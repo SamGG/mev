@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SingleArrayViewer.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-27 22:19:13 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -44,9 +44,10 @@ import org.tigr.microarray.util.swing.SlideDataLoader;
 
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.midas.mevdialogs.LinRegNormInitDialog;
-import org.tigr.midas.mevdialogs.RatioStatsNormInitDialog;
-import org.tigr.midas.mevdialogs.IterativeLogMCNormInitDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.normalization.LinRegNormInitDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.normalization.RatioStatsNormInitDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.normalization.IterativeLogMCNormInitDialog;
+
 
 //Graph package
 
@@ -870,7 +871,7 @@ public class SingleArrayViewer extends ArrayViewer implements Printable {
         if(mode == ISlideData.LINEAR_REGRESSION){
             LinRegNormInitDialog dialog = new LinRegNormInitDialog();
             if(dialog.showModal() == JOptionPane.OK_OPTION){
-                properties.setProperty("standard-deviation", Double.toString(dialog.getSD()));
+                properties.setProperty("standard-deviation", Float.toString(dialog.getSD()));
                 properties.setProperty("mode", dialog.getMode());
                 dialog.dispose();
             }
@@ -893,7 +894,7 @@ public class SingleArrayViewer extends ArrayViewer implements Printable {
         else if(mode == ISlideData.ITERATIVE_LOG){
             IterativeLogMCNormInitDialog dialog = new IterativeLogMCNormInitDialog();
             if(dialog.showModal() == JOptionPane.OK_OPTION){
-                properties.setProperty("standard-deviation", Double.toString(dialog.getSD()));
+                properties.setProperty("standard-deviation", Float.toString(dialog.getSD()));
                 dialog.dispose();
             }
             else{

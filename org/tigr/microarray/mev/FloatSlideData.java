@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: FloatSlideData.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-26 15:12:02 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-27 22:19:13 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -25,7 +25,7 @@ import org.tigr.midas.engine.IterativeLinReg;
 import org.tigr.midas.engine.IterativeLogMean;
 import org.tigr.midas.engine.RatioStats;
 import org.tigr.midas.Constant;
-import org.tigr.midas.display.ParameterPane;
+//import org.tigr.midas.display.ParameterPane;
 
 
 /**
@@ -710,7 +710,7 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
     public void applyTotalIntensity() {
         boolean [] goodValues = new boolean[this.getSize()];
         ColumnWorker cw = constructColumnWorker(goodValues);
-        cw = ((new TotInt(cw, false)).getFileTotIntColumnWorker());
+        cw = ((new TotInt(cw, "Cy3",false)).getFileTotIntColumnWorker());
         setNormalizedIntensities(cw, goodValues);
         normalizedState = ISlideData.TOTAL_INTENSITY;
     }
@@ -724,9 +724,8 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
         
         try{
             String  mode = (String)properties.get("mode");
-            double sd = Double.parseDouble((String)properties.get("standard-deviation"));
-            
-            cw = ((new IterativeLinReg(cw, sd, mode)).getIterLinRegColumnWorker());
+            float sd = Float.parseFloat((String)properties.get("standard-deviation"));
+            cw = (new IterativeLinReg(cw, sd, mode, "Cy3")).getIterLinRegColumnWorker();
             setNormalizedIntensities(cw, goodValues);
             normalizedState = ISlideData.LINEAR_REGRESSION;
         } catch (Exception e) {
@@ -746,7 +745,7 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
         try{
             int confInt = Integer.parseInt((String)properties.get("confidence-interval"));
             
-            cw = ((new RatioStats(cw, false, confInt)).getRatioStatsColumnWorker());
+            cw = ((new RatioStats(cw, false, confInt, "Cy3")).getRatioStatsColumnWorker());
             setNormalizedIntensities(cw, goodValues);
             normalizedState = ISlideData.LINEAR_REGRESSION;
         } catch (Exception e) {
@@ -764,9 +763,9 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
         ColumnWorker cw = constructColumnWorker(goodValues);
         
         try{
-            double sd = Double.parseDouble((String)properties.get("standard-deviation"));
+            float sd = Float.parseFloat((String)properties.get("standard-deviation"));
             
-            cw = ((new IterativeLogMean(cw, sd)).getIterLogMeanColumnWorker());
+            cw = ((new IterativeLogMean(cw, sd, "Cy3")).getIterLogMeanColumnWorker());
             setNormalizedIntensities(cw, goodValues);
             normalizedState = ISlideData.ITERATIVE_LOG;
         } catch (Exception e) {
@@ -781,29 +780,29 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
     private ColumnWorker constructColumnWorker(boolean [] goodValues){
         int n = this.getSize();
         int size = n;
-        double CY3;
-        double CY5;
-        double [] cy3 = new double[n];
-        double [] cy5 = new double[n];
+        float CY3;
+        float CY5;
+        float [] cy3 = new float[n];
+        float [] cy5 = new float[n];
         String [] metaCombo = new String[n];
         int metaRow, metaColumn;
-        double [] goodCy3;
-        double [] goodCy5;
+        float [] goodCy3;
+        float [] goodCy5;
         n = 0;
         for(int i = 0; i < size; i++){
             
             metaRow = this.getSlideDataElement(i).getRow(ISlideDataElement.META);
             metaColumn = this.getSlideDataElement(i).getColumn(ISlideDataElement.META);
             
-            CY3 = (double)trueCY3[i];
-            CY5 = (double)trueCY5[i];
+            CY3 = trueCY3[i];
+            CY5 = trueCY5[i];
             
             //if Stanford file is normalized then we need to generate cy3 and cy5
             if (this.dataType == IData.DATA_TYPE_RATIO_ONLY) {
                 CY3 = 100000;
-                CY5 = 100000*Math.pow(2.0d, CY5);                
+                CY5 = (float)(100000.0*Math.pow(2.0d, CY5));                
                 // if CY5 overflows, then set to zero and force no evaluation
-                if(CY5 == Double.POSITIVE_INFINITY || CY5 == Double.NEGATIVE_INFINITY)
+                if(CY5 == Float.POSITIVE_INFINITY || CY5 == Float.NEGATIVE_INFINITY)
                     CY3 = CY5 = 0; 
             }            
             
@@ -815,11 +814,15 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
                 n++;
             }
         }
-        goodCy3 = new double[n];
-        goodCy5 = new double[n];
+        goodCy3 = new float[n];
+        goodCy5 = new float[n];
         System.arraycopy(cy3, 0, goodCy3, 0, n);
         System.arraycopy(cy5, 0, goodCy5, 0, n);
         System.arraycopy(metaCombo, 0, metaCombo, 0, n);
+        
+        //ColumnWorker cw = new ColumnWorker(goodCy3.length);
+        //cw.setColOneArray(goodCy3);
+        //cw.setColTwoArray(goodCy5);
         return new ColumnWorker(goodCy3, goodCy5, metaCombo);
     }
     
@@ -827,8 +830,8 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
      *  Extracts data from a ColumnWorker into ISlideData current (normalized) intensities
      */
     private void setNormalizedIntensities(ColumnWorker cw, boolean [] goodIntensity){
-        double [] cy3 = cw.getColumnOneArray();
-        double [] cy5 = cw.getColumnTwoArray();
+        float [] cy3 = cw.getColumnOneArray();
+        float [] cy5 = cw.getColumnTwoArray();
         int goodIndex= 0;
         for(int i = 0 ; i < goodIntensity.length; i++){
             if(goodIntensity[i]){

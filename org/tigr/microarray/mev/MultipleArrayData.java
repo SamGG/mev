@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayData.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-02-26 15:12:02 $
+ * $Revision: 1.6 $
+ * $Date: 2004-02-27 22:19:13 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -35,10 +35,11 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
 
 import org.tigr.microarray.mev.cluster.clusterUtil.*;
-import org.tigr.midas.mevdialogs.LinRegNormInitDialog;
-import org.tigr.midas.mevdialogs.RatioStatsNormInitDialog;
-import org.tigr.midas.mevdialogs.IterativeLogMCNormInitDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.normalization.LinRegNormInitDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.normalization.RatioStatsNormInitDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.normalization.IterativeLogMCNormInitDialog;
 
+import org.tigr.midas.engine.Parameter;
 
 public class MultipleArrayData implements IData, java.io.Serializable {
     
@@ -79,7 +80,7 @@ public class MultipleArrayData implements IData, java.io.Serializable {
     private ClusterRepository geneClusterRepository;
     private ClusterRepository expClusterRepository;
     
-    private int logState = LOG;        
+    private int logState = LOG;
     
     /**
      * Sets the geneClusterRepository
@@ -312,12 +313,8 @@ public class MultipleArrayData implements IData, java.io.Serializable {
      * Returns ratio value for specified row, column and log state.
      */
     public float getRatio(int column, int row, int logState) {
-      //  System.out.println("external getRatio");        
         ISlideData slideData = (ISlideData)featuresList.get(column);
-        //System.out.println(logState);
-       // if(this.dataType == IData.DATA_TYPE_RATIO_ONLY)
-            logState = this.logState;
-       // System.out.println(logState);
+        logState = this.logState;  //set to current log state
         return slideData.getRatio(row, logState);
     }
     
@@ -678,7 +675,7 @@ public class MultipleArrayData implements IData, java.io.Serializable {
     void addFeature(ISlideData slideData) {
         featuresList.add(slideData);
         slideData.setDataType(this.dataType);
-        indicesList.add(createIndices(slideData));        
+        indicesList.add(createIndices(slideData));
         this.experiment = createExperiment();
         if (this.colorIndices == null) {
             this.colorIndices = createColorIndices(slideData.getSize());
@@ -692,7 +689,7 @@ public class MultipleArrayData implements IData, java.io.Serializable {
     void addFeatures(ISlideData[] slideData) {
         for (int i = 0; i < slideData.length; i++) {
             featuresList.add(slideData[i]);
-            slideData[i].setDataType(this.dataType);            
+            slideData[i].setDataType(this.dataType);
             indicesList.add(createIndices(slideData[i]));
             updateMaxValues(slideData[i]);
         }
@@ -829,6 +826,8 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         ISlideData slideData;
         final int size = getFeaturesCount();
         Properties properties = new Properties();
+        //construct normalization parameter defaults
+        new Parameter();
         if(mode == ISlideData.NO_NORMALIZATION){
             for (int feature=0; feature<size; feature++) {
                 slideData = getFeature(feature);
@@ -841,7 +840,7 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         if(mode == ISlideData.LINEAR_REGRESSION){
             LinRegNormInitDialog dialog = new LinRegNormInitDialog();
             if(dialog.showModal() == JOptionPane.OK_OPTION){
-                properties.setProperty("standard-deviation", Double.toString(dialog.getSD()));
+                properties.setProperty("standard-deviation", Float.toString(dialog.getSD()));
                 properties.setProperty("mode", dialog.getMode());
                 dialog.dispose();
             }
@@ -862,7 +861,7 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         else if(mode == ISlideData.ITERATIVE_LOG){
             IterativeLogMCNormInitDialog dialog = new IterativeLogMCNormInitDialog();
             if(dialog.showModal() == JOptionPane.OK_OPTION){
-                properties.setProperty("standard-deviation", Double.toString(dialog.getSD()));
+                properties.setProperty("standard-deviation", Float.toString(dialog.getSD()));
                 dialog.dispose();
             }
             else{
@@ -1174,8 +1173,16 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         float[][] matrix = fm.A;
         for (int i = 0; i < columns.length; i++) {
             sd = (ISlideData)featuresList.get(columns[i]);
-            for (int row = rows; --row >= 0;) {
-                fm.A[row][columns[i]] = sd.getRatio(row, this.logState);
+            
+            //pcahan --  don't log2 transform affy data
+            if (TMEV.getDataType() == TMEV.DATA_TYPE_AFFY){
+                for (int row = rows; --row >= 0; ) {
+                    fm.A[row][columns[i]] = sd.getRatio(row, LINEAR);
+                }
+            } else {
+                for (int row = rows; --row >= 0;) {
+                    fm.A[row][columns[i]] = sd.getRatio(row, this.logState);
+                }
             }
         }
         return new Experiment(fm, columns);
@@ -1191,9 +1198,18 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         for (int i = 0; i < columns; i++) {
             columnArray[i] = i;
             sd = (ISlideData)featuresList.get(i);
+            
+          //pcahan --  don't log2 transform affy data
+          if (TMEV.getDataType() == TMEV.DATA_TYPE_AFFY) {
+
             for (int j = 0; j < rows.length; j++) {
-                fm.A[j][i] = sd.getRatio(rows[j], this.logState);
+              fm.A[j][i] = sd.getRatio(rows[j], LINEAR);
             }
+          } else {                      
+              for (int j = 0; j < rows.length; j++) {              
+                  fm.A[j][i] = sd.getRatio(rows[j], this.logState);                
+              }
+          }
         }
         return new Experiment(fm, columnArray, rows);
     }
@@ -1272,7 +1288,7 @@ public class MultipleArrayData implements IData, java.io.Serializable {
                     ((FloatSlideData)slideData).setCurrentIntensities(spot, sde.getCurrentIntensity()[0], sde.getCurrentIntensity()[1]);
                 }
             }
-            slideData.setNormalizedState(normalizedState);            
+            slideData.setNormalizedState(normalizedState);
             data.addFeature(slideData);
         }
         return data;
@@ -1452,6 +1468,15 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         Adjustment.divideSpotsSD(experiment.getMatrix());
     }
     
+    // pcahan -- affy- abs specific
+    void divideGenesMedian() {
+        Adjustment.divideGenesMedian(experiment.getMatrix());
+    }
+
+    void divideGenesMean() {
+            Adjustment.divideGenesMean(experiment.getMatrix());
+    }    
+    
     void meanCenterSpots() {
         Adjustment.meanCenterSpots(experiment.getMatrix());
     }
@@ -1492,10 +1517,19 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         Adjustment.log10toLog2(experiment.getMatrix());
     }
     
+    // pcahan
+    private static float getGeneMean(float[] row) {
+        float mean = 0f;
+        for (int i = 0; i < row.length; i++){
+            mean += row[i];
+        }
+        return (float)mean/row.length;
+   }
+    
     public int getDataType() {
         return this.dataType;
-    }    
-
+    }
+    
     public void setDataType(int type){
         this.dataType = type;
         ISlideData slideData;
@@ -1503,11 +1537,12 @@ public class MultipleArrayData implements IData, java.io.Serializable {
             slideData = this.getFeature(i);
             slideData.setDataType(type);
         }
-        if(this.dataType == IData.DATA_TYPE_RATIO_ONLY){
+        if(this.dataType == IData.DATA_TYPE_RATIO_ONLY || this.dataType == IData.DATA_TYPE_AFFY_ABS ){
             this.logState = LINEAR;
-        }        
+        } 
+
         if(this.getFeaturesCount() > 0)
-            this.experiment = createExperiment();        
+            this.experiment = createExperiment();
     }
     
     /** Returns an annotation array for the provided indices based on annotation key
@@ -1528,12 +1563,12 @@ public class MultipleArrayData implements IData, java.io.Serializable {
             annot[i] = this.getElementAttribute(indices[i], fieldIndex);
         }
         
-        return annot;        
+        return annot;
     }
     
-        private void writeObject(ObjectOutputStream oos) throws IOException, ClassNotFoundException{
+    private void writeObject(ObjectOutputStream oos) throws IOException, ClassNotFoundException{
         oos.writeObject(TMEV.getFieldNames());
-            
+        
         oos.writeObject(featuresList);  //ArrayList
         oos.writeObject(indicesList); //ArrayList
         
@@ -1544,7 +1579,7 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         oos.writeObject(experimentColorIndices); // int []
         oos.writeObject(experiment); //Experiment
         oos.writeInt(dataType); //int
-
+        
         oos.writeFloat(maxCy3);
         oos.writeFloat(maxCy5);
         oos.writeFloat(maxRatio);
@@ -1552,13 +1587,13 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         
         oos.writeFloat(percentageCutoff);
         oos.writeBoolean(usePercentageCutoff);
- 
+        
         oos.writeFloat(lowerCY3Cutoff);
         oos.writeFloat(lowerCY5Cutoff);
         oos.writeBoolean(useLowerCutoffs);
-
+        
         // pcahan
-        if(dataType == TMEV.DATA_TYPE_AFFY){            
+        if(dataType == TMEV.DATA_TYPE_AFFY){
         /*
         private DetectionFilter detectionFilter;
     private FoldFilter foldFilter;

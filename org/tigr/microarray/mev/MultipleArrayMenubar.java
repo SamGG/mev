@@ -1,11 +1,11 @@
 /*
 Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
 All rights reserved.
-*/
+ */
 /*
  * $RCSfile: MultipleArrayMenubar.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-13 19:15:02 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-27 22:19:13 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -45,6 +45,8 @@ public class MultipleArrayMenubar extends JMenuBar {
     private JMenu sortMenu;
     private ButtonGroup sortGroup;
     private ActionListener listener;
+    private boolean affyNormAdded = false;
+
     
     private ActionManager actionManager;
     
@@ -57,7 +59,7 @@ public class MultipleArrayMenubar extends JMenuBar {
         listener = manager.getListener();
         actionManager = manager;
         JMenu fileMenu = new JMenu("File");
-       // fileMenu.add(createJMenuItem(manager.getAction(ActionManager.LOAD_DIRECTORY_ACTION)));
+        // fileMenu.add(createJMenuItem(manager.getAction(ActionManager.LOAD_DIRECTORY_ACTION)));
         fileMenu.add(createJMenuItem(manager.getAction(ActionManager.LOAD_ACTION)));
         fileMenu.addSeparator();
         fileMenu.add(createJMenuItem(manager.getAction(ActionManager.LOAD_ANALYSIS_ACTION)));
@@ -65,11 +67,11 @@ public class MultipleArrayMenubar extends JMenuBar {
         fileMenu.add(createJMenuItem(manager.getAction(ActionManager.SAVE_ANALYSIS_ACTION)));
         fileMenu.add(createJMenuItem(manager.getAction(ActionManager.SAVE_ANALYSIS_AS_ACTION)));
         
-       // fileMenu.add(createJMenuItem(manager.getAction(ActionManager.LOAD_DB_ACTION)));
-      //  fileMenu.getMenuComponent(2).setEnabled(false);
-      //  fileMenu.addSeparator();
-      //  fileMenu.add(createJMenuItem(manager.getAction(ActionManager.LOAD_STANFORD_ACTION)));
-    //    fileMenu.add(createJMenuItem(manager.getAction(ActionManager.LOAD_CLUSTER_ACTION)));
+        // fileMenu.add(createJMenuItem(manager.getAction(ActionManager.LOAD_DB_ACTION)));
+        //  fileMenu.getMenuComponent(2).setEnabled(false);
+        //  fileMenu.addSeparator();
+        //  fileMenu.add(createJMenuItem(manager.getAction(ActionManager.LOAD_STANFORD_ACTION)));
+        //    fileMenu.add(createJMenuItem(manager.getAction(ActionManager.LOAD_CLUSTER_ACTION)));
         fileMenu.addSeparator();
         fileMenu.add(createJMenuItem(manager.getAction(ActionManager.SAVE_MATRIX_ACTION)));
         fileMenu.addSeparator();
@@ -106,17 +108,18 @@ public class MultipleArrayMenubar extends JMenuBar {
         adjustMenu.add(createJCheckBoxMenuItem("Use Percentage Cutoffs", ActionManager.USE_PERCENTAGE_CUTOFFS_CMD, listener));
         adjustMenu.addSeparator();
         adjustMenu.add(createJCheckBoxMenuItem("Adjust Intensities of '0'", ActionManager.ADJUST_INTENSITIES_0_CMD, listener, true));
-
+        
         // pcahan
-
+        /*
         if (TMEV.getDataType() == TMEV.DATA_TYPE_AFFY){
             adjustMenu.addSeparator();
             adjustMenu.add(createJMenuItem("Set Detection Filter", ActionManager.SET_DETECTION_FILTER_CMD, listener));
             adjustMenu.add(createJCheckBoxMenuItem("Use Detection Filter", ActionManager.USE_DETECTION_FILTER_CMD, listener));
-
-	    adjustMenu.add(createJMenuItem("Set Fold Filter", ActionManager.SET_FOLD_FILTER_CMD, listener));
+            
+            adjustMenu.add(createJMenuItem("Set Fold Filter", ActionManager.SET_FOLD_FILTER_CMD, listener));
             adjustMenu.add(createJCheckBoxMenuItem("Use Fold Filter", ActionManager.USE_FOLD_FILTER_CMD, listener));
         }
+        */
         
         add(adjustMenu);
         
@@ -172,13 +175,13 @@ public class MultipleArrayMenubar extends JMenuBar {
         colorSchemeMenu.add(createJCheckBoxMenuItem("Use Color Gradient on Graphs", ActionManager.COLOR_GRADIENT_CMD, listener));
         displayMenu.add(colorSchemeMenu);
         displayMenu.addSeparator();
-
+        
         buttonGroup = new ButtonGroup();
         displayMenu.add(createJRadioButtonMenuItem("Expression Bar View", ActionManager.DISPLAY_GREEN_RED_CMD, listener, buttonGroup));
         displayMenu.add(createJRadioButtonMenuItem("Ratio Split View", ActionManager.DISPLAY_GR_RATIO_SPLIT_CMD, listener, buttonGroup, true));
         displayMenu.add(createJRadioButtonMenuItem("Color Overlay View", ActionManager.DISPLAY_GR_OVERLAY_CMD, listener, buttonGroup));
-
-        displayMenu.addSeparator();        
+        
+        displayMenu.addSeparator();
         
         displayMenu.add(createJMenuItem("Abbr. Experiment Names", ActionManager.TOGGLE_ABBR_EXPT_NAMES_CMD, listener));
         
@@ -211,7 +214,7 @@ public class MultipleArrayMenubar extends JMenuBar {
         sortMenu.add(createJRadioButtonMenuItem("Sort by Location", ActionManager.SORT_BY_LOCATION_CMD, listener, sortGroup, true));
         sortMenu.add(createJRadioButtonMenuItem("Sort by Ratio", ActionManager.SORT_BY_RATIO_CMD, listener, sortGroup));
         ((JRadioButtonMenuItem)sortMenu.getMenuComponent(0)).setSelected(true);
-       // addSortMenuItems(sortMenu, manager, sortGroup);
+        // addSortMenuItems(sortMenu, manager, sortGroup);
         add(sortMenu);
         
         JMenu helpMenu = new JMenu("Help");
@@ -228,13 +231,13 @@ public class MultipleArrayMenubar extends JMenuBar {
             case TMEV.SYSTEM:
                 setEnableMenu("File", true);
                 setEnableMenuItem("File", ActionManager.LOAD_STANFORD_COMMAND, true);
-                setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_COMMAND, false); 
+                setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_COMMAND, false);
                 setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_AS_COMMAND, false);
                 break;
             case TMEV.DATA_AVAILABLE:
                 setEnableMenu("File", true);
-                setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_COMMAND, false); 
-                setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_AS_COMMAND, true);                
+                setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_COMMAND, false);
+                setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_AS_COMMAND, true);
                 setEnableMenuItem("File", ActionManager.SAVE_MATRIX_COMMAND, true);
                 setEnableMenuItem("File", ActionManager.SAVE_IMAGE_COMMAND, true);
                 setEnableMenuItem("File", ActionManager.PRINT_IMAGE_COMMAND, true);
@@ -265,16 +268,16 @@ public class MultipleArrayMenubar extends JMenuBar {
                 setEnableMenu("File", true);
                 setEnableMenuItem("File", ActionManager.LOAD_DB_COMMAND, false);
                 setEnableMenuItem("File", ActionManager.LOAD_FILE_COMMAND, false);
-                setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_COMMAND, false);                
-                setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_AS_COMMAND, false);                
-
+                setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_COMMAND, false);
+                setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_AS_COMMAND, false);
+                
                 setEnableMenuItem("File", ActionManager.LOAD_DIRECTORY_COMMAND, false);
                 setEnableMenuItem("File", ActionManager.LOAD_STANFORD_COMMAND, false);
                 break;
             case TMEV.DATA_AVAILABLE:
                 setEnableMenu("File", true);
-                setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_COMMAND, false);  
-                setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_AS_COMMAND, false);  
+                setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_COMMAND, false);
+                setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_AS_COMMAND, false);
                 
                 setEnableMenuItem("File", ActionManager.SAVE_MATRIX_COMMAND, false);
                 setEnableMenuItem("File", ActionManager.SAVE_IMAGE_COMMAND, false);
@@ -319,17 +322,17 @@ public class MultipleArrayMenubar extends JMenuBar {
     
     public void addLabelMenuItems(String [] fieldNames){
         JRadioButtonMenuItem item;
-        ButtonGroup bg = new ButtonGroup();        
+        ButtonGroup bg = new ButtonGroup();
         DefaultAction action;
         for(int i = 0; i < fieldNames.length; i++){
             action = new DefaultAction(actionManager, "Label by "+fieldNames[i], ActionManager.DISPLAY_LABEL_CMD);
-	    action.putValue(ActionManager.PARAMETER, String.valueOf(i));
+            action.putValue(ActionManager.PARAMETER, String.valueOf(i));
             item = new JRadioButtonMenuItem(action);
             labelGroup.add(item);
-            if(i == 0) 
-                item.setSelected(true);                       
+            if(i == 0)
+                item.setSelected(true);
             this.labelMenu.add(item);
-        }  
+        }
     }
     
     
@@ -338,26 +341,34 @@ public class MultipleArrayMenubar extends JMenuBar {
         this.labelMenu.removeAll();
         
         JRadioButtonMenuItem item;
-        ButtonGroup bg = new ButtonGroup();        
+        ButtonGroup bg = new ButtonGroup();
         DefaultAction action;
         for(int i = 0; i < fieldNames.length; i++){
             action = new DefaultAction(actionManager, "Label by "+fieldNames[i], ActionManager.DISPLAY_LABEL_CMD);
-	    action.putValue(ActionManager.PARAMETER, String.valueOf(i));
+            action.putValue(ActionManager.PARAMETER, String.valueOf(i));
             item = new JRadioButtonMenuItem(action);
             labelGroup.add(item);
-            if(i == 0) 
-                item.setSelected(true);                       
+            if(i == 0)
+                item.setSelected(true);
             this.labelMenu.add(item);
-        }  
+        }
     }
     
     
-    public void addAffyFilterMenuItems(){           
-            adjustMenu.addSeparator();
-            adjustMenu.add(createJMenuItem("Set Detection Filter", ActionManager.SET_DETECTION_FILTER_CMD, listener));
-            adjustMenu.add(createJCheckBoxMenuItem("Use Detection Filter", ActionManager.USE_DETECTION_FILTER_CMD, listener));
-	    adjustMenu.add(createJMenuItem("Set Fold Filter", ActionManager.SET_FOLD_FILTER_CMD, listener));
-            adjustMenu.add(createJCheckBoxMenuItem("Use Fold Filter", ActionManager.USE_FOLD_FILTER_CMD, listener));       
+    public void addAffyFilterMenuItems(){
+        adjustMenu.addSeparator();
+        adjustMenu.add(createJMenuItem("Set Detection Filter", ActionManager.SET_DETECTION_FILTER_CMD, listener));
+        adjustMenu.add(createJCheckBoxMenuItem("Use Detection Filter", ActionManager.USE_DETECTION_FILTER_CMD, listener));
+        adjustMenu.add(createJMenuItem("Set Fold Filter", ActionManager.SET_FOLD_FILTER_CMD, listener));
+        adjustMenu.add(createJCheckBoxMenuItem("Use Fold Filter", ActionManager.USE_FOLD_FILTER_CMD, listener));
+    }
+    
+    
+    public void addAffyNormMenuItems() {
+        adjustMenu.addSeparator();
+        adjustMenu.add(createJMenuItem("Divide Genes by Median", ActionManager.DIVIDE_GENES_MEDIAN_CMD, listener));
+        adjustMenu.add(createJMenuItem("Divide Genes by Mean", ActionManager.DIVIDE_GENES_MEAN_CMD, listener));
+        this.set_affyNormAddded(true);
     }
     
     /**
@@ -375,36 +386,36 @@ public class MultipleArrayMenubar extends JMenuBar {
         }
     }
     
-   public void addSortMenuItems(String [] fieldNames){
+    public void addSortMenuItems(String [] fieldNames){
         JRadioButtonMenuItem item;
         DefaultAction action;
-        for(int i = 0; i < fieldNames.length; i++){ 
+        for(int i = 0; i < fieldNames.length; i++){
             action = new DefaultAction(actionManager, "Sort by "+fieldNames[i], ActionManager.SORT_LABEL_CMD);
-	    action.putValue(ActionManager.PARAMETER, String.valueOf(i));
+            action.putValue(ActionManager.PARAMETER, String.valueOf(i));
             item = new JRadioButtonMenuItem(action);
             sortGroup.add(item);
-            this.sortMenu.add(item);            
+            this.sortMenu.add(item);
         }
     }
-   
-   public void replaceSortMenuItems(String [] fieldNames){
+    
+    public void replaceSortMenuItems(String [] fieldNames){
         //Remove all items
         this.sortMenu.removeAll();
         
         //Restore defaults
         sortMenu.add(createJRadioButtonMenuItem("Sort by Location", ActionManager.SORT_BY_LOCATION_CMD, listener, sortGroup, true));
         sortMenu.add(createJRadioButtonMenuItem("Sort by Ratio", ActionManager.SORT_BY_RATIO_CMD, listener, sortGroup));
-       
+        
         JRadioButtonMenuItem item;
         DefaultAction action;
-        for(int i = 0; i < fieldNames.length; i++){ 
+        for(int i = 0; i < fieldNames.length; i++){
             action = new DefaultAction(actionManager, "Sort by "+fieldNames[i], ActionManager.SORT_LABEL_CMD);
-	    action.putValue(ActionManager.PARAMETER, String.valueOf(i));
+            action.putValue(ActionManager.PARAMETER, String.valueOf(i));
             item = new JRadioButtonMenuItem(action);
             sortGroup.add(item);
-            this.sortMenu.add(item);            
+            this.sortMenu.add(item);
         }
-    }   
+    }
     
     /**
      * Adds analysis menu items.
@@ -543,6 +554,15 @@ public class MultipleArrayMenubar extends JMenuBar {
         item.setEnabled(enable);
     }
     
+    // pcahan
+    boolean get_affyNormAdded(){
+        return this.affyNormAdded;
+    }
+
+    void set_affyNormAddded(boolean set){
+        this.affyNormAdded = set;
+    }
+    
     /**
      * Sets current index of label menu.
      */
@@ -672,7 +692,7 @@ public class MultipleArrayMenubar extends JMenuBar {
      * Return current negative gradient image
      */
     public BufferedImage getNegativeGradientImage() {
-        return displayMenu.getNegativeGradientImage();      
+        return displayMenu.getNegativeGradientImage();
     }
     
     public boolean getColorGradientState(){
@@ -799,7 +819,7 @@ public class MultipleArrayMenubar extends JMenuBar {
          * Creates a gradient image given specifiedColors
          */
         public BufferedImage createGradientImage(Color color1, Color color2) {
-           // BufferedImage image = (BufferedImage)createCompatibleImage(256,1);
+            // BufferedImage image = (BufferedImage)createCompatibleImage(256,1);
             
             BufferedImage image = (BufferedImage)java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleImage(256,1);
             Graphics2D graphics = image.createGraphics();
@@ -810,7 +830,7 @@ public class MultipleArrayMenubar extends JMenuBar {
         }
         
         /**
-         * Returns true if the use gradient color box is selected 
+         * Returns true if the use gradient color box is selected
          */
         public boolean getColorGradientState(){
             return useColorGradient;
@@ -819,7 +839,7 @@ public class MultipleArrayMenubar extends JMenuBar {
         public void setColorGradientState(boolean state){
             useColorGradient = state;
         }
-         
+        
         
     }
     

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: InfoDisplay.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-26 15:12:02 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-27 22:19:13 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -153,9 +153,9 @@ public class InfoDisplay extends ActionInfoDialog {
             "<tr><td>log2(Ratio)</td><td><b>" + logRatio + "</b></td></tr>";
         } else if(dataType == this.data.DATA_TYPE_AFFY_MEAN){
             message += "<tr><td>File Index</td><td>" + trueRow + "</td></tr>";
-            message += "<tr><td>Affy Loading Mode</td><td>Spot Mean as Ref.</td></tr>";
+            message += "<tr><td>Affy Loading Mode</td><td>Array Set Mean Int. as Ref.</td></tr>";
             message += "<tr><td>Sample Intensity</td><td><b>" + cy5 + "</b></td></tr>";
-            message += "<tr><td>Spot Mean Intensity</td><td><b>" + cy3 + "</b></td></tr>";
+            message += "<tr><td>Array Set Mean Int.</td><td><b>" + cy3 + "</b></td></tr>";
             message += "<tr><td>Ratio (Sample/Mean)</td><td>" + ratio + "</td></tr>"+
             "<tr><td>log2(Ratio)</td><td><b>" + logRatio + "</b></td></tr>";
         } else if(dataType == this.data.DATA_TYPE_AFFY_MEDIAN){
