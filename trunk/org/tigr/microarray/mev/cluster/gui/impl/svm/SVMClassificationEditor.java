@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMClassificationEditor.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-09 17:29:21 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -200,7 +200,7 @@ public class SVMClassificationEditor extends javax.swing.JFrame {
         
         for(int i = 0; i < numRows; i++){
             if( fm.stringWidth( ((Integer)table.getValueAt(i, 0)).toString() ) > columnWidth)
-                columnWidth = fm.stringWidth((String)table.getValueAt(i, 0));
+                columnWidth = fm.stringWidth(((Integer)table.getValueAt(i, 0)).toString());
         }
         return columnWidth + 10;
     }

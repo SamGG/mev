@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SVMDiscriminantExperimentViewer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-09 17:29:21 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -784,6 +784,19 @@ public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer {
         if (row < 0 || row > getCluster().length -1)
             return false;
         return true;
+    }
+    
+    /** Returns a component to be inserted into the scroll pane row header
+     */
+    public JComponent getRowHeaderComponent() {
+        return null;
+    }
+    
+    /** Returns the corner component corresponding to the indicated corner,
+     * posibly null
+     */
+    public JComponent getCornerComponent(int cornerIndex) {
+        return null;
     }
     
     /**
