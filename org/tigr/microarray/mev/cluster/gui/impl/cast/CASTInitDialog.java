@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: CASTInitDialog.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-13 18:32:52 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -24,7 +24,7 @@ public class CASTInitDialog extends AlgorithmDialog{
     
     protected GBA gba;
     protected EventListener eventListener;
-    
+     
     protected SampleSelectionPanel sampleSelectionPanel;
     protected HCLSelectionPanel hclOpsPanel;
     
