@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: GDMGeneGradientLabelPanel.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-13 21:36:44 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-25 21:09:09 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -320,10 +320,7 @@ public class GDMGeneGradientLabelPanel extends JScrollPane {
         gdmLabelPanel.updateSize();
         
         if (isColumnHeader == true ) {
-            getVerticalScrollBar().setValues(190, 10, 100, 200);
-            //this.getViewport().setViewPosition(new Point(0, this.getViewport().getHeight()));
-            //  this.scrollRectToVisible(new Rectangle(0, 20, getWidth(), 10));
-            
+            getVerticalScrollBar().setValues(190, 10, 100, 200);            
         } else {
             getHorizontalScrollBar().setValues(190, 10, 100, 200);
         }
@@ -345,9 +342,6 @@ public class GDMGeneGradientLabelPanel extends JScrollPane {
             this.setPreferredSize(new Dimension(w, h));
         }
         this.getViewport().setViewSize(gdmLabelPanel.getSize());
-        //       this.getViewport().setSize(gdmLabelPanel.getSize());
-        //     this.getViewport().setPreferredSize(new Dimension(gdmLabelPanel.getSize()));
-        //this.doLayout();
         validate();
     }
     
