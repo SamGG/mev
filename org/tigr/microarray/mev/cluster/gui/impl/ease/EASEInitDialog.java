@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASEInitDialog.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-04-01 20:42:21 $
+ * $Revision: 1.4 $
+ * $Date: 2004-05-26 13:24:50 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -58,6 +58,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
@@ -155,6 +156,72 @@ public class EASEInitDialog extends AlgorithmDialog {
         this.setSize(570,650);
     }
     
+        /** Creates a new instance of EaseInitDialog
+     * @param parent Parent Frame
+     * @param repository Cluster repository to construct <CODE>ClusterBrowser</CODE>
+     * @param annotationLabels Annotation types
+     */
+    public EASEInitDialog(Frame parent, String [] annotationLabels) {
+        super(new JFrame(), "EASE: EASE Annotation Analysis", true);
+        this.parent = parent;
+        font = new Font("Dialog", Font.BOLD, 12);
+        listener = new EventListener();
+        addWindowListener(listener);
+        
+        //Tabbed pane creation
+        tabbedPane = new JTabbedPane();
+        
+        JPanel popNClusterPanel = new JPanel(new GridBagLayout());
+        popNClusterPanel.setBackground(Color.white);
+        popPanel = new PopSelectionPanel();
+       // browser = new ClusterBrowser(repository);
+        
+        JPanel emptyClusterPanel = new JPanel(new GridBagLayout());
+        String text = "<center><b>Note: When running EASE in script mode the cluster<br>";
+        text += "under analysis is determined by the preceding algorithm<br>";
+        text += "that feeds source data into EASE.</center>";
+        JTextPane textArea = new JTextPane();
+        textArea.setEditable(false);
+        textArea.setBackground(Color.lightGray);
+        textArea.setContentType("text/html");
+        textArea.setText(text);
+        emptyClusterPanel.add(textArea, new GridBagConstraints(0,0,1,1,0.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        
+        popNClusterPanel.add(popPanel, new GridBagConstraints(0,0,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        popNClusterPanel.add(emptyClusterPanel, new GridBagConstraints(0,1,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        tabbedPane.add("Population and Cluster Selection", popNClusterPanel);
+        
+        easeParamPanel = new EaseParameterPanel(annotationLabels);
+        tabbedPane.add("Annotation Parameters", easeParamPanel);
+        
+        alphaPanel = new AlphaPanel();
+        tabbedPane.add("Statistical Parameters", alphaPanel);
+        
+        JPanel parameters = new JPanel(new GridBagLayout());
+        parameters.setBackground(Color.white);
+        
+        //mode panel
+        modePanel = new ModePanel(true);
+        
+        parameters.add(modePanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        parameters.add(tabbedPane, new GridBagConstraints(0,1,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        
+        addContent(parameters);
+        setActionListeners(listener);
+        
+     /*   if(repository == null || repository.isEmpty()) {
+            Component comp = tabbedPane.getComponentAt(0);
+            JPanel panel = (JPanel)comp;
+            panel.removeAll();
+            panel.validate();
+            panel.setOpaque(false);
+            panel.add(new JLabel("Empty Cluster Repository"), new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(15,0,10,0),0,0));
+            panel.add(new JLabel("Only Annotation Survey is Enabled"), new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(0,0,0,0),0,0));
+            tabbedPane.setSelectedIndex(1);
+        }
+        */
+        this.setSize(570,650);
+    }
     
     /** Shows the dialog.
      * @return  */
@@ -933,5 +1000,15 @@ public class EASEInitDialog extends AlgorithmDialog {
             result = JOptionPane.CLOSED_OPTION;
             dispose();
         }
+    }
+    
+    public static void main(String [] args) {
+        String [] labels = new String [3];
+        labels[0] = "TC#";
+        labels[1] = "GB#";
+        labels[2] = "Role";
+
+        EASEInitDialog eid = new EASEInitDialog(new JFrame(), labels);
+        eid.showModal();
     }
 }

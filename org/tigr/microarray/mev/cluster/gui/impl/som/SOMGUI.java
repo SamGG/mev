@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SOMGUI.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-05-17 15:41:53 $
+ * $Revision: 1.5 $
+ * $Date: 2004-05-26 13:29:32 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -268,7 +268,10 @@ public class SOMGUI implements IClusterGUI, IScriptGUI {
         data.addParam("name", "SOM");
         
         // alg type
-        data.addParam("alg-type", "cluster");
+        if(clusterGenes)
+            data.addParam("alg-type", "cluster-genes");
+        else
+            data.addParam("alg-type", "cluster-experiments");
         
         // output class
         data.addParam("output-class", "multi-cluster-output");

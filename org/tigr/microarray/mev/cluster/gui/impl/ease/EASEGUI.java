@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASEGUI.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-03-24 21:59:15 $
+ * $Revision: 1.3 $
+ * $Date: 2004-05-26 13:13:39 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -49,11 +49,14 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Logger;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
 
 
+import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
+
+
 /** The <CODE>EASEGUI</CODE> class contains code to gather parameters
  * for EASE annotation analysis, to run the analysis, and to display
  * various results from the analysis.
  */
-public class EASEGUI implements IClusterGUI {
+public class EASEGUI implements IClusterGUI, IScriptGUI {
     
     /** The algorithm class for execution of EASE.
      */
@@ -94,6 +97,10 @@ public class EASEGUI implements IClusterGUI {
     
     boolean stop = false;
     String annotationKeyType;
+    
+    /** Indicates if the algorithm run is via a script execution
+     */    
+    boolean isScripting = false;
     
     /** Creates a new instance of EASEGUI */
     public EASEGUI() {
@@ -166,7 +173,7 @@ public class EASEGUI implements IClusterGUI {
                     return null;
                 }
             } catch (IOException ioe) {
-                //Bad file format               
+                //Bad file format
                 JOptionPane.showMessageDialog(framework.getFrame(), "Error loading population file.", "Population File Load Error", JOptionPane.ERROR_MESSAGE);
                 return null;
             }
@@ -215,6 +222,191 @@ public class EASEGUI implements IClusterGUI {
         
         return node;
     }
+    
+    
+    
+    public AlgorithmData getScriptParameters(IFramework framework) {
+        algorithmData = new AlgorithmData();
+        
+        //  ClusterRepository repository = framework.getClusterRepository(Cluster.GENE_CLUSTER);
+        
+        EASEInitDialog dialog = new EASEInitDialog(framework.getFrame(), framework.getData().getFieldNames());
+        
+        if(dialog.showModal() != JOptionPane.OK_OPTION)
+            return null;
+        
+        isClusterAnalysis = dialog.isClusterModeSelected();
+        String converterFileName = dialog.getConverterFileName();
+        annotationKeyType = dialog.getAnnotationKeyType();
+        algorithmData.addParam("annotation-key-type", annotationKeyType);
+        String [] annotationFileList = dialog.getAnnToGOFileList();
+        int minClusterSize = dialog.getMinClusterSize();
+        int [] indices;
+        boolean isPvalueCorrectionSelected;
+        experiment = framework.getData().getExperiment();
+        
+        if(isClusterAnalysis){
+            //cluster = dialog.getSelectedCluster();
+            //experiment = cluster.getExperiment();   //asign proper experiment object
+            //indices = cluster.getIndices();  //**These map to IDATA**
+            algorithmData.addParam("report-ease-score", String.valueOf(dialog.isEaseScoreSelected()));
+            isPvalueCorrectionSelected = dialog.isCorrectPvaluesSelected();
+            algorithmData.addParam("p-value-corrections", String.valueOf(isPvalueCorrectionSelected));
+            if(isPvalueCorrectionSelected){
+                algorithmData.addParam("bonferroni-correction", String.valueOf(dialog.isBonferroniSelected()));
+                algorithmData.addParam("bonferroni-step-down-correction", String.valueOf(dialog.isStepDownBonferroniSelected()));
+                algorithmData.addParam("sidak-correction", String.valueOf(dialog.isSidakSelected()));
+            }
+            
+            algorithmData.addParam("run-permutation-analysis", String.valueOf(dialog.isPermutationAnalysisSelected()));
+            if(dialog.isPermutationAnalysisSelected())
+                algorithmData.addParam("permutation-count", String.valueOf(dialog.getPermutationCount()));
+            
+            //  logger.append("Extracting Annotation Key Lists\n");
+            //  String [] clusterKeys = framework.getData().getAnnotationList(annotationKeyType, indices);
+            //   if(clusterKeys == null)
+            //      System.out.println("NULL CLUSTER KEYS!!!!!!!!!!!!!!!!!!!!!!!!!");
+            //  algorithmData.addStringArray("sample-list", clusterKeys);
+            // algorithmData.addIntArray("sample-indices", cluster.getExperimentIndices());  //drop in experiment indices
+        }
+        
+        //Use file or IData for population, only permit file use for cluster analysis
+        String [] populationKeys;
+        if(isClusterAnalysis && dialog.isPopFileModeSelected()) {
+            // try {
+            // populationKeys = getPopulationKeysFromFile(dialog.getPopulationFileName());
+            algorithmData.addParam("population-file-name", dialog.getPopulationFileName());
+            //     if(populationKeys == null) {
+            //        return null;
+            //   }
+            //  } catch (IOException ioe) {
+            //Bad file format
+            //       JOptionPane.showMessageDialog(framework.getFrame(), "Error loading population file.", "Population File Load Error", JOptionPane.ERROR_MESSAGE);
+            //      return null;
+            //  }
+        } //else {
+        //   populationKeys = framework.getData().getAnnotationList(annotationKeyType, experiment.getRowMappingArrayCopy());
+        // }
+        
+        algorithmData.addParam("perform-cluster-analysis", String.valueOf(isClusterAnalysis));
+        // algorithmData.addStringArray("population-list", populationKeys);
+        if(converterFileName != null)
+            algorithmData.addParam("converter-file-name", converterFileName);
+        algorithmData.addStringArray("annotation-file-list", annotationFileList);
+        //  algorithmData.addMatrix("expression", experiment.getMatrix());
+        
+        //Trim options
+        String [] trimOptions = dialog.getTrimOptions();
+        algorithmData.addParam("trim-option", trimOptions[0]);
+        algorithmData.addParam("trim-value", trimOptions[1]);
+        
+        //script control parameters
+        
+        // alg name
+        algorithmData.addParam("name", "EASE");
+        
+        // alg type
+        algorithmData.addParam("alg-type", "cluster-genes");
+        
+        // output class
+        algorithmData.addParam("output-class", "multi-cluster-output");
+        
+        //output nodes
+        String [] outputNodes = new String[1];
+        outputNodes[0] = "Multi-cluster";
+        algorithmData.addStringArray("output-nodes", outputNodes);
+        return algorithmData;
+    }
+    
+    
+    
+    
+    public DefaultMutableTreeNode executeScript(IFramework framework, AlgorithmData algData, Experiment experiment) throws AlgorithmException {
+        this.isScripting = true;
+        this.algorithmData = algData;
+        this.experiment = experiment;
+        algData.addMatrix("expression", framework.getData().getExperiment().getMatrix());
+        
+        AlgorithmParameters params = algData.getParams();
+        
+        this.isClusterAnalysis = params.getBoolean("perform-cluster-analysis");
+        this.annotationKeyType = params.getString("annotation-key-type");
+        
+        
+        
+        listener = new Listener();
+        logger = new Logger(framework.getFrame(), "EASE Analysis", listener);
+        logger.show();
+        progress = new Progress(framework.getFrame(), "Probability Analysis Resampling Progress", listener);
+        
+        if(this.isClusterAnalysis) {
+            //cluster keys
+            int indices [] = experiment.getRowMappingArrayCopy();
+            String [] clusterKeys = framework.getData().getAnnotationList(annotationKeyType, indices);
+            //   if(clusterKeys == null)
+            //      System.out.println("NULL CLUSTER KEYS!!!!!!!!!!!!!!!!!!!!!!!!!");
+              algData.addStringArray("sample-list", clusterKeys);
+             algData.addIntArray("sample-indices", indices);  //drop in experiment indices
+            
+        }
+        
+        
+        
+        
+        // population keys
+        String popFileName = params.getString("population-file-name");
+        String [] populationKeys;
+        if(isClusterAnalysis && popFileName != null){// && dialog.isPopFileModeSelected()) {
+            try {
+                populationKeys = getPopulationKeysFromFile(params.getString("population-file-name"));
+                if(populationKeys == null) {
+                    return null;
+                }
+            } catch (IOException ioe) {
+                //Bad file format
+                JOptionPane.showMessageDialog(framework.getFrame(), "Error loading population file.", "Population File Load Error", JOptionPane.ERROR_MESSAGE);
+                return null;
+            }
+        } else {
+            populationKeys = framework.getData().getAnnotationList(annotationKeyType, experiment.getRowMappingArrayCopy());
+        }
+                algData.addStringArray("population-list", populationKeys);
+        
+        
+        
+        
+        
+        
+        algorithm = framework.getAlgorithmFactory().getAlgorithm("EASE");
+        algorithm.addAlgorithmListener(listener);
+        algorithm.execute(algorithmData);
+        
+        if(stop)
+            return null;
+        
+        progress.dispose();
+        categoryNames = algorithmData.getStringArray("category-names");
+        
+        clusters = algorithmData.getIntMatrix("cluster-matrix");
+        resultMatrix = (String [][])algorithmData.getObjectMatrix("result-matrix");
+        haveAccessionNumbers = algorithmData.getParams().getBoolean("have-accession-numbers", false);
+        
+        DefaultMutableTreeNode node;
+        logger.append("Creating Result Viewers\n");
+        
+        if(resultMatrix == null)
+            node = createEmptyResultNode(algorithmData);
+        else
+            node = createResultNode(algorithmData, clusters);
+        
+        if (algorithm != null) {
+            algorithm.removeAlgorithmListener(listener);
+        }
+        if (logger != null) logger.dispose();
+        
+        return node;
+    }
+    
     
     private String [] getPopulationKeysFromFile(String fileName) throws IOException {
         File file = new File(fileName);
@@ -329,7 +521,7 @@ public class EASEGUI implements IClusterGUI {
         String converterFileName = result.getParams().getString("converter-file-name");
         DefaultMutableTreeNode newNode;
         
-        if(this.isClusterAnalysis){
+        if(this.isClusterAnalysis && !isScripting){
             newNode = new DefaultMutableTreeNode("Input Cluster Info");
             newNode.add(new DefaultMutableTreeNode("Cluster Serial # :"+String.valueOf(this.cluster.getSerialNumber())));
             newNode.add(new DefaultMutableTreeNode("Cluster Source: "+String.valueOf(this.cluster.getSource())));
@@ -338,6 +530,10 @@ public class EASEGUI implements IClusterGUI {
             newNode.add(new DefaultMutableTreeNode("Cluster Label: "+String.valueOf(this.cluster.getClusterLabel())));
             newNode.add(new DefaultMutableTreeNode("Cluster Size: "+String.valueOf(this.cluster.getSize())));
             generalInfo.add(newNode);
+        }
+        
+        if(this.isScripting) {
+            newNode = new DefaultMutableTreeNode("Input Data: Script Data Input");            
         }
         
         newNode = new DefaultMutableTreeNode("Analysis Options");
@@ -383,6 +579,8 @@ public class EASEGUI implements IClusterGUI {
         
         root.add(generalInfo);
     }
+    
+    
     
     /** Listens to algorithm events and updates the logger.
      */

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: QTCGUI.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-05-17 15:42:16 $
+ * $Revision: 1.5 $
+ * $Date: 2004-05-26 13:26:04 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -260,7 +260,10 @@ public class QTCGUI implements IClusterGUI, IScriptGUI {
         data.addParam("name", "QTC");
         
         // alg type
-        data.addParam("alg-type", "cluster");
+        if(clusterGenes)
+            data.addParam("alg-type", "cluster-genes");
+        else
+            data.addParam("alg-type", "cluster-experiments");
         
         // output class
         data.addParam("output-class", "multi-cluster-output");

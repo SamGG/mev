@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: GSHGUI.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-05-21 13:01:39 $
+ * $Revision: 1.5 $
+ * $Date: 2004-05-26 13:15:07 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -264,7 +264,10 @@ public class GSHGUI implements IClusterGUI, IScriptGUI {
         data.addParam("name", "GSH");
         
         // alg type
-        data.addParam("alg-type", "cluster");
+        if(clusterGenes)
+            data.addParam("alg-type", "cluster-genes");
+        else
+            data.addParam("alg-type", "cluster-experiments");
         
         // output class
         data.addParam("output-class", "multi-cluster-output");

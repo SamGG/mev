@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: KMCGUI.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-05-17 15:41:32 $
+ * $Revision: 1.7 $
+ * $Date: 2004-05-26 13:15:55 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -279,7 +279,10 @@ public class KMCGUI implements IClusterGUI, IScriptGUI {
         data.addParam("name", "KMC");
         
         // alg type
-        data.addParam("alg-type", "cluster");
+        if(clusterGenes)
+            data.addParam("alg-type", "cluster-genes");
+        else
+            data.addParam("alg-type", "cluster-experiments");
         
         // output class
         data.addParam("output-class", "multi-cluster-output");

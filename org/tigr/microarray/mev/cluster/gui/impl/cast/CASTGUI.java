@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: CASTGUI.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-05-06 15:33:33 $
+ * $Revision: 1.5 $
+ * $Date: 2004-05-26 13:12:51 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -259,8 +259,11 @@ public class CASTGUI implements IClusterGUI, IScriptGUI {
         data.addParam("name", "CAST");
         
         // alg type
-        data.addParam("alg-type", "cluster");
-        
+        if(clusterGenes)
+            data.addParam("alg-type", "cluster-genes");
+        else
+            data.addParam("alg-type", "cluster-experiments");
+            
         // output class
         data.addParam("output-class", "multi-cluster-output");
         
