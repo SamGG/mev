@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ActionManager.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-27 22:20:42 $
+ * $Revision: 1.4 $
+ * $Date: 2004-04-13 14:39:40 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -55,6 +55,7 @@ public class ActionManager implements java.io.Serializable {
         return(Action)actions.get(name);
     }
     
+    
     /**
      * Delegates this invokation to a wrapped action listener.
      */
@@ -70,6 +71,10 @@ public class ActionManager implements java.io.Serializable {
         actions.put(LOAD_ANALYSIS_ACTION, new DefaultAction(this, LOAD_ANALYSIS_NAME, LOAD_ANALYSIS_COMMAND, getIcon(LOAD_ANALYSIS_SMALLICON), getIcon(LOAD_ANALYSIS_LARGEICON)));        
         actions.put(SAVE_ANALYSIS_ACTION, new DefaultAction(this, SAVE_ANALYSIS_NAME, SAVE_ANALYSIS_COMMAND, getIcon(SAVE_ANALYSIS_SMALLICON), getIcon(SAVE_ANALYSIS_LARGEICON)));        
         actions.put(SAVE_ANALYSIS_AS_ACTION, new DefaultAction(this, SAVE_ANALYSIS_AS_NAME, SAVE_ANALYSIS_AS_COMMAND, getIcon(SAVE_ANALYSIS_AS_SMALLICON), getIcon(SAVE_ANALYSIS_AS_LARGEICON)));
+        actions.put(NEW_SCRIPT_ACTION, new DefaultAction(this, NEW_SCRIPT_NAME, NEW_SCRIPT_COMMAND, getIcon(NEW_SCRIPT_SMALLICON), getIcon(NEW_SCRIPT_LARGEICON)));
+        actions.put(LOAD_SCRIPT_ACTION, new DefaultAction(this, LOAD_SCRIPT_NAME, LOAD_SCRIPT_COMMAND, getIcon(LOAD_SCRIPT_SMALLICON), getIcon(LOAD_SCRIPT_LARGEICON)));
+        
+        
         actions.put(LOAD_DIRECTORY_ACTION, new DefaultAction(this, LOAD_DIRECTORY_NAME, LOAD_DIRECTORY_COMMAND, getIcon(LOAD_DIRECTORY_SMALLICON), getIcon(LOAD_DIRECTORY_LARGEICON)));
         actions.put(LOAD_FILE_ACTION, new DefaultAction(this, LOAD_FILE_NAME, LOAD_FILE_COMMAND, getIcon(LOAD_FILE_SMALLICON), getIcon(LOAD_FILE_LARGEICON)));
         actions.put(LOAD_EXPRESSION_ACTION, new DefaultAction(this, LOAD_EXPRESSION_NAME, LOAD_EXPRESSION_COMMAND, getIcon(LOAD_EXPRESSION_SMALLICON), getIcon(LOAD_EXPRESSION_LARGEICON)));
@@ -186,6 +191,21 @@ public class ActionManager implements java.io.Serializable {
     public static final String  SAVE_ANALYSIS_AS_NAME    = "Save Analysis As...";
     private static final String SAVE_ANALYSIS_AS_SMALLICON = "save16.gif";
     private static final String SAVE_ANALYSIS_AS_LARGEICON = "save16.gif";
+    
+
+    public static final String  NEW_SCRIPT_ACTION  = "action-new-script";
+    public static final String  NEW_SCRIPT_COMMAND = "command-new-script";
+    public static final String  NEW_SCRIPT_NAME    = "New Script";
+    private static final String NEW_SCRIPT_SMALLICON = "save16.gif";
+    private static final String NEW_SCRIPT_LARGEICON = "save16.gif";
+    
+    
+    public static final String  LOAD_SCRIPT_ACTION  = "action-load-script";
+    public static final String  LOAD_SCRIPT_COMMAND = "command-load-script";
+    public static final String  LOAD_SCRIPT_NAME    = "Load Script";
+    private static final String LOAD_SCRIPT_SMALLICON = "save16.gif";
+    private static final String LOAD_SCRIPT_LARGEICON = "save16.gif";
+    
     
     // load directory action
     public static final String  LOAD_DIRECTORY_ACTION  = "action-load-directory";
