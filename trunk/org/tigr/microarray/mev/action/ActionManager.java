@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ActionManager.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-06-11 18:52:04 $
+ * $Revision: 1.6 $
+ * $Date: 2004-07-27 19:56:58 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -22,6 +22,7 @@ import org.tigr.microarray.mev.cluster.gui.IGUIFactory;
 import org.tigr.microarray.mev.cluster.gui.AnalysisDescription;
 
 public class ActionManager implements java.io.Serializable {
+    public static final long serialVersionUID = 100010201010001L;
     
     public static final String PARAMETER = "command-parameter";
     public static final String LARGE_ICON = "LargeIcon";
