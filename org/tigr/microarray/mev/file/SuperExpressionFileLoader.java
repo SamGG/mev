@@ -6,8 +6,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SuperExpressionFileLoader.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-17 14:40:09 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -35,11 +35,11 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
 
 public class SuperExpressionFileLoader {
     
-    public final static ImageIcon ICON_COMPUTER = new ImageIcon(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("org/tigr/images/PCIcon.gif")));
-    public final static ImageIcon ICON_DISK = new ImageIcon(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("org/tigr/images/disk.gif")));
-    public final static ImageIcon ICON_FOLDER = new ImageIcon(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("org/tigr/images/Directory.gif")));
-    public final static ImageIcon ICON_EXPANDEDFOLDER = new ImageIcon(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("org/tigr/images/expandedfolder.gif")));
-    
+    public final static ImageIcon ICON_COMPUTER = new ImageIcon(Toolkit.getDefaultToolkit().getImage(SuperExpressionFileLoader.class.getClassLoader().getResource("org/tigr/images/PCIcon.gif")));
+    public final static ImageIcon ICON_DISK = new ImageIcon(Toolkit.getDefaultToolkit().getImage(SuperExpressionFileLoader.class.getClassLoader().getResource("org/tigr/images/disk.gif")));
+    public final static ImageIcon ICON_FOLDER = new ImageIcon(Toolkit.getDefaultToolkit().getImage(SuperExpressionFileLoader.class.getClassLoader().getResource("org/tigr/images/Directory.gif")));
+    public final static ImageIcon ICON_EXPANDEDFOLDER = new ImageIcon(Toolkit.getDefaultToolkit().getImage(SuperExpressionFileLoader.class.getClassLoader().getResource("org/tigr/images/expandedfolder.gif")));
+     
     protected ExpressionFileLoader[] fileLoaders;
     protected ExpressionFileLoader selectedFileLoader;
     protected FileFilter[] fileFilters;
