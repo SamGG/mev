@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASEGUI.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-05-26 13:13:39 $
+ * $Revision: 1.4 $
+ * $Date: 2004-06-01 13:23:13 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -309,7 +309,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         algorithmData.addParam("alg-type", "cluster-genes");
         
         // output class
-        algorithmData.addParam("output-class", "multi-cluster-output");
+        algorithmData.addParam("output-class", "multi-gene-cluster-output");
         
         //output nodes
         String [] outputNodes = new String[1];

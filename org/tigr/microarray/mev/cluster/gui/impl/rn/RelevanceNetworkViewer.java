@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: RelevanceNetworkViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-03-01 19:45:56 $
+ * $Revision: 1.6 $
+ * $Date: 2004-06-01 13:23:13 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -86,6 +86,8 @@ public class RelevanceNetworkViewer extends JPanel implements IViewer, Scrollabl
     private int labelIndex = -1;
     private String status;
     private int shape_type = SHAPE_RECT;
+    
+    private int subnetIndex = 0;
 
     private JPopupMenu popup;
     private JWindow tipWindow;
@@ -614,7 +616,31 @@ public class RelevanceNetworkViewer extends JPanel implements IViewer, Scrollabl
      */
     public void onSelected(IFramework framework) {
         this.framework = framework;
-        this.data = framework.getData();
+        this.data = framework.getData(); 
+        
+ 
+        /*
+        //jcb to make it select cluser index
+       Object userObj = framework.getUserObject();
+      //  if(userObj != null) {
+            subnetIndex = 0; //Integer.parseInt(userObj);
+        
+            this.indices = clusters[subnetIndex];
+            int [][] selCluster = new int[1][];
+            float [][] selWeights = new float[1][];
+            
+            selCluster[0] = indices;
+            selWeights[0] = weights[0];
+            
+        RelevanceNetworkLayout layout = new RelevanceNetworkLayout();
+        this.coords = layout.doLayout(selCluster, selWeights, RelevanceNetworkLayout.CIRCULAR_LAYOUT);
+        this.selected = createSelected(selCluster);
+        this.draw = new boolean[selCluster.length];
+        
+     //   }
+        */
+ 
+        
         IDisplayMenu menu = framework.getDisplayMenu();
         this.isDrawBorders = menu.isDrawingBorder();
         this.isAntiAliasing = menu.isAntiAliasing();
