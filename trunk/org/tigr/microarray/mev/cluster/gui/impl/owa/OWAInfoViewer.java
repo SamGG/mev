@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: OWAInfoViewer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 18:16:44 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -110,4 +110,10 @@ public class OWAInfoViewer extends ViewerAdapter {
 	}
     }    
 
+    /** Returns a component to be inserted into the scroll pane row header
+     */
+    public JComponent getRowHeaderComponent() {
+        return null;
+    }
+    
 }

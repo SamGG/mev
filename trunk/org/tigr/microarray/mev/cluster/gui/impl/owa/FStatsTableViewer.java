@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: FStatsTableViewer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 18:16:43 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -66,6 +66,7 @@ public class FStatsTableViewer extends ViewerAdapter {
     private JPopupMenu popup;
     private Object[][] origData;    
     private int univCnt, univCnt2, univCnt3;
+    private boolean sortedAscending[];    
     
     /** Creates new FStatsTableViewer */
     public FStatsTableViewer(Experiment experiment, int[][] clusters, IData data, float[][] geneGroupMeans, float[][] geneGroupSDs, Vector pValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues, boolean sig) {
@@ -97,6 +98,10 @@ public class FStatsTableViewer extends ViewerAdapter {
             for (int j = 0; j < origData[i].length; j++) {
                 origData[i][j] = fModel.getValueAt(i, j);
             }
+        } 
+        this.sortedAscending = new boolean[fModel.getColumnCount()];
+        for (int i = 0; i < sortedAscending.length; i++) {
+            sortedAscending[i] = false;
         }        
         TableColumn column = null;
         for (int i = 0; i < fModel.getColumnCount(); i++) {
@@ -156,8 +161,8 @@ public class FStatsTableViewer extends ViewerAdapter {
                                     //}
                                 }
                                 for (int j = 0; j < geneGroupMeans[i].length; j++) {
-                                    out.print(geneGroupMeans[i][j] + "\t");
-                                    out.print(geneGroupSDs[i][j] + "\t");
+                                    out.print(geneGroupMeans[rows[i]][j] + "\t");
+                                    out.print(geneGroupSDs[rows[i]][j] + "\t");
                                 }
                                 out.print(((Float)(fValues.get(rows[i]))).floatValue());
                                 out.print("\t" + ((Float)(ssGroups.get(rows[i]))).floatValue());
@@ -271,17 +276,17 @@ public class FStatsTableViewer extends ViewerAdapter {
                 for (int j = counter; j < counter3;) {
                     //if ((j >= counter) && (j < counter3)) {
                     //System.out.println("i = " + i + ", j = " + j + ", groupNum = " + groupNum);
-                    if (Float.isNaN(geneGroupMeans[i][groupNum])) {
+                    if (Float.isNaN(geneGroupMeans[rows[i]][groupNum])) {
                         tableData[i][j] = "N/A";
                     } else {
-                        tableData[i][j] = new Float(geneGroupMeans[i][groupNum]);
+                        tableData[i][j] = new Float(geneGroupMeans[rows[i]][groupNum]);
                     }
                     j++;
                     
-                    if (Float.isNaN(geneGroupSDs[i][groupNum])) {
+                    if (Float.isNaN(geneGroupSDs[rows[i]][groupNum])) {
                         tableData[i][j] = "N/A";
                     } else {
-                        tableData[i][j] = new Float(geneGroupSDs[i][groupNum]);
+                        tableData[i][j] = new Float(geneGroupSDs[rows[i]][groupNum]);
                     }
                     groupNum++;
                     j++;
@@ -409,9 +414,15 @@ public class FStatsTableViewer extends ViewerAdapter {
                     //System.out.println("Sorting ..."); 
                     int shiftPressed = e.getModifiers()&InputEvent.SHIFT_MASK; 
                     int controlPressed = e.getModifiers()&InputEvent.CTRL_MASK;
-                    boolean ascending = (shiftPressed == 0); 
+                    //boolean ascending = (shiftPressed == 0); 
                     boolean originalOrder = (controlPressed != 0);
-                    sortByColumn(column, ascending, originalOrder); 
+                    sortByColumn(column, !(sortedAscending[column]), originalOrder);
+                    sortedAscending[column] = !(sortedAscending[column]);  
+                    if (originalOrder) {
+                        for (int i = 0; i < fModel.getColumnCount(); i++)
+                        sortedAscending[i] = false;
+                    }                    
+                    //sortByColumn(column, ascending, originalOrder); 
                 }
             }
         };
@@ -469,12 +480,12 @@ public class FStatsTableViewer extends ViewerAdapter {
             if ((int)(currentIndex%2) == 0) {
                 newIndex = (int)(currentIndex/2);
                 for (int i = 0; i < origArray.length; i++) {
-                    origArray[i] = geneGroupMeans[i][newIndex];
+                    origArray[i] = geneGroupMeans[rows[i]][newIndex];
                 }
             } else {
                 newIndex = (int)((currentIndex - 1)/2);
                 for (int i = 0; i < origArray.length; i++) {
-                    origArray[i] = geneGroupSDs[i][newIndex];
+                    origArray[i] = geneGroupSDs[rows[i]][newIndex];
                 }
             }
         }
