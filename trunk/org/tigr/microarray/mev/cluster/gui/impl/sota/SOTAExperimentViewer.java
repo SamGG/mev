@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SOTAExperimentViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 18:35:16 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 20:27:16 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -41,7 +41,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterHeader;
  * Class to display expression images with a <code>CentroidExperimentHeader</code>
  * and cluster information.
  */
-public class SOTAExperimentViewer extends JPanel implements IViewer {
+public class SOTAExperimentViewer extends JPanel implements IViewer, java.io.Serializable {
     
     protected static final String STORE_CLUSTER_CMD = "store-cluster-cmd";
     private static final String SET_DEF_COLOR_CMD = "set-def-color-cmd";
@@ -52,7 +52,6 @@ public class SOTAExperimentViewer extends JPanel implements IViewer {
     private JPopupMenu popup;
     
     //panel components
-    JSplitPane viewSplitPane;
     private IViewer expViewer;
     private JComponent header;
     private InfoPanel infoPanel;
@@ -134,6 +133,59 @@ public class SOTAExperimentViewer extends JPanel implements IViewer {
         add(viewPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
     }
     
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.writeObject(expViewer);
+        if(header instanceof CentroidExperimentHeader){
+            oos.writeObject("CentroidExperimentHeader");
+            CentroidExperimentHeader h = (CentroidExperimentHeader)header;
+            oos.writeObject(h);
+        } else {
+            oos.writeObject("ExperimentClusterHeader");
+            oos.writeObject((ExperimentClusterHeader)header);
+        }
+        
+        oos.writeObject(infoPanel);
+        oos.writeObject(viewPanel);
+        oos.writeObject(clusters);
+        oos.writeObject(clusterDivFM);
+        oos.writeObject(this.centroidDataFM);
+        oos.writeInt(numberOfCells);
+        oos.writeFloat(factor);
+        oos.writeInt(function);
+        oos.writeBoolean(geneClusterViewer);
+    }
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        this.expViewer = (IViewer)ois.readObject();
+        String headerType = (String)ois.readObject();
+ 
+        if(headerType.equals("CentroidExperimentHeader")){            
+            this.header = (CentroidExperimentHeader)ois.readObject();
+       } else
+            this.header = (ExperimentClusterHeader)ois.readObject();
+        
+        this.infoPanel = (SOTAExperimentViewer.InfoPanel)ois.readObject();
+        this.viewPanel = (JPanel)ois.readObject();
+        this.clusters = (int [][])ois.readObject();
+        this.clusterDivFM = (FloatMatrix)ois.readObject();
+        this.centroidDataFM = (FloatMatrix)ois.readObject();
+        this.numberOfCells = ois.readInt();
+        this.factor = ois.readFloat();
+        this.function = ois.readInt();
+        this.geneClusterViewer = ois.readBoolean();
+        
+        Listener listener = new Listener();
+        this.popup = createJPopupMenu(listener);
+        this.infoPanel.addMouseListener(listener);
+        
+        setLayout(new GridBagLayout());
+        viewPanel.setLayout(new GridBagLayout());
+        viewPanel.add(((JComponent)expViewer), new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        viewPanel.add(infoPanel, new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        add(viewPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+    }
+    
+    
     /**
      *  Adds components to viewer
      */
@@ -173,7 +225,7 @@ public class SOTAExperimentViewer extends JPanel implements IViewer {
         infoPanel.setCurrentCluster(userObject == null ? 0 : userObject.intValue());
         infoPanel.onSelected();
         IDisplayMenu menu = framework.getDisplayMenu();
-        if(geneClusterViewer){
+        if(geneClusterViewer){                        
             ((CentroidExperimentHeader)this.header).setCurrentCluster(userObject == null ? 0 : userObject.intValue());
             ((CentroidExperimentHeader)this.header).setNegAndPosColorImages(menu.getNegativeGradientImage(), menu.getPositiveGradientImage());
             ((CentroidExperimentHeader)this.header).setValues(Math.abs(menu.getMaxRatioScale()), -Math.abs(menu.getMinRatioScale()));
@@ -424,7 +476,7 @@ public class SOTAExperimentViewer extends JPanel implements IViewer {
      * Displays information about the currently displayed cluster
      *
      */
-    public class InfoPanel extends JPanel{
+    public class InfoPanel extends JPanel implements java.io.Serializable {
         
         private int currCluster;
         public int INFO_PANEL_WIDTH = 300;

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOTAInfoViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 18:35:16 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 20:27:16 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -23,7 +23,7 @@ import javax.swing.JTextArea;
 
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
-public class SOTAInfoViewer extends ViewerAdapter {
+public class SOTAInfoViewer extends ViewerAdapter implements java.io.Serializable {
     
     private JComponent header;
     private JTextArea  content;

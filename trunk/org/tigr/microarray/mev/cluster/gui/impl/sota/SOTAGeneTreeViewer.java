@@ -1,11 +1,11 @@
 /*
 Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
 All rights reserved.
-*/
+ */
 /*
  * $RCSfile: SOTAGeneTreeViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 18:35:16 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 20:27:16 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -42,7 +42,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLConfigDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLExperimentHeader;
 
 
-public class SOTAGeneTreeViewer extends JPanel implements IViewer{
+public class SOTAGeneTreeViewer extends JPanel implements IViewer, java.io.Serializable {
     
     protected static String SET_CLUSTER_CMD = "set-cluster-cmd";
     protected static String SET_CLUSTER_TEXT_CMD = "set-cluster-text-cmd";
@@ -51,7 +51,6 @@ public class SOTAGeneTreeViewer extends JPanel implements IViewer{
     protected static String DELETE_ALL_CLUSTERS_CMD = "delete-all-clusters-cmd";
     protected static String SOTA_TREE_PROPERTIES_CMD = "gene-tree-properties-cmd";
     protected static String SAMPLE_TREE_PROPERTIES_CMD = "sample-tree-properties-cmd";
-    
     
     private int numberOfCells;
     private int numberOfSamples;
@@ -67,7 +66,6 @@ public class SOTAGeneTreeViewer extends JPanel implements IViewer{
     private IFramework framework;
     private IData data;
     private Experiment experiment;
-    private SOTACentroidInfoDialog centroidDialog;
     private HCLExperimentHeader header;
     protected HCLTree sampleTree;
     private int elementHeight;
@@ -99,7 +97,6 @@ public class SOTAGeneTreeViewer extends JPanel implements IViewer{
         if(sotaTree != null)
             sotaTree.addMouseListener(listener);
         int [] samplesOrder = null;
-        centroidDialog = null;
         sampleTree = null;
         if(hclSampleTree != null){
             Node sampleTreeNode = hclSampleTree.getNodeList().getNode(0);
@@ -118,6 +115,54 @@ public class SOTAGeneTreeViewer extends JPanel implements IViewer{
         addMouseListener(listener);
         popup = this.createJPopupMenu(listener);
         this.experiment = experiment;
+    }
+    
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.writeInt(this.numberOfCells);
+        oos.writeInt(this.numberOfSamples);
+        oos.writeObject(this.centroidData);
+        oos.writeObject(this.sotaTree);
+        oos.writeObject(this.clusterDivFM);
+        oos.writeObject(this.clusterPop);
+        oos.writeObject(this.clusterIndices);
+        oos.writeObject(this.selectedClusterList);
+        oos.writeObject(this.expViewer);
+        oos.writeObject(this.elementSize);
+        oos.writeObject(this.experiment);               
+        oos.writeObject(this.header);
+        oos.writeBoolean(this.sampleTree != null);
+        if(this.sampleTree != null)        
+            oos.writeObject(this.sampleTree);
+        oos.writeInt(this.elementHeight);
+        oos.writeInt(this.elementWidth);
+        oos.writeInt(this.function);        
+    }
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        this.numberOfCells = ois.readInt();
+        this.numberOfSamples = ois.readInt();
+        this.centroidData = (Experiment)ois.readObject();
+        this.sotaTree = (SOTATree)ois.readObject();
+        this.clusterDivFM = (FloatMatrix)ois.readObject();
+        this.clusterPop = (int [])ois.readObject();
+        this.clusterIndices = (int [][])ois.readObject();
+        this.selectedClusterList = (ArrayList)ois.readObject();
+        this.expViewer = (SOTACentroidExpressionViewer)ois.readObject();
+        this.elementSize = (Dimension)ois.readObject();
+        this.experiment = (Experiment)ois.readObject();
+        this.header = (HCLExperimentHeader)ois.readObject();
+        if(ois.readBoolean())
+            this.sampleTree = (HCLTree)ois.readObject();
+        this.elementHeight = ois.readInt();
+        this.elementWidth = ois.readInt();
+        this.function = ois.readInt();
+        
+        this.currClusterNum = -1;
+        this.listener = new Listener();        
+        expViewer.addMouseListener(listener);        
+        header.addMouseListener(listener);
+        addMouseListener(listener);
+        popup = this.createJPopupMenu(listener);
     }
     
     
@@ -205,6 +250,17 @@ public class SOTAGeneTreeViewer extends JPanel implements IViewer{
         verifyClusterMembership(data);
         //Only do this if we have a visible viewer
         this.header.setHeaderPosition(this.sotaTree.getTreeHeight()-10); //move by inset of viewer
+
+        //expImageNode is null after de-serialization and must be reset
+        if(this.expImageNode == null){
+            DefaultMutableTreeNode node = framework.getCurrentNode();
+            if(node != null)
+                node = (DefaultMutableTreeNode)node.getParent();
+            if(node != null)
+                node = (DefaultMutableTreeNode)node.getChildAt(1);
+            if(node != null)
+                this.expImageNode = node;            
+        }
     }
     
     /**
@@ -259,8 +315,8 @@ public class SOTAGeneTreeViewer extends JPanel implements IViewer{
         this.data = data;
         verifyClusterExistence(data);
     }
-       
-        private void verifyClusterExistence(IData data){
+    
+    private void verifyClusterExistence(IData data){
         Color [] colors = data.getColors();
         if(colors.length == 0){
             this.selectedClusterList.clear();
@@ -277,7 +333,7 @@ public class SOTAGeneTreeViewer extends JPanel implements IViewer{
         boolean membershipChanged = false;
         boolean [] alteredMembership = new boolean[selectedClusterList.size()];
         
-        int index;        
+        int index;
         for(int c = 0; c < this.selectedClusterList.size(); c++){
             cluster = (HCLCluster)this.selectedClusterList.get(c);
             currColor = cluster.color;
@@ -297,7 +353,7 @@ public class SOTAGeneTreeViewer extends JPanel implements IViewer{
         for(int i = selectedClusterList.size()-1; i >=0 ;i--){
             if(alteredMembership[i])
                 selectedClusterList.remove(i);
-        }        
+        }
         if(aMemberChanged)
             this.expViewer.onDataChanged(data);
     }
@@ -357,7 +413,7 @@ public class SOTAGeneTreeViewer extends JPanel implements IViewer{
         setTreeProperties(this.sampleTree);
         revalidate();
     }
-   */ 
+  */
  /*   private void setTreeProperties(HCLTree tree) {
         Frame frame = JOptionPane.getFrameForComponent(this);
         HCLConfigDialog dialog = new HCLConfigDialog(frame, tree.getZeroThreshold(), tree.getMinDistance(), tree.getMaxDistance());
@@ -365,7 +421,7 @@ public class SOTAGeneTreeViewer extends JPanel implements IViewer{
             tree.setProperties(dialog.getZeroThreshold(), dialog.getMinDistance(), dialog.getMaxDistance());
         }
     }
-   */ 
+  */
     
     private JPopupMenu createJPopupMenu(Listener listener) {
         JPopupMenu popup = new JPopupMenu();
@@ -484,32 +540,32 @@ public class SOTAGeneTreeViewer extends JPanel implements IViewer{
         menuItem.setActionCommand(SET_CLUSTER_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
-       */ 
+         */
        /*
         menuItem = new JMenuItem("Set cluster text...", GUIFactory.getIcon("edit16.gif"));
         menuItem.setEnabled(false);
         menuItem.setActionCommand(SET_CLUSTER_TEXT_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
-         */
+        */
         menuItem = new JMenuItem("Save cluster...", GUIFactory.getIcon("save_as16.gif"));
         menuItem.setEnabled(false);
         menuItem.setActionCommand(SAVE_CLUSTER_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
-      /*  
+      /*
         menuItem = new JMenuItem("Delete cluster", GUIFactory.getIcon("delete16.gif"));
         menuItem.setEnabled(false);
         menuItem.setActionCommand(DELETE_CLUSTER_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
-        
+       
         menuItem = new JMenuItem("Delete all clusters", GUIFactory.getIcon("delete16.gif"));
         menuItem.setEnabled(false);
         menuItem.setActionCommand(DELETE_ALL_CLUSTERS_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
-        */
+       */
         menu.addSeparator();
         
         menuItem = new JMenuItem("SOTATree properties...", GUIFactory.getIcon("edit16.gif"));
@@ -518,11 +574,11 @@ public class SOTAGeneTreeViewer extends JPanel implements IViewer{
         menuItem.addActionListener(listener);
         menu.add(menuItem);
         
-     //   menuItem = new JMenuItem("SampleTree properties...", GUIFactory.getIcon("edit16.gif"));
-     //   menuItem.setEnabled(this.sampleTree != null);
-     //   menuItem.setActionCommand(SAMPLE_TREE_PROPERTIES_CMD);
-      //  menuItem.addActionListener(listener);
-     //   menu.add(menuItem);
+        //   menuItem = new JMenuItem("SampleTree properties...", GUIFactory.getIcon("edit16.gif"));
+        //   menuItem.setEnabled(this.sampleTree != null);
+        //   menuItem.setActionCommand(SAMPLE_TREE_PROPERTIES_CMD);
+        //  menuItem.addActionListener(listener);
+        //   menu.add(menuItem);
     }
     
     
@@ -568,7 +624,7 @@ public class SOTAGeneTreeViewer extends JPanel implements IViewer{
      */
     public JComponent getRowHeaderComponent() {
         return null;
-    }    
+    }
     
     /** Returns the corner component corresponding to the indicated corner,
      * posibly null
@@ -585,9 +641,9 @@ public class SOTAGeneTreeViewer extends JPanel implements IViewer{
                 setSOTATreeProperties();
                 
             }
-         //   else if(actionCmd.equals(SOTAGeneTreeViewer.SAMPLE_TREE_PROPERTIES_CMD)){
-          //      onSampleTreeProperties();
-         //   }
+            //   else if(actionCmd.equals(SOTAGeneTreeViewer.SAMPLE_TREE_PROPERTIES_CMD)){
+            //      onSampleTreeProperties();
+            //   }
             else if(actionCmd.equals(SOTAGeneTreeViewer.this.SET_CLUSTER_CMD)){
                 if(currClusterNum != -1)
                     onSetCluster(currClusterNum);
