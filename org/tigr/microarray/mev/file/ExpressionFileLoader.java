@@ -6,8 +6,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ExpressionFileLoader.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-27 22:16:51 $
+ * $Revision: 1.3 $
+ * $Date: 2004-05-03 13:47:05 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -54,6 +54,9 @@ public abstract class ExpressionFileLoader extends SlideLoaderProgressBar { // i
         
         for (int i = 0; i < fileVector.size(); i++) {
             slideData = loadExpressionFile((File) fileVector.elementAt(i));
+            if(slideData == null)
+                return null;
+            
             dataVector.add(slideData);
         }
         
