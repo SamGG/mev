@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterRepository.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-02-13 19:15:02 $
+ * $Revision: 1.6 $
+ * $Date: 2004-04-05 17:36:44 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -396,10 +396,10 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
     
     /** Remove  a cluster given supplied parameters
      */
-    public void removeCluster(int [] indices, String algorithmName, String clusterID){
+    public boolean removeCluster(int [] indices, String algorithmName, String clusterID){
         ClusterList list = findClusterList(algorithmName);
         if(list == null || list.size() == 0)
-            return;
+            return false;
         Cluster cluster = list.getCluster(clusterID);
         if(cluster != null){
             int serialNumber = cluster.getSerialNumber();
@@ -410,17 +410,20 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
                 framework.getData().setExperimentColor(indices, null);
                 framework.addHistory("Remove Experiment Cluster From Repository: Serial # "+String.valueOf(serialNumber));
             }
+        } else {
+            return false;
         }
         list.removeCluster(clusterID);
         removeElementClusters(indices, cluster);
+        return true;
     }
     
     /** Remove  a cluster given supplied parameters
      */
-    public void removeSubCluster(int [] indices, String algorithmName, String clusterID){
+    public boolean removeSubCluster(int [] indices, String algorithmName, String clusterID){
         ClusterList list = findClusterList(algorithmName);
         if(list == null || list.size() == 0)
-            return;
+            return false;
         
         Cluster cluster = null;
         Cluster temp = null;
@@ -430,7 +433,7 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
                 cluster = temp;
         }
         if(cluster == null)
-            return;
+            return false;
         
         int serialNumber = cluster.getSerialNumber();
         if(this.isGeneClusterRepository()){
@@ -443,6 +446,7 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
                 
         list.removeCluster(cluster);
         removeElementClusters(indices, cluster);
+        return true;
     }
     
     
@@ -482,10 +486,10 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
     
     /** Removes cluster specified by the serial number
      */
-    public void removeCluster(int serialNumber){
+    public boolean removeCluster(int serialNumber){
         Cluster cluster = getCluster(serialNumber);
         if(cluster == null)
-            return;
+            return false;
         
         ClusterList list;
         for(int i = 0; i < size(); i++){
@@ -506,6 +510,7 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
             framework.getData().setExperimentColor(indices, null);
             framework.addHistory("Remove Experiment Cluster From Repository: Serial # "+String.valueOf(serialNumber));
         }
+        return true;
     }
     
     /** Returns the next availible cluster serial
