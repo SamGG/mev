@@ -172,8 +172,19 @@ public class ParameterValidator extends DefaultHandler{
             return false;
         }
         
+        //short circuit if algorithm type is an adjustment
+        if(algorithmNode.getAlgorithmType().equals(ScriptConstants.ALGORITHM_TYPE_ADJUSTMENT))
+            return true;
+        
         //get algorithm dom Element
         Element algElement = getAlgorithmElement(algName, algList);
+        
+        if(algElement == null) {
+            JOptionPane.showMessageDialog(new JFrame(), "The "+algName+" algorithm does not have information to support parameter validation."+
+                                                      "\nPlease be aware that script loading will proceed without validation of this algorithm.", "Unsupported Parameter Validation",  JOptionPane.WARNING_MESSAGE);
+            return true;
+        }
+        
         if(algElement == null) {
             //invalid name or no entry in xml
             //REPORT
@@ -218,13 +229,16 @@ public class ParameterValidator extends DefaultHandler{
      */
     private Element getAlgorithmElement(String algName, NodeList algList) {
         Element elem = null;
+        Element resultElement = null;
         String name;
         for(int i = 0; i < algList.getLength(); i++) {
             elem = (Element)(algList.item(i));
-            if(elem.getAttribute("name").equals(algName))
+            if(elem.getAttribute("name").equals(algName)) {
+                resultElement = elem;
                 break;
+            }
         }
-        return elem;
+        return resultElement;
     }
     
     /**
@@ -358,9 +372,10 @@ public class ParameterValidator extends DefaultHandler{
      * @return
      */
     private boolean validateValueConstraints(String algName, String key, String value) {
+       
         ParameterAttributes atts = this.getParameterAttributes(algName, key);
         
-        if(!atts.hasConstraints())  //if no constraints then return true
+        if(atts == null || !atts.hasConstraints())  //if no info on key or no constraints for found param then return true
             return true;
         
         return checkConstraints(value, atts.getValueType(), atts.getMin(), atts.getMax());
@@ -463,7 +478,7 @@ public class ParameterValidator extends DefaultHandler{
                     min = constraint.getAttribute("min");
                     max = constraint.getAttribute("max");
                 }
-                table+="<tr><td>"+key+"</td><td>"+valueType+"</td><td>"+min+"</td><td>"+max+"</td><td>"+ (valStatus.equalsIgnoreCase("REQUIRED") ? "Always" : "Dependant") +"</td></tr>";
+                table+="<tr><td>"+key+"</td><td>"+valueType+"</td><td>"+min+"</td><td>"+max+"</td><td>"+ (valStatus.equalsIgnoreCase("REQUIRED") ? "Always" : "Dependent") +"</td></tr>";
             }
             table += "</table>";
         }
@@ -477,9 +492,14 @@ public class ParameterValidator extends DefaultHandler{
      * @return
      */
     public Hashtable getParameterHash(String algName) {
+        
+        System.out.println("getParameterHash() algName= "+algName);
+        
         Element algElement = findAlgorithmElement(algName);
-        if(algElement == null)
+        if(algElement == null) {
+            System.out.println("null alg element");
             return null;
+        }
         
         Element paramList = (Element)(algElement.getElementsByTagName("param_list").item(0));
         Hashtable paramHash = new Hashtable();
@@ -536,7 +556,7 @@ public class ParameterValidator extends DefaultHandler{
         return (ParameterAttributes)(hash.get(key));
     }
 
-    /** Displays a dialog warning that loaded algorithms are dependant on the specific data
+    /** Displays a dialog warning that loaded algorithms are dependent on the specific data
      * set.  Parameters such as grouping experiments is an example
      * @param tree the script tree to evaluate
      * @param manager the script manager     

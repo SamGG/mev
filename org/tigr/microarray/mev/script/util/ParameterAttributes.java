@@ -25,7 +25,7 @@ public class ParameterAttributes {
      *
      */
     String valueType;
-    /** Required or dependant on other settings.
+    /** Required or dependent on other settings.
      */
     String valueRequirementLevel;
     
