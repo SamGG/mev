@@ -255,7 +255,7 @@ public class TFA extends AbstractAlgorithm {
                             
                             if (permFAValue >= factorAFValues[i]) origFactorAPValues[i] = origFactorAPValues[i] + 1d;
                             if (permFBValue >= factorBFValues[i]) origFactorBPValues[i] = origFactorBPValues[i] + 1d;
-                            if (permInteractionFValue >= origInteractionPValues[i]) origInteractionPValues[i] = origInteractionPValues[i] + 1d;
+                            if (permInteractionFValue >= interactionFValues[i]) origInteractionPValues[i] = origInteractionPValues[i] + 1d;
                             // UP TO HERE 03/01/2004
                         }
                         //origFactorAPValues[i] = origFactorAPValues[i]/(double)numPerms;
@@ -290,7 +290,7 @@ public class TFA extends AbstractAlgorithm {
                             
                             if (permFAValue >= factorAFValues[i]) origFactorAPValues[i] = origFactorAPValues[i] + 1d;
                             if (permFBValue >= factorBFValues[i]) origFactorBPValues[i] = origFactorBPValues[i] + 1d;
-                            if (permInteractionFValue >= origInteractionPValues[i]) origInteractionPValues[i] = origInteractionPValues[i] + 1d;
+                            if (permInteractionFValue >= interactionFValues[i]) origInteractionPValues[i] = origInteractionPValues[i] + 1d;
                             // UP TO HERE 03/01/2004
                         }
                         //origFactorAPValues[i] = origFactorAPValues[i]/(double)numPerms;
@@ -386,7 +386,7 @@ public class TFA extends AbstractAlgorithm {
                             
                             if (currGenePermFAValue >= factorAFValues[i]) origFactorAPValues[i] = origFactorAPValues[i] + 1d;
                             if (currGenePermFBValue >= factorBFValues[i]) origFactorBPValues[i] = origFactorBPValues[i] + 1d;
-                            if (currGenePermInteractionFValue >= origInteractionPValues[i]) origInteractionPValues[i] = origInteractionPValues[i] + 1d;                                               
+                            if (currGenePermInteractionFValue >= interactionFValues[i]) origInteractionPValues[i] = origInteractionPValues[i] + 1d;                                               
                         }
                     }
                 } else if (geneFactorCondition == UNBALANCED_WITH_REPLICATION) {
@@ -401,7 +401,7 @@ public class TFA extends AbstractAlgorithm {
                             
                             if (currGenePermFAValue >= factorAFValues[i]) origFactorAPValues[i] = origFactorAPValues[i] + 1d;
                             if (currGenePermFBValue >= factorBFValues[i]) origFactorBPValues[i] = origFactorBPValues[i] + 1d;
-                            if (currGenePermInteractionFValue >= origInteractionPValues[i]) origInteractionPValues[i] = origInteractionPValues[i] + 1d;                                               
+                            if (currGenePermInteractionFValue >= interactionFValues[i]) origInteractionPValues[i] = origInteractionPValues[i] + 1d;                                               
                         }
                     }                    
                 } else if (geneFactorCondition == ALL_CELLS_HAVE_ONE_SAMPLE) {
@@ -433,6 +433,12 @@ public class TFA extends AbstractAlgorithm {
             }
         }
         
+        for (int i = 0; i < numGenes; i++) {
+            if (Double.isNaN(factorAFValues[i])) origFactorAPValues[i] = Double.NaN;
+            if (Double.isNaN(factorBFValues[i])) origFactorBPValues[i] = Double.NaN;
+            if (Double.isNaN(interactionFValues[i])) origInteractionPValues[i] = Double.NaN;
+        }
+        
         if (adjustmentMethod == JUST_ALPHA) {
             for (int i = 0; i < numGenes; i++) {
                 adjFactorAPValues[i] = origFactorAPValues[i];
@@ -455,9 +461,11 @@ public class TFA extends AbstractAlgorithm {
         for (int i = 0; i < numGenes; i++) {
             if ((float)(adjFactorAPValues[i]) <= alpha) {
                 sigAGenes.add(new Integer(i));
-            } else if ((float)(adjFactorBPValues[i]) <= alpha) {
+            } 
+            if ((float)(adjFactorBPValues[i]) <= alpha) {
                 sigBGenes.add(new Integer(i));
-            } else if ((float)(adjInteractionPValues[i]) <= alpha) {
+            } 
+            if ((float)(adjInteractionPValues[i]) <= alpha) {
                 sigInteractionGenes.add(new Integer(i));
             }
         };
@@ -468,8 +476,12 @@ public class TFA extends AbstractAlgorithm {
             allGenes.add(new Integer(i));
         }
         
+        //System.out.println("allGenes.size() = " + allGenes.size());
+        
         nonSigAGenes = (Vector)(allGenes.clone());
         nonSigAGenes.removeAll(sigAGenes);
+        
+        //System.out.println("allGenes.size() = " + allGenes.size());
         
         nonSigBGenes = (Vector)(allGenes.clone());
         nonSigBGenes.removeAll(sigBGenes);  
