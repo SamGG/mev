@@ -5,8 +5,8 @@ All rights reserved.
 
 /*
  * $RCSfile: AffySlideDataElement.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-07-22 15:40:48 $
+ * $Revision: 1.3 $
+ * $Date: 2004-07-27 19:56:10 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -18,6 +18,8 @@ import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.util.Xcon;
 
 public class AffySlideDataElement extends ArrayElement implements ISlideDataElement, Serializable {
+    public static final long serialVersionUID = 100010201120001L;
+
 
     protected int[] rows;
     protected int[] columns;

@@ -7,6 +7,7 @@
 package org.tigr.microarray.mev;
 
 public class SpotInformationData implements java.io.Serializable {
+    public static final long serialVersionUID = 100010201090001L;
 
     private String [] columnHeaders;
     private String [][] spotData;

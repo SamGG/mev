@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SingleArrayViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-07-26 21:24:42 $
+ * $Revision: 1.5 $
+ * $Date: 2004-07-27 19:56:10 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -547,7 +547,7 @@ public class SingleArrayViewer extends ArrayViewer implements Printable {
     }
     
     public void loadFile() {
-        JFileChooser jfc = new JFileChooser(System.getProperty("user.dir")+"\\Preferences");
+        JFileChooser jfc = new JFileChooser(TMEV.getFile("preferences/"));
         FileFilter ff = new FileFilter() {
             public boolean accept(File file) {
                 if (file.isDirectory()) return true;
@@ -770,10 +770,9 @@ public class SingleArrayViewer extends ArrayViewer implements Printable {
     }
     
     public void setReportFilename() {
-        JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
+        JFileChooser chooser = new JFileChooser(TMEV.getFile("data/"));
         chooser.setDialogTitle("Choose a Report Name");
         chooser.setMultiSelectionEnabled(false);
-        chooser.setCurrentDirectory(new File("Data"));
         if (chooser.showSaveDialog(getParent()) == JFileChooser.APPROVE_OPTION) {
             generateReport(chooser.getSelectedFile());
         }
@@ -1904,8 +1903,7 @@ public class SingleArrayViewer extends ArrayViewer implements Printable {
     }
     
     public void saveImage() {
-        final JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
-        chooser.setCurrentDirectory(new File("Data"));
+        final JFileChooser chooser = new JFileChooser(TMEV.getFile("data/"));
         chooser.addChoosableFileFilter(new FileFilter() {
             public boolean accept(File f) {
                 String extension = "";

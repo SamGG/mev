@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: MultipleArrayCanvas.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-03-01 15:52:30 $
+ * $Revision: 1.6 $
+ * $Date: 2004-07-27 19:56:10 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -42,6 +42,7 @@ import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 
 public class MultipleArrayCanvas extends JPanel implements IViewer, java.io.Serializable {
+    public static final long serialVersionUID = 100010201030001L;
     
     private static final int TRACE_SPACE = 50;
     

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: Manager.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-07-26 21:26:33 $
+ * $Revision: 1.5 $
+ * $Date: 2004-07-27 19:56:10 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -22,6 +22,7 @@ import org.tigr.util.awt.ActionInfoListener;
 import org.tigr.util.awt.ActionInfoEvent;
 import org.tigr.util.awt.MessageDisplay;
 import org.tigr.util.awt.ImageScreen;
+import org.tigr.microarray.mev.TMEV;
 
 public class Manager {//A class to keep track of viewers
     private static Vector activeComponents;
@@ -201,7 +202,7 @@ public class Manager {//A class to keep track of viewers
         });
         chooser.setDialogTitle("Select Preferences File");
         chooser.setMultiSelectionEnabled(false);
-        chooser.setCurrentDirectory(new File("Preferences"));
+        chooser.setCurrentDirectory(TMEV.getFile("preferences/"));
         
         if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
             inputFile = chooser.getSelectedFile();

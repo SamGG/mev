@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayData.java,v $
- * $Revision: 1.13 $
- * $Date: 2004-07-22 15:39:39 $
+ * $Revision: 1.14 $
+ * $Date: 2004-07-27 19:56:10 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -43,6 +43,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.normalization.IterativeL
 import org.tigr.midas.engine.Parameter;
 
 public class MultipleArrayData implements IData, java.io.Serializable {
+   public static final long serialVersionUID = 100010201040001L;
 
     private ArrayList featuresList = new ArrayList();
     private ArrayList indicesList  = new ArrayList(); // array of int[]'s

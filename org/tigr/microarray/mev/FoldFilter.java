@@ -9,7 +9,7 @@ package org.tigr.microarray.mev;
 import java.io.Serializable;
 
 public class FoldFilter implements Serializable {
-
+    public static final long serialVersionUID = 100010201100001L;
 
     private float fold_change;
     // index corresponds to file index returned by MAD.getsample(int)
