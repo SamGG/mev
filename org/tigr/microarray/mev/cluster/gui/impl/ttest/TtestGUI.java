@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: TtestGUI.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-04-08 15:08:10 $
+ * $Revision: 1.5 $
+ * $Date: 2004-04-08 15:12:27 $
  * $Author: nbhagaba $
  * $State: Exp $
  */
@@ -55,7 +55,7 @@ import org.tigr.microarray.mev.cluster.NodeValueList;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
-
+   
 /**
  *
  * @author  nbhagaba
