@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SAM.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-04-23 19:06:05 $
+ * $Revision: 1.6 $
+ * $Date: 2004-05-03 15:10:54 $
  * $Author: nbhagaba $
  * $State: Exp $
  */
@@ -198,7 +198,7 @@ public class SAM extends AbstractAlgorithm {
         
         double pi0Hat = 0; 
         double delta = 0.0d;
-        double[] deltaGrid = new double[101];
+        double[] deltaGrid = new double[1001];
         int[] numSigGenesByDelta = new int[1];
         int[] sortedDArrayIndices = new int[1];
         double[] medNumFalselyCalledGenesByDelta = new double[1];
@@ -743,7 +743,7 @@ public class SAM extends AbstractAlgorithm {
             double minDelta = getMin(diffValues);
             //System.out.println("maxDelta = " + maxDelta + ", minDelta = " + minDelta);
 
-            double deltaIncrement = (double)((maxDelta - minDelta)/100d);
+            double deltaIncrement = (double)((maxDelta - minDelta)/1000d);
             
             double currentDelta = minDelta;
             for (int i = 0 ; i < deltaGrid.length; i++) {
@@ -812,6 +812,7 @@ public class SAM extends AbstractAlgorithm {
             // THIS PORTION DELETED FOR SIMON; PROBABLY MAKE OPTIONAL ANYWAY 
              
             //System.out.println("Calculating qLowesrFDRs ...");
+           /*
             if (calculateQLowestFDR) {
                 qLowestFDR = new double[numGenes];
                 
@@ -850,6 +851,51 @@ public class SAM extends AbstractAlgorithm {
                     }
                     //System.out.println("qLowestFDR[" + i + "] = " + qLowestFDR[i]);
                 }
+            } 
+            */
+            
+            if (calculateQLowestFDR){
+                qLowestFDR = new double[numGenes];
+                
+                AlgorithmEvent event3 = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, qLowestFDR.length);
+                fireValueChanged(event3);
+                event3.setId(AlgorithmEvent.PROGRESS_VALUE);  
+                
+                for (int i = 0; i < numGenes; i++) {
+                    if (stop) {
+                        throw new AbortException();
+                    }
+                    event3.setIntValue(i);
+                    event3.setDescription("Calculating q values: Current gene = " + (i+ 1));
+                    fireValueChanged(event3);
+                    
+                    //Vector sigDeltaIndices = new Vector();
+                    int sigDeltaIndex = 0;
+                    boolean sigFound = false;
+                    for (int j = deltaGrid.length - 1; j >= 0; j--) {
+                        if (isSignificant(i, cutUp[j], cutLow[j])) {
+                            //sigDeltaIndices.add(new Integer(j));
+                            sigDeltaIndex = j;
+                            sigFound = true;
+                            break;
+                        }
+                    }
+                    
+                    //double[] currentGeneFDRs = new double[sigDeltaIndices.size()];
+                    //for (int j = 0; j < sigDeltaIndices.size(); j++) {
+                        //int currentDeltaIndex = ((Integer)sigDeltaIndices.get(j)).intValue();
+
+                    //}
+                    if (sigFound) {
+                        double currDelta = deltaGrid[sigDeltaIndex];
+                        qLowestFDR[i] = getMedNumFalselyCalledGenesByDelta(permutedDValues, getCutUp(currDelta), getCutLow(currDelta));
+                        qLowestFDR[i] = (double)(qLowestFDR[i]*pi0Hat*100d)/(double)numSigGenesByDelta[sigDeltaIndex];                        
+                        //qLowestFDR[i] = getMin(currentGeneFDRs);                        
+                    } else {
+                        qLowestFDR[i] = Double.NaN;
+                    }
+                    //System.out.println("qLowestFDR[" + i + "] = " + qLowestFDR[i]);
+                }                
             } else {
                 qLowestFDR = new double[numGenes];
             }

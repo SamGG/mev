@@ -200,7 +200,7 @@ public class SAMGraph extends ActionInfoDialog {
             
             initDelta = delta;
             
-            deltaSlider = new JSlider(0, 100, (int)Math.round(initDelta*100/maxValue));
+            deltaSlider = new JSlider(0, 1000, (int)Math.round(initDelta*1000/maxValue));
             
             deltaTextField = new JTextField("" + initDelta, 7);
             deltaTextField.addActionListener(new ActionListener(){
@@ -209,10 +209,10 @@ public class SAMGraph extends ActionInfoDialog {
                     try {
                         String s = deltaTextField.getText();
                         double f = Double.parseDouble(s);
-                        sliderValue = (int)Math.round(f*100/maxValue);
-                        if (sliderValue >= 100) {
+                        sliderValue = (int)Math.round(f*1000/maxValue);
+                        if (sliderValue >= 1000) {
                             //sliderValue = 100;
-                            deltaSlider.setValue(100);
+                            deltaSlider.setValue(1000);
                             deltaTextField.setText("" + (float)maxValue);
                         } else if (sliderValue <= 0) {
                             //sliderValue = 0;
@@ -225,7 +225,7 @@ public class SAMGraph extends ActionInfoDialog {
                         
                         //if ()
                     } catch (Exception exc) {
-                        deltaSlider.setValue(25);
+                        deltaSlider.setValue(250);
                         deltaTextField.setText("" + (float)initDelta);
                     }
                     
@@ -243,10 +243,10 @@ public class SAMGraph extends ActionInfoDialog {
                     try {
                         String s = deltaTextField.getText();
                         double f = Double.parseDouble(s);
-                        sliderValue = (int)Math.round(f*100/maxValue);
-                        if (sliderValue >= 100) {
+                        sliderValue = (int)Math.round(f*1000/maxValue);
+                        if (sliderValue >= 1000) {
                             //sliderValue = 100;
-                            deltaSlider.setValue(100);
+                            deltaSlider.setValue(1000);
                             deltaTextField.setText("" + (float)maxValue);
                         } else if (sliderValue <= 0) {
                             //sliderValue = 0;
@@ -258,7 +258,7 @@ public class SAMGraph extends ActionInfoDialog {
                         }                        
                         //deltaSlider.setValue(sliderValue);
                     } catch (Exception exc) {
-                        deltaSlider.setValue(25);
+                        deltaSlider.setValue(250);
                         deltaTextField.setText("" + (float)initDelta);
                         
                     }  
@@ -280,7 +280,7 @@ public class SAMGraph extends ActionInfoDialog {
                     JSlider source = (JSlider)e.getSource();
                     //if (!source.getValueIsAdjusting()) {
                     int value = (int)source.getValue();
-                    double displayValue = (double)(value*maxValue/100);
+                    double displayValue = (double)(value*maxValue/1000);
                     if (value == 0) {
                         displayValue = 0.0f;
                     }
