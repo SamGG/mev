@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterTable.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-04-06 15:24:19 $
+ * $Revision: 1.6 $
+ * $Date: 2004-04-13 21:20:33 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -1102,14 +1102,9 @@ public class ClusterTable extends JPanel implements IViewer {
     
     private void deleteSelectedRows(){
         int [] rows = table.getSelectedRows();
-        System.out.println("Remove row #= "+rows[0]);
         for(int i = 0; i < rows.length; i++){
             if(model.isLegalRow(rows[i]-i)){
-                System.out.println("Remove cluster ser number= "+model.getSerialNumber(rows[i]-i));
-                if(repository.removeCluster(model.getSerialNumber(rows[i]-i)))
-                    System.out.println("Deleted Cluster");
-                else
-                    System.out.println("Couldn't delete cluster");
+                repository.removeCluster(model.getSerialNumber(rows[i]-i));
                 model.removeRow(rows[i]-i);
             }
         }

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.14 $
- * $Date: 2004-04-13 20:08:38 $
+ * $Revision: 1.15 $
+ * $Date: 2004-04-13 21:20:08 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -329,19 +329,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             chooser.setFileFilter(new AnalysisFileFilter());
             chooser.setApproveButtonText("Save");
             JPanel panel = new JPanel(new GridBagLayout());
-
             
             final javax.swing.JDialog dialog = new javax.swing.JDialog(getFrame(), "Save Dialog", true);
             
             chooser.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent ae) {
-                    System.out.println("action performed");
-                    Object source = ae.getSource();
-                    if(source instanceof javax.swing.AbstractButton)
-                        System.out.println("Button");
-                    else if(source instanceof JFileChooser)
-                        System.out.println("JFileCHooser");
-                    System.out.println("cmd = "+ae.getActionCommand());
                     String cmd = ae.getActionCommand();
                     if(cmd.equals(JFileChooser.APPROVE_SELECTION)) {
                         File file = chooser.getSelectedFile();
@@ -361,20 +353,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             
             
             javax.swing.JTextPane pane = new javax.swing.JTextPane();
-            pane.setContentType("text/html");                      
+            pane.setContentType("text/html");
             pane.setEditable(false);
-          //  pane.setBorder(BorderFactory.createLineBorder(Color.black));
-
-            /*
-                        String msg = "<html><body><font face=arial size=2>The following inconsistency was"+
-                        " detected during analysis file loading:</b><br>";
             
-                            msg += "This difference ";
-                        
-                        msg += "could affect analysis file loading. <br><br>";
-                        msg += "Hit <b>\"OK\"</b> to continue loading. (Loading errors will be reported if they occur)<br>";
-                        msg += "Hit <b>\"Cancel\"</b> to abort the loading process.</body></html>";
-              */          
             String text = "<html><body><font face=arial size=4><b><center>Analysis Save and Restoration Warning</center><b><hr size=3><br>";//<hr size=3>";
             text += "<font face=arial size=4>Proper restoration of analysis files is dependant on the Java and Java Virtual Machine versions used to open the file. ";
             text += "Analysis files should be opened using Java and Java Virtual Machine versions that match the versions used to save the file.<br><br>";
@@ -382,40 +363,26 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             text += "If version inconsistencies are found when loading an analysis file the saved and current versions " ;
             text +=  "will be reported at that time.  This problem only arises when moving analysis files between computers ";
             text += "running different versions of Java.<br><br></body></html>";
-                        
+            
             pane.setMargin(new Insets(10,10,10,10));
             pane.setFont(new java.awt.Font("arial", java.awt.Font.PLAIN, 4));
-            pane.setText(text);        
+            pane.setText(text);
             JPanel panePanel = new JPanel(new GridBagLayout());
             panePanel.setBorder(BorderFactory.createLineBorder(Color.black));
             panePanel.add(pane,  new GridBagConstraints(0,0,1,1,1,1,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(2,2,2,2), 0, 0) );
             panePanel.setPreferredSize(new Dimension(chooser.getPreferredSize().width,((int)(chooser.getPreferredSize().height/1.4))));
-          
-            panel.add(panePanel, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(5,5,5,5), 0, 0));            
+            
+            panel.add(panePanel, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(5,5,5,5), 0, 0));
             panel.add(chooser, new GridBagConstraints(0,1,1,1,0,1,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,5,5,5), 0, 0));
             
             
             dialog.getContentPane().add(panel);
             dialog.pack();
-     
-                   Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        dialog.setLocation((screenSize.width - dialog.getSize().width)/2, (screenSize.height - dialog.getSize().height)/2);
+            
+            Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+            dialog.setLocation((screenSize.width - dialog.getSize().width)/2, (screenSize.height - dialog.getSize().height)/2);
             dialog.show();
             
-            
-            
-            
-            
-            
-            //javax.swing.JDialog dialog = chooser.createDialog(this);
-            /*
-            if(chooser.showSaveDialog(this) == JOptionPane.OK_OPTION) {
-                file = chooser.getSelectedFile();
-                ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file));
-                saveState(oos, file.getAbsolutePath());
-                this.currentAnalysisFile = file;
-            }
-             */
         } catch (Exception e) {
             e.printStackTrace();
         }
