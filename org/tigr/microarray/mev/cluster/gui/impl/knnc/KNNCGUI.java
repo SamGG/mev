@@ -19,6 +19,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.tigr.util.FloatMatrix;
 
+import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
@@ -46,6 +47,7 @@ import org.tigr.microarray.mev.cluster.NodeValueList;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidsViewer;
@@ -59,7 +61,7 @@ public class KNNCGUI implements IClusterGUI{
     private Algorithm algorithm;
     private Progress progress;    
     private Experiment experiment;
-    //private IData data;    
+    private IData data;    
     private int[][] clusters;
     private FloatMatrix means;
     private FloatMatrix variances;   
@@ -86,6 +88,7 @@ public class KNNCGUI implements IClusterGUI{
      * @see IFramework
      */
     public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
+        this.data = framework.getData();
 	this.experiment = framework.getData().getExperiment();
         //this.data = framework.getData();
 	
@@ -322,9 +325,52 @@ public class KNNCGUI implements IClusterGUI{
         addExpressionImages(root);
         addHierarchicalTrees(root, result_cluster, info);
         addCentroidViews(root);
+        addTableViews(root);
         addClusterInfo(root);
         addGeneralInfo(root, info);
     }   
+    
+    
+    private void addTableViews(DefaultMutableTreeNode root) {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table views");
+        IViewer tabViewer;
+        DefaultMutableTreeNode[] nodeArray = new DefaultMutableTreeNode[4];
+        nodeArray[0] = new DefaultMutableTreeNode("Used classifiers");
+        nodeArray[1] = new DefaultMutableTreeNode("Unused classifiers");
+        nodeArray[2] = new DefaultMutableTreeNode("Classified");
+        nodeArray[3] = new DefaultMutableTreeNode("Used classifiers + classified");
+        //nodeArray[4] = new DefaultMutableTreeNode("Unclassified");
+        if (classifyGenes) {
+            tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.data);
+        } else {
+            return; //placeholder for ExptClusterTableViewer
+            //expViewer = new KNNCExperimentClusterViewer(this.experiment, this.clusters);
+        }
+        
+        for (int i =0; i < numClasses; i++) {
+            nodeArray[0].add(new DefaultMutableTreeNode(new LeafInfo("Class "+String.valueOf(i+1), tabViewer, new Integer(i))));
+        }
+        for (int i = numClasses; i < 2*numClasses; i++) {
+            nodeArray[1].add(new DefaultMutableTreeNode(new LeafInfo("Class "+String.valueOf(i+1 - numClasses), tabViewer, new Integer(i))));
+        }      
+         for (int i =2*numClasses; i < 3*numClasses; i++) {
+            nodeArray[2].add(new DefaultMutableTreeNode(new LeafInfo("Class "+String.valueOf(i+1 - 2*numClasses), tabViewer, new Integer(i))));
+        }  
+        for (int i =3*numClasses; i < 4*numClasses; i++) {
+            nodeArray[3].add(new DefaultMutableTreeNode(new LeafInfo("Class "+String.valueOf(i+1 - 3*numClasses), tabViewer, new Integer(i))));
+        }  
+        
+        //nodeArray[4].add(new DefaultMutableTreeNode(new LeafInfo("Unclassified ", expViewer, new Integer(4*numClasses))));
+        
+        for (int i = 0; i < nodeArray.length; i++) {
+            node.add(nodeArray[i]);
+        }
+        
+        node.add(new DefaultMutableTreeNode(new LeafInfo("Unclassified ", tabViewer, new Integer(4*numClasses))));
+ 
+        root.add(node);
+    }    
+    
     
     /**
      * Adds nodes to display clusters data.
