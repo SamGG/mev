@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: IData.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-15 15:52:01 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -14,6 +14,8 @@ package org.tigr.microarray.mev.cluster.gui;
 
 import java.awt.Color;
 
+import org.tigr.microarray.mev.ISlideData;
+import org.tigr.microarray.mev.ISlideDataElement;
 
 public interface IData {
     //Log state
@@ -41,8 +43,17 @@ public interface IData {
      * Returns size of features.
      */
     public int getFeaturesSize();
-    
-    
+
+    /**
+     * Retruns the indicated feature
+     */
+    public ISlideData getFeature(int index);
+
+    /**
+     * Returns the indicated ISlideDataElement
+     */
+    public ISlideDataElement getSlideDataElement(int row, int col);
+        
     /**
      * Returns the integer identifying the type of input data
      */
@@ -129,6 +140,7 @@ public interface IData {
      */
     public int[] getSortedIndices(int column);
     
+    
     //////////////////////////////////////////
     //                                      //
     //        color coding methods          //
@@ -204,5 +216,13 @@ public interface IData {
      * Returns array of published colors.
      */
     public Color[] getExperimentColors();
+    
+    /**
+     * Returns an annotation array for the provided indices based on annotation key
+     */
+    public String [] getAnnotationList(String fieldName, int [] indices);
+    
+     
+    
     
 }
