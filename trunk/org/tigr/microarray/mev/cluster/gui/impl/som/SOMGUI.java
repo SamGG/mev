@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOMGUI.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2004-04-08 20:27:30 $
+ * $Author: nbhagaba $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.som;
@@ -21,6 +21,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.tigr.util.FloatMatrix;
 
+import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
@@ -28,6 +29,7 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
@@ -56,6 +58,7 @@ import org.tigr.microarray.mev.cluster.NodeValueList;
 public class SOMGUI implements IClusterGUI {
     
     private Experiment experiment;
+    private IData data;
     private Algorithm algorithm;
     private Progress progress;
     
@@ -71,6 +74,7 @@ public class SOMGUI implements IClusterGUI {
      */
     public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
         
+        this.data = framework.getData();
         SOMInitDialog som_dialog = new SOMInitDialog(framework.getFrame(), 3, 3, 2000, 0.05f, 3f, 1, 1, 0);
         if (som_dialog.showModal() != JOptionPane.OK_OPTION) {
             return null;
@@ -199,9 +203,29 @@ public class SOMGUI implements IClusterGUI {
         addHierarchicalTrees(root, result_cluster, info);
         addCentroidViews(root, info);
         addSOMViews(root, info);
+        addTableViews(root, info);
         addClusterInfo(root);        
         addGeneralInfo(root, info);
     }
+    
+    private void addTableViews(DefaultMutableTreeNode root, GeneralInfo info) {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table views");
+        //SOMExperimentViewer expViewer;
+        IViewer tabViewer;
+        if(clusterGenes)
+            tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.data);
+        else
+            return; //placeholder for ExptClusterTableViewer
+            //expViewer = new SOMExperimentClusterViewer(this.experiment, this.clusters, "SOM Vector", this.codes);
+        int cluster;
+        for (int x=0; x<info.dimension_x; x++) {
+            for (int y=0; y<info.dimension_y; y++) {
+                cluster = x*info.dimension_y+y;
+                node.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+String.valueOf(cluster+1)+" ("+String.valueOf(x+1)+","+String.valueOf(y+1)+")", tabViewer, new Integer(cluster))));
+            }
+        }
+        root.add(node);
+    }    
     
     /**
      * Adds experiment viewer nodes.
