@@ -216,7 +216,6 @@ public class TableViewer extends JPanel implements IViewer {
                 if( myObject instanceof Comparable ) {
                     if(isNumerical(colToSort)){  //catch string designation of a number
                         if(myObject instanceof String){
-                            System.out.println("Sort numerical");
                             Float myFloat = new Float((String)myObject);
                             Float otherFloat = new Float((String)otherObject);
                             return myFloat.compareTo(otherFloat);
