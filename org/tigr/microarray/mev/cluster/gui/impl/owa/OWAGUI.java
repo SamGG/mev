@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: OWAGUI.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-05-06 20:53:40 $
+ * $Revision: 1.4 $
+ * $Date: 2004-05-26 14:21:55 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -352,7 +352,7 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
         data.addParam("name", "OWA");
         
         // alg type
-        data.addParam("alg-type", "cluster");
+        data.addParam("alg-type", "cluster-genes");
         
         // output class
         data.addParam("output-class", "partition-output");
