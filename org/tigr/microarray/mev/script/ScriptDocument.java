@@ -1,0 +1,111 @@
+/*
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+All rights reserved.
+ */
+/*
+ * ScriptDocument.java
+ *
+ * Created on February 27, 2004, 9:59 PM
+ */
+
+package org.tigr.microarray.mev.script;
+
+import org.w3c.dom.Document; 
+import org.w3c.dom.Element;
+
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
+import org.tigr.microarray.mev.script.util.DocumentBase;
+
+/** The ScriptDocument class contains script attributes
+ * such as script name and script description.  ScriptDocument
+ * extends <CODE>DocumentBase</CODE> which handles the script
+ * content as a DOM.
+ * @author braisted
+ */
+public class ScriptDocument extends DocumentBase {
+    
+    private int id;
+    private String name;
+    private String fileName;    
+    private String description;
+    private String date;
+    
+    /** Constructs a new ScriptDocument.
+     * @param sid Script ID
+     * @param fileName script file input file name
+     */    
+    public ScriptDocument(int sid, String fileName, ScriptManager manager) {
+        super(manager);
+        id = sid;
+        fileName = fileName;
+    }
+
+    /** Creates a new instance of ScriptDocument
+     * @param id Script ID
+     * @param name Script name attribute
+     * @param description Script Description
+     * @param date Creation data
+     */
+    public ScriptDocument(int id, String name, String description, String date, ScriptManager manager) {
+        super(date, name, description, manager);
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.date = date;
+    }
+    
+    /** Returns the document's name, or null if not set.
+     */  
+    
+    public String getDocumentName() {
+        return name;
+    }
+    
+    /** Sets the document's file name.
+     * @param name file name
+     */    
+    public void setDocumentFileName(String name) {
+        fileName = name;
+    }
+    
+    /** Returns the document's file name.
+     */    
+    public String getDocumentFileName() {
+        if(fileName != null)
+            return fileName;
+        return "Not Assigned";
+    }
+    
+    /** Returns the document ID.
+     * @return  */    
+    public int getDocumentID() {
+        return id;
+    }
+    
+    /** Returns the script description, or null if not set.
+     */    
+    public String getDescription() {
+        return description;
+    }
+    
+    /** Sets the script ID.
+     */
+
+        
+    public void setID(int docID) {
+        id = docID;
+    }
+        
+    /** Sets the script name
+     */    
+    public void setName(String docName) {
+        name = docName;
+    }
+                
+    /** Sets script description.
+     * @param docDesc  */    
+    public void setDescription(String docDesc) {
+        description = docDesc;
+    }
+
+}
