@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SlideData.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-05 22:35:25 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-26 15:12:02 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -183,6 +183,10 @@ public class SlideData extends Vector implements ISlideData, ISlideMetaData, jav
      * Returns a ratio of specified values.
      */
     public final float getRatio(float numerator, float denominator, int logState) {
+
+        if(dataType == IData.DATA_TYPE_RATIO_ONLY)         
+            return numerator;
+        
         float ratio;
         if(denominator < 0 || numerator < 0)
             return Float.NaN;
@@ -776,6 +780,15 @@ public class SlideData extends Vector implements ISlideData, ISlideMetaData, jav
             CY3 = (double)this.getSlideDataElement(i).getTrueIntensity(ISlideDataElement.CY3);
             CY5 = (double)this.getSlideDataElement(i).getTrueIntensity(ISlideDataElement.CY5);
             
+            //if Stanford file is normalized then we need to generate cy3 and cy5
+            if (this.dataType == IData.DATA_TYPE_RATIO_ONLY) {
+                CY3 = 100000;
+                CY5 = 100000*Math.pow(2.0d, CY5);
+                // if CY5 overflows, then set to zero and force no evaluation
+                if(CY5 == Double.POSITIVE_INFINITY || CY5 == Double.NEGATIVE_INFINITY)
+                    CY3 = CY5 = 0; 
+            }
+            
             if(CY3 != 0 && CY5 != 0){
                 goodValues[i] = true;
                 cy3[n] = CY3;
@@ -803,8 +816,13 @@ public class SlideData extends Vector implements ISlideData, ISlideMetaData, jav
         for(int i = 0 ; i < goodIntensity.length; i++){
             sde = this.getSlideDataElement(i);
             if(goodIntensity[i]){
-                sde.setIntensity(ISlideDataElement.CY3, (float)cy3[goodIndex]);
-                sde.setIntensity(ISlideDataElement.CY5, (float)cy5[goodIndex]);
+                if(this.dataType == IData.DATA_TYPE_RATIO_ONLY) {
+                    sde.setIntensity(ISlideDataElement.CY3, (float)1.0);
+                    sde.setIntensity(ISlideDataElement.CY5, (float)(Math.log(cy5[goodIndex]/cy3[goodIndex])/Math.log(2.0)));
+                } else {
+                    sde.setIntensity(ISlideDataElement.CY3, (float)cy3[goodIndex]);
+                    sde.setIntensity(ISlideDataElement.CY5, (float)cy5[goodIndex]);
+                }
                 goodIndex++;
             }
             else{

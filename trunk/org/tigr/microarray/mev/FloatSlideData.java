@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: FloatSlideData.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-09 15:23:53 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-26 15:12:02 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -305,10 +305,15 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
      * Returns a ratio value with specified index and log state.
      */
     public final float getRatio(int index, int logState) {
-        if(normalizedState == ISlideData.NO_NORMALIZATION)
+        if(normalizedState == ISlideData.NO_NORMALIZATION) {    
+            if(dataType == IData.DATA_TYPE_RATIO_ONLY)
+                return trueCY5[index];        
             return getRatio(trueCY5[index], trueCY3[index], logState);
-        else
+        } else {
+            if(dataType == IData.DATA_TYPE_RATIO_ONLY)
+                return currentCY5[index]; 
             return getRatio(currentCY5[index], currentCY3[index], logState);
+        }
     }
     
     /**
@@ -342,8 +347,10 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
                 return Float.NaN;
             ratio = numerator/denominator;
         }
-        if (logState == IData.LOG)
+        if (logState == IData.LOG) {
             ratio = (float)(Math.log(ratio)/Math.log(2.0));
+        }
+        
         return ratio;
     }
     
@@ -790,6 +797,16 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
             
             CY3 = (double)trueCY3[i];
             CY5 = (double)trueCY5[i];
+            
+            //if Stanford file is normalized then we need to generate cy3 and cy5
+            if (this.dataType == IData.DATA_TYPE_RATIO_ONLY) {
+                CY3 = 100000;
+                CY5 = 100000*Math.pow(2.0d, CY5);                
+                // if CY5 overflows, then set to zero and force no evaluation
+                if(CY5 == Double.POSITIVE_INFINITY || CY5 == Double.NEGATIVE_INFINITY)
+                    CY3 = CY5 = 0; 
+            }            
+            
             if(CY3 != 0 && CY5 != 0){
                 goodValues[i] = true;
                 cy3[n] = CY3;
@@ -815,8 +832,13 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
         int goodIndex= 0;
         for(int i = 0 ; i < goodIntensity.length; i++){
             if(goodIntensity[i]){
-                currentCY3[i] = (float)cy3[goodIndex];
-                currentCY5[i] = (float)cy5[goodIndex];
+                if(this.dataType == IData.DATA_TYPE_RATIO_ONLY) {
+                    currentCY3[i] = 1.0f;
+                    currentCY5[i] = (float)(Math.log(cy5[goodIndex]/cy3[goodIndex])/Math.log(2.0));
+                } else {
+                    currentCY3[i] = (float)cy3[goodIndex];
+                    currentCY5[i] = (float)cy5[goodIndex];
+                }
                 goodIndex++;
             }
             else{

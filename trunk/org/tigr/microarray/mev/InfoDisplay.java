@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: InfoDisplay.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 18:48:00 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-26 15:12:02 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -18,6 +18,7 @@ import javax.swing.*;
 import org.tigr.graph.*;
 import org.tigr.util.*;
 import org.tigr.util.awt.*;
+import org.tigr.microarray.mev.cluster.gui.IData;
 
 public class InfoDisplay extends ActionInfoDialog {
     
@@ -26,6 +27,7 @@ public class InfoDisplay extends ActionInfoDialog {
     private MultipleArrayData data;
     private ISlideData slideData;
     private ISlideDataElement element;
+    private int dataType;
     
     private int LINEAR = 0; // to return just ratio
     private int LOG = 1;   //for log2(ratio)
@@ -34,6 +36,7 @@ public class InfoDisplay extends ActionInfoDialog {
     public InfoDisplay(JFrame parent, ISlideData slideData, ISlideDataElement element, int probe) {
         super(parent, false);
         this.probe = probe;
+        dataType = slideData.getDataType();
         init(slideData, element);
     }
     
@@ -43,6 +46,7 @@ public class InfoDisplay extends ActionInfoDialog {
         this.data = data;
         this.feature = feature;
         this.probe = probe;
+        this.dataType = data.getDataType();
         init(data.getFeature(feature), data.getSlideDataElement(feature, probe));
     }
     
@@ -126,14 +130,7 @@ public class InfoDisplay extends ActionInfoDialog {
             logRatio = Float.NaN;
         else
             logRatio = (float)(Math.log(ratio)/Math.log(2.0));
-        
-        int dataType;
-        
-        if(this.data != null)
-            dataType = this.data.getDataType();
-        else
-            dataType = this.slideData.getDataType();
-        
+
         String message = "<html><body bgcolor = \"#FFFFCC\"><basefont face = \"Arial\"><h3>Location and Intensities</h3><table border=2 cellpadding=4 valign=top>";
         
         if(dataType == this.data.DATA_TYPE_TWO_INTENSITY){
@@ -169,6 +166,7 @@ public class InfoDisplay extends ActionInfoDialog {
             message += "<tr><td>Ratio (Sample/Median)</td><td>" + ratio + "</td></tr>"+
             "<tr><td>log2(Ratio)</td><td><b>" + logRatio + "</b></td></tr>";
         } else { //ratio only, like stanford
+            logRatio = cy5;
             message += "<tr><td>File Index</td><td>" + trueRow + "</td></tr>";
             message += "<tr><td>log2(Ratio)</td><td><b>" + logRatio + "</b></td></tr>";
         }
@@ -224,8 +222,9 @@ public class InfoDisplay extends ActionInfoDialog {
         
         for (int i = 0; i < targets.length; i++) {
             sde = targets[i];
-            //System.out.println("Element " + i + ": "+sde.hashCode()+" " + sde.getRatio(SlideDataElement.CY5, SlideDataElement.CY3, AC.LINEAR) + ", " + Xcon.log10(sde.getRatio(ISlideDataElement.CY5, ISlideDataElement.CY3, AC.LINEAR)));
+
             workingRatio = (int)sde.getRatio(this.probe, LOG); //Xcon.log2(sde.getRatio(ISlideDataElement.CY5, ISlideDataElement.CY3, AC.LINEAR));
+
             if (workingRatio < minCy5) minCy5 = workingRatio;
             if (workingRatio > maxCy5) maxCy5 = workingRatio;
         }
@@ -262,14 +261,21 @@ public class InfoDisplay extends ActionInfoDialog {
             cy3 = sde.getCY3(this.probe);
             cy5 = sde.getCY5(this.probe);
             logCy3 = i + 1;
-            logCy5 = Xcon.log2((double) cy5 / (double) cy3);
+            
+            if(dataType == IData.DATA_TYPE_RATIO_ONLY)
+                logCy5 = cy5;
+            else
+                logCy5 = Xcon.log2((double) cy5 / (double) cy3);
             
             sde = targets[i + 1];
             
             cy3b = sde.getCY3(this.probe);
             cy5b = sde.getCY5(this.probe);
             logCy3b = i + 2;
-            logCy5b = Xcon.log2((double) cy5b / (double) cy3b);
+            if(dataType == IData.DATA_TYPE_RATIO_ONLY)
+                logCy5b = cy5b;
+            else
+                logCy5b = Xcon.log2((double) cy5b / (double) cy3b);
             if(!Double.isNaN(logCy5) && !Double.isNaN(logCy5b)){
                 gl = new GraphLine(logCy3, logCy5, logCy3b, logCy5b, Color.blue);
                 graph.addGraphElement(gl);
@@ -281,7 +287,10 @@ public class InfoDisplay extends ActionInfoDialog {
             cy3 = sde.getCY3(this.probe);
             cy5 = sde.getCY5(this.probe);
             logCy3 = i + 1;
-            logCy5 = Xcon.log2((double) cy5 / (double) cy3);
+            if(dataType == IData.DATA_TYPE_RATIO_ONLY)
+                logCy5 = cy5;
+            else
+                logCy5 = Xcon.log2((double) cy5 / (double) cy3);
             if(!Double.isNaN(logCy5)){
                 gp = new GraphPoint(logCy3, logCy5, Color.blue, 3);
                 graph.addGraphElement(gp);
