@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: TtestCentroidsViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-01-13 17:32:11 $
- * $Author: nbhagaba $
+ * $Revision: 1.4 $
+ * $Date: 2004-01-13 21:17:06 $
+ * $Author: braisted $
  * $State: Exp $
  */
 
@@ -30,8 +30,6 @@ import java.util.Vector;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JOptionPane;
-
-import org.tigr.microarray.mev.TMEV;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
