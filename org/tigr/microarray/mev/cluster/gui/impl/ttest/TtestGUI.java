@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: TtestGUI.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-01-13 17:32:40 $
+ * $Revision: 1.4 $
+ * $Date: 2004-04-08 15:08:10 $
  * $Author: nbhagaba $
  * $State: Exp $
  */
@@ -33,6 +33,7 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
@@ -70,6 +71,9 @@ public class TtestGUI implements IClusterGUI {
     private int[][] clusters;
     private FloatMatrix means;
     private FloatMatrix variances;
+    
+    private String[] auxTitles;
+    private Object[][] auxData;    
     
     //private Vector sigTValues, nonSigTValues, sigPValues, nonSigPValues, additionalHeaders, additionalSigOutput, additionalNonSigOutput;
     private Vector tValues, pValues, dfValues, meansA, meansB, sdA, sdB, oneClassMeans, oneClassSDs;
@@ -310,6 +314,44 @@ public class TtestGUI implements IClusterGUI {
             info.hcl_genes = hcl_genes;
             info.hcl_samples = hcl_samples;
             info.hcl_method = hcl_method;
+            
+            Vector titlesVector = new Vector();
+            if (tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS) {
+                titlesVector.add("GroupA mean");
+                titlesVector.add("GroupA std.dev.");
+                titlesVector.add("GroupB mean");
+                titlesVector.add("GroupB std.dev.");
+                titlesVector.add("Absolute t value");
+            } else if (tTestDesign == TtestInitDialog.ONE_CLASS) {
+                titlesVector.add("Gene mean");
+                titlesVector.add("Gene std.dev.");
+                titlesVector.add("t value");
+            }   
+            titlesVector.add("Degrees of freedom");
+            titlesVector.add("p value");        
+            
+            auxTitles = new String[titlesVector.size()];
+            for (int i = 0; i < auxTitles.length; i++) {
+                auxTitles[i] = (String)(titlesVector.get(i));
+            }
+            
+            auxData = new Object[experiment.getNumberOfGenes()][auxTitles.length];
+            for (int i = 0; i < auxData.length; i++) {
+                int counter = 0;
+                if (tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS) {
+                    auxData[i][counter++] = meansA.get(i);
+                    auxData[i][counter++] = sdA.get(i);
+                    auxData[i][counter++] = meansB.get(i);
+                    auxData[i][counter++] = sdB.get(i);
+                } else if (tTestDesign == TtestInitDialog.ONE_CLASS) {
+                    auxData[i][counter++] = oneClassMeans.get(i);
+                    auxData[i][counter++] = oneClassSDs.get(i);
+                }   
+                auxData[i][counter++] = tValues.get(i);
+                auxData[i][counter++] = dfValues.get(i);
+                auxData[i][counter++] = pValues.get(i);
+            }
+            
             return createResultTree(result_cluster, info);
             
         } finally {
@@ -374,12 +416,27 @@ public class TtestGUI implements IClusterGUI {
         addExpressionImages(root);
         addHierarchicalTrees(root, result_cluster, info);
         addCentroidViews(root);
+        addTableViews(root);
         addClusterInfo(root);
-        addTStatsViews(root);
+        //addTStatsViews(root);
         if (tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS) {
             addVolcanoPlot(root);
         }
         addGeneralInfo(root, info);
+    }
+    
+    private void addTableViews(DefaultMutableTreeNode root) {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table Views");   
+        IViewer tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData);
+        for (int i=0; i<this.clusters.length; i++) {
+            if (i < this.clusters.length - 1) {
+                node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", tabViewer, new Integer(i))));
+            } else if (i == this.clusters.length - 1) {
+                node.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", tabViewer, new Integer(i))));
+                
+            }
+        }
+        root.add(node);        
     }
     
     /**
