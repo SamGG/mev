@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: IFramework.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-13 19:15:03 $
+ * $Revision: 1.5 $
+ * $Date: 2004-04-05 17:30:43 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -109,12 +109,12 @@ public interface IFramework {
     /**
      * Removes the cluster from the repository
      */    
-    public void removeSubCluster(int [] indices, Experiment experiment, int clusterType);
+    public boolean removeSubCluster(int [] indices, Experiment experiment, int clusterType);
     
     /**
      * Removes the cluster from the repository
      */    
-    public void removeCluster(int [] indices, Experiment experiment, int clusterType);
+    public boolean removeCluster(int [] indices, Experiment experiment, int clusterType);
     
     /**
      * Launches a new Multiple Array Viewer given indices
