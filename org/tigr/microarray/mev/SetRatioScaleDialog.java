@@ -5,8 +5,8 @@ All rights reserved.
 
 /*
  * $RCSfile: SetRatioScaleDialog.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-09 20:56:49 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -24,7 +24,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.JFrame;
+import javax.swing.JFrame; 
 import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
