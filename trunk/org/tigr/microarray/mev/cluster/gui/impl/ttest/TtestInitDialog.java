@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: TtestInitDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-08-25 15:18:14 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2004-01-13 17:33:45 $
+ * $Author: nbhagaba $
  * $State: Exp $
  */
 
@@ -49,6 +49,8 @@ public class TtestInitDialog extends AlgorithmDialog {
     public static final int ADJ_BONFERRONI = 6;
     public static final int BETWEEN_SUBJECTS = 7;
     public static final int ONE_CLASS = 8;
+    public static final int MAX_T = 9;
+    public static final int MIN_P = 10;
     
     boolean okPressed = false;
     boolean permParamOkPressed = false;
@@ -75,6 +77,8 @@ public class TtestInitDialog extends AlgorithmDialog {
         
         chooseDesignPane = new JTabbedPane();
         
+        sPanel = new SignificancePanel();
+        
         pPanel = new PValuePanel();
         
         gPanel = new GroupExperimentsPanel(exptNames);
@@ -83,6 +87,11 @@ public class TtestInitDialog extends AlgorithmDialog {
                 public void actionPerformed(ActionEvent evt) {
                     //if (evt.getSource() == gPanel.groupARadioButtons[count]) {
                     pPanel.tDistButton.setSelected(true);
+                    sPanel.justAlphaButton.setSelected(true);
+                    sPanel.maxTButton.setSelected(false);
+                    sPanel.maxTButton.setEnabled(false);
+                    sPanel.minPButton.setSelected(false);
+                    sPanel.minPButton.setEnabled(false);                    
                     pPanel.randomGroupsButton.setEnabled(false);
                     pPanel.allCombsButton.setEnabled(false);
                     pPanel.timesField.setEnabled(false);
@@ -98,6 +107,11 @@ public class TtestInitDialog extends AlgorithmDialog {
                 public void actionPerformed(ActionEvent evt) {
                     //if (evt.getSource() == gPanel.groupBRadioButtons[count]) {
                     pPanel.tDistButton.setSelected(true);
+                    sPanel.justAlphaButton.setSelected(true);
+                    sPanel.maxTButton.setSelected(false);
+                    sPanel.maxTButton.setEnabled(false);
+                    sPanel.minPButton.setSelected(false);
+                    sPanel.minPButton.setEnabled(false);                    
                     pPanel.randomGroupsButton.setEnabled(false);
                     pPanel.allCombsButton.setEnabled(false);
                     pPanel.timesField.setEnabled(false);
@@ -113,6 +127,11 @@ public class TtestInitDialog extends AlgorithmDialog {
                 public void actionPerformed(ActionEvent evt) {
                     //if (evt.getSource() == gPanel.neitherGroupRadioButtons[count]) {
                     pPanel.tDistButton.setSelected(true);
+                    sPanel.justAlphaButton.setSelected(true);
+                    sPanel.maxTButton.setSelected(false);
+                    sPanel.maxTButton.setEnabled(false);
+                    sPanel.minPButton.setSelected(false);
+                    sPanel.minPButton.setEnabled(false);                     
                     pPanel.randomGroupsButton.setEnabled(false);
                     pPanel.allCombsButton.setEnabled(false);
                     pPanel.timesField.setEnabled(false);
@@ -134,6 +153,11 @@ public class TtestInitDialog extends AlgorithmDialog {
                 public void actionPerformed(ActionEvent evt) {
                     //if (evt.getSource() == gPanel.neitherGroupRadioButtons[count]) {
                     pPanel.tDistButton.setSelected(true);
+                    sPanel.justAlphaButton.setSelected(true);
+                    sPanel.maxTButton.setSelected(false);
+                    sPanel.maxTButton.setEnabled(false);
+                    sPanel.minPButton.setSelected(false);
+                    sPanel.minPButton.setEnabled(false);                     
                     pPanel.randomGroupsButton.setEnabled(false);
                     pPanel.allCombsButton.setEnabled(false);
                     pPanel.timesField.setEnabled(false);
@@ -151,9 +175,21 @@ public class TtestInitDialog extends AlgorithmDialog {
         pane.add(chooseDesignPane);
          */
         
+        pPanel.tDistButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                sPanel.justAlphaButton.setSelected(true);
+                sPanel.maxTButton.setSelected(false);
+                sPanel.maxTButton.setEnabled(false);
+                sPanel.minPButton.setSelected(false);
+                sPanel.minPButton.setEnabled(false);                
+            }
+        });
+        
         pPanel.permutButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                if (evt.getSource() == pPanel.permutButton) {
+                if (evt.getSource() == pPanel.permutButton) {                    
+                    sPanel.maxTButton.setEnabled(true);
+                    //sPanel.minPButton.setEnabled(true);    // **** ENABLE THIS WHEN MINP MTHOD HAS BEEN DEBUGGED  - 1/12/2004            
                     if (getTestDesign() == TtestInitDialog.BETWEEN_SUBJECTS) {
                         int[] grpAssignments = getGroupAssignments();
                         int grpACounter = 0;
@@ -318,6 +354,11 @@ public class TtestInitDialog extends AlgorithmDialog {
         chooseDesignPane.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 pPanel.tDistButton.setSelected(true);
+                sPanel.justAlphaButton.setSelected(true);
+                sPanel.maxTButton.setSelected(false);
+                sPanel.maxTButton.setEnabled(false);
+                sPanel.minPButton.setSelected(false);
+                sPanel.minPButton.setEnabled(false);                
                 pPanel.allCombsButton.setEnabled(false);
                 pPanel.randomGroupsButton.setEnabled(false);
                 pPanel.numCombsLabel.setForeground(Color.black);
@@ -339,7 +380,7 @@ public class TtestInitDialog extends AlgorithmDialog {
         gridbag.setConstraints(pPanel, constraints);
         pane.add(pPanel);
         
-        sPanel = new SignificancePanel();
+        //sPanel = new SignificancePanel();
         buildConstraints(constraints, 0, 2, 1, 1, 0, 20);
         gridbag.setConstraints(sPanel, constraints);
         pane.add(sPanel);
@@ -1066,7 +1107,7 @@ public class TtestInitDialog extends AlgorithmDialog {
     }
     
     class SignificancePanel extends JPanel {
-        JRadioButton justAlphaButton, stdBonfButton, adjBonfButton;
+        JRadioButton minPButton, maxTButton, justAlphaButton, stdBonfButton, adjBonfButton;
         SignificancePanel() {
             //      this.setBorder(new TitledBorder(new EtchedBorder(), "Significance based on: "));
             this.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), "Alpha Corrections", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
@@ -1103,7 +1144,21 @@ public class TtestInitDialog extends AlgorithmDialog {
             adjBonfButton.setBackground(Color.white);
             sigGroup.add(adjBonfButton);
             
-            buildConstraints(constraints, 0, 0, 1, 1, 33, 100);
+            minPButton = new JRadioButton("minP", false);
+            minPButton.setEnabled(false);
+            minPButton.setFocusPainted(false);
+            minPButton.setForeground(UIManager.getColor("Label.foreground"));
+            minPButton.setBackground(Color.white);
+            sigGroup.add(minPButton);            
+            
+            maxTButton = new JRadioButton("maxT", false);
+            maxTButton.setEnabled(false);
+            maxTButton.setFocusPainted(false);
+            maxTButton.setForeground(UIManager.getColor("Label.foreground"));
+            maxTButton.setBackground(Color.white);
+            sigGroup.add(maxTButton);            
+            
+            buildConstraints(constraints, 0, 0, 1, 1, 33, 50);
             //constraints.fill = GridBagConstraints.BOTH;
             gridbag.setConstraints(justAlphaButton, constraints);
             this.add(justAlphaButton);
@@ -1118,6 +1173,45 @@ public class TtestInitDialog extends AlgorithmDialog {
             gridbag.setConstraints(adjBonfButton, constraints);
             this.add(adjBonfButton);
             
+            JPanel westfallYoungPanel = new JPanel();
+            westfallYoungPanel.setBackground(Color.white);
+            westfallYoungPanel.setBorder(new EtchedBorder());
+            GridBagLayout grid2 = new GridBagLayout(); 
+            westfallYoungPanel.setLayout(grid2);
+ 
+            JLabel stepDownLabel = new JLabel("Step-down Westfall and Young methods (for permutations only): ");
+            buildConstraints(constraints, 0, 0, 1, 1, 34, 100);
+            //buildConstraints(constraints, 0, 1, 1, 1, 34, 50);
+            ////constraints.fill = GridBagConstraints.BOTH;
+            //constraints.anchor = GridBagConstraints.EAST;
+            //gridbag.setConstraints(stepDownLabel, constraints);
+            grid2.setConstraints(stepDownLabel, constraints);
+            //this.add(stepDownLabel);  
+            westfallYoungPanel.add(stepDownLabel);
+            
+            //buildConstraints(constraints, 1, 1, 1, 1, 33, 0);
+            buildConstraints(constraints, 1, 0, 1, 1, 33, 0);
+            ////constraints.fill = GridBagConstraints.BOTH;
+            //constraints.anchor = GridBagConstraints.WEST;
+            //gridbag.setConstraints(minPButton, constraints);
+            grid2.setConstraints(minPButton, constraints);
+            //this.add(minPButton); 
+            westfallYoungPanel.add(minPButton);
+            
+            
+            //buildConstraints(constraints, 2, 1, 1, 1, 33, 0);
+            buildConstraints(constraints, 2, 0, 1, 1, 33, 0);
+            ////constraints.fill = GridBagConstraints.BOTH;
+            //constraints.anchor = GridBagConstraints.WEST;
+            //gridbag.setConstraints(maxTButton, constraints);
+            grid2.setConstraints(maxTButton, constraints);
+            //this.add(maxTButton);  
+            westfallYoungPanel.add(maxTButton);
+            
+            buildConstraints(constraints, 0, 1, 3, 1, 100, 50);
+            //constraints.fill = GridBagConstraints.BOTH;
+            gridbag.setConstraints(westfallYoungPanel, constraints);
+            this.add(westfallYoungPanel);
             /*
             JButton sButton = new JButton("significancePanel");
             buildConstraints(constraints, 0, 0, 1, 1, 100, 100);
@@ -1616,8 +1710,12 @@ public class TtestInitDialog extends AlgorithmDialog {
             return this.JUST_ALPHA;
         } else if (sPanel.stdBonfButton.isSelected()) {
             return this.STD_BONFERRONI;
-        } else {
+        } else if (sPanel.adjBonfButton.isSelected()){
             return this.ADJ_BONFERRONI;
+        } else if (sPanel.maxTButton.isSelected()) {
+            return this.MAX_T;
+        } else {
+            return this.MIN_P;
         }
     }
     
