@@ -1,0 +1,22 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>Data Adjustment: Lower Cutoffs</h1><h2>Parameter Information</h2>
+            <hr size = 10>
+
+<h2>Overview of Lower Cutoffs</h2>
+The lower cutoff data adjustment is used to trim out genes having low intensity
+data.  The trim criteria is such that if any one expression value for a gene falls
+below the Cy3 or Cy5 intensity value cutoffs then that gene will excluded from
+further analysis.  This method is rather stringent since the entire gene is removed
+from analysis if it fails for one intensity in one experiment.
+<br><br>
+One possible utility is to exclude genes with missing data by setting the
+cutoffs to a very low value such as 1.  The possibility of exclusion increases
+with increased number of experiments making this feature impractical for many
+data sets.<br><br>
+Note that if the goal is to make sure that a gene has valid data representing
+most of the experiments, percentage cutoffs is a more flexible alternative.
+<br>
+        </basefont>
+    </body>
+</html>

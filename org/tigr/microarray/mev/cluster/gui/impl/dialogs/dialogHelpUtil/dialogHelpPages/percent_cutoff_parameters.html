@@ -1,0 +1,29 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>Data Adjustment: Percentage Cutoff</h1><h2>Parameter Information</h2>
+            <hr size = 10>
+
+<h2>Overview of Percentage Cutoff</h2>
+The Percentage Cutoff data adjustment acts as a filter to remove genes
+that have fewer than some percentage of valid values for the experiments under
+study.  It is common in microarray expression analysis to have some missing data, 
+however, if a particular gene has fewer than some percentage of it's values then the
+gene can not be reliably compared to other genes.  
+<br><br>
+This filtering method permits the
+you to select a criteria such that any gene having fewer good values than the supplied 
+percentage will be removed from analyis runs.  The history log will report the number 
+of genes that are remaining after the cuttof is applied using the "use percent cutoff"
+menu option to enforce the cutoff.
+<br>
+
+<h2>Cutoff Parameter</h2>
+This value, ranging from 0.0% to 100.0%, represents the percentage of valid
+values that a gene is required to have in order to be allowed into analysis
+algorithms.  (e.g. 10 experiments loaded, cutoff criteria is 75%, if a gene
+has only 6 valid values (60%) then that gene is not a candidate for analysis
+while a gene having 8 valid values (80%) would be accepted.)
+<br>
+        </basefont>
+    </body>
+</html>
