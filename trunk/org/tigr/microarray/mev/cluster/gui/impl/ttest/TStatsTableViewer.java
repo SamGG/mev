@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: TStatsTableViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-08-25 15:18:13 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2003-12-17 17:11:14 $
+ * $Author: nbhagaba $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.ttest;
@@ -65,6 +65,7 @@ public class TStatsTableViewer extends ViewerAdapter {
     private JPopupMenu popup;
     //boolean meansASortedAsc, meansASortedDesc;
     private Object[][] origData;
+    private boolean sortedAscending[];//, sortedDescending;
     
     /** Creates new TStatsTableViewer */
     public TStatsTableViewer(Experiment experiment, int[][] clusters, IData data, int tTestDesign, Vector oneClassMeans, Vector oneClassSDs, Vector meansA, Vector meansB, Vector sdA, Vector sdB, Vector pValues, Vector tValues, Vector dfValues, boolean sig) {
@@ -90,6 +91,8 @@ public class TStatsTableViewer extends ViewerAdapter {
         } else {
             rows =clusters[1];
         }
+        //this.sortedAscending = false;
+        //this.sortedDescending = false;
         tModel = new TValuesTableModel(tTestDesign);
         tValuesTable = new JTable(tModel);
         origData = new Object[tModel.getRowCount()][tModel.getColumnCount()];
@@ -97,6 +100,10 @@ public class TStatsTableViewer extends ViewerAdapter {
             for (int j = 0; j < origData[i].length; j++) {
                 origData[i][j] = tModel.getValueAt(i, j);
             }
+        }
+        this.sortedAscending = new boolean[tModel.getColumnCount()];
+        for (int i = 0; i < sortedAscending.length; i++) {
+            sortedAscending[i] = false;
         }
         //tValuesTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         //tValuesTable.setBackground(Color.white);
@@ -214,7 +221,7 @@ public class TStatsTableViewer extends ViewerAdapter {
         //return tValuesTable;
         //return content;
     }
-    
+       
     /**
      * Returns the viewer header.
      */
@@ -454,9 +461,18 @@ public class TStatsTableViewer extends ViewerAdapter {
                     //System.out.println("Sorting ...");
                     int shiftPressed = e.getModifiers()&InputEvent.SHIFT_MASK;
                     int controlPressed = e.getModifiers()&InputEvent.CTRL_MASK;
-                    boolean ascending = (shiftPressed == 0);
+                    //boolean ascending = (shiftPressed == 0);
                     boolean originalOrder = (controlPressed != 0);
-                    sortByColumn(column, ascending, originalOrder);
+                    //sortedAscending[column] = !(sortedAscending[column]);
+                    //sortByColumn(column, ascending, originalOrder);
+                    sortByColumn(column, !(sortedAscending[column]), originalOrder);
+                    sortedAscending[column] = !(sortedAscending[column]);
+                    //System.out.println("sortedAscending[" + column + "] = " + sortedAscending[column]);
+                    if (originalOrder) {
+                        for (int i = 0; i < tModel.getColumnCount(); i++)
+                        sortedAscending[i] = false;
+                    } 
+                    //System.out.println("sortedAscending[" + column + "] = " + sortedAscending[column]);                    
                 }
             }
         };
@@ -471,8 +487,11 @@ public class TStatsTableViewer extends ViewerAdapter {
                     tModel.setValueAt(origData[i][j], i, j);
                 }
             }
+            //sortedAscending = false;
             return;
-        }
+        } /*else {
+            sortedAscending = !(sortedAscending);
+        }*/
         //int[] sortedIndices;
         Object[][] sortedData = new Object[tValuesTable.getRowCount()][tValuesTable.getColumnCount()];
         float[] origArray = new float[rows.length];
