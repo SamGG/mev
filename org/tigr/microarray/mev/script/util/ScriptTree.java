@@ -71,7 +71,7 @@ public class ScriptTree extends JTree {
         BasicTreeUI basicTreeUI = (BasicTreeUI) getUI();
         basicTreeUI.setRightChildIndent(50);
         super.putClientProperty("JTree.lineStyle", "Angled");
-        
+       
         this.document = doc;
         this.manager = manager;
         
@@ -169,7 +169,6 @@ public class ScriptTree extends JTree {
         if(dataNode != null) {
             DefaultTreeModel model = (DefaultTreeModel)getModel();
             model.insertNodeInto(node, dataNode, dataNode.getChildCount());
-            System.out.println("appended alg node to data node");
         } else {
             System.out.println("null data node can't append");
         }
@@ -178,8 +177,7 @@ public class ScriptTree extends JTree {
     public Element getAlgSet(NodeList setList, int id) {
         Element currElement;
         for(int i = 0; i < setList.getLength(); i++) {
-            System.out.println("get alg set !!!!!!!!!!!! id ="+ id+"  algset attr = "+((Element)setList.item(i)).getAttribute("set_id"));
-            if(((Element)setList.item(i)).getAttribute("set_id").equals(String.valueOf(id)))
+             if(((Element)setList.item(i)).getAttribute("set_id").equals(String.valueOf(id)))
                 return (Element)setList.item(i);
         }
         return null;
@@ -208,22 +206,7 @@ public class ScriptTree extends JTree {
     }
     
     public AlgorithmSet [] getAlgorithmSets() {
-/*
-        AlgorithmSet set = new AlgorithmSet();
-        DataNode root = (DataNode)(this.getModel().getRoot());
-        set.setDataNode(root);
-        int childCount = root.getChildCount();
-        for(int i = 0; i < childCount; i++) {
-            set.addAlgorithmNode((AlgorithmNode)(root.getChildAt(i)));
-        }
- 
- 
- 
-        set.setExperiment(experiment);
- 
-        AlgorithmSet [] sets = new AlgorithmSet[1];
-        sets[0] = set;
- */
+
         AlgorithmSet set;
         DataNode root = (DataNode)(this.getModel().getRoot());
         Experiment experiment = manager.getCurrentExperiment();
@@ -444,43 +427,17 @@ public class ScriptTree extends JTree {
         AlgorithmData data = manager.getAlgorithm(outputClass);
         
         if(data != null) {
-            System.out.println("In Script tree have new alg data");
-            //Builder bob = new Builder(parentNode, data);
-            //Thread thread = new Thread(bob);
-            //thread.start();
-            
+
             if(document.appendAlgorithm(data, parentNode.getID())) {
-                System.out.println("addnew appended alg");
-                //  System.out.println("alg index = "+data.getParams().getString("algorithm-action-index"));;
-                try {
+               try {
                     updateTree();
-                    
-                    //  try{
-                    //   java.lang.Thread.sleep(1000);
-                    //  } catch (Exception e) { }
-                    // childNode.setSelected(true);
-                    //       DefaultMutableTreeNode n = (DefaultMutableTreeNode)childNode;
-                    //     n.setSelected();
-                    
-                    // this.clearSelection();
-                /*ScriptNode childNode = (ScriptNode)parentNode.getLastChild();
-                TreePath path = new TreePath(((DefaultTreeModel)this.getModel()).getPathToRoot(childNode));
-                System.out.println("tree path ="+path.toString());
-                this.setSelectionPath(path);
-                this.getSelectionModel().setSelectionPath(path);
-                 */
-                    scrollAllToVisible();
-                    
+                    scrollAllToVisible();                    
                 } catch (Exception e) {e.printStackTrace(); }
             } else {
                 System.out.println("doc base didn't append");
             }
-            
-            
-            
-        }
-        //Need to id data node, (id alg set), pass data to doc for append
-        
+    
+        }     
     }
     
     /**
@@ -496,22 +453,8 @@ public class ScriptTree extends JTree {
         
         public void run() {
             if(document.appendAlgorithm(data, parentNode.getID())) {
-                System.out.println("static addnew appended alg");
                 try {
                     updateTree();
-                    //  try{
-                    //   java.lang.Thread.sleep(1000);
-                    //  } catch (Exception e) { }
-                    // childNode.setSelected(true);
-                    //       DefaultMutableTreeNode n = (DefaultMutableTreeNode)childNode;
-                    //     n.setSelected();
-                    
-                    //   clearSelection();
-                    //  ScriptNode childNode = (ScriptNode)parentNode.getLastChild();
-                    // TreePath path = new TreePath(((DefaultTreeModel)getModel()).getPathToRoot(parentNode));
-                    //  System.out.println("tree path ="+path.toString());
-                    // setSelectionPath(path);
-                    // getSelectionModel().setSelectionPath(path);
                     scrollAllToVisible();
                     repaint();
                 } catch (Exception e) {e.printStackTrace(); }
