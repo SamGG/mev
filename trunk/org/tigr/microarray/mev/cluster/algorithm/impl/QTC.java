@@ -10,9 +10,9 @@ All rights reserved.
 
  * $RCSfile: QTC.java,v $
 
- * $Revision: 1.1.1.2 $
+ * $Revision: 1.2 $
 
- * $Date: 2004-02-06 21:48:18 $
+ * $Date: 2004-04-12 20:29:54 $
 
  * $Author: braisted $
 
@@ -119,8 +119,6 @@ public class QTC extends AbstractAlgorithm {
     
 
     public synchronized AlgorithmData execute(AlgorithmData data) throws AlgorithmException {
-
-        System.out.println("AHA!");
 
 	AlgorithmParameters map = data.getParams();
 
