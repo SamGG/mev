@@ -85,7 +85,7 @@ public class GDM extends AbstractAlgorithm {
 	function = map.getInt("distance-function", EUCLIDEAN);
 	factor   = map.getFloat("distance-factor", 1.0f);
         absolute = map.getBoolean("distance-absolute", false);
-		this.expMatrix = data.getMatrix("experiment");
+	this.expMatrix = data.getMatrix("experiment");
         if (expMatrix == null) {
             throw new AlgorithmException("Experiment data is absent.");
         }
