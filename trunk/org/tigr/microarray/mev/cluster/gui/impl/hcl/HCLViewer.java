@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-02-09 16:07:18 $
+ * $Revision: 1.6 $
+ * $Date: 2004-02-09 16:54:13 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -35,8 +35,6 @@ import java.awt.event.MouseAdapter;
 
 import java.awt.image.BufferedImage;
 
-import java.beans.*;
-import java.beans.DefaultPersistenceDelegate;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
