@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: KMCSupport.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-11 17:58:51 $
+ * $Author: nbhagaba $
  * $State: Exp $
  */
 
@@ -31,7 +31,7 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
 import org.tigr.microarray.mev.cluster.algorithm.AbortException;
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
-
+   
 /**
  *
  * @author  nbhagaba
@@ -52,7 +52,7 @@ public class KMCSupport extends AbstractAlgorithm {
     private int numGenes, numSamples, numReps;
     private int k; // # of clusters
     private float thresholdPercent;
-    private float[][] geneMatrix;
+    private short[][] geneMatrix;
     private int userK;
     
     private FloatMatrix expMatrix;
@@ -89,7 +89,7 @@ public class KMCSupport extends AbstractAlgorithm {
         userK = map.getInt("number-of-desired-clusters", 5);
         calculateMeans = map.getBoolean("calculate-means", true);
         
-        geneMatrix = new float[numGenes][];
+        geneMatrix = new short[numGenes][];
         assigned = new boolean[numGenes];
         unassignedExists = false;
         for (int i = 0; i < numGenes; i++) {
@@ -97,9 +97,9 @@ public class KMCSupport extends AbstractAlgorithm {
         }
         
         for(int i = 1; i < numGenes; i++) {
-            geneMatrix[i] = new float[i];
+            geneMatrix[i] = new short[i];
             for(int j = 0; j < geneMatrix[i].length; j++) {
-                geneMatrix[i][j] = 0.0f;
+                geneMatrix[i][j] = 0;
             }
         }
         
@@ -376,25 +376,31 @@ public class KMCSupport extends AbstractAlgorithm {
             
             sub_algo_clusters = sub_algo_result.getCluster("cluster");
             
-            Vector myKMCClusters = getClusterVector(sub_algo_clusters);
+            //Vector myKMCClusters = getClusterVector(sub_algo_clusters);
+            int[][] myKMCClusters = getClusterArray(sub_algo_clusters);
+            
+            //System.out.println("Finished up to getClusterVector(), i = " + i);
             
             for(int j = 1; j < numGenes; j++) {
                 for(int k = 0; k < j; k++) {
                     if(occurInSameCluster(j,k, myKMCClusters)) {//write the method "occurInSameCluster(int, int, Vector)"
-                        geneMatrix[j][k] = geneMatrix[j][k] + 1;
+                        geneMatrix[j][k] = (short)(geneMatrix[j][k] + 1);
                         //System.out.println("genes " + j + " and " + k + " occur in the same cluster");
                     }
                 }
             }
             
+            //System.out.println("Finished occurInSameCluster(), i = " + i);
+            
         }
         
-        
+/*        
         for(int j = 1; j < numGenes; j++) {
             for(int k = 0; k < j; k++) {
                 geneMatrix[j][k] = (geneMatrix[j][k]/numReps)*100;
             }
         }
+ */
         
         /*
         for (int p = 1; p < geneMatrix.length; p++) {
@@ -409,7 +415,7 @@ public class KMCSupport extends AbstractAlgorithm {
         
     }
     
-    
+/*    
     private Vector getClusterVector(Cluster clusters) {
         NodeList nodeList = clusters.getNodeList();
         final int number_of_clusters = nodeList.getSize();
@@ -430,8 +436,29 @@ public class KMCSupport extends AbstractAlgorithm {
         
         return cVector;
     }
+ */
     
+    private int[][] getClusterArray(Cluster  clusters) {
+        NodeList nodeList = clusters.getNodeList();
+        final int number_of_clusters = nodeList.getSize();
+        int[] cluster;
+        
+        int[][] cArray = new int[number_of_clusters][];
+        
+        for (int j = 0; j < number_of_clusters; j++) {
+            cluster = nodeList.getNode(j).getFeaturesIndexes();
+            
+            cArray[j] = new int[cluster.length];
+            for (int i = 0; i < cluster.length; i++) {
+                cArray[j][i] = cluster[i];
+                //currentCluster.add(new Integer(cluster[i]));
+            }            
+        }
+        
+        return cArray;
+    }
     
+/*    
     boolean occurInSameCluster(int gene1, int gene2, Vector clustVect) {
         boolean occurs = false;
         
@@ -445,8 +472,22 @@ public class KMCSupport extends AbstractAlgorithm {
         
         return occurs;
     }
+ */
     
-    
+    boolean occurInSameCluster(int gene1, int gene2, int[][] clustArr) {
+        boolean occurs = false;
+        
+        for (int i = 0; i < clustArr.length; i++) {
+            int[] currCluster = clustArr[i];
+            if( (isFound(gene1, currCluster)) && (isFound(gene2, currCluster)) ) {
+                //occurs = true;
+                //break;
+                return true;
+            }
+        }
+        
+        return occurs;
+    }    
     
     
     void createClusters() throws AlgorithmException {
@@ -462,7 +503,7 @@ public class KMCSupport extends AbstractAlgorithm {
         for (currentGene = 1; currentGene < numGenes; currentGene++) {
             
             for (comparisonGene = 0; comparisonGene < currentGene; comparisonGene++) {
-                if (geneMatrix[currentGene][comparisonGene] >= thresholdPercent) {
+                if ( (float)(((float)(geneMatrix[currentGene][comparisonGene])/numReps)*100) >= thresholdPercent) {
                     if (assigned[comparisonGene]) {
                         addToCluster(currentGene, comparisonGene);
                         assigned[currentGene] = true;
@@ -489,7 +530,7 @@ public class KMCSupport extends AbstractAlgorithm {
                 unassignedGeneSet.add(new Integer(i));
             }
         }
-        System.out.println();
+        //System.out.println();
         
         Vector workingClusterVector = new Vector();
         
@@ -569,14 +610,14 @@ public class KMCSupport extends AbstractAlgorithm {
             for (int j = i+1; j < geneCluster.size(); j++) {
                 int gene = ((Integer)(geneCluster.get(j))).intValue();
                 if (currentGene > gene) {
-                    if (geneMatrix[currentGene][gene] < thresholdPercent) {
+                    if ( (float)(((float)(geneMatrix[currentGene][gene])/numReps)*100) < thresholdPercent) {
                         unassignedGeneSet.add(new Integer(currentGene));
                         unassignedGeneSet.add(new Integer(gene));
                         weededOutGenes.add(new Integer(currentGene));
                         weededOutGenes.add(new Integer(gene));
                     }
                 } else if (currentGene < gene) {
-                    if (geneMatrix[gene][currentGene] < thresholdPercent) {
+                    if ( (float)(((float)(geneMatrix[gene][currentGene])/numReps)*100) < thresholdPercent) {
                         unassignedGeneSet.add(new Integer(currentGene));
                         unassignedGeneSet.add(new Integer(gene));
                         weededOutGenes.add(new Integer(currentGene));
@@ -613,12 +654,12 @@ public class KMCSupport extends AbstractAlgorithm {
                 belongs = true;
                 break;
             } else if (gene > currentGene) {
-                if (geneMatrix[gene][currentGene] < thresholdPercent) {
+                if ( (float)(((float)(geneMatrix[gene][currentGene])/numReps)*100) < thresholdPercent) {
                     belongs = false;
                     break;
                 }
             } else if (gene < currentGene) {
-                if (geneMatrix[currentGene][gene] < thresholdPercent) {
+                if ( (float)(((float)(geneMatrix[currentGene][gene])/numReps)*100) < thresholdPercent) {
                     belongs = false;
                     break;
                 }
@@ -655,13 +696,30 @@ public class KMCSupport extends AbstractAlgorithm {
         for (int i = 0; i < clustVect.size(); i++) {
             //System.out.println(clustVect.get(i));
             if (gene == ((Integer) clustVect.get(i)).intValue()) {
-                found =true;
-                break;
+                //found =true;
+                //break;
+                return true;
             }
         }
         
         return found;
     }
+
+    
+    boolean isFound(int gene, int[] clustArr) {
+        boolean found = false;
+        
+        for (int i = 0; i < clustArr.length; i++) {
+            //System.out.println(clustVect.get(i));
+            if (gene == clustArr[i]) {
+                //found =true;
+                //break;
+                return true;
+            }
+        }
+        
+        return found;
+    }    
     
     public boolean unassignedGenesExist() {
         return unassignedExists;
@@ -673,7 +731,7 @@ public class KMCSupport extends AbstractAlgorithm {
         if (gene == 0) {
             if(!assigned[gene]) {
                 for (int i = 1; i < numGenes; i++) {
-                    if (geneMatrix[i][0] >= thresholdPercent) {
+                    if ( (float)(((float)(geneMatrix[i][0])/numReps)*100) >= thresholdPercent) {
                         error1 = true;
                         break;
                     }
@@ -683,7 +741,7 @@ public class KMCSupport extends AbstractAlgorithm {
             
             if (!assigned[gene]) {
                 for (int i = 0; i < gene; i++) {
-                    if (geneMatrix[gene][i] >= thresholdPercent){
+                    if ( (float)(((float)(geneMatrix[gene][i])/numReps)*100) >= thresholdPercent){
                         error1 = true;
                         break;
                     }
@@ -716,7 +774,7 @@ public class KMCSupport extends AbstractAlgorithm {
                     if (currGene == gene) {
                         continue;
                     } else if (currGene > gene) {
-                        if (geneMatrix[currGene][gene] < thresholdPercent) {
+                        if ( (float)(((float)(geneMatrix[currGene][gene])/numReps)*100) < thresholdPercent) {
                             error2 = true;
                             if ((unassignedExists)&&(clusterNumber == (clusterVector.size() - 1))) {
                             } else {
@@ -726,7 +784,7 @@ public class KMCSupport extends AbstractAlgorithm {
                             break out;
                         }
                     } else {
-                        if (geneMatrix[gene][currGene] < thresholdPercent) {
+                        if ( (float)(((float)(geneMatrix[gene][currGene])/numReps)*100) < thresholdPercent) {
                             error2 = true;
                             if ((unassignedExists)&&(clusterNumber == (clusterVector.size() - 1))) {
                             } else {
