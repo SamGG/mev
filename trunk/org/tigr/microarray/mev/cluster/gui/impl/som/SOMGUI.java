@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOMGUI.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-04-08 20:27:30 $
+ * $Revision: 1.3 $
+ * $Date: 2004-04-29 19:05:51 $
  * $Author: nbhagaba $
  * $State: Exp $
  */
@@ -30,6 +30,7 @@ import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
 
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
@@ -215,7 +216,8 @@ public class SOMGUI implements IClusterGUI {
         if(clusterGenes)
             tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.data);
         else
-            return; //placeholder for ExptClusterTableViewer
+            tabViewer = new ExperimentClusterTableViewer(this.experiment, this.clusters, this.data);
+            //return; //placeholder for ExptClusterTableViewer
             //expViewer = new SOMExperimentClusterViewer(this.experiment, this.clusters, "SOM Vector", this.codes);
         int cluster;
         for (int x=0; x<info.dimension_x; x++) {
