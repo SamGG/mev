@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: RelevanceNetworkViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-13 19:15:05 $
+ * $Revision: 1.5 $
+ * $Date: 2004-03-01 19:45:56 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -172,10 +172,10 @@ public class RelevanceNetworkViewer extends JPanel implements IViewer, Scrollabl
     /**
      * Overriden to have a focus.  (deprecated as of 1.4, use isFocusable())
      */
-    public boolean isFocusTraversable() {
+/*    public boolean isFocusTraversable() {
         return true;
     }
-
+*/
      /**
      * Overriden to have a focus.  (deprecated as of 1.4, use isFocusable())
      */
