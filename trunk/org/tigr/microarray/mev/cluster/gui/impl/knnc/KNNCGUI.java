@@ -48,6 +48,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidsViewer;
@@ -343,7 +344,8 @@ public class KNNCGUI implements IClusterGUI{
         if (classifyGenes) {
             tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.data);
         } else {
-            return; //placeholder for ExptClusterTableViewer
+            tabViewer = new ExperimentClusterTableViewer(this.experiment, this.clusters, this.data);
+            //return; //placeholder for ExptClusterTableViewer
             //expViewer = new KNNCExperimentClusterViewer(this.experiment, this.clusters);
         }
         
