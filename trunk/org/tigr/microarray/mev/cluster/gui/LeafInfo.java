@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: LeafInfo.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-05 22:44:41 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-09 15:31:36 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -141,9 +141,9 @@ public class LeafInfo implements java.io.Serializable {
      * Returns the node viewer.
      */
     public IViewer getViewer() {
-        System.out.println("get leaf info viewer for xml");
         return viewer;
     }
+    
     public void setViewer(IViewer v) {
         this.viewer = v;
     }
@@ -174,7 +174,6 @@ public class LeafInfo implements java.io.Serializable {
      * Returns the node user object.
      */
     public Object getUserObject() {
-        System.out.println("leaf info userobj");
         return userObject;
     }
     
