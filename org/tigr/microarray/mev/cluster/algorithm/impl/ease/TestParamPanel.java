@@ -53,6 +53,9 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import org.tigr.microarray.mev.TMEV;
+
 /**
  *
  * @author  braisted
@@ -134,7 +137,13 @@ public class TestParamPanel extends JPanel {
             annPanel.add(annPane, new GridBagConstraints(1,1,2,1,0.0,0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));            
       
             sep = System.getProperty("file.separator");
-            String tempPath = System.getProperty("user.dir")+sep+"Data"+sep+"EASE";
+            String tempPath;
+            File easeFile = TMEV.getFile("data/ease");
+            if(easeFile != null)
+                tempPath = easeFile.getPath();
+            else
+                tempPath = System.getProperty("user.dir")+sep+"data"+sep+"ease";
+            
             File file = new File(tempPath);
             Vector fileVector = new Vector();
             fileList = new JList(fileVector);
