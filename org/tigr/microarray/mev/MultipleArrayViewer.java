@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.18 $
- * $Date: 2004-06-24 17:36:30 $
+ * $Revision: 1.19 $
+ * $Date: 2004-07-22 15:40:48 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -559,6 +559,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                     
                     //signal mev analysis loaded
                     menubar.systemEnable(TMEV.ANALYSIS_LOADED);
+
+                    //pcahan
+                    if(TMEV.getDataType() == TMEV.DATA_TYPE_AFFY){
+                        menubar.addAffyFilterMenuItems();
+                    }
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(MultipleArrayViewer.this, "Analysis was not loaded.  Error reading input file.",
                     "Load Analysis Error", JOptionPane.WARNING_MESSAGE);
@@ -625,7 +630,13 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     private void loadIData(ObjectInputStream ois) throws IOException, ClassNotFoundException {
         //loads IData and sets TMEV field names fields
         this.data = (MultipleArrayData)(ois.readObject());
-      
+        
+        //pcahan
+        int data_type = this.data.getDataType();
+        if (data_type!=0 || data_type!=1){
+          TMEV.setDataType(TMEV.DATA_TYPE_AFFY);
+        }
+        
         //resets the log state depending on data type
         this.data.setDataType(this.data.getDataType());
         
@@ -1772,19 +1783,27 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     
     
     private void onSetFoldFilter() {
+        SetFoldFilterDialog ffd;
         int num_samples = data.getFeaturesCount();
         String[] sample_names = new String[num_samples];
         for (int i = 0; i < num_samples; i++){
             sample_names[i] = data.getFullSampleName(i);
         }
-        SetFoldFilterDialog ffd = new SetFoldFilterDialog(getFrame(),sample_names);
-        
+
+        if ( data.getffSet() ) {
+            ffd = new SetFoldFilterDialog(getFrame(),sample_names);
+        }
+        else{
+            ffd = new SetFoldFilterDialog(getFrame(),sample_names);
+            data.setffSet(true);
+        }
+
         if (ffd.showModal() == JOptionPane.OK_OPTION) {
             data.setFoldFilter(ffd.getFoldFilter());
             if (data.isFoldFilter()) {
                 addHistory("Fold Filter (" + data.getFoldFilter().toString() + ")");
                 addHistory(data.getExperiment().getNumberOfGenes() + " genes will used in subsequent analyses");
-                
+
             }
         }
     }
