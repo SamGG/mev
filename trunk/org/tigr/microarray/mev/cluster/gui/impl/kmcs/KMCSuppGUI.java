@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: KMCSuppGUI.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-05-26 13:17:20 $
+ * $Revision: 1.6 $
+ * $Date: 2004-06-01 13:23:13 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -375,7 +375,10 @@ public class KMCSuppGUI implements IClusterGUI, IScriptGUI {
             data.addParam("alg-type", "cluster-experiments");
         
         // output class
-        data.addParam("output-class", "multi-cluster-output");
+        if(clusterGenes)
+            data.addParam("output-class", "multi-gene-cluster-output");
+        else
+            data.addParam("output-class", "multi-experiment-cluster-output");
         
         //output nodes
         String [] outputNodes = new String[1];
