@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: HCLCluster.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-05 20:25:10 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -13,7 +13,10 @@ package org.tigr.microarray.mev.cluster.gui.impl.hcl;
 
 import java.awt.Color;
 
-public class HCLCluster {
+public class HCLCluster implements java.io.Serializable {
+    
+    static final long serialVersionUID = 1L;
+    
     public int root; // root index
     public int firstElem;
     public int lastElem;
@@ -36,4 +39,6 @@ public class HCLCluster {
     public void setFinalSize(){
         this.size = (this.lastElem - this.firstElem) + 1;
     }
+
+    
 }

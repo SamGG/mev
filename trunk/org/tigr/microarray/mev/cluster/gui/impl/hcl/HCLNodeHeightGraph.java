@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLNodeHeightGraph.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 18:40:47 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 20:25:10 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -60,6 +60,8 @@ public class HCLNodeHeightGraph extends JPanel implements IViewer {
         treeData = data;
         initializeViewer();        
     }
+    
+    public HCLNodeHeightGraph() { }
     
     private void initializeViewer(){
         minX = findMinDistance();
@@ -232,6 +234,13 @@ public class HCLNodeHeightGraph extends JPanel implements IViewer {
      */
     public JComponent getCornerComponent(int cornerIndex) {
         return null;
+    }
+    
+    public void setViewer(GraphViewer val){
+        viewer = val;
+    }
+    public GraphViewer getViewer(){
+        return viewer;
     }
     
 }

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLTree.java,v $
- * $Revision: 1.3 $
- * $Date: 2003-12-15 14:35:43 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-05 20:25:10 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -41,7 +41,9 @@ import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 
-public class HCLTree extends JPanel {
+public class HCLTree extends JPanel implements java.io.Serializable {
+    
+    static final long serialVersionUID = 1L;
     
     // These constants specify a horizontal or
     // vertical orientation.
@@ -94,20 +96,9 @@ public class HCLTree extends JPanel {
         // helpers
         this.flatTree = flatTreeCheck(treeData.height);
         this.minHeight = getMinHeight(treeData.node_order, treeData.height);
-        
-        //op
-        //  this.treeData.height = shiftHeights(this.treeData.height, this.minHeight);
-        
-        
-        
+
         this.maxHeight = getMaxHeight(this.treeData.node_order, treeData.height);
-        
-        
-        //op
-        //   this.minHeight = 0;
-        
-        
-        
+
         this.zero_threshold = minHeight;
         this.terminalNodes = new boolean[this.treeData.height.length];
         
@@ -134,6 +125,58 @@ public class HCLTree extends JPanel {
         addMouseListener(new Listener());
     }
     
+    private HCLTree() { }
+    
+    
+    private void writeObject(java.io.ObjectOutputStream oos) throws IOException {        
+        oos.writeInt(orientation);
+        oos.writeInt(min_pixels);
+        oos.writeInt(max_pixels);
+        oos.writeFloat(zero_threshold);
+        
+        oos.writeObject(this.lineColor);
+        oos.writeObject(this.belowThrColor);
+        oos.writeObject(this.selectedLineColor);
+        
+        oos.writeObject(treeData);
+        oos.writeFloat(minHeight);
+        oos.writeInt(stepSize);
+        oos.writeObject(pHeights);
+        oos.writeObject(positions);
+        oos.writeObject(selected);
+        oos.writeObject(nodesColors);
+        oos.writeObject(parentNodes);
+        oos.writeObject(terminalNodes);
+        oos.writeFloat(maxHeight);
+        oos.writeBoolean(flatTree);
+        oos.writeInt(horizontalOffset);
+    }
+    
+    private void readObject(java.io.ObjectInputStream ois) throws IOException, ClassNotFoundException {        
+        this.orientation = ois.readInt();
+        this.min_pixels = ois.readInt();
+        this.max_pixels = ois.readInt();
+        this.zero_threshold = ois.readFloat();
+        
+        this.lineColor = (Color)ois.readObject();
+        this.belowThrColor = (Color)ois.readObject();
+        this.selectedLineColor = (Color)ois.readObject();
+        
+        this.treeData = (HCLTreeData)ois.readObject();
+        this.minHeight = ois.readFloat();
+        this.stepSize = ois.readInt();
+        this.pHeights = (int [])ois.readObject();
+        this.positions = (float [])ois.readObject();
+        this.selected = (boolean [])ois.readObject();
+        this.nodesColors = (Color [])ois.readObject();
+        this.parentNodes = (int [])ois.readObject();
+        this.terminalNodes = (boolean [])ois.readObject();
+        this.maxHeight = ois.readFloat();
+        this.flatTree = ois.readBoolean();
+        this.horizontalOffset = ois.readInt();
+        addMouseListener(new Listener());
+    }
+        
     /**
      * Sets specified listener to be notified by tree events.
      */

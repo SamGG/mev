@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2003-12-15 14:49:09 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-05 20:25:10 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -34,6 +34,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
 
 import java.awt.image.BufferedImage;
+
+import java.beans.*;
+import java.beans.DefaultPersistenceDelegate;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -70,11 +76,12 @@ import org.tigr.microarray.mev.cluster.gui.impl.kmc.KMCExperimentCentroidsViewer
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
 
-
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 
 public class HCLViewer extends JPanel implements IViewer {
+    
+    static final long serialVersionUID = 1L;
     
     protected static final String STORE_CLUSTER_CMD = "store-cluster-cmd";
     protected static final String LAUNCH_NEW_SESSION_CMD = "launch-new-session-cmd";
@@ -260,6 +267,90 @@ public class HCLViewer extends JPanel implements IViewer {
     }
     
     
+    private void writeObject(ObjectOutputStream oos) throws IOException {
+        
+        oos.writeObject(expViewer);
+        oos.writeObject(header);
+        oos.writeBoolean(genesTree != null);
+        if(genesTree != null){
+            oos.writeObject(genesTree);
+            oos.writeObject(this.genesOrder);
+        }
+        oos.writeBoolean(sampleTree != null);
+        if(sampleTree != null){
+            oos.writeObject(sampleTree);
+            oos.writeObject(this.samplesOrder);
+        }
+        oos.writeObject(colorBar);
+        oos.writeObject(annotationBar);
+        
+        
+        oos.writeObject(experiment);
+        
+        oos.writeObject(clusters);
+        oos.writeObject(experimentClusters);
+        oos.writeObject(sampleClusters);
+    }
+    
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        //      System.out.println("start hclviewer read");
+        
+        this.expViewer = (IViewer)ois.readObject();
+        //    System.out.println("have iviewer");
+        
+        this.header = (HCLExperimentHeader)ois.readObject();
+        //  System.out.println("have header");
+        
+        this.listener = new Listener();
+        
+        this.addMouseListener(listener);
+        this.header.addMouseListener(listener);
+        
+        if(ois.readBoolean()){
+            genesTree = (HCLTree)  ois.readObject();
+            //System.out.println("have gene tree");
+            
+            this.genesOrder = (int [])ois.readObject();
+            //System.out.println("have gene order array");
+            
+            genesTree.addMouseListener(listener);
+            genesTree.setListener(listener);
+            this.genesTree.deselectAllNodes();
+        }
+        
+        if(ois.readBoolean()){
+            sampleTree= (HCLTree) ois.readObject();
+            //System.out.println("have exp tree");
+            
+            this.samplesOrder = (int [])ois.readObject();
+            //          System.out.println("have sample order array");
+            
+            sampleTree.addMouseListener(listener);
+            sampleTree.setListener(listener);
+            this.sampleTree.deselectAllNodes();
+        }
+        
+        colorBar = (HCLColorBar)ois.readObject();
+        //System.out.println("have color bar");
+        
+        this.annotationBar = (HCLAnnotationBar)ois.readObject();
+        //System.out.println("have ann bar");
+        
+        experiment = (Experiment)ois.readObject();
+        //System.out.println("have experiment object");
+        
+        this.clusters = (ArrayList)ois.readObject();
+        //System.out.println("have array list clusters");
+        this.experimentClusters = (ArrayList)ois.readObject();
+        //System.out.println("have exp cluster array list");
+        
+        this.sampleClusters = (int[][])ois.readObject();
+        //System.out.println("have sample clusters int[][]");
+        
+        this.popup = this.createJPopupMenu(listener);
+    }
+    
+    
     /**
      * Adds wrapped viewers.
      */
@@ -395,6 +486,10 @@ public class HCLViewer extends JPanel implements IViewer {
         }
         this.elementSize = framework.getDisplayMenu().getElementSize();
         this.header.updateSize(getCommonWidth(), this.elementSize.width);
+        
+        if(this.node == null)
+            this.node = (DefaultMutableTreeNode)(framework.getCurrentNode().getParent());
+        
         verifyClusterExistence(this.data);
         updateTrees();
         refreshViewer();
@@ -859,7 +954,6 @@ public class HCLViewer extends JPanel implements IViewer {
         return elements;
     }
     
-    /** saves all genes in the tree with the order conserved **/
     public void saveGenesOrder(){
         try{
             ExperimentUtil.saveExperiment(getFrame(), this.experiment, this.data, this.genesOrder);
@@ -869,7 +963,6 @@ public class HCLViewer extends JPanel implements IViewer {
         }
     }
     
-    /** saves all experiments in the tree with the order conserved **/
     public void saveExperimentOrder(){
         try{
             if(!this.isExperimentCluster)
@@ -1283,10 +1376,23 @@ public class HCLViewer extends JPanel implements IViewer {
         return null;
     }
     
+    
+  /**  Prototyping code for saving state as XML
+   *
+    public void writeXML(XMLEncoder enc) {
+        enc.setPersistenceDelegate(HCLViewer.class,
+        new DefaultPersistenceDelegate( new String[]{
+            "experiment", "features", "genes_result", "samples_result", "node"}));
+            
+            enc.writeObject( new HCLViewer(experiment, features, genes_result, samples_result, node) );
+            
+    }
+   */
+    
     /**
      * The class to listen to mouse, action and hcl tree events.
      */
-    private class Listener extends MouseAdapter implements ActionListener, HCLTreeListener {
+    private class Listener extends MouseAdapter implements ActionListener, HCLTreeListener, java.io.Serializable {
         
         public void actionPerformed(ActionEvent e) {
             String command = e.getActionCommand();
