@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: GenePixFileLoader.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 18:46:37 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -72,7 +72,9 @@ public class GenePixFileLoader extends ExpressionFileLoader {
             } else {
                 data.add( loadFloatSlideData((File)genePixFiles[i], meta));
             }
-            setFilesProgress(i+1);            
+            setFilesProgress(i+1);    
+            if(i > 0 && i%10 == 0)
+                java.lang.Runtime.getRuntime().gc();
         }
         if(data != null && data.size() > 0){
             String [] fieldNames = new String[2];
