@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: Content3D.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 18:16:07 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-10 00:16:48 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -699,6 +699,7 @@ public class Content3D extends JPanel {
             return null;
         }
         int uncoloredCount = data.getColoredProbesCount(-1);
+
         int delta = uncoloredCount == 0 ? 0 : 1;
         
         Color[] colors;
@@ -706,7 +707,7 @@ public class Content3D extends JPanel {
             colors = data.getColors(); // get colored gene clusters
         else
             colors = data.getExperimentColors();
-        
+
         PointArray[] pointArrays = new PointArray[colors.length+delta];
         Appearance[] appearances = new Appearance[colors.length+delta];
         int[] counters = new int[colors.length+delta];
@@ -749,11 +750,12 @@ public class Content3D extends JPanel {
                     index = data.getProbeColorIndex(experiment.getGeneIndexMappedToData(i))+delta;
                 else
                     index = data.getExperimentColorIndex(i)+delta;
+
                 pointArrays[index].setCoordinate(counters[index], new Point3f(x*factorX, y*factorY, z*factorZ));
                 counters[index]++;
             }
         }
-        
+   
         Shape3D[] pointShapes = new Shape3D[pointArrays.length];
         for (int i=0; i<pointShapes.length; i++) {
             pointShapes[i] = new Shape3D();
