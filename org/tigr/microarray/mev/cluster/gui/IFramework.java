@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: IFramework.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-15 15:54:39 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -14,6 +14,7 @@ package org.tigr.microarray.mev.cluster.gui;
 import java.awt.Color;
 import java.awt.Frame;
 import javax.swing.tree.DefaultMutableTreeNode;
+import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
 
@@ -120,4 +121,9 @@ public interface IFramework {
      * Opens viewer a parent node name and a cluster node name
      */
     public void openClusterNode(String parentNodeName, String childNodeName);
+    
+    /**
+     * Returns the specified cluster repository
+     */
+    public ClusterRepository getClusterRepository(int clusterType);
 }
