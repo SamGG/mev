@@ -2,10 +2,10 @@
 Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
-/*
+/**
  * $RCSfile: TtestInfoViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-01-21 21:52:10 $
+ * $Revision: 1.6 $
+ * $Date: 2004-01-21 21:57:15 $
  * $Author: braisted $
  * $State: Exp $
  */
