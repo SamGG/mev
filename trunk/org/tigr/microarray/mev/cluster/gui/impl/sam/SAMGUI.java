@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SAMGUI.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-05-26 13:28:16 $
+ * $Revision: 1.6 $
+ * $Date: 2004-06-17 15:05:12 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -695,7 +695,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
         addCentroidViews(root);
         addTableViews(root);
         addClusterInfo(root);
-      //  addGeneralInfo(root, info);
+        addGeneralInfo(root, info);
     }
     
     private void addSAMGraph(DefaultMutableTreeNode root) {
@@ -1308,6 +1308,23 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
         AlgorithmParameters params = algData.getParams();
         this.studyDesign = params.getInt("study-design");
         
+        if(this.studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED || this.studyDesign == SAMInitDialog.ONE_CLASS ||
+            this.studyDesign == SAMInitDialog.MULTI_CLASS) {
+            this.groupAssignments = algData.getIntArray("group-assignments");
+            if(this.studyDesign == SAMInitDialog.MULTI_CLASS)
+                this.numMultiClassGroups = params.getInt("numMultiClassGroups");
+        } else if(this.studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) {
+            FloatMatrix fm = algData.getMatrix("pairedAExptsMatrix");
+            this.pairedGroupAExpts = new Vector();
+            for(int i = 0; i < fm.getRowDimension(); i++)
+                this.pairedGroupAExpts.addElement(new Integer((int)(fm.get(i,0))));
+
+            fm = algData.getMatrix("pairedBExptsMatrix");           
+            this.pairedGroupBExpts = new Vector();
+            for(int i = 0; i < fm.getRowDimension(); i++)
+                this.pairedGroupBExpts.addElement(new Integer((int)(fm.get(i,0))));
+        }
+        
         int number_of_samples = experiment.getNumberOfSamples();
         this.exptNamesVector = new Vector();       
         for (int i = 0; i < number_of_samples; i++) {
@@ -1421,6 +1438,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
             
            /*
             *  Scripting will not support saving the imputed matrix to file
+            * on the first pass
             *
             *
             if ((!usePreviousGraph) && (saveImputedMatrix)) {
@@ -1495,18 +1513,19 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
 
             
             GeneralInfo info = new GeneralInfo();
-            /*
+
             info.time = time;
             //ADD MORE INFO PARAMETERS HERE
             info.delta = delta;
             info.upperCutoff = upperCutoff;
             info.lowerCutoff = lowerCutoff;
-            info.useAllUniquePerms = useAllUniquePerms;
-            info.numUniquePerms = numUniquePerms;
+            info.useAllUniquePerms = params.getBoolean("useAllUniquePerms");
+            if(info.useAllUniquePerms)
+                info.numUniquePerms = params.getInt("numUniquePerms");
             if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED)) {
-                if (useFoldChange) {
+                if (params.getBoolean("useFoldChange")) {
                     info.useFoldChange = "Yes";
-                    info.foldChangeValue = foldChangeValue;
+                    info.foldChangeValue = params.getFloat("foldChangeValue");
                 } else {
                     info.useFoldChange = "No";
                 }
@@ -1514,34 +1533,38 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
                 info.useFoldChange = "N/A";
             }
             if (studyDesign == SAMInitDialog.MULTI_CLASS) {
-                info.numMultiClassGroups = numMultiClassGroups;
+                info.numMultiClassGroups = params.getInt("numMultiClassGroups");
             }
             
             if (studyDesign == SAMInitDialog.ONE_CLASS) {
-                info.oneClassMean = oneClassMean;
+                info.oneClassMean = params.getFloat("oneClassMean");
             }
+            
             info.numSigGenes = numSigGenes;
             info.numFalseSigMed = numFalseSigMed;
             info.numFalseSig90th = numFalseSig90th;
             info.FDRMedian = FDRMedianString;
             info.FDR90th = FDR90thString;
             info.studyDesign = studyDesign;
-            if (useKNearest) {
+            
+            if (params.getBoolean("useKNearest")) {
                 info.imputationEngine = "K-Nearest Neighbors";
-                info.numNeighbors = numNeighbors;
+                info.numNeighbors = params.getInt("numNeighbors");
             } else {
                 info.imputationEngine = "Row Average";
             }
-            info.numCombs = numCombs;
+            info.numCombs = params.getInt("num-combs");
             info.sNought = sNought;
             info.s0Percentile = s0Percentile;
             info.pi0Hat = pi0Hat;
             //info.function = menu.getFunctionName(function);
-            info.hcl = isHierarchicalTree;
-            info.hcl_genes = hcl_genes;
-            info.hcl_samples = hcl_samples;
-            info.hcl_method = hcl_method;
-        */    
+            
+            info.hcl = params.getBoolean("hierarchical-tree");
+            info.hcl_genes = params.getBoolean("calculate-gemes");
+            info.hcl_samples = params.getBoolean("calculate-samples");
+            if(info.hcl)
+                info.hcl_method = params.getInt("method-linkage");
+            
             Vector allFields = new Vector();
             
             allFields.add("Score(d)");
