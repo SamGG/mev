@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: TtestGUI.java,v $
- * $Revision: 1.7 $
- * $Date: 2004-05-11 18:00:47 $
- * $Author: nbhagaba $
+ * $Revision: 1.8 $
+ * $Date: 2004-05-26 13:53:09 $
+ * $Author: braisted $
  * $State: Exp $
  */
 
@@ -477,7 +477,7 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
         data.addParam("name", "TTEST");
         
         // alg type
-        data.addParam("alg-type", "cluster");
+        data.addParam("alg-type", "cluster-genes");
         
         // output class
         data.addParam("output-class", "partition-output");
