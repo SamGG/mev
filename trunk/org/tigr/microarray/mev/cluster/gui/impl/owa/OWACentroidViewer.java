@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: OWACentroidViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-05 22:09:18 $
- * $Author: braisted $
+ * $Revision: 1.4 $
+ * $Date: 2004-04-08 18:21:55 $
+ * $Author: nbhagaba $
  * $State: Exp $
  */
 
@@ -200,8 +200,8 @@ public class OWACentroidViewer extends CentroidViewer {
                 //}
             }
             for (int j = 0; j < geneGroupMeans[i].length; j++) {
-                out.print(geneGroupMeans[i][j] + "\t");
-                out.print(geneGroupSDs[i][j] + "\t");
+                out.print(geneGroupMeans[rows[i]][j] + "\t");
+                out.print(geneGroupSDs[rows[i]][j] + "\t");
             }            
             //out.print("\t");
             out.print("" + ((Float)fValues.get(rows[i])).floatValue());
