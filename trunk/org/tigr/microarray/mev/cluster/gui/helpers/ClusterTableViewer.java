@@ -813,9 +813,12 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
     private void onSaveClusters() {
 	//Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
         Frame frame = JOptionPane.getFrameForComponent(clusterTable);
-	try {
-	    //ExperimentUtil.saveExperiment(frame, getExperiment(), getData(), getClusters());
-            ExperimentUtil.saveAllGeneClustersWithAux(frame, this.getExperiment(), this.getData(), this.getClusters(), auxTitles, auxData);   
+        try {
+            if (auxTitles.length == 0) {
+                ExperimentUtil.saveExperiment(frame, getExperiment(), getData(), getClusters());
+            } else {
+                ExperimentUtil.saveAllGeneClustersWithAux(frame, this.getExperiment(), this.getData(), this.getClusters(), auxTitles, auxData);  
+            }
             //getContentComponent().repaint();
 	} catch (Exception e) {
 	    JOptionPane.showMessageDialog(frame, "Can not save clusters!", e.toString(), JOptionPane.ERROR_MESSAGE);
@@ -831,8 +834,11 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
 	//Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
         Frame frame = JOptionPane.getFrameForComponent(clusterTable);
 	try {
-	    //ExperimentUtil.saveExperiment(frame, getExperiment(), getData(), getCluster());
-            ExperimentUtil.saveGeneClusterWithAux(frame, this.getExperiment(), this.getData(), this.getCluster(), auxTitles, auxData); 
+            if (auxTitles.length == 0) {
+                ExperimentUtil.saveExperiment(frame, getExperiment(), getData(), getCluster());
+            } else {
+                ExperimentUtil.saveGeneClusterWithAux(frame, this.getExperiment(), this.getData(), this.getCluster(), auxTitles, auxData); 
+            }
             //getContentComponent().repaint();
 	} catch (Exception e) {
 	    JOptionPane.showMessageDialog(frame, "Can not save cluster!", e.toString(), JOptionPane.ERROR_MESSAGE);
