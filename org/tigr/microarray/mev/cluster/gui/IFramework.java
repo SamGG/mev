@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: IFramework.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-04-05 17:30:43 $
+ * $Revision: 1.6 $
+ * $Date: 2004-05-24 18:08:23 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -138,4 +138,10 @@ public interface IFramework {
     /** Returns the ResultTree object
      */
     public ResultTree getResultTree();
+    
+           
+    /** Adds result to the ResultTree    
+     */
+    public void addAnalysisResult(DefaultMutableTreeNode resultNode);
+    
 }
