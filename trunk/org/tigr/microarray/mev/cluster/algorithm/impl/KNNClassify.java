@@ -1,4 +1,15 @@
 /*
+Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+All rights reserved.
+*/
+/*
+ * $RCSfile: KNNClassify.java,v $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 19:36:14 $
+ * $Author: braisted $
+ * $State: Exp $
+ */
+/*
  * KNNClassify.java
  *
  * Created on September 2, 2003, 4:37 PM

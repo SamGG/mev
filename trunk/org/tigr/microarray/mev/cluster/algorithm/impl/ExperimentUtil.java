@@ -4,14 +4,15 @@ All rights reserved.
 */
 /*
  * $RCSfile: ExperimentUtil.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 19:34:28 $
  * $Author: braisted $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.algorithm.impl;
 
+import java.util.Vector;
 import org.tigr.util.FloatMatrix;
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 
@@ -423,6 +424,7 @@ public class ExperimentUtil {
 	return(float)(is/(Math.sqrt((double) n1)*Math.sqrt((double)n2)+TINY)*factor);
     }
     
+   
     public static float geneMutualInformation(FloatMatrix matrix, FloatMatrix M, int g1, int g2, float factor) {
 	if (M == null) {
 	    M = matrix;
@@ -440,8 +442,11 @@ public class ExperimentUtil {
 	int k=0;
 	for (int i=0; i<n; i++) {
 	    if ((!Float.isNaN(matrix.get(g1, i))) && (!Float.isNaN(matrix.get(g2,i)))) {
-		Gene1Array.set(0,k,matrix.get(g1,i));
-		Gene2Array.set(0,k,M.get(g2,i));
+		//Gene1Array.set(0,k,matrix.get(g1,i));
+		//Gene2Array.set(0,k,M.get(g2,i));
+                Gene1Array.set(k,0,matrix.get(g1,i));
+		Gene2Array.set(k,0,M.get(g2,i));
+                
 		k++;
 	    }
 	}
@@ -452,7 +457,7 @@ public class ExperimentUtil {
 	double[] P2=new double[NumberOfBins];
 	double[][] P12=new double[NumberOfBins][NumberOfBins];
 	for (int i=0; i<n; i++) {
-	    P1[(int)Gene1Array.get(0,i)-1]++;
+            P1[(int)Gene1Array.get(0,i)-1]++;
 	    P2[(int)Gene2Array.get(0,i)-1]++;
 	    P12[(int)Gene1Array.get(0,i)-1][(int)Gene2Array.get(0,i)-1]++;
 	}
@@ -480,6 +485,7 @@ public class ExperimentUtil {
 	MI=(H1+H2-H12)/Math.max(H1,H2);
 	return(float)((1-MI)*factor);
     }
+    
     
     public static float pearson(FloatMatrix matrix, int e1, int e2, float factor) {
 	float TINY = Float.MIN_VALUE;
@@ -900,4 +906,292 @@ public class ExperimentUtil {
 	    }
 	}
     }
+    
+
+    
+    /**
+    public static float geneMutualInformation(FloatMatrix matrix, FloatMatrix M, int g1, int g2, float factor) {
+        if (M == null) {
+            M = matrix;
+        }
+        
+        //System.out.println("Mutual info: Current genes: gene " + g1 + " gene " + g2);
+        
+        int numExps = matrix.getColumnDimension();
+        float[] gene1 = new float[numExps];
+        float[] gene2 = new float[numExps];
+        
+        for (int i = 0 ; i < numExps; i++) {
+            gene1[i] = matrix.A[g1][i];
+            gene2[i] = matrix.A[g2][i];
+        }
+        
+        //Vector naNValuedElements = new Vector();
+        boolean[] naNFlags = new boolean[numExps];
+        int naNCounter = 0;
+        
+        for (int i = 0; i < numExps; i++) {
+            naNFlags[i] = false;
+        }
+        
+        for (int i = 0; i < numExps; i++) {
+            if ((Float.isNaN(gene1[i]))||(Float.isNaN(gene2[i]))) {
+                //naNValuedElements.add(new Integer(i));
+                naNFlags[i] = true;
+                naNCounter++;
+            }
+        }
+        
+        int reducedGeneLength =  numExps - naNCounter; 
+        int reducedGeneIndex = 0;
+        float[] reducedGene1 = new float[numExps - naNCounter];
+        float[] reducedGene2 = new float[numExps - naNCounter]; 
+        
+        for (int i = 0; i < numExps; i++) {
+            if (naNFlags[i] == false) {
+                reducedGene1[reducedGeneIndex] = gene1[i];
+                reducedGene2[reducedGeneIndex] = gene2[i];
+                reducedGeneIndex++;
+            }
+        }
+        //System.out.println("Entropy of gene " + g1);
+        double h1 = calculateSingleEntropy(reducedGene1);
+        //System.out.println();
+        //System.out.println("Entropy of gene " + g2);
+        double h2 = calculateSingleEntropy(reducedGene2);
+        //System.out.println();
+        double h12 = calculateJointEntropy(reducedGene1, reducedGene2);
+        //System.out.println("Entropy of gene " + g1 + " = " + h1);
+        //System.out.println("Entropy of gene " + g2 + " = " + h2);
+        //System.out.println("Joint entropy of gene " + g1 + " and gene " + g2 + " = " + h12);
+        
+        
+        //double mutualInfo=(h1+h2-h12)/Math.max(h1,h2);
+        //float miDistance = (float)((1-mutualInfo)*factor);
+         
+        double mutualInfo = h1 + h2 - h12;
+        float miDistance = (float)(h12 - mutualInfo)*factor;
+        //System.out.println("Mutual info distance between gene " + g1 + " and gene " + g2 + " = " + miDistance);
+        return miDistance;
+        
+        //float max1 = getMax(gene1);
+        //loat min1 = getMin(gene1);
+        
+        //float max2 = getMax(gene2);
+        //float min2 = getMin(gene2);          
+    }
+
+    private static float getMax(float[] gene) {
+        float max = Float.NEGATIVE_INFINITY;
+        
+        for (int i = 0; i < gene.length; i++) {
+            if (gene[i] > max) {
+                max = gene[i];
+            }
+        }
+        
+        return max;
+    }
+
+    private static float getMin(float[] gene) {
+        float min = Float.POSITIVE_INFINITY;
+        
+        for (int i = 0; i < gene.length; i++) {
+            if (gene[i] < min) {
+                min = gene[i];
+            }
+        }
+        
+        return min;
+    }  
+    
+    
+    private static Vector[] makeBins(float[] gene) {
+  
+        
+        if (getMax(gene) == getMin(gene)) {
+            for (int i = 0; i < gene.length; i++) {//this is needed to introduce some variability into "flat" genes, otherwise entropy calculations cause subsequent problems
+                gene[i] = 0;
+            }
+            gene[0] = gene[0] + Float.MIN_VALUE;
+            
+        }
+        
+        float max = getMax(gene);
+        float min = getMin(gene);
+        
+        //System.out.println("Max = " + max);
+        //System.out.println("Min = " + min);
+        
+        Vector[] bins = new Vector[10];
+        for (int i = 0; i < bins.length; i++) {
+            bins[i] = new Vector();
+        }
+        
+        int counter = 0;
+        
+        for (int i = 0; i < gene.length; i++) {
+            if (gene[i] == min) {
+                bins[0].add(new Integer(i));//otherwise, the min value(s) would never be binned, as the "for" loop below only checks to see
+                //if the value is > currentLowerBound. bin[0] includes the currentLowerBound (i.e., min), all other bins include values > currentLowerBound
+                counter++;
+            }
+        }
+        
+        
+        
+        float currentLowerBound = min;
+        float interval = (max - min) / 10;
+        float currentUpperBound = currentLowerBound + interval;
+        
+        for (int i = 0; i < bins.length; i++) {
+            currentUpperBound = currentLowerBound + interval;
+            for (int j = 0; j < gene.length; j++) {
+                if ((gene[j] > currentLowerBound)&&(gene[j] <= currentUpperBound)) {
+                    bins[i].add(new Integer(j));
+                    counter++;
+                }
+            }
+            
+            currentLowerBound = currentUpperBound;
+        }
+        
+        if (currentUpperBound < max) { // might happen because of rounding off, in which case the max value(s) won't get binned
+            for (int i = 0; i < gene.length; i++) {
+                if (gene[i] == max) {
+                    bins[9].add(new Integer(i));
+                    counter++;
+                }
+            }
+        }
+        
+        if (counter > gene.length) {
+            System.out.println("Warning: Mutual info: too many elements added to bins");
+        } else if (counter < gene.length) {
+            System.out.println("Warning: Mutual info: too few elements added to bins");
+        }      
+        return bins;
+    }
+    
+    private static double calculateSingleEntropy(float[] gene) {
+        Vector[] bins = makeBins(gene);
+        double[] probArray = new double[bins.length];
+        
+        for (int i = 0; i < probArray.length; i++) {
+            //System.out.println("bins[" + i + "].size() = " + bins[i].size());
+            //System.out.println("gene.length = " + gene.length);
+            int num = bins[i].size();
+            int denom = gene.length;
+            probArray[i] = (double)num/(double)denom;
+            //System.out.println("probArray[" + i + "] = " + probArray[i]);
+        }
+        
+        double entropy = 0;
+        
+        for (int i = 0; i < probArray.length; i++) {
+            if (probArray[i] != 0) {
+                entropy = entropy + probArray[i]*(Math.log(probArray[i])/Math.log(2));
+            }
+        }
+        
+        entropy = (-1)*entropy;
+        return entropy;
+        
+    }
+    
+    private static double calculateJointEntropy(float[] gene1, float[] gene2) {
+        Vector[] bins1 = makeBins(gene1);
+        Vector[] bins2 = makeBins(gene2);
+        
+        float[][] jointProbMatrix = new float[bins1.length][];
+        
+        for (int i = 0; i < jointProbMatrix.length; i++) {
+            jointProbMatrix[i] = new float[bins1.length];
+        }
+        
+        for (int i = 0; i < jointProbMatrix.length; i++) {
+            for (int j = 0; j < jointProbMatrix[0].length; j++) {
+                jointProbMatrix[i][j] = 0;
+            }
+        }
+        
+        int[] gene1States = new int[gene1.length];
+        int[] gene2States = new int[gene2.length];
+        
+        for (int i = 0; i < gene1States.length; i++) {//initializing
+            gene1States[i] = -1;
+            gene2States[i] = -1;
+        }
+        
+        for (int i = 0; i < bins1.length; i++) {
+            Vector currentBin = bins1[i];
+            if (currentBin.size() != 0) {
+                for (int j = 0 ; j < currentBin.size(); j++) {
+                    int currentElement = ((Integer)(currentBin.get(j))).intValue();
+                    //System.out.println("currentElement from bins1 = " + currentElement);                   
+                    gene1States[currentElement] = i;
+                    //System.out.println("gene1States[" + currentElement + "] = " + gene1States[currentElement]);
+                }
+            }
+        }
+
+        //System.out.println();
+ 
+        for (int i = 0; i < bins2.length; i++) {
+            Vector currentBin = bins2[i];
+            if (currentBin.size() != 0) {
+                for (int j = 0 ; j < currentBin.size(); j++) {
+                    int currentElement = ((Integer)(currentBin.get(j))).intValue();
+                    //System.out.println("currentElement from bins2 = " + currentElement);
+                    gene2States[currentElement] = i;
+                    //System.out.println("gene2States[" + currentElement + "] = " + gene2States[currentElement]);                    
+                }
+            }
+        }  
+        
+        for (int i = 0; i < gene1States.length; i++) {
+            if (gene1States.length == -1) {
+                System.out.println("Warning in mutual info: gene1States[" + i + "] has not been initialized");
+            }
+
+            if (gene2States.length == -1) {
+                System.out.println("Warning in mutual info: gene2States[" + i + "] has not been initialized");
+            }            
+            
+        }
+
+        for (int i = 0 ; i < gene1States.length; i++) {
+            int state1 = gene1States[i];
+            int state2 = gene2States[i];
+            jointProbMatrix[state1][state2] = jointProbMatrix[state1][state2] + 1;
+        }
+        
+        for (int i = 0; i < jointProbMatrix.length; i++) {
+            for (int j = 0; j < jointProbMatrix[0].length; j++) {
+                jointProbMatrix[i][j] = (jointProbMatrix[i][j])/(gene1States.length);
+            }
+           
+        }
+
+        
+        double jointEntropy = 0;
+        
+        
+        for (int i = 0; i < jointProbMatrix.length; i++) {
+            for (int j = 0; j < jointProbMatrix[0].length; j++) {
+                if (jointProbMatrix[i][j] != 0) {
+                    jointEntropy = jointEntropy + (jointProbMatrix[i][j])*(Math.log(jointProbMatrix[i][j])/Math.log(2));
+                }
+            }
+        }
+         
+        
+       jointEntropy = (-1)*jointEntropy;
+       
+       return jointEntropy;
+        
+    }
+  
+    */
+    
 }
