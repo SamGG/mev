@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterList.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-05 22:40:08 $
+ * $Revision: 1.3 $
+ * $Date: 2004-04-07 19:26:20 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -140,10 +140,11 @@ public class ClusterList extends Vector implements java.io.Serializable {
     /** Returns true if the cluster from the specified clusterID
      * (node name) is already saved
      */    
-    public boolean isClusterSaved(String clusterID){              
+    public boolean isClusterSaved(String clusterID, int [] indices){              
         for(int i = 0; i < size(); i++){
             if(this.getClusterID(i).equals(clusterID))
-                return true;
+                if(this.getCluster(clusterID).doIndicesMatch(indices))
+                    return true;                
         }
         return false;
     }
