@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: AlgorithmDialog.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 18:42:39 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -29,9 +29,9 @@ public class AlgorithmDialog extends JDialog {
     protected JButton cancelButton;
     protected JButton resetButton;
     protected JButton infoButton;
-    JPanel mainPanel;
+    protected JPanel mainPanel;
     protected JPanel contentPanel;
-    JPanel buttonPanel;
+    protected JPanel buttonPanel;
     
     GradientPaint gp;
     Color backgroundColor = new Color(25,25,169);
@@ -97,7 +97,7 @@ public class AlgorithmDialog extends JDialog {
         infoButton.addActionListener(listener);
     }
     
-    protected void addContent(JPanel content){
+    protected void addContent(Component content){
         contentPanel.add(content, new GridBagConstraints(0,0,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         validate();
     }
@@ -105,6 +105,12 @@ public class AlgorithmDialog extends JDialog {
     protected void disposeDialog(){
         dispose();
     };
+    
+    protected void supplantButtonPanel(Component buttonsSet){
+        mainPanel.remove(buttonPanel);
+        this.mainPanel.add(buttonsSet, new GridBagConstraints(0,2,1,1,1.0,0.0,GridBagConstraints.SOUTH, GridBagConstraints.BOTH, new Insets(5,0,0,0), 0,0)); 
+        validate();
+    }
     
     
     public class HeaderImagePanel extends JPanel{
