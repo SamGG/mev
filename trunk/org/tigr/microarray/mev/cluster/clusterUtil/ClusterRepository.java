@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterRepository.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-04-05 17:36:44 $
+ * $Revision: 1.7 $
+ * $Date: 2004-04-07 19:26:20 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -148,7 +148,7 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
             return;
         
         //if not a cluster operation and cluster exists, modify cluster
-        if(!((cluster.getSource()).equals("Cluster Op.")) && list.isClusterSaved(cluster.getClusterID())){
+        if(!((cluster.getSource()).equals("Cluster Op.")) && list.isClusterSaved(cluster.getClusterID(), cluster.getIndices())){
             Cluster savedCluster = list.getCluster(cluster.getClusterID());
             if(savedCluster == null){   //safety net
                 list.addCluster(cluster);
@@ -279,7 +279,7 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
         if(list == null){
             list = new ClusterList(algorithmName);
             this.addClusterList(list);
-        } else if(list.isClusterSaved(clusterID)){
+        } else if(list.isClusterSaved(clusterID, indices)){
             JOptionPane pane = new JOptionPane("Cluster has already been saved.  Would you like to " +
             "replace the existing attributes?", JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_CANCEL_OPTION);
             pane.setVisible(true);
@@ -312,7 +312,7 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
         if(list == null){
             list = new ClusterList(algorithmName);
             this.addClusterList(list);
-        } else if(list.isClusterSaved(clusterID)){
+        } else if(list.isClusterSaved(clusterID, indices)){
             int option = JOptionPane.showConfirmDialog(new java.awt.Frame(), "Cluster has already been saved.  Would you like to " +
             "modify the existing attributes?", "Cluster Saved Alert", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             
@@ -346,7 +346,7 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
         if(list == null){
             list = new ClusterList(algorithmName);
             this.addClusterList(list);
-        } else if(list.isClusterSaved(clusterID)){
+        } else if(list.isClusterSaved(clusterID, indices)){
             if(list.getCluster(clusterID).doIndicesMatch(indices)){
                 int option = JOptionPane.showConfirmDialog(new java.awt.Frame(), "Cluster has already been saved.  Would you like to " +
                 "modify the existing attributes?", "Cluster Saved Alert", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
