@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASEInitDialog.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-05-26 13:24:50 $
+ * $Revision: 1.5 $
+ * $Date: 2004-07-26 21:32:00 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -77,6 +77,8 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;
 
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
+
+import org.tigr.microarray.mev.TMEV;
 
 
 /** Accumulates parameters for execution of
@@ -458,8 +460,7 @@ public class EASEInitDialog extends AlgorithmDialog {
             browseButton.setSize(150, 25);
             browseButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent ae) {
-                    String file = System.getProperty("user.dir")+sep+"Data";
-                    JFileChooser chooser = new JFileChooser(file);
+                    JFileChooser chooser = new JFileChooser(TMEV.getFile("Data/"));
                     chooser.setDialogTitle("Population File Selection");
                     chooser.setMultiSelectionEnabled(false);
                     if(chooser.showOpenDialog(parent) == JOptionPane.OK_OPTION){
@@ -587,8 +588,8 @@ public class EASEInitDialog extends AlgorithmDialog {
             annPanel.add(annPane, new GridBagConstraints(1,1,2,1,0.0,1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
             
             sep = System.getProperty("file.separator");
-            String tempPath = System.getProperty("user.dir")+sep+"Data"+sep+"EASE";
-            File file = new File(tempPath);
+            File file = TMEV.getFile("Data/Ease/");
+            String tempPath = file.getPath();
             Vector fileVector = new Vector();
             fileList = new JList(fileVector);
             if(file.exists()){
@@ -911,8 +912,8 @@ public class EASEInitDialog extends AlgorithmDialog {
                     easeParamPanel.fileLabel.setEnabled(false);
                 }
             } else if (command.equals("converter-file-browser-command")){
-                String file = System.getProperty("user.dir")+sep+"Data"+sep+"EASE"+sep+"Data"+sep+"Convert";
-                JFileChooser chooser = new JFileChooser(file);
+                File convertFile = TMEV.getFile("Data/Ease/Data/Convert");
+                JFileChooser chooser = new JFileChooser(convertFile);
                 chooser.setDialogTitle("Annotation Converter Selection");
                 chooser.setMultiSelectionEnabled(false);
                 if(chooser.showOpenDialog(parent) == JOptionPane.OK_OPTION){
@@ -920,8 +921,9 @@ public class EASEInitDialog extends AlgorithmDialog {
                 }
                 return;
             } else if (command.equals("ann-file-browser-command")){
-                String file = System.getProperty("user.dir")+sep+"Data"+sep+"EASE"+sep+"Data"+sep+"Class";
-                JFileChooser chooser = new JFileChooser(file);
+                
+                File classFile = TMEV.getFile("Data/Ease/Data/Class/");
+                JFileChooser chooser = new JFileChooser(classFile);
                 chooser.setDialogTitle("Annotation --> GO Term, File(s) Selection");
                 chooser.setMultiSelectionEnabled(true);
                 if(chooser.showOpenDialog(parent) == JOptionPane.OK_OPTION){
