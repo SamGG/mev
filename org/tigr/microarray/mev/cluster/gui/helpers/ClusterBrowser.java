@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterBrowser.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-09 16:08:16 $
+ * $Revision: 1.5 $
+ * $Date: 2004-04-14 23:44:58 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -170,9 +170,22 @@ public class ClusterBrowser extends JPanel {
         if(this.clusterTypeStr.equals("Experiment"))
             this.matrix = this.matrix.transpose();
         
-        int [] indices = cluster.getIndices();
+        int [] indices = cluster.getExperimentIndices();  //get the indices that map to the experiment
         Color clusterColor = cluster.getClusterColor();
         int xRange = matrix.getColumnDimension();
+        
+        
+        
+        //debug
+       /*System.out.println("cluster indices");
+        for(int i = 0; i < indices.length; i++)
+            System.out.println("cluster index = "+indices[i]);
+        
+        int [] expindices = cluster.getExperiment().getRowMappingArrayCopy();
+        System.out.println("\nExp indices indices");
+        for(int i = 0; i < expindices.length; i++)
+            System.out.println("exp index = "+expindices[i]);
+        */
         
         float min = Float.POSITIVE_INFINITY;
         float max = Float.NEGATIVE_INFINITY;
