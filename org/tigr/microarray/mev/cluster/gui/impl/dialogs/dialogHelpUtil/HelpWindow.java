@@ -265,6 +265,12 @@ public class HelpWindow extends JDialog {
             return "file_loader.html";
         if(key.equals("SOTA Tree Properties"))
             return "sota_tree_config_parameters.html";
+        if(key.equals("GDM Initialization Dialog"))
+            return "gdm_parameters.html";  
+        if(key.equals("GDM Color Range Dialog"))
+            return "gdm_color_range.html";
+        if(key.equals("EASE Initialization Dialog"))
+            return "ease_parameters.html";
         else
             return null;
     }
