@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: Content3D.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 18:16:07 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -746,7 +746,7 @@ public class Content3D extends JPanel {
             z = U.get(i,2);
             if (!isSelection() || !isPointSelected(x, y, z)) {
                 if(geneViewer)
-                    index = data.getProbeColorIndex(i)+delta;
+                    index = data.getProbeColorIndex(experiment.getGeneIndexMappedToData(i))+delta;
                 else
                     index = data.getExperimentColorIndex(i)+delta;
                 pointArrays[index].setCoordinate(counters[index], new Point3f(x*factorX, y*factorY, z*factorZ));
@@ -808,10 +808,10 @@ public class Content3D extends JPanel {
             sphere = new TransformGroup(transform);
             selected = (isSelection() && isPointSelected(x, y, z));
             if(geneViewer){
-                if (data.getProbeColor(i) == null) {
+                if (data.getProbeColor(experiment.getGeneIndexMappedToData(i)) == null) {
                     sphere.addChild(new Sphere(getPointSize(selected)/20f, (selected ? sAppearance : uAppearance)));
                 } else {
-                    sphere.addChild(new Sphere(getPointSize(selected)/20f, (selected ? sAppearance : createSphereAppearance(new Color3f(data.getProbeColor(i))))));
+                    sphere.addChild(new Sphere(getPointSize(selected)/20f, (selected ? sAppearance : createSphereAppearance(new Color3f(data.getProbeColor(experiment.getGeneIndexMappedToData(i)))))));
                 }
             }
             else{
