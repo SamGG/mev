@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: TMEV.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-05 22:36:19 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-27 22:20:09 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -60,6 +60,9 @@ public class TMEV {
     
     //Prompt user to save analysis on close
     public static boolean permitSavePrompt = true;
+    
+    //Initial data path
+    private static String dataPath;
     
     // pcahan                       jcb:constant
     private static int dataType = DATA_TYPE_TWO_DYE;
@@ -379,10 +382,28 @@ public class TMEV {
             algorithmFactory = new TMEVAlgorithmFactory(cfg);
             
             TMEV.permitSavePrompt = cfg.getBoolean("prompt-for-save", false);
+            String path = cfg.getProperty("current-data-path");
+
+            if(path != null) {
+                String sep = System.getProperty("file.separator");
+                StringTokenizer stok = new StringTokenizer(path, "/");
+                path = new String();
+                while(stok.hasMoreTokens())
+                    path += stok.nextToken()+sep;
+                TMEV.dataPath = path;
+            } 
             
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    public static String getDataPath() {
+        return dataPath;
+    }
+    
+    public static void setDataPath(String newPath) {
+        dataPath = newPath;
     }
     
     
