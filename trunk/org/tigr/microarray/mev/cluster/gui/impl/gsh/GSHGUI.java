@@ -1,12 +1,12 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
-*/
+ */
 /*
  * $RCSfile: GSHGUI.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-04-29 19:01:58 $
- * $Author: nbhagaba $
+ * $Revision: 1.4 $
+ * $Date: 2004-05-21 13:01:39 $
+ * $Author: braisted $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.gsh;
@@ -55,7 +55,9 @@ import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
 
-public class GSHGUI implements IClusterGUI {
+import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
+
+public class GSHGUI implements IClusterGUI, IScriptGUI {
     
     private Algorithm algorithm;
     private IData data;
@@ -122,14 +124,7 @@ public class GSHGUI implements IClusterGUI {
             algorithm = framework.getAlgorithmFactory().getAlgorithm("GSH");
             algorithm.addAlgorithmListener(listener);
             
-            
-            
             int genes = experiment.getNumberOfGenes();
-            /*this.monitor = new Monitor(framework.getFrame(), "Reallocations", 25, 100, 210.0/genes);
-            this.monitor.setStepXFactor((int)Math.floor(245/k));
-            this.monitor.update(genes);
-            this.monitor.show();
-             */
             
             AlgorithmData data = new AlgorithmData();
             FloatMatrix matrix = experiment.getMatrix();
@@ -146,9 +141,9 @@ public class GSHGUI implements IClusterGUI {
                 function = Algorithm.EUCLIDEAN;
             }
             data.addParam("distance-function", String.valueOf(function));
-            data.addParam("number_of_clusters", String.valueOf(k));
-            data.addParam("number_of_fakedMatrix", String.valueOf(f));
-            data.addParam("number_of_swap", String.valueOf(s));
+            data.addParam("number-of-clusters", String.valueOf(k));
+            data.addParam("number-of-fakedMatrix", String.valueOf(f));
+            data.addParam("number-of-swap", String.valueOf(s));
             // hcl parameters
             if (isHierarchicalTree) {
                 data.addParam("hierarchical-tree", String.valueOf(true));
@@ -171,8 +166,8 @@ public class GSHGUI implements IClusterGUI {
             for (int i=0; i<k; i++) {
                 clusters[i] = nodeList.getNode(i).getFeaturesIndexes();
             }
-            this.means = result.getMatrix("clusters_means");
-            this.variances = result.getMatrix("clusters_variances");
+            this.means = result.getMatrix("clusters-means");
+            this.variances = result.getMatrix("clusters-variances");
             
             GeneralInfo info = new GeneralInfo();
             info.clusters = k;
@@ -192,6 +187,157 @@ public class GSHGUI implements IClusterGUI {
             }
         }
     }
+    
+    
+    
+    public AlgorithmData getScriptParameters(IFramework framework) {
+        this.data = framework.getData();
+        // the default values
+        int k = 10;
+        int f = 20;
+        int s = 5;
+        
+        GSHInitDialog gsh_dialog = new GSHInitDialog(framework.getFrame(), k, f, s);
+        if (gsh_dialog.showModal() != JOptionPane.OK_OPTION) {
+            return null;
+        }
+        k = gsh_dialog.getClusters();
+        f = gsh_dialog.getFM();
+        s = gsh_dialog.getST();
+        clusterGenes = gsh_dialog.isClusterGenesSelected();
+        if (k < 1) {
+            JOptionPane.showMessageDialog(framework.getFrame(), "Number of clusters must be greater than 0!", "Error", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+        if (f < 1) {
+            JOptionPane.showMessageDialog(framework.getFrame(), "Number of faked matrix must be greater than 0!", "Error", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+        if (s < 1) {
+            JOptionPane.showMessageDialog(framework.getFrame(), "Number of swap must be greater than 0!", "Error", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+        boolean isHierarchicalTree = gsh_dialog.isHierarchicalTree();
+        // hcl init
+        int hcl_method = 0;
+        boolean hcl_samples = false;
+        boolean hcl_genes = false;
+        if (isHierarchicalTree) {
+            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame());
+            if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
+                return null;
+            }
+            hcl_method = hcl_dialog.getMethod();
+            hcl_samples = hcl_dialog.isClusterExperience();
+            hcl_genes = hcl_dialog.isClusterGenes();
+        }
+        
+        this.experiment = framework.getData().getExperiment();
+        Listener listener = new Listener();
+
+        int genes = experiment.getNumberOfGenes();
+        
+        AlgorithmData data = new AlgorithmData();
+        data.addParam("distance-factor", String.valueOf(1.0f));
+        IDistanceMenu menu = framework.getDistanceMenu();
+        data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
+        data.addParam("gsh-cluster-genes", String.valueOf(this.clusterGenes));
+        int function = menu.getDistanceFunction();
+        if (function == Algorithm.DEFAULT) {
+            function = Algorithm.EUCLIDEAN;
+        }
+        data.addParam("distance-function", String.valueOf(function));
+        data.addParam("number-of-clusters", String.valueOf(k));
+        data.addParam("number-of-fakedMatrix", String.valueOf(f));
+        data.addParam("number-of-swap", String.valueOf(s));
+        // hcl parameters
+        if (isHierarchicalTree) {
+            data.addParam("hierarchical-tree", String.valueOf(true));
+            data.addParam("method-linkage", String.valueOf(hcl_method));
+            data.addParam("calculate-genes", String.valueOf(hcl_genes));
+            data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+        }
+        
+        //script control parameters
+        
+        // alg name
+        data.addParam("name", "GSH");
+        
+        // alg type
+        data.addParam("alg-type", "cluster");
+        
+        // output class
+        data.addParam("output-class", "multi-cluster-output");
+        
+        //output nodes
+        String [] outputNodes = new String[1];
+        outputNodes[0] = "Multi-cluster";
+        data.addStringArray("output-nodes", outputNodes);
+        
+        return data;
+    }
+    
+    
+    public DefaultMutableTreeNode executeScript(IFramework framework, AlgorithmData algData, Experiment experiment) throws AlgorithmException {
+        this.data = framework.getData();
+        this.experiment = experiment;
+        
+        this.clusterGenes = algData.getParams().getBoolean("gsh-cluster-genes");
+        
+        Listener listener = new Listener();
+        try {
+            
+            FloatMatrix matrix = experiment.getMatrix();
+            if(!clusterGenes)
+                matrix = matrix.transpose();
+            algData.addMatrix("experiment", matrix);
+            
+            algorithm = framework.getAlgorithmFactory().getAlgorithm("GSH");
+            algorithm.addAlgorithmListener(listener);
+            int genes = experiment.getNumberOfGenes();            
+            
+            long start = System.currentTimeMillis();
+            AlgorithmData result = algorithm.execute(algData);
+            long time = System.currentTimeMillis() - start;
+            // getting the results
+            Cluster result_cluster = result.getCluster("cluster");
+            NodeList nodeList = result_cluster.getNodeList();
+            
+            AlgorithmParameters resultMap = result.getParams();
+            int k = resultMap.getInt("number-of-clusters"); // NEED THIS TO GET THE VALUE OF NUMBER-OF-CLUSTERS
+            
+            this.clusters = new int[k][];
+            for (int i=0; i<k; i++) {
+                clusters[i] = nodeList.getNode(i).getFeaturesIndexes();
+            }
+            this.means = result.getMatrix("clusters-means");
+            this.variances = result.getMatrix("clusters-variances");
+            
+            AlgorithmParameters params = algData.getParams();
+            
+            GeneralInfo info = new GeneralInfo();
+            info.clusters = k;
+            info.time = time;
+            info.FM = params.getInt("number-of-fakedMatrix");
+            info.ST = params.getInt("number-of-swap");
+            int function = params.getInt("distance-function");
+            info.function = framework.getDistanceMenu().getFunctionName(function);
+            info.hcl = params.getBoolean("hierarchical-tree");
+            info.hcl_genes = params.getBoolean("calculate-genes");
+            info.hcl_samples = params.getBoolean("calculate-experiments");
+            if(info.hcl)
+                info.hcl_method = params.getInt("method-linkage");
+            
+            return createResultTree(result_cluster, info);
+            
+        } finally {
+            if (algorithm != null) {
+                algorithm.removeAlgorithmListener(listener);
+            }
+        }
+        
+    }
+    
     
     /**
      * Creates a result tree to be inserted into the framework analysis node.
@@ -227,8 +373,8 @@ public class GSHGUI implements IClusterGUI {
             tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.data);
         else
             tabViewer = new ExperimentClusterTableViewer(this.experiment, this.clusters, this.data);
-            //return; // placeholder for ExptClusterTableViewer
-            //expViewer = new GSHExperimentClusterViewer(this.experiment, this.clusters);
+        //return; // placeholder for ExptClusterTableViewer
+        //expViewer = new GSHExperimentClusterViewer(this.experiment, this.clusters);
         
         for (i=0; i<this.clusters.length-1; i++) {
             node.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+String.valueOf(i+1), tabViewer, new Integer(i))));
@@ -236,10 +382,10 @@ public class GSHGUI implements IClusterGUI {
         //if(clusterGenes)
         node.add(new DefaultMutableTreeNode(new LeafInfo("Unassigned ", tabViewer, new Integer(i))));
         //else
-            //node.add(new DefaultMutableTreeNode(new LeafInfo("Unassigned Experiments", expViewer, new Integer(i))));
+        //node.add(new DefaultMutableTreeNode(new LeafInfo("Unassigned Experiments", expViewer, new Integer(i))));
         
         root.add(node);
-    }    
+    }
     
     /**
      * Adds nodes to display clusters data.
@@ -445,6 +591,8 @@ public class GSHGUI implements IClusterGUI {
         }
         return pos;
     }
+    
+    
     
     /****************************************************************************************
      * End of Sample Cluster index ordering code

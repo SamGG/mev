@@ -1,9 +1,9 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
- * $Id: GSH.java,v 1.1.1.2 2004-02-06 21:48:18 braisted Exp $
+ * $Id: GSH.java,v 1.2 2004-05-21 13:02:32 braisted Exp $
  *
  * Created 11/26/2001
  *
@@ -103,11 +103,11 @@ public class GSH extends AbstractAlgorithm {
         absolute = map.getBoolean("distance-absolute", false);
         gshGenes = map.getBoolean("gsh-cluster-genes", true);
         
-        int number_of_fakedMatrix = map.getInt("number_of_fakedMatrix", 20);
+        int number_of_fakedMatrix = map.getInt("number-of-fakedMatrix", 20);
         fakedMatrix=number_of_fakedMatrix;
-        int number_of_swap = map.getInt("number_of_swap", 5);
+        int number_of_swap = map.getInt("number-of-swap", 5);
         swapTime=number_of_swap;
-        int number_of_clusters = map.getInt("number_of_clusters", 5);
+        int number_of_clusters = map.getInt("number-of-clusters", 5);
         k=number_of_clusters;
         
         boolean hierarchical_tree = map.getBoolean("hierarchical-tree", false);
@@ -183,8 +183,8 @@ public class GSH extends AbstractAlgorithm {
         AlgorithmData result = new AlgorithmData();
         result.addCluster("cluster", result_cluster);
         result.addParam("number-of-clusters", String.valueOf(clusters.length));
-        result.addMatrix("clusters_means", means);
-        result.addMatrix("clusters_variances", variances);
+        result.addMatrix("clusters-means", means);
+        result.addMatrix("clusters-variances", variances);
         //result.addParam("iterations", String.valueOf(getIterations()));
         //result.addParam("converged", String.valueOf(getConverged()));
         return result;
