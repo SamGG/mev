@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: CastFOMContentComponentA.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-03 16:07:39 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -30,7 +30,7 @@ import javax.swing.JScrollPane;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 
-public class CastFOMContentComponentA extends JPanel {
+public class CastFOMContentComponentA extends JPanel implements java.io.Serializable {
     
     private FOMGraph fomGraphA;
     private FOMGraph fomGraphB;

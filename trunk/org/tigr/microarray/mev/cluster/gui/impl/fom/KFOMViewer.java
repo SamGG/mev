@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: KFOMViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 18:42:10 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-03 16:07:39 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -20,7 +20,7 @@ import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
-public class KFOMViewer extends ViewerAdapter {
+public class KFOMViewer extends ViewerAdapter implements java.io.Serializable {
     
     private FOMContentComponent content;
     
