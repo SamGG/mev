@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: RNGUI.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-04-08 19:05:44 $
+ * $Revision: 1.3 $
+ * $Date: 2004-04-29 18:03:55 $
  * $Author: nbhagaba $
  * $State: Exp $
  */
@@ -24,6 +24,7 @@ import org.tigr.util.FloatMatrix;
 import org.tigr.microarray.mev.cluster.*;
 import org.tigr.microarray.mev.cluster.gui.*;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
 import org.tigr.microarray.mev.cluster.algorithm.*;
 
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
@@ -223,7 +224,8 @@ public class RNGUI implements IClusterGUI {
         if (clusterGenes)
             viewer = new ClusterTableViewer(experiment, clusters, this.data);
         else
-            return; //placeholder for ExptClusterTableViewer
+            viewer = new ExperimentClusterTableViewer(experiment, clusters, this.data);
+            //return; //placeholder for ExptClusterTableViewer
             //viewer = new RelNetExperimentClusterViewer(experiment, clusters);
         for (int i=0; i<clusters.length; i++)
             if (clusters[indices[i]].length > 1)
@@ -326,7 +328,8 @@ public class RNGUI implements IClusterGUI {
         if (clusterGenes)
             viewer = new ClusterTableViewer(experiment, subnets, this.data);
         else
-            return; //placeholder for ExptClusterTableViewer
+            viewer = new ExperimentClusterTableViewer(experiment, subnets, this.data);
+            //return; //placeholder for ExptClusterTableViewer
         for (int i=0; i<subnets.length; i++)
             tabNode.add(new DefaultMutableTreeNode(new LeafInfo("Subnet "+String.valueOf(i+1)+" ("+subnets[indices[i]].length+")", viewer, new Integer(indices[i]))));
         root.add(tabNode);        
