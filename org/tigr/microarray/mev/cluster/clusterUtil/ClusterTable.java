@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterTable.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-13 19:15:02 $
+ * $Revision: 1.5 $
+ * $Date: 2004-04-06 15:24:19 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -540,7 +540,7 @@ public class ClusterTable extends JPanel implements IViewer {
         }
         
         public int getSerialNumber(int row){
-            JLabel serialLabel = (JLabel)(rowData[row][0]);
+            JLabel serialLabel = (JLabel)(rowData[rows[row].index][0]);
             return Integer.parseInt(serialLabel.getText());
         }
         
@@ -1102,14 +1102,21 @@ public class ClusterTable extends JPanel implements IViewer {
     
     private void deleteSelectedRows(){
         int [] rows = table.getSelectedRows();
+        System.out.println("Remove row #= "+rows[0]);
         for(int i = 0; i < rows.length; i++){
             if(model.isLegalRow(rows[i]-i)){
-                repository.removeCluster(model.getSerialNumber(rows[i]-i));
+                System.out.println("Remove cluster ser number= "+model.getSerialNumber(rows[i]-i));
+                if(repository.removeCluster(model.getSerialNumber(rows[i]-i)))
+                    System.out.println("Deleted Cluster");
+                else
+                    System.out.println("Couldn't delete cluster");
                 model.removeRow(rows[i]-i);
             }
         }
         if(rows.length > 0)
             model.fireTableDataChanged();
+        //try this
+        this.onRepositoryChanged(this.repository);
     }
     
     private void deleteAllRows(){
