@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2004-02-13 19:15:05 $
+ * $Revision: 1.8 $
+ * $Date: 2004-03-16 17:27:52 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -369,7 +369,7 @@ public class HCLViewer extends JPanel implements IViewer {
      * Creates a cluster for wrapped experiment viewer.
      */
     private int[][] createClusters(Experiment experiment, int[] features, HCLTreeData genes_result) {
-        int[][] clusters = new int[1][features.length];
+        int [][] clusters = new int[1][features.length];
         clusters[0] = createGenesOrder(experiment, features, genes_result);
         return clusters;
     }
@@ -597,7 +597,7 @@ public class HCLViewer extends JPanel implements IViewer {
         menuItem.addActionListener(listener);
         menu.add(menuItem);
         
-        menuItem = new JMenuItem("Save Experimnet Order", GUIFactory.getIcon("save_as16.gif"));
+        menuItem = new JMenuItem("Save Experiment Order", GUIFactory.getIcon("save_as16.gif"));
         menuItem.setEnabled(this.sampleTree != null);
         menuItem.setActionCommand(SAVE_EXP_ORDER_CMD);
         menuItem.addActionListener(listener);
@@ -1348,12 +1348,21 @@ public class HCLViewer extends JPanel implements IViewer {
         return null;
     }
     
-    public int[][] getClusters() {
-        return null;
+    public int[][] getClusters() {       
+        int [][] leafClusters = new int[2][];
+        if(this.genesTree != null)
+            leafClusters[0] = this.genesOrder;
+        else
+            leafClusters[0] = null;
+        if(this.sampleTree != null)
+            leafClusters[1] = this.samplesOrder;
+        else
+            leafClusters[1] = null;
+            return leafClusters;
     }    
     
     public Experiment getExperiment() {
-        return null;
+        return this.experiment;
     }
     
   /**  Prototyping code for saving state as XML
