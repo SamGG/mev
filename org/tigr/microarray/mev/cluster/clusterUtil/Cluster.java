@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: Cluster.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 18:46:05 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -31,6 +31,9 @@ public class Cluster {
     /** Element indices in IData.
      */    
     private int [] indices;
+    /** Indices to the Experiment Object's matrix
+     */
+    private int [] experimentIndices;
     /** Cluster source type
      */    
     private String source;
@@ -72,6 +75,7 @@ public class Cluster {
         this.clusterDescription = clusterDescription;
         this.serialNumber = serialNumber;
         this.experiment = experiment;
+        this.experimentIndices = getIndicesMappedToExperiment();
     }
     
         /** Creates new cluster object
@@ -88,6 +92,7 @@ public class Cluster {
         this.serialNumber = serialNumber;
         this.node = node;
         this.experiment = experiment;
+        this.experimentIndices = getIndicesMappedToExperiment();
     }
     
     /** Returns cluster color
@@ -96,6 +101,9 @@ public class Cluster {
     /** Returns cluster indices
      */    
     public int []  getIndices(){ return this.indices; }
+    /** Returns the cluster indices to the Experiment object associated with the cluster.
+     */
+    public int [] getExperimentIndices(){ return this.experimentIndices; }
     /** Returns source type
      */    
     public String getSource(){ return this.source; }
@@ -205,5 +213,29 @@ public class Cluster {
             set.add(new Integer(indices[i]));
         }
         return set;
+    }
+    
+    private int [] getIndicesMappedToExperiment(){
+        int [] expIndices= new int[indices.length];
+        int [] map = this.experiment.getRowMappingArrayCopy();
+        int cnt = 0;
+      /*  for(int i = 0; i < map.length; i++){
+            if(map[i] == indices[cnt]){
+                expIndices[cnt] = i;
+                cnt++;
+            }
+        }
+       **/
+        int currIndex;
+        for(int i = 0; i < expIndices.length; i++){
+            currIndex = indices[i];
+            
+            for(int j = 0; j < map.length; j++){
+                if(map[j] == currIndex){
+                    expIndices[i] = j;
+                }                    
+            }
+        }
+        return expIndices;
     }
 }
