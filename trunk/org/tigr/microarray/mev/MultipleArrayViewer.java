@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.16 $
- * $Date: 2004-06-11 18:51:22 $
+ * $Revision: 1.17 $
+ * $Date: 2004-06-21 21:50:41 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -622,14 +622,17 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     private void loadIData(ObjectInputStream ois) throws IOException, ClassNotFoundException {
         //loads IData and sets TMEV field names fields
         this.data = (MultipleArrayData)(ois.readObject());
-
+      
+        //resets the log state depending on data type
+        this.data.setDataType(this.data.getDataType());
+        
         //get the experiment label keys
         this.menubar.replaceExperimentLabelMenuItems(data.getSlideNameKeyArray());
         
         //populate the display menu
         this.menubar.replaceLabelMenuItems(TMEV.getFieldNames());
         this.menubar.replaceSortMenuItems(TMEV.getFieldNames());
-        
+
         setMaxCY3AndCY5();
         systemEnable(TMEV.DATA_AVAILABLE);
         fireMenuChanged();
