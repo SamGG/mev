@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: GDMElementSizeDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2004-02-06 22:53:43 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-25 21:08:11 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -35,7 +35,7 @@ public class GDMElementSizeDialog extends JDialog {
     private JLabel sizeLabel;
     private JTextField sizeTextField;
     private GBA gba;
- 	private final int maxSize = 15;
+   private final int maxSize = 30;
  	  
     public GDMElementSizeDialog(JFrame parent, Dimension elementSize) {
 		super(parent, true);
