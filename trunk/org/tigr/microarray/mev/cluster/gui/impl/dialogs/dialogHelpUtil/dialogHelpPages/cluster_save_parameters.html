@@ -1,0 +1,42 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>Cluster Archive Initialization</h1> <h2> Parameter Information</h2>
+            <hr size = 10>
+
+<h2> Analysis Node </h2>
+This non-editable field displays the algorithm node including the result index
+from the result navigation tree.  This is unique for an algorithm execution.
+<br>
+
+<h2> Cluster Node </h2>
+This non-editable field identifies the result cluster node from the navigation
+tree which contains the members of the cluster.  Note that it is a child node under
+the Analysis Node.  Note that different viewers identifying the same cluster
+will have the same Cluster Node label.  Since they represent the same elements
+the user is given the option of modifying the cluster attributes when attempting
+to save a cluster for a second time.
+<br>
+
+<h2> Cluster Label  </h2>
+Cluster Label is an optional field that can be used to designate a descriptive label
+for the stored cluster.
+<br>
+
+<h2> Remarks </h2>
+The Remarks text area provides a means to give a more descriptive account of the nature of
+the cluster or the algorithm and parameters used to generate the cluster.
+<br>
+
+<h2> Select Color and Color Preview </h2>
+The Select Color button presents a user interface to select a color for the cluster.
+All cluster member elements will be assigned this color.  This color will propagate to
+all cluster viewers and is the main means of qualitatively determining clustering
+consensus between algorithm methods or parameter selections.
+<br><br>
+The Reset button will return the dialog to it's initial state.  If the form was presented
+for modifying the attributes of an existing cluster these values are those of the initial
+cluster.  The Cancel button terminates the cluster storage or modification.
+<br>
+        </basefont>
+    </body>
+</html>

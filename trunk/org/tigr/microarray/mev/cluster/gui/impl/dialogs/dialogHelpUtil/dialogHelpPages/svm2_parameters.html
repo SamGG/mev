@@ -1,0 +1,91 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>SVM: Support Vector Machines</h1> 
+        <h1>Training Initialization Dialog</h1>
+        <h2> Parameter Information</h2>
+            <hr size = 10>
+
+<h2>Classification Input</h2>
+The SVM training process requires the supplied expression data and
+an additional initial presumptive classification which indicates
+which elements are initially presumed to have a relationship.
+Two options are provided for selecting members of the initial classification.
+<h3>Use SVM Classification Editor</h3>
+This option causes an editor application to be launched in order to
+allow a flexible tool for finding and marking elements to be positive members
+of the initial classification. This classification can be save as an
+SVC file for later recovery of these initial settings.
+
+<h3>Use Classification File</h3>
+This allow the loading of an initial classification from an
+existing SVC file.
+
+<h2>Kernel Matrix Construction</h2>
+One can select to construct a polynomial or a radial kernal matrix.
+<br>
+<h2>Polynomial Kernel Function Parameters</h2>
+The polynomial option is the default and three parameters are used to define
+the kernel construction.
+
+<h3>Constant</h3>
+An additive constant. (c)
+
+<h3>Coefficient</h3> 
+A multiplicative constant. (w)
+
+<h3>Power</h3>
+A power factor. (p)
+<br>
+<h3>Polynomial Kernel Function</h3>
+K(i,j) = [w*(Dist(i,j)+c)]<sup>p</sup>
+<br><br>
+
+<h2>Radial Basis Function Parameters</h2>
+The Radial Basis checkbox is used to select to use this type of Kernal generating function.
+<h3>Width Factor</h3>
+Radial width factor (w, see in below formula).
+<br>
+<h3>Radial Basis Kernel Function</h3>
+K(x,y) = e<sup>( - (||x - y||<sup><font size = 2>^2</font></sup>)/(2w<sup><font size = 2>^2</font></sup>))</sup>
+<br>
+
+<h2>Training Parameters</h2>
+<h3>Diagonal Factor</h3>
+Constant added to the main diagonal of the kernel matrix.
+Adding this factor to the main diagonal of the kernel is required to force
+the matrix to be 'positive definite'. The definition of a positive definite
+matrix is best reviewed in books devoted to linear algebra but this
+state is achieved by selecting a constant of sufficient magnitude.
+<br><br>
+This positive definite state of the kernel matrix is required for the SVM algorithm to
+yeild meaningful results.  Testing values starting at 1.0 and increasing
+may be required to find an appropriate value.  If the value is too low all
+elements will be partitioned in the negative class.  For a range of values
+for this factor a stable set of elements may be classified as positive.
+At very high values there is a tendancy to force all positive expamples
+to be in the positive class regardless of their similarity of expression.
+
+<h3>Threshold</h3>
+This value is used as a stopping criteria for the weight optimization phase of training.
+Optimizing the weights produced during training is an iterative process which converges
+on an optimal set of weights to separate the positive and negative examples.
+This threshold dictates how stable the weights must be before the optimization process
+is terminated.  Selection of a threshold that is very low could cause the 
+optimization process to take an extremely long time and yet yeild similar results to those where
+a higher threshold value was used which terminated the process earlier.
+
+
+<h3>Constraints</h3>
+This check box selects to apply limits to weights produced during training.
+
+
+<h3>Positive Constraint</h3>
+The upper limit to produced weights.
+<h3>Negative Constraint</h3>
+The lower limit to produced weights.
+
+        </basefont>
+    </body>
+</html>
+
+

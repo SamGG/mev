@@ -1,0 +1,36 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>KMC: K-Means/K-Medians</h1> <h2> Parameter Information</h2>
+            <hr size = 10>
+
+<h2> Sample Selection </h2>
+The sample selection option indicates whether to cluster genes or experiments.
+<br>
+
+<h2>Means/Medians option</h2>
+The Means or Medians option indicates whether each cluster's centroid vector
+should be calculated a mean or a median of the member expression patterns.
+<br>
+
+<h2> Number of Clusters </h2>
+This positive integer value indicates the number of clusters to be created.
+Note that FOM can be used to estimate an appropriate value.
+<br>
+
+<h2> Number of Iterations </h2>
+This positive integer value is the maximum number of times that all the elements in the data set
+will be tested for cluster fit.  On each iteration each element
+is associated with the cluster with the closest mean (or median).
+<br><br>
+Note that the algorithm will terminate when either no elements
+require migration (reassignment) to new clusters or when the maximum number of
+iterations has been reached.
+<br>
+
+<h2> Hierarchical Clustering </h2>
+This check box selects whether to perform hierarchical clustering on the elements in each cluster
+created.
+<br>
+        </basefont>
+    </body>
+</html>

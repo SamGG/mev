@@ -1,0 +1,52 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>KMS: K-Means/K-Medians Support</h1><h2>Parameter Information</h2>
+            <hr size = 10>
+
+<h2> Sample Selection </h2>
+The sample selection option indicates whether to cluster genes or experiments.
+<br>
+
+<h2>Means/Medians option</h2>
+The Means or Medians option indicates whether each cluster's centroid vector
+should be calculated a mean or a median of the member expression patterns.
+<br>
+
+<h2>Number of k-means/k-medians runs</h2>
+This integer value indicates how many times KMC should be run.
+<br>
+
+<h2>Threshold % of occurrence in same cluster</h2>
+This parameter indicates the minimum percentage of times that two elements
+should cluster together in order consider the two elements in a cluster.
+For instance, if 10 KMC runs were run, and the percentage was 80% then a pair of
+expression elements found together at least 8 times would be considered
+to pass a criteria to be included in a cluster.
+<br>
+
+<h2> Number of Clusters (K)</h2>
+This positive integer value indicates the number of clusters to be created during
+each KMC run.  Note that for K-Means support the final number may turn out to
+be slightly smaller or larger than this entered value depending on the nature
+of the input data and the appropriate selection of K (number of clusters to create).
+Note that FOM can be used to estimate an appropriate value for K.
+<br>
+
+<h2> Number of Iterations </h2>
+This positive integer value is the maximum number of times that all the elements in the data set
+will be tested for cluster fit.  On each iteration each element
+is associated with the cluster with the closest mean (or median).
+<br><br>
+Note that a KMC run will terminate when either no elements
+require migration (reassignment) to new clusters or when the maximum number of
+iterations has been reached.
+<br>
+
+<h2> Hierarchical Clustering </h2>
+This check box selects whether to perform hierarchical clustering on the elements in each cluster
+created.
+<br>
+
+        </basefont>
+    </body>
+</html>

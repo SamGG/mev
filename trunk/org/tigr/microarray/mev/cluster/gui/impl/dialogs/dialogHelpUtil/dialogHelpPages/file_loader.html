@@ -1,0 +1,102 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "sans-serif">
+	<h1>File Loader </h1>
+        <h2>Help Page</h2>
+            <hr size = 10>
+
+<h2> File Formats </h2>
+MeV supports the loading of several file formats.  For a complete
+description refer to the manual included in the documentation
+folder appendix 11.  Here's a brief overview of supported file types.
+<br>
+<h3>mev Format (Multiple Experiment Viewer Format)</h3>
+This format is a tab delimited text file format which allows a header
+for identification of columns and comments are preceded by the pound (#) sign.
+The first nine columns are a unique identifier, slide row, slide column,
+meta row, meta column, sub row, sub column, intensity 1, intensity 2.  The unique
+identifier is used to match up corresponding annotation which is supplied from
+annotation files which contain spot annotation for each element on the slide.
+<br>
+The annotation files, given a .ann extension are also tab delimited and
+have entries corresponding to the unique identifiers in the mev file.
+One or more annotation files may be loaded to provide several types of
+annotation.
+<br>
+<h3>Stanford Format</h3>
+The Stanford format file encapsulates several hybridizations in one file.
+The first several columns are used for annotation and following the
+annotation the intensity data corresponds to one column of log<sub>2</sub>ratio(cy5/cy3)
+for each hybridization.  The format includes a header to identify the
+labels for the annotation as well as the labels for the individual hybridizations.
+<br>
+<h3>tav Format (TIGR Array Viewer Format)</h3>
+This is similar to the mev format but differs in that it does not permit
+a header row or comment rows and there is no unique ID column.  Each tav file contains
+annotation following the columns for intensity and other spot specific information. 
+<br>
+The loading of tav files depends on having selected a 'preference' file which is used
+to identify the type and number of annotation fields in the tav files.
+<br>
+<h3>Affymetrix File Format</h3>
+Affymetrix arrays use a single dye system.  The file description is detailed on
+the Affymetrix web site but includes a Affy probe identifier, an intensity 
+value, a detection flag to indicate whether or not a spot signal is present or absent,
+and a spot description.
+<br>
+<h3>Gene Pix File Format</h3>
+<br>
+
+<h2>Loading Files</h2>
+Loading requires several basic steps that vary slightly depending on the file
+format chosen.  
+<br>
+1.) Select a file format.<br>
+2.) Select a directory using the file navigation tree in the left window
+until the selected files are reached.<br>
+3.) Select the data file or files.<br>
+<h3>mev Format</h3>
+For mev format you will select several data files in the available files list
+and use the add button to move them into the selected file list box.  The same
+process is used to select one or more annotation files.  Once these files are selected
+hit the OK button to load the files.<br>
+<h3>Stanford Format</h3>
+For Stanford format you will select a path to the data file and once a file
+is selected a table will display the first few rows of the file.  Select the
+first log ratio of the first, left most, hybridization in the table.  This will
+identify the upper left limit of the log ratio data.  Columns to the left contain
+annotation while columns above contain header information.  Once the proper cell
+has been selected the annotation field names should appear in a window near the bottom
+of the form.  Select OK to load.<br>
+<br>
+<h3>tav Format</h3>
+For tav Format there are several means to load the files.  The most common is to
+use a preference file to indicate annotation fields in the file.  See the manual
+for a full description of the tav format and the use of preference files.
+Navigate through the tree to select the tav files then use the file browser button
+to select an associated preference file.<br>
+<h3>Affymetrix Format</h3>
+There are four modes to loading Affymetrix files. <br>
+1.) The absolute selection simply loads
+the single intensity value into one channel and sets the other channel to 1.0.
+This will require the user to scale the expression image, set ratio scale, to
+increase the dynamic range of the image to compensate for the absolute intensities.
+<br>
+2.) The mean and median modes are related.  For each spot the intensity is averaged
+or the median is taken across the hybridizations (files).  This average value is used as a reference to
+scale the intensities corresponding the that spot.  Each spot gets assigned one intensity
+to the spots true intensity and the other intensity is set to the mean or median
+intensity.  The calculated log2(r) is taken where <br>
+<br>
+r = (spot intensity)/(ave. intensity) <br>
+<br>
+3.) The reference loading mode allows the user to select a file to represent
+a reference against which the other files are compared. <br><br>
+log<sub>2</sub>(spot intensity/ref. intensity)<br>
+<br>
+<br>
+Please refer to the manual for more details and information regarding file formats
+and loading data.
+<br>
+        </basefont>
+    </body>
+</html>

@@ -1,0 +1,25 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>SOTA Tree Configuration</h1> <h2>Parameter Information</h2>
+            <hr size = 10>
+
+<h2> Distance Threshold </h2>
+This floating point parameter is used as a cutoff value.  Elements on nodes
+which have distances below this threshold can be considered as one entity
+(or cluster). Consequently the lower level detail of the tree is ignored.
+<br>
+<h2> Minimum Pixel Distance </h2>
+This integer is the minimum height of a node in the tree in units of pixels.
+Nodes which are close and would ordinarily have a node height below
+this value are forced to appear this number of pixels above the
+lower level node.
+<br>
+<h2> Maximum Pixel Distance </h2>
+Maximum Pixel Distance (integer) is the maximum distance that any node can have.
+Nodes which are distant and would ordinarily have a node height greater
+than this value are constrained to appear this number of pixels above the
+lower level node.
+<br>
+        </basefont>
+    </body>
+</html>

@@ -1,0 +1,19 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>Iterative Log Mean Centering Normalization</h1><h2>Parameter Information</h2>
+            <hr size = 10>
+
+<h2>Standard Deviation</h2>
+Iterative Log Mean Centering Normalization requires only a standard deviation
+range to be selected. During each iteration the a mean log ratio and standard deviation is
+taken on a subset of the data which is initially the entire data set.  The calculated mean
+is used to correct the position to move the mean toward zero.
+At the end of each iteration, data elements within the indicated standard deviation range are
+selected to enter the next iteration and are used to calculate a current mean and standard deviation.
+Iterations stop when the mean converges to zero.
+<br><br>
+Using small values for standard deviation will force the subset of data used for the
+next iteration to be a more aggressive cut of the data.
+       </basefont>
+    </body>
+</html>

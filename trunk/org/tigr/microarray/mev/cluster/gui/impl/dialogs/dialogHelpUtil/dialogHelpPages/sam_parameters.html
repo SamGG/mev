@@ -1,0 +1,56 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>SAM: Significance Analysis of Microarrays</h1> <h2>Parameter Information</h2>
+            <hr size = 10>
+<h2> SAM Models </h2>
+Several experimental design models can be processed by SAM to provide results
+based on the selected design.  Each design is represented as a tab
+in the SAM initialization dialog. Comprehensive coverage of the use of SAM
+and analysis of various experimental designs are covered in the TMeV manual
+and the reference list found in the 'references' selection of the 'help' menu of the
+main TMeV tool bar.
+<h3>Two-class unpaired</h3>
+This model provides selection buttons to indicate which experiments should be
+in group A, group B, or Neither group.  Options exist (buttons below group selection
+controls) to save a grouping scheme, load a grouping scheme, or reset the grouping.
+<h3>Two-class paired</h3>
+This model provides selection buttons to indicate which experiments should be
+paired. Experiments which are paired are considered to be related observations,
+for instance, samples from a particular subject before and after drug treatment. 
+Each experiment can be paired with only one other experiment.  Once a pairing has been
+made the pair is put into the pairings list and selection of the two experiments
+is disabled.  Pairings may be removed from the pairing list and reassigned.
+Options exist (buttons below group selection
+controls) to save a pairing scheme, load a pairing scheme, or reset the pairings.
+<h3>Multi-class</h3>
+This model requires one to initially specify an number of classes (>2).
+Once that is done selection buttons allow the assignment of experiments
+to the appropriate classes.  Groupings can be saved, loaded, and reset using the
+buttons below the group selection controls.
+<h3>Censored survival</h3>
+The selection controls for this model allow the inclusion or exclusion of particular experiments using
+the check boxes to the left of the experiment names.  For those experiments included
+a corresponding time and a state is selected (Censored, or Dead).
+<br>
+<h2>Number of Permutations</h2>
+This integer number indicates the number of times each vector should be permuted
+and have a d-statistic computed.
+<br>
+<h2>Imputation Engine</h2>
+SAM handles missing data by constructing or imputing
+missing values using one of two available methods.
+<h3>K-nearest neighbor imputer</h3>
+This option imputes a value based on the k nearest neighbors (using Euclidean distance)
+to the vector which is missing the value.  The k nearest neighbors are selected 
+such that each should have a value for the missing vector element.
+<h3>Row average imputer</h3>
+This option imputes by taking the mean of the other elements in the vector which
+is missing the value.
+<br>
+<h2>Hierarchical Clustering</h2>
+This check box selects whether to perform hierarchical clustering on the elements in each cluster
+created.
+        </basefont>
+    </body>
+</html>
+

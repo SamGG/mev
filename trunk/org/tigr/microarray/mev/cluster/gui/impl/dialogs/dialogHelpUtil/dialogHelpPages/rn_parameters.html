@@ -1,0 +1,40 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>RN: Relevance Networks</h1><h2>Parameter Information</h2>
+            <hr size = 10>
+
+<h2> Sample Selection </h2>
+The sample selection option indicates whether to cluster genes or experiments.
+<br>
+
+<h2>Use Permutation Test</h2>
+This check box is used to indicate that the minimum threshold R^2 value should be
+selected based on a distribution constructed from element to element R^2 values
+derived following permutation of the expression vectors.
+<br>
+
+<h2>Min Threshold</h2> 
+This value ranging from 0 to 1.0 indicates
+the smallest R^2 possible between two elements to permit a link between the
+elements in a subnet.
+<br>
+
+<h2>Max Threshold</h2> 
+This value ranging from 0 to 1.0 indicates
+the greatest R^2 possible between two elements to permit a link between the
+elements in a subnet.
+<br>
+
+<h2>Use Filter</h2> 
+This option allows the user to filter out elements with little dynamic change thus
+removing flat or uninteresting elements.  
+A measure of entropy is used to rank the elements.  The percentage value
+entered (1 to 100) indicates what percentage of the elements to retain
+for the construction of the network.  A value of 25 will retain the 25%
+of elements having the greatest entropy.
+<br>
+
+        </basefont>
+    </body>
+</html>
+

@@ -1,0 +1,46 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>SVM: Support Vector Machines</h1> 
+        <h1>Process Initialization Dialog</h1>
+        <h2> Parameter Information</h2>
+            <hr size = 10>
+
+<h2> Sample Selection </h2>
+The sample selection option indicates whether to cluster genes or experiments.
+<br>
+
+<h2>Process Selection</h2>
+The SVM algorithm works performing two main processes, training and classification.
+One can elect to perform training only, classification only, or both phases of the SVM classification
+technique.
+<br><br>
+The 'Training Only' option results in a set of numerical weights which can stored as a file and used for classification
+at a later time.
+<br><br>
+The 'Classification Only' option takes a file input of weights generated from training and results in a binary classification
+of the elements.
+<br><br>
+The 'Training and Classification' option provides the ability to use the input set as a training set to produce weights which
+are immediately applied to perform the classification.
+<br><br>
+The 'One-out Iterative Validation' iteratively performs an SVM training and classification run.
+On each iteration one element is moved to the neutral classification and therefore will not
+impact the SVM training nor the classification of elements.  The final classification will not
+be biased by an initial classification of the element.
+<h3>** Note that the One-out Iterative Validation will iterate a training and classification
+run for each element being classified.  This may not be practical nor necessary for the 
+classification of large numbers of genes. In the case of genes the impact of one gene
+in producing a discriminate is relatively small and the time to iteratively run for
+each gene could be prohibitive for large sets of genes.  This feature is more practical
+to use when classifying experiments.
+
+<br><br>
+
+<h2> Hierarchical Clustering </h2>
+This check box selects whether to perform hierarchical clustering on the elements in each cluster
+created.
+<br>
+        </basefont>
+    </body>
+</html>
+

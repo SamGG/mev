@@ -1,0 +1,72 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>TTEST: T-test</h1> <h2> Parameter Information</h2>
+            <hr size = 10>
+
+<h2>Group Assignments</h2>
+<h3>Group Selection Controls</h3>
+This set of buttons permits each experiment to be placed into
+group A, group B, or neither group.  If an experiment is placed in
+neither group it will be ignored for the purposes the analysis.
+<br><br>
+Note that groups A and B must each have at least two members
+following the assignment.
+<h3>Save Grouping</h3>
+The save grouping button allows you to save the grouping
+to file.  This is particularly useful when there are many experiments.
+<h3>Load Grouping</h3>
+This button allows you to select and load a saved grouping.
+<h3>Reset</h3>
+The reset button returns all of the group selection control buttons
+to Group A, the initial state.
+<br>
+<h2>P-Value Parameters</h2>
+This set of controls are used to indicate the method by which p-values are determined for 
+each gene and allows the input of the critical p-value.
+<br><br>
+p-values can be computed either from the theoretical t-distribution, or from permutations 
+of the data for each gene between the two groups. 
+<h3>p-values based on t-distribution</h3>
+Using this option a gene's p-value is taken directly from the theoretical t-distribution
+based on the gene's calculated t-value.
+<h3>p-values based on permutation</h3>
+Using this option a gene's p-value is determined by forming a distribution based on
+permutations of the data for that gene.  The permutations allow each value in the expression
+vector in group A or group B to be randomly placed into either group (the size of each
+group is conserved).  t-values are constructed following each permutation to construct
+a distribution which is used to generate p values for each gene based on it's t-value.
+<br><br>
+If permutations are used, two buttons allow you to select to permute
+the values a number of times indicated or to permute the values a number of
+times equal to the maximum number of permutations possible.
+<h3>Critical p-value</h3>
+This text field allows you to enter the alpha or critical p-value.
+<br>
+<h2>P-Value Corrections</h2>
+The p-values for each p can be adjusted to correct for the large number
+of observations (genes) and the increased possibility of considering a gene without
+a real significant change to be considered significant.  Three options are given for 
+this correction.
+<h3>Just Alpha (no correction)</h3>
+Using this option the alpha is not altered.
+<h3>Standard Bonferroni Correction</h3>
+In the standard Bonferroni correction, the user-specified alpha is divided 
+by the number of genes to give the critical p-value. 
+This is much more stringent than using an uncorrected alpha.
+<h3>Adjusted Bonferroni Correction</h3>
+In the adjusted Bonferroni correction, the t-values for all the genes are 
+ranked in descending order. For the gene with the highest t-value, the critical 
+p-value becomes (alpha / n), where n is the total number of genes; 
+for the gene with the second-highest t-value, the critical p-value will be (alpha/ n-1), 
+and so on. The stringency of this correction falls somewhere between no correction
+and the Standard Bonferroni.
+<br>
+<h2> Hierarchical Clustering </h2>
+This check box selects whether to perform hierarchical clustering on the elements in each cluster
+created.
+<br>
+        </basefont>
+    </body>
+</html>
+
+
