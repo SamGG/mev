@@ -122,7 +122,7 @@ public class ClusterTableSearchDialog extends javax.swing.JDialog {
 	    for(int row = 0; row < numRows; row++){
 		
 		for(int i = 0; i < colsToSearch.length; i++){
-		    if( ((String)table.getValueAt(row, colsToSearch[i])).indexOf( searchStr ) != -1){
+		    if( ((String)table.getModel().getValueAt(row, colsToSearch[i])).indexOf( searchStr ) != -1){
 			//select row;
 			if(selectAll || !found){
 			    table.addRowSelectionInterval(row, row);
@@ -147,7 +147,7 @@ public class ClusterTableSearchDialog extends javax.swing.JDialog {
 	    for(int row = 0; row < numRows; row++){
 		
 		for(int i = 0; i < colsToSearch.length; i++){
-		    if( (((String)table.getValueAt(row, colsToSearch[i])).toUpperCase()).indexOf( upperCaseStr ) != -1){
+		    if( (((String)table.getModel().getValueAt(row, colsToSearch[i])).toUpperCase()).indexOf( upperCaseStr ) != -1){
 			//select row;
 			if(selectAll || !found){
 			    table.addRowSelectionInterval(row, row);
@@ -428,6 +428,23 @@ public class ClusterTableSearchDialog extends javax.swing.JDialog {
             
             return selCols;
         }
+        
+        public String[] getSelectedColNames() {
+            Vector selColNamesVector = new Vector();
+            for (int i = 0; i < columnNameBoxes.length; i++) {
+                if (columnNameBoxes[i].isSelected()) {
+                    selColNamesVector.add(table.getColumnName(i + 1));
+                }                
+            }    
+            
+            String[] selColNames = new String[selColNamesVector.size()];
+            for (int i = 0; i < selColNames.length; i++) {
+                selColNames[i] = (String)(selColNamesVector.get(i));
+            }
+            
+            return selColNames;
+        }
+        
     }
     
     void buildConstraints(GridBagConstraints gbc, int gx, int gy,
