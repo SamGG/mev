@@ -1,12 +1,12 @@
 /*
 Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
 All rights reserved.
-*/
+ */
 /*
  * $RCSfile: PTMGUI.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-04-29 17:32:07 $
- * $Author: nbhagaba $
+ * $Revision: 1.6 $
+ * $Date: 2004-05-24 17:34:02 $
+ * $Author: braisted $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.ptm;
@@ -41,6 +41,7 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
@@ -56,15 +57,17 @@ import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
 
+import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
 
-public class PTMGUI implements IClusterGUI {
+
+public class PTMGUI implements IClusterGUI, IScriptGUI {
     
     private Algorithm algorithm;
     private Experiment experiment;
     private int[][] clusters;
     private FloatMatrix means;
     private FloatMatrix variances;
-    private IData data;    
+    private IData data;
     Vector templateVector;
     private float[] pValues, rValues;
     private boolean clusterGenes = false;
@@ -93,7 +96,7 @@ public class PTMGUI implements IClusterGUI {
         float threshold = 0.8f;
         
         this.experiment = framework.getData().getExperiment();
-        this.data = framework.getData();        
+        this.data = framework.getData();
         Vector sampleNamesVector = new Vector();
         int number_of_samples = experiment.getNumberOfSamples();
         int number_of_genes = experiment.getNumberOfGenes();
@@ -105,7 +108,7 @@ public class PTMGUI implements IClusterGUI {
         Vector uniqueIDs = new Vector();
         int labelIndex = framework.getDisplayMenu().getLabelIndex();
         for (int i = 0; i < number_of_genes; i++) {
-		uniqueIDs.add(framework.getData().getElementAttribute(experiment.getGeneIndexMappedToData(i), labelIndex));
+            uniqueIDs.add(framework.getData().getElementAttribute(experiment.getGeneIndexMappedToData(i), labelIndex));
             //uniqueIDs.add(framework.getData().getUniqueId(experiment.getGeneIndexMappedToData(i)));
         }
         
@@ -163,10 +166,10 @@ public class PTMGUI implements IClusterGUI {
         int hcl_method = 0;
         boolean hcl_samples = false;
         boolean hcl_genes = false;
-
+        
         ptmInitBox.setVisible(true);
         
-
+        
         if (! ptmInitBox.isOkPressed()){
             return null;
         }
@@ -267,7 +270,7 @@ public class PTMGUI implements IClusterGUI {
             auxTitles[0] = "R values";
             auxTitles[1] = "p Values";
             
-            auxData = new Object[pValues.length][2];            
+            auxData = new Object[pValues.length][2];
             
             for (int i = 0; i < auxData.length; i++) {
                 auxData[i][0] = new Float(rValues[i]);
@@ -285,19 +288,264 @@ public class PTMGUI implements IClusterGUI {
             info.hcl_genes = hcl_genes;
             info.hcl_samples = hcl_samples;
             info.hcl_method = hcl_method;
-                        
+            
             return createResultTree(result_cluster, info);
             
         } finally {
             if (algorithm != null) {
                 algorithm.removeAlgorithmListener(listener);
-            }
-            
-            
+            }    
         }
     }
     
     
+    
+    
+    
+    public AlgorithmData getScriptParameters(IFramework framework) {
+        int k = 2; //number of clusters
+        boolean modality = true; // HOPE THIS IS OK; DID THIS TO CALL UP THE DIALOG BOX
+        boolean useAbsolute = false;
+        boolean useR = false;
+        FloatMatrix templateMatrix;
+        float threshold = 0.8f;
+        
+        this.experiment = framework.getData().getExperiment();
+        this.data = framework.getData();
+        Vector sampleNamesVector = new Vector();
+        int number_of_samples = experiment.getNumberOfSamples();
+        int number_of_genes = experiment.getNumberOfGenes();
+        
+        for (int i = 0; i < number_of_samples; i++) {
+            sampleNamesVector.add(framework.getData().getFullSampleName(i));
+        }
+        
+        Vector uniqueIDs = new Vector();
+        int labelIndex = framework.getDisplayMenu().getLabelIndex();
+        for (int i = 0; i < number_of_genes; i++) {
+            uniqueIDs.add(framework.getData().getElementAttribute(experiment.getGeneIndexMappedToData(i), labelIndex));
+            //uniqueIDs.add(framework.getData().getUniqueId(experiment.getGeneIndexMappedToData(i)));
+        }
+        
+        Vector clusterVector = new Vector();
+        
+        Color clusterColors[] = framework.getData().getColors();
+        boolean assignedToACluster[] = new boolean[number_of_genes];
+        
+        for (int i = 0; i < number_of_genes; i++) {
+            assignedToACluster[i] = false;
+        }
+        
+        for (int i = 0; i < clusterColors.length; i++) {
+            Vector currentCluster = new Vector();
+            
+            for (int j = 0; j < number_of_genes; j++) {
+                if (!assignedToACluster[j]) {
+                    if (clusterColors[i].equals(framework.getData().getProbeColor(experiment.getGeneIndexMappedToData(j)))) {
+                        currentCluster.add(new Integer(j));
+                        assignedToACluster[j] = true;
+                    }
+                }
+            }
+            
+            clusterVector.add(currentCluster);
+        }
+        
+        //Experiment clustering
+        Vector expClusterVector = new Vector();
+        Color expClusterColors[] = framework.getData().getExperimentColors();
+        boolean expAssignedToACluster[] = new boolean[number_of_samples];
+        
+        for (int i = 0; i < number_of_samples; i++) {
+            expAssignedToACluster[i] = false;
+        }
+        
+        for (int i = 0; i < expClusterColors.length; i++) {
+            Vector currentCluster = new Vector();
+            
+            for (int j = 0; j < number_of_samples; j++) {
+                if (!expAssignedToACluster[j]) {
+                    if (expClusterColors[i].equals(framework.getData().getExperimentColor(j))) {
+                        currentCluster.add(new Integer(j));
+                        expAssignedToACluster[j] = true;
+                    }
+                }
+            }
+            expClusterVector.add(currentCluster);
+        }
+        
+        PTMInitDialog  ptmInitBox = new PTMInitDialog(new JFrame(), modality, experiment.getMatrix(), uniqueIDs, sampleNamesVector, clusterVector, expClusterVector, clusterColors, expClusterColors);
+        
+        boolean isHierarchicalTree;
+        // hcl init
+        int hcl_method = 0;
+        boolean hcl_samples = false;
+        boolean hcl_genes = false;
+        
+        ptmInitBox.setVisible(true);
+        
+        
+        if (! ptmInitBox.isOkPressed()){
+            return null;
+        }
+        clusterGenes = ptmInitBox.isGeneTemplate();
+        
+        if(clusterGenes){
+            templateMatrix = ptmInitBox.convertTemplateVectorToFloatMatrix();
+            templateVector = ptmInitBox.getTemplate();
+            useAbsolute = ptmInitBox.isUseAbsolute();
+            useR = ptmInitBox.isUseR();
+            threshold = (float) ptmInitBox.getThresholdR();
+            isHierarchicalTree = ptmInitBox.isDrawTrees();
+        }
+        else{
+            templateMatrix = ptmInitBox.convertTemplateVectorToFloatMatrix();
+            templateVector = ptmInitBox.getTemplate();
+            useAbsolute = ptmInitBox.isUseAbsolute();
+            useR = ptmInitBox.isUseR();
+            threshold = (float) ptmInitBox.getThresholdR();
+            isHierarchicalTree = ptmInitBox.isDrawTrees();
+        }
+        
+        if (isHierarchicalTree) {
+            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame());
+            if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
+                return null;
+            }
+            hcl_method = hcl_dialog.getMethod();
+            hcl_samples = hcl_dialog.isClusterExperience();
+            hcl_genes = hcl_dialog.isClusterGenes();
+        }
+        
+        
+        AlgorithmData data = new AlgorithmData();
+        data.addParam("ptm-cluster-genes", String.valueOf(clusterGenes));
+        data.addMatrix("templateVectorMatrix", templateMatrix);
+        data.addParam("distance-factor", String.valueOf(1.0f));
+        IDistanceMenu menu = framework.getDistanceMenu();
+        data.addParam("use-absolute", String.valueOf(useAbsolute));
+        data.addParam("useR", String.valueOf(useR));
+        data.addParam("threshold", String.valueOf(threshold));
+        int function = menu.getDistanceFunction();
+        if (function == Algorithm.DEFAULT) {
+            function = Algorithm.EUCLIDEAN;
+        }
+        //function = Algorithm.PEARSON;
+        data.addParam("distance-function", String.valueOf(function));
+        
+        // hcl parameters
+        if (isHierarchicalTree) {
+            data.addParam("hierarchical-tree", String.valueOf(true));
+            data.addParam("method-linkage", String.valueOf(hcl_method));
+            data.addParam("calculate-genes", String.valueOf(hcl_genes));
+            data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+        }
+        
+        // alg name
+        data.addParam("name", "PTM");
+        
+        // alg type
+        data.addParam("alg-type", "cluster");
+        
+        // output class
+        data.addParam("output-class", "partition-output");
+        
+        //output nodes
+        String [] outputNodes = new String[2];
+        outputNodes[0] = "Significant Genes";
+        outputNodes[1] = "Non-significant Genes";
+        
+        data.addStringArray("output-nodes", outputNodes);
+        
+        return data;
+    }
+    
+    public DefaultMutableTreeNode executeScript(IFramework framework, AlgorithmData algData, Experiment experiment) throws AlgorithmException {
+        int k = 2;
+        this.experiment = experiment;
+        this.data = framework.getData();
+        AlgorithmParameters params = algData.getParams();
+        this.clusterGenes = params.getBoolean("ptm-cluster-genes");
+        FloatMatrix templateMatrix = algData.getMatrix("templateVectorMatrix");
+        this.templateVector = new Vector();
+        int cols = templateMatrix.getColumnDimension();
+        for(int i = 0; i < cols; i++) {
+            templateVector.add(new Float(templateMatrix.A[0][i]));
+        }
+        
+        Listener listener = new Listener();
+        
+        try {
+            algorithm = framework.getAlgorithmFactory().getAlgorithm("PTM");
+            algorithm.addAlgorithmListener(listener);
+            FloatMatrix matrix = experiment.getMatrix();
+            int genes;
+            if(!clusterGenes){
+                matrix = matrix.transpose();
+                genes = matrix.getRowDimension();
+            }
+            genes = experiment.getNumberOfGenes();
+       
+            algData.addMatrix("experiment", matrix);
+  
+            long start = System.currentTimeMillis();
+            AlgorithmData result = algorithm.execute(algData);
+            long time = System.currentTimeMillis() - start;
+            // getting the results
+            Cluster result_cluster = result.getCluster("cluster");
+            NodeList nodeList = result_cluster.getNodeList();
+            
+            this.clusters = new int[k][];
+            for (int i=0; i<k; i++) {
+                clusters[i] = nodeList.getNode(i).getFeaturesIndexes();
+            }
+            
+            this.means = result.getMatrix("clusters_means");
+            this.variances = result.getMatrix("clusters_variances");
+            
+            FloatMatrix rValuesMatrix = result.getMatrix("rValuesMatrix");
+            FloatMatrix pValuesMatrix = result.getMatrix("pValuesMatrix");
+            
+            pValues = new float[pValuesMatrix.getRowDimension()];
+            rValues = new float[rValuesMatrix.getRowDimension()];
+            
+            for (int i = 0; i < pValues.length; i++) {
+                pValues[i] = pValuesMatrix.A[i][0];
+                rValues[i] = rValuesMatrix.A[i][0];
+            }
+            
+            auxTitles = new String[2];
+            auxTitles[0] = "R values";
+            auxTitles[1] = "p Values";
+            
+            auxData = new Object[pValues.length][2];
+            
+            for (int i = 0; i < auxData.length; i++) {
+                auxData[i][0] = new Float(rValues[i]);
+                auxData[i][1] = new Float(pValues[i]);
+            }
+            
+            GeneralInfo info = new GeneralInfo();
+            info.clusters = k;
+            info.time = time;
+            int function = params.getInt("distance-function");
+            info.function = framework.getDistanceMenu().getFunctionName(function);
+            info.isR = params.getBoolean("useR");
+            info.isAbsolute = params.getBoolean("use-absolute");
+            info.threshold = params.getFloat("threshold");
+            info.hcl = params.getBoolean("hierarchical-tree");
+            info.hcl_genes = params.getBoolean("calculate-genes");
+            info.hcl_samples = params.getBoolean("calculate-experiments");
+            if(info.hcl)
+                info.hcl_method = params.getInt("method-linkage") ;
+            return createResultTree(result_cluster, info);
+            
+        } finally {
+            if (algorithm != null) {
+                algorithm.removeAlgorithmListener(listener);
+            }    
+        }
+    }
     
     /**
      * Returns a hcl tree data from the specified cluster node.
@@ -507,10 +755,10 @@ public class PTMGUI implements IClusterGUI {
                 } else if (i == this.clusters.length - 1) {
                     tablesNode.add(new DefaultMutableTreeNode(new LeafInfo("Unmatched Genes ", tabViewer, new Integer(i))));
                 }
-            }            
+            }
             //IViewer nonSigTableViewer = new PTMGeneStatsTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData, false);
             //tablesNode.add(new DefaultMutableTreeNode(new LeafInfo("Matched Genes", sigTableViewer)));
-            //tablesNode.add(new DefaultMutableTreeNode(new LeafInfo("Unmatched Genes", nonSigTableViewer)));            
+            //tablesNode.add(new DefaultMutableTreeNode(new LeafInfo("Unmatched Genes", nonSigTableViewer)));
         } else {
             IViewer tabViewer = new ExperimentClusterTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData);
             for (int i=0; i<this.clusters.length; i++) {
@@ -519,15 +767,15 @@ public class PTMGUI implements IClusterGUI {
                 } else if (i == this.clusters.length - 1) {
                     tablesNode.add(new DefaultMutableTreeNode(new LeafInfo("Unmatched Experiments ", tabViewer, new Integer(i))));
                 }
-            }             
+            }
         }
         /*else {
             IViewer sigTableViewer = new PTMExpStatsTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData, true);
             IViewer nonSigTableViewer = new PTMExpStatsTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData, false);
             tablesNode.add(new DefaultMutableTreeNode(new LeafInfo("Matched experiments", sigTableViewer)));
-            tablesNode.add(new DefaultMutableTreeNode(new LeafInfo("Unmatched experiments", nonSigTableViewer)));            
+            tablesNode.add(new DefaultMutableTreeNode(new LeafInfo("Unmatched experiments", nonSigTableViewer)));
         }
-           */
+         */
         
         root.add(tablesNode);
     }
@@ -608,6 +856,8 @@ public class PTMGUI implements IClusterGUI {
         }
         return pos;
     }
+    
+    
     
     /****************************************************************************************
      * End of Sample Cluster index ordering code

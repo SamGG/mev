@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SVMGUI.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
+ * $Revision: 1.2 $
+ * $Date: 2004-05-24 17:33:09 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -50,6 +50,7 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
@@ -64,7 +65,9 @@ import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
 
-public class SVMGUI implements IClusterGUI {
+import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
+
+public class SVMGUI implements IClusterGUI, IScriptGUI {
     
     // GUI
     protected Frame parentFrame;
@@ -99,6 +102,7 @@ public class SVMGUI implements IClusterGUI {
     private FloatMatrix discriminantMatrix;
     private boolean stop = false;
     
+    private boolean scripting = false;
     
     // Generic protocol for both SVM Train and SVM classify algorithms
     /** Creates an SVM algorithm
@@ -115,10 +119,13 @@ public class SVMGUI implements IClusterGUI {
      * @param data AlgorithmData to mainitain pased parameters
      */
     protected void bindParams( AlgorithmData data ) {
-        FloatMatrix matrix = this.experiment.getExperiment().getMatrix();
-        if(!this.data.classifyGenes)
-            matrix = matrix.transpose();
-        data.addMatrix("experiment", matrix);
+        if(!scripting) {
+            FloatMatrix matrix = this.experiment.getExperiment().getMatrix();
+            if(!this.data.classifyGenes)
+                matrix = matrix.transpose();
+            data.addMatrix("experiment", matrix);
+        }
+        
         data.addParam("distance-factor", String.valueOf(1.0f)  );
         data.addParam("distance-absolute", String.valueOf( menu.isAbsoluteDistance() )  );
         data.addParam("distance-function", String.valueOf( this.data.distanceFunction ) );
@@ -299,16 +306,12 @@ public class SVMGUI implements IClusterGUI {
                     
                     getNumberOfCorrectPlacements(iterationScores, elementScores, iter);
                 }
-                
-                
+                                
                 DefaultMutableTreeNode root = new DefaultMutableTreeNode(new LeafInfo("SVM One-out Validation",
                 new SVMOneOutViewer( framework, experiment, this.data, cumDiscriminantMatrix, info, this.data.classifyGenes, this.classes, elementScores, iterationScores, numberOfNonNeutrals)));
                 svmNode.add(root);
                 
-                
-                
-                AlgorithmData cumulativeData = constructCumulativeResult(cumDiscriminantMatrix);
-                
+                AlgorithmData cumulativeData = constructCumulativeResult(cumDiscriminantMatrix);                
                 
                 svmNode.add( createSVMExpressionViews( cumulativeData, classes));  //add expression image viewer
                 if(this.data.calculateHCL){
@@ -331,6 +334,387 @@ public class SVMGUI implements IClusterGUI {
             if (monitor != null) monitor.dispose();
             if (logger != null) logger.dispose();
         }
+    }
+    
+    
+    
+    public AlgorithmData getScriptParameters(IFramework framework) {
+        //get basic objects for data and framework
+        this.scripting = true;
+        this.parentFrame = framework.getFrame();
+        this.experiment = framework.getData();
+        this.experimentMap = experiment.getExperiment();
+        this.menu = framework.getDistanceMenu();
+        this.framework = framework;
+        
+        //Make a new data structure for binding data and params
+        AlgorithmData data = new AlgorithmData();
+        
+        //Determine sample set (exp or genes) and SVM process
+        // (train and classify, just train, or just classify), sets SVMMode
+        if(!selectSVMProcedure())
+            return null;
+        
+        if(SVMMode == TRAIN_AND_CLASSIFY){
+            //Set get data into float, run init dialog, read svc file or use class. editor
+            if (!initTrainingParams())
+                return null;
+            //bind training parameters into data
+            bindTrainingParams(data);
+            //classification parameters already set, weights and data and primary params for kernel
+            bindClassificationParams(data);
+            
+            data.addParam("mode", String.valueOf(TRAIN_AND_CLASSIFY));
+            
+            // alg name
+            data.addParam("name", "SVM");
+            
+            // alg type
+            data.addParam("alg-type", "cluster");
+            
+            // output class
+            data.addParam("output-class", "partition-output");
+            
+            //output nodes
+            String [] outputNodes = new String[2];
+            outputNodes[0] = "Positives";
+            outputNodes[1] = "Negatives";
+            
+            data.addStringArray("output-nodes", outputNodes);
+            
+            return data;
+        }
+        
+        else if(SVMMode == TRAIN_ONLY){
+            if (!initTrainingParams())
+                return null;
+            bindTrainingParams(data);
+            
+            data.addParam("mode", String.valueOf(TRAIN_ONLY));
+            
+            // alg name
+            data.addParam("name", "SVM");
+            
+            // alg type
+            data.addParam("alg-type", "cluster");
+            
+            // output class
+            data.addParam("output-class", "partition-output");
+            
+            //output nodes
+            String [] outputNodes = new String[1];
+            outputNodes[0] = "Training Weights Output";
+            
+            data.addStringArray("output-nodes", outputNodes);
+            
+            return data;
+        }
+        
+        else if(SVMMode == CLASSIFY_ONLY){
+            if (!initClassificationParams())
+                return null;
+            bindClassificationParams(data);
+            
+            data.addParam("mode", String.valueOf(CLASSIFY_ONLY));
+            
+            // alg name
+            data.addParam("name", "SVM");
+            
+            // alg type
+            data.addParam("alg-type", "cluster");
+            
+            // output class
+            data.addParam("output-class", "partition-output");
+            
+            //output nodes
+            String [] outputNodes = new String[2];
+            outputNodes[0] = "Positives";
+            outputNodes[1] = "Negatives";
+            
+            data.addStringArray("output-nodes", outputNodes);
+            
+            return data;
+        }
+        
+        else if(SVMMode == ONE_OUT_VALIDATION){
+            if (!initTrainingParams())
+                return null;
+            
+            //bind training parameters into data
+            bindTrainingParams(data);
+            bindClassificationParams(data);
+            
+            data.addParam("mode", String.valueOf(ONE_OUT_VALIDATION));
+            
+            // alg name
+            data.addParam("name", "SVM");
+            
+            // alg type
+            data.addParam("alg-type", "cluster");
+            
+            // output class
+            data.addParam("output-class", "partition-output");
+            
+            //output nodes
+            String [] outputNodes = new String[2];
+            outputNodes[0] = "Positives";
+            outputNodes[1] = "Negatives";
+            
+            data.addStringArray("output-nodes", outputNodes);
+            
+            return data;
+        }
+        return data;
+    }
+    
+    public DefaultMutableTreeNode executeScript(IFramework framework, AlgorithmData algData, Experiment experiment) throws AlgorithmException {
+        
+        //get basic objects for data and framework
+        this.SVMMode = algData.getParams().getInt("mode");
+        
+        //set fields
+        rebuildSVMData(algData);
+        
+        this.parentFrame = framework.getFrame();
+        this.experiment = framework.getData();
+        this.experimentMap = experiment;
+        this.menu = framework.getDistanceMenu();
+        this.framework = framework;
+        
+        this.data.classifyGenes = algData.getParams().getBoolean("classify-genes");
+        this.classifyGenes = this.data.classifyGenes;
+        
+        trainingMatrix = experiment.getMatrix();
+        if(this.data.classifyGenes)
+            algData.addMatrix("training", trainingMatrix);
+        else
+            algData.addMatrix("training", trainingMatrix.transpose());
+        
+        
+        FloatMatrix matrix = experiment.getMatrix();
+        if(!this.data.classifyGenes)
+            matrix = matrix.transpose();
+        algData.addMatrix("experiment", matrix);
+        this.classes = algData.getIntArray("classes");
+        
+        DefaultMutableTreeNode svmNode = null;  //Result Node
+        
+        showLogger("SVM Log Window");
+        
+        try {
+            //create an algorithm, assigns algorithm to this.algorithm
+            createAlgorithm( framework.getAlgorithmFactory() );
+            
+            if(SVMMode == TRAIN_AND_CLASSIFY){
+                bindParams(algData);
+                algData.addParam("is-classify", String.valueOf(false));
+                
+                //Time start and execution of training
+                long start = System.currentTimeMillis();
+                AlgorithmData trainingResult = this.algorithm.execute(algData);
+                long time = System.currentTimeMillis() - start;
+                //build training result, attach to node
+                getTrainingResults( trainingResult );
+                if(this.classifyGenes)
+                    svmNode = new DefaultMutableTreeNode("SVM - genes");
+                else
+                    svmNode = new DefaultMutableTreeNode("SVM - experiments");
+                svmNode.add( createTrainingGUIResult());  //add traing result viewer
+                
+                //classify
+                createAlgorithm( framework.getAlgorithmFactory() );  //get a fresh SVM
+                
+                //classification parameters already set, weights and data and primary params for kernel
+                bindClassificationParams(algData);
+                algData.addParam("is-classify", String.valueOf(true));
+                
+                start = System.currentTimeMillis();
+                AlgorithmData classificationResult = this.algorithm.execute(algData);
+                time += System.currentTimeMillis() - start;
+                getClassificationResults( classificationResult );
+                info.time = time;
+                
+                info.function = framework.getDistanceMenu().getFunctionName( algData.getParams().getInt("distance-function"));
+                
+                svmNode.add( createClassificationGUIResult() );   //add class. viewer
+                svmNode.add( createSVMExpressionViews( classificationResult, classes));  //add expression image viewer
+                if(this.data.calculateHCL)
+                    svmNode.add(createHierarchicalTreeViews(classificationResult.getCluster("cluster"), classificationResult));
+                createSVMCentroidViews(classificationResult, svmNode); //add centroid and expression graphs
+                createInfoView(classificationResult, svmNode);
+                addSVMParameterNode(svmNode);
+            }
+            
+            else if(SVMMode == TRAIN_ONLY){
+              //  if (!initTrainingParams())
+              //      return null;
+                bindParams(algData);
+                algData.addParam("is-classify", String.valueOf(false));
+                
+                long start = System.currentTimeMillis();
+                AlgorithmData trainingResult = this.algorithm.execute(algData);
+                long time = System.currentTimeMillis() - start;
+                getTrainingResults( trainingResult );
+                if(this.classifyGenes)
+                    svmNode = new DefaultMutableTreeNode("SVM - genes");
+                else
+                    svmNode = new DefaultMutableTreeNode("SVM - experiments");
+                svmNode.add( createTrainingGUIResult() );
+                info.time = time;
+                int function = menu.getDistanceFunction();
+                info.function = menu.getFunctionName( function );
+                addSVMParameterNode(svmNode);
+            }
+            
+            else if(SVMMode == CLASSIFY_ONLY){
+              //  if (!initClassificationParams())
+               //     return null;
+                this.Weights = algData.getMatrix("weights").A[0];
+                bindClassificationParams(algData);
+                long start = System.currentTimeMillis();
+                AlgorithmData classificationResult = this.algorithm.execute(algData);
+                long time = System.currentTimeMillis() - start;
+                getClassificationResults( classificationResult );
+                if(this.classifyGenes)
+                    svmNode = new DefaultMutableTreeNode("SVM - genes");
+                else
+                    svmNode = new DefaultMutableTreeNode("SVM - experiments");
+                info.time = time;
+                int function = menu.getDistanceFunction();
+                info.function = menu.getFunctionName( function );
+                svmNode.add( createClassificationGUIResult() );
+                svmNode.add( createViewers(classificationResult) );     //Experiment viewers based on pos/neg without prior knowledge of init. class.
+                if(this.data.calculateHCL)
+                    svmNode.add(createHierarchicalTreeViews(classificationResult.getCluster("cluster"), classificationResult));
+                createSVMCentroidViews(classificationResult, svmNode);  //append centroid and exp. viewers
+                createInfoView(classificationResult, svmNode);
+                addSVMParameterNode(svmNode);
+            }
+            
+            else if(SVMMode == ONE_OUT_VALIDATION){
+                int iter;
+                int n;
+                int initClass;
+                int numberOfNonNeutrals;
+                FloatMatrix cumDiscriminantMatrix;
+                int [] iterationScores;
+                int [] elementScores;
+                
+                if (!initTrainingParams())
+                    return null;
+                
+                if(this.classifyGenes)
+                    n = this.experimentMap.getNumberOfGenes();
+                else
+                    n = this.experimentMap.getNumberOfSamples();
+                
+                cumDiscriminantMatrix = new FloatMatrix(n,2);
+                numberOfNonNeutrals = getNumberOfNonNeutrals();
+                iterationScores = new int[n];
+                elementScores = new int[n];
+                for(int i = 0; i < n; i++)
+                    elementScores[i] = 0;
+                
+                if(this.classifyGenes)
+                    svmNode = new DefaultMutableTreeNode("SVM Val. - genes");
+                else
+                    svmNode = new DefaultMutableTreeNode("SVM Val. - experiments");
+                
+                for(iter = 0; iter < n; iter++){
+                    initClass = classes[iter];
+                    classes[iter] = 0;
+                    
+                    //bind training parameters into data
+                    bindTrainingParams(algData);
+                    
+                    //Time start and execution of training
+                    long start = System.currentTimeMillis();
+                    AlgorithmData trainingResult = this.algorithm.execute(algData);
+                    long time = System.currentTimeMillis() - start;
+                    //build training result, attach to node
+                    getTrainingResults( trainingResult );
+                    
+                    //    svmNode.add( createTrainingGUIResult());  //add traing result viewer
+                    
+                    //classify
+                    createAlgorithm( framework.getAlgorithmFactory() );  //get a fresh SVM
+                    
+                    //classification parameters already set, weights and data and primary params for kernel
+                    bindClassificationParams(algData);
+                    start = System.currentTimeMillis();
+                    AlgorithmData classificationResult = this.algorithm.execute(algData);
+                    time += System.currentTimeMillis() - start;
+                    getClassificationResults( classificationResult );
+                    
+                    accumulateResult(cumDiscriminantMatrix, iter); // get cumulative result
+                    
+                    classes[iter] = initClass;  //restore initial classification
+                    
+                    getNumberOfCorrectPlacements(iterationScores, elementScores, iter);
+                }
+                                     
+                DefaultMutableTreeNode root = new DefaultMutableTreeNode(new LeafInfo("SVM One-out Validation",
+                new SVMOneOutViewer( framework, this.experiment, this.data, cumDiscriminantMatrix, info, this.data.classifyGenes, this.classes, elementScores, iterationScores, numberOfNonNeutrals)));                
+                svmNode.add(root);
+                 
+                AlgorithmData cumulativeData = constructCumulativeResult(cumDiscriminantMatrix);
+                
+                svmNode.add( createSVMExpressionViews( cumulativeData, classes));  //add expression image viewer
+                if(this.data.calculateHCL){
+                    try{
+                        calculateHCL(cumulativeData, cumDiscriminantMatrix);
+                        svmNode.add(createHierarchicalTreeViews(cumulativeData.getCluster("cluster"), cumulativeData));
+                    }catch (Exception e){ }
+                }
+                createSVMCentroidViews(cumulativeData, svmNode); //add centroid and expression graphs
+                createInfoView(cumulativeData, svmNode);
+                addSVMParameterNode(svmNode);
+                
+            }
+            
+            return svmNode;
+        } finally {
+            if (algorithm != null) {
+                algorithm.removeAlgorithmListener(listener);
+            }
+            if (monitor != null) monitor.dispose();
+            if (logger != null) logger.dispose();
+        }
+    }
+    
+    private void rebuildSVMData(AlgorithmData algData) {
+        AlgorithmParameters params = algData.getParams();
+        
+        this.data.constant = params.getFloat("constant");
+        this.data.coefficient = params.getFloat("coefficient"); 
+        this.data.power = params.getFloat("power");
+
+        //skip training params if classification from file, params won't be in algData
+        if(this.SVMMode != this.CLASSIFY_ONLY) {
+            this.data.diagonalFactor = params.getFloat("diagonal-factor");
+            this.data.convergenceThreshold = params.getFloat("convergence-threshold"); 
+            this.data.radial = params.getBoolean("radial");
+            this.data.normalize = params.getBoolean("normalize");
+            this.data.widthFactor = params.getFloat("width-factor");        
+            this.data.constrainWeights = params.getBoolean("constrain-weights");
+            this.data.positiveConstraint = params.getFloat("positive-constraint");
+            this.data.negativeConstraint = params.getFloat("negative-constraint");
+        }
+        this.data.useEditor = params.getBoolean("used-classification-editor"); 
+        if(!this.data.useEditor) { 
+            String fileName = params.getString("classification-file-name");
+            if(fileName != null)
+                this.data.classificationFile = new File(fileName);
+        }
+        
+        this.data.classifyGenes = params.getBoolean("classify-genes"); 
+        this.data.calculateHCL = params.getBoolean("calculate-hcl");
+        if(this.data.calculateHCL) {
+            this.data.calcSampleHCL = params.getBoolean("calculate-samples-hcl");
+            this.data.calcGeneHCL = params.getBoolean("calculate-genes-hcl");
+            this.data.hclMethod = params.getInt("method-linkage");
+        }
+        this.data.distanceFunction = params.getInt("distance-function");
     }
     
     
@@ -400,7 +784,7 @@ public class SVMGUI implements IClusterGUI {
      * @throws AlgorithmException
      * @return Returns true if successful
      */
-    protected boolean initTrainingParams() throws AlgorithmException {
+    protected boolean initTrainingParams() {//throws AlgorithmException {
         trainingMatrix =  experiment.getExperiment().getMatrix();
         kernelMatrix = null;
         data.distanceFunction =  menu.getDistanceFunction();
@@ -419,16 +803,23 @@ public class SVMGUI implements IClusterGUI {
             classes = new int[trainingMatrix.getColumnDimension()];
         }
         
-        showLogger("SVM Log Window");
+        if(!scripting)
+            showLogger("SVM Log Window");
         if(this.data.useEditor){
             SVMClassificationEditor editor = new SVMClassificationEditor(framework, this.data.classifyGenes);
-            logger.append("Using Classification Editor\n");
-            editor.show();
-            while(editor.isVisible()){
-                // wait until done
-            }
-            if(editor.formCanceled())
+    
+            if(!scripting)
+                logger.append("Using Classification Editor\n");//            editor.show();
+            
+            editor.setVisible(true);
+            //editor.show();
+            //  while(editor.isVisible()){
+            // wait until done
+            //  }
+            if(editor.formCanceled()){
+                System.out.println("form canceled!!!");
                 return false;
+            }
             classes = editor.getClassification();
         }
         else{
@@ -521,6 +912,12 @@ public class SVMGUI implements IClusterGUI {
         data.addParam("negative-constraint", String.valueOf(this.data.negativeConstraint));
         data.addParam("convergence-threshold", String.valueOf(this.data.convergenceThreshold));
         data.addParam("constrain-weights", String.valueOf(this.data.constrainWeights));
+        
+        data.addParam("used-classification-editor", String.valueOf(this.data.useEditor));
+        if(!this.data.useEditor && this.data.classificationFile != null)
+            data.addParam("classification-file-name", this.data.classificationFile.getName());
+        
+        data.addParam("classify-genes", String.valueOf(classifyGenes));
     }
     
     /**
@@ -550,7 +947,7 @@ public class SVMGUI implements IClusterGUI {
      * @return Returns true if initialization of parameters was successful
      */
     
-    protected boolean initClassificationParams() throws AlgorithmException {
+    protected boolean initClassificationParams() {//throws AlgorithmException {
         data.distanceFunction =  menu.getDistanceFunction();
         if (data.distanceFunction == Algorithm.DEFAULT)
             data.distanceFunction  = Algorithm.EUCLIDEAN; //this applies to HCL on SVM result
@@ -563,10 +960,14 @@ public class SVMGUI implements IClusterGUI {
         int returnVal = fc.showOpenDialog( parentFrame );
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             SVMFile = fc.getSelectedFile();
-            showLogger("SVM Classify Log Window");
+            if(!scripting)
+                showLogger("SVM Classify Log Window");
         } else
             return false;
-        logger.append("Reading SVM file\n");
+
+        if(!scripting)
+            logger.append("Reading SVM file\n");
+        
         try {
             if(!ReadSVMFile())
                 return false;
@@ -702,13 +1103,16 @@ public class SVMGUI implements IClusterGUI {
     protected void bindClassificationParams( AlgorithmData data ) {
         bindParams( data );     //already done
         data.addParam("is-classify", String.valueOf(true));
-        if(this.SVMMode == this.CLASSIFY_ONLY)
-            trainingMatrix = this.experiment.getExperiment().getMatrix();
-        if(this.data.classifyGenes)
-            data.addMatrix("training", trainingMatrix);
-        else
-            data.addMatrix("training", trainingMatrix.transpose());
-        data.addMatrix("weights", new FloatMatrix(Weights, 1));  //weights already set by Training
+        if(!scripting) {
+            if(this.SVMMode == this.CLASSIFY_ONLY)
+                trainingMatrix = this.experiment.getExperiment().getMatrix();
+            if(this.data.classifyGenes)
+                data.addMatrix("training", trainingMatrix);
+            else
+                data.addMatrix("training", trainingMatrix.transpose());
+        }
+        if(this.Weights != null)
+            data.addMatrix("weights", new FloatMatrix(Weights, 1));  //weights already set by Training
         data.addParam("classify-genes", String.valueOf(classifyGenes));
         if(this.data.calculateHCL){
             data.addParam("calculate-hcl", String.valueOf(this.data.calculateHCL));
@@ -1564,8 +1968,6 @@ public class SVMGUI implements IClusterGUI {
         }
         return int_matrix;
     }
-    
-    
     
     
     private class Listener extends DialogListener implements AlgorithmListener {
