@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: PaperReferencesDialog.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
+ * $Revision: 1.2 $
+ * $Date: 2004-04-12 20:32:02 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -188,6 +188,10 @@ public class PaperReferencesDialog extends JDialog implements java.awt.print.Pri
         html += "Significance analysis of microarrays applied to the ionizing radiation response. ";
         html += "<i>Proceedings of the National Academy of Sciences USA</i> 98: 5116-5121.";
         
+        html += "<br><p>Chu, G., B. Narasimhan, R. Tibshirani and V. Tusher (2002).";
+        html += "SAM \"Significance Analysis of Microarrays\" Users Guide and Technical Document.";
+        html += "http://www-stat.stanford.edu/~tibs/SAM/";
+  
         html += "<br><p><font size = +1><b>ANOVA</b></font> - ";
         html += "<b>One-way Analysis of Variance</b>";        
         html += "<br>Zar, J.H. 1999. Biostatistical Analysis. 4th ed. Prentice Hall, NJ.";
@@ -202,21 +206,44 @@ public class PaperReferencesDialog extends JDialog implements java.awt.print.Pri
         html += "Statistical methods for identifying differentially expressed genes ";
         html += "in replicated cDNA microarray experiments. <i>Technical report 2000</i> ";
         html += "Statistics Department, University of California, Berkeley.";
-        
+
+        html += "<br><p>Welch B.L. (1947).";
+        html += "The generalization of ‘students’ problem when several different population variances are involved. ";
+        html += "<i>Biometrika</i> 34: 28-35.";
+
+        html += "<br><p><font size = +1><b>TFA</b></font> - ";
+        html += "<b>Two Factor ANOVA</b>";
+        html += "<br>Keppel, G., and S. Zedeck. (1989). Randomization, Bootstrap and Monte Carlo Methods in Biology. 2nd ed. Chapman and Hall / CRC , FL.";               
+        html += "<br><p>Manly, B.F.J. (1997). Data Analysis for Research Designs. W. H. Freeman and Co., NY.";       
+        html += "<br><p>Zar, J.H. 1999. Biostatistical Analysis. 4th ed. Prentice Hall, NJ.";  
+                
         html += "<br><p><font size = +1><b>SVM</b></font> - ";
         html += "<b>Support Vector Machines</b>";
         html += "<br>Brown, M.P., W.N. Grundy, D. Lin, N. Cristianini, C.W. Sugnet, ";
         html += "T.S. Furey, M. Ares, Jr., and D. Haussler (2000) ";
         html += "Knowledge-based analysis of microarray gene expression data by using support vector machines. ";
         html += "<i>Proceedings of the National Academy of Sciences USA</i> 97: 262-267.";
-
+        
+        html += "<br><p><font size = +1><b>KNNC</b></font> - ";
+        html += "<b>K-Nearest Neighbor Classification</b>";
+        html += "<br>Theilhaber, J., Connolly, S. Roman-Roman, S. Bushnell, A. Jackson, K. Call, T. Garcia, R. Baron (2002) ";        
+        html += "Finding Genes in the C2Cl2 Osteogenic Pathway by K-Nearest-Neighbor Classification of Expression Data.";
+        html += "<i>Genome Research</i> 12:165-176";
+        
         html += "<br><p><font size = +1><b>TRN</b></font> - ";
         html += "<b>Expression Terrain Maps</b>";
         html += "<br>Kim, S.K., J. Lund, M. Kiraly, K. Duke, M. Jiang, J.M. Stuart, A. Eizinger,";
         html += "B.N. Wylie, and G.S. Davidson (2001) ";
-        html += "A Gene Expression Map for Caenorhabditis elegans";
+        html += "A Gene Expression Map for Caenorhabditis elegans. ";
         html += "<i>Science</i> 293: 2087-2092.";
 
+        html += "<br><p><font size = +1><b>EASE</b></font> - ";
+        html += "<b>Expression Analysis Systematic Explorer</b>";
+        html += "<br>Hosack, D.A., G. Dennis Jr., B.T. Sherman, H.C. Lane, R.A. Lempicki. (2001)";
+        html += "Identifying biological themes within lists of genes with EASE.";
+        html += "<i>Genome Biol.</i> 4:R70-R70.8, 2003.";        
+        
+        
         //html += "<br><p>UNDER CONSTRUCTION";
         
         html += "</body></html>";
