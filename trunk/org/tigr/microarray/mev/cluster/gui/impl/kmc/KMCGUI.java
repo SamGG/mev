@@ -1,11 +1,11 @@
 /*
 Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
 All rights reserved.
-*/
+ */
 /*
  * $RCSfile: KMCGUI.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
+ * $Revision: 1.2 $
+ * $Date: 2004-04-06 17:30:16 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -33,9 +33,10 @@ import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Monitor;
@@ -53,7 +54,9 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidsViewer;
 
-public class KMCGUI implements IClusterGUI {
+import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
+
+public class KMCGUI implements IClusterGUI, IScriptGUI {
     
     private Algorithm algorithm;
     private Progress progress;
@@ -144,8 +147,8 @@ public class KMCGUI implements IClusterGUI {
                 function = Algorithm.EUCLIDEAN;
             }
             data.addParam("distance-function", String.valueOf(function));
-            data.addParam("number_of_clusters", String.valueOf(k));
-            data.addParam("number_of_iterations", String.valueOf(iterations));
+            data.addParam("number-of-clusters", String.valueOf(k));
+            data.addParam("number-of-iterations", String.valueOf(iterations));
             data.addParam("calculate-means", String.valueOf(calcMeans));
             // hcl parameters
             if (isHierarchicalTree) {
@@ -413,6 +416,175 @@ public class KMCGUI implements IClusterGUI {
         node.add(new DefaultMutableTreeNode(info.function));
         root.add(node);
     }
+    
+    /***
+     *      Script Support
+     *
+     */                  
+    public AlgorithmData getScriptParameters(IFramework framework) {
+        k = 10;
+        int iterations = 50;
+        boolean calcMeans = true;        
+        
+        KMCInitDialog kmc_dialog = new KMCInitDialog(new JFrame(), k, iterations);
+        if (kmc_dialog.showModal() != JOptionPane.OK_OPTION) {
+            return null;
+        }
+        k = kmc_dialog.getClusters();
+        iterations = kmc_dialog.getIterations();
+        calcMeans = kmc_dialog.calculateMeans();
+        clusterGenes = kmc_dialog.isClusterGenesSelected();
+        
+        if (k < 1) {
+            JOptionPane.showMessageDialog(framework.getFrame(), "Number of clusters must be greater than 0!", "Error", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+        if (iterations < 1) {
+            JOptionPane.showMessageDialog(framework.getFrame(), "Number of iterations must be greater than 0!", "Error", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+        boolean isHierarchicalTree = kmc_dialog.isHierarchicalTree();
+        // hcl init
+        int hcl_method = 0;
+        boolean hcl_samples = false;
+        boolean hcl_genes = false;
+        if (isHierarchicalTree) {
+            HCLInitDialog hcl_dialog = new HCLInitDialog(new JFrame());
+            if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
+                return null;
+            }
+            hcl_method = hcl_dialog.getMethod();
+            hcl_samples = hcl_dialog.isClusterExperience();
+            hcl_genes = hcl_dialog.isClusterGenes();
+        }
+        
+        this.experiment = framework.getData().getExperiment();
+        Listener listener = new Listener();
+   
+        AlgorithmData data = new AlgorithmData();
+        if(clusterGenes){
+            data.addParam("kmc-cluster-genes", String.valueOf(true));
+        }
+        else{
+            data.addParam("kmc-cluster-genes", String.valueOf(false));
+        }
+        data.addParam("distance-factor", String.valueOf(1.0f));
+        IDistanceMenu menu = framework.getDistanceMenu();
+        data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
+        int function = menu.getDistanceFunction();
+        if (function == Algorithm.DEFAULT) {
+            function = Algorithm.EUCLIDEAN;
+        }
+        data.addParam("distance-function", String.valueOf(function));
+        data.addParam("number-of-clusters", String.valueOf(k));
+        data.addParam("number-of-iterations", String.valueOf(iterations));
+        data.addParam("calculate-means", String.valueOf(calcMeans));
+        // hcl parameters
+        if (isHierarchicalTree) {
+            data.addParam("hierarchical-tree", String.valueOf(true));
+            data.addParam("method-linkage", String.valueOf(hcl_method));
+            data.addParam("calculate-genes", String.valueOf(hcl_genes));
+            data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+        }
+        
+        //script control parameters
+
+        // alg name
+        data.addParam("name", "KMC");
+        
+        // alg type
+        data.addParam("alg-type", "cluster");
+        
+        // output class
+        data.addParam("output-class", "multi-cluster-output");
+        
+        //output nodes                
+        String [] outputNodes = new String[1];
+        outputNodes[0] = "Multi-cluster";
+        data.addStringArray("output-nodes", outputNodes);
+        
+        
+        return data;
+    }
+    
+    public DefaultMutableTreeNode executeScript(IFramework framework, AlgorithmData algData, Experiment experiment) throws AlgorithmException {
+        AlgorithmData data = algData;
+        
+            //extract some key paramters
+            AlgorithmParameters params = data.getParams();
+            k = params.getInt("number-of-clusters", 10);
+            this.clusterGenes = params.getBoolean("kmc-cluster-genes");
+            int iterations = params.getInt("number-of-iterations");
+            
+            if(clusterGenes){
+                data.addMatrix("experiment", experiment.getMatrix());
+
+            }
+            else{
+                data.addMatrix("experiment", experiment.getMatrix().transpose());
+
+            }
+        
+        this.experiment = experiment;
+        Listener listener = new Listener();
+        try {
+            algorithm = framework.getAlgorithmFactory().getAlgorithm("KMC");
+            algorithm.addAlgorithmListener(listener);
+            
+            int genes = experiment.getNumberOfGenes();
+            this.monitor = new Monitor(framework.getFrame(), "Reallocations", 25, 100, 210.0/genes);
+            this.monitor.setStepXFactor((int)Math.floor(245/iterations));
+            this.monitor.update(genes);
+            this.monitor.show();
+            
+            this.progress = new Progress(framework.getFrame(), "Calculating clusters", listener);
+            this.progress.show();
+            
+            long start = System.currentTimeMillis();
+            AlgorithmData result = algorithm.execute(data);
+            long time = System.currentTimeMillis() - start;
+            // getting the results
+            Cluster result_cluster = result.getCluster("cluster"); 
+            NodeList nodeList = result_cluster.getNodeList();
+            this.clusters = new int[k][];
+            for (int i=0; i<k; i++) {
+                clusters[i] = nodeList.getNode(i).getFeaturesIndexes();
+            }
+            this.means = result.getMatrix("clusters_means");
+            this.variances = result.getMatrix("clusters_variances");
+            
+            GeneralInfo info = new GeneralInfo();
+            info.clusters = k;
+            info.converged = result.getParams().getBoolean("converged");
+            info.iterations = result.getParams().getInt("iterations");
+            info.calculate_means = params.getBoolean("calculate-means");
+            info.time = time;
+            info.function = framework.getDistanceMenu().getFunctionName(params.getInt("distance-function"));
+            info.hcl = params.getBoolean("hierarchical-tree");
+
+            info.hcl_genes = params.getBoolean("calculate-genes");
+            info.hcl_samples = params.getBoolean("calculate-experiments");
+            if(info.hcl)
+                    info.hcl_method = params.getInt("method-linkage");
+            else
+                info.hcl_method = 0;
+            
+            return createResultTree(result_cluster, info);
+            
+        } finally {
+            if (algorithm != null) {
+                algorithm.removeAlgorithmListener(listener);
+            }
+            if (progress != null) {
+                progress.dispose();
+            }
+            if (monitor != null) {
+                monitor.dispose();
+            }
+        }
+    }
+    
+    
     
     /**
      * The class to listen to progress, monitor and algorithms events.
