@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SAMGUI.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 16:59:46 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2004-04-07 20:25:40 $
+ * $Author: nbhagaba $
  * $State: Exp $
  */
 
@@ -37,6 +37,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import org.tigr.util.FloatMatrix;
 import org.tigr.util.ConfMap;
 
+import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
@@ -44,6 +45,7 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
@@ -76,6 +78,7 @@ public class SAMGUI implements IClusterGUI {
     private Algorithm algorithm;
     private Progress progress;
     //private Monitor monitor;
+    private IData data;
     
     private Experiment experiment;
     private int[][] clusters;
@@ -86,6 +89,9 @@ public class SAMGUI implements IClusterGUI {
     private float delta, oneClassMean;
     private double[] deltaGrid, medNumFalse, false90th, FDRMedian, FDR90th;
     private int[] numSig;
+    private String[] auxTitles;
+    private Object[][] auxData;
+    //private String[] allTitles;
     
     int[] groupAssignments;
     int numMultiClassGroups;
@@ -106,6 +112,7 @@ public class SAMGUI implements IClusterGUI {
         
         this.SAMFrame = (JFrame) framework.getFrame();
 	this.experiment = framework.getData().getExperiment();
+        this.data = framework.getData();
 	exptNamesVector = new Vector(); 
         geneNamesVector = new Vector();
 	int number_of_samples = experiment.getNumberOfSamples();
@@ -619,6 +626,38 @@ public class SAMGUI implements IClusterGUI {
 	    info.hcl_genes = hcl_genes;
 	    info.hcl_samples = hcl_samples;
 	    info.hcl_method = hcl_method;
+            
+            Vector allFields = new Vector();
+            
+            allFields.add("Score(d)");
+            allFields.add("Numerator(r)");
+            allFields.add("Denominator (s+s0)");
+            if ((studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED)) {
+                allFields.add("Fold change");
+            }
+            if (calculateQLowestFDR) {
+                allFields.add("q-value (%)");
+            }
+
+            auxTitles = new String[allFields.size()];
+            for (int i = 0; i < auxTitles.length; i++) {
+                auxTitles[i] = (String)(allFields.get(i));
+            }
+            
+            auxData = new Object[experiment.getNumberOfGenes()][auxTitles.length];
+            for (int i = 0; i < auxData.length; i++) {
+                int counter = 0;
+                auxData[i][counter++] = new Float(dValues[i]);
+                auxData[i][counter++] = new Float(rValues[i]);
+                auxData[i][counter++] = new Float((float)(rValues[i]/dValues[i]));
+                if ((studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED)) {
+                    auxData[i][counter++] = new Float(foldChangeArray[i]);
+                }
+                if (calculateQLowestFDR) {
+                    auxData[i][counter++] = new Float(qLowestFDR[i]);
+                }
+            }
+            
 	    return createResultTree(result_cluster, info);            
             
         } finally {
@@ -652,6 +691,7 @@ public class SAMGUI implements IClusterGUI {
         addExpressionImages(root);
 	addHierarchicalTrees(root, result_cluster, info);
 	addCentroidViews(root);
+        addTableViews(root);
 	addClusterInfo(root);
         addGeneralInfo(root, info);
     }
@@ -762,6 +802,33 @@ public class SAMGUI implements IClusterGUI {
 	node.add(new DefaultMutableTreeNode(new LeafInfo("Results (#,%)", new SAMInfoViewer(this.clusters, this.experiment.getNumberOfGenes(), studyDesign))));
 	root.add(node);
     }   
+    
+    private void addTableViews(DefaultMutableTreeNode root) {
+	DefaultMutableTreeNode tabNode = new DefaultMutableTreeNode("Table Views");    
+        IViewer tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData);
+        if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) || (studyDesign == SAMInitDialog.ONE_CLASS)) {
+            for (int i=0; i<this.clusters.length; i++) {
+                if (i == 0) {
+                    tabNode.add(new DefaultMutableTreeNode(new LeafInfo("Positive Significant Genes ", tabViewer, new Integer(i))));
+                } else if (i == 1) {
+                    tabNode.add(new DefaultMutableTreeNode(new LeafInfo("Negative Significant Genes ", tabViewer, new Integer(i))));                           
+                } else if (i == 2) {
+                    tabNode.add(new DefaultMutableTreeNode(new LeafInfo("All Significant Genes ", tabViewer, new Integer(i))));                    
+                } else if (i == 3) {
+                    tabNode.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", tabViewer, new Integer(i))));                    
+                }
+            }
+        } else {
+            for (int i=0; i<this.clusters.length; i++) {
+                if (i == 0) {
+                    tabNode.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", tabViewer, new Integer(i))));
+                } else if (i == 1) {
+                    tabNode.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", tabViewer, new Integer(i))));
+                } 
+            }            
+        }
+        root.add(tabNode);
+    }
     
     /**
      * Adds nodes to display centroid charts.
