@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: KMCGUI.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-04-07 18:28:25 $
+ * $Revision: 1.4 $
+ * $Date: 2004-04-29 17:31:42 $
  * $Author: nbhagaba $
  * $State: Exp $
  */
@@ -52,6 +52,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidsViewer;
@@ -249,7 +250,8 @@ public class KMCGUI implements IClusterGUI/*, IScriptGUI*/ {
         if (clusterGenes) {
             tableViewer = new ClusterTableViewer(this.experiment, this.clusters, data);
         } else {// placeholder for ExperimentClusterTableViewer
-            return;
+            tableViewer = new ExperimentClusterTableViewer(this.experiment, this.clusters, data);
+            //return;
         }
         
         for (int i=0; i<this.clusters.length; i++) {
