@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: FOMContentComponent.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-04-06 13:02:12 $
+ * $Revision: 1.4 $
+ * $Date: 2004-04-12 19:34:20 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -48,7 +48,7 @@ public class FOMContentComponent extends JPanel implements java.io.Serializable 
         else {
 	    this.fomGraph = new FOMGraph(fom_values, variances, "FOM value vs. # of clusters", "Number of Clusters", "Adjusted FOM", false);
         }
-            this.fomGraph.setItems(createXItems(fom_values.length), createYItems(fom_values));
+        this.fomGraph.setItems(createXItems(fom_values.length), createYItems(fom_values));
 	this.fomGraph.setMaxYValue((float)Math.ceil(getMaxValue(fom_values)));
 	GridBagConstraints gbc = new GridBagConstraints();
 	gbc.fill = GridBagConstraints.BOTH;
@@ -60,6 +60,10 @@ public class FOMContentComponent extends JPanel implements java.io.Serializable 
 	gbc.gridx = 1;
 	gbc.weightx = 0.1;
 	add(createValuesList(fom_values), gbc);
+    }
+    
+    public void setFOMIterationValues(float [][] values) {
+        fomGraph.setFOMIterationValues(values);
     }
     
     public BufferedImage getImage() {
