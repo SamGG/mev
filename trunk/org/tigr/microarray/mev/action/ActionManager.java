@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ActionManager.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-05 22:37:40 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-27 22:20:42 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -314,6 +314,15 @@ public class ActionManager implements java.io.Serializable {
     public static final String SET_PERCENTAGE_CUTOFFS_CMD = "set-percentage-cutoffs-cmd";
     public static final String USE_PERCENTAGE_CUTOFFS_CMD = "use-percentage-cutoffs-cmd";
     public static final String ADJUST_INTENSITIES_0_CMD = "adjust-intensities-0-cmd";
+
+    // pcahan
+    public static final String DIVIDE_GENES_MEDIAN_CMD = "divide-genes-median-cmd";
+    public static final String UNDIVIDE_GENES_MEDIAN_CMD = "undivide-genes-median-cmd";
+
+    public static final String DIVIDE_GENES_MEAN_CMD = "divide-genes-mean-cmd";
+    public static final String UNDIVIDE_GENES_MEAN_CMD = "undivide-genes-mean-cmd";  
+    
+    
     // normalization commands
     public static final String TOTAL_INTENSITY_CMD        = "total-intensity-cmd";
     public static final String LINEAR_REGRESSION_CMD      = "linear-regression-cmd";
