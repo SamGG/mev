@@ -50,7 +50,7 @@ public class SAMGraphViewer extends JPanel implements IViewer {
     
     public void paint(Graphics g) {
         super.paint(g);
-        if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL)) {
+        if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) || (studyDesign == SAMInitDialog.ONE_CLASS)) {
             paint1(g);
         } else if (studyDesign == SAMInitDialog.MULTI_CLASS) {
             paint2(g);
@@ -253,6 +253,13 @@ public class SAMGraphViewer extends JPanel implements IViewer {
         g2D.drawString( "X axis = Expected, Y axis = Observed", this.getWidth()/2 + 25, this.getHeight() - 25);
     }
     
+    public JComponent getCornerComponent(int corner){
+      return null;   
+    }
+    
+    public JComponent getRowHeaderComponent(){
+        return null;
+    }
     private void paint2(Graphics g) {
         Graphics2D g2D = (Graphics2D)g;
         int panelWidth = this.getWidth();
@@ -455,7 +462,7 @@ public class SAMGraphViewer extends JPanel implements IViewer {
         int yCoord = 0;
         
         //if (xValue >= 0) {
-        if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL)) {
+        if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) || (studyDesign == SAMInitDialog.ONE_CLASS)) {
             xCoord = (int)Math.round((double)(this.getWidth()/2)) + xRaw;
             //} else {
             //xCoord = Math.round((float)(this.getWidth()/2)) - xRaw;
@@ -513,7 +520,7 @@ public class SAMGraphViewer extends JPanel implements IViewer {
         }
         
         double scalingFactor =0;
-        if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL)) {
+        if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) || (studyDesign == SAMInitDialog.ONE_CLASS)) {
             scalingFactor = (this.getWidth()/2 - 50)/largest;
         } else if (studyDesign == SAMInitDialog.MULTI_CLASS) {
             scalingFactor = ((this.getWidth() - 50) - 30)/largest;
@@ -539,7 +546,7 @@ public class SAMGraphViewer extends JPanel implements IViewer {
         }
         
         double scalingFactor = 0;
-        if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL)) {
+        if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) || (studyDesign == SAMInitDialog.ONE_CLASS)) {
             scalingFactor = (this.getHeight()/2 - 50)/largest;
         } else if (studyDesign == SAMInitDialog.MULTI_CLASS) {
             scalingFactor = ((this.getHeight() - 30) - 50)/largest;

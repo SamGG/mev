@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SAMInfoViewer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 16:59:46 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -77,7 +77,7 @@ public class SAMInfoViewer extends ViewerAdapter {
         area.setMargin(new Insets(0, 10, 0, 0));  
 	StringBuffer sb = new StringBuffer(clusters.length*3*10);
         //System.out.println("SAMIInfoViewer.createContent(): studyDesign = " + studyDesign);
-        if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL)) {
+        if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) || (studyDesign == SAMInitDialog.ONE_CLASS)) {
             for (int counter = 0; counter < clusters.length; counter++) {
                 if (counter == 0) {
                     sb.append("Positive Significant Genes ");

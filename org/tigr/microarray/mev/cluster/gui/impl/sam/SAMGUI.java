@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SAMGUI.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 16:59:46 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -83,7 +83,7 @@ public class SAMGUI implements IClusterGUI {
     private FloatMatrix variances; 
     private float[] dValues, rValues, qLowestFDR, foldChangeArray;
     private double[] xArray, yArray;
-    private float delta;
+    private float delta, oneClassMean;
     private double[] deltaGrid, medNumFalse, false90th, FDRMedian, FDR90th;
     private int[] numSig;
     
@@ -121,6 +121,7 @@ public class SAMGUI implements IClusterGUI {
         SAMInitDialog sDialog;
         studyDesign = 0; 
         int numCombs = 0; 
+        int numUniquePerms = 0;
         int numNeighbors = 0;
         numMultiClassGroups = 0;
         
@@ -129,6 +130,7 @@ public class SAMGUI implements IClusterGUI {
         boolean usePreviousGraph = false;
         boolean saveImputedMatrix = false;
         boolean useTusherEtAlS0 = false;
+        boolean useAllUniquePerms = false;
         
         double userPercentile = 0;
         
@@ -154,6 +156,12 @@ public class SAMGUI implements IClusterGUI {
                     inSurvivalAnalysis = SAMState.inSurvivalAnalysis;
                     survivalTimes = SAMState.survivalTimes;
                     censored = SAMState.censored;
+                } else if (studyDesign == SAMInitDialog.ONE_CLASS) {
+                    oneClassMean = (float)(SAMState.oneClassMean);
+                }
+                useAllUniquePerms = SAMState.useAllUniquePerms;
+                if (useAllUniquePerms) {
+                    numUniquePerms = SAMState.numUniquePerms;
                 }
                 numCombs = SAMState.numCombs;
                 numNeighbors = SAMState.numNeighbors;
@@ -193,6 +201,11 @@ public class SAMGUI implements IClusterGUI {
                     SAMState.censored = censored;
                     survivalTimes =sDialog.getSurvivalTimes();
                     SAMState.survivalTimes = survivalTimes;
+                } 
+                
+                if (studyDesign == SAMInitDialog.ONE_CLASS) {
+                    oneClassMean = (float)(sDialog.getOneClassMean());
+                    SAMState.oneClassMean = (double)oneClassMean;
                 }
                 groupAssignments = sDialog.getGroupAssignments();
                 SAMState.groupAssignments = groupAssignments;
@@ -200,6 +213,12 @@ public class SAMGUI implements IClusterGUI {
                 //if (!useAllCombs) {
                 numCombs = sDialog.getUserNumCombs();
                 SAMState.numCombs = numCombs;
+                useAllUniquePerms = sDialog.useAllUniquePerms();
+                SAMState.useAllUniquePerms = useAllUniquePerms;
+                if (useAllUniquePerms) {
+                    numUniquePerms = sDialog.getNumUniquePerms();
+                    SAMState.numUniquePerms = numUniquePerms;
+                }
                 //}
                 useKNearest = sDialog.useKNearest();
                 SAMState.useKNearest = useKNearest;
@@ -252,6 +271,11 @@ public class SAMGUI implements IClusterGUI {
                 SAMState.censored = censored;
                 survivalTimes =sDialog.getSurvivalTimes();
                 SAMState.survivalTimes = survivalTimes;
+            } 
+            
+            if (studyDesign == SAMInitDialog.ONE_CLASS) {
+                    oneClassMean = (float)(sDialog.getOneClassMean());
+                    SAMState.oneClassMean = (double)oneClassMean;
             }            
             groupAssignments = sDialog.getGroupAssignments();
             SAMState.groupAssignments = groupAssignments;
@@ -259,6 +283,13 @@ public class SAMGUI implements IClusterGUI {
             //if (!useAllCombs) {
             numCombs = sDialog.getUserNumCombs();
             SAMState.numCombs = numCombs;
+            
+            useAllUniquePerms = sDialog.useAllUniquePerms();
+            SAMState.useAllUniquePerms = useAllUniquePerms;
+            if (useAllUniquePerms) {
+                numUniquePerms = sDialog.getNumUniquePerms();
+                SAMState.numUniquePerms = numUniquePerms;
+            }           
             //}
             useKNearest = sDialog.useKNearest();
             SAMState.useKNearest = useKNearest;
@@ -357,7 +388,17 @@ public class SAMGUI implements IClusterGUI {
                 data.addMatrix("inAnalysisMatrix", inAnalysisMatrix);
                 data.addMatrix("isCensoredMatrix", isCensoredMatrix);
                 data.addMatrix("survivalTimesMatrix", survivalTimesMatrix);
+            } 
+            
+            if (studyDesign == SAMInitDialog.ONE_CLASS) {
+                data.addParam("oneClassMean", String.valueOf(oneClassMean));
             }
+            data.addParam("useAllUniquePerms", String.valueOf(useAllUniquePerms));
+            
+            if (useAllUniquePerms) {
+                data.addParam("numUniquePerms", String.valueOf(numUniquePerms));
+            }
+             
             data.addParam("num-combs", String.valueOf(numCombs));
             //data.addParam("use-all-combs", String.valueOf(useAllCombs));
             data.addParam("use-k-nearest", String.valueOf(useKNearest));
@@ -384,7 +425,7 @@ public class SAMGUI implements IClusterGUI {
 	    NodeList nodeList = result_cluster.getNodeList();
 	    AlgorithmParameters resultMap = result.getParams();  
             int k = 0;
-            if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL)) {
+            if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) || (studyDesign == SAMInitDialog.ONE_CLASS)) {
                 k = 4; //resultMap.getInt("number-of-clusters"); // NEED THIS TO GET THE VALUE OF NUMBER-OF-CLUSTERS 
             } else {
                 k = 2;
@@ -538,6 +579,8 @@ public class SAMGUI implements IClusterGUI {
             info.delta = delta;
             info.upperCutoff = upperCutoff;
             info.lowerCutoff = lowerCutoff;
+            info.useAllUniquePerms = useAllUniquePerms;
+            info.numUniquePerms = numUniquePerms;
             if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED)) {
                 if (useFoldChange) {
                     info.useFoldChange = "Yes";
@@ -550,6 +593,10 @@ public class SAMGUI implements IClusterGUI {
             }
             if (studyDesign == SAMInitDialog.MULTI_CLASS) {
                 info.numMultiClassGroups = numMultiClassGroups;
+            } 
+            
+            if (studyDesign == SAMInitDialog.ONE_CLASS) {
+                info.oneClassMean = oneClassMean;
             }
             info.numSigGenes = numSigGenes;
             info.numFalseSigMed = numFalseSigMed;
@@ -627,7 +674,7 @@ public class SAMGUI implements IClusterGUI {
 	DefaultMutableTreeNode node = new DefaultMutableTreeNode("Expression Images");
 	IViewer expViewer = new SAMExperimentViewer(this.experiment, this.clusters, studyDesign, /*geneNamesVector,*/ dValues, rValues, foldChangeArray, qLowestFDR, calculateQLowestFDR);
 	
-        if ((studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL)) {
+        if ((studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) || (studyDesign == SAMInitDialog.ONE_CLASS)) {
             for (int i=0; i<this.clusters.length; i++) {
                 if (i == 0) {
                     node.add(new DefaultMutableTreeNode(new LeafInfo("Positive Significant Genes ", expViewer, new Integer(i))));
@@ -663,7 +710,7 @@ public class SAMGUI implements IClusterGUI {
 	}
 	DefaultMutableTreeNode node = new DefaultMutableTreeNode("Hierarchical Trees");
 	NodeList nodeList = result_cluster.getNodeList();
-        if ((studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL)) {        
+        if ((studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) || (studyDesign == SAMInitDialog.ONE_CLASS)) {        
             for (int i=0; i<nodeList.getSize(); i++) {
                 if (i == 0) {
                     node.add(new DefaultMutableTreeNode(new LeafInfo("Positive Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
@@ -725,7 +772,7 @@ public class SAMGUI implements IClusterGUI {
 	SAMCentroidViewer centroidViewer = new SAMCentroidViewer(this.experiment, clusters, studyDesign, /*geneNamesVector,*/ dValues, rValues, foldChangeArray, qLowestFDR, calculateQLowestFDR);
 	centroidViewer.setMeans(this.means.A);
 	centroidViewer.setVariances(this.variances.A);
-        if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL)) {
+        if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) || (studyDesign == SAMInitDialog.ONE_CLASS)) {
             for (int i=0; i<this.clusters.length; i++) {
                 
                 if (i == 0) {
@@ -778,11 +825,14 @@ public class SAMGUI implements IClusterGUI {
         DefaultMutableTreeNode inputSubNode = new DefaultMutableTreeNode("Input Parameters");
         DefaultMutableTreeNode computedSubNode = new DefaultMutableTreeNode("Computed Quantities");
         inputSubNode.add(new DefaultMutableTreeNode("Study Design: " + info.getStudyDesign()));
-        if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.MULTI_CLASS)) {
+        if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.MULTI_CLASS) || (studyDesign == SAMInitDialog.ONE_CLASS)) {
             inputSubNode.add(getGroupAssignmentInfo(info.studyDesign));
         }
         if (info.studyDesign == SAMInitDialog.MULTI_CLASS) {
             inputSubNode.add(new DefaultMutableTreeNode("Number of classes: " + info.numMultiClassGroups));
+        }
+        if (info.studyDesign == SAMInitDialog.ONE_CLASS) {
+            inputSubNode.add(new DefaultMutableTreeNode("Hypothesized one-class mean: " + info.oneClassMean));
         }
         if (info.studyDesign == SAMInitDialog.CENSORED_SURVIVAL) {
             inputSubNode.add(getSampleSurvivalInfo());
@@ -794,7 +844,12 @@ public class SAMGUI implements IClusterGUI {
         inputSubNode.add(new DefaultMutableTreeNode("Delta: " + info.delta));
         inputSubNode.add(new DefaultMutableTreeNode("Upper Cutoff: " + info.upperCutoff));
         inputSubNode.add(new DefaultMutableTreeNode("Lower Cutoff: " + info.lowerCutoff));
-        inputSubNode.add(new DefaultMutableTreeNode("Number of Permutations: " + info.numCombs));
+        inputSubNode.add(new DefaultMutableTreeNode("All permutations unique? " + info.useAllUniquePerms));
+        if (info.useAllUniquePerms) {
+            inputSubNode.add(new DefaultMutableTreeNode("Number of unique permutations " + info.numUniquePerms));
+        } else {
+            inputSubNode.add(new DefaultMutableTreeNode("Number of Permutations: " + info.numCombs));
+        }
         inputSubNode.add(new DefaultMutableTreeNode("Fold Change Criterion Used: " + info.useFoldChange));
         if (info.useFoldChange == "Yes") {
            inputSubNode.add(new DefaultMutableTreeNode("Fold Change Value: " + info.foldChangeValue));
@@ -910,6 +965,25 @@ public class SAMGUI implements IClusterGUI {
             if (notInGroups.getChildCount() > 0) {
                 groupAssignmentInfo.add(notInGroups);
             }
+        } else if (studyDesign == SAMInitDialog.ONE_CLASS) {
+            groupAssignmentInfo = new DefaultMutableTreeNode("Experiment details");
+            DefaultMutableTreeNode in = new DefaultMutableTreeNode("In analysis ");
+            DefaultMutableTreeNode out = new DefaultMutableTreeNode("Out of analysis "); 
+            int outCounter = 0;
+            for (int i = 0; i < groupAssignments.length; i++) {
+                if (groupAssignments[i] == 1) {
+                    in.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i))));
+                } else {
+                    out.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i))));
+                    outCounter++;
+                }
+            }
+            
+            if (outCounter == 0) {
+                out.add(new DefaultMutableTreeNode("None"));
+            }
+            groupAssignmentInfo.add(in);
+            groupAssignmentInfo.add(out);            
         }
 	//
 	return groupAssignmentInfo;
@@ -968,10 +1042,10 @@ public class SAMGUI implements IClusterGUI {
 	//public String function;
 	//public int numReps;
 	//public double thresholdPercent;
-        private float delta, sNought, s0Percentile, pi0Hat, foldChangeValue, upperCutoff, lowerCutoff;
+        private float delta, sNought, s0Percentile, pi0Hat, foldChangeValue, upperCutoff, lowerCutoff, oneClassMean;
         private String numSigGenes, numFalseSigMed, numFalseSig90th, FDRMedian, FDR90th;
         private int studyDesign;
-        private int numCombs;
+        private int numCombs, numUniquePerms;
         private String imputationEngine;
         private int numNeighbors;
 	private int numMultiClassGroups;
@@ -979,6 +1053,7 @@ public class SAMGUI implements IClusterGUI {
 	private int hcl_method;
 	private boolean hcl_genes;
 	private boolean hcl_samples;
+        private boolean useAllUniquePerms;
 	
 	public String getMethodName() {
 	    return hcl ? HCLGUI.GeneralInfo.getMethodName(hcl_method) : "no linkage";
@@ -994,6 +1069,8 @@ public class SAMGUI implements IClusterGUI {
                 study = "Multi Class";
             } else if (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) {
                 study = "Censored Survival";
+            } else if (studyDesign == SAMInitDialog.ONE_CLASS) {
+                study = "One Class";
             }
             return study;
         }
