@@ -23,6 +23,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JTree;
@@ -219,7 +220,7 @@ public class ResultTree extends JTree implements java.io.Serializable {
             currLevel = ois.readInt();
             if(currLevel == 0){
                 obj = ois.readObject();
-
+                
                 root = new DefaultMutableTreeNode(obj);
                 parent = root;
                 child = root;
@@ -276,8 +277,8 @@ public class ResultTree extends JTree implements java.io.Serializable {
                 while (!stop && enum.hasMoreElements()){
                     currentNode = (DefaultMutableTreeNode)enum.nextElement();
                     if(currentNode.getUserObject() instanceof LeafInfo){
-                       viewer = ((LeafInfo)currentNode.getUserObject()).getViewer();
-                       if(viewer != null) {
+                        viewer = ((LeafInfo)currentNode.getUserObject()).getViewer();
+                        if(viewer != null) {
                             exp = viewer.getExperiment();
                             clusters = viewer.getClusters();
                             if(exp != null && clusters != null) {
@@ -287,16 +288,13 @@ public class ResultTree extends JTree implements java.io.Serializable {
                                 table.put(algName, vals);
                                 stop = true;
                             }
-                            
-                       }
-                            
-                        
+                        }
                     }
                     
                 }
-                stop = false;                
+                stop = false;
             }
-        }        
+        }
         return table;
     }
     
@@ -381,11 +379,21 @@ public class ResultTree extends JTree implements java.io.Serializable {
         /**Script Manager Icon
          */
         private Icon scriptManagerIcon = GUIFactory.getIcon("ScriptManager.gif");
-        
+        /**
+         * Script Object Viewer Icon
+         */
+        private Icon scriptIcon = GUIFactory.getIcon("ScriptIcon.gif");
+        /**
+         * Script Tree Viewer Icon
+         */
+        private Icon scriptTreeViewerIcon = GUIFactory.getIcon("ScriptTreeViewer.gif");
+        /**
+         * Script XML Viewer Icon
+         */
+        private Icon scriptXMLViewerIcon = GUIFactory.getIcon("ScriptXMLViewer.gif");        
         /** Parent node
          */
         private DefaultMutableTreeNode parent;
-                
         /** Grandparent node
          */
         private DefaultMutableTreeNode  grandParent;
@@ -416,7 +424,8 @@ public class ResultTree extends JTree implements java.io.Serializable {
             Object userObj = ((DefaultMutableTreeNode)value).getUserObject();
             //setText("");
             //setIcon(null)
-            this.setBorder(null);
+            //this.setBorder(null);
+            this.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));
             
             if(!isLeaf){
                 
@@ -469,6 +478,8 @@ public class ResultTree extends JTree implements java.io.Serializable {
                     setIcon(SOMColorIcon);
                 } else if(text.indexOf("Network") != -1) {
                     setIcon(networkIcon);
+                } else if(text.indexOf("Script (") != -1) {
+                    setIcon(scriptIcon);
                 }
                 
             } else {  //it's a leaf
@@ -520,13 +531,14 @@ public class ResultTree extends JTree implements java.io.Serializable {
                         setIcon(analysisIcon);
                     } else if(text.equalsIgnoreCase("Cluster Manager")){
                         setIcon(clusterManagerIcon);
-                    } else if (text.equals("Script Manager")){                      
+                    } else if (text.equals("Script Manager")){
                         setIcon(scriptManagerIcon);
                     } else if(text.equalsIgnoreCase("History")){
                         setIcon(historyIcon);
                     } else if(text.indexOf("able") != -1){ //table viewer
                         setIcon(tableIcon);
-                    } else if(parentText.indexOf("Hierarchical") != -1 || text.indexOf("Tree") != -1 || text.indexOf("Dendogram") != -1){
+                    } else if(parentText.indexOf("Hierarchical") != -1 || text.indexOf("Dendogram") != -1
+                            || text.indexOf("HCL Tree") != -1){
                         setIcon(hclIcon);
                     } else if(text.equals("Expression Image")){
                         setIcon(expressionImageIcon);
@@ -554,7 +566,15 @@ public class ResultTree extends JTree implements java.io.Serializable {
                         setIcon(pca3DIcon);
                     } else if(text.equals("Map") && parentText.indexOf("Terrain") != -1) {
                         setIcon(trn3DIcon);
-                    } else if(grandParentText != null){
+                    } else if(text.equals("Script Tree Viewer")) {
+                        setIcon(scriptTreeViewerIcon);
+                    } else if(text.equals("Script XML Viewer")) {
+                        setIcon(scriptXMLViewerIcon);
+                    }
+                    //add new icons here for leaf icons
+                    
+    
+                    else if(grandParentText != null){
                         if(grandParentText.indexOf("Expression Image") != -1){
                             setIcon(expressionImageIcon);
                         } else if(grandParentText.indexOf("Centroid") != -1){
