@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: StanfordFileLoader.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-10 21:35:39 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-26 15:16:54 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -76,7 +76,14 @@ public class StanfordFileLoader extends ExpressionFileLoader {
         return null;
     }
     
-    
+    /*
+     *  Handling of Stanford data has been altered in version 3.0 to permit loading of 
+     *  "ratio" input without the creation of false cy3 and cy5.  cy5 values in data structures
+     *  are used to hold the input value.
+     *  
+     *  getRatio methods are altered to return the value (held in cy5) rather than
+     *  taking log2(cy5/cy3).
+     */
     
     public Vector loadStanfordExpressionFile(File f) throws IOException {
 
@@ -87,10 +94,10 @@ public class StanfordFileLoader extends ExpressionFileLoader {
         if (spotCount <= 0) {
             JOptionPane.showMessageDialog(superLoader.getFrame(),  "There is no spot data available.",  "Stanford Load Error", JOptionPane.INFORMATION_MESSAGE);
         }
-        
-        
+                
         int[] rows = new int[] {0, 1, 0};
         int[] columns = new int[] {0, 1, 0};
+        String value;
         float cy3, cy5;
         String[] moreFields = new String[preExperimentColumns];
 
@@ -152,19 +159,18 @@ public class StanfordFileLoader extends ExpressionFileLoader {
                 }
                 sde = new SlideDataElement(rows, columns, new float[2], moreFields);
                 slideDataArray[0].addSlideDataElement(sde);
+                
                 for (int i=0; i<slideDataArray.length; i++) {
-                    cy3 = 100000f;
-                    try {
-                        //LOG
-                        String value = ss.nextToken();
-                        cy5 = (float)(100000f*Math.pow(2.0f, Float.parseFloat(value)));
-                        if(Float.parseFloat(value) > 50)
-                            System.out.println("value = "+value+" cy5 = "+cy5);
-                        
+
+                    cy3 = 1f;  //set cy3 to a default value of 1.
+                    
+                    try {                       
+                        value = ss.nextToken();
+                        cy5 = Float.parseFloat(value);  //set cy5 to hold the value
+                                                        //getRatio methods will return cy5
+                                                        //for Stanford data type
                     } catch (Exception e) {
-                        System.out.println("Exception in loader");
-                        e.printStackTrace();
-                        cy3 = cy5 = 0f;
+                        cy3 = cy5 = Float.NaN;
                     }
                     slideDataArray[i].setIntensities(counter - preSpotRows, cy3, cy5);
                 }
@@ -279,7 +285,11 @@ public class StanfordFileLoader extends ExpressionFileLoader {
                 ss.init(currentLine);
                 rowVector = new Vector();
                 for (int i = 0; i < ss.countTokens()+1; i++) {
-                    rowVector.add(ss.nextToken());
+                    try {
+                        rowVector.add(ss.nextToken());    
+                    } catch (java.util.NoSuchElementException nsee) {
+                        rowVector.add(" ");
+                    }
                 }
                 
                 dataVector.add(rowVector);
