@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: Ttest.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-01-13 17:31:02 $
+ * $Revision: 1.4 $
+ * $Date: 2004-01-21 21:20:49 $
  * $Author: nbhagaba $
  * $State: Exp $
  */
@@ -981,6 +981,11 @@ public class Ttest extends AbstractAlgorithm {
             QSort sortRawPValues = new QSort(rawPValues, QSort.ASCENDING);
             sortedRawPValues = sortRawPValues.getSortedDouble();
             sortedRawPValueIndices = sortRawPValues.getOrigIndx();
+            /*
+            for (int i = 0; i < sortedRawPValues.length; i++) {
+                System.out.println("sortedRawPValues[" + i + "] = " + sortedRawPValues[i]);
+            }
+             */
             
             for (int i = 0; i < numGenes; i++) {
                 for (int j = 0; j < numCombs; j++) {
@@ -1088,6 +1093,17 @@ public class Ttest extends AbstractAlgorithm {
             }            
         }
         
+        //System.out.println("Sorted T Matrix: ");
+        
+        /*
+        for (int i = 0; i < sortedTMatrix.length; i++) {
+            for (int j = 0; j < sortedTMatrix[i].length; j++) {
+                System.out.print(sortedTMatrix[i][j] + "  ");
+            }
+            System.out.println();
+        }
+         */
+        
         double[] sortedAdjPValues = new double[numGenes];
         
         int currentGeneCounter = 0;
@@ -1095,6 +1111,7 @@ public class Ttest extends AbstractAlgorithm {
         fireValueChanged(event3);
         event3.setId(AlgorithmEvent.PROGRESS_VALUE);        
         for (int i = numGenes - 1; i >= 0; i--) {
+            //System.out.println("Gene" + i);
             //currentGeneCounter++;            
             event3.setIntValue(currentGeneCounter);
             event3.setDescription("Calculating p-values: Current gene = " + (i+1));
@@ -1115,17 +1132,32 @@ public class Ttest extends AbstractAlgorithm {
              
             System.out.println();
             */
-            System.out.print("Gene " + i + ": ");
+            //System.out.print("Gene " + i + ": ");
             double[] currentGeneSortedPVals = getPValsFromOrderStats(sortedCurrentGeneTVals);    
-            System.out.println();
+            //System.out.println();
             //DONE UP TO HERE O1/05/2004
             for (int j = 0; j < pMatrix[i].length; j++) {
                 pMatrix[i][j] = currentGeneSortedPVals[currentGeneTValsSortedIndices[j]];
+                //pMatrix[i][j] = currentGeneSortedPVals[j]; //*** NOTE: THIS IS PROBABLY NOT CORRECT; UNCOMMENT THE ABOVE LINE AND COMMENT THIS LINE OUT. 01/21/2004
             }
-            
+            /*
+            System.out.print("pMatrix[" + i + "] = ");
+            for (int j = 0; j < pMatrix[i].length; j++) {
+                System.out.print(pMatrix[i][j] + "  ");
+            }
+            System.out.println();
+            */
             for (int j = 0; j < qMatrix[i].length; j++) {
                 qMatrix[i][j] = Math.min(qMatrix[i+1][j], pMatrix[i][j]);
             }
+
+            /*
+            System.out.print("qMatrix[" + i + "] = ");
+            for (int j = 0; j < qMatrix[i].length; j++) {
+                System.out.print(qMatrix[i][j] + "  ");
+            }
+            System.out.println();
+               */         
             
             int adjPCounter = 0;
             
@@ -1381,9 +1413,11 @@ public class Ttest extends AbstractAlgorithm {
             }
         }
         
+        /*
         for (int i = 0; i < pVals.length; i++) {
             System.out.print("  " + pVals[i]);
         }
+         */
         
         return pVals;
     }
