@@ -6,8 +6,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MevFileLoader.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-05-03 13:45:19 $
+ * $Revision: 1.5 $
+ * $Date: 2004-05-20 14:30:26 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -59,6 +59,8 @@ public class MevFileLoader extends ExpressionFileLoader {
     
     private boolean loadEnabled = false;
     private String [] uidArray;
+    
+    boolean haveSRandSC;
     
     public MevFileLoader(SuperExpressionFileLoader superLoader) {
         super(superLoader);
@@ -128,6 +130,16 @@ public class MevFileLoader extends ExpressionFileLoader {
         mfp.loadFile(currentFile);
         if (mfp.isMevFileLoaded()) {
             Vector headers = mfp.getColumnHeaders();
+            
+            //test for optional SR and SC
+            haveSRandSC = false;
+            if(headers.size() > 7) {
+                String possibleSR = (String)(headers.elementAt(7));
+                String possibleSC = (String)(headers.elementAt(8));
+                if(possibleSR.equals("SR") && possibleSC.equals("SC"))
+                    haveSRandSC = true;
+            }
+            
             String [][] data = mfp.getDataMatrix();
             SlideDataElement sde;
             int [] rows;
@@ -159,8 +171,13 @@ public class MevFileLoader extends ExpressionFileLoader {
                     cols[0] = Integer.parseInt(data[i][4]);
                     rows[1] = Integer.parseInt(data[i][5]);
                     cols[1] = Integer.parseInt(data[i][6]);
-                    rows[2] = Integer.parseInt(data[i][7]);
-                    cols[2] = Integer.parseInt(data[i][8]);
+                    if(haveSRandSC) {
+                        rows[2] = Integer.parseInt(data[i][7]);
+                        cols[2] = Integer.parseInt(data[i][8]);
+                    } else {
+                        rows[2] = 0;
+                        cols[2] = 0;
+                    }
                 } catch (NumberFormatException e) {
                     final String fileName = currentFile.getName();
                     final int loc = i;
@@ -168,7 +185,6 @@ public class MevFileLoader extends ExpressionFileLoader {
                         public void run() {
                             JOptionPane.showConfirmDialog(mflp, "The input file \""+fileName+"\" was missing critical information on line # "+ String.valueOf(loc+1) + "\n" +
                             "MeV files require entries for UID, Intensities, and slide location information.", "Loading Aborted/Loading Error", JOptionPane.ERROR_MESSAGE);
-                            
                         }
                     });
                     thread.start();
@@ -496,7 +512,7 @@ public class MevFileLoader extends ExpressionFileLoader {
             gba.add(annListPanel, annAvailableScrollPane, 0, 1, 1, 4, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             gba.add(annListPanel, annButtonPanel, 1, 1, 1, 4, 0, 1, GBA.V, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             gba.add(annListPanel, annSelectedScrollPane, 2, 1, 1, 4, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-                        
+            
             annFieldsTextField = new JTextField();
             annFieldsTextField.setEditable(false);
             annFieldsTextField.setBorder(new TitledBorder(new EtchedBorder(), "Annotation Fields"));
