@@ -33,7 +33,7 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
  * @author  nbhagaba
  * @version 
  */
-public class SAMGraphViewer extends JPanel implements IViewer {
+public class SAMGraphViewer extends JPanel implements IViewer, java.io.Serializable {
     private double[] yArray, xArray;
     private double delta; 
     int originX, originY;
@@ -253,13 +253,6 @@ public class SAMGraphViewer extends JPanel implements IViewer {
         g2D.drawString( "X axis = Expected, Y axis = Observed", this.getWidth()/2 + 25, this.getHeight() - 25);
     }
     
-    public JComponent getCornerComponent(int corner){
-      return null;   
-    }
-    
-    public JComponent getRowHeaderComponent(){
-        return null;
-    }
     private void paint2(Graphics g) {
         Graphics2D g2D = (Graphics2D)g;
         int panelWidth = this.getWidth();
@@ -610,6 +603,19 @@ public class SAMGraphViewer extends JPanel implements IViewer {
      * Returns a component to be inserted into scroll pane header.
      */
     public JComponent getHeaderComponent() {
+        return null;
+    }
+    
+    /** Returns the corner component corresponding to the indicated corner,
+     * posibly null
+     */
+    public JComponent getCornerComponent(int cornerIndex) {
+        return null;
+    }
+    
+    /** Returns a component to be inserted into the scroll pane row header
+     */
+    public JComponent getRowHeaderComponent() {
         return null;
     }
     

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SAMCentroidsViewer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-06 20:48:36 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -69,6 +69,20 @@ public class SAMCentroidsViewer extends CentroidsViewer {
         this.calculateQLowestFDR = calculateQLowestFDR;
         getContentComponent().addMouseListener(listener);
     }
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        Listener listener = new Listener();
+        this.popup = createJPopupMenu(listener);
+        getContentComponent().addMouseListener(listener);
+    }
+    
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { 
+        oos.defaultWriteObject();
+    }
+    
+    
+    
     
     /**
      * Creates a popup menu.

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SAMExperimentViewer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-06 20:48:37 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -67,6 +67,20 @@ public class SAMExperimentViewer extends ExperimentViewer {
 	getContentComponent().addMouseListener(listener);
 	getHeaderComponent().addMouseListener(listener);
     }
+    
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        Listener listener = new Listener();
+        this.popup = createJPopupMenu(listener);
+        getContentComponent().addMouseListener(listener);
+        getHeaderComponent().addMouseListener(listener);        
+    }
+    
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.defaultWriteObject();
+    }
+
     
     /**
      * Creates a popup menu.

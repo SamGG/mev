@@ -36,7 +36,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
  * @author  nbhagaba
  * @version 
  */
-public class SAMDeltaInfoViewer extends ViewerAdapter {
+public class SAMDeltaInfoViewer extends ViewerAdapter implements java.io.Serializable {
     private JComponent header;
     private JTextArea  content; 
     private double[] deltaGrid, medNumFalse,false90th, FDRMedian, FDR90th;
@@ -56,6 +56,19 @@ public class SAMDeltaInfoViewer extends ViewerAdapter {
 	content = createContent();
 	setMaxWidth(content, header);   
 
+    }
+    
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        //oos.writeObject(this.deltaGrid);
+        //oos.writeObject(this.medNumFalse);
+        oos.defaultWriteObject();
+    }
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        header = createHeader();
+        content = createContent();
+        setMaxWidth(content, header);
     }
     
     /**
