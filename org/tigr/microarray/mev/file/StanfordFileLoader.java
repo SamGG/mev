@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: StanfordFileLoader.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-26 15:16:54 $
+ * $Revision: 1.5 $
+ * $Date: 2004-02-27 22:16:51 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -304,7 +304,12 @@ public class StanfordFileLoader extends ExpressionFileLoader {
         sflp.setTableModel(model);
     }
     
+    public String getFilePath() {
+        return this.sflp.fileNameTextField.getText();
+    }    
 
+    public void openDataPath() {
+    } 
     
 /*
 //
@@ -405,7 +410,7 @@ public class StanfordFileLoader extends ExpressionFileLoader {
         }
         
         public void selectStanfordFile() {
-            JFileChooser jfc = new JFileChooser(System.getProperty("user.dir")+"\\Data");
+            JFileChooser jfc = new JFileChooser(SuperExpressionFileLoader.DATA_PATH);
             jfc.setFileFilter(getFileFilter());
             int activityCode = jfc.showDialog(this, "Select");
             

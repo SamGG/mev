@@ -6,8 +6,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ExpressionFileLoader.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-27 22:16:51 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -82,6 +82,8 @@ public abstract class ExpressionFileLoader extends SlideLoaderProgressBar { // i
     
     public abstract boolean checkLoadEnable();
     public abstract JPanel getFileLoaderPanel();
+    public abstract String getFilePath();
+    public abstract void openDataPath();    
     
     /**
      * Returns number of lines in the specified file.

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: TavFileFilter.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-27 22:16:51 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -45,6 +45,7 @@ public class TavFileFilter extends ExpressionFileFilter {
 	return "TIGR ArrayViewer Files (*.tav)";
     }
     
+   
     public Vector loadExpressionFile(File file) throws IOException {
 	Vector dataVector = new Vector();
 	
@@ -133,4 +134,5 @@ public class TavFileFilter extends ExpressionFileFilter {
 	dataVector.add(slideData);
 	return dataVector;
     }
+     
 }

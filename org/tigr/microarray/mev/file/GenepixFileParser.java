@@ -452,11 +452,8 @@ public class GenepixFileParser extends Thread{
     String tempStr = new String("");
     StringSplitter spliter = new StringSplitter('\t');
     spliter.init(str);
-   // StringSplitter spliter = new StringSplitter('\t');
-  //  spliter.init(str, '\t');
-    
+
     int num = spliter.countTokens()+1;
- //   System.out.println("in sep line count = "+num);
     int length = 0;
 
     name = new String[num];
@@ -465,7 +462,6 @@ public class GenepixFileParser extends Thread{
         tempStr = spliter.nextToken();
         tempStr = removeAllEndSpaces(tempStr);
         tempStr = removeAllHeadSpaces(tempStr);
- //       System.out.println("token index (length) = "+length+" tempStr = "+tempStr);
         name[length++] = tempStr;
       }
     }

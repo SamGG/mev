@@ -6,8 +6,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MevFileLoader.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-26 15:13:43 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-27 22:16:51 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -299,6 +299,17 @@ public class MevFileLoader extends ExpressionFileLoader {
         }
     }
     
+    public String getFilePath() {
+        if(this.mflp.getMevSelectedListModel().getSize() <1)
+            return null;
+        return ((File)(mflp.getMevSelectedListModel().getElementAt(0))).getAbsolutePath();
+    }
+    
+    public void openDataPath() {
+        this.mflp.openDataPath();
+    }
+
+    
 /*
 //
 //	MevFileLoader - Internal Classes
@@ -349,7 +360,7 @@ public class MevFileLoader extends ExpressionFileLoader {
             
             setLayout(new GridBagLayout());
             
-            fileTreePane = new FileTreePane();
+            fileTreePane = new FileTreePane(SuperExpressionFileLoader.DATA_PATH);
             fileTreePane.addFileTreePaneListener(new FileTreePaneEventHandler());
             fileTreePane.setPreferredSize(new java.awt.Dimension(200, 50));
             
@@ -496,7 +507,12 @@ public class MevFileLoader extends ExpressionFileLoader {
         public void setPath(String path) {
             pathTextField.setText(path);
         }
+                
+        public void openDataPath(){
+            this.fileTreePane.openDataPath();
+        }
         
+       
         public void validateLists() {
             
             // Currently, a minimum of one mev file must be selected to enable loading
@@ -677,7 +693,6 @@ public class MevFileLoader extends ExpressionFileLoader {
                     onAnnRemoveAll();
                 } else if (source == noAnnFileBox) {
                     onUseMevAnn();
-                    System.out.println("Selected no ann file");
                 }
             }
         }

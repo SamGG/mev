@@ -6,8 +6,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SuperExpressionFileLoader.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-17 14:40:09 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-27 22:16:51 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -30,16 +30,19 @@ import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
 
+import org.tigr.microarray.mev.TMEV;
+
 
 // Loads expression data in various file formats
 
 public class SuperExpressionFileLoader {
     
+    public static String DATA_PATH = System.getProperty("user.dir")+System.getProperty("file.separator")+"Data";
     public final static ImageIcon ICON_COMPUTER = new ImageIcon(Toolkit.getDefaultToolkit().getImage(SuperExpressionFileLoader.class.getClassLoader().getResource("org/tigr/images/PCIcon.gif")));
     public final static ImageIcon ICON_DISK = new ImageIcon(Toolkit.getDefaultToolkit().getImage(SuperExpressionFileLoader.class.getClassLoader().getResource("org/tigr/images/disk.gif")));
     public final static ImageIcon ICON_FOLDER = new ImageIcon(Toolkit.getDefaultToolkit().getImage(SuperExpressionFileLoader.class.getClassLoader().getResource("org/tigr/images/Directory.gif")));
     public final static ImageIcon ICON_EXPANDEDFOLDER = new ImageIcon(Toolkit.getDefaultToolkit().getImage(SuperExpressionFileLoader.class.getClassLoader().getResource("org/tigr/images/expandedfolder.gif")));
-     
+    
     protected ExpressionFileLoader[] fileLoaders;
     protected ExpressionFileLoader selectedFileLoader;
     protected FileFilter[] fileFilters;
@@ -69,6 +72,7 @@ public class SuperExpressionFileLoader {
     public SuperExpressionFileLoader(MultipleArrayViewer viewer) {
         this.viewer = viewer;
         loader = new Loader();
+        initializeDataPath();
         initializeFileLoaders();
         initializeGUI();
     }
@@ -88,7 +92,7 @@ public class SuperExpressionFileLoader {
         fileLoaders[0] = new MevFileLoader(this);
         fileLoaders[1] = new StanfordFileLoader(this);
         fileLoaders[2] = new TavFileLoader(this);
-        fileLoaders[3] = new AffymetrixFileLoader(this);
+        fileLoaders[3] = new AffymetrixFileLoader_new(this); 
         fileLoaders[4] = new GenePixFileLoader(this);
         //fileLoaders[4] = new ArraySuiteFileLoader();
         
@@ -165,7 +169,21 @@ public class SuperExpressionFileLoader {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         mainFrame.setLocation((screenSize.width - mainFrame.getSize().width) / 2 , (screenSize.height - mainFrame.getSize().height) / 2);
         mainFrame.setVisible(true);
+        selectedFileLoader.openDataPath();
+    }
+    
+    public void initializeDataPath(){
         
+        String newPath = TMEV.getDataPath();
+
+        if(newPath == null) {
+            return;
+        }
+        
+        File file = new File(newPath);        
+        if(file.exists()){
+            DATA_PATH = newPath;
+        }        
     }
     
     public void setLoadEnabled(boolean state) {
@@ -182,6 +200,8 @@ public class SuperExpressionFileLoader {
         changeFileLoaderPanel(selectedFileLoader);
     }
     
+
+    
     public void changeFileLoaderPanel(ExpressionFileLoader targetFileLoader) {
         
         Container cp = mainFrame.getContentPane();
@@ -191,6 +211,7 @@ public class SuperExpressionFileLoader {
         gba.add(cp, fileLoaderPanel, 0, 2, 1, 2, 1, 1, GBA.B, GBA.C);
         checkLoadEnable();
         cp.validate();
+        selectedFileLoader.openDataPath();        
         cp.repaint();
     }
     
@@ -265,6 +286,55 @@ public class SuperExpressionFileLoader {
         }
         return data;
     }
+
+    
+    private void updateDataPath(String  dataPath){
+        if(dataPath == null)
+            return;
+        String renderedSep = "/";
+        String renderedPath = new String();
+
+        String sep = System.getProperty("file.separator");        
+        String lineSep = System.getProperty("line.separator");
+
+        StringTokenizer stok = new StringTokenizer(dataPath, sep);
+        
+        DATA_PATH = new String();
+
+        String str;
+        while(stok.hasMoreTokens() && stok.countTokens() > 1){
+            str = stok.nextToken();
+            renderedPath += str + renderedSep;            
+            DATA_PATH += str + sep;
+        }
+        
+        //Read tmev.cfg
+        try{
+            BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir")+sep+"tmev.cfg"));
+
+            String content = new String();
+            String line;
+            while( !(( line = br.readLine() ).equals("#DATA PATH"))){
+                content += line+lineSep;
+            }
+            br.readLine(); //pass old path
+            content += "#DATA PATH"+lineSep;
+            content += "current-data-path "+renderedPath+lineSep;
+            while( (line = br.readLine()) != null ){
+                content += line+lineSep;
+            }
+            
+            BufferedWriter bfr = new BufferedWriter(new FileWriter(System.getProperty("user.dir")+sep+"tmev.cfg"));
+            bfr.write(content);
+            bfr.flush();
+            bfr.close();
+            br.close();
+            //if reset in file then update TMEV.dataPath;
+            TMEV.setDataPath(DATA_PATH);
+        } catch (IOException e){
+            
+        }
+    }
     
     /*
      
@@ -302,10 +372,11 @@ public class SuperExpressionFileLoader {
                 if(loaderIndex == 1)
                     dataType = IData.DATA_TYPE_RATIO_ONLY;
                 else if(loaderIndex == 3) {
-                    dataType = ((AffymetrixFileLoader)selectedFileLoader).getAffyDataType();
+                    dataType = ((AffymetrixFileLoader_new)selectedFileLoader).getAffyDataType();
                 } else
-                    dataType = IData.DATA_TYPE_TWO_INTENSITY;                
+                    dataType = IData.DATA_TYPE_TWO_INTENSITY;
                 selectedFileLoader.dispose();
+                updateDataPath(selectedFileLoader.getFilePath());                
                 if(data != null){
                     viewer.fireDataLoaded(toISlideDataArray(data), dataType);
                 }
