@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SOTAGUI.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-05-06 15:32:06 $
+ * $Revision: 1.5 $
+ * $Date: 2004-05-26 13:48:30 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -487,7 +487,10 @@ public class SOTAGUI implements IClusterGUI, IScriptGUI {
             data.addParam("name", "SOTA");
             
             // alg type
-            data.addParam("alg-type", "cluster");
+            if(clusterGenes)
+                data.addParam("alg-type", "cluster-genes");
+            else
+                data.addParam("alg-type", "cluster-experiments");
             
             // output class
             data.addParam("output-class", "multi-cluster-output");

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SVMGUI.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-05-24 17:33:09 $
+ * $Revision: 1.3 $
+ * $Date: 2004-05-26 13:51:25 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -370,7 +370,10 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
             data.addParam("name", "SVM");
             
             // alg type
-            data.addParam("alg-type", "cluster");
+            if(classifyGenes)
+                data.addParam("alg-type", "cluster-genes");
+            else
+                data.addParam("alg-type", "cluster-experiments");
             
             // output class
             data.addParam("output-class", "partition-output");
@@ -396,7 +399,10 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
             data.addParam("name", "SVM");
             
             // alg type
-            data.addParam("alg-type", "cluster");
+            if(classifyGenes)
+                data.addParam("alg-type", "cluster-genes");
+            else
+                data.addParam("alg-type", "cluster-experiments");
             
             // output class
             data.addParam("output-class", "partition-output");
@@ -421,7 +427,10 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
             data.addParam("name", "SVM");
             
             // alg type
-            data.addParam("alg-type", "cluster");
+            if(classifyGenes)
+                data.addParam("alg-type", "cluster-genes");
+            else
+                data.addParam("alg-type", "cluster-experiments");
             
             // output class
             data.addParam("output-class", "partition-output");
@@ -450,7 +459,10 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
             data.addParam("name", "SVM");
             
             // alg type
-            data.addParam("alg-type", "cluster");
+            if(classifyGenes)
+                data.addParam("alg-type", "cluster-genes");
+            else
+                data.addParam("alg-type", "cluster-experiments");
             
             // output class
             data.addParam("output-class", "partition-output");
