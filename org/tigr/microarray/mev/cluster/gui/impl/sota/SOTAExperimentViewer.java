@@ -1,0 +1,631 @@
+/*
+Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+All rights reserved.
+ */
+/*
+ * $RCSfile: SOTAExperimentViewer.java,v $
+ * $Revision: 1.1.1.1 $
+ * $Date: 2003-08-21 21:04:24 $
+ * $Author: braisted $
+ * $State: Exp $
+ */
+
+package org.tigr.microarray.mev.cluster.gui.impl.sota;
+
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.*;
+import java.util.Arrays;
+import java.util.ArrayList;
+import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.border.LineBorder;
+
+import org.tigr.util.FloatMatrix;
+//import org.tigr.microarray.mev.cluster.algorithm.impl.SOTA;
+import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
+import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
+import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
+import org.tigr.microarray.mev.cluster.gui.helpers.CentroidExperimentHeader;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterHeader;
+
+/**
+ * Class to display expression images with a <code>CentroidExperimentHeader</code>
+ * and cluster information.
+ */
+public class SOTAExperimentViewer extends JPanel implements IViewer {
+    
+    protected static final String STORE_CLUSTER_CMD = "store-cluster-cmd";
+    private static final String SET_DEF_COLOR_CMD = "set-def-color-cmd";
+    private static final String SAVE_CLUSTER_CMD = "save-cluster-cmd";
+    private static final String SAVE_ALL_CLUSTERS_CMD = "save-all-clusters-cmd";
+    protected static final String LAUNCH_NEW_SESSION_CMD = "launch-new-session-cmd";
+    
+    private JPopupMenu popup;
+    
+    //panel components
+    JSplitPane viewSplitPane;
+    private IViewer expViewer;
+    private JComponent header;
+    private InfoPanel infoPanel;
+    private JPanel viewPanel;
+    
+    //data matricies and parameters
+    private int [][] clusters;
+    private FloatMatrix clusterDivFM;
+    private FloatMatrix centroidDataFM;
+    private int numberOfCells;
+    private float factor;
+    private int function;
+    private boolean geneClusterViewer = true;
+    
+    /**
+     * Constructs a <code>SOTAExperimentViewer</code> with specified
+     * experiment, clusters (gene indices) and codes (centroid data)
+     */
+    public SOTAExperimentViewer(Experiment experiment, int[][] clusters, FloatMatrix codes, FloatMatrix clusterDiv, SOTATreeData sotaTreeData) {
+        setLayout(new GridBagLayout());
+        Listener listener = new Listener();
+        this.popup = createJPopupMenu(listener);
+        this.clusters = clusters;
+        this.clusterDivFM = clusterDiv;
+        this.numberOfCells = 0;
+        if(this.clusterDivFM != null)
+            this.numberOfCells = clusterDivFM.getRowDimension();
+        this.centroidDataFM = codes;
+        this.factor = sotaTreeData.factor;  //from SOTA, factor sets polarity of 'displayed' distances in viewer based on metric
+        this.function = sotaTreeData.function; //distance metric
+        this.expViewer = new ExperimentViewer(experiment, clusters);
+        this.expViewer.getContentComponent().addMouseListener(listener);
+        this.header = new CentroidExperimentHeader(this.expViewer.getHeaderComponent(), codes, clusters,"SOTA Centroid Vector");
+        ((CentroidExperimentHeader)this.header).setNegAndPosColorImages(((ExperimentViewer)expViewer).getNegColorImage(), ((ExperimentViewer)expViewer).getPosColorImage());
+        this.infoPanel = new InfoPanel();
+        this.infoPanel.addMouseListener(listener);
+        ((CentroidExperimentHeader)this.header).setNegAndPosColorImages(((ExperimentViewer)expViewer).getNegColorImage(), ((ExperimentViewer)expViewer).getPosColorImage());
+        ((CentroidExperimentHeader)this.header).setMissingColor(((ExperimentViewer)expViewer).getMissingColor());
+        ((CentroidExperimentHeader)this.header).addMouseListener(listener);
+        viewPanel = new JPanel();
+        viewPanel.setLayout(new GridBagLayout());
+        viewPanel.add(((JComponent)expViewer), new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        viewPanel.add(infoPanel, new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        add(viewPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+    }
+    
+    /**
+     * Constructs a <code>SOTAExperimentViewer</code> with specified
+     * experiment, clusters (gene indices) and codes (centroid data)
+     */
+    public SOTAExperimentViewer(Experiment experiment, int[][] clusters, FloatMatrix codes, FloatMatrix clusterDiv, SOTATreeData sotaTreeData, boolean clusterGenes) {
+        setLayout(new GridBagLayout());
+        this.geneClusterViewer = clusterGenes;
+        Listener listener = new Listener();
+        this.popup = createJPopupMenu(listener);
+        this.clusters = clusters;
+        this.clusterDivFM = clusterDiv;
+        this.numberOfCells = 0;
+        if(this.clusterDivFM != null)
+            this.numberOfCells = clusterDivFM.getRowDimension();
+        this.centroidDataFM = codes;
+        this.factor = sotaTreeData.factor;  //from SOTA, factor sets polarity of 'displayed' distances in viewer based on metric
+        this.function = sotaTreeData.function; //distance metric
+        if(!clusterGenes){
+            this.expViewer = new ExperimentClusterViewer(experiment, clusters, "Sota Centroid Vector", codes.getArrayCopy());
+            this.header = (ExperimentClusterHeader)(expViewer.getHeaderComponent());
+        }
+        else{
+            this.expViewer = new ExperimentViewer(experiment, clusters);
+            this.header = new CentroidExperimentHeader(expViewer.getHeaderComponent(), codes, this.clusters, "SOTA Centroid Vector");
+        }
+        this.expViewer.getContentComponent().addMouseListener(listener);
+        this.infoPanel = new InfoPanel();
+        this.infoPanel.addMouseListener(listener);
+        viewPanel = new JPanel();
+        viewPanel.setLayout(new GridBagLayout());
+        viewPanel.add(((JComponent)expViewer), new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        viewPanel.add(infoPanel, new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        add(viewPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+    }
+    
+    /**
+     *  Adds components to viewer
+     */
+    private void addComponents(JComponent header, ExperimentViewer expImageViewer, InfoPanel info){
+        //add(header, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 0, 0, 0), 0, 0));
+        add(expImageViewer, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 0, 0, 0), 0, 0));
+        add(info,  new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+    }
+    
+    /**
+     * Returns the header component.
+     */
+    public JComponent getHeaderComponent() {
+        return header;
+    }
+    
+    /**
+     * Returns the wrapped experiment viewer.
+     */
+    public JComponent getContentComponent() {
+        return this;
+    }
+    
+    public BufferedImage getImage() {
+        return expViewer.getImage();
+    }
+    
+    /**
+     * Updates header and contents attributes when the viewer is selected.
+     */
+    public void onSelected(IFramework framework) {
+        if(this.geneClusterViewer)
+            ((ExperimentViewer) expViewer).onSelected(framework);
+        else
+            ((ExperimentClusterViewer) expViewer).onSelected(framework);
+        Integer userObject = ((Integer)framework.getUserObject());
+        infoPanel.setCurrentCluster(userObject == null ? 0 : userObject.intValue());
+        infoPanel.onSelected();
+        IDisplayMenu menu = framework.getDisplayMenu();
+        if(geneClusterViewer){
+            ((CentroidExperimentHeader)this.header).setCurrentCluster(userObject == null ? 0 : userObject.intValue());
+            ((CentroidExperimentHeader)this.header).setNegAndPosColorImages(menu.getNegativeGradientImage(), menu.getPositiveGradientImage());
+            ((CentroidExperimentHeader)this.header).setValues(Math.abs(menu.getMaxRatioScale()), -Math.abs(menu.getMinRatioScale()));
+            ((CentroidExperimentHeader)this.header).setAntiAliasing(menu.isAntiAliasing());
+            ((CentroidExperimentHeader)this.header).setDrawBorders(menu.isDrawingBorder());
+            ((CentroidExperimentHeader)this.header).updateSize(menu.getElementSize());
+            int height = ((CentroidExperimentHeader)this.header).getCurrHeight();
+            this.header.setSize(getContentWidth(), height);
+            this.header.setPreferredSize(new Dimension(getContentWidth(), height));
+        }
+        else{
+            ((ExperimentClusterHeader)(this.header)).updateSizes(getContentWidth(), menu.getElementSize().width);
+        }
+        repaint();
+    }
+    
+    
+    private int getContentWidth(){
+        int width;
+        if(this.geneClusterViewer)
+            width = ((ExperimentViewer)this.expViewer).getContentWidth();
+        else
+            width = ((ExperimentClusterViewer)this.expViewer).getContentWidth();
+        width += this.infoPanel.INFO_PANEL_WIDTH;
+        return width;
+    }
+    
+    
+    /**
+     * Updates experiment data.
+     */
+    public void onDataChanged(IData data) {
+        expViewer.onDataChanged(data);
+    }
+    
+    /**
+     * Updates header and contents attributes when the display menu is changed.
+     */
+    public void onMenuChanged(IDisplayMenu menu) {
+        
+        if(this.geneClusterViewer)
+            ((ExperimentViewer) expViewer).onMenuChanged(menu);
+        else
+            ((ExperimentClusterViewer) expViewer).onMenuChanged(menu);
+        
+        if(geneClusterViewer){
+            ((CentroidExperimentHeader)this.header).setNegAndPosColorImages(menu.getNegativeGradientImage(), menu.getPositiveGradientImage());
+            ((CentroidExperimentHeader)this.header).setValues(Math.abs(menu.getMaxRatioScale()), -Math.abs(menu.getMinRatioScale()));
+            ((CentroidExperimentHeader)this.header).setAntiAliasing(menu.isAntiAliasing());
+            ((CentroidExperimentHeader)this.header).setDrawBorders(menu.isDrawingBorder());
+            ((CentroidExperimentHeader)this.header).updateSize(menu.getElementSize());
+            this.header.setSize(getContentWidth(), this.header.getHeight());
+            this.header.setPreferredSize(new Dimension(getContentWidth(), this.header.getHeight()));
+        }
+        else {
+            ((ExperimentClusterHeader)(this.header)).updateSizes(getContentWidth(), menu.getElementSize().width);
+        }
+        repaint();
+    }
+    
+    public void onDeselected() {}
+    public void onClosed() {}
+    
+    /**
+     * Creates a popup menu.
+     */
+    private JPopupMenu createJPopupMenu(Listener listener) {
+        JPopupMenu popup = new JPopupMenu();
+        addMenuItems(popup, listener);
+        return popup;
+    }
+    
+    protected void addMenuItems(JPopupMenu menu, ActionListener listener) {
+        JMenuItem menuItem;
+        menuItem = new JMenuItem("Store cluster", GUIFactory.getIcon("new16.gif"));
+        menuItem.setActionCommand(STORE_CLUSTER_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        menu.addSeparator();
+        
+        menuItem = new JMenuItem("Launch new session", GUIFactory.getIcon("analysis16.gif"));
+        menuItem.setActionCommand(LAUNCH_NEW_SESSION_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        menu.addSeparator();
+        
+        menuItem = new JMenuItem("Delete public cluster", GUIFactory.getIcon("delete16.gif"));
+        menuItem.setActionCommand(SET_DEF_COLOR_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        menu.addSeparator();
+        
+        menuItem = new JMenuItem("Save cluster...", GUIFactory.getIcon("save16.gif"));
+        menuItem.setActionCommand(SAVE_CLUSTER_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        menuItem = new JMenuItem("Save all clusters...", GUIFactory.getIcon("save16.gif"));
+        menuItem.setActionCommand(SAVE_ALL_CLUSTERS_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+    }
+    
+    /**
+     * Saves clusters.
+     */
+    private void onSaveClusters() {
+        Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
+        try {
+            if(expViewer instanceof ExperimentViewer)
+                ((ExperimentViewer)expViewer).saveClusters(frame);
+            else
+                ((ExperimentClusterViewer)expViewer).saveClusters(frame);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(frame, "Can not save clusters!", e.toString(), JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Save the viewer cluster.
+     */
+    private void onSaveCluster() {
+        Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
+        try {
+            if(expViewer instanceof ExperimentViewer)
+                ((ExperimentViewer)expViewer).saveCluster(frame);
+            else{
+                ((ExperimentClusterViewer)expViewer).saveCluster(frame);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(frame, "Can not save cluster!", e.toString(), JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Sets a public color.
+     */
+    private void onSetColor() {
+        Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
+        Color newColor = JColorChooser.showDialog(frame, "Choose color", CentroidViewer.DEF_CLUSTER_COLOR);
+        if (newColor != null) {
+            if(expViewer instanceof ExperimentViewer)
+                ((ExperimentViewer)expViewer).setClusterColor(newColor);
+            else
+                ((ExperimentClusterViewer)expViewer).setClusterColor(newColor);
+        }
+    }
+    
+    /**
+     * Sets public color for the current cluster.
+     */
+    public void setClusterColor(Color color) {
+        if(color ==null){  //indicates removal of cluster
+            if(expViewer instanceof ExperimentViewer)
+                ((ExperimentViewer)expViewer).setClusterColor(null);
+            else
+                ((ExperimentClusterViewer)expViewer).setClusterColor(null);
+        }
+    }
+    
+    /**
+     * Launches a new session
+     */
+    public void launchNewSession(){
+        if(expViewer instanceof ExperimentViewer)
+            ((ExperimentViewer)expViewer).launchNewSession();
+        else
+            ((ExperimentClusterViewer)expViewer).launchNewSession();
+    }
+    
+    /**
+     *  Sets cluster color
+     */
+    public void storeCluster(){
+        if(expViewer instanceof ExperimentViewer)
+            ((ExperimentViewer)expViewer).storeCluster();
+        else
+            ((ExperimentClusterViewer)expViewer).storeCluster();
+    }
+    
+    /**
+     * Removes a public color.
+     */
+    private void onSetDefaultColor() {
+        if(expViewer instanceof ExperimentViewer)
+            ((ExperimentViewer)expViewer).setClusterColor(null);
+        else
+            ((ExperimentClusterViewer)expViewer).setClusterColor(null);
+    }
+    
+    /**
+     * The class to listen to mouse and action events.
+     */
+    private class Listener extends MouseAdapter implements ActionListener {
+        
+        public void actionPerformed(ActionEvent e) {
+            String command = e.getActionCommand();
+            if (command.equals(SAVE_CLUSTER_CMD)) {
+                onSaveCluster();
+            } else if (command.equals(SAVE_ALL_CLUSTERS_CMD)) {
+                onSaveClusters();
+            } else if (command.equals(SET_DEF_COLOR_CMD)) {
+                onSetDefaultColor();
+            } else if (command.equals(STORE_CLUSTER_CMD)) {
+                storeCluster();
+            } else if(command.equals(LAUNCH_NEW_SESSION_CMD)){
+                launchNewSession();
+            }
+        }
+        
+        public void mouseReleased(MouseEvent event) {
+            maybeShowPopup(event);
+        }
+        
+        private void maybeShowPopup(MouseEvent e) {
+            int [] cluster = null;
+            if(expViewer instanceof ExperimentViewer)
+                cluster = ((ExperimentViewer)expViewer).getCluster();
+            else
+                cluster = ((ExperimentClusterViewer)expViewer).getCluster();
+            
+            if (!e.isPopupTrigger() || cluster == null || cluster.length == 0) {
+                return;
+            }
+            popup.show(e.getComponent(), e.getX(), e.getY());
+        }
+    }
+    
+    /**
+     * Displays information about the currently displayed cluster
+     *
+     */
+    public class InfoPanel extends JPanel{
+        
+        private int currCluster;
+        public int INFO_PANEL_WIDTH = 300;
+        
+        private javax.swing.JSplitPane jSplitPane1;
+        private javax.swing.JScrollPane viewerPane;
+        private javax.swing.JPanel infoPanel;
+        private javax.swing.JLabel jLabel10;
+        private javax.swing.JLabel jLabel11;
+        private javax.swing.JLabel jLabel12;
+        private javax.swing.JLabel jLabel13;
+        private javax.swing.JLabel jLabel14;
+        private javax.swing.JLabel jLabel15;
+        private javax.swing.JLabel jLabel16;
+        private javax.swing.JLabel jLabel17;
+        private javax.swing.JLabel c1Label;
+        private javax.swing.JLabel c1PopLabel;
+        private javax.swing.JLabel c1DivLabel;
+        private javax.swing.JLabel distLabel;
+        private javax.swing.JLabel c2Label;
+        private javax.swing.JLabel c2DivLabel;
+        private javax.swing.JLabel c2PopLabel;
+        
+        /**
+         * Constructs a new InfoPanel.
+         *
+         */
+        public InfoPanel(){
+            initComponents();
+            currCluster = 0;
+            
+            this.setSize(INFO_PANEL_WIDTH , 350);
+            this.setPreferredSize( new Dimension(INFO_PANEL_WIDTH , 350));
+            this.setVisible(true);
+            this.setBackground(java.awt.Color.white);
+            super.setBackground(java.awt.Color.white);
+        }
+        
+        private void initComponents() {
+            
+            jLabel10 = new javax.swing.JLabel();
+            jLabel11 = new javax.swing.JLabel();
+            jLabel12 = new javax.swing.JLabel();
+            jLabel13 = new javax.swing.JLabel();
+            jLabel14 = new javax.swing.JLabel();
+            jLabel15 = new javax.swing.JLabel();
+            jLabel16 = new javax.swing.JLabel();
+            jLabel17 = new javax.swing.JLabel();
+            c1Label = new javax.swing.JLabel();
+            c1PopLabel = new javax.swing.JLabel();
+            c1DivLabel = new javax.swing.JLabel();
+            distLabel = new javax.swing.JLabel();
+            c2Label = new javax.swing.JLabel();
+            c2DivLabel = new javax.swing.JLabel();
+            c2PopLabel = new javax.swing.JLabel();
+            
+            this.setLayout(null);
+            
+            this.setBackground(java.awt.Color.white);
+            super.setBackground(java.awt.Color.white);
+            this.setBorder(new LineBorder(Color.black, 1));
+            
+            setAlignmentY(1.0F);
+            setAlignmentX(1.0F);
+            setOpaque(false);
+            jLabel10.setText("Cluster ID#:");
+            jLabel10.setForeground(java.awt.Color.black);
+            add(jLabel10);
+            jLabel10.setBounds(20, 30, 65, 17);
+            
+            jLabel11.setText("Cluster Population:");
+            jLabel11.setForeground(java.awt.Color.black);
+            add(jLabel11);
+            jLabel11.setBounds(20, 60, 107, 17);
+            
+            jLabel12.setText("Cluster Diversity:");
+            jLabel12.setForeground(java.awt.Color.black);
+            add(jLabel12);
+            jLabel12.setBounds(20, 90, 96, 17);
+            
+            jLabel13.setText("Distance to");
+            jLabel13.setForeground(java.awt.Color.black);
+            add(jLabel13);
+            jLabel13.setBounds(20, 130, 64, 17);
+            
+            jLabel14.setText("Closest Neighbor:");
+            jLabel14.setForeground(java.awt.Color.black);
+            add(jLabel14);
+            jLabel14.setBounds(20, 150, 100, 17);
+            
+            jLabel15.setText("Neighbor ID#:");
+            jLabel15.setForeground(java.awt.Color.black);
+            add(jLabel15);
+            jLabel15.setBounds(20, 190, 75, 17);
+            
+            jLabel16.setText("Neighbor Population:");
+            jLabel16.setForeground(java.awt.Color.black);
+            add(jLabel16);
+            jLabel16.setBounds(20, 220, 117, 17);
+            
+            jLabel17.setText("Neighbor Diversity:");
+            jLabel17.setForeground(java.awt.Color.black);
+            add(jLabel17);
+            jLabel17.setBounds(20, 250, 106, 17);
+            
+            c1Label.setForeground(java.awt.Color.black);
+            add(c1Label);
+            c1Label.setBounds(150, 30, 70, 20);
+            
+            c1PopLabel.setForeground(java.awt.Color.black);
+            add(c1PopLabel);
+            c1PopLabel.setBounds(150, 60, 70, 20);
+            
+            c1DivLabel.setForeground(java.awt.Color.black);
+            add(c1DivLabel);
+            c1DivLabel.setBounds(150, 90, 110, 20);
+            
+            distLabel.setForeground(java.awt.Color.black);
+            add(distLabel);
+            distLabel.setBounds(150, 150, 110, 20);
+            
+            c2Label.setForeground(java.awt.Color.black);
+            add(c2Label);
+            c2Label.setBounds(150, 190, 70, 20);
+            
+            c2DivLabel.setForeground(java.awt.Color.black);
+            add(c2DivLabel);
+            c2DivLabel.setBounds(150, 250, 110, 20);
+            
+            c2PopLabel.setForeground(java.awt.Color.black);
+            add(c2PopLabel);
+            c2PopLabel.setBounds(150, 220, 70, 20);
+        }
+        
+        /**
+         * Sets viewable data into panel
+         */
+        private void setData(int c1, int clusterPop1, float div1, float dist, int c2, int clusterPop2, float div2){
+            this.c1Label.setText(String.valueOf(c1+1));
+            this.c1PopLabel.setText(String.valueOf(clusterPop1));
+            this.c1DivLabel.setText(String.valueOf(div1));
+            this.distLabel.setText(String.valueOf(dist*factor));  //factor sets polarity based on distance metric
+            this.c2Label.setText(String.valueOf(c2+1));
+            this.c2PopLabel.setText(String.valueOf(clusterPop2));
+            this.c2DivLabel.setText(String.valueOf(div2));
+            repaint();
+        }
+        
+        /**
+         * Clears data entries
+         */
+        private void clearData(int clusterNum){
+            this.c1Label.setText(String.valueOf(clusterNum+1));
+            this.c1PopLabel.setText("");
+            this.c1DivLabel.setText("");
+            this.distLabel.setText("");
+            this.c2Label.setText("");
+            this.c2PopLabel.setText("");
+            this.c2DivLabel.setText("");
+            repaint();
+        }
+        
+        /**
+         * Returns index of closest neighbor
+         */
+        private int getClosestCentroid(int centroidNum){
+            
+            float minDist = Float.POSITIVE_INFINITY;
+            float currDist;
+            int closestCentroid = centroidNum;
+            for(int i = 0; i < numberOfCells ;i++){
+                currDist = org.tigr.microarray.mev.cluster.algorithm.impl.ExperimentUtil.geneDistance(centroidDataFM,
+                null, centroidNum, i, function, (float)1.0, false);
+                
+                if(currDist < minDist && i != centroidNum){
+                    minDist = currDist;
+                    closestCentroid = i;
+                }
+            }
+            return closestCentroid;
+        }
+        
+        /**
+         *  sets the cluster index (and associated data) to display
+         */
+        public void setCurrentCluster(int clusterIndex){
+            currCluster = clusterIndex;
+        }
+        
+        
+        /**
+         *  Triggers preparation to display data on current cluster
+         */
+        public void onSelected(){
+            
+            float neighborDist;
+            int neighbor = getClosestCentroid(currCluster);
+            
+            if(neighbor == currCluster) return;
+            
+            neighborDist = org.tigr.microarray.mev.cluster.algorithm.impl.ExperimentUtil.geneDistance(centroidDataFM,
+            null, currCluster, neighbor, function, (float)1.0, false);
+            
+            if(neighborDist == Float.POSITIVE_INFINITY || neighborDist == 0 || neighbor >= numberOfCells || clusterDivFM == null || clusters[currCluster].length <=0)
+                clearData(currCluster);
+            else
+                setData(currCluster, clusters[currCluster].length , clusterDivFM.get(currCluster, 0), neighborDist, neighbor, clusters[neighbor].length ,
+                clusterDivFM.get(neighbor, 0));
+        }
+        
+        
+    }
+    
+}
+
+
+

@@ -1,0 +1,33 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>CAST: Cluster Affinity Search Technique</h1> <h2>Parameter Information</h2>
+            <hr size = 10>
+
+<h2> Sample Selection </h2>
+The sample selection option indicates whether to cluster genes or experiments.
+<br>
+
+<h2>Threshold</h2>
+The threshold parameter is a value ranging from 0.0 to 1.0 which is used as a
+cluster affinity threshold.  Each expression element will have an affinity for the current cluster being
+created based on it's relationship to the elements currently in the cluster.  If that affinity 
+is greater than the supplied threshold the gene is permitted to be a member of the cluster.
+<p>
+Note that thresholds near 1.0 are more stringent and tend to produce many clusters with
+rather low variability.  Conversely, using a lower threshold will produce fewer, more
+variable clusters.  A balance by trail-and-error should be found between these extremes.
+</p>
+<p>
+Note that in the algorithm expression elements are repeatedly tested for their affinity
+to the cluster being formed.  In that way elements can be added or subtracted based on
+the current cluster membership.
+<br>
+<h2> Hierarchical Clustering </h2>
+This check box selects whether to perform hierarchical clustering on the elements in each cluster
+created.
+<br>
+
+        </basefont>
+    </body>
+</html>
+

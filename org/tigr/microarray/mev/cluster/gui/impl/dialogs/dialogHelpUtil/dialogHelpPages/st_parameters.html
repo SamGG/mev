@@ -1,0 +1,63 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>ST: Support Trees</h1><h2>Parameter Information</h2>
+            <hr size = 10>
+
+<br>
+The Support Tree algorithm permits the resampling options to be set separately
+for the gene tree and the experiment tree.
+<br>
+
+<h2>Tree Construction Options</h2>
+The Draw Gene Tree and Draw Experiment Tree options allow you to
+select to construct a gene tree, an experiment tree, or both.
+<br>
+<h2>Resampling Options</h2>
+You can elect to resample either genes or experiments or neither using either
+a bootstraping or a jackknifing method.
+<br>
+
+<h3>Bootstraping</h3>
+The matrix is reconstructed such that each expression vector has the original number
+of values but the values are a random selection (with replacement) of the original values.
+Values in the original expression vector may occur more than once since the selection uses
+replacement.
+
+<h3>Jackknifing</h3>
+Jackknifing takes each expression vector and randomly selects to omit an element.
+This method produces expression vectors that have one fewer element and this is often
+done to minimize the effect of single outlier values.
+<br>
+
+<h2>Iterations</h2>
+This indicates how many times the expression matrix should be reconstructed and clustered.
+<br>
+
+<h2> Linkage Method </h2>
+This parameter is used to indicate the convention
+used for determining cluster-to-cluster distances
+when constructing the hierarchical tree.
+<br><br>
+Single Linkage: The distances are measured between
+each member of one cluster each member of the other
+cluster.  The minimum of these distances is considered
+the cluster-to-cluster distance.
+<br><br>
+Average Linkage: The average distance of each member of
+one cluster to each member of the other cluster is used
+as a measure of cluster-to-cluster distance.
+<br><br>
+Complete Linkage: The distances are measured between
+each member of one cluster each member of the other
+cluster.  The maximum of these distances is considered
+the cluster-to-cluster distance.
+<br>
+
+<h2>Support Tree Legend</h2>
+A legend to relate support tree output colors to % support
+is displayed by selecting the support tree legend menu item
+in the main help menu.
+<br>
+        </basefont>
+    </body>
+</html>

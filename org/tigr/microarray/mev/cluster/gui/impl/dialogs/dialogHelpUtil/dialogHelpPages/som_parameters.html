@@ -1,0 +1,94 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>SOM: Self Organizing Maps</h1><h2>Parameter Information</h2>
+            <hr size = 10>
+
+<h2>Basic Terminology</h2>
+Node: an SOM structure to which expression elements are associated to form clusters.
+<br><br>
+SOM Vector: a vector of size n, associated with a node that represents the nodes location
+in the n dimensional space.  Each node has one SOM Vector.
+<br><br>
+Training/Adaptation:  the process of repositioning the SOM Nodes by altering their associated
+SOM Vectors.  The adaptation process is a result of an expression element being associated
+with a node.  The new position is determined by the distance between the expression element
+and the SOM Vector, the Alpha value, and the neighborhood convention (see below).
+<br><br>
+Topology: a two dimensional topology used to define how node-to-node distances are calculated.
+<br><br>
+Note that a cluster is a collection of expression elements associated with a Node.
+<br>
+           
+<h2>Sample Selection</h2>
+The sample selection option indicates whether to cluster genes or experiments.
+<br>
+
+<h2>Dimension X</h2>
+This positive integer value determines the X dimension of the resulting topology.
+<br>
+
+<h2>Dimension Y</h2>
+This positive integer value determines the Y dimension of the resulting topology.
+Note that Dimension X times Dimension Y gives the number of clusters that will
+be produced.
+<br>
+
+<h2>Iterations</h2>
+This positive integer value indicates the total number of times that the data set
+will be presented to the network (or Map, Graph).  Each expression element
+will be presented this number of times to train the Nodes.
+<br>
+
+<h2>Alpha</h2>
+This value is used to scale the alteration of SOM vectors when a new expression
+vector is associated with a node.
+<br>
+
+
+<h2>Radius</h2>
+When using the bubble neighborhood parameter this float value is used to
+define the extent of the neighborhood.  If an SOM vector is within this
+distance from the winning node (the cluster to which an element has
+been assigned) then that Node (and SOM vector) is considered to be in the neighborhood
+and it's SOM vector is adapted.
+<br>
+
+<h2>Initialization</h2>
+Random Genes or Random Experiments: Indicates that the initial SOM vectors will be selected
+at random as actual elements in the data.
+<br><br>
+Random Vector: Indicates that the initial SOM vectors will be constructed as random vectors
+generated to reflect the magnitude of the data set.  These initial vectors are not actual
+expression vectors in the data set.
+<br>
+
+<h2>Neighborhood</h2>
+The neighborhood options indicate the conventions (formulas) used to update (adapt) an SOM vector
+once an expression vector has been added into a Node's neighborhood.
+<br><br>
+Bubble: This option uses the provided radius (see above) to determine which surrounding
+SOM nodes are in the neighborhood and therefore are candidates for adaptation.
+When this option is selected the Alpha parameter for scaling the adaptation is used directly
+as provided from the user.
+<br><br>
+Gaussian: This option forces all SOM vectors in the network to be adapted regardless of proximity to the
+winning node.  In this case the Alpha parameter is scaled based on the distance between
+the SOM vector to be adapted and the winning node's SOM vector.
+<br>
+
+<h2>Topology</h2>
+Indicates whether the topology should be rectangular or hexagonal.  If rectangular topology is selected
+the node-to-node distance is determined as Euclidean distance within the two dimensional
+x-y grid.  If hexagonal distance is used an appropriate formula is used to determine the distance
+given the coordinates of the two nodes.
+<br>
+
+<h2> Hierarchical Clustering </h2>
+This check box selects whether to perform hierarchical clustering on the elements in each cluster
+created.
+
+
+
+        </basefont>
+    </body>
+</html>

@@ -1,0 +1,53 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>PTM: Pavlidis Template Matching</h1><h2>Parameter Information</h2>
+            <hr size = 10>
+
+<h2>Template Selection Tabs</h2>
+The five tabbed panels at the top of the dialog select to view candidate templates
+from various sources.
+<br><br>
+The Gene Template tab provides a list of genes in the data set and their expression
+profile graphs. Selection of elements in the list display the expression pattern for
+that gene.
+<br><br>
+The Gene Cluster Template tab provides a list and view of templates which are the
+mean values of stored (colored) clusters.
+<br><br>
+The Experiment Template, and Experiment Cluster Template tabs provide the same
+functionality but use experiment templates.
+<br><br>
+The Saved Template tab provides an interface for loading gene and
+experiment templates.  Templates loaded from files will populate a list from
+which a template may be selected.
+<br><br>
+A button in each of these areas is used to select the displayed template for
+matching.
+<br>
+
+<h2>Threshold Parameters</h2>
+<h3>Use Absolute R</h3>
+Using this option will select expression patterns that are either positively
+or negatively correlated with the template.
+<h3>Use Threshold R</h3>
+This option will indicate that the threshold value for determining a match is
+the R value between the expression vector and the template.
+<h3>Use Threshold p-Value</h3>
+This option will indicate that the threshold value for determining a match is
+the p value on R between the expression vector and the template.
+<h3>Threshold Input Value</h3>
+This is either a supplied value for R or a p-value ranging from 0.0 to 1.0.
+R values closer to 1.0 are more stringent.  p-values closer to 0 are more stringent.
+<br>
+<h2>Save Template</h2>
+This button launches a file browser to allow the user to save the current template
+to a tab delimited text file.  These files can be loaded from the Saved Template tab
+interface.
+<br>
+<h2> Hierarchical Clustering </h2>
+This check box selects whether to perform hierarchical clustering on the elements in the
+resulting matched and unmatched element sets.
+<br>
+        </basefont>
+    </body>
+</html>

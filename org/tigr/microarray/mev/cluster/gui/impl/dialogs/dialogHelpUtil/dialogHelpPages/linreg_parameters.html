@@ -1,0 +1,27 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>Iterative Linear Regression Normalization</h1><h2>Parameter Information</h2>
+            <hr size = 10>
+
+<h2>Normalization Mode</h2>
+There are two possible normalization modes available. 
+<h3>Block mode</h3> 
+Block mode selects to traverse the
+data block by block and performs the normalization within each block.
+Using this mode data variation between blocks is ignored.
+<h3>Global Mode</h3>
+Using this mode all data enters into one global normalization.  In this
+mode the normalization of all data points is influenced by all other data points
+regardless of block membership.
+<br>
+<h2>Standard Deviation Range</h2>
+On each iteration a linear regression is calculated for log(Cy5) vs. log(Cy3) based on
+a subset of the data.  Initially this subset is the entire data set.
+On each iteration points which fall outside the number of standard deviations indicated 
+from the regression line are omitted for the next iteration.  On each subsequent
+iteration the R<sup>2</sup> is taken until it converges and for each iteration the data set 
+for this regression is reduced by selecting only points which fall within the provided 
+standard deviation range.
+       </basefont>
+    </body>
+</html>
