@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: FOMContentComponent.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-03 16:07:39 $
+ * $Revision: 1.3 $
+ * $Date: 2004-04-06 13:02:12 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -34,12 +34,21 @@ public class FOMContentComponent extends JPanel implements java.io.Serializable 
     
     private FOMGraph fomGraph;
     private float[] fom_values;
+    private float[] variances;
+    private boolean showVariance = false;
     
-    public FOMContentComponent(float[] fom_values) {
+    public FOMContentComponent(float[] fom_values, float [] variances) {
 	setLayout(new GridBagLayout());
 	this.fom_values = fom_values;
-	this.fomGraph = new FOMGraph(fom_values, "FOM value vs. # of clusters", "Number of Clusters", "Adjusted FOM");
-	this.fomGraph.setItems(createXItems(fom_values.length), createYItems(fom_values));
+        this.variances = variances;
+        if(this.variances != null) {
+            showVariance = true;
+	    this.fomGraph = new FOMGraph(fom_values, variances, "Mean Adjusted FOM values (\u00B1 SD)  vs.  Number of Clusters", "Number of Clusters", "Mean Adjusted FOM", true);            
+        }
+        else {
+	    this.fomGraph = new FOMGraph(fom_values, variances, "FOM value vs. # of clusters", "Number of Clusters", "Adjusted FOM", false);
+        }
+            this.fomGraph.setItems(createXItems(fom_values.length), createYItems(fom_values));
 	this.fomGraph.setMaxYValue((float)Math.ceil(getMaxValue(fom_values)));
 	GridBagConstraints gbc = new GridBagConstraints();
 	gbc.fill = GridBagConstraints.BOTH;
@@ -61,6 +70,8 @@ public class FOMContentComponent extends JPanel implements java.io.Serializable 
 	String[] items = new String[fom_values.length];
 	for (int i=0; i<fom_values.length; i++) {
 	    items[i] = String.valueOf(i+1) + "---->" + String.valueOf(Math.round(fom_values[i]*1000)/1000f);
+            if(showVariance)
+                items[i] += " \u00B1 " + String.valueOf(Math.round(variances[i]*1000)/1000f);
 	}
 	JPanel listPanel = new JPanel(new GridBagLayout());
 	JScrollPane scroll = new JScrollPane(new JList(items));
@@ -141,7 +152,7 @@ public class FOMContentComponent extends JPanel implements java.io.Serializable 
     }
     
     /////////////////////////////////////////////////////////////////
-    public static void main(String[] args) throws Exception {
+/*    public static void main(String[] args) throws Exception {
 	javax.swing.JFrame frame = new javax.swing.JFrame();
 	frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
 	float[] fom_values = new float[] {1.5f, 0.88888888888f, 0.6666666666f, 2.5f, 0.33333333333f, 0.0f};
@@ -152,4 +163,5 @@ public class FOMContentComponent extends JPanel implements java.io.Serializable 
 	frame.setLocation(screenSize.width/2 - frame.getSize().width/2, screenSize.height/2 - frame.getSize().height/2);
 	frame.setVisible(true);
     }
+ **/
 }

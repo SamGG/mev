@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: CastFOMContentComponentB.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-03 16:07:39 $
+ * $Revision: 1.3 $
+ * $Date: 2004-04-06 13:02:12 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -50,7 +50,7 @@ public class CastFOMContentComponentB extends JPanel implements java.io.Serializ
 	this.numOfCastClusters = numOfCastClusters;
 	this.sortedFomValues = createSortedFomValues(fom_values, numOfCastClusters);
 	this.sortedNumCastClusters = createSortedClusterArray(numOfCastClusters);
-	this.fomGraphB = new FOMGraph(sortedFomValues, "FOM value vs. # of Clusters", "# of Clusters", "Adjusted FOM");
+	this.fomGraphB = new FOMGraph(sortedFomValues, null, "FOM value vs. # of Clusters", "# of Clusters", "Adjusted FOM", false);
 	this.fomGraphB.setItems(createXItems(sortedFomValues.length), createYItems(sortedFomValues));
 	this.fomGraphB.setMaxYValue((float)Math.ceil(getMaxValue(sortedFomValues)));
 	GridBagConstraints gbc = new GridBagConstraints();
@@ -323,7 +323,7 @@ public class CastFOMContentComponentB extends JPanel implements java.io.Serializ
     }
     
     /////////////////////////////////////////////////////////////////
-    public static void main(String[] args) throws Exception {
+  /*  public static void main(String[] args) throws Exception {
 	javax.swing.JFrame frame = new javax.swing.JFrame();
 	frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
 	float[] fom_values = new float[] {1.5f, 0.88888888888f, 0.6666666666f, 2.5f, 0.33333333333f, 0.0f};
@@ -334,4 +334,5 @@ public class CastFOMContentComponentB extends JPanel implements java.io.Serializ
 	frame.setLocation(screenSize.width/2 - frame.getSize().width/2, screenSize.height/2 - frame.getSize().height/2);
 	frame.setVisible(true);
     }
+   **/
 }

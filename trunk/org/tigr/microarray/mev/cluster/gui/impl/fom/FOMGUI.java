@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: FOMGUI.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
+ * $Revision: 1.2 $
+ * $Date: 2004-04-06 13:02:13 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -62,6 +62,7 @@ public class FOMGUI implements IClusterGUI {
         if (!fom_dialog.isOkPressed()) {
             return null;
         }
+        int fomIterations = fom_dialog.getFOMIterations();  //fom iterations
         int method = fom_dialog.getMethod();
         float interval = fom_dialog.getInterval();          //Cast threshold interval
         int numberOfClusters = fom_dialog.getIterations();  //KMC number of clusters (max)
@@ -96,10 +97,12 @@ public class FOMGUI implements IClusterGUI {
                 function = Algorithm.EUCLIDEAN;
             }
             data.addParam("distance-function", String.valueOf(function));
-            
+            if(method != 2)
+                fomIterations = 1;
+            data.addParam("fom-iterations", String.valueOf(fomIterations));             
             data.addParam("method", String.valueOf(method));
             data.addParam("cluster-genes", String.valueOf(clusterGenes));
-            data.addParam("number_of_clusters", String.valueOf(numberOfClusters));
+            data.addParam("number-of-clusters", String.valueOf(numberOfClusters));
             data.addParam("interval", String.valueOf(interval));
             data.addParam("iterations", String.valueOf(iterations));
             data.addParam("average", String.valueOf(average));
@@ -110,10 +113,17 @@ public class FOMGUI implements IClusterGUI {
             AlgorithmData result = this.algorithm.execute(data);
             long time = System.currentTimeMillis() - start;
             // getting the results
-            float[] fom_values = result.getMatrix("fom-values").A[0];
+            float[] fom_values = null;
+            if(method != 2) {
+                FloatMatrix fm = result.getMatrix("fom-values");
+                if(fm != null)
+                    fom_values = fm.A[0];
+            }
+
             int[] numOfCastClusters = result.getIntArray("numOfCastClusters");
 
             GeneralInfo info = new GeneralInfo();
+            info.fomIterations = fomIterations;
             info.average = average;
             info.function = menu.getFunctionName(function);
             info.interval = interval;
@@ -127,8 +137,21 @@ public class FOMGUI implements IClusterGUI {
                 }
             }
             info.time = time;
-            return createResultTree(fom_values, info, interval, numOfCastClusters);
-        } finally {
+            if(method == 2) {
+                FloatMatrix resultMatrix = result.getMatrix("fom-matrix");
+
+                float [] means = getMeans(resultMatrix);
+                float [] variances = null;
+                
+                if(resultMatrix != null && resultMatrix.getRowDimension() > 1)
+                    variances = getVariances(resultMatrix, means);    
+               
+                return createResultTree(means, variances, info, interval, numOfCastClusters);
+            } else {
+                return createResultTree(fom_values, null, info, interval, numOfCastClusters);
+            }
+            
+            } finally {
             if (this.algorithm != null) {
                 this.algorithm.removeAlgorithmListener(listener);
             }
@@ -141,28 +164,28 @@ public class FOMGUI implements IClusterGUI {
     /**
      * Creates a result tree to be inserted into the framework analysis node.
      */
-    private DefaultMutableTreeNode createResultTree(float[] fom_values, GeneralInfo info, float interval, int[] numOfCastClusters) {
+    private DefaultMutableTreeNode createResultTree(float[] fom_values, float[] fom_vars, GeneralInfo info, float interval, int[] numOfCastClusters) {
         DefaultMutableTreeNode root;
         if(this.clusterGenes)
             root = new DefaultMutableTreeNode("FOM - genes");
         else
             root = new DefaultMutableTreeNode("FOM - experiments");
-        addResultNodes(root, fom_values, info, interval, numOfCastClusters);
+        addResultNodes(root, fom_values, fom_vars, info, interval, numOfCastClusters);
         return root;
     }
     
     /**
      * Adds result nodes into the tree root.
      */
-    private void addResultNodes(DefaultMutableTreeNode root, float[] fom_values, GeneralInfo info, float interval, int[] numOfCastClusters) {
-        addGraphViewer(root, fom_values, info, interval, numOfCastClusters);
+    private void addResultNodes(DefaultMutableTreeNode root, float[] fom_values, float [] fom_vars, GeneralInfo info, float interval, int[] numOfCastClusters) {
+        addGraphViewer(root, fom_values, fom_vars, info, interval, numOfCastClusters);
         addGeneralInfo(root, info);
     }
     
-    private void addGraphViewer(DefaultMutableTreeNode root, float[] fom_values, GeneralInfo info, float interval, int[] numOfCastClusters) {
+    private void addGraphViewer(DefaultMutableTreeNode root, float[] fom_values, float [] variances, GeneralInfo info, float interval, int[] numOfCastClusters) {
         IViewer viewer = null;
         if (info.method == 2) {
-            viewer = new KFOMViewer(fom_values);
+            viewer = new KFOMViewer(fom_values, variances);
             root.add(new DefaultMutableTreeNode(new LeafInfo("Graph - FOM value vs. # of Clusters", viewer)));
         }
         else {
@@ -185,7 +208,8 @@ public class FOMGUI implements IClusterGUI {
         if (info.method == 2) {
             node.add(new DefaultMutableTreeNode("Method: "+info.getMethod() + " : " + info.kMeansOrKMedians));
             //node.add(new DefaultMutableTreeNode("K-Means or K-Medians: "+ info.kMeansOrKMedians));
-            node.add(new DefaultMutableTreeNode("Iterations: "+String.valueOf(info.iterations)));
+            node.add(new DefaultMutableTreeNode("FOM Iterations: "+String.valueOf(info.fomIterations)));
+            node.add(new DefaultMutableTreeNode("Max KMC Iterations: "+String.valueOf(info.iterations)));
         } else {
             node.add(new DefaultMutableTreeNode("Interval: "+String.valueOf(info.interval)));
         }
@@ -236,9 +260,56 @@ public class FOMGUI implements IClusterGUI {
         public boolean average;
         public long time;
         public String function;
+        public int fomIterations;
         
         public String getMethod() {
             return method == 1 ? "CAST" : "KMC";
         }
+    }
+    
+    
+    /**
+     *  Returns a set of means for an element
+     */
+    private float [] getMeans(FloatMatrix data){
+        int nSamples = data.getColumnDimension();
+        int nFOMI = data.getRowDimension();
+        float [] means = new float[nSamples];
+        float sum = 0;
+        float n = 0;
+        float value;
+        for(int i = 0; i < nSamples; i++){
+            n = 0;
+            sum = 0;
+            for(int j = 0; j < nFOMI; j++){
+                value = data.get(j,i);
+                if(!Float.isNaN(value)){
+                    sum += value;
+                    n++;
+                }
+            }
+            if(n > 0)
+                means[i] = sum/n;
+            else
+                means[i] = Float.NaN;
+        }
+        return means;
+    }
+    
+    private float [] getVariances(FloatMatrix values, float [] means) {
+        int iterations = values.getRowDimension();
+        int nSamples = values.getColumnDimension();
+        float [] vars = new float[nSamples];
+
+        if(iterations == 1)
+            return vars;
+        
+        for(int sample = 0; sample < nSamples; sample++) {
+            for(int iter = 0; iter < iterations; iter++) {
+                vars[sample] += Math.pow(values.A[iter][sample] - means[sample], 2);
+            }            
+            vars[sample] = (float)Math.sqrt(vars[sample]/(iterations-1));
+        }        
+        return vars;
     }
 }

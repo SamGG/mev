@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: FOMInitDialog.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
+ * $Revision: 1.2 $
+ * $Date: 2004-04-06 13:02:13 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -35,6 +35,7 @@ public class FOMInitDialog extends AlgorithmDialog {
     public final static int CAST   = 1;
     public final static int KMEANS = 2;
     
+    IterationPanel iPanel;
     KMCPanel kPanel;
     CASTPanel cPanel;
     JTabbedPane methodTabPane;
@@ -62,6 +63,12 @@ public class FOMInitDialog extends AlgorithmDialog {
         
         gridbag.setConstraints(sPanel, constraints);
         pane.add(sPanel);
+        
+        iPanel = new IterationPanel();
+        buildConstraints(constraints, 0, 1, 1, 1, 100, 20);
+        gridbag.setConstraints(iPanel, constraints);
+        pane.add(iPanel);
+        
         javax.swing.UIManager.put("TabbedPane.selected", Color.white);
         methodTabPane = new JTabbedPane();
         
@@ -71,7 +78,7 @@ public class FOMInitDialog extends AlgorithmDialog {
         methodTabPane.add("K-Means / K-Medians", kPanel);
         methodTabPane.add("CAST", cPanel);
         
-        buildConstraints(constraints, 0, 1, 1, 1, 100, 90);
+        buildConstraints(constraints, 0, 2, 1, 1, 100, 90);
         gridbag.setConstraints(methodTabPane, constraints);
         pane.add(methodTabPane);
         
@@ -85,10 +92,11 @@ public class FOMInitDialog extends AlgorithmDialog {
         EventListener listener = new EventListener();
         setActionListeners(listener);
         this.addWindowListener(listener);
+        methodTabPane.addChangeListener(listener);
         //      methodTabPane.addChangeListener(listener);
         pack();
-        setSize(600,410);
-       // setResizable(false);
+        setSize(600,450);
+        // setResizable(false);
     }
     
     public void setVisible(boolean visible) {
@@ -350,6 +358,11 @@ public class FOMInitDialog extends AlgorithmDialog {
         return iterations;
     }
     
+    public int getFOMIterations() {
+        String s = iPanel.iterationField.getText();
+        return Integer.parseInt(s);
+    }
+    
     public boolean isAverage() {
         return takeAverageBox.isSelected();
     }
@@ -365,12 +378,14 @@ public class FOMInitDialog extends AlgorithmDialog {
         kPanel.intervalInputField.setText("20");
         kPanel.iterationInputField.setText("50");
         cPanel.thresholdInputField.setText("0.1");
+        iPanel.iterationField.setText("1");
     }
     
     public static void main(String[] args) {
         JFrame dummyFrame = new JFrame();
         FOMInitDialog fDialog = new FOMInitDialog(dummyFrame, true);
         fDialog.show();
+        System.out.println(fDialog.getIterations());
         System.exit(0);
     }
     
@@ -407,18 +422,45 @@ public class FOMInitDialog extends AlgorithmDialog {
         }
     }
     
+    private class IterationPanel extends ParameterPanel {
+        
+        JLabel iterationLabel;
+        JTextField iterationField;
+        
+        public IterationPanel() {
+            super("FOM Iteration Selection");
+            setLayout(new GridBagLayout());
+            iterationLabel = new JLabel("Number of FOM Iterations");
+            iterationLabel.setOpaque(false);
+            iterationField = new JTextField("1", 5);
+            add(iterationLabel, new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(10,10,10,10), 0, 0));
+            add(iterationField, new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(10,10,10,10), 0, 0));
+        }
+        
+        public void setEnabled(boolean enable) {
+            iterationLabel.setEnabled(enable);
+            iterationField.setEnabled(enable);
+            if(enable)
+                iterationField.setBackground(Color.white);
+            else
+                iterationField.setBackground(Color.lightGray);
+        }
+    }
     
-    protected class EventListener extends WindowAdapter implements ActionListener{
+    protected class EventListener extends WindowAdapter implements ActionListener, ChangeListener{
         public void actionPerformed(ActionEvent event) {
             String command = event.getActionCommand();
             if (command.equals("ok-command")) {
                 okPressed = true;
                 int method = FOMInitDialog.this.methodTabPane.getSelectedIndex();
+                int fomI = 1;
                 //KMC
                 int k = -1;
-                float inter = -1.0f, kmcIter = -1, progress = 0;
+                float inter = -1.0f, kmcIter = -1, progress = -1;
                 try{
                     if(method == 0){
+                        fomI = Integer.parseInt(iPanel.iterationField.getText());
+                        progress++;
                         k = Integer.parseInt(FOMInitDialog.this.kPanel.intervalInputField.getText());
                         progress++;
                         kmcIter = Integer.parseInt(kPanel.iterationInputField.getText());
@@ -428,7 +470,11 @@ public class FOMInitDialog extends AlgorithmDialog {
                         inter = Float.parseFloat(FOMInitDialog.this.cPanel.thresholdInputField.getText());
                     }
                 } catch (NumberFormatException e){
-                    if(method == 0){
+                    if(progress == -1) {
+                        JOptionPane.showMessageDialog(FOMInitDialog.this, "Number format error. Expecting an integer for FOM iteration parameter.", "Number Format Error", JOptionPane.ERROR_MESSAGE);
+                        iPanel.iterationField.requestFocus();
+                        iPanel.iterationField.selectAll();
+                    } else if(method == 0){
                         JOptionPane.showMessageDialog(FOMInitDialog.this, "Number format error.", "Number Format Error", JOptionPane.ERROR_MESSAGE);
                         if(progress == 0){
                             kPanel.intervalInputField.requestFocus();
@@ -446,6 +492,12 @@ public class FOMInitDialog extends AlgorithmDialog {
                     return;
                 }
                 if(method == 0){
+                    if(fomI < 1) {
+                        JOptionPane.showMessageDialog(FOMInitDialog.this, "FOM iterations must be > 0", "Invalid Input Error", JOptionPane.ERROR_MESSAGE);
+                        iPanel.iterationField.requestFocus();
+                        iPanel.iterationField.selectAll();
+                        return;
+                    }
                     if(k < 1){
                         JOptionPane.showMessageDialog(FOMInitDialog.this, "Maximum Number of Clusters must be > 0", "Number Format Error", JOptionPane.ERROR_MESSAGE);
                         kPanel.intervalInputField.requestFocus();
@@ -489,6 +541,16 @@ public class FOMInitDialog extends AlgorithmDialog {
         public void windowClosing(java.awt.event.WindowEvent we){
             javax.swing.UIManager.put("TabbedPane.selected", Color.lightGray);
         }
+        
+        public void stateChanged(javax.swing.event.ChangeEvent changeEvent) {
+            //only methodTabbedPane has change events listener
+            JTabbedPane tPane = (JTabbedPane)(changeEvent.getSource());
+            if(tPane.getSelectedIndex() == 0)
+                iPanel.setEnabled(true);
+            else
+                iPanel.setEnabled(false);
+        }
+        
     }
     
     

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: CastFOMContentComponentA.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-03 16:07:39 $
+ * $Revision: 1.3 $
+ * $Date: 2004-04-06 13:02:12 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -42,7 +42,7 @@ public class CastFOMContentComponentA extends JPanel implements java.io.Serializ
 	setLayout(new GridBagLayout());
 	this.fom_values = fom_values;
 	this.interval = interval;
-	this.fomGraphA = new FOMGraph(fom_values, "FOM value vs. Threshold", "Threshold", "Adjusted FOM");
+	this.fomGraphA = new FOMGraph(fom_values, null, "FOM value vs. Threshold", "Threshold", "Adjusted FOM", false);
 	this.fomGraphA.setItems(createXThresholdItems(fom_values.length), createYItems(fom_values));
 	this.fomGraphA.setMaxYValue((float)Math.ceil(getMaxValue(fom_values)));
 	GridBagConstraints gbc = new GridBagConstraints();
@@ -186,7 +186,7 @@ public class CastFOMContentComponentA extends JPanel implements java.io.Serializ
     }
     
     /////////////////////////////////////////////////////////////////
-    public static void main(String[] args) throws Exception {
+ /*   public static void main(String[] args) throws Exception {
 	javax.swing.JFrame frame = new javax.swing.JFrame();
 	frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
 	float[] fom_values = new float[] {1.5f, 0.88888888888f, 0.6666666666f, 2.5f, 0.33333333333f, 0.0f};
@@ -197,4 +197,5 @@ public class CastFOMContentComponentA extends JPanel implements java.io.Serializ
 	frame.setLocation(screenSize.width/2 - frame.getSize().width/2, screenSize.height/2 - frame.getSize().height/2);
 	frame.setVisible(true);
     }
+  */
 }
