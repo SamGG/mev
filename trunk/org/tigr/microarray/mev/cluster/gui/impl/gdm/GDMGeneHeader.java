@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: GDMGeneHeader.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-13 21:36:44 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-25 21:06:33 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -331,7 +331,8 @@ public class GDMGeneHeader extends JPanel {
             labelPanelHeight = annotationSize + 10;// + (elementHeight/2);
             
             if (hasColorBar) {
-                colorBarHeight = OFFSET + elementHeight ;
+                colorBarHeight = OFFSET + (elementHeight >= 10 ? elementHeight : 10) ;
+                System.out.println("set column Header h = "+colorBarHeight);
             } else {
                 colorBarHeight = 0;
             }
@@ -346,7 +347,8 @@ public class GDMGeneHeader extends JPanel {
             labelPanelWidth = annotationSize + 10;// + (elementHeight/2);
             
             if (hasColorBar) {
-                colorBarWidth = OFFSET + elementWidth;
+                colorBarWidth = OFFSET + (elementWidth >= 10 ? elementWidth : 10);
+                System.out.println("set row Header w = "+colorBarWidth);
             } else {
                 colorBarWidth = 0;
             }
@@ -574,12 +576,13 @@ public class GDMGeneHeader extends JPanel {
     
     
     private class GDMColorBarPanel extends JPanel {
-        
+ 
         public GDMColorBarPanel() {
             setBackground(Color.white);
             setSize(0,0);
             setPreferredSize(new Dimension(0,0));
             setOpaque(true);
+            
         }
         
         /**
@@ -621,7 +624,7 @@ public class GDMGeneHeader extends JPanel {
             super.paint(g1D);
             if(!GDMGeneHeader.this.hasColorBar)
                 return;
-            if (expData == null || getElementWidth() <= 2) {
+            if (expData == null) {
                 return;
             }
             Graphics2D g = (Graphics2D)g1D;
@@ -661,9 +664,9 @@ public class GDMGeneHeader extends JPanel {
             
             if(geneColor == null)
                 geneColor = Color.white;
-            
+
             g.setColor(geneColor);
-            g.fillRect(xLoc, row*elementHeight, elementWidth, elementHeight);
+            g.fillRect(xLoc, row*elementHeight, colorBarWidth-OFFSET, elementHeight);
         }
         
         private void drawColumnColorBar(Graphics2D g) {
@@ -691,7 +694,7 @@ public class GDMGeneHeader extends JPanel {
                 geneColor = Color.white;
             
             g.setColor(geneColor);
-            g.fillRect(column*elementWidth, yLoc, elementWidth, elementHeight);
+            g.fillRect(column*elementWidth, yLoc, elementWidth, colorBarHeight-OFFSET);
         }
         
         
