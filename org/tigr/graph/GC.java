@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: GC.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-06 22:46:02 $
  * $Author: braisted $
  * $State: Exp $
  */

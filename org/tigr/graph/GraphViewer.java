@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: GraphViewer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-06 22:46:02 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -46,7 +46,7 @@ public class GraphViewer extends Viewer {
     protected Font tickFont, labelFont, titleFont;
     protected int tickFontHeight, tickFontWidth, labelFontHeight, labelFontWidth, titleFontHeight, titleFontWidth;
     
-    protected String title, xLabel, yLabel;
+    protected String title, xLabel, yLabel, subTitle;
     
     protected JScrollPane scrollPane;
     protected JMenuBar menuBar;
@@ -93,6 +93,10 @@ public class GraphViewer extends Viewer {
         if(frame != null)
             initializeFrame();
         initializePopupMenu();
+    }
+    
+    public void setSubTitle(String subTitle){
+        this.subTitle = subTitle;
     }
     
     private void initializeViewer() {
@@ -447,7 +451,12 @@ public class GraphViewer extends Viewer {
     }
     
     public void drawTitle(Graphics2D g, String title, Color titleColor) {
-        canvas.drawString(g, title, canvas.getSize().width / 2 - (title.length() * titleFontWidth / 2), titleFontHeight * 2, titleColor, titleFont);
+        if(subTitle == null)
+            canvas.drawString(g, title, canvas.getSize().width / 2 - (title.length() * titleFontWidth / 2), titleFontHeight * 2, titleColor, titleFont);
+        else {
+            canvas.drawString(g, title, canvas.getSize().width / 2 - (title.length() * titleFontWidth / 2), (int)(titleFontHeight * 1.5), titleColor, titleFont);
+            canvas.drawString(g, subTitle, canvas.getSize().width / 2 - (subTitle.length() * titleFontWidth / 2), titleFontHeight * 3, titleColor, titleFont);           
+        }
     }
     
     public void drawXLabel(Graphics2D g, String label, Color labelColor) {
@@ -564,7 +573,7 @@ public class GraphViewer extends Viewer {
         this.showCoordinates = showCoordinates;
     }
     
-    private class EventListener implements ActionListener, KeyListener, MouseListener, MouseMotionListener {
+    private class EventListener implements ActionListener, KeyListener, MouseListener, MouseMotionListener, java.io.Serializable {
         public void actionPerformed(ActionEvent event) {
             popup.setVisible(false);
             if (event.getActionCommand() == "Close") getFrame().dispose();
