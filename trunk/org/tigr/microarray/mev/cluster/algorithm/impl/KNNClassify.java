@@ -5,12 +5,12 @@ All rights reserved.
 /*
  * $RCSfile: KNNClassify.java,v $
 <<<<<<< KNNClassify.java
- * $Revision: 1.6 $
- * $Date: 2003-12-11 17:26:37 $
+ * $Revision: 1.7 $
+ * $Date: 2004-05-19 15:26:05 $
  * $Author: nbhagaba $
 =======
- * $Revision: 1.6 $
- * $Date: 2003-12-11 17:26:37 $
+ * $Revision: 1.7 $
+ * $Date: 2004-05-19 15:26:05 $
  * $Author: nbhagaba $
 >>>>>>> 1.4
  * $State: Exp $
@@ -55,7 +55,7 @@ public class KNNClassify extends AbstractAlgorithm {
     private boolean absolute;
     private FloatMatrix expMatrix;
     
-    private Vector[] clusters;
+    private Vector[] clusters, filteredClassifiersByClass;
     private int k; // # of clusters
     
     private int numRows, numCols;  
@@ -64,7 +64,8 @@ public class KNNClassify extends AbstractAlgorithm {
     private boolean validate, classifyGenes, useVarianceFilter, useCorrelFilter;
     private int numClasses, numVarFilteredVectors, numNeighbors, numPerms, postVarClassSetSize, postVarDataSetSize, postCorrDataSetSize, origDataSetSize, origClassSetSize;
     private double correlPValue;  
-    private int[] classIndices, classes;    
+    private int[] classIndices, classes;  
+    //private int[][] filteredClassifiersByClass;
     
     private Vector rowsInAnalysis, filteredClassifierSet, filteredClasses;
     
@@ -230,7 +231,19 @@ public class KNNClassify extends AbstractAlgorithm {
             Vector[] classSets = new Vector[numClasses + 1]; // classSets[0] contains unclassified elements
             for (int i = 0; i < classSets.length; i++) {
                 classSets[i] = new Vector();
+            }            
+            
+            //filteredClassifiersByClass = new int[numClasses + 1][]; // first element stays empty; the remaining elements contain the memebers of the training set grouped by class
+            filteredClassifiersByClass = new Vector[numClasses + 1]; // first element stays empty; the remaining elements contain the members of the training set grouped by class
+            for (int i = 0; i < numClasses + 1; i++) {
+                filteredClassifiersByClass[i] = new Vector();
             }
+            for (int i = 0; i < filteredClassifierSet.size(); i++) {
+                int currClassifier = ((Integer)(filteredClassifierSet.get(i))).intValue();
+                int currClass = ((Integer)(filteredClasses.get(i))).intValue();
+                filteredClassifiersByClass[currClass].add(new Integer(currClassifier));
+            }
+            
             
             for (int i = 0; i < rowsInAnalysis.size(); i++) {
                 int currRow = ((Integer)(rowsInAnalysis.get(i))).intValue();
@@ -285,6 +298,14 @@ public class KNNClassify extends AbstractAlgorithm {
             
             clusters[numClasses*4] = classSets[0];
             
+            int[][] crossValidationStats = getCrossValidationStats();
+            int[] numberCorrectlyClassifiedByClass = crossValidationStats[0];
+            int[] numberIncorrectlyClassifiedByClass = crossValidationStats[1];
+            int[] origNumInFiltTrgSetByClass = new int[numClasses + 1];
+            
+            for (int i = 0; i < origNumInFiltTrgSetByClass.length; i++) {
+                origNumInFiltTrgSetByClass[i] = filteredClassifiersByClass[i].size();
+            }
             /*
             for (int i = 0; i < clusters.length; i++) {
                 System.out.println("clusters[" + i + "].size() = " + clusters[i].size());
@@ -335,14 +356,119 @@ public class KNNClassify extends AbstractAlgorithm {
             if (this.useCorrelFilter) {
                 result.addParam("postCorrDataSetSize", String.valueOf(postCorrDataSetSize));
             }
+            result.addIntArray("origNumInFiltTrgSetByClass", origNumInFiltTrgSetByClass);
+            result.addIntArray("numberCorrectlyClassifiedByClass", numberCorrectlyClassifiedByClass);
+            result.addIntArray("numberIncorrectlyClassifiedByClass", numberIncorrectlyClassifiedByClass);
             result.addCluster("cluster", result_cluster);
             result.addMatrix("clusters_means", means);
             result.addMatrix("clusters_variances", variances);
             return result;           
             
-        } // end of if (!validate)
+        } else {// if (validate)
+            classifyGenes = map.getBoolean("classifyGenes", true);            
+            useCorrelFilter = map.getBoolean("useCorrelFilter", false);
+            if (useCorrelFilter) {
+                correlPValue = map.getFloat("correlPValue", 0.01f);
+                numPerms = map.getInt("numPerms", 1000);
+            }
+            numClasses = map.getInt("numClasses", 5);
+            numNeighbors = map.getInt("numNeighbors", 3);
+            classIndices = data.getIntArray("classIndices");
+            classes = data.getIntArray("classes");
+            
+            filteredClassifierSet = new Vector();
+            filteredClasses = new Vector();
+            for (int i = 0; i < classIndices.length; i++) {
+                filteredClassifierSet.add(new Integer(classIndices[i]));
+                filteredClasses.add(new Integer(classes[i]));
+            }
+            
+            /*
+            System.out.println("Before variance filter:");
+            System.out.println("rowsInAnalysis.size() = " + rowsInAnalysis.size() + ", filteredClassifierSet.size() = " + filteredClassifierSet.size());
+            */
+            
+            //origDataSetSize = rowsInAnalysis.size();
+            origClassSetSize = filteredClassifierSet.size();            
+            
+            filteredClassifiersByClass = new Vector[numClasses + 1]; // first element stays empty; the remaining elements contain the members of the training set grouped by class
+            for (int i = 0; i < numClasses + 1; i++) {
+                filteredClassifiersByClass[i] = new Vector();
+            }
+            for (int i = 0; i < filteredClassifierSet.size(); i++) {
+                int currClassifier = ((Integer)(filteredClassifierSet.get(i))).intValue();
+                int currClass = ((Integer)(filteredClasses.get(i))).intValue();
+                filteredClassifiersByClass[currClass].add(new Integer(currClassifier));
+            }
+            
+            int[][] crossValidationStats = getCrossValidationStats();
+            int[] numberCorrectlyClassifiedByClass = crossValidationStats[0];
+            int[] numberIncorrectlyClassifiedByClass = crossValidationStats[1];
+            int[] origNumInFiltTrgSetByClass = new int[numClasses + 1];
+            
+            for (int i = 0; i < origNumInFiltTrgSetByClass.length; i++) {
+                origNumInFiltTrgSetByClass[i] = filteredClassifiersByClass[i].size();
+            }    
+            
+            Vector nonTrainingRows = new Vector();
+            for (int i = 0; i < numRows; i++) {
+                nonTrainingRows.add(new Integer(i));
+            }
+            nonTrainingRows.removeAll(filteredClassifierSet);
+            
+            clusters = new Vector[numClasses + 1];
+            clusters[0] = nonTrainingRows;
+            for (int i = 1; i < numClasses + 1; i++) {
+                clusters[i] = filteredClassifiersByClass[i];
+            }
+            
+            FloatMatrix means = getMeans(clusters);
+            FloatMatrix variances = getVariances(clusters, means);
+            
+            AlgorithmEvent event3 = null;
+            if (hierarchical_tree) {
+                event3 = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, clusters.length, "Calculate Hierarchical Trees");
+                fireValueChanged(event3);
+                event3.setIntValue(0);
+                event3.setId(AlgorithmEvent.PROGRESS_VALUE);
+                fireValueChanged(event3);
+            }  
+            
+            AlgorithmEvent event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, numRows);
+            fireValueChanged(event);
+            event.setId(AlgorithmEvent.PROGRESS_VALUE);            
+            
+            Cluster result_cluster = new Cluster();
+            NodeList nodeList = result_cluster.getNodeList();
+            int[] features;
+            for (int i=0; i<clusters.length; i++) {
+                if (stop) {
+                    throw new AbortException();
+                }
+                features = convert2int(clusters[i]);
+                Node node = new Node(features);
+                nodeList.addNode(node);
+                if (hierarchical_tree) {
+                    node.setValues(calculateHierarchicalTree(features, method_linkage, calculate_genes, calculate_experiments));
+                    event.setIntValue(i+1);
+                    fireValueChanged(event);
+                }
+            }            
+            
+            // prepare the result
+            AlgorithmData result = new AlgorithmData();
+            result.addParam("usedNumNeibs", String.valueOf(usedNumNeibs));   
+            
+            result.addIntArray("origNumInFiltTrgSetByClass", origNumInFiltTrgSetByClass);
+            result.addIntArray("numberCorrectlyClassifiedByClass", numberCorrectlyClassifiedByClass);
+            result.addIntArray("numberIncorrectlyClassifiedByClass", numberIncorrectlyClassifiedByClass); 
+            result.addCluster("cluster", result_cluster);
+            result.addMatrix("clusters_means", means);
+            result.addMatrix("clusters_variances", variances);            
+            return result;
+        } // end if (validate)
         
-        return null; //for now
+        //return null; //for now
     }
     
     private NodeValueList calculateHierarchicalTree(int[] features, int method, boolean genes, boolean experiments) throws AlgorithmException {
@@ -551,6 +677,123 @@ public class KNNClassify extends AbstractAlgorithm {
         } else {
             return 0;
         }
+    }
+    
+    private int getClassificationForCrossValid(int row, int numNeibs, Vector reducedClassifierSet, Vector reducedClasses) {// return zero if unclassified (in case of a tie)
+        int[] classCounts = new int[numClasses + 1];
+        for (int i = 0; i < classCounts.length; i++) {
+            classCounts[i] = 0;
+        }
+        
+        float[] distances = new float[reducedClassifierSet.size()];
+        int numNeibsUsed;
+        
+        if (numNeibs <= reducedClassifierSet.size()) {
+            numNeibsUsed = numNeibs;
+        } else {
+            numNeibsUsed = reducedClassifierSet.size();
+        }
+        
+        usedNumNeibs = numNeibsUsed;
+        
+        for (int i = 0; i < reducedClassifierSet.size(); i++) {
+            int currentClassifier = ((Integer)(reducedClassifierSet.get(i))).intValue();
+            float currDist = ExperimentUtil.geneEuclidianDistance(expMatrix, null, row, currentClassifier, factor);
+            distances[i] = currDist;
+        }
+        
+        QSort sortDistances = new QSort(distances);
+        int[] sortedDistIndices = sortDistances.getOrigIndx();
+        
+        for (int i = 0; i < numNeibsUsed; i++) {
+            int currClassifierIndex = sortedDistIndices[i];
+            int currClass = ((Integer)(reducedClasses.get(currClassifierIndex))).intValue();
+            classCounts[currClass] = classCounts[currClass] + 1;
+        }
+        
+        int maxCount = 0;
+        for (int i = 1; i < classCounts.length; i++) {
+            maxCount = Math.max(maxCount, classCounts[i]);
+        }
+        
+        int numMaxCountEncountered = 0;
+        int assignedClass = 0;
+        for (int i = 1; i < classCounts.length; i++) {
+            if (maxCount == classCounts[i]) {
+                numMaxCountEncountered++;
+                assignedClass = i;
+            }
+        }
+        
+        if (numMaxCountEncountered == 1) {
+            return assignedClass;
+        } else {
+            return 0;
+        }    
+    }
+    
+    private int[][] getCrossValidationStats() throws AlgorithmException {
+        int[] numCorrectlyClassifiedByClass = new int[numClasses + 1]; // first element of array is not used, so the first class is index [1]
+        int[] numIncorrectlyClassifiedByClass = new int[numClasses + 1]; // first element of array is not used, so the first class is index [1]
+        for (int i = 0; i < numCorrectlyClassifiedByClass.length; i++) {
+            numCorrectlyClassifiedByClass[i] = 0;
+            numIncorrectlyClassifiedByClass[i] = 0;
+        }
+        
+        AlgorithmEvent algEvent = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, filteredClassifierSet.size());
+        fireValueChanged(algEvent);
+        algEvent.setId(AlgorithmEvent.PROGRESS_VALUE);
+        
+        for (int i = 0; i < filteredClassifierSet.size(); i++) {
+            if (stop) {
+                throw new AbortException();
+            }
+            algEvent.setIntValue(i);
+            algEvent.setDescription("Cross-validation: testing classifier " + (i + 1));
+            fireValueChanged(algEvent);            
+            Vector reducedFilteredClassifierSet = (Vector)(filteredClassifierSet.clone());
+            reducedFilteredClassifierSet.remove(i);
+            Vector reducedFilteredClasses = (Vector)(filteredClasses.clone());
+            reducedFilteredClasses.remove(i);
+            
+            int rowToClassify = ((Integer)(filteredClassifierSet.get(i))).intValue();
+            if(!useCorrelFilter) {
+                int currClass = getClassificationForCrossValid(rowToClassify, numNeighbors, reducedFilteredClassifierSet, reducedFilteredClasses);
+                if (filteredClassifiersByClass[currClass].contains(new Integer(rowToClassify))) {
+                    numCorrectlyClassifiedByClass[currClass]++;
+                } else {
+                    numIncorrectlyClassifiedByClass[currClass]++;
+                }
+                
+            } else { // if (useCorrelFilter)
+                Random rnd1 = new Random();                
+                if (passesCorrelationFilter(rowToClassify, reducedFilteredClassifierSet, correlPValue, numPerms, rnd1.nextLong())) {
+                    int currClass = getClassificationForCrossValid(rowToClassify, numNeighbors, reducedFilteredClassifierSet, reducedFilteredClasses);
+                    if (filteredClassifiersByClass[currClass].contains(new Integer(rowToClassify))) {
+                        numCorrectlyClassifiedByClass[currClass]++;
+                    } else {
+                        numIncorrectlyClassifiedByClass[currClass]++;
+                    }                    
+                }  else {// if (!passesCorrelationFilter)
+                    //do nothing, since rowToClassify cannot be classified
+                }
+            }
+        }
+        
+        int[][] crossValidationStats = new int[2][];
+        crossValidationStats[0] = numCorrectlyClassifiedByClass;
+        crossValidationStats[1] = numIncorrectlyClassifiedByClass;
+        /*
+        for (int i = 1; i < numClasses + 1; i++) {
+            System.out.println("Class " + i + ":");
+            System.out.println("Original number in training set = " + filteredClassifiersByClass[i].size());
+            System.out.println("Number correctly classified = " + numCorrectlyClassifiedByClass[i]);
+            System.out.println("Number falsely assigned = " + numIncorrectlyClassifiedByClass[i]);
+            
+        }
+         */
+        
+        return crossValidationStats;
     }
     
     private boolean passesCorrelationFilter(int row, Vector classifiers, double thresholdP, int permutations, long seed) {
