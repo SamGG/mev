@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: Content3D.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-10 00:16:48 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-12 15:13:20 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -93,7 +93,9 @@ public class Content3D extends JPanel {
     private float selectedPointSize = 1.0f;
     private Color3f blackColor = new Color3f(0f, 0f, 0f);
     // private Color3f whiteColor = new Color3f(0.8f, 0.8f, 0.8f);
-    private Color3f whiteColor = new Color3f(0.98f, 0.98f, 0.98f);
+    //private Color3f whiteColor = new Color3f(0.98f, 0.98f, 0.98f);
+    private Color3f whiteColor = new Color3f(1f, 1f, 1f);    
+    
     /**
      * Constructs a <code>Content3D</code> with specified mode,
      * U-matrix and an experiment data.
@@ -506,6 +508,7 @@ public class Content3D extends JPanel {
         group.addChild(openObject);
         return group;
     }
+
     
     /**
      * Creates a light transform group.
@@ -529,6 +532,7 @@ public class Content3D extends JPanel {
         lightGroup.addChild(light);
         return lightGroup;
     }
+    
     
     /**
      * Creates an ambient light.
@@ -769,7 +773,7 @@ public class Content3D extends JPanel {
      * Creates a point appearance with specified color.
      */
     private Appearance createSphereAppearance(Color3f color) {
-        Material material = new Material(color, color, color, color, 100.0f);
+        Material material = new Material(color, this.blackColor, color, this.whiteColor, 100.0f);
         material.setLightingEnable(true);
         Appearance appearance = new Appearance();
         appearance.setMaterial(material);
@@ -827,7 +831,9 @@ public class Content3D extends JPanel {
         }
         return spheres;
     }
+       
     
+
     /**
      * Creates a text transform group.
      */
