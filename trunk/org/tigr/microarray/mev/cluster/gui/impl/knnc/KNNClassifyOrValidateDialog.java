@@ -49,7 +49,7 @@ public class KNNClassifyOrValidateDialog extends AlgorithmDialog {
         classifyButton = new JRadioButton("Classify", true);
         classifyButton.setBackground(Color.white);
         validateButton = new JRadioButton("Validate", false);
-        validateButton.setEnabled(false);
+        //validateButton.setEnabled(false);
         validateButton.setBackground(Color.white);
         
         ButtonGroup classifyOrValidate =new ButtonGroup();
