@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: CentroidViewer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2003-11-25 14:30:04 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -673,6 +673,18 @@ public class CentroidViewer extends JPanel implements IViewer {
         
     }
     
+    /** Returns a component to be inserted into the scroll pane row header
+     */
+    public JComponent getRowHeaderComponent() {
+        return null;
+    }    
+    
+    /** Returns the corner component corresponding to the indicated corner,
+     * posibly null
+     */
+    public JComponent getCornerComponent(int cornerIndex) {
+        return null;
+    }
     
     /**
      * Handles mouse event in viewer

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ExperimentViewer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2003-11-25 14:30:05 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -600,10 +600,12 @@ public class ExperimentViewer extends JPanel implements IViewer {
      * Paint component into specified graphics.
      */
     public void paint(Graphics g) {
-        super.paint(g);
+        super.paint(g);        
         if (this.data == null) {
             return;
         }
+        if(this.elementSize.getHeight() < 1)
+            return;
         
         final int samples = experiment.getNumberOfSamples();
         
@@ -810,6 +812,19 @@ public class ExperimentViewer extends JPanel implements IViewer {
         menuItem.setActionCommand(SAVE_ALL_CLUSTERS_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
+    }
+    
+    /** Returns a component to be inserted into the scroll pane row header
+     */
+    public JComponent getRowHeaderComponent() {
+        return null;
+    }
+    
+    /** Returns the corner component corresponding to the indicated corner,
+     * posibly null
+     */
+    public JComponent getCornerComponent(int cornerIndex) {
+        return null;
     }
     
     /**

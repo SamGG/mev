@@ -1,11 +1,11 @@
 /*
 Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
 All rights reserved.
-*/
+ */
 /*
  * $RCSfile: ExperimentUtil.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2003-11-25 14:30:05 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -98,7 +98,7 @@ public class ExperimentUtil {
     }
     
     private static void saveGeneCluster(File file, IData data, int [] rows) throws Exception{
-                PrintWriter out = new PrintWriter(new FileOutputStream(file));
+        PrintWriter out = new PrintWriter(new FileOutputStream(file));
         String[] fieldNames = data.getFieldNames();
         
         if(fieldNames == null)
@@ -106,7 +106,7 @@ public class ExperimentUtil {
         
         out.print("Original row");
         out.print("\t");
-
+        
         for (int i = 0; i < fieldNames.length; i++) {
             out.print(fieldNames[i]);
             if (i < fieldNames.length - 1) {
@@ -138,6 +138,73 @@ public class ExperimentUtil {
         out.flush();
         out.close();
     }
+    
+    
+    /**
+     * Saves values from specified rows in IData with specified auxilary header titles and data.
+     * (rows are mapped IData indices, Experiment object is used for mapping)
+     */
+    public static void saveGeneCluster(Frame frame, IData data, int[] rows, String [] auxTitles, String auxData[][]) throws Exception {
+        File file = getFile(frame);
+        if (file != null) {
+            saveGeneCluster(file, data, rows, auxTitles, auxData);
+        }
+    }
+    
+    /**
+     *  Saves gene cluster and aux data.  Presumes rows are IData indices.
+     */
+    private static void saveGeneCluster(File file, IData data, int [] rows, String [] auxTitles, String [][] auxData) throws Exception{
+        PrintWriter out = new PrintWriter(new FileOutputStream(file));
+        String[] fieldNames = data.getFieldNames();
+        
+        if(fieldNames == null)
+            return;
+        
+        out.print("Original row");
+        out.print("\t");
+        
+        for (int i = 0; i < fieldNames.length; i++) {
+            out.print(fieldNames[i]);
+            if (i < fieldNames.length - 1) {
+                out.print("\t");
+            }
+        }
+        //out.print("UniqueID\tName");
+        for (int i=0; i<data.getFeaturesCount(); i++) {
+            out.print("\t");
+            out.print(data.getFullSampleName(i));
+        }
+        //aux titles
+        for(int i = 0; i < auxTitles.length; i++){
+            out.print("\t"+auxTitles[i]);
+        }
+        out.print("\n");
+        for (int i=0; i<rows.length; i++) {
+            out.print(Integer.toString(rows[i] + 1));  //JCB handles cuttoffs, gets gene mapping
+            out.print("\t");
+            for (int k = 0; k < fieldNames.length; k++) {
+                out.print(data.getElementAttribute(rows[i], k));  //JCB in case of using cuttoffs, get mapping
+                
+                if (k < fieldNames.length - 1) {
+                    out.print("\t");
+                }
+            }
+            for (int j=0; j<data.getFeaturesCount(); j++) {
+                out.print("\t");
+                out.print(Float.toString(data.getRatio(j, rows[i], IData.LOG)));
+            }
+            
+            for(int j = 0; j < auxData[0].length; j++){
+                out.print("\t"+auxData[i][j]);
+            }
+            out.print("\n");
+        }
+        out.flush();
+        out.close();
+    }
+    
+    
     /**
      * Saves experiment data as a cluster.
      */
@@ -145,7 +212,7 @@ public class ExperimentUtil {
     private static void saveCluster(File file, Experiment experiment, IData data, int[] rows) throws Exception {
         PrintWriter out = new PrintWriter(new FileOutputStream(file));
         String[] fieldNames = data.getFieldNames();
-                if(fieldNames == null)
+        if(fieldNames == null)
             return;
         out.print("Original row");
         out.print("\t");
@@ -191,13 +258,13 @@ public class ExperimentUtil {
             saveExperimentCluster(file, experiment, data, rows);
         }
     }
-
-        /**
+    
+    /**
      * Saves values from specified experiment cluster and its rows.
      */
     public static void saveAllExperimentClusters(Frame frame, Experiment experiment, IData data, int[][] clusters) throws Exception {
-
-    File file = getFile(frame);
+        
+        File file = getFile(frame);
         if (file != null) {
             File aFile;
             for (int i=0; i<clusters.length; i++) {
@@ -210,25 +277,97 @@ public class ExperimentUtil {
         }
     }
     
+    
     /**
-     *  Saves experiment cluster
+     * Saves values from specified experiment cluster and its rows and auxillary data.
      */
-    private static void saveExperimentCluster(File file, Experiment experiment, IData data, int[] experiments) throws Exception {
+    public static void saveExperimentCluster(Frame frame, Experiment experiment, IData data, int[] rows, String [] auxTitles, String [][] auxData) throws Exception {
+        File file = getFile(frame);
+        if (file != null) {
+            saveExperimentCluster(file, experiment, data, rows, auxTitles, auxData);
+        }
+    }
+    
+    /**
+     *  Saves experiment cluster with auxilary data
+     */
+    private static void saveExperimentCluster(File file, Experiment experiment, IData data, int[] experiments, String [] auxTitles, String [][] auxData) throws Exception {
         PrintWriter out = new PrintWriter(new FileOutputStream(file));
-        String[] fieldNames = data.getFieldNames();                
-            
+        String[] fieldNames = data.getFieldNames();
+        
         int numberOfGenes = experiment.getNumberOfGenes();
         
         out.print("Original row");
         out.print("\t");
-
+        
         for (int i = 0; i < fieldNames.length; i++) {
             out.print(fieldNames[i]);
             if (i < fieldNames.length - 1) {
                 out.print("\t");
             }
         }
-
+        //out.print("UniqueID\tName");
+        for (int i=0; i<experiments.length; i++) {
+            out.print("\t");
+            out.print(data.getFullSampleName(experiment.getSampleIndex(experiments[i])));
+        }
+        out.print("\n");
+        
+        //aux titles
+        for(int i = 0; i < auxTitles.length; i++){
+            
+                for(int k = 0; k < fieldNames.length; k++)
+                    out.print("\t");
+            
+                out.print(auxTitles[i]+"\t");
+                
+                for(int j = 0; j < auxData.length; j++){
+                    out.print(auxData[j][i]+"\t");
+                }                
+                out.print("\n");            
+        }
+        out.print("\n");
+        for (int i=0; i<numberOfGenes; i++) {
+            out.print(Integer.toString(experiment.getGeneIndexMappedToData(i) + 1));  //JCB handles cuttoffs, gets gene mapping
+            out.print("\t");
+            for (int k = 0; k < fieldNames.length; k++) {
+                //                out.print(data.getElementAttribute(rows[i], k));
+                out.print(data.getElementAttribute(experiment.getGeneIndexMappedToData(i), k));  //JCB in case of using cuttoffs, get mapping
+                
+                if (k < fieldNames.length - 1) {
+                    out.print("\t");
+                }
+            }
+            for (int j=0; j<experiments.length; j++) {
+                out.print("\t");
+                out.print(Float.toString(experiment.get(i, experiment.getSampleIndex(experiments[j]))));
+            }
+            out.print("\n");
+        }
+        out.flush();
+        out.close();
+    }
+    
+    
+    /**
+     *  Saves experiment cluster
+     */
+    private static void saveExperimentCluster(File file, Experiment experiment, IData data, int[] experiments) throws Exception {
+        PrintWriter out = new PrintWriter(new FileOutputStream(file));
+        String[] fieldNames = data.getFieldNames();
+        
+        int numberOfGenes = experiment.getNumberOfGenes();
+        
+        out.print("Original row");
+        out.print("\t");
+        
+        for (int i = 0; i < fieldNames.length; i++) {
+            out.print(fieldNames[i]);
+            if (i < fieldNames.length - 1) {
+                out.print("\t");
+            }
+        }
+        
         //out.print("UniqueID\tName");
         for (int i=0; i<experiments.length; i++) {
             out.print("\t");
@@ -257,8 +396,6 @@ public class ExperimentUtil {
         out.flush();
         out.close();
     }
-    
-    
     
     
     /**
