@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: Experiment.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-15 16:04:42 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -21,8 +21,8 @@ import org.tigr.util.FloatMatrix;
  */
 public class Experiment {
     // matrix of ratio values
-    private FloatMatrix matrix;
-    // data indices
+    private FloatMatrix matrix; 
+    // data indices 
     private int[] columns;
     // gene indices to map from a FloatMatrix that is a subset of the
     //full dataset back to a row index in the MultipleArrayData.
