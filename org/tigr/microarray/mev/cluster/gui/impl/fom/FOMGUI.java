@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: FOMGUI.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-04-06 13:02:13 $
+ * $Revision: 1.3 $
+ * $Date: 2004-04-12 19:34:20 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -146,9 +146,9 @@ public class FOMGUI implements IClusterGUI {
                 if(resultMatrix != null && resultMatrix.getRowDimension() > 1)
                     variances = getVariances(resultMatrix, means);    
                
-                return createResultTree(means, variances, info, interval, numOfCastClusters);
+                return createResultTree(means, variances, resultMatrix.A, info, interval, numOfCastClusters);
             } else {
-                return createResultTree(fom_values, null, info, interval, numOfCastClusters);
+                return createResultTree(fom_values, null, null, info, interval, numOfCastClusters);
             }
             
             } finally {
@@ -164,28 +164,31 @@ public class FOMGUI implements IClusterGUI {
     /**
      * Creates a result tree to be inserted into the framework analysis node.
      */
-    private DefaultMutableTreeNode createResultTree(float[] fom_values, float[] fom_vars, GeneralInfo info, float interval, int[] numOfCastClusters) {
+    private DefaultMutableTreeNode createResultTree(float[] fom_values, float[] fom_vars, float [][] iValues, GeneralInfo info, float interval, int[] numOfCastClusters) {
         DefaultMutableTreeNode root;
         if(this.clusterGenes)
             root = new DefaultMutableTreeNode("FOM - genes");
         else
             root = new DefaultMutableTreeNode("FOM - experiments");
-        addResultNodes(root, fom_values, fom_vars, info, interval, numOfCastClusters);
+        addResultNodes(root, fom_values, fom_vars, iValues, info, interval, numOfCastClusters);
         return root;
     }
     
     /**
      * Adds result nodes into the tree root.
      */
-    private void addResultNodes(DefaultMutableTreeNode root, float[] fom_values, float [] fom_vars, GeneralInfo info, float interval, int[] numOfCastClusters) {
-        addGraphViewer(root, fom_values, fom_vars, info, interval, numOfCastClusters);
+    private void addResultNodes(DefaultMutableTreeNode root, float[] fom_values, float [] fom_vars, float [][] iValues, GeneralInfo info, float interval, int[] numOfCastClusters) {
+        addGraphViewer(root, fom_values, fom_vars, iValues, info, interval, numOfCastClusters);
         addGeneralInfo(root, info);
     }
     
-    private void addGraphViewer(DefaultMutableTreeNode root, float[] fom_values, float [] variances, GeneralInfo info, float interval, int[] numOfCastClusters) {
+    private void addGraphViewer(DefaultMutableTreeNode root, float[] fom_values, float [] variances, float [][] iValues, GeneralInfo info, float interval, int[] numOfCastClusters) {
         IViewer viewer = null;
         if (info.method == 2) {
             viewer = new KFOMViewer(fom_values, variances);
+            if(variances != null && iValues != null)
+                ((KFOMViewer)viewer).setFOMIterationValues(iValues);
+                
             root.add(new DefaultMutableTreeNode(new LeafInfo("Graph - FOM value vs. # of Clusters", viewer)));
         }
         else {
