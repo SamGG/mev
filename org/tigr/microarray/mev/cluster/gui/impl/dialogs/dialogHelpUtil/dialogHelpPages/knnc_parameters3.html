@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<HTML>
+  <BODY bgcolor = "#FFFFCC"><basefont face = "Arial">
+    <h1>KNNC: K-Nearest Neighbors Validation</H1><H2>Parameter Information</H2>
+        <hr size = 10>
+This option will validate the training set using leave-one-out cross validation, without classifying the unknowns.
+<br>
+In the following description "vector" refers to a given gene or experiment, depending on what is being classified. 
+An element of a vector is one of the expression values that consitutes that vector. For a gene vector, its elements would 
+consist of the expression values for that gene across all experiments, while for an experiment vector, its elements would
+consist of all the gene expression values for that experiment.
+
+<H2>Classify genes or experiments</H2>
+Self-explanatory
+<BR>  
+<h2>Correlation filter</H2>
+The correlation filter is used to filter out those vectors of the set to be classified, that are not significantly 
+correlated with at least one member of the training set. The significance of correlation is determined by the 
+p-value, which is calculated by a permutation test in which each vector is permuted a user-specified number of times.
+<br>
+<h2>KNN Classification parameters</H2>
+This is where the user specifies the expected number of classes (which is also the number of classes present 
+in the training set). The number of neighbors is the number of vectors from the training set that are chosen as 
+neighbors to a given vector. Euclidean distance is used to determine the neighborhood. Let’s say we want to 
+classify a gene g. Gene g is assigned to the class that is most frequently represented among its k nearest 
+neighbors from the training set (where k is specified by the user). In case of a tie, gene g remains unassigned.
+<br>
+<h2>Create / import training set</H2>
+If the user chooses to import a previously created training set, on hitting the “Next” button a file chooser is 
+displayed from which the training file can be chosen. If an appropriate file is chosen, the KNN classification editor 
+displayed with the class assignments from the file. If the option to create a new training set from data is chosen, 
+on hitting the “Next” button the classification editor is directly displayed with all vectors set to neutral.
+<br>
+<h2>Hierarchical Clustering</H2>
+This checkbox selects whether to perform hierarchical clustering on the elements in each cluster created.
+<br>
+        </basefont>  
+  </BODY>
+</HTML>
