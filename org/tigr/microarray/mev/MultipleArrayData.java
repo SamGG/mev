@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayData.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-13 19:15:02 $
+ * $Revision: 1.5 $
+ * $Date: 2004-02-26 15:12:02 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -78,6 +78,8 @@ public class MultipleArrayData implements IData, java.io.Serializable {
     
     private ClusterRepository geneClusterRepository;
     private ClusterRepository expClusterRepository;
+    
+    private int logState = LOG;        
     
     /**
      * Sets the geneClusterRepository
@@ -310,7 +312,12 @@ public class MultipleArrayData implements IData, java.io.Serializable {
      * Returns ratio value for specified row, column and log state.
      */
     public float getRatio(int column, int row, int logState) {
+      //  System.out.println("external getRatio");        
         ISlideData slideData = (ISlideData)featuresList.get(column);
+        //System.out.println(logState);
+       // if(this.dataType == IData.DATA_TYPE_RATIO_ONLY)
+            logState = this.logState;
+       // System.out.println(logState);
         return slideData.getRatio(row, logState);
     }
     
@@ -670,7 +677,8 @@ public class MultipleArrayData implements IData, java.io.Serializable {
      */
     void addFeature(ISlideData slideData) {
         featuresList.add(slideData);
-        indicesList.add(createIndices(slideData));
+        slideData.setDataType(this.dataType);
+        indicesList.add(createIndices(slideData));        
         this.experiment = createExperiment();
         if (this.colorIndices == null) {
             this.colorIndices = createColorIndices(slideData.getSize());
@@ -684,6 +692,7 @@ public class MultipleArrayData implements IData, java.io.Serializable {
     void addFeatures(ISlideData[] slideData) {
         for (int i = 0; i < slideData.length; i++) {
             featuresList.add(slideData[i]);
+            slideData[i].setDataType(this.dataType);            
             indicesList.add(createIndices(slideData[i]));
             updateMaxValues(slideData[i]);
         }
@@ -1166,7 +1175,7 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         for (int i = 0; i < columns.length; i++) {
             sd = (ISlideData)featuresList.get(columns[i]);
             for (int row = rows; --row >= 0;) {
-                fm.A[row][columns[i]] = sd.getRatio(row, LOG);
+                fm.A[row][columns[i]] = sd.getRatio(row, this.logState);
             }
         }
         return new Experiment(fm, columns);
@@ -1183,7 +1192,7 @@ public class MultipleArrayData implements IData, java.io.Serializable {
             columnArray[i] = i;
             sd = (ISlideData)featuresList.get(i);
             for (int j = 0; j < rows.length; j++) {
-                fm.A[j][i] = sd.getRatio(rows[j], LOG);
+                fm.A[j][i] = sd.getRatio(rows[j], this.logState);
             }
         }
         return new Experiment(fm, columnArray, rows);
@@ -1209,7 +1218,7 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         ISlideDataElement sde;
         String name;
         MultipleArrayData data = new MultipleArrayData();
-        
+        data.setDataType(this.dataType);
         int normalizedState = this.getNormalizationState();
         
         if(indices.length < 1)
@@ -1263,7 +1272,7 @@ public class MultipleArrayData implements IData, java.io.Serializable {
                     ((FloatSlideData)slideData).setCurrentIntensities(spot, sde.getCurrentIntensity()[0], sde.getCurrentIntensity()[1]);
                 }
             }
-            slideData.setNormalizedState(normalizedState);
+            slideData.setNormalizedState(normalizedState);            
             data.addFeature(slideData);
         }
         return data;
@@ -1279,6 +1288,7 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         ISlideDataElement sde;
         String name;
         MultipleArrayData data = new MultipleArrayData();
+        data.setDataType(this.dataType);
         int normalizedState = this.getNormalizationState();
         
         if(columnIndices.length < 1 || rowIndices.length < 1)
@@ -1358,7 +1368,7 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         final int features = featuresList.size();
         final int probes = ((ISlideData)featuresList.get(0)).getSize();
         for (int probe=0; probe<probes; probe++) {
-            value = slideData.getRatio(probe, LOG);
+            value = slideData.getRatio(probe, this.logState);
             max = Math.max(max, value);
             min = Math.min(min, value);
         }
@@ -1493,6 +1503,11 @@ public class MultipleArrayData implements IData, java.io.Serializable {
             slideData = this.getFeature(i);
             slideData.setDataType(type);
         }
+        if(this.dataType == IData.DATA_TYPE_RATIO_ONLY){
+            this.logState = LINEAR;
+        }        
+        if(this.getFeaturesCount() > 0)
+            this.experiment = createExperiment();        
     }
     
     /** Returns an annotation array for the provided indices based on annotation key

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.9 $
- * $Date: 2004-02-13 19:15:02 $
+ * $Revision: 1.10 $
+ * $Date: 2004-02-26 15:12:02 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -2149,9 +2149,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             this.menubar.addLabelMenuItems(TMEV.getFieldNames());
             this.menubar.addSortMenuItems(TMEV.getFieldNames());
             this.menubar.setLabelIndex(0);
-        }
+        }        
         data.addFeatures(features);
-        data.setDataType(dataType);
+        data.setDataType(dataType);        
         // if we have field names and data is not loaded
         if(TMEV.getDataType() == TMEV.DATA_TYPE_AFFY)
             this.menubar.addAffyFilterMenuItems();
