@@ -21,8 +21,8 @@ prior written consent of TIGR.
  */
 /*
  * $RCSfile: SetDetectionFilterDialog.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.1.1.2 $
+ * $Date: 2004-02-06 21:48:17 $
  * $Author: braisted $
  * $State: Exp $
  */
