@@ -246,9 +246,8 @@ public class Query {
 			
 			// Explicitly set the chained to off and begin transaction 
 			Statement stmt = c.createStatement();
-//			stmt.execute("SET CHAINED OFF");	
-//			stmt.execute("BEGIN TRANSACTION");	
-                        stmt.execute("BEGIN");
+			stmt.execute("SET CHAINED OFF");	
+			stmt.execute("BEGIN TRANSACTION");
 			
 		} catch (SQLException sqle) {
 			
