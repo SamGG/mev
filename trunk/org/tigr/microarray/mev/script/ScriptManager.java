@@ -250,8 +250,9 @@ public class ScriptManager {
                 System.out.println("Class name = "+className);
                 try {
                     Class clazz = Class.forName(className);
-                    IClusterGUI gui = (IClusterGUI)clazz.newInstance();
-                    data = ((KMCGUI)gui).getScriptParameters(framework);
+                    IScriptGUI gui = (IScriptGUI)clazz.newInstance();
+                    data = gui.getScriptParameters(framework);
+                    System.out.println("HAVE Script Parameters");
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(framework.getFrame(), "Can't retrieve script parameters for the "+algName+ " algorithm", "Script Parameter Error", JOptionPane.WARNING_MESSAGE);
                     e.printStackTrace();
@@ -350,6 +351,26 @@ public class ScriptManager {
         ScriptRunner runner = new ScriptRunner(script, actionManager, framework);
         runner.setOutputMode(ScriptConstants.SCRIPT_OUTPUT_MODE_INTERNAL_OUTPUT);
         runner.execute();
+    }
+    
+    public void runScript(ScriptDocument scriptDoc) {        
+        Script script = getScriptObjectForDocument(scriptDoc);
+        if(script == null)
+            return;
+        
+        ScriptRunner runner = new ScriptRunner(script, actionManager, framework);
+        runner.setOutputMode(ScriptConstants.SCRIPT_OUTPUT_MODE_INTERNAL_OUTPUT);
+        runner.execute();
+    }
+    
+    public Script getScriptObjectForDocument(ScriptDocument doc) {
+        Script script;
+        for(int i = 0; i < scripts.size(); i++) {
+            script = (Script)(scripts.elementAt(i));
+            if(script.getScriptDocument() == doc)
+                return script;
+        }
+        return null;
     }
     
     public Experiment getCurrentExperiment() {
