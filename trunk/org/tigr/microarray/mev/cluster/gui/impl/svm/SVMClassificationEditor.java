@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMClassificationEditor.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-09 17:29:21 $
+ * $Revision: 1.3 $
+ * $Date: 2004-05-24 18:20:10 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -25,7 +25,7 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
 
-public class SVMClassificationEditor extends javax.swing.JFrame {
+public class SVMClassificationEditor extends javax.swing.JDialog {//javax.swing.JFrame {
     
     IFramework framework;
     IData data;
@@ -41,6 +41,7 @@ public class SVMClassificationEditor extends javax.swing.JFrame {
      * @param Framework <CODE>Framework</CODE> object to supply initial data to editor
      */
     public SVMClassificationEditor(IFramework Framework, boolean classifyGenes){
+        super(new JFrame(), "SVM Classification Editor", true);
         this.classifyGenes = classifyGenes;
         initComponents();
         
@@ -70,7 +71,7 @@ public class SVMClassificationEditor extends javax.swing.JFrame {
         this.jScrollPane1.setBackground(Color.black);
         loadTable();  //create and build table
         
-        searchDialog = new SVMSearchDialog(this, table, false); //persistent search dialog
+        searchDialog = new SVMSearchDialog(new JFrame(), table, false); //persistent search dialog
         
         sorter = new SortListener(svmTableModel);	//listener to fire sorting events
         indexSortMenuItem.addActionListener(sorter);
