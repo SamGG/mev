@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOTACentroidExpressionViewer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 18:35:16 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -470,6 +470,8 @@ public class SOTACentroidExpressionViewer extends JPanel implements IViewer{
         // if (this.data == null) {
         //    return;
         //}
+        if(this.elementSize.getHeight() < 1)
+            return;
         
         if (this.isAntiAliasing) {
             ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
@@ -647,6 +649,18 @@ public class SOTACentroidExpressionViewer extends JPanel implements IViewer{
         return this.listener.getCurrCentroidNumber();
     }
     
+    /** Returns a component to be inserted into the scroll pane row header
+     */
+    public JComponent getRowHeaderComponent() {
+        return null;
+    }    
+    
+    /** Returns the corner component corresponding to the indicated corner,
+     * posibly null
+     */
+    public JComponent getCornerComponent(int cornerIndex) {
+        return null;
+    }
     
     private class Listener extends MouseAdapter implements ActionListener, MouseMotionListener{
         
