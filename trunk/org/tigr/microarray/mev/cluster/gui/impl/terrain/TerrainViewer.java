@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: TerrainViewer.java,v $
- * $Revision: 1.8 $
- * $Date: 2005-02-24 20:24:10 $
+ * $Revision: 1.9 $
+ * $Date: 2005-03-10 20:33:21 $
  * $Author: braistedj $
  * $State: Exp $
  */

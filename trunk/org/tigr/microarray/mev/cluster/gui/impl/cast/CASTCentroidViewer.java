@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: CASTCentroidViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-02-24 20:24:02 $
+ * $Revision: 1.4 $
+ * $Date: 2005-03-10 20:30:30 $
  * $Author: braistedj $
  * $State: Exp $
  */

@@ -261,6 +261,8 @@ public class HelpWindow extends JDialog {
             return "file_loader.html";
         if(key.equals("SOTA Tree Properties"))
             return "sota_tree_config_parameters.html";
+        if(key.equals("DAM Initialization Dialog"))
+            return "dam_parameters.html";        
         if(key.equals("GDM Initialization Dialog"))
             return "gdm_parameters.html";  
         if(key.equals("GDM Color Range Dialog"))
@@ -313,6 +315,8 @@ public class HelpWindow extends JDialog {
             return "variance_filter_parameters.html";            
         if(key.equals("Gene Annotation Import"))
             return "gene_annotation_import_parameters.html";
+        if(key.equals("Color Scale Dialog"))
+            return "set_ratio_scale_parameters.html";
         else
             return null;
     }

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: OWAInfoViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-02-24 20:24:04 $
+ * $Revision: 1.6 $
+ * $Date: 2005-03-10 20:32:37 $
  * $Author: braistedj $
  * $State: Exp $
  */
