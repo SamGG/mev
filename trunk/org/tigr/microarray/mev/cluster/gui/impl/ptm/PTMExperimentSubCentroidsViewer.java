@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMExperimentSubCentroidsViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 17:07:43 $
+ * $Revision: 1.3 $
+ * $Date: 2003-12-08 18:13:54 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -57,6 +57,19 @@ public class PTMExperimentSubCentroidsViewer extends JPanel implements IViewer {
     public JComponent getContentComponent() {
 	return this;
     }
+    
+    /** Returns a component to be inserted into the scroll pane row header
+     */
+    public JComponent getRowHeaderComponent() {
+        return null;
+    }
+    
+    /** Returns the corner component corresponding to the indicated corner,
+     * posibly null
+     */
+    public JComponent getCornerComponent(int cornerIndex) {
+        return null;
+    }    
     
     /**
      * There is no a header.
