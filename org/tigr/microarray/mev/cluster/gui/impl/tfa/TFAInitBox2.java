@@ -421,7 +421,7 @@ public class TFAInitBox2 extends AlgorithmDialog {
             
             ButtonGroup chooseP = new ButtonGroup();
             
-            tDistButton = new JRadioButton("p-values based on t-distribution", true);
+            tDistButton = new JRadioButton("p-values based on F-distribution", true);
             tDistButton.setFocusPainted(false);
             tDistButton.setForeground(UIManager.getColor("Label.foreground"));
             tDistButton.setBackground(Color.white);
@@ -730,7 +730,7 @@ public class TFAInitBox2 extends AlgorithmDialog {
                         }
                     }
                     if (!allOne) {
-                        JOptionPane.showMessageDialog(null, "All factor combinations must contain > 1 sample, or exactly 1 sample each", "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "All factor combinations must contain more than one sample, or else they must all contain exactly one sample each", "Error", JOptionPane.ERROR_MESSAGE);
                         okPressed = false;
                         return;
                     } else {
@@ -739,7 +739,7 @@ public class TFAInitBox2 extends AlgorithmDialog {
                 } else {
                     for (int i = 0; i < cellSizes.length; i++) {
                         if (cellSizes[i] < 2) {
-                            JOptionPane.showMessageDialog(null, "All factor combinations must contain > 1 sample, or exactly 1 sample each", "Error", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "All factor combinations must contain more than one sample, or else they must all contain exactly one sample each", "Error", JOptionPane.ERROR_MESSAGE);
                             okPressed = false;
                             return;                            
                         }
