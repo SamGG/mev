@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ExperimentViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-05 22:53:06 $
+ * $Revision: 1.5 $
+ * $Date: 2004-02-09 16:08:09 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -848,11 +848,8 @@ public class ExperimentViewer extends JPanel implements IViewer {
     }
         
     private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        System.out.println("read exp viewer");
         header = (ExperimentHeader)ois.readObject();
-        System.out.println("have exp header");
         experiment = (Experiment)ois.readObject();
-        System.out.println("have experiment");
         clusters = (int[][])ois.readObject();
         samplesOrder = (int[])ois.readObject();
         elementSize = (Dimension)ois.readObject();
