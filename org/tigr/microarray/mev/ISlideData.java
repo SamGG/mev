@@ -4,14 +4,16 @@ All rights reserved.
  */
 /*
  * $RCSfile: ISlideData.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-05 22:33:04 $
+ * $Revision: 1.3 $
+ * $Date: 2004-06-11 18:51:22 $
  * $Author: braisted $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
+import java.util.Hashtable;
 import java.util.Properties;
+import java.util.Vector;
 
 public interface ISlideData {
     
@@ -42,6 +44,31 @@ public interface ISlideData {
      * Sets a microarray name.
      */
     public void setSlideDataName(String slideDataName);
+    
+    /**
+     * Sets the current label index.
+     */
+    public void setDataLabelKey(String key);
+    
+    /**
+     * Adds a new key and label value
+     */
+    public void addNewSampleLabel(String label, String value);
+    
+    /**
+     * Returns the slide name keys.
+     */
+    public Vector getSlideDataKeys();
+ 
+    /**
+     * Returns the slide data labels hash
+     */
+    public Hashtable getSlideDataLabels();
+    
+    /**
+     * Sets the slide data lable hash
+     */
+    public void setSlideDataLabels(Vector keys, Hashtable labels);
     
     /**
      * Returns size of a microarray.
@@ -217,4 +244,9 @@ public interface ISlideData {
      * Returns the slide's file name
      */
     public String getSlideFileName();
+    
+    /**
+     * Returns the detection status for the gene specified, Affy support
+     */
+    public String getDetection(int row);
 }

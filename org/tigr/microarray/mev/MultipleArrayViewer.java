@@ -1,11 +1,11 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.15 $
- * $Date: 2004-04-13 21:20:08 $
+ * $Revision: 1.16 $
+ * $Date: 2004-06-11 18:51:22 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -225,6 +225,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         //have new session but need to build field names into menus
         menubar.addLabelMenuItems(TMEV.getFieldNames());
         menubar.addSortMenuItems(TMEV.getFieldNames());
+
+        //need to populate the experiment label menu items
+        menubar.addExperimentLabelMenuItems(arrayData.getSlideNameKeyVectorUnion());
         mainframe.setJMenuBar(menubar);
         
         toolbar = new MultipleArrayToolbar(manager);
@@ -619,6 +622,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     private void loadIData(ObjectInputStream ois) throws IOException, ClassNotFoundException {
         //loads IData and sets TMEV field names fields
         this.data = (MultipleArrayData)(ois.readObject());
+
+        //get the experiment label keys
+        this.menubar.replaceExperimentLabelMenuItems(data.getSlideNameKeyArray());
         
         //populate the display menu
         this.menubar.replaceLabelMenuItems(TMEV.getFieldNames());
@@ -751,7 +757,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         root.add(analysisNode);
         
         scriptNode = new DefaultMutableTreeNode(new LeafInfo("Script Manager"));
-        //root.add(scriptNode);
+        root.add(scriptNode);
         
         historyNode = new DefaultMutableTreeNode(new LeafInfo("History"));
         root.add(historyNode);
@@ -1197,6 +1203,59 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         String index = (String)action.getValue(ActionManager.PARAMETER);
         menubar.setLabelIndex(Integer.parseInt(index));
         fireMenuChanged();
+    }
+    
+    /**
+     * Invoked when a label menu item is selected.
+     */
+    private void onExperimentLabelChanged(Action action) {
+        String key = (String)action.getValue(ActionManager.PARAMETER);
+        //menubar.setExperimentLabelIndex(Integer.parseInt(index));
+        this.data.setSampleLabelKey(key);
+        fireMenuChanged();
+    }
+    
+    
+    private void onExperimentLabelAdded() {
+        
+        boolean safeToReorderExperiments = false;
+        
+        //make sure no results exist and cluster repositories are null, then safe to reorder.
+        //note that result counter starts at 1 and holds the index for the next result
+        safeToReorderExperiments = (this.resultCount < 2 && this.geneClusterRepository == null && this.experimentClusterRepository == null);
+        
+        //get the longest key set from loaded samples
+        Vector featureAttributes = this.data.getSlideNameKeyVectorUnion();
+        
+        
+        ExperimentLabelEditor editor = new ExperimentLabelEditor(this.getFrame(), featureAttributes, this.data, safeToReorderExperiments);
+        
+        //return if not OK
+        if(editor.showModal() != JOptionPane.OK_OPTION)
+            return;             
+        
+        //get data and keys
+        String [][] data = editor.getLabelDataWithoutKeys();
+        String [] keys = editor.getLabelKeys();
+
+        //add/update features
+        for(int i=0; i < keys.length; i++)
+            this.data.addNewExperimentLabel(keys[i], data[i]);
+
+        //add the new label to the experiment label menu    
+        this.menubar.replaceExperimentLabelMenuItems(keys);
+        
+        //now the data has been updated, check for reordering request
+        if(safeToReorderExperiments && editor.isReorderedSelected()) { 
+            int [] order = editor.getNewOrderScheme();
+            ArrayList featuresList = new ArrayList(order.length);
+            for(int i = 0; i < order.length; i++) {
+                featuresList.add(this.data.getFeature(order[i]));
+            }
+            //set new features list
+            this.data.setFeaturesList(featuresList);        
+        }        
+        this.fireDataChanged();
     }
     
     /**
@@ -2314,6 +2373,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             return;
         if(TMEV.getFieldNames() != null && this.data.getFeaturesCount() < 1){
             this.menubar.addLabelMenuItems(TMEV.getFieldNames());
+            //add the experiment key vector that is longest
+            this.menubar.addExperimentLabelMenuItems(getSlideNameKeyVectorUnion(features));
             this.menubar.addSortMenuItems(TMEV.getFieldNames());
             this.menubar.setLabelIndex(0);
             
@@ -2353,6 +2414,33 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                 addHistory("Load Data File: "+featureNames[i]);
             }
         }
+        if(features.length > 1)
+            addHistory(features.length+" experiments loaded.");
+        else
+            addHistory("1 experiment loaded.");
+            
+        if(features.length > 0)
+                addHistory(features[0].getSize()+"genes loaded.");
+    }
+    
+    
+    
+    /**
+     * Returns the key vector for the sample with the longest sample name key list
+     */
+    private Vector getSlideNameKeyVectorUnion(ISlideData [] features) {
+        Vector keyVector;
+        Vector fullKeyVector = new Vector();
+        String key;
+        for( int i = 0; i < features.length; i++) {
+            keyVector = features[i].getSlideDataKeys();
+            for(int j = 0; j < keyVector.size(); j++) {
+                key = (String)(keyVector.elementAt(j));
+                if(!fullKeyVector.contains(key))
+                    fullKeyVector.addElement(key);
+            }
+        }
+        return fullKeyVector;
     }
     
     /**
@@ -2420,6 +2508,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                 doViewLayout();
             } else if (command.equals(ActionManager.DISPLAY_LABEL_CMD)) {
                 onLabelChanged((Action)event.getSource());
+            } else if (command.equals(ActionManager.DISPLAY_EXPERIMENT_LABEL_CMD)) {
+                onExperimentLabelChanged((Action)event.getSource());
+            } else if (command.equals(ActionManager.ADD_NEW_EXPERIMENT_LABEL_CMD)) {
+                onExperimentLabelAdded();
             } else if (command.equals(ActionManager.DISPLAY_10X10_CMD)) {
                 onElementSizeChanged(10, 10);
             } else if (command.equals(ActionManager.DISPLAY_20X5_CMD)) {
@@ -2697,6 +2789,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         public void windowActivated(WindowEvent e) {}
         public void windowDeactivated(WindowEvent e) {}
     }
+    
     /**
      * This <code>IFramework</code> implementation delegates
      * all its invokations to the outer class.
@@ -2794,6 +2887,12 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
          */
         public ResultTree getResultTree() {
             return MultipleArrayViewer.this.getResultTree();
+        }
+        
+        /** Adds result to the ResultTree
+         */
+        public void addAnalysisResult(DefaultMutableTreeNode resultNode) {
+            MultipleArrayViewer.this.addAnalysisResult(resultNode);
         }
         
     }

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ActionManager.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-04-13 14:39:40 $
+ * $Revision: 1.5 $
+ * $Date: 2004-06-11 18:52:04 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -196,15 +196,15 @@ public class ActionManager implements java.io.Serializable {
     public static final String  NEW_SCRIPT_ACTION  = "action-new-script";
     public static final String  NEW_SCRIPT_COMMAND = "command-new-script";
     public static final String  NEW_SCRIPT_NAME    = "New Script";
-    private static final String NEW_SCRIPT_SMALLICON = "save16.gif";
-    private static final String NEW_SCRIPT_LARGEICON = "save16.gif";
+    private static final String NEW_SCRIPT_SMALLICON = "newScript16.gif";
+    private static final String NEW_SCRIPT_LARGEICON = "newScript16.gif";
     
     
     public static final String  LOAD_SCRIPT_ACTION  = "action-load-script";
     public static final String  LOAD_SCRIPT_COMMAND = "command-load-script";
     public static final String  LOAD_SCRIPT_NAME    = "Load Script";
-    private static final String LOAD_SCRIPT_SMALLICON = "save16.gif";
-    private static final String LOAD_SCRIPT_LARGEICON = "save16.gif";
+    private static final String LOAD_SCRIPT_SMALLICON = "loadScript16.gif";
+    private static final String LOAD_SCRIPT_LARGEICON = "loadScript16.gif";
     
     
     // load directory action
@@ -303,6 +303,11 @@ public class ActionManager implements java.io.Serializable {
     // display label actions
     public static final String DISPLAY_LABEL_ACTION = "display--label-action";
     public static final String DISPLAY_LABEL_CMD    = "display-label-cmd";
+    // display experiment label actions
+    public static final String ADD_NEW_EXPERIMENT_LABEL_ACTION = "add-new-experiment-action";     
+    public static final String ADD_NEW_EXPERIMENT_LABEL_CMD = "add-new-experiment-label";    
+    public static final String DISPLAY_EXPERIMENT_LABEL_ACTION = "display-experiment_label-action";
+    public static final String DISPLAY_EXPERIMENT_LABEL_CMD    = "display-experiment-label-cmd";
     // sort label actions
     public static final String SORT_LABEL_ACTION = "sort-label-action";
     public static final String SORT_LABEL_CMD    = "sort-label-cmd";

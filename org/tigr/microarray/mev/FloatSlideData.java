@@ -4,13 +4,14 @@ All rights reserved.
  */
 /*
  * $RCSfile: FloatSlideData.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-27 22:19:13 $
+ * $Revision: 1.5 $
+ * $Date: 2004-06-11 18:51:22 $
  * $Author: braisted $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
+import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Properties;
 import javax.swing.JOptionPane;
@@ -53,12 +54,21 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
     // affy detection flag is MAS's (P)resent, (A)bsent, (M)arginal
     private String[] detection;
     
+    //Support multiple sample labels
+    private String sampleLabelKey = "Default Slide Name";
+    private Hashtable sampleLabels;
+    private Vector sampleLabelKeys;
+    
     /**
      * Creates a <code>FloatSlideData</code> with specified reference
      * to a microarray meta data.
      */
     public FloatSlideData(ISlideMetaData slideMetaData) {
         this(slideMetaData, slideMetaData.getSize());
+        sampleLabelKeys = new Vector();
+        sampleLabelKey = "Default Slide Name";
+        sampleLabelKeys = new Vector();
+        sampleLabels = new Hashtable();
     }
     
     /**
@@ -71,6 +81,9 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
         trueCY3 = new float[size];
         trueCY5 = new float[size];
         detection = new String[size];
+        sampleLabelKey = "Default Slide Name";
+        sampleLabelKeys = new Vector();
+        sampleLabels = new Hashtable();
     }
     
     /**
@@ -80,7 +93,7 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
         return slideMetaData;
     }
     
-     /**
+    /**
      * Sets the data type attribute see static type variables in <code>IData</code>
      */
     public void setDataType(int type){
@@ -121,10 +134,22 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
     }
     
     /**
+     *  Sets the slide label keys and hash table
+     */
+    public void setSlideDataLabels(Vector keys, Hashtable namesHash) {
+        this.sampleLabelKeys = keys;
+        this.sampleLabels = namesHash;
+    }
+    
+    /**
      * Sets a microarray name.
      */
-    public void setSlideDataName(String name) {
-        this.name = name;
+    public void setSlideDataName(String slideDataName) {
+        this.name = slideDataName; 
+        String key = "Default Slide Name";
+        sampleLabelKey = key;        
+        sampleLabelKeys.addElement(key);
+        sampleLabels.put(key, slideDataName);
     }
     
     /**
@@ -138,17 +163,26 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
      * Returns the name of a microarray.
      */
     public String getSlideDataName() {
+        String name = (String)this.sampleLabels.get(this.sampleLabelKey);
+
+        if(name == null)
+            return " ";
+        
         if(!this.abbrName)
-            return this.name;
+            return name;
         else{
-            if(this.name.length() < 26)
-                return this.name;
-            return this.name.substring(0, 25)+"...";
+            if(name.length() < 26)
+                return name;
+            return name.substring(0, 25)+"...";
         }
     }
     
     public String getFullSlideDataName() {
-        return this.name;
+        String name = (String)this.sampleLabels.get(this.sampleLabelKey);
+        if(name == null)
+            return " ";
+        else
+            return name;
     }
     
     /**
@@ -305,13 +339,13 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
      * Returns a ratio value with specified index and log state.
      */
     public final float getRatio(int index, int logState) {
-        if(normalizedState == ISlideData.NO_NORMALIZATION) {    
+        if(normalizedState == ISlideData.NO_NORMALIZATION) {
             if(dataType == IData.DATA_TYPE_RATIO_ONLY)
-                return trueCY5[index];        
+                return trueCY5[index];
             return getRatio(trueCY5[index], trueCY3[index], logState);
         } else {
             if(dataType == IData.DATA_TYPE_RATIO_ONLY)
-                return currentCY5[index]; 
+                return currentCY5[index];
             return getRatio(currentCY5[index], currentCY3[index], logState);
         }
     }
@@ -800,11 +834,11 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
             //if Stanford file is normalized then we need to generate cy3 and cy5
             if (this.dataType == IData.DATA_TYPE_RATIO_ONLY) {
                 CY3 = 100000;
-                CY5 = (float)(100000.0*Math.pow(2.0d, CY5));                
+                CY5 = (float)(100000.0*Math.pow(2.0d, CY5));
                 // if CY5 overflows, then set to zero and force no evaluation
                 if(CY5 == Float.POSITIVE_INFINITY || CY5 == Float.NEGATIVE_INFINITY)
-                    CY3 = CY5 = 0; 
-            }            
+                    CY3 = CY5 = 0;
+            }
             
             if(CY3 != 0 && CY5 != 0){
                 goodValues[i] = true;
@@ -967,5 +1001,32 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
         throw new RuntimeException("Method '"+methodName+"' is not supported");
     }
     
+    /**
+     * Returns the slide name keys.
+     */
+    public Vector getSlideDataKeys() {
+        return this.sampleLabelKeys;
+    }
     
+    /**
+     * Returns the slide name keys and pairs
+     */
+    public Hashtable getSlideDataLabels() {
+        return this.sampleLabels;
+    }
+    
+    /** Sets the current label index.
+     */
+    public void setDataLabelKey(String key) {
+        this.sampleLabelKey = key;
+    }
+    
+    /** Adds a new key and label value
+     */
+    public void addNewSampleLabel(String label, String value) {        
+       if(!sampleLabelKeys.contains(label))
+            this.sampleLabelKeys.addElement(label);
+        this.sampleLabels.put(label, value);
+    }
+
 }

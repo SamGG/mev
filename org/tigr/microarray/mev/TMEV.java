@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: TMEV.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-03-03 15:38:03 $
+ * $Revision: 1.6 $
+ * $Date: 2004-06-11 18:51:22 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -39,7 +39,7 @@ public class TMEV {
     public final static int SPOTFIRE_AVAILABLE = 1004;
     public final static int DATA_TYPE_TWO_DYE = 1;
     public final static int DATA_TYPE_AFFY = 2;
-
+    
     public final static int ANALYSIS_LOADED = 101;
     
     
@@ -303,7 +303,7 @@ public class TMEV {
             try {
                 BufferedReader br = new java.io.BufferedReader(new FileReader(fileName));
                 String line;
-                while((line = br.readLine()) != null) {                    
+                while((line = br.readLine()) != null) {
                     if(line.indexOf("prompt-for-save") != -1) {
                         havePromptTag = true;
                         line = line.substring(0, line.lastIndexOf(" "));
@@ -356,7 +356,7 @@ public class TMEV {
      * Java Web Start
      */
     public static void configure() {
-        String filename = "tmev.cfg";
+        String filename = "config/tmev.cfg";
         ConfMap cfg = new ConfMap();
         try {
             // Try reading configuration from resource
@@ -393,7 +393,7 @@ public class TMEV {
             
             TMEV.permitSavePrompt = cfg.getBoolean("prompt-for-save", true);
             String path = cfg.getProperty("current-data-path");
-
+            
             if(path != null) {
                 String sep = System.getProperty("file.separator");
                 StringTokenizer stok = new StringTokenizer(path, "/");
@@ -401,7 +401,7 @@ public class TMEV {
                 while(stok.hasMoreTokens())
                     path += stok.nextToken()+sep;
                 TMEV.dataPath = path;
-            } 
+            }
             
         } catch (Exception e) {
             e.printStackTrace();

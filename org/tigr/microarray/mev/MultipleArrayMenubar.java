@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayMenubar.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-27 22:19:13 $
+ * $Revision: 1.5 $
+ * $Date: 2004-06-11 18:51:22 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -17,6 +17,8 @@ import java.awt.Graphics2D;
 import java.awt.GradientPaint;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+
+import java.util.Vector;
 
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
@@ -40,13 +42,14 @@ public class MultipleArrayMenubar extends JMenuBar {
     private DistanceMenu distanceMenu = new DistanceMenu();
     private JMenu normalizationMenu;
     private JMenu labelMenu;
+    private JMenu expLabelSelectionMenu;
     private JMenu adjustMenu;
     private ButtonGroup labelGroup;
     private JMenu sortMenu;
     private ButtonGroup sortGroup;
     private ActionListener listener;
     private boolean affyNormAdded = false;
-
+    private ButtonGroup experimentLabelGroup;
     
     private ActionManager actionManager;
     
@@ -66,6 +69,10 @@ public class MultipleArrayMenubar extends JMenuBar {
         fileMenu.addSeparator();
         fileMenu.add(createJMenuItem(manager.getAction(ActionManager.SAVE_ANALYSIS_ACTION)));
         fileMenu.add(createJMenuItem(manager.getAction(ActionManager.SAVE_ANALYSIS_AS_ACTION)));
+        fileMenu.addSeparator();
+        fileMenu.add(createJMenuItem(manager.getAction(ActionManager.NEW_SCRIPT_ACTION)));
+        fileMenu.addSeparator();
+        fileMenu.add(createJMenuItem(manager.getAction(ActionManager.LOAD_SCRIPT_ACTION)));
         
         // fileMenu.add(createJMenuItem(manager.getAction(ActionManager.LOAD_DB_ACTION)));
         //  fileMenu.getMenuComponent(2).setEnabled(false);
@@ -115,11 +122,11 @@ public class MultipleArrayMenubar extends JMenuBar {
             adjustMenu.addSeparator();
             adjustMenu.add(createJMenuItem("Set Detection Filter", ActionManager.SET_DETECTION_FILTER_CMD, listener));
             adjustMenu.add(createJCheckBoxMenuItem("Use Detection Filter", ActionManager.USE_DETECTION_FILTER_CMD, listener));
-            
+         
             adjustMenu.add(createJMenuItem("Set Fold Filter", ActionManager.SET_FOLD_FILTER_CMD, listener));
             adjustMenu.add(createJCheckBoxMenuItem("Use Fold Filter", ActionManager.USE_FOLD_FILTER_CMD, listener));
         }
-        */
+         */
         
         add(adjustMenu);
         
@@ -187,8 +194,18 @@ public class MultipleArrayMenubar extends JMenuBar {
         
         displayMenu.addSeparator();
         
-        labelMenu = new JMenu("Label");
+        JMenu expLabelMenu = new JMenu("Experiment Labels");
+        expLabelMenu.add(this.createJMenuItem("Edit Labels/Reorder Experiments", ActionManager.ADD_NEW_EXPERIMENT_LABEL_CMD, listener));
+        expLabelSelectionMenu = new JMenu("Select Exp. Label");
+        expLabelMenu.addSeparator();
+        expLabelMenu.add(expLabelSelectionMenu);
+        experimentLabelGroup = new ButtonGroup();
+        
+        displayMenu.add(expLabelMenu);
+        
+        labelMenu = new JMenu("Gene Labels");
         labelGroup = new ButtonGroup();
+        
         //addLabelMenuItems(labelMenu, manager, labelGroup);
         displayMenu.add(labelMenu);
         displayMenu.addSeparator();
@@ -233,6 +250,8 @@ public class MultipleArrayMenubar extends JMenuBar {
                 setEnableMenuItem("File", ActionManager.LOAD_STANFORD_COMMAND, true);
                 setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_COMMAND, false);
                 setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_AS_COMMAND, false);
+                setEnableMenuItem("File", ActionManager.NEW_SCRIPT_COMMAND, false);
+                setEnableMenuItem("File", ActionManager.LOAD_SCRIPT_COMMAND, false);
                 break;
             case TMEV.DATA_AVAILABLE:
                 setEnableMenu("File", true);
@@ -240,6 +259,8 @@ public class MultipleArrayMenubar extends JMenuBar {
                 setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_AS_COMMAND, true);
                 setEnableMenuItem("File", ActionManager.SAVE_MATRIX_COMMAND, true);
                 setEnableMenuItem("File", ActionManager.SAVE_IMAGE_COMMAND, true);
+                setEnableMenuItem("File", ActionManager.NEW_SCRIPT_COMMAND, true);
+                setEnableMenuItem("File", ActionManager.LOAD_SCRIPT_COMMAND, true);
                 setEnableMenuItem("File", ActionManager.PRINT_IMAGE_COMMAND, true);
                 setEnableMenu("Adjust Data", true);
                 setEnableMenu("Normalization", true);
@@ -270,6 +291,11 @@ public class MultipleArrayMenubar extends JMenuBar {
                 setEnableMenuItem("File", ActionManager.LOAD_FILE_COMMAND, false);
                 setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_COMMAND, false);
                 setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_AS_COMMAND, false);
+              //  setEnableMenuItem("File", ActionManager.NEW_SCRIPT_COMMAND, false);
+              //  setEnableMenuItem("File", ActionManager.LOAD_SCRIPT_COMMAND, false);
+                setEnableMenuItem("File", ActionManager.NEW_SCRIPT_COMMAND, false);
+                setEnableMenuItem("File", ActionManager.LOAD_SCRIPT_COMMAND, false);                
+                
                 
                 setEnableMenuItem("File", ActionManager.LOAD_DIRECTORY_COMMAND, false);
                 setEnableMenuItem("File", ActionManager.LOAD_STANFORD_COMMAND, false);
@@ -278,6 +304,9 @@ public class MultipleArrayMenubar extends JMenuBar {
                 setEnableMenu("File", true);
                 setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_COMMAND, false);
                 setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_AS_COMMAND, false);
+                setEnableMenuItem("File", ActionManager.NEW_SCRIPT_COMMAND, false);
+                setEnableMenuItem("File", ActionManager.LOAD_SCRIPT_COMMAND, false);                
+
                 
                 setEnableMenuItem("File", ActionManager.SAVE_MATRIX_COMMAND, false);
                 setEnableMenuItem("File", ActionManager.SAVE_IMAGE_COMMAND, false);
@@ -336,6 +365,54 @@ public class MultipleArrayMenubar extends JMenuBar {
     }
     
     
+    public void addExperimentLabelMenuItems(Vector fieldNames){
+        JRadioButtonMenuItem item;
+        DefaultAction action;
+        for(int i = 0; i < fieldNames.size(); i++){
+            action = new DefaultAction(actionManager, "Label by "+(String)fieldNames.elementAt(i), ActionManager.DISPLAY_EXPERIMENT_LABEL_CMD);
+            action.putValue(ActionManager.PARAMETER, (String)(fieldNames.elementAt(i)));
+            item = new JRadioButtonMenuItem(action);
+            experimentLabelGroup.add(item);
+            if(i == 0)
+                item.setSelected(true);
+            this.expLabelSelectionMenu.add(item);
+        }
+    }
+    
+    public void addNewExperimentLabelMenuItem(String label) {
+        DefaultAction action = new DefaultAction(actionManager, "Label by "+label, ActionManager.DISPLAY_EXPERIMENT_LABEL_CMD);
+        action.putValue(ActionManager.PARAMETER, label);
+        JRadioButtonMenuItem item = new JRadioButtonMenuItem(action);
+        experimentLabelGroup.add(item);
+        expLabelSelectionMenu.add(item);
+    }
+    
+    
+    public void replaceExperimentLabelMenuItems(String [] fieldNames){
+        //remove all menu items 
+
+        //ButtonModel model = 
+        //String currentKey = (this.experimentLabelGroup.getSelection()).getActionCommand();
+       
+        this.expLabelSelectionMenu.removeAll();
+        
+        JRadioButtonMenuItem item;
+        ButtonGroup bg = new ButtonGroup();
+        DefaultAction action;
+        String cmd;
+        for(int i = 0; i < fieldNames.length; i++){
+            cmd = "Label by "+fieldNames[i];
+            action = new DefaultAction(actionManager, cmd, ActionManager.DISPLAY_EXPERIMENT_LABEL_CMD);
+            action.putValue(ActionManager.PARAMETER, fieldNames[i]);
+            item = new JRadioButtonMenuItem(action);
+            experimentLabelGroup.add(item);            
+            this.expLabelSelectionMenu.add(item);
+            item.setSelected(false);
+            if(i == 0)
+                item.setSelected(true);
+        }        
+    }
+        
     public void replaceLabelMenuItems(String [] fieldNames){
         //remove all menu items
         this.labelMenu.removeAll();
@@ -558,7 +635,7 @@ public class MultipleArrayMenubar extends JMenuBar {
     boolean get_affyNormAdded(){
         return this.affyNormAdded;
     }
-
+    
     void set_affyNormAddded(boolean set){
         this.affyNormAdded = set;
     }
