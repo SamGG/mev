@@ -47,4 +47,8 @@ public class SpotInformationData implements java.io.Serializable {
     public String [] getSpotInformationHeader(){
         return columnHeaders;
     }
+    
+    public int getSize() {
+        return this.spotData.length;
+    }
 }

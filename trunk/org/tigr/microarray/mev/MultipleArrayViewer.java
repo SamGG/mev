@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.10 $
- * $Date: 2004-02-26 15:12:02 $
+ * $Revision: 1.11 $
+ * $Date: 2004-02-27 22:19:13 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -369,7 +369,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                     // Save Cluster Repositories
                     saveClusterRepositories(oos);
                     // Record the save to history
-                    addHistory("Save Analysis: "+filePath);                    
+                    addHistory("Save Analysis: "+filePath);
                     // Save History Tree
                     tree.writeHistory(oos);
                     //reset result changed boolean
@@ -398,11 +398,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                 try {
                     
                     String version = (String)ois.readObject();
-
+                    
                     long dateLong = ois.readLong();
                     //Load IData object and set annotation field names
-                    loadIData(ois);    
-              
+                    loadIData(ois);
+                    
                     //set the current result count
                     resultCount = ois.readInt();
                     
@@ -410,15 +410,15 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                     loadAnalysisNode(ois);
                     
                     //load cluster repositories
-                    loadClusterRepositories(ois);                                        
-
-                    //load history 
+                    loadClusterRepositories(ois);
+                    
+                    //load history
                     loadHistoryNode(ois);
                     
                     //Add time node to the analysis node
                     Date date = new Date(System.currentTimeMillis());
                     DateFormat format = DateFormat.getDateTimeInstance();
-                                        
+                    
                     format.setTimeZone(TimeZone.getDefault());
                     DefaultMutableTreeNode node = new DefaultMutableTreeNode(format.format(date));
                     DefaultTreeModel treeModel = (DefaultTreeModel)tree.getModel();
@@ -430,10 +430,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                     tree.expandPath(path);
                     
                     //signal mev analysis loaded
-                    menubar.systemEnable(TMEV.ANALYSIS_LOADED);                    
+                    menubar.systemEnable(TMEV.ANALYSIS_LOADED);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(MultipleArrayViewer.this, "Analysis was not loaded.  Error reading input file.",
-                    "Load Analysis Error", JOptionPane.WARNING_MESSAGE);   
+                    "Load Analysis Error", JOptionPane.WARNING_MESSAGE);
                     e.printStackTrace();
                     System.out.println(e.getMessage());
                 }
@@ -449,7 +449,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             this.geneClusterRepository = (ClusterRepository)ois.readObject();
             this.data.setGeneClusterRepository(this.geneClusterRepository);
             this.geneClusterRepository.setFramework(this.framework);
-                        
+            
             this.geneClusterManager = new ClusterTable(this.geneClusterRepository, framework);
             DefaultMutableTreeNode genesNode = new DefaultMutableTreeNode(new LeafInfo("Gene Clusters", this.geneClusterManager), false);
             addNode(this.clusterNode, genesNode);
@@ -468,9 +468,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     
     
     private void loadAnalysisNode(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-
+        
         DefaultMutableTreeNode node = tree.loadResults(ois);
-
+        
         if(node != null){
             tree.removeNode(analysisNode);
             analysisNode = node;
@@ -487,7 +487,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             tree.removeNode(historyNode);
             historyNode = node;
             tree.insertNode(historyNode, tree.getRoot(), tree.getRoot().getChildCount());
-            historyLog = (HistoryViewer)(((LeafInfo)(((DefaultMutableTreeNode)historyNode.getChildAt(0)).getUserObject())).getViewer());            
+            historyLog = (HistoryViewer)(((LeafInfo)(((DefaultMutableTreeNode)historyNode.getChildAt(0)).getUserObject())).getViewer());
         }
     }
     
@@ -531,9 +531,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             chooser.setFileView(new AnalysisFileView());
             chooser.setFileFilter(new AnalysisFileFilter());
             if(chooser.showOpenDialog(this) == JOptionPane.OK_OPTION) {
-                file = chooser.getSelectedFile();                
+                file = chooser.getSelectedFile();
                 ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
-                loadState(ois);                
+                loadState(ois);
                 this.currentAnalysisFile = file;
             }
         } catch (Exception e) {
@@ -1470,7 +1470,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         selModel.setSelectionPath(treePath);
         tree.scrollPathToVisible(treePath);
         this.treeScrollPane.getHorizontalScrollBar().setValue(0);
-*/
+         */
     }
     
     /**
@@ -1524,7 +1524,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         else if(object instanceof String)
             nodeName = (String)object;
         addHistory("Deleted Node: "+nodeName);
-
+        
     }
     
     
@@ -1691,6 +1691,19 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         addHistory("Divide Spots by SD");
     }
     
+    // pcahan
+    private void onDivideGenesMedian() {
+        data.divideGenesMedian();
+        fireDataChanged();
+        addHistory("Per gene normalization -- Divide Genes by Median");
+    }
+    
+    private void onDivideGenesMean() {
+        data.divideGenesMean();
+        fireDataChanged();
+        addHistory("Per gene normalization -- Divide Genes by Mean");
+    }
+    
     private void onMeanCenterSpots() {
         data.meanCenterSpots();
         fireDataChanged();
@@ -1805,7 +1818,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         if(this.geneClusterManager != null)
             this.geneClusterManager.deleteAllClusters();
         fireDataChanged();
-        fireMenuChanged();  
+        fireMenuChanged();
         addHistory("Deleted All Gene Clusters");
     }
     
@@ -1923,13 +1936,13 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         if(cluster != null) {
             int serNum = cluster.getSerialNumber();
             String algName = cluster.getAlgorithmName();
-         
+            
             if(clusterType == Cluster.GENE_CLUSTER)
                 addHistory("Save Gene Cluster: Serial #: "+String.valueOf(serNum)+", Algorithm: "+
-                    algName+", Cluster: "+clusterID);
+                algName+", Cluster: "+clusterID);
             else
                 addHistory("Save Experiment Cluster: Serial #: "+String.valueOf(serNum)+", Algorithm: "+
-                    algName+", Cluster: "+clusterID);                
+                algName+", Cluster: "+clusterID);
         }
         
         fireDataChanged();
@@ -1994,13 +2007,13 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         if(cluster != null) {
             int serNum = cluster.getSerialNumber();
             String algName = cluster.getAlgorithmName();
-         
+            
             if(clusterType == Cluster.GENE_CLUSTER)
                 addHistory("Save Gene Cluster: Serial #: "+String.valueOf(serNum)+", Algorithm: "+
-                    algName+", Cluster: "+clusterID);
+                algName+", Cluster: "+clusterID);
             else
                 addHistory("Save Experiment Cluster: Serial #: "+String.valueOf(serNum)+", Algorithm: "+
-                    algName+", Cluster: "+clusterID);                
+                algName+", Cluster: "+clusterID);
         }
         
         fireDataChanged();
@@ -2149,12 +2162,25 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             this.menubar.addLabelMenuItems(TMEV.getFieldNames());
             this.menubar.addSortMenuItems(TMEV.getFieldNames());
             this.menubar.setLabelIndex(0);
-        }        
+            
+            //pcahan
+            if (TMEV.getDataType() == TMEV.DATA_TYPE_AFFY){
+                this.menubar.addAffyFilterMenuItems();
+            }
+        }
         data.addFeatures(features);
-        data.setDataType(dataType);        
+        data.setDataType(dataType);
         // if we have field names and data is not loaded
-        if(TMEV.getDataType() == TMEV.DATA_TYPE_AFFY)
-            this.menubar.addAffyFilterMenuItems();
+        //if(TMEV.getDataType() == TMEV.DATA_TYPE_AFFY)
+        //    this.menubar.addAffyFilterMenuItems();
+        
+        // pcahan - convoluted but it works
+        if ( (TMEV.getDataType() == TMEV.DATA_TYPE_AFFY) &&
+        (data.getDataType() == IData.DATA_TYPE_AFFY_ABS) &&
+        (!this.menubar.get_affyNormAdded())) {
+            this.menubar.addAffyNormMenuItems();
+        }
+        
         setMaxCY3AndCY5();
         systemEnable(TMEV.DATA_AVAILABLE);
         fireMenuChanged();
@@ -2170,8 +2196,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             else {
                 if(featureNames[i].equals(featureNames[i-1]))
                     break;
-                addHistory("Load Data File: "+featureNames[i]);                
-            }                
+                addHistory("Load Data File: "+featureNames[i]);
+            }
         }
     }
     
@@ -2201,7 +2227,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     }
     
     /**
-     *  Returns the <CODE>ResultTree</CODE> object     
+     *  Returns the <CODE>ResultTree</CODE> object
      */
     protected ResultTree getResultTree() {
         return this.tree;
@@ -2345,7 +2371,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             }
             
             // pcahan
-            else if (command.equals(ActionManager.SET_DETECTION_FILTER_CMD)) {
+            /*else if (command.equals(ActionManager.SET_DETECTION_FILTER_CMD)) {
                 onSetDetectionFilter();
             } else if (command.equals(ActionManager.SET_FOLD_FILTER_CMD)) {
                 onSetFoldFilter();
@@ -2354,8 +2380,22 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             } else if (command.equals(ActionManager.USE_FOLD_FILTER_CMD)) {
                 onUseFoldFilter( (AbstractButton) event.getSource());
             }
-            
-            else if (command.equals(ActionManager.LOG2_TRANSFORM_CMD)) {
+             */
+            // pcahan
+            else if (command.equals(ActionManager.SET_DETECTION_FILTER_CMD)) {
+                onSetDetectionFilter();
+            } else if (command.equals(ActionManager.SET_FOLD_FILTER_CMD)) {
+                onSetFoldFilter();
+            } else if (command.equals(ActionManager.USE_DETECTION_FILTER_CMD)) {
+                onUseDetectionFilter( (AbstractButton) event.getSource());
+            } else if (command.equals(ActionManager.USE_FOLD_FILTER_CMD)) {
+                onUseFoldFilter( (AbstractButton) event.getSource());
+            } else if (command.equals(ActionManager.DIVIDE_GENES_MEDIAN_CMD)) {
+                onDivideGenesMedian();
+            } else if (command.equals(ActionManager.DIVIDE_GENES_MEAN_CMD)) {
+                onDivideGenesMean();
+                
+            } else if (command.equals(ActionManager.LOG2_TRANSFORM_CMD)) {
                 onLog2Transform();
             } else if (command.equals(ActionManager.NORMALIZE_SPOTS_CMD)) {
                 onNormalizeSpots();
