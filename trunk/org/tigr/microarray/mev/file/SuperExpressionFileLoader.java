@@ -6,8 +6,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SuperExpressionFileLoader.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-27 22:23:33 $
+ * $Revision: 1.5 $
+ * $Date: 2004-03-03 15:38:48 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -314,15 +314,23 @@ public class SuperExpressionFileLoader {
 
             String content = new String();
             String line;
-            while( !(( line = br.readLine() ).equals("#DATA PATH"))){
-                content += line+lineSep;
+            while( (line = br.readLine()) != null && !((line).equals("#DATA PATH"))){
+                content += line+lineSep; 
             }
+            
+            if(line == null) {   //if at end of file
+                content += lineSep;
+                content += "#DATA PATH"+lineSep;
+                content += "current-data-path "+renderedPath+lineSep;
+            } else {            
             br.readLine(); //pass old path
             content += "#DATA PATH"+lineSep;
             content += "current-data-path "+renderedPath+lineSep;
             while( (line = br.readLine()) != null ){
                 content += line+lineSep;
             }
+            }
+            
             
             BufferedWriter bfr = new BufferedWriter(new FileWriter(System.getProperty("user.dir")+sep+"tmev.cfg"));
             bfr.write(content);
