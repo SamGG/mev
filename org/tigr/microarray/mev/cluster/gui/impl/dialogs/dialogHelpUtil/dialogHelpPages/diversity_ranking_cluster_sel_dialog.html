@@ -1,0 +1,51 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>Diversity Ranking Cluster Selection</h1>
+            <hr size = 10>
+
+Diversity Ranking cluster selection is an algorithm used to rank a set of clusters
+based on diversity and then select candidate clusters meeting supplied criteria.
+This process will tend to find clusters that meet a minimum size and have relatively
+lower variability between the expression vectors contained in the cluster.  This process 
+will find the least variable clusters but there is no means to know if the clusters 
+found will have interesting expression changes over the set of observations.
+<br><br>
+Note: See Centroid Variability or Entropy Ranking cluster selection for methods that try
+to select clusters that have maximal centroid variance over the observations.  In some cases
+it might be advisable to try several selection methods on an input set of clusters.
+
+<h1>Parameters</h1>
+<h2>Desired Number of Clusters</h2>
+This parameter indicates the number of clusters that should be selected from the input set.  
+If during execution it turns out that the number of input clusters is smaller than the 
+number of clusters desired, then all input clusters are returned as the result.
+
+<h2>Minimum Cluster Population (# of elements)</h2>
+The minimum cluster size describes the minimum number of genes or experiments that should
+be in the cluster.  In some cases clusters may have low variability but are only composed of
+a couple of elements.
+
+<h2>Rank Clusters on Centroid Based Diversity</h2>
+Centroid based diversity is the mean distance between a each element in the cluster and the 
+cluster's centroid (mean expression pattern for the cluster).   (Distance metric is determined
+by the current global metric defined in the 'Distance' menu. Euclidean is the default metric.)
+
+<h2>Rank Clusters on Intra-gene Based Diversity</h2>
+Intra-gene based diversity is the mean distance between each element in the cluster to
+every other gene in the cluster.  (Distance metric is determined
+by the current global metric defined in the 'Distance' menu. Euclidean is the default metric.)
+
+
+
+
+<br><br>
+The <i>View Valid Parameters</i> button will provide a table of
+parameters names, their types, possible constraints,
+and if the parameter is strictly required in all cases.
+<br><br>
+<b>Great care should be taken to insure that changes to script parameters
+will not affect other algorithm parameters or the nature of the output
+such that down-stream algorithms are still appropriate.</b>
+        </basefont>
+    </body>
+</html>
