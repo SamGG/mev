@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: KMCInitDialog.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 18:38:38 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -108,7 +108,7 @@ public class KMCInitDialog extends AlgorithmDialog {
         controlPanel.setBackground(Color.white);
         controlPanel.add(mainPanel, BorderLayout.CENTER);
         
-        addContent(controlPanel);
+        addContent(controlPanel); 
         okButton.addActionListener(listener);
         cancelButton.addActionListener(listener);
         resetButton.addActionListener(listener);
