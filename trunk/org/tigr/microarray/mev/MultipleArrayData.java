@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayData.java,v $
- * $Revision: 1.10 $
- * $Date: 2004-06-21 21:50:41 $
+ * $Revision: 1.11 $
+ * $Date: 2004-06-24 17:36:30 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -1629,10 +1629,11 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         String [] fieldNames = this.getFieldNames();
         int fieldIndex;
         for(fieldIndex = 0; fieldIndex < fieldNames.length; fieldIndex++){
-            if(fieldName == fieldNames[fieldIndex])
+            if(fieldName.equals(fieldNames[fieldIndex]))
                 break;
         }
-        if(fieldIndex > fieldNames.length)
+        
+        if(fieldIndex >= fieldNames.length)
             return null;
         
         String [] annot = new String[indices.length];
