@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: HCLColorBar.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-05 20:25:10 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -27,7 +27,9 @@ import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 
-public class HCLColorBar extends JPanel {
+public class HCLColorBar extends JPanel implements java.io.Serializable {
+    
+    static final long serialVersionUID = 1L;
     
     private static final int BAR_WIDTH = 10;
     

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLConfigDialog.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-05 20:25:10 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -326,7 +326,6 @@ public class HCLConfigDialog extends AlgorithmDialog {
                 } catch (NumberFormatException e){
                 }
             }
-            System.out.println("key event");  
         }
         
         public void keyTyped(java.awt.event.KeyEvent keyEvent) {

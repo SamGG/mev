@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: HCLClusterInfoViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 18:40:29 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 20:25:10 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -23,8 +23,10 @@ import javax.swing.JTextArea;
 
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
-public class HCLClusterInfoViewer extends ViewerAdapter {
+public class HCLClusterInfoViewer extends ViewerAdapter implements java.io.Serializable {
     
+    static final long serialVersionUID = 1L;
+
     private JComponent header;
     private JTextArea  content;
     private boolean clusterGenes;
