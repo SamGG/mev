@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SlideDataElement.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 21:39:28 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 22:35:41 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -15,7 +15,7 @@ import java.util.Hashtable;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.util.Xcon;
 
-public class SlideDataElement extends ArrayElement implements ISlideDataElement {
+public class SlideDataElement extends ArrayElement implements ISlideDataElement, java.io.Serializable {
     
     protected int[] rows;
     protected int[] columns;

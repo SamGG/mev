@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: MultipleArrayMenubar.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:23 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-05 22:34:13 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -59,6 +59,12 @@ public class MultipleArrayMenubar extends JMenuBar {
         JMenu fileMenu = new JMenu("File");
        // fileMenu.add(createJMenuItem(manager.getAction(ActionManager.LOAD_DIRECTORY_ACTION)));
         fileMenu.add(createJMenuItem(manager.getAction(ActionManager.LOAD_ACTION)));
+        fileMenu.addSeparator();
+        fileMenu.add(createJMenuItem(manager.getAction(ActionManager.LOAD_ANALYSIS_ACTION)));
+        fileMenu.addSeparator();
+        fileMenu.add(createJMenuItem(manager.getAction(ActionManager.SAVE_ANALYSIS_ACTION)));
+        fileMenu.add(createJMenuItem(manager.getAction(ActionManager.SAVE_ANALYSIS_AS_ACTION)));
+        
        // fileMenu.add(createJMenuItem(manager.getAction(ActionManager.LOAD_DB_ACTION)));
       //  fileMenu.getMenuComponent(2).setEnabled(false);
       //  fileMenu.addSeparator();
@@ -222,9 +228,13 @@ public class MultipleArrayMenubar extends JMenuBar {
             case TMEV.SYSTEM:
                 setEnableMenu("File", true);
                 setEnableMenuItem("File", ActionManager.LOAD_STANFORD_COMMAND, true);
+                setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_COMMAND, false); 
+                setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_AS_COMMAND, false);
                 break;
             case TMEV.DATA_AVAILABLE:
                 setEnableMenu("File", true);
+                setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_COMMAND, false); 
+                setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_AS_COMMAND, true);                
                 setEnableMenuItem("File", ActionManager.SAVE_MATRIX_COMMAND, true);
                 setEnableMenuItem("File", ActionManager.SAVE_IMAGE_COMMAND, true);
                 setEnableMenuItem("File", ActionManager.PRINT_IMAGE_COMMAND, true);
@@ -235,6 +245,9 @@ public class MultipleArrayMenubar extends JMenuBar {
                 setEnableMenu("Display", true);
                 setEnableMenu("Sort", true);
                 break;
+            case TMEV.ANALYSIS_LOADED:
+                setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_COMMAND, true);
+                setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_AS_COMMAND, true);
             case TMEV.DB_AVAILABLE:
                 break;
             case TMEV.DB_LOGIN:
@@ -252,11 +265,17 @@ public class MultipleArrayMenubar extends JMenuBar {
                 setEnableMenu("File", true);
                 setEnableMenuItem("File", ActionManager.LOAD_DB_COMMAND, false);
                 setEnableMenuItem("File", ActionManager.LOAD_FILE_COMMAND, false);
+                setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_COMMAND, false);                
+                setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_AS_COMMAND, false);                
+
                 setEnableMenuItem("File", ActionManager.LOAD_DIRECTORY_COMMAND, false);
                 setEnableMenuItem("File", ActionManager.LOAD_STANFORD_COMMAND, false);
                 break;
             case TMEV.DATA_AVAILABLE:
                 setEnableMenu("File", true);
+                setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_COMMAND, false);  
+                setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_AS_COMMAND, false);  
+                
                 setEnableMenuItem("File", ActionManager.SAVE_MATRIX_COMMAND, false);
                 setEnableMenuItem("File", ActionManager.SAVE_IMAGE_COMMAND, false);
                 setEnableMenuItem("File", ActionManager.PRINT_IMAGE_COMMAND, false);

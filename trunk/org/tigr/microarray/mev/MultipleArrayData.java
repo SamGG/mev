@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayData.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 18:48:00 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 22:33:59 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -17,6 +17,11 @@ import java.awt.event.*;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Properties;
+
+import java.io.Serializable;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
@@ -35,7 +40,7 @@ import org.tigr.midas.mevdialogs.RatioStatsNormInitDialog;
 import org.tigr.midas.mevdialogs.IterativeLogMCNormInitDialog;
 
 
-public class MultipleArrayData implements IData {
+public class MultipleArrayData implements IData, java.io.Serializable {
     
     private ArrayList featuresList = new ArrayList();
     private ArrayList indicesList  = new ArrayList(); // array of int[]'s
@@ -1510,5 +1515,100 @@ public class MultipleArrayData implements IData {
         
         return annot;        
     }
+    
+        private void writeObject(ObjectOutputStream oos) throws IOException, ClassNotFoundException{
+  
+        oos.writeObject(featuresList);  //ArrayList
+        oos.writeObject(indicesList); //ArrayList
+        
+        oos.writeObject(spotColors);  //ArrayList
+        oos.writeObject(colorIndices); //int []
+        
+        oos.writeObject(experimentColors); //ArrayList
+        oos.writeObject(experimentColorIndices); // int []
+        oos.writeObject(experiment); //Experiment
+        oos.writeInt(dataType); //int
+
+        oos.writeFloat(maxCy3);
+        oos.writeFloat(maxCy5);
+        oos.writeFloat(maxRatio);
+        oos.writeFloat(minRatio);
+        
+        oos.writeFloat(percentageCutoff);
+        oos.writeBoolean(usePercentageCutoff);
+ 
+        oos.writeFloat(lowerCY3Cutoff);
+        oos.writeFloat(lowerCY5Cutoff);
+        oos.writeBoolean(useLowerCutoffs);
+
+        // pcahan
+        if(dataType == TMEV.DATA_TYPE_AFFY){            
+        /*
+        private DetectionFilter detectionFilter;
+    private FoldFilter foldFilter;
+    private boolean useDetectionFilter = false;
+    private boolean dfSet = false;
+    private boolean useFoldFilter = false;
+         **/
+        }
+        //private ClusterRepository geneClusterRepository;
+        //private ClusterRepository expClusterRepository;
+    }
+    
+    private void readObject(ObjectInputStream ois)throws IOException, ClassNotFoundException{
+       
+        featuresList = (ArrayList)ois.readObject();  //ArrayList
+        indicesList = (ArrayList)ois.readObject(); //ArrayList
+        
+        spotColors = (ArrayList)ois.readObject();  //ArrayList
+        colorIndices = (int [])ois.readObject(); //int []
+        
+        experimentColors = (ArrayList)ois.readObject(); //ArrayList
+        experimentColorIndices = (int [])ois.readObject(); // int []
+        experiment = (Experiment)ois.readObject(); //Experiment
+        dataType = ois.readInt(); //int
+        
+        
+      /*
+    private float maxCy3 = 0f;
+    private float maxCy5 = 0f;
+    private float maxRatio = 0f;
+    private float minRatio = 0f;
+       */
+        maxCy3 = ois.readFloat();
+        maxCy5 = ois.readFloat();
+        maxRatio = ois.readFloat();
+        minRatio = ois.readFloat();
+        
+        percentageCutoff = ois.readFloat();
+        usePercentageCutoff = ois.readBoolean();
+        //    private float percentageCutoff = 0f;
+        //    private boolean usePercentageCutoff = false;
+        
+        lowerCY3Cutoff = ois.readFloat();
+        lowerCY5Cutoff = ois.readFloat();
+        useLowerCutoffs = ois.readBoolean();
+        //    private float lowerCY3Cutoff = 0f;
+        //   private float lowerCY5Cutoff = 0f;
+        // private boolean useLowerCutoffs = false;
+        
+        // private Progress progressBar;
+        //    private boolean normalizationAbort = false;
+        
+        // pcahan
+        if(dataType == TMEV.DATA_TYPE_AFFY){
+            
+        /*
+        private DetectionFilter detectionFilter;
+    private FoldFilter foldFilter;
+    private boolean useDetectionFilter = false;
+    private boolean dfSet = false;
+    private boolean useFoldFilter = false;
+         **/
+        }
+        //private ClusterRepository geneClusterRepository;
+        //private ClusterRepository expClusterRepository;
+    }
+    
     
 }

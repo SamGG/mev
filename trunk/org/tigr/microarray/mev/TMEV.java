@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: TMEV.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 18:48:00 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 22:36:19 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -30,6 +30,8 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.gui.IGUIFactory;
 
 public class TMEV {
+    public final static String VERSION = "Mev_2.3";
+    
     public final static int SYSTEM = 1000;
     public final static int DB_AVAILABLE = 1001;
     public final static int DB_LOGIN = 1002;
@@ -37,6 +39,9 @@ public class TMEV {
     public final static int SPOTFIRE_AVAILABLE = 1004;
     public final static int DATA_TYPE_TWO_DYE = 1;
     public final static int DATA_TYPE_AFFY = 2;
+
+    public final static int ANALYSIS_LOADED = 101;
+    
     
     private static Connection connection;
     private static Hashtable properties;
@@ -52,6 +57,9 @@ public class TMEV {
     private static boolean indicesAdjusted = false;
     private static String[] fieldNames;
     private static String[] databases;
+    
+    //Prompt user to save analysis on close
+    public static boolean permitSavePrompt = true;
     
     // pcahan                       jcb:constant
     private static int dataType = DATA_TYPE_TWO_DYE;
@@ -278,6 +286,36 @@ public class TMEV {
         TMEV.fieldNames = null;
     }
     
+    public static void setPermitPrompt(boolean permitPrompt) {
+        if(TMEV.permitSavePrompt != permitPrompt) {
+            String value = String.valueOf(permitPrompt);
+            
+            String fileName = "tmev.cfg";
+            String text = new String("");
+            
+            try {
+                BufferedReader br = new java.io.BufferedReader(new FileReader(fileName));
+                String line;
+                while((line = br.readLine()) != null) {
+                    if(line.indexOf("prompt-for-save") != -1) {
+                        line = line.substring(0, line.lastIndexOf(" "));
+                        line += " "+value;
+                    }
+                    text += line+"\n";
+                }
+                br.close();
+                
+                BufferedWriter bw = new java.io.BufferedWriter(new FileWriter(fileName));
+                bw.write(text);
+                bw.flush();
+                bw.close();
+            } catch (IOException ioe) {
+                System.out.println("Can't alter tmev.cfg");
+            }
+            TMEV.permitSavePrompt = permitPrompt;
+        }
+    }
+    
  /*   public static void configure() {
         String filename = "tmev.cfg";
         ConfMap cfg = new ConfMap();
@@ -299,7 +337,7 @@ public class TMEV {
             e.printStackTrace();
         }
     }
-  */    
+  */
     /*
      * This code was modified by Jim Johnson with other changes to enable
      * Java Web Start
@@ -339,6 +377,9 @@ public class TMEV {
                 throw new Exception("GUI factory class name not found, check the 'gui.factory.class' key in "+filename+" file.");
             }
             algorithmFactory = new TMEVAlgorithmFactory(cfg);
+            
+            TMEV.permitSavePrompt = cfg.getBoolean("prompt-for-save", false);
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
