@@ -10,9 +10,9 @@ All rights reserved.
 
  * $RCSfile: ViewerAdapter.java,v $
 
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
 
- * $Date: 2003-12-09 17:16:43 $
+ * $Date: 2003-12-09 17:20:56 $
 
  * $Author: nbhagaba $
 
@@ -83,6 +83,8 @@ public class ViewerAdapter implements IViewer {
     }
 
     //THIS IS A TEST COMMENT
+    
+    //LOCAL COPY
     
 
 }
