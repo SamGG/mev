@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SingleArrayViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-27 22:19:13 $
+ * $Revision: 1.3 $
+ * $Date: 2004-03-01 15:52:30 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -44,9 +44,9 @@ import org.tigr.microarray.util.swing.SlideDataLoader;
 
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.impl.normalization.LinRegNormInitDialog;
-import org.tigr.microarray.mev.cluster.gui.impl.normalization.RatioStatsNormInitDialog;
-import org.tigr.microarray.mev.cluster.gui.impl.normalization.IterativeLogMCNormInitDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.normalization.LinRegNormInitDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.normalization.RatioStatsNormInitDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.normalization.IterativeLogMCNormInitDialog;
 
 
 //Graph package
