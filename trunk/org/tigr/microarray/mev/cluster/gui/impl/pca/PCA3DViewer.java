@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: PCA3DViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 18:16:07 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 20:26:34 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -15,6 +15,7 @@ import java.awt.Frame;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JMenuItem;
@@ -23,9 +24,12 @@ import javax.swing.JPopupMenu;
 import javax.swing.JOptionPane;
 import javax.swing.JCheckBoxMenuItem;
 
+import javax.swing.tree.DefaultMutableTreeNode;
+
 import org.tigr.util.FloatMatrix;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
@@ -35,7 +39,7 @@ import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 
-public class PCA3DViewer extends ViewerAdapter {
+public class PCA3DViewer extends ViewerAdapter implements java.io.Serializable {
     
     private static final String RESET_CMD   = "reset-cmd";
     private static final String OPTIONS_CMD = "options-cmd";
@@ -57,6 +61,9 @@ public class PCA3DViewer extends ViewerAdapter {
     private boolean geneViewer;
     private IFramework framework;
     
+    private FloatMatrix U;
+    private int mode;
+    
     /**
      * Constructs a <code>PCA3DViewer</code> with specified mode,
      * U-matrix and an experiment data.
@@ -65,8 +72,27 @@ public class PCA3DViewer extends ViewerAdapter {
         this.frame = frame;
         this.experiment = experiment;
         this.geneViewer = geneViewer;
+        this.U = U;
+        this.mode = mode;
         content = createContent(mode, U, experiment, geneViewer);
         popup = createJPopupMenu();
+    }
+    
+    
+    private void writeObject(java.io.ObjectOutputStream oos) throws  java.io.IOException {
+        oos.writeObject(this.experiment);
+        oos.writeBoolean(this.geneViewer);
+        oos.writeObject(this.U);
+        oos.writeInt(this.mode);        
+    }
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        this.experiment = (Experiment)ois.readObject();
+        this.geneViewer = ois.readBoolean();
+        this.U = (FloatMatrix)ois.readObject();
+        this.mode = ois.readInt();
+        
+        content = createContent(mode, U, experiment, geneViewer);               
     }
     
     /**
@@ -74,9 +100,22 @@ public class PCA3DViewer extends ViewerAdapter {
      */
     public void onSelected(IFramework framework) {
         this.framework = framework;
+        this.frame = framework.getFrame();
         this.data = framework.getData();
         content.setData(this.data);
         content.updateScene();
+        
+        //In case it is viewed after serialization
+        if(popup == null){
+            popup = createJPopupMenu(); 
+            DefaultMutableTreeNode node = framework.getCurrentNode();
+            if(node != null){
+                if(node.getUserObject() instanceof LeafInfo){
+                    LeafInfo leafInfo = (LeafInfo) node.getUserObject();
+                    leafInfo.setPopupMenu(this.popup);
+                }
+            }
+        }    
     }
     
     /**
@@ -409,6 +448,6 @@ public class PCA3DViewer extends ViewerAdapter {
             } else if (command.equals(LAUNCH_NEW_SESSION_CMD)){
                 launchNewSession();
             }
-        }
+        }        
     }
 }
