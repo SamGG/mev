@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: Cluster.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-03-19 15:33:40 $
+ * $Revision: 1.5 $
+ * $Date: 2004-07-27 19:58:13 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -21,6 +21,7 @@ import org.tigr.microarray.mev.cluster.gui.Experiment;
  * the cluster definition.
  */
 public class Cluster implements java.io.Serializable {
+    public static final long serialVersionUID = 1000102010203010001L;
 
     public static final int GENE_CLUSTER = 0;
     public static final int EXPERIMENT_CLUSTER = 1;
