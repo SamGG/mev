@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SVMDiscriminantExperimentViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2005-02-24 20:23:45 $
+ * $Revision: 1.7 $
+ * $Date: 2005-03-10 20:21:55 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -83,6 +83,7 @@ public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer, 
     public static Color maskColor = new Color(255, 255, 255, 128);
     private float maxValue = INITIAL_MAX_VALUE;
     private float minValue = INITIAL_MIN_VALUE;
+    private float midValue = 0.0f;
     protected int firstSelectedRow = -1;
     protected int lastSelectedRow  = -1;
     public BufferedImage posColorImage = createGradientImage(Color.red, Color.black);
@@ -262,8 +263,9 @@ public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer, 
         Integer userObject = (Integer)framework.getUserObject();
         setClusterIndex(userObject == null ? 0 : userObject.intValue());
         labelIndex = menu.getLabelIndex();
-        this.maxValue = Math.abs(menu.getMaxRatioScale());
-        this.minValue = -Math.abs(menu.getMinRatioScale());
+        this.maxValue = menu.getMaxRatioScale();
+        this.minValue = menu.getMinRatioScale();
+        this.midValue = menu.getMidRatioValue();
         setElementSize(menu.getElementSize());
         setAntialiasing(menu.isAntiAliasing());
         setDrawBorders(menu.isDrawingBorder());
@@ -272,7 +274,7 @@ public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer, 
         onMenuChanged(menu);
         //header.setValues(maxValue, minValue);
         header.setClusterIndex(clusterIndex);
-        header.setValues(minValue, maxValue);
+        header.setValues(minValue, midValue, maxValue);
         header.setAntiAliasing(menu.isAntiAliasing());
         header.updateSizes(getSize().width, elementSize.width);        
     }
@@ -285,13 +287,14 @@ public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer, 
     	useDoubleGradient = menu.getUseDoubleGradient();
     	header.setUseDoubleGradient(useDoubleGradient);
         setDrawBorders(menu.isDrawingBorder());
-        this.maxValue = Math.abs(menu.getMaxRatioScale());
-        this.minValue = -Math.abs(menu.getMinRatioScale());
+        this.maxValue = menu.getMaxRatioScale();
+        this.minValue = menu.getMinRatioScale();
+        this.midValue = menu.getMidRatioValue();
         this.negColorImage = menu.getNegativeGradientImage();
         this.posColorImage = menu.getPositiveGradientImage();
         header.setNegAndPosColorImages(this.negColorImage, this.posColorImage);
         //header.setValues(maxValue, minValue);
-        header.setValues(minValue, maxValue);
+        header.setValues(minValue, midValue, maxValue);
         if (this.elementSize.equals(menu.getElementSize()) &&
         labelIndex == menu.getLabelIndex() &&
         this.isAntiAliasing == menu.isAntiAliasing()) {
@@ -318,8 +321,7 @@ public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer, 
         this.data = data;
         this.haveColorBar = areProbesColored();
         this.header.setData(data);
-        System.out.println("Data changed, p colored? ="+this.haveColorBar);
-    }
+   }
     
     public void onDeselected() {}
     public void onClosed() {}
@@ -585,10 +587,10 @@ public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer, 
         int colorIndex, rgb;
         
         if(useDoubleGradient) {
-        	maximum = value < 0 ? this.minValue : this.maxValue;
-			colorIndex = (int) (255 * value / maximum);
+        	maximum = value < midValue ? this.minValue : this.maxValue;
+			colorIndex = (int) (255 * (value-midValue) / (maximum - midValue));
 			colorIndex = colorIndex > 255 ? 255 : colorIndex;
-			rgb = value < 0 ? negColorImage.getRGB(255 - colorIndex, 0)
+			rgb = value < midValue ? negColorImage.getRGB(255 - colorIndex, 0)
 					: posColorImage.getRGB(colorIndex, 0);
         } else {
         	float span = this.maxValue - this.minValue;

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOTADiversityViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-02-24 20:23:50 $
+ * $Revision: 1.6 $
+ * $Date: 2005-03-10 20:22:06 $
  * $Author: braistedj $
  * $State: Exp $
  */

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOTACentroidExpressionViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2005-02-24 20:23:50 $
+ * $Revision: 1.7 $
+ * $Date: 2005-03-10 20:22:06 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -79,6 +79,7 @@ public class SOTACentroidExpressionViewer extends JPanel implements IViewer, jav
     public static Color maskColor = new Color(255, 255, 255, 128);
     private float maxValue = INITIAL_MAX_VALUE;
     private float minValue = INITIAL_MIN_VALUE;
+    private float midValue = 0.0f;
     private int firstSelectedRow = -1;
     private int lastSelectedRow  = -1;
     private ArrayList selectedClusterList;
@@ -245,8 +246,9 @@ public class SOTACentroidExpressionViewer extends JPanel implements IViewer, jav
         useDoubleGradient = menu.getUseDoubleGradient();
         header.setUseDoubleGradient(useDoubleGradient);
         
-        this.maxValue = Math.abs(menu.getMaxRatioScale());
-        this.minValue = -Math.abs(menu.getMinRatioScale());
+        this.maxValue = menu.getMaxRatioScale();
+        this.minValue = menu.getMinRatioScale();
+        this.midValue = menu.getMidRatioValue();
         setElementSize(menu.getElementSize());
         setAntialiasing(menu.isAntiAliasing());
         setDrawBorders(menu.isDrawingBorder());
@@ -255,8 +257,7 @@ public class SOTACentroidExpressionViewer extends JPanel implements IViewer, jav
         this.posColorImage = menu.getPositiveGradientImage();
         this.negColorImage = menu.getNegativeGradientImage();
         this.header.setNegAndPosColorImages(this.negColorImage, this.posColorImage);
-        //header.setValues(maxValue, minValue);
-        header.setValues(minValue, maxValue);
+        header.setValues(minValue, midValue, maxValue);
         header.setAntiAliasing(menu.isAntiAliasing());
         header.updateSizes(getSize().width, elementSize.width);
         
@@ -272,9 +273,10 @@ public class SOTACentroidExpressionViewer extends JPanel implements IViewer, jav
     	useDoubleGradient = menu.getUseDoubleGradient();
     	header.setUseDoubleGradient(useDoubleGradient);
     	setDrawBorders(menu.isDrawingBorder());
-        this.maxValue = Math.abs(menu.getMaxRatioScale());
-        this.minValue = -Math.abs(menu.getMinRatioScale());
-        header.setValues(minValue, maxValue);
+        this.maxValue = menu.getMaxRatioScale();
+        this.minValue = menu.getMinRatioScale();
+        this.midValue = menu.getMidRatioValue();
+        header.setValues(minValue, midValue, maxValue);
         this.posColorImage = menu.getPositiveGradientImage();
         this.negColorImage = menu.getNegativeGradientImage();
         this.header.setNegAndPosColorImages(this.negColorImage, this.posColorImage);
@@ -499,10 +501,10 @@ public class SOTACentroidExpressionViewer extends JPanel implements IViewer, jav
         int colorIndex, rgb;
         
         if(useDoubleGradient) {
-        	maximum = value < 0 ? this.minValue : this.maxValue;
-			colorIndex = (int) (255 * value / maximum);
+        	maximum = value < midValue ? this.minValue : this.maxValue;
+			colorIndex = (int) (255 * (value-midValue) / (maximum - midValue));
 			colorIndex = colorIndex > 255 ? 255 : colorIndex;
-			rgb = value < 0 ? negColorImage.getRGB(255 - colorIndex, 0)
+			rgb = value < midValue ? negColorImage.getRGB(255 - colorIndex, 0)
 					: posColorImage.getRGB(colorIndex, 0);
         } else {
         	float span = this.maxValue - this.minValue;

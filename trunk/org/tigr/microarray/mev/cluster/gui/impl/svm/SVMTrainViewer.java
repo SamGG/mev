@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMTrainViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-02-24 20:23:45 $
+ * $Revision: 1.6 $
+ * $Date: 2005-03-10 20:21:56 $
  * $Author: braistedj $
  * $State: Exp $
  */

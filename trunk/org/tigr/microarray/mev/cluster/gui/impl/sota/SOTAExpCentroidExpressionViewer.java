@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOTAExpCentroidExpressionViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2005-02-24 20:23:49 $
+ * $Revision: 1.7 $
+ * $Date: 2005-03-10 20:22:05 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -79,6 +79,7 @@ public class SOTAExpCentroidExpressionViewer extends JPanel implements IViewer, 
     public static Color maskColor = new Color(255, 255, 255, 128);
     private float maxValue = INITIAL_MAX_VALUE;
     private float minValue = INITIAL_MIN_VALUE;
+    private float midValue = 0.0f;
     private int firstSelectedRow = -1;
     private int lastSelectedRow  = -1;
     private ArrayList selectedClusterList;
@@ -546,10 +547,10 @@ public class SOTAExpCentroidExpressionViewer extends JPanel implements IViewer, 
         int colorIndex, rgb;
         
         if(useDoubleGradient) {
-        	maximum = value < 0 ? this.minValue : this.maxValue;
-			colorIndex = (int) (255 * value / maximum);
+        	maximum = value < midValue ? this.minValue : this.maxValue;
+			colorIndex = (int) (255 * (value-midValue) / (maximum - midValue));
 			colorIndex = colorIndex > 255 ? 255 : colorIndex;
-			rgb = value < 0 ? negColorImage.getRGB(255 - colorIndex, 0)
+			rgb = value < midValue ? negColorImage.getRGB(255 - colorIndex, 0)
 					: posColorImage.getRGB(colorIndex, 0);
         } else {
         	float span = this.maxValue - this.minValue;

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SOTAExperimentViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2005-02-24 20:23:49 $
+ * $Revision: 1.7 $
+ * $Date: 2005-03-10 20:22:05 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -239,8 +239,8 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer, j
         if(geneClusterViewer){                        
             ((CentroidExperimentHeader)this.header).setCurrentCluster(userObject == null ? 0 : userObject.intValue());
             ((CentroidExperimentHeader)this.header).setNegAndPosColorImages(menu.getNegativeGradientImage(), menu.getPositiveGradientImage());
-            ((CentroidExperimentHeader)this.header).setValues(Math.abs(menu.getMaxRatioScale()), -Math.abs(menu.getMinRatioScale()));
-            ((CentroidExperimentHeader)this.header).setAntiAliasing(menu.isAntiAliasing());
+            ((CentroidExperimentHeader)this.header).setValues(menu.getMinRatioScale(), menu.getMidRatioValue(), menu.getMaxRatioScale());
+            ((CentroidExperimentHeader)this.header).setAntiAliasing(menu.isAntiAliasing());            
             ((CentroidExperimentHeader)this.header).setDrawBorders(menu.isDrawingBorder());
             ((CentroidExperimentHeader)this.header).updateSize(menu.getElementSize());
             ((CentroidExperimentHeader)this.header).setUseDoubleGradient(useDoubleGradient);
@@ -251,6 +251,7 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer, j
         else{
             ((ExperimentClusterHeader)(this.header)).updateSizes(getContentWidth(), menu.getElementSize().width);
             ((ExperimentClusterHeader)(this.header)).setUseDoubleGradient(useDoubleGradient);        
+            ((ExperimentClusterHeader)this.header).setValues(menu.getMinRatioScale(), menu.getMidRatioValue(), menu.getMaxRatioScale());
         }
         repaint();
     }

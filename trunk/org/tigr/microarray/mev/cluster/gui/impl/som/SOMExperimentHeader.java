@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOMExperimentHeader.java,v $
- * $Revision: 1.2 $
- * $Date: 2005-02-24 20:23:49 $
+ * $Revision: 1.3 $
+ * $Date: 2005-03-10 20:22:04 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -81,6 +81,7 @@ public class SOMExperimentHeader extends JPanel {
         private int cluster;
         private float maxValue = 3f;
         private float minValue = -3f;
+        private float midValue = 0.0f;
         private Dimension elementSize;
         private boolean drawBorders = true;
         private boolean isAntiAliasing = false;
@@ -143,10 +144,16 @@ public class SOMExperimentHeader extends JPanel {
         /**
          * Sets min and max values.
          */
-        public void setValues(float maxValue, float minValue) {
+        public void setValues(float minValue, float maxValue) {
             this.maxValue = maxValue;
             this.minValue = minValue;
         }
+
+        public void setValues(float minValue, float midValue, float maxValue) {
+            this.maxValue = maxValue;
+            this.minValue = minValue;
+            this.midValue = midValue;
+        }        
         
         /**
          * Updates the component size.
@@ -219,10 +226,10 @@ public class SOMExperimentHeader extends JPanel {
             int colorIndex, rgb;
             
             if(useDoubleGradient) {
-            	maximum = value < 0 ? this.minValue : this.maxValue;
-    			colorIndex = (int) (255 * value / maximum);
+            	maximum = value < midValue ? this.minValue : this.maxValue;
+    			colorIndex = (int) (255 * (value-midValue) / (maximum - midValue));
     			colorIndex = colorIndex > 255 ? 255 : colorIndex;
-    			rgb = value < 0 ? negColorImage.getRGB(255 - colorIndex, 0)
+    			rgb = value < midValue ? negColorImage.getRGB(255 - colorIndex, 0)
     					: posColorImage.getRGB(colorIndex, 0);
             } else {
             	float span = this.maxValue - this.minValue;
@@ -264,9 +271,16 @@ public class SOMExperimentHeader extends JPanel {
     /**
      * Sets min and max values.
      */
-    public void setValues(float maxValue, float minValue) {
-        somVectorPanel.setValues(maxValue, minValue);
+    public void setValues(float minValue, float maxValue) {
+        somVectorPanel.setValues(minValue, maxValue);
     }
+    
+    /**
+     * Sets min, mid, and max values.
+     */
+    public void setValues(float minValue, float midValue, float maxValue) {
+        somVectorPanel.setValues(minValue, midValue, maxValue);
+    }    
     
     /**
      * Sets gradient images.

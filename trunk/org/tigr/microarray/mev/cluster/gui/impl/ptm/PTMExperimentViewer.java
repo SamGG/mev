@@ -4,8 +4,8 @@
  */
 /*
  * $RCSfile: PTMExperimentViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2005-02-24 20:24:05 $
+ * $Revision: 1.8 $
+ * $Date: 2005-03-10 20:22:03 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -135,7 +135,7 @@ public class PTMExperimentViewer extends ExperimentViewer implements IViewer, ja
 		IDisplayMenu menu = framework.getDisplayMenu();
 		header.setUseDoubleGradient(menu.getUseDoubleGradient());    
 		header.setColorImages(menu.getPositiveGradientImage(), menu.getNegativeGradientImage());
-		header.setValues(Math.abs(menu.getMaxRatioScale()), -Math.abs(menu.getMinRatioScale()));
+		header.setValues(menu.getMinRatioScale(), menu.getMidRatioValue(), menu.getMaxRatioScale());
 		header.setAntiAliasing(menu.isAntiAliasing());
 		header.setDrawBorders(menu.isDrawingBorder());
 		header.updateSize(menu.getElementSize());
@@ -155,7 +155,7 @@ public class PTMExperimentViewer extends ExperimentViewer implements IViewer, ja
 		expViewer.onMenuChanged(menu);
 		header.setUseDoubleGradient(menu.getUseDoubleGradient());
 		header.setColorImages(menu.getPositiveGradientImage(), menu.getNegativeGradientImage());
-		header.setValues(Math.abs(menu.getMaxRatioScale()), -Math.abs(menu.getMinRatioScale()));
+		header.setValues(menu.getMinRatioScale(), menu.getMidRatioValue(), menu.getMaxRatioScale());
 		header.setAntiAliasing(menu.isAntiAliasing());
 		header.setDrawBorders(menu.isDrawingBorder());
 		header.updateSize(menu.getElementSize());

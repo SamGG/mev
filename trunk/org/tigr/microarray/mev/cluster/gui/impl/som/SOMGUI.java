@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SOMGUI.java,v $
- * $Revision: 1.7 $
- * $Date: 2005-02-24 20:23:49 $
+ * $Revision: 1.8 $
+ * $Date: 2005-03-10 20:22:04 $
  * $Author: braistedj $
  * $State: Exp $
  */
