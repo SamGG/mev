@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: TtestInfoViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-01-21 21:37:04 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2004-01-21 21:40:04 $
+ * $Author: nbhagaba $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.ttest;
@@ -101,6 +101,9 @@ public class TtestInfoViewer extends ViewerAdapter {
     private void setMaxWidth(JComponent content, JComponent header) {
 	int c_width = content.getPreferredSize().width;
 	int h_width = header.getPreferredSize().width;
+        
+        int y = 0;
+        
 	if (c_width > h_width) {
 	    header.setPreferredSize(new Dimension(c_width, header.getPreferredSize().height));
 	} else {
