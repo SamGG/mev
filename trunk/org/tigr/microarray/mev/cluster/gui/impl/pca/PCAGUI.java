@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: PCAGUI.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-05-06 20:53:24 $
+ * $Revision: 1.3 $
+ * $Date: 2004-05-26 13:22:00 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -155,14 +155,14 @@ public class PCAGUI implements IClusterGUI, IScriptGUI {
         data.addParam("name", "PCA");
         
         // alg type
-        data.addParam("alg-type", "cluster");
+        data.addParam("alg-type", "data-visualization");
         
         // output class
         data.addParam("output-class", "single-output");
         
         //output nodes
         String [] outputNodes = new String[1];
-        outputNodes[0] = "Single Viewer Output";
+        outputNodes[0] = "Data Visualization";
         data.addStringArray("output-nodes", outputNodes);
         
         return data;

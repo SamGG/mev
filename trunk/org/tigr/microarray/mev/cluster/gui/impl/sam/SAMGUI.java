@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SAMGUI.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-05-20 21:10:24 $
+ * $Revision: 1.5 $
+ * $Date: 2004-05-26 13:28:16 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -1275,7 +1275,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
         data.addParam("name", "SAM");
         
         // alg type
-        data.addParam("alg-type", "cluster");
+        data.addParam("alg-type", "cluster-genes");
         
         // output class
         data.addParam("output-class", "partition-output");

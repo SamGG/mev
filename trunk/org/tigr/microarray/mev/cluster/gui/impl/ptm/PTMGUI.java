@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: PTMGUI.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-05-24 17:34:02 $
+ * $Revision: 1.7 $
+ * $Date: 2004-05-26 13:25:34 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -445,7 +445,10 @@ public class PTMGUI implements IClusterGUI, IScriptGUI {
         data.addParam("name", "PTM");
         
         // alg type
-        data.addParam("alg-type", "cluster");
+        if(clusterGenes)
+            data.addParam("alg-type", "cluster-genes");
+        else
+            data.addParam("alg-type", "cluster-experiments");
         
         // output class
         data.addParam("output-class", "partition-output");
