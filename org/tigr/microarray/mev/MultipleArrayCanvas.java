@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: MultipleArrayCanvas.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-13 19:15:01 $
+ * $Revision: 1.5 $
+ * $Date: 2004-03-01 15:52:30 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -115,10 +115,10 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, java.io.Seri
     /**
      * Overriden to have focus. (deprecated as of 1.4, use isFocusable()
      */
-    public boolean isFocusTraversable() {
+/*    public boolean isFocusTraversable() {
 	return true;
     }
-    
+*/    
         /**
      * Overriden to have focus.
      */
