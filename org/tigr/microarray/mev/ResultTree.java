@@ -538,7 +538,7 @@ public class ResultTree extends JTree implements java.io.Serializable {
                     } else if(text.indexOf("able") != -1){ //table viewer
                         setIcon(tableIcon);
                     } else if(parentText.indexOf("Hierarchical") != -1 || text.indexOf("Dendogram") != -1
-                            || text.indexOf("HCL Tree") != -1){
+                            || text.indexOf("HCL Tree") != -1 || text.indexOf("Support Tree") != -1){
                         setIcon(hclIcon);
                     } else if(text.equals("Expression Image")){
                         setIcon(expressionImageIcon);
