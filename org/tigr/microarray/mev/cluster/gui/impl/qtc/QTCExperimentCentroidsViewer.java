@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: QTCExperimentCentroidsViewer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-05 21:12:18 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -49,6 +49,14 @@ public class QTCExperimentCentroidsViewer extends ExperimentClusterCentroidsView
         this.popup = createJPopupMenu(listener);
         getContentComponent().addMouseListener(listener);
     }
+    
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { }    
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {        
+        Listener listener = new Listener();
+	this.popup = createJPopupMenu(listener);
+	getContentComponent().addMouseListener(listener);
+    }    
     
     /**
      * Creates a popup menu.

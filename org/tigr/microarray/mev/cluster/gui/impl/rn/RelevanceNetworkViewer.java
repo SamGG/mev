@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: RelevanceNetworkViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 18:36:58 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 21:13:02 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -20,6 +20,10 @@ import java.awt.geom.Rectangle2D;
 import java.awt.event.*;
 
 import java.awt.image.BufferedImage;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import javax.swing.*;
 
@@ -1307,6 +1311,69 @@ public class RelevanceNetworkViewer extends JPanel implements IViewer, Scrollabl
      */
     public JComponent getCornerComponent(int cornerIndex) {
         return null;
+    }
+    
+    
+    private void writeObject(ObjectOutputStream oos) throws IOException {
+        oos.writeObject(this.experiment);
+        oos.writeBoolean(this.isGenes);
+        oos.writeObject(this.clusters);
+        oos.writeObject(this.weights);
+        oos.writeObject(this.indices);
+        oos.writeObject(this.coords);
+        oos.writeObject(this.selected);
+        oos.writeObject(this.draw);
+        oos.writeFloat(this.links_threshold);
+        oos.writeBoolean(this.isLinksColor);
+        oos.writeObject(this.LINKS_PALETTE);
+        oos.writeFloat(this.weight_min);
+        oos.writeFloat(this.weight_scale);
+ 
+        oos.writeObject(this.selectionColor);
+        oos.writeObject(this.labelColor);
+        oos.writeObject(this.insets);
+        oos.writeBoolean(this.isDrawBorders);
+        oos.writeBoolean(this.isAntiAliasing);
+        oos.writeObject(this.elementSize);
+        oos.writeInt(this.labelIndex);
+        oos.writeObject(status);
+        oos.writeInt(this.shape_type);
+        oos.writeObject(this.prevZoomRect);
+
+//    private JPopupMenu popup;
+  //  private JWindow tipWindow;
+    }
+    
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        this.experiment = (Experiment)ois.readObject();
+        this.isGenes = ois.readBoolean();
+        this.clusters = (int [][])ois.readObject();
+        this.weights = (float [][])ois.readObject();
+        this.indices = (int [])ois.readObject();
+        this.coords = (float [][])ois.readObject();
+        this.selected = (boolean [])ois.readObject();
+        this.draw = (boolean [])ois.readObject();
+        this.links_threshold = ois.readFloat();
+        this.isLinksColor = ois.readBoolean();
+        this.LINKS_PALETTE = (Color [])ois.readObject();
+        this.weight_min = ois.readFloat();
+        this.weight_scale = ois.readFloat();
+        this.selectionColor = (Color)ois.readObject();
+        this.labelColor = (Color)ois.readObject();
+        this.insets = (Insets)ois.readObject();
+        this.isDrawBorders = ois.readBoolean();
+        this.isAntiAliasing = ois.readBoolean();
+        this.elementSize = (Dimension)ois.readObject();
+        this.labelIndex = ois.readInt();
+        this.status = (String)ois.readObject();
+        this.shape_type = ois.readInt();
+        this.prevZoomRect = (Rectangle)ois.readObject();
+
+        Listener listener = new Listener();
+        this.popup = createJPopupMenu(listener);
+        this.tipWindow = createTipWindow();
+        getContentComponent().addMouseListener(listener);
+        getContentComponent().addMouseMotionListener(listener);
     }
     
     /**

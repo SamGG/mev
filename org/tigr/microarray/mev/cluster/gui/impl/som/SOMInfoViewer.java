@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOMInfoViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 18:36:07 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 21:11:04 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -24,7 +24,7 @@ import javax.swing.JComponent;
 
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
-public class SOMInfoViewer extends ViewerAdapter {
+public class SOMInfoViewer extends ViewerAdapter implements java.io.Serializable {
     
     private JComponent header;
     private JTextArea  content;

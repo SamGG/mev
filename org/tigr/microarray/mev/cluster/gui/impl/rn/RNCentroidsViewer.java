@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: RNCentroidsViewer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-05 21:13:01 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -28,7 +28,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidsViewer;
 
-public class RNCentroidsViewer extends CentroidsViewer {
+public class RNCentroidsViewer extends CentroidsViewer implements java.io.Serializable {
     
     private static final String SAVE_ALL_CLUSTERS_CMD = "save-all-clusters-cmd";
     private static final String SET_Y_TO_EXPERIMENT_MAX_CMD = "set-y-to-exp-max-cmd";
@@ -47,6 +47,16 @@ public class RNCentroidsViewer extends CentroidsViewer {
         Listener listener = new Listener();
         this.popup = createJPopupMenu(listener);
         getContentComponent().addMouseListener(listener);
+    }
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {        
+        Listener listener = new Listener();
+	this.popup = createJPopupMenu(listener);
+	getContentComponent().addMouseListener(listener);
+    }
+    
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        
     }
     
     /**
@@ -78,7 +88,7 @@ public class RNCentroidsViewer extends CentroidsViewer {
         setClusterMaxMenuItem.setActionCommand(SET_Y_TO_CLUSTER_MAX_CMD);
         setClusterMaxMenuItem.addActionListener(listener);
         menu.add(setClusterMaxMenuItem);
-    }
+    } 
     
     /**
      * Saves all clusters.

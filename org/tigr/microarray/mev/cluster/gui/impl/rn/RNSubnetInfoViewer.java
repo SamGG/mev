@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: RNSubnetInfoViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 18:36:58 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 21:13:02 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -23,7 +23,7 @@ import javax.swing.JTextArea;
 
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
-public class RNSubnetInfoViewer extends ViewerAdapter {
+public class RNSubnetInfoViewer extends ViewerAdapter implements java.io.Serializable {
     
     private JComponent header;
     private JTextArea  content;
