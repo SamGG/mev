@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: QSort.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:23 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-17 16:57:18 $
+ * $Author: nbhagaba $
  * $State: Exp $
  */
 package org.tigr.util;
@@ -22,9 +22,13 @@ public class QSort {
     private float[] sorted;
     private double[] sortedDouble;
     private int[] NaNIndices;
-        
+    public static final int ASCENDING = 1;
+    public static final int DESCENDING = 2;
+    private boolean ascending;    
+    
     public QSort(float[] origA){
         float[] copyA = new float[origA.length];
+        this.ascending = true;
         Vector NaNIndicesVector = new Vector();
         for (int i = 0; i < copyA.length; i++) {
             copyA[i] = origA[i];
@@ -43,6 +47,7 @@ public class QSort {
     
     public QSort(double[] origA){
         double[] copyA = new double[origA.length];
+        this.ascending = true;
         Vector NaNIndicesVector = new Vector();        
         for (int i = 0; i < copyA.length; i++) {
             copyA[i] = origA[i];
@@ -57,6 +62,24 @@ public class QSort {
             NaNIndices[i] = ((Integer)(NaNIndicesVector.get(i))).intValue();
         }        
 	sort(copyA);
+    }   
+    
+    public QSort(float[] origA, int ascOrDesc) {
+        this(origA);
+        if (ascOrDesc == QSort.ASCENDING) {
+            this.ascending = true;
+        } else if (ascOrDesc == QSort.DESCENDING) {
+            this.ascending = false;
+        }
+    }
+    
+    public QSort(double[] origA, int ascOrDesc) {
+       this(origA);
+        if (ascOrDesc == QSort.ASCENDING) {
+            this.ascending = true;
+        } else if (ascOrDesc == QSort.DESCENDING) {
+            this.ascending = false;
+        }
     }    
     
     public void sort(float a[]) {
@@ -219,7 +242,13 @@ public class QSort {
         for (int i = 0; i < sortedVector.size(); i++) {
             sorted[i] = ((Float)(sortedVector.get(i))).floatValue();
         }
-	return sorted;
+        if (!ascending) {
+            float[] revSorted = reverse(sorted);
+            return revSorted;
+        } else {        
+            return sorted;
+        }        
+	//return sorted;
     }
     
     public double[] getSortedDouble(){
@@ -239,8 +268,14 @@ public class QSort {
         }
         for (int i = 0; i < sortedVector.size(); i++) {
             sortedDouble[i] = ((Double)(sortedVector.get(i))).doubleValue();
-        }       
-	return sortedDouble;
+        } 
+        
+        if (!ascending) {
+            double[] revSortedDouble = reverse(sortedDouble);
+            return revSortedDouble;
+        } else {        
+            return sortedDouble;
+        }
     }    
     
     public int[] getOrigIndx(){
@@ -259,7 +294,11 @@ public class QSort {
             origIndx[i] = ((Integer)(origIndxVector.get(i))).intValue();
         }
         
-	return origIndx;
+        if (!ascending) {
+            return reverse(origIndx);
+        } else {        
+            return origIndx;
+        }
     }
 
     private boolean isNaNIndex(int index) {
@@ -271,6 +310,42 @@ public class QSort {
         
         return false;
     }
+    
+    private int[] reverse(int[] arr) {
+        int[] revArr = new int[arr.length];
+        int  revCount = 0;
+        int count = arr.length - 1;
+        for (int i=0; i < arr.length; i++) {
+            revArr[revCount] = arr[count];
+            revCount++;
+            count--;
+        }
+        return revArr;
+    }
+    
+    private float[] reverse(float[] arr) {
+        float[] revArr = new float[arr.length];
+        int  revCount = 0;
+        int count = arr.length - 1;
+        for (int i=0; i < arr.length; i++) {
+            revArr[revCount] = arr[count];
+            revCount++;
+            count--;
+        }
+        return revArr;
+    }    
+    
+    private double[] reverse(double[] arr) {
+        double[] revArr = new double[arr.length];
+        int  revCount = 0;
+        int count = arr.length - 1;
+        for (int i=0; i < arr.length; i++) {
+            revArr[revCount] = arr[count];
+            revCount++;
+            count--;
+        }
+        return revArr;
+    }    
     
 }
 
