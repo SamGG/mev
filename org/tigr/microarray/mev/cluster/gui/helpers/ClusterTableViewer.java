@@ -636,7 +636,10 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
     public void setClusterColor(Color color) {
         if(color ==null){  //indicates removal of cluster
             //framework.removeCluster(getArrayMappedToData(), experiment, ClusterRepository.GENE_CLUSTER);
-            framework.removeSubCluster(getArrayMappedToSelectedIndices(), experiment, ClusterRepository.GENE_CLUSTER);
+            boolean success = framework.removeSubCluster(getArrayMappedToSelectedIndices(), experiment, ClusterRepository.GENE_CLUSTER);
+            if (!success) {
+                JOptionPane.showMessageDialog(null, "Cluster not deleted! Selected rows must exactly correspond to a cluster created in this viewer", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }    
 
@@ -727,6 +730,11 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
         menuItem.addActionListener(listener);
         menu.add(menuItem);
         
+        menuItem = new JMenuItem("Delete cluster composed of selected rows", GUIFactory.getIcon("delete16.gif"));
+        menuItem.setActionCommand(SET_DEF_COLOR_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);        
+        
         menu.addSeparator();        
         
         menuItem = new JMenuItem("Launch new session with entire cluster", GUIFactory.getIcon("launch_new_mav.gif"));
@@ -741,15 +749,10 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
         menuItem.addActionListener(listener);
         menu.add(menuItem);       
         
-        menu.addSeparator();        
-        /*
-        menuItem = new JMenuItem("Delete cluster membership of selected rows", GUIFactory.getIcon("delete16.gif"));
-        menuItem.setActionCommand(SET_DEF_COLOR_CMD);
-        menuItem.addActionListener(listener);
-        menu.add(menuItem);
+        //menu.addSeparator();        
         
         menu.addSeparator();
-         */
+        
         
         menuItem = new JMenuItem("Save cluster...", GUIFactory.getIcon("save16.gif"));
         menuItem.setActionCommand(SAVE_CLUSTER_CMD);
