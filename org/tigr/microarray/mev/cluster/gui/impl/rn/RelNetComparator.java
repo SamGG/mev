@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: RelNetComparator.java,v $
- * $Revision: 1.2 $
- * $Date: 2005-02-24 20:23:44 $
+ * $Revision: 1.3 $
+ * $Date: 2005-03-10 15:14:06 $
  * $Author: braistedj $
  * $State: Exp $
  */
