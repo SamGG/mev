@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ExperimentViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-02-09 16:08:09 $
+ * $Revision: 1.6 $
+ * $Date: 2004-04-01 21:34:21 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -861,6 +861,8 @@ public class ExperimentViewer extends JPanel implements IViewer {
         this.lastSelectedRow = -1;
         this.firstSelectedColumn = -1;
         this.lastSelectedColumn = -1;
+        
+        this.showClusters = true;
         
         Listener listener = new Listener();
         addMouseListener(listener);
