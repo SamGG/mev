@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: OneWayANOVAInitBox.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-13 18:16:45 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -36,7 +36,7 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
     public static final int JUST_ALPHA = 1;
     public static final int STD_BONFERRONI = 2;
     public static final int ADJ_BONFERRONI = 3;
-    
+     
     boolean okPressed = false;
     Vector exptNames;    
     MultiClassPanel mPanel; 
