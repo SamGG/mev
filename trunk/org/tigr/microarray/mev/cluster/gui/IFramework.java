@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: IFramework.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-15 15:54:39 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 22:44:24 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -21,8 +21,6 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
 /**
  * This class serves as an interface to the framework.
  *
- * @version 1.0
- * @author Aleksey D.Rezantsev
  */
 public interface IFramework {
     
@@ -80,22 +78,27 @@ public interface IFramework {
      * Returns a meta data from a selected tree node.
      */
     public Object getUserObject();
-    
+    /**
+     * Returns the result node containing the supplied object
+     */
+    public DefaultMutableTreeNode getNode(Object object);
     /**
      * Selects passed node in navigation tree, viewer in node is set into MultipleArrayViewer
      */
-    public void setTreeNode(DefaultMutableTreeNode node);
-    
+    public void setTreeNode(DefaultMutableTreeNode node);    
     /**
      * Adds passed node in navigation tree, viewer in node is set into MultipleArrayViewer
      */
     public void addNode(DefaultMutableTreeNode parent, DefaultMutableTreeNode child);
     
     /**
+     * Returns the currently selected node.
+     */
+    public DefaultMutableTreeNode getCurrentNode();
+    /**
      * Stores the indices into the cluster repository
      */
-    public Color storeCluster(int [] indices, Experiment experiment, int clusterType);
-    
+    public Color storeCluster(int [] indices, Experiment experiment, int clusterType);    
     /**
      * Stores the indices into the cluster repository even if indices represent a subset
      * of the displayed cluster.
@@ -126,4 +129,8 @@ public interface IFramework {
      * Returns the specified cluster repository
      */
     public ClusterRepository getClusterRepository(int clusterType);
+    
+    /** Adds string to history node
+     */
+    public void addHistory(String historyEvent);
 }
