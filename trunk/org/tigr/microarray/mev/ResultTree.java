@@ -217,8 +217,7 @@ public class ResultTree extends JTree implements java.io.Serializable {
             currLevel = ois.readInt();
             if(currLevel == 0){
                 obj = ois.readObject();
-                System.out.println(obj.getClass().getName());
-                
+
                 root = new DefaultMutableTreeNode(obj);
                 parent = root;
                 child = root;
@@ -237,7 +236,6 @@ public class ResultTree extends JTree implements java.io.Serializable {
                 }
                 
                 obj = ois.readObject();
-                System.out.println(obj.getClass().getName());
                 child = new DefaultMutableTreeNode(obj);
                 parent.add(child);
             }

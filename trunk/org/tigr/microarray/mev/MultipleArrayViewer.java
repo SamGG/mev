@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-02-05 22:58:16 $
+ * $Revision: 1.6 $
+ * $Date: 2004-02-09 15:47:52 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -401,31 +401,19 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                     System.out.println("have string version");
                     long dateLong = ois.readLong();
                     //Load IData object
-                    System.out.println("read long");
-
-                    loadIData(ois);
-                    
-                    System.out.println("read IData");
-                    
+                    loadIData(ois);    
+              
                     //set the current result count
                     resultCount = ois.readInt();
-                    
-                    System.out.println("read result count int");
                     
                     //load analysis viewers
                     loadAnalysisNode(ois);
                     
-                    System.out.println("loaded analysis node");
-                    
                     //load cluster repositories
                     loadClusterRepositories(ois);                                        System.out.println("have string version");
-                    System.out.println("loaded cluster repositories");
-
                     
                     //load history 
                     loadHistoryNode(ois);
-                    
-                    System.out.println("loaded history node");
                     
                     //Add time node to the analysis node
                     Date date = new Date(System.currentTimeMillis());
@@ -478,11 +466,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     
     
     private void loadAnalysisNode(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-                            System.out.println("In load analysis node");
 
         DefaultMutableTreeNode node = tree.loadResults(ois);
-        
-                         System.out.println("loaded analysis node");
 
         if(node != null){
             tree.removeNode(analysisNode);
