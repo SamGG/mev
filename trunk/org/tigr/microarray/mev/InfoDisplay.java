@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: InfoDisplay.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-27 22:19:13 $
+ * $Revision: 1.5 $
+ * $Date: 2004-04-09 21:36:28 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -168,7 +168,7 @@ public class InfoDisplay extends ActionInfoDialog {
         } else { //ratio only, like stanford
             logRatio = cy5;
             message += "<tr><td>File Index</td><td>" + trueRow + "</td></tr>";
-            message += "<tr><td>log2(Ratio)</td><td><b>" + logRatio + "</b></td></tr>";
+            message += "<tr><td>Value</td><td><b>" + logRatio + "</b></td></tr>";
         }
         message += "</table>";
         //annotation
