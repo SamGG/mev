@@ -36,7 +36,8 @@ import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
  * @author  braisted
  */
 public class ScriptTable extends ViewerAdapter {
-
+    public static final long serialVersionUID = 1000102010301030001L;
+    
     private JTable table;
     private Vector data;
     private ScriptDataModel dataModel;

@@ -70,7 +70,7 @@ import org.tigr.microarray.mev.script.event.ScriptEventListener;
  * @author braisted
  */
 public class DocumentBase extends DefaultHandler implements Serializable {
-    
+    public static final long serialVersionUID = 1000102010302010001L;    
     /** Current verson to append
      */
     String tm4ScriptVersion = "1.0";
