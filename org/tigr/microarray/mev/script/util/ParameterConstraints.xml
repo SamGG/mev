@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE mev_val [
+<!ELEMENT mev_val (script_algorithm*)>
+
+<!ELEMENT script_algorithm (param_list*)>
+<!ATTLIST script_algorithm name CDATA #REQUIRED>
+
+<!ELEMENT param_list (param+)>
+
+<!ELEMENT param (constraint?)>
+<!ATTLIST param key CDATA #REQUIRED
+		   value_type ( boolean | int | long | float | double | string ) #REQUIRED
+		   val_level ( optional | required ) #REQUIRED >
+
+<!ELEMENT constraint EMPTY>
+<!ATTLIST constraint min CDATA #IMPLIED
+			  max CDATA #IMPLIED>
+
+]>
+
+<mev_val>
+	<script_algorithm name="KMC">
+		<param_list>
+			<!-- algorithm specific parameters -->
+			<param key="name" value_type="string" val_level="required"/>
+			<param key="number-of-clusters" value_type="int" val_level="required">
+				<constraint min="1"/>
+			</param>
+			<param key="number-of-iterations" value_type="int" val_level="required">
+				<constraint min="1"/>
+			</param>
+			<param key="calculate-means" value_type="boolean" val_level="required"/>
+			<param key="kmc-cluster-genes" value_type="boolean" val_level="required"/>
+
+			<!-- distance parameters -->
+			<param key="distance-factor" value_type="float" val_level="required"/>
+			<param key="distance-absolute" value_type="boolean" val_level="required"/>
+			<param key="distance-function" value_type="int" val_level="required">
+				<constraint min="0" max="9"/>
+			</param>
+
+			<!-- HCL parameters -->
+			<param key="hierarchical-tree" value_type="boolean" val_level="optional"/>
+			<param key="method-linkage" value_type="int" val_level="optional">
+				<constraint min="0" max="2"/>
+			</param>
+			<param key="calculate-genes" value_type="boolean" val_level="optional"/>
+			<param key="calculate-experiments" value_type="boolean" val_level="optional"/>
+		</param_list>
+	</script_algorithm>
+</mev_val>
+
