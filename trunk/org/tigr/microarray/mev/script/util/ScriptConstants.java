@@ -1,4 +1,8 @@
 /*
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+All rights reserved.
+*/
+/*
  * ScriptConstants.java
  *
  * Created on March 4, 2004, 11:09 AM
@@ -6,30 +10,40 @@
 
 package org.tigr.microarray.mev.script.util;
 
-/**
- *
- * @author  braisted
+/** ScriptConstants contains primary constants used under the
+ * scripting packages.
+ * @author braisted
  */
 public class ScriptConstants {
     
-     
     //need to modify to 
+    /** Current document type string.
+     */    
     public static final String DOCTYPE_STRING = "<!DOCTYPE TM4ML SYSTEM " +
               "\"mev_script_dtd.dtd\">";
     
+    //cluster types
+    public static final int CLUSTER_TYPE_GENE = 0;  
+    public static final int CLUSTER_TYPE_EXPERIMENT = 1;
     
-    //Algorithm types 
-    public static final String ALGORITHM_TYPE_CLUSTER = "cluster";
+    //Algorithm types  
+    public static final String ALGORITHM_TYPE_CLUSTER = "cluster";    
+    public static final String ALGORITHM_TYPE_CLUSTER_GENES = "cluster-genes";    
+    public static final String ALGORITHM_TYPE_CLUSTER_EXPERIMENTS = "cluster-experiments";
     public static final String ALGORITHM_TYPE_CLUSTER_SELECTION = "cluster-selection";
+    public static final String ALGORITHM_TYPE_GENE_CLUSTER_SELECTION = "gene-cluster-selection";
+    public static final String ALGORITHM_TYPE_EXPERIMENT_CLUSTER_SELECTION = "experiment-cluster-selection";
     public static final String ALGORITHM_TYPE_ADJUSTMENT = "data-adjustment";
     public static final String ALGORITHM_TYPE_NORMALIZATION = "data-normalization";
     public static final String ALGORITHM_TYPE_VISUALIZATION = "data-visualization";
     
-
     //Ouput data classes
     public static final String OUTPUT_DATA_CLASS_SINGLE_OUTPUT = "single-output";    
     public static final String OUTPUT_DATA_CLASS_MULTICLUSTER_OUTPUT = "multi-cluster-output";
+    public static final String OUTPUT_DATA_CLASS_GENE_MULTICLUSTER_OUTPUT = "multi-gene-cluster-output";
+    public static final String OUTPUT_DATA_CLASS_EXPERIMENT_MULTICLUSTER_OUTPUT = "multi-experiment-cluster-output";
     public static final String OUTPUT_DATA_CLASS_PARTITION_OUTPUT = "partition-output";
+    public static final String OUTPUT_DATA_CLASS_CLUSTER_SELECTION_OUTPUT = "cluster-selection-output";
 
     public static final String MEV_COMMENT_INDENT = "            ";    
 

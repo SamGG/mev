@@ -1,4 +1,8 @@
 /*
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+All rights reserved.
+ */
+/*
  * ScriptInitDialog.java
  *
  * Created on February 28, 2004, 12:38 AM
@@ -39,9 +43,9 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 
 import org.tigr.microarray.mev.script.util.ScriptConstants;
-/**
+/** The ScriptAttributeDialog permits the selection of basic script attributes.
  *
- * @author  braisted
+ * @author braisted
  */
 public class ScriptAttributeDialog extends AlgorithmDialog {
     
@@ -121,7 +125,7 @@ public class ScriptAttributeDialog extends AlgorithmDialog {
         return result;
     }
     
-    public void resetControls() {
+    private void resetControls() {
         dateField.setText(dateString);
         nameField.setText("");
         descriptionArea.setText("");
@@ -129,16 +133,23 @@ public class ScriptAttributeDialog extends AlgorithmDialog {
         nameField.selectAll();
     }
     
+    /** Returns the creation date
+     */    
     public String getDate() {
         return dateField.getText();
     }
     
     
+    /** returns the script name
+     */    
     public String getName() {
         return nameField.getText();
     }
     
     
+    /** returns a description in a format ready for inclusion
+     * in the XML.
+     */    
     public String getFormattedDescription() {
         String text = descriptionArea.getText();
         
@@ -171,15 +182,13 @@ public class ScriptAttributeDialog extends AlgorithmDialog {
         return formatText;
     }
     
+    /** Returns the description
+     */    
     public String getDescription() {
         return this.descriptionArea.getText();
     }
     
-    public static void main(String [] args) {
-        ScriptAttributeDialog dialog = new ScriptAttributeDialog();
-        dialog.showModal();
-        System.out.println(dialog.getDescription());
-    }
+  
     
     /**
      * The class to listen to the dialog events.

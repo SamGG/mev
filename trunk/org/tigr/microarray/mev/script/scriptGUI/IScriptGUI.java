@@ -17,16 +17,35 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 
-/**
+/** IScriptGUI provides the methods required for an algorithm to
+ * support scripting activities in MeV.
  *
- * @author  braisted
+ * These methods are to be implemented in the gui packages of algorithm
+ * modules to implement scripting support and usually these are IClusterGUI
+ * implementations.
+ * @author braisted
  */
 public interface IScriptGUI {
  
-public DefaultMutableTreeNode executeScript(IFramework framework, AlgorithmData algData, 
+    
+    /** Returns selected parameters for building a script.
+     * @param framework Framework object to provide IData object.
+     * @return
+     */    
+    public AlgorithmData getScriptParameters(IFramework framework) ;
+    
+    /** Excutes algorihtm provided an experiment, parameters, and the framework.
+     * @param framework <code>IFramework</code> object.
+     * @param algData Holds parameters
+     * @param experiment <code>Experiment</code> object wraps <code>FloatMatrix</code>.
+     *
+     * @throws AlgorithmException
+     * @return
+     */    
+    public DefaultMutableTreeNode executeScript(IFramework framework, AlgorithmData algData, 
                                              Experiment experiment) throws AlgorithmException;
  
-public AlgorithmData getScriptParameters(IFramework framework) ;
+
     
     
 }

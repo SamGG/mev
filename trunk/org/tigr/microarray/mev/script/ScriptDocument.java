@@ -20,17 +20,29 @@ import org.tigr.microarray.mev.script.util.DocumentBase;
  * such as script name and script description.  ScriptDocument
  * extends <CODE>DocumentBase</CODE> which handles the script
  * content as a DOM.
+ *
  * @author braisted
  */
 public class ScriptDocument extends DocumentBase {
     
+    /** Script id
+     */    
     private int id;
+    /** Script name
+     */    
     private String name;
+    /** Script file name, if set
+     */    
     private String fileName;    
+    /** Script description
+     */    
     private String description;
+    /** Creation date
+     */    
     private String date;
     
     /** Constructs a new ScriptDocument.
+     * @param manager script manager
      * @param sid Script ID
      * @param fileName script file input file name
      */    
@@ -41,6 +53,7 @@ public class ScriptDocument extends DocumentBase {
     }
 
     /** Creates a new instance of ScriptDocument
+     * @param manager script manager
      * @param id Script ID
      * @param name Script name attribute
      * @param description Script Description
@@ -55,7 +68,7 @@ public class ScriptDocument extends DocumentBase {
     }
     
     /** Returns the document's name, or null if not set.
-     */  
+     * @return  */  
     
     public String getDocumentName() {
         return name;
@@ -69,7 +82,7 @@ public class ScriptDocument extends DocumentBase {
     }
     
     /** Returns the document's file name.
-     */    
+     * @return  */    
     public String getDocumentFileName() {
         if(fileName != null)
             return fileName;
@@ -89,21 +102,22 @@ public class ScriptDocument extends DocumentBase {
     }
     
     /** Sets the script ID.
-     */
-
-        
+     * @param docID document id
+     */        
     public void setID(int docID) {
         id = docID;
     }
         
     /** Sets the script name
+     * @param docName document name
      */    
     public void setName(String docName) {
         name = docName;
     }
                 
     /** Sets script description.
-     * @param docDesc  */    
+     * @param docDesc script description
+     */    
     public void setDescription(String docDesc) {
         description = docDesc;
     }

@@ -1,11 +1,14 @@
 /*
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+All rights reserved.
+ */
+/*
  * ScriptTreeViewer.java
  *
  * Created on February 28, 2004, 4:36 PM
  */
 
 package org.tigr.microarray.mev.script.scriptGUI;
-
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,21 +22,25 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import org.tigr.microarray.mev.script.util.AlgorithmNode;
+import org.tigr.microarray.mev.script.util.ScriptConstants;
 import org.tigr.microarray.mev.script.util.ScriptNode;
 import org.tigr.microarray.mev.script.util.DataNode;
 import org.tigr.microarray.mev.script.util.ScriptTree;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
+
 import org.tigr.microarray.mev.script.ScriptManager;
 import org.tigr.microarray.mev.script.event.ScriptDocumentEvent;
 import org.tigr.microarray.mev.script.event.ScriptEventListener;
-/**
- *
- * @author  braisted
+/** ScriptTreeViewer renders the script in an intuitive tree where
+ * data nodes and algorithm nodes are identified.
+ * @author braisted
  */
 public class ScriptTreeViewer extends ViewerAdapter {
     
+    /** Data for the tree rendering, scriptTree
+     */
     ScriptTree scriptTree;
     
     JPopupMenu dataPopup;
@@ -45,11 +52,14 @@ public class ScriptTreeViewer extends ViewerAdapter {
     ScriptManager manager;
     
     boolean selected = false;
-    /** Creates a new instance of ScriptTreeViewer */
+    /** Creates a new instance of ScriptTreeViewer
+     * @param tree ScriptTree data structure
+     * @param manager script manager to support mev-script interactions.
+     */
     public ScriptTreeViewer(ScriptTree tree, ScriptManager manager) {
-        scriptTree = tree; 
+        scriptTree = tree;
         this.manager = manager;
-        listener = new ScriptTreeListener(); 
+        listener = new ScriptTreeListener();
         scriptTree.addMouseListener(listener);
         scriptTree.getDocument().addDocumentListener(new ScriptListener());
         dataPopup = createPopupMenu(listener, "data");
@@ -59,10 +69,10 @@ public class ScriptTreeViewer extends ViewerAdapter {
     
     public void onSelected(IFramework framework) {
         selected = true;
-    }       
+    }
     
     public void onClosed() {
-        selected = false; 
+        selected = false;
     }
     
     public JComponent getContentComponent() {
@@ -77,24 +87,24 @@ public class ScriptTreeViewer extends ViewerAdapter {
             item = new JMenuItem("Change Algorithm");
             item.setActionCommand("replace-algorithm-cmd");
             item.addActionListener(listener);
-        //    menu.add(item);
+            //    menu.add(item);
             //Delete Algorithm
-            item = new JMenuItem("Delete Algorithm");            
+            item = new JMenuItem("Delete Algorithm");
             item.setActionCommand("delete-algorithm-cmd");
             item.addActionListener(listener);
             menu.add(item);
             //Modify Parameters
-            item = new JMenuItem("Modify Paramaters");        
+            item = new JMenuItem("Modify Paramaters");
             item.setActionCommand("modify-algorithm-cmd");
-            item.addActionListener(listener);            
-        //    menu.add(item);
+            item.addActionListener(listener);
+            //    menu.add(item);
             
             menu.addSeparator();
             
             //view xml
-            item = new JMenuItem("View XML Section");        
+            item = new JMenuItem("View XML Section");
             item.setActionCommand("view-xml-cmd");
-            item.addActionListener(listener);            
+            item.addActionListener(listener);
             menu.add(item);
             menu.addSeparator();
         } else {
@@ -102,27 +112,27 @@ public class ScriptTreeViewer extends ViewerAdapter {
             item = new JMenuItem("Add Algorithm Node");
             item.setActionCommand("add-new-algorithm-cmd");
             item.addActionListener(listener);
-            menu.add(item);            
+            menu.add(item);
             menu.addSeparator();
-        }     
+        }
         
-            item = new JMenuItem("Execute Script");
-            item.setActionCommand("execute-script-cmd");
-            item.addActionListener(listener);
-            menu.add(item); 
-            menu.addSeparator();
-            
-          item = new JMenuItem("Save Script");
-            item.setActionCommand("save-script-cmd");
-            item.addActionListener(listener);
-            menu.add(item); 
-            
+        item = new JMenuItem("Execute Script");
+        item.setActionCommand("execute-script-cmd");
+        item.addActionListener(listener);
+        menu.add(item);
+        menu.addSeparator();
+        
+        item = new JMenuItem("Save Script");
+        item.setActionCommand("save-script-cmd");
+        item.addActionListener(listener);
+        menu.add(item);
+        
         return menu;
     }
     
     
     public class ScriptTreeListener extends MouseAdapter implements ActionListener {
-     
+        
         ScriptNode node;
         
         public void mouseClicked(MouseEvent me) {
@@ -133,36 +143,53 @@ public class ScriptTreeViewer extends ViewerAdapter {
                 } else if(node instanceof AlgorithmNode) {
                     algPopup.show(scriptTree, me.getX(), me.getY());
                 } else {
+                    ScriptNode parent = (ScriptNode)(node.getParent());
+                    if(parent != null) {
+                        if(((AlgorithmNode)parent).getAlgorithmType().equals(ScriptConstants.ALGORITHM_TYPE_VISUALIZATION)) {
+                            dataPopup.getComponent(0).setEnabled(false);
+                        } else
+                            dataPopup.getComponent(0).setEnabled(true);
+                    }
                     dataPopup.show(scriptTree, me.getX(), me.getY());
                 }
             }
         }
+        
         
         public void mouseReleased(MouseEvent me) {
             if(me.isPopupTrigger()){
                 node = scriptTree.getSelectedNode();
                 if(node == null)
                     return;
-                if(node instanceof AlgorithmNode)
+                if(node instanceof AlgorithmNode) {
                     algPopup.show(scriptTree, me.getX(), me.getY());
-                else
+                }
+                else {
+                    ScriptNode parent = (ScriptNode)(node.getParent());
+                    if(parent != null) {
+                        if(((AlgorithmNode)parent).getAlgorithmType().equals(ScriptConstants.ALGORITHM_TYPE_VISUALIZATION)) {
+                            dataPopup.getComponent(0).setEnabled(false);
+                        } else
+                            dataPopup.getComponent(0).setEnabled(true);
+                    }
                     dataPopup.show(scriptTree, me.getX(), me.getY());
+                }
             }
+            
+            
+            
         }
+        
         
         public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
             String command = actionEvent.getActionCommand();
             if(command.equals("add-new-algorithm-cmd") || command.equals("replace-algorithm-cmd")) {
                 node = scriptTree.getSelectedNode();
                 if(node == null){
-                    return;     
+                    return;
                 }
                 if(node instanceof DataNode)
-                    scriptTree.addNewAlgorithmToDataNode((DataNode)node);
-                else
-                    scriptTree.replaceAlgorithm((AlgorithmNode)node);
-                
-            
+                    scriptTree.addNewAlgorithmToDataNode((DataNode)node);                              
             } else if(command.equals("delete-algorithm-cmd")) {
                 node = scriptTree.getSelectedNode();
                 if(node != null) {
@@ -174,7 +201,7 @@ public class ScriptTreeViewer extends ViewerAdapter {
             } else if(command.equals("view-xml-cmd")) {
                 node = scriptTree.getSelectedNode();
                 if(node != null) {
-                    manager.viewSelectedNodeXML(ScriptTreeViewer.this, node);                        
+                    manager.viewSelectedNodeXML(ScriptTreeViewer.this, node);
                 }
             } else if(command.equals("save-script-cmd")) {
                 manager.saveScript(scriptTree.getDocument());
@@ -182,14 +209,13 @@ public class ScriptTreeViewer extends ViewerAdapter {
                 manager.runScript(scriptTree.getDocument());
             }
         }
-    }    
+    }
     
-        
-   public class ScriptListener implements ScriptEventListener { 
-        
+    
+    public class ScriptListener implements ScriptEventListener {        
         public void documentChanged(ScriptDocumentEvent event) {
-                scriptTree.updateTree();       
-        }  
+            scriptTree.updateTree();
+        }
     }
     
 }

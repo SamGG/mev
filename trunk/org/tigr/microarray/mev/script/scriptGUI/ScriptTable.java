@@ -1,4 +1,8 @@
 /*
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+All rights reserved.
+*/
+/*
  * ScriptTable.java
  *
  * Created on February 28, 2004, 12:18 AM
@@ -33,14 +37,17 @@ import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
  */
 public class ScriptTable extends ViewerAdapter {
 
-    JTable table;
-    Vector data;
-    ScriptDataModel dataModel;
-    ScriptManager manager;
+    private JTable table;
+    private Vector data;
+    private ScriptDataModel dataModel;
+    private ScriptManager manager;
     
-    JPopupMenu menu;
+    private JPopupMenu menu;
     
-    /** Creates a new instance of ScriptTable */
+    /** Creates a new instance of ScriptTable
+     * @param manager ScriptManager object to be used to control events in the table.
+     * @param data Vector
+     */
     public ScriptTable(ScriptManager manager, Vector data) {       
         this.manager = manager;
         dataModel = new ScriptDataModel(data, constructHeaderNames());
@@ -76,6 +83,8 @@ public class ScriptTable extends ViewerAdapter {
     
 
     
+    /**
+     * @param doc  */    
     public void addScriptDoc(ScriptDocument doc) {
         data.add(doc);        
     }
@@ -84,10 +93,14 @@ public class ScriptTable extends ViewerAdapter {
         
     }
     
+    /** Returns the content component to MeV for viewing
+     */    
     public JComponent getContentComponent() {
         return table;
     }
     
+    /** Returns the header component to mev for viewing
+     */    
     public JComponent getHeaderComponent() {
         return table.getTableHeader();
     }

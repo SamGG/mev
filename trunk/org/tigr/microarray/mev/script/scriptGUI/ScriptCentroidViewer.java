@@ -1,11 +1,11 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: ScriptCentroidViewer.java,v $
- * $Revision: 1.1 $
- * $Date: 2004-04-12 20:51:52 $
+ * $Revision: 1.2 $
+ * $Date: 2004-06-11 18:12:05 $
  * $Author: braisted $
  * $State: Exp $
  */

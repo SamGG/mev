@@ -13,8 +13,9 @@ package org.tigr.microarray.mev.script.util;
 import java.io.File;
 import java.awt.Frame;
 
-import java.util.Hashtable;
 import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 
 import javax.swing.Action;
 import javax.swing.JFileChooser;
@@ -40,22 +41,42 @@ import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
 
 import org.tigr.microarray.mev.script.Script;
 import org.tigr.microarray.mev.script.scriptGUI.ScriptCentroidViewer;
+import org.tigr.microarray.mev.script.scriptGUI.ScriptCentroidsViewer;
+import org.tigr.microarray.mev.script.scriptGUI.ScriptClusterSelectionInfoViewer;
+import org.tigr.microarray.mev.script.scriptGUI.ScriptExperimentCentroidViewer;
+import org.tigr.microarray.mev.script.scriptGUI.ScriptExperimentCentroidsViewer;
+import org.tigr.microarray.mev.script.scriptGUI.ScriptExperimentClusterViewer;
 import org.tigr.microarray.mev.script.scriptGUI.ScriptExperimentViewer;
+
 import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
 
 
-/**
- *
- * @author  braisted
+/** ScriptRunner supports script execution activities as directed by the
+ * <CODE>ScriptManager</CODE>
+ * @author braisted
  */
 public class ScriptRunner {
     
+    /** Script to run
+     */    
     private Script script;
+    /** ScriptTree containing objects for execution
+     */    
     private ScriptTree scriptTree;
+    /** parent's frame
+     */    
     private Frame parentFrame;
+    /** action manager to provide MeV algorithm access.
+     */    
     private ActionManager actionManager;
+    /** framework object
+     */    
     private IFramework framework;
+    /** hashtable of available algorithm classes
+     */    
     private Hashtable classHash;
+    /** algorithm set collection to execute
+     */    
     private AlgorithmSet [] algSets;
     /**
      *  Three output modes: internal (0), file (1), external (2)
@@ -63,7 +84,11 @@ public class ScriptRunner {
      */
     private int mode;
     
-    /** Creates a new instance of ScriptRunner */
+    /** Creates a new instance of ScriptRunner
+     * @param script Script to execute
+     * @param actionManager action manager provides algorithms
+     * @param framework
+     */
     public ScriptRunner(Script script, ActionManager actionManager, IFramework framework) {
         this.script = script;
         scriptTree = script.getScriptTree();
@@ -74,23 +99,40 @@ public class ScriptRunner {
         classHash = getClassNames();
     }
     
+    /** Sets the output mode (file or internal)
+     * @param outputMode  */    
     public void setOutputMode(int outputMode) {
         mode = outputMode;
     }
     
+    /** Triggers script execution
+     * @param outputMode output mode
+     */    
     public void execute(int outputMode) {
         mode = outputMode;
         Thread thread = new Thread(new Runner());
         thread.start();
     }
     
+    /** Triggers script execution to interal MeV result tree.
+     */    
     public void execute() {
         Thread thread = new Thread(new Runner());
         thread.start();
     }
     
-    public DefaultMutableTreeNode execute(AlgorithmSet set) {
+    /** Executes a delivered <CODE>AlgorithmSet</CODE>
+     * @param set set of algorithms and data
+     * @return
+     */    
+    private DefaultMutableTreeNode execute(AlgorithmSet set) {
         Experiment experiment = set.getExperiment();
+        
+        if(experiment == null) {
+            DefaultMutableTreeNode emptyNode = new DefaultMutableTreeNode("No Result (empty input data node)");
+            return emptyNode;
+        }
+        
         int algCount = set.getAlgorithmCount();
         File outputFile;
         AlgorithmNode algNode;
@@ -98,7 +140,7 @@ public class ScriptRunner {
         String algName, algType;
         
         DefaultMutableTreeNode currNode = null, outputNode = null;
- 
+        
         if(mode == ScriptConstants.SCRIPT_OUTPUT_MODE_FILE_OUTPUT) {
             JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+System.getProperty("file.separator")+"Data");
             if(chooser.showOpenDialog(parentFrame) == JFileChooser.APPROVE_OPTION) {
@@ -118,14 +160,12 @@ public class ScriptRunner {
             algName = algNode.getAlgorithmName();
             algType = algNode.getAlgorithmType();
             // int actionIndex = getActionIndex(algName);
-    
+            
             // Action action = actionManager.getAction(actionManager.ANALYSIS_ACTION+String.valueOf(actionIndex));
-            if(algType.equals(ScriptConstants.ALGORITHM_TYPE_CLUSTER) || algType.equals(ScriptConstants.ALGORITHM_TYPE_VISUALIZATION)) {
+            if(algType.equals(ScriptConstants.ALGORITHM_TYPE_CLUSTER) || algType.equals(ScriptConstants.ALGORITHM_TYPE_CLUSTER_GENES)
+            || algType.equals(ScriptConstants.ALGORITHM_TYPE_CLUSTER_EXPERIMENTS) || algType.equals(ScriptConstants.ALGORITHM_TYPE_VISUALIZATION)) {
                 
                 String className = (String)(this.classHash.get(algName));
-                
-                System.out.println("Run script "+className);
-                
                 
                 try {
                     Class clazz = Class.forName(className);
@@ -143,14 +183,13 @@ public class ScriptRunner {
                     outputNode.add(currNode);
                     
                     attachResultToChildAlgorithmSets(algNode, experiment, extractClusters(currNode));
-                    
                 }
             } else if(algType.equals(ScriptConstants.ALGORITHM_TYPE_ADJUSTMENT)){
                 //Handle adjustments here
                 data.addParam("name", algName);
                 
-                ScriptDataTransformer adjuster = new ScriptDataTransformer(experiment);
-                Experiment resultExperiment = adjuster.transformData(data);
+                ScriptDataTransformer adjuster = new ScriptDataTransformer(experiment, framework);
+                Experiment resultExperiment = adjuster.transformData(data); 
                 
                 //Associate result experiment and indices with the output node's result set if it exists.
                 int [][] clusters = new int[1][];
@@ -164,13 +203,35 @@ public class ScriptRunner {
                 DefaultMutableTreeNode resultNode = getViewerNodes(resultExperiment);
                 resultNode.setUserObject("Data Adjustment: "+algName);
                 outputNode.add(resultNode);
+            } else if(algType.equals(ScriptConstants.ALGORITHM_TYPE_CLUSTER_SELECTION)) {
+                //handle cluster selection
+                data.addParam("name", algName);
+                
+                //DataNode node = (DataNode)(algNode.getParent());
+                ScriptDataTransformer selector = new ScriptDataTransformer(experiment, framework);
+                int [][] selectedClusters = selector.selectClusters(data, set.getClusters());
+                
+                attachResultToChildAlgorithmSets(algNode, experiment, selectedClusters);
+                
+                boolean areGeneClusters =data.getParams().getBoolean("process-gene-clusters");
+                DefaultMutableTreeNode node = getSelectedClusterViewers(data, experiment, selectedClusters, areGeneClusters);
+                
+                if(outputNode == null) {
+                    outputNode = new DefaultMutableTreeNode("Results");
+                }
+                
+                outputNode.add(node);
             }
         }
         return outputNode;
     }
     
+    /** Thread runner for execution
+     */    
     private class Runner implements Runnable {
         
+        /** run method to kick of execution
+         */        
         public void run() {
             algSets = scriptTree.getAlgorithmSets();
             DefaultMutableTreeNode currNode, setNode, dataNode, resultNode, scriptNode;
@@ -210,17 +271,22 @@ public class ScriptRunner {
                         
                         currNode = new DefaultMutableTreeNode("Input Data Node: "+inputNode.toString());
                         dataNode.add(currNode);
-                        currNode = new DefaultMutableTreeNode("Number of Experiments: "+experiment.getNumberOfSamples());
-                        dataNode.add(currNode);
-                        currNode = new DefaultMutableTreeNode("Number of Genes: "+experiment.getNumberOfGenes());
-                        dataNode.add(currNode);
-                        
-                        currNode = getViewerNodes(set.getExperiment());
-                        dataNode.add(currNode);
-                        
+                        if(experiment != null) {
+                            currNode = new DefaultMutableTreeNode("Number of Experiments: "+experiment.getNumberOfSamples());
+                            dataNode.add(currNode);
+                            currNode = new DefaultMutableTreeNode("Number of Genes: "+experiment.getNumberOfGenes());
+                            dataNode.add(currNode);
+                            
+                            currNode = getViewerNodes(set.getExperiment());
+                            dataNode.add(currNode);                            
+                        } else {
+                            currNode = new DefaultMutableTreeNode("Number of Experiments: 0, null input data");
+                            dataNode.add(currNode);
+                            currNode = new DefaultMutableTreeNode("Number of Genes: 0, null input data");
+                            dataNode.add(currNode);
+                        }
                         setNode.add(dataNode);
-                        setNode.add(resultNode);
-                        
+                        setNode.add(resultNode);                        
                         scriptResultNode.add(setNode);
                     }
                 }
@@ -234,7 +300,11 @@ public class ScriptRunner {
         
     }
     
-    public DefaultMutableTreeNode getViewerNodes(Experiment experiment) {
+    /** Constructs viewer nodes for input display
+     * @param experiment
+     * @return
+     */    
+    private DefaultMutableTreeNode getViewerNodes(Experiment experiment) {
         DefaultMutableTreeNode viewerNode = new DefaultMutableTreeNode("Input Data Viewers");
         int [][] cluster = new int [1][];
         
@@ -261,7 +331,10 @@ public class ScriptRunner {
         return viewerNode;
     }
     
-    public Hashtable getClassNames() {
+    /** Returns algorithm class names hash
+     * @return
+     */    
+    private Hashtable getClassNames() {
         Hashtable hash = new Hashtable();
         int algCnt = 0;
         String algName, className;
@@ -333,6 +406,8 @@ public class ScriptRunner {
         return variances;
     }
     
+    /** returns variances
+     */    
     private float [] getVariances(FloatMatrix data, FloatMatrix means, int [] indices, int clusterIndex){
         int nSamples = data.getColumnDimension();
         float [] variances = new float[nSamples];
@@ -359,6 +434,8 @@ public class ScriptRunner {
         return variances;
     }
     
+    /** Returns a set of dfault indices
+     */    
     private int [] getDefaultGeneIndices(int length) {
         int [] indices = new int[length];
         for(int i = 0; i < indices.length; i++)
@@ -376,16 +453,32 @@ public class ScriptRunner {
             for( int j = 0; j < algSets.length; j++) {
                 if(dataNode == algSets[j].getDataNode()) {
                     //if it's not multicluster ouput then append the propper experiment
-                    if(!dataNode.getDataOutputClass().equals(ScriptConstants.OUTPUT_DATA_CLASS_MULTICLUSTER_OUTPUT)) {
+                    
+                    if(!dataNode.getDataOutputClass().equals(ScriptConstants.OUTPUT_DATA_CLASS_MULTICLUSTER_OUTPUT)
+                    && !dataNode.getDataOutputClass().equals(ScriptConstants.OUTPUT_DATA_CLASS_GENE_MULTICLUSTER_OUTPUT)
+                    && !dataNode.getDataOutputClass().equals(ScriptConstants.OUTPUT_DATA_CLASS_EXPERIMENT_MULTICLUSTER_OUTPUT)) {
                         if( i < clusters.length ) {
-                            setExperiment(algSets[j], experiment, clusters[i]);
+                            if(algNode.getAlgorithmType().equals(ScriptConstants.ALGORITHM_TYPE_CLUSTER_EXPERIMENTS))
+                                setExperiment(algSets[j], experiment, clusters[i], false);
+                            else
+                                setExperiment(algSets[j], experiment, clusters[i], true );
                         }
                     }
                     
                     //if it IS multicluster output then the next algorithm must be for
                     //cluster selection.  This algorithm will require clusters[][] for selection process
                     else {
-                        setExperimentAndClusters(algSets[i], experiment, clusters);
+                        setExperimentAndClusters(algSets[j], experiment, clusters, algNode);
+                        //debug
+                        Experiment expo =  algSets[i].getExperiment();
+                        if(expo == null)
+                            System.out.println("expo is null");
+                        else
+                            System.out.println("expo is not null");
+                        
+                        System.out.println("algSet first child" + algSets[0].getAlgorithmNodeAt(0).getAlgorithmName() );
+                        
+                        
                     }
                     
                 }
@@ -393,19 +486,38 @@ public class ScriptRunner {
         }
     }
     
-    private void setExperiment(AlgorithmSet algSet, Experiment experiment, int [] indices) {
-        ScriptDataTransformer transformer = new ScriptDataTransformer(experiment);
-        Experiment trimmedExperiment = transformer.getTrimmedExperiment(indices);
+    /** Sets the Experiment into the output nodes
+     */    
+    private void setExperiment(AlgorithmSet algSet, Experiment experiment, int [] indices, boolean geneReduction) {
+        ScriptDataTransformer transformer = new ScriptDataTransformer(experiment, framework);
+        Experiment trimmedExperiment = transformer.getTrimmedExperiment(indices, geneReduction);
         algSet.setExperiment(trimmedExperiment);
     }
     
     
-    private void setExperimentAndClusters(AlgorithmSet algSet, Experiment experiment, int [][] clusters) {
+    /** Sets Experiment and cluster indicies.
+     */    
+    private void setExperimentAndClusters(AlgorithmSet algSet, Experiment experiment, int [][] clusters, AlgorithmNode algNode) {
         
+        System.out.println("KMC set experiment and clusters");
+        
+        if(experiment == null)
+            System.out.println("null exp");
+        else
+            System.out.println("have exp");
+        
+        algSet.setExperiment(experiment);
+        algSet.setClusters(clusters);
+        if(algNode.getAlgorithmType().equals(ScriptConstants.ALGORITHM_TYPE_CLUSTER_GENES))
+            algSet.setClusterType(ScriptConstants.CLUSTER_TYPE_GENE);
+        else
+            algSet.setClusterType(ScriptConstants.CLUSTER_TYPE_EXPERIMENT);
     }
     
+    /** Extracts cluster results from tree nodes
+     */    
     private int [][] extractClusters(DefaultMutableTreeNode analysisNode) {
-
+        
         int [][] clusters;
         Enumeration enum = analysisNode.depthFirstEnumeration();
         DefaultMutableTreeNode currentNode;
@@ -427,6 +539,96 @@ public class ScriptRunner {
         }
         return null;
     }
+    /** Constructs cluster viewer for clusters selected
+     * by cluster selection algorithms
+     */    
+    private DefaultMutableTreeNode getSelectedClusterViewers(AlgorithmData data, Experiment experiment, int [][] clusters, boolean areGeneClusters) {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Cluster Selection Results");
+        addExpressionImages(node, experiment, clusters, areGeneClusters);
+        addCentroidViews(node, experiment, clusters, areGeneClusters);
+        addSelectionInfoViewer(node, data);
+        return node;
+    }
     
+    /**
+     * Adds nodes to display clusters data.
+     */
+    private void addExpressionImages(DefaultMutableTreeNode root, Experiment experiment, int [][] clusters, boolean clusterGenes) {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Expression Images");
+        IViewer expViewer;
+        if(clusterGenes)
+            expViewer = new ScriptExperimentViewer(experiment, clusters);
+        else
+            expViewer = new ScriptExperimentClusterViewer(experiment, clusters);
+        
+        for (int i=0; i<clusters.length; i++) {
+            node.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+String.valueOf(i+1), expViewer, new Integer(i))));
+        }
+        root.add(node);
+    }
     
+    /**
+     * Adds nodes to display centroid charts.
+     */
+    private void addCentroidViews(DefaultMutableTreeNode root, Experiment experiment, int [][] clusters, boolean clusterGenes) {
+        DefaultMutableTreeNode centroidNode = new DefaultMutableTreeNode("Centroid Graphs");
+        DefaultMutableTreeNode expressionNode = new DefaultMutableTreeNode("Expression Graphs");
+        
+        FloatMatrix matrix = experiment.getMatrix();
+        if(!clusterGenes)
+            matrix = matrix.transpose();
+        
+        FloatMatrix means = getMeans(matrix, clusters);
+        FloatMatrix variances = getVariances(matrix, means, clusters);
+        
+        //if ! genes then transpose it back
+        if(!clusterGenes)
+            matrix = matrix.transpose();
+        
+        
+        ScriptCentroidViewer centroidViewer;
+        ScriptExperimentCentroidViewer expCentroidViewer;
+        if(clusterGenes){
+            centroidViewer = new ScriptCentroidViewer(experiment, clusters);
+            centroidViewer.setMeans(means.A);
+            centroidViewer.setVariances(variances.A);
+            for (int i=0; i<clusters.length; i++) {
+                centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+String.valueOf(i+1), centroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
+                expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+String.valueOf(i+1), centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
+            }
+            
+            ScriptCentroidsViewer centroidsViewer = new ScriptCentroidsViewer(experiment, clusters);
+            centroidsViewer.setMeans(means.A);
+            centroidsViewer.setVariances(variances.A);
+            
+            centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("All Clusters", centroidsViewer, new Integer(CentroidUserObject.VARIANCES_MODE))));
+            expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("All Clusters", centroidsViewer, new Integer(CentroidUserObject.VALUES_MODE))));
+            
+        }
+        else{
+            expCentroidViewer = new ScriptExperimentCentroidViewer(experiment, clusters);
+            
+            expCentroidViewer.setMeans(means.A);
+            expCentroidViewer.setVariances(variances.A);
+            for (int i=0; i<clusters.length; i++) {
+                centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+String.valueOf(i+1), expCentroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
+                expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+String.valueOf(i+1), expCentroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
+            }
+            ScriptExperimentCentroidsViewer expCentroidsViewer = new ScriptExperimentCentroidsViewer(experiment, clusters);
+            expCentroidsViewer.setMeans(means.A);
+            expCentroidsViewer.setVariances(variances.A);
+            
+            centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("All Clusters", expCentroidsViewer, new Integer(CentroidUserObject.VARIANCES_MODE))));
+            expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("All Clusters", expCentroidsViewer, new Integer(CentroidUserObject.VALUES_MODE))));
+        }
+        root.add(centroidNode);
+        root.add(expressionNode);
+    }
+    
+    /** Creates a viewer for cluster selection results
+     */    
+    private void addSelectionInfoViewer(DefaultMutableTreeNode root, AlgorithmData data) {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode(new LeafInfo("Selection Information", new ScriptClusterSelectionInfoViewer(data)));
+        root.add(node);
+    }
 }

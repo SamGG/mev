@@ -1,7 +1,7 @@
 /*
 Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
- */
+*/
 /*
  * ScriptTree.java
  *
@@ -47,21 +47,34 @@ import org.tigr.microarray.mev.script.ScriptManager;
 import org.tigr.microarray.mev.script.scriptGUI.ScriptTreeRenderer;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
-/**
- *
- * @author  braisted
+/** The script tree is a data structure for script parameter organization.
+ * It extends JTree and is used as a graphical aid to view xml scripts.
+ * The main function is to encapsulate nodes with parameters to help in
+ * script execution.
+ * @author braisted
  */
 public class ScriptTree extends JTree {
     
     
-    ScriptDocument document;
-    ScriptManager manager;    
-    DataNode primaryDataRoot;
-    Hashtable dataNodeHash;
+    /** <CODE>ScriptDocument</CODE> to emulate
+     */    
+    private ScriptDocument document;
+    /** script manager, for script management control and mev communication
+     */    
+    private ScriptManager manager;
+    /** Data root
+     */    
+    private DataNode primaryDataRoot;
+    /** Data node hash table
+     */    
+    private Hashtable dataNodeHash;
     
-    boolean resetWidth = true;
+    private boolean resetWidth = true;
     
-    /** Creates a new instance of ScriptTree */
+    /** Creates a new instance of ScriptTree
+     * @param doc script document to emulate
+     * @param manager script manager
+     */
     public ScriptTree(ScriptDocument doc, ScriptManager manager) {
         super();
         super.setCellRenderer(new ScriptTreeRenderer());
@@ -71,7 +84,7 @@ public class ScriptTree extends JTree {
         BasicTreeUI basicTreeUI = (BasicTreeUI) getUI();
         basicTreeUI.setRightChildIndent(50);
         super.putClientProperty("JTree.lineStyle", "Angled");
-       
+        
         this.document = doc;
         this.manager = manager;
         
@@ -80,11 +93,16 @@ public class ScriptTree extends JTree {
         scrollAllToVisible();
     }
     
+    /** returns the script document
+     */    
     public ScriptDocument getDocument() {
         return document;
     }
     
-    public void constructTree(Document doc) {
+    /** Builds the tree from the document
+     * @param doc document to emulate
+     */    
+    private void constructTree(Document doc) {
         Element root = doc.getDocumentElement();
         
         NodeList primaryData = doc.getElementsByTagName("primary_data");
@@ -118,7 +136,11 @@ public class ScriptTree extends JTree {
     }
     
     
-    public boolean addAlgSet(Element algSet) {
+    /** Adds an algorithm set given the root element
+     * @param algSet <CODE>AlgorithmSet</CODE> to add
+     * @return
+     */    
+    private boolean addAlgSet(Element algSet) {
         NodeList algList = algSet.getElementsByTagName("algorithm");
         Element currAlgorithm;
         int listLength = algList.getLength();
@@ -136,7 +158,12 @@ public class ScriptTree extends JTree {
     }
     
     
-    public boolean addAlgorithm(Element algorithmElement, String dataRef) {
+    /** Adds an algorithm to the tree
+     * @param algorithmElement Algorithm root element
+     * @param dataRef data reference
+     * @return
+     */    
+    private boolean addAlgorithm(Element algorithmElement, String dataRef) {
         int alg_id, alg_name, input_data_ref;
         String name = algorithmElement.getAttribute("alg_name");
         String  alg_type = algorithmElement.getAttribute("alg_type");
@@ -164,7 +191,11 @@ public class ScriptTree extends JTree {
         return true;
     }
     
-    public void appendAlgorithmNode(AlgorithmNode node, String inputDataRef) {
+    /** Adds and algorithm node and input data reference
+     * @param node
+     * @param inputDataRef
+     */    
+    private void appendAlgorithmNode(AlgorithmNode node, String inputDataRef) {
         DataNode dataNode = (DataNode)dataNodeHash.get(inputDataRef);
         if(dataNode != null) {
             DefaultTreeModel model = (DefaultTreeModel)getModel();
@@ -174,16 +205,26 @@ public class ScriptTree extends JTree {
         }
     }
     
-    public Element getAlgSet(NodeList setList, int id) {
+    /** Returns the algorithm set given a node list, and an <CODE>AlgorithmSet</CODE> ID.
+     * @param setList
+     * @param id
+     * @return
+     */    
+    private Element getAlgSet(NodeList setList, int id) {
         Element currElement;
         for(int i = 0; i < setList.getLength(); i++) {
-             if(((Element)setList.item(i)).getAttribute("set_id").equals(String.valueOf(id)))
+            if(((Element)setList.item(i)).getAttribute("set_id").equals(String.valueOf(id)))
                 return (Element)setList.item(i);
         }
         return null;
     }
     
-    public Element getAlgorithmElement(NodeList setList, int id) {
+    /** Returns an algorithm element given a node list and an algorithm id.
+     * @param setList
+     * @param id
+     * @return
+     */    
+    private Element getAlgorithmElement(NodeList setList, int id) {
         Element currElement;
         for(int i = 0; i < setList.getLength(); i++) {
             if(((Element)setList.item(i)).getAttribute("alg_id").equals(String.valueOf(id)))
@@ -192,21 +233,11 @@ public class ScriptTree extends JTree {
         return null;
     }
     
-    
-    public int [] getAlgorithmSetList() {
-        return null;
-    }
-    
-    public AlgorithmNode [] getAlgorithmSet(int setID) {
-        return null;
-    }
-    
-    public DataNode getDataNode(int data_ref) {
-        return null;
-    }
-    
+    /** Returns all algorithm sets in the script tree
+     * and associated document.
+     * @return  */    
     public AlgorithmSet [] getAlgorithmSets() {
-
+        
         AlgorithmSet set;
         DataNode root = (DataNode)(this.getModel().getRoot());
         Experiment experiment = manager.getCurrentExperiment();
@@ -244,7 +275,11 @@ public class ScriptTree extends JTree {
     }
     
     
-    public AlgorithmData constructAlgorithmData(Element algElement) {
+    /** Construct Algorithm Data from an algorithm element
+     * @param algElement Algorithm element to supply params
+     * @return
+     */    
+    private AlgorithmData constructAlgorithmData(Element algElement) {
         AlgorithmData data = new AlgorithmData();
         
         // parameter list
@@ -260,7 +295,11 @@ public class ScriptTree extends JTree {
         return data;
     }
     
-    public void appendParameters(AlgorithmData data, Element plist) {
+    /** appends parameters in AlgorithmData
+     * @param data Algorithm data
+     * @param plist parameter list element
+     */    
+    private void appendParameters(AlgorithmData data, Element plist) {
         NodeList parameters = plist.getElementsByTagName("param");
         Element currParam;
         String key;
@@ -275,7 +314,11 @@ public class ScriptTree extends JTree {
         }
     }
     
-    public void appendMatrices(AlgorithmData data, Element mlist) {
+    /** Appends a matrix to the AlgorithmData object.
+     * @param data AlgorithmData with parameters
+     * @param mlist matrix list to be added to the AlgorithmData
+     */    
+    private void appendMatrices(AlgorithmData data, Element mlist) {
         NodeList matrices = mlist.getElementsByTagName("matrix");
         
         for(int i = 0; i < matrices.getLength(); i++) {
@@ -283,7 +326,11 @@ public class ScriptTree extends JTree {
         }
     }
     
-    public void addMatrix(AlgorithmData data, Element matrixElement) {
+    /** Adds a matrix to the AlgorithmData object.
+     * @param data receiver AlgorithmData
+     * @param matrixElement Matrix element.
+     */    
+    private void addMatrix(AlgorithmData data, Element matrixElement) {
         String name = matrixElement.getAttribute("name");
         String type = matrixElement.getAttribute("type");
         String row_dim = matrixElement.getAttribute("row_dim");
@@ -337,7 +384,9 @@ public class ScriptTree extends JTree {
         
     }
     
-    public void appendOutputNodes(AlgorithmNode node, Element algElement) {
+    /** Append ouput nodes to the algorithm data.
+     */    
+    private void appendOutputNodes(AlgorithmNode node, Element algElement) {
         
         NodeList list = algElement.getElementsByTagName("output_data");
         
@@ -354,10 +403,8 @@ public class ScriptTree extends JTree {
         String name;
         
         for(int i = 0; i < list.getLength(); i++) {
-            System.out.println("put data node into hash");
             outputElement = (Element)list.item(i);
             dataID = Integer.parseInt(outputElement.getAttribute("data_node_id"));
-            // dataType = outputElement.getAttribute("output_data_")
             dataNode = new DataNode(dataID, outputElement.getAttribute("name"), output_class);
             dataNodeHash.put(String.valueOf(dataID), dataNode);
             node.add(dataNode);
@@ -365,34 +412,19 @@ public class ScriptTree extends JTree {
         
     }
     
-    
-    
-    
-    
-    
-    /*****************
-     *
-     * Methods for script construction
-     *
-     */
+       
+    /** sets the data root
+     * @param node
+     * @return  */
     public boolean setDataRoot(DataNode node) {
         DefaultTreeModel model = (DefaultTreeModel)getModel();
         model.setRoot(node);
         return true;
     }
     
-    public boolean addDataNode(DataNode node) {
-        return true;
-    }
     
-    public boolean addAlgorithmNode(AlgorithmNode node, int dataRef) {
-        return true;
-    }
-    
-    public boolean addAlgorithmSet(AlgorithmNode [] nodes, int dataRef) {
-        return true;
-    }
-    
+    /** Returns the selected tree node.
+     */    
     public ScriptNode getSelectedNode() {
         TreePath path =  this.getSelectionPath();
         if(path == null)
@@ -401,6 +433,8 @@ public class ScriptTree extends JTree {
         return node;
     }
     
+    /** opens the tree
+     */    
     public void scrollAllToVisible() {
         DefaultTreeModel model = (DefaultTreeModel)this.getModel();
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)model.getRoot();
@@ -409,48 +443,82 @@ public class ScriptTree extends JTree {
         TreePath path;
         while(enum.hasMoreElements()) {
             node = (DefaultMutableTreeNode)enum.nextElement();
-            System.out.println("Element");
             if(node.isLeaf()) {
-                System.out.println("leaf element");
                 visPath = node.getPath();
-                System.out.println("path length= "+visPath.length);
                 path = new TreePath(visPath);
-                //this.expandPath(path);
-                //this.fireTreeExpanded(path);
                 this.scrollPathToVisible(path);
             }
         }
     }
     
+    /** public void addNewAlgorithmToDataNode(DataNode parentNode) {
+     * String outputClass = parentNode.getDataOutputClass();
+     * manager.getAlgorithm(parentNode, this);
+     * //this will run in a thread in the manager then new data will be set into tree
+     * //using setAlgorithm
+     * }
+     * @param parentNode <CODE>DataNode</CODE> to receive the new <CODE>AlgorithmNode</CODE>
+     */
+    
     public void addNewAlgorithmToDataNode(DataNode parentNode) {
         String outputClass = parentNode.getDataOutputClass();
         AlgorithmData data = manager.getAlgorithm(outputClass);
-        
         if(data != null) {
-
             if(document.appendAlgorithm(data, parentNode.getID())) {
-               try {
+                try {
                     updateTree();
-                    scrollAllToVisible();                    
+                    scrollAllToVisible();
                 } catch (Exception e) {e.printStackTrace(); }
             } else {
                 System.out.println("doc base didn't append");
             }
-    
-        }     
+        }
     }
+    
+    
+    /** Adds an <CODE>AlgorithmNode</CODE> to a <CODE>DataNode</CODE>
+     * @param data data to add
+     * @param parentNode parent node to accept algorithm
+     */    
+    private void setAlgorithm(AlgorithmData data, DataNode parentNode){
+        synchronized (this) {
+            if(data != null) {
+                if(document.appendAlgorithm(data, parentNode.getID())) {
+                    try {
+                        updateTree();
+                        scrollAllToVisible();
+                        this.validate();
+                        this.validateTree();
+                    } catch (Exception e) {e.printStackTrace(); }
+                } else {
+                    System.out.println("doc base didn't append");
+                }
+            }
+        }
+    }
+    
     
     /**
      * The class to allow run loading process in a separate thread.
      */
     private class Builder implements Runnable {
+        /** parent node (data node)
+         */        
         DataNode parentNode;
+        /** parameter collection
+         */        
         AlgorithmData data;
+        /** Constructs a Builder instance.
+         * @param p data node
+         * @param d algorithm data
+         */        
         public Builder(DataNode p, AlgorithmData d) {
             parentNode = p;
             data = d;
         }
         
+        /** Run method kicks off algorithm addition.
+         */        
         public void run() {
             if(document.appendAlgorithm(data, parentNode.getID())) {
                 try {
@@ -464,6 +532,8 @@ public class ScriptTree extends JTree {
         }
     }
     
+    /** Refreshes tree to reflect ScriptDocument changes.
+     */    
     public void updateTree() {
         ((DefaultTreeModel)this.getModel()).setRoot(null);
         this.constructTree(document.getDocument());
@@ -472,25 +542,11 @@ public class ScriptTree extends JTree {
         
         this.scrollAllToVisible();
     }
+ 
     
-    public void replaceAlgorithm(AlgorithmNode node) {
-        DataNode parentNode = (DataNode)node.getParent();
-        AlgorithmData data;
-        
-        if(parentNode != null) {
-            String outputClass = parentNode.getDataOutputClass();
-            data = manager.getAlgorithm(outputClass);
-        }
-        
-        //Need to id data node, (id alg set),
-        
-        //pass data to doc for append
-        //remove node from tree and dom tree
-        
-        //put in the new one??
-        
-    }
-    
+    /** Removes algorithm from ther tree.
+     * @param node Node to remove
+     */    
     public void removeAlgorithm(AlgorithmNode node) {
         this.document.removeAlgorithm(node);
     }
