@@ -285,7 +285,8 @@ public class HelpWindow extends JDialog {
             return "knnc_parameters2.html";
         if(key.equals("KNNC Validataion Parameter Selections"))
             return "knnc_parameters3.html";
-        
+        if(key.equals("SAM Script Delta Dialog"))
+            return "sam_script_delta_dialog.html";
         else
             return null;
     }
