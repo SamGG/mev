@@ -154,9 +154,10 @@ public class SAMDeltaInfoViewer extends ViewerAdapter implements java.io.Seriali
         nf.setMaximumFractionDigits(3);
         nf.setMinimumFractionDigits(3);        
         //sb.append("Delta\tMedian false\t90th %ile false\t  # sig. genes\tFDR(%) Median\t   FDR(%) 90th %ile\n\n");
-        for (int i = 0; i < deltaGrid.length; i++) {
-                sb.append("  " + printFormat(deltaGrid[i]) + "\t" + printFormat(medNumFalse[i]) + "\t" + printFormat(false90th[i]) + "\t  " + numSig[i] + "\t" + printFormat(FDRMedian[i]) + "\t   " + printFormat(FDR90th[i]) + "\n");
-            
+        //counter = 0;
+        for (int counter = 0; counter < deltaGrid.length; counter++) {            
+            sb.append("  " + printFormat(deltaGrid[counter]) + "\t" + printFormat(medNumFalse[counter]) + "\t" + printFormat(false90th[counter]) + "\t  " + numSig[counter] + "\t" + printFormat(FDRMedian[counter]) + "\t   " + printFormat(FDR90th[counter]) + "\n");
+            //counter += 100;
         }
         area.setText(sb.toString());
 	area.setCaretPosition(0);
