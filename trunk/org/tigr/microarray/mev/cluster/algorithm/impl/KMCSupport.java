@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: KMCSupport.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-11 17:58:51 $
+ * $Revision: 1.3 $
+ * $Date: 2004-04-08 19:28:45 $
  * $Author: nbhagaba $
  * $State: Exp $
  */
@@ -340,8 +340,8 @@ public class KMCSupport extends AbstractAlgorithm {
         sub_algo_data.addParam("distance-factor", String.valueOf(factor));
         sub_algo_data.addParam("distance-absolute", String.valueOf(absolute));
         sub_algo_data.addParam("distance-function", String.valueOf(function));
-        sub_algo_data.addParam("number_of_iterations", String.valueOf(iterations));
-        sub_algo_data.addParam("number_of_clusters", String.valueOf(userK));
+        sub_algo_data.addParam("number-of-iterations", String.valueOf(iterations));
+        sub_algo_data.addParam("number-of-clusters", String.valueOf(userK));
         sub_algo_data.addParam("calculate-means", String.valueOf(calculateMeans));
         
         AlgorithmEvent event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, numReps);
