@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SAM.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-11 20:07:50 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -35,7 +35,7 @@ import javax.swing.JPanel;
 import org.tigr.util.ConfMap;
 import org.tigr.util.FloatMatrix;
 import org.tigr.util.QSort;
-import org.tigr.util.Combinations;
+import org.tigr.util.*;
 
 //import TDistribution;
 
@@ -77,16 +77,16 @@ public class SAM extends AbstractAlgorithm {
     private int numGenes, numExps;    
     
     private int[] groupAssignments, pairedGroupAExpts, pairedGroupBExpts;
-    private boolean[] inSurvivalAnalysis, isCensored;
+    private boolean[] inSurvivalAnalysis, isCensored, useAllPerms;
     private int studyDesign;
     private int numMultiClassGroups = 0;
-    private int numCombs;
+    private int numCombs, numUniquePerms;
     //private boolean useAllCombs;
     private boolean useKNearest;
     private int numNeighbors;
-    
+    //private boolean useAllUniquePerms;
     private double sNought = 0.0f;
-    private double s0Percentile;
+    private double s0Percentile, oneClassMean;
     
     private double[] dArray, rArray, sortedDArray, dBarValues, survivalTimes, zkArray;
     private int[] dkArray;
@@ -129,6 +129,8 @@ public class SAM extends AbstractAlgorithm {
         double userPercentile = (double)(map.getFloat("userPercentile", 0.0f));
         boolean useTusherEtAlS0 = map.getBoolean("useTusherEtAlS0", false);
         boolean calculateQLowestFDR = map.getBoolean("calculateQLowestFDR", false);
+        boolean useAllUniquePerms = map.getBoolean("useAllUniquePerms", false);
+        numUniquePerms = map.getInt("numUniquePerms", 0);
         
 	this.expMatrix = data.getMatrix("experiment");
 	
@@ -150,6 +152,9 @@ public class SAM extends AbstractAlgorithm {
         }
         if (studyDesign == SAMInitDialog.MULTI_CLASS) {
             numMultiClassGroups = map.getInt("numMultiClassGroups", 0);
+        }
+        if (studyDesign == SAMInitDialog.ONE_CLASS) {
+            oneClassMean = (double)(map.getFloat("oneClassMean", 0.0f));
         }
         if (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) {
             FloatMatrix inAnalysisMatrix = data.getMatrix("inAnalysisMatrix");
@@ -184,6 +189,9 @@ public class SAM extends AbstractAlgorithm {
          */      
         
         numCombs = map.getInt("num-combs", 100);
+        if (useAllUniquePerms) {
+            numCombs = numUniquePerms;
+        }
         //useAllCombs = map.getBoolean("use-all-combs", false);
         useKNearest = map.getBoolean("use-k-nearest", true);
         numNeighbors = map.getInt("num-neighbors", 10);
@@ -334,8 +342,13 @@ public class SAM extends AbstractAlgorithm {
             sortedDArrayIndices = sortDArray.getOrigIndx();
             SAMState.sortedDArrayIndices = sortedDArrayIndices;
             double[][] permutedDValues = new double[numCombs][numGenes];
+            //if (useAllUniquePerms) {
+            //}
 
             AlgorithmEvent event2 = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, numCombs);
+            if (useAllUniquePerms) {
+                event2 = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, numUniquePerms);
+            }
             fireValueChanged(event2);
             event2.setId(AlgorithmEvent.PROGRESS_VALUE);   
             
@@ -344,61 +357,286 @@ public class SAM extends AbstractAlgorithm {
             for (int i = 0; i < numCombs; i++) {
                 randomSeeds[i] = rand.nextLong();
             }
+            
+            if (!useAllUniquePerms) {
+                for (int i = 0; i < numCombs; i++) {
+                    if (stop) {
+                        throw new AbortException();
+                    }  
+                    event2.setIntValue(i);
+                    event2.setDescription("Permuting matrix: Current permutation = " + (i+1));
+                    fireValueChanged(event2);            
+                    //System.out.println("execute(): permutation " + i);
+                    int[] permutedExpts = new int[1];
+                    boolean[] changeSign = new boolean[1];
+                    if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.MULTI_CLASS) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL)) {
+                        //System.out.print("Permutation " + i + ": ");
+                        Vector validExpts = new Vector();
+                        if (studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) {
+                            for (int j = 0; j < groupAssignments.length; j++) {
+                                if (groupAssignments[j] != SAMInitDialog.NEITHER_GROUP) {
+                                    validExpts.add(new Integer(j));
+                                }
+                            }                        
+                        } else if (studyDesign == SAMInitDialog.MULTI_CLASS) {
+                            for (int j = 0; j < groupAssignments.length; j++) {
+                                if (groupAssignments[j] != 0) {
+                                    validExpts.add(new Integer(j));
+                                }
+                            }
+                        } else if (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) {
+                            for (int j = 0; j < inSurvivalAnalysis.length; j++) {
+                                if (inSurvivalAnalysis[j]) {
+                                    validExpts.add(new Integer(j));
+                                }
+                            }
+                        } 
 
-            for (int i = 0; i < numCombs; i++) {
-                if (stop) {
-                    throw new AbortException();
-                }  
-                event2.setIntValue(i);
-                event2.setDescription("Permuting matrix: Current permutation = " + (i+1));
-                fireValueChanged(event2);            
-                //System.out.println("execute(): permutation " + i);
-                int[] permutedExpts = new int[1];
-                if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.MULTI_CLASS) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL)) {
-                    //System.out.print("Permutation " + i + ": ");
-                    Vector validExpts = new Vector();
-                    if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED)||(studyDesign == SAMInitDialog.MULTI_CLASS)) {
+                        int[] validArray = new int[validExpts.size()];
+                        for (int j = 0; j < validArray.length; j++) {
+                            validArray[j] = ((Integer)(validExpts.get(j))).intValue();
+                        } 
+                        //System.out.print("valid array: ");
+                        //printIntArray(validArray);
+                        permutedExpts = getPermutedValues(numExps, validArray); //returns an int array of size "numExps", with the valid values permuted 
+                        //printIntArray(permutedExpts);
+                    } else if (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) {
+                        //System.out.print("Permutation " + i + ": ");
+                        permutedExpts = permuteWithinPairs(randomSeeds[i]); //returns an int array with some paired experiment indices permuted
+                        //System.out.println();
+                    } else if (studyDesign == SAMInitDialog.ONE_CLASS) {
+                        Vector validExpts = new Vector();
                         for (int j = 0; j < groupAssignments.length; j++) {
-                            if (groupAssignments[j] != 0) {
+                            if (groupAssignments[j] == 1) {
                                 validExpts.add(new Integer(j));
                             }
+                        } 
+
+                        int[] validArray = new int[validExpts.size()];
+                        for (int j = 0; j < validArray.length; j++) {
+                            validArray[j] = ((Integer)(validExpts.get(j))).intValue();
+                        }                    
+
+                        changeSign = getOneClassChangeSignArray(randomSeeds[i], validArray);
+                    }
+
+                    // *** DONE UP TO HERE 5/30/03 ***
+
+                    //printIntArray(permutedExpts);
+                    FloatMatrix permutedMatrix;
+                    if (studyDesign == SAMInitDialog.ONE_CLASS) {
+                        permutedMatrix = getOneClassPermMatrix(imputedMatrix, changeSign);
+                    } else {
+                        permutedMatrix = getPermutedMatrix(imputedMatrix, permutedExpts);
+                    }
+
+                    // ****DONE UP TO HERE 10/29/03
+
+                    double[] permDArray = new double[permutedMatrix.getRowDimension()];
+                    for (int j = 0; j < permutedMatrix.getRowDimension(); j++) {
+                        permDArray[j] = getD(j, permutedMatrix);
+                    }
+
+                    QSort sortPermDArray = new QSort(permDArray);
+                    double[] sortedPermDArray = sortPermDArray.getSortedDouble();
+
+                    for (int j = 0; j < sortedPermDArray.length; j++) {
+                        permutedDValues[i][j] = sortedPermDArray[j];
+                    }
+
+                }
+                
+            } else { // if (useAllPerms)
+                int[] permutedExpts = new int[numExps];
+                
+                for (int i = 0; i < numExps; i++) {
+                    permutedExpts[i] = i;
+                }
+                
+                if (studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) {
+                    Vector usedExptsVector = new Vector();
+                    int numGroupAValues = 0;
+                    for (int i = 0; i < groupAssignments.length; i++) {
+                        if (groupAssignments[i] != SAMInitDialog.NEITHER_GROUP) {
+                           usedExptsVector.add(new Integer(i));
+                        } 
+                        if (groupAssignments[i] == SAMInitDialog.GROUP_A) {
+                            numGroupAValues++;
                         }
-                    } else if (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) {
-                        for (int j = 0; j < inSurvivalAnalysis.length; j++) {
-                            if (inSurvivalAnalysis[j]) {
+                    }
+                    int[] usedExptsArray = new int[usedExptsVector.size()];
+                    
+                    for (int i = 0; i < usedExptsArray.length; i++) {
+                        usedExptsArray[i] = ((Integer)(usedExptsVector.get(i))).intValue();
+                    }
+                    
+                    int[] combArray = new int[numGroupAValues];
+                    for (int i = 0; i < combArray.length; i++) {
+                        combArray[i] = -1;
+                    }  
+                    
+                    int numGroupBValues = usedExptsArray.length - numGroupAValues;
+
+                    int permCounter = 0;
+                    
+                    while (Combinations.enumerateCombinations(usedExptsArray.length, numGroupAValues, combArray)) {
+                        
+                        if (stop) {
+                            throw new AbortException();
+                        }
+                        event2.setIntValue(permCounter);
+                        event2.setDescription("Permuting matrix: Current permutation = " + (permCounter+1));
+                        fireValueChanged(event2); 
+                        
+                        int[] notInCombArray = new int[numGroupBValues];
+                        int notCombCounter = 0;                 
+                        
+                        for (int i = 0; i < usedExptsArray.length; i++) {
+                            if(!belongsInArray(i, combArray)) {
+                                notInCombArray[notCombCounter] = i;
+                                notCombCounter++;
+                            }                            
+                        }
+                        
+                        for (int i = 0; i < combArray.length; i++) {
+                            permutedExpts[usedExptsArray[i]] = usedExptsArray[combArray[i]];
+                        }
+                        for (int i = 0; i < notInCombArray.length; i++) {
+                            permutedExpts[usedExptsArray[combArray.length + i]] = usedExptsArray[notInCombArray[i]];
+                        }
+                        
+                        FloatMatrix permutedMatrix = getPermutedMatrix(imputedMatrix, permutedExpts);  
+                        
+                        double[] permDArray = new double[permutedMatrix.getRowDimension()];
+                        for (int j = 0; j < permutedMatrix.getRowDimension(); j++) {
+                            permDArray[j] = getD(j, permutedMatrix);
+                        }
+                        
+                        QSort sortPermDArray = new QSort(permDArray);
+                        double[] sortedPermDArray = sortPermDArray.getSortedDouble();
+                        
+                        for (int j = 0; j < sortedPermDArray.length; j++) {
+                            permutedDValues[permCounter][j] = sortedPermDArray[j];
+                        } 
+                        
+                        permCounter++;                        
+                    }
+                    
+                } else if (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) {
+                    for (int i = 0; i < numUniquePerms; i++) {
+                        
+                        if (stop) {
+                            throw new AbortException();
+                        }                     
+                        event2.setIntValue(i);
+                        event2.setDescription("Permuting matrix: Current permutation = " + (i+1));
+                        fireValueChanged(event2);                     
+                        permutedExpts = permuteWithinPairsAllPerms(i);
+                        
+                        FloatMatrix permutedMatrix = getPermutedMatrix(imputedMatrix, permutedExpts);  
+                        
+                        double[] permDArray = new double[permutedMatrix.getRowDimension()];
+                        for (int j = 0; j < permutedMatrix.getRowDimension(); j++) {
+                            permDArray[j] = getD(j, permutedMatrix);
+                        }
+                        
+                        QSort sortPermDArray = new QSort(permDArray);
+                        double[] sortedPermDArray = sortPermDArray.getSortedDouble();
+                        
+                        for (int j = 0; j < sortedPermDArray.length; j++) {
+                            permutedDValues[i][j] = sortedPermDArray[j];
+                        }                        
+                    }
+                    
+                } else if (studyDesign == SAMInitDialog.ONE_CLASS) {
+                    for (int i = 0; i < numUniquePerms; i++) {
+                        if (stop) {
+                            throw new AbortException();
+                        }                     
+                        event2.setIntValue(i);
+                        event2.setDescription("Permuting matrix: Current permutation = " + (i+1));
+                        fireValueChanged(event2);   
+                        
+                        Vector validExpts = new Vector();
+                        for (int j = 0; j < groupAssignments.length; j++) {
+                            if (groupAssignments[j] == 1) {
                                 validExpts.add(new Integer(j));
                             }
+                        } 
+
+                        int[] validArray = new int[validExpts.size()];
+                        for (int j = 0; j < validArray.length; j++) {
+                            validArray[j] = ((Integer)(validExpts.get(j))).intValue();
+                        }                    
+
+                        boolean[] changeSign = getOneClassChangeSignArrayAllUniquePerms(i, validArray);      
+                        
+                        FloatMatrix permutedMatrix = getOneClassPermMatrix(imputedMatrix, changeSign);
+                        
+                        double[] permDArray = new double[permutedMatrix.getRowDimension()];
+                        for (int j = 0; j < permutedMatrix.getRowDimension(); j++) {
+                            permDArray[j] = getD(j, permutedMatrix);
                         }
+                        
+                        QSort sortPermDArray = new QSort(permDArray);
+                        double[] sortedPermDArray = sortPermDArray.getSortedDouble();
+                        
+                        for (int j = 0; j < sortedPermDArray.length; j++) {
+                            permutedDValues[i][j] = sortedPermDArray[j];
+                        }                        
+                    }
+                    
+                } else if (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) {
+                    Vector validExpts = new Vector();
+                    
+                    for (int j = 0; j < inSurvivalAnalysis.length; j++) {
+                        if (inSurvivalAnalysis[j]) {
+                            validExpts.add(new Integer(j));
+                        } 
                     }
                     
                     int[] validArray = new int[validExpts.size()];
                     for (int j = 0; j < validArray.length; j++) {
                         validArray[j] = ((Integer)(validExpts.get(j))).intValue();
                     }                    
-                    permutedExpts = getPermutedValues(numExps, validArray); //returns an int array of size "numExps", with the permuted values ranging from 0 to numExps - 1
-                    //printIntArray(permutedExpts);
-                } else if (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) {
-                    //System.out.print("Permutation " + i + ": ");
-                    permutedExpts = permuteWithinPairs(randomSeeds[i]); //returns an int array with some paired experiment indices permuted
-                    //System.out.println();
+                    
+                    int[] comb = new int[validArray.length];
+                    for (int i = 0; i < comb.length; i++) {
+                        comb[i] = -1;
+                    }                    
+                    
+                    int permCounter = 0;
+                    while (Permutations.enumeratePermutations(validArray.length, validArray.length, comb)) {
+                        if (stop) {
+                            throw new AbortException();
+                        }
+                        event2.setIntValue(permCounter);
+                        event2.setDescription("Permuting matrix: Current permutation = " + (permCounter+1));
+                        fireValueChanged(event2);       
+                        
+                        for (int i = 0; i < validArray.length; i++) {
+                            permutedExpts[validArray[i]] = validArray[comb[i]]; 
+                        }    
+                        
+                        FloatMatrix permutedMatrix = getPermutedMatrix(imputedMatrix, permutedExpts); 
+                        
+                        double[] permDArray = new double[permutedMatrix.getRowDimension()];
+                        for (int j = 0; j < permutedMatrix.getRowDimension(); j++) {
+                            permDArray[j] = getD(j, permutedMatrix);
+                        }
+                        
+                        QSort sortPermDArray = new QSort(permDArray);
+                        double[] sortedPermDArray = sortPermDArray.getSortedDouble();
+                        
+                        for (int j = 0; j < sortedPermDArray.length; j++) {
+                            permutedDValues[permCounter][j] = sortedPermDArray[j];
+                        }                         
+                        
+                        permCounter++;
+                    }
                 }
-                
-                // *** DONE UP TO HERE 5/30/03 ***
-                
-                //printIntArray(permutedExpts);
-                FloatMatrix permutedMatrix = getPermutedMatrix(imputedMatrix, permutedExpts);
-                double[] permDArray = new double[permutedMatrix.getRowDimension()];
-                for (int j = 0; j < permutedMatrix.getRowDimension(); j++) {
-                    permDArray[j] = getD(j, permutedMatrix);
-                }
-
-                QSort sortPermDArray = new QSort(permDArray);
-                double[] sortedPermDArray = sortPermDArray.getSortedDouble();
-
-                for (int j = 0; j < sortedPermDArray.length; j++) {
-                    permutedDValues[i][j] = sortedPermDArray[j];
-                }
-            
+                                
+              
             }
 
             dBarValues = new double[numGenes];
@@ -656,6 +894,7 @@ public class SAM extends AbstractAlgorithm {
 
         } else { // if (usePreviousGraph)
             imputedMatrix = SAMState.imputedMatrix;
+            //oneClassMean = SAMState.oneClassMean;
             dBarValues = SAMState.dBarValues;
             sortedDArray = SAMState.sortedDArray;
             sortedDArrayIndices = SAMState.sortedDArrayIndices;
@@ -892,13 +1131,13 @@ public class SAM extends AbstractAlgorithm {
         allSigGenes.addAll(posSigGenes);
         allSigGenes.addAll(negSigGenes);
         
-        if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL)) {
+        if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) || (studyDesign == SAMInitDialog.ONE_CLASS)) {
             k = 4; //# of clusters;
         } else {
             k = 2;
         }
         clusters = new Vector[k];
-        if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL)) {        
+        if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) || (studyDesign == SAMInitDialog.ONE_CLASS)) {        
             clusters[0] = posSigGenes;
             clusters[1] = negSigGenes;
             clusters[2] = allSigGenes;
@@ -1131,6 +1370,20 @@ public class SAM extends AbstractAlgorithm {
 	return(float)Math.sqrt(getSampleNormalizedSum(cluster, column, mean)/(float)(validN-1));
 	
     } 
+    
+    
+    private boolean belongsInArray(int i, int[] arr) {
+	boolean belongs = false;
+	
+	for (int j = 0; j < arr.length; j++) {
+	    if (i == arr[j]) {
+		belongs = true;
+		break;
+	    }
+	}
+	
+	return belongs;
+    }    
     
     private double getFoldChange(int gene) {
         float[] currentGene = new float[numExps];
@@ -1455,6 +1708,22 @@ public class SAM extends AbstractAlgorithm {
         return permutedMatrix;
     }
     
+    private FloatMatrix getOneClassPermMatrix(FloatMatrix inputMatrix, boolean[] changeSign) {
+        FloatMatrix permutedMatrix = new FloatMatrix(inputMatrix.getRowDimension(), inputMatrix.getColumnDimension());
+
+        for (int i = 0; i < inputMatrix.getRowDimension(); i++) {
+            for (int j = 0; j < inputMatrix.getColumnDimension(); j++) {
+                if (changeSign[j]) {
+                    permutedMatrix.A[i][j] = (float)(inputMatrix.A[i][j] - 2.0f*(inputMatrix.A[i][j] - oneClassMean));
+                } else {
+                    permutedMatrix.A[i][j] = inputMatrix.A[i][j];
+                }
+            }
+        }
+        
+        return permutedMatrix;
+    }
+    
     private int[] permuteWithinPairs(long seed) {
         int[] permutedValues = new int[numExps];
         for (int i = 0; i < permutedValues.length; i++) {
@@ -1482,6 +1751,89 @@ public class SAM extends AbstractAlgorithm {
         
         return permutedValues;
     }
+    
+    private int[] permuteWithinPairsAllPerms(int num) {
+        int[] permutedValues = new int[numExps];
+        for (int i = 0; i < permutedValues.length; i++) {
+            permutedValues[i] = i;
+        }
+        
+        int temp;
+        //Random generator2 =new Random(seed);
+        boolean[] changeSign = getChangeSignArrayForAllPairedPerms(num);
+        for (int i = 0; i < pairedGroupAExpts.length; i++) {
+            
+            boolean swap = changeSign[i];
+            //System.out.print(swap + " ");
+            if (swap) {
+                temp = permutedValues[pairedGroupBExpts[i]];
+                permutedValues[pairedGroupBExpts[i]] = permutedValues[pairedGroupAExpts[i]];
+                permutedValues[pairedGroupAExpts[i]] = temp;
+            }
+        }
+        /*
+        try {
+            Thread.sleep(10);
+        } catch (Exception exc) {
+            exc.printStackTrace();
+        } 
+         */       
+        
+        return permutedValues;
+    }    
+    
+    boolean[] getChangeSignArrayForAllPairedPerms(int num) {
+        boolean[] permutArray = new boolean[pairedGroupAExpts.length];
+        
+        for (int i = 0; i < permutArray.length; i++) {
+            permutArray[i] = false;
+        }
+        
+        int numPairs = pairedGroupAExpts.length;
+        
+        String binaryString = Integer.toBinaryString(num);
+        //System.out.println(binaryString);
+        char[] binArray = binaryString.toCharArray();
+        if (binArray.length < numPairs) {
+            Vector binVector = new Vector();
+            for (int i = 0; i < (numPairs - binArray.length); i++) {
+                binVector.add(new Character('0'));
+            }
+            
+            for (int i = 0; i < binArray.length; i++) {
+                binVector.add(new Character(binArray[i]));
+            }
+            binArray = new char[binVector.size()]; 
+            
+            for (int i = 0; i < binArray.length; i++) {
+                binArray[i] = ((Character)(binVector.get(i))).charValue();
+            }
+        } 
+        /*
+        for (int i = 0; i < binArray.length; i++) {
+            System.out.print(binArray[i]);
+        }
+        System.out.println();
+         */
+        //int counter = 0;
+        
+        for (int i = 0; i < permutArray.length; i++) {
+
+            if (binArray[i] == '1') {
+                permutArray[i] = true;
+            } else {
+                permutArray[i] = false;
+            }
+
+        }
+        /*
+        for (int i = 0; i < oneClassPermutArray.length; i++) {
+            System.out.print(oneClassPermutArray[i] + " ");
+        }
+        System.out.println();
+        */
+        return permutArray;
+    }    
     
     private int[] getPermutedValues(int arrayLength, int[] validArray) {//returns an integer array of length "arrayLength", with the valid values (the currently included experiments) permuted
         int[] permutedValues = new int[arrayLength];
@@ -1525,7 +1877,8 @@ public class SAM extends AbstractAlgorithm {
         }  
         
         for (int i = 0; i < validArray.length; i++) {
-            permutedValues[validArray[i]] = permutedValues[permutedValidArray[i]];
+            //permutedValues[validArray[i]] = permutedValues[permutedValidArray[i]];
+            permutedValues[validArray[i]] = permutedValidArray[i];
         }
         
         /*
@@ -1559,6 +1912,59 @@ public class SAM extends AbstractAlgorithm {
         return permutedValues;
         
     }
+    
+    private boolean[] getOneClassChangeSignArray(long seed, int[] validExpts) {
+        boolean[] changeSignArray = new boolean[numExps];
+        for (int i = 0; i < changeSignArray.length; i++) {
+            changeSignArray[i] = false;            
+        }
+        
+        Random generator2 = new Random(seed);
+        for (int i = 0; i < validExpts.length; i++) {
+            changeSignArray[validExpts[i]] = generator2.nextBoolean();
+        }
+        
+        return changeSignArray;
+    }
+    
+    private boolean[] getOneClassChangeSignArrayAllUniquePerms(int num, int[] validExpts) {
+        boolean[] changeSignArray = new boolean[numExps];
+        for (int i = 0; i < changeSignArray.length; i++) {
+            changeSignArray[i] = false;            
+        }
+        
+        //Random generator2 = new Random(seed);
+        int numValidExps = validExpts.length;
+
+        String binaryString = Integer.toBinaryString(num);
+        //System.out.println(binaryString);
+        char[] binArray = binaryString.toCharArray();
+        if (binArray.length < numValidExps) {
+            Vector binVector = new Vector();
+            for (int i = 0; i < (numValidExps - binArray.length); i++) {
+                binVector.add(new Character('0'));
+            }
+            
+            for (int i = 0; i < binArray.length; i++) {
+                binVector.add(new Character(binArray[i]));
+            }
+            binArray = new char[binVector.size()]; 
+            
+            for (int i = 0; i < binArray.length; i++) {
+                binArray[i] = ((Character)(binVector.get(i))).charValue();
+            }
+        }
+        
+        for (int i = 0; i < validExpts.length; i++) {
+            if (binArray[i] == '1') {
+                changeSignArray[validExpts[i]] = true;
+            } else {
+                changeSignArray[validExpts[i]] = false;
+            }
+        }
+        
+        return changeSignArray;
+    }    
     
     private float getMax(float[] array) {
         float max = Float.NEGATIVE_INFINITY;
@@ -1651,6 +2057,21 @@ public class SAM extends AbstractAlgorithm {
         return (double)(zk/(double)(pairedGroupAExpts.length));
     }
     
+    private double rOneClass(int gene, FloatMatrix matrix) {
+        int validN = 0;
+        double xiBar = 0d;
+        
+        for (int i = 0; i < groupAssignments.length; i++) {
+            if (groupAssignments[i] == 1) {
+                validN++;
+                xiBar = xiBar + (matrix.A[gene][i] - oneClassMean);
+            }
+        }
+        
+        return (double)(xiBar/(double)validN);
+        
+    }
+    
     private double rMultiClass(int gene, FloatMatrix matrix) {
        float[] geneValues = new float[matrix.getColumnDimension()];
        
@@ -1690,6 +2111,21 @@ public class SAM extends AbstractAlgorithm {
         
         int K = pairedGroupAExpts.length;
         return Math.sqrt((double)num/(double)(K*(K - 1)));
+    }
+    
+    private double sOneClass(int gene, FloatMatrix matrix) {
+        double xiBar = rOneClass(gene, matrix);
+        double sValue = 0d;
+        int validN = 0;
+        
+        for (int i = 0; i < groupAssignments.length; i++) {
+            if (groupAssignments[i] == 1) {
+                validN++;
+                sValue = sValue + Math.pow((matrix.A[gene][i] - xiBar), 2);
+            }
+        }
+        
+        return Math.sqrt( (double)(sValue/(double)(validN*(validN - 1))) );
     }
     
     private double sMultiClass(int gene, FloatMatrix matrix) {
@@ -2482,6 +2918,8 @@ public class SAM extends AbstractAlgorithm {
             return sMultiClass(gene, matrix);
         } else if (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) {
             return sCensoredSurvival(gene, matrix);
+        } else if (studyDesign == SAMInitDialog.ONE_CLASS) {
+            return sOneClass(gene, matrix);
         }
         
         return s;
@@ -2498,6 +2936,8 @@ public class SAM extends AbstractAlgorithm {
             return rMultiClass(gene, matrix);
         } else if (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) {
             return rCensoredSurvival(gene, matrix);
+        } else if (studyDesign == SAMInitDialog.ONE_CLASS) {
+            return rOneClass(gene, matrix);
         }
         
         return r;
