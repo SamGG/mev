@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SVMDiscriminantExperimentViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-09 17:29:21 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 22:11:50 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -31,6 +31,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import java.text.DecimalFormat;
 
 import javax.swing.JPanel;
@@ -55,7 +59,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 
 
 
-public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer {
+public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer, java.io.Serializable {
     
     private int numRetainedPos;
     private int numRecruitedNeg;
@@ -703,7 +707,7 @@ public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer {
         g.drawRect(column*elementSize.width + insets.left, row*elementSize.height, elementSize.width-1, elementSize.height-1);
     }
     
-        /**
+    /**
      * fills cluster colors
      */
     private void fillClusterRectAt(Graphics g, int row, int xLoc) {
@@ -797,6 +801,49 @@ public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer {
      */
     public JComponent getCornerComponent(int cornerIndex) {
         return null;
+    }
+    
+    private void writeObject(ObjectOutputStream oos) throws IOException {
+        oos.writeObject(header);
+        oos.writeObject(experiment);
+        oos.writeObject(clusters);
+        oos.writeObject(samplesOrder);
+        oos.writeObject(elementSize);
+        oos.writeInt(labelIndex);
+        oos.writeBoolean(this.isDrawAnnotations);
+        oos.writeObject(insets);
+        
+        oos.writeInt(clusterIndex);
+        oos.writeInt(this.numRetainedPos);
+        oos.writeInt(this.numRecruitedNeg);
+        oos.writeObject(this.RecruitColor);
+        oos.writeBoolean(this.classifyGenes);
+        oos.writeObject(this.discriminants);
+    }
+    
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        header = (ExperimentHeader)ois.readObject();
+        experiment = (Experiment)ois.readObject();
+        clusters = (int[][])ois.readObject();
+        samplesOrder = (int[])ois.readObject();
+        elementSize = (Dimension)ois.readObject();
+        labelIndex = ois.readInt();
+        this.isDrawAnnotations = ois.readBoolean();
+        insets = (Insets)ois.readObject();
+        
+        this.clusterIndex = ois.readInt();
+        this.numRetainedPos = ois.readInt();
+        this.numRecruitedNeg = ois.readInt();
+        this.RecruitColor = (Color)ois.readObject();
+        this.classifyGenes = ois.readBoolean();
+        this.discriminants = (float [][])ois.readObject();
+        
+        this.firstSelectedRow = -1;
+        this.lastSelectedRow = -1;
+                
+        SVMExperimentActionListener actionListener = new SVMExperimentActionListener();
+        addMouseListener(actionListener);
+        this.popup = createJPopupMenu(actionListener);
     }
     
     /**

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMExperimentViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2003-12-08 18:13:54 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-05 22:10:56 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -21,6 +21,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
 
 import java.awt.image.BufferedImage;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import javax.swing.JMenuItem;
 import javax.swing.JComponent;
@@ -43,7 +47,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 
 
-public class PTMExperimentViewer implements IViewer {
+public class PTMExperimentViewer implements IViewer, java.io.Serializable {
     
     protected static final String STORE_CLUSTER_CMD = "store-cluster-cmd";
     protected static final String SET_DEF_COLOR_CMD = "set-def-color-cmd";
@@ -75,6 +79,27 @@ public class PTMExperimentViewer implements IViewer {
 	this.header.setMissingColor(expViewer.getMissingColor());
 	this.header.addMouseListener(listener);
     }
+    
+    
+    private void writeObject(ObjectOutputStream oos) throws IOException {
+        oos.writeObject(this.expViewer);
+        oos.writeObject(this.header);
+        oos.writeObject(this.auxData);
+        oos.writeObject(this.auxTitles);
+    }    
+        
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        this.expViewer = (ExperimentViewer)ois.readObject();
+        this.header = (PTMExperimentHeader)ois.readObject();
+        this.auxData = (Object [][])ois.readObject();
+        this.auxTitles = (String [])ois.readObject();
+        
+	Listener listener = new Listener();	
+	this.expViewer.getContentComponent().addMouseListener(listener);
+	this.header.setMissingColor(expViewer.getMissingColor());
+        this.header.addMouseListener(listener);
+        this.popup = createJPopupMenu(listener);
+    }   
     
     /**
      * Returns the header component.

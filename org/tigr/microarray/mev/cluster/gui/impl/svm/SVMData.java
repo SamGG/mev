@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMData.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-05 22:11:50 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -19,7 +19,7 @@ import javax.swing.JComponent;
 import java.io.File;
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 
-class SVMData {
+class SVMData implements java.io.Serializable {
     public SVMData() {
         constant = 1.0f;
         coefficient = 1.0f;

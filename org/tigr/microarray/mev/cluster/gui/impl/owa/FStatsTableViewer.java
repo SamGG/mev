@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: FStatsTableViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 18:16:43 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 22:09:18 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -47,7 +47,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
  * @author  nbhagaba
  * @version 
  */
-public class FStatsTableViewer extends ViewerAdapter {
+public class FStatsTableViewer extends ViewerAdapter implements java.io.Serializable {
 
     private JComponent header;
     private JComponent content;    
@@ -76,8 +76,6 @@ public class FStatsTableViewer extends ViewerAdapter {
         fieldNames = data.getFieldNames();
         this.geneGroupMeans = geneGroupMeans;
         this.geneGroupSDs = geneGroupSDs;
-        //System.out.println("gene groupMeans.length = " + geneGroupMeans.length+ ", geneGroupMeans[0].length = " + geneGroupMeans[0].length);
-        //System.out.println("gene groupSDs.length = " + geneGroupSDs.length+ ", geneGroupSDs[0].length = " + geneGroupSDs[0].length);        
         this.pValues = pValues;
         this.fValues = fValues;
         this.ssGroups = ssGroups;
@@ -112,6 +110,71 @@ public class FStatsTableViewer extends ViewerAdapter {
         header  = fValuesTable.getTableHeader();  
         setMaxWidth(getContentComponent(), getHeaderComponent());         
     }
+    
+    
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.writeObject(this.experiment);
+        oos.writeObject(this.clusters);
+        oos.writeObject(this.fieldNames);
+
+        
+        oos.writeObject(this.geneGroupMeans);
+        oos.writeObject(this.geneGroupSDs);
+
+        oos.writeObject(this.pValues);
+        oos.writeObject(this.fValues);
+        oos.writeObject(this.dfNumValues);
+        oos.writeObject(this.dfDenomValues);
+        oos.writeObject(this.ssError);
+        oos.writeObject(this.ssGroups);
+        
+        
+        oos.writeBoolean(this.sig);
+
+        oos.writeObject(this.rows);
+                
+        oos.writeObject(this.fModel);
+        oos.writeObject(this.origData);
+        oos.writeObject(this.fValuesTable);
+        oos.writeObject(this.header);
+        oos.writeObject(this.sortedAscending);
+        oos.writeInt(this.univCnt);
+        oos.writeInt(this.univCnt2);
+        oos.writeInt(this.univCnt3);
+      }
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        this.experiment = (Experiment)ois.readObject();
+        this.clusters = (int [][])ois.readObject();
+        this.fieldNames = (String [])ois.readObject();
+
+        this.geneGroupMeans = (float [][])ois.readObject();
+        this.geneGroupSDs = (float [][])ois.readObject();
+        
+        this.pValues = (Vector)ois.readObject();
+        this.fValues = (Vector)ois.readObject();
+
+        this.dfNumValues = (Vector)ois.readObject();
+        this.dfDenomValues = (Vector)ois.readObject();
+        this.ssError = (Vector)ois.readObject();
+        this.ssGroups = (Vector)ois.readObject();
+        
+        this.sig = ois.readBoolean();        
+        this.rows = (int [])ois.readObject();        
+        this.fModel = (FValuesTableModel)ois.readObject();
+        this.origData = (Object [][])ois.readObject();
+        this.fValuesTable = (JTable)ois.readObject();
+        this.header = (JComponent)ois.readObject();
+        this.sortedAscending = (boolean [])ois.readObject();
+        this.univCnt = ois.readInt();
+        this.univCnt2 = ois.readInt();
+        this.univCnt3 = ois.readInt();
+        
+        addMouseListenerToHeaderInTable(fValuesTable);
+        this.header = header  = fValuesTable.getTableHeader();
+        this.getContentComponent(); //builds the popup and sets listeners
+    }
+    
     
     /**
      * Returns component to be inserted into the framework scroll pane.

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: TerrainViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-09 17:29:01 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 22:14:39 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -34,7 +34,7 @@ import org.tigr.microarray.mev.cluster.gui.*;
 import org.tigr.microarray.mev.cluster.gui.impl.util.IntArray;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ListDialog;
 
-public class TerrainViewer extends JPanel implements IViewer {
+public class TerrainViewer extends JPanel implements IViewer, java.io.Serializable {
 
     private IData data;
     private IFramework framework;
@@ -100,14 +100,113 @@ public class TerrainViewer extends JPanel implements IViewer {
     private UndoManager undoManager = new UndoManager();
     private Experiment experiment;
 
-    public TerrainViewer(boolean isGenes, IFramework framework, int[][] clusters, float[][] weights, float[][] locations, float sigma) {
+    public TerrainViewer(boolean isGenes, Experiment experiment, int[][] clusters, float[][] weights, float[][] locations, float sigma, int labelIndex) {
         this.isGenes = isGenes;
-        this.data = framework.getData();
-        this.experiment = this.data.getExperiment();
+        this.experiment = experiment;
         this.clusters = clusters;
         this.weights = weights;
         this.locations = locations;
         this.sigma = sigma;
+        setPreferredSize(new Dimension(10, 10));
+        Listener listener = new Listener();
+        // create the universe 
+        GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
+        this.onScreenCanvas = new Canvas3D(config);
+        this.universe = new SimpleUniverse(this.onScreenCanvas);
+
+        this.offScreenCanvas = new Canvas3D(config, true);
+        Screen3D sOn = onScreenCanvas.getScreen3D();
+        Screen3D sOff = offScreenCanvas.getScreen3D();
+        sOff.setSize(sOn.getSize());
+        sOff.setPhysicalScreenWidth(sOn.getPhysicalScreenWidth());
+        sOff.setPhysicalScreenHeight(sOn.getPhysicalScreenHeight());
+        // attach the offscreen canvas to the view
+        this.universe.getViewer().getView().addCanvas3D(this.offScreenCanvas);
+        // set its bounds
+        BoundingLeaf boundingLeaf = new BoundingLeaf(new BoundingSphere(new Point3d(), 100d));
+        boundingLeaf.setCapability(BoundingLeaf.ALLOW_REGION_READ);
+        PlatformGeometry platformGeometry = new PlatformGeometry();
+        platformGeometry.addChild(boundingLeaf);
+        platformGeometry.compile();
+        this.universe.getViewingPlatform().setPlatformGeometry(platformGeometry);
+        // set distances
+        this.universe.getViewer().getView().setFrontClipDistance(0.001);
+        this.universe.getViewer().getView().setBackClipDistance(0.5);
+        // basis point
+        Point3d basis = new Point3d(0.5, 0, 0.5);
+        this.view_tg = universe.getViewingPlatform().getViewPlatformTransform();
+        // set initilal view point
+        setInitialViewPoint(view_tg, basis);
+        // drifting
+        this.driftInterpolator = new DriftInterpolator(this.view_tg, boundingLeaf);
+        // create heights
+        float[][] heights = DomainUtil.getHeights(this.locations, this.grid_size, this.sigma);
+        // selection shape
+        this.selectionShape = new SelectionShape();
+        // the landscape
+        this.landscape = new Landscape(heights);
+        this.landscape.setPoligonMode(PolygonAttributes.POLYGON_FILL);
+        TransformGroup landTransform = new TransformGroup();
+        landTransform.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+        landTransform.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        landTransform.addChild(this.landscape);
+        // links shape
+        this.linksShape = new LinksShape(clusters, weights, locations);
+        // keyboard support
+        this.keyMotionBehavior = createKeyMotionBehavior(this.view_tg, basis, boundingLeaf);
+        // control panel
+        this.controlPanel = new ControlPanel(landTransform, this.keyMotionBehavior, boundingLeaf);
+        //this.controlPanel.setVisible(false);
+        Behavior sliderBehavior = this.controlPanel.getSliderBehavior();
+        // add gene shapes
+        this.genesShape = new GenesShape(GenesShape.POINTS, this.locations, this.up_left_point, this.bottom_right_point);
+        this.genesShape.setBounds(boundingLeaf.getRegion());
+        // add labels
+        this.labelIndex = labelIndex;
+        // create scene
+        Node[] nodes = new Node[] {this.selectionShape, landTransform, sliderBehavior, this.keyMotionBehavior, this.driftInterpolator, this.genesShape, this.linksShape};
+        this.sceneGroup = createSceneGraph(nodes, boundingLeaf);
+
+        this.pickBehavior = new PickBehavior(this.sceneGroup, this.onScreenCanvas, boundingLeaf.getRegion());
+        this.pickBehavior.setPickListener(listener);
+        this.sceneGroup.addChild(this.pickBehavior);
+
+        this.sceneGroup.compile();
+        // add the canvas to this panel
+        setLayout(new BorderLayout());
+        add(this.onScreenCanvas, BorderLayout.CENTER);
+        // control panel
+        add(this.controlPanel, BorderLayout.SOUTH);
+
+        this.popup = createJPopupMenu(listener);
+        this.onScreenCanvas.addMouseListener(listener);
+        this.onScreenCanvas.addMouseMotionListener(listener);
+        this.onScreenCanvas.addKeyListener(listener);
+    }
+    
+    public TerrainViewer(){  }
+    
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        System.out.println("Serialize TRN viewer");
+        oos.writeBoolean(this.isGenes);
+        oos.writeObject(this.experiment);
+        oos.writeObject(this.clusters);
+        oos.writeObject(this.weights);
+        oos.writeObject(this.locations);
+        oos.writeFloat(this.sigma);
+    }
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        
+        //Data read
+        this.isGenes = ois.readBoolean();
+        this.experiment = (Experiment)ois.readObject();
+        this.clusters = (int [][])ois.readObject();
+        this.weights = (float [][])ois.readObject();
+        this.locations = (float [][])ois.readObject();
+        this.sigma = ois.readFloat();
+        
+        //construct other objects
         setPreferredSize(new Dimension(10, 10));
         Listener listener = new Listener();
         // create the universe 
@@ -180,10 +279,9 @@ public class TerrainViewer extends JPanel implements IViewer {
         add(this.controlPanel, BorderLayout.SOUTH);
 
         this.popup = createJPopupMenu(listener);
-        this.tipWindow = new JWindow(framework.getFrame());
         this.onScreenCanvas.addMouseListener(listener);
         this.onScreenCanvas.addMouseMotionListener(listener);
-        this.onScreenCanvas.addKeyListener(listener);
+        this.onScreenCanvas.addKeyListener(listener);        
     }
 
     // IViewer implementation
@@ -197,8 +295,12 @@ public class TerrainViewer extends JPanel implements IViewer {
 
     public void onSelected(IFramework framework) {
         this.framework = framework;
+        if(this.tipWindow == null)
+            this.tipWindow = new JWindow(framework.getFrame());
+
         this.universe.addBranchGraph(this.sceneGroup);
-        onDataChanged(framework.getData());
+        this.data = framework.getData();
+        onDataChanged(this.data);
         onMenuChanged(framework.getDisplayMenu());
     }
 

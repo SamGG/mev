@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: TtestCentroidsViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-01-13 21:17:06 $
+ * $Revision: 1.5 $
+ * $Date: 2004-02-05 22:10:23 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -41,18 +41,18 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileFilter;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
 
 public class TtestCentroidsViewer extends CentroidsViewer {
-    
+
     private static final String SAVE_ALL_CLUSTERS_CMD = "save-all-clusters-cmd";
     private static final String SET_Y_TO_EXPERIMENT_MAX_CMD = "set-y-to-exp-max-cmd";
     private static final String SET_Y_TO_CLUSTER_MAX_CMD = "set-y-to-cluster-max-cmd";
-    
+
     private JPopupMenu popup;
     private JMenuItem setOverallMaxMenuItem;
     private JMenuItem setClusterMaxMenuItem;
-    
+
     private Vector tValues, pValues, dfValues, meansA, meansB, sdA, sdB, oneClassMeans, oneClassSDs;
     private int tTestDesign;
-    
+
     /**
      * Constructs a <code>TtestCentroidsViewer</code> for specified experiment
      * and clusters.
@@ -69,11 +69,24 @@ public class TtestCentroidsViewer extends CentroidsViewer {
         this.dfValues = dfValues;
         this.meansA = meansA;
         this.meansB = meansB;
-        this.sdA = sdA; 
-        this.sdB = sdB;        
+        this.sdA = sdA;
+        this.sdB = sdB;
         getContentComponent().addMouseListener(listener);
     }
+
     
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.defaultWriteObject();
+    }
+    
+     private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        Listener listener = new Listener();
+        this.popup = createJPopupMenu(listener);
+        getContentComponent().addMouseListener(listener);      
+     }
+ 
+     
     /**
      * Creates a popup menu.
      */
@@ -82,7 +95,7 @@ public class TtestCentroidsViewer extends CentroidsViewer {
         addMenuItems(popup, listener);
         return popup;
     }
-    
+
     /**
      * Adds the viewer specific menu items.
      */
@@ -92,19 +105,19 @@ public class TtestCentroidsViewer extends CentroidsViewer {
         menuItem.setActionCommand(SAVE_ALL_CLUSTERS_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
-        
+
         setOverallMaxMenuItem = new JMenuItem("Set Y to overall max...", GUIFactory.getIcon("Y_range_expand.gif"));
         setOverallMaxMenuItem.setActionCommand(SET_Y_TO_EXPERIMENT_MAX_CMD);
         setOverallMaxMenuItem.addActionListener(listener);
         setOverallMaxMenuItem.setEnabled(false);
         menu.add(setOverallMaxMenuItem);
-        
+
         setClusterMaxMenuItem = new JMenuItem("Set Y to cluster max...", GUIFactory.getIcon("Y_range_expand.gif"));
         setClusterMaxMenuItem.setActionCommand(SET_Y_TO_CLUSTER_MAX_CMD);
         setClusterMaxMenuItem.addActionListener(listener);
         menu.add(setClusterMaxMenuItem);
     }
-    
+
     /**
      * Saves all clusters.
      */
@@ -117,8 +130,8 @@ public class TtestCentroidsViewer extends CentroidsViewer {
             e.printStackTrace();
         }
     }
-    
-    
+
+
     /**
      * Saves values from specified experiment and cluster.
      */
@@ -135,7 +148,7 @@ public class TtestCentroidsViewer extends CentroidsViewer {
             }
         }
     }
-    
+
     private void saveCluster(File file, Experiment experiment, IData data, int[] rows) throws Exception {
         PrintWriter out = new PrintWriter(new FileOutputStream(file));
         String[] fieldNames = data.getFieldNames();
@@ -151,18 +164,18 @@ public class TtestCentroidsViewer extends CentroidsViewer {
             out.print("GroupA mean\t");
             out.print("GroupA std.dev.\t");
             out.print("GroupB mean\t");
-            out.print("GroupB std.dev.\t"); 
+            out.print("GroupB std.dev.\t");
             out.print("Absolute t value");
         } else if (tTestDesign == TtestInitDialog.ONE_CLASS) {
             out.print("Gene mean\t");
             out.print("Gene std.dev.\t");
-            out.print("Absolute t value");
+            out.print("t value");
         }
         //out.print("\t");
         out.print("\t");
         out.print("Degrees of freedom\t");
         out.print("p value");
-        
+
         //out.print("UniqueID\tName");
         for (int i=0; i<experiment.getNumberOfSamples(); i++) {
             out.print("\t");
@@ -184,7 +197,7 @@ public class TtestCentroidsViewer extends CentroidsViewer {
                 out.print(((Float)meansA.get(rows[i])).floatValue() + "\t");
                 out.print(((Float)sdA.get(rows[i])).floatValue() + "\t");
                 out.print(((Float)meansB.get(rows[i])).floatValue() + "\t");
-                out.print(((Float)sdB.get(rows[i])).floatValue() + "\t"); 
+                out.print(((Float)sdB.get(rows[i])).floatValue() + "\t");
             } else if (tTestDesign == TtestInitDialog.ONE_CLASS) {
                 out.print(((Float)oneClassMeans.get(rows[i])).floatValue() + "\t");
                 out.print(((Float)oneClassSDs.get(rows[i])).floatValue() + "\t");
@@ -193,7 +206,7 @@ public class TtestCentroidsViewer extends CentroidsViewer {
             out.print("" + ((Float)tValues.get(rows[i])).floatValue());
             out.print("\t");
             out.print("" + ((Float)dfValues.get(rows[i])).intValue());
-            out.print("\t");            
+            out.print("\t");
             out.print("" + ((Float)pValues.get(rows[i])).floatValue());
             for (int j=0; j<experiment.getNumberOfSamples(); j++) {
                 out.print("\t");
@@ -204,7 +217,7 @@ public class TtestCentroidsViewer extends CentroidsViewer {
         out.flush();
         out.close();
     }
-    
+
     /**
      * Returns a file choosed by the user.
      */
@@ -219,12 +232,12 @@ public class TtestCentroidsViewer extends CentroidsViewer {
         }
         return file;
     }
-    
+
     /**
      * The class to listen to mouse and action events.
      */
     private class Listener extends MouseAdapter implements ActionListener {
-        
+
         public void actionPerformed(ActionEvent e) {
             String command = e.getActionCommand();
             if (command.equals(SAVE_ALL_CLUSTERS_CMD)) {
@@ -241,7 +254,7 @@ public class TtestCentroidsViewer extends CentroidsViewer {
                 repaint();
             }
         }
-        
+
         private void setAllYRanges(int yRangeOption){
             int numClusters = getClusters().length;
             for(int i = 0; i < numClusters; i++){
@@ -249,16 +262,16 @@ public class TtestCentroidsViewer extends CentroidsViewer {
                 centroidViewer.setYRangeOption(yRangeOption);
             }
         }
-        
+
         public void mouseReleased(MouseEvent event) {
             maybeShowPopup(event);
         }
-        
+
         public void mousePressed(MouseEvent event) {
             maybeShowPopup(event);
         }
-        
-        
+
+
         private void maybeShowPopup(MouseEvent e) {
             if (!e.isPopupTrigger()) {
                 return;

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMClassifyViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-09 17:29:21 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 22:11:50 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -88,7 +88,37 @@ public class SVMClassifyViewer extends SVMResultViewer {
      //   resultPanel.addMouseMotionListener(listener);
         displayData();
         this.add(resultPanel,new GridBagConstraints(0,1,1,1,1.0,1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
-
+    }
+    
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        
+        this.discr = (float [])ois.readObject();
+        this.classes = (float [])ois.readObject();
+        this.discriminant = (FloatMatrix)ois.readObject();
+        
+        this.classifyGenes = ois.readBoolean();
+        this.data = (SVMData)ois.readObject();
+        this.info = (GeneralInfo)ois.readObject();
+        
+        MyListener listener = new MyListener();
+        getContentComponent().addMouseListener(listener);
+    }
+    
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { 
+        oos.writeObject(this.discr);
+        oos.writeObject(this.classes);
+        oos.writeObject(this.discriminant);
+        
+        oos.writeBoolean(this.classifyGenes);
+        oos.writeObject(this.data);
+        oos.writeObject(this.info);
+    }
+    
+    public void onSelected(IFramework frm) {
+        this.framework = frm;
+        this.experiment = frm.getData();
+        onMenuChanged(frm.getDisplayMenu());
     }
     
     /**
@@ -197,7 +227,7 @@ public class SVMClassifyViewer extends SVMResultViewer {
     }    
     
     
-    public class ClassifyResultPanel extends JPanel{
+    public class ClassifyResultPanel extends JPanel implements java.io.Serializable {
         int lineHeight = 20;
         
         int indexLength = 1;

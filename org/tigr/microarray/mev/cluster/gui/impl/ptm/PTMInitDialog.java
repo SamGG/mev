@@ -1,11 +1,11 @@
 /*
 Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
 All rights reserved.
-*/
+ */
 /*
  * $RCSfile: PTMInitDialog.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-05 22:10:56 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -58,7 +58,7 @@ public class PTMInitDialog extends AlgorithmDialog {
     
     public PTMInitDialog(JFrame parentFrame, boolean modality, FloatMatrix expMatrix, Vector uniqueIDs, Vector sampleNamesVector, Vector clusters, Vector expClusters, Color[] clusterColors, Color[] expClusterColors) {
         
-        super (parentFrame, "PTM: Pavlidis Template Matching", modality);
+        super(parentFrame, "PTM: Pavlidis Template Matching", modality);
         
         this.expMatrix = expMatrix;
         this.numberOfExperiments = expMatrix.getColumnDimension();
@@ -69,7 +69,7 @@ public class PTMInitDialog extends AlgorithmDialog {
         this.expClusters = expClusters;
         this.expClusterColors = expClusterColors;
         SampleNames = getSampleNames();
-      //  setBounds(0, 0, 1000, 800); // may need to tinker with this, to set the right size and position of the frame
+        //  setBounds(0, 0, 1000, 800); // may need to tinker with this, to set the right size and position of the frame
         setBounds(0,0,890,700);
         setSize(890, 700);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -379,7 +379,7 @@ public class PTMInitDialog extends AlgorithmDialog {
             }
             profileDisplayPanel.repaint();
         }
-
+        
         public void reset(){
             expList.setSelectedIndex(0);
             setTemplate = false;
@@ -408,7 +408,7 @@ public class PTMInitDialog extends AlgorithmDialog {
         }
         return meanProfile;
     }
-
+    
     
     float[][] convertToFloatMatrix(Vector geneCluster) {
         float[][] matrix = new float[geneCluster.size()][];
@@ -483,7 +483,7 @@ public class PTMInitDialog extends AlgorithmDialog {
             if (expClusters.size() == 0) {
                 clusterNames.add("No experiment clusters to show");
             } else {
-               
+                
                 for (int i = 0; i < expClusters.size(); i++) {
                     clusterNames.add("Exp. Cluster " + (i+1));
                 }
@@ -494,7 +494,6 @@ public class PTMInitDialog extends AlgorithmDialog {
                 for(int j = 0; j < expClusters.size(); j++) {//IN THIS "FOR" LOOP, CURRENT CLUSTER INITIALLY CONTAINS THE INDICES OF THE GENES IN THE CLUSTER, BUT THESE ARE REPLACED BY THE ACUALLY EXPRESSION VECTORS
                     Vector currentCluster = (Vector)expClusters.get(j);
                     Vector cluster = new Vector();
-                    System.out.println("Current cluster size = "+currentCluster.size());
                     for (int k = 0; k < currentCluster.size(); k++) {
                         index = ((Integer)currentCluster.get(k)).intValue();
                         Vector currentGene = getExperiment(index);
@@ -508,7 +507,7 @@ public class PTMInitDialog extends AlgorithmDialog {
                     
                     averageClusterProfiles.add(meanOfCurrentCluster);
                 }
-               
+                
             }
             
             
@@ -569,36 +568,36 @@ public class PTMInitDialog extends AlgorithmDialog {
                         Vector v = (Vector)(expClusters.elementAt(c));
                         
                         
-
+                        
                         int [] index = new int[v.size()];
                         for(int i = 0; i < index.length; i++)
                             index[i] = ((Integer)v.elementAt(i)).intValue();
                         
                         Vector expProfile = new Vector();
-                    Vector expProfiles = new Vector();
-                    
-                    for(int j = 0; j < index.length; j++){
+                        Vector expProfiles = new Vector();
                         
-                        expProfile = getExperiment(index[j]);
-                        float max = getMax(expProfile);
-                        float min = getMin(expProfile);
-                        
-                        if ((max - min) == 0) {
-                            for(int i = 0; i < expProfile.size(); i++) {
-                                expProfile.set(i, new Float(0.5));
+                        for(int j = 0; j < index.length; j++){
+                            
+                            expProfile = getExperiment(index[j]);
+                            float max = getMax(expProfile);
+                            float min = getMin(expProfile);
+                            
+                            if ((max - min) == 0) {
+                                for(int i = 0; i < expProfile.size(); i++) {
+                                    expProfile.set(i, new Float(0.5));
+                                }
+                            } else {
+                                for(int i = 0; i < expProfile.size(); i++) {
+                                    float f = (((Float)expProfile.get(i)).floatValue()- min)/(max - min);
+                                    expProfile.set(i, new Float(f));
+                                }
                             }
-                        } else {
-                            for(int i = 0; i < expProfile.size(); i++) {
-                                float f = (((Float)expProfile.get(i)).floatValue()- min)/(max - min);
-                                expProfile.set(i, new Float(f));
-                            }
+                            expProfiles.add(expProfile);
                         }
-                        expProfiles.add(expProfile);
-                    }
-                    
-                    template = getMeanProfile(expProfiles);
-                    setTemplate = true;
-                    clusterGenes = false;  
+                        
+                        template = getMeanProfile(expProfiles);
+                        setTemplate = true;
+                        clusterGenes = false;
                         okButton.setEnabled(true);
                     }
                 }
@@ -813,7 +812,7 @@ public class PTMInitDialog extends AlgorithmDialog {
             constraints.insets = new Insets(5,5,5,5);
             gridbag.setConstraints(templateSplitPane, constraints);
             this.add(templateSplitPane);
-
+            
             loadButton = new JButton("Load saved template", GUIFactory.getIcon("Open24.gif"));
             loadButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
             loadButton.setMargin(new Insets(10,10,10,10));
@@ -838,7 +837,7 @@ public class PTMInitDialog extends AlgorithmDialog {
                                     int index = templatesVector.size();
                                     String value;
                                     Vector currentTemplate = new Vector();
-                                    while ((value = br.readLine())!= null) {       
+                                    while ((value = br.readLine())!= null) {
                                         currentTemplate.add(new Float((value)));
                                     }
                                     listModel.addElement(file.getName());
@@ -858,7 +857,7 @@ public class PTMInitDialog extends AlgorithmDialog {
                     }
                 }
             });
-
+            
             selectButton = new JButton("Select Displayed Template", GUIFactory.getIcon("select_check24.gif"));
             selectButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
             selectButton.setMargin(new Insets(10,10,10,10));
@@ -1010,7 +1009,7 @@ public class PTMInitDialog extends AlgorithmDialog {
             buildConstraints(constraints, 1, 0, 1, 1, 80, 0);
             threshLabel1 = new JLabel("Enter magnitude of threshold R or p-Value (between 0 and 1 inclusive)");
             buildConstraints(constraints, 1, 1, 1, 1, 0, 0);
-            threshLabel2 = new JLabel("at which selected profiles should be correlated to template");   
+            threshLabel2 = new JLabel("at which selected profiles should be correlated to template");
             constraints.insets = new Insets(15, 5, 0, 0);
             
             JPanel thresholdInputPanel = new JPanel(new GridBagLayout());
@@ -1034,7 +1033,7 @@ public class PTMInitDialog extends AlgorithmDialog {
                 }
                 
             });
-
+            
             threshInputField = new JTextField("", 7);
             threshInputField.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent evt) {
@@ -1630,10 +1629,7 @@ public class PTMInitDialog extends AlgorithmDialog {
                     geneDataInClusters.add(currentCluster);
                     
                     Vector meanOfCurrentCluster = getMeanProfile(currentCluster);
-                    
-                                        for(int i = 0; i < meanOfCurrentCluster.size(); i++){
-                        System.out.println("mean = "+ ((Float)(meanOfCurrentCluster.elementAt(i))).floatValue());
-                    }
+                                       
                     averageClusterProfiles.add(meanOfCurrentCluster);
                 }
             }

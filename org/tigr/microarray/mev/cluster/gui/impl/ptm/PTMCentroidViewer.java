@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMCentroidViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2003-12-08 18:13:54 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-05 22:10:55 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -55,6 +55,24 @@ public class PTMCentroidViewer extends CentroidViewer {
         this.auxData = auxData;
 	getContentComponent().addMouseListener(listener);
     }
+    
+    
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.writeObject(this.templateVector);
+        oos.writeObject(this.auxData);
+        oos.writeObject(this.auxTitles);
+    }    
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {        
+        this.templateVector = (Vector)ois.readObject();
+        this.auxData = (Object [][])ois.readObject();
+        this.auxTitles = (String [])ois.readObject();
+            
+        Listener listener = new Listener();
+	this.popup = createJPopupMenu(listener);
+	getContentComponent().addMouseListener(listener);
+    }
+    
     
     /**
      * Creates a popup menu.

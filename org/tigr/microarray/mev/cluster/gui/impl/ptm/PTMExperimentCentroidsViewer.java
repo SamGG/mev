@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMExperimentCentroidsViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 17:07:43 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 22:10:56 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -55,6 +55,20 @@ public class PTMExperimentCentroidsViewer extends PTMExperimentSubCentroidsViewe
         this.popup = createJPopupMenu(listener);
         getContentComponent().addMouseListener(listener);
     }
+    
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.writeObject(this.auxData);
+        oos.writeObject(this.auxTitles);
+    }    
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {        
+        this.auxData = (Object [][])ois.readObject();
+        this.auxTitles = (String [])ois.readObject();
+            
+        Listener listener = new Listener();
+	this.popup = createJPopupMenu(listener);
+	getContentComponent().addMouseListener(listener);
+    }    
     
     /**
      * Creates a popup menu.

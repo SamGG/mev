@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: TtestExperimentViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-01-13 17:32:18 $
- * $Author: nbhagaba $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-05 22:10:23 $
+ * $Author: braisted $
  * $State: Exp $
  */
 
@@ -41,7 +41,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileFilter;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
 
-public class TtestExperimentViewer extends ExperimentViewer {
+public class TtestExperimentViewer extends ExperimentViewer implements java.io.Serializable {
 
     private JPopupMenu popup;
     private Vector tValues, pValues, dfValues, meansA, meansB, sdA, sdB, oneClassMeans, oneClassSDs;
@@ -68,8 +68,20 @@ public class TtestExperimentViewer extends ExperimentViewer {
 	getContentComponent().addMouseListener(listener);
 	getHeaderComponent().addMouseListener(listener);
     }
+       
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.defaultWriteObject();
+    }
     
-    /**
+     private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        Listener listener = new Listener();
+        this.popup = createJPopupMenu(listener);
+        getContentComponent().addMouseListener(listener);
+        getHeaderComponent().addMouseListener(listener);        
+     }
+         
+     /**
      * Creates a popup menu.
      */
     private JPopupMenu createJPopupMenu(Listener listener) {
@@ -185,7 +197,7 @@ public class TtestExperimentViewer extends ExperimentViewer {
         } else if (tTestDesign == TtestInitDialog.ONE_CLASS) {
             out.print("Gene mean\t");
             out.print("Gene std.dev.\t");
-            out.print("Absolute t value");
+            out.print("t value");
         }
         //out.print("UniqueID\tName");        
         //out.print("\t");

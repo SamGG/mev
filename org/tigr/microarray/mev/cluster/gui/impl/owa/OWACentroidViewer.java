@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: OWACentroidViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 20:30:22 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 22:09:18 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -17,7 +17,6 @@ import java.io.PrintWriter;
 import java.io.FileOutputStream;
 
 import javax.swing.JFileChooser;
-
 
 import java.awt.Color;
 import java.awt.Frame;
@@ -67,6 +66,17 @@ public class OWACentroidViewer extends CentroidViewer {
         this.dfDenomValues = dfDenomValues;
         getContentComponent().addMouseListener(listener);        
     }
+    
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.defaultWriteObject();
+    }
+
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        Listener listener = new Listener();
+        this.popup = createJPopupMenu(listener);
+        getContentComponent().addMouseListener(listener);
+    }    
 
     /**
      * Creates a popup menu.
@@ -189,9 +199,9 @@ public class OWACentroidViewer extends CentroidViewer {
                     out.print("\t");
                 //}
             }
-            for (int j = 0; j < geneGroupMeans[rows[i]].length; j++) {
-                out.print(geneGroupMeans[rows[i]][j] + "\t");
-                out.print(geneGroupSDs[rows[i]][j] + "\t");
+            for (int j = 0; j < geneGroupMeans[i].length; j++) {
+                out.print(geneGroupMeans[i][j] + "\t");
+                out.print(geneGroupSDs[i][j] + "\t");
             }            
             //out.print("\t");
             out.print("" + ((Float)fValues.get(rows[i])).floatValue());

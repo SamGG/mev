@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMExperimentHeader.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-05 22:10:56 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -38,6 +38,9 @@ public class PTMExperimentHeader extends javax.swing.JPanel {
     private PTMVectorPanel ptmVectorPanel;
     private static final String PTM_TEMPLATE_STRING = "Template";
     private Insets insets = new Insets(0, 10, 0, 0);
+    private BufferedImage posColorImage;
+    private BufferedImage negColorImage;
+
     /** Creates new PTMExperimentHeader */
     
     public PTMExperimentHeader(JComponent expHeader, Vector templateVector) {
@@ -47,6 +50,17 @@ public class PTMExperimentHeader extends javax.swing.JPanel {
 	add(expHeader, BorderLayout.NORTH);
 	add(ptmVectorPanel, BorderLayout.SOUTH);
     }
+    
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.writeObject(this.ptmVectorPanel);
+        oos.writeObject(this.insets);
+    }
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        this.ptmVectorPanel = (PTMVectorPanel)ois.readObject();
+        this.insets = (Insets)ois.readObject();
+    }
+    
     
     /**
      * The component to display ptm vector.
@@ -61,8 +75,6 @@ public class PTMExperimentHeader extends javax.swing.JPanel {
 	private boolean drawBorders = true;
 	private boolean isAntiAliasing = false;
 	private Color missingColor = new Color(128, 128, 128);
-	private BufferedImage posColorImage;
-	private BufferedImage negColorImage;
 	
 	/**
 	 * Constructs a <code>PTMVectorPanel</code> with specified templateVector.
@@ -72,14 +84,30 @@ public class PTMExperimentHeader extends javax.swing.JPanel {
 	    this.templateVector = templateVector;
 	}
 	
-	/**
-	 * Sets gradient images.
-	 */
-	public void setColorImages(BufferedImage posColorImage, BufferedImage negColorImage) {
-	    this.posColorImage = posColorImage;
-	    this.negColorImage = negColorImage;
-	}
-	
+        private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+            oos.defaultWriteObject();
+            oos.writeObject(this.templateVector);
+            oos.writeInt(this.cluster);
+            oos.writeFloat(this.maxValue);
+            oos.writeFloat(this.minValue);
+            oos.writeObject(this.elementSize);
+            oos.writeBoolean(this.drawBorders);
+            oos.writeBoolean(this.isAntiAliasing);
+            oos.writeObject(this.missingColor);
+        }
+        
+        private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+            ois.defaultReadObject();
+            this.templateVector = (Vector)ois.readObject();
+            this.cluster = ois.readInt();
+            this.maxValue = ois.readFloat();
+            this.minValue = ois.readFloat();
+            this.elementSize = (Dimension)ois.readObject();
+            this.drawBorders = ois.readBoolean();
+            this.isAntiAliasing = ois.readBoolean();
+            this.missingColor = (Color)ois.readObject();
+        }
+        
 	/**
 	 * Sets color for NaN values.
 	 */
@@ -271,7 +299,8 @@ public class PTMExperimentHeader extends javax.swing.JPanel {
      * Sets gradient images.
      */
     public void setColorImages(BufferedImage posColorImage, BufferedImage negColorImage) {
-	ptmVectorPanel.setColorImages(posColorImage, negColorImage);
+        this.posColorImage = posColorImage;
+        this.negColorImage = negColorImage;
     }
     
     /**

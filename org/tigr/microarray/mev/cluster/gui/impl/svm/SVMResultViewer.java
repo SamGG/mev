@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMResultViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-09 17:29:21 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 22:11:50 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -46,7 +46,7 @@ import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
-abstract class SVMResultViewer extends JPanel implements IViewer {
+abstract class SVMResultViewer extends JPanel implements IViewer, java.io.Serializable {
     
     // gui stuff
     protected JTextArea Log;
@@ -90,6 +90,32 @@ abstract class SVMResultViewer extends JPanel implements IViewer {
         Log.addMouseListener(myListener);
         Log.addMouseMotionListener(myListener);
     }
+
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        this.analysisExperiment = (Experiment)ois.readObject();
+        this.Log = (JTextArea)ois.readObject();
+        this.resultPanel = (JPanel)ois.readObject();
+        this.fieldNames = (String [])ois.readObject();
+        this.labelIndex = ois.readInt();
+        
+        MyListener listener = new MyListener();
+        MyPopup = new JPopupMenu();
+        menuItem1 = new JMenuItem("Save classification...", GUIFactory.getIcon("save_as16.gif"));
+        menuItem1.setActionCommand("save-result-command");
+        menuItem1.addActionListener( new Listener()  );
+        MyPopup.add(menuItem1);
+        getContentComponent().addMouseListener(listener);
+    }
+    
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { 
+        oos.writeObject(this.analysisExperiment);
+        oos.writeObject(this.Log);
+        oos.writeObject(this.resultPanel);
+        oos.writeObject(this.fieldNames);
+        oos.writeInt(this.labelIndex);
+    }
+        
+    public abstract void onSelected(IFramework frm);
     
     protected abstract void displayData();
     
@@ -108,9 +134,7 @@ abstract class SVMResultViewer extends JPanel implements IViewer {
         return null;
     }
     
-    public void onSelected(IFramework frm) {
-        onMenuChanged(frm.getDisplayMenu());
-    }
+
     
     public void onDataChanged(IData data) {}
     

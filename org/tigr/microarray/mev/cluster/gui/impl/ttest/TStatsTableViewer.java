@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: TStatsTableViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-01-13 17:31:39 $
- * $Author: nbhagaba $
+ * $Revision: 1.5 $
+ * $Date: 2004-02-05 22:10:23 $
+ * $Author: braisted $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.ttest;
@@ -39,6 +39,7 @@ import javax.swing.SwingUtilities;
 import org.tigr.util.QSort;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
@@ -47,7 +48,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
  * @author  nbhagaba
  * @version
  */
-public class TStatsTableViewer extends ViewerAdapter {
+public class TStatsTableViewer extends ViewerAdapter implements java.io.Serializable {
     
     private JComponent header;
     private JComponent content;
@@ -122,6 +123,64 @@ public class TStatsTableViewer extends ViewerAdapter {
         setMaxWidth(getContentComponent(), getHeaderComponent());
     }
     
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.writeObject(this.experiment);
+        oos.writeObject(this.clusters);
+        oos.writeObject(this.fieldNames);
+        oos.writeInt(this.tTestDesign);
+        
+        oos.writeObject(this.oneClassMeans);
+        oos.writeObject(this.oneClassSDs);
+        oos.writeObject(this.pValues);
+        oos.writeObject(this.tValues);
+        oos.writeObject(this.dfValues);
+        oos.writeObject(this.meansA);
+        oos.writeObject(this.meansB);
+        oos.writeObject(this.sdA);
+        oos.writeObject(this.sdB);
+        oos.writeBoolean(this.sig);
+
+        oos.writeObject(this.rows);
+        oos.writeObject(this.tModel);
+        oos.writeObject(this.origData);
+        oos.writeObject(this.tValuesTable);
+        oos.writeObject(this.header);
+        oos.writeObject(this.sortedAscending);
+      }
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        this.experiment = (Experiment)ois.readObject();
+        this.clusters = (int [][])ois.readObject();
+        this.fieldNames = (String [])ois.readObject();
+        this.tTestDesign = ois.readInt();
+
+        this.oneClassMeans = (Vector)ois.readObject();
+        this.oneClassSDs = (Vector)ois.readObject();
+        this.pValues = (Vector)ois.readObject();
+        this.tValues = (Vector)ois.readObject();
+        this.dfValues = (Vector)ois.readObject();
+        this.meansA = (Vector)ois.readObject();
+        this.meansB = (Vector)ois.readObject();
+        this.sdA = (Vector)ois.readObject();
+        this.sdB = (Vector)ois.readObject();
+        this.sig = ois.readBoolean();
+        
+        this.rows = (int [])ois.readObject();
+        this.tModel = (TValuesTableModel)ois.readObject();
+        this.origData = (Object [][])ois.readObject();
+        this.tValuesTable = (JTable)ois.readObject();
+        this.header = (JComponent)ois.readObject();
+        this.sortedAscending = (boolean [])ois.readObject();
+        
+        addMouseListenerToHeaderInTable(tValuesTable);
+        this.header = header  = tValuesTable.getTableHeader();
+        this.getContentComponent();  //builds popup and sets listeners
+    }
+    
+    public void onSelected(IFramework framework){
+        this.data = framework.getData();
+    }
+    
     /**
      * Returns component to be inserted into the framework scroll pane.
      */
@@ -158,9 +217,9 @@ public class TStatsTableViewer extends ViewerAdapter {
                             }
                         }
                         if (tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS) {
-                            out.print("\tGroupA mean\tGroupA std.dev.\tGroupB mean\tGroupB std.dev.\t Abs. t-ratio\tdf\tp-value\n");
+                            out.print("\tGroupA mean\tGroupA std.dev.\tGroupB mean\tGroupB std.dev.\tt-ratio\tdf\tp-value\n");
                         } else if (tTestDesign == TtestInitDialog.ONE_CLASS) {
-                            out.print("\tGene mean\tGene std.dev.\tAbs. t-ratio\tdf\tp-value\n");
+                            out.print("\tGene mean\tGene std.dev.\tt-ratio\tdf\tp-value\n");
                         }
                         for (int i = 0; i < rows.length; i++) {
                             for (int k = 0; k < fieldNames.length; k++) {
@@ -221,7 +280,7 @@ public class TStatsTableViewer extends ViewerAdapter {
         //return tValuesTable;
         //return content;
     }
-       
+    
     /**
      * Returns the viewer header.
      */
@@ -252,7 +311,7 @@ public class TStatsTableViewer extends ViewerAdapter {
     
     
     
-    class TValuesTableModel extends AbstractTableModel {
+    class TValuesTableModel extends AbstractTableModel implements java.io.Serializable {
         String[] columnNames;
         Object[][] tableData;
         
@@ -267,7 +326,7 @@ public class TStatsTableViewer extends ViewerAdapter {
                 columnNames[counter + 1] = "GroupA std.dev";
                 columnNames[counter + 2] = "GroupB mean";
                 columnNames[counter + 3] = "GroupB std.dev.";
-                columnNames[counter + 4] = "Abs. t-ratio";
+                columnNames[counter + 4] = "t-ratio";
                 columnNames[counter + 5] = "df";
                 columnNames[counter + 6] = "p-value";
                 
@@ -345,7 +404,7 @@ public class TStatsTableViewer extends ViewerAdapter {
                 }
                 columnNames[counter] = "Gene mean";
                 columnNames[counter + 1] = "Gene std.dev";
-                columnNames[counter + 2] = " Abs. t-ratio";
+                columnNames[counter + 2] = "t-ratio";
                 columnNames[counter + 3] = "df";
                 columnNames[counter + 4] = "p-value";
                 

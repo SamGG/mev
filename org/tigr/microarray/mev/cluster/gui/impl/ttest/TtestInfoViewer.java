@@ -2,10 +2,10 @@
 Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
-/**
+/*
  * $RCSfile: TtestInfoViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-01-21 21:57:15 $
+ * $Revision: 1.7 $
+ * $Date: 2004-02-05 22:10:23 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -23,7 +23,7 @@ import javax.swing.JTextArea;
 
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
-public class TtestInfoViewer extends ViewerAdapter {
+public class TtestInfoViewer extends ViewerAdapter implements java.io.Serializable {
     
     private JComponent header;
     private JTextArea  content;
@@ -101,13 +101,17 @@ public class TtestInfoViewer extends ViewerAdapter {
     private void setMaxWidth(JComponent content, JComponent header) {
 	int c_width = content.getPreferredSize().width;
 	int h_width = header.getPreferredSize().width;
-
 	if (c_width > h_width) {
 	    header.setPreferredSize(new Dimension(c_width, header.getPreferredSize().height));
 	} else {
 	    content.setPreferredSize(new Dimension(h_width, content.getPreferredSize().height));
 	}
     }
-
-     
+    
+    /** Returns a component to be inserted into the scroll pane row header
+     */
+    public JComponent getRowHeaderComponent() {
+        return null;
+    }
+    
 }
