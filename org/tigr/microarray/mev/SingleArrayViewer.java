@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SingleArrayViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-03-01 15:52:30 $
+ * $Revision: 1.4 $
+ * $Date: 2004-07-26 21:24:42 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -25,7 +25,6 @@ import javax.swing.event.*;
 import javax.swing.filechooser.FileFilter;
 import javax.media.jai.*;
 import com.sun.media.jai.codec.*;
-import org.tigr.util.Query;
 import org.tigr.util.awt.GBA;
 import org.tigr.util.awt.ActionInfoEvent;
 import org.tigr.microarray.util.awt.SetElementSizeDialog;
@@ -536,9 +535,8 @@ public class SingleArrayViewer extends ArrayViewer implements Printable {
         } catch (Exception e) {
             System.out.println("Exception (SingleArrayViewer.loadDataFromDatabase()): " + e);
             e.printStackTrace();
-        } finally {
-            return slideData;
         }
+        return slideData;
     }
     
     public void loadDataFromDatabase(String filename) {
@@ -2514,8 +2512,8 @@ public class SingleArrayViewer extends ArrayViewer implements Printable {
                         int col = canvas.findColumn(event.getX(), event.getY());
                         final int columns = slideData.getSlideMetaData().getColumns();
                         int index = (row-1)*columns +col -1;
-                     //   System.out.println("row, col, columns index "+ row +" "+col+" "+columns+  "   "+((columns*(row-1))+(col-1)));
-                        Manager.displaySlideElementInfo(getFrame(), slideData, element, ((columns*(row-1))+(col-1))); 
+                        //   System.out.println("row, col, columns index "+ row +" "+col+" "+columns+  "   "+((columns*(row-1))+(col-1)));
+                        Manager.displaySlideElementInfo(getFrame(), slideData, element, ((columns*(row-1))+(col-1)));
                         //canvas.findRow(event.getX(), event.getY())-1);
                     } catch (ArrayIndexOutOfBoundsException e) {
                         ;
@@ -3219,14 +3217,14 @@ public class SingleArrayViewer extends ArrayViewer implements Printable {
             ISlideDataElement slideDataElement;
             
             if (slideData == null){
-                System.out.println("IN SAV canvas null data");                
-                return;                
+                System.out.println("IN SAV canvas null data");
+                return;
             }
             int index;
             final int rows    = slideData.getSlideMetaData().getRows();
             final int columns = slideData.getSlideMetaData().getColumns();
             if (columns==0) {
-                System.out.println("IN SAV canvas columns = 0"); 
+                System.out.println("IN SAV canvas columns = 0");
                 return;
             }
             int row, column;
@@ -3350,9 +3348,10 @@ public class SingleArrayViewer extends ArrayViewer implements Printable {
                 }
             } catch (Exception e) {
                 System.out.println("Exception (SingleArrayViewerCanvas.getFalseColor()): " + e);
-            } finally {
-                return falseColor;
             }
+            
+            return falseColor;
+            
         }
         
         public Color getFalseColor2(long value) {
@@ -3372,9 +3371,10 @@ public class SingleArrayViewer extends ArrayViewer implements Printable {
                 falseColor = (Color) palette.elementAt(scale.intValue());
             } catch (Exception e) {
                 System.out.println("Exception (SingleArrayViewerCanvas.getFalseColor()): " + e);
-            } finally {
-                return falseColor;
             }
+            
+            return falseColor;
+            
         }
         
         public Color getGreenScaleColor(long value) {
@@ -3418,9 +3418,9 @@ public class SingleArrayViewer extends ArrayViewer implements Printable {
                 ;
             } catch (Exception e) {
                 System.out.println("Exception (SingleArrayViewerCanvas.getGreenScaleColor()): " + e);
-            } finally {
-                return greenScaleColor;
             }
+            
+            return greenScaleColor;       
         }
         
         public Color getRedScaleColor(long value) {
@@ -3455,9 +3455,8 @@ public class SingleArrayViewer extends ArrayViewer implements Printable {
                 ;
             } catch (Exception e) {
                 System.out.println("Exception (SingleArrayViewerCanvas.getRedScaleColor()): " + e);
-            } finally {
-                return redScaleColor;
-            }
+            }    
+            return redScaleColor;
         }
         
         public void drawSlideDataElement(Graphics2D g, int dataRow, int row, int column) {
