@@ -4,13 +4,13 @@ All rights reserved.
 */
 /*
  * $RCSfile: CASTExperimentCentroidViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-03 16:01:52 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-13 18:34:01 $
  * $Author: braisted $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.cast;
-
+ 
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
