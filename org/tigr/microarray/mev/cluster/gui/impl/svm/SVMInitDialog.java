@@ -1,11 +1,11 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: SVMInitDialog.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
+ * $Revision: 1.2 $
+ * $Date: 2004-07-27 19:59:17 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -19,6 +19,7 @@ import java.net.URL;
 import java.io.*;
 import javax.swing.border.*;
 
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 
@@ -280,7 +281,7 @@ public class SVMInitDialog extends AlgorithmDialog {
      * Launches file chooser
      */    
     protected void onChooseFile() {
-        final JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        final JFileChooser fc = new JFileChooser(TMEV.getFile("data/"));
         fc.setCurrentDirectory(new File("Data"));
         fc.addChoosableFileFilter(new ClassificationFileFilter());
         fc.setFileView(new ClassificationFileView());

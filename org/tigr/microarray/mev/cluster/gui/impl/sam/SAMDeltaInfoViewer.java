@@ -1,5 +1,5 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
@@ -37,6 +37,8 @@ import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
  * @version 
  */
 public class SAMDeltaInfoViewer extends ViewerAdapter implements java.io.Serializable {
+    public static final long serialVersionUID = 202015020001L;
+    
     private JComponent header;
     private JTextArea  content; 
     private double[] deltaGrid, medNumFalse,false90th, FDRMedian, FDR90th;

@@ -1,11 +1,11 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-20034, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: ValuesViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-05 20:26:34 $
+ * $Revision: 1.4 $
+ * $Date: 2004-07-27 19:59:16 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -27,6 +27,7 @@ import org.tigr.util.FloatMatrix;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
 public class ValuesViewer extends ViewerAdapter implements java.io.Serializable {
+    public static final long serialVersionUID = 202011050001L;
     
     private JComponent header;
     private JComponent content;

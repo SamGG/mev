@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SAMCentroidViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-06 20:48:36 $
+ * $Revision: 1.3 $
+ * $Date: 2004-07-27 19:59:16 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -36,6 +36,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JOptionPane;
 import javax.swing.JColorChooser;
 
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
@@ -240,7 +241,7 @@ public class SAMCentroidViewer extends CentroidViewer {
      */
     private static File getFile(Frame frame) {
         File file = null;
-        final JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        final JFileChooser fc = new JFileChooser(TMEV.getFile("data/"));
         fc.addChoosableFileFilter(new ExpressionFileFilter());
         fc.setFileView(new ExpressionFileView());
         int ret = fc.showSaveDialog(frame);

@@ -1,11 +1,11 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: SVMDiscriminantExperimentViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-13 19:15:07 $
+ * $Revision: 1.5 $
+ * $Date: 2004-07-27 19:59:17 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -60,6 +60,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 
 
 public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer, java.io.Serializable {
+    public static final long serialVersionUID = 202018040001L;
     
     private int numRetainedPos;
     private int numRecruitedNeg;

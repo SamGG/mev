@@ -1,11 +1,11 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: GeneralInfo.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-05 22:11:50 $
+ * $Revision: 1.3 $
+ * $Date: 2004-07-27 19:59:17 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -13,6 +13,8 @@ All rights reserved.
 package org.tigr.microarray.mev.cluster.gui.impl.svm;
 
 class GeneralInfo implements java.io.Serializable {
+    public static final long serialVersionUID = 202018010001L;
+
     public long time;
     public String function;
 }

@@ -1,11 +1,11 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: RNExperimentCentroidViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-05 21:13:01 $
+ * $Revision: 1.3 $
+ * $Date: 2004-07-27 19:59:16 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -29,6 +29,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
 
 public class RNExperimentCentroidViewer extends ExperimentClusterCentroidViewer implements java.io.Serializable {
+    public static final long serialVersionUID = 202014060001L;
     
     private JPopupMenu popup;
 

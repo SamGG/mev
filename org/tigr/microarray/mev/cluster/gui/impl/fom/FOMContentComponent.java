@@ -1,11 +1,11 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: FOMContentComponent.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-04-12 19:34:20 $
+ * $Revision: 1.5 $
+ * $Date: 2004-07-27 19:59:16 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -31,6 +31,7 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 
 public class FOMContentComponent extends JPanel implements java.io.Serializable {
+    public static final long serialVersionUID = 202003050001L;
     
     private FOMGraph fomGraph;
     private float[] fom_values;

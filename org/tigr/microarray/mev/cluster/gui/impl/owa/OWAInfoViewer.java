@@ -1,11 +1,11 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: OWAInfoViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-05 22:09:18 $
+ * $Revision: 1.4 $
+ * $Date: 2004-07-27 19:59:16 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -30,7 +30,8 @@ import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
  * @version 
  */
 public class OWAInfoViewer extends ViewerAdapter implements java.io.Serializable {
-
+    public static final long serialVersionUID = 202010020001L;
+    
     private JComponent header;
     private JTextArea  content;
     /** Creates new OWAInfoViewer */

@@ -36,6 +36,7 @@ import org.tigr.util.QSort;
  * @author  nbhagaba
  */
 public class ClusterTableViewer implements IViewer, java.io.Serializable {
+    public static final long serialVersionUID = 201050001L;
     
     private static final String NO_GENES_STR = "No Genes in Cluster!";
     private static final Font ERROR_FONT = new Font("monospaced", Font.BOLD, 20);

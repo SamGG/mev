@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMResultViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-13 19:15:07 $
+ * $Revision: 1.5 $
+ * $Date: 2004-07-27 19:59:17 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -47,6 +47,7 @@ import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
 abstract class SVMResultViewer extends JPanel implements IViewer, java.io.Serializable {
+    public static final long serialVersionUID = 202018070001L;
     
     // gui stuff
     protected JTextArea Log;

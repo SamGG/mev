@@ -1,11 +1,11 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: HCLTreeData.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-05 20:25:10 $
+ * $Revision: 1.3 $
+ * $Date: 2004-07-27 19:59:16 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -13,7 +13,7 @@ package org.tigr.microarray.mev.cluster.gui.impl.hcl;
 
 public class HCLTreeData implements java.io.Serializable {
     
-    static final long serialVersionUID = 1L;
+    public static final long serialVersionUID = 202006070001L;
 
     public int[] child_1_array;
     public int[] child_2_array;

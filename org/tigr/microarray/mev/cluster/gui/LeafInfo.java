@@ -1,11 +1,11 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: LeafInfo.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-09 15:31:36 $
+ * $Revision: 1.4 $
+ * $Date: 2004-07-27 19:59:15 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -23,7 +23,7 @@ import javax.swing.JPopupMenu;
  */
 public class LeafInfo implements java.io.Serializable {
         
-    static final long serialVersionUID = 1L;
+    public static final long serialVersionUID = 2020001L;
     
     // leaf name
     private String name;

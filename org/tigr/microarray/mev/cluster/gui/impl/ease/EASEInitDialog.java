@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASEInitDialog.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-07-26 21:32:00 $
+ * $Revision: 1.6 $
+ * $Date: 2004-07-27 19:59:16 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -588,7 +588,7 @@ public class EASEInitDialog extends AlgorithmDialog {
             annPanel.add(annPane, new GridBagConstraints(1,1,2,1,0.0,1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
             
             sep = System.getProperty("file.separator");
-            File file = TMEV.getFile("Data/Ease/");
+            File file = TMEV.getFile("data/ease/");
             String tempPath = file.getPath();
             Vector fileVector = new Vector();
             fileList = new JList(fileVector);
@@ -912,7 +912,7 @@ public class EASEInitDialog extends AlgorithmDialog {
                     easeParamPanel.fileLabel.setEnabled(false);
                 }
             } else if (command.equals("converter-file-browser-command")){
-                File convertFile = TMEV.getFile("Data/Ease/Data/Convert");
+                File convertFile = TMEV.getFile("data/ease/Data/Convert");
                 JFileChooser chooser = new JFileChooser(convertFile);
                 chooser.setDialogTitle("Annotation Converter Selection");
                 chooser.setMultiSelectionEnabled(false);
@@ -922,7 +922,7 @@ public class EASEInitDialog extends AlgorithmDialog {
                 return;
             } else if (command.equals("ann-file-browser-command")){
                 
-                File classFile = TMEV.getFile("Data/Ease/Data/Class/");
+                File classFile = TMEV.getFile("data/ease/Data/Class/");
                 JFileChooser chooser = new JFileChooser(classFile);
                 chooser.setDialogTitle("Annotation --> GO Term, File(s) Selection");
                 chooser.setMultiSelectionEnabled(true);

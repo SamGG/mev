@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASETableViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-07-26 21:32:00 $
+ * $Revision: 1.4 $
+ * $Date: 2004-07-27 19:59:16 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -49,6 +49,7 @@ import org.tigr.microarray.mev.TMEV;
 /** Displays ease results
  */
 public class EASETableViewer extends TableViewer implements java.io.Serializable {
+    public static final long serialVersionUID = 202002010001L;
     
     DefaultMutableTreeNode easeRoot;
     JPopupMenu menu;

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: PTMInitDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-05 22:10:56 $
+ * $Revision: 1.3 $
+ * $Date: 2004-07-27 19:59:16 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -21,8 +21,9 @@ import javax.swing.event.*;
 import org.tigr.util.*;
 import org.tigr.util.awt.*;
 import org.tigr.graph.*;
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
+import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
 
@@ -143,9 +144,8 @@ public class PTMInitDialog extends AlgorithmDialog {
         saveTemplateButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent evt) {
                 if (evt.getSource() == saveTemplateButton) {
-                    JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
-                    fc.setCurrentDirectory(new File("Data"));
-                    
+                    JFileChooser fc = new JFileChooser(TMEV.getFile("data/"));
+
                     int returnVal = fc.showSaveDialog(PTMInitDialog.this);
                     if (returnVal == JFileChooser.APPROVE_OPTION) {
                         File file = fc.getSelectedFile();
@@ -821,9 +821,8 @@ public class PTMInitDialog extends AlgorithmDialog {
             loadButton.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent evt) {
                     if (evt.getSource() == loadButton) {
-                        JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
-                        fc.setCurrentDirectory(new File(fc.getCurrentDirectory(), "Data"));
-                        
+                        JFileChooser fc = new JFileChooser(TMEV.getFile("data/"));
+                                                
                         int returnVal = fc.showOpenDialog(SavedTemplateSelector.this);
                         if (returnVal == JFileChooser.APPROVE_OPTION) {
                             //     listModel.removeAllElements();

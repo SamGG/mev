@@ -1,11 +1,11 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: TStatsTableViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-02-05 22:10:23 $
+ * $Revision: 1.6 $
+ * $Date: 2004-07-27 19:59:17 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -49,6 +49,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
  * @version
  */
 public class TStatsTableViewer extends ViewerAdapter implements java.io.Serializable {
+    public static final long serialVersionUID = 202021010001L;
     
     private JComponent header;
     private JComponent content;

@@ -1,12 +1,12 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: HCLViewer.java,v $
- * $Revision: 1.10 $
- * $Date: 2004-04-29 17:41:51 $
- * $Author: nbhagaba $
+ * $Revision: 1.11 $
+ * $Date: 2004-07-27 19:59:16 $
+ * $Author: braisted $
  * $State: Exp $
  */
 /*
@@ -80,9 +80,9 @@ import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 
 public class HCLViewer extends JPanel implements IViewer {
-    
-    static final long serialVersionUID = 1L;
-    
+
+    public static final long serialVersionUID = 202006080001L;
+
     protected static final String STORE_CLUSTER_CMD = "store-cluster-cmd";
     protected static final String LAUNCH_NEW_SESSION_CMD = "launch-new-session-cmd";
     protected static final String SAVE_CLUSTER_CMD = "save-cluster-cmd";

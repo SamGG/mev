@@ -1,11 +1,11 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: PCA3DViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-10 00:17:01 $
+ * $Revision: 1.5 $
+ * $Date: 2004-07-27 19:59:16 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -40,6 +40,7 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 
 public class PCA3DViewer extends ViewerAdapter implements java.io.Serializable {
+    public static final long serialVersionUID = 202011010001L;
     
     private static final String RESET_CMD   = "reset-cmd";
     private static final String OPTIONS_CMD = "options-cmd";

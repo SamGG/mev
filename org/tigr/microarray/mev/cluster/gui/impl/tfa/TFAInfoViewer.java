@@ -1,4 +1,15 @@
 /*
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+All rights reserved.
+*/
+/*
+ * $RCSfile: TFAInfoViewer.java,v $
+ * $Revision: 1.2 $
+ * $Date: 2004-07-27 19:59:17 $
+ * $Author: braisted $
+ * $State: Exp $
+ */
+/*
  * TFAInfoViewer.java
  *
  * Created on February 27, 2004, 2:10 PM
@@ -23,6 +34,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
  * @author  nbhagaba
  */
 public class TFAInfoViewer extends ViewerAdapter implements java.io.Serializable {
+    public static final long serialVersionUID = 202020010001L;
 
     private JComponent header;
     private JTextArea  content;  

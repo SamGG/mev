@@ -1,11 +1,11 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: HCLTree.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-05 20:25:10 $
+ * $Revision: 1.5 $
+ * $Date: 2004-07-27 19:59:16 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -37,13 +37,15 @@ import org.tigr.util.FloatMatrix;
 
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 
+import org.tigr.microarray.mev.TMEV;
+
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 
 public class HCLTree extends JPanel implements java.io.Serializable {
     
-    static final long serialVersionUID = 1L;
+    public static final long serialVersionUID = 202006060001L;
     
     // These constants specify a horizontal or
     // vertical orientation.
@@ -879,7 +881,7 @@ public class HCLTree extends JPanel implements java.io.Serializable {
         int child1, child2;
         
         File file = null;
-        final JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        final JFileChooser fc = new JFileChooser(TMEV.getFile("data/"));
         int ret = fc.showSaveDialog(new javax.swing.JFrame());
         if (ret == JFileChooser.APPROVE_OPTION) {
             file = fc.getSelectedFile();
@@ -921,7 +923,7 @@ public class HCLTree extends JPanel implements java.io.Serializable {
         int child1, child2;
         
         File file = null;
-        final JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        final JFileChooser fc = new JFileChooser(TMEV.getFile("data/"));
         int ret = fc.showSaveDialog(new javax.swing.JFrame());
         if (ret == JFileChooser.APPROVE_OPTION) {
             file = fc.getSelectedFile();

@@ -1,11 +1,11 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: CentroidExperimentHeader.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-05 22:53:06 $
+ * $Revision: 1.3 $
+ * $Date: 2004-07-27 19:59:15 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -39,6 +39,7 @@ import org.tigr.util.FloatMatrix;
  *  Creates a header with a centroid vector image and centroid label
  */
 public class CentroidExperimentHeader extends JPanel implements java.io.Serializable {
+    public static final long serialVersionUID = 201010001L;    
     
     private String vectorString;
     private CentroidVectorPanel centroidVectorPanel;

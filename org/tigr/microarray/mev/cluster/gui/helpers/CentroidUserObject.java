@@ -1,18 +1,18 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: CentroidUserObject.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-05 22:53:06 $
+ * $Revision: 1.3 $
+ * $Date: 2004-07-27 19:59:15 $
  * $Author: braisted $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.helpers;
 
 public class CentroidUserObject implements java.io.Serializable {
-    
+    public static final long serialVersionUID = 201030001L;    
     // drawing modes
     public static final int VARIANCES_MODE = 0;
     public static final int VALUES_MODE = 1;

@@ -1,11 +1,11 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: CastFOMContentComponentB.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-04-06 13:02:12 $
+ * $Revision: 1.4 $
+ * $Date: 2004-07-27 19:59:16 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -33,6 +33,7 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 
 public class CastFOMContentComponentB extends JPanel implements java.io.Serializable {
+    public static final long serialVersionUID = 202003030001L;    
     
     //private FOMGraph fomGraphA;
     private FOMGraph fomGraphB;

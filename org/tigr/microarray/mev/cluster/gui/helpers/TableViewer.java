@@ -1,4 +1,8 @@
 /*
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+All rights reserved.
+ */
+/*
  * TableViewer.java
  *
  * Created on September 5, 2003, 10:17 AM
@@ -47,6 +51,7 @@ import org.tigr.microarray.mev.cluster.gui.IViewer;
 
 
 public class TableViewer extends JPanel implements IViewer, java.io.Serializable {
+    public static final long serialVersionUID = 201100001L;
     
     protected JTable table;
     protected TableModel model;

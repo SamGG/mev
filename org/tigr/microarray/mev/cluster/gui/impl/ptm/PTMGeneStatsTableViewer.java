@@ -1,4 +1,8 @@
 /*
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+All rights reserved.
+*/
+/*
  * PTMStatsTableViewer.java
  *
  * Created on November 24, 2003, 3:59 PM
@@ -42,6 +46,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
  * @author  nbhagaba
  */
 public class PTMGeneStatsTableViewer extends ViewerAdapter implements java.io.Serializable {
+    public static final long serialVersionUID = 202012030001L;
     
     private JComponent header;
     private JComponent content;

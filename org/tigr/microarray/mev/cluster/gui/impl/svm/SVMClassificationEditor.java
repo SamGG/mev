@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMClassificationEditor.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-05-24 18:22:26 $
+ * $Revision: 1.5 $
+ * $Date: 2004-07-27 19:59:17 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -19,6 +19,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 import javax.swing.table.*;
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
@@ -219,8 +220,7 @@ public class SVMClassificationEditor extends javax.swing.JDialog {//javax.swing.
     private void applySVCFile(){
         File inputFile = null;
         
-        final JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
-        fc.setCurrentDirectory(new File("Data/SVM"));
+        final JFileChooser fc = new JFileChooser(TMEV.getFile("data/svm"));
         fc.setFileFilter(new SVCFileFilter());
         int returnVal = fc.showOpenDialog( this );
         
@@ -338,10 +338,9 @@ public class SVMClassificationEditor extends javax.swing.JDialog {//javax.swing.
     
     private void saveTableAsSVC() throws IOException{
         
-        final JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        final JFileChooser fc = new JFileChooser(TMEV.getFile("data/svm"));
         fc.addChoosableFileFilter(new SVCFileFilter());
         fc.setFileView(new SVCFileView());             
-        fc.setCurrentDirectory(new File("Data/SVM"));
         if(currentFile != null)
             fc.setSelectedFile(currentFile);           
         int result = fc.showSaveDialog(this);        

@@ -1,11 +1,11 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: UMatrixColorViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-13 19:15:06 $
+ * $Revision: 1.5 $
+ * $Date: 2004-07-27 19:59:17 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -39,7 +39,8 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.impl.util.Hexagon;
 
 public class UMatrixColorViewer extends JPanel implements IViewer, java.io.Serializable {
-    
+    public static final long serialVersionUID = 202016030001L;
+     
     private int[][] clusters;
     private FloatMatrix u_matrix;
     private int dim_x, dim_y;
