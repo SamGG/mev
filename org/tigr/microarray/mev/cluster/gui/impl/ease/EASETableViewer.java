@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASETableViewer.java,v $
- * $Revision: 1.1 $
- * $Date: 2004-02-06 22:52:37 $
+ * $Revision: 1.2 $
+ * $Date: 2004-04-12 19:35:28 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -183,7 +183,7 @@ public class EASETableViewer extends TableViewer implements java.io.Serializable
         menu.addSeparator();
         
         if(this.haveAccessionNumbers){
-            this.launchMenuItem = new JMenuItem("Open Web Resource");
+            this.launchMenuItem = new JMenuItem("Open Web Page");
             this.launchMenuItem.setActionCommand("launch-browser-command");
             this.launchMenuItem.addActionListener(listener);
             menu.add(this.launchMenuItem);
