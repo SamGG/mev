@@ -1,0 +1,174 @@
+<html>
+<body bgcolor="#ffffcc" lang=EN-US style='tab-interval:.5in'>
+
+<div class=Section1>
+
+<h1>DAM: Discriminant Analysis Module</h1>
+
+<h1>Initialization Dialog</h1>
+
+<h2>Parameter Information</h2>
+
+
+<div class=MsoNormal align=center style='text-align:center'>
+
+<hr size=10 width="100%" align=center>
+
+</div>
+
+
+<h2>General DAM Terminology</h2>
+
+<p class=MsoNormal>The Primary function of the DAM is to serve as a method for
+multi-class classification. It incorporates the dimensional reduction method <b><i>Multivariate
+Partial Least Squares (MPLS)</i></b> and two classification analysis methods <b><i>Polychotomous
+Discrimination (PDA)</i></b> and <b><i>Quadratic Discriminant Analysis (QDA)</i></b>.
+Either PDA or QDA are performed after the starting data has been reduced by
+MPLS. </p>
+
+<h2>Classification Selection </h2>
+
+<p class=MsoNormal>The classification selection option indicates whether to
+classify genes or experiments. </p>
+
+<h2>Parameters </h2>
+
+<p class=MsoNormal><b>Number Of Classes<span style="mso-spacerun: yes">&nbsp;
+</span></b><span style="mso-spacerun: yes">&nbsp;</span>The number of classes.</p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><b>Number Of Gene Components </b><span style="mso-spacerun:
+yes">&nbsp;&nbsp;</span>The number of gene components for Dimension Reduction.</p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><b>Alpha<span style="mso-spacerun: yes">&nbsp; </span></b><span
+style="mso-spacerun: yes">&nbsp;</span>The alpha value chosen for the
+t-distribution in preliminary gene screening.</p>
+
+<h3><span style='font-size:12.0pt;mso-bidi-font-size:13.5pt'>Skip Gene
+Screening step (ANOVA)</span> <span style='font-size:12.0pt;mso-bidi-font-size:
+13.5pt;font-weight:normal'><span style="mso-spacerun: yes">&nbsp;</span><span
+style="mso-spacerun: yes">&nbsp;</span>Skips the Gene Screening / Selection
+step when executing the Initial Classification and Assessment algorithms(A0, A1
+or A2) <o:p></o:p></span></h3>
+
+<h2><span style='font-size:12.0pt;mso-bidi-font-size:18.0pt'><span
+style="mso-spacerun: yes">&nbsp;</span><br>
+</span>Assessment Algorithm Selection</h2>
+
+<p class=MsoNormal>The Initial Classification Algorithm and assessment
+algorithms A0, A1 &amp; A2 essentially contain the same fundamental stages
+(i.e. Preliminary Gene Selection, Dimension Reduction(MPLS) &amp;
+Classification/Prediction based on Leave One Out Cross Validation (LOOCV)) but
+they are ordered in a different sequence. </p>
+
+<h3>Initial Classification algorithm</h3>
+
+<ol style='margin-top:0in' start=1 type=1>
+ <li class=MsoNormal style='mso-list:l3 level1 lfo3;tab-stops:list .5in'><i>Preliminary
+     Gene Selection: </i>Use ANOVA to select genes from given gene expression
+     matrix.</li>
+ <li class=MsoNormal style='mso-list:l3 level1 lfo3;tab-stops:list .5in left 4.5in'><i>Dimension
+     Reduction</i>: Use MPLS algorithm to obtain gene components matrix from
+     gene expression matrix</li>
+ <li class=MsoNormal style='mso-list:l3 level1 lfo3;tab-stops:list .5in'><i>Classification</i>:.<br>
+     Use the fitted classifier from training to predict all the test samples in
+     the gene components matrix obtained from step 2. <span
+     style="mso-spacerun: yes">&nbsp;</span></li>
+</ol>
+
+<h3>A0 algorithm</h3>
+
+<ol style='margin-top:0in' start=1 type=1>
+ <li class=MsoNormal style='mso-list:l1 level1 lfo9;tab-stops:list .5in'><i>Preliminary
+     Gene Selection: </i>Use ANOVA to select genes from given gene expression
+     matrix.</li>
+ <li class=MsoNormal style='mso-list:l1 level1 lfo9;tab-stops:list .5in left 4.5in'><i>Dimension
+     Reduction</i>: Use MPLS algorithm to obtain gene components matrix from
+     gene expression matrix</li>
+ <li class=MsoNormal style='mso-list:l1 level1 lfo9;tab-stops:list .5in'><i>Classification/Prediction</i>:
+     Classification is based on LOOCV.<br>
+     For each sample in the gene components matrix obtained from step 2, leave
+     out this sample, and fit classifier to the remaining samples. Use the fitted
+     classifier to predict left out sample.<br>
+     <span style="mso-spacerun: yes">&nbsp;</span><br>
+     <b>NOTE</b>: For a given expression matrix, steps 1 (Preliminary Gene
+     Selection) &amp; 2 (Dimension Reduction) are <i>fixed</i> with respect to
+     LOOCV. Thus, the effect of gene selection &amp; dimension reduction on the
+     classification cannot be assessed. </li>
+</ol>
+
+<h3>A1 algorithm</h3>
+
+<p class=MsoNormal style='margin-left:39.0pt;text-indent:-.25in;mso-list:l2 level1 lfo5;
+tab-stops:list 39.0pt'><![if !supportLists]>1.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><![endif]><i>Preliminary Gene Selection</i>: Use ANOVA to select genes
+from given gene expression matrix.</p>
+
+<p class=MsoNormal style='margin-left:21.0pt'><i><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></i></p>
+
+<p class=MsoNormal style='margin-left:21.0pt'>For each sample in the gene
+expression matrix, leave out this sample to obtain a sub expression matrix.</p>
+
+<p class=MsoNormal style='margin-left:39.0pt;text-indent:-.25in;mso-list:l2 level1 lfo5;
+tab-stops:list 39.0pt'><![if !supportLists]>2.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><![endif]><i>Dimension Reduction</i>: Use MPLS algorithm to obtain gene
+components matrix from the sub gene expression matrix.</p>
+
+<p class=MsoNormal style='margin-left:39.0pt;text-indent:-.25in;mso-list:l2 level1 lfo5;
+tab-stops:list 39.0pt'><![if !supportLists]>3.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><![endif]><i>Classification/Prediction</i>: Fit classifier to the
+remaining samples in gene components matrix. Use the fitted classifier to
+predict left out sample.</p>
+
+<p class=MsoNormal style='margin-left:21.0pt'><i><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></i></p>
+
+<p class=MsoNormal style='margin-left:21.0pt'><b>NOTE</b>: The first modification
+to <i>A0</i> given as <i>A1</i> assesses the affects of dimension reduction.
+The dimension reduction as well as the classifier is refitted <i>N</i> times,
+one for each sample left out. </p>
+
+<h3>A2 algorithm</h3>
+
+<p class=MsoNormal>For each sample in the gene expression matrix, leave out
+this sample to obtain a sub expression matrix.</p>
+
+<ol style='margin-top:0in' start=1 type=1>
+ <li class=MsoNormal style='mso-list:l0 level1 lfo8;tab-stops:list .5in'><i>Preliminary
+     Gene Selection</i>: Use ANOVA to select genes from the sub expression
+     matrix.</li>
+ <li class=MsoNormal style='mso-list:l0 level1 lfo8;tab-stops:list .5in'><i>Dimension
+     Reduction</i>: Use MPLS algorithm to obtain gene components matrix from
+     the sub expression matrix.</li>
+ <li class=MsoNormal style='mso-list:l0 level1 lfo8;tab-stops:list .5in'><i>Classification/Prediction</i>:
+     Fit classifier to the remaining samples in gene components matrix. Use the
+     fitted classifier to predict left out sample.</li>
+</ol>
+
+<p class=MsoNormal style='margin-left:.25in'><i><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></i></p>
+
+<p class=MsoNormal style='margin-left:.25in'><b>NOTE</b>: The second
+modification to <i>A0</i> given as <i>A2</i> assesses the affects of gene
+selection. The gene set is reselected for classification each time a sample is
+left out. </p>
+
+<h2>Classification Method Selection</h2>
+
+<p class=MsoNormal>The Classification methods are performed after the data has
+reduced by dimension reduction (MPLS) </p>
+
+<h3>PDA</h3>
+
+<p class=MsoNormal>Polychotomous Discrimination </p>
+
+<h3>QDA</h3>
+
+<p class=MsoNormal>Quadratic Discriminant Analysis </basefont></p>
+
+</div>
+
+</body>
+
+</html>

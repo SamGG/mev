@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: TtestCentroidsViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2005-02-24 20:24:05 $
+ * $Revision: 1.8 $
+ * $Date: 2005-03-10 20:36:42 $
  * $Author: braistedj $
  * $State: Exp $
  */

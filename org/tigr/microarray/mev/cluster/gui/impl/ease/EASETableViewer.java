@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASETableViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-02-24 20:24:11 $
+ * $Revision: 1.6 $
+ * $Date: 2005-03-10 20:31:06 $
  * $Author: braistedj $
  * $State: Exp $
  */

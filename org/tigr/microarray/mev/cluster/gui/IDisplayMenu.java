@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: IDisplayMenu.java,v $
- * $Revision: 1.2 $
- * $Date: 2005-02-24 20:24:11 $
+ * $Revision: 1.3 $
+ * $Date: 2005-03-10 20:38:25 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -31,6 +31,7 @@ public interface IDisplayMenu {
     public static final int GREEN_RED_SCHEME = 5;
     public static final int BLUE_YELLOW_SCHEME = 6;
     public static final int CUSTOM_COLOR_SCHEME = 7;
+    public static final int RAINBOW_COLOR_SCHEME = 8;
     
     /**
      * Returns a palette style.
@@ -76,6 +77,12 @@ public interface IDisplayMenu {
      * Returns min value of the ratio scale.
      */
     public float getMinRatioScale();
+    
+    /**
+     *  Returns mid (selected "mid-point") of the ratio scale.
+     * @return
+     */
+    public float getMidRatioValue();
     
     /**
      * Returns max value of the CY3 scale.

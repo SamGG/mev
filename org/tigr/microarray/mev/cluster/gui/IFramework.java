@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: IFramework.java,v $
- * $Revision: 1.7 $
- * $Date: 2005-02-24 20:24:11 $
+ * $Revision: 1.8 $
+ * $Date: 2005-03-10 20:38:25 $
  * $Author: braistedj $
  * $State: Exp $
  */

@@ -10,9 +10,9 @@ All rights reserved.
 
  * $RCSfile: ViewerAdapter.java,v $
 
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
 
- * $Date: 2005-02-24 20:24:11 $
+ * $Date: 2005-03-10 20:36:57 $
 
  * $Author: braistedj $
 

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: CASTExperimentCentroidViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2005-02-24 20:24:02 $
+ * $Revision: 1.7 $
+ * $Date: 2005-03-10 20:30:31 $
  * $Author: braistedj $
  * $State: Exp $
  */

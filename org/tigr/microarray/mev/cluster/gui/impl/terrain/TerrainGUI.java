@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: TerrainGUI.java,v $
- * $Revision: 1.4 $
- * $Date: 2005-02-24 20:24:10 $
+ * $Revision: 1.5 $
+ * $Date: 2005-03-10 20:33:21 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -110,7 +110,7 @@ public class TerrainGUI implements IClusterGUI, IScriptGUI {
         //script control parameters
         
         // alg name
-        data.addParam("name", "Terrain");
+        data.addParam("name", "TRN");
         
         // alg type
         data.addParam("alg-type", "data-visualization");

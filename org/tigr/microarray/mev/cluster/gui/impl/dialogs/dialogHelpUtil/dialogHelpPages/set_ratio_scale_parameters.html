@@ -1,0 +1,50 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>Color Scale Limits Dialog</h1><h2>Information</h2>
+            <hr size = 10>
+
+<h2> Gradient Style </h2>
+The gradient style controls are used to select to use either
+a double gradient such as green-black-red or a single gradient
+such as black-red.  The double gradient is most often used for
+two dye array systems in which the values are log<sub>2</sub>
+ratios. In this case the mid-point is kept at 0.0 so that
+spots where the two channels have equal expression (log<sub>2</sub>(A/B) = 0) are
+depicted as black and spots where the expression is unequal will
+tend to be colored more toward the extremes.  The double gradient
+might also be useful for single dye systems where a reference
+or median value is used to generate a log<sub>2</sub>(I/Ref).
+<br><br>
+The single gradient option is useful for single channel data
+where data falls over a continuum and there is no clear rationale
+to separate the data into two distinct color regions.
+
+<h2> Color Range Selection </h2>
+This section of the dialog is used to indicate the limits for the
+color scale and an optional "mid-point" value.  The single gradient mode
+only requires endpoints while the double gradient mode provides
+for selection of a mid-point value.  For two dye systems the mid-point
+should generally be left at zero so that spots with equal expression
+in the two channels are displayed as black.  
+<br><br>
+Values that exceed the limits that are set will be displayed as the
+saturated endpoint color.  The range of the data is given in parentheses
+next to the limit input boxes to assist in initial limit selections.
+The <i>Update Limits</i> button in this panel will apply the current
+limits to the display in MeV and will update the 
+<i>Color Saturation Statistics</i> panel and <i>Gradient and Limits Preview</i> panel.
+
+<h2> Color Saturation Statistics </h2>
+This section of the dialog reports the number of elements that are 
+beyond the limits defined by the color scale.  These off-scale 
+elements are displayed as the endpoint color of gradient closest
+to the element's value.  The statistics are calculted using all 
+spots that are not missing values and have not been filtered out of
+the main data set by an applied filter.
+
+<h2> Limits and Gradient Preview </h2>
+This panel presents the current gradient style and the selected range limits.
+<br>
+       </basefont>
+    </body>
+</html>

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: IntComparator.java,v $
- * $Revision: 1.2 $
- * $Date: 2005-02-24 20:24:08 $
+ * $Revision: 1.3 $
+ * $Date: 2005-03-10 20:36:56 $
  * $Author: braistedj $
  * $State: Exp $
  */
