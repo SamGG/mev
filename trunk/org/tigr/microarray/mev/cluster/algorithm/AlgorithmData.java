@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: AlgorithmData.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-11 21:51:06 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -20,14 +20,14 @@ import org.tigr.microarray.mev.cluster.Cluster;
  * This class is used to pass data and necessary parameters 
  * to a calculation algorithm, and to receive the result of 
  * calculation.
- *
- * @version 1.0
- * @author Aleksey D.Rezantsev
  */
 public class AlgorithmData {
 
     private HashMap matrixes;
+    private HashMap intMatrices;
     private HashMap intArrays;
+    private HashMap stringArrays;
+    private HashMap objectMatrices;
     private AlgorithmParameters parameters;
     private HashMap clusters;
 
@@ -36,7 +36,10 @@ public class AlgorithmData {
      */
     public AlgorithmData() {
         matrixes   = new HashMap();
+        intMatrices = new HashMap();
         intArrays  = new HashMap();
+        stringArrays = new HashMap();
+        objectMatrices = new HashMap();
         parameters = new AlgorithmParameters();
         clusters = new HashMap();
 
@@ -52,6 +55,16 @@ public class AlgorithmData {
         matrixes.put( name, matrix );
     }
 
+        /**
+     * Adds a matrix of float values by its name.
+     *
+     * @param name the name of the matrix.
+     * @param matrix the <code>FloatMatrix</code> to be added.
+     */
+    public void addIntMatrix(String name, int [][] matrix) {
+        intMatrices.put( name, matrix );
+    } 
+    
     /**
      * Adds a cluster by its name.
      *
@@ -89,6 +102,15 @@ public class AlgorithmData {
     public FloatMatrix getMatrix(String name) {
         return(FloatMatrix)matrixes.get( name );
     }
+    
+    /**
+     * Gets a matrix of float values by its name.
+     *
+     * @param name the name of <code>FloatMatrix</code>.
+     */
+    public int [][] getIntMatrix(String name) {
+        return(int [][])intMatrices.get( name );
+    }
 
     /**
      * Returns true if this data contains matrix.
@@ -118,6 +140,34 @@ public class AlgorithmData {
         return(int[])intArrays.get(name);
     }
 
+
+    /**
+     * Adds a matrix of int values by its name
+     *
+     * @param name the name of the matrix.
+     * @param intArray the array to be added.
+     */
+    public void addStringArray(String name, String [] stringArray) {
+        stringArrays.put(name, stringArray);
+    }
+
+    /**
+     * Gets a matrix of int values by its name.
+     *
+     * @param name the name of matrix.
+     */
+    public String[] getStringArray(String name) {
+        return(String[])stringArrays.get(name);
+    }
+    
+    public void addObjectMatrix(String name, Object objM [][]){
+        this.objectMatrices.put(name, objM);
+    }
+    
+    public Object [][] getObjectMatrix(String name){
+        return (Object [][])(this.objectMatrices.get(name));
+    }
+    
     /**
      * Returns count of float matrixes.
      */
@@ -157,5 +207,7 @@ public class AlgorithmData {
     public Map getProperties() { return parameters.getMap(); }
     public Map getMatrixes()   { return matrixes; }
     public Map getIntArrays()  { return intArrays; }
+    public Map getStringArrays() { return this.stringArrays; }
+    public Map getObjectMatrices() { return this.objectMatrices; }
     public Map getClusters()   { return clusters;  }
 }
