@@ -289,6 +289,14 @@ public class HelpWindow extends JDialog {
             return "sam_script_delta_dialog.html";
         if(key.equals("List Import Dialog"))
             return "cluster_list_import_parameters.html";
+        if(key.equals("Script Attribute Dialog"))
+            return "script_attribute_parameters.html";        
+        if(key.equals("Script Algorithm Initialization Dialog"))
+            return "script_algorithm_selection.html";
+        if(key.equals("Script Value Editor Dialog"))
+            return "script_value_editor_dialog.html"; 
+        if(key.equals("Script Error Log"))
+            return "script_error_log.html";           
         else
             return null;
     }
