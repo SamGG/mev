@@ -1,11 +1,11 @@
 /*
 Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
 All rights reserved.
-*/
+ */
 /*
  * $RCSfile: TStatsTableViewer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2003-08-25 15:18:13 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -45,12 +45,12 @@ import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 /**
  *
  * @author  nbhagaba
- * @version 
+ * @version
  */
 public class TStatsTableViewer extends ViewerAdapter {
-
+    
     private JComponent header;
-    private JComponent content;    
+    private JComponent content;
     private Experiment experiment;
     private int[][] clusters;
     private boolean sig;
@@ -59,18 +59,22 @@ public class TStatsTableViewer extends ViewerAdapter {
     
     private JTable tValuesTable;
     private TValuesTableModel tModel;
-    private Vector pValues, tValues, dfValues, meansA, meansB, sdA, sdB;
-    private IData data; 
+    private int tTestDesign;
+    private Vector pValues, tValues, dfValues, meansA, meansB, sdA, sdB, oneClassMeans, oneClassSDs;
+    private IData data;
     private JPopupMenu popup;
     //boolean meansASortedAsc, meansASortedDesc;
     private Object[][] origData;
     
     /** Creates new TStatsTableViewer */
-    public TStatsTableViewer(Experiment experiment, int[][] clusters, IData data, Vector meansA, Vector meansB, Vector sdA, Vector sdB, Vector pValues, Vector tValues, Vector dfValues, boolean sig) {
+    public TStatsTableViewer(Experiment experiment, int[][] clusters, IData data, int tTestDesign, Vector oneClassMeans, Vector oneClassSDs, Vector meansA, Vector meansB, Vector sdA, Vector sdB, Vector pValues, Vector tValues, Vector dfValues, boolean sig) {
         this.experiment = experiment;
         this.clusters = clusters;
         this.data = data;
         this.fieldNames = data.getFieldNames();
+        this.tTestDesign = tTestDesign;
+        this.oneClassMeans = oneClassMeans;
+        this.oneClassSDs = oneClassSDs;
         this.pValues = pValues;
         this.tValues = tValues;
         this.dfValues = dfValues;
@@ -85,8 +89,8 @@ public class TStatsTableViewer extends ViewerAdapter {
             rows = clusters[0];
         } else {
             rows =clusters[1];
-        } 
-        tModel = new TValuesTableModel(); 
+        }
+        tModel = new TValuesTableModel(tTestDesign);
         tValuesTable = new JTable(tModel);
         origData = new Object[tModel.getRowCount()][tModel.getColumnCount()];
         for (int i = 0; i < origData.length; i++) {
@@ -103,12 +107,12 @@ public class TStatsTableViewer extends ViewerAdapter {
         for (int i = 0; i < tModel.getColumnCount(); i++) {
             column = tValuesTable.getColumnModel().getColumn(i);
             column.setMinWidth(30);
-        }  
+        }
         addMouseListenerToHeaderInTable(tValuesTable);
         header  = tValuesTable.getTableHeader();
         //header.setBackground(Color.white);
         //content = createContent();
-        setMaxWidth(getContentComponent(), getHeaderComponent());        
+        setMaxWidth(getContentComponent(), getHeaderComponent());
     }
     
     /**
@@ -127,53 +131,62 @@ public class TStatsTableViewer extends ViewerAdapter {
         panel.add(tValuesTable);
         
         final JFileChooser fc = new JFileChooser();
-        fc.setCurrentDirectory(new File("Data"));   
+        fc.setCurrentDirectory(new File("Data"));
         fc.setDialogTitle("Save gene t-statistics");
         
         popup = new JPopupMenu();
         JMenuItem menuItem = new JMenuItem("Save Gene t-statistics", GUIFactory.getIcon("save16.gif"));
         menuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                    int returnVal = fc.showSaveDialog(TStatsTableViewer.this.getHeaderComponent());
-                    if (returnVal == JFileChooser.APPROVE_OPTION) {
-                        File file = fc.getSelectedFile();
-                        try {
-                            PrintWriter out = new PrintWriter(new FileOutputStream(file));
-                            for (int i = 0; i < fieldNames.length; i++) {
-                                out.print(fieldNames[i]);
-                                if (i < fieldNames.length - 1) {
-                                    
+                int returnVal = fc.showSaveDialog(TStatsTableViewer.this.getHeaderComponent());
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File file = fc.getSelectedFile();
+                    try {
+                        PrintWriter out = new PrintWriter(new FileOutputStream(file));
+                        for (int i = 0; i < fieldNames.length; i++) {
+                            out.print(fieldNames[i]);
+                            if (i < fieldNames.length - 1) {
+                                
+                                out.print("\t");
+                            }
+                        }
+                        if (tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS) {
+                            out.print("\tGroupA mean\tGroupA std.dev.\tGroupB mean\tGroupB std.dev.\tt-ratio\tdf\tp-value\n");
+                        } else if (tTestDesign == TtestInitDialog.ONE_CLASS) {
+                            out.print("\tGene mean\tGene std.dev.\tt-ratio\tdf\tp-value\n");
+                        }
+                        for (int i = 0; i < rows.length; i++) {
+                            for (int k = 0; k < fieldNames.length; k++) {
+                                out.print(data.getElementAttribute(experiment.getGeneIndexMappedToData(rows[i]), k));
+                                if (k < fieldNames.length - 1) {
                                     out.print("\t");
                                 }
                             }
-                           out.print("\tGroupA mean\tGroupA std.dev.\tGroupB mean\tGroupB std.dev.\tt-ratio\tdf\tp-value\n");                      
-                            for (int i = 0; i < rows.length; i++) {
-                                for (int k = 0; k < fieldNames.length; k++) {
-                                    out.print(data.getElementAttribute(experiment.getGeneIndexMappedToData(rows[i]), k));
-                                    if (k < fieldNames.length - 1) {
-                                        out.print("\t");
-                                    }
-                                }
+                            if (tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS) {
                                 out.print("\t" + ((Float)(meansA.get(rows[i]))).floatValue());
                                 out.print("\t" + ((Float)(sdA.get(rows[i]))).floatValue());
                                 out.print("\t" + ((Float)(meansB.get(rows[i]))).floatValue());
                                 out.print("\t" + ((Float)(sdB.get(rows[i]))).floatValue());
-                                out.print("\t" + ((Float)(tValues.get(rows[i]))).floatValue());
-                                out.print("\t" + ((Float)(dfValues.get(rows[i]))).intValue());
-                                out.print("\t" + ((Float)(pValues.get(rows[i]))).floatValue());
-                                out.print("\n");
+                            } else if (tTestDesign == TtestInitDialog.ONE_CLASS) {
+                                out.print("\t" + ((Float)(oneClassMeans.get(rows[i]))).floatValue());
+                                out.print("\t" + ((Float)(oneClassSDs.get(rows[i]))).floatValue());                                
                             }
-                            out.println();
-                            out.flush();
-                            out.close();
-                       } catch (Exception e) {
-                            e.printStackTrace();
+                            out.print("\t" + ((Float)(tValues.get(rows[i]))).floatValue());
+                            out.print("\t" + ((Float)(dfValues.get(rows[i]))).intValue());
+                            out.print("\t" + ((Float)(pValues.get(rows[i]))).floatValue());
+                            out.print("\n");
                         }
-                        //this is where a real application would save the file.
-                        //log.append("Saving: " + file.getName() + "." + newline);
-                    } else {
-                        //log.append("Save command cancelled by user." + newline);
-                    }                
+                        out.println();
+                        out.flush();
+                        out.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    //this is where a real application would save the file.
+                    //log.append("Saving: " + file.getName() + "." + newline);
+                } else {
+                    //log.append("Save command cancelled by user." + newline);
+                }
             }
         });
         
@@ -193,13 +206,13 @@ public class TStatsTableViewer extends ViewerAdapter {
                     popup.show(e.getComponent(),
                     e.getX(), e.getY());
                 }
-            }            
-
+            }
+            
         });
         
         return panel;
         //return tValuesTable;
-	//return content;
+        //return content;
     }
     
     /**
@@ -214,103 +227,165 @@ public class TStatsTableViewer extends ViewerAdapter {
         constraints.fill = GridBagConstraints.HORIZONTAL;
         buildConstraints(constraints, 0, 0, 1, 1, 100, 100);
         gridbag.setConstraints(header, constraints);
-        panel.add(header); 
+        panel.add(header);
         return panel;
-	//return header;
-    } 
+        //return header;
+    }
     
     void buildConstraints(GridBagConstraints gbc, int gx, int gy,
     int gw, int gh, int wx, int wy) {
-	
-	gbc.gridx = gx;
-	gbc.gridy = gy;
-	gbc.gridwidth = gw;
-	gbc.gridheight = gh;
-	gbc.weightx = wx;
-	gbc.weighty = wy;
-    }    
-
-
+        
+        gbc.gridx = gx;
+        gbc.gridy = gy;
+        gbc.gridwidth = gw;
+        gbc.gridheight = gh;
+        gbc.weightx = wx;
+        gbc.weighty = wy;
+    }
+    
+    
     
     class TValuesTableModel extends AbstractTableModel {
         String[] columnNames;
         Object[][] tableData;
         
-        public TValuesTableModel() {
-            columnNames = new String[fieldNames.length + 7];
-            int counter;
-            for (counter = 0; counter < fieldNames.length; counter++) {
-                columnNames[counter] = fieldNames[counter];
-            }
-            columnNames[counter] = "GroupA mean";
-            columnNames[counter + 1] = "GroupA std.dev";
-            columnNames[counter + 2] = "GroupB mean";
-            columnNames[counter + 3] = "GroupB std.dev.";
-            columnNames[counter + 4] = "t-ratio";
-            columnNames[counter + 5] = "df";
-            columnNames[counter + 6] = "p-value";
-            
-            tableData = new Object[rows.length][columnNames.length];
-            
-            for (int i = 0; i < tableData.length; i++) {
-                for (int j = 0; j < tableData[i].length; j++) {
-                    if (j < fieldNames.length) {
-                        tableData[i][j] = data.getElementAttribute(experiment.getGeneIndexMappedToData(rows[i]), j);
-                    } else if (j == fieldNames.length) {
-                        float f = ((Float)(meansA.get(rows[i]))).floatValue();
-                        if (Float.isNaN(f)) {
-                            tableData[i][j] = "N/A";
-                        } else {
-                            tableData[i][j] = (Float)(meansA.get(rows[i]));
+        public TValuesTableModel(int design) {
+            if (design == TtestInitDialog.BETWEEN_SUBJECTS) {
+                columnNames = new String[fieldNames.length + 7];
+                int counter;
+                for (counter = 0; counter < fieldNames.length; counter++) {
+                    columnNames[counter] = fieldNames[counter];
+                }
+                columnNames[counter] = "GroupA mean";
+                columnNames[counter + 1] = "GroupA std.dev";
+                columnNames[counter + 2] = "GroupB mean";
+                columnNames[counter + 3] = "GroupB std.dev.";
+                columnNames[counter + 4] = "t-ratio";
+                columnNames[counter + 5] = "df";
+                columnNames[counter + 6] = "p-value";
+                
+                tableData = new Object[rows.length][columnNames.length];
+                
+                for (int i = 0; i < tableData.length; i++) {
+                    for (int j = 0; j < tableData[i].length; j++) {
+                        if (j < fieldNames.length) {
+                            tableData[i][j] = data.getElementAttribute(experiment.getGeneIndexMappedToData(rows[i]), j);
+                        } else if (j == fieldNames.length) {
+                            float f = ((Float)(meansA.get(rows[i]))).floatValue();
+                            if (Float.isNaN(f)) {
+                                tableData[i][j] = "N/A";
+                            } else {
+                                tableData[i][j] = (Float)(meansA.get(rows[i]));
+                            }
+                            
+                        } else if (j == fieldNames.length + 1) {
+                            
+                            float f = ((Float)(sdA.get(rows[i]))).floatValue();
+                            if (Float.isNaN(f)) {
+                                tableData[i][j] = "N/A";
+                            } else {
+                                tableData[i][j] = (Float)(sdA.get(rows[i]));
+                            }
+                            
+                        } else if (j == fieldNames.length + 2) {
+                            
+                            float f = ((Float)(meansB.get(rows[i]))).floatValue();
+                            if (Float.isNaN(f)) {
+                                tableData[i][j] = "N/A";
+                            } else {
+                                tableData[i][j] = (Float)(meansB.get(rows[i]));
+                            }
+                            
+                        } else if (j == fieldNames.length + 3) {
+                            
+                            float f = ((Float)(sdB.get(rows[i]))).floatValue();
+                            if (Float.isNaN(f)) {
+                                tableData[i][j] = "N/A";
+                            } else {
+                                tableData[i][j] = (Float)(sdB.get(rows[i]));
+                            }
+                            
+                        } else if (j == fieldNames.length + 4) {
+                            float f = ((Float)(tValues.get(rows[i]))).floatValue();
+                            if (Float.isNaN(f)) {
+                                tableData[i][j] = "N/A";
+                            } else {
+                                tableData[i][j] = (Float)(tValues.get(rows[i]));
+                            }
+                        } else if (j == fieldNames.length + 5) {
+                            float f = ((Float)(dfValues.get(rows[i]))).floatValue();
+                            if (Float.isNaN(f)) {
+                                tableData[i][j] = "N/A";
+                            } else {
+                                tableData[i][j] = (Float)(dfValues.get(rows[i]));
+                            }
+                        } else if (j == fieldNames.length + 6) {
+                            float f = ((Float)(pValues.get(rows[i]))).floatValue();
+                            if (Float.isNaN(f)) {
+                                tableData[i][j] = "N/A";
+                            } else {
+                                tableData[i][j] = (Float)(pValues.get(rows[i]));
+                            }
                         }
-                        
-                    } else if (j == fieldNames.length + 1) {
-                        
-                        float f = ((Float)(sdA.get(rows[i]))).floatValue();
-                        if (Float.isNaN(f)) {
-                            tableData[i][j] = "N/A";
-                        } else {
-                            tableData[i][j] = (Float)(sdA.get(rows[i]));
-                        }
-
-                    } else if (j == fieldNames.length + 2) {
-                        
-                        float f = ((Float)(meansB.get(rows[i]))).floatValue();
-                        if (Float.isNaN(f)) {
-                            tableData[i][j] = "N/A";
-                        } else {
-                            tableData[i][j] = (Float)(meansB.get(rows[i]));
-                        }
-                       
-                    } else if (j == fieldNames.length + 3) {
-                        
-                        float f = ((Float)(sdB.get(rows[i]))).floatValue();
-                        if (Float.isNaN(f)) {
-                            tableData[i][j] = "N/A";
-                        } else {
-                            tableData[i][j] = (Float)(sdB.get(rows[i]));
-                        }
-
-                    } else if (j == fieldNames.length + 4) {
-                        float f = ((Float)(tValues.get(rows[i]))).floatValue();
-                        if (Float.isNaN(f)) {
-                            tableData[i][j] = "N/A";
-                        } else {
-                            tableData[i][j] = (Float)(tValues.get(rows[i]));
-                        }
-                    } else if (j == fieldNames.length + 5) {
-                        float f = ((Float)(dfValues.get(rows[i]))).floatValue();
-                        if (Float.isNaN(f)) {
-                            tableData[i][j] = "N/A";
-                        } else {                        
-                            tableData[i][j] = (Float)(dfValues.get(rows[i]));
-                        }
-                    } else if (j == fieldNames.length + 6) {
-                        float f = ((Float)(pValues.get(rows[i]))).floatValue();
-                        if (Float.isNaN(f)) {
-                            tableData[i][j] = "N/A";
-                        } else {                        
-                            tableData[i][j] = (Float)(pValues.get(rows[i]));
+                    }
+                }
+                
+            } else if (design == TtestInitDialog.ONE_CLASS) {
+                columnNames = new String[fieldNames.length + 5];
+                int counter;
+                for (counter = 0; counter < fieldNames.length; counter++) {
+                    columnNames[counter] = fieldNames[counter];
+                }
+                columnNames[counter] = "Gene mean";
+                columnNames[counter + 1] = "Gene std.dev";
+                columnNames[counter + 2] = "t-ratio";
+                columnNames[counter + 3] = "df";
+                columnNames[counter + 4] = "p-value";
+                
+                tableData = new Object[rows.length][columnNames.length];
+                
+                for (int i = 0; i < tableData.length; i++) {
+                    for (int j = 0; j < tableData[i].length; j++) {
+                        if (j < fieldNames.length) {
+                            tableData[i][j] = data.getElementAttribute(experiment.getGeneIndexMappedToData(rows[i]), j);
+                        } else if (j == fieldNames.length) {
+                            float f = ((Float)(oneClassMeans.get(rows[i]))).floatValue();
+                            if (Float.isNaN(f)) {
+                                tableData[i][j] = "N/A";
+                            } else {
+                                tableData[i][j] = (Float)(oneClassMeans.get(rows[i]));
+                            }
+                            
+                        } else if (j == fieldNames.length + 1) {
+                            
+                            float f = ((Float)(oneClassSDs.get(rows[i]))).floatValue();
+                            if (Float.isNaN(f)) {
+                                tableData[i][j] = "N/A";
+                            } else {
+                                tableData[i][j] = (Float)(oneClassSDs.get(rows[i]));
+                            }
+                            
+                        } else if (j == fieldNames.length + 2) {
+                            float f = ((Float)(tValues.get(rows[i]))).floatValue();
+                            if (Float.isNaN(f)) {
+                                tableData[i][j] = "N/A";
+                            } else {
+                                tableData[i][j] = (Float)(tValues.get(rows[i]));
+                            }
+                        } else if (j == fieldNames.length + 3) {
+                            float f = ((Float)(dfValues.get(rows[i]))).floatValue();
+                            if (Float.isNaN(f)) {
+                                tableData[i][j] = "N/A";
+                            } else {
+                                tableData[i][j] = (Float)(dfValues.get(rows[i]));
+                            }
+                        } else if (j == fieldNames.length + 4) {
+                            float f = ((Float)(pValues.get(rows[i]))).floatValue();
+                            if (Float.isNaN(f)) {
+                                tableData[i][j] = "N/A";
+                            } else {
+                                tableData[i][j] = (Float)(pValues.get(rows[i]));
+                            }
                         }
                     }
                 }
@@ -348,7 +423,7 @@ public class TStatsTableViewer extends ViewerAdapter {
             //return getValueAt(0, c).getClass();
         }
          */
-         
+        
         
         
     }
@@ -357,36 +432,36 @@ public class TStatsTableViewer extends ViewerAdapter {
      * Synchronize content and header sizes.
      */
     private void setMaxWidth(JComponent content, JComponent header) {
-	int c_width = content.getPreferredSize().width;
-	int h_width = header.getPreferredSize().width;
-	if (c_width > h_width) {
-	    header.setPreferredSize(new Dimension(c_width, header.getPreferredSize().height));
-	} else {
-	    content.setPreferredSize(new Dimension(h_width, content.getPreferredSize().height));
-	}
-    } 
+        int c_width = content.getPreferredSize().width;
+        int h_width = header.getPreferredSize().width;
+        if (c_width > h_width) {
+            header.setPreferredSize(new Dimension(c_width, header.getPreferredSize().height));
+        } else {
+            content.setPreferredSize(new Dimension(h_width, content.getPreferredSize().height));
+        }
+    }
     
-    public void addMouseListenerToHeaderInTable(JTable table) { 
-        //final TableSorter sorter = this; 
-        final JTable tableView = table; 
-        tableView.setColumnSelectionAllowed(false); 
+    public void addMouseListenerToHeaderInTable(JTable table) {
+        //final TableSorter sorter = this;
+        final JTable tableView = table;
+        tableView.setColumnSelectionAllowed(false);
         MouseAdapter listMouseListener = new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 TableColumnModel columnModel = tableView.getColumnModel();
-                int viewColumn = columnModel.getColumnIndexAtX(e.getX()); 
-                int column = tableView.convertColumnIndexToModel(viewColumn); 
+                int viewColumn = columnModel.getColumnIndexAtX(e.getX());
+                int column = tableView.convertColumnIndexToModel(viewColumn);
                 if (e.getClickCount() == 1 && column != -1) {
-                    //System.out.println("Sorting ..."); 
-                    int shiftPressed = e.getModifiers()&InputEvent.SHIFT_MASK; 
+                    //System.out.println("Sorting ...");
+                    int shiftPressed = e.getModifiers()&InputEvent.SHIFT_MASK;
                     int controlPressed = e.getModifiers()&InputEvent.CTRL_MASK;
-                    boolean ascending = (shiftPressed == 0); 
+                    boolean ascending = (shiftPressed == 0);
                     boolean originalOrder = (controlPressed != 0);
-                    sortByColumn(column, ascending, originalOrder); 
+                    sortByColumn(column, ascending, originalOrder);
                 }
             }
         };
-        JTableHeader th = tableView.getTableHeader(); 
-        th.addMouseListener(listMouseListener); 
+        JTableHeader th = tableView.getTableHeader();
+        th.addMouseListener(listMouseListener);
     }
     
     public void sortByColumn(int column, boolean ascending, boolean originalOrder) {
@@ -395,13 +470,13 @@ public class TStatsTableViewer extends ViewerAdapter {
                 for (int j = 0; j < tModel.getColumnCount(); j++) {
                     tModel.setValueAt(origData[i][j], i, j);
                 }
-            } 
+            }
             return;
         }
         //int[] sortedIndices;
-        Object[][] sortedData = new Object[tValuesTable.getRowCount()][tValuesTable.getColumnCount()]; 
+        Object[][] sortedData = new Object[tValuesTable.getRowCount()][tValuesTable.getColumnCount()];
         float[] origArray = new float[rows.length];
-        SortableField[] sortFields = new SortableField[rows.length]; 
+        SortableField[] sortFields = new SortableField[rows.length];
         if (column < fieldNames.length) {
             //SortableField[] sortFields = new SortableField[rows.length];
             for (int i = 0; i < sortFields.length; i++) {
@@ -410,36 +485,60 @@ public class TStatsTableViewer extends ViewerAdapter {
             }
             Arrays.sort(sortFields);
             //return;
-        } else if (column == fieldNames.length) {
-            for (int i = 0; i < origArray.length; i++) {
-                origArray[i] = ((Float)(meansA.get(rows[i]))).floatValue();
+        } else if (tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS) {
+            if (column == fieldNames.length) {
+                for (int i = 0; i < origArray.length; i++) {
+                    origArray[i] = ((Float)(meansA.get(rows[i]))).floatValue();
+                }
+            } else if (column == fieldNames.length + 1) {
+                for (int i = 0; i < origArray.length; i++) {
+                    origArray[i] = ((Float)(sdA.get(rows[i]))).floatValue();
+                }
+            } else if (column == fieldNames.length + 2) {
+                for (int i = 0; i < origArray.length; i++) {
+                    origArray[i] = ((Float)(meansB.get(rows[i]))).floatValue();
+                }
+            } else if (column == fieldNames.length + 3) {
+                for (int i = 0; i < origArray.length; i++) {
+                    origArray[i] = ((Float)(sdB.get(rows[i]))).floatValue();
+                }
+            } else if (column == fieldNames.length + 4) {
+                for (int i = 0; i < origArray.length; i++) {
+                    origArray[i] = ((Float)(tValues.get(rows[i]))).floatValue();
+                }
+            } else if (column == fieldNames.length + 5) {
+                for (int i = 0; i < origArray.length; i++) {
+                    origArray[i] = ((Float)(dfValues.get(rows[i]))).floatValue();
+                }
+            } else if (column == fieldNames.length + 6) {
+                for (int i = 0; i < origArray.length; i++) {
+                    origArray[i] = ((Float)(pValues.get(rows[i]))).floatValue();
+                }
             }
-        } else if (column == fieldNames.length + 1) {
-            for (int i = 0; i < origArray.length; i++) {
-                origArray[i] = ((Float)(sdA.get(rows[i]))).floatValue();
-            }
-        } else if (column == fieldNames.length + 2) {
-            for (int i = 0; i < origArray.length; i++) {
-                origArray[i] = ((Float)(meansB.get(rows[i]))).floatValue();
-            }
-        } else if (column == fieldNames.length + 3) {
-            for (int i = 0; i < origArray.length; i++) {
-                origArray[i] = ((Float)(sdB.get(rows[i]))).floatValue();
-            }
-        } else if (column == fieldNames.length + 4) {
-            for (int i = 0; i < origArray.length; i++) {
-                origArray[i] = ((Float)(tValues.get(rows[i]))).floatValue();
-            }
-        } else if (column == fieldNames.length + 5) {
-            for (int i = 0; i < origArray.length; i++) {
-                origArray[i] = ((Float)(dfValues.get(rows[i]))).floatValue();
-            }
-        } else if (column == fieldNames.length + 6) {
-            for (int i = 0; i < origArray.length; i++) {
-                origArray[i] = ((Float)(pValues.get(rows[i]))).floatValue();
-            }
+        } else if (tTestDesign == TtestInitDialog.ONE_CLASS) {
+            if (column == fieldNames.length) {
+                for (int i = 0; i < origArray.length; i++) {
+                    origArray[i] = ((Float)(oneClassMeans.get(rows[i]))).floatValue();
+                }
+            } else if (column == fieldNames.length + 1) {
+                for (int i = 0; i < origArray.length; i++) {
+                    origArray[i] = ((Float)(oneClassSDs.get(rows[i]))).floatValue();
+                }
+            } else if (column == fieldNames.length + 2) {
+                for (int i = 0; i < origArray.length; i++) {
+                    origArray[i] = ((Float)(tValues.get(rows[i]))).floatValue();
+                }
+            } else if (column == fieldNames.length + 3) {
+                for (int i = 0; i < origArray.length; i++) {
+                    origArray[i] = ((Float)(dfValues.get(rows[i]))).floatValue();
+                }
+            } else if (column == fieldNames.length + 4) {
+                for (int i = 0; i < origArray.length; i++) {
+                    origArray[i] = ((Float)(pValues.get(rows[i]))).floatValue();
+                }
+            }            
         }
-            //if ( ((ascending) && (!meansASortedAsc)) || ((!ascending) && (!meansASortedDesc)) ) {
+        //if ( ((ascending) && (!meansASortedAsc)) || ((!ascending) && (!meansASortedDesc)) ) {
         int[] sortedIndices = new int[rows.length];
         if (column >= fieldNames.length) {
             QSort sortArray = new QSort(origArray);
@@ -465,25 +564,25 @@ public class TStatsTableViewer extends ViewerAdapter {
                 tModel.setValueAt(sortedData[i][j], i, j);
             }
         }
-            //}
-            
+        //}
+        
                 /*
             if (ascending) {
                 if (column == fieldNames.length) {
                     meansASortedAsc = true;
                     meansASortedDesc = false;
                 }
-                
+                 
             } else {
                 if (column == fieldNames.length) {
                 meansASortedAsc = false;
                 meansASortedDesc = true;
                 }
-
-            } 
-                 */           
-            
-        //} 
+                 
+            }
+                 */
+        
+        //}
     }
     
     private int[] reverse(int[] arr) {
@@ -495,9 +594,9 @@ public class TStatsTableViewer extends ViewerAdapter {
             revCount++;
             count--;
         }
-        return revArr; 
+        return revArr;
     }
- 
+    
     private class SortableField implements Comparable {
         private String field;
         private int index;
