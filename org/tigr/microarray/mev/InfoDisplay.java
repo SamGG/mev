@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: InfoDisplay.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:23 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 18:48:00 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -137,7 +137,7 @@ public class InfoDisplay extends ActionInfoDialog {
         String message = "<html><body bgcolor = \"#FFFFCC\"><basefont face = \"Arial\"><h3>Location and Intensities</h3><table border=2 cellpadding=4 valign=top>";
         
         if(dataType == this.data.DATA_TYPE_TWO_INTENSITY){
-                    message += "<tr><td>Row</td><td>" + trueRow + "</td></tr>"+
+            message += "<tr><td>Row</td><td>" + trueRow + "</td></tr>"+
         "<tr><td>Column</td><td>" + trueColumn + "</td></tr>";
             message += "<tr><td>Cy3</td><td><b>" + cy3 + "</b></td></tr>"+
             "<tr><td>Cy5</td><td><b>" + cy5 + "</b></td></tr>";

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayData.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:23 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 18:48:00 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -728,14 +728,14 @@ public class MultipleArrayData implements IData {
     /**
      * Returns a microarray data by specified column.
      */
-    ISlideData getFeature(int column) {
+    public ISlideData getFeature(int column) {
         return(ISlideData)featuresList.get(column);
     }
     
     /**
      * Returns an element by specified row and column.
      */
-    ISlideDataElement getSlideDataElement(int column, int row) {
+    public ISlideDataElement getSlideDataElement(int column, int row) {
         ISlideData slideData = getFeature(column);
         return slideData.getSlideDataElement(row);
     }
@@ -1397,6 +1397,8 @@ public class MultipleArrayData implements IData {
         }
     }
     
+    
+    
     /**
      * Returns ratio values of the data.
      */
@@ -1487,4 +1489,26 @@ public class MultipleArrayData implements IData {
             slideData.setDataType(type);
         }
     }
+    
+    /** Returns an annotation array for the provided indices based on annotation key
+     */
+    public String[] getAnnotationList(String fieldName, int[] indices) {
+        String [] fieldNames = this.getFieldNames();
+        int fieldIndex;
+        for(fieldIndex = 0; fieldIndex < fieldNames.length; fieldIndex++){
+            if(fieldName == fieldNames[fieldIndex])
+                break;
+        }
+        if(fieldIndex > fieldNames.length)
+            return null;
+        
+        String [] annot = new String[indices.length];
+        
+        for(int i = 0; i < annot.length; i++){
+            annot[i] = this.getElementAttribute(indices[i], fieldIndex);
+        }
+        
+        return annot;        
+    }
+    
 }

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: TMEV.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 18:48:00 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -299,8 +299,7 @@ public class TMEV {
             e.printStackTrace();
         }
     }
-  */
-    
+  */    
     /*
      * This code was modified by Jim Johnson with other changes to enable
      * Java Web Start

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-08-22 16:59:58 $
+ * $Revision: 1.3 $
+ * $Date: 2003-12-08 18:47:59 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -176,7 +176,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         statusLabel = new JLabel("TIGR MultiExperiment Viewer");
         mainframe.getContentPane().add(statusLabel, BorderLayout.SOUTH);
         mainframe.pack();
-        splitPane.setDividerLocation(.4);
+        splitPane.setDividerLocation(.3);
         
         systemDisable(TMEV.DB_AVAILABLE);
         systemDisable(TMEV.DATA_AVAILABLE);
@@ -221,7 +221,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         statusLabel = new JLabel("TIGR MultiExperiment Viewer");
         mainframe.getContentPane().add(statusLabel, BorderLayout.SOUTH);
         mainframe.pack();
-        splitPane.setDividerLocation(.4);
+        splitPane.setDividerLocation(.3);
         
         systemEnable(TMEV.DATA_AVAILABLE);
         fireDataChanged();
@@ -331,7 +331,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("MultipleExperimentViewer");
         
         this.viewer = new MultipleArrayCanvas(this.framework, new Insets(0, 10, 0, 20));
-
+        
         DefaultMutableTreeNode mainViewNode = new DefaultMutableTreeNode(new LeafInfo("Main View", viewer), false);
         
         root.add(mainViewNode);
@@ -360,8 +360,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      */
     private JScrollPane createViewScrollPane(EventListener listener) {
         JScrollPane scrollPane = new JScrollPane();
-         //scrollPane.getViewport().setScrollMode(JViewport.BACKINGSTORE_SCROLL_MODE);
-
+        //scrollPane.getViewport().setScrollMode(JViewport.BACKINGSTORE_SCROLL_MODE);
+        
         scrollPane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
         //scrollPane.getVerticalScrollBar().setToolTipText("Use up/down/pgup/pgdown to scroll image");
         KeyStroke up = KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_UP, 0);
@@ -380,6 +380,119 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      * into the scroll pane view port and the viewer header will
      * be used as the scroll pane header view.
      */
+    /*private void setCurrentViewer(IViewer viewer) {
+        if (viewer == null || viewer.getContentComponent() == null) {
+            return;
+        }
+        if (this.viewer != null) {
+            this.viewer.onDeselected();
+        }
+        this.viewer = viewer;
+        this.viewScrollPane.setViewportView(this.viewer.getContentComponent());
+     
+        JPanel emptycorner = new JPanel();
+        emptycorner.setBackground(Color.white);
+        emptycorner.setOpaque(true);
+     
+        if (viewer instanceof GDMGeneViewer == true) {
+     
+                GDMGeneViewer gdmV = (GDMGeneViewer)viewer;
+     
+                gdmV.setMultipleArrayData(data);
+     
+                gdmV.setMainFrame(mainframe);
+     
+                JComponent colHeader = gdmV.getColumnHeaderComponent();
+                if (colHeader != null) {
+                    this.viewScrollPane.setColumnHeaderView(colHeader);
+                } else {
+                    this.viewScrollPane.setColumnHeader(null);
+                }
+     
+                JComponent rowHeader = gdmV.getRowHeaderComponent();
+                if (rowHeader != null) {
+                    this.viewScrollPane.setRowHeaderView(rowHeader);
+                } else {
+                    this.viewScrollPane.setRowHeader(null);
+                }
+     
+                JComponent upperRightCornerSB = gdmV.getUpperRightCornerSB();
+                if (upperRightCornerSB != null) {
+                    this.viewScrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, upperRightCornerSB);
+                }
+     
+                JComponent lowerLeftCornerSB = gdmV.getLowerLeftCornerSB();
+                if (lowerLeftCornerSB != null) {
+                    this.viewScrollPane.setCorner(JScrollPane.LOWER_LEFT_CORNER, lowerLeftCornerSB);
+                }
+     
+                this.viewScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+                this.viewScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+     
+        } else if (viewer instanceof GDMExpViewer == true) {
+     
+                GDMExpViewer gdmV = (GDMExpViewer)viewer;
+     
+                gdmV.setMultipleArrayData(data);
+     
+                gdmV.setMainFrame(mainframe);
+     
+                JComponent colHeader = gdmV.getColumnHeaderComponent();
+                if (colHeader != null) {
+                    this.viewScrollPane.setColumnHeaderView(colHeader);
+                } else {
+                    this.viewScrollPane.setColumnHeader(null);
+                }
+     
+                JComponent rowHeader = gdmV.getRowHeaderComponent();
+                if (rowHeader != null) {
+                    this.viewScrollPane.setRowHeaderView(rowHeader);
+                } else {
+                    this.viewScrollPane.setRowHeader(null);
+                }
+     
+                JComponent upperRightCornerSB = gdmV.getUpperRightCornerSB();
+                if (upperRightCornerSB != null) {
+                    this.viewScrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, upperRightCornerSB);
+                }
+     
+                JComponent lowerLeftCornerSB = gdmV.getLowerLeftCornerSB();
+                if (lowerLeftCornerSB != null) {
+                    this.viewScrollPane.setCorner(JScrollPane.LOWER_LEFT_CORNER, lowerLeftCornerSB);
+                }
+     
+                this.viewScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+                this.viewScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+     
+        } else {
+     
+                JComponent header = viewer.getHeaderComponent();
+                if (header != null) {
+                    this.viewScrollPane.setColumnHeaderView(header);
+     
+                    if (this.viewScrollPane.getCorner(JScrollPane.UPPER_RIGHT_CORNER) != null) {
+                        this.viewScrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, emptycorner);
+                    }
+     
+                } else {
+                    this.viewScrollPane.setColumnHeader(null);
+                }
+                this.viewScrollPane.setRowHeader(null);
+     
+        }
+     
+        this.viewer.onSelected(framework);
+        doViewLayout();
+        handleThumbnailButton(this.viewer);
+    }
+     */
+    
+    /**
+     * Sets a current viewer. The viewer content will be inserted
+     * into the scroll pane view port and the viewer header will
+     * be used as the scroll pane header view.
+     */
+    
     private void setCurrentViewer(IViewer viewer) {
         if (viewer == null || viewer.getContentComponent() == null) {
             return;
@@ -389,32 +502,41 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         }
         this.viewer = viewer;
         this.viewScrollPane.setViewportView(this.viewer.getContentComponent());
+ 
+        //Top Header (column header)
         JComponent header = viewer.getHeaderComponent();
         if (header != null) {
-            this.viewScrollPane.setColumnHeaderView(header);
-            
-            // JScrollPane pane = new JScrollPane(header);
-            // header.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
-            //header.setSize(new Dimension(this.viewScrollPane.getColumnHeader().getWidth(), 25));
-            
-            //  this.viewScrollPane.getColumnHeader().setSize(new Dimension(this.viewScrollPane.getColumnHeader().getWidth(), 25));
-            //   pane.setMaximumSize(new Dimension(this.viewScrollPane.getWidth(), 50));
-            //     int pHeight = header.getPreferredSize().height;
-            //    if(pHeight > 100)
-            //        pHeight = 100;
-            
-            //   header.setSize(new Dimension(this.viewScrollPane.getWidth(), pHeight));
-            //   header.setPreferredSize(new Dimension(this.viewScrollPane.getWidth(), pHeight));
-            //   this.viewScrollPane.setColumnHeaderView(header);
-            //   this.viewScrollPane.getColumnHeader().setPreferredSize(new Dimension(this.viewScrollPane.getWidth(), pHeight));
-            
+            this.viewScrollPane.setColumnHeaderView(header);       
         } else {
             this.viewScrollPane.setColumnHeader(null);
         }
+        
+        //Left header (row header)
+        JComponent rowHeader = viewer.getRowHeaderComponent();
+        if (rowHeader != null) {
+            this.viewScrollPane.setRowHeaderView(rowHeader);
+        } else {
+            this.viewScrollPane.setRowHeader(null);
+        }
+        
+        //Corner components
+        JComponent cornerComponent = viewer.getCornerComponent(IViewer.UPPER_LEFT_CORNER);
+        if (cornerComponent != null)
+            this.viewScrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, cornerComponent);
+        
+        cornerComponent = viewer.getCornerComponent(IViewer.UPPER_RIGHT_CORNER);
+        if (cornerComponent != null)
+            this.viewScrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, cornerComponent);
+        
+        cornerComponent = viewer.getCornerComponent(IViewer.LOWER_LEFT_CORNER);
+        if (cornerComponent != null)
+            this.viewScrollPane.setCorner(JScrollPane.LOWER_LEFT_CORNER, cornerComponent);        
+        
         this.viewer.onSelected(framework);
         doViewLayout();
         handleThumbnailButton(this.viewer);
     }
+    
     
     /**
      * Sets state of the thumbnail button according to a viewer
@@ -459,7 +581,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      * Invoked by a window listener when frame close button was pressed.
      */
     private void onClose() {
-	  TMEV.setDataType(TMEV.DATA_TYPE_TWO_DYE);  //default type
+        TMEV.setDataType(TMEV.DATA_TYPE_TWO_DYE);  //default type
         DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
         fireOnCloseEvent((DefaultMutableTreeNode)model.getRoot());
         mainframe.dispose();
@@ -478,7 +600,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             width = Math.max(width, header.getWidth());
             height += header.getHeight();
         }
-       // BufferedImage image = (BufferedImage)java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleImage(256,1);       
+        // BufferedImage image = (BufferedImage)java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleImage(256,1);
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);  //need to use this type for image creation
         Graphics2D g = image.createGraphics();
         g.setColor(Color.white);
@@ -679,7 +801,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     }
     
     
-      /**
+    /**
      * Invoked when the header name is truncated or expanded.
      */
     private void fireHeaderChanged() {
@@ -941,8 +1063,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             thread.start();
         } catch (Exception e) {
             e.printStackTrace(); }
-            setCursor(Cursor.DEFAULT_CURSOR);
-            fireDataChanged();
+        setCursor(Cursor.DEFAULT_CURSOR);
+        fireDataChanged();
     }
     
     
@@ -1353,7 +1475,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      */
     private void onDeleteAll() {
         data.deleteColors();
-        this.geneClusterManager.deleteAllClusters();
+        if(this.geneClusterManager != null)
+            this.geneClusterManager.deleteAllClusters();
         fireDataChanged();
         fireMenuChanged();
     }
@@ -1363,7 +1486,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      */
     private void onDeleteAllExperimentClusters() {
         data.deleteExperimentColors();
-        this.experimentClusterManager.deleteAllClusters();
+        if(this.experimentClusterManager != null)
+            this.experimentClusterManager.deleteAllClusters();
         fireDataChanged();
         fireMenuChanged();
     }
@@ -1676,6 +1800,16 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      */
     private void loadData(){
         SuperExpressionFileLoader loader = new SuperExpressionFileLoader(this);
+    }
+    
+    /**
+     *
+     */
+    protected ClusterRepository getClusterRepository(int clusterType){
+        if(clusterType == Cluster.GENE_CLUSTER)
+            return this.geneClusterRepository;
+        else
+            return this.experimentClusterRepository;
     }
     
     /**
@@ -2031,6 +2165,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         
         public void openClusterNode(String algorithmNode, String clusterID) {
             MultipleArrayViewer.this.openClusterNode(algorithmNode, clusterID);
+        }
+        
+        public ClusterRepository getClusterRepository(int clusterType){
+            return MultipleArrayViewer.this.getClusterRepository(clusterType);
         }
         
     }
