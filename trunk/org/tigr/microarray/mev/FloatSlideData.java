@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: FloatSlideData.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-06-11 18:51:22 $
+ * $Revision: 1.6 $
+ * $Date: 2004-07-27 19:56:10 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -35,6 +35,7 @@ import org.tigr.midas.Constant;
  *  was invalid.
  */
 public class FloatSlideData implements ISlideData, java.io.Serializable {
+    public static final long serialVersionUID = 10201060001L;
     
     private String name; // slide name
     private String filename; // slide file name

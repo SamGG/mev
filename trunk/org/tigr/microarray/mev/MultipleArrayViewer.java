@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.19 $
- * $Date: 2004-07-22 15:40:48 $
+ * $Revision: 1.20 $
+ * $Date: 2004-07-27 19:56:10 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -130,6 +130,7 @@ import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
 import org.tigr.microarray.mev.script.ScriptManager;
 
 public class MultipleArrayViewer extends ArrayViewer implements Printable {
+   public static final long serialVersionUID = 100010201010001L;    
     
     private MultipleArrayMenubar menubar;
     private MultipleArrayToolbar toolbar;
@@ -327,7 +328,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     public void saveAnalysisAs() {
         try {
             
-            final JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+"\\Data");
+            final JFileChooser chooser = new JFileChooser(TMEV.getFile("data/"));
             chooser.setFileView(new AnalysisFileView());
             chooser.setFileFilter(new AnalysisFileFilter());
             chooser.setApproveButtonText("Save");
@@ -674,7 +675,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     private void loadAnalysis() {
         File file;
         try {
-            JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+"\\Data");
+            JFileChooser chooser = new JFileChooser(TMEV.getFile("data/"));
             chooser.setFileView(new AnalysisFileView());
             chooser.setFileFilter(new AnalysisFileFilter());
             if(chooser.showOpenDialog(this) == JOptionPane.OK_OPTION) {
@@ -1087,9 +1088,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      * Saves a current viewer image into the user specified file.
      */
     private void onSaveImage() {
-        final JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
+        final JFileChooser chooser = new JFileChooser(TMEV.getFile("data?"));
         chooser.setAcceptAllFileFilterUsed(false);
-        chooser.setCurrentDirectory(new File("Data"));
         chooser.addChoosableFileFilter(new BMPFileFilter());
         chooser.addChoosableFileFilter(new JPGFileFilter());
         chooser.addChoosableFileFilter(new PNGFileFilter());
@@ -2820,6 +2820,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      * all its invokations to the outer class.
      */
     private class FrameworkImpl implements IFramework, java.io.Serializable {
+        public static final long serialVersionUID = 10201020001L;
         
         public IData getData() {
             return MultipleArrayViewer.this.getData();

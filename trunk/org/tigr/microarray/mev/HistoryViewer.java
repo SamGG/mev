@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: HistoryViewer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2004-02-06 21:48:18 $
+ * $Revision: 1.2 $
+ * $Date: 2004-07-27 19:56:10 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -49,6 +49,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
 
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
@@ -58,7 +59,8 @@ import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
  *
  * @author braisted
  */
-public class HistoryViewer extends ViewerAdapter implements java.io.Serializable {
+public class HistoryViewer extends ViewerAdapter implements java.io.Serializable {        
+    public static final long serialVersionUID = 100010201080001L;
     
     /** Contains the text contents of the viewer.
      */    
@@ -145,7 +147,7 @@ public class HistoryViewer extends ViewerAdapter implements java.io.Serializable
      */    
     private void saveHistory() {
         String sep = System.getProperty("file.separator");
-        JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+sep+"Data");
+        JFileChooser chooser = new JFileChooser(TMEV.getFile("data/"));
         if(chooser.showSaveDialog(content) == JOptionPane.OK_OPTION) {
             try {
                 File file = chooser.getSelectedFile();

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SlideData.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-06-11 18:51:22 $
+ * $Revision: 1.6 $
+ * $Date: 2004-07-27 19:56:10 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -29,6 +29,7 @@ import org.tigr.midas.util.ColumnWorker;
 
 
 public class SlideData extends Vector implements ISlideData, ISlideMetaData, java.io.Serializable {
+    public static final long serialVersionUID = 100010201050001L;
     
     private String slideDataName;
     private String slideFileName;

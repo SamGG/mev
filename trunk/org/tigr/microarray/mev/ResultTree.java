@@ -49,6 +49,8 @@ import java.beans.*;
  * @author  braisted
  */
 public class ResultTree extends JTree implements java.io.Serializable {
+    public static final long serialVersionUID = 100010201070001L;
+
     
     /** Root node
      */

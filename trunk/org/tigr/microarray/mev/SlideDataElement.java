@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SlideDataElement.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-06-24 17:36:30 $
+ * $Revision: 1.5 $
+ * $Date: 2004-07-27 19:56:10 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -16,6 +16,7 @@ import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.util.Xcon;
 
 public class SlideDataElement extends ArrayElement implements ISlideDataElement, java.io.Serializable {
+    public static final long serialVersionUID = 100010201130001L;
     
     protected int[] rows;
     protected int[] columns;

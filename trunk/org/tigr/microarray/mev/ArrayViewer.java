@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: ArrayViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-07-26 21:26:09 $
+ * $Revision: 1.3 $
+ * $Date: 2004-07-27 19:56:10 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -63,7 +63,7 @@ abstract public class ArrayViewer extends JPanel {
     private File selectFile(String title, boolean multiSelectionEnabled) {
         JFileChooser chooser;
         if(firstLoad)
-		chooser = new JFileChooser(System.getProperty("user.dir"));
+		chooser = new JFileChooser(TMEV.getFile("data/"));
 	  else
 		chooser = new JFileChooser(currentDataPath);
 
@@ -106,11 +106,9 @@ abstract public class ArrayViewer extends JPanel {
     }
     
     public ISlideData[] loadDirectory(ISlideMetaData slideMetaData) throws Exception {
-        String parent, child, directory; 
+        String directory; 
 	  if(firstLoad){
-		parent = System.getProperty("user.dir");
-         	child  = "Data";
-	      directory = new File(parent, child).getPath();
+	      directory = TMEV.getFile("data/").getPath();
 	  } else {
 		directory = currentDataPath;		
 	  }   
