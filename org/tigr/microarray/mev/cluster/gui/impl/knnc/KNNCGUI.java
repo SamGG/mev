@@ -72,8 +72,8 @@ public class KNNCGUI implements IClusterGUI{
     int numClasses, numVarFilteredVectors, numNeighbors, numPerms;
     double correlPValue;
     Vector[] classificationVector;
-    
-    int[] classIndices, classes;
+        
+    int[] classIndices, classes, origNumInFiltTrgSetByClass, numberCorrectlyClassifiedByClass, numberIncorrectlyClassifiedByClass;
     
     /** Creates a new instance of KNNCGUI */
     public KNNCGUI() {
@@ -258,6 +258,9 @@ public class KNNCGUI implements IClusterGUI{
                 this.means = result.getMatrix("clusters_means");
                 this.variances = result.getMatrix("clusters_variances");       
                 
+                this.numberCorrectlyClassifiedByClass = result.getIntArray("numberCorrectlyClassifiedByClass");
+                this.numberIncorrectlyClassifiedByClass = result.getIntArray("numberIncorrectlyClassifiedByClass");
+                this.origNumInFiltTrgSetByClass = result.getIntArray("origNumInFiltTrgSetByClass");
                             
                 GeneralInfo info = new GeneralInfo();
                 //info.clusters = k;
@@ -301,9 +304,217 @@ public class KNNCGUI implements IClusterGUI{
                  */
             }
             
-        } // if (!validate)
+        } else {// if (validate)
+            KNNCStatusDialog kStatDialog = new KNNCStatusDialog((JFrame)framework.getFrame(), false);
+            kStatDialog.setVisible(true);            
+            KNNCValidationFirstDialog kvDialog = new KNNCValidationFirstDialog((JFrame)framework.getFrame(), true, framework);
+            kvDialog.setVisible(true); 
+            
+            if (!kvDialog.isOkPressed()) {
+                kStatDialog.dispose();
+                return null;
+            } 
+            
+            classifyGenes = kvDialog.classifyGenes();
+            numClasses = kvDialog.getNumClasses();
+            numNeighbors = kvDialog.getNumNeighbors();  
+            
+            useCorrelFilter = kvDialog.useCorrelFilter();
+            if (useCorrelFilter) {
+                correlPValue = kvDialog.getCorrPValue();
+                numPerms = kvDialog.getNumPerms();
+            }
+            k = numClasses*4 + 1;
+            kcEditor = new KNNClassificationEditor(framework, classifyGenes, numClasses); 
+            if (kvDialog.createNewTrgSet()) {
+                //kcEditor = new KNNClassificationEditor(framework, classifyGenes, numClasses);
+                kcEditor.setVisible(true);
+                kcEditor.showWarningMessage();
+            } else {
+                final JFileChooser fc = new JFileChooser();
+                fc.setCurrentDirectory(new File("Data")); 
+                int returnVal = fc.showOpenDialog(framework.getFrame());
+                    if (returnVal == JFileChooser.APPROVE_OPTION) {
+                        //kcEditor = new KNNClassificationEditor(framework, classifyGenes, numClasses);
+                        //kcEditor.setVisible(true);
+                        kcEditor.loadFromFile(fc.getSelectedFile());
+                    } else {
+                        kStatDialog.dispose();
+                        return null;
+                    }
+            }   
+            
+            if (kcEditor.fileIsIncompatible()) {
+                kStatDialog.dispose();
+                return null;                
+            }            
+            
+            while (!kcEditor.isNextPressed()) {
+                continue;
+            }  
+            if (!kcEditor.proceed()) {
+                kStatDialog.dispose();
+                return null;
+            } 
+            
+            classificationVector = kcEditor.getClassification();
+            classIndices = new int[classificationVector[0].size()];
+            classes = new int[classificationVector[1].size()];
+            
+            for (int i = 0; i < classIndices.length; i++) {
+                classIndices[i] = ((Integer)(classificationVector[0].get(i))).intValue();
+                classes[i] = ((Integer)(classificationVector[1].get(i))).intValue();
+            }  
+            
+            boolean isHierarchicalTree = kvDialog.drawTrees();
+            
+            // hcl init
+            int hcl_method = 0;
+            boolean hcl_samples = false;
+            boolean hcl_genes = false;
+            if (isHierarchicalTree) {
+                HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame());
+                if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
+                    kStatDialog.dispose();
+                    return null;
+                }
+                hcl_method = hcl_dialog.getMethod();
+                hcl_samples = hcl_dialog.isClusterExperience();
+                hcl_genes = hcl_dialog.isClusterGenes();
+            }            
+            
+            Listener listener = new Listener();     
+            
+            try {
+                //System.out.println("Proceeded to algorithm");
+                algorithm = framework.getAlgorithmFactory().getAlgorithm("KNNC");
+                algorithm.addAlgorithmListener(listener);
+                
+                this.progress = new Progress(framework.getFrame(), "KNN classification", listener);
+                this.progress.show();
+                
+                AlgorithmData data = new AlgorithmData();
+                
+                data.addMatrix("experiment", experiment.getMatrix());
+                data.addParam("distance-factor", String.valueOf(1.0f));
+                IDistanceMenu menu = framework.getDistanceMenu();
+                data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
+                
+                int function = menu.getDistanceFunction();
+                if (function == Algorithm.DEFAULT) {
+                    function = Algorithm.EUCLIDEAN;
+                }
+                
+                data.addParam("distance-function", String.valueOf(function));
+                
+                data.addParam("validate", String.valueOf(validate));                
+                data.addParam("classifyGenes", String.valueOf(classifyGenes));
+                if (classifyGenes) {
+                    data.addMatrix("experiment", experiment.getMatrix());
+                } else {
+                    data.addMatrix("experiment", experiment.getMatrix().transpose());
+                }
+                //data.addParam("useVarianceFilter", String.valueOf(useVarianceFilter));
+                data.addParam("useCorrelFilter", String.valueOf(useCorrelFilter));
+                data.addParam("numClasses", String.valueOf(numClasses));
+                data.addParam("numNeighbors", String.valueOf(numNeighbors));
+                /*
+                if (useVarianceFilter) {
+                    data.addParam("numVarFilteredVectors", String.valueOf(numVarFilteredVectors));
+                }
+                 */
+                if (useCorrelFilter) {
+                    data.addParam("correlPValue", String.valueOf((float)correlPValue));
+                    data.addParam("numPerms", String.valueOf(numPerms));
+                }
+                data.addIntArray("classIndices", classIndices);
+                data.addIntArray("classes", classes);
+                // hcl parameters
+                
+                if (isHierarchicalTree) {
+                    data.addParam("hierarchical-tree", String.valueOf(true));
+                    data.addParam("method-linkage", String.valueOf(hcl_method));
+                    data.addParam("calculate-genes", String.valueOf(hcl_genes));
+                    data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+                }
+                 
+                
+                long start = System.currentTimeMillis();
+                AlgorithmData result = algorithm.execute(data);
+                long time = System.currentTimeMillis() - start;     
+                // getting the results
+                Cluster result_cluster = result.getCluster("cluster");
+                NodeList nodeList = result_cluster.getNodeList(); 
+                k = numClasses + 1;
+                this.clusters = new int[k][];
+                for (int i=0; i<k; i++) {
+                    clusters[i] = nodeList.getNode(i).getFeaturesIndexes();
+                }
+                this.means = result.getMatrix("clusters_means");
+                this.variances = result.getMatrix("clusters_variances");       
+                
+                this.numberCorrectlyClassifiedByClass = result.getIntArray("numberCorrectlyClassifiedByClass");
+                this.numberIncorrectlyClassifiedByClass = result.getIntArray("numberIncorrectlyClassifiedByClass");
+                this.origNumInFiltTrgSetByClass = result.getIntArray("origNumInFiltTrgSetByClass");
+                            
+                GeneralInfo info = new GeneralInfo();
+                //info.clusters = k;
+                info.time = time;
+                info.hcl = isHierarchicalTree;
+                info.hcl_genes = hcl_genes;
+                info.hcl_samples = hcl_samples;
+                info.hcl_method = hcl_method;   
+                info.numClasses = numClasses;
+                info.numNeighbors = numNeighbors;
+                //info.usedVarFilter = useVarianceFilter;
+                /*
+                if (useVarianceFilter) {
+                    info.numVarFiltered = this.numVarFilteredVectors;
+                    info.postVarDataSetSize = (result.getParams()).getInt("postVarDataSetSize");
+                    info.postVarClassSetSize = (result.getParams()).getInt("postVarClassSetSize");
+                }
+                 */
+                info.usedCorrelFilter = this.useCorrelFilter;                
+                if (useCorrelFilter) {
+                    info.correlPvalue = this.correlPValue;
+                    info.numPerms = this.numPerms;
+                    //info.postCorrDataSetSize = (result.getParams()).getInt("postCorrDataSetSize");
+                }
+                info.usedNumNeibs = (result.getParams()).getInt("usedNumNeibs");
+                //info.origDataSetSize = (result.getParams()).getInt("origDataSetSize");
+                //info.origClassSetSize = (result.getParams()).getInt("origClassSetSize");
+                
+                return createValidationResultTree(result_cluster, info);
+                //return createResultTree(result_cluster, info);   
+                
+            }  finally {
+                kStatDialog.dispose();
+                if (algorithm != null) {
+                    algorithm.removeAlgorithmListener(listener);
+                }
+                if (progress != null) {
+                    progress.dispose();
+                }
+            }
+            
+        } // end if (validate)
         
-        return null; //for now
+        //return null; //for now
+    }
+    
+    private DefaultMutableTreeNode createValidationResultTree(Cluster result_cluster, GeneralInfo info) {
+        DefaultMutableTreeNode root;  
+        if(classifyGenes)
+            root = new DefaultMutableTreeNode("KNNC Validation - genes");
+        else
+            root = new DefaultMutableTreeNode("KNNC Validation - experiments");  
+        addValidationExpressionImages(root);
+        addValidationHierarchicalTrees(root, result_cluster, info);
+        addValidationCentroidViews(root);
+        addValidationTableViews(root);
+        addValidationInfo(root);
+        addValidationGeneralInfo(root, info);  
+        return root;        
     }
 
     /**
@@ -328,9 +539,25 @@ public class KNNCGUI implements IClusterGUI{
         addCentroidViews(root);
         addTableViews(root);
         addClusterInfo(root);
+        addValidationInfo(root);
         addGeneralInfo(root, info);
     }   
     
+    
+    private void addValidationTableViews(DefaultMutableTreeNode root) {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table views");
+        IViewer tabViewer;   
+        if (classifyGenes) {
+            tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.data);
+        } else {
+            tabViewer = new ExperimentClusterTableViewer(this.experiment, this.clusters, this.data);
+        }        
+        for (int i = 1; i < this.clusters.length; i++) {            
+            node.add(new DefaultMutableTreeNode(new LeafInfo("Class " + String.valueOf(i), tabViewer, new Integer(i))));
+        }
+        node.add(new DefaultMutableTreeNode(new LeafInfo("Not in training set ", tabViewer, new Integer(0))));
+        root.add(node);
+    }
     
     private void addTableViews(DefaultMutableTreeNode root) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table views");
@@ -373,6 +600,21 @@ public class KNNCGUI implements IClusterGUI{
         root.add(node);
     }    
     
+    private void addValidationExpressionImages(DefaultMutableTreeNode root) {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Expression Images");
+        IViewer expViewer;     
+        if (classifyGenes) {
+            expViewer = new KNNCExperimentViewer(this.experiment, this.clusters);
+        } else {
+            expViewer = new KNNCExperimentClusterViewer(this.experiment, this.clusters);
+        }
+        
+        for (int i = 1; i < this.clusters.length; i++) {            
+            node.add(new DefaultMutableTreeNode(new LeafInfo("Class " + String.valueOf(i), expViewer, new Integer(i))));
+        }
+        node.add(new DefaultMutableTreeNode(new LeafInfo("Not in training set ", expViewer, new Integer(0))));
+        root.add(node);        
+    }
     
     /**
      * Adds nodes to display clusters data.
@@ -415,6 +657,36 @@ public class KNNCGUI implements IClusterGUI{
  
         root.add(node);
     } 
+    
+    
+    private void addValidationHierarchicalTrees(DefaultMutableTreeNode root, Cluster result_cluster, GeneralInfo info) {
+        if (!info.hcl) {
+            return;
+        }  
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Hierarchical Trees");
+        NodeList nodeList = result_cluster.getNodeList();
+        int [][] clusters = null; 
+        
+        if(!this.classifyGenes){
+            clusters = new int[k][];
+            for (int i=0; i<k; i++) {
+                clusters[i] = nodeList.getNode(i).getFeaturesIndexes();
+            }
+            if(info.hcl_samples)
+                clusters = getOrderedIndices(nodeList, clusters, info.hcl_genes);
+        }  
+        for (int i=1; i<nodeList.getSize(); i++) {
+            if(this.classifyGenes)
+                node.add(new DefaultMutableTreeNode(new LeafInfo("Class "+String.valueOf(i), createHCLViewer(nodeList.getNode(i), info, null))));
+            else
+                node.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+String.valueOf(i), createHCLViewer(nodeList.getNode(i), info, clusters), new Integer(i))));
+        }
+        if (this.classifyGenes) {
+            node.add(new DefaultMutableTreeNode(new LeafInfo("Not in training set", createHCLViewer(nodeList.getNode(0), info, null))));
+        } else 
+           node.add(new DefaultMutableTreeNode(new LeafInfo("Not in training set", createHCLViewer(nodeList.getNode(0), info, clusters), new Integer(0)))); 
+        root.add(node);        
+    }
     
     /**
      * Adds nodes to display hierarchical trees.
@@ -578,6 +850,81 @@ public class KNNCGUI implements IClusterGUI{
         root.add(node);
     }   
      
+    private void addValidationInfo(DefaultMutableTreeNode root) {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode(new LeafInfo("Validation Information", new KNNCValidationInfoViewer(origNumInFiltTrgSetByClass, numberCorrectlyClassifiedByClass, numberIncorrectlyClassifiedByClass)));
+        root.add(node);
+    }
+    
+    
+    private void addValidationCentroidViews(DefaultMutableTreeNode root) {
+        DefaultMutableTreeNode centroidNode = new DefaultMutableTreeNode("Centroid Graphs");
+        DefaultMutableTreeNode expressionNode = new DefaultMutableTreeNode("Expression Graphs");
+        
+        KNNCCentroidViewer centroidViewer;
+        ExperimentClusterCentroidViewer expCentroidViewer;
+        
+        
+        int[][] shuffledClusters = new int[clusters.length][];
+        for (int i = 0; i < clusters.length - 1; i++) {
+            shuffledClusters[i] = clusters[i + 1];
+        }
+        shuffledClusters[clusters.length - 1] = clusters[0];
+        
+        FloatMatrix shuffledMeans = new FloatMatrix(means.getRowDimension(), means.getColumnDimension());
+        FloatMatrix shuffledVariances = new FloatMatrix(variances.getRowDimension(), variances.getColumnDimension());
+        
+        for (int i = 0; i  < clusters.length - 1; i++) {
+            shuffledMeans.A[i] = means.A[i + 1];
+            shuffledVariances.A[i] = variances.A[i + 1];
+        }
+        
+        shuffledMeans.A[clusters.length - 1] = means.A[0];
+        shuffledVariances.A[clusters.length - 1] = variances.A[0];
+        
+        if(classifyGenes){
+            centroidViewer = new KNNCCentroidViewer(this.experiment, clusters);
+            centroidViewer.setMeans(this.means.A);
+            centroidViewer.setVariances(this.variances.A);
+            for (int i=1; i<this.clusters.length; i++) {
+                centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("Class "+String.valueOf(i), centroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
+                expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Class "+String.valueOf(i), centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
+            }
+            centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("Not in training set ", centroidViewer, new CentroidUserObject(0, CentroidUserObject.VARIANCES_MODE))));
+            expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Not in training set ", centroidViewer, new CentroidUserObject(0, CentroidUserObject.VALUES_MODE))));
+                  
+            
+            KNNCCentroidsViewer centroidsViewer = new KNNCCentroidsViewer(this.experiment, shuffledClusters);
+            centroidsViewer.setMeans(shuffledMeans.A);
+            centroidsViewer.setVariances(shuffledVariances.A);
+            
+            centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("All Clusters", centroidsViewer, new Integer(CentroidUserObject.VARIANCES_MODE))));
+            expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("All Clusters", centroidsViewer, new Integer(CentroidUserObject.VALUES_MODE))));
+            
+        }
+        else{
+            expCentroidViewer = new KNNCExperimentCentroidViewer(this.experiment, clusters);
+            
+            expCentroidViewer.setMeans(this.means.A);
+            expCentroidViewer.setVariances(this.variances.A);
+            for (int i=1; i<this.clusters.length; i++) {
+                centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("Class "+String.valueOf(i), expCentroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
+                expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Class "+String.valueOf(i), expCentroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
+            }
+            centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("Not in training set ", expCentroidViewer, new CentroidUserObject(0, CentroidUserObject.VARIANCES_MODE))));
+            expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Not in training set ", expCentroidViewer, new CentroidUserObject(0, CentroidUserObject.VALUES_MODE))));
+                   
+            KNNCExperimentCentroidsViewer expCentroidsViewer = new KNNCExperimentCentroidsViewer(this.experiment, shuffledClusters);
+            expCentroidsViewer.setMeans(shuffledMeans.A);
+            expCentroidsViewer.setVariances(shuffledVariances.A);
+            
+            centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("All Clusters", expCentroidsViewer, new Integer(CentroidUserObject.VARIANCES_MODE))));
+            expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("All Clusters", expCentroidsViewer, new Integer(CentroidUserObject.VALUES_MODE))));
+            
+            
+        }
+        root.add(centroidNode);
+        root.add(expressionNode);        
+    }
     
     /**
      * Adds nodes to display centroid charts.
@@ -739,6 +1086,23 @@ public class KNNCGUI implements IClusterGUI{
         //node.add(new DefaultMutableTreeNode(info.function));
         root.add(node);
     }    
+    
+    private void addValidationGeneralInfo(DefaultMutableTreeNode root, GeneralInfo info) {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("General Information");  
+        node.add(new DefaultMutableTreeNode("Used correlation filter: " + info.usedCorrelFilter));
+        if (useCorrelFilter) {
+            node.add(new DefaultMutableTreeNode("Threshold p-value: " + info.correlPvalue));
+            node.add(new DefaultMutableTreeNode("Number of permutations: " + info.numPerms));
+            //node.add(new DefaultMutableTreeNode("Size of set to classify after corr. filtering: " + info.postCorrDataSetSize));
+        }  
+        node.add(new DefaultMutableTreeNode("Num. classes: " + info.numClasses));
+        node.add(new DefaultMutableTreeNode("Input num. neighbors: " + info.numNeighbors));
+        node.add(new DefaultMutableTreeNode("Num. neighbors used: " + info.usedNumNeibs)); 
+        node.add(new DefaultMutableTreeNode("HCL: "+info.getMethodName()));        
+        node.add(new DefaultMutableTreeNode("Time: "+String.valueOf(info.time)+" ms"));
+        //node.add(new DefaultMutableTreeNode(info.function));
+        root.add(node);        
+    }
     
     /**
      * The class to listen to progress, monitor and algorithms events.
