@@ -4,21 +4,27 @@ All rights reserved.
  */
 /*
  * $RCSfile: ExperimentUtil.java,v $
- * $Revision: 1.3 $
- * $Date: 2003-12-08 17:06:24 $
- * $Author: braisted $
+ * $Revision: 1.4 $
+ * $Date: 2004-07-08 20:12:48 $
+ * $Author: nbhagaba $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.gui.helpers;
 
+import java.io.*;
 import java.io.File;
+import java.io.IOException.*;
 import java.io.PrintWriter;
 import java.io.FileOutputStream;
+import java.util.Vector;
 
 import java.awt.Frame;
+import javax.swing.*;
 import javax.swing.JFileChooser;
 
+import org.tigr.util.StringSplitter;
+import org.tigr.util.BrowserLauncher;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 
@@ -559,6 +565,181 @@ public class ExperimentUtil {
         out.close();
     }
      */
+    public static void linkToURL(JFrame frame, Experiment experiment, IData data, int row)  /*throws Exception*/ {
+        //NOTE: In this method, the argument "row" is what's obtained AFTER applying getGeneIndexMappedToSelectedRows(); i.e., use as is; no need to re-map for cutoffs 
+        try {
+            File file = new File(System.getProperty("user.dir")+"\\config\\annotation_URLs.txt");
+            //System.out.println("Found annotation file");
+            AnnotationURLLinkDialog aDialog = new AnnotationURLLinkDialog(frame, false, experiment, data, row, file);
+            aDialog.setVisible(true);
+            //if (aDialog.isOkPressed()) lastSelectedAnnotationIndices = aDialog.getLastSelectedIndices();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(new JFrame(), "Could not link to URL! Make sure \"annotation_URLs.txt\" file in \"config\" directory is in correct format", "Error", JOptionPane.ERROR_MESSAGE);
+            //System.out.println("Did not find file");
+            //JOptionPane.showMessageDialog(new JFrame(), "Could not find annotation_URLs.txt file in config directory", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    public static void linkToURL(JFrame frame, Experiment experiment, IData data, int row, int[] lastSelectedIndices)  /*throws Exception*/ {
+        //int[] indices = {0, 0};
+        //NOTE: In this method, the argument "row" is what's obtained AFTER applying getGeneIndexMappedToSelectedRows(); i.e., use as is; no need to re-map for cutoffs 
+        try {
+            File file = new File(System.getProperty("user.dir")+"\\config\\annotation_URLs.txt");
+            System.out.println("Found annotation file");
+            AnnotationURLLinkDialog aDialog = new AnnotationURLLinkDialog(frame, false, experiment, data, row, file, lastSelectedIndices);
+            aDialog.setVisible(true);
+            //if (aDialog.isOkPressed()) 
+                //indices = aDialog.getLastSelectedIndices();            
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(new JFrame(), "Could not link to URL! Make sure \"annotation_URLs.txt\" file in \"config\" directory is in correct format", "Error", JOptionPane.ERROR_MESSAGE);            
+            //System.out.println("Did not find file");
+            //JOptionPane.showMessageDialog(new JFrame(), "Could not find annotation_URLs.txt file in config directory", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        //return indices;
+    }    
+    
+    public static void linkToURL(JFrame frame, Experiment experiment, IData data, int row, String annotationKey, int[] lastSelectedIndices) {
+  //NOTE: In this method, the argument "row" is what's obtained AFTER applying getGeneIndexMappedToSelectedRows(); i.e., use as is; no need to re-map for cutoffs      
+        try {
+            File file = new File(System.getProperty("user.dir")+"\\config\\annotation_URLs.txt");            
+            if (annotationKey.equalsIgnoreCase("Stored Color")) {
+                JOptionPane.showMessageDialog(new JFrame(), "Cannot link stored color to an URL. Pick a different field to link from", "Error", JOptionPane.ERROR_MESSAGE);
+                
+            } else {
+                String[] fieldNames = data.getFieldNames();
+                int currFieldIndex = -1;
+                for (int i = 0; i < fieldNames.length; i++) {
+                    if (annotationKey.equalsIgnoreCase(fieldNames[i])) {
+                        currFieldIndex = i;
+                        break;
+                    }
+                }
+                String[][] annotationFields = getAnnotationFieldsFromFile(file);                
+                //System.out.println("Found annotation file");
+                String[] urlTemplates = annotationFields[0];
+                String[] urlKeys = annotationFields[1];
+                
+                if (isFound(annotationKey, urlKeys)) {
+                    int currKeyIndex =  -1;
+                    for (int i =0; i < urlKeys.length; i++) {
+                        if (annotationKey.equalsIgnoreCase(urlKeys[i])) {
+                            currKeyIndex = i;
+                            break;
+                        }
+                    }
+                    String currURLTemplate = urlTemplates[currKeyIndex];
+       //NOTE: In the following statement, the argument "row" is what's obtained AFTER applying getGeneIndexMappedToSelectedRows(); i.e., use as is; no need to re-map for cutoffs                            
+                    String currentAnnotationString = data.getElementAttribute(row, currFieldIndex);                    
+                    String currentURL = getCurrentURL(annotationKey, currentAnnotationString, currURLTemplate);
+                    try {
+                        BrowserLauncher.openURL(currentURL);                       
+                    }  catch (IOException ie) {
+                        JOptionPane.showMessageDialog(new JFrame(), ie.toString(),"Error", JOptionPane.ERROR_MESSAGE);
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(new JFrame(), "Browser could not be launched! Possible problem: the annotation format may not be appropriate for this URL type!","Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                    
+                } else { // if annotationKey is not found in annotation_URLs.txt file
+                    int[] indicesToUse = new int[2];
+                    indicesToUse[0] = currFieldIndex; //top dropdown list in dialog defaults to current annotation field
+                    indicesToUse[1] = lastSelectedIndices[1]; // bottom dropdown list in dialog defaults to last chosen
+                    AnnotationURLLinkDialog aDialog = new AnnotationURLLinkDialog(frame, false, experiment, data, row, file, indicesToUse);
+                    aDialog.setVisible(true);
+                }
+
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(new JFrame(), "Could not open browser! Possible problems: bad URL, or \"annotation_URLs.txt\" file in \"config\" directory is not in correct format", "Error", JOptionPane.ERROR_MESSAGE);
+            //System.out.println("Did not find file");
+            //JOptionPane.showMessageDialog(new JFrame(), "Could not find annotation_URLs.txt file in config directory", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        
+        //return indices;
+    }    
+    
+    private static String getCurrentURL(String currKey, String currAnn, String currTemplate) {
+        //System.out.println("currKey = " + currKey);
+        String urlToUse = "";
+        if (currKey.equalsIgnoreCase("UniGene")) {
+            String[] splitAnnotation = currAnn.split("\\.");
+            /*
+            System.out.println("splitAnnotation.length = " + splitAnnotation.length);
+            for (int i = 0; i < splitAnnotation.length; i++) {
+                System.out.print("splitAnnotation[" + i + "] = " + splitAnnotation[i]);
+            }
+             */
+            String s1 = currTemplate.replaceAll("FIELD1", splitAnnotation[1]);
+            urlToUse = s1.replaceAll("FIELD2", splitAnnotation[0]);
+        } else {
+            urlToUse = currTemplate.replaceAll("FIELD1", currAnn);
+        }
+        //System.out.println("url To use = " + urlToUse);
+        return urlToUse;        
+    }
+    
+    private static boolean isFound(String annKey, String[] keys) {
+        for (int i = 0; i < keys.length; i++) {
+            if (annKey.equalsIgnoreCase(keys[i]))
+                return true;
+        }
+        return false;
+    }
+    
+    private static String[][] getAnnotationFieldsFromFile(File file) {
+        String[][] annFields = new String[2][];
+        Vector annotFieldsVector = new Vector();
+        Vector urlKeysVector = new Vector();
+        Vector urlTemplateVector = new Vector();
+        //Vector urlDescriptionVector = new Vector();
+        try {
+            FileReader fr = new FileReader(file);
+            BufferedReader buff = new BufferedReader(fr);
+            StringSplitter st = new StringSplitter('\t');
+            boolean eof = false;
+            while (!eof) {
+                String line = buff.readLine();
+                if (line == null) eof = true;
+                else {
+                    st.init(line);
+                    urlKeysVector.add(st.nextToken());
+                    urlTemplateVector.add(st.nextToken());
+                    //urlDescriptionVector.add(st.nextToken());
+                }
+            }
+            buff.close();
+            /*
+            String[] urlDescriptions = new String[urlDescriptionVector.size()];
+            for (int i = 0; i < urlDescriptions.length; i++) {
+                urlDescriptions[i] = (String)(urlDescriptionVector.get(i));
+            }
+             */
+
+            String[] urlTemplates = new String[urlTemplateVector.size()];
+            String[] urlKeys = new String[urlKeysVector.size()];
+            
+            for (int i = 0; i < urlTemplates.length; i++) {
+                urlTemplates[i] = (String)(urlTemplateVector.get(i));
+            }
+            for (int i = 0; i < urlKeys.length; i++) {
+                urlKeys[i] = (String)(urlKeysVector.get(i));
+            }
+            annFields[0] = urlTemplates;
+            annFields[1] = urlKeys;
+        } catch (java.io.FileNotFoundException fne) {
+            JOptionPane.showMessageDialog(new JFrame(), "Could not find \"annotation_URLs.txt\" file in \"config\" directory", "Error", JOptionPane.ERROR_MESSAGE);            
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(new JFrame(), "Incompatible \"annotation_URLs.txt\" file in \"config\" directory! Possible issues: extra newline characters, too many or too few tabs per line", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        return annFields;
+    }
+    
+    public static int[] lastSelectedAnnotationIndices = {0,0};
+    
+    /*
+    public static int[] getLastSelectedAnnotationIndices() {
+        return lastSelectedAnnotationIndices;
+    }
+     **/
     
     /**
      * Creates array of integers with increasing order.

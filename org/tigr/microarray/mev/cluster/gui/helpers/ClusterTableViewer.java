@@ -50,6 +50,7 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
     protected static final String CLEAR_ALL_CMD = "clear-all-cmd";
     protected static final String SELECT_ALL_CMD = "select-all-cmd";
     protected static final String SORT_ORIG_ORDER_CMD = "sort-orig-order-cmd";
+    protected static final String LINK_TO_URL_CMD = "link-to-url-cmd";    
     
     public static final int INTEGER_TYPE = 10;
     public static final int FLOAT_TYPE = 11;
@@ -62,10 +63,12 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
     private Experiment experiment;
     private IFramework framework;
     private IData data;
-    private int clusterIndex;
+    private int clusterIndex, xColumn;
+    //private int xRow;
     private int[][] clusters;
     private int[][] sortedClusters;
     private int[] samplesOrder;
+    private int[] lastSelectedAnnotationIndices;
     private String[] auxTitles, fieldNames;
     private Object[][] auxData;
     //private Object[][] origData;
@@ -73,6 +76,7 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
     private JTable clusterTable;
     private ClusterTableModel clusterModel;  
     private ClusterTableSearchDialog searchDialog;
+    private JMenuItem urlMenuItem;
     //private JPanel clusterTablePanel;
     
     /** Creates a new instance of ClusterTableViewer */
@@ -91,6 +95,12 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
         this.fieldNames = data.getFieldNames();
         this.auxTitles = auxTitles;
         this.auxData = auxData;
+        this.lastSelectedAnnotationIndices = new int[2];
+        //this.xRow = -1;
+        this.xColumn = -1;
+        for (int i = 0; i < lastSelectedAnnotationIndices.length; i++) {
+            lastSelectedAnnotationIndices[1] = 0;
+        }
         
         this.sortedClusters = new int[clusters.length][];
         
@@ -106,6 +116,7 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
         
         this.clusterModel = new ClusterTableModel();
         this.clusterTable = new JTable(clusterModel);
+        clusterTable.setCellSelectionEnabled(true);
         clusterTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
         TableColumn column = null;
         for (int i = 0; i < clusterModel.getColumnCount(); i++) {
@@ -119,6 +130,17 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
                 sortedAscending[i][j] = false;
             }
         }
+        /*
+        clusterTable.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent event) {
+                if (!event.isPopupTrigger()){
+                    xRow = clusterTable.rowAtPoint(event.getPoint());
+                    xColumn = clusterTable.columnAtPoint(event.getPoint()); 
+                    System.out.println("xRow = " + xRow + ", xCol = " + xColumn);
+                }
+            }
+        });  
+         */      
         addMouseListenerToHeaderInTable(clusterTable);
         header  = clusterTable.getTableHeader();        
         
@@ -764,8 +786,8 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
         menuItem.addActionListener(listener);
         menu.add(menuItem);
         
-        menuItem.addActionListener(listener);
-        menu.add(menuItem);
+        //menuItem.addActionListener(listener);
+        //menu.add(menuItem);
         
         menu.addSeparator();
         
@@ -792,8 +814,8 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
         menuItem.addActionListener(listener);
         menu.add(menuItem);
         
-        menuItem.addActionListener(listener);
-        menu.add(menuItem);      
+        //menuItem.addActionListener(listener);
+        //menu.add(menuItem);      
         
         menu.addSeparator();
         
@@ -802,9 +824,16 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
         menuItem.addActionListener(listener);
         menu.add(menuItem);
         
-        menuItem.addActionListener(listener);
-        menu.add(menuItem);           
+        //menuItem.addActionListener(listener);
+        //menu.add(menuItem);   
+     
+        menu.addSeparator();
         
+        urlMenuItem = new JMenuItem("Link to URL ...", GUIFactory.getIcon("ClusterInformationResult.gif"));
+        urlMenuItem.setActionCommand(LINK_TO_URL_CMD);
+        urlMenuItem.addActionListener(listener);
+        //if (clusterTable.getSelectedRows().length != 1) 
+        menu.add(urlMenuItem);        
     }    
     
     /**
@@ -847,6 +876,20 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
         //clusterTable.repaint();
     }   
     
+    private void linkToURL() {
+        JFrame frame = (JFrame)(JOptionPane.getFrameForComponent(clusterTable));
+        //System.out.println("Before linkToURL: ClusterTablerViewer.lastSelectedAnnotationIndices = " + lastSelectedAnnotationIndices[0] + " " + lastSelectedAnnotationIndices[1]);        
+        ExperimentUtil.linkToURL(frame, getExperiment(), getData(), getArrayMappedToSelectedIndices()[0], ExperimentUtil.lastSelectedAnnotationIndices);
+        //System.out.println("After linkToURL: ClusterTablerViewer.lastSelectedAnnotationIndices = " + lastSelectedAnnotationIndices[0] + " " + lastSelectedAnnotationIndices[1]);
+        //lastSelectedAnnotationIndices = ExperimentUtil.getLastSelectedAnnotationIndices();
+    }
+    
+    private void linkToURL2() {
+        JFrame frame = (JFrame)(JOptionPane.getFrameForComponent(clusterTable));        
+        String colName = clusterTable.getColumnName(xColumn);
+        ExperimentUtil.linkToURL(frame, getExperiment(), getData(), getArrayMappedToSelectedIndices()[0], colName, ExperimentUtil.lastSelectedAnnotationIndices);      
+    }
+    
     /**
      * Removes a public color.
      */
@@ -885,22 +928,37 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
                 clusterTable.selectAll();
             } else if (command.equals(SORT_ORIG_ORDER_CMD)) {
                 sortInOrigOrder();
+            } else if (command.equals(LINK_TO_URL_CMD)) {
+                linkToURL2();
             }
 	}
 	   
 	public void mouseReleased(MouseEvent event) {
+            //System.out.println("Mouse released");
 	    maybeShowPopup(event);
 	}
 	
 	public void mousePressed(MouseEvent event) {
+            //System.out.println("Mouse pressed");
 	    maybeShowPopup(event);
 	}
 	
 	private void maybeShowPopup(MouseEvent e) {
 	    if (!e.isPopupTrigger() || getCluster() == null || getCluster().length == 0) {
+                //xRow = clusterTable.rowAtPoint(e.getPoint());
+                //xColumn = clusterTable.columnAtPoint(e.getPoint());
+                xColumn = clusterTable.getSelectedColumn();
+                //System.out.println("xRow = " + xRow + ", xCol = " + xColumn);               
 		return;
 	    }
+            
+            if (clusterTable.getSelectedRowCount() != 1) {
+                urlMenuItem.setEnabled(false);
+            } else {
+                urlMenuItem.setEnabled(true);
+            }
 	    popup.show(e.getComponent(), e.getX(), e.getY());
+             
 	}
     }
     
