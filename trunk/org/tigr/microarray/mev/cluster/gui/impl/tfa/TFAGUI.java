@@ -57,6 +57,12 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidsVie
  * @author  nbhagaba
  */
 public class TFAGUI implements IClusterGUI {
+    
+    public static final int JUST_ALPHA = 4;
+    public static final int STD_BONFERRONI = 5;
+    public static final int ADJ_BONFERRONI = 6;    
+    public static final int MAX_T = 9;
+    public static final int MIN_P = 10;    
 
     private Algorithm algorithm;
     private Progress progress;    
@@ -69,6 +75,12 @@ public class TFAGUI implements IClusterGUI {
     Vector exptNamesVector;    
     String[] factorNames;
     int[] numFactorLevels;
+    int[] factorAAssignments, factorBAssignments;
+    
+    private Object[][] auxData;
+    private String[] auxTitles; 
+    String[] clusterLabels; 
+    private boolean usePerms;
     
     /** Creates a new instance of TFAGUI */
     public TFAGUI() {
@@ -114,13 +126,431 @@ public class TFAGUI implements IClusterGUI {
         factorNames[0] = t1Box.getFactorAName();
         factorNames[1] = t1Box.getFactorBName();
         
+        String[] localClustNames =  {factorNames[0] + " significant", factorNames[1] + " significant", "Interaction signficant", factorNames[0] + " non-significant", factorNames[1] + " non-significant", "Interaction non-signficant", "Non-significant for all effects"};
+        clusterLabels = new String[localClustNames.length];
+        
+        for (int i = 0; i < clusterLabels.length; i++) {
+            clusterLabels[i] = localClustNames[i];
+        }
+        
         numFactorLevels[0] = t1Box.getNumFactorALevels();
         numFactorLevels[1] = t1Box.getNumFactorBLevels();
         
         TFAInitBox2 t2Box  = new TFAInitBox2((JFrame)framework.getFrame(), true, exptNamesVector, factorNames, numFactorLevels);
         t2Box.setVisible(true);
         
-        return null; // for now
+        if (!t2Box.isOkPressed()) return null;
+        
+        boolean allCellsHaveOneSample = t2Box.allCellsHaveOneSample();
+        boolean isHierarchicalTree = t2Box.drawTrees();        
+        int adjustmentMethod = t2Box.getAdjustmentMethod();
+        float alpha = t2Box.getAlpha();
+        factorAAssignments = t2Box.getFactorAAssignments();
+        factorBAssignments = t2Box.getFactorBAssignments();
+        Vector[][] bothFactorAssignments = t2Box.getBothFactorAssignments();
+        boolean isBalancedDesign = false;
+        if (!allCellsHaveOneSample) {
+            isBalancedDesign = t2Box.isBalancedDesign();
+        }
+        usePerms = t2Box.usePerms();
+        int numPerms = 0;
+        if (usePerms) {
+            numPerms = t2Box.getNumPerms();
+        }
+        
+         // hcl init
+        int hcl_method = 0;
+        boolean hcl_samples = false;
+        boolean hcl_genes = false;
+        if (isHierarchicalTree) {
+            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame());
+            if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
+                return null;
+            }
+            hcl_method = hcl_dialog.getMethod();
+            hcl_samples = hcl_dialog.isClusterExperience();
+            hcl_genes = hcl_dialog.isClusterGenes();
+        }       
+        Listener listener = new Listener();
+        
+        try {
+            algorithm = framework.getAlgorithmFactory().getAlgorithm("TFA");
+            algorithm.addAlgorithmListener(listener);  
+            
+            int genes = experiment.getNumberOfGenes();  
+            
+            this.progress = new Progress(framework.getFrame(), "Finding significant genes", listener);
+            this.progress.show();
+            
+            AlgorithmData data = new AlgorithmData();
+            
+            data.addMatrix("experiment", experiment.getMatrix());
+            data.addParam("distance-factor", String.valueOf(1.0f));
+            IDistanceMenu menu = framework.getDistanceMenu();
+            data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
+            
+            int function = menu.getDistanceFunction();
+            if (function == Algorithm.DEFAULT) {
+                function = Algorithm.EUCLIDEAN;
+            }    
+            
+            data.addParam("distance-function", String.valueOf(function));            
+            data.addIntArray("numFactorLevels", numFactorLevels);
+            data.addParam("allCellsHaveOneSample", String.valueOf(allCellsHaveOneSample));
+            data.addParam("adjustmentMethod", String.valueOf(adjustmentMethod));
+            data.addParam("alpha", String.valueOf(alpha));
+            data.addIntArray("factorAAssignments", factorAAssignments);
+            data.addIntArray("factorBAssignments", factorBAssignments);
+            data.addObjectMatrix("bothFactorAssignments", bothFactorAssignments);
+            data.addParam("isBalancedDesign", String.valueOf(isBalancedDesign));
+            data.addParam("usePerms", String.valueOf(usePerms));
+            data.addParam("numPerms", String.valueOf(numPerms));
+            // hcl parameters
+            if (isHierarchicalTree) {
+                data.addParam("hierarchical-tree", String.valueOf(true));
+                data.addParam("method-linkage", String.valueOf(hcl_method));
+                data.addParam("calculate-genes", String.valueOf(hcl_genes));
+                data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+            }  
+            
+            long start = System.currentTimeMillis();
+            AlgorithmData result = algorithm.execute(data);
+            long time = System.currentTimeMillis() - start;     
+            
+            // getting the results
+            Cluster result_cluster = result.getCluster("cluster");
+            NodeList nodeList = result_cluster.getNodeList();
+            //AlgorithmParameters resultMap = result.getParams();
+            int k = 7; //resultMap.getInt("number-of-clusters"); // NEED THIS TO GET THE VALUE OF NUMBER-OF-CLUSTERS
+            
+            this.clusters = new int[k][];
+            for (int i=0; i<k; i++) {
+                clusters[i] = nodeList.getNode(i).getFeaturesIndexes();
+            }
+            this.means = result.getMatrix("clusters_means");
+            this.variances = result.getMatrix("clusters_variances");
+            FloatMatrix factorAFValuesMatrix = result.getMatrix("factorAFValuesMatrix");
+            FloatMatrix factorBFValuesMatrix = result.getMatrix("factorBFValuesMatrix");
+            FloatMatrix interactionFValuesMatrix = result.getMatrix("interactionFValuesMatrix");
+
+            FloatMatrix factorADfValuesMatrix = result.getMatrix("factorADfValuesMatrix");
+            FloatMatrix factorBDfValuesMatrix = result.getMatrix("factorBDfValuesMatrix");
+            FloatMatrix interactionDfValuesMatrix = result.getMatrix("interactionDfValuesMatrix");
+            FloatMatrix errorDfValuesMatrix = result.getMatrix("errorDfValuesMatrix");
+
+            FloatMatrix origFactorAPValuesMatrix = result.getMatrix("origFactorAPValuesMatrix");
+            FloatMatrix origFactorBPValuesMatrix = result.getMatrix("origFactorBPValuesMatrix");
+            FloatMatrix origInteractionPValuesMatrix = result.getMatrix("origInteractionPValuesMatrix");
+
+            FloatMatrix adjFactorAPValuesMatrix = result.getMatrix("adjFactorAPValuesMatrix");
+            FloatMatrix adjFactorBPValuesMatrix = result.getMatrix("adjFactorBPValuesMatrix");
+            FloatMatrix adjInteractionPValuesMatrix = result.getMatrix("adjInteractionPValuesMatrix");       
+            
+            auxTitles = new String[13];
+            //auxTitles = {"Adj. p-values (" + factorNames[0] + ")", "Adj. p-values (" + factorNames[1] + ")",  "Adj. p-values (interaction)", factorName[0] + " Orig. p-values", factorNames[0] + " F-ratio", factorNames[1] + "F-Ratio", "Interaction F-Ratio" };
+            auxTitles[0] = "Adj. p-values (" + factorNames[0] + ")";
+            auxTitles[1] = "Adj. p-values (" + factorNames[1] + ")";
+            auxTitles[2] = "Adj. p-values (interaction)";
+            auxTitles[3] = "Orig. p-values (" + factorNames[0] + ")";
+            auxTitles[4] = "Orig. p-values (" + factorNames[1] + ")";
+            auxTitles[5] = "Orig. p-values (interaction)";
+            auxTitles[6] = "F-ratio (" + factorNames[0] + ")";
+            auxTitles[7] = "F-ratio (" + factorNames[1] + ")";
+            auxTitles[8] = "F-ratio (interaction)";
+            auxTitles[9] = "df (" + factorNames[0] + ")";
+            auxTitles[10] = "df (" + factorNames[1] + ")";
+            auxTitles[11] = "df (interaction)";
+            auxTitles[12] = "df (error)";
+            
+            auxData = new Object[factorAFValuesMatrix.A.length][13];  
+            
+            for (int i = 0; i < auxData.length; i++) {
+                auxData[i][0] = new Float(adjFactorAPValuesMatrix.A[i][0]);
+                auxData[i][1] = new Float(adjFactorBPValuesMatrix.A[i][0]);
+                auxData[i][2] = new Float(adjInteractionPValuesMatrix.A[i][0]);
+                auxData[i][3] = new Float(origFactorAPValuesMatrix.A[i][0]);
+                auxData[i][4] = new Float(origFactorBPValuesMatrix.A[i][0]);
+                auxData[i][5] = new Float(origInteractionPValuesMatrix.A[i][0]);
+                auxData[i][6] = new Float(factorAFValuesMatrix.A[i][0]);
+                auxData[i][7] = new Float(factorBFValuesMatrix.A[i][0]);
+                auxData[i][8] = new Float(interactionFValuesMatrix.A[i][0]);
+                auxData[i][9] = new Integer((int)(factorADfValuesMatrix.A[i][0]));
+                auxData[i][10] = new Integer((int)(factorBDfValuesMatrix.A[i][0]));                
+                auxData[i][11] = new Integer((int)(interactionDfValuesMatrix.A[i][0]));
+                auxData[i][12] = new Integer((int)(errorDfValuesMatrix.A[i][0]));                
+            }
+            
+
+            
+            GeneralInfo info = new GeneralInfo();
+            info.time = time;
+            //ADD MORE INFO PARAMETERS HERE
+            info.alpha = alpha;
+            info.adjMethod = getAdjMethod(adjustmentMethod);
+            info.pValueBasedOn = getPValueBasedOn(usePerms); 
+            if (usePerms) {
+                //info.useAllCombs = useAllCombs;
+                info.numPerms = numPerms;
+            }   
+            info.function = menu.getFunctionName(function);
+            info.hcl = isHierarchicalTree;
+            info.hcl_genes = hcl_genes;
+            info.hcl_samples = hcl_samples;
+            info.hcl_method = hcl_method;
+            return createResultTree(result_cluster, info);            
+            
+        } finally {
+            if (algorithm != null) {
+                algorithm.removeAlgorithmListener(listener);
+            }
+            if (progress != null) {
+                progress.dispose();
+            }
+            /*
+            if (monitor != null) {
+                monitor.dispose();
+            }
+             */
+        }
+        
+        //return null; // for now
     }
+    
+    private String getPValueBasedOn(boolean isPerm) {
+        String str = "";
+        if (isPerm) {
+            str = "permutation";
+        } else {
+            str = "F-distribution";
+        }
+        
+        return str;
+    }
+    
+    private String getAdjMethod(int adjMethod) {
+        String methodName = "";
+        
+        if (adjMethod == JUST_ALPHA) {
+            methodName = "None";
+        } else if (adjMethod == STD_BONFERRONI) {
+            methodName = "Standard Bonferroni correction";
+        } else if (adjMethod == ADJ_BONFERRONI) {
+            methodName = "Adjusted Bonferroni correction";
+        } else if (adjMethod == MIN_P) {
+            methodName = "Step-down Westfall Young: Min P";            
+        } else if (adjMethod == MAX_T) {
+            methodName = "Step-down Westfall Young: Max T";
+        }
+        
+        return methodName;
+    }    
+    
+    /**
+     * Creates a result tree to be inserted into the framework analysis node.
+     */
+    private DefaultMutableTreeNode createResultTree(Cluster result_cluster, GeneralInfo info) {
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Two-factor ANOVA");
+        addResultNodes(root, result_cluster, info);
+        return root;
+    }  
+    
+    /**
+     * Adds result nodes into the tree root.
+     */
+    private void addResultNodes(DefaultMutableTreeNode root, Cluster result_cluster, GeneralInfo info) {
+        addExpressionImages(root);
+        addHierarchicalTrees(root, result_cluster, info);
+        addCentroidViews(root);
+        addClusterInfo(root);
+        //addTableViews(root);
+        addGeneralInfo(root, info);
+    }    
+    
+    /**
+     * Adds nodes to display clusters data.
+     */
+    private void addExpressionImages(DefaultMutableTreeNode root) {
+	DefaultMutableTreeNode node = new DefaultMutableTreeNode("Expression Images");
+	IViewer expViewer = new TFAExperimentViewer(this.experiment, this.clusters, auxTitles, auxData);
+	for (int i=0; i<this.clusters.length; i++) {
+            node.add(new DefaultMutableTreeNode(new LeafInfo(clusterLabels[i], expViewer, new Integer(i))));	    
+	}
+	root.add(node);
+    }  
+    
+    /**
+     * Adds nodes to display hierarchical trees.
+     */
+    private void addHierarchicalTrees(DefaultMutableTreeNode root, Cluster result_cluster, GeneralInfo info) {
+	if (!info.hcl) {
+	    return;
+	}
+	DefaultMutableTreeNode node = new DefaultMutableTreeNode("Hierarchical Trees");
+	NodeList nodeList = result_cluster.getNodeList();
+	for (int i=0; i<nodeList.getSize(); i++) {	    
+            node.add(new DefaultMutableTreeNode(new LeafInfo(clusterLabels[i], createHCLViewer(nodeList.getNode(i), info))));
+	}
+	root.add(node);
+    }    
+    
+    /**
+     * Creates an <code>HCLViewer</code>.
+     */
+    private IViewer createHCLViewer(Node clusterNode, GeneralInfo info) {
+        HCLTreeData genes_result = info.hcl_genes ? getResult(clusterNode, 0) : null;
+        HCLTreeData samples_result = info.hcl_samples ? getResult(clusterNode, info.hcl_genes ? 4 : 0) : null;
+        return new HCLViewer(this.experiment, clusterNode.getFeaturesIndexes(), genes_result, samples_result);
+    }   
+    
+    /**
+     * Adds nodes to display centroid charts.
+     */
+    private void addCentroidViews(DefaultMutableTreeNode root) {
+	DefaultMutableTreeNode centroidNode = new DefaultMutableTreeNode("Centroid Graphs");
+	DefaultMutableTreeNode expressionNode = new DefaultMutableTreeNode("Expression Graphs");
+	TFACentroidViewer centroidViewer = new TFACentroidViewer(this.experiment, clusters, auxTitles, auxData);
+	centroidViewer.setMeans(this.means.A);
+	centroidViewer.setVariances(this.variances.A);
+	for (int i=0; i<this.clusters.length; i++) {            
+            centroidNode.add(new DefaultMutableTreeNode(new LeafInfo(clusterLabels[i], centroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
+            expressionNode.add(new DefaultMutableTreeNode(new LeafInfo(clusterLabels[i], centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));            
+        }
+	
+	TFACentroidsViewer centroidsViewer = new TFACentroidsViewer(this.experiment, clusters, auxTitles, auxData);
+	centroidsViewer.setMeans(this.means.A);
+	centroidsViewer.setVariances(this.variances.A);
+	
+	centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("All Genes", centroidsViewer, new Integer(CentroidUserObject.VARIANCES_MODE))));
+	expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("All Genes", centroidsViewer, new Integer(CentroidUserObject.VALUES_MODE))));
+	
+	root.add(centroidNode);
+	root.add(expressionNode);
+    }    
+    
+    /**
+     * Returns a hcl tree data from the specified cluster node.
+     */
+    private HCLTreeData getResult(Node clusterNode, int pos) {
+        HCLTreeData data = new HCLTreeData();
+        NodeValueList valueList = clusterNode.getValues();
+        data.child_1_array = (int[])valueList.getNodeValue(pos).value;
+        data.child_2_array = (int[])valueList.getNodeValue(pos+1).value;
+        data.node_order = (int[])valueList.getNodeValue(pos+2).value;
+        data.height = (float[])valueList.getNodeValue(pos+3).value;
+        return data;
+    }   
+    
+    /**
+     * Adds node with cluster information.
+     */
+    private void addClusterInfo(DefaultMutableTreeNode root) {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Cluster Information");
+        node.add(new DefaultMutableTreeNode(new LeafInfo("Results (#,%)", new TFAInfoViewer(this.clusters, this.experiment.getNumberOfGenes(), factorNames))));
+        root.add(node);
+    }    
+    
+    /**
+     * Adds node with general iformation.
+     */
+    private void addGeneralInfo(DefaultMutableTreeNode root, GeneralInfo info) {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("General Information");
+        //node.add(new DefaultMutableTreeNode("Test design: " + info.getTestDesign()));        
+        node.add(getGroupAssignmentInfo());
+
+        node.add(new DefaultMutableTreeNode("Alpha (overall threshold p-value): "+info.alpha));
+        node.add(new DefaultMutableTreeNode("P-values based on: "+info.pValueBasedOn));
+        if (usePerms) {
+            node.add(new DefaultMutableTreeNode("Number of permutations per gene: " + info.numPerms));
+        }
+        node.add(new DefaultMutableTreeNode("P-value adjustment: "+info.adjMethod));
+        node.add(new DefaultMutableTreeNode("HCL: "+info.getMethodName()));
+        node.add(new DefaultMutableTreeNode("Time: "+String.valueOf(info.time)+" ms"));
+        node.add(new DefaultMutableTreeNode(info.function));
+        root.add(node);
+    }    
+    
+    private DefaultMutableTreeNode getGroupAssignmentInfo() {
+        DefaultMutableTreeNode groupAssignmentInfo = new DefaultMutableTreeNode("Factor Assignments");
+        DefaultMutableTreeNode factorANode = new DefaultMutableTreeNode(factorNames[0]);
+        DefaultMutableTreeNode factorBNode = new DefaultMutableTreeNode(factorNames[1]);
+        for (int i = 0; i < exptNamesVector.size(); i++) {
+            if (factorAAssignments[i] != 0) {
+                factorANode.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i)) + ": Group " + factorAAssignments[i]));
+            } else {
+                factorANode.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i)) + ": Unassigned"));                
+            }
+            if (factorBAssignments[i] != 0) {
+                factorBNode.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i)) + ": Group " + factorBAssignments[i]));
+            } else {
+                factorBNode.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i)) + ": Unassigned"));                
+            }            
+        }
+        groupAssignmentInfo.add(factorANode);
+        groupAssignmentInfo.add(factorBNode);
+        
+        return groupAssignmentInfo;
+    }
+    
+    /**
+     * The class to listen to progress, monitor and algorithms events.
+     */
+    private class Listener extends DialogListener implements AlgorithmListener {
+        
+        public void valueChanged(AlgorithmEvent event) {
+            switch (event.getId()) {
+                case AlgorithmEvent.SET_UNITS:
+                    progress.setUnits(event.getIntValue());
+                    progress.setDescription(event.getDescription());
+                    break;
+                case AlgorithmEvent.PROGRESS_VALUE:
+                    progress.setValue(event.getIntValue());
+                    progress.setDescription(event.getDescription());
+                    break;
+                case AlgorithmEvent.MONITOR_VALUE:
+                    int value = event.getIntValue();
+                    if (value == -1) {
+                        //monitor.dispose();
+                    } else {
+                        //monitor.update(value);
+                    }
+                    break;
+            }
+        }
+        
+        public void actionPerformed(ActionEvent e) {
+            String command = e.getActionCommand();
+            if (command.equals("cancel-command")) {
+                algorithm.abort();
+                progress.dispose();
+                //monitor.dispose();
+            }
+        }
+        
+        public void windowClosing(WindowEvent e) {
+            algorithm.abort();
+            progress.dispose();
+            //monitor.dispose();
+        }
+    } 
+    
+    private class GeneralInfo {
+        public int clusters;
+        public String adjMethod;
+        public String pValueBasedOn;
+        public float alpha;
+        public int numPerms;
+        public long time;
+        public String function;
+        
+        private boolean hcl;
+        private int hcl_method;
+        private boolean hcl_genes;
+        private boolean hcl_samples;
+        
+        public String getMethodName() {
+            return hcl ? HCLGUI.GeneralInfo.getMethodName(hcl_method) : "no linkage";
+        }
+        
+    }    
     
 }
