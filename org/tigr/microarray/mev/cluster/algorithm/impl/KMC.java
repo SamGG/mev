@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: KMC.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
+ * $Revision: 1.2 $
+ * $Date: 2004-04-06 15:20:46 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -59,8 +59,8 @@ public class KMC extends AbstractAlgorithm {
         calculateMeans = map.getBoolean("calculate-means", true);
         kmcGenes = map.getBoolean("kmc-cluster-genes", true);
         
-        int number_of_iterations = map.getInt("number_of_iterations", 0);
-        int number_of_clusters = map.getInt("number_of_clusters", 0);
+        int number_of_iterations = map.getInt("number-of-iterations", 0);
+        int number_of_clusters = map.getInt("number-of-clusters", 0);
         boolean hierarchical_tree = map.getBoolean("hierarchical-tree", false);
         int method_linkage = map.getInt("method-linkage", 0);
         boolean calculate_genes = map.getBoolean("calculate-genes", false);
@@ -235,7 +235,7 @@ public class KMC extends AbstractAlgorithm {
         KMCluster[] clusters = new KMCluster[number_of_clusters];
         for (i=0; i<clusters.length; i++) {         // initialize array clusters
             clusters[i] = new KMCluster();
-        }
+        } 
         int clusterIndex = 0;
         Random random = new Random();
         for (i=0; i<number_of_genes; i++) {
