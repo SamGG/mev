@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLTree.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-09 18:39:50 $
+ * $Revision: 1.3 $
+ * $Date: 2003-12-15 14:35:43 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -21,8 +21,15 @@ import java.awt.AlphaComposite;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+
 import java.util.Arrays;
 
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -828,33 +835,83 @@ public class HCLTree extends JPanel {
         int nodeIndex = 0;
         int child1, child2;
         
-        System.out.println("order = "+this.treeData.node_order.length +"height = "+this.treeData.height.length);
+        File file = null;
+        final JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        int ret = fc.showSaveDialog(new javax.swing.JFrame());
+        if (ret == JFileChooser.APPROVE_OPTION) {
+            file = fc.getSelectedFile();
+        }
         
-        for(int i = 0; i < this.treeData.node_order.length-1; i++){
-            line = "Node_"+String.valueOf(i)+"\t";
+        try{
+            PrintWriter out = new PrintWriter(new FileOutputStream(file));
             
-            //            System.out.println("node h= "+this.treeData.height[this.treeData.node_order[i]]);
-            child1 = this.treeData.child_1_array[this.treeData.node_order[i]];
-            child2 = this.treeData.child_2_array[this.treeData.node_order[i]];
-
-            if(child1 < this.treeData.height.length/2)
-                line += "Gene_" + String.valueOf(child1) + "\t";
-            else
-                line += "Node_" + String.valueOf(child1-this.treeData.height.length/2) + "\t";
-            
-            if(child2 < this.treeData.height.length/2)
-                line += "Gene_" + String.valueOf(child2) + "\t";
-            else
-                line += "Node_" + String.valueOf(child2-this.treeData.height.length/2) + "\t";
-                        
-            line += String.valueOf(this.treeData.height[this.treeData.node_order[i]]);
-            
-            System.out.println(line);
+            for(int i = 0; i < this.treeData.node_order.length-1; i++){
+                line = "Node_"+String.valueOf(i)+"\t";
+                child1 = this.treeData.child_1_array[this.treeData.node_order[i]];
+                child2 = this.treeData.child_2_array[this.treeData.node_order[i]];
+                
+                if(child1 < this.treeData.height.length/2)
+                    line += "Gene_" + String.valueOf(child1+1) + "\t";
+                else
+                    line += "Node_" + String.valueOf(child1-this.treeData.height.length/2) + "\t";
+                
+                if(child2 < this.treeData.height.length/2)
+                    line += "Gene_" + String.valueOf(child2+1) + "\t";
+                else
+                    line += "Node_" + String.valueOf(child2-this.treeData.height.length/2) + "\t";
+                
+                line += String.valueOf(this.treeData.height[this.treeData.node_order[i]]);
+                
+                out.println(line);
+            }
+            out.flush();
+            out.close();
+        } catch (IOException ioe){
+            JOptionPane.showMessageDialog(this, "Error saving node height file.", "Error", JOptionPane.WARNING_MESSAGE);
+            ioe.printStackTrace();
         }
     }
     
     public void saveExperimentNodeHeights(){
+        String line;
+        int nodeIndex = 0;
+        int child1, child2;
         
+        File file = null;
+        final JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        int ret = fc.showSaveDialog(new javax.swing.JFrame());
+        if (ret == JFileChooser.APPROVE_OPTION) {
+            file = fc.getSelectedFile();
+        }
+        
+        try{
+            PrintWriter out = new PrintWriter(new FileOutputStream(file));
+            
+            for(int i = 0; i < this.treeData.node_order.length-1; i++){
+                line = "Node_"+String.valueOf(i)+"\t";
+                child1 = this.treeData.child_1_array[this.treeData.node_order[i]];
+                child2 = this.treeData.child_2_array[this.treeData.node_order[i]];
+                
+                if(child1 < this.treeData.height.length/2)
+                    line += "Exp_" + String.valueOf(child1+1) + "\t";
+                else
+                    line += "Node_" + String.valueOf(child1-this.treeData.height.length/2) + "\t";
+                
+                if(child2 < this.treeData.height.length/2)
+                    line += "Exp_" + String.valueOf(child2+1) + "\t";
+                else
+                    line += "Node_" + String.valueOf(child2-this.treeData.height.length/2) + "\t";
+                
+                line += String.valueOf(this.treeData.height[this.treeData.node_order[i]]);
+                
+                out.println(line);
+            }
+            out.flush();
+            out.close();
+        } catch (IOException ioe){
+            JOptionPane.showMessageDialog(this, "Error saving node height file.", "Error", JOptionPane.WARNING_MESSAGE);
+            ioe.printStackTrace();
+        }
     }
     
     /**
