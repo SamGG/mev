@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterRepository.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 18:46:05 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -133,6 +133,7 @@ public class ClusterRepository extends Vector {
             savedCluster.setClusterLabel(cluster.getClusterLabel());
             savedCluster.setClusterDescription(cluster.getClusterDescription());
             this.setClusterSerialCounter(this.getMaxClusterSerialNumber()-1);  //rollback counter
+            moveClusterToEndInMembershipLists(savedCluster);
         } else {
             list.addCluster(cluster);
             updateClusterMembership(cluster);
@@ -175,6 +176,25 @@ public class ClusterRepository extends Vector {
         }
     }
     
+    /** Moves a cluster to the rear of the elementCluster lists ClusterList
+     * (This is so that getColor() commands for gene color get the latest color
+     * assigned rather than the color of the last cluster assigned.  This is to handle
+     * modification of an existing cluster's color attribute.)
+     */
+    private void moveClusterToEndInMembershipLists(Cluster cluster){
+                int [] indices = cluster.getIndices();
+        for(int i = 0; i < indices.length; i++){
+            if(elementClusters[indices[i]] == null)
+                elementClusters[indices[i]] = new ClusterList("element "+indices[i]);        
+            //if it's in the list (and is should always be) remove it and put it back in
+            //at the end.
+            if(elementClusters[indices[i]].contains(cluster)){
+                elementClusters[indices[i]].removeElement(cluster);       
+                elementClusters[indices[i]].addElement(cluster);
+            }
+        }
+    }
+    
     /** Removes clusters from the cluster list of each element
      * contained in the specified cluster.
      */
@@ -202,6 +222,13 @@ public class ClusterRepository extends Vector {
     private void clearElementClusters(){
         for(int i = 0; i < numberOfElements; i++)
             this.elementClusters[i] = null;
+    }
+    
+    public boolean isEmpty(){
+        for(int i = 0; i < size(); i++)
+            if(this.getClusterList(i).size() > 0)
+                return false;
+        return true;
     }
     
     /** Returns true if an index for a cluster list is in range.

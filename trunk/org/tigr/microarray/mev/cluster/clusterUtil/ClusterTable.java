@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterTable.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 18:46:05 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -83,7 +83,7 @@ public class ClusterTable extends JPanel implements IViewer {
         setBackground(Color.white);
         MenuListener menuListener = new MenuListener();
         initializeTable();
-        initializeMenu(menuListener);
+        initializeMenu(menuListener);        
     }
     
     
@@ -1117,4 +1117,18 @@ public class ClusterTable extends JPanel implements IViewer {
         }
         repository.saveCluster(clusters[0].getSerialNumber());
     }
+    
+    /** Returns a component to be inserted into the scroll pane row header
+     */
+    public JComponent getRowHeaderComponent() {
+        return null;
+    }
+    
+    /** Returns the corner component corresponding to the indicated corner,
+     * posibly null
+     */
+    public JComponent getCornerComponent(int cornerIndex) {
+        return null;
+    }
+    
 }
