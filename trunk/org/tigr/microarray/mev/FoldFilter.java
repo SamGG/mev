@@ -6,7 +6,9 @@
 */
 package org.tigr.microarray.mev;
 
-public class FoldFilter {
+import java.io.Serializable;
+
+public class FoldFilter implements Serializable {
 
 
     private float fold_change;

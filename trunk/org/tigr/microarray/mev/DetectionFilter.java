@@ -11,7 +11,9 @@
 */
 package org.tigr.microarray.mev;
 
-public class DetectionFilter {
+import java.io.Serializable;
+
+public class DetectionFilter implements Serializable {
 
     // number of (P)s of a gene in each group required
     // assume num of group = 2 for now
