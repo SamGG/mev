@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: CastFOMViewerB.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 18:42:10 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -50,4 +50,11 @@ public class CastFOMViewerB extends ViewerAdapter {
 	return this.content.getImageB();
 	
     }
+    
+    /** Returns a component to be inserted into the scroll pane row header
+     */
+    public JComponent getRowHeaderComponent() {
+        return null;
+    }
+    
 }
