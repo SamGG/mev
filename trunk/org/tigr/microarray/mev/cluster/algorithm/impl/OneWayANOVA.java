@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: OneWayANOVA.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-04-22 15:41:37 $
+ * $Revision: 1.4 $
+ * $Date: 2004-06-25 18:50:08 $
  * $Author: nbhagaba $
  * $State: Exp $
  */
@@ -25,6 +25,7 @@ import JSci.maths.statistics.FDistribution;
 
 import org.tigr.util.ConfMap;
 import org.tigr.util.FloatMatrix;
+import org.tigr.util.QSort;
 
 import org.tigr.microarray.mev.cluster.Node;
 import org.tigr.microarray.mev.cluster.Cluster;
@@ -58,16 +59,26 @@ public class OneWayANOVA extends AbstractAlgorithm {
     
     private int numGenes, numExps, numGroups;
     private float alpha;
+    private boolean usePerms;
+    private int numPerms;
     private int correctionMethod;    
     int[] groupAssignments; 
     
     float currentP = 0.0f;
-    float currentF = 0.0f;
+    //float currentF = 0.0f;
     int currentIndex = 0; 
     double constant;
     
+    AlgorithmEvent event;
+    
     Vector fValuesVector = new Vector();
-    Vector pValuesVector = new Vector();    
+    Vector rawPValuesVector = new Vector();
+    Vector adjPValuesVector = new Vector();
+    //Vector pValuesVector = new Vector(); 
+    Vector dfNumVector = new Vector();
+    Vector dfDenomVector = new Vector();
+    Vector ssGroupsVector = new Vector();
+    Vector ssErrorVector = new Vector();
 
     /**
      * This method should interrupt the calculation.
@@ -89,6 +100,8 @@ public class OneWayANOVA extends AbstractAlgorithm {
 	function = map.getInt("distance-function", EUCLIDEAN);
 	factor   = map.getFloat("distance-factor", 1.0f);
 	absolute = map.getBoolean("distance-absolute", false);
+        usePerms = map.getBoolean("usePerms", false);
+        numPerms = map.getInt("numPerms", 0);
 	
 	boolean hierarchical_tree = map.getBoolean("hierarchical-tree", false);
 	int method_linkage = map.getInt("method-linkage", 0);
@@ -102,11 +115,48 @@ public class OneWayANOVA extends AbstractAlgorithm {
 	alpha = map.getFloat("alpha", 0.01f);
 	correctionMethod = map.getInt("correction-method", OneWayANOVAInitBox.JUST_ALPHA);        
         numGroups = map.getInt("numGroups", 3);
-        Vector clusterVector = sortGenesBySignificance();
+        
+        getFDfSSValues();
+        if (!usePerms) {
+            rawPValuesVector = getRawPValuesFromFDist();
+        } else {
+            rawPValuesVector = getRawPValsFromPerms();
+        }
+        adjPValuesVector = getAdjPVals(rawPValuesVector, correctionMethod);
+        //Vector clusterVector = sortGenesBySignificance();
+        Vector clusterVector = new Vector();
+        Vector sigGenes = new Vector();
+        Vector nonSigGenes = new Vector();
+        
+        event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, numGenes);
+	fireValueChanged(event);
+	event.setId(AlgorithmEvent.PROGRESS_VALUE); 
+        
+        for (int i = 0; i < numGenes; i++) {
+            if (stop) {
+                throw new AbortException();
+            }   
+            event.setIntValue(i);
+            event.setDescription("Finding significant genes: Current gene = " + (i + 1));
+            fireValueChanged(event);  
+            
+            float currAdjP = ((Float)(adjPValuesVector.get(i))).floatValue();
+            //System.out.println("currAdjP: gene" + i + " = " + currAdjP);
+            if (currAdjP <= alpha) {
+                sigGenes.add(new Integer(i));
+            } else {
+                nonSigGenes.add(new Integer(i));
+            }
+        }
+        
+        clusterVector.add(sigGenes);
+        clusterVector.add(nonSigGenes);
         k = clusterVector.size();
 
         FloatMatrix fValuesMatrix = new FloatMatrix(fValuesVector.size(), 1);  
-        FloatMatrix pValuesMatrix = new FloatMatrix(pValuesVector.size(), 1);   
+        //FloatMatrix pValuesMatrix = new FloatMatrix(pValuesVector.size(), 1);   
+        FloatMatrix rawPValuesMatrix = new FloatMatrix(rawPValuesVector.size(), 1);
+        FloatMatrix adjPValuesMatrix = new FloatMatrix(adjPValuesVector.size(), 1);
         FloatMatrix dfNumMatrix = new FloatMatrix(numGenes, 1);
         FloatMatrix dfDenomMatrix = new FloatMatrix(numGenes, 1);
 
@@ -114,33 +164,38 @@ public class OneWayANOVA extends AbstractAlgorithm {
             fValuesMatrix.A[i][0] = ((Float)(fValuesVector.get(i))).floatValue();
         }  
         
-        for (int i = 0; i < pValuesVector.size(); i++) {
-            pValuesMatrix.A[i][0] = ((Float)(pValuesVector.get(i))).floatValue();
+        for (int i = 0; i < rawPValuesVector.size(); i++) {
+            rawPValuesMatrix.A[i][0] = ((Float)(rawPValuesVector.get(i))).floatValue();
+            adjPValuesMatrix.A[i][0] = ((Float)(adjPValuesVector.get(i))).floatValue();
         } 
         
         for (int i = 0; i < numGenes; i++) {
-            dfNumMatrix.A[i][0] = (float)(getDfNum(i));
-            dfDenomMatrix.A[i][0] = (float)(getDfDenom(i));
+            //dfNumMatrix.A[i][0] = (float)(getDfNum(i));
+            //dfDenomMatrix.A[i][0] = (float)(getDfDenom(i));            
+            dfNumMatrix.A[i][0] = ((Integer)(dfNumVector.get(i))).floatValue();
+            dfDenomMatrix.A[i][0] = ((Integer)(dfDenomVector.get(i))).floatValue();
+            if (dfNumMatrix.A[i][0] <= 0) dfNumMatrix.A[i][0] = Float.NaN;
+            if (dfDenomMatrix.A[i][0] <= 0) dfDenomMatrix.A[i][0] = Float.NaN;
         }
         
         FloatMatrix ssGroupsMatrix = new FloatMatrix(numGenes, 1);
         FloatMatrix ssErrorMatrix = new FloatMatrix(numGenes, 1);
         
         for (int i = 0; i < ssGroupsMatrix.getRowDimension(); i++) {
-            float[] currentGene = getGene(i);
-            constant = getConstant(currentGene);
+            //float[] currentGene = getGene(i);
+            //constant = getConstant(currentGene);
             /*
             if (i == 11) {
                 System.out.println("Gene A3: groupsSS = " + getGroupsSS(currentGene));
             }
              */
-            ssGroupsMatrix.A[i][0] = (float)(getGroupsSS(currentGene));
+            ssGroupsMatrix.A[i][0] = ((Double)(ssGroupsVector.get(i))).floatValue();//(float)(getGroupsSS(currentGene));
             /*
             if (i == 11) {
                 System.out.println("Gene A3: ssGroupsMatrix.A[11][0] = " + ssGroupsMatrix.A[i][0]);
             }
              */
-            ssErrorMatrix.A[i][0] = (float)(getTotalSS(currentGene) - getGroupsSS(currentGene));
+            ssErrorMatrix.A[i][0] = ((Double)(ssErrorVector.get(i))).floatValue();//(float)(getTotalSS(currentGene) - getGroupsSS(currentGene));
         }
         
 	clusters = new Vector[k];
@@ -184,7 +239,9 @@ public class OneWayANOVA extends AbstractAlgorithm {
 	result.addParam("number-of-clusters", String.valueOf(clusters.length));    
 	result.addMatrix("clusters_means", means);
 	result.addMatrix("clusters_variances", variances); 
-        result.addMatrix("pValues", pValuesMatrix);
+        //result.addMatrix("pValues", pValuesMatrix);
+        result.addMatrix("rawPValues", rawPValuesMatrix);
+        result.addMatrix("adjPValues", adjPValuesMatrix);
         result.addMatrix("fValues", fValuesMatrix);
         result.addMatrix("dfNumMatrix", dfNumMatrix);
         result.addMatrix("dfDenomMatrix", dfDenomMatrix);
@@ -327,8 +384,398 @@ public class OneWayANOVA extends AbstractAlgorithm {
     private float getSampleVariance(Vector cluster, int column, float mean) {
 	return(float)Math.sqrt(getSampleNormalizedSum(cluster, column, mean)/(float)(validN-1));
 	
+    }  
+    
+    private void getFDfSSValues() throws AlgorithmException {
+        event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, numGenes);
+        fireValueChanged(event);
+        event.setId(AlgorithmEvent.PROGRESS_VALUE);   
+        
+        for (int gene = 0; gene < numGenes; gene++) {
+            float currentF = 0.0f;
+            if (stop) {
+                throw new AbortException();
+            }
+            event.setIntValue(gene);
+            event.setDescription("Calculating F and df: Current gene = " + (gene + 1));
+            fireValueChanged(event);            
+            //boolean sig = false;
+            float[] geneValues = new float[numExps];
+            int n = 0;
+            for (int i = 0; i < numExps; i++) {
+                geneValues[i] = expMatrix.A[gene][i];
+                if (!Float.isNaN(geneValues[i])) {
+                    n++;
+                }
+            }
+            
+            if (n == 0) {
+                currentF = Float.NaN;
+                //currentP = Float.NaN;
+                //return false;
+            }
+            
+            constant = getConstant(geneValues);
+            
+            double totalSS = getTotalSS(geneValues);
+            double groupsSS = getGroupsSS(geneValues);
+            double errorSS = totalSS - groupsSS;
+            
+            if ((Double.isNaN(totalSS))||(Double.isNaN(groupsSS))||(Double.isNaN(errorSS))) {
+                currentF = Float.NaN;
+                //currentP = Float.NaN;
+                //return false;
+            }
+            
+            //int totalDF = validN - 1;
+            int groupsDF = getDfNum(gene);
+            int errorDF = getDfDenom(gene);
+            
+            double groupsMS = groupsSS / groupsDF;
+            double errorMS = errorSS / errorDF;
+            
+            if (!Float.isNaN(currentF)) {
+                double fValue = groupsMS/errorMS;
+                currentF = (float)(fValue);
+            }
+            
+            //System.out.println("currentF for gene " + gene + " = " + currentF);
+            
+            fValuesVector.add(new Float(currentF));
+            dfNumVector.add(new Integer(groupsDF));
+            dfDenomVector.add(new Integer(errorDF));
+            ssGroupsVector.add(new Double(groupsSS));
+            ssErrorVector.add(new Double(errorSS));
+        }
+    }
+    
+    private Vector getRawPValuesFromFDist() {
+        Vector rawPVals = new Vector();
+        for (int i = 0; i < numGenes; i++) {
+            double currF = ((Float)(fValuesVector.get(i))).doubleValue();
+            int currDfNum = ((Integer)(dfNumVector.get(i))).intValue(); 
+            int currDfDenom = ((Integer)(dfDenomVector.get(i))).intValue();
+            
+            if (Double.isNaN(currF) || (currDfNum <= 0) || (currDfDenom <= 0) ) {
+                rawPVals.add(new Float(Float.NaN));
+            } else {
+                FDistribution fDist = new FDistribution(currDfNum, currDfDenom);                
+                double cumulProb = fDist.cumulative(currF);
+                double pValue = 1 - cumulProb; //                
+                if (pValue > 1) {
+                    pValue = 1.0d;
+                }                
+                rawPVals.add(new Float(pValue));                
+            }
+        }
+        return rawPVals;
+    }
+    
+    private Vector getRawPValsFromPerms() throws AlgorithmException {
+        event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, numPerms);
+        fireValueChanged(event);
+        event.setId(AlgorithmEvent.PROGRESS_VALUE);
+        
+        float[] permPValues = new float[numGenes];
+        for (int i = 0; i < numGenes; i++) {
+            permPValues[i] = 0f;
+        }
+        float[] origFValues = new float[fValuesVector.size()];
+        for (int i = 0; i < fValuesVector.size(); i++) {
+            origFValues[i] = ((Float)(fValuesVector.get(i))).floatValue();
+        }
+        
+        Vector validExpts = new Vector();
+        for (int i = 0; i < groupAssignments.length; i++) {
+            if (groupAssignments[i] != 0) validExpts.add(new Integer(i));
+        }
+        
+        int[] validArray = new int[validExpts.size()];
+        for (int j = 0; j < validArray.length; j++) {
+            validArray[j] = ((Integer)(validExpts.get(j))).intValue();
+        }  
+        for (int i = 0; i < numPerms; i++) {
+            if (stop) {
+                throw new AbortException();
+            }
+            event.setIntValue(i);
+            event.setDescription("Permuting matrix: Current permutation = " + (i + 1));
+            fireValueChanged(event);            
+            int[] permutedExpts = getPermutedValues(numExps, validArray);
+            FloatMatrix permutedMatrix = getPermutedMatrix(expMatrix, permutedExpts);
+            float[] currPermFVals = getPermutedFVals(permutedMatrix);
+            for (int j = 0; j < numGenes; j++) {
+                if (currPermFVals[j] > origFValues[j]) permPValues[j]++;
+            }
+        }
+        
+        for (int i = 0; i < numGenes; i++) {
+            if (Float.isNaN(origFValues[i])) {
+                permPValues[i] = Float.NaN;
+            } else {
+                permPValues[i] = (float)permPValues[i]/(float)numPerms;
+            }
+        }
+        
+        Vector permPValsVector = new Vector();
+        
+        for (int i = 0; i < permPValues.length; i++) {
+            permPValsVector.add(new Float(permPValues[i]));
+        }
+        
+        return permPValsVector;
+    }
+    
+    private FloatMatrix getPermutedMatrix(FloatMatrix inputMatrix, int[] permExpts) {
+        FloatMatrix permutedMatrix = new FloatMatrix(inputMatrix.getRowDimension(), inputMatrix.getColumnDimension());
+        for (int i = 0; i < inputMatrix.getRowDimension(); i++) {
+            for (int j = 0; j < inputMatrix.getColumnDimension(); j++) {
+                permutedMatrix.A[i][j] = inputMatrix.A[i][permExpts[j]];
+            }
+        }
+        return permutedMatrix;
     }    
     
+    private float[] getPermutedFVals(FloatMatrix permMatrix) {        
+        float[] permFVals  = new float[numGenes];
+        
+        for (int gene = 0; gene < numGenes; gene++) {
+            float currentF = 0.0f;
+            //boolean sig = false;
+            float[] geneValues = new float[numExps];
+            int n = 0;
+            for (int i = 0; i < numExps; i++) {
+                geneValues[i] = permMatrix.A[gene][i];
+                if (!Float.isNaN(geneValues[i])) {
+                    n++;
+                }
+            }
+            
+            if (n == 0) {
+                currentF = Float.NaN;
+                //currentP = Float.NaN;
+                //return false;
+            }
+            
+            constant = getConstant(geneValues);
+            
+            double totalSS = getTotalSS(geneValues);
+            double groupsSS = getGroupsSS(geneValues);
+            double errorSS = totalSS - groupsSS;
+            
+            if ((Double.isNaN(totalSS))||(Double.isNaN(groupsSS))||(Double.isNaN(errorSS))) {
+                currentF = Float.NaN;
+                //currentP = Float.NaN;
+                //return false;
+            } 
+            
+            int groupsDF = getDfNum(gene, permMatrix);
+            int errorDF = getDfDenom(gene, permMatrix);            
+            
+            double groupsMS = groupsSS / groupsDF;
+            double errorMS = errorSS / errorDF;
+            
+            if (!Float.isNaN(currentF)) {
+                double fValue = groupsMS/errorMS;
+                currentF = (float)(fValue);
+            }
+            
+            //System.out.println("currentF for gene " + gene + " = " + currentF);
+            permFVals[gene] = currentF;
+        }  
+        return permFVals;
+    }
+    
+    private int[] getPermutedValues(int arrayLength, int[] validArray) {//returns an integer array of length "arrayLength", with the valid values (the currently included experiments) permuted
+        int[] permutedValues = new int[arrayLength];
+        for (int i = 0; i < permutedValues.length; i++) {
+            permutedValues[i] = i;
+        }
+        
+        int[] permutedValidArray = new int[validArray.length];
+        for (int i = 0; i < validArray.length; i++) {
+            permutedValidArray[i] = validArray[i];
+        }
+        
+        for (int i = permutedValidArray.length; i > 1; i--) {
+            Random generator2 =new Random();
+            //Random generator2 = new Random(randomSeeds[i - 2]);
+            int randVal = generator2.nextInt(i - 1);
+            int temp = permutedValidArray[randVal];
+            permutedValidArray[randVal] = permutedValidArray[i - 1];
+            permutedValidArray[i - 1] = temp;
+        }  
+        
+        for (int i = 0; i < validArray.length; i++) {
+            //permutedValues[validArray[i]] = permutedValues[permutedValidArray[i]];
+            permutedValues[validArray[i]] = permutedValidArray[i];
+        }
+        
+        try {
+            Thread.sleep(10);
+        } catch (Exception exc) {
+            exc.printStackTrace();
+        }
+        
+        
+        return permutedValues;        
+    }    
+    
+    private Vector getAdjPVals(Vector rawPVals, int adjMethod) throws AlgorithmException {
+        event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, numGenes);
+	fireValueChanged(event);
+	event.setId(AlgorithmEvent.PROGRESS_VALUE); 
+        
+        Vector adjPVals = new Vector();
+        if (adjMethod == OneWayANOVAInitBox.JUST_ALPHA) {
+            adjPVals = (Vector)(rawPVals.clone());
+        } 
+        if (adjMethod == OneWayANOVAInitBox.STD_BONFERRONI) {
+            for (int i = 0; i < numGenes; i++) {
+		if (stop) {
+		    throw new AbortException();
+		}
+		event.setIntValue(i);
+		event.setDescription("Computing adjusted p-values: Current gene = " + (i + 1));  
+		fireValueChanged(event);  
+                float currP = ((Float)(rawPVals.get(i))).floatValue();
+                float currAdjP = (float)(currP*numGenes);
+                if (currAdjP > 1.0f) currAdjP = 1.0f;
+                adjPVals.add(new Float(currAdjP));
+            }
+        }
+        if (adjMethod == OneWayANOVAInitBox.ADJ_BONFERRONI) {
+            adjPVals = getAdjBonfPVals(rawPVals);
+        }
+        if (adjMethod == OneWayANOVAInitBox.MAX_T) {
+            adjPVals = getMaxTPVals();
+        }
+        
+        return adjPVals;
+    }
+    
+    private Vector getMaxTPVals() throws AlgorithmException {
+        double[] origFValues = new double[numGenes];
+        double[] descFValues = new double[numGenes];
+        int[] descGeneIndices = new int[numGenes];
+        double[] adjPValues = new double[numGenes];
+        double[][] permutedRankedFValues = new double[numPerms][numGenes];
+        double[][] uMatrix = new double[numGenes][numPerms];     
+        
+        event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, numPerms);
+        fireValueChanged(event);
+        event.setId(AlgorithmEvent.PROGRESS_VALUE);    
+        
+        for (int i = 0; i < numGenes; i++) {
+            origFValues[i] = ((Float)(fValuesVector.get(i))).doubleValue();
+        }
+        
+        QSort sortDescFValues = new QSort(origFValues, QSort.DESCENDING);
+        descFValues = sortDescFValues.getSortedDouble();
+        descGeneIndices = sortDescFValues.getOrigIndx(); 
+        
+        Vector validExpts = new Vector();
+        for (int i = 0; i < groupAssignments.length; i++) {
+            if (groupAssignments[i] != 0) validExpts.add(new Integer(i));
+        }
+        
+        int[] validArray = new int[validExpts.size()];
+        for (int j = 0; j < validArray.length; j++) {
+            validArray[j] = ((Integer)(validExpts.get(j))).intValue();
+        }        
+        
+        for (int i = 0; i < numPerms; i++) {
+            if (stop) {
+                throw new AbortException();
+            }
+            event.setIntValue(i);
+            event.setDescription("Permuting matrix: Current permutation = " + (i+1));
+            fireValueChanged(event);   
+            
+            int[] permutedExpts = getPermutedValues(numExps, validArray);
+            FloatMatrix permutedMatrix = getPermutedMatrix(expMatrix, permutedExpts);
+            float[] currPermFVals = getPermutedFVals(permutedMatrix);  
+            
+            if (Double.isNaN(currPermFVals[descGeneIndices[numGenes - 1]])) {
+                uMatrix[numGenes - 1][i] = Double.NEGATIVE_INFINITY;
+            } else {
+                uMatrix[numGenes - 1][i] = currPermFVals[descGeneIndices[numGenes - 1]];
+            }   
+            
+            for (int j = numGenes - 2; j >= 0; j--) {
+                if (Double.isNaN(currPermFVals[descGeneIndices[j]])) {
+                    uMatrix[j][i] = uMatrix[j+1][i];
+                } else {
+                    uMatrix[j][i] = Math.max(uMatrix[j+1][i], currPermFVals[descGeneIndices[j]]);
+                }
+                //System.out.println("uMatrix[" + j + "][" + i + "] = " + uMatrix[j][i]);
+            }            
+            
+        }
+        
+        for (int i = 0; i < numGenes; i++) {
+            int pCounter = 0;
+            for (int j = 0; j < numPerms; j++) {
+
+                if (uMatrix[i][j] >= descFValues[i]) {
+                    pCounter++;
+                }
+            }
+            adjPValues[descGeneIndices[i]] = (double)pCounter/(double)numPerms;
+        }  
+        
+        int NaNPCounter = 0;
+        for (int i = 0; i < numGenes; i++) {
+            if (Double.isNaN(origFValues[i])) {
+                adjPValues[i] = Double.NaN;
+                NaNPCounter++;
+                //System.out.println("NaN index = " + i);
+            }             
+        } 
+        //double[] pStarValues = new double[adjPValues];
+        //pStartValues[descGeneIndices[0]]
+        for (int i = 1; i < numGenes - NaNPCounter; i++) { // enforcing monotonicity
+            adjPValues[descGeneIndices[i]] = Math.max(adjPValues[descGeneIndices[i]], adjPValues[descGeneIndices[i - 1]]); 
+        }        
+        
+        Vector adPVector = new Vector();
+        
+        for (int i = 0; i < adjPValues.length; i++) {
+            adPVector.add (new Float(adjPValues[i]));
+        }
+        return adPVector;
+    }
+    
+    
+    private Vector getAdjBonfPVals(Vector rawPVals) {
+        float[] rawPValArray = new float[rawPVals.size()];
+        for (int i = 0; i < rawPValArray.length; i++) {
+            rawPValArray[i] = ((Float)(rawPVals.get(i))).floatValue();
+        }
+        float[] adjPValArray = new float[rawPValArray.length];
+        
+        QSort sortRawPs = new QSort(rawPValArray, QSort.ASCENDING);
+        float[] sortedRawPVals = sortRawPs.getSorted();
+        int[] origIndices = sortRawPs.getOrigIndx();
+        int n = numGenes;
+        adjPValArray[origIndices[0]] = (float)(sortedRawPVals[0]*n);        
+        for (int i = 1; i < numGenes; i++) {
+            if (sortedRawPVals[i - 1] < sortedRawPVals[i]) n--;   
+            if (n <= 0) n = 1;
+            adjPValArray[origIndices[i]] = (float)(sortedRawPVals[i]*n);
+        }
+        
+        for (int i = 0; i < adjPValArray.length; i++) {
+            if (adjPValArray[i] > 1.0f) adjPValArray[i] = 1.0f;
+        }
+        Vector adjBonPVals = new Vector();
+        for (int i = 0; i < adjPValArray.length; i++) {
+            adjBonPVals.add(new Float(adjPValArray[i]));
+        }
+        return adjBonPVals;
+    }
+    
+    /*
     private Vector sortGenesBySignificance() throws AlgorithmException {
 	Vector sigGenes = new Vector();
 	Vector nonSigGenes = new Vector();
@@ -350,11 +797,11 @@ public class OneWayANOVA extends AbstractAlgorithm {
 		if (isSignificant(i)) {
 		    sigGenes.add(new Integer(i));
                     fValuesVector.add(new Float(currentF));
-                    pValuesVector.add(new Float(currentP));
+                    //pValuesVector.add(new Float(currentP));
 		} else {
 		    nonSigGenes.add(new Integer(i));
                     fValuesVector.add(new Float(currentF));
-                    pValuesVector.add(new Float(currentP));                    
+                    //pValuesVector.add(new Float(currentP));                    
 		}                
             }
         }
@@ -365,6 +812,7 @@ public class OneWayANOVA extends AbstractAlgorithm {
 	
         return sortedGenes;        
     }
+     */
     
     private float[] getGene(int gene) {
         float[] currentGene = new float[expMatrix.getColumnDimension()];
@@ -404,6 +852,37 @@ public class OneWayANOVA extends AbstractAlgorithm {
         return (n - numGroups);
     }
     
+    private int getDfNum(int gene, FloatMatrix permMatrix) {
+	//float[] geneValues = new float[numExps];
+        int n = 0;
+	for (int i = 0; i < numExps; i++) {
+	    //geneValues[i] = expMatrix.A[gene][i];
+            if ((!Float.isNaN(permMatrix.A[gene][i])) && (groupAssignments[i] != 0)) {
+                n++;
+            }
+	} 
+         if (n == 0) {
+             return (-1); // will be exported as Float.NaN to OWAGUI
+         }
+        
+         return (numGroups - 1);
+    }
+    
+    private int getDfDenom(int gene, FloatMatrix permMatrix) {
+        int n = 0;
+	for (int i = 0; i < numExps; i++) {
+	    //geneValues[i] = expMatrix.A[gene][i];
+            if ((!Float.isNaN(permMatrix.A[gene][i])) && (groupAssignments[i] != 0)) {
+                n++;
+            }
+	} 
+         if (n == 0) {
+             return (-1); // will be exported as Float.NaN to OWAGUI
+         } 
+        return (n - numGroups);
+    }    
+    
+    /*
     private boolean isSignificant(int gene) {
         boolean sig = false;
 	float[] geneValues = new float[numExps];
@@ -483,11 +962,13 @@ public class OneWayANOVA extends AbstractAlgorithm {
         double testP = testF.cumulative(2.51);
         
         System.out.println("F(11, 15)  = 2.51, cum. probability = " + (1 - testP));
-         */
+         /
         //System.out.println("Gene " + gene + ": GroupsSS = " + groupsSS + ", errorSS = " + errorSS + ", groupsDF = " + groupsDF + ", errorDF = " + errorDF + ", F = " + fValue + ", p = " + pValue);
         
         return sig;
     }
+         */
+
     
     private double getConstant(float[] geneValues) {
         double sum = 0.0d;
