@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASEGUI.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-06-01 13:23:13 $
+ * $Revision: 1.5 $
+ * $Date: 2004-06-24 17:28:55 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -157,8 +157,6 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
             
             logger.append("Extracting Annotation Key Lists\n");
             String [] clusterKeys = framework.getData().getAnnotationList(annotationKeyType, indices);
-            if(clusterKeys == null)
-                System.out.println("NULL CLUSTER KEYS!!!!!!!!!!!!!!!!!!!!!!!!!");
             algorithmData.addStringArray("sample-list", clusterKeys);
             algorithmData.addIntArray("sample-indices", cluster.getExperimentIndices());  //drop in experiment indices
         }
@@ -246,9 +244,6 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         experiment = framework.getData().getExperiment();
         
         if(isClusterAnalysis){
-            //cluster = dialog.getSelectedCluster();
-            //experiment = cluster.getExperiment();   //asign proper experiment object
-            //indices = cluster.getIndices();  //**These map to IDATA**
             algorithmData.addParam("report-ease-score", String.valueOf(dialog.isEaseScoreSelected()));
             isPvalueCorrectionSelected = dialog.isCorrectPvaluesSelected();
             algorithmData.addParam("p-value-corrections", String.valueOf(isPvalueCorrectionSelected));
@@ -261,14 +256,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
             algorithmData.addParam("run-permutation-analysis", String.valueOf(dialog.isPermutationAnalysisSelected()));
             if(dialog.isPermutationAnalysisSelected())
                 algorithmData.addParam("permutation-count", String.valueOf(dialog.getPermutationCount()));
-            
-            //  logger.append("Extracting Annotation Key Lists\n");
-            //  String [] clusterKeys = framework.getData().getAnnotationList(annotationKeyType, indices);
-            //   if(clusterKeys == null)
-            //      System.out.println("NULL CLUSTER KEYS!!!!!!!!!!!!!!!!!!!!!!!!!");
-            //  algorithmData.addStringArray("sample-list", clusterKeys);
-            // algorithmData.addIntArray("sample-indices", cluster.getExperimentIndices());  //drop in experiment indices
-        }
+     }
         
         //Use file or IData for population, only permit file use for cluster analysis
         String [] populationKeys;
@@ -331,8 +319,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         
         this.isClusterAnalysis = params.getBoolean("perform-cluster-analysis");
         this.annotationKeyType = params.getString("annotation-key-type");
-        
-        
+                                                 
         
         listener = new Listener();
         logger = new Logger(framework.getFrame(), "EASE Analysis", listener);
@@ -343,16 +330,11 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
             //cluster keys
             int indices [] = experiment.getRowMappingArrayCopy();
             String [] clusterKeys = framework.getData().getAnnotationList(annotationKeyType, indices);
-            //   if(clusterKeys == null)
-            //      System.out.println("NULL CLUSTER KEYS!!!!!!!!!!!!!!!!!!!!!!!!!");
-              algData.addStringArray("sample-list", clusterKeys);
-             algData.addIntArray("sample-indices", indices);  //drop in experiment indices
-            
+
+             algData.addStringArray("sample-list", clusterKeys);
+             algData.addIntArray("sample-indices", indices);  //drop in experiment indices          
         }
-        
-        
-        
-        
+                
         // population keys
         String popFileName = params.getString("population-file-name");
         String [] populationKeys;
@@ -370,13 +352,10 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         } else {
             populationKeys = framework.getData().getAnnotationList(annotationKeyType, experiment.getRowMappingArrayCopy());
         }
-                algData.addStringArray("population-list", populationKeys);
         
+        algData.addStringArray("population-list", populationKeys);
         
-        
-        
-        
-        
+         
         algorithm = framework.getAlgorithmFactory().getAlgorithm("EASE");
         algorithm.addAlgorithmListener(listener);
         algorithm.execute(algorithmData);
