@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: Cluster.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 18:46:05 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 22:40:08 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -20,7 +20,7 @@ import org.tigr.microarray.mev.cluster.gui.Experiment;
  * Methods include standard set... and get... methods to access and alter
  * the cluster definition.
  */
-public class Cluster {
+public class Cluster implements java.io.Serializable {
 
     public static final int GENE_CLUSTER = 0;
     public static final int EXPERIMENT_CLUSTER = 1;
@@ -61,6 +61,9 @@ public class Cluster {
     /** Cluster's Experiment of origin
      */
     private Experiment experiment;
+    /** Node objects userObject
+     */
+    private Object userObject;
 
     /** Creates new cluster object
      */
@@ -91,6 +94,7 @@ public class Cluster {
         this.clusterDescription = clusterDescription;
         this.serialNumber = serialNumber;
         this.node = node;
+        this.userObject = node.getUserObject();
         this.experiment = experiment;
         this.experimentIndices = getIndicesMappedToExperiment();
     }
@@ -134,7 +138,9 @@ public class Cluster {
     /** Returns the cluster's experiment
      */
     public Experiment getExperiment(){ return experiment; }
-    
+    /** Returns the cluster's node objects userObject
+     */
+    public Object getUserObject(){ return userObject; }
     /** Sets cluster color
      */    
     public void setClusterColor(Color color){ this.clusterColor = color; }
@@ -237,5 +243,52 @@ public class Cluster {
             }
         }
         return expIndices;
+    }
+    
+        private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {        
+        oos.writeObject(indices);
+        oos.writeObject(source);
+        oos.writeObject(clusterLabel);
+        oos.writeObject(clusterID);
+        oos.writeObject(algorithmName);
+        oos.writeInt(algorithmIndex);
+        oos.writeObject(clusterColor);
+        oos.writeObject(clusterDescription);
+        oos.writeInt(serialNumber);     
+        oos.writeObject(experiment);
+        
+        //Can't store node, store path names for finding node
+        oos.writeBoolean(node != null);
+        if(node != null){
+    /*        DefaultMutableTreeNode currNode = node;
+            path = new String[node.getLevel()];
+            for( int i = 0; i < path.length(); i++){
+                path[i] = currNode.getString();
+                currNode = (DefaultMutableTreeNode)currNode.getParent();
+            }
+            oos.writeObject(path);
+     **/
+            oos.writeObject(node.getUserObject());
+        }        
+    }
+    
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        indices = (int []) ois.readObject();
+        source = (String)ois.readObject();
+        clusterLabel = (String)ois.readObject();  
+        clusterID = (String)ois.readObject();
+        algorithmName = (String)ois.readObject();
+        algorithmIndex = ois.readInt();
+        clusterColor = (Color)ois.readObject();
+        clusterDescription = (String)ois.readObject();
+        serialNumber = ois.readInt();       
+        experiment = (Experiment)ois.readObject();
+
+        //if a node path was stored get path and later restore node value
+        if(ois.readBoolean()){
+           // path = (String [])ois.readObject();
+           userObject = ois.readObject();
+        }            
     }
 }

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterTable.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 18:46:05 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 22:40:08 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -1016,9 +1016,27 @@ public class ClusterTable extends JPanel implements IViewer {
         if( !(cluster.getSource()).equals("Algorithm") ){
             return;
         }
+        
         DefaultMutableTreeNode node = cluster.getNode();
-        if(node != null)
+        
+        if(node == null){  // no node, probably cluster loaded from saved object, set node if found
+   /*         node = this.framework.findNode(cluster.getAlgorithmName(), cluster.getClusterID());
+            if( node != null){
+                cluster.setNode(node);
+                framework.setTreeNode(node);
+            }
+    **/
+            Object userObject = cluster.getUserObject();
+            if(userObject != null) {
+                 node = framework.getNode(userObject);
+                if( node != null) {
+                    cluster.setNode(node);
+                    framework.setTreeNode(node);
+                }                    
+            }
+        } else {        
             framework.setTreeNode(node);
+        }
     }
     
     private void modifyClusterAttributes(){
@@ -1078,6 +1096,8 @@ public class ClusterTable extends JPanel implements IViewer {
             repository.addCluster(repository.getClusterOperationsList(), result);
             addCluster(result);
         }
+        if(result != null)
+            this.framework.addHistory("Cluster Operation: "+result.getAlgorithmName());
     }
     
     private void deleteSelectedRows(){
@@ -1115,7 +1135,7 @@ public class ClusterTable extends JPanel implements IViewer {
             JOptionPane.showMessageDialog(framework.getFrame(), "One row must be selected to indicate the cluster to save.", "Save Error", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        repository.saveCluster(clusters[0].getSerialNumber());
+        //repository.saveCluster(clusters[0].getSerialNumber());
     }
     
     /** Returns a component to be inserted into the scroll pane row header

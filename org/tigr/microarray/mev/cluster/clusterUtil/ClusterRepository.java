@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterRepository.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 18:46:05 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 22:40:08 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -16,6 +16,11 @@ import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+import java.util.Enumeration;
 import java.util.Vector;
 import java.awt.Color;
 
@@ -25,7 +30,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 /** The ClusterRepository contains ClusterList objects created for
  * holding saved clusters particular analysis results.
  */
-public class ClusterRepository extends Vector {
+public class ClusterRepository extends Vector implements java.io.Serializable {
     
     public static final int GENE_CLUSTER = 0;
     public static final int EXPERIMENT_CLUSTER = 1;
@@ -44,27 +49,41 @@ public class ClusterRepository extends Vector {
     /** true if the repository maintains gene clusters
      */
     private boolean geneClusterRepository = false;
-    /** IFramework Object
+    
+    /** IFramework implementation
      */
     private IFramework framework;
-    
     
     /** Creates new ClusterRepository with a specified element count
      */
     public ClusterRepository(int numberOfElements, IFramework framework) {
         this.numberOfElements = numberOfElements;
+        this.framework = framework;
         this.elementClusters = new ClusterList[numberOfElements];
         this.addClusterList(new ClusterList("Cluster Ops."));
-        this.framework = framework;
     }
     
     /** Creates new ClusterRepository with specified cluster type*/
     public ClusterRepository(int numberOfElements, IFramework framework, boolean isGeneClusterRepository) {
         this.numberOfElements = numberOfElements;
+        this.framework = framework;
         this.elementClusters = new ClusterList[numberOfElements];
         this.geneClusterRepository = isGeneClusterRepository;
         this.addClusterList(new ClusterList("Cluster Ops."));
-        this.framework = framework;
+    }
+    
+    private void writeObject(ObjectOutputStream oos) throws IOException { 
+        oos.writeBoolean(this.geneClusterRepository);
+        oos.writeInt(this.clusterSerialCounter);
+        oos.writeObject(this.elementClusters);
+        oos.writeInt(this.numberOfElements);
+    }
+    
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        this.geneClusterRepository = ois.readBoolean();
+        this.clusterSerialCounter = ois.readInt();
+        this.elementClusters = (ClusterList [])ois.readObject(); 
+        this.numberOfElements = ois.readInt();
     }
     
     /** Returns the color of the last cluster to which the element
@@ -115,6 +134,7 @@ public class ClusterRepository extends Vector {
         add(list);
     }
     
+    
     /** Adds a cluster to a specified ClusterList
      */
     public void addCluster(ClusterList list, Cluster cluster){
@@ -135,12 +155,16 @@ public class ClusterRepository extends Vector {
             this.setClusterSerialCounter(this.getMaxClusterSerialNumber()-1);  //rollback counter
             moveClusterToEndInMembershipLists(savedCluster);
         } else {
+            if(list == null){ // null cluster list for cluster operations. make one
+                list = new ClusterList("Cluster Ops.");
+                this.addClusterList(list);
+            }
             list.addCluster(cluster);
             updateClusterMembership(cluster);
         }
     }
     
-        /** Adds a cluster to a specified ClusterList
+    /** Adds a cluster to a specified ClusterList
      */
     public void addSubCluster(ClusterList list, Cluster cluster){
         if(cluster == null)
@@ -159,9 +183,9 @@ public class ClusterRepository extends Vector {
             this.setClusterSerialCounter(this.getMaxClusterSerialNumber()-1);  //rollback counter
         } else {
  **/
-            list.addCluster(cluster);
-            updateClusterMembership(cluster);
-      //  }
+        list.addCluster(cluster);
+        updateClusterMembership(cluster);
+        //  }
     }
     
     /** Adds a cluster to elements cluster list for elements
@@ -182,14 +206,14 @@ public class ClusterRepository extends Vector {
      * modification of an existing cluster's color attribute.)
      */
     private void moveClusterToEndInMembershipLists(Cluster cluster){
-                int [] indices = cluster.getIndices();
+        int [] indices = cluster.getIndices();
         for(int i = 0; i < indices.length; i++){
             if(elementClusters[indices[i]] == null)
-                elementClusters[indices[i]] = new ClusterList("element "+indices[i]);        
+                elementClusters[indices[i]] = new ClusterList("element "+indices[i]);
             //if it's in the list (and is should always be) remove it and put it back in
             //at the end.
             if(elementClusters[indices[i]].contains(cluster)){
-                elementClusters[indices[i]].removeElement(cluster);       
+                elementClusters[indices[i]].removeElement(cluster);
                 elementClusters[indices[i]].addElement(cluster);
             }
         }
@@ -279,10 +303,10 @@ public class ClusterRepository extends Vector {
         if(list == null){
             list = new ClusterList(algorithmName);
             this.addClusterList(list);
-        } else if(list.isClusterSaved(clusterID)){            
-            int option = JOptionPane.showConfirmDialog(framework.getFrame(), "Cluster has already been saved.  Would you like to " +
+        } else if(list.isClusterSaved(clusterID)){
+            int option = JOptionPane.showConfirmDialog(new java.awt.Frame(), "Cluster has already been saved.  Would you like to " +
             "modify the existing attributes?", "Cluster Saved Alert", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
- 
+            
             if(option == JOptionPane.NO_OPTION)
                 return null;
         }
@@ -302,24 +326,24 @@ public class ClusterRepository extends Vector {
         return cluster;
     }
     
-    /** 
+    /**
      * Stores a clsuter given the supplied parameters.
      */
     public Cluster storeSubCluster(int algorithmIndex, String algorithmName, String clusterID, int [] indices, DefaultMutableTreeNode clusterNode, Experiment experiment){
         
         ClusterList list =  findClusterList(algorithmName);
-         boolean modification = false;
+        boolean modification = false;
         
         if(list == null){
             list = new ClusterList(algorithmName);
             this.addClusterList(list);
-        } else if(list.isClusterSaved(clusterID)){      
+        } else if(list.isClusterSaved(clusterID)){
             if(list.getCluster(clusterID).doIndicesMatch(indices)){
-                int option = JOptionPane.showConfirmDialog(framework.getFrame(), "Cluster has already been saved.  Would you like to " +
+                int option = JOptionPane.showConfirmDialog(new java.awt.Frame(), "Cluster has already been saved.  Would you like to " +
                 "modify the existing attributes?", "Cluster Saved Alert", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 modification = true;
-            if(option == JOptionPane.NO_OPTION)
-                return null;
+                if(option == JOptionPane.NO_OPTION)
+                    return null;
             }
         }
         
@@ -368,7 +392,13 @@ public class ClusterRepository extends Vector {
         if(list == null || list.size() == 0)
             return;
         Cluster cluster = list.getCluster(clusterID);
-        
+        if(cluster != null){
+            int serialNumber = cluster.getSerialNumber();
+            if(this.isGeneClusterRepository())
+                framework.addHistory("Remove Gene Cluster From Repository: Serial # "+String.valueOf(serialNumber));
+            else
+                framework.addHistory("Remove Experiment Cluster From Repository: Serial # "+String.valueOf(serialNumber));
+        }
         list.removeCluster(clusterID);
         removeElementClusters(indices, cluster);
     }
@@ -379,16 +409,16 @@ public class ClusterRepository extends Vector {
         ClusterList list = findClusterList(algorithmName);
         if(list == null || list.size() == 0)
             return;
-                
+        
         Cluster cluster = null;
         Cluster temp = null;
         for(int i = 0; i < list.size(); i++){
             temp = list.getClusterAt(i);
             if(temp.doIndicesMatch(indices))
                 cluster = temp;
-        }                
+        }
         if(cluster == null)
-            return;   
+            return;
         
         list.removeCluster(cluster);
         removeElementClusters(indices, cluster);
@@ -433,6 +463,9 @@ public class ClusterRepository extends Vector {
      */
     public void removeCluster(int serialNumber){
         Cluster cluster = getCluster(serialNumber);
+        if(cluster == null)
+            return;
+        
         ClusterList list;
         for(int i = 0; i < size(); i++){
             list = this.getClusterList(i);
@@ -444,6 +477,11 @@ public class ClusterRepository extends Vector {
         }
         int [] indices = cluster.getIndices();
         removeClusterMembership(cluster);
+        
+        if(this.isGeneClusterRepository())
+            framework.addHistory("Remove Gene Cluster From Repository: Serial # "+String.valueOf(serialNumber));
+        else
+            framework.addHistory("Remove Experiment Cluster From Repository: Serial # "+String.valueOf(serialNumber));
     }
     
     /** Returns the next availible cluster serial
@@ -475,7 +513,7 @@ public class ClusterRepository extends Vector {
     
     /** Saves the specified cluster
      */
-    public void saveCluster(int serialNumber){
+/*    public void saveCluster(int serialNumber){
         Cluster cluster = getCluster(serialNumber);
         try{
             if(geneClusterRepository)
@@ -487,5 +525,6 @@ public class ClusterRepository extends Vector {
             e.printStackTrace();
         }
     }
+ **/
     
 }
