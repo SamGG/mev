@@ -28,7 +28,7 @@ import org.tigr.microarray.mev.cluster.gui.Experiment;
  */
 public class KNNCInitDialog extends AlgorithmDialog {
     
-    boolean okPressed = false;  
+    boolean okPressed = false;
     JRadioButton genesButton, expsButton, createNewTrgSetButton, useExistTrgSetButton, trgSetFromCurrent, trgSetNotFromCurrent;
     JButton classEditorButton, browseTrgFileButton, previewTrgSetButton;
     JCheckBox useVarianceFilterBox, useCorrelFilterBox;
@@ -38,7 +38,7 @@ public class KNNCInitDialog extends AlgorithmDialog {
     JPanel trgSetSpecPanel;
     JTabbedPane classifyOrValidatePane;
     
-    HCLSelectionPanel hclOpsPanel;   
+    HCLSelectionPanel hclOpsPanel;
     
     IFramework framework;
     Experiment experiment;
@@ -54,7 +54,7 @@ public class KNNCInitDialog extends AlgorithmDialog {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
         this.framework = framework_1;
-	this.experiment = framework.getData().getExperiment();      
+        this.experiment = framework.getData().getExperiment();
         this.knnEditor = new KNNClassificationEditor(framework, true, 5);
         
         numExps = experiment.getNumberOfSamples();
@@ -62,7 +62,7 @@ public class KNNCInitDialog extends AlgorithmDialog {
         
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints constraints = new GridBagConstraints();
-        //constraints.fill = GridBagConstraints.BOTH;     
+        //constraints.fill = GridBagConstraints.BOTH;
         
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(gridbag);
@@ -92,12 +92,12 @@ public class KNNCInitDialog extends AlgorithmDialog {
         
         buildConstraints(constraints, 1, 0, 1, 1, 50, 0);
         grid1.setConstraints(expsButton, constraints);
-        genesOrExpsPanel.add(expsButton);   
+        genesOrExpsPanel.add(expsButton);
         
         buildConstraints(constraints, 0, 0, 1, 1, 100, 10);
         constraints.fill = GridBagConstraints.BOTH;
         classGrid.setConstraints(genesOrExpsPanel, constraints);
-        classifyPanel.add(genesOrExpsPanel);        
+        classifyPanel.add(genesOrExpsPanel);
         
         constraints.fill = GridBagConstraints.NONE;
         
@@ -109,7 +109,7 @@ public class KNNCInitDialog extends AlgorithmDialog {
         
         useVarianceFilterBox = new JCheckBox("Use variance filter (if unchecked, use all vectors)", false);
         useVarianceFilterBox.setBackground(Color.white);
-        varLabel = new JLabel("Use only the following number of highest-variance vectors: ");   
+        varLabel = new JLabel("Use only the following number of highest-variance vectors: ");
         varLabel.setEnabled(false);
         numGenesField = new JTextField("1000",7);
         numGenesField.setEnabled(false);
@@ -123,7 +123,7 @@ public class KNNCInitDialog extends AlgorithmDialog {
                     numGenesField.setBackground(Color.gray);
                 } else {
                     varLabel.setEnabled(true);
-                    numGenesField.setEnabled(true); 
+                    numGenesField.setEnabled(true);
                     numGenesField.setBackground(Color.white);
                 }
             }
@@ -132,28 +132,28 @@ public class KNNCInitDialog extends AlgorithmDialog {
         constraints.anchor = GridBagConstraints.WEST;
         buildConstraints(constraints, 0, 0, 1, 1, 100, 50);
         grid3.setConstraints(useVarianceFilterBox, constraints);
-        variancePanel.add(useVarianceFilterBox);        
+        variancePanel.add(useVarianceFilterBox);
         
         //JLabel varLabel = new JLabel("Use only the following number of highest-variance vectors: ");
         buildConstraints(constraints, 0, 1, 1, 1, 70, 50);
         grid3.setConstraints(varLabel, constraints);
-        variancePanel.add(varLabel);   
+        variancePanel.add(varLabel);
         
         //numGenesField = new JTextField(7);
         buildConstraints(constraints, 1, 1, 1, 1, 30, 0);
         grid3.setConstraints(numGenesField, constraints);
-        variancePanel.add(numGenesField);   
+        variancePanel.add(numGenesField);
         
-        //constraints.anchor = GridBagConstraints.CENTER;        
+        //constraints.anchor = GridBagConstraints.CENTER;
         
         buildConstraints(constraints, 0, 1, 1, 1, 100, 10);
         constraints.fill = GridBagConstraints.BOTH;
         classGrid.setConstraints(variancePanel, constraints);
-        classifyPanel.add(variancePanel); 
+        classifyPanel.add(variancePanel);
         
         constraints.fill = GridBagConstraints.NONE;
         
-
+        
         JPanel correlPanel = new JPanel();
         correlPanel.setBackground(Color.white);
         correlPanel.setBorder(new TitledBorder("Correlation filter"));
@@ -177,7 +177,7 @@ public class KNNCInitDialog extends AlgorithmDialog {
                 } else {
                     corrLabel.setEnabled(true);
                     pValueField.setEnabled(true);
-                    pValueField.setBackground(Color.white);                    
+                    pValueField.setBackground(Color.white);
                 }
             }
         });
@@ -189,7 +189,7 @@ public class KNNCInitDialog extends AlgorithmDialog {
         //corrLabel = new JLabel("Cutoff p-value for correlation: ");
         buildConstraints(constraints, 0, 1, 1, 1, 70, 50);
         grid2.setConstraints(corrLabel, constraints);
-        correlPanel.add(corrLabel);        
+        correlPanel.add(corrLabel);
         
         //pValueField = new JTextField(7);
         buildConstraints(constraints, 1, 1, 1, 1, 30, 0);
@@ -218,22 +218,22 @@ public class KNNCInitDialog extends AlgorithmDialog {
         numClassesField = new JTextField("5", 7);
         buildConstraints(constraints, 1, 0, 1, 1, 50, 0);
         grid4.setConstraints(numClassesField, constraints);
-        knnParamPanel.add(numClassesField);      
+        knnParamPanel.add(numClassesField);
         
         JLabel numNeighborsLabel = new JLabel("Number of neighbors");
         buildConstraints(constraints, 0, 1, 1, 1, 50, 50);
         grid4.setConstraints(numNeighborsLabel, constraints);
-        knnParamPanel.add(numNeighborsLabel);   
+        knnParamPanel.add(numNeighborsLabel);
         
         numNeighborsField = new JTextField("3", 7);
         buildConstraints(constraints, 1, 1, 1, 1, 50, 0);
         grid4.setConstraints(numNeighborsField, constraints);
-        knnParamPanel.add(numNeighborsField);  
+        knnParamPanel.add(numNeighborsField);
         
         buildConstraints(constraints, 0, 3, 1, 1, 100, 10);
         constraints.fill = GridBagConstraints.BOTH;
         classGrid.setConstraints(knnParamPanel, constraints);
-        classifyPanel.add(knnParamPanel);   
+        classifyPanel.add(knnParamPanel);
         
         constraints.fill = GridBagConstraints.NONE;
         
@@ -256,7 +256,7 @@ public class KNNCInitDialog extends AlgorithmDialog {
         trgSetSpecPanel.add(questionLabel);
         
         String[] annotFields = {"field1", "field2", "field3", "field4"}; // for now
-        annotSelectBox = new JComboBox(annotFields);        
+        annotSelectBox = new JComboBox(annotFields);
         annotSelectBox.setEnabled(false);
         
         trgSetFromCurrent = new JRadioButton("Yes", true);
@@ -280,23 +280,23 @@ public class KNNCInitDialog extends AlgorithmDialog {
         
         buildConstraints(constraints, 0, 1, 1, 1, 100, 25);
         grid6.setConstraints(trgSetFromCurrent, constraints);
-        trgSetSpecPanel.add(trgSetFromCurrent);  
+        trgSetSpecPanel.add(trgSetFromCurrent);
         
         buildConstraints(constraints, 0, 2, 1, 1, 80, 25);
         grid6.setConstraints(trgSetNotFromCurrent, constraints);
-        trgSetSpecPanel.add(trgSetNotFromCurrent);     
+        trgSetSpecPanel.add(trgSetNotFromCurrent);
         
         //String[] annotFields = {"field1", "field2", "field3", "field4"}; // for now
         //annotSelectBox = new JComboBox(annotFields);
         buildConstraints(constraints, 1, 2, 1, 1, 20, 0);
         grid6.setConstraints(annotSelectBox, constraints);
-        trgSetSpecPanel.add(annotSelectBox); 
+        trgSetSpecPanel.add(annotSelectBox);
         
         previewTrgSetButton = new JButton("View / modify training set assignments from file");
         constraints.anchor = GridBagConstraints.CENTER;
         buildConstraints(constraints, 0, 3, 1, 1, 100, 25);
         grid6.setConstraints(previewTrgSetButton, constraints);
-        trgSetSpecPanel.add(previewTrgSetButton);  
+        trgSetSpecPanel.add(previewTrgSetButton);
         
         
         
@@ -323,7 +323,7 @@ public class KNNCInitDialog extends AlgorithmDialog {
         trgSetFromCurrent.setEnabled(false);
         trgSetNotFromCurrent.setEnabled(false);
         annotSelectBox.setEnabled(false);
-        previewTrgSetButton.setEnabled(false);         
+        previewTrgSetButton.setEnabled(false);
         
         createNewTrgSetButton.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent evt) {
@@ -338,7 +338,7 @@ public class KNNCInitDialog extends AlgorithmDialog {
                     trgSetNotFromCurrent.setEnabled(false);
                     trgSetNotFromCurrent.setBackground(Color.gray);
                     annotSelectBox.setEnabled(false);
-                    previewTrgSetButton.setEnabled(false);                    
+                    previewTrgSetButton.setEnabled(false);
                 } else {
                     trgSetSpecPanel.setBackground(Color.white);
                     browseTrgFileButton.setEnabled(true);
@@ -354,7 +354,7 @@ public class KNNCInitDialog extends AlgorithmDialog {
                     } else {
                         annotSelectBox.setEnabled(true);
                     }
-                    previewTrgSetButton.setEnabled(true);                    
+                    previewTrgSetButton.setEnabled(true);
                 }
             }
         });
@@ -380,22 +380,22 @@ public class KNNCInitDialog extends AlgorithmDialog {
         //classEditorButton = new JButton("Classificaton editor ...");
         buildConstraints(constraints, 1, 0, 1, 1, 50, 0);
         grid5.setConstraints(classEditorButton, constraints);
-        makeTrainingSetPanel.add(classEditorButton);  
+        makeTrainingSetPanel.add(classEditorButton);
         
         buildConstraints(constraints, 0, 1, 1, 1, 50, 10);
         grid5.setConstraints(useExistTrgSetButton, constraints);
-        makeTrainingSetPanel.add(useExistTrgSetButton);   
+        makeTrainingSetPanel.add(useExistTrgSetButton);
         
         //browseTrgFileButton = new JButton("Browse files ...");
         buildConstraints(constraints, 1, 1, 1, 1, 50, 0);
         grid5.setConstraints(browseTrgFileButton, constraints);
-        makeTrainingSetPanel.add(browseTrgFileButton);   
+        makeTrainingSetPanel.add(browseTrgFileButton);
         
         //pathLabel = new JLabel("Selected file: ");
         constraints.anchor = GridBagConstraints.WEST;
         buildConstraints(constraints, 0, 2, 1, 1, 100, 5);
         grid5.setConstraints(pathLabel, constraints);
-        makeTrainingSetPanel.add(pathLabel);     
+        makeTrainingSetPanel.add(pathLabel);
         
         //pathFileField = new JTextField(60);
         pathFileField.setBackground(Color.lightGray);
@@ -405,7 +405,7 @@ public class KNNCInitDialog extends AlgorithmDialog {
         constraints.anchor = GridBagConstraints.WEST;
         buildConstraints(constraints, 0, 3, 2, 1, 100, 5);
         grid5.setConstraints(pathFileField, constraints);
-        makeTrainingSetPanel.add(pathFileField); 
+        makeTrainingSetPanel.add(pathFileField);
         
         constraints.fill = GridBagConstraints.NONE;
         //constraints.anchor = GridBagConstraints.CENTER;
@@ -416,12 +416,12 @@ public class KNNCInitDialog extends AlgorithmDialog {
         trgSetSpecPanel.setBorder(new TitledBorder("Training file specifications"));
         GridBagLayout grid6 = new GridBagLayout();
         trgSetSpecPanel.setLayout(grid6);
-        
+         
         JLabel questionLabel = new JLabel("Was training file created from current data set?");
         buildConstraints(constraints, 0, 0, 1, 1, 100, 25);
         grid6.setConstraints(questionLabel, constraints);
         trgSetSpecPanel.add(questionLabel);
-        
+         
         trgSetFromCurrent = new JRadioButton("Yes", true);
         trgSetFromCurrent.setBackground(Color.white);
         trgSetNotFromCurrent = new JRadioButton("No - select annotation column of current data set to match to: ", false);
@@ -429,33 +429,33 @@ public class KNNCInitDialog extends AlgorithmDialog {
         ButtonGroup currentOrNot = new ButtonGroup();
         currentOrNot.add(trgSetFromCurrent);
         currentOrNot.add(trgSetNotFromCurrent);
-        
+         
         buildConstraints(constraints, 0, 1, 1, 1, 100, 25);
         grid6.setConstraints(trgSetFromCurrent, constraints);
-        trgSetSpecPanel.add(trgSetFromCurrent);  
-        
+        trgSetSpecPanel.add(trgSetFromCurrent);
+         
         buildConstraints(constraints, 0, 2, 1, 1, 80, 25);
         grid6.setConstraints(trgSetNotFromCurrent, constraints);
-        trgSetSpecPanel.add(trgSetNotFromCurrent);     
-        
+        trgSetSpecPanel.add(trgSetNotFromCurrent);
+         
         String[] annotFields = {"field1", "field2", "field3", "field4"}; // for now
         annotSelectBox = new JComboBox(annotFields);
         buildConstraints(constraints, 1, 2, 1, 1, 20, 0);
         grid6.setConstraints(annotSelectBox, constraints);
-        trgSetSpecPanel.add(annotSelectBox); 
-        
+        trgSetSpecPanel.add(annotSelectBox);
+         
         previewTrgSetButton = new JButton("View / modify training set assignments from file");
         constraints.anchor = GridBagConstraints.CENTER;
         buildConstraints(constraints, 0, 3, 1, 1, 100, 25);
         grid6.setConstraints(previewTrgSetButton, constraints);
         trgSetSpecPanel.add(previewTrgSetButton);
-        */
+         */
         
         buildConstraints(constraints, 0, 4, 2, 1, 100, 70);
         constraints.fill = GridBagConstraints.BOTH;
         constraints.anchor = GridBagConstraints.EAST;
         grid5.setConstraints(trgSetSpecPanel, constraints);
-        makeTrainingSetPanel.add(trgSetSpecPanel); 
+        makeTrainingSetPanel.add(trgSetSpecPanel);
         
         constraints.fill = GridBagConstraints.NONE;
         constraints.anchor = GridBagConstraints.WEST;
@@ -463,7 +463,7 @@ public class KNNCInitDialog extends AlgorithmDialog {
         buildConstraints(constraints, 0, 4, 1, 1, 100, 50);
         constraints.fill = GridBagConstraints.BOTH;
         classGrid.setConstraints(makeTrainingSetPanel, constraints);
-        classifyPanel.add(makeTrainingSetPanel); 
+        classifyPanel.add(makeTrainingSetPanel);
         
         constraints.fill = GridBagConstraints.NONE;
         
@@ -476,7 +476,7 @@ public class KNNCInitDialog extends AlgorithmDialog {
         constraints.fill = GridBagConstraints.NONE;
         
         classifyOrValidatePane = new JTabbedPane();
-        classifyOrValidatePane.add("Classify", classifyPanel); 
+        classifyOrValidatePane.add("Classify", classifyPanel);
         constraints.fill = GridBagConstraints.BOTH;
         buildConstraints(constraints, 0, 0, 1, 1, 100, 100);
         gridbag.setConstraints(classifyOrValidatePane, constraints);
@@ -487,7 +487,7 @@ public class KNNCInitDialog extends AlgorithmDialog {
         
         
         addContent(mainPanel);
-        EventListener listener = new EventListener();        
+        EventListener listener = new EventListener();
         setActionListeners(listener);
         this.addWindowListener(listener);
     }
@@ -497,7 +497,7 @@ public class KNNCInitDialog extends AlgorithmDialog {
         setLocation((screenSize.width - getSize().width)/2, (screenSize.height - getSize().height)/2);
         
         super.setVisible(visible);
-    }    
+    }
     
     void buildConstraints(GridBagConstraints gbc, int gx, int gy,
     int gw, int gh, int wx, int wy) {
@@ -508,15 +508,15 @@ public class KNNCInitDialog extends AlgorithmDialog {
         gbc.gridheight = gh;
         gbc.weightx = wx;
         gbc.weighty = wy;
-    } 
+    }
     
     public boolean isOkPressed() {
         return okPressed;
-    }    
+    }
     
     public boolean drawTrees() {
         return this.hclOpsPanel.isHCLSelected();
-    } 
+    }
     
     public boolean classifyGenes() {
         return genesButton.isSelected();
@@ -550,32 +550,31 @@ public class KNNCInitDialog extends AlgorithmDialog {
                 okPressed = false;
                 dispose();
             } else if (command.equals("info-command")){
-                /*
-                HelpWindow hw = new HelpWindow(OneWayANOVAInitBox.this, "One Way ANOVA Initialization Dialog");
+                
+                HelpWindow hw = new HelpWindow(KNNCInitDialog.this, "KNNC Parameter Selections");
                 okPressed = false;
                 if(hw.getWindowContent()){
                     hw.setSize(450,600);
                     hw.setLocation();
                     hw.show();
                     return;
-                 
                 }
                 else {
                     hw.setVisible(false);
                     hw.dispose();
                     return;
                 }
-                 */
-		}
+                
+            }
         }
         
     }
     
     public static void main(String[] args) {
         
-        //KNNCInitDialog kDialog = new KNNCInitDialog(new JFrame(), true);
-        //kDialog.setVisible(true);
+      //  KNNCInitDialog kDialog = new KNNCInitDialog(new JFrame(), true);
+      //  kDialog.setVisible(true);
         
-    }    
+    }
     
 }
