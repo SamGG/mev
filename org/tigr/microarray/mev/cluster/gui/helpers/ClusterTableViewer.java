@@ -638,7 +638,7 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
             //framework.removeCluster(getArrayMappedToData(), experiment, ClusterRepository.GENE_CLUSTER);
             boolean success = framework.removeSubCluster(getArrayMappedToSelectedIndices(), experiment, ClusterRepository.GENE_CLUSTER);
             if (!success) {
-                JOptionPane.showMessageDialog(null, "Cluster not deleted! Selected rows must exactly correspond to a cluster created in this viewer", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Cluster not deleted! Selected rows must exactly correspond to a cluster created in the current algorithm run", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }    
