@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: KMCSuppGUI.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2004-04-08 19:28:27 $
+ * $Author: nbhagaba $
  * $State: Exp $
  */
 
@@ -24,6 +24,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import org.tigr.util.FloatMatrix;
 import org.tigr.util.ConfMap;
 
+import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
@@ -31,6 +32,7 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
@@ -73,6 +75,8 @@ public class KMCSuppGUI implements IClusterGUI {
     private FloatMatrix means;
     private FloatMatrix variances;
     
+    private IData data;
+    
     private boolean unassignedExists;
     private boolean clusterGenes;
     
@@ -85,6 +89,7 @@ public class KMCSuppGUI implements IClusterGUI {
         // the default values
         int numClusters = 10;
         int iterations = 50;
+        data = framework.getData();
         
         KMCSupportDialog kmcsDialog = new KMCSupportDialog((JFrame) framework.getFrame(), true);
         kmcsDialog.setVisible(true);
@@ -235,8 +240,35 @@ public class KMCSuppGUI implements IClusterGUI {
         addExpressionImages(root);
         addHierarchicalTrees(root, result_cluster, info);
         addCentroidViews(root);
+        addTableViews(root);
         addClusterInfo(root);        
         addGeneralInfo(root, info);
+    }
+    
+    private void addTableViews(DefaultMutableTreeNode root) {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table views");
+        IViewer tabViewer;
+        if(clusterGenes)
+            tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.data);
+        else
+            return; // placeholder for ExptClusterTableViewer
+            //expViewer = new KMCSuppExperimentClusterViewer(this.experiment, this.clusters);
+        
+        if (!unassignedExists) {
+            for (int i=0; i<this.clusters.length; i++) {
+                node.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+String.valueOf(i+1), tabViewer, new Integer(i))));
+            }
+        } else {
+            for (int i=0; i<(this.clusters.length - 1); i++) {
+                node.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+String.valueOf(i+1), tabViewer, new Integer(i))));
+            }
+            //if(clusterGenes)
+            node.add(new DefaultMutableTreeNode(new LeafInfo("Unassigned ", tabViewer, new Integer(clusters.length - 1))));
+            //else
+                //node.add(new DefaultMutableTreeNode(new LeafInfo("Unassigned experiments ", expViewer, new Integer(clusters.length - 1))));
+            
+        }
+        root.add(node);        
     }
     
     /**
