@@ -39,14 +39,14 @@ public class SerializedTerrainViewer extends JPanel implements IViewer, java.io.
     /** Creates a new instance of SerializedTerrainViewer */
     public SerializedTerrainViewer(boolean isGenes, IFramework framework, int[][] clusters, float[][] weights, float[][] locations, float sigma) {
         this.isGenes = isGenes;
-        this.experiment = experiment;
+        this.experiment = framework.getData().getExperiment();
         this.clusters = clusters;
         this.weights = weights;
         this.locations = locations;
         this.sigma = sigma;
         this.labelIndex = labelIndex;
 
-        trn = new TerrainViewer(isGenes, framework.getData().getExperiment(), clusters, weights, locations, sigma, framework.getDisplayMenu().getLabelIndex()); 
+        trn = new TerrainViewer(isGenes, experiment, clusters, weights, locations, sigma, framework.getDisplayMenu().getLabelIndex()); 
     }
     
     private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
