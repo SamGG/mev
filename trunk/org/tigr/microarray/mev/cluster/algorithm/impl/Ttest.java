@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: Ttest.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-01-21 21:20:49 $
+ * $Revision: 1.5 $
+ * $Date: 2004-05-11 18:01:12 $
  * $Author: nbhagaba $
  * $State: Exp $
  */
@@ -64,7 +64,7 @@ public class Ttest extends AbstractAlgorithm {
     private int numGenes, numExps;
     private float alpha;
     private int significanceMethod;
-    private boolean isPermut;
+    private boolean isPermut, useWelchDf;
     int[] groupAssignments;
     private int numCombs;
     boolean useAllCombs;
@@ -124,6 +124,7 @@ public class Ttest extends AbstractAlgorithm {
         alpha = map.getFloat("alpha", 0.01f);
         significanceMethod = map.getInt("significance-method", TtestInitDialog.JUST_ALPHA);
         isPermut = map.getBoolean("is-permut", false);
+        useWelchDf = map.getBoolean("useWelchDf", true);
         numCombs = map.getInt("num-combs", 100);
         useAllCombs = map.getBoolean("use-all-combs", false);
         
@@ -3454,6 +3455,12 @@ public class Ttest extends AbstractAlgorithm {
             }
         }
         
+        if (!useWelchDf) {
+            int df = kA + kB - 2;
+            if (df < 0) df = 0;
+            return df;
+        }
+        
         float meanA = getMean(groupA);
         float meanB = getMean(groupB);
         float varA = getVar(groupA);
@@ -3473,7 +3480,7 @@ public class Ttest extends AbstractAlgorithm {
         
         //System.out.print(".. df(unrounded) = " +  (numerator / denom) + " ... ");
         
-        int df = Math.round(numerator / denom);
+        int df = (int)Math.floor(numerator / denom);
         
         return df;
     }

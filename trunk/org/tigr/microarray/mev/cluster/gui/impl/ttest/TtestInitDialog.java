@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: TtestInitDialog.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-01-13 17:33:45 $
+ * $Revision: 1.4 $
+ * $Date: 2004-05-11 18:00:26 $
  * $Author: nbhagaba $
  * $State: Exp $
  */
@@ -40,6 +40,7 @@ public class TtestInitDialog extends AlgorithmDialog {
     HCLSelectionPanel hclOpsPanel;
     Vector exptNames;
     JTabbedPane chooseDesignPane;
+    DfCalcPanel dPanel;
     
     public static final int GROUP_A = 1;
     public static final int GROUP_B = 2;
@@ -67,7 +68,7 @@ public class TtestInitDialog extends AlgorithmDialog {
     public TtestInitDialog(JFrame parentFrame, boolean modality, Vector exptNames) {
         super(parentFrame, "TTEST: T-test", modality);
         this.exptNames = exptNames;
-        setBounds(0, 0, 800, 800);
+        setBounds(0, 0, 800, 850);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints constraints = new GridBagConstraints();
@@ -374,19 +375,24 @@ public class TtestInitDialog extends AlgorithmDialog {
 
         buildConstraints(constraints, 0, 0, 1, 1, 100, 45);
         gridbag.setConstraints(chooseDesignPane, constraints);
-        pane.add(chooseDesignPane);        
+        pane.add(chooseDesignPane);     
         
-        buildConstraints(constraints, 0, 1, 1, 1, 0, 25);
+        dPanel = new DfCalcPanel();
+        buildConstraints(constraints, 0, 1, 1, 1, 0, 5);
+        gridbag.setConstraints(dPanel, constraints);  
+        pane.add(dPanel);
+        
+        buildConstraints(constraints, 0, 2, 1, 1, 0, 25);
         gridbag.setConstraints(pPanel, constraints);
         pane.add(pPanel);
         
         //sPanel = new SignificancePanel();
-        buildConstraints(constraints, 0, 2, 1, 1, 0, 20);
+        buildConstraints(constraints, 0, 3, 1, 1, 0, 20);
         gridbag.setConstraints(sPanel, constraints);
         pane.add(sPanel);
         
         hclOpsPanel = new HCLSelectionPanel();
-        buildConstraints(constraints, 0, 3, 1, 1, 0, 10);
+        buildConstraints(constraints, 0, 4, 1, 1, 0, 5);
         gridbag.setConstraints(hclOpsPanel, constraints);
         
         pane.add(hclOpsPanel);
@@ -1260,6 +1266,40 @@ public class TtestInitDialog extends AlgorithmDialog {
         }
     }
     
+    class DfCalcPanel extends JPanel {
+        JRadioButton welchButton, eqVarButton;
+        DfCalcPanel() {
+            this.setBorder(new TitledBorder(new EtchedBorder(), "Degree of freedom calculation (for between subjects t-test only)"));  
+            this.setBackground(Color.white);
+            GridBagLayout gridbag = new GridBagLayout();
+            GridBagConstraints constraints = new GridBagConstraints();
+            this.setLayout(gridbag);
+            
+            welchButton = new JRadioButton("Welch approximation (unequal group variances)", true);
+            welchButton.setBackground(Color.white);
+            eqVarButton = new JRadioButton("Assume equal group variances", false);
+            eqVarButton.setBackground(Color.white);
+            
+            ButtonGroup group = new ButtonGroup();
+            group.add(welchButton);
+            group.add(eqVarButton);
+            
+            buildConstraints(constraints, 0, 0, 1, 1, 50, 100);
+            //constraints.fill = GridBagConstraints.BOTH;
+            gridbag.setConstraints(welchButton, constraints);
+            this.add(welchButton);    
+            
+            buildConstraints(constraints, 1, 0, 1, 1, 50, 0);
+            //constraints.fill = GridBagConstraints.BOTH;
+            gridbag.setConstraints(eqVarButton, constraints);
+            this.add(eqVarButton);            
+        }
+        
+        public void reset() {
+            welchButton.setSelected(true);
+        }
+    }
+    
     /*
     class NumPermutationsDialog extends ActionInfoDialog {
         JRadioButton allCombs, randomCombs;
@@ -1682,6 +1722,7 @@ public class TtestInitDialog extends AlgorithmDialog {
                 pPanel.alphaInputField.setText("0.01");
                 sPanel.justAlphaButton.setSelected(true);
                 hclOpsPanel.setHCLSelected(false);
+                dPanel.reset();
 
             }
             else if(command.equals("cancel-command")){
@@ -1717,6 +1758,10 @@ public class TtestInitDialog extends AlgorithmDialog {
         } else {
             return this.MIN_P;
         }
+    }
+    
+    public boolean useWelchDf() {
+        return dPanel.welchButton.isSelected();
     }
     
     public boolean useAllCombs() {
