@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: FOMGraph.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-04-06 13:02:13 $
+ * $Revision: 1.4 $
+ * $Date: 2004-04-12 19:33:37 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -22,14 +22,22 @@ import java.awt.RenderingHints;
 
 import java.awt.image.BufferedImage;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 
 public class FOMGraph extends JPanel implements java.io.Serializable {
     
     private float[] values;
+    private float [][] iValues;
     private float[] variances;
     private String[] xItems;
     private String[] yItems;
@@ -41,13 +49,19 @@ public class FOMGraph extends JPanel implements java.io.Serializable {
     private float maxYValue = 1f;
     private Color pointColor = Color.red;
     private Color valuesLineColor = Color.blue;
-    private Color sdLineColor = Color.gray;
+    private Color iterationLineColor = Color.lightGray;
+    private Color sdLineColor = Color.darkGray;
     private Color mouseLineColor = Color.magenta;
     private Color gridLineColor = Color.yellow;
     private Color axisLineColor = Color.black;
     private int pointSize = 5;
     
+    private boolean haveIValues;
     private boolean showVariance;
+    private boolean showIValues;
+    
+    private JPopupMenu menu;
+    private JCheckBoxMenuItem menuItem;
     
     private MouseHandler mouseHandler;
     
@@ -65,6 +79,7 @@ public class FOMGraph extends JPanel implements java.io.Serializable {
         this.yLabel = yLabel;
         this.mouseHandler = new MouseHandler();
         addMouseMotionListener(mouseHandler);
+        addMouseListener(mouseHandler);
     }
     
     public void setItems(String[] xItems, String[] yItems) {
@@ -72,6 +87,24 @@ public class FOMGraph extends JPanel implements java.io.Serializable {
         this.yItems = yItems;
         this.maxXItem = getMaxWidth(xItems);
         this.maxYItem = getMaxWidth(yItems);
+    }
+    
+    public void setFOMIterationValues(float [][] values) {
+        iValues = values;
+        if(iValues != null) {
+            haveIValues = true;
+            showIValues = false;
+            createJPopupMenu();
+        }
+    }
+    
+    public void createJPopupMenu() {
+        MouseHandler mh = new MouseHandler();
+        menuItem = new JCheckBoxMenuItem("Show Iteration Values", false);
+        menuItem.addActionListener(mh);
+        menuItem.setFocusPainted(false);
+        menu = new JPopupMenu();
+        menu.add(menuItem);
     }
     
     public void setMaxYValue(float value) {
@@ -176,6 +209,21 @@ public class FOMGraph extends JPanel implements java.io.Serializable {
         // draw value lines
         g.setColor(this.valuesLineColor);
         int x1, y1, x2, y2, sdY, sdX;
+        
+        //show the iteration fom values
+        if(showIValues) {            
+            g.setColor(this.iterationLineColor);
+            for (int i=0; i<this.iValues.length; i++) {
+                for(int j = 0; j < iValues[i].length-1; j++) {                    
+                    x1 = left+Math.round(j*xScale);
+                    y1 = top+height-Math.round(this.iValues[i][j]*yScale);
+                    x2 = left+Math.round((j+1)*xScale);
+                    y2 = top+height-Math.round(this.iValues[i][j+1]*yScale);
+                    g.drawLine(x1, y1, x2, y2);
+                }
+            }
+        }
+        
         for (int i=0; i<this.values.length-1; i++) {
             g.setColor(this.valuesLineColor);
             x1 = left+Math.round(i*xScale);
@@ -183,15 +231,16 @@ public class FOMGraph extends JPanel implements java.io.Serializable {
             x2 = left+Math.round((i+1)*xScale);
             y2 = top+height-Math.round(this.values[i+1]*yScale);
             g.drawLine(x1, y1, x2, y2);
+            g.drawLine(x1, y1-1, x2, y2-1);
             
             if(showVariance) {
                 g.setColor(this.sdLineColor);
                 sdX = x2;
                 sdY = y2;
-
+                
                 //get coordinates
-                x1 = left+Math.round((i+1)*xScale) - 5;
-                x2 = x2 + 10;
+                x1 = left+Math.round((i+1)*xScale) - 3;
+                x2 = x2 + 3;
                 y1 = top+height-Math.round((this.values[i+1]+this.variances[i+1])*yScale);
                 y2 = top+height-Math.round((this.values[i+1]-this.variances[i+1])*yScale);
                 //draw caps
@@ -240,7 +289,7 @@ public class FOMGraph extends JPanel implements java.io.Serializable {
         g.dispose();
     }
     
-    private class MouseHandler extends MouseMotionAdapter implements java.io.Serializable {
+    private class MouseHandler extends MouseMotionAdapter implements ActionListener, MouseListener, java.io.Serializable {
         
         private Point prevCoords = new Point(-1, -1);
         
@@ -271,6 +320,36 @@ public class FOMGraph extends JPanel implements java.io.Serializable {
             final int bottom = size.height - insets.bottom - maxXItem;
             return(left < x && x < right) && (top < y && y < bottom);
         }
+        
+        public void mousePressed(MouseEvent e) {
+            if(menu != null && e.isPopupTrigger())
+                menu.show(FOMGraph.this, e.getX(), e.getY());
+        }
+         
+        public void mouseReleased(MouseEvent e) {
+            if(menu != null && e.isPopupTrigger())
+                menu.show(FOMGraph.this, e.getX(), e.getY());
+        }
+        
+        public void actionPerformed(ActionEvent ae) {
+            if(menuItem.isSelected()) {
+                showIValues = true;
+                repaint();
+            } else {
+                showIValues = false;
+                repaint();
+            }
+        }
+                   
+        public void mouseClicked(java.awt.event.MouseEvent mouseEvent) {
+        }
+        
+        public void mouseEntered(java.awt.event.MouseEvent mouseEvent) {
+        }
+        
+        public void mouseExited(java.awt.event.MouseEvent mouseEvent) {
+        }
+        
     }
     
 }
