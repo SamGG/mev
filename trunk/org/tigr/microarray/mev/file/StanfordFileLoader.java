@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: StanfordFileLoader.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 18:46:37 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-10 21:35:39 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -123,8 +123,10 @@ public class StanfordFileLoader extends ExpressionFileLoader {
                 int experimentCount = ss.countTokens()+1 - preExperimentColumns;
                 slideDataArray = new ISlideData[experimentCount];
                 slideDataArray[0] = new SlideData(rRows, rColumns);
+                    slideDataArray[0].setSlideFileName(f.getPath());
                 for (int i=1; i<slideDataArray.length; i++) {
-                    slideDataArray[i] = new FloatSlideData(slideDataArray[0].getSlideMetaData(), spotCount);
+                    slideDataArray[i] = new FloatSlideData(slideDataArray[0].getSlideMetaData(), spotCount);                    
+                    slideDataArray[i].setSlideFileName(f.getPath());                   
                 }
                 //get Field Names
                 String [] fieldNames = new String[preExperimentColumns];
