@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: IQueue.java,v $
- * $Revision: 1.2 $
- * $Date: 2005-02-24 20:24:08 $
+ * $Revision: 1.3 $
+ * $Date: 2005-03-10 15:36:11 $
  * $Author: braistedj $
  * $State: Exp $
  */

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ExperimentViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2005-02-24 20:24:08 $
+ * $Revision: 1.8 $
+ * $Date: 2005-03-10 15:56:09 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -86,6 +86,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
     public static Color maskColor = new Color(255, 255, 255, 128);
     private float maxValue = INITIAL_MAX_VALUE;
     private float minValue = INITIAL_MIN_VALUE;
+    private float midValue = 0.0f;
     private int firstSelectedRow = -1;
     private int lastSelectedRow  = -1;
     private int firstSelectedColumn = -1;
@@ -277,8 +278,9 @@ public class ExperimentViewer extends JPanel implements IViewer {
         setClusterIndex(userObject == null ? 0 : userObject.intValue());
         this.header.setClusterIndex(this.clusterIndex);
         labelIndex = menu.getLabelIndex();
-        this.maxValue = Math.abs(menu.getMaxRatioScale());
-        this.minValue = -Math.abs(menu.getMinRatioScale());
+        this.maxValue = menu.getMaxRatioScale();
+        this.minValue = menu.getMinRatioScale();
+        this.midValue = menu.getMidRatioValue();
         setElementSize(menu.getElementSize());
         setAntialiasing(menu.isAntiAliasing());
         setDrawBorders(menu.isDrawingBorder());
@@ -291,7 +293,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
         header.setData(data);
         onMenuChanged(menu);
         //header.setValues(maxValue, minValue);
-        header.setValues(minValue, maxValue);
+        header.setValues(minValue, midValue, maxValue);
         header.setAntiAliasing(menu.isAntiAliasing());
         header.updateSizes(getSize().width, elementSize.width);
         header.setUseDoubleGradient(useDoubleGradient);
@@ -303,15 +305,16 @@ public class ExperimentViewer extends JPanel implements IViewer {
      */
     public void onMenuChanged(IDisplayMenu menu) {
         setDrawBorders(menu.isDrawingBorder());
-        this.maxValue = Math.abs(menu.getMaxRatioScale());
-        this.minValue = -Math.abs(menu.getMinRatioScale());
+        this.maxValue = menu.getMaxRatioScale();
+        this.minValue = menu.getMinRatioScale();
+        this.midValue = menu.getMidRatioValue();
         this.posColorImage = menu.getPositiveGradientImage();
         this.negColorImage = menu.getNegativeGradientImage();
         this.useDoubleGradient = menu.getUseDoubleGradient();
         this.header.setNegAndPosColorImages(this.negColorImage, this.posColorImage);
         this.header.setUseDoubleGradient(useDoubleGradient);
         //header.setValues(maxValue, minValue);
-        header.setValues(minValue, maxValue);
+        header.setValues(minValue, midValue, maxValue);
         if (this.elementSize.equals(menu.getElementSize()) &&
         labelIndex == menu.getLabelIndex() &&
         this.isAntiAliasing == menu.isAntiAliasing()) {
@@ -598,7 +601,9 @@ public class ExperimentViewer extends JPanel implements IViewer {
     /**
      * Calculates color for passed value.
      */
-    private Color getColor(float value) {
+    /*
+      
+     private Color getColor(float value) {
         if (Float.isNaN(value)) {
             return missingColor;
         }
@@ -625,7 +630,35 @@ public class ExperimentViewer extends JPanel implements IViewer {
         }
         return new Color(rgb);
     }
+    */
     
+    private Color getColor(float value) {
+        if (Float.isNaN(value)) {
+            return missingColor;
+        }
+        
+        float maximum;
+        int colorIndex, rgb;
+        
+        if(useDoubleGradient) {
+        	maximum = value < midValue ? this.minValue : this.maxValue;
+			colorIndex = (int) (255 * (value-midValue) / (maximum - midValue));
+			colorIndex = colorIndex > 255 ? 255 : colorIndex;
+			rgb = value < midValue ? negColorImage.getRGB(255 - colorIndex, 0)
+					: posColorImage.getRGB(colorIndex, 0);
+        } else {
+        	float span = this.maxValue - this.minValue;
+        	if(value <= minValue)
+        		colorIndex = 0;
+        	else if(value >= maxValue)
+        		colorIndex = 255;
+        	else
+        		colorIndex = (int)(((value - this.minValue)/span) * 255);
+         	
+        	rgb = posColorImage.getRGB(colorIndex,0);
+        }
+        return new Color(rgb);
+    }
     
     /**
      * Paint component into specified graphics.

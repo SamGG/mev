@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: NodeSupports.java,v $
- * $Revision: 1.2 $
- * $Date: 2005-02-24 20:23:48 $
+ * $Revision: 1.3 $
+ * $Date: 2005-03-10 15:45:20 $
  * $Author: braistedj $
  * $State: Exp $
  */

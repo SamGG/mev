@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: ExperimentHeader.java,v $
- * $Revision: 1.4 $
- * $Date: 2005-02-24 20:24:07 $
+ * $Revision: 1.5 $
+ * $Date: 2005-03-10 15:56:09 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -52,6 +52,7 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader, java.
     private boolean isAntiAliasing = true;
     private float maxValue = 3f;
     private float minValue = -3f;
+    private float midValue = 0.0f;
     private Insets insets = new Insets(0, 10, 0, 0);
     
     private BufferedImage negColorImage;
@@ -99,6 +100,15 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader, java.
         this.data = data;
     }
     
+    /**
+     * Sets max and min experiment values.
+     */
+    public void setValues(float minValue, float midValue, float maxValue) {
+        this.maxValue = maxValue;
+        this.minValue = minValue;
+        this.midValue = midValue;
+    }
+
     /**
      * Sets max and min experiment values.
      */
@@ -244,9 +254,9 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader, java.
         
         int textWidth;
         g.drawString(String.valueOf(this.minValue), insets.left, RECT_HEIGHT+fHeight);
-        textWidth = hfm.stringWidth("0.0");
+        textWidth = hfm.stringWidth(String.valueOf(midValue));
         if(useDoubleGradient)
-        	g.drawString("0.0", (int)(width/2f)-textWidth/2 + insets.left, RECT_HEIGHT+fHeight);
+        	g.drawString(String.valueOf(midValue), (int)(width/2f)-textWidth/2 + insets.left, RECT_HEIGHT+fHeight);
         textWidth = hfm.stringWidth(String.valueOf(this.maxValue));
         g.drawString(String.valueOf(this.maxValue), width-textWidth + insets.left, RECT_HEIGHT+fHeight);
         

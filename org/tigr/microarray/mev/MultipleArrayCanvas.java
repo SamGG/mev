@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayCanvas.java,v $
- * $Revision: 1.7 $
- * $Date: 2005-02-24 20:23:44 $
+ * $Revision: 1.8 $
+ * $Date: 2005-03-10 15:44:16 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -96,6 +96,7 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, java.io.Seri
     private float maxCY5;
     private float maxRatio;
     private float minRatio;
+    private float midRatio;
     
     public static Color missingColor = Color.gray;
     private BufferedImage negColorImage;
@@ -191,7 +192,8 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, java.io.Seri
         this.maxCY5 = menu.getMaxCY5Scale();
         this.maxRatio = menu.getMaxRatioScale();
         this.minRatio = menu.getMinRatioScale();
-        this.header.setMinAndMaxRatios(this.minRatio, this.maxRatio);
+        this.midRatio = menu.getMidRatioValue();
+        this.header.setMinAndMaxAndMidRatios(this.minRatio, this.midRatio, this.maxRatio);
         header.setData(data);
         onMenuChanged(menu);
         onDataChanged(data);
@@ -232,7 +234,8 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, java.io.Seri
         this.maxCY5 = menu.getMaxCY5Scale();
         this.maxRatio = menu.getMaxRatioScale();
         this.minRatio = menu.getMinRatioScale();
-        this.header.setMinAndMaxRatios(this.minRatio, this.maxRatio);
+        this.midRatio = menu.getMidRatioValue();
+        this.header.setMinAndMaxAndMidRatios(this.minRatio, this.midRatio, this.maxRatio);
         this.negColorImage = menu.getNegativeGradientImage();
         this.posColorImage = menu.getPositiveGradientImage();
         this.header.setNegativeAndPositiveColorImages(this.negColorImage, this.posColorImage);
@@ -426,7 +429,7 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, java.io.Seri
     /**
      * Calculates color for passed value.
      */
-    private Color getColor(float value) {
+   /* private Color getColor(float value) {
         if (Float.isNaN(value)) {
             return missingColor;
         }
@@ -453,6 +456,39 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, java.io.Seri
         }
         return new Color(rgb);
     }
+    */
+
+    
+    /**
+     * Calculates color for passed value.
+     */
+    private Color getColor(float value) {
+        if (Float.isNaN(value)) {
+            return missingColor;
+        }
+        
+        float maximum;
+        int colorIndex, rgb;
+        
+        if(useDoubleGradient) {
+        	maximum = value < midRatio ? this.minRatio : this.maxRatio;
+			colorIndex = (int) (255 * (value-midRatio) /  (maximum - midRatio));
+			colorIndex = colorIndex > 255 ? 255 : colorIndex;
+			rgb = value < midRatio ? negColorImage.getRGB(255 - colorIndex, 0)
+					: posColorImage.getRGB(colorIndex, 0);
+        } else {
+        	float span = this.maxRatio - this.minRatio;
+        	if(value <= minRatio)
+        		colorIndex = 0;
+        	else if(value >= maxRatio)
+        		colorIndex = 255;
+        	else
+        		colorIndex = (int)(((value - this.minRatio)/span) * 255);
+         	
+        	rgb = posColorImage.getRGB(colorIndex,0);
+        }
+        return new Color(rgb);
+    }      
     
     
     /**

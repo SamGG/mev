@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: MultipleArrayToolbar.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-02-24 20:23:45 $
+ * $Revision: 1.6 $
+ * $Date: 2005-03-10 15:44:16 $
  * $Author: braistedj $
  * $State: Exp $
  */

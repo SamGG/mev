@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOM.java,v $
- * $Revision: 1.2 $
- * $Date: 2005-02-24 20:23:49 $
+ * $Revision: 1.3 $
+ * $Date: 2005-03-10 15:45:19 $
  * $Author: braistedj $
  * $State: Exp $
  */

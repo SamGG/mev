@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SequenceFileView.java,v $
- * $Revision: 1.2 $
- * $Date: 2005-02-24 20:24:11 $
+ * $Revision: 1.3 $
+ * $Date: 2005-03-10 15:27:49 $
  * $Author: braistedj $
  * $State: Exp $
  */

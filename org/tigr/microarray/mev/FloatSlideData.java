@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: FloatSlideData.java,v $
- * $Revision: 1.7 $
- * $Date: 2005-02-24 20:23:44 $
+ * $Revision: 1.8 $
+ * $Date: 2005-03-10 15:44:14 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -50,7 +50,10 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
     
     // pcahan
     // affy detection flag is MAS's (P)resent, (A)bsent, (M)arginal
-    private String[] detection;
+    //private String[] detection;
+    //jcb
+    //smaller data struct
+    private char [] detection;
     
     //Support multiple sample labels
     private String sampleLabelKey = "Default Slide Name";
@@ -78,7 +81,7 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
         this.slideMetaData = slideMetaData;
         trueCY3 = new float[size];
         trueCY5 = new float[size];
-        detection = new String[size];
+        detection = new char[size];
         sampleLabelKey = "Default Slide Name";
         sampleLabelKeys = new Vector();
         sampleLabels = new Hashtable();
@@ -489,12 +492,12 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
     
     // pcahan
     public void setDetection(int index, String value){
-        detection[index] = value;
+		detection[index] = value.charAt(0);
     }
     
     // pcahan
     public String getDetection(int index){
-        return detection[index];
+        return String.valueOf(detection[index]);
     }
     
     /**

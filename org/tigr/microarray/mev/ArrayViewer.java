@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: ArrayViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2005-02-24 20:23:44 $
+ * $Revision: 1.5 $
+ * $Date: 2005-03-10 15:44:14 $
  * $Author: braistedj $
  * $State: Exp $
  */

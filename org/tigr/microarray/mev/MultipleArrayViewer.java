@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.21 $
- * $Date: 2005-02-24 20:23:45 $
+ * $Revision: 1.22 $
+ * $Date: 2005-03-10 15:44:15 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -207,7 +207,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         statusLabel = new JLabel("TIGR MultiExperiment Viewer");
         mainframe.getContentPane().add(statusLabel, BorderLayout.SOUTH);
         mainframe.pack();
-        splitPane.setDividerLocation(.3);
+        splitPane.setDividerLocation(.2);
         
         systemDisable(TMEV.DB_AVAILABLE);
         systemDisable(TMEV.DATA_AVAILABLE);
@@ -266,7 +266,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         statusLabel = new JLabel("TIGR MultiExperiment Viewer");
         mainframe.getContentPane().add(statusLabel, BorderLayout.SOUTH);
         mainframe.pack();
-        splitPane.setDividerLocation(.3);
+        splitPane.setDividerLocation(.2);
 
         if (data.getDataType() == IData.DATA_TYPE_RATIO_ONLY || data.getDataType() == IData.DATA_TYPE_AFFY_ABS){
             this.menubar.enableNormalizationMenu(false);
@@ -342,7 +342,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         statusLabel = new JLabel("TIGR MultiExperiment Viewer");
         mainframe.getContentPane().add(statusLabel, BorderLayout.SOUTH);
         mainframe.pack();
-        splitPane.setDividerLocation(.3);
+        splitPane.setDividerLocation(.2);
 
         if (data.getDataType() == IData.DATA_TYPE_RATIO_ONLY || data.getDataType() == IData.DATA_TYPE_AFFY_ABS){
             this.menubar.enableNormalizationMenu(false);
@@ -1577,18 +1577,37 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      */
     private void onColorSchemeChange(int colorScheme){
         int initColorScheme = menubar.getColorScheme();
-        if(colorScheme == IDisplayMenu.GREEN_RED_SCHEME || colorScheme == IDisplayMenu.BLUE_YELLOW_SCHEME) {
+        if(colorScheme == IDisplayMenu.GREEN_RED_SCHEME || colorScheme == IDisplayMenu.BLUE_YELLOW_SCHEME || colorScheme == IDisplayMenu.RAINBOW_COLOR_SCHEME) {
             this.menubar.setColorSchemeIndex(colorScheme);
-            this.menubar.setUseDoubleGradient(true);  //use double gradient
+            if(colorScheme == IDisplayMenu.RAINBOW_COLOR_SCHEME) {
+            	this.menubar.setUseDoubleGradient(false); //rainbow uses single gradient (pos)
+            } else {
+                this.menubar.setUseDoubleGradient(true);  //use double gradient
+            }
         } else { 
-            ColorSchemeSelectionDialog dialog = new ColorSchemeSelectionDialog((Frame)getFrame(), true, menubar.getNegativeGradientImage(), menubar.getPositiveGradientImage(), this.menubar.getDisplayMenu().getUseDoubleGradient());
-            if(dialog.showModal() != JOptionPane.OK_OPTION)
-                return;
+        	//select a custom color scheme
+        	
+        	// using rainbow scheme set current to standard green/black/red first
+        	boolean rainbowScheme = (initColorScheme == IDisplayMenu.RAINBOW_COLOR_SCHEME);
+        	if(rainbowScheme) {
+        		menubar.setColorSchemeIndex(IDisplayMenu.GREEN_RED_SCHEME);
+        		menubar.setUseDoubleGradient(true);
+        	}
+            ColorSchemeSelectionDialog dialog = new ColorSchemeSelectionDialog((Frame)getFrame(), true, menubar.getNegativeGradientImage(), menubar.getPositiveGradientImage(), this.menubar.getDisplayMenu().getUseDoubleGradient());            
+            if(dialog.showModal() != JOptionPane.OK_OPTION) {
+            	//if not ok and using rainbow, set back
+            	if(rainbowScheme) { 
+            		menubar.setColorSchemeIndex(IDisplayMenu.RAINBOW_COLOR_SCHEME);            		
+            		menubar.setUseDoubleGradient(false);
+            	}
+            	return;
+            }
             this.menubar.setPositiveCustomGradient(dialog.getPositiveGradient());
             this.menubar.setNegativeCustomGradient(dialog.getNegativeGradient());
             this.menubar.setColorSchemeIndex(colorScheme);
             this.menubar.setUseDoubleGradient(dialog.getUseDoubleGradient());                    	
         }
+        
         fireMenuChanged();
     }
     
@@ -2176,6 +2195,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         data.setUseDetectionFilter(item.isSelected());
         if (data.isDetectionFilter()) {
             addHistory("Detection Filter (" + data.getDetectionFilter() + ")");
+            addAdjustmentResultNodes("Data Filter - Affy Detection Filter", data.getExperiment(), new Properties());             
         } else {
             addHistory("Detection Filter not used.");
         }
@@ -2186,6 +2206,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         data.setUseFoldFilter(item.isSelected());
         if (data.isFoldFilter()) {
             addHistory("Fold Filter (" + data.getDetectionFilter() + ")");
+            addAdjustmentResultNodes("Data Filter - Affy Fold Filter", data.getExperiment(), new Properties());             
         } else {
             addHistory("Fold Filter not used.");
         }
@@ -2320,20 +2341,19 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      */
     private void onSetRatioScale() {
         IDisplayMenu menu = menubar.getDisplayMenu();
-        SetRatioScaleDialog srsd = new SetRatioScaleDialog(mainframe, framework, menubar, menu.getMaxRatioScale(), menu.getMinRatioScale(), menu.getUseDoubleGradient());
+        SetRatioScaleDialog srsd = new SetRatioScaleDialog(mainframe, framework, menubar, menu.getMaxRatioScale(), menu.getMinRatioScale(), menu.getMidRatioValue(), menu.getUseDoubleGradient());
         if (srsd.showModal() == JOptionPane.OK_OPTION) {
-            menubar.setMaxRatioScale(srsd.getUpperRatio());
-            menubar.setMinRatioScale(srsd.getLowerRatio());
+            menubar.setMaxRatioScale(srsd.getUpperLimit());
+            menubar.setMinRatioScale(srsd.getLowerLimit());
+            menubar.setMidRatioValue(srsd.getMidValue());
             menubar.setUseDoubleGradient(srsd.getUseDoubleGradient());
     
-            //posImage might have changed if gradient style went from single->double
             if(srsd.isGradientStyleAltered() && srsd.getUseDoubleGradient()) 
             	this.menubar.setPositiveCustomGradient(srsd.getPosImage());
                
             fireMenuChanged();
-            System.out.println("set ratio scale ok option");
         }
-        addHistory("Ratio Color Sat. Limits Set: Lower = "+ srsd.getLowerRatio() +" Upper = "+ srsd.getUpperRatio());
+        addHistory("Color Sat. Limits Set: Lower = "+ srsd.getLowerLimit() +" Upper = "+ srsd.getUpperLimit());
     }
     
     /**
@@ -3128,9 +3148,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                 onColorSchemeChange(IDisplayMenu.GREEN_RED_SCHEME);
             } else if (command.equals(ActionManager.BLUE_YELLOW_COLOR_SCHEME_CMD)){
                 onColorSchemeChange(IDisplayMenu.BLUE_YELLOW_SCHEME);
+            } else if (command.equals(ActionManager.RAINBOW_COLOR_SCHEME_CMD)){
+                onColorSchemeChange(IDisplayMenu.RAINBOW_COLOR_SCHEME);
             } else if (command.equals(ActionManager.CUSTOM_COLOR_SCHEME_CMD)){
                 onColorSchemeChange(IDisplayMenu.CUSTOM_COLOR_SCHEME);
-            }else if (command.equals(ActionManager.COLOR_GRADIENT_CMD)){
+            } else if (command.equals(ActionManager.COLOR_GRADIENT_CMD)){
                 onColorGradientChange(((javax.swing.JCheckBoxMenuItem)(event.getSource())).isSelected());
             } else if (command.equals(ActionManager.DISPLAY_DRAW_BORDERS_CMD)) {
                 onDrawBorders();

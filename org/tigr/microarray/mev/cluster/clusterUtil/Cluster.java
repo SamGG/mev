@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: Cluster.java,v $
- * $Revision: 1.6 $
- * $Date: 2005-02-24 20:24:12 $
+ * $Revision: 1.7 $
+ * $Date: 2005-03-10 15:48:48 $
  * $Author: braistedj $
  * $State: Exp $
  */

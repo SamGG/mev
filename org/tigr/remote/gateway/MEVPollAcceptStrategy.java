@@ -4,10 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: MEVPollAcceptStrategy.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:28:40 $
+ * $Revision: 1.4 $
+ * $Date: 2005-03-10 15:34:10 $
  * $Author: braistedj $
- * $State: Exp $
  */
 package org.tigr.remote.gateway;
 

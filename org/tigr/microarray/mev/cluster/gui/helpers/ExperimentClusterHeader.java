@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: ExperimentClusterHeader.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-02-24 20:24:07 $
+ * $Revision: 1.4 $
+ * $Date: 2005-03-10 15:56:09 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -43,6 +43,7 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
     private boolean isAntiAliasing = true;
     private float maxValue = 3f;
     private float minValue = -3f;
+    private float midValue = 0.0f;    
     int clusterIndex = 0;
     private String centroidName;
     private boolean hasCentroid;
@@ -115,7 +116,16 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
     /**
      * Sets max and min experiment values.
      */
-    public void setValues(float maxValue, float minValue) {
+    public void setValues(float minValue, float midValue, float maxValue) {
+        this.maxValue = maxValue;
+        this.minValue = minValue;
+        this.midValue = midValue;
+    }
+    
+    /**
+     * Sets max and min experiment values.
+     */
+    public void setValues(float minValue, float maxValue) {
         this.maxValue = maxValue;
         this.minValue = minValue;
     }
@@ -244,12 +254,12 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
         g.setColor(Color.black);
 
         int textWidth;
-        g.drawString(String.valueOf(this.maxValue), insets.left, RECT_HEIGHT+fHeight);
-        textWidth = hfm.stringWidth("0.0");
+        g.drawString(String.valueOf(this.minValue), insets.left, RECT_HEIGHT+fHeight);
+        textWidth = hfm.stringWidth(String.valueOf(midValue));
         if(useDoubleGradient)
-        	g.drawString("0.0", (int)((width+insets.left)/2f)-textWidth/2, RECT_HEIGHT+fHeight);
-        textWidth = hfm.stringWidth(String.valueOf(this.minValue));
-        g.drawString(String.valueOf(this.minValue), (width-textWidth)+insets.left, RECT_HEIGHT+fHeight);
+        	g.drawString(String.valueOf(midValue), (int)((width+insets.left)/2f)-textWidth/2, RECT_HEIGHT+fHeight);
+        textWidth = hfm.stringWidth(String.valueOf(this.maxValue));
+        g.drawString(String.valueOf(this.maxValue), (width-textWidth)+insets.left, RECT_HEIGHT+fHeight);
 
         // draw feature names
         g.rotate(-Math.PI/2);

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayMenubar.java,v $
- * $Revision: 1.6 $
- * $Date: 2005-02-24 20:23:44 $
+ * $Revision: 1.7 $
+ * $Date: 2005-03-10 15:44:16 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -47,8 +47,6 @@ public class MultipleArrayMenubar extends JMenuBar {
     private JMenu adjustMenu;
     private JMenu filterMenu;
     private ButtonGroup labelGroup;
-   // private JMenu sortMenu;
-  //  private ButtonGroup sortGroup;
     private ActionListener listener;
     private boolean affyNormAdded = false;
     private ButtonGroup experimentLabelGroup;
@@ -64,7 +62,6 @@ public class MultipleArrayMenubar extends JMenuBar {
         listener = manager.getListener();
         actionManager = manager;
         JMenu fileMenu = new JMenu("File");
-        // fileMenu.add(createJMenuItem(manager.getAction(ActionManager.LOAD_DIRECTORY_ACTION)));
         fileMenu.add(createJMenuItem(manager.getAction(ActionManager.LOAD_ACTION)));
         fileMenu.addSeparator();
         fileMenu.add(createJMenuItem(manager.getAction(ActionManager.LOAD_ANALYSIS_ACTION)));
@@ -76,12 +73,8 @@ public class MultipleArrayMenubar extends JMenuBar {
         fileMenu.addSeparator();
         fileMenu.add(createJMenuItem(manager.getAction(ActionManager.LOAD_SCRIPT_ACTION)));
         
-        // fileMenu.add(createJMenuItem(manager.getAction(ActionManager.LOAD_DB_ACTION)));
-        //  fileMenu.getMenuComponent(2).setEnabled(false);
-        //  fileMenu.addSeparator();
-        //  fileMenu.add(createJMenuItem(manager.getAction(ActionManager.LOAD_STANFORD_ACTION)));
-        //    fileMenu.add(createJMenuItem(manager.getAction(ActionManager.LOAD_CLUSTER_ACTION)));
         fileMenu.addSeparator();
+        
         fileMenu.add(createJMenuItem(manager.getAction(ActionManager.SAVE_MATRIX_ACTION)));
         fileMenu.addSeparator();
         fileMenu.add(createJMenuItem(manager.getAction(ActionManager.SAVE_IMAGE_ACTION)));
@@ -128,19 +121,7 @@ public class MultipleArrayMenubar extends JMenuBar {
         filterMenu.add(createJMenuItem("Variance Filter", ActionManager.USE_VARIANCE_FILTER_CMD, listener));
         adjustMenu.add(filterMenu);        
         adjustMenu.addSeparator();
-        
-        // pcahan
-        /*
-        if (TMEV.getDataType() == TMEV.DATA_TYPE_AFFY){
-            adjustMenu.addSeparator();
-            adjustMenu.add(createJMenuItem("Set Detection Filter", ActionManager.SET_DETECTION_FILTER_CMD, listener));
-            adjustMenu.add(createJCheckBoxMenuItem("Use Detection Filter", ActionManager.USE_DETECTION_FILTER_CMD, listener));
-         
-            adjustMenu.add(createJMenuItem("Set Fold Filter", ActionManager.SET_FOLD_FILTER_CMD, listener));
-            adjustMenu.add(createJCheckBoxMenuItem("Use Fold Filter", ActionManager.USE_FOLD_FILTER_CMD, listener));
-        }
-         */
-        
+                
         ButtonGroup buttonGroup = new ButtonGroup();
         normalizationMenu = new JMenu("Normalization");
         normalizationMenu.add(createJRadioButtonMenuItem("Total Intensity", ActionManager.TOTAL_INTENSITY_CMD, listener, buttonGroup));
@@ -190,14 +171,6 @@ public class MultipleArrayMenubar extends JMenuBar {
         
         JMenu displayMenu = new JMenu("Display");
         
-        buttonGroup = new ButtonGroup();
-        JMenu colorSchemeMenu = new JMenu("Color Scheme");
-        colorSchemeMenu.add(createJMenuItem("Green/Black/Red Scheme (Double Gradient)", ActionManager.GREEN_RED_COLOR_SCHEME_CMD, listener));
-        colorSchemeMenu.add(createJMenuItem("Blue/Black/Yellow Scheme (Double Gradient)", ActionManager.BLUE_YELLOW_COLOR_SCHEME_CMD, listener));
-        colorSchemeMenu.add(createJMenuItem("Custom Color Scheme", ActionManager.CUSTOM_COLOR_SCHEME_CMD, listener));
-        colorSchemeMenu.add(createJCheckBoxMenuItem("Use Color Gradient on Graphs", ActionManager.COLOR_GRADIENT_CMD, listener));
-        displayMenu.add(colorSchemeMenu);
-        displayMenu.addSeparator();
         
         JMenu expLabelMenu = new JMenu("Sample/Column Labels");   
 
@@ -206,37 +179,43 @@ public class MultipleArrayMenubar extends JMenuBar {
         expLabelMenu.addSeparator();
         expLabelMenu.add(this.createJMenuItem("Edit Labels/Reorder Samples", ActionManager.ADD_NEW_EXPERIMENT_LABEL_CMD, listener));        
         expLabelMenu.add(createJMenuItem("Abbr. Sample Names", ActionManager.TOGGLE_ABBR_EXPT_NAMES_CMD, listener));          
-        experimentLabelGroup = new ButtonGroup();
-        
+        experimentLabelGroup = new ButtonGroup();        
         displayMenu.add(expLabelMenu);
         
-        labelMenu = new JMenu("Gene/Row Labels");
-        labelGroup = new ButtonGroup();
-        
-        //addLabelMenuItems(labelMenu, manager, labelGroup);
+        labelMenu = new JMenu("Gene/Row Labels");        
+        labelGroup = new ButtonGroup();      
         displayMenu.add(labelMenu);
         displayMenu.addSeparator();
-        
-        //move these to main context menu
-        
-        displayMenu.add(createJCheckBoxMenuItem("Draw Borders", ActionManager.DISPLAY_DRAW_BORDERS_CMD, listener, false));
-       displayMenu.add(createJMenuItem("Set Color Scale Limits", ActionManager.DISPLAY_SET_RATIO_SCALE_CMD, listener));
+
+        JMenu colorSchemeMenu = new JMenu("Color Scheme");
+        colorSchemeMenu.add(createJMenuItem("Green-Black-Red Scheme", ActionManager.GREEN_RED_COLOR_SCHEME_CMD, listener));
+        colorSchemeMenu.add(createJMenuItem("Blue-Black-Yellow Scheme", ActionManager.BLUE_YELLOW_COLOR_SCHEME_CMD, listener));
+        colorSchemeMenu.add(createJMenuItem("Rainbow Scheme", ActionManager.RAINBOW_COLOR_SCHEME_CMD, listener));
+        colorSchemeMenu.addSeparator();
+        colorSchemeMenu.add(createJMenuItem("Custom Color Scheme", ActionManager.CUSTOM_COLOR_SCHEME_CMD, listener));
+        colorSchemeMenu.addSeparator();
+        colorSchemeMenu.add(createJCheckBoxMenuItem("Use Color Gradient on Graphs", ActionManager.COLOR_GRADIENT_CMD, listener));
+        displayMenu.add(colorSchemeMenu);
+                
+        displayMenu.add(createJMenuItem("Set Color Scale Limits", ActionManager.DISPLAY_SET_RATIO_SCALE_CMD, listener));
         displayMenu.addSeparator();
+        
         JMenu sizeMenu = new JMenu("Set Element Size");
         buttonGroup = new ButtonGroup();
         sizeMenu.add(createJRadioButtonMenuItem("5 x 2", ActionManager.DISPLAY_5X2_CMD, listener, buttonGroup));
         sizeMenu.add(createJRadioButtonMenuItem("10 x 10", ActionManager.DISPLAY_10X10_CMD, listener, buttonGroup));
         sizeMenu.add(createJRadioButtonMenuItem("20 x 5", ActionManager.DISPLAY_20X5_CMD, listener, buttonGroup, true));
         sizeMenu.add(createJRadioButtonMenuItem("50 x 10", ActionManager.DISPLAY_50X10_CMD, listener, buttonGroup));
-        sizeMenu.add(createJRadioButtonMenuItem("Other", ActionManager.DISPLAY_OTHER_CMD, listener, buttonGroup));
+        sizeMenu.add(createJRadioButtonMenuItem("Custom", ActionManager.DISPLAY_OTHER_CMD, listener, buttonGroup));
         displayMenu.add(sizeMenu);
+
+        displayMenu.add(createJCheckBoxMenuItem("Draw Borders", ActionManager.DISPLAY_DRAW_BORDERS_CMD, listener, false));        
+        
         add(displayMenu);
         
         JMenu utilMenu = new JMenu("Utilities");
         utilMenu.add(createJMenuItem(manager.getAction(ActionManager.SEARCH_ACTION)));
         utilMenu.addSeparator();
-        
-        
         
         JMenu clusterMenu = new JMenu("Cluster Utilities");
         
@@ -252,17 +231,8 @@ public class MultipleArrayMenubar extends JMenuBar {
         utilMenu.add(clusterMenu);
         
         utilMenu.addSeparator();
-        
-        //Eventually we might provide annotation append annotation for genes, for now use a single sample menu item
-        //JMenu appendAnnotationMenu = new JMenu("Append Annotation");
-        //appendAnnotationMenu.add(manager.getAction(ActionManager.APPEND_SAMPLE_ANNOTATION_ACTION));
-        //appendAnnotationMenu.add(manager.getAction(ActionManager.APPEND_GENE_ANNOTATION_ACTION));
-        //utilMenu.add(appendAnnotationMenu);
-        
-        //gene annotation append
-        utilMenu.add(manager.getAction(ActionManager.APPEND_GENE_ANNOTATION_ACTION));
-        
-        //sample annotation append
+                
+        utilMenu.add(manager.getAction(ActionManager.APPEND_GENE_ANNOTATION_ACTION));        
         utilMenu.add(manager.getAction(ActionManager.APPEND_SAMPLE_ANNOTATION_ACTION));
                         
         add(utilMenu);      
@@ -292,6 +262,7 @@ public class MultipleArrayMenubar extends JMenuBar {
         this.setDrawBorders(origDisplayMenu.isDrawingBorder());
         this.setMaxRatioScale(origDisplayMenu.getMaxRatioScale());
         this.setMinRatioScale(origDisplayMenu.getMinRatioScale());
+        this.setMidRatioValue(origDisplayMenu.getMidRatioValue());
         this.setColorGradientState(origDisplayMenu.getColorGradientState());
         this.setNegativeCustomGradient(origDisplayMenu.getNegativeGradientImage());
         this.setPositiveCustomGradient(origDisplayMenu.getPositiveGradientImage());
@@ -854,6 +825,13 @@ public class MultipleArrayMenubar extends JMenuBar {
     }
     
     /**
+     *  Sets mid ratio scale value.
+     */
+    void setMidRatioValue(float value) {
+    	displayMenu.midRatioValue = value;
+    }
+    
+    /**
      * Sets max CY3 scale value.
      */
     void setMaxCY3Scale(float scale) {
@@ -940,6 +918,7 @@ public class MultipleArrayMenubar extends JMenuBar {
         private boolean useColorGradient = false;
         private float minRatioScale = -3f;
         private float maxRatioScale = 3f;
+        private float midRatioValue = 0f;
         private float maxCY3Scale = 0f;
         private float maxCY5Scale = 0f;
         
@@ -948,6 +927,7 @@ public class MultipleArrayMenubar extends JMenuBar {
         private BufferedImage posRedColorImage = createGradientImage(Color.black, Color.red);
         private BufferedImage negBlueColorImage = createGradientImage(Color.blue, Color.black);
         private BufferedImage posYellowColorImage = createGradientImage(Color.black, Color.yellow);
+        private BufferedImage rainbowImage = createRainbowImage();
         private BufferedImage negCustomColorImage;
         private BufferedImage posCustomColorImage;
         private boolean useDoubleGradient = true;
@@ -996,6 +976,10 @@ public class MultipleArrayMenubar extends JMenuBar {
             return minRatioScale;
         }
         
+        public float getMidRatioValue() {
+        	return midRatioValue;        
+        }
+        
         public float getMaxCY3Scale() {
             return maxCY3Scale;
         }
@@ -1012,7 +996,7 @@ public class MultipleArrayMenubar extends JMenuBar {
          * Return current positive gradient image
          */
         public BufferedImage getPositiveGradientImage() {
-            BufferedImage image = this.posRedColorImage;
+        	BufferedImage image = this.posRedColorImage;
             switch (this.colorScheme){
                 case IDisplayMenu.GREEN_RED_SCHEME:
                     break;
@@ -1022,6 +1006,9 @@ public class MultipleArrayMenubar extends JMenuBar {
                 case IDisplayMenu.CUSTOM_COLOR_SCHEME:
                     if(this.posCustomColorImage != null)
                         image = this.posCustomColorImage;
+                    break;
+                case IDisplayMenu.RAINBOW_COLOR_SCHEME:                	
+                		image = this.rainbowImage;
             }
             return image;
         }
@@ -1070,6 +1057,58 @@ public class MultipleArrayMenubar extends JMenuBar {
             useColorGradient = state;
         }
         
+        private BufferedImage createRainbowImage() {
+        	Vector palette = buildPalette();
+        	
+            BufferedImage image = (BufferedImage)java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleImage(256,1);
+            Graphics2D graphics = image.createGraphics();
+
+            drawScale((Graphics2D)graphics, palette);
+            
+            return image;
+        }
+        
+        private void drawScale(Graphics2D g, Vector palette) {	
+            for (int i = 0; i < palette.size(); i++) {
+            	g.setColor((Color) palette.elementAt(i));
+                g.fillRect(i, 0, 1, 1);
+            }
+        }        
+        
+        private Vector buildPalette() {
+            Vector palette = new Vector(256);
+            Color newColor;
+            double r, g, b;
+            
+            newColor = new Color(0, 0, 0);
+            palette.addElement(newColor);
+            
+            for (int i = 1; i < 256; i++) {
+                i = 255 - i;
+                
+                r = 0; g = 0; b = 0;
+                
+                if (i < 33) r = 255;
+                else if (i > 32 && i < 108) r = Math.abs( 255 * Math.cos((i - 32) * Math.PI / 151));
+                else if (i > 107) r = 0;
+                
+                if (i < 5) g = 0;
+                else if (i > 4 && i < 101) g = Math.abs((255 * Math.cos((i - 100) * Math.PI / 189)));
+                else if (i > 100 && i < 229) g = Math.abs((255 * Math.cos((i - 100) * Math.PI / 294)));
+                else if (i > 230) g = 0;
+                
+                if (i < 72) b = 0;
+                else if (i > 71 && i < 200) b = Math.abs((255 * Math.cos((i - 199) * Math.PI / 256)));
+                else if (i > 199) b = Math.abs((255 * Math.cos((i - 199) * Math.PI / 175)));
+                
+                newColor = new Color((float) r / 255, (float) g / 255, (float) b / 255);
+                palette.addElement(newColor);
+                
+                i = 255 - i;
+            }
+            
+            return palette;
+        }
         
     }
     

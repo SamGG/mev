@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ExperimentUtil.java,v $
- * $Revision: 1.7 $
- * $Date: 2005-02-24 20:24:08 $
+ * $Revision: 1.8 $
+ * $Date: 2005-03-10 15:56:10 $
  * $Author: braistedj $
  * $State: Exp $
  */

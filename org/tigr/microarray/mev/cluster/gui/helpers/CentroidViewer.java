@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: CentroidViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-02-24 20:24:07 $
+ * $Revision: 1.6 $
+ * $Date: 2005-03-10 15:56:09 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -79,7 +79,7 @@ public class CentroidViewer extends JPanel implements IViewer, java.io.Serializa
     protected float[][] means;
     protected float[][] variances;
     protected float[][] codes;
-    protected float minValue, maxValue;
+    protected float minValue, maxValue, midValue = 0.0f;
     public static Color missingColor = new Color(128, 128, 128);
     public static BufferedImage posColorImage; // = createGradientImage(Color.black, Color.red);
     public static BufferedImage negColorImage; // = createGradientImage(Color.green, Color.black);
@@ -236,8 +236,9 @@ public class CentroidViewer extends JPanel implements IViewer, java.io.Serializa
             setMode(((Integer)userObject).intValue());
         }
         updateValues(getCluster());
-        this.maxValue = Math.abs(framework.getDisplayMenu().getMaxRatioScale());
-        this.minValue = -Math.abs(framework.getDisplayMenu().getMinRatioScale());
+        this.maxValue = framework.getDisplayMenu().getMaxRatioScale();
+        this.minValue = framework.getDisplayMenu().getMinRatioScale();
+        this.midValue = framework.getDisplayMenu().getMidRatioValue();
         CentroidViewer.posColorImage = framework.getDisplayMenu().getPositiveGradientImage();
         CentroidViewer.negColorImage = framework.getDisplayMenu().getNegativeGradientImage();
         useDoubleGradient = framework.getDisplayMenu().getUseDoubleGradient();
@@ -282,10 +283,10 @@ public class CentroidViewer extends JPanel implements IViewer, java.io.Serializa
         int colorIndex, rgb;
         
         if(useDoubleGradient) {
-        	maximum = value < 0 ? this.minValue : this.maxValue;
-			colorIndex = (int) (255 * value / maximum);
+        	maximum = value < midValue ? this.minValue : this.maxValue;
+			colorIndex = (int) (255 * (value-midValue) / (maximum - midValue));
 			colorIndex = colorIndex > 255 ? 255 : colorIndex;
-			rgb = value < 0 ? negColorImage.getRGB(255 - colorIndex, 0)
+			rgb = value < midValue ? negColorImage.getRGB(255 - colorIndex, 0)
 					: posColorImage.getRGB(colorIndex, 0);
         } else {
         	float span = this.maxValue - this.minValue;
@@ -639,8 +640,9 @@ public class CentroidViewer extends JPanel implements IViewer, java.io.Serializa
      */
     public void onMenuChanged(IDisplayMenu menu) {
         setAntiAliasing(menu.isAntiAliasing());
-        this.maxValue = Math.abs(menu.getMaxRatioScale());
-        this.minValue = -Math.abs(menu.getMinRatioScale());
+        this.maxValue = menu.getMaxRatioScale();
+        this.minValue = menu.getMinRatioScale();
+        this.midValue = menu.getMidRatioValue();
         CentroidViewer.posColorImage = menu.getPositiveGradientImage();
         CentroidViewer.negColorImage = menu.getNegativeGradientImage();
         this.setGradient(menu.getColorGradientState());

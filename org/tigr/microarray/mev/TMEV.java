@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: TMEV.java,v $
- * $Revision: 1.9 $
- * $Date: 2005-02-24 20:23:44 $
+ * $Revision: 1.10 $
+ * $Date: 2005-03-10 15:44:14 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -81,7 +81,7 @@ public class TMEV {
     
     public static void main(String[] args) {
         try {
-            System.out.println("TIGR MultiExperimentViewer (1090854423507) - version "+TMEV.VERSION+" - " + System.getProperty("os.name"));
+            System.out.println("TIGR MultiExperimentViewer (1109887083829) - version "+TMEV.VERSION+" - " + System.getProperty("os.name"));
             String Java3DTitle, Java3DVendor, Java3DVersion;
             try {
                 InformationPanel info = new InformationPanel();

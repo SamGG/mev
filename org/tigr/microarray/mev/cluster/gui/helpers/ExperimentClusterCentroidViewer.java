@@ -4,36 +4,36 @@ All rights reserved.
 */
 /*
  * $RCSfile: ExperimentClusterCentroidViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-02-24 20:24:07 $
+ * $Revision: 1.6 $
+ * $Date: 2005-03-10 15:56:09 $
  * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.helpers;
 
-import java.awt.Font;
 import java.awt.Color;
-import java.awt.Rectangle;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.FontMetrics;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
+import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JComponent;
 
-import org.tigr.microarray.mev.cluster.gui.IViewer;
+import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
+import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-
-import org.tigr.microarray.mev.cluster.clusterUtil.*;
 
 
 
@@ -61,7 +61,7 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer, 
     protected float maxYValue;           //current max y range set for graph, from y = 0
     protected float maxClusterValue;     //max abs. value in current cluster
     protected float maxExperimentValue;  //max abs. value in all clusters
-    protected float minValue, maxValue;
+    protected float minValue, maxValue, midValue = 0.0f;
     
     
     protected int yRangeOption;
@@ -83,6 +83,9 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer, 
     public static BufferedImage posColorImage; // = createGradientImage(Color.black, Color.red);
     public static BufferedImage negColorImage; // = createGradientImage(Color.green, Color.black);
     protected boolean showRefLine = false;
+    
+    private boolean useDoubleGradient = true;
+    
     
     /**
      * Constructs a <code>ExperimentClusterCentroidViewer</code> for specified
@@ -115,6 +118,7 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer, 
         oos.writeBoolean(drawMarks);
         oos.writeBoolean(isAntiAliasing);
         oos.writeBoolean(gradientColors);
+        oos.writeBoolean(useDoubleGradient);
 
         oos.writeObject(means);
         oos.writeObject(variances);
@@ -137,6 +141,7 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer, 
         this.drawMarks = ois.readBoolean();
         this.isAntiAliasing = ois.readBoolean();
         this.gradientColors = ois.readBoolean();
+        this.useDoubleGradient = ois.readBoolean();
         this.means = (float [][])ois.readObject();
         this.variances = (float [][])ois.readObject();
         if(ois.readBoolean())
@@ -169,16 +174,31 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer, 
     /**
      * Calculates color for passed expression value.
      */
-    private Color getColor(float value) {	// value is the log ratio used to set color cutoffs
+    private Color getColor(float value) {
         if (Float.isNaN(value)) {
             return missingColor;
         }
-        float maximum = value < 0 ? this.minValue : this.maxValue;
-        int colorIndex = (int)(255*value/maximum);
-        if (colorIndex ==0) colorIndex = 1;
-        colorIndex = colorIndex > 255 ? 255 : colorIndex;
-        int rgb;
-        rgb = value < 0 ? negColorImage.getRGB(255-colorIndex, 0) : posColorImage.getRGB(colorIndex, 0);
+        
+        float maximum;
+        int colorIndex, rgb;
+        
+        if(useDoubleGradient) {
+        	maximum = value < midValue ? this.minValue : this.maxValue;
+			colorIndex = (int) (255 * (value-midValue) / (maximum - midValue));
+			colorIndex = colorIndex > 255 ? 255 : colorIndex;
+			rgb = value < midValue ? negColorImage.getRGB(255 - colorIndex, 0)
+					: posColorImage.getRGB(colorIndex, 0);
+        } else {
+        	float span = this.maxValue - this.minValue;
+        	if(value <= minValue)
+        		colorIndex = 0;
+        	else if(value >= maxValue)
+        		colorIndex = 255;
+        	else
+        		colorIndex = (int)(((value - this.minValue)/span) * 255);
+         	
+        	rgb = posColorImage.getRGB(colorIndex,0);
+        }
         return new Color(rgb);
     }
     
@@ -257,8 +277,9 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer, 
             setClusterIndex(((Integer)userObject).intValue());
         }
         updateValues(getCluster());
-        this.maxValue = Math.abs(framework.getDisplayMenu().getMaxRatioScale());
-        this.minValue = -Math.abs(framework.getDisplayMenu().getMinRatioScale());
+        this.maxValue = framework.getDisplayMenu().getMaxRatioScale();
+        this.minValue = framework.getDisplayMenu().getMinRatioScale();
+        this.midValue = framework.getDisplayMenu().getMidRatioValue();
         ExperimentClusterCentroidViewer.posColorImage = framework.getDisplayMenu().getPositiveGradientImage();
         ExperimentClusterCentroidViewer.negColorImage = framework.getDisplayMenu().getNegativeGradientImage();
         this.gradientColors = framework.getDisplayMenu().getColorGradientState();
@@ -611,8 +632,9 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer, 
      */
     public void onMenuChanged(IDisplayMenu menu) {
         setAntiAliasing(menu.isAntiAliasing());
-        this.maxValue = Math.abs(menu.getMaxRatioScale());
-        this.minValue = -Math.abs(menu.getMinRatioScale());
+        this.maxValue = menu.getMaxRatioScale();
+        this.minValue = menu.getMinRatioScale();
+        this.midValue = menu.getMidRatioValue();
         ExperimentClusterCentroidViewer.posColorImage = menu.getPositiveGradientImage();
         ExperimentClusterCentroidViewer.negColorImage = menu.getNegativeGradientImage();
         this.gradientColors = menu.getColorGradientState();

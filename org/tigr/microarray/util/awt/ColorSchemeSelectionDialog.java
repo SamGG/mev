@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: ColorSchemeSelectionDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2005-02-24 20:24:11 $
+ * $Revision: 1.3 $
+ * $Date: 2005-03-10 15:39:20 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -85,7 +85,8 @@ public class ColorSchemeSelectionDialog extends JDialog {
         neutralColorCheckBox = new javax.swing.JCheckBox("Use Black as Neutral Color", true);
         neutralColorCheckBox.setFocusPainted(false);
         neutralColorCheckBox.setOpaque(false);
-
+        neutralColorCheckBox.setEnabled(useDouble);
+        
         if((posImage.getRGB(0,0)) == ((Color.white).getRGB())) { //if neutral is white, then set to neutral = white
             neutralColorCheckBox.setSelected(false);
             neutralColor = Color.white;
@@ -136,14 +137,14 @@ public class ColorSchemeSelectionDialog extends JDialog {
     	Listener listener = new Listener();
     	
         ButtonGroup bg = new ButtonGroup();
-		doubleGradientButton = new JRadioButton("Double Gradient  (Suitable for log2Ratio Data)", useDoubleGradient);
+		doubleGradientButton = new JRadioButton("Double Gradient", useDoubleGradient);
 		doubleGradientButton.setActionCommand("change-gradient-command");
 		doubleGradientButton.addActionListener(listener);
 		doubleGradientButton.setFocusPainted(false);
 		doubleGradientButton.setOpaque(false);
 		bg.add(doubleGradientButton);
 		
-		singleGradientButton = new JRadioButton("Single Gradient  (Suitable for Absolute Intensity Values)", !useDoubleGradient);
+		singleGradientButton = new JRadioButton("Single Gradient", !useDoubleGradient);
 		singleGradientButton.setActionCommand("change-gradient-command");
 		singleGradientButton.addActionListener(listener);
 		singleGradientButton.setFocusPainted(false);
@@ -154,8 +155,8 @@ public class ColorSchemeSelectionDialog extends JDialog {
     	gradientStylePanel.setBackground(Color.white);
         gradientStylePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Gradient Style"));
 
-		gradientStylePanel.add(doubleGradientButton, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,0,5,0),0,0));
-		gradientStylePanel.add(singleGradientButton, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0),0,0));		
+		gradientStylePanel.add(doubleGradientButton, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,0,5,20),0,0));
+		gradientStylePanel.add(singleGradientButton, new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,20,5,0),0,0));		
 				
     	chanelSelectionGroup = new javax.swing.ButtonGroup();
         channelSelectionPanel = new javax.swing.JPanel();

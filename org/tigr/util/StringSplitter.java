@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: StringSplitter.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-02-24 20:24:06 $
+ * $Revision: 1.6 $
+ * $Date: 2005-03-10 15:27:01 $
  * $Author: braistedj $
  * $State: Exp $
  */
