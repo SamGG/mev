@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: QSort.java,v $
- * $Revision: 1.3 $
- * $Date: 2003-12-17 19:20:22 $
+ * $Revision: 1.4 $
+ * $Date: 2004-01-13 17:29:06 $
  * $Author: nbhagaba $
  * $State: Exp $
  */
@@ -393,7 +393,20 @@ public class QSort {
             count--;
         }
         return revArr;
-    }    
+    }   
+    
+    public static void main(String[] args) {
+        
+        float[] arr = {120f, 0.01f, -4.5f, Float.NaN, 7.6f, -65f, Float.NEGATIVE_INFINITY, 3.5f, -0.95f, Float.POSITIVE_INFINITY, 600f, Float.NaN, 65f, Float.NEGATIVE_INFINITY, Float.MAX_VALUE};
+        
+        QSort sortArr = new QSort(arr, QSort.DESCENDING);
+        float[] sortedArr = sortArr.getSorted();
+        int[] sortedArrIndices = sortArr.getOrigIndx();
+        for (int i = 0; i < sortedArr.length; i++) {
+            System.out.println("sortedArr[" + i + "] = " + sortedArr[i] + ",  sortedArrIndices[" + i + "] = " + sortedArrIndices[i]);
+        }
+                
+    }
     
 }
 
