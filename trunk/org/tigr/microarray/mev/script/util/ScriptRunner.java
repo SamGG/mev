@@ -27,6 +27,7 @@ import javax.swing.tree.TreePath;
 
 import org.tigr.util.FloatMatrix;
 import org.tigr.microarray.mev.ResultTree;
+import org.tigr.microarray.mev.TMEV;
 
 import org.tigr.microarray.mev.action.ActionManager;
 import org.tigr.microarray.mev.action.AnalysisAction;
@@ -143,7 +144,7 @@ public class ScriptRunner {
         DefaultMutableTreeNode currNode = null, outputNode = null;
         
         if(mode == ScriptConstants.SCRIPT_OUTPUT_MODE_FILE_OUTPUT) {
-            JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+System.getProperty("file.separator")+"Data");
+            JFileChooser chooser = new JFileChooser(TMEV.getFile("data/"));
             if(chooser.showOpenDialog(parentFrame) == JFileChooser.APPROVE_OPTION) {
                 outputFile = chooser.getSelectedFile();
             } else {

@@ -45,6 +45,7 @@ import org.tigr.microarray.mev.script.util.AlgorithmSet;
  * @author braisted
  */
 public class ScriptTreeViewer extends ViewerAdapter implements Serializable {
+    public static final long serialVersionUID = 1000102010301040001L;
     
     /** Data for the tree rendering, scriptTree
      */

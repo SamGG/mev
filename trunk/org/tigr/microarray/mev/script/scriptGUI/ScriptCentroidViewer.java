@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: ScriptCentroidViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-06-11 18:12:05 $
+ * $Revision: 1.3 $
+ * $Date: 2004-07-27 20:02:27 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -29,6 +29,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 
 public class ScriptCentroidViewer extends CentroidViewer implements java.io.Serializable {
+    public static final long serialVersionUID = 1000102010301010001L;    
     
     private JPopupMenu popup;
     

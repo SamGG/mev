@@ -185,7 +185,7 @@ public class ScriptTreeRenderer implements TreeCellRenderer {
     
     /**
      */
-    private class ScriptNodeLabel extends JLabel implements java.io.Serializable {
+    private class ScriptNodeLabel extends JLabel {
         boolean showRound;
         boolean sel;
         boolean highlighted;

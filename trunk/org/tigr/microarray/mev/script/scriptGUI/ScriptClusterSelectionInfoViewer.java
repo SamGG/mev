@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ScriptClusterSelectionInfoViewer.java,v $
- * $Revision: 1.1 $
- * $Date: 2004-06-11 18:41:57 $
+ * $Revision: 1.2 $
+ * $Date: 2004-07-27 20:02:27 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -28,6 +28,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
  * and the criteria upon which the selections were made.
  */
 public class ScriptClusterSelectionInfoViewer extends ViewerAdapter implements java.io.Serializable {
+    public static final long serialVersionUID = 1000102010301020001L;
     
     private JComponent header;
     private JTextPane  content;
