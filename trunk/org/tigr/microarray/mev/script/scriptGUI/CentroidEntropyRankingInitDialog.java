@@ -19,7 +19,6 @@ import java.awt.Component;
 import java.awt.Insets;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
-//import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 
@@ -33,11 +32,7 @@ import javax.swing.JTextField;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JOptionPane;
-//import javax.swing.BorderFactory;
-//import javax.swing.border.EmptyBorder;
 
-
-//import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
 
@@ -66,7 +61,7 @@ public class CentroidEntropyRankingInitDialog extends AlgorithmDialog {
     
     /** Creates a new instance of DiversityRankingInitDialog */
     public CentroidEntropyRankingInitDialog(JFrame parent) {
-        super(parent, "Centroid Entropy/Variance Ranking Cluster Selection", true);
+        super(parent, "Centroid Variance or Entropy Ranking Cluster Selection", true);
         
         ParameterPanel paramPanel = new ParameterPanel("Selection Parameters");
         paramPanel.setLayout(new GridBagLayout());
@@ -212,7 +207,7 @@ public class CentroidEntropyRankingInitDialog extends AlgorithmDialog {
                 resetControls();
             }
             else if (command.equals("info-command")){
-                HelpWindow hw = new HelpWindow(CentroidEntropyRankingInitDialog.this, "Centroid Entropy/Variance Ranking Cluster Selection");
+                HelpWindow hw = new HelpWindow(CentroidEntropyRankingInitDialog.this, "Centroid Variance/Entropy Ranking Cluster Selection");
                 if(hw.getWindowContent()){
                     hw.setSize(450,650);
                     hw.setLocation();

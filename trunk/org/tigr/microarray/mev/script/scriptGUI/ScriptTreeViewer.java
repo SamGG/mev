@@ -10,11 +10,15 @@ All rights reserved.
 
 package org.tigr.microarray.mev.script.scriptGUI;
 
+import java.awt.Color;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
+import java.io.Serializable;
 
 import javax.swing.JComponent;
 import javax.swing.JMenu;
@@ -29,15 +33,18 @@ import org.tigr.microarray.mev.script.util.ScriptTree;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
-
+import org.tigr.microarray.mev.script.ScriptDocument;
 import org.tigr.microarray.mev.script.ScriptManager;
 import org.tigr.microarray.mev.script.event.ScriptDocumentEvent;
 import org.tigr.microarray.mev.script.event.ScriptEventListener;
+import org.tigr.microarray.mev.script.util.AlgorithmSet;
+
+
 /** ScriptTreeViewer renders the script in an intuitive tree where
  * data nodes and algorithm nodes are identified.
  * @author braisted
  */
-public class ScriptTreeViewer extends ViewerAdapter {
+public class ScriptTreeViewer extends ViewerAdapter implements Serializable {
     
     /** Data for the tree rendering, scriptTree
      */
@@ -51,6 +58,9 @@ public class ScriptTreeViewer extends ViewerAdapter {
     
     ScriptManager manager;
     
+    private boolean isAlgSetViewer = false;
+    private DataNode algSetRoot;
+    
     boolean selected = false;
     /** Creates a new instance of ScriptTreeViewer
      * @param tree ScriptTree data structure
@@ -62,13 +72,62 @@ public class ScriptTreeViewer extends ViewerAdapter {
         listener = new ScriptTreeListener();
         scriptTree.addMouseListener(listener);
         scriptTree.getDocument().addDocumentListener(new ScriptListener());
+        //scriptTree.setBackground(new Color(255,255,220));
         dataPopup = createPopupMenu(listener, "data");
         algPopup = createPopupMenu(listener, "alg");
         defaultMenu = createPopupMenu(listener, "default");
+        isAlgSetViewer = false;
     }
+    
+    
+    /** Creates a new instance of ScriptTreeViewer
+     * @param tree ScriptTree data structure
+     * @param manager script manager to support mev-script interactions.
+     */
+    public ScriptTreeViewer(ScriptTree tree, ScriptManager manager, DataNode algSetRoot) {
+        scriptTree = tree;
+        this.manager = manager;
+        //listener = new ScriptTreeListener();
+        //scriptTree.addMouseListener(listener);
+        //scriptTree.getDocument().addDocumentListener(new ScriptListener());
+        
+        this.algSetRoot = findLocalAlgSetRoot(algSetRoot.toString());
+        
+        if(this.algSetRoot != null){
+            scriptTree.highlightAlgSet(this.algSetRoot);
+            isAlgSetViewer = true;
+        } else {
+            isAlgSetViewer = false;
+        }
+        
+        //dataPopup = createPopupMenu(listener, "data");
+        //algPopup = createPopupMenu(listener, "alg");
+        //defaultMenu = createPopupMenu(listener, "default");
+        
+        
+    }
+    
+    private DataNode findLocalAlgSetRoot(String rootName) {
+        AlgorithmSet [] sets = scriptTree.getAlgorithmSets();
+        DataNode dataNode = null;
+        for(int i = 0; i < sets.length; i++) {
+            if(sets[i].getDataNode().toString().equals(rootName)) {
+                dataNode = sets[i].getDataNode();
+                break;
+            }
+        }
+        return dataNode;
+    }
+    
     
     public void onSelected(IFramework framework) {
         selected = true;
+        
+        //sets it up to highlight an algorithm set
+        if(isAlgSetViewer)
+            scriptTree.highlightAlgSet(algSetRoot);
+        else
+            scriptTree.clearHighlights();
     }
     
     public void onClosed() {
@@ -136,6 +195,8 @@ public class ScriptTreeViewer extends ViewerAdapter {
         ScriptNode node;
         
         public void mouseClicked(MouseEvent me) {
+            if(isAlgSetViewer)
+                return;
             if(me.isPopupTrigger()){
                 node = scriptTree.getSelectedNode();
                 if(node == null) {
@@ -157,6 +218,8 @@ public class ScriptTreeViewer extends ViewerAdapter {
         
         
         public void mouseReleased(MouseEvent me) {
+            if(isAlgSetViewer)
+                return;
             if(me.isPopupTrigger()){
                 node = scriptTree.getSelectedNode();
                 if(node == null)
@@ -182,6 +245,9 @@ public class ScriptTreeViewer extends ViewerAdapter {
         
         
         public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
+            if(isAlgSetViewer)
+                return;
+            
             String command = actionEvent.getActionCommand();
             if(command.equals("add-new-algorithm-cmd") || command.equals("replace-algorithm-cmd")) {
                 node = scriptTree.getSelectedNode();
@@ -189,7 +255,7 @@ public class ScriptTreeViewer extends ViewerAdapter {
                     return;
                 }
                 if(node instanceof DataNode)
-                    scriptTree.addNewAlgorithmToDataNode((DataNode)node);                              
+                    scriptTree.addNewAlgorithmToDataNode((DataNode)node);
             } else if(command.equals("delete-algorithm-cmd")) {
                 node = scriptTree.getSelectedNode();
                 if(node != null) {
@@ -212,10 +278,35 @@ public class ScriptTreeViewer extends ViewerAdapter {
     }
     
     
-    public class ScriptListener implements ScriptEventListener {        
+    public class ScriptListener implements ScriptEventListener {
         public void documentChanged(ScriptDocumentEvent event) {
             scriptTree.updateTree();
         }
+    }
+    
+    
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.writeObject(manager);
+        oos.writeObject(scriptTree.getDocument());
+        oos.writeBoolean(isAlgSetViewer);
+        if(isAlgSetViewer)
+            oos.writeObject(algSetRoot);
+        oos.writeBoolean(selected);
+    }
+    
+    
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        this.manager = (ScriptManager)ois.readObject();
+        this.scriptTree = new ScriptTree((ScriptDocument)ois.readObject(), manager);
+        this.isAlgSetViewer = ois.readBoolean();
+        if(this.isAlgSetViewer) {
+            this.algSetRoot = (DataNode)ois.readObject();
+            this.algSetRoot = scriptTree.getDataNodeNamed(algSetRoot.toString());
+            if(algSetRoot != null)
+                this.scriptTree.highlightAlgSet(algSetRoot);
+        }
+        this.selected = ois.readBoolean();
     }
     
 }

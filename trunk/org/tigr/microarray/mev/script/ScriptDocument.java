@@ -67,6 +67,15 @@ public class ScriptDocument extends DocumentBase {
         this.date = date;
     }
     
+    
+    
+    public ScriptDocument(ScriptDocument doc) {
+        super(doc);
+        this.id = doc.getDocumentID();
+        this.name = doc.getDocumentName();
+        this.description = doc.getDescription();        
+    }
+    
     /** Returns the document's name, or null if not set.
      * @return  */  
     

@@ -18,6 +18,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Serializable;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -67,7 +68,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
  * the interface.
  * @author braisted
  */
-public class ScriptManager {
+public class ScriptManager implements Serializable {
     
     /** Holds the Mev' ResultTree script mount point.
      */
@@ -696,4 +697,29 @@ public class ScriptManager {
         return validator.getParameterAttributes(algName, key);
         
     }
+    
+    
+        
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+
+   // oos.writeObject(actionManager);
+    //oos.writeObject(table);
+    oos.writeInt(scriptNum);
+//    oos.writeObject(framework);
+   // oos.writeObject(validator);
+//    oos.writeObject(scripts);
+    
+    }
+     
+   
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+
+    //this.actionManager = (ActionManager)ois.readObject();
+   // this.table = (ScriptTable)ois.readObject();
+    this.scriptNum = ois.readInt();
+  //  this.framework = (IFramework)ois.readObject();
+   // this.scripts = (Vector)ois.readObject();
+    }  
+    
 }
