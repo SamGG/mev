@@ -4,13 +4,14 @@ All rights reserved.
  */
 /*
  * $RCSfile: SlideData.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-27 22:19:13 $
+ * $Revision: 1.5 $
+ * $Date: 2004-06-11 18:51:22 $
  * $Author: braisted $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
+import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Properties;
 
@@ -40,6 +41,11 @@ public class SlideData extends Vector implements ISlideData, ISlideMetaData, jav
     private int dataType = IData.DATA_TYPE_TWO_INTENSITY;
     //   boolean [] goodValues;
     
+    //Support multiple sample labels
+    private String sampleLabelKey = "Default Slide Name";
+    private Hashtable sampleLabels;
+    private Vector sampleLabelKeys;
+    
     /**
      * Constructs a <code>SlideData</code> which is a copy of specified original.
      */
@@ -54,6 +60,9 @@ public class SlideData extends Vector implements ISlideData, ISlideMetaData, jav
         for (int i = 0; i < original.getSize(); i++) {
             addElement(original.getSlideDataElement(i).copy());
         }
+        sampleLabelKey = "Default Slide Name";
+        sampleLabelKeys = original.getSlideDataKeys();
+        sampleLabels = original.getSlideDataLabels();        
     }
     
     /**
@@ -63,6 +72,9 @@ public class SlideData extends Vector implements ISlideData, ISlideMetaData, jav
         super(rows * columns);
         this.rows = rows;
         this.columns = columns;
+        sampleLabelKey = "Default Slide Name";
+        sampleLabelKeys = new Vector();
+        sampleLabels = new Hashtable();
     }
     
     /**
@@ -72,6 +84,9 @@ public class SlideData extends Vector implements ISlideData, ISlideMetaData, jav
         super(size);
         rows = -1;
         columns = -1;
+        sampleLabelKey = "Default Slide Name";
+        sampleLabelKeys = new Vector();
+        sampleLabels = new Hashtable();
     }
     
     /**
@@ -182,8 +197,8 @@ public class SlideData extends Vector implements ISlideData, ISlideMetaData, jav
      * Returns a ratio of specified values.
      */
     public final float getRatio(float numerator, float denominator, int logState) {
-
-        if(dataType == IData.DATA_TYPE_RATIO_ONLY)         
+        
+        if(dataType == IData.DATA_TYPE_RATIO_ONLY)
             return numerator;
         
         float ratio;
@@ -279,31 +294,58 @@ public class SlideData extends Vector implements ISlideData, ISlideMetaData, jav
     /**
      * Sets a microarray name.
      */
-    public void setSlideDataName(String slideDataName) {this.slideDataName = slideDataName;}
+    public void setSlideDataName(String slideDataName) {
+        this.slideDataName = slideDataName;
+        String key = "Default Slide Name";
+        sampleLabelKey = key;
+        sampleLabelKeys.addElement(key);
+        sampleLabels.put(key, slideDataName);
+    }
+    
+    
+    /**
+     *  Sets the slide label keys and hash table
+     */
+    public void setSlideDataLabels(Vector keys, Hashtable namesHash) {
+        this.sampleLabelKeys = keys;
+        this.sampleLabels = namesHash;
+    }
+    
     
     /**
      *  sets boolean to indicate to abbr file and data name
      */
     public void toggleNameLength(){
-        System.out.println("toggle name length");
         this.abbrName = (!this.abbrName);
     }
+    
     
     /**
      * Returns the name of a microarray.
      */
     public String getSlideDataName() {
+        if(sampleLabelKey == null)
+            System.out.println("NULLLLL SAMPLE LABEL KEY");
+        String name = (String)this.sampleLabels.get(this.sampleLabelKey);
+
+        if(name == null)
+            return " ";
+        
         if(!this.abbrName)
-            return this.slideDataName;
+            return name;
         else{
-            if(this.slideDataName.length() < 26)
-                return this.slideDataName;
-            return this.slideDataName.substring(0, 25)+"...";
+            if(name.length() < 26)
+                return name;
+            return name.substring(0, 25)+"...";
         }
     }
     
     public String getFullSlideDataName() {
-        return this.slideDataName;
+        String name = (String)this.sampleLabels.get(this.sampleLabelKey);
+        if(name == null)
+            return " ";
+        else
+            return name;
     }
     
     /**
@@ -785,7 +827,7 @@ public class SlideData extends Vector implements ISlideData, ISlideMetaData, jav
                 CY5 = (float)(100000.0*Math.pow(2.0d, CY5));
                 // if CY5 overflows, then set to zero and force no evaluation
                 if(CY5 == Float.POSITIVE_INFINITY || CY5 == Float.NEGATIVE_INFINITY)
-                    CY3 = CY5 = 0; 
+                    CY3 = CY5 = 0;
             }
             
             if(CY3 != 0 && CY5 != 0){
@@ -801,12 +843,12 @@ public class SlideData extends Vector implements ISlideData, ISlideMetaData, jav
         System.arraycopy(cy3, 0, goodCy3, 0, n);
         System.arraycopy(cy5, 0, goodCy5, 0, n);
         System.arraycopy(metaCombo, 0, metaCombo, 0, n);
-
-       // ColumnWorker cw = new ColumnWorker(goodCy3.length);
+        
+        // ColumnWorker cw = new ColumnWorker(goodCy3.length);
         //cw.setColOneArray(goodCy3);
         //cw.setColTwoArray(goodCy5);
         
-       // return cw;        
+        // return cw;
         return new ColumnWorker(goodCy3, goodCy5, metaCombo);
     }
     
@@ -1040,5 +1082,38 @@ public class SlideData extends Vector implements ISlideData, ISlideMetaData, jav
         System.out.println(contents);
     }
     
+    /**
+     * Returns the slide name keys.
+     */
+    public Vector getSlideDataKeys() {
+        return this.sampleLabelKeys;
+    }
+    
+    /**
+     * Returns the slide name keys and pairs
+     */
+    public Hashtable getSlideDataLabels() {
+        return this.sampleLabels;
+    }
+    
+    /** Sets the current label index.
+     */
+    public void setDataLabelKey(String key) {
+        this.sampleLabelKey = key;
+    }
+    
+    /** Adds a new key and label value
+     */
+    public void addNewSampleLabel(String label, String value) {
+        if(!sampleLabelKeys.contains(label))
+            this.sampleLabelKeys.addElement(label);
+        this.sampleLabels.put(label, value);
+    }
+    
+    /** Returns the detection status for the gene specified, Affy support
+     */
+    public String getDetection(int row) {
+        return this.getSlideDataElement(row).getDetection();
+    }
     
 }

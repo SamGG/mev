@@ -1,11 +1,11 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayData.java,v $
- * $Revision: 1.8 $
- * $Date: 2004-03-02 19:35:53 $
+ * $Revision: 1.9 $
+ * $Date: 2004-06-11 18:51:22 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -17,6 +17,7 @@ import java.awt.event.*;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.Vector;
 
 import java.io.Serializable;
 import java.io.ObjectInputStream;
@@ -81,6 +82,15 @@ public class MultipleArrayData implements IData, java.io.Serializable {
     private ClusterRepository expClusterRepository;
     
     private int logState = LOG;
+    
+    /**
+     *  Sets the data objects feature list
+     */
+    public void setFeaturesList(ArrayList list) {
+        this.featuresList = list;
+        //**update the experiment object
+        this.experiment = this.createExperiment();
+    }
     
     /**
      * Sets the geneClusterRepository
@@ -325,12 +335,76 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         return((ISlideData)featuresList.get(column)).getSlideDataName();
     }
     
+    /** Sets the experiment label index for the collection of features
+     */
+    public void setSampleLabelKey(String key) {
+        for(int i = 0; i < featuresList.size(); i++) {
+            ((ISlideData)featuresList.get(i)).setDataLabelKey(key);
+        }        
+    }    
+    
     /**
      * Returns full feature name.
      */
     public String getFullSampleName(int column) {
         return((ISlideData)featuresList.get(column)).getFullSlideDataName();
     }
+    
+    public Vector getSlideDataNameKeys(int column) {
+             return((ISlideData)featuresList.get(column)).getSlideDataKeys();   
+    }
+    
+    /**
+     * Returns the key vector for the sample with the longest sample name key list
+     */
+    public Vector getSlideNameKeyVectorUnion() {
+        Vector keyVector;
+        Vector fullKeyVector = new Vector();
+        String key;
+        for( int i = 0; i < featuresList.size(); i++) {
+            keyVector = ((ISlideData)featuresList.get(i)).getSlideDataKeys();
+            for(int j = 0; j < keyVector.size(); j++) {
+                key = (String)(keyVector.elementAt(j));
+                if(!fullKeyVector.contains(key))
+                    fullKeyVector.addElement(key);                
+            }
+        }
+        return fullKeyVector;
+    }
+    
+    
+    /**
+     * Returns the key vector for the sample with the longest sample name key list
+     */
+    public String [] getSlideNameKeyArray() {
+        Vector keyVector;
+        Vector fullKeyVector = new Vector();
+        String key;
+        for( int i = 0; i < featuresList.size(); i++) {
+            keyVector = ((ISlideData)featuresList.get(i)).getSlideDataKeys();
+            for(int j = 0; j < keyVector.size(); j++) {
+                key = (String)(keyVector.elementAt(j));
+                if(!fullKeyVector.contains(key))
+                    fullKeyVector.addElement(key);                
+            }
+        }
+        
+        String [] keys = new String[fullKeyVector.size()];
+        for(int i = 0 ; i < keys.length; i++) {
+            keys[i] = (String)(fullKeyVector.elementAt(i));
+        }
+        return keys;
+    }
+    
+    
+    public void addNewExperimentLabel(String key, String [] values) {
+        ISlideData slideData;
+        
+        for(int i = 0; i < featuresList.size(); i++) {
+           getFeature(i).addNewSampleLabel(key, values[i]);;            
+        }
+    }
+    
     
     /**
      * Returns an element attribute for specified row and
@@ -1248,12 +1322,14 @@ public class MultipleArrayData implements IData, java.io.Serializable {
                 name = this.getSampleName(slide);
                 if(name.endsWith("...")){
                     toggleExptNameLength();
-                    slideData.setSlideDataName(this.getSampleName(slide));
+                    
+                    slideData.setSlideDataLabels(this.getFeature(slide).getSlideDataKeys(), this.getFeature(slide).getSlideDataLabels());
                     ((SlideData) slideData).setSlideFileName(this.getSampleName(slide));
                     
                     toggleExptNameLength();
                 } else{
-                    slideData.setSlideDataName(this.getSampleName(slide));
+
+                    slideData.setSlideDataLabels(this.getFeature(slide).getSlideDataKeys(), this.getFeature(slide).getSlideDataLabels());
                     ((SlideData) slideData).setSlideFileName(this.getSampleName(slide));
                 }
                 
@@ -1272,12 +1348,12 @@ public class MultipleArrayData implements IData, java.io.Serializable {
                 name = this.getSampleName(slide);
                 if(name.endsWith("...")){
                     toggleExptNameLength();
-                    slideData.setSlideDataName(this.getSampleName(slide));
+                    slideData.setSlideDataLabels(this.getFeature(slide).getSlideDataKeys(), this.getFeature(slide).getSlideDataLabels());
                     ((FloatSlideData) slideData).setSlideFileName(this.getSampleName(slide));
                     
                     toggleExptNameLength();
                 } else{
-                    slideData.setSlideDataName(this.getSampleName(slide));
+                    slideData.setSlideDataLabels(this.getFeature(slide).getSlideDataKeys(), this.getFeature(slide).getSlideDataLabels());
                     ((FloatSlideData) slideData).setSlideFileName(this.getSampleName(slide));
                 }
                 
@@ -1322,11 +1398,11 @@ public class MultipleArrayData implements IData, java.io.Serializable {
                 name = this.getSampleName(slideIndex);
                 if(name.endsWith("...")){
                     toggleExptNameLength();
-                    slideData.setSlideDataName(this.getSampleName(slideIndex));
+                    slideData.setSlideDataLabels(this.getFeature(slide).getSlideDataKeys(), this.getFeature(slide).getSlideDataLabels());
                     ((SlideData) slideData).setSlideFileName(this.getSampleName(slideIndex));
                     toggleExptNameLength();
                 } else{
-                    slideData.setSlideDataName(this.getSampleName(slideIndex));
+                    slideData.setSlideDataLabels(this.getFeature(slide).getSlideDataKeys(), this.getFeature(slide).getSlideDataLabels());
                     ((SlideData) slideData).setSlideFileName(this.getSampleName(slideIndex));
                 }
                 
@@ -1343,11 +1419,11 @@ public class MultipleArrayData implements IData, java.io.Serializable {
                 name = this.getSampleName(slideIndex);
                 if(name.endsWith("...")){
                     toggleExptNameLength();
-                    slideData.setSlideDataName(this.getSampleName(slideIndex));
+                    slideData.setSlideDataLabels(this.getFeature(slide).getSlideDataKeys(), this.getFeature(slide).getSlideDataLabels());
                     ((FloatSlideData) slideData).setSlideFileName(this.getSampleName(slideIndex));
                     toggleExptNameLength();
                 } else{
-                    slideData.setSlideDataName(this.getSampleName(slideIndex));
+                    slideData.setSlideDataLabels(this.getFeature(slide).getSlideDataKeys(), this.getFeature(slide).getSlideDataLabels());
                     ((FloatSlideData) slideData).setSlideFileName(this.getSampleName(slideIndex));
                 }
                 for(int spot = 0; spot < rowIndices.length; spot++){
@@ -1662,5 +1738,6 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         //private ClusterRepository expClusterRepository;
     }
     
+
     
 }

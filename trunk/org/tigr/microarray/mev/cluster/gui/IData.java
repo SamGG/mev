@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: IData.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-15 15:52:01 $
+ * $Revision: 1.3 $
+ * $Date: 2004-06-11 18:52:43 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -103,6 +103,11 @@ public interface IData {
      * Returns full feature name.
      */
     public String getFullSampleName(int column);
+    
+    /**
+     * Sets the experiment label index for the collection of features
+     */
+    public void setSampleLabelKey(String key);
     
     /**
      * Returns an element attribute.
@@ -221,8 +226,6 @@ public interface IData {
      * Returns an annotation array for the provided indices based on annotation key
      */
     public String [] getAnnotationList(String fieldName, int [] indices);
-    
-     
-    
+        
     
 }

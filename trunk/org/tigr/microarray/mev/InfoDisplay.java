@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: InfoDisplay.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-04-09 21:36:28 $
+ * $Revision: 1.6 $
+ * $Date: 2004-06-11 18:51:22 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -111,6 +111,7 @@ public class InfoDisplay extends ActionInfoDialog {
         show();
     }
     
+    /*
     private String createMessage(ISlideDataElement element) {
         int stringLength = 0;
         int trueRow = element.getRow(ISlideDataElement.BASE);
@@ -131,11 +132,11 @@ public class InfoDisplay extends ActionInfoDialog {
         else
             logRatio = (float)(Math.log(ratio)/Math.log(2.0));
 
-        String message = "<html><body bgcolor = \"#FFFFCC\"><basefont face = \"Arial\"><h3>Location and Intensities</h3><table border=2 cellpadding=4 valign=top>";
+        String message = "<html><body bgcolor = \"#FFFFCC\"><basefont face = \"Arial\"><table cellpadding=4 valign=top><th colspan=2>Location and Intensities</th>";
         
         if(dataType == this.data.DATA_TYPE_TWO_INTENSITY){
             message += "<tr><td>Row</td><td>" + trueRow + "</td></tr>"+
-        "<tr><td>Column</td><td>" + trueColumn + "</td></tr>";
+            "<tr><td>Column</td><td>" + trueColumn + "</td></tr>";
             message += "<tr><td>Cy3</td><td><b>" + cy3 + "</b></td></tr>"+
             "<tr><td>Cy5</td><td><b>" + cy5 + "</b></td></tr>";
             message += "<tr><td>Ratio</td><td>" + ratio + "</td></tr>"+
@@ -170,15 +171,30 @@ public class InfoDisplay extends ActionInfoDialog {
             message += "<tr><td>File Index</td><td>" + trueRow + "</td></tr>";
             message += "<tr><td>Value</td><td><b>" + logRatio + "</b></td></tr>";
         }
-        message += "</table>";
-        //annotation
+       // message += "</table>";
+
+        //experiment annotation
+        Vector keys = slideData.getSlideDataKeys();
+        Hashtable expLabels =  slideData.getSlideDataLabels();
+        message += "<th colspan=2>Experiment Annotation</th/>";
+        String key, value;
+        for(int i = 0; i < keys.size(); i++){
+            key = (String)(keys.elementAt(i));
+            value = (String)(expLabels.get(key));
+            if(value == null)
+                value = "";
+            message += "<tr valign=top><td>" + key + "</td><td>" + value + "</td></tr>";         
+        }
+      //  message += "</table>";
+        
+        //gene annotation
         String[] fieldNames = TMEV.getFieldNames();
         if(fieldNames != null && fieldNames.length > 0){
-            message += "<h3>Annotation</h3><table border=2 cellpadding=4>";
+            message += "<th>Gene Annotation</th>";
             for (int i = 0; i < fieldNames.length; i++) {
                 message += "<tr valign=top><td>" + fieldNames[i] + "</td><td>" + element.getFieldAt(i) + "</td></tr>";
             }
-            message += "</table>";
+          //  message += "</table>";
         }
         
         //spot specific information
@@ -186,15 +202,229 @@ public class InfoDisplay extends ActionInfoDialog {
         if(spotData != null){
             String [] spotInfoLabels = spotData.getSpotInformationHeader();
             String [] info = spotData.getSpotInformationArray(probe);
-            message += "<h3>Spot Information</h3><table border=2 cellpadding=4>";
+            message += "<th colspan=2>Spot Information</th>";
             for (int i = 0; i < spotInfoLabels.length; i++) {
                 message += "<tr valign=top><td>" + spotInfoLabels[i] + "</td><td>" + info[i] + "</td></tr>";
             }
-            message += "</table>";
+           // message += "</table>";
         }
+        message += "</table>";
         message += "</basefont></body></html>";
         return message;
     }
+    */
+    
+    /* with italics 
+    private String createMessage(ISlideDataElement element) {
+        int stringLength = 0;
+        int trueRow = element.getRow(ISlideDataElement.BASE);
+        int trueColumn = element.getColumn(ISlideDataElement.BASE);
+        float cy3 = this.slideData.getCY3(this.probe);
+        float cy5 = this.slideData.getCY5(this.probe);
+        
+        //	float cy3 = element.getTrueIntensity(ISlideDataElement.CY3);
+        //  float cy5 = element.getTrueIntensity(ISlideDataElement.CY5);
+        //    float ratio = element.getTrueRatio(ISlideDataElement.CY5, ISlideDataElement.CY3, LINEAR);
+        //    float logRatio = element.getTrueRatio(ISlideDataElement.CY5, ISlideDataElement.CY3, LOG);
+        float ratio = cy5/cy3;
+        
+        float logRatio;
+        
+        if(cy3 < 0 || cy5 < 0) //for data input where neg. is posible.
+            logRatio = Float.NaN;
+        else
+            logRatio = (float)(Math.log(ratio)/Math.log(2.0));
+
+        String message = "<html><body bgcolor = \"#FFFFCC\"><basefont face = \"Arial\"><table cellpadding=4 valign=top><th colspan=2 halign=left>Location and Intensities</th>";
+        
+        if(dataType == this.data.DATA_TYPE_TWO_INTENSITY){
+            message += "<tr><td><i>Row</i></td><td>" + trueRow + "</td></tr>"+
+            "<tr><td><i>Column</i></td><td>" + trueColumn + "</td></tr>";
+            message += "<tr><td>Cy3</td><td><b>" + cy3 + "</b></td></tr>"+
+            "<tr><td><i>Cy5</i></td><td><b>" + cy5 + "</b></td></tr>";
+            message += "<tr><td><i>Ratio</i></td><td>" + ratio + "</td></tr>"+
+            "<tr><td><i>log2(Ratio)</i></td><td><b>" + logRatio + "</b></td></tr>";
+        } else if(dataType == this.data.DATA_TYPE_AFFY_ABS){
+            message += "<tr><td><i>File Index</i></td><td>+" + trueRow + "</td></tr>";
+            message += "<tr><td><i>Affy Loading Mode</i></td><td>Absolute</td></tr>";
+            message += "<tr><td><i>Intensity<i>/</td><td><b>" + cy5 + "</b></td></tr>";
+        } else if(dataType == this.data.DATA_TYPE_AFFY_REF){
+            message += "<tr><td><i>File Index</i></td><td>" + trueRow + "</td></tr>";
+            message += "<tr><td><i>Affy Loading Mode</i></td><td>Reference</td></tr>";
+            message += "<tr><td><i>Sample Intensity</i></td><td><b>" + cy5 + "</b></td></tr>";
+            message += "<tr><td><i>Ref. Intensity</i></td><td><b>" + cy3 + "</b></td></tr>";
+            message += "<tr><td><i>Ratio (Sample/Ref.)</i></td><td>" + ratio + "</td></tr>"+
+            "<tr><td><i>log2(Ratio)</i></td><td><b>" + logRatio + "</b></td></tr>";
+        } else if(dataType == this.data.DATA_TYPE_AFFY_MEAN){
+            message += "<tr><td><i>File Index</i></td><td>" + trueRow + "</td></tr>";
+            message += "<tr><td><i>Affy Loading Mode</i></td><td>Array Set Mean Int. as Ref.</td></tr>";
+            message += "<tr><td><i>Sample Intensity</i></td><td><b>" + cy5 + "</b></td></tr>";
+            message += "<tr><td><i>Array Set Mean Int.</i></td><td><b>" + cy3 + "</b></td></tr>";
+            message += "<tr><td><i>Ratio (Sample/Mean)</i></td><td>" + ratio + "</td></tr>"+
+            "<tr><td><i>log2(Ratio)</i></td><td><b>" + logRatio + "</b></td></tr>";
+        } else if(dataType == this.data.DATA_TYPE_AFFY_MEDIAN){
+            message += "<tr><td><i>File Index</i></td><td>" + trueRow + "</td></tr>";
+            message += "<tr><td><i>Affy Loading Mode</i></td><td>Spot Median as Ref.</td></tr>";
+            message += "<tr><td><i>Sample Intensity</i></td><td><b>" + cy5 + "</b></td></tr>";
+            message += "<tr><td><i>Spot Median Intensity</i></td><td><b>" + cy3 + "</b></td></tr>";
+            message += "<tr><td><i>Ratio (Sample/Median)</i></td><td>" + ratio + "</td></tr>"+
+            "<tr><td><i>log2(Ratio)</i></td><td><b>" + logRatio + "</b></td></tr>";
+        } else { //ratio only, like stanford
+            logRatio = cy5;
+            message += "<tr><td><i>File Index</i></td><td>" + trueRow + "</td></tr>";
+            message += "<tr><td><i>Value</i></td><td><b>" + logRatio + "</b></td></tr>";
+        }
+       // message += "</table>";
+
+        //experiment annotation
+        Vector keys = slideData.getSlideDataKeys();
+        Hashtable expLabels =  slideData.getSlideDataLabels();
+        message += "<th colspan=2 halign=left>Experiment Annotation</th/>";
+        String key, value;
+        for(int i = 0; i < keys.size(); i++){
+            key = (String)(keys.elementAt(i));
+            value = (String)(expLabels.get(key));
+            if(value == null)
+                value = "";
+            message += "<tr valign=top><td><i>" + key + "</i></td><td>" + value + "</td></tr>";         
+        }
+      //  message += "</table>";
+        
+        //gene annotation
+        String[] fieldNames = TMEV.getFieldNames();
+        if(fieldNames != null && fieldNames.length > 0){
+            message += "<th colspan=2 halign=left>Gene Annotation</th>";
+            for (int i = 0; i < fieldNames.length; i++) {
+                message += "<tr valign=top><td><i>" + fieldNames[i] + "</i></td><td>" + element.getFieldAt(i) + "</td></tr>";
+            }
+          //  message += "</table>";
+        }
+        
+        //spot specific information
+        SpotInformationData spotData = this.slideData.getSpotInformationData();
+        if(spotData != null){
+            String [] spotInfoLabels = spotData.getSpotInformationHeader();
+            String [] info = spotData.getSpotInformationArray(probe);
+            message += "<th colspan=2 halign=left>Spot Information</th>";
+            for (int i = 0; i < spotInfoLabels.length; i++) {
+                message += "<tr valign=top><td><i>" + spotInfoLabels[i] + "</i></td><td>" + info[i] + "</td></tr>";
+            }
+           // message += "</table>";
+        }
+        message += "</table>";
+        message += "</basefont></body></html>";
+        return message;
+    }
+     **/
+    
+        private String createMessage(ISlideDataElement element) {
+        int stringLength = 0;
+        int trueRow = element.getRow(ISlideDataElement.BASE);
+        int trueColumn = element.getColumn(ISlideDataElement.BASE);
+        float cy3 = this.slideData.getCY3(this.probe);
+        float cy5 = this.slideData.getCY5(this.probe);
+        
+        //	float cy3 = element.getTrueIntensity(ISlideDataElement.CY3);
+        //  float cy5 = element.getTrueIntensity(ISlideDataElement.CY5);
+        //    float ratio = element.getTrueRatio(ISlideDataElement.CY5, ISlideDataElement.CY3, LINEAR);
+        //    float logRatio = element.getTrueRatio(ISlideDataElement.CY5, ISlideDataElement.CY3, LOG);
+        float ratio = cy5/cy3;
+        
+        float logRatio;
+        
+        if(cy3 < 0 || cy5 < 0) //for data input where neg. is posible.
+            logRatio = Float.NaN;
+        else
+            logRatio = (float)(Math.log(ratio)/Math.log(2.0));
+
+        String message = "<html><body bgcolor = \"#FFFFCC\"><basefont face = \"Arial\"><table cellpadding=4 valign=top><th colspan=2 align=left valign=center><font size=6>Location and Intensities</font></th>";
+        
+        if(dataType == this.data.DATA_TYPE_TWO_INTENSITY){
+            message += "<tr><td><i>Row</i></td><td>" + trueRow + "</td></tr>"+
+            "<tr><td><i>Column</i></td><td>" + trueColumn + "</td></tr>";
+            message += "<tr><td>Cy3</td><td><b>" + cy3 + "</b></td></tr>"+
+            "<tr><td><i>Cy5</i></td><td><b>" + cy5 + "</b></td></tr>";
+            message += "<tr><td><i>Ratio</i></td><td>" + ratio + "</td></tr>"+
+            "<tr><td><i>log2(Ratio)</i></td><td><b>" + logRatio + "</b></td></tr>";
+        } else if(dataType == this.data.DATA_TYPE_AFFY_ABS){
+            message += "<tr><td><i>File Index</i></td><td>+" + trueRow + "</td></tr>";
+            message += "<tr><td><i>Affy Loading Mode</i></td><td>Absolute</td></tr>";
+            message += "<tr><td><i>Intensity<i>/</td><td><b>" + cy5 + "</b></td></tr>";
+        } else if(dataType == this.data.DATA_TYPE_AFFY_REF){
+            message += "<tr><td><i>File Index</i></td><td>" + trueRow + "</td></tr>";
+            message += "<tr><td><i>Affy Loading Mode</i></td><td>Reference</td></tr>";
+            message += "<tr><td><i>Sample Intensity</i></td><td><b>" + cy5 + "</b></td></tr>";
+            message += "<tr><td><i>Ref. Intensity</i></td><td><b>" + cy3 + "</b></td></tr>";
+            message += "<tr><td><i>Ratio (Sample/Ref.)</i></td><td>" + ratio + "</td></tr>"+
+            "<tr><td><i>log2(Ratio)</i></td><td><b>" + logRatio + "</b></td></tr>";
+        } else if(dataType == this.data.DATA_TYPE_AFFY_MEAN){
+            message += "<tr><td><i>File Index</i></td><td>" + trueRow + "</td></tr>";
+            message += "<tr><td><i>Affy Loading Mode</i></td><td>Array Set Mean Int. as Ref.</td></tr>";
+            message += "<tr><td><i>Sample Intensity</i></td><td><b>" + cy5 + "</b></td></tr>";
+            message += "<tr><td><i>Array Set Mean Int.</i></td><td><b>" + cy3 + "</b></td></tr>";
+            message += "<tr><td><i>Ratio (Sample/Mean)</i></td><td>" + ratio + "</td></tr>"+
+            "<tr><td><i>log2(Ratio)</i></td><td><b>" + logRatio + "</b></td></tr>";
+        } else if(dataType == this.data.DATA_TYPE_AFFY_MEDIAN){
+            message += "<tr><td><i>File Index</i></td><td>" + trueRow + "</td></tr>";
+            message += "<tr><td><i>Affy Loading Mode</i></td><td>Spot Median as Ref.</td></tr>";
+            message += "<tr><td><i>Sample Intensity</i></td><td><b>" + cy5 + "</b></td></tr>";
+            message += "<tr><td><i>Spot Median Intensity</i></td><td><b>" + cy3 + "</b></td></tr>";
+            message += "<tr><td><i>Ratio (Sample/Median)</i></td><td>" + ratio + "</td></tr>"+
+            "<tr><td><i>log2(Ratio)</i></td><td><b>" + logRatio + "</b></td></tr>";
+        } else { //ratio only, like stanford
+            logRatio = cy5;
+            message += "<tr><td><i>File Index</i></td><td>" + trueRow + "</td></tr>";
+            message += "<tr><td><i>Value</i></td><td><b>" + logRatio + "</b></td></tr>";
+        }
+       // message += "</table>";
+
+        //experiment annotation
+        Vector keys = slideData.getSlideDataKeys();
+        Hashtable expLabels =  slideData.getSlideDataLabels();
+        message += "<th colspan=2 align=left valign=center><font size=6>Experiment Annotation</font></header></th/>";
+        String key, value;
+        for(int i = 0; i < keys.size(); i++){
+            key = (String)(keys.elementAt(i));
+            value = (String)(expLabels.get(key));
+            if(value == null)
+                value = "";
+            message += "<tr valign=top><td><i>" + key + "</i></td><td>" + value + "</td></tr>";         
+        }
+      //  message += "</table>";
+        
+        //gene annotation
+        String[] fieldNames = TMEV.getFieldNames();
+        if(fieldNames != null && fieldNames.length > 0){
+            message += "<th colspan=2 align=left valign=center><font size=6>Gene Annotation</font></th>";
+            for (int i = 0; i < fieldNames.length; i++) {                
+                
+              //pcahan change to call getDetection on the element rather than the field  
+              if(fieldNames[i].equals("Detection")){
+                message += "<tr valign=top><td><i>" + fieldNames[i] + "</i></td><td>" + element.getDetection() + "</td></tr>";
+              }
+              else{
+                message += "<tr valign=top><td><i>" + fieldNames[i] + "</i></td><td>" + element.getFieldAt(i) + "</td></tr>";  
+              }               
+           }
+          //  message += "</table>";
+        }
+        
+        //spot specific information
+        SpotInformationData spotData = this.slideData.getSpotInformationData();
+        if(spotData != null){
+            String [] spotInfoLabels = spotData.getSpotInformationHeader();
+            String [] info = spotData.getSpotInformationArray(probe);
+            message += "<th colspan=2 align=left valign=center><font size=6>Spot Information</font></th>";
+            for (int i = 0; i < spotInfoLabels.length; i++) {
+                message += "<tr valign=top><td><i>" + spotInfoLabels[i] + "</i></td><td>" + info[i] + "</td></tr>";
+            }
+           // message += "</table>";
+        }
+        message += "</table>";
+        message += "</basefont></body></html>";
+        return message;
+    }
+    
     
     public void createGeneGraph() {
         JFrame graphFrame;
