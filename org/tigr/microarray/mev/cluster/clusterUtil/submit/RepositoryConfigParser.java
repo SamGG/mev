@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: RepositoryConfigParser.java,v $
- * $Revision: 1.1 $
- * $Date: 2004-07-22 15:29:11 $
+ * $Revision: 1.2 $
+ * $Date: 2004-07-27 19:57:55 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -30,25 +30,19 @@ import javax.swing.JOptionPane;
 import org.apache.xerces.parsers.DOMParser;
 import org.apache.xerces.dom.DOMImplementationImpl;
 
-//import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-//import org.w3c.dom.Comment;
-//import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-//import org.w3c.dom.Text;
-
-//import org.w3c.dom.traversal.DocumentTraversal;
-//import org.w3c.dom.traversal.NodeFilter;
-//import org.w3c.dom.traversal.NodeIterator;
-
-import org.xml.sax.helpers.DefaultHandler;
 
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
+
+import org.xml.sax.helpers.DefaultHandler;
+
+import org.tigr.microarray.mev.TMEV;
 
 /**
  *
@@ -75,7 +69,7 @@ public class RepositoryConfigParser extends DefaultHandler {
     public boolean parseSubmissionConfigFile() {
         
         try {
-            File file = new File(System.getProperty("user.dir")+"\\config\\archive_submission_config.xml");
+            File file = TMEV.getConfigurationFile("archive_submission_config.xml");
 
             if(file == null || !file.exists()) {
                 JOptionPane.showMessageDialog(new JFrame(), "Error during submission configuration.  The file archive_submission_config.xml which contains\n"+
