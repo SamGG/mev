@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLViewer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-09 17:28:18 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -76,13 +76,18 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 
 public class HCLViewer extends JPanel implements IViewer {
     
-    protected static final String STORE_CLUSTER_CMD = "store-cluster-cmd";    
+    protected static final String STORE_CLUSTER_CMD = "store-cluster-cmd";
     protected static final String LAUNCH_NEW_SESSION_CMD = "launch-new-session-cmd";
     protected static final String SAVE_CLUSTER_CMD = "save-cluster-cmd";
     protected static final String DELETE_CLUSTER_CMD = "delete-cluster-cmd";
     protected static final String DELETE_ALL_CLUSTERS_CMD = "delete-all-clusters-cmd";
     protected static final String GENE_TREE_PROPERTIES_CMD = "gene-tree-properties-cmd";
     protected static final String SAMPLE_TREE_PROPERTIES_CMD = "sample-tree-properties-cmd";
+    
+    protected static final String SAVE_GENE_ORDER_CMD = "save-gene-order-cmd";
+    protected static final String SAVE_EXP_ORDER_CMD = "save-exp-order-cmd";
+    protected static final String SAVE_GENE_HEIGHT_CMD = "save-gene-height-cmd";
+    protected static final String SAVE_EXP_HEIGHT_CMD = "save-exp-height-cmd";
     
     // wrapped viewers
     /** component to draw an experiment data */
@@ -253,7 +258,7 @@ public class HCLViewer extends JPanel implements IViewer {
         addComponents(this.sampleTree, this.genesTree, this.expViewer.getContentComponent(), this.colorBar, this.annotationBar);
         this.popup = createJPopupMenu(listener);
     }
-
+    
     
     /**
      * Adds wrapped viewers.
@@ -273,7 +278,7 @@ public class HCLViewer extends JPanel implements IViewer {
     
     
     
-    protected IViewer createExperimentViewer(Experiment experiment, int[] features, HCLTreeData genes_result, HCLTreeData samples_result) {        
+    protected IViewer createExperimentViewer(Experiment experiment, int[] features, HCLTreeData genes_result, HCLTreeData samples_result) {
         int[][] clusters = createClusters(experiment, features, genes_result);
         int [] samples = getLeafOrder(samples_result, null);
         IViewer viewer;
@@ -372,7 +377,7 @@ public class HCLViewer extends JPanel implements IViewer {
         this.data = framework.getData();
         this.expViewer.onSelected(framework);
         
-     //   onDataChanged(this.data);
+        //   onDataChanged(this.data);
         
         Object userObject = framework.getUserObject();
         this.clusterIndex = (userObject != null ? ((Integer)userObject).intValue():0);
@@ -504,6 +509,33 @@ public class HCLViewer extends JPanel implements IViewer {
         menuItem.setActionCommand(SAMPLE_TREE_PROPERTIES_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
+        
+        menu.addSeparator();
+        
+        menuItem = new JMenuItem("Save Gene Node Heights", GUIFactory.getIcon("save_as16.gif"));
+        menuItem.setEnabled(this.genesTree != null);
+        menuItem.setActionCommand(SAVE_GENE_HEIGHT_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        menuItem = new JMenuItem("Save Gene Order", GUIFactory.getIcon("save_as16.gif"));
+        menuItem.setEnabled(this.genesTree != null);
+        menuItem.setActionCommand(SAVE_GENE_ORDER_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        menuItem = new JMenuItem("Save Experiment Node Heights", GUIFactory.getIcon("save_as16.gif"));
+        menuItem.setEnabled(this.sampleTree != null);
+        menuItem.setActionCommand(SAVE_EXP_HEIGHT_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        menuItem = new JMenuItem("Save Experimnet Order", GUIFactory.getIcon("save_as16.gif"));
+        menuItem.setEnabled(this.sampleTree != null);
+        menuItem.setActionCommand(SAVE_EXP_ORDER_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
     }
     
     /**
@@ -604,7 +636,7 @@ public class HCLViewer extends JPanel implements IViewer {
         return null;
     }
     
-
+    
     
     /**
      * Removes cluster for specified root.
@@ -674,8 +706,8 @@ public class HCLViewer extends JPanel implements IViewer {
                 this.experimentClusters.add(this.selectedCluster);
         }
         
-        this.selectedCluster.color = newColor;                
-
+        this.selectedCluster.color = newColor;
+        
         if(!this.isExperimentCluster){
             if(!this.selectedCluster.isGeneCluster)
                 this.selectedCluster.color = ((ExperimentViewer)(this.expViewer)).setHCLClusterColor(getSubTreeElements(),this.selectedCluster.color, this.selectedCluster.isGeneCluster);
@@ -689,9 +721,9 @@ public class HCLViewer extends JPanel implements IViewer {
                 this.selectedCluster.color = ((ExperimentClusterViewer)(this.expViewer)).setHCLClusterColor(getArrayMappedToData(getSubTreeElements()),this.selectedCluster.color, this.selectedCluster.isGeneCluster);
         }
         
-                //    if(!notANewNode)
+        //    if(!notANewNode)
         removeSubTreeClusters(this.selectedCluster); //need to remove clusters from the list if they are sub-trees
-
+        
         if(selectedCluster.isGeneCluster)
             this.colorBar.onClustersChanged(this.clusters);
         
@@ -725,7 +757,7 @@ public class HCLViewer extends JPanel implements IViewer {
         }
     }
     
-    private boolean isSubTree(HCLCluster parent, HCLCluster child){        
+    private boolean isSubTree(HCLCluster parent, HCLCluster child){
         if( parent.size < child.size )
             return false;
         if( child.firstElem >= parent.firstElem &&
@@ -772,9 +804,9 @@ public class HCLViewer extends JPanel implements IViewer {
         for(int i = clusterGone.length-1; i >= 0; i--){
             if(clusterGone[i]){
                 this.genesTree.setNodeColor(((HCLCluster)this.clusters.get(i)).root, null);
-             //   this.clusters.remove(i);
+                //   this.clusters.remove(i);
             }
-        }        
+        }
         int expIndex;
         for( int i = 0; i < this.experimentClusters.size() ; i++){
             currCluster = (HCLCluster)this.experimentClusters.get(i);
@@ -791,7 +823,7 @@ public class HCLViewer extends JPanel implements IViewer {
         for(int i = expClusterGone.length-1; i >= 0; i--){
             if(expClusterGone[i]){
                 this.sampleTree.setNodeColor(((HCLCluster)this.experimentClusters.get(i)).root, null);
-              //  this.experimentClusters.remove(i);
+                //  this.experimentClusters.remove(i);
             }
         }
     }
@@ -827,6 +859,32 @@ public class HCLViewer extends JPanel implements IViewer {
         return elements;
     }
     
+    public void saveGenesOrder(){
+        try{
+            ExperimentUtil.saveExperiment(getFrame(), this.experiment, this.data, this.genesOrder);
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(getFrame(), "Can not save data!", e.toString(), JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+    
+    public void saveExperimentOrder(){
+        try{
+            if(!this.isExperimentCluster)
+                ExperimentUtil.saveExperimentCluster(getFrame(), this.experiment, this.data, this.samplesOrder);
+            else{
+                int elements[] = new int[this.sampleClusters[this.clusterIndex].length];
+                for (int i= 0; i< this.sampleClusters[this.clusterIndex].length ; i++) {
+                    elements[i] = this.sampleClusters[this.clusterIndex][i];
+                }
+                ExperimentUtil.saveExperimentCluster(getFrame(), this.experiment, this.data, elements);
+            }
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(getFrame(), "Can not save data!", e.toString(), JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+    
     /**
      * Saves cluster.
      */
@@ -851,7 +909,7 @@ public class HCLViewer extends JPanel implements IViewer {
     public void onDeleteCluster() {
         HCLCluster cluster;
         removeCluster(this.selectedCluster);
-
+        
         this.colorBar.onClustersChanged(this.clusters);
         if(this.selectedCluster.isGeneCluster){
             this.genesTree.setNodeColor(this.selectedCluster.root, null);
@@ -868,7 +926,7 @@ public class HCLViewer extends JPanel implements IViewer {
             this.sampleTree.setNodeColor(this.selectedCluster.root, null);
             this.data.setExperimentColor(getSubTreeElements(), null);
             this.framework.removeSubCluster(getSubTreeElements(), this.experiment, Cluster.EXPERIMENT_CLUSTER);
-             
+            
             // restore sub tree colors
             for (int i=0; i<this.experimentClusters.size(); i++) {
                 cluster = (HCLCluster)this.experimentClusters.get(i);
@@ -926,7 +984,7 @@ public class HCLViewer extends JPanel implements IViewer {
     /**
      *  Created viewers for clusters and places them on the analysis tree
      */
-    private void createAndAddClusterViews(HCLTree tree){        
+    private void createAndAddClusterViews(HCLTree tree){
         int k = tree.getNumberOfTerminalNodes();
         
         DefaultMutableTreeNode newNode;
@@ -987,7 +1045,7 @@ public class HCLViewer extends JPanel implements IViewer {
         if(!clusterGenes){
             data = data.transpose();
         }
-
+        
         FloatMatrix means = getMeans(data, clusters);
         FloatMatrix variances = getVariances(data, means, clusters);
         
@@ -1032,12 +1090,12 @@ public class HCLViewer extends JPanel implements IViewer {
     
     /**
      *  Calculates means for the clusters
-     */    
+     */
     private FloatMatrix getMeans(FloatMatrix data, int [][] clusters){
         FloatMatrix means = new FloatMatrix(clusters.length, data.getColumnDimension());
         for(int i = 0; i < clusters.length; i++){
             means.A[i] = getMeans(data, clusters[i]);
-        }        
+        }
         return means;
     }
     
@@ -1197,18 +1255,32 @@ public class HCLViewer extends JPanel implements IViewer {
         revalidate();
     }
     
-        /**
+    /**
      * Launches a new <code>MultipleExperimentViewer</code> containing the current cluster
      */
     public void launchNewSession(){
         if(this.selectedCluster == null)
             return;
         if(this.selectedCluster.isGeneCluster){
-            framework.launchNewMAV(getArrayMappedToData(getSubTreeElements()), this.experiment, "Multiple Experiment Viewer - Cluster Viewer", Cluster.GENE_CLUSTER);            
+            framework.launchNewMAV(getArrayMappedToData(getSubTreeElements()), this.experiment, "Multiple Experiment Viewer - Cluster Viewer", Cluster.GENE_CLUSTER);
         } else {
-            framework.launchNewMAV(getSubTreeElements(), this.experiment, "Multiple Experiment Viewer - Cluster Viewer", Cluster.EXPERIMENT_CLUSTER);                       
+            framework.launchNewMAV(getSubTreeElements(), this.experiment, "Multiple Experiment Viewer - Cluster Viewer", Cluster.EXPERIMENT_CLUSTER);
         }
     }
+    
+    /** Returns a component to be inserted into the scroll pane row header
+     */
+    public JComponent getRowHeaderComponent() {
+        return null;
+    }
+    
+    /** Returns the corner component corresponding to the indicated corner,
+     * posibly null
+     */
+    public JComponent getCornerComponent(int cornerIndex) {
+        return null;
+    }
+    
     /**
      * The class to listen to mouse, action and hcl tree events.
      */
@@ -1230,6 +1302,14 @@ public class HCLViewer extends JPanel implements IViewer {
                 onGeneTreeProperties();
             } else if (command.equals(SAMPLE_TREE_PROPERTIES_CMD)) {
                 onSampleTreeProperties();
+            } else if (command.equals(SAVE_GENE_ORDER_CMD)){
+                saveGenesOrder();
+            } else if (command.equals(SAVE_GENE_HEIGHT_CMD)){
+                genesTree.saveGeneNodeHeights();
+            } else if (command.equals(SAVE_EXP_ORDER_CMD)){
+                saveExperimentOrder();
+            } else if (command.equals(SAVE_EXP_HEIGHT_CMD)){
+                sampleTree.saveExperimentNodeHeights();
             }
         }
         
@@ -1258,7 +1338,7 @@ public class HCLViewer extends JPanel implements IViewer {
             int node = HCLViewer.this.selectedCluster == null ? -1 : HCLViewer.this.selectedCluster.root;
             setEnableMenuItem(STORE_CLUSTER_CMD, node >= 0);
             setEnableMenuItem(LAUNCH_NEW_SESSION_CMD, node >= 0);
-        //    setEnableMenuItem(SET_CLUSTER_TEXT_CMD, doesClusterExist() && node != -1 && HCLViewer.this.selectedCluster.isGeneCluster);
+            //    setEnableMenuItem(SET_CLUSTER_TEXT_CMD, doesClusterExist() && node != -1 && HCLViewer.this.selectedCluster.isGeneCluster);
             setEnableMenuItem(DELETE_CLUSTER_CMD, doesClusterExist());
             setEnableMenuItem(DELETE_ALL_CLUSTERS_CMD, doesClusterExist());
             setEnableMenuItem(SAVE_CLUSTER_CMD, HCLViewer.this.selectedCluster != null && HCLViewer.this.selectedCluster.root != -1);
