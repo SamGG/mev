@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: TtestInfoViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-01-21 21:40:04 $
+ * $Revision: 1.4 $
+ * $Date: 2004-01-21 21:43:40 $
  * $Author: nbhagaba $
  * $State: Exp $
  */
@@ -103,7 +103,7 @@ public class TtestInfoViewer extends ViewerAdapter {
 	int h_width = header.getPreferredSize().width;
         
         int y = 0;
-        
+        int test = 1;
 	if (c_width > h_width) {
 	    header.setPreferredSize(new Dimension(c_width, header.getPreferredSize().height));
 	} else {
