@@ -42,6 +42,8 @@ public class SAMDeltaInfoViewer extends ViewerAdapter implements java.io.Seriali
     private double[] deltaGrid, medNumFalse,false90th, FDRMedian, FDR90th;
     private int[] numSig;
     private JPopupMenu popup;
+    
+    //private SAMState localSAMState;
 
     /** Creates new SAMDeltaInfoViewer */
     public SAMDeltaInfoViewer(double[] deltaGrid, double[] medNumFalse, double[] false90th, int[] numSig, double[] FDRMedian, double[] FDR90th) {
@@ -51,7 +53,18 @@ public class SAMDeltaInfoViewer extends ViewerAdapter implements java.io.Seriali
         this.numSig = numSig;
         this.FDRMedian = FDRMedian;
         this.FDR90th = FDR90th;
+        /*
+        this.localSAMState = new SAMState();
         
+        System.out.println("Before new SAMState(): ");
+        System.out.println("SAMState.firstRun = " + SAMState.firstRun);
+        System.out.println("SAMState.groupAssignments.length = " + SAMState.groupAssignments.length);
+        SAMState localSAMState = new SAMState(); 
+        System.out.println("After new SAMState(): ");        
+        System.out.println("localSAMState.firstRun = " + localSAMState.firstRun);
+        System.out.println("localSAMState.groupAssignments.length = " + localSAMState.groupAssignments.length); 
+             
+         */  
 	header  = createHeader();
 	content = createContent();
 	setMaxWidth(content, header);   
@@ -61,11 +74,22 @@ public class SAMDeltaInfoViewer extends ViewerAdapter implements java.io.Seriali
     private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
         //oos.writeObject(this.deltaGrid);
         //oos.writeObject(this.medNumFalse);
+        //System.out.println("In writeObject()");
+        //System.out.println("SAMState.firstRun = " + SAMState.firstRun);
+        //System.out.println("SAMState.groupAssignments.length = " + SAMState.groupAssignments.length);  
+
+        oos.writeObject(new SAMState());
         oos.defaultWriteObject();
+        //oos.writeObject();
+        
     }
     
     private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        ois.readObject();
         ois.defaultReadObject();
+        //System.out.println("In readObject()");
+        //System.out.println("SAMState.firstRun = " + SAMState.firstRun);
+        //System.out.println("SAMState.groupAssignments.length = " + SAMState.groupAssignments.length);        
         header = createHeader();
         content = createContent();
         setMaxWidth(content, header);
