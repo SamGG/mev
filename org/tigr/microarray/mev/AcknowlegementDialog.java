@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: AcknowlegementDialog.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-10 21:12:39 $
+ * $Revision: 1.4 $
+ * $Date: 2004-04-14 16:56:35 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -25,6 +25,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -49,6 +51,7 @@ public class AcknowlegementDialog extends JDialog implements java.awt.print.Prin
     public AcknowlegementDialog(Frame parent, String labelText) {
         super(parent, "Contribution Acknowledgement :)", false);
         EventListener listener = new EventListener();
+        addWindowListener(listener);
         this.text = labelText;
         GBA gba = new GBA();
         Font font = new Font("serif", Font.PLAIN, 12);
@@ -113,9 +116,9 @@ public class AcknowlegementDialog extends JDialog implements java.awt.print.Prin
         "<td>DataNaut, Inc.</td>"+
         "<td>System architecture, module architecture, parallel processing system, primary module development (RN, TRN)</td></tr>"; 
         
-        html += "<tr valign=top><td>Stu Golub, Zaigang Liu</td>"+
+        html += "<tr valign=top><td>Stu Golub, Zaigang Liu, Jane Ruan, Minhas Siddiqui</td>"+
         "<td>Syntek Systems Corporation, Inc.</td>"+
-        "<td>Primary module development (CAST, FOM, GSH)</td></tr>"; 
+        "<td>Primary module development (CAST, FOM, GSH, GDM)</td></tr>"; 
      
         html += "<tr valign=top><td>Wei Liang</td>"+
         "<td>The Institute for Genomic Research</td>"+
@@ -127,7 +130,7 @@ public class AcknowlegementDialog extends JDialog implements java.awt.print.Prin
         
         html += "<tr valign=top><td>Patrick Cahan, Tim McCaffrey</td>"+
         "<td>The George Washington University</td>"+
-        "<td>Affymetrix data loader and filters</td></tr>"; 
+        "<td>Affymetrix data loader and filters, Affymetrix loader rework</td></tr>"; 
 
          html += "<tr valign=top><td>Todd Peterson</td>"+
         "<td>National Center for Genome Resources</td>"+
@@ -140,7 +143,19 @@ public class AcknowlegementDialog extends JDialog implements java.awt.print.Prin
         html += "<tr valign=top><td>Jim Johnson, Ernest Retzel</td>"+
         "<td>Center for Computational Genomics and Bioinformatics, University of Minnesota</td>"+
         "<td>Java WebStart configuration</td></tr>"; 
+        
+        html += "<tr valign=top><td>Glynn Dennis, Douglas Hosack, Richard Lempicki, Wei Gao</td>"+
+        "<td>National Institute of Allergy and Infectious Disease, NIH, Laboratory of Immunopathogenesis and Bioinformatics.</td>"+
+        "<td>EASEOpenSource Java package to support EASE development and helpful consultation during EASE integration and development.</td></tr>";
      
+        html += "<tr valign=top><td>Eric Albert</td>"+
+        "<td>Independent Development</td>"+
+        "<td>Implementation of BrowswerLauncher.java, utility to launch default web browser from within MeV</td></tr>";
+    
+        html += "<tr valign=top><td>Sally Gaddis</td>"+
+        "<td>University of Texas, MD Anderson Cancer Center</td>"+
+        "<td>Report and basic testing of Java3D support for mev 3D viewers on the Mac platform.</td></tr>";
+    
         html += "</table>";
         html += "</center></body></html>";
         
@@ -170,7 +185,7 @@ public class AcknowlegementDialog extends JDialog implements java.awt.print.Prin
         return book;
     }
     
-    private class EventListener implements ActionListener, KeyListener {
+    private class EventListener extends WindowAdapter implements ActionListener, KeyListener {
         
         public void actionPerformed(ActionEvent event) {
             String command = event.getActionCommand();
@@ -195,6 +210,10 @@ public class AcknowlegementDialog extends JDialog implements java.awt.print.Prin
             }
         }
         
+        
+        public void windowClosing(WindowEvent we) {
+            AcknowlegementDialog.this.dispose();     
+        }
         
         
         public void keyPressed(KeyEvent event) {
