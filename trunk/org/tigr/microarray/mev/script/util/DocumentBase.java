@@ -284,6 +284,8 @@ public class DocumentBase extends DefaultHandler {
         
         if(name != null){
             
+            System.out.println("Name != null");
+            
             //set attributes, name and input ref
             algElement.setAttribute("alg_name", name);
             algElement.setAttribute("input_data_ref", String.valueOf(inputDataRef));
@@ -322,6 +324,10 @@ public class DocumentBase extends DefaultHandler {
             Element outputNodeElement, dataElement;
             String outputClass;
             if(outputNodes != null){
+                
+                System.out.println("Output nodes are not null, being created");
+                
+                
                 outputNodeElement = document.createElement("output_data");
                 outputClass = data.getParams().getString("output-class");
                 if(outputClass != null)
@@ -332,6 +338,7 @@ public class DocumentBase extends DefaultHandler {
                     dataElement.setAttribute("data_node_id", String.valueOf(this.currDataID));
                     dataElement.setAttribute("name", outputNodes[i]);
                     outputNodeElement.appendChild(dataElement);
+                    System.out.println("output node ="+outputNodes[i]);
                 }
                 algElement.appendChild(outputNodeElement);
             }
@@ -340,8 +347,11 @@ public class DocumentBase extends DefaultHandler {
         }
         algSetElement.appendChild(algElement);
         added = true;
+        System.out.println("child appended");
         updateScript();
+        System.out.println("updateScript() done");
         fireScriptEvent();
+        System.out.println("Fired script event");
         return added;
     }
     
@@ -403,7 +413,7 @@ public class DocumentBase extends DefaultHandler {
                 elementElement = document.createElement("element");
                 elementElement.setAttribute("row", String.valueOf(j));
                 elementElement.setAttribute("col", "0");
-                elementElement.setAttribute("value", String.valueOf(currentArray[i]));
+                elementElement.setAttribute("value", String.valueOf(currentArray[j]));
                 matrixElement.appendChild(elementElement);
             }
             
@@ -442,7 +452,7 @@ public class DocumentBase extends DefaultHandler {
                 elementElement = document.createElement("element");
                 elementElement.setAttribute("row", String.valueOf(j));
                 elementElement.setAttribute("col", "0");
-                elementElement.setAttribute("value", currentArray[i]);
+                elementElement.setAttribute("value", currentArray[j]);
                 matrixElement.appendChild(elementElement);
             }
             
@@ -570,7 +580,6 @@ public class DocumentBase extends DefaultHandler {
                 break;
             case Node.TEXT_NODE:
                 writer.write(node.getNodeValue());
-                //System.out.println("text node!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 // name = node.getNodeName();
                 //// String text = node.getNodeValue();
                 // writer.write(indentLevel + "<" + name + ">" + text + "<\\" + name +">");
@@ -616,6 +625,7 @@ public class DocumentBase extends DefaultHandler {
         StringTokenizer stok;
         
         switch(node.getNodeType()) {
+            
             case Node.DOCUMENT_NODE:
                 scriptText += ("<?xml version=\"1.0\"?>");
                 scriptText += (lineSeparator);
@@ -910,25 +920,25 @@ public class DocumentBase extends DefaultHandler {
     /*
     public static void main(String [] args) {
         DocumentBase hand = new DocumentBase();
-        
-
-        
-        
+     
+     
+     
+     
         AlgorithmData data = new AlgorithmData();
         data.addParam("name", "KMC");
         data.addParam("k", "10");
         data.addParam("iter", "50");
         data.addParam("eval-genes", "true");
         data.addParam("alg_type", "cluster");
-        
+     
         data.addParam("output-class", "multi-cluster-output");
-        
-        
+     
+     
         String [] outArray = new String[1];
-        
+     
         outArray[0] = "Multi-cluster Result";
         data.addStringArray("output-nodes", outArray);
-        
+     
         FloatMatrix matrix = new FloatMatrix(3,3);
         for(int i = 0; i < 3; i++) {
             for(int j = 0; j < 3; j++) {
@@ -936,70 +946,70 @@ public class DocumentBase extends DefaultHandler {
             }
         }
         data.addMatrix("fuzzy-factor", matrix);
-        
-        
+     
+     
         //   hand.createAlgorithmSet(1,1);
         hand.appendAlgorithm(data, 1);
-        
+     
         data = new AlgorithmData();
         data.addParam("name", "TTEST");
         data.addParam("type", "TTEST.TWO_CLASS");
         data.addParam("alpha", "0.01");
         data.addParam("p-correction", "TTEST.NO_CORRECTION");
         data.addParam("alg_type", "cluster");
-        
+     
         int [] groupAssignments = new int[10];
-        
+     
         for(int i = 0; i < 10; i++) {
             groupAssignments[i] = i%2;
         }
-        
+     
         data.addIntArray("group-assignments", groupAssignments);
-        
+     
         groupAssignments = new int[12];
-        
+     
         for(int i = 0; i < 12; i++) {
             groupAssignments[i] = i%2;
         }
-        
+     
         data.addIntArray("another-array-test", groupAssignments);
-        
+     
         data.addParam("output-class", "partition-output");
-        
+     
         outArray = new String[2];
         outArray[0] = "significant";
         outArray[1] = "non significant";
         data.addStringArray("output-nodes", outArray);
-        
+     
         hand.appendAlgorithm(data, 1);
-        
-        
-        
+     
+     
+     
         try {
-            
+     
             //XMLSerializer serial = new XMLSerializer();
-            
+     
             //serial.set(new FileWriter("dfaf"));
-            
+     
             //serial.serialize(hand.getDocument());
-            
+     
             // hand.serialize(hand.getDocument(), new FileWriter(new File("C:\\Temp\\kmc_script.xml")));
             hand.writeDocument("C:\\MyProjects\\source_3_5\\Data\\kmc_script2.xml");
-            
-            
-            
+     
+     
+     
             java.io.CharArrayWriter caw = new java.io.CharArrayWriter();
-            
+     
             // hand.writeDocument(hand.getDocument(), caw);
             hand.writeDocument(caw);
             char [] array = caw.toCharArray();
             String s = new String(array);
             System.out.println(s);
-            
+     
             System.out.println("Try a write");
             hand.updateScript();
             System.out.println(hand.toString());
-            
+     
             javax.swing.JEditorPane pane = new javax.swing.JEditorPane("text/plain",s);
             pane.setFont(new java.awt.Font("monospaced", java.awt.Font.PLAIN, 12));
             System.out.println(pane.getContentType());
@@ -1009,13 +1019,13 @@ public class DocumentBase extends DefaultHandler {
             frame.getContentPane().add(pane);
             frame.setSize(300,500);
             frame.setVisible(true);
-            
+     
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
         System.out.println("Done");
     }
-*/
+     */
     
     //  WARNING Event Handler
     public void warning(SAXParseException e)
@@ -1031,7 +1041,6 @@ public class DocumentBase extends DefaultHandler {
         System.err.println("Error:  "+e);
         errorLog.recordError(e);
         parseErrors++;
-        System.out.println("ERROR IN HANDLER!!!!!!!!!!!!!!!!!!!!!!!");
     }
     
     //  FATAL ERROR Event Handler
@@ -1081,32 +1090,13 @@ public class DocumentBase extends DefaultHandler {
             if(found) {
                 //Need to remove lower alg sets if present and possibly
                 //roll back algset number.
-             /*   list = algorithmElement.getElementsByTagName("alg_set");
-                int [] algIDs = new int[list.getLength()];
-                for(int i = 0 i < list.getLength(); i++) {
-                    algIDs[i] = Integer.parseInt(((Element)list.item(i)).getAttribute("alg_set_id"));
-                }
-              */
                 
-                System.out.println("FOUND ALG TO DELETE!!!!!!!!!!!!!!");
                 if(algorithmElement == null)
                     return;
-                
-                
-                System.out.println("FOUND ALG TO DELETE, ALGELEM NOT NULL !!!!!!!!!!!!!!");
+  
                 //Decided not to rollback alg id's for deleted
                 Node parentNode = algorithmElement.getParentNode();
                 if(parentNode != null) {
-                    
-                    //remove elements below the algorithm
-                 /*  Element child;
-                    while(algorithmElement.hasChildNodes()) {
-                        algorithmElement.removeChild(algorithmElement.getFirstChild());
-                        System.out.println("Remove child element.");
-                    }
-                   */ 
-                    
-                    //Get rid of alg sets that reference output from the algorithmElement
                     
                     //Get output node and then the data node id's
                     list = algorithmElement.getElementsByTagName("data_node");
@@ -1133,8 +1123,6 @@ public class DocumentBase extends DefaultHandler {
                         }
                     }
                     
-                    
-                    System.out.println("FOUND ALG TO DELETE  PARENT NOT NULL!!!!!!!!!!!!!!");
                     parentNode.removeChild(algorithmElement);
                     
                     //Check for more algorithms

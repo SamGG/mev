@@ -114,8 +114,6 @@ public class ErrorLog {
     }
     
     public void recordError(SAXParseException e) {
-        
-        System.out.println("RECORD THE ERROR!!!!!!!!!!!!!!!!!!");
         errors.add(e);
     }
     

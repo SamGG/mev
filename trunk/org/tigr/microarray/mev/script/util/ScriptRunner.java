@@ -12,7 +12,9 @@ package org.tigr.microarray.mev.script.util;
 
 import java.io.File;
 import java.awt.Frame;
+
 import java.util.Hashtable;
+import java.util.Enumeration;
 
 import javax.swing.Action;
 import javax.swing.JFileChooser;
@@ -32,15 +34,15 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
 
 import org.tigr.microarray.mev.script.Script;
 import org.tigr.microarray.mev.script.scriptGUI.ScriptCentroidViewer;
 import org.tigr.microarray.mev.script.scriptGUI.ScriptExperimentViewer;
+import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
 
-//for testing
-import org.tigr.microarray.mev.cluster.gui.impl.kmc.KMCGUI;
 
 /**
  *
@@ -96,9 +98,7 @@ public class ScriptRunner {
         String algName, algType;
         
         DefaultMutableTreeNode currNode = null, outputNode = null;
-        
-        System.out.println("Execute AlgSet");
-        
+ 
         if(mode == ScriptConstants.SCRIPT_OUTPUT_MODE_FILE_OUTPUT) {
             JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+System.getProperty("file.separator")+"Data");
             if(chooser.showOpenDialog(parentFrame) == JFileChooser.APPROVE_OPTION) {
@@ -109,7 +109,7 @@ public class ScriptRunner {
         }
         
         if(algCount > 0) {
-            //create a node for the alg set and a data info node;            
+            //create a node for the alg set and a data info node;
         }
         
         for(int i = 0; i < algCount; i++) {
@@ -117,53 +117,54 @@ public class ScriptRunner {
             data = algNode.getAlgorithmData();
             algName = algNode.getAlgorithmName();
             algType = algNode.getAlgorithmType();
-           // int actionIndex = getActionIndex(algName);
-            
-            System.out.println("Execute algorithm Name = "+algNode.getAlgorithmName());
-            
-           // Action action = actionManager.getAction(actionManager.ANALYSIS_ACTION+String.valueOf(actionIndex));
-           if(algType.equals(ScriptConstants.ALGORITHM_TYPE_CLUSTER)) {
-            
-            String className = (String)(this.classHash.get(algName));
-            
-            System.out.println("Run script "+className);
-            
-            
-            try {
-                Class clazz = Class.forName(className);
-                IClusterGUI gui = (IClusterGUI)clazz.newInstance();
-                currNode = ((KMCGUI)gui).executeScript(framework, data, experiment);
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(parentFrame, "Can't execute script "+algName+ " algorithm", "Script Parameter Error", JOptionPane.WARNING_MESSAGE);
-                e.printStackTrace();
-            }
-            
-            if(currNode != null) {
+            // int actionIndex = getActionIndex(algName);
+    
+            // Action action = actionManager.getAction(actionManager.ANALYSIS_ACTION+String.valueOf(actionIndex));
+            if(algType.equals(ScriptConstants.ALGORITHM_TYPE_CLUSTER) || algType.equals(ScriptConstants.ALGORITHM_TYPE_VISUALIZATION)) {
+                
+                String className = (String)(this.classHash.get(algName));
+                
+                System.out.println("Run script "+className);
+                
+                
+                try {
+                    Class clazz = Class.forName(className);
+                    IScriptGUI gui = (IScriptGUI)clazz.newInstance();
+                    currNode = gui.executeScript(framework, data, experiment);
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(parentFrame, "Can't execute script "+algName+ " algorithm", "Script Parameter Error", JOptionPane.WARNING_MESSAGE);
+                    e.printStackTrace();
+                }
+                
+                if(currNode != null) {
+                    if(outputNode == null) {
+                        outputNode = new DefaultMutableTreeNode("Results");
+                    }
+                    outputNode.add(currNode);
+                    
+                    attachResultToChildAlgorithmSets(algNode, experiment, extractClusters(currNode));
+                    
+                }
+            } else if(algType.equals(ScriptConstants.ALGORITHM_TYPE_ADJUSTMENT)){
+                //Handle adjustments here
+                data.addParam("name", algName);
+                
+                ScriptDataTransformer adjuster = new ScriptDataTransformer(experiment);
+                Experiment resultExperiment = adjuster.transformData(data);
+                
+                //Associate result experiment and indices with the output node's result set if it exists.
+                int [][] clusters = new int[1][];
+                clusters[0] = getDefaultGeneIndices(resultExperiment.getNumberOfGenes());
+                attachResultToChildAlgorithmSets(algNode, resultExperiment, clusters);
+                
                 if(outputNode == null) {
                     outputNode = new DefaultMutableTreeNode("Results");
                 }
-                outputNode.add(currNode);
-            }
-           } else if(algType.equals(ScriptConstants.ALGORITHM_TYPE_ADJUSTMENT)){ 
-           //Handle adjustments here
-               data.addParam("name", algName);
-
-               ScriptDataTransformer adjuster = new ScriptDataTransformer(experiment);
-               Experiment resultExperiment = adjuster.transformData(data);
-               
-               //Associate result experiment and indices with the output node's result set if it exists.               
-               int [][] clusters = new int[1][];
-               clusters[0] = getDefaultGeneIndices(resultExperiment.getNumberOfGenes());
-               attachResultToChildAlgorithmSets(algNode, resultExperiment, clusters);
-               
-                if(outputNode == null) {
-                    outputNode = new DefaultMutableTreeNode("Results");
-                }
-               
+                
                 DefaultMutableTreeNode resultNode = getViewerNodes(resultExperiment);
                 resultNode.setUserObject("Data Adjustment: "+algName);
                 outputNode.add(resultNode);
-           }
+            }
         }
         return outputNode;
     }
@@ -182,7 +183,7 @@ public class ScriptRunner {
             DefaultMutableTreeNode scriptResultNode = new DefaultMutableTreeNode("Script Result");
             
             if(algSets.length > 0) {
-                                
+                
             }
             
             for(int i = 0; i < algSets.length; i++) {
@@ -206,27 +207,28 @@ public class ScriptRunner {
                             " ["+inputAlgNode.getDataNodeRef()+","+inputAlgNode.getID()+"] ");
                             dataNode.add(currNode);
                         }
-
+                        
                         currNode = new DefaultMutableTreeNode("Input Data Node: "+inputNode.toString());
                         dataNode.add(currNode);
                         currNode = new DefaultMutableTreeNode("Number of Experiments: "+experiment.getNumberOfSamples());
                         dataNode.add(currNode);
                         currNode = new DefaultMutableTreeNode("Number of Genes: "+experiment.getNumberOfGenes());
                         dataNode.add(currNode);
-                                                        
-                        currNode = getViewerNodes(set.getExperiment());                        
-                        dataNode.add(currNode);                        
-
+                        
+                        currNode = getViewerNodes(set.getExperiment());
+                        dataNode.add(currNode);
+                        
                         setNode.add(dataNode);
                         setNode.add(resultNode);
                         
                         scriptResultNode.add(setNode);
                     }
-                }                
+                }
             }
             
             ResultTree tree = framework.getResultTree();
-            framework.addNode(tree.getAnalysisNode(), scriptResultNode);
+            //framework.addNode(tree.getAnalysisNode(), scriptResultNode);
+            framework.addAnalysisResult(scriptResultNode);
             tree.scrollPathToVisible(new TreePath(((DefaultTreeModel)(tree.getModel())).getPathToRoot(scriptResultNode)));
         }
         
@@ -238,15 +240,15 @@ public class ScriptRunner {
         
         //since it's a single set, contains all indices in experiment.
         cluster[0] = getDefaultGeneIndices(experiment.getNumberOfGenes());
-
+        
         //Will need to deal with var. exp nums perhaps use exp cluster viewers
-                
+        
         DefaultMutableTreeNode currNode = new DefaultMutableTreeNode(new LeafInfo("Expression Image", new ScriptExperimentViewer(experiment, cluster)));
         viewerNode.add(currNode);
         
         FloatMatrix matrix = experiment.getMatrix();
         FloatMatrix means = getMeans(matrix, cluster);
-        FloatMatrix vars = getVariances(matrix, means, cluster);  
+        FloatMatrix vars = getVariances(matrix, means, cluster);
         
         ScriptCentroidViewer viewer = new ScriptCentroidViewer(experiment, cluster);
         viewer.setMeans(means.A);
@@ -255,7 +257,7 @@ public class ScriptRunner {
         viewerNode.add(currNode);
         currNode = new DefaultMutableTreeNode(new LeafInfo("Expression Graph", viewer, new CentroidUserObject(0,CentroidUserObject.VALUES_MODE)));
         viewerNode.add(currNode);
-
+        
         return viewerNode;
     }
     
@@ -263,24 +265,24 @@ public class ScriptRunner {
         Hashtable hash = new Hashtable();
         int algCnt = 0;
         String algName, className;
-
+        
         AnalysisAction action;
         
         while ((action = (AnalysisAction)(actionManager.getAction(ActionManager.ANALYSIS_ACTION+String.valueOf(algCnt))))!=null){
-           
+            
             //Name or Short Description??
             
-            algName = (String)(action.getValue(Action.NAME));            
+            algName = (String)(action.getValue(Action.NAME));
             className = (String)(action.getValue(ActionManager.PARAMETER));
-
+            
             hash.put(algName, className);
-            algCnt++;                
-        }       
+            algCnt++;
+        }
         return hash;
     }
     
     
-        /**
+    /**
      *  Calculates means for the clusters
      */
     private FloatMatrix getMeans(FloatMatrix data, int [][] clusters){
@@ -358,49 +360,73 @@ public class ScriptRunner {
     }
     
     private int [] getDefaultGeneIndices(int length) {
-            int [] indices = new int[length];
+        int [] indices = new int[length];
         for(int i = 0; i < indices.length; i++)
             indices[i] = i;
-            
-            return indices;
+        
+        return indices;
     }
     
-   private void attachResultToChildAlgorithmSets(AlgorithmNode algNode, Experiment experiment, int [][] clusters) {
+    private void attachResultToChildAlgorithmSets(AlgorithmNode algNode, Experiment experiment, int [][] clusters) {
         //get data ouput nodes
-       int outputCount = algNode.getChildCount();
-       DataNode dataNode;
-       for(int i = 0; i < outputCount; i++) {
+        int outputCount = algNode.getChildCount();
+        DataNode dataNode;
+        for(int i = 0; i < outputCount; i++) {
             dataNode = ((DataNode)algNode.getChildAt(i));
             for( int j = 0; j < algSets.length; j++) {
                 if(dataNode == algSets[j].getDataNode()) {
                     //if it's not multicluster ouput then append the propper experiment
                     if(!dataNode.getDataOutputClass().equals(ScriptConstants.OUTPUT_DATA_CLASS_MULTICLUSTER_OUTPUT)) {
-                        if( i < clusters.length ) {                         
-                            setExperiment(algSets[j], experiment, clusters[i]);                         
+                        if( i < clusters.length ) {
+                            setExperiment(algSets[j], experiment, clusters[i]);
                         }
                     }
                     
                     //if it IS multicluster output then the next algorithm must be for
-                    //cluster selection.  This algorithm will require clusters[][] for selection process                    
+                    //cluster selection.  This algorithm will require clusters[][] for selection process
                     else {
                         setExperimentAndClusters(algSets[i], experiment, clusters);
                     }
                     
                 }
             }
-       }
-   }
- 
-   private void setExperiment(AlgorithmSet algSet, Experiment experiment, int [] indices) {
+        }
+    }
+    
+    private void setExperiment(AlgorithmSet algSet, Experiment experiment, int [] indices) {
         ScriptDataTransformer transformer = new ScriptDataTransformer(experiment);
         Experiment trimmedExperiment = transformer.getTrimmedExperiment(indices);
         algSet.setExperiment(trimmedExperiment);
-   }
-   
-   
-   private void setExperimentAndClusters(AlgorithmSet algSet, Experiment experiment, int [][] clusters) {
-       
-   }
+    }
+    
+    
+    private void setExperimentAndClusters(AlgorithmSet algSet, Experiment experiment, int [][] clusters) {
+        
+    }
+    
+    private int [][] extractClusters(DefaultMutableTreeNode analysisNode) {
+
+        int [][] clusters;
+        Enumeration enum = analysisNode.depthFirstEnumeration();
+        DefaultMutableTreeNode currentNode;
+        IViewer viewer;
+        Experiment exp;
+        
+        while (enum.hasMoreElements()){
+            currentNode = (DefaultMutableTreeNode)enum.nextElement();
+            if(currentNode.getUserObject() instanceof LeafInfo){
+                viewer = ((LeafInfo)currentNode.getUserObject()).getViewer();
+                if(viewer != null) {
+                    exp = viewer.getExperiment();
+                    clusters = viewer.getClusters();
+                    if(exp != null && clusters != null) {
+                        return clusters;
+                    }
+                }
+            }
+        }
+        return null;
+    }
     
     
 }

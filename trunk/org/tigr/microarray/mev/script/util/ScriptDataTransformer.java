@@ -131,17 +131,15 @@ public class ScriptDataTransformer {
         float [][] matrix = new float[indices.length][colCount];        
         int [] newRowMap = new int[indices.length];
         int currRow = 0;
-        
-        for(int i = 0; i < fm.A.length; i++) {
-            if(i == indices[currRow]) {
-                newRowMap[currRow] = origRowMap[i];
-                for(int j = 0; j < colCount; j++) {
-                    matrix[currRow][j] = fm.A[i][j];
-                }
-                currRow++;
-            }
-        }
-        
+
+        int dataRow = 0;
+        for(int i = 0; i < indices.length; i++) {
+            dataRow = origRowMap[indices[i]];
+            newRowMap[i] = dataRow;
+            for(int j = 0; j < colCount; j++) {
+                    matrix[i][j] = fm.A[indices[i]][j];
+            }            
+        }      
         return new Experiment(new FloatMatrix(matrix), experiment.getColumnIndicesCopy(), newRowMap);
     }
     

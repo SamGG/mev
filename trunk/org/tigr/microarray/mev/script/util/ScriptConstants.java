@@ -23,6 +23,8 @@ public class ScriptConstants {
     public static final String ALGORITHM_TYPE_CLUSTER_SELECTION = "cluster-selection";
     public static final String ALGORITHM_TYPE_ADJUSTMENT = "data-adjustment";
     public static final String ALGORITHM_TYPE_NORMALIZATION = "data-normalization";
+    public static final String ALGORITHM_TYPE_VISUALIZATION = "data-visualization";
+    
 
     //Ouput data classes
     public static final String OUTPUT_DATA_CLASS_SINGLE_OUTPUT = "single-output";    
