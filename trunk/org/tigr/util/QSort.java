@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: QSort.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-01-13 17:29:06 $
+ * $Revision: 1.5 $
+ * $Date: 2004-01-21 20:10:08 $
  * $Author: nbhagaba $
  * $State: Exp $
  */
@@ -397,13 +397,13 @@ public class QSort {
     
     public static void main(String[] args) {
         
-        float[] arr = {120f, 0.01f, -4.5f, Float.NaN, 7.6f, -65f, Float.NEGATIVE_INFINITY, 3.5f, -0.95f, Float.POSITIVE_INFINITY, 600f, Float.NaN, 65f, Float.NEGATIVE_INFINITY, Float.MAX_VALUE};
+        double[] arr = {120d, 0.01d, -4.5d, Double.NaN, 7.6d, -65d, Double.NEGATIVE_INFINITY, 3.5d, -0.95d, Double.POSITIVE_INFINITY, 600d, Double.NaN, 65d, Double.NEGATIVE_INFINITY, Double.MAX_VALUE};
         
-        QSort sortArr = new QSort(arr, QSort.DESCENDING);
-        float[] sortedArr = sortArr.getSorted();
+        QSort sortArr = new QSort(arr, QSort.ASCENDING);
+        double[] sortedArr = sortArr.getSortedDouble();
         int[] sortedArrIndices = sortArr.getOrigIndx();
         for (int i = 0; i < sortedArr.length; i++) {
-            System.out.println("sortedArr[" + i + "] = " + sortedArr[i] + ",  sortedArrIndices[" + i + "] = " + sortedArrIndices[i]);
+            System.out.println("arr[" + i + "] = " + arr[i] + ", sortedArr[" + i + "] = " + sortedArr[i] + ",  sortedArrIndices[" + i + "] = " + sortedArrIndices[i]);
         }
                 
     }
