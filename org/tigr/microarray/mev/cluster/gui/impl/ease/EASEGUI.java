@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASEGUI.java,v $
- * $Revision: 1.1 $
- * $Date: 2004-02-06 22:52:37 $
+ * $Revision: 1.2 $
+ * $Date: 2004-03-24 21:59:15 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -16,6 +16,13 @@ All rights reserved.
  */
 
 package org.tigr.microarray.mev.cluster.gui.impl.ease;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
+import java.util.Vector;
 
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -143,11 +150,29 @@ public class EASEGUI implements IClusterGUI {
             
             logger.append("Extracting Annotation Key Lists\n");
             String [] clusterKeys = framework.getData().getAnnotationList(annotationKeyType, indices);
+            if(clusterKeys == null)
+                System.out.println("NULL CLUSTER KEYS!!!!!!!!!!!!!!!!!!!!!!!!!");
             algorithmData.addStringArray("sample-list", clusterKeys);
             algorithmData.addIntArray("sample-indices", cluster.getExperimentIndices());  //drop in experiment indices
         }
         
-        String [] populationKeys = framework.getData().getAnnotationList(annotationKeyType, experiment.getRowMappingArrayCopy());
+        //Use file or IData for population, only permit file use for cluster analysis
+        String [] populationKeys;
+        if(isClusterAnalysis && dialog.isPopFileModeSelected()) {
+            try {
+                populationKeys = getPopulationKeysFromFile(dialog.getPopulationFileName());
+                algorithmData.addParam("population-file-name", dialog.getPopulationFileName());
+                if(populationKeys == null) {
+                    return null;
+                }
+            } catch (IOException ioe) {
+                //Bad file format               
+                JOptionPane.showMessageDialog(framework.getFrame(), "Error loading population file.", "Population File Load Error", JOptionPane.ERROR_MESSAGE);
+                return null;
+            }
+        } else {
+            populationKeys = framework.getData().getAnnotationList(annotationKeyType, experiment.getRowMappingArrayCopy());
+        }
         
         algorithmData.addParam("perform-cluster-analysis", String.valueOf(isClusterAnalysis));
         algorithmData.addStringArray("population-list", populationKeys);
@@ -190,6 +215,25 @@ public class EASEGUI implements IClusterGUI {
         
         return node;
     }
+    
+    private String [] getPopulationKeysFromFile(String fileName) throws IOException {
+        File file = new File(fileName);
+        if(file.exists()) {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            Vector ann = new Vector();
+            String key;
+            while( (key = reader.readLine()) != null ) {
+                ann.add(key);
+            }
+            String [] annot = new String [ann.size()];
+            for(int i = 0; i < annot.length; i++) {
+                annot[i] = (String)(ann.elementAt(i));
+            }
+            return annot;
+        }
+        return null;
+    }
+    
     
     /** Creates the result node.
      * @param result result matrix
@@ -298,6 +342,13 @@ public class EASEGUI implements IClusterGUI {
         
         newNode = new DefaultMutableTreeNode("Analysis Options");
         DefaultMutableTreeNode fileNode = new DefaultMutableTreeNode("Selected Index and Files");
+        
+        String popFileName = result.getParams().getString("population-file-name");
+        if(popFileName == null)
+            fileNode.add(new DefaultMutableTreeNode("Population Selection: Data in Current Viewer"));
+        else
+            fileNode.add(new DefaultMutableTreeNode("Population Selection: File Input ("+popFileName+")"));
+        
         fileNode.add(new DefaultMutableTreeNode("MeV Index: "+this.annotationKeyType));
         AlgorithmParameters params = this.algorithmData.getParams();
         fileNode.add(new DefaultMutableTreeNode("Conversion File: "+params.getString("converter-file-name", "Not Selected")));
