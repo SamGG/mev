@@ -1,0 +1,25 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>Script Error Log</h1>
+            <hr size = 10>
+
+The Script Error Log records and reports errors during script validation.
+These errors fall into two basic categories.<br><br>
+ 
+<i>Parse Errors</i> describe
+problems with script construction and can be described as <i>Fatal Errors</i>
+(malformed XML) such as missing closing tags, <i>Validation Errors</i> in which the script fails
+to conform the the DTD (Document Type Description), and <i>Parse Warnings</i>.  <br><br>
+
+Aside from Parse Errors, the other major error type is in parameter validation,
+ <i>Parameter Errors</i>.  These errors report missing parameters, parameter type
+mismatches, and parameters that fall outside of established range constraints.
+<br><br>
+The <i>Edit Script</i> button will display the current script in an editor window
+to the right of the reported error tables.  If corrections are made to the script it is
+possible to right click to save the corrected script to file.  If the validation
+error was reported during a script load then the load will be terminated but can
+be retried after script editing.
+        </basefont>
+    </body>
+</html>
