@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: KNNClassify.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 19:36:14 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2003-12-11 15:55:16 $
+ * $Author: nbhagaba $
  * $State: Exp $
  */
 /*
@@ -16,7 +16,7 @@ All rights reserved.
  */
 
 package org.tigr.microarray.mev.cluster.algorithm.impl;
-
+    
 import java.util.Vector;
 import java.util.Random;
 import org.tigr.util.FloatMatrix;
