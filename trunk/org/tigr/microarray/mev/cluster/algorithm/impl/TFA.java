@@ -729,7 +729,7 @@ public class TFA extends AbstractAlgorithm {
     private double getPValueFromFDist(double fValue, int groupsDF, int errorDF) {
         FDistribution fDist = new FDistribution(groupsDF, errorDF);
         double cumulProb = fDist.cumulative(fValue);
-        double pValue = 2*(1 - cumulProb); // (1 - cumulProb) is the one-tailed test p-value
+        double pValue = 1 - cumulProb; // (1 - cumulProb) is the two-tailed test p-value
         
         if (pValue > 1) {
             pValue = 1.0d;
