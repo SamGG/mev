@@ -1,11 +1,11 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: PavlidisTemplateInitBox.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
+ * $Revision: 1.2 $
+ * $Date: 2004-07-27 19:59:16 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -21,9 +21,10 @@ import javax.swing.event.*;
 import org.tigr.graph.*;
 import org.tigr.util.*;
 import org.tigr.util.awt.*;
+import org.tigr.microarray.mev.TMEV;
 
 
-public class PavlidisTemplateInitBox extends JPanel {//ActionInfoDialog {
+public class PavlidisTemplateInitBox extends JPanel {
     
     String[] SampleNames;
     Vector sampleNamesVector;
@@ -893,8 +894,7 @@ public class PavlidisTemplateInitBox extends JPanel {//ActionInfoDialog {
 	    saveButton.addActionListener(new ActionListener(){
 		public void actionPerformed(ActionEvent evt) {
 		    if (evt.getSource() == saveButton) {
-			JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
-			fc.setCurrentDirectory(new File("Data"));
+			JFileChooser fc = new JFileChooser(TMEV.getFile("data/"));
 			
 			int returnVal = fc.showSaveDialog(BottomPanel.this);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {

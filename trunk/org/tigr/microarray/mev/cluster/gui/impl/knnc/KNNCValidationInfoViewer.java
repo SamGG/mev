@@ -1,4 +1,8 @@
 /*
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+All rights reserved.
+*/
+/*
  * KNNCValidationInfoViewer.java
  *
  * Created on May 17, 2004, 12:11 PM
@@ -23,7 +27,8 @@ import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
  * @author  nbhagaba
  */
 public class KNNCValidationInfoViewer extends ViewerAdapter implements java.io.Serializable {
-
+    public static final long serialVersionUID = 202009020001L;
+    
     private JComponent header;
     private JTextArea  content;
     private int[] origNumInFiltTrgSetByClass, numberCorrectlyClassifiedByClass, numberIncorrectlyClassifiedByClass;

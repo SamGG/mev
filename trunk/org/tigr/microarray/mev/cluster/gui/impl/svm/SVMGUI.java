@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SVMGUI.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-06-24 17:32:24 $
+ * $Revision: 1.5 $
+ * $Date: 2004-07-27 19:59:17 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -28,7 +28,7 @@ import java.util.Arrays;
 import java.util.Vector;
 
 import org.tigr.util.FloatMatrix;
-
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.Node;
 import org.tigr.microarray.mev.cluster.Cluster;
 import org.tigr.microarray.mev.cluster.NodeList;
@@ -965,8 +965,7 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
             data.distanceFunction  = Algorithm.EUCLIDEAN; //this applies to HCL on SVM result
         //SVM kernal uses dot product on normalized vectors
         
-        final JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
-        fc.setCurrentDirectory(new File("Data/SVM"));
+        final JFileChooser fc = new JFileChooser(TMEV.getFile("data/svm"));
         fc.addChoosableFileFilter(new SVMFileFilter());
         fc.setFileView(new SVMFileView());
         int returnVal = fc.showOpenDialog( parentFrame );

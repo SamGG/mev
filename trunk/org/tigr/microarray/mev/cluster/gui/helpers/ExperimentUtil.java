@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ExperimentUtil.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-07-26 21:30:43 $
+ * $Revision: 1.6 $
+ * $Date: 2004-07-27 19:59:16 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -178,7 +178,7 @@ public class ExperimentUtil {
      */
     private static File getFile(Frame frame) {
         File file = null;
-        final JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        final JFileChooser fc = new JFileChooser(TMEV.getFile("data/"));
         fc.addChoosableFileFilter(new ExpressionFileFilter());
         fc.setFileView(new ExpressionFileView());
         int ret = fc.showSaveDialog(frame);
@@ -570,7 +570,7 @@ public class ExperimentUtil {
     public static void linkToURL(JFrame frame, Experiment experiment, IData data, int row)  /*throws Exception*/ {
         //NOTE: In this method, the argument "row" is what's obtained AFTER applying getGeneIndexMappedToSelectedRows(); i.e., use as is; no need to re-map for cutoffs 
         try {
-            File file = new File(System.getProperty("user.dir")+"\\config\\annotation_URLs.txt");
+            File file = TMEV.getConfigurationFile("annotation_URLs.txt");
             //System.out.println("Found annotation file");
             AnnotationURLLinkDialog aDialog = new AnnotationURLLinkDialog(frame, false, experiment, data, row, file);
             aDialog.setVisible(true);
@@ -586,7 +586,7 @@ public class ExperimentUtil {
         //int[] indices = {0, 0};
         //NOTE: In this method, the argument "row" is what's obtained AFTER applying getGeneIndexMappedToSelectedRows(); i.e., use as is; no need to re-map for cutoffs 
         try {
-            File file = new File(System.getProperty("user.dir")+"\\config\\annotation_URLs.txt");
+            File file = TMEV.getConfigurationFile("annotation_URLs.txt");
             System.out.println("Found annotation file");
             AnnotationURLLinkDialog aDialog = new AnnotationURLLinkDialog(frame, false, experiment, data, row, file, lastSelectedIndices);
             aDialog.setVisible(true);

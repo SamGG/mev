@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: TtestInfoViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2004-02-05 22:10:23 $
+ * $Revision: 1.8 $
+ * $Date: 2004-07-27 19:59:17 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -24,6 +24,7 @@ import javax.swing.JTextArea;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
 public class TtestInfoViewer extends ViewerAdapter implements java.io.Serializable {
+    public static final long serialVersionUID = 202021030001L;
     
     private JComponent header;
     private JTextArea  content;

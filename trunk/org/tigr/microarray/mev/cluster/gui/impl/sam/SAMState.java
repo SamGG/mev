@@ -1,5 +1,5 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
@@ -17,6 +17,7 @@ import java.util.Vector;
  * @version 
  */
 public class SAMState implements java.io.Serializable {
+    public static final long serialVersionUID = 202015040001L;
     
     public static boolean firstRun = true, useAllUniquePerms; 
     public static int[] groupAssignments, numSigGenesByDelta, sortedDArrayIndices;

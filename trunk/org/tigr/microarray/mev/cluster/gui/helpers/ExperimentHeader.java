@@ -1,11 +1,11 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: ExperimentHeader.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-05 22:53:06 $
+ * $Revision: 1.3 $
+ * $Date: 2004-07-27 19:59:15 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -40,7 +40,7 @@ import org.tigr.microarray.mev.cluster.gui.IData;
  */
 public class ExperimentHeader extends JPanel implements IExperimentHeader, java.io.Serializable {
     
-    static final long serialVersionUID = 1L;
+    public static final long serialVersionUID = 201090001L;
     
     private static final int RECT_HEIGHT = 15;
     private static final int COLOR_BAR_HEIGHT = 10;

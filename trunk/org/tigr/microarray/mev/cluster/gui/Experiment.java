@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: Experiment.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-04-05 17:31:38 $
+ * $Revision: 1.5 $
+ * $Date: 2004-07-27 19:59:15 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -20,6 +20,8 @@ import org.tigr.util.FloatMatrix;
  * @author Aleksey D.Rezantsev
  */
 public class Experiment implements java.io.Serializable {
+    public static final long serialVersionUID = 2010001L;
+    
     // matrix of ratio values
     private FloatMatrix matrix; 
     // data indices 

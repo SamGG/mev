@@ -1,11 +1,11 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: TTestVolcanoPlotViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-02-13 19:15:07 $
+ * $Revision: 1.7 $
+ * $Date: 2004-07-27 19:59:17 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -31,6 +31,7 @@ import org.tigr.graph.*;
 import org.tigr.util.*;
 import org.tigr.util.awt.*;
 
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
@@ -48,6 +49,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
  * @version
  */
 public class TTestVolcanoPlotViewer extends JPanel implements IViewer, java.io.Serializable /*, MouseMotionListener */{
+    public static final long serialVersionUID = 202021040001L;
     
     private Experiment experiment;
     private IFramework framework;
@@ -725,7 +727,7 @@ public class TTestVolcanoPlotViewer extends JPanel implements IViewer, java.io.S
      */
     private static File getFile(Frame frame) {
         File file = null;
-        final JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        final JFileChooser fc = new JFileChooser(TMEV.getFile("data/"));
         fc.addChoosableFileFilter(new ExpressionFileFilter());
         fc.setFileView(new ExpressionFileView());
         int ret = fc.showSaveDialog(frame);

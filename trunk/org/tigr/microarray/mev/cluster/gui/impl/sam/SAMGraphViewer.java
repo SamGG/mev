@@ -1,5 +1,5 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
@@ -35,6 +35,8 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
  * @version 
  */
 public class SAMGraphViewer extends JPanel implements IViewer, java.io.Serializable {
+    public static final long serialVersionUID = 202015010001L;
+
     private double[] yArray, xArray;
     private double delta; 
     int originX, originY;

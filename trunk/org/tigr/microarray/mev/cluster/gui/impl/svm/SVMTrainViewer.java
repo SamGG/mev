@@ -1,11 +1,11 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: SVMTrainViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-05 22:11:50 $
+ * $Revision: 1.4 $
+ * $Date: 2004-07-27 19:59:17 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -44,8 +44,9 @@ import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 
 import org.tigr.util.FloatMatrix;
-import org.tigr.microarray.mev.cluster.gui.Experiment;
 
+import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
@@ -55,6 +56,8 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileFilter;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
 
 public class SVMTrainViewer extends SVMResultViewer implements java.io.Serializable {
+    public static final long serialVersionUID = 202018080001L;
+
     private float[] weights;
     private IData experiment;
     private Experiment analysisExperiment;
@@ -160,10 +163,9 @@ public class SVMTrainViewer extends SVMResultViewer implements java.io.Serializa
      */
     protected void onSaveResult() {
         File SVMFile;
-        final JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        final JFileChooser fc = new JFileChooser(TMEV.getFile("data/"));
         fc.addChoosableFileFilter(new SVMFileFilter());
         fc.setFileView(new SVMFileView());
-        fc.setCurrentDirectory(new File("Data/SVM"));
         int returnVal = fc.showSaveDialog(JOptionPane.getFrameForComponent(this));
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             SVMFile = fc.getSelectedFile();

@@ -1,4 +1,8 @@
 /*
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+All rights reserved.
+ */
+/*
  * ExperimentClusterTableViewer.java
  *
  * Created on April 26, 2004, 1:59 PM
@@ -36,6 +40,7 @@ import org.tigr.util.QSort;
  * @author  nbhagaba
  */
 public class ExperimentClusterTableViewer implements IViewer, java.io.Serializable {
+    public static final long serialVersionUID = 201080001L;
     
     private static final String NO_GENES_STR = "No Genes in Cluster!";
     private static final Font ERROR_FONT = new Font("monospaced", Font.BOLD, 20);

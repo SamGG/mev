@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASEURLFactory.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-07-26 21:32:00 $
+ * $Revision: 1.3 $
+ * $Date: 2004-07-27 19:59:16 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -32,7 +32,7 @@ public class EASEURLFactory {
     public static String constructURL(String file, String tag){
 
         try {
-            File urlFile = TMEV.getFile("Data/Ease/Data/Class/URL data/"+file+".txt");
+            File urlFile = TMEV.getFile("data/ease/Data/Class/URL data/"+file+".txt");
             if(!urlFile.exists() || !urlFile.isFile()){
                 JOptionPane.showMessageDialog(new Frame(), "The file: "+file+".txt"+"\n"+"does not exist. Files in this directory are used to construct URLs. \n Other files in this directory can be used as a template to construct\nthe required file.", "URL Construction Not Currently Supported for: "+ file, JOptionPane.WARNING_MESSAGE);
                 return null;

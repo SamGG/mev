@@ -1,12 +1,12 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: OWACentroidViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-06-25 18:51:18 $
- * $Author: nbhagaba $
+ * $Revision: 1.6 $
+ * $Date: 2004-07-27 19:59:16 $
+ * $Author: braisted $
  * $State: Exp $
  */
 
@@ -31,6 +31,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JOptionPane;
 import javax.swing.JColorChooser;
+
+import org.tigr.microarray.mev.TMEV;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
@@ -234,7 +236,7 @@ public class OWACentroidViewer extends CentroidViewer {
      */
     private static File getFile(Frame frame) {
         File file = null;
-        final JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        final JFileChooser fc = new JFileChooser(TMEV.getFile("data/"));
         fc.addChoosableFileFilter(new ExpressionFileFilter());
         fc.setFileView(new ExpressionFileView());
         int ret = fc.showSaveDialog(frame);

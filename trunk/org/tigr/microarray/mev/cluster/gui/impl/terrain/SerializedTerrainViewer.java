@@ -1,3 +1,14 @@
+/*
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+All rights reserved.
+*/
+/*
+ * $RCSfile: SerializedTerrainViewer.java,v $
+ * $Revision: 1.4 $
+ * $Date: 2004-07-27 19:59:17 $
+ * $Author: braisted $
+ * $State: Exp $
+ */
 package org.tigr.microarray.mev.cluster.gui.impl.terrain;
 
 import java.awt.Frame;
@@ -26,6 +37,7 @@ import org.tigr.microarray.mev.cluster.gui.IViewer;
  * @author  braisted
  */
 public class SerializedTerrainViewer extends JPanel implements IViewer, java.io.Serializable {
+    public static final long serialVersionUID = 202019010001L;
     
     private TerrainViewer trn;
     private boolean isGenes;

@@ -1,11 +1,11 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: GDMGeneViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-03-16 17:26:53 $
+ * $Revision: 1.6 $
+ * $Date: 2004-07-27 19:59:16 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -99,6 +99,7 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 import org.tigr.microarray.util.SlideDataSorter;
 
 public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializable {
+    public static final long serialVersionUID = 202004020001L;
     
     private JPanel content;
     private GDMGeneHeader geneColumnHeaderSP;
