@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayData.java,v $
- * $Revision: 1.9 $
- * $Date: 2004-06-11 18:51:22 $
+ * $Revision: 1.10 $
+ * $Date: 2004-06-21 21:50:41 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -1615,7 +1615,9 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         }
         if(this.dataType == IData.DATA_TYPE_RATIO_ONLY || this.dataType == IData.DATA_TYPE_AFFY_ABS ){
             this.logState = LINEAR;
-        } 
+        } else {
+            this.logState = LOG;
+        }
 
         if(this.getFeaturesCount() > 0)
             this.experiment = createExperiment();
