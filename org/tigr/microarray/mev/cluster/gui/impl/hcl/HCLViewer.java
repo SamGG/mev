@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-09 17:28:18 $
+ * $Revision: 1.3 $
+ * $Date: 2003-12-15 14:49:09 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -859,6 +859,7 @@ public class HCLViewer extends JPanel implements IViewer {
         return elements;
     }
     
+    /** saves all genes in the tree with the order conserved **/
     public void saveGenesOrder(){
         try{
             ExperimentUtil.saveExperiment(getFrame(), this.experiment, this.data, this.genesOrder);
@@ -868,6 +869,7 @@ public class HCLViewer extends JPanel implements IViewer {
         }
     }
     
+    /** saves all experiments in the tree with the order conserved **/
     public void saveExperimentOrder(){
         try{
             if(!this.isExperimentCluster)
