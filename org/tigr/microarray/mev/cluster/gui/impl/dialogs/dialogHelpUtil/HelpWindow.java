@@ -277,6 +277,15 @@ public class HelpWindow extends JDialog {
             return "lower_cutoff_parameters.html";
         if(key.equals("Set Percentage Cutoff"))
             return "percent_cutoff_parameters.html";
+        if(key.equals("Experiment Label Editor"))
+            return "experiment_label_editor.html";       
+        if(key.equals("KNNC Mode Selection"))
+            return "knnc_parameters1.html";
+        if(key.equals("KNNC Parameter Selections"))
+            return "knnc_parameters2.html";
+        if(key.equals("KNNC Validataion Parameter Selections"))
+            return "knnc_parameters3.html";
+        
         else
             return null;
     }
