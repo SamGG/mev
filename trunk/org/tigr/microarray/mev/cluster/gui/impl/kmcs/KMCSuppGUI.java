@@ -1,12 +1,12 @@
 /*
 Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
 All rights reserved.
-*/
+ */
 /*
  * $RCSfile: KMCSuppGUI.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-04-29 18:48:42 $
- * $Author: nbhagaba $
+ * $Revision: 1.4 $
+ * $Date: 2004-05-19 21:12:04 $
+ * $Author: braisted $
  * $State: Exp $
  */
 
@@ -57,13 +57,15 @@ import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
 
+import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
+
 
 /**
  *
  * @author  nbhagaba
  * @version
  */
-public class KMCSuppGUI implements IClusterGUI {
+public class KMCSuppGUI implements IClusterGUI, IScriptGUI {
     
     
     private Algorithm algorithm;
@@ -153,9 +155,9 @@ public class KMCSuppGUI implements IClusterGUI {
                 function = Algorithm.EUCLIDEAN;
             }
             data.addParam("distance-function", String.valueOf(function));
-            data.addParam("number-of-desired-clusters", String.valueOf(numClusters));
-            data.addParam("number_of_iterations", String.valueOf(iterations));
-            data.addParam("number_of_repetitions", String.valueOf(numReps));
+            data.addParam("number-of-desired-clusters", String.valueOf(numClusters));            
+            data.addParam("number-of-iterations", String.valueOf(iterations));
+            data.addParam("number-of-repetitions", String.valueOf(numReps));
             data.addParam("threshold-percent", String.valueOf(thresholdPercent));
             data.addParam("calculate-means", String.valueOf(calculateMeans));
             // hcl parameters
@@ -221,6 +223,166 @@ public class KMCSuppGUI implements IClusterGUI {
         }
     }
     
+    public DefaultMutableTreeNode executeScript(IFramework framework, AlgorithmData algData, Experiment experiment) throws AlgorithmException {
+        this.experiment = experiment;
+        this.data = framework.getData();
+        this.clusterGenes = algData.getParams().getBoolean("kmc-cluster-genes");
+        boolean calculateMeans = algData.getParams().getBoolean("calculate-means");
+        
+        Listener listener = new Listener();
+        try {
+            algorithm = framework.getAlgorithmFactory().getAlgorithm("KMCS");
+            algorithm.addAlgorithmListener(listener);
+            
+            int genes = experiment.getNumberOfGenes();
+            this.progress = new Progress(framework.getFrame(), "Calculating clusters", listener);
+            this.progress.show();
+            
+            AlgorithmData data = new AlgorithmData();
+            FloatMatrix matrix = experiment.getMatrix();
+            if(!clusterGenes)
+                matrix = matrix.transpose();
+            algData.addMatrix("experiment", matrix);
+            
+            long start = System.currentTimeMillis();
+            AlgorithmData result = algorithm.execute(algData);
+            long time = System.currentTimeMillis() - start;
+            // getting the results
+            Cluster result_cluster = result.getCluster("cluster");
+            NodeList nodeList = result_cluster.getNodeList();
+            AlgorithmParameters resultMap = result.getParams();
+            k = resultMap.getInt("number-of-clusters"); // NEED THIS TO GET THE VALUE OF NUMBER-OF-CLUSTERS
+            unassignedExists = resultMap.getBoolean("unassigned-genes-exist");
+            this.clusters = new int[k][];
+            for (int i=0; i<k; i++) {
+                clusters[i] = nodeList.getNode(i).getFeaturesIndexes();
+            }
+            this.means = result.getMatrix("clusters_means");
+            this.variances = result.getMatrix("clusters_variances");
+            AlgorithmParameters params = algData.getParams();
+            
+            GeneralInfo info = new GeneralInfo();
+            if (unassignedExists) {
+                info.clusters = k - 1;
+            } else {
+                info.clusters = k;
+            }
+            info.userNumClusters = params.getInt("number-of-desired-clusters");;
+            if (calculateMeans) {
+                info.meansOrMedians = "K-Means";
+            } else {
+                info.meansOrMedians = "K-Medians";
+            }
+            //info.converged = result.getParams().getBoolean("converged");
+            info.iterations = params.getInt("number-of-iterations");
+            info.time = time;              
+            info.numReps = params.getInt("number-of-repetitions");
+            info.thresholdPercent = params.getFloat("threshold-percent");
+            int function = params.getInt("distance-function");
+            
+            info.function = framework.getDistanceMenu().getFunctionName(function);
+            info.hcl = params.getBoolean("hierarchical-tree");
+            info.hcl_genes = params.getBoolean("calculate-genes");
+            info.hcl_samples = params.getBoolean("calculate-experiments");
+            if(info.hcl)
+                info.hcl_method = params.getInt("method-linkage");
+            return createResultTree(result_cluster, info);
+            
+        } finally {
+            if (algorithm != null) {
+                algorithm.removeAlgorithmListener(listener);
+            }
+            if (progress != null) {
+                progress.dispose();
+            }
+        }
+    }
+    
+    
+    public AlgorithmData getScriptParameters(IFramework framework) {
+        // the default values
+        int numClusters = 10;
+        int iterations = 50;
+        data = framework.getData();
+        
+        KMCSupportDialog kmcsDialog = new KMCSupportDialog((JFrame) framework.getFrame(), true);
+        kmcsDialog.setVisible(true);
+        
+        if (!kmcsDialog.isOkPressed()) return null;
+        int numReps = 0;
+        double thresholdPercent = 0.0;
+        try {
+            numClusters = kmcsDialog.getNumClusters();
+            iterations = kmcsDialog.getIterations();
+            numReps = kmcsDialog.getNumReps();
+            thresholdPercent = kmcsDialog.getThresholdPercent();
+            clusterGenes = kmcsDialog.isClusterGenes();
+        } catch (NumberFormatException nfe) {
+            JOptionPane.showMessageDialog(framework.getFrame(), "Invalid input parameters!", "Error", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+        
+        boolean isHierarchicalTree = kmcsDialog.isDrawTrees();
+        boolean calculateMeans = kmcsDialog.meansChosen();
+        // hcl init
+        int hcl_method = 0;
+        boolean hcl_samples = false;
+        boolean hcl_genes = false;
+        if (isHierarchicalTree) {
+            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame());
+            if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
+                return null;
+            }
+            hcl_method = hcl_dialog.getMethod();
+            hcl_samples = hcl_dialog.isClusterExperience();
+            hcl_genes = hcl_dialog.isClusterGenes();
+        }
+        this.experiment = framework.getData().getExperiment();
+        
+        int genes = experiment.getNumberOfGenes();
+        
+        AlgorithmData data = new AlgorithmData();
+        data.addParam("kmc-cluster-genes", String.valueOf(clusterGenes));
+        data.addParam("distance-factor", String.valueOf(1.0f));
+        IDistanceMenu menu = framework.getDistanceMenu();
+        data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
+        int function = menu.getDistanceFunction();
+        if (function == Algorithm.DEFAULT) {
+            function = Algorithm.EUCLIDEAN;
+        }
+        data.addParam("distance-function", String.valueOf(function));
+        data.addParam("number-of-desired-clusters", String.valueOf(numClusters));
+        data.addParam("number-of-iterations", String.valueOf(iterations));
+        data.addParam("number-of-repetitions", String.valueOf(numReps));
+        data.addParam("threshold-percent", String.valueOf(thresholdPercent));
+        data.addParam("calculate-means", String.valueOf(calculateMeans));
+        // hcl parameters
+        if (isHierarchicalTree) {
+            data.addParam("hierarchical-tree", String.valueOf(true));
+            data.addParam("method-linkage", String.valueOf(hcl_method));
+            data.addParam("calculate-genes", String.valueOf(hcl_genes));
+            data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+        }
+        //script control parameters
+        
+        // alg name
+        data.addParam("name", "KMS");
+        
+        // alg type
+        data.addParam("alg-type", "cluster");
+        
+        // output class
+        data.addParam("output-class", "multi-cluster-output");
+        
+        //output nodes
+        String [] outputNodes = new String[1];
+        outputNodes[0] = "Multi-cluster";
+        data.addStringArray("output-nodes", outputNodes);
+        
+        return data;
+    }
+    
+    
     /**
      * Creates a result tree to be inserted into the framework analysis node.
      */
@@ -242,7 +404,7 @@ public class KMCSuppGUI implements IClusterGUI {
         addHierarchicalTrees(root, result_cluster, info);
         addCentroidViews(root);
         addTableViews(root);
-        addClusterInfo(root);        
+        addClusterInfo(root);
         addGeneralInfo(root, info);
     }
     
@@ -253,8 +415,8 @@ public class KMCSuppGUI implements IClusterGUI {
             tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.data);
         else
             tabViewer = new ExperimentClusterTableViewer(this.experiment, this.clusters, this.data);
-            //return; // placeholder for ExptClusterTableViewer
-            //expViewer = new KMCSuppExperimentClusterViewer(this.experiment, this.clusters);
+        //return; // placeholder for ExptClusterTableViewer
+        //expViewer = new KMCSuppExperimentClusterViewer(this.experiment, this.clusters);
         
         if (!unassignedExists) {
             for (int i=0; i<this.clusters.length; i++) {
@@ -267,10 +429,10 @@ public class KMCSuppGUI implements IClusterGUI {
             //if(clusterGenes)
             node.add(new DefaultMutableTreeNode(new LeafInfo("Unassigned ", tabViewer, new Integer(clusters.length - 1))));
             //else
-                //node.add(new DefaultMutableTreeNode(new LeafInfo("Unassigned experiments ", expViewer, new Integer(clusters.length - 1))));
+            //node.add(new DefaultMutableTreeNode(new LeafInfo("Unassigned experiments ", expViewer, new Integer(clusters.length - 1))));
             
         }
-        root.add(node);        
+        root.add(node);
     }
     
     /**
@@ -510,6 +672,8 @@ public class KMCSuppGUI implements IClusterGUI {
         }
         return pos;
     }
+    
+    
     
     /****************************************************************************************
      * End of Sample Cluster index ordering code
