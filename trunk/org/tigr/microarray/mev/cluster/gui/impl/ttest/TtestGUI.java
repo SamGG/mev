@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: TtestGUI.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-08-25 15:18:14 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2004-01-13 17:32:40 $
+ * $Author: nbhagaba $
  * $State: Exp $
  */
 
@@ -349,6 +349,10 @@ public class TtestGUI implements IClusterGUI {
             methodName = "Standard Bonferroni correction";
         } else if (sigMethod == TtestInitDialog.ADJ_BONFERRONI) {
             methodName = "Adjusted Bonferroni correction";
+        } else if (sigMethod == TtestInitDialog.MIN_P) {
+            methodName = "Step-down Westfall Young: Min P";            
+        } else if (sigMethod == TtestInitDialog.MAX_T) {
+            methodName = "Step-down Westfall Young: Max T";
         }
         
         return methodName;
