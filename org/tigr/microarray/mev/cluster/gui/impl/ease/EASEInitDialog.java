@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASEInitDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-03-24 21:59:15 $
+ * $Revision: 1.3 $
+ * $Date: 2004-04-01 20:42:21 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -105,7 +105,7 @@ public class EASEInitDialog extends AlgorithmDialog {
      * @param annotationLabels Annotation types
      */
     public EASEInitDialog(Frame parent, ClusterRepository repository, String [] annotationLabels) {
-        super(new JFrame(), "EASE: Ease Annotation Analysis", true);
+        super(new JFrame(), "EASE: EASE Annotation Analysis", true);
         this.parent = parent;
         font = new Font("Dialog", Font.BOLD, 12);
         listener = new EventListener();
@@ -684,7 +684,7 @@ public class EASEInitDialog extends AlgorithmDialog {
             fisherBox.setFocusPainted(false);
             bg.add(fisherBox);
             
-            easeBox = new JCheckBox("Ease Score", false);
+            easeBox = new JCheckBox("EASE Score", false);
             easeBox.setBackground(Color.white);
             easeBox.setFocusPainted(false);
             bg.add(easeBox);
@@ -874,7 +874,7 @@ public class EASEInitDialog extends AlgorithmDialog {
                     String fileName = popPanel.popField.getText();
                     if(fileName == null || fileName.equals("") || fileName.equals(" ")) {
                         JOptionPane.showMessageDialog(parent, "You have selected to use a population file but have not "+
-                        "entered a file name.  \nPlease enter a file or use the file browser to select a file.", "Ease Initialization: Missing Parameter", JOptionPane.WARNING_MESSAGE);
+                        "entered a file name.  \nPlease enter a file or use the file browser to select a file.", "EASE Initialization: Missing Parameter", JOptionPane.WARNING_MESSAGE);
                         tabbedPane.setSelectedIndex(0);
                         popPanel.popField.grabFocus();
                         popPanel.popField.selectAll();
@@ -885,7 +885,7 @@ public class EASEInitDialog extends AlgorithmDialog {
                 
                 if(getAnnToGOFileList().length == 0) {
                     JOptionPane.showMessageDialog(parent, "You have not selected any gene annotation/gene ontology linking files. \n"+
-                    "Please enter files or use the browser to select files.", "Ease Initialization: Missing Parameter", JOptionPane.WARNING_MESSAGE);
+                    "Please enter files or use the browser to select files.", "EASE Initialization: Missing Parameter", JOptionPane.WARNING_MESSAGE);
                     tabbedPane.setSelectedIndex(1);
                     easeParamPanel.browserButton.grabFocus();
                     return;
@@ -895,7 +895,7 @@ public class EASEInitDialog extends AlgorithmDialog {
                     String fileName = easeParamPanel.getConverterFileName();
                     if( fileName == null || fileName.equals("") || fileName.equals(" ") ) {
                         JOptionPane.showMessageDialog(parent, "You have selected to use an annotation conversion file but have not made a file selection.\n" +
-                        "Please enter a file name or browse to select a file.", "Ease Initialization: Missing Parameter", JOptionPane.WARNING_MESSAGE);
+                        "Please enter a file name or browse to select a file.", "EASE Initialization: Missing Parameter", JOptionPane.WARNING_MESSAGE);
                         tabbedPane.setSelectedIndex(1);
                         easeParamPanel.browserButton.grabFocus();
                         return;

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: JEASEStatistics.java,v $
- * $Revision: 1.1 $
- * $Date: 2004-02-06 22:55:36 $
+ * $Revision: 1.2 $
+ * $Date: 2004-04-01 20:42:55 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -662,7 +662,7 @@ public class JEASEStatistics {
     
     /***
      * Modified Hit collection methods to accept a vector argument of annotation keys
-     * Modification of code to enable integration into TIGR MeV Ease module.
+     * Modification of code to enable integration into TIGR MeV EASE module.
      */
     
     /** Get the number of the genes in the population for each category that exists in the annotation files.
