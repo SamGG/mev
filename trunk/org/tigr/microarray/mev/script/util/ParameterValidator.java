@@ -37,6 +37,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import org.xml.sax.InputSource;
+
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.SAXNotRecognizedException;
@@ -45,6 +47,8 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import org.tigr.microarray.mev.script.ScriptManager;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
+
+import org.tigr.microarray.mev.TMEV;
 
 /** Facilitates parameter validation. XML file supports validation by supplying
  * the parameter details.
@@ -75,15 +79,12 @@ public class ParameterValidator extends DefaultHandler{
     public boolean loadParameterConstraints() {
 
         try {
-            File file = new File(System.getProperty("user.dir")+"\\config\\ParameterConstraints.xml");
-            URL url = file.toURL();
-            //URL url = this.getClass().getResource(System.getProperty("user.dir")+"\\config\\ParameterConstraints.xml");
-
+            File paramFile = TMEV.getConfigurationFile("ParameterConstraints.xml");
             DOMParser parser = new DOMParser();
             
             parser.setFeature("http://xml.org/sax/features/validation", true);
             parser.setErrorHandler(this);
-            parser.parse(url.toString());
+            parser.parse(paramFile.toURL().toString());            
             validationRoot = parser.getDocument().getDocumentElement();
             haveValidationRoot = true;
         } catch ( NullPointerException e ) {
@@ -93,6 +94,7 @@ public class ParameterValidator extends DefaultHandler{
             "Parameter Validation Initialization Error", JOptionPane.ERROR_MESSAGE);
             return false;
         } catch (Exception e) {
+            e.printStackTrace();
             haveValidationRoot = false;
             JOptionPane.showMessageDialog(new JFrame(), "The parameter validation feature in support of scripting could not be initialized properly.\n"+
             "\"ParameterConstraints.xml\" contained errors reported in the console window.\nScript capabilities will operate without full parameter validation",
