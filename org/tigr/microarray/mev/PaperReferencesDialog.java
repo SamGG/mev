@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: PaperReferencesDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-04-12 20:32:02 $
+ * $Revision: 1.3 $
+ * $Date: 2004-05-06 15:39:31 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -143,7 +143,7 @@ public class PaperReferencesDialog extends JDialog implements java.awt.print.Pri
         html += "Clustering gene expression patterns. ";
         html += "<i>Journal of Computational Biology</i> 6:281-297.";
         
-        html += "<br><p><font size = +1><b>HJC</b></font> - ";
+        html += "<br><p><font size = +1><b>QTC</b></font> - ";
         html += "<b>Jackknife Clustering</b>";
         html += "<br>Heyer, L.J., S. Kruglyak, and S. Yooseph (1999) ";
         html += "Exploring expression data: identification and analysis of coexpressed genes. ";
