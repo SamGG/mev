@@ -6,8 +6,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SuperExpressionFileLoader.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-05-03 13:47:57 $
+ * $Revision: 1.7 $
+ * $Date: 2004-07-07 22:28:27 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -310,7 +310,7 @@ public class SuperExpressionFileLoader {
         
         //Read tmev.cfg
         try{
-            BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir")+sep+"tmev.cfg"));
+            BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir")+sep+"config"+sep+"tmev.cfg"));
 
             String content = new String();
             String line;
