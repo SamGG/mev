@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.13 $
- * $Date: 2004-04-12 21:32:08 $
+ * $Revision: 1.14 $
+ * $Date: 2004-04-13 20:08:38 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -159,7 +159,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     private ClusterTable geneClusterManager;
     private ClusterTable experimentClusterManager;
     private ScriptManager scriptManager;
-    private HistoryViewer historyLog;    
+    private HistoryViewer historyLog;
     
     private File currentAnalysisFile;
     private boolean modifiedResult = false;
@@ -322,17 +322,100 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      */
     
     public void saveAnalysisAs() {
-        File file;
         try {
-            JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+"\\Data");
+            
+            final JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+"\\Data");
             chooser.setFileView(new AnalysisFileView());
             chooser.setFileFilter(new AnalysisFileFilter());
+            chooser.setApproveButtonText("Save");
+            JPanel panel = new JPanel(new GridBagLayout());
+
+            
+            final javax.swing.JDialog dialog = new javax.swing.JDialog(getFrame(), "Save Dialog", true);
+            
+            chooser.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    System.out.println("action performed");
+                    Object source = ae.getSource();
+                    if(source instanceof javax.swing.AbstractButton)
+                        System.out.println("Button");
+                    else if(source instanceof JFileChooser)
+                        System.out.println("JFileCHooser");
+                    System.out.println("cmd = "+ae.getActionCommand());
+                    String cmd = ae.getActionCommand();
+                    if(cmd.equals(JFileChooser.APPROVE_SELECTION)) {
+                        File file = chooser.getSelectedFile();
+                        dialog.dispose();
+                        try {
+                            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file));
+                            saveState(oos, file);
+                        } catch (IOException ioe) {
+                            JOptionPane.showMessageDialog(MultipleArrayViewer.this, "I/O Exception, Error saving analysis. File ("+(file != null ? file.getName() : "name unknown")+")", "Save Analysis", JOptionPane.ERROR_MESSAGE);
+                            ioe.printStackTrace();
+                        }
+                    } else {
+                        dialog.dispose();
+                    }
+                }
+            });
+            
+            
+            javax.swing.JTextPane pane = new javax.swing.JTextPane();
+            pane.setContentType("text/html");                      
+            pane.setEditable(false);
+          //  pane.setBorder(BorderFactory.createLineBorder(Color.black));
+
+            /*
+                        String msg = "<html><body><font face=arial size=2>The following inconsistency was"+
+                        " detected during analysis file loading:</b><br>";
+            
+                            msg += "This difference ";
+                        
+                        msg += "could affect analysis file loading. <br><br>";
+                        msg += "Hit <b>\"OK\"</b> to continue loading. (Loading errors will be reported if they occur)<br>";
+                        msg += "Hit <b>\"Cancel\"</b> to abort the loading process.</body></html>";
+              */          
+            String text = "<html><body><font face=arial size=4><b><center>Analysis Save and Restoration Warning</center><b><hr size=3><br>";//<hr size=3>";
+            text += "<font face=arial size=4>Proper restoration of analysis files is dependant on the Java and Java Virtual Machine versions used to open the file. ";
+            text += "Analysis files should be opened using Java and Java Virtual Machine versions that match the versions used to save the file.<br><br>";
+            
+            text += "If version inconsistencies are found when loading an analysis file the saved and current versions " ;
+            text +=  "will be reported at that time.  This problem only arises when moving analysis files between computers ";
+            text += "running different versions of Java.<br><br></body></html>";
+                        
+            pane.setMargin(new Insets(10,10,10,10));
+            pane.setFont(new java.awt.Font("arial", java.awt.Font.PLAIN, 4));
+            pane.setText(text);        
+            JPanel panePanel = new JPanel(new GridBagLayout());
+            panePanel.setBorder(BorderFactory.createLineBorder(Color.black));
+            panePanel.add(pane,  new GridBagConstraints(0,0,1,1,1,1,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(2,2,2,2), 0, 0) );
+            panePanel.setPreferredSize(new Dimension(chooser.getPreferredSize().width,((int)(chooser.getPreferredSize().height/1.4))));
+          
+            panel.add(panePanel, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(5,5,5,5), 0, 0));            
+            panel.add(chooser, new GridBagConstraints(0,1,1,1,0,1,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,5,5,5), 0, 0));
+            
+            
+            dialog.getContentPane().add(panel);
+            dialog.pack();
+     
+                   Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+        dialog.setLocation((screenSize.width - dialog.getSize().width)/2, (screenSize.height - dialog.getSize().height)/2);
+            dialog.show();
+            
+            
+            
+            
+            
+            
+            //javax.swing.JDialog dialog = chooser.createDialog(this);
+            /*
             if(chooser.showSaveDialog(this) == JOptionPane.OK_OPTION) {
                 file = chooser.getSelectedFile();
                 ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file));
                 saveState(oos, file.getAbsolutePath());
                 this.currentAnalysisFile = file;
             }
+             */
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -342,7 +425,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         if(this.currentAnalysisFile != null) {
             try {
                 ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(this.currentAnalysisFile));
-                saveState(oos, currentAnalysisFile.getAbsolutePath());
+                saveState(oos, currentAnalysisFile);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -353,12 +436,13 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     }
     
     
-    private void saveState(ObjectOutputStream os, String fp) throws IOException {
+    private void saveState(ObjectOutputStream os, File file) throws IOException {
         final ObjectOutputStream oos = os;
-        final String filePath = fp;
+        final String filePath = file.getAbsolutePath();
+        this.currentAnalysisFile = file;
         Thread thread = new Thread(new Runnable() {
             public void run() {
-                try{                   
+                try{
                     oos.useProtocolVersion(ObjectStreamConstants.PROTOCOL_VERSION_2);
                     // Save MeV tag
                     oos.writeObject(TMEV.VERSION);
@@ -373,7 +457,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                     if(jvm != null)
                         oos.writeObject(jvm);
                     else
-                        oos.writeObject("unknown");                    
+                        oos.writeObject("unknown");
                     // Save Date
                     oos.writeLong(System.currentTimeMillis());
                     // Save IData
@@ -419,7 +503,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                     String jreVersion = System.getProperty("java.version");
                     String jvmVersion = System.getProperty("java.vm.version");
                     
-                    if(!savedMEVVersion.equals(TMEV.VERSION) || !savedJREVersion.equals(jreVersion) || !savedJVMVersion.equals(jvmVersion)) {                        
+                    if(!savedMEVVersion.equals(TMEV.VERSION) || !savedJREVersion.equals(jreVersion) || !savedJVMVersion.equals(jvmVersion)) {
                         String msg = "";
                         String error = "<b>";
                         int errorCount = 0;
@@ -441,10 +525,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                             error += "<br>";
                             error += "Current Java Virtual Machine Version: "+jvmVersion+"<br>";
                             error += "Java Virtual Machine Version During Save: "+savedJVMVersion+"<br>";
-                        }        
+                        }
                         
                         msg += "<html><body><font face=arial size=4>The following inconsistenc"+(errorCount == 1 ? "y was" : "ies were")+
-                                " detected during analysis file loading:<br>" + error + "</b><br>";
+                        " detected during analysis file loading:<br>" + error + "</b><br>";
                         if(errorCount > 1) {
                             msg += "These differences ";
                         } else {
@@ -458,6 +542,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                         panel.setBackground(Color.white);
                         panel.setBorder(BorderFactory.createLineBorder(Color.black));
                         javax.swing.JTextPane pane = new javax.swing.JTextPane();
+                        pane.setEditable(false);
                         pane.setMargin(new Insets(10,10,10,10));
                         pane.setBackground(Color.white);
                         pane.setContentType("text/html");
@@ -465,7 +550,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                         panel.add(pane);
                         
                         int choice = JOptionPane.showConfirmDialog(getFrame(), panel, "Analysis Load Version Confirmations", JOptionPane.WARNING_MESSAGE);
-                      //  JOptionPane.showMessageDialog(getFrame(), msg, "Analysis Load Version Confirmations", JOptionPane.WARNING_MESSAGE);
+                        //  JOptionPane.showMessageDialog(getFrame(), msg, "Analysis Load Version Confirmations", JOptionPane.WARNING_MESSAGE);
                         if(choice != JOptionPane.OK_OPTION)
                             return;
                     }
@@ -501,7 +586,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                     
                     //signal mev analysis loaded
                     menubar.systemEnable(TMEV.ANALYSIS_LOADED);
-                } catch (Exception e) {                    
+                } catch (Exception e) {
                     JOptionPane.showMessageDialog(MultipleArrayViewer.this, "Analysis was not loaded.  Error reading input file.",
                     "Load Analysis Error", JOptionPane.WARNING_MESSAGE);
                     e.printStackTrace();
@@ -2142,7 +2227,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         }
         if(removed)
             fireDataChanged();
- 
+        
         return removed;
     }
     
@@ -2174,7 +2259,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         }
         if(removed)
             fireDataChanged();
-
+        
         return removed;
     }
     
