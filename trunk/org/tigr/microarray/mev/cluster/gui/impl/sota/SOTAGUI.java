@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SOTAGUI.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-06-01 13:23:13 $
+ * $Revision: 1.7 $
+ * $Date: 2004-06-24 17:31:14 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -510,12 +510,18 @@ public class SOTAGUI implements IClusterGUI, IScriptGUI {
     
     public DefaultMutableTreeNode executeScript(IFramework framework, AlgorithmData algData, Experiment experiment) throws AlgorithmException {
         this.experiment = experiment;
+        this.frameData = framework.getData();
+        this.clusterGenes = algData.getParams().getBoolean("sota-cluster-genes");
+                    
         Listener listener = new Listener();
         
         try {
             algorithm = framework.getAlgorithmFactory().getAlgorithm("SOTA");
             algorithm.addAlgorithmListener(listener);
-            algData.addMatrix("experiment", experiment.getMatrix());
+            if(clusterGenes)
+                algData.addMatrix("experiment", experiment.getMatrix());
+            else
+                algData.addMatrix("experiment", experiment.getMatrix().transpose());                
             
             this.progress = new Progress(framework.getFrame(), "Calculating clusters", listener);
             this.progress.show();
@@ -550,6 +556,7 @@ public class SOTAGUI implements IClusterGUI, IScriptGUI {
             
             AlgorithmParameters params = algData.getParams();
             
+      
             //menu param
             info.function = framework.getDistanceMenu().getFunctionName(params.getInt("distance-function"));
             
@@ -580,7 +587,8 @@ public class SOTAGUI implements IClusterGUI, IScriptGUI {
             info.hcl_genes_in_clusters = params.getBoolean("calculate_genes");
             info.hcl_samples_in_clusters = params.getBoolean("calculate-experiments");
             info.hcl = (info.hcl_on_clusters || info.hcl_on_samples_on_all_genes);
-            info.hcl_method = params.getInt("method-linkage");
+            if(info.hcl)
+                info.hcl_method = params.getInt("method-linkage");
             
             loadSotaTreeData();
             
