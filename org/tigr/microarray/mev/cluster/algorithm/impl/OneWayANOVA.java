@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: OneWayANOVA.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2004-04-22 15:40:09 $
+ * $Author: nbhagaba $
  * $State: Exp $
  */
 
@@ -445,7 +445,7 @@ public class OneWayANOVA extends AbstractAlgorithm {
         FDistribution fDist = new FDistribution(groupsDF, errorDF);
         //System.out.println("Gene " + gene + ": fValue = " + fValue + ", dfNum = " + groupsDF + ", dfDenom = " + errorDF);        
         double cumulProb = fDist.cumulative(fValue);
-        double pValue = 2*(1 - cumulProb); // (1 - cumulProb) is the one-tailed test p-value
+        double pValue = 1 - cumulProb; // (1 - cumulProb) is the one-tailed test p-value
         
         if (pValue > 1) {
             pValue = 1.0d;
