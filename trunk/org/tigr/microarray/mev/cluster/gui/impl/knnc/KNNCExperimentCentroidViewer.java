@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: KNNCExperimentCentroidViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-05 22:18:01 $
+ * $Revision: 1.3 $
+ * $Date: 2004-06-21 21:09:10 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -48,7 +48,6 @@ public class KNNCExperimentCentroidViewer extends ExperimentClusterCentroidViewe
         Listener listener = new Listener();
         this.popup = createJPopupMenu(listener);
         getContentComponent().addMouseListener(listener);
-        getHeaderComponent().addMouseListener(listener);        
     }
     
     private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { }
