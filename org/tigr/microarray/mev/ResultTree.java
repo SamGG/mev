@@ -180,9 +180,9 @@ public class ResultTree extends JTree implements java.io.Serializable {
     
     /** Writes the hitory node.
      */
-    public void writeHistory(ObjectOutputStream oos) throws IOException {
+    public void writeHistory(ObjectOutputStream oos, DefaultMutableTreeNode historyNode) throws IOException {
         // work on analysis node
-        writeTree(oos, (DefaultMutableTreeNode)root.getChildAt(3), 0);
+        writeTree(oos, historyNode, 0);
         oos.writeInt(-1);
     }
     
@@ -378,6 +378,9 @@ public class ResultTree extends JTree implements java.io.Serializable {
         /** String Terminal Icon
          */
         private Icon dotTerminalIcon = GUIFactory.getIcon("TerminalDot.gif");
+        /**Script Manager Icon
+         */
+        private Icon scriptManagerIcon = GUIFactory.getIcon("ScriptManager.gif");
         
         /** Parent node
          */
@@ -439,10 +442,12 @@ public class ResultTree extends JTree implements java.io.Serializable {
                     setIcon(centroidGraphIcon);
                 } else if(text.indexOf("Expression Graph") != -1){
                     setIcon(expressionGraphIcon);
-                } else if(text.equals("Analysis")){
+                } else if(text.equals("Analysis Results")){
                     setIcon(analysisIcon);
                 } else if(text.equals("Cluster Manager")){
                     setIcon(clusterManagerIcon);
+                } else if (text.equals("Script Manager")){
+                    setIcon(scriptManagerIcon);
                 } else if(text.equals("History")){
                     setIcon(historyIcon);
                 } else if(text.equals("General Information")){
@@ -462,6 +467,8 @@ public class ResultTree extends JTree implements java.io.Serializable {
                     setIcon(hclIcon);
                 } else if(text.equals("SOM Visualization")){
                     setIcon(SOMColorIcon);
+                } else if(text.indexOf("Network") != -1) {
+                    setIcon(networkIcon);
                 }
                 
             } else {  //it's a leaf
@@ -509,10 +516,12 @@ public class ResultTree extends JTree implements java.io.Serializable {
                         setIcon(openIcon);
                     } else if(text.equals("Main View")){
                         setIcon(mainViewIcon);
-                    } else if(text.equalsIgnoreCase("Analysis")){
+                    } else if(text.equalsIgnoreCase("Analysis Results")){
                         setIcon(analysisIcon);
                     } else if(text.equalsIgnoreCase("Cluster Manager")){
                         setIcon(clusterManagerIcon);
+                    } else if (text.equals("Script Manager")){                      
+                        setIcon(scriptManagerIcon);
                     } else if(text.equalsIgnoreCase("History")){
                         setIcon(historyIcon);
                     } else if(text.indexOf("able") != -1){ //table viewer
@@ -533,7 +542,7 @@ public class ResultTree extends JTree implements java.io.Serializable {
                         setIcon(volcanoIcon);
                     } else if(text.equals("SAM Graph")){
                         setIcon(samGraphIcon);
-                    } else if(text.equals("Network")){
+                    } else if(text.indexOf("Network") != -1){
                         setIcon(networkIcon);
                     } else if(text.equals("Matrix View")){
                         setIcon(gdmMatrixIcon);
