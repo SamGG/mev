@@ -4,17 +4,16 @@ All rights reserved.
 */
 /*
  * $RCSfile: RelevanceNetworkLayout.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:44 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.rn;
 
-import java.util.Stack;
-import java.util.Random;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
 
 import org.tigr.microarray.mev.cluster.gui.impl.util.IntSorter;
 

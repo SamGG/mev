@@ -6,27 +6,24 @@
 
 package org.tigr.microarray.mev.cluster.algorithm.impl;
 
-import java.util.Vector;
 import java.util.Random;
+import java.util.Vector;
 
-import JSci.maths.statistics.FDistribution;
-
-import org.tigr.util.FloatMatrix;
-import org.tigr.util.ConfMap;
-import org.tigr.util.QSort;
-  
-import org.tigr.microarray.mev.cluster.Node;
 import org.tigr.microarray.mev.cluster.Cluster;
+import org.tigr.microarray.mev.cluster.Node;
 import org.tigr.microarray.mev.cluster.NodeList;
 import org.tigr.microarray.mev.cluster.NodeValue;
 import org.tigr.microarray.mev.cluster.NodeValueList;
-
+import org.tigr.microarray.mev.cluster.algorithm.AbortException;
 import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
-import org.tigr.microarray.mev.cluster.algorithm.AbortException;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
+import org.tigr.util.FloatMatrix;
+
+import JSci.maths.statistics.FDistribution;
+
 /**
  *
  * @author  nbhagaba
@@ -62,7 +59,7 @@ public class TFA extends AbstractAlgorithm {
     private int numGenes, numExps; 
     
     private int[] numFactorLevels, factorAAssignments, factorBAssignments;
-    private boolean allCellsHaveOneSample, isBalancedDesign, usePerms;
+    private boolean allCellsHaveOneSample, isBalancedDesign, usePerms, drawSigTreesOnly;
     private int adjustmentMethod;
     private float alpha;
     //private Vector[][] bothFactorAssignments;
@@ -71,6 +68,10 @@ public class TFA extends AbstractAlgorithm {
     double[] origFactorAPValues, origFactorBPValues, origInteractionPValues, factorAFValues, factorBFValues, interactionFValues; 
     double[] factorADfValues, factorBDfValues, interactionDfValues, errorDfValues;
     double[] adjFactorAPValues, adjFactorBPValues, adjInteractionPValues;
+    
+    private int hcl_function;
+    private boolean hcl_absolute;
+    
     /**
      * This method should interrupt the calculation.
      *
@@ -100,8 +101,14 @@ public class TFA extends AbstractAlgorithm {
         function = map.getInt("distance-function", EUCLIDEAN);
         factor   = map.getFloat("distance-factor", 1.0f);
         absolute = map.getBoolean("distance-absolute", false);
+
+        hcl_function = map.getInt("hcl-distance-function", EUCLIDEAN);
+        hcl_absolute = map.getBoolean("hcl-distance-absolute", false);        
         
         hierarchical_tree = map.getBoolean("hierarchical-tree", false);
+        if (hierarchical_tree) {
+            drawSigTreesOnly = map.getBoolean("draw-sig-trees-only");
+        }        
         method_linkage = map.getInt("method-linkage", 0);
         calculate_genes = map.getBoolean("calculate-genes", false);
         calculate_experiments = map.getBoolean("calculate-experiments", false);
@@ -569,9 +576,17 @@ public class TFA extends AbstractAlgorithm {
 	    Node node = new Node(features);
 	    nodeList.addNode(node);
 	    if (hierarchical_tree) {
-		node.setValues(calculateHierarchicalTree(features, method_linkage, calculate_genes, calculate_experiments));
-		event.setIntValue(i+1);
-		fireValueChanged(event);
+                if (drawSigTreesOnly) {
+                    if (i <= 2) {
+                        node.setValues(calculateHierarchicalTree(features, method_linkage, calculate_genes, calculate_experiments));
+                        event.setIntValue(i+1);
+                        fireValueChanged(event);                        
+                    }
+                } else {
+                    node.setValues(calculateHierarchicalTree(features, method_linkage, calculate_genes, calculate_experiments));
+                    event.setIntValue(i+1);
+                    fireValueChanged(event);
+                }
 	    }
 	}       
         
@@ -604,8 +619,8 @@ public class TFA extends AbstractAlgorithm {
 	AlgorithmData data = new AlgorithmData();
 	FloatMatrix experiment = getSubExperiment(this.expMatrix, features);
 	data.addMatrix("experiment", experiment);
-	data.addParam("distance-function", String.valueOf(this.function));
-	data.addParam("distance-absolute", String.valueOf(this.absolute));
+        data.addParam("hcl-distance-function", String.valueOf(this.hcl_function));
+        data.addParam("hcl-distance-absolute", String.valueOf(this.hcl_absolute));
 	data.addParam("method-linkage", String.valueOf(method));
 	HCL hcl = new HCL();
 	AlgorithmData result;

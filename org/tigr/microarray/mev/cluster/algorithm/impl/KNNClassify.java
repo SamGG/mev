@@ -5,13 +5,13 @@ All rights reserved.
 /*
  * $RCSfile: KNNClassify.java,v $
 <<<<<<< KNNClassify.java
- * $Revision: 1.7 $
- * $Date: 2004-05-19 15:26:05 $
- * $Author: nbhagaba $
+ * $Revision: 1.8 $
+ * $Date: 2005-02-24 20:23:47 $
+ * $Author: braistedj $
 =======
- * $Revision: 1.7 $
- * $Date: 2004-05-19 15:26:05 $
- * $Author: nbhagaba $
+ * $Revision: 1.8 $
+ * $Date: 2005-02-24 20:23:47 $
+ * $Author: braistedj $
 >>>>>>> 1.4
  * $State: Exp $
  */
@@ -24,24 +24,22 @@ All rights reserved.
 package org.tigr.microarray.mev.cluster.algorithm.impl;
 //THIS IS A TEST COMMENT    
 //TEST  COMMENT FOR V 1.6
-import java.util.Vector;
 import java.util.Random;
-import org.tigr.util.FloatMatrix;
-import org.tigr.util.ConfMap;
-import org.tigr.util.QSort;
-  
-import org.tigr.microarray.mev.cluster.Node;
+import java.util.Vector;
+
 import org.tigr.microarray.mev.cluster.Cluster;
+import org.tigr.microarray.mev.cluster.Node;
 import org.tigr.microarray.mev.cluster.NodeList;
 import org.tigr.microarray.mev.cluster.NodeValue;
 import org.tigr.microarray.mev.cluster.NodeValueList;
-
+import org.tigr.microarray.mev.cluster.algorithm.AbortException;
 import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
-import org.tigr.microarray.mev.cluster.algorithm.AbortException;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
+import org.tigr.util.FloatMatrix;
+import org.tigr.util.QSort;
 
 /**
  *
@@ -69,6 +67,9 @@ public class KNNClassify extends AbstractAlgorithm {
     
     private Vector rowsInAnalysis, filteredClassifierSet, filteredClasses;
     
+    private int hcl_function;
+    private boolean hcl_absolute;
+    
     //AlgorithmEvent event, event2;    
     
     /** This method should interrupt the calculation.
@@ -91,7 +92,10 @@ public class KNNClassify extends AbstractAlgorithm {
 	boolean calculate_genes = map.getBoolean("calculate-genes", false);
 	boolean calculate_experiments = map.getBoolean("calculate-experiments", false);
 	
-	this.expMatrix = data.getMatrix("experiment");
+        hcl_function = map.getInt("hcl-distance-function", EUCLIDEAN);
+        hcl_absolute = map.getBoolean("hcl-distance-absolute", false);
+        
+        this.expMatrix = data.getMatrix("experiment");
 	
 	numRows = this.expMatrix.getRowDimension();
 	numCols = this.expMatrix.getColumnDimension();        
@@ -482,8 +486,8 @@ public class KNNClassify extends AbstractAlgorithm {
             experiment = this.getSubExperimentReducedCols(this.expMatrix, features);
         
         data.addMatrix("experiment", experiment);
-	data.addParam("distance-function", String.valueOf(this.function));
-	data.addParam("distance-absolute", String.valueOf(this.absolute));
+        data.addParam("hcl-distance-function", String.valueOf(this.hcl_function));
+        data.addParam("hcl-distance-absolute", String.valueOf(this.hcl_absolute));
 	data.addParam("method-linkage", String.valueOf(method));
 	HCL hcl = new HCL();
 	AlgorithmData result;

@@ -1,4 +1,8 @@
 /*
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
+All rights reserved.
+*/
+/*
  * TFAGUI.java
  *
  * Created on February 12, 2004, 10:44 AM
@@ -6,55 +10,42 @@
 
 package org.tigr.microarray.mev.cluster.gui.impl.tfa;
 
-import java.io.*;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
-import java.util.Arrays;
 import java.util.Vector;
 
-import javax.swing.*;
-
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.tigr.util.FloatMatrix;
-
-import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.IViewer;
-import org.tigr.microarray.mev.cluster.gui.LeafInfo;
-import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
-import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
-import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
-
+import org.tigr.microarray.mev.cluster.Cluster;
+import org.tigr.microarray.mev.cluster.Node;
+import org.tigr.microarray.mev.cluster.NodeList;
+import org.tigr.microarray.mev.cluster.NodeValueList;
+import org.tigr.microarray.mev.cluster.algorithm.AbortException;
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
-
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Monitor;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLInitDialog;
-import org.tigr.microarray.mev.cluster.Cluster;
-import org.tigr.microarray.mev.cluster.NodeList;
-import org.tigr.microarray.mev.cluster.Node;
-import org.tigr.microarray.mev.cluster.NodeValueList;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
+import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
+import org.tigr.microarray.mev.cluster.gui.LeafInfo;
+import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidsViewer;
-
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
+import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
+import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLInitDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
+import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
 import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
-
+import org.tigr.util.FloatMatrix;
 
 /**
  *
@@ -84,7 +75,7 @@ public class TFAGUI implements IClusterGUI, IScriptGUI {
     private Object[][] auxData;
     private String[] auxTitles;
     String[] clusterLabels;
-    private boolean usePerms;
+    private boolean usePerms, drawSigTreesOnly;
     
     /** Creates a new instance of TFAGUI */
     public TFAGUI() {
@@ -117,7 +108,7 @@ public class TFAGUI implements IClusterGUI, IScriptGUI {
         
         exptNamesVector = new Vector();
         for (int i = 0; i < number_of_samples; i++) {
-            exptNamesVector.add(framework.getData().getFullSampleName(i));
+            exptNamesVector.add(framework.getData().getFullSampleName(experiment.getSampleIndex(i)));
         }
         
         TFAInitBox1 t1Box = new TFAInitBox1((JFrame)framework.getFrame(), true);
@@ -147,6 +138,10 @@ public class TFAGUI implements IClusterGUI, IScriptGUI {
         
         boolean allCellsHaveOneSample = t2Box.allCellsHaveOneSample();
         boolean isHierarchicalTree = t2Box.drawTrees();
+        drawSigTreesOnly = true;
+        if (isHierarchicalTree) {
+            drawSigTreesOnly = t2Box.drawSigTreesOnly();
+        }        
         int adjustmentMethod = t2Box.getAdjustmentMethod();
         float alpha = t2Box.getAlpha();
         factorAAssignments = t2Box.getFactorAAssignments();
@@ -161,20 +156,31 @@ public class TFAGUI implements IClusterGUI, IScriptGUI {
         if (usePerms) {
             numPerms = t2Box.getNumPerms();
         }
-        
+
+        IDistanceMenu menu = framework.getDistanceMenu();        
+        int function = menu.getDistanceFunction();
+        if (function == Algorithm.DEFAULT) {
+            function = Algorithm.EUCLIDEAN;
+        }
+    
         // hcl init
         int hcl_method = 0;
         boolean hcl_samples = false;
         boolean hcl_genes = false;
+        int hcl_function = 4;
+        boolean hcl_absolute = false;
         if (isHierarchicalTree) {
-            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame());
+            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(function), menu.isAbsoluteDistance(), true);
             if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
                 return null;
             }
             hcl_method = hcl_dialog.getMethod();
-            hcl_samples = hcl_dialog.isClusterExperience();
+            hcl_samples = hcl_dialog.isClusterExperiments();
             hcl_genes = hcl_dialog.isClusterGenes();
+            hcl_function = hcl_dialog.getDistanceMetric();
+            hcl_absolute = hcl_dialog.getAbsoluteSelection();
         }
+        
         Listener listener = new Listener();
         
         try {
@@ -190,14 +196,8 @@ public class TFAGUI implements IClusterGUI, IScriptGUI {
             
             data.addMatrix("experiment", experiment.getMatrix());
             data.addParam("distance-factor", String.valueOf(1.0f));
-            IDistanceMenu menu = framework.getDistanceMenu();
             data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
-            
-            int function = menu.getDistanceFunction();
-            if (function == Algorithm.DEFAULT) {
-                function = Algorithm.EUCLIDEAN;
-            }
-            
+                        
             data.addParam("distance-function", String.valueOf(function));
             data.addIntArray("numFactorLevels", numFactorLevels);
             data.addParam("allCellsHaveOneSample", String.valueOf(allCellsHaveOneSample));
@@ -212,9 +212,12 @@ public class TFAGUI implements IClusterGUI, IScriptGUI {
             // hcl parameters
             if (isHierarchicalTree) {
                 data.addParam("hierarchical-tree", String.valueOf(true));
+                data.addParam("draw-sig-trees-only", String.valueOf(drawSigTreesOnly));                
                 data.addParam("method-linkage", String.valueOf(hcl_method));
                 data.addParam("calculate-genes", String.valueOf(hcl_genes));
                 data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+                data.addParam("hcl-distance-function", String.valueOf(hcl_function));
+                data.addParam("hcl-distance-absolute", String.valueOf(hcl_absolute));
             }
             
             long start = System.currentTimeMillis();
@@ -331,7 +334,7 @@ public class TFAGUI implements IClusterGUI, IScriptGUI {
         
         exptNamesVector = new Vector();
         for (int i = 0; i < number_of_samples; i++) {
-            exptNamesVector.add(framework.getData().getFullSampleName(i));
+            exptNamesVector.add(framework.getData().getFullSampleName(experiment.getSampleIndex(i)));            
         }
         
         TFAInitBox1 t1Box = new TFAInitBox1((JFrame)framework.getFrame(), true);
@@ -361,6 +364,11 @@ public class TFAGUI implements IClusterGUI, IScriptGUI {
         
         boolean allCellsHaveOneSample = t2Box.allCellsHaveOneSample();
         boolean isHierarchicalTree = t2Box.drawTrees();
+        drawSigTreesOnly = true;
+        if (isHierarchicalTree) {
+            drawSigTreesOnly = t2Box.drawSigTreesOnly();
+        }        
+        
         int adjustmentMethod = t2Box.getAdjustmentMethod();
         float alpha = t2Box.getAlpha();
         factorAAssignments = t2Box.getFactorAAssignments();
@@ -376,18 +384,28 @@ public class TFAGUI implements IClusterGUI, IScriptGUI {
             numPerms = t2Box.getNumPerms();
         }
         
+        IDistanceMenu menu = framework.getDistanceMenu();        
+        int function = menu.getDistanceFunction();
+        if (function == Algorithm.DEFAULT) {
+            function = Algorithm.EUCLIDEAN;
+        }
+        
         // hcl init
         int hcl_method = 0;
         boolean hcl_samples = false;
         boolean hcl_genes = false;
+        int hcl_function = 4;
+        boolean hcl_absolute = false;
         if (isHierarchicalTree) {
-            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame());
+            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(function), menu.isAbsoluteDistance(), true);
             if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
                 return null;
             }
             hcl_method = hcl_dialog.getMethod();
-            hcl_samples = hcl_dialog.isClusterExperience();
+            hcl_samples = hcl_dialog.isClusterExperiments();
             hcl_genes = hcl_dialog.isClusterGenes();
+            hcl_function = hcl_dialog.getDistanceMetric();
+            hcl_absolute = hcl_dialog.getAbsoluteSelection();
         }
         
         int genes = experiment.getNumberOfGenes();
@@ -396,13 +414,8 @@ public class TFAGUI implements IClusterGUI, IScriptGUI {
         data.addStringArray("cluster-labels", this.clusterLabels);
         data.addStringArray("factor-names", this.factorNames);
         data.addParam("distance-factor", String.valueOf(1.0f));
-        IDistanceMenu menu = framework.getDistanceMenu();
+
         data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
-        
-        int function = menu.getDistanceFunction();
-        if (function == Algorithm.DEFAULT) {
-            function = Algorithm.EUCLIDEAN;
-        }
         
         data.addParam("distance-function", String.valueOf(function));
         data.addIntArray("numFactorLevels", numFactorLevels);
@@ -418,13 +431,16 @@ public class TFAGUI implements IClusterGUI, IScriptGUI {
         // hcl parameters
         if (isHierarchicalTree) {
             data.addParam("hierarchical-tree", String.valueOf(true));
+            data.addParam("draw-sig-trees-only", String.valueOf(drawSigTreesOnly));            
             data.addParam("method-linkage", String.valueOf(hcl_method));
             data.addParam("calculate-genes", String.valueOf(hcl_genes));
             data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+            data.addParam("hcl-distance-function", String.valueOf(hcl_function));
+            data.addParam("hcl-distance-absolute", String.valueOf(hcl_absolute));            
         }
         
         // alg name
-        data.addParam("name", "TFA");
+        data.addParam("name", "2 Fact. ANOVA");
         
         // alg type
         data.addParam("alg-type", "cluster-genes");
@@ -449,6 +465,7 @@ public class TFAGUI implements IClusterGUI, IScriptGUI {
         this.factorNames = algData.getStringArray("factor-names");
         this.factorAAssignments = algData.getIntArray("factorAAssignments");
         this.factorBAssignments = algData.getIntArray("factorBAssignments");
+        this.drawSigTreesOnly = algData.getParams().getBoolean("draw-sig-trees-only");        
         algData.addMatrix("experiment", experiment.getMatrix());
         Listener listener = new Listener();
         
@@ -642,8 +659,17 @@ public class TFAGUI implements IClusterGUI, IScriptGUI {
         }
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Hierarchical Trees");
         NodeList nodeList = result_cluster.getNodeList();
-        for (int i=0; i<nodeList.getSize(); i++) {
-            node.add(new DefaultMutableTreeNode(new LeafInfo(clusterLabels[i], createHCLViewer(nodeList.getNode(i), info))));
+        
+        if (!drawSigTreesOnly) {
+            for (int i=0; i<nodeList.getSize(); i++) {
+                node.add(new DefaultMutableTreeNode(new LeafInfo(clusterLabels[i], createHCLViewer(nodeList.getNode(i), info))));
+            }
+        } else {
+            for (int i=0; i<nodeList.getSize(); i++) {
+                if (i <= 2) {
+                node.add(new DefaultMutableTreeNode(new LeafInfo(clusterLabels[i], createHCLViewer(nodeList.getNode(i), info))));
+                }
+            }            
         }
         root.add(node);
     }

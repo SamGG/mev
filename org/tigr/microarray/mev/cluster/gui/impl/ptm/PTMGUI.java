@@ -1,12 +1,12 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: PTMGUI.java,v $
- * $Revision: 1.7 $
- * $Date: 2004-05-26 13:25:34 $
- * $Author: braisted $
+ * $Revision: 1.8 $
+ * $Date: 2005-02-24 20:24:05 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.ptm;
@@ -14,7 +14,6 @@ package org.tigr.microarray.mev.cluster.gui.impl.ptm;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
-
 import java.util.Arrays;
 import java.util.Vector;
 
@@ -22,42 +21,35 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.tigr.util.ConfMap;
-import org.tigr.util.FloatMatrix;
-
-import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.IViewer;
-import org.tigr.microarray.mev.cluster.gui.LeafInfo;
-import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
-import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
-import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
-import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
-
+import org.tigr.microarray.mev.cluster.Cluster;
+import org.tigr.microarray.mev.cluster.Node;
+import org.tigr.microarray.mev.cluster.NodeList;
+import org.tigr.microarray.mev.cluster.NodeValueList;
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
-
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Monitor;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
+import org.tigr.microarray.mev.cluster.clusterUtil.ClusterList;
+import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
+import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
+import org.tigr.microarray.mev.cluster.gui.LeafInfo;
+import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLInitDialog;
-import org.tigr.microarray.mev.cluster.Cluster;
-import org.tigr.microarray.mev.cluster.NodeList;
-import org.tigr.microarray.mev.cluster.Node;
-import org.tigr.microarray.mev.cluster.NodeValueList;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
-
+import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLInitDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
+import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
 import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
+import org.tigr.util.FloatMatrix;
 
 
 public class PTMGUI implements IClusterGUI, IScriptGUI {
@@ -73,7 +65,7 @@ public class PTMGUI implements IClusterGUI, IScriptGUI {
     private boolean clusterGenes = false;
     private Object[][] auxData;
     private String[] auxTitles;
-    
+    private boolean drawSigTreesOnly;    
     
     /**
      * Default constructor.
@@ -102,7 +94,7 @@ public class PTMGUI implements IClusterGUI, IScriptGUI {
         int number_of_genes = experiment.getNumberOfGenes();
         
         for (int i = 0; i < number_of_samples; i++) {
-            sampleNamesVector.add(framework.getData().getFullSampleName(i));
+            sampleNamesVector.add(framework.getData().getFullSampleName(experiment.getSampleIndex(i)));
         }
         
         Vector uniqueIDs = new Vector();
@@ -115,15 +107,17 @@ public class PTMGUI implements IClusterGUI, IScriptGUI {
         Vector clusterVector = new Vector();
         
         Color clusterColors[] = framework.getData().getColors();
+
         boolean assignedToACluster[] = new boolean[number_of_genes];
         
         for (int i = 0; i < number_of_genes; i++) {
             assignedToACluster[i] = false;
         }
         
-        for (int i = 0; i < clusterColors.length; i++) {
-            Vector currentCluster = new Vector();
+        //for (int i = 0; i < clusterColors.length; i++) {
+          //  Vector currentCluster = new Vector();
             
+            /*
             for (int j = 0; j < number_of_genes; j++) {
                 if (!assignedToACluster[j]) {
                     if (clusterColors[i].equals(framework.getData().getProbeColor(experiment.getGeneIndexMappedToData(j)))) {
@@ -132,25 +126,81 @@ public class PTMGUI implements IClusterGUI, IScriptGUI {
                     }
                 }
             }
+             */
+        
+        //can't assume that a null cluster color means that a gene is not in a cluster.
+        ClusterRepository geneClusterRepository = framework.getClusterRepository(org.tigr.microarray.mev.cluster.clusterUtil.Cluster.GENE_CLUSTER);
+        
+        for(int i = 0; i < geneClusterRepository.size(); i++) {
+            ClusterList list = geneClusterRepository.getClusterList(i);
+            Vector currentCluster;
             
-            clusterVector.add(currentCluster);
+            clusterColors = new Color[list.size()];
+            
+            for(int j = 0; j < list.size(); j++) {
+                //make a vector     
+                currentCluster = new Vector();
+                
+                //get cluster
+                org.tigr.microarray.mev.cluster.clusterUtil.Cluster mevCluster = list.getClusterAt(j);
+                clusterColors[j] = mevCluster.getClusterColor();
+                
+                //check genes for membership and add to cluster vector
+                for(int m = 0 ; m < number_of_genes; m++) {
+                    if(mevCluster.isMember(experiment.getGeneIndexMappedToData(m)))
+                        currentCluster.add(new Integer(m));
+                        assignedToACluster[m] = true;
+                }
+
+                clusterVector.add(currentCluster);
+                
+            }  
         }
+    
         
         //Experiment clustering
         Vector expClusterVector = new Vector();
         Color expClusterColors[] = framework.getData().getExperimentColors();
         boolean expAssignedToACluster[] = new boolean[number_of_samples];
         
-        for (int i = 0; i < number_of_samples; i++) {
+        for(int i = 0; i < number_of_samples; i++) {
             expAssignedToACluster[i] = false;
         }
+
+                //can't assume that a null cluster color means that a gene is not in a cluster.
+        ClusterRepository expClusterRepository = framework.getClusterRepository(org.tigr.microarray.mev.cluster.clusterUtil.Cluster.GENE_CLUSTER);
         
-        for (int i = 0; i < expClusterColors.length; i++) {
+        for(int i = 0; i < expClusterRepository.size(); i++) {
+            ClusterList list = expClusterRepository.getClusterList(i);
+            Vector currentCluster;
+            
+            expClusterColors = new Color[list.size()];
+            
+            for(int j = 0; j < list.size(); j++) {
+                //make a vector     
+                currentCluster = new Vector();
+                
+                //get cluster
+                org.tigr.microarray.mev.cluster.clusterUtil.Cluster mevCluster = list.getClusterAt(j);
+                expClusterColors[j] = mevCluster.getClusterColor();
+                
+                //check genes for membership and add to cluster vector
+                for(int m = 0 ; m < number_of_samples; m++) {
+                    if(mevCluster.isMember(experiment.getSampleIndex(m)))
+                        currentCluster.add(new Integer(m));
+                        expAssignedToACluster[m] = true;
+                }
+
+                expClusterVector.add(currentCluster);
+                
+            }  
+        }
+      /*  for (int i = 0; i < expClusterColors.length; i++) {
             Vector currentCluster = new Vector();
             
             for (int j = 0; j < number_of_samples; j++) {
                 if (!expAssignedToACluster[j]) {
-                    if (expClusterColors[i].equals(framework.getData().getExperimentColor(j))) {
+                    if (expClusterColors[i].equals(framework.getData().getExperimentColor(experiment.getSampleIndex(j)))) {
                         currentCluster.add(new Integer(j));
                         expAssignedToACluster[j] = true;
                     }
@@ -158,8 +208,10 @@ public class PTMGUI implements IClusterGUI, IScriptGUI {
             }
             expClusterVector.add(currentCluster);
         }
+       */
+
         
-        PTMInitDialog  ptmInitBox = new PTMInitDialog(new JFrame(), modality, experiment.getMatrix(), uniqueIDs, sampleNamesVector, clusterVector, expClusterVector, clusterColors, expClusterColors);
+        PTMInitDialog  ptmInitBox = new PTMInitDialog((JFrame)framework.getFrame(), modality, experiment.getMatrix(), uniqueIDs, sampleNamesVector, clusterVector, expClusterVector, clusterColors, expClusterColors);
         
         boolean isHierarchicalTree;
         // hcl init
@@ -192,14 +244,30 @@ public class PTMGUI implements IClusterGUI, IScriptGUI {
             isHierarchicalTree = ptmInitBox.isDrawTrees();
         }
         
+        drawSigTreesOnly = true;
         if (isHierarchicalTree) {
-            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame());
+            drawSigTreesOnly = ptmInitBox.drawSigTreesOnly();
+        }        
+
+        IDistanceMenu menu = framework.getDistanceMenu();
+        int function = menu.getDistanceFunction();
+        if (function == Algorithm.DEFAULT) {
+            function = Algorithm.EUCLIDEAN;
+        }
+        
+        int hcl_function = 4;
+        boolean hcl_absolute = false;        
+        
+        if (isHierarchicalTree) {
+            HCLInitDialog hcl_dialog = new HCLInitDialog(new JFrame(), menu.getFunctionName(function), menu.isAbsoluteDistance(), true);
             if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
                 return null;
             }
             hcl_method = hcl_dialog.getMethod();
-            hcl_samples = hcl_dialog.isClusterExperience();
+            hcl_samples = hcl_dialog.isClusterExperiments();
             hcl_genes = hcl_dialog.isClusterGenes();
+            hcl_function = hcl_dialog.getDistanceMetric();
+            hcl_absolute = hcl_dialog.getAbsoluteSelection();            
         }
         
         Listener listener = new Listener();
@@ -221,23 +289,23 @@ public class PTMGUI implements IClusterGUI, IScriptGUI {
             data.addParam("ptm-cluster-genes", String.valueOf(clusterGenes));
             data.addMatrix("templateVectorMatrix", templateMatrix);
             data.addParam("distance-factor", String.valueOf(1.0f));
-            IDistanceMenu menu = framework.getDistanceMenu();
+
             data.addParam("use-absolute", String.valueOf(useAbsolute));
             data.addParam("useR", String.valueOf(useR));
             data.addParam("threshold", String.valueOf(threshold));
-            int function = menu.getDistanceFunction();
-            if (function == Algorithm.DEFAULT) {
-                function = Algorithm.EUCLIDEAN;
-            }
+
             //function = Algorithm.PEARSON;
             data.addParam("distance-function", String.valueOf(function));
             
             // hcl parameters
             if (isHierarchicalTree) {
                 data.addParam("hierarchical-tree", String.valueOf(true));
+                data.addParam("draw-sig-trees-only", String.valueOf(drawSigTreesOnly));                
                 data.addParam("method-linkage", String.valueOf(hcl_method));
                 data.addParam("calculate-genes", String.valueOf(hcl_genes));
                 data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+                data.addParam("hcl-distance-function", String.valueOf(hcl_function));
+                data.addParam("hcl-distance-absolute", String.valueOf(hcl_absolute));                
             }
             
             long start = System.currentTimeMillis();
@@ -317,7 +385,7 @@ public class PTMGUI implements IClusterGUI, IScriptGUI {
         int number_of_genes = experiment.getNumberOfGenes();
         
         for (int i = 0; i < number_of_samples; i++) {
-            sampleNamesVector.add(framework.getData().getFullSampleName(i));
+            sampleNamesVector.add(framework.getData().getFullSampleName(experiment.getSampleIndex(i)));
         }
         
         Vector uniqueIDs = new Vector();
@@ -365,7 +433,7 @@ public class PTMGUI implements IClusterGUI, IScriptGUI {
             
             for (int j = 0; j < number_of_samples; j++) {
                 if (!expAssignedToACluster[j]) {
-                    if (expClusterColors[i].equals(framework.getData().getExperimentColor(j))) {
+                    if (expClusterColors[i].equals(framework.getData().getExperimentColor(experiment.getSampleIndex(j)))) {
                         currentCluster.add(new Integer(j));
                         expAssignedToACluster[j] = true;
                     }
@@ -374,7 +442,7 @@ public class PTMGUI implements IClusterGUI, IScriptGUI {
             expClusterVector.add(currentCluster);
         }
         
-        PTMInitDialog  ptmInitBox = new PTMInitDialog(new JFrame(), modality, experiment.getMatrix(), uniqueIDs, sampleNamesVector, clusterVector, expClusterVector, clusterColors, expClusterColors);
+        PTMInitDialog  ptmInitBox = new PTMInitDialog((JFrame)framework.getFrame(), modality, experiment.getMatrix(), uniqueIDs, sampleNamesVector, clusterVector, expClusterVector, clusterColors, expClusterColors);
         
         boolean isHierarchicalTree;
         // hcl init
@@ -407,38 +475,52 @@ public class PTMGUI implements IClusterGUI, IScriptGUI {
             isHierarchicalTree = ptmInitBox.isDrawTrees();
         }
         
+        drawSigTreesOnly = true;
         if (isHierarchicalTree) {
-            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame());
-            if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
-                return null;
-            }
-            hcl_method = hcl_dialog.getMethod();
-            hcl_samples = hcl_dialog.isClusterExperience();
-            hcl_genes = hcl_dialog.isClusterGenes();
-        }
+            drawSigTreesOnly = ptmInitBox.drawSigTreesOnly();
+        }        
         
-        
-        AlgorithmData data = new AlgorithmData();
-        data.addParam("ptm-cluster-genes", String.valueOf(clusterGenes));
-        data.addMatrix("templateVectorMatrix", templateMatrix);
-        data.addParam("distance-factor", String.valueOf(1.0f));
-        IDistanceMenu menu = framework.getDistanceMenu();
-        data.addParam("use-absolute", String.valueOf(useAbsolute));
-        data.addParam("useR", String.valueOf(useR));
-        data.addParam("threshold", String.valueOf(threshold));
+        IDistanceMenu menu = framework.getDistanceMenu();        
         int function = menu.getDistanceFunction();
         if (function == Algorithm.DEFAULT) {
             function = Algorithm.EUCLIDEAN;
         }
+        
+        int hcl_function = 4;
+        boolean hcl_absolute = false;        
+        
+        if (isHierarchicalTree) {
+            HCLInitDialog hcl_dialog = new HCLInitDialog(new JFrame(), menu.getFunctionName(function), menu.isAbsoluteDistance(), true);
+            if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
+                return null;
+            }
+            hcl_method = hcl_dialog.getMethod();
+            hcl_samples = hcl_dialog.isClusterExperiments();
+            hcl_genes = hcl_dialog.isClusterGenes();
+            hcl_function = hcl_dialog.getDistanceMetric();
+            hcl_absolute = hcl_dialog.getAbsoluteSelection();            
+        }
+                
+        AlgorithmData data = new AlgorithmData();
+        data.addParam("ptm-cluster-genes", String.valueOf(clusterGenes));
+        data.addMatrix("templateVectorMatrix", templateMatrix);
+        data.addParam("distance-factor", String.valueOf(1.0f));
+        data.addParam("use-absolute", String.valueOf(useAbsolute));
+        data.addParam("useR", String.valueOf(useR));
+        data.addParam("threshold", String.valueOf(threshold));
+
         //function = Algorithm.PEARSON;
         data.addParam("distance-function", String.valueOf(function));
         
         // hcl parameters
         if (isHierarchicalTree) {
             data.addParam("hierarchical-tree", String.valueOf(true));
+            data.addParam("draw-sig-trees-only", String.valueOf(drawSigTreesOnly));             
             data.addParam("method-linkage", String.valueOf(hcl_method));
             data.addParam("calculate-genes", String.valueOf(hcl_genes));
             data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+            data.addParam("hcl-distance-function", String.valueOf(hcl_function));
+            data.addParam("hcl-distance-absolute", String.valueOf(hcl_absolute));
         }
         
         // alg name
@@ -468,6 +550,7 @@ public class PTMGUI implements IClusterGUI, IScriptGUI {
         this.experiment = experiment;
         this.data = framework.getData();
         AlgorithmParameters params = algData.getParams();
+        this.drawSigTreesOnly = algData.getParams().getBoolean("draw-sig-trees-only");        
         this.clusterGenes = params.getBoolean("ptm-cluster-genes");
         FloatMatrix templateMatrix = algData.getMatrix("templateVectorMatrix");
         this.templateVector = new Vector();
@@ -571,7 +654,7 @@ public class PTMGUI implements IClusterGUI, IScriptGUI {
         if(this.clusterGenes)
             root = new DefaultMutableTreeNode("PTM - genes");
         else
-            root = new DefaultMutableTreeNode("PTM - experiments");
+            root = new DefaultMutableTreeNode("PTM - samples");
         addResultNodes(root, result_cluster, info);
         return root;
     }
@@ -632,30 +715,53 @@ public class PTMGUI implements IClusterGUI, IScriptGUI {
         int n = nodeList.getSize();
         int [][] clusters = null;
         
-        if(!this.clusterGenes){
-            clusters = new int[n][];
-            for (int i=0; i<clusters.length; i++) {
-                clusters[i] = nodeList.getNode(i).getFeaturesIndexes();
+        if (!drawSigTreesOnly) {
+            if(!this.clusterGenes){
+                clusters = new int[n][];
+                for (int i=0; i<clusters.length; i++) {
+                    clusters[i] = nodeList.getNode(i).getFeaturesIndexes();
+                }
+                if(info.hcl_samples)
+                    clusters = getOrderedIndices(nodeList, clusters, info.hcl_genes);
             }
-            if(info.hcl_samples)
-                clusters = getOrderedIndices(nodeList, clusters, info.hcl_genes);
-        }
-        for (int i=0; i<n; i++) {
-            if(this.clusterGenes){
-                if(i == 0)
-                    node.add(new DefaultMutableTreeNode(new LeafInfo("Matched Genes", createHCLViewer(nodeList.getNode(i), info, null))));
-                else
-                    node.add(new DefaultMutableTreeNode(new LeafInfo("Unmatched Genes", createHCLViewer(nodeList.getNode(i), info, null))));
+            for (int i=0; i<n; i++) {
+                if(this.clusterGenes){
+                    if(i == 0)
+                        node.add(new DefaultMutableTreeNode(new LeafInfo("Matched Genes", createHCLViewer(nodeList.getNode(i), info, null))));
+                    else
+                        node.add(new DefaultMutableTreeNode(new LeafInfo("Unmatched Genes", createHCLViewer(nodeList.getNode(i), info, null))));
+                }
+                else{
+                    if(i == 0)
+                        node.add(new DefaultMutableTreeNode(new LeafInfo("Matched Experiments", createHCLViewer(nodeList.getNode(i), info, clusters), new Integer(i))));
+                    else
+                        node.add(new DefaultMutableTreeNode(new LeafInfo("UnMatched Experiments", createHCLViewer(nodeList.getNode(i), info, clusters), new Integer(i))));
+                }
             }
-            else{
-                if(i == 0)
-                    node.add(new DefaultMutableTreeNode(new LeafInfo("Matched Experiments", createHCLViewer(nodeList.getNode(i), info, clusters), new Integer(i))));
-                else
-                    node.add(new DefaultMutableTreeNode(new LeafInfo("UnMatched Experiments", createHCLViewer(nodeList.getNode(i), info, clusters), new Integer(i))));
+        
+        } else { // if (drawSigTreesOnly)
+            if(!this.clusterGenes){
+                //clusters = new int[n][];
+                clusters = new int[1][];
+                for (int i=0; i<clusters.length; i++) {
+                    clusters[i] = nodeList.getNode(i).getFeaturesIndexes();
+                }
+                if(info.hcl_samples)
+                    clusters = getOrderedIndices(nodeList, clusters, info.hcl_genes);
             }
+            for (int i=0; i<n; i++) {
+                if(this.clusterGenes){
+                    if(i == 0)
+                        node.add(new DefaultMutableTreeNode(new LeafInfo("Matched Genes", createHCLViewer(nodeList.getNode(i), info, null))));                    
+                }
+                else{
+                    if(i == 0)
+                        node.add(new DefaultMutableTreeNode(new LeafInfo("Matched Experiments", createHCLViewer(nodeList.getNode(i), info, clusters), new Integer(i))));                    
+                }
+            }            
             
-            
         }
+        
         root.add(node);
     }
     

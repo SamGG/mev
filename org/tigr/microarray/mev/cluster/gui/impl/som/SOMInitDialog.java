@@ -4,53 +4,49 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOMInitDialog.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:49 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.som;
 
-import java.awt.Frame;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.FontMetrics;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.WindowEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 
-import javax.swing.JLabel;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.UIManager;
 import javax.swing.JComboBox;
-import javax.swing.JCheckBox;
-import javax.swing.JTextField;
-import javax.swing.ButtonGroup;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JRadioButton;
-import javax.swing.BorderFactory;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
-
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
-
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DistanceMetricPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HCLSelectionPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.SampleSelectionPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 
 public class SOMInitDialog extends AlgorithmDialog {
     
     private int result;
     private SampleSelectionPanel sampleSelectionPanel;
     private HCLSelectionPanel hclOpsPanel;
+    private DistanceMetricPanel metricPanel;
     
     public JTextField dimXField;
     public JTextField dimYField;
@@ -66,8 +62,8 @@ public class SOMInitDialog extends AlgorithmDialog {
      */
     public SOMInitDialog(Frame frame, int dimX, int dimY, long iterations,
     float alpha, float radius,
-    int initType, int neighborhood, int topology) {
-        super(new JFrame(), "SOM: Self Organizing Maps", true);
+    int initType, int neighborhood, int topology, String globalFunctionName, boolean globalAbsoluteValue) {
+        super(frame, "SOM: Self Organizing Maps", true);
         this.setSize(520, 343);
         this.setResizable(false);
         
@@ -82,7 +78,7 @@ public class SOMInitDialog extends AlgorithmDialog {
                     return;
                 int sel = initList.getSelectedIndex();
                 initList.removeItemAt(1);
-                initList.insertItemAt("Random Experiments", 1);
+                initList.insertItemAt("Random Samples", 1);
                 initList.setSelectedIndex(sel);
             }
         });
@@ -96,6 +92,9 @@ public class SOMInitDialog extends AlgorithmDialog {
                 initList.setSelectedIndex(sel);
             }
         });
+        
+    
+        metricPanel = new DistanceMetricPanel(globalFunctionName, globalAbsoluteValue, "Euclidean Distance", "SOM", true, true);
         
         JPanel parameters1 = new JPanel();
         parameters1.setBorder(new EmptyBorder(5, 10, 20, 0));
@@ -158,7 +157,7 @@ public class SOMInitDialog extends AlgorithmDialog {
         initList.setSelectedIndex(initType);
         
         FontMetrics fm = initList.getFontMetrics(initList.getFont());
-        int width = fm.stringWidth("Random Experiments");
+        int width = fm.stringWidth("Random Samples");
         initList.setPreferredSize( new Dimension(width + 40, initList.getHeight()));
         
         neighbList = new JComboBox(new String[] {"Bubble", "Gaussian"});
@@ -178,17 +177,18 @@ public class SOMInitDialog extends AlgorithmDialog {
         
         hclOpsPanel = new HCLSelectionPanel();
         
-        JPanel panel3 = new JPanel(new BorderLayout());
-        panel3.add(sampleSelectionPanel, BorderLayout.NORTH);
         ParameterPanel paramPanel = new ParameterPanel();
         paramPanel.setLayout(new BorderLayout());
         
         paramPanel.add(parameters1, BorderLayout.WEST);
         paramPanel.add(parameters2, BorderLayout.CENTER);
         paramPanel.add(parameters3, BorderLayout.EAST);
-        
-        panel3.add(paramPanel, BorderLayout.CENTER);
-        panel3.add(hclOpsPanel, BorderLayout.SOUTH);
+                
+        JPanel panel3 = new JPanel(new GridBagLayout());
+        panel3.add(sampleSelectionPanel, new GridBagConstraints(0,0,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));       
+        panel3.add(metricPanel, new GridBagConstraints(0,1,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        panel3.add(paramPanel, new GridBagConstraints(0,2,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        panel3.add(hclOpsPanel, new GridBagConstraints(0,3,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         
         setActionListeners(listener);
         addContent(panel3);
@@ -280,6 +280,21 @@ public class SOMInitDialog extends AlgorithmDialog {
     }
     
     /**
+     * Returns the currently selected metric
+     */
+    public int getDistanceMetric() {
+        return metricPanel.getMetricIndex();
+    }
+    
+    /**
+     *  Returns true if the absolute checkbox is selected, else false
+     */
+    public boolean isAbsoluteDistance() {
+        return metricPanel.getAbsoluteSelection();
+    }
+    
+    
+    /**
      *  Resets the controls to default
      */
     private void resetControls(){
@@ -298,7 +313,9 @@ public class SOMInitDialog extends AlgorithmDialog {
         this.initList.setSelectedIndex(1);
         this.neighbList.setSelectedIndex(1);
         this.topoList.setSelectedIndex(0);
+        this.metricPanel.reset();
     }
+    
     /**
      * Validates input values
      */
@@ -388,7 +405,7 @@ public class SOMInitDialog extends AlgorithmDialog {
     }
     
     public static void main(String[] args) {
-        SOMInitDialog dlg = new SOMInitDialog(new Frame(), 0 ,0, 0, 0, 0, 1, 0, 0);
+        SOMInitDialog dlg = new SOMInitDialog(new Frame(), 0 ,0, 0, 0, 0, 1, 0, 0, "Euclidean Distance", false);
         dlg.showModal();
         System.exit(0);
     }

@@ -4,21 +4,27 @@ All rights reserved.
 */
 /*
  * $RCSfile: PickBehavior.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:10 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.terrain;
 
+import java.awt.AWTEvent;
+import java.awt.event.MouseEvent;
 import java.util.Enumeration;
 
-import javax.media.j3d.*;
+import javax.media.j3d.Behavior;
+import javax.media.j3d.Bounds;
+import javax.media.j3d.BranchGroup;
+import javax.media.j3d.Canvas3D;
+import javax.media.j3d.WakeupCriterion;
+import javax.media.j3d.WakeupOnAWTEvent;
+import javax.media.j3d.WakeupOr;
 
-import com.sun.j3d.utils.picking.*;
-import com.sun.j3d.utils.picking.behaviors.PickMouseBehavior;
-import java.awt.event.MouseEvent;
-import java.awt.AWTEvent;
+import com.sun.j3d.utils.picking.PickCanvas;
+import com.sun.j3d.utils.picking.PickTool;
 
 public class PickBehavior extends Behavior {
 

@@ -4,21 +4,35 @@ All rights reserved.
 */
 /*
  * $RCSfile: QTCInitDialog.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:08 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.qtc;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import org.tigr.util.awt.*;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
+
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DistanceMetricPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HCLSelectionPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.SampleSelectionPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
+import org.tigr.util.awt.GBA;
 
 public class QTCInitDialog extends AlgorithmDialog {
     
@@ -31,8 +45,6 @@ public class QTCInitDialog extends AlgorithmDialog {
     public JLabel clusterLabel;
     public JTextField clusterTextField;
     
-    protected JPanel useAbsolutePanel;
-    public JCheckBox useAbsoluteCheckBox;
     public int result;
     
     private SampleSelectionPanel sampleSelectionPanel;
@@ -42,13 +54,15 @@ public class QTCInitDialog extends AlgorithmDialog {
     
     private boolean okPressed = false;
     
-    public QTCInitDialog(JFrame parent, boolean modal) {
+    private DistanceMetricPanel metricPanel;
+    
+    public QTCInitDialog(JFrame parent, boolean modal, String globalMetricName, boolean globalAbsoluteValue) {
         super(parent, "QTC: QT Cluster", modal);
         
-        initialize();
+        initialize(globalMetricName, globalAbsoluteValue);
     }
     
-    protected void initialize() {
+    protected void initialize(String globalMetricName, boolean globalAbsoluteValue) {
         gba = new GBA();
         eventListener = new EventListener();
         
@@ -63,7 +77,9 @@ public class QTCInitDialog extends AlgorithmDialog {
         clusterTextField.setText("5");
         
         sampleSelectionPanel = new SampleSelectionPanel(Color.white, UIManager.getColor("Label.foreground"),true,"Sample Selection");
-        
+         
+        metricPanel = new DistanceMetricPanel(globalMetricName, globalAbsoluteValue, "Pearson Correlation", "QTC", true, true);
+ 
         inputPanel = new JPanel();
         inputPanel.setLayout(new GridBagLayout());
         inputPanel.setBackground(Color.white);
@@ -71,17 +87,7 @@ public class QTCInitDialog extends AlgorithmDialog {
         gba.add(inputPanel, clusterLabel, 0, 1, 1, 0, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
         gba.add(inputPanel, diameterTextField, 1, 0, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
         gba.add(inputPanel, clusterTextField, 1, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-        
-        useAbsoluteCheckBox = new JCheckBox("Use Absolute R");
-        useAbsoluteCheckBox.setForeground(UIManager.getColor("Label.foreground"));
-        useAbsoluteCheckBox.setBackground(Color.white);
-        useAbsoluteCheckBox.setFocusPainted(false);
-        
-        useAbsolutePanel = new JPanel();
-        useAbsolutePanel.setBackground(Color.white);
-        useAbsolutePanel.setLayout(new GridBagLayout());
-        gba.add(useAbsolutePanel, useAbsoluteCheckBox, 0, 0, 1, 1, 0, 0, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-        
+                      
         hclOpsPanel = new HCLSelectionPanel();
         
         mainPanel = new JPanel();
@@ -91,11 +97,11 @@ public class QTCInitDialog extends AlgorithmDialog {
         ParameterPanel parameters = new ParameterPanel();
         parameters.setLayout(new GridBagLayout());
         gba.add(parameters, inputPanel, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-        gba.add(parameters, useAbsolutePanel, 0, 1, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-        
+       
         gba.add(mainPanel, sampleSelectionPanel, 0, 0, 1, 1, 1, 1, GBA.H, GBA.C, new Insets(0, 0, 0, 0), 0, 0);
-        gba.add(mainPanel, parameters, 0, 1, 1, 1, 1, 1, GBA.H, GBA.C, new Insets(0, 0, 0, 0), 0, 0);
-        gba.add(mainPanel, hclOpsPanel, 0, 2, 1, 1, 1, 1, GBA.H, GBA.C, new Insets(0, 0, 0, 0), 0, 0);
+        gba.add(mainPanel, metricPanel, 0, 1, 1, 1, 1, 1, GBA.H, GBA.C, new Insets(0, 0, 0, 0), 0, 0);
+        gba.add(mainPanel, parameters, 0, 2, 1, 1, 1, 1, GBA.H, GBA.C, new Insets(0, 0, 0, 0), 0, 0);
+        gba.add(mainPanel, hclOpsPanel, 0, 3, 1, 1, 1, 1, GBA.H, GBA.C, new Insets(0, 0, 0, 0), 0, 0);
         
         
         setActionListeners(eventListener);
@@ -163,6 +169,20 @@ public class QTCInitDialog extends AlgorithmDialog {
     }
     
     /**
+     * Returns the currently selected metric
+     */
+    public int getDistanceMetric() {
+        return metricPanel.getMetricIndex();
+    }
+    
+    /**
+     *  Returns true if the absolute checkbox is selected, else false
+     */
+    public boolean isAbsoluteDistance() {
+        return metricPanel.getAbsoluteSelection();
+    }
+    
+    /**
      * Resets controls
      */
     private void resetControls(){
@@ -170,7 +190,7 @@ public class QTCInitDialog extends AlgorithmDialog {
         this.hclOpsPanel.setHCLSelected(false);
         this.clusterTextField.setText("5");
         this.diameterTextField.setText("0.5");
-        this.useAbsoluteCheckBox.setSelected(false);
+        this.metricPanel.reset();
     }
     
     /**
@@ -195,7 +215,7 @@ public class QTCInitDialog extends AlgorithmDialog {
     
     
     public static void main(String [] agrs){
-        QTCInitDialog hgid = new QTCInitDialog(new JFrame(), true);
+        QTCInitDialog hgid = new QTCInitDialog(new JFrame(), true, "Euclidean Distance", false);
         hgid.show();
         System.exit(0);
     }

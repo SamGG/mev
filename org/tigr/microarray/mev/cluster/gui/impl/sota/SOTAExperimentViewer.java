@@ -4,44 +4,52 @@ All rights reserved.
  */
 /*
  * $RCSfile: SOTAExperimentViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-07-27 19:59:17 $
- * $Author: braisted $
+ * $Revision: 1.6 $
+ * $Date: 2005-02-24 20:23:49 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.gui.impl.sota;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.*;
-import java.util.Arrays;
-import java.util.ArrayList;
-import javax.swing.*;
-import javax.swing.event.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+
+import javax.swing.JColorChooser;
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.border.LineBorder;
 
-import org.tigr.util.FloatMatrix;
-//import org.tigr.microarray.mev.cluster.algorithm.impl.SOTA;
-import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
-import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidExperimentHeader;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterHeader;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
+import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
+import org.tigr.util.FloatMatrix;
 
 /**
  * Class to display expression images with a <code>CentroidExperimentHeader</code>
  * and cluster information.
  */
-public class SOTAExperimentViewer extends JPanel implements IViewer, java.io.Serializable {
+public class SOTAExperimentViewer extends ExperimentViewer implements IViewer, java.io.Serializable {
     public static final long serialVersionUID = 202017030001L;
     
     protected static final String STORE_CLUSTER_CMD = "store-cluster-cmd";
@@ -66,6 +74,7 @@ public class SOTAExperimentViewer extends JPanel implements IViewer, java.io.Ser
     private float factor;
     private int function;
     private boolean geneClusterViewer = true;
+    private boolean useDoubleGradient = true;
     
     /**
      * Constructs a <code>SOTAExperimentViewer</code> with specified
@@ -226,6 +235,7 @@ public class SOTAExperimentViewer extends JPanel implements IViewer, java.io.Ser
         infoPanel.setCurrentCluster(userObject == null ? 0 : userObject.intValue());
         infoPanel.onSelected();
         IDisplayMenu menu = framework.getDisplayMenu();
+        useDoubleGradient = menu.getUseDoubleGradient();
         if(geneClusterViewer){                        
             ((CentroidExperimentHeader)this.header).setCurrentCluster(userObject == null ? 0 : userObject.intValue());
             ((CentroidExperimentHeader)this.header).setNegAndPosColorImages(menu.getNegativeGradientImage(), menu.getPositiveGradientImage());
@@ -233,18 +243,20 @@ public class SOTAExperimentViewer extends JPanel implements IViewer, java.io.Ser
             ((CentroidExperimentHeader)this.header).setAntiAliasing(menu.isAntiAliasing());
             ((CentroidExperimentHeader)this.header).setDrawBorders(menu.isDrawingBorder());
             ((CentroidExperimentHeader)this.header).updateSize(menu.getElementSize());
+            ((CentroidExperimentHeader)this.header).setUseDoubleGradient(useDoubleGradient);
             int height = ((CentroidExperimentHeader)this.header).getCurrHeight();
             this.header.setSize(getContentWidth(), height);
             this.header.setPreferredSize(new Dimension(getContentWidth(), height));
         }
         else{
             ((ExperimentClusterHeader)(this.header)).updateSizes(getContentWidth(), menu.getElementSize().width);
+            ((ExperimentClusterHeader)(this.header)).setUseDoubleGradient(useDoubleGradient);        
         }
         repaint();
     }
     
     
-    private int getContentWidth(){
+    public int getContentWidth(){
         int width;
         if(this.geneClusterViewer)
             width = ((ExperimentViewer)this.expViewer).getContentWidth();
@@ -272,17 +284,20 @@ public class SOTAExperimentViewer extends JPanel implements IViewer, java.io.Ser
         else
             ((ExperimentClusterViewer) expViewer).onMenuChanged(menu);
         
+        useDoubleGradient = menu.getUseDoubleGradient();
         if(geneClusterViewer){
             ((CentroidExperimentHeader)this.header).setNegAndPosColorImages(menu.getNegativeGradientImage(), menu.getPositiveGradientImage());
             ((CentroidExperimentHeader)this.header).setValues(Math.abs(menu.getMaxRatioScale()), -Math.abs(menu.getMinRatioScale()));
             ((CentroidExperimentHeader)this.header).setAntiAliasing(menu.isAntiAliasing());
             ((CentroidExperimentHeader)this.header).setDrawBorders(menu.isDrawingBorder());
             ((CentroidExperimentHeader)this.header).updateSize(menu.getElementSize());
+            ((CentroidExperimentHeader)this.header).setUseDoubleGradient(useDoubleGradient);
             this.header.setSize(getContentWidth(), this.header.getHeight());
             this.header.setPreferredSize(new Dimension(getContentWidth(), this.header.getHeight()));
         }
         else {
             ((ExperimentClusterHeader)(this.header)).updateSizes(getContentWidth(), menu.getElementSize().width);
+            ((ExperimentClusterHeader)(this.header)).setUseDoubleGradient(useDoubleGradient);
         }
         repaint();
     }
@@ -438,15 +453,21 @@ public class SOTAExperimentViewer extends JPanel implements IViewer, java.io.Ser
     /** Returns the viewer's clusters or null
      */
     public int[][] getClusters() {
-        return null;
+        return this.expViewer.getClusters();
     }    
     
     /**  Returns the viewer's experiment or null
      */
     public Experiment getExperiment() {
-        return null;
+        return this.expViewer.getExperiment();
     }
     
+    /** Returns int value indicating viewer type
+     * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
+     */
+    public int getViewerType() {       
+        return this.expViewer.getViewerType();
+    }    
     
     /**
      * The class to listen to mouse and action events.

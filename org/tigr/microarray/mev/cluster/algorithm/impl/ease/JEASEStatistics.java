@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: JEASEStatistics.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-04-01 20:42:55 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2005-02-24 20:24:13 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 /* 
@@ -170,6 +170,8 @@ public class JEASEStatistics {
                     }
                 }
             }
+
+            //System.out.println("categories size = "+categories.size());
             
             //(jcb)
             //create hash table for implies using (implies_associator)
@@ -179,8 +181,11 @@ public class JEASEStatistics {
             for(int i = 0; i < annotation_file_names.size(); i++){
                 fileName = (String)annotation_file_names.elementAt(i);
                 stringIndex = fileName.lastIndexOf(sep);
-                impliesFile = fileName.substring(0, stringIndex) + "\\Implies\\";
+                impliesFile = fileName.substring(0, stringIndex) + sep+"Implies"+sep;
                 impliesFile += fileName.substring(stringIndex+1, fileName.length());
+                
+                //System.out.println("implies file = "+impliesFile);
+                
                 File file = new File(impliesFile);
                 if(!file.exists() || !file.isFile())  //if implies file is missing move on
                     continue;
@@ -255,9 +260,145 @@ public class JEASEStatistics {
         }catch(Exception error){
             System.out.println("Error occured collecting categories");
             System.out.println(error.getMessage());
+            error.printStackTrace();
         }
     }
+
     
+    /**  Obtain the categories from the annotation files and create a hashtable using these categories as keys.*/
+    public void GetCategories(Vector popVector) {
+        BufferedReader in = null;
+        Hashtable hash_table = new Hashtable();
+        Hashtable implied_associations = new Hashtable();
+        String term;
+        String line="", category="", file_name="";
+        int idx, c =0, idx2;        
+        
+        try{
+            for(Enumeration e = annotation_file_names.elements(); e.hasMoreElements();){
+                file_name = e.nextElement().toString();
+                in = new BufferedReader(new FileReader(file_name));
+                
+                //use last index of . in case a user has a . in the path.
+                term = file_name.substring(file_name.lastIndexOf(sep)+1, file_name.lastIndexOf("."));
+                
+                //store terms in total hits accumulators
+                this.sample_totals.put(term, new Hashtable());
+                this.pop_totals.put(term, new Hashtable());
+                
+                while((line = in.readLine()) != null){
+                    
+                    idx = line.indexOf("\t");
+                    
+                    if( idx >= line.length() || idx < 1){
+                        continue;
+                    }
+                    
+                    //put this in to guard against no trailing tab (jcb)
+                    idx2 = line.indexOf("\t", idx+1);
+                    if(idx2 >= line.length() || idx2 < 1)
+                        idx2 = line.length();
+                    
+                    category = term + "\t" + line.substring(idx+1, idx2).trim();
+                    if(popVector.contains(line.substring(0,idx).trim())) {
+                        if(!categories.containsKey(category)){
+                            categories.put(category, new Hashtable());
+                            ((Hashtable) categories.get(category)).put(line.substring(0,idx).trim(), "");
+                        }else{
+                            ((Hashtable) categories.get(category)).put(line.substring(0,idx).trim(), "");
+                        }
+                    }
+                }
+            }
+                        
+            //(jcb)
+            //create hash table for implies using (implies_associator)
+            //This will then be used to add implied categories
+            String fileName, impliesFile;
+            int stringIndex;
+            for(int i = 0; i < annotation_file_names.size(); i++){
+                fileName = (String)annotation_file_names.elementAt(i);
+                stringIndex = fileName.lastIndexOf(sep);
+                impliesFile = fileName.substring(0, stringIndex) + sep+"Implies"+sep;
+                impliesFile += fileName.substring(stringIndex+1, fileName.length());
+                 
+                File file = new File(impliesFile);
+                if(!file.exists() || !file.isFile())  //if implies file is missing move on
+                    continue;
+                
+                in = new BufferedReader(new FileReader(impliesFile));
+                //term = fileName.substring(file_name.lastIndexOf("/")+1, file_name.indexOf("."));
+                term = fileName.substring(fileName.lastIndexOf(sep)+1, fileName.lastIndexOf("."));
+                
+                
+                while((line = in.readLine()) != null){
+                    idx = line.indexOf('\t');
+                    
+                    if(idx >= line.length() || idx < 1)  //must include a tab
+                        continue;
+                    
+                    if(!implied_associations.containsKey(term + "\t" +line.substring(0,idx).trim())){
+                        implied_associations.put(term + "\t" +line.substring(0,idx).trim(), new Vector());
+                        ((Vector)(implied_associations.get(term + "\t" +line.substring(0,idx).trim()))).addElement(term + "\t" + line.substring(idx, line.length()).trim());
+                    } else {
+                        ((Vector)(implied_associations.get(term + "\t" +line.substring(0,idx).trim()))).addElement(term + "\t" + line.substring(idx, line.length()).trim());
+                    }
+                }
+            }
+            
+            boolean end = false;
+            //(jcb) append associated categories to the list
+            for(int k = 0; k < 10 && !end; k++){  // !end will short circuit if stable
+                String cat="";
+                Hashtable catHash;
+                Vector impVector;
+                String impCat;
+
+                end = true;  //start at true until no new indices are inserted
+                
+                for( Enumeration enum = implied_associations.keys(); enum.hasMoreElements(); ){
+                    
+                    cat = (String) enum.nextElement();
+                    
+                    //if the category is represented, add the implied associations if they don't exist
+                    if(categories.containsKey(cat)){
+                        catHash = (Hashtable)categories.get(cat);
+                        
+                        //associated categories
+                        impVector = ((Vector)implied_associations.get(cat));
+                        
+                        for(int i = 0; i < impVector.size(); i++){
+                            
+                            impCat = ((String)impVector.elementAt(i));
+                            
+                            if(!categories.containsKey(impCat)){
+                                end = false;
+                                categories.put(impCat, new Hashtable());
+                                for(Enumeration categoryEnum = catHash.keys(); categoryEnum.hasMoreElements();){
+                                    ((Hashtable)categories.get(impCat)).put((String)categoryEnum.nextElement(), "");
+                                }
+                            } else {  //category exists, need to append locus link numbers
+                                for(Enumeration categoryEnum = catHash.keys(); categoryEnum.hasMoreElements();){
+                                    String indexString = (String)categoryEnum.nextElement();
+                                    if(!((Hashtable)categories.get(impCat)).containsKey(indexString) ){
+                                        // ((Hashtable)categories.get(impCat)).put((String)categoryEnum.nextElement(), "");
+                                        ((Hashtable)categories.get(impCat)).put(indexString, "");
+                                        
+                                        end = false;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+        }catch(Exception error){
+            System.out.println("Error occured collecting categories");
+            System.out.println(error.getMessage());
+            error.printStackTrace();
+        }
+    }
     
     /** Get the number of the genes in the population for each category that exists in the annotation files. */
     public void GetPopulationHitsByCategory() {

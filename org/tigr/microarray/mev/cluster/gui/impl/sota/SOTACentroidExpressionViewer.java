@@ -4,14 +4,13 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOTACentroidExpressionViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-07-27 19:59:17 $
- * $Author: braisted $
+ * $Revision: 1.6 $
+ * $Date: 2005-02-24 20:23:50 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.sota;
 
-import java.util.Arrays;
 import java.util.ArrayList;
 
 import java.awt.Font;
@@ -27,7 +26,6 @@ import java.awt.FontMetrics;
 import java.awt.GradientPaint;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseMotionListener;
 
@@ -35,24 +33,19 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import javax.swing.event.*;
 import javax.swing.JPanel;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
 import org.tigr.util.FloatMatrix;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLCluster;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
-
 
 
 public class SOTACentroidExpressionViewer extends JPanel implements IViewer, java.io.Serializable {
@@ -93,6 +86,7 @@ public class SOTACentroidExpressionViewer extends JPanel implements IViewer, jav
     public BufferedImage negColorImage = createGradientImage(Color.green, Color.black);
     private int maxUniqueIDWidth, maxGeneNameWidth;
     private Listener listener;
+    private boolean useDoubleGradient = true;
     
     /**
      * Constructs an <code>SOTACentroidEpressionViewer</code> with specified
@@ -136,6 +130,7 @@ public class SOTACentroidExpressionViewer extends JPanel implements IViewer, jav
         oos.writeObject(this.selectedClusterList);
         oos.writeObject(samplesOrder);
         oos.writeObject(elementSize);
+        oos.writeBoolean(useDoubleGradient);
     }
         
     private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
@@ -148,6 +143,7 @@ public class SOTACentroidExpressionViewer extends JPanel implements IViewer, jav
         this.selectedClusterList = (ArrayList)ois.readObject();
         samplesOrder = (int[])ois.readObject();
         elementSize = (Dimension)ois.readObject();
+        this.useDoubleGradient = ois.readBoolean();
         
         TEXT_LEFT_MARGIN = 20; 
         CLUSTER_POP_SPACER = 20;
@@ -245,7 +241,10 @@ public class SOTACentroidExpressionViewer extends JPanel implements IViewer, jav
         
         Integer userObject = (Integer)framework.getUserObject();
         setClusterIndex(userObject == null ? 0 : userObject.intValue());
-        IDisplayMenu menu = framework.getDisplayMenu();
+        IDisplayMenu menu = framework.getDisplayMenu();        
+        useDoubleGradient = menu.getUseDoubleGradient();
+        header.setUseDoubleGradient(useDoubleGradient);
+        
         this.maxValue = Math.abs(menu.getMaxRatioScale());
         this.minValue = -Math.abs(menu.getMinRatioScale());
         setElementSize(menu.getElementSize());
@@ -270,7 +269,9 @@ public class SOTACentroidExpressionViewer extends JPanel implements IViewer, jav
      * @see IViewer#onMenuChanged
      */
     public void onMenuChanged(IDisplayMenu menu) {
-        setDrawBorders(menu.isDrawingBorder());
+    	useDoubleGradient = menu.getUseDoubleGradient();
+    	header.setUseDoubleGradient(useDoubleGradient);
+    	setDrawBorders(menu.isDrawingBorder());
         this.maxValue = Math.abs(menu.getMaxRatioScale());
         this.minValue = -Math.abs(menu.getMinRatioScale());
         header.setValues(minValue, maxValue);
@@ -492,14 +493,31 @@ public class SOTACentroidExpressionViewer extends JPanel implements IViewer, jav
     private Color getColor(float value) {
         if (Float.isNaN(value)) {
             return missingColor;
-            
         }
-        float maximum = value < 0 ? this.minValue : this.maxValue;
-        int colorIndex = (int)(255*value/maximum);
-        colorIndex = colorIndex > 255 ? 255 : colorIndex;
-        int rgb = value < 0 ? negColorImage.getRGB(255-colorIndex, 0) : posColorImage.getRGB(colorIndex, 0);
+        
+        float maximum;
+        int colorIndex, rgb;
+        
+        if(useDoubleGradient) {
+        	maximum = value < 0 ? this.minValue : this.maxValue;
+			colorIndex = (int) (255 * value / maximum);
+			colorIndex = colorIndex > 255 ? 255 : colorIndex;
+			rgb = value < 0 ? negColorImage.getRGB(255 - colorIndex, 0)
+					: posColorImage.getRGB(colorIndex, 0);
+        } else {
+        	float span = this.maxValue - this.minValue;
+        	if(value <= minValue)
+        		colorIndex = 0;
+        	else if(value >= maxValue)
+        		colorIndex = 255;
+        	else
+        		colorIndex = (int)(((value - this.minValue)/span) * 255);
+         	
+        	rgb = posColorImage.getRGB(colorIndex,0);
+        }
         return new Color(rgb);
     }
+    
     
     /**
      * Paint component into specified graphics.
@@ -699,6 +717,13 @@ public class SOTACentroidExpressionViewer extends JPanel implements IViewer, jav
      */
     public JComponent getCornerComponent(int cornerIndex) {
         return null;
+    }
+    
+    /** Returns int value indicating viewer type
+     * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
+     */
+    public int getViewerType() {
+        return org.tigr.microarray.mev.cluster.clusterUtil.Cluster.GENE_CLUSTER;
     }
     
     private class Listener extends MouseAdapter implements ActionListener, MouseMotionListener{

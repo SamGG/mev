@@ -1,12 +1,12 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: AffymetrixFileLoader.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-27 22:23:33 $
- * $Author: braisted $
+ * $Revision: 1.4 $
+ * $Date: 2005-02-24 20:23:50 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.file;
@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Vector;
+
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -44,12 +45,9 @@ import javax.swing.filechooser.FileFilter;
 import org.tigr.microarray.mev.AffySlideDataElement;
 import org.tigr.microarray.mev.FloatSlideData;
 import org.tigr.microarray.mev.ISlideData;
-import org.tigr.microarray.mev.ISlideDataElement;
 import org.tigr.microarray.mev.ISlideMetaData;
 import org.tigr.microarray.mev.SlideData;
-import org.tigr.microarray.mev.SlideDataElement;
 import org.tigr.microarray.mev.TMEV;
-
 import org.tigr.microarray.mev.cluster.gui.IData;
 
 public class AffymetrixFileLoader extends ExpressionFileLoader {
@@ -548,7 +546,7 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
                }
                */
 
-            slideDataElement = new AffySlideDataElement(rows, columns, intensities, moreFields);
+            slideDataElement = new AffySlideDataElement(String.valueOf(curpos), rows, columns, intensities, moreFields);
 
             slideDataElement.setDetection(detection);
 

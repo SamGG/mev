@@ -1,12 +1,12 @@
 /*
-Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: OWAInfoViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-07-27 19:59:16 $
- * $Author: braisted $
+ * $Revision: 1.5 $
+ * $Date: 2005-02-24 20:24:04 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.owa;

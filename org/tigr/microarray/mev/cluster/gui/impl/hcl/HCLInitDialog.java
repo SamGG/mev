@@ -4,17 +4,18 @@ All rights reserved.
 */
 /*
  * $RCSfile: HCLInitDialog.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:09 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.hcl;
 
 import java.awt.Color;
 import java.awt.Frame;
-import java.awt.GridLayout;
-import java.awt.BorderLayout;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.Dimension;
 
@@ -24,22 +25,16 @@ import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemListener;
 
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JDialog;
-import javax.swing.JButton;
 import javax.swing.UIManager;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
-import javax.swing.BorderFactory;
-import javax.swing.border.EmptyBorder;
 
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DistanceMetricPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
@@ -53,16 +48,51 @@ public class HCLInitDialog extends AlgorithmDialog {//JDialog {
     private JRadioButton ALC;
     private JRadioButton CLC;
     private JRadioButton SLC;
+    private DistanceMetricPanel metricPanel;
+    private String globalMetricName;
+    private boolean globalAbsoluteDistance;
+    
+    public HCLInitDialog(Frame parent) {
+        this(parent, " ", false, false);
+    }
     
     /**
      * Constructs the dialog.
      */
-    public HCLInitDialog(Frame parent) {
-        super(new JFrame(), "HCL: Hierarchical Clustering", true);
+    public HCLInitDialog(Frame parent, String globalMetricName, boolean globalAbsoluteDistance, boolean showDistancePanel) {
+        super(parent, "HCL: Hierarchical Clustering", true);
         setResizable(false);
+        
+        this.globalMetricName = globalMetricName;
+        this.globalAbsoluteDistance = globalAbsoluteDistance;
         
         Listener listener = new Listener();
         addWindowListener(listener);
+        
+        ParameterPanel sampleSelectionPanel = new ParameterPanel("Tree Selection");
+        sampleSelectionPanel.setLayout(new GridBagLayout());
+        
+        genes_box = new JCheckBox("Gene Tree");
+        genes_box.setSelected(true);
+        genes_box.setFocusPainted(false);
+        genes_box.setBackground(Color.white);
+        genes_box.setForeground(UIManager.getColor("Label.foreground"));
+        genes_box.addItemListener(listener);
+        
+        cluster_box = new JCheckBox("Sample Tree");
+        cluster_box.setSelected(true);
+        cluster_box.setFocusPainted(false);
+        cluster_box.setBackground(Color.white);
+        cluster_box.setForeground(UIManager.getColor("Label.foreground"));
+        cluster_box.addItemListener(listener);
+        
+        sampleSelectionPanel.add(genes_box, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,0,5,20), 0,0));
+        sampleSelectionPanel.add(cluster_box, new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,20,5,0), 0,0));        
+        
+        metricPanel = new DistanceMetricPanel(globalMetricName, globalAbsoluteDistance, "Euclidean Distance", "HCL", true, true);
+        
+        ParameterPanel linkageMethodPanel = new ParameterPanel("Linkage Method Selection");
+        linkageMethodPanel.setLayout(new GridBagLayout());
         
         ALC = new JRadioButton("Average linkage clustering");
         ALC.setBackground(Color.white);
@@ -83,41 +113,43 @@ public class HCLInitDialog extends AlgorithmDialog {//JDialog {
         SLC.setForeground(UIManager.getColor("Label.foreground"));
         SLC.setMnemonic(KeyEvent.VK_S);
         
+        linkageMethodPanel.add(ALC, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,0,5,0), 0,0));
+        linkageMethodPanel.add(CLC, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
+        linkageMethodPanel.add(SLC, new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
+        
         // Group the radio buttons.
         ButtonGroup group = new ButtonGroup();
         group.add(ALC);
         group.add(CLC);
         group.add(SLC);
         
-        genes_box = new JCheckBox("Cluster genes");
-        genes_box.setSelected(true);
-        genes_box.setFocusPainted(false);
-        genes_box.setBackground(Color.white);
-        genes_box.setForeground(UIManager.getColor("Label.foreground"));
-        genes_box.addItemListener(listener);
         
-        cluster_box = new JCheckBox("Cluster experiments");
-        cluster_box.setSelected(true);
-        cluster_box.setFocusPainted(false);
-        cluster_box.setBackground(Color.white);
-        cluster_box.setForeground(UIManager.getColor("Label.foreground"));
-        cluster_box.addItemListener(listener);
+//        JPanel parameters = new JPanel(new GridLayout(0, 2, 10, 10));
+  //          ParameterPanel parameters = new ParameterPanel();
+//        parameters.setLayout(new GridLayout(0, 2, 10, 10));
+  //      parameters.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    //    parameters.setBackground(Color.white);
+ //       parameters.setForeground(Color.black);
+   //     parameters.add(ALC);
+     //   parameters.add(genes_box);
+   //     parameters.add(CLC);
+    //    parameters.add(cluster_box);
+      //  parameters.add(SLC);
         
-        JPanel parameters = new JPanel(new GridLayout(0, 2, 10, 10));
-        //    ParameterPanel parameters = new ParameterPanel();
-        parameters.setLayout(new GridLayout(0, 2, 10, 10));
-        parameters.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        parameters.setBackground(Color.white);
-        parameters.setForeground(Color.black);
-        parameters.add(ALC);
-        parameters.add(genes_box);
-        parameters.add(CLC);
-        parameters.add(cluster_box);
-        parameters.add(SLC);
         
-        ParameterPanel parameterPanel = new ParameterPanel();
-        parameterPanel.add(parameters);
+    //    ParameterPanel parameterPanel = new ParameterPanel();
+      //  parameterPanel.add(parameters);
         
+        JPanel parameterPanel = new JPanel(new GridBagLayout());
+        parameterPanel.setBackground(Color.white);
+        
+        parameterPanel.add(sampleSelectionPanel, new GridBagConstraints(0,0,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
+        if(showDistancePanel) {
+            parameterPanel.add(metricPanel, new GridBagConstraints(0,1,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
+            parameterPanel.add(linkageMethodPanel, new GridBagConstraints(0,2,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
+        } else {
+            parameterPanel.add(linkageMethodPanel, new GridBagConstraints(0,1,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
+        }
         addContent(parameterPanel);
         setActionListeners(listener);
         
@@ -142,6 +174,7 @@ public class HCLInitDialog extends AlgorithmDialog {//JDialog {
         ALC.setSelected(true);
         genes_box.setSelected(true);
         cluster_box.setSelected(true);
+        metricPanel.reset();
     }
     
     /**
@@ -154,7 +187,7 @@ public class HCLInitDialog extends AlgorithmDialog {//JDialog {
     /**
      * Returns true, if cluster check box is selected.
      */
-    public boolean isClusterExperience() {
+    public boolean isClusterExperiments() {
         return cluster_box.isSelected();
     }
     
@@ -170,6 +203,20 @@ public class HCLInitDialog extends AlgorithmDialog {//JDialog {
             return 1;
         }
         return -1;
+    }
+    
+    /**
+     * Returns the currently selected metric
+     */
+    public int getDistanceMetric() {
+        return metricPanel.getMetricIndex();
+    }
+    
+    /**
+     *  Returns true if the absolute checkbox is selected, else false
+     */
+    public boolean getAbsoluteSelection() {
+        return metricPanel.getAbsoluteSelection();
     }
     
     /**
@@ -219,16 +266,16 @@ public class HCLInitDialog extends AlgorithmDialog {//JDialog {
         }
     }
     
-    public static void main(String[] args) {
+   public static void main(String[] args) {
         javax.swing.JFrame frame = new javax.swing.JFrame("Test");
         while (true) {
-            HCLInitDialog dialog = new HCLInitDialog(frame);
+            HCLInitDialog dialog = new HCLInitDialog(frame, "Euclidean Distance", false, true);
             if (dialog.showModal() != JOptionPane.OK_OPTION) {
                 System.exit(0);
             }
             System.out.println("===============================");
             System.out.println(dialog.isClusterGenes());
-            System.out.println(dialog.isClusterExperience());
+            System.out.println(dialog.isClusterExperiments());
             System.out.println(dialog.getMethod());
         }
     }

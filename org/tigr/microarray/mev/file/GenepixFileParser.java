@@ -561,6 +561,7 @@ public class GenepixFileParser extends Thread{
       }
          // check if the original file has been modified.
       noError = true;
+      /*
       if((max * maxCol * maxRow) + hLines != gprFileContents.size()){
         JOptionPane.showMessageDialog(null,
           "You might have dropped some of your spots in the file \n(" +
@@ -568,6 +569,7 @@ public class GenepixFileParser extends Thread{
           "GenePix File Loader", JOptionPane.ERROR_MESSAGE);
         noError = false;
       }
+       */
       if(noError){
         fPixAddr = findRightCol(colNames, F_PIX, F_PIX_N);
 

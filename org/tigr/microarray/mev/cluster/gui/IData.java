@@ -4,15 +4,17 @@ All rights reserved.
 */
 /*
  * $RCSfile: IData.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-07-22 15:33:48 $
- * $Author: braisted $
+ * $Revision: 1.5 $
+ * $Date: 2005-02-24 20:24:11 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.gui;
 
 import java.awt.Color;
+
+import java.util.Vector;
 
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.ISlideDataElement;
@@ -28,11 +30,20 @@ public interface IData {
     public final static int DATA_TYPE_AFFY_REF = 3;
     public final static int DATA_TYPE_AFFY_MEAN = 4;
     public final static int DATA_TYPE_AFFY_MEDIAN = 5;
+    
+    public final static String DEFAULT_SAMPLE_ANNOTATION_KEY = "Default Slide Name";
+
     /**
      * Returns the experiment data (ratio values).
      * @see Experiment
      */
     public Experiment getExperiment();
+    
+    /**
+     * Returns the experiment data (ratio values) without application of cutoffs.
+     * @see Experiment
+     */
+    public Experiment getFullExperiment();
     
     /**
      * Returns count of features.
@@ -100,6 +111,11 @@ public interface IData {
     public String getSampleName(int column);
     
     /**
+     * Returns the slected sample annotation
+     */
+    public String getSampleAnnotation(int column, String key);
+    
+    /**
      * Returns full feature name.
      */
     public String getFullSampleName(int column);
@@ -140,6 +156,11 @@ public interface IData {
     
     public String[] getFieldNames();
     
+    /**
+     *Returns all annotation field names associated with the loaded samples
+     */
+    public Vector getSampleAnnotationFieldNames();    
+   
     /**
      * Returns sorted indices for specified column.
      */

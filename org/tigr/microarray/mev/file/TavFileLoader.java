@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: TavFileLoader.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-27 22:16:51 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2005-02-24 20:23:50 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
@@ -25,10 +25,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Vector;
+
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -185,7 +185,7 @@ public class TavFileLoader extends ExpressionFileLoader {
                     moreFields[j] = "";
                 }
             }
-            slideDataElement = new SlideDataElement(rows, columns, intensities, moreFields);
+            slideDataElement = new SlideDataElement(String.valueOf(curpos),rows, columns, intensities, moreFields);
             slideData.addSlideDataElement(slideDataElement);
         }
         reader.close();
@@ -318,7 +318,7 @@ public class TavFileLoader extends ExpressionFileLoader {
                 }
             }
             realData[rows[0]-1][columns[0]-1] = true;
-            slideDataElement = new SlideDataElement(rows, columns, intensities, moreFields);
+            slideDataElement = new SlideDataElement(String.valueOf(curpos), rows, columns, intensities, moreFields);
             slideData.addSlideDataElement(slideDataElement);
         }
         reader.close();
@@ -695,7 +695,7 @@ public class TavFileLoader extends ExpressionFileLoader {
         
         public void selectPreferencesFile() {
             
-            JFileChooser jfc = new JFileChooser(System.getProperty("user.dir")+"\\Preferences");
+            JFileChooser jfc = new JFileChooser(TMEV.getFile("preferences/"));
             FileFilter ff = new FileFilter() {
                 public boolean accept(File file) {
                     if (file.isDirectory()) return true;

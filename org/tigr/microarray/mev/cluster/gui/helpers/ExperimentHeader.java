@@ -1,12 +1,12 @@
 /*
-Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: ExperimentHeader.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-07-27 19:59:15 $
- * $Author: braisted $
+ * $Revision: 1.4 $
+ * $Date: 2005-02-24 20:24:07 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.helpers;
@@ -18,7 +18,6 @@ import java.awt.Graphics;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.FontMetrics;
-import java.awt.GradientPaint;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
@@ -58,6 +57,7 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader, java.
     private BufferedImage negColorImage;
     private BufferedImage posColorImage;
     
+    private boolean useDoubleGradient = true;
     
     /**
      * Construct an <code>ExperimentHeader</code> with specified experiment.
@@ -115,6 +115,13 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader, java.
         this.posColorImage = pos;
     }
     
+    /**
+     * Sets flag to use a double gradient 
+     */
+    public void setUseDoubleGradient(boolean useDouble) {
+    	this.useDoubleGradient = useDouble;
+    }    
+     
     /**
      * Sets anti-aliasing property.
      */
@@ -215,14 +222,20 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader, java.
      */
     private void drawHeader(Graphics2D g) {
         final int samples = this.experiment.getNumberOfSamples();
+        
         if (samples == 0) {
             return;
         }
+        
         int width = samples*elementWidth;
         
-        g.drawImage(this.negColorImage, insets.left, 0, (int)(width/2f), RECT_HEIGHT, null);
-        g.drawImage(this.posColorImage, (int)((width)/2f + insets.left), 0, (int)(width/2.0), RECT_HEIGHT, null);
-        
+        if(useDoubleGradient) {
+	        g.drawImage(this.negColorImage, insets.left, 0, (int)(width/2f), RECT_HEIGHT, null);
+	        g.drawImage(this.posColorImage, (int)((width)/2f + insets.left), 0, (int)(width/2.0), RECT_HEIGHT, null);
+        } else {
+	        g.drawImage(this.posColorImage, insets.left, 0, width, RECT_HEIGHT, null);
+        }
+
         FontMetrics hfm = g.getFontMetrics();
         int descent = hfm.getDescent();
         int fHeight = hfm.getHeight();
@@ -231,8 +244,9 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader, java.
         
         int textWidth;
         g.drawString(String.valueOf(this.minValue), insets.left, RECT_HEIGHT+fHeight);
-        textWidth = hfm.stringWidth("1:1");
-        g.drawString("1:1", (int)(width/2f)-textWidth/2 + insets.left, RECT_HEIGHT+fHeight);
+        textWidth = hfm.stringWidth("0.0");
+        if(useDoubleGradient)
+        	g.drawString("0.0", (int)(width/2f)-textWidth/2 + insets.left, RECT_HEIGHT+fHeight);
         textWidth = hfm.stringWidth(String.valueOf(this.maxValue));
         g.drawString(String.valueOf(this.maxValue), width-textWidth + insets.left, RECT_HEIGHT+fHeight);
         
@@ -272,6 +286,7 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader, java.
         oos.writeObject(samplesOrder);
         oos.writeInt(elementWidth);
         oos.writeObject(insets);
+        oos.writeBoolean(useDoubleGradient);
     }
     
     
@@ -281,5 +296,6 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader, java.
         samplesOrder = (int[])ois.readObject();
         elementWidth = ois.readInt();
         insets = (Insets)ois.readObject();
+        this.useDoubleGradient = ois.readBoolean();
     }
 }

@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: AcknowlegementDialog.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-05-03 14:04:41 $
- * $Author: braisted $
+ * $Revision: 1.6 $
+ * $Date: 2005-02-24 20:23:45 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -30,7 +30,6 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JEditorPane;
@@ -130,7 +129,8 @@ public class AcknowlegementDialog extends JDialog implements java.awt.print.Prin
         
         html += "<tr valign=top><td>Patrick Cahan, Tim McCaffrey</td>"+
         "<td>The George Washington University</td>"+
-        "<td>Affymetrix data loader and filters, Affymetrix loader rework</td></tr>"; 
+        "<td>Affymetrix data loader and filters, Affymetrix loader rework, gene submission capability for "+
+        "the LOLA cluster repository</td></tr>"; 
 
          html += "<tr valign=top><td>Todd Peterson</td>"+
         "<td>National Center for Genome Resources</td>"+
@@ -155,7 +155,15 @@ public class AcknowlegementDialog extends JDialog implements java.awt.print.Prin
         html += "<tr valign=top><td>Sally Gaddis</td>"+
         "<td>University of Texas, MD Anderson Cancer Center</td>"+
         "<td>Report and basic testing of Java3D support for mev 3D viewers on the Mac platform.</td></tr>";
-    
+        
+        html += "<tr valign=top><td>Vu T. Chu</td>"+
+        "<td>University of Washington - Microbiology</td>"+
+        "<td>Design and implementation of Agilent File loading capabilities.</td></tr>";
+        
+        html += "<tr valign=top><td>Stephen C. Harris</td>"+
+        "<td>FDA, National Center for Toxicological Research</td>"+
+        "<td>T-test bug identification, and suggestion for improvement of adjusted Bonferroni correction.</td></tr>";
+        
         html += "</table>";
         html += "</center></body></html>";
         

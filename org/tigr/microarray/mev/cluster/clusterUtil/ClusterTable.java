@@ -4,61 +4,60 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterTable.java,v $
- * $Revision: 1.8 $
- * $Date: 2004-07-22 15:29:56 $
- * $Author: braisted $
+ * $Revision: 1.9 $
+ * $Date: 2005-02-24 20:24:12 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.clusterUtil;
 
-import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.IViewer;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Vector;
 
-import java.awt.Font;
-import java.awt.event.*;
-import java.awt.Color;
-import java.awt.Insets;
-import java.awt.Graphics;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FontMetrics;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.image.BufferedImage;
-
-import javax.swing.event.*;
-import javax.swing.JPanel;
-import javax.swing.JTable;
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JColorChooser;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JComponent;
-import javax.swing.ButtonGroup;
-import javax.swing.JScrollPane;
-import javax.swing.JColorChooser;
-import javax.swing.JOptionPane;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.DefaultCellEditor;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.event.CellEditorListener;
+import javax.swing.event.EventListenerList;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.tree.DefaultMutableTreeNode;
+
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
+import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
 public class ClusterTable extends JPanel implements IViewer {
     
@@ -100,6 +99,7 @@ public class ClusterTable extends JPanel implements IViewer {
         headerVector.add("Remarks");
         headerVector.add("Size");
         headerVector.add("Color");
+        headerVector.add("Show Color");
         
         Vector dataVector = new Vector();
         
@@ -116,6 +116,7 @@ public class ClusterTable extends JPanel implements IViewer {
                 dataVector.add(cluster.getClusterDescription());
                 dataVector.add(new JLabel(String.valueOf(cluster.getSize())));
                 dataVector.add(cluster.getClusterColor());
+                dataVector.add(new Boolean(cluster.showColor()));
                 row++;
             }
         }
@@ -124,6 +125,7 @@ public class ClusterTable extends JPanel implements IViewer {
         ClusterCellRenderer renderer = new ClusterCellRenderer();
         table.setDefaultRenderer(Color.class, renderer);
         table.setDefaultRenderer(JLabel.class, renderer);
+      //  table.setDefaultRenderer(Boolean.class, new javax.swing.table.DefaultTableCellRenderer());
         table.setPreferredScrollableViewportSize(new Dimension(450, 175));
         table.addMouseListener(new TableListener());
         table.setBackground(Color.white);
@@ -166,6 +168,7 @@ public class ClusterTable extends JPanel implements IViewer {
         dataVector.add(cluster.getClusterDescription());
         dataVector.add(new JLabel(String.valueOf(cluster.getSize())));
         dataVector.add(cluster.getClusterColor());
+        dataVector.add(new Boolean(cluster.showColor()));
         
         model.addRow(dataVector);
     }
@@ -221,12 +224,12 @@ public class ClusterTable extends JPanel implements IViewer {
         
         if(repository.isGeneClusterRepository()) {
             menu.addSeparator();
-    
+            
             item = new JMenuItem("Submit Gene List (External Repository)", GUIFactory.getIcon("empty.gif"));
             item.setActionCommand("submit-list-command");
             item.addActionListener(listener);
             this.menu.add(item);
-        }  
+        }
     }
     
     private JMenu initializeModifyMenu(MenuListener listener){
@@ -420,7 +423,7 @@ public class ClusterTable extends JPanel implements IViewer {
         }
         
         public boolean isCellEditable(int row, int col) {
-            return (col == 7);
+            return (col == 7 || col == 8);
         }
         
         public void setValueAt(Object value, int row, int col) {
@@ -431,6 +434,7 @@ public class ClusterTable extends JPanel implements IViewer {
         public Class getColumnClass(int col){
             if(col == 7) return Color.class;
             if(col == 4 || col == 5) return String.class;
+            if(col == 8) return Boolean.class;
             else return JLabel.class;
         }
         
@@ -490,7 +494,8 @@ public class ClusterTable extends JPanel implements IViewer {
         }
         
         public void addRow(Vector data){
-            Object [][] newData = new Object[rowData.length+1][rowData[0].length];
+            Object [][] newData = new Object[rowData.length+1][columnNames.length];
+            
             for(int i = 0; i < rowData.length; i++){
                 for(int j = 0; j < rowData[i].length; j++){
                     newData[i][j] = rowData[i][j];
@@ -633,6 +638,13 @@ public class ClusterTable extends JPanel implements IViewer {
                 if(table.isRowSelected(row))
                     textArea.setBackground(table.getSelectionBackground());
                 return textArea;
+            } else if(obj instanceof Boolean) {
+                System.out.println("Handle Boolean");
+                JCheckBox box = new JCheckBox();
+                box.setBackground(Color.white);
+                box.setHorizontalAlignment(JCheckBox.CENTER);
+                box.setSelected(((Boolean)obj).booleanValue());
+                return box;
             }
             colorPanel.setBackground(Color.white);
             return colorPanel;
@@ -661,6 +673,8 @@ public class ClusterTable extends JPanel implements IViewer {
                     return;
                 if(table.getColumnClass(col) == Color.class)
                     modifyColor(row, col);
+                else if(table.getColumnClass(col) == Boolean.class)
+                    modifyShowColor(row, col);
             } else {
                 if(mouseEvent.isPopupTrigger()){
                     int menuSize = menu.getComponentCount();
@@ -844,16 +858,12 @@ public class ClusterTable extends JPanel implements IViewer {
                 deleteSelectedRows();
             } else if(command.equals("delete-all-command")) {
                 deleteAllRows();
-            }else if(command.equals("save-cluster-command")){
+            } else if(command.equals("save-cluster-command")){
                 saveCluster();
-            }else if(command.equals("import-list-command")){
+            } else if(command.equals("import-list-command")){
                 Cluster newCluster = repository.createClusterFromList();
                 if(newCluster != null)
                     addCluster(newCluster);
-                else
-                    JOptionPane.showMessageDialog(framework.getFrame(), "Cluster was not created. Process aborted or input ID's were not found in the loaded data set.", "No List Matches", JOptionPane.INFORMATION_MESSAGE);
-                //onRepositoryChanged(repository);
-                //model.fireTableDataChanged();
             } else if(command.equals("submit-list-command")) {
                 submitCluster();
             }
@@ -996,13 +1006,29 @@ public class ClusterTable extends JPanel implements IViewer {
     }
     
     private void modifyColor(int row, int col){
-        Color color = (Color)(table.getValueAt(row, col));
-        JColorChooser chooser = new JColorChooser(color);
-        color = chooser.showDialog(ClusterTable.this, "Reassign Color", color);
+        Color color = (Color)(table.getValueAt(row, col));       
+        color = JColorChooser.showDialog(ClusterTable.this, "Reassign Color", color);
         if(color != null){
             table.setValueAt(color, row, col);
             repository.updateClusterColor(model.getClusterSerialNumber(row), color);
         }
+    }
+    
+    private void modifyShowColor(int row, int col) {
+        Cluster [] clusters = this.getSelectedClusters();
+        
+        if(clusters.length == 0)
+            return;
+        
+        Boolean bool = (Boolean)(this.model.getValueAt(row, col));
+
+        clusters[0].enableShowColor(bool.booleanValue());
+        model.setValueAt( clusters[0].getClusterColor(),row, col-1);
+      //  initializeTable();        
+        model.fireTableDataChanged();
+        model.fireTableChanged(new TableModelEvent(model));
+        this.table.repaint();
+        repaint();
     }
     
     private void launchNewMevSession(){
@@ -1184,6 +1210,13 @@ public class ClusterTable extends JPanel implements IViewer {
     
     public Experiment getExperiment() {
         return null;
+    }
+    
+    /** Returns int value indicating viewer type
+     * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
+     */
+    public int getViewerType() {
+        return -1;
     }
     
 }

@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: KNNCExperimentClusterViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-05 22:18:01 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2005-02-24 20:23:50 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.knnc;
@@ -15,17 +15,14 @@ import java.awt.Color;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JOptionPane;
 import javax.swing.JColorChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
 

@@ -1,12 +1,12 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: ActionManager.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-07-27 19:56:58 $
- * $Author: braisted $
+ * $Revision: 1.7 $
+ * $Date: 2005-02-24 20:24:10 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.action;
@@ -38,7 +38,6 @@ public class ActionManager implements java.io.Serializable {
         this.listener = listener;
         initActions();
         initLabelActions(labels);
-        initSortActions(labels);
         initAnalysisActions(factory);
     }
     
@@ -68,9 +67,9 @@ public class ActionManager implements java.io.Serializable {
      * Initializes main menu and toolbar actions.
      */
     private void initActions() {
-        actions.put(LOAD_ACTION, new DefaultAction(this, LOAD_NAME, LOAD_COMMAND, getIcon(LOAD_FILE_SMALLICON), getIcon(LOAD_FILE_LARGEICON)));        
-        actions.put(LOAD_ANALYSIS_ACTION, new DefaultAction(this, LOAD_ANALYSIS_NAME, LOAD_ANALYSIS_COMMAND, getIcon(LOAD_ANALYSIS_SMALLICON), getIcon(LOAD_ANALYSIS_LARGEICON)));        
-        actions.put(SAVE_ANALYSIS_ACTION, new DefaultAction(this, SAVE_ANALYSIS_NAME, SAVE_ANALYSIS_COMMAND, getIcon(SAVE_ANALYSIS_SMALLICON), getIcon(SAVE_ANALYSIS_LARGEICON)));        
+        actions.put(LOAD_ACTION, new DefaultAction(this, LOAD_NAME, LOAD_COMMAND, getIcon(LOAD_FILE_SMALLICON), getIcon(LOAD_FILE_LARGEICON)));
+        actions.put(LOAD_ANALYSIS_ACTION, new DefaultAction(this, LOAD_ANALYSIS_NAME, LOAD_ANALYSIS_COMMAND, getIcon(LOAD_ANALYSIS_SMALLICON), getIcon(LOAD_ANALYSIS_LARGEICON)));
+        actions.put(SAVE_ANALYSIS_ACTION, new DefaultAction(this, SAVE_ANALYSIS_NAME, SAVE_ANALYSIS_COMMAND, getIcon(SAVE_ANALYSIS_SMALLICON), getIcon(SAVE_ANALYSIS_LARGEICON)));
         actions.put(SAVE_ANALYSIS_AS_ACTION, new DefaultAction(this, SAVE_ANALYSIS_AS_NAME, SAVE_ANALYSIS_AS_COMMAND, getIcon(SAVE_ANALYSIS_AS_SMALLICON), getIcon(SAVE_ANALYSIS_AS_LARGEICON)));
         actions.put(NEW_SCRIPT_ACTION, new DefaultAction(this, NEW_SCRIPT_NAME, NEW_SCRIPT_COMMAND, getIcon(NEW_SCRIPT_SMALLICON), getIcon(NEW_SCRIPT_LARGEICON)));
         actions.put(LOAD_SCRIPT_ACTION, new DefaultAction(this, LOAD_SCRIPT_NAME, LOAD_SCRIPT_COMMAND, getIcon(LOAD_SCRIPT_SMALLICON), getIcon(LOAD_SCRIPT_LARGEICON)));
@@ -86,9 +85,15 @@ public class ActionManager implements java.io.Serializable {
         actions.put(SAVE_IMAGE_ACTION, new DefaultAction(this, SAVE_IMAGE_NAME, SAVE_IMAGE_COMMAND, getIcon(SAVE_IMAGE_SMALLICON), getIcon(SAVE_IMAGE_LARGEICON)));
         actions.put(PRINT_IMAGE_ACTION, new DefaultAction(this, PRINT_IMAGE_NAME, PRINT_IMAGE_COMMAND, getIcon(PRINT_IMAGE_SMALLICON), getIcon(PRINT_IMAGE_LARGEICON)));
         actions.put(CLOSE_ACTION, new DefaultAction(this, CLOSE_NAME, CLOSE_COMMAND, getIcon(CLOSE_ICON)));
-        actions.put(SHOW_THUMBNAIL_ACTION, new DefaultAction(this, SHOW_THUMBNAIL_NAME, SHOW_THUMBNAIL_COMMAND, getIcon(SHOW_THUMBNAIL_SMALLICON), getIcon(SHOW_THUMBNAIL_LARGEICON)));
         actions.put(DELETE_ALL_ACTION, new DefaultAction(this, DELETE_ALL_NAME, DELETE_ALL_COMMAND, getIcon(DELETE_ALL_ICON)));
         actions.put(DELETE_ALL_EXPERIMENT_CLUSTERS_ACTION, new DefaultAction(this, DELETE_ALL_EXPERIMENT_CLUSTERS_NAME, DELETE_ALL_EXPERIMENT_CLUSTERS_COMMAND, getIcon(DELETE_ALL_ICON)));
+        actions.put(SEARCH_ACTION, new DefaultAction(this, SEARCH_NAME, SEARCH_COMMAND, getIcon(SEARCH_ICON)));
+        actions.put(IMPORT_GENE_LIST_ACTION, new DefaultAction(this, IMPORT_GENE_LIST_NAME, IMPORT_GENE_LIST_COMMAND, getIcon(IMPORT_GENE_LIST_ICON)));
+        actions.put(IMPORT_SAMPLE_LIST_ACTION, new DefaultAction(this, IMPORT_SAMPLE_LIST_NAME, IMPORT_SAMPLE_LIST_COMMAND, getIcon(IMPORT_SAMPLE_LIST_ICON)));
+
+        actions.put(APPEND_SAMPLE_ANNOTATION_ACTION, new DefaultAction(this, APPEND_SAMPLE_ANNOTATION_NAME, APPEND_SAMPLE_ANNOTATION_COMMAND, getIcon(APPEND_SAMPLE_ANNOTATION_ICON)));            
+        actions.put(APPEND_GENE_ANNOTATION_ACTION, new DefaultAction(this, APPEND_GENE_ANNOTATION_NAME, APPEND_GENE_ANNOTATION_COMMAND, getIcon(APPEND_GENE_ANNOTATION_ICON)));            
+
     }
     
     /**
@@ -137,20 +142,7 @@ public class ActionManager implements java.io.Serializable {
         return desc != null && desc.getName() != null && desc.getClassName() != null;
     }
     
-    /**
-     * Initializes sorting actions.
-     */
-    private void initSortActions(String[] labels) {
-        DefaultAction action;
-        if(labels == null)
-            return;
-        for (int i=0; i<labels.length; i++) {
-            action = new DefaultAction(this, "Sort by "+labels[i], SORT_LABEL_CMD);
-            action.putValue(PARAMETER, String.valueOf(i));
-            actions.put(SORT_LABEL_ACTION+String.valueOf(i), action);
-        }
-    }
-    
+
     /**
      * Creates an image by specified name.
      */
@@ -193,7 +185,7 @@ public class ActionManager implements java.io.Serializable {
     private static final String SAVE_ANALYSIS_AS_SMALLICON = "save16.gif";
     private static final String SAVE_ANALYSIS_AS_LARGEICON = "save16.gif";
     
-
+    
     public static final String  NEW_SCRIPT_ACTION  = "action-new-script";
     public static final String  NEW_SCRIPT_COMMAND = "command-new-script";
     public static final String  NEW_SCRIPT_NAME    = "New Script";
@@ -211,13 +203,13 @@ public class ActionManager implements java.io.Serializable {
     // load directory action
     public static final String  LOAD_DIRECTORY_ACTION  = "action-load-directory";
     public static final String  LOAD_DIRECTORY_COMMAND = "command-load-directory";
-    public static final String  LOAD_DIRECTORY_NAME    = "Add Experiments from Directory";
+    public static final String  LOAD_DIRECTORY_NAME    = "Add Samples from Directory";
     private static final String LOAD_DIRECTORY_SMALLICON = "addmultiple16.gif";
     private static final String LOAD_DIRECTORY_LARGEICON = "addmultiple.gif";
     // load file action
     public static final String  LOAD_FILE_ACTION  = "action-load-file";
     public static final String  LOAD_FILE_COMMAND = "command-load-file";
-    public static final String  LOAD_FILE_NAME    = "Add Experiment from File";
+    public static final String  LOAD_FILE_NAME    = "Add Sample from File";
     private static final String LOAD_FILE_SMALLICON    = "addfromfile16.gif";
     private static final String LOAD_FILE_LARGEICON    = "addfromfile.gif";
     
@@ -233,7 +225,7 @@ public class ActionManager implements java.io.Serializable {
     // load Affy action
     public static final String  LOAD_AFFY_ACTION  = "action-load-affy";
     public static final String  LOAD_AFFY_COMMAND = "command-load-affy";
-    public static final String  LOAD_AFFY_NAME    = "Add Experiment from Affymetrix datafile";
+    public static final String  LOAD_AFFY_NAME    = "Add Sample from Affymetrix datafile";
     private static final String LOAD_AFFY_SMALLICON    = "addfromfile16.gif";
     private static final String LOAD_AFFY_LARGEICON    = "addfromfile.gif";
     
@@ -241,19 +233,19 @@ public class ActionManager implements java.io.Serializable {
     // load expression action
     public static final String  LOAD_EXPRESSION_ACTION  = "action-load-expression";
     public static final String  LOAD_EXPRESSION_COMMAND = "command-load-expression";
-    public static final String  LOAD_EXPRESSION_NAME    = "Add Experiment from Expression File";
+    public static final String  LOAD_EXPRESSION_NAME    = "Add Sample from Expression File";
     private static final String LOAD_EXPRESSION_SMALLICON    = "addfromfile16.gif";
     private static final String LOAD_EXPRESSION_LARGEICON    = "addfromfile.gif";
     // load db action
     public static final String  LOAD_DB_ACTION  = "action-load-db";
     public static final String  LOAD_DB_COMMAND = "command-load-db";
-    public static final String  LOAD_DB_NAME    = "Add Experiment from DB";
+    public static final String  LOAD_DB_NAME    = "Add Samples from DB";
     private static final String LOAD_DB_SMALLICON    = "addfromdb16.gif";
     private static final String LOAD_DB_LARGEICON    = "addfromdb.gif";
     // load stanford action
     public static final String  LOAD_STANFORD_ACTION  = "action-load-stanford";
     public static final String  LOAD_STANFORD_COMMAND = "command-load-stanford";
-    private static final String LOAD_STANFORD_NAME    = "Add Experiments from Stanford File";
+    private static final String LOAD_STANFORD_NAME    = "Add Samples from Stanford File";
     private static final String LOAD_STANFORD_ICON    = "addmultiple16.gif";
     // load cluster action
     public static final String  LOAD_CLUSTER_ACTION  = "action-load-cluster";
@@ -282,13 +274,8 @@ public class ActionManager implements java.io.Serializable {
     public static final String  CLOSE_COMMAND = "command-close";
     private static final String CLOSE_NAME    = "Close";
     private static final String CLOSE_ICON    = "close16.gif";
-    // show thumbnail action
-    public static final String SHOW_THUMBNAIL_ACTION  = "show-thumbnail-action";
-    public static final String SHOW_THUMBNAIL_COMMAND = "show-thumbnail-cmd";
-    private static final String SHOW_THUMBNAIL_NAME   = "Show Thumbnail";
-    private static final String SHOW_THUMBNAIL_SMALLICON = "thumbnail16.gif";
-    private static final String SHOW_THUMBNAIL_LARGEICON = "thumbnail.gif";
-    // delete all gene clusters action
+
+  // delete all gene clusters action
     public static final String  DELETE_ALL_ACTION  = "delete-all-action";
     public static final String  DELETE_ALL_COMMAND = "delete-all-cmd";
     private static final String DELETE_ALL_NAME    = "Delete All Gene Clusters";
@@ -296,17 +283,17 @@ public class ActionManager implements java.io.Serializable {
     // delete all experiment clusters action
     public static final String  DELETE_ALL_EXPERIMENT_CLUSTERS_ACTION  = "delete-all-experiments-action";
     public static final String  DELETE_ALL_EXPERIMENT_CLUSTERS_COMMAND = "delete-all-experiments-cmd";
-    private static final String DELETE_ALL_EXPERIMENT_CLUSTERS_NAME    = "Delete All Experiment Clusters";
+    private static final String DELETE_ALL_EXPERIMENT_CLUSTERS_NAME    = "Delete All Sample Clusters";
     // abbr. expt. names toggle
     public static final String TOGGLE_ABBR_EXPT_NAMES_ACTION = "toggle-abbr-expt-names-action";
     public static final String TOGGLE_ABBR_EXPT_NAMES_CMD = "toggle-abbr-expt-names-cmd";
-    public static final String TOGGLE_ABBR_EXPT_NAMES_NAME = "Abbr. Experiment Names";
+    public static final String TOGGLE_ABBR_EXPT_NAMES_NAME = "Abbr. Sample Names";
     // display label actions
     public static final String DISPLAY_LABEL_ACTION = "display--label-action";
     public static final String DISPLAY_LABEL_CMD    = "display-label-cmd";
     // display experiment label actions
-    public static final String ADD_NEW_EXPERIMENT_LABEL_ACTION = "add-new-experiment-action";     
-    public static final String ADD_NEW_EXPERIMENT_LABEL_CMD = "add-new-experiment-label";    
+    public static final String ADD_NEW_EXPERIMENT_LABEL_ACTION = "add-new-experiment-action";
+    public static final String ADD_NEW_EXPERIMENT_LABEL_CMD = "add-new-experiment-label";
     public static final String DISPLAY_EXPERIMENT_LABEL_ACTION = "display-experiment_label-action";
     public static final String DISPLAY_EXPERIMENT_LABEL_CMD    = "display-experiment-label-cmd";
     // sort label actions
@@ -335,18 +322,17 @@ public class ActionManager implements java.io.Serializable {
     public static final String MEDIAN_CENTER_EXPERIMENTS_CMD = "median-center-experiments-cmd";
     public static final String DIGITAL_EXPERIMENTS_CMD = "digital-experiments-cmd";
     public static final String LOG10_TO_LOG2_CMD = "log10-to-log2-cmd";
-    public static final String SET_LOWER_CUTOFFS_CMD = "set-lower-cutoffs-cmd";
     public static final String USE_LOWER_CUTOFFS_CMD = "use-lower-cutoffs-cmd";
-    public static final String SET_PERCENTAGE_CUTOFFS_CMD = "set-percentage-cutoffs-cmd";
     public static final String USE_PERCENTAGE_CUTOFFS_CMD = "use-percentage-cutoffs-cmd";
+    public static final String USE_VARIANCE_FILTER_CMD = "use-variance-filter-cmd";
     public static final String ADJUST_INTENSITIES_0_CMD = "adjust-intensities-0-cmd";
-
+    
     // pcahan
     public static final String DIVIDE_GENES_MEDIAN_CMD = "divide-genes-median-cmd";
     public static final String UNDIVIDE_GENES_MEDIAN_CMD = "undivide-genes-median-cmd";
-
+    
     public static final String DIVIDE_GENES_MEAN_CMD = "divide-genes-mean-cmd";
-    public static final String UNDIVIDE_GENES_MEAN_CMD = "undivide-genes-mean-cmd";  
+    public static final String UNDIVIDE_GENES_MEAN_CMD = "undivide-genes-mean-cmd";
     
     
     // normalization commands
@@ -378,26 +364,42 @@ public class ActionManager implements java.io.Serializable {
     public static final String BLUE_YELLOW_COLOR_SCHEME_CMD = "display-blue-yellow-scheme-cmd";
     public static final String CUSTOM_COLOR_SCHEME_CMD = "display-custom-color-scheme-cmd";
     public static final String COLOR_GRADIENT_CMD = "display-color-gradient-cmd";
-    public static final String DISPLAY_GREEN_RED_CMD = "display-green-red-cmd";
-    public static final String DISPLAY_GR_RATIO_SPLIT_CMD = "display-gr-ratio-split-cmd";
-    public static final String DISPLAY_GR_OVERLAY_CMD = "display-gr-overlay-cmd";
-    public static final String DISPLAY_GR_SCALE_CMD = "display-gr-dcale-cmd";
     public static final String DISPLAY_DRAW_BORDERS_CMD = "display-draw-borders-cmd";
-    public static final String DISPLAY_TRACING_CMD = "display-tracing-cmd";
-    public static final String DISPLAY_USE_ANTIALIASING_CMD = "display-use-antialiasing-cmd";
-    public static final String DISPLAY_SET_UPPER_LIMITS_CMD = "display-set-upper-limits-cmd";
     public static final String DISPLAY_SET_RATIO_SCALE_CMD = "display-set-ratio-scale-cmd";
     public static final String DISPLAY_5X2_CMD = "display-5x2-cmd";
     public static final String DISPLAY_10X10_CMD = "display-10x10-cmd";
     public static final String DISPLAY_20X5_CMD = "display-20x5-cmd";
     public static final String DISPLAY_50X10_CMD = "display-50x10-cmd";
     public static final String DISPLAY_OTHER_CMD = "display-other-cmd";
-    public static final String SORT_BY_LOCATION_CMD = "sort-by-location-cmd";
-    public static final String SORT_BY_RATIO_CMD = "sort-by-ratio-cmd";
     public static final String SYSTEM_INFO_CMD = "system-info-cmd";
     public static final String DEFAULT_DISTANCES_CMD = "default-distances-cmd";
     // popup commands
     public static final String DELETE_NODE_CMD = "delete-node-cmd";
-    // help commands
-    public static final String SHOW_SUPPORTTREE_LEGEND_COMMAND = "show-supporttree-legend-command";
+
+    public static final String  SEARCH_ACTION  = "search-action";
+    public static final String  SEARCH_COMMAND = "search-cmd";
+    private static final String SEARCH_NAME    = "Search";
+    private static final String SEARCH_ICON    = "search_16.gif";
+    
+    public static final String IMPORT_GENE_LIST_COMMAND = "import-gene-list-command";
+    public static final String IMPORT_GENE_LIST_ACTION = "import-gene-list-action";
+    public static final String IMPORT_GENE_LIST_NAME = "Import Gene List";
+    public static final String IMPORT_GENE_LIST_ICON = "import_list.gif";
+    
+    public static final String IMPORT_SAMPLE_LIST_COMMAND = "import-sample-list-command";
+    public static final String IMPORT_SAMPLE_LIST_ACTION = "import-sample-list-action";
+    public static final String IMPORT_SAMPLE_LIST_NAME = "Import Sample List";
+    public static final String IMPORT_SAMPLE_LIST_ICON = "import_list.gif";
+    
+    public static final String SET_DATA_SOURCE_COMMAND = "set-data-source-command";
+    
+    public static final String APPEND_SAMPLE_ANNOTATION_COMMAND = "append-sample-annotation-command";
+    public static final String APPEND_SAMPLE_ANNOTATION_ACTION = "append-sample-annotation-action";
+    public static final String APPEND_SAMPLE_ANNOTATION_NAME = "Append Sample Annotation";
+    public static final String APPEND_SAMPLE_ANNOTATION_ICON = "append_sample_annotation.gif";    
+
+    public static final String APPEND_GENE_ANNOTATION_COMMAND = "append-gene-annotation-command";
+    public static final String APPEND_GENE_ANNOTATION_ACTION = "append-gene-annotation-action";
+    public static final String APPEND_GENE_ANNOTATION_NAME = "Append Gene Annotation";
+    public static final String APPEND_GENE_ANNOTATION_ICON = "append_gene_annotation.gif";
 }

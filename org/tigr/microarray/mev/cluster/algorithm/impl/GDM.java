@@ -21,32 +21,18 @@ prior written consent of TIGR.
 */
 package org.tigr.microarray.mev.cluster.algorithm.impl;
 
-import java.awt.BorderLayout;
-import java.awt.event.*;
-import java.util.Random;
-import java.util.ArrayList;
-import java.util.Vector;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 
+import javax.swing.JFrame;
+
+import org.tigr.microarray.mev.cluster.algorithm.AbortException;
+import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
+import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 import org.tigr.util.FloatMatrix;
 import org.tigr.util.awt.ProgressDialog;
-
-import org.tigr.microarray.mev.cluster.Node;
-import org.tigr.microarray.mev.cluster.Cluster;
-import org.tigr.microarray.mev.cluster.NodeList;
-import org.tigr.microarray.mev.cluster.NodeValue;
-import org.tigr.microarray.mev.cluster.NodeValueList;
-
-import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
-import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
-import org.tigr.microarray.mev.cluster.algorithm.AbortException;
 
 public class GDM extends AbstractAlgorithm {
     private boolean stop = false;
@@ -87,7 +73,7 @@ public class GDM extends AbstractAlgorithm {
         absolute = map.getBoolean("distance-absolute", false);
 	this.expMatrix = data.getMatrix("experiment");
         if (expMatrix == null) {
-            throw new AlgorithmException("Experiment data is absent.");
+            throw new AlgorithmException("Input data is absent.");
         }
 		
 	num_genes = this.expMatrix.getRowDimension(); //n = number_of_genes

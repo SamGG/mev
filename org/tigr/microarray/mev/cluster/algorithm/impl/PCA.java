@@ -4,36 +4,44 @@ All rights reserved.
 */
 /*
  * $RCSfile: PCA.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:48 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.algorithm.impl;
 
-import org.tigr.util.FloatMatrix;
-import org.tigr.util.ConfMap;
-import org.tigr.util.Maths;
+import java.util.Vector;
 
+import org.tigr.microarray.mev.cluster.algorithm.AbortException;
 import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
-import org.tigr.microarray.mev.cluster.algorithm.AbortException;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
+import org.tigr.util.FloatMatrix;
+import org.tigr.util.Maths;
+import org.tigr.util.QSort;
 
 public class PCA extends AbstractAlgorithm {
     
     private boolean stop = false;
+    private int numNeighbors;    
+    private int numGenes, numExps;  
+    private float factor;    
     
     public AlgorithmData execute(AlgorithmData data) throws AlgorithmException {
 	FloatMatrix expMatrix = data.getMatrix("experiment");
 	AlgorithmParameters map = data.getParams();
 	
 	int function = map.getInt("distance-function", COVARIANCE);
-	float factor = map.getFloat("distance-factor", 1.0f);
+	factor = map.getFloat("distance-factor", 1.0f);
 	boolean absolute = map.getBoolean("distance-absolute", false);
 	int mode = map.getInt("pca-mode", 0);
+	numNeighbors = map.getInt("numNeighbors", 10);  
+        
+	numGenes = expMatrix.getRowDimension();
+	numExps = expMatrix.getColumnDimension();        
 	
 	final int numberOfGenes = expMatrix.getRowDimension();
 	final int numberOfSamples = expMatrix.getColumnDimension();
@@ -43,6 +51,7 @@ public class PCA extends AbstractAlgorithm {
 	event.setIntValue(eventValue);
 	event.setDescription("Calculate covariance matrix\n");
 	fireValueChanged(event);
+        /*
 	FloatMatrix An = new FloatMatrix(numberOfGenes, numberOfSamples);
 	for (int row=0; row<numberOfGenes; row++) {
 	    for (int column=0; column<numberOfSamples; column++) {
@@ -53,6 +62,8 @@ public class PCA extends AbstractAlgorithm {
 		}
 	    }
 	}
+        */
+        FloatMatrix An = imputeKNearestMatrix(expMatrix, numNeighbors);
 	FloatMatrix matrix = null;
 	if (mode==0) {
 	    matrix = An;
@@ -60,7 +71,8 @@ public class PCA extends AbstractAlgorithm {
 	    matrix = new FloatMatrix(numberOfSamples, numberOfSamples);
 	    for (int column=0; column<numberOfSamples; column++) {
 		for (int row=0; row<numberOfSamples; row++) {
-		    matrix.set(row, column, ExperimentUtil.distance(expMatrix, row, column, function, factor, absolute));
+		    //matrix.set(row, column, ExperimentUtil.distance(expMatrix, row, column, function, factor, absolute));
+                    matrix.set(row, column, ExperimentUtil.distance(An, row, column, function, factor, absolute));
 		}
 	    }
 	}
@@ -523,4 +535,304 @@ public class PCA extends AbstractAlgorithm {
     public void abort() {
 	stop = true;
     }
+    
+    private FloatMatrix imputeKNearestMatrix(FloatMatrix inputMatrix, int k) throws AlgorithmException {
+        int numRows = inputMatrix.getRowDimension();
+        int numCols = inputMatrix.getColumnDimension();
+        FloatMatrix resultMatrix = new FloatMatrix(numRows, numCols);
+        
+        AlgorithmEvent event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, numGenes);
+        event.setDescription("Imputing missing values");
+        fireValueChanged(event);
+        event.setId(AlgorithmEvent.PROGRESS_VALUE);
+        
+        for (int i = 0; i < numRows; i++) {
+            if (stop) {
+                throw new AbortException();
+            }
+            //event.setIntValue(i);
+            //event.setDescription("Imputing missing values: Current gene = " + (i+ 1));
+            //fireValueChanged(event);
+            
+            if (isMissingValues(inputMatrix, i)) {
+                //System.out.println("gene " + i + " is missing values");
+                Vector nonMissingExpts = new Vector();
+                for (int j = 0; j < numCols; j++) {
+                    if (!Float.isNaN(inputMatrix.A[i][j])) {
+                        nonMissingExpts.add(new Integer(j));
+                    }
+                }
+                Vector geneSubset = getValidGenes(i, inputMatrix, nonMissingExpts); //getValidGenes() returns a Vector of genes that have valid values for all the non-missing expts
+                
+                //System.out.println(" Valid geneSubset.size() = " + geneSubset.size());
+                
+                /*
+                for (int j = 0; j < geneSubset.size(); j++) {
+                    System.out.println(((Integer)geneSubset.get(j)).intValue());
+                }
+                 */
+                //System.out.println("imputing KNN: current gene = " + i);
+                Vector kNearestGenes = getKNearestGenes(i, k, inputMatrix, geneSubset, nonMissingExpts);
+                
+                /*
+                System.out.println("k nearest genes of gene " + i + " : ");
+                 
+                for (int j = 0; j < kNearestGenes.size(); j++) {
+                    System.out.println("" + ((Integer)kNearestGenes.get(j)).intValue());
+                }
+                 */
+                
+                //TESTED UPTO HERE -- 12/18/2002***********
+                //
+                /*
+                System.out.print("Gene " + i + " :\t");
+                for (int j = 0; j < numCols; j++) {
+                    System.out.print("" +inputMatrix.A[i][j]);
+                    System.out.print("\t");
+                }
+                System.out.println();
+                System.out.println("Matrix of k Nearest Genes");
+                printSubMatrix(kNearestGenes, inputMatrix);
+                 */    //
+                for (int j = 0; j < numCols; j++) {
+                    if (!Float.isNaN(inputMatrix.A[i][j])) {
+                        resultMatrix.A[i][j] = inputMatrix.A[i][j];
+                    } else {
+                        
+                        //System.out.println("just before entering getExptMean(): kNearestGenes.size() = " + kNearestGenes.size());
+                        
+                        //resultMatrix.A[i][j] = getExptMean(j, kNearestGenes, inputMatrix);
+                        resultMatrix.A[i][j] = getExptWeightedMean(i, j, kNearestGenes, inputMatrix);
+                    }
+                }
+                //DONE UPTO HERE
+            }
+            
+            else {
+                for (int j = 0; j < numCols; j++) {
+                    resultMatrix.A[i][j] = inputMatrix.A[i][j];
+                }
+            }
+        }
+        
+        return imputeRowAverageMatrix(resultMatrix);
+    }   
+    
+    private FloatMatrix imputeRowAverageMatrix(FloatMatrix inputMatrix) throws AlgorithmException {
+        int numRows = inputMatrix.getRowDimension();
+        int numCols = inputMatrix.getColumnDimension();
+        FloatMatrix resultMatrix = new FloatMatrix(numRows, numCols);
+        
+        AlgorithmEvent event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, numGenes);
+        fireValueChanged(event);
+        event.setId(AlgorithmEvent.PROGRESS_VALUE);
+        
+        for (int i = 0; i < numRows; i++) {
+            
+            if (stop) {
+                throw new AbortException();
+            }
+            //event.setIntValue(i);
+            //event.setDescription("Imputing missing values: Current gene = " + (i+ 1));
+            //fireValueChanged(event);
+            
+            float[] currentRow = new float[numCols];
+            float[] currentOrigRow = new float[numCols];
+            for (int j = 0; j < numCols; j++) {
+                currentRow[j] = inputMatrix.A[i][j];
+                currentOrigRow[j] = inputMatrix.A[i][j];
+            }
+            for (int k = 0; k < numCols; k++) {
+                if (Float.isNaN(inputMatrix.A[i][k])) {
+                    currentRow[k] = getMean(currentOrigRow);
+                }
+            }
+            
+            for (int l = 0; l < numCols; l++) {
+                resultMatrix.A[i][l] = currentRow[l];
+            }
+        }
+        
+        return resultMatrix;
+    }    
+    
+    private boolean isMissingValues(FloatMatrix mat, int row) {//returns true if the row of the matrix has any NaN values
+        
+        for (int i = 0; i < mat.getColumnDimension(); i++) {
+            if (Float.isNaN(mat.A[row][i])) {
+                return true;
+            }
+        }
+        
+        return false;
+    }   
+    
+    private Vector getValidGenes(int gene, FloatMatrix mat, Vector validExpts) { //returns the indices of those genes in "mat" that have valid values for all the validExpts
+        Vector validGenes = new Vector();
+        
+        for (int i = 0; i < mat.getRowDimension(); i++) {
+            if ((hasAllExpts(i, mat, validExpts)) && (gene != i)){//returns true if gene i in "mat" has valid values for all the validExpts
+                validGenes.add(new Integer(i));
+            }
+        }
+        
+        if (validGenes.size() < numNeighbors) { // if the number of valid genes is < k, other genes will be added to validGenes in increasing order of Euclidean distance until validGenes.size() = k
+            int additionalGenesNeeded = numNeighbors - validGenes.size();
+            Vector additionalGenes = getAdditionalGenes(gene, additionalGenesNeeded, validGenes, mat);
+            for (int i = 0; i < additionalGenes.size(); i++) {
+                validGenes.add(additionalGenes.get(i));
+            }
+        }
+        
+        return validGenes;
+    } 
+    
+    private Vector getAdditionalGenes(int currentGene, int numGenesNeeded, Vector alreadyPresentGenes, FloatMatrix mat) {
+        Vector additionalGenes = new Vector();
+        Vector allGenes = new Vector();
+        Vector geneDistances = new Vector();
+        
+        for (int i = 0; i < mat.getRowDimension(); i++) {
+            if (i != currentGene) {
+                float currentDistance = ExperimentUtil.geneEuclidianDistance(mat, null, i, currentGene, factor);
+                geneDistances.add(new Float(currentDistance));
+                allGenes.add(new Integer(i));
+            }
+        }
+        
+        float[] geneDistancesArray = new float[geneDistances.size()];
+        for (int i = 0; i < geneDistances.size(); i++) {
+            float currentDist = ((Float)geneDistances.get(i)).floatValue();
+            geneDistancesArray[i] = currentDist;
+        }
+        
+        QSort sortGeneDistances = new QSort(geneDistancesArray);
+        float[] sortedDistances = sortGeneDistances.getSorted();
+        int[] sortedDistanceIndices = sortGeneDistances.getOrigIndx();
+        
+        int counter = 0;
+        
+        for (int i = 0; i < sortedDistanceIndices.length; i++) {
+            int currentIndex = sortedDistanceIndices[i];
+            int currentNearestGene = ((Integer)allGenes.get(currentIndex)).intValue();
+            if (belongsIn(alreadyPresentGenes, currentNearestGene)) {
+                continue;
+            } else {
+                additionalGenes.add(new Integer(currentNearestGene));
+                counter++;
+                if (counter >= numGenesNeeded) {
+                    break;
+                }
+            }
+        }
+        
+        return additionalGenes;
+    }   
+    
+    Vector getKNearestGenes(int gene, int k, FloatMatrix mat, Vector geneSubset, Vector nonMissingExpts) {
+        Vector allValidGenes = new Vector();
+        Vector nearestGenes = new Vector();
+        Vector geneDistances = new Vector();
+        for (int i = 0; i < geneSubset.size(); i++) {
+            int currentGene = ((Integer)geneSubset.get(i)).intValue();
+            if (gene != currentGene) {
+                float currentDistance = ExperimentUtil.geneEuclidianDistance(mat, null, gene, currentGene, factor);
+                //System.out.println("Current distance = " + currentDistance);
+                geneDistances.add(new Float(currentDistance));
+                allValidGenes.add(new Integer(currentGene));
+            }
+        }
+        
+        float[] geneDistancesArray = new float[geneDistances.size()];
+        for (int i = 0; i < geneDistances.size(); i++) {
+            float currentDist = ((Float)geneDistances.get(i)).floatValue();
+            geneDistancesArray[i] = currentDist;
+        }
+        
+        QSort sortGeneDistances = new QSort(geneDistancesArray);
+        float[] sortedDistances = sortGeneDistances.getSorted();
+        int[] sortedDistanceIndices = sortGeneDistances.getOrigIndx();
+        
+        for (int i = 0; i < k; i++) {
+            int currentGeneIndex = sortedDistanceIndices[i];
+            int currentNearestGene = ((Integer)allValidGenes.get(currentGeneIndex)).intValue();
+            nearestGenes.add(new Integer(currentNearestGene));
+        }
+        
+        return nearestGenes;
+    } 
+    
+    private float getExptWeightedMean(int gene, int expt, Vector geneVector, FloatMatrix mat) {
+        float weightedMean = 0.0f;
+        int validN = 0;
+        float numerator = 0.0f;
+        float recipNeighborDistances[] = new float[geneVector.size()];
+        for (int i = 0; i < recipNeighborDistances.length; i++) {
+            int currentGene = ((Integer)geneVector.get(i)).intValue();
+            if (!Float.isNaN(mat.A[currentGene][expt])) {
+                float distance = ExperimentUtil.geneEuclidianDistance(mat, null, gene, currentGene, factor);
+                if (distance == 0.0f) {
+                    distance = Float.MIN_VALUE;
+                }
+                recipNeighborDistances[i] = (float)(1.0f/distance);
+                numerator = numerator + (float)(recipNeighborDistances[i]*mat.A[currentGene][expt]);
+                validN++;
+            } else {
+                recipNeighborDistances[i] = 0.0f;
+            }
+            
+        }
+        
+        float denominator = 0.0f;
+        for (int i = 0; i < recipNeighborDistances.length; i++) {
+            denominator = denominator + recipNeighborDistances[i];
+        }
+        
+        weightedMean = (float)(numerator/(float)denominator);
+        return weightedMean;
+    }   
+    
+    private float getMean(float[] row) {
+        float mean = 0.0f;
+        int validN = 0;
+        
+        for (int i = 0; i < row.length; i++) {
+            if (!Float.isNaN(row[i])) {
+                mean = mean + row[i];
+                validN++;
+            }
+        }
+        
+        if (validN == 0) {
+            validN = 1; // if the whole row is NaN, it will be set to zero;
+        }
+        
+        mean = (float)(mean / validN);
+        
+        return mean;
+    } 
+    
+    private boolean hasAllExpts(int gene, FloatMatrix mat, Vector validExpts) {//returns true if "gene" in "mat" has valid values for all the validExpts
+        
+        for (int i = 0; i < validExpts.size(); i++) {
+            int expIndex = ((Integer)validExpts.get(i)).intValue();
+            if (Float.isNaN(mat.A[gene][expIndex])) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    private boolean belongsIn(Vector geneVector, int gene) {
+        for (int i = 0; i < geneVector.size(); i++) {
+            int currentGene = ((Integer)geneVector.get(i)).intValue();
+            if (gene == currentGene) {
+                return true;
+            }
+        }
+        
+        return false;
+    }    
+    
 }

@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: AlgorithmDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 18:42:39 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2005-02-24 20:23:51 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
@@ -15,8 +15,6 @@ package org.tigr.microarray.mev.cluster.gui.impl.dialogs;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
-import java.awt.event.*;
-
 
 //import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
@@ -38,6 +36,58 @@ public class AlgorithmDialog extends JDialog {
     Color fadeColor = new Color(140,220,240);
     
     /** Creates new AlgorithmDialog */
+    public AlgorithmDialog(Frame parent, String title, boolean modal) {
+        super(parent, title, modal);
+        
+        mainPanel = new JPanel();
+        mainPanel.setLayout(new GridBagLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(0,5,5,5));
+        contentPanel = new JPanel();
+        contentPanel.setLayout(new GridBagLayout());
+        buttonPanel = new JPanel();
+        okButton = new JButton("OK");
+        okButton.setActionCommand("ok-command");
+        okButton.setSize(60,30);
+        okButton.setPreferredSize(new Dimension(60,30));
+        okButton.setFocusPainted(false);
+        cancelButton = new JButton("Cancel");
+        cancelButton.setActionCommand("cancel-command");
+        cancelButton.setSize(60,30);
+        cancelButton.setPreferredSize(new Dimension(60,30));
+        cancelButton.setFocusPainted(false);
+        resetButton = new JButton("Reset");
+        resetButton.setActionCommand("reset-command");
+        resetButton.setSize(60,30);
+        resetButton.setPreferredSize(new Dimension(60,30));
+        resetButton.setFocusPainted(false);
+        infoButton = new JButton(null, GUIFactory.getIcon("Information24.gif"));
+        infoButton.setActionCommand("info-command");
+        infoButton.setSize(30,30);
+        infoButton.setPreferredSize(new Dimension(30,30));
+        infoButton.setFocusPainted(false);
+        Border border = BorderFactory.createBevelBorder(BevelBorder.RAISED);
+        infoButton.setBorder(border);
+        okButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED, new Color(240,240,240), new Color(180,180,180), new Color(10,0,0), new Color(10,10,10) ));
+        resetButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+        cancelButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+        
+        //layout button panel
+        buttonPanel.setLayout(new GridBagLayout());
+        buttonPanel.add(infoButton, new GridBagConstraints(0,0,1,1,0.0,1.0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,5), 0,0));
+        JLabel label = new JLabel(GUIFactory.getIcon("dialog_button_bar.gif"));
+        buttonPanel.add(label, new GridBagConstraints(1,0,1,1,1.0,0.0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,5,0,5), 0,0));
+        buttonPanel.add(resetButton, new GridBagConstraints(2,0,1,1,0.0,0.0,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,5,0,5), 0,0));
+        buttonPanel.add(cancelButton, new GridBagConstraints(3,0,1,1,0.0,0.0,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,0,0,5), 0,0));
+        buttonPanel.add(okButton, new GridBagConstraints(4,0,1,1,0.0,0.0,GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,30,0,0), 0,0));
+        
+        mainPanel.add(new HeaderImagePanel(), new GridBagConstraints(0,0,1,1,1.0,0.0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
+        mainPanel.add(contentPanel, new GridBagConstraints(0,1,1,1,1.0,1.0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
+        mainPanel.add(buttonPanel, new GridBagConstraints(0,2,1,1,1.0,0.0,GridBagConstraints.SOUTH, GridBagConstraints.BOTH, new Insets(5,0,0,0), 0,0));
+        
+        this.getContentPane().add(mainPanel);
+        pack();
+    }
+        /** Creates new AlgorithmDialog */
     public AlgorithmDialog(JFrame parent, String title, boolean modal) {
         super(parent, title, modal);
         

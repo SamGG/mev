@@ -4,21 +4,18 @@ All rights reserved.
  */
 /*
  * $RCSfile: SingleArrayViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-07-27 19:56:10 $
- * $Author: braisted $
+ * $Revision: 1.6 $
+ * $Date: 2005-02-24 20:23:44 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
-import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.font.*;
 import java.awt.image.*;
 import java.awt.print.*;
 import java.io.*;
-import java.net.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -27,7 +24,6 @@ import javax.media.jai.*;
 import com.sun.media.jai.codec.*;
 import org.tigr.util.awt.GBA;
 import org.tigr.util.awt.ActionInfoEvent;
-import org.tigr.microarray.util.awt.SetElementSizeDialog;
 import org.tigr.util.awt.ActionInfoListener;
 import org.tigr.graph.GC;
 import org.tigr.graph.GraphBar;
@@ -41,8 +37,6 @@ import org.tigr.util.awt.MessageDisplay;
 import org.tigr.microarray.util.SlideDataSorter;
 import org.tigr.microarray.util.swing.SlideDataLoader;
 
-import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.normalization.LinRegNormInitDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.normalization.RatioStatsNormInitDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.normalization.IterativeLogMCNormInitDialog;

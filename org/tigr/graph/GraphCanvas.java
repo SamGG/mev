@@ -4,16 +4,15 @@ All rights reserved.
 */
 /*
  * $RCSfile: GraphCanvas.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-06 22:46:02 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2005-02-24 20:24:06 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.graph;
 
 import java.awt.*;
 import java.util.Vector;
-import javax.swing.*;
 
 public class GraphCanvas extends Drawable {
     

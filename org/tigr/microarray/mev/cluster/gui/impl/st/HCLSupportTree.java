@@ -1,58 +1,82 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
-*/
+ */
 /*
  * $RCSfile: HCLSupportTree.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:51 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.st;
 
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Dimension;
-
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseAdapter;
-
-import java.util.Arrays;
+import java.text.DecimalFormat;
 import java.util.Vector;
 
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-
-import org.tigr.util.FloatMatrix;
-
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
-
-import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTree;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
 
 public class HCLSupportTree extends HCLTree {
+    
     private Vector geneTreeSupportVector, exptTreeSupportVector;
+    private boolean showSupportValues;
+    private int MIN_VALUE_TIC_HEIGHT = 2;
+    private FontMetrics fm;
+    private DecimalFormat format;
+    private String supportString;
+    private int supportValueHeight;
+    private int supportValueWidth;
+    private int index;
+    private Float supportPercentage;
+    private Color currentColor;
     
     public HCLSupportTree(HCLTreeData treeData, int orientation, Vector geneTreeSupportVector, Vector exptTreeSupportVector) {
         super(treeData, orientation);
+        showSupportValues = false;
         this.geneTreeSupportVector = geneTreeSupportVector;
         this.exptTreeSupportVector = exptTreeSupportVector;
+        this.format = new DecimalFormat();
+        format.setMaximumFractionDigits(0);
     }
     
-   
+    /*
+    protected void updateSize(Dimension elementSize) {
+        super.updateSize(elementSize);
+        Graphics g = getGraphics();
+        if(g != null) {
+            g.setFont(new Font("mono-spaced", Font.PLAIN, this.stepSize <= 15 ? this.stepSize : 15));
+            fm = g.getFontMetrics();
+        }
+        this.adjustPixelHeightsForValueDisplay();
+    }
+     */
+    
     /**
      * Paints the tree into specified graphics.
      */
     public void paint(Graphics g) {
         super.paintSubTree(g);
+        
+        Graphics2D g2 = (Graphics2D)g;
+        Composite composite = g2.getComposite();
+        
+        //        g.setFont(g.getFont().deriveFont(this.stepSize));
+        //  if(this.orientation == HORIZONTAL)
+        g.setFont(new Font("mono-spaced", Font.PLAIN, this.stepSize <= 15 ? this.stepSize : 15));
+        
+        fm = g.getFontMetrics();
+        
+        supportValueHeight = fm.getHeight();
+        
         if (this.treeData.node_order.length < 2) {
             return;
         }
@@ -94,8 +118,8 @@ public class HCLSupportTree extends HCLTree {
              */
             
             if ((geneTreeSupportVector != null) || (exptTreeSupportVector != null)) {
-                int index = node - (this.treeData.node_order.length);
-                Float supportPercentage = null;
+                index = node - (this.treeData.node_order.length);
+                supportPercentage = null;
                 
                 try {
                     if (orientation == HCLTree.HORIZONTAL) {
@@ -109,42 +133,156 @@ public class HCLSupportTree extends HCLTree {
                 
                 if (supportPercentage != null) {
                     g.setColor(getColorFromPercentage(supportPercentage.doubleValue())); //Parameter is the percentage of support for this node
+                    currentColor = g.getColor();
                 }
             }
             
             
-            if(this.treeData.height[node] >= zero_threshold) {                    
-                    this.terminalNodes[node] = false;
-                    if(this.pHeights[child_1] == 0)
-                        this.terminalNodes[child_1] = true;
-                    if(this.pHeights[child_2] == 0)
-                        this.terminalNodes[child_2] = true;
-                } else{
-                    
-                    this.terminalNodes[node] = false;
-                    
-                     if(this.treeData.height[parentNodes[node]] >= zero_threshold){
-                        drawWedge(g, node, child_1_x1+xOrigin, child_2_x1+xOrigin, child_1_y, child_2_y);
-                        this.terminalNodes[node] = true;
-                        this.terminalNodes[child_1] = false;
-                        this.terminalNodes[child_2] = false;
-                    }
+            if(this.treeData.height[node] >= zero_threshold) {
+                this.terminalNodes[node] = false;
+                if(this.pHeights[child_1] == 0)
+                    this.terminalNodes[child_1] = true;
+                if(this.pHeights[child_2] == 0)
+                    this.terminalNodes[child_2] = true;
+            } else{
+                
+                this.terminalNodes[node] = false;
+                
+                if(this.treeData.height[parentNodes[node]] >= zero_threshold){
+                    drawWedge(g, node, child_1_x1+xOrigin, child_2_x1+xOrigin, child_1_y, child_2_y);
+                    this.terminalNodes[node] = true;
+                    this.terminalNodes[child_1] = false;
+                    this.terminalNodes[child_2] = false;
                 }
+            }
             
             selectedLineColor = Color.lightGray;
             
             if (this.selected[node]) {
                 g.setColor(selectedLineColor);
             }
-            if(this.orientation == HORIZONTAL){
-                g.drawLine(child_1_x1 + xOrigin, child_1_y, child_1_x2 + xOrigin, child_1_y);
-                g.drawLine(child_2_x1 + xOrigin, child_2_y, child_2_x2 + xOrigin, child_2_y);
-                g.drawLine(child_1_x1 + xOrigin, child_1_y, child_2_x1 + xOrigin, child_2_y);
+            if(!showSupportValues) {
+                if(this.orientation == HORIZONTAL){
+                    g.drawLine(child_1_x1 + xOrigin, child_1_y, child_1_x2 + xOrigin, child_1_y);
+                    g.drawLine(child_2_x1 + xOrigin, child_2_y, child_2_x2 + xOrigin, child_2_y);
+                    g.drawLine(child_1_x1 + xOrigin, child_1_y, child_2_x1 + xOrigin, child_2_y);
+                }
+                else{
+                    g.drawLine(child_1_x1, child_1_y + horizontalOffset, child_1_x2, child_1_y + horizontalOffset);
+                    g.drawLine(child_2_x1, child_2_y + horizontalOffset, child_2_x2, child_2_y + horizontalOffset);
+                    g.drawLine(child_1_x1, child_1_y + horizontalOffset, child_2_x1, child_2_y + horizontalOffset);
+                }
+            } else {
+                
+                if(this.orientation == HORIZONTAL){  //gene tree
+                    
+                    if (geneTreeSupportVector != null && !geneTreeSupportVector.isEmpty())
+                        supportPercentage = (Float) geneTreeSupportVector.get(index);
+                                        
+                    g.drawLine(child_1_x1 + xOrigin, child_1_y, child_1_x2 + xOrigin, child_1_y);
+                    g.drawLine(child_2_x1 + xOrigin, child_2_y, child_2_x2 + xOrigin, child_2_y);
+                    g.drawLine(child_1_x1 + xOrigin, child_1_y, child_2_x1 + xOrigin, child_2_y);                    
+                                        
+                    if(i == this.treeData.node_order.length-2 || geneTreeSupportVector.isEmpty())
+                        continue;
+                    
+                    supportString = format.format(Math.round(supportPercentage.floatValue()));
+                    supportValueWidth = fm.stringWidth(supportString);
+                    
+                    if(supportString.equals("0"))
+                        continue;
+
+                    g.setColor(new Color(192, 200, 228));
+                    g2.setComposite(composite);
+
+                    g.fillRect(child_1_x1-(int)(supportValueWidth)-4 + xOrigin, ((child_2_y - child_1_y)/2)+child_1_y - fm.getAscent() - 2, supportValueWidth+4, fm.getAscent()+2);
+                  
+                    g.setColor(Color.black);
+                    g.drawRect(child_1_x1-(int)(supportValueWidth)-4 + xOrigin, ((child_2_y - child_1_y)/2)+child_1_y - fm.getAscent() - 2, supportValueWidth+4, fm.getAscent()+2);
+                    
+                    g.drawString(supportString, child_1_x1-supportValueWidth-2+xOrigin, ((child_2_y - child_1_y)/2)+child_1_y - 2);
+                    
+                    g2.setComposite(composite);
+                    
+                } else {
+                    
+                    if (exptTreeSupportVector != null && !exptTreeSupportVector.isEmpty())
+                        supportPercentage = (Float) exptTreeSupportVector.get(index);
+                                                            
+                    g.drawLine(child_1_x1, child_1_y + horizontalOffset, child_1_x2, child_1_y + horizontalOffset);
+                    g.drawLine(child_2_x1, child_2_y + horizontalOffset, child_2_x2, child_2_y + horizontalOffset);
+                    g.drawLine(child_1_x1, child_1_y + horizontalOffset, child_2_x1, child_2_y + horizontalOffset);
+                    
+                    
+                    if(i == this.treeData.node_order.length-2 || exptTreeSupportVector.isEmpty())
+                        continue;
+                    
+                    supportString = format.format(Math.round(supportPercentage.floatValue()));
+                    supportValueWidth = fm.stringWidth(supportString);
+                    
+                    supportString = format.format(Math.round(supportPercentage.floatValue()));
+                    supportValueWidth = fm.stringWidth(supportString);
+                    
+                    if(supportString.equals("0"))
+                        continue;
+                    
+                    if(node % 50 == 0)
+                        System.out.println("support string width ="+supportValueWidth);
+                    //   g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f));
+                    
+                    g.setColor(new Color(192, 200, 228));
+                    g2.setComposite(composite);
+                    // g.setColor(Color.blue);
+                    //      g.fillRect(10,110,100,100);
+                    
+                    
+                    // g.setColor(new Color(192, 200, 228));
+                    //                    g.fillRect(child_1_x1-(int)(supportValueWidth/2.0)-2, ((child_2_y - child_1_y)/2)+child_1_y - fm.getAscent()/2 + 2, supportValueWidth+4, fm.getAscent()+4);
+                    //  g.fillRect(child_1_x1-(int)(supportValueWidth)-4, ((int)(child_2_y - child_1_y)/2.0)+child_1_y + fm.getAscent()/2 + 2, supportValueWidth+4, fm.getAscent()+4);
+                    // g.fillRect(child_1_x1-(int)(supportValueWidth)-4 + xOrigin, ((child_2_y - child_1_y)/2)+child_1_y + 2, supportValueWidth+4, fm.getAscent()+4);
+                    g.fillRect(child_1_x1, ((child_2_y - child_1_y)/2)+child_1_y - fm.getAscent() - 2 + horizontalOffset, supportValueWidth+4, fm.getAscent()+2);
+                    
+                    //  g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f));
+                    
+                    g.setColor(Color.black);
+                    g.drawRect(child_1_x1, ((child_2_y - child_1_y)/2)+child_1_y - fm.getAscent() - 2 +horizontalOffset, supportValueWidth+4, fm.getAscent()+2);
+                    
+                    //    g.drawRect(child_1_x1-(int)(supportValueWidth/2.0)-2, ((child_2_y - child_1_y)/2)+child_1_y - fm.getAscent()/2 + 2, supportValueWidth+4, fm.getAscent()+4);
+                    //g.setColor(Color.black);
+                    //   g.drawString(supportString, child_1_x1-(supportValueWidth/2), ((child_2_y - child_1_y)/2)+child_1_y + fm.getAscent()/2);
+                    g.drawString(supportString, child_1_x1+2, ((child_2_y - child_1_y)/2)+child_1_y - 2 + horizontalOffset);
+                    
+                    g2.setComposite(composite);
+                }
             }
-            else{
-                g.drawLine(child_1_x1, child_1_y + horizontalOffset, child_1_x2, child_1_y + horizontalOffset);
-                g.drawLine(child_2_x1, child_2_y + horizontalOffset, child_2_x2, child_2_y + horizontalOffset);
-                g.drawLine(child_1_x1, child_1_y + horizontalOffset, child_2_x1, child_2_y + horizontalOffset);
+        }
+    }
+    
+    public void toggleShowSupportValues(boolean showValues) {
+        showSupportValues = showValues;
+        adjustPixelHeightsForValueDisplay();
+    }
+    
+    public void adjustPixelHeightsForValueDisplay() {
+        
+        if(showSupportValues) {
+            Graphics g = getGraphics();
+            
+            if(g == null)
+                return;
+            
+            g.setFont(new Font("mono-spaced", Font.PLAIN, this.stepSize <= 15 ? this.stepSize : 15));
+            fm = g.getFontMetrics();
+            int stringWidth = fm.stringWidth("000");
+            
+            if(this.orientation == VERTICAL) {
+                if(this.min_pixels < stringWidth + MIN_VALUE_TIC_HEIGHT) {
+                    this.setPixelHeightLimits(stringWidth+MIN_VALUE_TIC_HEIGHT+4, this.max_pixels >= stringWidth+MIN_VALUE_TIC_HEIGHT+4 ? this.max_pixels : stringWidth+MIN_VALUE_TIC_HEIGHT+4);
+                }
+            } else {
+                if(this.min_pixels < stringWidth + MIN_VALUE_TIC_HEIGHT) {
+                    this.setPixelHeightLimits(stringWidth+MIN_VALUE_TIC_HEIGHT+4, this.max_pixels >= stringWidth+MIN_VALUE_TIC_HEIGHT+4 ? this.max_pixels : stringWidth+MIN_VALUE_TIC_HEIGHT+4);
+                }
             }
         }
     }

@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: MultipleArrayHeader.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:44 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -40,6 +40,8 @@ public class MultipleArrayHeader extends JPanel {
     BufferedImage posColorImage;
     private float maxValue;
     private float minValue;
+    private boolean useDoubleGradient = true;
+    
     /**
      * Constructs a <code>MultipleArrayHeader</code> with specified
      * insets and trace space.
@@ -84,6 +86,10 @@ public class MultipleArrayHeader extends JPanel {
     void setContentWidth(int width) {
         this.contentWidth = width;
         this.repaint();
+    }
+    
+    public void setUseDoubleGradient(boolean useDouble) {
+    	this.useDoubleGradient = useDouble;    
     }
     
     /**
@@ -175,8 +181,12 @@ public class MultipleArrayHeader extends JPanel {
             width = this.data.getFeaturesCount() * this.elementWidth;
         else
             width = (this.data.getFeaturesCount() - 1) * (this.elementWidth + getSpacing()) + this.elementWidth ;    
-        g.drawImage(this.negColorImage, insets.left, 0, (int)(width/2f), RECT_HEIGHT, null);
-        g.drawImage(this.posColorImage, (int)(width/2f)+insets.left, 0, (int)(width/2.0), RECT_HEIGHT, null);
+        if(useDoubleGradient) {
+        	g.drawImage(this.negColorImage, insets.left, 0, (int)(width/2f), RECT_HEIGHT, null);
+        	g.drawImage(this.posColorImage, (int)(width/2f)+insets.left, 0, (int)(width/2.0), RECT_HEIGHT, null);
+        } else {        	
+	        g.drawImage(this.posColorImage, insets.left, 0, width, RECT_HEIGHT, null);
+        }
         
         FontMetrics hfm = g.getFontMetrics();
         int descent = hfm.getDescent();
@@ -189,8 +199,9 @@ public class MultipleArrayHeader extends JPanel {
         }
         int textWidth;
         g.drawString(String.valueOf(this.minValue), insets.left, RECT_HEIGHT+fHeight);
-        textWidth = hfm.stringWidth("1:1");
-        g.drawString("1:1", (int)(width/2f)-textWidth/2 + insets.left, RECT_HEIGHT+fHeight);
+        textWidth = hfm.stringWidth("0.0");
+        if(useDoubleGradient)
+        	g.drawString("0.0", (int)(width/2f)-textWidth/2 + insets.left, RECT_HEIGHT+fHeight);
         textWidth = hfm.stringWidth(String.valueOf(this.maxValue));
         g.drawString(String.valueOf(this.maxValue), (width-textWidth)+insets.left, RECT_HEIGHT+fHeight);
                 

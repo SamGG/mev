@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: Progress.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:51 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.dialogs;
@@ -29,7 +29,6 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JScrollPane;
 import javax.swing.JProgressBar;
 import javax.swing.border.BevelBorder;
 

@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: GatewayServlet.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:23 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:12 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.remote.gateway;
@@ -44,24 +44,20 @@ package org.tigr.remote.gateway;
  Note: Gateway was developed and tested under Apache Tomcat 3.2 in Standalone mode
  Requirements: Java Servlet API 2.2 or higher.
  */
-import java.util.Properties;
 
 import java.io.IOException;
-import java.io.PrintStream;
-import java.io.BufferedOutputStream;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-
-import org.tigr.util.ConfMap;
 
 import org.tigr.remote.gateway.util.ServletUtil;
+import org.tigr.util.ConfMap;
 
 public class GatewayServlet extends HttpServlet {
     

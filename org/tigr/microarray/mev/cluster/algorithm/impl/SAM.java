@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SAM.java,v $
- * $Revision: 1.7 $
- * $Date: 2004-05-20 21:22:43 $
- * $Author: braisted $
+ * $Revision: 1.8 $
+ * $Date: 2005-02-24 20:23:48 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
@@ -19,41 +19,31 @@ All rights reserved.
 package org.tigr.microarray.mev.cluster.algorithm.impl;
 
 import java.io.File;
-import java.io.PrintWriter;
 import java.io.FileOutputStream;
-
-import java.awt.BorderLayout;
-import java.awt.event.*;
-import java.util.Random;
-import java.util.ArrayList;
+import java.io.PrintWriter;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Vector;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 
-import org.tigr.util.ConfMap;
-import org.tigr.util.FloatMatrix;
-import org.tigr.util.QSort;
-import org.tigr.util.*;
-
-//import TDistribution;
-
-import org.tigr.microarray.mev.cluster.Node;
 import org.tigr.microarray.mev.cluster.Cluster;
+import org.tigr.microarray.mev.cluster.Node;
 import org.tigr.microarray.mev.cluster.NodeList;
 import org.tigr.microarray.mev.cluster.NodeValue;
 import org.tigr.microarray.mev.cluster.NodeValueList;
-
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-import org.tigr.microarray.mev.cluster.gui.impl.sam.*;
-
-import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
+import org.tigr.microarray.mev.cluster.algorithm.AbortException;
 import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
-import org.tigr.microarray.mev.cluster.algorithm.AbortException;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
+import org.tigr.microarray.mev.cluster.gui.impl.sam.SAMGUI;
+import org.tigr.microarray.mev.cluster.gui.impl.sam.SAMGraph;
+import org.tigr.microarray.mev.cluster.gui.impl.sam.SAMInitDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.sam.SAMState;
+import org.tigr.util.Combinations;
+import org.tigr.util.FloatMatrix;
+import org.tigr.util.Permutations;
+import org.tigr.util.QSort;
 
 /**
  *
@@ -82,7 +72,7 @@ public class SAM extends AbstractAlgorithm {
     private int numMultiClassGroups = 0;
     private int numCombs, numUniquePerms;
     //private boolean useAllCombs;
-    private boolean useKNearest;
+    private boolean useKNearest, drawSigTreesOnly ;
     private int numNeighbors;
     //private boolean useAllUniquePerms;
     private double sNought = 0.0f;
@@ -93,6 +83,9 @@ public class SAM extends AbstractAlgorithm {
     private int[][] rkArray;
     private long[] randomSeeds;
 
+    private int hcl_function;
+    private boolean hcl_absolute;
+    
     //private boolean passedThisPoint = false; // just for debugging purposes, delete this variable later
     
     /** Creates new SAM */
@@ -118,8 +111,14 @@ public class SAM extends AbstractAlgorithm {
 	function = map.getInt("distance-function", EUCLIDEAN);
 	factor   = map.getFloat("distance-factor", 1.0f);
 	absolute = map.getBoolean("distance-absolute", false);
-	
+
+        hcl_function = map.getInt("hcl-distance-function", EUCLIDEAN);
+        hcl_absolute = map.getBoolean("hcl-distance-absolute", false);
+        
 	boolean hierarchical_tree = map.getBoolean("hierarchical-tree", false);
+        if (hierarchical_tree) {
+            drawSigTreesOnly = map.getBoolean("draw-sig-trees-only");
+        }        
 	int method_linkage = map.getInt("method-linkage", 0);
 	boolean calculate_genes = map.getBoolean("calculate-genes", false);
 	boolean calculate_experiments = map.getBoolean("calculate-experiments", false);
@@ -1247,9 +1246,26 @@ public class SAM extends AbstractAlgorithm {
 	    Node node = new Node(features);
 	    nodeList.addNode(node);
 	    if (hierarchical_tree) {
+               if (drawSigTreesOnly) {
+                   if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) || (studyDesign == SAMInitDialog.ONE_CLASS)) {
+                       if ((i == 0) || (i == 1) || (i == 2)) {
+                           node.setValues(calculateHierarchicalTree(features, method_linkage, calculate_genes, calculate_experiments));
+                           event.setIntValue(i+1);
+                           fireValueChanged(event);
+                       }                
+                   } else {
+                       if (i == 0) {
+                           node.setValues(calculateHierarchicalTree(features, method_linkage, calculate_genes, calculate_experiments));
+                           event.setIntValue(i+1);
+                           fireValueChanged(event);
+                       }                       
+                   }
+                   
+               } else {
 		node.setValues(calculateHierarchicalTree(features, method_linkage, calculate_genes, calculate_experiments));
 		event.setIntValue(i+1);
 		fireValueChanged(event);
+               }
 	    }
 	}  
         
@@ -1318,9 +1334,9 @@ public class SAM extends AbstractAlgorithm {
 	AlgorithmData data = new AlgorithmData();
 	FloatMatrix experiment = getSubExperiment(this.expMatrix, features);
 	data.addMatrix("experiment", experiment);
-	data.addParam("distance-function", String.valueOf(this.function));
-	data.addParam("distance-absolute", String.valueOf(this.absolute));
-	data.addParam("method-linkage", String.valueOf(method));
+        data.addParam("hcl-distance-function", String.valueOf(this.hcl_function));
+        data.addParam("hcl-distance-absolute", String.valueOf(this.hcl_absolute));
+        data.addParam("method-linkage", String.valueOf(method));
 	HCL hcl = new HCL();
 	AlgorithmData result;
 	if (genes) {
@@ -3050,11 +3066,24 @@ public class SAM extends AbstractAlgorithm {
         out.close();
     }
     
-    private FloatMatrix imputeRowAverageMatrix(FloatMatrix inputMatrix) {
+    private FloatMatrix imputeRowAverageMatrix(FloatMatrix inputMatrix) throws AlgorithmException {
         int numRows = inputMatrix.getRowDimension();
         int numCols = inputMatrix.getColumnDimension();
         FloatMatrix resultMatrix = new FloatMatrix(numRows, numCols);
+        
+        AlgorithmEvent event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, numGenes);
+        fireValueChanged(event);
+        event.setId(AlgorithmEvent.PROGRESS_VALUE);        
+        
         for (int i = 0; i < numRows; i++) {
+            
+            if (stop) {
+                throw new AbortException();
+            }          
+            event.setIntValue(i);
+            event.setDescription("Imputing missing values: Current gene = " + (i+ 1));
+            fireValueChanged(event);            
+            
             float[] currentRow = new float[numCols];
             float[] currentOrigRow = new float[numCols];
             for (int j = 0; j < numCols; j++) {
@@ -3116,12 +3145,23 @@ public class SAM extends AbstractAlgorithm {
     }    
     
 
-    private FloatMatrix imputeKNearestMatrix(FloatMatrix inputMatrix, int k) { 
+    private FloatMatrix imputeKNearestMatrix(FloatMatrix inputMatrix, int k) throws AlgorithmException { 
         int numRows = inputMatrix.getRowDimension();
         int numCols = inputMatrix.getColumnDimension();
         FloatMatrix resultMatrix = new FloatMatrix(numRows, numCols);
         
+        AlgorithmEvent event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, numGenes);
+        fireValueChanged(event);
+        event.setId(AlgorithmEvent.PROGRESS_VALUE);      
+        
         for (int i = 0; i < numRows; i++) {
+            if (stop) {
+                throw new AbortException();
+            }          
+            event.setIntValue(i);
+            event.setDescription("Imputing missing values: Current gene = " + (i+ 1));
+            fireValueChanged(event);           
+            
             if (isMissingValues(inputMatrix, i)) {
                 //System.out.println("gene " + i + " is missing values");
                 Vector nonMissingExpts = new Vector();
@@ -3139,7 +3179,7 @@ public class SAM extends AbstractAlgorithm {
                     System.out.println(((Integer)geneSubset.get(j)).intValue());
                 }
                  */
-                
+                //System.out.println("imputing KNN: current gene = " + i);
                 Vector kNearestGenes = getKNearestGenes(i, k, inputMatrix, geneSubset, nonMissingExpts);
                 
                 /*
@@ -3302,7 +3342,7 @@ public class SAM extends AbstractAlgorithm {
         Vector validGenes = new Vector();
         
         for (int i = 0; i < mat.getRowDimension(); i++) {
-            if (hasAllExpts(i, mat, validExpts)) {//returns true if gene i in "mat" has valid values for all the validExpts
+            if ((hasAllExpts(i, mat, validExpts)) && (gene != i)){//returns true if gene i in "mat" has valid values for all the validExpts
                 validGenes.add(new Integer(i));
             }
         }

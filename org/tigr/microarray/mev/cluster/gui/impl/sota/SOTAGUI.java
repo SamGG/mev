@@ -4,58 +4,50 @@ All rights reserved.
  */
 /*
  * $RCSfile: SOTAGUI.java,v $
- * $Revision: 1.7 $
- * $Date: 2004-06-24 17:31:14 $
- * $Author: braisted $
+ * $Revision: 1.8 $
+ * $Date: 2005-02-24 20:23:50 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.sota;
 
-import java.util.Arrays;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
+import java.util.Arrays;
 
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.tigr.util.FloatMatrix;
+import org.tigr.microarray.mev.cluster.Cluster;
+import org.tigr.microarray.mev.cluster.Node;
+import org.tigr.microarray.mev.cluster.NodeList;
+import org.tigr.microarray.mev.cluster.NodeValueList;
+import org.tigr.microarray.mev.cluster.algorithm.AbortException;
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
-
-import org.tigr.microarray.mev.cluster.Node;
-import org.tigr.microarray.mev.cluster.Cluster;
-import org.tigr.microarray.mev.cluster.NodeList;
-import org.tigr.microarray.mev.cluster.NodeValueList;
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
-import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
-import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Monitor;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLInitDialog;
-import org.tigr.microarray.mev.cluster.gui.impl.kmc.KMCCentroidViewer;
-import org.tigr.microarray.mev.cluster.gui.impl.kmc.KMCInfoViewer;
-import org.tigr.microarray.mev.cluster.gui.impl.kmc.KMCCentroidsViewer;
-import org.tigr.microarray.mev.cluster.gui.impl.kmc.KMCExperimentViewer;
-
+import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
+import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
 import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
+import org.tigr.util.FloatMatrix;
 
 
 public class SOTAGUI implements IClusterGUI, IScriptGUI {
@@ -114,12 +106,16 @@ public class SOTAGUI implements IClusterGUI, IScriptGUI {
         boolean calcFullTreeSampleHCL;
         
         frameData = framework.getData();
-        
         menu = framework.getDistanceMenu();
         int function = menu.getDistanceFunction();
+        
+        if (function == Algorithm.DEFAULT) {        
+            function = Algorithm.EUCLIDEAN;            
+        }
+        
         int distFactor = 1;
         
-        if ((function==Algorithm.PEARSON)           ||
+            if ((function==Algorithm.PEARSON)           ||
         (function==Algorithm.PEARSONUNCENTERED) ||
         (function==Algorithm.PEARSONSQARED)     ||
         (function==Algorithm.COSINE)            ||
@@ -131,7 +127,8 @@ public class SOTAGUI implements IClusterGUI, IScriptGUI {
         } else {
             distFactor = 1;
         }
-        SOTAInitDialog sota_dialog = new SOTAInitDialog(framework.getFrame(), distFactor);
+        
+        SOTAInitDialog sota_dialog = new SOTAInitDialog(framework.getFrame(), distFactor, menu.getFunctionName(function), menu.isAbsoluteDistance());
         
         //   maxCycles, maxEpochsPerCycle, maxTreeDiv, epochDivFluxLimit, migFactor_w, migFactor_p, migFactor_s);
         
@@ -190,15 +187,19 @@ public class SOTAGUI implements IClusterGUI, IScriptGUI {
         int hcl_method = 0;
         boolean hcl_samples = false;
         boolean hcl_genes = false;
+        int hcl_function = sota_dialog.getDistanceMetric();
+        boolean hcl_absolute = sota_dialog.isAbsoluteDistance();
         
         if (calcClusterHCL || calcFullTreeSampleHCL) {
-            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame());
+            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(sota_dialog.getDistanceMetric()), sota_dialog.isAbsoluteDistance(), true);
             if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
                 return null;
             }
             hcl_method = hcl_dialog.getMethod();
-            hcl_samples = hcl_dialog.isClusterExperience();
+            hcl_samples = hcl_dialog.isClusterExperiments();
             hcl_genes = hcl_dialog.isClusterGenes();
+            hcl_function = hcl_dialog.getDistanceMetric();
+            hcl_absolute = hcl_dialog.getAbsoluteSelection();
         }
         
         this.experiment = framework.getData().getExperiment();
@@ -222,11 +223,14 @@ public class SOTAGUI implements IClusterGUI, IScriptGUI {
             if(!clusterGenes)
                 matrix = matrix.transpose();
             data.addMatrix("experiment", matrix);
-            data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
-            if (function == Algorithm.DEFAULT) {
-                function = Algorithm.EUCLIDEAN;
-            }
+            
+            //from dialog
+            data.addParam("distance-absolute", String.valueOf(sota_dialog.isAbsoluteDistance()));
+
+            //get distance from dialog
+            function = sota_dialog.getDistanceMetric();
             data.addParam("distance-function", String.valueOf(function));
+        
             data.addParam("sota-cluster-genes", String.valueOf(clusterGenes));
             data.addParam("max-number-of-cycles", String.valueOf(maxCycles));
             data.addParam("max-epochs-per-cycle", String.valueOf(maxEpochsPerCycle));
@@ -251,6 +255,8 @@ public class SOTAGUI implements IClusterGUI, IScriptGUI {
                 data.addParam("method-linkage", String.valueOf(hcl_method));
                 data.addParam("calculate-genes", String.valueOf(hcl_genes));
                 data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+                data.addParam("hcl-distance-function", String.valueOf(hcl_function));
+                data.addParam("hcl-distance-absolute", String.valueOf(hcl_absolute));
             }
             
             long start = System.currentTimeMillis();
@@ -359,6 +365,11 @@ public class SOTAGUI implements IClusterGUI, IScriptGUI {
         
         menu = framework.getDistanceMenu();
         int function = menu.getDistanceFunction();
+        
+        if (function == Algorithm.DEFAULT) {        
+            function = Algorithm.EUCLIDEAN;            
+        }
+        
         int distFactor = 1;
         
         if ((function==Algorithm.PEARSON)           ||
@@ -373,7 +384,8 @@ public class SOTAGUI implements IClusterGUI, IScriptGUI {
         } else {
             distFactor = 1;
         }
-        SOTAInitDialog sota_dialog = new SOTAInitDialog(framework.getFrame(), distFactor);
+ 
+        SOTAInitDialog sota_dialog = new SOTAInitDialog(framework.getFrame(), distFactor, menu.getFunctionName(function), menu.isAbsoluteDistance());
         
         if (sota_dialog.showModal() != JOptionPane.OK_OPTION) {
             return null;
@@ -431,14 +443,19 @@ public class SOTAGUI implements IClusterGUI, IScriptGUI {
         boolean hcl_samples = false;
         boolean hcl_genes = false;
         
+        int hcl_function = sota_dialog.getDistanceMetric();
+        boolean hcl_absolute = sota_dialog.isAbsoluteDistance();
+        
         if (calcClusterHCL || calcFullTreeSampleHCL) {
-            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame());
+            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(sota_dialog.getDistanceMetric()), sota_dialog.isAbsoluteDistance(), true);
             if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
                 return null;
             }
             hcl_method = hcl_dialog.getMethod();
-            hcl_samples = hcl_dialog.isClusterExperience();
+            hcl_samples = hcl_dialog.isClusterExperiments();
             hcl_genes = hcl_dialog.isClusterGenes();
+            hcl_function = hcl_dialog.getDistanceMetric();
+            hcl_absolute = hcl_dialog.getAbsoluteSelection();
         }
         
         this.experiment = framework.getData().getExperiment();
@@ -450,12 +467,10 @@ public class SOTAGUI implements IClusterGUI, IScriptGUI {
             
             data = new AlgorithmData();
             
-            data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
+            data.addParam("distance-absolute", String.valueOf(sota_dialog.isAbsoluteDistance()));
             
-            if (function == Algorithm.DEFAULT) {
-                function = Algorithm.EUCLIDEAN;
-            }
-            
+            //from dialog
+            function = sota_dialog.getDistanceMetric();
             data.addParam("distance-function", String.valueOf(function));
             data.addParam("sota-cluster-genes", String.valueOf(clusterGenes));
             data.addParam("max-number-of-cycles", String.valueOf(maxCycles));
@@ -481,6 +496,8 @@ public class SOTAGUI implements IClusterGUI, IScriptGUI {
                 data.addParam("method-linkage", String.valueOf(hcl_method));
                 data.addParam("calculate-genes", String.valueOf(hcl_genes));
                 data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+                data.addParam("hcl-distance-function", String.valueOf(hcl_function));
+                data.addParam("hcl-distance-absolute", String.valueOf(hcl_absolute));
             }
             
             // alg name
@@ -584,7 +601,7 @@ public class SOTAGUI implements IClusterGUI, IScriptGUI {
             //HCL Options
             info.hcl_on_clusters = params.getBoolean("calc-cluster-hcl");
             info.hcl_on_samples_on_all_genes = params.getBoolean("calc-full-tree-hcl");
-            info.hcl_genes_in_clusters = params.getBoolean("calculate_genes");
+            info.hcl_genes_in_clusters = params.getBoolean("calculate-genes");
             info.hcl_samples_in_clusters = params.getBoolean("calculate-experiments");
             info.hcl = (info.hcl_on_clusters || info.hcl_on_samples_on_all_genes);
             if(info.hcl)
@@ -636,7 +653,7 @@ public class SOTAGUI implements IClusterGUI, IScriptGUI {
         if(this.clusterGenes)
             root = new DefaultMutableTreeNode("SOTA - genes");
         else
-            root = new DefaultMutableTreeNode("SOTA - experiments");
+            root = new DefaultMutableTreeNode("SOTA - samples");
         addResultNodes(root, hcl_clusters, hcl_sample_tree, info);
         return root;
     }
@@ -734,7 +751,7 @@ public class SOTAGUI implements IClusterGUI, IScriptGUI {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Hierarchical Trees");
         NodeList nodeList = result_cluster.getNodeList();
         int [][] clusters = null;
-        
+       
         if(!this.clusterGenes){
             clusters = new int[k][];
             for (int i=0; i<k; i++) {
@@ -755,7 +772,7 @@ public class SOTAGUI implements IClusterGUI, IScriptGUI {
     /**
      * Creates an <code>HCLViewer</code>.
      */
-    private IViewer createHCLViewer(Node clusterNode, GeneralInfo info, int [][] sampleClusters) {
+    private IViewer createHCLViewer(Node clusterNode, GeneralInfo info, int [][] sampleClusters) {  
         HCLTreeData genes_result = info.hcl_genes_in_clusters ? getResult(clusterNode, 0) : null;
         HCLTreeData samples_result = info.hcl_samples_in_clusters ? getResult(clusterNode, info.hcl_genes_in_clusters ? 4 : 0) : null;
         if(this.clusterGenes)
@@ -786,7 +803,7 @@ public class SOTAGUI implements IClusterGUI, IScriptGUI {
         if(this.clusterGenes)
             node.add(new DefaultMutableTreeNode(new LeafInfo("Genes in Clusters (#,%)", new SOTAInfoViewer(this.clusters, this.experiment.getNumberOfGenes()))));
         else
-            node.add(new DefaultMutableTreeNode(new LeafInfo("Experiments in Clusters (#,%)", new SOTAInfoViewer(this.clusters, this.experiment.getNumberOfSamples(), false))));
+            node.add(new DefaultMutableTreeNode(new LeafInfo("Samples in Clusters (#,%)", new SOTAInfoViewer(this.clusters, this.experiment.getNumberOfSamples(), false))));
         root.add(node);
     }
     

@@ -4,30 +4,35 @@ All rights reserved.
 */
 /*
 * $RCSfile: GDMResultSelectionDialog.java,v $
-* $Revision: 1.1 $
-* $Date: 2004-03-01 16:33:17 $
-* $Author: braisted $
+* $Revision: 1.2 $
+* $Date: 2005-02-24 20:23:46 $
+* $Author: braistedj $
 * $State: Exp $
 */
 package org.tigr.microarray.mev.cluster.gui.impl.gdm;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
-
 import java.util.Enumeration;
 import java.util.Vector;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 
-import org.tigr.util.QSort;
-
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
+import org.tigr.util.QSort;
 
 public class GDMResultSelectionDialog extends AlgorithmDialog {
 
@@ -39,8 +44,8 @@ public class GDMResultSelectionDialog extends AlgorithmDialog {
      * Constructs a <code>GDMInitDialog</code> with default
      * initial parameters.
      */
-    public GDMResultSelectionDialog(Enumeration nameEnum) {
-        super(new JFrame(), "GDM Result Selection Dialog", true);
+    public GDMResultSelectionDialog(JFrame frame, Enumeration nameEnum) {
+        super(frame, "GDM Result Selection Dialog", true);
       
         Listener listener = new Listener();
         addWindowListener(listener);
@@ -100,7 +105,7 @@ public class GDMResultSelectionDialog extends AlgorithmDialog {
         nameVector.add("SOTA - genes (1)");
         nameVector.add("QTC - genes (2)");
         
-        GDMResultSelectionDialog dialog = new GDMResultSelectionDialog(nameVector.elements());
+        GDMResultSelectionDialog dialog = new GDMResultSelectionDialog(new JFrame(), nameVector.elements());
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         dialog.showModal();
         System.out.println("Selected result: "+ dialog.getSelectedResult());

@@ -4,33 +4,30 @@ All rights reserved.
 */
 /*
  * $RCSfile: GDMColorSelectionDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2004-02-06 22:53:42 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:46 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.gui.impl.gdm;
 
-import javax.swing.JPanel;
+import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.event.*;
+import java.awt.Dimension;
+import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GradientPaint;
-import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeListener;
-import java.awt.BorderLayout;
-import java.awt.Insets;
-import java.awt.GridBagConstraints;
-import javax.swing.BorderFactory;
-import java.awt.Toolkit;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JOptionPane;
 
 
 /** Supplies option dialog for selection of

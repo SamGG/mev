@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: GraphViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-06 22:46:02 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2005-02-24 20:24:07 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.graph;
@@ -16,7 +16,6 @@ import java.awt.event.*;
 import java.awt.image.*;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.event.*;
 import org.tigr.util.awt.Drawable;
 import org.tigr.util.awt.Viewer;
 import org.tigr.util.awt.GBA;
@@ -29,6 +28,8 @@ import javax.swing.JMenuItem;
 import java.text.DecimalFormat;
 
 public class GraphViewer extends Viewer {
+   public static final long serialVersionUID = 1000101030001L;    
+    
     public final static int SYSTEM_QUADRANT1_ONLY = 1000;
     public final static int SYSTEM_QUADRANT12_ONLY = 1001;
     public final static int SYSTEM_ALL_QUADRANTS = 1002;
@@ -604,7 +605,7 @@ public class GraphViewer extends Viewer {
         public void keyReleased(KeyEvent event) {;}
         public void keyTyped(KeyEvent event) {;}
         public void mouseClicked(MouseEvent event) {
-            if(event.getModifiers() == event.BUTTON3_MASK){
+            if(event.getModifiers() == MouseEvent.BUTTON3_MASK){
             popup.show(event.getComponent(), event.getX(), event.getY());   
             }
         }

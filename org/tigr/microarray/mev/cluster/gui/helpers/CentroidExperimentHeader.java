@@ -1,12 +1,12 @@
 /*
-Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: CentroidExperimentHeader.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-07-27 19:59:15 $
- * $Author: braisted $
+ * $Revision: 1.4 $
+ * $Date: 2005-02-24 20:24:07 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
@@ -22,7 +22,6 @@ import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
-import java.awt.BorderLayout;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
@@ -51,6 +50,7 @@ public class CentroidExperimentHeader extends JPanel implements java.io.Serializ
     private ExperimentHeader expHeader;
     private BufferedImage posColorImage;
     private BufferedImage negColorImage;
+    private boolean useDoubleGradient = true;
     
     private FloatMatrix mainCentroidData;
     /**
@@ -87,6 +87,7 @@ public class CentroidExperimentHeader extends JPanel implements java.io.Serializ
         oos.writeInt(currWidth);
         oos.writeInt(currHeight);
         oos.writeObject(centroidVectorPanel);
+        oos.writeBoolean(useDoubleGradient);
     }
     
     
@@ -101,6 +102,7 @@ public class CentroidExperimentHeader extends JPanel implements java.io.Serializ
         this.currWidth = ois.readInt();
         this.currHeight = ois.readInt();
         this.centroidVectorPanel = (CentroidExperimentHeader.CentroidVectorPanel)ois.readObject();
+        this.useDoubleGradient = ois.readBoolean();
     }
     
     
@@ -134,16 +136,21 @@ public class CentroidExperimentHeader extends JPanel implements java.io.Serializ
     }
     
     /**
+     * Sets the flag to use a double gradient
+     * @return
+     */
+    public void setUseDoubleGradient(boolean useDouble){
+    	useDoubleGradient = useDouble;
+    }
+    
+
+    /**
      * Returns current cluster
      */
     public int [] getCluster(){
         return clusters[clusterIndex];
     }
     
-    //  public void paint(Graphics g){
-    //      this.expHeader.paint(g);
-    //      this.centroidVectorPanel.paint(g);
-    //  }
     
     /**
      * The component to display som vector.
@@ -330,16 +337,33 @@ public class CentroidExperimentHeader extends JPanel implements java.io.Serializ
         }
         
         /**
-         * Calculates a color for the specified value.
+         * Calculates color for passed value.
          */
         private Color getColor(float value) {
-            if (Float.isNaN(value) || posColorImage == null || negColorImage == null) {
+            if (Float.isNaN(value)) {
                 return missingColor;
             }
-            float maximum = value < 0 ? this.minValue : this.maxValue;
-            int colorIndex = (int)(255*value/maximum);
-            colorIndex = colorIndex > 255 ? 255 : colorIndex;
-            int rgb = value < 0 ? negColorImage.getRGB(255-colorIndex, 0) : posColorImage.getRGB(colorIndex, 0);
+            
+            float maximum;
+            int colorIndex, rgb;
+            
+            if(useDoubleGradient) {
+            	maximum = value < 0 ? this.minValue : this.maxValue;
+    			colorIndex = (int) (255 * value / maximum);
+    			colorIndex = colorIndex > 255 ? 255 : colorIndex;
+    			rgb = value < 0 ? negColorImage.getRGB(255 - colorIndex, 0)
+    					: posColorImage.getRGB(colorIndex, 0);
+            } else {
+            	float span = this.maxValue - this.minValue;
+            	if(value <= minValue)
+            		colorIndex = 0;
+            	else if(value >= maxValue)
+            		colorIndex = 255;
+            	else
+            		colorIndex = (int)(((value - this.minValue)/span) * 255);
+             	
+            	rgb = posColorImage.getRGB(colorIndex,0);
+            }
             return new Color(rgb);
         }
         

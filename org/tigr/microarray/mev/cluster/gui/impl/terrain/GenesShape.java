@@ -4,20 +4,33 @@ All rights reserved.
 */
 /*
  * $RCSfile: GenesShape.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:10 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.terrain;
 
 import java.awt.Color;
-import javax.vecmath.*;
-import javax.media.j3d.*;
-import com.sun.j3d.utils.geometry.*;
 
-import org.tigr.microarray.mev.cluster.gui.*;
+import javax.media.j3d.Appearance;
+import javax.media.j3d.Geometry;
+import javax.media.j3d.GeometryArray;
+import javax.media.j3d.GeometryUpdater;
+import javax.media.j3d.LineArray;
+import javax.media.j3d.Material;
+import javax.media.j3d.PointArray;
+import javax.media.j3d.PointAttributes;
+import javax.media.j3d.QuadArray;
+import javax.media.j3d.Shape3D;
+import javax.media.j3d.TriangleStripArray;
+import javax.vecmath.Color3f;
+import javax.vecmath.Point2f;
+
 import org.tigr.microarray.mev.cluster.gui.impl.util.IntArray;
+
+import com.sun.j3d.utils.geometry.Primitive;
+import com.sun.j3d.utils.geometry.Sphere;
 
 public class GenesShape extends Shape3D implements GeometryUpdater {
 

@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: PaperReferencesDialog.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-05-06 15:39:31 $
- * $Author: braisted $
+ * $Revision: 1.4 $
+ * $Date: 2005-02-24 20:23:45 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -28,7 +28,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JEditorPane;
@@ -161,13 +160,23 @@ public class PaperReferencesDialog extends JDialog implements java.awt.print.Pri
         html += "Validating clustering for gene expression data. ";
         html += "<i>Bioinformatics</i> 17:309-318.";
         
-        html += "<br><p><font size = +1><b>PCAE and PCAG</b></font> - ";
+        html += "<br><p><font size = +1><b>PCA</b></font> - ";
         html += "<b>Principal Components Analysis</b>";
         html += "<br>Raychaudhuri, S.,  J. M. Stuart, & R. B. Altman (2000) ";
         html += "Principal components analysis to summarize microarray experiments: ";
         html += "application to sporulation time series. ";
         html += "<i>Pacific Symposium on Biocomputing 2000, Honolulu, Hawaii,</i> 452-463. ";
         html += "Available at http://smi-web.stanford.edu/pubs/SMI_Abstracts/SMI-1999-0804.html";
+        
+        html += "<br><p><font size = +1><b>COA</b></font> - ";
+        html += "<b>Correspondence Analysis</b>";
+        html += "<br>Fellenberg K. et al. (2001) ";
+        html += "Correspondence analysis applied to microarray data. ";
+        html += "<i>Proceedings of the National Academy of Sciences USA</i> 98: 10781-10786";
+        
+        html += "<br><p>Culhane A.C. et al. (2002) ";
+        html += "Between-group analysis of microarray data. ";
+        html += "<i>Bioinformatics</i> 18:1600-1608.";
         
         html += "<br><p><font size = +1><b>RN</b></font> - ";
         html += "<b>Relevance networks</b>";
@@ -207,14 +216,22 @@ public class PaperReferencesDialog extends JDialog implements java.awt.print.Pri
         html += "in replicated cDNA microarray experiments. <i>Technical report 2000</i> ";
         html += "Statistics Department, University of California, Berkeley.";
 
-        html += "<br><p>Welch B.L. (1947).";
+        html += "<br><p>Welch, B.L. (1947).";
         html += "The generalization of ‘students’ problem when several different population variances are involved. ";
         html += "<i>Biometrika</i> 34: 28-35.";
+        
+        html += "<br><p>Korn, E.L., J.F. Troendle, L.M. McShane, R. Simon (2001).";
+        html += "Controlling the number of false discoveries: application to high-dimensional genomic data ";
+        html += "<i> Technical report 003</i>, Biometric Research Branch, National Cancer Institute. http://linus.nci.nih.gov/~brb/TechReport.htm";           
+        
+        html += "<br><p>Korn, E.L., J.F. Troendle, L.M. McShane, R. Simon (2004).";
+        html += "Controlling the number of false discoveries: application to high-dimensional genomic data ";
+        html += "<i>Journal of Statistical Planning and Inference</i> 124: 379-398.";      
 
         html += "<br><p><font size = +1><b>TFA</b></font> - ";
         html += "<b>Two Factor ANOVA</b>";
-        html += "<br>Keppel, G., and S. Zedeck. (1989). Randomization, Bootstrap and Monte Carlo Methods in Biology. 2nd ed. Chapman and Hall / CRC , FL.";               
-        html += "<br><p>Manly, B.F.J. (1997). Data Analysis for Research Designs. W. H. Freeman and Co., NY.";       
+        html += "<br>Keppel, G., and S. Zedeck. (1989). Data Analysis for Research Designs. W. H. Freeman and Co., NY.";               
+        html += "<br><p>Manly, B.F.J. (1997). Randomization, Bootstrap and Monte Carlo Methods in Biology. 2nd ed. Chapman and Hall / CRC , FL.";       
         html += "<br><p>Zar, J.H. 1999. Biostatistical Analysis. 4th ed. Prentice Hall, NJ.";  
                 
         html += "<br><p><font size = +1><b>SVM</b></font> - ";

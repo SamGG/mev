@@ -1,5 +1,5 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
@@ -13,7 +13,6 @@ package org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil;
 import java.io.*;
 
 import java.awt.Toolkit;
-import java.awt.Font;
 import java.awt.Color;
 import javax.swing.JDialog;
 import java.awt.Graphics;
@@ -27,7 +26,6 @@ import java.net.URL;
 import java.awt.Insets;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
-import java.awt.BorderLayout;
 
 import java.awt.GradientPaint;
 
@@ -69,8 +67,7 @@ public class HelpWindow extends JDialog {
         FillPanel fill = new FillPanel();
         iconPanel.add(iconLabel, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
         iconPanel.add(fill, new GridBagConstraints(1,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
-        
-        
+                
         pane = new JEditorPane();
         pane.setEditable(false);
         pane.setForeground(Color.black);
@@ -80,8 +77,7 @@ public class HelpWindow extends JDialog {
         scroll.getViewport().setView(pane);
         scroll.setPreferredSize(new Dimension(200,200));
         scroll.setBorder(BorderFactory.createLineBorder(Color.blue, 1));
-        
-        
+                
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new GridBagLayout());
         
@@ -301,6 +297,22 @@ public class HelpWindow extends JDialog {
             return "diversity_ranking_cluster_sel_dialog.html";
         if(key.equals("Centroid Variance/Entropy Ranking Cluster Selection"))
             return "centroid_entropy_variance_sel_dialog.html";
+        if(key.equals("Search Dialog"))
+            return "search_init_parameters.html";
+        if(key.equals("Search Result Dialog"))
+            return "search_result_dialog.html";
+        if(key.equals("Import Result Dialog"))
+            return "import_result_dialog.html";
+        if(key.equals("EASE Threshold Dialog"))
+            return "ease_threshold_parameters.html";
+        if(key.equals("Newick File Output Dialog"))
+            return "hcl_newick_output_parameters.html";
+        if(key.equals("EASE File Update Dialog"))
+            return "ease_file_update_parameters.html";
+        if(key.equals("Variance Filter Dialog"))
+            return "variance_filter_parameters.html";            
+        if(key.equals("Gene Annotation Import"))
+            return "gene_annotation_import_parameters.html";
         else
             return null;
     }

@@ -4,23 +4,21 @@ All rights reserved.
 */
 /*
  * $RCSfile: MAGESerializer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:23 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:08 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.remote.protocol.serializer;
 
-import java.io.OutputStream;
 import java.io.PrintStream;
-import java.io.IOException;
-
 import java.util.Iterator;
 import java.util.Map;
 
-import org.tigr.util.FloatMatrix;
 import org.tigr.microarray.mev.cluster.Cluster;
-import org.tigr.microarray.mev.cluster.algorithm.*;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
+import org.tigr.util.FloatMatrix;
 
 class MAGESerializer {
 

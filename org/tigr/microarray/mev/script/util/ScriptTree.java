@@ -11,42 +11,28 @@ All rights reserved.
 package org.tigr.microarray.mev.script.util;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JTree;
-
-import javax.swing.tree.TreeCellRenderer;
-import javax.swing.tree.TreeNode;
+import javax.swing.plaf.basic.BasicTreeUI;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-import javax.swing.plaf.basic.BasicTreeUI;
-import org.tigr.util.FloatMatrix;
 
-import org.tigr.microarray.mev.script.ScriptDocument;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
-
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Comment;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
-
-import org.w3c.dom.traversal.DocumentTraversal;
-import org.w3c.dom.traversal.NodeFilter;
-import org.w3c.dom.traversal.NodeIterator;
-
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.script.ScriptDocument;
 import org.tigr.microarray.mev.script.ScriptManager;
 import org.tigr.microarray.mev.script.scriptGUI.ScriptTreeRenderer;
+import org.tigr.util.FloatMatrix;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
-import org.tigr.microarray.mev.cluster.gui.Experiment;
 /** The script tree is a data structure for script parameter organization.
  * It extends JTree and is used as a graphical aid to view xml scripts.
  * The main function is to encapsulate nodes with parameters to help in

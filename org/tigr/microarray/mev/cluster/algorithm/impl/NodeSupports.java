@@ -4,31 +4,31 @@ All rights reserved.
 */
 /*
  * $RCSfile: NodeSupports.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:48 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.algorithm.impl;
-import java.util.*;
 
-import org.tigr.util.ConfMap;
-import org.tigr.util.FloatMatrix;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.Vector;
+
+import org.tigr.microarray.mev.cluster.algorithm.AbortException;
+import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
+import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 import org.tigr.microarray.util.BootstrappedMatrixByExps;
 import org.tigr.microarray.util.BootstrappedMatrixByGenes;
 import org.tigr.microarray.util.JacknifedMatrixByExps;
 import org.tigr.microarray.util.JacknifedMatrixByGenes;
-
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-import org.tigr.microarray.mev.cluster.algorithm.AbortException;
-import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
-import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
-import org.tigr.microarray.mev.cluster.Cluster;
-import org.tigr.microarray.mev.cluster.NodeList;
-
+import org.tigr.util.FloatMatrix;
 
 
 public class NodeSupports extends AbstractAlgorithm {
@@ -187,7 +187,7 @@ public class NodeSupports extends AbstractAlgorithm {
 		    throw new AbortException();
 		}
 		event.setIntValue(i);
-		event.setDescription("Experiment Tree Resampling: iteration "+String.valueOf(i+1));
+		event.setDescription("Sample Tree Resampling: iteration "+String.valueOf(i+1));
 		fireValueChanged(event);
 		
 		FloatMatrix resampExpMatrix = null;

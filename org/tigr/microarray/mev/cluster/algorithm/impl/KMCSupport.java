@@ -4,33 +4,30 @@ All rights reserved.
 */
 /*
  * $RCSfile: KMCSupport.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-05-19 21:11:35 $
- * $Author: braisted $
+ * $Revision: 1.5 $
+ * $Date: 2005-02-24 20:23:48 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.algorithm.impl;
 
-import java.util.Vector;
 import java.util.HashSet;
+import java.util.Vector;
 
-import org.tigr.util.FloatMatrix;
-import org.tigr.util.ConfMap;
-
-import org.tigr.microarray.mev.cluster.Node;
 import org.tigr.microarray.mev.cluster.Cluster;
+import org.tigr.microarray.mev.cluster.Node;
 import org.tigr.microarray.mev.cluster.NodeList;
 import org.tigr.microarray.mev.cluster.NodeValue;
 import org.tigr.microarray.mev.cluster.NodeValueList;
-
-import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
 import org.tigr.microarray.mev.cluster.algorithm.AbortException;
+import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
+import org.tigr.util.FloatMatrix;
    
 /**
  *
@@ -61,7 +58,9 @@ public class KMCSupport extends AbstractAlgorithm {
     private boolean unassignedExists;
     private boolean calculateMeans;
     HashSet unassignedGeneSet = new HashSet();
-    
+
+    private int hcl_function;
+    private boolean hcl_absolute;    
     
     public AlgorithmData execute(AlgorithmData data) throws AlgorithmException {
         
@@ -70,6 +69,9 @@ public class KMCSupport extends AbstractAlgorithm {
         function = map.getInt("distance-function", EUCLIDEAN);
         factor   = map.getFloat("distance-factor", 1.0f);
         absolute = map.getBoolean("distance-absolute", false);
+
+        hcl_function = map.getInt("hcl-distance-function", EUCLIDEAN);
+        hcl_absolute = map.getBoolean("hcl-distance-absolute", false);        
         
         iterations = map.getInt("number-of-iterations", 50);
         kmcGenes = map.getBoolean("kmc-cluster-genes", true);
@@ -164,8 +166,8 @@ public class KMCSupport extends AbstractAlgorithm {
             experiment = getSubExperimentReducedCols(this.expMatrix, features);
         
 	data.addMatrix("experiment", experiment);
-	data.addParam("distance-function", String.valueOf(this.function));
-	data.addParam("distance-absolute", String.valueOf(this.absolute));
+        data.addParam("hcl-distance-function", String.valueOf(this.hcl_function));
+        data.addParam("hcl-distance-absolute", String.valueOf(this.hcl_absolute));
 	data.addParam("method-linkage", String.valueOf(method));
 	HCL hcl = new HCL();
 	AlgorithmData result;

@@ -4,14 +4,12 @@ All rights reserved.
 */
 /*
  * $RCSfile: SuccessfulJob.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:23 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:10 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.remote.protocol;
-
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 
 public class SuccessfulJob extends FinishedJob {
     

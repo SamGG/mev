@@ -4,36 +4,34 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMExperimentCentroidViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-05 22:10:56 $
- * $Author: braisted $
+ * $Revision: 1.4 $
+ * $Date: 2005-02-24 20:24:05 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.ptm;
 
 import java.awt.Color;
+import java.awt.FontMetrics;
 import java.awt.Frame;
-import java.awt.Rectangle;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.FontMetrics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Vector;
 
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JOptionPane;
 import javax.swing.JColorChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 
 
 public class PTMExperimentCentroidViewer extends ExperimentClusterCentroidViewer {
@@ -166,9 +164,9 @@ public class PTMExperimentCentroidViewer extends ExperimentClusterCentroidViewer
         final int numberOfSamples  = this.getCluster().length;
         
         //do this outside paint once menu is set up
-        if(this.yRangeOption == this.USE_EXPERIMENT_MAX)
+        if(this.yRangeOption == PTMExperimentCentroidViewer.USE_EXPERIMENT_MAX)
             maxYValue = this.maxExperimentValue;
-        else if(this.yRangeOption == this.USE_CLUSTER_MAX)
+        else if(this.yRangeOption == PTMExperimentCentroidViewer.USE_CLUSTER_MAX)
             maxYValue = this.maxClusterValue;
         
         if (maxYValue == 0.0f) {

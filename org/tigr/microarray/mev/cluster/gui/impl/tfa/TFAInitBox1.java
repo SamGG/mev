@@ -1,4 +1,8 @@
 /*
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
+All rights reserved.
+*/
+/*
  * TFAInitBox1.java
  *
  * Created on February 11, 2004, 12:20 PM
@@ -6,19 +10,23 @@
 
 package org.tigr.microarray.mev.cluster.gui.impl.tfa;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import org.tigr.graph.*;
-import org.tigr.util.*;
-import org.tigr.util.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
 
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EtchedBorder;
+
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 
 /**
  *

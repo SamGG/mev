@@ -4,33 +4,44 @@ All rights reserved.
  */
 /*
  * $RCSfile: GDMColorScaleDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2004-02-06 22:53:43 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:46 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.gdm;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.BevelBorder;
-import javax.swing.text.*;
-import javax.swing.event.*;
-
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Frame;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.Toolkit;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
 
-import java.lang.Float;
-
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
-import org.tigr.util.FloatMatrix;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
 
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
+import org.tigr.util.FloatMatrix;
 
 public class GDMColorScaleDialog extends AlgorithmDialog {
     
@@ -70,7 +81,7 @@ public class GDMColorScaleDialog extends AlgorithmDialog {
     
     public GDMColorScaleDialog(Frame parent, float lower, float upper, FloatMatrix matrix, int genes, Color lowerColor, Color upperColor) {
         
-        super(new JFrame(), "Set Color Scale", true);
+        super(parent, "Set Color Scale", true);
         this.geneMatrix = matrix;
         this.num_genes = genes;
         origLower = lower;

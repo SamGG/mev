@@ -10,37 +10,30 @@ All rights reserved.
 
 package org.tigr.microarray.mev.script.util;
 
-import java.io.File;
 import java.awt.Frame;
-
+import java.io.File;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
 
 import javax.swing.Action;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
-import org.tigr.util.FloatMatrix;
 import org.tigr.microarray.mev.ResultTree;
 import org.tigr.microarray.mev.TMEV;
-
 import org.tigr.microarray.mev.action.ActionManager;
 import org.tigr.microarray.mev.action.AnalysisAction;
-
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
-
 import org.tigr.microarray.mev.script.Script;
+import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
 import org.tigr.microarray.mev.script.scriptGUI.ScriptCentroidViewer;
 import org.tigr.microarray.mev.script.scriptGUI.ScriptCentroidsViewer;
 import org.tigr.microarray.mev.script.scriptGUI.ScriptClusterSelectionInfoViewer;
@@ -49,8 +42,7 @@ import org.tigr.microarray.mev.script.scriptGUI.ScriptExperimentCentroidsViewer;
 import org.tigr.microarray.mev.script.scriptGUI.ScriptExperimentClusterViewer;
 import org.tigr.microarray.mev.script.scriptGUI.ScriptExperimentViewer;
 import org.tigr.microarray.mev.script.scriptGUI.ScriptTreeViewer;
-
-import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
+import org.tigr.util.FloatMatrix;
 
 
 /** ScriptRunner supports script execution activities as directed by the

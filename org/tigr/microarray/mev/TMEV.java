@@ -1,37 +1,43 @@
 /*
-Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
- */
+*/
 /*
  * $RCSfile: TMEV.java,v $
- * $Revision: 1.8 $
- * $Date: 2004-07-27 19:56:10 $
- * $Author: braisted $
+ * $Revision: 1.9 $
+ * $Date: 2005-02-24 20:23:44 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-import javax.swing.*;
+import javax.swing.UIManager;
 
-import org.tigr.util.StringSplitter;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
+import org.tigr.microarray.mev.cluster.gui.IGUIFactory;
 import org.tigr.util.ConfMap;
 import org.tigr.util.awt.ImageScreen;
 
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
-import org.tigr.microarray.mev.cluster.gui.IGUIFactory;
-
 public class TMEV {
-    public final static String VERSION = "Mev_2.3";
+    public final static String VERSION = "3.1";
     
     public final static int SYSTEM = 1000;
     public final static int DB_AVAILABLE = 1001;
@@ -42,7 +48,6 @@ public class TMEV {
     public final static int DATA_TYPE_AFFY = 2;
     
     public final static int ANALYSIS_LOADED = 101;
-    
     
     private static Connection connection;
     private static Hashtable properties;
@@ -71,9 +76,12 @@ public class TMEV {
     //OS string
     private static String os = "";
     
+    //signals active save in progress
+    public static boolean activeSave = false;
+    
     public static void main(String[] args) {
         try {
-            System.out.println("TIGR MultiExperimentViewer (1090854423507) - version 3.0 - " + System.getProperty("os.name"));                                                            
+            System.out.println("TIGR MultiExperimentViewer (1090854423507) - version "+TMEV.VERSION+" - " + System.getProperty("os.name"));
             String Java3DTitle, Java3DVendor, Java3DVersion;
             try {
                 InformationPanel info = new InformationPanel();
@@ -87,7 +95,8 @@ public class TMEV {
             }
             
             os = System.getProperty("os.name");
-            // System.out.println(System.currentTimeMillis());
+            
+            System.out.println(System.currentTimeMillis());
             System.out.println("Java Runtime Environment version: "+System.getProperty("java.version"));
             System.out.println("Java Runtime Environment vendor: "+System.getProperty("java.vendor"));
             System.out.println("Java Virtual Machine name: "+System.getProperty("java.vm.name"));
@@ -108,8 +117,11 @@ public class TMEV {
             
             //default Mac Aqua L+F is not serializable, therefore use Java Metal L+F for Mac OS
             if (os.indexOf("Apple") != -1 || os.indexOf("Mac") != -1 ) {
-                 manager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());    
+                manager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
             }
+            
+            Manager.createNewMultipleArrayViewer();
+                    
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -375,7 +387,7 @@ public class TMEV {
                 InputStream is = TMEV.class.getClassLoader().getResourceAsStream(filename);
                 
                 URL url = TMEV.class.getClassLoader().getResource(filename);
-
+                
                 if (is != null) {
                     cfg.load(is);
                 }
@@ -426,6 +438,51 @@ public class TMEV {
         return dataPath;
     }
     
+    
+    /** Updates the data path in config given a formatted data path string
+     */
+    public static void updateDataPath(String  dataPath){
+        if(dataPath == null)
+            return;
+        
+        String lineSep = System.getProperty("line.separator");
+        
+        //Read tmev.cfg
+        try{
+            BufferedReader br = new BufferedReader(new FileReader(TMEV.getFile("config/tmev.cfg")));
+            
+            String content = new String();
+            String line;
+            while( (line = br.readLine()) != null && !((line).equals("#DATA PATH"))){
+                content += line+lineSep;
+            }
+            
+            if(line == null) {   //if at end of file
+                content += lineSep;
+                content += "#DATA PATH"+lineSep;
+                content += "current-data-path "+dataPath+lineSep;
+            } else {
+                br.readLine(); //pass old path
+                content += "#DATA PATH"+lineSep;
+                content += "current-data-path "+dataPath+lineSep;
+                while( (line = br.readLine()) != null ){
+                    content += line+lineSep;
+                }
+            }
+            
+            
+            BufferedWriter bfr = new BufferedWriter(new FileWriter(TMEV.getFile("config/tmev.cfg")));
+            bfr.write(content);
+            bfr.flush();
+            bfr.close();
+            br.close();
+            
+        } catch (IOException e){
+            System.out.println("Error updating data path in tmev.cfg file.");
+        }
+    }
+    
+    
     public static void setDataPath(String newPath) {
         dataPath = newPath;
     }
@@ -448,7 +505,7 @@ public class TMEV {
         System.exit(0);
     }
     
-
+    
     /** Returns the configuration file indicated by the fileName argument
      */
     public static File getConfigurationFile(String fileName) {
@@ -465,5 +522,5 @@ public class TMEV {
      */
     public static String getOSName() {
         return os;
-    }   
+    }
 }

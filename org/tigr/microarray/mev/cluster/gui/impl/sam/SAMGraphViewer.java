@@ -10,24 +10,21 @@ All rights reserved.
 
 package org.tigr.microarray.mev.cluster.gui.impl.sam;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.awt.event.*;
-import java.io.*;
 import java.text.DecimalFormat;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import org.tigr.graph.*;
-import org.tigr.util.*;
-import org.tigr.util.awt.*;
+
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
 
 /**
  *
@@ -628,6 +625,13 @@ public class SAMGraphViewer extends JPanel implements IViewer, java.io.Serializa
     
     public Experiment getExperiment() {
         return null;
+    }
+    
+    /** Returns int value indicating viewer type
+     * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
+     */
+    public int getViewerType() {
+        return -1;
     }
     
 }

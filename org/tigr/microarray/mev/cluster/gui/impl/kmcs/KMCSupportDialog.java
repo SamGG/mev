@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: KMCSupportDialog.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:50 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
@@ -14,14 +14,9 @@ package org.tigr.microarray.mev.cluster.gui.impl.kmcs;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
-import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
-import javax.swing.event.*;
-import org.tigr.graph.*;
-import org.tigr.util.*;
-import org.tigr.util.awt.*;
+
 
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
@@ -39,13 +34,14 @@ public class KMCSupportDialog extends AlgorithmDialog {
     TopPanel tPanel;
     KMCParameterPanel kPanel;
     HCLSelectionPanel hclOpsPanel;
+    DistanceMetricPanel metricPanel;
     
     boolean okPressed = false;
     
     /** Creates new KMCSupportDialog */
-    public KMCSupportDialog(JFrame parentFrame, boolean modality) {
+    public KMCSupportDialog(JFrame parentFrame, boolean modality, String globalMetricName, boolean globalAbsoluteSetting) {
         super(parentFrame, "KMS: K-Means/K-Medians Support", modality);
-        setBounds(0, 0, 500, 500);
+        setBounds(0, 0, 500, 550);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints constraints = new GridBagConstraints();
@@ -58,23 +54,28 @@ public class KMCSupportDialog extends AlgorithmDialog {
         gridbag.setConstraints(sPanel, constraints);
         pane.add(sPanel);
         
-        mPanel = new MeansOrMediansPanel();
+        metricPanel = new DistanceMetricPanel(globalMetricName, globalAbsoluteSetting, "Euclidean Distance", "KMCS", true, true);
         buildConstraints(constraints, 0, 1, 1, 1, 100, 10);
+        gridbag.setConstraints(metricPanel, constraints);
+        pane.add(metricPanel);
+        
+        mPanel = new MeansOrMediansPanel();
+        buildConstraints(constraints, 0, 2, 1, 1, 100, 10);
         gridbag.setConstraints(mPanel, constraints);
         pane.add(mPanel);
         
         tPanel = new TopPanel();
-        buildConstraints(constraints, 0, 2, 1, 1, 100, 30);
+        buildConstraints(constraints, 0, 3, 1, 1, 100, 30);
         gridbag.setConstraints(tPanel, constraints);
         pane.add(tPanel);
         
         kPanel = new KMCParameterPanel();
-        buildConstraints(constraints, 0, 3, 1, 1, 0, 30);
+        buildConstraints(constraints, 0, 4, 1, 1, 0, 30);
         gridbag.setConstraints(kPanel, constraints);
         pane.add(kPanel);
         
         hclOpsPanel = new HCLSelectionPanel();
-        buildConstraints(constraints, 0, 4, 1, 1, 0, 10);
+        buildConstraints(constraints, 0, 5, 1, 1, 0, 10);
         gridbag.setConstraints(hclOpsPanel, constraints);
         pane.add(hclOpsPanel);
         
@@ -261,6 +262,20 @@ public class KMCSupportDialog extends AlgorithmDialog {
     public boolean isClusterGenes(){
         return sPanel.isClusterGenesSelected();
     }
+
+    /**
+     * Returns the currently selected metric
+     */
+    public int getDistanceMetric() {
+        return metricPanel.getMetricIndex();
+    }
+    
+    /**
+     *  Returns true if the absolute checkbox is selected, else false
+     */
+    public boolean getAbsoluteSelection() {
+        return metricPanel.getAbsoluteSelection();
+    }
     
     /**
      * Resets to initial values
@@ -273,6 +288,7 @@ public class KMCSupportDialog extends AlgorithmDialog {
         this.kPanel.numClustersInputField.setText("10");
         this.kPanel.numIterationsInputField.setText("50");
         this.hclOpsPanel.setHCLSelected(false);
+        this.metricPanel.reset();
     }
     
     /**
@@ -389,7 +405,7 @@ public class KMCSupportDialog extends AlgorithmDialog {
     
     public static void main(String[] args) {
         JFrame dummyFrame = new JFrame();
-        KMCSupportDialog kSuppDialog = new KMCSupportDialog(dummyFrame, true);
+        KMCSupportDialog kSuppDialog = new KMCSupportDialog(dummyFrame, true, "Euclidean Distance", false);
         kSuppDialog.setVisible(true);
         System.exit(0);
     }

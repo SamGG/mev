@@ -11,12 +11,9 @@ All rights reserved.
 package org.tigr.microarray.mev.script.scriptGUI;
 
 import java.awt.Color;
-
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import java.util.Vector;
 
 import javax.swing.JComponent;
@@ -24,12 +21,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
 
+import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 import org.tigr.microarray.mev.script.Script;
 import org.tigr.microarray.mev.script.ScriptDocument;
 import org.tigr.microarray.mev.script.ScriptManager;
-import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
 /**
  *

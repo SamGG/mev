@@ -4,19 +4,23 @@ All rights reserved.
 */
 /*
  * $RCSfile: MessageDisplay.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:23 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:02 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.util.awt;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.lang.Math;
-import java.util.Vector;
-import javax.swing.*;
-import org.tigr.util.awt.GBA;
+import java.awt.Font;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 public class MessageDisplay extends ActionInfoDialog {
     final static int MESSAGE_TEXT = 0;

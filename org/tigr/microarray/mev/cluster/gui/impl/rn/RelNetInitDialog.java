@@ -4,23 +4,36 @@ All rights reserved.
 */
 /*
  * $RCSfile: RelNetInitDialog.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:44 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.rn;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
+import javax.swing.AbstractButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
 
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.SampleSelectionPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 
 public class RelNetInitDialog extends AlgorithmDialog {
     private int result;
@@ -37,7 +50,7 @@ public class RelNetInitDialog extends AlgorithmDialog {
      * initial parameters.
      */
     public RelNetInitDialog(Frame parent) {
-        super(new JFrame(), "RN: Relevance Networks", true);
+        super(parent, "RN: Relevance Networks", true);
         
         Listener listener = new Listener();
         addWindowListener(listener);

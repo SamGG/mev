@@ -7,6 +7,16 @@
 The sample selection option indicates whether to cluster genes or experiments.
 <br>
 
+<h2> Distance Metric Selection </h2>
+This area allows the selection of the metric to be used to assess gene-to-gene
+or sample-to-sample distances.  The initial metric displayed (choosen) corresponds to the global
+setting in the Multiple Array Viewer's 'Metrics' menu.  Alterations to the
+chosen metric in this dialog will only alter the metric used for the current
+algorithm run.  The global setting in the main 'Metrics' menu will remain unchanged.
+<br><br>
+An appendix in the MeV manual describes the distance metrics offered in MeV. 
+<br>
+
 <h2>Maximum Cluster Diameter</h2>
 Cluster Diameter is related to the overall variability between the member elements
 within a cluster.  Maximum Cluster Diameter is a constraint on that variance such that all
@@ -19,11 +29,6 @@ decreasing the maximum diameter tends to produce smaller less variable clusters.
 The minimum number of elements required to be present in order to 
 form a cluster.  For instance a Minimum Cluster Population of 10
 insures that all formed clusters will have at least 10 members.
-<br>
-
-<h2>Use Absolute R</h2>
-Using this option will group expression patterns that are positively and
-negatively correlated.
 <br>
 
 <h2> Hierarchical Clustering </h2>

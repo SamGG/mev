@@ -1,61 +1,52 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: OWAGUI.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-06-25 19:45:54 $
- * $Author: nbhagaba $
+ * $Revision: 1.7 $
+ * $Date: 2005-02-24 20:24:04 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.owa;
 
-import java.util.Vector;
-
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
+import java.util.Vector;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.tigr.util.FloatMatrix;
-import org.tigr.util.ConfMap;
-
-import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.IViewer;
-import org.tigr.microarray.mev.cluster.gui.LeafInfo;
-import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
-import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
-import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
-import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
-
+import org.tigr.microarray.mev.cluster.Cluster;
+import org.tigr.microarray.mev.cluster.Node;
+import org.tigr.microarray.mev.cluster.NodeList;
+import org.tigr.microarray.mev.cluster.NodeValueList;
+import org.tigr.microarray.mev.cluster.algorithm.AbortException;
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
-
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Monitor;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
+import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
+import org.tigr.microarray.mev.cluster.gui.LeafInfo;
+import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLInitDialog;
-import org.tigr.microarray.mev.cluster.Cluster;
-import org.tigr.microarray.mev.cluster.NodeList;
-import org.tigr.microarray.mev.cluster.Node;
-import org.tigr.microarray.mev.cluster.NodeValueList;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
-
+import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLInitDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
+import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
 import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
+import org.tigr.util.FloatMatrix;
 
 /**
  *
@@ -76,11 +67,14 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
     
     private Vector fValues, rawPValues, adjPValues, dfNumValues, dfDenomValues, ssGroups, ssError;
     private float[][] geneGroupMeans, geneGroupSDs;
+    private boolean drawSigTreesOnly;
     
     //private boolean usePerms;
     
     Vector exptNamesVector;
     int[] groupAssignments;
+    private int falseNum, correctionMethod;
+    private double falseProp;
     private IData data;
     private int numGroups, numPerms;
     /** Creates new OWAGUI */
@@ -98,14 +92,16 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
      * @see IFramework
      */
     public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
-        this.experiment = framework.getData().getExperiment();
+        this.experiment = framework.getData().getExperiment();        
         this.data = framework.getData();
         exptNamesVector = new Vector();
         int number_of_samples = experiment.getNumberOfSamples();
         int number_of_genes = experiment.getNumberOfGenes();
         
+        int [] columnIndices = experiment.getColumnIndicesCopy(); 
+        
         for (int i = 0; i < number_of_samples; i++) {
-            exptNamesVector.add(framework.getData().getFullSampleName(i));
+            exptNamesVector.add(framework.getData().getFullSampleName(columnIndices[i]));
         }
         
         OneWayANOVAInitBox owaDialog = new OneWayANOVAInitBox((JFrame)framework.getFrame(), true, exptNamesVector);
@@ -121,22 +117,43 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
         if (usePerms) {
             numPerms = owaDialog.getNumPerms();
         }
-        int correctionMethod = owaDialog.getCorrectionMethod();
+        correctionMethod = owaDialog.getCorrectionMethod();
+        if (correctionMethod == OneWayANOVAInitBox.FALSE_NUM) {
+            falseNum = owaDialog.getFalseNum();
+        }
+        if (correctionMethod == OneWayANOVAInitBox.FALSE_PROP) {
+            falseProp = owaDialog.getFalseProp();
+        }
         boolean isHierarchicalTree = owaDialog.drawTrees();
+        drawSigTreesOnly = true;
+        if (isHierarchicalTree) {
+            drawSigTreesOnly = owaDialog.drawSigTreesOnly();
+        }      
+        
+        IDistanceMenu menu = framework.getDistanceMenu();
+        int function = menu.getDistanceFunction();
+        if (function == Algorithm.DEFAULT) {
+            function = Algorithm.EUCLIDEAN;
+        }
         
         // hcl init
         int hcl_method = 0;
         boolean hcl_samples = false;
         boolean hcl_genes = false;
+        int hcl_function = 4;
+        boolean hcl_absolute = false;
         if (isHierarchicalTree) {
-            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame());
+            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(function), menu.isAbsoluteDistance(), true);
             if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
                 return null;
             }
             hcl_method = hcl_dialog.getMethod();
-            hcl_samples = hcl_dialog.isClusterExperience();
+            hcl_samples = hcl_dialog.isClusterExperiments();
             hcl_genes = hcl_dialog.isClusterGenes();
+            hcl_function = hcl_dialog.getDistanceMetric();
+            hcl_absolute = hcl_dialog.getAbsoluteSelection();
         }
+        
         Listener listener = new Listener();
         
         try {
@@ -150,13 +167,7 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
             
             data.addMatrix("experiment", experiment.getMatrix());
             data.addParam("distance-factor", String.valueOf(1.0f));
-            IDistanceMenu menu = framework.getDistanceMenu();
             data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
-            
-            int function = menu.getDistanceFunction();
-            if (function == Algorithm.DEFAULT) {
-                function = Algorithm.EUCLIDEAN;
-            }
             
             data.addParam("distance-function", String.valueOf(function));
             data.addIntArray("group-assignments", groupAssignments);
@@ -165,12 +176,21 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
             data.addParam("alpha", String.valueOf(alpha));
             data.addParam("correction-method", String.valueOf(correctionMethod));
             data.addParam("numGroups", String.valueOf(numGroups));
+            if (correctionMethod == OneWayANOVAInitBox.FALSE_NUM) {
+                data.addParam("falseNum", String.valueOf(falseNum));
+            }
+            if (correctionMethod == OneWayANOVAInitBox.FALSE_PROP) {
+                data.addParam("falseProp", String.valueOf((float)falseProp));
+            }
             // hcl parameters
             if (isHierarchicalTree) {
                 data.addParam("hierarchical-tree", String.valueOf(true));
+                data.addParam("draw-sig-trees-only", String.valueOf(drawSigTreesOnly));                
                 data.addParam("method-linkage", String.valueOf(hcl_method));
                 data.addParam("calculate-genes", String.valueOf(hcl_genes));
                 data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+                data.addParam("hcl-distance-function", String.valueOf(hcl_function));
+                data.addParam("hcl-distance-absolute", String.valueOf(hcl_absolute));
             }
             
             long start = System.currentTimeMillis();
@@ -267,7 +287,9 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
             titlesVector.add("df (Groups)");
             titlesVector.add("df (Error)");
             titlesVector.add("Raw p value");
-            titlesVector.add("Adj. p value");
+            if (!((correctionMethod == OneWayANOVAInitBox.FALSE_NUM)||(correctionMethod == OneWayANOVAInitBox.FALSE_PROP))) {            
+                titlesVector.add("Adj. p value");
+            }
             
             auxTitles = new String[titlesVector.size()];
             for (int i = 0; i < auxTitles.length; i++) {
@@ -288,7 +310,9 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
                 auxData[i][counter++] = dfNumValues.get(i);
                 auxData[i][counter++] = dfDenomValues.get(i);
                 auxData[i][counter++] = rawPValues.get(i);
-                auxData[i][counter++] = adjPValues.get(i);
+                if (!((correctionMethod == OneWayANOVAInitBox.FALSE_NUM)||(correctionMethod == OneWayANOVAInitBox.FALSE_PROP))) {
+                    auxData[i][counter++] = adjPValues.get(i);
+                }
             }
             
             
@@ -313,7 +337,7 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
         int number_of_genes = experiment.getNumberOfGenes();
         
         for (int i = 0; i < number_of_samples; i++) {
-            exptNamesVector.add(framework.getData().getFullSampleName(i));
+            exptNamesVector.add(framework.getData().getFullSampleName(experiment.getSampleIndex(i)));
         }
         
         OneWayANOVAInitBox owaDialog = new OneWayANOVAInitBox((JFrame)framework.getFrame(), true, exptNamesVector);
@@ -329,33 +353,46 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
         if (usePerms) {
             numPerms = owaDialog.getNumPerms();           
         }
-        int correctionMethod = owaDialog.getCorrectionMethod();
+        correctionMethod = owaDialog.getCorrectionMethod();
+        if (correctionMethod == OneWayANOVAInitBox.FALSE_NUM) {
+            falseNum = owaDialog.getFalseNum();
+        }
+        if (correctionMethod == OneWayANOVAInitBox.FALSE_PROP) {
+            falseProp = owaDialog.getFalseProp();
+        }        
         boolean isHierarchicalTree = owaDialog.drawTrees();
+        drawSigTreesOnly = true;
+        if (isHierarchicalTree) {
+            drawSigTreesOnly = owaDialog.drawSigTreesOnly();
+        }         
+        
+        IDistanceMenu menu = framework.getDistanceMenu();
+        int function = menu.getDistanceFunction();
+        if (function == Algorithm.DEFAULT) {
+            function = Algorithm.EUCLIDEAN;
+        }
         
         // hcl init
         int hcl_method = 0;
         boolean hcl_samples = false;
         boolean hcl_genes = false;
+        int hcl_function = 4;
+        boolean hcl_absolute = false;
         if (isHierarchicalTree) {
-            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame());
+            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(function), menu.isAbsoluteDistance(), true);
             if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
                 return null;
             }
             hcl_method = hcl_dialog.getMethod();
-            hcl_samples = hcl_dialog.isClusterExperience();
+            hcl_samples = hcl_dialog.isClusterExperiments();
             hcl_genes = hcl_dialog.isClusterGenes();
-        }
-        
+            hcl_function = hcl_dialog.getDistanceMetric();
+            hcl_absolute = hcl_dialog.getAbsoluteSelection();
+        }        
         AlgorithmData data = new AlgorithmData();
         
         data.addParam("distance-factor", String.valueOf(1.0f));
-        IDistanceMenu menu = framework.getDistanceMenu();
         data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
-        
-        int function = menu.getDistanceFunction();
-        if (function == Algorithm.DEFAULT) {
-            function = Algorithm.EUCLIDEAN;
-        }
         
         data.addParam("distance-function", String.valueOf(function));
         data.addIntArray("group-assignments", groupAssignments);
@@ -364,17 +401,26 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
         data.addParam("alpha", String.valueOf(alpha));
         data.addParam("correction-method", String.valueOf(correctionMethod));
         data.addParam("numGroups", String.valueOf(numGroups));
+        if (correctionMethod == OneWayANOVAInitBox.FALSE_NUM) {
+            data.addParam("falseNum", String.valueOf(falseNum));
+        }
+        if (correctionMethod == OneWayANOVAInitBox.FALSE_PROP) {
+            data.addParam("falseProp", String.valueOf((float)falseProp));
+        }       
         // hcl parameters
         if (isHierarchicalTree) {
             data.addParam("hierarchical-tree", String.valueOf(true));
+            data.addParam("draw-sig-trees-only", String.valueOf(drawSigTreesOnly));              
             data.addParam("method-linkage", String.valueOf(hcl_method));
             data.addParam("calculate-genes", String.valueOf(hcl_genes));
             data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+            data.addParam("hcl-distance-function", String.valueOf(hcl_function));
+            data.addParam("hcl-distance-absolute", String.valueOf(hcl_absolute));
         }
         
         
         // alg name
-        data.addParam("name", "OWA");
+        data.addParam("name", "ANOVA");
         
         // alg type
         data.addParam("alg-type", "cluster-genes");
@@ -399,6 +445,14 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
         this.experiment = experiment;
         this.data = framework.getData();
         this.groupAssignments = algData.getIntArray("group-assignments");
+        this.correctionMethod = algData.getParams().getInt("correction-method");
+        if (correctionMethod == OneWayANOVAInitBox.FALSE_NUM) {
+            falseNum = algData.getParams().getInt("falseNum");
+        }
+        if (correctionMethod == OneWayANOVAInitBox.FALSE_PROP) {
+            falseProp = algData.getParams().getFloat("falseProp");
+        }        
+        this.drawSigTreesOnly = algData.getParams().getBoolean("draw-sig-trees-only");        
         this.rawPValues = new Vector();
         this.adjPValues=  new Vector();
         
@@ -512,7 +566,9 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
             titlesVector.add("df (Groups)");
             titlesVector.add("df (Error)");
             titlesVector.add("Raw p value");
-            titlesVector.add("Adj. p value");
+            if (!((correctionMethod == OneWayANOVAInitBox.FALSE_NUM)||(correctionMethod == OneWayANOVAInitBox.FALSE_PROP))) {            
+                titlesVector.add("Adj. p value");
+            }
             
             auxTitles = new String[titlesVector.size()];
             for (int i = 0; i < auxTitles.length; i++) {
@@ -533,7 +589,9 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
                 auxData[i][counter++] = dfNumValues.get(i);
                 auxData[i][counter++] = dfDenomValues.get(i);
                 auxData[i][counter++] = rawPValues.get(i);
-                auxData[i][counter++] = adjPValues.get(i);
+                if (!((correctionMethod == OneWayANOVAInitBox.FALSE_NUM)||(correctionMethod == OneWayANOVAInitBox.FALSE_PROP))) {
+                    auxData[i][counter++] = adjPValues.get(i);
+                }
             }
             
             return createResultTree(result_cluster, info);
@@ -560,6 +618,10 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
             methodName = "Adjusted Bonferroni correction";
         } else if (sigMethod == OneWayANOVAInitBox.MAX_T) {
             methodName = "Westfall Young stepdown - MaxT";
+        } else if (sigMethod == OneWayANOVAInitBox.FALSE_NUM) {
+            methodName = "False significant number: " + falseNum + " or less";
+        } else if (sigMethod == OneWayANOVAInitBox.FALSE_PROP) {
+            methodName = "False significant proportion: " + falseProp + " or less";
         }
         
         return methodName;
@@ -627,12 +689,16 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
         }
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Hierarchical Trees");
         NodeList nodeList = result_cluster.getNodeList();
-        for (int i=0; i<nodeList.getSize(); i++) {
-            if (i < nodeList.getSize() - 1 ) {
-                node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
-            } else if (i == nodeList.getSize() - 1) {
-                node.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
+        if (!drawSigTreesOnly) {        
+            for (int i=0; i<nodeList.getSize(); i++) {
+                if (i < nodeList.getSize() - 1 ) {
+                    node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
+                } else if (i == nodeList.getSize() - 1) {
+                    node.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
+                }
             }
+        } else {
+            node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", createHCLViewer(nodeList.getNode(0), info))));            
         }
         root.add(node);
     }
@@ -719,7 +785,12 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
     private void addGeneralInfo(DefaultMutableTreeNode root, GeneralInfo info) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("General Information");
         node.add(getGroupAssignmentInfo());
-        node.add(new DefaultMutableTreeNode("Alpha (overall threshold p-value): "+info.alpha));
+        //node.add(new DefaultMutableTreeNode("Alpha (overall threshold p-value): "+info.alpha));
+        if (info.correctionMethod.startsWith("False")) {
+            node.add(new DefaultMutableTreeNode("Confidence (1 - alpha) : "+(1d - info.alpha)*100 + " %"));
+        } else {
+            node.add(new DefaultMutableTreeNode("Alpha (overall threshold p-value): "+info.alpha));
+        }        
         node.add(new DefaultMutableTreeNode("Used permutation test? " + info.usePerms));
         if (info.usePerms) {
             node.add(new DefaultMutableTreeNode("Number of permutations " + info.numPerms));
@@ -731,7 +802,12 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
             node.add(new DefaultMutableTreeNode("Number of permutations per gene: " + info.numCombs));
         }
          */
-        node.add(new DefaultMutableTreeNode("Significance determined by: "+info.correctionMethod));
+        if (info.correctionMethod.startsWith("False")) {
+           node.add(new DefaultMutableTreeNode(info.correctionMethod)); 
+        } else {
+            node.add(new DefaultMutableTreeNode("Significance determined by: "+info.correctionMethod));
+        }        
+        //node.add(new DefaultMutableTreeNode("Significance determined by: "+info.correctionMethod));
         node.add(new DefaultMutableTreeNode("HCL: "+info.getMethodName()));
         node.add(new DefaultMutableTreeNode("Time: "+String.valueOf(info.time)+" ms"));
         node.add(new DefaultMutableTreeNode(info.function));

@@ -1,4 +1,8 @@
 /*
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
+All rights reserved.
+*/
+/*
  * TFAInitBox2.java
  *
  * Created on February 12, 2004, 4:15 PM
@@ -6,18 +10,44 @@
 
 package org.tigr.microarray.mev.cluster.gui.impl.tfa;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import org.tigr.graph.*;
-import org.tigr.util.*;
-import org.tigr.util.awt.*;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.PrintWriter;
+import java.util.Vector;
+
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.UIManager;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HCLSigOnlyPanel;
+import org.tigr.util.StringSplitter;
+
 
 /**
  *
@@ -39,7 +69,8 @@ public class TFAInitBox2 extends AlgorithmDialog {
     GroupExptsPanel gPanel;
     PValuePanel pPanel;
     PValueAdjustmentPanel pAdjPanel;
-    HCLSelectionPanel hclOpsPanel;
+    HCLSigOnlyPanel hclOpsPanel;    
+    //HCLSelectionPanel hclOpsPanel;
     /** Creates a new instance of TFAInitBox2 */
     public TFAInitBox2(JFrame parentFrame, boolean modality, Vector exptNames, String[] factorNames, int[] numFactorLevels) {
         super(parentFrame, "Two-factor ANOVA Initialization", modality);
@@ -73,7 +104,7 @@ public class TFAInitBox2 extends AlgorithmDialog {
         gridbag.setConstraints(pAdjPanel, constraints);
         pane.add(pAdjPanel);
         
-        hclOpsPanel = new HCLSelectionPanel();
+        hclOpsPanel = new HCLSigOnlyPanel();
         buildConstraints(constraints, 0, 3, 1, 1, 0, 4);
         gridbag.setConstraints(hclOpsPanel, constraints);
         pane.add(hclOpsPanel);
@@ -672,15 +703,15 @@ public class TFAInitBox2 extends AlgorithmDialog {
     
     public int getAdjustmentMethod() {
         if (pAdjPanel.justAlphaButton.isSelected()) {
-            return this.JUST_ALPHA;
+            return TFAInitBox2.JUST_ALPHA;
         } else if (pAdjPanel.stdBonfButton.isSelected()) {
-            return this.STD_BONFERRONI;
+            return TFAInitBox2.STD_BONFERRONI;
         } else if (pAdjPanel.adjBonfButton.isSelected()){
-            return this.ADJ_BONFERRONI;
+            return TFAInitBox2.ADJ_BONFERRONI;
         } else if (pAdjPanel.maxTButton.isSelected()) {
-            return this.MAX_T;
+            return TFAInitBox2.MAX_T;
         } else if (pAdjPanel.minPButton.isSelected()) {
-            return this.MIN_P;
+            return TFAInitBox2.MIN_P;
         } else {
             return -1;
         }
@@ -689,6 +720,10 @@ public class TFAInitBox2 extends AlgorithmDialog {
     public boolean drawTrees() {
         return this.hclOpsPanel.isHCLSelected();
     }
+    
+    public boolean drawSigTreesOnly() {
+        return hclOpsPanel.drawSigTreesOnly();
+    }    
     
     public boolean isOkPressed() {
         return okPressed;

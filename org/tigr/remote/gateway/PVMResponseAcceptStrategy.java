@@ -4,25 +4,24 @@ All rights reserved.
 */
 /*
  * $RCSfile: PVMResponseAcceptStrategy.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:23 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:12 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.remote.gateway;
 
-import java.io.IOException;
 import java.io.BufferedInputStream;
-import java.io.InputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.tigr.util.ConfMap;
 
 import org.tigr.remote.gateway.util.IQueue;
+import org.tigr.util.ConfMap;
 
 class PVMResponseAcceptStrategy {
     private static final int MAX_PACKET_SIZE = 1024 * 100; // 100K packet

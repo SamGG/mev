@@ -4,43 +4,36 @@ All rights reserved.
 */
 /*
  * $RCSfile: SAXResponseHandler.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:23 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:08 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.remote.protocol.parser;
 
-import org.tigr.remote.protocol.Response;
-import org.tigr.remote.protocol.FinishedJob;
-import org.tigr.remote.protocol.SuccessfulJob;
-import org.tigr.remote.protocol.ExecutedJob;
-import org.tigr.remote.protocol.JobData;
-import org.tigr.remote.protocol.FailedJob;
-import org.tigr.remote.protocol.Fail;
-import org.tigr.remote.protocol.util.TempFile;
-
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
-
-import org.tigr.util.ConfMap;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-import org.xml.sax.XMLReader;
-
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.IOException;
-import java.io.Writer;
-import java.io.File;
-import java.io.BufferedWriter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.LinkedList;
+import java.io.Writer;
+
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
+import org.tigr.remote.protocol.ExecutedJob;
+import org.tigr.remote.protocol.Fail;
+import org.tigr.remote.protocol.FailedJob;
+import org.tigr.remote.protocol.FinishedJob;
+import org.tigr.remote.protocol.JobData;
+import org.tigr.remote.protocol.Response;
+import org.tigr.remote.protocol.SuccessfulJob;
+import org.tigr.remote.protocol.util.TempFile;
+import org.tigr.util.ConfMap;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
 import de.mnl.java.io.base64.Base64InputStream;
 

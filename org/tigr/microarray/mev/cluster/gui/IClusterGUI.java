@@ -4,14 +4,13 @@ All rights reserved.
 */
 /*
  * $RCSfile: IClusterGUI.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:11 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui;
 
-import javax.swing.JFrame;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;

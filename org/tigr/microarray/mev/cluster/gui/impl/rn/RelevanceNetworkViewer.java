@@ -4,32 +4,63 @@ All rights reserved.
 */
 /*
  * $RCSfile: RelevanceNetworkViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-06-01 13:23:13 $
- * $Author: braisted $
+ * $Revision: 1.7 $
+ * $Date: 2005-02-24 20:23:44 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.rn;
 
-import java.util.Arrays;
-import java.util.ArrayList;
-
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Frame;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.Rectangle2D;
-
-import java.awt.event.*;
-
 import java.awt.image.BufferedImage;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 
-import javax.swing.*;
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JColorChooser;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JToolTip;
+import javax.swing.JViewport;
+import javax.swing.JWindow;
+import javax.swing.Scrollable;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
-import org.tigr.microarray.mev.cluster.gui.*;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
-
+import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
 public class RelevanceNetworkViewer extends JPanel implements IViewer, Scrollable {
@@ -1197,7 +1228,7 @@ public class RelevanceNetworkViewer extends JPanel implements IViewer, Scrollabl
         if (this.isGenes)
             this.framework.setStatusText("Gene Id: "+data.getUniqueId(spotIndex)+" Gene Name: "+data.getGeneName(spotIndex));
         else
-            this.framework.setStatusText("Experiment: "+data.getSampleName(spotIndex));
+            this.framework.setStatusText("Sample: "+data.getSampleName(spotIndex));
         Graphics g = getContentComponent().getGraphics();
         drawSelectedSpot(g, spotIndex);
         g.dispose();
@@ -1408,6 +1439,15 @@ public class RelevanceNetworkViewer extends JPanel implements IViewer, Scrollabl
     
     public Experiment getExperiment() {
         return null;
+    }
+    
+    /** Returns int value indicating viewer type
+     * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
+     */
+    public int getViewerType() {
+        if(this.isGenes)
+            return Cluster.GENE_CLUSTER;
+        return Cluster.EXPERIMENT_CLUSTER;
     }
     
     /**

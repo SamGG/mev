@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.20 $
- * $Date: 2004-07-27 19:56:10 $
- * $Author: braisted $
+ * $Revision: 1.21 $
+ * $Date: 2005-02-24 20:23:45 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -38,7 +38,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.event.KeyEvent;
@@ -53,14 +52,20 @@ import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Properties;
 import java.util.TimeZone;
 import java.util.Vector;
 
 import java.text.DateFormat;
 
+import java.util.StringTokenizer;
+
 import javax.swing.Action;
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -76,9 +81,9 @@ import javax.swing.JTree;
 import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.ToolTipManager;
-import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import javax.swing.event.TreeSelectionEvent;
@@ -88,7 +93,7 @@ import javax.media.jai.JAI;
 import com.sun.media.jai.codec.ImageEncodeParam;
 
 import org.tigr.util.FloatMatrix;
-import org.tigr.microarray.util.SlideDataSorter;
+import org.tigr.microarray.file.AnnFileParser;
 import org.tigr.microarray.util.awt.SetElementSizeDialog;
 import org.tigr.microarray.util.awt.SetSlideFilenameDialog;
 
@@ -97,8 +102,6 @@ import org.tigr.util.swing.BMPFileFilter;
 import org.tigr.util.swing.JPGFileFilter;
 import org.tigr.util.swing.PNGFileFilter;
 import org.tigr.util.swing.TIFFFileFilter;
-import org.tigr.microarray.util.swing.ExpressionFileView;
-import org.tigr.microarray.util.swing.ExpressionFileFilter;
 import org.tigr.microarray.util.awt.ColorSchemeSelectionDialog;
 
 import org.tigr.microarray.mev.SetLowerCutoffsDialog;
@@ -115,22 +118,27 @@ import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
 
+import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
-import org.tigr.microarray.mev.cluster.gui.impl.st.HCLSupportTree; //Temporary: see onShowSupportTreeLegend()
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.TextViewer;
 
-import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AbortException;
+import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 
-import org.tigr.microarray.mev.file.ExpressionFileLoader;
+import org.tigr.microarray.mev.file.AnnFileFilter;
 
 import org.tigr.microarray.mev.cluster.clusterUtil.*;
 import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
 import org.tigr.microarray.mev.script.ScriptManager;
 
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HTMLMessageFileChooser;
+
 public class MultipleArrayViewer extends ArrayViewer implements Printable {
-   public static final long serialVersionUID = 100010201010001L;    
+    public static final long serialVersionUID = 100010201010001L;
     
     private MultipleArrayMenubar menubar;
     private MultipleArrayToolbar toolbar;
@@ -140,6 +148,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     // the tree and special nodes and scroll pane
     private JScrollPane treeScrollPane;
     private ResultTree tree;
+    private DefaultMutableTreeNode mainViewerNode;
     private DefaultMutableTreeNode clusterNode;
     private DefaultMutableTreeNode analysisNode;
     private DefaultMutableTreeNode scriptNode;
@@ -217,16 +226,15 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         // listener
         EventListener eventListener = new EventListener();
         mainframe.addWindowListener(eventListener);
-        manager = new ActionManager(eventListener, TMEV.getFieldNames(), TMEV.getGUIFactory());
+        manager = new ActionManager(eventListener, arrayData.getFieldNames(), TMEV.getGUIFactory());
         
         data = arrayData;
         
         menubar = new MultipleArrayMenubar(manager);
         
         //have new session but need to build field names into menus
-        menubar.addLabelMenuItems(TMEV.getFieldNames());
-        menubar.addSortMenuItems(TMEV.getFieldNames());
-
+        menubar.addLabelMenuItems(arrayData.getFieldNames());
+       
         //need to populate the experiment label menu items
         menubar.addExperimentLabelMenuItems(arrayData.getSlideNameKeyVectorUnion());
         mainframe.setJMenuBar(menubar);
@@ -239,6 +247,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         
         treeScrollPane = createTreeScrollPane(eventListener);
         
+        //have the main scroll pane
+        ((MultipleArrayCanvas)this.viewer).addSortMenuItems(arrayData.getFieldNames());
+         
         //Add the time stamp node
         Date date = new Date(System.currentTimeMillis());
         DateFormat format = DateFormat.getDateTimeInstance();
@@ -256,6 +267,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         mainframe.getContentPane().add(statusLabel, BorderLayout.SOUTH);
         mainframe.pack();
         splitPane.setDividerLocation(.3);
+
+        if (data.getDataType() == IData.DATA_TYPE_RATIO_ONLY || data.getDataType() == IData.DATA_TYPE_AFFY_ABS){
+            this.menubar.enableNormalizationMenu(false);
+        }        
         
         systemEnable(TMEV.DATA_AVAILABLE);
         fireDataChanged();
@@ -264,7 +279,81 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         //systemDisable(TMEV.DATA_AVAILABLE);
     }
     
-    
+    /**
+     * Construct a <code>MultipleArrayViewer</code> with default title,
+     * creates menu and tool bars from new instance of action manager,
+     * creates the navigation tree and the scroll pane to be used to display
+     * a calculation result, creates a status bar.  Uses passed MultipleArrayMenubar
+     * to dictate initial settings.
+     */
+    public MultipleArrayViewer(MultipleArrayData arrayData, MultipleArrayMenubar origMenubar) {
+        super(new JFrame("TIGR Multiple Array Viewer"));
+        
+        // listener
+        EventListener eventListener = new EventListener();
+        mainframe.addWindowListener(eventListener);
+        manager = new ActionManager(eventListener, arrayData.getFieldNames(), TMEV.getGUIFactory());
+        
+        data = arrayData;
+        
+        menubar = new MultipleArrayMenubar(origMenubar, manager);
+        
+        //have new session but need to build field names into menus
+        menubar.addLabelMenuItems(arrayData.getFieldNames());       
+        
+        menubar.synchronizeSettings(origMenubar);
+        
+        //need to populate the experiment label menu items
+        menubar.addExperimentLabelMenuItems(arrayData.getSlideNameKeyVectorUnion());
+        mainframe.setJMenuBar(menubar);
+        
+        toolbar = new MultipleArrayToolbar(manager);
+        mainframe.getContentPane().add(toolbar, BorderLayout.NORTH);
+        
+        viewScrollPane = createViewScrollPane(eventListener);
+        viewScrollPane.setBackground(Color.white);
+        
+        treeScrollPane = createTreeScrollPane(eventListener);
+
+        //have the main scroll pane
+        ((MultipleArrayCanvas)this.viewer).addSortMenuItems(arrayData.getFieldNames());
+          
+        //Add the time stamp node
+        Date date = new Date(System.currentTimeMillis());
+        DateFormat format = DateFormat.getDateTimeInstance();
+        format.setTimeZone(TimeZone.getDefault());
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode(format.format(date));
+        DefaultTreeModel treeModel = (DefaultTreeModel)tree.getModel();
+        treeModel.insertNodeInto(node, analysisNode, analysisNode.getChildCount());
+        
+        //set IData as primary and selected
+        data.setUseMainData(true);
+        ((LeafInfo)(mainViewerNode.getUserObject())).setSelectedDataSource(true);
+        //record main data as source      
+        createDataSelectionNode((DefaultMutableTreeNode)(tree.getRoot().getChildAt(0)), data.getExperiment(), data.getExperiment().getNumberOfGenes(), Cluster.GENE_CLUSTER);              
+        tree.repaint();
+        
+        
+        setNormalizedState(arrayData.getNormalizationState());
+        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treeScrollPane, viewScrollPane);
+        splitPane.setOneTouchExpandable(true);
+        mainframe.getContentPane().add(splitPane, BorderLayout.CENTER);
+        
+        statusLabel = new JLabel("TIGR MultiExperiment Viewer");
+        mainframe.getContentPane().add(statusLabel, BorderLayout.SOUTH);
+        mainframe.pack();
+        splitPane.setDividerLocation(.3);
+
+        if (data.getDataType() == IData.DATA_TYPE_RATIO_ONLY || data.getDataType() == IData.DATA_TYPE_AFFY_ABS){
+            this.menubar.enableNormalizationMenu(false);
+        }
+        
+        systemEnable(TMEV.DATA_AVAILABLE);
+        fireDataChanged();
+        
+        //systemDisable(TMEV.DB_AVAILABLE);
+        //systemDisable(TMEV.DATA_AVAILABLE);
+    }
     
     /**
      * Sets toolbar and menubar states.
@@ -328,7 +417,21 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     public void saveAnalysisAs() {
         try {
             
-            final JFileChooser chooser = new JFileChooser(TMEV.getFile("data/"));
+            String dataPath = TMEV.getDataPath();
+            File fileLoc = TMEV.getFile("data/");
+            
+            // if the data path is null go to default, if not null and not exist then to to default
+            // else use the dataPath
+            
+            if(dataPath != null) {
+                fileLoc = new File(dataPath);
+                
+                if(!fileLoc.exists()) {
+                    fileLoc = TMEV.getFile("data/");
+                }
+            }
+            
+            final JFileChooser chooser = new JFileChooser(fileLoc);
             chooser.setFileView(new AnalysisFileView());
             chooser.setFileFilter(new AnalysisFileFilter());
             chooser.setApproveButtonText("Save");
@@ -343,8 +446,19 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                         File file = chooser.getSelectedFile();
                         dialog.dispose();
                         try {
+                            AnalysisFileFilter filter = new AnalysisFileFilter();
+                            String ext = filter.getExtension(file);
+                            
+                            if(ext == null)
+                                file = new File(file.getPath()+".anl");
+                            
                             ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file));
                             saveState(oos, file);
+                            
+                            //set tmev.cfg path to match formatted path
+                            TMEV.updateDataPath(formatDataPath(file.getPath()));
+                            //set variable to OS specific path format
+                            TMEV.setDataPath(file.getParentFile().getPath());
                         } catch (IOException ioe) {
                             JOptionPane.showMessageDialog(MultipleArrayViewer.this, "I/O Exception, Error saving analysis. File ("+(file != null ? file.getName() : "name unknown")+")", "Save Analysis", JOptionPane.ERROR_MESSAGE);
                             ioe.printStackTrace();
@@ -371,6 +485,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             pane.setMargin(new Insets(10,10,10,10));
             pane.setFont(new java.awt.Font("arial", java.awt.Font.PLAIN, 4));
             pane.setText(text);
+            
             JPanel panePanel = new JPanel(new GridBagLayout());
             panePanel.setBorder(BorderFactory.createLineBorder(Color.black));
             panePanel.add(pane,  new GridBagConstraints(0,0,1,1,1,1,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(2,2,2,2), 0, 0) );
@@ -392,6 +507,28 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         }
     }
     
+    private String formatDataPath(String dataPath) {
+        if(dataPath == null)
+            return " ";
+        
+        String renderedSep = "/";
+        String renderedPath = new String();
+        
+        String sep = System.getProperty("file.separator");
+        
+        StringTokenizer stok = new StringTokenizer(dataPath, sep);
+        
+        String newDataPath = new String();
+        
+        String str;
+        while(stok.hasMoreTokens() && stok.countTokens() > 1){
+            str = stok.nextToken();
+            renderedPath += str + renderedSep;
+            newDataPath += str + sep;
+        }
+        return renderedPath;
+    }
+    
     public void saveAnalysis() {
         if(this.currentAnalysisFile != null) {
             try {
@@ -411,6 +548,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         final ObjectOutputStream oos = os;
         final String filePath = file.getAbsolutePath();
         this.currentAnalysisFile = file;
+        
+        TMEV.activeSave = true;
+        
         Thread thread = new Thread(new Runnable() {
             public void run() {
                 try{
@@ -451,15 +591,19 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                     oos.flush();
                     oos.close();
                     setCursor(Cursor.DEFAULT_CURSOR);
+                    
+                    TMEV.activeSave = false;
+                    
                 } catch (IOException ioe){
                     setCursor(Cursor.DEFAULT_CURSOR);
                     JOptionPane.showMessageDialog(MultipleArrayViewer.this, "Analysis was not saved.  Error writing output file.",
                     "Save Error", JOptionPane.WARNING_MESSAGE);
                     ioe.printStackTrace();
+                    TMEV.activeSave = false;
                 }
             }
         });
-        thread.setPriority(Thread.MIN_PRIORITY);
+        thread.setPriority(Thread.NORM_PRIORITY);
         thread.start();
     }
     
@@ -560,7 +704,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                     
                     //signal mev analysis loaded
                     menubar.systemEnable(TMEV.ANALYSIS_LOADED);
-
+                    
                     //pcahan
                     if(TMEV.getDataType() == TMEV.DATA_TYPE_AFFY){
                         menubar.addAffyFilterMenuItems();
@@ -595,7 +739,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             this.experimentClusterRepository.setFramework(this.framework);
             
             this.experimentClusterManager = new ClusterTable(this.experimentClusterRepository, framework);
-            DefaultMutableTreeNode experimentNode = new DefaultMutableTreeNode(new LeafInfo("Experiment Clusters", this.experimentClusterManager), false);
+            DefaultMutableTreeNode experimentNode = new DefaultMutableTreeNode(new LeafInfo("Sample Clusters", this.experimentClusterManager), false);
             addNode(this.clusterNode, experimentNode);
         }
     }
@@ -635,7 +779,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         //pcahan
         int data_type = this.data.getDataType();
         if (data_type!=0 || data_type!=1){
-          TMEV.setDataType(TMEV.DATA_TYPE_AFFY);
+            TMEV.setDataType(TMEV.DATA_TYPE_AFFY);
         }
         
         //resets the log state depending on data type
@@ -645,9 +789,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         this.menubar.replaceExperimentLabelMenuItems(data.getSlideNameKeyArray());
         
         //populate the display menu
-        this.menubar.replaceLabelMenuItems(TMEV.getFieldNames());
-        this.menubar.replaceSortMenuItems(TMEV.getFieldNames());
-
+        this.menubar.replaceLabelMenuItems(this.data.getFieldNames());
+        this.menubar.replaceSortMenuItems(this.data.getFieldNames());
+        
         setMaxCY3AndCY5();
         systemEnable(TMEV.DATA_AVAILABLE);
         fireMenuChanged();
@@ -673,9 +817,19 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     
     
     private void loadAnalysis() {
+        
+        String dataPath = TMEV.getDataPath();
+        File pathFile = TMEV.getFile("data/");
+        
+        if(dataPath != null) {
+            pathFile = new File(dataPath);
+            if(!pathFile.exists())
+                pathFile = TMEV.getFile("data/");
+        }
+        
         File file;
         try {
-            JFileChooser chooser = new JFileChooser(TMEV.getFile("data/"));
+            JFileChooser chooser = new JFileChooser(pathFile);
             chooser.setFileView(new AnalysisFileView());
             chooser.setFileFilter(new AnalysisFileFilter());
             if(chooser.showOpenDialog(this) == JOptionPane.OK_OPTION) {
@@ -683,6 +837,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                 ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
                 loadState(ois);
                 this.currentAnalysisFile = file;
+                //set tmev.cfg to formatted path
+                TMEV.updateDataPath(formatDataPath(file.getPath()));
+                //set variable to OS format path
+                TMEV.setDataPath(file.getParentFile().getPath());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -764,9 +922,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         
         this.viewer = new MultipleArrayCanvas(this.framework, new Insets(0, 10, 0, 20));
         
-        DefaultMutableTreeNode mainViewNode = new DefaultMutableTreeNode(new LeafInfo("Main View", viewer), false);
+        LeafInfo mainViewLeafInfo = new LeafInfo("Main View", viewer);
+        mainViewerNode = new DefaultMutableTreeNode(mainViewLeafInfo, false);
         
-        root.add(mainViewNode);
+        root.add(mainViewerNode);
         
         clusterNode = new DefaultMutableTreeNode(new LeafInfo("Cluster Manager"));
         root.add(clusterNode);
@@ -788,7 +947,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         tree.addTreeSelectionListener(listener);
         tree.addMouseListener(listener);
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        tree.setSelectionPath(new TreePath(mainViewNode.getPath()));
+        tree.setSelectionPath(new TreePath(mainViewerNode.getPath()));
         tree.setEditable(false);
         
         ToolTipManager.sharedInstance().registerComponent(tree);
@@ -937,9 +1096,34 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      */
     
     private void setCurrentViewer(IViewer viewer) {
+        
+        /*
         if (viewer == null || viewer.getContentComponent() == null) {
             return;
         }
+         *
+         *        
+         * Above wascode changed to support nodes that have viewers with null content
+         * These 'viewers' still implement onSelected for the sake of initialization
+         * of node-based popups created after deserialization (loading an analysis)
+         * 
+         * The new corresponding code is in two blocks below marked by '&&'.
+         *
+         * 12.16.2004 implemented for this purpose to handle new menus in PCA
+         * for selection of displayed components.
+         */
+        
+        // && handles the cases where selected node does not have an IViewer
+        if(viewer == null) {
+            return;
+        }
+        
+        // && handles viewers that contain a null content component, *See Above*
+        if(viewer.getContentComponent() == null) {
+            viewer.onSelected(framework);
+            return;
+        }
+        
         if (this.viewer != null) {
             this.viewer.onDeselected();
         }
@@ -977,24 +1161,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         
         this.viewer.onSelected(framework);
         doViewLayout();
-        handleThumbnailButton(this.viewer);
     }
     
-    
-    /**
-     * Sets state of the thumbnail button according to a viewer
-     * thumbnail enabled attribute state.
-     * At the moment only a <code>MultipleArrayCanvas</code> support
-     * thumbnail feature.
-     */
-    private void handleThumbnailButton(IViewer viewer) {
-        if (viewer instanceof MultipleArrayCanvas) {
-            this.toolbar.setThumbnailEnabled(((MultipleArrayCanvas)viewer).isThumbnailEnabled());
-        } else {
-            this.toolbar.setThumbnailEnabled(false);
-        }
-    }
-    
+
     /**
      * Returns a current viewer.
      */
@@ -1249,29 +1418,29 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         
         //return if not OK
         if(editor.showModal() != JOptionPane.OK_OPTION)
-            return;             
+            return;
         
         //get data and keys
         String [][] data = editor.getLabelDataWithoutKeys();
         String [] keys = editor.getLabelKeys();
-
+        
         //add/update features
         for(int i=0; i < keys.length; i++)
             this.data.addNewExperimentLabel(keys[i], data[i]);
-
-        //add the new label to the experiment label menu    
+        
+        //add the new label to the experiment label menu
         this.menubar.replaceExperimentLabelMenuItems(keys);
         
         //now the data has been updated, check for reordering request
-        if(safeToReorderExperiments && editor.isReorderedSelected()) { 
+        if(safeToReorderExperiments && editor.isReorderedSelected()) {
             int [] order = editor.getNewOrderScheme();
             ArrayList featuresList = new ArrayList(order.length);
             for(int i = 0; i < order.length; i++) {
                 featuresList.add(this.data.getFeature(order[i]));
             }
             //set new features list
-            this.data.setFeaturesList(featuresList);        
-        }        
+            this.data.setFeaturesList(featuresList);
+        }
         this.fireDataChanged();
     }
     
@@ -1408,28 +1577,22 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      */
     private void onColorSchemeChange(int colorScheme){
         int initColorScheme = menubar.getColorScheme();
-        if(colorScheme == IDisplayMenu.GREEN_RED_SCHEME || colorScheme == IDisplayMenu.BLUE_YELLOW_SCHEME)
+        if(colorScheme == IDisplayMenu.GREEN_RED_SCHEME || colorScheme == IDisplayMenu.BLUE_YELLOW_SCHEME) {
             this.menubar.setColorSchemeIndex(colorScheme);
-        else{
-            ColorSchemeSelectionDialog dialog = new ColorSchemeSelectionDialog((Frame)getFrame(), true, menubar.getNegativeGradientImage(), menubar.getPositiveGradientImage());
+            this.menubar.setUseDoubleGradient(true);  //use double gradient
+        } else { 
+            ColorSchemeSelectionDialog dialog = new ColorSchemeSelectionDialog((Frame)getFrame(), true, menubar.getNegativeGradientImage(), menubar.getPositiveGradientImage(), this.menubar.getDisplayMenu().getUseDoubleGradient());
             if(dialog.showModal() != JOptionPane.OK_OPTION)
                 return;
             this.menubar.setPositiveCustomGradient(dialog.getPositiveGradient());
             this.menubar.setNegativeCustomGradient(dialog.getNegativeGradient());
             this.menubar.setColorSchemeIndex(colorScheme);
+            this.menubar.setUseDoubleGradient(dialog.getUseDoubleGradient());                    	
         }
         fireMenuChanged();
     }
     
-    
-    
-    /**
-     * Invoked when pallete style is changed.
-     */
-    private void onPaletteStyleChanged(int style) {
-        menubar.setPaletteStyle(style);
-        fireMenuChanged();
-    }
+
     /**
      *  Sets the current (selected) state of gradient use
      */
@@ -1438,29 +1601,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         fireMenuChanged();
     }
     
-    /**
-     * Invoked when tracing menu item is changed.
-     */
-    private void onTracing() {
-        menubar.setTracing(!menubar.getDisplayMenu().isTracing());
-        fireMenuChanged();
-    }
-    
-    /**
-     * Invoked when GR scale menu item is changed.
-     */
-    private void onGRScale() {
-        menubar.setGRScale(!menubar.getDisplayMenu().isGRScale());
-        fireMenuChanged();
-    }
-    
-    /**
-     * Invoked when anti-aliasing menu item is changed.
-     */
-    private void onAntiAliasing() {
-        menubar.setAntiAliasing(!menubar.getDisplayMenu().isAntiAliasing());
-        fireMenuChanged();
-    }
     
     /**
      * Invoked when draw borders menu item is changed.
@@ -1470,21 +1610,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         fireMenuChanged();
     }
     
-    /**
-     * Invoked when a sort menu item is changed.
-     */
-    private void onSort(Action action) {
-        String index = (String)action.getValue(ActionManager.PARAMETER);
-        onSort(Integer.parseInt(index));
-    }
-    
-    /**
-     * Sorts the framework data.
-     */
-    private void onSort(int style) {
-        data.sort(style);
-        fireDataChanged();
-    }
     
     /**
      * Shows the system info dialog.
@@ -1749,7 +1874,133 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         
     }
     
+    /**
+     *
+     */
+    private void onSetData(boolean isSelected) {
+        boolean selected = isSelected;
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
+        Object object = node.getUserObject();
+        String nodeName;
+        Experiment experiment;
+        int [][] clusters;
+        LeafInfo leafInfo;
+        int index = 0;
+        int viewerType;
+        
+        if (node == null || node.getParent() == null) {
+            return;
+        }
+        
+        if(object instanceof LeafInfo) {
+            leafInfo = (LeafInfo)object;
+            
+            IViewer viewer = leafInfo.getViewer();
+            if(viewer != null) {
+                experiment = viewer.getExperiment();
+                clusters = viewer.getClusters();
+                
+                //special case, reset to main view data
+                if(leafInfo.toString().equals("Main View")) {
+                    tree.clearDataSelection();
+                    leafInfo.setSelectedDataSource(isSelected);
+                    data.setUseMainData(true);
+                    //createDataSelectionNode((DefaultMutableTreeNode)(tree.getRoot().getChildAt(0)), data.getExperiment());
+                    createDataSelectionNode((DefaultMutableTreeNode)(tree.getRoot().getChildAt(0)), data.getExperiment(), data.getExperiment().getNumberOfGenes(), Cluster.GENE_CLUSTER);
+                    tree.repaint();
+                    return;
+                }
+                
+                if(experiment == null || clusters == null)
+                    return;
+                
+                Object leafUserObject = leafInfo.getUserObject();
+                if(leafUserObject instanceof Integer) {
+                    index = ((Integer)leafUserObject).intValue();
+                } else if (leafUserObject instanceof CentroidUserObject) {
+                    index = ((CentroidUserObject)leafUserObject).getClusterIndex();
+                } else {
+                    //need to consider status of check box, log report
+                    return;
+                }
+                
+                viewerType = viewer.getViewerType();
+                
+                if(viewerType == -1)
+                    return;
+                
+                //have clusters, experiment, cluster index, and viewer type
+                
+                //Need to traverse result tree and set all LeafInfo selections to false.
+                tree.clearDataSelection();
+                
+                //set as selected data source
+                leafInfo.setSelectedDataSource(isSelected);
+                
+                if(isSelected) {
+                    data.constructAndSetAlternateExperiment(experiment, clusters[index], viewerType);
+                    createDataSelectionNode(node, experiment, clusters[index].length, viewerType);
+                } else {
+                    //reset to main data set due to de-selection of node
+                    data.setUseMainData(true);
+                    ((LeafInfo)((DefaultMutableTreeNode)(tree.getRoot().getChildAt(0))).getUserObject()).setSelectedDataSource(true);
+                    createDataSelectionNode((DefaultMutableTreeNode)(tree.getRoot().getChildAt(0)), data.getExperiment(), data.getExperiment().getNumberOfGenes(), Cluster.GENE_CLUSTER);
+                }
+            }
+        }
+        tree.repaint();
+    }
     
+    private void createDataSelectionNode(DefaultMutableTreeNode node, Experiment experiment, int clusterSize, int clusterType) {
+        int numGenes;
+        int numSamples;
+        String dataSourcePath = "";
+        String msg = "<html><body>";
+        
+        msg += "<h1>Data Source Selection Information</h1>";
+        msg += "<table align=left>";
+        
+        TreeNode [] path = node.getPath();
+        String indent = "   ";
+        
+        msg += "<tr><td><b>Data Source Path:</b></td><td>";
+        dataSourcePath += "Data Source Path: ";
+        
+        for(int i = 1; i < path.length-1; i++) {
+            msg+= path[i].toString();
+            msg+=" : ";
+            
+            dataSourcePath += path[i].toString();
+            dataSourcePath += " : ";
+        }
+        
+        msg += path[path.length-1]+"</td></tr>";
+        dataSourcePath += path[path.length-1];
+        
+        if(clusterType == Cluster.GENE_CLUSTER) {
+            numGenes = clusterSize;
+            numSamples = experiment.getNumberOfSamples();
+            msg += "<tr><td><b>Number of Genes:</b></td><td>"+clusterSize+"</td></tr>";
+            msg += "<tr><td><b>Number of Samples:</b></td><td>"+experiment.getNumberOfSamples()+"</td></tr>";
+        } else {
+            numGenes = experiment.getNumberOfGenes();
+            numSamples = clusterSize;
+            msg += "<tr><td><b>Number of Genes:</b></td><td>"+experiment.getNumberOfGenes()+"</td></tr>";
+            msg += "<tr><td><b>Number of Samples:</b></td><td>"+clusterSize+"</td></tr>";
+        }
+        
+        msg += "</table></body></html>";
+        
+        DefaultMutableTreeNode dataInfoNode = new DefaultMutableTreeNode(new LeafInfo("Data Source Selection", new TextViewer(msg)));
+        addNode(this.analysisNode, dataInfoNode);
+        //  tree.scrollToVisible(dataInfoNode);
+        String historyString = "Data Source Selection\n";
+        historyString +=        "=====================\n";
+        historyString += dataSourcePath + "\n";
+        historyString += "Number of Genes: "+String.valueOf(numGenes)+"\n";
+        historyString += "Number of Samples: "+String.valueOf(numSamples);
+        addHistory(historyString);
+    }
     
     /** pcahan
      * Sets the user specified Detection Filter.
@@ -1789,7 +2040,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         for (int i = 0; i < num_samples; i++){
             sample_names[i] = data.getFullSampleName(i);
         }
-
+        
         if ( data.getffSet() ) {
             ffd = new SetFoldFilterDialog(getFrame(),sample_names);
         }
@@ -1797,72 +2048,123 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             ffd = new SetFoldFilterDialog(getFrame(),sample_names);
             data.setffSet(true);
         }
-
+        
         if (ffd.showModal() == JOptionPane.OK_OPTION) {
             data.setFoldFilter(ffd.getFoldFilter());
             if (data.isFoldFilter()) {
                 addHistory("Fold Filter (" + data.getFoldFilter().toString() + ")");
                 addHistory(data.getExperiment().getNumberOfGenes() + " genes will used in subsequent analyses");
-
+                
             }
         }
     }
-    
-    
-    
+        
     
     /**
-     * Sets the user specified lower cutoffs.
+     * Applys the percentage cutoff filter
      */
-    private void onSetLowerCutoffs() {
+    private void applyLowerCutoffs() {                        
         SetLowerCutoffsDialog slcd = new SetLowerCutoffsDialog(getFrame(), data.getLowerCY3Cutoff(), data.getLowerCY5Cutoff());
         if (slcd.showModal() == JOptionPane.OK_OPTION) {
+
+            boolean useCutoff = slcd.isLowerCutoffEnabled();
+
+            data.setUseLowerCutoffs(useCutoff);            
             data.setLowerCutoffs(slcd.getLowerCY3Cutoff(), slcd.getLowerCY5Cutoff());
+            Properties props = new Properties();
+            props.setProperty("CY3 Cutoff", Float.toString(slcd.getLowerCY3Cutoff()));
+            props.setProperty("CY5 Cutoff", Float.toString(slcd.getLowerCY5Cutoff()));
+            
             if (data.isLowerCutoffs()) {
-                addHistory("Lower cutoffs (" + data.getLowerCY3Cutoff() + ", " + data.getLowerCY5Cutoff() + ")");
-                addHistory(data.getExperiment().getNumberOfGenes() + " genes will used in subsequent analyses");
+                addAdjustmentResultNodes("Data Filter - Low Intensity Cutoff Filter", data.getExperiment(), props);                
+                addHistory("Low Intensity Cutoff Filter is ON ( percent = cy3= " +Float.toString(slcd.getLowerCY3Cutoff())+"  cy5 ="+Float.toString(slcd.getLowerCY5Cutoff())+" )");
+            } else {
+                addHistory("Low Intensity Filter is OFF");
             }
+            addHistory(data.getExperiment().getNumberOfGenes() + " genes will be used in subsequent analyses");            
         }
-    }
-    
+    }    
+
     /**
-     * Sets the user specified use lower cutoffs flag.
+     * Applys the percentage cutoff filter
      */
-    private void onUseLowerCutoffs(AbstractButton item) {
-        data.setUseLowerCutoffs(item.isSelected());
-        if (data.isLowerCutoffs()) {
-            addHistory("Lower cutoffs (" + data.getLowerCY3Cutoff() + ", " + data.getLowerCY5Cutoff() + ")");
-        } else {
-            addHistory("Lower cutoffs not used");
-        }
-        addHistory(data.getExperiment().getNumberOfGenes() + " genes will be used in subsequent analyses");
-    }
-    
-    /**
-     * Sets the user specified percentage cutoffs.
-     */
-    private void onSetPercentageCutoffs() {
+    private void applyPercentageCutoffs() {                        
         SetPercentageCutoffsDialog spcd = new SetPercentageCutoffsDialog(getFrame(), data.getPercentageCutoff());
         if (spcd.showModal() == JOptionPane.OK_OPTION) {
-            data.setPercentageCutoff(spcd.getPercentageCutoff());
+            boolean useCutoff = spcd.isCutoffFilterEnabled();
+            float percent = spcd.getPercentageCutoff();
+
+            data.setUsePercentageCutoff(useCutoff);            
+            data.setPercentageCutoff(percent);
+            
+            Properties props = new Properties();
+            props.setProperty("Percentage", Float.toString(percent));
+            
             if (data.isPercentageCutoff()) {
-                addHistory("Percentage cutoff (" + data.getPercentageCutoff() + "%)");
-                addHistory(data.getExperiment().getNumberOfGenes() + " genes will be used in subsequent analyses");
+                 addAdjustmentResultNodes("Data Filter - Percentage Cutoff Filter", data.getExperiment(), props);
+                 addHistory("Percentage Cutoff Filter is ON ( percent = " +Float.toString(percent)+" )");
+            } else {
+                addHistory("Percentage Cutoff Filter is OFF");
             }
+            addHistory(data.getExperiment().getNumberOfGenes() + " genes will be used in subsequent analyses");            
+        }
+    }
+        
+    /**
+     * Applies a variance filter
+     */
+    private void applyVarianceFilter() {
+        VarianceFilterDialog dialog = new VarianceFilterDialog(getFrame());
+        if(dialog.showModal() == JOptionPane.OK_OPTION) {
+            Properties props = dialog.getProperties();
+            data.setVarianceFilter(props);
+                        
+            if (data.isVarianceFilter()) {
+                addAdjustmentResultNodes("Data Filter - Variance Filter", data.getExperiment(), props); 
+                addHistory("Variance Filter is ON ( mode= " + props.getProperty("Filter Mode")+ " value= "+ props.getProperty("Value")+" )");
+            } else {
+                addHistory("Variance Filter is OFF");
+            }
+            
+            addHistory(data.getExperiment().getNumberOfGenes() + " genes will be used in subsequent analyses");            
         }
     }
     
-    /**
-     * Sets the user specified use percentage cutoffs flag.
-     */
-    private void onUsePercentageCutoffs(AbstractButton item) {
-        data.setUsePercentageCutoff(item.isSelected());
-        if (data.isPercentageCutoff()) {
-            addHistory("Percentage cutoff (" + data.getPercentageCutoff() + "%)");
-        } else {
-            addHistory("Percentage cutoffs not used");
+    private void addAdjustmentResultNodes(String mainTitle, Experiment experiment, Properties props) {
+        DefaultMutableTreeNode filterNode = new DefaultMutableTreeNode(mainTitle);
+        int [][] cluster = new int[1][experiment.getNumberOfGenes()];
+        
+        //default indices for viewer, experiment will handle mapping
+        for(int i = 0; i < cluster[0].length; i++)
+            cluster[0][i] = i;
+        
+        DefaultMutableTreeNode expressionNode = new DefaultMutableTreeNode(new LeafInfo("Expression Image", new ExperimentViewer(experiment, cluster), new Integer(0)));
+        
+        filterNode.add(expressionNode);
+        filterNode.add(new DefaultMutableTreeNode("Gene/Row Count: "+cluster[0].length));
+        
+        if(props.size() > 0) {
+            String label = "Parameter";
+            if(props.size() > 1)
+                label += "s";
+            DefaultMutableTreeNode parameterNode = new DefaultMutableTreeNode(label);
+            Enumeration enum = props.keys();
+            String key;
+            while(enum.hasMoreElements()) {
+                key = (String)enum.nextElement();
+                parameterNode.add(new DefaultMutableTreeNode(key+ ": " + (String)(props.get(key))));
+            }
+            filterNode.add(parameterNode);
         }
-        addHistory(data.getExperiment().getNumberOfGenes() + " genes will be used in subsequent analyses");
+        
+        this.addNode(analysisNode, filterNode);
+
+        Object [] path = new Object[3];
+        path[0] = tree.getRoot();
+        path[1] = analysisNode;
+        path[2] = filterNode;
+        tree.scrollPathToVisible(new TreePath(path));
+        //this.addAnalysisResult(filterNode);
     }
     
     
@@ -1906,86 +2208,86 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     private void onNormalizeSpots() {
         data.normalizeSpots();
         fireDataChanged();
-        addHistory("Normalize Spots");
+        addHistory("Normalize Gene/Row Vectors");
     }
     
     private void onDivideSpotsRMS() {
         data.divideSpotsRMS();
         fireDataChanged();
-        addHistory("Divide Spots by RMS");
+        addHistory("Divide by Gene/Row RMS");
     }
     
     private void onDivideSpotsSD() {
         data.divideSpotsSD();
         fireDataChanged();
-        addHistory("Divide Spots by SD");
+        addHistory("Divide by Gene/Row SD");
     }
     
     // pcahan
     private void onDivideGenesMedian() {
         data.divideGenesMedian();
         fireDataChanged();
-        addHistory("Per gene normalization -- Divide Genes by Median");
+        addHistory("Divide by Gene/Row Median");
     }
     
     private void onDivideGenesMean() {
         data.divideGenesMean();
         fireDataChanged();
-        addHistory("Per gene normalization -- Divide Genes by Mean");
+        addHistory("Divide by Gene/Row Mean");
     }
     
     private void onMeanCenterSpots() {
         data.meanCenterSpots();
         fireDataChanged();
-        addHistory("Mean Center Spots");
+        addHistory("Mean Center by Gene/Row Mean");
     }
     
     private void onMedianCenterSpots() {
         data.medianCenterSpots();
         fireDataChanged();
-        addHistory("Median Center Spots");
+        addHistory("Median Center by Gene/Row Median");
     }
     
     private void onDigitalSpots() {
         data.digitalSpots();
         fireDataChanged();
-        addHistory("Digital Spots");
+        addHistory("Digital Rows");
     }
     
     private void onNormalizeExperiments() {
         data.normalizeExperiments();
         fireDataChanged();
-        addHistory("Normalize Experiments");
+        addHistory("Normalize Sample/Column Vectors");
     }
     
     private void onDivideExperimentsRMS() {
         data.divideExperimentsRMS();
         fireDataChanged();
-        addHistory("Divide Experiments by RMS");
+        addHistory("Divide by Sample/Column RMS");
     }
     
     private void onDivideExperimentsSD() {
         data.divideExperimentsSD();
         fireDataChanged();
-        addHistory("Divide Experiments by SD");
+        addHistory("Divide by Sample/Column SD");
     }
     
     private void onMeanCenterExperiments() {
         data.meanCenterExperiments();
         fireDataChanged();
-        addHistory("Mean Center Experiments");
+        addHistory("Mean Center by Column/Sample Mean");
     }
     
     private void onMedianCenterExperiments() {
         data.medianCenterExperiments();
         fireDataChanged();
-        addHistory("Median Center Experiments");
+        addHistory("Median Center by Sample/Column Median");
     }
     
     private void onDigitalExperiments() {
         data.digitalExperiments();
         fireDataChanged();
-        addHistory("Digital Experiments");
+        addHistory("Digital Samples");
     }
     
     private void onLog10toLog2() {
@@ -2012,30 +2314,24 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         }
     }
     
-    /**
-     * Sets the user specified upper limits.
-     */
-    private void onSetUpperLimits() {
-        IDisplayMenu menu = menubar.getDisplayMenu();
-        SetUpperLimitsDialog suld = new SetUpperLimitsDialog(mainframe, menu.getMaxCY3Scale(), menu.getMaxCY5Scale());
-        if (suld.showModal() == JOptionPane.OK_OPTION) {
-            menubar.setMaxCY3Scale(suld.getUpperCY3());
-            menubar.setMaxCY5Scale(suld.getUpperCY5());
-            fireMenuChanged();
-        }
-        addHistory("Intensity Limits Set: Upper Cy3 = "+ suld.getUpperCY3() +" Upper Cy5 = "+ suld.getUpperCY5());
-    }
     
     /**
      * Sets the user specified ratio scale.
      */
     private void onSetRatioScale() {
         IDisplayMenu menu = menubar.getDisplayMenu();
-        SetRatioScaleDialog srsd = new SetRatioScaleDialog(mainframe, menu.getMaxRatioScale(), menu.getMinRatioScale());
+        SetRatioScaleDialog srsd = new SetRatioScaleDialog(mainframe, framework, menubar, menu.getMaxRatioScale(), menu.getMinRatioScale(), menu.getUseDoubleGradient());
         if (srsd.showModal() == JOptionPane.OK_OPTION) {
             menubar.setMaxRatioScale(srsd.getUpperRatio());
             menubar.setMinRatioScale(srsd.getLowerRatio());
+            menubar.setUseDoubleGradient(srsd.getUseDoubleGradient());
+    
+            //posImage might have changed if gradient style went from single->double
+            if(srsd.isGradientStyleAltered() && srsd.getUseDoubleGradient()) 
+            	this.menubar.setPositiveCustomGradient(srsd.getPosImage());
+               
             fireMenuChanged();
+            System.out.println("set ratio scale ok option");
         }
         addHistory("Ratio Color Sat. Limits Set: Lower = "+ srsd.getLowerRatio() +" Upper = "+ srsd.getUpperRatio());
     }
@@ -2061,36 +2357,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             this.experimentClusterManager.deleteAllClusters();
         fireDataChanged();
         fireMenuChanged();
-        addHistory("Deleted All Experiment Clusters");
+        addHistory("Deleted All Sample Clusters");
     }
     
-    /**
-     * Shows a thumbnail for the current viewer.
-     * At the moment only <code>MultipleArrayCanvas</code> supports this feature.
-     */
-    private void onShowThumbnail() {
-        IViewer viewer = getCurrentViewer();
-        if (viewer instanceof MultipleArrayCanvas) {
-            ((MultipleArrayCanvas)viewer).onShowThumbnail();
-        }
-    }
-    
-    /**
-     * Shows the legend for HCLSupportTree coloring
-     * This method will no longer be supported when the legend
-     * is displayed as part of the HCLSupportTree image
-     */
-    private void onShowSupportTreeLegend() {
-        JFrame legendFrame = new JFrame("Support Tree Legend");
-        JPanel legendPanel = HCLSupportTree.getColorLegendPanel();
-        legendFrame.getContentPane().add(legendPanel);
-        legendFrame.setSize(200, 300);
-        legendFrame.setLocation(300, 100);
-        legendFrame.setVisible(true);
-    }
-    
-    
-    private void selectNode(DefaultMutableTreeNode node){
+
+    private void selectNode(DefaultMutableTreeNode node) {
         this.tree.setSelectionPath(new TreePath(node.getPath()));
     }
     
@@ -2133,13 +2404,13 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                 this.data.setGeneClusterRepository(this.geneClusterRepository);
             }
             cluster = geneClusterRepository.storeCluster(this.resultCount-1, algorithmName, clusterID, indices, clusterNode, experiment);
-            if(cluster != null){
+            if(cluster != null) {
                 clusterColor = cluster.getClusterColor();
                 if(geneClusterManager == null){
                     this.geneClusterManager = new ClusterTable(this.geneClusterRepository, framework);
                     DefaultMutableTreeNode genesNode = new DefaultMutableTreeNode(new LeafInfo("Gene Clusters", this.geneClusterManager), false);
                     addNode(this.clusterNode, genesNode);
-                } else{
+                } else {
                     geneClusterManager.onRepositoryChanged(geneClusterRepository);
                 }
             }
@@ -2150,13 +2421,13 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                 this.data.setExperimentClusterRepository(this.experimentClusterRepository);
             }
             cluster = experimentClusterRepository.storeCluster(this.resultCount-1, algorithmName, clusterID, indices, clusterNode, experiment);
-            if(cluster != null){
+            if(cluster != null) {
                 clusterColor = cluster.getClusterColor();
                 if(experimentClusterManager == null){
                     this.experimentClusterManager = new ClusterTable(this.experimentClusterRepository, framework);
-                    DefaultMutableTreeNode experimentNode = new DefaultMutableTreeNode(new LeafInfo("Experiment Clusters", this.experimentClusterManager), false);
+                    DefaultMutableTreeNode experimentNode = new DefaultMutableTreeNode(new LeafInfo("Sample Clusters", this.experimentClusterManager), false);
                     addNode(this.clusterNode, experimentNode);
-                } else{
+                } else {
                     experimentClusterManager.onRepositoryChanged(experimentClusterRepository);
                 }
             }
@@ -2225,7 +2496,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                 clusterColor = cluster.getClusterColor();
                 if(experimentClusterManager == null){
                     this.experimentClusterManager = new ClusterTable(this.experimentClusterRepository, framework);
-                    DefaultMutableTreeNode experimentNode = new DefaultMutableTreeNode(new LeafInfo("Experiment Clusters", this.experimentClusterManager), false);
+                    DefaultMutableTreeNode experimentNode = new DefaultMutableTreeNode(new LeafInfo("Sample Clusters", this.experimentClusterManager), false);
                     addNode(this.clusterNode, experimentNode);
                 } else{
                     experimentClusterManager.onRepositoryChanged(experimentClusterRepository);
@@ -2251,6 +2522,54 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         return clusterColor;
     }
     
+    /**
+     *  Stores cluster to manager but doesn't link to a particular viewer node.
+     */
+    public void storeOperationCluster(String source, String clusterID, int [] indices, boolean geneCluster){
+        
+        ClusterRepository repository;
+        Cluster cluster;
+        
+        ClusterAttributesDialog dialog = new ClusterAttributesDialog("Store Cluster Attributes", source, clusterID);
+        
+        if(dialog.showModal() == JOptionPane.OK_OPTION) {
+            Experiment experiment;
+            if (geneCluster) {
+                FloatMatrix matrix = data.getFullExperiment().getMatrix();
+                experiment = new Experiment(matrix, indices);
+                repository = getClusterRepository(Cluster.GENE_CLUSTER);
+                cluster = new Cluster(indices, source, dialog.getLabel(), clusterID, "", dialog.getDescription(), -1, repository.takeNextClusterSerialNumber(), dialog.getColor(), experiment);
+                repository.addCluster(repository.getClusterOperationsList(), cluster);
+                //geneClusterManager.onRepositoryChanged(geneClusterRepository);
+                geneClusterManager.addCluster(cluster);
+                
+            } else {
+                experiment = data.getFullExperiment();
+                repository = getClusterRepository(Cluster.EXPERIMENT_CLUSTER);
+                cluster = new Cluster(indices, "Search Result", dialog.getLabel(), "Selected Samples", "", dialog.getDescription(), -1, repository.takeNextClusterSerialNumber(), dialog.getColor(), experiment);
+                repository.addCluster(repository.getClusterOperationsList(), cluster);
+                //experimentClusterManager.onRepositoryChanged(experimentClusterRepository);
+                experimentClusterManager.addCluster(cluster);
+            }
+            
+            if(cluster != null) {
+                int serNum = cluster.getSerialNumber();
+                String algName = cluster.getAlgorithmName();
+                
+                if(geneCluster)
+                    addHistory("Save Gene Cluster: Serial #: "+String.valueOf(serNum)+", Algorithm: "+
+                    algName+", Cluster: "+clusterID);
+                else
+                    addHistory("Save Experiment Cluster: Serial #: "+String.valueOf(serNum)+", Algorithm: "+
+                    algName+", Cluster: "+clusterID);
+            }
+        }
+        refreshCurrentViewer();
+    }
+    
+    /** Removes a cluster based on indices, Experiment, and cluster type.
+     * Returns true if found and removed.
+     */
     public boolean removeCluster(int [] indices, Experiment experiment, int clusterType){
         DefaultTreeModel model = (DefaultTreeModel) this.tree.getModel();
         TreePath path = this.tree.getSelectionPath();
@@ -2313,7 +2632,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         
         return removed;
     }
-    
+
+    /** Launches a new MultipleArrayViewer containing the indexed items, Experiment, and cluster type.
+     * clusterType specifies whether the indices relate to genes or samples
+     */
     private void launchNewMAV(int [] indices, Experiment experiment, String label, int clusterType){
         MultipleArrayData newData;
         if(indices.length < 1){
@@ -2326,10 +2648,13 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         } else {
             newData = this.data.getDataSubset(indices, experiment.getRowMappingArrayCopy());
         }
-        Manager.createNewMultipleArrayViewer(newData, label);
+        Manager.createNewMultipleArrayViewer(this.menubar, newData, label);
+        
         addHistory("Launch New MAV: "+label);
     }
     
+    /** Opens the specified cluster node based on parent algorithm name and the cluster's node name
+     */
     private void openClusterNode(String algorithmNode, String clusterNode){
         DefaultMutableTreeNode node = findNode(algorithmNode, clusterNode);
         if(node == null){
@@ -2338,6 +2663,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         selectNode(node);
     }
     
+    
+    /** Finds the specified child node given node name (child) and the parent's name.
+     */
     private DefaultMutableTreeNode findNode(String parent, String child){
         int childCount = this.analysisNode.getChildCount();
         DefaultMutableTreeNode curr = this.analysisNode;
@@ -2379,6 +2707,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         return (DefaultMutableTreeNode)curr;
     }
     
+    /** Returns the currently selected node
+     */
     public DefaultMutableTreeNode getCurrentNode(){
         TreePath path = this.tree.getSelectionPath();
         if(path == null)
@@ -2396,11 +2726,15 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     public void fireDataLoaded(ISlideData [] features, int dataType){
         if(features == null || features.length < 1)
             return;
-        if(TMEV.getFieldNames() != null && this.data.getFeaturesCount() < 1){
-            this.menubar.addLabelMenuItems(TMEV.getFieldNames());
+        if(this.data.getFieldNames() != null && this.data.getFeaturesCount() < 1){
+            this.menubar.addLabelMenuItems(this.data.getFieldNames());
             //add the experiment key vector that is longest
             this.menubar.addExperimentLabelMenuItems(getSlideNameKeyVectorUnion(features));
-            this.menubar.addSortMenuItems(TMEV.getFieldNames());
+            //this.menubar.addSortMenuItems(this.data.getFieldNames());
+            
+            //have the main scroll pane and canvas
+            ((MultipleArrayCanvas)this.viewer).addSortMenuItems(data.getFieldNames());
+  
             this.menubar.setLabelIndex(0);
             
             //pcahan
@@ -2420,9 +2754,21 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         (!this.menubar.get_affyNormAdded())) {
             this.menubar.addAffyNormMenuItems();
         }
+                
+        if (data.getDataType() == IData.DATA_TYPE_RATIO_ONLY || data.getDataType() == IData.DATA_TYPE_AFFY_ABS){
+            this.menubar.enableNormalizationMenu(false);
+        }
+
+        //set IData as primary and selected
+        data.setUseMainData(true);
+        ((LeafInfo)(mainViewerNode.getUserObject())).setSelectedDataSource(true);
+        //record main data as source      
+        createDataSelectionNode((DefaultMutableTreeNode)(tree.getRoot().getChildAt(0)), data.getExperiment(), data.getExperiment().getNumberOfGenes(), Cluster.GENE_CLUSTER);              
+        tree.repaint();
         
         setMaxCY3AndCY5();
         systemEnable(TMEV.DATA_AVAILABLE);
+        this.viewer.onSelected(framework);
         fireMenuChanged();
         fireDataChanged();
         fireHeaderChanged();
@@ -2440,12 +2786,12 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             }
         }
         if(features.length > 1)
-            addHistory(features.length+" experiments loaded.");
+            addHistory(features.length+" samples loaded.");
         else
-            addHistory("1 experiment loaded.");
-            
+            addHistory("1 sample loaded.");
+        
         if(features.length > 0)
-                addHistory(features[0].getSize()+"genes loaded.");
+            addHistory(features[0].getSize()+" genes loaded.");
     }
     
     
@@ -2480,17 +2826,40 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         format.setTimeZone(TimeZone.getDefault());
         DefaultMutableTreeNode node = new DefaultMutableTreeNode(format.format(date));
         DefaultTreeModel treeModel = (DefaultTreeModel)tree.getModel();
-        treeModel.insertNodeInto(node, analysisNode, analysisNode.getChildCount());
+        treeModel.insertNodeInto(node, analysisNode, analysisNode.getChildCount());        
     }
     
     /**
      * Returns specfied the cluster repository, possibly null
      */
     protected ClusterRepository getClusterRepository(int clusterType){
-        if(clusterType == Cluster.GENE_CLUSTER)
+        if(clusterType == Cluster.GENE_CLUSTER) {
+            if(this.geneClusterRepository == null) {
+                this.geneClusterRepository = new ClusterRepository(data.getFeaturesSize(), framework, true);
+                this.data.setGeneClusterRepository(this.geneClusterRepository);
+            }
+            
+            
+            if(geneClusterManager == null){
+                this.geneClusterManager = new ClusterTable(this.geneClusterRepository, framework);
+                DefaultMutableTreeNode genesNode = new DefaultMutableTreeNode(new LeafInfo("Gene Clusters", this.geneClusterManager), false);
+                addNode(this.clusterNode, genesNode);
+                
+            }
             return this.geneClusterRepository;
-        else
+            
+        } else {
+            if(this.experimentClusterRepository == null) {
+                this.experimentClusterRepository = new ClusterRepository(data.getFeaturesCount(), framework);
+                this.data.setExperimentClusterRepository(this.experimentClusterRepository);
+            }
+            if(experimentClusterManager == null) {
+                this.experimentClusterManager = new ClusterTable(this.experimentClusterRepository, framework);
+                DefaultMutableTreeNode experimentNode = new DefaultMutableTreeNode(new LeafInfo("Sample Clusters", this.experimentClusterManager), false);
+                addNode(this.clusterNode, experimentNode);
+            }
             return this.experimentClusterRepository;
+        }
     }
     
     /**
@@ -2501,7 +2870,215 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     }
     
     
+    /**
+     * Perform a search for elements based on keys
+     */
+    private void search() {
+        SearchDialog dialog = new SearchDialog(this.getFrame(), this.data.getFieldNames(), this.data.getSlideNameKeyArray());
+        if( dialog.showModal() == JOptionPane.OK_OPTION) {
+            AlgorithmData searchParameters = dialog.getSearchCriteria();
+            
+            AlgorithmParameters params = searchParameters.getParams();
+            boolean geneSearch = params.getBoolean("gene-search");
+            boolean caseSens = params.getBoolean("case-sensitive");
+            boolean fullTerm = params.getBoolean("full-term");
+            String searchTerm = params.getString("search-term");
+            String [] fields = searchParameters.getStringArray("field-names");
+            
+            ResultTree resultTree = framework.getResultTree();
+            
+            //get IData indices
+            int [] indices = data.search(searchParameters);
+            
+            if(indices.length > 0) {
+                
+                //returns Vector of result objects (Vector, Hashtable, Hashtable), #0 ExperimentViewers, #2 TableViewers
+                Vector result =  resultTree.findViewerCollection(indices, searchParameters.getParams().getBoolean("gene-search"));
+                
+                if(result != null) {
+                    
+                    Vector primaryNodes = (Vector)(result.elementAt(0));
+                    Hashtable expViewHash = (Hashtable)(result.elementAt(1));
+                    Hashtable tableViewHash = (Hashtable)(result.elementAt(2));
+                    
+                    DefaultMutableTreeNode root = new DefaultMutableTreeNode("Search Result Shortcuts");
+                    for(int i = 0; i < primaryNodes.size(); i++) {
+                        root.add((DefaultMutableTreeNode)(primaryNodes.elementAt(i)));
+                    }
+                    JTree tree = new JTree(root);
+                    tree.setCellRenderer(resultTree.getCellRenderer());
+                    
+                    SearchResultDialog resultDialog = new SearchResultDialog(this.framework, searchParameters, tree, expViewHash, tableViewHash, indices);
+                    resultDialog.showModal();
+                } else {
+                    SearchResultDialog resultDialog = new SearchResultDialog(this.framework, searchParameters, indices);
+                    resultDialog.showModal();
+                }
+                
+                
+            } else {
+                if(geneSearch)
+                    JOptionPane.showMessageDialog(framework.getFrame(), "No genes matching the search criteria were found.", "Empty Search Result", JOptionPane.INFORMATION_MESSAGE);
+                else
+                    JOptionPane.showMessageDialog(framework.getFrame(), "No samples matching the search criteria were found.", "Empty Search Result", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+        }
+    }
     
+    /** Refreshes the current viewer by calling <code>IViewer</code> onSelected(IFramework)
+     */
+    private void refreshCurrentViewer() {
+        TreePath path = tree.getSelectionPath();
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
+        
+        Object leafInfo = node.getUserObject();
+        
+        if(leafInfo instanceof LeafInfo) {
+            IViewer viewer = ((LeafInfo)leafInfo).getViewer();
+            if(viewer != null) {
+                viewer.onSelected(framework);
+            }
+        }
+    }
+    
+    /** Imports a list of gene or sample identifiers based on matching an annotation key
+     * Imported cluster will be added to the proper repository.
+     */
+    private void onImportList(int clusterType) {
+        ClusterRepository cr = getClusterRepository(clusterType);
+        
+        Cluster cluster = cr.createClusterFromList();
+        
+        if(cluster != null) {
+            if(clusterType == Cluster.GENE_CLUSTER) {
+                this.geneClusterManager.onRepositoryChanged(cr);
+                addHistory("Save Gene Cluster: Serial #: "+cluster.getSerialNumber()+", Source: List Import");
+            } else {
+                this.experimentClusterManager.onRepositoryChanged(cr);
+                addHistory("Save Sample Cluster: Serial #: "+cluster.getSerialNumber()+", Source: List Import");
+            }
+            refreshCurrentViewer();
+        }
+    }
+    
+    /** Appends Sample annoation.  Loads annoation using the loaded order.
+     */
+    private void appendSampleAnnotation() {
+           
+        String msg = "<html><center><h1>Import Sample Annotation</h1></center>";
+        msg += "The sample annotation file should be a tab-delimited text file containing one header row for annotation labels (field names).";
+        msg += "The file may contain multiple columns of annotation with each column containing a header entry that indicates the nature of the annotation.";
+        msg += "The annotation for each sample is organized in rows corresponding to the order of the loaded samples.";
+        msg += "If annotation is missing for a sample the entry in that sample row may be left blank.  Please see the manual appendix on file formats for more information. </html>";
+        
+        HTMLMessageFileChooser dialog = new HTMLMessageFileChooser(getFrame(), "Sample Annotation File Selection", msg, TMEV.getFile("data"), true);
+        dialog.setApproveButtonText("Load");
+        dialog.setSize(500, 600);
+        if(dialog.showModal() == JFileChooser.APPROVE_OPTION) {
+            File file = dialog.getSelectedFile();           
+            try {
+                if(data.addNewSampleLabels(getFrame(), file)) {                            
+                    //add the new label to the experiment label menu
+                    this.menubar.replaceExperimentLabelMenuItems(data.getSlideNameKeyArray());
+                }
+            } catch (IOException ioe) {
+                JOptionPane.showMessageDialog(getFrame(), "Error processing sample annotation file. Check file format.", "Sample Annotation Input Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }                    
+    }
+    
+    
+    /** Appends gene annoation from an annotation file.  Mapping depends on a key selected from the loaded data     
+     *
+     *  and a second key selected from the annotation file.  These keys map annoation to genes.
+     */
+    private void appendGeneAnnotation() {
+        
+        String msg = "<html><center><h1>Import Gene Annotation</h1></center>";
+        msg += "Please select an annotation file to import.  The file should contain a column that can be used ";
+        msg += "to map annotation in the file to the proper genes.  After file selection you will be asked to identify ";
+        msg += "a key from the data and from the input file to be used to insure proper mapping of annotation. ";
+        msg += "Note that this file format should conform the MeV annotation file format conventions (.ann) file ";
+        msg += "described in the appendix of the manual</html>";
+        
+        HTMLMessageFileChooser dialog = new HTMLMessageFileChooser(getFrame(), "Gene Annotation File Selection", msg, TMEV.getFile("data"), true);
+        dialog.setFileFilter(new AnnFileFilter());
+        dialog.setApproveButtonText("Load");
+        dialog.setSize(500, 600);
+
+        if(dialog.showModal() == JFileChooser.APPROVE_OPTION) {
+            File file = dialog.getSelectedFile();
+            try {
+                
+                //parse the file
+                AnnFileParser parser = new AnnFileParser();
+                parser.loadFile(file);
+                Vector headerVector;
+                String [] headers;
+                String [][] annMatrix = null;
+                if(parser.isAnnFileLoaded()) {
+                    headerVector = parser.getColumnHeaders();
+                    annMatrix = parser.getDataMatrix(true);                    
+                } else {
+                    JOptionPane.showMessageDialog(getFrame(), "Error processing gene annotation file. Please check file format.", "Sample Annotation Input Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
+                //get field names from current data and add UID as an option
+                String [] dataFieldNames = data.getFieldNames();
+                String [] fieldNamesWithUID = new String[dataFieldNames.length+1];
+                fieldNamesWithUID[0] = "UID";
+                for(int i = 0; i < dataFieldNames.length; i++) {
+                    fieldNamesWithUID[i+1] = dataFieldNames[i];
+                }
+                                
+                //get annotation keys for mapping
+                GeneAnnotationImportDialog importDialog = new GeneAnnotationImportDialog(getFrame(), fieldNamesWithUID, annMatrix[0]);
+
+                //select columns of annoation to append
+                
+                
+                if(importDialog.showModal() == JOptionPane.OK_OPTION) {
+
+                    String [] newFields = importDialog.getSelectedAnnotationFields();
+                    
+                    int updateCount = data.addNewGeneAnnotation(annMatrix, importDialog.getDataAnnotationKey(), importDialog.getFileAnnotationKey(), newFields);
+                    
+                    if(updateCount > 0) {
+                        
+                        //update menubar and TMEV field names
+                        TMEV.appendFieldNames(newFields);
+                        menubar.replaceLabelMenuItems(data.getFieldNames());
+                        
+                        //add event to history log
+                        String historyMsg = "New Gene Annotation\n";
+                        historyMsg += "Annotation File = " + file.getAbsolutePath() + "\n";
+                        historyMsg += "New Annotation Fields: ";
+                        for(int i = 0; i < newFields.length; i++) {
+                            historyMsg += newFields[i];
+                            if(i < newFields.length-1)
+                                historyMsg += ", ";
+                        }
+                        addHistory(historyMsg);
+                        
+                        JOptionPane.showMessageDialog(getFrame(), "<html>Gene annotation has been successfully added.<br>Check the history node for field information.</html>", "Append Gene Annotation", JOptionPane.INFORMATION_MESSAGE);
+                        
+                    } else {
+                        String eMsg = "<html>Gene annotation addition has failed.  The identifying keys in the loaded data ("+importDialog.getDataAnnotationKey()+")<br>";
+                        eMsg += "and the keys in the file ("+importDialog.getFileAnnotationKey()+") did not have any matches.<br<br>The new annotation could not be mapped to the data.</html>";
+                        JOptionPane.showMessageDialog(getFrame(), eMsg, "Append Gene Annotation", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(getFrame(), "Error processing gene annotation file. Please check file format.", "Sample Annotation Input Error", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
+        }
+    }
+    
+
+
     /**
      * The listener to listen to mouse, action, tree, keyboard and window events.
      */
@@ -2555,26 +3132,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                 onColorSchemeChange(IDisplayMenu.CUSTOM_COLOR_SCHEME);
             }else if (command.equals(ActionManager.COLOR_GRADIENT_CMD)){
                 onColorGradientChange(((javax.swing.JCheckBoxMenuItem)(event.getSource())).isSelected());
-            } else if (command.equals(ActionManager.DISPLAY_GREEN_RED_CMD)) {
-                onPaletteStyleChanged(IDisplayMenu.GREENRED);
-            } else if (command.equals(ActionManager.DISPLAY_GR_RATIO_SPLIT_CMD)) {
-                onPaletteStyleChanged(IDisplayMenu.RATIOSPLIT);
-            } else if (command.equals(ActionManager.DISPLAY_GR_OVERLAY_CMD)) {
-                onPaletteStyleChanged(IDisplayMenu.OVERLAY);
-            } else if (command.equals(ActionManager.DISPLAY_TRACING_CMD)) {
-                onTracing();
-            } else if (command.equals(ActionManager.DISPLAY_GR_SCALE_CMD)) {
-                onGRScale();
-            } else if (command.equals(ActionManager.DISPLAY_USE_ANTIALIASING_CMD)) {
-                onAntiAliasing();
             } else if (command.equals(ActionManager.DISPLAY_DRAW_BORDERS_CMD)) {
                 onDrawBorders();
-            } else if (command.equals(ActionManager.SORT_BY_LOCATION_CMD)) {
-                onSort(SlideDataSorter.SORT_BY_LOCATION);
-            } else if (command.equals(ActionManager.SORT_BY_RATIO_CMD)) {
-                onSort(SlideDataSorter.SORT_BY_RATIO);
-            } else if (command.equals(ActionManager.SORT_LABEL_CMD)) {
-                onSort((Action)event.getSource());
             } else if (command.equals(ActionManager.SYSTEM_INFO_CMD)) {
                 onSystemInfo();
             } else if (command.equals(ActionManager.DEFAULT_DISTANCES_CMD)) {
@@ -2631,14 +3190,22 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                 menubar.setDistanceAbsolute(((AbstractButton)event.getSource()).isSelected());
             } else if (command.equals(ActionManager.DELETE_NODE_CMD)) {
                 onDeleteNode();
-            } else if (command.equals(ActionManager.SET_LOWER_CUTOFFS_CMD)) {
-                onSetLowerCutoffs();
-            } else if (command.equals(ActionManager.SET_PERCENTAGE_CUTOFFS_CMD)) {
-                onSetPercentageCutoffs();
+            } else if (command.equals(ActionManager.SET_DATA_SOURCE_COMMAND)) {
+                Object source = event.getSource();
+                if(source instanceof JCheckBoxMenuItem)
+                    onSetData(((JCheckBoxMenuItem)event.getSource()).isSelected());
+                else
+                    onSetData(true);  //reset main view
             } else if (command.equals(ActionManager.USE_PERCENTAGE_CUTOFFS_CMD)) {
-                onUsePercentageCutoffs((AbstractButton)event.getSource());
+                applyPercentageCutoffs();
             } else if (command.equals(ActionManager.USE_LOWER_CUTOFFS_CMD)) {
-                onUseLowerCutoffs((AbstractButton)event.getSource());
+                applyLowerCutoffs();
+            } else if (command.equals(ActionManager.USE_VARIANCE_FILTER_CMD)) {
+                applyVarianceFilter();
+            } else if (command.equals(ActionManager.IMPORT_GENE_LIST_COMMAND)) {
+                onImportList(Cluster.GENE_CLUSTER);
+            } else if (command.equals(ActionManager.IMPORT_SAMPLE_LIST_COMMAND)) {
+                onImportList(Cluster.EXPERIMENT_CLUSTER);
             }
             
             // pcahan
@@ -2664,8 +3231,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             } else if (command.equals(ActionManager.DIVIDE_GENES_MEDIAN_CMD)) {
                 onDivideGenesMedian();
             } else if (command.equals(ActionManager.DIVIDE_GENES_MEAN_CMD)) {
-                onDivideGenesMean();
-                
+                onDivideGenesMean();                
             } else if (command.equals(ActionManager.LOG2_TRANSFORM_CMD)) {
                 onLog2Transform();
             } else if (command.equals(ActionManager.NORMALIZE_SPOTS_CMD)) {
@@ -2698,18 +3264,12 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                 onAdjustIntensities((AbstractButton)event.getSource());
             } else if (command.equals(ActionManager.SAVE_MATRIX_COMMAND)) {
                 onSaveMatrix();
-            } else if (command.equals(ActionManager.DISPLAY_SET_UPPER_LIMITS_CMD)) {
-                onSetUpperLimits();
             } else if (command.equals(ActionManager.DISPLAY_SET_RATIO_SCALE_CMD)) {
                 onSetRatioScale();
             } else if (command.equals(ActionManager.DELETE_ALL_EXPERIMENT_CLUSTERS_COMMAND)) {
                 onDeleteAllExperimentClusters();
             } else if (command.equals(ActionManager.DELETE_ALL_COMMAND)) {
                 onDeleteAll();
-            } else if (command.equals(ActionManager.SHOW_THUMBNAIL_COMMAND)) {
-                onShowThumbnail();
-            } else if (command.equals(ActionManager.SHOW_SUPPORTTREE_LEGEND_COMMAND)) {
-                onShowSupportTreeLegend(); //Accessible here -- temporarily
             } else if (command.equals(ActionManager.LOAD_ANALYSIS_COMMAND)) {
                 loadAnalysis();
             } else if (command.equals(ActionManager.SAVE_ANALYSIS_COMMAND)) {
@@ -2720,6 +3280,12 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                 onNewScript();
             } else if (command.equals(ActionManager.LOAD_SCRIPT_COMMAND)) {
                 onLoadScript();
+            } else if (command.equals(ActionManager.SEARCH_COMMAND)) {
+                search();
+            } else if (command.equals(ActionManager.APPEND_SAMPLE_ANNOTATION_COMMAND)) {
+                appendSampleAnnotation();
+            } else if (command.equals(ActionManager.APPEND_GENE_ANNOTATION_COMMAND)) {
+                appendGeneAnnotation();
             } else {
                 System.out.println("unhandled command = " + command);
             }
@@ -2762,13 +3328,30 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                     return;
                 if (popup == null) {
                     popup = new JPopupMenu();
-                    popup.add(createDeleteMenuItem());
+                    if(userObject instanceof LeafInfo) {
+                        Object viewerObj = ((LeafInfo)userObject).getViewer();
+                        if(viewerObj == null) {
+                            popup.add(createDeleteMenuItem());
+                        } else if(viewerObj instanceof IViewer && ((IViewer)viewerObj).getClusters() != null && ((IViewer)viewerObj).getExperiment() != null && ((IViewer)viewerObj).getViewerType() != -1) {
+                            popup.add(createDeleteMenuItem());
+                            popup.addSeparator();
+                            popup.add(createSetDataMenuItem(((LeafInfo)userObject).isSelectedDataSource()));
+                        }
+                    } else {
+                        popup.add(createDeleteMenuItem());
+                    }
                 } else {
                     if (!isContainsDeleteItem(popup)) {
                         popup.addSeparator();
                         popup.add(createDeleteMenuItem());
                     }
                 }
+            } else if( ((LeafInfo)userObject).toString().equals("Main View") && data.getFeaturesCount() != 0 ) {
+                popup = new JPopupMenu();
+                JMenuItem item = new JMenuItem("Set as Data Source");
+                item.setActionCommand(ActionManager.SET_DATA_SOURCE_COMMAND);
+                item.addActionListener(this);
+                popup.add(item);
             }
             if (popup != null) {
                 popup.show(e.getComponent(), e.getX(), e.getY());
@@ -2784,6 +3367,18 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             menuItem.addActionListener(this);
             return menuItem;
         }
+        
+        
+        /**
+         * Creates a data source CheckBox menu item.
+         */
+        private JCheckBoxMenuItem createSetDataMenuItem(boolean selected) {
+            JCheckBoxMenuItem box = new JCheckBoxMenuItem("Set as Data Source", selected);
+            box.setActionCommand(ActionManager.SET_DATA_SOURCE_COMMAND);
+            box.addActionListener(this);
+            return box;
+        }
+        
         
         /**
          * Checkes if node already contains the delete item.
@@ -2919,6 +3514,17 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
          */
         public void addAnalysisResult(DefaultMutableTreeNode resultNode) {
             MultipleArrayViewer.this.addAnalysisResult(resultNode);
+        }
+        
+        /** Refreshes current viewer if it's an IViewer  */
+        public void refreshCurrentViewer() {
+            MultipleArrayViewer.this.refreshCurrentViewer();
+        }
+        
+        /**  Stores indices to a cluster in the manager but doesn't link to a particular viewer node.
+         */
+        public void storeOperationCluster(String source, String clusterID, int[] indices, boolean geneCluster) {
+            MultipleArrayViewer.this.storeOperationCluster(source, clusterID, indices, geneCluster);
         }
         
     }

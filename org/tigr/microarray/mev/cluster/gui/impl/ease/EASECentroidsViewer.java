@@ -4,14 +4,13 @@ All rights reserved.
 */
 /*
  * $RCSfile: EASECentroidsViewer.java,v $
- * $Revision: 1.1 $
- * $Date: 2004-02-06 22:52:37 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:11 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.ease;
 
-import java.awt.Color;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

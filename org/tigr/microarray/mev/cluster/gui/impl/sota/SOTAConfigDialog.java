@@ -4,39 +4,34 @@ All rights reserved.
  */
 /*
  * $RCSfile: SOTAConfigDialog.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:50 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.sota;
 
-import java.awt.Frame;
-import java.awt.Color;
-import java.awt.Toolkit;
-import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.BorderLayout;
-
-import java.awt.event.WindowEvent;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
 
-import javax.swing.JLabel;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JDialog;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JTextField;
-import javax.swing.JOptionPane;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
-
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 
 public class SOTAConfigDialog extends AlgorithmDialog {
     
@@ -52,7 +47,7 @@ public class SOTAConfigDialog extends AlgorithmDialog {
      * Constructs the dialog.
      */
     public SOTAConfigDialog(Frame parent, float zeroThreshold, int minPixelDistance, int maxPixelDistance) {
-        super(new JFrame(), "Tree Configuration", true);
+        super(parent, "Tree Configuration", true);
         zThr = zeroThreshold;
         minPixDist = minPixelDistance;
         maxPixDist = maxPixelDistance;

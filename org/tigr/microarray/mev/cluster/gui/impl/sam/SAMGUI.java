@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: SAMGUI.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-06-17 15:05:12 $
- * $Author: braisted $
+ * $Revision: 1.7 $
+ * $Date: 2005-02-24 20:23:46 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
@@ -18,57 +18,45 @@ All rights reserved.
 
 package org.tigr.microarray.mev.cluster.gui.impl.sam;
 
-import java.util.Vector;
-
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
-
 import java.io.File;
-import java.io.PrintWriter;
 import java.io.FileOutputStream;
+import java.io.PrintWriter;
+import java.util.Vector;
 
 import javax.swing.JFileChooser;
-
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.tigr.util.FloatMatrix;
-import org.tigr.util.ConfMap;
-
-import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.IViewer;
-import org.tigr.microarray.mev.cluster.gui.LeafInfo;
-import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
-import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
-import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
-import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
-
+import org.tigr.microarray.mev.cluster.Cluster;
+import org.tigr.microarray.mev.cluster.Node;
+import org.tigr.microarray.mev.cluster.NodeList;
+import org.tigr.microarray.mev.cluster.NodeValueList;
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Monitor;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
+import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
+import org.tigr.microarray.mev.cluster.gui.LeafInfo;
+import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLInitDialog;
-import org.tigr.microarray.mev.cluster.Cluster;
-import org.tigr.microarray.mev.cluster.NodeList;
-import org.tigr.microarray.mev.cluster.Node;
-import org.tigr.microarray.mev.cluster.NodeValueList;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
-
+import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLInitDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
+import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
 import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
+import org.tigr.util.FloatMatrix;
 
 /**
  *
@@ -99,6 +87,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
     int numMultiClassGroups;
     int studyDesign;
     boolean[] inSurvivalAnalysis, censored;
+    private boolean drawSigTreesOnly;    
     double[] survivalTimes;
     public static JFrame SAMFrame;
     boolean calculateQLowestFDR;
@@ -112,16 +101,17 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
     
     public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
         
-        this.SAMFrame = (JFrame) framework.getFrame();
+        SAMGUI.SAMFrame = (JFrame) framework.getFrame();
         this.experiment = framework.getData().getExperiment();
         this.data = framework.getData();
         exptNamesVector = new Vector();
         geneNamesVector = new Vector();
         int number_of_samples = experiment.getNumberOfSamples();
         int number_of_genes = experiment.getNumberOfGenes();
+        int [] columnIndices = experiment.getColumnIndicesCopy();
         
         for (int i = 0; i < number_of_samples; i++) {
-            exptNamesVector.add(framework.getData().getFullSampleName(i));
+            exptNamesVector.add(framework.getData().getFullSampleName(columnIndices[i]));
         }
         for (int i = 0; i < number_of_genes; i++) {
             geneNamesVector.add(framework.getData().getGeneName(i));
@@ -136,6 +126,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
         
         boolean useKNearest = true;
         boolean isHierarchicalTree = false;
+        drawSigTreesOnly = true;
         boolean usePreviousGraph = false;
         boolean saveImputedMatrix = false;
         boolean useTusherEtAlS0 = false;
@@ -176,6 +167,9 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
                 numNeighbors = SAMState.numNeighbors;
                 useKNearest = SAMState.useKNearest;
                 isHierarchicalTree = spDialog.drawTrees();
+                if (isHierarchicalTree) {
+                    drawSigTreesOnly = spDialog.drawSigTreesOnly();
+                }           
                 useTusherEtAlS0 = SAMState.useTusherEtAlS0;
                 calculateQLowestFDR = SAMState.calculateQLowestFDR;
                 
@@ -246,6 +240,9 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
                 SAMState.calculateQLowestFDR = calculateQLowestFDR;
                 
                 isHierarchicalTree = sDialog.drawTrees();
+                if (isHierarchicalTree) {
+                    drawSigTreesOnly = sDialog.drawSigTreesOnly();
+                }             
                 //SAMState.isHierarchicalTree = isHierarchicalTree;
             }
             
@@ -308,6 +305,9 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
                 SAMState.numNeighbors = numNeighbors;
             }
             isHierarchicalTree = sDialog.drawTrees();
+            if (isHierarchicalTree) {
+                drawSigTreesOnly = sDialog.drawSigTreesOnly();
+            }            
             //SAMState.isHierarchicalTree = isHierarchicalTree;
             saveImputedMatrix = sDialog.isSaveMatrix();
             
@@ -318,20 +318,31 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
             calculateQLowestFDR = sDialog.calculateQLowestFDR();
             SAMState.calculateQLowestFDR = calculateQLowestFDR;
         }
+
+                    IDistanceMenu menu = framework.getDistanceMenu();
+        int function = menu.getDistanceFunction();
+            if (function == Algorithm.DEFAULT) {
+                function = Algorithm.EUCLIDEAN;
+            }
         
         // hcl init
         int hcl_method = 0;
         boolean hcl_samples = false;
         boolean hcl_genes = false;
+        int hcl_function = 4;
+        boolean hcl_absolute = false;
         if (isHierarchicalTree) {
-            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame());
+            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(function), menu.isAbsoluteDistance(), true);
             if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
                 return null;
             }
             hcl_method = hcl_dialog.getMethod();
-            hcl_samples = hcl_dialog.isClusterExperience();
+            hcl_samples = hcl_dialog.isClusterExperiments();
             hcl_genes = hcl_dialog.isClusterGenes();
+            hcl_function = hcl_dialog.getDistanceMetric();
+            hcl_absolute = hcl_dialog.getAbsoluteSelection();
         }
+        
         Listener listener = new Listener();
         
         try {
@@ -349,13 +360,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
             
             data.addMatrix("experiment", experiment.getMatrix());
             data.addParam("distance-factor", String.valueOf(1.0f));
-            IDistanceMenu menu = framework.getDistanceMenu();
             data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
-            
-            int function = menu.getDistanceFunction();
-            if (function == Algorithm.DEFAULT) {
-                function = Algorithm.EUCLIDEAN;
-            }
             
             data.addParam("distance-function", String.valueOf(function));
             data.addIntArray("group-assignments", groupAssignments);
@@ -420,9 +425,12 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
             // hcl parameters
             if (isHierarchicalTree) {
                 data.addParam("hierarchical-tree", String.valueOf(true));
+                data.addParam("draw-sig-trees-only", String.valueOf(drawSigTreesOnly));                
                 data.addParam("method-linkage", String.valueOf(hcl_method));
                 data.addParam("calculate-genes", String.valueOf(hcl_genes));
                 data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+                data.addParam("hcl-distance-function", String.valueOf(hcl_function));
+                data.addParam("hcl-distance-absolute", String.valueOf(hcl_absolute));
             }
             
             long start = System.currentTimeMillis();
@@ -631,7 +639,8 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
             
             Vector allFields = new Vector();
             
-            allFields.add("Score(d)");
+            allFields.add("Expected score (dExp)");
+            allFields.add(" Observed score(d)");
             allFields.add("Numerator(r)");
             allFields.add("Denominator (s+s0)");
             if ((studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED)) {
@@ -649,6 +658,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
             auxData = new Object[experiment.getNumberOfGenes()][auxTitles.length];
             for (int i = 0; i < auxData.length; i++) {
                 int counter = 0;
+                auxData[i][counter++] = new Float(dBarMatrixX.A[i][0]);
                 auxData[i][counter++] = new Float(dValues[i]);
                 auxData[i][counter++] = new Float(rValues[i]);
                 auxData[i][counter++] = new Float((float)(rValues[i]/dValues[i]));
@@ -752,26 +762,48 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
         }
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Hierarchical Trees");
         NodeList nodeList = result_cluster.getNodeList();
-        if ((studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) || (studyDesign == SAMInitDialog.ONE_CLASS)) {
-            for (int i=0; i<nodeList.getSize(); i++) {
-                if (i == 0) {
-                    node.add(new DefaultMutableTreeNode(new LeafInfo("Positive Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
-                } else if (i == 1) {
-                    node.add(new DefaultMutableTreeNode(new LeafInfo("Negative Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
-                } else if (i == 2) {
-                    node.add(new DefaultMutableTreeNode(new LeafInfo("All Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
-                } else if (i == 3) {
-                    node.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
+        if (!drawSigTreesOnly) {
+            if ((studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) || (studyDesign == SAMInitDialog.ONE_CLASS)) {
+                for (int i=0; i<nodeList.getSize(); i++) {
+                    if (i == 0) {
+                        node.add(new DefaultMutableTreeNode(new LeafInfo("Positive Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
+                    } else if (i == 1) {
+                        node.add(new DefaultMutableTreeNode(new LeafInfo("Negative Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
+                    } else if (i == 2) {
+                        node.add(new DefaultMutableTreeNode(new LeafInfo("All Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
+                    } else if (i == 3) {
+                        node.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
+                    }
+                }
+            } else {
+                for (int i=0; i<nodeList.getSize(); i++) {
+                    if (i == 0) {
+                        node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
+                    } else if (i == 1) {
+                        node.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
+                    }
                 }
             }
-        } else {
-            for (int i=0; i<nodeList.getSize(); i++) {
-                if (i == 0) {
-                    node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
-                } else if (i == 1) {
-                    node.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
+            
+        } else {//if (drawSigTreesOnly)
+            if ((studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) || (studyDesign == SAMInitDialog.ONE_CLASS)) {
+                for (int i=0; i<nodeList.getSize(); i++) {
+                    if (i == 0) {
+                        node.add(new DefaultMutableTreeNode(new LeafInfo("Positive Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
+                    } else if (i == 1) {
+                        node.add(new DefaultMutableTreeNode(new LeafInfo("Negative Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
+                    } else if (i == 2) {
+                        node.add(new DefaultMutableTreeNode(new LeafInfo("All Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
+                    } 
                 }
-            }
+                
+            } else {
+                for (int i=0; i<nodeList.getSize(); i++) {
+                    if (i == 0) {
+                        node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
+                    } 
+                }
+            }            
         }
         root.add(node);
     }
@@ -992,7 +1024,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
             for (int i = 0; i < paired.length; i++) {
                 paired[i] = false;
             }
-            DefaultMutableTreeNode pairs = new DefaultMutableTreeNode("Experiment Pairs");
+            DefaultMutableTreeNode pairs = new DefaultMutableTreeNode("Sample Pairs");
             DefaultMutableTreeNode nonPairs = new DefaultMutableTreeNode("Unpaired Experiments");
             for (int i = 0; i < pairedGroupAExpts.size(); i++) {
                 int currentA = ((Integer)(pairedGroupAExpts.get(i))).intValue();
@@ -1035,7 +1067,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
                 groupAssignmentInfo.add(notInGroups);
             }
         } else if (studyDesign == SAMInitDialog.ONE_CLASS) {
-            groupAssignmentInfo = new DefaultMutableTreeNode("Experiment details");
+            groupAssignmentInfo = new DefaultMutableTreeNode("Sample details");
             DefaultMutableTreeNode in = new DefaultMutableTreeNode("In analysis ");
             DefaultMutableTreeNode out = new DefaultMutableTreeNode("Out of analysis ");
             int outCounter = 0;
@@ -1065,7 +1097,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
     
     public AlgorithmData getScriptParameters(IFramework framework) {
         AlgorithmData data = new AlgorithmData();
-        this.SAMFrame = (JFrame) framework.getFrame();
+        SAMGUI.SAMFrame = (JFrame) framework.getFrame();
         this.experiment = framework.getData().getExperiment();
         this.data = framework.getData();
         exptNamesVector = new Vector();
@@ -1074,7 +1106,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
         int number_of_genes = experiment.getNumberOfGenes();
         
         for (int i = 0; i < number_of_samples; i++) {
-            exptNamesVector.add(framework.getData().getFullSampleName(i));
+            exptNamesVector.add(framework.getData().getFullSampleName(experiment.getSampleIndex(i)));
         }
         for (int i = 0; i < number_of_genes; i++) {
             geneNamesVector.add(framework.getData().getGeneName(i));
@@ -1109,7 +1141,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
         }
         
         //get delta value
-        SAMScriptDeltaValueInitDialog deltaDialog = new SAMScriptDeltaValueInitDialog(new JFrame());
+        SAMScriptDeltaValueInitDialog deltaDialog = new SAMScriptDeltaValueInitDialog((JFrame)framework.getFrame());
         if(deltaDialog.showModal() != JOptionPane.OK_OPTION)
             return null;
         
@@ -1168,6 +1200,10 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
             SAMState.numNeighbors = numNeighbors;
         }
         isHierarchicalTree = sDialog.drawTrees();
+        drawSigTreesOnly = true;
+        if (isHierarchicalTree) {
+            drawSigTreesOnly = sDialog.drawSigTreesOnly();
+        }        
         //SAMState.isHierarchicalTree = isHierarchicalTree;
         saveImputedMatrix = sDialog.isSaveMatrix();
         
@@ -1178,31 +1214,34 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
         calculateQLowestFDR = sDialog.calculateQLowestFDR();
         SAMState.calculateQLowestFDR = calculateQLowestFDR;
         
-        
-        // hcl init
-        int hcl_method = 0;
-        boolean hcl_samples = false;
-        boolean hcl_genes = false;
-        if (isHierarchicalTree) {
-            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame());
-            if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
-                return null;
-            }
-            hcl_method = hcl_dialog.getMethod();
-            hcl_samples = hcl_dialog.isClusterExperience();
-            hcl_genes = hcl_dialog.isClusterGenes();
-        }
-        
-        
-        data.addParam("distance-factor", String.valueOf(1.0f));
         IDistanceMenu menu = framework.getDistanceMenu();
-        data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
-        
         int function = menu.getDistanceFunction();
         if (function == Algorithm.DEFAULT) {
             function = Algorithm.EUCLIDEAN;
         }
         
+        // hcl init
+        int hcl_method = 0;
+        boolean hcl_samples = false;
+        boolean hcl_genes = false;
+        int hcl_function = 4;
+        boolean hcl_absolute = false;
+        if (isHierarchicalTree) {
+            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(function), menu.isAbsoluteDistance(), true);
+            if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
+                return null;
+            }
+            hcl_method = hcl_dialog.getMethod();
+            hcl_samples = hcl_dialog.isClusterExperiments();
+            hcl_genes = hcl_dialog.isClusterGenes();
+            hcl_function = hcl_dialog.getDistanceMetric();
+            hcl_absolute = hcl_dialog.getAbsoluteSelection();
+        }
+        
+        
+        data.addParam("distance-factor", String.valueOf(1.0f));
+        data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
+                
         data.addParam("distance-function", String.valueOf(function));
         data.addIntArray("group-assignments", groupAssignments);
         data.addParam("study-design", String.valueOf(studyDesign));
@@ -1266,9 +1305,12 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
         // hcl parameters
         if (isHierarchicalTree) {
             data.addParam("hierarchical-tree", String.valueOf(true));
+            data.addParam("draw-sig-trees-only", String.valueOf(drawSigTreesOnly));            
             data.addParam("method-linkage", String.valueOf(hcl_method));
             data.addParam("calculate-genes", String.valueOf(hcl_genes));
             data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+            data.addParam("hcl-distance-function", String.valueOf(hcl_function));
+            data.addParam("hcl-distance-absolute", String.valueOf(hcl_absolute));
         }
         
         // alg name
@@ -1306,6 +1348,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
         algData.addMatrix("experiment", experiment.getMatrix());
         this.data = framework.getData();
         AlgorithmParameters params = algData.getParams();
+        this.drawSigTreesOnly = algData.getParams().getBoolean("draw-sig-trees-only");        
         this.studyDesign = params.getInt("study-design");
         
         if(this.studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED || this.studyDesign == SAMInitDialog.ONE_CLASS ||
@@ -1560,8 +1603,8 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
             //info.function = menu.getFunctionName(function);
             
             info.hcl = params.getBoolean("hierarchical-tree");
-            info.hcl_genes = params.getBoolean("calculate-gemes");
-            info.hcl_samples = params.getBoolean("calculate-samples");
+            info.hcl_genes = params.getBoolean("calculate-genes");
+            info.hcl_samples = params.getBoolean("calculate-experiments");
             if(info.hcl)
                 info.hcl_method = params.getInt("method-linkage");
             

@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: MevFileParser.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-07-27 19:46:11 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2005-02-24 20:24:02 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
@@ -143,7 +143,7 @@ public class MevFileParser {
 			reader = new BufferedReader(new FileReader(targetFile));
 			for (int lineCount = 0; ((currentLine = reader.readLine()) != null); lineCount++) {
 				rawLines.add(currentLine);
-				if (! currentLine.startsWith("#")) { // Non-comment line
+				if (!(currentLine.startsWith("#") || currentLine.startsWith("\"#"))) { // Non-comment line
 					if (! readHeaders) { // Read/load the column headers
 						readHeaders = true;
 						StringTokenizer st = new StringTokenizer(currentLine, "\t");
@@ -207,7 +207,7 @@ public class MevFileParser {
 			reader = new BufferedReader(new FileReader(targetFile));
 			for (int lineCount = 0; ((currentLine = reader.readLine()) != null); lineCount++) {
 				rawLines.add(currentLine);
-				if (! currentLine.startsWith("#")) { // Non-comment line
+				if (!(currentLine.startsWith("#") || currentLine.startsWith("\"#")) ) { // Non-comment line
 					if (! readHeaders) { // Read/load the column headers
 						readHeaders = true;
 						StringTokenizer st = new StringTokenizer(currentLine, "\t");

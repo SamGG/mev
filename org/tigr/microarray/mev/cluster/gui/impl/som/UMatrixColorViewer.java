@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: UMatrixColorViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-07-27 19:59:17 $
- * $Author: braisted $
+ * $Revision: 1.6 $
+ * $Date: 2005-02-24 20:23:49 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.som;
@@ -229,6 +229,13 @@ public class UMatrixColorViewer extends JPanel implements IViewer, java.io.Seria
      */
     public Experiment getExperiment() {
         return null;
+    }
+    
+    /** Returns int value indicating viewer type
+     * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
+     */
+    public int getViewerType() {
+        return -1;
     }
     
     /**

@@ -4,31 +4,28 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOM.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:49 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.algorithm.impl;
 
-import java.util.Random;
 import java.util.ArrayList;
+import java.util.Random;
 
-import org.tigr.util.FloatMatrix;
-import org.tigr.util.ConfMap;
-
-import org.tigr.microarray.mev.cluster.Node;
 import org.tigr.microarray.mev.cluster.Cluster;
+import org.tigr.microarray.mev.cluster.Node;
 import org.tigr.microarray.mev.cluster.NodeList;
 import org.tigr.microarray.mev.cluster.NodeValue;
 import org.tigr.microarray.mev.cluster.NodeValueList;
-
+import org.tigr.microarray.mev.cluster.algorithm.AbortException;
 import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
-import org.tigr.microarray.mev.cluster.algorithm.AbortException;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
+import org.tigr.util.FloatMatrix;
 
 public class SOM extends AbstractAlgorithm {
     
@@ -52,6 +49,9 @@ public class SOM extends AbstractAlgorithm {
     private FloatMatrix expMatrix;
     private float[][][] somCodes;
     private int validN;
+
+    private int hcl_function;
+    private boolean hcl_absolute;    
     
     public AlgorithmData execute(AlgorithmData data) throws AlgorithmException {
         
@@ -79,6 +79,9 @@ public class SOM extends AbstractAlgorithm {
         boolean calculate_experiments = map.getBoolean("calculate-experiments", false);
         
         this.expMatrix = data.getMatrix("experiment");
+        
+        hcl_function = map.getInt("hcl-distance-function", EUCLIDEAN);
+        hcl_absolute = map.getBoolean("hcl-distance-absolute", false);
         
         number_of_genes   = this.expMatrix.getRowDimension();
         number_of_samples = this.expMatrix.getColumnDimension();
@@ -206,8 +209,8 @@ public class SOM extends AbstractAlgorithm {
             experiment = getSubExperimentReducedCols(this.expMatrix, features);
         
         data.addMatrix("experiment", experiment);
-        data.addParam("distance-function", String.valueOf(this.function));
-        data.addParam("distance-absolute", String.valueOf(this.absolute));
+        data.addParam("hcl-distance-function", String.valueOf(this.hcl_function));
+        data.addParam("hcl-distance-absolute", String.valueOf(this.hcl_absolute));
         data.addParam("method-linkage", String.valueOf(method));
         HCL hcl = new HCL();
         AlgorithmData result;

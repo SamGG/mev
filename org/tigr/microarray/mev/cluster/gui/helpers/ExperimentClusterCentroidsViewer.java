@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: ExperimentClusterCentroidsViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-07-27 19:59:15 $
- * $Author: braisted $
+ * $Revision: 1.6 $
+ * $Date: 2005-02-24 20:24:07 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.helpers;
@@ -183,6 +183,13 @@ public class ExperimentClusterCentroidsViewer extends JPanel implements IViewer,
      */
     public JComponent getCornerComponent(int cornerIndex) {
         return null;
+    }
+    
+    /** Returns int value indicating viewer type
+     * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
+     */
+    public int getViewerType() {
+        return org.tigr.microarray.mev.cluster.clusterUtil.Cluster.EXPERIMENT_CLUSTER;
     }
     
 }

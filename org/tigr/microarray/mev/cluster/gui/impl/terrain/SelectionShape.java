@@ -4,17 +4,24 @@ All rights reserved.
 */
 /*
  * $RCSfile: SelectionShape.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:10 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.terrain;
 
-import javax.vecmath.*;
-import javax.media.j3d.*;
-import java.util.Arrays;
-import com.sun.j3d.utils.geometry.*;
+import javax.media.j3d.Appearance;
+import javax.media.j3d.Geometry;
+import javax.media.j3d.GeometryArray;
+import javax.media.j3d.Material;
+import javax.media.j3d.PolygonAttributes;
+import javax.media.j3d.QuadArray;
+import javax.media.j3d.Shape3D;
+import javax.media.j3d.TransparencyAttributes;
+import javax.vecmath.Point2f;
+import javax.vecmath.Point3d;
+import javax.vecmath.Point3f;
 
 public class SelectionShape extends Shape3D {
 

@@ -4,14 +4,13 @@ All rights reserved.
 */
 /*
  * $RCSfile: SerializedTerrainViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-07-27 19:59:17 $
- * $Author: braisted $
+ * $Revision: 1.5 $
+ * $Date: 2005-02-24 20:24:10 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.terrain;
 
-import java.awt.Frame;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JComponent;
@@ -56,7 +55,7 @@ public class SerializedTerrainViewer extends JPanel implements IViewer, java.io.
         this.weights = weights;
         this.locations = locations;
         this.sigma = sigma;
-        this.labelIndex = labelIndex;
+        this.labelIndex = framework.getDisplayMenu().getLabelIndex();
 
         trn = new TerrainViewer(isGenes, experiment, clusters, weights, locations, sigma, framework.getDisplayMenu().getLabelIndex()); 
     }
@@ -159,6 +158,13 @@ public class SerializedTerrainViewer extends JPanel implements IViewer, java.io.
      */
     public Experiment getExperiment() {
         return null;
+    }
+    
+    /** Returns int value indicating viewer type
+     * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
+     */
+    public int getViewerType() {
+        return -1;
     }
     
 }

@@ -1,4 +1,8 @@
 /*
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
+All rights reserved.
+*/
+/*
  * TFAExperimentViewer.java
  *
  * Created on February 27, 2004, 11:10 AM
@@ -15,19 +19,17 @@ import java.awt.Color;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JOptionPane;
 import javax.swing.JColorChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
+import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
-import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 
 public class TFAExperimentViewer extends ExperimentViewer {
 

@@ -1,26 +1,24 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: HCL.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:46 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.algorithm.impl;
 
-import org.tigr.util.FloatMatrix;
-import org.tigr.util.ConfMap;
-
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
 import org.tigr.microarray.mev.cluster.algorithm.AbortException;
+import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
+import org.tigr.util.FloatMatrix;
 
 public class HCL extends AbstractAlgorithm {
     
@@ -40,13 +38,13 @@ public class HCL extends AbstractAlgorithm {
 	
 	FloatMatrix expMatrix = data.getMatrix("experiment");
 	if (expMatrix == null) {
-	    throw new AlgorithmException("Experiment data is absent.");
+	    throw new AlgorithmException("Input data is absent.");
 	}
 	AlgorithmParameters map = data.getParams();
 	
-	int function = map.getInt("distance-function", EUCLIDEAN);
+	int function = map.getInt("hcl-distance-function", EUCLIDEAN);
 	float factor; // = map.getFloat("distance-factor", 1.0f);
-	boolean absolute = map.getBoolean("distance-absolute", false);
+	boolean absolute = map.getBoolean("hcl-distance-absolute", false);
 	boolean genes = map.getBoolean("calculate-genes", true);
 	int method = map.getInt("method-linkage", 0);
 	

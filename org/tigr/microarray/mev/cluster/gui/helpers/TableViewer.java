@@ -19,7 +19,6 @@ import java.awt.Insets;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JComponent;
@@ -320,7 +319,7 @@ public class TableViewer extends JPanel implements IViewer, java.io.Serializable
     public class TableHeaderMouseListener extends MouseAdapter{
         
         public void mouseClicked(MouseEvent evt) {
-            if(evt.getModifiers() == evt.BUTTON1_MASK && evt.getClickCount() > 1){
+            if(evt.getModifiers() == MouseEvent.BUTTON1_MASK && evt.getClickCount() > 1){
                 if(model instanceof DefaultViewerTableModel){
                     JTableHeader header = (JTableHeader)evt.getSource();
                     int tableCol = header.columnAtPoint(evt.getPoint());
@@ -410,6 +409,13 @@ public class TableViewer extends JPanel implements IViewer, java.io.Serializable
     
     public Experiment getExperiment() {
         return null;
+    }
+    
+    /** Returns int value indicating viewer type
+     * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
+     */
+    public int getViewerType() {
+        return -1;
     }
     
 }

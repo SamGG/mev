@@ -4,23 +4,20 @@ All rights reserved.
  */
 /*
  * $RCSfile: CastClust.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:47 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.algorithm.impl;
 
 import java.awt.BorderLayout;
 import java.awt.event.*;
-import java.util.Random;
-import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import org.tigr.util.ConfMap;
 import org.tigr.util.FloatMatrix;
 import org.tigr.util.awt.ProgressDialog;
 
@@ -71,6 +68,9 @@ public class CastClust extends AbstractAlgorithm {
     private ProgressDialog PD;
     
     private double zeroValue;
+
+    private int hcl_function;
+    private boolean hcl_absolute;    
     
     public CastClust() {
     }
@@ -87,6 +87,9 @@ public class CastClust extends AbstractAlgorithm {
         absolute = map.getBoolean("distance-absolute", false);
         threshold = map.getFloat("threshold", 0.5f);
         castGenes = map.getBoolean("cast-cluster-genes", true);
+
+        hcl_function = map.getInt("hcl-distance-function", EUCLIDEAN);
+        hcl_absolute = map.getBoolean("hcl-distance-absolute", false);        
         
         boolean hierarchical_tree = map.getBoolean("hierarchical-tree", false);
         int method_linkage = map.getInt("method-linkage", 0);
@@ -314,8 +317,8 @@ public class CastClust extends AbstractAlgorithm {
         else
             experiment = getSubExperimentReducedCols(this.expMatrix, features);
         data.addMatrix("experiment", experiment);
-        data.addParam("distance-function", String.valueOf(this.function));
-        data.addParam("distance-absolute", String.valueOf(this.absolute));
+        data.addParam("hcl-distance-function", String.valueOf(this.hcl_function));
+        data.addParam("hcl-distance-absolute", String.valueOf(this.hcl_absolute));
         data.addParam("method-linkage", String.valueOf(method));
         HCL hcl = new HCL();
         AlgorithmData result;

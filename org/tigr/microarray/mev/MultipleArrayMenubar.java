@@ -1,17 +1,18 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayMenubar.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-06-11 18:51:22 $
- * $Author: braisted $
+ * $Revision: 1.6 $
+ * $Date: 2005-02-24 20:23:44 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.GradientPaint;
@@ -44,9 +45,10 @@ public class MultipleArrayMenubar extends JMenuBar {
     private JMenu labelMenu;
     private JMenu expLabelSelectionMenu;
     private JMenu adjustMenu;
+    private JMenu filterMenu;
     private ButtonGroup labelGroup;
-    private JMenu sortMenu;
-    private ButtonGroup sortGroup;
+   // private JMenu sortMenu;
+  //  private ButtonGroup sortGroup;
     private ActionListener listener;
     private boolean affyNormAdded = false;
     private ButtonGroup experimentLabelGroup;
@@ -90,31 +92,42 @@ public class MultipleArrayMenubar extends JMenuBar {
         add(fileMenu);
         
         adjustMenu = new JMenu("Adjust Data");
-        adjustMenu.add(createJMenuItem("Log2 Transform", ActionManager.LOG2_TRANSFORM_CMD, listener));
+        
+        JMenu spotMenu = new JMenu("Gene/Row Adjustments");
+        spotMenu.add(createJMenuItem("Normalize Genes/Rows", ActionManager.NORMALIZE_SPOTS_CMD, listener));
+        spotMenu.add(createJMenuItem("Divide Genes/Rows by RMS", ActionManager.DIVIDE_SPOTS_RMS_CMD, listener));
+        spotMenu.add(createJMenuItem("Divide Genes/Rows by SD", ActionManager.DIVIDE_SPOTS_SD_CMD, listener));
+        spotMenu.add(createJMenuItem("Mean Center Genes/Rows", ActionManager.MEAN_CENTER_SPOTS_CMD, listener));
+        spotMenu.add(createJMenuItem("Median Center Genes/Rows", ActionManager.MEDIAN_CENTER_SPOTS_CMD, listener));
+        spotMenu.add(createJMenuItem("Digitalize Genes/Rows", ActionManager.DIGITAL_SPOTS_CMD, listener));
+        adjustMenu.add(spotMenu);
         adjustMenu.addSeparator();
-        adjustMenu.add(createJMenuItem("Normalize Spots", ActionManager.NORMALIZE_SPOTS_CMD, listener));
-        adjustMenu.add(createJMenuItem("Divide Spots by RMS", ActionManager.DIVIDE_SPOTS_RMS_CMD, listener));
-        adjustMenu.add(createJMenuItem("Divide Spots by SD", ActionManager.DIVIDE_SPOTS_SD_CMD, listener));
-        adjustMenu.add(createJMenuItem("Mean Center Spots", ActionManager.MEAN_CENTER_SPOTS_CMD, listener));
-        adjustMenu.add(createJMenuItem("Median Center Spots", ActionManager.MEDIAN_CENTER_SPOTS_CMD, listener));
-        adjustMenu.add(createJMenuItem("Digital Spots", ActionManager.DIGITAL_SPOTS_CMD, listener));
+        
+        
+        JMenu sampMenu = new JMenu("Sample/Column Adjustments");
+        sampMenu.add(createJMenuItem("Normalize Samples/Columns", ActionManager.NORMALIZE_EXPERIMENTS_CMD, listener));
+        sampMenu.add(createJMenuItem("Divide Samples/Columns by RMS", ActionManager.DIVIDE_EXPERIMENTS_RMS_CMD, listener));
+        sampMenu.add(createJMenuItem("Divide Samples/Columns by SD", ActionManager.DIVIDE_EXPERIMENTS_SD_CMD, listener));
+        sampMenu.add(createJMenuItem("Mean Center Samples/Columns", ActionManager.MEAN_CENTER_EXPERIMENTS_CMD, listener));
+        sampMenu.add(createJMenuItem("Median Center Samples/Columns", ActionManager.MEDIAN_CENTER_EXPERIMENTS_CMD, listener));
+        sampMenu.add(createJMenuItem("Digitalize Samples/Columns", ActionManager.DIGITAL_EXPERIMENTS_CMD, listener));
+        adjustMenu.add(sampMenu);
         adjustMenu.addSeparator();
-        adjustMenu.add(createJMenuItem("Normalize Experiments", ActionManager.NORMALIZE_EXPERIMENTS_CMD, listener));
-        adjustMenu.add(createJMenuItem("Divide Experiments by RMS", ActionManager.DIVIDE_EXPERIMENTS_RMS_CMD, listener));
-        adjustMenu.add(createJMenuItem("Divide Experiments by SD", ActionManager.DIVIDE_EXPERIMENTS_SD_CMD, listener));
-        adjustMenu.add(createJMenuItem("Mean Center Experiments", ActionManager.MEAN_CENTER_EXPERIMENTS_CMD, listener));
-        adjustMenu.add(createJMenuItem("Median Center Experiments", ActionManager.MEDIAN_CENTER_EXPERIMENTS_CMD, listener));
-        adjustMenu.add(createJMenuItem("Digital Experiments", ActionManager.DIGITAL_EXPERIMENTS_CMD, listener));
+        
+        JMenu logMenu = new JMenu("Log Transformations");
+        logMenu.add(createJMenuItem("Log2 Transform", ActionManager.LOG2_TRANSFORM_CMD, listener));
+        logMenu.add(createJMenuItem("Log10 to Log2", ActionManager.LOG10_TO_LOG2_CMD, listener));
+        adjustMenu.add(logMenu);
         adjustMenu.addSeparator();
-        adjustMenu.add(createJMenuItem("Log10 to Log2", ActionManager.LOG10_TO_LOG2_CMD, listener));
+        
+        filterMenu = new JMenu("Data Filters");          
+        filterMenu.add(createJMenuItem("Low Intensity Cutoff Filter", ActionManager.USE_LOWER_CUTOFFS_CMD, listener));
+        filterMenu.addSeparator();
+        filterMenu.add(createJMenuItem("Percentage Cutoff Filter", ActionManager.USE_PERCENTAGE_CUTOFFS_CMD, listener));
+        filterMenu.addSeparator();
+        filterMenu.add(createJMenuItem("Variance Filter", ActionManager.USE_VARIANCE_FILTER_CMD, listener));
+        adjustMenu.add(filterMenu);        
         adjustMenu.addSeparator();
-        adjustMenu.add(createJMenuItem("Set Lower Cutoffs", ActionManager.SET_LOWER_CUTOFFS_CMD, listener));
-        adjustMenu.add(createJCheckBoxMenuItem("Use Lower Cutoffs", ActionManager.USE_LOWER_CUTOFFS_CMD, listener));
-        adjustMenu.addSeparator();
-        adjustMenu.add(createJMenuItem("Set Percentage Cutoffs", ActionManager.SET_PERCENTAGE_CUTOFFS_CMD, listener));
-        adjustMenu.add(createJCheckBoxMenuItem("Use Percentage Cutoffs", ActionManager.USE_PERCENTAGE_CUTOFFS_CMD, listener));
-        adjustMenu.addSeparator();
-        adjustMenu.add(createJCheckBoxMenuItem("Adjust Intensities of '0'", ActionManager.ADJUST_INTENSITIES_0_CMD, listener, true));
         
         // pcahan
         /*
@@ -128,8 +141,6 @@ public class MultipleArrayMenubar extends JMenuBar {
         }
          */
         
-        add(adjustMenu);
-        
         ButtonGroup buttonGroup = new ButtonGroup();
         normalizationMenu = new JMenu("Normalization");
         normalizationMenu.add(createJRadioButtonMenuItem("Total Intensity", ActionManager.TOTAL_INTENSITY_CMD, listener, buttonGroup));
@@ -138,24 +149,36 @@ public class MultipleArrayMenubar extends JMenuBar {
         normalizationMenu.add(createJRadioButtonMenuItem("Iterative Log", ActionManager.ITERATIVE_LOG_CMD, listener, buttonGroup));
         normalizationMenu.addSeparator();
         normalizationMenu.add(createJRadioButtonMenuItem("No Normalization", ActionManager.NO_NORMALIZATION_CMD, listener, buttonGroup, true));
-        add(normalizationMenu);
+        
+        adjustMenu.add(normalizationMenu);
+        adjustMenu.addSeparator();
+        adjustMenu.add(createJCheckBoxMenuItem("Adjust Intensities of '0'", ActionManager.ADJUST_INTENSITIES_0_CMD, listener, true));
+        
+        add(adjustMenu);
         
         buttonGroup = new ButtonGroup();
-        JMenu distanceMenu = new JMenu("Distance");
+        JMenu distanceMenu = new JMenu("Metrics");
         distanceMenu.add(createJRadioButtonMenuItem("Default Distance", ActionManager.DEFAULT_DISTANCE_CMD, listener, buttonGroup, true));
+        
         distanceMenu.addSeparator();
+        
+        distanceMenu.add(createJRadioButtonMenuItem("Euclidean Distance", ActionManager.EUCLIDEAN_DISTANCE_CMD, listener, buttonGroup));
+        distanceMenu.add(createJRadioButtonMenuItem("Manhattan Distance", ActionManager.MANHATTAN_DISTANCE_CMD, listener, buttonGroup));
+        distanceMenu.add(createJRadioButtonMenuItem("Average Dot Product", ActionManager.AVERAGE_DOT_PRODUCT_CMD, listener, buttonGroup));
+        
+        distanceMenu.addSeparator();
+        
         distanceMenu.add(createJRadioButtonMenuItem("Pearson Correlation", ActionManager.PEARSON_CORRELATION_CMD, listener, buttonGroup));
         distanceMenu.add(createJRadioButtonMenuItem("Pearson Uncentered", ActionManager.PEARSON_UNCENTERED_CMD, listener, buttonGroup));
         distanceMenu.add(createJRadioButtonMenuItem("Pearson Squared", ActionManager.PEARSON_SQUARED_CMD, listener, buttonGroup));
         distanceMenu.add(createJRadioButtonMenuItem("Cosine Correlation", ActionManager.COSINE_CORRELATION_CMD, listener, buttonGroup));
         distanceMenu.add(createJRadioButtonMenuItem("Covariance Value", ActionManager.COVARIANCE_VALUE_CMD, listener, buttonGroup));
-        distanceMenu.add(createJRadioButtonMenuItem("Euclidean Distance", ActionManager.EUCLIDEAN_DISTANCE_CMD, listener, buttonGroup));
-        distanceMenu.add(createJRadioButtonMenuItem("Average Dot Product", ActionManager.AVERAGE_DOT_PRODUCT_CMD, listener, buttonGroup));
-        distanceMenu.add(createJRadioButtonMenuItem("Manhattan Distance", ActionManager.MANHATTAN_DISTANCE_CMD, listener, buttonGroup));
-        distanceMenu.addSeparator();
-        distanceMenu.add(createJRadioButtonMenuItem("Mutual Information", ActionManager.MUTUAL_INFORMATION_CMD, listener, buttonGroup));
         distanceMenu.add(createJRadioButtonMenuItem("Spearman Rank Correlation", ActionManager.SPEARMAN_RANK_CORRELATION_CMD, listener, buttonGroup));
+        
+        distanceMenu.addSeparator();
+        
         distanceMenu.add(createJRadioButtonMenuItem("Kendall's Tau", ActionManager.KENDALLS_TAU_CMD, listener, buttonGroup));
+        distanceMenu.add(createJRadioButtonMenuItem("Mutual Information", ActionManager.MUTUAL_INFORMATION_CMD, listener, buttonGroup));
         distanceMenu.addSeparator();
         distanceMenu.add(createJCheckBoxMenuItem("Absolute distance", ActionManager.ABSOLUTE_DISTANCE_CMD, listener, false));
         add(distanceMenu);
@@ -163,60 +186,43 @@ public class MultipleArrayMenubar extends JMenuBar {
         JMenu analysisMenu = new JMenu("Analysis");
         // add analysis menu here
         addAnalysisMenu(analysisMenu, manager);
-        analysisMenu.addSeparator();
-        analysisMenu.add(manager.getAction(ActionManager.DELETE_ALL_ACTION));
-        analysisMenu.addSeparator();
-        analysisMenu.add(manager.getAction(ActionManager.DELETE_ALL_EXPERIMENT_CLUSTERS_ACTION));
-        analysisMenu.addSeparator();
-        analysisMenu.add(manager.getAction(ActionManager.SHOW_THUMBNAIL_ACTION));
         add(analysisMenu);
-        
         
         JMenu displayMenu = new JMenu("Display");
         
         buttonGroup = new ButtonGroup();
         JMenu colorSchemeMenu = new JMenu("Color Scheme");
-        colorSchemeMenu.add(createJRadioButtonMenuItem("Green/Red Scheme", ActionManager.GREEN_RED_COLOR_SCHEME_CMD, listener, buttonGroup, true));
-        colorSchemeMenu.add(createJRadioButtonMenuItem("Blue/Yellow Scheme", ActionManager.BLUE_YELLOW_COLOR_SCHEME_CMD, listener, buttonGroup));
-        colorSchemeMenu.add(createJRadioButtonMenuItem("Custom Color Scheme", ActionManager.CUSTOM_COLOR_SCHEME_CMD, listener, buttonGroup));
+        colorSchemeMenu.add(createJMenuItem("Green/Black/Red Scheme (Double Gradient)", ActionManager.GREEN_RED_COLOR_SCHEME_CMD, listener));
+        colorSchemeMenu.add(createJMenuItem("Blue/Black/Yellow Scheme (Double Gradient)", ActionManager.BLUE_YELLOW_COLOR_SCHEME_CMD, listener));
+        colorSchemeMenu.add(createJMenuItem("Custom Color Scheme", ActionManager.CUSTOM_COLOR_SCHEME_CMD, listener));
         colorSchemeMenu.add(createJCheckBoxMenuItem("Use Color Gradient on Graphs", ActionManager.COLOR_GRADIENT_CMD, listener));
         displayMenu.add(colorSchemeMenu);
         displayMenu.addSeparator();
         
-        buttonGroup = new ButtonGroup();
-        displayMenu.add(createJRadioButtonMenuItem("Expression Bar View", ActionManager.DISPLAY_GREEN_RED_CMD, listener, buttonGroup));
-        displayMenu.add(createJRadioButtonMenuItem("Ratio Split View", ActionManager.DISPLAY_GR_RATIO_SPLIT_CMD, listener, buttonGroup, true));
-        displayMenu.add(createJRadioButtonMenuItem("Color Overlay View", ActionManager.DISPLAY_GR_OVERLAY_CMD, listener, buttonGroup));
-        
-        displayMenu.addSeparator();
-        
-        displayMenu.add(createJMenuItem("Abbr. Experiment Names", ActionManager.TOGGLE_ABBR_EXPT_NAMES_CMD, listener));
-        
-        displayMenu.addSeparator();
-        
-        JMenu expLabelMenu = new JMenu("Experiment Labels");
-        expLabelMenu.add(this.createJMenuItem("Edit Labels/Reorder Experiments", ActionManager.ADD_NEW_EXPERIMENT_LABEL_CMD, listener));
-        expLabelSelectionMenu = new JMenu("Select Exp. Label");
-        expLabelMenu.addSeparator();
+        JMenu expLabelMenu = new JMenu("Sample/Column Labels");   
+
+        expLabelSelectionMenu = new JMenu("Select Sample Label");
         expLabelMenu.add(expLabelSelectionMenu);
+        expLabelMenu.addSeparator();
+        expLabelMenu.add(this.createJMenuItem("Edit Labels/Reorder Samples", ActionManager.ADD_NEW_EXPERIMENT_LABEL_CMD, listener));        
+        expLabelMenu.add(createJMenuItem("Abbr. Sample Names", ActionManager.TOGGLE_ABBR_EXPT_NAMES_CMD, listener));          
         experimentLabelGroup = new ButtonGroup();
         
         displayMenu.add(expLabelMenu);
         
-        labelMenu = new JMenu("Gene Labels");
+        labelMenu = new JMenu("Gene/Row Labels");
         labelGroup = new ButtonGroup();
         
         //addLabelMenuItems(labelMenu, manager, labelGroup);
         displayMenu.add(labelMenu);
         displayMenu.addSeparator();
-        displayMenu.add(createJCheckBoxMenuItem("G/R Scale", ActionManager.DISPLAY_GR_SCALE_CMD, listener, true));
+        
+        //move these to main context menu
+        
         displayMenu.add(createJCheckBoxMenuItem("Draw Borders", ActionManager.DISPLAY_DRAW_BORDERS_CMD, listener, false));
-        displayMenu.add(createJCheckBoxMenuItem("Tracing", ActionManager.DISPLAY_TRACING_CMD, listener));
-        displayMenu.add(createJCheckBoxMenuItem("Use Anti-Aliasing", ActionManager.DISPLAY_USE_ANTIALIASING_CMD, listener, true));
+       displayMenu.add(createJMenuItem("Set Color Scale Limits", ActionManager.DISPLAY_SET_RATIO_SCALE_CMD, listener));
         displayMenu.addSeparator();
-        displayMenu.add(createJMenuItem("Set Upper Limits", ActionManager.DISPLAY_SET_UPPER_LIMITS_CMD, listener));
-        displayMenu.add(createJMenuItem("Set Ratio Scale", ActionManager.DISPLAY_SET_RATIO_SCALE_CMD, listener));
-        JMenu sizeMenu = new JMenu("Element Size");
+        JMenu sizeMenu = new JMenu("Set Element Size");
         buttonGroup = new ButtonGroup();
         sizeMenu.add(createJRadioButtonMenuItem("5 x 2", ActionManager.DISPLAY_5X2_CMD, listener, buttonGroup));
         sizeMenu.add(createJRadioButtonMenuItem("10 x 10", ActionManager.DISPLAY_10X10_CMD, listener, buttonGroup));
@@ -226,18 +232,135 @@ public class MultipleArrayMenubar extends JMenuBar {
         displayMenu.add(sizeMenu);
         add(displayMenu);
         
-        sortGroup = new ButtonGroup();
-        sortMenu = new JMenu("Sort");
-        sortMenu.add(createJRadioButtonMenuItem("Sort by Location", ActionManager.SORT_BY_LOCATION_CMD, listener, sortGroup, true));
-        sortMenu.add(createJRadioButtonMenuItem("Sort by Ratio", ActionManager.SORT_BY_RATIO_CMD, listener, sortGroup));
-        ((JRadioButtonMenuItem)sortMenu.getMenuComponent(0)).setSelected(true);
-        // addSortMenuItems(sortMenu, manager, sortGroup);
-        add(sortMenu);
+        JMenu utilMenu = new JMenu("Utilities");
+        utilMenu.add(createJMenuItem(manager.getAction(ActionManager.SEARCH_ACTION)));
+        utilMenu.addSeparator();
         
-        JMenu helpMenu = new JMenu("Help");
-        helpMenu.add(createJMenuItem("Default Distances", ActionManager.DEFAULT_DISTANCES_CMD, listener));
-        helpMenu.add(createJMenuItem("Support Tree Legend", ActionManager.SHOW_SUPPORTTREE_LEGEND_COMMAND, listener));
-        add(helpMenu);
+        
+        
+        JMenu clusterMenu = new JMenu("Cluster Utilities");
+        
+        JMenu importMenu = new JMenu("Import Cluster");                
+        importMenu.add(manager.getAction(ActionManager.IMPORT_GENE_LIST_ACTION));
+        importMenu.add(manager.getAction(ActionManager.IMPORT_SAMPLE_LIST_ACTION));        
+        clusterMenu.add(importMenu);
+        
+        clusterMenu.addSeparator();
+        
+        clusterMenu.add(manager.getAction(ActionManager.DELETE_ALL_ACTION));
+        clusterMenu.add(manager.getAction(ActionManager.DELETE_ALL_EXPERIMENT_CLUSTERS_ACTION));
+        utilMenu.add(clusterMenu);
+        
+        utilMenu.addSeparator();
+        
+        //Eventually we might provide annotation append annotation for genes, for now use a single sample menu item
+        //JMenu appendAnnotationMenu = new JMenu("Append Annotation");
+        //appendAnnotationMenu.add(manager.getAction(ActionManager.APPEND_SAMPLE_ANNOTATION_ACTION));
+        //appendAnnotationMenu.add(manager.getAction(ActionManager.APPEND_GENE_ANNOTATION_ACTION));
+        //utilMenu.add(appendAnnotationMenu);
+        
+        //gene annotation append
+        utilMenu.add(manager.getAction(ActionManager.APPEND_GENE_ANNOTATION_ACTION));
+        
+        //sample annotation append
+        utilMenu.add(manager.getAction(ActionManager.APPEND_SAMPLE_ANNOTATION_ACTION));
+                        
+        add(utilMenu);      
+    }
+    
+    
+    
+    /**
+     * Constructs a <code>MultipleArrayMenubar</code> using specified
+     * action maneger.
+     * @see ActionManager
+     */
+    public MultipleArrayMenubar(MultipleArrayMenubar origMenubar, ActionManager manager) {
+        //run main constructor
+        this(manager);
+        
+        IDisplayMenu origDisplayMenu = origMenubar.getDisplayMenu();
+        
+        this.setColorSchemeIndex(origDisplayMenu.getColorScheme());
+        Dimension dim = origDisplayMenu.getElementSize();
+        this.setElementSize(dim.width, dim.height);
+        this.setAntiAliasing(origDisplayMenu.isAntiAliasing());
+        this.setTracing(origDisplayMenu.isTracing());
+        this.setLabelIndex(origDisplayMenu.getLabelIndex());
+        this.setPaletteStyle(origDisplayMenu.getPaletteStyle());
+        this.setGRScale(origDisplayMenu.isGRScale());
+        this.setDrawBorders(origDisplayMenu.isDrawingBorder());
+        this.setMaxRatioScale(origDisplayMenu.getMaxRatioScale());
+        this.setMinRatioScale(origDisplayMenu.getMinRatioScale());
+        this.setColorGradientState(origDisplayMenu.getColorGradientState());
+        this.setNegativeCustomGradient(origDisplayMenu.getNegativeGradientImage());
+        this.setPositiveCustomGradient(origDisplayMenu.getPositiveGradientImage());
+        this.setUseDoubleGradient(origDisplayMenu.getUseDoubleGradient());
+        
+        IDistanceMenu origDistanceMenu = origMenubar.getDistanceMenu();
+        
+        this.setDistanceAbsolute(origDistanceMenu.isAbsoluteDistance());
+        this.setDistanceFunction(origDistanceMenu.getDistanceFunction());
+        //now have the full menu, minus probably the full sort and label menu
+    }
+    
+    public void synchronizeSettings(MultipleArrayMenubar origMenuBar) {
+        
+        //first synchronize the distance menu
+        
+        JMenu origMenu = origMenuBar.getMenu(2);
+        JMenu menu = getMenu(2);
+        Object menuObject, origMenuObject;
+        
+        for(int i = 0; i < menu.getMenuComponentCount(); i++) {
+            menuObject = menu.getMenuComponent(i);
+            origMenuObject = origMenu.getMenuComponent(i);
+            
+            if(origMenuObject instanceof JRadioButtonMenuItem) {
+                ((JRadioButtonMenuItem)menuObject).setSelected( ((JRadioButtonMenuItem)origMenuObject).isSelected());
+            } else if (origMenuObject instanceof JCheckBoxMenuItem) {
+                ((JCheckBoxMenuItem)menuObject).setSelected( ((JCheckBoxMenuItem)origMenuObject).isSelected());
+            }
+        }
+        
+        // now synchronize the display menu
+        origMenu = origMenuBar.getMenu(4);
+        menu = getMenu(4);
+        
+        //strategy: if it's a JMenu send it to the sync method else deal with it directly
+        Component comp, origComp;
+        int numComponents = origMenu.getMenuComponentCount();
+        for(int i = 0; i < numComponents; i++) {
+            origComp = origMenu.getMenuComponent(i);
+            comp = menu.getMenuComponent(i);
+            
+            if(origComp instanceof JMenu) {
+                syncMenus((JMenu) origComp, (JMenu)comp);
+            } else {
+                if(origComp instanceof JRadioButtonMenuItem) {
+                    ((JRadioButtonMenuItem)comp).setSelected( ((JRadioButtonMenuItem)origComp).isSelected());
+                } else if (origComp instanceof JCheckBoxMenuItem) {
+                    ((JCheckBoxMenuItem)comp).setSelected( ((JCheckBoxMenuItem)origComp).isSelected());
+                }
+            }
+        }
+    }
+    
+    private void syncMenus(JMenu origMenu, JMenu menu) {
+        Object menuObject, origMenuObject;
+        
+        for(int i = 0; i < menu.getMenuComponentCount(); i++) {
+            menuObject = menu.getMenuComponent(i);
+            origMenuObject = origMenu.getMenuComponent(i);
+            
+            if(origMenuObject instanceof JRadioButtonMenuItem) {
+                ((JRadioButtonMenuItem)menuObject).setSelected( ((JRadioButtonMenuItem)origMenuObject).isSelected());
+            } else if (origMenuObject instanceof JCheckBoxMenuItem) {
+                ((JCheckBoxMenuItem)menuObject).setSelected( ((JCheckBoxMenuItem)origMenuObject).isSelected());
+            } else if(origMenuObject instanceof JMenu) {
+                syncMenus((JMenu)origMenuObject, (JMenu)menuObject);
+            }
+        }
     }
     
     /**
@@ -264,7 +387,8 @@ public class MultipleArrayMenubar extends JMenuBar {
                 setEnableMenuItem("File", ActionManager.PRINT_IMAGE_COMMAND, true);
                 setEnableMenu("Adjust Data", true);
                 setEnableMenu("Normalization", true);
-                setEnableMenu("Distance", true);
+                setEnableMenu("Metrics", true);
+                setEnableMenu("Utilities", true);
                 setEnableMenu("Analysis", true);
                 setEnableMenu("Display", true);
                 setEnableMenu("Sort", true);
@@ -291,10 +415,10 @@ public class MultipleArrayMenubar extends JMenuBar {
                 setEnableMenuItem("File", ActionManager.LOAD_FILE_COMMAND, false);
                 setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_COMMAND, false);
                 setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_AS_COMMAND, false);
-              //  setEnableMenuItem("File", ActionManager.NEW_SCRIPT_COMMAND, false);
-              //  setEnableMenuItem("File", ActionManager.LOAD_SCRIPT_COMMAND, false);
+                //  setEnableMenuItem("File", ActionManager.NEW_SCRIPT_COMMAND, false);
+                //  setEnableMenuItem("File", ActionManager.LOAD_SCRIPT_COMMAND, false);
                 setEnableMenuItem("File", ActionManager.NEW_SCRIPT_COMMAND, false);
-                setEnableMenuItem("File", ActionManager.LOAD_SCRIPT_COMMAND, false);                
+                setEnableMenuItem("File", ActionManager.LOAD_SCRIPT_COMMAND, false);
                 
                 
                 setEnableMenuItem("File", ActionManager.LOAD_DIRECTORY_COMMAND, false);
@@ -305,15 +429,16 @@ public class MultipleArrayMenubar extends JMenuBar {
                 setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_COMMAND, false);
                 setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_AS_COMMAND, false);
                 setEnableMenuItem("File", ActionManager.NEW_SCRIPT_COMMAND, false);
-                setEnableMenuItem("File", ActionManager.LOAD_SCRIPT_COMMAND, false);                
-
+                setEnableMenuItem("File", ActionManager.LOAD_SCRIPT_COMMAND, false);
+                
                 
                 setEnableMenuItem("File", ActionManager.SAVE_MATRIX_COMMAND, false);
                 setEnableMenuItem("File", ActionManager.SAVE_IMAGE_COMMAND, false);
                 setEnableMenuItem("File", ActionManager.PRINT_IMAGE_COMMAND, false);
                 setEnableMenu("Adjust Data", false);
                 setEnableMenu("Normalization", false);
-                setEnableMenu("Distance", false);
+                setEnableMenu("Metrics", false);
+                setEnableMenu("Utilities", false);
                 break;
             case TMEV.DB_AVAILABLE:
                 setEnableMenu("File", true);
@@ -327,6 +452,11 @@ public class MultipleArrayMenubar extends JMenuBar {
         setEnableMenu("Analysis", false);
         setEnableMenu("Display", false);
         setEnableMenu("Sort", false);
+    }
+    
+    
+    public void enableNormalizationMenu(boolean enable) {
+        normalizationMenu.setEnabled(enable);
     }
     
     /**
@@ -389,11 +519,11 @@ public class MultipleArrayMenubar extends JMenuBar {
     
     
     public void replaceExperimentLabelMenuItems(String [] fieldNames){
-        //remove all menu items 
-
-        //ButtonModel model = 
+        //remove all menu items
+        
+        //ButtonModel model =
         //String currentKey = (this.experimentLabelGroup.getSelection()).getActionCommand();
-       
+        
         this.expLabelSelectionMenu.removeAll();
         
         JRadioButtonMenuItem item;
@@ -405,14 +535,14 @@ public class MultipleArrayMenubar extends JMenuBar {
             action = new DefaultAction(actionManager, cmd, ActionManager.DISPLAY_EXPERIMENT_LABEL_CMD);
             action.putValue(ActionManager.PARAMETER, fieldNames[i]);
             item = new JRadioButtonMenuItem(action);
-            experimentLabelGroup.add(item);            
+            experimentLabelGroup.add(item);
             this.expLabelSelectionMenu.add(item);
             item.setSelected(false);
             if(i == 0)
                 item.setSelected(true);
-        }        
+        }
     }
-        
+    
     public void replaceLabelMenuItems(String [] fieldNames){
         //remove all menu items
         this.labelMenu.removeAll();
@@ -433,18 +563,20 @@ public class MultipleArrayMenubar extends JMenuBar {
     
     
     public void addAffyFilterMenuItems(){
-        adjustMenu.addSeparator();
-        adjustMenu.add(createJMenuItem("Set Detection Filter", ActionManager.SET_DETECTION_FILTER_CMD, listener));
-        adjustMenu.add(createJCheckBoxMenuItem("Use Detection Filter", ActionManager.USE_DETECTION_FILTER_CMD, listener));
-        adjustMenu.add(createJMenuItem("Set Fold Filter", ActionManager.SET_FOLD_FILTER_CMD, listener));
-        adjustMenu.add(createJCheckBoxMenuItem("Use Fold Filter", ActionManager.USE_FOLD_FILTER_CMD, listener));
+        filterMenu.addSeparator();
+        filterMenu.add(createJMenuItem("Set Detection Filter", ActionManager.SET_DETECTION_FILTER_CMD, listener));
+        filterMenu.add(createJCheckBoxMenuItem("Use Detection Filter", ActionManager.USE_DETECTION_FILTER_CMD, listener));
+        filterMenu.add(createJMenuItem("Set Fold Filter", ActionManager.SET_FOLD_FILTER_CMD, listener));
+        filterMenu.add(createJCheckBoxMenuItem("Use Fold Filter", ActionManager.USE_FOLD_FILTER_CMD, listener));
     }
     
     
     public void addAffyNormMenuItems() {
         adjustMenu.addSeparator();
-        adjustMenu.add(createJMenuItem("Divide Genes by Median", ActionManager.DIVIDE_GENES_MEDIAN_CMD, listener));
-        adjustMenu.add(createJMenuItem("Divide Genes by Mean", ActionManager.DIVIDE_GENES_MEAN_CMD, listener));
+        JMenu menu = new JMenu("Affymetrix Adjustments");
+        menu.add(createJMenuItem("Divide Genes by Median", ActionManager.DIVIDE_GENES_MEDIAN_CMD, listener));
+        menu.add(createJMenuItem("Divide Genes by Mean", ActionManager.DIVIDE_GENES_MEAN_CMD, listener));
+        adjustMenu.add(menu);
         this.set_affyNormAddded(true);
     }
     
@@ -464,7 +596,7 @@ public class MultipleArrayMenubar extends JMenuBar {
     }
     
     public void addSortMenuItems(String [] fieldNames){
-        JRadioButtonMenuItem item;
+       /* JRadioButtonMenuItem item;
         DefaultAction action;
         for(int i = 0; i < fieldNames.length; i++){
             action = new DefaultAction(actionManager, "Sort by "+fieldNames[i], ActionManager.SORT_LABEL_CMD);
@@ -473,11 +605,12 @@ public class MultipleArrayMenubar extends JMenuBar {
             sortGroup.add(item);
             this.sortMenu.add(item);
         }
+        */
     }
     
     public void replaceSortMenuItems(String [] fieldNames){
         //Remove all items
-        this.sortMenu.removeAll();
+     /*   this.sortMenu.removeAll();
         
         //Restore defaults
         sortMenu.add(createJRadioButtonMenuItem("Sort by Location", ActionManager.SORT_BY_LOCATION_CMD, listener, sortGroup, true));
@@ -492,6 +625,9 @@ public class MultipleArrayMenubar extends JMenuBar {
             sortGroup.add(item);
             this.sortMenu.add(item);
         }
+    */
+        
+      
     }
     
     /**
@@ -753,7 +889,7 @@ public class MultipleArrayMenubar extends JMenuBar {
     }
     
     int getColorScheme(){
-        return displayMenu.colorScheme;
+        return displayMenu.getColorScheme();
     }
     
     
@@ -785,6 +921,10 @@ public class MultipleArrayMenubar extends JMenuBar {
         button.setSelected(true);
     }
     
+    public void setUseDoubleGradient(boolean useDouble) {
+    	this.displayMenu.setUseDoubleGradient(useDouble);
+    }
+    
     /**
      * The class to present a state of the display menu.
      */
@@ -810,6 +950,7 @@ public class MultipleArrayMenubar extends JMenuBar {
         private BufferedImage posYellowColorImage = createGradientImage(Color.black, Color.yellow);
         private BufferedImage negCustomColorImage;
         private BufferedImage posCustomColorImage;
+        private boolean useDoubleGradient = true;
         
         public int getPaletteStyle() {
             return paletteStyle;
@@ -821,6 +962,14 @@ public class MultipleArrayMenubar extends JMenuBar {
         
         public Dimension getElementSize() {
             return elementSize;
+        }
+        
+        public boolean getUseDoubleGradient() {
+        	return useDoubleGradient;        
+        }
+        
+        public void setUseDoubleGradient(boolean useDouble) {
+        	useDoubleGradient = useDouble;         
         }
         
         public boolean isDrawingBorder() {
@@ -853,6 +1002,10 @@ public class MultipleArrayMenubar extends JMenuBar {
         
         public float getMaxCY5Scale() {
             return maxCY5Scale;
+        }
+        
+        public int getColorScheme() {
+            return colorScheme;
         }
         
         /**
@@ -938,17 +1091,17 @@ public class MultipleArrayMenubar extends JMenuBar {
         public String getFunctionName(int function) {
             String name;
             switch (function) {
-                case Algorithm.PEARSON: name="Pearson correlation"; break;
-                case Algorithm.COSINE: name="Cosine correlation"; break;
+                case Algorithm.PEARSON: name="Pearson Correlation"; break;
+                case Algorithm.COSINE: name="Cosine Correlation"; break;
                 case Algorithm.COVARIANCE: name="Covariance"; break;
-                case Algorithm.EUCLIDEAN: name="Euclidean distance"; break;
-                case Algorithm.DOTPRODUCT: name="Average dot product"; break;
-                case Algorithm.PEARSONUNCENTERED: name="Pearson uncentered"; break;
-                case Algorithm.PEARSONSQARED: name="Pearson squared"; break;
-                case Algorithm.MANHATTAN: name="Manhattan distance"; break;
-                case Algorithm.SPEARMANRANK: name="Spearman rank correlation"; break;
+                case Algorithm.EUCLIDEAN: name="Euclidean Distance"; break;
+                case Algorithm.DOTPRODUCT: name="Average Dot Product"; break;
+                case Algorithm.PEARSONUNCENTERED: name="Pearson Uncentered"; break;
+                case Algorithm.PEARSONSQARED: name="Pearson Squared"; break;
+                case Algorithm.MANHATTAN: name="Manhattan Distance"; break;
+                case Algorithm.SPEARMANRANK: name="Spearman Rank Correlation"; break;
                 case Algorithm.KENDALLSTAU: name="Kendall's Tau"; break;
-                case Algorithm.MUTUALINFORMATION: name="Mutual information"; break;
+                case Algorithm.MUTUALINFORMATION: name="Mutual Information"; break;
                 default: { name="not defined";}
             }
             return name;

@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMExperimentHeader.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-05 22:10:56 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2005-02-24 20:24:05 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.ptm;
@@ -40,28 +40,35 @@ public class PTMExperimentHeader extends javax.swing.JPanel {
     private Insets insets = new Insets(0, 10, 0, 0);
     private BufferedImage posColorImage;
     private BufferedImage negColorImage;
+    private boolean useDoubleGradient = true;
 
     /** Creates new PTMExperimentHeader */
     
     public PTMExperimentHeader(JComponent expHeader, Vector templateVector) {
-	setLayout(new BorderLayout());
-	setBackground(Color.white);
-	this.ptmVectorPanel = new PTMVectorPanel(templateVector);
-	add(expHeader, BorderLayout.NORTH);
-	add(ptmVectorPanel, BorderLayout.SOUTH);
-    }
+    	setLayout(new BorderLayout());
+		setBackground(Color.white);
+		this.ptmVectorPanel = new PTMVectorPanel(templateVector);
+		add(expHeader, BorderLayout.NORTH);
+		add(ptmVectorPanel, BorderLayout.SOUTH);
+	}
     
     private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
         oos.writeObject(this.ptmVectorPanel);
         oos.writeObject(this.insets);
+        oos.writeBoolean(useDoubleGradient);        
     }
     
     private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
         this.ptmVectorPanel = (PTMVectorPanel)ois.readObject();
         this.insets = (Insets)ois.readObject();
+        this.useDoubleGradient = ois.readBoolean();
     }
     
+    public void setUseDoubleGradient(boolean useDouble) {
+    	useDoubleGradient = useDouble;
+    }
     
+
     /**
      * The component to display ptm vector.
      */
@@ -249,20 +256,38 @@ public class PTMExperimentHeader extends javax.swing.JPanel {
 	    g.setColor(color);
 	    g.drawRect(sample*elementSize.width, 0, elementSize.width-1, elementSize.height-1);
 	}
-	/**
-	 * Calculates a color for the specified value.
-	 */
-	
-	private Color getColor(float value) {
-	    if (Float.isNaN(value) || posColorImage == null || negColorImage == null) {
-		return missingColor;
-	    }
-	    float maximum = value < 0 ? this.minValue : this.maxValue;
-	    int colorIndex = (int)(255*value/maximum);
-	    colorIndex = colorIndex > 255 ? 255 : colorIndex;
-	    int rgb = value < 0 ? negColorImage.getRGB(255-colorIndex, 0) : posColorImage.getRGB(colorIndex, 0);
-	    return new Color(rgb);
-	}
+
+
+    /**
+     * Calculates color for passed value.
+     */
+    private Color getColor(float value) {
+        if (Float.isNaN(value)) {
+            return missingColor;
+        }
+        
+        float maximum;
+        int colorIndex, rgb;
+        
+        if(useDoubleGradient) {
+        	maximum = value < 0 ? this.minValue : this.maxValue;
+			colorIndex = (int) (255 * value / maximum);
+			colorIndex = colorIndex > 255 ? 255 : colorIndex;
+			rgb = value < 0 ? negColorImage.getRGB(255 - colorIndex, 0)
+					: posColorImage.getRGB(colorIndex, 0);
+        } else {
+        	float span = this.maxValue - this.minValue;
+        	if(value <= minValue)
+        		colorIndex = 0;
+        	else if(value >= maxValue)
+        		colorIndex = 255;
+        	else
+        		colorIndex = (int)(((value - this.minValue)/span) * 255);
+         	
+        	rgb = posColorImage.getRGB(colorIndex,0);
+        }
+        return new Color(rgb);
+    }
 	
 	
     }

@@ -4,14 +4,15 @@ All rights reserved.
 */
 /*
  * $RCSfile: Content3D.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-12 15:13:20 $
- * $Author: braisted $
+ * $Revision: 1.5 $
+ * $Date: 2005-02-24 20:24:02 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.pca;
 
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.BorderLayout;
@@ -66,7 +67,9 @@ import org.tigr.microarray.mev.cluster.gui.IData;
 public class Content3D extends JPanel {
     
     private IData data;
-    private int mode;
+    private int mode;    
+    private int xAxis, yAxis, zAxis;
+    private int geneLabelIndex;
     private FloatMatrix U;
     private Experiment experiment;
     private SimpleUniverse universe;
@@ -116,6 +119,11 @@ public class Content3D extends JPanel {
         this.universe = new SimpleUniverse(onScreenCanvas);
         universe.getViewingPlatform().setNominalViewingTransform();
         
+        boxSizeX = (float)(scaleAxisX/5f);
+        boxSizeY = (float)(scaleAxisY/5f);
+        boxSizeZ = (float)(scaleAxisZ/5f); 
+        //System.out.println("boxSize X, Y, Z = " + boxSizeX + ", " +boxSizeY + ", " + boxSizeZ);       
+        
         offScreenCanvas = new Canvas3D(config, true);
         Screen3D sOn = onScreenCanvas.getScreen3D();
         Screen3D sOff = offScreenCanvas.getScreen3D();
@@ -149,6 +157,10 @@ public class Content3D extends JPanel {
         this.universe = new SimpleUniverse(onScreenCanvas);
         universe.getViewingPlatform().setNominalViewingTransform();
         
+        boxSizeX = (float)(scaleAxisX/5f);
+        boxSizeY = (float)(scaleAxisY/5f);
+        boxSizeZ = (float)(scaleAxisZ/5f);        
+        
         offScreenCanvas = new Canvas3D(config, true);
         Screen3D sOn = onScreenCanvas.getScreen3D();
         Screen3D sOff = offScreenCanvas.getScreen3D();
@@ -160,6 +172,38 @@ public class Content3D extends JPanel {
         
         add(onScreenCanvas, BorderLayout.CENTER);
     }
+    
+    public Content3D(int mode, FloatMatrix U, Experiment experiment, boolean geneViewer, int xAxis, int yAxis, int zAxis) {
+        this.mode = mode;
+        this.U = U;
+        this.experiment = experiment;
+        this.geneViewer = geneViewer;
+        this.xAxis = xAxis;
+        this.yAxis = yAxis;
+        this.zAxis = zAxis;
+        initScales(U);
+        setLayout(new BorderLayout());
+        setPreferredSize(new Dimension(10, 10));
+        GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
+        this.onScreenCanvas = new Canvas3D(config);
+        this.universe = new SimpleUniverse(onScreenCanvas);
+        universe.getViewingPlatform().setNominalViewingTransform();
+        
+        boxSizeX = (float)(scaleAxisX/5f);
+        boxSizeY = (float)(scaleAxisY/5f);
+        boxSizeZ = (float)(scaleAxisZ/5f);        
+        
+        offScreenCanvas = new Canvas3D(config, true);
+        Screen3D sOn = onScreenCanvas.getScreen3D();
+        Screen3D sOff = offScreenCanvas.getScreen3D();
+        sOff.setSize(sOn.getSize());
+        sOff.setPhysicalScreenWidth(sOn.getPhysicalScreenWidth());
+        sOff.setPhysicalScreenHeight(sOn.getPhysicalScreenHeight());
+        // attach the offscreen canvas to the view
+        universe.getViewer().getView().addCanvas3D(offScreenCanvas);
+        
+        add(onScreenCanvas, BorderLayout.CENTER);
+    }    
     
     /**
      * Sets the content data.
@@ -208,6 +252,10 @@ public class Content3D extends JPanel {
      */
     public float getSizeZ() {
         return boxSizeZ;
+    }
+    
+    public void setGeneLabelIndex(int index){
+        geneLabelIndex = index;
     }
     
     /**
@@ -292,6 +340,10 @@ public class Content3D extends JPanel {
         scaleAxisY = dimY;
         scaleAxisZ = dimZ;
     }
+    
+    public float getMaxValue() {
+        return Math.max(scaleAxisX, Math.max(scaleAxisY, scaleAxisZ));
+    }    
     
     /**
      * Sets white background attribute.
@@ -408,7 +460,8 @@ public class Content3D extends JPanel {
         float max = 0f;
         final int rows = U.getRowDimension();
         for (int i = rows; --i >= 0;) {
-            max = Math.max(max, Math.max(Math.max(Math.abs(U.get(i, 0)), Math.abs(U.get(i, 1))), Math.abs(U.get(i, 2))));
+            //max = Math.max(max, Math.max(Math.max(Math.abs(U.get(i, 0)), Math.abs(U.get(i, 1))), Math.abs(U.get(i, 2))));
+            max = Math.max(max, Math.max(Math.max(Math.abs(U.get(i, xAxis)), Math.abs(U.get(i, yAxis))), Math.abs(U.get(i, zAxis))));
         }
         setScale(max, max, max);
     }
@@ -562,6 +615,7 @@ public class Content3D extends JPanel {
         appearance.setLineAttributes(new LineAttributes(10, LineAttributes.PATTERN_SOLID, true));
         appearance.setMaterial(material);
         return new Cylinder(0.025f, 6f, appearance);
+        //return new Cylinder(0.025f, getMaxValue(), appearance);
     }
     
     /**
@@ -607,8 +661,13 @@ public class Content3D extends JPanel {
         int[] genes = new int[getPointsCount(true)];
         int pos = 0;
         for (int i=0; i<U.getRowDimension(); i++) {
-            if (isPointSelected(U.get(i,0), U.get(i,1), U.get(i,2))) {
-                genes[pos] = experiment.getGeneIndexMappedToData(i);
+            //if (isPointSelected(U.get(i,0), U.get(i,1), U.get(i,2))) {
+            if (isPointSelected(U.get(i,xAxis), U.get(i,yAxis), U.get(i,zAxis))) {
+                if (this.geneViewer) {
+                    genes[pos] = experiment.getGeneIndexMappedToData(i);
+                } else {
+                    genes[pos] = experiment.getSampleIndex(i);
+                }
                 pos++;
             }
         }
@@ -622,7 +681,8 @@ public class Content3D extends JPanel {
         int count = 0;
         int selCount = 0;
         for (int i=0; i<U.getRowDimension(); i++) {
-            if (isPointSelected(U.get(i,0), U.get(i,1), U.get(i,2))) {
+            //if (isPointSelected(U.get(i,0), U.get(i,1), U.get(i,2))) {
+            if (isPointSelected(U.get(i,xAxis), U.get(i,yAxis), U.get(i,zAxis))) {
                 selCount++;
             } else {
                 count++;
@@ -668,9 +728,12 @@ public class Content3D extends JPanel {
         float x, y, z;
         int index = 0;
         for (int i=0; i<U.getRowDimension(); i++) {
-            x = U.get(i,0);
-            y = U.get(i,1);
-            z = U.get(i,2);
+            //x = U.get(i,0);
+            //y = U.get(i,1);
+            //z = U.get(i,2);
+            x = U.get(i,xAxis);
+            y = U.get(i,yAxis);
+            z = U.get(i,zAxis);            
             if (isPointSelected(x, y, z)) {
                 points.setCoordinate(index, new Point3f(x*factorX, y*factorY, z*factorZ));
                 index++;
@@ -702,7 +765,12 @@ public class Content3D extends JPanel {
         if (count < 1) {
             return null;
         }
-        int uncoloredCount = data.getColoredProbesCount(-1);
+        int uncoloredCount;
+        if (geneViewer) {
+            uncoloredCount = data.getColoredProbesCount(-1);
+        } else {
+            uncoloredCount = data.getColoredExperimentsCount(-1);
+        }
 
         int delta = uncoloredCount == 0 ? 0 : 1;
         
@@ -746,9 +814,12 @@ public class Content3D extends JPanel {
         float x, y, z;
         int index = 0;
         for (int i=0; i<U.getRowDimension(); i++) {
-            x = U.get(i,0);
-            y = U.get(i,1);
-            z = U.get(i,2);
+            //x = U.get(i,0);
+            //y = U.get(i,1);
+            //z = U.get(i,2);
+            x = U.get(i,xAxis);
+            y = U.get(i,yAxis);
+            z = U.get(i,zAxis);            
             if (!isSelection() || !isPointSelected(x, y, z)) {
                 if(geneViewer)
                     index = data.getProbeColorIndex(experiment.getGeneIndexMappedToData(i))+delta;
@@ -805,9 +876,12 @@ public class Content3D extends JPanel {
         float x, y, z;
         
         for (int i=0; i<U.getRowDimension(); i++) {
-            x = U.get(i,0);
-            y = U.get(i,1);
-            z = U.get(i,2);
+            //x = U.get(i,0);
+            //y = U.get(i,1);
+            //z = U.get(i,2);
+            x = U.get(i,xAxis);
+            y = U.get(i,yAxis);
+            z = U.get(i,zAxis);            
             transform  = new Transform3D();
             vector3d = new Vector3d(x*factorX, y*factorY, z*factorZ);
             transform.set(vector3d);
@@ -846,6 +920,11 @@ public class Content3D extends JPanel {
         
         //Font3D font = new Font3D(new Font("TestFont", Font.BOLD, 1), new FontExtrusion());
         Font3D font = new Font3D(new Font("TestFont", Font.BOLD, (int)(Math.round(getPointSize(false)))), new FontExtrusion());
+        Font origFont = font.getFont();
+        
+        FontMetrics fMet = onScreenCanvas.getFontMetrics(origFont);
+        int ascent = fMet.getAscent();   
+        
         Color3f color3f;
         if(!this.whiteBackground)
             color3f = new Color3f(1.0f, 1.0f, 1.0f);
@@ -872,14 +951,19 @@ public class Content3D extends JPanel {
         String text;
         float x, y, z;
         for (int i=0; i<U.getRowDimension(); i++) {
-            x = U.get(i,0);
-            y = U.get(i,1);
-            z = U.get(i,2);
+            //x = U.get(i,0);
+            //y = U.get(i,1);
+            //z = U.get(i,2);
+            x = U.get(i,xAxis);
+            y = U.get(i,yAxis);
+            z = U.get(i,zAxis);            
             tempGroup = new TransformGroup(fontTransform);
-            text = (mode == 1) ? data.getUniqueId(i) : data.getSampleName(experiment.getSampleIndex(i));
-            text3d = new Text3D(font, text, new Point3f(x*factorX*10f+getPointSize(isPointSelected(x, y, z)), (y-0.035f)*factorY*10f, z*factorZ*10f));
+            //text = (mode == 1) ? data.getUniqueId(i) : data.getSampleName(experiment.getSampleIndex(i));
+            text = (mode == 1) ? data.getElementAttribute(experiment.getGeneIndexMappedToData(i), geneLabelIndex) : data.getSampleName(experiment.getSampleIndex(i));
+            //text3d = new Text3D(font, text, new Point3f(x*factorX*10f+getPointSize(isPointSelected(x, y, z)), (y-0.035f)*factorY*10f, z*factorZ*10f));
+            text3d = new Text3D(font, text, new Point3f(x*factorX*10f+getPointSize(isPointSelected(x, y, z)), (float)(y*factorY*10f - (float)ascent/2f), z*factorZ*10f));            
             shape3d = new Shape3D();
-            shape3d.setGeometry(text3d);
+            shape3d.setGeometry(text3d);            
             shape3d.setAppearance(appearance);
             tempGroup.addChild(shape3d);
             textGroup.addChild(tempGroup);
@@ -922,9 +1006,11 @@ public class Content3D extends JPanel {
         fontTrans.rotZ(Math.PI/2.0d);
         
         if(!whiteBackground)
-            return createAxis("X", new Color3f(0.5f, 0.5f, 0.5f), axisTrans, fontTrans);
+            //return createAxis("X", new Color3f(0.5f, 0.5f, 0.5f), axisTrans, fontTrans);
+            return createAxis("" + (xAxis + 1), new Color3f(0.5f, 0.5f, 0.5f), axisTrans, fontTrans);
         else
-            return createAxis("X", new Color3f(0.0f, 0.0f, 0.0f), axisTrans, fontTrans);
+            //return createAxis("X", new Color3f(0.0f, 0.0f, 0.0f), axisTrans, fontTrans);
+            return createAxis("" + (xAxis + 1), new Color3f(0.0f, 0.0f, 0.0f), axisTrans, fontTrans);
     }
     
     /**
@@ -933,9 +1019,11 @@ public class Content3D extends JPanel {
     private TransformGroup createYAxis() {
         
         if(!whiteBackground)
-            return createAxis("Y", new Color3f(0.3f, 0.3f, 1f), null, null);
+            //return createAxis("Y", new Color3f(0.3f, 0.3f, 1f), null, null);
+            return createAxis("" + (yAxis + 1), new Color3f(0.3f, 0.3f, 1f), null, null);
         else
-            return createAxis("Y", new Color3f(0.0f, 0.0f, 0.0f), null, null);
+            //return createAxis("Y", new Color3f(0.0f, 0.0f, 0.0f), null, null);
+            return createAxis("" + (yAxis + 1), new Color3f(0.0f, 0.0f, 0.0f), null, null);
     }
     
     /**
@@ -950,9 +1038,11 @@ public class Content3D extends JPanel {
         Transform3D fontTrans = new Transform3D();
         fontTrans.rotZ(Math.PI/2.0d);
         if(!whiteBackground)
-            return createAxis("Z", new Color3f(1f, 0.3f, 1f), axisTrans, fontTrans);
+            //return createAxis("Z", new Color3f(1f, 0.3f, 1f), axisTrans, fontTrans);
+            return createAxis("" + (zAxis + 1), new Color3f(1f, 0.3f, 1f), axisTrans, fontTrans);
         else
-            return createAxis("Z", new Color3f(0.0f, 0.0f, 0.0f), axisTrans, fontTrans);
+            //return createAxis("Z", new Color3f(0.0f, 0.0f, 0.0f), axisTrans, fontTrans);
+            return createAxis("" + (zAxis + 1), new Color3f(0.0f, 0.0f, 0.0f), axisTrans, fontTrans);
     }
     
     /**

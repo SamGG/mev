@@ -4,36 +4,34 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterAttributesDialog.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:12 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.clusterUtil;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
-import java.awt.Dimension;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
-import javax.swing.JColorChooser;
-import javax.swing.BorderFactory;
-import javax.swing.border.LineBorder;
 import javax.swing.border.BevelBorder;
 
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 
@@ -169,8 +167,7 @@ public class ClusterAttributesDialog extends AlgorithmDialog {
         public void actionPerformed(ActionEvent event){
             String command = event.getActionCommand();
             if(command == "set-color-command"){
-                JColorChooser chooser = new JColorChooser();
-                Color color = chooser.showDialog(ClusterAttributesDialog.this, "Cluster Color", null);
+                Color color = JColorChooser.showDialog(ClusterAttributesDialog.this, "Cluster Color", null);
                 if(color != null){
                     okButton.setEnabled(true);
                     colorLabel.setEnabled(true);

@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: HistoryViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-07-27 19:56:10 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2005-02-24 20:23:44 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 /*
@@ -17,7 +17,6 @@ All rights reserved.
 
 package org.tigr.microarray.mev;
 
-import java.io.BufferedWriter;
 import java.io.File;
 
 import java.io.PrintWriter;
@@ -42,10 +41,8 @@ import java.text.DateFormat;
 
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
 

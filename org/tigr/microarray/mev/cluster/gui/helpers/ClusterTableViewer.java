@@ -19,7 +19,6 @@ import javax.swing.JTable;
 import javax.swing.JComponent;
 import javax.swing.border.Border;
 import javax.swing.table.*;
-import javax.swing.event.TableModelEvent;
 
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
@@ -1064,5 +1063,11 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
         clusterTable.addMouseListener(listener);
     }
     
+    /** Returns int value indicating viewer type
+     * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
+     */
+    public int getViewerType() {
+        return Cluster.GENE_CLUSTER;
+    }    
     
 }

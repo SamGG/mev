@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: Manager.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-07-27 19:56:10 $
- * $Author: braisted $
+ * $Revision: 1.6 $
+ * $Date: 2005-02-24 20:23:44 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -16,7 +16,6 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.filechooser.*;
 import org.tigr.util.Query;
 import org.tigr.util.awt.ActionInfoListener;
 import org.tigr.util.awt.ActionInfoEvent;
@@ -65,17 +64,33 @@ public class Manager {//A class to keep track of viewers
         }
     }
     
+/*
     public void initializeFrame() {
         frame = new JFrame("TIGR MultiExperiment Viewer");
         frame.addWindowListener(eventListener);
         frame.setVisible(true);
-        
+ 
         initializeMenuBar(frame);
         frame.setSize(frame.getPreferredSize());
-        
+ 
         frame.validate();
         frame.setResizable(false);
     }
+ */
+  
+   public void initializeFrame() {
+        frame = new JFrame("TIGR MultiExperiment Viewer");
+        frame.addWindowListener(eventListener);
+        
+        initializeMenuBar(frame);
+        frame.setSize(frame.getPreferredSize());
+
+        frame.setResizable(false);
+        //frame.pack() was required for WindowsXP 
+        frame.pack();
+        frame.setVisible(true);
+    }
+   
     
     public void initializeMenuBar(JFrame frame) {
         menuBar = new JMenuBar();
@@ -297,6 +312,22 @@ public class Manager {//A class to keep track of viewers
     
     public static void createNewMultipleArrayViewer(MultipleArrayData data, String clusterLabel){
         MultipleArrayViewer mav = new MultipleArrayViewer(data);
+        //Remove the next two lines (about DB system enabling)
+        //mav.systemEnable(TMEV.DB_AVAILABLE);
+        //mav.systemEnable(TMEV.DB_LOGIN);
+        mav.getFrame().setSize(1050, 700);
+        if(clusterLabel != null)
+            mav.getFrame().setTitle("TIGR Multiple Array Viewer, "+clusterLabel);
+        Manager.addComponent(mav);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        mav.getFrame().setLocation((screenSize.width - mav.getFrame().getSize().width)/2, (screenSize.height - mav.getFrame().getSize().height)/2);
+        mav.getFrame().setVisible(true);
+    }
+    
+    
+    public static void createNewMultipleArrayViewer(MultipleArrayMenubar origMenubar, MultipleArrayData data, String clusterLabel){
+        
+        MultipleArrayViewer mav = new MultipleArrayViewer(data, origMenubar);
         //Remove the next two lines (about DB system enabling)
         //mav.systemEnable(TMEV.DB_AVAILABLE);
         //mav.systemEnable(TMEV.DB_LOGIN);
@@ -543,9 +574,23 @@ public class Manager {//A class to keep track of viewers
         }
         
         public void windowClosing(WindowEvent event) {
+            
+            //in the event of an active save, inform user of state save
+            if(TMEV.activeSave) {
+                JOptionPane.showMessageDialog(frame, "Analayis save is in progress. "+
+                "MeV will close when complete.", "Analysis Save in Progress", JOptionPane.INFORMATION_MESSAGE);
+            }
+            
             frame.dispose();
+            
+            while(TMEV.activeSave) {
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception e) { }
+            }
             System.exit(0);
         }
+        
         
         public void windowOpened(WindowEvent event) {}
         public void windowClosed(WindowEvent event) {}

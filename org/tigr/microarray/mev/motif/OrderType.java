@@ -1,22 +1,16 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: OrderType.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:19 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:50 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.motif;
 
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import javax.swing.*;
-import org.tigr.microarray.mev.cluster.*;
 /************************ ADT Order ***********************************
  * Defines a model for the orderings of ntyp different types of linear
  * elements having n (or npos) total positions in each of nseq sequences

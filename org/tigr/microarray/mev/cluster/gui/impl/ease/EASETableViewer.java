@@ -1,12 +1,12 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: EASETableViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-07-27 19:59:16 $
- * $Author: braisted $
+ * $Revision: 1.5 $
+ * $Date: 2005-02-24 20:24:11 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 /*
@@ -24,12 +24,12 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeNode;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,7 +40,6 @@ import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 
 import org.tigr.microarray.mev.cluster.gui.helpers.TableViewer;
 
@@ -48,18 +47,18 @@ import org.tigr.microarray.mev.TMEV;
 
 /** Displays ease results
  */
-public class EASETableViewer extends TableViewer implements java.io.Serializable {
+public class EASETableViewer extends TableViewer implements Serializable {
     public static final long serialVersionUID = 202002010001L;
     
-    DefaultMutableTreeNode easeRoot;
-    JPopupMenu menu;
+    private DefaultMutableTreeNode easeRoot;
+    private JPopupMenu menu;
     
-    Experiment experiment;
-    int [][] clusters;
-    String [] headerNames;
-    boolean clusterAnalysis;
-    boolean haveAccessionNumbers;
-    JMenuItem launchMenuItem;
+    private Experiment experiment;
+    private int [][] clusters;
+    private String [] headerNames;
+    private boolean clusterAnalysis;
+    private boolean haveAccessionNumbers;
+    private JMenuItem launchMenuItem;
     
     /** Creates a new instance of EASETableViewer
      * @param headerNames Header names
@@ -136,8 +135,7 @@ public class EASETableViewer extends TableViewer implements java.io.Serializable
             setNumerical(4, true);
         }
         menu = createPopupMenu();
-        this.experiment = experiment;
-        this.clusters = clusters;
+
         table.addMouseListener(new Listener());
         if(table.getRowCount() > 0)
             table.getSelectionModel().setSelectionInterval(0,0);

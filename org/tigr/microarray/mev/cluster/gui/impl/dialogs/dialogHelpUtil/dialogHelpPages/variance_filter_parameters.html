@@ -1,0 +1,33 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>Variance Filter</h1><h2>Parameter Information</h2>
+            <hr size = 10>
+
+<br>
+The variance filter allows the removal of genes with low variation of expression over the 
+loaded samples.  This filter is basically used to remove ‘flat genes’ that don’t vary much 
+in expression over the conditions of the experiment.  The variance filter has three possible 
+criteria for specifying which genes to keep.  The Enable Variance Filter check box turns the 
+filter on and off.  Be sure to observe the History Node log to see the number of genes 
+retained after using the filter.  Note that the variance filter is performed after other 
+filters such as Percent Cutoff Filter is imposed.  This convention insures that the genes 
+that are tested for variance also contain some minimum level of ‘good’ (not missing) data.
+
+<h2>Percentage of Highest SD Genes</h2>
+The <i>Percentage of Highest SD Genes</i> option ranks the genes based on standard deviation and 
+then the genes that are kept are some percentage of this ranked list. For and example, 
+if we have 1000 genes and the percentage was set to 20%, then the result would be a 
+final list of the 200 most variable genes.
+
+<h2>Number of Desired High SD Genes</h2>
+The <i>Number of Desired High SD Genes</i> option also ranks the genes based on SD and
+then the number of genes specified are selected from this SD ordered list such that 
+the highest SD genes are selected.
+
+<h2>SD Cutoff Value</h2>
+The <i>SD Cutoff Value</i> option uses an actual SD value such that all genes having 
+an SD greater than this value are selected.
+
+        </basefont>
+    </body>
+</html>

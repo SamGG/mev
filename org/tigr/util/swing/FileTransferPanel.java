@@ -4,40 +4,38 @@ All rights reserved.
 */
 /*
  * $RCSfile: FileTransferPanel.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:23 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:11 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.util.swing;
 
-import java.io.File;
-import java.util.Vector;
-import java.util.Enumeration;
-import java.awt.Dimension;
 import java.awt.Component;
-import java.awt.BorderLayout;
-import java.awt.GridBagLayout;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.border.BevelBorder;
-import javax.swing.JList;
-import javax.swing.JScrollPane;
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileSystemView;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.DefaultListModel;
+import java.io.File;
+
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.border.BevelBorder;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileSystemView;
 
 public class FileTransferPanel extends JPanel {
     

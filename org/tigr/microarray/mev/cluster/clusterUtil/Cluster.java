@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: Cluster.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-07-27 19:58:13 $
- * $Author: braisted $
+ * $Revision: 1.6 $
+ * $Date: 2005-02-24 20:24:12 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.clusterUtil;
@@ -65,6 +65,9 @@ public class Cluster implements java.io.Serializable {
     /** Node objects userObject
      */
     private Object userObject;
+    /** boolean to indicate if cluster color should be displayed
+     */
+    private boolean isShowColor;
 
     /** Creates new cluster object
      */
@@ -79,6 +82,7 @@ public class Cluster implements java.io.Serializable {
         this.clusterDescription = clusterDescription;
         this.serialNumber = serialNumber;
         this.experiment = experiment;
+        this.isShowColor = true;
         this.experimentIndices = getIndicesMappedToExperiment();
     }
     
@@ -97,12 +101,29 @@ public class Cluster implements java.io.Serializable {
         this.node = node;
         this.userObject = node.getUserObject();
         this.experiment = experiment;
+        this.isShowColor = true;
         this.experimentIndices = getIndicesMappedToExperiment();
     }
     
     /** Returns cluster color
      */    
-    public Color getClusterColor(){ return this.clusterColor; }
+    public Color getClusterColor(){ 
+        if(this.isShowColor)
+            return this.clusterColor;
+        else
+            return null;
+    }
+    
+    /** Sets boolean to show color
+     */
+    public void enableShowColor(boolean show) {
+        this.isShowColor = show;
+    }
+    /** returns true if color is to be shown
+     */
+    public boolean showColor() {
+        return this.isShowColor;
+    }
     /** Returns cluster indices
      */    
     public int []  getIndices(){ return this.indices; }
@@ -258,7 +279,7 @@ public class Cluster implements java.io.Serializable {
         oos.writeInt(serialNumber);     
         oos.writeObject(experiment);
         oos.writeObject(experimentIndices);
-        
+        oos.writeBoolean(isShowColor);
         //Can't store node, store path names for finding node
         oos.writeBoolean(node != null);
         if(node != null){
@@ -287,7 +308,7 @@ public class Cluster implements java.io.Serializable {
         serialNumber = ois.readInt();       
         experiment = (Experiment)ois.readObject();
         experimentIndices = (int [])ois.readObject();
-        
+        this.isShowColor = ois.readBoolean();
         //if a node path was stored get path and later restore node value
         if(ois.readBoolean()){
            // path = (String [])ois.readObject();

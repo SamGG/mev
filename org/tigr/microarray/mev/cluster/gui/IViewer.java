@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: IViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-13 19:15:03 $
- * $Author: braisted $
+ * $Revision: 1.4 $
+ * $Date: 2005-02-24 20:24:11 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui;
@@ -93,4 +93,10 @@ public interface IViewer {
      *  Returns the viewer's experiment or null
      */
     public Experiment getExperiment();
+    
+    /**
+     * Returns int value indicating viewer type
+     * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
+     */
+    public int getViewerType();
 }

@@ -4,32 +4,30 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMSubCentroidsViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-13 19:15:05 $
- * $Author: braisted $
+ * $Revision: 1.4 $
+ * $Date: 2005-02-24 20:24:05 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.gui.impl.ptm;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.util.Vector;
 
-import java.awt.Font;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-
-import javax.swing.JPanel;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 
-import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
-import org.tigr.microarray.mev.cluster.gui.helpers.CentroidsViewer;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
 
 /**
  *
@@ -180,6 +178,13 @@ public class PTMSubCentroidsViewer  extends JPanel implements IViewer {
      */
     public JComponent getCornerComponent(int cornerIndex) {
         return null;
+    }
+    
+    /** Returns int value indicating viewer type
+     * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
+     */
+    public int getViewerType() {
+        return centroidViewer.getViewerType();
     }
     
 }

@@ -4,19 +4,26 @@ All rights reserved.
 */
 /*
  * $RCSfile: KeyMotionBehavior.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:10 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.terrain;
 
-import java.awt.AWTEvent;
-import java.util.Enumeration;
 import java.awt.event.KeyEvent;
+import java.util.Enumeration;
 
-import javax.media.j3d.*;
-import javax.vecmath.*;
+import javax.media.j3d.Behavior;
+import javax.media.j3d.Transform3D;
+import javax.media.j3d.TransformGroup;
+import javax.media.j3d.WakeupCriterion;
+import javax.media.j3d.WakeupOnBehaviorPost;
+import javax.vecmath.AxisAngle4d;
+import javax.vecmath.Matrix3d;
+import javax.vecmath.Point3d;
+import javax.vecmath.Vector3d;
+import javax.vecmath.Vector3f;
 
 public class KeyMotionBehavior extends Behavior {
 

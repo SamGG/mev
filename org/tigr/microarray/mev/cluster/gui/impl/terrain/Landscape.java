@@ -4,25 +4,25 @@ All rights reserved.
 */
 /*
  * $RCSfile: Landscape.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:10 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.terrain;
 
-import java.awt.*; 
-import java.awt.image.*;
-
-import javax.vecmath.*;
-import javax.media.j3d.*;
-
-import com.sun.j3d.utils.image.TextureLoader;
-import com.sun.j3d.utils.geometry.GeometryInfo;
-import com.sun.j3d.utils.geometry.NormalGenerator;
-import com.sun.j3d.utils.picking.PickTool;
-import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.util.Arrays;
+
+import javax.media.j3d.Appearance;
+import javax.media.j3d.Geometry;
+import javax.media.j3d.GeometryArray;
+import javax.media.j3d.GeometryUpdater;
+import javax.media.j3d.Material;
+import javax.media.j3d.PolygonAttributes;
+import javax.media.j3d.Shape3D;
+import javax.media.j3d.TriangleStripArray;
+import javax.vecmath.Vector3f;
 
 public class Landscape extends Shape3D implements GeometryUpdater {
 

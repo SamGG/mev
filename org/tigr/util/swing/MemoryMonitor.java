@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: MemoryMonitor.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:23 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:11 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
@@ -255,7 +255,7 @@ public class MemoryMonitor extends JPanel {
 	    
 	    while (thread == me && !isShowing() || getSize().width == 0) {
 		try {
-		    thread.sleep(500);
+		    Thread.sleep(500);
 		} catch (InterruptedException e) {
 		    return;
 		}
@@ -275,7 +275,7 @@ public class MemoryMonitor extends JPanel {
 		}
 		repaint();
 		try {
-		    thread.sleep(sleepAmount);
+		    Thread.sleep(sleepAmount);
 		} catch (InterruptedException e) {
 		    break;
 		}

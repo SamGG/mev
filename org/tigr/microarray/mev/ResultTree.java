@@ -12,7 +12,6 @@ package org.tigr.microarray.mev;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 import java.awt.Graphics;
 
 import java.io.ObjectInputStream;
@@ -27,15 +26,12 @@ import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JTree;
-import javax.swing.SwingConstants;
 
 import javax.swing.border.EmptyBorder;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
-import javax.swing.UIManager;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
@@ -43,14 +39,18 @@ import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 
 
-import java.beans.*;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
+
 /**
  *
  * @author  braisted
  */
 public class ResultTree extends JTree implements java.io.Serializable {
     public static final long serialVersionUID = 100010201070001L;
-
+    
     
     /** Root node
      */
@@ -63,14 +63,14 @@ public class ResultTree extends JTree implements java.io.Serializable {
     
     public ResultTree(){
         // super();
-        this.setCellRenderer(new NodeRenderer());
+        this.setCellRenderer(new ResultTreeNodeRenderer());
     }
     
     /** Creates a new instance of ResultTree */
     public ResultTree(DefaultMutableTreeNode root) {
         super(root);
         this.root = root;
-        this.setCellRenderer(new NodeRenderer());
+        this.setCellRenderer(new ResultTreeNodeRenderer());
         
         dumpVector = new Vector();
     }
@@ -163,8 +163,8 @@ public class ResultTree extends JTree implements java.io.Serializable {
         boolean removedTimeNode = false;
         
         if(timeNode != null){
-            //last analysis node is childless, indicates just a time stamp
-            if(timeNode.getChildCount() == 0){
+            //last analysis node is childless AND user object is a String, indicates just a time stamp
+            if(timeNode.getChildCount() == 0 && timeNode.getUserObject() instanceof String){
                 DefaultTreeModel treeModel = (DefaultTreeModel)this.getModel();
                 treeModel.removeNodeFromParent(timeNode);
                 removedTimeNode = true;
@@ -300,9 +300,217 @@ public class ResultTree extends JTree implements java.io.Serializable {
         return table;
     }
     
+    /** Support for gene or experiment search, retrieval of nodes for the
+     * SearchResultDialg
+     */
+    
+    public Vector findViewerCollection(int [] indices, boolean geneSearch) {
+        Vector result = new Vector();
+        
+        
+        
+        Vector analysisNodes = new Vector();
+        Hashtable expViewHash = new Hashtable();
+        Hashtable tabViewHash = new Hashtable();
+        
+        Vector childNodes = new Vector();
+        DefaultMutableTreeNode node;
+        
+        
+        int childCount = analysisNode.getChildCount();
+        boolean hasResult = false;
+        
+        for(int analysis = 0; analysis < childCount ; analysis++) {
+            
+            node = (DefaultMutableTreeNode)(analysisNode.getChildAt(analysis));
+            
+            //for each analysis node accumulate result nodes
+            DefaultMutableTreeNode aNode = getSearchResults(indices, node, expViewHash, tabViewHash, geneSearch);
+         
+            if(aNode != null)
+                analysisNodes.addElement(aNode);
+        }
+        
+        
+        result.add(analysisNodes);
+        result.add(expViewHash);
+        result.add(tabViewHash);
+        
+        if(expViewHash.size() == 0 && expViewHash.size() == 0)
+            return null;
+        
+        return result;
+    }
+    
+    private DefaultMutableTreeNode getSearchResults(int [] indices, DefaultMutableTreeNode analRoot, Hashtable expHash, Hashtable tabHash, boolean geneSearch) {
+        boolean result = false;
+        
+        Enumeration enum = analRoot.depthFirstEnumeration();
+        DefaultMutableTreeNode currNode;
+        Object currUserObject;
+        IViewer currViewer;
+        LeafInfo currLeafInfo;
+        Experiment currExperiment;
+        int [][] clusters;
+        int clusterIndex;
+        Object currIndexObject;
+        boolean containsIndex;
+        
+        Vector expViewers = new Vector();
+        Vector tabViewers = new Vector();
+        
+        DefaultMutableTreeNode newNode;
+        
+        DefaultMutableTreeNode newRoot = new DefaultMutableTreeNode(analRoot.getUserObject());
+        
+      
+        while(enum.hasMoreElements()) {
+            
+            currNode = (DefaultMutableTreeNode)(enum.nextElement());
+            currUserObject = currNode.getUserObject();
+            
+            if(currUserObject instanceof LeafInfo) {
+                currLeafInfo = (LeafInfo)currUserObject;
+                currViewer = (currLeafInfo).getViewer();
+                
+                if(currViewer != null) {
+                    
+                    if(geneSearch) {                    
+                        if( currViewer instanceof ExperimentViewer ) {
+                            currIndexObject = ((LeafInfo)currUserObject).getUserObject();
+                            if(currIndexObject != null && currIndexObject instanceof Integer) {
+                                clusterIndex = ((Integer)currIndexObject).intValue();
+                                
+                                clusters = currViewer.getClusters();
+                                currExperiment = currViewer.getExperiment();
+                                
+                                if(clusters != null && currExperiment != null) {
+                                    if(containsGeneIndices(indices, clusters[clusterIndex], currExperiment)) {
+                                        result = true;
+                                        expViewers.addElement(currNode);
+                                        //newNode = new DefaultMutableTreeNode(new LeafInfo(currLeafInfo.getName(), currLeafInfo.getViewer(), currLeafInfo.getJPopupMenu(), currLeafInfo.getUserObject()));
+                                        //expViewers.addElement(newNode);
+                                    }
+                                }
+                            }
+                        } else if(currViewer instanceof ClusterTableViewer) {
+                            currIndexObject = ((LeafInfo)currUserObject).getUserObject();
+                            if(currIndexObject != null && currIndexObject instanceof Integer) {
+                                clusterIndex = ((Integer)currIndexObject).intValue();
+                                
+                                clusters = currViewer.getClusters();
+                                currExperiment = currViewer.getExperiment();
+                                
+                                if(clusters != null && currExperiment != null) {
+                                    if(containsGeneIndices(indices, clusters[clusterIndex], currExperiment)) {
+                                        result = true;                                                                                
+                                        tabViewers.addElement(currNode);
+                                        //newNode = new DefaultMutableTreeNode(new LeafInfo(currLeafInfo.getName(), currLeafInfo.getViewer(), currLeafInfo.getJPopupMenu(), currLeafInfo.getUserObject()));                                                                                
+                                        //tabViewers.addElement(newNode);
+                                    }
+                                }
+                            }             
+                        }
+                        
+           
+                        
+                        
+                    } else { //experiment search
+                        
+                        if(currViewer instanceof ExperimentClusterViewer) {
+                            currIndexObject = ((LeafInfo)currUserObject).getUserObject();
+                            if(currIndexObject != null && currIndexObject instanceof Integer) {
+                                clusterIndex = ((Integer)currIndexObject).intValue();
+                                
+                                clusters = currViewer.getClusters();
+                                currExperiment = currViewer.getExperiment();
+                                
+                                if(clusters != null && currExperiment != null) {
+                                    if(containsExperimentIndices(indices, clusters[clusterIndex], currExperiment)) {
+                                        result = true;                 
+                                        expViewers.addElement(currNode);
+                                        //newNode = new DefaultMutableTreeNode(new LeafInfo(currLeafInfo.getName(), currLeafInfo.getViewer(), currLeafInfo.getJPopupMenu(), currLeafInfo.getUserObject()));
+                                        //expViewers.addElement(newNode);
+                                    }
+                                }
+                            }
+                        } else if(currViewer instanceof ExperimentClusterTableViewer){
+                            currIndexObject = ((LeafInfo)currUserObject).getUserObject();
+                            if(currIndexObject != null && currIndexObject instanceof Integer) {
+                                clusterIndex = ((Integer)currIndexObject).intValue();
+                                
+                                clusters = currViewer.getClusters();
+                                currExperiment = currViewer.getExperiment();
+                                
+                                if(clusters != null && currExperiment != null) {
+                                    if(containsExperimentIndices(indices, clusters[clusterIndex], currExperiment)) {
+                                        result = true;
+                                        tabViewers.addElement(currNode);
+                                        //newNode = new DefaultMutableTreeNode(new LeafInfo(currLeafInfo.getName(), currLeafInfo.getViewer(), currLeafInfo.getJPopupMenu(), currLeafInfo.getUserObject()));
+                                        //tabViewers.addElement(newNode);
+                                    }
+                                }
+                            }
+                            
+                            
+                            
+                        }
+                        
+                    }
+                }
+            } 
+            
+        }
+        
+        if(result) {
+            expHash.put(newRoot, expViewers);
+            tabHash.put(newRoot, tabViewers);
+            return newRoot;
+        }
+        
+        return null;
+    }
+    
+    
+    private boolean containsGeneIndices(int [] indices, int [] clusterIndices, Experiment experiment) {
+        for(int i = 0; i < indices.length; i++) {
+            for(int j = 0; j < clusterIndices.length; j++) {
+                if(indices[i] == experiment.getGeneIndexMappedToData(clusterIndices[j]))
+                    return true;
+            }
+        }        
+        return false;
+    }
+    
+    private boolean containsExperimentIndices(int [] indices, int [] clusterIndices, Experiment experiment) {
+        int [] colIndices = experiment.getColumnIndicesCopy();
+        
+        for(int i = 0; i < indices.length; i++) {
+            for(int j = 0; j < clusterIndices.length; j++) {
+                if(indices[i] == colIndices[clusterIndices[j]])
+                    return true;
+            }
+        }
+        
+        return false;
+    }    
+    
+    /**
+     *  Clears data selection over the tree
+     */
+    public void clearDataSelection() {
+        Enumeration  enum = this.root.depthFirstEnumeration();
+        DefaultMutableTreeNode node;
+        while(enum.hasMoreElements()) {
+            node = (DefaultMutableTreeNode)(enum.nextElement());
+            if(node.getUserObject() != null && node.getUserObject() instanceof LeafInfo)
+                ((LeafInfo)node.getUserObject()).setSelectedDataSource(false);
+        }
+    }
+    
     /** Renders the <CODE>ResultTree</CODE>.
      */
-    private class NodeRenderer extends DefaultTreeCellRenderer {
+    public class ResultTreeNodeRenderer extends DefaultTreeCellRenderer {
         
         /** Default leaf icon to display
          */
@@ -392,7 +600,23 @@ public class ResultTree extends JTree implements java.io.Serializable {
         /**
          * Script XML Viewer Icon
          */
-        private Icon scriptXMLViewerIcon = GUIFactory.getIcon("ScriptXMLViewer.gif");        
+        private Icon scriptXMLViewerIcon = GUIFactory.getIcon("ScriptXMLViewer.gif");
+        /**
+         * Search Icon         
+         */
+        private Icon searchIcon = GUIFactory.getIcon("search_16.gif");   
+        /**
+         * GO hierarchy viewer Icon         
+         */
+        private Icon goHierarchyViewerIcon = GUIFactory.getIcon("go_hierarchy_viewer.gif"); 
+        /**
+         * Data Selection Icon         
+         */
+        private Icon dataSelectionIcon = GUIFactory.getIcon("data_selection_icon.gif");         
+        /**
+         * Data Filter Icon
+         */
+        private Icon dataFilterIcon = GUIFactory.getIcon("DataFilterResult.gif");                 
         /** Parent node
          */
         private DefaultMutableTreeNode parent;
@@ -406,7 +630,7 @@ public class ResultTree extends JTree implements java.io.Serializable {
         
         /** Creats a new NodeRenderer.
          */
-        public NodeRenderer(){
+        public ResultTreeNodeRenderer(){
             super();
             
             this.setIcon(closedIcon);
@@ -424,9 +648,7 @@ public class ResultTree extends JTree implements java.io.Serializable {
             
             String text = "", parentText= "", grandParentText= "";
             Object userObj = ((DefaultMutableTreeNode)value).getUserObject();
-            //setText("");
-            //setIcon(null)
-            //this.setBorder(null);
+                        
             this.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));
             
             if(!isLeaf){
@@ -437,7 +659,9 @@ public class ResultTree extends JTree implements java.io.Serializable {
                     setText(text);
                 } else if(userObj instanceof LeafInfo){
                     text = ((LeafInfo)userObj).toString();
-                    setText(text);
+                    setText(text);        
+                    if(((LeafInfo)userObj).isSelectedDataSource())       
+                        setBorder(BorderFactory.createLineBorder(Color.green, 2));
                 }
                 
                 //assign default icons
@@ -482,6 +706,10 @@ public class ResultTree extends JTree implements java.io.Serializable {
                     setIcon(networkIcon);
                 } else if(text.indexOf("Script (") != -1) {
                     setIcon(scriptIcon);
+                } else if(text.equals("Search Result Shortcuts")) {
+                    setIcon(searchIcon);                    
+                } else if(text.indexOf("Data Filter") != -1) {
+                        setIcon(dataFilterIcon);
                 }
                 
             } else {  //it's a leaf
@@ -493,6 +721,9 @@ public class ResultTree extends JTree implements java.io.Serializable {
                 } else if(userObj instanceof LeafInfo) {
                     text = ((LeafInfo)userObj).toString();
                     setText(text);
+                    
+                    if(((LeafInfo)userObj).isSelectedDataSource())       
+                        setBorder(BorderFactory.createLineBorder(Color.green, 2));                    
                     
                     parent = ((DefaultMutableTreeNode)((DefaultMutableTreeNode)value).getParent());
                     //get text
@@ -540,7 +771,7 @@ public class ResultTree extends JTree implements java.io.Serializable {
                     } else if(text.indexOf("able") != -1){ //table viewer
                         setIcon(tableIcon);
                     } else if(parentText.indexOf("Hierarchical") != -1 || text.indexOf("Dendogram") != -1
-                            || text.indexOf("HCL Tree") != -1 || text.indexOf("Support Tree") != -1){
+                    || text.indexOf("HCL Tree") != -1 || text.indexOf("Support Tree") != -1){
                         setIcon(hclIcon);
                     } else if(text.equals("Expression Image")){
                         setIcon(expressionImageIcon);
@@ -572,10 +803,14 @@ public class ResultTree extends JTree implements java.io.Serializable {
                         setIcon(scriptTreeViewerIcon);
                     } else if(text.equals("Script XML Viewer")) {
                         setIcon(scriptXMLViewerIcon);
-                    }
+                    } else if(text.indexOf("GO") != -1) {
+                        setIcon(goHierarchyViewerIcon);
+                    } else if(text.equals("Data Source Selection")) {
+                        setIcon(dataSelectionIcon);
+                    } 
                     //add new icons here for leaf icons
                     
-    
+                    
                     else if(grandParentText != null){
                         if(grandParentText.indexOf("Expression Image") != -1){
                             setIcon(expressionImageIcon);
@@ -590,7 +825,7 @@ public class ResultTree extends JTree implements java.io.Serializable {
             
             if(selected){
                 setOpaque(true);
-            } else{
+            } else {
                 setOpaque(false);
             }
             

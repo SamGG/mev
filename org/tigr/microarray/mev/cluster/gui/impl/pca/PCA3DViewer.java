@@ -3,41 +3,41 @@ Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
+All rights reserved.
+*/
+/*
  * $RCSfile: PCA3DViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-07-27 19:59:16 $
- * $Author: braisted $
+ * $Revision: 1.6 $
+ * $Date: 2005-02-24 20:24:02 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.pca;
 
-import java.awt.Frame;
 import java.awt.Component;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
 import java.awt.image.BufferedImage;
 
-import javax.swing.JMenuItem;
-import javax.swing.JComponent;
-import javax.swing.JPopupMenu;
-import javax.swing.JOptionPane;
 import javax.swing.JCheckBoxMenuItem;
-
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.tigr.util.FloatMatrix;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
-
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
-
-import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
-import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
+import org.tigr.util.FloatMatrix;
 
 public class PCA3DViewer extends ViewerAdapter implements java.io.Serializable {
     public static final long serialVersionUID = 202011010001L;
@@ -64,6 +64,9 @@ public class PCA3DViewer extends ViewerAdapter implements java.io.Serializable {
     
     private FloatMatrix U;
     private int mode;
+    private int xAxis, yAxis, zAxis;
+    private int labelIndex = -1;    
+    private PCASelectionAreaDialog dlg;
     
     /**
      * Constructs a <code>PCA3DViewer</code> with specified mode,
@@ -76,15 +79,32 @@ public class PCA3DViewer extends ViewerAdapter implements java.io.Serializable {
         this.U = U;
         this.mode = mode;
         content = createContent(mode, U, experiment, geneViewer);
+        dlg = new PCASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());
         popup = createJPopupMenu();
     }
     
+    public PCA3DViewer(Frame frame, int mode, FloatMatrix U, Experiment experiment, boolean geneViewer, int xAxis, int yAxis, int zAxis) {
+        this.frame = frame;
+        this.experiment = experiment;
+        this.geneViewer = geneViewer;
+        this.U = U;
+        this.mode = mode;
+        this.xAxis = xAxis;
+        this.yAxis= yAxis;
+        this.zAxis = zAxis;
+        content = createContent(mode, U, experiment, geneViewer, xAxis, yAxis, zAxis);
+        dlg = new PCASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());
+        popup = createJPopupMenu();
+    }   
     
     private void writeObject(java.io.ObjectOutputStream oos) throws  java.io.IOException {
         oos.writeObject(this.experiment);
         oos.writeBoolean(this.geneViewer);
         oos.writeObject(this.U);
-        oos.writeInt(this.mode);        
+        oos.writeInt(this.mode);  
+        oos.writeInt(this.xAxis);
+        oos.writeInt(this.yAxis);
+        oos.writeInt(this.zAxis);
     }
     
     private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
@@ -92,8 +112,12 @@ public class PCA3DViewer extends ViewerAdapter implements java.io.Serializable {
         this.geneViewer = ois.readBoolean();
         this.U = (FloatMatrix)ois.readObject();
         this.mode = ois.readInt();
+        this.xAxis = ois.readInt();
+        this.yAxis = ois.readInt();
+        this.zAxis = ois.readInt();
+        content = createContent(mode, U, experiment, geneViewer, xAxis, yAxis, zAxis);  
+        dlg = new PCASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());
         
-        content = createContent(mode, U, experiment, geneViewer);               
     }
     
     /**
@@ -103,7 +127,11 @@ public class PCA3DViewer extends ViewerAdapter implements java.io.Serializable {
         this.framework = framework;
         this.frame = framework.getFrame();
         this.data = framework.getData();
+        IDisplayMenu menu = framework.getDisplayMenu();        
+        labelIndex = menu.getLabelIndex();        
         content.setData(this.data);
+        content.setGeneLabelIndex(labelIndex);
+        onMenuChanged(menu);
         content.updateScene();
         
         //In case it is viewed after serialization
@@ -117,6 +145,12 @@ public class PCA3DViewer extends ViewerAdapter implements java.io.Serializable {
                 }
             }
         }    
+    }
+    
+    public void onMenuChanged(IDisplayMenu menu) {
+        labelIndex = menu.getLabelIndex();  
+        content.setGeneLabelIndex(labelIndex);  
+        content.updateScene();        
     }
     
     /**
@@ -148,6 +182,10 @@ public class PCA3DViewer extends ViewerAdapter implements java.io.Serializable {
     private Content3D createContent(int mode, FloatMatrix U, Experiment experiment, boolean geneViewer) {
         return new Content3D(mode, U, experiment, geneViewer);
     }
+    
+    private Content3D createContent(int mode, FloatMatrix U, Experiment experiment, boolean geneViewer, int x, int y, int z) {
+        return new Content3D(mode, U, experiment, geneViewer, x, y, z);
+    }    
     
     /**
      * Returns the viewer popup menu.
@@ -288,9 +326,9 @@ public class PCA3DViewer extends ViewerAdapter implements java.io.Serializable {
      * Sets the user specified selection area parameters.
      */
     private void onSelectionArea() {
-        PCASelectionAreaDialog dlg = new PCASelectionAreaDialog(frame,
-        content.getPositionX(), content.getPositionY(), content.getPositionZ(),
-        content.getSizeX(), content.getSizeY(), content.getSizeZ());
+        //PCASelectionAreaDialog dlg = new PCASelectionAreaDialog(frame,
+        //content.getPositionX(), content.getPositionY(), content.getPositionZ(),
+        //content.getSizeX(), content.getSizeY(), content.getSizeZ());
         if (dlg.showModal() == JOptionPane.OK_OPTION) {
             content.setBoxPosition(dlg.getPositionX(), dlg.getPositionY(), dlg.getPositionZ());
             content.setBoxSize(dlg.getSizeX(), dlg.getSizeY(), dlg.getSizeZ());
@@ -391,7 +429,8 @@ public class PCA3DViewer extends ViewerAdapter implements java.io.Serializable {
             textItem.setEnabled(true);
         } else {
             content.setShowSpheres(false);
-            content.setShowText(false);
+            //content.setShowText(false);
+            content.setShowText(textItem.isSelected());
             textItem.setEnabled(true);
         }
         content.updateScene();

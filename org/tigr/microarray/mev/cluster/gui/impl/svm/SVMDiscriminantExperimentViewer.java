@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: SVMDiscriminantExperimentViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-07-27 19:59:17 $
- * $Author: braisted $
+ * $Revision: 1.6 $
+ * $Date: 2005-02-24 20:23:45 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
@@ -54,7 +54,6 @@ import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 
 
@@ -104,6 +103,7 @@ public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer, 
     protected static final String SAVE_ALL_CLUSTERS_CMD = "save-all-clusters-cmd";
     protected static final String LAUNCH_NEW_SESSION_CMD = "launch-new-session-cmd";
     private boolean haveColorBar;
+    private boolean useDoubleGradient = true;
     
     private JPopupMenu popup;
     
@@ -257,6 +257,8 @@ public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer, 
         this.framework = framework;
         this.data = framework.getData();
         IDisplayMenu menu = framework.getDisplayMenu();
+        useDoubleGradient = menu.getUseDoubleGradient();
+        header.setUseDoubleGradient(useDoubleGradient);
         Integer userObject = (Integer)framework.getUserObject();
         setClusterIndex(userObject == null ? 0 : userObject.intValue());
         labelIndex = menu.getLabelIndex();
@@ -269,9 +271,10 @@ public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer, 
         header.setData(data);
         onMenuChanged(menu);
         //header.setValues(maxValue, minValue);
+        header.setClusterIndex(clusterIndex);
         header.setValues(minValue, maxValue);
         header.setAntiAliasing(menu.isAntiAliasing());
-        header.updateSizes(getSize().width, elementSize.width);
+        header.updateSizes(getSize().width, elementSize.width);        
     }
     
     /**
@@ -279,6 +282,8 @@ public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer, 
      * @see IViewer#onMenuChanged
      */
     public void onMenuChanged(IDisplayMenu menu) {
+    	useDoubleGradient = menu.getUseDoubleGradient();
+    	header.setUseDoubleGradient(useDoubleGradient);
         setDrawBorders(menu.isDrawingBorder());
         this.maxValue = Math.abs(menu.getMaxRatioScale());
         this.minValue = -Math.abs(menu.getMinRatioScale());
@@ -575,10 +580,27 @@ public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer, 
         if (Float.isNaN(value)) {
             return missingColor;
         }
-        float maximum = value < 0 ? this.minValue : this.maxValue;
-        int colorIndex = (int)(255*value/maximum);
-        colorIndex = colorIndex > 255 ? 255 : colorIndex;
-        int rgb = value < 0 ? negColorImage.getRGB(255-colorIndex, 0) : posColorImage.getRGB(colorIndex, 0);
+        
+        float maximum;
+        int colorIndex, rgb;
+        
+        if(useDoubleGradient) {
+        	maximum = value < 0 ? this.minValue : this.maxValue;
+			colorIndex = (int) (255 * value / maximum);
+			colorIndex = colorIndex > 255 ? 255 : colorIndex;
+			rgb = value < 0 ? negColorImage.getRGB(255 - colorIndex, 0)
+					: posColorImage.getRGB(colorIndex, 0);
+        } else {
+        	float span = this.maxValue - this.minValue;
+        	if(value <= minValue)
+        		colorIndex = 0;
+        	else if(value >= maxValue)
+        		colorIndex = 255;
+        	else
+        		colorIndex = (int)(((value - this.minValue)/span) * 255);
+         	
+        	rgb = posColorImage.getRGB(colorIndex,0);
+        }
         return new Color(rgb);
     }
     
@@ -820,6 +842,7 @@ public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer, 
         oos.writeObject(this.RecruitColor);
         oos.writeBoolean(this.classifyGenes);
         oos.writeObject(this.discriminants);
+        oos.writeBoolean(useDoubleGradient);
     }
     
     private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
@@ -838,6 +861,7 @@ public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer, 
         this.RecruitColor = (Color)ois.readObject();
         this.classifyGenes = ois.readBoolean();
         this.discriminants = (float [][])ois.readObject();
+        this.useDoubleGradient = ois.readBoolean();
         
         this.firstSelectedRow = -1;
         this.lastSelectedRow = -1;
@@ -845,6 +869,15 @@ public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer, 
         SVMExperimentActionListener actionListener = new SVMExperimentActionListener();
         addMouseListener(actionListener);
         this.popup = createJPopupMenu(actionListener);
+    }
+    
+    /** Returns int value indicating viewer type
+     * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
+     */
+    public int getViewerType() {
+        if(this.classifyGenes)
+            return Cluster.GENE_CLUSTER;
+        return Cluster.EXPERIMENT_CLUSTER;
     }
     
     /**

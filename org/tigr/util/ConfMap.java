@@ -4,16 +4,15 @@ All rights reserved.
 */
 /*
  * $RCSfile: ConfMap.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:23 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:06 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.util;
 
-import java.net.URL;
 import java.net.MalformedURLException;
-import java.text.ParseException;
+import java.net.URL;
 
 public class ConfMap extends java.util.Properties {
     

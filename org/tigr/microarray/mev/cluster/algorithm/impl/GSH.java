@@ -3,7 +3,7 @@ Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
- * $Id: GSH.java,v 1.2 2004-05-21 13:02:32 braisted Exp $
+ * $Id: GSH.java,v 1.3 2005-02-24 20:23:48 braistedj Exp $
  *
  * Created 11/26/2001
  *
@@ -14,37 +14,33 @@ All rights reserved.
  */
 package org.tigr.microarray.mev.cluster.algorithm.impl;
 
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Random;
-import java.util.ArrayList;
-import java.io.*;
-import java.awt.*;
-import java.awt.image.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import java.util.*;
-import java.lang.*;
+import java.util.Vector;
 
-import org.tigr.microarray.util.Adjustment;
-import org.tigr.util.ConfMap;
-import org.tigr.util.FloatMatrix;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
-import org.tigr.util.awt.ProgressDialog;
-
-import org.tigr.microarray.mev.cluster.Node;
 import org.tigr.microarray.mev.cluster.Cluster;
+import org.tigr.microarray.mev.cluster.Node;
 import org.tigr.microarray.mev.cluster.NodeList;
 import org.tigr.microarray.mev.cluster.NodeValue;
 import org.tigr.microarray.mev.cluster.NodeValueList;
-
+import org.tigr.microarray.mev.cluster.algorithm.AbortException;
 import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
-import org.tigr.microarray.mev.cluster.algorithm.AbortException;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
+import org.tigr.microarray.util.Adjustment;
+import org.tigr.util.FloatMatrix;
+import org.tigr.util.awt.ProgressDialog;
 
-import Jama.*;
+import Jama.Matrix;
 
 public class GSH extends AbstractAlgorithm {
     
@@ -93,6 +89,8 @@ public class GSH extends AbstractAlgorithm {
     
     private FloatMatrix expMatrix;
     
+    private int hcl_function;
+    private boolean hcl_absolute;    
     
     public AlgorithmData execute(AlgorithmData data) throws AlgorithmException {
         
@@ -115,6 +113,9 @@ public class GSH extends AbstractAlgorithm {
         boolean calculate_genes = map.getBoolean("calculate-genes", false);
         boolean calculate_experiments = map.getBoolean("calculate-experiments", false);
         
+        hcl_function = map.getInt("hcl-distance-function", EUCLIDEAN);
+        hcl_absolute = map.getBoolean("hcl-distance-absolute", false);        
+
         this.expMatrix = data.getMatrix("experiment");
         
         number_of_genes   = this.expMatrix.getRowDimension();
@@ -128,7 +129,7 @@ public class GSH extends AbstractAlgorithm {
         if(gshGenes)
             PD = new ProgressDialog(dummyFrame, "Gene Shaving -- Progress", false, 6);
         else
-            PD = new ProgressDialog(dummyFrame, "Experiment Shaving -- Progress", false, 6);
+            PD = new ProgressDialog(dummyFrame, "Sample Shaving -- Progress", false, 6);
         
         JPanel progressPanel = PD.getLabelPanel();
         JPanel superPanel = new JPanel();
@@ -556,8 +557,8 @@ public class GSH extends AbstractAlgorithm {
             experiment = getSubExperimentReducedCols(this.expMatrix, features);
         
         data.addMatrix("experiment", experiment);
-        data.addParam("distance-function", String.valueOf(this.function));
-        data.addParam("distance-absolute", String.valueOf(this.absolute));
+        data.addParam("hcl-distance-function", String.valueOf(this.hcl_function));
+        data.addParam("hcl-distance-absolute", String.valueOf(this.hcl_absolute));
         data.addParam("method-linkage", String.valueOf(method));
         HCL hcl = new HCL();
         AlgorithmData result;

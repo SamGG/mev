@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLExperimentHeader.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-07-27 19:59:16 $
- * $Author: braisted $
+ * $Revision: 1.4 $
+ * $Date: 2005-02-24 20:24:09 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.hcl;
@@ -24,11 +24,11 @@ import javax.swing.JPanel;
 import javax.swing.JComponent;
 
 import org.tigr.microarray.mev.cluster.gui.helpers.IExperimentHeader;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
+
 
 public class HCLExperimentHeader extends JPanel implements java.io.Serializable {
 
-    public static final long serialVersionUID = 202006050001L;
+    public static final long serialVersionUID = 202006050002L;
 
     // wrapped experiment header.
     private JComponent expHeader;
@@ -63,7 +63,7 @@ public class HCLExperimentHeader extends JPanel implements java.io.Serializable 
         setSize(width, height);
         setPreferredSize(new Dimension(width, height));
     }
-    
+        
     /**
      * Adds mouse listener to itself and to wrapped component.
      */
@@ -81,12 +81,16 @@ public class HCLExperimentHeader extends JPanel implements java.io.Serializable 
         this.expHeader.removeMouseListener(listener);
     }
     
+    public void setUseDoubleGradient(boolean useDouble) {
+    	((IExperimentHeader)this.expHeader).setUseDoubleGradient(useDouble);
+    }
+    
     private void writeObject(ObjectOutputStream oos) throws IOException {
         oos.writeObject(this.expHeader);
     }
     
     private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        this.expHeader = (ExperimentHeader)ois.readObject();
+        this.expHeader = (JComponent)ois.readObject();
         
         if(this.expHeader == null)
             System.out.println("NULL HEADER");

@@ -20,11 +20,12 @@ This button allows you to select and load a saved grouping.
 The reset button returns all of the group selection control buttons
 to Group A, the initial state.
 <br>
-<h2>Degree of freedom calculation</h2>
+<h2>Variance assumption</h2>
 This option applies to between subjects t-test only. By default, degree of freedom is calculated
 on a gene by gene basis assuming that the two groups have unequal variances. The other option
 assumes equal variances of the two groups, and calculates degree of freedom as (nA + nB - 2), where
-nA and nB are the number of valid values in groups A and B respectively.
+nA and nB are the number of valid values in groups A and B respectively. The formula for the t-ratio is also
+ slightly different
 <br>
 <h2>P-Value Parameters</h2>
 This set of controls are used to indicate the method by which p-values are determined for 
@@ -48,7 +49,7 @@ times equal to the maximum number of permutations possible.
 <h3>Critical p-value</h3>
 This text field allows you to enter the alpha or critical p-value.
 <br>
-<h2>P-Value Corrections</h2>
+<h2>P-Value / false discovery corrections</h2>
 The p-values for each p can be adjusted to correct for the large number
 of observations (genes) and the increased possibility of considering a gene without
 a real significant change to be considered significant.  Three options are given for 
@@ -66,6 +67,9 @@ p-value becomes (alpha / n), where n is the total number of genes;
 for the gene with the second-highest t-value, the critical p-value will be (alpha/ n-1), 
 and so on. The stringency of this correction falls somewhere between no correction
 and the Standard Bonferroni.
+<H3>False discovery control</H3>
+Under this option, with confidence of (1 - alpha), the number or proportion of false positives 
+in the significant gene list should not exceed the input value. 
 <br>
 <h2> Hierarchical Clustering </h2>
 This check box selects whether to perform hierarchical clustering on the elements in each cluster

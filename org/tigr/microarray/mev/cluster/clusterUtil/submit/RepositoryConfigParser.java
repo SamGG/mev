@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: RepositoryConfigParser.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-07-27 19:57:55 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2005-02-24 20:24:13 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 /*
@@ -19,7 +19,6 @@ package org.tigr.microarray.mev.cluster.clusterUtil.submit;
 
 import java.io.File;
 import java.net.URL;
-
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
@@ -28,21 +27,13 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import org.apache.xerces.parsers.DOMParser;
-import org.apache.xerces.dom.DOMImplementationImpl;
-
+import org.tigr.microarray.mev.TMEV;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
-
 import org.xml.sax.helpers.DefaultHandler;
-
-import org.tigr.microarray.mev.TMEV;
 
 /**
  *

@@ -1,5 +1,5 @@
 /*
-Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
@@ -23,7 +23,6 @@ import javax.swing.JTable;
 import javax.swing.JComponent;
 import javax.swing.border.Border;
 import javax.swing.table.*;
-import javax.swing.event.TableModelEvent;
 
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
@@ -303,7 +302,7 @@ public class ExperimentClusterTableViewer implements IViewer, java.io.Serializab
             columnNames = new String[2 + auxTitles.length];
             //int counter;
             columnNames[0] = "Stored Color";
-            columnNames[1] = "Experiment Name";
+            columnNames[1] = "Sample Name";
             for (int i = 2; i < columnNames.length; i++) {
                 columnNames[i] = auxTitles[i - 2];
             }
@@ -933,5 +932,12 @@ public class ExperimentClusterTableViewer implements IViewer, java.io.Serializab
 	//getContentComponent().addMouseListener(listener);  
         clusterTable.addMouseListener(listener);
     }    
+    
+    /** Returns int value indicating viewer type
+     * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
+     */
+    public int getViewerType() {
+        return Cluster.EXPERIMENT_CLUSTER;
+    }
     
 }

@@ -4,23 +4,37 @@ All rights reserved.
  */
 /*
  * $RCSfile: GDMExpSpotInfoDisplay.java,v $
- * $Revision: 1.1 $
- * $Date: 2004-02-06 22:53:43 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:46 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.gdm;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import javax.swing.*;
-import org.tigr.graph.*;
-import org.tigr.util.*;
-import org.tigr.util.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
-import org.tigr.microarray.mev.cluster.gui.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
+import javax.swing.JViewport;
+import javax.swing.ScrollPaneConstants;
+
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
+import org.tigr.util.FloatMatrix;
+import org.tigr.util.awt.ActionInfoDialog;
+import org.tigr.util.awt.GBA;
 
 public class GDMExpSpotInfoDisplay extends ActionInfoDialog {
     
@@ -109,7 +123,7 @@ public class GDMExpSpotInfoDisplay extends ActionInfoDialog {
         pack();
         setSize(500, 500);
         setResizable(true);
-        setTitle("Experiment Distance Spot Information");
+        setTitle("Sample Distance Spot Information");
         setLocation(300, 100);
         show();
     }

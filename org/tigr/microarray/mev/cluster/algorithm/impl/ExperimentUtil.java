@@ -4,15 +4,14 @@ All rights reserved.
 */
 /*
  * $RCSfile: ExperimentUtil.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 19:34:28 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2005-02-24 20:23:47 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.algorithm.impl;
 
-import java.util.Vector;
 import org.tigr.util.FloatMatrix;
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 

@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: GDMGUI.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-06-24 17:29:48 $
- * $Author: braisted $
+ * $Revision: 1.4 $
+ * $Date: 2005-02-24 20:23:46 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.gdm;
@@ -14,42 +14,23 @@ package org.tigr.microarray.mev.cluster.gui.impl.gdm;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.tigr.util.FloatMatrix;
-import org.tigr.util.ConfMap;
-
-import org.tigr.microarray.mev.cluster.gui.IViewer;
-import org.tigr.microarray.mev.cluster.gui.LeafInfo;
-import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
-import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
-import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
-
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
-
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLInitDialog;
-
-import org.tigr.microarray.mev.cluster.Node;
-import org.tigr.microarray.mev.cluster.Cluster;
-import org.tigr.microarray.mev.cluster.NodeList;
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
-
-import org.tigr.microarray.mev.cluster.NodeValueList;
-
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
+import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.LeafInfo;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
 import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
+import org.tigr.util.FloatMatrix;
 
 public class GDMGUI implements IClusterGUI, IScriptGUI {
     
@@ -284,7 +265,7 @@ public class GDMGUI implements IClusterGUI, IScriptGUI {
                 root.add(new DefaultMutableTreeNode(info.function));
             }
             else {
-                root = new DefaultMutableTreeNode("GDM - experiments");
+                root = new DefaultMutableTreeNode("GDM - samples");
                 root.add(new DefaultMutableTreeNode(new LeafInfo("Matrix View", new GDMExpViewer(this.framework, data, info.function, displayInterval, null, 0))));
                 root.add(new DefaultMutableTreeNode("Time: "+String.valueOf(info.time)+" ms"));
                 root.add(new DefaultMutableTreeNode(info.function));

@@ -4,15 +4,14 @@ All rights reserved.
 */
 /*
  * $RCSfile: ImageFilter.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 21:52:11 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2005-02-24 20:23:44 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
 import java.io.File;
-import javax.swing.*;
 import javax.swing.filechooser.*;
 import org.tigr.util.swing.*;
 

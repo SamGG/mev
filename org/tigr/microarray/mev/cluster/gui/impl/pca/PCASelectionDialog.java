@@ -1,5 +1,5 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
@@ -10,31 +10,92 @@ All rights reserved.
 
 package org.tigr.microarray.mev.cluster.gui.impl.pca;
 
-//import javax.swing.JDialog;
-import javax.swing.event.*;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.border.EtchedBorder;
+
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.SampleSelectionPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 
 public class PCASelectionDialog extends AlgorithmDialog {
     
     private int result = JOptionPane.CANCEL_OPTION;
     
     private SampleSelectionPanel sampleSelectionPanel;
+    JTextField numNeighborsField;
     
     /** Creates new PCASelectionDialog */
     public PCASelectionDialog(Frame frame) {
-        super(new JFrame(), "PCA: Principal Components Analysis", true);
-        setSize(300, 110);
-        super.setResizable(false);
+        super(frame, "PCA: Principal Components Analysis", true);
+        //setSize(300, 110);
+        setBounds(0, 0, 600, 200);
+        //super.setResizable(false);
+        setBackground(Color.white);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);   
+        
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.HORIZONTAL;       
+        
+        JPanel pane = new JPanel();
+        pane.setBackground(Color.white);
+        pane.setBorder(new EtchedBorder());
+        pane.setLayout(gridbag);
+        
         sampleSelectionPanel = new SampleSelectionPanel(Color.white, UIManager.getColor("Label.foreground"),true,"Sample Selection");
+        
+        buildConstraints(constraints, 0, 0, 1, 1, 100, 50);
+        gridbag.setConstraints(sampleSelectionPanel, constraints);
+        pane.add(sampleSelectionPanel);   
+        
+        JPanel numNeibsPanel = new JPanel();
+        numNeibsPanel.setBackground(Color.white);
+        GridBagLayout grid2 = new GridBagLayout();
+        
+        JLabel numNeibsLabel= new JLabel("Number for neighbors for KNN imputation :");
+        buildConstraints(constraints, 0, 0, 1, 1, 50, 100);
+        grid2.setConstraints(numNeibsLabel, constraints);
+        numNeibsPanel.add(numNeibsLabel);     
+        
+        numNeighborsField = new JTextField("10", 7);
+        buildConstraints(constraints, 1, 0, 1, 1, 50, 100);
+        grid2.setConstraints(numNeighborsField, constraints);
+        numNeibsPanel.add(numNeighborsField);    
+        
+        buildConstraints(constraints, 0, 1, 1, 1, 0, 50);
+        gridbag.setConstraints(numNeibsPanel, constraints);
+        pane.add(numNeibsPanel);        
+        
         setActionListeners(new EventListener());
-        addContent(sampleSelectionPanel);
+       //addContent(sampleSelectionPanel);
+        addContent(pane);
         pack();
     }
+    
+    void buildConstraints(GridBagConstraints gbc, int gx, int gy,
+    int gw, int gh, int wx, int wy) {
+        
+        gbc.gridx = gx;
+        gbc.gridy = gy;
+        gbc.gridwidth = gw;
+        gbc.gridheight = gh;
+        gbc.weightx = wx;
+        gbc.weighty = wy;
+    }    
     
     public int showModal(){
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -51,13 +112,28 @@ public class PCASelectionDialog extends AlgorithmDialog {
         sampleSelectionPanel.setClusterGenesSelected(true);
     }
     
+    public int getNumNeighbors() {
+        return Integer.parseInt(numNeighborsField.getText());
+    }    
+    
     protected class EventListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
             String command = event.getActionCommand();
             //  Object source = event.getSource();
             if (command.equals("ok-command")) {
-                result = JOptionPane.OK_OPTION;
-                dispose();
+               try {
+                    int numNeibs = getNumNeighbors();
+                    if (numNeibs <= 0) {
+                        JOptionPane.showMessageDialog(null, "Invalid number of neighbors", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;                        
+                    } else {
+                        result = JOptionPane.OK_OPTION;
+                        dispose();
+                    }
+               }  catch (NumberFormatException nfe){
+                    JOptionPane.showMessageDialog(null, "Invalid number of neighbors", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
             } else if (command.equals("cancel-command")){
                 result = JOptionPane.CANCEL_OPTION;
                 dispose();

@@ -4,23 +4,43 @@ All rights reserved.
  */
 /*
  * $RCSfile: GDMGeneSpotInfoDisplay.java,v $
- * $Revision: 1.1 $
- * $Date: 2004-02-06 22:53:42 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:46 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.gdm;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import javax.swing.*;
-import org.tigr.graph.*;
-import org.tigr.util.*;
-import org.tigr.util.awt.*;
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
-import org.tigr.microarray.mev.cluster.gui.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
+import javax.swing.ScrollPaneConstants;
+
+import org.tigr.graph.GC;
+import org.tigr.graph.GraphLine;
+import org.tigr.graph.GraphPoint;
+import org.tigr.graph.GraphTick;
+import org.tigr.graph.GraphViewer;
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
+import org.tigr.util.FloatMatrix;
+import org.tigr.util.awt.ActionInfoDialog;
+import org.tigr.util.awt.GBA;
 
 public class GDMGeneSpotInfoDisplay extends ActionInfoDialog {
     
@@ -221,8 +241,8 @@ public class GDMGeneSpotInfoDisplay extends ActionInfoDialog {
         if(rowMax < 0)
             rowMax = 0;
         
-        graphFrame = new JFrame("Experiment vs. Log Ratio");
-        graph = new GraphViewer(graphFrame, 0, 500, 0, 500, 1, numberOfExp, rowMin, rowMax, 100, 100, 100, 100, "Experiment vs. Log Ratio", "Experiment Name", "Log2 (Cy5 / Cy3)");
+        graphFrame = new JFrame("Samples vs. Log Ratio");
+        graph = new GraphViewer(graphFrame, 0, 500, 0, 500, 1, numberOfExp, rowMin, rowMax, 100, 100, 100, 100, "Sample vs. Log Ratio", "Sample Name", "Log2 (Cy5 / Cy3)");
         graph.setSubTitle("(red line = row gene, blue line = column gene)");
         
         graph.setXAxisValue(0);

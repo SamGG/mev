@@ -4,14 +4,13 @@ All rights reserved.
  */
 /*
  * $RCSfile: KMCGUI.java,v $
- * $Revision: 1.8 $
- * $Date: 2004-06-01 13:23:13 $
- * $Author: braisted $
+ * $Revision: 1.9 $
+ * $Date: 2005-02-24 20:23:51 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.kmc;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.util.Arrays;
@@ -35,11 +34,9 @@ import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Monitor;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
@@ -53,9 +50,8 @@ import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidsViewer;
+
 
 import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
 
@@ -87,7 +83,13 @@ public class KMCGUI implements IClusterGUI, IScriptGUI {
         int iterations = 50;
         boolean calcMeans = true;
         data = framework.getData();
-        KMCInitDialog kmc_dialog = new KMCInitDialog(new JFrame(), k, iterations);
+        IDistanceMenu menu = framework.getDistanceMenu();
+        int function = menu.getDistanceFunction();        
+        if (function == Algorithm.DEFAULT) {        
+            function = Algorithm.EUCLIDEAN;            
+        }
+           
+        KMCInitDialog kmc_dialog = new KMCInitDialog((JFrame)framework.getFrame(), k, iterations, menu.getFunctionName(function),menu.isAbsoluteDistance());
         if (kmc_dialog.showModal() != JOptionPane.OK_OPTION) {
             return null;
         }
@@ -109,14 +111,19 @@ public class KMCGUI implements IClusterGUI, IScriptGUI {
         int hcl_method = 0;
         boolean hcl_samples = false;
         boolean hcl_genes = false;
+        int hcl_function = 4;
+        boolean hcl_absolute = false;
         if (isHierarchicalTree) {
-            HCLInitDialog hcl_dialog = new HCLInitDialog(new JFrame());
+                                                                                                                                        
+            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(kmc_dialog.getDistanceMetric()), kmc_dialog.isAbsoluteDistance(), true);
             if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
                 return null;
             }
             hcl_method = hcl_dialog.getMethod();
-            hcl_samples = hcl_dialog.isClusterExperience();
+            hcl_samples = hcl_dialog.isClusterExperiments();
             hcl_genes = hcl_dialog.isClusterGenes();
+            hcl_function = hcl_dialog.getDistanceMetric();
+            hcl_absolute = hcl_dialog.getAbsoluteSelection();
         }
         
         this.experiment = framework.getData().getExperiment();
@@ -144,9 +151,9 @@ public class KMCGUI implements IClusterGUI, IScriptGUI {
                 data.addParam("kmc-cluster-genes", String.valueOf(false));
             }
             data.addParam("distance-factor", String.valueOf(1.0f));
-            IDistanceMenu menu = framework.getDistanceMenu();
-            data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
-            int function = menu.getDistanceFunction();
+
+            data.addParam("distance-absolute", String.valueOf(kmc_dialog.isAbsoluteDistance()));
+            function = kmc_dialog.getDistanceMetric();
             if (function == Algorithm.DEFAULT) {
                 function = Algorithm.EUCLIDEAN;
             }
@@ -160,6 +167,8 @@ public class KMCGUI implements IClusterGUI, IScriptGUI {
                 data.addParam("method-linkage", String.valueOf(hcl_method));
                 data.addParam("calculate-genes", String.valueOf(hcl_genes));
                 data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+                data.addParam("hcl-distance-function", String.valueOf(hcl_function));
+                data.addParam("hcl-distance-absolute", String.valueOf(hcl_absolute));
             }
             
             long start = System.currentTimeMillis();
@@ -212,7 +221,13 @@ public class KMCGUI implements IClusterGUI, IScriptGUI {
         int iterations = 50;
         boolean calcMeans = true;
         
-        KMCInitDialog kmc_dialog = new KMCInitDialog(new JFrame(), k, iterations);
+        IDistanceMenu menu = framework.getDistanceMenu();
+        int function = menu.getDistanceFunction();        
+        if (function == Algorithm.DEFAULT) {        
+            function = Algorithm.EUCLIDEAN;            
+        }
+        KMCInitDialog kmc_dialog = new KMCInitDialog((JFrame)framework.getFrame(), k, iterations, menu.getFunctionName(menu.getDistanceFunction()),menu.isAbsoluteDistance());
+ 
         if (kmc_dialog.showModal() != JOptionPane.OK_OPTION) {
             return null;
         }
@@ -234,14 +249,20 @@ public class KMCGUI implements IClusterGUI, IScriptGUI {
         int hcl_method = 0;
         boolean hcl_samples = false;
         boolean hcl_genes = false;
+
+        int hcl_function = 4;
+        boolean hcl_absolute = false;
         if (isHierarchicalTree) {
-            HCLInitDialog hcl_dialog = new HCLInitDialog(new JFrame());
+                                                                                                                                        
+            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(kmc_dialog.getDistanceMetric()), kmc_dialog.isAbsoluteDistance(), true);
             if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
                 return null;
             }
             hcl_method = hcl_dialog.getMethod();
-            hcl_samples = hcl_dialog.isClusterExperience();
+            hcl_samples = hcl_dialog.isClusterExperiments();
             hcl_genes = hcl_dialog.isClusterGenes();
+            hcl_function = hcl_dialog.getDistanceMetric();
+            hcl_absolute = hcl_dialog.getAbsoluteSelection();
         }
         
         this.experiment = framework.getData().getExperiment();
@@ -255,9 +276,8 @@ public class KMCGUI implements IClusterGUI, IScriptGUI {
             data.addParam("kmc-cluster-genes", String.valueOf(false));
         }
         data.addParam("distance-factor", String.valueOf(1.0f));
-        IDistanceMenu menu = framework.getDistanceMenu();
-        data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
-        int function = menu.getDistanceFunction();
+        data.addParam("distance-absolute", String.valueOf(kmc_dialog.isAbsoluteDistance()));
+        function = kmc_dialog.getDistanceMetric();
         if (function == Algorithm.DEFAULT) {
             function = Algorithm.EUCLIDEAN;
         }
@@ -271,6 +291,8 @@ public class KMCGUI implements IClusterGUI, IScriptGUI {
             data.addParam("method-linkage", String.valueOf(hcl_method));
             data.addParam("calculate-genes", String.valueOf(hcl_genes));
             data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+            data.addParam("hcl-distance-function", String.valueOf(hcl_function));
+            data.addParam("hcl-distance-absolute", String.valueOf(hcl_absolute));
         }
         
         //script control parameters
@@ -386,7 +408,7 @@ public class KMCGUI implements IClusterGUI, IScriptGUI {
         if(clusterGenes)
             root = new DefaultMutableTreeNode("KMC - genes");
         else
-            root = new DefaultMutableTreeNode("KMC - experiments");
+            root = new DefaultMutableTreeNode("KMC - samples");
         addResultNodes(root, result_cluster, info);
         return root;
     }
@@ -544,7 +566,7 @@ public class KMCGUI implements IClusterGUI, IScriptGUI {
         if(this.clusterGenes)
             node.add(new DefaultMutableTreeNode(new LeafInfo("Genes in Clusters (#,%)", new KMCInfoViewer(this.clusters, this.experiment.getNumberOfGenes()))));
         else
-            node.add(new DefaultMutableTreeNode(new LeafInfo("Experiments in Clusters (#,%)", new KMCInfoViewer(this.clusters, this.experiment.getNumberOfSamples(), false))));
+            node.add(new DefaultMutableTreeNode(new LeafInfo("Samples in Clusters (#,%)", new KMCInfoViewer(this.clusters, this.experiment.getNumberOfSamples(), false))));
         root.add(node);
     }
     
@@ -636,7 +658,8 @@ public class KMCGUI implements IClusterGUI, IScriptGUI {
                     if (value == -1) {
                         monitor.dispose();
                     } else {
-                        monitor.update(value);
+                        
+                        //monitor.update(value);
                     }
                     break;
             }

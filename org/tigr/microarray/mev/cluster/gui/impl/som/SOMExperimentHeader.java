@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOMExperimentHeader.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:49 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.som;
@@ -35,6 +35,7 @@ public class SOMExperimentHeader extends JPanel {
     private int clusterIndex;
     private static final String SOM_VECTOR_STRING = "SOM Vector";
     private Insets insets = new Insets(0, 10, 0, 0);
+    private boolean useDoubleGradient = true;
     
     /**
      * Construct a <code>SOMExperimentHeader</code> with specified experiment
@@ -61,6 +62,14 @@ public class SOMExperimentHeader extends JPanel {
      */
     private int [] getCluster(){
         return clusters[clusterIndex];
+    }
+    
+    /**
+     * sets flag to use double or single gradient
+     * @param useDouble 
+     */
+    private void setUseDoubleGradient(boolean useDouble) {
+    	useDoubleGradient = useDouble;    
     }
     
     /**
@@ -199,19 +208,36 @@ public class SOMExperimentHeader extends JPanel {
         }
         
         /**
-         * Calculates a color for the specified value.
+         * Calculates color for passed value.
          */
         private Color getColor(float value) {
-            if (Float.isNaN(value) || posColorImage == null || negColorImage == null) {
+            if (Float.isNaN(value)) {
                 return missingColor;
             }
-            float maximum = value < 0 ? this.minValue : this.maxValue;
-            int colorIndex = (int)(255*value/maximum);
-            colorIndex = colorIndex > 255 ? 255 : colorIndex;
-            int rgb = value < 0 ? negColorImage.getRGB(255-colorIndex, 0) : posColorImage.getRGB(colorIndex, 0);
+            
+            float maximum;
+            int colorIndex, rgb;
+            
+            if(useDoubleGradient) {
+            	maximum = value < 0 ? this.minValue : this.maxValue;
+    			colorIndex = (int) (255 * value / maximum);
+    			colorIndex = colorIndex > 255 ? 255 : colorIndex;
+    			rgb = value < 0 ? negColorImage.getRGB(255 - colorIndex, 0)
+    					: posColorImage.getRGB(colorIndex, 0);
+            } else {
+            	float span = this.maxValue - this.minValue;
+            	if(value <= minValue)
+            		colorIndex = 0;
+            	else if(value >= maxValue)
+            		colorIndex = 255;
+            	else
+            		colorIndex = (int)(((value - this.minValue)/span) * 255);
+             	
+            	rgb = posColorImage.getRGB(colorIndex,0);
+            }
             return new Color(rgb);
         }
-        
+                
     }
     
     /**

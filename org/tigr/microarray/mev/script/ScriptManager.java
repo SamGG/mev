@@ -10,56 +10,56 @@ All rights reserved.
 
 package org.tigr.microarray.mev.script;
 
-import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Insets;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
-
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.swing.Action;
-import javax.swing.BorderFactory;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-
 import org.tigr.microarray.mev.DetectionFilter;
 import org.tigr.microarray.mev.FoldFilter;
 import org.tigr.microarray.mev.SetDetectionFilterDialog;
 import org.tigr.microarray.mev.SetFoldFilterDialog;
-
-import org.tigr.microarray.mev.script.scriptGUI.*;
-import org.tigr.microarray.mev.script.util.*;
-import org.tigr.microarray.mev.SetPercentageCutoffsDialog;
 import org.tigr.microarray.mev.SetLowerCutoffsDialog;
-
+import org.tigr.microarray.mev.SetPercentageCutoffsDialog;
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.action.ActionManager;
-
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
-
 import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
-
-//For testing
-import org.tigr.microarray.mev.cluster.gui.impl.kmc.KMCGUI;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
-
-import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.script.scriptGUI.CentroidEntropyRankingInitDialog;
+import org.tigr.microarray.mev.script.scriptGUI.DiversityRankingInitDialog;
+import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
+import org.tigr.microarray.mev.script.scriptGUI.ScriptAlgorithmInitDialog;
+import org.tigr.microarray.mev.script.scriptGUI.ScriptAttributeDialog;
+import org.tigr.microarray.mev.script.scriptGUI.ScriptTable;
+import org.tigr.microarray.mev.script.scriptGUI.ScriptTreeViewer;
+import org.tigr.microarray.mev.script.scriptGUI.ScriptXMLViewer;
+import org.tigr.microarray.mev.script.util.AlgorithmNode;
+import org.tigr.microarray.mev.script.util.ErrorLog;
+import org.tigr.microarray.mev.script.util.ParameterAttributes;
+import org.tigr.microarray.mev.script.util.ParameterValidator;
+import org.tigr.microarray.mev.script.util.ScriptConstants;
+import org.tigr.microarray.mev.script.util.ScriptNode;
+import org.tigr.microarray.mev.script.util.ScriptRunner;
+import org.tigr.microarray.mev.script.util.ScriptTree;
 
 
 /** The ScriptManager class acts as a conduit to facilitate interaction between
@@ -125,7 +125,7 @@ public class ScriptManager implements Serializable {
     /** Loads a script following File selection.
      */
     public void loadScript() {
-        JFileChooser chooser = new JFileChooser(TMEV.getFile("Data/scripts/"));
+        JFileChooser chooser = new JFileChooser(TMEV.getFile("data/scripts/"));
         chooser.setMultiSelectionEnabled(false);
         boolean loadState;
         if( chooser.showOpenDialog(framework.getFrame()) == JFileChooser.APPROVE_OPTION ) {
@@ -292,7 +292,7 @@ public class ScriptManager implements Serializable {
      * @param doc <CODE>ScriptDocument</CODE> to save.
      */
     public void saveScript(ScriptDocument doc) {
-        JFileChooser chooser = new JFileChooser(TMEV.getFile("Data/scripts/"));
+        JFileChooser chooser = new JFileChooser(TMEV.getFile("data/scripts/"));
         if(chooser.showSaveDialog(new JFrame()) == JFileChooser.APPROVE_OPTION) {
             try {
                 writeScript(chooser.getSelectedFile(), doc);
@@ -360,7 +360,7 @@ public class ScriptManager implements Serializable {
             
             if(algType.equals(ScriptConstants.ALGORITHM_TYPE_CLUSTER)) {
                 int algIndex = dialog.getAlgorithmIndex();
-                Action action = actionManager.getAction(actionManager.ANALYSIS_ACTION+String.valueOf(algIndex));
+                Action action = actionManager.getAction(ActionManager.ANALYSIS_ACTION+String.valueOf(algIndex));
                 if(action == null){
                     return null;
                 }

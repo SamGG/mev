@@ -4,16 +4,15 @@ All rights reserved.
 */
 /*
  * $RCSfile: AnalysisAction.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:09 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.action;
 
 import javax.swing.Action;
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 import java.awt.event.ActionEvent;
 
 import org.tigr.microarray.mev.cluster.gui.AnalysisDescription;

@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: TerrainInitDialog.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:10 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.terrain;
@@ -58,7 +58,7 @@ public class TerrainInitDialog extends AlgorithmDialog {
         gbc.gridx = 0; gbc.gridy = 0;
         parameters.add(genRadio, gbc);
 
-        expRadio = new JRadioButton("Experiments");
+        expRadio = new JRadioButton("Samples");
         expRadio.setForeground(UIManager.getColor("Label.foreground"));
         expRadio.setFocusPainted(false);
         expRadio.setBackground(Color.white);

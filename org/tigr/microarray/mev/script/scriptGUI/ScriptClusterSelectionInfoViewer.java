@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: ScriptClusterSelectionInfoViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-07-27 20:02:27 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2005-02-24 20:24:05 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.script.scriptGUI;
@@ -46,6 +46,25 @@ public class ScriptClusterSelectionInfoViewer extends ViewerAdapter implements j
     }
     
     
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.writeBoolean(this.clusterGenes);
+        oos.writeObject(this.content.getText());
+    }
+    
+    
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        header = createHeader();
+        this.clusterGenes = ois.readBoolean();
+        String contentString = (String)ois.readObject();
+        this.content = new JTextPane();
+        this.content.setContentType("text/html");
+        this.content.setEditable(false);
+        this.content.setMargin(new Insets(0, 10, 0, 0));
+        this.content.setText(contentString);
+        this.content.setCaretPosition(0);
+    }
+   
     /**
      * Returns component to be inserted into the framework scroll pane.
      */

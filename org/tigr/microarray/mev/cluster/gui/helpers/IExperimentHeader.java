@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: IExperimentHeader.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:07 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.helpers;
@@ -34,6 +34,11 @@ public interface IExperimentHeader {
      * Sets positive and negative images 
      */
     public void setNegAndPosColorImages(java.awt.image.BufferedImage neg, java.awt.image.BufferedImage pos);
+    
+    /**
+     * Sets the flag to use double gradient 
+     */
+    public void setUseDoubleGradient(boolean useDouble);    
     
     /**
      * Sets anti-aliasing property.

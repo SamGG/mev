@@ -1,0 +1,31 @@
+/*
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+All rights reserved.
+ */
+/*
+ * ITreeNodeRenderer.java
+ *
+ * Created on August 11, 2004, 9:51 AM
+ */
+
+package org.tigr.microarray.mev.cluster.gui.helpers.ktree;
+
+import java.awt.Graphics2D;
+
+/**
+ *
+ * @author  braisted
+ */
+public interface ITreeNodeRenderer {
+    
+    public static int RENDERING_HINT_VERBOSE = 0;
+    public static int RENDERING_HINT_MINIMAL = 1;
+    
+    public static int STANDARD_NODE = 0;
+    public static int SELECTED_NODE = 1;
+    public static int PATH_NODE = 2;
+    public static int NON_PATH_NODE = 3;
+        
+    public void renderNode(Graphics2D g2, int x, int y, int modifier);
+    
+}

@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: CentroidViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-07-27 19:59:15 $
- * $Author: braisted $
+ * $Revision: 1.5 $
+ * $Date: 2005-02-24 20:24:07 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.helpers;
@@ -84,6 +84,8 @@ public class CentroidViewer extends JPanel implements IViewer, java.io.Serializa
     public static BufferedImage posColorImage; // = createGradientImage(Color.black, Color.red);
     public static BufferedImage negColorImage; // = createGradientImage(Color.green, Color.black);
     
+    public boolean useDoubleGradient = true;
+    
     protected boolean drawReferenceBlock = false;
     protected int xref = 0;
     protected int yref = 0;
@@ -108,7 +110,7 @@ public class CentroidViewer extends JPanel implements IViewer, java.io.Serializa
         setFont(new Font("monospaced", Font.BOLD, 10));
        // this.setGradient(this.checkGradient());
         this.maxExperimentValue = experiment.getMaxAbsValue();
-        this.yRangeOption = this.USE_EXPERIMENT_MAX;
+        this.yRangeOption = CentroidViewer.USE_EXPERIMENT_MAX;
         this.addMouseMotionListener(new GraphListener());        
     }
     
@@ -154,7 +156,7 @@ public class CentroidViewer extends JPanel implements IViewer, java.io.Serializa
         setBackground(Color.white);
         setFont(new Font("monospaced", Font.BOLD, 10));
         this.maxExperimentValue = experiment.getMaxAbsValue();
-        this.yRangeOption = this.USE_EXPERIMENT_MAX;
+        this.yRangeOption = CentroidViewer.USE_EXPERIMENT_MAX;
         this.addMouseMotionListener(new GraphListener());
     }
     
@@ -236,9 +238,12 @@ public class CentroidViewer extends JPanel implements IViewer, java.io.Serializa
         updateValues(getCluster());
         this.maxValue = Math.abs(framework.getDisplayMenu().getMaxRatioScale());
         this.minValue = -Math.abs(framework.getDisplayMenu().getMinRatioScale());
-        this.posColorImage = framework.getDisplayMenu().getPositiveGradientImage();
-        this.negColorImage = framework.getDisplayMenu().getNegativeGradientImage();
+        CentroidViewer.posColorImage = framework.getDisplayMenu().getPositiveGradientImage();
+        CentroidViewer.negColorImage = framework.getDisplayMenu().getNegativeGradientImage();
+        useDoubleGradient = framework.getDisplayMenu().getUseDoubleGradient();
         this.setGradient(framework.getDisplayMenu().getColorGradientState());
+        // repaint put in in case onSelected called by refreshCurrentViewer() method
+        repaint();
     }
     
     /**
@@ -266,16 +271,33 @@ public class CentroidViewer extends JPanel implements IViewer, java.io.Serializa
     }
     
     /**
-     * Calculates color for passed expression value.
+     * Calculates color for passed value.
      */
-    private Color getColor(float value) {	// value is the log ratio used to set color cutoffs
+    private Color getColor(float value) {
         if (Float.isNaN(value)) {
             return missingColor;
         }
-        float maximum = value < 0 ? this.minValue : this.maxValue;
-        int colorIndex = (int)(255*value/maximum);
-        colorIndex = colorIndex > 255 ? 255 : colorIndex;
-        int rgb = value < 0 ? negColorImage.getRGB(255-colorIndex, 0) : posColorImage.getRGB(colorIndex, 0);
+        
+        float maximum;
+        int colorIndex, rgb;
+        
+        if(useDoubleGradient) {
+        	maximum = value < 0 ? this.minValue : this.maxValue;
+			colorIndex = (int) (255 * value / maximum);
+			colorIndex = colorIndex > 255 ? 255 : colorIndex;
+			rgb = value < 0 ? negColorImage.getRGB(255 - colorIndex, 0)
+					: posColorImage.getRGB(colorIndex, 0);
+        } else {
+        	float span = this.maxValue - this.minValue;
+        	if(value <= minValue)
+        		colorIndex = 0;
+        	else if(value >= maxValue)
+        		colorIndex = 255;
+        	else
+        		colorIndex = (int)(((value - this.minValue)/span) * 255);
+         	
+        	rgb = posColorImage.getRGB(colorIndex,0);
+        }
         return new Color(rgb);
     }
     
@@ -381,7 +403,7 @@ public class CentroidViewer extends JPanel implements IViewer, java.io.Serializa
      * Sets Y range scaling option
      */
     public void setYRangeOption(int option){
-        if(option != this.USE_EXPERIMENT_MAX && option != this.USE_CLUSTER_MAX)
+        if(option != CentroidViewer.USE_EXPERIMENT_MAX && option != CentroidViewer.USE_CLUSTER_MAX)
             this.yRangeOption = USE_EXPERIMENT_MAX;
         else
             yRangeOption = option;
@@ -449,9 +471,9 @@ public class CentroidViewer extends JPanel implements IViewer, java.io.Serializa
         final int numberOfSamples  = experiment.getNumberOfSamples();
         
         //do this outside paint once menu is set up
-        if(this.yRangeOption == this.USE_EXPERIMENT_MAX)
+        if(this.yRangeOption == CentroidViewer.USE_EXPERIMENT_MAX)
             maxYValue = this.maxExperimentValue;
-        else if(this.yRangeOption == this.USE_CLUSTER_MAX)
+        else if(this.yRangeOption == CentroidViewer.USE_CLUSTER_MAX)
             maxYValue = this.maxClusterValue;
         
         if (maxYValue == 0.0f) {
@@ -588,7 +610,7 @@ public class CentroidViewer extends JPanel implements IViewer, java.io.Serializa
            g.setComposite(initComposite);
            g.setColor(Color.blue);
            g.drawLine(xref, 20, xref, height+20);
-           framework.setStatusText("Experiment = "+data.getSampleName(experiment.getSampleIndex(currExpRefLine))+",   mean = "+ this.means[this.clusterIndex][currExpRefLine]+",   sd = "+ this.variances[this.clusterIndex][currExpRefLine]);
+           framework.setStatusText("Sample= "+data.getSampleName(experiment.getSampleIndex(currExpRefLine))+",   mean = "+ this.means[this.clusterIndex][currExpRefLine]+",   sd = "+ this.variances[this.clusterIndex][currExpRefLine]);
         }
         g.setColor(bColor);
         if (getCluster() == null || getCluster().length == 0) {
@@ -619,9 +641,11 @@ public class CentroidViewer extends JPanel implements IViewer, java.io.Serializa
         setAntiAliasing(menu.isAntiAliasing());
         this.maxValue = Math.abs(menu.getMaxRatioScale());
         this.minValue = -Math.abs(menu.getMinRatioScale());
-        this.posColorImage = menu.getPositiveGradientImage();
-        this.negColorImage = menu.getNegativeGradientImage();
+        CentroidViewer.posColorImage = menu.getPositiveGradientImage();
+        CentroidViewer.negColorImage = menu.getNegativeGradientImage();
         this.setGradient(menu.getColorGradientState());
+        useDoubleGradient = menu.getUseDoubleGradient();
+        repaint();
     }
     
     public void onDeselected() {}
@@ -732,6 +756,13 @@ public class CentroidViewer extends JPanel implements IViewer, java.io.Serializa
      */
     public JComponent getCornerComponent(int cornerIndex) {
         return null;
+    }
+    
+    /** Returns int value indicating viewer type
+     * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
+     */
+    public int getViewerType() {
+        return Cluster.GENE_CLUSTER;
     }
     
     /**

@@ -1,21 +1,15 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: MinMaxHeap.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:19 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:50 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.motif;
-
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import javax.swing.*;
 
 public class MinMaxHeap {
     Heap heap;   /* minheap */
@@ -30,7 +24,7 @@ public class MinMaxHeap {
 	avail=new int[hpsz];
 	heap=new Heap(hpsz,d);
 	maxheap=new Heap(hpsz,d);
-	hpsz=hpsz;
+	this.hpsz=hpsz;
 	nfree = hpsz;
 	for (int i=0; i<hpsz; i++) avail[i] = i;
     }

@@ -4,46 +4,42 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMResultViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-07-27 19:59:17 $
- * $Author: braisted $
+ * $Revision: 1.6 $
+ * $Date: 2005-02-24 20:23:45 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.gui.impl.svm;
 
-import java.awt.Font;
-import java.awt.Color;
-import java.awt.Insets;
-import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.BorderLayout;
-import java.awt.GridBagLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
-import javax.swing.JComponent;
-import javax.swing.JTextArea;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.JPopupMenu;
-import javax.swing.JMenuItem;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.AbstractButton;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTextArea;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.MouseInputAdapter;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IViewer;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
 abstract class SVMResultViewer extends JPanel implements IViewer, java.io.Serializable {
@@ -182,6 +178,13 @@ abstract class SVMResultViewer extends JPanel implements IViewer, java.io.Serial
     public Experiment getExperiment() {
         return null;
     }    
+    
+    /** Returns int value indicating viewer type
+     * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
+     */
+    public int getViewerType() {
+        return -1;
+    }
     
     // GUI Listener class helpers
     class MyListener extends MouseInputAdapter {

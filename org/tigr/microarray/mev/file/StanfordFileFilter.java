@@ -1,12 +1,12 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: StanfordFileFilter.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:50 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.file;
@@ -24,7 +24,7 @@ public class StanfordFileFilter extends ExpressionFileFilter {
     }
     
     public String getDescription() {
-	return "Stanford Format Files (*.*)";
+	return "Tab Delimited, Multiple Sample Files (TDMS) (*.*)";
     }
     
     public Vector loadExpressionFile(File file) {

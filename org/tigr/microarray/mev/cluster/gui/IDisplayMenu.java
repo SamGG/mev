@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: IDisplayMenu.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:11 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui;
@@ -101,4 +101,14 @@ public interface IDisplayMenu {
      * Returns current selection for using a gradient in expression graphs
      */
     public boolean getColorGradientState();
+
+    /**
+     * Returns the current color scheme index
+     */
+    public int getColorScheme();
+    
+    /**
+     * Returns true if the gradient style is double 
+     */
+    public boolean getUseDoubleGradient();
 }

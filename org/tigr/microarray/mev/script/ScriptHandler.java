@@ -6,35 +6,22 @@
 
 package org.tigr.microarray.mev.script;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.JEditorPane;
-
 import org.apache.xerces.dom.DOMImplementationImpl;
-import org.apache.xml.serialize.XMLSerializer;
-
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-
+import org.tigr.util.FloatMatrix;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
-
-import org.w3c.dom.traversal.DocumentTraversal;
-import org.w3c.dom.traversal.NodeFilter;
-import org.w3c.dom.traversal.NodeIterator;
-
-import org.tigr.util.FloatMatrix;
 
 
 /**
@@ -382,10 +369,6 @@ public class ScriptHandler {
                 break;
             case Node.TEXT_NODE:
                 writer.write(node.getNodeValue());
-                // name = node.getNodeName();
-                //// String text = node.getNodeValue();
-                // writer.write(indentLevel + "<" + name + ">" + text + "<\\" + name +">");
-                // writer.write(lineSeparator);
                 break;
             case Node.COMMENT_NODE:
                 break;

@@ -21,16 +21,15 @@ prior written consent of TIGR.
  */
 /*
  * $RCSfile: SetFoldFilterDialog.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:44 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
 
 import java.awt.Dimension;
-import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.*;
 
@@ -38,11 +37,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.TextEvent;
-import java.awt.event.TextListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.KeyAdapter;
 
 import java.awt.event.ActionEvent;
@@ -50,22 +46,15 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import java.awt.Component;
-import javax.swing.BoxLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.border.*;
 import javax.swing.JOptionPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JCheckBox;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JTextField;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -73,9 +62,7 @@ import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JScrollPane;
 
-import org.tigr.util.awt.GBA;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
 
 public class SetFoldFilterDialog extends AlgorithmDialog {
     

@@ -1,12 +1,12 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: ExperimentClusterViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-04-01 21:35:49 $
- * $Author: braisted $
+ * $Revision: 1.6 $
+ * $Date: 2005-02-24 20:24:07 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
@@ -96,6 +96,9 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
     
     private boolean showClusters = true;
     private boolean haveColorBar = false;
+    
+    private boolean useDoubleGradient = true;
+    
     /**
      * Constructs an <code>ExperimentClusterViewer</code> with specified
      * experiment and clusters.
@@ -345,6 +348,8 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         this.framework = framework;
         this.data = framework.getData();
         IDisplayMenu menu = framework.getDisplayMenu();
+        this.useDoubleGradient = menu.getUseDoubleGradient();
+        header.setUseDoubleGradient(useDoubleGradient);
         Integer userObject = (Integer)framework.getUserObject();
         setClusterIndex(userObject == null ? 0 : userObject.intValue());
         header.setClusterIndex(this.clusterIndex);
@@ -372,6 +377,8 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
      * @see IViewer#onMenuChanged
      */
     public void onMenuChanged(IDisplayMenu menu) {
+    	this.useDoubleGradient = menu.getUseDoubleGradient();
+        header.setUseDoubleGradient(useDoubleGradient);    	
         setDrawBorders(menu.isDrawingBorder());
         this.maxValue = Math.abs(menu.getMaxRatioScale());
         this.minValue = -Math.abs(menu.getMinRatioScale());
@@ -656,6 +663,7 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         return max;
     }
     
+    
     /**
      * Calculates color for passed value.
      */
@@ -663,12 +671,30 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         if (Float.isNaN(value)) {
             return missingColor;
         }
-        float maximum = value < 0 ? this.minValue : this.maxValue;
-        int colorIndex = (int)(255*value/maximum);
-        colorIndex = colorIndex > 255 ? 255 : colorIndex;
-        int rgb = value < 0 ? negColorImage.getRGB(255-colorIndex, 0) : posColorImage.getRGB(colorIndex, 0);
+        
+        float maximum;
+        int colorIndex, rgb;
+        
+        if(useDoubleGradient) {
+        	maximum = value < 0 ? this.minValue : this.maxValue;
+			colorIndex = (int) (255 * value / maximum);
+			colorIndex = colorIndex > 255 ? 255 : colorIndex;
+			rgb = value < 0 ? negColorImage.getRGB(255 - colorIndex, 0)
+					: posColorImage.getRGB(colorIndex, 0);
+        } else {
+        	float span = this.maxValue - this.minValue;
+        	if(value <= minValue)
+        		colorIndex = 0;
+        	else if(value >= maxValue)
+        		colorIndex = 255;
+        	else
+        		colorIndex = (int)(((value - this.minValue)/span) * 255);
+         	
+        	rgb = posColorImage.getRGB(colorIndex,0);
+        }
         return new Color(rgb);
     }
+    
     
     /**
      * Paint component into specified graphics.
@@ -1011,6 +1037,13 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         Listener listener = new Listener();
         addMouseListener(listener);
         addMouseMotionListener(listener);
+    }
+    
+    /** Returns int value indicating viewer type
+     * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
+     */
+    public int getViewerType() {
+        return Cluster.EXPERIMENT_CLUSTER;
     }
     
     /**

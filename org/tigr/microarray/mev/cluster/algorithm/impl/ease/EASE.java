@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASE.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-06-24 17:27:05 $
- * $Author: braisted $
+ * $Revision: 1.4 $
+ * $Date: 2005-02-24 20:24:13 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
@@ -34,7 +34,7 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
-import org.tigr.microarray.mev.cluster.algorithm.AbortException;
+
 /** Manages EASE analysis and raw result manipulation and return.
  * @author braisted
  */
@@ -61,6 +61,7 @@ public class EASE extends AbstractAlgorithm {
     private boolean stop = false;
     private boolean performClusterAnalysis;
     
+    long start;
     /** Creates a new instance of ease (Default)
      */
     public EASE() {
@@ -76,6 +77,8 @@ public class EASE extends AbstractAlgorithm {
      * @return Returns result in <CODE>AlgorithmData</CODE>
      */
     public AlgorithmData execute(AlgorithmData algorithmData) throws AlgorithmException {
+        //start = System.currentTimeMillis();
+        
         AlgorithmParameters params = algorithmData.getParams();
         performClusterAnalysis = params.getBoolean("perform-cluster-analysis", true);
         expData = algorithmData.getMatrix("expression");
@@ -160,8 +163,10 @@ public class EASE extends AbstractAlgorithm {
         
         event.setDescription("Loading Annotation Category Files\n");
         fireValueChanged(event);
-        jstats.GetCategories();
         
+        //jstats.GetCategories();
+        jstats.GetCategories(populationVector);
+
         if(stop)
             return null;
         
@@ -253,6 +258,8 @@ public class EASE extends AbstractAlgorithm {
         
         if(stop)
             return null;
+        
+        //System.out.println("Duration: "+(System.currentTimeMillis()-start));        
         
         return algorithmData;
     }

@@ -1,12 +1,12 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: SOMGUI.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-06-01 13:23:13 $
- * $Author: braisted $
+ * $Revision: 1.7 $
+ * $Date: 2005-02-24 20:23:49 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.som;
@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
@@ -30,7 +29,6 @@ import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
 
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
@@ -48,7 +46,6 @@ import org.tigr.microarray.mev.cluster.NodeValueList;
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
@@ -74,9 +71,15 @@ public class SOMGUI implements IClusterGUI, IScriptGUI {
      * Initialize the algorithm's parameters and execute it.
      */
     public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
-        
+
+        IDistanceMenu menu = framework.getDistanceMenu();
+        int function = menu.getDistanceFunction();
+        if (function == Algorithm.DEFAULT) {
+            function = Algorithm.EUCLIDEAN;
+        } 
+            
         this.data = framework.getData();
-        SOMInitDialog som_dialog = new SOMInitDialog(framework.getFrame(), 3, 3, 2000, 0.05f, 3f, 1, 1, 0);
+        SOMInitDialog som_dialog = new SOMInitDialog(framework.getFrame(), 3, 3, 2000, 0.05f, 3f, 1, 1, 0, menu.getFunctionName(function), menu.isAbsoluteDistance());
         if (som_dialog.showModal() != JOptionPane.OK_OPTION) {
             return null;
         }
@@ -86,14 +89,19 @@ public class SOMGUI implements IClusterGUI, IScriptGUI {
         int hcl_method = 0;
         boolean hcl_samples = false;
         boolean hcl_genes = false;
+        int hcl_metric = 4;
+        boolean hcl_absolute = false;
         if (isHierarchicalTree) {
-            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame());
+                        
+            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(som_dialog.getDistanceMetric()), som_dialog.isAbsoluteDistance(), true);
             if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
                 return null;
             }
             hcl_method = hcl_dialog.getMethod();
-            hcl_samples = hcl_dialog.isClusterExperience();
+            hcl_samples = hcl_dialog.isClusterExperiments();
             hcl_genes = hcl_dialog.isClusterGenes();
+            hcl_metric = hcl_dialog.getDistanceMetric();
+            hcl_absolute = hcl_dialog.getAbsoluteSelection();
         }
         
         this.experiment = framework.getData().getExperiment();
@@ -130,12 +138,9 @@ public class SOMGUI implements IClusterGUI, IScriptGUI {
                 matrix = matrix.transpose();
             data.addMatrix("experiment", matrix);
             data.addParam("distance-factor", String.valueOf(1f));
-            IDistanceMenu menu = framework.getDistanceMenu();
-            data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
-            int function = menu.getDistanceFunction();
-            if (function == Algorithm.DEFAULT) {
-                function = Algorithm.EUCLIDEAN;
-            }
+            data.addParam("distance-absolute", String.valueOf(som_dialog.isAbsoluteDistance()));
+            
+            function = som_dialog.getDistanceMetric();
             info.function = menu.getFunctionName(function);
             data.addParam("distance-function", String.valueOf(function));
             data.addParam("dimension-x", String.valueOf(info.dimension_x));
@@ -152,7 +157,9 @@ public class SOMGUI implements IClusterGUI, IScriptGUI {
                 data.addParam("hierarchical-tree", String.valueOf(true));
                 data.addParam("method-linkage", String.valueOf(hcl_method));
                 data.addParam("calculate-genes", String.valueOf(hcl_genes));
-                data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+                data.addParam("calculate-experiments", String.valueOf(hcl_samples));     
+                data.addParam("hcl-distance-function", String.valueOf(hcl_metric));
+                data.addParam("hcl-distance-absolute", String.valueOf(hcl_absolute));
             }
             
             long startTime = System.currentTimeMillis();
@@ -190,8 +197,14 @@ public class SOMGUI implements IClusterGUI, IScriptGUI {
     
     public AlgorithmData getScriptParameters(IFramework framework) {
         
+        IDistanceMenu menu = framework.getDistanceMenu();
+        int function = menu.getDistanceFunction();
+        if (function == Algorithm.DEFAULT) {
+            function = Algorithm.EUCLIDEAN;
+        } 
+            
         this.data = framework.getData();
-        SOMInitDialog som_dialog = new SOMInitDialog(framework.getFrame(), 3, 3, 2000, 0.05f, 3f, 1, 1, 0);
+        SOMInitDialog som_dialog = new SOMInitDialog(framework.getFrame(), 3, 3, 2000, 0.05f, 3f, 1, 1, 0, menu.getFunctionName(function), menu.isAbsoluteDistance());
         if (som_dialog.showModal() != JOptionPane.OK_OPTION) {
             return null;
         }
@@ -201,14 +214,18 @@ public class SOMGUI implements IClusterGUI, IScriptGUI {
         int hcl_method = 0;
         boolean hcl_samples = false;
         boolean hcl_genes = false;
+        int hcl_metric = 4;
+        boolean hcl_absolute = false;        
         if (isHierarchicalTree) {
-            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame());
+            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(som_dialog.getDistanceMetric()), som_dialog.isAbsoluteDistance(), true);
             if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
                 return null;
             }
             hcl_method = hcl_dialog.getMethod();
-            hcl_samples = hcl_dialog.isClusterExperience();
+            hcl_samples = hcl_dialog.isClusterExperiments();
             hcl_genes = hcl_dialog.isClusterGenes();
+            hcl_metric = hcl_dialog.getDistanceMetric();
+            hcl_absolute = hcl_dialog.getAbsoluteSelection();
         }
         
         this.experiment = framework.getData().getExperiment();
@@ -237,14 +254,13 @@ public class SOMGUI implements IClusterGUI, IScriptGUI {
         FloatMatrix matrix = framework.getData().getExperiment().getMatrix();
         
         data.addParam("distance-factor", String.valueOf(1f));
-        IDistanceMenu menu = framework.getDistanceMenu();
-        data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
-        int function = menu.getDistanceFunction();
-        if (function == Algorithm.DEFAULT) {
-            function = Algorithm.EUCLIDEAN;
-        }
+
+        data.addParam("distance-absolute", String.valueOf(som_dialog.isAbsoluteDistance()));
+
+        function = som_dialog.getDistanceMetric();
         info.function = menu.getFunctionName(function);
-        data.addParam("distance-function", String.valueOf(function));
+        data.addParam("distance-function", String.valueOf(function));        
+
         data.addParam("dimension-x", String.valueOf(info.dimension_x));
         data.addParam("dimension-y", String.valueOf(info.dimension_y));
         data.addParam("iterations", String.valueOf(info.iterations));
@@ -260,6 +276,8 @@ public class SOMGUI implements IClusterGUI, IScriptGUI {
             data.addParam("method-linkage", String.valueOf(hcl_method));
             data.addParam("calculate-genes", String.valueOf(hcl_genes));
             data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+            data.addParam("hcl-distance-function", String.valueOf(hcl_metric));
+            data.addParam("hcl-distance-absolute", String.valueOf(hcl_absolute));
         }
         
         //script control parameters
@@ -367,7 +385,7 @@ public class SOMGUI implements IClusterGUI, IScriptGUI {
         if(this.clusterGenes)
             root = new DefaultMutableTreeNode("SOM - genes");
         else
-            root = new DefaultMutableTreeNode("SOM - experiments");
+            root = new DefaultMutableTreeNode("SOM - samples");
         addResultNodes(root, result_cluster, info);
         return root;
     }
@@ -491,7 +509,7 @@ public class SOMGUI implements IClusterGUI, IScriptGUI {
         if(this.clusterGenes)
             node.add(new DefaultMutableTreeNode(new LeafInfo("Genes in Clusters (#,%)", new SOMInfoViewer(this.clusters, this.experiment.getNumberOfGenes()))));
         else
-            node.add(new DefaultMutableTreeNode(new LeafInfo("Experiments in Clusters (#,%)", new SOMInfoViewer(this.clusters, this.experiment.getNumberOfSamples(), false))));
+            node.add(new DefaultMutableTreeNode(new LeafInfo("Samples in Clusters (#,%)", new SOMInfoViewer(this.clusters, this.experiment.getNumberOfSamples(), false))));
         root.add(node);
     }
     

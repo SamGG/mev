@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: EaseElementList.java,v $
- * $Revision: 1.1 $
- * $Date: 2004-02-06 22:55:36 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:13 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 /*
@@ -110,7 +110,6 @@ public class EaseElementList extends Vector{
         
         for(int i = 0; i < size; i++){
             values = dataElementAt(i).getEaseKeys();
-           // System.out.println("values size = "+values.size());
             for(int j = 0; j < values.size(); j++){
                 if(!list.contains((String)values.elementAt(j))){
                     list.addElement((String)values.elementAt(j));

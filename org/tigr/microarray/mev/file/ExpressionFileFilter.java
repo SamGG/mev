@@ -1,12 +1,12 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: ExpressionFileFilter.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:50 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.file;
@@ -14,9 +14,8 @@ package org.tigr.microarray.mev.file;
 import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
-import javax.swing.filechooser.FileFilter;
 
-import org.tigr.microarray.mev.ISlideData;
+import javax.swing.filechooser.FileFilter;
 
 public abstract class ExpressionFileFilter extends FileFilter {
     

@@ -1,62 +1,40 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: HCLSupportViewer.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:50 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.st;
 
 import java.awt.Color;
-import java.awt.Frame;
-import java.awt.Insets;
 import java.awt.Component;
 import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
-
-import java.awt.image.BufferedImage;
-
-import java.util.Arrays;
-import java.util.ArrayList;
+import java.awt.event.MouseEvent;
 import java.util.Vector;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.JPanel;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
-import javax.swing.JColorChooser;
 import javax.swing.SwingUtilities;
+import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
-
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLAnnotationBar;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLCluster;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLColorBar;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTree;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeListener;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
-
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 
 public class HCLSupportViewer extends HCLViewer {
     
@@ -67,15 +45,21 @@ public class HCLSupportViewer extends HCLViewer {
     protected static final String DELETE_ALL_CLUSTERS_CMD = "delete-all-clusters-cmd";
     protected static final String GENE_TREE_PROPERTIES_CMD = "gene-tree-properties-cmd";
     protected static final String SAMPLE_TREE_PROPERTIES_CMD = "sample-tree-properties-cmd";
-    
+    protected static final String SUPPORT_LEGEND_CMD = "support-legend-cmd";
+    protected static final String SUPPORT_VALUES_CMD = "support-value-cmd";
+   
     
     Vector geneTreeSupportVector, exptTreeSupportVector;
+    
     
     
     public HCLSupportViewer(Experiment Experiment, int[] Features, HCLTreeData genes_result, HCLTreeData samples_result, Vector geneTreeSupportVector, Vector exptTreeSupportVector, DefaultMutableTreeNode node) {
         super(Experiment, Features, genes_result, samples_result, node); 
         setLayout(new GridBagLayout());
         setBackground(Color.white);
+        
+        this.geneTreeSupportVector = geneTreeSupportVector;
+        this.exptTreeSupportVector = exptTreeSupportVector;
 
         if (genes_result != null && experiment.getNumberOfGenes() > 1) {
             this.genesTree = new HCLSupportTree(genes_result, HCLTree.HORIZONTAL, geneTreeSupportVector, exptTreeSupportVector);
@@ -96,65 +80,49 @@ public class HCLSupportViewer extends HCLViewer {
         super.validate();
         addComponents(this.sampleTree, this.genesTree, this.expViewer.getContentComponent(), this.colorBar, this.annotationBar);
         this.addMouseListener(listener);
+        addSTMenuItems(popup);
     }
     
-    /**
-     * Creates a popup menu.
-     */
-    private JPopupMenu createJPopupMenu(Listener listener) {
-        JPopupMenu popup = new JPopupMenu();
-        addMenuItems(popup, listener);
-        return popup;
-    }
-    
+
     /**
      * Adds menu items to the specified popup menu.
      */
-    private void addMenuItems(JPopupMenu menu, Listener listener) {
+    private void addSTMenuItems(JPopupMenu menu) {
+        Listener listener = new Listener();
+
+        boolean haveResamplingData = true;
+        if((this.geneTreeSupportVector == null || this.geneTreeSupportVector.isEmpty()) 
+            && (this.exptTreeSupportVector == null || this.exptTreeSupportVector.isEmpty()))
+            haveResamplingData = false;
+            
         JMenuItem menuItem;
-        menuItem = new JMenuItem("Set cluster...", GUIFactory.getIcon("edit16.gif"));
-        menuItem.setEnabled(false);
-        menuItem.setActionCommand(SET_CLUSTER_CMD);
+       
+        menuItem = new JMenuItem("Support tree legend...");
+        menuItem.setActionCommand(SUPPORT_LEGEND_CMD);
         menuItem.addActionListener(listener);
-        menu.add(menuItem);
         
-        menuItem = new JMenuItem("Set cluster text...", GUIFactory.getIcon("edit16.gif"));
-        menuItem.setEnabled(false);
-        menuItem.setActionCommand(SET_CLUSTER_TEXT_CMD);
+        if(!haveResamplingData)
+            menuItem.setEnabled(false);
+
+        Component [] comps = menu.getComponents();
+        
+        menu.removeAll();
+        menu.add(menuItem);
+        menu.addSeparator();
+
+        menuItem = new JCheckBoxMenuItem("Show values...", false);
+        menuItem.setActionCommand(SUPPORT_VALUES_CMD);
         menuItem.addActionListener(listener);
+
+        if(!haveResamplingData)
+            menuItem.setEnabled(false);
+
         menu.add(menuItem);
-        
-        menuItem = new JMenuItem("Save cluster...", GUIFactory.getIcon("save_as16.gif"));
-        menuItem.setEnabled(false);
-        menuItem.setActionCommand(SAVE_CLUSTER_CMD);
-        menuItem.addActionListener(listener);
-        menu.add(menuItem);
-        
-        menuItem = new JMenuItem("Delete cluster", GUIFactory.getIcon("delete16.gif"));
-        menuItem.setEnabled(false);
-        menuItem.setActionCommand(DELETE_CLUSTER_CMD);
-        menuItem.addActionListener(listener);
-        menu.add(menuItem);
-        
-        menuItem = new JMenuItem("Delete all clusters", GUIFactory.getIcon("delete16.gif"));
-        menuItem.setEnabled(false);
-        menuItem.setActionCommand(DELETE_ALL_CLUSTERS_CMD);
-        menuItem.addActionListener(listener);
-        menu.add(menuItem);
-        
         menu.addSeparator();
         
-        menuItem = new JMenuItem("GeneTree properties...", GUIFactory.getIcon("edit16.gif"));
-        menuItem.setEnabled(this.genesTree != null);
-        menuItem.setActionCommand(GENE_TREE_PROPERTIES_CMD);
-        menuItem.addActionListener(listener);
-        menu.add(menuItem);
-        
-        menuItem = new JMenuItem("SampleTree properties...", GUIFactory.getIcon("edit16.gif"));
-        menuItem.setEnabled(this.sampleTree != null);
-        menuItem.setActionCommand(SAMPLE_TREE_PROPERTIES_CMD);
-        menuItem.addActionListener(listener);
-        menu.add(menuItem);
+        for(int i = 0; i < comps.length; i++) {
+            menu.add(comps[i]);
+        }        
     }
     
     protected void showPopup(MouseEvent e) {
@@ -168,6 +136,46 @@ public class HCLSupportViewer extends HCLViewer {
     }
     
     /**
+     * Shows the legend for HCLSupportTree coloring
+     * This method will no longer be supported when the legend
+     * is displayed as part of the HCLSupportTree image
+     */
+    private void onShowSupportTreeLegend() {
+        javax.swing.JDialog legendFrame = new javax.swing.JDialog(this.framework.getFrame(), "Support Tree Legend");
+        JPanel legendPanel = HCLSupportTree.getColorLegendPanel();
+        legendFrame.getContentPane().add(legendPanel);
+        legendFrame.setSize(200, 300);
+        legendFrame.setLocation(300, 100);
+        legendFrame.setVisible(true);
+    }    
+    
+    private void onShowSupportValues(boolean showValues) {
+        if(this.genesTree != null)
+            ((HCLSupportTree)this.genesTree).toggleShowSupportValues(showValues);
+        if(this.sampleTree != null)
+            ((HCLSupportTree)this.sampleTree).toggleShowSupportValues(showValues);        
+        this.header.updateSize(getCommonWidth(), this.elementSize.width);       
+        onSelected(framework);        
+    }
+    
+    /**
+     * Delegates this invokation to wrapped viewers.
+     */
+    public void onMenuChanged(IDisplayMenu menu) {
+        super.onMenuChanged(menu);
+       // this.expViewer.onMenuChanged(menu);
+        if (this.genesTree != null) {
+            ((HCLSupportTree)genesTree).adjustPixelHeightsForValueDisplay();
+            this.genesTree.onMenuChanged(menu);
+        }
+        if (this.sampleTree != null) {
+            ((HCLSupportTree)sampleTree).adjustPixelHeightsForValueDisplay();
+            this.sampleTree.onMenuChanged(menu);
+        }                
+        onSelected(framework);
+    }
+  
+  /**
      * The class to listen to mouse, action and hcl tree events.
      */
     private class Listener extends MouseAdapter implements ActionListener, HCLTreeListener {
@@ -188,6 +196,10 @@ public class HCLSupportViewer extends HCLViewer {
                 onGeneTreeProperties();
             } else if (command.equals(SAMPLE_TREE_PROPERTIES_CMD)) {
                 onSampleTreeProperties();
+            } else if (command.equals(SUPPORT_LEGEND_CMD)) {
+                onShowSupportTreeLegend();
+            } else if (command.equals(SUPPORT_VALUES_CMD)) {                
+                onShowSupportValues(((JCheckBoxMenuItem)e.getSource()).isSelected());
             }
         }
         
@@ -214,45 +226,8 @@ public class HCLSupportViewer extends HCLViewer {
             
             showPopup(e);
         }
-   /*
-        private void deselect(MouseEvent e){
-            Object source = e.getSource();
-    
-            if(source instanceof HCLSupportTree){  //in a tree don't deselect
-                return;
-            }
-    
-            int x = e.getX();
-            int y = e.getY();
-    
-            //now know we are not on a tree
-            if(!(source instanceof HCLSupportViewer) && (source != expViewer)){
-                deselectAllNodes();
-                repaint();
-            }
-            //know we are in the HCLViewer but not in the tree areas but above matrix
-            else if(source instanceof HCLSupportViewer && sampleTree != null && y < sampleTree.getHeight()){
-                deselectAllNodes();
-                repaint();
-            }
-            else if(source == expViewer && x > (elementSize.width * numberOfSamples)){
-                deselectAllNodes();
-                repaint();
-            }
-            else if(source == expViewer && x < offset){
-                deselectAllNodes();
-                repaint();
-            }
-        }
-    
-        private void deselectAllNodes(){
-            if(genesTree != null)
-                genesTree.deselectAllNodes();
-            if(sampleTree != null)
-                sampleTree.deselectAllNodes();
-           ((ExperimentViewer)expViewer).selectRows(-1, -1);
-        }
-    **/
+
+        
         private void deselect(MouseEvent e){
             Object source = e.getSource();
             

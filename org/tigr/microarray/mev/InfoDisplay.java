@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: InfoDisplay.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-06-11 18:51:22 $
- * $Author: braisted $
+ * $Revision: 1.7 $
+ * $Date: 2005-02-24 20:23:44 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -78,7 +78,7 @@ public class InfoDisplay extends ActionInfoDialog {
         if (data != null)
             viewGeneGraphButton.setEnabled(true);
         
-        JButton viewExperimentButton = new JButton("Experiment Detail");
+        JButton viewExperimentButton = new JButton("Sample Detail");
         //viewExperimentButton.setEnabled(false);
         //viewExperimentButton.setToolTipText("Temporarily Disabled -- visit www.tigr.org/software/TM4 for update.");
         viewExperimentButton.setActionCommand("view-experiment");
@@ -317,7 +317,7 @@ public class InfoDisplay extends ActionInfoDialog {
     }
      **/
     
-        private String createMessage(ISlideDataElement element) {
+    private String createMessage(ISlideDataElement element) {
         int stringLength = 0;
         int trueRow = element.getRow(ISlideDataElement.BASE);
         int trueColumn = element.getColumn(ISlideDataElement.BASE);
@@ -339,32 +339,32 @@ public class InfoDisplay extends ActionInfoDialog {
 
         String message = "<html><body bgcolor = \"#FFFFCC\"><basefont face = \"Arial\"><table cellpadding=4 valign=top><th colspan=2 align=left valign=center><font size=6>Location and Intensities</font></th>";
         
-        if(dataType == this.data.DATA_TYPE_TWO_INTENSITY){
+        if(dataType == IData.DATA_TYPE_TWO_INTENSITY){
             message += "<tr><td><i>Row</i></td><td>" + trueRow + "</td></tr>"+
             "<tr><td><i>Column</i></td><td>" + trueColumn + "</td></tr>";
             message += "<tr><td>Cy3</td><td><b>" + cy3 + "</b></td></tr>"+
             "<tr><td><i>Cy5</i></td><td><b>" + cy5 + "</b></td></tr>";
             message += "<tr><td><i>Ratio</i></td><td>" + ratio + "</td></tr>"+
             "<tr><td><i>log2(Ratio)</i></td><td><b>" + logRatio + "</b></td></tr>";
-        } else if(dataType == this.data.DATA_TYPE_AFFY_ABS){
+        } else if(dataType == IData.DATA_TYPE_AFFY_ABS){
             message += "<tr><td><i>File Index</i></td><td>+" + trueRow + "</td></tr>";
             message += "<tr><td><i>Affy Loading Mode</i></td><td>Absolute</td></tr>";
             message += "<tr><td><i>Intensity<i>/</td><td><b>" + cy5 + "</b></td></tr>";
-        } else if(dataType == this.data.DATA_TYPE_AFFY_REF){
+        } else if(dataType == IData.DATA_TYPE_AFFY_REF){
             message += "<tr><td><i>File Index</i></td><td>" + trueRow + "</td></tr>";
             message += "<tr><td><i>Affy Loading Mode</i></td><td>Reference</td></tr>";
             message += "<tr><td><i>Sample Intensity</i></td><td><b>" + cy5 + "</b></td></tr>";
             message += "<tr><td><i>Ref. Intensity</i></td><td><b>" + cy3 + "</b></td></tr>";
             message += "<tr><td><i>Ratio (Sample/Ref.)</i></td><td>" + ratio + "</td></tr>"+
             "<tr><td><i>log2(Ratio)</i></td><td><b>" + logRatio + "</b></td></tr>";
-        } else if(dataType == this.data.DATA_TYPE_AFFY_MEAN){
+        } else if(dataType == IData.DATA_TYPE_AFFY_MEAN){
             message += "<tr><td><i>File Index</i></td><td>" + trueRow + "</td></tr>";
             message += "<tr><td><i>Affy Loading Mode</i></td><td>Array Set Mean Int. as Ref.</td></tr>";
             message += "<tr><td><i>Sample Intensity</i></td><td><b>" + cy5 + "</b></td></tr>";
             message += "<tr><td><i>Array Set Mean Int.</i></td><td><b>" + cy3 + "</b></td></tr>";
             message += "<tr><td><i>Ratio (Sample/Mean)</i></td><td>" + ratio + "</td></tr>"+
             "<tr><td><i>log2(Ratio)</i></td><td><b>" + logRatio + "</b></td></tr>";
-        } else if(dataType == this.data.DATA_TYPE_AFFY_MEDIAN){
+        } else if(dataType == IData.DATA_TYPE_AFFY_MEDIAN){
             message += "<tr><td><i>File Index</i></td><td>" + trueRow + "</td></tr>";
             message += "<tr><td><i>Affy Loading Mode</i></td><td>Spot Median as Ref.</td></tr>";
             message += "<tr><td><i>Sample Intensity</i></td><td><b>" + cy5 + "</b></td></tr>";
@@ -381,7 +381,7 @@ public class InfoDisplay extends ActionInfoDialog {
         //experiment annotation
         Vector keys = slideData.getSlideDataKeys();
         Hashtable expLabels =  slideData.getSlideDataLabels();
-        message += "<th colspan=2 align=left valign=center><font size=6>Experiment Annotation</font></header></th/>";
+        message += "<th colspan=2 align=left valign=center><font size=6>Sample Annotation</font></header></th/>";
         String key, value;
         for(int i = 0; i < keys.size(); i++){
             key = (String)(keys.elementAt(i));
@@ -465,8 +465,8 @@ public class InfoDisplay extends ActionInfoDialog {
         int xGap = (int)(maxCy3 - minCy3);
         int yGap = (int)(maxCy5 - minCy5);
         
-        graphFrame = new JFrame("Experiment vs. Log Ratio");
-        graph = new GraphViewer(graphFrame, 0, 500, 0, 500, minCy3, maxCy3, minCy5, maxCy5, 100, 100, 100, 100, "Experiment vs. Log Ratio", "Experiment Name", "Log2 (Cy5 / Cy3)");
+        graphFrame = new JFrame("Sample vs. Log Ratio");
+        graph = new GraphViewer(graphFrame, 0, 500, 0, 500, minCy3, maxCy3, minCy5, maxCy5, 100, 100, 100, 100, "Sample vs. Log Ratio", "Sample Name", "Log2 (Cy5 / Cy3)");
         
         graph.setXAxisValue(0);
         graph.setYAxisValue(minCy3);

@@ -1,12 +1,12 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: ExperimentViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-04-01 21:34:21 $
- * $Author: braisted $
+ * $Revision: 1.7 $
+ * $Date: 2005-02-24 20:24:08 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.helpers;
@@ -95,7 +95,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
     private int annotationWidth;
     private Insets insets = new Insets(0, 10, 0, 0);
     private int contentWidth = 0;
-    
+    private boolean useDoubleGradient = true;
     private boolean showClusters = true;
     private boolean haveColorBar = false;
     //public static BufferedImage posColorImage = createGradientImage(Color.black, Color.red);
@@ -272,6 +272,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
         this.framework = framework;
         this.data = framework.getData();
         IDisplayMenu menu = framework.getDisplayMenu();
+        useDoubleGradient = menu.getUseDoubleGradient();
         Integer userObject = (Integer)framework.getUserObject();
         setClusterIndex(userObject == null ? 0 : userObject.intValue());
         this.header.setClusterIndex(this.clusterIndex);
@@ -285,7 +286,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
             haveColorBar = areProbesColored();
         else
             haveColorBar = false;
-        updateSize();
+        updateSize();        
         header.updateSizes(getSize().width, elementSize.width);
         header.setData(data);
         onMenuChanged(menu);
@@ -293,6 +294,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
         header.setValues(minValue, maxValue);
         header.setAntiAliasing(menu.isAntiAliasing());
         header.updateSizes(getSize().width, elementSize.width);
+        header.setUseDoubleGradient(useDoubleGradient);
     }
     
     /**
@@ -305,7 +307,9 @@ public class ExperimentViewer extends JPanel implements IViewer {
         this.minValue = -Math.abs(menu.getMinRatioScale());
         this.posColorImage = menu.getPositiveGradientImage();
         this.negColorImage = menu.getNegativeGradientImage();
+        this.useDoubleGradient = menu.getUseDoubleGradient();
         this.header.setNegAndPosColorImages(this.negColorImage, this.posColorImage);
+        this.header.setUseDoubleGradient(useDoubleGradient);
         //header.setValues(maxValue, minValue);
         header.setValues(minValue, maxValue);
         if (this.elementSize.equals(menu.getElementSize()) &&
@@ -589,6 +593,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
     public int getContentWidth(){
         return contentWidth;
     }
+
     
     /**
      * Calculates color for passed value.
@@ -597,12 +602,30 @@ public class ExperimentViewer extends JPanel implements IViewer {
         if (Float.isNaN(value)) {
             return missingColor;
         }
-        float maximum = value < 0 ? this.minValue : this.maxValue;
-        int colorIndex = (int)(255*value/maximum);
-        colorIndex = colorIndex > 255 ? 255 : colorIndex;
-        int rgb = value < 0 ? negColorImage.getRGB(255-colorIndex, 0) : posColorImage.getRGB(colorIndex, 0);
+        
+        float maximum;
+        int colorIndex, rgb;
+        
+        if(useDoubleGradient) {
+        	maximum = value < 0 ? this.minValue : this.maxValue;
+			colorIndex = (int) (255 * value / maximum);
+			colorIndex = colorIndex > 255 ? 255 : colorIndex;
+			rgb = value < 0 ? negColorImage.getRGB(255 - colorIndex, 0)
+					: posColorImage.getRGB(colorIndex, 0);
+        } else {
+        	float span = this.maxValue - this.minValue;
+        	if(value <= minValue)
+        		colorIndex = 0;
+        	else if(value >= maxValue)
+        		colorIndex = 255;
+        	else
+        		colorIndex = (int)(((value - this.minValue)/span) * 255);
+         	
+        	rgb = posColorImage.getRGB(colorIndex,0);
+        }
         return new Color(rgb);
     }
+    
     
     /**
      * Paint component into specified graphics.
@@ -845,6 +868,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
         oos.writeInt(labelIndex);
         oos.writeBoolean(this.isDrawAnnotations);
         oos.writeObject(insets);
+        oos.writeBoolean(useDoubleGradient);
     }
         
     private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
@@ -856,6 +880,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
         labelIndex = ois.readInt();
         this.isDrawAnnotations = ois.readBoolean();
         insets = (Insets)ois.readObject();
+        this.useDoubleGradient = ois.readBoolean();
         
         this.firstSelectedRow = -1;
         this.lastSelectedRow = -1;
@@ -867,6 +892,14 @@ public class ExperimentViewer extends JPanel implements IViewer {
         Listener listener = new Listener();
         addMouseListener(listener);
         addMouseMotionListener(listener);
+    }
+    
+    
+    /** Returns int value indicating viewer type
+     * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
+     */
+    public int getViewerType() {
+        return Cluster.GENE_CLUSTER;
     }
     
     /**
