@@ -10,58 +10,39 @@ All rights reserved.
 
 package org.tigr.microarray.mev.script.util;
 
-import java.awt.Frame;
-
-import java.io.CharArrayWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
-
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.StringTokenizer;
-
-import org.apache.xerces.parsers.DOMParser;
 import org.apache.xerces.dom.DOMImplementationImpl;
-import org.apache.xml.serialize.XMLSerializer;
-
+import org.apache.xerces.parsers.DOMParser;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-
-import org.w3c.dom.Attr;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
+import org.tigr.microarray.mev.script.ScriptManager;
+import org.tigr.microarray.mev.script.event.ScriptDocumentEvent;
+import org.tigr.microarray.mev.script.event.ScriptEventListener;
+import org.tigr.util.FloatMatrix;
+import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentType;
 import org.w3c.dom.Element;
-import org.w3c.dom.Comment;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
-
-import org.w3c.dom.traversal.DocumentTraversal;
-import org.w3c.dom.traversal.NodeFilter;
-import org.w3c.dom.traversal.NodeIterator;
-
-import org.xml.sax.helpers.DefaultHandler;
-
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
-
-import org.tigr.util.FloatMatrix;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
-
-import org.tigr.microarray.mev.script.ScriptManager;
-import org.tigr.microarray.mev.script.event.ScriptDocumentEvent;
-import org.tigr.microarray.mev.script.event.ScriptEventListener;
+import org.xml.sax.helpers.DefaultHandler;
 
 
 
@@ -73,64 +54,69 @@ public class DocumentBase extends DefaultHandler implements Serializable {
     public static final long serialVersionUID = 1000102010302010001L;    
     /** Current verson to append
      */
-    String tm4ScriptVersion = "1.0";
+    protected String tm4ScriptVersion = "1.0";
     /** script version
      */
-    String mevScriptVersion = "1.0";
+    protected String mevScriptVersion = "1.0";
     /** <CODE>ScriptManager</CODE> to be used as a outward communication mode.
      */
-    ScriptManager manager;
+    protected ScriptManager manager;
     
     /** XML Document
      */
-    Document document;
+    protected Document document;
     /** Script text string.  This is kept current for fast rendering.
      */
-    String scriptText;
+    protected String scriptText;
     /** Root element
      */
-    Element root;
+    protected Element root;
     /** mev Element
      */
-    Element mevElement;
+    protected Element mevElement;
     /** Primary data element
      */
-    Element primaryDataElement;
+    protected Element primaryDataElement;
     /** main comment element.
      */
-    Element commentElement;
+    protected Element commentElement;
     
     /** Analysis element.
      */
-    Element analysisElement;
+    protected Element analysisElement;
     
     /** Data id incrementer.  Increases as document grows.
      */
-    int currDataID = 1;
+    protected int currDataID = 1;
     /** <CODE>AlgorithmSet</CODE> ID incrementer to increase during
      * script expansion.
      */
-    int currAlgSetID = 1;
+    protected int currAlgSetID = 1;
     /** Line separator for script rendering.
      */
-    String lineSeparator = System.getProperty("line.separator");
+    protected String lineSeparator = System.getProperty("line.separator");
     /** Indent.
      */
-    String indent = "   ";
+    protected String indent = "   ";
     
     /** Records number of errors found on validation.
      */
-    int parseErrors = 0;
+    protected int parseErrors = 0;
     /** The <CODE>ErrorLog</CODE> object dedicated to this object.
      */
-    ErrorLog errorLog;
+    protected ErrorLog errorLog;
     
     /** Script listner vector.  This will permit update events
      * to be handled correctly.
      */
     private Vector listeners;
-    boolean parsedScript = false;
+    protected boolean parsedScript = false;
+
+    /** Inidicates if the text string represenation is current
+     */
+    protected boolean isTextCurrent = false;
     
+     
     /** Creates a new instance of DocumentBase
      * @param manager <CODE>ScriptManager</CODE> object.
      */
@@ -239,6 +225,7 @@ public class DocumentBase extends DefaultHandler implements Serializable {
         
         Document newDoc =  impl.createDocument(null, "TM4ML", docType);
         copyChildren(doc.getDocumentElement(), newDoc.getDocumentElement(), newDoc);
+        isTextCurrent = false;
         return newDoc;
     }
     
@@ -249,21 +236,21 @@ public class DocumentBase extends DefaultHandler implements Serializable {
      * @param newElement destination element for copied children
      * @param newDoc New Document to import new nodes.
      */    
-    private void copyChildren(Node docElement, Node newElement, Document newDoc) {
+    private void copyChildren(org.w3c.dom.Node docElement, org.w3c.dom.Node newElement, org.w3c.dom.Document newDoc) {
         NodeList nodes = docElement.getChildNodes();
-        Node newNode;
-        Node oldNode;
+        org.w3c.dom.Node newNode;
+        org.w3c.dom.Node oldNode;
         
         for(int i = 0; i < nodes.getLength(); i++) {
-            oldNode = nodes.item(i);
-            // oldElem = (Element)(oldElem.getNextSibling());
-            // newNode = oldNode.cloneNode(true);
+            oldNode = (org.w3c.dom.Node)(nodes.item(i));
+
             newNode = newDoc.importNode(oldNode, false);
             newElement.appendChild(newNode);
             
             if(oldNode.hasChildNodes())
                 copyChildren(oldNode, newNode, newDoc);
         }
+        isTextCurrent = false;
     }
     
     
@@ -325,8 +312,9 @@ public class DocumentBase extends DefaultHandler implements Serializable {
         algSetElement.setAttribute("set_id", String.valueOf(currAlgSetID));
         algSetElement.setAttribute("input_data_ref", String.valueOf(dataRef));
         analysisElement.appendChild(algSetElement);
-        updateScript();
+        //updateScript();
         currAlgSetID++;
+        isTextCurrent = false;
         return algSetElement;
     }
     
@@ -461,7 +449,13 @@ public class DocumentBase extends DefaultHandler implements Serializable {
         }
         algSetElement.appendChild(algElement);
         added = true;
-        updateScript();
+        
+        //don't automatically update text until needed -- Test 01.12.2005 --
+        //updateScript();
+
+        //set isTextCurrent to no to force update later
+        isTextCurrent = false;
+
         fireScriptEvent();
         return added;
     }
@@ -750,11 +744,15 @@ public class DocumentBase extends DefaultHandler implements Serializable {
      * underlying information changes.
      */
     public void updateScript() {
+        if(!isTextCurrent) {
         try {
             scriptText = "";
             writeScriptText(document, "");
+            //text is updated
+            isTextCurrent = true;
         } catch (IOException e) {
             e.printStackTrace();
+        }
         }
     }
     
@@ -1191,18 +1189,20 @@ public class DocumentBase extends DefaultHandler implements Serializable {
         NodeList list = elem.getElementsByTagName("param");
         Element param;
         String key;
+        
+        isTextCurrent = false;
+        
         for(int i =0; i < list.getLength(); i++) {
             param = (Element)list.item(i);
             key = param.getAttribute("key");
             
             if(modLine.indexOf(key) > -1) {
-                param.setAttribute("value", value);
+                param.setAttribute("value", value);                
                 fireScriptEvent();
                 return true;
             }
         }
-        return false;
-        
+        return false;        
     }
     
     //verify algorithm Element is correct
@@ -1382,7 +1382,9 @@ public class DocumentBase extends DefaultHandler implements Serializable {
                         }
                     }
                 }
-                updateScript();
+                
+                //updateScript();
+                isTextCurrent = false;
                 fireScriptEvent();
             }
         }
