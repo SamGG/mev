@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMCentroidsViewer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 17:07:43 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -39,14 +39,18 @@ public class PTMCentroidsViewer extends PTMSubCentroidsViewer {
     private JPopupMenu popup;
     private JMenuItem setOverallMaxMenuItem;
     private JMenuItem setClusterMaxMenuItem;
+    private String[] auxTitles;
+    private Object[][] auxData;    
     //private Vector templateVector;
     
     /**
      * Constructs a <code>PTMCentroidsViewer</code> for specified experiment
      * and clusters.
      */
-    public PTMCentroidsViewer(Experiment experiment, int[][] clusters, Vector templateVector) {
+    public PTMCentroidsViewer(Experiment experiment, int[][] clusters, Vector templateVector, String[] auxTitles, Object[][] auxData) {
 	super(experiment, clusters, templateVector);
+        this.auxTitles = auxTitles;
+        this.auxData = auxData;       
 	Listener listener = new Listener();
 	this.popup = createJPopupMenu(listener);
 	getContentComponent().addMouseListener(listener);
@@ -89,7 +93,7 @@ public class PTMCentroidsViewer extends PTMSubCentroidsViewer {
     private void onSaveClusters() {
 	Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
 	try {
-	    ExperimentUtil.saveExperiment(frame, getExperiment(), getData(), getClusters());
+	    ExperimentUtil.saveAllGeneClustersWithAux(frame, getExperiment(), getData(), getClusters(), auxTitles, auxData);
 	} catch (Exception e) {
 	    JOptionPane.showMessageDialog(frame, "Can not save cluster!", e.toString(), JOptionPane.ERROR_MESSAGE);
 	    e.printStackTrace();

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMSubCentroidViewer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 17:07:43 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -116,7 +116,7 @@ public class PTMSubCentroidViewer extends CentroidViewer {
 		    if (Float.isNaN(fValue) || Float.isNaN(sValue)) {
 			continue;
 		    }
-		    color = this.data.getProbeColor(getProbe(probe));
+		    color = this.data.getProbeColor(this.experiment.getGeneIndexMappedToData(getProbe(probe)));
 		    color = color == null ? DEF_CLUSTER_COLOR : color;
 		    g.setColor(color);
 		    g.drawLine(left+(int)Math.round(sample*stepX)    , zeroValue - (int)Math.round(fValue*factor),

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMExperimentCentroidViewer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 17:07:43 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -42,17 +42,21 @@ public class PTMExperimentCentroidViewer extends ExperimentClusterCentroidViewer
     private JPopupMenu popup;
     private Vector templateVector;
     private int numberOfGenes;
+    private String[] auxTitles;
+    private Object[][] auxData;    
     
     /**
      * Construct a <code>PTMExperimentCentroidViewer</code> with specified experiment
      * and clusters.
      */
-    public PTMExperimentCentroidViewer(Experiment experiment, int[][] clusters, Vector templateVector) {
+    public PTMExperimentCentroidViewer(Experiment experiment, int[][] clusters, Vector templateVector, String[] auxTitles, Object[][] auxData) {
 	super(experiment, clusters);
         this.numberOfGenes = experiment.getNumberOfGenes();
 	Listener listener = new Listener();
 	this.popup = createJPopupMenu(listener);
 	this.templateVector = templateVector;
+        this.auxTitles = auxTitles;
+        this.auxData = auxData;        
 	getContentComponent().addMouseListener(listener);
     }
     
@@ -72,7 +76,7 @@ public class PTMExperimentCentroidViewer extends ExperimentClusterCentroidViewer
     private void onSaveClusters() {
 	Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
 	try {
-	    ExperimentUtil.saveAllExperimentClusters(frame, getExperiment(), getData(), getClusters());
+	    ExperimentUtil.saveAllExperimentClustersWithAux(frame, getExperiment(), getData(), getClusters(), auxTitles, auxData);
 	} catch (Exception e) {
 	    JOptionPane.showMessageDialog(frame, "Can not save clusters!", e.toString(), JOptionPane.ERROR_MESSAGE);
 	    e.printStackTrace();
@@ -85,7 +89,7 @@ public class PTMExperimentCentroidViewer extends ExperimentClusterCentroidViewer
     private void onSaveCluster() {
 	Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
 	try {
-	    ExperimentUtil.saveExperimentCluster(frame, getExperiment(), getData(), getCluster());
+	    ExperimentUtil.saveExperimentClusterWithAux(frame, getExperiment(), getData(), getCluster(), auxTitles, auxData);
 	} catch (Exception e) {
 	    JOptionPane.showMessageDialog(frame, "Can not save cluster!", e.toString(), JOptionPane.ERROR_MESSAGE);
 	    e.printStackTrace();

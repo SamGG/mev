@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMExperimentViewer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 17:07:43 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -54,17 +54,21 @@ public class PTMExperimentViewer implements IViewer {
     private JPopupMenu popup;
     private ExperimentViewer expViewer;
     private PTMExperimentHeader header;
+    private String[] auxTitles;
+    private Object[][] auxData;    
     
     /**
      * Constructs a <code>PTMExperimentViewer</code> with specified
      * experiment, clusters and templateVector.
      */
-    public PTMExperimentViewer(Experiment experiment, int[][] clusters, Vector templateVector) {
+    public PTMExperimentViewer(Experiment experiment, int[][] clusters, Vector templateVector, String[] auxTitles, Object[][] auxData) {
 	Listener listener = new Listener();
 	this.popup = createJPopupMenu(listener);
 	
 	this.expViewer = new ExperimentViewer(experiment, clusters);
 	this.expViewer.getContentComponent().addMouseListener(listener);
+        this.auxTitles = auxTitles;
+        this.auxData = auxData;        
 	this.header = new PTMExperimentHeader(expViewer.getHeaderComponent(), templateVector);
 	//this.header.setColorImages(expViewer.getPosColorImage(), expViewer.getNegColorImage());
 	this.header.setColorImages(expViewer.getNegColorImage(), expViewer.getPosColorImage());
@@ -180,7 +184,8 @@ public class PTMExperimentViewer implements IViewer {
     private void onSaveClusters() {
 	Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
 	try {
-	    expViewer.saveClusters(frame);
+	    //expViewer.saveClusters(frame);
+            ExperimentUtil.saveAllGeneClustersWithAux(frame, expViewer.getExperiment(), expViewer.getData(), expViewer.getClusters(), auxTitles, auxData);            
 	} catch (Exception e) {
 	    JOptionPane.showMessageDialog(frame, "Can not save clusters!", e.toString(), JOptionPane.ERROR_MESSAGE);
 	    e.printStackTrace();
@@ -193,7 +198,8 @@ public class PTMExperimentViewer implements IViewer {
     private void onSaveCluster() {
 	Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
 	try {
-	    expViewer.saveCluster(frame);
+	    //expViewer.saveCluster(frame);
+            ExperimentUtil.saveGeneClusterWithAux(frame, expViewer.getExperiment(), expViewer.getData(), expViewer.getCluster(), auxTitles, auxData);            
 	} catch (Exception e) {
 	    JOptionPane.showMessageDialog(frame, "Can not save cluster!", e.toString(), JOptionPane.ERROR_MESSAGE);
 	    e.printStackTrace();

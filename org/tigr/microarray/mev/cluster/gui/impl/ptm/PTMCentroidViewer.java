@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMCentroidViewer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 17:07:43 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -39,16 +39,20 @@ public class PTMCentroidViewer extends CentroidViewer {
        
     private JPopupMenu popup;
     private Vector templateVector;
+    private String[] auxTitles;
+    private Object[][] auxData;
     
     /**
      * Construct a <code>PTMCentroidViewer</code> with specified experiment
      * and clusters.
      */
-    public PTMCentroidViewer(Experiment experiment, int[][] clusters, Vector templateVector) {
+    public PTMCentroidViewer(Experiment experiment, int[][] clusters, Vector templateVector, String[] auxTitles, Object[][] auxData) {
 	super(experiment, clusters);
 	Listener listener = new Listener();
 	this.popup = createJPopupMenu(listener);
 	this.templateVector = templateVector;
+        this.auxTitles = auxTitles;
+        this.auxData = auxData;
 	getContentComponent().addMouseListener(listener);
     }
     
@@ -67,7 +71,7 @@ public class PTMCentroidViewer extends CentroidViewer {
     private void onSaveClusters() {
 	Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
 	try {
-	    ExperimentUtil.saveExperiment(frame, getExperiment(), getData(), getClusters());
+	    ExperimentUtil.saveAllGeneClustersWithAux(frame, getExperiment(), getData(), getClusters(), auxTitles, auxData);
 	} catch (Exception e) {
 	    JOptionPane.showMessageDialog(frame, "Can not save clusters!", e.toString(), JOptionPane.ERROR_MESSAGE);
 	    e.printStackTrace();
@@ -80,7 +84,7 @@ public class PTMCentroidViewer extends CentroidViewer {
     private void onSaveCluster() {
 	Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
 	try {
-	    ExperimentUtil.saveExperiment(frame, getExperiment(), getData(), getCluster());
+	    ExperimentUtil.saveGeneClusterWithAux(frame, getExperiment(), getData(), getCluster(), auxTitles, auxData);
 	} catch (Exception e) {
 	    JOptionPane.showMessageDialog(frame, "Can not save cluster!", e.toString(), JOptionPane.ERROR_MESSAGE);
 	    e.printStackTrace();
