@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: QSort.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-17 16:57:18 $
+ * $Revision: 1.3 $
+ * $Date: 2003-12-17 19:20:22 $
  * $Author: nbhagaba $
  * $State: Exp $
  */
@@ -22,6 +22,7 @@ public class QSort {
     private float[] sorted;
     private double[] sortedDouble;
     private int[] NaNIndices;
+    private int[] negInfinityIndices;
     public static final int ASCENDING = 1;
     public static final int DESCENDING = 2;
     private boolean ascending;    
@@ -30,29 +31,49 @@ public class QSort {
         float[] copyA = new float[origA.length];
         this.ascending = true;
         Vector NaNIndicesVector = new Vector();
+        Vector negInfinityIndicesVector = new Vector();
+        
         for (int i = 0; i < copyA.length; i++) {
             copyA[i] = origA[i];
             if (Float.isNaN(origA[i])) {
                 NaNIndicesVector.add(new Integer(i));
+                copyA[i] = Float.NEGATIVE_INFINITY; // so that NaN's are always first when the array is sorted in ascending order
+            }
+            if (Float.isInfinite(origA[i]) && (origA[i] < 0)) { // in case there are actual negative infinity values in origA
+                negInfinityIndicesVector.add(new Integer(i));
             }
         }
+         
         
         NaNIndices = new int[NaNIndicesVector.size()];
         
         for (int i = 0; i < NaNIndices.length; i++) {
             NaNIndices[i] = ((Integer)(NaNIndicesVector.get(i))).intValue();
         }
+        
+        negInfinityIndices = new int[negInfinityIndicesVector.size()];
+        
+        for (int i = 0; i < negInfinityIndices.length; i++) {
+            negInfinityIndices[i] = ((Integer)(negInfinityIndicesVector.get(i))).intValue();
+        }
+        
 	sort(copyA);
     }
     
     public QSort(double[] origA){
         double[] copyA = new double[origA.length];
         this.ascending = true;
-        Vector NaNIndicesVector = new Vector();        
+        Vector NaNIndicesVector = new Vector(); 
+        Vector negInfinityIndicesVector = new Vector();        
+        
         for (int i = 0; i < copyA.length; i++) {
             copyA[i] = origA[i];
             if (Double.isNaN(origA[i])) {
                 NaNIndicesVector.add(new Integer(i));
+                copyA[i] = Double.NEGATIVE_INFINITY; // so that NaN's are always first when the array is sorted in ascending order
+            }  
+            if (Double.isInfinite(origA[i]) && (origA[i] < 0)) { // in case there are actual negative infinity values in origA
+                negInfinityIndicesVector.add(new Integer(i));
             }            
         }  
         
@@ -60,7 +81,14 @@ public class QSort {
         
         for (int i = 0; i < NaNIndices.length; i++) {
             NaNIndices[i] = ((Integer)(NaNIndicesVector.get(i))).intValue();
+        }   
+        
+        negInfinityIndices = new int[negInfinityIndicesVector.size()];
+        
+        for (int i = 0; i < negInfinityIndices.length; i++) {
+            negInfinityIndices[i] = ((Integer)(negInfinityIndicesVector.get(i))).intValue();
         }        
+        
 	sort(copyA);
     }   
     
@@ -225,6 +253,7 @@ public class QSort {
     }    
     
     public float[] getSorted(){
+        /*
         Vector sortedVector = new Vector();
         Vector NaNSortedIndices = new Vector();
         
@@ -242,6 +271,10 @@ public class QSort {
         for (int i = 0; i < sortedVector.size(); i++) {
             sorted[i] = ((Float)(sortedVector.get(i))).floatValue();
         }
+         */
+        for (int i = 0; i < NaNIndices.length; i++) {
+            sorted[i] = Float.NaN;
+        }
         if (!ascending) {
             float[] revSorted = reverse(sorted);
             return revSorted;
@@ -252,6 +285,7 @@ public class QSort {
     }
     
     public double[] getSortedDouble(){
+        /*
         Vector sortedVector = new Vector();
         Vector NaNSortedIndices = new Vector();
         
@@ -269,6 +303,10 @@ public class QSort {
         for (int i = 0; i < sortedVector.size(); i++) {
             sortedDouble[i] = ((Double)(sortedVector.get(i))).doubleValue();
         } 
+         */
+        for (int i = 0; i < NaNIndices.length; i++) {
+            sortedDouble[i] = Double.NaN;
+        }        
         
         if (!ascending) {
             double[] revSortedDouble = reverse(sortedDouble);
@@ -279,6 +317,7 @@ public class QSort {
     }    
     
     public int[] getOrigIndx(){
+        /*
         Vector origIndxVector = new Vector();
         for (int i = 0; i < origIndx.length; i++) {
             if (!isNaNIndex(origIndx[i])) {
@@ -292,6 +331,15 @@ public class QSort {
         
         for (int i = 0; i < origIndxVector.size(); i++) {
             origIndx[i] = ((Integer)(origIndxVector.get(i))).intValue();
+        }
+         */
+        
+        for (int i = 0; i < NaNIndices.length; i++) {
+            origIndx[i] = NaNIndices[i];
+        }
+        
+        for (int i = NaNIndices.length; i < NaNIndices.length + negInfinityIndices.length; i++) {
+            origIndx[i] = negInfinityIndices[i - NaNIndices.length];
         }
         
         if (!ascending) {
