@@ -5,12 +5,12 @@ All rights reserved.
 /*
  * $RCSfile: KNNClassify.java,v $
 <<<<<<< KNNClassify.java
- * $Revision: 1.5 $
- * $Date: 2003-12-11 16:20:00 $
+ * $Revision: 1.6 $
+ * $Date: 2003-12-11 17:26:37 $
  * $Author: nbhagaba $
 =======
- * $Revision: 1.5 $
- * $Date: 2003-12-11 16:20:00 $
+ * $Revision: 1.6 $
+ * $Date: 2003-12-11 17:26:37 $
  * $Author: nbhagaba $
 >>>>>>> 1.4
  * $State: Exp $
@@ -23,6 +23,7 @@ All rights reserved.
 
 package org.tigr.microarray.mev.cluster.algorithm.impl;
 //THIS IS A TEST COMMENT    
+//TEST  COMMENT FOR V 1.6
 import java.util.Vector;
 import java.util.Random;
 import org.tigr.util.FloatMatrix;
