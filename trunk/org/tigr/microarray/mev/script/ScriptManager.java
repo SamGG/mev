@@ -11,6 +11,7 @@ All rights reserved.
 package org.tigr.microarray.mev.script;
 
 import java.awt.Color;
+import java.awt.Frame;
 import java.awt.Insets;
 
 import java.io.BufferedWriter;
@@ -69,28 +70,28 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
 public class ScriptManager {
     
     /** Holds the Mev' ResultTree script mount point.
-     */    
+     */
     private DefaultMutableTreeNode scriptManagerNode;
     /** Mev's <CODE>ActionManager</CODE>. Supports algorithm interactions.
-     */    
+     */
     private ActionManager actionManager;
     /** Contains multiple script objects.
-     */    
+     */
     private ScriptTable table;
     /** Count of current scripts.
-     */    
+     */
     private int scriptNum;
     /** MeV's framework communication conduit.
-     */    
+     */
     private IFramework framework;
     /** Validation support class.
-     */    
+     */
     private ParameterValidator validator;
     /** Progress meter.
-     */    
+     */
     private Progress progress;
     /** Vector data structure of current scripts.
-     */    
+     */
     private Vector scripts;
     
     /** Creates a new instance of ScriptManager
@@ -112,13 +113,13 @@ public class ScriptManager {
     }
     
     /** Default Constructor.
-     */    
+     */
     public ScriptManager() {
         
     }
     
     /** Loads a script following File selection.
-     */    
+     */
     public void loadScript() {
         String sep = System.getProperty("file.separator");
         JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+sep+"Data"+sep+"Scripts");
@@ -133,7 +134,7 @@ public class ScriptManager {
     /** Loads the XML script specified by File object.
      * Note that real-time validation occurs on loading the script.
      * @param file XML file object.
-     */    
+     */
     public void loadXML(File file) {
         Thread thread = new Thread(new ThreadHandler(file));
         thread.setPriority(Thread.MIN_PRIORITY);
@@ -145,7 +146,7 @@ public class ScriptManager {
     
     
     /** Internal class to handle thread for script loading.
-     */    
+     */
     public class ThreadHandler implements Runnable {
         private final File file;
         public ThreadHandler(File f) {
@@ -159,7 +160,7 @@ public class ScriptManager {
     
     /** Supports script loading called from a thread.
      * @param inputFile
-     * @return  */    
+     * @return  */
     private boolean loadScript(File inputFile) {
         
         ScriptDocument newScriptDoc = new ScriptDocument(scriptNum, inputFile.getPath(), this);
@@ -179,8 +180,8 @@ public class ScriptManager {
             }
         } catch (Exception e) {
             //catch non parse errors such as IO errors
-            JOptionPane.showMessageDialog(framework.getFrame(), "Script loading has been aborted due to parse errors.", 
-                                            "Script Parse Error", JOptionPane.INFORMATION_MESSAGE);           
+            JOptionPane.showMessageDialog(framework.getFrame(), "Script loading has been aborted due to parse errors.",
+            "Script Parse Error", JOptionPane.INFORMATION_MESSAGE);
             
             progress.dispose();
             return false;
@@ -189,7 +190,7 @@ public class ScriptManager {
         //Exit if there were validation or fatal errors.
         if(validationErrors) {
             JOptionPane.showMessageDialog(framework.getFrame(), "Script loading has been aborted.  If the script has been \n"+
-            "repaired to correct the errors you can attempt to load it again.", "Script Validation Error", JOptionPane.INFORMATION_MESSAGE);           
+            "repaired to correct the errors you can attempt to load it again.", "Script Validation Error", JOptionPane.INFORMATION_MESSAGE);
             return false;
         }
         
@@ -198,14 +199,14 @@ public class ScriptManager {
         if(validator == null) {
             //construct a parameter validator
             validator = new ParameterValidator();
-            validator.loadParameterConstraints();            
+            validator.loadParameterConstraints();
         }
         
         ScriptTree tree = new ScriptTree(newScriptDoc, this);
         if(!validateParameters(tree, errorLog)) {
             this.progress.dispose();
             JOptionPane.showMessageDialog(framework.getFrame(), "Script loading has been aborted.  If the script has been \n"+
-            "repaired to correct the errors you can attempt to load it again.", "Parmameter Validataion Error", JOptionPane.INFORMATION_MESSAGE);           
+            "repaired to correct the errors you can attempt to load it again.", "Parmameter Validataion Error", JOptionPane.INFORMATION_MESSAGE);
             return false;
         }
         
@@ -213,7 +214,7 @@ public class ScriptManager {
         if(table == null) {
             table = new ScriptTable(this, scripts);
             DefaultMutableTreeNode tableNode = new DefaultMutableTreeNode(new LeafInfo("Script Table", table));
-            framework.addNode(scriptManagerNode,tableNode);            
+            framework.addNode(scriptManagerNode,tableNode);
         }
         
         ScriptTreeViewer treeViewer = new ScriptTreeViewer(tree, this);
@@ -232,12 +233,14 @@ public class ScriptManager {
         framework.setTreeNode(treeNode);
         scriptNum++;
         
+        validator.checkAlgorithmsForDataDependance(tree, this);
+        
         return true;
     }
     
     /** Prompts for a new script object to be created.
      * Initialized structures are put in place.
-     */    
+     */
     public void addNewScript() {
         ScriptDocument newScriptDoc;
         ScriptAttributeDialog dialog = new ScriptAttributeDialog();
@@ -275,7 +278,7 @@ public class ScriptManager {
     }
     
     /** Provides the next Script ID number.
-     */    
+     */
     public int getNextScriptID() {
         scriptNum++;
         return scriptNum;
@@ -284,7 +287,7 @@ public class ScriptManager {
     
     /** Saves the script to a file to be specified via a prompt.
      * @param doc <CODE>ScriptDocument</CODE> to save.
-     */    
+     */
     public void saveScript(ScriptDocument doc) {
         String sep = System.getProperty("file.separator");
         JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+sep+"Data"+sep+"Scripts");
@@ -302,7 +305,7 @@ public class ScriptManager {
      * @param file Output file
      * @param doc <CODE>ScriptDocument</CODE> to output.
      * @throws IOException
-     */    
+     */
     private void writeScript(File file, ScriptDocument doc) throws IOException {
         BufferedWriter bfr = new BufferedWriter( new FileWriter(file));
         bfr.write(doc.toString());
@@ -316,7 +319,7 @@ public class ScriptManager {
      * @param parentNodeOutputClass Parent input data class used to restrict options to
      * appropriate algorithms.
      * @return
-     */    
+     */
     public AlgorithmData getAlgorithm(String parentNodeOutputClass) {
         
         AlgorithmData data = null;
@@ -419,7 +422,7 @@ public class ScriptManager {
                         data.addIntArray("number-required", numReq);
                         data.addParam("is-required-in-both-groups", String.valueOf(detFilter.get_both()));
                         setAdjustmentOutput(data);
-                    }                    
+                    }
                 } else if(algName.equals("Fold Filter")) {
                     data = new AlgorithmData();
                     
@@ -446,7 +449,7 @@ public class ScriptManager {
                         data.addParam("fold-change", String.valueOf(foldFilter.get_fold_change()));
                         data.addParam("divider-string", foldFilter.get_divider());
                         setAdjustmentOutput(data);
-                    }   
+                    }
                     
                 } else {
                     data = new AlgorithmData();
@@ -454,7 +457,7 @@ public class ScriptManager {
                     setAdjustmentOutput(data);
                 }
             } else if(algType.equals(ScriptConstants.ALGORITHM_TYPE_CLUSTER_SELECTION)) {
- 
+                
                 if(algName.equals("Diversity Ranking Cluster Selection")) {
                     DiversityRankingInitDialog selectDialog = new DiversityRankingInitDialog(new JFrame());
                     if(selectDialog.showModal() == JOptionPane.OK_OPTION) {
@@ -478,9 +481,9 @@ public class ScriptManager {
                             data.addParam("process-gene-clusters", String.valueOf(false));
                         
                         setSelectionOutput(data);
-                    }                 
+                    }
                 } else if(algName.equals("Centroid Entropy/Variance Ranking Cluster Selection")) {
-                  
+                    
                     System.out.println("ENTROPY SELECTION");
                     
                     CentroidEntropyRankingInitDialog entropyDialog = new CentroidEntropyRankingInitDialog(new JFrame());
@@ -504,8 +507,8 @@ public class ScriptManager {
                         else
                             data.addParam("process-gene-clusters", String.valueOf(false));
                         
-                        setSelectionOutput(data);                       
-                    }                    
+                        setSelectionOutput(data);
+                    }
                 }
             }
         }
@@ -513,14 +516,14 @@ public class ScriptManager {
         // use for parameter varification dumpParams(data.getParams());
         return data;
     }
-   
-    /* for debug 
+    
+    /* for debug
     private void dumpParams(org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters params) {
         java.util.Properties props = (java.util.Properties)(params.getMap());
         Enumeration keys = props.keys();
         String key;
         String value;
-        
+     
         String name = props.getProperty("name");
         System.out.println("<script-algorithm name=\""+name+"\">");
         while(keys.hasMoreElements()) {
@@ -529,13 +532,13 @@ public class ScriptManager {
         }
         System.out.println("</script-algorithm>");
     }
-    */
-  /*  
+     */
+  /*
     public void getAlgorithm(DataNode parentNode, ScriptTree tree) {
-        
+   
         ScriptParameterFetcher fetcher = new ScriptParameterFetcher(tree, parentNode);
         fetcher.start();
-   */     
+   */
         /*
         ScriptAlgorithmInitDialog dialog = new ScriptAlgorithmInitDialog(actionManager, parentNodeOutputClass);
          
@@ -596,10 +599,10 @@ public class ScriptManager {
          */
     /*
     }
-    
-*//*
+     
+     *//*
     private class ScriptParameterFetcher extends Thread {
-           
+        
         String parentClass;
         AlgorithmData algData;
         DataNode parent;
@@ -619,11 +622,11 @@ public class ScriptManager {
         public void getAlgData() {
             AlgorithmData data = null;
             ScriptAlgorithmInitDialog dialog = new ScriptAlgorithmInitDialog(actionManager, parentClass, false);
-            
+        
             if(dialog.showModal() == JOptionPane.OK_OPTION) {
                 String algName = dialog.getAlgorithmName();
                 String algType = dialog.getAlgorithmType();
-                
+        
                 System.out.println("type = "+ algType);
                 System.out.println("name = "+algName);
                 if(algType.equals(ScriptConstants.ALGORITHM_TYPE_CLUSTER)) {
@@ -645,15 +648,15 @@ public class ScriptManager {
                         e.printStackTrace();
                     }
                 } else if(algType.equals(ScriptConstants.ALGORITHM_TYPE_ADJUSTMENT)) {
-                    
+        
                     if(algName.equals("Percentage Cutoff")) {
                         SetPercentageCutoffsDialog percDialog = new SetPercentageCutoffsDialog(new JFrame(), 0.0f);
                         if(percDialog.showModal() == JOptionPane.OK_OPTION) {
                             data = new AlgorithmData();
                             data.addParam("name", algName);
-                            
+        
                             System.out.println("AlgName ="+algName);
-                            
+        
                             float percentage = percDialog.getPercentageCutoff();
                             data.addParam("percent-cutoff", String.valueOf(percentage));
                             setAdjustmentOutput(data);
@@ -688,18 +691,18 @@ public class ScriptManager {
             }
             //sets data in tree
             tree.setAlgorithm(data, parent);
-            
-            
-            
+        
+        
+        
         }
         
     }
-    
-    */
+        
+      */
     
     /** Adds parameters common to all data adjustment algorithms.
      * @param data Parameter container.
-     */    
+     */
     private void setAdjustmentOutput(AlgorithmData data) {
         String [] output_nodes = new String[1];
         output_nodes[0] = "Single Adjusted Ouput";
@@ -710,7 +713,7 @@ public class ScriptManager {
     
     /** Sets the parameters common to all Cluster Selection algorithms.
      * @param data AlgorithmData parameter container.
-     */    
+     */
     private void setSelectionOutput(AlgorithmData data) {
         int clusterCount = data.getParams().getInt("desired-cluster-count");
         String [] output_nodes = new String[clusterCount];
@@ -725,7 +728,7 @@ public class ScriptManager {
      * <CODE>ScriptXMLViewer</CODE>.
      * @param viewer ScriptTreeViewer object.
      * @param node script node on the tree to highlight.
-     */    
+     */
     public void viewSelectedNodeXML(ScriptTreeViewer viewer, ScriptNode node) {
         IViewer iviewer;
         ScriptXMLViewer xmlViewer;
@@ -747,7 +750,7 @@ public class ScriptManager {
      * associated tree.
      * @param treeViewer ScriptTreeViewer associated with xml view to be delivered.
      * @return
-     */    
+     */
     public DefaultMutableTreeNode getSiblingXMLNode(ScriptTreeViewer treeViewer) {
         Enumeration enum = this.scriptManagerNode.depthFirstEnumeration();
         DefaultMutableTreeNode node, treeNode = null;
@@ -778,7 +781,7 @@ public class ScriptManager {
     
     /** Executes the script specified by the ID.
      * @param index Source script ID.
-     */    
+     */
     public void runScript(int index) {
         if(index >= scripts.size())
             return;
@@ -791,7 +794,7 @@ public class ScriptManager {
     
     /** Runs the script contained in the ScriptDocument.
      * @param scriptDoc Source script.
-     */    
+     */
     public void runScript(ScriptDocument scriptDoc) {
         Script script = getScriptObjectForDocument(scriptDoc);
         if(script == null)
@@ -806,7 +809,7 @@ public class ScriptManager {
      * <CODE>ScriptDocument</CODE>
      * @param doc source document.
      * @return
-     */    
+     */
     public Script getScriptObjectForDocument(ScriptDocument doc) {
         Script script;
         for(int i = 0; i < scripts.size(); i++) {
@@ -817,9 +820,15 @@ public class ScriptManager {
         return null;
     }
     
+    /** Returns MeV's main frame component
+     */
+    public Frame getFrame() {
+        return this.framework.getFrame();
+    }
+    
     /** Serves the current experiment object in MeV.  This is the primary
      * (initial) data source.
-     * @return  */    
+     * @return  */
     public Experiment getCurrentExperiment() {
         return framework.getData().getExperiment();
     }
@@ -831,7 +840,7 @@ public class ScriptManager {
      * @param tree ScriptTree to validate.
      * @param log <CODE>ErrorLog</CODE> to collect possible violations.
      * @return
-     */    
+     */
     public boolean validateParameters(ScriptTree tree, ErrorLog log) {
         boolean isValid = true;
         if(this.validator != null && this.validator.isEnabled()) {
@@ -851,7 +860,7 @@ public class ScriptManager {
     /** Returns a set of valid parameters given a passed algorithm name.
      * @param algName Algorithm name.
      * @return
-     */    
+     */
     public String getValidParametersTable(String algName) {
         if(validator == null)
             return null;
@@ -861,7 +870,7 @@ public class ScriptManager {
     /** Returns a Hashtable of valid key value pairs for the algorithm
      * @param algName algorithm name
      * @return
-     */   
+     */
     public Hashtable getParameterHash(String algName) {
         if(validator == null)
             return null;
@@ -872,7 +881,7 @@ public class ScriptManager {
      * @param algName Algorithm name
      * @param key parameter key
      * @return
-     */    
+     */
     public ParameterAttributes getParameterAttributes(String algName, String key) {
         if(validator == null)
             return null;
