@@ -4,14 +4,14 @@ All rights reserved.
 */
 /*
  * $RCSfile: CentroidUserObject.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-05 22:53:06 $
  * $Author: braisted $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.helpers;
 
-public class CentroidUserObject {
+public class CentroidUserObject implements java.io.Serializable {
     
     // drawing modes
     public static final int VARIANCES_MODE = 0;

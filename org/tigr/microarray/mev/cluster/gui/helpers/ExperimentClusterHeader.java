@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: ExperimentClusterHeader.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-05 22:53:06 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -21,6 +21,10 @@ import java.awt.FontMetrics;
 import java.awt.GradientPaint;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import javax.swing.JPanel;
 import javax.swing.JComponent;
@@ -271,6 +275,29 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
                     g.setColor(Color.white);
                 g.fillRect(sample*elementWidth + insets.left + centroidNameOffset, getSize().height - COLOR_BAR_HEIGHT - 2, elementWidth, COLOR_BAR_HEIGHT);
             }
+        }
+    }
+        
+    private void writeObject(ObjectOutputStream oos) throws IOException {       
+        oos.writeObject(experiment);            
+        oos.writeObject(samplesOrder);
+        oos.writeInt(elementWidth);
+        oos.writeObject(insets);
+        oos.writeBoolean(this.hasCentroid);
+        if(this.hasCentroid){
+            oos.writeObject(this.centroidName);
+        }            
+    }
+    
+    
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {     
+        experiment = (Experiment)ois.readObject();
+        samplesOrder = (int[][])ois.readObject();
+        elementWidth = ois.readInt();
+        insets = (Insets)ois.readObject();
+        if(ois.readBoolean()){
+            this.hasCentroid = true;
+            this.centroidName = (String)ois.readObject();
         }
     }
     

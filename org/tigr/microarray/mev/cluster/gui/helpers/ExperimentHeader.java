@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: ExperimentHeader.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-05 22:53:06 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -22,6 +22,10 @@ import java.awt.GradientPaint;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import javax.swing.JPanel;
 import javax.swing.JComponent;
 
@@ -34,7 +38,9 @@ import org.tigr.microarray.mev.cluster.gui.IData;
  * @version 1.0
  * @author Aleksey D.Rezantsev
  */
-public class ExperimentHeader extends JPanel implements IExperimentHeader{
+public class ExperimentHeader extends JPanel implements IExperimentHeader, java.io.Serializable {
+    
+    static final long serialVersionUID = 1L;
     
     private static final int RECT_HEIGHT = 15;
     private static final int COLOR_BAR_HEIGHT = 10;
@@ -258,5 +264,22 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader{
                 g.fillRect(sample*elementWidth + insets.left, getSize().height - COLOR_BAR_HEIGHT - 2, elementWidth, COLOR_BAR_HEIGHT);
             }
         }
+    }
+    
+    private void writeObject(ObjectOutputStream oos) throws IOException {       
+        oos.writeObject(experiment);        
+        oos.writeObject(clusters);        
+        oos.writeObject(samplesOrder);
+        oos.writeInt(elementWidth);
+        oos.writeObject(insets);
+    }
+    
+    
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {     
+        experiment = (Experiment)ois.readObject();
+        clusters = (int[][])ois.readObject();
+        samplesOrder = (int[])ois.readObject();
+        elementWidth = ois.readInt();
+        insets = (Insets)ois.readObject();
     }
 }

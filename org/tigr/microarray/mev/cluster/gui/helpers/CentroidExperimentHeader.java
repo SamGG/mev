@@ -1,11 +1,11 @@
 /*
 Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
 All rights reserved.
-*/
+ */
 /*
  * $RCSfile: CentroidExperimentHeader.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-05 22:53:06 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -26,6 +26,10 @@ import java.awt.BorderLayout;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import javax.swing.JPanel;
 import javax.swing.JComponent;
 
@@ -34,17 +38,20 @@ import org.tigr.util.FloatMatrix;
 /**
  *  Creates a header with a centroid vector image and centroid label
  */
-public class CentroidExperimentHeader extends JPanel{
+public class CentroidExperimentHeader extends JPanel implements java.io.Serializable {
     
     private String vectorString;
     private CentroidVectorPanel centroidVectorPanel;
     private int [][] clusters;
-    private int clusterIndex = 0;
+    protected int clusterIndex = 0;
     private int currHeight;
     private int currWidth;
     private Insets insets = new Insets(0, 10, 0, 0);
     private ExperimentHeader expHeader;
+    private BufferedImage posColorImage;
+    private BufferedImage negColorImage;
     
+    private FloatMatrix mainCentroidData;
     /**
      * Constructs a <code>CentroidExperimentHeader</code> with specified experiment
      * header, centroid data, and centroid vector label.
@@ -53,16 +60,48 @@ public class CentroidExperimentHeader extends JPanel{
      * @param vectorString, label for centroid vector
      */
     public CentroidExperimentHeader(JComponent expHeader, FloatMatrix centroidData, int [][] clusters, String VectorString) {
+        super();
         setLayout(new GridBagLayout());
         setBackground(Color.white);
         this.clusters = clusters;
         this.expHeader = (ExperimentHeader)expHeader;
-        this.centroidVectorPanel = new CentroidVectorPanel(centroidData);
+        this.mainCentroidData = centroidData;
+        this.centroidVectorPanel = new CentroidVectorPanel(centroidData, insets);
         add(expHeader, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         add(centroidVectorPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         vectorString = VectorString;
         currWidth = currHeight = 0;
     }
+    
+    public CentroidExperimentHeader(){ }
+    
+    private void writeObject(ObjectOutputStream oos) throws IOException {
+        oos.writeObject(expHeader);
+        
+        oos.writeObject(clusters);
+        oos.writeObject(mainCentroidData);
+        oos.writeInt(clusterIndex);
+        oos.writeObject(insets);
+        oos.writeObject(this.vectorString);
+        oos.writeInt(currWidth);
+        oos.writeInt(currHeight);
+        oos.writeObject(centroidVectorPanel);
+    }
+    
+    
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        this.expHeader = (ExperimentHeader)ois.readObject();
+        
+        this.clusters = (int[][])ois.readObject();
+        this.mainCentroidData = (FloatMatrix)ois.readObject();
+        this.clusterIndex = ois.readInt();
+        this.insets = (Insets)ois.readObject();
+        this.vectorString = (String)ois.readObject();
+        this.currWidth = ois.readInt();
+        this.currHeight = ois.readInt();
+        this.centroidVectorPanel = (CentroidExperimentHeader.CentroidVectorPanel)ois.readObject();
+    }
+    
     
     /**
      *  Returns the current width of the header.
@@ -90,12 +129,13 @@ public class CentroidExperimentHeader extends JPanel{
      */
     public void setClusterIndex(int index){
         this.clusterIndex = index;
+        this.centroidVectorPanel.setCurrentCluster(index);
     }
     
     /**
      * Returns current cluster
      */
-    private int [] getCluster(){
+    public int [] getCluster(){
         return clusters[clusterIndex];
     }
     
@@ -107,35 +147,63 @@ public class CentroidExperimentHeader extends JPanel{
     /**
      * The component to display som vector.
      */
-    private class CentroidVectorPanel extends JPanel {
+    public class CentroidVectorPanel extends JPanel implements java.io.Serializable {
         
         private FloatMatrix codes;
         private int cluster;
         private float maxValue = 3f;
         private float minValue = -3f;
-        private Dimension elementSize;
+        private Dimension elementSize = new Dimension(20,5);
         private boolean drawBorders = true;
         private boolean isAntiAliasing = false;
         private Color missingColor = new Color(128, 128, 128);
-        private BufferedImage posColorImage;
-        private BufferedImage negColorImage;
+        private Insets insets = new Insets(0,0,0,0);
+        
         
         /**
          * Constructs a <code>SOMVectorPanel</code> with specified codes.
          */
-        public CentroidVectorPanel(FloatMatrix codes) {
+        public CentroidVectorPanel(FloatMatrix codes, Insets insets) {
             setBackground(Color.white);
             this.codes = codes;
+            this.insets = insets;
         }
+        
+        public CentroidVectorPanel(){ }
+        
+        private void writeObject(ObjectOutputStream oos) throws IOException {
+            oos.defaultWriteObject();
+            oos.writeObject(codes);
+            oos.writeInt(this.cluster);
+            oos.writeFloat(this.minValue);
+            oos.writeFloat(this.maxValue);
+            oos.writeObject(elementSize);
+            oos.writeBoolean(this.drawBorders);
+            oos.writeBoolean(this.isAntiAliasing);
+            oos.writeObject(insets);
+        }
+        
+        private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+            ois.defaultReadObject();
+            this.codes = (FloatMatrix)ois.readObject();
+            this.cluster = ois.readInt();
+            this.minValue = ois.readFloat();
+            this.maxValue = ois.readFloat();
+            this.elementSize = (Dimension)ois.readObject();
+            this.drawBorders = ois.readBoolean();
+            this.isAntiAliasing = ois.readBoolean();
+            this.insets = (Insets)ois.readObject();
+        }
+        
         
         /**
          * Sets gradient images.
          */
-        public void setColorImages(BufferedImage posColorImage, BufferedImage negColorImage) {
-            this.posColorImage = posColorImage;
-            this.negColorImage = negColorImage;
+ /*       public void setColorImages(BufferedImage posColorImage, BufferedImage negColorImage) {
+            CentroidExperimentHeader.this.posColorImage = posColorImage;
+            CentroidExperimentHeader.this.negColorImage = negColorImage;
         }
-        
+  */      
         /**
          * Sets color for NaN values.
          */
@@ -148,7 +216,6 @@ public class CentroidExperimentHeader extends JPanel{
          */
         public void setCurrentCluster(int cluster) {
             this.cluster = cluster;
-            clusterIndex = cluster;
         }
         
         /**
@@ -225,6 +292,7 @@ public class CentroidExperimentHeader extends JPanel{
          */
         public void paint(Graphics g) {
             super.paint(g);
+
             if(getCluster().length < 1)
                 return;
             
@@ -232,6 +300,7 @@ public class CentroidExperimentHeader extends JPanel{
                 ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
                 ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             }
+
             final int samples = codes.getColumnDimension();
             for (int i=0; i<samples; i++) {
                 fillRectAt(g, i, getColor(codes.get(this.cluster, i)));
@@ -287,6 +356,7 @@ public class CentroidExperimentHeader extends JPanel{
      * Sets the current index of a cluster.
      */
     public void setCurrentCluster(int cluster) {
+        clusterIndex = cluster;
         centroidVectorPanel.setCurrentCluster(cluster);
     }
     
@@ -308,8 +378,8 @@ public class CentroidExperimentHeader extends JPanel{
      * Sets positive and negative images
      */
     public void setNegAndPosColorImages(BufferedImage neg, BufferedImage pos){
-        this.centroidVectorPanel.negColorImage = neg;
-        this.centroidVectorPanel.posColorImage = pos;
+        CentroidExperimentHeader.this.negColorImage = neg;
+        CentroidExperimentHeader.this.posColorImage = pos;
     }
     
     /**
@@ -325,8 +395,6 @@ public class CentroidExperimentHeader extends JPanel{
     public void setAntiAliasing(boolean value) {
         centroidVectorPanel.setAntiAliasing(value);
     }
-    
-    
     
     
 }

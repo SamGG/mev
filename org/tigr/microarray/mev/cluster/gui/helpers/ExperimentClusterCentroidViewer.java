@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: ExperimentClusterCentroidViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-11-25 14:30:05 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 22:53:06 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -37,7 +37,7 @@ import org.tigr.microarray.mev.cluster.clusterUtil.*;
 
 
 
-public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
+public class ExperimentClusterCentroidViewer extends JPanel implements IViewer, java.io.Serializable {
     
     public static final Color DEF_CLUSTER_COLOR = Color.lightGray;
     protected static final Color bColor = new Color(0, 0, 128);
@@ -78,7 +78,6 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
     protected float[][] variances;
     protected float[][] codes;
     
-    protected int [] genesOrder;
     protected int numberOfGenes;
     public static BufferedImage posColorImage; // = createGradientImage(Color.black, Color.red);
     public static BufferedImage negColorImage; // = createGradientImage(Color.green, Color.black);
@@ -102,6 +101,50 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
         setFont(new Font("monospaced", Font.BOLD, 10));
         this.maxExperimentValue = experiment.getMaxAbsValue();
         this.yRangeOption = this.USE_EXPERIMENT_MAX;
+    }
+    
+    
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.writeObject(experiment);
+        oos.writeObject(clusters);
+        oos.writeInt(yRangeOption);
+        oos.writeBoolean(drawValues);
+        oos.writeBoolean(drawVariances);
+        oos.writeBoolean(drawCodes);
+        oos.writeBoolean(drawMarks);
+        oos.writeBoolean(isAntiAliasing);
+        oos.writeBoolean(gradientColors);
+
+        oos.writeObject(means);
+        oos.writeObject(variances);
+        if(codes != null){
+            oos.writeBoolean(true);
+            oos.writeObject(codes);
+        } else {
+            oos.writeBoolean(false);
+        }
+        
+    }
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        this.experiment = (Experiment)ois.readObject();
+        this.clusters = (int [][])ois.readObject();
+        this.yRangeOption = ois.readInt();
+        this.drawValues = ois.readBoolean();
+        this.drawVariances = ois.readBoolean();
+        this.drawCodes = ois.readBoolean();
+        this.drawMarks = ois.readBoolean();
+        this.isAntiAliasing = ois.readBoolean();
+        this.gradientColors = ois.readBoolean();
+        this.means = (float [][])ois.readObject();
+        this.variances = (float [][])ois.readObject();
+        if(ois.readBoolean())
+            this.codes = (float [][])ois.readObject();             
+        setBackground(Color.white);
+        setFont(new Font("monospaced", Font.BOLD, 10));
+        this.maxExperimentValue = experiment.getMaxAbsValue();
+        this.yRangeOption = this.USE_EXPERIMENT_MAX;
+        this.numberOfGenes = this.experiment.getNumberOfGenes();
     }
     
     /**

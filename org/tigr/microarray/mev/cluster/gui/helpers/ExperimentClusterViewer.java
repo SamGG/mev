@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ExperimentClusterViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-11-25 14:30:05 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 22:53:06 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -30,6 +30,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseMotionListener;
 
 import java.awt.image.BufferedImage;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import java.util.Vector;
 
@@ -237,6 +241,7 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         addMouseListener(listener);
         addMouseMotionListener(listener);
     }
+    
     
     private static int[][] defSamplesOrder(int size) {
         int[][] order = new int[1][size];
@@ -967,6 +972,43 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
      */
     public JComponent getCornerComponent(int cornerIndex) {
         return null;
+    }
+        
+    private void writeObject(ObjectOutputStream oos) throws IOException {
+        oos.writeObject(header);
+        oos.writeObject(experiment);
+        oos.writeObject(clusters);
+        oos.writeObject(genesOrder);
+        oos.writeObject(elementSize);
+        oos.writeInt(labelIndex);
+        oos.writeBoolean(this.isDrawAnnotations);
+        oos.writeObject(insets);
+        oos.writeBoolean(this.hasCentroid);
+        if(hasCentroid)
+            oos.writeObject(this.centroids);
+    }
+        
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        header = (ExperimentClusterHeader)ois.readObject();
+        experiment = (Experiment)ois.readObject();
+        clusters = (int[][])ois.readObject();
+        this.genesOrder = (int[])ois.readObject();
+        elementSize = (Dimension)ois.readObject();
+        labelIndex = ois.readInt();
+        this.isDrawAnnotations = ois.readBoolean();
+        insets = (Insets)ois.readObject();
+        this.hasCentroid = ois.readBoolean();
+        if(this.hasCentroid)
+            this.centroids = (float [][])ois.readObject();
+        
+        this.firstSelectedRow = -1;
+        this.lastSelectedRow = -1;
+        this.firstSelectedColumn = -1;
+        this.lastSelectedColumn = -1;
+        
+        Listener listener = new Listener();
+        addMouseListener(listener);
+        addMouseMotionListener(listener);
     }
     
     /**

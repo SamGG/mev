@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: ExperimentClusterCentroidsViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-11-25 14:30:05 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 22:53:06 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -28,7 +28,7 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 
 
-public class ExperimentClusterCentroidsViewer extends JPanel implements IViewer {
+public class ExperimentClusterCentroidsViewer extends JPanel implements IViewer, java.io.Serializable {
     
     /** Wrapped experiment cluster centroid viewer */
     protected ExperimentClusterCentroidViewer centroidViewer;

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ExperimentViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2003-12-08 18:44:48 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-05 22:53:06 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -30,6 +30,10 @@ import java.awt.event.MouseMotionListener;
 
 import java.awt.image.BufferedImage;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import javax.swing.JPanel;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
@@ -53,6 +57,8 @@ import org.tigr.microarray.mev.cluster.clusterUtil.*;
  * @author Aleksey D.Rezantsev
  */
 public class ExperimentViewer extends JPanel implements IViewer {
+    
+    static final long serialVersionUID = 1L;
     
     private static final float INITIAL_MAX_VALUE = 3f;
     private static final float INITIAL_MIN_VALUE = -3f;
@@ -171,6 +177,8 @@ public class ExperimentViewer extends JPanel implements IViewer {
         addMouseListener(listener);
         addMouseMotionListener(listener);
     }
+    
+    public ExperimentViewer(){  }
     
     private static int[] defSamplesOrder(int size) {
         int[] order = new int[size];
@@ -434,10 +442,10 @@ public class ExperimentViewer extends JPanel implements IViewer {
      * Sets public color for the current cluster related to genes or experiment indices.
      */
     public Color setHCLClusterColor(int [] clusterIndices, Color color, boolean areGeneIndices) {
-       // if(areGeneIndices)
-       //     this.data.setProbesColor(clusterIndices, color);
-      //  else
-       //     this.data.setExperimentColor(clusterIndices, color);
+        // if(areGeneIndices)
+        //     this.data.setProbesColor(clusterIndices, color);
+        //  else
+        //     this.data.setExperimentColor(clusterIndices, color);
         Color clusterColor = null;
         if(areGeneIndices)
             clusterColor = framework.storeSubCluster(clusterIndices, experiment, ClusterRepository.GENE_CLUSTER);
@@ -451,7 +459,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
         updateSize();
         this.repaint();
         
-        return clusterColor;        
+        return clusterColor;
     }
     
     /**
@@ -512,8 +520,8 @@ public class ExperimentViewer extends JPanel implements IViewer {
     /**
      * Creates a gradient image with specified initial colors.
      */
-    public BufferedImage createGradientImage(Color color1, Color color2) {  
-        BufferedImage image = (BufferedImage)java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleImage(256,1);       
+    public BufferedImage createGradientImage(Color color1, Color color2) {
+        BufferedImage image = (BufferedImage)java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleImage(256,1);
         Graphics2D graphics = image.createGraphics();
         GradientPaint gp = new GradientPaint(0, 0, color1, 255, 0, color2);
         graphics.setPaint(gp);
@@ -600,7 +608,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
      * Paint component into specified graphics.
      */
     public void paint(Graphics g) {
-        super.paint(g);        
+        super.paint(g);
         if (this.data == null) {
             return;
         }
@@ -825,6 +833,41 @@ public class ExperimentViewer extends JPanel implements IViewer {
      */
     public JComponent getCornerComponent(int cornerIndex) {
         return null;
+    }
+    
+    
+    private void writeObject(ObjectOutputStream oos) throws IOException {
+        oos.writeObject(header);
+        oos.writeObject(experiment);
+        oos.writeObject(clusters);
+        oos.writeObject(samplesOrder);
+        oos.writeObject(elementSize);
+        oos.writeInt(labelIndex);
+        oos.writeBoolean(this.isDrawAnnotations);
+        oos.writeObject(insets);
+    }
+        
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        System.out.println("read exp viewer");
+        header = (ExperimentHeader)ois.readObject();
+        System.out.println("have exp header");
+        experiment = (Experiment)ois.readObject();
+        System.out.println("have experiment");
+        clusters = (int[][])ois.readObject();
+        samplesOrder = (int[])ois.readObject();
+        elementSize = (Dimension)ois.readObject();
+        labelIndex = ois.readInt();
+        this.isDrawAnnotations = ois.readBoolean();
+        insets = (Insets)ois.readObject();
+        
+        this.firstSelectedRow = -1;
+        this.lastSelectedRow = -1;
+        this.firstSelectedColumn = -1;
+        this.lastSelectedColumn = -1;
+        
+        Listener listener = new Listener();
+        addMouseListener(listener);
+        addMouseMotionListener(listener);
     }
     
     /**
