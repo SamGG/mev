@@ -229,7 +229,6 @@ public class TableViewer extends JPanel implements IViewer, java.io.Serializable
                 if( myObject instanceof Comparable ) {
                     if(isNumerical(colToSort)){  //catch string designation of a number
                         if(myObject instanceof String){
-                            System.out.println("Sort numerical");
                             Float myFloat = new Float((String)myObject);
                             Float otherFloat = new Float((String)otherObject);
                             return myFloat.compareTo(otherFloat);
@@ -299,7 +298,9 @@ public class TableViewer extends JPanel implements IViewer, java.io.Serializable
                     data[i][j] = "1000";
                 else
                     data[i][j] = Integer.toString(i*j+j);
+        
         TableViewer tv = new TableViewer(headers, data);
+        
         tv.setNumerical(0, true);
         tv.setNumerical(1, true);
         tv.setNumerical(2, false);
