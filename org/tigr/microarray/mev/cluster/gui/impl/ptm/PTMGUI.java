@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMGUI.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-04-08 15:21:29 $
+ * $Revision: 1.5 $
+ * $Date: 2004-04-29 17:32:07 $
  * $Author: nbhagaba $
  * $State: Exp $
  */
@@ -34,6 +34,7 @@ import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
 
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
@@ -511,11 +512,22 @@ public class PTMGUI implements IClusterGUI {
             //tablesNode.add(new DefaultMutableTreeNode(new LeafInfo("Matched Genes", sigTableViewer)));
             //tablesNode.add(new DefaultMutableTreeNode(new LeafInfo("Unmatched Genes", nonSigTableViewer)));            
         } else {
+            IViewer tabViewer = new ExperimentClusterTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData);
+            for (int i=0; i<this.clusters.length; i++) {
+                if (i < this.clusters.length - 1) {
+                    tablesNode.add(new DefaultMutableTreeNode(new LeafInfo("Matched Experiments ", tabViewer, new Integer(i))));
+                } else if (i == this.clusters.length - 1) {
+                    tablesNode.add(new DefaultMutableTreeNode(new LeafInfo("Unmatched Experiments ", tabViewer, new Integer(i))));
+                }
+            }             
+        }
+        /*else {
             IViewer sigTableViewer = new PTMExpStatsTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData, true);
             IViewer nonSigTableViewer = new PTMExpStatsTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData, false);
             tablesNode.add(new DefaultMutableTreeNode(new LeafInfo("Matched experiments", sigTableViewer)));
             tablesNode.add(new DefaultMutableTreeNode(new LeafInfo("Unmatched experiments", nonSigTableViewer)));            
         }
+           */
         
         root.add(tablesNode);
     }
