@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: AcknowlegementDialog.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:17 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-10 21:11:55 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -44,6 +44,7 @@ public class AcknowlegementDialog extends JDialog implements java.awt.print.Prin
     
     public AcknowlegementDialog(Frame parent) {
         this(parent, "");
+        ed = null;
     }
     
     public AcknowlegementDialog(Frame parent, String labelText) {
