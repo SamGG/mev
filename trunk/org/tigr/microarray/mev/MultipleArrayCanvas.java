@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: MultipleArrayCanvas.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:23 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 18:47:59 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -245,6 +245,8 @@ public class MultipleArrayCanvas extends JPanel implements IViewer {
     public void paint(Graphics g1D) {
         g1D.setColor(Color.white);
 	super.paint(g1D);
+        if(this.elementSize.getHeight() < 1)
+            return;
         g1D.setColor(Color.black);
 	if (features == 0 || framework == null) { // empty data
 	    return;
@@ -749,6 +751,19 @@ public class MultipleArrayCanvas extends JPanel implements IViewer {
 	for (int column = left; column < last; column++) {
 	    drawLink(g, chain[column], column, chain[column+1], column+1, color);
 	}
+    }
+    
+    /** Returns a component to be inserted into the scroll pane row header
+     */
+    public JComponent getRowHeaderComponent() {
+        return null;
+    }
+    
+    /** Returns the corner component corresponding to the indicated corner,
+     * posibly null
+     */
+    public JComponent getCornerComponent(int cornerIndex) {
+        return null;
     }
     
     /**

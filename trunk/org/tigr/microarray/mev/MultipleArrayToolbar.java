@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: MultipleArrayToolbar.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:23 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 18:47:59 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -51,7 +51,7 @@ public class MultipleArrayToolbar extends JToolBar {
 	Action action;
 	while ((action = manager.getAction(ActionManager.ANALYSIS_ACTION+String.valueOf(index)))!=null) {
 	    add(action);
-            if(index == 3 || index == 10 || index == 14)
+            if(index == 4 || index == 11 || index == 15 || index == 18)
                 this.addSeparator();
 	    index++;
             
@@ -65,6 +65,7 @@ public class MultipleArrayToolbar extends JToolBar {
 	JButton button = super.add(a);
 	button.setActionCommand((String)a.getValue(Action.ACTION_COMMAND_KEY));
 	button.setIcon((Icon)a.getValue(ActionManager.LARGE_ICON));
+        button.setFocusPainted(false);
       //  button.setBackground(java.awt.Color.white);
      //   button.setBorder(javax.swing.BorderFactory.createLineBorder(java.awt.Color.black));
 	return button;
