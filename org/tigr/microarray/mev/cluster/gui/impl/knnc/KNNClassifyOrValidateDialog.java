@@ -111,8 +111,8 @@ public class KNNClassifyOrValidateDialog extends AlgorithmDialog {
                 okPressed = false;
                 dispose();
             } else if (command.equals("info-command")){
-                /*
-                HelpWindow hw = new HelpWindow(OneWayANOVAInitBox.this, "One Way ANOVA Initialization Dialog");
+               
+                HelpWindow hw = new HelpWindow(KNNClassifyOrValidateDialog.this, "KNNC Mode Selection");
                 okPressed = false;
                 if(hw.getWindowContent()){
                     hw.setSize(450,600);
@@ -126,7 +126,7 @@ public class KNNClassifyOrValidateDialog extends AlgorithmDialog {
                     hw.dispose();
                     return;
                 }
-                 */
+                
 		}
         }
         

@@ -111,22 +111,20 @@ public class KNNCSecondDialog extends AlgorithmDialog {
                 okPressed = false;
                 dispose();
             } else if (command.equals("info-command")){
-                /*
-                HelpWindow hw = new HelpWindow(OneWayANOVAInitBox.this, "One Way ANOVA Initialization Dialog");
+         /*  HelpWindow hw = new HelpWindow(KNNCSecondDialog.this, "KNNC Parameter Selections");
                 okPressed = false;
                 if(hw.getWindowContent()){
                     hw.setSize(450,600);
                     hw.setLocation();
                     hw.show();
                     return;
-                 
                 }
                 else {
                     hw.setVisible(false);
                     hw.dispose();
                     return;
                 }
-                 */
+          */
 		}
         }
         
