@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMGUI.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 17:07:43 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -25,6 +25,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import org.tigr.util.ConfMap;
 import org.tigr.util.FloatMatrix;
 
+import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
@@ -61,9 +62,12 @@ public class PTMGUI implements IClusterGUI {
     private int[][] clusters;
     private FloatMatrix means;
     private FloatMatrix variances;
+    private IData data;    
     Vector templateVector;
+    private float[] pValues, rValues;
     private boolean clusterGenes = false;
-    
+    private Object[][] auxData;
+    private String[] auxTitles;
     
     
     /**
@@ -87,6 +91,7 @@ public class PTMGUI implements IClusterGUI {
         float threshold = 0.8f;
         
         this.experiment = framework.getData().getExperiment();
+        this.data = framework.getData();        
         Vector sampleNamesVector = new Vector();
         int number_of_samples = experiment.getNumberOfSamples();
         int number_of_genes = experiment.getNumberOfGenes();
@@ -96,9 +101,10 @@ public class PTMGUI implements IClusterGUI {
         }
         
         Vector uniqueIDs = new Vector();
-        
+        int labelIndex = framework.getDisplayMenu().getLabelIndex();
         for (int i = 0; i < number_of_genes; i++) {
-            uniqueIDs.add(framework.getData().getUniqueId(experiment.getGeneIndexMappedToData(i)));
+		uniqueIDs.add(framework.getData().getElementAttribute(experiment.getGeneIndexMappedToData(i), labelIndex));
+            //uniqueIDs.add(framework.getData().getUniqueId(experiment.getGeneIndexMappedToData(i)));
         }
         
         Vector clusterVector = new Vector();
@@ -244,6 +250,28 @@ public class PTMGUI implements IClusterGUI {
             this.means = result.getMatrix("clusters_means");
             this.variances = result.getMatrix("clusters_variances");
             
+            FloatMatrix rValuesMatrix = result.getMatrix("rValuesMatrix");
+            FloatMatrix pValuesMatrix = result.getMatrix("pValuesMatrix");
+            
+            pValues = new float[pValuesMatrix.getRowDimension()];
+            rValues = new float[rValuesMatrix.getRowDimension()];
+            
+            for (int i = 0; i < pValues.length; i++) {
+                pValues[i] = pValuesMatrix.A[i][0];
+                rValues[i] = rValuesMatrix.A[i][0];
+            }
+            
+            auxTitles = new String[2];
+            auxTitles[0] = "R values";
+            auxTitles[1] = "p Values";
+            
+            auxData = new Object[pValues.length][2];            
+            
+            for (int i = 0; i < auxData.length; i++) {
+                auxData[i][0] = new Float(rValues[i]);
+                auxData[i][1] = new Float(pValues[i]);
+            }
+            
             GeneralInfo info = new GeneralInfo();
             info.clusters = k;
             info.time = time;
@@ -302,6 +330,7 @@ public class PTMGUI implements IClusterGUI {
         addExpressionImages(root);
         addHierarchicalTrees(root, result_cluster, info);
         addCentroidViews(root);
+        addStatsTables(root);
         addClusterInfo(root);
         addGeneralInfo(root, info);
     }
@@ -314,7 +343,7 @@ public class PTMGUI implements IClusterGUI {
         IViewer expViewer;
         
         if(clusterGenes){
-            expViewer = new PTMExperimentViewer(this.experiment, this.clusters, this.templateVector);
+            expViewer = new PTMExperimentViewer(this.experiment, this.clusters, this.templateVector, auxTitles, auxData);
             for (int i=0; i<this.clusters.length; i++) {
                 if (i < this.clusters.length - 1) {
                     node.add(new DefaultMutableTreeNode(new LeafInfo("Matched Genes ", expViewer, new Integer(i))));
@@ -325,7 +354,7 @@ public class PTMGUI implements IClusterGUI {
         }
         else {
             
-            expViewer = new PTMExperimentClusterViewer(this.experiment, this.clusters, "Template", this.templateVector);
+            expViewer = new PTMExperimentClusterViewer(this.experiment, this.clusters, "Template", this.templateVector, auxTitles, auxData);
             for (int i=0; i<this.clusters.length; i++) {
                 if (i < this.clusters.length - 1) {
                     node.add(new DefaultMutableTreeNode(new LeafInfo("Matched Experiments ", expViewer, new Integer(i))));
@@ -414,7 +443,7 @@ public class PTMGUI implements IClusterGUI {
         PTMCentroidViewer centroidViewer;
         PTMExperimentCentroidViewer expCentroidViewer;
         if(clusterGenes){
-            centroidViewer = new PTMCentroidViewer(this.experiment, clusters, templateVector);
+            centroidViewer = new PTMCentroidViewer(this.experiment, clusters, templateVector, auxTitles, auxData);
             centroidViewer.setMeans(this.means.A);
             centroidViewer.setVariances(this.variances.A);
             for (int i=0; i<this.clusters.length; i++) {
@@ -429,7 +458,7 @@ public class PTMGUI implements IClusterGUI {
                 }
             }
             
-            PTMCentroidsViewer centroidsViewer = new PTMCentroidsViewer(this.experiment, clusters, templateVector);
+            PTMCentroidsViewer centroidsViewer = new PTMCentroidsViewer(this.experiment, clusters, templateVector, auxTitles, auxData);
             centroidsViewer.setMeans(this.means.A);
             centroidsViewer.setVariances(this.variances.A);
             
@@ -437,7 +466,7 @@ public class PTMGUI implements IClusterGUI {
             expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("All Clusters", centroidsViewer, new Integer(CentroidUserObject.VALUES_MODE))));
         }
         else{
-            expCentroidViewer = new PTMExperimentCentroidViewer(this.experiment, clusters, templateVector);
+            expCentroidViewer = new PTMExperimentCentroidViewer(this.experiment, clusters, templateVector, auxTitles, auxData);
             float [][] codes = getCodes(this.templateVector);
             expCentroidViewer.setMeans(this.means.A);
             expCentroidViewer.setVariances(this.variances.A);
@@ -454,7 +483,7 @@ public class PTMGUI implements IClusterGUI {
                     expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Unmatched Experiments ", expCentroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
                 }
             }
-            PTMExperimentCentroidsViewer expCentroidsViewer = new PTMExperimentCentroidsViewer(this.experiment, clusters, templateVector);
+            PTMExperimentCentroidsViewer expCentroidsViewer = new PTMExperimentCentroidsViewer(this.experiment, clusters, templateVector, auxTitles, auxData);
             expCentroidsViewer.setMeans(this.means.A);
             expCentroidsViewer.setVariances(this.variances.A);
             // expCentroidsViewer.setCodes(codes);
@@ -464,6 +493,23 @@ public class PTMGUI implements IClusterGUI {
         }
         root.add(centroidNode);
         root.add(expressionNode);
+    }
+    
+    private void addStatsTables(DefaultMutableTreeNode root) {
+        DefaultMutableTreeNode tablesNode = new DefaultMutableTreeNode("R and p-value tables");
+        if (clusterGenes) {
+            IViewer sigTableViewer = new PTMGeneStatsTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData, true);
+            IViewer nonSigTableViewer = new PTMGeneStatsTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData, false);
+            tablesNode.add(new DefaultMutableTreeNode(new LeafInfo("Matched Genes", sigTableViewer)));
+            tablesNode.add(new DefaultMutableTreeNode(new LeafInfo("Unmatched Genes", nonSigTableViewer)));            
+        } else {
+            IViewer sigTableViewer = new PTMExpStatsTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData, true);
+            IViewer nonSigTableViewer = new PTMExpStatsTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData, false);
+            tablesNode.add(new DefaultMutableTreeNode(new LeafInfo("Matched experiments", sigTableViewer)));
+            tablesNode.add(new DefaultMutableTreeNode(new LeafInfo("Unmatched experiments", nonSigTableViewer)));            
+        }
+        
+        root.add(tablesNode);
     }
     
     /**
