@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: KFOMViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-03 16:07:39 $
+ * $Revision: 1.4 $
+ * $Date: 2004-04-06 13:02:13 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -24,8 +24,8 @@ public class KFOMViewer extends ViewerAdapter implements java.io.Serializable {
     
     private FOMContentComponent content;
     
-    public KFOMViewer(float[] fom_values) {
-	this.content = new FOMContentComponent(fom_values);
+    public KFOMViewer(float[] fom_values, float[] variances) {
+	this.content = new FOMContentComponent(fom_values, variances);
     }
     
     public JComponent getContentComponent() {

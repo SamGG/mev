@@ -1,11 +1,11 @@
 /*
 Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
 All rights reserved.
-*/
+ */
 /*
  * $RCSfile: FOM.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
+ * $Revision: 1.2 $
+ * $Date: 2004-04-06 13:03:55 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -43,10 +43,11 @@ public class FOM extends AbstractAlgorithm {
         boolean absolute = map.getBoolean("distance-absolute", false);
         
         clusterGenes = map.getBoolean("cluster-genes", true);
+        int fomIterations = map.getInt("fom-iterations", 1);
         int method      = map.getInt("method", 2);
         float interval  = map.getFloat("interval", 0.1f);
         int iterations  = map.getInt("iterations", 50);
-        int maxNumClusters = map.getInt("number_of_clusters", 20);
+        int maxNumClusters = map.getInt("number-of-clusters", 20);
         boolean average = map.getBoolean("average", true);
         boolean calculateMeans = map.getBoolean("calculate-means", true);
         
@@ -64,7 +65,7 @@ public class FOM extends AbstractAlgorithm {
         sub_algo_data.addParam("distance-factor", String.valueOf(factor));
         sub_algo_data.addParam("distance-absolute", String.valueOf(absolute));
         sub_algo_data.addParam("distance-function", String.valueOf(function));
-        sub_algo_data.addParam("number_of_iterations", String.valueOf(iterations));
+        sub_algo_data.addParam("number-of-iterations", String.valueOf(iterations));
         sub_algo_data.addParam("calculate-means", String.valueOf(calculateMeans));
         
         /*
@@ -75,6 +76,7 @@ public class FOM extends AbstractAlgorithm {
         AlgorithmData sub_algo_result = null;
         Cluster sub_algo_clusters = new Cluster();
         float[] fom_values = null;
+        FloatMatrix fomResults = null;
         int times = 0;
         int[] numOfCastClusters = new int[1]; // just to initialize
         
@@ -84,20 +86,25 @@ public class FOM extends AbstractAlgorithm {
             event.setId(AlgorithmEvent.PROGRESS_VALUE);
             sub_algo_data.addParam("kmc-cluster-genes", String.valueOf(clusterGenes));
             fom_values = new float[maxNumClusters];
-            for (int i=0; i<maxNumClusters; i++) {
-                if (stop) {
-                    throw new AbortException();
-                }
-                event.setIntValue(i);
-                event.setDescription("calculating for "+String.valueOf(i+1)+" clusters");
+            
+            fomResults = new FloatMatrix(fomIterations, maxNumClusters);
+            for (int fomi = 0; fomi < fomIterations; fomi++) {
+                event.setDescription("Calculating FOMs for FOM iteration "+String.valueOf(fomi+1)+" of "+String.valueOf(fomIterations)+" iterations.");
                 fireValueChanged(event);
-                
-                sub_algo_data.addParam("number_of_clusters", String.valueOf(i+1));
-                sub_algo_result = sub_algo.execute(sub_algo_data);
-                
-                sub_algo_clusters = sub_algo_result.getCluster("cluster");
-                
-                fom_values[i] = (float)getFOM(expMatrix, sub_algo_clusters, number_of_genes, number_of_samples);
+                for (int i=0; i<maxNumClusters; i++) {
+                    if (stop) {
+                        throw new AbortException();
+                    }
+                    
+                    event.setIntValue(i);
+                    fireValueChanged(event);
+                    
+                    sub_algo_data.addParam("number-of-clusters", String.valueOf(i+1));
+                    sub_algo_result = sub_algo.execute(sub_algo_data);
+                    
+                    sub_algo_clusters = sub_algo_result.getCluster("cluster");
+                    fomResults.set(fomi, i, (float)getFOM(expMatrix, sub_algo_clusters, number_of_genes, number_of_samples));
+                }
             }
         }  else { //FOM FOR CAST
             times = (int)(1/interval);
@@ -138,7 +145,10 @@ public class FOM extends AbstractAlgorithm {
         }
         
         AlgorithmData result = new AlgorithmData();
-        result.addMatrix("fom-values", new FloatMatrix(fom_values, 1));
+        if(method == 2)
+            result.addMatrix("fom-matrix", fomResults);
+        else
+            result.addMatrix("fom-values", new FloatMatrix(fom_values, 1));
         result.addIntArray("numOfCastClusters", numOfCastClusters);
         return result;
     }
@@ -173,12 +183,12 @@ public class FOM extends AbstractAlgorithm {
         double[] tFOM = new double[number_of_samples];
         double factor;
         //if(this.clusterGenes)
-          //  factor = Math.sqrt((double)(number_of_genes-number_of_samples)/(double)number_of_genes);
-       // else
-         //   factor = Math.sqrt((double)(number_of_samples-number_of_genes)/(double)number_of_samples);
-      // factor = Math.sqrt(((double)(number_of_genes-number_of_clusters))/(double)number_of_genes);
- factor = 1;        
-for (int i=0; i<number_of_samples; i++) {
+        //  factor = Math.sqrt((double)(number_of_genes-number_of_samples)/(double)number_of_genes);
+        // else
+        //   factor = Math.sqrt((double)(number_of_samples-number_of_genes)/(double)number_of_samples);
+        // factor = Math.sqrt(((double)(number_of_genes-number_of_clusters))/(double)number_of_genes);
+        factor = 1;
+        for (int i=0; i<number_of_samples; i++) {
             tFOM[i] = 0.0;
             for (int j=0; j<number_of_clusters; j++) {
                 cluster = nodeList.getNode(j).getFeaturesIndexes();
@@ -188,10 +198,10 @@ for (int i=0; i<number_of_samples; i++) {
                         tFOM[i] += Math.pow(((double)value-means[i][j]), 2);
                     }
                 }
-         //       if(this.clusterGenes)
-                    tFOM[i] = Math.sqrt(tFOM[i]/(double)number_of_genes);
-        //        else
-        //            tFOM[i] = Math.sqrt(tFOM[i]/(double)number_of_samples);
+                //       if(this.clusterGenes)
+                tFOM[i] = Math.sqrt(tFOM[i]/(double)number_of_genes);
+                //        else
+                //            tFOM[i] = Math.sqrt(tFOM[i]/(double)number_of_samples);
                 
                 tFOM[i] /= factor;
             }
