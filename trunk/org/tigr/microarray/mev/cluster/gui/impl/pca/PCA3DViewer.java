@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: PCA3DViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-05 20:26:34 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-10 00:17:01 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -317,14 +317,13 @@ public class PCA3DViewer extends ViewerAdapter implements java.io.Serializable {
      */
     private void storeCluster(){
         if(geneViewer)
-            framework.storeCluster( content.getSelectedGenes(), experiment, Cluster.GENE_CLUSTER);
+            framework.storeSubCluster( content.getSelectedGenes(), experiment, Cluster.GENE_CLUSTER);
         else
-            framework.storeCluster( content.getSelectedGenes(), experiment, Cluster.EXPERIMENT_CLUSTER);
+            framework.storeSubCluster( content.getSelectedGenes(), experiment, Cluster.EXPERIMENT_CLUSTER);
         content.setSelection(false);
-        onHideSelection(); 
+        //onHideSelection(); 
         this.onDataChanged(this.data);
-        content.updateScene();
-        
+        content.updateScene();        
     }
     
     
