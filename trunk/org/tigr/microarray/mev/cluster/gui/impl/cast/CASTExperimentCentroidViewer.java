@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: CASTExperimentCentroidViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-13 18:34:55 $
+ * $Revision: 1.5 $
+ * $Date: 2004-02-13 19:40:04 $
  * $Author: nbhagaba $
  * $State: Exp $
  */
@@ -29,7 +29,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
 
 public class CASTExperimentCentroidViewer extends ExperimentClusterCentroidViewer {
-    
+       
     private JPopupMenu popup;
     
     /**
