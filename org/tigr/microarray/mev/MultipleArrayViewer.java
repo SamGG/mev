@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.12 $
- * $Date: 2004-04-12 20:39:49 $
+ * $Revision: 1.13 $
+ * $Date: 2004-04-12 21:32:08 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -358,11 +358,22 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         final String filePath = fp;
         Thread thread = new Thread(new Runnable() {
             public void run() {
-                try{
-                    
+                try{                   
                     oos.useProtocolVersion(ObjectStreamConstants.PROTOCOL_VERSION_2);
                     // Save MeV tag
                     oos.writeObject(TMEV.VERSION);
+                    //Save JRE Version
+                    String jre = System.getProperty("java.version");
+                    if(jre != null)
+                        oos.writeObject(jre);
+                    else
+                        oos.writeObject("unknown");
+                    //Save JVM Version
+                    String jvm = System.getProperty("java.vm.version");
+                    if(jvm != null)
+                        oos.writeObject(jvm);
+                    else
+                        oos.writeObject("unknown");                    
                     // Save Date
                     oos.writeLong(System.currentTimeMillis());
                     // Save IData
@@ -402,8 +413,62 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             public void run() {
                 try {
                     
-                    String version = (String)ois.readObject();
+                    String savedMEVVersion = (String)ois.readObject();
+                    String savedJREVersion = (String)ois.readObject();
+                    String savedJVMVersion = (String)ois.readObject();
+                    String jreVersion = System.getProperty("java.version");
+                    String jvmVersion = System.getProperty("java.vm.version");
                     
+                    if(!savedMEVVersion.equals(TMEV.VERSION) || !savedJREVersion.equals(jreVersion) || !savedJVMVersion.equals(jvmVersion)) {                        
+                        String msg = "";
+                        String error = "<b>";
+                        int errorCount = 0;
+                        
+                        if(!savedMEVVersion.equals(TMEV.VERSION)) {
+                            errorCount++;
+                            error += "<br>";
+                            error += "Current MeV Version: "+TMEV.VERSION+"<br>";
+                            error += "Analysis File MeV Version: "+savedMEVVersion+"<br>";
+                        }
+                        if(!savedJREVersion.equals(jreVersion)) {
+                            errorCount++;
+                            error += "<br>";
+                            error += "Current Java Runtime Version: "+jreVersion+"<br>";
+                            error += "Java Runtime Version During Save: "+savedJREVersion+"<br>";
+                        }
+                        if(!savedJVMVersion.equals(jvmVersion)) {
+                            errorCount++;
+                            error += "<br>";
+                            error += "Current Java Virtual Machine Version: "+jvmVersion+"<br>";
+                            error += "Java Virtual Machine Version During Save: "+savedJVMVersion+"<br>";
+                        }        
+                        
+                        msg += "<html><body><font face=arial size=4>The following inconsistenc"+(errorCount == 1 ? "y was" : "ies were")+
+                                " detected during analysis file loading:<br>" + error + "</b><br>";
+                        if(errorCount > 1) {
+                            msg += "These differences ";
+                        } else {
+                            msg += "This difference ";
+                        }
+                        msg += "could affect analysis file loading. <br><br>";
+                        msg += "Hit <b>\"OK\"</b> to continue loading. (Loading errors will be reported if they occur)<br>";
+                        msg += "Hit <b>\"Cancel\"</b> to abort the loading process.</body></html>";
+                        
+                        JPanel panel = new JPanel();
+                        panel.setBackground(Color.white);
+                        panel.setBorder(BorderFactory.createLineBorder(Color.black));
+                        javax.swing.JTextPane pane = new javax.swing.JTextPane();
+                        pane.setMargin(new Insets(10,10,10,10));
+                        pane.setBackground(Color.white);
+                        pane.setContentType("text/html");
+                        pane.setText(msg);
+                        panel.add(pane);
+                        
+                        int choice = JOptionPane.showConfirmDialog(getFrame(), panel, "Analysis Load Version Confirmations", JOptionPane.WARNING_MESSAGE);
+                      //  JOptionPane.showMessageDialog(getFrame(), msg, "Analysis Load Version Confirmations", JOptionPane.WARNING_MESSAGE);
+                        if(choice != JOptionPane.OK_OPTION)
+                            return;
+                    }
                     long dateLong = ois.readLong();
                     //Load IData object and set annotation field names
                     loadIData(ois);
@@ -436,7 +501,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                     
                     //signal mev analysis loaded
                     menubar.systemEnable(TMEV.ANALYSIS_LOADED);
-                } catch (Exception e) {
+                } catch (Exception e) {                    
                     JOptionPane.showMessageDialog(MultipleArrayViewer.this, "Analysis was not loaded.  Error reading input file.",
                     "Load Analysis Error", JOptionPane.WARNING_MESSAGE);
                     e.printStackTrace();
