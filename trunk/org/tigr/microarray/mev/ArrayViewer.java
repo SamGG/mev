@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: ArrayViewer.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:17 $
+ * $Revision: 1.2 $
+ * $Date: 2004-07-26 21:26:09 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -25,7 +25,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 
-import org.tigr.util.Query;
 import org.tigr.util.StringSplitter;
 import org.tigr.util.awt.Viewer;
 import org.tigr.util.awt.TransferDialog;
