@@ -6,8 +6,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SuperExpressionFileLoader.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-03-03 15:38:48 $
+ * $Revision: 1.6 $
+ * $Date: 2004-05-03 13:47:57 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -254,7 +254,7 @@ public class SuperExpressionFileLoader {
         this.clean();
         
         Thread thread = new Thread(new Loader());
-        thread.setPriority(Thread.MIN_PRIORITY);
+        thread.setPriority(Thread.NORM_PRIORITY);
         thread.start();
         selectedFileLoader.showModal();
     }
