@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: GSHGUI.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-04-08 20:16:37 $
+ * $Revision: 1.3 $
+ * $Date: 2004-04-29 19:01:58 $
  * $Author: nbhagaba $
  * $State: Exp $
  */
@@ -32,6 +32,7 @@ import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
 
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
@@ -225,7 +226,8 @@ public class GSHGUI implements IClusterGUI {
         if(clusterGenes)
             tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.data);
         else
-            return; // placeholder for ExptClusterTableViewer
+            tabViewer = new ExperimentClusterTableViewer(this.experiment, this.clusters, this.data);
+            //return; // placeholder for ExptClusterTableViewer
             //expViewer = new GSHExperimentClusterViewer(this.experiment, this.clusters);
         
         for (i=0; i<this.clusters.length-1; i++) {
