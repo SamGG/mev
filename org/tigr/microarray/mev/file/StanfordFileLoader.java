@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: StanfordFileLoader.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-02-27 22:16:51 $
+ * $Revision: 1.6 $
+ * $Date: 2004-03-02 19:36:29 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -170,7 +170,8 @@ public class StanfordFileLoader extends ExpressionFileLoader {
                                                         //getRatio methods will return cy5
                                                         //for Stanford data type
                     } catch (Exception e) {
-                        cy3 = cy5 = Float.NaN;
+                        cy3 = 0;
+                        cy5 = Float.NaN;
                     }
                     slideDataArray[i].setIntensities(counter - preSpotRows, cy3, cy5);
                 }

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayData.java,v $
- * $Revision: 1.7 $
- * $Date: 2004-03-01 15:52:30 $
+ * $Revision: 1.8 $
+ * $Date: 2004-03-02 19:35:53 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -1130,7 +1130,7 @@ public class MultipleArrayData implements IData, java.io.Serializable {
             
             if (isPercentageCutoff()) {
                 for (int j = 0; j < cy3.length; j++) {
-                    if ((cy3[j] > 0) && (cy5[j] > 0)) {
+                    if ((cy3[j] > 0) && (cy5[j] > 0) || (dataType == IData.DATA_TYPE_RATIO_ONLY && !Float.isNaN(cy5[j]))) {
                         percentageCount++;
                     }
                 }
