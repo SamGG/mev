@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: OWAGUI.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2004-04-08 18:22:38 $
+ * $Author: nbhagaba $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.owa;
@@ -32,6 +32,7 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
@@ -66,6 +67,9 @@ public class OWAGUI implements IClusterGUI {
     private int[][] clusters;
     private FloatMatrix means;
     private FloatMatrix variances;    
+    
+    private String[] auxTitles;
+    private Object[][] auxData;     
 
     private Vector fValues, pValues, dfNumValues, dfDenomValues, ssGroups, ssError; 
     private float[][] geneGroupMeans, geneGroupSDs;
@@ -232,6 +236,41 @@ public class OWAGUI implements IClusterGUI {
 	    info.hcl_genes = hcl_genes;
 	    info.hcl_samples = hcl_samples;
 	    info.hcl_method = hcl_method;
+            
+            Vector titlesVector = new Vector();
+            for (int i = 0; i < geneGroupMeans[0].length; i++) {
+                titlesVector.add("Group" + (i+1) + " mean");
+                titlesVector.add("Group" + (i + 1) + " std.dev");
+            }
+            titlesVector.add("F ratio");            
+            titlesVector.add("SS(Groups)");
+            titlesVector.add("SS(Error)");
+            titlesVector.add("df (Groups)");
+            titlesVector.add("df (Error)");
+            titlesVector.add("p value");   
+            
+            auxTitles = new String[titlesVector.size()];
+            for (int i = 0; i < auxTitles.length; i++) {
+                auxTitles[i] = (String)(titlesVector.get(i));
+            }
+            
+            auxData = new Object[experiment.getNumberOfGenes()][auxTitles.length];  
+            for (int i = 0; i < auxData.length; i++) {
+                int counter = 0;
+                for (int j = 0; j < geneGroupMeans[i].length; j++) {
+                    auxData[i][counter++] = new Float(geneGroupMeans[i][j]);
+                    auxData[i][counter++] = new Float(geneGroupSDs[i][j]);                    
+                }
+                
+                auxData[i][counter++] = fValues.get(i);
+                auxData[i][counter++] = ssGroups.get(i);
+                auxData[i][counter++] = ssError.get(i);
+                auxData[i][counter++] = dfNumValues.get(i);
+                auxData[i][counter++] = dfDenomValues.get(i);
+                auxData[i][counter++] = pValues.get(i);                   
+            }
+      
+            
 	    return createResultTree(result_cluster, info);    
             
         } finally {
@@ -281,10 +320,25 @@ public class OWAGUI implements IClusterGUI {
 	addExpressionImages(root);
 	addHierarchicalTrees(root, result_cluster, info);
 	addCentroidViews(root);
+        addTableViews(root);
 	addClusterInfo(root);  
-        addFRatioInfoViews(root);
+        //addFRatioInfoViews(root);
 	addGeneralInfo(root, info);
     }   
+    
+    private void addTableViews(DefaultMutableTreeNode root) {
+	DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table Views");
+	IViewer tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData);
+	for (int i=0; i<this.clusters.length; i++) {
+	    if (i < this.clusters.length - 1) {
+		node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", tabViewer, new Integer(i))));
+	    } else if (i == this.clusters.length - 1) {
+		node.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", tabViewer, new Integer(i))));
+		
+	    }
+	}
+	root.add(node);        
+    }
     
     /**
      * Adds nodes to display clusters data.
