@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOMExperimentViewer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 18:36:07 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -211,6 +211,19 @@ public class SOMExperimentViewer implements IViewer {
      */
     private void onSetDefaultColor() {
 	expViewer.setClusterColor(null);
+    }
+    
+    /** Returns a component to be inserted into the scroll pane row header
+     */
+    public JComponent getRowHeaderComponent() {
+        return null;
+    }
+    
+    /** Returns the corner component corresponding to the indicated corner,
+     * posibly null
+     */
+    public JComponent getCornerComponent(int cornerIndex) {
+        return null;
     }
     
     /**
