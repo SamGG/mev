@@ -10,9 +10,9 @@ All rights reserved.
 
  * $RCSfile: FileTreePane.java,v $
 
- * $Revision: 1.1.1.2 $
+ * $Revision: 1.2 $
 
- * $Date: 2004-02-06 21:48:18 $
+ * $Date: 2004-02-17 14:40:32 $
 
  * $Author: braisted $
 
@@ -101,14 +101,13 @@ import javax.swing.tree.TreeSelectionModel;
 public class FileTreePane extends JPanel {
 
 
+	public final static ImageIcon ICON_COMPUTER = new ImageIcon(Toolkit.getDefaultToolkit().getImage(FileTreePane.class.getClassLoader().getResource("org/tigr/images/PCIcon.gif")));
 
-	public final static ImageIcon ICON_COMPUTER = new ImageIcon(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("org/tigr/images/PCIcon.gif")));
+	public final static ImageIcon ICON_DISK = new ImageIcon(Toolkit.getDefaultToolkit().getImage(FileTreePane.class.getClassLoader().getResource("org/tigr/images/disk.gif")));
 
-	public final static ImageIcon ICON_DISK = new ImageIcon(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("org/tigr/images/disk.gif")));
+        public final static ImageIcon ICON_FOLDER = new ImageIcon(Toolkit.getDefaultToolkit().getImage(FileTreePane.class.getClassLoader().getResource("org/tigr/images/Directory.gif")));
 
-        public final static ImageIcon ICON_FOLDER = new ImageIcon(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("org/tigr/images/Directory.gif")));
-
-	public final static ImageIcon ICON_EXPANDEDFOLDER = new ImageIcon(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("org/tigr/images/expandedfolder.gif")));
+	public final static ImageIcon ICON_EXPANDEDFOLDER = new ImageIcon(Toolkit.getDefaultToolkit().getImage(FileTreePane.class.getClassLoader().getResource("org/tigr/images/expandedfolder.gif")));
 
 
 
