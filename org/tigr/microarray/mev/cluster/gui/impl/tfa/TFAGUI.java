@@ -33,6 +33,7 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
@@ -52,35 +53,37 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidsViewer;
 
+import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
+
 
 /**
  *
  * @author  nbhagaba
  */
-public class TFAGUI implements IClusterGUI {
+public class TFAGUI implements IClusterGUI, IScriptGUI {
     
     public static final int JUST_ALPHA = 4;
     public static final int STD_BONFERRONI = 5;
-    public static final int ADJ_BONFERRONI = 6;    
+    public static final int ADJ_BONFERRONI = 6;
     public static final int MAX_T = 9;
-    public static final int MIN_P = 10;    
-
+    public static final int MIN_P = 10;
+    
     private Algorithm algorithm;
-    private Progress progress;    
+    private Progress progress;
     private Experiment experiment;
-    private IData data;    
+    private IData data;
     private int[][] clusters;
     private FloatMatrix means;
-    private FloatMatrix variances; 
-
-    Vector exptNamesVector;    
+    private FloatMatrix variances;
+    
+    Vector exptNamesVector;
     String[] factorNames;
     int[] numFactorLevels;
     int[] factorAAssignments, factorBAssignments;
     
     private Object[][] auxData;
-    private String[] auxTitles; 
-    String[] clusterLabels; 
+    private String[] auxTitles;
+    String[] clusterLabels;
     private boolean usePerms;
     
     /** Creates a new instance of TFAGUI */
@@ -106,16 +109,16 @@ public class TFAGUI implements IClusterGUI {
      *
      */
     public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
-	this.experiment = framework.getData().getExperiment();
+        this.experiment = framework.getData().getExperiment();
         this.data = framework.getData();
-	
-	int number_of_samples = experiment.getNumberOfSamples();
-	int number_of_genes = experiment.getNumberOfGenes();   
+        
+        int number_of_samples = experiment.getNumberOfSamples();
+        int number_of_genes = experiment.getNumberOfGenes();
         
         exptNamesVector = new Vector();
-	for (int i = 0; i < number_of_samples; i++) {
-	    exptNamesVector.add(framework.getData().getFullSampleName(i));
-	}        
+        for (int i = 0; i < number_of_samples; i++) {
+            exptNamesVector.add(framework.getData().getFullSampleName(i));
+        }
         
         TFAInitBox1 t1Box = new TFAInitBox1((JFrame)framework.getFrame(), true);
         t1Box.setVisible(true);
@@ -143,7 +146,7 @@ public class TFAGUI implements IClusterGUI {
         if (!t2Box.isOkPressed()) return null;
         
         boolean allCellsHaveOneSample = t2Box.allCellsHaveOneSample();
-        boolean isHierarchicalTree = t2Box.drawTrees();        
+        boolean isHierarchicalTree = t2Box.drawTrees();
         int adjustmentMethod = t2Box.getAdjustmentMethod();
         float alpha = t2Box.getAlpha();
         factorAAssignments = t2Box.getFactorAAssignments();
@@ -159,7 +162,7 @@ public class TFAGUI implements IClusterGUI {
             numPerms = t2Box.getNumPerms();
         }
         
-         // hcl init
+        // hcl init
         int hcl_method = 0;
         boolean hcl_samples = false;
         boolean hcl_genes = false;
@@ -171,14 +174,14 @@ public class TFAGUI implements IClusterGUI {
             hcl_method = hcl_dialog.getMethod();
             hcl_samples = hcl_dialog.isClusterExperience();
             hcl_genes = hcl_dialog.isClusterGenes();
-        }       
+        }
         Listener listener = new Listener();
         
         try {
             algorithm = framework.getAlgorithmFactory().getAlgorithm("TFA");
-            algorithm.addAlgorithmListener(listener);  
+            algorithm.addAlgorithmListener(listener);
             
-            int genes = experiment.getNumberOfGenes();  
+            int genes = experiment.getNumberOfGenes();
             
             this.progress = new Progress(framework.getFrame(), "Finding significant genes", listener);
             this.progress.show();
@@ -193,9 +196,9 @@ public class TFAGUI implements IClusterGUI {
             int function = menu.getDistanceFunction();
             if (function == Algorithm.DEFAULT) {
                 function = Algorithm.EUCLIDEAN;
-            }    
+            }
             
-            data.addParam("distance-function", String.valueOf(function));            
+            data.addParam("distance-function", String.valueOf(function));
             data.addIntArray("numFactorLevels", numFactorLevels);
             data.addParam("allCellsHaveOneSample", String.valueOf(allCellsHaveOneSample));
             data.addParam("adjustmentMethod", String.valueOf(adjustmentMethod));
@@ -212,11 +215,11 @@ public class TFAGUI implements IClusterGUI {
                 data.addParam("method-linkage", String.valueOf(hcl_method));
                 data.addParam("calculate-genes", String.valueOf(hcl_genes));
                 data.addParam("calculate-experiments", String.valueOf(hcl_samples));
-            }  
+            }
             
             long start = System.currentTimeMillis();
             AlgorithmData result = algorithm.execute(data);
-            long time = System.currentTimeMillis() - start;     
+            long time = System.currentTimeMillis() - start;
             
             // getting the results
             Cluster result_cluster = result.getCluster("cluster");
@@ -233,19 +236,19 @@ public class TFAGUI implements IClusterGUI {
             FloatMatrix factorAFValuesMatrix = result.getMatrix("factorAFValuesMatrix");
             FloatMatrix factorBFValuesMatrix = result.getMatrix("factorBFValuesMatrix");
             FloatMatrix interactionFValuesMatrix = result.getMatrix("interactionFValuesMatrix");
-
+            
             FloatMatrix factorADfValuesMatrix = result.getMatrix("factorADfValuesMatrix");
             FloatMatrix factorBDfValuesMatrix = result.getMatrix("factorBDfValuesMatrix");
             FloatMatrix interactionDfValuesMatrix = result.getMatrix("interactionDfValuesMatrix");
             FloatMatrix errorDfValuesMatrix = result.getMatrix("errorDfValuesMatrix");
-
+            
             FloatMatrix origFactorAPValuesMatrix = result.getMatrix("origFactorAPValuesMatrix");
             FloatMatrix origFactorBPValuesMatrix = result.getMatrix("origFactorBPValuesMatrix");
             FloatMatrix origInteractionPValuesMatrix = result.getMatrix("origInteractionPValuesMatrix");
-
+            
             FloatMatrix adjFactorAPValuesMatrix = result.getMatrix("adjFactorAPValuesMatrix");
             FloatMatrix adjFactorBPValuesMatrix = result.getMatrix("adjFactorBPValuesMatrix");
-            FloatMatrix adjInteractionPValuesMatrix = result.getMatrix("adjInteractionPValuesMatrix");       
+            FloatMatrix adjInteractionPValuesMatrix = result.getMatrix("adjInteractionPValuesMatrix");
             
             auxTitles = new String[13];
             //auxTitles = {"Adj. p-values (" + factorNames[0] + ")", "Adj. p-values (" + factorNames[1] + ")",  "Adj. p-values (interaction)", factorName[0] + " Orig. p-values", factorNames[0] + " F-ratio", factorNames[1] + "F-Ratio", "Interaction F-Ratio" };
@@ -263,7 +266,7 @@ public class TFAGUI implements IClusterGUI {
             auxTitles[11] = "df (interaction)";
             auxTitles[12] = "df (error)";
             
-            auxData = new Object[factorAFValuesMatrix.A.length][13];  
+            auxData = new Object[factorAFValuesMatrix.A.length][13];
             
             for (int i = 0; i < auxData.length; i++) {
                 auxData[i][0] = new Float(adjFactorAPValuesMatrix.A[i][0]);
@@ -276,29 +279,29 @@ public class TFAGUI implements IClusterGUI {
                 auxData[i][7] = new Float(factorBFValuesMatrix.A[i][0]);
                 auxData[i][8] = new Float(interactionFValuesMatrix.A[i][0]);
                 auxData[i][9] = new Integer((int)(factorADfValuesMatrix.A[i][0]));
-                auxData[i][10] = new Integer((int)(factorBDfValuesMatrix.A[i][0]));                
+                auxData[i][10] = new Integer((int)(factorBDfValuesMatrix.A[i][0]));
                 auxData[i][11] = new Integer((int)(interactionDfValuesMatrix.A[i][0]));
-                auxData[i][12] = new Integer((int)(errorDfValuesMatrix.A[i][0]));                
+                auxData[i][12] = new Integer((int)(errorDfValuesMatrix.A[i][0]));
             }
             
-
+            
             
             GeneralInfo info = new GeneralInfo();
             info.time = time;
             //ADD MORE INFO PARAMETERS HERE
             info.alpha = alpha;
             info.adjMethod = getAdjMethod(adjustmentMethod);
-            info.pValueBasedOn = getPValueBasedOn(usePerms); 
+            info.pValueBasedOn = getPValueBasedOn(usePerms);
             if (usePerms) {
                 //info.useAllCombs = useAllCombs;
                 info.numPerms = numPerms;
-            }   
+            }
             info.function = menu.getFunctionName(function);
             info.hcl = isHierarchicalTree;
             info.hcl_genes = hcl_genes;
             info.hcl_samples = hcl_samples;
             info.hcl_method = hcl_method;
-            return createResultTree(result_cluster, info);            
+            return createResultTree(result_cluster, info);
             
         } finally {
             if (algorithm != null) {
@@ -316,6 +319,247 @@ public class TFAGUI implements IClusterGUI {
         
         //return null; // for now
     }
+    
+    
+    
+    public AlgorithmData getScriptParameters(IFramework framework) {
+        this.experiment = framework.getData().getExperiment();
+        this.data = framework.getData();
+        
+        int number_of_samples = experiment.getNumberOfSamples();
+        int number_of_genes = experiment.getNumberOfGenes();
+        
+        exptNamesVector = new Vector();
+        for (int i = 0; i < number_of_samples; i++) {
+            exptNamesVector.add(framework.getData().getFullSampleName(i));
+        }
+        
+        TFAInitBox1 t1Box = new TFAInitBox1((JFrame)framework.getFrame(), true);
+        t1Box.setVisible(true);
+        if (!t1Box.isOkPressed()) return null;
+        
+        factorNames = new String[2];
+        numFactorLevels = new int[2];
+        
+        factorNames[0] = t1Box.getFactorAName();
+        factorNames[1] = t1Box.getFactorBName();
+        
+        String[] localClustNames =  {factorNames[0] + " significant", factorNames[1] + " significant", "Interaction signficant", factorNames[0] + " non-significant", factorNames[1] + " non-significant", "Interaction non-signficant", "Non-significant for all effects"};
+        clusterLabels = new String[localClustNames.length];
+        
+        for (int i = 0; i < clusterLabels.length; i++) {
+            clusterLabels[i] = localClustNames[i];
+        }
+        
+        numFactorLevels[0] = t1Box.getNumFactorALevels();
+        numFactorLevels[1] = t1Box.getNumFactorBLevels();
+        
+        TFAInitBox2 t2Box  = new TFAInitBox2((JFrame)framework.getFrame(), true, exptNamesVector, factorNames, numFactorLevels);
+        t2Box.setVisible(true);
+        
+        if (!t2Box.isOkPressed()) return null;
+        
+        boolean allCellsHaveOneSample = t2Box.allCellsHaveOneSample();
+        boolean isHierarchicalTree = t2Box.drawTrees();
+        int adjustmentMethod = t2Box.getAdjustmentMethod();
+        float alpha = t2Box.getAlpha();
+        factorAAssignments = t2Box.getFactorAAssignments();
+        factorBAssignments = t2Box.getFactorBAssignments();
+        Vector[][] bothFactorAssignments = t2Box.getBothFactorAssignments();
+        boolean isBalancedDesign = false;
+        if (!allCellsHaveOneSample) {
+            isBalancedDesign = t2Box.isBalancedDesign();
+        }
+        usePerms = t2Box.usePerms();
+        int numPerms = 0;
+        if (usePerms) {
+            numPerms = t2Box.getNumPerms();
+        }
+        
+        // hcl init
+        int hcl_method = 0;
+        boolean hcl_samples = false;
+        boolean hcl_genes = false;
+        if (isHierarchicalTree) {
+            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame());
+            if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
+                return null;
+            }
+            hcl_method = hcl_dialog.getMethod();
+            hcl_samples = hcl_dialog.isClusterExperience();
+            hcl_genes = hcl_dialog.isClusterGenes();
+        }
+        
+        int genes = experiment.getNumberOfGenes();
+        
+        AlgorithmData data = new AlgorithmData();
+        data.addStringArray("cluster-labels", this.clusterLabels);
+        data.addStringArray("factor-names", this.factorNames);
+        data.addParam("distance-factor", String.valueOf(1.0f));
+        IDistanceMenu menu = framework.getDistanceMenu();
+        data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
+        
+        int function = menu.getDistanceFunction();
+        if (function == Algorithm.DEFAULT) {
+            function = Algorithm.EUCLIDEAN;
+        }
+        
+        data.addParam("distance-function", String.valueOf(function));
+        data.addIntArray("numFactorLevels", numFactorLevels);
+        data.addParam("allCellsHaveOneSample", String.valueOf(allCellsHaveOneSample));
+        data.addParam("adjustmentMethod", String.valueOf(adjustmentMethod));
+        data.addParam("alpha", String.valueOf(alpha));
+        data.addIntArray("factorAAssignments", factorAAssignments);
+        data.addIntArray("factorBAssignments", factorBAssignments);
+        data.addObjectMatrix("bothFactorAssignments", bothFactorAssignments);
+        data.addParam("isBalancedDesign", String.valueOf(isBalancedDesign));
+        data.addParam("usePerms", String.valueOf(usePerms));
+        data.addParam("numPerms", String.valueOf(numPerms));
+        // hcl parameters
+        if (isHierarchicalTree) {
+            data.addParam("hierarchical-tree", String.valueOf(true));
+            data.addParam("method-linkage", String.valueOf(hcl_method));
+            data.addParam("calculate-genes", String.valueOf(hcl_genes));
+            data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+        }
+        
+        // alg name
+        data.addParam("name", "TFA");
+        
+        // alg type
+        data.addParam("alg-type", "cluster");
+        
+        // output class
+        data.addParam("output-class", "partition-output");
+        
+        //output nodes
+        data.addStringArray("output-nodes", clusterLabels);
+        return data;
+    }
+    
+    
+    public DefaultMutableTreeNode executeScript(IFramework framework, AlgorithmData algData, Experiment experiment) throws AlgorithmException {
+        this.experiment = experiment;
+        this.data = framework.getData();
+        exptNamesVector = new Vector();
+        for (int i = 0; i < data.getFeaturesCount(); i++) {
+            exptNamesVector.add(framework.getData().getFullSampleName(i));
+        }        
+        this.clusterLabels = algData.getStringArray("cluster-labels");
+        this.factorNames = algData.getStringArray("factor-names");
+        this.factorAAssignments = algData.getIntArray("factorAAssignments");
+        this.factorBAssignments = algData.getIntArray("factorBAssignments");
+        algData.addMatrix("experiment", experiment.getMatrix());
+        Listener listener = new Listener();
+        
+        try {
+            algorithm = framework.getAlgorithmFactory().getAlgorithm("TFA");
+            algorithm.addAlgorithmListener(listener);
+            
+            int genes = experiment.getNumberOfGenes();
+            
+            this.progress = new Progress(framework.getFrame(), "Finding significant genes", listener);
+            this.progress.show();
+            
+            long start = System.currentTimeMillis();
+            AlgorithmData result = algorithm.execute(algData);
+            long time = System.currentTimeMillis() - start;
+            
+            // getting the results
+            Cluster result_cluster = result.getCluster("cluster");
+            NodeList nodeList = result_cluster.getNodeList();
+            //AlgorithmParameters resultMap = result.getParams();
+            int k = 7; //resultMap.getInt("number-of-clusters"); // NEED THIS TO GET THE VALUE OF NUMBER-OF-CLUSTERS
+            
+            this.clusters = new int[k][];
+            for (int i=0; i<k; i++) {
+                clusters[i] = nodeList.getNode(i).getFeaturesIndexes();
+            }
+            this.means = result.getMatrix("clusters_means");
+            this.variances = result.getMatrix("clusters_variances");
+            FloatMatrix factorAFValuesMatrix = result.getMatrix("factorAFValuesMatrix");
+            FloatMatrix factorBFValuesMatrix = result.getMatrix("factorBFValuesMatrix");
+            FloatMatrix interactionFValuesMatrix = result.getMatrix("interactionFValuesMatrix");
+            
+            FloatMatrix factorADfValuesMatrix = result.getMatrix("factorADfValuesMatrix");
+            FloatMatrix factorBDfValuesMatrix = result.getMatrix("factorBDfValuesMatrix");
+            FloatMatrix interactionDfValuesMatrix = result.getMatrix("interactionDfValuesMatrix");
+            FloatMatrix errorDfValuesMatrix = result.getMatrix("errorDfValuesMatrix");
+            
+            FloatMatrix origFactorAPValuesMatrix = result.getMatrix("origFactorAPValuesMatrix");
+            FloatMatrix origFactorBPValuesMatrix = result.getMatrix("origFactorBPValuesMatrix");
+            FloatMatrix origInteractionPValuesMatrix = result.getMatrix("origInteractionPValuesMatrix");
+            
+            FloatMatrix adjFactorAPValuesMatrix = result.getMatrix("adjFactorAPValuesMatrix");
+            FloatMatrix adjFactorBPValuesMatrix = result.getMatrix("adjFactorBPValuesMatrix");
+            FloatMatrix adjInteractionPValuesMatrix = result.getMatrix("adjInteractionPValuesMatrix");
+            
+            auxTitles = new String[13];
+            //auxTitles = {"Adj. p-values (" + factorNames[0] + ")", "Adj. p-values (" + factorNames[1] + ")",  "Adj. p-values (interaction)", factorName[0] + " Orig. p-values", factorNames[0] + " F-ratio", factorNames[1] + "F-Ratio", "Interaction F-Ratio" };
+            auxTitles[0] = "Adj. p-values (" + factorNames[0] + ")";
+            auxTitles[1] = "Adj. p-values (" + factorNames[1] + ")";
+            auxTitles[2] = "Adj. p-values (interaction)";
+            auxTitles[3] = "Orig. p-values (" + factorNames[0] + ")";
+            auxTitles[4] = "Orig. p-values (" + factorNames[1] + ")";
+            auxTitles[5] = "Orig. p-values (interaction)";
+            auxTitles[6] = "F-ratio (" + factorNames[0] + ")";
+            auxTitles[7] = "F-ratio (" + factorNames[1] + ")";
+            auxTitles[8] = "F-ratio (interaction)";
+            auxTitles[9] = "df (" + factorNames[0] + ")";
+            auxTitles[10] = "df (" + factorNames[1] + ")";
+            auxTitles[11] = "df (interaction)";
+            auxTitles[12] = "df (error)";
+            
+            auxData = new Object[factorAFValuesMatrix.A.length][13];
+            
+            for (int i = 0; i < auxData.length; i++) {
+                auxData[i][0] = new Float(adjFactorAPValuesMatrix.A[i][0]);
+                auxData[i][1] = new Float(adjFactorBPValuesMatrix.A[i][0]);
+                auxData[i][2] = new Float(adjInteractionPValuesMatrix.A[i][0]);
+                auxData[i][3] = new Float(origFactorAPValuesMatrix.A[i][0]);
+                auxData[i][4] = new Float(origFactorBPValuesMatrix.A[i][0]);
+                auxData[i][5] = new Float(origInteractionPValuesMatrix.A[i][0]);
+                auxData[i][6] = new Float(factorAFValuesMatrix.A[i][0]);
+                auxData[i][7] = new Float(factorBFValuesMatrix.A[i][0]);
+                auxData[i][8] = new Float(interactionFValuesMatrix.A[i][0]);
+                auxData[i][9] = new Integer((int)(factorADfValuesMatrix.A[i][0]));
+                auxData[i][10] = new Integer((int)(factorBDfValuesMatrix.A[i][0]));
+                auxData[i][11] = new Integer((int)(interactionDfValuesMatrix.A[i][0]));
+                auxData[i][12] = new Integer((int)(errorDfValuesMatrix.A[i][0]));
+            }
+            
+            AlgorithmParameters params = algData.getParams();
+            
+            
+            GeneralInfo info = new GeneralInfo();
+            info.time = time;
+            //ADD MORE INFO PARAMETERS HERE
+            info.alpha = params.getFloat("alpha");
+            info.adjMethod = this.getAdjMethod(params.getInt("adjustmentMethod"));
+            info.pValueBasedOn = getPValueBasedOn(params.getBoolean("usePerms"));
+            if (usePerms) {
+                //info.useAllCombs = useAllCombs;
+                info.numPerms = params.getInt("numPerms");
+            }
+            int function = params.getInt("distance-function");
+            info.function = framework.getDistanceMenu().getFunctionName(function);
+            info.hcl = params.getBoolean("hierarchical-tree");
+            info.hcl_genes = params.getBoolean("calculate-genes");
+            info.hcl_samples = params.getBoolean("calculate-experiments");
+            if(info.hcl)
+                info.hcl_method = params.getInt("method-linkage");
+            return createResultTree(result_cluster, info);
+            
+        } finally {
+            if (algorithm != null) {
+                algorithm.removeAlgorithmListener(listener);
+            }
+            if (progress != null) {
+                progress.dispose();
+            }
+        }
+    }
+    
     
     private String getPValueBasedOn(boolean isPerm) {
         String str = "";
@@ -338,13 +582,13 @@ public class TFAGUI implements IClusterGUI {
         } else if (adjMethod == ADJ_BONFERRONI) {
             methodName = "Adjusted Bonferroni correction";
         } else if (adjMethod == MIN_P) {
-            methodName = "Step-down Westfall Young: Min P";            
+            methodName = "Step-down Westfall Young: Min P";
         } else if (adjMethod == MAX_T) {
             methodName = "Step-down Westfall Young: Max T";
         }
         
         return methodName;
-    }    
+    }
     
     /**
      * Creates a result tree to be inserted into the framework analysis node.
@@ -353,7 +597,7 @@ public class TFAGUI implements IClusterGUI {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("Two-factor ANOVA");
         addResultNodes(root, result_cluster, info);
         return root;
-    }  
+    }
     
     /**
      * Adds result nodes into the tree root.
@@ -365,27 +609,27 @@ public class TFAGUI implements IClusterGUI {
         addClusterInfo(root);
         addTableViews(root);
         addGeneralInfo(root, info);
-    }    
+    }
     
     /**
      * Adds nodes to display clusters data.
      */
     private void addExpressionImages(DefaultMutableTreeNode root) {
-	DefaultMutableTreeNode node = new DefaultMutableTreeNode("Expression Images");
-	IViewer expViewer = new TFAExperimentViewer(this.experiment, this.clusters, auxTitles, auxData);
-	for (int i=0; i<this.clusters.length; i++) {
-            node.add(new DefaultMutableTreeNode(new LeafInfo(clusterLabels[i], expViewer, new Integer(i))));	    
-	}
-	root.add(node);
-    }  
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Expression Images");
+        IViewer expViewer = new TFAExperimentViewer(this.experiment, this.clusters, auxTitles, auxData);
+        for (int i=0; i<this.clusters.length; i++) {
+            node.add(new DefaultMutableTreeNode(new LeafInfo(clusterLabels[i], expViewer, new Integer(i))));
+        }
+        root.add(node);
+    }
     
     private void addTableViews(DefaultMutableTreeNode root) {
-	DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table views");   
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table views");
         IViewer tableViewer = new ClusterTableViewer(this.experiment, this.clusters, data, auxTitles, auxData);
         //IViewer tableViewer = new ClusterTableViewer(this.experiment, this.clusters, data);
-	for (int i=0; i<this.clusters.length; i++) {
-            node.add(new DefaultMutableTreeNode(new LeafInfo(clusterLabels[i], tableViewer, new Integer(i))));	    
-	}  
+        for (int i=0; i<this.clusters.length; i++) {
+            node.add(new DefaultMutableTreeNode(new LeafInfo(clusterLabels[i], tableViewer, new Integer(i))));
+        }
         root.add(node);
     }
     
@@ -393,16 +637,16 @@ public class TFAGUI implements IClusterGUI {
      * Adds nodes to display hierarchical trees.
      */
     private void addHierarchicalTrees(DefaultMutableTreeNode root, Cluster result_cluster, GeneralInfo info) {
-	if (!info.hcl) {
-	    return;
-	}
-	DefaultMutableTreeNode node = new DefaultMutableTreeNode("Hierarchical Trees");
-	NodeList nodeList = result_cluster.getNodeList();
-	for (int i=0; i<nodeList.getSize(); i++) {	    
+        if (!info.hcl) {
+            return;
+        }
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Hierarchical Trees");
+        NodeList nodeList = result_cluster.getNodeList();
+        for (int i=0; i<nodeList.getSize(); i++) {
             node.add(new DefaultMutableTreeNode(new LeafInfo(clusterLabels[i], createHCLViewer(nodeList.getNode(i), info))));
-	}
-	root.add(node);
-    }    
+        }
+        root.add(node);
+    }
     
     /**
      * Creates an <code>HCLViewer</code>.
@@ -411,32 +655,32 @@ public class TFAGUI implements IClusterGUI {
         HCLTreeData genes_result = info.hcl_genes ? getResult(clusterNode, 0) : null;
         HCLTreeData samples_result = info.hcl_samples ? getResult(clusterNode, info.hcl_genes ? 4 : 0) : null;
         return new HCLViewer(this.experiment, clusterNode.getFeaturesIndexes(), genes_result, samples_result);
-    }   
+    }
     
     /**
      * Adds nodes to display centroid charts.
      */
     private void addCentroidViews(DefaultMutableTreeNode root) {
-	DefaultMutableTreeNode centroidNode = new DefaultMutableTreeNode("Centroid Graphs");
-	DefaultMutableTreeNode expressionNode = new DefaultMutableTreeNode("Expression Graphs");
-	TFACentroidViewer centroidViewer = new TFACentroidViewer(this.experiment, clusters, auxTitles, auxData);
-	centroidViewer.setMeans(this.means.A);
-	centroidViewer.setVariances(this.variances.A);
-	for (int i=0; i<this.clusters.length; i++) {            
+        DefaultMutableTreeNode centroidNode = new DefaultMutableTreeNode("Centroid Graphs");
+        DefaultMutableTreeNode expressionNode = new DefaultMutableTreeNode("Expression Graphs");
+        TFACentroidViewer centroidViewer = new TFACentroidViewer(this.experiment, clusters, auxTitles, auxData);
+        centroidViewer.setMeans(this.means.A);
+        centroidViewer.setVariances(this.variances.A);
+        for (int i=0; i<this.clusters.length; i++) {
             centroidNode.add(new DefaultMutableTreeNode(new LeafInfo(clusterLabels[i], centroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
-            expressionNode.add(new DefaultMutableTreeNode(new LeafInfo(clusterLabels[i], centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));            
+            expressionNode.add(new DefaultMutableTreeNode(new LeafInfo(clusterLabels[i], centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
         }
-	
-	TFACentroidsViewer centroidsViewer = new TFACentroidsViewer(this.experiment, clusters, auxTitles, auxData);
-	centroidsViewer.setMeans(this.means.A);
-	centroidsViewer.setVariances(this.variances.A);
-	
-	centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("All Genes", centroidsViewer, new Integer(CentroidUserObject.VARIANCES_MODE))));
-	expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("All Genes", centroidsViewer, new Integer(CentroidUserObject.VALUES_MODE))));
-	
-	root.add(centroidNode);
-	root.add(expressionNode);
-    }    
+        
+        TFACentroidsViewer centroidsViewer = new TFACentroidsViewer(this.experiment, clusters, auxTitles, auxData);
+        centroidsViewer.setMeans(this.means.A);
+        centroidsViewer.setVariances(this.variances.A);
+        
+        centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("All Genes", centroidsViewer, new Integer(CentroidUserObject.VARIANCES_MODE))));
+        expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("All Genes", centroidsViewer, new Integer(CentroidUserObject.VALUES_MODE))));
+        
+        root.add(centroidNode);
+        root.add(expressionNode);
+    }
     
     /**
      * Returns a hcl tree data from the specified cluster node.
@@ -449,7 +693,7 @@ public class TFAGUI implements IClusterGUI {
         data.node_order = (int[])valueList.getNodeValue(pos+2).value;
         data.height = (float[])valueList.getNodeValue(pos+3).value;
         return data;
-    }   
+    }
     
     /**
      * Adds node with cluster information.
@@ -458,16 +702,16 @@ public class TFAGUI implements IClusterGUI {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Cluster Information");
         node.add(new DefaultMutableTreeNode(new LeafInfo("Results (#,%)", new TFAInfoViewer(this.clusters, this.experiment.getNumberOfGenes(), factorNames))));
         root.add(node);
-    }    
+    }
     
     /**
      * Adds node with general iformation.
      */
     private void addGeneralInfo(DefaultMutableTreeNode root, GeneralInfo info) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("General Information");
-        //node.add(new DefaultMutableTreeNode("Test design: " + info.getTestDesign()));        
+        //node.add(new DefaultMutableTreeNode("Test design: " + info.getTestDesign()));
         node.add(getGroupAssignmentInfo());
-
+        
         node.add(new DefaultMutableTreeNode("Alpha (overall threshold p-value): "+info.alpha));
         node.add(new DefaultMutableTreeNode("P-values based on: "+info.pValueBasedOn));
         if (usePerms) {
@@ -478,7 +722,7 @@ public class TFAGUI implements IClusterGUI {
         node.add(new DefaultMutableTreeNode("Time: "+String.valueOf(info.time)+" ms"));
         node.add(new DefaultMutableTreeNode(info.function));
         root.add(node);
-    }    
+    }
     
     private DefaultMutableTreeNode getGroupAssignmentInfo() {
         DefaultMutableTreeNode groupAssignmentInfo = new DefaultMutableTreeNode("Factor Assignments");
@@ -488,19 +732,21 @@ public class TFAGUI implements IClusterGUI {
             if (factorAAssignments[i] != 0) {
                 factorANode.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i)) + ": Group " + factorAAssignments[i]));
             } else {
-                factorANode.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i)) + ": Unassigned"));                
+                factorANode.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i)) + ": Unassigned"));
             }
             if (factorBAssignments[i] != 0) {
                 factorBNode.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i)) + ": Group " + factorBAssignments[i]));
             } else {
-                factorBNode.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i)) + ": Unassigned"));                
-            }            
+                factorBNode.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i)) + ": Unassigned"));
+            }
         }
         groupAssignmentInfo.add(factorANode);
         groupAssignmentInfo.add(factorBNode);
         
         return groupAssignmentInfo;
     }
+    
+    
     
     /**
      * The class to listen to progress, monitor and algorithms events.
@@ -542,7 +788,7 @@ public class TFAGUI implements IClusterGUI {
             progress.dispose();
             //monitor.dispose();
         }
-    } 
+    }
     
     private class GeneralInfo {
         public int clusters;
@@ -562,6 +808,6 @@ public class TFAGUI implements IClusterGUI {
             return hcl ? HCLGUI.GeneralInfo.getMethodName(hcl_method) : "no linkage";
         }
         
-    }    
+    }
     
 }
