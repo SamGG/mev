@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
 * $RCSfile: GDMExpHeader.java,v $
-* $Revision: 1.3 $
-* $Date: 2004-02-25 21:07:44 $
+* $Revision: 1.4 $
+* $Date: 2004-03-01 16:39:39 $
 * $Author: braisted $
 * $State: Exp $
 */
@@ -650,7 +650,6 @@ public class GDMExpHeader extends JPanel {
 		expColor = Color.white;
 
 	    g.setColor(expColor);
-            System.out.println("Row color bar x loc = " +xLoc);
 	    g.fillRect(xLoc, row*elementHeight, colorBarWidth-OFFSET, elementHeight);
 	}
 

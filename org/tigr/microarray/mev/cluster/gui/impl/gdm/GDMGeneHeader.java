@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: GDMGeneHeader.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-25 21:06:33 $
+ * $Revision: 1.4 $
+ * $Date: 2004-03-01 16:39:39 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -332,7 +332,6 @@ public class GDMGeneHeader extends JPanel {
             
             if (hasColorBar) {
                 colorBarHeight = OFFSET + (elementHeight >= 10 ? elementHeight : 10) ;
-                System.out.println("set column Header h = "+colorBarHeight);
             } else {
                 colorBarHeight = 0;
             }
@@ -348,7 +347,6 @@ public class GDMGeneHeader extends JPanel {
             
             if (hasColorBar) {
                 colorBarWidth = OFFSET + (elementWidth >= 10 ? elementWidth : 10);
-                System.out.println("set row Header w = "+colorBarWidth);
             } else {
                 colorBarWidth = 0;
             }
