@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.17 $
- * $Date: 2004-06-21 21:50:41 $
+ * $Revision: 1.18 $
+ * $Date: 2004-06-24 17:36:30 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -360,7 +360,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             pane.setEditable(false);
             
             String text = "<html><body><font face=arial size=4><b><center>Analysis Save and Restoration Warning</center><b><hr size=3><br>";//<hr size=3>";
-            text += "<font face=arial size=4>Proper restoration of analysis files is dependant on the Java and Java Virtual Machine versions used to open the file. ";
+            text += "<font face=arial size=4>Proper restoration of analysis files is dependent on the Java and Java Virtual Machine versions used to open the file. ";
             text += "Analysis files should be opened using Java and Java Virtual Machine versions that match the versions used to save the file.<br><br>";
             
             text += "If version inconsistencies are found when loading an analysis file the saved and current versions " ;
@@ -413,6 +413,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         Thread thread = new Thread(new Runnable() {
             public void run() {
                 try{
+                    setCursor(new Cursor(Cursor.WAIT_CURSOR));
                     oos.useProtocolVersion(ObjectStreamConstants.PROTOCOL_VERSION_2);
                     // Save MeV tag
                     oos.writeObject(TMEV.VERSION);
@@ -448,7 +449,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                     menubar.systemEnable(TMEV.ANALYSIS_LOADED);
                     oos.flush();
                     oos.close();
+                    setCursor(Cursor.DEFAULT_CURSOR);
                 } catch (IOException ioe){
+                    setCursor(Cursor.DEFAULT_CURSOR);
                     JOptionPane.showMessageDialog(MultipleArrayViewer.this, "Analysis was not saved.  Error writing output file.",
                     "Save Error", JOptionPane.WARNING_MESSAGE);
                     ioe.printStackTrace();

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SlideDataElement.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-05 22:35:41 $
+ * $Revision: 1.4 $
+ * $Date: 2004-06-24 17:36:30 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -386,8 +386,9 @@ public class SlideDataElement extends ArrayElement implements ISlideDataElement,
      * does not exist
      */
     public String getFieldAt(int index) {
-        if(extraFields == null || index < 0 || index > (extraFields.length - 1))
+        if(extraFields == null || index < 0 || index > (extraFields.length - 1)) {
             return "";
+        }
         return extraFields[index];
     }
     
