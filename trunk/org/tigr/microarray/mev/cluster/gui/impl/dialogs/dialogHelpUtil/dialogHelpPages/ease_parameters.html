@@ -1,0 +1,101 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>EASE: Annotation Over-representation Analysis</h1> <h2>Parameter Information</h2>
+            <hr size = 10>
+
+
+<h2>Mode Selection</h2>
+<h3>Cluster Analysis</h3> 
+This mode performs annotation analysis on a selected subset (sample list or cluster) of the
+full data set loaded in MeV.  The output is a list of biological 'themes' represented in
+the cluster and a statistic reporting the probability that a particular theme is over represented in
+the cluster relative to it's representation in the entire data set.  The resulting table will
+initially be sorted by this statistic.
+
+<h3>Slide Annotation Survey</h3>
+The survey mode simply produces a list of biological themes that are represented in the slide.
+The initial ordering of the output table is based on the prevalence of a theme in the data set (hit count).
+This mode can be used to cluster genes based on biological themes.  The clusters can then be
+stored and marked (colored) for tracking during cluster analysis.
+<br>
+
+<h2>Parameter Pages</h2>
+Several parameter input pages are available:
+<hr>
+<br>
+<h2>Cluster Browser Page</h2>
+This panel displays gene clusters currently stored in MeV's cluster repository.  If no clusters have
+been saved then a blank browser page will be displayed and the Cluster Analysis mode option will be
+disabled.  Selecting a row in the cluster table will display the cluster in the expression graph area
+of the browser.  EASE cluster analysis will operate on the selected cluster.
+<br>
+<br>
+<h2>Annotation Parameters Page</h2>
+This page has three major parts described below.
+<h3>MeV Annotation Key</h3>
+This area contains a drop down list which contains a list of available annotation types which can be
+used identify genes.  Generally it's best to use an index or accession which 'uniquely' identifies
+the spotted material.
+<h3>Annotation Conversion File</h3>
+This optional file provides the mapping from your annotation key (above) to the index used to map to
+biological themes (GO terms, KEGG pathways, etc.).  If your annotation key type is the one used in the
+linking file (below) then this conversion (mapping) is not needed.
+<h3>Gene Annotation / Gene Ontology Linking Files</h3>
+This section allows one to specify one or more annotation files.  These files contain gene indices
+paired with biological themes such as go terms.   
+<h3><i>File Selection Scenario</h3>
+One possible example of the file linking structure could be:<br>
+<b>[GenBank#]-->[GenBank#]:[locus_link_id]-->[locus_link_id]:[go_term]</b><br>
+This shows the progression from 'Annotation Key', to conversion file (converting GenBank# to locus_link_id),
+to final linking with GO terms.  Keep in mind that although shown with a single arrow, in general
+one gene index will map to many GO terms (or other biological theme or pathway categories).</i>
+<br>
+<br>
+<h2>Statistical Parameters Page</h2>
+Several sections on this page are used to specify reported statistical and result trimming parameters.
+<h2>Reported Statistic</h2>
+<h3>Fisher's Exact Probability</h3>
+The Fisher's Exact Probability reports the probability that a biological theme is
+over-represented in the cluster of interest relative to the representation of that theme in the
+total gene population. For example, suppose that one has a gene
+list of 50 genes from a population of 10,000 genes.  Now suppose that 10 of the 50 genes were related to
+pathway "A" but only 13 genes in the total population were associated with pathway "A".  This scenario
+would yield a low probability that the observed number of hits (occurrences of pathway "A") within the small 
+sample could be due to chance alone.  This statistic is based on the hypergeometric distribution and has
+benefits over chi-square in that it is appropriate for finite populations.  The reference sited for EASE
+describes this statistic at length.
+<h3>EASE Score</h3>
+The EASE Score reported is essentially a jackknifed Fisher's Exact Probability which is arrived at
+by calculation of the Fisher's Exact where one occurrence (list hit for a term) has been removed.
+<h2>Multiplicity Corrections</h2>
+Several p-value corrections can be applied to help correct for the chance of arriving at a significant
+result when performing multiple tests.
+<h3>Bonferroni Correction</h3>
+This correction simply multiplies the statistic by the number of results generated.  This is the most
+stringent correction of the three options.
+<h3>Bonferroni Step Down Correction</h3>
+This modified Bonferroni correction ranks the results by the statistic in ascending order.  Each
+value is multiplied by (n-rank) where n is the number of results.  In the case of a tie, where two
+results have the same probability the rank is kept constant until the next element occurs having
+a higher probability value.  The rank is then adjusted for the number of tied elements where rank was constant.
+<h3>Sidak Method</h3>
+This correction uses the following formula where v' is the corrected value and k is the rank of the result
+in terms of original statistic value.  In this case ties in rank are handled as described in the step down Bonferroni correction.
+<br>
+v' = 1-(1-v)<sup>k</sup>
+
+<h3>Permutation Analysis</h3>
+The permutation option performs a number of bootstrapping iterations where random
+gene lists are generated and run through the analysis.  The results are used to apply a correction
+factor to the reported statistic.
+
+<h2>Trim Parameters</h2>
+The trim parameters can be applied to filter analysis results based on the number of hits
+or the fraction of genes in the cluster that are represented by an annotation term.  Sometimes
+a term can be found significant but does not represent a large segment of the cluster of interest.
+These options can be applied to be certain that a minimum number of genes in the cluster fall under
+that particular annotation class.  This feature should be used with caution so that biological
+themes represented by very few genes are not excluded. 
+        </basefont>
+    </body>
+</html>

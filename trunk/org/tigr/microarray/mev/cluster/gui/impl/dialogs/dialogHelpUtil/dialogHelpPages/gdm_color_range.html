@@ -1,0 +1,40 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>GDM: Setting the Color Range</h1> <h2>Parameter Information</h2>
+            <hr size = 10>
+This dialog controls the range over which distances will be differentially colored
+based on the color gradient selected.  e.g. if the range is black to red in color and
+the range limits are 0.1 (lower limit) to 0.5 (upper limit), all distances below 0.1
+will be represented by black, all distances above 0.5 will be represented by red,
+and distances within the range will be represented by a color corresponding to their
+position on the color gradient.  The distances outside of the defined range are
+said to be saturated (in terms of color representation).  The Dynamic Range Preview
+panel clearly represents the current limits applied to the matrix.
+<h2>Lower Limit</h2>
+The lower range limit defines the distance below which distances will be uniformly
+represented by the lower extreme color of the gradient.  This value must be in the
+range [0,1) and be less than the upper limit.
+<h2>Upper Limit</h2>
+The upper range limit defines the distance above which distances will be uniformly
+represented by the upper extreme color of the gradient.  This value must be in the
+range of (0,1] and be greater than the lower limit.
+<h2>% Saturation</h2>
+The percent saturation value represents the number of matrix elements which fall
+outside of the current range.  Note that this field is only updated upon hitting
+the 'Preview' button.
+<h2>Effective Range Preview</h2>
+This color gradient displays the current limits. (Initial values or entered values
+after hitting the 'preview' button.
+<h2>Button</h2>
+<h3>OK Button</h3>
+This button closes the dialog and applies the entered limits on the GDM.
+<h3>Cancel Button</h3>
+This button closes the dialog and restores the GDM to the state before the range dialog
+was opened.
+<h3>Reset Button</h3>
+This button sets the limit values to the initial limit values displayed upon opening
+the dialog.  The restored limits are then previewed on the GDM and in the Range Preview
+area of the dialog.
+        </basefont>
+    </body>
+</html>
