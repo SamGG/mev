@@ -2152,7 +2152,7 @@ public class SAMInitDialog extends AlgorithmDialog {
         
         S0AndQValueCalcPanel() {
             this.setBorder(new TitledBorder(new EtchedBorder(), "S0 and Q Value parameters", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));            
-            String[] s0SelectOptions = {"5th percentile", "50th percentile", "90th percentile", "Minimum S Value", "Tusher et al. method (slow!)"};
+            String[] s0SelectOptions = {"Tusher et al. method", "5th percentile", "50th percentile", "90th percentile", "Minimum S Value"};
             setBackground(Color.white);
             s0SelectBox = new JComboBox(s0SelectOptions);
             //s0SelectBox.setBackground(Color.white);
@@ -2722,7 +2722,7 @@ public class SAMInitDialog extends AlgorithmDialog {
     }
     
     public boolean useTusherEtAlS0() {
-        if (sqPanel.s0SelectBox.getSelectedIndex() == 4) {
+        if (sqPanel.s0SelectBox.getSelectedIndex() == 0) {
             return true;
         } else {
             return false;
@@ -2733,15 +2733,15 @@ public class SAMInitDialog extends AlgorithmDialog {
         if (sqPanel.s0SelectButton.isSelected()) {
             int index = sqPanel.s0SelectBox.getSelectedIndex();
             if (index == 0) {
-                return 5d;
-            } else if (index == 1) {
-                return 50d;
-            } else if (index == 2) {
-                return 90d;
-            } else if (index == 3) {
-                return 0d;
-            } else if (index == 4) {
                 return -1d;
+            } else if (index == 1) {
+                return 5d;
+            } else if (index == 2) {
+                return 50d;
+            } else if (index == 3) {
+                return 90d;
+            } else if (index == 4) {
+                return 0d;
             }
         } else {
             return Double.parseDouble(sqPanel.s0EntryField.getText());
