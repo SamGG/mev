@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: TerrainViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-02-25 16:49:10 $
+ * $Revision: 1.6 $
+ * $Date: 2004-05-05 21:41:37 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -66,6 +66,7 @@ public class TerrainViewer extends JPanel implements IViewer, java.io.Serializab
     private static final String DESELECT_CMD      = "deselect-cmd";
     private static final String SHOW_CONTROLS_CMD = "show-controls-cmd";
     private static final String DRIFT_DIALOG_CMD  = "drift-dialog-cmd";
+    private static final String LAUNCH_SESSION_CMD = "launch-session-cmd";
     private static final String SET_CLUSTER_CMD   = "set-cluster-cmd";
     private static final String SHOW_LINKS_CMD    = "show-links-cmd";
     private static final String LINKS_THRESHOLD_CMD  = "links-threshold-cmd";
@@ -594,6 +595,11 @@ public class TerrainViewer extends JPanel implements IViewer, java.io.Serializab
         menuItem.addActionListener(listener);
         menu.add(menuItem);
         
+        menuItem = new JMenuItem("Launch New Session");
+        menuItem.setActionCommand(LAUNCH_SESSION_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);       
+        
         menuItem = new JMenuItem("Deselect");
         menuItem.setActionCommand(DESELECT_CMD);
         menuItem.addActionListener(listener);
@@ -718,6 +724,39 @@ public class TerrainViewer extends JPanel implements IViewer, java.io.Serializab
         }
         this.selectionShape.clearSelection();
     }
+    
+    
+    private void onLaunchNewSession() {
+        
+        float scale = Math.max(Math.abs(this.up_left_point.x-this.bottom_right_point.x), Math.abs(this.up_left_point.y-this.bottom_right_point.y));
+        Point2f start = this.selectionShape.getStartCoords();
+        Point2f end   = this.selectionShape.getEndCoords();
+        start.scale(scale);
+        end.scale(scale);
+        start.add(this.up_left_point);
+        end.add(this.up_left_point);
+        IntArray ids = new IntArray();
+        for (int i=0; i<this.locations.length; i++) {
+            float x = this.locations[i][0];
+            float y = this.locations[i][1];
+            if (x>start.x && x<end.x && y>start.y && y<end.y)
+                ids.add(i);
+        }
+
+//        int [] indices = ids.toArray();
+  //      if(indices.length > 0) {
+            if (isGenes) {
+            framework.launchNewMAV(ids.toArray(), this.experiment, "Multiple Experiment Viewer - Cluster Viewer", Cluster.GENE_CLUSTER);
+
+            } else {
+            framework.launchNewMAV(ids.toArray(), this.experiment, "Multiple Experiment Viewer - Cluster Viewer", Cluster.EXPERIMENT_CLUSTER);
+
+            }
+    //    }
+        this.selectionShape.clearSelection();
+        
+    }
+    
     
     /**
      * Converts cluster indicies from the experiment to IData rows which could be different
@@ -1073,6 +1112,8 @@ public class TerrainViewer extends JPanel implements IViewer, java.io.Serializab
                 TerrainViewer.this.onLinksThreshold();
             } else if (command.equals(LINKS_WIDTH_CMD)) {
                 TerrainViewer.this.onLinksWidth();
+            } else if (command.equals(LAUNCH_SESSION_CMD)) {
+                TerrainViewer.this.onLaunchNewSession();
             }
         }
 
