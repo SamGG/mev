@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: FloatMatrix.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:23 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-09 15:06:35 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -1046,4 +1046,31 @@ public class FloatMatrix implements Cloneable, java.io.Serializable {
 		}
 	    }
 	    
+
+    /** Get a sub-matrix .
+     * @return    A'
+     */
+    
+    public FloatMatrix getSubMatrix(int displayInterval) {
+
+        if (displayInterval <= 0) return this;
+
+        int sub_m = m / displayInterval;
+	int sub_n = n / displayInterval;
+
+	FloatMatrix X = new FloatMatrix(sub_m, sub_n);
+
+	float[][] C = X.getArray();
+
+	for (int i = 0, k = 0; i < m && k < sub_m; i += displayInterval, k++) {
+	    for (int j = 0, l = 0; j < n && l < sub_n; j += displayInterval, l++) {
+		C[k][l] = A[i][j];
+	    }
+	}
+
+	return X;
+
+
+    }
+    
 }
