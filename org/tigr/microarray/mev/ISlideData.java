@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ISlideData.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:23 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-05 22:33:04 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -207,4 +207,14 @@ public interface ISlideData {
      * Returns the data type attribute
      */
     public int getDataType();
+    
+    /**
+     * Sets the slide file name
+     */
+    public void setSlideFileName(String fileName);
+    
+    /**
+     * Returns the slide's file name
+     */
+    public String getSlideFileName();
 }

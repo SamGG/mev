@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: MultipleArrayCanvas.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 18:47:59 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 22:33:44 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -39,7 +39,7 @@ import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 
-public class MultipleArrayCanvas extends JPanel implements IViewer {
+public class MultipleArrayCanvas extends JPanel implements IViewer, java.io.Serializable {
     
     private static final int TRACE_SPACE = 50;
     
@@ -78,6 +78,10 @@ public class MultipleArrayCanvas extends JPanel implements IViewer {
     private BufferedImage posColorImage;
     private int xOffset = 10;
     
+    public MultipleArrayCanvas() {
+        
+    }
+    
     /**
      * Constructs a <code>MultipleArrayCanvas</code> with specified
      * reference to a framework and insets.
@@ -96,6 +100,15 @@ public class MultipleArrayCanvas extends JPanel implements IViewer {
         this.posColorImage = framework.getDisplayMenu().getPositiveGradientImage();
         this.header.setNegativeAndPositiveColorImages(this.negColorImage, this.posColorImage);
     }
+    
+ /*   private void writeObject(java.io.ObjectOutputStream oos){
+        oos.writeObject();
+        oos.writeObject();
+        oos.writeObject();
+        oos.writeObject();
+        oos.writeObject();
+    }
+  **/
     
     /**
      * Overriden to have focus. (deprecated as of 1.4, use isFocusable()
@@ -771,6 +784,8 @@ public class MultipleArrayCanvas extends JPanel implements IViewer {
      */
     private class Listener extends MouseAdapter implements MouseMotionListener, KeyListener, WindowListener {
 	
+        public Listener() {  }
+        
 	private int oldRow = -1;
 	private int oldColumn = -1;
 	

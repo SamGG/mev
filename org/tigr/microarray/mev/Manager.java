@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: Manager.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:23 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-05 22:33:33 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -55,24 +55,25 @@ public class Manager {//A class to keep track of viewers
 	    eventListener = new EventListener();
 	    
 	    initializeFrame();
-	    
-            //SuperExpressionFileLoader is being used.
-	   // if(! selectPreferencesFile()) return;
-	    
+
 	    initializeInput();
 	    
 	} catch (Exception e) {
 	    System.out.println("Exception (Manager.const()): " + e);
+            e.printStackTrace();
 	}
     }
     
     public void initializeFrame() {
 	frame = new JFrame("TIGR MultiExperiment Viewer");
+        frame.addWindowListener(eventListener);
+        frame.setVisible(true); 
+        
 	initializeMenuBar(frame);
-	frame.addWindowListener(eventListener);
-	frame.setSize(Toolkit.getDefaultToolkit().getScreenSize().width, 50);
-	frame.setResizable(false);
-	frame.setVisible(true);
+        frame.setSize(frame.getPreferredSize());
+
+        frame.validate();         
+        frame.setResizable(false);         
     }
     
     public void initializeMenuBar(JFrame frame) {
@@ -173,8 +174,10 @@ public class Manager {//A class to keep track of viewers
 	referencesMenu.add(aboutMenuItem);
 	
 	menuBar.add(referencesMenu);
-	
+
 	frame.setJMenuBar(menuBar);
+                
+        menuBar.setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize().width-2, menuBar.getFontMetrics(menuBar.getFont()).getHeight()+5));                  
     }
     
     public boolean selectPreferencesFile() {

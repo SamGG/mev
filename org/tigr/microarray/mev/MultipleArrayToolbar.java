@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: MultipleArrayToolbar.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 18:47:59 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 22:34:28 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -51,7 +51,7 @@ public class MultipleArrayToolbar extends JToolBar {
 	Action action;
 	while ((action = manager.getAction(ActionManager.ANALYSIS_ACTION+String.valueOf(index)))!=null) {
 	    add(action);
-            if(index == 4 || index == 11 || index == 15 || index == 18)
+            if(index == 3 || index == 10 || index == 14 || index == 16 || index == 19)
                 this.addSeparator();
 	    index++;
             

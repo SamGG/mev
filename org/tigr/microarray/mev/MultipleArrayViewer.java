@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2003-12-08 18:47:59 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-05 22:34:41 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -344,13 +344,15 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         historyNode = new DefaultMutableTreeNode(new LeafInfo("History"));
         root.add(historyNode);
         
-        tree = new JTree(root);
+        tree = new ResultTree(root);
+
+        //tree = new JTree(root);
         tree.addTreeSelectionListener(listener);
         tree.addMouseListener(listener);
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         tree.setSelectionPath(new TreePath(mainViewNode.getPath()));
         tree.setEditable(false);
-        
+
         ToolTipManager.sharedInstance().registerComponent(tree);
         return new JScrollPane(tree);
     }
@@ -1142,7 +1144,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         JScrollBar bar = this.treeScrollPane.getHorizontalScrollBar();
         if(bar != null)
             bar.setValue(0);
-    }
+     }
     
     /**
      * Adds info into the history node.

@@ -6,7 +6,7 @@
 
 package org.tigr.microarray.mev;
 
-public class SpotInformationData{
+public class SpotInformationData implements java.io.Serializable {
 
     private String [] columnHeaders;
     private String [][] spotData;
