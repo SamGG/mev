@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: FloatSlideData.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:17 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-09 15:23:53 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -33,7 +33,7 @@ import org.tigr.midas.display.ParameterPane;
  *  It is possible to get ArrayIndexOutOfBoundsException if an index
  *  was invalid.
  */
-public class FloatSlideData implements ISlideData {
+public class FloatSlideData implements ISlideData, java.io.Serializable {
     
     private String name; // slide name
     private String filename; // slide file name
