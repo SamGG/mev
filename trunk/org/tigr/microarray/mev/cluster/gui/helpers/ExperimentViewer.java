@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ExperimentViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-11-25 14:30:05 $
+ * $Revision: 1.3 $
+ * $Date: 2003-12-08 18:44:48 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -388,14 +388,14 @@ public class ExperimentViewer extends JPanel implements IViewer {
     /**
      * Returns wrapped experiment.
      */
-    protected Experiment getExperiment() {
+    public Experiment getExperiment() {
         return experiment;
     }
     
     /**
      * Returns the data.
      */
-    protected IData getData() {
+    public IData getData() {
         return data;
     }
     
