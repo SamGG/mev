@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: GDMGeneViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-13 19:15:04 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-13 21:36:44 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -98,7 +98,7 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 
 import org.tigr.microarray.util.SlideDataSorter;
 
-public class GDMGeneViewer extends JPanel implements IViewer {
+public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializable {
     
     private JPanel content;
     private GDMGeneHeader geneColumnHeaderSP;
@@ -110,6 +110,7 @@ public class GDMGeneViewer extends JPanel implements IViewer {
     private FloatMatrix rawMatrix;
     
     private IData expData;
+    private String [] fieldNames;
     private IFramework framework;
     private JFrame mainframe;
     
@@ -229,6 +230,7 @@ public class GDMGeneViewer extends JPanel implements IViewer {
         setElementWidth(elementSize.width);
         
         this.expData = fmwk.getData();
+        this.fieldNames = this.expData.getFieldNames();
         this.experiment = expData.getExperiment();
         this.probes = expData.getFeaturesSize();
         this.featuresCount = expData.getFeaturesCount();
@@ -273,10 +275,10 @@ public class GDMGeneViewer extends JPanel implements IViewer {
         initSortActions(expData.getFieldNames());
         initAnnotationWidthActions();
         
-        this.geneColumnHeaderSP = createHeader(TRACE_SPACE, true, xWidth, MAX_COL_HEIGHT, elementSize, expData);
+        this.geneColumnHeaderSP = createHeader(TRACE_SPACE, true, xWidth, MAX_COL_HEIGHT, elementSize, experiment);
         this.geneColumnHeaderSP.setBorder(BorderFactory.createLineBorder(Color.white));
 
-        this.geneRowHeaderSP = createHeader(TRACE_SPACE, false, MAX_ROW_WIDTH, xHeight, elementSize, expData);
+        this.geneRowHeaderSP = createHeader(TRACE_SPACE, false, MAX_ROW_WIDTH, xHeight, elementSize, experiment);
         this.content = createContent(MAX_MATRIX_WIDTH, MAX_MATRIX_WIDTH, listener);
 
         this.geneColumnHeaderSP.setMatrixListener(listener);
@@ -307,7 +309,126 @@ public class GDMGeneViewer extends JPanel implements IViewer {
     }
     
     public GDMGeneViewer() {}
+
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.writeObject(this.distanceMetric);
+        oos.writeInt(this.elementWidth);
+        oos.writeObject(this.elementSize);
+        oos.writeObject(this.experiment);
+        oos.writeInt(this.probes);
+        oos.writeInt(this.featuresCount);
+        oos.writeObject(this.geneDistMatrix);
+        oos.writeObject(this.rawMatrix);
+        oos.writeFloat(this.minValue);
+        oos.writeFloat(this.origMaxValue);
+        oos.writeFloat(this.origMinValue);
+        oos.writeInt(this.displayEvery);
+        oos.writeObject(this.clusters);
+        oos.writeObject(this.indices);
+        oos.writeInt(this.numOfClusters);
+        oos.writeFloat(this.maxValue);
+        oos.writeInt(this.maxGeneNameLength);
+        oos.writeInt(this.num_genes);
+        oos.writeObject(this.borderColor);
+        oos.writeObject(this.clusterBorderColor);
+        oos.writeObject(this.insets);
+        oos.writeInt(this.xWidth);
+        oos.writeInt(this.xHeight); 
+        
+        oos.writeObject(fieldNames);
+    }
     
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        
+        //read critcal data
+        this.distanceMetric = (String)ois.readObject();
+        this.elementWidth = ois.readInt();
+        this.elementSize = (Dimension)ois.readObject();
+        setElementWidth(elementSize.width);
+        this.experiment = (Experiment)ois.readObject();
+        this.probes = ois.readInt();
+        this.featuresCount = ois.readInt();
+        this.geneDistMatrix = (FloatMatrix)ois.readObject();
+        this.rawMatrix = (FloatMatrix)ois.readObject();
+        this.minValue = ois.readFloat();
+        this.origMaxValue = ois.readFloat();
+        this.origMinValue = ois.readFloat();
+        this.displayEvery = ois.readInt();
+        this.clusters = (int [][])ois.readObject();
+        this.indices = (int [])ois.readObject();
+        this.numOfClusters = ois.readInt();
+        this.maxValue = ois.readFloat();
+        this.maxGeneNameLength = ois.readInt();
+        this.num_genes = ois.readInt();
+        this.borderColor = (Color)ois.readObject();
+        this.clusterBorderColor = (Color)ois.readObject();
+        this.insets = (Insets)ois.readObject();
+        this.xWidth  = ois.readInt();
+        this.xHeight = ois.readInt();
+        
+        this.fieldNames = (String [])ois.readObject();
+        
+        //set some defaults
+        
+        colorScheme = IDisplayMenu.GREEN_RED_SCHEME;
+        negGreenColorImage = createGradientImage(Color.green, Color.black);
+        posRedColorImage = createGradientImage(Color.black, Color.red);
+        negBlueColorImage = createGradientImage(Color.blue, Color.black);
+        posYellowColorImage = createGradientImage(Color.black, Color.yellow);
+        
+        posColorImage = posRedColorImage;
+        negColorImage = negGreenColorImage;
+        
+        
+        //constructor activity
+        
+        this.actions = new HashMap();
+        
+        if(this.displayEvery==1) {
+            setIndices(createIndices());
+        } else if (this.displayEvery > 1) {
+            setIndices(createIndices(this.displayEvery));
+        }
+        
+        listener = new Listener();
+        addMouseMotionListener(listener);
+        addKeyListener(listener);
+        
+        initLabelActions(fieldNames);
+        initSortActions(fieldNames);
+        initAnnotationWidthActions();
+        
+        this.geneColumnHeaderSP = createHeader(TRACE_SPACE, true, xWidth, MAX_COL_HEIGHT, elementSize, experiment);
+        this.geneColumnHeaderSP.setBorder(BorderFactory.createLineBorder(Color.white));
+        
+        this.geneRowHeaderSP = createHeader(TRACE_SPACE, false, MAX_ROW_WIDTH, xHeight, elementSize, experiment);
+        this.content = createContent(MAX_MATRIX_WIDTH, MAX_MATRIX_WIDTH, listener);
+        
+        this.geneColumnHeaderSP.setMatrixListener(listener);
+        this.geneRowHeaderSP.setMatrixListener(listener);
+        
+        this.upperRightCornerSB = createScrollBar(JScrollBar.VERTICAL);
+        this.lowerLeftCornerSB = createScrollBar(JScrollBar.HORIZONTAL);
+        
+        setMaxWidth(content, geneColumnHeaderSP);
+        setMaxHeight(content, geneRowHeaderSP);
+        
+        geneColumnHeaderSP.setPosColorImages(posColorImage);
+        geneRowHeaderSP.setPosColorImages(posColorImage);
+        
+        geneColumnHeaderSP.setIndices(indices);
+        geneRowHeaderSP.setIndices(indices);
+        
+        add(content);
+        
+        // Create a "pop-up" context menu for GDM Viewer
+        popup = createJPopupMenu(listener);
+        
+        getContentComponent().addMouseListener(listener);
+        
+        setBackground(Color.white);
+        setOpaque(true);
+    }
     
     /**
      * Initializes 'display/label' menu actions.
@@ -488,9 +609,9 @@ public class GDMGeneViewer extends JPanel implements IViewer {
     }
     
     private GDMGeneHeader createHeader(int tracespace, boolean colHdr,
-    int width, int height, Dimension eSize, IData expData) {
+    int width, int height, Dimension eSize, Experiment experiment) {
         
-        GDMGeneHeader hdr = new GDMGeneHeader(this.insets, tracespace, colHdr, expData, width,
+        GDMGeneHeader hdr = new GDMGeneHeader(this.insets, tracespace, colHdr, experiment, width,
         height, eSize, maxGeneNameLength, num_genes, getIndices());
         return hdr;
     }
@@ -1319,6 +1440,9 @@ public class GDMGeneViewer extends JPanel implements IViewer {
     }
     
     private void onSortByGeneProximity(int baseIndex) {
+
+        this.isDrawClusterBorders = false;
+        
         QSort qsort = new QSort(this.geneDistMatrix.A[baseIndex]);
         int [] sortedIndices = qsort.getOrigIndx();  
 
@@ -1357,7 +1481,8 @@ public class GDMGeneViewer extends JPanel implements IViewer {
      * Invoked when a sort menu item is changed.
      */
     private void onSort(Action action) {
-        String index = (String)action.getValue(PARAMETER);
+        String index = (String)action.getValue(PARAMETER);        
+        this.isDrawClusterBorders = false;        
         onSort(Integer.parseInt(index));
     }
     
@@ -1563,14 +1688,7 @@ public class GDMGeneViewer extends JPanel implements IViewer {
         }
         
         if( ((int)(cnt/displayEvery)) == this.num_genes) 
-  //      if(displayEvery > 1) {
-        //    if(((int)((cnt-1)/this.displayEvery))+1 == this.num_genes )
-                return true;
-    //        else
-      //          return false;
-        //} else if(cnt == this.num_genes) {
-          //  return true;
-       // }                        
+            return true;                 
         return false;
     }
     

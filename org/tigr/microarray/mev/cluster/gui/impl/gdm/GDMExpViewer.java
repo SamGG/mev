@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: GDMExpViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-13 19:15:04 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-13 21:36:44 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -43,6 +43,8 @@ import java.awt.image.BufferedImage;
 
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.swing.Action;
@@ -65,6 +67,7 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.ButtonGroup;
 import javax.swing.BorderFactory;
 import javax.swing.SwingUtilities;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.tigr.util.FloatMatrix;
 import org.tigr.util.QSort;
@@ -74,6 +77,7 @@ import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
+import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 
@@ -84,7 +88,7 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 
 import org.tigr.microarray.util.SlideDataSorter;
 
-public class GDMExpViewer extends JPanel implements IViewer {
+public class GDMExpViewer extends JPanel implements IViewer, java.io.Serializable {
     
     private JPanel content;
     private GDMExpHeader expColumnHeaderSP;
@@ -278,6 +282,117 @@ public class GDMExpViewer extends JPanel implements IViewer {
     }
     
     public GDMExpViewer() {}
+    
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.writeObject(this.distanceMetric);
+        oos.writeInt(this.elementWidth);
+        oos.writeObject(this.elementSize);
+        oos.writeObject(this.experiment);
+        oos.writeInt(this.probes);
+        oos.writeInt(this.featuresCount);
+        oos.writeObject(this.expDistMatrix);
+        oos.writeObject(this.rawMatrix);
+        oos.writeFloat(this.minValue);
+        oos.writeFloat(this.origMaxValue);
+        oos.writeFloat(this.origMinValue);
+        oos.writeInt(this.displayEvery);
+        oos.writeObject(this.clusters);
+        oos.writeObject(this.indices);
+        oos.writeInt(this.numOfClusters);
+        oos.writeFloat(this.maxValue);
+        oos.writeInt(this.maxExpNameLength);
+        oos.writeInt(this.num_experiments);
+        oos.writeObject(this.borderColor);
+        oos.writeObject(this.clusterBorderColor);
+        oos.writeObject(this.insets);
+        oos.writeInt(this.xWidth);
+        oos.writeInt(this.xHeight);         
+    }
+    
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        
+        //read critcal data
+        this.distanceMetric = (String)ois.readObject();
+        this.elementWidth = ois.readInt();
+        this.elementSize = (Dimension)ois.readObject();
+        setElementWidth(elementSize.width);
+        this.experiment = (Experiment)ois.readObject();
+        this.probes = ois.readInt();
+        this.featuresCount = ois.readInt();
+        this.expDistMatrix = (FloatMatrix)ois.readObject();
+        this.rawMatrix = (FloatMatrix)ois.readObject();
+        this.minValue = ois.readFloat();
+        this.origMaxValue = ois.readFloat();
+        this.origMinValue = ois.readFloat();
+        this.displayEvery = ois.readInt();
+        this.clusters = (int [][])ois.readObject();
+        this.indices = (int [])ois.readObject();
+        this.numOfClusters = ois.readInt();
+        this.maxValue = ois.readFloat();
+        this.maxExpNameLength = ois.readInt();
+        this.num_experiments = ois.readInt();
+        this.borderColor = (Color)ois.readObject();
+        this.clusterBorderColor = (Color)ois.readObject();
+        this.insets = (Insets)ois.readObject();
+        this.xWidth  = ois.readInt();
+        this.xHeight = ois.readInt();
+
+        //set some defaults
+        
+        colorScheme = IDisplayMenu.GREEN_RED_SCHEME;
+        negGreenColorImage = createGradientImage(Color.green, Color.black);
+        posRedColorImage = createGradientImage(Color.black, Color.red);
+        negBlueColorImage = createGradientImage(Color.blue, Color.black);
+        posYellowColorImage = createGradientImage(Color.black, Color.yellow);
+        
+        posColorImage = posRedColorImage;
+        negColorImage = negGreenColorImage;
+        
+        
+        //constructor activity
+    
+        if(this.displayEvery==1) {
+            setIndices(createIndices());
+        } else if (this.displayEvery > 1) {
+            setIndices(createIndices(this.displayEvery));
+        }
+
+        Listener listener = new Listener();
+        addMouseListener(listener);
+        addMouseMotionListener(listener);
+        addKeyListener(listener);
+        
+         this.expColumnHeaderSP = createHeader(TRACE_SPACE, true, xWidth, MAX_COL_HEIGHT, elementSize);
+        this.expRowHeaderSP = createHeader(TRACE_SPACE, false, MAX_ROW_WIDTH, xHeight, elementSize);
+       
+        this.expColumnHeaderSP.setMatrixListener(listener);
+        this.expRowHeaderSP.setMatrixListener(listener);
+        
+        this.content = createContent(MAX_MATRIX_WIDTH, MAX_MATRIX_WIDTH, listener);
+        
+        this.upperRightCornerSB = createScrollBar(JScrollBar.VERTICAL);
+        this.lowerLeftCornerSB = createScrollBar(JScrollBar.HORIZONTAL);
+        
+        setMaxWidth(content, expColumnHeaderSP);
+        setMaxHeight(content, expRowHeaderSP);
+        
+        expColumnHeaderSP.setPosColorImages(posColorImage);
+        expRowHeaderSP.setPosColorImages(posColorImage);
+        
+        expColumnHeaderSP.setIndices(indices);
+        expRowHeaderSP.setIndices(indices);
+        
+        add(content);
+        
+        // Create a "pop-up" context menu for GDM Viewer
+        popup = createJPopupMenu(listener); 
+        
+        setBackground(Color.white);
+        setOpaque(true);
+    }
+    
+    
     /*
     public void setMultipleArrayData(IData data) {
         this.arrayData = data;
@@ -406,8 +521,7 @@ public class GDMExpViewer extends JPanel implements IViewer {
     private GDMExpHeader createHeader(int tracespace, boolean colHdr,
     int width, int height, Dimension eSize) {
         
-        GDMExpHeader hdr = new GDMExpHeader(insets, tracespace, colHdr, this.expData, width,
-        height, eSize, maxExpNameLength, featuresCount, indices);
+        GDMExpHeader hdr = new GDMExpHeader(insets, tracespace, colHdr, experiment, width, height, eSize, maxExpNameLength, featuresCount, indices);
         
         return hdr;
     }
@@ -1035,14 +1149,15 @@ public class GDMExpViewer extends JPanel implements IViewer {
         
         menu.add(createJCheckBoxMenuItem("Draw Borders", DISPLAY_DRAW_BORDERS_CMD, listener));
         
+        /*
         if (numOfClusters > 0) {
             menu.add(createJCheckBoxMenuItem("Draw Cluster Borders", SET_CLUSTER_BORDER_CMD, listener, true));
         } else {
             menu.add(createJCheckBoxMenuItem("Draw Cluster Borders", SET_CLUSTER_BORDER_CMD, listener, false));
         }
+        */
         
-        menu.addSeparator();
-        
+        menu.addSeparator();        
         
         item = new JMenuItem("Toggle Sort on Proximity");
         item.setActionCommand(TOGGLE_PROXIMITY_SORT_CMD);
@@ -1051,6 +1166,13 @@ public class GDMExpViewer extends JPanel implements IViewer {
         
         item = new JMenuItem("Save k Neighbors");
         item.setActionCommand(SAVE_NEIGHBORS_CMD);
+        item.addActionListener(listener);
+        menu.add(item);
+        
+        menu.addSeparator();
+        
+        item = new JMenuItem("Impose Cluster Result");
+        item.setActionCommand("impose-cluster-order");
         item.addActionListener(listener);
         menu.add(item);
         
@@ -1264,6 +1386,24 @@ public class GDMExpViewer extends JPanel implements IViewer {
         expRowHeaderSP.repaint();
     }
     
+    private void onSortByClusterChange() {
+        if (numOfClusters > 0) {
+            isDrawClusterBorders=true;
+          //  drawClusterBorderItem.setState(true);
+            
+            if(this.displayEvery==1) {
+                setIndices(createIndices());
+            } else if (this.displayEvery > 1) {
+                setIndices(createIndices(this.displayEvery));
+            }
+            
+            expColumnHeaderSP.setIndices(indices);
+            expRowHeaderSP.setIndices(indices);
+            
+            onDataChanged(this.expData);
+        }
+    }
+    
     private void onRestoreOriginalOrder() {
         
         this.createIndices(this.displayEvery);
@@ -1346,6 +1486,128 @@ public class GDMExpViewer extends JPanel implements IViewer {
         return Integer.toString(count);
     }
     
+        private void imposeClusterOrder() {
+        
+        Hashtable results = getResultHash();
+        boolean noUseableResult = false;
+        
+        Hashtable goodResults = new Hashtable();
+        
+        Enumeration keys = results.keys();
+        Object [] result;
+        String key;
+        
+        
+        while(keys.hasMoreElements()){
+            key = (String)keys.nextElement();
+            result = (Object [])(results.get(key));
+            
+            //make sure it's the same experiment (same cutoffs), same number of genes (not exp. cluster)
+            if((this.experiment == result[0]) && checkClustersSize((int[][])result[1]) ) {
+                goodResults.put(key, result[1]);                
+            }            
+        }
+        
+        if(goodResults.size() > 0) {
+            GDMResultSelectionDialog dialog = new GDMResultSelectionDialog(goodResults.keys());
+            if( dialog.showModal() == JOptionPane.OK_OPTION ) {
+                int [][] clusters = ((int [][])goodResults.get(dialog.getSelectedResult()));
+                imposeClusterOrder(clusters);
+            }                        
+        } else {
+            System.out.println("No good results");            
+        }
+        
+        //launch cluster selection dialog
+        //use cluster browser
+   /*     GDMClusterBrowserDialog dialog = new GDMClusterBrowserDialog(this.framework.getClusterRepository(Cluster.GENE_CLUSTER));
+        Cluster cluster;
+        if(dialog.showModal() == JOptionPane.OK_OPTION) {
+            cluster = dialog.getSelectedCluster();
+            if(cluster.getExperiment() == this.experiment){
+         //       imposeClusterOrder(cluster.getClusters());
+            } else {  //tranformed data set
+                
+            }
+        }        
+ */
+        
+        
+    }
+    
+    private boolean checkClustersSize(int [][] clusters) {
+        int cnt = 0;
+        for(int i = 0; i < clusters.length; i++) {
+            cnt += clusters[i].length;
+        }
+        
+        if( ((int)(cnt/displayEvery)) == this.num_experiments) 
+            return true;                 
+        return false;
+    }
+    
+    
+    
+    public Hashtable getResultHash(){
+        Hashtable table = new Hashtable();
+        DefaultMutableTreeNode analysisNode = framework.getResultTree().getAnalysisNode();
+        DefaultMutableTreeNode analysisRoot;
+        DefaultMutableTreeNode currentNode;
+        Object object;
+        Object [] vals;
+        boolean stop = false;
+        
+        IViewer viewer;
+        Experiment exp; 
+        int [][] clusters;
+        
+        int childCount = analysisNode.getChildCount();
+        //String algTitles = new String[analysisNode.getChildCount()];
+        String algName = "";
+        Enumeration enum;
+        
+        for(int i = 0; i < childCount; i++){
+            analysisRoot = ((DefaultMutableTreeNode)(analysisNode.getChildAt(i)));
+            object = analysisRoot.getUserObject();
+            if(object != null){
+                if(object instanceof LeafInfo){
+                    algName = ((LeafInfo)object).toString();
+                } else if(object instanceof String) {
+                    algName = (String)object;
+                }
+                
+                enum = analysisRoot.depthFirstEnumeration();
+                while (!stop && enum.hasMoreElements()){
+                    currentNode = (DefaultMutableTreeNode)enum.nextElement();
+                    if(currentNode.getUserObject() instanceof LeafInfo){
+                       viewer = ((LeafInfo)currentNode.getUserObject()).getViewer();
+                       if(viewer != null) {
+                            exp = viewer.getExperiment();
+                            clusters = viewer.getClusters();
+                            if(exp != null && clusters != null) {
+                                vals = new Object[2];
+                                vals[0] = exp;
+                                vals[1] = clusters;
+                                table.put(algName, vals);
+                                stop = true;
+                            }                            
+                       }                                                    
+                    }                    
+                }
+                stop = false;                
+            }
+        }        
+        return table;
+    }
+    
+    
+    private void imposeClusterOrder(int [][] newClusters) {
+        this.clusters = newClusters;
+        this.numOfClusters = clusters.length;
+        onSortByClusterChange();
+    }
+
+    
     public int[][] getClusters() {
         return null;
     }
@@ -1353,6 +1615,8 @@ public class GDMExpViewer extends JPanel implements IViewer {
     public Experiment getExperiment() {
         return null;
     }
+    
+    
     
     /**
      * The listener to listen to mouse, keyboard and window events.
@@ -1403,6 +1667,8 @@ public class GDMExpViewer extends JPanel implements IViewer {
                 onSortByExperimentName();
             } else if (command.equals(SORT_BY_ORIGINAL_ORDER_CMD)) {
                 onRestoreOriginalOrder();
+            } else if (command.equals("impose-cluster-order")) {
+                imposeClusterOrder();
             }
         }
         

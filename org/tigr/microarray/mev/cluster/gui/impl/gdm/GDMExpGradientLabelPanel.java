@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: GDMExpGradientLabelPanel.java,v $
- * $Revision: 1.1 $
- * $Date: 2004-02-06 22:53:42 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-13 21:36:44 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -83,7 +83,7 @@ public class GDMExpGradientLabelPanel extends JScrollPane {
      * Constructs a <code>MultipleArrayHeader</code> with specified
      * insets and trace space.
      */
-    public GDMExpGradientLabelPanel(Insets insets, int tracespace, boolean colHdr, IData gData,
+    public GDMExpGradientLabelPanel(Insets insets, int tracespace, boolean colHdr,
     int width, int height, Dimension eSize, int maxExperimentLen, int num_experiments,
     int[] indices) {
         
@@ -97,7 +97,6 @@ public class GDMExpGradientLabelPanel extends JScrollPane {
         this.insets.bottom = insets.bottom;
         
         this.tracespace = tracespace;
-        this.expData = gData;
         this.elementWidth = eSize.width;
         this.elementHeight = eSize.height;
         this.isColumnHeader = colHdr;
