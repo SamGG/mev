@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: GDMExpViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-25 21:07:03 $
+ * $Revision: 1.5 $
+ * $Date: 2004-03-16 17:26:53 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -1518,8 +1518,21 @@ public class GDMExpViewer extends JPanel implements IViewer, java.io.Serializabl
             key = (String)keys.nextElement();
             result = (Object [])(results.get(key));
             
+                        //need to handle HCL differently since it can be a gene or an experiemnt order
+            if(key.indexOf("HCL") != -1) {
+                int [][] clusters = new int[1][];
+                clusters[0] = ((int[][])result[1])[1];  //experiment result order
+                
+                if(clusters[0] == null)  //if no exp tree then continue
+                    continue;
+                
+                if((this.experiment == result[0]) && checkClustersSize(clusters)) {
+                    goodResults.put(key, clusters);
+                }             
+            }
+            
             //make sure it's the same experiment (same cutoffs), same number of genes (not exp. cluster)
-            if((this.experiment == result[0]) && checkClustersSize((int[][])result[1]) ) {
+            else if((this.experiment == result[0]) && checkClustersSize((int[][])result[1]) ) {
                 goodResults.put(key, result[1]);                
             }            
         }

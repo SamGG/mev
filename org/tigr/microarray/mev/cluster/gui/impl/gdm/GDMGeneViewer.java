@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: GDMGeneViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-25 21:04:43 $
+ * $Revision: 1.5 $
+ * $Date: 2004-03-16 17:26:53 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -1650,8 +1650,21 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
             key = (String)keys.nextElement();
             result = (Object [])(results.get(key));
             
+            //need to handle HCL differently since it can be a gene or an experiemnt order
+            if(key.indexOf("HCL") != -1) {
+                int [][] clusters = new int[1][];
+                clusters[0] = ((int[][])result[1])[0];
+                
+                if(clusters[0] == null)
+                    continue;
+                
+                if((this.experiment == result[0]) && checkClustersSize(clusters)) {
+                    goodResults.put(key, clusters);
+                }             
+            }
+            
             //make sure it's the same experiment (same cutoffs), same number of genes (not exp. cluster)
-            if((this.experiment == result[0]) && checkClustersSize((int[][])result[1]) ) {
+            else if((this.experiment == result[0]) && checkClustersSize((int[][])result[1]) ) {
                 goodResults.put(key, result[1]);
             }
         }
@@ -1662,9 +1675,9 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
                 int [][] clusters = ((int [][])goodResults.get(dialog.getSelectedResult()));
                 imposeClusterOrder(clusters);
             }
-        } else {        
-            JOptionPane.showMessageDialog(framework.getFrame(), "There are currently no appropriate clustering results to apply to this GDM.", "No Results Available", JOptionPane.INFORMATION_MESSAGE);                 
-        }        
+        } else {
+            JOptionPane.showMessageDialog(framework.getFrame(), "There are currently no appropriate clustering results to apply to this GDM.", "No Results Available", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
     
     private boolean checkClustersSize(int [][] clusters) {
