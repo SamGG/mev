@@ -71,8 +71,8 @@ public class SAMInitDialog extends AlgorithmDialog {
         setBackground(Color.white);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
-        forwardImage = new ImageIcon(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("org/tigr/images/Forward24.gif")));        
-        backImage = new ImageIcon(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("org/tigr/images/Back24.gif")));        
+        forwardImage = new ImageIcon(Toolkit.getDefaultToolkit().getImage(this.getClass().getClassLoader().getResource("org/tigr/images/Forward24.gif")));        
+        backImage = new ImageIcon(Toolkit.getDefaultToolkit().getImage(this.getClass().getClassLoader().getResource("org/tigr/images/Back24.gif")));        
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.BOTH;
