@@ -73,15 +73,12 @@ public class ParameterValidator extends DefaultHandler{
     /** Load the XML ParameterConstraints.
      */
     public boolean loadParameterConstraints() {
-        System.out.println(System.getProperty("user.dir")+"\\config\\ParameterConstraints.xml");
 
         try {
             File file = new File(System.getProperty("user.dir")+"\\config\\ParameterConstraints.xml");
             URL url = file.toURL();
             //URL url = this.getClass().getResource(System.getProperty("user.dir")+"\\config\\ParameterConstraints.xml");
-            
-            System.out.println("Load Paramter constraints url = "+url.toString());
-            
+
             DOMParser parser = new DOMParser();
             
             parser.setFeature("http://xml.org/sax/features/validation", true);
@@ -96,8 +93,6 @@ public class ParameterValidator extends DefaultHandler{
             "Parameter Validation Initialization Error", JOptionPane.ERROR_MESSAGE);
             return false;
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println(e.getMessage());
             haveValidationRoot = false;
             JOptionPane.showMessageDialog(new JFrame(), "The parameter validation feature in support of scripting could not be initialized properly.\n"+
             "\"ParameterConstraints.xml\" contained errors reported in the console window.\nScript capabilities will operate without full parameter validation",
@@ -126,15 +121,12 @@ public class ParameterValidator extends DefaultHandler{
         AlgorithmNode node;
         boolean isValid = true;
         log.reset();
-        
-        System.out.println("VALIDATE IN VALIDATOR");
-        
+
         NodeList list = validationRoot.getElementsByTagName("script_algorithm");
         
         for(int setIndex = 0; setIndex < sets.length; setIndex++) {
             for(int algIndex = 0; algIndex < sets[setIndex].getAlgorithmCount(); algIndex++) {
                 node = sets[setIndex].getAlgorithmNodeAt(algIndex);
-                System.out.println("Validate Algorithm");
                 if( !validateAlgorithm(node, list, log) )
                     isValid = false;
             }
@@ -199,7 +191,6 @@ public class ParameterValidator extends DefaultHandler{
         if(missingParameterVector.size() > 0) {
             //missing required parameter
             //REPORT
-            System.out.println("Missing Parameter > 0");
             for(int i = 0; i < missingParameterVector.size(); i++) {
                 ScriptParameterException spe = new ScriptParameterException(algorithmNode.getAlgorithmName(), algorithmNode.getID(),
                 algorithmNode.getDataNodeRef(), (String)(missingParameterVector.elementAt(i)), "N/A", "Missing required parameter.");
@@ -492,12 +483,9 @@ public class ParameterValidator extends DefaultHandler{
      * @return
      */
     public Hashtable getParameterHash(String algName) {
-        
-        System.out.println("getParameterHash() algName= "+algName);
-        
+
         Element algElement = findAlgorithmElement(algName);
         if(algElement == null) {
-            System.out.println("null alg element");
             return null;
         }
         

@@ -166,12 +166,7 @@ public class ScriptRunner {
             || algType.equals(ScriptConstants.ALGORITHM_TYPE_CLUSTER_EXPERIMENTS) || algType.equals(ScriptConstants.ALGORITHM_TYPE_VISUALIZATION)) {
                 
                 String className = (String)(this.classHash.get(algName));
-                
-                if(algName.equals("EASE")) {
-                    System.out.println("EASE run");
-                    System.out.println("Experiment dim = "+experiment.getNumberOfGenes()+" "+experiment.getNumberOfSamples());
-                }
-                
+
                 try {
                     Class clazz = Class.forName(className);
                     IScriptGUI gui = (IScriptGUI)clazz.newInstance();
@@ -474,16 +469,6 @@ public class ScriptRunner {
                     //cluster selection.  This algorithm will require clusters[][] for selection process
                     else {
                         setExperimentAndClusters(algSets[j], experiment, clusters, algNode);
-                        //debug
-                        Experiment expo =  algSets[i].getExperiment();
-                        if(expo == null)
-                            System.out.println("expo is null");
-                        else
-                            System.out.println("expo is not null");
-                        
-                        System.out.println("algSet first child" + algSets[0].getAlgorithmNodeAt(0).getAlgorithmName() );
-                        
-                        
                     }
                     
                 }
@@ -503,14 +488,6 @@ public class ScriptRunner {
     /** Sets Experiment and cluster indicies.
      */    
     private void setExperimentAndClusters(AlgorithmSet algSet, Experiment experiment, int [][] clusters, AlgorithmNode algNode) {
-        
-        System.out.println("KMC set experiment and clusters");
-        
-        if(experiment == null)
-            System.out.println("null exp");
-        else
-            System.out.println("have exp");
-        
         algSet.setExperiment(experiment);
         algSet.setClusters(clusters);
         if(algNode.getAlgorithmType().equals(ScriptConstants.ALGORITHM_TYPE_CLUSTER_GENES))

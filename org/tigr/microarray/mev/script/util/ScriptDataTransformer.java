@@ -62,19 +62,9 @@ public class ScriptDataTransformer {
      */    
     public Experiment transformData(AlgorithmData data) {
         AlgorithmParameters params = data.getParams();
-        
-        java.util.Map map = params.getMap();
-        java.util.Set keys = map.keySet();
-        java.util.Iterator iter = keys.iterator();
-        Object obj;
-        while(iter.hasNext()) {
-            obj = iter.next();
-            System.out.println("key ="+obj+" value ="+ map.get(obj));
-        }
-        
+   
         String algName = params.getString("name");
-        
-        System.out.println("script transformer algName="+algName);
+
         if(algName == null)
             return null;
         

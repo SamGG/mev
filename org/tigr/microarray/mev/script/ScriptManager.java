@@ -360,16 +360,13 @@ public class ScriptManager {
                 int algIndex = dialog.getAlgorithmIndex();
                 Action action = actionManager.getAction(actionManager.ANALYSIS_ACTION+String.valueOf(algIndex));
                 if(action == null){
-                    System.out.println("null action");
                     return null;
                 }
                 String className = (String)action.getValue(ActionManager.PARAMETER);
-                System.out.println("Class name = "+className);
                 try {
                     Class clazz = Class.forName(className);
                     IScriptGUI gui = (IScriptGUI)clazz.newInstance();
                     data = gui.getScriptParameters(framework);
-                    System.out.println("HAVE Script Parameters");
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(framework.getFrame(), "Can't retrieve script parameters for the "+algName+ " algorithm", "Script Parameter Error", JOptionPane.WARNING_MESSAGE);
                     e.printStackTrace();
@@ -381,9 +378,6 @@ public class ScriptManager {
                     if(percDialog.showModal() == JOptionPane.OK_OPTION) {
                         data = new AlgorithmData();
                         data.addParam("name", algName);
-                        
-                        System.out.println("AlgName ="+algName);
-                        
                         float percentage = percDialog.getPercentageCutoff();
                         data.addParam("percent-cutoff", String.valueOf(percentage));
                         setAdjustmentOutput(data);
@@ -483,9 +477,6 @@ public class ScriptManager {
                         setSelectionOutput(data);
                     }
                 } else if(algName.equals("Centroid Entropy/Variance Ranking Cluster Selection")) {
-                    
-                    System.out.println("ENTROPY SELECTION");
-                    
                     CentroidEntropyRankingInitDialog entropyDialog = new CentroidEntropyRankingInitDialog(new JFrame());
                     if(entropyDialog.showModal() == JOptionPane.OK_OPTION) {
                         data = new AlgorithmData();
@@ -517,188 +508,6 @@ public class ScriptManager {
         return data;
     }
     
-    /* for debug
-    private void dumpParams(org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters params) {
-        java.util.Properties props = (java.util.Properties)(params.getMap());
-        Enumeration keys = props.keys();
-        String key;
-        String value;
-     
-        String name = props.getProperty("name");
-        System.out.println("<script-algorithm name=\""+name+"\">");
-        while(keys.hasMoreElements()) {
-            key = (String)(keys.nextElement());
-            System.out.println("   <param key=\""+key+"\" value_type=\"\"  value_level=\"\"/>");
-        }
-        System.out.println("</script-algorithm>");
-    }
-     */
-  /*
-    public void getAlgorithm(DataNode parentNode, ScriptTree tree) {
-   
-        ScriptParameterFetcher fetcher = new ScriptParameterFetcher(tree, parentNode);
-        fetcher.start();
-   */
-        /*
-        ScriptAlgorithmInitDialog dialog = new ScriptAlgorithmInitDialog(actionManager, parentNodeOutputClass);
-         
-        if(dialog.showModal() == JOptionPane.OK_OPTION) {
-            String algName = dialog.getAlgorithmName();
-            String algType = dialog.getAlgorithmType();
-         
-         
-            if(algType.equals(ScriptConstants.ALGORITHM_TYPE_CLUSTER)) {
-                int algIndex = dialog.getAlgorithmIndex();
-                Action action = actionManager.getAction(actionManager.ANALYSIS_ACTION+String.valueOf(algIndex));
-                if(action == null){
-                    System.out.println("null action");
-                    return null;
-                }
-                String className = (String)action.getValue(ActionManager.PARAMETER);
-                System.out.println("Class name = "+className);
-                try {
-                    Class clazz = Class.forName(className);
-                    IScriptGUI gui = (IScriptGUI)clazz.newInstance();
-                    data = gui.getScriptParameters(framework);
-                    System.out.println("HAVE Script Parameters");
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(framework.getFrame(), "Can't retrieve script parameters for the "+algName+ " algorithm", "Script Parameter Error", JOptionPane.WARNING_MESSAGE);
-                    e.printStackTrace();
-                }
-            } else if(algType.equals(ScriptConstants.ALGORITHM_TYPE_ADJUSTMENT)) {
-         
-                if(algName.equals("Percentage Cutoff")) {
-                    SetPercentageCutoffsDialog percDialog = new SetPercentageCutoffsDialog(new JFrame(), 0.0f);
-                    if(percDialog.showModal() == JOptionPane.OK_OPTION) {
-                        data = new AlgorithmData();
-                        data.addParam("name", algName);
-         
-                        System.out.println("AlgName ="+algName);
-         
-                        float percentage = percDialog.getPercentageCutoff();
-                        data.addParam("percent-cutoff", String.valueOf(percentage));
-                        setAdjustmentOutput(data);
-                    }
-                } else if(algName.equals("Lower Cutoffs")) {
-                    SetLowerCutoffsDialog lowerDialog = new SetLowerCutoffsDialog(new JFrame(), 0.0f, 0.0f);
-                    if(lowerDialog.showModal() == JOptionPane.OK_OPTION) {
-                        data = new AlgorithmData();
-                        data.addParam("name", algName);
-                        data.addParam("cy3-lower-cutoff", String.valueOf(lowerDialog.getLowerCY3Cutoff()));
-                        data.addParam("cy5-lower-cutoff", String.valueOf(lowerDialog.getLowerCY5Cutoff()));
-                        setAdjustmentOutput(data);
-                    }
-                } else {
-                    data = new AlgorithmData();
-                    data.addParam("name", algName);
-                    setAdjustmentOutput(data);
-                }
-            }
-        }
-        return data;
-         */
-    /*
-    }
-     
-     *//*
-    private class ScriptParameterFetcher extends Thread {
-        
-        String parentClass;
-        AlgorithmData algData;
-        DataNode parent;
-        ScriptTree tree;
-        
-        
-        public ScriptParameterFetcher(ScriptTree tree, DataNode parentNode) {
-            this.tree = tree;
-            parentClass = parentNode.getDataOutputClass();
-            parent = parentNode;
-        }
-        
-        public void run() {
-            getAlgData();
-        }
-        
-        public void getAlgData() {
-            AlgorithmData data = null;
-            ScriptAlgorithmInitDialog dialog = new ScriptAlgorithmInitDialog(actionManager, parentClass, false);
-        
-            if(dialog.showModal() == JOptionPane.OK_OPTION) {
-                String algName = dialog.getAlgorithmName();
-                String algType = dialog.getAlgorithmType();
-        
-                System.out.println("type = "+ algType);
-                System.out.println("name = "+algName);
-                if(algType.equals(ScriptConstants.ALGORITHM_TYPE_CLUSTER)) {
-                    int algIndex = dialog.getAlgorithmIndex();
-                    Action action = actionManager.getAction(actionManager.ANALYSIS_ACTION+String.valueOf(algIndex));
-                    if(action == null){
-                        System.out.println("null action");
-                        return;
-                    }
-                    String className = (String)action.getValue(ActionManager.PARAMETER);
-                    System.out.println("Class name = "+className);
-                    try {
-                        Class clazz = Class.forName(className);
-                        IScriptGUI gui = (IScriptGUI)clazz.newInstance();
-                        data = gui.getScriptParameters(framework);
-                        System.out.println("HAVE Script Parameters");
-                    } catch (Exception e) {
-                        JOptionPane.showMessageDialog(framework.getFrame(), "Can't retrieve script parameters for the "+algName+ " algorithm", "Script Parameter Error", JOptionPane.WARNING_MESSAGE);
-                        e.printStackTrace();
-                    }
-                } else if(algType.equals(ScriptConstants.ALGORITHM_TYPE_ADJUSTMENT)) {
-        
-                    if(algName.equals("Percentage Cutoff")) {
-                        SetPercentageCutoffsDialog percDialog = new SetPercentageCutoffsDialog(new JFrame(), 0.0f);
-                        if(percDialog.showModal() == JOptionPane.OK_OPTION) {
-                            data = new AlgorithmData();
-                            data.addParam("name", algName);
-        
-                            System.out.println("AlgName ="+algName);
-        
-                            float percentage = percDialog.getPercentageCutoff();
-                            data.addParam("percent-cutoff", String.valueOf(percentage));
-                            setAdjustmentOutput(data);
-                        }
-                    } else if(algName.equals("Lower Cutoffs")) {
-                        SetLowerCutoffsDialog lowerDialog = new SetLowerCutoffsDialog(new JFrame(), 0.0f, 0.0f);
-                        if(lowerDialog.showModal() == JOptionPane.OK_OPTION) {
-                            data = new AlgorithmData();
-                            data.addParam("name", algName);
-                            data.addParam("cy3-lower-cutoff", String.valueOf(lowerDialog.getLowerCY3Cutoff()));
-                            data.addParam("cy5-lower-cutoff", String.valueOf(lowerDialog.getLowerCY5Cutoff()));
-                            setAdjustmentOutput(data);
-                        }
-                    } else {
-                        data = new AlgorithmData();
-                        data.addParam("name", algName);
-                        setAdjustmentOutput(data);
-                    }
-                } else if(algType.equals(ScriptConstants.ALGORITHM_TYPE_CLUSTER_SELECTION)) {
-                    if(algName.equals("Diversity Ranking Cluster Selection")) {
-                        DiversityRankingInitDialog selectDialog = new DiversityRankingInitDialog(new JFrame());
-                        if(dialog.showModal() == JOptionPane.OK_OPTION) {
-                            data = new AlgorithmData();
-                            data.addParam("name", algName);
-                            data.addParam("desired-cluster-count", String.valueOf(selectDialog.getClusterNumber()));
-                            data.addParam("minimum-cluster-size", String.valueOf(selectDialog.getClusterSize()));
-                            data.addParam("use-centroid-based-variability", String.valueOf(selectDialog.isCentroidBased()));
-                            setSelectionOutput(data);
-                        }
-                    }
-                }
-            }
-            //sets data in tree
-            tree.setAlgorithm(data, parent);
-        
-        
-        
-        }
-        
-    }
-        
-      */
     
     /** Adds parameters common to all data adjustment algorithms.
      * @param data Parameter container.
@@ -844,7 +653,6 @@ public class ScriptManager {
     public boolean validateParameters(ScriptTree tree, ErrorLog log) {
         boolean isValid = true;
         if(this.validator != null && this.validator.isEnabled()) {
-            System.out.println("VALIDATION ENABLED");
             if( ! (validator.validate(this, tree, log)) ) {
                 //REPORT ERRORS
                 log.reportAllListings();

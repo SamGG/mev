@@ -341,7 +341,6 @@ public class DocumentBase extends DefaultHandler {
         Element algSetElement = this.getAlgorithmSetByDataRef(inputDataRef);
         
         if(algSetElement == null) {
-            System.out.println("null alg set element, bad id??");
             return false;
         }
         
@@ -353,9 +352,6 @@ public class DocumentBase extends DefaultHandler {
         int algID = algSetElement.getElementsByTagName("algorithm").getLength()+1;
         
         if(name != null){
-            
-            System.out.println("Name != null");
-            
             //set attributes, name and input ref
             algElement.setAttribute("alg_name", name);
             algElement.setAttribute("input_data_ref", String.valueOf(inputDataRef));
@@ -394,10 +390,7 @@ public class DocumentBase extends DefaultHandler {
             Element outputNodeElement, dataElement;
             String outputClass;
             if(outputNodes != null){
-                
-                System.out.println("Output nodes are not null, being created");
-                
-                
+  
                 outputNodeElement = document.createElement("output_data");
                 outputClass = data.getParams().getString("output-class");
                 if(outputClass != null)
@@ -676,11 +669,6 @@ public class DocumentBase extends DefaultHandler {
                 break;
             case Node.TEXT_NODE:
                 writer.write(node.getNodeValue());
-                //System.out.println("text node!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                // name = node.getNodeName();
-                //// String text = node.getNodeValue();
-                // writer.write(indentLevel + "<" + name + ">" + text + "<\\" + name +">");
-                // writer.write(lineSeparator);
                 break;
             case Node.COMMENT_NODE:
                 text = node.getNodeValue();
@@ -1100,12 +1088,10 @@ public class DocumentBase extends DefaultHandler {
         
         progress.setValue(3);
         progress.setDescription("Internal Serialization");
-        
-        System.out.println("load xml file:");
+
         parsedScript = true;
         updateScript();
-        
-        //System.out.println(this.toString());
+
         //Extract name, description and date tags if availible
         progress.setValue(4);
         progress.setDescription("Done");
@@ -1179,7 +1165,6 @@ public class DocumentBase extends DefaultHandler {
             key = (String)enum.nextElement();
             value = (String)attributes.get(key);
             algValue = algorithm.getAttribute(key);
-            System.out.println("key = "+key+" value = *"+value+"* docValue = *"+algValue+"*");
             if(!algValue.equals(value))
                 return false;
         }

@@ -190,7 +190,6 @@ public class ScriptValueChangeDialog extends AlgorithmDialog {
             pnt = strPost.indexOf("\"");
             this.key = strPost.substring(0, pnt);
             this.key = this.key.trim();
-            //     System.out.println("Parameter value = ***"+key+"***");
         }
         
         
@@ -457,9 +456,8 @@ public class ScriptValueChangeDialog extends AlgorithmDialog {
             public void actionPerformed(ActionEvent ae) {
                 String cmd = ae.getActionCommand();
                 if(cmd.equals("apply-cmd")) {
-                    System.out.println("apply");
-                } else if(cmd.equals("cancel-cmd")) {
-                    System.out.println("cancel");
+                    
+                } else if(cmd.equals("cancel-cmd")) {                    
                     dispose();
                 } else if(cmd.equals("commit-cmd")) {
                     result = JOptionPane.OK_OPTION;
@@ -476,7 +474,7 @@ public class ScriptValueChangeDialog extends AlgorithmDialog {
                         }
                     }
                 } else if(cmd.equals("reset-cmd")) {
-                    System.out.println("reset");
+
                 } else if(cmd.equals("info-cmd")) {
                     HelpWindow hw = new HelpWindow(ScriptValueChangeDialog.this, "Script Value Input Dialog");
                     if(hw.getWindowContent()){
