@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-05 22:34:41 $
+ * $Revision: 1.5 $
+ * $Date: 2004-02-05 22:58:16 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -44,8 +44,19 @@ import java.awt.event.WindowListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamConstants;
+import java.io.IOException;
+
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.TimeZone;
 import java.util.Vector;
+
+import java.text.DateFormat;
 
 import javax.swing.Action;
 import javax.swing.AbstractButton;
@@ -126,7 +137,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     private JLabel statusLabel;
     // the tree and special nodes and scroll pane
     private JScrollPane treeScrollPane;
-    private JTree tree;
+    private ResultTree tree;
     private DefaultMutableTreeNode clusterNode;
     private DefaultMutableTreeNode analysisNode;
     private DefaultMutableTreeNode historyNode;
@@ -143,6 +154,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     private ClusterRepository experimentClusterRepository;
     private ClusterTable geneClusterManager;
     private ClusterTable experimentClusterManager;
+    
+    private File currentAnalysisFile;
+    private boolean modifiedResult = false;
+    
+    private HistoryViewer historyLog;
     
     /**
      * Construct a <code>MultipleArrayViewer</code> with default title,
@@ -213,6 +229,15 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         viewScrollPane.setBackground(Color.white);
         
         treeScrollPane = createTreeScrollPane(eventListener);
+        
+        //Add the time stamp node
+        Date date = new Date(System.currentTimeMillis());
+        DateFormat format = DateFormat.getDateTimeInstance();
+        format.setTimeZone(TimeZone.getDefault());
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode(format.format(date));
+        DefaultTreeModel treeModel = (DefaultTreeModel)tree.getModel();
+        treeModel.insertNodeInto(node, analysisNode, analysisNode.getChildCount());
+        
         setNormalizedState(arrayData.getNormalizationState());
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treeScrollPane, viewScrollPane);
         splitPane.setOneTouchExpandable(true);
@@ -275,6 +300,254 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     private void displaySlideElementInfo(int column, int row) {
         Manager.displaySlideElementInfo(mainframe, data, column, row);
     }
+    
+    /*********************************************
+     *  This section of code defines methods to save the state of MeV
+     *  to file.
+     *
+     *  Process:
+     *
+     *  -Save a time stamp
+     *  -Save MultipleArrayData
+     *  -Save Analysis Counter
+     *  -Save the Analysis Node via ResultTree
+     *  -Save the ClusterRepositories
+     *  -Save the History Node via ResultTree
+     *
+     */
+    
+    public void saveAnalysisAs() {
+        File file;
+        try {
+            JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+"\\Data");
+            chooser.setFileView(new AnalysisFileView());
+            chooser.setFileFilter(new AnalysisFileFilter());
+            if(chooser.showSaveDialog(this) == JOptionPane.OK_OPTION) {
+                file = chooser.getSelectedFile();
+                ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file));
+                saveState(oos, file.getAbsolutePath());
+                this.currentAnalysisFile = file;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void saveAnalysis() {
+        if(this.currentAnalysisFile != null) {
+            try {
+                ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(this.currentAnalysisFile));
+                saveState(oos, currentAnalysisFile.getAbsolutePath());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "State was not saved.  Error finding file to save. \n"+
+            "Please use the \"Save As...\" menu item.", "Save Error", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+    
+    
+    private void saveState(ObjectOutputStream os, String fp) throws IOException {
+        final ObjectOutputStream oos = os;
+        final String filePath = fp;
+        Thread thread = new Thread(new Runnable() {
+            public void run() {
+                try{
+                    
+                    oos.useProtocolVersion(ObjectStreamConstants.PROTOCOL_VERSION_2);
+                    // Save MeV tag
+                    oos.writeObject(TMEV.VERSION);
+                    // Save Date
+                    oos.writeLong(System.currentTimeMillis());
+                    // Save IData
+                    oos.writeObject(data);
+                    // Save Analysis Counter
+                    oos.writeInt(resultCount);
+                    // Save Analysis Tree
+                    tree.writeResults(oos);
+                    // Save Cluster Repositories
+                    saveClusterRepositories(oos);
+                    // Record the save to history
+                    addHistory("Save Analysis: "+filePath);                    
+                    // Save History Tree
+                    tree.writeHistory(oos);
+                    //reset result changed boolean
+                    modifiedResult = false;
+                    //enable save menu item, current file is already set
+                    menubar.systemEnable(TMEV.ANALYSIS_LOADED);
+                    oos.flush();
+                    oos.close();
+                } catch (IOException ioe){
+                    JOptionPane.showMessageDialog(MultipleArrayViewer.this, "Analysis was not saved.  Error writing output file.",
+                    "Save Error", JOptionPane.WARNING_MESSAGE);
+                    ioe.printStackTrace();
+                }
+            }
+        });
+        thread.setPriority(Thread.MIN_PRIORITY);
+        thread.start();
+    }
+    
+    
+    private void loadState(ObjectInputStream is) throws IOException, ClassNotFoundException {
+        final ObjectInputStream ois = is;
+        
+        Thread thread = new Thread( new Runnable(){
+            public void run() {
+                try {
+                    
+                    String version = (String)ois.readObject();
+                    System.out.println("have string version");
+                    long dateLong = ois.readLong();
+                    //Load IData object
+                    System.out.println("read long");
+
+                    loadIData(ois);
+                    
+                    System.out.println("read IData");
+                    
+                    //set the current result count
+                    resultCount = ois.readInt();
+                    
+                    System.out.println("read result count int");
+                    
+                    //load analysis viewers
+                    loadAnalysisNode(ois);
+                    
+                    System.out.println("loaded analysis node");
+                    
+                    //load cluster repositories
+                    loadClusterRepositories(ois);                                        System.out.println("have string version");
+                    System.out.println("loaded cluster repositories");
+
+                    
+                    //load history 
+                    loadHistoryNode(ois);
+                    
+                    System.out.println("loaded history node");
+                    
+                    //Add time node to the analysis node
+                    Date date = new Date(System.currentTimeMillis());
+                    DateFormat format = DateFormat.getDateTimeInstance();
+                                        
+                    format.setTimeZone(TimeZone.getDefault());
+                    DefaultMutableTreeNode node = new DefaultMutableTreeNode(format.format(date));
+                    DefaultTreeModel treeModel = (DefaultTreeModel)tree.getModel();
+                    treeModel.insertNodeInto(node, analysisNode, analysisNode.getChildCount());
+                    
+                    TreePath path = new TreePath(((DefaultTreeModel)tree.getModel()).getPathToRoot(analysisNode));
+                    tree.expandPath(path);
+                    path = new TreePath(((DefaultTreeModel)tree.getModel()).getPathToRoot(historyNode));
+                    tree.expandPath(path);
+                    
+                    //signal mev analysis loaded
+                    menubar.systemEnable(TMEV.ANALYSIS_LOADED);                    
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(MultipleArrayViewer.this, "Analysis was not loaded.  Error reading input file.",
+                    "Load Analysis Error", JOptionPane.WARNING_MESSAGE);   
+                    e.printStackTrace();
+                    System.out.println(e.getMessage());
+                }
+            }
+        });
+        thread.setPriority(Thread.MIN_PRIORITY);
+        thread.start();
+    }
+    
+    
+    private void loadClusterRepositories(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        if(ois.readBoolean()){
+            this.geneClusterRepository = (ClusterRepository)ois.readObject();
+            this.data.setGeneClusterRepository(this.geneClusterRepository);
+            
+            this.geneClusterManager = new ClusterTable(this.geneClusterRepository, framework);
+            DefaultMutableTreeNode genesNode = new DefaultMutableTreeNode(new LeafInfo("Gene Clusters", this.geneClusterManager), false);
+            addNode(this.clusterNode, genesNode);
+            
+        }
+        if(ois.readBoolean()){
+            this.experimentClusterRepository = (ClusterRepository)ois.readObject();
+            this.data.setExperimentClusterRepository(this.experimentClusterRepository);
+            
+            this.experimentClusterManager = new ClusterTable(this.experimentClusterRepository, framework);
+            DefaultMutableTreeNode experimentNode = new DefaultMutableTreeNode(new LeafInfo("Experiment Clusters", this.experimentClusterManager), false);
+            addNode(this.clusterNode, experimentNode);
+        }
+    }
+    
+    
+    private void loadAnalysisNode(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+                            System.out.println("In load analysis node");
+
+        DefaultMutableTreeNode node = tree.loadResults(ois);
+        
+                         System.out.println("loaded analysis node");
+
+        if(node != null){
+            tree.removeNode(analysisNode);
+            analysisNode = node;
+            tree.insertNode(analysisNode, tree.getRoot(), tree.getRoot().getChildCount());
+            tree.setAnalysisNode(analysisNode);
+        }
+    }
+    
+    private void loadHistoryNode(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        
+        DefaultMutableTreeNode node = tree.loadResults(ois);
+        
+        if(node != null){
+            tree.removeNode(historyNode);
+            historyNode = node;
+            tree.insertNode(historyNode, tree.getRoot(), tree.getRoot().getChildCount());
+        }
+    }
+    
+    
+    private void loadIData(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        this.data = (MultipleArrayData)(ois.readObject());
+        
+        setMaxCY3AndCY5();
+        systemEnable(TMEV.DATA_AVAILABLE);
+        fireMenuChanged();
+        fireDataChanged();
+        fireHeaderChanged();
+    }
+    
+    
+    private void saveClusterRepositories(ObjectOutputStream oos) throws IOException {
+        if(this.geneClusterRepository == null)
+            oos.writeBoolean(false);
+        else{
+            oos.writeBoolean(true);
+            oos.writeObject(this.geneClusterRepository);
+        }
+        if(this.experimentClusterRepository == null)
+            oos.writeBoolean(false);
+        else{
+            oos.writeBoolean(true);
+            oos.writeObject(this.experimentClusterRepository);
+        }
+    }
+    
+    
+    private void loadAnalysis() {
+        File file;
+        try {
+            JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+"\\Data");
+            chooser.setFileView(new AnalysisFileView());
+            chooser.setFileFilter(new AnalysisFileFilter());
+            if(chooser.showOpenDialog(this) == JOptionPane.OK_OPTION) {
+                file = chooser.getSelectedFile();                
+                ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
+                loadState(ois);                
+                this.currentAnalysisFile = file;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
     
     /**
      * Returns the status bar text.
@@ -343,17 +616,22 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         root.add(analysisNode);
         historyNode = new DefaultMutableTreeNode(new LeafInfo("History"));
         root.add(historyNode);
+        historyLog = new HistoryViewer();
+        historyNode.add(new DefaultMutableTreeNode(new LeafInfo("History Log", historyLog)));
         
         tree = new ResultTree(root);
-
-        //tree = new JTree(root);
+        tree.setAnalysisNode(analysisNode);
+        
         tree.addTreeSelectionListener(listener);
         tree.addMouseListener(listener);
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         tree.setSelectionPath(new TreePath(mainViewNode.getPath()));
         tree.setEditable(false);
-
+        
         ToolTipManager.sharedInstance().registerComponent(tree);
+        
+        
+        
         return new JScrollPane(tree);
     }
     
@@ -504,11 +782,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         }
         this.viewer = viewer;
         this.viewScrollPane.setViewportView(this.viewer.getContentComponent());
- 
+        
         //Top Header (column header)
         JComponent header = viewer.getHeaderComponent();
         if (header != null) {
-            this.viewScrollPane.setColumnHeaderView(header);       
+            this.viewScrollPane.setColumnHeaderView(header);
         } else {
             this.viewScrollPane.setColumnHeader(null);
         }
@@ -532,7 +810,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         
         cornerComponent = viewer.getCornerComponent(IViewer.LOWER_LEFT_CORNER);
         if (cornerComponent != null)
-            this.viewScrollPane.setCorner(JScrollPane.LOWER_LEFT_CORNER, cornerComponent);        
+            this.viewScrollPane.setCorner(JScrollPane.LOWER_LEFT_CORNER, cornerComponent);
         
         this.viewer.onSelected(framework);
         doViewLayout();
@@ -583,11 +861,33 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      * Invoked by a window listener when frame close button was pressed.
      */
     private void onClose() {
+        onSaveCheck();
+        
+        addHistory("Close Viewer");
+        
         TMEV.setDataType(TMEV.DATA_TYPE_TWO_DYE);  //default type
         DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
         fireOnCloseEvent((DefaultMutableTreeNode)model.getRoot());
         mainframe.dispose();
         Manager.removeComponent(this);
+    }
+    
+    /**
+     * Checks to see if the session should be saved
+     */
+    private void onSaveCheck() {
+        //meets three criteria, has data loaded, result is modified, allowed to prompt
+        if(this.modifiedResult && this.data != null && TMEV.permitSavePrompt){
+            AnalysisSaveDialog dialog = new AnalysisSaveDialog(this.getFrame());
+            int result = dialog.showModal();
+            boolean permitSave = dialog.askAgain();
+            if(result == JOptionPane.YES_OPTION){
+                saveAnalysis();
+            }
+            if(TMEV.permitSavePrompt != permitSave) {
+                TMEV.setPermitPrompt(permitSave);
+            }
+        }
     }
     
     /**
@@ -838,7 +1138,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     private void onNormalizeData(int mode) {
         setCursor(Cursor.WAIT_CURSOR);
         data.normalize(mode, this);
-        addHistory(SlideData.normalizationString(mode));
+        addHistory("Normalization State: "+SlideData.normalizationString(mode));
         setCursor(Cursor.DEFAULT_CURSOR);
     }
     
@@ -1134,6 +1434,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         String nodeTitle = (String) node.getUserObject();
         nodeTitle += " ("+resultCount+")";
         resultCount++;
+        modifiedResult = true;
         node.setUserObject(nodeTitle);
         DefaultTreeModel treeModel = (DefaultTreeModel)tree.getModel();
         treeModel.insertNodeInto(node, analysisNode, analysisNode.getChildCount());
@@ -1144,12 +1445,30 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         JScrollBar bar = this.treeScrollPane.getHorizontalScrollBar();
         if(bar != null)
             bar.setValue(0);
-     }
+        
+        addHistory("Analysis Result: "+nodeTitle);
+        /// this.saveAnalysis();
+        // this.loadAnalysis();
+   /*     try{
+             ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("c:/Temp/out.out"));
+             tree.writeResults(oos);
+             oos.flush();
+             oos.close();
+    
+             ObjectInputStream ois = new ObjectInputStream(new FileInputStream("c:/Temp/out.out"));
+    
+             treeModel.insertNodeInto(tree.loadResults(ois), analysisNode, analysisNode.getChildCount());
+    
+        } catch (Exception e) { e.printStackTrace();}
+    **/
+    }
     
     /**
      * Adds info into the history node.
      */
     private void addHistory(String info) {
+        historyLog.addHistory(info);
+        /*
         DefaultMutableTreeNode node = new DefaultMutableTreeNode(info);
         DefaultTreeModel treeModel = (DefaultTreeModel)tree.getModel();
         treeModel.insertNodeInto(node, historyNode, historyNode.getChildCount());
@@ -1158,6 +1477,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         selModel.setSelectionPath(treePath);
         tree.scrollPathToVisible(treePath);
         this.treeScrollPane.getHorizontalScrollBar().setValue(0);
+*/
     }
     
     /**
@@ -1203,6 +1523,15 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         ((DefaultTreeModel)tree.getModel()).removeNodeFromParent(node);
         ((TreeSelectionModel)tree.getSelectionModel()).setSelectionPath(parentPath);
         tree.scrollPathToVisible(parentPath);
+        
+        String nodeName = " ";
+        Object object = node.getUserObject();
+        if(object instanceof LeafInfo)
+            nodeName = ((LeafInfo)object).toString();
+        else if(object instanceof String)
+            nodeName = (String)object;
+        addHistory("Deleted Node: "+nodeName);
+
     }
     
     
@@ -1440,6 +1769,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     private void onSaveMatrix() {
         try {
             ExperimentUtil.saveExperiment(mainframe, data.getExperiment(), data);
+            addHistory("Save Data Matrix to File");
         } catch (Exception e) {
             JOptionPane.showMessageDialog(mainframe, "Can not save matrix!", e.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
@@ -1457,6 +1787,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             menubar.setMaxCY5Scale(suld.getUpperCY5());
             fireMenuChanged();
         }
+        addHistory("Intensity Limits Set: Upper Cy3 = "+ suld.getUpperCY3() +" Upper Cy5 = "+ suld.getUpperCY5());
     }
     
     /**
@@ -1470,6 +1801,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             menubar.setMinRatioScale(srsd.getLowerRatio());
             fireMenuChanged();
         }
+        addHistory("Ratio Color Sat. Limits Set: Lower = "+ srsd.getLowerRatio() +" Upper = "+ srsd.getUpperRatio());
     }
     
     /**
@@ -1481,6 +1813,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             this.geneClusterManager.deleteAllClusters();
         fireDataChanged();
         fireMenuChanged();
+        addHistory("Deleted All Gene Clusters");
     }
     
     /**
@@ -1492,6 +1825,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             this.experimentClusterManager.deleteAllClusters();
         fireDataChanged();
         fireMenuChanged();
+        addHistory("Deleted All Experiment Clusters");
     }
     
     /**
@@ -1592,6 +1926,19 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             }
             experimentClusterRepository.printRepository();
         }
+        
+        if(cluster != null) {
+            int serNum = cluster.getSerialNumber();
+            String algName = cluster.getAlgorithmName();
+         
+            if(clusterType == Cluster.GENE_CLUSTER)
+                addHistory("Save Gene Cluster: Serial #: "+String.valueOf(serNum)+", Algorithm: "+
+                    algName+", Cluster: "+clusterID);
+            else
+                addHistory("Save Experiment Cluster: Serial #: "+String.valueOf(serNum)+", Algorithm: "+
+                    algName+", Cluster: "+clusterID);                
+        }
+        
         fireDataChanged();
         tree.repaint();
         return clusterColor;
@@ -1650,6 +1997,19 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             }
             experimentClusterRepository.printRepository();
         }
+        //Record history
+        if(cluster != null) {
+            int serNum = cluster.getSerialNumber();
+            String algName = cluster.getAlgorithmName();
+         
+            if(clusterType == Cluster.GENE_CLUSTER)
+                addHistory("Save Gene Cluster: Serial #: "+String.valueOf(serNum)+", Algorithm: "+
+                    algName+", Cluster: "+clusterID);
+            else
+                addHistory("Save Experiment Cluster: Serial #: "+String.valueOf(serNum)+", Algorithm: "+
+                    algName+", Cluster: "+clusterID);                
+        }
+        
         fireDataChanged();
         tree.repaint();
         return clusterColor;
@@ -1723,6 +2083,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             newData = this.data.getDataSubset(indices, experiment.getRowMappingArrayCopy());
         }
         Manager.createNewMultipleArrayViewer(newData, label);
+        addHistory("Launch New MAV: "+label);
     }
     
     private void openClusterNode(String algorithmNode, String clusterNode){
@@ -1774,6 +2135,17 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         return (DefaultMutableTreeNode)curr;
     }
     
+    public DefaultMutableTreeNode getCurrentNode(){
+        TreePath path = this.tree.getSelectionPath();
+        if(path == null)
+            return null;
+        return (DefaultMutableTreeNode)path.getLastPathComponent();
+    }
+    
+    public DefaultMutableTreeNode getNode(Object object) {
+        return this.tree.getNode(object);
+    }
+    
     /**
      *  Handles new data load.  Vector contains ISlideData objects.
      */
@@ -1795,6 +2167,19 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         fireMenuChanged();
         fireDataChanged();
         fireHeaderChanged();
+        
+        // record it for history's sake
+        String [] featureNames = new String[features.length];
+        for(int i = 0; i < features.length; i++){
+            featureNames[i] = features[i].getSlideFileName();
+            if(i == 0)
+                addHistory("Load Data File: "+featureNames[i]);
+            else {
+                if(featureNames[i].equals(featureNames[i-1]))
+                    break;
+                addHistory("Load Data File: "+featureNames[i]);                
+            }                
+        }
     }
     
     /**
@@ -1802,6 +2187,14 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      */
     private void loadData(){
         SuperExpressionFileLoader loader = new SuperExpressionFileLoader(this);
+        
+        //Add time node to the analysis node
+        Date date = new Date(System.currentTimeMillis());
+        DateFormat format = DateFormat.getDateTimeInstance();
+        format.setTimeZone(TimeZone.getDefault());
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode(format.format(date));
+        DefaultTreeModel treeModel = (DefaultTreeModel)tree.getModel();
+        treeModel.insertNodeInto(node, analysisNode, analysisNode.getChildCount());
     }
     
     /**
@@ -1817,7 +2210,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     /**
      * The listener to listen to mouse, action, tree, keyboard and window events.
      */
-    private class EventListener extends MouseAdapter implements ActionListener, TreeSelectionListener, KeyListener, WindowListener {
+    private class EventListener extends MouseAdapter implements ActionListener, TreeSelectionListener, KeyListener, WindowListener, java.io.Serializable {
         
         public void actionPerformed(ActionEvent event) {
             String command = event.getActionCommand();
@@ -2004,6 +2397,12 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                 onShowThumbnail();
             } else if (command.equals(ActionManager.SHOW_SUPPORTTREE_LEGEND_COMMAND)) {
                 onShowSupportTreeLegend(); //Accessible here -- temporarily
+            } else if (command.equals(ActionManager.LOAD_ANALYSIS_COMMAND)) {
+                loadAnalysis();
+            } else if (command.equals(ActionManager.SAVE_ANALYSIS_COMMAND)) {
+                saveAnalysis();
+            } else if (command.equals(ActionManager.SAVE_ANALYSIS_AS_COMMAND)) {
+                saveAnalysisAs();
             } else {
                 System.out.println("unhandled command = " + command);
             }
@@ -2102,7 +2501,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      * This <code>IFramework</code> implementation delegates
      * all its invokations to the outer class.
      */
-    private class FrameworkImpl implements IFramework {
+    private class FrameworkImpl implements IFramework, java.io.Serializable {
         
         public IData getData() {
             return MultipleArrayViewer.this.getData();
@@ -2171,6 +2570,24 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         
         public ClusterRepository getClusterRepository(int clusterType){
             return MultipleArrayViewer.this.getClusterRepository(clusterType);
+        }
+        
+        /** Returns the currently selected node.
+         */
+        public DefaultMutableTreeNode getCurrentNode() {
+            return MultipleArrayViewer.this.getCurrentNode();
+        }
+        
+        /** Returns the result node containing the supplied object
+         */
+        public DefaultMutableTreeNode getNode(Object object) {
+            return MultipleArrayViewer.this.getNode(object);
+        }
+        
+        /** Adds string to history node
+         */
+        public void addHistory(String historyEvent) {
+            MultipleArrayViewer.this.addHistory(historyEvent);
         }
         
     }
