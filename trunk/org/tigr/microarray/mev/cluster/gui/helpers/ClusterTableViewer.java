@@ -48,6 +48,8 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
     protected static final String LAUNCH_NEW_SESSION_WITH_SEL_ROWS_CMD = "launch-new-session-with-sel-rows-cmd"; 
     protected static final String SEARCH_CMD = "search-cmd";
     protected static final String CLEAR_ALL_CMD = "clear-all-cmd";
+    protected static final String SELECT_ALL_CMD = "select-all-cmd";
+    protected static final String SORT_ORIG_ORDER_CMD = "sort-orig-order-cmd";
     
     public static final int INTEGER_TYPE = 10;
     public static final int FLOAT_TYPE = 11;
@@ -470,6 +472,7 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
             }
             
             clusterTable.repaint();
+            clusterTable.clearSelection();
             return;            
         }
         
@@ -632,7 +635,8 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
 
     public void setClusterColor(Color color) {
         if(color ==null){  //indicates removal of cluster
-            framework.removeCluster(getArrayMappedToData(), experiment, ClusterRepository.GENE_CLUSTER);
+            //framework.removeCluster(getArrayMappedToData(), experiment, ClusterRepository.GENE_CLUSTER);
+            framework.removeSubCluster(getArrayMappedToSelectedIndices(), experiment, ClusterRepository.GENE_CLUSTER);
         }
     }    
 
@@ -662,7 +666,19 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
     public void launchNewSessionWithSelectedRows() {
         framework.launchNewMAV(getArrayMappedToSelectedIndices(), this.experiment, "Multiple Experiment Viewer - Cluster Viewer", Cluster.GENE_CLUSTER);        
     }
+    
+    public void sortInOrigOrder() {
+        for (int i = 0; i < getSortedCluster().length; i++) {
+            sortedClusters[this.clusterIndex][i] = getCluster()[i];
+        }
+        
+        clusterTable.repaint();  
+        clusterTable.clearSelection();
+        for (int i = 0; i < clusterModel.getColumnCount(); i++)
+            sortedAscending[getClusterIndex()][i] = false;        
+    }
 
+    
     private int [] getArrayMappedToData(){
         int [] clusterIndices = getCluster();
         if(clusterIndices == null || clusterIndices.length < 1)
@@ -726,13 +742,14 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
         menu.add(menuItem);       
         
         menu.addSeparator();        
-        
-        menuItem = new JMenuItem("Delete public cluster", GUIFactory.getIcon("delete16.gif"));
+        /*
+        menuItem = new JMenuItem("Delete cluster membership of selected rows", GUIFactory.getIcon("delete16.gif"));
         menuItem.setActionCommand(SET_DEF_COLOR_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
         
         menu.addSeparator();
+         */
         
         menuItem = new JMenuItem("Save cluster...", GUIFactory.getIcon("save16.gif"));
         menuItem.setActionCommand(SAVE_CLUSTER_CMD);
@@ -759,13 +776,31 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
         
         menu.addSeparator();
         
+        menuItem = new JMenuItem("Select all rows...", GUIFactory.getIcon("TableViewerResult.gif"));
+        menuItem.setActionCommand(SELECT_ALL_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);        
+        
         menuItem = new JMenuItem("Clear all selections...", GUIFactory.getIcon("TableViewerResult.gif"));
         menuItem.setActionCommand(CLEAR_ALL_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
         
         menuItem.addActionListener(listener);
-        menu.add(menuItem);        
+        menu.add(menuItem);      
+        
+        menu.addSeparator();
+        
+        menuItem = new JMenuItem("Sort table in original gene order...", GUIFactory.getIcon("TableViewerResult.gif"));
+        menuItem.setActionCommand(SORT_ORIG_ORDER_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);           
         
     }    
     
@@ -837,6 +872,10 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
                 searchTable();
             } else if (command.equals(CLEAR_ALL_CMD)) {
                 clusterTable.clearSelection();
+            } else if (command.equals(SELECT_ALL_CMD)) {
+                clusterTable.selectAll();
+            } else if (command.equals(SORT_ORIG_ORDER_CMD)) {
+                sortInOrigOrder();
             }
 	}
 	
