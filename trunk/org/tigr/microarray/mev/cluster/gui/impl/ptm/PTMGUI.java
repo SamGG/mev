@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMGUI.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-05 22:10:56 $
- * $Author: braisted $
+ * $Revision: 1.4 $
+ * $Date: 2004-04-08 15:21:29 $
+ * $Author: nbhagaba $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.ptm;
@@ -33,6 +33,7 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
@@ -496,12 +497,19 @@ public class PTMGUI implements IClusterGUI {
     }
     
     private void addStatsTables(DefaultMutableTreeNode root) {
-        DefaultMutableTreeNode tablesNode = new DefaultMutableTreeNode("R and p-value Tables");
+        DefaultMutableTreeNode tablesNode = new DefaultMutableTreeNode("Table views");
         if (clusterGenes) {
-            IViewer sigTableViewer = new PTMGeneStatsTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData, true);
-            IViewer nonSigTableViewer = new PTMGeneStatsTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData, false);
-            tablesNode.add(new DefaultMutableTreeNode(new LeafInfo("Matched Genes", sigTableViewer)));
-            tablesNode.add(new DefaultMutableTreeNode(new LeafInfo("Unmatched Genes", nonSigTableViewer)));            
+            IViewer tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData);
+            for (int i=0; i<this.clusters.length; i++) {
+                if (i < this.clusters.length - 1) {
+                    tablesNode.add(new DefaultMutableTreeNode(new LeafInfo("Matched Genes ", tabViewer, new Integer(i))));
+                } else if (i == this.clusters.length - 1) {
+                    tablesNode.add(new DefaultMutableTreeNode(new LeafInfo("Unmatched Genes ", tabViewer, new Integer(i))));
+                }
+            }            
+            //IViewer nonSigTableViewer = new PTMGeneStatsTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData, false);
+            //tablesNode.add(new DefaultMutableTreeNode(new LeafInfo("Matched Genes", sigTableViewer)));
+            //tablesNode.add(new DefaultMutableTreeNode(new LeafInfo("Unmatched Genes", nonSigTableViewer)));            
         } else {
             IViewer sigTableViewer = new PTMExpStatsTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData, true);
             IViewer nonSigTableViewer = new PTMExpStatsTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData, false);
