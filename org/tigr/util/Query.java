@@ -101,11 +101,15 @@ public class Query {
     } catch (SQLException sqle) {
 
       throw sqle;
-
-    } finally {
+    }
+      // we might not be able to use 'finally' here.  If we use, the method will
+      // ALWAYS return the updateCount and never throw the sqle. /JL
+    /*} finally {
 
       return resultVector;
-    }
+    }*/
+
+    return resultVector;
   }
 
   public Vector executeQuery(Connection c) throws SQLException {
@@ -170,11 +174,16 @@ public class Query {
 
       //System.out.println("SQLException: " + sqle);
       throw sqle;
+    }
+      // we might not be able to use 'finally' here.  If we use, the method will
+      // ALWAYS return the updateCount and never throw the sqle. -- JL
 
-    } finally {
+    /*} finally {
 
       return resultVector;
-    }
+    }*/
+
+    return resultVector;
   }
 
   public int executeUpdate(Connection c) throws SQLException {
@@ -192,14 +201,16 @@ public class Query {
       s.close();
 
     } catch (SQLException sqle) {
-
       //System.out.println("SQLException: " + sqle);
       throw sqle;
-
-    } finally {
+    }
+    // we might not be able to use 'finally' here.  If we use, the method will
+    // ALWAYS return the updateCount and never throw the sqle. -- JL
+    /*} finally {
 
       return updateCount;
-    }
+    }*/
+      return updateCount;
   }
 
   public static Vector resultsToList(Vector results) {
@@ -212,6 +223,10 @@ public class Query {
     }
 
     return resultVector;
+  }
+
+  public void setQueryStatement(String code){
+    queryString = code;
   }
 
   public static Vector resultsToVectors(Vector results) {
