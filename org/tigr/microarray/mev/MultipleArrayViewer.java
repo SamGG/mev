@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.11 $
- * $Date: 2004-02-27 22:19:13 $
+ * $Revision: 1.12 $
+ * $Date: 2004-04-12 20:39:49 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -127,6 +127,7 @@ import org.tigr.microarray.mev.file.ExpressionFileLoader;
 
 import org.tigr.microarray.mev.cluster.clusterUtil.*;
 import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
+import org.tigr.microarray.mev.script.ScriptManager;
 
 public class MultipleArrayViewer extends ArrayViewer implements Printable {
     
@@ -140,6 +141,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     private ResultTree tree;
     private DefaultMutableTreeNode clusterNode;
     private DefaultMutableTreeNode analysisNode;
+    private DefaultMutableTreeNode scriptNode;
     private DefaultMutableTreeNode historyNode;
     // current viewer
     private IViewer viewer;
@@ -147,6 +149,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     private IFramework framework = new FrameworkImpl();
     // features data
     private MultipleArrayData data = new MultipleArrayData();
+    //Action Manager
+    private ActionManager manager;
     
     private int resultCount = 1;
     
@@ -154,11 +158,12 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     private ClusterRepository experimentClusterRepository;
     private ClusterTable geneClusterManager;
     private ClusterTable experimentClusterManager;
+    private ScriptManager scriptManager;
+    private HistoryViewer historyLog;    
     
     private File currentAnalysisFile;
     private boolean modifiedResult = false;
     
-    private HistoryViewer historyLog;
     
     /**
      * Construct a <code>MultipleArrayViewer</code> with default title,
@@ -172,7 +177,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         // listener
         EventListener eventListener = new EventListener();
         mainframe.addWindowListener(eventListener);
-        ActionManager manager = new ActionManager(eventListener, TMEV.getFieldNames(), TMEV.getGUIFactory());
+        manager = new ActionManager(eventListener, TMEV.getFieldNames(), TMEV.getGUIFactory());
         
         menubar = new MultipleArrayMenubar(manager);
         mainframe.setJMenuBar(menubar);
@@ -211,7 +216,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         // listener
         EventListener eventListener = new EventListener();
         mainframe.addWindowListener(eventListener);
-        ActionManager manager = new ActionManager(eventListener, TMEV.getFieldNames(), TMEV.getGUIFactory());
+        manager = new ActionManager(eventListener, TMEV.getFieldNames(), TMEV.getGUIFactory());
         
         data = arrayData;
         
@@ -371,7 +376,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                     // Record the save to history
                     addHistory("Save Analysis: "+filePath);
                     // Save History Tree
-                    tree.writeHistory(oos);
+                    tree.writeHistory(oos, historyNode);
                     //reset result changed boolean
                     modifiedResult = false;
                     //enable save menu item, current file is already set
@@ -472,9 +477,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         DefaultMutableTreeNode node = tree.loadResults(ois);
         
         if(node != null){
+            
+            int location = tree.getModel().getIndexOfChild(tree.getRoot(), analysisNode);
             tree.removeNode(analysisNode);
             analysisNode = node;
-            tree.insertNode(analysisNode, tree.getRoot(), tree.getRoot().getChildCount());
+            tree.insertNode(analysisNode, tree.getRoot(), location);
             tree.setAnalysisNode(analysisNode);
         }
     }
@@ -541,6 +548,24 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         }
     }
     
+    /*****************************
+     *
+     * Script code
+     */
+    private void onNewScript() {
+        if(this.scriptManager == null) {
+            scriptManager = new ScriptManager(framework, scriptNode, manager);
+        }
+        scriptManager.addNewScript();
+    }
+    
+    private void onLoadScript() {
+        if(this.scriptManager == null) {
+            scriptManager = new ScriptManager(framework, scriptNode, manager);
+        }
+        scriptManager.loadScript();
+    }
+    
     
     /**
      * Returns the status bar text.
@@ -605,8 +630,12 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         clusterNode = new DefaultMutableTreeNode(new LeafInfo("Cluster Manager"));
         root.add(clusterNode);
         
-        analysisNode = new DefaultMutableTreeNode(new LeafInfo("Analysis"));
+        analysisNode = new DefaultMutableTreeNode(new LeafInfo("Analysis Results"));
         root.add(analysisNode);
+        
+        scriptNode = new DefaultMutableTreeNode(new LeafInfo("Script Manager"));
+        //root.add(scriptNode);
+        
         historyNode = new DefaultMutableTreeNode(new LeafInfo("History"));
         root.add(historyNode);
         historyLog = new HistoryViewer();
@@ -2021,59 +2050,67 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         return clusterColor;
     }
     
-    public void removeCluster(int [] indices, Experiment experiment, int clusterType){
+    public boolean removeCluster(int [] indices, Experiment experiment, int clusterType){
         DefaultTreeModel model = (DefaultTreeModel) this.tree.getModel();
         TreePath path = this.tree.getSelectionPath();
         DefaultMutableTreeNode clusterNode = (DefaultMutableTreeNode)path.getLastPathComponent();
         Object leafInfo = clusterNode.getUserObject();
+        boolean removed = false;
         if(!(leafInfo instanceof LeafInfo))
-            return;
+            return removed;
         if(path.getPathCount() < 3)
-            return;
+            return removed;
         String clusterID = ((LeafInfo)clusterNode.getUserObject()).toString();
         DefaultMutableTreeNode algorithmNode = (DefaultMutableTreeNode)path.getPathComponent(2);
         String algorithmName = (String)algorithmNode.getUserObject();
         
         if(clusterType == ClusterRepository.GENE_CLUSTER){
             if(this.geneClusterRepository == null)
-                return;
-            this.geneClusterRepository.removeCluster(indices, algorithmName, clusterID);
+                return removed;
+            removed = this.geneClusterRepository.removeCluster(indices, algorithmName, clusterID);
             this.geneClusterManager.onRepositoryChanged(this.geneClusterRepository);
         } else {
             if(this.experimentClusterRepository == null)
-                return;
-            this.experimentClusterRepository.removeCluster(indices, algorithmName, clusterID);
+                return removed;
+            removed = this.experimentClusterRepository.removeCluster(indices, algorithmName, clusterID);
             this.experimentClusterManager.onRepositoryChanged(this.experimentClusterRepository);
         }
-        fireDataChanged();
+        if(removed)
+            fireDataChanged();
+ 
+        return removed;
     }
     
     
-    public void removeSubCluster(int [] indices, Experiment experiment, int clusterType){
+    public boolean removeSubCluster(int [] indices, Experiment experiment, int clusterType){
         DefaultTreeModel model = (DefaultTreeModel) this.tree.getModel();
         TreePath path = this.tree.getSelectionPath();
         DefaultMutableTreeNode clusterNode = (DefaultMutableTreeNode)path.getLastPathComponent();
         Object leafInfo = clusterNode.getUserObject();
+        boolean removed = false;
         if(!(leafInfo instanceof LeafInfo))
-            return;
+            return removed;
         if(path.getPathCount() < 3)
-            return;
+            return removed;
         String clusterID = ((LeafInfo)clusterNode.getUserObject()).toString();
         DefaultMutableTreeNode algorithmNode = (DefaultMutableTreeNode)path.getPathComponent(2);
         String algorithmName = (String)algorithmNode.getUserObject();
         
         if(clusterType == ClusterRepository.GENE_CLUSTER){
             if(this.geneClusterRepository == null)
-                return;
-            this.geneClusterRepository.removeSubCluster(indices, algorithmName, clusterID);
+                return removed;
+            removed = this.geneClusterRepository.removeSubCluster(indices, algorithmName, clusterID);
             this.geneClusterManager.onRepositoryChanged(this.geneClusterRepository);
         } else {
             if(this.experimentClusterRepository == null)
-                return;
-            this.experimentClusterRepository.removeSubCluster(indices, algorithmName, clusterID);
+                return removed;
+            removed = this.experimentClusterRepository.removeSubCluster(indices, algorithmName, clusterID);
             this.experimentClusterManager.onRepositoryChanged(this.experimentClusterRepository);
         }
-        fireDataChanged();
+        if(removed)
+            fireDataChanged();
+
+        return removed;
     }
     
     private void launchNewMAV(int [] indices, Experiment experiment, String label, int clusterType){
@@ -2445,6 +2482,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                 saveAnalysis();
             } else if (command.equals(ActionManager.SAVE_ANALYSIS_AS_COMMAND)) {
                 saveAnalysisAs();
+            } else if (command.equals(ActionManager.NEW_SCRIPT_COMMAND)) {
+                onNewScript();
+            } else if (command.equals(ActionManager.LOAD_SCRIPT_COMMAND)) {
+                onLoadScript();
             } else {
                 System.out.println("unhandled command = " + command);
             }
@@ -2594,12 +2635,12 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             return MultipleArrayViewer.this.storeSubCluster(indices, experiment, clusterType);
         }
         
-        public void removeSubCluster(int[] indices, Experiment experiment, int clusterType) {
-            MultipleArrayViewer.this.removeSubCluster(indices, experiment, clusterType);
+        public boolean removeSubCluster(int[] indices, Experiment experiment, int clusterType) {
+            return MultipleArrayViewer.this.removeSubCluster(indices, experiment, clusterType);
         }
         
-        public void removeCluster(int[] indices, Experiment experiment, int clusterType) {
-            MultipleArrayViewer.this.removeCluster(indices, experiment, clusterType);
+        public boolean removeCluster(int[] indices, Experiment experiment, int clusterType) {
+            return MultipleArrayViewer.this.removeCluster(indices, experiment, clusterType);
         }
         
         public void launchNewMAV(int[] indices, Experiment experiment, String label, int clusterType){
