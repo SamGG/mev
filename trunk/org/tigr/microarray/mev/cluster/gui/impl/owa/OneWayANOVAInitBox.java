@@ -10,11 +10,11 @@ All rights reserved.
 
  * $RCSfile: OneWayANOVAInitBox.java,v $
 
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
 
- * $Date: 2004-02-13 18:28:55 $
+ * $Date: 2004-02-13 18:55:56 $
 
- * $Author: nbhagaba $
+ * $Author: braisted $
 
  * $State: Exp $
 
@@ -23,7 +23,7 @@ All rights reserved.
 
 
 package org.tigr.microarray.mev.cluster.gui.impl.owa;
-
+ 
 
 
 import java.awt.*;
