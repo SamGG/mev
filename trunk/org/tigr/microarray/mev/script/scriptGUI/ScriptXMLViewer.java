@@ -355,7 +355,7 @@ public class ScriptXMLViewer extends ViewerAdapter {
             menu.add(createItem("Edit", "edit-cmd", "Enabled when parameter key/value or algorithm is selected", listener, false));
             menu.addSeparator();
             menu.add(createItem("Clear Overlay", "clear-overlay-cmd", "Clears the algorithm overlay area if present", listener, false));
-            menu.add(createItem("Mark Algorithm", "mark-algorithm-cmd", "Overlay shading if present", listener, true));
+          //  menu.add(createItem("Mark Algorithm", "mark-algorithm-cmd", "Overlay shading if present", listener, true));
             menu.addSeparator();
         }
         menu.add(createItem("Save Script", "save-cmd", "Save script to file", listener, true));
