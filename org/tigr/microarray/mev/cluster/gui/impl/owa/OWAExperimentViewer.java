@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: OWAExperimentViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-04-08 18:22:28 $
+ * $Revision: 1.5 $
+ * $Date: 2004-06-25 18:51:18 $
  * $Author: nbhagaba $
  * $State: Exp $
  */
@@ -50,15 +50,16 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
 public class OWAExperimentViewer extends ExperimentViewer {
     
     private JPopupMenu popup;
-    private Vector fValues, pValues, dfNumValues, dfDenomValues, ssGroups, ssError;  
+    private Vector fValues, rawPValues, adjPValues, dfNumValues, dfDenomValues, ssGroups, ssError;  
     private float[][] geneGroupMeans, geneGroupSDs;
     
     /** Creates new OWAExperimentViewer */
-    public OWAExperimentViewer(Experiment experiment, int[][] clusters, float[][] geneGroupMeans, float[][] geneGroupSDs, Vector pValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
+    public OWAExperimentViewer(Experiment experiment, int[][] clusters, float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
 	super(experiment, clusters);
 	Listener listener = new Listener();
 	this.popup = createJPopupMenu(listener);
-        this.pValues = pValues;
+        this.rawPValues = rawPValues;
+        this.adjPValues = adjPValues;
         this.fValues = fValues;
         this.ssGroups = ssGroups;
         this.ssError = ssError;
@@ -202,7 +203,8 @@ public class OWAExperimentViewer extends ExperimentViewer {
         out.print("SS(Error)\t");
         out.print("df (Groups)\t");
         out.print("df (Error)\t");
-        out.print("p value");
+        out.print(" raw p value\t");
+        out.print("adj. p value");
         
         //out.print("UniqueID\tName");
         for (int i=0; i<experiment.getNumberOfSamples(); i++) {
@@ -236,7 +238,9 @@ public class OWAExperimentViewer extends ExperimentViewer {
             out.print("\t");   
             out.print("" + ((Float)dfDenomValues.get(rows[i])).floatValue());
             out.print("\t");            
-            out.print("" + ((Float)pValues.get(rows[i])).floatValue());          
+            out.print("" + ((Float)rawPValues.get(rows[i])).floatValue());   
+            out.print("\t");            
+            out.print("" + ((Float)adjPValues.get(rows[i])).floatValue());            
             for (int j=0; j<experiment.getNumberOfSamples(); j++) {
                 out.print("\t");
                 out.print(Float.toString(experiment.get(rows[i], j)));

@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: OWAGUI.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-05-26 14:21:55 $
- * $Author: braisted $
+ * $Revision: 1.5 $
+ * $Date: 2004-06-25 18:51:18 $
+ * $Author: nbhagaba $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.owa;
@@ -74,13 +74,15 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
     private String[] auxTitles;
     private Object[][] auxData;
     
-    private Vector fValues, pValues, dfNumValues, dfDenomValues, ssGroups, ssError;
+    private Vector fValues, rawPValues, adjPValues, dfNumValues, dfDenomValues, ssGroups, ssError;
     private float[][] geneGroupMeans, geneGroupSDs;
+    
+    //private boolean usePerms;
     
     Vector exptNamesVector;
     int[] groupAssignments;
     private IData data;
-    private int numGroups;
+    private int numGroups, numPerms;
     /** Creates new OWAGUI */
     public OWAGUI() {
     }
@@ -114,6 +116,11 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
         double alpha = owaDialog.getPValue();
         numGroups = owaDialog.getNumGroups();
         groupAssignments = owaDialog.getGroupAssignments();
+        boolean usePerms = owaDialog.usePerms();
+        int numPerms = 0;
+        if (usePerms) {
+            numPerms = owaDialog.getNumPerms();
+        }
         int correctionMethod = owaDialog.getCorrectionMethod();
         boolean isHierarchicalTree = owaDialog.drawTrees();
         
@@ -153,6 +160,8 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
             
             data.addParam("distance-function", String.valueOf(function));
             data.addIntArray("group-assignments", groupAssignments);
+            data.addParam("usePerms", String.valueOf(usePerms));
+            data.addParam("numPerms", String.valueOf(numPerms));
             data.addParam("alpha", String.valueOf(alpha));
             data.addParam("correction-method", String.valueOf(correctionMethod));
             data.addParam("numGroups", String.valueOf(numGroups));
@@ -180,7 +189,10 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
             }
             this.means = result.getMatrix("clusters_means");
             this.variances = result.getMatrix("clusters_variances");
-            FloatMatrix pValuesMatrix = result.getMatrix("pValues");
+            //FloatMatrix pValuesMatrix = result.getMatrix("pValues");
+            FloatMatrix rawPValuesMatrix = result.getMatrix("rawPValues");
+            FloatMatrix adjPValuesMatrix = result.getMatrix("adjPValues");
+            //FloatMatrix pValuesMatrix = result.getMatrix("pValues");
             FloatMatrix fValuesMatrix = result.getMatrix("fValues");
             FloatMatrix dfNumMatrix = result.getMatrix("dfNumMatrix");
             FloatMatrix dfDenomMatrix = result.getMatrix("dfDenomMatrix");
@@ -189,7 +201,8 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
             FloatMatrix geneGroupMeansMatrix = result.getMatrix("geneGroupMeansMatrix");
             FloatMatrix geneGroupSDsMatrix = result.getMatrix("geneGroupSDsMatrix");
             
-            pValues = new Vector();
+            rawPValues = new Vector();
+            adjPValues = new Vector();
             fValues = new Vector();
             ssGroups = new Vector();
             ssError = new Vector();
@@ -204,8 +217,9 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
                 }
             }
             
-            for (int i = 0; i < pValuesMatrix.getRowDimension(); i++) {
-                pValues.add(new Float(pValuesMatrix.A[i][0]));
+            for (int i = 0; i < rawPValuesMatrix.getRowDimension(); i++) {
+                rawPValues.add(new Float(rawPValuesMatrix.A[i][0]));
+                adjPValues.add(new Float(adjPValuesMatrix.A[i][0]));
             }
             
             for (int i = 0; i < fValuesMatrix.getRowDimension(); i++) {
@@ -226,6 +240,8 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
             info.time = time;
             //ADD MORE INFO PARAMETERS HERE
             info.alpha = alpha;
+            info.usePerms = usePerms;
+            info.numPerms = numPerms;
             info.correctionMethod = getSigMethod(correctionMethod);
             /*
             info.pValueBasedOn = getPValueBasedOn(isPermut);
@@ -250,7 +266,8 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
             titlesVector.add("SS(Error)");
             titlesVector.add("df (Groups)");
             titlesVector.add("df (Error)");
-            titlesVector.add("p value");
+            titlesVector.add("Raw p value");
+            titlesVector.add("Adj. p value");
             
             auxTitles = new String[titlesVector.size()];
             for (int i = 0; i < auxTitles.length; i++) {
@@ -270,7 +287,8 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
                 auxData[i][counter++] = ssError.get(i);
                 auxData[i][counter++] = dfNumValues.get(i);
                 auxData[i][counter++] = dfDenomValues.get(i);
-                auxData[i][counter++] = pValues.get(i);
+                auxData[i][counter++] = rawPValues.get(i);
+                auxData[i][counter++] = adjPValues.get(i);
             }
             
             
@@ -306,6 +324,11 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
         double alpha = owaDialog.getPValue();
         numGroups = owaDialog.getNumGroups();
         groupAssignments = owaDialog.getGroupAssignments();
+        boolean usePerms = owaDialog.usePerms();     
+        int numPerms = 0;
+        if (usePerms) {
+            numPerms = owaDialog.getNumPerms();           
+        }
         int correctionMethod = owaDialog.getCorrectionMethod();
         boolean isHierarchicalTree = owaDialog.drawTrees();
         
@@ -336,6 +359,8 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
         
         data.addParam("distance-function", String.valueOf(function));
         data.addIntArray("group-assignments", groupAssignments);
+        data.addParam("usePerms", String.valueOf(usePerms));   
+        data.addParam("numPerms", String.valueOf(numPerms));
         data.addParam("alpha", String.valueOf(alpha));
         data.addParam("correction-method", String.valueOf(correctionMethod));
         data.addParam("numGroups", String.valueOf(numGroups));
@@ -406,7 +431,8 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
             }
             this.means = result.getMatrix("clusters_means");
             this.variances = result.getMatrix("clusters_variances");
-            FloatMatrix pValuesMatrix = result.getMatrix("pValues");
+            FloatMatrix rawPValuesMatrix = result.getMatrix("rawPValues");
+            FloatMatrix adjPValuesMatrix = result.getMatrix("adjPValues");
             FloatMatrix fValuesMatrix = result.getMatrix("fValues");
             FloatMatrix dfNumMatrix = result.getMatrix("dfNumMatrix");
             FloatMatrix dfDenomMatrix = result.getMatrix("dfDenomMatrix");
@@ -415,7 +441,7 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
             FloatMatrix geneGroupMeansMatrix = result.getMatrix("geneGroupMeansMatrix");
             FloatMatrix geneGroupSDsMatrix = result.getMatrix("geneGroupSDsMatrix");
             
-            pValues = new Vector();
+            //pValues = new Vector();
             fValues = new Vector();
             ssGroups = new Vector();
             ssError = new Vector();
@@ -430,8 +456,9 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
                 }
             }
             
-            for (int i = 0; i < pValuesMatrix.getRowDimension(); i++) {
-                pValues.add(new Float(pValuesMatrix.A[i][0]));
+            for (int i = 0; i < rawPValuesMatrix.getRowDimension(); i++) {
+                rawPValues.add(new Float(rawPValuesMatrix.A[i][0]));
+                adjPValues.add(new Float(adjPValuesMatrix.A[i][0]));
             }
             
             for (int i = 0; i < fValuesMatrix.getRowDimension(); i++) {
@@ -500,7 +527,8 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
                 auxData[i][counter++] = ssError.get(i);
                 auxData[i][counter++] = dfNumValues.get(i);
                 auxData[i][counter++] = dfDenomValues.get(i);
-                auxData[i][counter++] = pValues.get(i);
+                auxData[i][counter++] = rawPValues.get(i);
+                auxData[i][counter++] = adjPValues.get(i);
             }
             
             return createResultTree(result_cluster, info);
@@ -525,6 +553,8 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
             methodName = "Standard Bonferroni correction";
         } else if (sigMethod == OneWayANOVAInitBox.ADJ_BONFERRONI) {
             methodName = "Adjusted Bonferroni correction";
+        } else if (sigMethod == OneWayANOVAInitBox.MAX_T) {
+            methodName = "Westfall Young stepdown - MaxT";
         }
         
         return methodName;
@@ -571,7 +601,7 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
      */
     private void addExpressionImages(DefaultMutableTreeNode root) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Expression Images");
-        IViewer expViewer = new OWAExperimentViewer(this.experiment, this.clusters, geneGroupMeans, geneGroupSDs, pValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues);
+        IViewer expViewer = new OWAExperimentViewer(this.experiment, this.clusters, geneGroupMeans, geneGroupSDs, rawPValues, adjPValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues);
         for (int i=0; i<this.clusters.length; i++) {
             if (i < this.clusters.length - 1) {
                 node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", expViewer, new Integer(i))));
@@ -639,7 +669,7 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
     private void addCentroidViews(DefaultMutableTreeNode root) {
         DefaultMutableTreeNode centroidNode = new DefaultMutableTreeNode("Centroid Graphs");
         DefaultMutableTreeNode expressionNode = new DefaultMutableTreeNode("Expression Graphs");
-        OWACentroidViewer centroidViewer = new OWACentroidViewer(this.experiment, clusters, geneGroupMeans, geneGroupSDs, pValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues);
+        OWACentroidViewer centroidViewer = new OWACentroidViewer(this.experiment, clusters, geneGroupMeans, geneGroupSDs, rawPValues, adjPValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues);
         centroidViewer.setMeans(this.means.A);
         centroidViewer.setVariances(this.variances.A);
         for (int i=0; i<this.clusters.length; i++) {
@@ -654,7 +684,7 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
             }
         }
         
-        OWACentroidsViewer centroidsViewer = new OWACentroidsViewer(this.experiment, clusters, geneGroupMeans, geneGroupSDs, pValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues);
+        OWACentroidsViewer centroidsViewer = new OWACentroidsViewer(this.experiment, clusters, geneGroupMeans, geneGroupSDs, rawPValues, adjPValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues);
         centroidsViewer.setMeans(this.means.A);
         centroidsViewer.setVariances(this.variances.A);
         
@@ -665,6 +695,7 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
         root.add(expressionNode);
     }
     
+    /*
     private void addFRatioInfoViews(DefaultMutableTreeNode root) {
         DefaultMutableTreeNode fRatioInfoNode = new DefaultMutableTreeNode("F-Ratio information");
         IViewer fSigViewer = new FStatsTableViewer(this.experiment, this.clusters, this.data, geneGroupMeans, geneGroupSDs, pValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues, true);
@@ -675,6 +706,7 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
         
         root.add(fRatioInfoNode);
     }
+     */
     
     /**
      * Adds node with general iformation.
@@ -683,6 +715,10 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("General Information");
         node.add(getGroupAssignmentInfo());
         node.add(new DefaultMutableTreeNode("Alpha (overall threshold p-value): "+info.alpha));
+        node.add(new DefaultMutableTreeNode("Used permutation test? " + info.usePerms));
+        if (info.usePerms) {
+            node.add(new DefaultMutableTreeNode("Number of permutations " + info.numPerms));
+        }
         /*
         node.add(new DefaultMutableTreeNode("P-values based on: "+info.pValueBasedOn));
         if (isPermutations) {
@@ -698,7 +734,7 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
     }
     
     private DefaultMutableTreeNode getGroupAssignmentInfo() {
-        DefaultMutableTreeNode groupAssignmentInfo = new DefaultMutableTreeNode("Group assigments ");
+        DefaultMutableTreeNode groupAssignmentInfo = new DefaultMutableTreeNode("Group assignments ");
         DefaultMutableTreeNode notInGroups = new DefaultMutableTreeNode("Not in groups");
         DefaultMutableTreeNode[] groups = new DefaultMutableTreeNode[numGroups];
         for (int i = 0; i < numGroups; i++) {
@@ -780,8 +816,8 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
         //public int numReps;
         //public double thresholdPercent;
         
-        private boolean hcl;
-        private int hcl_method;
+        private boolean hcl, usePerms;
+        private int hcl_method, numPerms;
         private boolean hcl_genes;
         private boolean hcl_samples;
         
