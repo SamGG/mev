@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: KMCSupport.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-04-08 19:28:45 $
- * $Author: nbhagaba $
+ * $Revision: 1.4 $
+ * $Date: 2004-05-19 21:11:35 $
+ * $Author: braisted $
  * $State: Exp $
  */
 
@@ -71,7 +71,7 @@ public class KMCSupport extends AbstractAlgorithm {
         factor   = map.getFloat("distance-factor", 1.0f);
         absolute = map.getBoolean("distance-absolute", false);
         
-        iterations = map.getInt("number_of_iterations", 50);
+        iterations = map.getInt("number-of-iterations", 50);
         kmcGenes = map.getBoolean("kmc-cluster-genes", true);
         //int number_of_clusters = map.getInt("number_of_clusters", 5);
         
@@ -84,7 +84,7 @@ public class KMCSupport extends AbstractAlgorithm {
         
         numGenes = this.expMatrix.getRowDimension();
         numSamples = this.expMatrix.getColumnDimension();
-        numReps = map.getInt("number_of_repetitions", 0);
+        numReps = map.getInt("number-of-repetitions", 0);
         thresholdPercent = map.getFloat("threshold-percent", 80);
         userK = map.getInt("number-of-desired-clusters", 5);
         calculateMeans = map.getBoolean("calculate-means", true);
