@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: Ttest.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 18:50:36 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -63,6 +63,8 @@ public class Ttest extends AbstractAlgorithm {
     int[] groupAssignments;
     private int numCombs;
     boolean useAllCombs;
+    int tTestDesign;
+    float oneClassMean = 0.0f;
     
     double currentP = 0.0f;
     double currentT = 0.0f;
@@ -110,6 +112,10 @@ public class Ttest extends AbstractAlgorithm {
 	
 	numGenes = this.expMatrix.getRowDimension();
 	numExps = this.expMatrix.getColumnDimension();
+        tTestDesign = map.getInt("tTestDesign", TtestInitDialog.BETWEEN_SUBJECTS);
+        if (tTestDesign == TtestInitDialog.ONE_CLASS) {
+            oneClassMean = map.getFloat("oneClassMean", 0.0f);
+        }
 	alpha = map.getFloat("alpha", 0.01f);
 	significanceMethod = map.getInt("significance-method", TtestInitDialog.JUST_ALPHA);
 	isPermut = map.getBoolean("is-permut", false);
@@ -117,39 +123,18 @@ public class Ttest extends AbstractAlgorithm {
 	useAllCombs = map.getBoolean("use-all-combs", false);
 	
 	Vector clusterVector = new Vector();
-	if (isPermut) {
-	    clusterVector = sortGenesByPermutationSignificance();
-	} else {
-	    clusterVector = sortGenesBySignificance();
-	}
-	k = clusterVector.size();
-	/*
-        System.out.println("sigTValues.size() = " + sigTValues.size());
-        System.out.println("sigPValues.size() = " + sigPValues.size());        
-        System.out.println("nonSigTValues.size() = " + nonSigTValues.size());
-        System.out.println("nonSigPValues.size() = " + nonSigPValues.size());  
-        
-        FloatMatrix sigTValuesMatrix = new FloatMatrix(sigTValues.size(), 1);
-        FloatMatrix sigPValuesMatrix = new FloatMatrix(sigPValues.size(), 1);        
-        FloatMatrix nonSigTValuesMatrix = new FloatMatrix(nonSigTValues.size(), 1);  
-        FloatMatrix nonSigPValuesMatrix = new FloatMatrix(nonSigPValues.size(), 1);     
-        
-        for (int i = 0; i < sigTValues.size(); i++) {
-            sigTValuesMatrix.A[i][0] = ((Float)(sigTValues.get(i))).floatValue();
+        if (tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS) {
+            if (isPermut) {
+                clusterVector = sortGenesByPermutationSignificance();
+            } else {
+                clusterVector = sortGenesBySignificance();
+            }
+        } else if (tTestDesign == TtestInitDialog.ONE_CLASS) {
+            clusterVector = sortGenesForOneClassDesign();
         }
+        
+        k = clusterVector.size();
 
-        for (int i = 0; i < sigPValues.size(); i++) {
-            sigPValuesMatrix.A[i][0] = ((Float)(sigPValues.get(i))).floatValue();
-        }        
-        
-        for (int i = 0; i < nonSigTValues.size(); i++) {
-            nonSigTValuesMatrix.A[i][0] = ((Float)(nonSigTValues.get(i))).floatValue();
-        }  
-        
-        for (int i = 0; i < nonSigPValues.size(); i++) {
-            nonSigPValuesMatrix.A[i][0] = ((Float)(nonSigPValues.get(i))).floatValue();
-        }
-         */ 
         
         FloatMatrix isSigMatrix = new FloatMatrix(numGenes, 1);
         
@@ -164,40 +149,109 @@ public class Ttest extends AbstractAlgorithm {
             isSigMatrix.A[currentGene][0] = 1.0f;
         }
         
+        Vector oneClassDFVector = new Vector();
+        Vector oneClassGeneMeansVector = new Vector();
+        Vector oneClassGeneSDsVector = new Vector();
+        
+        if (tTestDesign == TtestInitDialog.ONE_CLASS) {
+            AlgorithmEvent event2 = null;
+            /*
+            if (isPermut) {
+                event2 = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, numGenes);
+                fireValueChanged(event2);
+                event2.setId(AlgorithmEvent.PROGRESS_VALUE);  
+            }
+             */
+            //if ((significanceMethod == TtestInitDialog.JUST_ALPHA) || (significanceMethod == TtestInitDialog.STD_BONFERRONI)) {
+                tValuesVector = new Vector();
+                //pValuesVector = new Vector();
+                oneClassDFVector = new Vector();
+                
+                for (int i = 0; i < numGenes; i++) {
+                    float[] currentGeneValues = getOneClassGeneValues(i);
+                    float currentOneClassT = (float)getOneClassTValue(currentGeneValues);
+                    //System.out.println("t = " + currentOneClassT);
+                    tValuesVector.add(new Float(currentOneClassT));
+                    float currentOneClassDF = (float)getOneClassDFValue(currentGeneValues);
+                    oneClassDFVector.add(new Float(currentOneClassDF));
+                    //float currentOneClassProb = 0.0f;
+                    /*
+                    if (!isPermut) {
+                       currentOneClassProb = getProb(currentOneClassT, (int)currentOneClassDF);
+                    } else {                        
+                        event2.setIntValue(i);
+                        event2.setDescription("Reporting gene statistics: Current gene = " + (i + 1));
+                        fireValueChanged(event2); 
+                        
+                        if (useAllCombs) {
+                            currentOneClassProb = getAllCombsOneClassProb(i);
+                        } else {
+                            currentOneClassProb = getSomeCombsOneClassProb(i);
+                        }
+                         
+                    }
+                     */
+                    //pValuesVector.add(new Float(currentOneClassProb));
+                    float currentOneClassMean = getMean(currentGeneValues);
+                    oneClassGeneMeansVector.add(new Float(currentOneClassMean));
+                    float currentOneClassSD = (float)(Math.sqrt(getVar(currentGeneValues)));
+                    oneClassGeneSDsVector.add(new Float(currentOneClassSD));
+                }
+            //}
+        }        
+        
         FloatMatrix tValuesMatrix = new FloatMatrix(tValuesVector.size(), 1);  
         FloatMatrix pValuesMatrix = new FloatMatrix(pValuesVector.size(), 1); 
+        //System.out.println("pValuesVector.size() = " + pValuesVector.size());
         FloatMatrix dfMatrix = new FloatMatrix(numGenes, 1);
-        
-        for (int i = 0; i < tValuesVector.size(); i++) {
-            tValuesMatrix.A[i][0] = Math.abs(((Float)(tValuesVector.get(i))).floatValue());
-        }  
+        FloatMatrix oneClassMeansMatrix = new FloatMatrix(numGenes, 1);
+        FloatMatrix oneClassSDsMatrix = new FloatMatrix(numGenes, 1);
+
+        if (tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS) {
+            for (int i = 0; i < tValuesVector.size(); i++) {
+                tValuesMatrix.A[i][0] = Math.abs(((Float)(tValuesVector.get(i))).floatValue());
+            }
+        } else if (tTestDesign == TtestInitDialog.ONE_CLASS) {
+            for (int i = 0; i < tValuesVector.size(); i++) {            
+                tValuesMatrix.A[i][0] = ((Float)(tValuesVector.get(i))).floatValue();
+            }
+        }
         
         for (int i = 0; i < pValuesVector.size(); i++) {
             pValuesMatrix.A[i][0] = ((Float)(pValuesVector.get(i))).floatValue();
-        }   
-        
-        for (int i = 0; i < numGenes; i++) {
-            dfMatrix.A[i][0] = (float)(getDF(i));
+        }
+        if (tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS) {
+            for (int i = 0; i < numGenes; i++) {
+                dfMatrix.A[i][0] = (float)(getDF(i));
+            }
+        } else if (tTestDesign == TtestInitDialog.ONE_CLASS) {
+            for (int i = 0; i < numGenes; i++) {
+                dfMatrix.A[i][0] = ((Float)(oneClassDFVector.get(i))).floatValue();
+                oneClassMeansMatrix.A[i][0] = ((Float)(oneClassGeneMeansVector.get(i))).floatValue();
+                oneClassSDsMatrix.A[i][0] = ((Float)(oneClassGeneSDsVector.get(i))).floatValue();
+            }            
         }
         
         FloatMatrix meansAMatrix = new FloatMatrix(numGenes, 1);
         FloatMatrix meansBMatrix = new FloatMatrix(numGenes, 1);
         FloatMatrix sdAMatrix = new FloatMatrix(numGenes, 1);
         FloatMatrix sdBMatrix = new FloatMatrix(numGenes, 1);    
+
+        if (tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS) {
+            Vector meansAndSDs = getMeansAndSDs();
+            float[] meansA = (float[])(meansAndSDs.get(0));
+            float[] meansB = (float[])(meansAndSDs.get(1));
+            float[] sdA = (float[])(meansAndSDs.get(2));
+            float[] sdB = (float[])(meansAndSDs.get(3));
         
-        Vector meansAndSDs = getMeansAndSDs();
-        
-        float[] meansA = (float[])(meansAndSDs.get(0));
-        float[] meansB = (float[])(meansAndSDs.get(1));
-        float[] sdA = (float[])(meansAndSDs.get(2));
-        float[] sdB = (float[])(meansAndSDs.get(3));
-        
-        for (int i = 0; i < numGenes; i++) {
-            meansAMatrix.A[i][0] = meansA[i];
-            meansBMatrix.A[i][0] = meansB[i];
-            sdAMatrix.A[i][0] = sdA[i];
-            sdBMatrix.A[i][0] = sdB[i];
+            for (int i = 0; i < numGenes; i++) {
+                meansAMatrix.A[i][0] = meansA[i];
+                meansBMatrix.A[i][0] = meansB[i];
+                sdAMatrix.A[i][0] = sdA[i];
+                sdBMatrix.A[i][0] = sdB[i];
+            }
         }
+        
         
 	clusters = new Vector[k];
 	
@@ -253,6 +307,8 @@ public class Ttest extends AbstractAlgorithm {
         result.addMatrix("sdAMatrix", sdAMatrix);
         result.addMatrix("sdBMatrix", sdBMatrix);
         result.addMatrix("isSigMatrix", isSigMatrix);
+        result.addMatrix("oneClassMeansMatrix", oneClassMeansMatrix);
+        result.addMatrix("oneClassSDsMatrix", oneClassSDsMatrix);
 	return result;
 	
     }
@@ -392,6 +448,564 @@ public class Ttest extends AbstractAlgorithm {
     private float getSampleVariance(Vector cluster, int column, float mean) {
 	return(float)Math.sqrt(getSampleNormalizedSum(cluster, column, mean)/(float)(validN-1));
 	
+    }
+    
+    private Vector sortGenesForOneClassDesign() throws AlgorithmException {
+        Vector sigGenes = new Vector();
+        Vector nonSigGenes = new Vector();
+        AlgorithmEvent event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, numGenes);
+        fireValueChanged(event);
+        event.setId(AlgorithmEvent.PROGRESS_VALUE);
+        pValuesVector = new Vector();
+        if (!isPermut) {            
+            if ((significanceMethod == TtestInitDialog.JUST_ALPHA)||(significanceMethod == TtestInitDialog.STD_BONFERRONI)) {
+                for (int i = 0; i < numGenes; i++) {
+                    if (stop) {
+                        throw new AbortException();
+                    }
+                    event.setIntValue(i);
+                    event.setDescription("Current gene = " + (i + 1));
+                    fireValueChanged(event);
+                    if (isSigOneClass(i)) {
+                        sigGenes.add(new Integer(i));
+                    } else {
+                        nonSigGenes.add(new Integer(i));
+                    }
+                }
+            } else if (significanceMethod == TtestInitDialog.ADJ_BONFERRONI) {
+                float[] pValues = new float[numGenes];
+                for (int i = 0; i < numGenes; i++) {
+                    if (stop) {
+                        throw new AbortException();
+                    }
+                    event.setIntValue(i);
+                    event.setDescription("Current gene = " + (i + 1));
+                    fireValueChanged(event);  
+                    float[] currentGeneValues = getOneClassGeneValues(i);
+                    float currentOneClassT = (float)getOneClassTValue(currentGeneValues);
+                    //System.out.println("t = " + currentOneClassT);
+                    //tValuesVector.add(new Float(currentOneClassT));
+                    float currentOneClassDF = (float)getOneClassDFValue(currentGeneValues);
+                    //oneClassDFVector.add(new Float(currentOneClassDF));
+                    float currentOneClassProb = getProb(currentOneClassT, (int)currentOneClassDF); 
+                    pValues[i] = currentOneClassProb;
+                }
+                
+                for (int i = 0; i < pValues.length; i++) {
+                    pValuesVector.add(new Float(pValues[i]));
+                }
+                //double adjAlpha = alpha;
+                int denomAlpha = numGenes;
+                //int dF = 0;
+                double adjAlpha = alpha/(double)denomAlpha;   
+                
+                QSort sortPVals = new QSort(pValues);
+                float[] sortedPValues = sortPVals.getSorted();
+                int[] sortedIndices = sortPVals.getOrigIndx();
+                
+                for (int i = (sortedPValues.length - 1); i >= 0; i--) {
+                    if (sortedPValues[i] <= adjAlpha) {
+                        sigGenes.add(new Integer(sortedIndices[i]));
+                    } else {
+                        nonSigGenes.add(new Integer(sortedIndices[i]));
+                    }
+                    
+                    if (i < sortedPValues.length - 1) {
+                        if (sortedPValues[i] < sortedPValues[i + 1]) {
+                            denomAlpha--;
+                            //System.out.println(" i = " + i + ", denomAlpha = " + denomAlpha);
+                            if (denomAlpha < 1) {
+                                System.out.println("Warning: denomAlpha = " + denomAlpha);
+                            }                                
+                        } else {
+                            //System.out.println("Equal p-values: i = " + i + " and " + (i+1) + ", denomAlpha = " + denomAlpha);
+                        }
+                    } else {
+                        if (denomAlpha < 1) {
+                            System.out.println("Warning: denomAlpha = " + denomAlpha);
+                        }
+                    }
+                    
+                    adjAlpha = alpha / denomAlpha;
+                    
+                }
+            }
+            
+        } else { // if (isPermut)
+            if (useAllCombs) {
+                if ((significanceMethod == TtestInitDialog.JUST_ALPHA) || (significanceMethod == TtestInitDialog.STD_BONFERRONI)) {
+                    for (int i = 0; i < numGenes; i++) {
+                        if (stop) {
+                            throw new AbortException();
+                        }
+                        event.setIntValue(i);
+                        event.setDescription("Current gene = " + (i + 1));
+                        fireValueChanged(event);
+                        
+                        if (significanceMethod == TtestInitDialog.JUST_ALPHA) {
+                            float currentProb = getAllCombsOneClassProb(i);
+                            pValuesVector.add(new Float(currentProb));
+                            if (currentProb <= alpha) {
+                                sigGenes.add(new Integer(i));
+                            } else {
+                                nonSigGenes.add(new Integer(i));
+                            }
+                        } else if (significanceMethod == TtestInitDialog.STD_BONFERRONI) {
+                            float currentProb = getAllCombsOneClassProb(i);
+                            pValuesVector.add(new Float(currentProb));
+                            float thresh = (float)(alpha/(double)numGenes);
+                            if (currentProb <= thresh) {
+                                sigGenes.add(new Integer(i));
+                            } else {
+                                nonSigGenes.add(new Integer(i));
+                            }
+                        }
+                        
+                    }
+                } else if (significanceMethod == TtestInitDialog.ADJ_BONFERRONI) {
+                    float[] pValues = new float[numGenes];
+                    for (int i = 0; i < numGenes; i++) {
+                        if (stop) {
+                            throw new AbortException();
+                        }
+                        event.setIntValue(i);
+                        event.setDescription("Current gene = " + (i + 1));
+                        fireValueChanged(event);
+                        pValues[i] = getAllCombsOneClassProb(i);
+                    }
+                    for (int i = 0; i < pValues.length; i++) {
+                        pValuesVector.add(new Float(pValues[i]));
+                    }
+                    //double adjAlpha = alpha;
+                    int denomAlpha = numGenes;
+                    //int dF = 0;
+                    double adjAlpha = alpha/(double)denomAlpha;
+                    
+                    QSort sortPVals = new QSort(pValues);
+                    float[] sortedPValues = sortPVals.getSorted();
+                    int[] sortedIndices = sortPVals.getOrigIndx();
+                    
+                    for (int i = (sortedPValues.length - 1); i >= 0; i--) {
+                        if (sortedPValues[i] <= adjAlpha) {
+                            sigGenes.add(new Integer(sortedIndices[i]));
+                        } else {
+                            nonSigGenes.add(new Integer(sortedIndices[i]));
+                        }
+                        
+                        if (i < sortedPValues.length - 1) {
+                            if (sortedPValues[i] < sortedPValues[i + 1]) {
+                                denomAlpha--;
+                                //System.out.println(" i = " + i + ", denomAlpha = " + denomAlpha);
+                                if (denomAlpha < 1) {
+                                    System.out.println("Warning: denomAlpha = " + denomAlpha);
+                                }
+                            } else {
+                                //System.out.println("Equal p-values: i = " + i + " and " + (i+1) + ", denomAlpha = " + denomAlpha);
+                            }
+                        } else {
+                            if (denomAlpha < 1) {
+                                System.out.println("Warning: denomAlpha = " + denomAlpha);
+                            }
+                        }
+                        
+                        adjAlpha = alpha / denomAlpha;
+                        
+                    }
+                }
+                
+            } else {// if !useAllCombs
+                if ((significanceMethod == TtestInitDialog.JUST_ALPHA) || (significanceMethod == TtestInitDialog.STD_BONFERRONI)) {
+                    for (int i = 0; i < numGenes; i++) {
+                        if (stop) {
+                            throw new AbortException();
+                        }
+                        event.setIntValue(i);
+                        event.setDescription("Current gene = " + (i + 1));
+                        fireValueChanged(event);
+                        
+                        float currentProb = getSomeCombsOneClassProb(i);
+                        pValuesVector.add(new Float(currentProb));
+                        
+                        if (significanceMethod == TtestInitDialog.JUST_ALPHA) {
+                           if (currentProb <= alpha) {
+                               //System.out.println("currentProb = " + currentProb + ", alpha = " + alpha);
+                                sigGenes.add(new Integer(i));
+                            } else {
+                                nonSigGenes.add(new Integer(i));
+                            }                            
+                        } else if (significanceMethod == TtestInitDialog.STD_BONFERRONI) {                            
+                            float thresh = (float)(alpha/(double)numGenes);
+                            if (currentProb <= thresh) {
+                                sigGenes.add(new Integer(i));
+                            } else {
+                                nonSigGenes.add(new Integer(i));
+                            }
+                        } 
+                        
+                    }
+                } else if (significanceMethod == TtestInitDialog.ADJ_BONFERRONI) {
+                    float[] pValues = new float[numGenes];
+                    for (int i = 0; i < numGenes; i++) {
+                        if (stop) {
+                            throw new AbortException();
+                        }
+                        event.setIntValue(i);
+                        event.setDescription("Current gene = " + (i + 1));
+                        fireValueChanged(event);
+                        pValues[i] = getSomeCombsOneClassProb(i);
+                    }
+                    for (int i = 0; i < pValues.length; i++) {
+                        pValuesVector.add(new Float(pValues[i]));
+                    }
+                    //double adjAlpha = alpha;
+                    int denomAlpha = numGenes;
+                    //int dF = 0;
+                    double adjAlpha = alpha/(double)denomAlpha;
+                    
+                    QSort sortPVals = new QSort(pValues);
+                    float[] sortedPValues = sortPVals.getSorted();
+                    int[] sortedIndices = sortPVals.getOrigIndx();
+                    
+                    for (int i = (sortedPValues.length - 1); i >= 0; i--) {
+                        if (sortedPValues[i] <= adjAlpha) {
+                            sigGenes.add(new Integer(sortedIndices[i]));
+                        } else {
+                            nonSigGenes.add(new Integer(sortedIndices[i]));
+                        }
+                        
+                        if (i < sortedPValues.length - 1) {
+                            if (sortedPValues[i] < sortedPValues[i + 1]) {
+                                denomAlpha--;
+                                //System.out.println(" i = " + i + ", denomAlpha = " + denomAlpha);
+                                if (denomAlpha < 1) {
+                                    System.out.println("Warning: denomAlpha = " + denomAlpha);
+                                }
+                            } else {
+                                //System.out.println("Equal p-values: i = " + i + " and " + (i+1) + ", denomAlpha = " + denomAlpha);
+                            }
+                        } else {
+                            if (denomAlpha < 1) {
+                                System.out.println("Warning: denomAlpha = " + denomAlpha);
+                            }
+                        }
+                        
+                        adjAlpha = alpha / denomAlpha;
+                        
+                    }                    
+                }
+            }
+        }
+        
+        
+        Vector sortedGenes = new Vector();
+        sortedGenes.add(sigGenes);
+        sortedGenes.add(nonSigGenes);
+        
+        return sortedGenes; 
+    }
+    
+    private float getSomeCombsOneClassProb(int gene) {
+        
+        int validNumExps = getNumValidOneClassExpts();
+        //int numAllPossOneClassPerms = (int)(Math.pow(2, validNumExps));        
+        float[] currentGene = expMatrix.A[gene];
+        float[] origGeneValues = getOneClassGeneValues(gene);
+        float origOneClassT = (float)Math.abs(getOneClassTValue(origGeneValues));  
+        if (Float.isNaN(origOneClassT)) {
+            return Float.NaN;
+        }
+
+        Random rand  = new Random();
+        long[] randomSeeds  = new long[numCombs];
+        for (int i = 0; i < numCombs; i++) {
+            randomSeeds[i] = rand.nextLong();
+        }    
+        
+        int exceedCount = 0;
+        for (int i = 0; i < numCombs; i++) {
+            boolean[] changeSign = getSomeCombsPermutArray(randomSeeds[i]);
+            float[] randomizedGene = new float[origGeneValues.length];
+            
+            for (int l = 0; l < changeSign.length; l++) {
+                if (changeSign[l]) {
+                    randomizedGene[l] = (float)(origGeneValues[l] - 2.0f*(origGeneValues[l] - oneClassMean));
+                } else {
+                    randomizedGene[l] = origGeneValues[l];
+                }
+            }            
+          
+            double randTValue = Math.abs(getOneClassTValue(randomizedGene));
+            if (randTValue > origOneClassT) {
+                exceedCount++;
+            }            
+        }
+        
+        //System.out.println();
+        
+        double prob = (double)exceedCount / (double)numCombs;
+        
+        return (float)prob;        
+    }
+    
+    private boolean[] getSomeCombsPermutArray(long seed) {
+        boolean[] boolArray = new boolean[getNumValidOneClassExpts()];
+        for (int i = 0; i < boolArray.length; i++) {
+            boolArray[i] = false;
+        }
+
+        Random generator2 =new Random(seed);
+        for (int i = 0; i < boolArray.length; i++) {
+            
+            boolArray[i] = generator2.nextBoolean();
+            //System.out.print(boolArray[i] + " ");
+            /*
+            try {
+                Thread.sleep(10);
+            } catch (Exception exc) {
+                exc.printStackTrace();
+            }  
+             */
+              
+        }
+        
+        //System.out.println();
+        return boolArray;        
+    }
+    
+    private float getAllCombsOneClassProb(int gene) {
+        
+        int validNumExps = getNumValidOneClassExpts();
+        int numAllPossOneClassPerms = (int)(Math.pow(2, validNumExps));        
+        float[] currentGene = expMatrix.A[gene];
+        float[] origGeneValues = getOneClassGeneValues(gene);
+        float origOneClassT = (float)Math.abs(getOneClassTValue(origGeneValues));
+        if (Float.isNaN(origOneClassT)) {
+            return Float.NaN;
+        }
+        int exceedCount = 0;
+        
+        for (int j = 0; j < numAllPossOneClassPerms; j++) {
+            boolean[] changeSign = getOneClassPermutArray(j);
+            float[] randomizedGene = new float[currentGene.length];
+            
+            for (int l = 0; l < changeSign.length; l++) {
+                if (changeSign[l]) {
+                    randomizedGene[l] = (float)(currentGene[l] - 2.0f*(currentGene[l] - oneClassMean));
+                } else {
+                    randomizedGene[l] = currentGene[l];
+                }
+            }
+            
+            float[] reducedRandGene = new float[validNumExps];
+            int count = 0;
+            for (int l = 0; l < groupAssignments.length; l++) {
+                if (groupAssignments[l] == 1) {
+                    reducedRandGene[count] = randomizedGene[l];
+                    count++;
+                }
+            }
+            
+            double randTValue = Math.abs(getOneClassTValue(reducedRandGene));
+            if (randTValue > origOneClassT) {
+                exceedCount++;
+            }
+            
+        }
+        
+        //System.out.println();
+        double prob = (double)exceedCount / (double)numAllPossOneClassPerms;
+        
+        return (float)prob;
+    }
+    
+    boolean[] getOneClassPermutArray(int num) {
+        boolean[] oneClassPermutArray = new boolean[numExps];
+        
+        for (int i = 0; i < oneClassPermutArray.length; i++) {
+            oneClassPermutArray[i] = false;
+        }
+        
+        int validNumExps = getNumValidOneClassExpts();
+        
+        String binaryString = Integer.toBinaryString(num);
+        //System.out.println(binaryString);
+        char[] binArray = binaryString.toCharArray();
+        if (binArray.length < validNumExps) {
+            Vector binVector = new Vector();
+            for (int i = 0; i < (validNumExps - binArray.length); i++) {
+                binVector.add(new Character('0'));
+            }
+            
+            for (int i = 0; i < binArray.length; i++) {
+                binVector.add(new Character(binArray[i]));
+            }
+            binArray = new char[binVector.size()]; 
+            
+            for (int i = 0; i < binArray.length; i++) {
+                binArray[i] = ((Character)(binVector.get(i))).charValue();
+            }
+        } 
+        /*
+        for (int i = 0; i < binArray.length; i++) {
+            System.out.print(binArray[i]);
+        }
+        System.out.println();
+         */
+        int counter = 0;
+        
+        for (int i = 0; i < oneClassPermutArray.length; i++) {
+            if (groupAssignments[i] == 1) {
+                if (binArray[counter] == '1') {
+                    oneClassPermutArray[i] = true;
+                } else {
+                    oneClassPermutArray[i] = false;
+                }
+                counter++;
+            }
+        }
+        /*
+        for (int i = 0; i < oneClassPermutArray.length; i++) {
+            System.out.print(oneClassPermutArray[i] + " ");
+        }
+        System.out.println();
+        */
+        return oneClassPermutArray;
+    }
+    
+    public int getNumValidOneClassExpts() {
+        int validNum = 0;
+        
+        for (int i =0; i < groupAssignments.length; i++) {
+            if (groupAssignments[i] == 1) {
+                validNum++;
+            }
+        }
+        
+        return validNum;
+    }    
+    
+    private float[] getOneClassGeneValues(int gene) {
+        Vector currentGene = new Vector();
+        
+        for (int i = 0; i < numExps; i++) {
+            if (groupAssignments[i] == 1) {
+                currentGene.add(new Float(expMatrix.A[gene][i]));
+            }
+        }
+        
+        float[] currGeneArray = new float[currentGene.size()];
+        
+        for (int i = 0; i < currGeneArray.length; i++) {
+            currGeneArray[i] = ((Float)(currentGene.get(i))).floatValue();
+        }
+        
+        return currGeneArray;
+    }
+    
+    private boolean isSigOneClass(int gene) {
+        boolean isSig = false;
+        Vector currentGene = new Vector();
+        
+        for (int i = 0; i < numExps; i++) {
+            if (groupAssignments[i] == 1) {
+                currentGene.add(new Float(expMatrix.A[gene][i]));
+            }
+        }
+        
+        float[] currGeneArray = new float[currentGene.size()];
+        
+        for (int i = 0; i < currGeneArray.length; i++) {
+            currGeneArray[i] = ((Float)(currentGene.get(i))).floatValue();
+        }
+        
+        double tValue = getOneClassTValue(currGeneArray);
+        
+        if (Double.isNaN(tValue)) {
+            pValuesVector.add(new Float(Float.NaN));
+            return false;
+        }
+        
+        int validNum = 0;
+        for (int i = 0; i < currGeneArray.length; i++) {
+            if (!Float.isNaN(currGeneArray[i])) {
+                validNum++;
+            }
+        }        
+        
+        int df = validNum -1;
+        double prob;
+        TDistribution tDist = new TDistribution(df);
+        double cumulP = tDist.cumulative(Math.abs(tValue));
+        prob = 2*(1 - cumulP); // two-tailed test
+        if (prob > 1) {
+            prob = 1;
+        } 
+        
+        pValuesVector.add(new Float((float)prob));
+        
+        if (significanceMethod == TtestInitDialog.JUST_ALPHA) {
+            if (prob <= alpha) {
+                isSig = true;
+            } else {
+                isSig = false;
+            }
+        } else if (significanceMethod == TtestInitDialog.STD_BONFERRONI) {
+            double thresh = alpha/(double)numGenes;
+            if (prob <= thresh) {
+                isSig = true;
+            } else {
+                isSig = false;
+            }
+            
+        }
+        
+        return isSig;
+    }
+    
+    private double getOneClassTValue(float[] geneArray) {
+        double tValue;
+        
+        float mean = getMean(geneArray);
+        double stdDev = Math.sqrt((double)(getVar(geneArray)));
+        
+        int validNum = 0;
+        for (int i = 0; i < geneArray.length; i++) {
+            if (!Float.isNaN(geneArray[i])) {
+                validNum++;
+            }
+        }
+        
+        double stdErr = stdDev / (Math.sqrt(validNum));
+        
+        tValue = ((double)(mean - oneClassMean))/stdErr;
+        
+     
+        
+        return tValue;
+    }
+    
+    private int getOneClassDFValue(float[] geneArray) {
+        int validNum = 0;
+        for (int i = 0; i < geneArray.length; i++) {
+            if (!Float.isNaN(geneArray[i])) {
+                validNum++;
+            }
+        }        
+        
+        int df = validNum -1;  
+        
+        return df;
+    }
+    
+    private float getProb(float tValue, int df) {
+        TDistribution tDist = new TDistribution(df);
+        double cumulP = tDist.cumulative(Math.abs((double)tValue));
+        double prob = 2*(1 - cumulP); // two-tailed test
+        if (prob > 1) {
+            prob = 1;
+        }  
+        
+        return (float)prob;
     }
     
     private Vector sortGenesBySignificance() throws AlgorithmException {
@@ -1422,7 +2036,7 @@ public class Ttest extends AbstractAlgorithm {
 		sig = false;
                 currentP = Float.NaN;
 	    } else {
- 		TDistribution tDist = new TDistribution(df);
+		TDistribution tDist = new TDistribution(df);
                 double cumulP = tDist.cumulative(tValue);
                 prob = 2*(1 - cumulP); // two-tailed test
                 if (prob > 1) {
