@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: KMCSuppGUI.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-04-08 19:28:27 $
+ * $Revision: 1.3 $
+ * $Date: 2004-04-29 18:48:42 $
  * $Author: nbhagaba $
  * $State: Exp $
  */
@@ -33,6 +33,7 @@ import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
 
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
@@ -251,7 +252,8 @@ public class KMCSuppGUI implements IClusterGUI {
         if(clusterGenes)
             tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.data);
         else
-            return; // placeholder for ExptClusterTableViewer
+            tabViewer = new ExperimentClusterTableViewer(this.experiment, this.clusters, this.data);
+            //return; // placeholder for ExptClusterTableViewer
             //expViewer = new KMCSuppExperimentClusterViewer(this.experiment, this.clusters);
         
         if (!unassignedExists) {
