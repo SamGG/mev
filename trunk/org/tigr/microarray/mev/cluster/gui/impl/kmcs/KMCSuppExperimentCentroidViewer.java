@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: KMCSuppExperimentCentroidViewer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-03 15:54:32 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -42,6 +42,16 @@ public class KMCSuppExperimentCentroidViewer extends ExperimentClusterCentroidVi
 	this.popup = createJPopupMenu(listener);
 	getContentComponent().addMouseListener(listener);
     }
+    
+    
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { }    
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {        
+        Listener listener = new Listener();
+	this.popup = createJPopupMenu(listener);
+	getContentComponent().addMouseListener(listener);
+    }
+   
     
     /**
      * Creates a popup menu.

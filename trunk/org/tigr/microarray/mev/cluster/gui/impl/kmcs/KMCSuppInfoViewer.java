@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: KMCSuppInfoViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 18:38:09 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-03 15:54:32 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -23,7 +23,7 @@ import javax.swing.JTextArea;
 
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
-public class KMCSuppInfoViewer extends ViewerAdapter {
+public class KMCSuppInfoViewer extends ViewerAdapter implements java.io.Serializable {
     
     private JComponent header;
     private JTextArea  content;
