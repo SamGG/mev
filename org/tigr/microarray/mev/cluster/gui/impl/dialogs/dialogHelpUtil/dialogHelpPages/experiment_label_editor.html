@@ -1,0 +1,45 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>Experiment Sorter / Experiment Label Editor</h1><h2>Editor Information</h2>
+            <hr size = 10>
+
+<h2> Overview </h2>
+The primary function of the Editor is to permit the modification of labels (attributes) associated with
+the loaded experiments.  Note that the first row in the table contains the default
+experiment name and that label can not be edited nor can it be deleted.  The second major function
+is to enable the order of loaded experiments to be rearranged.  Two menus are available 
+within the editor frame for performing editor actions.  The two menus contain the same menu options.
+One is in the main menu bar and the other is available using a right mouse click with the mouse cursor
+over a table cell.
+<br><br>
+<h2>Experiment Reordering</h2>
+The order of the columns in the table can be altered by clicking on the column header and dragging the
+column to the desired location.  This action alone does not force the loaded data to be reordered.
+The table order can be imposed on the loaded data if the check box menu item is selected to
+<i>Enable Experiment Reordering</i>.  This ordering is imposed as soon as the dialog is dismissed.
+<br><br>
+<b>Note:  If analyses have been run on the loaded data, the reordering option is disabled. This is done
+as a precaution against misrepresentation of prior results that may have relied on the original ordering.
+Typically the reordering of experiments should be done just after data loading to place associated
+experiments into an order that is reasonable based on study design.</b>
+<br>
+<h2>Experiment Label Editing</h2>
+<h3>Adding Experiment Labels</h3>
+The <i>Add New Experiment Label</i> menu item is used to create a new row in the table.  Note that the
+first cell in the new row is light yellow and is used to indicate a <i>Label Key</i>.  This
+key will be placed into the 'Experiment Label' menu in the 'Display' menu so that when selected
+this label type will be displayed for the loaded experiments.  Once a Label Key is entered a double
+click on the remaining cells will allow editing to add appropriate labels for each experiment.
+Reopening the editor will allow you to alter any label or label key visible in the table except for
+the default primary label and key (shown in gray). Any experiments for which labels would not apply
+can be left blank and will appear this way in displays where experiment labels are present.
+
+<h3>Merging Experiment Labels</h3>
+Occasionally is is convenient to merge several attributes or labels to produce a more informative
+label for each experiment.  To merge labels start by selecting two or more rows using control click
+and then selecting the <i>Merge Selected Rows</i> menu item.  A small list will be presented
+that can be used to order the selected labels before actual merging.  Once this is accomplished
+a new row is inserted in the table to display the merged labels and the merged label key.
+       </basefont>
+    </body>
+</html>
