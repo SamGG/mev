@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: AcknowlegementDialog.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-04-14 16:56:35 $
+ * $Revision: 1.5 $
+ * $Date: 2004-05-03 14:04:41 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -124,7 +124,7 @@ public class AcknowlegementDialog extends JDialog implements java.awt.print.Prin
         "<td>The Institute for Genomic Research</td>"+
         "<td>Normalization algorithm development, TM4 website maintenance</td></tr>"; 
         
-        html += "<tr valign=top><td>Jerry Li, Vasily Sharov, Joe White, Mathangi Thiagarajan, Tracey Currier</td>"+
+        html += "<tr valign=top><td>Jerry Li, Vasily Sharov, Joe White, Mathangi Thiagarajan, Tracey Currier, Eleanor Howe</td>"+
         "<td>The Institute for Genomic Research</td>"+
         "<td>Additional development, software testing, documentation, support</td></tr>"; 
         
@@ -142,7 +142,7 @@ public class AcknowlegementDialog extends JDialog implements java.awt.print.Prin
 
         html += "<tr valign=top><td>Jim Johnson, Ernest Retzel</td>"+
         "<td>Center for Computational Genomics and Bioinformatics, University of Minnesota</td>"+
-        "<td>Java WebStart configuration</td></tr>"; 
+        "<td>Java WebStart configuration, scripts and consultation to support using ANT technologies for MeV development</td></tr>"; 
         
         html += "<tr valign=top><td>Glynn Dennis, Douglas Hosack, Richard Lempicki, Wei Gao</td>"+
         "<td>National Institute of Allergy and Infectious Disease, NIH, Laboratory of Immunopathogenesis and Bioinformatics.</td>"+
@@ -150,7 +150,7 @@ public class AcknowlegementDialog extends JDialog implements java.awt.print.Prin
      
         html += "<tr valign=top><td>Eric Albert</td>"+
         "<td>Independent Development</td>"+
-        "<td>Implementation of BrowswerLauncher.java, utility to launch default web browser from within MeV</td></tr>";
+        "<td>Implementation of BrowserLauncher.java, utility to launch default web browser from within MeV</td></tr>";
     
         html += "<tr valign=top><td>Sally Gaddis</td>"+
         "<td>University of Texas, MD Anderson Cancer Center</td>"+
