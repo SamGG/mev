@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
 * $RCSfile: GDMInitDialog.java,v $
-* $Revision: 1.1 $
-* $Date: 2004-02-06 22:53:43 $
+* $Revision: 1.2 $
+* $Date: 2004-05-10 17:00:01 $
 * $Author: braisted $
 * $State: Exp $
 */
@@ -76,7 +76,7 @@ public class GDMInitDialog extends AlgorithmDialog {
         expRadio.setSelected(!useGenes);
 
         gbc.gridx = 0; gbc.gridy = 10;
-        displayLabel = new JLabel("  Display Every    ");
+        displayLabel = new JLabel("  Display Interval  ");
 	parameters.add(displayLabel, gbc);	
 
 	gbc.gridx = 1; gbc.gridy = 10;
@@ -130,7 +130,7 @@ public class GDMInitDialog extends AlgorithmDialog {
 
         
         gbc.gridx = 0; gbc.gridy = 10;
-        displayLabel = new JLabel("  Display Every    ");
+        displayLabel = new JLabel("  Display Interval  ");
 	parameters.add( displayLabel, gbc);	
 
 	gbc.gridx = 1; gbc.gridy = 10;
