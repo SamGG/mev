@@ -12,9 +12,11 @@ the cluster and a statistic reporting the probability that a particular theme is
 the cluster relative to it's representation in the entire data set.  The resulting table will
 initially be sorted by this statistic.
 
-<h3>Slide Annotation Survey</h3>
-The survey mode simply produces a list of biological themes that are represented in the slide.
-The initial ordering of the output table is based on the prevalence of a theme in the data set (hit count).
+<h3>Annotation Survey</h3>
+The survey mode simply produces a list of biological themes that are represented in the data currently loaded
+in the viewer from which Ease is launched.  Note that this could be a subset of the total slide data.
+If you want to survey all annotation on the slide you have to use a viewer with all of the slide's data
+loaded.  The initial ordering of the output table is based on the prevalence of a theme in the data set (hit count).
 This mode can be used to cluster genes based on biological themes.  The clusters can then be
 stored and marked (colored) for tracking during cluster analysis.
 <br>
@@ -23,11 +25,23 @@ stored and marked (colored) for tracking during cluster analysis.
 Several parameter input pages are available:
 <hr>
 <br>
-<h2>Cluster Browser Page</h2>
-This panel displays gene clusters currently stored in MeV's cluster repository.  If no clusters have
-been saved then a blank browser page will be displayed and the Cluster Analysis mode option will be
+<h2>Population and Cluster Selection</h2>
+This section permits selection of a cluster for analysis and defines the population to which the
+cluster should be compared.  The population selection panel, on top, allows the user to specify whether the
+population set of gene indices should be loaded from a file or if the population set should be
+taken as all indices loaded in the current Multiple Experiment Viewer.  Note that if the current
+viewer does not contain all population indices it is important to use the default option of a
+population file.<br><br>
+A population file is a list of indices representing the indices from which the cluster
+was segregated by statistical or other means.  The file format consists of a column of indices with
+one index per line.  The population often represents a set of indices representing each element 
+on the array, however, there are circumstances where one might wish to disregard particular 
+spots such as internal controls.
+<br><br>
+The cluster panel, below the population panel, displays gene clusters currently stored in MeV's cluster repository.  
+If no clusters have been saved then a blank browser page or empty table will be displayed and the Cluster Analysis mode option will be
 disabled.  Selecting a row in the cluster table will display the cluster in the expression graph area
-of the browser.  EASE cluster analysis will operate on the selected cluster.
+of the browser.  EASE cluster analysis will operate on the selected cluster..
 <br>
 <br>
 <h2>Annotation Parameters Page</h2>
