@@ -47,6 +47,7 @@ import org.tigr.microarray.mev.cluster.NodeValueList;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidsViewer;
@@ -362,7 +363,7 @@ public class TFAGUI implements IClusterGUI {
         addHierarchicalTrees(root, result_cluster, info);
         addCentroidViews(root);
         addClusterInfo(root);
-        //addTableViews(root);
+        addTableViews(root);
         addGeneralInfo(root, info);
     }    
     
@@ -377,6 +378,16 @@ public class TFAGUI implements IClusterGUI {
 	}
 	root.add(node);
     }  
+    
+    private void addTableViews(DefaultMutableTreeNode root) {
+	DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table views");   
+        IViewer tableViewer = new ClusterTableViewer(this.experiment, this.clusters, data, auxTitles, auxData);
+        //IViewer tableViewer = new ClusterTableViewer(this.experiment, this.clusters, data);
+	for (int i=0; i<this.clusters.length; i++) {
+            node.add(new DefaultMutableTreeNode(new LeafInfo(clusterLabels[i], tableViewer, new Integer(i))));	    
+	}  
+        root.add(node);
+    }
     
     /**
      * Adds nodes to display hierarchical trees.
