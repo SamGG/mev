@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SAM.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-05-03 15:10:54 $
- * $Author: nbhagaba $
+ * $Revision: 1.7 $
+ * $Date: 2004-05-20 21:22:43 $
+ * $Author: braisted $
  * $State: Exp $
  */
 
@@ -1002,8 +1002,30 @@ public class SAM extends AbstractAlgorithm {
         
         //double delta = (double)(0.25*maxDelta); 
         
+        
+        
+        
+        
+        //SCRIPTING SUPPORT (JCB)
+        
+        //check if delta value is deliverd
+        float scriptDelta = data.getParams().getFloat("delta", -1f);        
+        //if we are scripting this can be T or F, else it's T
+        boolean graphInteraction = data.getParams().getBoolean("permit-graph-interaction", true);
+        
+        if(scriptDelta != -1)
+            delta = (double)scriptDelta;        
+                   
         SAMGraph sg = new SAMGraph(SAMGUI.SAMFrame, studyDesign, dBarValues, sortedDArray,/* dArray,*/ delta, deltaGrid, numSigGenesByDelta, medNumFalselyCalledGenesByDelta, ninetiethPercentileFalselyCalledGenesByDelta, FDRmedian, FDR90thPercentile, true);
-        sg.setVisible(true);
+        
+        if(graphInteraction) { //if true set the sg visible and get delta from there
+             sg.setVisible(true);        
+            delta = sg.getDelta();
+        }         
+        //END SCRIPTING SUPPORT CHANGES (JCB)
+        
+        
+        
         
         delta = sg.getDelta();
         SAMState.delta = delta;
