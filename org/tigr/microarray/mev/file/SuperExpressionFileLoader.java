@@ -6,8 +6,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SuperExpressionFileLoader.java,v $
- * $Revision: 1.7 $
- * $Date: 2004-07-07 22:28:27 $
+ * $Revision: 1.8 $
+ * $Date: 2004-07-08 13:10:35 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -332,7 +332,7 @@ public class SuperExpressionFileLoader {
             }
             
             
-            BufferedWriter bfr = new BufferedWriter(new FileWriter(System.getProperty("user.dir")+sep+"tmev.cfg"));
+            BufferedWriter bfr = new BufferedWriter(new FileWriter(System.getProperty("user.dir")+sep+"config"+sep+"tmev.cfg"));
             bfr.write(content);
             bfr.flush();
             bfr.close();
