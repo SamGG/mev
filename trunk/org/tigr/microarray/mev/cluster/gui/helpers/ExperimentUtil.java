@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: ExperimentUtil.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-07-08 20:12:48 $
- * $Author: nbhagaba $
+ * $Revision: 1.5 $
+ * $Date: 2004-07-26 21:30:43 $
+ * $Author: braisted $
  * $State: Exp $
  */
 
@@ -27,6 +27,8 @@ import org.tigr.util.StringSplitter;
 import org.tigr.util.BrowserLauncher;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
+
+import org.tigr.microarray.mev.TMEV;
 
 /**
  * This class contains set of static methods to store
@@ -601,7 +603,7 @@ public class ExperimentUtil {
     public static void linkToURL(JFrame frame, Experiment experiment, IData data, int row, String annotationKey, int[] lastSelectedIndices) {
   //NOTE: In this method, the argument "row" is what's obtained AFTER applying getGeneIndexMappedToSelectedRows(); i.e., use as is; no need to re-map for cutoffs      
         try {
-            File file = new File(System.getProperty("user.dir")+"\\config\\annotation_URLs.txt");            
+            File file = TMEV.getConfigurationFile("annotation_URLs.txt");
             if (annotationKey.equalsIgnoreCase("Stored Color")) {
                 JOptionPane.showMessageDialog(new JFrame(), "Cannot link stored color to an URL. Pick a different field to link from", "Error", JOptionPane.ERROR_MESSAGE);
                 
