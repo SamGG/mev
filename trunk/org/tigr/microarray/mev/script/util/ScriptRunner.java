@@ -167,6 +167,11 @@ public class ScriptRunner {
                 
                 String className = (String)(this.classHash.get(algName));
                 
+                if(algName.equals("EASE")) {
+                    System.out.println("EASE run");
+                    System.out.println("Experiment dim = "+experiment.getNumberOfGenes()+" "+experiment.getNumberOfSamples());
+                }
+                
                 try {
                     Class clazz = Class.forName(className);
                     IScriptGUI gui = (IScriptGUI)clazz.newInstance();
@@ -461,10 +466,10 @@ public class ScriptRunner {
                             if(algNode.getAlgorithmType().equals(ScriptConstants.ALGORITHM_TYPE_CLUSTER_EXPERIMENTS))
                                 setExperiment(algSets[j], experiment, clusters[i], false);
                             else
-                                setExperiment(algSets[j], experiment, clusters[i], true );
+                                setExperiment(algSets[j], experiment, clusters[i], true);
                         }
                     }
-                    
+
                     //if it IS multicluster output then the next algorithm must be for
                     //cluster selection.  This algorithm will require clusters[][] for selection process
                     else {
