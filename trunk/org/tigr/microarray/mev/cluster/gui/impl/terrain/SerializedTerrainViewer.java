@@ -137,4 +137,16 @@ public class SerializedTerrainViewer extends JPanel implements IViewer, java.io.
         trn.onSelected(framework);
     }
     
+    /** Returns the viewer's clusters or null
+     */
+    public int[][] getClusters() {
+        return null;
+    }    
+    
+    /**  Returns the viewer's experiment or null
+     */
+    public Experiment getExperiment() {
+        return null;
+    }
+    
 }

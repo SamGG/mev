@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLNodeHeightGraph.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-05 20:25:10 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-13 19:15:04 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -40,6 +40,7 @@ import org.tigr.util.awt.ActionInfoEvent;
 import org.tigr.util.awt.BoundariesDialog;
 import org.tigr.util.awt.ActionInfoListener;
 
+import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
@@ -243,4 +244,15 @@ public class HCLNodeHeightGraph extends JPanel implements IViewer {
         return viewer;
     }
     
+    /** Returns the viewer's clusters or null
+     */
+    public int[][] getClusters() {
+        return null;
+    }    
+    
+    /**  Returns the viewer's experiment or null
+     */
+    public Experiment getExperiment() {
+        return null;
+    }        
 }

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: TTestVolcanoPlotViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-02-05 22:10:23 $
+ * $Revision: 1.6 $
+ * $Date: 2004-02-13 19:15:07 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -1027,6 +1027,13 @@ public class TTestVolcanoPlotViewer extends JPanel implements IViewer, java.io.S
     public JComponent getCornerComponent(int cornerIndex) {
         return null;
     }
+
+    /** Returns the viewer's clusters or null
+     */
+    public int[][] getClusters() {
+        return null;
+    }    
+ 
     
     class SelectionSliderPanel extends ActionInfoDialog {
         JSlider pValueSlider, meanSlider;

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: GDMExpViewer.java,v $
- * $Revision: 1.1 $
- * $Date: 2004-02-06 22:53:42 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-13 19:15:04 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -107,7 +107,7 @@ public class GDMExpViewer extends JPanel implements IViewer {
     private static final int MAX_ROW_WIDTH = MAX_COL_HEIGHT;
     private static final int MAX_ROW_HEIGHT = MAX_COL_WIDTH;
     private static final int NOT_UPDATE_ANNOTATION_SIZE = -1;
-
+    
     private int num_experiments;
     private int maxExpNameLength;
     private int probes;
@@ -184,7 +184,7 @@ public class GDMExpViewer extends JPanel implements IViewer {
     private static final String SET_CLUSTER_BORDER_CMD = "set-cluster-border-cmd";
     private static final String ANNOTATION_WIDTH_ACTION = "annotation-width-action";
     private static final String ANNOTATION_WIDTH_CMD = "annotation-width-cmd";
-    private static final String TOGGLE_PROXIMITY_SORT_CMD = "Toggle-proximity-cmd"; 
+    private static final String TOGGLE_PROXIMITY_SORT_CMD = "Toggle-proximity-cmd";
     
     public static final String SORT_BY_EXP_NAME_CMD = "sort-by-experiment-cmd";
     public static final String SORT_BY_ORIGINAL_ORDER_CMD = "sort-by-original-order-cmd";
@@ -230,12 +230,12 @@ public class GDMExpViewer extends JPanel implements IViewer {
         
         this.borderColor = Color.black;
         this.clusterBorderColor = Color.white;
-                        
+        
         this.insets = new Insets(1, 1, 1, 1);
         
         xWidth = getXSize();
         xHeight = getYSize();
-
+        
         if(this.displayEvery==1) {
             setIndices(createIndices());
         } else if (this.displayEvery > 1) {
@@ -246,10 +246,10 @@ public class GDMExpViewer extends JPanel implements IViewer {
         addMouseListener(listener);
         addMouseMotionListener(listener);
         addKeyListener(listener);
-                
+        
         this.expColumnHeaderSP = createHeader(TRACE_SPACE, true, xWidth, MAX_COL_HEIGHT, elementSize);
         this.expRowHeaderSP = createHeader(TRACE_SPACE, false, MAX_ROW_WIDTH, xHeight, elementSize);
-       
+        
         this.expColumnHeaderSP.setMatrixListener(listener);
         this.expRowHeaderSP.setMatrixListener(listener);
         
@@ -461,7 +461,7 @@ public class GDMExpViewer extends JPanel implements IViewer {
         return (left-insets.left)/(elementSize.width+getSpacing());
     }
     
-
+    
     /**
      * Returns index of right column.
      */
@@ -597,12 +597,12 @@ public class GDMExpViewer extends JPanel implements IViewer {
         
         bottom = getBottomIndex(bounds.y+bounds.height, featuresCount);
         right = getRightIndex(bounds.x+bounds.width, featuresCount);
-                
+        
         for (int column = left; column < right; column++) {
             drawColumn(g, column, top, bottom);
         }
         
-        drawPerimeter(g);        
+        drawPerimeter(g);
     }
     
     private void drawPerimeter(Graphics2D g){
@@ -674,7 +674,7 @@ public class GDMExpViewer extends JPanel implements IViewer {
         
         return new Color(rgb);
     }
-
+    
     
     private void setFontSize(int width) {
         if (width > 12)
@@ -1169,7 +1169,7 @@ public class GDMExpViewer extends JPanel implements IViewer {
     private void onColorScaleChanged() {
         BufferedImage grad = getPosColorImage();
         Color lowerColor = new Color(grad.getRGB(0,0));
-        Color upperColor = new Color(grad.getRGB(grad.getWidth()-1, 0));        
+        Color upperColor = new Color(grad.getRGB(grad.getWidth()-1, 0));
         GDMColorScaleDialog dialog = new GDMColorScaleDialog((Frame)mainframe, minValue, maxValue, expDistMatrix, num_experiments, lowerColor, upperColor);
         dialog.setGDMScaleListener(new ScaleListener());
         int res = dialog.showModal();
@@ -1182,7 +1182,7 @@ public class GDMExpViewer extends JPanel implements IViewer {
         validate();
         expColumnHeaderSP.repaint();
         expRowHeaderSP.repaint();
-        repaint();            
+        repaint();
     }
     
     /**
@@ -1210,8 +1210,8 @@ public class GDMExpViewer extends JPanel implements IViewer {
     
     private void onSortByProximity(int baseIndex) {
         QSort qsort = new QSort(this.expDistMatrix.A[baseIndex]);
-        int [] sortedIndices = qsort.getOrigIndx();  
-
+        int [] sortedIndices = qsort.getOrigIndx();
+        
         //to handle random placement of base if sorting on NaN or have a tie
         if(sortedIndices[0] != baseIndex){
             boolean notFound = true;
@@ -1227,12 +1227,12 @@ public class GDMExpViewer extends JPanel implements IViewer {
         setIndices(sortedIndices);
         
         expColumnHeaderSP.setIndices(sortedIndices);
-        expRowHeaderSP.setIndices(sortedIndices);  
+        expRowHeaderSP.setIndices(sortedIndices);
         
         onDataChanged(this.expData);
         validate();
         expColumnHeaderSP.repaint();
-        expRowHeaderSP.repaint();  
+        expRowHeaderSP.repaint();
     }
     
     private void onSortByExperimentName() {
@@ -1249,19 +1249,19 @@ public class GDMExpViewer extends JPanel implements IViewer {
         
         for(int i = 0; i < this.indices.length; i++){
             for(int j = 0; j < this.indices.length; j++){
-              if(expNames[i].equals(sortedExpNames[j]))
-                  sortedIndices[i] = indices[j];
+                if(expNames[i].equals(sortedExpNames[j]))
+                    sortedIndices[i] = indices[j];
             }
         }
         
-
+        
         expColumnHeaderSP.setIndices(sortedIndices);
-        expRowHeaderSP.setIndices(sortedIndices);  
+        expRowHeaderSP.setIndices(sortedIndices);
         
         onDataChanged(this.expData);
         validate();
         expColumnHeaderSP.repaint();
-        expRowHeaderSP.repaint();          
+        expRowHeaderSP.repaint();
     }
     
     private void onRestoreOriginalOrder() {
@@ -1269,12 +1269,12 @@ public class GDMExpViewer extends JPanel implements IViewer {
         this.createIndices(this.displayEvery);
         
         expColumnHeaderSP.setIndices(indices);
-        expRowHeaderSP.setIndices(indices);  
+        expRowHeaderSP.setIndices(indices);
         
         onDataChanged(this.expData);
         validate();
         expColumnHeaderSP.repaint();
-        expRowHeaderSP.repaint(); 
+        expRowHeaderSP.repaint();
     }
     
     private void setLabelIndex(int style) {
@@ -1293,20 +1293,20 @@ public class GDMExpViewer extends JPanel implements IViewer {
     }
     
     
-    private void onSaveNeighbors(){        
+    private void onSaveNeighbors(){
         GDMMemberSelectionDialog dialog = new GDMMemberSelectionDialog(new JFrame(), this.num_experiments);
         if(dialog.showModal() == JOptionPane.OK_OPTION){
             int k = dialog.getK();
             if(k <= 0)
                 return;
             if(k > this.num_experiments)
-                k = this.num_experiments;            
+                k = this.num_experiments;
             int [] rows = getRows(k);
             String [][] auxData = getAuxilaryData(k);
             String [] auxHeaders = new String[3];
             auxHeaders[0] = "Scaled Dist.";
             auxHeaders[1] = "Actual Dist.";
-            auxHeaders[2] = "Value Pairs";            
+            auxHeaders[2] = "Value Pairs";
             try{
                 ExperimentUtil.saveExperimentClusterWithAux(framework.getFrame(), this.experiment, this.expData, rows, auxHeaders, auxData);
             } catch (Exception e){
@@ -1325,27 +1325,34 @@ public class GDMExpViewer extends JPanel implements IViewer {
     }
     
     
-   private String [][] getAuxilaryData(int k){
+    private String [][] getAuxilaryData(int k){
         String [][] data = new String[k][3];
         FloatMatrix matrix = this.experiment.getMatrix().transpose();
-        for(int i = 0; i < k; i++){            
+        for(int i = 0; i < k; i++){
             data[i][0] = Float.toString(this.expDistMatrix.get(indices[0], indices[i]));
             data[i][1] = Float.toString(this.rawMatrix.get(indices[0], indices[i]));
             data[i][2] = getValuePairCount(matrix, indices[0], indices[i]);
-        }  
+        }
         return data;
     }
-   
-   private String getValuePairCount(FloatMatrix matrix, int row, int col){
+    
+    private String getValuePairCount(FloatMatrix matrix, int row, int col){
         int cols = matrix.getColumnDimension();
         int count = 0;
         for(int i = 0; i < cols; i++){
             if(!Float.isNaN(matrix.get(row, i)) && !Float.isNaN(matrix.get(col, i)))
                 count++;
         }
-        return Integer.toString(count);        
+        return Integer.toString(count);
     }
-        
+    
+    public int[][] getClusters() {
+        return null;
+    }
+    
+    public Experiment getExperiment() {
+        return null;
+    }
     
     /**
      * The listener to listen to mouse, keyboard and window events.
@@ -1410,7 +1417,7 @@ public class GDMExpViewer extends JPanel implements IViewer {
                 
                 if (!isLegalPosition(row, column)) {
                     return;
-                }                
+                }
                 displayGDMSpotInfo(indices[column], indices[row]);
             }
             else {

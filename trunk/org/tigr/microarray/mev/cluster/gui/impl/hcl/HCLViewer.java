@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-02-09 16:54:13 $
+ * $Revision: 1.7 $
+ * $Date: 2004-02-13 19:15:05 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -1348,6 +1348,13 @@ public class HCLViewer extends JPanel implements IViewer {
         return null;
     }
     
+    public int[][] getClusters() {
+        return null;
+    }    
+    
+    public Experiment getExperiment() {
+        return null;
+    }
     
   /**  Prototyping code for saving state as XML
    *

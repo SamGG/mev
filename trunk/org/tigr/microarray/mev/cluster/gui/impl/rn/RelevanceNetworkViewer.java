@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: RelevanceNetworkViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-05 21:13:02 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-13 19:15:05 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -1374,6 +1374,14 @@ public class RelevanceNetworkViewer extends JPanel implements IViewer, Scrollabl
         this.tipWindow = createTipWindow();
         getContentComponent().addMouseListener(listener);
         getContentComponent().addMouseMotionListener(listener);
+    }
+    
+   public int[][] getClusters() {
+        return null;
+    }
+    
+    public Experiment getExperiment() {
+        return null;
     }
     
     /**

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: MultipleArrayCanvas.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-05 22:33:44 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-13 19:15:01 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -34,6 +34,8 @@ import javax.swing.JPanel;
 import java.awt.AlphaComposite;
 
 import org.tigr.util.FloatMatrix;
+
+import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
@@ -776,6 +778,14 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, java.io.Seri
      * posibly null
      */
     public JComponent getCornerComponent(int cornerIndex) {
+        return null;
+    }
+    
+    public int[][] getClusters() {
+        return null;
+    }
+    
+    public Experiment getExperiment() {
         return null;
     }
     

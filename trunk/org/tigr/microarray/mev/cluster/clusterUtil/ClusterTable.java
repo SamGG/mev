@@ -4,16 +4,16 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterTable.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-05 22:40:08 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-13 19:15:02 $
  * $Author: braisted $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.clusterUtil;
 
+import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
-
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
@@ -1148,6 +1148,14 @@ public class ClusterTable extends JPanel implements IViewer {
      * posibly null
      */
     public JComponent getCornerComponent(int cornerIndex) {
+        return null;
+    }
+    
+    public int[][] getClusters() {
+        return null;
+    }
+    
+    public Experiment getExperiment() {
         return null;
     }
     

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.8 $
- * $Date: 2004-02-10 00:14:26 $
+ * $Revision: 1.9 $
+ * $Date: 2004-02-13 19:15:02 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -400,7 +400,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                     String version = (String)ois.readObject();
 
                     long dateLong = ois.readLong();
-                    //Load IData object
+                    //Load IData object and set annotation field names
                     loadIData(ois);    
               
                     //set the current result count
@@ -448,7 +448,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         if(ois.readBoolean()){
             this.geneClusterRepository = (ClusterRepository)ois.readObject();
             this.data.setGeneClusterRepository(this.geneClusterRepository);
-            
+            this.geneClusterRepository.setFramework(this.framework);
+                        
             this.geneClusterManager = new ClusterTable(this.geneClusterRepository, framework);
             DefaultMutableTreeNode genesNode = new DefaultMutableTreeNode(new LeafInfo("Gene Clusters", this.geneClusterManager), false);
             addNode(this.clusterNode, genesNode);
@@ -457,6 +458,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         if(ois.readBoolean()){
             this.experimentClusterRepository = (ClusterRepository)ois.readObject();
             this.data.setExperimentClusterRepository(this.experimentClusterRepository);
+            this.experimentClusterRepository.setFramework(this.framework);
             
             this.experimentClusterManager = new ClusterTable(this.experimentClusterRepository, framework);
             DefaultMutableTreeNode experimentNode = new DefaultMutableTreeNode(new LeafInfo("Experiment Clusters", this.experimentClusterManager), false);
@@ -485,12 +487,18 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             tree.removeNode(historyNode);
             historyNode = node;
             tree.insertNode(historyNode, tree.getRoot(), tree.getRoot().getChildCount());
+            historyLog = (HistoryViewer)(((LeafInfo)(((DefaultMutableTreeNode)historyNode.getChildAt(0)).getUserObject())).getViewer());            
         }
     }
     
     
     private void loadIData(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        //loads IData and sets TMEV field names fields
         this.data = (MultipleArrayData)(ois.readObject());
+        
+        //populate the display menu
+        this.menubar.replaceLabelMenuItems(TMEV.getFieldNames());
+        this.menubar.replaceSortMenuItems(TMEV.getFieldNames());
         
         setMaxCY3AndCY5();
         systemEnable(TMEV.DATA_AVAILABLE);
@@ -867,7 +875,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             int result = dialog.showModal();
             boolean permitSave = dialog.askAgain();
             if(result == JOptionPane.YES_OPTION){
-                saveAnalysis();
+                saveAnalysisAs();
             }
             if(TMEV.permitSavePrompt != permitSave) {
                 TMEV.setPermitPrompt(permitSave);
@@ -2183,7 +2191,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     }
     
     /**
-     *
+     * Returns specfied the cluster repository, possibly null
      */
     protected ClusterRepository getClusterRepository(int clusterType){
         if(clusterType == Cluster.GENE_CLUSTER)
@@ -2191,6 +2199,15 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         else
             return this.experimentClusterRepository;
     }
+    
+    /**
+     *  Returns the <CODE>ResultTree</CODE> object     
+     */
+    protected ResultTree getResultTree() {
+        return this.tree;
+    }
+    
+    
     
     /**
      * The listener to listen to mouse, action, tree, keyboard and window events.
@@ -2573,6 +2590,12 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
          */
         public void addHistory(String historyEvent) {
             MultipleArrayViewer.this.addHistory(historyEvent);
+        }
+        
+        /** Returns the ResultTree object
+         */
+        public ResultTree getResultTree() {
+            return MultipleArrayViewer.this.getResultTree();
         }
         
     }

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: IViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 17:11:58 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-13 19:15:03 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -82,4 +82,15 @@ public interface IViewer {
      * Invoked by the framework to save or to print viewer image.
      */
     public BufferedImage getImage();
+    
+    /**
+     * Returns the viewer's clusters or null
+     */
+    public int[][] getClusters();
+    
+    
+    /**
+     *  Returns the viewer's experiment or null
+     */
+    public Experiment getExperiment();
 }

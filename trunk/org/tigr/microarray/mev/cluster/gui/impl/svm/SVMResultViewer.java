@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMResultViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-05 22:11:50 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-13 19:15:07 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -169,6 +169,18 @@ abstract class SVMResultViewer extends JPanel implements IViewer, java.io.Serial
     public JComponent getCornerComponent(int cornerIndex) {
         return null;
     }
+
+    /** Returns the viewer's clusters or null
+     */
+    public int[][] getClusters() {
+        return null;
+    }    
+    
+    /**  Returns the viewer's experiment or null
+     */
+    public Experiment getExperiment() {
+        return null;
+    }    
     
     // GUI Listener class helpers
     class MyListener extends MouseInputAdapter {

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: TerrainViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-05 22:14:39 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-13 19:15:07 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -1021,6 +1021,18 @@ public class TerrainViewer extends JPanel implements IViewer, java.io.Serializab
         return null;
     }
     
+    /** Returns the viewer's clusters or null
+     */
+    public int[][] getClusters() {
+        return null;
+    }    
+    
+    /**  Returns the viewer's experiment or null
+     */
+    public Experiment getExperiment() {
+        return null;
+    }    
+
     /**
      * The listener to listen to menu, mouse and keyboard events.
      */

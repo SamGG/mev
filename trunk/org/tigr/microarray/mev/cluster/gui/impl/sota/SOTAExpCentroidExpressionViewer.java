@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOTAExpCentroidExpressionViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-05 20:27:16 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-13 19:15:06 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -372,7 +372,7 @@ public class SOTAExpCentroidExpressionViewer extends JPanel implements IViewer, 
     /**
      * Returns wrapped experiment.
      */
-    protected Experiment getExperiment() {
+    public Experiment getExperiment() {
         return experiment;
     }
     

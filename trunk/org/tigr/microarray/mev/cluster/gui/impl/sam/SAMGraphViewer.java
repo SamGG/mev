@@ -23,6 +23,7 @@ import org.tigr.graph.*;
 import org.tigr.util.*;
 import org.tigr.util.awt.*;
 
+import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
@@ -616,6 +617,14 @@ public class SAMGraphViewer extends JPanel implements IViewer, java.io.Serializa
     /** Returns a component to be inserted into the scroll pane row header
      */
     public JComponent getRowHeaderComponent() {
+        return null;
+    }
+        
+    public int[][] getClusters() {
+        return null;
+    }
+    
+    public Experiment getExperiment() {
         return null;
     }
     

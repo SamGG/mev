@@ -84,10 +84,11 @@ in terms of original statistic value.  In this case ties in rank are handled as 
 <br>
 v' = 1-(1-v)<sup>k</sup>
 
-<h3>Permutation Analysis</h3>
-The permutation option performs a number of bootstrapping iterations where random
-gene lists are generated and run through the analysis.  The results are used to apply a correction
-factor to the reported statistic.
+<h3>Resampling Probability Analysis</h3>
+The resampling option performs a number of analysis iterations in which random
+gene lists of the original cluster size are selected from the population without replacement.
+The end result reported for a particular term is the probability of obtaining the determined 
+significance level by chance.
 
 <h2>Trim Parameters</h2>
 The trim parameters can be applied to filter analysis results based on the number of hits

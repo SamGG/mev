@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SVMDiscriminantExperimentViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-05 22:11:50 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-13 19:15:07 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -382,7 +382,7 @@ public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer, 
     /**
      * Returns wrapped experiment.
      */
-    protected Experiment getExperiment() {
+    public Experiment getExperiment() {
         return experiment;
     }
     

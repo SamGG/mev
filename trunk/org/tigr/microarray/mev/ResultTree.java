@@ -20,6 +20,7 @@ import java.io.ObjectOutputStream;
 import java.io.IOException;
 
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.swing.Icon;
@@ -35,6 +36,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.UIManager;
 
+import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
@@ -241,6 +243,61 @@ public class ResultTree extends JTree implements java.io.Serializable {
             }
         }
         return root;
+    }
+    
+    public Hashtable getResultHash(){
+        Hashtable table = new Hashtable();
+        DefaultMutableTreeNode analysisRoot;
+        DefaultMutableTreeNode currentNode;
+        Object object;
+        Object [] vals;
+        boolean stop = false;
+        
+        IViewer viewer;
+        Experiment exp;
+        int [][] clusters;
+        
+        int childCount = analysisNode.getChildCount();
+        //String algTitles = new String[analysisNode.getChildCount()];
+        String algName = "";
+        Enumeration enum;
+        
+        for(int i = 0; i < childCount; i++){
+            analysisRoot = ((DefaultMutableTreeNode)(analysisNode.getChildAt(i)));
+            object = analysisRoot.getUserObject();
+            if(object != null){
+                if(object instanceof LeafInfo){
+                    algName = ((LeafInfo)object).toString();
+                } else if(object instanceof String) {
+                    algName = (String)object;
+                }
+                
+                enum = analysisRoot.depthFirstEnumeration();
+                while (!stop && enum.hasMoreElements()){
+                    currentNode = (DefaultMutableTreeNode)enum.nextElement();
+                    if(currentNode.getUserObject() instanceof LeafInfo){
+                       viewer = ((LeafInfo)currentNode.getUserObject()).getViewer();
+                       if(viewer != null) {
+                            exp = viewer.getExperiment();
+                            clusters = viewer.getClusters();
+                            if(exp != null && clusters != null) {
+                                vals = new Object[2];
+                                vals[0] = exp;
+                                vals[1] = clusters;
+                                table.put(algName, vals);
+                                stop = true;
+                            }
+                            
+                       }
+                            
+                        
+                    }
+                    
+                }
+                stop = false;                
+            }
+        }        
+        return table;
     }
     
     /** Renders the <CODE>ResultTree</CODE>.

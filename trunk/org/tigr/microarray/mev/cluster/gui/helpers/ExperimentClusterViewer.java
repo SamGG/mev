@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ExperimentClusterViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-05 22:53:06 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-13 19:15:03 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -476,7 +476,7 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
     /**
      * Returns wrapped experiment.
      */
-    protected Experiment getExperiment() {
+    public Experiment getExperiment() {
         return experiment;
     }
     
