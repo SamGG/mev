@@ -1,12 +1,12 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
-*/
+ */
 /*
  * $RCSfile: QTCGUI.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-04-29 18:56:59 $
- * $Author: nbhagaba $
+ * $Revision: 1.4 $
+ * $Date: 2004-05-17 15:42:16 $
+ * $Author: braisted $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.qtc;
@@ -56,7 +56,9 @@ import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
 
-public class QTCGUI implements IClusterGUI {
+import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
+
+public class QTCGUI implements IClusterGUI, IScriptGUI {
     
     private Algorithm algorithm;
     private IData data;
@@ -125,7 +127,7 @@ public class QTCGUI implements IClusterGUI {
                 matrix = matrix.transpose();
             
             data.addMatrix("experiment", matrix);
-            data.addParam("hjc-cluster-genes", String.valueOf(this.clusterGenes));
+            data.addParam("qtc-cluster-genes", String.valueOf(this.clusterGenes));
             data.addParam("distance-factor", String.valueOf(1.0f));
             IDistanceMenu menu = framework.getDistanceMenu();
             data.addParam("use-absolute", String.valueOf(useAbsolute));
@@ -188,6 +190,160 @@ public class QTCGUI implements IClusterGUI {
         }
     }
     
+    
+  /*
+   * Scripting Support
+   */
+    
+    
+    public AlgorithmData getScriptParameters(IFramework framework) {
+        
+        this.data = framework.getData();
+        // the default values
+        int minimumClusterSize = 5;
+        float diameter = 0.2f;
+        boolean useAbsolute = false;
+        boolean modal = true; //I SET MODAL TO TRUE TO CALL THE QTC DIALOG BOX, HOPE THIS IS OK
+        
+        QTCInitDialog hjc_dialog = new QTCInitDialog((JFrame) framework.getFrame(), modal);
+        hjc_dialog.setVisible(true);
+        
+        if (! hjc_dialog.isOkPressed()) return null;
+        
+        clusterGenes = hjc_dialog.isClusterGenesSelected();
+        minimumClusterSize = Integer.parseInt(hjc_dialog.clusterTextField.getText());
+        diameter = Float.parseFloat(hjc_dialog.diameterTextField.getText());
+        useAbsolute = hjc_dialog.useAbsoluteCheckBox.isSelected();
+        
+        boolean isHierarchicalTree = hjc_dialog.isHCLSelected();
+        // hcl init
+        int hcl_method = 0;
+        boolean hcl_samples = false;
+        boolean hcl_genes = false;
+        if (isHierarchicalTree) {
+            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame());
+            if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
+                return null;
+            }
+            hcl_method = hcl_dialog.getMethod();
+            hcl_samples = hcl_dialog.isClusterExperience();
+            hcl_genes = hcl_dialog.isClusterGenes();
+        }
+        
+        this.experiment = framework.getData().getExperiment();
+        
+        int genes = experiment.getNumberOfGenes();
+        
+        AlgorithmData data = new AlgorithmData();
+        
+        data.addParam("qtc-cluster-genes", String.valueOf(this.clusterGenes));
+        data.addParam("distance-factor", String.valueOf(1.0f));
+        IDistanceMenu menu = framework.getDistanceMenu();
+        data.addParam("use-absolute", String.valueOf(useAbsolute));
+        int function = menu.getDistanceFunction();
+        if (function == Algorithm.DEFAULT) {
+            function = Algorithm.PEARSON;
+        }
+        data.addParam("distance-function", String.valueOf(function));
+        data.addParam("min-cluster-size", String.valueOf(minimumClusterSize));
+        data.addParam("diameter", String.valueOf(diameter));
+        // hcl parameters
+        if (isHierarchicalTree) {
+            data.addParam("hierarchical-tree", String.valueOf(true));
+            data.addParam("method-linkage", String.valueOf(hcl_method));
+            data.addParam("calculate-genes", String.valueOf(hcl_genes));
+            data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+        }
+        //script control parameters
+        
+        // alg name
+        data.addParam("name", "QTC");
+        
+        // alg type
+        data.addParam("alg-type", "cluster");
+        
+        // output class
+        data.addParam("output-class", "multi-cluster-output");
+        
+        //output nodes
+        String [] outputNodes = new String[1];
+        outputNodes[0] = "Multi-cluster";
+        data.addStringArray("output-nodes", outputNodes);
+        
+        return data;
+    }
+    
+    
+    public DefaultMutableTreeNode executeScript(IFramework framework, AlgorithmData algData, Experiment experiment) throws AlgorithmException {
+        this.experiment = experiment;
+        this.data = framework.getData();
+        Listener listener = new Listener();
+        this.clusterGenes = algData.getParams().getBoolean("qtc-cluster-genes");
+        try {
+            algorithm = framework.getAlgorithmFactory().getAlgorithm("QTC");
+            algorithm.addAlgorithmListener(listener);
+            
+            int genes = experiment.getNumberOfGenes();
+            
+            FloatMatrix matrix = experiment.getMatrix();
+            
+            if(!clusterGenes)
+                matrix = matrix.transpose();
+            
+            algData.addMatrix("experiment", matrix);
+            
+            long start = System.currentTimeMillis();
+            AlgorithmData result = algorithm.execute(algData);
+            long time = System.currentTimeMillis() - start;
+            AlgorithmParameters resultMap = result.getParams();
+            
+            if (resultMap.getBoolean("aborted")) {
+                return null;
+            }
+            // getting the results
+            Cluster result_cluster = result.getCluster("cluster");
+            NodeList nodeList = result_cluster.getNodeList();
+            
+            int k = resultMap.getInt("number-of-clusters"); // NEED THIS TO GET THE VALUE OF NUMBER-OF-CLUSTERS
+            
+            this.clusters = new int[k][];
+            for (int i=0; i<k; i++) {
+                clusters[i] = nodeList.getNode(i).getFeaturesIndexes();
+            }
+            
+            this.means = result.getMatrix("clusters_means");
+            this.variances = result.getMatrix("clusters_variances");
+            
+            AlgorithmParameters params = algData.getParams();
+            GeneralInfo info = new GeneralInfo();
+            info.clusters = k;
+            
+            info.minClustSize = params.getInt("min-cluster-size");
+            info.diameter = params.getFloat("diameter");
+            info.useAbsolute = params.getBoolean("use-absolute");
+            info.time = time;
+            int function = params.getInt("distance-function");
+            info.function = framework.getDistanceMenu().getFunctionName(function);
+            boolean hclTrees = params.getBoolean("hierarchical-tree");
+            info.hcl = hclTrees;
+            if(info.hcl) {
+                info.hcl_genes = params.getBoolean("calculate-genes");
+                info.hcl_samples = params.getBoolean("calculate-experiments");
+                info.hcl_method = params.getInt("method-linkage");
+            }
+            return createResultTree(result_cluster, info);
+            
+        } finally {
+            if (algorithm != null) {
+                algorithm.removeAlgorithmListener(listener);
+            }
+            
+        }
+        
+    }
+    
+    
+    
     /**
      * Returns a hcl tree data from the specified cluster node.
      */
@@ -221,7 +377,7 @@ public class QTCGUI implements IClusterGUI {
         addHierarchicalTrees(root, result_cluster, info);
         addCentroidViews(root);
         addTableViews(root);
-        addClusterInfo(root);        
+        addClusterInfo(root);
         addGeneralInfo(root, info);
     }
     
@@ -232,8 +388,8 @@ public class QTCGUI implements IClusterGUI {
             tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.data);
         else
             tabViewer = new ExperimentClusterTableViewer(this.experiment, this.clusters, this.data);
-            //return; //placeholder for ExptClusterTableViewer
-            //expViewer = new QTCExperimentClusterViewer(this.experiment, this.clusters);
+        //return; //placeholder for ExptClusterTableViewer
+        //expViewer = new QTCExperimentClusterViewer(this.experiment, this.clusters);
         
         for (int i=0; i<this.clusters.length-1; i++) {
             node.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+String.valueOf(i+1), tabViewer, new Integer(i))));
@@ -241,10 +397,10 @@ public class QTCGUI implements IClusterGUI {
         //if(this.clusterGenes)
         node.add(new DefaultMutableTreeNode(new LeafInfo("Unassigned ", tabViewer, new Integer(this.clusters.length-1))));
         //else
-            //node.add(new DefaultMutableTreeNode(new LeafInfo("Unassigned Experiments", expViewer, new Integer(this.clusters.length-1))));
+        //node.add(new DefaultMutableTreeNode(new LeafInfo("Unassigned Experiments", expViewer, new Integer(this.clusters.length-1))));
         
         root.add(node);
-    } 
+    }
     
     
     /**
@@ -433,6 +589,7 @@ public class QTCGUI implements IClusterGUI {
         }
         return pos;
     }
+    
     
     /****************************************************************************************
      * End of Sample Cluster index ordering code
