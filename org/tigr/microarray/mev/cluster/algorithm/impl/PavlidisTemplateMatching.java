@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: PavlidisTemplateMatching.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-11 15:43:20 $
+ * $Author: nbhagaba $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.algorithm.impl;
@@ -56,6 +56,8 @@ public class PavlidisTemplateMatching extends AbstractAlgorithm {
     private long CalculationTime;
     private boolean ptmGenes;
     
+    private double[] pValues, rValues;
+    
     
     boolean useAbsolute; // true = use absolute value of correlation; false = use the signed value of the correlation
     boolean useR;
@@ -98,6 +100,9 @@ public class PavlidisTemplateMatching extends AbstractAlgorithm {
 	numSamples = this.expMatrix.getColumnDimension();
 	
 	geneTemplate = new float[templateVector.size()];
+        
+        pValues = new double[number_of_genes];
+        rValues = new double[number_of_genes];
 	
 	for (int i = 0; i < templateVector.size(); i++) {
 	    geneTemplate[i] = ((Float)templateVector.get(i)).floatValue();
@@ -134,12 +139,22 @@ public class PavlidisTemplateMatching extends AbstractAlgorithm {
 		fireValueChanged(event);
 	    }
 	}
+        
+        FloatMatrix rValuesMatrix = new FloatMatrix(number_of_genes, 1);
+        FloatMatrix pValuesMatrix = new FloatMatrix(number_of_genes, 1);     
+        
+        for (int i = 0; i < pValues.length; i++) {
+            rValuesMatrix.A[i][0] = (float)(rValues[i]);
+            pValuesMatrix.A[i][0] = (float)(pValues[i]);
+        }
 	
 	// prepare the result
 	AlgorithmData result = new AlgorithmData();
 	result.addCluster("cluster", result_cluster);
 	result.addMatrix("clusters_means", means);
 	result.addMatrix("clusters_variances", variances);
+        result.addMatrix("rValuesMatrix", rValuesMatrix);
+        result.addMatrix("pValuesMatrix", pValuesMatrix);
 	return result;
     }
     
@@ -286,12 +301,13 @@ public class PavlidisTemplateMatching extends AbstractAlgorithm {
 	for (int k = 0; k < geneTemplate.length; k++) {
 	    newMatrix.A[origNumGenes][k] = geneTemplate[k];
 	}
-	
+	/*
 	for (int i = 0; i < origNumGenes + 1; i++) {
 	    for (int j = 0; j < numSamples; j++) {
 		
 	    }
 	}
+         */
 	
 	return newMatrix;
     }
@@ -310,6 +326,8 @@ public class PavlidisTemplateMatching extends AbstractAlgorithm {
 	
 	for (int i = 0; i < origNumGenes; i++){
 	    pearsonR = ExperimentUtil.genePearson(newMatrix, null, i, origNumGenes, factor);
+            rValues[i] = pearsonR;
+            pValues[i] = getProb(pearsonR);
 	    if(useR) {
 		
 		if (useAbsolute == true) {
