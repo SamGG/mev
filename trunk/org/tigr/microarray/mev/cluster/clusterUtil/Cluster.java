@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: Cluster.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-05 22:40:08 $
+ * $Revision: 1.4 $
+ * $Date: 2004-03-19 15:33:40 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -256,6 +256,7 @@ public class Cluster implements java.io.Serializable {
         oos.writeObject(clusterDescription);
         oos.writeInt(serialNumber);     
         oos.writeObject(experiment);
+        oos.writeObject(experimentIndices);
         
         //Can't store node, store path names for finding node
         oos.writeBoolean(node != null);
@@ -284,7 +285,8 @@ public class Cluster implements java.io.Serializable {
         clusterDescription = (String)ois.readObject();
         serialNumber = ois.readInt();       
         experiment = (Experiment)ois.readObject();
-
+        experimentIndices = (int [])ois.readObject();
+        
         //if a node path was stored get path and later restore node value
         if(ois.readBoolean()){
            // path = (String [])ois.readObject();
