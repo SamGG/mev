@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: TTestVolcanoPlotViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-08-25 15:18:13 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2003-12-09 18:54:33 $
+ * $Author: nbhagaba $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.ttest;
@@ -821,6 +821,8 @@ public class TTestVolcanoPlotViewer extends JPanel implements IViewer/*, MouseMo
         return null;
     }
     
+    
+    
     /*
     public void mouseDragged(java.awt.event.MouseEvent mouseEvent) {
     }
@@ -844,7 +846,19 @@ public class TTestVolcanoPlotViewer extends JPanel implements IViewer/*, MouseMo
         gbc.weighty = wy;
     }   
     
+    /** Returns the corner component corresponding to the indicated corner,
+     * posibly null
+     */
+    public JComponent getCornerComponent(int cornerIndex) {
+        return null;
+    }    
    
+    /** Returns a component to be inserted into the scroll pane row header
+     */
+    public JComponent getRowHeaderComponent() {
+        return null;
+    }
+    
     class SelectionSliderPanel extends ActionInfoDialog {
         JSlider pValueSlider, meanSlider;
         JTextField pValueField, meanField;
