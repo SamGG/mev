@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SAMInfoViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 16:59:46 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-06 20:48:37 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -23,7 +23,7 @@ import javax.swing.JTextArea;
 
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
-public class SAMInfoViewer extends ViewerAdapter {
+public class SAMInfoViewer extends ViewerAdapter implements java.io.Serializable {
     
     private JComponent header;
     private JTextArea  content;
