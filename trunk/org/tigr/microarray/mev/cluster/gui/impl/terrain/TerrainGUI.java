@@ -1,11 +1,11 @@
 /*
 Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
 All rights reserved.
-*/
+ */
 /*
  * $RCSfile: TerrainGUI.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-05 22:14:39 $
+ * $Revision: 1.3 $
+ * $Date: 2004-05-19 13:18:35 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -22,11 +22,13 @@ import org.tigr.microarray.mev.cluster.gui.*;
 import org.tigr.microarray.mev.cluster.algorithm.*;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
 
-public class TerrainGUI implements IClusterGUI {
+import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
 
+public class TerrainGUI implements IClusterGUI, IScriptGUI {
+    
     private Algorithm algorithm;
     private Progress progress;
-
+    
     /**
      * This method returns the terrain calculation result tree or null,
      * if analysis start was canceled.
@@ -41,10 +43,10 @@ public class TerrainGUI implements IClusterGUI {
         TerrainInitDialog dialog = new TerrainInitDialog(framework.getFrame());
         if (dialog.showModal() != JOptionPane.OK_OPTION)
             return null; // canceled
-
+        
         boolean use_genes = dialog.isGenes();
         int neighbours = dialog.getNeighbours();
-
+        
         // prepare the algo data
         AlgorithmData data = new AlgorithmData();
         FloatMatrix experiment = framework.getData().getExperiment().getMatrix();
@@ -54,7 +56,7 @@ public class TerrainGUI implements IClusterGUI {
         int function = framework.getDistanceMenu().getDistanceFunction();
         function = (function == Algorithm.DEFAULT) ? Algorithm.PEARSONSQARED : function;
         data.addParam("distance-function", String.valueOf(function));
-        data.addParam("neighbours", String.valueOf(neighbours));
+        data.addParam("neighbors", String.valueOf(neighbours));
         data.addParam("use-genes", String.valueOf(use_genes));
         // the result general info
         GeneralInfo gi = new GeneralInfo();
@@ -62,18 +64,18 @@ public class TerrainGUI implements IClusterGUI {
         gi.absolute = framework.getDistanceMenu().isAbsoluteDistance();
         gi.neighbours = neighbours;
         gi.isGenes = use_genes;
-
+        
         Listener listener = new Listener();
         this.progress = new Progress(framework.getFrame(), "Calculating Terrain", listener);
         this.progress.show();
         try {
             this.algorithm = framework.getAlgorithmFactory().getAlgorithm("Terrain");
             this.algorithm.addAlgorithmListener(listener);
-
+            
             long start = System.currentTimeMillis();
             AlgorithmData result = algorithm.execute(data);
             gi.time = System.currentTimeMillis() - start;
-
+            
             this.progress.setDescription("Creating 3D View...");
             return createResultTree(result, gi, framework);
         } finally {
@@ -85,7 +87,84 @@ public class TerrainGUI implements IClusterGUI {
             }
         }
     }
-
+    
+    
+    public AlgorithmData getScriptParameters(IFramework framework) {
+        TerrainInitDialog dialog = new TerrainInitDialog(framework.getFrame());
+        if (dialog.showModal() != JOptionPane.OK_OPTION)
+            return null; // canceled
+        
+        boolean use_genes = dialog.isGenes();
+        int neighbours = dialog.getNeighbours();
+        
+        // prepare the algo data
+        AlgorithmData data = new AlgorithmData();
+        data.addParam("distance-factor", String.valueOf(1.0f));
+        data.addParam("distance-absolute", String.valueOf(framework.getDistanceMenu().isAbsoluteDistance()));
+        int function = framework.getDistanceMenu().getDistanceFunction();
+        function = (function == Algorithm.DEFAULT) ? Algorithm.PEARSONSQARED : function;
+        data.addParam("distance-function", String.valueOf(function));
+        data.addParam("neighbors", String.valueOf(neighbours));
+        data.addParam("use-genes", String.valueOf(use_genes));
+        
+        //script control parameters
+        
+        // alg name
+        data.addParam("name", "Terrain");
+        
+        // alg type
+        data.addParam("alg-type", "data-visualization");
+        
+        // output class
+        data.addParam("output-class", "single-output");
+        
+        //output nodes
+        String [] outputNodes = new String[1];
+        outputNodes[0] = "Data Visualization";
+        data.addStringArray("output-nodes", outputNodes);
+        
+        return data;
+    }
+    
+    
+    public DefaultMutableTreeNode executeScript(IFramework framework, AlgorithmData algData, Experiment experiment) throws AlgorithmException {
+        FloatMatrix matrix = framework.getData().getExperiment().getMatrix();
+        algData.addMatrix("experiment", matrix);
+        
+        // the result general info
+        GeneralInfo gi = new GeneralInfo();
+        AlgorithmParameters params = algData.getParams();
+        gi.function = framework.getDistanceMenu().getFunctionName(params.getInt("distance-function"));
+        gi.absolute = params.getBoolean("distance-absolute");
+        gi.neighbours = params.getInt("neighbors");
+        gi.isGenes = params.getBoolean("use-genes");
+        
+        Listener listener = new Listener();
+        
+        this.progress = new Progress(framework.getFrame(), "Calculating Terrain", listener);
+        this.progress.show();
+        try {
+            this.algorithm = framework.getAlgorithmFactory().getAlgorithm("Terrain");
+            this.algorithm.addAlgorithmListener(listener);
+            
+            long start = System.currentTimeMillis();
+            AlgorithmData result = algorithm.execute(algData);
+            gi.time = System.currentTimeMillis() - start;
+            
+            this.progress.setDescription("Creating 3D View...");
+            return createResultTree(result, gi, framework);
+        } finally {
+            if (this.algorithm != null) {
+                this.algorithm.removeAlgorithmListener(listener);
+            }
+            if (this.progress != null) {
+                this.progress.dispose();
+            }
+        }
+    }
+    
+    
+    
     /**
      * Creates a result tree to be inserted into the framework analysis node.
      */
@@ -95,7 +174,7 @@ public class TerrainGUI implements IClusterGUI {
         addGeneralInfo(root, gi);
         return root;
     }
-
+    
     private void addTerrainView(DefaultMutableTreeNode root, AlgorithmData result, IFramework framework, GeneralInfo gi) throws AlgorithmException {
         FloatMatrix locations = result.getMatrix("locations");
         checkLocations(locations.A);
@@ -107,7 +186,7 @@ public class TerrainGUI implements IClusterGUI {
         SerializedTerrainViewer viewer = new SerializedTerrainViewer(gi.isGenes, framework, clusters, weights, locations.A, sigma);
         root.add(new DefaultMutableTreeNode(new LeafInfo("Map", viewer)));
     }
-
+    
     private void checkLocations(float[][] locations) throws AlgorithmException {
         if (locations == null)
             throw new AlgorithmException("Locations is null.");
@@ -116,7 +195,7 @@ public class TerrainGUI implements IClusterGUI {
                 if (Float.isNaN(locations[i][j]))
                     throw new AlgorithmException("Location["+i+"]["+j+"] is NaN.");
     }
-
+    
     /**
      * Adds node with general iformation.
      */
@@ -129,7 +208,7 @@ public class TerrainGUI implements IClusterGUI {
         node.add(new DefaultMutableTreeNode("Data Type: "+(gi.isGenes ? "Genes" : "Experiments")));
         root.add(node);
     }
-
+    
     /**
      * Converts a passed cluster into a two dimensional int array.
      */
@@ -145,7 +224,7 @@ public class TerrainGUI implements IClusterGUI {
         }
         return result;
     }
-
+    
     private float[][] convert2float(Cluster cluster) throws AlgorithmException {
         NodeList nodeList = cluster.getNodeList();
         final int nodeListSize = nodeList.getSize();
@@ -162,25 +241,27 @@ public class TerrainGUI implements IClusterGUI {
         }
         return result;
     }
-
+    
+    
+    
     /**
      * The class to listen to progress, monitor and algorithms events.
      */
     private class Listener extends DialogListener implements AlgorithmListener {
-
+        
         public void valueChanged(AlgorithmEvent event) {
             switch (event.getId()) {
-            case AlgorithmEvent.SET_UNITS:
-                TerrainGUI.this.progress.setUnits(event.getIntValue());
-                TerrainGUI.this.progress.setDescription(event.getDescription());
-                break;
-            case AlgorithmEvent.PROGRESS_VALUE:
-                TerrainGUI.this.progress.setValue(event.getIntValue());
-                TerrainGUI.this.progress.setDescription(event.getDescription());
-                break;
+                case AlgorithmEvent.SET_UNITS:
+                    TerrainGUI.this.progress.setUnits(event.getIntValue());
+                    TerrainGUI.this.progress.setDescription(event.getDescription());
+                    break;
+                case AlgorithmEvent.PROGRESS_VALUE:
+                    TerrainGUI.this.progress.setValue(event.getIntValue());
+                    TerrainGUI.this.progress.setDescription(event.getDescription());
+                    break;
             }
         }
-
+        
         public void actionPerformed(ActionEvent e) {
             String command = e.getActionCommand();
             if (command.equals("cancel-command")) {
@@ -188,14 +269,14 @@ public class TerrainGUI implements IClusterGUI {
                 TerrainGUI.this.progress.dispose();
             }
         }
-
+        
         public void windowClosing(WindowEvent e) {
             TerrainGUI.this.algorithm.abort();
             TerrainGUI.this.progress.dispose();
         }
     }
-
-
+    
+    
     private class GeneralInfo {
         public long time;
         public String function;
