@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: GDMExpViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-13 21:36:44 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-25 21:07:03 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -722,7 +722,10 @@ public class GDMExpViewer extends JPanel implements IViewer, java.io.Serializabl
     private void drawPerimeter(Graphics2D g){
         Color color = g.getColor();
         g.setColor(Color.black);
-        g.drawRect(0,0, getXSize()-insets.right, getYSize()-insets.bottom);
+        if(this.isDrawClusterBorders && this.numOfClusters > 0)
+            g.drawRect(0,0, getXSize()-insets.right+1, getYSize()-insets.bottom+1);
+        else
+            g.drawRect(0,0, getXSize()-insets.right, getYSize()-insets.bottom);
         g.setColor(color);
     }
     
@@ -1142,7 +1145,7 @@ public class GDMExpViewer extends JPanel implements IViewer, java.io.Serializabl
         sizeMenu.add(createJRadioButtonMenuItem("2 x 2", DISPLAY_2X2_CMD, listener, buttonGroup));
         sizeMenu.add(createJRadioButtonMenuItem("5 x 5", DISPLAY_5X5_CMD, listener, buttonGroup));
         sizeMenu.add(createJRadioButtonMenuItem("10 x 10", DISPLAY_10X10_CMD, listener, buttonGroup));
-        sizeMenu.add(createJRadioButtonMenuItem("15 x 15", DISPLAY_10X10_CMD, listener, buttonGroup, true));
+        sizeMenu.add(createJRadioButtonMenuItem("15 x 15", DISPLAY_15X15_CMD, listener, buttonGroup, true));
         sizeMenu.add(createJRadioButtonMenuItem("Other", DISPLAY_OTHER_CMD, listener, buttonGroup));
         menu.add(sizeMenu);
         menu.addSeparator();
@@ -1175,6 +1178,11 @@ public class GDMExpViewer extends JPanel implements IViewer, java.io.Serializabl
         item.setActionCommand("impose-cluster-order");
         item.addActionListener(listener);
         menu.add(item);
+          
+        item = new JMenuItem("Restore Loaded Order");
+        item.setActionCommand(this.SORT_BY_ORIGINAL_ORDER_CMD);
+        item.addActionListener(listener);
+        menu.add(item);        
         
         menu.addSeparator();
         
@@ -1331,6 +1339,9 @@ public class GDMExpViewer extends JPanel implements IViewer, java.io.Serializabl
     }
     
     private void onSortByProximity(int baseIndex) {
+        this.isDrawClusterBorders = false;
+        this.numOfClusters = 0;
+        
         QSort qsort = new QSort(this.expDistMatrix.A[baseIndex]);
         int [] sortedIndices = qsort.getOrigIndx();
         
@@ -1406,7 +1417,12 @@ public class GDMExpViewer extends JPanel implements IViewer, java.io.Serializabl
     
     private void onRestoreOriginalOrder() {
         
-        this.createIndices(this.displayEvery);
+        numOfClusters = 0;
+        
+        setIndices(this.createIndices(this.displayEvery));
+        
+        isDrawClusterBorders=false;
+        
         
         expColumnHeaderSP.setIndices(indices);
         expRowHeaderSP.setIndices(indices);
@@ -1515,24 +1531,8 @@ public class GDMExpViewer extends JPanel implements IViewer, java.io.Serializabl
                 imposeClusterOrder(clusters);
             }                        
         } else {
-            System.out.println("No good results");            
-        }
-        
-        //launch cluster selection dialog
-        //use cluster browser
-   /*     GDMClusterBrowserDialog dialog = new GDMClusterBrowserDialog(this.framework.getClusterRepository(Cluster.GENE_CLUSTER));
-        Cluster cluster;
-        if(dialog.showModal() == JOptionPane.OK_OPTION) {
-            cluster = dialog.getSelectedCluster();
-            if(cluster.getExperiment() == this.experiment){
-         //       imposeClusterOrder(cluster.getClusters());
-            } else {  //tranformed data set
-                
-            }
+            JOptionPane.showMessageDialog(framework.getFrame(), "There are currently no appropriate clustering results to apply to this GDM.", "No Results Available", JOptionPane.INFORMATION_MESSAGE);                
         }        
- */
-        
-        
     }
     
     private boolean checkClustersSize(int [][] clusters) {
@@ -1712,7 +1712,7 @@ public class GDMExpViewer extends JPanel implements IViewer, java.io.Serializabl
                 g = getGraphics();
                 
                 drawColoredBoxAt(g, row, column, Color.white);
-                
+
                 framework.setStatusText(
                 " Column " + column +
                 "     " +  //some padding
@@ -1730,18 +1730,32 @@ public class GDMExpViewer extends JPanel implements IViewer, java.io.Serializabl
                 drawSlideDataElement(g2D, oldRow, oldColumn);
             }
             setOldPosition(row, column);
-            if (g != null) {
-                g.dispose();
+
+            if(g != null) {
+                if(isDrawClusterBorders && numOfClusters > 0)
+                    drawClusterBorder((Graphics2D)g);
+            } else if (g2D != null) {
+                if(isDrawClusterBorders && numOfClusters > 0)
+                    drawClusterBorder(g2D);
+            }
+            
+            if (g != null) {                               
+              if(isDrawClusterBorders && numOfClusters > 0)
+                 drawClusterBorder((Graphics2D)g);            
+              g.dispose();
             }
         }
         
         public void mouseExited(MouseEvent event) {
             if (isLegalPosition(oldRow, oldColumn)) {
+                
                 Graphics g = getGraphics();
                 Graphics2D g2D = (Graphics2D)g;
-                drawSlideDataElement(g2D, oldRow, oldColumn);
-                g2D.dispose();
-            }
+                drawSlideDataElement(g2D, oldRow, oldColumn);                
+                g2D.dispose();         
+                if(isDrawClusterBorders && numOfClusters > 0)                
+                    drawClusterBorder(g2D);                      
+            }           
             setOldPosition(-1, -1);
             framework.setStatusText("  ");	// blank Status bar
         }
@@ -1789,15 +1803,4 @@ public class GDMExpViewer extends JPanel implements IViewer, java.io.Serializabl
         }
     }
     
-    /**
-     * returns true if a probe in the current viewer has color
-     * protected  boolean areExperimentsColored() {
-     * for(int i = 0; i < this.num_experiments; i++){
-     * if( this.expData.getExperimentColor(indices[i]) != null){
-     * return true;
-     * }
-     * }
-     * return false;
-     * }
-     */
 }
