@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterList.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-04-07 19:26:20 $
+ * $Revision: 1.4 $
+ * $Date: 2004-07-27 19:58:13 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -19,8 +19,8 @@ import java.awt.Color;
  * used to collect clusters created from a particular analysis run.
  *
  */
-public class ClusterList extends Vector implements java.io.Serializable {
-    
+public class ClusterList extends Vector implements java.io.Serializable {        
+    public static final long serialVersionUID = 1000102010203020001L;
     /** a String identifing the algorithm origin.
      * (possibly the origin will not be an algorithm)
      */    
