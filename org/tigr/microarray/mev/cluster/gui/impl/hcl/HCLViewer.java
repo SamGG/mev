@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-05 20:25:10 $
+ * $Revision: 1.5 $
+ * $Date: 2004-02-09 16:07:18 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -293,60 +293,35 @@ public class HCLViewer extends JPanel implements IViewer {
     }
     
     private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        //      System.out.println("start hclviewer read");
         
-        this.expViewer = (IViewer)ois.readObject();
-        //    System.out.println("have iviewer");
-        
-        this.header = (HCLExperimentHeader)ois.readObject();
-        //  System.out.println("have header");
-        
-        this.listener = new Listener();
-        
+        this.expViewer = (IViewer)ois.readObject();        
+        this.header = (HCLExperimentHeader)ois.readObject();        
+        this.listener = new Listener();        
         this.addMouseListener(listener);
         this.header.addMouseListener(listener);
         
         if(ois.readBoolean()){
-            genesTree = (HCLTree)  ois.readObject();
-            //System.out.println("have gene tree");
-            
-            this.genesOrder = (int [])ois.readObject();
-            //System.out.println("have gene order array");
-            
+            genesTree = (HCLTree)  ois.readObject();            
+            this.genesOrder = (int [])ois.readObject();            
             genesTree.addMouseListener(listener);
             genesTree.setListener(listener);
             this.genesTree.deselectAllNodes();
         }
         
         if(ois.readBoolean()){
-            sampleTree= (HCLTree) ois.readObject();
-            //System.out.println("have exp tree");
-            
-            this.samplesOrder = (int [])ois.readObject();
-            //          System.out.println("have sample order array");
-            
+            sampleTree= (HCLTree) ois.readObject();            
+            this.samplesOrder = (int [])ois.readObject();            
             sampleTree.addMouseListener(listener);
             sampleTree.setListener(listener);
             this.sampleTree.deselectAllNodes();
         }
         
         colorBar = (HCLColorBar)ois.readObject();
-        //System.out.println("have color bar");
-        
-        this.annotationBar = (HCLAnnotationBar)ois.readObject();
-        //System.out.println("have ann bar");
-        
-        experiment = (Experiment)ois.readObject();
-        //System.out.println("have experiment object");
-        
+        this.annotationBar = (HCLAnnotationBar)ois.readObject();        
+        experiment = (Experiment)ois.readObject();        
         this.clusters = (ArrayList)ois.readObject();
-        //System.out.println("have array list clusters");
-        this.experimentClusters = (ArrayList)ois.readObject();
-        //System.out.println("have exp cluster array list");
-        
-        this.sampleClusters = (int[][])ois.readObject();
-        //System.out.println("have sample clusters int[][]");
-        
+        this.experimentClusters = (ArrayList)ois.readObject();        
+        this.sampleClusters = (int[][])ois.readObject();        
         this.popup = this.createJPopupMenu(listener);
     }
     
@@ -364,7 +339,6 @@ public class HCLViewer extends JPanel implements IViewer {
             add(gTree, new GridBagConstraints(cols-4, rows-1, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         }
         add(exp,  new GridBagConstraints(cols-3, rows-1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-        // add(cBar, new GridBagConstraints(cols-2, rows-1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
     }
     
     

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-02-09 15:47:52 $
+ * $Revision: 1.7 $
+ * $Date: 2004-02-09 16:09:08 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -398,7 +398,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                 try {
                     
                     String version = (String)ois.readObject();
-                    System.out.println("have string version");
+
                     long dateLong = ois.readLong();
                     //Load IData object
                     loadIData(ois);    
@@ -410,8 +410,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                     loadAnalysisNode(ois);
                     
                     //load cluster repositories
-                    loadClusterRepositories(ois);                                        System.out.println("have string version");
-                    
+                    loadClusterRepositories(ois);                                        
+
                     //load history 
                     loadHistoryNode(ois);
                     
