@@ -1,11 +1,11 @@
 /*
 Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
 All rights reserved.
-*/
+ */
 /*
  * $RCSfile: SOTAExperimentTreeViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 18:35:16 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 20:27:16 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -110,6 +110,53 @@ public class SOTAExperimentTreeViewer extends JPanel implements IViewer{
         this.experiment = experiment;
     }
     
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {     
+        oos.writeInt(this.numberOfCells);
+        oos.writeInt(this.numberOfSamples);
+        oos.writeObject(this.centroidData);
+        oos.writeObject(this.sotaTree);
+        oos.writeObject(this.clusterDivFM);
+        oos.writeObject(this.clusterPop);
+        oos.writeObject(this.clusterIndices);
+        oos.writeObject(this.selectedClusterList);
+        oos.writeObject(this.expViewer);
+        oos.writeObject(this.elementSize);
+        oos.writeObject(this.experiment);
+      //  oos.writeObject(this.header);
+        oos.writeBoolean(this.sampleTree != null);
+        if(this.sampleTree != null)
+            oos.writeObject(this.sampleTree);
+        oos.writeInt(this.elementHeight);
+        oos.writeInt(this.elementWidth);
+        oos.writeInt(this.function);
+    }
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        this.numberOfCells = ois.readInt();
+        this.numberOfSamples = ois.readInt();
+        this.centroidData = (Experiment)ois.readObject();
+        this.sotaTree = (SOTATree)ois.readObject();
+        this.clusterDivFM = (FloatMatrix)ois.readObject();
+        this.clusterPop = (int [])ois.readObject();
+        this.clusterIndices = (int [][])ois.readObject();
+        this.selectedClusterList = (ArrayList)ois.readObject();
+        this.expViewer = (SOTAExpCentroidExpressionViewer)ois.readObject();
+        this.elementSize = (Dimension)ois.readObject();
+        this.experiment = (Experiment)ois.readObject();
+    //    this.header = (HCLExperimentHeader)ois.readObject();
+        if(ois.readBoolean())
+            this.sampleTree = (HCLTree)ois.readObject();
+        this.elementHeight = ois.readInt();
+        this.elementWidth = ois.readInt();
+        this.function = ois.readInt();
+        
+        this.currClusterNum = -1;
+        this.listener = new Listener();
+        expViewer.addMouseListener(listener);
+      //  this.header.addMouseListener(listener);
+        addMouseListener(listener);
+        popup = this.createJPopupMenu(listener);
+    }
     
     /**
      *  sets a node to reference when jumping to expression images
@@ -161,7 +208,7 @@ public class SOTAExperimentTreeViewer extends JPanel implements IViewer{
         if(sampleTree != null)
             this.sampleTree.onMenuChanged(menu);
         verifyClusterExistence(data);
-                
+        
         //this.header.setHeaderPosition(this.sotaTree.getTreeHeight()-10); //move by inset of viewer
         //this.header.updateSize(getCommonWidth());
     }
@@ -189,6 +236,17 @@ public class SOTAExperimentTreeViewer extends JPanel implements IViewer{
         this.sotaTree.onSelected(framework);
         verifyClusterExistence(data);
         verifyClusterMembership(data);
+        
+        //expImageNode is null after de-serialization and must be reset
+        if(this.expImageNode == null){
+            DefaultMutableTreeNode node = framework.getCurrentNode();
+            if(node != null)
+                node = (DefaultMutableTreeNode)node.getParent();
+            if(node != null)
+                node = (DefaultMutableTreeNode)node.getChildAt(1);
+            if(node != null)
+                this.expImageNode = node;            
+        }
     }
     
     /**
@@ -261,7 +319,7 @@ public class SOTAExperimentTreeViewer extends JPanel implements IViewer{
         boolean membershipChanged = false;
         boolean [] alteredMembership = new boolean[selectedClusterList.size()];
         
-        int index;        
+        int index;
         for(int c = 0; c < this.selectedClusterList.size(); c++){
             cluster = (HCLCluster)this.selectedClusterList.get(c);
             currColor = cluster.color;
@@ -281,7 +339,7 @@ public class SOTAExperimentTreeViewer extends JPanel implements IViewer{
         for(int i = selectedClusterList.size()-1; i >=0 ;i--){
             if(alteredMembership[i])
                 selectedClusterList.remove(i);
-        }        
+        }
         if(aMemberChanged)
             this.expViewer.onDataChanged(data);
     }
@@ -465,17 +523,17 @@ public class SOTAExperimentTreeViewer extends JPanel implements IViewer{
         
         JMenuItem menuItem;
         
-      //  menuItem = new JMenuItem("Set cluster...", GUIFactory.getIcon("edit16.gif"));
-     //   menuItem.setEnabled(false);
-     //   menuItem.setActionCommand(SET_CLUSTER_CMD);
-     //   menuItem.addActionListener(listener);
-     //   menu.add(menuItem);
+        //  menuItem = new JMenuItem("Set cluster...", GUIFactory.getIcon("edit16.gif"));
+        //   menuItem.setEnabled(false);
+        //   menuItem.setActionCommand(SET_CLUSTER_CMD);
+        //   menuItem.addActionListener(listener);
+        //   menu.add(menuItem);
         
-     //   menuItem = new JMenuItem("Set cluster text...", GUIFactory.getIcon("edit16.gif"));
-    //    menuItem.setEnabled(false);
-    //    menuItem.setActionCommand(SET_CLUSTER_TEXT_CMD);
-    //    menuItem.addActionListener(listener);
-   //     menu.add(menuItem);
+        //   menuItem = new JMenuItem("Set cluster text...", GUIFactory.getIcon("edit16.gif"));
+        //    menuItem.setEnabled(false);
+        //    menuItem.setActionCommand(SET_CLUSTER_TEXT_CMD);
+        //    menuItem.addActionListener(listener);
+        //     menu.add(menuItem);
         
         menuItem = new JMenuItem("Save cluster...", GUIFactory.getIcon("save_as16.gif"));
         menuItem.setEnabled(false);
@@ -483,17 +541,17 @@ public class SOTAExperimentTreeViewer extends JPanel implements IViewer{
         menuItem.addActionListener(listener);
         menu.add(menuItem);
         
-    //    menuItem = new JMenuItem("Delete cluster", GUIFactory.getIcon("delete16.gif"));
-   //     menuItem.setEnabled(false);
-   //     menuItem.setActionCommand(DELETE_CLUSTER_CMD);
-   //     menuItem.addActionListener(listener);
-   //     menu.add(menuItem);
+        //    menuItem = new JMenuItem("Delete cluster", GUIFactory.getIcon("delete16.gif"));
+        //     menuItem.setEnabled(false);
+        //     menuItem.setActionCommand(DELETE_CLUSTER_CMD);
+        //     menuItem.addActionListener(listener);
+        //     menu.add(menuItem);
         
-   //     menuItem = new JMenuItem("Delete all clusters", GUIFactory.getIcon("delete16.gif"));
-   //     menuItem.setEnabled(false);
-   //     menuItem.setActionCommand(DELETE_ALL_CLUSTERS_CMD);
-    //    menuItem.addActionListener(listener);
-   //     menu.add(menuItem);
+        //     menuItem = new JMenuItem("Delete all clusters", GUIFactory.getIcon("delete16.gif"));
+        //     menuItem.setEnabled(false);
+        //     menuItem.setActionCommand(DELETE_ALL_CLUSTERS_CMD);
+        //    menuItem.addActionListener(listener);
+        //     menu.add(menuItem);
         
         menu.addSeparator();
         
@@ -553,7 +611,7 @@ public class SOTAExperimentTreeViewer extends JPanel implements IViewer{
      */
     public JComponent getRowHeaderComponent() {
         return null;
-    }    
+    }
     
     /** Returns the corner component corresponding to the indicated corner,
      * posibly null

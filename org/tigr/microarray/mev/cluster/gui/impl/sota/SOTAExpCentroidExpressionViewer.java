@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOTAExpCentroidExpressionViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 18:35:16 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 20:27:16 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -33,6 +33,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseMotionListener;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import javax.swing.event.*;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -56,7 +60,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 
 
 
-public class SOTAExpCentroidExpressionViewer extends JPanel implements IViewer{
+public class SOTAExpCentroidExpressionViewer extends JPanel implements IViewer, java.io.Serializable {
     
     private int numberOfCentroids;
     private int [] clusterPopulation;
@@ -130,6 +134,44 @@ public class SOTAExpCentroidExpressionViewer extends JPanel implements IViewer{
         listener = new Listener();
         this.addMouseMotionListener(listener);
         this.addMouseListener(listener);
+    }
+    
+     private void writeObject(ObjectOutputStream oos) throws IOException {
+        oos.writeObject(header);
+        oos.writeObject(experiment);
+        oos.writeObject(experimentMap);
+        oos.writeObject(clusters);
+        oos.writeInt(numberOfCentroids);
+        oos.writeObject(clusterPopulation);
+        oos.writeObject(this.clusterDiversity);        
+        oos.writeObject(this.selectedClusterList);
+        oos.writeObject(samplesOrder);
+        oos.writeObject(elementSize);
+        oos.writeObject(insets);
+    }
+        
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        header = (ColorBarHeader)ois.readObject();
+        experiment = (Experiment)ois.readObject();
+        experimentMap = (Experiment)ois.readObject();
+        clusters = (int[][])ois.readObject(); 
+        this.numberOfCentroids = ois.readInt();
+        this.clusterPopulation = (int [])ois.readObject();
+        this.clusterDiversity = (FloatMatrix)ois.readObject();
+        this.selectedClusterList = (ArrayList)ois.readObject();
+        samplesOrder = (int[])ois.readObject();
+        elementSize = (Dimension)ois.readObject();
+        this.insets = (Insets)ois.readObject();
+        
+        TEXT_LEFT_MARGIN = 20; 
+        CLUSTER_POP_SPACER = 20;
+        POP_DIV_SPACER = 20;
+        
+        this.firstSelectedRow = -1;
+        this.lastSelectedRow = -1;
+        this.listener = new Listener();
+        addMouseListener(listener);
+        addMouseMotionListener(listener);
     }
     
     /**
@@ -850,6 +892,24 @@ public class SOTAExpCentroidExpressionViewer extends JPanel implements IViewer{
         public ColorBarHeader(int NumberOfElements) {
             numberOfElements = NumberOfElements;
             setBackground(Color.white);
+        }
+        
+        private void writeObject(ObjectOutputStream oos) throws IOException {
+            oos.writeInt(elementWidth);
+            oos.writeBoolean(isAntiAliasing);
+            oos.writeFloat(maxValue);
+            oos.writeFloat(minValue);
+            oos.writeObject(insets);
+            oos.writeInt(numberOfElements);
+        }
+        
+        private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+            this.elementWidth = ois.readInt();
+            this.isAntiAliasing = ois.readBoolean();
+            this.maxValue = ois.readFloat();
+            this.minValue = ois.readFloat();
+            this.insets = (Insets)ois.readObject();
+            this.numberOfElements = ois.readInt();
         }
         
         /**

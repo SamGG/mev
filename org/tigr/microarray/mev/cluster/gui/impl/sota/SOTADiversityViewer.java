@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOTADiversityViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 18:35:16 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 20:27:16 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -37,7 +37,7 @@ import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.graph.*;
 import org.tigr.util.FloatMatrix;
 
-public class SOTADiversityViewer extends GraphViewer implements IViewer{
+public class SOTADiversityViewer extends GraphViewer implements IViewer {
     
     private int numPoints;
     // private int maxValue;
