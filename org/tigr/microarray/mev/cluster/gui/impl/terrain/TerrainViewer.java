@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: TerrainViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-13 19:15:07 $
+ * $Revision: 1.5 $
+ * $Date: 2004-02-25 16:49:10 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -693,13 +693,7 @@ public class TerrainViewer extends JPanel implements IViewer, java.io.Serializab
     }
 
     private void onSetCluster() {
-        
-        // Removed to handle new cluster repository system
-        
-        //Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
-       // Color color = JColorChooser.showDialog(frame, "Choose color", Color.lightGray);
-       // if (color == null)
-        //    return;
+
         float scale = Math.max(Math.abs(this.up_left_point.x-this.bottom_right_point.x), Math.abs(this.up_left_point.y-this.bottom_right_point.y));
         Point2f start = this.selectionShape.getStartCoords();
         Point2f end   = this.selectionShape.getEndCoords();
@@ -716,12 +710,10 @@ public class TerrainViewer extends JPanel implements IViewer, java.io.Serializab
         }
 
         if (isGenes) {
-            framework.storeCluster(getIDataRowIndices(ids.toArray()), this.experiment, Cluster.GENE_CLUSTER);
-           // this.data.setProbesColor(ids.toArray(), color);
-            this.genesShape.updateColors(this.data.getColorIndices(), this.data.getColors());
+              framework.storeSubCluster(ids.toArray(), this.experiment, Cluster.GENE_CLUSTER);
+              this.genesShape.updateColors(this.data.getColorIndices(), this.data.getColors());
         } else {
-            framework.storeCluster(ids.toArray(), this.experiment, Cluster.EXPERIMENT_CLUSTER);
-           //this.data.setExperimentColor(ids.toArray(), color);
+            framework.storeSubCluster(ids.toArray(), this.experiment, Cluster.EXPERIMENT_CLUSTER);
             this.genesShape.updateColors(this.data.getExperimentColorIndices(), this.data.getExperimentColors());
         }
         this.selectionShape.clearSelection();
@@ -942,13 +934,15 @@ public class TerrainViewer extends JPanel implements IViewer, java.io.Serializab
         end.scale(scale);
         start.add(this.up_left_point);
         end.add(this.up_left_point);
+        
+        
 
         ArrayList info = new ArrayList();
         for (int i=0; i<locations.length; i++) {
             float x = locations[i][0];
             float y = locations[i][1];
             if (x >= start.x && x <= end.x && y >= start.y && y <= end.y) {
-                info.add(new String("Element["+String.valueOf(i)+1+"]: "+(isGenes ? this.data.getGeneName(i) : this.data.getSampleName(i) )));
+                info.add(new String("Element["+String.valueOf(i)+1+"]: "+(isGenes ? this.data.getElementAttribute(this.experiment.getGeneIndexMappedToData(i), labelIndex) : this.data.getSampleName(i) )));
             }
         }
         Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
