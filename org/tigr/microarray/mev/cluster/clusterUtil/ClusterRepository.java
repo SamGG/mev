@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterRepository.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-05 22:40:08 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-10 00:15:09 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -72,7 +72,7 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
         this.addClusterList(new ClusterList("Cluster Ops."));
     }
     
-    private void writeObject(ObjectOutputStream oos) throws IOException { 
+    private void writeObject(ObjectOutputStream oos) throws IOException {
         oos.writeBoolean(this.geneClusterRepository);
         oos.writeInt(this.clusterSerialCounter);
         oos.writeObject(this.elementClusters);
@@ -82,7 +82,7 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
     private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
         this.geneClusterRepository = ois.readBoolean();
         this.clusterSerialCounter = ois.readInt();
-        this.elementClusters = (ClusterList [])ois.readObject(); 
+        this.elementClusters = (ClusterList [])ois.readObject();
         this.numberOfElements = ois.readInt();
     }
     
@@ -236,6 +236,10 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
         for(int i = 0; i < size(); i++)
             this.getClusterList(i).clear();
         clearElementClusters();
+        if(this.isGeneClusterRepository())
+            framework.getData().deleteColors();
+        else
+            framework.getData().deleteExperimentColors();
         //   clear();
     }
     
@@ -394,10 +398,13 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
         Cluster cluster = list.getCluster(clusterID);
         if(cluster != null){
             int serialNumber = cluster.getSerialNumber();
-            if(this.isGeneClusterRepository())
+            if(this.isGeneClusterRepository()){
+                framework.getData().setProbesColor(indices, null);
                 framework.addHistory("Remove Gene Cluster From Repository: Serial # "+String.valueOf(serialNumber));
-            else
+            } else {
+                framework.getData().setExperimentColor(indices, null);
                 framework.addHistory("Remove Experiment Cluster From Repository: Serial # "+String.valueOf(serialNumber));
+            }
         }
         list.removeCluster(clusterID);
         removeElementClusters(indices, cluster);
@@ -420,6 +427,15 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
         if(cluster == null)
             return;
         
+        int serialNumber = cluster.getSerialNumber();
+        if(this.isGeneClusterRepository()){
+            framework.getData().setProbesColor(indices, null);
+            framework.addHistory("Remove Gene Cluster From Repository: Serial # "+String.valueOf(serialNumber));
+        } else {
+            framework.getData().setExperimentColor(indices, null);
+            framework.addHistory("Remove Experiment Cluster From Repository: Serial # "+String.valueOf(serialNumber));
+        }
+                
         list.removeCluster(cluster);
         removeElementClusters(indices, cluster);
     }
@@ -478,10 +494,13 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
         int [] indices = cluster.getIndices();
         removeClusterMembership(cluster);
         
-        if(this.isGeneClusterRepository())
+        if(this.isGeneClusterRepository()){
+            framework.getData().setProbesColor(indices, null);
             framework.addHistory("Remove Gene Cluster From Repository: Serial # "+String.valueOf(serialNumber));
-        else
+        } else {
+            framework.getData().setExperimentColor(indices, null);
             framework.addHistory("Remove Experiment Cluster From Repository: Serial # "+String.valueOf(serialNumber));
+        }
     }
     
     /** Returns the next availible cluster serial
