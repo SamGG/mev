@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: Experiment.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-05 22:43:40 $
+ * $Revision: 1.4 $
+ * $Date: 2004-04-05 17:31:38 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -64,6 +64,15 @@ public class Experiment implements java.io.Serializable {
     public int [] getRowMappingArrayCopy(){
         int [] copyArray = new int[this.rowMapping.length];
         System.arraycopy(this.rowMapping, 0, copyArray, 0, copyArray.length);
+        return copyArray;
+    }
+    
+    /**
+     *  Returns a copy of the column indices
+     */
+    public int [] getColumnIndicesCopy() {
+        int [] copyArray = new int[this.columns.length];
+        System.arraycopy(this.columns, 0, copyArray, 0, copyArray.length);
         return copyArray;
     }
     
