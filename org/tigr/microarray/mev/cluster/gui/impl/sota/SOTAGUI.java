@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOTAGUI.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-04-07 18:28:50 $
+ * $Revision: 1.3 $
+ * $Date: 2004-04-29 17:52:17 $
  * $Author: nbhagaba $
  * $State: Exp $
  */
@@ -40,6 +40,7 @@ import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Monitor;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
@@ -393,7 +394,8 @@ public class SOTAGUI implements IClusterGUI {
         if (clusterGenes)
             tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.frameData);
         else
-            return; //placeholder for ExptClusterTableViewer
+            tabViewer = new ExperimentClusterTableViewer(this.experiment, this.clusters, this.frameData);
+            //return; //placeholder for ExptClusterTableViewer
         
         for (int i=0; i<this.clusters.length; i++) {
             node.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+String.valueOf(i+1), tabViewer, new Integer(i))));
