@@ -37,13 +37,15 @@ public class SAMInitDialog extends AlgorithmDialog {
     TwoClassPairedMainPanel tcpmPanel;
     MultiClassPanel mPanel;
     CensoredSurvivalPanel csPanel;
+    OneClassPanel oneCPanel;
     S0AndQValueCalcPanel sqPanel;
     PermutationsPanel pPanel;
     ImputationPanel iPanel;
     OKCancelPanel oPanel;
-    boolean okPressed = false;
+    
+    boolean okPressed = false, allUniquePermsUsed = false;
     Vector exptNames;
-    int numGenes;
+    int numGenes, numUniquePerms;
     HCLSelectionPanel hclOpsPanel;
     //JFrame parentFrame;
     
@@ -55,7 +57,7 @@ public class SAMInitDialog extends AlgorithmDialog {
     public static final int TWO_CLASS_PAIRED = 5;
     public static final int MULTI_CLASS = 6;
     public static final int CENSORED_SURVIVAL = 7;
-    
+    public static final int ONE_CLASS = 8;    
     
     /** Creates new SAMInitDialog */
     public SAMInitDialog(JFrame parentFrame, boolean modality, Vector exptNames, int numGenes) {
@@ -64,6 +66,7 @@ public class SAMInitDialog extends AlgorithmDialog {
         //this.parentFrame = parentFrame;
         this.exptNames = exptNames;
         this.numGenes = numGenes;
+        this.numUniquePerms = 0;
         setBounds(0, 0, 700, 800);
         setBackground(Color.white);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -87,6 +90,8 @@ public class SAMInitDialog extends AlgorithmDialog {
         tabPane.add("Multi-class", mPanel);
         csPanel = new CensoredSurvivalPanel(exptNames);
         tabPane.add("Censored survival", csPanel);
+        oneCPanel = new OneClassPanel();
+        tabPane.add("One-Class", oneCPanel);
         //tabPane.setEnabledAt(1, false);
         //    tabPane.setBackground(Color.white);
         
@@ -901,6 +906,194 @@ public class SAMInitDialog extends AlgorithmDialog {
         
         
     }
+    
+    class OneClassPanel extends JPanel {
+        JTextField meanField;
+        JCheckBox[] includeExpts;
+        JButton saveButton, loadButton, resetButton;
+        OneClassPanel() {
+            this.setBackground(Color.white);
+            JLabel meanLabel = new JLabel("Enter the mean value to be tested against: ");
+            meanField = new JTextField("0", 7);
+            includeExpts = new JCheckBox[exptNames.size()];
+            
+            GridBagLayout gridbag = new GridBagLayout();
+            GridBagConstraints constraints = new GridBagConstraints();
+            this.setLayout(gridbag);
+            
+            JPanel exptPanel = new JPanel();
+            GridBagLayout grid1 = new GridBagLayout();
+            exptPanel.setLayout(grid1);
+            
+            //System.out.println("exptNames.size()" + exptNames.size());
+            
+            for (int i = 0; i < exptNames.size(); i++) {
+                //JLabel expLabel = new JLabel((String)(exptNames.get(i)));
+                includeExpts[i] = new JCheckBox((String)(exptNames.get(i)), true);
+                buildConstraints(constraints, 0, i, 1, 1, 100, 100);
+                grid1.setConstraints(includeExpts[i], constraints);
+                exptPanel.add(includeExpts[i]);
+            }
+            
+            JScrollPane scroll = new JScrollPane(exptPanel);
+            scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+            //scroll.add(exptPanel);
+            
+            JPanel enterMeanPanel = new JPanel();
+            GridBagLayout grid2 = new GridBagLayout();
+            enterMeanPanel.setLayout(grid2);            
+            /*
+            constraints.fill = GridBagConstraints.BOTH;
+            buildConstraints(constraints, 0, 0, 1, 1, 50, 100);
+            gridbag.setConstraints(scroll, constraints);
+            this.add(scroll); 
+             */           
+            
+            constraints.fill = GridBagConstraints.NONE;
+            buildConstraints(constraints, 0, 0, 1, 1, 50, 100);
+            constraints.anchor = GridBagConstraints.EAST;
+            grid2.setConstraints(meanLabel, constraints);
+            enterMeanPanel.add(meanLabel);
+            
+            buildConstraints(constraints, 1, 0, 1, 1, 50, 0);
+            constraints.anchor = GridBagConstraints.WEST;
+            grid2.setConstraints(meanField, constraints);
+            enterMeanPanel.add(meanField);    
+            
+            JScrollPane scroll2 = new JScrollPane(enterMeanPanel);
+            
+            JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scroll, scroll2);
+            split.setOneTouchExpandable(true);
+            split.setDividerLocation(150);
+           
+            constraints.fill = GridBagConstraints.BOTH;
+            buildConstraints(constraints, 0, 0, 1, 1, 100, 80);
+            gridbag.setConstraints(split, constraints);
+            this.add(split);  
+            
+            constraints.fill = GridBagConstraints.NONE;
+            constraints.anchor = GridBagConstraints.CENTER;
+            
+            JPanel lsrPanel = new JPanel();
+            loadButton = new JButton("Load settings");
+            saveButton = new JButton("Save settings");
+            resetButton = new JButton("Reset");
+            
+            resetButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    for (int i = 0; i < includeExpts.length; i++) {
+                        includeExpts[i].setSelected(true);
+                    }
+                }
+            });
+            
+            final JFileChooser fc = new JFileChooser();
+            fc.setCurrentDirectory(new File("Data"));  
+            
+            saveButton.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent evt) {
+                    int returnVal = fc.showSaveDialog(OneClassPanel.this);  
+                    if (returnVal == JFileChooser.APPROVE_OPTION) {
+                        File file = fc.getSelectedFile();
+                        try {
+                            PrintWriter out = new PrintWriter(new FileOutputStream(file));
+                            for (int i = 0; i < includeExpts.length; i++) {
+                                if (includeExpts[i].isSelected()) {
+                                    out.print(1);
+                                } else {
+                                    out.print(0);
+                                }
+                                if (i < includeExpts.length - 1) {
+                                    out.print("\t");
+                                }
+                            }
+                            out.println();
+                            out.flush();
+                            out.close();                            
+                        } catch (Exception e) {
+                        }
+                    } else {
+                    }
+                }
+            });
+            
+            loadButton.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent evt) {
+                    int returnVal = fc.showOpenDialog(OneClassPanel.this);
+                    if (returnVal == JFileChooser.APPROVE_OPTION) {
+                        try {
+                            FileReader file = new FileReader(fc.getSelectedFile());
+                            BufferedReader buff = new BufferedReader(file);     
+                            String line = buff.readLine();
+                            //System.out.println(line);
+                            StringSplitter st = new StringSplitter('\t');
+                            st.init(line);  
+                            Vector includeExptsVector = new Vector();
+                            while (st.hasMoreTokens()) {
+                                String current = st.nextToken();
+                                includeExptsVector.add(new Integer(current));
+                                //System.out.print(current);
+                            }
+                            buff.close();
+                            if (includeExptsVector.size() != includeExpts.length) {
+                                JOptionPane.showMessageDialog(gPanel, "Incompatible file!", "Error", JOptionPane.WARNING_MESSAGE);
+                            } else {
+                                for (int i = 0; i < includeExpts.length; i++) {
+                                    int currentState = ((Integer)(includeExptsVector.get(i))).intValue();
+                                    if (currentState == 0) {
+                                        includeExpts[i].setSelected(false);
+                                    } else if (currentState == 1) {
+                                        includeExpts[i].setSelected(true);
+                                    }else {
+                                        for (int j = 0; j < includeExpts.length; j++) {
+                                            includeExpts[j].setSelected(true);
+                                        }
+                                        JOptionPane.showMessageDialog(gPanel, "Incompatible file!", "Error", JOptionPane.WARNING_MESSAGE);
+                                        break;                                        
+                                    }
+                                }
+                            }
+                        } catch (Exception e) {
+                            JOptionPane.showMessageDialog(gPanel, "Incompatible file!", "Error", JOptionPane.WARNING_MESSAGE); 
+                            
+                        }
+                    } else {
+                    }
+                }
+            });
+            
+            
+            GridBagLayout grid3 = new GridBagLayout();
+            lsrPanel.setLayout(grid3);
+            
+            buildConstraints(constraints, 0, 0, 1, 1, 33, 100);
+            grid3.setConstraints(saveButton, constraints);
+            lsrPanel.add(saveButton);
+            
+            buildConstraints(constraints, 1, 0, 1, 1, 33, 0);
+            grid3.setConstraints(loadButton, constraints);
+            lsrPanel.add(loadButton);            
+            
+            buildConstraints(constraints, 2, 0, 1, 1, 33, 0);
+            grid3.setConstraints(resetButton, constraints);
+            lsrPanel.add(resetButton);            
+            
+            //constraints.fill = GridBagConstraints.BOTH;
+            buildConstraints(constraints, 0, 1, 1, 1, 0, 20);
+            gridbag.setConstraints(lsrPanel, constraints);
+            this.add(lsrPanel);            
+        }
+        
+        
+        public void reset() {
+            for (int i = 0; i < includeExpts.length; i++) {
+                includeExpts[i].setSelected(true);
+            }
+            meanField.setText("0");
+        }
+        
+
+    }    
     
     class TwoClassPairedMainPanel extends JPanel {
         TwoClassPairedPanel tcpPanel;
@@ -2340,6 +2533,8 @@ public class SAMInitDialog extends AlgorithmDialog {
             studyDesign = SAMInitDialog.MULTI_CLASS;
         } else if (tabPane.getSelectedIndex() == 3) {
             studyDesign = SAMInitDialog.CENSORED_SURVIVAL;
+        } else if (tabPane.getSelectedIndex() == 4) {
+            studyDesign = SAMInitDialog.ONE_CLASS;
         }
         return studyDesign;
     }
@@ -2369,14 +2564,47 @@ public class SAMInitDialog extends AlgorithmDialog {
                     }
                 }
             }
+        } else if (getStudyDesign() == ONE_CLASS) {
+            return getOneClassAssignments();
         }
         
         return groupAssignments;
     }
     
+    public int[] getOneClassAssignments() {
+        int[] oneClassAssignments = new int[oneCPanel.includeExpts.length];
+        
+        for (int i = 0; i < oneClassAssignments.length; i++) {
+            if (oneCPanel.includeExpts[i].isSelected()) {
+                oneClassAssignments[i] = 1;
+            } else {
+                oneClassAssignments[i] = 0;
+            }
+        }
+        
+        return oneClassAssignments;
+    }    
+    
+    public double getOneClassMean() {
+        return Double.parseDouble(oneCPanel.meanField.getText());
+    }    
+    
     public int getMultiClassNumGroups() {
         return Integer.parseInt(mPanel.ngPanel.numGroupsField.getText());
     }
+    
+    public int getNumValidOneClassExpts() {
+        int validNum = 0;
+        int[] oca = getOneClassAssignments();
+        
+        for (int i =0; i < oca.length; i++) {
+            if (oca[i] == 1) {
+                validNum++;
+            }
+        }
+        
+        return validNum;
+    }    
     
     
     public int[] getGroupCount() {
@@ -2529,6 +2757,18 @@ public class SAMInitDialog extends AlgorithmDialog {
         }
     }
     
+    public int getNumUniquePerms() {
+        return this.numUniquePerms;
+    }
+    
+    public boolean useAllUniquePerms() {
+        return this.allUniquePermsUsed;
+    }
+    
+    private int getNumUnique2ClassUnpairedPerms(int n, int k) { // nCk
+        return Math.round(factorial(n)/(factorial(k)*factorial(n-k)));
+    }    
+    
     
     public class EventListener extends WindowAdapter implements ActionListener{
         public void actionPerformed(ActionEvent ae){
@@ -2544,6 +2784,21 @@ public class SAMInitDialog extends AlgorithmDialog {
                     }
                 } catch (NumberFormatException nfe) {
                     JOptionPane.showMessageDialog(null, "Enter a valid percentile between 0 and 100!", "Error!", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
+                try {
+                    int numCombs = 0;
+                    //if (!useAllCombs()) {
+                    numCombs = getUserNumCombs();
+                    //}
+                    int numNeibs = 0;
+                    if (useKNearest()) {
+                        numNeibs = getNumNeighbors();
+                    }                  
+                    
+                } catch (NumberFormatException nfe) {
+                    JOptionPane.showMessageDialog(null, "Invalid parameter value(s)!", "Error", JOptionPane.ERROR_MESSAGE); 
                     return;
                 }
                 if (getStudyDesign() == SAMInitDialog.TWO_CLASS_UNPAIRED) {
@@ -2566,6 +2821,7 @@ public class SAMInitDialog extends AlgorithmDialog {
                             JOptionPane.showMessageDialog(null, "Number of permutations must be > 0", "Error", JOptionPane.WARNING_MESSAGE);
                         } */else {
                             try {
+                                
                                 int numCombs = 0;
                                 //if (!useAllCombs()) {
                                 numCombs = getUserNumCombs();
@@ -2573,6 +2829,13 @@ public class SAMInitDialog extends AlgorithmDialog {
                                 int numNeibs = 0;
                                 if (useKNearest()) {
                                     numNeibs = getNumNeighbors();
+                                }
+                                 
+                                if ((grpACounter + grpBCounter) <= 20) {
+                                    numUniquePerms = getNumUnique2ClassUnpairedPerms((grpACounter + grpBCounter), grpACounter);
+                                    SAMAllPermsDialog sapDialog = new SAMAllPermsDialog(SAMGUI.SAMFrame, true, numUniquePerms, numCombs);
+                                    sapDialog.setVisible(true);
+                                    allUniquePermsUsed = sapDialog.useAllPerms();
                                 }
                                 okPressed = true;
                                 javax.swing.UIManager.put("TabbedPane.selected", Color.lightGray);
@@ -2591,6 +2854,13 @@ public class SAMInitDialog extends AlgorithmDialog {
                     if (tcpmPanel.tcpPanel.pairedListModel.size() < 2) {
                         JOptionPane.showMessageDialog(null, "Need at least two pairs of experiments!", "Error", JOptionPane.ERROR_MESSAGE);
                     } else {
+                        if (tcpmPanel.tcpPanel.pairedListModel.size() <= 29) {
+                            int numCombs = getUserNumCombs();
+                            numUniquePerms = (int)(Math.pow(2, tcpmPanel.tcpPanel.pairedListModel.size()));
+                            SAMAllPermsDialog sapDialog = new SAMAllPermsDialog(SAMGUI.SAMFrame, true, numUniquePerms, numCombs);
+                            sapDialog.setVisible(true);
+                            allUniquePermsUsed = sapDialog.useAllPerms();                            
+                        }
                         okPressed = true;
                         javax.swing.UIManager.put("TabbedPane.selected", Color.lightGray);
                         dispose();
@@ -2649,6 +2919,7 @@ public class SAMInitDialog extends AlgorithmDialog {
                             JOptionPane.showMessageDialog(null, "Invalid parameter value(s)!", "Error", JOptionPane.ERROR_MESSAGE);
                         }
                     }
+                     
                 } else if (getStudyDesign() == SAMInitDialog.CENSORED_SURVIVAL) {
                     try {
                         boolean allSame = true;
@@ -2679,12 +2950,38 @@ public class SAMInitDialog extends AlgorithmDialog {
                         } else if (allSame) {
                             JOptionPane.showMessageDialog(null, "At least one of the survival time values must be different from the rest!", "Error", JOptionPane.ERROR_MESSAGE);
                         } else {
+                            if (selectedCounter <= 10) {
+                                numUniquePerms = (int)(factorial(selectedCounter));
+                                SAMAllPermsDialog sapDialog = new SAMAllPermsDialog(SAMGUI.SAMFrame, true, numUniquePerms, numCombs);
+                                sapDialog.setVisible(true);
+                                allUniquePermsUsed = sapDialog.useAllPerms();
+                            }                            
                             okPressed = true;
                             javax.swing.UIManager.put("TabbedPane.selected", Color.lightGray);
                             dispose();
                         }
                     } catch (NumberFormatException nfe){
                         JOptionPane.showMessageDialog(null, "Invalid parameter value(s)!", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else if (getStudyDesign() == SAMInitDialog.ONE_CLASS) {
+                    try {
+                        double ocm = getOneClassMean();
+                        if (getNumValidOneClassExpts() < 2) {
+                            JOptionPane.showMessageDialog(null, "At least 2 experiments must be selected for one-class test!", "Error", JOptionPane.ERROR_MESSAGE);                            
+                        } else {
+                            if (getNumValidOneClassExpts() <= 29) {
+                                int numCombs = getUserNumCombs();
+                                numUniquePerms = (int)(Math.pow(2, getNumValidOneClassExpts()));
+                                SAMAllPermsDialog sapDialog = new SAMAllPermsDialog(SAMGUI.SAMFrame, true, numUniquePerms, numCombs);
+                                sapDialog.setVisible(true);
+                                allUniquePermsUsed = sapDialog.useAllPerms();
+                            }                            
+                            okPressed = true;
+                            javax.swing.UIManager.put("TabbedPane.selected", Color.lightGray);
+                            dispose();
+                        }
+                    } catch (NumberFormatException nfe) {
+                        JOptionPane.showMessageDialog(null, "Invalid value for one-class mean!", "Error", JOptionPane.ERROR_MESSAGE);                        
                     }
                 }
             }  // ends handling ok-command

@@ -18,11 +18,11 @@ import java.util.Vector;
  */
 public class SAMState {
     
-    public static boolean firstRun = true; 
+    public static boolean firstRun = true, useAllUniquePerms; 
     public static int[] groupAssignments, numSigGenesByDelta, sortedDArrayIndices;
-    public static int studyDesign, numCombs, numNeighbors, numMultiClassGroups;
+    public static int studyDesign, numCombs, numNeighbors, numMultiClassGroups, numUniquePerms;
     public static boolean useKNearest, /*isHierarchicalTree,*/ calculateQLowestFDR, useTusherEtAlS0;
-    public static double delta, sNought, pi0Hat, s0Percentile; 
+    public static double delta, sNought, pi0Hat, s0Percentile, oneClassMean; 
     public static double[] dBarValues, sortedDArray, deltaGrid, medNumFalselyCalledGenesByDelta, dArray, rArray, survivalTimes; 
     public static double[] ninetiethPercentileFalselyCalledGenesByDelta, FDRmedian, FDR90thPercentile, qLowestFDR;
     public static boolean[] inSurvivalAnalysis, censored;

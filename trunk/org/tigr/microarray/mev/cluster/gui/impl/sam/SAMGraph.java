@@ -533,7 +533,7 @@ public class SAMGraph extends ActionInfoDialog {
         
         public void paint(Graphics g) {
             super.paint(g);
-            if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL)) {
+            if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) || (studyDesign == SAMInitDialog.ONE_CLASS)) {
                 paint1(g);
             } else if (studyDesign == SAMInitDialog.MULTI_CLASS) {
                 paint2(g);
@@ -938,7 +938,7 @@ public class SAMGraph extends ActionInfoDialog {
             int yCoord = 0;
             
             //if (xValue >= 0) {
-            if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL)) {
+            if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) || (studyDesign == SAMInitDialog.ONE_CLASS)) {
                 xCoord = (int)Math.round((double)(this.getWidth()/2)) + xRaw;
             //} else {
                 //xCoord = Math.round((float)(this.getWidth()/2)) - xRaw;
@@ -976,7 +976,7 @@ public class SAMGraph extends ActionInfoDialog {
            }
            
            double scalingFactor =0; 
-           if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL)) {
+           if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) || (studyDesign == SAMInitDialog.ONE_CLASS)) {
                scalingFactor = (this.getWidth()/2 - 50)/largest;
            } else if (studyDesign == SAMInitDialog.MULTI_CLASS) {
                scalingFactor = ((this.getWidth() - 50) - 30)/largest;
@@ -1002,7 +1002,7 @@ public class SAMGraph extends ActionInfoDialog {
            }
            
           double scalingFactor = 0; 
-          if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL)) {
+          if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) || (studyDesign == SAMInitDialog.ONE_CLASS)) {
               scalingFactor = (this.getHeight()/2 - 50)/largest;
           } else if (studyDesign == SAMInitDialog.MULTI_CLASS) {
               scalingFactor = ((this.getHeight() - 30) - 50)/largest;
