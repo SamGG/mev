@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayData.java,v $
- * $Revision: 1.11 $
- * $Date: 2004-06-24 17:36:30 $
+ * $Revision: 1.12 $
+ * $Date: 2004-07-16 14:43:03 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -76,12 +76,15 @@ public class MultipleArrayData implements IData, java.io.Serializable {
     private FoldFilter foldFilter;
     private boolean useDetectionFilter = false;
     private boolean dfSet = false;
+    private boolean ffSet = false;
     private boolean useFoldFilter = false;
     
     private ClusterRepository geneClusterRepository;
     private ClusterRepository expClusterRepository;
     
     private int logState = LOG;
+    
+    private boolean isMedianIntensities = false;
     
     /**
      *  Sets the data objects feature list
@@ -181,6 +184,14 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         return dfSet;
     }
     
+    public void setffSet(boolean b) {
+        ffSet = b;
+    }
+    
+    public boolean getffSet(){
+        return ffSet;
+    }
+    
     /**
      * Returns the use  DetectionFilter.
      */
@@ -268,6 +279,20 @@ public class MultipleArrayData implements IData, java.io.Serializable {
     }
     
     /**
+     * Sets marker for median intensities
+     */
+    public void setMedianIntensities(boolean areMedians) {
+        this.isMedianIntensities = areMedians;
+    }
+    
+    /**
+     * Returns true if intensities are median intensities
+     */
+    public boolean areMedianIntensities() {
+        return isMedianIntensities;
+    }
+    
+    /**
      * Sets the lower cutoff values.
      */
     public void setLowerCutoffs(float lowerCY3, float lowerCY5) {
@@ -340,8 +365,8 @@ public class MultipleArrayData implements IData, java.io.Serializable {
     public void setSampleLabelKey(String key) {
         for(int i = 0; i < featuresList.size(); i++) {
             ((ISlideData)featuresList.get(i)).setDataLabelKey(key);
-        }        
-    }    
+        }
+    }
     
     /**
      * Returns full feature name.
@@ -351,7 +376,7 @@ public class MultipleArrayData implements IData, java.io.Serializable {
     }
     
     public Vector getSlideDataNameKeys(int column) {
-             return((ISlideData)featuresList.get(column)).getSlideDataKeys();   
+        return((ISlideData)featuresList.get(column)).getSlideDataKeys();
     }
     
     /**
@@ -366,7 +391,7 @@ public class MultipleArrayData implements IData, java.io.Serializable {
             for(int j = 0; j < keyVector.size(); j++) {
                 key = (String)(keyVector.elementAt(j));
                 if(!fullKeyVector.contains(key))
-                    fullKeyVector.addElement(key);                
+                    fullKeyVector.addElement(key);
             }
         }
         return fullKeyVector;
@@ -385,7 +410,7 @@ public class MultipleArrayData implements IData, java.io.Serializable {
             for(int j = 0; j < keyVector.size(); j++) {
                 key = (String)(keyVector.elementAt(j));
                 if(!fullKeyVector.contains(key))
-                    fullKeyVector.addElement(key);                
+                    fullKeyVector.addElement(key);
             }
         }
         
@@ -401,7 +426,7 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         ISlideData slideData;
         
         for(int i = 0; i < featuresList.size(); i++) {
-           getFeature(i).addNewSampleLabel(key, values[i]);;            
+            getFeature(i).addNewSampleLabel(key, values[i]);;
         }
     }
     
@@ -1273,17 +1298,17 @@ public class MultipleArrayData implements IData, java.io.Serializable {
             columnArray[i] = i;
             sd = (ISlideData)featuresList.get(i);
             
-          //pcahan --  don't log2 transform affy data
-          if (TMEV.getDataType() == TMEV.DATA_TYPE_AFFY) {
-
-            for (int j = 0; j < rows.length; j++) {
-              fm.A[j][i] = sd.getRatio(rows[j], LINEAR);
+            //pcahan --  don't log2 transform affy data
+            if (TMEV.getDataType() == TMEV.DATA_TYPE_AFFY) {
+                
+                for (int j = 0; j < rows.length; j++) {
+                    fm.A[j][i] = sd.getRatio(rows[j], LINEAR);
+                }
+            } else {
+                for (int j = 0; j < rows.length; j++) {
+                    fm.A[j][i] = sd.getRatio(rows[j], this.logState);
+                }
             }
-          } else {                      
-              for (int j = 0; j < rows.length; j++) {              
-                  fm.A[j][i] = sd.getRatio(rows[j], this.logState);                
-              }
-          }
         }
         return new Experiment(fm, columnArray, rows);
     }
@@ -1328,7 +1353,7 @@ public class MultipleArrayData implements IData, java.io.Serializable {
                     
                     toggleExptNameLength();
                 } else{
-
+                    
                     slideData.setSlideDataLabels(this.getFeature(slide).getSlideDataKeys(), this.getFeature(slide).getSlideDataLabels());
                     ((SlideData) slideData).setSlideFileName(this.getSampleName(slide));
                 }
@@ -1548,10 +1573,10 @@ public class MultipleArrayData implements IData, java.io.Serializable {
     void divideGenesMedian() {
         Adjustment.divideGenesMedian(experiment.getMatrix());
     }
-
+    
     void divideGenesMean() {
-            Adjustment.divideGenesMean(experiment.getMatrix());
-    }    
+        Adjustment.divideGenesMean(experiment.getMatrix());
+    }
     
     void meanCenterSpots() {
         Adjustment.meanCenterSpots(experiment.getMatrix());
@@ -1600,7 +1625,7 @@ public class MultipleArrayData implements IData, java.io.Serializable {
             mean += row[i];
         }
         return (float)mean/row.length;
-   }
+    }
     
     public int getDataType() {
         return this.dataType;
@@ -1618,7 +1643,7 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         } else {
             this.logState = LOG;
         }
-
+        
         if(this.getFeaturesCount() > 0)
             this.experiment = createExperiment();
     }
@@ -1671,16 +1696,26 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         oos.writeFloat(lowerCY5Cutoff);
         oos.writeBoolean(useLowerCutoffs);
         
+        oos.writeBoolean(isMedianIntensities);
+        
         // pcahan
-        if(dataType == TMEV.DATA_TYPE_AFFY){
-        /*
-        private DetectionFilter detectionFilter;
-    private FoldFilter foldFilter;
-    private boolean useDetectionFilter = false;
-    private boolean dfSet = false;
-    private boolean useFoldFilter = false;
-         **/
+        if(dataType !=  this.DATA_TYPE_TWO_INTENSITY){
+            
+            oos.writeBoolean(this.getdfSet());
+            oos.writeBoolean(this.getffSet());
+            
+            if(this.getdfSet()){
+                oos.writeBoolean(useDetectionFilter);
+                oos.writeObject(detectionFilter);
+                
+            }
+            
+            if(this.getffSet()){
+                oos.writeBoolean(useFoldFilter);
+                oos.writeObject(foldFilter);
+            }
         }
+        
         //private ClusterRepository geneClusterRepository;
         //private ClusterRepository expClusterRepository;
     }
@@ -1719,6 +1754,8 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         lowerCY3Cutoff = ois.readFloat();
         lowerCY5Cutoff = ois.readFloat();
         useLowerCutoffs = ois.readBoolean();
+        
+        isMedianIntensities = ois.readBoolean();
         //    private float lowerCY3Cutoff = 0f;
         //   private float lowerCY5Cutoff = 0f;
         // private boolean useLowerCutoffs = false;
@@ -1727,20 +1764,26 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         //    private boolean normalizationAbort = false;
         
         // pcahan
-        if(dataType == TMEV.DATA_TYPE_AFFY){
+        if(dataType !=  this.DATA_TYPE_TWO_INTENSITY){
             
-        /*
-        private DetectionFilter detectionFilter;
-    private FoldFilter foldFilter;
-    private boolean useDetectionFilter = false;
-    private boolean dfSet = false;
-    private boolean useFoldFilter = false;
-         **/
+            dfSet = ois.readBoolean();
+            ffSet = ois.readBoolean();
+            
+            if(dfSet){
+                useDetectionFilter = ois.readBoolean();
+                detectionFilter = (DetectionFilter)ois.readObject();
+            }
+            
+            if(ffSet){
+                useFoldFilter = ois.readBoolean();
+                foldFilter = (FoldFilter)ois.readObject();
+            }
         }
+        
         //private ClusterRepository geneClusterRepository;
         //private ClusterRepository expClusterRepository;
     }
     
-
+    
     
 }
