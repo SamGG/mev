@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: OneWayANOVAInitBox.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-02-13 19:36:39 $
- * $Author: braisted $
+ * $Revision: 1.6 $
+ * $Date: 2004-06-25 18:51:18 $
+ * $Author: nbhagaba $
  * $State: Exp $
  */
 
@@ -36,10 +36,12 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
     public static final int JUST_ALPHA = 1;
     public static final int STD_BONFERRONI = 2;
     public static final int ADJ_BONFERRONI = 3;
+    public static final int MAX_T = 9;    
     
     boolean okPressed = false;
     Vector exptNames;    
     MultiClassPanel mPanel; 
+    PermOrFDistPanel permPanel;
     PValuePanel pPanel;
     HCLSelectionPanel hclOpsPanel;    
     
@@ -47,7 +49,7 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
     public OneWayANOVAInitBox(JFrame parentFrame, boolean modality, Vector exptNames) {
         super(parentFrame, "One-way ANOVA Initialization", modality);
         this.exptNames = exptNames;  
-        setBounds(0, 0, 700, 720);
+        setBounds(0, 0, 700, 750);
         setBackground(Color.white);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         GridBagLayout gridbag = new GridBagLayout();
@@ -61,15 +63,20 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
 
         buildConstraints(constraints, 0, 0, 1, 1, 100, 80);
         gridbag.setConstraints(mPanel, constraints);
-        pane.add(mPanel);     
+        pane.add(mPanel);   
+        
+        permPanel = new PermOrFDistPanel();
+        buildConstraints(constraints, 0, 1, 1, 1, 0, 5);
+        gridbag.setConstraints(permPanel, constraints);
+        pane.add(permPanel);        
 
         pPanel = new PValuePanel();
-        buildConstraints(constraints, 0, 1, 1, 1, 0, 10);
+        buildConstraints(constraints, 0, 2, 1, 1, 0, 10);
         gridbag.setConstraints(pPanel, constraints);
         pane.add(pPanel);
         
         hclOpsPanel = new HCLSelectionPanel();
-        buildConstraints(constraints, 0, 2, 1, 1, 0, 10);
+        buildConstraints(constraints, 0, 3, 1, 1, 0, 5);
         gridbag.setConstraints(hclOpsPanel, constraints);
         pane.add(hclOpsPanel);        
         
@@ -473,9 +480,124 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
         }
     }
     
+    class PermOrFDistPanel extends JPanel {
+        JRadioButton tDistButton, permutButton; // randomGroupsButton, allCombsButton;
+        JLabel numPermsLabel;
+        JTextField timesField;//, alphaInputField;
+        //JButton permParamButton;
+        
+        PermOrFDistPanel() {
+            // this.setBorder(new TitledBorder(new EtchedBorder(), "P-Value parameters"));
+            this.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), "Permutations or F-distribution", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
+            this.setBackground(Color.white);
+            GridBagLayout gridbag = new GridBagLayout();
+            GridBagConstraints constraints = new GridBagConstraints();
+            //constraints.anchor = GridBagConstraints.WEST;
+            //constraints.fill = GridBagConstraints.BOTH;
+            this.setLayout(gridbag);
+            
+            //permParamButton = new JButton("Permutation parameters");
+            //permParamButton.setEnabled(false);
+            
+            ButtonGroup chooseP = new ButtonGroup();
+            
+            tDistButton = new JRadioButton("p-values based on F-distribution", true);
+            tDistButton.setFocusPainted(false);
+            tDistButton.setForeground(UIManager.getColor("Label.foreground"));
+            tDistButton.setBackground(Color.white);
+            
+            numPermsLabel = new JLabel("Enter number of permutations");
+            numPermsLabel.setEnabled(false);
+            
+            timesField = new JTextField("1000", 7);
+            timesField.setEnabled(false);
+            timesField.setBackground(Color.darkGray);
+            
+            tDistButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    numPermsLabel.setEnabled(false);
+                    timesField.setEnabled(false);
+                    timesField.setBackground(Color.darkGray); 
+                    if (pPanel.maxTButton.isSelected()) {
+                        pPanel.justAlphaButton.setSelected(true);
+                    }
+                    pPanel.maxTButton.setEnabled(false);
+                    //pAdjPanel.minPButton.setEnabled(false);
+                }
+            });
+            
+            chooseP.add(tDistButton);
+            
+            permutButton = new JRadioButton("p-values based on permutation:  ", false);
+            permutButton.setFocusPainted(false);
+            permutButton.setForeground(UIManager.getColor("Label.foreground"));
+            permutButton.setBackground(Color.white);
+            
+            permutButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    numPermsLabel.setEnabled(true);
+                    timesField.setEnabled(true);
+                    timesField.setBackground(Color.white);                  
+                    pPanel.maxTButton.setEnabled(true);  //UNCOMMENT THIS WHEN MAXT METHOD HAS BEEN IMPLEMEMTED
+                    //pAdjPanel.minPButton.setEnabled(true);  //UNCOMMENT THIS WHEN MINP METHOD HAS BEEN DEBUGGED                  
+                }                
+            });
+            
+            chooseP.add(permutButton);
+            
+            
+            //constraints.anchor = GridBagConstraints.CENTER;
+            
+            //numCombsLabel = new JLabel("                                       ");
+            //numCombsLabel.setOpaque(false);
+            /*
+            constraints.fill = GridBagConstraints.BOTH;
+            buildConstraints(constraints, 1, 2, 1, 1, 0, 0);
+            gridbag.setConstraints(numCombsLabel, constraints);
+            this.add(numCombsLabel);
+             */
+            
+            
+            buildConstraints(constraints, 0, 0, 3, 1, 100, 50);
+            //constraints.fill = GridBagConstraints.BOTH;
+            constraints.anchor = GridBagConstraints.WEST;
+            gridbag.setConstraints(tDistButton, constraints);
+            this.add(tDistButton);
+            
+            buildConstraints(constraints, 0, 1, 1, 1, 30, 50);
+            constraints.anchor = GridBagConstraints.WEST;
+            gridbag.setConstraints(permutButton, constraints);
+            this.add(permutButton);
+            
+            //JLabel numPermsLabel = new JLabel("Enter number of permutations");
+            //numPermsLabel.setEnabled(false);
+            buildConstraints(constraints, 1, 1, 1, 1, 30, 0);
+            gridbag.setConstraints(numPermsLabel, constraints);
+            this.add(numPermsLabel);
+            
+            buildConstraints(constraints, 2, 1, 1, 1, 40, 0);
+            gridbag.setConstraints(timesField, constraints);
+            this.add(timesField);
+            /*
+            JLabel alphaLabel = new JLabel("Enter critical p-value");
+            buildConstraints(constraints, 0, 2, 2, 1, 60, 40);
+            //constraints.anchor = GridBagConstraints.EAST;
+            gridbag.setConstraints(alphaLabel, constraints);
+            this.add(alphaLabel);
+            
+            alphaInputField = new JTextField("0.01", 7);
+            buildConstraints(constraints, 1, 2, 1, 1, 40, 0);
+            constraints.anchor = GridBagConstraints.WEST;
+            gridbag.setConstraints(alphaInputField, constraints);
+            this.add(alphaInputField);
+             */
+        }
+    }
+    
+    
     class PValuePanel extends JPanel {
         JTextField pValueInputField;
-        JRadioButton justAlphaButton, stdBonfButton, adjBonfButton;
+        JRadioButton justAlphaButton, stdBonfButton, adjBonfButton, maxTButton;
         
         public PValuePanel() {
             this.setBorder(new TitledBorder(new EtchedBorder(), "P-value parameters", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
@@ -502,33 +624,40 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
             
             justAlphaButton = new JRadioButton("Just alpha (no correction)", true);
             justAlphaButton.setBackground(Color.white);
-            justAlphaButton.setVisible(false);
-            stdBonfButton = new JRadioButton("Standard Bonferroni correction", false);
+            //justAlphaButton.setVisible(false);
+            stdBonfButton = new JRadioButton("Standard Bonferroni", false);
             stdBonfButton.setBackground(Color.white);
-            stdBonfButton.setVisible(false); // WILL BE MADE VISIBLE WHEN THESE OPTIONS ARE IMPLEMENTED
-            adjBonfButton = new JRadioButton("Adjusted Bonferroni correction", false);
+            //stdBonfButton.setVisible(false); // WILL BE MADE VISIBLE WHEN THESE OPTIONS ARE IMPLEMENTED
+            adjBonfButton = new JRadioButton("Adjusted Bonferroni", false);
             adjBonfButton.setBackground(Color.white);
-            adjBonfButton.setVisible(false);// WILL BE MADE VISIBLE WHEN THESE OPTIONS ARE IMPLEMENTED
+            //adjBonfButton.setVisible(false);// WILL BE MADE VISIBLE WHEN THESE OPTIONS ARE IMPLEMENTED
+            maxTButton = new JRadioButton("Westfall-Young step-down maxT", false);
+            maxTButton.setBackground(Color.white);
+            maxTButton.setEnabled(false);
             
             ButtonGroup chooseCorrection = new ButtonGroup();
             chooseCorrection.add(justAlphaButton);
             chooseCorrection.add(stdBonfButton);
             chooseCorrection.add(adjBonfButton);
+            chooseCorrection.add(maxTButton);
+            //stdBonfButton.setEnabled(false);
+            //adjBonfButton.setEnabled(false);
             
-            stdBonfButton.setEnabled(false);
-            adjBonfButton.setEnabled(false);
-            
-            buildConstraints(constraints, 0, 1, 1, 1, 33, 50);
+            buildConstraints(constraints, 0, 1, 1, 1, 25, 50);
             gridbag.setConstraints(justAlphaButton, constraints);
             this.add(justAlphaButton);
  
-            buildConstraints(constraints, 1, 1, 1, 1, 33, 0);
+            buildConstraints(constraints, 1, 1, 1, 1, 25, 0);
             gridbag.setConstraints(stdBonfButton, constraints);
             this.add(stdBonfButton);  
             
-            buildConstraints(constraints, 2, 1, 1, 1, 34, 0);
+            buildConstraints(constraints, 2, 1, 1, 1, 25, 0);
             gridbag.setConstraints(adjBonfButton, constraints);
-            this.add(adjBonfButton);            
+            this.add(adjBonfButton);     
+            
+            buildConstraints(constraints, 3, 1, 1, 1, 25, 0);
+            gridbag.setConstraints(maxTButton, constraints);
+            this.add(maxTButton);             
         }
         
         private void reset() {
@@ -581,15 +710,21 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
                     try {
                         //HERE, CHECK OTHER INPUTS: P-VALUE VALIDITY - 4/25/03
                         double d = Double.parseDouble(pPanel.pValueInputField.getText());
-                        if ((d <= 0d)||(d > 1d)) {
-                            JOptionPane.showMessageDialog(null, "P-value must be between 0 and 1", "Error!", JOptionPane.ERROR_MESSAGE);
+                        /*
+                        if (usePerms()) {
+                            int p = getNumPerms();
+                        }
+                         */
+                        if ((d <= 0d)||(d > 1d) || (usePerms() && (getNumPerms() <= 1))) {
+                            JOptionPane.showMessageDialog(null, "Valid inputs: 0 < alpha < 1, and # of permutations (integer only) > 1", "Error!", JOptionPane.ERROR_MESSAGE);
                         } else {
                             okPressed = true;
                             dispose();
                         }
                     } catch (NumberFormatException nfe) {
-                        JOptionPane.showMessageDialog(null, "P-value must be between 0 and 1", "Error!", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Valid inputs: 0 < alpha < 1, and # of permutations (integer only) > 1", "Error!", JOptionPane.ERROR_MESSAGE);
                     }
+
                 }
             } else if (command.equals("reset-command")) {
                 mPanel.reset();
@@ -640,6 +775,14 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
         return mPanel.numGroups;
     }
     
+    public boolean usePerms() {
+        return this.permPanel.permutButton.isSelected();
+    }
+    
+    public int getNumPerms() {
+        return Integer.parseInt(this.permPanel.timesField.getText());
+    }
+    
     public double getPValue() {
         return Double.parseDouble(pPanel.pValueInputField.getText());
     }
@@ -650,8 +793,10 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
             method = JUST_ALPHA;
         } else if (pPanel.stdBonfButton.isSelected()) {
             method = STD_BONFERRONI;
-        } else {
+        } else if (pPanel.adjBonfButton.isSelected()) {
             method = ADJ_BONFERRONI;
+        } else if (pPanel.maxTButton.isSelected()) {
+            method = MAX_T;
         }
         
         return method;
