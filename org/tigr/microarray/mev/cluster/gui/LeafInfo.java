@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: LeafInfo.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-05 22:44:41 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -21,7 +21,10 @@ import javax.swing.JPopupMenu;
  * @version 1.0
  * @author Aleksey D.Rezantsev
  */
-public class LeafInfo {
+public class LeafInfo implements java.io.Serializable {
+        
+    static final long serialVersionUID = 1L;
+    
     // leaf name
     private String name;
     // it will be used to display a result
@@ -33,6 +36,8 @@ public class LeafInfo {
     // user object
     private Object userObject;
     
+    
+    public LeafInfo() {  }
     /**
      * Constructs a <code>LeafInfo</code> with specified name.
      *
@@ -125,11 +130,22 @@ public class LeafInfo {
 	this.tooltip = tooltip;
     }
     
+    public void setName(String val) {
+        name = val;
+    }
+    public String getName() {
+        return name;
+    }
+    
     /**
      * Returns the node viewer.
      */
     public IViewer getViewer() {
-	return viewer;
+        System.out.println("get leaf info viewer for xml");
+        return viewer;
+    }
+    public void setViewer(IViewer v) {
+        this.viewer = v;
     }
     
     /**
@@ -146,6 +162,7 @@ public class LeafInfo {
 	return tooltip;
     }
     
+    
     /**
      * Sets the node user object.
      */
@@ -157,7 +174,8 @@ public class LeafInfo {
      * Returns the node user object.
      */
     public Object getUserObject() {
-	return userObject;
+        System.out.println("leaf info userobj");
+        return userObject;
     }
     
     /**
@@ -166,4 +184,27 @@ public class LeafInfo {
     public String toString() {
 	return name;
     }
+    
+    /**
+     * Sets the JPopupMenu field
+     */
+    public void setPopupMenu(JPopupMenu menu){
+        this.popup = menu;
+    }
+       
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.writeObject(this.name);
+        oos.writeObject(this.userObject);
+        oos.writeObject(this.tooltip);
+        oos.writeObject(this.viewer);
+    }
+     
+   
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        this.name = (String)ois.readObject();
+        this.userObject = ois.readObject();
+        this.tooltip = (String)ois.readObject();
+        this.viewer = (IViewer)ois.readObject();
+    }   
 }
