@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: MevFileParser.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2004-07-27 19:46:11 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -17,10 +17,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.FileReader;
 import java.io.File;
+import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
+
+
+import org.tigr.util.StringSplitter;
 
 /**
 	Parses and stores mev file data
@@ -199,7 +203,7 @@ public class MevFileParser {
 		BufferedReader reader = null;
 		boolean readHeaders = false;
 		
-		try {
+		try { 
 			reader = new BufferedReader(new FileReader(targetFile));
 			for (int lineCount = 0; ((currentLine = reader.readLine()) != null); lineCount++) {
 				rawLines.add(currentLine);
@@ -517,14 +521,24 @@ public class MevFileParser {
 			}
 		}
 		
+                //jcb use StringSplitter to return "" for an empty tokean
+                StringSplitter ss = new StringSplitter('\t');
+                
 		for (int i = hc; i < matrix.length; i++) {
 			
 			String currentLine = getElementAtIndex(i - hc);
-			StringTokenizer st = new StringTokenizer(currentLine, "\t");
+			//jcb StringTokenizer st = new StringTokenizer(currentLine, "\t");
+			//use StringSplitter, set current line
+                        //Note: if file has an empty field then the matrix gets ""
+                        ss.init(currentLine);
 			
-			for (int j = 0; j < matrix[i].length; j++) {
-				matrix[i][j] = st.nextToken();
-			}
+                        for (int j = 0; j < matrix[i].length; j++) {
+                            try {
+				matrix[i][j] = ss.nextToken();                                
+                            } catch (NoSuchElementException nsee) {  //catch empty final token
+                                matrix[i][j] = "";
+                            }
+                       }
 		}
 		
 		return matrix;

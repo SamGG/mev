@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: AnnFileParser.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2004-07-27 19:46:11 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -22,6 +22,7 @@ import java.util.Vector;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
+import org.tigr.util.StringSplitter;
 /**
 	Parses and stores annotation (.ann, .dat, .txt) file data
 	
@@ -140,7 +141,7 @@ public class AnnFileParser {
 			reader = new BufferedReader(new FileReader(targetFile));
 			for (int lineCount = 0; ((currentLine = reader.readLine()) != null); lineCount++) {
 				rawLines.add(currentLine);
-				if (! currentLine.startsWith("#")) { // Non-comment line
+				if (! ( currentLine.startsWith("#") || currentLine.startsWith("\"#") ) ) { // Non-comment line
 					if (! readHeaders) { // Read/load the column headers
 						readHeaders = true;
 						StringTokenizer st = new StringTokenizer(currentLine, "\t");
@@ -204,7 +205,7 @@ public class AnnFileParser {
 			reader = new BufferedReader(new FileReader(targetFile));
 			for (int lineCount = 0; ((currentLine = reader.readLine()) != null); lineCount++) {
 				rawLines.add(currentLine);
-				if (! currentLine.startsWith("#")) { // Non-comment line
+				if (! ( currentLine.startsWith("#") || currentLine.startsWith("\"#") )) { // Non-comment line
 					if (! readHeaders) { // Read/load the column headers
 						readHeaders = true;
 						StringTokenizer st = new StringTokenizer(currentLine, "\t");
@@ -493,22 +494,102 @@ public class AnnFileParser {
 		
 		if (withHeaders) {
 			for (int i = 0; i < columnHeaders.size(); i++) {
-				matrix[0][i] = (String) columnHeaders.elementAt(i);
-			}
+				matrix[0][i] = (String) columnHeaders.elementAt(i);                                
+			}  
 		}
+                
+                //jcb use StringSplitter to return empty tokens
+                StringSplitter ss = new StringSplitter('\t');                
 		
 		for (int i = hc; i < matrix.length; i++) {
 			
 			String currentLine = getElementAtIndex(i - hc);
-			StringTokenizer st = new StringTokenizer(currentLine, "\t");
-			
+			//jcb StringTokenizer st = new StringTokenizer(currentLine, "\t");
+			ss.init(currentLine);
+                        
 			for (int j = 0; j < matrix[i].length; j++) {
-				matrix[i][j] = st.nextToken();
-			}
+                            try{
+				matrix[i][j] = ss.nextToken();
+                            } catch (Exception e){
+                                matrix[i][j] = "";
+                                //e.printStackTrace();
+                            }
+                        }
 		}
 		
 		return matrix;
 	}
+        
+        
+        	/**
+		Returns a two-dimensional String array containing every value for each 
+		column header for every record in the ann file. The first dimension of 
+		the array iterates over the columns, while the second dimension iterates 
+		over the spots. All comment lines will be ignored.
+                 
+                 Beginning and ending quotes will be eliminated if both are present.
+		
+		@return The String[][] containing all annotation data
+	*/
+	public String[][] getDataMatrixMinusQuotes() {
+		return getDataMatrixMinusQuotes(false);
+	}
+	
+	/**
+		Returns a two-dimensional String array containing every value for each 
+		column header for every record in the ann file. The first dimension of 
+		the array iterates over the columns, while the second dimension iterates 
+		over the spots. Optionally, the first element in the first dimension of 
+		the array can be an array of all column headers. All comment lines will 
+		be ignored.
+         
+                Starting and trailing quotes will be eliminated if both are present.
+        
+		
+		@param withHeaders If true, headers are included in the returned array
+		
+		@return The String[][] containing all annotation data
+	*/
+	public String[][] getDataMatrixMinusQuotes(boolean withHeaders) {
+		System.out.println("data matrix minus quotes");
+		Vector columnHeaders = getColumnHeaders();
+		int hc = withHeaders ? 1 : 0;
+		
+		String[][] matrix = new String[dataLinesMap.size() + hc][columnHeaders.size()];
+		
+		if (withHeaders) {
+			for (int i = 0; i < columnHeaders.size(); i++) {
+				matrix[0][i] = (String) columnHeaders.elementAt(i);       
+			}  
+		}
+                
+                //jcb use StringSplitter to return empty tokens
+                StringSplitter ss = new StringSplitter('\t');                
+                
+		for (int i = hc; i < matrix.length; i++) {
+			
+			String currentLine = getElementAtIndex(i - hc);
+			//jcb StringTokenizer st = new StringTokenizer(currentLine, "\t");
+			ss.init(currentLine);
+                        
+			for (int j = 0; j < matrix[i].length; j++) {
+                            try{
+				matrix[i][j] = ss.nextToken();
+                                if(matrix[i][j].startsWith("\"") && matrix[i][j].endsWith("\"")) {
+                                    matrix[i][j] = matrix[i][j].replaceFirst("\"", "");
+                                    matrix[i][j] = matrix[i][j].substring(0, matrix[i][j].length()-2);
+                                }
+                            } catch (Exception e){
+                                matrix[i][j] = "";
+                                //e.printStackTrace();
+                            }
+                        }
+		}
+		
+		return matrix;
+	}
+        
+        
 	
 	private static class IntVector extends Vector {
 
