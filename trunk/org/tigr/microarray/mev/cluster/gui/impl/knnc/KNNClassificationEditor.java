@@ -25,7 +25,7 @@ import org.tigr.microarray.mev.cluster.gui.Experiment;
  *
  * @author  nbhagaba
  */
-public class KNNClassificationEditor extends JFrame {
+public class KNNClassificationEditor extends javax.swing.JDialog {// JFrame {
     
     IFramework framework;
     IData data;
@@ -55,6 +55,7 @@ public class KNNClassificationEditor extends JFrame {
     
     /** Creates a new instance of KNNClassificationEditor */
     public KNNClassificationEditor(IFramework framework, boolean classifyGenes, int numClasses) {
+        super(framework.getFrame(), true);
         this.setTitle("KNN Classification Editor");
         mainFrame = (JFrame)(framework.getFrame());
         //super((JFrame)(framework.getFrame()), "KNN Classification Editor", true);
@@ -94,8 +95,8 @@ public class KNNClassificationEditor extends JFrame {
         knnClassTable.setColumnModel(new KNNClassTableColumnModel(knnClassTable.getColumnModel()));
         knnClassTable.getModel().addTableModelListener(new ClassSelectionListener());
         
-        searchDialog = new KNNCSearchDialog(JOptionPane.getFrameForComponent(this), knnClassTable, numClasses, false); //persistent search dialog     
-        
+        searchDialog = new KNNCSearchDialog(this, knnClassTable, numClasses, false); //persistent search dialog     
+        //JOptionPane.getFrameForComponent(this)
         JScrollPane scroll = new JScrollPane(knnClassTable);
         buildConstraints(constraints, 0, 0, 1, 1, 100, 100);
         grid1.setConstraints(scroll, constraints);
@@ -283,12 +284,11 @@ public class KNNClassificationEditor extends JFrame {
         gbc.weighty = wy;
     }
     
-    public void setVisible(boolean visible) {
+    public void showModal(boolean visible) {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation((screenSize.width - getSize().width)/2, (screenSize.height - getSize().height)/2);
-        
-        super.setVisible(visible);
-        //showWarningMessage();
+        showWarningMessage();     
+        super.setVisible(visible);        
     }
     
     class KNNClassifierTable extends JTable {
@@ -802,9 +802,10 @@ public class KNNClassificationEditor extends JFrame {
                    kModel.setValueAt(new Boolean(true), currInd, currCl);
                }
            }  
-           
-           KNNClassificationEditor.this.setVisible(true);
-           showWarningMessage();
+           KNNClassificationEditor.this.showModal(true);
+          
+           //KNNClassificationEditor.this.setVisible(true);
+          // showWarningMessage();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(framework.getFrame(), "Incompatible file!", "Error", JOptionPane.WARNING_MESSAGE);
             incompatible = true;

@@ -28,7 +28,7 @@ public class KNNCSearchDialog extends javax.swing.JDialog {
      * @param table parent table
      * @param modal modal selection
      */
-    public KNNCSearchDialog(java.awt.Frame parent, JTable table, int numClasses, boolean modal) {
+    public KNNCSearchDialog(javax.swing.JDialog parent, JTable table, int numClasses, boolean modal) {
 	super(parent, modal);
 	this.table = table;
 	this.numClasses = numClasses;
