@@ -10,8 +10,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: QTCCentroidsViewer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-05 21:12:18 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -31,13 +31,18 @@ import javax.swing.JOptionPane;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
+import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidsViewer;
 
 public class QTCCentroidsViewer extends CentroidsViewer {
     
     private static final String SAVE_ALL_CLUSTERS_CMD = "save-all-clusters-cmd";
+    private static final String SET_Y_TO_EXPERIMENT_MAX_CMD = "set-y-to-exp-max-cmd";
+    private static final String SET_Y_TO_CLUSTER_MAX_CMD = "set-y-to-cluster-max-cmd";        
     
     private JPopupMenu popup;
+    private JMenuItem setOverallMaxMenuItem;
+    private JMenuItem setClusterMaxMenuItem;
     
     /**
      * Constructs a <code>QTCCentroidsViewer</code> for specified experiment
@@ -49,6 +54,14 @@ public class QTCCentroidsViewer extends CentroidsViewer {
 	this.popup = createJPopupMenu(listener);
 	getContentComponent().addMouseListener(listener);
     }
+    
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { }    
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {        
+        Listener listener = new Listener();
+	this.popup = createJPopupMenu(listener);
+	getContentComponent().addMouseListener(listener);
+    }    
     
     /**
      * Creates a popup menu.
@@ -63,13 +76,25 @@ public class QTCCentroidsViewer extends CentroidsViewer {
      * Adds the viewer specific menu items.
      */
     private void addMenuItems(JPopupMenu menu, Listener listener) {
-	JMenuItem menuItem;
-	menuItem = new JMenuItem("Save all clusters", GUIFactory.getIcon("save16.gif"));
-	menuItem.setActionCommand(SAVE_ALL_CLUSTERS_CMD);
-	menuItem.addActionListener(listener);
-	menu.add(menuItem);
-    }
-    
+        JMenuItem menuItem;
+        menuItem = new JMenuItem("Save all clusters", GUIFactory.getIcon("save16.gif"));
+        menuItem.setActionCommand(SAVE_ALL_CLUSTERS_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        setOverallMaxMenuItem = new JMenuItem("Set Y to overall max...", GUIFactory.getIcon("Y_range_expand.gif"));
+        setOverallMaxMenuItem.setActionCommand(SET_Y_TO_EXPERIMENT_MAX_CMD);
+        setOverallMaxMenuItem.addActionListener(listener);
+        setOverallMaxMenuItem.setEnabled(false);
+        menu.add(setOverallMaxMenuItem);
+        
+        setClusterMaxMenuItem = new JMenuItem("Set Y to cluster max...", GUIFactory.getIcon("Y_range_expand.gif"));
+        setClusterMaxMenuItem.setActionCommand(SET_Y_TO_CLUSTER_MAX_CMD);
+        setClusterMaxMenuItem.addActionListener(listener);
+        menu.add(setClusterMaxMenuItem);
+    }    
+        
+        
     /**
      * Saves all clusters.
      */
@@ -87,27 +112,45 @@ public class QTCCentroidsViewer extends CentroidsViewer {
      * The class to listen to mouse and action events.
      */
     private class Listener extends MouseAdapter implements ActionListener {
-	
-	public void actionPerformed(ActionEvent e) {
-	    String command = e.getActionCommand();
-	    if (command.equals(SAVE_ALL_CLUSTERS_CMD)) {
-		onSaveClusters();
-	    }
-	}
-	
-	public void mouseReleased(MouseEvent event) {
-	    maybeShowPopup(event);
-	}
-	
-	public void mousePressed(MouseEvent event) {
-	    maybeShowPopup(event);
-	}
-	
-	private void maybeShowPopup(MouseEvent e) {
-	    if (!e.isPopupTrigger()) {
-		return;
-	    }
-	    popup.show(e.getComponent(), e.getX(), e.getY());
-	}
+        
+        public void actionPerformed(ActionEvent e) {
+            String command = e.getActionCommand();
+            if (command.equals(SAVE_ALL_CLUSTERS_CMD)) {
+                onSaveClusters();
+            } else if(command.equals(SET_Y_TO_EXPERIMENT_MAX_CMD)){
+                setAllYRanges(CentroidViewer.USE_EXPERIMENT_MAX);
+                setClusterMaxMenuItem.setEnabled(true);
+                setOverallMaxMenuItem.setEnabled(false);
+                repaint();
+            } else if(command.equals(SET_Y_TO_CLUSTER_MAX_CMD)){
+                setAllYRanges(CentroidViewer.USE_CLUSTER_MAX);
+                setClusterMaxMenuItem.setEnabled(false);
+                setOverallMaxMenuItem.setEnabled(true);
+                repaint();
+            }
+        }
+        
+        private void setAllYRanges(int yRangeOption){
+            int numClusters = getClusters().length;
+            for(int i = 0; i < numClusters; i++){
+                centroidViewer.setClusterIndex(i);
+                centroidViewer.setYRangeOption(yRangeOption);
+            }
+        }
+        
+        public void mouseReleased(MouseEvent event) {
+            maybeShowPopup(event);
+        }
+        
+        public void mousePressed(MouseEvent event) {
+            maybeShowPopup(event);
+        }
+        
+        private void maybeShowPopup(MouseEvent e) {
+            if (!e.isPopupTrigger()) {
+                return;
+            }
+            popup.show(e.getComponent(), e.getX(), e.getY());
+        }
     }
 }

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: RNElementSeedInfoViewer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-05 21:13:01 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -24,7 +24,7 @@ import javax.swing.JTextArea;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
-public class RNElementSeedInfoViewer extends ViewerAdapter {
+public class RNElementSeedInfoViewer extends ViewerAdapter implements java.io.Serializable {
     
     private JComponent header;
     private JTextArea  content;
@@ -142,4 +142,11 @@ public class RNElementSeedInfoViewer extends ViewerAdapter {
             content.setPreferredSize(new Dimension(h_width, content.getPreferredSize().height));
         }
     }
+    
+    /** Returns a component to be inserted into the scroll pane row header
+     */
+    public JComponent getRowHeaderComponent() {
+        return null;
+    }
+    
 }

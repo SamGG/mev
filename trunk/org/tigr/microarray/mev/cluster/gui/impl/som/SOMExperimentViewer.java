@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOMExperimentViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 18:36:07 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 21:11:04 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -21,6 +21,10 @@ import java.awt.event.MouseAdapter;
 
 import java.awt.image.BufferedImage;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import javax.swing.JMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
@@ -35,17 +39,18 @@ import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 
+import org.tigr.microarray.mev.cluster.gui.helpers.CentroidExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 
-public class SOMExperimentViewer implements IViewer {    
+public class SOMExperimentViewer implements IViewer, java.io.Serializable {    
     
     private JPopupMenu popup;
     private ExperimentViewer expViewer;
-    private SOMExperimentHeader header;
+    private CentroidExperimentHeader header;
     
     protected static final String STORE_CLUSTER_CMD = "store-cluster-cmd";
     protected static final String SET_DEF_COLOR_CMD = "set-def-color-cmd";
@@ -62,12 +67,33 @@ public class SOMExperimentViewer implements IViewer {
 	
 	this.expViewer = new ExperimentViewer(experiment, clusters);
 	this.expViewer.getContentComponent().addMouseListener(listener);
-	this.header = new SOMExperimentHeader(expViewer.getHeaderComponent(), codes, clusters);
+        
+        this.header = new CentroidExperimentHeader(this.expViewer.getHeaderComponent(), codes, clusters, "SOM Vector");
+                
+	//this.header = new SOMExperimentHeader(expViewer.getHeaderComponent(), codes, clusters);
 	//this.header.setColorImages(expViewer.getPosColorImage(), expViewer.getNegColorImage());
-	this.header.setColorImages(expViewer.getNegColorImage(), expViewer.getPosColorImage());
+	this.header.setNegAndPosColorImages(expViewer.getPosColorImage(), expViewer.getNegColorImage());
 	this.header.setMissingColor(expViewer.getMissingColor());
 	this.header.addMouseListener(listener);
     }
+    
+    
+    private void writeObject(ObjectOutputStream oos) throws IOException {
+        oos.writeObject(this.expViewer);
+        oos.writeObject(header);
+    }    
+        
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        this.expViewer = (ExperimentViewer)ois.readObject();
+        this.header = (CentroidExperimentHeader)ois.readObject();
+        
+	Listener listener = new Listener();	
+	this.expViewer.getContentComponent().addMouseListener(listener);
+	this.header.setNegAndPosColorImages(expViewer.getPosColorImage(), expViewer.getNegColorImage());
+	this.header.setMissingColor(expViewer.getMissingColor());
+        this.header.addMouseListener(listener);
+        this.popup = createJPopupMenu(listener);
+    }        
     
     /**
      * Returns the header component.
@@ -94,7 +120,7 @@ public class SOMExperimentViewer implements IViewer {
 	expViewer.onSelected(framework);
 	header.setCurrentCluster(((Integer)framework.getUserObject()).intValue());
 	IDisplayMenu menu = framework.getDisplayMenu();
-        header.setColorImages(menu.getPositiveGradientImage(), menu.getNegativeGradientImage());
+        header.setNegAndPosColorImages(menu.getNegativeGradientImage(), menu.getPositiveGradientImage());
 	header.setValues(Math.abs(menu.getMaxRatioScale()), -Math.abs(menu.getMinRatioScale()));
 	header.setAntiAliasing(menu.isAntiAliasing());
 	header.setDrawBorders(menu.isDrawingBorder());
@@ -113,7 +139,7 @@ public class SOMExperimentViewer implements IViewer {
      */
     public void onMenuChanged(IDisplayMenu menu) {
 	expViewer.onMenuChanged(menu);
-        header.setColorImages(menu.getPositiveGradientImage(), menu.getNegativeGradientImage());
+        header.setNegAndPosColorImages(menu.getNegativeGradientImage(), menu.getPositiveGradientImage());
 	header.setValues(Math.abs(menu.getMaxRatioScale()), -Math.abs(menu.getMinRatioScale()));
 	header.setAntiAliasing(menu.isAntiAliasing());
 	header.setDrawBorders(menu.isDrawingBorder());
@@ -225,6 +251,7 @@ public class SOMExperimentViewer implements IViewer {
     public JComponent getCornerComponent(int cornerIndex) {
         return null;
     }
+    
     
     /**
      * The class to listen to mouse and action events.

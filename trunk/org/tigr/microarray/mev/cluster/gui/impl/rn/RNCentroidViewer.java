@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: RNCentroidViewer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-05 21:13:01 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -28,13 +28,11 @@ import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 
-public class RNCentroidViewer extends CentroidViewer {
+public class RNCentroidViewer extends CentroidViewer implements java.io.Serializable {
     
     
     private JPopupMenu popup;
-    private JMenuItem setOverallMaxMenuItem;
-    private JMenuItem setClusterMaxMenuItem;
-    
+
     /**
      * Construct a <code>KMCCentroidViewer</code> with specified experiment
      * and clusters.
@@ -45,6 +43,15 @@ public class RNCentroidViewer extends CentroidViewer {
 	this.popup = createJPopupMenu(listener);
 	getContentComponent().addMouseListener(listener);
     }
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {        
+        Listener listener = new Listener();
+	this.popup = createJPopupMenu(listener);
+	getContentComponent().addMouseListener(listener);
+    }
+    
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {        
+    }    
     
     /**
      * Creates a popup menu.
