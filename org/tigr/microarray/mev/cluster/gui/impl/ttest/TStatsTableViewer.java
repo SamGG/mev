@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: TStatsTableViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2003-12-17 17:11:14 $
+ * $Revision: 1.4 $
+ * $Date: 2004-01-13 17:31:39 $
  * $Author: nbhagaba $
  * $State: Exp $
  */
@@ -158,9 +158,9 @@ public class TStatsTableViewer extends ViewerAdapter {
                             }
                         }
                         if (tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS) {
-                            out.print("\tGroupA mean\tGroupA std.dev.\tGroupB mean\tGroupB std.dev.\tt-ratio\tdf\tp-value\n");
+                            out.print("\tGroupA mean\tGroupA std.dev.\tGroupB mean\tGroupB std.dev.\t Abs. t-ratio\tdf\tp-value\n");
                         } else if (tTestDesign == TtestInitDialog.ONE_CLASS) {
-                            out.print("\tGene mean\tGene std.dev.\tt-ratio\tdf\tp-value\n");
+                            out.print("\tGene mean\tGene std.dev.\tAbs. t-ratio\tdf\tp-value\n");
                         }
                         for (int i = 0; i < rows.length; i++) {
                             for (int k = 0; k < fieldNames.length; k++) {
@@ -267,7 +267,7 @@ public class TStatsTableViewer extends ViewerAdapter {
                 columnNames[counter + 1] = "GroupA std.dev";
                 columnNames[counter + 2] = "GroupB mean";
                 columnNames[counter + 3] = "GroupB std.dev.";
-                columnNames[counter + 4] = "t-ratio";
+                columnNames[counter + 4] = "Abs. t-ratio";
                 columnNames[counter + 5] = "df";
                 columnNames[counter + 6] = "p-value";
                 
@@ -345,7 +345,7 @@ public class TStatsTableViewer extends ViewerAdapter {
                 }
                 columnNames[counter] = "Gene mean";
                 columnNames[counter + 1] = "Gene std.dev";
-                columnNames[counter + 2] = "t-ratio";
+                columnNames[counter + 2] = " Abs. t-ratio";
                 columnNames[counter + 3] = "df";
                 columnNames[counter + 4] = "p-value";
                 

@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: TtestCentroidViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-08-25 15:18:13 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2004-01-13 17:32:03 $
+ * $Author: nbhagaba $
  * $State: Exp $
  */
 
@@ -169,7 +169,7 @@ public class TtestCentroidViewer extends CentroidViewer {
         } else if (tTestDesign == TtestInitDialog.ONE_CLASS) {
             out.print("Gene mean\t");
             out.print("Gene std.dev.\t");
-            out.print("t value");
+            out.print("Absolute t value");
         }
         //out.print("\t");
         
