@@ -26,5 +26,14 @@ public class ParameterPanel extends JPanel {
         Font font = new Font("Dialog", Font.BOLD, 12);
         this.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Parameters", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));        
     }
+    
+    
+    /** Creates new ParameterPanel */
+    public ParameterPanel(String title) {
+        super();
+        this.setBackground(Color.white);
+        Font font = new Font("Dialog", Font.BOLD, 12);
+        this.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), title, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));        
+    }
 
 }
