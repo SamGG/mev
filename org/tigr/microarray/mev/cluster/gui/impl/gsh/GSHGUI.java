@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: GSHGUI.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2004-04-08 20:16:37 $
+ * $Author: nbhagaba $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.gsh;
@@ -23,6 +23,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import org.tigr.util.ConfMap;
 import org.tigr.util.FloatMatrix;
 
+import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
@@ -30,6 +31,7 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
@@ -55,6 +57,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
 public class GSHGUI implements IClusterGUI {
     
     private Algorithm algorithm;
+    private IData data;
     private Experiment experiment;
     private int[][] clusters;
     private FloatMatrix means;
@@ -71,6 +74,7 @@ public class GSHGUI implements IClusterGUI {
      * Initialize the algorithm's parameters and execute it.
      */
     public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
+        this.data = framework.getData();
         // the default values
         int k = 10;
         int f = 20;
@@ -208,9 +212,32 @@ public class GSHGUI implements IClusterGUI {
         addExpressionImages(root);
         addHierarchicalTrees(root, result_cluster, info);
         addCentroidViews(root);
+        addTableViews(root);
         addClusterInfo(root);
         addGeneralInfo(root, info);
     }
+    
+    private void addTableViews(DefaultMutableTreeNode root) {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table views");
+        IViewer tabViewer;
+        int i;
+        
+        if(clusterGenes)
+            tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.data);
+        else
+            return; // placeholder for ExptClusterTableViewer
+            //expViewer = new GSHExperimentClusterViewer(this.experiment, this.clusters);
+        
+        for (i=0; i<this.clusters.length-1; i++) {
+            node.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+String.valueOf(i+1), tabViewer, new Integer(i))));
+        }
+        //if(clusterGenes)
+        node.add(new DefaultMutableTreeNode(new LeafInfo("Unassigned ", tabViewer, new Integer(i))));
+        //else
+            //node.add(new DefaultMutableTreeNode(new LeafInfo("Unassigned Experiments", expViewer, new Integer(i))));
+        
+        root.add(node);
+    }    
     
     /**
      * Adds nodes to display clusters data.
