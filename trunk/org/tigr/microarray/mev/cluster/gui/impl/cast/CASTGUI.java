@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: CASTGUI.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2004-04-08 19:57:13 $
+ * $Author: nbhagaba $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.cast;
@@ -24,6 +24,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import org.tigr.util.ConfMap;
 import org.tigr.util.FloatMatrix;
 
+import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
@@ -31,6 +32,7 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
@@ -58,6 +60,7 @@ public class CASTGUI implements IClusterGUI {
     private Algorithm algorithm;
     
     private Experiment experiment;
+    private IData data;
     private int[][] clusters;
     private FloatMatrix means;
     private FloatMatrix variances;
@@ -74,6 +77,7 @@ public class CASTGUI implements IClusterGUI {
      * Initialize the algorithm's parameters and execute it.
      */
     public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
+        this.data = framework.getData();
         // the default values
         float threshold = 0.5f;
         boolean modal = true; //I SET MODAL TO TRUE TO CALL THE HJC DIALOG BOX, HOPE THIS IS OK
@@ -225,9 +229,25 @@ public class CASTGUI implements IClusterGUI {
         addExpressionImages(root);
         addHierarchicalTrees(root, result_cluster, info);        
         addCentroidViews(root);
+        addTableViews(root);
         addClusterInfo(root);
         addGeneralInfo(root, info);
     }
+    
+     private void addTableViews(DefaultMutableTreeNode root) {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table views");
+        IViewer tabViewer;
+        if(clusterGenes)
+            tabViewer= new ClusterTableViewer(this.experiment, this.clusters, this.data);
+        else
+            return; // placeholder for ExptClusterTableViewer
+            //expViewer = new CASTExperimentClusterViewer(this.experiment, this.clusters);
+        
+        for (int i=0; i<this.clusters.length; i++) {
+            node.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+String.valueOf(i+1), tabViewer, new Integer(i))));
+        }
+        root.add(node);
+    }   
     
     /**
      * Adds nodes to display clusters data.
