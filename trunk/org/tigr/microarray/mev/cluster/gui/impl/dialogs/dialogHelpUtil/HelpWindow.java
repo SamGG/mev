@@ -287,6 +287,8 @@ public class HelpWindow extends JDialog {
             return "knnc_parameters3.html";
         if(key.equals("SAM Script Delta Dialog"))
             return "sam_script_delta_dialog.html";
+        if(key.equals("List Import Dialog"))
+            return "cluster_list_import_parameters.html";
         else
             return null;
     }
