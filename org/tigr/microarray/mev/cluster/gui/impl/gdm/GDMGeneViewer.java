@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: GDMGeneViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-13 21:36:44 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-25 21:04:43 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -121,7 +121,7 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
     private static final int MAX_ROW_WIDTH = MAX_COL_HEIGHT;
     private static final int MAX_ROW_HEIGHT = MAX_COL_WIDTH;
     private static final int NOT_UPDATE_ANNOTATION_SIZE = -1;
- 
+    
     private int num_genes;
     private int maxGeneNameLength;
     private int probes;
@@ -131,7 +131,7 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
     private int [] clusterlength;
     
     private Insets insets;
-
+    
     private int elementWidth;
     private int paletteStyle;
     private int labelIndex = -1;
@@ -148,7 +148,7 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
     private boolean sortByGeneProximity = true;
     
     private boolean imposeClusterOrder = false;
-        
+    
     public static Color zeroColor = Color.black;
     public static Color NaNColor = Color.gray;
     public static Color diagColor = Color.white;
@@ -259,7 +259,7 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
         this.insets = new Insets(1, 1, 1, 1);
         
         xWidth = getXSize();
-        xHeight = getYSize();        
+        xHeight = getYSize();
         
         if(this.displayEvery==1) {
             setIndices(createIndices());
@@ -277,16 +277,16 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
         
         this.geneColumnHeaderSP = createHeader(TRACE_SPACE, true, xWidth, MAX_COL_HEIGHT, elementSize, experiment);
         this.geneColumnHeaderSP.setBorder(BorderFactory.createLineBorder(Color.white));
-
+        
         this.geneRowHeaderSP = createHeader(TRACE_SPACE, false, MAX_ROW_WIDTH, xHeight, elementSize, experiment);
         this.content = createContent(MAX_MATRIX_WIDTH, MAX_MATRIX_WIDTH, listener);
-
+        
         this.geneColumnHeaderSP.setMatrixListener(listener);
         this.geneRowHeaderSP.setMatrixListener(listener);
-
+        
         this.upperRightCornerSB = createScrollBar(JScrollBar.VERTICAL);
         this.lowerLeftCornerSB = createScrollBar(JScrollBar.HORIZONTAL);
-       
+        
         setMaxWidth(content, geneColumnHeaderSP);
         setMaxHeight(content, geneRowHeaderSP);
         
@@ -309,7 +309,7 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
     }
     
     public GDMGeneViewer() {}
-
+    
     private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
         oos.writeObject(this.distanceMetric);
         oos.writeInt(this.elementWidth);
@@ -333,7 +333,7 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
         oos.writeObject(this.clusterBorderColor);
         oos.writeObject(this.insets);
         oos.writeInt(this.xWidth);
-        oos.writeInt(this.xHeight); 
+        oos.writeInt(this.xHeight);
         
         oos.writeObject(fieldNames);
     }
@@ -512,7 +512,7 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
                 i++;
             }
             total++;
-        }      
+        }
         total = 0;
         if (this.numOfClusters > 0) {
             clusterlength = new int [numOfClusters];
@@ -752,7 +752,10 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
     private void drawPerimeter(Graphics2D g){
         Color color = g.getColor();
         g.setColor(Color.black);
-        g.drawRect(0,0, this.getXSize()-insets.right, this.getYSize()-insets.bottom);
+        if(this.isDrawClusterBorders && this.numOfClusters > 0)
+            g.drawRect(0,0, getXSize()-insets.right+1, getYSize()-insets.bottom+1);
+        else
+            g.drawRect(0,0, getXSize()-insets.right, getYSize()-insets.bottom);
         g.setColor(color);
     }
     
@@ -932,13 +935,13 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
         
         geneColumnHeaderSP.setPosColorImages(posColorImage);
         geneRowHeaderSP.setPosColorImages(posColorImage);
-
-       // this.upperRightCornerSB.setValues(90, 10, 0, 100); 
+        
+        // this.upperRightCornerSB.setValues(90, 10, 0, 100);
         //this.lowerLeftCornerSB.setValues(0, 10, 0, 100);
-       
-      //  this.upperRightCornerSB.getModel().setValue(50);
-      //  this.upperRightCornerSB.setValue(50);
-       // this.upperRightCornerSB.fireAdjustmentValueChanged(
+        
+        //  this.upperRightCornerSB.getModel().setValue(50);
+        //  this.upperRightCornerSB.setValue(50);
+        // this.upperRightCornerSB.fireAdjustmentValueChanged(
         repaint();
     }
     
@@ -1078,7 +1081,7 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
         if (targetx > num_genes*columnSize - getSpacing() + insets.left || targetx < this.insets.left) {
             return -1;
         } else {
-            return ((targetx)/columnSize); 
+            return ((targetx)/columnSize);
         }
     }
     
@@ -1184,7 +1187,7 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
         sizeMenu.add(createJRadioButtonMenuItem("2 x 2", DISPLAY_2X2_CMD, listener, buttonGroup));
         sizeMenu.add(createJRadioButtonMenuItem("5 x 5", DISPLAY_5X5_CMD, listener, buttonGroup));
         sizeMenu.add(createJRadioButtonMenuItem("10 x 10", DISPLAY_10X10_CMD, listener, buttonGroup, true));
-        sizeMenu.add(createJRadioButtonMenuItem("15 x 15", DISPLAY_15X15_CMD, listener, buttonGroup));        
+        sizeMenu.add(createJRadioButtonMenuItem("15 x 15", DISPLAY_15X15_CMD, listener, buttonGroup));
         sizeMenu.add(createJRadioButtonMenuItem("Other", DISPLAY_OTHER_CMD, listener, buttonGroup));
         menu.add(sizeMenu);
         menu.addSeparator();
@@ -1407,18 +1410,18 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
         geneRowHeaderSP.setValues(minValue, maxValue);
         geneColumnHeaderSP.updateSize(NOT_UPDATE_ANNOTATION_SIZE);
         geneRowHeaderSP.updateSize(NOT_UPDATE_ANNOTATION_SIZE);
-       // geneRowHeaderSP.setContentH;
+        // geneRowHeaderSP.setContentH;
         
         revalidate();
-       // geneColumnHeaderSP.repaint();
-       // geneRowHeaderSP.repaint();
-       // repaint();
+        // geneColumnHeaderSP.repaint();
+        // geneRowHeaderSP.repaint();
+        // repaint();
     }
     
     private void onSortByClusterChange() {
         if (numOfClusters > 0) {
             isDrawClusterBorders=true;
-          //  drawClusterBorderItem.setState(true);
+            //  drawClusterBorderItem.setState(true);
             
             if(this.displayEvery==1) {
                 setIndices(createIndices());
@@ -1440,12 +1443,12 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
     }
     
     private void onSortByGeneProximity(int baseIndex) {
-
+        
         this.isDrawClusterBorders = false;
         
         QSort qsort = new QSort(this.geneDistMatrix.A[baseIndex]);
-        int [] sortedIndices = qsort.getOrigIndx();  
-
+        int [] sortedIndices = qsort.getOrigIndx();
+        
         //to handle random placement of base if sorting on NaN or have a tie
         if(sortedIndices[0] != baseIndex){
             boolean notFound = true;
@@ -1461,28 +1464,28 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
         setIndices(sortedIndices);
         
         geneColumnHeaderSP.setIndices(sortedIndices);
-        geneRowHeaderSP.setIndices(sortedIndices);  
+        geneRowHeaderSP.setIndices(sortedIndices);
         
         onDataChanged(this.expData);
         validate();
         geneColumnHeaderSP.repaint();
-        geneRowHeaderSP.repaint();          
+        geneRowHeaderSP.repaint();
     }
     
-    private void clearSortSelection(){        
+    private void clearSortSelection(){
         ButtonGroup group = new ButtonGroup();
-        for(int i = 0; i < sortMenu.getMenuComponentCount(); i++){            
+        for(int i = 0; i < sortMenu.getMenuComponentCount(); i++){
             ((JRadioButtonMenuItem)(sortMenu.getMenuComponent(i))).setSelected(false);
             group.add((JRadioButtonMenuItem)(sortMenu.getMenuComponent(i)));
-        }        
+        }
     }
     
     /**
      * Invoked when a sort menu item is changed.
      */
     private void onSort(Action action) {
-        String index = (String)action.getValue(PARAMETER);        
-        this.isDrawClusterBorders = false;        
+        String index = (String)action.getValue(PARAMETER);
+        this.isDrawClusterBorders = false;
         onSort(Integer.parseInt(index));
     }
     
@@ -1495,7 +1498,7 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
         
         isDrawClusterBorders=false;
         if(drawClusterBorderItem != null)
-            drawClusterBorderItem.setState(false);        
+            drawClusterBorderItem.setState(false);
         sortIndices(style);
         onDataChanged(expData);
     }
@@ -1560,11 +1563,11 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
             
             geneColumnHeaderSP.setSize(geneColumnHeaderSP.getWidth(), annotationSize);
             geneColumnHeaderSP.setPreferredSize(new Dimension(geneColumnHeaderSP.getWidth(), annotationSize));
-
+            
             geneRowHeaderSP.setSize(annotationSize, geneRowHeaderSP.getHeight());
-
+            
             geneRowHeaderSP.setPreferredSize(new Dimension(annotationSize, geneRowHeaderSP.getHeight()));
-                        
+            
             geneColumnHeaderSP.repaint();
             geneRowHeaderSP.repaint();
             
@@ -1602,7 +1605,7 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
             }
         }
     }
-        
+    
     private int [] getIDataRows(int k) {
         int [] rows = new int[k];
         for(int i = 0; i < k; i++){
@@ -1614,11 +1617,11 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
     private String [][] getAuxilaryData(int k){
         String [][] data = new String[k][3];
         FloatMatrix matrix = this.experiment.getMatrix();
-        for(int i = 0; i < k; i++){            
+        for(int i = 0; i < k; i++){
             data[i][0] = Float.toString(this.geneDistMatrix.get(indices[0], indices[i]));
             data[i][1] = Float.toString(this.rawMatrix.get(indices[0], indices[i]));
             data[i][2] = getValuePairCount(matrix, indices[0], indices[i]);
-        }  
+        }
         return data;
     }
     
@@ -1629,7 +1632,7 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
             if(!Float.isNaN(matrix.get(row, i)) && !Float.isNaN(matrix.get(col, i)))
                 count++;
         }
-        return Integer.toString(count);        
+        return Integer.toString(count);
     }
     
     private void imposeClusterOrder() {
@@ -1640,9 +1643,8 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
         Hashtable goodResults = new Hashtable();
         
         Enumeration keys = results.keys();
+        String key = "";
         Object [] result;
-        String key;
-        
         
         while(keys.hasMoreElements()){
             key = (String)keys.nextElement();
@@ -1650,8 +1652,8 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
             
             //make sure it's the same experiment (same cutoffs), same number of genes (not exp. cluster)
             if((this.experiment == result[0]) && checkClustersSize((int[][])result[1]) ) {
-                goodResults.put(key, result[1]);                
-            }            
+                goodResults.put(key, result[1]);
+            }
         }
         
         if(goodResults.size() > 0) {
@@ -1659,26 +1661,10 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
             if( dialog.showModal() == JOptionPane.OK_OPTION ) {
                 int [][] clusters = ((int [][])goodResults.get(dialog.getSelectedResult()));
                 imposeClusterOrder(clusters);
-            }                        
-        } else {
-            System.out.println("No good results");            
-        }
-        
-        //launch cluster selection dialog
-        //use cluster browser
-   /*     GDMClusterBrowserDialog dialog = new GDMClusterBrowserDialog(this.framework.getClusterRepository(Cluster.GENE_CLUSTER));
-        Cluster cluster;
-        if(dialog.showModal() == JOptionPane.OK_OPTION) {
-            cluster = dialog.getSelectedCluster();
-            if(cluster.getExperiment() == this.experiment){
-         //       imposeClusterOrder(cluster.getClusters());
-            } else {  //tranformed data set
-                
             }
+        } else {        
+            JOptionPane.showMessageDialog(framework.getFrame(), "There are currently no appropriate clustering results to apply to this GDM.", "No Results Available", JOptionPane.INFORMATION_MESSAGE);                 
         }        
- */
-        
-        
     }
     
     private boolean checkClustersSize(int [][] clusters) {
@@ -1687,8 +1673,8 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
             cnt += clusters[i].length;
         }
         
-        if( ((int)(cnt/displayEvery)) == this.num_genes) 
-            return true;                 
+        if( ((int)(cnt/displayEvery)) == this.num_genes)
+            return true;
         return false;
     }
     
@@ -1726,8 +1712,8 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
                 while (!stop && enum.hasMoreElements()){
                     currentNode = (DefaultMutableTreeNode)enum.nextElement();
                     if(currentNode.getUserObject() instanceof LeafInfo){
-                       viewer = ((LeafInfo)currentNode.getUserObject()).getViewer();
-                       if(viewer != null) {
+                        viewer = ((LeafInfo)currentNode.getUserObject()).getViewer();
+                        if(viewer != null) {
                             exp = viewer.getExperiment();
                             clusters = viewer.getClusters();
                             if(exp != null && clusters != null) {
@@ -1736,13 +1722,13 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
                                 vals[1] = clusters;
                                 table.put(algName, vals);
                                 stop = true;
-                            }                            
-                       }                                                    
-                    }                    
+                            }
+                        }
+                    }
                 }
-                stop = false;                
+                stop = false;
             }
-        }        
+        }
         return table;
     }
     
@@ -1752,7 +1738,7 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
         this.numOfClusters = clusters.length;
         onSortByClusterChange();
     }
-   
+    
     
     
     
@@ -1853,8 +1839,6 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
             if (isLegalPosition(row, column)) {
                 g = getGraphics();
                 drawColoredBoxAt(g, row, column, Color.white);
-                if(isDrawClusterBorders && numOfClusters > 0)
-                    drawClusterBorder((Graphics2D)g);
                 framework.setStatusText(
                 " Column: " + (column+1) +
                 "     " +  //some padding
@@ -1871,6 +1855,15 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
                 drawSlideDataElement(g2D, oldRow, oldColumn);
             }
             setOldPosition(row, column);
+            
+            if(g != null) {
+                if(isDrawClusterBorders && numOfClusters > 0)
+                    drawClusterBorder((Graphics2D)g);
+            } else if (g2D != null) {
+                if(isDrawClusterBorders && numOfClusters > 0)
+                    drawClusterBorder(g2D);
+            }
+            
             if (g != null) {
                 g.dispose();
             }
@@ -1882,7 +1875,10 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
                 Graphics2D g2D = (Graphics2D)g;
                 drawSlideDataElement(g2D, oldRow, oldColumn);
                 g2D.dispose();
+                if(isDrawClusterBorders && numOfClusters > 0)
+                    drawClusterBorder(g2D);
             }
+            
             setOldPosition(-1, -1);
             framework.setStatusText("  ");	// blank Status bar
         }
