@@ -1,20 +1,16 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: ClusterRepository.java,v $
- * $Revision: 1.7 $
- * $Date: 2004-04-07 19:26:20 $
+ * $Revision: 1.8 $
+ * $Date: 2004-06-17 21:03:37 $
  * $Author: braisted $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.clusterUtil;
-
-import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -26,6 +22,12 @@ import java.awt.Color;
 
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
+
+import org.tigr.microarray.mev.ISlideData;
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 
 /** The ClusterRepository contains ClusterList objects created for
  * holding saved clusters particular analysis results.
@@ -91,7 +93,7 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
      */
     public void setFramework(IFramework framework) {
         this.framework = framework;
-    }    
+    }
     /** Returns the color of the last cluster to which the element
      * (index) was assigned
      */
@@ -443,7 +445,7 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
             framework.getData().setExperimentColor(indices, null);
             framework.addHistory("Remove Experiment Cluster From Repository: Serial # "+String.valueOf(serialNumber));
         }
-                
+        
         list.removeCluster(cluster);
         removeElementClusters(indices, cluster);
         return true;
@@ -542,7 +544,7 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
     
     /** Saves the specified cluster
      */
-/*    public void saveCluster(int serialNumber){
+    public void saveCluster(int serialNumber){
         Cluster cluster = getCluster(serialNumber);
         try{
             if(geneClusterRepository)
@@ -554,6 +556,136 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
             e.printStackTrace();
         }
     }
- **/
+    
+    /* Creates a cluster by importing a gene list
+     */
+    public Cluster createClusterFromList() {
+        ListImportDialog dialog;
+        String [] ids;
+        String key;
+        int [] newIndices;
+        Experiment experiment = framework.getData().getExperiment();
+        
+        
+        if(this.isGeneClusterRepository()) {
+            dialog = new ListImportDialog(this.framework.getData().getFieldNames(), true);
+            if(dialog.showModal() == JOptionPane.OK_OPTION) {
+                key = dialog.getFieldName();
+                ids = dialog.getList();
+                
+ 
+                newIndices = getMatchingIndices(experiment, key, ids, true);
+                                
+           
+                if(newIndices != null && newIndices.length > 0) {                                                           
+                    ClusterAttributesDialog clusterDialog = new ClusterAttributesDialog("Store Cluster Attributes", "List Import", "Gene List");
+                    if(clusterDialog.showModal() != JOptionPane.OK_OPTION){
+                        return null;
+                    }
+
+                    ClusterList list = getClusterOperationsList();
+                    Color clusterColor = clusterDialog.getColor();
+                    String clusterLabel = clusterDialog.getLabel();
+                    String clusterDescription = clusterDialog.getDescription();
+                    this.clusterSerialCounter++;
+                    Cluster cluster = new Cluster(newIndices, "List Import", clusterLabel, "List Import", "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);                    
+                    
+                    addCluster(list, cluster);           
+                    return cluster;
+                }
+            }
+        } else{
+            ISlideData slide = this.framework.getData().getFeature(0);
+            if(slide == null)
+                return null;
+            
+            Vector slideNameKeys = slide.getSlideDataKeys();
+            String [] slideNames = new String[slideNameKeys.size()];
+            for(int i = 0; i < slideNames.length; i++) {
+                slideNames[i] = (String)(slideNameKeys.elementAt(i));
+            }
+            
+            dialog = new ListImportDialog(slideNames, false);
+            
+            if(dialog.showModal() == JOptionPane.OK_OPTION) {
+                key = dialog.getFieldName();
+                ids = dialog.getList();
+                newIndices = getMatchingIndices(experiment, key, ids, false);
+                if(newIndices != null && newIndices.length > 0) {
+                    ClusterAttributesDialog clusterDialog = new ClusterAttributesDialog("Store Cluster Attributes", "List Import", "Experiment List");
+                    if(clusterDialog.showModal() != JOptionPane.OK_OPTION){
+                        return null;
+                    }
+
+                    ClusterList list = getClusterOperationsList();
+                    Color clusterColor = clusterDialog.getColor();
+                    String clusterLabel = clusterDialog.getLabel();
+                    String clusterDescription = clusterDialog.getDescription();
+                    this.clusterSerialCounter++;
+                    Cluster cluster = new Cluster(newIndices, "List Import", clusterLabel, "List Import", "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
+                    
+                    addCluster(list, cluster);   
+                    return cluster;
+                }
+                
+            }
+            
+        }
+        return null;
+    }
+    
+    private int [] getMatchingIndices(Experiment experiment, String key, String [] ids, boolean geneIndices) {
+        int [] indices = null;
+        int [] allIndices;
+        String [] annList;
+        Vector indicesVector = new Vector();
+        IData data = framework.getData();
+        
+        if(geneIndices) {
+            allIndices = experiment.getRowMappingArrayCopy();
+            annList = framework.getData().getAnnotationList(key, allIndices);
+            Vector idVector = new Vector(annList.length);
+            for(int i = 0 ; i < ids.length; i++) {
+                idVector.addElement(ids[i]);
+            }
+            for(int i = 0; i < annList.length; i++) {
+                if(idVector.contains(annList[i]))
+                    indicesVector.addElement(new Integer(allIndices[i]));
+            }
+            indices = new int[indicesVector.size()];
+            for(int i = 0; i < indices.length; i++) {
+                indices[i] = ((Integer)(indicesVector.elementAt(i))).intValue();
+            }
+            
+        } else {
+            allIndices = experiment.getColumnIndicesCopy();
+            annList = new String[experiment.getNumberOfSamples()];
+            data.setSampleLabelKey(key);
+            
+            Vector idVector = new Vector(annList.length);
+            for(int i = 0; i < ids.length; i++) {
+                idVector.addElement(ids[i]);
+            }
+            
+            for(int i = 0; i < allIndices.length; i++) {
+                annList[i] = data.getFullSampleName(i);
+            }
+            
+            for(int i = 0; i < annList.length; i++) {
+                if(idVector.contains(annList[i]))
+                    indicesVector.addElement(new Integer(allIndices[i]));
+            }
+            
+            indices = new int[indicesVector.size()];
+            for(int i = 0; i < indices.length; i++) {
+                indices[i] = ((Integer)(indicesVector.elementAt(i))).intValue();
+            }
+            
+            
+        }
+        return indices;
+    }
+    
+    
     
 }
