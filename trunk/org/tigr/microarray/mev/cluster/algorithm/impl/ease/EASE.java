@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASE.java,v $
- * $Revision: 1.1 $
- * $Date: 2004-02-06 22:55:36 $
+ * $Revision: 1.2 $
+ * $Date: 2004-04-01 20:42:55 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -102,7 +102,7 @@ public class EASE extends AbstractAlgorithm {
         format = new DecimalFormat("0.###E00");
         
         event = new AlgorithmEvent(this, AlgorithmEvent.MONITOR_VALUE, 0);
-        event.setDescription("Start Ease Analyis\n");
+        event.setDescription("Start EASE Analyis\n");
         fireValueChanged(event);
         
         String converterFileName = params.getString("converter-file-name");
