@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.JComponent;
+import javax.swing.border.Border;
 import javax.swing.table.*;
 import javax.swing.event.TableModelEvent;
 
@@ -39,10 +40,14 @@ public class ClusterTableViewer implements IViewer {
     private static final String NO_GENES_STR = "No Genes in Cluster!";
     private static final Font ERROR_FONT = new Font("monospaced", Font.BOLD, 20);
     protected static final String STORE_CLUSTER_CMD = "store-cluster-cmd";
+    protected static final String STORE_SELECTED_ROWS_CMD = "store-selected-rows-cmd";
     protected static final String SET_DEF_COLOR_CMD = "set-def-color-cmd";
     protected static final String SAVE_CLUSTER_CMD = "save-cluster-cmd";
     protected static final String SAVE_ALL_CLUSTERS_CMD = "save-all-clusters-cmd";
     protected static final String LAUNCH_NEW_SESSION_CMD = "launch-new-session-cmd";    
+    protected static final String LAUNCH_NEW_SESSION_WITH_SEL_ROWS_CMD = "launch-new-session-with-sel-rows-cmd"; 
+    protected static final String SEARCH_CMD = "search-cmd";
+    protected static final String CLEAR_ALL_CMD = "clear-all-cmd";
     
     public static final int INTEGER_TYPE = 10;
     public static final int FLOAT_TYPE = 11;
@@ -51,6 +56,7 @@ public class ClusterTableViewer implements IViewer {
     public static final int BOOLEAN_TYPE = 14;    
     
     private JComponent header;
+    private JPopupMenu popup;    
     private Experiment experiment;
     private IFramework framework;
     private IData data;
@@ -64,6 +70,7 @@ public class ClusterTableViewer implements IViewer {
     private boolean[][] sortedAscending;  
     private JTable clusterTable;
     private ClusterTableModel clusterModel;  
+    private ClusterTableSearchDialog searchDialog;
     //private JPanel clusterTablePanel;
     
     /** Creates a new instance of ClusterTableViewer */
@@ -97,7 +104,7 @@ public class ClusterTableViewer implements IViewer {
         
         this.clusterModel = new ClusterTableModel();
         this.clusterTable = new JTable(clusterModel);
-        
+        clusterTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
         TableColumn column = null;
         for (int i = 0; i < clusterModel.getColumnCount(); i++) {
             column = clusterTable.getColumnModel().getColumn(i);
@@ -112,8 +119,14 @@ public class ClusterTableViewer implements IViewer {
         }
         addMouseListenerToHeaderInTable(clusterTable);
         header  = clusterTable.getTableHeader();        
+        
+        searchDialog = new ClusterTableSearchDialog(JOptionPane.getFrameForComponent(clusterTable), clusterTable, false);  
         setMaxWidth(getContentComponent(), getHeaderComponent());  
-              
+        
+	Listener listener = new Listener();
+	this.popup = createJPopupMenu(listener);
+	//getContentComponent().addMouseListener(listener);  
+        clusterTable.addMouseListener(listener);
     }    
     
     public ClusterTableViewer(Experiment experiment, int[][] clusters, IData data) {
@@ -135,10 +148,14 @@ public class ClusterTableViewer implements IViewer {
         panel.setLayout(gridbag);
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.anchor = GridBagConstraints.NORTH;
+        
+        //clusterTable.addMouseListener(new Listener());
+        
         buildConstraints(constraints, 0, 0, 1, 1, 100, 100);
         gridbag.setConstraints(clusterTable, constraints);
-        panel.add(clusterTable);
         
+        panel.add(clusterTable);
+        //panel.addMouseListener(listener);
         return panel;
     }
     
@@ -170,7 +187,7 @@ public class ClusterTableViewer implements IViewer {
         buildConstraints(constraints, 0, 0, 1, 1, 100, 100);
         gridbag.setConstraints(header, constraints);
         panel.add(header);
-         
+
         return panel; 
           
         //return header;
@@ -298,6 +315,14 @@ public class ClusterTableViewer implements IViewer {
     private int getExperimentRow(int row){
         return this.clusters[this.clusterIndex][row];
     }  
+    
+    /**
+     * Returns index of a gene in the current cluster.
+     */
+
+    protected int getProbe(int row) {
+        return this.clusters[this.clusterIndex][row];
+    }    
    
     
     private int getColumn(int column) {
@@ -345,10 +370,11 @@ public class ClusterTableViewer implements IViewer {
         //int[] rows = getCluster();
         
         public ClusterTableModel() {
-            columnNames = new String[fieldNames.length + auxTitles.length];  
+           columnNames = new String[1 + fieldNames.length + auxTitles.length];  
            int counter;
-            for (counter = 0; counter < fieldNames.length; counter++) {
-                columnNames[counter] = fieldNames[counter];
+           columnNames[0] = "Stored Color";
+            for (counter = 1; counter < fieldNames.length + 1; counter++) {
+                columnNames[counter] = fieldNames[counter - 1];
             }
             for (int i = counter; i < columnNames.length; i++) {
                 columnNames[i] = auxTitles[i - counter];
@@ -370,12 +396,18 @@ public class ClusterTableViewer implements IViewer {
         }
         
         public Object getValueAt(int row, int col) {
-            if (col < fieldNames.length) {
-                return data.getElementAttribute(experiment.getGeneIndexMappedToData(getSortedCluster()[row]), col);
+            if (col == 0) {
+                return data.getProbeColor(experiment.getGeneIndexMappedToData(getSortedCluster()[row])) == null? Color.white : data.getProbeColor(experiment.getGeneIndexMappedToData(getSortedCluster()[row]));
+            } else if (col < fieldNames.length+ 1) {
+                return data.getElementAttribute(experiment.getGeneIndexMappedToData(getSortedCluster()[row]), col - 1);
             } else {
-                return auxData[getSortedCluster()[row]][col - fieldNames.length];
+                return String.valueOf(auxData[getSortedCluster()[row]][col - (fieldNames.length + 1)]);
             }
             //return tableData[row][col];
+        }
+        
+       public Class getColumnClass(int c) {
+            return getValueAt(0, c).getClass();
         }
         /*
         public void setValueAt(Object value, int row, int col) {
@@ -383,8 +415,11 @@ public class ClusterTableViewer implements IViewer {
             fireTableCellUpdated(row, col);
         }
          */
+       
         
     }
+    
+    
     
     private int[] reverse(int[] arr) {
         int[] revArr = new int[arr.length];
@@ -427,6 +462,7 @@ public class ClusterTableViewer implements IViewer {
     }    
     
     public void sortByColumn(int column, boolean ascending, boolean originalOrder) {
+        //if (column == 0) return;
         if (originalOrder) {
             for (int i = 0; i < getSortedCluster().length; i++) {
                 sortedClusters[this.clusterIndex][i] = getCluster()[i];
@@ -437,12 +473,23 @@ public class ClusterTableViewer implements IViewer {
         }
         
         int[] sortedIndices = new int[getCluster().length];
-        
-        if (column < fieldNames.length) {
+        if (column == 0) {
+            double[] origArray = new double[getCluster().length];
+            for (int i = 0; i < origArray.length; i++) {
+                Color currColor = data.getProbeColor(experiment.getGeneIndexMappedToData(getCluster()[i])) == null? Color.white : data.getProbeColor(experiment.getGeneIndexMappedToData(getCluster()[i]));
+                origArray[i] = (double)(currColor.getRGB());
+            }
+            QSort sortArray = new QSort(origArray);
+            int[] sortedPrimaryIndices = sortArray.getOrigIndx();
+            for (int i = 0; i < sortedPrimaryIndices.length; i++) {
+                sortedIndices[i] = getCluster()[sortedPrimaryIndices[i]];
+            }            
+            
+        } else if (column < fieldNames.length +1) {
             SortableField[] sortFields = new SortableField[getCluster().length];
             for (int i = 0; i < sortFields.length; i++) {
                 int currIndex = getCluster()[i];
-                String currField = data.getElementAttribute(experiment.getGeneIndexMappedToData(getCluster()[i]), column);
+                String currField = data.getElementAttribute(experiment.getGeneIndexMappedToData(getCluster()[i]), column - 1);
                 sortFields[i] = new SortableField(currIndex, currField);
             }
             
@@ -451,16 +498,16 @@ public class ClusterTableViewer implements IViewer {
                 sortedIndices[i] = sortFields[i].getIndex();
             }
         } else {
-            int obType = getObjectType(auxData[0][column - fieldNames.length]);
+            int obType = getObjectType(auxData[0][column - (fieldNames.length +1)]);
             if ((obType == ExperimentUtil.DOUBLE_TYPE) || (obType == ExperimentUtil.FLOAT_TYPE) || (obType == ExperimentUtil.INTEGER_TYPE)) {
                 double[] origArray = new double[getCluster().length];
                 for (int i = 0; i < origArray.length; i++) {
                     if (obType == ExperimentUtil.DOUBLE_TYPE) {
-                        origArray[i] = ((Double)(auxData[getCluster()[i]][column - fieldNames.length])).doubleValue();
+                        origArray[i] = ((Double)(auxData[getCluster()[i]][column - (fieldNames.length + 1)])).doubleValue();
                     } else if (obType == ExperimentUtil.FLOAT_TYPE) {
-                        origArray[i] = ((Float)(auxData[getCluster()[i]][column - fieldNames.length])).doubleValue();
+                        origArray[i] = ((Float)(auxData[getCluster()[i]][column - (fieldNames.length + 1)])).doubleValue();
                     } else if (obType == ExperimentUtil.INTEGER_TYPE) {
-                        origArray[i] = ((Integer)(auxData[getCluster()[i]][column - fieldNames.length])).doubleValue();
+                        origArray[i] = ((Integer)(auxData[getCluster()[i]][column - (fieldNames.length + 1)])).doubleValue();
                     }
                 }
                 QSort sortArray = new QSort(origArray);
@@ -472,7 +519,7 @@ public class ClusterTableViewer implements IViewer {
                 SortableField[] sortFields = new SortableField[getCluster().length];
                 for (int i = 0; i < sortFields.length; i++) {
                     int currIndex = getCluster()[i];
-                    String currField = ((Boolean)(auxData[getCluster()[i]][column - fieldNames.length])).toString();
+                    String currField = ((Boolean)(auxData[getCluster()[i]][column - (fieldNames.length + 1)])).toString();
                     sortFields[i] = new SortableField(currIndex, currField);
                 }
                 
@@ -484,7 +531,7 @@ public class ClusterTableViewer implements IViewer {
                 SortableField[] sortFields = new SortableField[getCluster().length];
                 for (int i = 0; i < sortFields.length; i++) {
                     int currIndex = getCluster()[i];
-                    String currField = (String)(auxData[getCluster()[i]][column - fieldNames.length]);
+                    String currField = (String)(auxData[getCluster()[i]][column - (fieldNames.length + 1)]);
                     sortFields[i] = new SortableField(currIndex, currField);
                 }
                 
@@ -503,6 +550,7 @@ public class ClusterTableViewer implements IViewer {
             sortedClusters[this.clusterIndex][i] = sortedIndices[i];
         }
         clusterTable.repaint();
+        clusterTable.removeRowSelectionInterval(0, clusterTable.getRowCount() - 1);
     }
     
     private class SortableField implements Comparable {
@@ -553,6 +601,15 @@ public class ClusterTableViewer implements IViewer {
         } else {
             return obType;
         }
+    }  
+    
+    private void searchTable(){
+        
+        searchDialog.setVisible(true);
+        searchDialog.toFront();
+        //searchDialog.requestFocus();
+        searchDialog.setLocation(clusterTable.getLocation().x + 100, clusterTable.getLocation().y +100);
+        
     }    
 
     /**
@@ -567,5 +624,269 @@ public class ClusterTableViewer implements IViewer {
             content.setPreferredSize(new Dimension(h_width, content.getPreferredSize().height));
         }
     }    
+    
+    /**
+     * Sets public color for the current cluster.
+     */
+
+    public void setClusterColor(Color color) {
+        if(color ==null){  //indicates removal of cluster
+            framework.removeCluster(getArrayMappedToData(), experiment, ClusterRepository.GENE_CLUSTER);
+        }
+    }    
+
+    /**
+     *  Sets cluster color
+     */
+    public void storeCluster(){
+        framework.storeSubCluster(getArrayMappedToData(), experiment, ClusterRepository.GENE_CLUSTER);
+        onDataChanged(this.data);
+    }    
+
+    public void storeSelectedRowsAsCluster() {
+        if (getArrayMappedToSelectedIndices().length == 0) {
+            JOptionPane.showMessageDialog(null, "No rows selected! Cluster will not be saved", "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            framework.storeSubCluster(getArrayMappedToSelectedIndices(), experiment, ClusterRepository.GENE_CLUSTER);
+            onDataChanged(this.data);
+        }
+    }
+    /**
+     * Launches a new <code>MultipleExperimentViewer</code> containing the current cluster
+     */
+    public void launchNewSession(){
+        framework.launchNewMAV(getArrayMappedToData(), this.experiment, "Multiple Experiment Viewer - Cluster Viewer", Cluster.GENE_CLUSTER);
+    }    
+    
+    public void launchNewSessionWithSelectedRows() {
+        framework.launchNewMAV(getArrayMappedToSelectedIndices(), this.experiment, "Multiple Experiment Viewer - Cluster Viewer", Cluster.GENE_CLUSTER);        
+    }
+
+    private int [] getArrayMappedToData(){
+        int [] clusterIndices = getCluster();
+        if(clusterIndices == null || clusterIndices.length < 1)
+            return clusterIndices;       
+
+        int [] dataIndices = new int [clusterIndices.length];
+        for(int i = 0; i < clusterIndices.length; i++){
+            dataIndices[i] = this.experiment.getGeneIndexMappedToData(clusterIndices[i]);
+        }
+        return dataIndices;
+    }   
+    
+    private int[] getArrayMappedToSelectedIndices() {
+        int[] selectedRows = clusterTable.getSelectedRows();
+        if ((selectedRows == null) || (selectedRows.length == 0)) {
+            return new int[0];
+        }
+        
+        int[] dataIndices = new int[selectedRows.length];        
+        for (int i = 0; i < dataIndices.length; i++) {
+            dataIndices[i] = this.experiment.getGeneIndexMappedToData(getSortedCluster()[selectedRows[i]]);
+        }
+        return dataIndices;
+    }
+
+    /**
+     * Creates a popup menu.
+     */
+    private JPopupMenu createJPopupMenu(Listener listener) {
+	JPopupMenu popup = new JPopupMenu();
+	addMenuItems(popup, listener);
+	return popup;
+    }
+    
+    protected void addMenuItems(JPopupMenu menu, ActionListener listener) {
+        JMenuItem menuItem;
+        menuItem = new JMenuItem("Store entire cluster", GUIFactory.getIcon("new16.gif"));
+        menuItem.setActionCommand(STORE_CLUSTER_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        menu.addSeparator();
+        
+        menuItem = new JMenuItem("Store selected rows as cluster", GUIFactory.getIcon("new16.gif"));
+        menuItem.setActionCommand(STORE_SELECTED_ROWS_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        menu.addSeparator();        
+        
+        menuItem = new JMenuItem("Launch new session with entire cluster", GUIFactory.getIcon("launch_new_mav.gif"));
+        menuItem.setActionCommand(LAUNCH_NEW_SESSION_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);       
+        
+        menu.addSeparator();
+        
+        menuItem = new JMenuItem("Launch new session with selected rows", GUIFactory.getIcon("launch_new_mav.gif"));
+        menuItem.setActionCommand(LAUNCH_NEW_SESSION_WITH_SEL_ROWS_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);       
+        
+        menu.addSeparator();        
+        
+        menuItem = new JMenuItem("Delete public cluster", GUIFactory.getIcon("delete16.gif"));
+        menuItem.setActionCommand(SET_DEF_COLOR_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        menu.addSeparator();
+        
+        menuItem = new JMenuItem("Save cluster...", GUIFactory.getIcon("save16.gif"));
+        menuItem.setActionCommand(SAVE_CLUSTER_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        menuItem = new JMenuItem("Save all clusters...", GUIFactory.getIcon("save16.gif"));
+        menuItem.setActionCommand(SAVE_ALL_CLUSTERS_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        menu.addSeparator();
+        
+        menuItem = new JMenuItem("Search...", GUIFactory.getIcon("ClusterInformationResult.gif"));
+        menuItem.setActionCommand(SEARCH_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);  
+        
+        menu.addSeparator();
+        
+        menuItem = new JMenuItem("Clear all selections...", GUIFactory.getIcon("TableViewerResult.gif"));
+        menuItem.setActionCommand(CLEAR_ALL_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);        
+        
+    }    
+    
+    /**
+     * Saves all clusters.
+     */
+    private void onSaveClusters() {
+	//Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
+        Frame frame = JOptionPane.getFrameForComponent(clusterTable);
+	try {
+	    //ExperimentUtil.saveExperiment(frame, getExperiment(), getData(), getClusters());
+            ExperimentUtil.saveAllGeneClustersWithAux(frame, this.getExperiment(), this.getData(), this.getClusters(), auxTitles, auxData);   
+            //getContentComponent().repaint();
+	} catch (Exception e) {
+	    JOptionPane.showMessageDialog(frame, "Can not save clusters!", e.toString(), JOptionPane.ERROR_MESSAGE);
+	    e.printStackTrace();
+	}
+        //clusterTable.repaint();
+    }    
+
+    /**
+     * Save the viewer cluster.
+     */
+    private void onSaveCluster() {
+	//Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
+        Frame frame = JOptionPane.getFrameForComponent(clusterTable);
+	try {
+	    //ExperimentUtil.saveExperiment(frame, getExperiment(), getData(), getCluster());
+            ExperimentUtil.saveGeneClusterWithAux(frame, this.getExperiment(), this.getData(), this.getCluster(), auxTitles, auxData); 
+            //getContentComponent().repaint();
+	} catch (Exception e) {
+	    JOptionPane.showMessageDialog(frame, "Can not save cluster!", e.toString(), JOptionPane.ERROR_MESSAGE);
+	    e.printStackTrace();
+	}
+        //clusterTable.repaint();
+    }   
+    
+    /**
+     * Removes a public color.
+     */
+    private void onSetDefaultColor() {
+	setClusterColor(null);
+    }  
+    
+    /**
+     * The class to listen to mouse and action events.
+     */
+    private class Listener extends MouseAdapter implements ActionListener {
+	
+	public void actionPerformed(ActionEvent e) {
+	    String command = e.getActionCommand();
+	    if (command.equals(SAVE_CLUSTER_CMD)) {
+		onSaveCluster();
+                //getContentComponent().validate();
+	    } else if (command.equals(SAVE_ALL_CLUSTERS_CMD)) {
+		onSaveClusters();
+                //getContentComponent().validate();
+	    } else if (command.equals(STORE_CLUSTER_CMD)) {
+		storeCluster();
+	    } else if (command.equals(STORE_SELECTED_ROWS_CMD)) {
+                storeSelectedRowsAsCluster();
+            } else if (command.equals(SET_DEF_COLOR_CMD)) {
+		onSetDefaultColor();
+	    }  else if(command.equals(LAUNCH_NEW_SESSION_CMD)){
+                launchNewSession();
+            }  else if(command.equals(LAUNCH_NEW_SESSION_WITH_SEL_ROWS_CMD)){
+                launchNewSessionWithSelectedRows();
+            }  else if (command.equals(SEARCH_CMD)) {
+                searchTable();
+            } else if (command.equals(CLEAR_ALL_CMD)) {
+                clusterTable.clearSelection();
+            }
+	}
+	
+	public void mouseReleased(MouseEvent event) {
+	    maybeShowPopup(event);
+	}
+	
+	public void mousePressed(MouseEvent event) {
+	    maybeShowPopup(event);
+	}
+	
+	private void maybeShowPopup(MouseEvent e) {
+	    if (!e.isPopupTrigger() || getCluster() == null || getCluster().length == 0) {
+		return;
+	    }
+	    popup.show(e.getComponent(), e.getX(), e.getY());
+	}
+    }
+    
+    public class ColorRenderer extends JLabel implements TableCellRenderer {
+        Border unselectedBorder = null;
+        Border selectedBorder = null;
+        boolean isBordered = true;
+        
+        public ColorRenderer(boolean isBordered) {
+            this.isBordered = isBordered;
+            setOpaque(true); //MUST do this for background to show up.
+        }
+        
+        public Component getTableCellRendererComponent(JTable table, Object color, boolean isSelected, boolean hasFocus, int row, int column) {
+            Color newColor = (Color)color;
+            setBackground(newColor);
+            if (isBordered) {
+                if (isSelected) {
+                    if (selectedBorder == null) {
+                        selectedBorder = BorderFactory.createMatteBorder(2,5,2,5,
+                        table.getSelectionBackground());
+                    }
+                    setBorder(selectedBorder);
+                } else {
+                    if (unselectedBorder == null) {
+                        unselectedBorder = BorderFactory.createMatteBorder(2,5,2,5,
+                        table.getBackground());
+                    }
+                    setBorder(unselectedBorder);
+                }
+            }          
+            //setToolTipText(...); //Discussed in the following section
+            return this;
+        }
+    }
+    
     
 }
