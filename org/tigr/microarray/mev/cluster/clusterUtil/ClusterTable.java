@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterTable.java,v $
- * $Revision: 1.7 $
- * $Date: 2004-06-17 21:03:37 $
+ * $Revision: 1.8 $
+ * $Date: 2004-07-22 15:29:56 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -59,10 +59,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.event.CellEditorListener;
-
-
-import org.tigr.microarray.mev.cluster.clusterUtil.*;
-
 
 public class ClusterTable extends JPanel implements IViewer {
     
@@ -214,7 +210,7 @@ public class ClusterTable extends JPanel implements IViewer {
         
         this.menu.addSeparator();
         
-        if(repository.isGeneClusterRepository()) {            
+        if(repository.isGeneClusterRepository()) {
             item = new JMenuItem("Import Gene List", GUIFactory.getIcon("empty.gif"));
         } else {
             item = new JMenuItem("Import Experiment List", GUIFactory.getIcon("empty.gif"));
@@ -222,6 +218,15 @@ public class ClusterTable extends JPanel implements IViewer {
         item.setActionCommand("import-list-command");
         item.addActionListener(listener);
         this.menu.add(item);
+        
+        if(repository.isGeneClusterRepository()) {
+            menu.addSeparator();
+    
+            item = new JMenuItem("Submit Gene List (External Repository)", GUIFactory.getIcon("empty.gif"));
+            item.setActionCommand("submit-list-command");
+            item.addActionListener(listener);
+            this.menu.add(item);
+        }  
     }
     
     private JMenu initializeModifyMenu(MenuListener listener){
@@ -846,9 +851,11 @@ public class ClusterTable extends JPanel implements IViewer {
                 if(newCluster != null)
                     addCluster(newCluster);
                 else
-                    JOptionPane.showMessageDialog(framework.getFrame(), "Cluster was not created. Input ID's were not found in the loaded data set.", "No List Matches", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(framework.getFrame(), "Cluster was not created. Process aborted or input ID's were not found in the loaded data set.", "No List Matches", JOptionPane.INFORMATION_MESSAGE);
                 //onRepositoryChanged(repository);
                 //model.fireTableDataChanged();
+            } else if(command.equals("submit-list-command")) {
+                submitCluster();
             }
         }
     }
@@ -1150,6 +1157,12 @@ public class ClusterTable extends JPanel implements IViewer {
             return;
         }
         repository.saveCluster(clusters[0].getSerialNumber());
+    }
+    
+    private void submitCluster() {
+        Cluster [] clusters = getSelectedClusters();
+        if(clusters != null && clusters.length > 0)
+            this.repository.submitCluster(clusters[0]);
     }
     
     /** Returns a component to be inserted into the scroll pane row header
