@@ -6,8 +6,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SuperExpressionFileLoader.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-27 22:16:51 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-27 22:23:33 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -92,7 +92,7 @@ public class SuperExpressionFileLoader {
         fileLoaders[0] = new MevFileLoader(this);
         fileLoaders[1] = new StanfordFileLoader(this);
         fileLoaders[2] = new TavFileLoader(this);
-        fileLoaders[3] = new AffymetrixFileLoader_new(this); 
+        fileLoaders[3] = new AffymetrixFileLoader(this); 
         fileLoaders[4] = new GenePixFileLoader(this);
         //fileLoaders[4] = new ArraySuiteFileLoader();
         
@@ -372,7 +372,7 @@ public class SuperExpressionFileLoader {
                 if(loaderIndex == 1)
                     dataType = IData.DATA_TYPE_RATIO_ONLY;
                 else if(loaderIndex == 3) {
-                    dataType = ((AffymetrixFileLoader_new)selectedFileLoader).getAffyDataType();
+                    dataType = ((AffymetrixFileLoader)selectedFileLoader).getAffyDataType();
                 } else
                     dataType = IData.DATA_TYPE_TWO_INTENSITY;
                 selectedFileLoader.dispose();
