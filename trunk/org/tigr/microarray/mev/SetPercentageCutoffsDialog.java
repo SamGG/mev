@@ -1,16 +1,17 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: SetPercentageCutoffsDialog.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
+ * $Revision: 1.2 $
+ * $Date: 2004-03-25 18:59:40 $
  * $Author: braisted $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Toolkit;
@@ -23,8 +24,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JTextField;
@@ -32,41 +35,45 @@ import javax.swing.JOptionPane;
 
 import org.tigr.util.awt.GBA;
 
-public class SetPercentageCutoffsDialog extends JDialog {
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
+
+
+public class SetPercentageCutoffsDialog extends AlgorithmDialog {
     
+    private float originalValue;
     private int result;
     private JTextField textField;
     
     public SetPercentageCutoffsDialog(JFrame parent, float percentage) {
-	super(parent, "Set Percentage Cutoff", true);
-	
+	super(parent, "Set Percentage Cutoff", true);	
+	Listener listener = new Listener();
+	originalValue = percentage;
+        
 	GBA gba = new GBA();
 	
 	JLabel percentageLabel = new JLabel("Percentage Cutoff (" + percentage + "%): ");
-	
-	Listener listener = new Listener();
-	
+	percentageLabel.setHorizontalTextPosition(JLabel.RIGHT);
+        percentageLabel.setHorizontalAlignment(JLabel.RIGHT);
+   
 	textField = new JTextField(10);
+        textField.setText(String.valueOf(percentage));
+        textField.selectAll();
 	textField.addKeyListener(listener);
-	textField.setText(String.valueOf(percentage));
-	
-	JButton okButton = new JButton("Ok");
-	okButton.setActionCommand("ok-command");
-	okButton.addActionListener(listener);
-	
-	JButton cancelButton = new JButton("Cancel");
-	cancelButton.setActionCommand("cancel-command");
-	cancelButton.addActionListener(listener);
-	
-	getContentPane().setLayout(new GridBagLayout());
-	gba.add(getContentPane(), percentageLabel, 0, 0, 1, 1, 0, 0, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-	gba.add(getContentPane(), textField, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-	gba.add(getContentPane(), cancelButton, 0, 1, 1, 1, 0, 0, GBA.NONE, GBA.W, new Insets(5, 5, 5, 5), 0, 0);
-	gba.add(getContentPane(), okButton, 1, 1, 1, 1, 0, 0, GBA.NONE, GBA.E, new Insets(5, 5, 5, 5), 0, 0);
-	addWindowListener(listener);
+
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBackground(Color.white);
+        panel.setBorder(BorderFactory.createLineBorder(Color.black));
+        
+	gba.add(panel, percentageLabel, 0, 0, 1, 1, 1, 0, GBA.B, GBA.E, new Insets(25, 5, 35, 5), 0, 0);
+	gba.add(panel, textField, 1, 0, 1, 1, 1, 0, GBA.NONE, GBA.W, new Insets(25, 5, 35, 5), 0, 0);
+
+        addContent(panel);
+        setActionListeners(listener);
+        addWindowListener(listener);
 	pack();
 	setResizable(false);
-	textField.grabFocus();
+	textField.grabFocus();        
     }
     
     public int showModal() {
@@ -78,6 +85,11 @@ public class SetPercentageCutoffsDialog extends JDialog {
     
     public float getPercentageCutoff() {
 	return Float.parseFloat(textField.getText());
+    }
+    
+    public static void main(String [] args) {
+        SetPercentageCutoffsDialog dialog = new SetPercentageCutoffsDialog(new JFrame(), 0f);
+        dialog.showModal();
     }
     
     private class Listener extends WindowAdapter implements ActionListener, KeyListener {
@@ -94,7 +106,25 @@ public class SetPercentageCutoffsDialog extends JDialog {
 	    } else if (command.equals("cancel-command")) {
 		result = JOptionPane.CANCEL_OPTION;
 		dispose();
-	    }
+	    } else if (command.equals("reset-command")) {
+                textField.setText(String.valueOf(originalValue));
+                textField.selectAll();
+                textField.grabFocus();
+            } else if (command.equals("info-command")){
+                HelpWindow hw = new HelpWindow(SetPercentageCutoffsDialog.this, "Set Percentage Cutoff");
+                result = JOptionPane.CANCEL_OPTION;
+                if(hw.getWindowContent()){
+                    hw.setSize(450,600);
+                    hw.setLocation();
+                    hw.show();
+                    return;
+                }
+                else {
+                    hw.setVisible(false);
+                    hw.dispose();
+                    return;
+                }
+            }
 	}
 	
 	public void windowClosing(WindowEvent e) {
