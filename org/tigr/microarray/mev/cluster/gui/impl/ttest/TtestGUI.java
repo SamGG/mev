@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: TtestGUI.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-05-06 15:32:23 $
- * $Author: braisted $
+ * $Revision: 1.7 $
+ * $Date: 2004-05-11 18:00:47 $
+ * $Author: nbhagaba $
  * $State: Exp $
  */
 
@@ -85,7 +85,7 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
     int[] groupAssignments;
     int tTestDesign;
     double oneClassMean;
-    boolean isPermutations;
+    boolean isPermutations, useWelchDf;
     boolean[] isSig;
     double[] diffMeansBA, negLog10PValues;
     //JFrame tTestFrame;
@@ -143,6 +143,7 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
         isPermutations = isPermut;
         int numCombs = ttDialog.getUserNumCombs();
         boolean useAllCombs = ttDialog.useAllCombs();
+        useWelchDf = ttDialog.useWelchDf();
         
         // hcl init
         int hcl_method = 0;
@@ -194,6 +195,7 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
             data.addParam("is-permut", String.valueOf(isPermut));
             data.addParam("num-combs", String.valueOf(numCombs));
             data.addParam("use-all-combs", String.valueOf(useAllCombs));
+            data.addParam("useWelchDf", String.valueOf(useWelchDf));
             
             // hcl parameters
             if (isHierarchicalTree) {
@@ -415,6 +417,7 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
         int significanceMethod = ttDialog.getSignificanceMethod();
         boolean isHierarchicalTree = ttDialog.isDrawTrees();
         boolean isPermut = ttDialog.isPermut();
+        useWelchDf = ttDialog.useWelchDf();
         isPermutations = isPermut;
         int numCombs = ttDialog.getUserNumCombs();
         boolean useAllCombs = ttDialog.useAllCombs();
@@ -459,6 +462,7 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
         data.addParam("is-permut", String.valueOf(isPermut));
         data.addParam("num-combs", String.valueOf(numCombs));
         data.addParam("use-all-combs", String.valueOf(useAllCombs));
+        data.addParam("useWelchDf", String.valueOf(useWelchDf));        
         
         // hcl parameters
         if (isHierarchicalTree) {
@@ -499,6 +503,7 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
             this.experiment = experiment;
             this.data = framework.getData();
             this.groupAssignments = algData.getIntArray("group-assignments");
+            this.useWelchDf = algData.getParams().getBoolean("useWelchDf");
             this.exptNamesVector = new Vector();
             int number_of_samples = experiment.getNumberOfSamples();
             for (int i = 0; i < number_of_samples; i++) {
@@ -904,6 +909,12 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
         node.add(getGroupAssignmentInfo());
         if (tTestDesign == TtestInitDialog.ONE_CLASS) {
             node.add(new DefaultMutableTreeNode("Mean tested against: " + oneClassMean));
+        }
+        if (tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS) {
+            if (useWelchDf)
+                node.add(new DefaultMutableTreeNode("Df calculation: used Welch approximation"));
+            else 
+                node.add(new DefaultMutableTreeNode("Df calculation: assumed equal variances"));
         }
         node.add(new DefaultMutableTreeNode("Alpha (overall threshold p-value): "+info.alpha));
         node.add(new DefaultMutableTreeNode("P-values based on: "+info.pValueBasedOn));
