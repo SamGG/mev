@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2004-02-09 16:09:08 $
+ * $Revision: 1.8 $
+ * $Date: 2004-02-10 00:14:26 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -1797,7 +1797,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         if(this.geneClusterManager != null)
             this.geneClusterManager.deleteAllClusters();
         fireDataChanged();
-        fireMenuChanged();
+        fireMenuChanged();  
         addHistory("Deleted All Gene Clusters");
     }
     
