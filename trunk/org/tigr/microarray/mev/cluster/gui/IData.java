@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: IData.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-06-11 18:52:43 $
+ * $Revision: 1.4 $
+ * $Date: 2004-07-22 15:33:48 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -227,5 +227,14 @@ public interface IData {
      */
     public String [] getAnnotationList(String fieldName, int [] indices);
         
+    /**
+     * Returns true if loaded intensities are known to be median
+     */
+    public boolean areMedianIntensities();
     
+    /**
+     * Sets median intensity flag
+     */
+    public void setMedianIntensities(boolean areMedians);
+
 }
