@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLViewer.java,v $
- * $Revision: 1.9 $
- * $Date: 2004-04-07 18:28:40 $
+ * $Revision: 1.10 $
+ * $Date: 2004-04-29 17:41:51 $
  * $Author: nbhagaba $
  * $State: Exp $
  */
@@ -59,6 +59,7 @@ import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
@@ -1089,7 +1090,8 @@ public class HCLViewer extends JPanel implements IViewer {
         if (geneClusters)
             tabViewer = new ClusterTableViewer(this.experiment, clusters, this.data);
         else
-            return; // placeholder for ExptClusterTableViewer
+            tabViewer = new ExperimentClusterTableViewer(this.experiment, clusters, this.data);
+            //return; // placeholder for ExptClusterTableViewer
         
         for(int i = 0; i < clusters.length; i++){
             tabNode.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+String.valueOf(i+1), tabViewer, new Integer(i))));
