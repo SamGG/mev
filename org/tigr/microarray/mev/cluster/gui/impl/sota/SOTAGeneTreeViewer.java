@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SOTAGeneTreeViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-05 20:27:16 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-13 19:15:07 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -632,6 +632,14 @@ public class SOTAGeneTreeViewer extends JPanel implements IViewer, java.io.Seria
     public JComponent getCornerComponent(int cornerIndex) {
         return null;
     }
+    
+    public int[][] getClusters() {
+        return null;
+    }
+    
+    public Experiment getExperiment() {
+        return null;
+    }    
     
     private class Listener extends MouseAdapter implements ActionListener{
         

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: ExperimentClusterCentroidsViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-05 22:53:06 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-13 19:15:03 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -109,7 +109,7 @@ public class ExperimentClusterCentroidsViewer extends JPanel implements IViewer,
     /**
      * Returns the experiment.
      */
-    protected Experiment getExperiment() {
+    public Experiment getExperiment() {
         return this.centroidViewer.getExperiment();
     }
     
@@ -123,7 +123,7 @@ public class ExperimentClusterCentroidsViewer extends JPanel implements IViewer,
     /**
      * Returns clusters.
      */
-    protected int[][] getClusters() {
+    public int[][] getClusters() {
         return this.centroidViewer.getClusters();
     }
     

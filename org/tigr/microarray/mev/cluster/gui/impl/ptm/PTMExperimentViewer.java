@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMExperimentViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-05 22:10:56 $
+ * $Revision: 1.5 $
+ * $Date: 2004-02-13 19:15:05 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -260,6 +260,14 @@ public class PTMExperimentViewer implements IViewer, java.io.Serializable {
      */
     private void onSetDefaultColor() {
 	expViewer.setClusterColor(null);
+    }
+    
+    public int[][] getClusters() {
+        return null;
+    }
+    
+    public Experiment getExperiment() {
+        return null;
     }
     
     /**

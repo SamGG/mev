@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: IFramework.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-05 22:44:24 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-13 19:15:03 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -14,6 +14,7 @@ package org.tigr.microarray.mev.cluster.gui;
 import java.awt.Color;
 import java.awt.Frame;
 import javax.swing.tree.DefaultMutableTreeNode;
+import org.tigr.microarray.mev.ResultTree;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
@@ -133,4 +134,8 @@ public interface IFramework {
     /** Adds string to history node
      */
     public void addHistory(String historyEvent);
+    
+    /** Returns the ResultTree object
+     */
+    public ResultTree getResultTree();
 }

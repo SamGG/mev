@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayData.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-05 22:33:59 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-13 19:15:02 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -1517,7 +1517,8 @@ public class MultipleArrayData implements IData, java.io.Serializable {
     }
     
         private void writeObject(ObjectOutputStream oos) throws IOException, ClassNotFoundException{
-  
+        oos.writeObject(TMEV.getFieldNames());
+            
         oos.writeObject(featuresList);  //ArrayList
         oos.writeObject(indicesList); //ArrayList
         
@@ -1556,7 +1557,8 @@ public class MultipleArrayData implements IData, java.io.Serializable {
     }
     
     private void readObject(ObjectInputStream ois)throws IOException, ClassNotFoundException{
-       
+        TMEV.setFieldNames((String [])ois.readObject());
+        
         featuresList = (ArrayList)ois.readObject();  //ArrayList
         indicesList = (ArrayList)ois.readObject(); //ArrayList
         

@@ -10,11 +10,11 @@ All rights reserved.
 
  * $RCSfile: ViewerAdapter.java,v $
 
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
 
- * $Date: 2003-12-09 17:20:56 $
+ * $Date: 2004-02-13 19:15:04 $
 
- * $Author: nbhagaba $
+ * $Author: braisted $
 
  * $State: Exp $
 
@@ -39,6 +39,8 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IData;
 
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
+
+import org.tigr.microarray.mev.cluster.gui.Experiment;
 
 
 
@@ -82,9 +84,13 @@ public class ViewerAdapter implements IViewer {
 
     }
 
-    //THIS IS A TEST COMMENT
+    public int[][] getClusters() {
+        return null;
+    }
     
-    //LOCAL COPY
+    public Experiment getExperiment() {
+        return null;
+    }
     
 
 }

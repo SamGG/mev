@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: MultipleArrayMenubar.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-05 22:34:13 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-13 19:15:02 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -329,8 +329,28 @@ public class MultipleArrayMenubar extends JMenuBar {
             if(i == 0) 
                 item.setSelected(true);                       
             this.labelMenu.add(item);
-        }
+        }  
     }
+    
+    
+    public void replaceLabelMenuItems(String [] fieldNames){
+        //remove all menu items
+        this.labelMenu.removeAll();
+        
+        JRadioButtonMenuItem item;
+        ButtonGroup bg = new ButtonGroup();        
+        DefaultAction action;
+        for(int i = 0; i < fieldNames.length; i++){
+            action = new DefaultAction(actionManager, "Label by "+fieldNames[i], ActionManager.DISPLAY_LABEL_CMD);
+	    action.putValue(ActionManager.PARAMETER, String.valueOf(i));
+            item = new JRadioButtonMenuItem(action);
+            labelGroup.add(item);
+            if(i == 0) 
+                item.setSelected(true);                       
+            this.labelMenu.add(item);
+        }  
+    }
+    
     
     public void addAffyFilterMenuItems(){           
             adjustMenu.addSeparator();
@@ -366,6 +386,25 @@ public class MultipleArrayMenubar extends JMenuBar {
             this.sortMenu.add(item);            
         }
     }
+   
+   public void replaceSortMenuItems(String [] fieldNames){
+        //Remove all items
+        this.sortMenu.removeAll();
+        
+        //Restore defaults
+        sortMenu.add(createJRadioButtonMenuItem("Sort by Location", ActionManager.SORT_BY_LOCATION_CMD, listener, sortGroup, true));
+        sortMenu.add(createJRadioButtonMenuItem("Sort by Ratio", ActionManager.SORT_BY_RATIO_CMD, listener, sortGroup));
+       
+        JRadioButtonMenuItem item;
+        DefaultAction action;
+        for(int i = 0; i < fieldNames.length; i++){ 
+            action = new DefaultAction(actionManager, "Sort by "+fieldNames[i], ActionManager.SORT_LABEL_CMD);
+	    action.putValue(ActionManager.PARAMETER, String.valueOf(i));
+            item = new JRadioButtonMenuItem(action);
+            sortGroup.add(item);
+            this.sortMenu.add(item);            
+        }
+    }   
     
     /**
      * Adds analysis menu items.

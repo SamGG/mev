@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SOTAExperimentViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-05 20:27:16 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-13 19:15:06 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -433,6 +433,19 @@ public class SOTAExperimentViewer extends JPanel implements IViewer, java.io.Ser
     public JComponent getCornerComponent(int cornerIndex) {
         return null;
     }
+    
+    /** Returns the viewer's clusters or null
+     */
+    public int[][] getClusters() {
+        return null;
+    }    
+    
+    /**  Returns the viewer's experiment or null
+     */
+    public Experiment getExperiment() {
+        return null;
+    }
+    
     
     /**
      * The class to listen to mouse and action events.

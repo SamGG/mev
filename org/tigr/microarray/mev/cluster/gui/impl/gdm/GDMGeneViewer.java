@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: GDMGeneViewer.java,v $
- * $Revision: 1.1 $
- * $Date: 2004-02-06 22:53:42 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-13 19:15:04 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -45,8 +45,10 @@ import java.awt.image.BufferedImage;
 
 import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.Vector;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Vector;
 
 import javax.swing.Action;
 import javax.swing.AbstractAction;
@@ -72,16 +74,22 @@ import javax.swing.ButtonGroup;
 import javax.swing.BorderFactory;
 import javax.swing.SwingUtilities;
 
+import javax.swing.tree.DefaultMutableTreeNode;
+
 import org.tigr.util.FloatMatrix;
 import org.tigr.util.QSort;
 
+import org.tigr.microarray.mev.ResultTree;
+
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 
-import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
+import org.tigr.microarray.mev.cluster.gui.LeafInfo;
+
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 
@@ -1108,6 +1116,13 @@ public class GDMGeneViewer extends JPanel implements IViewer {
         
         menu.addSeparator();
         
+        item = new JMenuItem("Impose Cluster Result");
+        item.setActionCommand("impose-cluster-order");
+        item.addActionListener(listener);
+        menu.add(item);
+        
+        menu.addSeparator();
+        
         JMenu annotationMenu = new JMenu("Change Annotation");
         buttonGroup = new ButtonGroup();
         addLabelMenuItems(annotationMenu, buttonGroup);
@@ -1282,7 +1297,7 @@ public class GDMGeneViewer extends JPanel implements IViewer {
     private void onSortByClusterChange() {
         if (numOfClusters > 0) {
             isDrawClusterBorders=true;
-            drawClusterBorderItem.setState(true);
+          //  drawClusterBorderItem.setState(true);
             
             if(this.displayEvery==1) {
                 setIndices(createIndices());
@@ -1493,9 +1508,40 @@ public class GDMGeneViewer extends JPanel implements IViewer {
     }
     
     private void imposeClusterOrder() {
+        
+        Hashtable results = getResultHash();
+        boolean noUseableResult = false;
+        
+        Hashtable goodResults = new Hashtable();
+        
+        Enumeration keys = results.keys();
+        Object [] result;
+        String key;
+        
+        
+        while(keys.hasMoreElements()){
+            key = (String)keys.nextElement();
+            result = (Object [])(results.get(key));
+            
+            //make sure it's the same experiment (same cutoffs), same number of genes (not exp. cluster)
+            if((this.experiment == result[0]) && checkClustersSize((int[][])result[1]) ) {
+                goodResults.put(key, result[1]);                
+            }            
+        }
+        
+        if(goodResults.size() > 0) {
+            GDMResultSelectionDialog dialog = new GDMResultSelectionDialog(goodResults.keys());
+            if( dialog.showModal() == JOptionPane.OK_OPTION ) {
+                int [][] clusters = ((int [][])goodResults.get(dialog.getSelectedResult()));
+                imposeClusterOrder(clusters);
+            }                        
+        } else {
+            System.out.println("No good results");            
+        }
+        
         //launch cluster selection dialog
         //use cluster browser
-        GDMClusterBrowserDialog dialog = new GDMClusterBrowserDialog(this.framework.getClusterRepository(Cluster.GENE_CLUSTER));
+   /*     GDMClusterBrowserDialog dialog = new GDMClusterBrowserDialog(this.framework.getClusterRepository(Cluster.GENE_CLUSTER));
         Cluster cluster;
         if(dialog.showModal() == JOptionPane.OK_OPTION) {
             cluster = dialog.getSelectedCluster();
@@ -1505,7 +1551,83 @@ public class GDMGeneViewer extends JPanel implements IViewer {
                 
             }
         }        
+ */
+        
+        
     }
+    
+    private boolean checkClustersSize(int [][] clusters) {
+        int cnt = 0;
+        for(int i = 0; i < clusters.length; i++) {
+            cnt += clusters[i].length;
+        }
+        
+        if( ((int)(cnt/displayEvery)) == this.num_genes) 
+  //      if(displayEvery > 1) {
+        //    if(((int)((cnt-1)/this.displayEvery))+1 == this.num_genes )
+                return true;
+    //        else
+      //          return false;
+        //} else if(cnt == this.num_genes) {
+          //  return true;
+       // }                        
+        return false;
+    }
+    
+    
+    
+    public Hashtable getResultHash(){
+        Hashtable table = new Hashtable();
+        DefaultMutableTreeNode analysisNode = framework.getResultTree().getAnalysisNode();
+        DefaultMutableTreeNode analysisRoot;
+        DefaultMutableTreeNode currentNode;
+        Object object;
+        Object [] vals;
+        boolean stop = false;
+        
+        IViewer viewer;
+        Experiment exp;
+        int [][] clusters;
+        
+        int childCount = analysisNode.getChildCount();
+        //String algTitles = new String[analysisNode.getChildCount()];
+        String algName = "";
+        Enumeration enum;
+        
+        for(int i = 0; i < childCount; i++){
+            analysisRoot = ((DefaultMutableTreeNode)(analysisNode.getChildAt(i)));
+            object = analysisRoot.getUserObject();
+            if(object != null){
+                if(object instanceof LeafInfo){
+                    algName = ((LeafInfo)object).toString();
+                } else if(object instanceof String) {
+                    algName = (String)object;
+                }
+                
+                enum = analysisRoot.depthFirstEnumeration();
+                while (!stop && enum.hasMoreElements()){
+                    currentNode = (DefaultMutableTreeNode)enum.nextElement();
+                    if(currentNode.getUserObject() instanceof LeafInfo){
+                       viewer = ((LeafInfo)currentNode.getUserObject()).getViewer();
+                       if(viewer != null) {
+                            exp = viewer.getExperiment();
+                            clusters = viewer.getClusters();
+                            if(exp != null && clusters != null) {
+                                vals = new Object[2];
+                                vals[0] = exp;
+                                vals[1] = clusters;
+                                table.put(algName, vals);
+                                stop = true;
+                            }                            
+                       }                                                    
+                    }                    
+                }
+                stop = false;                
+            }
+        }        
+        return table;
+    }
+    
     
     private void imposeClusterOrder(int [][] newClusters) {
         this.clusters = newClusters;
@@ -1571,6 +1693,8 @@ public class GDMGeneViewer extends JPanel implements IViewer {
                 onDrawClusterBorderChange(((javax.swing.JCheckBoxMenuItem)(event.getSource())).isSelected());
             } else if (command.equals(SAVE_NEIGHBORS_CMD)){
                 onSaveNeighbors();
+            } else if (command.equals("impose-cluster-order")) {
+                imposeClusterOrder();
             }
         }
         
@@ -1611,6 +1735,8 @@ public class GDMGeneViewer extends JPanel implements IViewer {
             if (isLegalPosition(row, column)) {
                 g = getGraphics();
                 drawColoredBoxAt(g, row, column, Color.white);
+                if(isDrawClusterBorders && numOfClusters > 0)
+                    drawClusterBorder((Graphics2D)g);
                 framework.setStatusText(
                 " Column: " + (column+1) +
                 "     " +  //some padding
@@ -1707,6 +1833,14 @@ public class GDMGeneViewer extends JPanel implements IViewer {
             return this.upperRightCornerSB;
         else if(cornerIndex == IViewer.LOWER_LEFT_CORNER)
             return this.lowerLeftCornerSB;
+        return null;
+    }
+    
+    public int[][] getClusters() {
+        return null;
+    }
+    
+    public Experiment getExperiment() {
         return null;
     }
     

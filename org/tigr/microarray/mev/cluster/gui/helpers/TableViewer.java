@@ -32,6 +32,7 @@ import javax.swing.table.TableModel;
 
 import java.util.Arrays;
 
+import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
@@ -394,6 +395,14 @@ public class TableViewer extends JPanel implements IViewer, java.io.Serializable
      * posibly null
      */
     public JComponent getCornerComponent(int cornerIndex) {
+        return null;
+    }
+    
+    public int[][] getClusters() {
+        return null;
+    }
+    
+    public Experiment getExperiment() {
         return null;
     }
     

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: CentroidsViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-05 22:53:06 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-13 19:15:03 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -115,7 +115,7 @@ public class CentroidsViewer extends JPanel implements IViewer, java.io.Serializ
     /**
      * Returns the experiment.
      */
-    protected Experiment getExperiment() {
+    public Experiment getExperiment() {
 		return this.centroidViewer.getExperiment();
     }
     
@@ -129,7 +129,7 @@ public class CentroidsViewer extends JPanel implements IViewer, java.io.Serializ
     /**
      * Returns clusters.
      */
-    protected int[][] getClusters() {
+    public int[][] getClusters() {
 		return this.centroidViewer.getClusters();
     }
     

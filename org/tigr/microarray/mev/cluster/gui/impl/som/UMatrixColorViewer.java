@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: UMatrixColorViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-05 21:11:04 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-13 19:15:06 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -30,6 +30,7 @@ import javax.swing.JComponent;
 
 import org.tigr.util.FloatMatrix;
 
+import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
@@ -214,6 +215,18 @@ public class UMatrixColorViewer extends JPanel implements IViewer, java.io.Seria
      * posibly null
      */
     public JComponent getCornerComponent(int cornerIndex) {
+        return null;
+    }
+    
+    /** Returns the viewer's clusters or null
+     */
+    public int[][] getClusters() {
+        return null;
+    }    
+    
+    /**  Returns the viewer's experiment or null
+     */
+    public Experiment getExperiment() {
         return null;
     }
     

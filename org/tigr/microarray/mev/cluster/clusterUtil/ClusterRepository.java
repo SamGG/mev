@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterRepository.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-10 00:15:09 $
+ * $Revision: 1.5 $
+ * $Date: 2004-02-13 19:15:02 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -86,6 +86,12 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
         this.numberOfElements = ois.readInt();
     }
     
+    /**
+     *  Sets the repository's framework field
+     */
+    public void setFramework(IFramework framework) {
+        this.framework = framework;
+    }    
     /** Returns the color of the last cluster to which the element
      * (index) was assigned
      */
@@ -240,7 +246,6 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
             framework.getData().deleteColors();
         else
             framework.getData().deleteExperimentColors();
-        //   clear();
     }
     
     /** Clears the cluster lists for all elements.

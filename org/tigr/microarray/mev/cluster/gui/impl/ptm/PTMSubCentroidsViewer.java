@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMSubCentroidsViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 17:07:43 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-13 19:15:05 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -107,7 +107,7 @@ public class PTMSubCentroidsViewer  extends JPanel implements IViewer {
     /**
      * Returns the experiment.
      */
-    protected Experiment getExperiment() {
+    public Experiment getExperiment() {
 	return this.centroidViewer.getExperiment();
     }
     
@@ -121,7 +121,7 @@ public class PTMSubCentroidsViewer  extends JPanel implements IViewer {
     /**
      * Returns clusters.
      */
-    protected int[][] getClusters() {
+    public int[][] getClusters() {
 	return this.centroidViewer.getClusters();
     }
     

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOMExperimentViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-05 21:11:04 $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-13 19:15:06 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -251,6 +251,19 @@ public class SOMExperimentViewer implements IViewer, java.io.Serializable {
     public JComponent getCornerComponent(int cornerIndex) {
         return null;
     }
+    
+    /** Returns the viewer's clusters or null
+     */
+    public int[][] getClusters() {
+        return null;
+    }    
+    
+    /**  Returns the viewer's experiment or null
+     */
+    public Experiment getExperiment() {
+        return null;
+    }    
+    
     
     
     /**
