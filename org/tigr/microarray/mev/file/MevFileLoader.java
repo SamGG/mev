@@ -1,16 +1,16 @@
-package org.tigr.microarray.mev.file;
-
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: MevFileLoader.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-05-20 14:30:26 $
+ * $Revision: 1.6 $
+ * $Date: 2004-07-22 15:36:20 $
  * $Author: braisted $
  * $State: Exp $
  */
+package org.tigr.microarray.mev.file;
+
 
 import java.awt.Color;
 import java.awt.Component;
@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -33,6 +34,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
@@ -61,11 +63,16 @@ public class MevFileLoader extends ExpressionFileLoader {
     private String [] uidArray;
     
     boolean haveSRandSC;
+    boolean loadMedianIntensities = false;
+    
+    private boolean haveAnnMatch = false;
     
     public MevFileLoader(SuperExpressionFileLoader superLoader) {
         super(superLoader);
         gba = new GBA();
         mflp = new MevFileLoaderPanel();
+        mflp.splitPane.setDividerLocation(0.6);
+        mflp.validate();
     }
     
     public Vector loadExpressionFiles() throws IOException {
@@ -74,6 +81,8 @@ public class MevFileLoader extends ExpressionFileLoader {
         Vector data = new Vector();
         ISlideMetaData metaData = null;
         ISlideData slideData;
+        
+        this.loadMedianIntensities = mflp.loadMedButton.isSelected();
         
         setFilesCount(mevFiles.length);
         for (int i = 0; i < mevFiles.length; i++) {
@@ -96,6 +105,22 @@ public class MevFileLoader extends ExpressionFileLoader {
         } else {
             loadAnnotationFromMevFile((File)mevFiles[0], (SlideData)data.elementAt(0));
         }
+        
+        //check for existance of annotation matches, just set to true if ann. is from mev file
+        //or if no ann. files are selected.  haveAnnMatch is set when loading files to indicate a match
+        if(mflp.noAnnFileBox.isSelected() || annFiles == null || annFiles.length == 0)
+            haveAnnMatch = true;
+        
+        if(!haveAnnMatch) {
+            String msg = "The selected annoation file";
+            if(annFiles != null && annFiles.length > 1)
+                msg += "s";
+            
+            msg += " did not have have UID's that matched any UID's \n";
+            msg += "in the selected mev files.";
+            JOptionPane.showMessageDialog(mflp, msg, "Annotation Mismatch Warning", JOptionPane.WARNING_MESSAGE);
+        }
+        
         return data;
     }
     
@@ -131,6 +156,24 @@ public class MevFileLoader extends ExpressionFileLoader {
         if (mfp.isMevFileLoaded()) {
             Vector headers = mfp.getColumnHeaders();
             
+            //locate intensity columns
+            int i1, i2;
+            i1 = getIntensityColumn(headers, 1);
+            i2 = getIntensityColumn(headers, 2);
+            
+            //Intensities exist??
+            if(i1 == -1 || i2 == -1) {
+                if(loadMedianIntensities)
+                    JOptionPane.showMessageDialog(mflp, "Error loading "+currentFile.getName()+"\n"
+                    + "The file was missing median intensity columns indicated by\n"
+                    + "the header names MedA and MedB", "Load Error", JOptionPane.ERROR_MESSAGE);
+                else
+                    JOptionPane.showMessageDialog(mflp, "Error loading "+currentFile.getName()+"\n"
+                    + "The file was missing intensity columns indicated by\n"
+                    + "the header names IA and IB", "Load Error", JOptionPane.ERROR_MESSAGE);
+                return null;
+            }
+            
             //test for optional SR and SC
             haveSRandSC = false;
             if(headers.size() > 7) {
@@ -165,8 +208,8 @@ public class MevFileLoader extends ExpressionFileLoader {
                 uidArray[i] = data[i][0];
                 
                 try {
-                    intensities[0] = Float.parseFloat(data[i][1]);
-                    intensities[1] = Float.parseFloat(data[i][2]);
+                    intensities[0] = Float.parseFloat(data[i][i1]);
+                    intensities[1] = Float.parseFloat(data[i][i2]);
                     rows[0] = Integer.parseInt(data[i][3]);
                     cols[0] = Integer.parseInt(data[i][4]);
                     rows[1] = Integer.parseInt(data[i][5]);
@@ -204,6 +247,34 @@ public class MevFileLoader extends ExpressionFileLoader {
         return slideData;
     }
     
+    
+    private int getIntensityColumn(Vector headers, int index) {
+        String headerKey;
+        int col = -1;
+        
+        if(loadMedianIntensities) {
+            if(index == 1)
+                headerKey = "MedA";
+            else
+                headerKey = "MedB";
+            
+        } else {
+            if(index == 1)
+                headerKey = "IA";
+            else
+                headerKey = "IB";
+        }
+        
+        for(int i = 0; i < headers.size(); i++) {
+            if(((String)(headers.elementAt(i))).equals(headerKey)) {
+                col = i;
+                break;
+            }
+        }
+        return col;
+    }
+    
+    
     public ISlideData loadFloatSlideData(File currentFile, ISlideMetaData metaData) throws IOException {
         
         MevParser mfp = new MevParser();
@@ -212,10 +283,29 @@ public class MevFileLoader extends ExpressionFileLoader {
         if (mfp.isMevFileLoaded()) {
             
             Vector headers = mfp.getColumnHeaders();
+            
+            //locate intensity columns
+            int i1, i2;
+            i1 = getIntensityColumn(headers, 1);
+            i2 = getIntensityColumn(headers, 2);
+            
+            //Intensities exist??
+            if(i1 == -1 || i2 == -1) {
+                if(loadMedianIntensities)
+                    JOptionPane.showMessageDialog(mflp, "Error loading "+currentFile.getName()+"\n"
+                    + "The file was missing median intensity columns indicated by\n"
+                    + "the header names MedA and MedB", "Load Error", JOptionPane.ERROR_MESSAGE);
+                else
+                    JOptionPane.showMessageDialog(mflp, "Error loading "+currentFile.getName()+"\n"
+                    + "The file was missing intensity columns indicated by\n"
+                    + "the header names IA and IB", "Load Error", JOptionPane.ERROR_MESSAGE);
+                return null;
+            }
+            
             String [][] data = mfp.getDataMatrix();
             setLinesCount(data.length);
             for(int i = 0; i < data.length; i++){
-                slideData.setIntensities(i, Float.parseFloat(data[i][1]), Float.parseFloat(data[i][2]));
+                slideData.setIntensities(i, Float.parseFloat(data[i][i1]), Float.parseFloat(data[i][i2]));
                 setFileProgress(i);
             }
             if(mflp.saveSpotInfoBox.isSelected() && !mflp.noAnnFileBox.isSelected())
@@ -238,7 +328,12 @@ public class MevFileLoader extends ExpressionFileLoader {
             }
             setTMEVFieldNames(annotHeaders);
             
-            String [][] annMatrix = parser.getDataMatrix();
+            String [][] annMatrix;
+            if(mflp.cutQuotesBox.isSelected())
+                annMatrix = parser.getDataMatrixMinusQuotes();
+            else
+                annMatrix = parser.getDataMatrix();
+            
             Hashtable hash = new Hashtable();
             String [] value;
             int dataLength = targetData.size();
@@ -252,6 +347,9 @@ public class MevFileLoader extends ExpressionFileLoader {
             String [] extraFields;
             for(int i = 0; i < dataLength; i++){
                 extraFields = (String [])(hash.get(uidArray[i]));
+                //if there is a match in the annotation set flag to true
+                if(!haveAnnMatch && extraFields != null)
+                    haveAnnMatch = true;
                 ((SlideDataElement)targetData.getSlideDataElement(i)).setExtraFields(extraFields);
             }
         }
@@ -340,6 +438,7 @@ public class MevFileLoader extends ExpressionFileLoader {
     }
     
     public void openDataPath() {
+        this.mflp.splitPane.setDividerLocation(0.3);
         this.mflp.openDataPath();
     }
     
@@ -390,6 +489,10 @@ public class MevFileLoader extends ExpressionFileLoader {
         
         JCheckBox noAnnFileBox;
         JCheckBox saveSpotInfoBox;
+        JCheckBox cutQuotesBox;
+        
+        JRadioButton loadIButton;
+        JRadioButton loadMedButton;
         
         public MevFileLoaderPanel() {
             
@@ -418,46 +521,108 @@ public class MevFileLoader extends ExpressionFileLoader {
             mevAvailableScrollPane = new JScrollPane(mevAvailableList);
             mevSelectedScrollPane = new JScrollPane(mevSelectedList);
             mevAddButton = new JButton("Add");
+            mevAddButton.setPreferredSize(new Dimension(100,20));
+            //mevAddButton.setSize(100,20);
             mevAddButton.addActionListener(new EventHandler());
             mevAddAllButton = new JButton("Add All");
+            //mevAddAllButton.setSize(100,20);
+            mevAddAllButton.setPreferredSize(new Dimension(100,20));
+            
             mevAddAllButton.addActionListener(new EventHandler());
             mevRemoveButton = new JButton("Remove");
+            //mevRemoveButton.setSize(100,20);
+            mevRemoveButton.setPreferredSize(new Dimension(100,20));
+            
             mevRemoveButton.addActionListener(new EventHandler());
             mevRemoveAllButton = new JButton("Remove All");
+            //mevRemoveAllButton.setSize(100,20);
+            mevRemoveAllButton.setPreferredSize(new Dimension(100,20));
+            
             mevRemoveAllButton.addActionListener(new EventHandler());
             
-            Dimension largestMevButtonSize = mevRemoveAllButton.getPreferredSize();
-            mevAddButton.setPreferredSize(largestMevButtonSize);
-            mevAddAllButton.setPreferredSize(largestMevButtonSize);
-            mevRemoveButton.setPreferredSize(largestMevButtonSize);
-            mevRemoveAllButton.setPreferredSize(largestMevButtonSize);
+            //  Dimension largestMevButtonSize = mevRemoveAllButton.getPreferredSize();
+            // mevAddButton.setPreferredSize(largestMevButtonSize);
+            //   mevAddAllButton.setPreferredSize(largestMevButtonSize);
+            ////     mevRemoveButton.setPreferredSize(largestMevButtonSize);
+            //     mevRemoveAllButton.setPreferredSize(largestMevButtonSize);
             
             mevButtonPanel = new JPanel();
             mevButtonPanel.setLayout(new GridBagLayout());
+            //mevButtonPanel.setSize(110, 150);
+            //mevButtonPanel.setPreferredSize(new Dimension(110, 150));
             
             gba.add(mevButtonPanel, mevAddButton, 0, 0, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             gba.add(mevButtonPanel, mevAddAllButton, 0, 1, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             gba.add(mevButtonPanel, mevRemoveButton, 0, 2, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             gba.add(mevButtonPanel, mevRemoveAllButton, 0, 3, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             
-            mevListPanel = new JPanel();
-            mevListPanel.setLayout(new GridBagLayout());
             
-            gba.add(mevListPanel, mevAvailableLabel, 0, 0, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(mevListPanel, mevSelectedLabel, 2, 0, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(mevListPanel, mevAvailableScrollPane, 0, 1, 1, 4, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(mevListPanel, mevButtonPanel, 1, 1, 1, 4, 0, 1, GBA.V, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(mevListPanel, mevSelectedScrollPane, 2, 1, 1, 4, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            
-            gba.add(mevSelectionPanel, mevListPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            //Medians vs. Integrate intensities
+            loadIButton = new JRadioButton("Load Integrated Spot Intensities", true);
+            loadIButton.setFocusPainted(false);
+            loadMedButton = new JRadioButton("Load Median Spot Intensities");
+            loadMedButton.setFocusPainted(false);
+            ButtonGroup bg = new ButtonGroup();
+            bg.add(loadIButton);
+            bg.add(loadMedButton);
             
             noAnnFileBox = new JCheckBox("Use Annotation Contained in MeV File (no annotation file)", false);
             noAnnFileBox.setFocusPainted(false);
             noAnnFileBox.setActionCommand("use-annotation-in-mev-file");
             noAnnFileBox.addActionListener(new EventHandler());
             
-            saveSpotInfoBox = new JCheckBox("Load Auxilary Spot Information", false);
+            saveSpotInfoBox = new JCheckBox("Load Auxiliary Spot Information", false);
             saveSpotInfoBox.setFocusPainted(false);
+            
+            cutQuotesBox = new JCheckBox("Remove Annotation Quotes(\"...\")", false);
+            cutQuotesBox.setHorizontalAlignment(JCheckBox.CENTER);
+            cutQuotesBox.setFocusPainted(false);
+            
+            selectionPanel = new JPanel();
+            selectionPanel.setLayout(new GridBagLayout());
+
+            JPanel buttonPanel = new JPanel();
+            buttonPanel.setLayout(new GridBagLayout());
+            
+            gba.add(buttonPanel, loadIButton, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(0, 20, 0, 5), 0, 0);
+            gba.add(buttonPanel, saveSpotInfoBox, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(0, 20, 0, 5), 0, 0);
+            
+            gba.add(buttonPanel, loadMedButton, 0, 1, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(0, 20, 0, 5), 0, 0);
+            gba.add(buttonPanel, noAnnFileBox, 1, 1, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(0, 20, 0, 5), 0, 0);            
+
+            gba.add(buttonPanel, cutQuotesBox, 0, 2, 2, 1, 1, 0, GBA.H, GBA.E, new Insets(0, 118, 0, 5), 0, 0);
+            
+            mevListPanel = new JPanel();
+            mevListPanel.setLayout(new GridBagLayout());
+            
+            //            gba.add(mevSelectionPanel, selectionPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            
+            gba.add(mevListPanel, mevAvailableLabel, 0, 0, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            gba.add(mevListPanel, mevAvailableScrollPane, 0, 1, 1, 4, 5, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            gba.add(mevListPanel, new JPanel(), 1, 0, 1, 1, 0, 0, GBA.B, GBA.C, new Insets(0,0,0,0), 0, 0);
+            gba.add(mevListPanel, mevButtonPanel, 1, 1, 1, 4, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            gba.add(mevListPanel, mevSelectedLabel, 2, 0, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            gba.add(mevListPanel, mevSelectedScrollPane, 2, 1, 1, 4, 5, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            
+                        
+            gba.add(mevSelectionPanel, buttonPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            gba.add(mevSelectionPanel, mevListPanel, 0, 1, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+ 
+            gba.add(selectionPanel, pathTextField, 0, 0, 2, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            gba.add(selectionPanel, mevSelectionPanel, 0, 1, 2, 2, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            
+            
+          /*
+           
+                gba.add(mevListPanel, mevAvailableLabel, 0, 0, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            gba.add(mevListPanel, mevSelectedLabel, 2, 0, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            gba.add(mevListPanel, mevAvailableScrollPane, 0, 1, 1, 4, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            gba.add(mevListPanel, mevButtonPanel, 1, 1, 1, 4, 0, 1, GBA.V, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            gba.add(mevListPanel, mevSelectedScrollPane, 2, 1, 1, 4, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+           
+            gba.add(mevSelectionPanel, mevListPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+           */
+            
             
             annSelectionPanel = new JPanel();
             annSelectionPanel.setLayout(new GridBagLayout());
@@ -480,11 +645,13 @@ public class MevFileLoader extends ExpressionFileLoader {
             annRemoveAllButton = new JButton("Remove All");
             annRemoveAllButton.addActionListener(new EventHandler());
             
+            Dimension buttonSize = new Dimension(100, 20);
+            
             Dimension largestAnnButtonSize = annRemoveAllButton.getPreferredSize();
-            annAddButton.setPreferredSize(largestAnnButtonSize);
-            annAddAllButton.setPreferredSize(largestAnnButtonSize);
-            annRemoveButton.setPreferredSize(largestAnnButtonSize);
-            annRemoveAllButton.setPreferredSize(largestAnnButtonSize);
+            annAddButton.setPreferredSize(buttonSize);
+            annAddAllButton.setPreferredSize(buttonSize);
+            annRemoveButton.setPreferredSize(buttonSize);
+            annRemoveAllButton.setPreferredSize(buttonSize);
             
             this.mevAddAllButton.setFocusPainted(false);
             this.mevAddButton.setFocusPainted(false);
@@ -509,9 +676,10 @@ public class MevFileLoader extends ExpressionFileLoader {
             
             gba.add(annListPanel, annAvailableLabel, 0, 0, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             gba.add(annListPanel, annSelectedLabel, 2, 0, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(annListPanel, annAvailableScrollPane, 0, 1, 1, 4, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(annListPanel, annButtonPanel, 1, 1, 1, 4, 0, 1, GBA.V, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(annListPanel, annSelectedScrollPane, 2, 1, 1, 4, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            gba.add(annListPanel, annAvailableScrollPane, 0, 1, 1, 4, 5, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            gba.add(annListPanel, new JPanel(), 1, 0, 1, 1, 0, 0, GBA.B, GBA.C, new Insets(0, 0, 0, 0), 0, 0); 
+            gba.add(annListPanel, annButtonPanel, 1, 1, 1, 4, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            gba.add(annListPanel, annSelectedScrollPane, 2, 1, 1, 4, 5, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             
             annFieldsTextField = new JTextField();
             annFieldsTextField.setEditable(false);
@@ -519,26 +687,20 @@ public class MevFileLoader extends ExpressionFileLoader {
             annFieldsTextField.setForeground(Color.black);
             annFieldsTextField.setFont(new Font("serif", Font.BOLD, 12));
             
-            gba.add(annSelectionPanel, annListPanel, 0, 0, 1, 2, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(annSelectionPanel, annFieldsTextField, 0, 2, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            gba.add(annSelectionPanel, annListPanel, 0, 0, 1, 2, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 0, 5), 0, 0);
+            gba.add(annSelectionPanel, annFieldsTextField, 0, 2, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(0, 5, 0, 5), 0, 0);
             
-            selectionPanel = new JPanel();
-            selectionPanel.setLayout(new GridBagLayout());
-            gba.add(selectionPanel, pathTextField, 0, 0, 2, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(selectionPanel, mevSelectionPanel, 0, 1, 2, 2, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            
-            gba.add(selectionPanel, noAnnFileBox, 0, 3, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(selectionPanel, saveSpotInfoBox, 1, 3, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            
-            gba.add(selectionPanel, annSelectionPanel, 0, 4, 2, 2, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            gba.add(selectionPanel, annSelectionPanel, 0, 3, 2, 2, 1, 1, GBA.B, GBA.C, new Insets(0, 5, 0, 5), 0, 0);
             
             splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, fileTreePane, selectionPanel);
-            
+
             fileLoaderPanel = new JPanel();
             fileLoaderPanel.setLayout(new GridBagLayout());
             gba.add(fileLoaderPanel, splitPane, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             
             gba.add(this, fileLoaderPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            splitPane.setDividerLocation(0.6);     
+            
         }
         
         public void setPath(String path) {
@@ -625,6 +787,7 @@ public class MevFileLoader extends ExpressionFileLoader {
             }
             
             validateLists();
+            updateAnnFieldTextField();
         }
         
         public void onAnnAddAll() {
@@ -635,6 +798,7 @@ public class MevFileLoader extends ExpressionFileLoader {
             }
             
             validateLists();
+            updateAnnFieldTextField();
         }
         
         public void onAnnRemove() {
@@ -646,6 +810,7 @@ public class MevFileLoader extends ExpressionFileLoader {
             }
             
             validateLists();
+            updateAnnFieldTextField();
         }
         
         public void onAnnRemoveAll() {
@@ -653,6 +818,30 @@ public class MevFileLoader extends ExpressionFileLoader {
             ((DefaultListModel) annSelectedList.getModel()).removeAllElements();
             
             validateLists();
+            updateAnnFieldTextField();
+        }
+        
+        public void updateAnnFieldTextField() {
+            DefaultListModel model = (DefaultListModel) annSelectedList.getModel();
+            AnnFileParser parser = new AnnFileParser();
+            Vector annVector;
+            String text = "";
+            for(int i = 0; i < model.getSize(); i++) {
+                File annFile = (File)(model.get(i));
+                parser.loadFile(annFile);
+                if(parser.isAnnFileLoaded()) {
+                    annVector = parser.getColumnHeaders();
+                    
+                    if(i > 0 && annVector.size() > 3)
+                        text+= ", ";
+                    
+                    for(int j = 3; j < annVector.size()-1; j++){
+                        text += (((String)annVector.elementAt(j)))+", ";
+                    }
+                    text += ((String)annVector.elementAt(annVector.size()-1));
+                }
+            }
+            this.annFieldsTextField.setText(text);
         }
         
         public void onUseMevAnn() {
@@ -672,6 +861,7 @@ public class MevFileLoader extends ExpressionFileLoader {
             this.annSelectedLabel.setEnabled(enable);
             this.annAvailableList.setEnabled(enable);
             this.annSelectedList.setEnabled(enable);
+            this.annFieldsTextField.setEnabled(enable);
             
             if(!enable){
                 this.annAvailableList.setBackground(Color.lightGray);
