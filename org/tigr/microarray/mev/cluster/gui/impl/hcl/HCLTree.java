@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLTree.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-09 18:39:50 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -89,7 +89,7 @@ public class HCLTree extends JPanel {
         this.minHeight = getMinHeight(treeData.node_order, treeData.height);
         
         //op
-      //  this.treeData.height = shiftHeights(this.treeData.height, this.minHeight);
+        //  this.treeData.height = shiftHeights(this.treeData.height, this.minHeight);
         
         
         
@@ -97,7 +97,7 @@ public class HCLTree extends JPanel {
         
         
         //op
-     //   this.minHeight = 0;
+        //   this.minHeight = 0;
         
         
         
@@ -213,7 +213,7 @@ public class HCLTree extends JPanel {
         int [][] clusters = new int[terminals.length][];
         
         for(int i = 0; i < clusters.length; i++){
-            index = terminals[i];      
+            index = terminals[i];
             if(index >= this.treeData.node_order.length){
                 endPoints = this.getSubTreeEndPointElements(index);
                 
@@ -223,9 +223,9 @@ public class HCLTree extends JPanel {
                 endPoints[1] = (int)this.positions[index];
                 endPoints[0] = (int)this.positions[index];
             }
-
+            
             rows = new int[endPoints[1]-endPoints[0]+1];
-           // rows = new int[endPoints[1]-endPoints[0]+1];
+            // rows = new int[endPoints[1]-endPoints[0]+1];
             
             for(int j = 0; j < rows.length; j++){
                 rows[j] = endPoints[0]+j;
@@ -486,7 +486,7 @@ public class HCLTree extends JPanel {
             node = nodeOrder[i];
             child_1 = treeData.child_1_array[node];
             child_2 = treeData.child_2_array[node];
-
+            
             pHeights[node] = Math.max(pHeights[child_1], pHeights[child_2]) + Math.max(Math.min((int)Math.round(height[node]*scale), max_pixels), min_pixels);
         }
         return pHeights;
@@ -821,6 +821,40 @@ public class HCLTree extends JPanel {
             }
         }
         return -1;
+    }
+    
+    public void saveGeneNodeHeights(){
+        String line;
+        int nodeIndex = 0;
+        int child1, child2;
+        
+        System.out.println("order = "+this.treeData.node_order.length +"height = "+this.treeData.height.length);
+        
+        for(int i = 0; i < this.treeData.node_order.length-1; i++){
+            line = "Node_"+String.valueOf(i)+"\t";
+            
+            //            System.out.println("node h= "+this.treeData.height[this.treeData.node_order[i]]);
+            child1 = this.treeData.child_1_array[this.treeData.node_order[i]];
+            child2 = this.treeData.child_2_array[this.treeData.node_order[i]];
+
+            if(child1 < this.treeData.height.length/2)
+                line += "Gene_" + String.valueOf(child1) + "\t";
+            else
+                line += "Node_" + String.valueOf(child1-this.treeData.height.length/2) + "\t";
+            
+            if(child2 < this.treeData.height.length/2)
+                line += "Gene_" + String.valueOf(child2) + "\t";
+            else
+                line += "Node_" + String.valueOf(child2-this.treeData.height.length/2) + "\t";
+                        
+            line += String.valueOf(this.treeData.height[this.treeData.node_order[i]]);
+            
+            System.out.println(line);
+        }
+    }
+    
+    public void saveExperimentNodeHeights(){
+        
     }
     
     /**
