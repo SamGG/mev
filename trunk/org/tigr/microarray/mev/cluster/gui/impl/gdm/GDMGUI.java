@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: GDMGUI.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-05-10 17:00:22 $
+ * $Revision: 1.3 $
+ * $Date: 2004-06-24 17:29:48 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -96,12 +96,13 @@ public class GDMGUI implements IClusterGUI, IScriptGUI {
             this.progress.show();
             
             AlgorithmData data = new AlgorithmData();
+            data.addParam("distance-factor", String.valueOf(1f));
             if (useGenes) {
                 data.addMatrix("experiment", framework.getData().getExperiment().getMatrix());
-                data.addParam("distance-factor", String.valueOf(1f));
+                //data.addParam("distance-factor", String.valueOf(1f));
             } else {
                 data.addMatrix("experiment", framework.getData().getExperiment().getMatrix().transpose());
-                data.addParam("distance-factor", String.valueOf(false));
+               // data.addParam("distance-factor", String.valueOf(false));
             }
             
             IDistanceMenu menu = framework.getDistanceMenu();
@@ -159,12 +160,8 @@ public class GDMGUI implements IClusterGUI, IScriptGUI {
             AlgorithmData data = new AlgorithmData();
             data.addParam("gdm-genes", String.valueOf(useGenes));
             data.addParam("display-interval", String.valueOf(displayInterval));
-            if (useGenes) {
-                data.addParam("distance-factor", String.valueOf(1f));
-            } else {
-             data.addParam("distance-factor", String.valueOf(false));
-            }
-            
+            data.addParam("distance-factor", String.valueOf(1f));
+
             IDistanceMenu menu = framework.getDistanceMenu();
             
             data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
@@ -199,8 +196,12 @@ public class GDMGUI implements IClusterGUI, IScriptGUI {
             this.framework = framework;
             Listener listener = new Listener();
             this.experiment = experiment;
-            algData.addMatrix("experiment", experiment.getMatrix());
             this.useGenes = algData.getParams().getBoolean("gdm-genes"); 
+            if(useGenes)
+                algData.addMatrix("experiment", experiment.getMatrix());
+            else
+                algData.addMatrix("experiment", experiment.getMatrix().transpose());
+                
             this.displayInterval = algData.getParams().getInt("display-interval");
             int function = algData.getParams().getInt("distance-function");   
                 
