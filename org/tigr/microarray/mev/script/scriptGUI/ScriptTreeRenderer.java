@@ -43,6 +43,8 @@ import org.tigr.microarray.mev.script.util.ScriptConstants;
 public class ScriptTreeRenderer implements TreeCellRenderer {
     
     private ScriptNodeLabel label;
+  // private JLabel label;
+    
     private JPanel labelPanel;
     private DataNode algSetRoot = null;
     private boolean highlightAlgSet = false;
@@ -67,16 +69,13 @@ public class ScriptTreeRenderer implements TreeCellRenderer {
     /** Creates a new instance of ScriptTreeRenderer */
     public ScriptTreeRenderer() {
         label = new ScriptNodeLabel();
- 
+   
         dataNodeColor = new Color(209, 248, 203);
         algNodeColor = new Color(255,255,195);
-        
-        //label.setBorder(BorderFactory.createLineBorder(Color.black));
-        //label.setOpaque(true);
-        //label.setMinimumSize(new Dimension(100,30));
+
         labelPanel = new JPanel(new GridBagLayout());
         labelPanel.setBackground(Color.white);
-        labelPanel.add(label, new GridBagConstraints(0,0,1,1,0,1,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(8,0,0,5), 0,0));
+        labelPanel.add(label, new GridBagConstraints(0,0,1,1,1,1,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(8,0,0,0), 5, 0));
     }
     
     public void clearHighlights() {
@@ -96,7 +95,6 @@ public class ScriptTreeRenderer implements TreeCellRenderer {
     public Component getTreeCellRendererComponent(JTree tree, Object value,
     boolean selected, boolean expanded, boolean isLeaf, int row, boolean hasFocus) {
         String text;
-        label.setToolTipText("I have a tool tip");
         
         //never show node selection if it's an alg set viewer
         if(!highlightAlgSet)
@@ -105,32 +103,36 @@ public class ScriptTreeRenderer implements TreeCellRenderer {
             label.setScriptNodeSelected(false);
             checkHighlight((ScriptNode)value);
         }
-        
+       
         if(value instanceof DataNode) {
+
             label.setBackgroundColor(dataNodeColor);
             label.setRounded(false);
             DataNode dataNode= (DataNode)value;
             
             text = dataNode.toString();
-            label.setText(text);
+            
+            //set icon
             if(text.indexOf("Primary") != -1)
                 label.setIcon(scriptPrimaryDataNodeIcon);
             else if(text.indexOf("Multi") != -1)
                 label.setIcon(scriptMultiDataNodeIcon);
             else
                 label.setIcon(scriptDataNodeIcon);
-            
-            if(showToolTips)
-                label.setToolTipText("Data Node: id = "+dataNode.getID());
+
+            //set text
+            label.setText(text);
+
         } else if(value instanceof AlgorithmNode){
+
             label.setBackgroundColor(algNodeColor);
             label.setRounded(true);
             AlgorithmNode algNode = (AlgorithmNode)value;
             
             text = algNode.toString();
             if(text != null && !text.equals("") || !text.equals(" ")) {
-                label.setText(text+" ["+algNode.getDataNodeRef()+","+algNode.getID()+"] ");
-                
+
+                //set icon
                 if( algNode.getAlgorithmType().equals(ScriptConstants.ALGORITHM_TYPE_CLUSTER))
                     label.setIcon(scriptAnalysisIcon);
                 else if(algNode.getAlgorithmType().equals(ScriptConstants.ALGORITHM_TYPE_CLUSTER_GENES))
@@ -143,17 +145,20 @@ public class ScriptTreeRenderer implements TreeCellRenderer {
                     label.setIcon(scriptVisAlgNodeIcon);
                 else if(algNode.getAlgorithmType().equals(ScriptConstants.ALGORITHM_TYPE_CLUSTER_SELECTION))
                     label.setIcon(scriptClusterSelectionAnalysisIcon);
-                
-                if(showToolTips)
-                    label.setToolTipText("Algorithm Node: id = "+algNode.getID()+", input_data_ref = "+algNode.getDataNodeRef());
+                    
+                //set text
+                label.setText(text+" ["+algNode.getDataNodeRef()+","+algNode.getID()+"] ");
+  
             } else {
                 label.setText("Empty Algorithm ");
                 label.setBorder(BorderFactory.createLineBorder(Color.blue, 3));
                 label.setIcon(scriptEmptyAnalysisIcon);
-                if(showToolTips)
-                    label.setToolTipText("Algorithm Node: no algorithm selected");
             }
         }
+       
+        label.validate();        
+        labelPanel.validate();
+
         return labelPanel;
     }
     
@@ -163,7 +168,6 @@ public class ScriptTreeRenderer implements TreeCellRenderer {
         // safety
         if(algSetRoot == null) {
             return;
-            //label.setScriptNodeHighlighted(false);
         }
         
         // direct identity, offspring, or grandchild
@@ -190,7 +194,8 @@ public class ScriptTreeRenderer implements TreeCellRenderer {
         
         public ScriptNodeLabel() {
             setOpaque(false);
-            setBorder(BorderFactory.createEmptyBorder(3, 6, 3, 5));
+            setBorder(BorderFactory.createEmptyBorder(3, 6, 3, 8));
+
             backgroundColor = new Color(249,249,112);
         }
         
@@ -228,30 +233,28 @@ public class ScriptTreeRenderer implements TreeCellRenderer {
                     g2.setColor(Color.blue);
                     g2.drawRoundRect(1, 1, width-3, height-3, 19, 19);
                     g2.drawRoundRect(0, 0, width-1, height-1, 20, 20);
-            g2.setColor(Color.black);
-            super.paintComponent(g);
+                    g2.setColor(Color.black);
+                    super.paintComponent(g);
                 } else if(highlighted) {
                     g2.fillRoundRect(2, 2, width-4, height-4, 19, 19);
                     g2.setColor(new Color(176, 23, 54));
                     g2.drawRoundRect(1, 1, width-3, height-3, 19, 19);
                     g2.drawRoundRect(0, 0, width-1, height-1, 20, 20);
-                                g2.setColor(Color.black);
-            super.paintComponent(g);
+                    g2.setColor(Color.black);
+                    super.paintComponent(g);
                 } else {
                     if(!highlightAlgSet) {
                         g2.fillRoundRect(1, 1, width-2, height-2, 19,19);
                         g2.setColor(Color.black);
                         g2.drawRoundRect(0, 0, width-1, height-1, 20, 20);
-            g2.setColor(Color.black);
-            super.paintComponent(g);
+                        g2.setColor(Color.black);
+                        super.paintComponent(g);
                     } else {
                         Color color = g.getColor();
                         
-                        Composite composite = g2.getComposite();
-                        
+                        Composite composite = g2.getComposite();                        
                         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.25f));
-                        // g.setColor(Color.blue);
-                        
+              
                         g2.fillRoundRect(1, 1, width-2, height-2, 19,19);
                         g2.setColor(Color.black);
                         g2.drawRoundRect(0, 0, width-1, height-1, 20, 20);
@@ -269,8 +272,8 @@ public class ScriptTreeRenderer implements TreeCellRenderer {
                     g2.setColor(Color.blue);
                     g2.drawRect(1, 1, width-3, height-3);
                     g2.drawRect(0, 0, width-1, height-1);
-                                g2.setColor(Color.black);
-            super.paintComponent(g);
+                    g2.setColor(Color.black);
+                    super.paintComponent(g);
                 } else if(highlighted) {
                     g2.setColor(new Color(176, 23, 54));
                     g2.drawRect(1, 1, width-3, height-3);
@@ -289,8 +292,7 @@ public class ScriptTreeRenderer implements TreeCellRenderer {
                         Composite composite = g2.getComposite();
                         
                         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.25f));
-                        // g.setColor(Color.blue);
-                        
+       
                         g2.setColor(Color.black);
                         g2.drawRect(0, 0, width-1, height-1);
                         

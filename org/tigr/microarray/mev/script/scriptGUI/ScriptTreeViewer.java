@@ -128,6 +128,8 @@ public class ScriptTreeViewer extends ViewerAdapter implements Serializable {
             scriptTree.highlightAlgSet(algSetRoot);
         else
             scriptTree.clearHighlights();
+        
+        scriptTree.validate();
     }
     
     public void onClosed() {
@@ -237,10 +239,31 @@ public class ScriptTreeViewer extends ViewerAdapter implements Serializable {
                     }
                     dataPopup.show(scriptTree, me.getX(), me.getY());
                 }
+            }            
+        }
+
+        
+        public void mousePressed(MouseEvent me) {
+                        if(isAlgSetViewer)
+                return;
+            if(me.isPopupTrigger()){
+                node = scriptTree.getSelectedNode();
+                if(node == null)
+                    return;
+                if(node instanceof AlgorithmNode) {
+                    algPopup.show(scriptTree, me.getX(), me.getY());
+                }
+                else {
+                    ScriptNode parent = (ScriptNode)(node.getParent());
+                    if(parent != null) {
+                        if(((AlgorithmNode)parent).getAlgorithmType().equals(ScriptConstants.ALGORITHM_TYPE_VISUALIZATION)) {
+                            dataPopup.getComponent(0).setEnabled(false);
+                        } else
+                            dataPopup.getComponent(0).setEnabled(true);
+                    }
+                    dataPopup.show(scriptTree, me.getX(), me.getY());
+                }
             }
-            
-            
-            
         }
         
         

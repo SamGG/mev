@@ -59,6 +59,8 @@ import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.impl.kmc.KMCGUI;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
 
+import org.tigr.microarray.mev.TMEV;
+
 
 /** The ScriptManager class acts as a conduit to facilitate interaction between
  * the objects below the script package and the rest of MeV including data structures
@@ -122,8 +124,7 @@ public class ScriptManager implements Serializable {
     /** Loads a script following File selection.
      */
     public void loadScript() {
-        String sep = System.getProperty("file.separator");
-        JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+sep+"Data"+sep+"Scripts");
+        JFileChooser chooser = new JFileChooser(TMEV.getFile("Data/Scripts/"));
         chooser.setMultiSelectionEnabled(false);
         boolean loadState;
         if( chooser.showOpenDialog(framework.getFrame()) == JFileChooser.APPROVE_OPTION ) {
@@ -290,8 +291,7 @@ public class ScriptManager implements Serializable {
      * @param doc <CODE>ScriptDocument</CODE> to save.
      */
     public void saveScript(ScriptDocument doc) {
-        String sep = System.getProperty("file.separator");
-        JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+sep+"Data"+sep+"Scripts");
+        JFileChooser chooser = new JFileChooser(TMEV.getFile("Data/Scripts/"));
         if(chooser.showSaveDialog(new JFrame()) == JFileChooser.APPROVE_OPTION) {
             try {
                 writeScript(chooser.getSelectedFile(), doc);

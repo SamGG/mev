@@ -70,6 +70,8 @@ import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 import org.tigr.microarray.mev.script.event.ScriptDocumentEvent;
 import org.tigr.microarray.mev.script.event.ScriptEventListener;
 
+import org.tigr.microarray.mev.TMEV;
+
 /** ScriptXMLViewer renders the <CODE>Script</CODE> as a text editor in
  * xml text form.  The viewer is mostly just a viewer but lines with key:value
  * pairs can be edited.
@@ -402,7 +404,7 @@ public class ScriptXMLViewer extends ViewerAdapter {
         if(scriptFile != null) {
             chooser = new JFileChooser(scriptFile.getPath());
         } else {
-            chooser = new JFileChooser(System.getProperty("user.dir")+"/Data/Scripts");
+            chooser = new JFileChooser(TMEV.getFile("/Data/Scripts/"));
         }
         
         if(chooser.showSaveDialog(new JPanel()) == JFileChooser.APPROVE_OPTION) {
