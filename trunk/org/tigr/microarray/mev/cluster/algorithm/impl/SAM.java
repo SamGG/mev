@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SAM.java,v $
- * $Revision: 1.4 $
- * $Date: 2003-12-15 18:20:20 $
+ * $Revision: 1.5 $
+ * $Date: 2004-04-23 19:06:05 $
  * $Author: nbhagaba $
  * $State: Exp $
  */
@@ -88,7 +88,7 @@ public class SAM extends AbstractAlgorithm {
     private double sNought = 0.0f;
     private double s0Percentile, oneClassMean;
     
-    private double[] dArray, rArray, sortedDArray, dBarValues, survivalTimes, zkArray;
+    private double[] dArray, rArray, sortedDArray, dBarValues, survivalTimes, zkArray, globalAllSValues, globalAllQValues, globalSortedAllSValues;
     private int[] dkArray;
     private int[][] rkArray;
     private long[] randomSeeds;
@@ -287,9 +287,18 @@ public class SAM extends AbstractAlgorithm {
                 e.printStackTrace();
             }
              */
+            globalAllSValues = getAllSValues();
+            QSort sortSValues = new QSort(globalAllSValues);
+            globalSortedAllSValues = sortSValues.getSortedDouble();            
         
             //System.out.println("sAlpha(0.59) = " + getSAlpha(59.0d));
             if (useTusherEtAlS0) {
+                /*
+                globalAllSValues = getAllSValues();
+                QSort sortSValues = new QSort(globalAllSValues);
+                globalSortedAllSValues = sortSValues.getSortedDouble();    
+                 */           
+                globalAllQValues = getQValues();
                 sNought = getSNought(); 
                 SAMState.sNought = sNought;
                 SAMState.s0Percentile = s0Percentile;
@@ -2593,6 +2602,7 @@ public class SAM extends AbstractAlgorithm {
     private double getSNought() throws AlgorithmException {
         double sNot = 0;
         
+        /*
         double[] qValues = new double[101];
         qValues[0] = Double.NEGATIVE_INFINITY;
         for (int i = 1; i < qValues.length; i++) { // ****** NOTE THE INDICES
@@ -2600,6 +2610,7 @@ public class SAM extends AbstractAlgorithm {
             qValues[i] = getSAlpha(i);
             //System.out.println("qValues[" + i + "] = " + qValues[i]);
         }
+         */
  //**** UP TO HERE 12/19/02 
         
         /*
@@ -2607,12 +2618,14 @@ public class SAM extends AbstractAlgorithm {
             System.out.println("inside getSNought(): qValues[" + i + "] = " + qValues[i]);
         }
          */        
-        
-        double[] alphaArray = new double[21];
+        double[] qValues = globalAllQValues;
+        //double[] alphaArray = new double[21];
+        double[] alphaArray = new double[101];
         double currentAlpha = 0;
         for (int i = 0; i < alphaArray.length; i++) {
             alphaArray[i] = currentAlpha;
-            currentAlpha = currentAlpha + 5;
+            //currentAlpha = currentAlpha + 5;
+            currentAlpha = currentAlpha + 1;
             if (currentAlpha > 100) {
                 currentAlpha = 100;
             }
@@ -2680,17 +2693,21 @@ public class SAM extends AbstractAlgorithm {
     
 
     private double getCvAlpha(double alpha, double[] qValues) {
-        Vector vjValues = new Vector();
+        //Vector vjValues = new Vector();
         
+        /*
         for (int j = 1; j < 101; j++) {
         //for (int j = 1; j < numExps + 1; j++) {
             double vJ = getMAD(j, alpha); //MAD = median absolute deviation
             vjValues.add(new Double(vJ));
         }
+         */
         
-        double[] vjValuesArray = new double[vjValues.size()];
+        //double[] vjValuesArray = new double[vjValues.size()];
+        double[] vjValuesArray = new double[100];
         for (int i = 0; i < vjValuesArray.length; i++) {
-            vjValuesArray[i] = ((Double)vjValues.get(i)).doubleValue();
+            //vjValuesArray[i] = ((Double)vjValues.get(i)).doubleValue();
+            vjValuesArray[i] = getMAD(i + 1, alpha); //MAD = median absolute deviation
         }
         
         
@@ -2725,7 +2742,8 @@ public class SAM extends AbstractAlgorithm {
     }
     
     private double getMAD(int j, double alpha) { //MAD  = median absolute deviation
-        double[] sValues = getAllSValues();
+        //double[] sValues = getAllSValues();
+        double[] sValues = globalAllSValues;
         //System.out.println("getMAD(): sValues.length = " + sValues.length);
         
         /*
@@ -2734,7 +2752,8 @@ public class SAM extends AbstractAlgorithm {
         }
          */
         
-        double[] qValues = getQValues();
+        //double[] qValues = getQValues();
+        double[] qValues = globalAllQValues;
         /*
         for (int i = 0; i < qValues.length; i++) {
             System.out.println("getMAD(): qValues[" + i + "] = " + qValues[i]);
@@ -2772,7 +2791,8 @@ public class SAM extends AbstractAlgorithm {
             absDevValues[i] = Math.abs(dValues[i] - medianD);
         }
         
-        double medianAbsDev = getMedian(absDevValues)/0.64d;
+        //double medianAbsDev = getMedian(absDevValues)/0.64d;
+        double medianAbsDev = getMedian(absDevValues)/0.6745d; //SAM manual says 0.64, but apparently it should be 0.6745 to normalize the MAD; from SAM newsgroup and James MacDonald, U. Mich.
         //System.out.println("getMAD(): medianAbsDev = " + medianAbsDev);
         //double medianAbsDev = getMedian(absDevValues);
         return medianAbsDev;
@@ -2878,13 +2898,16 @@ public class SAM extends AbstractAlgorithm {
     
     private double getSAlpha(double percentile) {
         double sAlpha = 0;
+        /*
         double[] sValues = new double[numGenes];
         for (int i = 0; i < numGenes; i++) {
             sValues[i] = getS(i, imputedMatrix);
         }
+         */
         
-        QSort sortSValues = new QSort(sValues);
-        double[] sortedSValues = sortSValues.getSortedDouble();
+        //QSort sortSValues = new QSort(sValues);
+       // double[] sortedSValues = sortSValues.getSortedDouble();
+        double[] sortedSValues = globalSortedAllSValues;
         //int percentileIndex = (int)Math.round((sortedSValues.length - 1)*percentile/100);
         int percentileIndex = (int)(Math.floor(sortedSValues.length*percentile/100)) - 1;
         if (percentileIndex < 0) {
