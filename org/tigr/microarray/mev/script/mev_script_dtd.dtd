@@ -21,7 +21,7 @@
 <!ATTLIST algorithm alg_id CDATA #REQUIRED
 	            input_data_ref CDATA #REQUIRED
                     alg_name CDATA #REQUIRED
-                    alg_type ( cluster | data-adjustment | cluster-selection | data-normalization ) #REQUIRED>
+                    alg_type ( cluster | cluster-genes | cluster-experiments | data-visualization | data-adjustment | cluster-selection | data-normalization ) #REQUIRED>
 
 <!ELEMENT plist (param*)>
 
@@ -43,8 +43,8 @@
 
 <!ELEMENT output_data (data_node+)>
 <!ATTLIST output_data output_class 
-                ( single-output | multi-cluster-output |
-                  partition-output) #REQUIRED>
+                ( single-output | multi-cluster-output | multi-gene-cluster-output 
+                | multi-expteriment-cluster-output | partition-output) #REQUIRED>
 
 <!-- single-output indicates that the result is one set 
      (usually the result of normalization, filtering, or transform.

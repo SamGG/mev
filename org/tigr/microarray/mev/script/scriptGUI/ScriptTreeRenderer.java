@@ -1,7 +1,7 @@
 /*
 Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
- */
+*/
 /*
  * ScriptTreeRenderer.java
  *
@@ -33,9 +33,8 @@ import org.tigr.microarray.mev.script.util.AlgorithmNode;
 import org.tigr.microarray.mev.script.util.ScriptConstants;
 
 
-/**
- *
- * @author  braisted
+/** ScriptTreeRenderer renders the <CODE>ScriptTree</CODE> algorithm and data nodes.
+ * @author braisted
  */
 
 public class ScriptTreeRenderer implements TreeCellRenderer {
@@ -45,6 +44,9 @@ public class ScriptTreeRenderer implements TreeCellRenderer {
     boolean showToolTips = true;
     
     private Icon scriptAnalysisIcon = GUIFactory.getIcon("ScriptAnalysis.gif");
+    private Icon scriptGeneAnalysisIcon = GUIFactory.getIcon("ScriptGeneAlgorithm.gif");
+    private Icon scriptExperimentAnalysisIcon = GUIFactory.getIcon("ScriptExperimentAlgorithm.gif");    
+    private Icon scriptClusterSelectionAnalysisIcon = GUIFactory.getIcon("ScriptClusterSelectionAlgorithm.gif");
     private Icon scriptAdjustmentAlgIcon = GUIFactory.getIcon("adjustment_algorithm.gif");
     private Icon scriptEmptyAnalysisIcon = GUIFactory.getIcon("TreeBallLeaf.gif");
     private Icon scriptVisAlgNodeIcon = GUIFactory.getIcon("ScriptVisAlgorithmNode.gif");
@@ -54,7 +56,7 @@ public class ScriptTreeRenderer implements TreeCellRenderer {
     private Icon scriptMultiDataNodeIcon = GUIFactory.getIcon("ScriptMultiDataNodeShaded.gif");
 
     private Color dataNodeColor;
-    
+    private Color algNodeColor;            
     
     /** Creates a new instance of ScriptTreeRenderer */
     public ScriptTreeRenderer() {
@@ -63,6 +65,8 @@ public class ScriptTreeRenderer implements TreeCellRenderer {
         label.setToolTipText("I have a tool tip");
         
         dataNodeColor = new Color(209, 248, 203);
+        algNodeColor = new Color(255,255,195);
+        
         //label.setBorder(BorderFactory.createLineBorder(Color.black));
         //label.setOpaque(true);
         //label.setMinimumSize(new Dimension(100,30));
@@ -78,12 +82,8 @@ public class ScriptTreeRenderer implements TreeCellRenderer {
     boolean selected, boolean expanded, boolean isLeaf, int row, boolean hasFocus) {
         String text;
         label.setToolTipText("I have a tool tip");
-        //   if(selected)
         label.setScriptNodeSelected(selected);
-        //      label.setBorder(BorderFactory.createLineBorder(Color.blue, 2));
-        //  else
-        //      label.setBorder(BorderFactory.createLineBorder(Color.black));
-        
+
         if(value instanceof DataNode) {
             label.setBackgroundColor(dataNodeColor);
             label.setRounded(false);
@@ -100,18 +100,26 @@ public class ScriptTreeRenderer implements TreeCellRenderer {
             if(showToolTips)
                 label.setToolTipText("Data Node: id = "+dataNode.getID());
         } else if(value instanceof AlgorithmNode){
-            label.setBackgroundColor(Color.white);
+            label.setBackgroundColor(algNodeColor);
             label.setRounded(true);
             AlgorithmNode algNode = (AlgorithmNode)value;
             text = algNode.toString();
             if(text != null && !text.equals("") || !text.equals(" ")) {
                 label.setText(text+" ["+algNode.getDataNodeRef()+","+algNode.getID()+"] ");
-                if(algNode.getAlgorithmType().equals(ScriptConstants.ALGORITHM_TYPE_CLUSTER))
-                    label.setIcon(scriptAnalysisIcon);
+                
+                if( algNode.getAlgorithmType().equals(ScriptConstants.ALGORITHM_TYPE_CLUSTER))
+                     label.setIcon(scriptAnalysisIcon);                     
+                else if(algNode.getAlgorithmType().equals(ScriptConstants.ALGORITHM_TYPE_CLUSTER_GENES))
+                   label.setIcon(scriptGeneAnalysisIcon); 
+                else if(algNode.getAlgorithmType().equals(ScriptConstants.ALGORITHM_TYPE_CLUSTER_EXPERIMENTS))
+                    label.setIcon(scriptExperimentAnalysisIcon);                
                 else if(algNode.getAlgorithmType().equals(ScriptConstants.ALGORITHM_TYPE_ADJUSTMENT))
                     label.setIcon(scriptAdjustmentAlgIcon);
                 else if(algNode.getAlgorithmType().equals(ScriptConstants.ALGORITHM_TYPE_VISUALIZATION))
                     label.setIcon(scriptVisAlgNodeIcon);
+                else if(algNode.getAlgorithmType().equals(ScriptConstants.ALGORITHM_TYPE_CLUSTER_SELECTION))
+                    label.setIcon(scriptClusterSelectionAnalysisIcon);                
+                
                 if(showToolTips)
                     label.setToolTipText("Algorithm Node: id = "+algNode.getID()+", input_data_ref = "+algNode.getDataNodeRef());
             } else {
@@ -126,6 +134,8 @@ public class ScriptTreeRenderer implements TreeCellRenderer {
     }
     
     
+    /**
+     */    
     private class ScriptNodeLabel extends JLabel {
         boolean showRound;
         boolean sel;
@@ -134,7 +144,7 @@ public class ScriptTreeRenderer implements TreeCellRenderer {
         public ScriptNodeLabel() {
             setOpaque(false);
             setBorder(BorderFactory.createEmptyBorder(3, 6, 3, 5));
-            backgroundColor = Color.white;
+            backgroundColor = new Color(249,249,112);
         }
         
         public void setBackgroundColor(Color bkg) {
@@ -149,6 +159,8 @@ public class ScriptTreeRenderer implements TreeCellRenderer {
             showRound = isRounded;
         }
         
+        /**
+         * @param g  */        
         public void paintComponent(Graphics g) {
             int width = getWidth();
             int height = getHeight();
@@ -158,12 +170,13 @@ public class ScriptTreeRenderer implements TreeCellRenderer {
             g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
             
             if(showRound) {
-                g2.fillRoundRect( 0, 0, width, height, width, height);
                 if(sel) {
+                    g2.fillRoundRect(2, 2, width-4, height-4, 19, 19);                    
                     g2.setColor(Color.blue);                   
                      g2.drawRoundRect(1, 1, width-3, height-3, 19, 19);
                     g2.drawRoundRect(0, 0, width-1, height-1, 20, 20);
                 } else {
+                    g2.fillRoundRect(1, 1, width-2, height-2, 19,19);
                     g2.setColor(Color.black);
                     g2.drawRoundRect(0, 0, width-1, height-1, 20, 20);
                 }                

@@ -1,4 +1,8 @@
 /*
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+All rights reserved.
+*/
+/*
  * ErrorLog.java
  *
  * Created on March 11, 2004, 12:02 PM
@@ -60,19 +64,27 @@ public class ErrorLog {
     /** script manager */
     ScriptManager manager;
     
+    /** Report dialog
+     */    
     ErrorLogDialog eDialog;
     
+    /** Script file to log.
+     */    
     File scriptFile;
     
     int result = JOptionPane.CANCEL_OPTION;
     
-    /** Creates a new instance of ErrorLog */
+    /** Creates a new instance of ErrorLog
+     * @param manager ScriptManager
+     */
     public ErrorLog(ScriptManager manager) {
         this.manager = manager;
         reset();
         eDialog = new ErrorLogDialog();
     }
     
+    /** Resets the log contents
+     */    
     public void reset() {
         fatalErrors = new Vector();
         errors = new Vector();
@@ -80,53 +92,85 @@ public class ErrorLog {
         parameterErrors = new Vector();
     }
     
+    /** Sets the script file.
+     * @param file Script file
+     */    
     public void setFile(File file) {
         scriptFile = file;
     }
     
+    /** Returns true if there are no fatal errors
+     * and no dtd errors.
+     * @return
+     */    
     public boolean isValid() {
         return (fatalErrors.size() == 0 &&
         errors.size() == 0);
     }
     
+    /** Returns true if there are warnings
+     * @return
+     */    
     public boolean hasWarnings() {
         return warnings.size() != 0;
     }
     
+    /** Returns true if there are dtd errors.
+     */    
     public boolean hasErrors() {
         return errors.size() != 0;
     }
     
+    /** Returns true if there are fatal errors
+     */    
     public boolean hasFatalErrors() {
         return fatalErrors.size() != 0;
     }
     
+    /** Returns true if there are parameter errors.
+     */    
     public boolean hasParameterErrors() {
         return parameterErrors.size() != 0;
     }
     
+    /** Returns true if there are no errors to log.
+     */    
     public boolean isEmpty() {
         return isValid() && !hasWarnings();
     }
     
+    /** Records a parse warning.
+     * @param e Parse exception
+     */    
     public void recordWarning(SAXParseException e) {
         warnings.add(e);
     }
     
+    /** Records a parse error.
+     * @param e Error exeception
+     */    
     public void recordError(SAXParseException e) {
         errors.add(e);
     }
     
+    /** Records a fatal error.
+     * @param e Exception
+     */    
     public void recordFatalError(SAXParseException e) {
         fatalErrors.add(e);
     }
     
+    /** Parameter error.
+     * @param e <CODE>ScriptParameterException</CODE>
+     */    
     public void recordParameterError(ScriptParameterException e) {
         parameterErrors.add(e);
     }
     
     //Reporting Methods
     
+    /** Reports all listing in log to the dialog.
+     */    
     public void reportAllListings() {
         eDialog.updateContent();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -134,49 +178,68 @@ public class ErrorLog {
         eDialog.show();
     }
     
+    /** Report only fatal errors.
+     */    
     public void reportFatalErrors() {
         eDialog.updateContent();
         eDialog.show();
     }
     
+    /** Report only parse errors.
+     */    
     public void reportErrors() {
         eDialog.updateContent();
         eDialog.show();
     }
     
+    /** reports warnings to log.
+     */    
     public void reportWarnings() {
         eDialog.updateContent();
         eDialog.show();
     }
     
-    public void reportWarnings(String text) {
-        
-    }
-    
     
     //API methods to get data
-    public String [] getFataErrorsErrors() {
+    /** Gets fatal errors.
+     * @return
+     */    
+    public String [] getFataErrors() {
         return null;
     }
     
+    /**
+     * @return  */    
     public String [] getErrors() {
         return null;
     }
     
+    /** Returns errors.
+     * @return  */    
     public String [] getWarnings() {
         return null;
     }
     
     
     
+    /** ErrorLogDialog to display errors.
+     */    
     private class ErrorLogDialog extends AlgorithmDialog {
+        /** Text Pane
+         */        
         JTextPane pane;
+        /** Text string for error accumulation.
+         */        
         String text;
         JScrollPane sPane;
+        /** Indicates if the dialog should support editing
+         */        
         boolean isEditing;
         
+        /** Constructs the error log dialog.
+         */        
         public ErrorLogDialog() {
-            super(new JFrame(), "Script Error Log", false);
+            super(new JFrame(), "Script Error Log", true);
             isEditing = false;
             //set up button panel
             this.buttonPanel.remove(this.okButton);
@@ -207,6 +270,8 @@ public class ErrorLog {
             setSize(550, 600);
         }
         
+        /** Updates the content by searching the error logs.
+         */        
         public void updateContent() {
             SAXParseException e;
             int lineNum;
@@ -354,6 +419,8 @@ public class ErrorLog {
         }
         
         //TEST CODE
+        /** Sets the error text string.
+         */        
         public void setText(String t) {
             text = t;
             pane.setText(text);

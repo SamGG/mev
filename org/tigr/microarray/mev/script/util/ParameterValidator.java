@@ -1,4 +1,8 @@
 /*
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+All rights reserved.
+ */
+/*
  * ParameterValidator.java
  *
  * Created on March 27, 2004, 10:19 PM
@@ -7,6 +11,10 @@
 package org.tigr.microarray.mev.script.util;
 
 import java.net.URL;
+
+import java.io.File;
+
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -31,9 +39,9 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.tigr.microarray.mev.script.ScriptManager;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 
-/**
- *
- * @author  braisted
+/** Facilitates parameter validation. XML file supports validation by supplying
+ * the parameter details.
+ * @author braisted
  */
 
 //TODO Value Type check, extend to all types, validate range.
@@ -42,7 +50,11 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 
 public class ParameterValidator extends DefaultHandler{
     
+    /** Root element for validation XML.
+     */
     Element validationRoot;
+    /** True if have the val. root.
+     */
     boolean haveValidationRoot;
     
     /** Creates a new instance of ParameterValidator */
@@ -51,11 +63,20 @@ public class ParameterValidator extends DefaultHandler{
         
     }
     
+    /** Load the XML ParameterConstraints.
+     */
     public boolean loadParameterConstraints() {
-        URL url = this.getClass().getResource("/org/tigr/microarray/mev/script/util/ParameterConstraints.xml");
-        DOMParser parser = new DOMParser();
-        
+        System.out.println(System.getProperty("user.dir")+"\\config\\ParameterConstraints.xml");
+
         try {
+            File file = new File(System.getProperty("user.dir")+"\\config\\ParameterConstraints.xml");
+            URL url = file.toURL();
+            //URL url = this.getClass().getResource(System.getProperty("user.dir")+"\\config\\ParameterConstraints.xml");
+            
+            System.out.println("Load Paramter constraints url = "+url.toString());
+            
+            DOMParser parser = new DOMParser();
+            
             parser.setFeature("http://xml.org/sax/features/validation", true);
             parser.setErrorHandler(this);
             parser.parse(url.toString());
@@ -79,14 +100,19 @@ public class ParameterValidator extends DefaultHandler{
         return true;
     }
     
+    /** True if validator is enabled.
+     */
     public boolean isEnabled() {
         return haveValidationRoot;
     }
     
-    /**
-     *  Returns true if script parameters match the requirements
+    /**  Returns true if script parameters match the requirements
      *  defined in ScriptValidation.xml.  Algorithm parameter keys
      *  must match valid keys, value type, and value range as defined.
+     * @param manager script manager
+     * @param tree Script tree to validate.
+     * @param log error log
+     * @return
      */
     public boolean validate(ScriptManager manager, ScriptTree tree, ErrorLog log) {
         AlgorithmSet [] sets = tree.getAlgorithmSets();
@@ -117,8 +143,11 @@ public class ParameterValidator extends DefaultHandler{
      *  4.) Are all known required parameters present?
      */
     
-    /**
-     * Returns true if the algorithm parameters are valid.
+    /** Returns true if the algorithm parameters are valid.
+     * @param algorithmNode algorithm name to validate
+     * @param algList algorithm list
+     * @param log
+     * @return
      */
     private boolean validateAlgorithm( AlgorithmNode algorithmNode, NodeList algList, ErrorLog log) {
         AlgorithmData data = algorithmNode.getAlgorithmData();
@@ -133,7 +162,6 @@ public class ParameterValidator extends DefaultHandler{
         if(algName == null) {
             //Invalid, need algname, report and return false
             //REPORT
-            
             return false;
         }
         
@@ -176,6 +204,11 @@ public class ParameterValidator extends DefaultHandler{
     
     
     
+    /** returns the algorithm element given a list and algorithm name
+     * @param algName algorithm name
+     * @param algList node list to search
+     * @return
+     */
     private Element getAlgorithmElement(String algName, NodeList algList) {
         Element elem = null;
         String name;
@@ -216,6 +249,7 @@ public class ParameterValidator extends DefaultHandler{
     private boolean validateParameter(String key, String value, Element algElement, AlgorithmNode algNode, ErrorLog log) {
         NodeList paramList = algElement.getElementsByTagName("param");
         Element paramElement = getParameterElement(paramList, key);
+        boolean result = true;
         if(paramElement == null) {
             //Invalid Key Name, not registered
             //REPORT
@@ -230,23 +264,45 @@ public class ParameterValidator extends DefaultHandler{
             ScriptParameterException spe = createScriptParameterException(algNode, paramElement, value,
             "Incorrect value type.");
             log.recordParameterError(spe);
-            return false;
+            result = false;
         }
-        return true;
+        if(!validateValueConstraints(algNode.getAlgorithmName(), key, value)) {
+            
+        }
+        
+        return result;
     }
     
+    /** Creates a script parameter exception
+     * @return
+     * @param algNode algorithm node
+     * @param paramElement parameter element
+     * @param currValue value
+     * @param message exception message
+     */
     private ScriptParameterException createScriptParameterException(AlgorithmNode algNode, Element paramElement, String currValue, String message) {
         ScriptParameterException spe = new ScriptParameterException(algNode.getAlgorithmName(), algNode.getID(),
         algNode.getDataNodeRef(), paramElement.getAttribute("key"), currValue, message);
         return spe;
     }
     
+    /** Create exception
+     * @param algNode algorithm node
+     * @param message exception message
+     * @return
+     */
     private ScriptParameterException createScriptParameterException(AlgorithmNode algNode, String message) {
         ScriptParameterException spe = new ScriptParameterException(algNode.getAlgorithmName(), algNode.getID(),
         algNode.getDataNodeRef(), "N/A", "N/A", message);
         return spe;
     }
     
+    /** Returns the parameter element given a node list
+     * and the parameter key.
+     * @param list list
+     * @param key key to search on.
+     * @return
+     */
     private Element getParameterElement(NodeList list, String key) {
         Element elem = null;
         for(int i = 0; i < list.getLength(); i++) {
@@ -258,6 +314,13 @@ public class ParameterValidator extends DefaultHandler{
         return elem;
     }
     
+    /** Validate type
+     * @param value value
+     * @param paramElement parameter element
+     * @param algElement algorithm element
+     * @param log error log
+     * @return
+     */
     private boolean validateValueType(String value, Element paramElement, Element algElement, ErrorLog log) {
         String type = paramElement.getAttribute("value_type");
         boolean isValid = true;
@@ -281,6 +344,75 @@ public class ParameterValidator extends DefaultHandler{
         return isValid;
     }
     
+    /** Validate value's constraints
+     * @param algName Algorithm name
+     * @param key key for parameter to validate
+     * @param value value to check
+     * @return
+     */
+    private boolean validateValueConstraints(String algName, String key, String value) {
+        ParameterAttributes atts = this.getParameterAttributes(algName, key);
+        
+        if(!atts.hasConstraints())  //if no constraints then return true
+            return true;
+        
+        return checkConstraints(value, atts.getValueType(), atts.getMin(), atts.getMax());
+    }
+    
+    
+    /** Check the value against constraints. Returns true if
+     * passes.
+     * @param val Value
+     * @param type Type attribute
+     * @param min min
+     * @param max max
+     * @return
+     */
+    private boolean checkConstraints(String val, String type, String min, String max) {
+        if(type.equals("int")){
+            int value = Integer.parseInt(val);
+            if(!min.equals("") && !max.equals(""))
+                return (value >= Integer.parseInt(min) && value <= Integer.parseInt(max));
+            else if(!max.equals(""))
+                return (value <= Integer.parseInt(max));
+            else if(!min.equals(""))
+                return (value >= Integer.parseInt(min));
+            return true;
+        } else if(type.equals("float")){
+            float value = Float.parseFloat(val);
+            if(!min.equals("") && !max.equals(""))
+                return (value >= Float.parseFloat(min) && value <= Float.parseFloat(max));
+            else if(!max.equals(""))
+                return (value <= Float.parseFloat(max));
+            else if(!min.equals(""))
+                return (value >= Float.parseFloat(min));
+            return true;
+        } else if(type.equals("long")){
+            long value = Long.parseLong(val);
+            if(!min.equals("") && !max.equals(""))
+                return (value >= Long.parseLong(min) && value <= Long.parseLong(max));
+            else if(!max.equals(""))
+                return (value <= Long.parseLong(max));
+            else if(!min.equals(""))
+                return (value >= Long.parseLong(min));
+            return true;
+        } else if(type.equals("double")){
+            double value = Double.parseDouble(val);
+            if(!min.equals("") && !max.equals(""))
+                return (value >= Double.parseDouble(min) && value <= Double.parseDouble(max));
+            else if(!max.equals(""))
+                return (value <= Double.parseDouble(max));
+            else if(!min.equals(""))
+                return (value >= Double.parseDouble(min));
+            return true;
+        }
+        return true;
+    }
+    
+    /** Returns an html string table of valid parameters
+     * for the algorithm named.
+     * @return
+     * @param algName algorithm name */
     public String getValidParameterTable(String algName) {
         if(!isEnabled())
             return null;
@@ -331,6 +463,78 @@ public class ParameterValidator extends DefaultHandler{
         return table;
     }
     
+    
+    
+    /** returns a hash table for specified algorithm.
+     * @param algName algorithm name
+     * @return
+     */
+    public Hashtable getParameterHash(String algName) {
+        Element algElement = findAlgorithmElement(algName);
+        if(algElement == null)
+            return null;
+        
+        Element paramList = (Element)(algElement.getElementsByTagName("param_list").item(0));
+        Hashtable paramHash = new Hashtable();
+        NodeList list = paramList.getElementsByTagName("param");
+        
+        String key;
+        String valueType;
+        String valueRequirements;
+        boolean hasConstraints;
+        String min;
+        String max;
+        
+        Element paramElement;
+        NodeList constrList;
+        
+        ParameterAttributes attr;
+        Element constrElement;
+        
+        for(int i = 0; i < list.getLength(); i++) {
+            paramElement = (Element)(list.item(i));
+            
+            key = paramElement.getAttribute("key");
+            valueType = paramElement.getAttribute("value_type");
+            valueRequirements = paramElement.getAttribute("val_level");
+            
+            constrList = null;
+            constrList = paramElement.getElementsByTagName("constraint");
+            if(constrList == null || constrList.getLength() == 0) {
+                attr = new ParameterAttributes(key, valueType, valueRequirements);
+            } else {
+                constrElement = (Element)(constrList.item(0));
+                min = constrElement.getAttribute("min");
+                max = constrElement.getAttribute("max");
+                attr = new ParameterAttributes(key, valueType, valueRequirements, min, max);
+            }
+            paramHash.put(key, attr);
+        }
+        return paramHash;
+    }
+    
+    
+    
+    /** Returns a <CODE>ParameterAttributes</CODE> object for algorithm and
+     * specified key.
+     * @param algName
+     * @param key
+     * @return
+     */
+    public ParameterAttributes getParameterAttributes(String algName, String key) {
+        Hashtable hash = getParameterHash(algName);
+        if(hash == null)
+            return null;
+        
+        return (ParameterAttributes)(hash.get(key));
+    }
+    
+    
+    
+    /** Returns the algorithm element given an algorithm name
+     * @param algName
+     * @return
+     */
     private Element findAlgorithmElement(String algName) {
         NodeList list = validationRoot.getElementsByTagName("script_algorithm");
         Element algElement = null;
@@ -348,29 +552,27 @@ public class ParameterValidator extends DefaultHandler{
     
     
     //  WARNING Event Handler
+    /** records a warning
+     * @param e
+     * @throws SAXException
+     */
     public void warning(SAXParseException e)
     throws SAXException {
-        System.err.println("Warning:  "+e);
         
     }
     
     //  ERROR Event Handler
+    /** records a warning.
+     */
     public void error(SAXParseException e)
     throws SAXException {
-        System.err.println("Error:  "+e);
-        
     }
     
     //  FATAL ERROR Event Handler
+    /** records a fatal error
+     */
     public void fatalError(SAXParseException e)
     throws SAXException {
-        System.err.println("Fatal Error:  "+e);
-        
     }
     
-    public static void main(String [] args) {
-        ParameterValidator pv = new ParameterValidator();
-        pv.loadParameterConstraints();
-        System.out.println("pv is enabled? = "+pv.isEnabled());
-    }
 }

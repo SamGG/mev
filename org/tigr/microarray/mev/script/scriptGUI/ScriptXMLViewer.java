@@ -1,4 +1,8 @@
 /*
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+All rights reserved.
+*/
+/*
  * ScriptXMLViewer.java
  *
  * Created on February 28, 2004, 4:37 PM
@@ -66,17 +70,27 @@ import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 import org.tigr.microarray.mev.script.event.ScriptDocumentEvent;
 import org.tigr.microarray.mev.script.event.ScriptEventListener;
 
-/**
- *
- * @author  braisted
+/** ScriptXMLViewer renders the <CODE>Script</CODE> as a text editor in
+ * xml text form.  The viewer is mostly just a viewer but lines with key:value
+ * pairs can be edited.
+ * @author braisted
  */
 public class ScriptXMLViewer extends ViewerAdapter {
     
+    /** ScriptDoucment to be rendered
+     */    
     private ScriptDocument doc;
+    /** ScriptManager to act as a info exchange conduit.
+     *
+     */    
     private ScriptManager manager;
     
+    /** Main viewer component.
+     */    
     private JTextArea pane;
     private HighlightPanel highlightPanel;
+    /** Panel to display line numbers.
+     */    
     private LineNumberPanel numPanel;
     private JPopupMenu popup;
     private Font vFont;
@@ -88,7 +102,9 @@ public class ScriptXMLViewer extends ViewerAdapter {
     private IFramework framework;
     
     
-    /** Creates a new instance of ScriptXMLViewer */
+    /** Creates a new instance of ScriptXMLViewer
+     * @param manager
+     */
     public ScriptXMLViewer(ScriptManager manager) {
         this.manager = manager;
         editOnly = false;
@@ -118,6 +134,10 @@ public class ScriptXMLViewer extends ViewerAdapter {
         updateSize();
     }
     
+    /** Creates a new ScriptXMLViewer
+     * @param Doc ScriptDocument to render
+     * @param manager
+     */    
     public ScriptXMLViewer(ScriptDocument Doc, ScriptManager manager) {
         doc = Doc;
         this.manager = manager;
@@ -146,6 +166,8 @@ public class ScriptXMLViewer extends ViewerAdapter {
     }
     
     
+    /** Constructs a ScriptXMLViewer from reading the File object
+     * @param inputFile  */    
     public ScriptXMLViewer(File inputFile) {
         this.editOnly = true;
         scriptFile = inputFile;
@@ -182,12 +204,16 @@ public class ScriptXMLViewer extends ViewerAdapter {
     }
     
     
+    /** Sets the script document to render
+     * @param Doc  */    
     public void setDoc(ScriptDocument Doc) {
         doc = Doc;
         doc.addDocumentListener(new ScriptListener());
         updateSize();
     }
     
+    /** Handles update during selection for viewing.
+     */    
     public void onSelected(IFramework framework) {
         this.framework = framework;
         this.numPanel.clearSelection();
@@ -209,22 +235,32 @@ public class ScriptXMLViewer extends ViewerAdapter {
         pane.setCaretPosition(0);
     }
     
+    /** Extract the text of the viewer
+     * @return  */    
     public String getText() {
         return pane.getText();
     }
     
+    /** Calls an update of the viewer such as on document changed.
+     */    
     public void update() {
         updateSize();
     }
     
+    /** Returns the content component for viewing
+     */    
     public JComponent getContentComponent() {
         return highlightPanel;
     }
     
+    /** returns the row header component form viewing.
+     */    
     public JComponent getRowHeaderComponent() {
         return numPanel;
     }
     
+    /** Highlights a particular algorithm range.
+     */    
     public void highlightAlgorithmNode(AlgorithmNode node) {        
         String algName = node.getAlgorithmName();
         String algID = String.valueOf(node.getID());
@@ -366,7 +402,7 @@ public class ScriptXMLViewer extends ViewerAdapter {
         if(scriptFile != null) {
             chooser = new JFileChooser(scriptFile.getPath());
         } else {
-            chooser = new JFileChooser(System.getProperty("user.dir"));
+            chooser = new JFileChooser(System.getProperty("user.dir")+"/Data/Scripts");
         }
         
         if(chooser.showSaveDialog(new JPanel()) == JFileChooser.APPROVE_OPTION) {
@@ -508,7 +544,7 @@ public class ScriptXMLViewer extends ViewerAdapter {
                 
                 String newText = new String(text);
                 Hashtable attributes  = getAlgorithmAttributes(start);
-                    String algName = (String)(attributes.get("alg_name"));
+                String algName = (String)(attributes.get("alg_name"));
                 ScriptValueChangeDialog dialog = new ScriptValueChangeDialog(newText, algName, manager);
                 if(dialog.showModal() == JOptionPane.OK_OPTION) {
                     newText = dialog.getLine();
@@ -520,7 +556,7 @@ public class ScriptXMLViewer extends ViewerAdapter {
                             pane.setText(doc.toString());
                             pane.setCaretPosition(start);
                         } else {
-                            System.out.println("NO MOD PARAM");
+
                         }
                     }
                     try {

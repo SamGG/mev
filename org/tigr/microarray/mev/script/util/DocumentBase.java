@@ -64,44 +64,82 @@ import org.tigr.microarray.mev.script.event.ScriptEventListener;
 
 
 
-/**
- *
- * @author  braisted
+/** DocumentBase is the base class for <CODE>ScriptDocument</CODE> objects
+ * and maintains core function for DOM creation, modification, and output.
+ * @author braisted
  */
 public class DocumentBase extends DefaultHandler {
     
+    /** Current verson to append
+     */
     String tm4ScriptVersion = "1.0";
+    /** script version
+     */
     String mevScriptVersion = "1.0";
+    /** <CODE>ScriptManager</CODE> to be used as a outward communication mode.
+     */
     ScriptManager manager;
     
+    /** XML Document
+     */
     Document document;
+    /** Script text string.  This is kept current for fast rendering.
+     */
     String scriptText;
+    /** Root element
+     */
     Element root;
+    /** mev Element
+     */
     Element mevElement;
+    /** Primary data element
+     */
     Element primaryDataElement;
+    /** main comment element.
+     */
     Element commentElement;
     
+    /** Analysis element.
+     */
     Element analysisElement;
     
+    /** Data id incrementer.  Increases as document grows.
+     */
     int currDataID = 1;
+    /** <CODE>AlgorithmSet</CODE> ID incrementer to increase during
+     * script expansion.
+     */
     int currAlgSetID = 1;
+    /** Line separator for script rendering.
+     */
     String lineSeparator = System.getProperty("line.separator");
+    /** Indent.
+     */
     String indent = "   ";
     
+    /** Records number of errors found on validation.
+     */
     int parseErrors = 0;
+    /** The <CODE>ErrorLog</CODE> object dedicated to this object.
+     */
     ErrorLog errorLog;
     
+    /** Script listner vector.  This will permit update events
+     * to be handled correctly.
+     */
     private Vector listeners;
-    boolean parsedScript = false;
+    boolean parsedScript = false;    
     
-    /** Creates a new instance of ScriptHandler */
+    /** Creates a new instance of DocumentBase
+     * @param manager <CODE>ScriptManager</CODE> object.
+     */
     public DocumentBase(ScriptManager manager) {
         this.manager = manager;
         errorLog = new ErrorLog(manager);
         listeners = new Vector();
         
         DOMImplementationImpl impl = new DOMImplementationImpl();
-        DocumentType docType = impl.createDocumentType("TM4ML",null,"mev_script_dtd.dtd");
+        DocumentType docType = impl.createDocumentType("TM4ML",null,"../../config/mev_script_dtd.dtd");
         
         document = impl.createDocument(null, "TM4ML", docType);
         
@@ -132,14 +170,19 @@ public class DocumentBase extends DefaultHandler {
     }
     
     
-    /** Creates a new instance of ScriptHandler */
+    /** Creates a new instance of DocumentBase.
+     * @param date creation datae
+     * @param name name attribute
+     * @param description Description attribute.
+     * @param manager ScriptManager.
+     */
     public DocumentBase(String date, String name, String description, ScriptManager  manager) {
         this.manager = manager;
         errorLog = new ErrorLog(manager);
         listeners = new Vector();
         
         DOMImplementationImpl impl = new DOMImplementationImpl();
-        DocumentType docType = impl.createDocumentType("TM4ML",null,"mev_script_dtd.dtd");
+        DocumentType docType = impl.createDocumentType("TM4ML",null,"../../config/mev_script_dtd.dtd");
         
         document = impl.createDocument(null, "TM4ML", docType);
         
@@ -173,42 +216,57 @@ public class DocumentBase extends DefaultHandler {
         mevElement.appendChild(analysisElement);
         
         scriptText = new String("");
-        updateScript();
-        
-        // Element rootElement = new Element("tm4");
-        // document = new Document(rootElement);
+        updateScript();        
     }
     
     
+    /** Set the Document object.
+     * @param doc source Document
+     */
     public void setDocumnet(Document doc) {
         document = doc;
         updateScript();
     }
     
+    /** Returns the base Document.
+     */
     public Document getDocument() {
         return this.document;
     }
     
+    /** Sets the date
+     * @param comment Date comment
+     */
     public void setDateComment(String comment) {
-        Comment nameElement = document.createComment("Original Script Creation Date: " + comment);
+        Comment nameElement = document.createComment(" Original Script Creation Date: " + comment +" ");
         mevElement.appendChild(nameElement);
         updateScript();
     }
     
+    /** Sets name comment.
+     * @param comment name
+     */
     public void setNameComment(String comment) {
-        Comment nameElement = document.createComment("Script Name: " + comment);
+        Comment nameElement = document.createComment(" Script Name: " + comment+" ");
         mevElement.appendChild(nameElement);
         updateScript();
     }
     
+    /** Sets description comment
+     * @param comment description
+     */
     public void setDescriptionComment(String comment) {
-        Comment dElement = document.createComment("Script Description: "+ comment);
+        Comment dElement = document.createComment(" Script Description: "+ comment + " ");
         mevElement.appendChild(dElement);
         updateScript();
     }
     
     
-    public Element createAlgorithmSet(int dataRef){
+    /** Creates a new algorithm set with the provided data id.
+     * @param dataRef Data reference ID.
+     * @return
+     */
+    private Element createAlgorithmSet(int dataRef){
         Element algSetElement = document.createElement("alg_set");
         algSetElement.setAttribute("set_id", String.valueOf(currAlgSetID));
         algSetElement.setAttribute("input_data_ref", String.valueOf(dataRef));
@@ -218,13 +276,15 @@ public class DocumentBase extends DefaultHandler {
         return algSetElement;
     }
     
-    public Element getAlgorithmSetByID(int setID){
+    /** Returns an algorithm set by ID
+     * @param setID id
+     * @return
+     */
+    private Element getAlgorithmSetByID(int setID){
         String id = String.valueOf(setID);
         NodeList elements = analysisElement.getElementsByTagName("alg_set");
         
         for(int i = 0; i < elements.getLength(); i++) {
-            System.out.println("in getAlgSetByID("+id);
-            System.out.println("attribute = "+((Element)elements.item(i)).getAttribute("set_id"));
             if(id.equals(((Element)elements.item(i)).getAttribute("set_id")))
                 return (Element)elements.item(i);
         }
@@ -232,7 +292,11 @@ public class DocumentBase extends DefaultHandler {
     }
     
     
-    public Element getAlgorithmSetByDataRef(int dataRef) {
+    /** Returns an algorithm set by id
+     * @param dataRef ref (data id)
+     * @return
+     */
+    private Element getAlgorithmSetByDataRef(int dataRef) {
         int setID = -1;
         String dataID = String.valueOf(dataRef);
         //if data ref. is to primary data return default alg set
@@ -262,6 +326,12 @@ public class DocumentBase extends DefaultHandler {
     
     //need to get an algorithm ID, and get or make an alg set ref.
     
+    /** Returns true if algorithm is appended.  This is a primary method for
+     * script expansion.
+     * @param data AlgorithmData with parameters.
+     * @param inputDataRef Input data reference (ID)
+     * @return
+     */
     public boolean appendAlgorithm(AlgorithmData data, int inputDataRef) {
         
         Element algElement = document.createElement("algorithm");
@@ -338,25 +408,23 @@ public class DocumentBase extends DefaultHandler {
                     dataElement.setAttribute("data_node_id", String.valueOf(this.currDataID));
                     dataElement.setAttribute("name", outputNodes[i]);
                     outputNodeElement.appendChild(dataElement);
-                    System.out.println("output node ="+outputNodes[i]);
                 }
                 algElement.appendChild(outputNodeElement);
             }
-            
-            //keySet.
         }
         algSetElement.appendChild(algElement);
         added = true;
-        System.out.println("child appended");
         updateScript();
-        System.out.println("updateScript() done");
         fireScriptEvent();
-        System.out.println("Fired script event");
         return added;
     }
     
     
-    public void addParameterList(Element algElement, AlgorithmParameters params) {
+    /** Adds the parameter list to the model.
+     * @param algElement Algorithm to recieve
+     * @param params AlgorithmParameters
+     */
+    private void addParameterList(Element algElement, AlgorithmParameters params) {
         Map paramMap = params.getMap();
         String key = "", value = "";
         Element paramsElement, paramElement, keyElement, valueElement;
@@ -389,7 +457,11 @@ public class DocumentBase extends DefaultHandler {
     }
     
     
-    public void addIntArrays(Map map, Element mlist) {
+    /** Adds integer arrays
+     * @param map Map of the values.
+     * @param mlist Matrix list Element
+     */
+    private void addIntArrays(Map map, Element mlist) {
         Object [] arrayObjectNames = map.keySet().toArray();
         Element matrixElement, elementElement;
         int [] currentArray;
@@ -421,7 +493,11 @@ public class DocumentBase extends DefaultHandler {
         }
     }
     
-    public void addStringArrays(Map map, Element mlist) {
+    /** Add String arrays to the model
+     * @param map value map
+     * @param mlist Matrix list element.
+     */
+    private void addStringArrays(Map map, Element mlist) {
         Object [] arrayObjectNames = map.keySet().toArray();
         Element matrixElement, elementElement;
         String [] currentArray;
@@ -460,7 +536,11 @@ public class DocumentBase extends DefaultHandler {
         }
     }
     
-    public void addMatrices(Map map, Element mlist) {
+    /** Adds matices.
+     * @param map Matrix refs.
+     * @param mlist Matrix Element list.
+     */
+    private void addMatrices(Map map, Element mlist) {
         Object [] matrixObjectNames = map.keySet().toArray();
         Element matrixElement;
         
@@ -487,7 +567,10 @@ public class DocumentBase extends DefaultHandler {
         }
     }
     
-    public void addMatrixElements(FloatMatrix matrix, Element matrixElement) {
+    /** Adds actual matrix elements.
+     * @param matrix FloatMatrix to append
+     * @param matrixElement Element to receive. */
+    private void addMatrixElements(FloatMatrix matrix, Element matrixElement) {
         Element elementElement;
         
         float [][] data = matrix.A;
@@ -503,6 +586,10 @@ public class DocumentBase extends DefaultHandler {
         }
     }
     
+    /** Writes the source to the file name.
+     * @param fileName file name
+     * @throws IOException
+     */
     public void writeDocument(String fileName) throws IOException {
         FileWriter writer = new java.io.FileWriter(fileName);
         serialize(writer);
@@ -512,21 +599,30 @@ public class DocumentBase extends DefaultHandler {
     }
     
     
-    public void writeDocument(Writer writer) throws IOException {
+    /** Outputs document to Writer.
+     * @param writer Output Writer
+     * @throws IOException
+     */
+    private void writeDocument(Writer writer) throws IOException {
         serialize(writer);
     }
     
     
     
-    /*****************************
-     *
+    /**
      * Serialization Code
-     *
-     */
+     * @param writer Output Writer
+     * @throws IOException  */
     private void serialize(Writer writer) throws IOException {
         serializeNode(document,  writer, "");
     }
     
+    /** serializes a single node.
+     * @param node Node to output
+     * @param writer output writer
+     * @param indentLevel Indent level
+     * @throws IOException
+     */
     private void serializeNode(Node node, Writer writer, String indentLevel) throws IOException {
         String name;
         String text;
@@ -580,6 +676,7 @@ public class DocumentBase extends DefaultHandler {
                 break;
             case Node.TEXT_NODE:
                 writer.write(node.getNodeValue());
+                //System.out.println("text node!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 // name = node.getNodeName();
                 //// String text = node.getNodeValue();
                 // writer.write(indentLevel + "<" + name + ">" + text + "<\\" + name +">");
@@ -602,23 +699,29 @@ public class DocumentBase extends DefaultHandler {
                     }
                     writer.write(lineSeparator);
                 }
-                writer.write(" -->");
+                writer.write("-->");
                 break;
         }
     }
     
+    /** Forces the script to update on events where the
+     * underlying information changes.
+     */
     public void updateScript() {
-        //        CharArrayWriter writer = new CharArrayWriter();
         try {
             scriptText = "";
             writeScriptText(document, "");
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //      this.scriptText = writer.toString();
     }
     
     
+    /** Writes node serialized form to the internal text String.
+     * @param node node to serialize
+     * @param indentLevel indent level.
+     * @throws IOException
+     */ /*
     private void writeScriptText(Node node, String indentLevel) throws IOException {
         String name;
         String text;
@@ -630,8 +733,139 @@ public class DocumentBase extends DefaultHandler {
                 scriptText += ("<?xml version=\"1.0\"?>");
                 scriptText += (lineSeparator);
                 
-                //scriptText += (ScriptConstants.DOCTYPE_STRING);
-                //scriptText += (lineSeparator);
+                NodeList nodes = node.getChildNodes();
+                if(nodes != null) {
+                    for(int i = 0; i < nodes.getLength(); i++) {
+                        writeScriptText(nodes.item(i), "");
+                    }
+                }
+                /*
+                Document doc = (Document)node;
+                writeScriptText(doc.getDocumentElement()," ");
+                 **/
+/*                break;
+            case Node.ELEMENT_NODE:
+                name = node.getNodeName();
+                //    if(parsedScript)
+                //       scriptText += "<"+name;
+                //    else
+                scriptText += (indentLevel + "<" + name);
+                
+                //posible attributes
+                NamedNodeMap attrs = node.getAttributes();
+                for(int i = 0; i < attrs.getLength(); i++) {
+                    Node attr = attrs.item(i);
+                    scriptText += (" "+ attr.getNodeName()+"=\""+attr.getNodeValue()+"\"");
+                }
+                
+                NodeList children = node.getChildNodes();
+                if(children.getLength() > 0) {
+                    
+                    scriptText += (">");
+                    
+                    if((children.item(0) != null) &&
+                    (children.item(0).getNodeType() == Node.ELEMENT_NODE || children.item(0).getNodeType() == Node.COMMENT_NODE)){
+                        scriptText += (lineSeparator);
+                    }
+                    for(int i = 0; i < children.getLength(); i++){
+                        writeScriptText(children.item(i), indentLevel + indent);
+                    }
+                    if((children.item(0) != null) ){// &&
+               //     (children.item(children.getLength()-1).getNodeType() == Node.ELEMENT_NODE)) {
+                        scriptText += (indentLevel);
+                    }
+                    
+                    scriptText += ("</" + name + ">");
+                    
+                } else {
+                    scriptText += ("/>");
+                }
+                
+                scriptText += (lineSeparator);
+                break;
+            case Node.TEXT_NODE:
+                // text = node.getNodeValue();
+               //  scriptText += indentLevel+text+lineSeparator;
+                
+                
+                
+                String newText = node.getNodeValue();
+                String preText = "";
+                int pt;
+                if(newText.indexOf("\n") != -1 && scriptText.lastIndexOf('\n') == scriptText.length()-1){
+                    pt = newText.lastIndexOf("\n")+1;
+                    if(pt < newText.length()) {
+                        preText = newText.substring(pt);
+                        preText +=newText.substring(0, pt-1);
+                      //  preText = newText.substring(0, pt-1);
+                        newText = preText;
+                    }
+                    
+                }
+                
+                
+                scriptText += newText;
+  
+                
+                
+                
+                // name = node.getNodeName();
+                //// String text = node.getNodeValue();
+                // scriptText += (indentLevel + "<" + name + ">" + text + "<\\" + name +">");
+                // scriptText += (lineSeparator);
+                break;
+                
+            case Node.COMMENT_NODE:
+                text = node.getNodeValue();
+                scriptText += indentLevel+"<!-- ";
+                /*
+                stok = new StringTokenizer(text, " ");
+                int charCnt = 0;
+                String word;
+                 
+                while(stok.hasMoreElements()) {
+                 
+                    word = stok.nextToken();
+                    if (charCnt < 50){
+                        scriptText += word+" ";
+                        charCnt += word.length();
+                    } else {
+                        scriptText += lineSeparator+indentLevel+"     ";
+                        scriptText += word+" ";
+                        charCnt = 0;
+                    }
+                }
+                 */
+     /*           scriptText += text;
+                
+                scriptText += " -->"+lineSeparator+lineSeparator;
+                break;
+            case Node.DOCUMENT_TYPE_NODE:
+                DocumentType docType = (DocumentType)node;
+                scriptText += ("<!DOCTYPE " + docType.getName());
+                scriptText += " SYSTEM ";
+                scriptText += "\""+docType.getSystemId()+"\">";
+                scriptText += lineSeparator;
+                break;
+        }
+    }
+    */
+    
+    /** Writes node serialized form to the internal text String.
+     * @param node node to serialize
+     * @param indentLevel indent level.
+     * @throws IOException
+     */
+    private void writeScriptText(Node node, String indentLevel) throws IOException {
+        String name;
+        String text;
+        StringTokenizer stok;
+        
+        switch(node.getNodeType()) {
+            
+            case Node.DOCUMENT_NODE:
+                scriptText += ("<?xml version=\"1.0\"?>");
+                scriptText += (lineSeparator);
                 
                 NodeList nodes = node.getChildNodes();
                 if(nodes != null) {
@@ -663,15 +897,16 @@ public class DocumentBase extends DefaultHandler {
                     
                     scriptText += (">");
                     
-                    if((children.item(0) != null) &&
-                    (children.item(0).getNodeType() == Node.ELEMENT_NODE || children.item(0).getNodeType() == Node.COMMENT_NODE)){
+                    if((children.item(0) != null)){// &&
+   //                 (children.item(0).getNodeType() == Node.ELEMENT_NODE || children.item(0).getNodeType() == Node.COMMENT_NODE)){
                         scriptText += (lineSeparator);
                     }
                     for(int i = 0; i < children.getLength(); i++){
-                        writeScriptText(children.item(i), indentLevel + indent);
+                        if(children.item(i).getNodeType() != Node.TEXT_NODE)
+                            writeScriptText(children.item(i), indentLevel + indent);
                     }
-                    if((children.item(0) != null) &&
-                    (children.item(children.getLength()-1).getNodeType() == Node.ELEMENT_NODE)) {
+                    if((children.item(0) != null) ){// &&
+               //     (children.item(children.getLength()-1).getNodeType() == Node.ELEMENT_NODE)) {
                         scriptText += (indentLevel);
                     }
                     
@@ -685,7 +920,7 @@ public class DocumentBase extends DefaultHandler {
                 break;
             case Node.TEXT_NODE:
                 // text = node.getNodeValue();
-                // scriptText += indentLevel+text+lineSeparator;
+               //  scriptText += indentLevel+text+lineSeparator;
                 
                 
                 
@@ -697,6 +932,7 @@ public class DocumentBase extends DefaultHandler {
                     if(pt < newText.length()) {
                         preText = newText.substring(pt);
                         preText +=newText.substring(0, pt-1);
+                      //  preText = newText.substring(0, pt-1);
                         newText = preText;
                     }
                     
@@ -704,6 +940,9 @@ public class DocumentBase extends DefaultHandler {
                 
                 
                 scriptText += newText;
+  
+                
+                
                 
                 // name = node.getNodeName();
                 //// String text = node.getNodeValue();
@@ -713,7 +952,7 @@ public class DocumentBase extends DefaultHandler {
                 
             case Node.COMMENT_NODE:
                 text = node.getNodeValue();
-                scriptText += indentLevel+"<!-- ";
+                scriptText += indentLevel+"<!--";
                 /*
                 stok = new StringTokenizer(text, " ");
                 int charCnt = 0;
@@ -734,7 +973,7 @@ public class DocumentBase extends DefaultHandler {
                  */
                 scriptText += text;
                 
-                scriptText += " -->"+lineSeparator+lineSeparator;
+                scriptText += "-->"+lineSeparator+lineSeparator;
                 break;
             case Node.DOCUMENT_TYPE_NODE:
                 DocumentType docType = (DocumentType)node;
@@ -744,26 +983,41 @@ public class DocumentBase extends DefaultHandler {
                 scriptText += lineSeparator;
                 break;
         }
-    }
+    }    
     
+    /** Returns the current String representation of the script.
+     * @return  */
     public String toString() {
         return scriptText;
     }
     
+    /** Returns the document's <CODE>ErrorLog</CODE>
+     * @return  */
     public ErrorLog getErrorLog() {
         return errorLog;
     }
     
+    /** Opens the document's <CODE>ErrorLog</CODE>
+     */
     public void showErrorLog() {
         
     }
     
+    /** Returns the number of validation errors found during a load or requested
+     * validation.
+     */
     public int getErrorCount() {
         return parseErrors;
     }
     
     
     
+    /** Loads the specified file using the passed progress bar.
+     * @param inputFile File
+     * @param progress Progress monitor
+     * @throws Exception
+     * @return
+     */
     public boolean loadXMLFile(File inputFile, Progress progress) throws Exception{
         if(!inputFile.exists())
             return false;
@@ -779,10 +1033,8 @@ public class DocumentBase extends DefaultHandler {
         
         try {
             parser.setFeature("http://xml.org/sax/features/validation", true);
-            // System.out.println("dtd url: *"+new File(System.getProperty("user.dir")+"\\Data\\mev_script_dtd.dtd").toURL().toString()+"**");
-            
-            // parser.setFeature(new File(System.getProperty("user.dir")+"\\Data\\mev_script_dtd.dtd").toURL().toString(), true);
             parser.setErrorHandler(this);
+                        
             parser.parse(inputFile.toURL().toString());
             
         } catch ( Exception e ) {
@@ -862,17 +1114,24 @@ public class DocumentBase extends DefaultHandler {
         return validateDocument();
     }
     
+    /** Validates the document
+     */
     public boolean validateDocument() {
         return true;
     }
     
     
+    /** Modifies a parameter
+     * @param attributes parameter attributes
+     * @param modLine moddification line
+     * @param value value
+     * @return
+     */
     public boolean modifyParameter(Hashtable attributes, String modLine, String value) {
         NodeList list = document.getElementsByTagName("algorithm");
         Element algElement;
         for(int i = 0; i < list.getLength(); i++) {
             algElement = (Element)list.item(i);
-            System.out.println("********************");
             if(algorithmMatches(attributes, algElement)) {
                 return modifyAlgorithmParameter(algElement, modLine, value);
             }
@@ -882,17 +1141,21 @@ public class DocumentBase extends DefaultHandler {
     
     
     //find and mod the parameter
-    public boolean modifyAlgorithmParameter(Element elem, String modLine, String value) {
+    /** Modifies an a parameter given an elemement.
+     * @param elem Element to mod.
+     * @param modLine modified line
+     * @param value value
+     * @return
+     */
+    private boolean modifyAlgorithmParameter(Element elem, String modLine, String value) {
         NodeList list = elem.getElementsByTagName("param");
         Element param;
         String key;
-        System.out.println("Mod alg param");
         for(int i =0; i < list.getLength(); i++) {
             param = (Element)list.item(i);
             key = param.getAttribute("key");
             
             if(modLine.indexOf(key) > -1) {
-                System.out.println("Set new att value for param key val"+key+" "+value);
                 param.setAttribute("value", value);
                 fireScriptEvent();
                 return true;
@@ -903,6 +1166,11 @@ public class DocumentBase extends DefaultHandler {
     }
     
     //verify algorithm Element is correct
+    /** Verifies algorithm identity
+     * @param attributes Attribute hash
+     * @param algorithm Algorithm element
+     * @return
+     */
     private boolean algorithmMatches(Hashtable attributes, Element algorithm) {
         Enumeration enum = attributes.keys();
         String key, value, algValue;
@@ -917,117 +1185,13 @@ public class DocumentBase extends DefaultHandler {
         }
         return true;
     }
-    /*
-    public static void main(String [] args) {
-        DocumentBase hand = new DocumentBase();
-     
-     
-     
-     
-        AlgorithmData data = new AlgorithmData();
-        data.addParam("name", "KMC");
-        data.addParam("k", "10");
-        data.addParam("iter", "50");
-        data.addParam("eval-genes", "true");
-        data.addParam("alg_type", "cluster");
-     
-        data.addParam("output-class", "multi-cluster-output");
-     
-     
-        String [] outArray = new String[1];
-     
-        outArray[0] = "Multi-cluster Result";
-        data.addStringArray("output-nodes", outArray);
-     
-        FloatMatrix matrix = new FloatMatrix(3,3);
-        for(int i = 0; i < 3; i++) {
-            for(int j = 0; j < 3; j++) {
-                matrix.set(i, j, (float)(i/(j+1)));
-            }
-        }
-        data.addMatrix("fuzzy-factor", matrix);
-     
-     
-        //   hand.createAlgorithmSet(1,1);
-        hand.appendAlgorithm(data, 1);
-     
-        data = new AlgorithmData();
-        data.addParam("name", "TTEST");
-        data.addParam("type", "TTEST.TWO_CLASS");
-        data.addParam("alpha", "0.01");
-        data.addParam("p-correction", "TTEST.NO_CORRECTION");
-        data.addParam("alg_type", "cluster");
-     
-        int [] groupAssignments = new int[10];
-     
-        for(int i = 0; i < 10; i++) {
-            groupAssignments[i] = i%2;
-        }
-     
-        data.addIntArray("group-assignments", groupAssignments);
-     
-        groupAssignments = new int[12];
-     
-        for(int i = 0; i < 12; i++) {
-            groupAssignments[i] = i%2;
-        }
-     
-        data.addIntArray("another-array-test", groupAssignments);
-     
-        data.addParam("output-class", "partition-output");
-     
-        outArray = new String[2];
-        outArray[0] = "significant";
-        outArray[1] = "non significant";
-        data.addStringArray("output-nodes", outArray);
-     
-        hand.appendAlgorithm(data, 1);
-     
-     
-     
-        try {
-     
-            //XMLSerializer serial = new XMLSerializer();
-     
-            //serial.set(new FileWriter("dfaf"));
-     
-            //serial.serialize(hand.getDocument());
-     
-            // hand.serialize(hand.getDocument(), new FileWriter(new File("C:\\Temp\\kmc_script.xml")));
-            hand.writeDocument("C:\\MyProjects\\source_3_5\\Data\\kmc_script2.xml");
-     
-     
-     
-            java.io.CharArrayWriter caw = new java.io.CharArrayWriter();
-     
-            // hand.writeDocument(hand.getDocument(), caw);
-            hand.writeDocument(caw);
-            char [] array = caw.toCharArray();
-            String s = new String(array);
-            System.out.println(s);
-     
-            System.out.println("Try a write");
-            hand.updateScript();
-            System.out.println(hand.toString());
-     
-            javax.swing.JEditorPane pane = new javax.swing.JEditorPane("text/plain",s);
-            pane.setFont(new java.awt.Font("monospaced", java.awt.Font.PLAIN, 12));
-            System.out.println(pane.getContentType());
-            pane.setBackground(java.awt.Color.lightGray);
-            pane.setMargin(new java.awt.Insets(10,10,10,10));
-            javax.swing.JFrame frame = new javax.swing.JFrame();
-            frame.getContentPane().add(pane);
-            frame.setSize(300,500);
-            frame.setVisible(true);
-     
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-        System.out.println("Done");
-    }
-     */
+    
     
     //  WARNING Event Handler
+    /** Reports Parser Exceptions (Warning level exp.)
+     * @param e reported exception
+     * @throws SAXException
+     */
     public void warning(SAXParseException e)
     throws SAXException {
         System.err.println("Warning:  "+e);
@@ -1036,6 +1200,8 @@ public class DocumentBase extends DefaultHandler {
     }
     
     //  ERROR Event Handler
+    /** Parse error reporting.
+     */
     public void error(SAXParseException e)
     throws SAXException {
         System.err.println("Error:  "+e);
@@ -1044,6 +1210,8 @@ public class DocumentBase extends DefaultHandler {
     }
     
     //  FATAL ERROR Event Handler
+    /** Parse Fatal errors
+     */
     public void fatalError(SAXParseException e)
     throws SAXException {
         System.err.println("Fatal Error:  "+e);
@@ -1052,11 +1220,16 @@ public class DocumentBase extends DefaultHandler {
     }
     
     
+    /** Adds a <CODE>ScriptEventListener</CODE> instance.
+     * @param listener Listener to add
+     */
     public void addDocumentListener(ScriptEventListener listener) {
         if(!listeners.contains(listener))
             listeners.add(listener);
     }
     
+    /** Fires events to cached listeners.
+     */
     private void fireScriptEvent() {
         ScriptDocumentEvent event = new ScriptDocumentEvent(this);
         for(int i = 0; i < listeners.size(); i++) {
@@ -1064,10 +1237,16 @@ public class DocumentBase extends DefaultHandler {
         }
     }
     
+    /** Removes a specified listener
+     * @param listener Listener to remove.
+     */
     public void removeScriptListener(ScriptEventListener listener) {
         listeners.remove(listener);
     }
     
+    /** Removes a specified algorithm from the model.
+     * @param node <CODE>AlgorithmNode</CODE> to delete.
+     */
     public void removeAlgorithm(AlgorithmNode node) {
         int algID = node.getID();
         int dataRef = node.getDataNodeRef();
@@ -1088,15 +1267,15 @@ public class DocumentBase extends DefaultHandler {
                 }
             }
             if(found) {
-                //Need to remove lower alg sets if present and possibly
-                //roll back algset number.
                 
                 if(algorithmElement == null)
                     return;
-  
+                
                 //Decided not to rollback alg id's for deleted
                 Node parentNode = algorithmElement.getParentNode();
                 if(parentNode != null) {
+                    
+                    //Get rid of alg sets that reference output from the algorithmElement
                     
                     //Get output node and then the data node id's
                     list = algorithmElement.getElementsByTagName("data_node");
@@ -1109,9 +1288,15 @@ public class DocumentBase extends DefaultHandler {
                         data_refs[i] = ((Element)dataNode).getAttribute("data_node_id");
                     }
                     
+                    
+                    
                     //Check if this analysis node has algorithm sets that reference
                     //the output of the algorithm to delete, if so remove them.
-                    list = analysisElement.getElementsByTagName("alg_set");
+                  /*
+                   
+                   original version to delete child algsets
+                   
+                   list = analysisElement.getElementsByTagName("alg_set");
                     Node algSetNode;
                     String ref;
                     for(int i = 0; i < list.getLength(); i++) {
@@ -1122,7 +1307,29 @@ public class DocumentBase extends DefaultHandler {
                                 analysisElement.removeChild(algSetNode);
                         }
                     }
+                   */
                     
+                    //new recursive method
+                    Vector algSetIDs = getDependentDataIDs(algorithmElement, list);
+                    //have dependent algset ids
+                    list = analysisElement.getElementsByTagName("alg_set");
+                    Node algSetNode;
+                    String ref;
+                    Vector setsToRemove = new Vector();
+                    int listLength = list.getLength();
+                    for(int i = 0; i < listLength; i++) {
+                        algSetNode = list.item(i);
+                        ref = ((Element)algSetNode).getAttribute("set_id");
+                        
+                        for(int j = 0; j < algSetIDs.size(); j++) {                            
+                            if(ref.equals((String)(algSetIDs.elementAt(j))))
+                                setsToRemove.addElement(algSetNode);
+                        }
+                    }
+                    
+                    for(int i = 0; i < setsToRemove.size(); i++)
+                        analysisElement.removeChild(((Element)(setsToRemove.elementAt(i))));                    
+
                     parentNode.removeChild(algorithmElement);
                     
                     //Check for more algorithms
@@ -1143,5 +1350,56 @@ public class DocumentBase extends DefaultHandler {
     }
     
     
+    /** Returns the data ID's under the algorithm element
+     */
+    private Vector getDependentDataIDs(Element algElement, NodeList dataElements) {
+        Element dataElement;
+        Vector indices = new Vector();
+        for(int i = 0; i < dataElements.getLength(); i++) {
+            dataElement = ((Element)(dataElements.item(i)));
+            indices.addElement(dataElement.getAttribute("data_node_id"));
+        } 
+        
+        getDependentDataIDs(indices, 0, analysisElement.getElementsByTagName("alg_set"));
+        
+        return indices;
+    }
+
+
+    /** accumulates data ID's below the passed data id indices 
+     */
+    private void getDependentDataIDs(Vector indices, int start, NodeList algSets) {
+        //exit stategy
+        if( indices.size() <= start)
+            return;
+        //new hit accumulator
+        int initSize = indices.size();
+        int newHits = 0;
+        String index, newIndex, algSetID;
+        Element algSet;
+        
+        //algSets
+        for(int i = start; i < indices.size(); i++){
+            index = (String)(indices.elementAt(i));
+            for(int j = 0; j < algSets.getLength(); j++) {
+                algSet = ((Element)(algSets.item(j)));
+                algSetID = algSet.getAttribute("set_id");
+                if(algSetID.equals(index)) {
+                    //this is a dependent alg set, need get all data references
+                    NodeList dataList = algSet.getElementsByTagName("data_node");
+                    for(int k = 0; k < dataList.getLength(); k++) {
+                        newIndex = ((Element)dataList.item(k)).getAttribute("data_node_id");
+                        if(!indices.contains(newIndex)) {
+                            newHits++;
+                            indices.addElement(newIndex);
+                        }
+                    }
+                }
+            }
+        }
+        
+        //tail recursion
+        getDependentDataIDs(indices, initSize, algSets);
+    }
     
 }

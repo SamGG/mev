@@ -57,30 +57,48 @@ import org.tigr.microarray.mev.script.util.ScriptConstants;
 
 import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
-
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 
-/**
- *
- * @author  braisted
+/** The ScriptAlgorithmInitDialog permits algorithm selection during script construction.
+ * Three broad scripting algorithm categories exist: analyis (clustering, stat, and classification),
+ * adjustment algorithms (filters, tranformations), and cluster selections algorithms.
+ * @author braisted
  */
 public class ScriptAlgorithmInitDialog extends AlgorithmDialog {
     
-    int result;
-    
-    int algorithmIndex = -1;
-    
-    String algorithmType;
-    String currentAlgorithmName;
-    
-    JPanel mainPanel;
-    ActionManager actionManager;
-    
-    PreviewPanel previewPanel;
-    AlgorithmSelectionPanel algSelPanel;
-    AdjustmentSelectionPanel adjSelPanel;
+    /** result
+     */    
+    private int result;    
+    /** algorithm index
+     */    
+    private int algorithmIndex = -1;    
+    /** algorithm type
+     */    
+    private String algorithmType;
+    /** current selected algorithm name
+     */    
+    private String currentAlgorithmName;    
+    /** main panel for components
+     */    
+    private JPanel mainPanel;
+    /** action manager to accumulate available mev algorithms for presentation
+     */    
+    private ActionManager actionManager;    
+    /** previews the selections
+     */    
+    private PreviewPanel previewPanel;
+    /** analysis algorithm selection controls
+     */    
+    private AlgorithmSelectionPanel algSelPanel;
+    /** adjustment algorithm controls
+     */    
+    private AdjustmentSelectionPanel adjSelPanel;
+    /** cluster selection parameter controls
+     */    
+    private ClusterSelectionPanel clusterSelectionPanel;
     
         /*
          * CLASS DEVELOPMENT NOTES
@@ -99,41 +117,52 @@ public class ScriptAlgorithmInitDialog extends AlgorithmDialog {
          */
     
     
-    /** Creates a new instance of ScriptAlgorithmInitDialog */
-    public ScriptAlgorithmInitDialog(ActionManager manager, String nodeType) {
+    /** Creates a new instance of ScriptAlgorithmInitDialog
+     * @param manager ActionManager to provide available algorithms
+     * @param nodeType Node type, data node type can restrict algorithm selection.
+     * @param isAffyData Indicates if loaded data is for Affymetrix(TM) data, need more filter controls.
+     */
+    public ScriptAlgorithmInitDialog(ActionManager manager, String nodeType, boolean isAffyData) {
         super(new JFrame(), "Script Algorithm Initialization Dialog", true);
         this.actionManager = manager;
         algorithmType = ScriptConstants.ALGORITHM_TYPE_CLUSTER;;//default
         result = JOptionPane.CANCEL_OPTION;
-               
+        
         mainPanel = new JPanel(new GridBagLayout());
         mainPanel.setBackground(Color.white);
         
         previewPanel = new PreviewPanel();
         algSelPanel = new AlgorithmSelectionPanel(actionManager);
-        adjSelPanel = new AdjustmentSelectionPanel();
+        adjSelPanel = new AdjustmentSelectionPanel(isAffyData);
+        clusterSelectionPanel = new ClusterSelectionPanel();
         
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Analysis Algorithms", algSelPanel);
         tabbedPane.addTab("Adjustment Algorithms", adjSelPanel);
-        tabbedPane.addTab("Cluster Selection Algorithms", new JPanel());
+        tabbedPane.addTab("Cluster Selection Algorithms", clusterSelectionPanel);
         
-        if(nodeType.equals(ScriptConstants.OUTPUT_DATA_CLASS_MULTICLUSTER_OUTPUT)) {
+        if(nodeType.equals(ScriptConstants.OUTPUT_DATA_CLASS_GENE_MULTICLUSTER_OUTPUT)
+        || nodeType.equals(ScriptConstants.OUTPUT_DATA_CLASS_EXPERIMENT_MULTICLUSTER_OUTPUT)
+        || nodeType.equals(ScriptConstants.OUTPUT_DATA_CLASS_MULTICLUSTER_OUTPUT)) {
             tabbedPane.setEnabledAt(0, false);
             tabbedPane.setEnabledAt(1, false);
             tabbedPane.setSelectedIndex(2);
+        } else {
+            tabbedPane.setEnabledAt(2, false);
         }
         
-        
-        mainPanel.add(previewPanel, new GridBagConstraints(0,0,1,1,1,1,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
+        mainPanel.add(previewPanel, new GridBagConstraints(0,0,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
         mainPanel.add(tabbedPane, new GridBagConstraints(0,1,1,2,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
-        
         
         Listener listener = new Listener();
         addWindowListener(listener);
         addContent(mainPanel);
         setActionListeners(listener);
         pack();
+        if(!isAffyData)
+            setSize(new Dimension(510, 587));
+        else
+            setSize(new Dimension(510, 665));
     }
     
     /**
@@ -146,24 +175,33 @@ public class ScriptAlgorithmInitDialog extends AlgorithmDialog {
         return result;
     }
     
+    /** Resets the controls
+     */    
     public void onReset() {
         this.previewPanel.reset();
         this.algSelPanel.reset();
         this.adjSelPanel.reset();
+        this.clusterSelectionPanel.reset();
         this.algorithmIndex = -1;
         this.algorithmType  = "";
         this.currentAlgorithmName = "";
     }
     
     
+    /** returns the algorithm class
+     */    
     public String getAlgorithmType() {
         return algorithmType;
     }
     
+    /** returns algorithm name
+     */    
     public String getAlgorithmName() {
         return currentAlgorithmName;
     }
     
+    /** returns the algorthms index
+     */    
     public int getAlgorithmIndex() {
         int index;
         if(currentAlgorithmName != null) {
@@ -172,9 +210,9 @@ public class ScriptAlgorithmInitDialog extends AlgorithmDialog {
                 return Integer.parseInt(number);
             }
         }
-            
+        
         return -1;
-    
+        
     }
     
     
@@ -191,6 +229,8 @@ public class ScriptAlgorithmInitDialog extends AlgorithmDialog {
      * such as algorithm category and algorithm name.
      */
     
+    /** Previews the algorithm selection
+     */    
     private class PreviewPanel extends ParameterPanel {
         
         JTextField categoryValueField;
@@ -232,6 +272,8 @@ public class ScriptAlgorithmInitDialog extends AlgorithmDialog {
      * extra rows if needed.
      */
     
+    /** Supports analysis algorithm selection.
+     */    
     private class AlgorithmSelectionPanel extends ParameterPanel {
         
         ButtonPanel buttonPanel;
@@ -250,7 +292,7 @@ public class ScriptAlgorithmInitDialog extends AlgorithmDialog {
             buttonPanel.setBackground(Color.white);
             descriptions = new Hashtable();
             indexHash = new Hashtable();
-           // locations = new Hashtable();
+            // locations = new Hashtable();
             addAlgorithmButtons(actionManager);
             add(buttonPanel, new GridBagConstraints(0,0,1,1,1,1,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
         }
@@ -296,13 +338,13 @@ public class ScriptAlgorithmInitDialog extends AlgorithmDialog {
                         gbc.gridy = i;
                         buttonPanel.add(button, gbc);
                         descriptions.put(action.getValue(Action.NAME), action.getValue(Action.SHORT_DESCRIPTION));
-                        indexHash.put(action.getValue(Action.NAME), String.valueOf(cnt)); 
+                        indexHash.put(action.getValue(Action.NAME), String.valueOf(cnt));
                         try {
                             Class clazz = Class.forName(((String)action.getValue(ActionManager.PARAMETER)));
-                            IClusterGUI gui = (IClusterGUI)clazz.newInstance();       
+                            IClusterGUI gui = (IClusterGUI)clazz.newInstance();
                             button.setEnabled(gui instanceof IScriptGUI);
-                        } catch (Exception e ) {  } 
-                            // locations.put(button, new Point(button.getLocation()));
+                        } catch (Exception e ) {  }
+                        // locations.put(button, new Point(button.getLocation()));
                     }
                     cnt++;
                 }
@@ -314,6 +356,8 @@ public class ScriptAlgorithmInitDialog extends AlgorithmDialog {
             buttonPanel.repaint();
         }
         
+        /**
+         */        
         private class ButtonPanel extends JPanel {
             boolean isSelected;
             Point selectedSector;
@@ -336,7 +380,7 @@ public class ScriptAlgorithmInitDialog extends AlgorithmDialog {
             
             public void paint(Graphics g) {
                 super.paint(g);
-                if(isSelected && selectedButton != null) {                    
+                if(isSelected && selectedButton != null) {
                     selectedSector = selectedButton.getLocation();
                     g.setColor(Color.blue);
                     g.drawRect(selectedSector.x-5, selectedSector.y-5, 54, 54);
@@ -349,14 +393,13 @@ public class ScriptAlgorithmInitDialog extends AlgorithmDialog {
         private class ButtonListener implements ActionListener {
             public void actionPerformed(ActionEvent ae) {
                 String algorithmName = ae.getActionCommand();
-                System.out.println(algorithmName);
                 currentAlgorithmName = algorithmName;
                 Object button = ae.getSource();
-      
+                
                 if(button != null && button instanceof JButton) {
-                     buttonPanel.setSelection((JButton)button);
-                     algorithmType = ScriptConstants.ALGORITHM_TYPE_CLUSTER;
-                     previewPanel.setValues("Analysis Algorithm", algorithmName+": "+((String)descriptions.get(algorithmName)));                     
+                    buttonPanel.setSelection((JButton)button);
+                    algorithmType = ScriptConstants.ALGORITHM_TYPE_CLUSTER;
+                    previewPanel.setValues("Analysis Algorithm", algorithmName+": "+((String)descriptions.get(algorithmName)));
                 }
             }
         }
@@ -366,17 +409,19 @@ public class ScriptAlgorithmInitDialog extends AlgorithmDialog {
     
     
     
+    /** Support selection of adjustment algorithm
+     */    
     private class AdjustmentSelectionPanel extends ParameterPanel {
         //Filters (affymetrics as well detection filter and ....)
         //Gene Based transformations
         //NormSpots /RMS /SD MeanCenter DigSpots
         //Experiments (as above)
         //intensity adjustments
-
+        
         ButtonGroup bg;
         JCheckBox noneBox;
         
-        public AdjustmentSelectionPanel() {
+        public AdjustmentSelectionPanel(boolean isAffyData) {
             super("Adjustment Selection");
             setLayout(new GridBagLayout());
             AdjustmentBoxListener listener = new AdjustmentBoxListener();
@@ -394,16 +439,16 @@ public class ScriptAlgorithmInitDialog extends AlgorithmDialog {
             filterPanel.add(lowerBox, new GridBagConstraints(1,0,1,1,0,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(5,25,10,0), 0,0));
             
             //Gene Panel
-            ParameterPanel genePanel = new ParameterPanel("Gene Based Adjustements");
+            ParameterPanel genePanel = new ParameterPanel("Gene Based Adjustments");
             genePanel.setLayout(new GridBagLayout());
-
+            
             JCheckBox gNormBox = createCheckBox("Normalize Spots","Adjust Vector ||v||=1", listener);
             JCheckBox gRMSBox = createCheckBox("Divide Spots by RMS","Divide values by spot's RMS", listener);
             JCheckBox gSDBox = createCheckBox("Divide Spots by SD","Divide values by spot's SD", listener);
             JCheckBox gMCBox = createCheckBox("Mean Center Spots","Divide values by spot's Mean", listener);
             JCheckBox gMedCBox = createCheckBox("Median Center Spots","Divide values by spot's Median", listener);
             JCheckBox gDigBox = createCheckBox("Digital Spots","Bins spot's values into log2(#Spots) int value bins ", listener);
-
+            
             genePanel.add(gNormBox, new GridBagConstraints(0,0,1,1,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(5,10,10,0), 0,0));
             genePanel.add(gRMSBox, new GridBagConstraints(0,1,1,1,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,10,10,0), 0,0));
             genePanel.add(gSDBox, new GridBagConstraints(0,2,1,1,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,10,10,0), 0,0));
@@ -411,17 +456,17 @@ public class ScriptAlgorithmInitDialog extends AlgorithmDialog {
             genePanel.add(gMedCBox, new GridBagConstraints(0,4,1,1,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,10,10,0), 0,0));
             genePanel.add(gDigBox, new GridBagConstraints(0,5,1,1,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,10,10,0), 0,0));
             
-            //Experiment Panel                        
-            ParameterPanel expPanel = new ParameterPanel("Experiment Based Adjustements");
+            //Experiment Panel
+            ParameterPanel expPanel = new ParameterPanel("Experiment Based Adjustments");
             expPanel.setLayout(new GridBagLayout());
-
+            
             JCheckBox eNormBox = createCheckBox("Normalize Experiments","Adjust Vector ||v||=1", listener);
             JCheckBox eRMSBox = createCheckBox("Divide Experiments by RMS","Divide values by experiment's RMS", listener);
             JCheckBox eSDBox = createCheckBox("Divide Experiments by SD","Divide values by experiment's SD", listener);
             JCheckBox eMCBox = createCheckBox("Mean Center Experiments","Divide values by experiment's Mean", listener);
             JCheckBox eMedCBox = createCheckBox("Median Center Experiments","Divide values by experiment's Median", listener);
             JCheckBox eDigBox = createCheckBox("Digital Experiments","Bins values into log2(#Exps) int value bins ", listener);
-
+            
             expPanel.add(eNormBox, new GridBagConstraints(0,0,1,1,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(5,10,10,0), 0,0));
             expPanel.add(eRMSBox, new GridBagConstraints(0,1,1,1,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,10,10,0), 0,0));
             expPanel.add(eSDBox, new GridBagConstraints(0,2,1,1,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,10,10,0), 0,0));
@@ -430,17 +475,29 @@ public class ScriptAlgorithmInitDialog extends AlgorithmDialog {
             expPanel.add(eDigBox, new GridBagConstraints(0,5,1,1,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,10,10,0), 0,0));
             
             //Policy Panel  ** This is a global policy not an adjustment
-            //ParameterPanel polPanel = new ParameterPanel("Experiment Based Adjustements");
-            //polPanel.setLayout(new GridBagLayout());            
+            //ParameterPanel polPanel = new ParameterPanel("Experiment Based Adjustments");
+            //polPanel.setLayout(new GridBagLayout());
             
             //Log Transformations
             // Do we want or need these, applies log two transformation to FloatMatrix which is in log 2
-            
-             add(filterPanel, new GridBagConstraints(0,0,2,1,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,10,0), 0,0));
-             add(genePanel, new GridBagConstraints(0,1,1,1,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,10,0), 0,0));
-             add(expPanel, new GridBagConstraints(1,1,1,1,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,10,0), 0,0));                  
+
+            add(filterPanel, new GridBagConstraints(0,0,2,1,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,10,0), 0,0));
+            add(genePanel, new GridBagConstraints(0,1,1,1,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,10,0), 0,0));
+            add(expPanel, new GridBagConstraints(1,1,1,1,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,10,0), 0,0));
+            if(isAffyData) {
+                //affy based Detection and Fold filters
+                ParameterPanel affyPanel = new ParameterPanel("Affimetrix Filtering Options");
+                affyPanel.setLayout(new GridBagLayout());
+                JCheckBox affyDetectionBox = createCheckBox("Detection Filter", "Filters by detection flag.",listener);
+                JCheckBox affyFoldBox = createCheckBox("Fold Filter", "Filters by fold change.",listener);
+                affyPanel.add(affyDetectionBox, new GridBagConstraints(0,0,1,1,0,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(5,0,10,25), 0,0));
+                affyPanel.add(affyFoldBox, new GridBagConstraints(1,0,1,1,0,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(5,25,10,0), 0,0));
+                           
+                add(affyPanel, new GridBagConstraints(0,2,2,1,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,10,0), 0,0));                
+            }
         }
         
+
         private JCheckBox createCheckBox(String label, String toolTip, ActionListener listener) {
             JCheckBox box = new JCheckBox(label);
             box.setBackground(Color.white);
@@ -451,7 +508,7 @@ public class ScriptAlgorithmInitDialog extends AlgorithmDialog {
             bg.add(box);
             return box;
         }
-       
+        
         public void reset() {
             noneBox.setSelected(true);
         }
@@ -460,7 +517,6 @@ public class ScriptAlgorithmInitDialog extends AlgorithmDialog {
         private class AdjustmentBoxListener implements ActionListener {
             public void actionPerformed(ActionEvent ae) {
                 String algorithmName = ae.getActionCommand();
-                System.out.println(algorithmName);
                 currentAlgorithmName = algorithmName;
                 previewPanel.setValues("Adjustment Algorithm", algorithmName);
                 algorithmType = ScriptConstants.ALGORITHM_TYPE_ADJUSTMENT;
@@ -470,11 +526,64 @@ public class ScriptAlgorithmInitDialog extends AlgorithmDialog {
     }
     
     private class NormalizationSelectionPanel extends JPanel {
+        //
         
     }
     
+    /** Supports selection of cluster selection algorithms
+     */    
     private class ClusterSelectionPanel extends JPanel {
+        JRadioButton diversityButton;
+        JRadioButton centroidEntropyButton;
+        JRadioButton noButton;
         
+        public ClusterSelectionPanel() {
+            super();
+            setLayout(new GridBagLayout());
+            ButtonListener listener = new ButtonListener();
+            
+            ParameterPanel panel = new ParameterPanel();
+            panel.setLayout(new GridBagLayout());
+            
+            diversityButton = new JRadioButton("Diversity Ranking Cluster Selection", false);
+            diversityButton.setFocusPainted(false);
+            diversityButton.setOpaque(false);
+            diversityButton.addActionListener(listener);
+
+            centroidEntropyButton = new JRadioButton("Centroid Entropy/Variance Cluster Selection", false);
+            centroidEntropyButton.setFocusPainted(false);
+            centroidEntropyButton.setOpaque(false);            
+            centroidEntropyButton.addActionListener(listener);
+                        
+            noButton = new JRadioButton("hidden", true);
+            ButtonGroup bg = new ButtonGroup();
+            bg.add(diversityButton);
+            bg.add(centroidEntropyButton);
+            bg.add(noButton);
+            
+            panel.add(diversityButton, new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,20,0), 0,0));
+            panel.add(centroidEntropyButton, new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(20,0,0,0), 0,0));
+            add(panel, new GridBagConstraints(0,0,1,1,1,1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));            
+        }
+        
+        public void reset() {
+            noButton.setSelected(true);
+        }
+        
+        // Sets current algorithm
+        private class ButtonListener implements ActionListener {
+            public void actionPerformed(ActionEvent ae) {
+                if(diversityButton.isSelected()) {
+                    previewPanel.setValues("Cluster Selection", "Diversity Ranking Cluster Selection");
+                    algorithmType = ScriptConstants.ALGORITHM_TYPE_CLUSTER_SELECTION;
+                    currentAlgorithmName = "Diversity Ranking Cluster Selection";
+                } else if(centroidEntropyButton.isSelected()) {
+                    previewPanel.setValues("Cluster Selection", "Centroid Entropy Ranking Cluster Selection");
+                    algorithmType = ScriptConstants.ALGORITHM_TYPE_CLUSTER_SELECTION;
+                    currentAlgorithmName = "Centroid Entropy/Variance Ranking Cluster Selection";                    
+                }
+            }
+        }
     }
     
     
@@ -486,7 +595,7 @@ public class ScriptAlgorithmInitDialog extends AlgorithmDialog {
         
         public void actionPerformed(ActionEvent e) {
             Object source = e.getSource();
-            if (source == okButton) {    
+            if (source == okButton) {
                 result = JOptionPane.OK_OPTION;
                 dispose();
             } else if (source == cancelButton) {
@@ -516,33 +625,4 @@ public class ScriptAlgorithmInitDialog extends AlgorithmDialog {
         }
     }
     
-    public static void main(String[] args) {
-        // ScriptAlgorithmInitDialog dlg = new ScriptAlgorithmInitDialog();
-        int index = 19;
-        int x = 1;
-        int y = index;
-        
-        while(true){
-            x++;
-            y = (int)Math.floor(index/x);
-            //y += index%x;
-            //y += (int)Math.ceil(index-(x*y))/x;
-            y += x*y < index ? 1 : 0;//(index-x*y)%x;
-            
-            System.out.println("x= "+x+" y= "+y);
-            if(y<=x)// && x/y < 2)
-                break;
-            
-            
-            
-        }
-        
-        System.out.println("Final x = "+x+" y = "+y);
-        
-        //  dlg.showModal();
-        System.exit(0);
-    }
-    
-    protected void disposeDialog() {
-    }
 }

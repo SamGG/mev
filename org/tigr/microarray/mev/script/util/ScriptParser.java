@@ -1,4 +1,8 @@
 /*
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+All rights reserved.
+*/
+/*
  * ScriptParser.java
  *
  * Created on December 15, 2003, 10:59 PM
