@@ -16,6 +16,7 @@ import java.io.CharArrayWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.Writer;
 
 import java.util.Iterator;
@@ -68,7 +69,7 @@ import org.tigr.microarray.mev.script.event.ScriptEventListener;
  * and maintains core function for DOM creation, modification, and output.
  * @author braisted
  */
-public class DocumentBase extends DefaultHandler {
+public class DocumentBase extends DefaultHandler implements Serializable {
     
     /** Current verson to append
      */
@@ -128,7 +129,7 @@ public class DocumentBase extends DefaultHandler {
      * to be handled correctly.
      */
     private Vector listeners;
-    boolean parsedScript = false;    
+    boolean parsedScript = false;
     
     /** Creates a new instance of DocumentBase
      * @param manager <CODE>ScriptManager</CODE> object.
@@ -216,14 +217,60 @@ public class DocumentBase extends DefaultHandler {
         mevElement.appendChild(analysisElement);
         
         scriptText = new String("");
-        updateScript();        
+        updateScript();
+    }
+    
+    /** Copy constructor
+     * @param base base object to copy
+     */    
+    public DocumentBase(DocumentBase base) {
+        this.manager = base.getManager();
+        this.document = copyDocument(base.getDocument());
+    }
+    
+    
+    /** Constructs a copy of the document passed
+     * @param doc Document to copy
+     * @return
+     */    
+    private Document copyDocument(Document doc) {
+        DOMImplementationImpl impl = new DOMImplementationImpl();
+        DocumentType docType = impl.createDocumentType("TM4ML",null,"../../config/mev_script_dtd.dtd");
+        
+        Document newDoc =  impl.createDocument(null, "TM4ML", docType);
+        copyChildren(doc.getDocumentElement(), newDoc.getDocumentElement(), newDoc);
+        return newDoc;
+    }
+    
+    /** Recursive method to copy document children, used as
+     * a Document copy utility.
+     * @param docElement Document Element to use as source for
+     * children to copy
+     * @param newElement destination element for copied children
+     * @param newDoc New Document to import new nodes.
+     */    
+    private void copyChildren(Node docElement, Node newElement, Document newDoc) {
+        NodeList nodes = docElement.getChildNodes();
+        Node newNode;
+        Node oldNode;
+        
+        for(int i = 0; i < nodes.getLength(); i++) {
+            oldNode = nodes.item(i);
+            // oldElem = (Element)(oldElem.getNextSibling());
+            // newNode = oldNode.cloneNode(true);
+            newNode = newDoc.importNode(oldNode, false);
+            newElement.appendChild(newNode);
+            
+            if(oldNode.hasChildNodes())
+                copyChildren(oldNode, newNode, newDoc);
+        }
     }
     
     
     /** Set the Document object.
      * @param doc source Document
      */
-    public void setDocumnet(Document doc) {
+    public void setDocument(Document doc) {
         document = doc;
         updateScript();
     }
@@ -232,6 +279,13 @@ public class DocumentBase extends DefaultHandler {
      */
     public Document getDocument() {
         return this.document;
+    }
+    
+    
+    /** Returns the <CODE>ScriptManager</CODE> for the script
+     */
+    public ScriptManager getManager() {
+        return this.manager;
     }
     
     /** Sets the date
@@ -390,7 +444,7 @@ public class DocumentBase extends DefaultHandler {
             Element outputNodeElement, dataElement;
             String outputClass;
             if(outputNodes != null){
-  
+                
                 outputNodeElement = document.createElement("output_data");
                 outputClass = data.getParams().getString("output-class");
                 if(outputClass != null)
@@ -714,13 +768,13 @@ public class DocumentBase extends DefaultHandler {
         String name;
         String text;
         StringTokenizer stok;
-        
+         
         switch(node.getNodeType()) {
-            
+         
             case Node.DOCUMENT_NODE:
                 scriptText += ("<?xml version=\"1.0\"?>");
                 scriptText += (lineSeparator);
-                
+         
                 NodeList nodes = node.getChildNodes();
                 if(nodes != null) {
                     for(int i = 0; i < nodes.getLength(); i++) {
@@ -730,7 +784,7 @@ public class DocumentBase extends DefaultHandler {
                 /*
                 Document doc = (Document)node;
                 writeScriptText(doc.getDocumentElement()," ");
-                 **/
+      **/
 /*                break;
             case Node.ELEMENT_NODE:
                 name = node.getNodeName();
@@ -738,19 +792,19 @@ public class DocumentBase extends DefaultHandler {
                 //       scriptText += "<"+name;
                 //    else
                 scriptText += (indentLevel + "<" + name);
-                
+ 
                 //posible attributes
                 NamedNodeMap attrs = node.getAttributes();
                 for(int i = 0; i < attrs.getLength(); i++) {
                     Node attr = attrs.item(i);
                     scriptText += (" "+ attr.getNodeName()+"=\""+attr.getNodeValue()+"\"");
                 }
-                
+ 
                 NodeList children = node.getChildNodes();
                 if(children.getLength() > 0) {
-                    
+ 
                     scriptText += (">");
-                    
+ 
                     if((children.item(0) != null) &&
                     (children.item(0).getNodeType() == Node.ELEMENT_NODE || children.item(0).getNodeType() == Node.COMMENT_NODE)){
                         scriptText += (lineSeparator);
@@ -762,21 +816,21 @@ public class DocumentBase extends DefaultHandler {
                //     (children.item(children.getLength()-1).getNodeType() == Node.ELEMENT_NODE)) {
                         scriptText += (indentLevel);
                     }
-                    
+ 
                     scriptText += ("</" + name + ">");
-                    
+ 
                 } else {
                     scriptText += ("/>");
                 }
-                
+ 
                 scriptText += (lineSeparator);
                 break;
             case Node.TEXT_NODE:
                 // text = node.getNodeValue();
                //  scriptText += indentLevel+text+lineSeparator;
-                
-                
-                
+ 
+ 
+ 
                 String newText = node.getNodeValue();
                 String preText = "";
                 int pt;
@@ -788,21 +842,21 @@ public class DocumentBase extends DefaultHandler {
                       //  preText = newText.substring(0, pt-1);
                         newText = preText;
                     }
-                    
+ 
                 }
-                
-                
+ 
+ 
                 scriptText += newText;
-  
-                
-                
-                
+ 
+ 
+ 
+ 
                 // name = node.getNodeName();
                 //// String text = node.getNodeValue();
                 // scriptText += (indentLevel + "<" + name + ">" + text + "<\\" + name +">");
                 // scriptText += (lineSeparator);
                 break;
-                
+ 
             case Node.COMMENT_NODE:
                 text = node.getNodeValue();
                 scriptText += indentLevel+"<!-- ";
@@ -810,9 +864,9 @@ public class DocumentBase extends DefaultHandler {
                 stok = new StringTokenizer(text, " ");
                 int charCnt = 0;
                 String word;
-                 
+ 
                 while(stok.hasMoreElements()) {
-                 
+ 
                     word = stok.nextToken();
                     if (charCnt < 50){
                         scriptText += word+" ";
@@ -823,9 +877,9 @@ public class DocumentBase extends DefaultHandler {
                         charCnt = 0;
                     }
                 }
-                 */
+ */
      /*           scriptText += text;
-                
+      
                 scriptText += " -->"+lineSeparator+lineSeparator;
                 break;
             case Node.DOCUMENT_TYPE_NODE:
@@ -837,7 +891,7 @@ public class DocumentBase extends DefaultHandler {
                 break;
         }
     }
-    */
+      */
     
     /** Writes node serialized form to the internal text String.
      * @param node node to serialize
@@ -886,7 +940,7 @@ public class DocumentBase extends DefaultHandler {
                     scriptText += (">");
                     
                     if((children.item(0) != null)){// &&
-   //                 (children.item(0).getNodeType() == Node.ELEMENT_NODE || children.item(0).getNodeType() == Node.COMMENT_NODE)){
+                        //                 (children.item(0).getNodeType() == Node.ELEMENT_NODE || children.item(0).getNodeType() == Node.COMMENT_NODE)){
                         scriptText += (lineSeparator);
                     }
                     for(int i = 0; i < children.getLength(); i++){
@@ -894,7 +948,7 @@ public class DocumentBase extends DefaultHandler {
                             writeScriptText(children.item(i), indentLevel + indent);
                     }
                     if((children.item(0) != null) ){// &&
-               //     (children.item(children.getLength()-1).getNodeType() == Node.ELEMENT_NODE)) {
+                        //     (children.item(children.getLength()-1).getNodeType() == Node.ELEMENT_NODE)) {
                         scriptText += (indentLevel);
                     }
                     
@@ -908,7 +962,7 @@ public class DocumentBase extends DefaultHandler {
                 break;
             case Node.TEXT_NODE:
                 // text = node.getNodeValue();
-               //  scriptText += indentLevel+text+lineSeparator;
+                //  scriptText += indentLevel+text+lineSeparator;
                 
                 
                 
@@ -920,7 +974,7 @@ public class DocumentBase extends DefaultHandler {
                     if(pt < newText.length()) {
                         preText = newText.substring(pt);
                         preText +=newText.substring(0, pt-1);
-                      //  preText = newText.substring(0, pt-1);
+                        //  preText = newText.substring(0, pt-1);
                         newText = preText;
                     }
                     
@@ -928,7 +982,7 @@ public class DocumentBase extends DefaultHandler {
                 
                 
                 scriptText += newText;
-  
+                
                 
                 
                 
@@ -971,7 +1025,7 @@ public class DocumentBase extends DefaultHandler {
                 scriptText += lineSeparator;
                 break;
         }
-    }    
+    }
     
     /** Returns the current String representation of the script.
      * @return  */
@@ -1022,7 +1076,7 @@ public class DocumentBase extends DefaultHandler {
         try {
             parser.setFeature("http://xml.org/sax/features/validation", true);
             parser.setErrorHandler(this);
-                        
+            
             parser.parse(inputFile.toURL().toString());
             
         } catch ( Exception e ) {
@@ -1088,10 +1142,10 @@ public class DocumentBase extends DefaultHandler {
         
         progress.setValue(3);
         progress.setDescription("Internal Serialization");
-
+        
         parsedScript = true;
         updateScript();
-
+        
         //Extract name, description and date tags if availible
         progress.setValue(4);
         progress.setDescription("Done");
@@ -1306,15 +1360,15 @@ public class DocumentBase extends DefaultHandler {
                         algSetNode = list.item(i);
                         ref = ((Element)algSetNode).getAttribute("set_id");
                         
-                        for(int j = 0; j < algSetIDs.size(); j++) {                            
+                        for(int j = 0; j < algSetIDs.size(); j++) {
                             if(ref.equals((String)(algSetIDs.elementAt(j))))
                                 setsToRemove.addElement(algSetNode);
                         }
                     }
                     
                     for(int i = 0; i < setsToRemove.size(); i++)
-                        analysisElement.removeChild(((Element)(setsToRemove.elementAt(i))));                    
-
+                        analysisElement.removeChild(((Element)(setsToRemove.elementAt(i))));
+                    
                     parentNode.removeChild(algorithmElement);
                     
                     //Check for more algorithms
@@ -1343,15 +1397,15 @@ public class DocumentBase extends DefaultHandler {
         for(int i = 0; i < dataElements.getLength(); i++) {
             dataElement = ((Element)(dataElements.item(i)));
             indices.addElement(dataElement.getAttribute("data_node_id"));
-        } 
+        }
         
         getDependentDataIDs(indices, 0, analysisElement.getElementsByTagName("alg_set"));
         
         return indices;
     }
-
-
-    /** accumulates data ID's below the passed data id indices 
+    
+    
+    /** accumulates data ID's below the passed data id indices
      */
     private void getDependentDataIDs(Vector indices, int start, NodeList algSets) {
         //exit stategy
@@ -1387,4 +1441,47 @@ public class DocumentBase extends DefaultHandler {
         getDependentDataIDs(indices, initSize, algSets);
     }
     
+    
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.writeObject(tm4ScriptVersion);
+        oos.writeObject(mevScriptVersion);
+        oos.writeObject(manager);
+        oos.writeObject(document);
+        oos.writeObject(scriptText);
+        oos.writeObject(root);
+        oos.writeObject(mevElement);
+        oos.writeObject(this.primaryDataElement);
+        oos.writeObject(this.commentElement);
+        oos.writeObject(this.analysisElement);
+        oos.writeInt(currDataID);
+        oos.writeInt(currAlgSetID);
+        oos.writeObject(lineSeparator);
+        oos.writeObject(indent);
+        oos.writeBoolean(errorLog != null);
+        // if(errorLog != null)
+        //     oos.writeObject(errorLog);
+        oos.writeBoolean(parsedScript);
+    }
+    
+    
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        this.tm4ScriptVersion = (String)ois.readObject();
+        this.mevScriptVersion = (String)ois.readObject();
+        this.manager = (ScriptManager)ois.readObject();
+        this.document = (Document)ois.readObject();
+        this.scriptText = (String)ois.readObject();
+        this.root = (Element)ois.readObject();
+        this.mevElement = (Element)ois.readObject();
+        this.primaryDataElement = (Element)ois.readObject();
+        this.commentElement = (Element)ois.readObject();
+        this.analysisElement = (Element)ois.readObject();
+        this.currDataID = ois.readInt();
+        this.currAlgSetID = ois.readInt();
+        this.lineSeparator = (String)ois.readObject();
+        this.indent = (String)ois.readObject();
+        //  if(ois.readBoolean())
+        //     this.errorLog = (ErrorLog)ois.readObject();
+        this.parsedScript = ois.readBoolean();
+    }
 }

@@ -47,6 +47,7 @@ import org.tigr.microarray.mev.script.scriptGUI.ScriptExperimentCentroidViewer;
 import org.tigr.microarray.mev.script.scriptGUI.ScriptExperimentCentroidsViewer;
 import org.tigr.microarray.mev.script.scriptGUI.ScriptExperimentClusterViewer;
 import org.tigr.microarray.mev.script.scriptGUI.ScriptExperimentViewer;
+import org.tigr.microarray.mev.script.scriptGUI.ScriptTreeViewer;
 
 import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
 
@@ -234,7 +235,7 @@ public class ScriptRunner {
          */        
         public void run() {
             algSets = scriptTree.getAlgorithmSets();
-            DefaultMutableTreeNode currNode, setNode, dataNode, resultNode, scriptNode;
+            DefaultMutableTreeNode currNode, setNode, algSetViewerNode, dataNode, resultNode, scriptNode;
             AlgorithmSet set;
             Experiment experiment;
             boolean haveResult = false;
@@ -259,6 +260,8 @@ public class ScriptRunner {
                         haveResult = true;
                         setNode = new DefaultMutableTreeNode("Algorithm Set");
                         dataNode = new DefaultMutableTreeNode("Input Data");
+                        ScriptTree copyTree = new ScriptTree(scriptTree);
+                        algSetViewerNode = new DefaultMutableTreeNode(new LeafInfo("Script Tree", new ScriptTreeViewer(copyTree, scriptTree.getScriptManager(), set.getDataNode())));
                         
                         inputNode = set.getDataNode();
                         inputAlgNode = (AlgorithmNode)(inputNode.getParent());
@@ -285,6 +288,7 @@ public class ScriptRunner {
                             currNode = new DefaultMutableTreeNode("Number of Genes: 0, null input data");
                             dataNode.add(currNode);
                         }
+                        setNode.add(algSetViewerNode);
                         setNode.add(dataNode);
                         setNode.add(resultNode);                        
                         scriptResultNode.add(setNode);
@@ -296,8 +300,7 @@ public class ScriptRunner {
             //framework.addNode(tree.getAnalysisNode(), scriptResultNode);
             framework.addAnalysisResult(scriptResultNode);
             tree.scrollPathToVisible(new TreePath(((DefaultTreeModel)(tree.getModel())).getPathToRoot(scriptResultNode)));
-        }
-        
+        }        
     }
     
     /** Constructs viewer nodes for input display

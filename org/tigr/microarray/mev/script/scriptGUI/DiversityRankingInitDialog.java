@@ -180,11 +180,11 @@ public class DiversityRankingInitDialog extends AlgorithmDialog {
         return true;
     }
     
- /*   public static void main(String [] args) {
+    public static void main(String [] args) {
         DiversityRankingInitDialog dialog = new DiversityRankingInitDialog(new JFrame());
         dialog.showModal();
     }
- */   
+   
     
     /**
      * The class to listen to the dialog events.

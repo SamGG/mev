@@ -1,4 +1,8 @@
 /*
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+All rights reserved.
+*/
+/*
  * ScriptValueChangeDialog.java
  *
  * Created on March 10, 2004, 11:36 AM

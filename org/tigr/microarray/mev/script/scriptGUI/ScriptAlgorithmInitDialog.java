@@ -550,7 +550,7 @@ public class ScriptAlgorithmInitDialog extends AlgorithmDialog {
             diversityButton.setOpaque(false);
             diversityButton.addActionListener(listener);
 
-            centroidEntropyButton = new JRadioButton("Centroid Entropy/Variance Cluster Selection", false);
+            centroidEntropyButton = new JRadioButton("Centroid Variance or Entropy Cluster Selection", false);
             centroidEntropyButton.setFocusPainted(false);
             centroidEntropyButton.setOpaque(false);            
             centroidEntropyButton.addActionListener(listener);
@@ -561,8 +561,9 @@ public class ScriptAlgorithmInitDialog extends AlgorithmDialog {
             bg.add(centroidEntropyButton);
             bg.add(noButton);
             
-            panel.add(diversityButton, new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,20,0), 0,0));
-            panel.add(centroidEntropyButton, new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(20,0,0,0), 0,0));
+            panel.add(centroidEntropyButton, new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,20,0), 0,0));
+            panel.add(diversityButton, new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(20,0,0,0), 0,0));
+        
             add(panel, new GridBagConstraints(0,0,1,1,1,1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));            
         }
         
