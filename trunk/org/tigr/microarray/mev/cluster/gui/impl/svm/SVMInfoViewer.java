@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMInfoViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-09 17:29:21 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 22:11:50 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -23,7 +23,7 @@ import javax.swing.JTextArea;
 
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
-public class SVMInfoViewer extends ViewerAdapter {
+public class SVMInfoViewer extends ViewerAdapter implements java.io.Serializable {
     
     private JComponent header;
     private JTextArea  content;

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMCentroidsViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 17:07:43 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 22:10:55 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -30,7 +30,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidsViewer;
 
-public class PTMCentroidsViewer extends PTMSubCentroidsViewer {
+public class PTMCentroidsViewer extends CentroidsViewer { //PTMSubCentroidsViewer {
     
     private static final String SAVE_ALL_CLUSTERS_CMD = "save-all-clusters-cmd";        
     private static final String SET_Y_TO_EXPERIMENT_MAX_CMD = "set-y-to-exp-max-cmd";
@@ -41,20 +41,35 @@ public class PTMCentroidsViewer extends PTMSubCentroidsViewer {
     private JMenuItem setClusterMaxMenuItem;
     private String[] auxTitles;
     private Object[][] auxData;    
-    //private Vector templateVector;
-    
+
     /**
      * Constructs a <code>PTMCentroidsViewer</code> for specified experiment
      * and clusters.
      */
     public PTMCentroidsViewer(Experiment experiment, int[][] clusters, Vector templateVector, String[] auxTitles, Object[][] auxData) {
-	super(experiment, clusters, templateVector);
+	super(experiment, clusters);
         this.auxTitles = auxTitles;
         this.auxData = auxData;       
 	Listener listener = new Listener();
 	this.popup = createJPopupMenu(listener);
 	getContentComponent().addMouseListener(listener);
     }
+    
+    
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.writeObject(this.auxData);
+        oos.writeObject(this.auxTitles);
+    }    
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {        
+        this.auxData = (Object [][])ois.readObject();
+        this.auxTitles = (String [])ois.readObject();
+            
+        Listener listener = new Listener();
+	this.popup = createJPopupMenu(listener);
+	getContentComponent().addMouseListener(listener);
+    }
+    
     
     /**
      * Creates a popup menu.

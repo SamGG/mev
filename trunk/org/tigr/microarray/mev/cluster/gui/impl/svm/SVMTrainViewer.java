@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMTrainViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-09 17:29:21 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 22:11:50 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -54,7 +54,7 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileFilter;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
 
-public class SVMTrainViewer extends SVMResultViewer {
+public class SVMTrainViewer extends SVMResultViewer implements java.io.Serializable {
     private float[] weights;
     private IData experiment;
     private Experiment analysisExperiment;
@@ -76,6 +76,33 @@ public class SVMTrainViewer extends SVMResultViewer {
         displayData();
         this.add(resultPanel,new GridBagConstraints(0,1,1,1,1.0,1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
     }
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        this.analysisExperiment = (Experiment)ois.readObject();
+        this.weights = (float [])ois.readObject();
+        this.classifyGenes = ois.readBoolean();
+        this.data = (SVMData)ois.readObject();
+        this.info = (GeneralInfo)ois.readObject();
+        
+        MyListener listener = new MyListener();
+        getContentComponent().addMouseListener(listener);
+    }
+    
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { 
+        oos.writeObject(this.analysisExperiment);
+        oos.writeObject(this.weights);
+        oos.writeBoolean(this.classifyGenes);
+        oos.writeObject(this.data);
+        oos.writeObject(this.info);
+    }
+    
+    
+    public void onSelected(IFramework frm) {
+        this.framework = frm;
+        this.experiment = frm.getData();
+        onMenuChanged(frm.getDisplayMenu());
+    }
+    
     
     /**
      * Displays train result.

@@ -42,7 +42,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
  *
  * @author  nbhagaba
  */
-public class PTMExpStatsTableViewer extends ViewerAdapter {
+public class PTMExpStatsTableViewer extends ViewerAdapter implements java.io.Serializable {
     
     private JComponent header;
     private JComponent content;
@@ -50,8 +50,7 @@ public class PTMExpStatsTableViewer extends ViewerAdapter {
     private int[][] expClusters;
     private boolean sig;
     private int[] cols;
-    //private String[] fieldNames;    
-    
+ 
     private JTable pAndRValuesTable;
     private PAndRValuesTableModel pAndRModel;   
     private String[] auxTitles;
@@ -60,14 +59,13 @@ public class PTMExpStatsTableViewer extends ViewerAdapter {
     private IData data;
     private JPopupMenu popup;    
     private Object[][] origData;
-    private boolean sortedAscending[];//, sortedDescending;     
+    private boolean sortedAscending[];   
     
     /** Creates a new instance of PTMExpStatsTableViewer */
     public PTMExpStatsTableViewer(Experiment experiment, int[][] expClusters, IData data,  String[] auxTitles, Object[][] auxData, boolean sig) {
         this.experiment = experiment;
         this.expClusters = expClusters;
-        this.data = data;
-        //this.fieldNames = data.getFieldNames();     
+        this.data = data;  
         this.auxTitles = auxTitles;
         this.auxData = auxData;
         this.sig = sig;
@@ -100,6 +98,41 @@ public class PTMExpStatsTableViewer extends ViewerAdapter {
         //content = createContent();
         setMaxWidth(getContentComponent(), getHeaderComponent());          
     }
+    
+   private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.writeObject(this.experiment);
+        oos.writeObject(this.expClusters);
+
+        oos.writeObject(this.auxData);
+        oos.writeObject(this.auxTitles);
+
+        oos.writeObject(this.cols);
+        oos.writeObject(this.pAndRModel);        
+        oos.writeObject(this.origData);
+        oos.writeObject(this.pAndRValuesTable);
+        oos.writeObject(this.header);
+        oos.writeObject(this.sortedAscending);
+        oos.writeBoolean(this.sig);
+      }
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        this.experiment = (Experiment)ois.readObject();
+        this.expClusters = (int [][])ois.readObject();
+
+        this.auxData = (Object [][])ois.readObject();
+        this.auxTitles = (String [])ois.readObject();
+        
+        this.cols = (int [])ois.readObject();
+        this.pAndRModel = (PAndRValuesTableModel)ois.readObject();
+        this.origData = (Object [][])ois.readObject();
+        this.pAndRValuesTable = (JTable)ois.readObject();
+        this.header = (JComponent)ois.readObject();
+        this.sortedAscending = (boolean [])ois.readObject();
+        this.sig = ois.readBoolean();
+        
+        addMouseListenerToHeaderInTable(this.pAndRValuesTable);
+        this.header = header  = this.pAndRValuesTable.getTableHeader();
+    }      
     
     /**
      * Returns component to be inserted into the framework scroll pane.

@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: TtestCentroidViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-01-13 17:32:03 $
- * $Author: nbhagaba $
+ * $Revision: 1.4 $
+ * $Date: 2004-02-05 22:10:23 $
+ * $Author: braisted $
  * $State: Exp $
  */
 
@@ -67,6 +67,18 @@ public class TtestCentroidViewer extends CentroidViewer {
         this.sdB =sdB;
         getContentComponent().addMouseListener(listener);
     }
+
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.defaultWriteObject();
+    }
+    
+     private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        Listener listener = new Listener();
+        this.popup = createJPopupMenu(listener);
+        getContentComponent().addMouseListener(listener);
+     }
+ 
     
     /**
      * Creates a popup menu.
@@ -169,7 +181,7 @@ public class TtestCentroidViewer extends CentroidViewer {
         } else if (tTestDesign == TtestInitDialog.ONE_CLASS) {
             out.print("Gene mean\t");
             out.print("Gene std.dev.\t");
-            out.print("Absolute t value");
+            out.print("t value");
         }
         //out.print("\t");
         

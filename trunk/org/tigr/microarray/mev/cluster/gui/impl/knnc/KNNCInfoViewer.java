@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: KNNCInfoViewer.java,v $
- * $Revision: 1.1 $
- * $Date: 2003-12-08 17:51:09 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-05 22:18:01 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -24,7 +24,7 @@ import javax.swing.JTextArea;
 
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
-public class KNNCInfoViewer extends ViewerAdapter {
+public class KNNCInfoViewer extends ViewerAdapter implements java.io.Serializable {
     
     private JComponent header;
     private JTextArea  content;

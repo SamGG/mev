@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMGUI.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 17:07:43 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 22:10:56 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -496,7 +496,7 @@ public class PTMGUI implements IClusterGUI {
     }
     
     private void addStatsTables(DefaultMutableTreeNode root) {
-        DefaultMutableTreeNode tablesNode = new DefaultMutableTreeNode("R and p-value tables");
+        DefaultMutableTreeNode tablesNode = new DefaultMutableTreeNode("R and p-value Tables");
         if (clusterGenes) {
             IViewer sigTableViewer = new PTMGeneStatsTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData, true);
             IViewer nonSigTableViewer = new PTMGeneStatsTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData, false);

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMExperimentClusterViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 17:07:43 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 22:10:56 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -54,11 +54,27 @@ public class PTMExperimentClusterViewer extends ExperimentClusterViewer {
     /**
      * Creates a popup menu.
      */
-    private JPopupMenu createJPopupMenu(Listener listener) {
+    private JPopupMenu createJPopupMenu(Listener listener) {                
 	JPopupMenu popup = new JPopupMenu();
 	addMenuItems(popup, listener);
 	return popup;
     }
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        this.auxData = (Object [][])ois.readObject();
+        this.auxTitles = (String [])ois.readObject();
+        
+        Listener listener = new Listener();
+        this.popup = createJPopupMenu(listener);
+        getContentComponent().addMouseListener(listener);
+        getHeaderComponent().addMouseListener(listener);
+    }
+    
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.writeObject(this.auxData);
+        oos.writeObject(this.auxTitles);
+    }
+
     
     
     /**
@@ -81,10 +97,9 @@ public class PTMExperimentClusterViewer extends ExperimentClusterViewer {
     private void onSaveCluster() {
 	Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
 	try {
-	    //saveCluster(frame);
             ExperimentUtil.saveExperimentClusterWithAux(frame, getExperiment(), getData(), getCluster(), auxTitles, auxData);            
 	} catch (Exception e) {
-	    JOptionPane.showMessageDialog(frame, "Can not save cluster!", e.toString(), JOptionPane.ERROR_MESSAGE);
+	    JOptionPane.showMessageDialog(frame, "Can not save cluster.", e.toString(), JOptionPane.ERROR_MESSAGE);
 	    e.printStackTrace();
 	}
     }

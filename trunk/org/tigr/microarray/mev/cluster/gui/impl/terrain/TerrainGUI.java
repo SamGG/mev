@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: TerrainGUI.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-05 22:14:39 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -104,7 +104,7 @@ public class TerrainGUI implements IClusterGUI {
         float[][] weights = convert2float(cluster);
         AlgorithmParameters params = result.getParams();
         float sigma = params.getFloat("sigma");
-        TerrainViewer viewer = new TerrainViewer(gi.isGenes, framework, clusters, weights, locations.A, sigma);
+        SerializedTerrainViewer viewer = new SerializedTerrainViewer(gi.isGenes, framework, clusters, weights, locations.A, sigma);
         root.add(new DefaultMutableTreeNode(new LeafInfo("Map", viewer)));
     }
 

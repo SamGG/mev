@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SVMOneOutViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-09 17:29:21 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 22:11:50 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -58,7 +58,7 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileFilter;
 
-public class SVMOneOutViewer extends SVMResultViewer {
+public class SVMOneOutViewer extends SVMResultViewer implements java.io.Serializable{
     // calculation results
     private IData  experiment;
     private FloatMatrix discriminant;
@@ -96,6 +96,50 @@ public class SVMOneOutViewer extends SVMResultViewer {
         displayData();
         this.add(resultPanel,new GridBagConstraints(0,1,1,1,1.0,1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
     }
+    
+
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        
+        this.discr = (float [])ois.readObject();
+        this.classes = (float [])ois.readObject();
+        
+        this.initClasses = (int [])ois.readObject();
+        this.classMatch = (float [])ois.readObject();
+        this.elementScores = (int [])ois.readObject();
+        this.iterationScores = (int [])ois.readObject();
+        this.nonNeuts = ois.readInt();
+        
+        this.classifyGenes = ois.readBoolean();
+        this.data = (SVMData)ois.readObject();
+        this.info = (GeneralInfo)ois.readObject();
+        
+        MyListener listener = new MyListener();
+        getContentComponent().addMouseListener(listener);
+    }
+    
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { 
+        oos.writeObject(this.discr);
+        oos.writeObject(this.classes);
+        
+        oos.writeObject(this.initClasses);
+        oos.writeObject(this.classMatch);
+        oos.writeObject(this.elementScores);
+        oos.writeObject(this.iterationScores);
+        oos.writeInt(this.nonNeuts);
+        
+        oos.writeBoolean(this.classifyGenes);
+        oos.writeObject(this.data);
+        oos.writeObject(this.info);
+    }    
+
+    
+    
+    public void onSelected(IFramework frm) {
+        this.framework = frm;
+        this.experiment = frm.getData();
+        onMenuChanged(frm.getDisplayMenu());
+    }    
     
     /**
      * Displays data.
