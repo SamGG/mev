@@ -1,12 +1,12 @@
 /*
 Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
 All rights reserved.
-*/
+ */
 /*
  * $RCSfile: SOTAGUI.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-04-29 17:52:17 $
- * $Author: nbhagaba $
+ * $Revision: 1.4 $
+ * $Date: 2004-05-06 15:32:06 $
+ * $Author: braisted $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.sota;
@@ -25,6 +25,7 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 
 import org.tigr.microarray.mev.cluster.Node;
@@ -54,10 +55,10 @@ import org.tigr.microarray.mev.cluster.gui.impl.kmc.KMCInfoViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.kmc.KMCCentroidsViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.kmc.KMCExperimentViewer;
 
-//import org.tigr.microarray.mev.cluster.gui.impl.sota.SOTAViewer;
+import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
 
 
-public class SOTAGUI implements IClusterGUI {
+public class SOTAGUI implements IClusterGUI, IScriptGUI {
     
     private Algorithm algorithm;
     private IData frameData;
@@ -144,7 +145,7 @@ public class SOTAGUI implements IClusterGUI {
             maxEpochsPerCycle = sota_dialog.getInt("maxEpochsPerCycle");
             epochStopCriteria = sota_dialog.getFloat("epochStopCriteria");
             
-
+            
             migFactor_w = sota_dialog.getFloat("migFactor_w");
             migFactor_p = sota_dialog.getFloat("migFactor_p");
             migFactor_s = sota_dialog.getFloat("migFactor_s");
@@ -330,6 +331,271 @@ public class SOTAGUI implements IClusterGUI {
         }
     }
     
+    
+    
+    
+    /*
+     * Scripting Support
+     */
+    public AlgorithmData getScriptParameters(IFramework framework) {
+        int maxCycles = 10;
+        int maxEpochsPerCycle = 1000;
+        float epochStopCriteria = (float)0.0001;
+        float maxTreeDiv  = (float) 0.01;
+        float migFactor_w = (float)0.01;
+        float migFactor_p = (float)0.005;
+        float migFactor_s = (float)0.001;
+        int neighborhoodLevel = 5;
+        float pValue = (float)0.05;
+        boolean useVariance;
+        boolean runToMaxCycles;
+        boolean setMaxClusterDiv;
+        float maxClusterDiv;
+        
+        boolean calcClusterHCL;
+        boolean calcFullTreeSampleHCL;
+        
+        frameData = framework.getData();
+        
+        menu = framework.getDistanceMenu();
+        int function = menu.getDistanceFunction();
+        int distFactor = 1;
+        
+        if ((function==Algorithm.PEARSON)           ||
+        (function==Algorithm.PEARSONUNCENTERED) ||
+        (function==Algorithm.PEARSONSQARED)     ||
+        (function==Algorithm.COSINE)            ||
+        (function==Algorithm.COVARIANCE)        ||
+        (function==Algorithm.DOTPRODUCT)        ||
+        (function==Algorithm.SPEARMANRANK)      ||
+        (function==Algorithm.KENDALLSTAU)) {
+            distFactor = -1;
+        } else {
+            distFactor = 1;
+        }
+        SOTAInitDialog sota_dialog = new SOTAInitDialog(framework.getFrame(), distFactor);
+        
+        if (sota_dialog.showModal() != JOptionPane.OK_OPTION) {
+            return null;
+        }
+        
+        try{
+            clusterGenes = sota_dialog.getBoolean("clusterGenes");
+            maxCycles = sota_dialog.getInt("maxCycles");
+            maxEpochsPerCycle = sota_dialog.getInt("maxEpochsPerCycle");
+            epochStopCriteria = sota_dialog.getFloat("epochStopCriteria");
+            
+            
+            migFactor_w = sota_dialog.getFloat("migFactor_w");
+            migFactor_p = sota_dialog.getFloat("migFactor_p");
+            migFactor_s = sota_dialog.getFloat("migFactor_s");
+            neighborhoodLevel = sota_dialog.getInt("neighborhood-level");
+            useVariance = sota_dialog.getBoolean("useVariance");
+            if(useVariance)
+                pValue = sota_dialog.getFloat("pValue");
+            else
+                maxTreeDiv = sota_dialog.getFloat("maxTreeDiv");
+            runToMaxCycles = sota_dialog.getBoolean("runToMaxCycles");
+            setMaxClusterDiv = sota_dialog.getBoolean("setMaxClusterDiv");
+            maxClusterDiv = sota_dialog.getFloat("maxClusterDiv");
+            calcFullTreeSampleHCL = false;
+            calcClusterHCL = sota_dialog.getBoolean("calcClusterHCL");
+            
+            if(migFactor_w <=0 || migFactor_w <=0 || migFactor_w <=0 ){
+                JOptionPane.showMessageDialog(framework.getFrame(), "Migration weights should be > 0", "Error", JOptionPane.ERROR_MESSAGE);
+                return null;
+            }
+            
+            if(pValue <= 0){
+                JOptionPane.showMessageDialog(framework.getFrame(), "p-value should be > 0", "Error", JOptionPane.ERROR_MESSAGE);
+                return null;
+            }
+            
+            
+        } catch (NumberFormatException e){
+            JOptionPane.showMessageDialog(framework.getFrame(), "Invalid input parameters!", "Error", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+        
+        if (maxCycles < 1) {
+            JOptionPane.showMessageDialog(framework.getFrame(), "Number of cycles (number of clusters) must be greater than 0!", "Error", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+        if (maxEpochsPerCycle < 1) {
+            JOptionPane.showMessageDialog(framework.getFrame(), "Number of epochs per cycle must be greater than 0!", "Error", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+        
+        // hcl init
+        int hcl_method = 0;
+        boolean hcl_samples = false;
+        boolean hcl_genes = false;
+        
+        if (calcClusterHCL || calcFullTreeSampleHCL) {
+            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame());
+            if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
+                return null;
+            }
+            hcl_method = hcl_dialog.getMethod();
+            hcl_samples = hcl_dialog.isClusterExperience();
+            hcl_genes = hcl_dialog.isClusterGenes();
+        }
+        
+        this.experiment = framework.getData().getExperiment();
+        Listener listener = new Listener();
+        
+        try {
+            algorithm = framework.getAlgorithmFactory().getAlgorithm("SOTA");
+            algorithm.addAlgorithmListener(listener);
+            
+            data = new AlgorithmData();
+            
+            data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
+            
+            if (function == Algorithm.DEFAULT) {
+                function = Algorithm.EUCLIDEAN;
+            }
+            
+            data.addParam("distance-function", String.valueOf(function));
+            data.addParam("sota-cluster-genes", String.valueOf(clusterGenes));
+            data.addParam("max-number-of-cycles", String.valueOf(maxCycles));
+            data.addParam("max-epochs-per-cycle", String.valueOf(maxEpochsPerCycle));
+            data.addParam("epoch-improvement-cutoff", String.valueOf(epochStopCriteria));
+            data.addParam("end-training-diversity", String.valueOf(maxTreeDiv));
+            data.addParam("use-cluster-variance", String.valueOf(useVariance));
+            data.addParam("pValue", String.valueOf(pValue));
+            data.addParam("mig_w", String.valueOf(migFactor_w));
+            data.addParam("mig_p", String.valueOf(migFactor_p));
+            data.addParam("mig_s", String.valueOf(migFactor_s));
+            data.addParam("neighborhood-level", String.valueOf(neighborhoodLevel));
+            data.addParam("run-to-max-cycles", String.valueOf(runToMaxCycles));
+            data.addParam("set-max-cluster-div", String.valueOf(setMaxClusterDiv));
+            data.addParam("maxClusterDiv", String.valueOf(maxClusterDiv));
+            data.addParam("calc-full-tree-hcl", String.valueOf(calcFullTreeSampleHCL));
+            data.addParam("calc-cluster-hcl", String.valueOf(calcClusterHCL));
+            
+            // hcl parameters
+            if (calcClusterHCL || calcFullTreeSampleHCL) {
+                data.addParam("calcClusterHCL", String.valueOf(calcClusterHCL));
+                data.addParam("calcFullTreeHCL", String.valueOf(calcFullTreeSampleHCL));
+                data.addParam("method-linkage", String.valueOf(hcl_method));
+                data.addParam("calculate-genes", String.valueOf(hcl_genes));
+                data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+            }
+            
+            // alg name
+            data.addParam("name", "SOTA");
+            
+            // alg type
+            data.addParam("alg-type", "cluster");
+            
+            // output class
+            data.addParam("output-class", "multi-cluster-output");
+            
+            //output nodes
+            String [] outputNodes = new String[1];
+            outputNodes[0] = "Multi-cluster";
+            data.addStringArray("output-nodes", outputNodes);
+            
+        } catch (Exception e) {  }
+        return data;
+    }
+    
+    
+    public DefaultMutableTreeNode executeScript(IFramework framework, AlgorithmData algData, Experiment experiment) throws AlgorithmException {
+        this.experiment = experiment;
+        Listener listener = new Listener();
+        
+        try {
+            algorithm = framework.getAlgorithmFactory().getAlgorithm("SOTA");
+            algorithm.addAlgorithmListener(listener);
+            algData.addMatrix("experiment", experiment.getMatrix());
+            
+            this.progress = new Progress(framework.getFrame(), "Calculating clusters", listener);
+            this.progress.show();
+            
+            long start = System.currentTimeMillis();
+            result = algorithm.execute(algData);
+            long time = System.currentTimeMillis() - start;
+            // getting the results
+            Cluster result_cluster = result.getCluster("cluster");
+            Cluster hcl_clusters = result.getCluster("hcl-result-clusters");
+            Cluster hcl_sample_tree = result.getCluster("full-tree-sample-HCL");
+            
+            NodeList nodeList = result_cluster.getNodeList();
+            k = nodeList.getSize();
+            this.clusters = new int[k][];
+            
+            for (int i=0; i<k; i++) {
+                clusters[i] = nodeList.getNode(i).getProbesIndexes();
+            }
+            
+            means = result.getMatrix("centroid-matrix");
+            variances = result.getMatrix("cluster-variances");
+            
+            
+            //gather parameters
+            GeneralInfo info = new GeneralInfo();
+            
+            //results
+            info.iterations = result.getParams().getInt("cycles")-1;
+            info.clusters = info.iterations + 1;
+            info.time = time;
+            
+            AlgorithmParameters params = algData.getParams();
+            
+            //menu param
+            info.function = framework.getDistanceMenu().getFunctionName(params.getInt("distance-function"));
+            
+            //Growth Term Crit.
+            info.maxCycles = params.getInt("max-number-of-cycles");
+            info.maxEpochsPerCycle = params.getInt("max-epochs-per-cycle");
+            info.diversityCutoff = params.getFloat("end-training-diversity");
+            info.epochStopCriteria = params.getFloat("epoch-improvement-cutoff");
+            info.runToMaxCycles = params.getBoolean("run-to-max-cycles");
+            
+            //Cell Migration/Neighborhood Parmeters
+            info.migW = params.getFloat("mig_w");
+            info.migP = params.getFloat("mig_p");
+            info.migS = params.getFloat("mig_s");
+            info.neighborhoodLevel = params.getInt("neighborhood-level");
+            
+            //Cell Division Criteria
+            info.useCellDiversity = !params.getBoolean("use-cluster-variance");
+            info.useCellVariability = params.getBoolean("use-cluster-variance");
+            if(info.useCellVariability){
+                info.pValue = params.getFloat("pValue");
+                info.computedVarCutoff = result.getParams().getFloat("computed-var-cutoff");
+            }
+            
+            //HCL Options
+            info.hcl_on_clusters = params.getBoolean("calc-cluster-hcl");
+            info.hcl_on_samples_on_all_genes = params.getBoolean("calc-full-tree-hcl");
+            info.hcl_genes_in_clusters = params.getBoolean("calculate_genes");
+            info.hcl_samples_in_clusters = params.getBoolean("calculate-experiments");
+            info.hcl = (info.hcl_on_clusters || info.hcl_on_samples_on_all_genes);
+            info.hcl_method = params.getInt("method-linkage");
+            
+            loadSotaTreeData();
+            
+            //return createResultTree(sota, result, result_cluster, hcl_clusters, hcl_sample_tree, info);
+            return createResultTree(hcl_clusters, hcl_sample_tree, info);
+            
+        } finally {
+            if (algorithm != null) {
+                algorithm.removeAlgorithmListener(listener);
+            }
+            if (progress != null) {
+                progress.dispose();
+            }
+            /*if (monitor != null) {  NOT USING MONITOR
+                monitor.dispose();
+            }
+             */
+        }
+    }
+    
+    
     /**
      * Loads SOTATreeData result data structure
      */
@@ -390,18 +656,18 @@ public class SOTAGUI implements IClusterGUI {
     
     private void addTableViews(DefaultMutableTreeNode root) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table views");
-        IViewer tabViewer;  
+        IViewer tabViewer;
         if (clusterGenes)
             tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.frameData);
         else
             tabViewer = new ExperimentClusterTableViewer(this.experiment, this.clusters, this.frameData);
-            //return; //placeholder for ExptClusterTableViewer
+        //return; //placeholder for ExptClusterTableViewer
         
         for (int i=0; i<this.clusters.length; i++) {
             node.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+String.valueOf(i+1), tabViewer, new Integer(i))));
         }
         root.add(node);
-        //return node;        
+        //return node;
     }
     
     private SOTAGeneTreeViewer addSotaGeneViewer(DefaultMutableTreeNode root, Cluster hcl_sample_tree){

@@ -1,12 +1,12 @@
 /*
 Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
 All rights reserved.
-*/
+ */
 /*
  * $RCSfile: CASTGUI.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-04-29 18:51:41 $
- * $Author: nbhagaba $
+ * $Revision: 1.4 $
+ * $Date: 2004-05-06 15:33:33 $
+ * $Author: braisted $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.cast;
@@ -56,7 +56,10 @@ import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
 
-public class CASTGUI implements IClusterGUI {
+import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
+
+
+public class CASTGUI implements IClusterGUI, IScriptGUI {
     
     private Algorithm algorithm;
     
@@ -198,6 +201,159 @@ public class CASTGUI implements IClusterGUI {
         }
     }
     
+    
+        /*
+         * Scripting methods
+         */
+    
+    public AlgorithmData getScriptParameters(IFramework framework) {
+        this.data = framework.getData();
+        // the default values
+        float threshold = 0.5f;
+        boolean modal = true; //I SET MODAL TO TRUE TO CALL THE HJC DIALOG BOX, HOPE THIS IS OK
+        
+        CASTInitDialog cast_dialog = new CASTInitDialog((JFrame) framework.getFrame(), modal);
+        cast_dialog.setVisible(true);
+        
+        if (! cast_dialog.isOkPressed()) return null;
+        
+        clusterGenes = cast_dialog.isClusterGenes();
+        threshold = Float.parseFloat(cast_dialog.thresholdTextField.getText());
+        boolean isHierarchicalTree = cast_dialog.isHCLSelected();
+        // hcl init
+        int hcl_method = 0;
+        boolean hcl_samples = false;
+        boolean hcl_genes = false;
+        if (isHierarchicalTree) {
+            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame());
+            if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
+                return null;
+            }
+            hcl_method = hcl_dialog.getMethod();
+            hcl_samples = hcl_dialog.isClusterExperience();
+            hcl_genes = hcl_dialog.isClusterGenes();
+        }
+        
+        AlgorithmData data = new AlgorithmData();
+        data.addParam("cast-cluster-genes", String.valueOf(clusterGenes));
+        data.addParam("distance-factor", String.valueOf(1.0f));
+        data.addParam("threshold", String.valueOf(threshold));
+        IDistanceMenu menu = framework.getDistanceMenu();
+        data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
+        int function = menu.getDistanceFunction();
+        int usedFunction = Algorithm.EUCLIDEAN;
+        if (function == Algorithm.DEFAULT) {
+            function = Algorithm.EUCLIDEAN;
+        }
+        data.addParam("distance-function", String.valueOf(function));
+        // hcl parameters
+        if (isHierarchicalTree) {
+            data.addParam("hierarchical-tree", String.valueOf(true));
+            data.addParam("method-linkage", String.valueOf(hcl_method));
+            data.addParam("calculate-genes", String.valueOf(hcl_genes));
+            data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+        }
+        //script control parameters
+        
+        // alg name
+        data.addParam("name", "CAST");
+        
+        // alg type
+        data.addParam("alg-type", "cluster");
+        
+        // output class
+        data.addParam("output-class", "multi-cluster-output");
+        
+        //output nodes
+        String [] outputNodes = new String[1];
+        outputNodes[0] = "Multi-cluster";
+        data.addStringArray("output-nodes", outputNodes);
+        
+        return data;
+    }
+    
+    
+    public DefaultMutableTreeNode executeScript(IFramework framework, AlgorithmData algData, Experiment experiment) throws AlgorithmException {
+        
+        this.experiment = experiment;
+        this.data = framework.getData();
+        Listener listener = new Listener();
+        try {
+            algorithm = framework.getAlgorithmFactory().getAlgorithm("CAST");
+            algorithm.addAlgorithmListener(listener);
+            
+            FloatMatrix matrix = experiment.getMatrix();
+            
+            if(!algData.getParams().getBoolean("cast-cluster-genes")) {
+                this.clusterGenes = false;
+                matrix = matrix.transpose();
+            } else {
+                this.clusterGenes = true;
+            }
+            
+            algData.addMatrix("experiment", matrix);
+            
+            long start = System.currentTimeMillis();
+            AlgorithmData result = algorithm.execute(algData);
+            long time = System.currentTimeMillis() - start;
+            // getting the results
+            Cluster result_cluster = result.getCluster("cluster");
+            NodeList nodeList = result_cluster.getNodeList();
+            
+            AlgorithmParameters resultMap = result.getParams();
+            k = resultMap.getInt("number-of-clusters"); // I USED THIS TO GET THE VALUE OF NUMBER-OF-CLUSTERS
+            
+            this.clusters = new int[k][];
+            for (int i=0; i<k; i++) {
+                clusters[i] = nodeList.getNode(i).getFeaturesIndexes();
+            }
+            
+            this.means = result.getMatrix("clusters_means");
+            this.variances = result.getMatrix("clusters_variances");
+            
+            AlgorithmParameters params = algData.getParams();
+            int function = params.getInt("distance-function");
+            
+            GeneralInfo info = new GeneralInfo();
+            info.clusters = k;
+            info.time = time;
+            info.threshold = params.getFloat("threshold");
+            info.isAbsolute = params.getBoolean("distance-absolute");
+            int usedFunction = Algorithm.EUCLIDEAN;
+            if((function == Algorithm.DEFAULT)||(function == Algorithm.COSINE)
+            ||(function == Algorithm.COVARIANCE)||(function == Algorithm.EUCLIDEAN)
+            ||(function == Algorithm.DOTPRODUCT)||(function == Algorithm.MANHATTAN)
+            ||(function == Algorithm.SPEARMANRANK)||(function == Algorithm.KENDALLSTAU)
+            ||(function == Algorithm.MUTUALINFORMATION)){
+                // ONLY EUCLIDEAN OR PEARSON IS USED IN THE CALCULATION!!!!
+                usedFunction = Algorithm.EUCLIDEAN;
+            }
+            else if((function == Algorithm.PEARSON)||(function == Algorithm.PEARSONUNCENTERED)
+            ||(function == Algorithm.PEARSONSQARED)) {
+                
+                usedFunction = Algorithm.PEARSON;
+            }
+            
+            info.function = framework.getDistanceMenu().getFunctionName(usedFunction);
+            
+            info.hcl = params.getBoolean("hierarchical-tree");
+            info.hcl_genes = params.getBoolean("calculate-genes");
+            info.hcl_samples = params.getBoolean("calculate-samples");
+            if(info.hcl)
+                info.hcl_method = params.getInt("method-linkage");
+            else
+                info.hcl_method = 0;
+            
+            return createResultTree(result_cluster, info);
+            
+        } finally {
+            if (algorithm != null) {
+                algorithm.removeAlgorithmListener(listener);
+            }
+        }
+    }
+    
+    
     /**
      * Returns a hcl tree data from the specified cluster node.
      */
@@ -228,28 +384,28 @@ public class CASTGUI implements IClusterGUI {
      */
     private void addResultNodes(DefaultMutableTreeNode root, Cluster result_cluster, GeneralInfo info) {
         addExpressionImages(root);
-        addHierarchicalTrees(root, result_cluster, info);        
+        addHierarchicalTrees(root, result_cluster, info);
         addCentroidViews(root);
         addTableViews(root);
         addClusterInfo(root);
         addGeneralInfo(root, info);
     }
     
-     private void addTableViews(DefaultMutableTreeNode root) {
+    private void addTableViews(DefaultMutableTreeNode root) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table views");
         IViewer tabViewer;
         if(clusterGenes)
             tabViewer= new ClusterTableViewer(this.experiment, this.clusters, this.data);
         else
             tabViewer= new ExperimentClusterTableViewer(this.experiment, this.clusters, this.data);
-            //return; // placeholder for ExptClusterTableViewer
-            //expViewer = new CASTExperimentClusterViewer(this.experiment, this.clusters);
+        //return; // placeholder for ExptClusterTableViewer
+        //expViewer = new CASTExperimentClusterViewer(this.experiment, this.clusters);
         
         for (int i=0; i<this.clusters.length; i++) {
             node.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+String.valueOf(i+1), tabViewer, new Integer(i))));
         }
         root.add(node);
-    }   
+    }
     
     /**
      * Adds nodes to display clusters data.
