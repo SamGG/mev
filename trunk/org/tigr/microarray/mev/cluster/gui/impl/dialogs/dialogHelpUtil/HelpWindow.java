@@ -296,7 +296,11 @@ public class HelpWindow extends JDialog {
         if(key.equals("Script Value Editor Dialog"))
             return "script_value_editor_dialog.html"; 
         if(key.equals("Script Error Log"))
-            return "script_error_log.html";           
+            return "script_error_log.html";          
+        if(key.equals("Diversity Ranking Cluster Selection"))
+            return "diversity_ranking_cluster_sel_dialog.html";
+        if(key.equals("Centroid Variance/Entropy Ranking Cluster Selection"))
+            return "centroid_entropy_variance_sel_dialog.html";
         else
             return null;
     }
