@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SVMGUI.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-05-26 13:51:25 $
+ * $Revision: 1.4 $
+ * $Date: 2004-06-24 17:32:24 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -724,7 +724,7 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
         if(this.data.calculateHCL) {
             this.data.calcSampleHCL = params.getBoolean("calculate-samples-hcl");
             this.data.calcGeneHCL = params.getBoolean("calculate-genes-hcl");
-            this.data.hclMethod = params.getInt("method-linkage");
+            this.data.hclMethod = params.getInt("linkage-method");
         }
         this.data.distanceFunction = params.getInt("distance-function");
     }
