@@ -35,7 +35,7 @@ import org.tigr.util.QSort;
  *
  * @author  nbhagaba
  */
-public class ClusterTableViewer implements IViewer {
+public class ClusterTableViewer implements IViewer, java.io.Serializable {
     
     private static final String NO_GENES_STR = "No Genes in Cluster!";
     private static final Font ERROR_FONT = new Font("monospaced", Font.BOLD, 20);
@@ -66,7 +66,7 @@ public class ClusterTableViewer implements IViewer {
     private int[] samplesOrder;
     private String[] auxTitles, fieldNames;
     private Object[][] auxData;
-    private Object[][] origData;
+    //private Object[][] origData;
     private boolean[][] sortedAscending;  
     private JTable clusterTable;
     private ClusterTableModel clusterModel;  
@@ -704,7 +704,7 @@ public class ClusterTableViewer implements IViewer {
         menuItem.addActionListener(listener);
         menu.add(menuItem);
         
-        menu.addSeparator();
+        //menu.addSeparator();
         
         menuItem = new JMenuItem("Store selected rows as cluster", GUIFactory.getIcon("new16.gif"));
         menuItem.setActionCommand(STORE_SELECTED_ROWS_CMD);
@@ -718,7 +718,7 @@ public class ClusterTableViewer implements IViewer {
         menuItem.addActionListener(listener);
         menu.add(menuItem);       
         
-        menu.addSeparator();
+        //menu.addSeparator();
         
         menuItem = new JMenuItem("Launch new session with selected rows", GUIFactory.getIcon("launch_new_mav.gif"));
         menuItem.setActionCommand(LAUNCH_NEW_SESSION_WITH_SEL_ROWS_CMD);
@@ -887,6 +887,74 @@ public class ClusterTableViewer implements IViewer {
             //setToolTipText(...); //Discussed in the following section
             return this;
         }
+    }
+
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.writeObject(experiment);
+        oos.writeObject(clusters);
+        oos.writeObject(header);
+        oos.writeObject(popup);
+        
+        //oos.writeObject(framework);
+        //oos.writeObject(data);
+        oos.writeInt(clusterIndex);
+        oos.writeObject(sortedClusters);
+        oos.writeObject(samplesOrder);
+        oos.writeObject(auxTitles);
+        oos.writeObject(fieldNames);
+        oos.writeObject(auxData);
+        //oos.writeObject(origData);
+        oos.writeObject(sortedAscending);
+        oos.writeObject(clusterTable);
+        oos.writeObject(clusterModel);
+        oos.writeObject(searchDialog);
+    }
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        this.experiment = (Experiment)ois.readObject();
+        this.clusters = (int [][])ois.readObject();
+        this.header = (JComponent)ois.readObject();
+        this.popup = (JPopupMenu)ois.readObject();
+        
+        //this.framework = (IFramework)ois.readObject();
+        //this.data = (IData)ois.readObject();
+        this.clusterIndex = ois.readInt();
+        this.sortedClusters = (int[][])ois.readObject();
+        this.samplesOrder = (int[])ois.readObject();
+        this.auxTitles = (String[])ois.readObject();        
+        this.fieldNames = (String[])ois.readObject(); // need to serilaize this?
+        this.auxData = (Object[][])ois.readObject();
+        //this.origData = 
+        this.sortedAscending = (boolean[][])ois.readObject();
+        this.clusterTable = (JTable)ois.readObject();
+        this.clusterModel = (ClusterTableModel)ois.readObject();
+        this.searchDialog = (ClusterTableSearchDialog)ois.readObject();
+        
+        //this.fieldNames = data.getFieldNames();
+        
+        clusterTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
+        TableColumn column = null;
+        for (int i = 0; i < clusterModel.getColumnCount(); i++) {
+            column = clusterTable.getColumnModel().getColumn(i);
+            column.setMinWidth(30);
+        } 
+        
+        this.sortedAscending = new boolean[clusters.length][clusterModel.getColumnCount()];
+        for (int i = 0; i < sortedAscending.length; i++) {
+            for (int j = 0; j < sortedAscending[i].length; j++) {
+                sortedAscending[i][j] = false;
+            }
+        }
+        addMouseListenerToHeaderInTable(clusterTable);
+        header  = clusterTable.getTableHeader();        
+        
+        searchDialog = new ClusterTableSearchDialog(JOptionPane.getFrameForComponent(clusterTable), clusterTable, false);  
+        setMaxWidth(getContentComponent(), getHeaderComponent());  
+        
+	Listener listener = new Listener();
+	this.popup = createJPopupMenu(listener);
+	//getContentComponent().addMouseListener(listener);  
+        clusterTable.addMouseListener(listener);
     }
     
     
