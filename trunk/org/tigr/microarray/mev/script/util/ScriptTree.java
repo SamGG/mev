@@ -309,7 +309,6 @@ public class ScriptTree extends JTree {
             currParam = (Element)parameters.item(i);
             key = currParam.getAttribute("key");
             value = currParam.getAttribute("value");
-            System.out.println("key = "+key+" value = "+value);
             data.addParam(key, value);
         }
     }
@@ -550,42 +549,5 @@ public class ScriptTree extends JTree {
     public void removeAlgorithm(AlgorithmNode node) {
         this.document.removeAlgorithm(node);
     }
-    
-    /*
-    public int getMaxNodeWidth() {
-        Enumeration enum = ((DefaultMutableTreeNode)((this.getModel()).getRoot())).breadthFirstEnumeration();
-        int maxWidth = 0;
-        TreeCellRenderer rend = super.getCellRenderer();
-        Component comp;
-        while (enum.hasMoreElements()) {
-            Object obj = enum.nextElement();
-            System.out.println("Node class = "+obj.getClass().getName());
-            comp = rend.getTreeCellRendererComponent(this, obj, true, true, true, 0, false);
-            maxWidth = Math.max(maxWidth, ((javax.swing.JPanel)comp).getComponent(0).getWidth());
-            System.out.println("maxWidth = " + ((javax.swing.JPanel)comp).getComponent(0).getWidth());
-            //System.out.println("Render comp count = "+ ((javax.swing.JPanel)(comp)).getComponent().get);
-        //    javax.swing.JFrame frame = new javax.swing.JFrame();
-         //   frame.getContentPane().add(comp);
-          //  frame.setVisible(true);
-        }
-        return maxWidth;
-    }
-     
-    public void paint(java.awt.Graphics g) {
-        super.paint(g);
-     
-        if(resetWidth) {
-                  int colWidth = getMaxNodeWidth();
-        if(colWidth > 0) {
-        BasicTreeUI basicTreeUI = (BasicTreeUI) getUI();
-        basicTreeUI.setRightChildIndent(colWidth + 20);
-        System.out.println("set indent");
-        }
-            resetWidth = false;
-        }
-     
-    }
-     **/
-    
     
 }

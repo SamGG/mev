@@ -170,9 +170,7 @@ public class ScriptTable extends ViewerAdapter {
         public void actionPerformed(java.awt.event.ActionEvent ae) {
             String command = ae.getActionCommand();
             if(command.equals("run-script-cmd")) {
-                System.out.println("In table run script cmd.");
                 int row = table.getSelectedRow();
-                System.out.println("Table row = "+row);
                 if(row > -1)
                     manager.runScript(row);
             }

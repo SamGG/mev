@@ -174,7 +174,6 @@ public class ScriptAttributeDialog extends AlgorithmDialog {
                 if(i>0) 
                     formatText += ScriptConstants.MEV_COMMENT_INDENT;
                 formatText += line;
-                System.out.println("line = "+line);
             }
         } catch (BadLocationException ble) {
             return null;
