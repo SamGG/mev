@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: TtestInitDialog.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2003-08-25 15:18:14 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -34,10 +34,12 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
 public class TtestInitDialog extends AlgorithmDialog {
     
     GroupExperimentsPanel gPanel;
+    OneClassPanel oPanel;
     PValuePanel pPanel;
     SignificancePanel sPanel;
     HCLSelectionPanel hclOpsPanel;
     Vector exptNames;
+    JTabbedPane chooseDesignPane;
     
     public static final int GROUP_A = 1;
     public static final int GROUP_B = 2;
@@ -45,6 +47,8 @@ public class TtestInitDialog extends AlgorithmDialog {
     public static final int JUST_ALPHA = 4;
     public static final int STD_BONFERRONI = 5;
     public static final int ADJ_BONFERRONI = 6;
+    public static final int BETWEEN_SUBJECTS = 7;
+    public static final int ONE_CLASS = 8;
     
     boolean okPressed = false;
     boolean permParamOkPressed = false;
@@ -68,6 +72,8 @@ public class TtestInitDialog extends AlgorithmDialog {
         constraints.fill = GridBagConstraints.BOTH;
         JPanel pane = new JPanel();
         pane.setLayout(gridbag);
+        
+        chooseDesignPane = new JTabbedPane();
         
         pPanel = new PValuePanel();
         
@@ -118,47 +124,104 @@ public class TtestInitDialog extends AlgorithmDialog {
         }
         
         count = 0;
+        
+       
+        
+        oPanel = new OneClassPanel();
+        
+        for (int i = 0; i < oPanel.includeExpts.length; i++) {
+            oPanel.includeExpts[i].addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    //if (evt.getSource() == gPanel.neitherGroupRadioButtons[count]) {
+                    pPanel.tDistButton.setSelected(true);
+                    pPanel.randomGroupsButton.setEnabled(false);
+                    pPanel.allCombsButton.setEnabled(false);
+                    pPanel.timesField.setEnabled(false);
+                    pPanel.numCombsLabel.setText("                                                                            ");
+                    //}
+                }                
+            });
+        }
+        
+        chooseDesignPane.add("One-class", oPanel);
+        chooseDesignPane.add("Between subjects", gPanel);
+        /*
         buildConstraints(constraints, 0, 0, 1, 1, 100, 45);
-        gridbag.setConstraints(gPanel, constraints);
-        pane.add(gPanel);
+        gridbag.setConstraints(chooseDesignPane, constraints);
+        pane.add(chooseDesignPane);
+         */
         
         pPanel.permutButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 if (evt.getSource() == pPanel.permutButton) {
-                    int[] grpAssignments = getGroupAssignments();
-                    int grpACounter = 0;
-                    int grpBCounter = 0;
-                    for (int i = 0; i < grpAssignments.length; i++) {
-                        if (grpAssignments[i] == GROUP_A) {
-                            grpACounter++;
-                        } else if (grpAssignments[i] == GROUP_B) {
-                            grpBCounter++;
+                    if (getTestDesign() == TtestInitDialog.BETWEEN_SUBJECTS) {
+                        int[] grpAssignments = getGroupAssignments();
+                        int grpACounter = 0;
+                        int grpBCounter = 0;
+                        for (int i = 0; i < grpAssignments.length; i++) {
+                            if (grpAssignments[i] == GROUP_A) {
+                                grpACounter++;
+                            } else if (grpAssignments[i] == GROUP_B) {
+                                grpBCounter++;
+                            }
                         }
-                    }
-                    if ((grpACounter < 2) || (grpBCounter < 2)) {
-                        pPanel.numCombsLabel.setForeground(Color.red);
-                        pPanel.numCombsLabel.setText("Error! Group A and Group B must each contain more than one experiment");
-                        //JOptionPane.showMessageDialog(gPanel, "Group A and Group B must each contain more than one experiment", "Error", JOptionPane.WARNING_MESSAGE);
-                    } else {
-                        
-                        int numCombs = 0;
+                        if ((grpACounter < 2) || (grpBCounter < 2)) {
+                            pPanel.numCombsLabel.setForeground(Color.red);
+                            pPanel.numCombsLabel.setText("Error! Group A and Group B must each contain more than one experiment");
+                            //JOptionPane.showMessageDialog(gPanel, "Group A and Group B must each contain more than one experiment", "Error", JOptionPane.WARNING_MESSAGE);
+                        } else {
+
+                            int numCombs = 0;
+                            pPanel.numCombsLabel.setForeground(Color.black);
+                            pPanel.numCombsLabel.setText("There are too many unique permutations                                  ");
+                            pPanel.allCombsButton.setEnabled(false);
+                            pPanel.randomGroupsButton.setEnabled(true);
+                            pPanel.randomGroupsButton.setSelected(true);
+                            pPanel.timesField.setEnabled(true);
+                            pPanel.timesField.setBackground(Color.white);
+                            pPanel.timesField.setText("100");
+                            //tooMany = true;
+                            if ((grpACounter + grpBCounter) <= 20) {
+                                numCombs = getNumCombs((grpACounter + grpBCounter), grpACounter);
+                                pPanel.numCombsLabel.setForeground(Color.black);
+                                pPanel.numCombsLabel.setText("There are " + numCombs + " unique permutations                                ");
+                                allPossCombs = numCombs;
+                                pPanel.allCombsButton.setEnabled(true);
+                                pPanel.randomGroupsButton.setEnabled(true);
+                            }
+                        }
+                    } else if (getTestDesign() == TtestInitDialog.ONE_CLASS) {
                         pPanel.numCombsLabel.setForeground(Color.black);
-                        pPanel.numCombsLabel.setText("There are too many unique permutations                                  ");
-                        pPanel.allCombsButton.setEnabled(false);
+                        int validNum = getNumValidOneClassExpts();
+                        if (validNum <= 1) {
+                            pPanel.numCombsLabel.setForeground(Color.red);
+                            pPanel.numCombsLabel.setText("Error! Choose at least two experiments");
+                            pPanel.randomGroupsButton.setEnabled(false); 
+                            pPanel.timesField.setBackground(Color.gray);
+                            pPanel.timesField.setEnabled(false);
+                            
+                        } else if (validNum <= 29) {
+                            pPanel.numCombsLabel.setText("There are " + (int)Math.pow(2, validNum) + " possible combinations                    ");
+                            pPanel.randomGroupsButton.setEnabled(true);
+                            pPanel.allCombsButton.setEnabled(true);
+                            pPanel.timesField.setBackground(Color.white);
+                            pPanel.timesField.setEnabled(true);                           
+                        } else {
+                            pPanel.numCombsLabel.setText("There are too many unique combinations                                       ");
+                            pPanel.timesField.setBackground(Color.white);
+                            pPanel.timesField.setEnabled(true);  
+                            pPanel.randomGroupsButton.setEnabled(true);
+                            pPanel.randomGroupsButton.setSelected(true);                            
+                        }
+                                              
+                        //pPanel.allCombsButton.setEnabled(false);
+                        /*
                         pPanel.randomGroupsButton.setEnabled(true);
                         pPanel.randomGroupsButton.setSelected(true);
                         pPanel.timesField.setEnabled(true);
                         pPanel.timesField.setBackground(Color.white);
-                        pPanel.timesField.setText("100");
-                        //tooMany = true;
-                        if ((grpACounter + grpBCounter) <= 20) {
-                            numCombs = getNumCombs((grpACounter + grpBCounter), grpACounter);
-                            pPanel.numCombsLabel.setForeground(Color.black);
-                            pPanel.numCombsLabel.setText("There are " + numCombs + " unique permutations                                ");
-                            allPossCombs = numCombs;
-                            pPanel.allCombsButton.setEnabled(true);
-                            pPanel.randomGroupsButton.setEnabled(true);
-                        }
+                        pPanel.timesField.setText("100");  
+                         */                    
                     }
                 }
             }
@@ -252,6 +315,25 @@ public class TtestInitDialog extends AlgorithmDialog {
          */
         
         
+        chooseDesignPane.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                pPanel.tDistButton.setSelected(true);
+                pPanel.allCombsButton.setEnabled(false);
+                pPanel.randomGroupsButton.setEnabled(false);
+                pPanel.numCombsLabel.setForeground(Color.black);
+                pPanel.numCombsLabel.setText(""); 
+                pPanel.timesField.setEnabled(false);
+                if (getTestDesign() == TtestInitDialog.ONE_CLASS) {
+                    pPanel.numCombsLabel.setForeground(Color.black);
+                    pPanel.numCombsLabel.setText("");                     
+                }
+            }
+        });
+         
+
+        buildConstraints(constraints, 0, 0, 1, 1, 100, 45);
+        gridbag.setConstraints(chooseDesignPane, constraints);
+        pane.add(chooseDesignPane);        
         
         buildConstraints(constraints, 0, 1, 1, 1, 0, 25);
         gridbag.setConstraints(pPanel, constraints);
@@ -289,7 +371,194 @@ public class TtestInitDialog extends AlgorithmDialog {
         gbc.weightx = wx;
         gbc.weighty = wy;
     }
-    
+
+    class OneClassPanel extends JPanel {
+        JTextField meanField;
+        JCheckBox[] includeExpts;
+        JButton saveButton, loadButton, resetButton;
+        OneClassPanel() {
+            this.setBackground(Color.white);
+            JLabel meanLabel = new JLabel("Enter the mean value to be tested against: ");
+            meanField = new JTextField("0", 7);
+            includeExpts = new JCheckBox[exptNames.size()];
+            
+            GridBagLayout gridbag = new GridBagLayout();
+            GridBagConstraints constraints = new GridBagConstraints();
+            this.setLayout(gridbag);
+            
+            JPanel exptPanel = new JPanel();
+            GridBagLayout grid1 = new GridBagLayout();
+            exptPanel.setLayout(grid1);
+            
+            //System.out.println("exptNames.size()" + exptNames.size());
+            
+            for (int i = 0; i < exptNames.size(); i++) {
+                //JLabel expLabel = new JLabel((String)(exptNames.get(i)));
+                includeExpts[i] = new JCheckBox((String)(exptNames.get(i)), true);
+                buildConstraints(constraints, 0, i, 1, 1, 100, 100);
+                grid1.setConstraints(includeExpts[i], constraints);
+                exptPanel.add(includeExpts[i]);
+            }
+            
+            JScrollPane scroll = new JScrollPane(exptPanel);
+            scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+            //scroll.add(exptPanel);
+            
+            JPanel enterMeanPanel = new JPanel();
+            GridBagLayout grid2 = new GridBagLayout();
+            enterMeanPanel.setLayout(grid2);            
+            /*
+            constraints.fill = GridBagConstraints.BOTH;
+            buildConstraints(constraints, 0, 0, 1, 1, 50, 100);
+            gridbag.setConstraints(scroll, constraints);
+            this.add(scroll); 
+             */           
+            
+            constraints.fill = GridBagConstraints.NONE;
+            buildConstraints(constraints, 0, 0, 1, 1, 50, 100);
+            constraints.anchor = GridBagConstraints.EAST;
+            grid2.setConstraints(meanLabel, constraints);
+            enterMeanPanel.add(meanLabel);
+            
+            buildConstraints(constraints, 1, 0, 1, 1, 50, 0);
+            constraints.anchor = GridBagConstraints.WEST;
+            grid2.setConstraints(meanField, constraints);
+            enterMeanPanel.add(meanField);    
+            
+            JScrollPane scroll2 = new JScrollPane(enterMeanPanel);
+            
+            JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scroll, scroll2);
+            split.setOneTouchExpandable(true);
+            split.setDividerLocation(150);
+           
+            constraints.fill = GridBagConstraints.BOTH;
+            buildConstraints(constraints, 0, 0, 1, 1, 100, 80);
+            gridbag.setConstraints(split, constraints);
+            this.add(split);  
+            
+            constraints.fill = GridBagConstraints.NONE;
+            constraints.anchor = GridBagConstraints.CENTER;
+            
+            JPanel lsrPanel = new JPanel();
+            loadButton = new JButton("Load settings");
+            saveButton = new JButton("Save settings");
+            resetButton = new JButton("Reset");
+            
+            resetButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    for (int i = 0; i < includeExpts.length; i++) {
+                        includeExpts[i].setSelected(true);
+                    }
+                }
+            });
+            
+            final JFileChooser fc = new JFileChooser();
+            fc.setCurrentDirectory(new File("Data"));  
+            
+            saveButton.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent evt) {
+                    int returnVal = fc.showSaveDialog(OneClassPanel.this);  
+                    if (returnVal == JFileChooser.APPROVE_OPTION) {
+                        File file = fc.getSelectedFile();
+                        try {
+                            PrintWriter out = new PrintWriter(new FileOutputStream(file));
+                            for (int i = 0; i < includeExpts.length; i++) {
+                                if (includeExpts[i].isSelected()) {
+                                    out.print(1);
+                                } else {
+                                    out.print(0);
+                                }
+                                if (i < includeExpts.length - 1) {
+                                    out.print("\t");
+                                }
+                            }
+                            out.println();
+                            out.flush();
+                            out.close();                            
+                        } catch (Exception e) {
+                        }
+                    } else {
+                    }
+                }
+            });
+            
+            loadButton.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent evt) {
+                    int returnVal = fc.showOpenDialog(OneClassPanel.this);
+                    if (returnVal == JFileChooser.APPROVE_OPTION) {
+                        try {
+                            FileReader file = new FileReader(fc.getSelectedFile());
+                            BufferedReader buff = new BufferedReader(file);     
+                            String line = buff.readLine();
+                            //System.out.println(line);
+                            StringSplitter st = new StringSplitter('\t');
+                            st.init(line);  
+                            Vector includeExptsVector = new Vector();
+                            while (st.hasMoreTokens()) {
+                                String current = st.nextToken();
+                                includeExptsVector.add(new Integer(current));
+                                //System.out.print(current);
+                            }
+                            buff.close();
+                            if (includeExptsVector.size() != includeExpts.length) {
+                                JOptionPane.showMessageDialog(gPanel, "Incompatible file!", "Error", JOptionPane.WARNING_MESSAGE);
+                            } else {
+                                for (int i = 0; i < includeExpts.length; i++) {
+                                    int currentState = ((Integer)(includeExptsVector.get(i))).intValue();
+                                    if (currentState == 0) {
+                                        includeExpts[i].setSelected(false);
+                                    } else if (currentState == 1) {
+                                        includeExpts[i].setSelected(true);
+                                    }else {
+                                        for (int j = 0; j < includeExpts.length; j++) {
+                                            includeExpts[j].setSelected(true);
+                                        }
+                                        JOptionPane.showMessageDialog(gPanel, "Incompatible file!", "Error", JOptionPane.WARNING_MESSAGE);
+                                        break;                                        
+                                    }
+                                }
+                            }
+                        } catch (Exception e) {
+                            JOptionPane.showMessageDialog(gPanel, "Incompatible file!", "Error", JOptionPane.WARNING_MESSAGE); 
+                            
+                        }
+                    } else {
+                    }
+                }
+            });
+            
+            
+            GridBagLayout grid3 = new GridBagLayout();
+            lsrPanel.setLayout(grid3);
+            
+            buildConstraints(constraints, 0, 0, 1, 1, 33, 100);
+            grid3.setConstraints(saveButton, constraints);
+            lsrPanel.add(saveButton);
+            
+            buildConstraints(constraints, 1, 0, 1, 1, 33, 0);
+            grid3.setConstraints(loadButton, constraints);
+            lsrPanel.add(loadButton);            
+            
+            buildConstraints(constraints, 2, 0, 1, 1, 33, 0);
+            grid3.setConstraints(resetButton, constraints);
+            lsrPanel.add(resetButton);            
+            
+            //constraints.fill = GridBagConstraints.BOTH;
+            buildConstraints(constraints, 0, 1, 1, 1, 0, 20);
+            gridbag.setConstraints(lsrPanel, constraints);
+            this.add(lsrPanel);            
+        }
+        
+        
+        public void reset() {
+            for (int i = 0; i < includeExpts.length; i++) {
+                includeExpts[i].setSelected(true);
+            }
+            meanField.setText("0");
+        }
+        
+
+    }
     
     class GroupExperimentsPanel extends JPanel {
         JLabel[] expLabels;
@@ -1106,6 +1375,16 @@ public class TtestInitDialog extends AlgorithmDialog {
         return hclOpsPanel.isHCLSelected();
     }
     
+    public int getTestDesign() {
+        int design = -1;
+        if (chooseDesignPane.getSelectedIndex() == 0) {
+            design = TtestInitDialog.ONE_CLASS;
+        } else if (chooseDesignPane.getSelectedIndex() == 1){
+            design = TtestInitDialog.BETWEEN_SUBJECTS;
+        }
+        return design;
+    }
+    
     public int[] getGroupAssignments() {
         int[] groupAssignments = new int[exptNames.size()];
         for (int i = 0; i < exptNames.size(); i++) {
@@ -1127,11 +1406,15 @@ public class TtestInitDialog extends AlgorithmDialog {
     
     public int getUserNumCombs() {
         String s1 = pPanel.timesField.getText();
-        int num;
+        int num = 0;
         if (!useAllCombs()) {
             num = Integer.parseInt(s1);
         } else {
-            num = allPossCombs;
+            if (getTestDesign() == TtestInitDialog.BETWEEN_SUBJECTS) {
+                num = allPossCombs;
+            } else if (getTestDesign() == TtestInitDialog.ONE_CLASS) {
+                num = (int)Math.pow(2, getNumValidOneClassExpts());
+            }
         }
         return num;
     }
@@ -1140,6 +1423,37 @@ public class TtestInitDialog extends AlgorithmDialog {
         String s1 = pPanel.alphaInputField.getText();
         
         return Double.parseDouble(s1);
+    }
+    
+    public int[] getOneClassAssignments() {
+        int[] oneClassAssignments = new int[oPanel.includeExpts.length];
+        
+        for (int i = 0; i < oneClassAssignments.length; i++) {
+            if (oPanel.includeExpts[i].isSelected()) {
+                oneClassAssignments[i] = 1;
+            } else {
+                oneClassAssignments[i] = 0;
+            }
+        }
+        
+        return oneClassAssignments;
+    }
+    
+    public int getNumValidOneClassExpts() {
+        int validNum = 0;
+        int[] oca = getOneClassAssignments();
+        
+        for (int i =0; i < oca.length; i++) {
+            if (oca[i] == 1) {
+                validNum++;
+            }
+        }
+        
+        return validNum;
+    }
+    
+    public double getOneClassMean() {
+        return Double.parseDouble(oPanel.meanField.getText());
     }
     
     
@@ -1189,19 +1503,53 @@ public class TtestInitDialog extends AlgorithmDialog {
             String command = ae.getActionCommand();
             
             if(command.equals("ok-command")){
-                int[] grpAssignments = getGroupAssignments();
-                int grpACounter = 0;
-                int grpBCounter = 0;
-                for (int i = 0; i < grpAssignments.length; i++) {
-                    if (grpAssignments[i] == GROUP_A) {
-                        grpACounter++;
-                    } else if (grpAssignments[i] == GROUP_B) {
-                        grpBCounter++;
+                if (getTestDesign() == TtestInitDialog.BETWEEN_SUBJECTS) {
+                    int[] grpAssignments = getGroupAssignments();
+                    int grpACounter = 0;
+                    int grpBCounter = 0;
+                    for (int i = 0; i < grpAssignments.length; i++) {
+                        if (grpAssignments[i] == GROUP_A) {
+                            grpACounter++;
+                        } else if (grpAssignments[i] == GROUP_B) {
+                            grpBCounter++;
+                        }
                     }
-                }
-                if ((grpACounter < 2) || (grpBCounter < 2)) {
-                    JOptionPane.showMessageDialog(gPanel, "Group A and Group B must each contain more than one experiment", "Error", JOptionPane.WARNING_MESSAGE);
-                } else {
+                    if ((grpACounter < 2) || (grpBCounter < 2)) {
+                        JOptionPane.showMessageDialog(gPanel, "Group A and Group B must each contain more than one experiment", "Error", JOptionPane.WARNING_MESSAGE);
+                    } else {
+                        String alpha = pPanel.alphaInputField.getText();
+
+                        float a;
+                        if(pPanel.permutButton.isSelected() && pPanel.randomGroupsButton.isSelected()){
+                            String iter = pPanel.timesField.getText();
+                            if(!validatePermutations(iter)){
+                                okPressed = false;
+                                return;                            
+                            }
+                        }                    
+                        if(!validateAlpha(alpha)){
+                        okPressed = false;
+                            return;
+                        }                                                                                    
+                        okPressed = true;
+                        hide();
+                        dispose();
+                    }
+                } else if (getTestDesign() == TtestInitDialog.ONE_CLASS) {
+                    try {
+                        float mean = Float.parseFloat(oPanel.meanField.getText());
+                    } catch (NumberFormatException nfe) {
+                        JOptionPane.showMessageDialog(oPanel, "Invalid value entered for mean", "Error", JOptionPane.WARNING_MESSAGE);
+                        okPressed = false;
+                        return;
+                    }
+                    
+                    if (getNumValidOneClassExpts() < 2) {
+                        JOptionPane.showMessageDialog(oPanel, "Select at least two experiments", "Error", JOptionPane.WARNING_MESSAGE);
+                        okPressed = false;
+                        return;      
+                    }
+                    
                     String alpha = pPanel.alphaInputField.getText();
                     
                     float a;
@@ -1209,22 +1557,27 @@ public class TtestInitDialog extends AlgorithmDialog {
                         String iter = pPanel.timesField.getText();
                         if(!validatePermutations(iter)){
                             okPressed = false;
-                            return;                            
+                            return;
                         }
-                    }                    
+                    }
                     if(!validateAlpha(alpha)){
-                    okPressed = false;
+                        okPressed = false;
                         return;
-                    }                                                                                    
+                    } 
+                    
                     okPressed = true;
                     hide();
-                    dispose();
+                    dispose();                    
+
                 }
             }
             else if(command.equals("reset-command")){
-                
-                gPanel.reset();
-                
+                if (getTestDesign() == TtestInitDialog.BETWEEN_SUBJECTS) {
+                    gPanel.reset();
+                } else if (getTestDesign() == TtestInitDialog.ONE_CLASS) {
+                    oPanel.reset();
+                }
+
                 pPanel.tDistButton.setSelected(true);
                 pPanel.randomGroupsButton.setEnabled(false);
                 pPanel.allCombsButton.setEnabled(false);
@@ -1235,6 +1588,7 @@ public class TtestInitDialog extends AlgorithmDialog {
                 pPanel.alphaInputField.setText("0.01");
                 sPanel.justAlphaButton.setSelected(true);
                 hclOpsPanel.setHCLSelected(false);
+
             }
             else if(command.equals("cancel-command")){
                 okPressed = false;
@@ -1283,6 +1637,10 @@ public class TtestInitDialog extends AlgorithmDialog {
         }
         TtestInitDialog  tDialog= new TtestInitDialog(dummyFrame, true, nameVector);
 
+        for (int i = 0; i < 50; i++) {
+            System.out.println("2^" + i + " = " + (int)Math.pow(2, i));
+        }
+        
         tDialog.setVisible(true);
         
         System.exit(0);

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: TtestExperimentViewer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2003-08-25 15:18:14 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -44,16 +44,20 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
 public class TtestExperimentViewer extends ExperimentViewer {
 
     private JPopupMenu popup;
-    private Vector tValues, pValues, dfValues, meansA, meansB, sdA, sdB;
+    private Vector tValues, pValues, dfValues, meansA, meansB, sdA, sdB, oneClassMeans, oneClassSDs;
+    private int tTestDesign;    
     
     /**
      * Constructs a <code>TtestExperimentViewer</code> with specified
      * experiment and clusters.
      */
-    public TtestExperimentViewer(Experiment experiment, int[][] clusters, Vector meansA, Vector meansB, Vector sdA, Vector sdB, Vector pValues, Vector tValues, Vector dfValues) {
+    public TtestExperimentViewer(Experiment experiment, int[][] clusters, int tTestDesign, Vector oneClassMeans, Vector oneClassSDs, Vector meansA, Vector meansB, Vector sdA, Vector sdB, Vector pValues, Vector tValues, Vector dfValues) {
 	super(experiment, clusters);
 	Listener listener = new Listener();
 	this.popup = createJPopupMenu(listener);
+        this.tTestDesign = tTestDesign;
+        this.oneClassMeans = oneClassMeans;
+        this.oneClassSDs = oneClassSDs;        
         this.pValues = pValues;
         this.tValues = tValues;
         this.dfValues = dfValues;
@@ -172,20 +176,27 @@ public class TtestExperimentViewer extends ExperimentViewer {
                 out.print("\t");
             //}
         }
-        out.print("GroupA mean\t");
-        out.print("GroupA std.dev.\t");
-        out.print("GroupB mean\t");
-        out.print("GroupB std.dev.\t");        
+        if (tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS) {        
+            out.print("GroupA mean\t");
+            out.print("GroupA std.dev.\t");
+            out.print("GroupB mean\t");
+            out.print("GroupB std.dev.\t");    
+            out.print("Absolute t value");            
+        } else if (tTestDesign == TtestInitDialog.ONE_CLASS) {
+            out.print("Gene mean\t");
+            out.print("Gene std.dev.\t");
+            out.print("t value");
+        }
         //out.print("UniqueID\tName");        
         //out.print("\t");
-        out.print("Absolute t value");
+        
         out.print("\t");
         out.print("Degrees of freedom\t");
         out.print("p value");
 
         for (int i=0; i<experiment.getNumberOfSamples(); i++) {
             out.print("\t");
-            out.print(data.getFullSampleName(experiment.getSampleIndex(i)));
+            out.print(data.getSampleName(experiment.getSampleIndex(i)));
         }
         out.print("\n");
         for (int i=0; i<rows.length; i++) {
@@ -199,10 +210,15 @@ public class TtestExperimentViewer extends ExperimentViewer {
                     out.print("\t"); 
                 //}
             }
-            out.print(((Float)meansA.get(rows[i])).floatValue() + "\t");
-            out.print(((Float)sdA.get(rows[i])).floatValue() + "\t");
-            out.print(((Float)meansB.get(rows[i])).floatValue() + "\t");
-            out.print(((Float)sdB.get(rows[i])).floatValue() + "\t");            
+            if (tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS) {            
+                out.print(((Float)meansA.get(rows[i])).floatValue() + "\t");
+                out.print(((Float)sdA.get(rows[i])).floatValue() + "\t");
+                out.print(((Float)meansB.get(rows[i])).floatValue() + "\t");
+                out.print(((Float)sdB.get(rows[i])).floatValue() + "\t"); 
+            } else if (tTestDesign == TtestInitDialog.ONE_CLASS) {
+                out.print(((Float)oneClassMeans.get(rows[i])).floatValue() + "\t");
+                out.print(((Float)oneClassSDs.get(rows[i])).floatValue() + "\t");
+            }
             //out.print("\t");
             out.print("" + ((Float)tValues.get(rows[i])).floatValue());
             out.print("\t");
