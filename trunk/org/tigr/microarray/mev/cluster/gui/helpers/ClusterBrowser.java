@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterBrowser.java,v $
- * $Revision: 1.1 $
- * $Date: 2003-11-25 14:33:58 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 18:44:21 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -170,7 +170,8 @@ public class ClusterBrowser extends JPanel {
         if(this.clusterTypeStr.equals("Experiment"))
             this.matrix = this.matrix.transpose();
         
-        int [] indices = cluster.getIndices();
+        int [] indices = cluster.getExperimentIndices();  //get indices to the cluter exp object.
+      
         Color clusterColor = cluster.getClusterColor();
         int xRange = matrix.getColumnDimension();
         
