@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterRepository.java,v $
- * $Revision: 1.8 $
- * $Date: 2004-06-17 21:03:37 $
+ * $Revision: 1.9 $
+ * $Date: 2004-07-22 15:29:56 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -28,6 +28,8 @@ import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
+
+import org.tigr.microarray.mev.cluster.clusterUtil.submit.SubmissionManager;
 
 /** The ClusterRepository contains ClusterList objects created for
  * holding saved clusters particular analysis results.
@@ -686,6 +688,9 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
         return indices;
     }
     
-    
+    public void submitCluster( Cluster cluster ) {
+        SubmissionManager subManager = new SubmissionManager(this.framework, this);
+        subManager.submit(cluster);
+    }
     
 }
