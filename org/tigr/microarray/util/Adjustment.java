@@ -4,16 +4,19 @@ All rights reserved.
 */
 /*
  * $RCSfile: Adjustment.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:23 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2004-03-01 15:08:17 $
+ * $Author: nbhagaba $
  * $State: Exp $
  */
 package org.tigr.microarray.util;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.ArrayList;
 
 import org.tigr.util.FloatMatrix;
+
 
 public class Adjustment {
     
@@ -44,6 +47,60 @@ public class Adjustment {
 	    divideGeneByRMS(matrix, i);
 	}
     }
+    
+    // pcahan -- affy-abs specific adjustments
+    public static void divideGenesMedian(FloatMatrix matrix) {
+        float median = 0f;
+        float value = 0f;
+        int num_samples = matrix.getColumnDimension();
+        int num_genes = matrix.getRowDimension();
+
+        ArrayList row = new ArrayList(num_genes);
+        // foreach gene
+        for (int gene = 0; gene < num_genes; gene++) {
+            median = 0f;
+
+            // get median
+            for (int sample = 0; sample < num_samples; sample++) {
+                row.add(sample, new Float(matrix.get(gene,sample)));
+            }
+
+            median = getGeneMedian(row);
+
+            // set value = signal/median
+            for (int sample = 0; sample < num_samples; sample++) {
+                value = matrix.get(gene, sample);
+
+                matrix.set(gene, sample, (float) (value / median));
+            }
+            row.clear();
+        }
+    }
+
+    public static void divideGenesMean(FloatMatrix matrix) {
+
+        for (int g=0; g<matrix.getRowDimension(); g++) {
+            double Mean = 0.0;
+            int i;
+            int n = matrix.getColumnDimension();
+            float value;
+            for (i = 0; i < n; i++) {
+                value = matrix.get(g, i);
+                if (!Float.isNaN(value))
+                    Mean += value;
+                }
+                Mean /= (double) n;
+                //System.out.println("Row: " + g + " Mean: " + Mean);
+
+                for (i = 0; i < n; i++) {
+                    value = matrix.get(g, i);
+                    if (!Float.isNaN(value)) {
+                        matrix.set(g, i, (float) (value / Mean));
+                    }
+                }
+            }
+    }
+
     
     public static void divideSpotsSD(FloatMatrix matrix) {
 	for (int i=0; i<matrix.getRowDimension(); i++) {
@@ -431,4 +488,29 @@ public class Adjustment {
 	    }
 	}
     }
+    
+        // pcahan
+   public static float getGeneMedian( ArrayList float_array ) {
+
+        Collections.sort(float_array);
+
+        Float median;
+
+        if (float_array.size() == 1){
+            return ( (Float) float_array.get(0)).floatValue();
+        }
+
+        int center = float_array.size() / 2;
+
+        if (float_array.size() % 2 == 0) {
+            Float a, b;
+            a = (Float) float_array.get(center);
+            b = (Float) float_array.get(center - 1);
+            median = new Float(( a.floatValue() + b.floatValue() )/2);
+        }
+        else {
+            median = (Float)float_array.get( center );
+        }
+        return median.floatValue();
+    }    
 }
