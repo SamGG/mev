@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: ArrayViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-07-27 19:56:10 $
- * $Author: braisted $
+ * $Revision: 1.4 $
+ * $Date: 2005-02-24 20:23:44 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -14,10 +14,6 @@ package org.tigr.microarray.mev;
 import java.awt.Cursor;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.FileReader;
-import java.io.BufferedReader;
-import java.util.Vector;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -25,16 +21,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 
-import org.tigr.util.StringSplitter;
-import org.tigr.util.awt.Viewer;
-import org.tigr.util.awt.TransferDialog;
-import org.tigr.util.StringSplitter;
 import org.tigr.util.swing.FileTransferDialog;
 import org.tigr.microarray.util.swing.TAVFileFilter;
 import org.tigr.util.swing.TXTFileFilter;
 import org.tigr.microarray.util.swing.SlideDataLoader;
-
-import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
 
 abstract public class ArrayViewer extends JPanel {
     

@@ -17,10 +17,9 @@ import javax.swing.JOptionPane;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.clusterUtil.submit.IClusterSubmitter;
 import org.tigr.microarray.mev.cluster.clusterUtil.submit.RepositoryConfigParser;
-
+import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Logger;
 
@@ -139,7 +138,7 @@ public class LOLASubmitter implements IClusterSubmitter {
         
         for(int i=0; i<genes.length; i++){
             for(int j = 0; j<sns; j++){
-                signals[j] = data.getRatio(j,genes[i],data.LINEAR);
+                signals[j] = data.getRatio(j,genes[i], IData.LINEAR);
             }
             folds[i] = get_fold(signals, groupings);
         }

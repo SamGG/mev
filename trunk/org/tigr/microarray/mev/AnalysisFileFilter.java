@@ -43,7 +43,7 @@ public class AnalysisFileFilter extends javax.swing.filechooser.FileFilter {
     /**
      * Get the extension of a file.
      */
-    private String getExtension(File f) {
+    public String getExtension(File f) {
         String ext = null;
         String s = f.getName();
         int i = s.lastIndexOf('.');

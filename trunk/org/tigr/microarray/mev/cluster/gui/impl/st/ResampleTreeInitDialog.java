@@ -1,24 +1,41 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: ResampleTreeInitDialog.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:51 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.st;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import org.tigr.util.awt.*;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DistanceMetricPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
+import org.tigr.util.awt.GBA;
 
 public class ResampleTreeInitDialog extends AlgorithmDialog {
     
@@ -28,9 +45,7 @@ public class ResampleTreeInitDialog extends AlgorithmDialog {
     protected JPanel geneTreePanel;
     public JCheckBox drawGeneTreeCheckBox;
     protected JPanel geneTreeResamplingOptionsPanel;
-    protected JRadioButton geneBootstrapGenes;
     protected JRadioButton geneBootstrapExpts;
-    protected JRadioButton geneJackknifeGenes;
     protected JRadioButton geneJackknifeExpts;
     protected JRadioButton geneStandard;
     protected JPanel geneTreeIterationsPanel;
@@ -41,9 +56,7 @@ public class ResampleTreeInitDialog extends AlgorithmDialog {
     public JCheckBox drawExptTreeCheckBox;
     protected JPanel exptTreeResamplingOptionsPanel;
     protected JRadioButton exptBootstrapGenes;
-    protected JRadioButton exptBootstrapExpts;
     protected JRadioButton exptJackknifeGenes;
-    protected JRadioButton exptJackknifeExpts;
     protected JRadioButton exptStandard;
     protected JPanel exptTreeIterationsPanel;
     protected JLabel exptTreeIterationsLabel;
@@ -72,9 +85,15 @@ public class ResampleTreeInitDialog extends AlgorithmDialog {
     public final static int JACK_EXPTS = 3;
     public final static int JACK_GENES = 4;
     
+    private DistanceMetricPanel metricPanel;
+    private String globalMetricName;
+    private boolean globalAbsoluteSetting;
     
-    public ResampleTreeInitDialog(JFrame parent, boolean modal) {
+    public ResampleTreeInitDialog(JFrame parent, boolean modal, String globalMetricName, boolean globalAbsoluteSetting) {
         super(parent, "ST: Support Trees", modal);
+        
+        this.globalMetricName = globalMetricName;
+        this.globalAbsoluteSetting = globalAbsoluteSetting;
         
         initialize();
     }
@@ -89,27 +108,17 @@ public class ResampleTreeInitDialog extends AlgorithmDialog {
         this.drawGeneTreeCheckBox.setBackground(Color.white);
         this.drawGeneTreeCheckBox.setForeground(labelColor);
         buttonGroup = new ButtonGroup();
-        geneBootstrapGenes = new JRadioButton("Bootstrap Genes");
-        this.geneBootstrapGenes.setFocusPainted(false);
-        this.geneBootstrapGenes.setBackground(Color.white);
-        this.geneBootstrapGenes.setForeground(labelColor);
-        buttonGroup.add(geneBootstrapGenes);
-        geneBootstrapExpts = new JRadioButton("Bootstrap Experiments");
+        geneBootstrapExpts = new JRadioButton("Bootstrap Samples", true);
         this.geneBootstrapExpts.setFocusPainted(false);
         this.geneBootstrapExpts.setBackground(Color.white);
         this.geneBootstrapExpts.setForeground(labelColor);
         buttonGroup.add(geneBootstrapExpts);
-        geneJackknifeGenes = new JRadioButton("Jackknife Genes");
-        this.geneJackknifeGenes.setFocusPainted(false);
-        this.geneJackknifeGenes.setBackground(Color.white);
-        this.geneJackknifeGenes.setForeground(labelColor);
-        buttonGroup.add(geneJackknifeGenes);
-        geneJackknifeExpts = new JRadioButton("Jackknife Experiments");
+        geneJackknifeExpts = new JRadioButton("Jackknife Samples");
         this.geneJackknifeExpts.setFocusPainted(false);
         this.geneJackknifeExpts.setBackground(Color.white);
         this.geneJackknifeExpts.setForeground(labelColor);
         buttonGroup.add(geneJackknifeExpts);
-        geneStandard = new JRadioButton("No resampling", true);
+        geneStandard = new JRadioButton("No resampling");
         this.geneStandard.setFocusPainted(false);
         this.geneStandard.setBackground(Color.white);
         this.geneStandard.setForeground(labelColor);
@@ -128,11 +137,9 @@ public class ResampleTreeInitDialog extends AlgorithmDialog {
         geneTreeResamplingOptionsPanel.setLayout(new GridBagLayout());
         this.geneTreeResamplingOptionsPanel.setBackground(Color.white);
         geneTreeResamplingOptionsPanel.setBorder(new TitledBorder(new EtchedBorder(), "Resampling Options", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
-        gba.add(geneTreeResamplingOptionsPanel, geneBootstrapGenes, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-        gba.add(geneTreeResamplingOptionsPanel, geneBootstrapExpts, 0, 1, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-        gba.add(geneTreeResamplingOptionsPanel, geneJackknifeGenes, 0, 2, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-        gba.add(geneTreeResamplingOptionsPanel, geneJackknifeExpts, 0, 3, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-        gba.add(geneTreeResamplingOptionsPanel, geneStandard, 0, 4, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+        gba.add(geneTreeResamplingOptionsPanel, geneBootstrapExpts, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+        gba.add(geneTreeResamplingOptionsPanel, geneJackknifeExpts, 0, 1, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+        gba.add(geneTreeResamplingOptionsPanel, geneStandard, 0, 2, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
         
         geneTreePanel = new JPanel();
         geneTreePanel.setLayout(new GridBagLayout());
@@ -143,32 +150,22 @@ public class ResampleTreeInitDialog extends AlgorithmDialog {
         gba.add(geneTreePanel, geneTreeResamplingOptionsPanel, 0, 1, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
         gba.add(geneTreePanel, geneTreeIterationsPanel, 0, 2, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
         
-        drawExptTreeCheckBox = new JCheckBox("Draw Experiment Tree", true);
+        drawExptTreeCheckBox = new JCheckBox("Draw Sample Tree", true);
         drawExptTreeCheckBox.setFocusPainted(false);
         drawExptTreeCheckBox.setBackground(Color.white);
         drawExptTreeCheckBox.setForeground(labelColor);
         buttonGroup = new ButtonGroup();
-        exptBootstrapGenes = new JRadioButton("Bootstrap Genes");
+        exptBootstrapGenes = new JRadioButton("Bootstrap Genes", true);
         this.exptBootstrapGenes.setFocusPainted(false);
         this.exptBootstrapGenes.setBackground(Color.white);
         this.exptBootstrapGenes.setForeground(labelColor);
         buttonGroup.add(exptBootstrapGenes);
-        this.exptBootstrapExpts = new JRadioButton("Bootstrap Experiments");
-        this.exptBootstrapExpts.setFocusPainted(false);
-        this.exptBootstrapExpts.setBackground(Color.white);
-        this.exptBootstrapExpts.setForeground(labelColor);
-        buttonGroup.add(exptBootstrapExpts);
         exptJackknifeGenes = new JRadioButton("Jackknife Genes");
         this.exptJackknifeGenes.setFocusPainted(false);
         this.exptJackknifeGenes.setBackground(Color.white);
         this.exptJackknifeGenes.setForeground(labelColor);
         buttonGroup.add(exptJackknifeGenes);
-        exptJackknifeExpts = new JRadioButton("Jackknife Experiments");
-        this.exptJackknifeExpts.setFocusPainted(false);
-        this.exptJackknifeExpts.setBackground(Color.white);
-        this.exptJackknifeExpts.setForeground(labelColor);
-        buttonGroup.add(exptJackknifeExpts);
-        exptStandard = new JRadioButton("No resampling", true);
+        exptStandard = new JRadioButton("No resampling");
         this.exptStandard.setFocusPainted(false);
         this.exptStandard.setBackground(Color.white);
         this.exptStandard.setForeground(labelColor);
@@ -189,15 +186,13 @@ public class ResampleTreeInitDialog extends AlgorithmDialog {
         exptTreeResamplingOptionsPanel.setBorder(new TitledBorder(new EtchedBorder(), "Resampling Options", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
         
         gba.add(exptTreeResamplingOptionsPanel, exptBootstrapGenes, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-        gba.add(exptTreeResamplingOptionsPanel, exptBootstrapExpts, 0, 1, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-        gba.add(exptTreeResamplingOptionsPanel, exptJackknifeGenes, 0, 2, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-        gba.add(exptTreeResamplingOptionsPanel, exptJackknifeExpts, 0, 3, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-        gba.add(exptTreeResamplingOptionsPanel, exptStandard, 0, 4, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+        gba.add(exptTreeResamplingOptionsPanel, exptJackknifeGenes, 0, 1, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+        gba.add(exptTreeResamplingOptionsPanel, exptStandard, 0, 2, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
         
         exptTreePanel = new JPanel();
         exptTreePanel.setLayout(new GridBagLayout());
         this.exptTreePanel.setBackground(Color.white);
-        exptTreePanel.setBorder(new TitledBorder(new EtchedBorder(), "Experiment Tree", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
+        exptTreePanel.setBorder(new TitledBorder(new EtchedBorder(), "Sample Tree", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
         
         gba.add(exptTreePanel, drawExptTreeCheckBox, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
         gba.add(exptTreePanel, exptTreeResamplingOptionsPanel, 0, 1, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
@@ -226,6 +221,8 @@ public class ResampleTreeInitDialog extends AlgorithmDialog {
         this.singleLinkage.setForeground(labelColor);
         buttonGroup.add(singleLinkage);
         
+        metricPanel = new DistanceMetricPanel(globalMetricName, globalAbsoluteSetting, "Euclidean Distance", "ST", true, true);        
+        
         linkagePanel = new JPanel();
         linkagePanel.setLayout(new GridBagLayout());
         linkagePanel.setBackground(Color.white);
@@ -246,7 +243,8 @@ public class ResampleTreeInitDialog extends AlgorithmDialog {
         contentPane.setBackground(Color.white);
         
         gba.add(contentPane, topPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-        gba.add(contentPane, bottomPanel, 0, 1, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(0, 5, 5, 5), 0, 0);
+        gba.add(contentPane, metricPanel, 0, 1, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+        gba.add(contentPane, bottomPanel, 0, 2, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(0, 5, 5, 5), 0, 0);
         
         addContent(contentPane);
         setActionListeners(eventListener);
@@ -271,6 +269,23 @@ public class ResampleTreeInitDialog extends AlgorithmDialog {
         return linkageStyle;
     }
     
+
+    /**
+     * Returns the currently selected metric
+     */
+    public int getDistanceMetric() {
+        return metricPanel.getMetricIndex();
+    }
+    
+    
+    /**
+     *  Returns true if the absolute checkbox is selected, else false
+     */
+    public boolean isAbsoluteDistance() {
+        return metricPanel.getAbsoluteSelection();
+    }
+    
+    
     public boolean isCancelled() {
         return cancelled;
     }
@@ -294,19 +309,14 @@ public class ResampleTreeInitDialog extends AlgorithmDialog {
         int exptTreeIterations = Integer.parseInt(exptTreeIterationsTextField.getText());
         
         
-        if (geneBootstrapGenes.isSelected()) geneTreeAnalysisOption = BOOT_GENES;
-        else if (geneBootstrapExpts.isSelected()) geneTreeAnalysisOption = BOOT_EXPTS;
-        else if (geneJackknifeGenes.isSelected()) geneTreeAnalysisOption = JACK_GENES;
+        if (geneBootstrapExpts.isSelected()) geneTreeAnalysisOption = BOOT_EXPTS;
         else if (geneJackknifeExpts.isSelected()) geneTreeAnalysisOption = JACK_EXPTS;
         else geneTreeAnalysisOption = NONE;
         
         if (exptBootstrapGenes.isSelected()) exptTreeAnalysisOption = BOOT_GENES;
-        else if (exptBootstrapExpts.isSelected()) exptTreeAnalysisOption = BOOT_EXPTS;
         else if (exptJackknifeGenes.isSelected()) exptTreeAnalysisOption = JACK_GENES;
-        else if (exptJackknifeExpts.isSelected()) exptTreeAnalysisOption = JACK_EXPTS;
         else exptTreeAnalysisOption = NONE;
-        
-        
+                
         if (completeLinkage.isSelected()) linkageStyle = 1;
         else if (singleLinkage.isSelected()) linkageStyle = -1;
         else linkageStyle = 0;
@@ -320,10 +330,11 @@ public class ResampleTreeInitDialog extends AlgorithmDialog {
         this.averageLinkage.setSelected(true);
         this.geneTreeIterationsTextField.setText("100");
         this.exptTreeIterationsTextField.setText("100");
+        metricPanel.reset();
     }
     
     public static void main(String [] args){
-        ResampleTreeInitDialog dialog = new ResampleTreeInitDialog(new JFrame(), true);
+        ResampleTreeInitDialog dialog = new ResampleTreeInitDialog(new JFrame(), true, "Euclidean Distance", false);
         dialog.show();
         System.exit(0);
     }

@@ -1,43 +1,55 @@
-package org.tigr.microarray.mev.file;
-
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: SuperExpressionFileLoader.java,v $
- * $Revision: 1.8 $
- * $Date: 2004-07-08 13:10:35 $
- * $Author: braisted $
+ * $Revision: 1.9 $
+ * $Date: 2005-02-24 20:23:50 $
+ * $Author: braistedj $
  * $State: Exp $
  */
+package org.tigr.microarray.mev.file;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+import javax.swing.border.BevelBorder;
 import javax.swing.filechooser.FileFilter;
-import javax.swing.table.*;
-import javax.swing.tree.*;
 
-import org.tigr.microarray.file.MevFileParser;
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.MultipleArrayViewer;
-import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
-
 import org.tigr.microarray.mev.TMEV;
-
+import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
+import org.tigr.microarray.mev.file.agilent.AgilentMevFileLoader;
 
 // Loads expression data in various file formats
 
 public class SuperExpressionFileLoader {
     
-    public static String DATA_PATH = System.getProperty("user.dir")+System.getProperty("file.separator")+"Data";
+    public static String DATA_PATH = TMEV.getDataPath();
     public final static ImageIcon ICON_COMPUTER = new ImageIcon(Toolkit.getDefaultToolkit().getImage(SuperExpressionFileLoader.class.getClassLoader().getResource("org/tigr/images/PCIcon.gif")));
     public final static ImageIcon ICON_DISK = new ImageIcon(Toolkit.getDefaultToolkit().getImage(SuperExpressionFileLoader.class.getClassLoader().getResource("org/tigr/images/disk.gif")));
     public final static ImageIcon ICON_FOLDER = new ImageIcon(Toolkit.getDefaultToolkit().getImage(SuperExpressionFileLoader.class.getClassLoader().getResource("org/tigr/images/Directory.gif")));
@@ -88,20 +100,31 @@ public class SuperExpressionFileLoader {
         
         int defaultSelection = 0;
         
-        fileLoaders = new ExpressionFileLoader[5];
+        fileLoaders = new ExpressionFileLoader[6];
         fileLoaders[0] = new MevFileLoader(this);
+        
+        fileLoaders[1] = null;
+        fileLoaders[2] = null;
+        fileLoaders[3] = null;
+        fileLoaders[4] = null;
+        fileLoaders[5] = null;
+/*
         fileLoaders[1] = new StanfordFileLoader(this);
         fileLoaders[2] = new TavFileLoader(this);
-        fileLoaders[3] = new AffymetrixFileLoader(this); 
+        fileLoaders[3] = new AffymetrixFileLoader(this);
         fileLoaders[4] = new GenePixFileLoader(this);
-        //fileLoaders[4] = new ArraySuiteFileLoader();
-        
+        fileLoaders[5] = new AgilentMevFileLoader(this);
+ 
+ */
         selectedFileLoader = fileLoaders[defaultSelection];
         
         fileFilters = new FileFilter[fileLoaders.length];
-        for (int i = 0; i < fileLoaders.length; i++) {
+        fileFilters[0] = fileLoaders[0].getFileFilter();
+        
+        /*for (int i = 0; i < fileLoaders.length; i++) {
             fileFilters[i] = fileLoaders[i].getFileFilter();
         }
+         **/
         selectedFileFilter = fileFilters[defaultSelection];
     }
     
@@ -173,34 +196,82 @@ public class SuperExpressionFileLoader {
     }
     
     public void initializeDataPath(){
-        
         String newPath = TMEV.getDataPath();
-
+        newPath = (new File(newPath)).getPath();
+        
         if(newPath == null) {
             return;
         }
         
-        File file = new File(newPath);        
+        String sep = System.getProperty("file.separator");
+        
+        //if Linux or Mac / goes in front of the path
+        if(sep.equals("/"))
+            newPath = sep+newPath;
+        
+        File file = new File(newPath);
         if(file.exists()){
             DATA_PATH = newPath;
-        }        
+        } else {
+            file = TMEV.getFile("/data");
+            if(file != null)
+                DATA_PATH = file.getPath();
+        }
     }
     
     public void setLoadEnabled(boolean state) {
         loadButton.setEnabled(state);
     }
     
+    
+    private ExpressionFileLoader getFileLoader(int target) {
+
+        ExpressionFileLoader loader;
+        if(target >= 0 && target < fileLoaders.length && fileLoaders[target] != null) {
+            return fileLoaders[target];
+        }
+        
+        switch(target) {
+            case 0:
+                loader = fileLoaders[0];
+                break;
+            case 1:
+                loader = new StanfordFileLoader(this);
+                break;
+            case 2:
+                loader = new TavFileLoader(this);
+                break;
+            case 3:
+                loader = new AffymetrixFileLoader(this);
+                break;
+            case 4:
+                loader = new GenePixFileLoader(this);
+                break;
+            case 5:
+                loader = new AgilentMevFileLoader(this);
+                break;
+            default:
+                loader = new MevFileLoader(this);
+                break;
+        }
+        fileLoaders[target] = loader;
+        return loader;
+    }
+    
+    
     public void changeSelectedFileFilterAndLoader(int target) {
         
         if (target < 0 || target >= fileLoaders.length || target >= fileFilters.length) return;
         
-        selectedFileLoader = fileLoaders[target];
+        selectedFileLoader = getFileLoader(target);
+        this.mainFrame.toFront();
+        fileFilters[target] = selectedFileLoader.getFileFilter();
         selectedFileFilter = fileFilters[target];
         loaderIndex = target;
-        changeFileLoaderPanel(selectedFileLoader);
+        changeFileLoaderPanel(selectedFileLoader);       
     }
     
-
+    
     
     public void changeFileLoaderPanel(ExpressionFileLoader targetFileLoader) {
         
@@ -211,7 +282,7 @@ public class SuperExpressionFileLoader {
         gba.add(cp, fileLoaderPanel, 0, 2, 1, 2, 1, 1, GBA.B, GBA.C);
         checkLoadEnable();
         cp.validate();
-        selectedFileLoader.openDataPath();        
+        selectedFileLoader.openDataPath();
         cp.repaint();
     }
     
@@ -219,14 +290,44 @@ public class SuperExpressionFileLoader {
                 Add the argument FileFilter to the FileFilter JComboBox
          */
     public void addFileFilter(FileFilter fileFilter) {
-        if (fileFilter == null) return;
+        if (fileFilter == null) {
+            return;
+        }
         fileFilterComboBox.addItem(fileFilter.getDescription());
     }
     
     public void addFileFilters(FileFilter[] fileFilters) {
         for (int i = 0; i < fileFilters.length; i++) {
-            addFileFilter(fileFilters[i]);
+            fileFilterComboBox.addItem(getFileDescription(i));
         }
+    }
+    
+    public String getFileDescription(int target) {
+        String desc;
+        switch(target) {
+            case 0:
+                desc = "TIGR MeV Files (*.mev)";
+                break;
+            case 1:
+                desc = "Tab Delimited, Multiple Sample Files (TDMS) (*.*)";
+                break;
+            case 2:
+                desc = "TIGR ArrayViewer Files (*.tav)";
+                break;
+            case 3:
+                desc = "Affymetrix Files (*.*)";
+                break;
+            case 4:
+                desc = "GenePix Files (*.*)";
+                break;
+            case 5:
+                desc = "Agilent Files (*.*)";
+                break;
+            default:
+                desc = "TIGR MeV Files (*.mev)";
+                break;
+        }
+        return desc;
     }
     
     public void checkLoadEnable() {
@@ -265,7 +366,7 @@ public class SuperExpressionFileLoader {
     }
     
     public JFrame getFrame(){
-        return mainFrame;
+        return this.viewer.getFrame();
     }
     
     public MultipleArrayViewer getArrayViewer(){
@@ -286,62 +387,32 @@ public class SuperExpressionFileLoader {
         }
         return data;
     }
-
+    
     
     private void updateDataPath(String  dataPath){
         if(dataPath == null)
             return;
         String renderedSep = "/";
         String renderedPath = new String();
-
-        String sep = System.getProperty("file.separator");        
+        
+        String sep = System.getProperty("file.separator");
         String lineSep = System.getProperty("line.separator");
-
+        
         StringTokenizer stok = new StringTokenizer(dataPath, sep);
         
         DATA_PATH = new String();
-
+        
         String str;
         while(stok.hasMoreTokens() && stok.countTokens() > 1){
             str = stok.nextToken();
-            renderedPath += str + renderedSep;            
+            renderedPath += str + renderedSep;
             DATA_PATH += str + sep;
         }
+        //sets the data path in config to render well
+        TMEV.updateDataPath(renderedPath);
         
-        //Read tmev.cfg
-        try{
-            BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir")+sep+"config"+sep+"tmev.cfg"));
-
-            String content = new String();
-            String line;
-            while( (line = br.readLine()) != null && !((line).equals("#DATA PATH"))){
-                content += line+lineSep; 
-            }
-            
-            if(line == null) {   //if at end of file
-                content += lineSep;
-                content += "#DATA PATH"+lineSep;
-                content += "current-data-path "+renderedPath+lineSep;
-            } else {            
-            br.readLine(); //pass old path
-            content += "#DATA PATH"+lineSep;
-            content += "current-data-path "+renderedPath+lineSep;
-            while( (line = br.readLine()) != null ){
-                content += line+lineSep;
-            }
-            }
-            
-            
-            BufferedWriter bfr = new BufferedWriter(new FileWriter(System.getProperty("user.dir")+sep+"config"+sep+"tmev.cfg"));
-            bfr.write(content);
-            bfr.flush();
-            bfr.close();
-            br.close();
-            //if reset in file then update TMEV.dataPath;
-            TMEV.setDataPath(DATA_PATH);
-        } catch (IOException e){
-            
-        }
+        //sets variable to conform to OS spec.
+        TMEV.setDataPath(DATA_PATH);
     }
     
     /*
@@ -375,7 +446,7 @@ public class SuperExpressionFileLoader {
             Vector data = null;
             int dataType = 0;
             try {
-                selectedFileLoader.showModal();
+                selectedFileLoader.showModal(); 
                 data = selectedFileLoader.loadExpressionFiles();
                 if(loaderIndex == 1)
                     dataType = IData.DATA_TYPE_RATIO_ONLY;
@@ -384,7 +455,7 @@ public class SuperExpressionFileLoader {
                 } else
                     dataType = IData.DATA_TYPE_TWO_INTENSITY;
                 selectedFileLoader.dispose();
-                updateDataPath(selectedFileLoader.getFilePath());                
+                updateDataPath(selectedFileLoader.getFilePath());
                 if(data != null){
                     viewer.fireDataLoaded(toISlideDataArray(data), dataType);
                 }

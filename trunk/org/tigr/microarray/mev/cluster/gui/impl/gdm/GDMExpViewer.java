@@ -4,89 +4,63 @@ All rights reserved.
  */
 /*
  * $RCSfile: GDMExpViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-07-27 19:59:16 $
- * $Author: braisted $
+ * $Revision: 1.7 $
+ * $Date: 2005-02-24 20:23:46 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.gdm;
 
-import java.awt.Color;
-import java.awt.Frame;
-import java.awt.Insets;
-import java.awt.RenderingHints;
-import java.awt.Component;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
 import java.awt.BorderLayout;
-import java.awt.TextField;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Font;
-import java.awt.FontMetrics;
+import java.awt.Insets;
 import java.awt.Rectangle;
-import java.awt.GradientPaint;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseAdapter;
-
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-
 import java.awt.image.BufferedImage;
-
 import java.util.Arrays;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
 
-import javax.swing.Action;
-import javax.swing.JFrame;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.JPopupMenu;
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
-import javax.swing.JOptionPane;
-import javax.swing.JColorChooser;
-import javax.swing.JScrollPane;
-import javax.swing.JScrollBar;
-import javax.swing.JViewport;
-import javax.swing.JPopupMenu;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.ButtonGroup;
-import javax.swing.BorderFactory;
+import javax.swing.JScrollBar;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.tigr.util.FloatMatrix;
-import org.tigr.util.QSort;
-
-import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.IViewer;
-import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
-import org.tigr.microarray.mev.cluster.gui.LeafInfo;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
-
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-
-import org.tigr.microarray.util.SlideDataSorter;
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
+import org.tigr.microarray.mev.cluster.gui.LeafInfo;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
+import org.tigr.util.FloatMatrix;
+import org.tigr.util.QSort;
 
 public class GDMExpViewer extends JPanel implements IViewer, java.io.Serializable {
     public static final long serialVersionUID = 202004010001L;
@@ -1181,7 +1155,7 @@ public class GDMExpViewer extends JPanel implements IViewer, java.io.Serializabl
         menu.add(item);
           
         item = new JMenuItem("Restore Loaded Order");
-        item.setActionCommand(this.SORT_BY_ORIGINAL_ORDER_CMD);
+        item.setActionCommand(GDMExpViewer.SORT_BY_ORIGINAL_ORDER_CMD);
         item.addActionListener(listener);
         menu.add(item);        
         
@@ -1486,9 +1460,9 @@ public class GDMExpViewer extends JPanel implements IViewer, java.io.Serializabl
         String [][] data = new String[k][3];
         FloatMatrix matrix = this.experiment.getMatrix().transpose();
         for(int i = 0; i < k; i++){
-            data[i][0] = Float.toString(this.expDistMatrix.get(indices[0], indices[i]));
-            data[i][1] = Float.toString(this.rawMatrix.get(indices[0], indices[i]));
-            data[i][2] = getValuePairCount(matrix, indices[0], indices[i]);
+            data[i][0] = Float.toString(this.expDistMatrix.get(indices[0], i));
+            data[i][1] = Float.toString(this.rawMatrix.get(indices[0], i));
+            data[i][2] = getValuePairCount(matrix, indices[0], i);
         }
         return data;
     }
@@ -1539,7 +1513,7 @@ public class GDMExpViewer extends JPanel implements IViewer, java.io.Serializabl
         }
         
         if(goodResults.size() > 0) {
-            GDMResultSelectionDialog dialog = new GDMResultSelectionDialog(goodResults.keys());
+            GDMResultSelectionDialog dialog = new GDMResultSelectionDialog((JFrame)framework.getFrame(), goodResults.keys());
             if( dialog.showModal() == JOptionPane.OK_OPTION ) {
                 int [][] clusters = ((int [][])goodResults.get(dialog.getSelectedResult()));
                 imposeClusterOrder(clusters);
@@ -1630,6 +1604,12 @@ public class GDMExpViewer extends JPanel implements IViewer, java.io.Serializabl
         return null;
     }
     
+    /** Returns int value indicating viewer type
+     * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
+     */
+    public int getViewerType() {
+        return org.tigr.microarray.mev.cluster.clusterUtil.Cluster.EXPERIMENT_CLUSTER;
+    }    
     
     
     /**

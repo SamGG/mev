@@ -1,63 +1,42 @@
 /*
-Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: SVMClassifyViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-07-27 19:59:17 $
- * $Author: braisted $
+ * $Revision: 1.5 $
+ * $Date: 2005-02-24 20:23:45 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.gui.impl.svm;
 
-
-import java.awt.Font;
-import java.awt.Insets;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Dimension;
-import java.awt.Rectangle;
+import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.BorderLayout;
-import java.awt.GridBagLayout;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-
-import java.io.File;
+import java.awt.Insets;
+import java.awt.Rectangle;
 import java.io.BufferedWriter;
-import java.io.OutputStreamWriter;
+import java.io.File;
 import java.io.FileOutputStream;
-
+import java.io.OutputStreamWriter;
 import java.text.DecimalFormat;
 
 import javax.swing.JComponent;
-import javax.swing.JTextArea;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.JPopupMenu;
-import javax.swing.JMenuItem;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.AbstractButton;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.event.MouseInputAdapter;
-
-import org.tigr.util.FloatMatrix;
+import javax.swing.JPanel;
 
 import org.tigr.microarray.mev.TMEV;
-import org.tigr.microarray.mev.cluster.gui.IViewer;
-import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileFilter;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
+import org.tigr.util.FloatMatrix;
 
 public class SVMClassifyViewer extends SVMResultViewer {
     public static final long serialVersionUID = 202018020001L;

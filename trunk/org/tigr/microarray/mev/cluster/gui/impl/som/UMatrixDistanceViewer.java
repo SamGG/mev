@@ -4,39 +4,33 @@ All rights reserved.
 */
 /*
  * $RCSfile: UMatrixDistanceViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-07-27 19:59:17 $
- * $Author: braisted $
+ * $Revision: 1.6 $
+ * $Date: 2005-02-24 20:23:49 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.som;
 
-import java.awt.Font;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.FontMetrics;
-import java.awt.GradientPaint;
 import java.awt.RenderingHints;
-
-import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentAdapter;
-
+import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 
-import javax.swing.JPanel;
 import javax.swing.JComponent;
-
-import org.tigr.util.FloatMatrix;
+import javax.swing.JPanel;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
-
+import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.util.Hexagon;
+import org.tigr.util.FloatMatrix;
 
 public class UMatrixDistanceViewer extends JPanel implements IViewer, java.io.Serializable {
     public static final long serialVersionUID = 202016040001L;
@@ -232,6 +226,13 @@ public class UMatrixDistanceViewer extends JPanel implements IViewer, java.io.Se
     
     public Experiment getExperiment() {
         return null;
+    }
+    
+    /** Returns int value indicating viewer type
+     * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
+     */
+    public int getViewerType() {
+        return -1;
     }
     
     /**

@@ -4,15 +4,13 @@ All rights reserved.
 */
 /*
  * $RCSfile: ArrayViewerCanvas.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:17 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:45 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
-import java.util.*;
-import javax.swing.*;
 import org.tigr.util.awt.Drawable;
 
 public abstract class ArrayViewerCanvas extends Drawable {

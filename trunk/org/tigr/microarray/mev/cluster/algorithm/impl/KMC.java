@@ -4,32 +4,29 @@ All rights reserved.
 */
 /*
  * $RCSfile: KMC.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-04-06 15:20:46 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2005-02-24 20:23:47 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.algorithm.impl;
 
-import java.util.Random;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
 
-import org.tigr.util.FloatMatrix;
-import org.tigr.util.ConfMap;
-
-import org.tigr.microarray.mev.cluster.Node;
 import org.tigr.microarray.mev.cluster.Cluster;
+import org.tigr.microarray.mev.cluster.Node;
 import org.tigr.microarray.mev.cluster.NodeList;
 import org.tigr.microarray.mev.cluster.NodeValue;
 import org.tigr.microarray.mev.cluster.NodeValueList;
-
+import org.tigr.microarray.mev.cluster.algorithm.AbortException;
 import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
-import org.tigr.microarray.mev.cluster.algorithm.AbortException;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
+import org.tigr.util.FloatMatrix;
 
 public class KMC extends AbstractAlgorithm {
     
@@ -49,6 +46,9 @@ public class KMC extends AbstractAlgorithm {
     private boolean kmcGenes; //indicates gene clustering
     private int validN;
     
+    private int hcl_function;
+    private boolean hcl_absolute;
+    
     public AlgorithmData execute(AlgorithmData data) throws AlgorithmException {
         
         AlgorithmParameters map = data.getParams();
@@ -58,6 +58,9 @@ public class KMC extends AbstractAlgorithm {
         absolute = map.getBoolean("distance-absolute", false);
         calculateMeans = map.getBoolean("calculate-means", true);
         kmcGenes = map.getBoolean("kmc-cluster-genes", true);
+        
+        hcl_function = map.getInt("hcl-distance-function", EUCLIDEAN);
+        hcl_absolute = map.getBoolean("hcl-distance-absolute", false);
         
         int number_of_iterations = map.getInt("number-of-iterations", 0);
         int number_of_clusters = map.getInt("number-of-clusters", 0);
@@ -148,8 +151,8 @@ public class KMC extends AbstractAlgorithm {
             experiment = getSubExperimentReducedCols(this.expMatrix, features);
         
         data.addMatrix("experiment", experiment);
-        data.addParam("distance-function", String.valueOf(this.function));
-        data.addParam("distance-absolute", String.valueOf(this.absolute));
+        data.addParam("hcl-distance-function", String.valueOf(this.hcl_function));
+        data.addParam("hcl-distance-absolute", String.valueOf(this.hcl_absolute));
         data.addParam("method-linkage", String.valueOf(method));
         HCL hcl = new HCL();
         AlgorithmData result;
@@ -276,10 +279,15 @@ public class KMC extends AbstractAlgorithm {
             address = findNearest(dissim);
             if (address != location[current]) {
                 reallocations++;
+                
+                clusters[location[current]].updateMeanForLoosingCluster((int)(elements[current].intValue()));
                 clusters[location[current]].remove(elements[current]);
+
+                clusters[address].updateMeanForWinningCluster(elements[current].intValue());
                 clusters[address].add(elements[current]);
-                clusters[location[current]].calculateMean();
-                clusters[address].calculateMean();
+               
+                //clusters[location[current]].calculateMean();
+                //clusters[address].calculateMean();
                 location[current]=address;
             }
             current++;
@@ -370,7 +378,7 @@ public class KMC extends AbstractAlgorithm {
             if (address != location[current]) {
                 reallocations++;
                 clusters[location[current]].remove(elements[current]);
-                clusters[address].add(elements[current]);
+                clusters[address].add(elements[current]);         
                 clusters[location[current]].calculateMedian();
                 clusters[address].calculateMedian();
                 location[current]=address;
@@ -446,11 +454,15 @@ public class KMC extends AbstractAlgorithm {
         private FloatMatrix mean = new FloatMatrix(1, number_of_samples);
         private FloatMatrix median = new FloatMatrix(1, number_of_samples);
         
+        //JB optimize Mean updates
+        private float [] sums = new float[number_of_samples];
+        private int [] validNList = new int[number_of_samples]; 
+        
         public KMCluster() {}
         
         public void calculateMean() {
             float currentMean;
-            int n = size();
+            int n = size(); 
             float value;
             for (int i=0; i<number_of_samples; i++) {
                 currentMean = 0f;
@@ -462,8 +474,42 @@ public class KMC extends AbstractAlgorithm {
                         validN++;
                     }
                 }
+                
+                //jb accounting
+                sums[i] = currentMean;
+                validNList[i] = validN;
+                
                 mean.set(0, i, currentMean/(float)validN);
             }
+        }
+        
+        public void updateMeanForLoosingCluster(int index) {
+         //   int dataIndex = (int)(((Float)get(index)).floatValue());
+            float [] currValues = expMatrix.A[index];
+            
+            //update validNList
+            for(int i = 0; i < number_of_samples; i++) {
+                if(!Float.isNaN(currValues[i])) {
+                    validNList[i]--;
+                    sums[i] -= currValues[i];
+                    mean.set(0, i, sums[i]/(float)validNList[i]);
+                }
+            } 
+        }
+        
+        
+        public void updateMeanForWinningCluster(int index) {
+           // int dataIndex = (int)(((Float)get(index)).floatValue());
+            float [] currValues = expMatrix.A[index];
+            
+            //update validNList
+            for(int i = 0; i < number_of_samples; i++) {
+                if(!Float.isNaN(currValues[i])) {
+                    validNList[i]++;
+                    sums[i] += currValues[i];
+                    mean.set(0, i, sums[i]/(float)validNList[i]);
+                }
+            } 
         }
         
         public FloatMatrix getMean() {

@@ -40,21 +40,17 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableModel;
 import javax.swing.event.TableModelEvent;
 
 
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;
-import org.tigr.microarray.mev.cluster.gui.helpers.TableViewer;
 
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ListOrderDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
@@ -84,7 +80,7 @@ public class ExperimentLabelEditor extends AlgorithmDialog {
     
     /** Creates a new instance of ExperimentLabelEditor */
     public ExperimentLabelEditor(JFrame parent, Vector keys, IData data, boolean permitReorder) {
-        super(parent, "Experiment Label Editor", true);
+        super(parent, "Sample Label Editor", true);
         this.parent = parent;
         Listener listener= new Listener();
         allowReordering = permitReorder;
@@ -112,7 +108,7 @@ public class ExperimentLabelEditor extends AlgorithmDialog {
         JScrollPane pane = new JScrollPane(table);
         pane.setColumnHeaderView(table.getTableHeader());        
         table.setPreferredScrollableViewportSize(new Dimension(500, 150));        
-        ParameterPanel panel = new ParameterPanel("Experiment Labels");
+        ParameterPanel panel = new ParameterPanel("Sample Labels");
         panel.setLayout(new GridBagLayout());
         panel.add(pane, new GridBagConstraints(0,0,1,1,1.0,1.0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,5,5,5),0,0));
         JMenuBar menuBar = createMenuBar(listener);
@@ -225,7 +221,7 @@ public class ExperimentLabelEditor extends AlgorithmDialog {
         JMenu editMenu = new JMenu("Edit");
         editMenu.setMnemonic('E');
         
-        JMenuItem addRowItem = new JMenuItem("Add New Experiment Label");
+        JMenuItem addRowItem = new JMenuItem("Add New Sample Label");
         addRowItem.setActionCommand("add-row-command");
         addRowItem.addActionListener(listener);
         
@@ -237,10 +233,10 @@ public class ExperimentLabelEditor extends AlgorithmDialog {
         delRowsItem.setActionCommand("del-rows-command");
         delRowsItem.addActionListener(listener);
         
-        enableReorderItem = new JCheckBoxMenuItem("Enable Experiment Reordering", false);
+        enableReorderItem = new JCheckBoxMenuItem("Enable Sample Reordering", false);
         enableReorderItem.setActionCommand("reorder-command");        
         enableReorderItem.setEnabled(allowReordering);
-        enableReorderItem.setToolTipText("forces experiments to reorder to match table, hit info button");
+        enableReorderItem.setToolTipText("forces samples to reorder to match table, hit info button");
         enableReorderItem.addActionListener(listener); 
         
         editMenu.add(addRowItem);
@@ -257,7 +253,7 @@ public class ExperimentLabelEditor extends AlgorithmDialog {
     
     private JPopupMenu createPopupMenu(Listener listener) {
         JPopupMenu popup = new JPopupMenu();
-        JMenuItem addRowPopItem = new JMenuItem("Add New Experiment Label");
+        JMenuItem addRowPopItem = new JMenuItem("Add New Sample Label");
         addRowPopItem.setActionCommand("add-row-command");
         addRowPopItem.addActionListener(listener);
         
@@ -269,10 +265,10 @@ public class ExperimentLabelEditor extends AlgorithmDialog {
         delRowsPopItem.setActionCommand("del-rows-command");
         delRowsPopItem.addActionListener(listener);
         
-        enableReorderPopItem = new JCheckBoxMenuItem("Enable Experiment Reordering", false);
+        enableReorderPopItem = new JCheckBoxMenuItem("Enable Sample Reordering", false);
         enableReorderPopItem.setActionCommand("reorder-command");
         enableReorderPopItem.setEnabled(allowReordering);
-        enableReorderPopItem.setToolTipText("forces experiments to reorder to match table, hit info button");
+        enableReorderPopItem.setToolTipText("forces samples to reorder to match table, hit info button");
         enableReorderPopItem.addActionListener(listener); 
         
         popup.add(addRowPopItem);
@@ -492,7 +488,7 @@ public class ExperimentLabelEditor extends AlgorithmDialog {
             JList keyOrderList = new JList(keysToMerge);
             keyOrderList.setSelectedIndex(0);
             
-            ListOrderDialog dialog = new ListOrderDialog(parent, keyOrderList, keysToMerge, "Experiment Label Keys", " ");
+            ListOrderDialog dialog = new ListOrderDialog(parent, keyOrderList, keysToMerge, "Sample Label Keys", " ");
 
             if(dialog.showModal() != JOptionPane.OK_OPTION)
                 return;
@@ -571,11 +567,9 @@ public class ExperimentLabelEditor extends AlgorithmDialog {
          */
         public Component getTableCellRendererComponent(JTable jTable, Object obj, boolean param, boolean param3, int row, int col) {
             if(obj instanceof Color){
-                System.out.println("color");
                 colorPanel.setBackground((Color)obj);
                 return colorPanel;
             } else if(obj instanceof JLabel){
-                System.out.println("jlabel");
                 label = (JLabel)obj;
                 label.setOpaque(true);
                 label.setFont(new Font("Arial", Font.PLAIN, 12));
@@ -640,13 +634,11 @@ public class ExperimentLabelEditor extends AlgorithmDialog {
         }
         
         public Object getCellEditorValue() {
-            System.out.println("get editor value");
             return field;
         }
         
         public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
             value = field.getText();
-            System.out.println("action");
             this.fireEditingStopped();
         }
         
@@ -663,16 +655,13 @@ public class ExperimentLabelEditor extends AlgorithmDialog {
             String command = ae.getActionCommand();
             //menu actions
             if(command.equals("add-row-command")) {
-                System.out.println("add row command");
                 model.addNewRow();
             } else if(command.equals("merge-rows-command")) {
-                System.out.println("merge rows");
                 int [] selectedRows = table.getSelectedRows();
                 if(selectedRows.length < 2)
                     return;
                 model.mergeRows(selectedRows);
             } else if(command.equals("del-rows-command")) {
-                                System.out.println("del rows");
                 int [] selectedRows = table.getSelectedRows();
                 if(selectedRows.length < 1)
                     return;

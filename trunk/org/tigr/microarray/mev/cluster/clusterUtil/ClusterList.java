@@ -4,15 +4,18 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterList.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-07-27 19:58:13 $
- * $Author: braisted $
+ * $Revision: 1.5 $
+ * $Date: 2005-02-24 20:24:12 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.clusterUtil;
 
-import java.util.Vector;
 import java.awt.Color;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Vector;
 
 /** The ClusterList class is used to collect and administer
  * a collection of clusters.  The ClusterList object typically is
@@ -46,6 +49,17 @@ public class ClusterList extends Vector implements java.io.Serializable {
     public ClusterList(String AlgorithmName){
         this.algorithmName = AlgorithmName;
     }
+    
+    private void writeObject(ObjectOutputStream oos) throws IOException {
+        oos.writeInt(algorithmIndex);
+        oos.writeObject(algorithmName);
+    }
+    
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        algorithmIndex = ois.readInt();
+        algorithmName = (String)(ois.readObject());
+    }
+    
     
     /** Adds a cluster to the list
      */

@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: FOMGUI.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-07-27 19:59:16 $
- * $Author: braisted $
+ * $Revision: 1.6 $
+ * $Date: 2005-02-24 20:24:12 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.fom;
@@ -15,7 +15,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.tigr.util.FloatMatrix;
@@ -320,7 +319,7 @@ public class FOMGUI implements IClusterGUI, IScriptGUI {
             if(this.clusterGenes)
                 root = new DefaultMutableTreeNode("FOM - genes");
             else
-                root = new DefaultMutableTreeNode("FOM - experiments");
+                root = new DefaultMutableTreeNode("FOM - samples");
             addResultNodes(root, fom_values, fom_vars, iValues, info, interval, numOfCastClusters);
             return root;
         }

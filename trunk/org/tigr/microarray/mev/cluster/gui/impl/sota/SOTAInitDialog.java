@@ -1,34 +1,50 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: SOTAInitDialog.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:50 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.gui.impl.sota;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.WindowEvent;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
+import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.UIManager;
+
+import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.SampleSelectionPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DistanceMetricPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HCLSelectionPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.SampleSelectionPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
+
 /**
  *
  * @author  braisted
  */
-public class SOTAInitDialog extends AlgorithmDialog {//javax.swing.JDialog {
+public class SOTAInitDialog extends AlgorithmDialog {
     
-    public int result = 0;
+    public int result = JOptionPane.CANCEL_OPTION;
     private float initDiv = 0.01f;
     
     private SampleSelectionPanel sampleSelectionPanel;
@@ -62,10 +78,17 @@ public class SOTAInitDialog extends AlgorithmDialog {//javax.swing.JDialog {
     private javax.swing.JTextField pValue;
     private HCLSelectionPanel hclOpsPanel;
     
+    private DistanceMetricPanel metricPanel;
+    private String globalMetricName;
+    private boolean globalAbsoluteSetting;
     
     /** Creates new form JSOTAInitDialog */
-    public SOTAInitDialog(java.awt.Frame parent, int factor) {
-        super(new JFrame(), "SOTA: Self Organizing Tree Algorithm", true);
+    public SOTAInitDialog(java.awt.Frame parent, int factor, String globalMetricName, boolean globalAbsoluteSetting) {
+        super(parent, "SOTA: Self Organizing Tree Algorithm", true);
+
+        this.globalMetricName = globalMetricName;
+        this.globalAbsoluteSetting = globalAbsoluteSetting;
+        
         initComponents();
         
         if(factor == -1){
@@ -78,17 +101,46 @@ public class SOTAInitDialog extends AlgorithmDialog {//javax.swing.JDialog {
         Listener listener = new Listener();
         this.addWindowListener(listener);
         setActionListeners(listener);
+        metricPanel.addActionListener(listener);
         
         this.useClusterVariance.addItemListener(listener);
-        setSize(580,510);
-      // pack();
+        setSize(580,630);
+      //pack();
     }
     
+    private void updateMaxTreeDiversity() {
+        int function = metricPanel.getMetricIndex();
+        int factor;
+        
+        if ((function==Algorithm.PEARSON)           ||
+        (function==Algorithm.PEARSONUNCENTERED) ||
+        (function==Algorithm.PEARSONSQARED)     ||
+        (function==Algorithm.COSINE)            ||
+        (function==Algorithm.COVARIANCE)        ||
+        (function==Algorithm.DOTPRODUCT)        ||
+        (function==Algorithm.SPEARMANRANK)      ||
+        (function==Algorithm.KENDALLSTAU)) {
+            factor = -1;
+        } else {
+            factor = 1;
+        }
+        
+         
+        if(factor == -1){
+            maxTreeDiv.setText("0.90");
+            initDiv = 0.90f;
+        } else {
+            maxTreeDiv.setText("0.01");            
+            
+        }
+    }
     
     private void initComponents() {
         
         sampleSelectionPanel = new SampleSelectionPanel(Color.white, UIManager.getColor("Label.foreground"), true, "Sample Selection");
         
+        metricPanel = new DistanceMetricPanel(globalMetricName, globalAbsoluteSetting, "Euclidean Distance", "SOTA", true, true);
+                
         maxCyclesLabel = new javax.swing.JLabel();
         maxDivLabel = new javax.swing.JLabel();
         maxTreeDiv = new javax.swing.JTextField();
@@ -255,10 +307,11 @@ public class SOTAInitDialog extends AlgorithmDialog {//javax.swing.JDialog {
         parameters.setPreferredSize(new java.awt.Dimension(520, 412));
         parameters.setMaximumSize(new java.awt.Dimension(32767, 690));
         parameters.add(sampleSelectionPanel, new GridBagConstraints(0,0,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
-        parameters.add(growthCritPanel, new GridBagConstraints(0,1,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
-        parameters.add(migCritPanel, new GridBagConstraints(0,2,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
-        parameters.add(cellDivPanel, new GridBagConstraints(0,3,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
-        parameters.add(hclOpsPanel, new GridBagConstraints(0,4,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
+        parameters.add(metricPanel, new GridBagConstraints(0,1,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0)); 
+        parameters.add(growthCritPanel, new GridBagConstraints(0,2,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
+        parameters.add(migCritPanel, new GridBagConstraints(0,3,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
+        parameters.add(cellDivPanel, new GridBagConstraints(0,4,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
+        parameters.add(hclOpsPanel, new GridBagConstraints(0,5,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
         
         addContent(parameters);
     }
@@ -300,6 +353,21 @@ public class SOTAInitDialog extends AlgorithmDialog {//javax.swing.JDialog {
             value = Integer.parseInt(levelChoice.getSelectedItem());
         }
         return value;
+    }
+    
+    
+    /**
+     * Returns the currently selected metric
+     */
+    public int getDistanceMetric() {
+        return metricPanel.getMetricIndex();
+    }
+    
+    /**
+     *  Returns true if the absolute checkbox is selected, else false
+     */
+    public boolean isAbsoluteDistance() {
+        return metricPanel.getAbsoluteSelection();
     }
     
     
@@ -376,6 +444,8 @@ public class SOTAInitDialog extends AlgorithmDialog {//javax.swing.JDialog {
         this.hclOpsPanel.setHCLSelected(false);
         this.useClusterDiversity.setSelected(true);
         this.pValue.setText("0.05");
+        metricPanel.reset();
+        updateMaxTreeDiversity();
     }
     
     private boolean validateValues(){
@@ -515,7 +585,7 @@ public class SOTAInitDialog extends AlgorithmDialog {//javax.swing.JDialog {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        new SOTAInitDialog(new java.awt.Frame(), 1).show();
+        new SOTAInitDialog(new java.awt.Frame(), 1, "Euclidean Distance", false).show();
         System.exit(0);
     }
     
@@ -525,7 +595,7 @@ public class SOTAInitDialog extends AlgorithmDialog {//javax.swing.JDialog {
     /**
      * The class to listen to the dialog and check boxes items events.
      */
-    private class Listener extends DialogListener implements ItemListener {
+    private class Listener extends DialogListener implements ItemListener, ActionListener {
         
         public void actionPerformed(ActionEvent e) {
             String command = e.getActionCommand();
@@ -553,6 +623,9 @@ public class SOTAInitDialog extends AlgorithmDialog {//javax.swing.JDialog {
                     help.dispose();
                     return;
                 }
+            } else if (e.getSource() == metricPanel) {
+                updateMaxTreeDiversity();
+                return;
             }
             dispose();
         }

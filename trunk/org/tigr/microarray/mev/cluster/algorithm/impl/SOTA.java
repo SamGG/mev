@@ -4,32 +4,28 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOTA.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:47 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.algorithm.impl;
 
-import java.io.*;
-import java.util.*;
 import java.awt.Dimension;
+import java.util.Vector;
 
-import org.tigr.util.ConfMap;
-import org.tigr.util.FloatMatrix;
-import org.tigr.microarray.mev.cluster.Node;
 import org.tigr.microarray.mev.cluster.Cluster;
+import org.tigr.microarray.mev.cluster.Node;
 import org.tigr.microarray.mev.cluster.NodeList;
 import org.tigr.microarray.mev.cluster.NodeValue;
 import org.tigr.microarray.mev.cluster.NodeValueList;
-import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
 import org.tigr.microarray.mev.cluster.algorithm.AbortException;
 import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
-import org.tigr.microarray.mev.cluster.algorithm.impl.ExperimentUtil;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
+import org.tigr.util.FloatMatrix;
 
 
 public class SOTA extends AbstractAlgorithm{
@@ -77,7 +73,8 @@ public class SOTA extends AbstractAlgorithm{
     boolean calculate_experiments;
     int method;             //HCL linkage method
     
-    
+    private int hcl_function;
+    private boolean hcl_absolute;    
     
     /**
      * Constructs a new SOTA object
@@ -119,6 +116,9 @@ public class SOTA extends AbstractAlgorithm{
         migP = params.getFloat("mig_p", (float)0.005);
         migS = params.getFloat("mig_s", (float)0.001);
         neighborhoodLevel = params.getInt("neighborhood-level", 5);
+        
+        hcl_function = params.getInt("hcl-distance-function", EUCLIDEAN);
+        hcl_absolute = params.getBoolean("hcl-distance-absolute", false);
         
         inData = data;  //keep a handle on AlgorithmData for return
         
@@ -425,8 +425,8 @@ public class SOTA extends AbstractAlgorithm{
             experiment = getSubExperimentReducedCols(this.dataMatrix, features);
                 
         data.addMatrix("experiment", experiment);
-        data.addParam("distance-function", String.valueOf(this.function));
-        data.addParam("distance-absolute", String.valueOf(this.absolute));
+        data.addParam("hcl-distance-function", String.valueOf(this.hcl_function));
+        data.addParam("hcl-distance-absolute", String.valueOf(this.hcl_absolute));
         data.addParam("method-linkage", String.valueOf(method));
         HCL hcl = new HCL();
         AlgorithmData result;

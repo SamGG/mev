@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: PermutationTest.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:47 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.algorithm.impl;
@@ -14,7 +14,6 @@ package org.tigr.microarray.mev.cluster.algorithm.impl;
 import java.util.Arrays;
 
 import org.tigr.util.FloatMatrix;
-import org.tigr.microarray.mev.cluster.*;
 import org.tigr.microarray.mev.cluster.algorithm.*;
 
 import org.tigr.microarray.mev.cluster.algorithm.impl.util.*;

@@ -4,14 +4,13 @@ All rights reserved.
 */
 /*
  * $RCSfile: LeafInfo.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-07-27 19:59:15 $
- * $Author: braisted $
+ * $Revision: 1.5 $
+ * $Date: 2005-02-24 20:24:11 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui;
 
-import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 
 /**
@@ -23,7 +22,7 @@ import javax.swing.JPopupMenu;
  */
 public class LeafInfo implements java.io.Serializable {
         
-    public static final long serialVersionUID = 2020001L;
+    public static final long serialVersionUID = 2020002L;
     
     // leaf name
     private String name;
@@ -35,6 +34,8 @@ public class LeafInfo implements java.io.Serializable {
     private String tooltip;
     // user object
     private Object userObject;
+    // selected, as data source
+    private boolean selectedDataSource;
     
     
     public LeafInfo() {  }
@@ -178,6 +179,20 @@ public class LeafInfo implements java.io.Serializable {
     }
     
     /**
+     * Returns true if it is the selected data source
+     */
+    public boolean isSelectedDataSource() {
+        return selectedDataSource;
+    }
+    
+    /**
+     * sets the selected status for data source
+     */
+    public void setSelectedDataSource(boolean selected) {
+        selectedDataSource = selected;
+    }
+    
+    /**
      * Overriden to return the node name.
      */
     public String toString() {
@@ -196,6 +211,7 @@ public class LeafInfo implements java.io.Serializable {
         oos.writeObject(this.userObject);
         oos.writeObject(this.tooltip);
         oos.writeObject(this.viewer);
+        oos.writeBoolean(this.selectedDataSource);
     }
      
    
@@ -205,5 +221,6 @@ public class LeafInfo implements java.io.Serializable {
         this.userObject = ois.readObject();
         this.tooltip = (String)ois.readObject();
         this.viewer = (IViewer)ois.readObject();
+        this.selectedDataSource = ois.readBoolean();
     }   
 }

@@ -1,43 +1,71 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: ColorSchemeSelectionDialog.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:23 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:11 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
 package org.tigr.microarray.util.awt;
 
-import javax.swing.JPanel;
+import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.event.*;
+import java.awt.Dimension;
+import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GradientPaint;
-import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JColorChooser;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeListener;
-import java.awt.BorderLayout;
-import java.awt.Insets;
-import java.awt.GridBagConstraints;
-import javax.swing.BorderFactory;
-import java.awt.Toolkit;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JOptionPane;
 
 
 /** Supplies option dialog for selection of
  * expression color scheme
  */
-public class ColorSchemeSelectionDialog extends javax.swing.JDialog {
+public class ColorSchemeSelectionDialog extends JDialog {
+        
+    private ButtonGroup chanelSelectionGroup;
+    private JPanel channelSelectionPanel;
+    private JRadioButton negativeColorButton;
+    private JRadioButton positiveColorButton;
+    private JPanel actionButtonPanel;
+    private JButton okButton;
+    private JButton cancelButton;
+    private JColorChooser colorChooser;
+    private JPanel gradientPreviewPanel;
+    private Color posColor = Color.red;
+    private Color negColor = Color.green;
+    private Color neutralColor = Color.black;
+    private PreviewPanel previewer;
+    private JCheckBox neutralColorCheckBox;
+
+    private JRadioButton doubleGradientButton, singleGradientButton;
     
+    private boolean useDoubleGradient;
+    
+    private int result = 0;
+    	
     /**
      * Creates new form ColorSchemeSelectionDialog
      * @param parent parent Frame
@@ -45,8 +73,9 @@ public class ColorSchemeSelectionDialog extends javax.swing.JDialog {
      * @param negImage initial negative gradient image
      * @param posImage initial positive gradient image
      */
-    public ColorSchemeSelectionDialog(java.awt.Frame parent, boolean modal, BufferedImage negImage, BufferedImage posImage) {
+    public ColorSchemeSelectionDialog(java.awt.Frame parent, boolean modal, BufferedImage negImage, BufferedImage posImage, boolean useDouble) {
         super(parent, modal);
+        this.useDoubleGradient = useDouble;
         this.setTitle("Color Scheme Selection");
         this.previewer = new PreviewPanel(negImage, posImage);
         initComponents();
@@ -55,6 +84,7 @@ public class ColorSchemeSelectionDialog extends javax.swing.JDialog {
         
         neutralColorCheckBox = new javax.swing.JCheckBox("Use Black as Neutral Color", true);
         neutralColorCheckBox.setFocusPainted(false);
+        neutralColorCheckBox.setOpaque(false);
 
         if((posImage.getRGB(0,0)) == ((Color.white).getRGB())) { //if neutral is white, then set to neutral = white
             neutralColorCheckBox.setSelected(false);
@@ -69,7 +99,7 @@ public class ColorSchemeSelectionDialog extends javax.swing.JDialog {
                     neutralColor = Color.black;
                 else
                     neutralColor = Color.white;
-                previewer.refreshPreview();
+                previewer.alterNeutralColor();
             }
         });
         
@@ -79,7 +109,9 @@ public class ColorSchemeSelectionDialog extends javax.swing.JDialog {
         this.colorChooser.setPreviewPanel(new JPanel());
         this.gradientPreviewPanel.add(this.previewer, BorderLayout.CENTER);
         this.colorChooser.getSelectionModel().addChangeListener(previewer);
-        setSize(450, 465);
+        //setSize(450, 465);
+        
+        pack();
         
         this.okButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
@@ -100,8 +132,36 @@ public class ColorSchemeSelectionDialog extends javax.swing.JDialog {
      * initialize the form.
      */
     private void initComponents() {//GEN-BEGIN:initComponents
-        chanelSelectionGroup = new javax.swing.ButtonGroup();
+
+    	Listener listener = new Listener();
+    	
+        ButtonGroup bg = new ButtonGroup();
+		doubleGradientButton = new JRadioButton("Double Gradient  (Suitable for log2Ratio Data)", useDoubleGradient);
+		doubleGradientButton.setActionCommand("change-gradient-command");
+		doubleGradientButton.addActionListener(listener);
+		doubleGradientButton.setFocusPainted(false);
+		doubleGradientButton.setOpaque(false);
+		bg.add(doubleGradientButton);
+		
+		singleGradientButton = new JRadioButton("Single Gradient  (Suitable for Absolute Intensity Values)", !useDoubleGradient);
+		singleGradientButton.setActionCommand("change-gradient-command");
+		singleGradientButton.addActionListener(listener);
+		singleGradientButton.setFocusPainted(false);
+		singleGradientButton.setOpaque(false);
+		bg.add(singleGradientButton);
+		
+    	JPanel gradientStylePanel = new JPanel(new GridBagLayout());
+    	gradientStylePanel.setBackground(Color.white);
+        gradientStylePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Gradient Style"));
+
+		gradientStylePanel.add(doubleGradientButton, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,0,5,0),0,0));
+		gradientStylePanel.add(singleGradientButton, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0),0,0));		
+				
+    	chanelSelectionGroup = new javax.swing.ButtonGroup();
         channelSelectionPanel = new javax.swing.JPanel();
+        channelSelectionPanel.setBackground(Color.white);
+        channelSelectionPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Gradient Selection"));
+        
         negativeColorButton = new javax.swing.JRadioButton();
         positiveColorButton = new javax.swing.JRadioButton();
         actionButtonPanel = new javax.swing.JPanel();
@@ -127,12 +187,14 @@ public class ColorSchemeSelectionDialog extends javax.swing.JDialog {
         java.awt.GridBagConstraints gridBagConstraints2;
         
         negativeColorButton.setSelected(true);
-        negativeColorButton.setText("Select Negative Color");
+        negativeColorButton.setText("Select Low End Color");
+        negativeColorButton.setOpaque(false);
         chanelSelectionGroup.add(negativeColorButton);
         gridBagConstraints2 = new java.awt.GridBagConstraints();
         channelSelectionPanel.add(negativeColorButton, gridBagConstraints2);
         
-        positiveColorButton.setText("Select Positive Color");
+        positiveColorButton.setText("Select High End Color");
+        positiveColorButton.setOpaque(false);
         chanelSelectionGroup.add(positiveColorButton);
         gridBagConstraints2 = new java.awt.GridBagConstraints();
         channelSelectionPanel.add(positiveColorButton, gridBagConstraints2);
@@ -140,9 +202,11 @@ public class ColorSchemeSelectionDialog extends javax.swing.JDialog {
         gridBagConstraints1 = new java.awt.GridBagConstraints();
         gridBagConstraints1.gridx = 0;
         gridBagConstraints1.gridy = 0;
-        gridBagConstraints1.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        getContentPane().add(channelSelectionPanel, gridBagConstraints1);
-        
+        gridBagConstraints1.gridwidth = 1;
+        gridBagConstraints1.gridheight = 1;        
+        gridBagConstraints1.fill = java.awt.GridBagConstraints.BOTH;        
+        getContentPane().add(gradientStylePanel, gridBagConstraints1);
+                
         actionButtonPanel.setLayout(new java.awt.GridBagLayout());
         java.awt.GridBagConstraints gridBagConstraints3;
         
@@ -150,6 +214,7 @@ public class ColorSchemeSelectionDialog extends javax.swing.JDialog {
         okButton.setFocusPainted(false);
         okButton.setSelected(true);
         gridBagConstraints3 = new java.awt.GridBagConstraints();
+                        
         gridBagConstraints3.gridx = 0;
         gridBagConstraints3.gridy = 0;
         gridBagConstraints3.insets = new java.awt.Insets(10, 0, 10, 10);
@@ -164,7 +229,7 @@ public class ColorSchemeSelectionDialog extends javax.swing.JDialog {
         
         gridBagConstraints1 = new java.awt.GridBagConstraints();
         gridBagConstraints1.gridx = 0;
-        gridBagConstraints1.gridy = 3;
+        gridBagConstraints1.gridy = 4;
         gridBagConstraints1.fill = java.awt.GridBagConstraints.BOTH;
         getContentPane().add(actionButtonPanel, gridBagConstraints1);
         
@@ -172,6 +237,12 @@ public class ColorSchemeSelectionDialog extends javax.swing.JDialog {
         gridBagConstraints1.gridx = 0;
         gridBagConstraints1.gridy = 1;
         gridBagConstraints1.fill = java.awt.GridBagConstraints.BOTH;
+        getContentPane().add(channelSelectionPanel, gridBagConstraints1);
+
+        gridBagConstraints1 = new java.awt.GridBagConstraints();
+        gridBagConstraints1.gridx = 0;
+        gridBagConstraints1.gridy = 2;
+        gridBagConstraints1.fill = java.awt.GridBagConstraints.BOTH;      
         getContentPane().add(colorChooser, gridBagConstraints1);
         
         gradientPreviewPanel.setLayout(new java.awt.BorderLayout());
@@ -179,9 +250,10 @@ public class ColorSchemeSelectionDialog extends javax.swing.JDialog {
         gradientPreviewPanel.setBorder(new javax.swing.border.TitledBorder(new javax.swing.border.EtchedBorder(), "Gradient Preview"));
         gradientPreviewPanel.setPreferredSize(new java.awt.Dimension(200, 70));
         gradientPreviewPanel.setMinimumSize(new java.awt.Dimension(200, 70));
+        gradientPreviewPanel.setBackground(Color.white);
         gridBagConstraints1 = new java.awt.GridBagConstraints();
         gridBagConstraints1.gridx = 0;
-        gridBagConstraints1.gridy = 2;
+        gridBagConstraints1.gridy = 3;
         gridBagConstraints1.fill = java.awt.GridBagConstraints.BOTH;
         getContentPane().add(gradientPreviewPanel, gridBagConstraints1);
         
@@ -220,30 +292,21 @@ public class ColorSchemeSelectionDialog extends javax.swing.JDialog {
         return previewer.getNegativeGradient();
     }
     
+    public boolean getUseDoubleGradient() {
+    	return doubleGradientButton.isSelected();
+    }
+    
+    public BufferedImage getPosImage() {
+    	return previewer.getPositiveGradient();    
+    }
     
     
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.ButtonGroup chanelSelectionGroup;
-    private javax.swing.JPanel channelSelectionPanel;
-    private javax.swing.JRadioButton negativeColorButton;
-    private javax.swing.JRadioButton positiveColorButton;
-    private javax.swing.JPanel actionButtonPanel;
-    private javax.swing.JButton okButton;
-    private javax.swing.JButton cancelButton;
-    private javax.swing.JColorChooser colorChooser;
-    private javax.swing.JPanel gradientPreviewPanel;
-    // End of variables declaration//GEN-END:variables
-    private Color posColor = Color.red;
-    private Color negColor = Color.green;
-    private Color neutralColor = Color.black;
-    private PreviewPanel previewer;
-    private int result = 0;
-    private javax.swing.JCheckBox neutralColorCheckBox;
+    
     
     /**
      * Panel which displays the current color scheme gradient
      */
-    public class PreviewPanel extends JPanel implements ChangeListener{
+    public class PreviewPanel extends JPanel implements ChangeListener {
         
         BufferedImage currentPosGradient;
         BufferedImage currentNegGradient;
@@ -272,16 +335,39 @@ public class ColorSchemeSelectionDialog extends javax.swing.JDialog {
             if(newColor == null) return;
             
             if(positiveColorButton.isSelected()){
-                posColor = newColor;
-                currentPosGradient = createGradientImage(neutralColor, posColor);
+	                posColor = newColor;
+	                if(useDoubleGradient)
+	                	currentPosGradient = createGradientImage(neutralColor, posColor);
+	                else
+	                	currentPosGradient = createGradientImage(negColor, posColor);
             }
-            else if(negativeColorButton.isSelected()){
-                negColor = newColor;
-                currentNegGradient = createGradientImage(negColor, neutralColor);
-            }
+	            else if(negativeColorButton.isSelected()){
+	                negColor = newColor;
+	                if(useDoubleGradient)
+	                	currentNegGradient = createGradientImage(negColor, neutralColor);
+	                else  //single gradient, modify positive gradient only
+	                	currentPosGradient = createGradientImage(negColor, posColor);	                	
+	            }           
             repaint();
         }
         
+        public void alterNeutralColor() {
+            if(useDoubleGradient) {
+            	currentPosGradient = createGradientImage(neutralColor, posColor);
+            	currentNegGradient = createGradientImage(negColor, neutralColor);
+                repaint();       
+            }
+        }
+        
+    	public void onSwitchGradientStyle() {
+    		if(useDoubleGradient)
+    			refreshPreview();
+    		else { //modify for single gradient
+            	currentPosGradient = createGradientImage(negColor, posColor);    			
+    		}    			
+    		repaint();
+    	}
+    	
         /**
          * Refreshes gradients with current color
          */
@@ -295,8 +381,12 @@ public class ColorSchemeSelectionDialog extends javax.swing.JDialog {
          */
         public void paint(Graphics g){
             super.paintComponent(g);
-            g.drawImage(currentNegGradient, 0, 0, this.getWidth()/2, this.getHeight(), null);
-            g.drawImage(currentPosGradient, this.getWidth()/2, 0, this.getWidth()/2, this.getHeight(), null);
+            if(useDoubleGradient) {
+            	g.drawImage(currentNegGradient, 0, 0, this.getWidth()/2, this.getHeight(), null);
+            	g.drawImage(currentPosGradient, this.getWidth()/2, 0, this.getWidth()/2, this.getHeight(), null);
+            } else {
+            	g.drawImage(currentPosGradient, 0, 0, this.getWidth(), this.getHeight(), null);            	            
+            }
         }
         
         /**
@@ -330,7 +420,24 @@ public class ColorSchemeSelectionDialog extends javax.swing.JDialog {
             return currentNegGradient;
         }
         
-        
+    }
+    
+    public class Listener implements ActionListener {
+
+		/* (non-Javadoc)
+		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+		 */
+		public void actionPerformed(ActionEvent e) {
+			String command = e.getActionCommand();
+			if(command.equals("change-gradient-command")) {
+				useDoubleGradient = doubleGradientButton.isSelected();
+				neutralColorCheckBox.setEnabled(useDoubleGradient);
+				previewer.onSwitchGradientStyle();				
+			}
+			
+		}
+    	
+    
     }
     
 }

@@ -1,30 +1,54 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: OneWayANOVAInitBox.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-06-25 18:51:18 $
- * $Author: nbhagaba $
+ * $Revision: 1.7 $
+ * $Date: 2005-02-24 20:24:04 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.gui.impl.owa;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import org.tigr.graph.*;
-import org.tigr.util.*;
-import org.tigr.util.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.PrintWriter;
+import java.util.Vector;
 
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.UIManager;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HCLSigOnlyPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 
 /**
  *
@@ -36,20 +60,23 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
     public static final int JUST_ALPHA = 1;
     public static final int STD_BONFERRONI = 2;
     public static final int ADJ_BONFERRONI = 3;
-    public static final int MAX_T = 9;    
+    public static final int MAX_T = 9; 
+    public static final int FALSE_NUM = 12;
+    public static final int FALSE_PROP = 13;    
     
     boolean okPressed = false;
     Vector exptNames;    
     MultiClassPanel mPanel; 
     PermOrFDistPanel permPanel;
     PValuePanel pPanel;
-    HCLSelectionPanel hclOpsPanel;    
+    //HCLSelectionPanel hclOpsPanel;    
+    HCLSigOnlyPanel hclOpsPanel;
     
     /** Creates new OneWayANOVAInitBox */
     public OneWayANOVAInitBox(JFrame parentFrame, boolean modality, Vector exptNames) {
         super(parentFrame, "One-way ANOVA Initialization", modality);
         this.exptNames = exptNames;  
-        setBounds(0, 0, 700, 750);
+        setBounds(0, 0, 800, 850);
         setBackground(Color.white);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         GridBagLayout gridbag = new GridBagLayout();
@@ -75,7 +102,7 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
         gridbag.setConstraints(pPanel, constraints);
         pane.add(pPanel);
         
-        hclOpsPanel = new HCLSelectionPanel();
+        hclOpsPanel = new HCLSigOnlyPanel();
         buildConstraints(constraints, 0, 3, 1, 1, 0, 5);
         gridbag.setConstraints(hclOpsPanel, constraints);
         pane.add(hclOpsPanel);        
@@ -83,7 +110,8 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
         addContent(pane);
         EventListener listener = new EventListener();
         setActionListeners(listener);
-        this.addWindowListener(listener);        
+        this.addWindowListener(listener);  
+        //pack();
     }
 
     
@@ -116,6 +144,10 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
     
     public boolean drawTrees() {
         return this.hclOpsPanel.isHCLSelected();
+    }   
+    
+    public boolean drawSigTreesOnly() {
+        return hclOpsPanel.drawSigTreesOnly();
     }    
     
     class MultiClassPanel extends JPanel {
@@ -231,15 +263,19 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
         }
         
         class MultiGroupExperimentsPanel extends JPanel {
+            int numPanels = 0;
             JLabel[] expLabels;
             JRadioButton[][] exptGroupRadioButtons;
             JRadioButton[] notInGroupRadioButtons;
             MultiGroupExperimentsPanel(Vector exptNames, int numGroups) {
                 this.setBorder(new TitledBorder(new EtchedBorder(), "Group Assignments", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
                 setBackground(Color.white);
-                JPanel panel1 = new JPanel();
+
+               // JPanel panel1 = new JPanel();
                 expLabels = new JLabel[exptNames.size()];
                 exptGroupRadioButtons = new JRadioButton[numGroups][exptNames.size()];
+                numPanels = exptNames.size()/512 + 1;
+                
                 //groupARadioButtons = new JRadioButton[exptNames.size()];
                 //groupBRadioButtons = new JRadioButton[exptNames.size()];
                 notInGroupRadioButtons = new JRadioButton[exptNames.size()];
@@ -249,7 +285,15 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
                 GridBagLayout gridbag2 = new GridBagLayout();
                 GridBagConstraints constraints = new GridBagConstraints();
                 this.setLayout(gridbag2);
-                panel1.setLayout(gridbag);
+//                panel1.setLayout(gridbag);
+  
+
+                JPanel [] panels = new JPanel[numPanels];
+                
+                int currPanel = 0;
+                for(int i = 0; i < panels.length; i++) {
+                    panels[i] = new JPanel(gridbag);
+                }
                 
                 for (int i = 0; i < exptNames.size(); i++) {
                     String s1 = (String)(exptNames.get(i));
@@ -259,23 +303,29 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
                         exptGroupRadioButtons[j][i] = new JRadioButton("Group " + (j + 1) + "     ", j == 0? true: false);
                         chooseGroup[i].add(exptGroupRadioButtons[j][i]);
                     }
-
+                    
+                    //set current panel
+                    currPanel = i / 512;
+                    
                     notInGroupRadioButtons[i] = new JRadioButton("Not in groups", false);
                     chooseGroup[i].add(notInGroupRadioButtons[i]);
                     
                 
                     for (int j = 0; j < numGroups; j++) {
-                        buildConstraints(constraints, j, i, 1, 1, 100, 100);
+                        buildConstraints(constraints, j, i%512, 1, 1, 100, 100);
                         //constraints.fill = GridBagConstraints.BOTH;
                         gridbag.setConstraints(exptGroupRadioButtons[j][i], constraints);
-                        panel1.add(exptGroupRadioButtons[j][i]);
+                        panels[currPanel].add(exptGroupRadioButtons[j][i]);
+                        // panel1.add(exptGroupRadioButtons[j][i]);
                     }
                     
-                    buildConstraints(constraints, (numGroups + 1), i, 1, 1, 100, 100);
+                    buildConstraints(constraints, (numGroups + 1), i%512, 1, 1, 100, 100);
                     //constraints.fill = GridBagConstraints.BOTH;
                     gridbag.setConstraints(notInGroupRadioButtons[i], constraints);
-                    panel1.add(notInGroupRadioButtons[i]);
                     
+                    
+                    //panel1.add(notInGroupRadioButtons[i]);
+                    panels[currPanel].add(notInGroupRadioButtons[i]);                    
                     
                     
                 }
@@ -288,37 +338,52 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
                     }
                 }
                 
-                JScrollPane scroll = new JScrollPane(panel1);
+                JPanel bigPanel = new JPanel(new GridBagLayout());
+                
+                for(int i = 0; i < numPanels; i++) {
+                    bigPanel.add(panels[i] ,new GridBagConstraints(0,i,1,1,1,1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+                }
+                
+                JScrollPane scroll = new JScrollPane(bigPanel);
                 scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
                 scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
                 
                 
                 
-                JPanel exptNameHeaderPanel = new JPanel();
+                JPanel [] exptNameHeaderPanels = new JPanel[this.numPanels];
                 GridBagLayout exptHeaderGridbag = new GridBagLayout();
                 //exptNameHeaderPanel.HEIGHT = panel1.getHeight();
                 //System.out.println("panel1.preferredSise().height = " + panel1.getPreferredSize().height);
-                exptNameHeaderPanel.setSize(50, panel1.getPreferredSize().height);
-                exptNameHeaderPanel.setPreferredSize(new Dimension(maxLabelWidth + 10, panel1.getPreferredSize().height));
-                exptNameHeaderPanel.setLayout(exptHeaderGridbag);
+                for(int i = 0; i < exptNameHeaderPanels.length; i++) {
+                    exptNameHeaderPanels[i] = new JPanel();
+                    exptNameHeaderPanels[i].setSize(50, panels[i].getPreferredSize().height);
+                    exptNameHeaderPanels[i].setPreferredSize(new Dimension(maxLabelWidth + 10, panels[i].getPreferredSize().height));
+                    exptNameHeaderPanels[i].setLayout(exptHeaderGridbag);
+                }
                 //scroll.getRowHeader().setLayout(exptHeaderGridbag);
                 
-                
+                //need to possibly add to additional panels if number of exp. excedes 512
                 for (int i = 0; i < expLabels.length; i++) {
-                    buildConstraints(constraints, 0, i, 1, 1, 100, 100);
+                    currPanel = i / 512;
+                    buildConstraints(constraints, 0, i%512, 1, 1, 100, 100);
                     constraints.fill = GridBagConstraints.BOTH;
                     exptHeaderGridbag.setConstraints(expLabels[i], constraints);
-                    exptNameHeaderPanel.add(expLabels[i]);
+                    exptNameHeaderPanels[currPanel].add(expLabels[i]);
+                }
+
+                JPanel headerPanel = new JPanel(new GridBagLayout());
+                for(int i = 0; i < exptNameHeaderPanels.length; i++) {
+                    headerPanel.add(exptNameHeaderPanels[i], new GridBagConstraints(0,i,1,1,1,1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0)); 
                 }
                 
-                scroll.setRowHeaderView(exptNameHeaderPanel);
+                scroll.setRowHeaderView(headerPanel);
                 
                 buildConstraints(constraints, 0, 0, 1, 1, 100, 90);
                 constraints.fill = GridBagConstraints.BOTH;
                 gridbag2.setConstraints(scroll, constraints);
                 this.add(scroll);
                 
-                JLabel label1 = new JLabel("Note: Each group MUST each contain more than one experiment.");
+                JLabel label1 = new JLabel("Note: Each group MUST each contain more than one sample.");
                 label1.setHorizontalAlignment(JLabel.CENTER);
                 buildConstraints(constraints, 0, 1, 1, 1, 0, 5);
                 constraints.anchor = GridBagConstraints.EAST;
@@ -365,7 +430,7 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
                                 for (int i = 0; i < groupAssgn.length; i++) {
                                     out.print(groupAssgn[i]);
                                     if (i < groupAssgn.length - 1) {
-                                        out.print("\t");
+                                        out.print("\n");
                                     }
                                 }
                                 out.println();
@@ -392,13 +457,14 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
                             try {
                                 FileReader file = new FileReader(fc.getSelectedFile());
                                 BufferedReader buff = new BufferedReader(file);
-                                String line = buff.readLine();
+                               // String line = buff.readLine();
                                 //System.out.println(line);
-                                StringSplitter st = new StringSplitter('\t');
-                                st.init(line);
+                               // StringSplitter st = new StringSplitter('\t');
+                                //st.init(line);
                                 Vector groupsVector = new Vector();
-                                while (st.hasMoreTokens()) {
-                                    String current = st.nextToken();
+                                String current;
+                                while ((current = buff.readLine()) != null) {
+                                    //current = st.nextToken();
                                     groupsVector.add(new Integer(current));
                                     //System.out.print(current);
                                 }
@@ -518,10 +584,14 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
                     numPermsLabel.setEnabled(false);
                     timesField.setEnabled(false);
                     timesField.setBackground(Color.darkGray); 
-                    if (pPanel.maxTButton.isSelected()) {
+                    if (pPanel.maxTButton.isSelected() || pPanel.falseNumButton.isSelected() || pPanel.falsePropButton.isSelected()) {
                         pPanel.justAlphaButton.setSelected(true);
                     }
-                    pPanel.maxTButton.setEnabled(false);
+                    pPanel.maxTButton.setEnabled(false);                    
+                    pPanel.falseNumButton.setEnabled(false);
+                    pPanel.falsePropButton.setEnabled(false);
+                    pPanel.falseNumField.setEnabled(false);
+                    pPanel.falsePropField.setEnabled(false);                    
                     //pAdjPanel.minPButton.setEnabled(false);
                 }
             });
@@ -539,7 +609,11 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
                     timesField.setEnabled(true);
                     timesField.setBackground(Color.white);                  
                     pPanel.maxTButton.setEnabled(true);  //UNCOMMENT THIS WHEN MAXT METHOD HAS BEEN IMPLEMEMTED
-                    //pAdjPanel.minPButton.setEnabled(true);  //UNCOMMENT THIS WHEN MINP METHOD HAS BEEN DEBUGGED                  
+                    //pAdjPanel.minPButton.setEnabled(true);  //UNCOMMENT THIS WHEN MINP METHOD HAS BEEN DEBUGGED    
+                    pPanel.falseNumButton.setEnabled(true);
+                    pPanel.falsePropButton.setEnabled(true);
+                    pPanel.falseNumField.setEnabled(true);
+                    pPanel.falsePropField.setEnabled(true);
                 }                
             });
             
@@ -596,11 +670,11 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
     
     
     class PValuePanel extends JPanel {
-        JTextField pValueInputField;
-        JRadioButton justAlphaButton, stdBonfButton, adjBonfButton, maxTButton;
+        JTextField pValueInputField, falseNumField, falsePropField;
+        JRadioButton justAlphaButton, stdBonfButton, adjBonfButton, maxTButton, falseNumButton, falsePropButton;
         
         public PValuePanel() {
-            this.setBorder(new TitledBorder(new EtchedBorder(), "P-value parameters", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
+            this.setBorder(new TitledBorder(new EtchedBorder(), "P-value / false discovery parameters", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
             GridBagLayout gridbag = new GridBagLayout();
             GridBagConstraints constraints = new GridBagConstraints();
             //constraints.fill = GridBagConstraints.BOTH;
@@ -609,7 +683,7 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
             this.setLayout(gridbag);
             
             JLabel pValueLabel = new JLabel("Enter alpha (critical p-value): ");
-            buildConstraints(constraints, 0, 0, 1, 1, 33, 50);
+            buildConstraints(constraints, 0, 0, 1, 1, 33, 25);
             constraints.anchor = GridBagConstraints.EAST;
             gridbag.setConstraints(pValueLabel, constraints);
             this.add(pValueLabel);
@@ -635,15 +709,78 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
             maxTButton.setBackground(Color.white);
             maxTButton.setEnabled(false);
             
+            falseNumButton = new JRadioButton("EITHER, The number of false significant genes should not exceed", false);
+            falseNumButton.setEnabled(false);
+            //falseNumButton.setEnabled(false);
+            falseNumButton.setFocusPainted(false);
+            falseNumButton.setForeground(UIManager.getColor("Label.foreground"));
+            falseNumButton.setBackground(Color.white);
+            //sigGroup.add(falseNumButton);            
+            
+            falsePropButton = new JRadioButton("OR, The proportion of false significant genes should not exceed", false);
+            falsePropButton.setEnabled(false);
+            //falsePropButton.setEnabled(false);
+            falsePropButton.setFocusPainted(false);
+            falsePropButton.setForeground(UIManager.getColor("Label.foreground"));
+            falsePropButton.setBackground(Color.white);
+            //sigGroup.add(falsePropButton);            
+            
+            falseNumField = new JTextField(10);
+            falseNumField.setText("10");
+            falseNumField.setEnabled(false);
+            falsePropField = new JTextField(10);
+            falsePropField.setText("0.05");
+            falsePropField.setEnabled(false);            
+            
             ButtonGroup chooseCorrection = new ButtonGroup();
             chooseCorrection.add(justAlphaButton);
             chooseCorrection.add(stdBonfButton);
             chooseCorrection.add(adjBonfButton);
             chooseCorrection.add(maxTButton);
+            chooseCorrection.add(falseNumButton);
+            chooseCorrection.add(falsePropButton);
             //stdBonfButton.setEnabled(false);
             //adjBonfButton.setEnabled(false);
             
-            buildConstraints(constraints, 0, 1, 1, 1, 25, 50);
+            JPanel FDRPanel = new JPanel();
+            FDRPanel.setBackground(Color.white);
+            FDRPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), "False discovery control (permutations only)", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
+            GridBagLayout grid3 = new GridBagLayout(); 
+            FDRPanel.setLayout(grid3);            
+            
+            JLabel FDRLabel = new JLabel("With confidence of [1 - alpha] : ");            
+            constraints.anchor = GridBagConstraints.WEST;
+            buildConstraints(constraints, 0, 0, 2, 1, 100, 34);
+            grid3.setConstraints(FDRLabel, constraints);
+            FDRPanel.add(FDRLabel);
+            
+            constraints.anchor = GridBagConstraints.CENTER;
+            
+            buildConstraints(constraints, 0, 1, 1, 1, 50, 33);
+            constraints.anchor = GridBagConstraints.EAST;
+            grid3.setConstraints(falseNumButton, constraints);
+            FDRPanel.add(falseNumButton);       
+            
+            buildConstraints(constraints, 1, 1, 1, 1, 50, 0);
+            constraints.anchor = GridBagConstraints.WEST;
+            grid3.setConstraints(falseNumField, constraints);
+            FDRPanel.add(falseNumField);    
+            
+            buildConstraints(constraints, 0, 2, 1, 1, 50, 33);
+            constraints.anchor = GridBagConstraints.EAST;
+            grid3.setConstraints(falsePropButton, constraints);
+            FDRPanel.add(falsePropButton);    
+            
+            buildConstraints(constraints, 1, 2, 1, 1, 50, 0);
+            constraints.anchor = GridBagConstraints.WEST;
+            grid3.setConstraints(falsePropField, constraints);
+            FDRPanel.add(falsePropField);    
+            
+            constraints.anchor = GridBagConstraints.CENTER;
+            
+           
+            
+            buildConstraints(constraints, 0, 1, 1, 1, 25, 25);
             gridbag.setConstraints(justAlphaButton, constraints);
             this.add(justAlphaButton);
  
@@ -657,7 +794,11 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
             
             buildConstraints(constraints, 3, 1, 1, 1, 25, 0);
             gridbag.setConstraints(maxTButton, constraints);
-            this.add(maxTButton);             
+            this.add(maxTButton); 
+            
+            buildConstraints(constraints, 0, 2, 4, 1, 100, 50);
+            gridbag.setConstraints(FDRPanel, constraints);
+            this.add(FDRPanel);            
         }
         
         private void reset() {
@@ -700,14 +841,26 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
                 
                 for (int i = 0; i < groupSize.length; i++) {
                     if (groupSize[i] <= 1) {
-                        JOptionPane.showMessageDialog(null, "Each group must contain more than one experiment", "Error", JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Each group must contain more than one sample.", "Error", JOptionPane.WARNING_MESSAGE);
                         tooFew = true;
                         break;
                     }
                 }
                 
                 if (!tooFew) {
-                    try {
+                    try {               
+                        if (pPanel.falseNumButton.isSelected()) {
+                            if (!validateFalseNum()) {
+                                okPressed = false;
+                                return;
+                            }
+                        }
+                        if (pPanel.falsePropButton.isSelected()) {
+                            if (!validateFalseProp()) {
+                                okPressed = false;
+                                return;
+                            }
+                        }                     
                         //HERE, CHECK OTHER INPUTS: P-VALUE VALIDITY - 4/25/03
                         double d = Double.parseDouble(pPanel.pValueInputField.getText());
                         /*
@@ -716,7 +869,7 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
                         }
                          */
                         if ((d <= 0d)||(d > 1d) || (usePerms() && (getNumPerms() <= 1))) {
-                            JOptionPane.showMessageDialog(null, "Valid inputs: 0 < alpha < 1, and # of permutations (integer only) > 1", "Error!", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "Valid inputs: 0 < alpha < 1, and # of permutations (integer only) > 1", "Error!", JOptionPane.ERROR_MESSAGE);                            
                         } else {
                             okPressed = true;
                             dispose();
@@ -786,6 +939,54 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
     public double getPValue() {
         return Double.parseDouble(pPanel.pValueInputField.getText());
     }
+    
+    public int getFalseNum() {
+        return Integer.parseInt(pPanel.falseNumField.getText());
+    }
+    
+    public double getFalseProp() {
+        return Double.parseDouble(pPanel.falsePropField.getText());
+    }    
+    
+    public boolean validateFalseNum() {
+        int a;
+        try {
+            String falseNum = pPanel.falseNumField.getText();
+            a = Integer.parseInt(falseNum);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(OneWayANOVAInitBox.this, "False number must be an integer >= 0", "Input Error", JOptionPane.WARNING_MESSAGE);
+            pPanel.falseNumField.requestFocus();
+            pPanel.falseNumField.selectAll();
+            return false;
+        }
+        if (a < 0) {
+            JOptionPane.showMessageDialog(OneWayANOVAInitBox.this, "False number must be an integer >= 0", "Input Error", JOptionPane.WARNING_MESSAGE);
+            pPanel.falseNumField.requestFocus();
+            pPanel.falseNumField.selectAll();
+            return false;          
+        }
+        return true;
+    }
+    
+    public boolean validateFalseProp() {
+        float a;
+        try {
+            String falseProp = pPanel.falsePropField.getText();
+            a = Float.parseFloat(falseProp);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(OneWayANOVAInitBox.this, "False proportion must be between 0 and 1", "Input Error", JOptionPane.WARNING_MESSAGE);
+            pPanel.falsePropField.requestFocus();
+            pPanel.falsePropField.selectAll();
+            return false;
+        }
+        if ((a <= 0) || (a > 1)) {
+            JOptionPane.showMessageDialog(OneWayANOVAInitBox.this, "False proportion must be between 0 and 1", "Input Error", JOptionPane.WARNING_MESSAGE);
+            pPanel.falsePropField.requestFocus();
+            pPanel.falsePropField.selectAll();
+            return false;          
+        }
+        return true;
+    }       
 
     public int getCorrectionMethod() {
         int method = JUST_ALPHA;
@@ -797,6 +998,10 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
             method = ADJ_BONFERRONI;
         } else if (pPanel.maxTButton.isSelected()) {
             method = MAX_T;
+        } else if (pPanel.falseNumButton.isSelected()) {
+            method = FALSE_NUM;
+        } else if (pPanel.falsePropButton.isSelected()) {
+            method = FALSE_PROP;
         }
         
         return method;

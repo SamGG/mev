@@ -4,32 +4,30 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterRepository.java,v $
- * $Revision: 1.10 $
- * $Date: 2004-07-27 19:58:13 $
- * $Author: braisted $
+ * $Revision: 1.11 $
+ * $Date: 2005-02-24 20:24:12 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.clusterUtil;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
-import java.util.Enumeration;
 import java.util.Vector;
-import java.awt.Color;
 
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.tigr.microarray.mev.ISlideData;
+import org.tigr.microarray.mev.SearchResultDialog;
+import org.tigr.microarray.mev.cluster.clusterUtil.submit.SubmissionManager;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
-
-import org.tigr.microarray.mev.cluster.clusterUtil.submit.SubmissionManager;
 
 /** The ClusterRepository contains ClusterList objects created for
  * holding saved clusters particular analysis results.
@@ -82,6 +80,12 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
         oos.writeInt(this.clusterSerialCounter);
         oos.writeObject(this.elementClusters);
         oos.writeInt(this.numberOfElements);
+        
+      /*
+       oos.writeInt(size());
+        for(int i = 0; i < size(); i++)
+            oos.writeObject(elementAt(i));
+       */
     }
     
     private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
@@ -89,6 +93,11 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
         this.clusterSerialCounter = ois.readInt();
         this.elementClusters = (ClusterList [])ois.readObject();
         this.numberOfElements = ois.readInt();
+      /*
+        int n = ois.readInt();
+        for(int i = 0; i < n; i++)
+            addElement(ois.readObject());
+       */
     }
     
     /**
@@ -103,7 +112,30 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
     public Color getColor(int index){
         if(elementClusters[index] == null  || elementClusters[index].size() == 0)
             return null;
-        return elementClusters[index].lastCluster().getClusterColor();
+        Color color = elementClusters[index].lastCluster().getClusterColor();
+        
+        //if last color is showing color return the color
+        if(color != null)
+            return color;
+            
+        //if the last cluster is supressing color, then check earlier clusters.
+        else {  
+            //check for previous cluster colors
+            Color [] colors = getColors(index);
+            
+            //jump out if only one cluster
+            if(colors.length <= 1)
+                return null;
+            
+            else {
+                //skip last and try earlier clusters
+                for(int i = colors.length-2; i >= 0; i--) {
+                    if(colors[i] != null)
+                        return colors[i];
+                }
+            }
+        }
+        return null;
     }
     
     /** Returns all cluster colors for the clusters to which
@@ -386,7 +418,7 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
         ClusterList curr;
         for(int i = 0; i < size(); i++){
             curr = this.getClusterList(i);
-            if(curr.getAlgorithmName() == algName)
+            if(curr.getAlgorithmName().equals(algName))
                 return curr;
         }
         return null;
@@ -560,41 +592,62 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
         }
     }
     
-    /* Creates a cluster by importing a gene list
+    
+        
+    /** Creates a cluster by importing a gene list         
      */
     public Cluster createClusterFromList() {
         ListImportDialog dialog;
         String [] ids;
         String key;
         int [] newIndices;
+        boolean [] matches;
         Experiment experiment = framework.getData().getExperiment();
         
         
         if(this.isGeneClusterRepository()) {
-            dialog = new ListImportDialog(this.framework.getData().getFieldNames(), true);
+            dialog = new ListImportDialog(framework.getFrame(), this.framework.getData().getFieldNames(), true);
             if(dialog.showModal() == JOptionPane.OK_OPTION) {
                 key = dialog.getFieldName();
                 ids = dialog.getList();
                 
- 
-                newIndices = getMatchingIndices(experiment, key, ids, true);
-                                
-           
-                if(newIndices != null && newIndices.length > 0) {                                                           
-                    ClusterAttributesDialog clusterDialog = new ClusterAttributesDialog("Store Cluster Attributes", "List Import", "Gene List");
-                    if(clusterDialog.showModal() != JOptionPane.OK_OPTION){
+                //look for matches for ids
+                matches = new boolean[ids.length];
+                
+                newIndices = getMatchingIndices(experiment, key, ids, matches, true);
+                
+                if(newIndices != null && newIndices.length > 0) {
+
+                    SearchResultDialog resultDialog = new SearchResultDialog(framework, newIndices, ids, matches, true);
+                    
+                    if(resultDialog.showModal() == JOptionPane.OK_OPTION) {
+                        
+                        int [] selectedIndices = resultDialog.getSelectedIndices();
+                        
+                        if(selectedIndices == null || selectedIndices.length < 1) {
+                            return null;
+                        }
+                        
+                        ClusterAttributesDialog clusterDialog = new ClusterAttributesDialog("Store Cluster Attributes", "List Import", "Gene List");
+                        if(clusterDialog.showModal() != JOptionPane.OK_OPTION){
+                            return null;
+                        }
+                        
+                        ClusterList list = getClusterOperationsList();
+                        Color clusterColor = clusterDialog.getColor();
+                        String clusterLabel = clusterDialog.getLabel();
+                        String clusterDescription = clusterDialog.getDescription();
+                        this.clusterSerialCounter++;
+                        Cluster cluster = new Cluster(selectedIndices, "Cluster Op.", clusterLabel, "List Import", "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
+                        
+                        addCluster(list, cluster);
+                        return cluster;
+                    } else {
                         return null;
                     }
-
-                    ClusterList list = getClusterOperationsList();
-                    Color clusterColor = clusterDialog.getColor();
-                    String clusterLabel = clusterDialog.getLabel();
-                    String clusterDescription = clusterDialog.getDescription();
-                    this.clusterSerialCounter++;
-                    Cluster cluster = new Cluster(newIndices, "List Import", clusterLabel, "List Import", "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);                    
                     
-                    addCluster(list, cluster);           
-                    return cluster;
+                } else {
+                    JOptionPane.showMessageDialog(framework.getFrame(), "No genes matching the list entries were found.", "No Matches Found", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         } else{
@@ -608,34 +661,53 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
                 slideNames[i] = (String)(slideNameKeys.elementAt(i));
             }
             
-            dialog = new ListImportDialog(slideNames, false);
+            dialog = new ListImportDialog(framework.getFrame(), slideNames, false);
             
             if(dialog.showModal() == JOptionPane.OK_OPTION) {
+                
                 key = dialog.getFieldName();
                 ids = dialog.getList();
-                newIndices = getMatchingIndices(experiment, key, ids, false);
-                if(newIndices != null && newIndices.length > 0) {
-                    ClusterAttributesDialog clusterDialog = new ClusterAttributesDialog("Store Cluster Attributes", "List Import", "Experiment List");
-                    if(clusterDialog.showModal() != JOptionPane.OK_OPTION){
-                        return null;
-                    }
-
-                    ClusterList list = getClusterOperationsList();
-                    Color clusterColor = clusterDialog.getColor();
-                    String clusterLabel = clusterDialog.getLabel();
-                    String clusterDescription = clusterDialog.getDescription();
-                    this.clusterSerialCounter++;
-                    Cluster cluster = new Cluster(newIndices, "List Import", clusterLabel, "List Import", "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
-                    
-                    addCluster(list, cluster);   
-                    return cluster;
-                }
                 
+                //look for matches for ids
+                matches = new boolean[ids.length];
+                
+                newIndices = getMatchingIndices(experiment, key, ids, matches, false);
+                if(newIndices != null && newIndices.length > 0) {
+                    
+                    SearchResultDialog resultDialog = new SearchResultDialog(framework, newIndices, ids, matches, false);
+                    
+                    
+                    if(resultDialog.showModal() == JOptionPane.OK_OPTION) {
+                       int [] selectedIndices = resultDialog.getSelectedIndices();
+                        
+                        if(selectedIndices == null || selectedIndices.length < 1) {
+                            return null;
+                        }                        
+                        
+                        ClusterAttributesDialog clusterDialog = new ClusterAttributesDialog("Store Cluster Attributes", "List Import", "Sample List");
+                        if(clusterDialog.showModal() != JOptionPane.OK_OPTION){
+                            return null;
+                        }
+                        
+                        ClusterList list = getClusterOperationsList();
+                        Color clusterColor = clusterDialog.getColor();
+                        String clusterLabel = clusterDialog.getLabel();
+                        String clusterDescription = clusterDialog.getDescription();
+                        this.clusterSerialCounter++;
+                        Cluster cluster = new Cluster(selectedIndices, "List Import", clusterLabel, "List Import", "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
+                        
+                        addCluster(list, cluster);
+                        return cluster;
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(framework.getFrame(), "No samples matching the list entries were found.", "No Matches Found", JOptionPane.INFORMATION_MESSAGE);
+                }
             }
-            
         }
         return null;
     }
+    
+
     
     private int [] getMatchingIndices(Experiment experiment, String key, String [] ids, boolean geneIndices) {
         int [] indices = null;
@@ -677,6 +749,78 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
             for(int i = 0; i < annList.length; i++) {
                 if(idVector.contains(annList[i]))
                     indicesVector.addElement(new Integer(allIndices[i]));
+            }
+            
+            indices = new int[indicesVector.size()];
+            for(int i = 0; i < indices.length; i++) {
+                indices[i] = ((Integer)(indicesVector.elementAt(i))).intValue();
+            }
+            
+            
+        }
+        return indices;
+    }
+    
+    private int [] getMatchingIndices(Experiment experiment, String key, String [] ids, boolean [] matches, boolean geneIndices) {
+        int [] indices = null;
+        int [] allIndices;
+        String [] annList;
+        Vector indicesVector = new Vector();
+        IData data = framework.getData();
+        int idIndex;
+        
+        if(geneIndices) {
+            allIndices = experiment.getRowMappingArrayCopy();
+            annList = framework.getData().getAnnotationList(key, allIndices);
+            Vector idVector = new Vector(annList.length);
+            for(int i = 0 ; i < ids.length; i++) {
+                idVector.addElement(ids[i]);
+            }
+            for(int i = 0; i < annList.length; i++) {
+                if(idVector.contains(annList[i])) {
+                    indicesVector.addElement(new Integer(allIndices[i]));
+                    
+                    //don't do this because it doesn't handle duplicate entries in the index list
+                    //idIndex = idVector.indexOf(annList[i]);
+                    //if(idIndex > -1 && idIndex < matches.length)
+                    //    matches[idIndex] = true;
+                    
+                    //loop through to find all indices to mark all that are found
+                    for(int j = 0; j < idVector.size(); j++) {
+                        if(annList[i].equals((String)(idVector.elementAt(j))))
+                            matches[j] = true;
+                    }
+                    
+                }
+            }
+            indices = new int[indicesVector.size()];
+            for(int i = 0; i < indices.length; i++) {
+                indices[i] = ((Integer)(indicesVector.elementAt(i))).intValue();
+            }
+            
+        } else {
+            allIndices = experiment.getColumnIndicesCopy();
+            annList = new String[experiment.getNumberOfSamples()];
+            data.setSampleLabelKey(key);
+            
+            Vector idVector = new Vector(annList.length);
+            for(int i = 0; i < ids.length; i++) {
+                idVector.addElement(ids[i]);
+            }
+            
+            for(int i = 0; i < allIndices.length; i++) {
+                annList[i] = data.getFullSampleName(i);
+            }
+            
+            for(int i = 0; i < annList.length; i++) {
+                if(idVector.contains(annList[i])) {
+                    indicesVector.addElement(new Integer(allIndices[i]));
+                    //loop to id all indices that match in case of duplicates, see gene section above for alt.
+                    for(int j = 0; j < idVector.size(); j++) {
+                        if(annList[i].equals((String)(idVector.elementAt(j))))
+                            matches[j] = true;
+                    }
+                }
             }
             
             indices = new int[indicesVector.size()];

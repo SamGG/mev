@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLTree.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-07-27 19:59:16 $
- * $Author: braisted $
+ * $Revision: 1.6 $
+ * $Date: 2005-02-24 20:24:09 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.hcl;
@@ -21,21 +21,21 @@ import java.awt.AlphaComposite;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
 import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.Vector;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-
-import org.tigr.util.FloatMatrix;
-
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 
 import org.tigr.microarray.mev.TMEV;
 
@@ -51,9 +51,9 @@ public class HCLTree extends JPanel implements java.io.Serializable {
     // vertical orientation.
     
     /** HORIZONTAL orientation */
-    public static final int HORIZONTAL = 0;
+    public static final int HORIZONTAL = 0;  //gene tree
     /** VERTICAL orientation */
-    public static final int VERTICAL   = 1;
+    public static final int VERTICAL   = 1;  //sample tree
     
     protected HCLTreeListener treeListener;
     
@@ -84,6 +84,8 @@ public class HCLTree extends JPanel implements java.io.Serializable {
     protected boolean flatTree = false;
     protected int horizontalOffset = 0;
     
+    protected IFramework framework;
+    
     /**
      * Constructs a <code>HCLTree</code> for passed result and
      * with specified orientation.
@@ -98,9 +100,9 @@ public class HCLTree extends JPanel implements java.io.Serializable {
         // helpers
         this.flatTree = flatTreeCheck(treeData.height);
         this.minHeight = getMinHeight(treeData.node_order, treeData.height);
-
+        
         this.maxHeight = getMaxHeight(this.treeData.node_order, treeData.height);
-
+        
         this.zero_threshold = minHeight;
         this.terminalNodes = new boolean[this.treeData.height.length];
         
@@ -124,13 +126,15 @@ public class HCLTree extends JPanel implements java.io.Serializable {
         
         initializeParentNodeArray();
         
+        
+        
         addMouseListener(new Listener());
     }
     
     private HCLTree() { }
     
     
-    private void writeObject(java.io.ObjectOutputStream oos) throws IOException {        
+    private void writeObject(java.io.ObjectOutputStream oos) throws IOException {
         oos.writeInt(orientation);
         oos.writeInt(min_pixels);
         oos.writeInt(max_pixels);
@@ -154,7 +158,7 @@ public class HCLTree extends JPanel implements java.io.Serializable {
         oos.writeInt(horizontalOffset);
     }
     
-    private void readObject(java.io.ObjectInputStream ois) throws IOException, ClassNotFoundException {        
+    private void readObject(java.io.ObjectInputStream ois) throws IOException, ClassNotFoundException {
         this.orientation = ois.readInt();
         this.min_pixels = ois.readInt();
         this.max_pixels = ois.readInt();
@@ -178,7 +182,7 @@ public class HCLTree extends JPanel implements java.io.Serializable {
         this.horizontalOffset = ois.readInt();
         addMouseListener(new Listener());
     }
-        
+    
     /**
      * Sets specified listener to be notified by tree events.
      */
@@ -733,6 +737,7 @@ public class HCLTree extends JPanel implements java.io.Serializable {
      * Updates the tree size, if element size was changed.
      */
     public void onSelected(IFramework framework) {
+        this.framework = framework;
         this.data = framework.getData();
         updateSize(framework.getDisplayMenu().getElementSize());
     }
@@ -775,8 +780,8 @@ public class HCLTree extends JPanel implements java.io.Serializable {
             setPreferredSize(new Dimension(width, height));
         }
         else{
-            setSize(width, height);
-            setPreferredSize(new Dimension(width, height));
+            setSize(this.stepSize*this.treeData.node_order.length, height);
+            setPreferredSize(new Dimension(this.stepSize*this.treeData.node_order.length, height));
         }
     }
     
@@ -957,6 +962,142 @@ public class HCLTree extends JPanel implements java.io.Serializable {
             JOptionPane.showMessageDialog(this, "Error saving node height file.", "Error", JOptionPane.WARNING_MESSAGE);
             ioe.printStackTrace();
         }
+    }
+    
+    
+    public void saveAsNewickFile() {
+        NewickFileOutputDialog dialog;
+        String newickString;
+        String [] annKeys;
+        
+        if(this.orientation == HCLTree.HORIZONTAL) { //gene tree
+            annKeys = data.getFieldNames();
+        } else {  //sample tree
+            Vector annKeyVector = data.getSampleAnnotationFieldNames();
+            annKeys = new String[annKeyVector.size()];
+            for(int i = 0; i < annKeys.length; i++) {
+                annKeys[i] = (String)(annKeyVector.elementAt(i));
+            }
+        }
+        
+        dialog = new NewickFileOutputDialog(framework.getFrame(), annKeys, this.orientation);
+        
+        if(dialog.showModal() == JOptionPane.OK_OPTION) {
+
+            if(this.orientation == HCLTree.HORIZONTAL)
+                newickString = generateNewickStringForGeneTree(dialog.getAnnotationKey());
+            else
+                newickString = generateNewickStringForSampleTree(dialog.getAnnotationKey());
+            
+            saveNewickString(newickString, dialog.getOutputFile());            
+        }        
+    }
+    
+    private void saveNewickString(String s, File outputFile) {
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile));
+            bw.write(s);
+            bw.flush();
+            bw.close();
+        } catch (IOException ioe) {
+            JOptionPane.showMessageDialog(framework.getFrame(), "Error saving Newick file: "+outputFile.getAbsolutePath()+".<BR>"+
+            "Please check that file location is valid and permissions are open.", "IO Error Saving Newick File", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private String generateNewickStringForSampleTree(String annotationKey) {
+        
+        String s = new String("");
+        
+        int node, leftChild, rightChild, parent;
+        
+        float leftHeight, rightHeight;
+        
+        Hashtable treeHash = new Hashtable();
+        String nodeName = "";
+        
+        for(int i = 0; i < treeData.node_order.length-1; i++) {
+            node = treeData.node_order[i];
+            
+            leftChild = treeData.child_1_array[node];
+            rightChild = treeData.child_2_array[node];
+            
+            leftHeight = treeData.height[leftChild];
+            rightHeight = treeData.height[rightChild];
+            
+            parent = parentNodes[node];
+            
+            if(leftChild < this.treeData.height.length/2) {
+                s = this.data.getSampleAnnotation(leftChild, annotationKey)+":"+String.valueOf(this.treeData.height[node]/2.0f);
+                treeHash.put(String.valueOf(leftChild),s);
+            }
+            if(rightChild < this.treeData.height.length/2) {
+                s = this.data.getSampleAnnotation(rightChild, annotationKey)+":"+String.valueOf(this.treeData.height[node]/2.0f);
+                treeHash.put(String.valueOf(rightChild),s);
+            }
+            if(treeHash.containsKey(String.valueOf(leftChild)) && treeHash.containsKey(String.valueOf(rightChild))) {
+                s = "("+treeHash.get(String.valueOf(leftChild))+","+treeHash.get(String.valueOf(rightChild))+"):"+String.valueOf(this.treeData.height[parentNodes[node]]/2.0f);
+                treeHash.put(String.valueOf(node), s);
+                
+                //remove entries as they become obsolete
+                treeHash.remove(String.valueOf(leftChild));
+                treeHash.remove(String.valueOf(rightChild));
+            }
+        }        
+        return s+";";        
+    }
+    
+    
+    private String generateNewickStringForGeneTree(String annotationKey) {
+        
+        String [] fieldNames = data.getFieldNames();
+        
+        int attIndex = 0;  //element attribute index, annotation field index
+        for(int i = 0; i < fieldNames.length; i++) {
+            if(fieldNames[i].equals(annotationKey)) {
+                attIndex = i;
+                break;
+            }
+        }
+        
+        String s = new String("");
+        
+        int node, leftChild, rightChild, parent;
+        
+        float leftHeight, rightHeight;
+        
+        Hashtable treeHash = new Hashtable();
+        String nodeName = "";
+        
+        for(int i = 0; i < treeData.node_order.length-1; i++) {
+            node = treeData.node_order[i];
+            
+            leftChild = treeData.child_1_array[node];
+            rightChild = treeData.child_2_array[node];
+            
+            leftHeight = treeData.height[leftChild];
+            rightHeight = treeData.height[rightChild];
+            
+            parent = parentNodes[node];
+            
+            if(leftChild < this.treeData.height.length/2) {
+                s = this.data.getElementAttribute(leftChild, attIndex)+":"+String.valueOf(this.treeData.height[node]/2.0f);
+                treeHash.put(String.valueOf(leftChild),s);
+            }
+            if(rightChild < this.treeData.height.length/2) {
+                s = this.data.getElementAttribute(rightChild, attIndex)+":"+String.valueOf(this.treeData.height[node]/2.0f);
+                treeHash.put(String.valueOf(rightChild),s);
+            }
+            if(treeHash.containsKey(String.valueOf(leftChild)) && treeHash.containsKey(String.valueOf(rightChild))) {
+                s = "("+treeHash.get(String.valueOf(leftChild))+","+treeHash.get(String.valueOf(rightChild))+"):"+String.valueOf(this.treeData.height[parentNodes[node]]/2.0f);
+                treeHash.put(String.valueOf(node), s);
+                
+                //remove entries as they become obsolete
+                treeHash.remove(String.valueOf(leftChild));
+                treeHash.remove(String.valueOf(rightChild));
+            }
+        }        
+        return s+";";        
     }
     
     /**

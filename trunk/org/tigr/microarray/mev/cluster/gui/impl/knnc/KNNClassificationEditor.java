@@ -1,4 +1,8 @@
 /*
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
+All rights reserved.
+*/
+/*
  * KNNClassificationEditor.java
  *
  * Created on September 8, 2003, 4:05 PM
@@ -6,21 +10,45 @@
 
 package org.tigr.microarray.mev.cluster.gui.impl.knnc;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.Vector;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.PrintWriter;
 import java.util.Arrays;
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import javax.swing.table.*;
+import java.util.Vector;
 
-import org.tigr.util.*;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.border.EtchedBorder;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+
 import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.Experiment;
-//import org.tigr.microarray.mev.cluster.gui.impl.svm.SVMSearchDialog;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.util.StringSplitter;
+
 /**
  *
  * @author  nbhagaba
@@ -189,9 +217,9 @@ public class KNNClassificationEditor extends javax.swing.JDialog {// JFrame {
             }
         } else {
             labelsAscItem = new JMenuItem[1];
-            labelsAscItem[0] = new JMenuItem("Sample/Experiment Name");
+            labelsAscItem[0] = new JMenuItem("Sample Name");
             labelsDescItem = new JMenuItem[1];
-            labelsDescItem[0] = new JMenuItem("Sample/Experiment Name");
+            labelsDescItem[0] = new JMenuItem("Sample Name");
         }
         
         for (int i = 0; i < labelsAscItem.length; i++) {
@@ -336,7 +364,7 @@ public class KNNClassificationEditor extends javax.swing.JDialog {// JFrame {
                     columnNames[i + 1] = "Class " + (i+1);
                 }
                 columnNames[numClasses + 1] = "Neutral";
-                columnNames[numClasses + 2] = "Sample/Experiment Name";
+                columnNames[numClasses + 2] = "Sample Name";
                 tableData = new Object[numExps][columnNames.length];
                 
                 for (int i = 0; i < tableData.length; i++) {
@@ -867,7 +895,7 @@ public class KNNClassificationEditor extends javax.swing.JDialog {// JFrame {
         area.append("The editor displays all genes or expts in the data set loaded into MeV,");
         area.append("\nincluding those that have been removed from analysis by variance filtering"); 
         area.append("\nin the previous stage, or by applying cutoffs under the Adjust Data"); 
-        area.append("\nmenu. If you designate such genes  or experiments as classifiers,");  
+        area.append("\nmenu. If you designate such genes  or samples as classifiers,");  
         area.append("\nthey will not be used for classification");
         area.setEditable(false);
         area.setBackground(Color.gray.brighter());

@@ -4,37 +4,32 @@ All rights reserved.
 */
 /*
  * $RCSfile: HttpCommunicator2.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:23 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:13 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.remote.protocol.communication.http;
 
-import java.net.URL;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
-
-import HTTPClient.HttpOutputStream;
-import HTTPClient.HttpURLConnection;
-import HTTPClient.HTTPConnection;
-import HTTPClient.HTTPResponse;
-import HTTPClient.CookieModule;
-import HTTPClient.Cookie;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.Properties;
 
 import org.tigr.remote.protocol.util.TempFile;
 import org.tigr.util.ConfMap;
 
-import java.util.Properties;
-import java.util.Enumeration;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.InputStream;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.File;
+import HTTPClient.CookieModule;
+import HTTPClient.HTTPConnection;
+import HTTPClient.HttpURLConnection;
 
 public class HttpCommunicator2 {
 

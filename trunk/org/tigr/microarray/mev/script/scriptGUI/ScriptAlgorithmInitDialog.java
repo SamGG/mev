@@ -10,57 +10,41 @@ All rights reserved.
 
 package org.tigr.microarray.mev.script.scriptGUI;
 
-import java.awt.Frame;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Component;
-import java.awt.Insets;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-
-import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
 
 import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.UIManager;
-import javax.swing.JCheckBox;
+import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.JToolBar;
-import javax.swing.JRadioButton;
-import javax.swing.ButtonGroup;
-import javax.swing.JOptionPane;
-import javax.swing.BorderFactory;
 import javax.swing.border.BevelBorder;
-import javax.swing.border.EmptyBorder;
-
 
 import org.tigr.microarray.mev.action.ActionManager;
-
-import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
-import org.tigr.microarray.mev.script.util.ScriptConstants;
-
 import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
+import org.tigr.microarray.mev.script.util.ScriptConstants;
 
 /** The ScriptAlgorithmInitDialog permits algorithm selection during script construction.
  * Three broad scripting algorithm categories exist: analyis (clustering, stat, and classification),
@@ -431,7 +415,7 @@ public class ScriptAlgorithmInitDialog extends AlgorithmDialog {
             bg.add(noneBox);
             
             //Filter Panel
-            ParameterPanel filterPanel = new ParameterPanel("Gene Filters");
+            ParameterPanel filterPanel = new ParameterPanel("Gene/Row Filters");
             filterPanel.setLayout(new GridBagLayout());
             JCheckBox percBox = createCheckBox("Percentage Cutoff", "Requires x% valid expression values to retain a gene", listener);
             JCheckBox lowerBox = createCheckBox("Lower Cutoffs", "Cy3 and Cy5 must have a minium value \n to retain gene. (see info page)", listener);
@@ -439,15 +423,15 @@ public class ScriptAlgorithmInitDialog extends AlgorithmDialog {
             filterPanel.add(lowerBox, new GridBagConstraints(1,0,1,1,0,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(5,25,10,0), 0,0));
             
             //Gene Panel
-            ParameterPanel genePanel = new ParameterPanel("Gene Based Adjustments");
+            ParameterPanel genePanel = new ParameterPanel("Gene/Row Based Adjustments");
             genePanel.setLayout(new GridBagLayout());
             
-            JCheckBox gNormBox = createCheckBox("Normalize Spots","Adjust Vector ||v||=1", listener);
-            JCheckBox gRMSBox = createCheckBox("Divide Spots by RMS","Divide values by spot's RMS", listener);
-            JCheckBox gSDBox = createCheckBox("Divide Spots by SD","Divide values by spot's SD", listener);
-            JCheckBox gMCBox = createCheckBox("Mean Center Spots","Divide values by spot's Mean", listener);
-            JCheckBox gMedCBox = createCheckBox("Median Center Spots","Divide values by spot's Median", listener);
-            JCheckBox gDigBox = createCheckBox("Digital Spots","Bins spot's values into log2(#Spots) int value bins ", listener);
+            JCheckBox gNormBox = createCheckBox("Normalize Genes/Rows","Adjust Vector ||v||=1", listener);
+            JCheckBox gRMSBox = createCheckBox("Divide Genes/Rows by RMS","Divide values by spot's RMS", listener);
+            JCheckBox gSDBox = createCheckBox("Divide Genes/Rows by SD","Divide values by spot's SD", listener);
+            JCheckBox gMCBox = createCheckBox("Mean Center Genes/Rows","Divide values by spot's Mean", listener);
+            JCheckBox gMedCBox = createCheckBox("Median Center Genes/Rows","Divide values by spot's Median", listener);
+            JCheckBox gDigBox = createCheckBox("Digital Genes/Rows","Bins spot's values into log2(#Spots) int value bins ", listener);
             
             genePanel.add(gNormBox, new GridBagConstraints(0,0,1,1,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(5,10,10,0), 0,0));
             genePanel.add(gRMSBox, new GridBagConstraints(0,1,1,1,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,10,10,0), 0,0));
@@ -457,15 +441,15 @@ public class ScriptAlgorithmInitDialog extends AlgorithmDialog {
             genePanel.add(gDigBox, new GridBagConstraints(0,5,1,1,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,10,10,0), 0,0));
             
             //Experiment Panel
-            ParameterPanel expPanel = new ParameterPanel("Experiment Based Adjustments");
+            ParameterPanel expPanel = new ParameterPanel("Sample/Column Based Adjustments");
             expPanel.setLayout(new GridBagLayout());
             
-            JCheckBox eNormBox = createCheckBox("Normalize Experiments","Adjust Vector ||v||=1", listener);
-            JCheckBox eRMSBox = createCheckBox("Divide Experiments by RMS","Divide values by experiment's RMS", listener);
-            JCheckBox eSDBox = createCheckBox("Divide Experiments by SD","Divide values by experiment's SD", listener);
-            JCheckBox eMCBox = createCheckBox("Mean Center Experiments","Divide values by experiment's Mean", listener);
-            JCheckBox eMedCBox = createCheckBox("Median Center Experiments","Divide values by experiment's Median", listener);
-            JCheckBox eDigBox = createCheckBox("Digital Experiments","Bins values into log2(#Exps) int value bins ", listener);
+            JCheckBox eNormBox = createCheckBox("Normalize Samples/Columns","Adjust Vector ||v||=1", listener);
+            JCheckBox eRMSBox = createCheckBox("Divide Samples/Columns by RMS","Divide values by sample's RMS", listener);
+            JCheckBox eSDBox = createCheckBox("Divide Samples/Columns by SD","Divide values by sample's SD", listener);
+            JCheckBox eMCBox = createCheckBox("Mean Center Samples/Columns","Divide values by sample's Mean", listener);
+            JCheckBox eMedCBox = createCheckBox("Median Center Samples/Columns","Divide values by sample's Median", listener);
+            JCheckBox eDigBox = createCheckBox("Digital Samples/Columns","Bins values into log2(#Exps) int value bins ", listener);
             
             expPanel.add(eNormBox, new GridBagConstraints(0,0,1,1,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(5,10,10,0), 0,0));
             expPanel.add(eRMSBox, new GridBagConstraints(0,1,1,1,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,10,10,0), 0,0));

@@ -4,20 +4,15 @@ All rights reserved.
 */
 /*
  * $RCSfile: SlideDataSorter.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:23 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:08 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.util;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.ISlideMetaData;
-import org.tigr.microarray.mev.SlideDataElement;
 import org.tigr.microarray.mev.cluster.gui.IData;
 
 public class SlideDataSorter {

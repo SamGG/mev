@@ -10,11 +10,11 @@ All rights reserved.
 
  * $RCSfile: ViewerAdapter.java,v $
 
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
 
- * $Date: 2004-02-13 19:15:04 $
+ * $Date: 2005-02-24 20:24:11 $
 
- * $Author: braisted $
+ * $Author: braistedj $
 
  * $State: Exp $
 
@@ -92,6 +92,12 @@ public class ViewerAdapter implements IViewer {
         return null;
     }
     
+    /** Returns int value indicating viewer type
+     * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
+     */
+    public int getViewerType() {
+        return -1;
+    }    
 
 }
 

@@ -11,8 +11,6 @@ All rights reserved.
 package org.tigr.microarray.mev.cluster.gui.impl.dialogs;
 
 import java.awt.Color;
-import javax.swing.border.TitledBorder;
-import javax.swing.border.EtchedBorder;
 import java.awt.event.ActionListener;
 
 
@@ -31,7 +29,7 @@ public class SampleSelectionPanel extends javax.swing.JPanel {
     
    /** Creates new form SampleSelectionPanel */
     public SampleSelectionPanel(Color background, Color foreground, boolean etchedTitleBorder, String borderTitle){
-        initComponents();
+        initComponentsWithoutTheStupidForm();
         setBackground(background);
         setForeground(foreground);
         this.clusterGenesButton.setBackground(background);
@@ -111,5 +109,41 @@ public class SampleSelectionPanel extends javax.swing.JPanel {
     private javax.swing.JRadioButton clusterGenesButton;
     private javax.swing.JRadioButton clusterSamplesButton;
     // End of variables declaration//GEN-END:variables
+
+        
+    private void initComponentsWithoutTheStupidForm() {
+        selectButtonGroup = new javax.swing.ButtonGroup();
+        clusterGenesButton = new javax.swing.JRadioButton();
+        clusterSamplesButton = new javax.swing.JRadioButton();
+        
+        
+        setLayout(new java.awt.GridBagLayout());
+        java.awt.GridBagConstraints gridBagConstraints1;
+        
+        clusterGenesButton.setSelected(true);
+        clusterGenesButton.setText("Cluster Genes");
+        selectButtonGroup.add(clusterGenesButton);
+        clusterGenesButton.setFocusPainted(false);
+        clusterGenesButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        gridBagConstraints1 = new java.awt.GridBagConstraints();
+        gridBagConstraints1.gridx = 0;
+        gridBagConstraints1.gridy = 0;
+        gridBagConstraints1.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints1.weightx = 1.0;
+        add(clusterGenesButton, gridBagConstraints1);
+        
+        clusterSamplesButton.setText("Cluster Samples");
+        selectButtonGroup.add(clusterSamplesButton);
+        clusterSamplesButton.setFocusPainted(false);
+        clusterSamplesButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        gridBagConstraints1 = new java.awt.GridBagConstraints();
+        gridBagConstraints1.gridx = 1;
+        gridBagConstraints1.gridy = 0;
+        gridBagConstraints1.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints1.weightx = 1.0;
+        add(clusterSamplesButton, gridBagConstraints1);
+        
+    }
+
 
 }

@@ -21,22 +21,18 @@ import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -48,29 +44,23 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.ListCellRenderer;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
-import javax.swing.JTextPane;
+import javax.swing.ListCellRenderer;
 import javax.swing.text.BadLocationException;
 
-import org.tigr.microarray.mev.script.ScriptDocument;
-import org.tigr.microarray.mev.script.ScriptManager;
-import org.tigr.microarray.mev.script.util.ScriptNode;
-import org.tigr.microarray.mev.script.util.DataNode;
-import org.tigr.microarray.mev.script.util.AlgorithmNode;
-
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
-
+import org.tigr.microarray.mev.script.ScriptDocument;
+import org.tigr.microarray.mev.script.ScriptManager;
 import org.tigr.microarray.mev.script.event.ScriptDocumentEvent;
 import org.tigr.microarray.mev.script.event.ScriptEventListener;
-
-import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.script.util.AlgorithmNode;
 
 /** ScriptXMLViewer renders the <CODE>Script</CODE> as a text editor in
  * xml text form.  The viewer is mostly just a viewer but lines with key:value
@@ -218,6 +208,7 @@ public class ScriptXMLViewer extends ViewerAdapter {
      */    
     public void onSelected(IFramework framework) {
         this.framework = framework;
+        this.doc.updateScript();
         this.numPanel.clearSelection();
         updateSize();
     }
@@ -404,7 +395,7 @@ public class ScriptXMLViewer extends ViewerAdapter {
         if(scriptFile != null) {
             chooser = new JFileChooser(scriptFile.getPath());
         } else {
-            chooser = new JFileChooser(TMEV.getFile("/Data/scripts/"));
+            chooser = new JFileChooser(TMEV.getFile("/data/scripts/"));
         }
         
         if(chooser.showSaveDialog(new JPanel()) == JFileChooser.APPROVE_OPTION) {
@@ -490,7 +481,7 @@ public class ScriptXMLViewer extends ViewerAdapter {
         String text;
         
         public void mouseClicked(MouseEvent me) {
-            if(me.getModifiers() == me.BUTTON1_MASK) {
+            if(me.getModifiers() == MouseEvent.BUTTON1_MASK) {
                 if(!editOnly) {
                     numPanel.list.clearSelection();
                     pane.getHighlighter().removeAllHighlights();
@@ -511,7 +502,29 @@ public class ScriptXMLViewer extends ViewerAdapter {
         }
         
         public void mouseReleased(MouseEvent me) {
-            if(me.getModifiers() == me.BUTTON1_MASK) {
+            if(me.getModifiers() == MouseEvent.BUTTON1_MASK) {
+                if(!editOnly) {
+                    numPanel.list.clearSelection();
+                    pane.getHighlighter().removeAllHighlights();
+                }
+            } else if( me.isPopupTrigger() ) {
+                start = pane.getSelectionStart();
+                end = pane.getSelectionEnd();
+                
+                if(end > start) {
+                    text = pane.getSelectedText();
+                    setEnableMenuItem("Edit", (text.indexOf("value") != -1));
+                } else {
+                    setEnableMenuItem("Edit", false);
+                }
+                setEnableMenuItem("Clear Overlay", highlightPanel.haveOverlay());
+                popup.show(pane, me.getX(), me.getY());
+            }
+        }
+        
+
+        public void mousePressed(MouseEvent me) {
+            if(me.getModifiers() == MouseEvent.BUTTON1_MASK) {
                 if(!editOnly) {
                     numPanel.list.clearSelection();
                     pane.getHighlighter().removeAllHighlights();

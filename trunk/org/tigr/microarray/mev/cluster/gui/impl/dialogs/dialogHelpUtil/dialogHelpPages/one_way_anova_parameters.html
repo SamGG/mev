@@ -10,9 +10,11 @@ selection buttons allow the assignment of experiments to the appropriate classes
 Groupings can be saved, loaded, and reset using the buttons below the group selection 
 controls.  
 <br>
-<h2>P-value parameters</h2>
+<h2>P-value / false discovery parameters</h2>
 P-values are currently computed only from the F-distribution. Genes with a p-value less 
-than the alpha or critical p-value are considered significant.
+than the alpha or critical p-value are considered significant. When using false discovery
+options, the signficant gene list contains no more than the number or proportion of specified
+false significant genes, at a confidence of [1 - alpha]
 <br>
 <h2>Hierarchical Clustering </h2>
 This check box specifies whether to perform hierarchical clustering on the elements in 

@@ -4,56 +4,38 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMTrainViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-07-27 19:59:17 $
- * $Author: braisted $
+ * $Revision: 1.5 $
+ * $Date: 2005-02-24 20:23:45 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.gui.impl.svm;
 
-import java.awt.Font;
-import java.awt.Insets;
-import java.awt.Point;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Dimension;
-import java.awt.Rectangle;
+import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.BorderLayout;
-import java.awt.GridBagLayout;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-
-
-import java.io.File;
+import java.awt.Insets;
+import java.awt.Rectangle;
 import java.io.BufferedWriter;
-import java.io.OutputStreamWriter;
+import java.io.File;
 import java.io.FileOutputStream;
-
+import java.io.OutputStreamWriter;
 import java.text.DecimalFormat;
 
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
-import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
-
-import org.tigr.util.FloatMatrix;
+import javax.swing.JPanel;
 
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IViewer;
-import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileFilter;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
+
 
 public class SVMTrainViewer extends SVMResultViewer implements java.io.Serializable {
     public static final long serialVersionUID = 202018080001L;
@@ -68,8 +50,9 @@ public class SVMTrainViewer extends SVMResultViewer implements java.io.Serializa
     /**
      * Constructs a <code>SVMTrainViewer</code> with specified data.
      */
-    public SVMTrainViewer(IFramework framework, IData experiment, SVMData data, float[] weights, GeneralInfo info, boolean classifyGenes) {
+    public SVMTrainViewer(IFramework framework, IData experiment, Experiment experimentObj, SVMData data, float[] weights, GeneralInfo info, boolean classifyGenes) {
         super(framework);
+        this.analysisExperiment = experimentObj;
         this.experiment = experiment;
         this.data = data;
         this.weights = weights;
@@ -255,7 +238,7 @@ public class SVMTrainViewer extends SVMResultViewer implements java.io.Serializa
                     g.drawString(" "+floatFormat.format(weights[index]) + spacerString + experiment.getElementAttribute(getMultipleArrayDataRow(index), labelIndex), 10, (i+1)*lineHeight);  //map i to real data using exp
                 }
                 else{
-                    g.drawString(" "+floatFormat.format(weights[index]) + spacerString + experiment.getSampleName(index), 10, (i+1)*lineHeight);  //map i to real data using exp
+                    g.drawString(" "+floatFormat.format(weights[index]) + spacerString + experiment.getSampleName(analysisExperiment.getSampleIndex(index)), 10, (i+1)*lineHeight);  //map i to real data using exp
                 }
             }
         }
@@ -301,9 +284,9 @@ public class SVMTrainViewer extends SVMResultViewer implements java.io.Serializa
             floatFormat.setGroupingUsed(false);
             
             if(classifyGenes)
-                numElem = experiment.getFeaturesSize();
+                numElem = analysisExperiment.getNumberOfGenes();
             else
-                numElem = experiment.getFeaturesCount();
+                numElem = analysisExperiment.getNumberOfSamples();
             
             for(int i = 0; i < numElem; i++){
                 spacerString = getSpacerString(floatFormat.format(weights[i]));
@@ -312,7 +295,7 @@ public class SVMTrainViewer extends SVMResultViewer implements java.io.Serializa
                     s = (" "+floatFormat.format(weights[i]) + spacerString + experiment.getElementAttribute(getMultipleArrayDataRow(i), labelIndex));  //map i to real data using exp
                 }
                 else{
-                    s =(" "+floatFormat.format(weights[i]) + spacerString + experiment.getSampleName(i));  //map i to real data using exp
+                    s =(" "+floatFormat.format(weights[i]) + spacerString + experiment.getSampleName(analysisExperiment.getSampleIndex(i)));  //map i to real data using exp
                 }
                
                 len = Math.max(len, fm.stringWidth(s));

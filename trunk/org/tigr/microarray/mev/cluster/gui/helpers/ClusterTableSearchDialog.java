@@ -57,6 +57,8 @@ public class ClusterTableSearchDialog extends javax.swing.JDialog {
 	
 	this.findButton.addActionListener(new ActionListener(){
 	    public void actionPerformed( ActionEvent ae){
+                updateRowCount();
+                //numRows = table.getRowCount();
 		findNextButton.setEnabled(false);
 		runSearch();
 		if(foundRowIndices.size() > 0 && selectIncrButton.isSelected())
@@ -68,6 +70,8 @@ public class ClusterTableSearchDialog extends javax.swing.JDialog {
 	
 	this.findNextButton.addActionListener(new ActionListener(){
 	    public void actionPerformed(ActionEvent ae){
+                updateRowCount();
+                //numRows = table.getRowCount();
 		findNext();
 	    }
 	});
@@ -93,6 +97,10 @@ public class ClusterTableSearchDialog extends javax.swing.JDialog {
 		
 	    }
 	});        
+    }
+    
+    private void updateRowCount() {
+        numRows = table.getRowCount();
     }
     
     /** 

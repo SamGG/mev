@@ -4,99 +4,69 @@ All rights reserved.
  */
 /*
  * $RCSfile: GDMGeneViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-07-27 19:59:16 $
- * $Author: braisted $
+ * $Revision: 1.7 $
+ * $Date: 2005-02-24 20:23:46 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.gdm;
 
-import java.net.URL;
-
-import java.awt.Color;
-import java.awt.Frame;
-import java.awt.Insets;
-import java.awt.RenderingHints;
-import java.awt.Component;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
 import java.awt.BorderLayout;
-import java.awt.TextField;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Font;
-import java.awt.FontMetrics;
+import java.awt.Insets;
 import java.awt.Rectangle;
-import java.awt.GradientPaint;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseAdapter;
-
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-
 import java.awt.image.BufferedImage;
-
-import java.util.Arrays;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Vector;
 
-import javax.swing.Action;
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.JPopupMenu;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
-import javax.swing.JOptionPane;
-import javax.swing.JColorChooser;
-import javax.swing.JScrollPane;
-import javax.swing.JScrollBar;
-import javax.swing.JViewport;
-import javax.swing.JPopupMenu;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.ButtonGroup;
-import javax.swing.BorderFactory;
+import javax.swing.JScrollBar;
 import javax.swing.SwingUtilities;
-
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.tigr.util.FloatMatrix;
-import org.tigr.util.QSort;
-
-import org.tigr.microarray.mev.ResultTree;
-
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
-
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
-
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
-
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-
 import org.tigr.microarray.util.SlideDataSorter;
+import org.tigr.util.FloatMatrix;
+import org.tigr.util.QSort;
 
 public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializable {
     public static final long serialVersionUID = 202004020001L;
@@ -1592,8 +1562,10 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
             if(k > num_genes)
                 k = num_genes;
             
-            int [] rows = getIDataRows(k);
-            String [][] auxData = getAuxilaryData(k);
+            int [] rows = getRows(k); //getIDataRows(k);
+            
+            //get aux. data for ENTIRE set of genes relative to the base gene., rows will extract from here
+            String [][] auxData = getAuxilaryData(num_genes);
             String [] auxHeaders = new String[3];
             auxHeaders[0] = "Scaled Dist.";
             auxHeaders[1] = "Actual Dist.";
@@ -1602,7 +1574,8 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
             try{
                 ExperimentUtil.saveGeneClusterWithAux(framework.getFrame(), this.experiment, this.expData, rows, auxHeaders, auxData);
             } catch (Exception e){
-                JOptionPane.showMessageDialog(this, "Error saving file: "+e.getMessage(), "Output Error", JOptionPane.WARNING_MESSAGE);
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(framework.getFrame(), "Error saving file: "+e.getMessage(), "Output Error", JOptionPane.WARNING_MESSAGE);
             }
         }
     }
@@ -1614,14 +1587,24 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
         }
         return rows;
     }
+
+    private int [] getRows(int k) {
+        int [] rows = new int[k];
+        for(int i = 0; i < k; i++){
+            rows[i] = indices[i];
+        }
+        return rows;
+    }
     
+    
+    //get aux data for the entire gene set
     private String [][] getAuxilaryData(int k){
         String [][] data = new String[k][3];
         FloatMatrix matrix = this.experiment.getMatrix();
         for(int i = 0; i < k; i++){
-            data[i][0] = Float.toString(this.geneDistMatrix.get(indices[0], indices[i]));
-            data[i][1] = Float.toString(this.rawMatrix.get(indices[0], indices[i]));
-            data[i][2] = getValuePairCount(matrix, indices[0], indices[i]);
+            data[i][0] = Float.toString(this.geneDistMatrix.get(indices[0], i));
+            data[i][1] = Float.toString(this.rawMatrix.get(indices[0], i));
+            data[i][2] = getValuePairCount(matrix, indices[0], i);
         }
         return data;
     }
@@ -1671,7 +1654,7 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
         }
         
         if(goodResults.size() > 0) {
-            GDMResultSelectionDialog dialog = new GDMResultSelectionDialog(goodResults.keys());
+            GDMResultSelectionDialog dialog = new GDMResultSelectionDialog((JFrame)framework.getFrame(), goodResults.keys());
             if( dialog.showModal() == JOptionPane.OK_OPTION ) {
                 int [][] clusters = ((int [][])goodResults.get(dialog.getSelectedResult()));
                 imposeClusterOrder(clusters);
@@ -1970,6 +1953,13 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
     
     public Experiment getExperiment() {
         return null;
+    }
+    
+    /** Returns int value indicating viewer type
+     * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
+     */
+    public int getViewerType() {
+        return Cluster.GENE_CLUSTER;
     }
     
     private class DefaultAction extends AbstractAction {

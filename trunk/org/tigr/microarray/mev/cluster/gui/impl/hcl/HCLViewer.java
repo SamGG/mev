@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLViewer.java,v $
- * $Revision: 1.11 $
- * $Date: 2004-07-27 19:59:16 $
- * $Author: braisted $
+ * $Revision: 1.12 $
+ * $Date: 2005-02-24 20:24:09 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 /*
@@ -47,7 +47,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import javax.swing.JColorChooser;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 
@@ -63,25 +62,17 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterHeader;
 
 import org.tigr.util.FloatMatrix;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
-import org.tigr.microarray.mev.cluster.gui.impl.kmc.KMCExperimentViewer;
-import org.tigr.microarray.mev.cluster.gui.impl.kmc.KMCExperimentClusterViewer;
-import org.tigr.microarray.mev.cluster.gui.impl.kmc.KMCCentroidViewer;
-import org.tigr.microarray.mev.cluster.gui.impl.kmc.KMCExperimentCentroidViewer;
-import org.tigr.microarray.mev.cluster.gui.impl.kmc.KMCCentroidsViewer;
-import org.tigr.microarray.mev.cluster.gui.impl.kmc.KMCExperimentCentroidsViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
 
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 
 public class HCLViewer extends JPanel implements IViewer {
 
-    public static final long serialVersionUID = 202006080001L;
+    public static final long serialVersionUID = 202006080002L;
 
     protected static final String STORE_CLUSTER_CMD = "store-cluster-cmd";
     protected static final String LAUNCH_NEW_SESSION_CMD = "launch-new-session-cmd";
@@ -95,6 +86,9 @@ public class HCLViewer extends JPanel implements IViewer {
     protected static final String SAVE_EXP_ORDER_CMD = "save-exp-order-cmd";
     protected static final String SAVE_GENE_HEIGHT_CMD = "save-gene-height-cmd";
     protected static final String SAVE_EXP_HEIGHT_CMD = "save-exp-height-cmd";
+    
+    protected static final String SAVE_GENE_NEWICK_CMD = "save-gene-newick-cmd";
+    protected static final String SAVE_SAMPLE_NEWICK_CMD = "save-sample-newick-cmd";
     
     // wrapped viewers
     /** component to draw an experiment data */
@@ -131,7 +125,7 @@ public class HCLViewer extends JPanel implements IViewer {
     protected JPopupMenu popup;
     
     protected DefaultMutableTreeNode node;
-    private IFramework framework;
+    protected IFramework framework;
     
     /**
      * Constructs a <code>HCLViewer</code> for specified results.
@@ -290,6 +284,7 @@ public class HCLViewer extends JPanel implements IViewer {
         oos.writeObject(clusters);
         oos.writeObject(experimentClusters);
         oos.writeObject(sampleClusters);
+        oos.writeBoolean(this.isExperimentCluster);
     }
     
     private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
@@ -321,8 +316,9 @@ public class HCLViewer extends JPanel implements IViewer {
         experiment = (Experiment)ois.readObject();        
         this.clusters = (ArrayList)ois.readObject();
         this.experimentClusters = (ArrayList)ois.readObject();        
-        this.sampleClusters = (int[][])ois.readObject();        
-        this.popup = this.createJPopupMenu(listener);
+        this.sampleClusters = (int[][])ois.readObject();    
+        this.isExperimentCluster = ois.readBoolean();
+        this.popup = this.createJPopupMenu(listener);        
     }
     
     
@@ -472,7 +468,7 @@ public class HCLViewer extends JPanel implements IViewer {
     /**
      * Calculate the viewer width.
      */
-    private int getCommonWidth() {
+    protected int getCommonWidth() {
         int width = 0;
         if (this.genesTree != null) {
             width += this.genesTree.getWidth();
@@ -593,18 +589,33 @@ public class HCLViewer extends JPanel implements IViewer {
         menuItem.addActionListener(listener);
         menu.add(menuItem);
         
-        menuItem = new JMenuItem("Save Experiment Node Heights", GUIFactory.getIcon("save_as16.gif"));
+        menuItem = new JMenuItem("Save Sample Node Heights", GUIFactory.getIcon("save_as16.gif"));
         menuItem.setEnabled(this.sampleTree != null);
         menuItem.setActionCommand(SAVE_EXP_HEIGHT_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
         
-        menuItem = new JMenuItem("Save Experiment Order", GUIFactory.getIcon("save_as16.gif"));
+        menuItem = new JMenuItem("Save Sample Order", GUIFactory.getIcon("save_as16.gif"));
         menuItem.setEnabled(this.sampleTree != null);
         menuItem.setActionCommand(SAVE_EXP_ORDER_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
         
+        menu.addSeparator();
+        
+        if(this.genesTree != null) {
+            menuItem = new JMenuItem("Save Gene Tree To Newick File", GUIFactory.getIcon("save_as16.gif"));
+            menuItem.setActionCommand(SAVE_GENE_NEWICK_CMD);
+            menuItem.addActionListener(listener);
+            menu.add(menuItem);
+        }
+        
+        if(this.sampleTree != null) {
+            menuItem = new JMenuItem("Save Sample Tree to Newick File", GUIFactory.getIcon("save_as16.gif"));
+            menuItem.setActionCommand(SAVE_SAMPLE_NEWICK_CMD);
+            menuItem.addActionListener(listener);
+            menu.add(menuItem);
+        }        
     }
     
     /**
@@ -1060,7 +1071,7 @@ public class HCLViewer extends JPanel implements IViewer {
         if(tree == this.genesTree)
             newNode = new DefaultMutableTreeNode("Gene Tree Cut: "+String.valueOf(k)+" Clusters");
         else
-            newNode = new DefaultMutableTreeNode("Experiment Tree Cut: "+String.valueOf(k)+" Clusters");
+            newNode = new DefaultMutableTreeNode("Sample Tree Cut: "+String.valueOf(k)+" Clusters");
         
         int [][] clusters = tree.getClusterRowIndices();
         
@@ -1107,9 +1118,9 @@ public class HCLViewer extends JPanel implements IViewer {
         
         IViewer expViewer;
         if(geneClusters)
-            expViewer = new KMCExperimentViewer(this.experiment, clusters);
+            expViewer = new HCLExperimentViewer(this.experiment, clusters);
         else
-            expViewer = new KMCExperimentClusterViewer(this.experiment, clusters);
+            expViewer = new HCLExperimentClusterViewer(this.experiment, clusters);
         
         for(int i = 0; i < clusters.length; i++){
             expNode.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+String.valueOf(i+1), expViewer, new Integer(i))));
@@ -1134,10 +1145,10 @@ public class HCLViewer extends JPanel implements IViewer {
         FloatMatrix means = getMeans(data, clusters);
         FloatMatrix variances = getVariances(data, means, clusters);
         
-        KMCCentroidViewer centroidViewer;
+        HCLCentroidViewer centroidViewer;
         ExperimentClusterCentroidViewer expCentroidViewer;
         if(clusterGenes){
-            centroidViewer = new KMCCentroidViewer(this.experiment, clusters);
+            centroidViewer = new HCLCentroidViewer(this.experiment, clusters);
             centroidViewer.setMeans(means.A);
             centroidViewer.setVariances(variances.A);
             for (int i=0; i<clusters.length; i++) {
@@ -1145,7 +1156,7 @@ public class HCLViewer extends JPanel implements IViewer {
                 expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+String.valueOf(i+1), centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
             }
             
-            KMCCentroidsViewer centroidsViewer = new KMCCentroidsViewer(this.experiment, clusters);
+            HCLCentroidsViewer centroidsViewer = new HCLCentroidsViewer(this.experiment, clusters);
             centroidsViewer.setMeans(means.A);
             centroidsViewer.setVariances(variances.A);
             
@@ -1154,7 +1165,7 @@ public class HCLViewer extends JPanel implements IViewer {
             
         }
         else{
-            expCentroidViewer = new KMCExperimentCentroidViewer(this.experiment, clusters);
+            expCentroidViewer = new HCLExperimentCentroidViewer(this.experiment, clusters);
             
             expCentroidViewer.setMeans(means.A);
             expCentroidViewer.setVariances(variances.A);
@@ -1162,7 +1173,7 @@ public class HCLViewer extends JPanel implements IViewer {
                 centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+String.valueOf(i+1), expCentroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
                 expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+String.valueOf(i+1), expCentroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
             }
-            KMCExperimentCentroidsViewer expCentroidsViewer = new KMCExperimentCentroidsViewer(this.experiment, clusters);
+            HCLExperimentCentroidsViewer expCentroidsViewer = new HCLExperimentCentroidsViewer(this.experiment, clusters);
             expCentroidsViewer.setMeans(means.A);
             expCentroidsViewer.setVariances(variances.A);
             
@@ -1258,7 +1269,7 @@ public class HCLViewer extends JPanel implements IViewer {
         if(clusterGenes)
             node.add(new DefaultMutableTreeNode(new LeafInfo("Genes in Clusters (#,%)", new HCLClusterInfoViewer(clusters, this.experiment.getNumberOfGenes(), zThr))));
         else
-            node.add(new DefaultMutableTreeNode(new LeafInfo("Experiments in Clusters (#,%)", new HCLClusterInfoViewer(clusters, this.experiment.getNumberOfSamples(), false, zThr))));
+            node.add(new DefaultMutableTreeNode(new LeafInfo("Sammples in Clusters (#,%)", new HCLClusterInfoViewer(clusters, this.experiment.getNumberOfSamples(), false, zThr))));
         root.add(node);
     }
     
@@ -1267,7 +1278,7 @@ public class HCLViewer extends JPanel implements IViewer {
      */
     private void addGeneralInfo(DefaultMutableTreeNode root, float zThr, int k,boolean isGeneTree){
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("General Info");
-        node.add(new DefaultMutableTreeNode("Cluster Type: "+(isGeneTree ? "Gene Clusters" : "Experiment Clusters")));
+        node.add(new DefaultMutableTreeNode("Cluster Type: "+(isGeneTree ? "Gene Clusters" : "Sample Clusters")));
         node.add(new DefaultMutableTreeNode("Distance Threshold: "+ String.valueOf(zThr)));
         node.add(new DefaultMutableTreeNode("Number of Clusters: "+String.valueOf(k)));
         root.add(node);
@@ -1383,6 +1394,13 @@ public class HCLViewer extends JPanel implements IViewer {
         return this.experiment;
     }
     
+    /** Returns int value indicating viewer type
+     * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
+     */
+    public int getViewerType() {
+        return -1;
+    }
+    
   /**  Prototyping code for saving state as XML
    *
     public void writeXML(XMLEncoder enc) {
@@ -1424,6 +1442,10 @@ public class HCLViewer extends JPanel implements IViewer {
                 saveExperimentOrder();
             } else if (command.equals(SAVE_EXP_HEIGHT_CMD)){
                 sampleTree.saveExperimentNodeHeights();
+            } else if (command.equals(SAVE_GENE_NEWICK_CMD)) {
+                genesTree.saveAsNewickFile();
+            } else if (command.equals(SAVE_SAMPLE_NEWICK_CMD)) {
+                sampleTree.saveAsNewickFile();                
             }
         }
         

@@ -4,21 +4,38 @@ All rights reserved.
 */
 /*
  * $RCSfile: CASTInitDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-13 18:32:52 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2005-02-24 20:24:02 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.cast;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import org.tigr.util.awt.*;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DistanceMetricPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HCLSelectionPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.SampleSelectionPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
+import org.tigr.util.awt.GBA;
 
 public class CASTInitDialog extends AlgorithmDialog{
     
@@ -32,22 +49,26 @@ public class CASTInitDialog extends AlgorithmDialog{
     protected JLabel thresholdLabel;
     public JTextField thresholdTextField;
     
+    private DistanceMetricPanel metricPanel;
+    
     protected JPanel mainPanel;
     
     private boolean okPressed = false;
     
-    public CASTInitDialog(JFrame parent, boolean modal) {
-        super(parent, "CAST: Cluster Affinity Search Technique", modal);
-        
-        initialize();
+    public CASTInitDialog(JFrame parent, boolean modal, String globalMetricName, boolean globalAbsoluteValue) {
+        super(parent, "CAST: Cluster Affinity Search Technique", modal);        
+        initialize(globalMetricName, globalAbsoluteValue);
     }
     
     
     
-    protected void initialize() {
+    protected void initialize(String globalMetricName, boolean globalAbsoluteValue) {
         gba = new GBA();
         eventListener = new EventListener();
         sampleSelectionPanel = new SampleSelectionPanel(Color.white, UIManager.getColor("Label.foreground"),true,"Sample Selection");
+    
+        metricPanel = new DistanceMetricPanel(globalMetricName, globalAbsoluteValue, "Euclidean Distance", "CAST", true, true);
+ 
         thresholdLabel = new JLabel("Threshold");
         thresholdTextField = new JTextField(10);
         thresholdTextField.setText("0.8");
@@ -63,9 +84,11 @@ public class CASTInitDialog extends AlgorithmDialog{
         mainPanel = new JPanel();
         mainPanel.setLayout(new GridBagLayout());
         mainPanel.setBackground(Color.white);
-        gba.add(mainPanel, sampleSelectionPanel, 0, 0, 1, 1, 1, 1, GBA.H, GBA.C, new Insets(0, 0, 0, 0), 0, 0);
-        gba.add(mainPanel, thresholdPanel, 0, 1, 1, 1, 1, 1, GBA.H, GBA.C, new Insets(0, 0, 0, 0), 0, 0);
-        gba.add(mainPanel, hclOpsPanel, 0, 2, 1, 1, 1, 1, GBA.H, GBA.C, new Insets(0, 0, 0, 0), 0, 0);
+        gba.add(mainPanel, sampleSelectionPanel, 0, 0, 1, 1, 1, 1, GBA.H, GBA.C, new Insets(0, 0, 0, 0), 0, 0);        
+        gba.add(mainPanel, metricPanel, 0, 1, 1, 1, 1, 1, GBA.H, GBA.C, new Insets(0, 0, 0, 0), 0, 0);
+        
+        gba.add(mainPanel, thresholdPanel, 0, 2, 1, 1, 1, 1, GBA.H, GBA.C, new Insets(0, 0, 0, 0), 0, 0);
+        gba.add(mainPanel, hclOpsPanel, 0, 3, 1, 1, 1, 1, GBA.H, GBA.C, new Insets(0, 0, 0, 0), 0, 0);
         
         this.setResizable(false);
         
@@ -97,10 +120,25 @@ public class CASTInitDialog extends AlgorithmDialog{
         return hclOpsPanel.isHCLSelected();
     }
     
+    /**
+     * Returns the currently selected metric
+     */
+    public int getDistanceMetric() {
+        return metricPanel.getMetricIndex();
+    }
+    
+    /**
+     *  Returns true if the absolute checkbox is selected, else false
+     */
+    public boolean isAbsoluteDistance() {
+        return metricPanel.getAbsoluteSelection();
+    }
+    
     public void resetControls(){
         sampleSelectionPanel.setClusterGenesSelected(true);
         hclOpsPanel.setHCLSelected(false);
         thresholdTextField.setText("0.8");
+        metricPanel.reset();
     }
     
     protected class EventListener implements ActionListener {
@@ -145,7 +183,7 @@ public class CASTInitDialog extends AlgorithmDialog{
     
     
     public static void main(String [] args){
-        CASTInitDialog d = new CASTInitDialog(new JFrame(), true);
+        CASTInitDialog d = new CASTInitDialog(new JFrame(), true, "Euclidean Distance", false);
         d.show();
         System.exit(0);
     }

@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: TerrainGUI.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-05-19 13:18:35 $
- * $Author: braisted $
+ * $Revision: 1.4 $
+ * $Date: 2005-02-24 20:24:10 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.terrain;
@@ -205,7 +205,7 @@ public class TerrainGUI implements IClusterGUI, IScriptGUI {
         node.add(new DefaultMutableTreeNode("Distance: "+gi.function));
         node.add(new DefaultMutableTreeNode("Absolute: "+gi.absolute));
         node.add(new DefaultMutableTreeNode("Neighbours: "+gi.neighbours));
-        node.add(new DefaultMutableTreeNode("Data Type: "+(gi.isGenes ? "Genes" : "Experiments")));
+        node.add(new DefaultMutableTreeNode("Data Type: "+(gi.isGenes ? "Genes" : "Samples")));
         root.add(node);
     }
     

@@ -1,29 +1,23 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: StanfordFileLoader.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-03-02 19:36:29 $
- * $Author: braisted $
+ * $Revision: 1.7 $
+ * $Date: 2005-02-24 20:23:50 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.file;
 
-import org.tigr.microarray.mev.SlideData;
-import org.tigr.microarray.mev.FloatSlideData;
-import org.tigr.microarray.mev.SlideDataElement;
-
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
@@ -32,29 +26,32 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Vector;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.JProgressBar;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
+import javax.swing.event.ListSelectionEvent;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.FloatSlideData;
 import org.tigr.microarray.mev.ISlideData;
-import org.tigr.microarray.mev.ISlideDataElement;
+import org.tigr.microarray.mev.SlideData;
+import org.tigr.microarray.mev.SlideDataElement;
+import org.tigr.microarray.mev.TMEV;
 
 public class StanfordFileLoader extends ExpressionFileLoader {
     
@@ -77,38 +74,39 @@ public class StanfordFileLoader extends ExpressionFileLoader {
     }
     
     /*
-     *  Handling of Stanford data has been altered in version 3.0 to permit loading of 
+     *  Handling of Stanford data has been altered in version 3.0 to permit loading of
      *  "ratio" input without the creation of false cy3 and cy5.  cy5 values in data structures
      *  are used to hold the input value.
-     *  
+     *
      *  getRatio methods are altered to return the value (held in cy5) rather than
      *  taking log2(cy5/cy3).
      */
     
-    public Vector loadStanfordExpressionFile(File f) throws IOException {
-
+    public Vector loadStanfordExpressionFile_old(File f) throws IOException {
+        
         final int preSpotRows = this.sflp.getXRow()+1;
         final int preExperimentColumns = this.sflp.getXColumn();
         
-        int spotCount = getCountOfLines(f) - preSpotRows;
+        int numLines = this.getCountOfLines(f);
+        
+        int spotCount = numLines - preSpotRows;
+
         if (spotCount <= 0) {
-            JOptionPane.showMessageDialog(superLoader.getFrame(),  "There is no spot data available.",  "Stanford Load Error", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(superLoader.getFrame(),  "There is no spot data available.",  "TDMS Load Error", JOptionPane.INFORMATION_MESSAGE);
         }
-                
+        
         int[] rows = new int[] {0, 1, 0};
         int[] columns = new int[] {0, 1, 0};
         String value;
         float cy3, cy5;
         String[] moreFields = new String[preExperimentColumns];
-
+        
         final int rColumns = 1;
         final int rRows = spotCount;
         
         ISlideData[] slideDataArray = null;
         SlideDataElement sde;
-        
-        int numLines = this.getCountOfLines(f);
-        
+                        
         BufferedReader reader = new BufferedReader(new FileReader(f));
         StringSplitter ss = new StringSplitter((char)0x09);
         String currentLine;
@@ -116,6 +114,7 @@ public class StanfordFileLoader extends ExpressionFileLoader {
         counter = 0;
         row = column = 1;
         this.setFilesCount(1);
+        this.setRemain(1);
         this.setFilesProgress(0);
         this.setLinesCount(numLines);
         this.setFileProgress(0);
@@ -130,18 +129,18 @@ public class StanfordFileLoader extends ExpressionFileLoader {
                 int experimentCount = ss.countTokens()+1 - preExperimentColumns;
                 slideDataArray = new ISlideData[experimentCount];
                 slideDataArray[0] = new SlideData(rRows, rColumns);
-                    slideDataArray[0].setSlideFileName(f.getPath());
+                slideDataArray[0].setSlideFileName(f.getPath());
                 for (int i=1; i<slideDataArray.length; i++) {
-                    slideDataArray[i] = new FloatSlideData(slideDataArray[0].getSlideMetaData(), spotCount);                    
-                    slideDataArray[i].setSlideFileName(f.getPath());                   
+                    slideDataArray[i] = new FloatSlideData(slideDataArray[0].getSlideMetaData(), spotCount);
+                    slideDataArray[i].setSlideFileName(f.getPath());
                 }
                 //get Field Names
                 String [] fieldNames = new String[preExperimentColumns];
                 for(int i = 0; i < preExperimentColumns; i++){
-                   fieldNames[i] = ss.nextToken();
-                }         
+                    fieldNames[i] = ss.nextToken();
+                }
                 TMEV.setFieldNames(fieldNames);
-
+                
                 for (int i=0; i<experimentCount; i++) {
                     slideDataArray[i].setSlideDataName(ss.nextToken());
                 }
@@ -157,18 +156,18 @@ public class StanfordFileLoader extends ExpressionFileLoader {
                 for (int i=0; i<preExperimentColumns; i++) {
                     moreFields[i] = ss.nextToken();
                 }
-                sde = new SlideDataElement(rows, columns, new float[2], moreFields);
+                sde = new SlideDataElement(String.valueOf(row+1),rows, columns, new float[2], moreFields);
                 slideDataArray[0].addSlideDataElement(sde);
                 
                 for (int i=0; i<slideDataArray.length; i++) {
-
+                    
                     cy3 = 1f;  //set cy3 to a default value of 1.
                     
-                    try {                       
+                    try {
                         value = ss.nextToken();
                         cy5 = Float.parseFloat(value);  //set cy5 to hold the value
-                                                        //getRatio methods will return cy5
-                                                        //for Stanford data type
+                        //getRatio methods will return cy5
+                        //for Stanford data type
                     } catch (Exception e) {
                         cy3 = 0;
                         cy5 = Float.NaN;
@@ -177,19 +176,149 @@ public class StanfordFileLoader extends ExpressionFileLoader {
                 }
             }
             this.setFileProgress(counter);
-            counter++;            
+            counter++;
         }
         reader.close();
-   
+        
         Vector data = new Vector(slideDataArray.length);
-           
+        
         for(int i = 0; i < slideDataArray.length; i++)
             data.add(slideDataArray[i]);
         
-        this.setFilesProgress(1);   
+        this.setFilesProgress(1);
         return data;
     }
     
+    
+
+    /*
+     *  Handling of Stanford data has been altered in version 3.0 to permit loading of
+     *  "ratio" input without the creation of false cy3 and cy5.  cy5 values in data structures
+     *  are used to hold the input value.
+     *
+     *  getRatio methods are altered to return the value (held in cy5) rather than
+     *  taking log2(cy5/cy3).
+     */
+    
+    public Vector loadStanfordExpressionFile(File f) throws IOException {
+        
+        final int preSpotRows = this.sflp.getXRow()+1;
+        final int preExperimentColumns = this.sflp.getXColumn();
+        
+        int numLines = this.getCountOfLines(f);
+        
+        int spotCount = numLines - preSpotRows;
+
+        if (spotCount <= 0) {
+            JOptionPane.showMessageDialog(superLoader.getFrame(),  "There is no spot data available.",  "TDMS Load Error", JOptionPane.INFORMATION_MESSAGE);
+        }
+        
+        int[] rows = new int[] {0, 1, 0};
+        int[] columns = new int[] {0, 1, 0};
+        String value;
+        float cy3, cy5;
+        String[] moreFields = new String[preExperimentColumns];
+        
+        final int rColumns = 1;
+        final int rRows = spotCount;
+        
+        ISlideData[] slideDataArray = null;
+        SlideDataElement sde;
+                        
+        BufferedReader reader = new BufferedReader(new FileReader(f));
+        StringSplitter ss = new StringSplitter((char)0x09);
+        String currentLine;
+        int counter, row, column;
+        counter = 0;
+        row = column = 1;
+        this.setFilesCount(1);
+        this.setRemain(1);
+        this.setFilesProgress(0);
+        this.setLinesCount(numLines);
+        this.setFileProgress(0);
+        
+        
+        while ((currentLine = reader.readLine()) != null) {
+            if (stop) {
+                return null;
+            }
+            ss.init(currentLine);
+            if (counter == 0) { // parse header
+                int experimentCount = ss.countTokens()+1 - preExperimentColumns;
+                slideDataArray = new ISlideData[experimentCount];
+                slideDataArray[0] = new SlideData(rRows, rColumns);
+                slideDataArray[0].setSlideFileName(f.getPath());
+                for (int i=1; i<slideDataArray.length; i++) {
+                    slideDataArray[i] = new FloatSlideData(slideDataArray[0].getSlideMetaData(), spotCount);
+                    slideDataArray[i].setSlideFileName(f.getPath());
+                }
+                //get Field Names
+                String [] fieldNames = new String[preExperimentColumns];
+                for(int i = 0; i < preExperimentColumns; i++){
+                    fieldNames[i] = ss.nextToken();
+                }
+                TMEV.setFieldNames(fieldNames);
+                
+                for (int i=0; i<experimentCount; i++) {
+                    slideDataArray[i].setSlideDataName(ss.nextToken());
+                }
+            } else if (counter >= preSpotRows) { // data rows
+                rows[0] = rows[2] = row;
+                columns[0] = columns[2] = column;
+                if (column == rColumns) {
+                    column = 1;
+                    row++;
+                } else {
+                    column++;
+                }
+                for (int i=0; i<preExperimentColumns; i++) {
+                    moreFields[i] = ss.nextToken();
+                }
+                sde = new SlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields);
+                slideDataArray[0].addSlideDataElement(sde);
+                
+                for (int i=0; i<slideDataArray.length; i++) {
+                    
+                    cy3 = 1f;  //set cy3 to a default value of 1.
+                    
+                    try {
+                        value = ss.nextToken();
+                        cy5 = Float.parseFloat(value);  //set cy5 to hold the value
+                        //getRatio methods will return cy5
+                        //for Stanford data type
+                    } catch (Exception e) {
+                        cy3 = 0;
+                        cy5 = Float.NaN;
+                    }
+                    slideDataArray[i].setIntensities(counter - preSpotRows, cy3, cy5);
+                }
+            } else {
+                //we have additional sample annoation
+                
+                //advance to sample key
+                for(int i = 0; i < preExperimentColumns-1; i++) {
+                    ss.nextToken();
+                }
+                String key = ss.nextToken();
+                
+                for(int j = 0; j < slideDataArray.length; j++) {
+                    slideDataArray[j].addNewSampleLabel(key, ss.nextToken());
+                }
+            }
+            
+            this.setFileProgress(counter);
+            counter++;
+        }
+        reader.close();
+        
+        Vector data = new Vector(slideDataArray.length);
+        
+        for(int i = 0; i < slideDataArray.length; i++)
+            data.add(slideDataArray[i]);
+        
+        this.setFilesProgress(1);
+        return data;
+    }
     
     
     public FileFilter getFileFilter() {
@@ -203,7 +332,7 @@ public class StanfordFileLoader extends ExpressionFileLoader {
             }
             
             public String getDescription() {
-                return "Stanford Files (*.txt)";
+                return "Tab Delimited, Multiple Sample Files (TDMS) (*.txt)";
             }
         };
         
@@ -218,11 +347,11 @@ public class StanfordFileLoader extends ExpressionFileLoader {
         int tableColumn = sflp.getXColumn();
         
         if (tableColumn < 0) return false;
-      
+        
         TableModel model = sflp.getTable().getModel();
         String fieldSummary = "";
         for (int i = 0; i < tableColumn; i++) {
-          //  System.out.print(model.getColumnName(i) + (i + 1 == tableColumn ? "\n" : ", "));
+            //  System.out.print(model.getColumnName(i) + (i + 1 == tableColumn ? "\n" : ", "));
             fieldSummary += model.getColumnName(i) + (i + 1 == tableColumn ? "" : ", ");
         }
         
@@ -287,7 +416,7 @@ public class StanfordFileLoader extends ExpressionFileLoader {
                 rowVector = new Vector();
                 for (int i = 0; i < ss.countTokens()+1; i++) {
                     try {
-                        rowVector.add(ss.nextToken());    
+                        rowVector.add(ss.nextToken());
                     } catch (java.util.NoSuchElementException nsee) {
                         rowVector.add(" ");
                     }
@@ -307,10 +436,11 @@ public class StanfordFileLoader extends ExpressionFileLoader {
     
     public String getFilePath() {
         return this.sflp.fileNameTextField.getText();
-    }    
-
+    }
+    
     public void openDataPath() {
-    } 
+        this.sflp.openDataPath();
+    }
     
 /*
 //
@@ -320,8 +450,9 @@ public class StanfordFileLoader extends ExpressionFileLoader {
     
     private class StanfordFileLoaderPanel extends JPanel {
         
+        FileTreePane fileTreePane;
+        
         JTextField fileNameTextField;
-        JButton browseButton;
         JPanel fileSelectionPanel;
         JTable expressionTable;
         JLabel instructionsLabel;
@@ -330,6 +461,10 @@ public class StanfordFileLoader extends ExpressionFileLoader {
         JPanel fileLoaderPanel;
         JTextField fieldsTextField;
         JPanel fieldsPanel;
+        JSplitPane splitPane;
+        
+        JList availableList;
+        JScrollPane availableScrollPane;
         
         private int xRow = -1;
         private int xColumn = -1;
@@ -338,25 +473,25 @@ public class StanfordFileLoader extends ExpressionFileLoader {
             
             setLayout(new GridBagLayout());
             
+            fileTreePane = new FileTreePane(SuperExpressionFileLoader.DATA_PATH);
+            fileTreePane.addFileTreePaneListener(new FileTreePaneEventHandler());
+            fileTreePane.setPreferredSize(new java.awt.Dimension(200, 50));
+            
             fileNameTextField = new JTextField();
             fileNameTextField.setEditable(false);
             fileNameTextField.setForeground(Color.black);
             fileNameTextField.setFont(new Font("monospaced", Font.BOLD, 12));
-            
-            browseButton = new JButton("File Browser");
-            browseButton.addActionListener(new EventHandler());
-            
+         
             fileSelectionPanel = new JPanel();
             fileSelectionPanel.setLayout(new GridBagLayout());
-            fileSelectionPanel.setBorder(new TitledBorder(new EtchedBorder(), "Selected Stanford File"));
+            fileSelectionPanel.setBorder(new TitledBorder(new EtchedBorder(), "Selected TDMS File"));
             gba.add(fileSelectionPanel, fileNameTextField, 0, 0, 2, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(fileSelectionPanel, browseButton, 2, 0, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            
+    
             expressionTable = new JTable();
             expressionTable.setCellSelectionEnabled(true);
             expressionTable.setColumnSelectionAllowed(false);
             expressionTable.setRowSelectionAllowed(false);
-		expressionTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+            expressionTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
             expressionTable.getTableHeader().setReorderingAllowed(false);
             expressionTable.addMouseListener(new MouseAdapter() {
                 public void mousePressed(MouseEvent event) {
@@ -391,11 +526,34 @@ public class StanfordFileLoader extends ExpressionFileLoader {
             
             fileLoaderPanel = new JPanel();
             fileLoaderPanel.setLayout(new GridBagLayout());
-            gba.add(fileLoaderPanel, fileSelectionPanel, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(fileLoaderPanel, tablePanel, 0, 1, 1, 2, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(fileLoaderPanel, fieldsPanel, 0, 3, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             
-            gba.add(this, fileLoaderPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            //jcb add list panel
+            availableList = new JList(new DefaultListModel());
+            availableList.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
+            availableList.setCellRenderer(new ListRenderer());
+            availableList.addListSelectionListener(new ListListener());
+            availableScrollPane = new JScrollPane(availableList);
+            
+            JPanel filePanel = new JPanel(new GridBagLayout());
+            filePanel.setPreferredSize(new Dimension(10, 100));
+            filePanel.setBorder(new TitledBorder(new EtchedBorder(), "Available Files (*.txt)"));
+            gba.add(filePanel, availableScrollPane, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            
+            gba.add(fileLoaderPanel, filePanel, 0, 0, 1, 4, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            gba.add(fileLoaderPanel, fileSelectionPanel, 1, 0, 1, 1, 3, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            gba.add(fileLoaderPanel, tablePanel, 1, 1, 1, 2, 3, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            gba.add(fileLoaderPanel, fieldsPanel, 1, 3, 1, 1, 3, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            
+            //jcb
+            splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, fileTreePane, fileLoaderPanel);
+            
+            gba.add(this, splitPane, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            splitPane.setDividerLocation(0.50);
+            
+        }
+        
+        public void openDataPath() {
+            fileTreePane.openDataPath();
         }
         
         public JTable getTable() {
@@ -430,21 +588,68 @@ public class StanfordFileLoader extends ExpressionFileLoader {
             int numCols = expressionTable.getColumnCount();
             for(int i = 0; i < numCols; i++){
                 expressionTable.getColumnModel().getColumn(i).setMinWidth(75);
-            }            
+            }
         }
         
         public void setFieldsText(String fieldsText) {
             fieldsTextField.setText(fieldsText);
         }
         
-        private class EventHandler implements ActionListener {
-            public void actionPerformed(ActionEvent event) {
-                if (event.getSource() == browseButton) {
-                    selectStanfordFile();
+        
+        private class ListRenderer extends DefaultListCellRenderer {
+            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                File file = (File) value;
+                setText(file.getName());
+                return this;
+            }
+        }
+        
+        
+        
+        private class ListListener implements javax.swing.event.ListSelectionListener {
+            
+            public void valueChanged(ListSelectionEvent lse) {
+                
+                File file = (File)(availableList.getSelectedValue());
+                
+                if(file == null || !(file.exists()))
+                    return;
+                
+                processStanfordFile(file);
+            }
+        }
+        
+        
+        private class FileTreePaneEventHandler implements FileTreePaneListener {
+            
+            public void nodeSelected(FileTreePaneEvent event) {
+                
+                String filePath = (String) event.getValue("Path");
+                Vector fileNames = (Vector) event.getValue("Filenames");
+                
+                if(fileNames.size() < 1)
+                    return;
+                
+                String fileName = (String)(fileNames.elementAt(0));
+                
+                ((DefaultListModel)(availableList.getModel())).clear();
+                
+                
+                for (int i = 0; i < fileNames.size(); i++) {
+                    
+                    File targetFile = new File((String) fileNames.elementAt(i));
+                    
+                    FileFilter stanfordFileFilter = getFileFilter();
+                    
+                    if (stanfordFileFilter.accept(targetFile)) {
+                        ((DefaultListModel)(availableList.getModel())).addElement(new File((String) fileNames.elementAt(i)));
+                    }
                 }
             }
-        }                
-    }
-    
- 
+            
+            public void nodeCollapsed(FileTreePaneEvent event) {}
+            public void nodeExpanded(FileTreePaneEvent event) {}
+        }
+    }    
 }

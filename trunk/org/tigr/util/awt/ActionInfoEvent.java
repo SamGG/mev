@@ -1,6 +1,5 @@
 package org.tigr.util.awt;
 
-import java.util.EventObject;
 import java.util.Hashtable;
 
 public class ActionInfoEvent extends java.util.EventObject

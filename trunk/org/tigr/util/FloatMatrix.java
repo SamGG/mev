@@ -4,19 +4,18 @@ All rights reserved.
 */
 /*
  * $RCSfile: FloatMatrix.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-09 15:06:35 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2005-02-24 20:24:06 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.util;
 
-import java.text.NumberFormat;
-import java.text.DecimalFormat;
-import java.text.FieldPosition;
-import java.io.PrintWriter;
 import java.io.BufferedReader;
+import java.io.PrintWriter;
 import java.io.StreamTokenizer;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 
 // Changed from double to float for memory demand reduction!
@@ -66,7 +65,8 @@ import java.io.StreamTokenizer;
  */
 
 public class FloatMatrix implements Cloneable, java.io.Serializable {
-    
+    public static final long serialVersionUID = 1000103010001L;
+        
 /* ------------------------
    Class variables
  * ------------------------ */

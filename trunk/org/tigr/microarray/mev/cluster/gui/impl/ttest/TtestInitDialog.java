@@ -1,30 +1,61 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: TtestInitDialog.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-05-11 18:00:26 $
- * $Author: nbhagaba $
+ * $Revision: 1.5 $
+ * $Date: 2005-02-24 20:24:05 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.gui.impl.ttest;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import org.tigr.graph.*;
-import org.tigr.util.*;
-import org.tigr.util.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.PrintWriter;
+import java.util.Vector;
 
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.UIManager;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HCLSigOnlyPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
+import org.tigr.util.StringSplitter;
 
 /**
  *
@@ -35,9 +66,11 @@ public class TtestInitDialog extends AlgorithmDialog {
     
     GroupExperimentsPanel gPanel;
     OneClassPanel oPanel;
+    TwoClassPairedMainPanel tcpmPanel;    
     PValuePanel pPanel;
     SignificancePanel sPanel;
-    HCLSelectionPanel hclOpsPanel;
+    //HCLSelectionPanel hclOpsPanel;
+    HCLSigOnlyPanel hclOpsPanel;    
     Vector exptNames;
     JTabbedPane chooseDesignPane;
     DfCalcPanel dPanel;
@@ -52,6 +85,9 @@ public class TtestInitDialog extends AlgorithmDialog {
     public static final int ONE_CLASS = 8;
     public static final int MAX_T = 9;
     public static final int MIN_P = 10;
+    public static final int PAIRED = 11;   
+    public static final int FALSE_NUM = 12;
+    public static final int FALSE_PROP = 13;
     
     boolean okPressed = false;
     boolean permParamOkPressed = false;
@@ -170,6 +206,9 @@ public class TtestInitDialog extends AlgorithmDialog {
         
         chooseDesignPane.add("One-class", oPanel);
         chooseDesignPane.add("Between subjects", gPanel);
+        
+        tcpmPanel = new TwoClassPairedMainPanel();
+        chooseDesignPane.add("Paired", tcpmPanel);        
         /*
         buildConstraints(constraints, 0, 0, 1, 1, 100, 45);
         gridbag.setConstraints(chooseDesignPane, constraints);
@@ -182,7 +221,14 @@ public class TtestInitDialog extends AlgorithmDialog {
                 sPanel.maxTButton.setSelected(false);
                 sPanel.maxTButton.setEnabled(false);
                 sPanel.minPButton.setSelected(false);
-                sPanel.minPButton.setEnabled(false);                
+                sPanel.minPButton.setEnabled(false);  
+                sPanel.falseNumButton.setEnabled(false);
+                sPanel.falsePropButton.setEnabled(false);
+                sPanel.calcFDRPVals.setEnabled(false);
+                sPanel.fastFDRButton.setEnabled(false);
+                sPanel.slowFDRButton.setEnabled(false);
+                sPanel.falseNumField.setEnabled(false);
+                sPanel.falsePropField.setEnabled(false);
             }
         });
         
@@ -190,7 +236,15 @@ public class TtestInitDialog extends AlgorithmDialog {
             public void actionPerformed(ActionEvent evt) {
                 if (evt.getSource() == pPanel.permutButton) {                    
                     sPanel.maxTButton.setEnabled(true);
-                    //sPanel.minPButton.setEnabled(true);    // **** ENABLE THIS WHEN MINP MTHOD HAS BEEN DEBUGGED  - 1/12/2004            
+                    //sPanel.minPButton.setEnabled(true);    // **** ENABLE THIS WHEN MINP MTHOD HAS BEEN DEBUGGED  - 1/12/2004  
+                    sPanel.falseNumButton.setEnabled(true);
+                    sPanel.falsePropButton.setEnabled(true);
+                    //sPanel.calcFDRPVals.setEnabled(true);
+                    sPanel.fastFDRButton.setEnabled(true);
+                    //sPanel.slowFDRButton.setEnabled(true);
+                    sPanel.falseNumField.setEnabled(true);
+                    sPanel.falsePropField.setEnabled(true); 
+                    
                     if (getTestDesign() == TtestInitDialog.BETWEEN_SUBJECTS) {
                         int[] grpAssignments = getGroupAssignments();
                         int grpACounter = 0;
@@ -204,7 +258,7 @@ public class TtestInitDialog extends AlgorithmDialog {
                         }
                         if ((grpACounter < 2) || (grpBCounter < 2)) {
                             pPanel.numCombsLabel.setForeground(Color.red);
-                            pPanel.numCombsLabel.setText("Error! Group A and Group B must each contain more than one experiment");
+                            pPanel.numCombsLabel.setText("Error! Group A and Group B must each contain more than one sample");
                             //JOptionPane.showMessageDialog(gPanel, "Group A and Group B must each contain more than one experiment", "Error", JOptionPane.WARNING_MESSAGE);
                         } else {
 
@@ -232,7 +286,7 @@ public class TtestInitDialog extends AlgorithmDialog {
                         int validNum = getNumValidOneClassExpts();
                         if (validNum <= 1) {
                             pPanel.numCombsLabel.setForeground(Color.red);
-                            pPanel.numCombsLabel.setText("Error! Choose at least two experiments");
+                            pPanel.numCombsLabel.setText("Error! Choose at least two samples");
                             pPanel.randomGroupsButton.setEnabled(false); 
                             pPanel.timesField.setBackground(Color.gray);
                             pPanel.timesField.setEnabled(false);
@@ -259,6 +313,24 @@ public class TtestInitDialog extends AlgorithmDialog {
                         pPanel.timesField.setBackground(Color.white);
                         pPanel.timesField.setText("100");  
                          */                    
+                    }  else if (getTestDesign() == TtestInitDialog.PAIRED) {
+                        if (tcpmPanel.tcpPanel.pairedListModel.size() < 2) {
+                            JOptionPane.showMessageDialog(null, "Need at least two pairs of samples!", "Error", JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            if (tcpmPanel.tcpPanel.pairedListModel.size() <= 29) {
+                                pPanel.numCombsLabel.setText("There are " + (int)(Math.pow(2, tcpmPanel.tcpPanel.pairedListModel.size())) + " possible combinations                    ");
+                                pPanel.randomGroupsButton.setEnabled(true);
+                                pPanel.allCombsButton.setEnabled(true);
+                                pPanel.timesField.setBackground(Color.white);
+                                pPanel.timesField.setEnabled(true);
+                            } else {
+                                pPanel.numCombsLabel.setText("There are too many unique combinations                                       ");
+                                pPanel.timesField.setBackground(Color.white);
+                                pPanel.timesField.setEnabled(true);
+                                pPanel.randomGroupsButton.setEnabled(true);
+                                pPanel.randomGroupsButton.setSelected(true);                             
+                            }
+                        }
                     }
                 }
             }
@@ -382,22 +454,23 @@ public class TtestInitDialog extends AlgorithmDialog {
         gridbag.setConstraints(dPanel, constraints);  
         pane.add(dPanel);
         
-        buildConstraints(constraints, 0, 2, 1, 1, 0, 25);
+        buildConstraints(constraints, 0, 2, 1, 1, 0, 20);
         gridbag.setConstraints(pPanel, constraints);
         pane.add(pPanel);
         
         //sPanel = new SignificancePanel();
-        buildConstraints(constraints, 0, 3, 1, 1, 0, 20);
+        buildConstraints(constraints, 0, 3, 1, 1, 0, 25);
         gridbag.setConstraints(sPanel, constraints);
         pane.add(sPanel);
         
-        hclOpsPanel = new HCLSelectionPanel();
+        hclOpsPanel = new HCLSigOnlyPanel();
         buildConstraints(constraints, 0, 4, 1, 1, 0, 5);
         gridbag.setConstraints(hclOpsPanel, constraints);
         
         pane.add(hclOpsPanel);
         addContent(pane);
         setActionListeners(new EventListener());
+        pack();
     }
     
     
@@ -418,6 +491,477 @@ public class TtestInitDialog extends AlgorithmDialog {
         gbc.weightx = wx;
         gbc.weighty = wy;
     }
+    
+    class TwoClassPairedMainPanel extends JPanel {
+        TwoClassPairedPanel tcpPanel;
+        JButton saveButton, resetButton, loadButton;
+        GridBagConstraints constraints;
+        GridBagLayout gridbag;  
+        
+        public TwoClassPairedMainPanel() {
+            tcpPanel = new TwoClassPairedPanel();
+            JPanel bottomPanel = new JPanel();
+            bottomPanel.setBackground(Color.white);
+            constraints = new GridBagConstraints();
+            gridbag = new GridBagLayout();   
+            this.setLayout(gridbag);
+            
+            buildConstraints(constraints, 0, 0, 1, 1, 100, 90);
+            constraints.fill = GridBagConstraints.BOTH;
+            gridbag.setConstraints(tcpPanel, constraints);
+            this.add(tcpPanel);
+            
+            GridBagLayout grid1 = new GridBagLayout();
+            bottomPanel.setLayout(grid1);
+            
+            saveButton = new JButton("Save pairings");
+            
+            final JFileChooser fc = new JFileChooser();
+            fc.setCurrentDirectory(new File("Data"));
+            
+            saveButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    int returnVal = fc.showSaveDialog(TwoClassPairedMainPanel.this); 
+                    if (returnVal == JFileChooser.APPROVE_OPTION) {
+                        File file = fc.getSelectedFile(); 
+                        try {
+                            PrintWriter out = new PrintWriter(new FileOutputStream(file));
+                            for (int i = 0; i < tcpPanel.pairedAExpts.size(); i++) {
+                                int currentA = ((Integer)(tcpPanel.pairedAExpts.get(i))).intValue();
+                                int currentB = ((Integer)(tcpPanel.pairedBExpts.get(i))).intValue();
+                                out.print(currentA);
+                                out.print("\t");
+                                out.print(currentB);
+                                out.print("\t");
+                                out.println();
+                            }
+                            out.flush();
+                            out.close();
+                        } catch (Exception e) {
+                        }
+                    } else {
+                    }
+                }
+            });
+            constraints.fill = GridBagConstraints.NONE;
+            buildConstraints(constraints, 0, 0, 1, 1, 33, 100);
+            grid1.setConstraints(saveButton, constraints);
+            bottomPanel.add(saveButton);       
+            
+            loadButton = new JButton("Load pairings");
+            
+            loadButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    //tcpPanel.reset();
+                    int returnVal = fc.showOpenDialog(TwoClassPairedMainPanel.this);  
+                    if (returnVal == JFileChooser.APPROVE_OPTION) {
+                        tcpPanel.reset();
+                        try {
+                            FileReader file = new FileReader(fc.getSelectedFile());
+                            BufferedReader buff = new BufferedReader(file);
+                            String currentLine;  
+                            while((currentLine = buff.readLine()) != null) {
+                                StringSplitter st = new StringSplitter('\t');
+                                st.init(currentLine);
+                                
+                                for (int i = 0; i < 2; i++) {
+                                    String s = st.nextToken();
+                                    if (i == 0) {
+                                        tcpPanel.pairedAExpts.add(new Integer(s));
+                                    } else if (i == 1) {
+                                        tcpPanel.pairedBExpts.add(new Integer(s));
+                                    }
+                                }
+                                
+                            }
+                            buff.close();
+                            
+                            for (int i = 0; i < tcpPanel.pairedAExpts.size(); i++) {
+                                int currA = ((Integer)(tcpPanel.pairedAExpts.get(i))).intValue();
+                                int currB = ((Integer)(tcpPanel.pairedBExpts.get(i))).intValue();
+                                String currPair = "A: " + (String)(exptNames.get(currA)) + " - B: " + (String)(exptNames.get(currB));
+                                tcpPanel.exptButtons[currA].setEnabled(false);
+                                tcpPanel.exptButtons[currB].setEnabled(false); 
+                                tcpPanel.pairedListModel.addElement(currPair);
+                                
+                            }
+                            if (tcpPanel.pairedAExpts.size() > 0) {
+                                tcpPanel.removeABPairButton.setEnabled(true);
+                                tcpPanel.pairedExptsList.setSelectedIndex(tcpPanel.pairedListModel.size() - 1);
+                            }                            
+                            
+                            pPanel.tDistButton.setSelected(true);
+                            sPanel.justAlphaButton.setSelected(true);
+                            sPanel.maxTButton.setSelected(false);
+                            sPanel.maxTButton.setEnabled(false);
+                            sPanel.minPButton.setSelected(false);
+                            sPanel.minPButton.setEnabled(false);
+                            pPanel.randomGroupsButton.setEnabled(false);
+                            pPanel.allCombsButton.setEnabled(false);
+                            pPanel.timesField.setEnabled(false);
+                            pPanel.numCombsLabel.setText("                                                                            ");
+                            
+                        } catch (Exception exc) {
+                            JOptionPane.showMessageDialog(tcpPanel, "Incompatible file!", "Error", JOptionPane.WARNING_MESSAGE);
+                        }
+                    } else {
+                    }
+                }
+            });
+            
+            buildConstraints(constraints, 1, 0, 1, 1, 33, 100);
+            grid1.setConstraints(loadButton, constraints);
+            bottomPanel.add(loadButton);     
+            
+            resetButton = new JButton("Reset");
+            
+            resetButton.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent evt) {
+                    tcpPanel.reset();
+                    
+                    pPanel.tDistButton.setSelected(true);
+                    sPanel.justAlphaButton.setSelected(true);
+                    sPanel.maxTButton.setSelected(false);
+                    sPanel.maxTButton.setEnabled(false);
+                    sPanel.minPButton.setSelected(false);
+                    sPanel.minPButton.setEnabled(false);                    
+                    pPanel.randomGroupsButton.setEnabled(false);
+                    pPanel.allCombsButton.setEnabled(false);
+                    pPanel.timesField.setEnabled(false);
+                    pPanel.numCombsLabel.setText("                                                                            ");                    
+                }
+            });
+            
+            buildConstraints(constraints, 2, 0, 1, 1, 34, 100);
+            grid1.setConstraints(resetButton, constraints);
+            bottomPanel.add(resetButton);    
+            
+            buildConstraints(constraints, 0, 1, 1, 1, 0, 10);
+            //constraints.fill = GridBagConstraints.BOTH;
+            gridbag.setConstraints(bottomPanel, constraints);
+            this.add(bottomPanel);             
+        }
+    }
+    
+    class TwoClassPairedPanel extends JPanel {
+        ExperimentButton[] exptButtons;
+        GridBagConstraints constraints;
+        GridBagLayout gridbag;
+        JTextField currentATextField, currentBTextField;
+        JButton removeCurrentAButton, removeCurrentBButton, loadABPairButton, removeABPairButton;
+        PairedExperimentsPanel pairPanel;
+        JList pairedExptsList;
+        DefaultListModel pairedListModel;
+        boolean currentAFilled, currentBFilled;
+        int currentAExpt, currentBExpt;
+        Vector pairedAExpts, pairedBExpts;
+        public TwoClassPairedPanel() {
+            currentAExpt = -1;
+            currentBExpt = -1;
+            currentAFilled = false;
+            currentBFilled = false;
+            pairedAExpts = new Vector();
+            pairedBExpts = new Vector();
+            constraints = new GridBagConstraints();
+            gridbag = new GridBagLayout();
+            //this.setBackground(Color.white);
+            this.setLayout(gridbag);  
+            /*
+            currentATextField = new JTextField("", 10);
+            currentBTextField = new JTextField("", 10);
+            currentATextField.setBackground(Color.white);
+            currentBTextField.setBackground(Color.white);
+            currentATextField.setEditable(false);
+            currentBTextField.setEditable(false);   
+             */      
+            
+            pairedListModel = new DefaultListModel();
+            pairedExptsList = new JList(pairedListModel);
+            
+            JPanel exptNamesPanel = new JPanel();
+            GridBagLayout grid1 = new GridBagLayout();
+            exptNamesPanel.setLayout(grid1);
+            exptButtons = new ExperimentButton[exptNames.size()];
+            
+            int maxWidth = 0;
+            int maxNameLength = 0;
+            
+            for (int i = 0; i < exptNames.size(); i++) {
+                //String s = (String)(exptNames.get(i));
+                exptButtons[i] = new ExperimentButton(i);
+                
+                if (exptButtons[i].getPreferredSize().getWidth() > maxWidth) {
+                    maxWidth = (int)Math.ceil(exptButtons[i].getPreferredSize().getWidth());
+                }
+                
+                String s = (String)(exptNames.get(i));
+                int currentNameLength = s.length();
+                
+                if (currentNameLength > maxNameLength) {
+                    maxNameLength = currentNameLength;
+                }
+                
+                buildConstraints(constraints, 0, i, 1, 1, 100, 100);
+                grid1.setConstraints(exptButtons[i], constraints);
+                exptNamesPanel.add(exptButtons[i]);
+            }
+            
+            currentATextField = new JTextField("", maxNameLength + 2);
+            currentBTextField = new JTextField("", maxNameLength + 2);
+            //currentATextField.setSize(maxWidth + 5, 80);
+            //currentBTextField.setSize(maxWidth + 5, 80);
+            //currentATextField.setPreferredSize(new Dimension(maxWidth + 5, 80));
+            //currentBTextField.setPreferredSize(new Dimension(maxWidth + 5, 80));
+            
+            currentATextField.setBackground(Color.white);
+            currentBTextField.setBackground(Color.white);
+            currentATextField.setEditable(false);
+            currentBTextField.setEditable(false);   
+            
+            JScrollPane scroll = new JScrollPane(exptNamesPanel);
+            scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+            scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);            
+            
+            buildConstraints(constraints, 0, 0, 1, 1, 40, 100);
+            constraints.fill =GridBagConstraints.BOTH;
+            gridbag.setConstraints(scroll, constraints);
+            this.add(scroll);
+            
+            constraints.fill = GridBagConstraints.NONE;
+            
+            JPanel currentSelectionPanel = new JPanel();
+            GridBagLayout grid2 = new GridBagLayout();
+            currentSelectionPanel.setLayout(grid2);
+            removeCurrentAButton = new JButton("< Remove A");
+            removeCurrentBButton = new JButton("< Remove B");
+            loadABPairButton = new JButton("   Load Pair >>   ");
+            removeABPairButton = new JButton("<< Remove Pair");
+            removeCurrentAButton.setEnabled(false);
+            removeCurrentBButton.setEnabled(false);
+            loadABPairButton.setEnabled(false); 
+            removeABPairButton.setEnabled(false);
+            removeCurrentAButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    exptButtons[currentAExpt].setEnabled(true);
+                    currentAExpt = -1;
+                    currentATextField.setText("");
+                    currentAFilled = false;
+                    removeCurrentAButton.setEnabled(false);
+                    loadABPairButton.setEnabled(false);
+                }
+            });
+            
+            removeCurrentBButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    exptButtons[currentBExpt].setEnabled(true);
+                    currentBExpt = -1;
+                    currentBTextField.setText("");
+                    currentBFilled = false;
+                    removeCurrentBButton.setEnabled(false);
+                    loadABPairButton.setEnabled(false);                    
+                }
+            });     
+            
+            loadABPairButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    String currentPair = "A: " + (String)(exptNames.get(currentAExpt)) + " - B: " + (String)(exptNames.get(currentBExpt));
+                    pairedListModel.addElement(currentPair);
+                    pairedAExpts.add(new Integer(currentAExpt));
+                    pairedBExpts.add(new Integer(currentBExpt));
+                    currentAExpt = -1;
+                    currentBExpt = -1;
+                    currentATextField.setText("");
+                    currentBTextField.setText("");
+                    currentAFilled = false;
+                    currentBFilled = false;
+                    removeCurrentAButton.setEnabled(false);
+                    removeCurrentBButton.setEnabled(false);
+                    loadABPairButton.setEnabled(false); 
+                    removeABPairButton.setEnabled(true);
+                    pairedExptsList.setSelectedIndex(pairedListModel.size() - 1);
+                    
+                    pPanel.tDistButton.setSelected(true);
+                    sPanel.justAlphaButton.setSelected(true);
+                    sPanel.maxTButton.setSelected(false);
+                    sPanel.maxTButton.setEnabled(false);
+                    sPanel.minPButton.setSelected(false);
+                    sPanel.minPButton.setEnabled(false);                    
+                    pPanel.randomGroupsButton.setEnabled(false);
+                    pPanel.allCombsButton.setEnabled(false);
+                    pPanel.timesField.setEnabled(false);
+                    pPanel.numCombsLabel.setText("                                                                            ");                    
+                }
+            });
+            
+            removeABPairButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    int index = pairedExptsList.getSelectedIndex();
+                    pairedListModel.removeElementAt(index);
+                    int removedAIndex = ((Integer)(pairedAExpts.remove(index))).intValue();
+                    int removedBIndex = ((Integer)(pairedBExpts.remove(index))).intValue();
+                    exptButtons[removedAIndex].setEnabled(true);
+                    exptButtons[removedBIndex].setEnabled(true);
+                    if (pairedListModel.isEmpty()) {
+                        removeABPairButton.setEnabled(false);
+                    } else {
+                        pairedExptsList.setSelectedIndex(pairedListModel.size() - 1);
+                    }
+                    
+                    pPanel.tDistButton.setSelected(true);
+                    sPanel.justAlphaButton.setSelected(true);
+                    sPanel.maxTButton.setSelected(false);
+                    sPanel.maxTButton.setEnabled(false);
+                    sPanel.minPButton.setSelected(false);
+                    sPanel.minPButton.setEnabled(false);                    
+                    pPanel.randomGroupsButton.setEnabled(false);
+                    pPanel.allCombsButton.setEnabled(false);
+                    pPanel.timesField.setEnabled(false);
+                    pPanel.numCombsLabel.setText("                                                                            ");                    
+                }
+            });
+
+            JScrollPane currentAScroll = new JScrollPane(currentATextField);
+            currentAScroll.setMinimumSize(new Dimension(90, 50));
+            JScrollPane currentBScroll = new JScrollPane(currentBTextField);
+            currentBScroll.setMinimumSize(new Dimension(90, 50));
+            
+            currentAScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+            currentAScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);   
+            
+            currentBScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+            currentBScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);            
+            
+            buildConstraints(constraints, 0, 0, 1, 1, 20, 50);
+            grid2.setConstraints(removeCurrentAButton, constraints);
+            currentSelectionPanel.add(removeCurrentAButton);
+            
+            JLabel aLabel = new JLabel(" Current A: ");
+            buildConstraints(constraints, 1, 0, 1, 1, 20, 0);
+            grid2.setConstraints(aLabel, constraints);
+            currentSelectionPanel.add(aLabel);    
+            
+            buildConstraints(constraints, 2, 0, 1, 1, 60, 0);
+            constraints.fill = GridBagConstraints.BOTH;
+            //constraints.ipady = 100;
+            grid2.setConstraints(currentAScroll, constraints);
+            currentSelectionPanel.add(currentAScroll);   
+            
+            //constraints.ipady = 0;
+            constraints.fill = GridBagConstraints.NONE;
+            
+            buildConstraints(constraints, 0, 1, 1, 1, 20, 50);
+            grid2.setConstraints(removeCurrentBButton, constraints);
+            currentSelectionPanel.add(removeCurrentBButton);   
+            
+            JLabel bLabel = new JLabel("Current B: ");
+            buildConstraints(constraints, 1, 1, 1, 1, 20, 0);
+            grid2.setConstraints(bLabel, constraints);
+            currentSelectionPanel.add(bLabel);  
+            
+            buildConstraints(constraints, 2, 1, 1, 1, 60, 0);
+            constraints.fill = GridBagConstraints.BOTH;
+            //constraints.ipady = 100;
+            grid2.setConstraints(currentBScroll, constraints);
+            currentSelectionPanel.add(currentBScroll);   
+            
+            //constraints.ipady = 0;
+            constraints.fill = GridBagConstraints.NONE;
+            
+            buildConstraints(constraints, 1, 0, 1, 1, 10, 0);
+            //constraints.fill = GridBagConstraints.HORIZONTAL;
+            //constraints.ipadx = 200;
+            gridbag.setConstraints(currentSelectionPanel, constraints);
+            this.add(currentSelectionPanel);   
+            
+            constraints.fill = GridBagConstraints.NONE;
+            //constraints.ipadx = 0;
+            
+            JPanel pairButtonsPanel = new JPanel();
+            GridBagLayout grid3 = new GridBagLayout();
+            pairButtonsPanel.setLayout(grid3);
+
+            buildConstraints(constraints, 0, 0, 1, 1, 100, 50);
+            grid3.setConstraints(loadABPairButton, constraints);
+            pairButtonsPanel.add(loadABPairButton);
+
+            buildConstraints(constraints, 0, 1, 1, 1, 0, 50);
+            grid3.setConstraints(removeABPairButton, constraints);
+            pairButtonsPanel.add(removeABPairButton);            
+            
+            buildConstraints(constraints, 2, 0, 1, 1, 5, 0);
+            gridbag.setConstraints(pairButtonsPanel, constraints);
+            this.add(pairButtonsPanel);  
+            
+            //pairPanel = new PairedExperimentsPanel();
+            buildConstraints(constraints, 3, 0, 1, 1, 45, 0);
+            constraints.fill = GridBagConstraints.BOTH;
+            JScrollPane pairScroll = new JScrollPane(pairedExptsList);
+            pairScroll.setBorder(new TitledBorder("Paired Samples"));
+            gridbag.setConstraints(pairScroll, constraints);
+            this.add(pairScroll);              
+            
+        }
+        
+        public void reset() {
+            for (int i = 0; i < exptButtons.length; i++) {
+                exptButtons[i].setEnabled(true);
+                currentATextField.setText("");
+                currentBTextField.setText("");
+                removeCurrentAButton.setEnabled(false);
+                removeCurrentBButton.setEnabled(false);
+                loadABPairButton.setEnabled(false);
+                removeABPairButton.setEnabled(false);
+                pairedListModel.clear();
+                currentAFilled = false;
+                currentBFilled = false;
+                currentAExpt = -1;
+                currentBExpt = -1;
+                pairedAExpts.clear();
+                pairedBExpts.clear();
+            }
+        }
+        
+        class ExperimentButton extends JButton {
+            String s;
+            int index;
+            public ExperimentButton(int i) {
+                this.index = i;
+                s = (String)(exptNames.get(i));
+                this.setText(s);
+                this.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+                        if ((currentAFilled)&&(currentBFilled)) {
+                            JOptionPane.showMessageDialog(null, "Clear at least one current field first!", "Error", JOptionPane.ERROR_MESSAGE);
+                        } else if (!currentAFilled) {
+                            currentAExpt = index;
+                            currentATextField.setText(s);
+                            currentAFilled = true;
+                            ExperimentButton.this.setEnabled(false);
+                            removeCurrentAButton.setEnabled(true);
+                        } else if (!currentBFilled) {
+                            currentBExpt = index;
+                            currentBTextField.setText(s);
+                            currentBFilled = true;
+                            ExperimentButton.this.setEnabled(false);
+                            removeCurrentBButton.setEnabled(true);
+                        }
+                        
+                        if ((currentAFilled) && (currentBFilled)) {
+                            loadABPairButton.setEnabled(true);
+                        } else {
+                            loadABPairButton.setEnabled(false);
+                        }
+                    }
+                });
+            }
+        }
+        
+        class PairedExperimentsPanel extends JPanel {
+            public PairedExperimentsPanel() {
+                //this.setBorder(new TitledBorder("Paired Experiments"));
+            }
+        }
+    }    
 
     class OneClassPanel extends JPanel {
         JTextField meanField;
@@ -496,6 +1040,16 @@ public class TtestInitDialog extends AlgorithmDialog {
                     for (int i = 0; i < includeExpts.length; i++) {
                         includeExpts[i].setSelected(true);
                     }
+                    pPanel.tDistButton.setSelected(true);
+                    sPanel.justAlphaButton.setSelected(true);
+                    sPanel.maxTButton.setSelected(false);
+                    sPanel.maxTButton.setEnabled(false);
+                    sPanel.minPButton.setSelected(false);
+                    sPanel.minPButton.setEnabled(false);                    
+                    pPanel.randomGroupsButton.setEnabled(false);
+                    pPanel.allCombsButton.setEnabled(false);
+                    pPanel.timesField.setEnabled(false);
+                    pPanel.numCombsLabel.setText("                                                                            ");                    
                 }
             });
             
@@ -533,6 +1087,17 @@ public class TtestInitDialog extends AlgorithmDialog {
                 public void actionPerformed(ActionEvent evt) {
                     int returnVal = fc.showOpenDialog(OneClassPanel.this);
                     if (returnVal == JFileChooser.APPROVE_OPTION) {
+                        pPanel.tDistButton.setSelected(true);
+                        sPanel.justAlphaButton.setSelected(true);
+                        sPanel.maxTButton.setSelected(false);
+                        sPanel.maxTButton.setEnabled(false);
+                        sPanel.minPButton.setSelected(false);
+                        sPanel.minPButton.setEnabled(false);
+                        pPanel.randomGroupsButton.setEnabled(false);
+                        pPanel.allCombsButton.setEnabled(false);
+                        pPanel.timesField.setEnabled(false);
+                        pPanel.numCombsLabel.setText("                                                                            ");   
+                        
                         try {
                             FileReader file = new FileReader(fc.getSelectedFile());
                             BufferedReader buff = new BufferedReader(file);     
@@ -601,7 +1166,7 @@ public class TtestInitDialog extends AlgorithmDialog {
             for (int i = 0; i < includeExpts.length; i++) {
                 includeExpts[i].setSelected(true);
             }
-            meanField.setText("0");
+            meanField.setText("0");          
         }
         
 
@@ -679,7 +1244,7 @@ public class TtestInitDialog extends AlgorithmDialog {
             gridbag2.setConstraints(scroll, constraints);
             this.add(scroll);
             
-            JLabel label1 = new JLabel("                                                Note: Group A and Group B  MUST each contain more than one experiment.");
+            JLabel label1 = new JLabel("                                                Note: Group A and Group B  MUST each contain more than one sample.");
             buildConstraints(constraints, 0, 1, 1, 1, 0, 5);
             constraints.anchor = GridBagConstraints.EAST;
             //constraints.fill = GridBagConstraints.BOTH;
@@ -710,6 +1275,17 @@ public class TtestInitDialog extends AlgorithmDialog {
                     for (int i = 0; i < finNum; i++) {
                         groupARadioButtons[i].setSelected(true);
                     }
+                    
+                    pPanel.tDistButton.setSelected(true);
+                    sPanel.justAlphaButton.setSelected(true);
+                    sPanel.maxTButton.setSelected(false);
+                    sPanel.maxTButton.setEnabled(false);
+                    sPanel.minPButton.setSelected(false);
+                    sPanel.minPButton.setEnabled(false);                    
+                    pPanel.randomGroupsButton.setEnabled(false);
+                    pPanel.allCombsButton.setEnabled(false);
+                    pPanel.timesField.setEnabled(false);
+                    pPanel.numCombsLabel.setText("                                                                            ");                    
                 }
             });
             
@@ -783,6 +1359,18 @@ public class TtestInitDialog extends AlgorithmDialog {
                                     }
                                 }
                             }
+                            
+                            pPanel.tDistButton.setSelected(true);
+                            sPanel.justAlphaButton.setSelected(true);
+                            sPanel.maxTButton.setSelected(false);
+                            sPanel.maxTButton.setEnabled(false);
+                            sPanel.minPButton.setSelected(false);
+                            sPanel.minPButton.setEnabled(false);
+                            pPanel.randomGroupsButton.setEnabled(false);
+                            pPanel.allCombsButton.setEnabled(false);
+                            pPanel.timesField.setEnabled(false);
+                            pPanel.numCombsLabel.setText("                                                                            ");                        
+                        
                         } catch (Exception e) {
                             JOptionPane.showMessageDialog(gPanel, "Incompatible file!", "Error", JOptionPane.WARNING_MESSAGE);
                             //e.printStackTrace();
@@ -994,7 +1582,7 @@ public class TtestInitDialog extends AlgorithmDialog {
             panel2.setBorder(new EtchedBorder());
             
             
-            randomGroupsButton = new JRadioButton("Randomly group experiments ", true);
+            randomGroupsButton = new JRadioButton("Randomly group samples ", true);
             randomGroupsButton.setFocusPainted(false);
             randomGroupsButton.setForeground(UIManager.getColor("Label.foreground"));
             randomGroupsButton.setBackground(Color.white);
@@ -1108,15 +1696,17 @@ public class TtestInitDialog extends AlgorithmDialog {
             constraints.fill = GridBagConstraints.BOTH;
             gridbag.setConstraints(pButton, constraints);
             this.add(pButton);
-             */
+             */        
         }
     }
     
     class SignificancePanel extends JPanel {
-        JRadioButton minPButton, maxTButton, justAlphaButton, stdBonfButton, adjBonfButton;
+        JRadioButton minPButton, maxTButton, justAlphaButton, stdBonfButton, adjBonfButton, falseNumButton, falsePropButton, fastFDRButton, slowFDRButton;
+        JTextField falseNumField, falsePropField;
+        JCheckBox calcFDRPVals;
         SignificancePanel() {
             //      this.setBorder(new TitledBorder(new EtchedBorder(), "Significance based on: "));
-            this.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), "Alpha Corrections", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
+            this.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), "p-value / false discovery corrections", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
             this.setBackground(Color.white);
             GridBagLayout gridbag = new GridBagLayout();
             GridBagConstraints constraints = new GridBagConstraints();
@@ -1164,7 +1754,33 @@ public class TtestInitDialog extends AlgorithmDialog {
             maxTButton.setBackground(Color.white);
             sigGroup.add(maxTButton);            
             
-            buildConstraints(constraints, 0, 0, 1, 1, 33, 50);
+            falseNumButton = new JRadioButton("EITHER, The number of false significant genes should not exceed", false);
+            falseNumButton.setEnabled(false);
+            //falseNumButton.setEnabled(false);
+            falseNumButton.setFocusPainted(false);
+            falseNumButton.setForeground(UIManager.getColor("Label.foreground"));
+            falseNumButton.setBackground(Color.white);
+            sigGroup.add(falseNumButton);            
+            
+            falsePropButton = new JRadioButton("OR, The proportion of false significant genes should not exceed", false);
+            falsePropButton.setEnabled(false);
+            //falsePropButton.setEnabled(false);
+            falsePropButton.setFocusPainted(false);
+            falsePropButton.setForeground(UIManager.getColor("Label.foreground"));
+            falsePropButton.setBackground(Color.white);
+            sigGroup.add(falsePropButton);            
+            
+            falseNumField = new JTextField(10);
+            falseNumField.setText("10");
+            falseNumField.setEnabled(false);
+            falsePropField = new JTextField(10);
+            falsePropField.setText("0.05");
+            falsePropField.setEnabled(false);
+            calcFDRPVals = new JCheckBox("Calculate adjusted p values for false discovery control", false);
+            calcFDRPVals.setEnabled(false);
+            calcFDRPVals.setBackground(Color.white);
+            
+            buildConstraints(constraints, 0, 0, 1, 1, 33, 33);
             //constraints.fill = GridBagConstraints.BOTH;
             gridbag.setConstraints(justAlphaButton, constraints);
             this.add(justAlphaButton);
@@ -1197,7 +1813,7 @@ public class TtestInitDialog extends AlgorithmDialog {
             
             //buildConstraints(constraints, 1, 1, 1, 1, 33, 0);
             buildConstraints(constraints, 1, 0, 1, 1, 33, 0);
-            ////constraints.fill = GridBagConstraints.BOTH;
+            //constraints.fill = GridBagConstraints.BOTH;
             //constraints.anchor = GridBagConstraints.WEST;
             //gridbag.setConstraints(minPButton, constraints);
             grid2.setConstraints(minPButton, constraints);
@@ -1214,10 +1830,76 @@ public class TtestInitDialog extends AlgorithmDialog {
             //this.add(maxTButton);  
             westfallYoungPanel.add(maxTButton);
             
-            buildConstraints(constraints, 0, 1, 3, 1, 100, 50);
+            buildConstraints(constraints, 0, 1, 3, 1, 100, 33);
             //constraints.fill = GridBagConstraints.BOTH;
             gridbag.setConstraints(westfallYoungPanel, constraints);
             this.add(westfallYoungPanel);
+            
+            ButtonGroup fastOrSlow = new ButtonGroup();
+            fastFDRButton = new JRadioButton("Fast approximation (but possibly conservative)", true);
+            fastFDRButton.setSelected(true);
+            fastFDRButton.setEnabled(false);
+            fastFDRButton.setBackground(Color.white);
+            fastOrSlow.add(fastFDRButton);
+            slowFDRButton = new JRadioButton("Complete computation (possibly slow)");
+            slowFDRButton.setEnabled(false);
+            slowFDRButton.setBackground(Color.white);
+            fastOrSlow.add(slowFDRButton);
+            
+            JPanel FDRPanel = new JPanel();
+            FDRPanel.setBackground(Color.white);
+            FDRPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), "False discovery control (permutations only)", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
+            GridBagLayout grid3 = new GridBagLayout(); 
+            FDRPanel.setLayout(grid3); 
+            
+            JLabel FDRLabel = new JLabel("With confidence of [1 - alpha] : ");            
+            constraints.anchor = GridBagConstraints.WEST;
+            buildConstraints(constraints, 0, 0, 2, 1, 100, 20);
+            grid3.setConstraints(FDRLabel, constraints);
+            FDRPanel.add(FDRLabel);
+            
+            constraints.anchor = GridBagConstraints.CENTER;
+            
+            buildConstraints(constraints, 0, 1, 1, 1, 50, 20);
+            constraints.anchor = GridBagConstraints.EAST;
+            grid3.setConstraints(falseNumButton, constraints);
+            FDRPanel.add(falseNumButton);       
+            
+            buildConstraints(constraints, 1, 1, 1, 1, 50, 0);
+            constraints.anchor = GridBagConstraints.WEST;
+            grid3.setConstraints(falseNumField, constraints);
+            FDRPanel.add(falseNumField);    
+            
+            buildConstraints(constraints, 0, 2, 1, 1, 50, 20);
+            constraints.anchor = GridBagConstraints.EAST;
+            grid3.setConstraints(falsePropButton, constraints);
+            FDRPanel.add(falsePropButton);    
+            
+            buildConstraints(constraints, 1, 2, 1, 1, 50, 0);
+            constraints.anchor = GridBagConstraints.WEST;
+            grid3.setConstraints(falsePropField, constraints);
+            FDRPanel.add(falsePropField);    
+            
+            constraints.anchor = GridBagConstraints.CENTER;
+            
+            buildConstraints(constraints, 0, 3, 1, 1, 50, 20);
+            grid3.setConstraints(fastFDRButton, constraints);
+            FDRPanel.add(fastFDRButton);    
+            
+            buildConstraints(constraints, 1, 3, 1, 1, 50, 0);
+            grid3.setConstraints(slowFDRButton, constraints);
+            FDRPanel.add(slowFDRButton);              
+            
+            buildConstraints(constraints, 0, 4, 2, 1, 100, 20);
+            grid3.setConstraints(calcFDRPVals, constraints);
+            FDRPanel.add(calcFDRPVals);     
+            
+            buildConstraints(constraints, 0, 2, 3, 1, 100, 34);
+            constraints.fill = GridBagConstraints.HORIZONTAL;
+            gridbag.setConstraints(FDRPanel, constraints);
+            this.add(FDRPanel); 
+            
+            constraints.fill = GridBagConstraints.NONE;
             /*
             JButton sButton = new JButton("significancePanel");
             buildConstraints(constraints, 0, 0, 1, 1, 100, 100);
@@ -1269,7 +1951,7 @@ public class TtestInitDialog extends AlgorithmDialog {
     class DfCalcPanel extends JPanel {
         JRadioButton welchButton, eqVarButton;
         DfCalcPanel() {
-            this.setBorder(new TitledBorder(new EtchedBorder(), "Degree of freedom calculation (for between subjects t-test only)"));  
+            this.setBorder(new TitledBorder(new EtchedBorder(), "Variance assumption (for between subjects t-test only)"));  
             this.setBackground(Color.white);
             GridBagLayout gridbag = new GridBagLayout();
             GridBagConstraints constraints = new GridBagConstraints();
@@ -1509,12 +2191,18 @@ public class TtestInitDialog extends AlgorithmDialog {
         return hclOpsPanel.isHCLSelected();
     }
     
+    public boolean drawSigTreesOnly() {
+        return hclOpsPanel.drawSigTreesOnly();
+    }
+    
     public int getTestDesign() {
         int design = -1;
         if (chooseDesignPane.getSelectedIndex() == 0) {
             design = TtestInitDialog.ONE_CLASS;
         } else if (chooseDesignPane.getSelectedIndex() == 1){
             design = TtestInitDialog.BETWEEN_SUBJECTS;
+        } else if (chooseDesignPane.getSelectedIndex() == 2) {
+            design = TtestInitDialog.PAIRED;
         }
         return design;
     }
@@ -1548,6 +2236,8 @@ public class TtestInitDialog extends AlgorithmDialog {
                 num = allPossCombs;
             } else if (getTestDesign() == TtestInitDialog.ONE_CLASS) {
                 num = (int)Math.pow(2, getNumValidOneClassExpts());
+            } else if (getTestDesign() == TtestInitDialog.PAIRED) {
+                num = (int)(Math.pow(2, tcpmPanel.tcpPanel.pairedListModel.size()));
             }
         }
         return num;
@@ -1590,6 +2280,13 @@ public class TtestInitDialog extends AlgorithmDialog {
         return Double.parseDouble(oPanel.meanField.getText());
     }
     
+    public int getFalseNum() {
+        return Integer.parseInt(sPanel.falseNumField.getText());
+    }
+    
+    public double getFalseProp() {
+        return Double.parseDouble(sPanel.falsePropField.getText());
+    }
     
     public boolean validateAlpha(String alpha){
         float a;
@@ -1609,6 +2306,46 @@ public class TtestInitDialog extends AlgorithmDialog {
         }
         return true;
     }
+    
+    public boolean validateFalseNum() {
+        int a;
+        try {
+            String falseNum = sPanel.falseNumField.getText();
+            a = Integer.parseInt(falseNum);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(TtestInitDialog.this, "False number must be an integer >= 0", "Input Error", JOptionPane.WARNING_MESSAGE);
+            sPanel.falseNumField.requestFocus();
+            sPanel.falseNumField.selectAll();
+            return false;
+        }
+        if (a < 0) {
+            JOptionPane.showMessageDialog(TtestInitDialog.this, "False number must be an integer >= 0", "Input Error", JOptionPane.WARNING_MESSAGE);
+            sPanel.falseNumField.requestFocus();
+            sPanel.falseNumField.selectAll();
+            return false;          
+        }
+        return true;
+    }
+    
+    public boolean validateFalseProp() {
+        float a;
+        try {
+            String falseProp = sPanel.falsePropField.getText();
+            a = Float.parseFloat(falseProp);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(TtestInitDialog.this, "False proportion must be between 0 and 1", "Input Error", JOptionPane.WARNING_MESSAGE);
+            sPanel.falsePropField.requestFocus();
+            sPanel.falsePropField.selectAll();
+            return false;
+        }
+        if ((a <= 0) || (a > 1)) {
+            JOptionPane.showMessageDialog(TtestInitDialog.this, "False proportion must be between 0 and 1", "Input Error", JOptionPane.WARNING_MESSAGE);
+            sPanel.falsePropField.requestFocus();
+            sPanel.falsePropField.selectAll();
+            return false;          
+        }
+        return true;
+    }    
     
     public boolean validatePermutations(String n){
         int i;
@@ -1649,7 +2386,7 @@ public class TtestInitDialog extends AlgorithmDialog {
                         }
                     }
                     if ((grpACounter < 2) || (grpBCounter < 2)) {
-                        JOptionPane.showMessageDialog(gPanel, "Group A and Group B must each contain more than one experiment", "Error", JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(gPanel, "Group A and Group B must each contain more than one sample", "Error", JOptionPane.WARNING_MESSAGE);
                     } else {
                         String alpha = pPanel.alphaInputField.getText();
 
@@ -1664,7 +2401,19 @@ public class TtestInitDialog extends AlgorithmDialog {
                         if(!validateAlpha(alpha)){
                         okPressed = false;
                             return;
-                        }                                                                                    
+                        } 
+                        if (sPanel.falseNumButton.isSelected()) {                           
+                            if (!validateFalseNum()) {
+                                okPressed = false; 
+                                return;
+                            }
+                        }
+                        if (sPanel.falsePropButton.isSelected()) {
+                            if (!validateFalseProp()) {
+                                okPressed = false;
+                                return;
+                            }
+                        }
                         okPressed = true;
                         hide();
                         dispose();
@@ -1679,7 +2428,7 @@ public class TtestInitDialog extends AlgorithmDialog {
                     }
                     
                     if (getNumValidOneClassExpts() < 2) {
-                        JOptionPane.showMessageDialog(oPanel, "Select at least two experiments", "Error", JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(oPanel, "Select at least two samples", "Error", JOptionPane.WARNING_MESSAGE);
                         okPressed = false;
                         return;      
                     }
@@ -1699,10 +2448,68 @@ public class TtestInitDialog extends AlgorithmDialog {
                         return;
                     } 
                     
+                    if (sPanel.falseNumButton.isSelected()) {
+                        if (!validateFalseNum()) {
+                            okPressed = false;
+                            return;
+                        }
+                    }
+                    if (sPanel.falsePropButton.isSelected()) {
+                        if (!validateFalseProp()) {
+                            okPressed = false;
+                            return;
+                        }
+                    }                   
                     okPressed = true;
                     hide();
                     dispose();                    
 
+                } else if (getTestDesign() == TtestInitDialog.PAIRED) {
+                    if (tcpmPanel.tcpPanel.pairedListModel.size() < 2) {
+                        JOptionPane.showMessageDialog(null, "Need at least two pairs of samples!", "Error", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        if (tcpmPanel.tcpPanel.pairedListModel.size() <= 29) {
+                            int numCombs = getUserNumCombs();
+                            int numUniquePerms = (int)(Math.pow(2, tcpmPanel.tcpPanel.pairedListModel.size()));
+                            //SAMAllPermsDialog sapDialog = new SAMAllPermsDialog(SAMGUI.SAMFrame, true, numUniquePerms, numCombs);
+                            //sapDialog.setVisible(true);
+                            //allUniquePermsUsed = sapDialog.useAllPerms();                            
+                        }
+                        
+                    
+                    String alpha = pPanel.alphaInputField.getText();
+                    
+                    float a;
+                    if(pPanel.permutButton.isSelected() && pPanel.randomGroupsButton.isSelected()){
+                        String iter = pPanel.timesField.getText();
+                        if(!validatePermutations(iter)){
+                            okPressed = false;
+                            return;
+                        }
+                    }
+                    if(!validateAlpha(alpha)){
+                        okPressed = false;
+                        return;
+                    }    
+                    
+                    if (sPanel.falseNumButton.isSelected()) {
+                        if (!validateFalseNum()) {
+                            okPressed = false;
+                            return;
+                        }
+                    }
+                    if (sPanel.falsePropButton.isSelected()) {
+                        if (!validateFalseProp()) {
+                            okPressed = false;
+                            return;
+                        }
+                    }                    
+                        
+                    okPressed = true;
+                    javax.swing.UIManager.put("TabbedPane.selected", Color.lightGray);
+                    dispose();
+                    }
+                    
                 }
             }
             else if(command.equals("reset-command")){
@@ -1710,6 +2517,8 @@ public class TtestInitDialog extends AlgorithmDialog {
                     gPanel.reset();
                 } else if (getTestDesign() == TtestInitDialog.ONE_CLASS) {
                     oPanel.reset();
+                } else if (getTestDesign() == TtestInitDialog.PAIRED) {
+                    tcpmPanel.tcpPanel.reset();
                 }
 
                 pPanel.tDistButton.setSelected(true);
@@ -1721,6 +2530,8 @@ public class TtestInitDialog extends AlgorithmDialog {
                 pPanel.numCombsLabel.setText("                                                                            ");
                 pPanel.alphaInputField.setText("0.01");
                 sPanel.justAlphaButton.setSelected(true);
+                sPanel.falseNumField.setText("10");
+                sPanel.falsePropField.setText("0.05");
                 hclOpsPanel.setHCLSelected(false);
                 dPanel.reset();
 
@@ -1746,18 +2557,41 @@ public class TtestInitDialog extends AlgorithmDialog {
         
     }
     
+    
+    public Vector getPairedAExpts() {
+        return tcpmPanel.tcpPanel.pairedAExpts;
+    }
+    
+    public Vector getPairedBExpts() {
+        return tcpmPanel.tcpPanel.pairedBExpts;
+    }    
+    
     public int getSignificanceMethod() {
         if (sPanel.justAlphaButton.isSelected()) {
-            return this.JUST_ALPHA;
+            return TtestInitDialog.JUST_ALPHA;
         } else if (sPanel.stdBonfButton.isSelected()) {
-            return this.STD_BONFERRONI;
+            return TtestInitDialog.STD_BONFERRONI;
         } else if (sPanel.adjBonfButton.isSelected()){
-            return this.ADJ_BONFERRONI;
+            return TtestInitDialog.ADJ_BONFERRONI;
         } else if (sPanel.maxTButton.isSelected()) {
-            return this.MAX_T;
+            return TtestInitDialog.MAX_T;
+        } else if (sPanel.minPButton.isSelected()){
+            return TtestInitDialog.MIN_P;
+        } else if (sPanel.falseNumButton.isSelected()) {
+            return TtestInitDialog.FALSE_NUM;
+        } else if (sPanel.falsePropButton.isSelected()) {
+            return TtestInitDialog.FALSE_PROP;
         } else {
-            return this.MIN_P;
+            return -1;
         }
+    }
+    
+    public boolean calculateFDRPVals() {
+        return sPanel.calcFDRPVals.isSelected();
+    }
+    
+    public boolean doFastFDRApprox() {
+        return sPanel.fastFDRButton.isSelected();
     }
     
     public boolean useWelchDf() {

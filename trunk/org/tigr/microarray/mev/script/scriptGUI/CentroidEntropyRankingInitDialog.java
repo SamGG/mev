@@ -10,12 +10,8 @@ All rights reserved.
 
 package org.tigr.microarray.mev.script.scriptGUI;
 
-import java.awt.Frame;
-import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Component;
 import java.awt.Insets;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
@@ -24,10 +20,7 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.UIManager;
+
 import javax.swing.JTextField;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;

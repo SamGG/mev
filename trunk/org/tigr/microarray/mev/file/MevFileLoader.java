@@ -1,16 +1,15 @@
 /*
-Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: MevFileLoader.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-07-22 15:36:20 $
- * $Author: braisted $
+ * $Revision: 1.7 $
+ * $Date: 2005-02-24 20:23:50 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.file;
-
 
 import java.awt.Color;
 import java.awt.Component;
@@ -24,12 +23,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
+
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -43,16 +42,12 @@ import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileFilter;
 
 import org.tigr.microarray.file.AnnFileParser;
-import org.tigr.microarray.file.MevFileParser;
-
 import org.tigr.microarray.mev.FloatSlideData;
 import org.tigr.microarray.mev.ISlideData;
-import org.tigr.microarray.mev.ISlideDataElement;
 import org.tigr.microarray.mev.ISlideMetaData;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.SlideDataElement;
 import org.tigr.microarray.mev.SpotInformationData;
-import org.tigr.microarray.mev.TMEV;
 
 public class MevFileLoader extends ExpressionFileLoader {
     
@@ -76,6 +71,7 @@ public class MevFileLoader extends ExpressionFileLoader {
     }
     
     public Vector loadExpressionFiles() throws IOException {
+
         Object[] mevFiles = mflp.getMevSelectedListModel().toArray();
         Object[] annFiles = mflp.getAnnSelectedListModel().toArray();
         Vector data = new Vector();
@@ -85,6 +81,8 @@ public class MevFileLoader extends ExpressionFileLoader {
         this.loadMedianIntensities = mflp.loadMedButton.isSelected();
         
         setFilesCount(mevFiles.length);
+        setRemain(mevFiles.length);
+
         for (int i = 0; i < mevFiles.length; i++) {
             setFileName(((File) mevFiles[i]).getName());
             if(i == 0){
@@ -96,6 +94,8 @@ public class MevFileLoader extends ExpressionFileLoader {
             }
             else
                 data.add(loadFloatSlideData((File) mevFiles[i], metaData));
+            
+            setRemain(mevFiles.length-i-1);
             setFilesProgress(i);
         }
         if(!mflp.noAnnFileBox.isSelected()) {
@@ -233,7 +233,7 @@ public class MevFileLoader extends ExpressionFileLoader {
                     thread.start();
                     return null;
                 }
-                sde = new SlideDataElement(rows, cols, intensities, null);
+                sde = new SlideDataElement(data[i][0], rows, cols, intensities, null);
                 slideData.add(sde);
                 setFileProgress(i);
             }
@@ -322,8 +322,18 @@ public class MevFileLoader extends ExpressionFileLoader {
         parser.loadFile(sourceFile);
         if(parser.isAnnFileLoaded()){
             Vector headers = parser.getColumnHeaders();
+            
+            int firstAnnField = 1;
+            
+            // If columns 1 and 2 (after UID) are R and C skip over and use the ann. columns that follow.
+            if(headers.size() >= 3) {
+                if( ((String)(headers.get(1))).equalsIgnoreCase("R") &&
+                    ((String)(headers.get(2))).equalsIgnoreCase("C") )
+                    firstAnnField = 3;
+            }
+            
             Vector annotHeaders = new Vector();
-            for(int i = 3; i < headers.size(); i++){
+            for(int i = firstAnnField; i < headers.size(); i++){
                 annotHeaders.add(((String)headers.elementAt(i)));
             }
             setTMEVFieldNames(annotHeaders);
@@ -338,8 +348,8 @@ public class MevFileLoader extends ExpressionFileLoader {
             String [] value;
             int dataLength = targetData.size();
             for(int i = 0; i < annMatrix.length; i++){
-                value = new String[annMatrix[i].length-3];
-                System.arraycopy(annMatrix[i], 3, value, 0, annMatrix[i].length-3);
+                value = new String[annMatrix[i].length-firstAnnField];
+                System.arraycopy(annMatrix[i], firstAnnField, value, 0, annMatrix[i].length-firstAnnField);
                 hash.put(annMatrix[i][0], value);
             }
             
@@ -937,5 +947,14 @@ public class MevFileLoader extends ExpressionFileLoader {
             public void nodeCollapsed(FileTreePaneEvent event) {}
             public void nodeExpanded(FileTreePaneEvent event) {}
         }
+    }
+    
+        public class ProgressRunner implements Runnable {
+        
+        
+        public void run() {
+            progress = new SlideLoaderProgressBar(superLoader.getFrame());
+        }
+        
     }
 }

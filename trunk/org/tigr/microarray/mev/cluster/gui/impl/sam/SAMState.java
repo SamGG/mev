@@ -1,5 +1,5 @@
 /*
-Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
@@ -9,6 +9,7 @@ All rights reserved.
  */
 
 package org.tigr.microarray.mev.cluster.gui.impl.sam;
+
 import org.tigr.util.FloatMatrix;
 import java.util.Vector;
 /**
@@ -72,40 +73,40 @@ public class SAMState implements java.io.Serializable {
     }
     
     private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        this.firstRun = ois.readBoolean();
-        this.useAllUniquePerms =ois.readBoolean();
-        this.groupAssignments = (int[])ois.readObject();
-        this.numSigGenesByDelta = (int[])ois.readObject();
-        this.sortedDArrayIndices = (int[])ois.readObject();
-        this.studyDesign = ois.readInt();
-        this.numCombs = ois.readInt();
-        this.numNeighbors = ois.readInt();
-        this.numMultiClassGroups = ois.readInt();
-        this.numUniquePerms = ois.readInt();
-        this.useKNearest =ois.readBoolean();
-        this.calculateQLowestFDR = ois.readBoolean();
-        this.useTusherEtAlS0 = ois.readBoolean();
-        this.delta = ois.readDouble();
-        this.sNought = ois.readDouble();
-        this.pi0Hat = ois.readDouble();  
-        this.s0Percentile = ois.readDouble();
-        this.oneClassMean = ois.readDouble();
-        this.dBarValues = (double[])ois.readObject();
-        this.sortedDArray = (double[])ois.readObject();
-        this.deltaGrid = (double[])ois.readObject();
-        this.medNumFalselyCalledGenesByDelta = (double[])ois.readObject();
-        this.dArray = (double[])ois.readObject();
-        this.rArray = (double[])ois.readObject();
-        this.survivalTimes = (double[])ois.readObject();
-        this.ninetiethPercentileFalselyCalledGenesByDelta = (double[])ois.readObject();
-        this.FDRmedian = (double[])ois.readObject();
-        this.FDR90thPercentile = (double[])ois.readObject();
-        this.qLowestFDR = (double[])ois.readObject();
-        this.inSurvivalAnalysis = (boolean[])ois.readObject();
-        this.censored = (boolean[])ois.readObject();
-        this.imputedMatrix = (FloatMatrix)ois.readObject();
-        this.pairedGroupAExpts = (Vector)ois.readObject();
-        this.pairedGroupBExpts = (Vector)ois.readObject();        
+        SAMState.firstRun = ois.readBoolean();
+        SAMState.useAllUniquePerms =ois.readBoolean();
+        SAMState.groupAssignments = (int[])ois.readObject();
+        SAMState.numSigGenesByDelta = (int[])ois.readObject();
+        SAMState.sortedDArrayIndices = (int[])ois.readObject();
+        SAMState.studyDesign = ois.readInt();
+        SAMState.numCombs = ois.readInt();
+        SAMState.numNeighbors = ois.readInt();
+        SAMState.numMultiClassGroups = ois.readInt();
+        SAMState.numUniquePerms = ois.readInt();
+        SAMState.useKNearest =ois.readBoolean();
+        SAMState.calculateQLowestFDR = ois.readBoolean();
+        SAMState.useTusherEtAlS0 = ois.readBoolean();
+        SAMState.delta = ois.readDouble();
+        SAMState.sNought = ois.readDouble();
+        SAMState.pi0Hat = ois.readDouble();  
+        SAMState.s0Percentile = ois.readDouble();
+        SAMState.oneClassMean = ois.readDouble();
+        SAMState.dBarValues = (double[])ois.readObject();
+        SAMState.sortedDArray = (double[])ois.readObject();
+        SAMState.deltaGrid = (double[])ois.readObject();
+        SAMState.medNumFalselyCalledGenesByDelta = (double[])ois.readObject();
+        SAMState.dArray = (double[])ois.readObject();
+        SAMState.rArray = (double[])ois.readObject();
+        SAMState.survivalTimes = (double[])ois.readObject();
+        SAMState.ninetiethPercentileFalselyCalledGenesByDelta = (double[])ois.readObject();
+        SAMState.FDRmedian = (double[])ois.readObject();
+        SAMState.FDR90thPercentile = (double[])ois.readObject();
+        SAMState.qLowestFDR = (double[])ois.readObject();
+        SAMState.inSurvivalAnalysis = (boolean[])ois.readObject();
+        SAMState.censored = (boolean[])ois.readObject();
+        SAMState.imputedMatrix = (FloatMatrix)ois.readObject();
+        SAMState.pairedGroupAExpts = (Vector)ois.readObject();
+        SAMState.pairedGroupBExpts = (Vector)ois.readObject();        
     }
 }
 

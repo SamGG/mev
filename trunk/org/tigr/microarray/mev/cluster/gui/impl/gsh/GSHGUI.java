@@ -4,23 +4,20 @@ All rights reserved.
  */
 /*
  * $RCSfile: GSHGUI.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-06-01 13:23:13 $
- * $Author: braisted $
+ * $Revision: 1.7 $
+ * $Date: 2005-02-24 20:24:05 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.gsh;
 
 import java.util.Arrays;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.tigr.util.ConfMap;
 import org.tigr.util.FloatMatrix;
 
 import org.tigr.microarray.mev.cluster.gui.IData;
@@ -38,13 +35,9 @@ import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Monitor;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLInitDialog;
 import org.tigr.microarray.mev.cluster.Cluster;
@@ -78,6 +71,13 @@ public class GSHGUI implements IClusterGUI, IScriptGUI {
      */
     public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
         this.data = framework.getData();
+         
+        IDistanceMenu menu = framework.getDistanceMenu();
+        int function = menu.getDistanceFunction();        
+        if (function == Algorithm.DEFAULT) {        
+            function = Algorithm.EUCLIDEAN;            
+        }
+        
         // the default values
         int k = 10;
         int f = 20;
@@ -108,14 +108,19 @@ public class GSHGUI implements IClusterGUI, IScriptGUI {
         int hcl_method = 0;
         boolean hcl_samples = false;
         boolean hcl_genes = false;
+        int hcl_function = 4;
+        boolean hcl_absolute = false;
         if (isHierarchicalTree) {
-            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame());
+            
+            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(menu.getDistanceFunction()), menu.isAbsoluteDistance(), true);
             if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
                 return null;
             }
             hcl_method = hcl_dialog.getMethod();
-            hcl_samples = hcl_dialog.isClusterExperience();
+            hcl_samples = hcl_dialog.isClusterExperiments();
             hcl_genes = hcl_dialog.isClusterGenes();
+            hcl_function = hcl_dialog.getDistanceMetric();
+            hcl_absolute = hcl_dialog.getAbsoluteSelection();
         }
         
         this.experiment = framework.getData().getExperiment();
@@ -133,13 +138,10 @@ public class GSHGUI implements IClusterGUI, IScriptGUI {
             
             data.addMatrix("experiment", matrix);
             data.addParam("distance-factor", String.valueOf(1.0f));
-            IDistanceMenu menu = framework.getDistanceMenu();
+
             data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
             data.addParam("gsh-cluster-genes", String.valueOf(this.clusterGenes));
-            int function = menu.getDistanceFunction();
-            if (function == Algorithm.DEFAULT) {
-                function = Algorithm.EUCLIDEAN;
-            }
+
             data.addParam("distance-function", String.valueOf(function));
             data.addParam("number-of-clusters", String.valueOf(k));
             data.addParam("number-of-fakedMatrix", String.valueOf(f));
@@ -150,6 +152,8 @@ public class GSHGUI implements IClusterGUI, IScriptGUI {
                 data.addParam("method-linkage", String.valueOf(hcl_method));
                 data.addParam("calculate-genes", String.valueOf(hcl_genes));
                 data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+                data.addParam("hcl-distance-function", String.valueOf(hcl_function));
+                data.addParam("hcl-distance-absolute", String.valueOf(hcl_absolute));
             }
             
             long start = System.currentTimeMillis();
@@ -196,7 +200,13 @@ public class GSHGUI implements IClusterGUI, IScriptGUI {
         int k = 10;
         int f = 20;
         int s = 5;
-        
+
+        IDistanceMenu menu = framework.getDistanceMenu();
+        int function = menu.getDistanceFunction();        
+        if (function == Algorithm.DEFAULT) {        
+            function = Algorithm.EUCLIDEAN;            
+        }        
+                
         GSHInitDialog gsh_dialog = new GSHInitDialog(framework.getFrame(), k, f, s);
         if (gsh_dialog.showModal() != JOptionPane.OK_OPTION) {
             return null;
@@ -222,14 +232,19 @@ public class GSHGUI implements IClusterGUI, IScriptGUI {
         int hcl_method = 0;
         boolean hcl_samples = false;
         boolean hcl_genes = false;
+        int hcl_function = 4;
+        boolean hcl_absolute = false;
         if (isHierarchicalTree) {
-            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame());
+            
+            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(menu.getDistanceFunction()), menu.isAbsoluteDistance(), true);           
             if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
                 return null;
             }
             hcl_method = hcl_dialog.getMethod();
-            hcl_samples = hcl_dialog.isClusterExperience();
+            hcl_samples = hcl_dialog.isClusterExperiments();
             hcl_genes = hcl_dialog.isClusterGenes();
+            hcl_function = hcl_dialog.getDistanceMetric();
+            hcl_absolute = hcl_dialog.getAbsoluteSelection();
         }
         
         this.experiment = framework.getData().getExperiment();
@@ -239,13 +254,10 @@ public class GSHGUI implements IClusterGUI, IScriptGUI {
         
         AlgorithmData data = new AlgorithmData();
         data.addParam("distance-factor", String.valueOf(1.0f));
-        IDistanceMenu menu = framework.getDistanceMenu();
+
         data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
         data.addParam("gsh-cluster-genes", String.valueOf(this.clusterGenes));
-        int function = menu.getDistanceFunction();
-        if (function == Algorithm.DEFAULT) {
-            function = Algorithm.EUCLIDEAN;
-        }
+        
         data.addParam("distance-function", String.valueOf(function));
         data.addParam("number-of-clusters", String.valueOf(k));
         data.addParam("number-of-fakedMatrix", String.valueOf(f));
@@ -256,6 +268,8 @@ public class GSHGUI implements IClusterGUI, IScriptGUI {
             data.addParam("method-linkage", String.valueOf(hcl_method));
             data.addParam("calculate-genes", String.valueOf(hcl_genes));
             data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+            data.addParam("hcl-distance-function", String.valueOf(hcl_function));
+            data.addParam("hcl-distance-absolute", String.valueOf(hcl_absolute));
         }
         
         //script control parameters
@@ -353,7 +367,7 @@ public class GSHGUI implements IClusterGUI, IScriptGUI {
         if(this.clusterGenes)
             root = new DefaultMutableTreeNode("GSH - genes");
         else
-            root = new DefaultMutableTreeNode("GSH - experiments");
+            root = new DefaultMutableTreeNode("GSH - samples");
         addResultNodes(root, result_cluster, info);
         return root;
     }
@@ -487,7 +501,7 @@ public class GSHGUI implements IClusterGUI, IScriptGUI {
         if(this.clusterGenes)
             node.add(new DefaultMutableTreeNode(new LeafInfo("Genes in Clusters (#,%)", new GSHInfoViewer(this.clusters, this.experiment.getNumberOfGenes()))));
         else
-            node.add(new DefaultMutableTreeNode(new LeafInfo("Experiments in Clusters (#,%)", new GSHInfoViewer(this.clusters, this.experiment.getNumberOfSamples(), false))));
+            node.add(new DefaultMutableTreeNode(new LeafInfo("Samples in Clusters (#,%)", new GSHInfoViewer(this.clusters, this.experiment.getNumberOfSamples(), false))));
         root.add(node);
     }
     

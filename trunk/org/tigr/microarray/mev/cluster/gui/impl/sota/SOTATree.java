@@ -1,23 +1,26 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: SOTATree.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-05 20:27:17 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2005-02-24 20:23:50 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.sota;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+
+import javax.swing.JPanel;
 
 import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
-import org.tigr.microarray.mev.cluster.algorithm.impl.ExperimentUtil;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
 
 public class SOTATree extends JPanel {
     
@@ -59,7 +62,7 @@ public class SOTATree extends JPanel {
     public SOTATree(SOTATreeData sotaTreeData, boolean geneTree){
         setBackground(Color.white);
         if(!geneTree)
-            this.orientation = this.VERTICAL;
+            this.orientation = SOTATree.VERTICAL;
         this.nodeHeights = sotaTreeData.nodeHeights;
         this.leftChild = sotaTreeData.leftChild;
         this.rightChild = sotaTreeData.rightChild;
@@ -73,7 +76,7 @@ public class SOTATree extends JPanel {
         width = getTreeHeight();
         height = getTreeWidth();
         
-        if(orientation == this.HORIZONTAL)            
+        if(orientation == SOTATree.HORIZONTAL)            
             setSizes(width, height);
         else
             setSizes(height, width);
@@ -157,7 +160,7 @@ public class SOTATree extends JPanel {
         
         g.setColor(lineColor);
         this.paintElementHeight = elementHeight;
-        if(this.orientation == this.VERTICAL){
+        if(this.orientation == SOTATree.VERTICAL){
             ((Graphics2D)g).rotate(-Math.PI/2.0);
             //     this.elementHeight = -elementWidth;
             this.paintElementHeight = elementWidth;
@@ -370,7 +373,7 @@ public class SOTATree extends JPanel {
         minNodeHeight = min;
         maxNodeHeight = max;
         treeHeight = getTreeHeight();  //resets to current height
-        if(orientation == this.HORIZONTAL)            
+        if(orientation == SOTATree.HORIZONTAL)            
             setSizes(getTreeHeight(), getTreeWidth());
         else
             setSizes(getTreeWidth(), getTreeHeight());

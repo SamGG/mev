@@ -1,0 +1,36 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>Gene Annotation Import Parameters</h1>
+            <hr size = 10>
+
+<p> The <i>Append Gene Annotation</i> feature is used to append additional gene annotation
+from an MeV style annotation (.ann, or .dat) file.  The annotation file format is described
+in detail in the File Format Appendix of the MeV manual.  This dialog presents selection lists
+for two keys used to map annotation to genes.  The first key should be a primary identifier
+of genes in the loaded data.  This could be UID or some current annotation field.
+The other key represents a column from the annotation file to be used as a key identifier.
+<br><br>
+These two keys are used to map or associate annotation from the file to the proper gene in the loaded
+data set.  It is not imperative that all loaded genes be present in the annoation file and it
+is possible that the annotation file could have many more indices than those found in the data set.
+Genes that are not found in the input annotation file will have empty annotation for the imported annotation fields.
+</p>
+
+<h2>Gene Identifier</h2>
+This drop down list contains the gene annotation types currently loaded.  Use the drop down list
+to indicate the key to use to map genes to annotation.
+
+<h2>Corresponding Gene Identifier from Input File</h2>
+This drop down list contains gene annotation fields from the input file.  Use the list to select
+a key to use to map annotation to genes.  Note that in order to append annotation the two selected
+keys should represent overlaping lists of annoation.  During the import these two keys are used to
+matche annotation to genes.
+
+<h2>Fields to Append</h2>
+This lowest section of the dialog is used to select annotation fields to import.  By default, UID, R, and C,
+fields are not selected if present.  At least one field should be selected for import.
+<br>
+        </basefont>
+    </body>
+</html>
+

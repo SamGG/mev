@@ -4,18 +4,23 @@ All rights reserved.
 */
 /*
  * $RCSfile: LinksShape.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:10 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.terrain;
 
-import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
-import javax.vecmath.*;
-import javax.media.j3d.*;
+import javax.media.j3d.Appearance;
+import javax.media.j3d.Geometry;
+import javax.media.j3d.GeometryArray;
+import javax.media.j3d.LineArray;
+import javax.media.j3d.LineAttributes;
+import javax.media.j3d.Material;
+import javax.media.j3d.Shape3D;
+import javax.vecmath.Point2f;
 
 import org.tigr.microarray.mev.cluster.gui.impl.util.FloatArray;
 

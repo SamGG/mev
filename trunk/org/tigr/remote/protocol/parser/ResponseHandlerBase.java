@@ -4,22 +4,20 @@ All rights reserved.
 */
 /*
  * $RCSfile: ResponseHandlerBase.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:23 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:08 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.remote.protocol.parser;
 
-import org.tigr.util.ConfMap;
+import java.util.LinkedList;
 
+import org.tigr.util.ConfMap;
 import org.xml.sax.Attributes;
-import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-import org.xml.sax.XMLReader;
-
-import java.util.LinkedList;
+import org.xml.sax.helpers.DefaultHandler;
 
 class ResponseHandlerBase extends DefaultHandler {
 

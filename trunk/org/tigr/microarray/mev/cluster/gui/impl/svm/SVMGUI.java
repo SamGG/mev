@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: SVMGUI.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-07-27 19:59:17 $
- * $Author: braisted $
+ * $Revision: 1.6 $
+ * $Date: 2005-02-24 20:23:45 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
@@ -18,7 +18,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 
 import java.awt.Frame;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JFileChooser;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -54,16 +53,12 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Logger;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Monitor;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLInitDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
 
 import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
 
@@ -124,11 +119,11 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
             if(!this.data.classifyGenes)
                 matrix = matrix.transpose();
             data.addMatrix("experiment", matrix);
-        }
-        
+        }        
+       
         data.addParam("distance-factor", String.valueOf(1.0f)  );
-        data.addParam("distance-absolute", String.valueOf( menu.isAbsoluteDistance() )  );
-        data.addParam("distance-function", String.valueOf( this.data.distanceFunction ) );
+        data.addParam("hcl-distance-absolute", String.valueOf( this.data.absoluteDistance ) );
+        data.addParam("hcl-distance-function", String.valueOf( this.data.distanceFunction ) );
         
         data.addParam("constant", String.valueOf(this.data.constant));
         data.addParam("coefficient", String.valueOf( this.data.coefficient));
@@ -178,7 +173,7 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
                 if(this.classifyGenes)
                     svmNode = new DefaultMutableTreeNode("SVM - genes");
                 else
-                    svmNode = new DefaultMutableTreeNode("SVM - experiments");
+                    svmNode = new DefaultMutableTreeNode("SVM - samples");
                 svmNode.add( createTrainingGUIResult());  //add traing result viewer
                 
                 //classify
@@ -186,12 +181,13 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
                 
                 //classification parameters already set, weights and data and primary params for kernel
                 bindClassificationParams(data);
+
                 start = System.currentTimeMillis();
                 AlgorithmData classificationResult = this.algorithm.execute(data);
                 time += System.currentTimeMillis() - start;
                 getClassificationResults( classificationResult );
                 info.time = time;
-                info.function = menu.getFunctionName( menu.getDistanceFunction() );
+                info.function = menu.getFunctionName( this.data.distanceFunction ); //SVMData 
                 
                 svmNode.add( createClassificationGUIResult() );   //add class. viewer
                 svmNode.add( createSVMExpressionViews( classificationResult, classes));  //add expression image viewer
@@ -213,10 +209,10 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
                 if(this.classifyGenes)
                     svmNode = new DefaultMutableTreeNode("SVM - genes");
                 else
-                    svmNode = new DefaultMutableTreeNode("SVM - experiments");
+                    svmNode = new DefaultMutableTreeNode("SVM - samples");
                 svmNode.add( createTrainingGUIResult() );
                 info.time = time;
-                int function = menu.getDistanceFunction();
+                int function = this.data.distanceFunction;
                 info.function = menu.getFunctionName( function );
                 addSVMParameterNode(svmNode);
             }
@@ -232,9 +228,9 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
                 if(this.classifyGenes)
                     svmNode = new DefaultMutableTreeNode("SVM - genes");
                 else
-                    svmNode = new DefaultMutableTreeNode("SVM - experiments");
+                    svmNode = new DefaultMutableTreeNode("SVM - samples");
                 info.time = time;
-                int function = menu.getDistanceFunction();
+                int function = this.data.distanceFunction;
                 info.function = menu.getFunctionName( function );
                 svmNode.add( createClassificationGUIResult() );
                 svmNode.add( createViewers(classificationResult) );     //Experiment viewers based on pos/neg without prior knowledge of init. class.
@@ -272,7 +268,7 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
                 if(this.classifyGenes)
                     svmNode = new DefaultMutableTreeNode("SVM Val. - genes");
                 else
-                    svmNode = new DefaultMutableTreeNode("SVM Val. - experiments");
+                    svmNode = new DefaultMutableTreeNode("SVM Val. - samples");
                 
                 for(iter = 0; iter < n; iter++){
                     initClass = classes[iter];
@@ -530,7 +526,7 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
                 if(this.classifyGenes)
                     svmNode = new DefaultMutableTreeNode("SVM - genes");
                 else
-                    svmNode = new DefaultMutableTreeNode("SVM - experiments");
+                    svmNode = new DefaultMutableTreeNode("SVM - samples");
                 svmNode.add( createTrainingGUIResult());  //add traing result viewer
                 
                 //classify
@@ -546,7 +542,7 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
                 getClassificationResults( classificationResult );
                 info.time = time;
                 
-                info.function = framework.getDistanceMenu().getFunctionName( algData.getParams().getInt("distance-function"));
+                info.function = framework.getDistanceMenu().getFunctionName( this.data.distanceFunction );
                 
                 svmNode.add( createClassificationGUIResult() );   //add class. viewer
                 svmNode.add( createSVMExpressionViews( classificationResult, classes));  //add expression image viewer
@@ -570,7 +566,7 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
                 if(this.classifyGenes)
                     svmNode = new DefaultMutableTreeNode("SVM - genes");
                 else
-                    svmNode = new DefaultMutableTreeNode("SVM - experiments");
+                    svmNode = new DefaultMutableTreeNode("SVM - samples");
                 svmNode.add( createTrainingGUIResult() );
                 info.time = time;
                 int function = menu.getDistanceFunction();
@@ -590,7 +586,7 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
                 if(this.classifyGenes)
                     svmNode = new DefaultMutableTreeNode("SVM - genes");
                 else
-                    svmNode = new DefaultMutableTreeNode("SVM - experiments");
+                    svmNode = new DefaultMutableTreeNode("SVM - samples");
                 info.time = time;
                 int function = menu.getDistanceFunction();
                 info.function = menu.getFunctionName( function );
@@ -630,7 +626,7 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
                 if(this.classifyGenes)
                     svmNode = new DefaultMutableTreeNode("SVM Val. - genes");
                 else
-                    svmNode = new DefaultMutableTreeNode("SVM Val. - experiments");
+                    svmNode = new DefaultMutableTreeNode("SVM Val. - samples");
                 
                 for(iter = 0; iter < n; iter++){
                     initClass = classes[iter];
@@ -702,7 +698,7 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
         this.data.power = params.getFloat("power");
 
         //skip training params if classification from file, params won't be in algData
-        if(this.SVMMode != this.CLASSIFY_ONLY) {
+        if(this.SVMMode != SVMGUI.CLASSIFY_ONLY) {
             this.data.diagonalFactor = params.getFloat("diagonal-factor");
             this.data.convergenceThreshold = params.getFloat("convergence-threshold"); 
             this.data.radial = params.getBoolean("radial");
@@ -726,7 +722,8 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
             this.data.calcGeneHCL = params.getBoolean("calculate-genes-hcl");
             this.data.hclMethod = params.getInt("linkage-method");
         }
-        this.data.distanceFunction = params.getInt("distance-function");
+        this.data.distanceFunction = params.getInt("hcl-distance-function");
+        this.data.absoluteDistance = params.getBoolean("hcl-absolute-distance");
     }
     
     
@@ -772,11 +769,16 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
             this.data.calculateHCL = dialog.getHCLSelection();
             
             if(this.data.calculateHCL){
-                HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame());
+                IDistanceMenu menu = framework.getDistanceMenu();
+                
+                HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(menu.getDistanceFunction()), menu.isAbsoluteDistance(), true);
+                
                 if (hcl_dialog.showModal() == JOptionPane.OK_OPTION) {
                     this.data.hclMethod = hcl_dialog.getMethod();
-                    this.data.calcSampleHCL = hcl_dialog.isClusterExperience();
+                    this.data.calcSampleHCL = hcl_dialog.isClusterExperiments();
                     this.data.calcGeneHCL = hcl_dialog.isClusterGenes();
+                    this.data.distanceFunction = hcl_dialog.getDistanceMetric();
+                    this.data.absoluteDistance = hcl_dialog.getAbsoluteSelection();
                 }
                 else
                     this.data.calculateHCL = false;  //changed mind about HCL
@@ -799,9 +801,9 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
     protected boolean initTrainingParams() {//throws AlgorithmException {
         trainingMatrix =  experiment.getExperiment().getMatrix();
         kernelMatrix = null;
-        data.distanceFunction =  menu.getDistanceFunction();
-        if (data.distanceFunction == Algorithm.DEFAULT)
-            data.distanceFunction  = Algorithm.EUCLIDEAN; //this applies to HCL on SVM result
+        //data.distanceFunction =  menu.getDistanceFunction();
+        //if (data.distanceFunction == Algorithm.DEFAULT)
+       //     data.distanceFunction  = Algorithm.EUCLIDEAN; //this applies to HCL on SVM result
         //SVM kernal uses dot product on normalized vectors
         
         SVMInitDialog dialog = new SVMInitDialog( this.parentFrame, this.data  );
@@ -911,7 +913,7 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
     protected void bindTrainingParams( AlgorithmData data ) {
         bindParams( data );
         data.addParam("is-classify", String.valueOf(false));
-        data.addParam("distance-function", String.valueOf( this.data.distanceFunction ) );
+        data.addParam("hcl-distance-function", String.valueOf( this.data.distanceFunction ) );
         data.addIntArray("classes", classes);
         data.addParam("seed", String.valueOf( this.data.seed));
         data.addParam("normalize", String.valueOf(this.data.normalize));
@@ -947,7 +949,7 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
      */
     protected DefaultMutableTreeNode createTrainingGUIResult() {
         DefaultMutableTreeNode root =  new DefaultMutableTreeNode(new LeafInfo("SVM Training Result",
-        new SVMTrainViewer( framework, experiment, data, Weights, info, this.data.classifyGenes )));
+        new SVMTrainViewer( framework, experiment, experimentMap, data, Weights, info, this.data.classifyGenes )));
         return root;
     }
     
@@ -960,9 +962,9 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
      */
     
     protected boolean initClassificationParams() {//throws AlgorithmException {
-        data.distanceFunction =  menu.getDistanceFunction();
-        if (data.distanceFunction == Algorithm.DEFAULT)
-            data.distanceFunction  = Algorithm.EUCLIDEAN; //this applies to HCL on SVM result
+       // data.distanceFunction =  menu.getDistanceFunction();
+     //   if (data.distanceFunction == Algorithm.DEFAULT)
+     //      data.distanceFunction  = Algorithm.EUCLIDEAN; //this applies to HCL on SVM result
         //SVM kernal uses dot product on normalized vectors
         
         final JFileChooser fc = new JFileChooser(TMEV.getFile("data/svm"));
@@ -1115,7 +1117,7 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
         bindParams( data );     //already done
         data.addParam("is-classify", String.valueOf(true));
         if(!scripting) {
-            if(this.SVMMode == this.CLASSIFY_ONLY)
+            if(this.SVMMode == SVMGUI.CLASSIFY_ONLY)
                 trainingMatrix = this.experiment.getExperiment().getMatrix();
             if(this.data.classifyGenes)
                 data.addMatrix("training", trainingMatrix);
@@ -1130,6 +1132,8 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
             data.addParam("calculate-genes-hcl", String.valueOf(this.data.calcGeneHCL));
             data.addParam("calculate-samples-hcl", String.valueOf(this.data.calcSampleHCL));
             data.addParam("linkage-method", String.valueOf(this.data.hclMethod));
+            data.addParam("hcl-distance-fucntion", String.valueOf(this.data.distanceFunction));
+            data.addParam("hcl-absolute-distance", String.valueOf(this.data.absoluteDistance));
         }
     }
     
@@ -1211,7 +1215,7 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
         int [] pos = result.getIntArray("positives");
         int [] neg = result.getIntArray("negatives");
         SVMInfoViewer viewer;
-        if(SVMMode == this.CLASSIFY_ONLY){
+        if(SVMMode == SVMGUI.CLASSIFY_ONLY){
             viewer = new SVMInfoViewer(pos.length, neg.length, this.classifyGenes, this.SVMMode);
             
         }
@@ -1361,11 +1365,11 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
         DefaultMutableTreeNode node;
         DefaultMutableTreeNode childNode;
         
-        if(this.SVMMode == this.TRAIN_ONLY)
+        if(this.SVMMode == SVMGUI.TRAIN_ONLY)
             value = "Train SVM Only";
-        else if(this.SVMMode == this.CLASSIFY_ONLY)
+        else if(this.SVMMode == SVMGUI.CLASSIFY_ONLY)
             value = "Classify Only";
-        else if(this.SVMMode == this.TRAIN_AND_CLASSIFY)
+        else if(this.SVMMode == SVMGUI.TRAIN_AND_CLASSIFY)
             value = "Train SVM and Classify";
         else
             value = "One-out Validation";
@@ -1891,8 +1895,8 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
             experiment = getSubExperimentReducedCols(expMatrix, features);
         }
         data.addMatrix("experiment", experiment);
-        data.addParam("distance-function", String.valueOf(this.data.distanceFunction));
-        data.addParam("distance-absolute", String.valueOf(this.framework.getDistanceMenu().isAbsoluteDistance()));
+        data.addParam("hcl-distance-function", String.valueOf(this.data.distanceFunction));
+        data.addParam("hcl-distance-absolute", String.valueOf(this.data.absoluteDistance));
         data.addParam("method-linkage", String.valueOf(this.data.hclMethod));
         
         Algorithm hcl = framework.getAlgorithmFactory().getAlgorithm("HCL");

@@ -4,40 +4,31 @@ All rights reserved.
 */
 /*
  * $RCSfile: PavlidisTemplateMatching.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-11 15:43:20 $
- * $Author: nbhagaba $
+ * $Revision: 1.3 $
+ * $Date: 2005-02-24 20:23:48 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.algorithm.impl;
 
-import java.awt.BorderLayout;
-import java.awt.event.*;
-import java.util.Random;
-import java.util.ArrayList;
 import java.util.Vector;
+
 import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 
-import org.tigr.util.ConfMap;
-import org.tigr.util.FloatMatrix;
-
-import JSci.maths.statistics.TDistribution;
-
-import org.tigr.microarray.mev.cluster.Node;
 import org.tigr.microarray.mev.cluster.Cluster;
+import org.tigr.microarray.mev.cluster.Node;
 import org.tigr.microarray.mev.cluster.NodeList;
 import org.tigr.microarray.mev.cluster.NodeValue;
 import org.tigr.microarray.mev.cluster.NodeValueList;
-
-import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
+import org.tigr.microarray.mev.cluster.algorithm.AbortException;
 import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
-import org.tigr.microarray.mev.cluster.algorithm.AbortException;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
+import org.tigr.util.FloatMatrix;
+
+import JSci.maths.statistics.TDistribution;
 
 public class PavlidisTemplateMatching extends AbstractAlgorithm {
     private boolean stop = false;
@@ -60,7 +51,7 @@ public class PavlidisTemplateMatching extends AbstractAlgorithm {
     
     
     boolean useAbsolute; // true = use absolute value of correlation; false = use the signed value of the correlation
-    boolean useR;
+    boolean useR, drawSigTreesOnly;
     JButton abortButton;
     
     Vector templateVector;
@@ -70,6 +61,9 @@ public class PavlidisTemplateMatching extends AbstractAlgorithm {
     float threshold;    
     int origNumGenes, numSamples;
     
+    private int hcl_function;
+    private boolean hcl_absolute;
+    
     public AlgorithmData execute(AlgorithmData data) throws AlgorithmException {
 	
 	
@@ -78,7 +72,10 @@ public class PavlidisTemplateMatching extends AbstractAlgorithm {
 	function = map.getInt("distance-function", EUCLIDEAN);
 	factor   = map.getFloat("distance-factor", 1.0f);
 	absolute = map.getBoolean("distance-absolute", false);
-	
+                
+        hcl_function = map.getInt("hcl-distance-function", EUCLIDEAN);
+        hcl_absolute = map.getBoolean("hcl-distance-absolute", false);
+        
         ptmGenes = map.getBoolean("ptm-cluster-genes", true);
 	threshold = map.getFloat("threshold", 0.8f);
 	useAbsolute = map.getBoolean("use-absolute", false);
@@ -87,6 +84,9 @@ public class PavlidisTemplateMatching extends AbstractAlgorithm {
 	templateVector = convertToVector(templateVectorMatrix);
 	
 	boolean hierarchical_tree = map.getBoolean("hierarchical-tree", false);
+        if (hierarchical_tree) {
+            drawSigTreesOnly = map.getBoolean("draw-sig-trees-only");
+        }         
 	int method_linkage = map.getInt("method-linkage", 0);
 	boolean calculate_genes = map.getBoolean("calculate-genes", false);
 	boolean calculate_experiments = map.getBoolean("calculate-experiments", false);
@@ -134,9 +134,17 @@ public class PavlidisTemplateMatching extends AbstractAlgorithm {
 	    Node node = new Node(features);
 	    nodeList.addNode(node);
 	    if (hierarchical_tree) {
-		node.setValues(calculateHierarchicalTree(features, method_linkage, calculate_genes, calculate_experiments));
-		event.setIntValue(i+1);
-		fireValueChanged(event);
+                if (drawSigTreesOnly) {
+                    if (i == 0) {
+                        node.setValues(calculateHierarchicalTree(features, method_linkage, calculate_genes, calculate_experiments));
+                        event.setIntValue(i+1);
+                        fireValueChanged(event);                       
+                    }
+                } else {
+                    node.setValues(calculateHierarchicalTree(features, method_linkage, calculate_genes, calculate_experiments));
+                    event.setIntValue(i+1);
+                    fireValueChanged(event);
+                }
 	    }
 	}
         
@@ -170,9 +178,10 @@ public class PavlidisTemplateMatching extends AbstractAlgorithm {
             experiment = this.getSubExperimentReducedCols(this.expMatrix, features);
         
         data.addMatrix("experiment", experiment);
-	data.addParam("distance-function", String.valueOf(this.function));
-	data.addParam("distance-absolute", String.valueOf(this.absolute));
+        data.addParam("hcl-distance-function", String.valueOf(this.hcl_function));
+        data.addParam("hcl-distance-absolute", String.valueOf(this.hcl_absolute));
 	data.addParam("method-linkage", String.valueOf(method));
+        
 	HCL hcl = new HCL();
 	AlgorithmData result;
 	if (genes) {

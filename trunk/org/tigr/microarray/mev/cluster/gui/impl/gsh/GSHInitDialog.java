@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: GSHInitDialog.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:05 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.gsh;
@@ -15,29 +15,17 @@ import java.awt.Frame;
 import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JLabel;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.UIManager;
-import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 import javax.swing.JOptionPane;
-import javax.swing.ButtonGroup;
-import javax.swing.JRadioButton;
-import javax.swing.BorderFactory;
-import javax.swing.border.EmptyBorder;
-
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
@@ -55,14 +43,14 @@ public class GSHInitDialog extends AlgorithmDialog {
     private HCLSelectionPanel hclOpsPanel;
     
     public GSHInitDialog(Frame parent, int clusters, int fm, int st) {
-        super(new JFrame(), "GSH: Gene Shaving", true);
+        super(parent, "GSH: Gene Shaving", true);
         
         Listener listener = new Listener();
         addWindowListener(listener);
         
         //sample selction panel
         sampleSelectionPanel = new SampleSelectionPanel(Color.white, UIManager.getColor("Label.foreground"),true,"Sample Selection");
-        
+           
         //parameter panel
         ParameterPanel parameters = new ParameterPanel();
         parameters.setLayout(new GridBagLayout());
@@ -70,7 +58,7 @@ public class GSHInitDialog extends AlgorithmDialog {
         //add parameter controls
         GridBagConstraints gbc = new GridBagConstraints();
         
-        gbc.insets = new Insets(0,0,0,0);
+        gbc.insets = new Insets(0,0,10,0);
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.gridy = 0;
@@ -84,7 +72,7 @@ public class GSHInitDialog extends AlgorithmDialog {
         textField1 = new JTextField(String.valueOf(clusters), 5);
         textField2 = new JTextField(String.valueOf(fm), 5);
         textField3 = new JTextField(String.valueOf(st), 5);
-        gbc.insets = new Insets(0, 10, 0, 0);
+        gbc.insets = new Insets(0, 10, 10, 0);
         gbc.gridx = 1;
         gbc.gridy = 0;
         parameters.add(textField1, gbc);
@@ -100,7 +88,7 @@ public class GSHInitDialog extends AlgorithmDialog {
         contentPanel.setLayout(new GridBagLayout());
         contentPanel.setBackground(Color.white);
         contentPanel.add(this.sampleSelectionPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
-        contentPanel.add(parameters, new GridBagConstraints(0,1,1,1,0.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
+         contentPanel.add(parameters, new GridBagConstraints(0,1,1,1,0.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
         contentPanel.add(this.hclOpsPanel, new GridBagConstraints(0,2,1,1,0.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
         
         addContent(contentPanel);
@@ -147,6 +135,7 @@ public class GSHInitDialog extends AlgorithmDialog {
     public boolean isHierarchicalTree() {
         return this.hclOpsPanel.isHCLSelected();
     }
+    
     
     /**
      * Resets controls

@@ -4,14 +4,13 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMCentroidsViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-05 22:11:50 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2005-02-24 20:23:45 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.svm;
 
-import java.awt.Color;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

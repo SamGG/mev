@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: HypergeometricProbability.java,v $
- * $Revision: 1.1 $
- * $Date: 2004-02-06 22:55:36 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:13 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
@@ -145,6 +145,13 @@ public class HypergeometricProbability {
         p = ((double)m)/((double)n);
 
         return( dbinom(x,t,p) * dbinom(m-x,n-t,p) / dbinom(m,n,p) );
+    }
+
+    /** Returns an exact hypergeometric p for the contingency matrix values
+     *  p =  [(a1+a2)!*(a3+a4)!*(a1+a3)!*(a2+a4)!]/(n!a1!a2!a3!a4!)
+     */
+    public double pExactForMatrix(int a1, int a2, int a3, int a4){
+        return dhyperg(a1, a1+a3, a1+a2 , a1+a2+a3+a4);
     }
 
 

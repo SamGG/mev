@@ -4,29 +4,22 @@ All rights reserved.
 */
 /*
  * $RCSfile: TavFileFilter.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-27 22:16:51 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2005-02-24 20:23:50 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.file;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-
 import java.util.Vector;
 
-import org.tigr.microarray.mev.FloatSlideData;
-import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.ISlideDataElement;
-import org.tigr.microarray.mev.ISlideMetaData;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.SlideDataElement;
-import org.tigr.microarray.mev.TMEV;
-
 import org.tigr.util.StringSplitter;
 
 public class TavFileFilter extends ExpressionFileFilter {

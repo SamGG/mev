@@ -10,19 +10,54 @@ All rights reserved.
 
 package org.tigr.microarray.mev.cluster.gui.impl.sam;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import org.tigr.graph.*;
-import org.tigr.util.*;
-import org.tigr.util.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.PrintWriter;
+import java.util.Vector;
 
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.UIManager;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HCLSigOnlyPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
+import org.tigr.util.StringSplitter;
 
 /**
  *
@@ -46,7 +81,7 @@ public class SAMInitDialog extends AlgorithmDialog {
     boolean okPressed = false, allUniquePermsUsed = false;
     Vector exptNames;
     int numGenes, numUniquePerms;
-    HCLSelectionPanel hclOpsPanel;
+    HCLSigOnlyPanel hclOpsPanel;
     //JFrame parentFrame;
     
     public static final int GROUP_A = 1;
@@ -144,7 +179,7 @@ public class SAMInitDialog extends AlgorithmDialog {
         pane.add(imputeButton);
          */
         
-        hclOpsPanel = new HCLSelectionPanel();
+        hclOpsPanel = new HCLSigOnlyPanel();
         buildConstraints(constraints, 0, 4, 1, 1, 0, 5);
         gridbag.setConstraints(hclOpsPanel, constraints);
         pane.add(hclOpsPanel);
@@ -322,7 +357,7 @@ public class SAMInitDialog extends AlgorithmDialog {
             gridbag2.setConstraints(scroll, constraints);
             this.add(scroll);
             
-            JLabel label1 = new JLabel("Note: Group A and Group B  MUST each contain more than one experiment.");
+            JLabel label1 = new JLabel("Note: Group A and Group B  MUST each contain more than one sample.");
             label1.setHorizontalAlignment(JLabel.CENTER);
             buildConstraints(constraints, 0, 1, 1, 1, 0, 5);
             constraints.anchor = GridBagConstraints.CENTER;
@@ -1454,7 +1489,7 @@ public class SAMInitDialog extends AlgorithmDialog {
             buildConstraints(constraints, 3, 0, 1, 1, 45, 0);
             constraints.fill = GridBagConstraints.BOTH;
             JScrollPane pairScroll = new JScrollPane(pairedExptsList);
-            pairScroll.setBorder(new TitledBorder("Paired Experiments"));
+            pairScroll.setBorder(new TitledBorder("Paired Samples"));
             gridbag.setConstraints(pairScroll, constraints);
             this.add(pairScroll);              
             
@@ -1894,7 +1929,7 @@ public class SAMInitDialog extends AlgorithmDialog {
                 gridbag2.setConstraints(scroll, constraints);
                 this.add(scroll);
                 
-                JLabel label1 = new JLabel("Note: Each group MUST each contain more than one experiment.");
+                JLabel label1 = new JLabel("Note: Each group MUST each contain more than one sample.");
                 label1.setHorizontalAlignment(JLabel.CENTER);
                 buildConstraints(constraints, 0, 1, 1, 1, 0, 5);
                 constraints.anchor = GridBagConstraints.EAST;
@@ -2375,7 +2410,7 @@ public class SAMInitDialog extends AlgorithmDialog {
                             }
                         }
                         if ((grpACounter < 2) || (grpBCounter < 2)) {
-                            JOptionPane.showMessageDialog(null, "Group A and Group B must contain more than one experiment", "Error", JOptionPane.WARNING_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "Group A and Group B must contain more than one sample", "Error", JOptionPane.WARNING_MESSAGE);
                         } /*else if ((Integer.parseInt(iPanel.numNeighborsField.getText()) > numGenes) || (Integer.parseInt(iPanel.numNeighborsField.getText()) <= 0)) {
                             JOptionPane.showMessageDialog(null, "Number of neighbors must be  > 0, and <= the total number of genes", "Error", JOptionPane.WARNING_MESSAGE);
                         } else if (Integer.parseInt(pPanel.numPermsInputField.getText()) < 0) {
@@ -2430,7 +2465,7 @@ public class SAMInitDialog extends AlgorithmDialog {
                         
                         for (int i = 0; i < groupSize.length; i++) {
                             if (groupSize[i] <= 1) {
-                                JOptionPane.showMessageDialog(null, "Each group must contain more than one experiment", "Error", JOptionPane.WARNING_MESSAGE);
+                                JOptionPane.showMessageDialog(null, "Each group must contain more than one sample.", "Error", JOptionPane.WARNING_MESSAGE);
                                 tooFew = true;
                                 break;
                             }
@@ -2721,6 +2756,10 @@ public class SAMInitDialog extends AlgorithmDialog {
         return this.hclOpsPanel.isHCLSelected();
     }
     
+    public boolean drawSigTreesOnly() {
+        return hclOpsPanel.drawSigTreesOnly();
+    }    
+    
     public boolean useTusherEtAlS0() {
         if (sqPanel.s0SelectBox.getSelectedIndex() == 0) {
             return true;
@@ -2814,7 +2853,7 @@ public class SAMInitDialog extends AlgorithmDialog {
                         }
                     }
                     if ((grpACounter < 2) || (grpBCounter < 2)) {
-                        JOptionPane.showMessageDialog(null, "Group A and Group B must contain more than one experiment", "Error", JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Group A and Group B must contain more than one sample.", "Error", JOptionPane.WARNING_MESSAGE);
                     } /*else if ((Integer.parseInt(iPanel.numNeighborsField.getText()) > numGenes) || (Integer.parseInt(iPanel.numNeighborsField.getText()) <= 0)) {
                             JOptionPane.showMessageDialog(null, "Number of neighbors must be  > 0, and <= the total number of genes", "Error", JOptionPane.WARNING_MESSAGE);
                         } else if (Integer.parseInt(pPanel.numPermsInputField.getText()) < 0) {
@@ -2852,7 +2891,7 @@ public class SAMInitDialog extends AlgorithmDialog {
                     // }
                 } else if (getStudyDesign() == SAMInitDialog.TWO_CLASS_PAIRED) {
                     if (tcpmPanel.tcpPanel.pairedListModel.size() < 2) {
-                        JOptionPane.showMessageDialog(null, "Need at least two pairs of experiments!", "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Need at least two pairs of samples!", "Error", JOptionPane.ERROR_MESSAGE);
                     } else {
                         if (tcpmPanel.tcpPanel.pairedListModel.size() <= 29) {
                             int numCombs = getUserNumCombs();
@@ -2895,7 +2934,7 @@ public class SAMInitDialog extends AlgorithmDialog {
                     
                     for (int i = 0; i < groupSize.length; i++) {
                         if (groupSize[i] <= 1) {
-                            JOptionPane.showMessageDialog(null, "Each group must contain more than one experiment", "Error", JOptionPane.WARNING_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "Each group must contain more than one sample.", "Error", JOptionPane.WARNING_MESSAGE);
                             tooFew = true;
                             break;
                         }
@@ -2967,7 +3006,7 @@ public class SAMInitDialog extends AlgorithmDialog {
                     try {
                         double ocm = getOneClassMean();
                         if (getNumValidOneClassExpts() < 2) {
-                            JOptionPane.showMessageDialog(null, "At least 2 experiments must be selected for one-class test!", "Error", JOptionPane.ERROR_MESSAGE);                            
+                            JOptionPane.showMessageDialog(null, "At least 2 samples must be selected for one-class test!", "Error", JOptionPane.ERROR_MESSAGE);                            
                         } else {
                             if (getNumValidOneClassExpts() <= 29) {
                                 int numCombs = getUserNumCombs();

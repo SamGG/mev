@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: GraphBar.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-06 22:46:02 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2005-02-24 20:24:07 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.graph;
@@ -50,7 +50,7 @@ public class GraphBar extends GraphElement {
     public double getValue() {return this.value;}
     public void setColor(Color color) {this.color = color;}
     public Color getColor() {return this.color;}
-    public void setOrientation(int range) {this.orientation = orientation;}
+    public void setOrientation(int range) {this.orientation = range;}
     public int getOrientation() {return this.orientation;}
     public void setStyle(int style) {this.style = style;}
     public int getStyle() {return this.style;}

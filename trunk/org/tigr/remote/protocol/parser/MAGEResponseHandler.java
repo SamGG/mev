@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: MAGEResponseHandler.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:23 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:08 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.remote.protocol.parser;
@@ -14,20 +14,14 @@ package org.tigr.remote.protocol.parser;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-import org.xml.sax.XMLReader;
-
+import org.tigr.microarray.mev.cluster.Cluster;
+import org.tigr.microarray.mev.cluster.Node;
+import org.tigr.microarray.mev.cluster.NodeValue;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.util.ConfMap;
 import org.tigr.util.FloatMatrix;
-
-// cluster stuff
-import org.tigr.microarray.mev.cluster.Node;
-import org.tigr.microarray.mev.cluster.NodeList;
-import org.tigr.microarray.mev.cluster.NodeValue;
-import org.tigr.microarray.mev.cluster.Cluster;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
 class MAGEResponseHandler extends ResponseHandlerBase {
 

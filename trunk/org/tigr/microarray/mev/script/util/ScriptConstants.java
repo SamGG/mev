@@ -50,7 +50,7 @@ public class ScriptConstants {
     //primary input data types
     private static final String INPUT_DATA_TYPE_MEV = "mev";
     private static final String INPUT_DATA_TYPE_TAV = "tav";
-    private static final String INPUT_DATA_TYPE_STANFORD = "stanford";
+    private static final String INPUT_DATA_TYPE_TDMS = "tab-delimited-mulitple-sample";
     private static final String INPUT_DATA_TYPE_GENEPIX = "gpr";
     private static final String INPUT_DATA_TYPE_AFFY_ABS = "affy-abs";
     private static final String INPUT_DATA_TYPE_AFFY_REF = "affy-ref";

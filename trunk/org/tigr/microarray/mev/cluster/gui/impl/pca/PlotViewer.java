@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: PlotViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-07-27 19:59:16 $
- * $Author: braisted $
+ * $Revision: 1.5 $
+ * $Date: 2005-02-24 20:24:02 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.pca;
@@ -16,12 +16,12 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
+
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import org.tigr.util.FloatMatrix;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
+import org.tigr.util.FloatMatrix;
 
 public class PlotViewer extends ViewerAdapter implements java.io.Serializable {
     public static final long serialVersionUID = 202011040001L;

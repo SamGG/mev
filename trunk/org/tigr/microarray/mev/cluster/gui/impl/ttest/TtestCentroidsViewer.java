@@ -1,45 +1,40 @@
 /*
-Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: TtestCentroidsViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-07-27 19:59:17 $
- * $Author: braisted $
+ * $Revision: 1.7 $
+ * $Date: 2005-02-24 20:24:05 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.gui.impl.ttest;
 
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.FileOutputStream;
-
-import javax.swing.JFileChooser;
-
-import java.awt.Color;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
-
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
 import java.util.Vector;
 
+import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidsViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileFilter;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
+import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
 public class TtestCentroidsViewer extends CentroidsViewer {
 
@@ -51,21 +46,22 @@ public class TtestCentroidsViewer extends CentroidsViewer {
     private JMenuItem setOverallMaxMenuItem;
     private JMenuItem setClusterMaxMenuItem;
 
-    private Vector tValues, pValues, dfValues, meansA, meansB, sdA, sdB, oneClassMeans, oneClassSDs;
+    private Vector tValues, rawPValues, adjPValues, dfValues, meansA, meansB, sdA, sdB, oneClassMeans, oneClassSDs;
     private int tTestDesign;
 
     /**
      * Constructs a <code>TtestCentroidsViewer</code> for specified experiment
      * and clusters.
      */
-    public TtestCentroidsViewer(Experiment experiment, int[][] clusters, int tTestDesign, Vector oneClassMeans, Vector oneClassSDs, Vector meansA, Vector meansB, Vector sdA, Vector sdB, Vector pValues, Vector tValues, Vector dfValues) {
+    public TtestCentroidsViewer(Experiment experiment, int[][] clusters, int tTestDesign, Vector oneClassMeans, Vector oneClassSDs, Vector meansA, Vector meansB, Vector sdA, Vector sdB, Vector rawPValues, Vector adjPValues, Vector tValues, Vector dfValues) {
         super(experiment, clusters);
         Listener listener = new Listener();
         this.popup = createJPopupMenu(listener);
         this.tTestDesign = tTestDesign;
         this.oneClassMeans = oneClassMeans;
         this.oneClassSDs = oneClassSDs;
-        this.pValues = pValues;
+        this.rawPValues = rawPValues;
+        this.adjPValues = adjPValues;
         this.tValues = tValues;
         this.dfValues = dfValues;
         this.meansA = meansA;
@@ -161,7 +157,7 @@ public class TtestCentroidsViewer extends CentroidsViewer {
                 out.print("\t");
             //}
         }
-        if (tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS) {
+        if ((tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS) || (tTestDesign == TtestInitDialog.PAIRED)) {
             out.print("GroupA mean\t");
             out.print("GroupA std.dev.\t");
             out.print("GroupB mean\t");
@@ -175,7 +171,8 @@ public class TtestCentroidsViewer extends CentroidsViewer {
         //out.print("\t");
         out.print("\t");
         out.print("Degrees of freedom\t");
-        out.print("p value");
+        out.print("Raw p value\t");
+        out.print("Adj p value");
 
         //out.print("UniqueID\tName");
         for (int i=0; i<experiment.getNumberOfSamples(); i++) {
@@ -194,7 +191,7 @@ public class TtestCentroidsViewer extends CentroidsViewer {
                     out.print("\t");
                 //}
             }
-            if (tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS) {
+            if ((tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS) || (tTestDesign == TtestInitDialog.PAIRED)) {
                 out.print(((Float)meansA.get(rows[i])).floatValue() + "\t");
                 out.print(((Float)sdA.get(rows[i])).floatValue() + "\t");
                 out.print(((Float)meansB.get(rows[i])).floatValue() + "\t");
@@ -208,7 +205,9 @@ public class TtestCentroidsViewer extends CentroidsViewer {
             out.print("\t");
             out.print("" + ((Float)dfValues.get(rows[i])).intValue());
             out.print("\t");
-            out.print("" + ((Float)pValues.get(rows[i])).floatValue());
+            out.print("" + ((Float)rawPValues.get(rows[i])).floatValue());
+            out.print("\t");
+            out.print("" + ((Float)adjPValues.get(rows[i])).floatValue());            
             for (int j=0; j<experiment.getNumberOfSamples(); j++) {
                 out.print("\t");
                 out.print(Float.toString(experiment.get(rows[i], j)));

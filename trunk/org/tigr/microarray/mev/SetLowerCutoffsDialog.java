@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SetLowerCutoffsDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-03-25 18:59:40 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2005-02-24 20:23:44 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -25,8 +25,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JDialog;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -44,6 +43,8 @@ public class SetLowerCutoffsDialog extends AlgorithmDialog {
     private int result;
     private float originalCy3, originalCy5;
     private JTextField cy3TextField, cy5TextField;
+    private JCheckBox enableCheckBox;
+    private JLabel cy3Label, cy5Label;
     
     public SetLowerCutoffsDialog(JFrame parent, float cy3, float cy5) {
 	super(parent, "Set Lower Cutoffs", true);
@@ -53,13 +54,21 @@ public class SetLowerCutoffsDialog extends AlgorithmDialog {
 	Listener listener = new Listener();
 	GBA gba = new GBA();
 	
-	JLabel cy3Label = new JLabel("Cy3 Lower Cutoff (" + cy3 + "): ");
+        enableCheckBox = new JCheckBox("Enable Lower Cutoff Filter", true);
+        enableCheckBox.setActionCommand("enable-check-box-command");
+        enableCheckBox.setOpaque(false);
+        enableCheckBox.setFocusPainted(false);        
+        enableCheckBox.addActionListener(listener);
+        
+        
+        cy3Label = new JLabel("Cy3 Lower Cutoff (" + cy3 + "): ");
 	cy3Label.setHorizontalAlignment(JLabel.RIGHT);
-	cy3TextField = new JTextField(10);
+	
+        cy3TextField = new JTextField(10);
 	cy3TextField.addKeyListener(listener);
 	cy3TextField.setText("" + cy3);
 	
-	JLabel cy5Label = new JLabel("Cy5 Lower Cutoff (" + cy5 + "): ");
+        cy5Label = new JLabel("Cy5 Lower Cutoff (" + cy5 + "): ");
 	
 	cy5TextField = new JTextField(10);
 	cy5TextField.addKeyListener(listener);
@@ -68,10 +77,12 @@ public class SetLowerCutoffsDialog extends AlgorithmDialog {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(Color.white);
         panel.setBorder(BorderFactory.createLineBorder(Color.black));
-	gba.add(panel, cy3Label, 0, 0, 1, 1, 0, 0, GBA.H, GBA.E, new Insets(20, 5, 5, 5), 0, 0);
-	gba.add(panel, cy3TextField, 1, 0, 1, 1, 0, 0, GBA.NONE, GBA.W, new Insets(20, 5, 5, 5), 0, 0);
-	gba.add(panel, cy5Label, 0, 1, 1, 1, 0, 0, GBA.H, GBA.E, new Insets(5, 5, 25, 5), 0, 0);
-	gba.add(panel, cy5TextField, 1, 1, 2, 1, 0, 0, GBA.NONE, GBA.W, new Insets(5, 5, 25, 5), 0, 0);
+        
+        gba.add(panel, enableCheckBox, 0, 0, 2, 1, 0, 0, GBA.B, GBA.C, new Insets(20, 0, 0, 0), 0, 0);
+	gba.add(panel, cy3Label, 0, 1, 1, 1, 0, 0, GBA.H, GBA.E, new Insets(15, 5, 5, 5), 0, 0);
+	gba.add(panel, cy3TextField, 1, 1, 1, 1, 0, 0, GBA.NONE, GBA.W, new Insets(15, 5, 5, 5), 0, 0);
+	gba.add(panel, cy5Label, 0, 2, 1, 1, 0, 0, GBA.H, GBA.E, new Insets(5, 5, 25, 5), 0, 0);
+	gba.add(panel, cy5TextField, 1, 2, 2, 1, 0, 0, GBA.NONE, GBA.W, new Insets(5, 5, 25, 5), 0, 0);
 
         addContent(panel);
         setActionListeners(listener);
@@ -89,6 +100,10 @@ public class SetLowerCutoffsDialog extends AlgorithmDialog {
 	setLocation((screenSize.width - getSize().width)/2, (screenSize.height - getSize().height)/2);
 	show();
 	return result;
+    }
+    
+    public boolean isLowerCutoffEnabled() {
+        return enableCheckBox.isSelected();
     }
     
     public float getLowerCY3Cutoff() {
@@ -127,6 +142,12 @@ public class SetLowerCutoffsDialog extends AlgorithmDialog {
                     hw.dispose();
                     return;
                 }
+            } else if (command.equals("enable-check-box-command")) {
+                boolean enable = enableCheckBox.isSelected();
+                cy3Label.setEnabled(enable);
+                cy5Label.setEnabled(enable);
+                cy3TextField.setEnabled(enable);
+                cy5TextField.setEnabled(enable);
             }
 	}
 	

@@ -1,23 +1,21 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: STGUI.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-06-28 18:49:46 $
- * $Author: braisted $
+ * $Revision: 1.4 $
+ * $Date: 2005-02-24 20:23:51 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.st;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
-
 import java.util.Vector;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
@@ -27,22 +25,17 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-
-import org.tigr.microarray.mev.cluster.gui.IViewer;
-import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
-
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
+import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
-
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
-import org.tigr.util.FloatMatrix;
-
 import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
-
+import org.tigr.util.FloatMatrix;
 
 public class STGUI implements IClusterGUI, IScriptGUI {
     private Algorithm algorithm;
@@ -55,7 +48,14 @@ public class STGUI implements IClusterGUI, IScriptGUI {
      * a result to be inserted into the framework analysis node.
      */
     public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
-        ResampleTreeInitDialog dialog = new ResampleTreeInitDialog((JFrame) framework.getFrame(), true);
+
+        IDistanceMenu menu = framework.getDistanceMenu();
+        int function = menu.getDistanceFunction();
+        if (function == Algorithm.DEFAULT) {
+            function = Algorithm.EUCLIDEAN;
+        }
+        
+        ResampleTreeInitDialog dialog = new ResampleTreeInitDialog((JFrame) framework.getFrame(), true, menu.getFunctionName(function), menu.isAbsoluteDistance());
         dialog.setVisible(true);
         
         if (dialog.isCancelled()) {
@@ -79,14 +79,12 @@ public class STGUI implements IClusterGUI, IScriptGUI {
             algorithm.addAlgorithmListener(listener);
             AlgorithmData data = new AlgorithmData();
             data.addMatrix("experiment", experiment.getMatrix());
-            IDistanceMenu menu = framework.getDistanceMenu();
-            int function = menu.getDistanceFunction();
-            if (function == Algorithm.DEFAULT) {
-                function = Algorithm.EUCLIDEAN;
-            }
+
+            function = dialog.getDistanceMetric();
+            
             data.addParam("distance-function", String.valueOf(function));
             data.addParam("distance-factor", String.valueOf(1.0f));
-            data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
+            data.addParam("distance-absolute", String.valueOf(dialog.isAbsoluteDistance()));
             
             data.addParam("method-linkage", String.valueOf(method));
             data.addParam("geneTreeIterations", String.valueOf(geneTreeIterations));
@@ -146,7 +144,14 @@ public class STGUI implements IClusterGUI, IScriptGUI {
     
     
     public AlgorithmData getScriptParameters(IFramework framework) {
-        ResampleTreeInitDialog dialog = new ResampleTreeInitDialog((JFrame) framework.getFrame(), true);
+        
+        IDistanceMenu menu = framework.getDistanceMenu();
+        int function = menu.getDistanceFunction();
+        if (function == Algorithm.DEFAULT) {
+            function = Algorithm.EUCLIDEAN;
+        }
+        
+        ResampleTreeInitDialog dialog = new ResampleTreeInitDialog((JFrame) framework.getFrame(), true, menu.getFunctionName(function), menu.isAbsoluteDistance());
         dialog.setVisible(true);
         
         if (dialog.isCancelled()) {
@@ -161,15 +166,13 @@ public class STGUI implements IClusterGUI, IScriptGUI {
         int geneTreeIterations = Integer.parseInt(dialog.geneTreeIterationsTextField.getText());
         int exptTreeIterations = Integer.parseInt(dialog.exptTreeIterationsTextField.getText());
 
-        AlgorithmData data = new AlgorithmData();
-        IDistanceMenu menu = framework.getDistanceMenu();
-        int function = menu.getDistanceFunction();
-        if (function == Algorithm.DEFAULT) {
-            function = Algorithm.EUCLIDEAN;
-        }
+        AlgorithmData data = new AlgorithmData();  
+  
+        function = dialog.getDistanceMetric();
+  
         data.addParam("distance-function", String.valueOf(function));
         data.addParam("distance-factor", String.valueOf(1.0f));
-        data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
+        data.addParam("distance-absolute", String.valueOf(dialog.isAbsoluteDistance()));
         
         data.addParam("method-linkage", String.valueOf(method));
         data.addParam("geneTreeIterations", String.valueOf(geneTreeIterations));

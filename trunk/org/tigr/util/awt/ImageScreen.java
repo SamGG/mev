@@ -1,38 +1,41 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: ImageScreen.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:23 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:02 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.util.awt;
 
-import java.awt.Toolkit;
-import java.awt.Graphics;
-import java.awt.Dimension;
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
-import javax.swing.JPanel;
-import javax.swing.JFrame;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JPanel;
+import javax.swing.JWindow;
 
-public class ImageScreen extends JFrame {
+public class ImageScreen extends JWindow {
     
-    public ImageScreen() {
-	super("TIGR MultiExperimentViewer");
-	setImageIcon(new ImageIcon(ImageScreen.class.getResource("/org/tigr/images/expression.gif")));
-	ImageIcon image = new ImageIcon(ImageScreen.class.getResource("/org/tigr/images/MeV_splash.jpg"));
+    public ImageScreen() { 
+	super();
+        addMouseListener(new Listener());
+       
+	ImageIcon image = new ImageIcon(ImageScreen.class.getResource("/org/tigr/images/mev_splash.gif"));
 	ImageCanvas canvas = new ImageCanvas(image);
-	canvas.setPreferredSize(new Dimension(image.getIconWidth(), image.getIconHeight()));
+	canvas.setPreferredSize(new Dimension(image.getIconWidth()+4, image.getIconHeight()+5));     
 	getContentPane().add(canvas, BorderLayout.CENTER);
-	setResizable(false);
 	pack();
     }
-    
+        
     public void showImageScreen() {
 	Dimension screenSize = getToolkit().getScreenSize();
 	setLocation(screenSize.width/2 - getSize().width/2, screenSize.height/2 - getSize().height/2);
@@ -49,7 +52,6 @@ public class ImageScreen extends JFrame {
     }
     
     private void setImageIcon(ImageIcon icon) {
-	setIconImage(icon.getImage());
     }
     
     class ImageCanvas extends JPanel {
@@ -58,10 +60,24 @@ public class ImageScreen extends JFrame {
 	
 	public ImageCanvas(ImageIcon image) {
 	    this.image = image;
+            setBackground(Color.blue);
+            setBorder(BorderFactory.createLineBorder(Color.black, 1));
 	}
 	
 	public void paint(Graphics g) {
-	    g.drawImage(image.getImage(), 0, 0, this);
+            super.paint(g);
+	    g.drawImage(image.getImage(), 2, 2, this);
 	}
+    }
+    
+    public static void main(String [] args) {
+        ImageScreen is = new ImageScreen();
+        is.showImageScreen();
+    }
+    
+    class Listener extends MouseAdapter {
+        public void mousePressed(MouseEvent me) {
+            ImageScreen.this.dispose();
+        }
     }
 }

@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: FOMInitDialog.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-07-27 19:59:16 $
- * $Author: braisted $
+ * $Revision: 1.4 $
+ * $Date: 2005-02-24 20:24:12 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.fom;
@@ -19,14 +19,9 @@ package org.tigr.microarray.mev.cluster.gui.impl.fom;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
-import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
-import org.tigr.graph.*;
-import org.tigr.util.*;
-import org.tigr.util.awt.*;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
 
@@ -408,7 +403,7 @@ public class FOMInitDialog extends AlgorithmDialog {
             gridbag.setConstraints(calcGenes, constraints);
             this.add(calcGenes);
             
-            calcExperiments = new JRadioButton("Experiment Cluster FOM");
+            calcExperiments = new JRadioButton("Sample Cluster FOM");
             calcExperiments.setFocusPainted(false);
             calcExperiments.setBackground(Color.white);
             calcExperiments.setForeground(UIManager.getColor("Label.foreground"));

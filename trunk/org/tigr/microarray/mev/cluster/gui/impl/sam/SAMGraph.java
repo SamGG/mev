@@ -10,17 +10,36 @@ All rights reserved.
 
 package org.tigr.microarray.mev.cluster.gui.impl.sam;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.text.DecimalFormat;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import org.tigr.graph.*;
-import org.tigr.util.*;
-import org.tigr.util.awt.*;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import org.tigr.util.awt.ActionInfoDialog;
 
 /**
  *
@@ -80,8 +99,8 @@ public class SAMGraph extends ActionInfoDialog {
         setBounds(0, 0, 600, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
-        this.observedYArray = observedYArray;
-        this.expectedXArray = expectedXArray;
+        // no effect this.observedYArray = observedYArray;
+        // no effect this.expectedXArray = expectedXArray;
         
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints constraints = new GridBagConstraints();

@@ -4,59 +4,48 @@ All rights reserved.
  */
 /*
  * $RCSfile: QTCGUI.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-06-01 13:23:13 $
- * $Author: braisted $
+ * $Revision: 1.7 $
+ * $Date: 2005-02-24 20:24:08 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.qtc;
 
-import java.util.Arrays;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.util.Arrays;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.tigr.util.ConfMap;
-import org.tigr.util.FloatMatrix;
-
+import org.tigr.microarray.mev.cluster.Cluster;
+import org.tigr.microarray.mev.cluster.Node;
+import org.tigr.microarray.mev.cluster.NodeList;
+import org.tigr.microarray.mev.cluster.NodeValueList;
+import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
-import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
-import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
-
-import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
-
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Monitor;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLInitDialog;
-import org.tigr.microarray.mev.cluster.Cluster;
-import org.tigr.microarray.mev.cluster.NodeList;
-import org.tigr.microarray.mev.cluster.Node;
-import org.tigr.microarray.mev.cluster.NodeValueList;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
-
+import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLInitDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
+import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
 import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
+import org.tigr.util.FloatMatrix;
 
 public class QTCGUI implements IClusterGUI, IScriptGUI {
     
@@ -88,7 +77,13 @@ public class QTCGUI implements IClusterGUI, IScriptGUI {
         boolean useAbsolute = false;
         boolean modal = true; //I SET MODAL TO TRUE TO CALL THE QTC DIALOG BOX, HOPE THIS IS OK
         
-        QTCInitDialog hjc_dialog = new QTCInitDialog((JFrame) framework.getFrame(), modal);
+        IDistanceMenu menu = framework.getDistanceMenu();
+        int function = menu.getDistanceFunction();
+        if (function == Algorithm.DEFAULT) {
+            function = Algorithm.PEARSON;
+        }
+        
+        QTCInitDialog hjc_dialog = new QTCInitDialog((JFrame) framework.getFrame(), modal, menu.getFunctionName(function), menu.isAbsoluteDistance());
         hjc_dialog.setVisible(true);
         
         if (! hjc_dialog.isOkPressed()) return null;
@@ -96,21 +91,30 @@ public class QTCGUI implements IClusterGUI, IScriptGUI {
         clusterGenes = hjc_dialog.isClusterGenesSelected();
         minimumClusterSize = Integer.parseInt(hjc_dialog.clusterTextField.getText());
         diameter = Float.parseFloat(hjc_dialog.diameterTextField.getText());
-        useAbsolute = hjc_dialog.useAbsoluteCheckBox.isSelected();
+        useAbsolute = hjc_dialog.isAbsoluteDistance();
+        
         
         boolean isHierarchicalTree = hjc_dialog.isHCLSelected();
         // hcl init
         int hcl_method = 0;
         boolean hcl_samples = false;
         boolean hcl_genes = false;
+                            
+        int hcl_function = 4;
+        boolean hcl_absolute = false;
+
         if (isHierarchicalTree) {
-            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame());
+                                                                                                                                        
+            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(hjc_dialog.getDistanceMetric()), hjc_dialog.isAbsoluteDistance(), true);
+ 
             if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
                 return null;
             }
             hcl_method = hcl_dialog.getMethod();
-            hcl_samples = hcl_dialog.isClusterExperience();
+            hcl_samples = hcl_dialog.isClusterExperiments();
             hcl_genes = hcl_dialog.isClusterGenes();
+            hcl_function = hcl_dialog.getDistanceMetric();
+            hcl_absolute = hcl_dialog.getAbsoluteSelection();
         }
         
         this.experiment = framework.getData().getExperiment();
@@ -129,13 +133,11 @@ public class QTCGUI implements IClusterGUI, IScriptGUI {
             data.addMatrix("experiment", matrix);
             data.addParam("qtc-cluster-genes", String.valueOf(this.clusterGenes));
             data.addParam("distance-factor", String.valueOf(1.0f));
-            IDistanceMenu menu = framework.getDistanceMenu();
+
+            function = hjc_dialog.getDistanceMetric();            
             data.addParam("use-absolute", String.valueOf(useAbsolute));
-            int function = menu.getDistanceFunction();
-            if (function == Algorithm.DEFAULT) {
-                function = Algorithm.PEARSON;
-            }
             data.addParam("distance-function", String.valueOf(function));
+            
             data.addParam("min-cluster-size", String.valueOf(minimumClusterSize));
             data.addParam("diameter", String.valueOf(diameter));
             // hcl parameters
@@ -144,6 +146,8 @@ public class QTCGUI implements IClusterGUI, IScriptGUI {
                 data.addParam("method-linkage", String.valueOf(hcl_method));
                 data.addParam("calculate-genes", String.valueOf(hcl_genes));
                 data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+                data.addParam("hcl-distance-function", String.valueOf(hcl_function));
+                data.addParam("hcl-distance-absolute", String.valueOf(hcl_absolute));
             }
             
             long start = System.currentTimeMillis();
@@ -204,8 +208,15 @@ public class QTCGUI implements IClusterGUI, IScriptGUI {
         float diameter = 0.2f;
         boolean useAbsolute = false;
         boolean modal = true; //I SET MODAL TO TRUE TO CALL THE QTC DIALOG BOX, HOPE THIS IS OK
+  
+        IDistanceMenu menu = framework.getDistanceMenu();
+        int function = menu.getDistanceFunction();
+        if (function == Algorithm.DEFAULT) {
+            function = Algorithm.PEARSON;
+        }
         
-        QTCInitDialog hjc_dialog = new QTCInitDialog((JFrame) framework.getFrame(), modal);
+        QTCInitDialog hjc_dialog = new QTCInitDialog((JFrame) framework.getFrame(), modal, menu.getFunctionName(function), menu.isAbsoluteDistance());
+  
         hjc_dialog.setVisible(true);
         
         if (! hjc_dialog.isOkPressed()) return null;
@@ -213,21 +224,28 @@ public class QTCGUI implements IClusterGUI, IScriptGUI {
         clusterGenes = hjc_dialog.isClusterGenesSelected();
         minimumClusterSize = Integer.parseInt(hjc_dialog.clusterTextField.getText());
         diameter = Float.parseFloat(hjc_dialog.diameterTextField.getText());
-        useAbsolute = hjc_dialog.useAbsoluteCheckBox.isSelected();
+        useAbsolute = hjc_dialog.isAbsoluteDistance();
         
         boolean isHierarchicalTree = hjc_dialog.isHCLSelected();
         // hcl init
         int hcl_method = 0;
         boolean hcl_samples = false;
         boolean hcl_genes = false;
+        int hcl_function = 4;
+        boolean hcl_absolute = false;
+
         if (isHierarchicalTree) {
-            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame());
+                                                                                                                                        
+            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(hjc_dialog.getDistanceMetric()), hjc_dialog.isAbsoluteDistance(), true);
+ 
             if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
                 return null;
             }
             hcl_method = hcl_dialog.getMethod();
-            hcl_samples = hcl_dialog.isClusterExperience();
+            hcl_samples = hcl_dialog.isClusterExperiments();
             hcl_genes = hcl_dialog.isClusterGenes();
+            hcl_function = hcl_dialog.getDistanceMetric();
+            hcl_absolute = hcl_dialog.getAbsoluteSelection();
         }
         
         this.experiment = framework.getData().getExperiment();
@@ -238,13 +256,11 @@ public class QTCGUI implements IClusterGUI, IScriptGUI {
         
         data.addParam("qtc-cluster-genes", String.valueOf(this.clusterGenes));
         data.addParam("distance-factor", String.valueOf(1.0f));
-        IDistanceMenu menu = framework.getDistanceMenu();
+
+        function = hjc_dialog.getDistanceMetric();
         data.addParam("use-absolute", String.valueOf(useAbsolute));
-        int function = menu.getDistanceFunction();
-        if (function == Algorithm.DEFAULT) {
-            function = Algorithm.PEARSON;
-        }
         data.addParam("distance-function", String.valueOf(function));
+
         data.addParam("min-cluster-size", String.valueOf(minimumClusterSize));
         data.addParam("diameter", String.valueOf(diameter));
         // hcl parameters
@@ -253,6 +269,8 @@ public class QTCGUI implements IClusterGUI, IScriptGUI {
             data.addParam("method-linkage", String.valueOf(hcl_method));
             data.addParam("calculate-genes", String.valueOf(hcl_genes));
             data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+            data.addParam("hcl-distance-function", String.valueOf(hcl_function));
+            data.addParam("hcl-distance-absolute", String.valueOf(hcl_absolute));
         }
         //script control parameters
         
@@ -370,7 +388,7 @@ public class QTCGUI implements IClusterGUI, IScriptGUI {
         if(this.clusterGenes)
             root = new DefaultMutableTreeNode("QTC - genes");
         else
-            root = new DefaultMutableTreeNode("QTC - experiments");
+            root = new DefaultMutableTreeNode("QTC - samples");
         addResultNodes(root, result_cluster, info);
         return root;
     }
@@ -484,7 +502,7 @@ public class QTCGUI implements IClusterGUI, IScriptGUI {
         if(this.clusterGenes)
             node.add(new DefaultMutableTreeNode(new LeafInfo("Genes in Clusters (#,%)", new QTCInfoViewer(this.clusters, this.experiment.getNumberOfGenes()))));
         else
-            node.add(new DefaultMutableTreeNode(new LeafInfo("Experiments in Clusters (#,%)", new QTCInfoViewer(this.clusters, this.experiment.getNumberOfSamples(), false))));
+            node.add(new DefaultMutableTreeNode(new LeafInfo("Samples in Clusters (#,%)", new QTCInfoViewer(this.clusters, this.experiment.getNumberOfSamples(), false))));
         root.add(node);
     }
     

@@ -5,9 +5,9 @@ All rights reserved.
 
 /*
  * $RCSfile: FileTreePane.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-27 22:16:51 $
- * $Author: braisted $
+ * $Revision: 1.4 $
+ * $Date: 2005-02-24 20:23:50 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
@@ -18,13 +18,11 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Toolkit;
-
 import java.io.File;
 import java.util.Hashtable;
-import java.util.Vector;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
-import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -34,16 +32,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeCellRenderer;
@@ -169,6 +164,7 @@ public class FileTreePane extends JPanel {
         }
     }
     
+    /*
     private boolean openPath(DefaultMutableTreeNode root, String dataPath, String sep) {
         this.fPath = dataPath;
         TreePath path = new TreePath(root);
@@ -191,6 +187,90 @@ public class FileTreePane extends JPanel {
                 cumul = i;
                 break;
             }
+        }
+        
+        if(subRoot == null){
+            return false;
+        }
+        
+        path = path.pathByAddingChild(subRoot);
+        //   synchronized(this.m_tree){
+        this.m_tree.expandPath(path);
+        this.m_tree.validate();
+        //   }
+        String nodeName;
+        boolean stop = false;
+        int i;
+        while(!stop && stok.hasMoreTokens()){
+            childCount = subRoot.getChildCount();
+            nodeName = stok.nextToken();
+            for(i = 0; i < childCount; i++){
+                tempNode = (DefaultMutableTreeNode)subRoot.getChildAt(i);
+                tempFileNode = getFileNode(tempNode);
+                if(tempFileNode == null){
+                    stop = true;
+                    break;
+                }
+                if(nodeName.equalsIgnoreCase(tempFileNode.toString())){
+                    buildOffNode(tempFileNode, subRoot);
+                    path = path.pathByAddingChild(tempNode);
+                    this.fPath += tempNode.toString()+sep;
+                    
+                    this.m_tree.expandPath(path);  //****THIS EXPANDs
+                    subRoot = (DefaultMutableTreeNode)subRoot.getChildAt(i);
+                    this.repaint();
+                    break;
+                }
+            }
+            
+        }
+        this.m_tree.makeVisible(path);
+        this.m_tree.scrollPathToVisible(path);
+        this.m_tree.setSelectionPath(path);
+        this.m_tree.validate();
+        
+        return true;
+    }
+    */
+    
+    //from build for Mac
+   private boolean openPath(DefaultMutableTreeNode root, String dataPath, String sep) {
+        this.fPath = dataPath;
+        TreePath path = new TreePath(root);
+        StringTokenizer stok = new StringTokenizer(dataPath, sep);
+        //StringSplitter stok = new StringSplitter(sep.toCharArray()[0]);
+       // stok.init(dataPath);
+        
+        String [] nodes = new String[stok.countTokens()];
+        String drive = stok.nextToken()+sep;
+
+        DefaultMutableTreeNode subRoot = null;
+        int childCount = root.getChildCount();
+
+        DefaultMutableTreeNode tempNode = null;
+        FileNode tempFileNode = null;
+        int cumul = 0;
+        
+        //to handle platforms where drive is specified by "/"  
+        if(!sep.equals("/")) {
+            int driveNum = 0;
+            for(int i = 0; i < childCount; i++){
+                tempNode = (DefaultMutableTreeNode)root.getChildAt(i);
+                tempFileNode = getFileNode(tempNode);
+                if(drive.equalsIgnoreCase(tempFileNode.toString())){
+                    subRoot = (DefaultMutableTreeNode)root.getChildAt(i);
+                    driveNum = i;
+                    cumul = i;
+                    break;
+                }
+            }
+        } else {
+            //mac or linux need to reset stok and set subroot to "/"
+            subRoot = (DefaultMutableTreeNode)root.getChildAt(0);
+            //reset stok to pick up first directory
+            stok = new StringTokenizer(dataPath, sep);
+            //stok = new StringSplitter(sep.toCharArray()[0]);
+            //stok.init(dataPath);
         }
         
         if(subRoot == null){

@@ -4,31 +4,41 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayData.java,v $
- * $Revision: 1.14 $
- * $Date: 2004-07-27 19:56:10 $
- * $Author: braisted $
+ * $Revision: 1.15 $
+ * $Date: 2005-02-24 20:23:44 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev;
 
 import java.awt.Color;
+import java.awt.Frame;
 import java.awt.event.*;
-import java.util.Arrays;
+
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Properties;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
-import java.io.Serializable;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 
 import javax.swing.JOptionPane;
 
 import org.tigr.microarray.util.Adjustment;
 import org.tigr.util.FloatMatrix;
+import org.tigr.util.QSort;
 import org.tigr.microarray.util.SlideDataSorter;
+
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
@@ -42,8 +52,8 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.normalization.IterativeL
 
 import org.tigr.midas.engine.Parameter;
 
-public class MultipleArrayData implements IData, java.io.Serializable {
-   public static final long serialVersionUID = 100010201040001L;
+public class MultipleArrayData implements IData, Serializable {
+   public static final long serialVersionUID = 100010201040002L;
 
     private ArrayList featuresList = new ArrayList();
     private ArrayList indicesList  = new ArrayList(); // array of int[]'s
@@ -64,6 +74,9 @@ public class MultipleArrayData implements IData, java.io.Serializable {
 
     private float percentageCutoff = 0f;
     private boolean usePercentageCutoff = false;
+    
+    private boolean useVarianceFilter = false;
+    private Properties varianceFilterProps;
 
     private float lowerCY3Cutoff = 0f;
     private float lowerCY5Cutoff = 0f;
@@ -86,6 +99,11 @@ public class MultipleArrayData implements IData, java.io.Serializable {
     private int logState = LOG;
 
     private boolean isMedianIntensities = false;
+    
+    //fields for maintaining the 'experiment to use' statu
+    private boolean useMainData = true;
+    private Experiment alternateExperiment = null;
+    
 
     /**
      *  Sets the data objects feature list
@@ -111,6 +129,65 @@ public class MultipleArrayData implements IData, java.io.Serializable {
     }
 
 
+    /**
+     * Sets the main data marker
+     */    
+    public void setUseMainData(boolean useMainDataSelection) {
+        this.useMainData = useMainDataSelection;
+        if(this.useMainData)
+            this.alternateExperiment = null;
+    }
+    
+    /**
+     * Set alternate experiment
+     */
+    public void setAlternateExperiment(Experiment altExperiment) {
+        this.alternateExperiment = altExperiment;
+    }
+    
+    public void constructAndSetAlternateExperiment(Experiment coreExperiment, int [] clusterIndices, int clusterType) {
+        int [] origRowIndices = coreExperiment.getRowMappingArrayCopy();
+        int [] origColIndices = coreExperiment.getColumnIndicesCopy();
+        FloatMatrix coreMatrix = coreExperiment.getMatrix();
+        
+        FloatMatrix newMatrix;
+        int [] newRowIndices;
+        int [] newColIndices;
+        
+        if(clusterType == Cluster.GENE_CLUSTER) {
+            newMatrix = new FloatMatrix(clusterIndices.length, origColIndices.length);
+            newRowIndices = new int[clusterIndices.length];
+            
+            for(int row = 0; row < clusterIndices.length; row++) {
+                for(int col = 0; col < origColIndices.length; col++) {
+                    newMatrix.set(row, col, coreMatrix.get(clusterIndices[row], col));                    
+                }                
+                newRowIndices[row] = origRowIndices[clusterIndices[row]];
+            }
+            
+            alternateExperiment = new Experiment(newMatrix, origColIndices, newRowIndices);
+            this.useMainData = false;
+            
+        } else {
+            
+            newMatrix = new FloatMatrix(origRowIndices.length, clusterIndices.length);
+            newColIndices = new int[clusterIndices.length];
+            int colCount = 0;
+            
+            for(int col = 0; col < clusterIndices.length; col++) {
+                for(int row = 0; row < origRowIndices.length; row++) {
+                    newMatrix.set(row, col, coreMatrix.get(row, clusterIndices[col]));
+                }
+                newColIndices[col] = origColIndices[clusterIndices[col]];
+            }
+            
+            alternateExperiment = new Experiment(newMatrix, newColIndices, origRowIndices);            
+            this.useMainData = false;
+        }
+    
+    }
+    
+    
     /**
      * Returns number of loaded microarrays.
      */
@@ -143,6 +220,15 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         if (isPercentageCutoff()) {
             this.experiment = createExperiment();
         }
+    }
+    
+    public void setVarianceFilter(Properties props) {
+        this.varianceFilterProps = props; 
+        if(props.getProperty("Filter Enabled").equals("true"))
+            this.useVarianceFilter = true;
+        else
+            this.useVarianceFilter = false;            
+        this.experiment = createExperiment();
     }
 
     /**
@@ -270,6 +356,13 @@ public class MultipleArrayData implements IData, java.io.Serializable {
      */
     public boolean isPercentageCutoff() {
         return usePercentageCutoff;
+    }
+       
+    /**
+     * Returns the use percentage cutoff value.
+     */
+    public boolean isVarianceFilter() {
+        return useVarianceFilter;
     }
 
     /**
@@ -399,6 +492,24 @@ public class MultipleArrayData implements IData, java.io.Serializable {
     }
 
 
+        /**
+     * Returns the key vector for the sample with the longest sample name key list
+     */
+    public Vector getSampleAnnotationFieldNames() {
+        Vector keyVector;
+        Vector fullKeyVector = new Vector();
+        String key;
+        for( int i = 0; i < featuresList.size(); i++) {
+            keyVector = ((ISlideData)featuresList.get(i)).getSlideDataKeys();
+            for(int j = 0; j < keyVector.size(); j++) {
+                key = (String)(keyVector.elementAt(j));
+                if(!fullKeyVector.contains(key))
+                    fullKeyVector.addElement(key);
+            }
+        }
+        return fullKeyVector;
+    }
+    
     /**
      * Returns the key vector for the sample with the longest sample name key list
      */
@@ -429,6 +540,184 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         for(int i = 0; i < featuresList.size(); i++) {
             getFeature(i).addNewSampleLabel(key, values[i]);;
         }
+    }
+    
+    public boolean addNewSampleLabels(Frame parent, File file) throws IOException {
+        
+       BufferedReader reader = new BufferedReader(new FileReader(file));
+       String line;
+       int cnt = 0;
+       int sampleCount = this.getFeaturesCount();
+       while ((line = reader.readLine()) != null) {
+           cnt++;
+       }
+       
+       cnt--; //header
+       
+       if(cnt != sampleCount) {
+            JOptionPane.showMessageDialog(parent, "<html>The selected file size (number of rows) does not correspond to the<br>" +
+            "number of loaded samples.  The file should have a single header line and row for each loaded sample containing the samples<br>"+
+            "additional annotation.", "File Format Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+       }
+              
+       reader = new BufferedReader(new FileReader(file));              
+       StringTokenizer stok;
+       
+       boolean firstRead = true;
+       String [] keys = null;
+       String [][] data = null;
+       int fieldCount;
+       int annCnt = 0;    
+       int rowCnt = 0;
+ 
+       while( (line = reader.readLine()) != null) {
+           stok = new StringTokenizer(line, "\t");
+           
+           if(firstRead) {
+               keys = new String[stok.countTokens()];
+               for(int i = 0; i < keys.length; i++) {
+                   keys[i] = stok.nextToken();
+               }
+               
+               fieldCount = keys.length;               
+               data = new String[fieldCount][sampleCount];               
+               firstRead = false;
+               continue;
+           }
+           
+           annCnt = 0;
+           while(stok.hasMoreTokens()) {
+               data[annCnt][rowCnt] = stok.nextToken();
+               annCnt++;
+           }           
+           rowCnt++;
+       }
+       
+       for(int i= 0; i < keys.length; i++) {
+           addNewExperimentLabel(keys[i], data[i]);
+       }
+       
+       return true;
+    }
+    
+    /** Adds new gene annotation present in the annMatrix, Note: annMatrix contains headers with field names
+     */
+    public int addNewGeneAnnotation(String [][] annMatrix, String dataKey, String annFileKey, String [] fieldsToAppend) {
+
+        int updateCount = 0;
+
+        //get annFile key column number
+        int keyCol;
+        for(keyCol = 0; keyCol < annMatrix[0].length; keyCol++){
+            if(annMatrix[0][keyCol].equals(annFileKey))
+                break;
+        }
+
+
+        if(keyCol > annMatrix[0].length)
+            return updateCount;
+      
+        //get current field index for datakey
+        String [] fieldNames = getFieldNames();
+        int dataKeyCol = -1;
+        if(!dataKey.equals("UID")) {
+            for(dataKeyCol = 0; dataKeyCol < fieldNames.length; dataKeyCol++) {
+                if(dataKey.equals(fieldNames[dataKeyCol]))
+                    break;
+            }
+        }
+        
+        if(dataKeyCol > fieldNames.length)
+            return updateCount;
+
+        
+            /*
+             *  Probably want to make the hash contain only fields that are 
+             *  specified, maybe pass in String [] fieldsToAppend             
+             */
+                        
+        //build hash of annFileKeys and String [] rows
+        Hashtable annotationHash = new Hashtable();
+        
+        // appending all annotation fields
+        if(fieldsToAppend.length == annMatrix[0].length) {            
+            for(int row = 1; row < annMatrix.length; row++) {
+                annotationHash.put(annMatrix[row][keyCol], annMatrix[row]);
+            }
+        } else {
+        
+            //Just build a hash with selected fields
+            Vector testVector = new Vector();
+            
+            for(int i = 0; i < fieldsToAppend.length;i++)
+                testVector.add(fieldsToAppend[i]);
+            
+            int subsetIndex = 0;
+            String [] annSubset;
+            for(int row = 1; row < annMatrix.length; row++) {
+                subsetIndex = 0;
+    
+                annSubset = new String[fieldsToAppend.length];
+                
+                for(int fieldIndex = 0; fieldIndex < annMatrix[0].length; fieldIndex++)
+                    if(testVector.contains(annMatrix[0][fieldIndex])) {
+                        annSubset[subsetIndex] = annMatrix[row][fieldIndex];
+                        subsetIndex++;
+                    }
+                
+                annotationHash.put(annMatrix[row][keyCol], annSubset);
+            }            
+        }
+        
+        
+        //loop through IData to get ISlideDataElements, get dataKey, get values from hash to apppend to sde
+        //if hash returns null append "" for each field.
+        ISlideData slideData = (ISlideData)getSlideMetaData();
+        int rows = getFeaturesSize();
+        ISlideDataElement sde;
+        String dataID = "";
+        String [] newFields;
+        
+        //check for id matches, and count updates
+        for(int row = 0; row < rows; row++) {
+            //get sde
+            sde = slideData.getSlideDataElement(row);
+            
+            //get the data key
+            if(dataKeyCol == -1) //use UID
+                dataID = sde.getUID();
+            else
+                dataID = sde.getFieldAt(dataKeyCol);
+                
+            if(annotationHash.containsKey(dataID))
+                updateCount++;
+        }
+
+        if(updateCount > 0) {
+            for(int row = 0; row < rows; row++) {
+                //get sde
+                sde = slideData.getSlideDataElement(row);
+                
+                //get the data key
+                if(dataKeyCol == -1) //use UID
+                    dataID = sde.getUID();
+                else
+                    dataID = sde.getFieldAt(dataKeyCol);
+                
+                
+                newFields = (String []) annotationHash.get(dataID);
+                
+                if(newFields != null) {
+                    sde.setExtraFields(newFields);
+                    updateCount++;
+                } else {
+                    sde.setExtraFields(new String[annMatrix[0].length]);
+                }
+            }
+        }
+        
+        return updateCount;
     }
 
 
@@ -1039,7 +1328,7 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         int[] probes = null;
 
         // pcahan affy detection filter or fold filter
-        if ((isLowerCutoffs() || isPercentageCutoff()) || ( (TMEV.getDataType() == TMEV.DATA_TYPE_AFFY) && (isDetectionFilter() || isFoldFilter())) ) {
+        if ((isLowerCutoffs() || isPercentageCutoff()) || isVarianceFilter() || ( (TMEV.getDataType() == TMEV.DATA_TYPE_AFFY) && (isDetectionFilter() || isFoldFilter())) ) {
             //features = createCutoffFeatures(featuresSize, probesSize);
             probes = createCutoffGeneList(featuresSize, probesSize);
             experiment = createExperiment(featuresSize, probes);
@@ -1175,6 +1464,9 @@ public class MultipleArrayData implements IData, java.io.Serializable {
     }
      *
      */
+    
+    
+    
 
     //modified from original above ( by pcahan)
 
@@ -1184,6 +1476,7 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         ArrayList list = new ArrayList();
         boolean lowerCutoffCriterion = true;
         boolean percentageCutoffCriterion = true;
+        boolean varianceFilterCutoffCriterion = true;
         boolean detectionCriterion = true;
         boolean foldCriterion = true;
 
@@ -1194,7 +1487,7 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         for (int i = 0; i < slideData.length; i++) {
             slideData[i] = getFeature(i);
         }
-
+        
         // iterate over each gene
         for (int probe = 0; probe < probesSize; probe++) {
 
@@ -1240,7 +1533,11 @@ public class MultipleArrayData implements IData, java.io.Serializable {
                 }
 
             }
-
+            
+        /*    if(isVarianceFilter()) {
+                varianceCriterion = retainBasedOnSD;
+            }
+        */
             // pcahan
             if (isDetectionFilter()){
                 detectionCriterion = detectionFilter.keep_gene(detection);
@@ -1255,6 +1552,16 @@ public class MultipleArrayData implements IData, java.io.Serializable {
             }
         }
 
+         
+        //handle variance cuttoffs after other cutoffs, 
+        
+        boolean [] retainBasedOnSD = null;
+
+        if(isVarianceFilter()) {
+            //generate a new list now applying var. filter
+            list = imposeVarianceFilter(list);                
+        }        
+        
         int[] retainedProbes = new int[list.size()];
         for (int i = 0; i < retainedProbes.length; i++) {
             retainedProbes[i] = ((Integer)list.get(i)).intValue();
@@ -1263,7 +1570,104 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         return retainedProbes;
     }
 
+    
+    /**
+     * Determines which genes pass the variance filter
+     */
+    private float [] getStandardDeviations() {
+        int numGenes = this.getFeaturesSize();
+        int numSamples = this.getFeaturesCount();
+        float [] vars = new float[numGenes];
+        
+        float val;
+        int validN;
+        float sum;
+        float sse;
+        float mean;
 
+        float [] sds = new float[numGenes];
+        boolean [] retentionList = new boolean[numGenes];
+        
+        for(int i = 0; i < numGenes; i++) {
+
+            validN = 0;
+            sum = 0;
+            sse = 0;
+            
+            for(int j = 0; j < numSamples; j++) {
+                val = this.getRatio(j,i,this.logState);
+                if(!Float.isNaN(val)) {
+                    sum += val;
+                    validN++;
+                }
+            }
+            
+            if(validN > 0) {
+               mean = sum/validN++;
+               //System.out.println("mean = "+mean);
+            } else {                
+                sds[i] = -1; //marker for a gene with no values
+                continue;
+            }
+            
+            for(int j = 0; j < numSamples; j++) {
+                val = this.getRatio(j,i,this.logState);
+                if(!Float.isNaN(val)) {
+                    sse += Math.pow(val - mean,2.0);
+                }
+            }            
+            if(validN > 0)
+                sds[i] =(float)Math.sqrt(sse/validN);          
+            else
+                sds[i] = 0;
+        }        
+        return sds;
+    }
+    
+ 
+    
+    public ArrayList imposeVarianceFilter( ArrayList listOfIndices) {
+
+        String mode = varianceFilterProps.getProperty("Filter Mode");
+        float [] sds = getStandardDeviations();
+        boolean [] retentionList = new boolean[sds.length];
+
+        ArrayList newList = new ArrayList();
+        
+        if(mode.equals("sd value mode")) { //cutoff = hard
+            float sdCut = Float.parseFloat(varianceFilterProps.getProperty("Value"));
+            for(int i = 0; i < sds.length; i++) {
+                if(sds[i] >= sdCut && listOfIndices.contains(new Integer(i)))
+                    newList.add(new Integer(i));
+            }            
+        } else if(mode.equals("percent mode")) { //top x percent
+            float percent = Float.parseFloat(varianceFilterProps.getProperty("Value"));            
+            QSort sorter = new QSort(sds);
+            float [] sortedSDs = sorter.getSorted();
+            int [] origOrder = sorter.getOrigIndx();
+            int targetSize = (int)(listOfIndices.size()*(percent/100f));
+            
+            for(int i = origOrder.length-1; i >= 0 && newList.size() < targetSize; i--) {
+                if(listOfIndices.contains(new Integer(origOrder[i])))
+                    newList.add(new Integer(origOrder[i]));
+            }
+            
+        } else {
+            int targetSize = Integer.parseInt(varianceFilterProps.getProperty("Value"));
+            QSort sorter = new QSort(sds);
+            float [] sortedSDs = sorter.getSorted();
+            int [] origOrder = sorter.getOrigIndx();
+            
+            for(int i = origOrder.length-1; i >= 0 && newList.size() < targetSize; i--) {
+                if(listOfIndices.contains(new Integer(origOrder[i])))
+                    newList.add(new Integer(origOrder[i]));
+            }
+        }
+        
+        return newList;
+    }
+
+    
     /**
      * @param indices the indices of used experiments.
      */
@@ -1428,11 +1832,11 @@ public class MultipleArrayData implements IData, java.io.Serializable {
                 name = this.getSampleName(slideIndex);
                 if(name.endsWith("...")){
                     toggleExptNameLength();
-                    slideData.setSlideDataLabels(this.getFeature(slide).getSlideDataKeys(), this.getFeature(slide).getSlideDataLabels());
+                    slideData.setSlideDataLabels(this.getFeature(slideIndex).getSlideDataKeys(), this.getFeature(slideIndex).getSlideDataLabels());
                     ((SlideData) slideData).setSlideFileName(this.getSampleName(slideIndex));
                     toggleExptNameLength();
                 } else{
-                    slideData.setSlideDataLabels(this.getFeature(slide).getSlideDataKeys(), this.getFeature(slide).getSlideDataLabels());
+                    slideData.setSlideDataLabels(this.getFeature(slideIndex).getSlideDataKeys(), this.getFeature(slideIndex).getSlideDataLabels());
                     ((SlideData) slideData).setSlideFileName(this.getSampleName(slideIndex));
                 }
 
@@ -1442,18 +1846,18 @@ public class MultipleArrayData implements IData, java.io.Serializable {
                 }
                 metaData = (ISlideMetaData)slideData;
 
-            } else{
+            } else {
                 slideData = new FloatSlideData(metaData);
                 ((FloatSlideData) slideData).createCurrentIntensityArrays();
 
                 name = this.getSampleName(slideIndex);
                 if(name.endsWith("...")){
                     toggleExptNameLength();
-                    slideData.setSlideDataLabels(this.getFeature(slide).getSlideDataKeys(), this.getFeature(slide).getSlideDataLabels());
+                    slideData.setSlideDataLabels(this.getFeature(slideIndex).getSlideDataKeys(), this.getFeature(slideIndex).getSlideDataLabels());
                     ((FloatSlideData) slideData).setSlideFileName(this.getSampleName(slideIndex));
                     toggleExptNameLength();
                 } else{
-                    slideData.setSlideDataLabels(this.getFeature(slide).getSlideDataKeys(), this.getFeature(slide).getSlideDataLabels());
+                    slideData.setSlideDataLabels(this.getFeature(slideIndex).getSlideDataKeys(), this.getFeature(slideIndex).getSlideDataLabels());
                     ((FloatSlideData) slideData).setSlideFileName(this.getSampleName(slideIndex));
                 }
                 for(int spot = 0; spot < rowIndices.length; spot++){
@@ -1539,10 +1943,23 @@ public class MultipleArrayData implements IData, java.io.Serializable {
     /**
      * Returns ratio values of the data.
      */
-    public Experiment getExperiment() {
+    public Experiment getFullExperiment() {
+        int featuresSize = this.getFeaturesCount();
+        int probesSize = this.getFeaturesSize();        
+        int []  features = createDefaultFeatures(featuresSize, probesSize);
+        Experiment experiment = createExperiment(features, probesSize);        
         return experiment;
     }
-
+    
+    /**
+     * Returns ratio values of the data.
+     */
+    public Experiment getExperiment() {
+        if(useMainData)
+            return experiment;
+        return alternateExperiment;
+    }
+    
     private void setMaxCY3(float value) {this.maxCy3 = value;}
     private void setMaxCY5(float value) {this.maxCy5 = value;}
     public float getMaxCY3() {return this.maxCy3;}
@@ -1653,6 +2070,163 @@ public class MultipleArrayData implements IData, java.io.Serializable {
             this.experiment = createExperiment();
     }
 
+    /** Returns gene or sample indices related to search terms.
+     */
+    public int [] search(AlgorithmData criteria) {
+        AlgorithmParameters params = criteria.getParams();
+        boolean geneSearch = params.getBoolean("gene-search");
+        boolean caseSens = params.getBoolean("case-sensitive");
+        boolean fullTerm = params.getBoolean("full-term");
+        String searchTerm = params.getString("search-term");
+        String upperSearchString = searchTerm.toUpperCase();
+        String [] fields = criteria.getStringArray("field-names");
+        String annot;
+        String [] fullFieldNames;
+        boolean hit = false;        
+        int n;
+        //need to find indices of fields to check.
+        //the input fields should be in order
+        Vector fieldIndices = new Vector();
+        
+        Vector indexVector = new Vector();
+        
+        int [] indices;
+        
+       
+        
+        Hashtable keys = new Hashtable();
+        
+        if(getFeaturesCount() < 1 || getFeaturesSize() < 1)
+            return new int[0]; //empty result
+        
+        if(geneSearch) {
+        
+            fullFieldNames = this.getFieldNames();
+                    
+            for(int i = 0; i < fields.length; i++) {
+                for(int j = 0; j < fullFieldNames.length; j++) {
+                    if(fields[i].equals(fullFieldNames[j])) {
+                        fieldIndices.addElement(new Integer(j));
+                        break;
+                    }
+                }        
+            } 
+    
+            n = getFeaturesSize();
+            ISlideDataElement sde;
+            ISlideData slide = this.getFeature(0);
+            int annotIndex;            
+            for(int i = 0; i < n; i++) {
+                hit = false;
+                for(int j = 0; j < fieldIndices.size(); j++) {
+                    annotIndex = ((Integer)fieldIndices.elementAt(j)).intValue();
+                    annot = getElementAttribute(i, annotIndex);
+                    
+                    if(fullTerm) {
+                        if(caseSens) {
+                            if(annot.equals(searchTerm)) {
+                                hit = true;
+                              //  break;
+                            }
+                        } else {
+                            if(annot.equalsIgnoreCase(searchTerm)) {
+                                hit = true;
+                              break;
+                            }                            
+                        }
+                        
+                    } else {  //able to look within a term
+                       
+                        if(caseSens) {                                                              
+                            if(annot.indexOf(searchTerm) != -1) {
+                                hit = true;
+                                break;
+                            }                  
+                        } else {
+                            if((annot.toUpperCase()).indexOf(upperSearchString) != -1) {
+                                hit = true;
+                               break;
+                            } 
+                            
+                        }                           
+                         
+                    }
+                    
+          
+                    
+                }
+                if(hit == true) {
+                    indexVector.addElement(new Integer(i));
+                }
+            }
+            
+           
+            indices = new int[indexVector.size()];
+ 
+            for(int i = 0; i < indices.length; i++) {
+                indices[i] = ((Integer)(indexVector.elementAt(i))).intValue();
+            }
+            
+            //Sample search
+        } else { 
+            
+            n = getFeaturesCount();
+            Hashtable sampleNameHash;
+            
+            
+            for(int i = 0; i < n; i++) {
+                hit = false;
+                sampleNameHash = this.getFeature(i).getSlideDataLabels();
+                
+                for(int j = 0; j < fields.length; j++) {
+                      annot = (String)(sampleNameHash.get(fields[j]));
+                      if(annot == null)
+                          continue;
+                    
+                    if(fullTerm) {
+                        if(caseSens) {
+                            if(annot.equals(searchTerm)) {
+                                hit = true;
+                                break;
+                            }
+                        } else {
+                            if(annot.equalsIgnoreCase(searchTerm)) {
+                                hit = true;
+                                break;
+                            }                            
+                        }
+                        
+                    } else {  //able to look within a term
+                       
+                        if(caseSens) {                                                              
+                            if(annot.indexOf(searchTerm) != -1) {
+                                hit = true;
+                                break;
+                            }                  
+                        } else {
+                            if((annot.toUpperCase()).indexOf(upperSearchString) != -1) {
+                                hit = true;
+                                break;
+                            } 
+                            
+                        }                           
+                         
+                    }
+                }
+                 if(hit == true) {
+                        indexVector.addElement(new Integer(i));
+                    }
+            }
+                        
+            indices = new int[indexVector.size()];
+            
+            for(int i = 0; i < indices.length; i++) {
+                indices[i] = ((Integer)(indexVector.elementAt(i))).intValue();
+            }
+        }
+       return indices; 
+    }
+    
     /** Returns an annotation array for the provided indices based on annotation key
      */
     public String[] getAnnotationList(String fieldName, int[] indices) {
@@ -1702,9 +2276,14 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         oos.writeBoolean(useLowerCutoffs);
 
         oos.writeBoolean(isMedianIntensities);
+        
+        oos.writeBoolean(useMainData);
+        
+        if(!useMainData)
+            oos.writeObject(alternateExperiment);
 
         // pcahan
-        if(dataType !=  this.DATA_TYPE_TWO_INTENSITY){
+        if(dataType !=  IData.DATA_TYPE_TWO_INTENSITY){
 
             oos.writeBoolean(this.getdfSet());
             oos.writeBoolean(this.getffSet());
@@ -1769,7 +2348,12 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         //    private boolean normalizationAbort = false;
 
         // pcahan
-        if(dataType !=  this.DATA_TYPE_TWO_INTENSITY){
+        
+        useMainData = ois.readBoolean();
+        if(!useMainData)
+            alternateExperiment = (Experiment)ois.readObject();
+                
+        if(dataType !=  IData.DATA_TYPE_TWO_INTENSITY) {
 
             dfSet = ois.readBoolean();
             ffSet = ois.readBoolean();
@@ -1789,6 +2373,11 @@ public class MultipleArrayData implements IData, java.io.Serializable {
         //private ClusterRepository expClusterRepository;
     }
 
+    /** Returns the slected sample annotation
+     */
+    public String getSampleAnnotation(int column, String key) {
+        return (String)(this.getFeature(column).getSlideDataLabels().get(key));
+    }    
 
 
 }

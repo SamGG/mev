@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: KNNCCentroidsViewer.java,v $
- * $Revision: 1.1 $
- * $Date: 2003-12-08 17:51:09 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:50 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 /*
@@ -17,7 +17,6 @@ All rights reserved.
 
 package org.tigr.microarray.mev.cluster.gui.impl.knnc;
 
-import java.awt.Color;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

@@ -4,26 +4,39 @@ All rights reserved.
 */
 /*
  * $RCSfile: SlideDataElement.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-07-27 19:56:10 $
- * $Author: braisted $
+ * $Revision: 1.6 $
+ * $Date: 2005-02-24 20:23:44 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
-import java.util.Hashtable;
 import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.util.Xcon;
+
 
 public class SlideDataElement extends ArrayElement implements ISlideDataElement, java.io.Serializable {
     public static final long serialVersionUID = 100010201130001L;
     
+    protected String UID;
     protected int[] rows;
     protected int[] columns;
     protected float[] currentIntensity, trueIntensity;
     protected String[] extraFields;
     protected boolean isNull = false;
     protected boolean isNonZero = true;
+    
+    /**
+     * Constructs a <code>SlideDataElement</code> with specified meta rows,
+     * meta columns, intensities and descriptions.
+     */
+    public SlideDataElement(String UID, int[] rows, int[] columns, float[] intensities, String[] values) {
+        this.UID = UID;
+        this.rows = copyArray(rows);
+        this.columns = copyArray(columns);
+        this.currentIntensity = copyArray(intensities);
+        this.trueIntensity = copyArray(intensities);
+        this.extraFields = copyArray(values);
+    }
     
     /**
      * Constructs a <code>SlideDataElement</code> with specified meta rows,
@@ -41,6 +54,7 @@ public class SlideDataElement extends ArrayElement implements ISlideDataElement,
      * Copy constructor.
      */
     public SlideDataElement(ISlideDataElement sde) {
+        this.UID = sde.getUID();
         this.rows = sde.getRows();
         this.columns = sde.getColumns();
         this.currentIntensity = copyArray(sde.getCurrentIntensity());
@@ -403,4 +417,17 @@ public class SlideDataElement extends ArrayElement implements ISlideDataElement,
     public String toString() {
         return "SDE " + getRow(BASE) + ", " + getColumn(BASE);
     }
+    
+    /** Sets the UID field
+     */
+    public void setUID(String uid) {
+        this.UID = uid;
+    }
+    
+    /** Returns the UID field
+     */
+    public String getUID() {
+        return this.UID;
+    }
+    
 }

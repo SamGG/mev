@@ -1,12 +1,12 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: ExperimentClusterHeader.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-05 22:53:06 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2005-02-24 20:24:07 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.helpers;
@@ -18,7 +18,6 @@ import java.awt.Graphics;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.FontMetrics;
-import java.awt.GradientPaint;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
@@ -29,7 +28,6 @@ import java.io.ObjectOutputStream;
 import javax.swing.JPanel;
 import javax.swing.JComponent;
 
-import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 
@@ -53,6 +51,8 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
     private BufferedImage posColorImage;
     
     private Insets insets = new Insets(0, 10, 0, 0);
+    
+    private boolean useDoubleGradient = true;
     
     
     /**
@@ -106,6 +106,10 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
     
     public void setClusterIndex(int index){
         this.clusterIndex = index;
+    }
+    
+    public void setUseDoubleGradient(boolean useDouble) {
+        useDoubleGradient = useDouble;
     }
     
     /**
@@ -227,9 +231,12 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
         int width = samples*elementWidth;
         if(this.hasCentroid)
             width += this.elementWidth + 5;
-        
-        g.drawImage(this.negColorImage, insets.left, 0, (int)(width/2f), RECT_HEIGHT, null);
-        g.drawImage(this.posColorImage, (int)((width/2f)+insets.left), 0, (int)(width/2f), RECT_HEIGHT, null);
+        if(useDoubleGradient) {
+        	g.drawImage(this.negColorImage, insets.left, 0, (int)(width/2f), RECT_HEIGHT, null);
+        	g.drawImage(this.posColorImage, (int)((width/2f)+insets.left), 0, (int)(width/2f), RECT_HEIGHT, null);
+        } else {
+	        g.drawImage(this.posColorImage, insets.left, 0, width, RECT_HEIGHT, null);        	        
+        }
         
         FontMetrics hfm = g.getFontMetrics();
         int descent = hfm.getDescent();
@@ -238,8 +245,9 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
 
         int textWidth;
         g.drawString(String.valueOf(this.maxValue), insets.left, RECT_HEIGHT+fHeight);
-        textWidth = hfm.stringWidth("1:1");
-        g.drawString("1:1", (int)((width+insets.left)/2f)-textWidth/2, RECT_HEIGHT+fHeight);
+        textWidth = hfm.stringWidth("0.0");
+        if(useDoubleGradient)
+        	g.drawString("0.0", (int)((width+insets.left)/2f)-textWidth/2, RECT_HEIGHT+fHeight);
         textWidth = hfm.stringWidth(String.valueOf(this.minValue));
         g.drawString(String.valueOf(this.minValue), (width-textWidth)+insets.left, RECT_HEIGHT+fHeight);
 

@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASEInitDialog.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-07-27 19:59:16 $
- * $Author: braisted $
+ * $Revision: 1.7 $
+ * $Date: 2005-02-24 20:24:11 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 /*
@@ -23,11 +23,9 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.BorderLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.Dimension;
-import java.awt.event.KeyEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
@@ -46,12 +44,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JButton;
-import javax.swing.UIManager;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
@@ -60,26 +55,23 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.border.BevelBorder;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.tigr.microarray.mev.TMEV;
+
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterBrowser;
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;
 
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
-
-import org.tigr.microarray.mev.TMEV;
-
 
 /** Accumulates parameters for execution of
  * EASE analysis.
@@ -91,6 +83,7 @@ public class EASEInitDialog extends AlgorithmDialog {
      */
     private int result = JOptionPane.CANCEL_OPTION;
     
+    ConfigPanel configPanel;
     ModePanel modePanel;
     PopSelectionPanel popPanel;
     ClusterBrowser browser;
@@ -108,7 +101,7 @@ public class EASEInitDialog extends AlgorithmDialog {
      * @param annotationLabels Annotation types
      */
     public EASEInitDialog(Frame parent, ClusterRepository repository, String [] annotationLabels) {
-        super(new JFrame(), "EASE: EASE Annotation Analysis", true);
+        super(parent, "EASE: EASE Annotation Analysis", true);
         this.parent = parent;
         font = new Font("Dialog", Font.BOLD, 12);
         listener = new EventListener();
@@ -116,6 +109,9 @@ public class EASEInitDialog extends AlgorithmDialog {
         
         //Tabbed pane creation
         tabbedPane = new JTabbedPane();
+        
+        //config panel        
+        configPanel = new ConfigPanel();        
         
         JPanel popNClusterPanel = new JPanel(new GridBagLayout());
         popNClusterPanel.setBackground(Color.white);
@@ -138,8 +134,9 @@ public class EASEInitDialog extends AlgorithmDialog {
         //mode panel
         modePanel = new ModePanel(!(repository == null || repository.isEmpty()));
         
-        parameters.add(modePanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-        parameters.add(tabbedPane, new GridBagConstraints(0,1,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        parameters.add(configPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));       
+        parameters.add(modePanel, new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        parameters.add(tabbedPane, new GridBagConstraints(0,2,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         
         addContent(parameters);
         setActionListeners(listener);
@@ -155,7 +152,7 @@ public class EASEInitDialog extends AlgorithmDialog {
             tabbedPane.setSelectedIndex(1);
         }
         
-        this.setSize(570,650);
+        this.setSize(570,750);
     }
     
         /** Creates a new instance of EaseInitDialog
@@ -164,7 +161,7 @@ public class EASEInitDialog extends AlgorithmDialog {
      * @param annotationLabels Annotation types
      */
     public EASEInitDialog(Frame parent, String [] annotationLabels) {
-        super(new JFrame(), "EASE: EASE Annotation Analysis", true);
+        super(parent, "EASE: EASE Annotation Analysis", true);
         this.parent = parent;
         font = new Font("Dialog", Font.BOLD, 12);
         listener = new EventListener();
@@ -172,6 +169,9 @@ public class EASEInitDialog extends AlgorithmDialog {
         
         //Tabbed pane creation
         tabbedPane = new JTabbedPane();
+        
+        //config panel        
+        configPanel = new ConfigPanel();        
         
         JPanel popNClusterPanel = new JPanel(new GridBagLayout());
         popNClusterPanel.setBackground(Color.white);
@@ -201,13 +201,14 @@ public class EASEInitDialog extends AlgorithmDialog {
         
         JPanel parameters = new JPanel(new GridBagLayout());
         parameters.setBackground(Color.white);
-        
+            
         //mode panel
         modePanel = new ModePanel(true);
         
-        parameters.add(modePanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-        parameters.add(tabbedPane, new GridBagConstraints(0,1,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-        
+        parameters.add(configPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));       
+        parameters.add(modePanel, new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        parameters.add(tabbedPane, new GridBagConstraints(0,2,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+       
         addContent(parameters);
         setActionListeners(listener);
         
@@ -222,7 +223,7 @@ public class EASEInitDialog extends AlgorithmDialog {
             tabbedPane.setSelectedIndex(1);
         }
         */
-        this.setSize(570,650);
+        this.setSize(570,750);
     }
     
     /** Shows the dialog.
@@ -281,6 +282,12 @@ public class EASEInitDialog extends AlgorithmDialog {
         } catch (NumberFormatException e) {
             return 0;
         }
+    }
+    
+    /** Returns the base file location for EASE file system
+     */
+    public String getBaseFileLocation() {
+        return configPanel.getBaseFileLocation();
     }
     
     /** Returns the annotation key type.
@@ -496,9 +503,7 @@ public class EASEInitDialog extends AlgorithmDialog {
         
         private String getPopFile() {
             return popField.getText();
-        }
-        
-        
+        }        
     }
     
     
@@ -588,7 +593,7 @@ public class EASEInitDialog extends AlgorithmDialog {
             annPanel.add(annPane, new GridBagConstraints(1,1,2,1,0.0,1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
             
             sep = System.getProperty("file.separator");
-            File file = TMEV.getFile("data/ease/");
+            File file = new File(getBaseFileLocation()+"/Data/Convert/");
             String tempPath = file.getPath();
             Vector fileVector = new Vector();
             fileList = new JList(fileVector);
@@ -612,8 +617,6 @@ public class EASEInitDialog extends AlgorithmDialog {
             
             JPanel contentPanel = new JPanel(new GridBagLayout());
             
-            //Content Panels
-            //Ease File Panel
             JPanel easeFilePanel = new JPanel(new GridBagLayout());
             
             this.setLayout(new GridBagLayout());
@@ -892,6 +895,53 @@ public class EASEInitDialog extends AlgorithmDialog {
         }
     }
     
+    private class ConfigPanel extends ParameterPanel {
+
+        JTextField defaultFileBaseLocation;
+        
+        public ConfigPanel() {
+            super("File Updates and Configuration");
+            setLayout(new GridBagLayout());
+            
+            JButton updateFilesButton = new JButton("Update EASE File System");
+            updateFilesButton.setActionCommand("update-files-command");
+            updateFilesButton.setFocusPainted(false);
+            updateFilesButton.addActionListener(listener);
+            updateFilesButton.setToolTipText("<html>Downloads EASE annotation files<br>for a selected species and array type.</html>");
+            JButton browseFileBaseButton = new JButton("Select EASE File System");
+            browseFileBaseButton.setActionCommand("select-file-base-command");
+            browseFileBaseButton.setFocusPainted(false);
+            browseFileBaseButton.addActionListener(listener);
+            browseFileBaseButton.setToolTipText("<html>Helps select the EASE annotation file system<br>that corresponds the current species and array type.</html>");
+            defaultFileBaseLocation = new JTextField(TMEV.getFile("data/ease").getAbsolutePath(), 25);
+            defaultFileBaseLocation.setEditable(true);
+            
+            add(browseFileBaseButton, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,0,5,0), 0, 0));
+            add(defaultFileBaseLocation,  new GridBagConstraints(1,0,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,5,5,0), 0, 0));            
+            add(updateFilesButton, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0, 0));                               
+        }
+        
+        public void selectFileSystem() {
+            String startDir = defaultFileBaseLocation.getText();
+            File file = new File(startDir);
+            if(!file.exists()) {                
+                file = TMEV.getFile("data/ease");
+                if(file == null) {
+                    file = new File(System.getProperty("user.dir"));
+                }
+            }
+            JFileChooser chooser = new JFileChooser(file);
+            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            if(chooser.showOpenDialog(EASEInitDialog.this) == JOptionPane.OK_OPTION) {
+                defaultFileBaseLocation.setText(chooser.getSelectedFile().getAbsolutePath());
+            }
+        }
+        
+        public String getBaseFileLocation() {
+            return defaultFileBaseLocation.getText();
+        }
+    }
+    
     /**
      * The class to listen to the dialog and check boxes items events.
      */
@@ -912,7 +962,7 @@ public class EASEInitDialog extends AlgorithmDialog {
                     easeParamPanel.fileLabel.setEnabled(false);
                 }
             } else if (command.equals("converter-file-browser-command")){
-                File convertFile = TMEV.getFile("data/ease/Data/Convert");
+                File convertFile = new File(getBaseFileLocation()+"/Data/Convert");
                 JFileChooser chooser = new JFileChooser(convertFile);
                 chooser.setDialogTitle("Annotation Converter Selection");
                 chooser.setMultiSelectionEnabled(false);
@@ -922,7 +972,7 @@ public class EASEInitDialog extends AlgorithmDialog {
                 return;
             } else if (command.equals("ann-file-browser-command")){
                 
-                File classFile = TMEV.getFile("data/ease/Data/Class/");
+                File classFile = new File(getBaseFileLocation()+"/Data/Class/");
                 JFileChooser chooser = new JFileChooser(classFile);
                 chooser.setDialogTitle("Annotation --> GO Term, File(s) Selection");
                 chooser.setMultiSelectionEnabled(true);
@@ -933,10 +983,15 @@ public class EASEInitDialog extends AlgorithmDialog {
                 }
             } else if (command.equals("remove-ann-file-command")){
                 easeParamPanel.removeSelectedFiles();
-            }else if (command.equals("permutation-analysis-command")){
+            } else if (command.equals("permutation-analysis-command")){
                 alphaPanel.setEnablePermutations();
             } else if (command.equals("trim-result-command")){
                 alphaPanel.validateTrimOptions();
+            } else if (command.equals("select-file-base-command")) {
+                configPanel.selectFileSystem();
+            } else if (command.equals("update-files-command")) {
+                EASEUpdateManager manager = new EASEUpdateManager((JFrame)parent);
+                manager.updateFiles();
             } else if (command.equals("ok-command")) {
                 result = JOptionPane.OK_OPTION;
                 if(isClusterModeSelected() && popPanel.fileButton.isSelected()) {
@@ -969,8 +1024,7 @@ public class EASEInitDialog extends AlgorithmDialog {
                         easeParamPanel.browserButton.grabFocus();
                         return;
                     }
-                }
-                
+                }                
                 dispose();
             } else if (command.equals("cancel-command")) {
                 result = JOptionPane.CANCEL_OPTION;
@@ -983,7 +1037,7 @@ public class EASEInitDialog extends AlgorithmDialog {
                 HelpWindow hw = new HelpWindow(EASEInitDialog.this, "EASE Initialization Dialog");
                 result = JOptionPane.CANCEL_OPTION;
                 if(hw.getWindowContent()){
-                    hw.setSize(450,600);
+                    hw.setSize(600,600);
                     hw.setLocation();
                     hw.show();
                 }

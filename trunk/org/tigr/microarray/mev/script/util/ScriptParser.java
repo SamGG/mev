@@ -10,25 +10,19 @@ All rights reserved.
 
 package org.tigr.microarray.mev.script.util;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.Writer;
 
-//Dom imports
-import org.w3c.dom.Attr;
+import org.apache.xerces.parsers.DOMParser;
 import org.w3c.dom.Document;
-import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Element;
-import org.w3c.dom.Text;
-
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.traversal.DocumentTraversal;
 import org.w3c.dom.traversal.NodeFilter;
 import org.w3c.dom.traversal.NodeIterator;
 
-//Parser Import
-import org.apache.xerces.dom.DOMImplementationImpl;
-
-import org.apache.xerces.parsers.DOMParser;
 /**
  *
  * @author  braisted
@@ -135,10 +129,6 @@ public class ScriptParser {
                 break;
             case Node.TEXT_NODE:
                 writer.write(node.getNodeValue());
-               // name = node.getNodeName();
-               //// String text = node.getNodeValue();
-               // writer.write(indentLevel + "<" + name + ">" + text + "<\\" + name +">");
-               // writer.write(lineSeparator);
                 break;
             case Node.COMMENT_NODE:
                 break;

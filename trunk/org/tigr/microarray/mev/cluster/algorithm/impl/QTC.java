@@ -10,11 +10,11 @@ All rights reserved.
 
  * $RCSfile: QTC.java,v $
 
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
 
- * $Date: 2004-04-12 20:29:54 $
+ * $Date: 2005-02-24 20:23:46 $
 
- * $Author: braisted $
+ * $Author: braistedj $
 
  * $State: Exp $
 
@@ -25,74 +25,44 @@ package org.tigr.microarray.mev.cluster.algorithm.impl;
 
 
 import java.awt.BorderLayout;
-
-import java.awt.event.*;
-
-import java.util.Random;
-
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Vector;
 
 import javax.swing.JButton;
-
 import javax.swing.JFrame;
-
 import javax.swing.JPanel;
 
-
-
-import org.tigr.util.ConfMap;
-
-import org.tigr.util.FloatMatrix;
-
-import org.tigr.util.awt.ProgressDialog;
-
-
-
-import org.tigr.microarray.mev.cluster.Node;
-
 import org.tigr.microarray.mev.cluster.Cluster;
-
+import org.tigr.microarray.mev.cluster.Node;
 import org.tigr.microarray.mev.cluster.NodeList;
-
 import org.tigr.microarray.mev.cluster.NodeValue;
-
 import org.tigr.microarray.mev.cluster.NodeValueList;
-
-
-
-import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
-
-import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
-
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
-
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
-
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
-
 import org.tigr.microarray.mev.cluster.algorithm.AbortException;
-
+import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
+import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
+import org.tigr.util.FloatMatrix;
+import org.tigr.util.awt.ProgressDialog;
 
 public class QTC extends AbstractAlgorithm {
 
     private boolean stop = false;
 
-    private int function;
+	private int function;
 
-    private float factor;
+	private float factor;
 
-    ProgressDialog progress;
+	ProgressDialog progress;
 
-    
+	private int number_of_genes;
 
-    private int number_of_genes;
+	private int number_of_samples;
 
-    private int number_of_samples;
-
-    
-
-    boolean useAbsolute;
+	boolean useAbsolute;
 
     float diameter;
 
@@ -105,7 +75,7 @@ public class QTC extends AbstractAlgorithm {
     private int clusterSize = Integer.MAX_VALUE;
 
 
-
+    private boolean qtcGenes;
     
 
     private FloatMatrix expMatrix;
@@ -115,7 +85,9 @@ public class QTC extends AbstractAlgorithm {
     private float[][] proximity;
 
     private float adjustedDiameter;
-
+    
+    private int hcl_function;
+    private boolean hcl_absolute;
     
 
     public synchronized AlgorithmData execute(AlgorithmData data) throws AlgorithmException {
@@ -126,15 +98,16 @@ public class QTC extends AbstractAlgorithm {
 
 	factor   = map.getFloat("distance-factor", 1.0f);
 
-	
+	qtcGenes = map.getBoolean("qtc-cluster-genes");
 
 	useAbsolute = map.getBoolean("use-absolute", false);
 
 	diameter = map.getFloat("diameter", 0.2f);
 
 	minimumClusterSize = map.getInt("min-cluster-size", 1);
-
-	
+        
+        hcl_function = map.getInt("hcl-distance-function", EUCLIDEAN);
+        hcl_absolute = map.getBoolean("hcl-distance-absolute", false);        	
 
 	boolean hierarchical_tree = map.getBoolean("hierarchical-tree", false);
 
@@ -300,13 +273,16 @@ public class QTC extends AbstractAlgorithm {
 
 	AlgorithmData data = new AlgorithmData();
 
-	FloatMatrix experiment = getSubExperiment(this.expMatrix, features);
-
+	FloatMatrix experiment;
+        if(qtcGenes)
+            experiment = getSubExperiment(this.expMatrix, features);
+        else
+            experiment = experiment = getSubExperimentReducedCols(this.expMatrix, features);
+            
 	data.addMatrix("experiment", experiment);
 
-	data.addParam("distance-function", String.valueOf(this.function));
-
-	data.addParam("distance-absolute", String.valueOf(this.useAbsolute));
+        data.addParam("hcl-distance-function", String.valueOf(this.hcl_function));
+        data.addParam("hcl-distance-absolute", String.valueOf(this.hcl_absolute));
 
 	data.addParam("method-linkage", String.valueOf(method));
 
@@ -372,6 +348,18 @@ public class QTC extends AbstractAlgorithm {
 
     }
 
+    /**
+     *  Creates a matrix with reduced columns (samples) as during experiment clustering
+     */
+    private FloatMatrix getSubExperimentReducedCols(FloatMatrix experiment, int[] features) {
+        FloatMatrix copyMatrix = experiment.copy();
+        FloatMatrix subExperiment = new FloatMatrix(features.length, copyMatrix.getColumnDimension());
+        for (int i=0; i<features.length; i++) {
+            subExperiment.A[i] = copyMatrix.A[features[i]];
+        }
+        subExperiment = subExperiment.transpose();
+        return subExperiment;
+    }
     
 
     /**

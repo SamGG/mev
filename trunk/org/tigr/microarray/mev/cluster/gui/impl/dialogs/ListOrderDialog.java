@@ -6,49 +6,28 @@
 
 package org.tigr.microarray.mev.cluster.gui.impl.dialogs;
 
-import java.awt.Frame;
-import java.awt.Color;
-import java.awt.Toolkit;
 import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Component;
-import java.awt.Insets;
-import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
-import java.awt.BorderLayout;
-
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
-
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.UIManager;
-
 import javax.swing.border.BevelBorder;
-import javax.swing.border.EmptyBorder;
-
 
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
-
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 
 
 /**
@@ -182,7 +161,7 @@ public class ListOrderDialog extends AlgorithmDialog {
         data.add("Label2");
         data.add("Label3");
         JList list = new JList(data);
-        ListOrderDialog dialog = new ListOrderDialog(new JFrame(), list, data, "Experiment Label Keys", "Please Arrange Keys in Desired order.");
+        ListOrderDialog dialog = new ListOrderDialog(new JFrame(), list, data, "Sample Label Keys", "Please Arrange Keys in Desired order.");
         dialog.showModal();
     }
     

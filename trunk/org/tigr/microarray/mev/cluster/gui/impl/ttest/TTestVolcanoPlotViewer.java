@@ -1,47 +1,72 @@
 /*
-Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: TTestVolcanoPlotViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2004-07-27 19:59:17 $
- * $Author: braisted $
+ * $Revision: 1.8 $
+ * $Date: 2005-02-24 20:24:05 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.ttest;
 
-/*
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.FileOutputStream;
- */
-import javax.swing.JFileChooser;
-
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
-import java.awt.event.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
 import java.text.DecimalFormat;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import org.tigr.graph.*;
-import org.tigr.util.*;
-import org.tigr.util.awt.*;
+import java.util.Vector;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JRadioButton;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.border.EtchedBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.tigr.microarray.mev.TMEV;
-import org.tigr.microarray.mev.cluster.gui.IViewer;
+import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
+import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-
-import org.tigr.microarray.mev.cluster.clusterUtil.*;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileFilter;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
+import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
+import org.tigr.util.awt.ActionInfoDialog;
 
 /**
  *
@@ -63,25 +88,27 @@ public class TTestVolcanoPlotViewer extends JPanel implements IViewer, java.io.S
     private JPopupMenu popup;
     private JCheckBoxMenuItem useRefLinesBox, projectClustersBox;
     int currentXSliderPosition, currentYSliderPosition;
-    double currentP, currentMean;
+    double currentP, currentMean, oneClassMean;
     int tTestDesign;
-    private Vector pValues, tValues, dfValues, meansA, meansB, sdA, sdB, oneClassMeans, oneClassSDs;
+    private Vector rawPValues, adjPValues, tValues, dfValues, meansA, meansB, sdA, sdB, oneClassMeans, oneClassSDs;
     
     /** Creates new TTestVolcanoPlotViewer */
-    public TTestVolcanoPlotViewer(Experiment experiment, double[] xArray, double[] yArray, boolean[] isSig, int tTestDesign, Vector oneClassMeans, Vector oneClassSDs, Vector meansA, Vector meansB, Vector sdA, Vector sdB, Vector pValues, Vector tValues, Vector dfValues) {
+    public TTestVolcanoPlotViewer(Experiment experiment, double[] xArray, double[] yArray, boolean[] isSig, int tTestDesign, double oneClassMean, Vector oneClassMeans, Vector oneClassSDs, Vector meansA, Vector meansB, Vector sdA, Vector sdB, Vector rawPValues, Vector adjPValues, Vector tValues, Vector dfValues) {
         //System.out.println("Created Volcano plot");
         //this.tTestFrame = tTestFrame;
         this.experiment = experiment;
         this.xArray = xArray;
         this.yArray = yArray;
         this.isSig = isSig;
-        this.pValues = pValues;
+        this.rawPValues = rawPValues;
+        this.adjPValues = adjPValues;
         this.tValues = tValues;
         this.dfValues = dfValues;
         this.meansA = meansA;
         this.meansB = meansB;
         this.tTestDesign = tTestDesign;
         this.oneClassMeans = oneClassMeans;
+        this.oneClassMean = oneClassMean;
         this.oneClassSDs = oneClassSDs;
         this.sdA = sdA;
         this.sdB =sdB;
@@ -223,7 +250,8 @@ public class TTestVolcanoPlotViewer extends JPanel implements IViewer, java.io.S
         oos.writeObject(this.xArray);
         oos.writeObject(this.yArray);
         oos.writeObject(this.isSig);
-        oos.writeObject(this.pValues);
+        oos.writeObject(this.rawPValues);
+        oos.writeObject(this.adjPValues);
         oos.writeObject(this.tValues);
         oos.writeObject(this.dfValues);
         oos.writeObject(this.meansA);
@@ -244,7 +272,8 @@ public class TTestVolcanoPlotViewer extends JPanel implements IViewer, java.io.S
         this.xArray = (double [])ois.readObject(); 
         this.yArray = (double [])ois.readObject();
         this.isSig = (boolean [])ois.readObject();
-        this.pValues = (Vector)ois.readObject();
+        this.rawPValues = (Vector)ois.readObject();
+        this.adjPValues = (Vector)ois.readObject();
         this.tValues = (Vector)ois.readObject();
         this.dfValues = (Vector)ois.readObject();
         this.meansA = (Vector)ois.readObject();
@@ -513,7 +542,11 @@ public class TTestVolcanoPlotViewer extends JPanel implements IViewer, java.io.S
             g2D.drawString("-" + nf.format((double)xIntervalArray[i]), this.getWidth()/2 - (int)Math.round(xIntervalArray[i]*xScalingFactor) - 10, this.getHeight() - 30);
         }
         
-        g2D.drawString("Mean(GroupB) - Mean(GroupA)", this.getWidth()/2 - 85, this.getHeight() - 15);
+        if (tTestDesign == TtestInitDialog.ONE_CLASS) {
+            g2D.drawString("Gene Mean - Hypothesized Mean (" + oneClassMean + ")", this.getWidth()/2 - 85, this.getHeight() - 15);
+        } else {
+            g2D.drawString("Mean(GroupB) - Mean(GroupA)", this.getWidth()/2 - 85, this.getHeight() - 15);
+        }
         
         int maxYInt = (int)(Math.round(origMaxYValue));
         
@@ -801,7 +834,8 @@ public class TTestVolcanoPlotViewer extends JPanel implements IViewer, java.io.S
         
         out.print("\t");
         out.print("Degrees of freedom\t");
-        out.print("p value");
+        out.print("Raw p value\t");
+        out.print("Adj p value");
         
         //out.print("UniqueID\tName");
         for (int i=0; i<experiment.getNumberOfSamples(); i++) {
@@ -834,7 +868,9 @@ public class TTestVolcanoPlotViewer extends JPanel implements IViewer, java.io.S
             out.print("\t");
             out.print("" + ((Float)dfValues.get(rows[i])).intValue());
             out.print("\t");
-            out.print("" + ((Float)pValues.get(rows[i])).floatValue());
+            out.print("" + ((Float)rawPValues.get(rows[i])).floatValue());
+            out.print("\t");
+            out.print("" + ((Float)adjPValues.get(rows[i])).floatValue());            
             for (int j=0; j<experiment.getNumberOfSamples(); j++) {
                 out.print("\t");
                 out.print(Float.toString(experiment.get(rows[i], j)));
@@ -1036,6 +1072,12 @@ public class TTestVolcanoPlotViewer extends JPanel implements IViewer, java.io.S
         return null;
     }    
  
+    /** Returns int value indicating viewer type
+     * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
+     */
+    public int getViewerType() {
+        return Cluster.GENE_CLUSTER;
+    }    
     
     class SelectionSliderPanel extends ActionInfoDialog {
         JSlider pValueSlider, meanSlider;

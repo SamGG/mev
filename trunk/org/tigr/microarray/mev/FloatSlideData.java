@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: FloatSlideData.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-07-27 19:56:10 $
- * $Author: braisted $
+ * $Revision: 1.7 $
+ * $Date: 2005-02-24 20:23:44 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -14,9 +14,7 @@ package org.tigr.microarray.mev;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Properties;
-import javax.swing.JOptionPane;
 
-import org.tigr.util.Xcon;
 import org.tigr.util.math.LinearEquation;
 import org.tigr.microarray.mev.cluster.gui.IData;
 
@@ -25,7 +23,6 @@ import org.tigr.midas.engine.TotInt;
 import org.tigr.midas.engine.IterativeLinReg;
 import org.tigr.midas.engine.IterativeLogMean;
 import org.tigr.midas.engine.RatioStats;
-import org.tigr.midas.Constant;
 //import org.tigr.midas.display.ParameterPane;
 
 

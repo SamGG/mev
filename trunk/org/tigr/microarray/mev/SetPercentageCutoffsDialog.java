@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SetPercentageCutoffsDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-03-25 18:59:40 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2005-02-24 20:23:44 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -25,11 +25,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JTextField;
 import javax.swing.JOptionPane;
 
@@ -44,6 +43,8 @@ public class SetPercentageCutoffsDialog extends AlgorithmDialog {
     private float originalValue;
     private int result;
     private JTextField textField;
+    private JCheckBox enableCheckBox;
+    private JLabel percentageLabel;
     
     public SetPercentageCutoffsDialog(JFrame parent, float percentage) {
 	super(parent, "Set Percentage Cutoff", true);	
@@ -52,7 +53,13 @@ public class SetPercentageCutoffsDialog extends AlgorithmDialog {
         
 	GBA gba = new GBA();
 	
-	JLabel percentageLabel = new JLabel("Percentage Cutoff (" + percentage + "%): ");
+        enableCheckBox = new JCheckBox("Enable Percentage Cutoff Filter", true);
+        enableCheckBox.setActionCommand("enable-check-box-command");
+        enableCheckBox.setOpaque(false);
+        enableCheckBox.setFocusPainted(false);        
+        enableCheckBox.addActionListener(listener);
+        
+	percentageLabel = new JLabel("Percentage Cutoff (" + percentage + "%): ");
 	percentageLabel.setHorizontalTextPosition(JLabel.RIGHT);
         percentageLabel.setHorizontalAlignment(JLabel.RIGHT);
    
@@ -64,9 +71,10 @@ public class SetPercentageCutoffsDialog extends AlgorithmDialog {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(Color.white);
         panel.setBorder(BorderFactory.createLineBorder(Color.black));
-        
-	gba.add(panel, percentageLabel, 0, 0, 1, 1, 1, 0, GBA.B, GBA.E, new Insets(25, 5, 35, 5), 0, 0);
-	gba.add(panel, textField, 1, 0, 1, 1, 1, 0, GBA.NONE, GBA.W, new Insets(25, 5, 35, 5), 0, 0);
+
+        gba.add(panel, enableCheckBox, 0, 0, 2, 1, 0, 0, GBA.V, GBA.C, new Insets(25, 5, 0, 5), 0, 0);
+	gba.add(panel, percentageLabel, 0, 1, 1, 1, 1, 0, GBA.B, GBA.E, new Insets(10, 5, 35, 5), 0, 0);
+	gba.add(panel, textField, 1, 1, 1, 1, 1, 0, GBA.NONE, GBA.W, new Insets(10, 5, 35, 5), 0, 0);
 
         addContent(panel);
         setActionListeners(listener);
@@ -81,6 +89,10 @@ public class SetPercentageCutoffsDialog extends AlgorithmDialog {
 	setLocation((screenSize.width - getSize().width)/2, (screenSize.height - getSize().height)/2);
 	show();
 	return result;
+    }
+    
+    public boolean isCutoffFilterEnabled() {
+        return enableCheckBox.isSelected();
     }
     
     public float getPercentageCutoff() {
@@ -107,6 +119,9 @@ public class SetPercentageCutoffsDialog extends AlgorithmDialog {
 		result = JOptionPane.CANCEL_OPTION;
 		dispose();
 	    } else if (command.equals("reset-command")) {
+                enableCheckBox.setSelected(true);
+                textField.setEnabled(true);
+                percentageLabel.setEnabled(true);
                 textField.setText(String.valueOf(originalValue));
                 textField.selectAll();
                 textField.grabFocus();
@@ -124,6 +139,10 @@ public class SetPercentageCutoffsDialog extends AlgorithmDialog {
                     hw.dispose();
                     return;
                 }
+            } else if (command.equals("enable-check-box-command")) {
+                boolean enabled = enableCheckBox.isSelected();
+                percentageLabel.setEnabled(enabled);
+                textField.setEnabled(enabled);
             }
 	}
 	

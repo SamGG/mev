@@ -4,41 +4,26 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLNodeHeightGraph.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-13 19:15:04 $
- * $Author: braisted $
+ * $Revision: 1.5 $
+ * $Date: 2005-02-24 20:24:09 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.gui.impl.hcl;
 
-import java.util.Hashtable;
-
 import java.text.DecimalFormat;
 
 import javax.swing.JPanel;
-import javax.swing.JFrame;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.JComponent;
 
 import java.awt.Font;
 import java.awt.Color;
-import java.awt.Insets;
 import java.awt.Graphics;
 import java.awt.FontMetrics;
-import java.awt.BorderLayout;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.event.*;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
 import org.tigr.graph.*;
-
-import org.tigr.util.awt.ActionInfoEvent;
-import org.tigr.util.awt.BoundariesDialog;
-import org.tigr.util.awt.ActionInfoListener;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
@@ -255,4 +240,12 @@ public class HCLNodeHeightGraph extends JPanel implements IViewer {
     public Experiment getExperiment() {
         return null;
     }        
+    
+    /** Returns int value indicating viewer type
+     * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
+     */
+    public int getViewerType() {
+        return -1;
+    }
+    
 }

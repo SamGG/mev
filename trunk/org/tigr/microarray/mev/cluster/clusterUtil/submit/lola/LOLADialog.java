@@ -4,82 +4,41 @@ All rights reserved.
  */
 /*
  * $RCSfile: LOLADialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2004-07-22 15:29:12 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:09 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.clusterUtil.submit.lola;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.Dimension;
-import java.awt.GridBagLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
-import java.awt.*;
-
+import java.awt.GridBagLayout;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.TextEvent;
-import java.awt.event.TextListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyAdapter;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JOptionPane;
-import javax.swing.SwingConstants;
-import javax.swing.JColorChooser;
-import javax.swing.BorderFactory;
-import javax.swing.border.LineBorder;
-import javax.swing.border.BevelBorder;
-import javax.swing.BorderFactory;
-import javax.swing.border.*;
-import javax.swing.JOptionPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JCheckBox;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JTextField;
-import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.ButtonGroup;
 import javax.swing.JScrollPane;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
 
-import org.tigr.util.awt.GBA;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
-
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;
+import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
-
-import org.tigr.microarray.mev.cluster.clusterUtil.*;
 
 public class LOLADialog extends AlgorithmDialog {
     private GroupExperimentsPanel gPanel;

@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: ExperimentClusterCentroidViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-07-27 19:59:15 $
- * $Author: braisted $
+ * $Revision: 1.5 $
+ * $Date: 2005-02-24 20:24:07 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.helpers;
@@ -101,7 +101,7 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer, 
         setBackground(Color.white);
         setFont(new Font("monospaced", Font.BOLD, 10));
         this.maxExperimentValue = experiment.getMaxAbsValue();
-        this.yRangeOption = this.USE_EXPERIMENT_MAX;
+        this.yRangeOption = ExperimentClusterCentroidViewer.USE_EXPERIMENT_MAX;
     }
     
     
@@ -144,7 +144,7 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer, 
         setBackground(Color.white);
         setFont(new Font("monospaced", Font.BOLD, 10));
         this.maxExperimentValue = experiment.getMaxAbsValue();
-        this.yRangeOption = this.USE_EXPERIMENT_MAX;
+        this.yRangeOption = ExperimentClusterCentroidViewer.USE_EXPERIMENT_MAX;
         this.numberOfGenes = this.experiment.getNumberOfGenes();
     }
     
@@ -259,8 +259,8 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer, 
         updateValues(getCluster());
         this.maxValue = Math.abs(framework.getDisplayMenu().getMaxRatioScale());
         this.minValue = -Math.abs(framework.getDisplayMenu().getMinRatioScale());
-        this.posColorImage = framework.getDisplayMenu().getPositiveGradientImage();
-        this.negColorImage = framework.getDisplayMenu().getNegativeGradientImage();
+        ExperimentClusterCentroidViewer.posColorImage = framework.getDisplayMenu().getPositiveGradientImage();
+        ExperimentClusterCentroidViewer.negColorImage = framework.getDisplayMenu().getNegativeGradientImage();
         this.gradientColors = framework.getDisplayMenu().getColorGradientState();
     }
     
@@ -364,7 +364,7 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer, 
      * Sets Y range scaling option
      */
     public void setYRangeOption(int option){
-        if(option != this.USE_EXPERIMENT_MAX && option != this.USE_CLUSTER_MAX)
+        if(option != ExperimentClusterCentroidViewer.USE_EXPERIMENT_MAX && option != ExperimentClusterCentroidViewer.USE_CLUSTER_MAX)
             this.yRangeOption = USE_EXPERIMENT_MAX;
         else
             yRangeOption = option;
@@ -429,9 +429,9 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer, 
         final int numberOfSamples  = this.getCluster().length;
         
         //do this outside paint once menu is set up
-        if(this.yRangeOption == this.USE_EXPERIMENT_MAX)
+        if(this.yRangeOption == ExperimentClusterCentroidViewer.USE_EXPERIMENT_MAX)
             maxYValue = this.maxExperimentValue;
-        else if(this.yRangeOption == this.USE_CLUSTER_MAX)
+        else if(this.yRangeOption == ExperimentClusterCentroidViewer.USE_CLUSTER_MAX)
             maxYValue = this.maxClusterValue;
         
         if (maxYValue == 0.0f) {
@@ -613,8 +613,8 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer, 
         setAntiAliasing(menu.isAntiAliasing());
         this.maxValue = Math.abs(menu.getMaxRatioScale());
         this.minValue = -Math.abs(menu.getMinRatioScale());
-        this.posColorImage = menu.getPositiveGradientImage();
-        this.negColorImage = menu.getNegativeGradientImage();
+        ExperimentClusterCentroidViewer.posColorImage = menu.getPositiveGradientImage();
+        ExperimentClusterCentroidViewer.negColorImage = menu.getNegativeGradientImage();
         this.gradientColors = menu.getColorGradientState();
     }
     
@@ -725,6 +725,13 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer, 
      */
     public JComponent getCornerComponent(int cornerIndex) {
         return null;
+    }
+    
+    /** Returns int value indicating viewer type
+     * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
+     */
+    public int getViewerType() {
+        return Cluster.EXPERIMENT_CLUSTER;
     }
     
 }

@@ -4,19 +4,19 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMData.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-07-27 19:59:17 $
- * $Author: braisted $
+ * $Revision: 1.4 $
+ * $Date: 2005-02-24 20:23:45 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.gui.impl.svm;
 
-import javax.swing.JOptionPane;
-import javax.swing.JFrame;
-import javax.swing.JDialog;
-import javax.swing.JComponent;
 import java.io.File;
+
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 
 class SVMData implements java.io.Serializable {
@@ -88,6 +88,7 @@ class SVMData implements java.io.Serializable {
     public boolean useEditor;
     
     public int distanceFunction;
+    public boolean absoluteDistance;
     public float positiveDiagonal;         /* Add to diagonal of kernel matrix. */
     public float negativeDiagonal;         /* Add to diagonal of kernel matrix. */
     

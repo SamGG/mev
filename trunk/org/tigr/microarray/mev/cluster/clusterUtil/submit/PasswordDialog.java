@@ -10,30 +10,20 @@ All rights reserved.
 
 package org.tigr.microarray.mev.cluster.clusterUtil.submit;
 
-import java.awt.Frame;
-import java.awt.Color;
-import java.awt.Toolkit;
 import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Component;
-import java.awt.Insets;
-import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowEvent;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPasswordField;
-import javax.swing.UIManager;
-import javax.swing.JTextField;
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;
 
 /** Collects user and password information.
  * @author braisted

@@ -5,22 +5,20 @@ All rights reserved.
 
 /*
  * $RCSfile: AffySlideDataElement.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-07-27 19:56:10 $
- * $Author: braisted $
+ * $Revision: 1.4 $
+ * $Date: 2005-02-24 20:23:44 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
-import java.util.Hashtable;
 import java.io.Serializable;
 import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.util.Xcon;
 
 public class AffySlideDataElement extends ArrayElement implements ISlideDataElement, Serializable {
     public static final long serialVersionUID = 100010201120001L;
 
-
+    protected String UID;
     protected int[] rows;
     protected int[] columns;
     protected float[] currentIntensity, trueIntensity;
@@ -38,6 +36,19 @@ public class AffySlideDataElement extends ArrayElement implements ISlideDataElem
      * Constructs a <code>SlideDataElement</code> with specified meta rows,
      * meta columns, intensities and descriptions.
      */
+    public AffySlideDataElement(String UID, int[] rows, int[] columns, float[] intensities, String[] values) {
+        this.UID = UID;
+	this.rows = copyArray(rows);
+	this.columns = copyArray(columns);
+	this.currentIntensity = copyArray(intensities);
+	this.trueIntensity = copyArray(intensities);
+	this.extraFields = copyArray(values);
+    }
+    
+    /**
+     * Constructs a <code>SlideDataElement</code> with specified meta rows,
+     * meta columns, intensities and descriptions.
+     */
     public AffySlideDataElement(int[] rows, int[] columns, float[] intensities, String[] values) {
 	this.rows = copyArray(rows);
 	this.columns = copyArray(columns);
@@ -50,6 +61,7 @@ public class AffySlideDataElement extends ArrayElement implements ISlideDataElem
      * Copy constructor.
      */
     public AffySlideDataElement(ISlideDataElement sde) {
+        this.UID = sde.getUID();
 	this.rows = sde.getRows();
 	this.columns = sde.getColumns();
 	this.currentIntensity = copyArray(sde.getCurrentIntensity());
@@ -57,7 +69,24 @@ public class AffySlideDataElement extends ArrayElement implements ISlideDataElem
 	this.extraFields = sde.getExtraFields();
         this.detection = sde.getDetection();
     }
-
+    
+    /**
+     * Sets the extra fields (annotation), appends if fields exist
+     */
+    public void setExtraFields(String [] values){
+        if(values == null) return;
+        if(this.extraFields == null)
+            this.extraFields = values;
+        else{
+            String [] newFields = new String[this.extraFields.length+values.length];
+            for(int i = 0; i < this.extraFields.length; i++)
+                newFields[i] = this.extraFields[i];
+            for(int i = 0; i < values.length; i++)
+                newFields[i+this.extraFields.length] = values[i];
+            this.extraFields = newFields;
+        }
+    }
+    
     /**
      * Creates clone of a string array.
      */
@@ -401,4 +430,17 @@ public class AffySlideDataElement extends ArrayElement implements ISlideDataElem
     public String toString() {
 	return "SDE " + getRow(BASE) + ", " + getColumn(BASE);
     }
+    
+    /** Sets the UID field
+     */
+    public void setUID(String uid) {
+        this.UID = uid;
+    }
+    
+    /** Returns the UID field
+     */
+    public String getUID() {
+        return this.UID;
+    }
+    
 }

@@ -10,10 +10,6 @@ All rights reserved.
 
 package org.tigr.microarray.mev.script;
 
-import org.w3c.dom.Document; 
-import org.w3c.dom.Element;
-
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.script.util.DocumentBase;
 
 /** The ScriptDocument class contains script attributes
@@ -49,7 +45,7 @@ public class ScriptDocument extends DocumentBase {
     public ScriptDocument(int sid, String fileName, ScriptManager manager) {
         super(manager);
         id = sid;
-        fileName = fileName;
+        this.fileName = fileName;
     }
 
     /** Creates a new instance of ScriptDocument

@@ -6,59 +6,13 @@
 
 package org.tigr.microarray.mev.script.scriptGUI;
 
-
-import java.awt.Frame;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Component;
-import java.awt.Insets;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.UIManager;
-import javax.swing.JCheckBox;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.JToolBar;
-import javax.swing.JRadioButton;
-import javax.swing.ButtonGroup;
-import javax.swing.JOptionPane;
-import javax.swing.BorderFactory;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.EmptyBorder;
-
-import org.tigr.microarray.mev.action.ActionManager;
-
-import org.tigr.microarray.mev.script.util.ScriptConstants;
-
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
 
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
+
 /**
  *
  * @author  braisted

@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: ExperimentUtil.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-07-27 19:59:16 $
- * $Author: braisted $
+ * $Revision: 1.7 $
+ * $Date: 2005-02-24 20:24:08 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
@@ -14,9 +14,9 @@ package org.tigr.microarray.mev.cluster.gui.helpers;
 
 import java.io.*;
 import java.io.File;
-import java.io.IOException.*;
 import java.io.PrintWriter;
 import java.io.FileOutputStream;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 import java.awt.Frame;
@@ -75,7 +75,16 @@ public class ExperimentUtil {
      */
     public static void saveExperiment(Frame frame, Experiment experiment, IData data, int[][] clusters) throws Exception {
         File file = getFile(frame);
+
         if (file != null) {
+            //if file name already has a .txt extension, remove it
+            String path = file.getPath();
+            int extIndex = path.lastIndexOf(".txt");
+            if( extIndex > 0) {
+                path = path.substring(0, extIndex);
+                file = new File(path);
+            }
+            
             File aFile;
             for (int i=0; i<clusters.length; i++) {
                 if (clusters[i] == null || clusters[i].length == 0) {
@@ -124,8 +133,41 @@ public class ExperimentUtil {
         //out.print("UniqueID\tName");
         for (int i=0; i<experiment.getNumberOfSamples(); i++) {
             out.print("\t");
-            out.print(data.getFullSampleName(experiment.getSampleIndex(i)));
+            out.print(data.getSampleAnnotation(i, IData.DEFAULT_SAMPLE_ANNOTATION_KEY));
         }
+        out.print("\n");
+        
+        //primary sample names are ouput already, if additional sample annotation is present it should be
+        //output as well
+        
+        Vector sampleFieldNames = data.getSampleAnnotationFieldNames();
+        //if there are additional sample names
+        String key;
+
+        for(int i = 1; i < sampleFieldNames.size(); i++) {
+
+            String val = new String();            
+            
+            //skip gene annotation columns
+            for(int k= 0; k < fieldNames.length+auxTitles.length; k++) {
+                val += "\t";
+            }
+            
+            //append key
+            key = (String)(sampleFieldNames.elementAt(i));
+            val += key+"\t";
+            
+            //append annoation
+            for(int j = 0; j < data.getFeaturesCount(); j++) {
+                val += data.getSampleAnnotation(j, key);
+                if(j != data.getFeaturesCount()-1)
+                    val += "\t";
+                else
+                    val += "\n";
+            }
+            out.print(val);
+        }
+        
         /*
         for (int i=0; i<data.getFeaturesCount(); i++) {
             out.print("\t");
@@ -138,7 +180,6 @@ public class ExperimentUtil {
             out.print("\t"+auxTitles[i]);
         }
          **/
-        out.print("\n");
         for (int i=0; i<rows.length; i++) {
             out.print(Integer.toString(experiment.getGeneIndexMappedToData(rows[i]) + 1));  //JCB handles cuttoffs, gets gene mapping
             out.print("\t");
@@ -152,7 +193,6 @@ public class ExperimentUtil {
             
             for(int j = 0; j < auxData[0].length; j++){
                 out.print("\t");//+auxData[rows[i]][j]);
-                //System.out.println("auxData.length = " + auxData.length + ", auxData[0].length = " + auxData[0].length + ", i = " + i + ", j = " + j + ", rows[i] = " + rows[i]);
                 printDataType(out, auxData[rows[i]][j], typeArray[j]);
             }    
             
@@ -177,15 +217,65 @@ public class ExperimentUtil {
      * Returns a file choosed by the user.
      */
     private static File getFile(Frame frame) {
+        
+        String dataPath = TMEV.getDataPath();
+        File pathFile = TMEV.getFile("data/");
+        
+        if(dataPath != null) {
+            pathFile = new File(dataPath);
+            if(!pathFile.exists())
+                pathFile = TMEV.getFile("data/");
+        } else {
+            System.out.println("null data path");
+        }
+        
         File file = null;
-        final JFileChooser fc = new JFileChooser(TMEV.getFile("data/"));
+        
+        
+        final JFileChooser fc = new JFileChooser(pathFile);
         fc.addChoosableFileFilter(new ExpressionFileFilter());
         fc.setFileView(new ExpressionFileView());
         int ret = fc.showSaveDialog(frame);
         if (ret == JFileChooser.APPROVE_OPTION) {
             file = fc.getSelectedFile();
+        } else {
+            return null;
         }
+        
+        String fileName = file.getName();
+        int extIndex = fileName.lastIndexOf(".");
+        
+        //check for a three char extension, else append the default .txt
+        if(extIndex < 0 || ( fileName.length()- 1 - extIndex ) != 3)
+            file = new File(file.getPath()+".txt");
+        
+        TMEV.updateDataPath(formatDataPath(file.getPath()));
+        TMEV.setDataPath(file.getParent());
+        
         return file;
+    }
+    
+
+    private static String formatDataPath(String dataPath) {
+        if(dataPath == null)
+            return " ";
+        
+        String renderedSep = "/";
+        String renderedPath = new String();
+
+        String sep = System.getProperty("file.separator");        
+
+        StringTokenizer stok = new StringTokenizer(dataPath, sep);
+        
+        String newDataPath = new String();
+
+        String str;
+        while(stok.hasMoreTokens() && stok.countTokens() > 1){
+            str = stok.nextToken();
+            renderedPath += str + renderedSep;            
+            newDataPath += str + sep;
+        } 
+        return renderedPath;
     }
     
     /**
@@ -217,9 +307,41 @@ public class ExperimentUtil {
         //out.print("UniqueID\tName");
         for (int i=0; i<data.getFeaturesCount(); i++) {
             out.print("\t");
-            out.print(data.getFullSampleName(i));
+            out.print(data.getSampleAnnotation(i, IData.DEFAULT_SAMPLE_ANNOTATION_KEY));
         }
         out.print("\n");
+
+        //primary sample names are ouput already, if additional sample annotation is present it should be
+        //output as well
+        
+        Vector sampleFieldNames = data.getSampleAnnotationFieldNames();
+        //if there are additional sample names
+        String key;
+
+        for(int i = 1; i < sampleFieldNames.size(); i++) {
+
+            String val = new String();            
+            
+            //skip gene annotation columns
+            for(int k= 0; k < fieldNames.length; k++) {
+                val += "\t";
+            }
+            
+            //append key
+            key = (String)(sampleFieldNames.elementAt(i));
+            val += key+"\t";
+            
+            //append annoation
+            for(int j = 0; j < data.getFeaturesCount(); j++) {
+                val += data.getSampleAnnotation(j, key);
+                if(j != data.getFeaturesCount()-1)
+                    val += "\t";
+                else
+                    val += "\n";
+            }
+            out.print(val);
+        }
+        
         for (int i=0; i<rows.length; i++) {
             out.print(Integer.toString(rows[i] + 1));  //JCB handles cuttoffs, gets gene mapping
             out.print("\t");
@@ -332,9 +454,41 @@ public class ExperimentUtil {
         //out.print("UniqueID\tName");
         for (int i=0; i<experiment.getNumberOfSamples(); i++) {
             out.print("\t");
-            out.print(data.getFullSampleName(experiment.getSampleIndex(i)));
+            out.print(data.getSampleAnnotation(i, IData.DEFAULT_SAMPLE_ANNOTATION_KEY));
         }
         out.print("\n");
+
+        //primary sample names are ouput already, if additional sample annotation is present it should be
+        //output as well
+        
+        Vector sampleFieldNames = data.getSampleAnnotationFieldNames();
+        //if there are additional sample names
+        String key;
+
+        for(int i = 1; i < sampleFieldNames.size(); i++) {
+
+            String val = new String();            
+            
+            //skip gene annotation columns
+            for(int k= 0; k < fieldNames.length; k++) {
+                val += "\t";
+            }
+            
+            //append key
+            key = (String)(sampleFieldNames.elementAt(i));
+            val += key+"\t";
+            
+            //append annoation
+            for(int j = 0; j < data.getFeaturesCount(); j++) {
+                val += data.getSampleAnnotation(j, key);
+                if(j != data.getFeaturesCount()-1)
+                    val += "\t";
+                else
+                    val += "\n";
+            }
+            out.print(val);
+        }
+        
         for (int i=0; i<rows.length; i++) {
             out.print(Integer.toString(experiment.getGeneIndexMappedToData(rows[i]) + 1));  //JCB handles cuttoffs, gets gene mapping
             out.print("\t");
@@ -414,15 +568,15 @@ public class ExperimentUtil {
      *  Saves experiment cluster with auxilary data
      */
     private static void saveExperimentClusterWithAux(File file, Experiment experiment, IData data, int[] experiments, String [] auxTitles, Object [][] auxData) throws Exception {
-        int[] typeArray = getTypes(auxData);        
+        int[] typeArray = getTypes(auxData);
         PrintWriter out = new PrintWriter(new FileOutputStream(file));
         String[] fieldNames = data.getFieldNames();
         
         int numberOfGenes = experiment.getNumberOfGenes();
-        
+
         out.print("Original row");
         out.print("\t");
-        
+
         for (int i = 0; i < fieldNames.length; i++) {
             out.print(fieldNames[i]);
             if (i < fieldNames.length - 1) {
@@ -432,9 +586,37 @@ public class ExperimentUtil {
         //out.print("UniqueID\tName");
         for (int i=0; i<experiments.length; i++) {
             out.print("\t");
-            out.print(data.getFullSampleName(experiment.getSampleIndex(experiments[i])));
+            out.print(data.getSampleAnnotation(experiment.getSampleIndex(experiments[i]), IData.DEFAULT_SAMPLE_ANNOTATION_KEY));
         }
         out.print("\n");
+
+        Vector sampleFieldNames = data.getSampleAnnotationFieldNames();
+        //if there are additional sample names
+        String key;
+
+        for(int i = 1; i < sampleFieldNames.size(); i++) {
+
+            String val = new String();
+            
+            //skip gene annotation columns
+            for(int k= 0; k < fieldNames.length; k++) {
+                val += "\t";
+            }
+            
+            //append key
+            key = (String)(sampleFieldNames.elementAt(i));
+            val += key+"\t";
+            
+            //append annoation
+            for(int j = 0; j < experiments.length; j++) {
+                val += data.getSampleAnnotation(experiment.getSampleIndex(experiments[j]), key);
+                if(j != experiments.length-1)
+                    val += "\t";
+                else
+                    val += "\n";
+            }
+            out.print(val);
+        }        
         
         //aux titles
         //out.print("\t");        
@@ -458,7 +640,6 @@ public class ExperimentUtil {
             out.print(Integer.toString(experiment.getGeneIndexMappedToData(i) + 1));  //JCB handles cuttoffs, gets gene mapping
             out.print("\t");
             for (int k = 0; k < fieldNames.length; k++) {
-                //                out.print(data.getElementAttribute(rows[i], k));
                 out.print(data.getElementAttribute(experiment.getGeneIndexMappedToData(i), k));  //JCB in case of using cuttoffs, get mapping
                 
                 if (k < fieldNames.length - 1) {
@@ -498,9 +679,38 @@ public class ExperimentUtil {
         //out.print("UniqueID\tName");
         for (int i=0; i<experiments.length; i++) {
             out.print("\t");
-            out.print(data.getFullSampleName(experiment.getSampleIndex(experiments[i])));
-        }
+            out.print(data.getSampleAnnotation(experiment.getSampleIndex(experiments[i]), IData.DEFAULT_SAMPLE_ANNOTATION_KEY));
+        }        
         out.print("\n");
+        
+        Vector sampleFieldNames = data.getSampleAnnotationFieldNames();
+        //if there are additional sample names
+        String key;
+
+        for(int i = 1; i < sampleFieldNames.size(); i++) {
+
+            String val = new String();            
+            
+            //skip gene annotation columns
+            for(int k= 0; k < fieldNames.length; k++) {
+                val += "\t";
+            }
+            
+            //append key
+            key = (String)(sampleFieldNames.elementAt(i));
+            val += key+"\t";
+            
+            //append annoation
+            for(int j = 0; j < experiments.length; j++) {
+                val += data.getSampleAnnotation(experiment.getSampleIndex(experiments[j]), key);
+                if(j != experiments.length-1)
+                    val += "\t";
+                else
+                    val += "\n";
+            }
+            out.print(val);
+        }        
+        
         for (int i=0; i<numberOfGenes; i++) {
             out.print(Integer.toString(experiment.getGeneIndexMappedToData(i) + 1));  //JCB handles cuttoffs, gets gene mapping
             //out.print(data.getUniqueId(rows[i]));
@@ -524,49 +734,7 @@ public class ExperimentUtil {
         out.close();
     }
     
-    
-    /**
-     * Saves experiment data as a cluster.
-     */
-    /*
-    private static void saveCluster(File file, Experiment experiment, IData data, int[] rows, ) throws Exception {
-        PrintWriter out = new PrintWriter(new FileOutputStream(file));
-        String[] fieldNames = TMEV.getFieldNames();
-        for (int i = 0; i < fieldNames.length; i++) {
-            out.print(fieldNames[i]);
-            if (i < fieldNames.length - 1) {
-                out.print("\t");
-            }
-        }
-     
-     
-     
-        //out.print("UniqueID\tName");
-        for (int i=0; i<experiment.getNumberOfSamples(); i++) {
-            out.print("\t");
-            out.print(data.getSampleName(experiment.getSampleIndex(i)));
-        }
-        out.print("\n");
-        for (int i=0; i<rows.length; i++) {
-            //out.print(data.getUniqueId(rows[i]));
-            //out.print("\t");
-            //out.print(data.getGeneName(rows[i]));
-            for (int k = 0; k < fieldNames.length; k++) {
-                out.print(data.getElementAttribute(rows[i], k));
-                if (i < fieldNames.length - 1) {
-                    out.print("\t");
-                }
-            }
-            for (int j=0; j<experiment.getNumberOfSamples(); j++) {
-                out.print("\t");
-                out.print(Float.toString(experiment.get(rows[i], j)));
-            }
-            out.print("\n");
-        }
-        out.flush();
-        out.close();
-    }
-     */
+
     public static void linkToURL(JFrame frame, Experiment experiment, IData data, int row)  /*throws Exception*/ {
         //NOTE: In this method, the argument "row" is what's obtained AFTER applying getGeneIndexMappedToSelectedRows(); i.e., use as is; no need to re-map for cutoffs 
         try {

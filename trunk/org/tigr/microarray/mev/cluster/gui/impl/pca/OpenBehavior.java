@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: OpenBehavior.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:24:02 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.pca;
@@ -33,7 +33,7 @@ public class OpenBehavior extends Behavior {
     /**
      * Constructs an <code>OpenBehavior</code> for specified target.
      */
-    OpenBehavior(TransformGroup targetTG){
+    public OpenBehavior(TransformGroup targetTG){
 	this.targetTG = targetTG;
 	AWTEventCondition = new WakeupOnAWTEvent(KeyEvent.KEY_PRESSED);
 	wakeupNextFrame = new WakeupOnElapsedFrames(0);

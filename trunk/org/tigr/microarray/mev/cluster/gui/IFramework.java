@@ -1,12 +1,12 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: IFramework.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-05-24 18:08:23 $
- * $Author: braisted $
+ * $Revision: 1.7 $
+ * $Date: 2005-02-24 20:24:11 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui;
@@ -94,12 +94,19 @@ public interface IFramework {
     
     /**
      * Returns the currently selected node.
-     */
+     */       
     public DefaultMutableTreeNode getCurrentNode();
+
     /**
      * Stores the indices into the cluster repository
-     */
+     */    
     public Color storeCluster(int [] indices, Experiment experiment, int clusterType);    
+
+    /**
+     *  Stores indices to a cluster in the manager but doesn't link to a particular viewer node.
+     */
+    public void storeOperationCluster(String source, String clusterID, int [] indices, boolean geneCluster);
+    
     /**
      * Stores the indices into the cluster repository even if indices represent a subset
      * of the displayed cluster.
@@ -144,4 +151,6 @@ public interface IFramework {
      */
     public void addAnalysisResult(DefaultMutableTreeNode resultNode);
     
+    /** Refreshes current viewer if it's an IViewer **/
+    public void refreshCurrentViewer();
 }

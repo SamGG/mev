@@ -4,23 +4,32 @@ All rights reserved.
 */
 /*
 * $RCSfile: GDMInitDialog.java,v $
-* $Revision: 1.2 $
-* $Date: 2004-05-10 17:00:01 $
-* $Author: braisted $
+* $Revision: 1.3 $
+* $Date: 2005-02-24 20:23:46 $
+* $Author: braistedj $
 * $State: Exp $
 */
 package org.tigr.microarray.mev.cluster.gui.impl.gdm;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
+import javax.swing.ButtonGroup;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 
@@ -38,7 +47,7 @@ public class GDMInitDialog extends AlgorithmDialog {
      * initial parameters.
      */
     public GDMInitDialog(Frame parent, boolean useGenes) {
-        super(new JFrame(), "Gene Distance Matrix Initialization", true);
+        super(parent, "Gene Distance Matrix Initialization", true);
       
         Listener listener = new Listener();
         addWindowListener(listener);
@@ -56,7 +65,7 @@ public class GDMInitDialog extends AlgorithmDialog {
         gbc.gridx = 0; gbc.gridy = 4;
         parameters.add(genRadio, gbc);
 
-        expRadio = new JRadioButton("Experiments");
+        expRadio = new JRadioButton("Samples");
         expRadio.setBackground(Color.white);
         expRadio.setFocusPainted(false);
         gbc.gridx = 1; gbc.gridy = 4;
@@ -93,7 +102,7 @@ public class GDMInitDialog extends AlgorithmDialog {
      * initial parameters.
      */
     public GDMInitDialog(Frame parent) {
-        super(new JFrame(), "Gene Distance Matrix Initialization", true);
+        super(parent, "Gene Distance Matrix Initialization", true);
 
         Listener listener = new Listener();
         addWindowListener(listener);
@@ -112,7 +121,7 @@ public class GDMInitDialog extends AlgorithmDialog {
         gbc.insets = new Insets(0, 0, 25, 20);
         parameters.add(genRadio, gbc);
 
-        expRadio = new JRadioButton("Experiments");
+        expRadio = new JRadioButton("Samples");
         expRadio.setBackground(Color.white);
         expRadio.setFocusPainted(false);
         gbc.gridx = 1; gbc.gridy = 4;

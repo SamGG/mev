@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: RNGUI.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-06-01 13:23:13 $
- * $Author: braisted $
+ * $Revision: 1.6 $
+ * $Date: 2005-02-24 20:23:44 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.rn;
@@ -14,30 +14,33 @@ package org.tigr.microarray.mev.cluster.gui.impl.rn;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 
-import javax.swing.JFrame;
-import javax.swing.JTextField;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.tigr.util.FloatMatrix;
-
-import org.tigr.microarray.mev.cluster.*;
-import org.tigr.microarray.mev.cluster.gui.*;
-import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
-import org.tigr.microarray.mev.cluster.algorithm.*;
-
+import org.tigr.microarray.mev.cluster.Cluster;
+import org.tigr.microarray.mev.cluster.NodeList;
+import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
+import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
+import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidsViewer;
-
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
 import org.tigr.microarray.mev.cluster.gui.impl.util.IntSorter;
-
 import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
-
+import org.tigr.util.FloatMatrix;
 
 public class RNGUI implements IClusterGUI, IScriptGUI {
     
@@ -298,7 +301,7 @@ public class RNGUI implements IClusterGUI, IScriptGUI {
         if(clusterGenes)
             root = new DefaultMutableTreeNode("RelNet - genes");
         else
-            root = new DefaultMutableTreeNode("RelNet - experiments");
+            root = new DefaultMutableTreeNode("RelNet - samples");
             
         addResultNodes(root, experiment, clusters, weights, indices, info, clusterGenes);
         return root;
@@ -329,7 +332,7 @@ public class RNGUI implements IClusterGUI, IScriptGUI {
         if(clusterGenes)
             node.add(new DefaultMutableTreeNode(new LeafInfo("Genes in Clusters (#,%)", new RNElementSeedInfoViewer(clusters, experiment, orderedIndices, experiment.getNumberOfGenes(), true))));
         else
-            node.add(new DefaultMutableTreeNode(new LeafInfo("Experiments in Clusters (#,%)", new RNElementSeedInfoViewer(clusters, experiment, orderedIndices, experiment.getNumberOfSamples(), false))));
+            node.add(new DefaultMutableTreeNode(new LeafInfo("Samples in Clusters (#,%)", new RNElementSeedInfoViewer(clusters, experiment, orderedIndices, experiment.getNumberOfSamples(), false))));
         root.add(node);
     }
     
@@ -338,7 +341,7 @@ public class RNGUI implements IClusterGUI, IScriptGUI {
         if(clusterGenes)
             node.add(new DefaultMutableTreeNode(new LeafInfo("Genes in Subnets (#,%)", new RNSubnetInfoViewer(clusters, orderedIndices, experiment.getNumberOfGenes(), true))));
         else
-            node.add(new DefaultMutableTreeNode(new LeafInfo("Experiments in Subnets (#,%)", new RNSubnetInfoViewer(clusters, orderedIndices, experiment.getNumberOfSamples(), false))));
+            node.add(new DefaultMutableTreeNode(new LeafInfo("Samples in Subnets (#,%)", new RNSubnetInfoViewer(clusters, orderedIndices, experiment.getNumberOfSamples(), false))));
         root.add(node);
     }
     

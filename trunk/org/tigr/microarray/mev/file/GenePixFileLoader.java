@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: GenePixFileLoader.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-27 22:16:51 $
- * $Author: braisted $
+ * $Revision: 1.4 $
+ * $Date: 2005-02-24 20:23:50 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.file;
@@ -128,7 +128,7 @@ public class GenePixFileLoader extends ExpressionFileLoader {
                 cols[2] = ((Integer)spotData.elementAt(5)).intValue();
                 moreFields[0] = (String)spotData.elementAt(6);
                 moreFields[1] = (String)spotData.elementAt(7);
-                sde = new SlideDataElement(rows, cols, intensity, moreFields);
+                sde = new SlideDataElement(String.valueOf(i+1), rows, cols, intensity, moreFields);
                 slideData.add(sde);
                 setFileProgress(i);
             }

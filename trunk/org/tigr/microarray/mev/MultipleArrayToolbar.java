@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: MultipleArrayToolbar.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-07-28 13:47:44 $
- * $Author: braisted $
+ * $Revision: 1.5 $
+ * $Date: 2005-02-24 20:23:45 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -30,16 +30,6 @@ public class MultipleArrayToolbar extends JToolBar {
      * @see ActionManager
      */
     public MultipleArrayToolbar(ActionManager manager) { 
-	//add(manager.getAction(ActionManager.LOAD_DIRECTORY_ACTION));
-	//add(manager.getAction(ActionManager.LOAD_FILE_ACTION));
-	//add(manager.getAction(ActionManager.LOAD_EXPRESSION_ACTION));
-	//add(manager.getAction(ActionManager.LOAD_DB_ACTION));
-	//addSeparator();
-	//add(manager.getAction(ActionManager.SAVE_IMAGE_ACTION));
-	//add(manager.getAction(ActionManager.PRINT_IMAGE_ACTION));
-	//addSeparator();
-	//add(manager.getAction(ActionManager.SHOW_THUMBNAIL_ACTION));
-	//addSeparator();
 	addAlgorithmActions(manager);
     }
     
@@ -51,7 +41,7 @@ public class MultipleArrayToolbar extends JToolBar {
 	Action action;
 	while ((action = manager.getAction(ActionManager.ANALYSIS_ACTION+String.valueOf(index)))!=null) {
 	    add(action);
-            if(index == 3 || index == 10 || index == 15 || index == 17 || index == 20)
+            if(index == 3 || index == 10 || index == 15 || index == 18 || index == 22)
                 this.addSeparator();
 	    index++;
             
@@ -114,7 +104,6 @@ public class MultipleArrayToolbar extends JToolBar {
 		setEnable(ActionManager.LOAD_DB_COMMAND, false);
 		setEnable(ActionManager.SAVE_IMAGE_COMMAND, false);
 		setEnable(ActionManager.PRINT_IMAGE_COMMAND, false);
-		setEnable(ActionManager.SHOW_THUMBNAIL_COMMAND, false);
 		setEnable(ActionManager.ANALYSIS_COMMAND, false);
 		break;
 	    case TMEV.DB_AVAILABLE:
@@ -139,7 +128,6 @@ public class MultipleArrayToolbar extends JToolBar {
 	    case TMEV.DATA_AVAILABLE:
 		setEnable(ActionManager.SAVE_IMAGE_COMMAND, true);
 		setEnable(ActionManager.PRINT_IMAGE_COMMAND, true);
-		setEnable(ActionManager.SHOW_THUMBNAIL_COMMAND, true);
 		setEnable(ActionManager.ANALYSIS_COMMAND, true);
 		break;
 	    case TMEV.DB_AVAILABLE:
@@ -150,10 +138,4 @@ public class MultipleArrayToolbar extends JToolBar {
 	}
     }
     
-    /**
-     * Sets state of the thumbnail button.
-     */
-    public void setThumbnailEnabled(boolean enabled) {
-	setEnable(ActionManager.SHOW_THUMBNAIL_COMMAND, enabled);
-    }
 }

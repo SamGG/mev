@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: SOTAExperimentTreeViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-13 19:15:06 $
- * $Author: braisted $
+ * $Revision: 1.5 $
+ * $Date: 2005-02-24 20:23:49 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.sota;
@@ -15,30 +15,22 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.tree.*;
-import javax.swing.event.*;
 import java.awt.image.*;
 import java.util.Arrays;
 import java.util.ArrayList;
 
 import org.tigr.util.FloatMatrix;
-import org.tigr.microarray.mev.cluster.Cluster;
 import org.tigr.microarray.mev.cluster.Node;
-import org.tigr.microarray.mev.cluster.NodeList;
 import org.tigr.microarray.mev.cluster.NodeValueList;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
-import org.tigr.microarray.mev.cluster.gui.helpers.CentroidExperimentHeader;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTree;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLCluster;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLColorBar;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLConfigDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLExperimentHeader;
 
 
@@ -632,6 +624,12 @@ public class SOTAExperimentTreeViewer extends JPanel implements IViewer{
         return null;
     }
     
+    /** Returns int value indicating viewer type
+     * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
+     */
+    public int getViewerType() {
+        return -1;
+    }    
     
     private class Listener extends MouseAdapter implements ActionListener{
         
@@ -645,20 +643,20 @@ public class SOTAExperimentTreeViewer extends JPanel implements IViewer{
                 onSampleTreeProperties();
             }
  */
-            else if(actionCmd.equals(SOTAExperimentTreeViewer.this.SET_CLUSTER_CMD)){
+            else if(actionCmd.equals(SOTAExperimentTreeViewer.SET_CLUSTER_CMD)){
                 if(currClusterNum != -1)
                     onSetCluster(currClusterNum);
             }
-            else if(actionCmd.equals(SOTAExperimentTreeViewer.this.SAVE_CLUSTER_CMD)){
+            else if(actionCmd.equals(SOTAExperimentTreeViewer.SAVE_CLUSTER_CMD)){
                 if(currClusterNum != -1)
                     onSaveCluster(currClusterNum);
             }
-            else if(actionCmd.equals(SOTAExperimentTreeViewer.this.DELETE_CLUSTER_CMD)){
+            else if(actionCmd.equals(SOTAExperimentTreeViewer.DELETE_CLUSTER_CMD)){
                 if(currClusterNum != -1)
                     onDeleteCluster(currClusterNum);
             }
             
-            else if(actionCmd.equals(SOTAExperimentTreeViewer.this.DELETE_ALL_CLUSTERS_CMD)){
+            else if(actionCmd.equals(SOTAExperimentTreeViewer.DELETE_ALL_CLUSTERS_CMD)){
                 onDeleteAllClusters();
             }
         }

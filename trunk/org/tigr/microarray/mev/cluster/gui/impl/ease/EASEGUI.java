@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASEGUI.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-06-24 17:28:55 $
- * $Author: braisted $
+ * $Revision: 1.6 $
+ * $Date: 2005-02-24 20:24:11 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 /*
@@ -31,23 +31,20 @@ import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.clusterUtil.*;
-import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
-import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Logger;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
 
+import org.tigr.microarray.mev.cluster.gui.impl.ease.gotree.GOTreeViewer;
 
 import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
 
@@ -96,10 +93,14 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
     private Listener listener;
     
     boolean stop = false;
-    String annotationKeyType;
-    
+    /** Annotation type to use as a key (annotation field name)
+     */
+    private String annotationKeyType;
+    /** Indicates path of EASE base file system for this analysis
+     */
+    private String baseFileSystem;
     /** Indicates if the algorithm run is via a script execution
-     */    
+     */
     boolean isScripting = false;
     
     /** Creates a new instance of EASEGUI */
@@ -129,6 +130,8 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         logger.show();
         progress = new Progress(framework.getFrame(), "Probability Analysis Resampling Progress", listener);
         
+        baseFileSystem = dialog.getBaseFileLocation();
+        algorithmData.addParam("base-file-system", baseFileSystem);
         isClusterAnalysis = dialog.isClusterModeSelected();
         String converterFileName = dialog.getConverterFileName();
         annotationKeyType = dialog.getAnnotationKeyType();
@@ -176,7 +179,8 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
                 return null;
             }
         } else {
-            populationKeys = framework.getData().getAnnotationList(annotationKeyType, experiment.getRowMappingArrayCopy());
+            //populationKeys = framework.getData().getAnnotationList(annotationKeyType, experiment.getRowMappingArrayCopy());
+            populationKeys = framework.getData().getAnnotationList(annotationKeyType, framework.getData().getExperiment().getRowMappingArrayCopy());            
         }
         
         algorithmData.addParam("perform-cluster-analysis", String.valueOf(isClusterAnalysis));
@@ -232,7 +236,9 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         
         if(dialog.showModal() != JOptionPane.OK_OPTION)
             return null;
-        
+
+        baseFileSystem = dialog.getBaseFileLocation();
+        algorithmData.addParam("base-file-system", baseFileSystem);
         isClusterAnalysis = dialog.isClusterModeSelected();
         String converterFileName = dialog.getConverterFileName();
         annotationKeyType = dialog.getAnnotationKeyType();
@@ -256,7 +262,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
             algorithmData.addParam("run-permutation-analysis", String.valueOf(dialog.isPermutationAnalysisSelected()));
             if(dialog.isPermutationAnalysisSelected())
                 algorithmData.addParam("permutation-count", String.valueOf(dialog.getPermutationCount()));
-     }
+        }
         
         //Use file or IData for population, only permit file use for cluster analysis
         String [] populationKeys;
@@ -319,7 +325,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         
         this.isClusterAnalysis = params.getBoolean("perform-cluster-analysis");
         this.annotationKeyType = params.getString("annotation-key-type");
-                                                 
+        
         
         listener = new Listener();
         logger = new Logger(framework.getFrame(), "EASE Analysis", listener);
@@ -328,13 +334,21 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         
         if(this.isClusterAnalysis) {
             //cluster keys
-            int indices [] = experiment.getRowMappingArrayCopy();
+            int indices [] = experiment.getRowMappingArrayCopy(); 
             String [] clusterKeys = framework.getData().getAnnotationList(annotationKeyType, indices);
+            
+            algData.addStringArray("sample-list", clusterKeys);
 
-             algData.addStringArray("sample-list", clusterKeys);
-             algData.addIntArray("sample-indices", indices);  //drop in experiment indices          
+            //since we have an experiment containing only genes in cluster we can make
+            //default indices
+            int [] tempArray = new int[indices.length];
+            for(int i = 0; i < indices.length; i++) {
+                tempArray[i]= i;
+            }
+            
+            algData.addIntArray("sample-indices", tempArray);  //drop in experiment indices
         }
-                
+        
         // population keys
         String popFileName = params.getString("population-file-name");
         String [] populationKeys;
@@ -350,12 +364,12 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
                 return null;
             }
         } else {
-            populationKeys = framework.getData().getAnnotationList(annotationKeyType, experiment.getRowMappingArrayCopy());
+            populationKeys = framework.getData().getAnnotationList(annotationKeyType, framework.getData().getExperiment().getRowMappingArrayCopy());
         }
         
         algData.addStringArray("population-list", populationKeys);
         
-         
+        
         algorithm = framework.getAlgorithmFactory().getAlgorithm("EASE");
         algorithm.addAlgorithmListener(listener);
         algorithm.execute(algorithmData);
@@ -420,7 +434,40 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         addTableViewer(root, result);
         addExpressionViewers(root, result);
         addGeneralInfo(root, result);
+        if(isClusterAnalysis)
+            addGOTree(root, result);
         return root;
+    }
+    
+    private void addGOTree(DefaultMutableTreeNode root, AlgorithmData result) {
+        String [][] data = (String [][]) (result.getObjectMatrix("result-matrix"));
+        String [] headerNames = result.getStringArray("header-names");
+        
+        String categories = new String("");
+        
+        for(int i = 0; i < categoryNames.length; i++)
+            categories += categoryNames[i];
+        
+        if(categories.indexOf("GO Biological Process") != -1) {
+            DefaultMutableTreeNode node = new DefaultMutableTreeNode();
+            GOTreeViewer viewer = new GOTreeViewer("GO Biological Process", headerNames, data, root, this.baseFileSystem);
+            node.setUserObject(new LeafInfo("GO Hierarchy -- Biological Process", viewer));
+            root.add(node);
+        }
+        
+        if(categories.indexOf("GO Cellular Component") != -1) {
+            DefaultMutableTreeNode node = new DefaultMutableTreeNode();
+            GOTreeViewer viewer = new GOTreeViewer("GO Cellular Component", headerNames, data, root, this.baseFileSystem);
+            node.setUserObject(new LeafInfo("GO Hierarchy -- Cellular Component", viewer));
+            root.add(node);
+        }
+        
+        if(categories.indexOf("GO Molecular Function") != -1) {
+            DefaultMutableTreeNode node = new DefaultMutableTreeNode();
+            GOTreeViewer viewer = new GOTreeViewer("GO Molecular Function", headerNames, data, root, this.baseFileSystem);
+            node.setUserObject(new LeafInfo("GO Hierarchy -- Molecular Function", viewer));
+            root.add(node);
+        }
     }
     
     /** creates an empty result if the result is null.
@@ -512,7 +559,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         }
         
         if(this.isScripting) {
-            newNode = new DefaultMutableTreeNode("Input Data: Script Data Input");            
+            newNode = new DefaultMutableTreeNode("Input Data: Script Data Input");
         }
         
         newNode = new DefaultMutableTreeNode("Analysis Options");

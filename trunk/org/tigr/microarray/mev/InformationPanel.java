@@ -4,19 +4,17 @@ All rights reserved.
 */
 /*
  * $RCSfile: InformationPanel.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:17 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:44 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
 import java.awt.*;
-import java.awt.image.*;
 import java.awt.event.*;
 import java.text.*;
 import javax.swing.*;
-import javax.swing.event.*;
 
 public class InformationPanel extends JPanel {
     
@@ -80,7 +78,7 @@ public class InformationPanel extends JPanel {
 	g2.drawString("TIGR MeV",40,70);
 	Font InfoFont = new Font("monospaced",Font.BOLD,14);
 	g2.setFont(InfoFont);
-	g2.drawString("Version 2.2",40,90);
+	g2.drawString("Version "+TMEV.VERSION,40,90);
 	int CurrentPosition=150;
 	g2.setColor(new Color(155,180,215));
 	//g2.drawString("Version 1.0 Beta",40,CurrentPosition);

@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMClassificationEditor.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-07-27 19:59:17 $
- * $Author: braisted $
+ * $Revision: 1.6 $
+ * $Date: 2005-02-24 20:23:45 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.svm;
@@ -94,8 +94,8 @@ public class SVMClassificationEditor extends javax.swing.JDialog {//javax.swing.
         
         if(data == null) return;
         
-        int numGenes = data.getFeaturesSize();
-        int numSamples = data.getFeaturesCount();
+        int numGenes = experiment.getNumberOfGenes();
+        int numSamples = experiment.getNumberOfSamples();
         
         if(classifyGenes){
             fieldNames =  data.getFieldNames();     //get all field names
@@ -147,7 +147,7 @@ public class SVMClassificationEditor extends javax.swing.JDialog {//javax.swing.
                 this.table.setValueAt( new Boolean(true), row, 2);
                 this.table.setValueAt( new Boolean(false), row, 3);
                 
-                this.table.setValueAt( data.getFullSampleName(row), row, 4);
+                this.table.setValueAt( data.getFullSampleName(experiment.getSampleIndex(row)), row, 4);
             }
         }
         

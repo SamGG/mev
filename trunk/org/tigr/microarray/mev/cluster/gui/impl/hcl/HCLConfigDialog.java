@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLConfigDialog.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-07-27 19:59:16 $
- * $Author: braisted $
+ * $Revision: 1.4 $
+ * $Date: 2005-02-24 20:24:09 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.hcl;
@@ -27,13 +27,10 @@ import java.awt.GridBagConstraints;
 import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyListener;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import javax.swing.JLabel;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JDialog;
 import javax.swing.JButton;
 import javax.swing.JSlider;
 import javax.swing.UIManager;
@@ -42,12 +39,10 @@ import javax.swing.JTextField;
 import javax.swing.JSeparator;
 import javax.swing.JOptionPane;
 import javax.swing.BorderFactory;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.border.BevelBorder;
 
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
@@ -83,7 +78,7 @@ public class HCLConfigDialog extends AlgorithmDialog {
      * Constructs the dialog.
      */
     public HCLConfigDialog(Frame parent, HCLViewer viewer, float zeroThreshold, int minPixelDistance, int maxPixelDistance, float minDist, float maxDist) {
-        super(new JFrame(), "Tree Configuration", true);
+        super(parent, "Tree Configuration", true);
         this.viewer = viewer;
         zThr = zeroThreshold;
         this.minDist = minDist;

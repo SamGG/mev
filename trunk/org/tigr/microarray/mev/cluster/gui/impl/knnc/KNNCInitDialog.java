@@ -1,4 +1,8 @@
 /*
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
+All rights reserved.
+*/
+/*
  * KNNCInitDialog.java
  *
  * Created on September 3, 2003, 2:32 PM
@@ -6,21 +10,34 @@
 
 package org.tigr.microarray.mev.cluster.gui.impl.knnc;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import org.tigr.graph.*;
-import org.tigr.util.*;
-import org.tigr.util.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.WindowAdapter;
 
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.border.TitledBorder;
+
 import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HCLSelectionPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 
 /**
  *
@@ -74,13 +91,13 @@ public class KNNCInitDialog extends AlgorithmDialog {
         
         JPanel genesOrExpsPanel = new JPanel();
         genesOrExpsPanel.setBackground(Color.white);
-        genesOrExpsPanel.setBorder(new TitledBorder("Classify genes or experiments"));
+        genesOrExpsPanel.setBorder(new TitledBorder("Classify genes or samples"));
         GridBagLayout grid1 = new GridBagLayout();
         genesOrExpsPanel.setLayout(grid1);
         
         genesButton = new JRadioButton("Classify genes", true);
         genesButton.setBackground(Color.white);
-        expsButton = new JRadioButton("Classify experiments", false);
+        expsButton = new JRadioButton("Classify samples", false);
         expsButton.setBackground(Color.white);
         ButtonGroup genesOrExpsGroup = new ButtonGroup();
         genesOrExpsGroup.add(genesButton);

@@ -78,7 +78,7 @@ public class AnalysisSaveDialog extends org.tigr.microarray.mev.cluster.gui.impl
         this.supplantButtonPanel(buttonPanel);
         this.addContent(paramPanel);
         
-        this.setSize(470, 220);
+        this.setSize(470, 240);
     }
     
     

@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLGUI.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-05-06 15:33:12 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2005-02-24 20:24:09 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.hcl;
@@ -48,11 +48,19 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
      * a result to be inserted into the framework analysis node.
      */
     public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
-        HCLInitDialog dialog = new HCLInitDialog(framework.getFrame());
+        
+        IDistanceMenu menu = framework.getDistanceMenu();
+        int function = menu.getDistanceFunction();
+        if (function == Algorithm.DEFAULT) {
+            function = Algorithm.EUCLIDEAN;
+        }        
+        
+        HCLInitDialog dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(function), menu.isAbsoluteDistance(), true);
         if (dialog.showModal() != JOptionPane.OK_OPTION) {
             return null;
         }
         int method = dialog.getMethod();
+        function = dialog.getDistanceMetric();       
         Listener listener = new Listener();
         
         try {
@@ -63,14 +71,10 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
             algorithm.addAlgorithmListener(listener);
             AlgorithmData data = new AlgorithmData();
             data.addMatrix("experiment", experiment.getMatrix());
-            IDistanceMenu menu = framework.getDistanceMenu();
-            int function = menu.getDistanceFunction();
-            if (function == Algorithm.DEFAULT) {
-                function = Algorithm.EUCLIDEAN;
-            }
-            data.addParam("distance-function", String.valueOf(function));
+
+            data.addParam("hcl-distance-function", String.valueOf(function));
             data.addParam("distance-factor", String.valueOf(1.0f));
-            data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
+            data.addParam("hcl-distance-absolute", String.valueOf(dialog.getAbsoluteSelection()));
             data.addParam("method-linkage", String.valueOf(method));
             
             this.progress = new Progress(framework.getFrame(), "", listener);
@@ -85,7 +89,7 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
                 validate(genes_result);
             }
             AlgorithmData samples_result = null;
-            if (dialog.isClusterExperience()) {
+            if (dialog.isClusterExperiments()) {
                 progress.setTitle("Clustering by Examples");
                 data.addParam("calculate-genes", String.valueOf(false));
                 samples_result = algorithm.execute(data);
@@ -116,28 +120,31 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
      */
     
     public AlgorithmData getScriptParameters(IFramework framework) {
-        HCLInitDialog dialog = new HCLInitDialog(framework.getFrame());
-        if (dialog.showModal() != JOptionPane.OK_OPTION) {
-            return null;
-        }
-        int method = dialog.getMethod();
-        
-        AlgorithmData data = new AlgorithmData();
-        
         IDistanceMenu menu = framework.getDistanceMenu();
         int function = menu.getDistanceFunction();
         if (function == Algorithm.DEFAULT) {
             function = Algorithm.EUCLIDEAN;
+        }        
+        
+        HCLInitDialog dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(function), menu.isAbsoluteDistance(), true);
+
+        if (dialog.showModal() != JOptionPane.OK_OPTION) {
+            return null;
         }
+        int method = dialog.getMethod();
+        function = dialog.getDistanceMetric();  
+        
+        AlgorithmData data = new AlgorithmData();
+                
         data.addParam("distance-function", String.valueOf(function));
         data.addParam("distance-factor", String.valueOf(1.0f));
-        data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
+        data.addParam("distance-absolute", String.valueOf(dialog.getAbsoluteSelection()));
         data.addParam("method-linkage", String.valueOf(method));
         
         if (dialog.isClusterGenes())
             data.addParam("calculate-genes", String.valueOf(true));
         
-        if (dialog.isClusterExperience())
+        if (dialog.isClusterExperiments())
             data.addParam("calculate-experiments", String.valueOf(true));
         
         //script control parameters
@@ -240,7 +247,7 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
         if(genes_result != null)
             root.add(new DefaultMutableTreeNode(new LeafInfo("Gene Node Height Plot", new HCLNodeHeightGraph(getHCLTreeData(genes_result), true))));
         if(samples_result != null)
-            root.add(new DefaultMutableTreeNode(new LeafInfo("Experiment Node Height Plot", new HCLNodeHeightGraph(getHCLTreeData(samples_result), false))));
+            root.add(new DefaultMutableTreeNode(new LeafInfo("Sample Node Height Plot", new HCLNodeHeightGraph(getHCLTreeData(samples_result), false))));
         addGeneralInfo(root, info);
         return root;
     }

@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOTADiversityViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-13 19:15:06 $
- * $Author: braisted $
+ * $Revision: 1.5 $
+ * $Date: 2005-02-24 20:23:50 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 /*
@@ -15,27 +15,22 @@ All rights reserved.
  */
 package org.tigr.microarray.mev.cluster.gui.impl.sota;
 
-import java.lang.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.*;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import org.tigr.util.awt.Drawable;
-import org.tigr.util.awt.Viewer;
-import org.tigr.util.awt.GBA;
-import org.tigr.util.awt.BoundariesDialog;
-import org.tigr.util.awt.ActionInfoListener;
-import org.tigr.util.awt.ActionInfoEvent;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+
+import org.tigr.graph.GC;
+import org.tigr.graph.GraphPoint;
+import org.tigr.graph.GraphTick;
+import org.tigr.graph.GraphViewer;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
-import org.tigr.microarray.mev.cluster.gui.IViewer;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IData;
-
-
-import org.tigr.graph.*;
+import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.util.FloatMatrix;
 
 public class SOTADiversityViewer extends GraphViewer implements IViewer {
@@ -219,6 +214,13 @@ public class SOTADiversityViewer extends GraphViewer implements IViewer {
      */
     public Experiment getExperiment() {
         return null;
+    }
+    
+    /** Returns int value indicating viewer type
+     * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
+     */
+    public int getViewerType() {
+        return -1;
     }
     
 }

@@ -1,34 +1,26 @@
-package org.tigr.microarray.mev.file;
-
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: ExpressionFileLoader.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-05-03 13:47:05 $
- * $Author: braisted $
+ * $Revision: 1.4 $
+ * $Date: 2005-02-24 20:23:50 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+package org.tigr.microarray.mev.file;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Vector;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.JProgressBar;
 
-import javax.swing.border.BevelBorder;
+import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 
-import org.tigr.microarray.mev.MultipleArrayViewer;
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.TMEV;
 
@@ -37,11 +29,11 @@ public abstract class ExpressionFileLoader extends SlideLoaderProgressBar { // i
     protected SuperExpressionFileLoader superLoader;
     protected SlideLoaderProgressBar progress;
     protected boolean stop = false;
-    
+
     public ExpressionFileLoader(SuperExpressionFileLoader superLoader) {
         super(superLoader.getFrame());
         this.superLoader = superLoader;
-   //     this.loadingPanel = new LoadingPanel();
+   //     this.loadingPanel = new LoadingPanel();   
     }
     
     public abstract ISlideData loadExpressionFile(File f) throws IOException;
@@ -114,4 +106,5 @@ public abstract class ExpressionFileLoader extends SlideLoaderProgressBar { // i
             TMEV.appendFieldNames(fieldNames);
         }
     }
+    
 }

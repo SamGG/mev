@@ -13,11 +13,7 @@ package org.tigr.microarray.mev.script.util;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
-
 import java.io.File;
-
-import java.net.URL;
-
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
@@ -31,24 +27,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 
 import org.apache.xerces.parsers.DOMParser;
-import org.apache.xerces.dom.DOMImplementationImpl;
-
+import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
+import org.tigr.microarray.mev.script.ScriptManager;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import org.xml.sax.InputSource;
-
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import org.tigr.microarray.mev.script.ScriptManager;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
-
-import org.tigr.microarray.mev.TMEV;
 
 /** Facilitates parameter validation. XML file supports validation by supplying
  * the parameter details.

@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterBrowser.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-04-14 23:44:58 $
- * $Author: braisted $
+ * $Revision: 1.6 $
+ * $Date: 2005-02-24 20:24:08 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 /*
@@ -17,7 +17,6 @@ All rights reserved.
 package org.tigr.microarray.mev.cluster.gui.helpers;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -42,10 +41,8 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
 
 import org.tigr.util.FloatMatrix;
 import org.tigr.graph.*;
@@ -76,7 +73,7 @@ public class ClusterBrowser extends JPanel {
         }
         
         if(!repository.isGeneClusterRepository()){
-            clusterTypeStr = "Experiment";
+            clusterTypeStr = "Sample";
         }
         
         Font font = new Font("Dialog", Font.BOLD, 12);
@@ -167,7 +164,7 @@ public class ClusterBrowser extends JPanel {
         int serialNumber = model.getClusterSerialNumber(index);
         Cluster cluster = repository.getCluster(serialNumber);
         this.matrix = cluster.getExperiment().getMatrix();
-        if(this.clusterTypeStr.equals("Experiment"))
+        if(this.clusterTypeStr.equals("Sample"))
             this.matrix = this.matrix.transpose();
         
         int [] indices = cluster.getExperimentIndices();  //get the indices that map to the experiment

@@ -4,19 +4,16 @@ All rights reserved.
 */
 /*
  * $RCSfile: KMCInitDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 18:38:38 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2005-02-24 20:23:57 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.kmc;
 
-import java.awt.Frame;
 import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Component;
 import java.awt.Insets;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
@@ -24,22 +21,15 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.UIManager;
-import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JOptionPane;
 import javax.swing.BorderFactory;
-import javax.swing.border.EmptyBorder;
 
-
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
 
@@ -55,12 +45,13 @@ public class KMCInitDialog extends AlgorithmDialog {
     private ButtonGroup meanMedianGroup;
     private SampleSelectionPanel sampleSelectionPanel;
     private HCLSelectionPanel hclPanel;
+    private DistanceMetricPanel metricPanel;
     
     /**
      * Constructs a <code>KMCInitDialog</code> with specified clusters and
      * iterations parameters.
      */
-    public KMCInitDialog(javax.swing.JFrame parent, int clusters, int iterations) {
+    public KMCInitDialog(javax.swing.JFrame parent, int clusters, int iterations, String globalMetricName, boolean globalAbsoluteValue) {
         super(parent, "KMC: K-Means/K-Medians", true);
         k = clusters;
         iter = iterations;
@@ -68,6 +59,8 @@ public class KMCInitDialog extends AlgorithmDialog {
         addWindowListener(listener);
         
         sampleSelectionPanel = new SampleSelectionPanel(Color.white, UIManager.getColor("Label.foreground"),true,"Sample Selection");
+        
+        metricPanel = new DistanceMetricPanel(globalMetricName, globalAbsoluteValue, "Euclidean Distance", "KMC", true, true);
         
         meanMedianGroup = new ButtonGroup();
         calcMeans = new JRadioButton("Calculate K-Means", true);
@@ -99,8 +92,9 @@ public class KMCInitDialog extends AlgorithmDialog {
         JPanel mainPanel = new JPanel(new GridBagLayout());
         mainPanel.setBackground(Color.white);
         mainPanel.add(sampleSelectionPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
-        mainPanel.add(parameters, new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
-        mainPanel.add(hclPanel, new GridBagConstraints(0,2,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
+        mainPanel.add(metricPanel,  new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
+        mainPanel.add(parameters, new GridBagConstraints(0,2,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
+        mainPanel.add(hclPanel, new GridBagConstraints(0,3,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
      
         JPanel controlPanel = new JPanel(new BorderLayout());
         controlPanel.setForeground(Color.white);
@@ -114,7 +108,7 @@ public class KMCInitDialog extends AlgorithmDialog {
         resetButton.addActionListener(listener);
         infoButton.addActionListener(listener);
         validate();
-        setSize(420, 340);
+        setSize(420, 410);
         setResizable(false);
         pack();
     }
@@ -174,6 +168,21 @@ public class KMCInitDialog extends AlgorithmDialog {
         sampleSelectionPanel.setClusterGenesSelected(true);
         hclPanel.setHCLSelected(false);
         calcMeans.setSelected(true);
+        metricPanel.reset();
+    }
+    
+    /**
+     * Returns the currently selected metric
+     */
+    public int getDistanceMetric() {
+        return metricPanel.getMetricIndex();
+    }
+    
+    /**
+     *  Returns true if the absolute checkbox is selected, else false
+     */
+    public boolean isAbsoluteDistance() {
+        return metricPanel.getAbsoluteSelection();
     }
     
     /**
@@ -235,7 +244,7 @@ public class KMCInitDialog extends AlgorithmDialog {
     }
     
     public static void main(String[] args) {
-        KMCInitDialog dlg = new KMCInitDialog(new javax.swing.JFrame(), 10 , 50);
+        KMCInitDialog dlg = new KMCInitDialog(new javax.swing.JFrame(), 10 , 50, "Pearson Correlation", true);
         
         dlg.showModal();
         System.exit(0);

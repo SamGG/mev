@@ -1,49 +1,41 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: SlideLoaderProgressBar.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 20:23:50 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.file;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
 import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JProgressBar;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.border.BevelBorder;
 
-import org.tigr.microarray.mev.ISlideMetaData;
 import org.tigr.microarray.mev.ISlideData;
-import org.tigr.microarray.mev.FloatSlideData;
-import org.tigr.microarray.mev.TMEV;
-import org.tigr.util.StringSplitter;
-import org.tigr.microarray.mev.ISlideDataElement;
-import org.tigr.microarray.mev.SlideData;
-import org.tigr.microarray.mev.SlideDataElement;
+import org.tigr.microarray.mev.ISlideMetaData;
+
 
 public class SlideLoaderProgressBar extends JDialog {
     
@@ -72,7 +64,7 @@ public class SlideLoaderProgressBar extends JDialog {
      */
     
     public SlideLoaderProgressBar(JFrame frame) {
-        super(frame, "Slide Data Loading", true);
+        super(frame, "Slide Data Loading");
 
         Listener listener = new Listener();
  

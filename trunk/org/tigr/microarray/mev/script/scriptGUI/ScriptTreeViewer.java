@@ -10,34 +10,27 @@ All rights reserved.
 
 package org.tigr.microarray.mev.script.scriptGUI;
 
-import java.awt.Color;
-
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-
 import java.io.Serializable;
 
 import javax.swing.JComponent;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-import org.tigr.microarray.mev.script.util.AlgorithmNode;
-import org.tigr.microarray.mev.script.util.ScriptConstants;
-import org.tigr.microarray.mev.script.util.ScriptNode;
-import org.tigr.microarray.mev.script.util.DataNode;
-import org.tigr.microarray.mev.script.util.ScriptTree;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
-
 import org.tigr.microarray.mev.script.ScriptDocument;
 import org.tigr.microarray.mev.script.ScriptManager;
 import org.tigr.microarray.mev.script.event.ScriptDocumentEvent;
 import org.tigr.microarray.mev.script.event.ScriptEventListener;
+import org.tigr.microarray.mev.script.util.AlgorithmNode;
 import org.tigr.microarray.mev.script.util.AlgorithmSet;
+import org.tigr.microarray.mev.script.util.DataNode;
+import org.tigr.microarray.mev.script.util.ScriptConstants;
+import org.tigr.microarray.mev.script.util.ScriptNode;
+import org.tigr.microarray.mev.script.util.ScriptTree;
 
 
 /** ScriptTreeViewer renders the script in an intuitive tree where
