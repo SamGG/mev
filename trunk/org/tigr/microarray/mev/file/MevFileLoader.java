@@ -6,8 +6,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MevFileLoader.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-26 15:13:43 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -27,6 +27,7 @@ import java.util.Vector;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -46,6 +47,7 @@ import org.tigr.microarray.mev.ISlideDataElement;
 import org.tigr.microarray.mev.ISlideMetaData;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.SlideDataElement;
+import org.tigr.microarray.mev.SpotInformationData;
 import org.tigr.microarray.mev.TMEV;
 
 public class MevFileLoader extends ExpressionFileLoader {
@@ -81,8 +83,12 @@ public class MevFileLoader extends ExpressionFileLoader {
                 data.add(loadFloatSlideData((File) mevFiles[i], metaData));
             setFilesProgress(i);
         }
-        for (int i = 0; i < annFiles.length; i++){
-            loadAnnotationFile((SlideData)data.elementAt(0), (File)annFiles[i]);
+        if(!mflp.noAnnFileBox.isSelected()) {
+            for (int i = 0; i < annFiles.length; i++){
+                loadAnnotationFile((SlideData)data.elementAt(0), (File)annFiles[i]);
+            }
+        } else { 
+            loadAnnotationFromMevFile((File)mevFiles[0], (SlideData)data.elementAt(0));
         }
         return data;
     }
@@ -91,6 +97,26 @@ public class MevFileLoader extends ExpressionFileLoader {
     public ISlideData loadExpressionFile(File file){
         return null;
     }
+    
+    
+    public void loadAnnotationFromMevFile(File file, SlideData data) {
+        MevParser mfp = new MevParser();
+        mfp.loadFile(file);
+        
+        SpotInformationData annot = mfp.getSpotInformation();
+        int length = annot.getSize();
+
+        String [] header = annot.getSpotInformationHeader();
+        Vector v = new Vector();
+        for(int i = 0; i < header.length; i++) {
+            v.add(header[i]);
+        }
+        setTMEVFieldNames(v);
+        
+        for(int i = 1; i < length; i++){
+            ((SlideDataElement)data.getSlideDataElement(i)).setExtraFields(annot.getSpotInformationArray(i));
+        }        
+    }    
     
     public ISlideData loadSlideData(File currentFile) throws IOException {
         SlideData slideData = null;
@@ -134,7 +160,10 @@ public class MevFileLoader extends ExpressionFileLoader {
                 slideData.add(sde);
                 setFileProgress(i);
             }
-            slideData.setSpotInformationData(mfp.getSpotInformation());
+
+            if(!mflp.noAnnFileBox.isSelected())
+                slideData.setSpotInformationData(mfp.getSpotInformation());
+               
             slideData.setSlideDataName(currentFile.getName());
             slideData.setSlideFileName(currentFile.getPath());
         }
@@ -155,7 +184,8 @@ public class MevFileLoader extends ExpressionFileLoader {
                 slideData.setIntensities(i, Float.parseFloat(data[i][1]), Float.parseFloat(data[i][2]));
                 setFileProgress(i);
             }
-            slideData.setSpotInformationData(mfp.getSpotInformation());
+            if(!mflp.noAnnFileBox.isSelected())
+                slideData.setSpotInformationData(mfp.getSpotInformation());
         }
         slideData.setSlideDataName(currentFile.getName());
         slideData.setSlideFileName(currentFile.getPath());
@@ -313,6 +343,8 @@ public class MevFileLoader extends ExpressionFileLoader {
         JSplitPane splitPane;
         JPanel fileLoaderPanel;
         
+        JCheckBox noAnnFileBox;
+        
         public MevFileLoaderPanel() {
             
             setLayout(new GridBagLayout());
@@ -372,6 +404,12 @@ public class MevFileLoader extends ExpressionFileLoader {
             gba.add(mevListPanel, mevSelectedScrollPane, 2, 1, 1, 4, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             
             gba.add(mevSelectionPanel, mevListPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            
+            noAnnFileBox = new JCheckBox("Use Annotation Contained in MeV File (no annotation file)", false);
+            noAnnFileBox.setFocusPainted(false);
+            noAnnFileBox.setActionCommand("use-annotation-in-mev-file");
+            noAnnFileBox.addActionListener(new EventHandler());
+            
             
             annSelectionPanel = new JPanel();
             annSelectionPanel.setLayout(new GridBagLayout());
@@ -441,7 +479,10 @@ public class MevFileLoader extends ExpressionFileLoader {
             selectionPanel.setLayout(new GridBagLayout());
             gba.add(selectionPanel, pathTextField, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             gba.add(selectionPanel, mevSelectionPanel, 0, 1, 1, 2, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(selectionPanel, annSelectionPanel, 0, 3, 1, 2, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+
+            gba.add(selectionPanel, noAnnFileBox, 0, 3, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);            
+
+            gba.add(selectionPanel, annSelectionPanel, 0, 4, 1, 2, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             
             splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, fileTreePane, selectionPanel);
             
@@ -561,6 +602,33 @@ public class MevFileLoader extends ExpressionFileLoader {
             validateLists();
         }
         
+        public void onUseMevAnn() {
+            if(this.noAnnFileBox.isSelected())
+                enableAnnotationPanel(false);
+            else {                
+                enableAnnotationPanel(true);
+            }
+        }
+        
+        public void enableAnnotationPanel(boolean enable) {
+            this.annAddAllButton.setEnabled(enable);
+            this.annAddButton.setEnabled(enable);
+            this.annRemoveAllButton.setEnabled(enable);
+            this.annRemoveButton.setEnabled(enable);
+            this.annAvailableLabel.setEnabled(enable);
+            this.annSelectedLabel.setEnabled(enable);
+            this.annAvailableList.setEnabled(enable);
+            this.annSelectedList.setEnabled(enable);
+
+            if(!enable){
+                this.annAvailableList.setBackground(Color.lightGray);
+                this.annSelectedList.setBackground(Color.lightGray);
+            } else {
+                this.annAvailableList.setBackground(Color.white);
+                this.annSelectedList.setBackground(Color.white);                
+            }                
+        }
+        
         public DefaultListModel getMevAvailableListModel() {
             return (DefaultListModel) mevAvailableList.getModel();
         }
@@ -607,6 +675,9 @@ public class MevFileLoader extends ExpressionFileLoader {
                     onAnnRemove();
                 } else if (source == annRemoveAllButton) {
                     onAnnRemoveAll();
+                } else if (source == noAnnFileBox) {
+                    onUseMevAnn();
+                    System.out.println("Selected no ann file");
                 }
             }
         }
