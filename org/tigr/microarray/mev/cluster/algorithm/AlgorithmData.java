@@ -1,16 +1,17 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
 */
 /*
  * $RCSfile: AlgorithmData.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-11 21:51:06 $
+ * $Revision: 1.3 $
+ * $Date: 2004-07-27 20:01:46 $
  * $Author: braisted $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.algorithm;
 
+import java.io.Serializable;
 import java.util.*;
 
 import org.tigr.util.FloatMatrix;
@@ -21,7 +22,7 @@ import org.tigr.microarray.mev.cluster.Cluster;
  * to a calculation algorithm, and to receive the result of 
  * calculation.
  */
-public class AlgorithmData {
+public class AlgorithmData implements Serializable {
 
     private HashMap matrixes;
     private HashMap intMatrices;
