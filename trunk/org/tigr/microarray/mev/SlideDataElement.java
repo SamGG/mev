@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SlideDataElement.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 21:39:28 $
  * $Author: braisted $
  * $State: Exp $
  */
