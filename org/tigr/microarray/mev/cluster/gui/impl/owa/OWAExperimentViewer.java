@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: OWAExperimentViewer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 20:30:22 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -208,9 +208,9 @@ public class OWAExperimentViewer extends ExperimentViewer {
                     out.print("\t"); 
                 //}
             }
-            for (int j = 0; j < geneGroupMeans[i].length; j++) {
-                out.print(geneGroupMeans[i][j] + "\t");
-                out.print(geneGroupSDs[i][j] + "\t");
+            for (int j = 0; j < geneGroupMeans[rows[i]].length; j++) {
+                out.print(geneGroupMeans[rows[i]][j] + "\t");
+                out.print(geneGroupSDs[rows[i]][j] + "\t");
             }            
             //out.print("\t");
             out.print("" + ((Float)fValues.get(rows[i])).floatValue());
