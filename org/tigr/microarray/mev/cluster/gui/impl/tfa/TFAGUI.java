@@ -427,7 +427,7 @@ public class TFAGUI implements IClusterGUI, IScriptGUI {
         data.addParam("name", "TFA");
         
         // alg type
-        data.addParam("alg-type", "cluster");
+        data.addParam("alg-type", "cluster-genes");
         
         // output class
         data.addParam("output-class", "partition-output");
