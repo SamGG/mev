@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: TMEV.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-02-27 22:20:09 $
+ * $Revision: 1.5 $
+ * $Date: 2004-03-03 15:38:03 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -290,22 +290,32 @@ public class TMEV {
     }
     
     public static void setPermitPrompt(boolean permitPrompt) {
+        boolean havePromptTag = false;
+        
         if(TMEV.permitSavePrompt != permitPrompt) {
             String value = String.valueOf(permitPrompt);
-            
+            String lineSep = System.getProperty("line.separator");
+            if(lineSep == null)
+                lineSep = "\n";
             String fileName = "tmev.cfg";
             String text = new String("");
             
             try {
                 BufferedReader br = new java.io.BufferedReader(new FileReader(fileName));
                 String line;
-                while((line = br.readLine()) != null) {
+                while((line = br.readLine()) != null) {                    
                     if(line.indexOf("prompt-for-save") != -1) {
+                        havePromptTag = true;
                         line = line.substring(0, line.lastIndexOf(" "));
                         line += " "+value;
                     }
-                    text += line+"\n";
+                    text += line+lineSep;
                 }
+                
+                if(!havePromptTag){
+                    text += lineSep+"# Prompt save state"+lineSep+"prompt-for-save "+String.valueOf(permitPrompt);
+                }
+                
                 br.close();
                 
                 BufferedWriter bw = new java.io.BufferedWriter(new FileWriter(fileName));
@@ -313,7 +323,7 @@ public class TMEV {
                 bw.flush();
                 bw.close();
             } catch (IOException ioe) {
-                System.out.println("Can't alter tmev.cfg");
+                //no update to config file
             }
             TMEV.permitSavePrompt = permitPrompt;
         }
@@ -381,7 +391,7 @@ public class TMEV {
             }
             algorithmFactory = new TMEVAlgorithmFactory(cfg);
             
-            TMEV.permitSavePrompt = cfg.getBoolean("prompt-for-save", false);
+            TMEV.permitSavePrompt = cfg.getBoolean("prompt-for-save", true);
             String path = cfg.getProperty("current-data-path");
 
             if(path != null) {
