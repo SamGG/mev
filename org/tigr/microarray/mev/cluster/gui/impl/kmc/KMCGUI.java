@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: KMCGUI.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-04-06 17:30:16 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2004-04-07 18:28:25 $
+ * $Author: nbhagaba $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.kmc;
@@ -22,6 +22,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.tigr.util.FloatMatrix;
 
+import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
@@ -50,19 +51,21 @@ import org.tigr.microarray.mev.cluster.NodeValueList;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidsViewer;
 
-import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
+//import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
 
-public class KMCGUI implements IClusterGUI, IScriptGUI {
+public class KMCGUI implements IClusterGUI/*, IScriptGUI*/ {
     
     private Algorithm algorithm;
     private Progress progress;
     private Monitor monitor;
     
     private Experiment experiment;
+    private IData data;
     private int[][] clusters;
     private FloatMatrix means;
     private FloatMatrix variances;
@@ -82,7 +85,7 @@ public class KMCGUI implements IClusterGUI, IScriptGUI {
         k = 10;
         int iterations = 50;
         boolean calcMeans = true;
-        
+        data = framework.getData();
         KMCInitDialog kmc_dialog = new KMCInitDialog(new JFrame(), k, iterations);
         if (kmc_dialog.showModal() != JOptionPane.OK_OPTION) {
             return null;
@@ -217,6 +220,7 @@ public class KMCGUI implements IClusterGUI, IScriptGUI {
         addExpressionImages(root);
         addHierarchicalTrees(root, result_cluster, info);
         addCentroidViews(root);
+        addClusterTableViews(root);
         addClusterInfo(root);
         addGeneralInfo(root, info);
     }
@@ -237,6 +241,21 @@ public class KMCGUI implements IClusterGUI, IScriptGUI {
             node.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+String.valueOf(i+1), expViewer, new Integer(i))));
         }
         root.add(node);
+    }
+    
+    private void addClusterTableViews(DefaultMutableTreeNode root) {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table views"); 
+        IViewer tableViewer;
+        if (clusterGenes) {
+            tableViewer = new ClusterTableViewer(this.experiment, this.clusters, data);
+        } else {// placeholder for ExperimentClusterTableViewer
+            return;
+        }
+        
+        for (int i=0; i<this.clusters.length; i++) {
+            node.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+String.valueOf(i+1), tableViewer, new Integer(i))));
+        }
+        root.add(node);        
     }
     
     /**

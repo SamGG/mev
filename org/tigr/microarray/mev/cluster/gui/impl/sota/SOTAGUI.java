@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOTAGUI.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2004-04-07 18:28:50 $
+ * $Author: nbhagaba $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.sota;
@@ -31,6 +31,7 @@ import org.tigr.microarray.mev.cluster.Node;
 import org.tigr.microarray.mev.cluster.Cluster;
 import org.tigr.microarray.mev.cluster.NodeList;
 import org.tigr.microarray.mev.cluster.NodeValueList;
+import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
@@ -38,6 +39,7 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Monitor;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
@@ -57,6 +59,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.kmc.KMCExperimentViewer;
 public class SOTAGUI implements IClusterGUI {
     
     private Algorithm algorithm;
+    private IData frameData;
     private AlgorithmData data;
     private AlgorithmData result;
     private SOTATreeData sotaTreeData;
@@ -107,6 +110,8 @@ public class SOTAGUI implements IClusterGUI {
         
         boolean calcClusterHCL;
         boolean calcFullTreeSampleHCL;
+        
+        frameData = framework.getData();
         
         menu = framework.getDistanceMenu();
         int function = menu.getDistanceFunction();
@@ -375,11 +380,27 @@ public class SOTAGUI implements IClusterGUI {
         }
         addHierarchicalTrees(root, hcl_clusters, info);
         addCentroidViews(root);
+        addTableViews(root);
         addDiversityViewer(root);
         addClusterInfo(root);
         addGeneralInfo(root, info);
     }
     
+    
+    private void addTableViews(DefaultMutableTreeNode root) {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table views");
+        IViewer tabViewer;  
+        if (clusterGenes)
+            tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.frameData);
+        else
+            return; //placeholder for ExptClusterTableViewer
+        
+        for (int i=0; i<this.clusters.length; i++) {
+            node.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+String.valueOf(i+1), tabViewer, new Integer(i))));
+        }
+        root.add(node);
+        //return node;        
+    }
     
     private SOTAGeneTreeViewer addSotaGeneViewer(DefaultMutableTreeNode root, Cluster hcl_sample_tree){
         SOTAGeneTreeViewer viewer = new SOTAGeneTreeViewer(experiment, sotaTreeData, hcl_sample_tree, this.clusters);
