@@ -1,0 +1,44 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>Centroid Variance or Entropy Cluster Selection</h1>
+            <hr size = 10>
+
+The cluster centroid is the mean expression vector of a cluster.  Often the centroid is used
+to characterize changes in gene expression for a set of elements in a cluster.
+Centroid Entropy or Variance Ranking cluster selection is an algorithm used to rank a 
+set of clusters based on Centroid variability and then select candidate clusters meeting 
+supplied criteria.
+This process will tend to find clusters that meet a minimum size and have relatively
+higher centroid variability over the expression measurements.  The selected clusters will tend
+to have centroids that vary greatly over the measurements.  Be certain to understand how
+using <i>Centroid Variance</i> versus using <i>Centroid Entropy</i> will affect the outcome. 
+
+<h1>Parameters</h1>
+<h2>Desired Number of Clusters</h2>
+This parameter indicates the number of clusters that should be selected from the input set.  
+If during execution it turns out that the number of input clusters is smaller than the 
+number of clusters desired, then all input clusters are returned as the result.
+
+<h2>Minimum Cluster Population (# of elements)</h2>
+The minimum cluster size describes the minimum number of genes or experiments that should
+be in the cluster.  In some cases clusters may have low variability but are only composed of
+a couple of elements.
+
+<h2>Rank Clusters on Centroid Variance</h2>
+This measure takes the sum of squared errors for the centroid vector where the elements are the
+centroid values and each is compared to the centroid's mean value.
+
+<h2>Rank Clusters on Centroid Entropy</h2>
+Centroid entropy is a measure of the dispersion of centroid values over the observed range of
+centroid values.  In this case, the high entropy centroids would have values that are widely dispersed
+between the extremes of the centroid.  Note that the range of centroid values could be rather
+narrow for a centroid of high entropy where the values are evenly dispersed.  This measure therefore
+may select centroids that don't have large expression variability in terms of range of values and
+hence appear rather flat across measurements.
+
+<b>Great care should be taken to insure that changes to script parameters
+will not affect other algorithm parameters or the nature of the output
+such that down-stream algorithms are still appropriate.</b>
+        </basefont>
+    </body>
+</html>
