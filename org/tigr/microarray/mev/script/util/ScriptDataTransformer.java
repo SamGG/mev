@@ -431,7 +431,7 @@ public class ScriptDataTransformer {
                     div[i] += ExperimentUtil.geneDistance(data, data, clusters[i][j], clusters[i][k], function, 1.0f, absolute);
                 }
             }
-            div[i] /= (Math.pow(clusters[i].length, 2.0))/2+(clusters[i].length)/2;
+            div[i] /= (Math.pow(clusters[i].length, 2.0))/2-(clusters[i].length)/2;
         }
         return div;
     }
