@@ -1,0 +1,135 @@
+/*
+ * KNNCSecondDialog.java
+ *
+ * Created on September 24, 2003, 2:38 PM
+ */
+
+package org.tigr.microarray.mev.cluster.gui.impl.knnc;
+
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.border.*;
+import javax.swing.event.*;
+import org.tigr.graph.*;
+import org.tigr.util.*;
+import org.tigr.util.awt.*;
+
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
+
+/**
+ *
+ * @author  nbhagaba
+ */
+public class KNNCSecondDialog extends AlgorithmDialog {
+    
+    boolean okPressed = false;
+    JRadioButton stopButton, continueButton;
+    
+    /** Creates a new instance of KNNCSecondDialog */
+    public KNNCSecondDialog(JFrame parentFrame, boolean modality) {
+        super(parentFrame, "KNN classify - continue with analysis?", modality);
+        //okButton.setText("Next >");
+        setBounds(0, 0, 500, 200);
+        setBackground(Color.white);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); 
+        
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.NONE;
+        
+        JPanel pane = new JPanel();
+        pane.setBackground(Color.white);
+        pane.setBorder(new EtchedBorder());
+        pane.setLayout(gridbag);   
+        
+        stopButton = new JRadioButton("Stop here, don't classify", true);
+        stopButton.setBackground(Color.white);
+        continueButton = new JRadioButton("Proceed with classification", false);
+        continueButton.setBackground(Color.white);     
+        
+        ButtonGroup stopOrContinue =new ButtonGroup();
+        stopOrContinue.add(stopButton);
+        stopOrContinue.add(continueButton); 
+        
+        buildConstraints(constraints, 0, 0, 1, 1, 100, 50);
+        gridbag.setConstraints(stopButton, constraints);
+        pane.add(stopButton);
+
+        buildConstraints(constraints, 0, 1, 1, 1, 0, 50);
+        gridbag.setConstraints(continueButton, constraints);
+        pane.add(continueButton);        
+        
+        addContent(pane);
+        EventListener listener = new EventListener();        
+        setActionListeners(listener);
+        this.addWindowListener(listener);        
+    }
+    
+    
+    public void setVisible(boolean visible) {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation((screenSize.width - getSize().width)/2, (screenSize.height - getSize().height)/2);
+        
+        super.setVisible(visible);
+    }    
+    
+    void buildConstraints(GridBagConstraints gbc, int gx, int gy,
+    int gw, int gh, int wx, int wy) {
+        
+        gbc.gridx = gx;
+        gbc.gridy = gy;
+        gbc.gridwidth = gw;
+        gbc.gridheight = gh;
+        gbc.weightx = wx;
+        gbc.weighty = wy;
+    } 
+    
+    public boolean isOkPressed() {
+        return okPressed;
+    }
+    
+    public boolean proceed() {
+        return continueButton.isSelected();
+    }
+    
+    public class EventListener extends WindowAdapter implements ActionListener{
+        
+        public void actionPerformed(ActionEvent ae) {
+            String command = ae.getActionCommand();
+            if(command.equals("ok-command")){
+                okPressed = true;
+                dispose();
+            } else if (command.equals("reset-command")) {
+                okPressed = false;
+                stopButton.setSelected(true);
+                continueButton.setSelected(false);
+            } else if (command.equals("cancel-command")) {
+                okPressed = false;
+                dispose();
+            } else if (command.equals("info-command")){
+                /*
+                HelpWindow hw = new HelpWindow(OneWayANOVAInitBox.this, "One Way ANOVA Initialization Dialog");
+                okPressed = false;
+                if(hw.getWindowContent()){
+                    hw.setSize(450,600);
+                    hw.setLocation();
+                    hw.show();
+                    return;
+                 
+                }
+                else {
+                    hw.setVisible(false);
+                    hw.dispose();
+                    return;
+                }
+                 */
+		}
+        }
+        
+    }    
+    
+}
