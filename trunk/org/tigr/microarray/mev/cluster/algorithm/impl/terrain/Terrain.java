@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: Terrain.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
+ * $Revision: 1.2 $
+ * $Date: 2004-05-19 13:18:09 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -39,7 +39,7 @@ public class Terrain extends AbstractAlgorithm implements InterfaceToObjects {
         int function = map.getInt("distance-function", PEARSON);
         float factor = map.getFloat("distance-factor", 1.0f);
         boolean absolute = map.getBoolean("distance-absolute", false);
-        int k_neighbours = map.getInt("neighbours");
+        int k_neighbours = map.getInt("neighbors");
         this.experiment = data.getMatrix("experiment");
 
         // TODO: change algo to work without copy of the experiment
