@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: OWAGUI.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-06-25 18:51:18 $
+ * $Revision: 1.6 $
+ * $Date: 2004-06-25 19:45:54 $
  * $Author: nbhagaba $
  * $State: Exp $
  */
@@ -399,6 +399,8 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
         this.experiment = experiment;
         this.data = framework.getData();
         this.groupAssignments = algData.getIntArray("group-assignments");
+        this.rawPValues = new Vector();
+        this.adjPValues=  new Vector();
         
         exptNamesVector = new Vector();
         int number_of_samples = experiment.getNumberOfSamples();
@@ -483,6 +485,8 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
             info.alpha = params.getFloat("alpha");
             numGroups = params.getInt("numGroups");
             info.correctionMethod = getSigMethod(params.getInt("correction-method"));
+            info.usePerms = params.getBoolean("usePerms");
+            info.numPerms = params.getInt("numPerms");
             /*
             info.pValueBasedOn = getPValueBasedOn(isPermut);
             if (isPermut) {
@@ -507,7 +511,8 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
             titlesVector.add("SS(Error)");
             titlesVector.add("df (Groups)");
             titlesVector.add("df (Error)");
-            titlesVector.add("p value");
+            titlesVector.add("Raw p value");
+            titlesVector.add("Adj. p value");
             
             auxTitles = new String[titlesVector.size()];
             for (int i = 0; i < auxTitles.length; i++) {
