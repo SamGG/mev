@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: TtestInfoViewer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2004-01-21 21:37:04 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -107,4 +107,6 @@ public class TtestInfoViewer extends ViewerAdapter {
 	    content.setPreferredSize(new Dimension(h_width, content.getPreferredSize().height));
 	}
     }
+
+     
 }
