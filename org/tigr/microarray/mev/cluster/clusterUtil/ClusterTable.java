@@ -1,11 +1,11 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: ClusterTable.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-04-13 21:20:33 $
+ * $Revision: 1.7 $
+ * $Date: 2004-06-17 21:03:37 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -83,7 +83,7 @@ public class ClusterTable extends JPanel implements IViewer {
         setBackground(Color.white);
         MenuListener menuListener = new MenuListener();
         initializeTable();
-        initializeMenu(menuListener);        
+        initializeMenu(menuListener);
     }
     
     
@@ -212,10 +212,16 @@ public class ClusterTable extends JPanel implements IViewer {
         item.addActionListener(listener);
         this.menu.add(item);
         
-      //  item = new JMenuItem("Save List");
-      //  item.setActionCommand("save-list-command", GUIFactory.getIcon("save16.gif"));
-      //  item.addActionListener(listener);
-      //  this.menu.add(item);
+        this.menu.addSeparator();
+        
+        if(repository.isGeneClusterRepository()) {            
+            item = new JMenuItem("Import Gene List", GUIFactory.getIcon("empty.gif"));
+        } else {
+            item = new JMenuItem("Import Experiment List", GUIFactory.getIcon("empty.gif"));
+        }
+        item.setActionCommand("import-list-command");
+        item.addActionListener(listener);
+        this.menu.add(item);
     }
     
     private JMenu initializeModifyMenu(MenuListener listener){
@@ -835,8 +841,14 @@ public class ClusterTable extends JPanel implements IViewer {
                 deleteAllRows();
             }else if(command.equals("save-cluster-command")){
                 saveCluster();
-            }else if(command.equals("save-list-command")){
-                
+            }else if(command.equals("import-list-command")){
+                Cluster newCluster = repository.createClusterFromList();
+                if(newCluster != null)
+                    addCluster(newCluster);
+                else
+                    JOptionPane.showMessageDialog(framework.getFrame(), "Cluster was not created. Input ID's were not found in the loaded data set.", "No List Matches", JOptionPane.INFORMATION_MESSAGE);
+                //onRepositoryChanged(repository);
+                //model.fireTableDataChanged();
             }
         }
     }
@@ -957,7 +969,7 @@ public class ClusterTable extends JPanel implements IViewer {
                 menu.getComponent(i).setEnabled(true);
                 m = 0;
                 m = ((JMenuItem)(menu.getComponent(i))).getComponentCount();
-               if( (((JMenuItem)menu.getComponent(i)).getText()).equals("Open/Launch") )
+                if( (((JMenuItem)menu.getComponent(i)).getText()).equals("Open/Launch") )
                     ((JMenu)menu.getComponent(i)).getMenuComponent(0).setEnabled(true);
                 for(int j = 0; j < m; j++){
                     ((JMenuItem)((JMenuItem)menu.getComponent(i)).getComponent(m)).setEnabled(true);
@@ -1028,13 +1040,13 @@ public class ClusterTable extends JPanel implements IViewer {
     **/
             Object userObject = cluster.getUserObject();
             if(userObject != null) {
-                 node = framework.getNode(userObject);
+                node = framework.getNode(userObject);
                 if( node != null) {
                     cluster.setNode(node);
                     framework.setTreeNode(node);
-                }                    
+                }
             }
-        } else {        
+        } else {
             framework.setTreeNode(node);
         }
     }
@@ -1137,7 +1149,7 @@ public class ClusterTable extends JPanel implements IViewer {
             JOptionPane.showMessageDialog(framework.getFrame(), "One row must be selected to indicate the cluster to save.", "Save Error", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        //repository.saveCluster(clusters[0].getSerialNumber());
+        repository.saveCluster(clusters[0].getSerialNumber());
     }
     
     /** Returns a component to be inserted into the scroll pane row header
