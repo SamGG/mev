@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: RNGUI.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2004-04-08 19:05:44 $
+ * $Author: nbhagaba $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.rn;
@@ -23,6 +23,7 @@ import org.tigr.util.FloatMatrix;
 
 import org.tigr.microarray.mev.cluster.*;
 import org.tigr.microarray.mev.cluster.gui.*;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 import org.tigr.microarray.mev.cluster.algorithm.*;
 
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
@@ -41,6 +42,7 @@ public class RNGUI implements IClusterGUI {
     private Progress progress;
     private FloatMatrix means;
     private FloatMatrix variances;
+    private IData data;
     /**
      * Initialize the algorithm's parameters and execute it.
      */
@@ -57,7 +59,8 @@ public class RNGUI implements IClusterGUI {
         boolean use_entropy = dlg.useEntropy();
         float entropy = use_entropy ? dlg.getEntropy() : 100f;
         boolean clusterGenes = dlg.isClusterGenes();
-
+        this.data = framework.getData();
+        
         Listener listener = new Listener();
         try {
             this.algorithm = framework.getAlgorithmFactory().getAlgorithm("RN");
@@ -182,7 +185,8 @@ public class RNGUI implements IClusterGUI {
                 
         DefaultMutableTreeNode elementClusterNode = new DefaultMutableTreeNode("Element Seed Clusters");
         addExpressionImages(elementClusterNode, experiment, clusters, indices, clusterGenes);
-        addCentroidViews(elementClusterNode, experiment, clusters, indices, clusterGenes);          
+        addCentroidViews(elementClusterNode, experiment, clusters, indices, clusterGenes);  
+        addTableViews(elementClusterNode, experiment, clusters, indices, clusterGenes);
         addElementClusterInfo(elementClusterNode, experiment, clusters, indices, clusterGenes);
         
         DefaultMutableTreeNode subnetNode = new DefaultMutableTreeNode("Subnets");
@@ -211,6 +215,21 @@ public class RNGUI implements IClusterGUI {
             node.add(new DefaultMutableTreeNode(new LeafInfo("Experiments in Subnets (#,%)", new RNSubnetInfoViewer(clusters, orderedIndices, experiment.getNumberOfSamples(), false))));
         root.add(node);
     }
+    
+    
+    private void addTableViews(DefaultMutableTreeNode root, Experiment experiment, int[][] clusters, int[] indices, boolean clusterGenes) {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table views");
+        IViewer viewer;
+        if (clusterGenes)
+            viewer = new ClusterTableViewer(experiment, clusters, this.data);
+        else
+            return; //placeholder for ExptClusterTableViewer
+            //viewer = new RelNetExperimentClusterViewer(experiment, clusters);
+        for (int i=0; i<clusters.length; i++)
+            if (clusters[indices[i]].length > 1)
+                node.add(new DefaultMutableTreeNode(new LeafInfo("Element index "+String.valueOf(experiment.getGeneIndexMappedToData(clusters[i][0])+1)+" ("+clusters[indices[i]].length+")", viewer, new Integer(indices[i]))));
+        root.add(node);
+    }    
     
     /**
      * Adds nodes to display expression images.
@@ -297,7 +316,20 @@ public class RNGUI implements IClusterGUI {
             node.add(new DefaultMutableTreeNode(new LeafInfo("Subnet "+String.valueOf(i+1)+" ("+subnets[indices[i]].length+")", viewer, new Integer(indices[i]))));
         root.add(node);
         addSubnetCentroidViews(root, experiment, subnets, indices, clusterGenes);
+        addSubnetTableViews(root, experiment, subnets, indices, clusterGenes);
         addSubnetClusterInfo(root, experiment, subnets, indices, clusterGenes);
+    }
+    
+    private void addSubnetTableViews(DefaultMutableTreeNode root, Experiment experiment, int [][] subnets, int [] indices, boolean clusterGenes) {
+        DefaultMutableTreeNode tabNode = new DefaultMutableTreeNode("Table Views");   
+        IViewer viewer;
+        if (clusterGenes)
+            viewer = new ClusterTableViewer(experiment, subnets, this.data);
+        else
+            return; //placeholder for ExptClusterTableViewer
+        for (int i=0; i<subnets.length; i++)
+            tabNode.add(new DefaultMutableTreeNode(new LeafInfo("Subnet "+String.valueOf(i+1)+" ("+subnets[indices[i]].length+")", viewer, new Integer(indices[i]))));
+        root.add(tabNode);        
     }
     
     private void addSubnetCentroidViews(DefaultMutableTreeNode root, Experiment experiment, int [][] subnets, int [] indices, boolean clusterGenes){
