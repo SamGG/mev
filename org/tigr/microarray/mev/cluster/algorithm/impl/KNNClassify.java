@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: KNNClassify.java,v $
- * $Revision: 1.3 $
- * $Date: 2003-12-11 15:55:16 $
- * $Author: nbhagaba $
+ * $Revision: 1.4 $
+ * $Date: 2003-12-11 16:08:14 $
+ * $Author: braisted $
  * $State: Exp $
  */
 /*
@@ -22,7 +22,7 @@ import java.util.Random;
 import org.tigr.util.FloatMatrix;
 import org.tigr.util.ConfMap;
 import org.tigr.util.QSort;
-
+  
 import org.tigr.microarray.mev.cluster.Node;
 import org.tigr.microarray.mev.cluster.Cluster;
 import org.tigr.microarray.mev.cluster.NodeList;
@@ -780,12 +780,15 @@ public class KNNClassify extends AbstractAlgorithm {
     private float getMean(float[] group) {
 	float sum = 0;
 	int n = 0;
+        
+        int z = 0;
 	
 	for (int i = 0; i < group.length; i++) {
 	    //System.out.println("getMean(): group[" + i + "] = " + group[i]);
 	    if (!Float.isNaN(group[i])) {
 		sum = sum + group[i];
 		n++;
+                z++;
 	    }
 	}
 	
