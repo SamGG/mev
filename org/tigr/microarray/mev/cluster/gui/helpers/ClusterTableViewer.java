@@ -881,7 +881,7 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
                 sortInOrigOrder();
             }
 	}
-	
+	   
 	public void mouseReleased(MouseEvent event) {
 	    maybeShowPopup(event);
 	}
