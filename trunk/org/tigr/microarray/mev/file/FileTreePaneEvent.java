@@ -6,8 +6,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: FileTreePaneEvent.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-02-24 20:23:50 $
+ * $Revision: 1.4 $
+ * $Date: 2005-03-10 15:39:40 $
  * $Author: braistedj $
  * $State: Exp $
  */

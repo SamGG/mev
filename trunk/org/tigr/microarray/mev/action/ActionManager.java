@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ActionManager.java,v $
- * $Revision: 1.7 $
- * $Date: 2005-02-24 20:24:10 $
+ * $Revision: 1.8 $
+ * $Date: 2005-03-10 15:40:11 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -362,6 +362,7 @@ public class ActionManager implements java.io.Serializable {
     // display commands
     public static final String GREEN_RED_COLOR_SCHEME_CMD = "display-green-red-scheme-cmd";
     public static final String BLUE_YELLOW_COLOR_SCHEME_CMD = "display-blue-yellow-scheme-cmd";
+    public static final String RAINBOW_COLOR_SCHEME_CMD = "display-rainbow-scheme-cmd";
     public static final String CUSTOM_COLOR_SCHEME_CMD = "display-custom-color-scheme-cmd";
     public static final String COLOR_GRADIENT_CMD = "display-color-gradient-cmd";
     public static final String DISPLAY_DRAW_BORDERS_CMD = "display-draw-borders-cmd";

@@ -4,7 +4,7 @@
  */
 
 /*
- * $RCSfile: SetRatioScaleDialog.java,v $ $Revision: 1.3 $ $Date: 2005/02/10
+ * $RCSfile: SetRatioScaleDialog.java,v $ $Revision: 1.4 $ $Date: 2005/02/10
  * 16:06:10 $ $Author: braistedj $ $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -38,12 +38,14 @@ import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JOptionPane;
 
 import org.tigr.util.FloatMatrix;
 import org.tigr.util.QSort;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;
@@ -66,20 +68,21 @@ public class SetRatioScaleDialog extends AlgorithmDialog {
 	private boolean doubleGradient;
 	private boolean origDoubleGradient;
 	private BufferedImage origPosImage, origNegImage;
-	private JTextField upperTextField, lowerTextField;
+	private JTextField upperTextField, lowerTextField, midTextField;
+	private JLabel midLabel;
 	private JRadioButton singleGradientButton, doubleGradientButton;
 	
 
-	private float currMinValue, currMaxValue;
-	private float origUpper, origLower;
-	private String formattedUpper, formattedLower;
+	private float currMinValue, currMaxValue, currMidValue;
+	private float origUpper, origLower, origMid;
+	private String formattedUpper, formattedLower, formattedMid;
 
 	private StatsPanel statsPanel;
 	private GradientPreviewPanel gradientPreviewPanel;
 	private IFramework framework;
 	private MultipleArrayMenubar menubar;
 	
-	private DecimalFormat twoDecimalFormat;	
+	private DecimalFormat twoDecimalFormat, oneDecimalFormat;	
 
 	
 	/**
@@ -92,12 +95,12 @@ public class SetRatioScaleDialog extends AlgorithmDialog {
 	 * @param lower current lower limit
 	 * @param doubleGradient true if the gradient is a double gradient
 	 */
-	public SetRatioScaleDialog(JFrame parent, IFramework framework, MultipleArrayMenubar menubar, float upper, float lower, boolean doubleGradient) {
-		super(parent, "Set Ratio Scale", true);
+	public SetRatioScaleDialog(JFrame parent, IFramework framework, MultipleArrayMenubar menubar, float upper, float lower, float mid, boolean doubleGradient) {
+		super(parent, "Color Scale Limits", true);
 		
 		EventListener listener = new EventListener();
 		
-		Experiment experiment = framework.getData().getFullExperiment();
+		Experiment experiment = framework.getData().getExperiment();
 		FloatMatrix matrix = experiment.getMatrix();
 		float [] extreems = experiment.getMinAndMax();
 		float minValue = extreems[0];
@@ -109,47 +112,69 @@ public class SetRatioScaleDialog extends AlgorithmDialog {
 		this.framework = framework;
 		origLower = lower;
 		origUpper = upper;
+		origMid = mid;
 		origNegImage = framework.getDisplayMenu().getNegativeGradientImage();
 		origPosImage = framework.getDisplayMenu().getPositiveGradientImage();
 
 		twoDecimalFormat = new DecimalFormat();
 		twoDecimalFormat.setMaximumFractionDigits(2);
 		twoDecimalFormat.setMinimumFractionDigits(2);
-		
+
+		oneDecimalFormat = new DecimalFormat();
+		oneDecimalFormat.setMaximumFractionDigits(1);
+
 		formattedUpper = twoDecimalFormat.format(origUpper);
 		formattedLower = twoDecimalFormat.format(origLower);
-		
+		formattedMid = twoDecimalFormat.format(origMid);
+
+		//build stats panel, get median value
+		statsPanel = new StatsPanel(framework);
+		float medianValue = statsPanel.getMedian();
+			
 		ButtonGroup bg = new ButtonGroup();
 		
-		doubleGradientButton = new JRadioButton("Double Gradient  (Suitable for log2Ratio Data)", doubleGradient);
+		doubleGradientButton = new JRadioButton("Double Gradient", doubleGradient);
 		doubleGradientButton.setActionCommand("change-gradient-command");
 		doubleGradientButton.addActionListener(listener);
 		doubleGradientButton.setFocusPainted(false);
 		doubleGradientButton.setOpaque(false);
 		bg.add(doubleGradientButton);
 		
-		singleGradientButton = new JRadioButton("Single Gradient  (Suitable for Absolute Intensity Values)", !doubleGradient);
+		singleGradientButton = new JRadioButton("Single Gradient", !doubleGradient);
 		singleGradientButton.setActionCommand("change-gradient-command");
 		singleGradientButton.addActionListener(listener);
 		singleGradientButton.setFocusPainted(false);
 		singleGradientButton.setOpaque(false);
 		bg.add(singleGradientButton);
-		
+			
+		//special case, rainbow scale is considered single gradient, and transition
+		//to double from rainbow is not good.  If rainbow disable double gradient option.
+		if(framework.getDisplayMenu().getColorScheme() == IDisplayMenu.RAINBOW_COLOR_SCHEME)
+			doubleGradientButton.setEnabled(false);
+	
 		ParameterPanel gradientPanel = new ParameterPanel("Gradient Style");
 		gradientPanel.setLayout(new GridBagLayout());		
-		gradientPanel.add(doubleGradientButton, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,0,5,0),0,0));
-		gradientPanel.add(singleGradientButton, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0),0,0));		
+		gradientPanel.add(doubleGradientButton, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,0,10,20),0,0));
+		gradientPanel.add(singleGradientButton, new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,20,10,0),0,0));				
 				
 		DecimalFormat format = new DecimalFormat();
 		format.setMaximumFractionDigits(2);
-		JLabel upperLabel = new JLabel("Upper Color Limit ( max. data value = " + format.format(maxValue) + " ): ");
+		JLabel upperLabel = new JLabel("Upper Limit ( max. data value = " + format.format(maxValue) + " ): ");
 		upperLabel.addKeyListener(listener);
 		
 		upperTextField = new JTextField(5);
 		upperTextField.addKeyListener(listener);
 		upperTextField.setText("" + upper);
+
 		
-		JLabel lowerLabel = new JLabel("Lower Color Limit ( min. data value = " + format.format(minValue) + " ): ");
+		midLabel = new JLabel("Midpoint Value ( median data value = " + format.format(medianValue) + " ): ");
+		midLabel.addKeyListener(listener);
+		
+		midTextField = new JTextField(5);
+		midTextField.addKeyListener(listener);
+		midTextField.setText("" + mid);
+		
+		JLabel lowerLabel = new JLabel("Lower Limit ( min. data value = " + format.format(minValue) + " ): ");
 		lowerLabel.addKeyListener(listener);
 		
 		lowerTextField = new JTextField(5);
@@ -164,13 +189,15 @@ public class SetRatioScaleDialog extends AlgorithmDialog {
 		
 		ParameterPanel rangePanel = new ParameterPanel("Color Range Selection");
 		rangePanel.setLayout(new GridBagLayout());
-		rangePanel.add(lowerLabel, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,0,10,0),0,0));
+		rangePanel.add(lowerLabel, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,0,10,10),0,0));
 		rangePanel.add(lowerTextField, new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,0,10,0),0,0));
-		rangePanel.add(upperLabel, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,25,0),0,0));
-		rangePanel.add(upperTextField, new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,25,0),0,0));
-		rangePanel.add(updateLimitsButton, new GridBagConstraints(0,2,2,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,0,20,0),0,0));
 
-		statsPanel = new StatsPanel(framework);
+		rangePanel.add(midLabel, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,10,10),0,0));		
+		rangePanel.add(midTextField, new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,10,0),0,0));
+		
+		rangePanel.add(upperLabel, new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,25,10),0,0));		
+		rangePanel.add(upperTextField, new GridBagConstraints(1,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,25,0),0,0));
+		rangePanel.add(updateLimitsButton, new GridBagConstraints(0,3,2,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,0,20,0),0,0));
 			
 		ParameterPanel preview = new ParameterPanel("Gradient and Limits Preview");
 		preview.setLayout(new GridBagLayout());		
@@ -191,7 +218,8 @@ public class SetRatioScaleDialog extends AlgorithmDialog {
 		
 		pack();
 		setResizable(false);
-		upperTextField.grabFocus();
+		lowerTextField.grabFocus();
+		lowerTextField.selectAll();
 	}
 	
 	/**
@@ -210,7 +238,7 @@ public class SetRatioScaleDialog extends AlgorithmDialog {
 	 * Returns the upper ratio limit
 	 * @return upper limit
 	 */
-	public float getUpperRatio() {
+	public float getUpperLimit() {
 		return Float.parseFloat(upperTextField.getText());
 	}
 		
@@ -218,8 +246,16 @@ public class SetRatioScaleDialog extends AlgorithmDialog {
 	 * Returns the lower limit
 	 * @return lower limit
 	 */
-	public float getLowerRatio() {
+	public float getLowerLimit() {
 		return Float.parseFloat(lowerTextField.getText());
+	}
+
+	/**
+	 *  Returns the mid point value
+	 * @return
+	 */
+	public float getMidValue() {
+		return Float.parseFloat(midTextField.getText());
 	}
 	
 	/**
@@ -245,12 +281,15 @@ public class SetRatioScaleDialog extends AlgorithmDialog {
 		if(validateValues()) {
 			currMinValue = Float.parseFloat(lowerTextField.getText());
 			currMaxValue = Float.parseFloat(upperTextField.getText());
+			currMidValue = Float.parseFloat(midTextField.getText());
 			formattedLower = twoDecimalFormat.format(currMinValue);
 			formattedUpper = twoDecimalFormat.format(currMaxValue);
+			formattedMid = twoDecimalFormat.format(currMidValue);
 			statsPanel.updateStats(currMinValue, currMaxValue);
 			menubar.setUseDoubleGradient(getUseDoubleGradient());
 			menubar.setMaxRatioScale(currMaxValue);
 			menubar.setMinRatioScale(currMinValue);
+			menubar.setMidRatioValue(currMidValue);
 			framework.refreshCurrentViewer();
 			repaint();
 		}		
@@ -281,19 +320,22 @@ public class SetRatioScaleDialog extends AlgorithmDialog {
 	 */
 	private boolean validateValues() {
 		int progress = 0;
-		boolean valid = true;
-		float newLower, newUpper;
+		boolean valid = false;
+		float newLower, newUpper, newMid;
 		try {
 			newLower = Float.parseFloat(this.lowerTextField.getText());
 			progress++;
 			newUpper = Float.parseFloat(this.upperTextField.getText());
 			progress++;
+			newMid = Float.parseFloat(this.midTextField.getText());			
+
 			if(this.doubleGradient) {
-				if(newLower >= 0 || newUpper <=0)
-					valid = false;
+				if(newLower < newMid && newMid < newUpper)
+					valid = true;
+			
 			} else {  //single gradient
-				if(newLower >= newUpper)
-					valid = false;
+				if(newLower < newUpper)
+					valid = true;
 			}
 		} catch (NumberFormatException nfe) {
 			valid = false;
@@ -302,7 +344,7 @@ public class SetRatioScaleDialog extends AlgorithmDialog {
 		
 		if(!valid) {
 			if(doubleGradient) {
-				JOptionPane.showMessageDialog(this, "Input Error (Double Gradient), Value Limits:  floating point number, lower limit < 0, upper limit > 0", "Input Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this, "Input Error (Double Gradient), Value Limits:  floating point number, lower < mid < upper", "Input Error", JOptionPane.ERROR_MESSAGE);
 			} else {
 				JOptionPane.showMessageDialog(this, "Input Error (Single Gradient), Value Limits:  floating point number, lower limit < upper limit", "Input Error", JOptionPane.ERROR_MESSAGE);			
 			}
@@ -310,20 +352,26 @@ public class SetRatioScaleDialog extends AlgorithmDialog {
 		return valid;
 	}
 
-	
+		
 	/**
 	 * Resets the text fields to original values, updates stats, repaints preview
 	 */
 	private void resetControls() {
+		//set original values
 		upperTextField.setText(String.valueOf(origUpper));
 		lowerTextField.setText(String.valueOf(origLower));
-		formattedUpper = twoDecimalFormat.format(origUpper);		
-		formattedLower = twoDecimalFormat.format(origLower);
-		statsPanel.updateStats(origLower, origUpper);
-		repaint();
+		midTextField.setText(String.valueOf(origMid));
+		if(origDoubleGradient) {
+			doubleGradientButton.setSelected(true);		
+		} else
+			singleGradientButton.setSelected(true);
+		doubleGradient = origDoubleGradient;
+		midLabel.setEnabled(origDoubleGradient);
+		midTextField.setEnabled(origDoubleGradient);
+		
+		//update the limits and reset the viewer
+		updateLimits();
 	}
-	
-	
 	
 	
 	/**
@@ -347,7 +395,6 @@ public class SetRatioScaleDialog extends AlgorithmDialog {
 		public GradientPreviewPanel(IFramework framework) {
 			super();					
 			insets = new Insets(5,5,5,5);
-			centerPointStr = "0.0";
 			negImage = framework.getDisplayMenu().getNegativeGradientImage();
 			posImage = framework.getDisplayMenu().getPositiveGradientImage();	
 			setBackground(Color.white);
@@ -376,7 +423,7 @@ public class SetRatioScaleDialog extends AlgorithmDialog {
 				g.drawLine(insets.left+negImage.getWidth()+1, insets.top, insets.left+negImage.getWidth()+1, insets.top+TIC_HEIGHT);												
 			
 				//draw center point string
-				g.drawString(centerPointStr, insets.left+negImage.getWidth()-(int)(fm.stringWidth(centerPointStr)/2f), insets.top+TIC_HEIGHT+fm.getHeight());
+				g.drawString(formattedMid, insets.left+negImage.getWidth()-(int)(fm.stringWidth(formattedMid)/2f), insets.top+TIC_HEIGHT+fm.getHeight());
 			} else {				
 				g.drawImage(posImage, insets.left, insets.top, totalWidth, GRAD_HEIGHT, null);				
 			}
@@ -394,7 +441,6 @@ public class SetRatioScaleDialog extends AlgorithmDialog {
 			//put limits on axis			
 			g.drawString(formattedLower, insets.left, insets.top+TIC_HEIGHT+fm.getHeight());
 			g.drawString(formattedUpper, insets.left+totalWidth-fm.stringWidth(formattedUpper), insets.top+TIC_HEIGHT+fm.getHeight());							
-
 		}
 		
 		public void setPosImage(BufferedImage posBI) {
@@ -429,7 +475,7 @@ public class StatsPanel extends ParameterPanel {
 	 * @param framework
 	 */
 	public StatsPanel(IFramework framework) {
-		super("Range and Saturation Statistics");
+		super("Color Saturation Statistics");
 		setLayout(new GridBagLayout());
 		format = new DecimalFormat();
 		format.setMaximumIntegerDigits(3);
@@ -443,8 +489,8 @@ public class StatsPanel extends ParameterPanel {
 		percentLabel.setOpaque(false);
 		
 		JLabel offScaleLabel = new JLabel("Elements Off Color Scale");
-		JLabel lowEndLabel = new JLabel("Elements Below Low End");
-		JLabel highEndLabel = new JLabel("Elements Above High End");
+		JLabel lowEndLabel = new JLabel("Elements Below Lower Limit");
+		JLabel highEndLabel = new JLabel("Elements Above Upper Limit");
 
 		offScaleField = new JTextField(5);
 		offScaleField.setBackground(Color.lightGray);
@@ -476,7 +522,7 @@ public class StatsPanel extends ParameterPanel {
 		highEndPercentField.setEditable(false);
 		highEndPercentField.setHorizontalAlignment(JTextField.RIGHT);
 		
-		sortedValues = initSortedValues(framework.getData().getFullExperiment().getMatrix());
+		sortedValues = initSortedValues(framework.getData().getExperiment().getMatrix());
 		updateStats(origLower, origUpper);
 		
 		JPanel dummyPanel = new JPanel();
@@ -486,18 +532,22 @@ public class StatsPanel extends ParameterPanel {
 	    add(numberLabel, new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,0,4,10), 0,0));
 	    add(percentLabel, new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,0,4,0), 0,0));
 	    
-	    add(offScaleLabel, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,20), 0,0));
-	    add(offScaleField, new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,10), 0,0));
-	    add(offScalePercentField, new GridBagConstraints(2,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
+	    add(offScaleLabel, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,10,20), 0,0));
+	    add(offScaleField, new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,10,10), 0,0));
+	    add(offScalePercentField, new GridBagConstraints(2,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,10,0), 0,0));
 
-	    add(lowEndLabel, new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,20), 0,0));
-	    add(lowEndField, new GridBagConstraints(1,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,10), 0,0));
-	    add(lowEndPercentField, new GridBagConstraints(2,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
-
-	    add(highEndLabel, new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,20), 0,0));
-	    add(highEndField, new GridBagConstraints(1,3,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,10), 0,0));
-	    add(highEndPercentField, new GridBagConstraints(2,3,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
+	    JSeparator sep = new JSeparator(JSeparator.HORIZONTAL);
+	    sep.setPreferredSize(new Dimension(200,1));
+	    sep.setOpaque(true);
+	    add(sep, new GridBagConstraints(0,2,3,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,10,0), 0,0));	    	    
 	    
+	    add(lowEndLabel, new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,20), 0,0));
+	    add(lowEndField, new GridBagConstraints(1,3,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,10), 0,0));
+	    add(lowEndPercentField, new GridBagConstraints(2,3,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
+
+	    add(highEndLabel, new GridBagConstraints(0,4,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,20), 0,0));
+	    add(highEndField, new GridBagConstraints(1,4,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,10), 0,0));
+	    add(highEndPercentField, new GridBagConstraints(2,4,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));	    
 	}
 	
 	/**
@@ -531,7 +581,19 @@ public class StatsPanel extends ParameterPanel {
 		return values;
 		
 	}
-
+	/**
+	 *  returns the median from the sorted array
+	 * @return
+	 */
+	public float getMedian() {
+		float median;
+		if(sortedValues.length % 2 == 0)
+			median = (sortedValues[sortedValues.length/2] + sortedValues[sortedValues.length/2 + 1])/2.0f;
+		else
+			median = sortedValues[sortedValues.length/2 + 1];			
+		return median;
+	}
+	
 	/**
 	 * Updates the stats panel with the current limits and resulting
 	 * saturation stats.
@@ -565,7 +627,7 @@ public class StatsPanel extends ParameterPanel {
 	 */
 	private int getLowCount(float lower) {
 		int index = 0;
-		while(sortedValues[index]<lower) {
+		while(index < sortedValues.length && sortedValues[index]<lower) {
 			index++;
 		}
 		return index;
@@ -579,7 +641,7 @@ public class StatsPanel extends ParameterPanel {
 	private int getHighCount(float upper) {
 		int index = sortedValues.length-1;
 		int highCount  = 0;
-		while(sortedValues[index]>upper) {
+		while(index > -1 && sortedValues[index]>upper) {
 			index--;
 			highCount++;
 		}
@@ -602,7 +664,6 @@ public class EventListener extends WindowAdapter implements ActionListener, KeyL
         String command = event.getActionCommand();
         if (command.equals("ok-command")) {
         	if(validateValues()) {
-        		System.out.println("set ratio dialog ok hit, it's valid");
 	        	result = JOptionPane.OK_OPTION;
 	        	dispose();
         	}
@@ -612,9 +673,9 @@ public class EventListener extends WindowAdapter implements ActionListener, KeyL
         } else if (command.equals("reset-command")) {
             resetControls();
         } else if (command.equals("info-command")) {
-            HelpWindow hw = new HelpWindow(SetRatioScaleDialog.this, "Ratio Scale Dialog");
+            HelpWindow hw = new HelpWindow(SetRatioScaleDialog.this, "Color Scale Dialog");
             if(hw.getWindowContent()){
-                hw.setSize(450,500);
+                hw.setSize(575,550);
                 hw.setLocation();
                 hw.show();
             } else {
@@ -628,12 +689,15 @@ public class EventListener extends WindowAdapter implements ActionListener, KeyL
 
         	if(doubleGradient) {  //might have to alter pos image to have proper neutal
         		BufferedImage posImage = createGradientImage(new Color(gradientPreviewPanel.getNegImage().getRGB(255,0)), new Color(gradientPreviewPanel.getPosImage().getRGB(255,0)));
-				gradientPreviewPanel.setPosImage(posImage);			
+				gradientPreviewPanel.setPosImage(posImage);				
         	}
+        	
+        	midLabel.setEnabled(doubleGradient);
+        	midTextField.setEnabled(doubleGradient);
         	
         	repaint();
         }
-    }	
+    }
 	
 	public void windowClosing(WindowEvent e) {
 		result = JOptionPane.CLOSED_OPTION;

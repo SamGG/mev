@@ -5,12 +5,12 @@ All rights reserved.
 /*
  * $RCSfile: KNNClassify.java,v $
 <<<<<<< KNNClassify.java
- * $Revision: 1.8 $
- * $Date: 2005-02-24 20:23:47 $
+ * $Revision: 1.9 $
+ * $Date: 2005-03-10 15:45:20 $
  * $Author: braistedj $
 =======
- * $Revision: 1.8 $
- * $Date: 2005-02-24 20:23:47 $
+ * $Revision: 1.9 $
+ * $Date: 2005-03-10 15:45:20 $
  * $Author: braistedj $
 >>>>>>> 1.4
  * $State: Exp $

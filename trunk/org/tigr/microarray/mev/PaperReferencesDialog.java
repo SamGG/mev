@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: PaperReferencesDialog.java,v $
- * $Revision: 1.4 $
- * $Date: 2005-02-24 20:23:45 $
+ * $Revision: 1.5 $
+ * $Date: 2005-03-10 15:44:14 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -85,7 +85,7 @@ public class PaperReferencesDialog extends JDialog implements java.awt.print.Pri
         gba.add(getContentPane(), referencesPanel, 0, 0, 1, 2, 1, 1, GBA.B, GBA.C);
         gba.add(getContentPane(), buttonPanel, 0, 2, 1, 1, 0, 0, GBA.NONE, GBA.C);
         
-        setSize(450, 550);
+        setSize(550, 650);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation((screenSize.width - getSize().width)/2, (screenSize.height - getSize().height)/2);
         show();
@@ -246,6 +246,12 @@ public class PaperReferencesDialog extends JDialog implements java.awt.print.Pri
         html += "<br>Theilhaber, J., Connolly, S. Roman-Roman, S. Bushnell, A. Jackson, K. Call, T. Garcia, R. Baron (2002) ";        
         html += "Finding Genes in the C2Cl2 Osteogenic Pathway by K-Nearest-Neighbor Classification of Expression Data.";
         html += "<i>Genome Research</i> 12:165-176";
+
+        html += "<br><p><font size = +1><b>DAM</b></font> - ";
+        html += "<b>Discriminant Analysis Module</b>";
+        html += "<br>Nguyen, D.V., D.M. Rocke.";        
+        html += "Multi-class Cancer Classification via Partial Least Squares with Gene Expression Profiles.";
+        html += "<i>Bioinformatics</i> 18(9):1216-1226, 2002";
         
         html += "<br><p><font size = +1><b>TRN</b></font> - ";
         html += "<b>Expression Terrain Maps</b>";

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ExperimentClusterViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2005-02-24 20:24:07 $
+ * $Revision: 1.7 $
+ * $Date: 2005-03-10 15:56:09 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -82,6 +82,7 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
     public static Color maskColor = new Color(255, 255, 255, 128);
     private float maxValue = INITIAL_MAX_VALUE;
     private float minValue = INITIAL_MIN_VALUE;
+    private float midValue = 0.0f;
     private int firstSelectedRow = -1;
     private int lastSelectedRow  = -1;
     private int firstSelectedColumn = -1;
@@ -354,8 +355,9 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         setClusterIndex(userObject == null ? 0 : userObject.intValue());
         header.setClusterIndex(this.clusterIndex);
         labelIndex = menu.getLabelIndex();
-        this.maxValue = Math.abs(menu.getMaxRatioScale());
-        this.minValue = -Math.abs(menu.getMinRatioScale());
+        this.maxValue = menu.getMaxRatioScale();
+        this.minValue = menu.getMinRatioScale();
+        this.midValue = menu.getMidRatioValue();
         setElementSize(menu.getElementSize());
         setAntialiasing(menu.isAntiAliasing());
         setDrawBorders(menu.isDrawingBorder());
@@ -367,7 +369,7 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         header.setData(data);
         onMenuChanged(menu);
         //header.setValues(maxValue, minValue);
-        header.setValues(minValue, maxValue);
+        header.setValues(minValue, midValue, maxValue);
         header.setAntiAliasing(menu.isAntiAliasing());
         header.updateSizes(getSize().width, elementSize.width);
     }
@@ -380,10 +382,11 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
     	this.useDoubleGradient = menu.getUseDoubleGradient();
         header.setUseDoubleGradient(useDoubleGradient);    	
         setDrawBorders(menu.isDrawingBorder());
-        this.maxValue = Math.abs(menu.getMaxRatioScale());
-        this.minValue = -Math.abs(menu.getMinRatioScale());
+        this.maxValue = menu.getMaxRatioScale();
+        this.minValue = menu.getMinRatioScale();
+        this.midValue = menu.getMidRatioValue();
         //header.setValues(maxValue, minValue);
-        header.setValues(minValue, maxValue);
+        header.setValues(minValue, midValue, maxValue);
         this.posColorImage = menu.getPositiveGradientImage();
         this.negColorImage = menu.getNegativeGradientImage();
         this.header.setNegAndPosColorImages(this.negColorImage, this.posColorImage);
@@ -662,8 +665,8 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         }
         return max;
     }
-    
-    
+        
+   
     /**
      * Calculates color for passed value.
      */
@@ -676,10 +679,10 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         int colorIndex, rgb;
         
         if(useDoubleGradient) {
-        	maximum = value < 0 ? this.minValue : this.maxValue;
-			colorIndex = (int) (255 * value / maximum);
+        	maximum = value < midValue ? this.minValue : this.maxValue;
+			colorIndex = (int) (255 * (value-midValue) / (maximum - midValue));
 			colorIndex = colorIndex > 255 ? 255 : colorIndex;
-			rgb = value < 0 ? negColorImage.getRGB(255 - colorIndex, 0)
+			rgb = value < midValue ? negColorImage.getRGB(255 - colorIndex, 0)
 					: posColorImage.getRGB(colorIndex, 0);
         } else {
         	float span = this.maxValue - this.minValue;
@@ -693,7 +696,7 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         	rgb = posColorImage.getRGB(colorIndex,0);
         }
         return new Color(rgb);
-    }
+    }    
     
     
     /**

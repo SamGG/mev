@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: Manager.java,v $
- * $Revision: 1.6 $
- * $Date: 2005-02-24 20:23:44 $
+ * $Revision: 1.7 $
+ * $Date: 2005-03-10 15:44:16 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -304,7 +304,7 @@ public class Manager {//A class to keep track of viewers
         //Remove the next two lines (about DB system enabling)
         //mav.systemEnable(TMEV.DB_AVAILABLE);
         //mav.systemEnable(TMEV.DB_LOGIN);
-        mav.getFrame().setSize(1050, 700);
+        mav.getFrame().setSize(1150, 700);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         mav.getFrame().setLocation((screenSize.width - mav.getFrame().getSize().width)/2, (screenSize.height - mav.getFrame().getSize().height)/2);
         mav.getFrame().setVisible(true);
@@ -315,7 +315,7 @@ public class Manager {//A class to keep track of viewers
         //Remove the next two lines (about DB system enabling)
         //mav.systemEnable(TMEV.DB_AVAILABLE);
         //mav.systemEnable(TMEV.DB_LOGIN);
-        mav.getFrame().setSize(1050, 700);
+        mav.getFrame().setSize(1150, 700);
         if(clusterLabel != null)
             mav.getFrame().setTitle("TIGR Multiple Array Viewer, "+clusterLabel);
         Manager.addComponent(mav);
@@ -331,7 +331,7 @@ public class Manager {//A class to keep track of viewers
         //Remove the next two lines (about DB system enabling)
         //mav.systemEnable(TMEV.DB_AVAILABLE);
         //mav.systemEnable(TMEV.DB_LOGIN);
-        mav.getFrame().setSize(1050, 700);
+        mav.getFrame().setSize(1150, 700);
         if(clusterLabel != null)
             mav.getFrame().setTitle("TIGR Multiple Array Viewer, "+clusterLabel);
         Manager.addComponent(mav);

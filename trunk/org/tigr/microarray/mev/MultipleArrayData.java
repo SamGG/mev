@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayData.java,v $
- * $Revision: 1.15 $
- * $Date: 2005-02-24 20:23:44 $
+ * $Revision: 1.16 $
+ * $Date: 2005-03-10 15:44:16 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -333,20 +333,7 @@ public class MultipleArrayData implements IData, Serializable {
             return "";
         }
 
-        String detection_call;
-
-        if (column > 0){
-            FloatSlideData slideData = (FloatSlideData)featuresList.get(column);
-            detection_call = slideData.getDetection(row);
-        }
-        else {
-
-            SlideData slideData = (SlideData)featuresList.get(column);
-            ISlideDataElement element = slideData.getSlideDataElement(row);
-            detection_call = element.getDetection();
-
-        }
-        return detection_call;
+        return ((ISlideData)(featuresList.get(column))).getDetection(row);        
     }
 
     // end affy specific methods ********************************************

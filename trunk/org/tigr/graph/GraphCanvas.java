@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: GraphCanvas.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-02-24 20:24:06 $
+ * $Revision: 1.4 $
+ * $Date: 2005-03-10 15:22:39 $
  * $Author: braistedj $
  * $State: Exp $
  */

@@ -1,7 +1,7 @@
 /*
  * $RCSfile: AgilentFileFilter.java,v $
- * $Revision: 1.1 $
- * $Date: 2005-02-24 20:23:49 $
+ * $Revision: 1.2 $
+ * $Date: 2005-03-10 15:39:40 $
  * $Author: braistedj $
  */
 package org.tigr.microarray.mev.file.agilent;

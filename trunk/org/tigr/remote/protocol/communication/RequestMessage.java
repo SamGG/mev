@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: RequestMessage.java,v $
- * $Revision: 1.2 $
- * $Date: 2005-02-24 20:24:12 $
+ * $Revision: 1.3 $
+ * $Date: 2005-03-10 15:28:21 $
  * $Author: braistedj $
  * $State: Exp $
  */

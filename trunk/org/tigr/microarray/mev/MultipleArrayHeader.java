@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: MultipleArrayHeader.java,v $
- * $Revision: 1.2 $
- * $Date: 2005-02-24 20:23:44 $
+ * $Revision: 1.3 $
+ * $Date: 2005-03-10 15:44:13 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -40,6 +40,7 @@ public class MultipleArrayHeader extends JPanel {
     BufferedImage posColorImage;
     private float maxValue;
     private float minValue;
+    private float midValue;
     private boolean useDoubleGradient = true;
     
     /**
@@ -52,6 +53,7 @@ public class MultipleArrayHeader extends JPanel {
         this.tracespace = tracespace;
         this.maxValue = 3.0f;
         this.minValue = -3.0f;
+        this.midValue = 0.0f;
     }
     
     /**
@@ -98,6 +100,16 @@ public class MultipleArrayHeader extends JPanel {
     public void setMinAndMaxRatios(float min, float max){
         this.minValue = min;
         this.maxValue = max;
+        this.repaint();
+    }
+    
+    /**
+     * Sets min and max ratio values
+     */
+    public void setMinAndMaxAndMidRatios(float min, float mid, float max){
+        this.minValue = min;
+        this.midValue = mid;
+        this.maxValue = max;        
         this.repaint();
     }
     
@@ -199,9 +211,9 @@ public class MultipleArrayHeader extends JPanel {
         }
         int textWidth;
         g.drawString(String.valueOf(this.minValue), insets.left, RECT_HEIGHT+fHeight);
-        textWidth = hfm.stringWidth("0.0");
+        textWidth = hfm.stringWidth(String.valueOf(midValue));
         if(useDoubleGradient)
-        	g.drawString("0.0", (int)(width/2f)-textWidth/2 + insets.left, RECT_HEIGHT+fHeight);
+        	g.drawString(String.valueOf(midValue), (int)(width/2f)-textWidth/2 + insets.left, RECT_HEIGHT+fHeight);
         textWidth = hfm.stringWidth(String.valueOf(this.maxValue));
         g.drawString(String.valueOf(this.maxValue), (width-textWidth)+insets.left, RECT_HEIGHT+fHeight);
                 

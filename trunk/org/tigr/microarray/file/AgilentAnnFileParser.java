@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: AgilentAnnFileParser.java,v $
- * $Revision: 1.1 $
- * $Date: 2005-02-24 20:24:02 $
+ * $Revision: 1.2 $
+ * $Date: 2005-03-10 15:38:44 $
  * $Author: braistedj $
  * $State: Exp $
  */

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterArchiveSelectionDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2005-02-24 20:24:13 $
+ * $Revision: 1.3 $
+ * $Date: 2005-03-10 15:48:03 $
  * $Author: braistedj $
  * $State: Exp $
  */
