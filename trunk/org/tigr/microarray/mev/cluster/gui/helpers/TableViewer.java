@@ -36,7 +36,6 @@ import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
-
 /** The TableViewer class is provided as a JPanel extention to be used
  * as a means of presenting tabular data.  The TableViewer can be added
  * to any component and can recieve a variety of data types.
@@ -46,7 +45,7 @@ import org.tigr.microarray.mev.cluster.gui.IViewer;
  */
 
 
-public class TableViewer extends JPanel implements IViewer {
+public class TableViewer extends JPanel implements IViewer, java.io.Serializable {
     
     protected JTable table;
     protected TableModel model;
@@ -54,8 +53,7 @@ public class TableViewer extends JPanel implements IViewer {
     protected IFramework framework;
     
     /** Creates a new instance of TableViewer */
-    public TableViewer() {
-    }
+    public TableViewer() { }
     
     /** Creates a new TableViewer with header names and data.
      * @param headerNames Header name strings.
@@ -71,6 +69,20 @@ public class TableViewer extends JPanel implements IViewer {
       
         this.setLayout(new GridBagLayout());
         add(pane, new GridBagConstraints(0,0,1,1,1.0,1.0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
+    }
+    
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.writeObject(this.model);
+    }
+    
+    
+    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {                
+        this.model = (TableModel)ois.readObject();
+        this.table = new JTable(model);
+        this.table.getTableHeader().addMouseListener(new TableHeaderMouseListener());       
+        pane = new JScrollPane(table);      
+        this.setLayout(new GridBagLayout());
+        add(pane, new GridBagConstraints(0,0,1,1,1.0,1.0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));        
     }
     
     /** Allows the substitution of a specific table model.
@@ -128,7 +140,7 @@ public class TableViewer extends JPanel implements IViewer {
      *  Internal Classes
      *
      */    
-    public class DefaultViewerTableModel extends AbstractTableModel {
+    public class DefaultViewerTableModel extends AbstractTableModel implements java.io.Serializable {
         String[] columnNames;
         Object[][] tableData;
         boolean [] numerical;
@@ -199,7 +211,7 @@ public class TableViewer extends JPanel implements IViewer {
         }
        
         
-        private class Row implements Comparable{
+        private class Row implements Comparable, java.io.Serializable {
             public int index;
             private String myString, otherString;
             
@@ -216,6 +228,7 @@ public class TableViewer extends JPanel implements IViewer {
                 if( myObject instanceof Comparable ) {
                     if(isNumerical(colToSort)){  //catch string designation of a number
                         if(myObject instanceof String){
+                            System.out.println("Sort numerical");
                             Float myFloat = new Float((String)myObject);
                             Float otherFloat = new Float((String)otherObject);
                             return myFloat.compareTo(otherFloat);

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: CentroidsViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-11-25 14:30:04 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-05 22:53:06 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -33,7 +33,7 @@ import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
  * @version 1.0
  * @author Aleksey D.Rezantsev
  */
-public class CentroidsViewer extends JPanel implements IViewer {
+public class CentroidsViewer extends JPanel implements IViewer, java.io.Serializable {
     
     /** Wrapped centroid viewer */
     protected CentroidViewer centroidViewer;
