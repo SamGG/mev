@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: AlgorithmParameters.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 18:49:01 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -28,6 +28,13 @@ public class AlgorithmParameters {
 
     public String getString(String key) {
         return properties.getProperty(key);
+    }
+    
+    public String getString(String key, String defValue) {
+        String value = properties.getProperty(key);
+        if(value == null)
+            return defValue;
+        return value;
     }
 
     public boolean getBoolean(String key) {
