@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMExperimentClusterViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2005-02-24 20:24:05 $
+ * $Revision: 1.5 $
+ * $Date: 2005-03-10 20:22:04 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -39,120 +39,120 @@ public class PTMExperimentClusterViewer extends ExperimentClusterViewer {
      * experiment and clusters.
      */
     public PTMExperimentClusterViewer(Experiment experiment, int[][] clusters, String centroidName, Vector vector, String[] auxTitles, Object[][] auxData) {
-	super(experiment, clusters, centroidName, vector);
-	Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
-        this.auxTitles = auxTitles;
-        this.auxData = auxData;         
-	getContentComponent().addMouseListener(listener);
-	getHeaderComponent().addMouseListener(listener);
+    	super(experiment, clusters, centroidName, vector);
+    	Listener listener = new Listener();
+    	this.popup = createJPopupMenu(listener);
+    	this.auxTitles = auxTitles;
+    	this.auxData = auxData;         
+    	getContentComponent().addMouseListener(listener);
+    	getHeaderComponent().addMouseListener(listener);
     }
     
     /**
      * Creates a popup menu.
      */
     private JPopupMenu createJPopupMenu(Listener listener) {                
-	JPopupMenu popup = new JPopupMenu();
-	addMenuItems(popup, listener);
-	return popup;
+    	JPopupMenu popup = new JPopupMenu();
+    	addMenuItems(popup, listener);
+    	return popup;
     }
     
     private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        this.auxData = (Object [][])ois.readObject();
-        this.auxTitles = (String [])ois.readObject();
-        
-        Listener listener = new Listener();
-        this.popup = createJPopupMenu(listener);
-        getContentComponent().addMouseListener(listener);
-        getHeaderComponent().addMouseListener(listener);
+    	this.auxData = (Object [][])ois.readObject();
+    	this.auxTitles = (String [])ois.readObject();
+    	
+    	Listener listener = new Listener();
+    	this.popup = createJPopupMenu(listener);
+    	getContentComponent().addMouseListener(listener);
+    	getHeaderComponent().addMouseListener(listener);
     }
     
     private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        oos.writeObject(this.auxData);
-        oos.writeObject(this.auxTitles);
+    	oos.writeObject(this.auxData);
+    	oos.writeObject(this.auxTitles);
     }
-
+    
     
     
     /**
      * Saves clusters.
      */
     private void onSaveClusters() {
-	Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
-	try {
-	    //saveClusters(frame);
-            ExperimentUtil.saveAllExperimentClustersWithAux(frame, getExperiment(), getData(), getClusters(), auxTitles, auxData);
-	} catch (Exception e) {
-	    JOptionPane.showMessageDialog(frame, "Can not save clusters!", e.toString(), JOptionPane.ERROR_MESSAGE);
-	    e.printStackTrace();
-	}
+    	Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
+    	try {
+    		//saveClusters(frame);
+    		ExperimentUtil.saveAllExperimentClustersWithAux(frame, getExperiment(), getData(), getClusters(), auxTitles, auxData);
+    	} catch (Exception e) {
+    		JOptionPane.showMessageDialog(frame, "Can not save clusters!", e.toString(), JOptionPane.ERROR_MESSAGE);
+    		e.printStackTrace();
+    	}
     }
     
     /**
      * Save the viewer cluster.
      */
     private void onSaveCluster() {
-	Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
-	try {
-            ExperimentUtil.saveExperimentClusterWithAux(frame, getExperiment(), getData(), getCluster(), auxTitles, auxData);            
-	} catch (Exception e) {
-	    JOptionPane.showMessageDialog(frame, "Can not save cluster.", e.toString(), JOptionPane.ERROR_MESSAGE);
-	    e.printStackTrace();
-	}
+    	Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
+    	try {
+    		ExperimentUtil.saveExperimentClusterWithAux(frame, getExperiment(), getData(), getCluster(), auxTitles, auxData);            
+    	} catch (Exception e) {
+    		JOptionPane.showMessageDialog(frame, "Can not save cluster.", e.toString(), JOptionPane.ERROR_MESSAGE);
+    		e.printStackTrace();
+    	}
     }
     
     /**
      * Sets a public color.
      */
     private void onSetColor() {
-	Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
-	Color newColor = JColorChooser.showDialog(frame, "Choose color", CentroidViewer.DEF_CLUSTER_COLOR);
-	if (newColor != null) {
-	    setClusterColor(newColor);
-	}
+    	Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
+    	Color newColor = JColorChooser.showDialog(frame, "Choose color", CentroidViewer.DEF_CLUSTER_COLOR);
+    	if (newColor != null) {
+    		setClusterColor(newColor);
+    	}
     }
     
     /**
      * Removes a public color.
      */
     private void onSetDefaultColor() {
-	setClusterColor(null);
+    	setClusterColor(null);
     }
     
     /**
      * The class to listen to mouse and action events.
      */
     private class Listener extends MouseAdapter implements ActionListener {
-	
-	public void actionPerformed(ActionEvent e) {
-	    String command = e.getActionCommand();
-	    if (command.equals(SAVE_CLUSTER_CMD)) {
-		onSaveCluster();
-	    } else if (command.equals(SAVE_ALL_CLUSTERS_CMD)) {
-		onSaveClusters();
-	    } else if (command.equals(SET_DEF_COLOR_CMD)) {
-		onSetDefaultColor();
-	    } else if (command.equals(STORE_CLUSTER_CMD)) {
-		storeCluster();
-	    } else if(command.equals(LAUNCH_NEW_SESSION_CMD)){
-                launchNewSession();
-            }
-	}
-	
-	public void mouseReleased(MouseEvent event) {
-	    maybeShowPopup(event);
-	}
-	
-	public void mousePressed(MouseEvent event) {
-	    maybeShowPopup(event);
-	}
-	
-	private void maybeShowPopup(MouseEvent e) {
-	    
-	    if (!e.isPopupTrigger() || getCluster() == null || getCluster().length == 0) {
-		return;
-	    }
-	    popup.show(e.getComponent(), e.getX(), e.getY());
-	}
+    	
+    	public void actionPerformed(ActionEvent e) {
+    		String command = e.getActionCommand();
+    		if (command.equals(SAVE_CLUSTER_CMD)) {
+    			onSaveCluster();
+    		} else if (command.equals(SAVE_ALL_CLUSTERS_CMD)) {
+    			onSaveClusters();
+    		} else if (command.equals(SET_DEF_COLOR_CMD)) {
+    			onSetDefaultColor();
+    		} else if (command.equals(STORE_CLUSTER_CMD)) {
+    			storeCluster();
+    		} else if(command.equals(LAUNCH_NEW_SESSION_CMD)){
+    			launchNewSession();
+    		}
+    	}
+    	
+    	public void mouseReleased(MouseEvent event) {
+    		maybeShowPopup(event);
+    	}
+    	
+    	public void mousePressed(MouseEvent event) {
+    		maybeShowPopup(event);
+    	}
+    	
+    	private void maybeShowPopup(MouseEvent e) {
+    		
+    		if (!e.isPopupTrigger() || getCluster() == null || getCluster().length == 0) {
+    			return;
+    		}
+    		popup.show(e.getComponent(), e.getX(), e.getY());
+    	}
     }
 }

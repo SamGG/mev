@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: HCLColorBar.java,v $
- * $Revision: 1.4 $
- * $Date: 2005-02-24 20:24:09 $
+ * $Revision: 1.5 $
+ * $Date: 2005-03-10 20:22:02 $
  * $Author: braistedj $
  * $State: Exp $
  */

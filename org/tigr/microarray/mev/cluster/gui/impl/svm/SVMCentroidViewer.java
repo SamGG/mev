@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMCentroidViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-02-24 20:23:45 $
+ * $Revision: 1.4 $
+ * $Date: 2005-03-10 20:21:56 $
  * $Author: braistedj $
  * $State: Exp $
  */

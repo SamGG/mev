@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMExperimentHeader.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-02-24 20:24:05 $
+ * $Revision: 1.4 $
+ * $Date: 2005-03-10 20:22:04 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -78,6 +78,7 @@ public class PTMExperimentHeader extends javax.swing.JPanel {
 	private int cluster;
 	private float maxValue = 3f;
 	private float minValue = -3f;
+	private float midValue = 0.0f;
 	private Dimension elementSize;
 	private boolean drawBorders = true;
 	private boolean isAntiAliasing = false;
@@ -146,11 +147,20 @@ public class PTMExperimentHeader extends javax.swing.JPanel {
 	/**
 	 * Sets min and max values.
 	 */
-	public void setValues(float maxValue, float minValue) {
+	public void setValues(float minValue, float maxValue) {
 	    this.maxValue = maxValue;
 	    this.minValue = minValue;
 	}
-        
+
+	/**
+	 * Sets min and max values.
+	 */
+	public void setValues(float minValue, float midValue, float maxValue) {
+	    this.maxValue = maxValue;
+	    this.minValue = minValue;
+	    this.midValue = midValue;
+	}
+	
         /**
          * Sets left margin
          */
@@ -261,7 +271,7 @@ public class PTMExperimentHeader extends javax.swing.JPanel {
     /**
      * Calculates color for passed value.
      */
-    private Color getColor(float value) {
+	   private Color getColor(float value) {
         if (Float.isNaN(value)) {
             return missingColor;
         }
@@ -270,10 +280,10 @@ public class PTMExperimentHeader extends javax.swing.JPanel {
         int colorIndex, rgb;
         
         if(useDoubleGradient) {
-        	maximum = value < 0 ? this.minValue : this.maxValue;
-			colorIndex = (int) (255 * value / maximum);
+        	maximum = value < midValue ? this.minValue : this.maxValue;
+			colorIndex = (int) (255 * (value-midValue) / (maximum - midValue));
 			colorIndex = colorIndex > 255 ? 255 : colorIndex;
-			rgb = value < 0 ? negColorImage.getRGB(255 - colorIndex, 0)
+			rgb = value < midValue ? negColorImage.getRGB(255 - colorIndex, 0)
 					: posColorImage.getRGB(colorIndex, 0);
         } else {
         	float span = this.maxValue - this.minValue;
@@ -288,9 +298,9 @@ public class PTMExperimentHeader extends javax.swing.JPanel {
         }
         return new Color(rgb);
     }
-	
-	
     }
+	
+    
     
     /**
      * Updates the viewer size.
@@ -316,9 +326,17 @@ public class PTMExperimentHeader extends javax.swing.JPanel {
     /**
      * Sets min and max values.
      */
-    public void setValues(float maxValue, float minValue) {
-	ptmVectorPanel.setValues(maxValue, minValue);
+    public void setValues(float minValue, float maxValue) {
+    	ptmVectorPanel.setValues(minValue, maxValue);
     }
+
+    /**
+     * Sets min and max values.
+     */
+    public void setValues(float minValue, float midValue, float maxValue) {
+    	ptmVectorPanel.setValues(minValue, midValue, maxValue);
+    }
+    
     
     /**
      * Sets gradient images.

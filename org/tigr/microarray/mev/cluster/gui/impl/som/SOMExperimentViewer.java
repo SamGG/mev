@@ -4,8 +4,8 @@
  */
 /*
  * $RCSfile: SOMExperimentViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2005-02-24 20:23:49 $
+ * $Revision: 1.7 $
+ * $Date: 2005-03-10 20:22:04 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -122,7 +122,7 @@ public class SOMExperimentViewer implements IViewer, java.io.Serializable {
 		IDisplayMenu menu = framework.getDisplayMenu();
 		header.setUseDoubleGradient(menu.getUseDoubleGradient());    
 		header.setNegAndPosColorImages(menu.getNegativeGradientImage(), menu.getPositiveGradientImage());
-		header.setValues(Math.abs(menu.getMaxRatioScale()), -Math.abs(menu.getMinRatioScale()));
+		header.setValues(menu.getMinRatioScale(), menu.getMidRatioValue(), menu.getMaxRatioScale());
 		header.setAntiAliasing(menu.isAntiAliasing());
 		header.setDrawBorders(menu.isDrawingBorder());
 		header.updateSize(menu.getElementSize());
@@ -142,7 +142,7 @@ public class SOMExperimentViewer implements IViewer, java.io.Serializable {
 		expViewer.onMenuChanged(menu);
 		header.setUseDoubleGradient(menu.getUseDoubleGradient());    
 		header.setNegAndPosColorImages(menu.getNegativeGradientImage(), menu.getPositiveGradientImage());
-		header.setValues(Math.abs(menu.getMaxRatioScale()), -Math.abs(menu.getMinRatioScale()));
+		header.setValues(menu.getMinRatioScale(), menu.getMidRatioValue() ,menu.getMaxRatioScale());
 		header.setAntiAliasing(menu.isAntiAliasing());
 		header.setDrawBorders(menu.isDrawingBorder());
 		header.updateSize(menu.getElementSize());
