@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: KMCGUI.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-05-06 15:32:46 $
+ * $Revision: 1.6 $
+ * $Date: 2004-05-17 15:41:32 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -57,9 +57,9 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidsViewer;
 
-//import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
+import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
 
-public class KMCGUI implements IClusterGUI/*, IScriptGUI*/ {
+public class KMCGUI implements IClusterGUI, IScriptGUI {
     
     private Algorithm algorithm;
     private Progress progress;

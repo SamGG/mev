@@ -1,12 +1,12 @@
 /*
 Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
 All rights reserved.
-*/
+ */
 /*
  * $RCSfile: SOMGUI.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-04-29 19:05:51 $
- * $Author: nbhagaba $
+ * $Revision: 1.4 $
+ * $Date: 2004-05-17 15:41:53 $
+ * $Author: braisted $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.som;
@@ -30,6 +30,7 @@ import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
 
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
@@ -43,20 +44,19 @@ import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLInitDialog;
 import org.tigr.microarray.mev.cluster.Node;
 import org.tigr.microarray.mev.cluster.Cluster;
 import org.tigr.microarray.mev.cluster.NodeList;
+import org.tigr.microarray.mev.cluster.NodeValueList;
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 
+import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
 
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
 
-
-import org.tigr.microarray.mev.cluster.NodeValueList;
-
-public class SOMGUI implements IClusterGUI {
+public class SOMGUI implements IClusterGUI, IScriptGUI {
     
     private Experiment experiment;
     private IData data;
@@ -183,6 +183,176 @@ public class SOMGUI implements IClusterGUI {
         }
     }
     
+    
+    /**
+     *  Script Support
+     */
+    
+    public AlgorithmData getScriptParameters(IFramework framework) {
+        
+        this.data = framework.getData();
+        SOMInitDialog som_dialog = new SOMInitDialog(framework.getFrame(), 3, 3, 2000, 0.05f, 3f, 1, 1, 0);
+        if (som_dialog.showModal() != JOptionPane.OK_OPTION) {
+            return null;
+        }
+        clusterGenes = som_dialog.isClusterGenes();
+        boolean isHierarchicalTree = som_dialog.isHierarchicalTree();
+        // hcl init
+        int hcl_method = 0;
+        boolean hcl_samples = false;
+        boolean hcl_genes = false;
+        if (isHierarchicalTree) {
+            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame());
+            if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
+                return null;
+            }
+            hcl_method = hcl_dialog.getMethod();
+            hcl_samples = hcl_dialog.isClusterExperience();
+            hcl_genes = hcl_dialog.isClusterGenes();
+        }
+        
+        this.experiment = framework.getData().getExperiment();
+        GeneralInfo info = new GeneralInfo();
+        info.alpha = som_dialog.getAlpha();
+        info.radius = som_dialog.getRadius();
+        if(clusterGenes)
+            info.dimension   = this.experiment.getNumberOfSamples();
+        else
+            info.dimension = this.experiment.getNumberOfGenes();
+        info.dimension_x = som_dialog.getDimensionX();
+        info.dimension_y = som_dialog.getDimensionY();
+        info.clusters    = info.dimension_x * info.dimension_y;
+        info.iterations  = som_dialog.getIterations();
+        info.neiborhood  = som_dialog.getNeighborhood() == 0 ? "bubble" : "gaussian";
+        info.topology    = som_dialog.getTopology() == 0 ? "hexagonal" : "rectangular";
+        info.init_type   = som_dialog.getInitType() == 0 ? "vector" : "genes";
+        info.hcl = isHierarchicalTree;
+        info.hcl_genes = hcl_genes;
+        info.hcl_samples = hcl_samples;
+        info.hcl_method = hcl_method;
+        
+        Listener listener = new Listener();
+        
+        AlgorithmData data = new AlgorithmData();
+        FloatMatrix matrix = framework.getData().getExperiment().getMatrix();
+        
+        data.addParam("distance-factor", String.valueOf(1f));
+        IDistanceMenu menu = framework.getDistanceMenu();
+        data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
+        int function = menu.getDistanceFunction();
+        if (function == Algorithm.DEFAULT) {
+            function = Algorithm.EUCLIDEAN;
+        }
+        info.function = menu.getFunctionName(function);
+        data.addParam("distance-function", String.valueOf(function));
+        data.addParam("dimension-x", String.valueOf(info.dimension_x));
+        data.addParam("dimension-y", String.valueOf(info.dimension_y));
+        data.addParam("iterations", String.valueOf(info.iterations));
+        data.addParam("topology", info.topology);
+        data.addParam("is_neighborhood_bubble", String.valueOf(info.neiborhood.equals("bubble")));
+        data.addParam("is_random_vector", String.valueOf(info.init_type.equals("vector")));
+        data.addParam("radius", String.valueOf(info.radius));
+        data.addParam("alpha", String.valueOf(info.alpha));
+        data.addParam("som-cluster-genes", String.valueOf(clusterGenes));
+        // hcl parameters
+        if (isHierarchicalTree) {
+            data.addParam("hierarchical-tree", String.valueOf(true));
+            data.addParam("method-linkage", String.valueOf(hcl_method));
+            data.addParam("calculate-genes", String.valueOf(hcl_genes));
+            data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+        }
+        
+        //script control parameters
+        
+        // alg name
+        data.addParam("name", "SOM");
+        
+        // alg type
+        data.addParam("alg-type", "cluster");
+        
+        // output class
+        data.addParam("output-class", "multi-cluster-output");
+        
+        //output nodes
+        String [] outputNodes = new String[1];
+        outputNodes[0] = "Multi-cluster";
+        data.addStringArray("output-nodes", outputNodes);
+        
+        return data;
+    }
+    
+    public DefaultMutableTreeNode executeScript(IFramework framework, AlgorithmData algData, Experiment experiment) throws AlgorithmException {
+        this.data = framework.getData();
+        this.experiment = experiment;
+        Listener listener = new Listener();
+        this.clusterGenes = algData.getParams().getBoolean("som-cluster-genes");
+        try {
+            algorithm = framework.getAlgorithmFactory().getAlgorithm("SOM");
+            algorithm.addAlgorithmListener(listener);
+            
+            this.progress = new Progress(framework.getFrame(), "SOM Training", listener);
+            this.progress.show();
+            
+            FloatMatrix matrix = framework.getData().getExperiment().getMatrix();
+            if(!clusterGenes)
+                matrix = matrix.transpose();
+            algData.addMatrix("experiment", matrix);
+            
+            long startTime = System.currentTimeMillis();
+            AlgorithmData result = algorithm.execute(algData);
+            GeneralInfo info = new GeneralInfo();
+            info.time = System.currentTimeMillis()-startTime;
+            // obtain the clusters
+            Cluster result_cluster = result.getCluster("cluster");
+            NodeList nodeList = result_cluster.getNodeList();
+            this.clusters = new int[nodeList.getSize()][];
+            for (int i=0; i<this.clusters.length; i++) {
+                this.clusters[i] = nodeList.getNode(i).getFeaturesIndexes();
+            }
+            // obtain the codes
+            this.codes = result.getMatrix("codes");
+            // obtain the u-matrix
+            this.u_matrix = result.getMatrix("u_matrix");
+            // means, variances
+            this.means = result.getMatrix("clusters_means");
+            this.variances = result.getMatrix("clusters_variances");
+            
+            
+            IDistanceMenu menu = framework.getDistanceMenu();
+            
+            AlgorithmParameters params = algData.getParams();
+            
+            info.alpha = params.getFloat("alpha");
+            info.radius = params.getFloat("radius");
+            if(clusterGenes)
+                info.dimension   = this.experiment.getNumberOfSamples();
+            else
+                info.dimension = this.experiment.getNumberOfGenes();
+            info.dimension_x = params.getInt("dimension-x");
+            info.dimension_y = params.getInt("dimension-y");
+            info.clusters    = info.dimension_x * info.dimension_y;
+            info.iterations  = params.getInt("iterations");
+            info.neiborhood  = params.getBoolean("is-neighborhood-bubble") ? "bubble" : "gaussian";
+            info.topology    = params.getString("topology");
+            info.init_type   = params.getBoolean("is-random-vector") ? "vector" : "genes";
+            info.hcl = params.getBoolean("hierarchical-tree");
+            info.hcl_genes = params.getBoolean("calculate-genes");
+            info.hcl_samples = params.getBoolean("calculate-experiments");
+            if(info.hcl_genes)
+                info.hcl_method = params.getInt("method-linkage");
+            
+            return createResultTree(result_cluster, info);
+        } finally {
+            if (algorithm != null) {
+                algorithm.removeAlgorithmListener(listener);
+            }
+            if (progress != null) {
+                progress.dispose();
+            }
+        }
+    }
+    
+    
     /**
      * Creates the result tree.
      */
@@ -191,7 +361,7 @@ public class SOMGUI implements IClusterGUI {
         if(this.clusterGenes)
             root = new DefaultMutableTreeNode("SOM - genes");
         else
-            root = new DefaultMutableTreeNode("SOM - experiments");        
+            root = new DefaultMutableTreeNode("SOM - experiments");
         addResultNodes(root, result_cluster, info);
         return root;
     }
@@ -205,7 +375,7 @@ public class SOMGUI implements IClusterGUI {
         addCentroidViews(root, info);
         addSOMViews(root, info);
         addTableViews(root, info);
-        addClusterInfo(root);        
+        addClusterInfo(root);
         addGeneralInfo(root, info);
     }
     
@@ -217,8 +387,8 @@ public class SOMGUI implements IClusterGUI {
             tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.data);
         else
             tabViewer = new ExperimentClusterTableViewer(this.experiment, this.clusters, this.data);
-            //return; //placeholder for ExptClusterTableViewer
-            //expViewer = new SOMExperimentClusterViewer(this.experiment, this.clusters, "SOM Vector", this.codes);
+        //return; //placeholder for ExptClusterTableViewer
+        //expViewer = new SOMExperimentClusterViewer(this.experiment, this.clusters, "SOM Vector", this.codes);
         int cluster;
         for (int x=0; x<info.dimension_x; x++) {
             for (int y=0; y<info.dimension_y; y++) {
@@ -227,7 +397,7 @@ public class SOMGUI implements IClusterGUI {
             }
         }
         root.add(node);
-    }    
+    }
     
     /**
      * Adds experiment viewer nodes.
@@ -448,6 +618,8 @@ public class SOMGUI implements IClusterGUI {
         }
         return pos;
     }
+    
+    
     
     /****************************************************************************************
      * End of Sample Cluster index ordering code
