@@ -566,7 +566,7 @@ public class ResultTree extends JTree implements java.io.Serializable {
                         setIcon(pca3DIcon);
                     } else if(text.equals("Map") && parentText.indexOf("Terrain") != -1) {
                         setIcon(trn3DIcon);
-                    } else if(text.equals("Script Tree Viewer")) {
+                    } else if(text.indexOf("Script Tree") != -1) {
                         setIcon(scriptTreeViewerIcon);
                     } else if(text.equals("Script XML Viewer")) {
                         setIcon(scriptXMLViewerIcon);
