@@ -1,11 +1,11 @@
 /*
 Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
 All rights reserved.
-*/
+ */
 /*
  * $RCSfile: IViewer.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 17:11:58 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -23,6 +23,10 @@ import javax.swing.JComponent;
  */
 public interface IViewer {
     
+    public static int UPPER_LEFT_CORNER = 0;
+    public static int UPPER_RIGHT_CORNER = 1;
+    public static int LOWER_LEFT_CORNER = 2;
+    
     /**
      * Returns a component to be inserted into scroll pane view port.
      */
@@ -32,6 +36,18 @@ public interface IViewer {
      * Returns a component to be inserted into scroll pane header.
      */
     public JComponent getHeaderComponent();
+    
+    /**
+     * Returns a component to be inserted into the scroll pane row header
+     */
+    public JComponent getRowHeaderComponent();  
+
+    /**
+     * Returns the corner component corresponding to the indicated corner,
+     * posibly null
+     */
+    public JComponent getCornerComponent(int cornerIndex);
+    
     
     /**
      * Invoked by the framework when this viewer is selected.
