@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASE.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-04-01 20:42:55 $
+ * $Revision: 1.3 $
+ * $Date: 2004-06-24 17:27:05 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -113,7 +113,7 @@ public class EASE extends AbstractAlgorithm {
         
         EaseElementList sampleElementList = new EaseElementList(clusterIndices, sampleList);
         EaseElementList populationElementList = new EaseElementList(populationList);
-        
+
         if(stop)
             return null;
         
@@ -186,8 +186,9 @@ public class EASE extends AbstractAlgorithm {
         result = jstats.getResults();
         
         //if the result set is empty, return.
-        if(result.length < 1)
+        if(result.length < 1) {
             return algorithmData;
+        }
         
         hitList = jstats.getListHitMatrix();
         categoryNames = jstats.getCategoryNames();
@@ -516,7 +517,10 @@ public class EASE extends AbstractAlgorithm {
             " and format", "File Error", JOptionPane.WARNING_MESSAGE);
             return result;  // return original result
         }
-        return newResult;
+        if(haveAccessionNumbers)
+            return newResult;
+        else
+            return resultMatrix;
     }
     
     /** Builds a result copy
@@ -851,26 +855,18 @@ public class EASE extends AbstractAlgorithm {
             
             permEvent.setIntValue(i+1);
             fireValueChanged(permEvent);
-            
-            //startsamp = System.currentTimeMillis();
+
             sampleVector = getRandomSampleVector(sampleSize, rand);
-            //sampleTime += startsamp - System.currentTimeMillis();
+
             jstats.resetForNewList();
-            
-           // System.out.println("start list hits"+System.currentTimeMillis());
-            
+
             jstats.GetListHitsByCategory(sampleVector);
-                        
-           // System.out.println("end list hits"+System.currentTimeMillis());
-            
+    
             jstats.ConstructResults();
-                                   
-          //  System.out.println("start acc"+System.currentTimeMillis());
-            
+ 
             testResult = jstats.getResults();
             
             accumulateBinHits(testResult, accumulator);
-         //   System.out.println("start acc"+System.currentTimeMillis());
         }
         
         double [] prob = new double[k];
@@ -882,10 +878,7 @@ public class EASE extends AbstractAlgorithm {
         
         permEvent.setDescription("DISPOSE");  //get rid of progress bar
         fireValueChanged(permEvent);
-        
-        //System.out.println("Overall ET = "+ (System.currentTimeMillis() - start));
-       // System.out.println("sampling ET = "+ sampleTime);
-        
+
         Vector probVector = new Vector();
         probVector.add(prob);
         appendResult(probVector);
