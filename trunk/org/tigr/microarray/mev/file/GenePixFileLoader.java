@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: GenePixFileLoader.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 18:46:37 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-27 22:16:51 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -227,6 +227,17 @@ public class GenePixFileLoader extends ExpressionFileLoader {
         }
     }
     
+    public String getFilePath() {
+        if(this.gpflp.getGenePixSelectedListModel().getSize() < 1)
+            return null;
+        return ((File)(gpflp.getGenePixSelectedListModel().getElementAt(0))).getAbsolutePath();
+    }
+    
+    public void openDataPath() {
+        this.gpflp.openDataPath();
+    }
+
+    
 /*
 //
 //	GenePixFileLoader - Internal Classes
@@ -260,7 +271,7 @@ public class GenePixFileLoader extends ExpressionFileLoader {
             
             setLayout(new GridBagLayout());
             
-            fileTreePane = new FileTreePane();
+            fileTreePane = new FileTreePane(SuperExpressionFileLoader.DATA_PATH);
             fileTreePane.addFileTreePaneListener(new FileTreePaneEventHandler());
             fileTreePane.setPreferredSize(new java.awt.Dimension(200, 50));
             
@@ -334,6 +345,10 @@ public class GenePixFileLoader extends ExpressionFileLoader {
             pathTextField.setText(path);
         }
         
+        public void openDataPath(){
+            this.fileTreePane.openDataPath(); 
+        }
+                
         public void validateLists() {
             
             // Currently, a minimum of one GenePix file must be selected to enable loading

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: AffymetrixFileLoader.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-27 22:16:51 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -599,7 +599,16 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
             }
         }
     }
+
+    public String getFilePath() {
+        if(this.aflp.getAffymetrixSelectedListModel().getSize() <1)
+            return null;
+        return ((File)(aflp.getAffymetrixSelectedListModel().getElementAt(0))).getAbsolutePath();
+    }
     
+    public void openDataPath() {
+        this.aflp.openDataPath();
+    }
 /*
 //
 //	AffymetrixFileLoader - Internal Classes
@@ -653,7 +662,7 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
             
             setLayout(new GridBagLayout());
             
-            fileTreePane = new FileTreePane();
+            fileTreePane = new FileTreePane(SuperExpressionFileLoader.DATA_PATH);
             fileTreePane.addFileTreePaneListener(new FileTreePaneEventHandler());
             fileTreePane.setPreferredSize(new java.awt.Dimension(200, 50));
             
@@ -807,6 +816,10 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
         
         public void setPath(String path) {
             pathTextField.setText(path);
+        }
+        
+        public void openDataPath(){
+           this.fileTreePane.openDataPath();
         }
         
         public void validateLists() {
