@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: KMCCentroidViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-02-03 15:42:16 $
+ * $Revision: 1.3 $
+ * $Date: 2004-02-03 16:23:58 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -32,11 +32,6 @@ public class KMCCentroidViewer extends CentroidViewer implements java.io.Seriali
     
     private JPopupMenu popup;
     
-    public KMCCentroidViewer(){
-        Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
-	getContentComponent().addMouseListener(listener);
-    }
     
     /**
      * Construct a <code>KMCCentroidViewer</code> with specified experiment
