@@ -1,11 +1,11 @@
 /*
 Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
 All rights reserved.
-*/
+ */
 /*
  * $RCSfile: PCAGUI.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
+ * $Revision: 1.2 $
+ * $Date: 2004-05-06 20:53:24 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -36,7 +36,9 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
 
-public class PCAGUI implements IClusterGUI {
+import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
+
+public class PCAGUI implements IClusterGUI, IScriptGUI {
     
     private int mode;
     private FloatMatrix T;
@@ -121,6 +123,106 @@ public class PCAGUI implements IClusterGUI {
         }
     }
     
+    
+    
+    public AlgorithmData getScriptParameters(IFramework framework) {
+        
+        PCASelectionDialog dialog = new PCASelectionDialog(framework.getFrame());
+        if(dialog.showModal() == JOptionPane.CANCEL_OPTION)
+            return null;
+        
+        if(dialog.isClusterGenesSelected())
+            this.mode = 1;
+        else
+            this.mode = 3;
+        
+        FloatMatrix Cov;
+        AlgorithmData data = new AlgorithmData();
+        
+        data.addParam("distance-factor", String.valueOf(1.0f));
+        IDistanceMenu menu = framework.getDistanceMenu();
+        data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
+        int function = menu.getDistanceFunction();
+        if (function == Algorithm.DEFAULT) {
+            function = Algorithm.COVARIANCE;
+        }
+        data.addParam("distance-function", String.valueOf(function));
+        data.addParam("pca-mode", String.valueOf(mode));
+        
+        //script control parameters
+        
+        // alg name
+        data.addParam("name", "PCA");
+        
+        // alg type
+        data.addParam("alg-type", "cluster");
+        
+        // output class
+        data.addParam("output-class", "single-output");
+        
+        //output nodes
+        String [] outputNodes = new String[1];
+        outputNodes[0] = "Single Viewer Output";
+        data.addStringArray("output-nodes", outputNodes);
+        
+        return data;
+    }
+    
+    public DefaultMutableTreeNode executeScript(IFramework framework, AlgorithmData algData, Experiment experiment) throws AlgorithmException {
+        Listener listener = new Listener();
+        try {
+            
+            mode = algData.getParams().getInt("pca-mode");
+            int function = algData.getParams().getInt("distance-function");
+            
+                 AlgorithmData result = null;
+            DefaultMutableTreeNode node = null;
+            algData.addMatrix("experiment", experiment.getMatrix());
+            
+            algorithm = framework.getAlgorithmFactory().getAlgorithm("PCA");
+            algorithm.addAlgorithmListener(listener);
+            
+            logger = new Logger(framework.getFrame(), "PCA Log Window", listener);
+            logger.show();
+            logger.append("Starting SVD calculation\n");
+            
+            long start = System.currentTimeMillis();
+            switch (mode) {
+                case 1: // Spots
+                    result = algorithm.execute(algData);
+                    T = result.getMatrix("T");
+                    V = result.getMatrix("V");
+                    S = result.getMatrix("S");
+                    U = result.getMatrix("U");
+                    node = new DefaultMutableTreeNode("PCA - genes");
+                    break;
+                case 3: // Experiments
+                    result = algorithm.execute(algData);
+                    T = result.getMatrix("T");
+                    V = result.getMatrix("V");
+                    S = result.getMatrix("S");
+                    U = result.getMatrix("U");
+                    node = new DefaultMutableTreeNode("PCA - experiments");
+                    break;
+                default:
+                    break;
+            }
+            logger.append("Creation the result viewers");
+            long time = System.currentTimeMillis() - start;
+            addResultNodes(framework.getFrame(), node, time, framework.getDistanceMenu().getFunctionName(function), experiment);
+            return node;
+        } finally {
+            if (algorithm != null) {
+                algorithm.removeAlgorithmListener(listener);
+            }
+            if (logger != null) {
+                logger.dispose();
+            }
+        }
+    }
+    
+    
+    
     /**
      * Adds nodes into a result tree root.
      */
@@ -200,6 +302,7 @@ public class PCAGUI implements IClusterGUI {
         gNode.add(new DefaultMutableTreeNode(function));
         node.add(gNode);
     }
+    
     
     /**
      * The class to listen to dialog and algorithm events.
