@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASEURLFactory.java,v $
- * $Revision: 1.1 $
- * $Date: 2004-02-06 22:52:37 $
+ * $Revision: 1.2 $
+ * $Date: 2004-07-26 21:32:00 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -19,6 +19,8 @@ package org.tigr.microarray.mev.cluster.gui.impl.ease;
 import java.io.*;
 import javax.swing.JOptionPane;
 import java.awt.Frame;
+
+import org.tigr.microarray.mev.TMEV;
 /**
  *
  * @author  braisted
@@ -26,15 +28,13 @@ import java.awt.Frame;
 public class EASEURLFactory {
     
     /** Create a url String based on file name and the tag
-     */    
+     */
     public static String constructURL(String file, String tag){
-        String sep = System.getProperty("file.separator");
-        String baseDirectory = System.getProperty("user.dir");
-        baseDirectory += sep+"Data"+sep+"EASE"+sep+"Data"+sep+"Class"+sep+"URL data"+sep+file+".txt";
+
         try {
-            File urlFile = new File(baseDirectory);
+            File urlFile = TMEV.getFile("Data/Ease/Data/Class/URL data/"+file+".txt");
             if(!urlFile.exists() || !urlFile.isFile()){
-                JOptionPane.showMessageDialog(new Frame(), "The file: "+baseDirectory+"\n"+"does not exist. Files in this directory are used to construct URLs. \n Other files in this directory can be used as a template to construct\nthe required file.", "URL Construction Not Currently Supported for: "+ file, JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(new Frame(), "The file: "+file+".txt"+"\n"+"does not exist. Files in this directory are used to construct URLs. \n Other files in this directory can be used as a template to construct\nthe required file.", "URL Construction Not Currently Supported for: "+ file, JOptionPane.WARNING_MESSAGE);
                 return null;
             }
             

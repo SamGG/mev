@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASETableViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-04-12 19:35:28 $
+ * $Revision: 1.3 $
+ * $Date: 2004-07-26 21:32:00 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -43,6 +43,8 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 
 import org.tigr.microarray.mev.cluster.gui.helpers.TableViewer;
+
+import org.tigr.microarray.mev.TMEV;
 
 /** Displays ease results
  */
@@ -280,7 +282,7 @@ public class EASETableViewer extends TableViewer implements java.io.Serializable
     /** Saves the ease table to file
      */
     private void onSaveEaseTable(){
-        JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+System.getProperty("file.separator")+"Data");
+        JFileChooser chooser = new JFileChooser(TMEV.getFile("/Data"));
         String fileName = "";
         if(chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION){
             File file = chooser.getSelectedFile();
