@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: FOMGraph.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-03 16:07:39 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -27,7 +27,7 @@ import java.awt.event.MouseMotionAdapter;
 
 import javax.swing.JPanel;
 
-public class FOMGraph extends JPanel {
+public class FOMGraph extends JPanel implements java.io.Serializable {
     
     private float[] values;
     private String[] xItems;
@@ -214,7 +214,7 @@ public class FOMGraph extends JPanel {
 	g.dispose();
     }
     
-    private class MouseHandler extends MouseMotionAdapter {
+    private class MouseHandler extends MouseMotionAdapter implements java.io.Serializable {
 	
 	private Point prevCoords = new Point(-1, -1);
 	
