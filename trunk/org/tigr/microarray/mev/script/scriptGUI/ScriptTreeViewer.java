@@ -77,7 +77,7 @@ public class ScriptTreeViewer extends ViewerAdapter {
             item = new JMenuItem("Change Algorithm");
             item.setActionCommand("replace-algorithm-cmd");
             item.addActionListener(listener);
-            menu.add(item);
+        //    menu.add(item);
             //Delete Algorithm
             item = new JMenuItem("Delete Algorithm");            
             item.setActionCommand("delete-algorithm-cmd");
@@ -87,7 +87,7 @@ public class ScriptTreeViewer extends ViewerAdapter {
             item = new JMenuItem("Modify Paramaters");        
             item.setActionCommand("modify-algorithm-cmd");
             item.addActionListener(listener);            
-            menu.add(item);
+        //    menu.add(item);
             
             menu.addSeparator();
             
@@ -106,6 +106,12 @@ public class ScriptTreeViewer extends ViewerAdapter {
             menu.addSeparator();
         }     
         
+            item = new JMenuItem("Execute Script");
+            item.setActionCommand("execute-script-cmd");
+            item.addActionListener(listener);
+            menu.add(item); 
+            menu.addSeparator();
+            
           item = new JMenuItem("Save Script");
             item.setActionCommand("save-script-cmd");
             item.addActionListener(listener);
@@ -170,8 +176,10 @@ public class ScriptTreeViewer extends ViewerAdapter {
                 if(node != null) {
                     manager.viewSelectedNodeXML(ScriptTreeViewer.this, node);                        
                 }
-            } else if(command.equals("save_script_cmd")) {
+            } else if(command.equals("save-script-cmd")) {
                 manager.saveScript(scriptTree.getDocument());
+            } else if(command.equals("execute-script-cmd")) {
+                manager.runScript(scriptTree.getDocument());
             }
         }
     }    
