@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: FOM.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-04-06 13:03:55 $
+ * $Revision: 1.3 $
+ * $Date: 2004-04-12 20:29:12 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -120,7 +120,7 @@ public class FOM extends AbstractAlgorithm {
             for (int i = 0; i < times; i++) {
                 threshold = threshold + interval;
                 if (threshold > 1.0f) threshold = 1.0f;
-                //System.out.println("Threshold at iteration " + i + " = " + threshold);
+
                 if (stop) {
                     throw new AbortException();
                 }
@@ -130,17 +130,10 @@ public class FOM extends AbstractAlgorithm {
                 
                 sub_algo_data.addParam("threshold", String.valueOf(threshold));
                 sub_algo_result = sub_algo.execute(sub_algo_data);
-                //System.out.println("Cast iteration [" + i + "] completed" );
-                
                 sub_algo_clusters = sub_algo_result.getCluster("cluster");
                 
-                fom_values[i] = (float)getFOM(expMatrix, sub_algo_clusters, number_of_genes, number_of_samples);
-                //System.out.println("Inside FOM: fom_values[" + i + "] = " + fom_values[i]);
-                
+                fom_values[i] = (float)getFOM(expMatrix, sub_algo_clusters, number_of_genes, number_of_samples);   
                 numOfCastClusters[i] = sub_algo_clusters.getNodeList().getSize();
-                //System.out.println ("Inside FOM: numOfCastClusters[" + i + "] = " + numOfCastClusters[i]);
-                
-                //sub_algo_result = new AlgorithmData();//added for debugging purposes, probably not needed
             }
         }
         
@@ -182,12 +175,27 @@ public class FOM extends AbstractAlgorithm {
         
         double[] tFOM = new double[number_of_samples];
         double factor;
+        
+        /*
+        if(number_of_clusters == 2) {
+            System.out.println("***********************");
+            float [][] m = new float[means.length][means[0].length];
+            for(int i = 0; i < means.length; i++) {
+                for(int j = 0; j < means[i].length; j++){
+                    m[i][j] = (float)means[i][j];
+                }
+            }
+            FloatMatrix meanFM = new FloatMatrix(m);
+            meanFM.print(2,5);
+        }
+         */
         //if(this.clusterGenes)
         //  factor = Math.sqrt((double)(number_of_genes-number_of_samples)/(double)number_of_genes);
         // else
         //   factor = Math.sqrt((double)(number_of_samples-number_of_genes)/(double)number_of_samples);
         // factor = Math.sqrt(((double)(number_of_genes-number_of_clusters))/(double)number_of_genes);
         factor = 1;
+        //float tot = 0;
         for (int i=0; i<number_of_samples; i++) {
             tFOM[i] = 0.0;
             for (int j=0; j<number_of_clusters; j++) {
@@ -196,28 +204,32 @@ public class FOM extends AbstractAlgorithm {
                     value = expMatrix.get(cluster[p], i);
                     if (!Float.isNaN(value)) {
                         tFOM[i] += Math.pow(((double)value-means[i][j]), 2);
+           
+                        //check sos, tot += Math.pow(((double)value-means[i][j]), 2);
                     }
                 }
-                //       if(this.clusterGenes)
-                tFOM[i] = Math.sqrt(tFOM[i]/(double)number_of_genes);
-                //        else
-                //            tFOM[i] = Math.sqrt(tFOM[i]/(double)number_of_samples);
-                
-                tFOM[i] /= factor;
-            }
-        }
-        
-        double fom_value = 0d;
-        for (int i=0; i<number_of_samples; i++) {
-            fom_value += tFOM[i];
-        }
-        return fom_value;
+            }              
+        tFOM[i] = Math.sqrt(tFOM[i]/(double)number_of_genes);      
     }
     
-    /**
-     * This method should interrupt the calculation.
-     */
-    public void abort() {
-        this.stop = true;
+    double fom_value = 0d;
+    for (int i=0; i<number_of_samples; i++) {
+        fom_value += tFOM[i];
     }
+
+    /*  
+    if(number_of_clusters == 2){
+        System.out.println("tot ="+ tot);
+        System.out.println("fom value ="+fom_value);
+    }
+    */
+    return fom_value;
+}
+
+/**
+ * This method should interrupt the calculation.
+ */
+public void abort() {
+    this.stop = true;
+}
 }
