@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
 * $RCSfile: GDMExpHeader.java,v $
-* $Revision: 1.2 $
-* $Date: 2004-02-13 21:36:44 $
+* $Revision: 1.3 $
+* $Date: 2004-02-25 21:07:44 $
 * $Author: braisted $
 * $State: Exp $
 */
@@ -144,7 +144,7 @@ public class GDMExpHeader extends JPanel {
         setFontSize(elementWidth);
 
         if (isColumnHeader == true) {
-            add(gdmGradientLabelPanel, BorderLayout.NORTH);
+            add(gdmGradientLabelPanel, BorderLayout.NORTH);            
             if(hasColorBar)
                 add(gdmColorBarPanel, BorderLayout.CENTER);
         } else {
@@ -325,7 +325,7 @@ public class GDMExpHeader extends JPanel {
             labelPanelHeight = annotationSize + 10;// + (elementHeight/2);
 
 	    if (hasColorBar) {
-		colorBarHeight = OFFSET + elementHeight ;
+		colorBarHeight = OFFSET + (elementHeight >= 10 ? elementHeight : 10);
 	    } else {
 		colorBarHeight = 0;
 	    }
@@ -337,7 +337,7 @@ public class GDMExpHeader extends JPanel {
             labelPanelWidth = annotationSize + 10;// + (elementHeight/2);
 
 	    if (hasColorBar) {
-		colorBarWidth = OFFSET + elementWidth;
+		colorBarWidth = OFFSET + (elementWidth >= 10 ? elementWidth : 10);
 	    } else {
 		colorBarWidth = 0; 
 	    }
@@ -606,7 +606,7 @@ public class GDMExpHeader extends JPanel {
          */
     	public void paint(Graphics g1D) {
             super.paint(g1D);            
-            if (expData == null || getElementWidth() <= 2) {
+            if (expData == null) {
                 return;
             }
             if (!hasColorBar)
@@ -650,7 +650,8 @@ public class GDMExpHeader extends JPanel {
 		expColor = Color.white;
 
 	    g.setColor(expColor);
-	    g.fillRect(xLoc, row*elementHeight, elementWidth, elementHeight);
+            System.out.println("Row color bar x loc = " +xLoc);
+	    g.fillRect(xLoc, row*elementHeight, colorBarWidth-OFFSET, elementHeight);
 	}
 
 	private void drawColumnColorBar(Graphics2D g) {
@@ -678,7 +679,7 @@ public class GDMExpHeader extends JPanel {
                 expColor = Color.white;
 
 	    g.setColor(expColor);
-	    g.fillRect(column*elementWidth, yLoc, elementWidth, elementHeight);
+	    g.fillRect(column*elementWidth, yLoc, elementWidth, colorBarHeight-OFFSET);
         }
 
 
