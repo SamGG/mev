@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLNodeHeightGraph.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:25 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 18:40:47 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -220,4 +220,18 @@ public class HCLNodeHeightGraph extends JPanel implements IViewer {
     public JComponent getHeaderComponent() {
         return null;
     }    
+    
+    /** Returns a component to be inserted into the scroll pane row header
+     */
+    public JComponent getRowHeaderComponent() {
+        return null;
+    }
+    
+    /** Returns the corner component corresponding to the indicated corner,
+     * posibly null
+     */
+    public JComponent getCornerComponent(int cornerIndex) {
+        return null;
+    }
+    
 }
