@@ -267,7 +267,8 @@ public class ClusterTableViewer implements IViewer {
         this.data = framework.getData();        
         IDisplayMenu menu = framework.getDisplayMenu();
         Integer userObject = (Integer)framework.getUserObject();        
-        setClusterIndex(userObject == null ? 0 : userObject.intValue());       
+        setClusterIndex(userObject == null ? 0 : userObject.intValue());  
+        clusterTable.clearSelection();
     }
     
     /**
