@@ -1,11 +1,11 @@
 /*
-Copyright @ 1999-2003, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: EASEInitDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2004-02-06 22:52:36 $
+ * $Revision: 1.2 $
+ * $Date: 2004-03-24 21:59:15 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -31,6 +31,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 
 import java.io.File;
@@ -84,15 +85,17 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindo
 public class EASEInitDialog extends AlgorithmDialog {
     
     /** Result when dialog is dismissed.
-     */    
+     */
     private int result = JOptionPane.CANCEL_OPTION;
     
     ModePanel modePanel;
+    PopSelectionPanel popPanel;
     ClusterBrowser browser;
     EventListener listener;
     EaseParameterPanel easeParamPanel;
     AlphaPanel alphaPanel;
-    Font font;    
+    JTabbedPane tabbedPane;
+    Font font;
     String sep;
     Frame parent;
     
@@ -104,20 +107,26 @@ public class EASEInitDialog extends AlgorithmDialog {
     public EASEInitDialog(Frame parent, ClusterRepository repository, String [] annotationLabels) {
         super(new JFrame(), "EASE: Ease Annotation Analysis", true);
         this.parent = parent;
-        font = new Font("Dialog", Font.BOLD, 12);                
+        font = new Font("Dialog", Font.BOLD, 12);
         listener = new EventListener();
         addWindowListener(listener);
         
         //Tabbed pane creation
-        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane = new JTabbedPane();
         
+        JPanel popNClusterPanel = new JPanel(new GridBagLayout());
+        popNClusterPanel.setBackground(Color.white);
+        popPanel = new PopSelectionPanel();
         browser = new ClusterBrowser(repository);
-        tabbedPane.add("Cluster Browser", browser);
+        
+        popNClusterPanel.add(popPanel, new GridBagConstraints(0,0,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        popNClusterPanel.add(browser, new GridBagConstraints(0,1,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        tabbedPane.add("Population and Cluster Selection", popNClusterPanel);
         
         easeParamPanel = new EaseParameterPanel(annotationLabels);
         tabbedPane.add("Annotation Parameters", easeParamPanel);
         
-        alphaPanel = new AlphaPanel();    
+        alphaPanel = new AlphaPanel();
         tabbedPane.add("Statistical Parameters", alphaPanel);
         
         JPanel parameters = new JPanel(new GridBagLayout());
@@ -128,12 +137,22 @@ public class EASEInitDialog extends AlgorithmDialog {
         
         parameters.add(modePanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         parameters.add(tabbedPane, new GridBagConstraints(0,1,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-       
+        
         addContent(parameters);
         setActionListeners(listener);
-        tabbedPane.setSelectedIndex(2);  //pack with largest pane visible
-        this.pack();
-        tabbedPane.setSelectedIndex(0);
+        
+        if(repository == null || repository.isEmpty()) {
+            Component comp = tabbedPane.getComponentAt(0);
+            JPanel panel = (JPanel)comp;
+            panel.removeAll();
+            panel.validate();
+            panel.setOpaque(false);
+            panel.add(new JLabel("Empty Cluster Repository"), new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(15,0,10,0),0,0));
+            panel.add(new JLabel("Only Annotation Survey is Enabled"), new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(0,0,0,0),0,0));
+            tabbedPane.setSelectedIndex(1);
+        }
+        
+        this.setSize(570,650);
     }
     
     
@@ -147,32 +166,44 @@ public class EASEInitDialog extends AlgorithmDialog {
     }
     
     /** Resets dialog controls.
-     */    
+     */
     private void resetControls(){
         
     }
     
     /** Indicates if mode is cluster analysis, if not mode is annotation survey.
-     * @return  */    
+     * @return  */
     public boolean isClusterModeSelected(){
         return this.modePanel.clusterAnalysisButton.isSelected();
     }
     
     /** Returns the cluster selected for analysis.
-     * @return  */    
+     * @return  */
     public Cluster getSelectedCluster(){
         return this.browser.getSelectedCluster();
     }
     
+    
+    public boolean isPopFileModeSelected() {
+        return popPanel.fileButton.isSelected();
+    }
+    
+    
+    /** Returns the population fille to load
+     */
+    public String getPopulationFileName() {
+        return this.popPanel.getPopFile();
+    }
+    
     /** Returns the name of the converter file selected.
      * If none selected null is returned.
-     */    
+     */
     public String getConverterFileName(){
         return easeParamPanel.getConverterFileName();
     }
     
     /** Returns the minimum clusters size if trimming result.
-     */    
+     */
     public int getMinClusterSize() {
         String value = easeParamPanel.minClusterSizeField.getText();
         try {
@@ -184,7 +215,7 @@ public class EASEInitDialog extends AlgorithmDialog {
     }
     
     /** Returns the annotation key type.
-     */    
+     */
     public String getAnnotationKeyType(){
         return easeParamPanel.getAnnotationKeyType();
     }
@@ -192,51 +223,51 @@ public class EASEInitDialog extends AlgorithmDialog {
     
     /** Returns a list of file names corresponding to files mapping
      * indices to annotation terms (themes).
-     */    
+     */
     public String [] getAnnToGOFileList(){
         return this.easeParamPanel.getAnnToGOFileList();
     }
     
     /** Returns the stat to report.  If true then EaseScore, else Fisher's Exact.
-     */    
+     */
     public boolean isEaseScoreSelected(){
         return (this.alphaPanel.easeBox.isSelected());
     }
     
     /** Returns true if multiplicity corrections are
      * selected.
-     */    
-    public boolean isCorrectPvaluesSelected(){     
+     */
+    public boolean isCorrectPvaluesSelected(){
         return (this.isBonferroniSelected() || this.isStepDownBonferroniSelected() || this.isSidakSelected());
     }
     
     /** Returns true if Bonferroni correction is selected.
-     */    
+     */
     public boolean isBonferroniSelected(){
         return alphaPanel.bonferroniBox.isSelected();
     }
     
     /** Returns true if step down Bonferroni is selected.
-     */    
+     */
     public boolean isStepDownBonferroniSelected(){
         return alphaPanel.bonferroniStepBox.isSelected();
     }
     
     /** Returns true is Sidak method correction is selected
-     */    
+     */
     public boolean isSidakSelected(){
-        return alphaPanel.sidakBox.isSelected();        
+        return alphaPanel.sidakBox.isSelected();
     }
     
     /** Returns true if bootstrapping permutations
      * are selected.
-     */    
+     */
     public boolean isPermutationAnalysisSelected(){
         return alphaPanel.permBox.isSelected();
     }
     
     /** Returns the number of permutations to perform.
-     */    
+     */
     public int getPermutationCount(){
         return Integer.parseInt(alphaPanel.permField.getText());
     }
@@ -244,7 +275,7 @@ public class EASEInitDialog extends AlgorithmDialog {
     /** Returns the trim options as two strings.
      * The first string indicates the type of trim
      * NO_TRIM, N_TRIM, PERCENT_TRIM.  The second string indicates the value to be applied.
-     */    
+     */
     public String [] getTrimOptions(){
         String [] options = new String[2];
         if ( alphaPanel.trimBox.isSelected() ){
@@ -263,32 +294,42 @@ public class EASEInitDialog extends AlgorithmDialog {
     }
     
     /** Contains mode controls. (anal. or survey)
-     */    
+     */
     private class ModePanel extends JPanel {
         private JRadioButton clusterAnalysisButton;
         private JRadioButton slideSurveyButton;
         
         /** Constructs a mode panel.
          * @param haveClusters
-         */        
+         */
         public ModePanel(boolean haveClusters){
             super(new GridBagLayout());
             setLayout(new GridBagLayout());
             setBackground(Color.white);
             setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Mode Selection", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
-                        
+            
             ButtonGroup bg = new ButtonGroup();
             clusterAnalysisButton = new JRadioButton("Cluster Analysis", haveClusters);
             clusterAnalysisButton.setFocusPainted(false);
-            clusterAnalysisButton.setBackground(Color.white);    
+            clusterAnalysisButton.setBackground(Color.white);
             clusterAnalysisButton.setHorizontalAlignment(JRadioButton.CENTER);
+            clusterAnalysisButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    popPanel.setEnableControls(true);
+                }
+            });
             bg.add(clusterAnalysisButton);
-
-            slideSurveyButton = new JRadioButton("Slide Annotation Survey");
+            
+            slideSurveyButton = new JRadioButton("Annotation Survey");
+            slideSurveyButton.setToolTipText("Surveys annotation loaded in the CURRENT viewer.");
             slideSurveyButton.setFocusPainted(false);
             slideSurveyButton.setBackground(Color.white);
             slideSurveyButton.setHorizontalAlignment(JRadioButton.CENTER);
-
+            slideSurveyButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    popPanel.setEnableControls(false);
+                }
+            });
             bg.add(slideSurveyButton);
             
             if(!haveClusters){
@@ -300,11 +341,104 @@ public class EASEInitDialog extends AlgorithmDialog {
             add(slideSurveyButton, new GridBagConstraints(1,0,1,1,1.0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
         }
     }
+    
+    private class PopSelectionPanel extends ParameterPanel {
         
+        JRadioButton fileButton;
+        JRadioButton dataButton;
+        JTextField popField;
+        JButton browseButton;
+        JLabel fileLabel;
+        
+        public PopSelectionPanel() {
+            super("Population Selection");
+            setLayout(new GridBagLayout());
+            
+            ButtonGroup bg = new ButtonGroup();
+            fileButton = new JRadioButton("Population from File", true);
+            fileButton.setBackground(Color.white);
+            fileButton.setFocusPainted(false);
+            bg.add(fileButton);
+            
+            fileButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    
+                    browseButton.setEnabled(fileButton.isSelected());
+                    popField.setEnabled(fileButton.isSelected());
+                    popField.setBackground(Color.white);
+                    fileLabel.setEnabled(fileButton.isSelected());
+                    
+                }
+            });
+            
+            dataButton = new JRadioButton("Population from Current Viewer");
+            dataButton.setBackground(Color.white);
+            dataButton.setFocusPainted(false);
+            bg.add(dataButton);
+            dataButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    browseButton.setEnabled(fileButton.isSelected());
+                    popField.setEnabled(fileButton.isSelected());
+                    popField.setBackground(Color.lightGray);
+                    fileLabel.setEnabled(fileButton.isSelected());
+                    
+                }
+            });
+            
+            browseButton = new JButton("File Browser");
+            browseButton.setFocusPainted(false);
+            browseButton.setPreferredSize(new Dimension(150, 25));
+            browseButton.setSize(150, 25);
+            browseButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    String file = System.getProperty("user.dir")+sep+"Data";
+                    JFileChooser chooser = new JFileChooser(file);
+                    chooser.setDialogTitle("Population File Selection");
+                    chooser.setMultiSelectionEnabled(false);
+                    if(chooser.showOpenDialog(parent) == JOptionPane.OK_OPTION){
+                        updatePopField(chooser.getSelectedFile().getPath());
+                    }
+                }
+            });
+            
+            fileLabel = new JLabel("File: ");
+            popField = new JTextField(25);
+            
+            add(fileButton, new GridBagConstraints(0,0,3,1,1,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,30,0,0), 0,0));
+            add(fileLabel, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,30,0,0), 0,0));
+            add(popField, new GridBagConstraints(1,1,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,10,0,0), 0,0));
+            add(browseButton, new GridBagConstraints(2,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,25,0,20), 0,0));
+            
+            add(dataButton, new GridBagConstraints(0,2,3,1,1,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(15,30,20,0), 0,0));
+        }
+        
+        private void setEnableControls(boolean enable) {
+            fileButton.setEnabled(enable);
+            dataButton.setEnabled(enable);
+            popField.setEnabled(enable);
+            browseButton.setEnabled(enable);
+            fileLabel.setEnabled(enable);
+            setOpaque(enable);
+            tabbedPane.setEnabledAt(0, enable);
+        }
+        
+        private void updatePopField(String file) {
+            this.popField.setText(file);
+        }
+        
+        private String getPopFile() {
+            return popField.getText();
+        }
+        
+        
+    }
+    
+    
+    
     /** Contains annotation parameter controls.
-     */    
+     */
     private class EaseParameterPanel extends JPanel {
-
+        
         JTextField converterFileField;
         JList fileList;
         JButton browserButton;
@@ -315,11 +449,12 @@ public class EASEInitDialog extends AlgorithmDialog {
         Vector annVector;
         JButton removeButton;
         JCheckBox useAnnBox;
+        JLabel fileLabel;
         
         /** Constructs a new EaseParameterPanel
          * @param fieldNames annotation types
-         */        
-        public EaseParameterPanel(String [] fieldNames) {            
+         */
+        public EaseParameterPanel(String [] fieldNames) {
             //Conversion File Panel
             JPanel convPanel = new JPanel(new GridBagLayout());
             convPanel.setBackground(Color.white);
@@ -333,6 +468,7 @@ public class EASEInitDialog extends AlgorithmDialog {
             converterFileField = new JTextField(30);
             converterFileField.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED, Color.lightGray, Color.gray));
             converterFileField.setEnabled(false);
+            converterFileField.setBackground(Color.lightGray);
             
             browserButton = new JButton("File Browser");
             browserButton.setActionCommand("converter-file-browser-command");
@@ -342,12 +478,13 @@ public class EASEInitDialog extends AlgorithmDialog {
             browserButton.addActionListener(listener);
             browserButton.setEnabled(false);
             
-            
+            fileLabel = new JLabel("File :");
+            fileLabel.setEnabled(false);
             convPanel.add(useAnnBox, new GridBagConstraints(0,0,3,1,0.0,0.0,GridBagConstraints.WEST,GridBagConstraints.BOTH,new Insets(0,15,15,0),0,0));
-            convPanel.add(new JLabel("File :"), new GridBagConstraints(0,1,1,1,0.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,15,15,0),0,0));
+            convPanel.add(fileLabel, new GridBagConstraints(0,1,1,1,0.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,15,15,0),0,0));
             convPanel.add(this.browserButton, new GridBagConstraints(0,2,3,1,0.0,0.0,GridBagConstraints.WEST,GridBagConstraints.VERTICAL,new Insets(0,15,0,0),0,0));
             convPanel.add(this.converterFileField, new GridBagConstraints(1,1,2,1,0.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,15,15,0),0,0));
-                   
+            
             //Annotation file panel
             JPanel annPanel = new JPanel(new GridBagLayout());
             annPanel.setBackground(Color.white);
@@ -401,12 +538,12 @@ public class EASEInitDialog extends AlgorithmDialog {
             
             this.fieldNamesBox = new JComboBox(fieldNames);
             this.fieldNamesBox.setEditable(false);
-                        
+            
             minClusterSizeField = new JTextField(5);
             minClusterSizeField.setText("5");
             
             JPanel contentPanel = new JPanel(new GridBagLayout());
-
+            
             //Content Panels
             //Ease File Panel
             JPanel easeFilePanel = new JPanel(new GridBagLayout());
@@ -418,11 +555,11 @@ public class EASEInitDialog extends AlgorithmDialog {
             annotKeyPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "MeV Annotation Key  (\"Unique ID\")", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
             
             annotKeyPanel.add(new JLabel("Annotation Key:  "), new GridBagConstraints(0,0,1,1,0.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
-            annotKeyPanel.add(this.fieldNamesBox, new GridBagConstraints(1,0,1,1,0.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));   
+            annotKeyPanel.add(this.fieldNamesBox, new GridBagConstraints(1,0,1,1,0.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
             
             this.add(annotKeyPanel, new GridBagConstraints(0,0,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
             this.add(convPanel, new GridBagConstraints(0,1,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
-            this.add(annPanel, new GridBagConstraints(0,2,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));          
+            this.add(annPanel, new GridBagConstraints(0,2,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
         }
         
         private void updateFileDirectoryField(){
@@ -445,11 +582,11 @@ public class EASEInitDialog extends AlgorithmDialog {
                     ((DefaultListModel) annFileList.getModel()).addElement(file);
                 }
             }
-            annFileList.validate();            
+            annFileList.validate();
         }
         
         /** Returns the converter file name (or null if none)
-         */        
+         */
         public String getConverterFileName(){
             if(this.useAnnBox.isSelected())
                 return converterFileField.getText();
@@ -457,15 +594,15 @@ public class EASEInitDialog extends AlgorithmDialog {
         }
         
         /** Returns the annotation type string.
-         */        
+         */
         public String getAnnotationKeyType(){
             return (String)this.fieldNamesBox.getSelectedItem();
         }
         
-        private class EaseListListener implements ListSelectionListener {            
+        private class EaseListListener implements ListSelectionListener {
             public void valueChanged(ListSelectionEvent listSelectionEvent) {
                 updateFileDirectoryField();
-            }            
+            }
         }
         
         private void updateConverterFileField(String field){
@@ -473,7 +610,7 @@ public class EASEInitDialog extends AlgorithmDialog {
         }
         
         /** Returns the list of annotation-theme mapping files.
-         */        
+         */
         public String [] getAnnToGOFileList(){
             String [] fileNames = new String[((DefaultListModel) annFileList.getModel()).size()];
             for(int i = 0; i < fileNames.length; i++){
@@ -482,12 +619,12 @@ public class EASEInitDialog extends AlgorithmDialog {
             return fileNames;
         }
         
-        public void removeSelectedFiles(){            
+        public void removeSelectedFiles(){
             int [] indices = annFileList.getSelectedIndices();
-
+            
             for(int i = 0; i < indices.length; i++){
-              // annFileList.remove(indices[i]);
-               ((DefaultListModel)annFileList.getModel()).removeElementAt(indices[i]);
+                // annFileList.remove(indices[i]);
+                ((DefaultListModel)annFileList.getModel()).removeElementAt(indices[i]);
             }
             if(annFileList.getModel().getSize() < 1){
                 this.removeButton.setEnabled(false);
@@ -507,16 +644,16 @@ public class EASEInitDialog extends AlgorithmDialog {
     }
     
     /** Contains statistical parameter controls.
-     */    
+     */
     private class AlphaPanel extends JPanel{
-
+        
         //Stats
         private JCheckBox fisherBox;
         private JCheckBox easeBox;
         //mult. corrections
         private JCheckBox bonferroniBox;
         private JCheckBox sidakBox;
-        private JCheckBox bonferroniStepBox;        
+        private JCheckBox bonferroniStepBox;
         private JCheckBox permBox;
         private JTextField permField;
         private JLabel permLabel;
@@ -524,22 +661,22 @@ public class EASEInitDialog extends AlgorithmDialog {
         private JCheckBox trimBox;
         private JCheckBox trimNBox;
         private JLabel trimNLabel;
-        private JTextField trimNField;        
+        private JTextField trimNField;
         private JCheckBox trimPercentBox;
         private JLabel trimPercentLabel;
         private JTextField trimPercentField;
-
+        
         
         /** Constucts a new AlphaPanel.
-         */        
+         */
         public AlphaPanel(){
             super(new GridBagLayout());
             setBackground(Color.white);
-        
+            
             //STAT PANEL
             JPanel statPanel = new JPanel(new GridBagLayout());
             statPanel.setBackground(Color.white);
-            statPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Reported Statistic", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));            
+            statPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Reported Statistic", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
             
             ButtonGroup bg = new ButtonGroup();
             fisherBox = new JCheckBox("Fisher Exact Probability", true);
@@ -554,25 +691,25 @@ public class EASEInitDialog extends AlgorithmDialog {
             
             statPanel.add(fisherBox, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
             statPanel.add(easeBox, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,10,0),0,0));
-                      
+            
             
             //P-value Correction Panel
             JPanel correctionPanel = new JPanel(new GridBagLayout());
             correctionPanel.setBackground(Color.white);
             correctionPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Multiplicity Corrections", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
-
-            bonferroniBox = new JCheckBox("Bonferroni Correction", false);            
+            
+            bonferroniBox = new JCheckBox("Bonferroni Correction", false);
             bonferroniBox.setBackground(Color.white);
             bonferroniBox.setFocusPainted(false);
             
-            bonferroniStepBox = new JCheckBox("Bonferroni Step Down Correction", false);            
+            bonferroniStepBox = new JCheckBox("Bonferroni Step Down Correction", false);
             bonferroniStepBox.setBackground(Color.white);
             bonferroniStepBox.setFocusPainted(false);
             
-            sidakBox = new JCheckBox("Sidak Method", false);            
+            sidakBox = new JCheckBox("Sidak Method", false);
             sidakBox.setBackground(Color.white);
-            sidakBox.setFocusPainted(false);            
-                    
+            sidakBox.setFocusPainted(false);
+            
             permBox = new JCheckBox("Resampling Probability Analysis", false);
             permBox.setActionCommand("permutation-analysis-command");
             permBox.setBackground(Color.white);
@@ -594,12 +731,12 @@ public class EASEInitDialog extends AlgorithmDialog {
             correctionPanel.add(permBox, new GridBagConstraints(0,2,2,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,5,0),0,0));
             correctionPanel.add(permLabel, new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,15,0),0,0));
             correctionPanel.add(permField, new GridBagConstraints(1,3,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.VERTICAL, new Insets(0,0,15,0),0,0));
-                       
-            //Trim Panel            
+            
+            //Trim Panel
             JPanel trimPanel = new JPanel(new GridBagLayout());
             trimPanel.setBackground(Color.white);
             trimPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Trim Parameters", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
-
+            
             trimBox = new JCheckBox("Trim Resulting Groups", false);
             trimBox.setActionCommand("trim-result-command");
             trimBox.addActionListener(listener);
@@ -612,7 +749,7 @@ public class EASEInitDialog extends AlgorithmDialog {
             trimNBox = new JCheckBox("Select Minimum Hit Number", true);
             trimNBox.setActionCommand("trim-result-command");
             trimNBox.addActionListener(listener);
-            trimNBox.setEnabled(false);            
+            trimNBox.setEnabled(false);
             trimNBox.setBackground(Color.white);
             trimNBox.setFocusPainted(false);
             bg.add(trimNBox);
@@ -622,8 +759,8 @@ public class EASEInitDialog extends AlgorithmDialog {
             trimNLabel.setEnabled(false);
             
             trimNField = new JTextField("5", 10);
-            trimNField.setEnabled(false);      
-                       
+            trimNField.setEnabled(false);
+            
             trimPercentBox = new JCheckBox("Select Minimum Hit Percentage", false);
             trimPercentBox.setActionCommand("trim-result-command");
             trimPercentBox.addActionListener(listener);
@@ -631,32 +768,32 @@ public class EASEInitDialog extends AlgorithmDialog {
             trimPercentBox.setBackground(Color.white);
             trimPercentBox.setFocusPainted(false);
             bg.add(trimPercentBox);
-                        
+            
             trimPercentLabel = new JLabel("Percent Hits");
             trimPercentLabel.setBackground(Color.white);
             trimPercentLabel.setEnabled(false);
             
             trimPercentField = new JTextField("5", 10);
-            trimPercentField.setEnabled(false);            
+            trimPercentField.setEnabled(false);
             
             trimPanel.add(trimBox, new GridBagConstraints(0,0,3,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,20,0),0,0));
-
+            
             trimPanel.add(trimNBox, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
             trimPanel.add(trimNLabel, new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.BOTH, new Insets(0,20,0,15),0,0));
             trimPanel.add(trimNField, new GridBagConstraints(2,1,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.NONE, new Insets(0,0,0,0),0,0));
-
+            
             trimPanel.add(trimPercentBox, new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
             trimPanel.add(trimPercentLabel, new GridBagConstraints(1,2,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.BOTH, new Insets(10,20,0,15),0,0));
-            trimPanel.add(trimPercentField, new GridBagConstraints(2,2,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.NONE, new Insets(10,0,0,0),0,0));            
-
+            trimPanel.add(trimPercentField, new GridBagConstraints(2,2,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.NONE, new Insets(10,0,0,0),0,0));
+            
             //Add panels to main panel
             add(statPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
             add(correctionPanel, new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-            add(trimPanel, new GridBagConstraints(0,2,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));            
+            add(trimPanel, new GridBagConstraints(0,2,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         }
         
         /** Indicates if permutations are selected.
-         */        
+         */
         public boolean performPermutations(){
             return permBox.isSelected();
         }
@@ -667,7 +804,7 @@ public class EASEInitDialog extends AlgorithmDialog {
         }
         
         public void validateTrimOptions(){
-            if(this.trimBox.isSelected()){                
+            if(this.trimBox.isSelected()){
                 trimNBox.setEnabled(true);
                 trimPercentBox.setEnabled(true);
                 
@@ -698,9 +835,13 @@ public class EASEInitDialog extends AlgorithmDialog {
                 if(easeParamPanel.useAnnBox.isSelected()){
                     easeParamPanel.browserButton.setEnabled(true);
                     easeParamPanel.converterFileField.setEnabled(true);
-                } else {                 
+                    easeParamPanel.converterFileField.setBackground(Color.white);
+                    easeParamPanel.fileLabel.setEnabled(true);
+                } else {
                     easeParamPanel.browserButton.setEnabled(false);
-                    easeParamPanel.converterFileField.setEnabled(false);   
+                    easeParamPanel.converterFileField.setEnabled(false);
+                    easeParamPanel.converterFileField.setBackground(Color.lightGray);
+                    easeParamPanel.fileLabel.setEnabled(false);
                 }
             } else if (command.equals("converter-file-browser-command")){
                 String file = System.getProperty("user.dir")+sep+"Data"+sep+"EASE"+sep+"Data"+sep+"Convert";
@@ -722,13 +863,45 @@ public class EASEInitDialog extends AlgorithmDialog {
                     okButton.setEnabled(true);
                 }
             } else if (command.equals("remove-ann-file-command")){
-                easeParamPanel.removeSelectedFiles();               
+                easeParamPanel.removeSelectedFiles();
             }else if (command.equals("permutation-analysis-command")){
                 alphaPanel.setEnablePermutations();
             } else if (command.equals("trim-result-command")){
                 alphaPanel.validateTrimOptions();
             } else if (command.equals("ok-command")) {
                 result = JOptionPane.OK_OPTION;
+                if(isClusterModeSelected() && popPanel.fileButton.isSelected()) {
+                    String fileName = popPanel.popField.getText();
+                    if(fileName == null || fileName.equals("") || fileName.equals(" ")) {
+                        JOptionPane.showMessageDialog(parent, "You have selected to use a population file but have not "+
+                        "entered a file name.  \nPlease enter a file or use the file browser to select a file.", "Ease Initialization: Missing Parameter", JOptionPane.WARNING_MESSAGE);
+                        tabbedPane.setSelectedIndex(0);
+                        popPanel.popField.grabFocus();
+                        popPanel.popField.selectAll();
+                        popPanel.popField.setCaretPosition(0);
+                        return;
+                    }
+                }
+                
+                if(getAnnToGOFileList().length == 0) {
+                    JOptionPane.showMessageDialog(parent, "You have not selected any gene annotation/gene ontology linking files. \n"+
+                    "Please enter files or use the browser to select files.", "Ease Initialization: Missing Parameter", JOptionPane.WARNING_MESSAGE);
+                    tabbedPane.setSelectedIndex(1);
+                    easeParamPanel.browserButton.grabFocus();
+                    return;
+                }
+                
+                if(easeParamPanel.useAnnBox.isSelected()) {
+                    String fileName = easeParamPanel.getConverterFileName();
+                    if( fileName == null || fileName.equals("") || fileName.equals(" ") ) {
+                        JOptionPane.showMessageDialog(parent, "You have selected to use an annotation conversion file but have not made a file selection.\n" +
+                        "Please enter a file name or browse to select a file.", "Ease Initialization: Missing Parameter", JOptionPane.WARNING_MESSAGE);
+                        tabbedPane.setSelectedIndex(1);
+                        easeParamPanel.browserButton.grabFocus();
+                        return;
+                    }
+                }
+                
                 dispose();
             } else if (command.equals("cancel-command")) {
                 result = JOptionPane.CANCEL_OPTION;
@@ -759,6 +932,6 @@ public class EASEInitDialog extends AlgorithmDialog {
         public void windowClosing(WindowEvent e) {
             result = JOptionPane.CLOSED_OPTION;
             dispose();
-        }        
+        }
     }
 }
