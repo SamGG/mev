@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: Manager.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-03-19 21:33:40 $
+ * $Revision: 1.4 $
+ * $Date: 2004-07-26 21:26:33 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -440,6 +440,17 @@ public class Manager {//A class to keep track of viewers
     private void handleItems(Object target) {
     }
     
+    public void setLookAndFeel(String lookAndFeelStr) {
+        try {
+            UIManager.setLookAndFeel(lookAndFeelStr);
+            SwingUtilities.updateComponentTreeUI(frame);
+            for (int i = 0; i < activeComponents.size(); i++) {
+                SwingUtilities.updateComponentTreeUI(((Component) activeComponents.elementAt(i)).getParent());
+            }
+        } catch (Exception e) {
+        }
+    }
+    
     private class EventListener implements ActionListener, WindowListener {
         public void actionPerformed(ActionEvent event) {
             Object source = event.getSource();
@@ -523,7 +534,7 @@ public class Manager {//A class to keep track of viewers
                             ((SingleArrayViewer)component).getFrame().requestFocus();
                         else
                             ((MultipleArrayViewer)component).getFrame().requestFocus();
-
+                        
                         break;
                     }
                 }

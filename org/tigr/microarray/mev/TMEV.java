@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: TMEV.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-06-11 18:51:22 $
+ * $Revision: 1.7 $
+ * $Date: 2004-07-26 21:26:33 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -13,6 +13,7 @@ All rights reserved.
 package org.tigr.microarray.mev;
 
 import java.io.*;
+import java.net.URL;
 import java.sql.*;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -67,9 +68,12 @@ public class TMEV {
     // pcahan                       jcb:constant
     private static int dataType = DATA_TYPE_TWO_DYE;
     
+    //OS string
+    private static String os = "";
+    
     public static void main(String[] args) {
         try {
-            System.out.println("TIGR MultiExperimentViewer (1057937513220) - version 2.2 - " + System.getProperty("os.name"));
+            System.out.println("TIGR MultiExperimentViewer (1090854423507) - version 3.0 - " + System.getProperty("os.name"));                                                            
             String Java3DTitle, Java3DVendor, Java3DVersion;
             try {
                 InformationPanel info = new InformationPanel();
@@ -81,6 +85,8 @@ public class TMEV {
                 Java3DVendor="not available";
                 Java3DVersion="not available";
             }
+            
+            os = System.getProperty("os.name");
             // System.out.println(System.currentTimeMillis());
             System.out.println("Java Runtime Environment version: "+System.getProperty("java.version"));
             System.out.println("Java Runtime Environment vendor: "+System.getProperty("java.vendor"));
@@ -90,7 +96,7 @@ public class TMEV {
             System.out.println("Java 3D Runtime Environment: "+Java3DTitle);
             System.out.println("Java 3D Runtime Environment vendor: "+Java3DVendor);
             System.out.println("Java 3D Runtime Environment version:"+Java3DVersion);
-            System.out.println("Operating System name: "+System.getProperty("os.name"));
+            System.out.println("Operating System name: "+os);
             System.out.println("Operating System version: "+System.getProperty("os.version"));
             System.out.println("Operating System architecture: "+System.getProperty("os.arch"));
             
@@ -99,6 +105,11 @@ public class TMEV {
             is.showImageScreen(1500);
             
             Manager manager = new Manager();
+            
+            //default Mac Aqua L+F is not serializable, therefore use Java Metal L+F for Mac OS
+            if (os.indexOf("Apple") != -1 || os.indexOf("Mac") != -1 ) {
+                 manager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());    
+            }
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -362,6 +373,9 @@ public class TMEV {
             // Try reading configuration from resource
             try {
                 InputStream is = TMEV.class.getClassLoader().getResourceAsStream(filename);
+                
+                URL url = TMEV.class.getClassLoader().getResource(filename);
+
                 if (is != null) {
                     cfg.load(is);
                 }
@@ -434,5 +448,22 @@ public class TMEV {
         System.exit(0);
     }
     
+
+    /** Returns the configuration file indicated by the fileName argument
+     */
+    public static File getConfigurationFile(String fileName) {
+        return new File("config/"+fileName);
+    }
     
+    /** Returns a file relative to the base directory
+     */
+    public static File getFile(String fileName) {
+        return new File(fileName);
+    }
+    
+    /** Returns a string representing the OS name
+     */
+    public static String getOSName() {
+        return os;
+    }   
 }
