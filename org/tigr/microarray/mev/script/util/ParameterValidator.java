@@ -10,9 +10,13 @@ All rights reserved.
 
 package org.tigr.microarray.mev.script.util;
 
-import java.net.URL;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Insets;
 
 import java.io.File;
+
+import java.net.URL;
 
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -20,8 +24,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
 
 import org.apache.xerces.parsers.DOMParser;
 import org.apache.xerces.dom.DOMImplementationImpl;
@@ -528,8 +535,58 @@ public class ParameterValidator extends DefaultHandler{
         
         return (ParameterAttributes)(hash.get(key));
     }
-    
-    
+
+    /** Displays a dialog warning that loaded algorithms are dependant on the specific data
+     * set.  Parameters such as grouping experiments is an example
+     * @param tree the script tree to evaluate
+     * @param manager the script manager     
+     */
+       public void checkAlgorithmsForDataDependance(ScriptTree tree, ScriptManager manager) {
+        AlgorithmSet [] algSet = tree.getAlgorithmSets();        
+        Element algElement;
+        String algName;
+        Vector algNames = new Vector();
+        for(int i = 0; i < algSet.length; i++) {
+            for(int j = 0; j < algSet[i].getAlgorithmCount(); j++) {
+                algName = algSet[i].getAlgorithmNodeAt(j).getAlgorithmName();
+                algElement = findAlgorithmElement(algName);
+                if(algElement != null) {
+                    if(algElement.getAttribute("input_data_dep").equals("true")) {
+                        if(!algNames.contains(algName))
+                            algNames.addElement(algName);
+                    }
+                }
+            }
+        }
+        if(algNames.size() > 0) {
+            JTextPane pane = new JTextPane();
+            pane.setContentType("text/html");
+            pane.setEditable(false);
+            pane.setMargin(new Insets(10,10,10,5));
+            String text = "<html><center><h2>Data Dependent Script Algorithms</h2></center>";
+            text += "<hr size=3>The processing of the following algorithm";
+            if(algNames.size() == 1)
+                text += " is ";
+            else
+                text+= "s are ";
+            text+= "dependent on the number and order of the loaded experiments.<br>";
+            text+= "<center><b>";
+            for(int i = 0 ; i < algNames.size(); i++) {                
+                text+= ((String)(algNames.elementAt(i)))+"<br>";
+            }   
+           text+= "</b><br></center>";
+           text+= "Please verify that the data set (number of loaded experiments and their order) is appropriate for the listed algorithms.</html>";
+           pane.setText(text);
+                      
+           JScrollPane scroll = new JScrollPane(pane);
+           scroll.setViewportBorder(BorderFactory.createLineBorder(Color.black));
+           scroll.getViewport().setViewSize(new Dimension(450, 275));
+          
+           scroll.setPreferredSize(new Dimension(450, 275));
+           JOptionPane.showMessageDialog(manager.getFrame(), scroll, "Data Set Dependent Algorithms", JOptionPane.PLAIN_MESSAGE);
+        }
+    }
+       
     
     /** Returns the algorithm element given an algorithm name
      * @param algName
