@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: StanfordFileLoader.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:24 $
+ * $Revision: 1.2 $
+ * $Date: 2003-12-08 18:46:37 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -154,8 +154,14 @@ public class StanfordFileLoader extends ExpressionFileLoader {
                     cy3 = 100000f;
                     try {
                         //LOG
-                        cy5 = (float)(100000f*Math.pow(2.0f, Float.parseFloat(ss.nextToken())));
+                        String value = ss.nextToken();
+                        cy5 = (float)(100000f*Math.pow(2.0f, Float.parseFloat(value)));
+                        if(Float.parseFloat(value) > 50)
+                            System.out.println("value = "+value+" cy5 = "+cy5);
+                        
                     } catch (Exception e) {
+                        System.out.println("Exception in loader");
+                        e.printStackTrace();
                         cy3 = cy5 = 0f;
                     }
                     slideDataArray[i].setIntensities(counter - preSpotRows, cy3, cy5);
@@ -260,7 +266,7 @@ public class StanfordFileLoader extends ExpressionFileLoader {
             currentLine = reader.readLine();
             ss.init(currentLine);
             
-            for (int i = 0; i < ss.countTokens(); i++) {
+            for (int i = 0; i < ss.countTokens()+1; i++) {
                 columnHeaders.add(ss.nextToken());
             }
             
@@ -270,7 +276,7 @@ public class StanfordFileLoader extends ExpressionFileLoader {
                 cnt++;
                 ss.init(currentLine);
                 rowVector = new Vector();
-                for (int i = 0; i < ss.countTokens(); i++) {
+                for (int i = 0; i < ss.countTokens()+1; i++) {
                     rowVector.add(ss.nextToken());
                 }
                 
