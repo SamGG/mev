@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: STGUI.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-05-21 13:42:28 $
+ * $Revision: 1.3 $
+ * $Date: 2004-06-28 18:49:46 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -295,7 +295,7 @@ public class STGUI implements IClusterGUI, IScriptGUI {
      */
     private DefaultMutableTreeNode createResultTree(Experiment experiment, AlgorithmData genes_result, AlgorithmData samples_result, GeneralInfo info) {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("ST");
-        root.add(new DefaultMutableTreeNode(new LeafInfo("Tree - "+info.getMethodName(), createHCLSupportViewer(experiment, genes_result, samples_result, root))));
+        root.add(new DefaultMutableTreeNode(new LeafInfo("Support Tree - "+info.getMethodName(), createHCLSupportViewer(experiment, genes_result, samples_result, root))));
         root.add(new DefaultMutableTreeNode("Time: "+String.valueOf(info.time)+" ms"));
         root.add(new DefaultMutableTreeNode(info.function));
         if (info.drawGeneTree) {
