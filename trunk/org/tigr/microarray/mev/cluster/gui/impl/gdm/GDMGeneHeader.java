@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: GDMGeneHeader.java,v $
- * $Revision: 1.1 $
- * $Date: 2004-02-06 22:53:42 $
+ * $Revision: 1.2 $
+ * $Date: 2004-02-13 21:36:44 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -113,7 +113,7 @@ public class GDMGeneHeader extends JPanel {
      * Constructs a <code>MultipleArrayHeader</code> with specified
      * insets and trace space.
      */
-    public GDMGeneHeader(Insets insets, int tracespace, boolean colHdr, IData expData,
+    public GDMGeneHeader(Insets insets, int tracespace, boolean colHdr, Experiment experiment,
     int width, int height, Dimension eSize, int maxGeneLen, int num_genes,
     int [] indexes) {
         
@@ -122,27 +122,24 @@ public class GDMGeneHeader extends JPanel {
         this.insets = new Insets(0, 0, 0, 0);
 
         this.tracespace = tracespace;
-        this.expData = expData;
-        this.experiment = expData.getExperiment();
+        this.experiment = experiment;
         this.elementWidth = eSize.width;
         this.elementHeight = eSize.height;
         this.isColumnHeader = colHdr;
         this.contentWidth = width;
         this.contentHeight = height;
         this.indices = indexes;
-        this.probes = expData.getFeaturesSize();
+        this.probes = experiment.getNumberOfGenes();
         this.num_genes = num_genes;
         this.maxGeneNameLength = maxGeneLen * elementWidth;
         
-        gdmGradientLabelPanel = new GDMGeneGradientLabelPanel(insets, tracespace, colHdr, expData, width,
+        gdmGradientLabelPanel = new GDMGeneGradientLabelPanel(insets, tracespace, colHdr, experiment, width,
         height, eSize, maxGeneLen, num_genes, indexes);
         
         gdmColorBarPanel = new GDMColorBarPanel();
         
         setFontSize(elementWidth);
-        
-        updateSize(NOT_UPDATE_ANNOTATION_SIZE);
-        
+
         if (isColumnHeader == true) {
             add(gdmGradientLabelPanel, BorderLayout.NORTH);
             if(hasColorBar)
