@@ -20,6 +20,12 @@ This button allows you to select and load a saved grouping.
 The reset button returns all of the group selection control buttons
 to Group A, the initial state.
 <br>
+<h2>Degree of freedom calculation</h2>
+This option applies to between subjects t-test only. By default, degree of freedom is calculated
+on a gene by gene basis assuming that the two groups have unequal variances. The other option
+assumes equal variances of the two groups, and calculates degree of freedom as (nA + nB - 2), where
+nA and nB are the number of valid values in groups A and B respectively.
+<br>
 <h2>P-Value Parameters</h2>
 This set of controls are used to indicate the method by which p-values are determined for 
 each gene and allows the input of the critical p-value.
