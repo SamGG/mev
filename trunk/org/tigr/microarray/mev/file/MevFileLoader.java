@@ -6,8 +6,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MevFileLoader.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-02-27 22:16:51 $
+ * $Revision: 1.4 $
+ * $Date: 2004-05-03 13:45:19 $
  * $Author: braisted $
  * $State: Exp $
  */
@@ -28,8 +28,10 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -76,6 +78,8 @@ public class MevFileLoader extends ExpressionFileLoader {
             setFileName(((File) mevFiles[i]).getName());
             if(i == 0){
                 slideData = loadSlideData((File) mevFiles[i]);
+                if(slideData == null)
+                    return null;
                 data.add(slideData);
                 metaData = slideData.getSlideMetaData();
             }
@@ -87,7 +91,7 @@ public class MevFileLoader extends ExpressionFileLoader {
             for (int i = 0; i < annFiles.length; i++){
                 loadAnnotationFile((SlideData)data.elementAt(0), (File)annFiles[i]);
             }
-        } else { 
+        } else {
             loadAnnotationFromMevFile((File)mevFiles[0], (SlideData)data.elementAt(0));
         }
         return data;
@@ -105,7 +109,7 @@ public class MevFileLoader extends ExpressionFileLoader {
         
         SpotInformationData annot = mfp.getSpotInformation();
         int length = annot.getSize();
-
+        
         String [] header = annot.getSpotInformationHeader();
         Vector v = new Vector();
         for(int i = 0; i < header.length; i++) {
@@ -115,8 +119,8 @@ public class MevFileLoader extends ExpressionFileLoader {
         
         for(int i = 1; i < length; i++){
             ((SlideDataElement)data.getSlideDataElement(i)).setExtraFields(annot.getSpotInformationArray(i));
-        }        
-    }    
+        }
+    }
     
     public ISlideData loadSlideData(File currentFile) throws IOException {
         SlideData slideData = null;
@@ -147,23 +151,37 @@ public class MevFileLoader extends ExpressionFileLoader {
                 intensities = new float[2];
                 
                 uidArray[i] = data[i][0];
-                intensities[0] = Float.parseFloat(data[i][1]);
-                intensities[1] = Float.parseFloat(data[i][2]);
-                rows[0] = Integer.parseInt(data[i][3]);
-                cols[0] = Integer.parseInt(data[i][4]);
-                rows[1] = Integer.parseInt(data[i][5]);
-                cols[1] = Integer.parseInt(data[i][6]);
-                rows[2] = Integer.parseInt(data[i][7]);
-                cols[2] = Integer.parseInt(data[i][8]);
                 
+                try {
+                    intensities[0] = Float.parseFloat(data[i][1]);
+                    intensities[1] = Float.parseFloat(data[i][2]);
+                    rows[0] = Integer.parseInt(data[i][3]);
+                    cols[0] = Integer.parseInt(data[i][4]);
+                    rows[1] = Integer.parseInt(data[i][5]);
+                    cols[1] = Integer.parseInt(data[i][6]);
+                    rows[2] = Integer.parseInt(data[i][7]);
+                    cols[2] = Integer.parseInt(data[i][8]);
+                } catch (NumberFormatException e) {
+                    final String fileName = currentFile.getName();
+                    final int loc = i;
+                    Thread thread = new Thread( new Runnable() {
+                        public void run() {
+                            JOptionPane.showConfirmDialog(mflp, "The input file \""+fileName+"\" was missing critical information on line # "+ String.valueOf(loc+1) + "\n" +
+                            "MeV files require entries for UID, Intensities, and slide location information.", "Loading Aborted/Loading Error", JOptionPane.ERROR_MESSAGE);
+                            
+                        }
+                    });
+                    thread.start();
+                    return null;
+                }
                 sde = new SlideDataElement(rows, cols, intensities, null);
                 slideData.add(sde);
                 setFileProgress(i);
             }
-
-            if(!mflp.noAnnFileBox.isSelected())
+            
+            if(mflp.saveSpotInfoBox.isSelected() && !mflp.noAnnFileBox.isSelected())
                 slideData.setSpotInformationData(mfp.getSpotInformation());
-               
+            
             slideData.setSlideDataName(currentFile.getName());
             slideData.setSlideFileName(currentFile.getPath());
         }
@@ -184,7 +202,7 @@ public class MevFileLoader extends ExpressionFileLoader {
                 slideData.setIntensities(i, Float.parseFloat(data[i][1]), Float.parseFloat(data[i][2]));
                 setFileProgress(i);
             }
-            if(!mflp.noAnnFileBox.isSelected())
+            if(mflp.saveSpotInfoBox.isSelected() && !mflp.noAnnFileBox.isSelected())
                 slideData.setSpotInformationData(mfp.getSpotInformation());
         }
         slideData.setSlideDataName(currentFile.getName());
@@ -308,7 +326,7 @@ public class MevFileLoader extends ExpressionFileLoader {
     public void openDataPath() {
         this.mflp.openDataPath();
     }
-
+    
     
 /*
 //
@@ -355,6 +373,7 @@ public class MevFileLoader extends ExpressionFileLoader {
         JPanel fileLoaderPanel;
         
         JCheckBox noAnnFileBox;
+        JCheckBox saveSpotInfoBox;
         
         public MevFileLoaderPanel() {
             
@@ -421,6 +440,8 @@ public class MevFileLoader extends ExpressionFileLoader {
             noAnnFileBox.setActionCommand("use-annotation-in-mev-file");
             noAnnFileBox.addActionListener(new EventHandler());
             
+            saveSpotInfoBox = new JCheckBox("Load Auxilary Spot Information", false);
+            saveSpotInfoBox.setFocusPainted(false);
             
             annSelectionPanel = new JPanel();
             annSelectionPanel.setLayout(new GridBagLayout());
@@ -475,8 +496,7 @@ public class MevFileLoader extends ExpressionFileLoader {
             gba.add(annListPanel, annAvailableScrollPane, 0, 1, 1, 4, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             gba.add(annListPanel, annButtonPanel, 1, 1, 1, 4, 0, 1, GBA.V, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             gba.add(annListPanel, annSelectedScrollPane, 2, 1, 1, 4, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            
-            
+                        
             annFieldsTextField = new JTextField();
             annFieldsTextField.setEditable(false);
             annFieldsTextField.setBorder(new TitledBorder(new EtchedBorder(), "Annotation Fields"));
@@ -488,12 +508,13 @@ public class MevFileLoader extends ExpressionFileLoader {
             
             selectionPanel = new JPanel();
             selectionPanel.setLayout(new GridBagLayout());
-            gba.add(selectionPanel, pathTextField, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(selectionPanel, mevSelectionPanel, 0, 1, 1, 2, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-
-            gba.add(selectionPanel, noAnnFileBox, 0, 3, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);            
-
-            gba.add(selectionPanel, annSelectionPanel, 0, 4, 1, 2, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            gba.add(selectionPanel, pathTextField, 0, 0, 2, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            gba.add(selectionPanel, mevSelectionPanel, 0, 1, 2, 2, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            
+            gba.add(selectionPanel, noAnnFileBox, 0, 3, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            gba.add(selectionPanel, saveSpotInfoBox, 1, 3, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            
+            gba.add(selectionPanel, annSelectionPanel, 0, 4, 2, 2, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             
             splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, fileTreePane, selectionPanel);
             
@@ -507,12 +528,12 @@ public class MevFileLoader extends ExpressionFileLoader {
         public void setPath(String path) {
             pathTextField.setText(path);
         }
-                
+        
         public void openDataPath(){
             this.fileTreePane.openDataPath();
         }
         
-       
+        
         public void validateLists() {
             
             // Currently, a minimum of one mev file must be selected to enable loading
@@ -621,7 +642,7 @@ public class MevFileLoader extends ExpressionFileLoader {
         public void onUseMevAnn() {
             if(this.noAnnFileBox.isSelected())
                 enableAnnotationPanel(false);
-            else {                
+            else {
                 enableAnnotationPanel(true);
             }
         }
@@ -635,14 +656,14 @@ public class MevFileLoader extends ExpressionFileLoader {
             this.annSelectedLabel.setEnabled(enable);
             this.annAvailableList.setEnabled(enable);
             this.annSelectedList.setEnabled(enable);
-
+            
             if(!enable){
                 this.annAvailableList.setBackground(Color.lightGray);
                 this.annSelectedList.setBackground(Color.lightGray);
             } else {
                 this.annAvailableList.setBackground(Color.white);
-                this.annSelectedList.setBackground(Color.white);                
-            }                
+                this.annSelectedList.setBackground(Color.white);
+            }
         }
         
         public DefaultListModel getMevAvailableListModel() {
