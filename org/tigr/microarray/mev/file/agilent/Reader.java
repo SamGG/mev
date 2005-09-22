@@ -14,7 +14,7 @@ import java.util.Vector;
  * This is a simple utility class that reads a tab-delimited text file into a Vector of Strings
  * where each String is a line from the file.
  * 
- * It exists to deal with blank cells in a spreadsheet
+ * It exists to deal with blank cells in a spreadsheet..
  * 
  * Where there are null fields in the file, a String 'replacer' is added as a placeholder.
  * 
