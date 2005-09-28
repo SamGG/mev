@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: Manager.java,v $
- * $Revision: 1.7 $
- * $Date: 2005-03-10 15:44:16 $
- * $Author: braistedj $
+ * $Revision: 1.8 $
+ * $Date: 2005-09-28 21:52:22 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -16,6 +16,8 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
+
+import org.tigr.util.BrowserLauncher;
 import org.tigr.util.Query;
 import org.tigr.util.awt.ActionInfoListener;
 import org.tigr.util.awt.ActionInfoEvent;
@@ -46,6 +48,10 @@ public class Manager {//A class to keep track of viewers
     private JMenuItem citationMenuItem;
     private JMenuItem aboutMenuItem;
     private ButtonGroup buttonGroup;
+    //added 9.27.05 vu
+    private JMenu helpMenu;
+    private JMenuItem bugReportMenuItem;
+    private JMenuItem featureReqMenuItem;
     
     private static EventListener eventListener;
     
@@ -191,6 +197,21 @@ public class Manager {//A class to keep track of viewers
         
         menuBar.add(referencesMenu);
         
+        //added 9.21.05 vu
+        helpMenu = new JMenu( "Help" );
+        
+        bugReportMenuItem = new JMenuItem( "Report Bug" );
+        bugReportMenuItem.addActionListener( eventListener );
+        
+        helpMenu.add( bugReportMenuItem );
+        
+        featureReqMenuItem = new JMenuItem( "Request a Feature" );
+        featureReqMenuItem.addActionListener( eventListener );
+        
+        helpMenu.add( featureReqMenuItem );
+        
+        menuBar.add( helpMenu );
+        
         frame.setJMenuBar(menuBar);
         
         menuBar.setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize().width-2, menuBar.getFontMetrics(menuBar.getFont()).getHeight()+5));
@@ -266,6 +287,10 @@ public class Manager {//A class to keep track of viewers
         }
     }
     
+    public static Component getLastComponent() {
+    	return ( Component ) activeComponents.lastElement();
+    }
+    
     public static Component getComponent(int position) {
         return(Component) activeComponents.elementAt(position);
     }
@@ -294,6 +319,19 @@ public class Manager {//A class to keep track of viewers
         } catch (Exception e) {
             System.out.println("Exception (TMEV.initializeInput()): " + e);
         }
+    }
+    
+    public static void createNewMultipleArrayViewer( int xOffset, int yOffset ) {
+        MultipleArrayViewer mav = new MultipleArrayViewer();
+        Manager.addComponent(mav);
+        
+        TMEV.clearFieldNames();
+        mav.getFrame().setSize(1150, 700);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int x = (screenSize.width - mav.getFrame().getSize().width)/2 + xOffset;
+        int y = (screenSize.height - mav.getFrame().getSize().height)/2 + yOffset;
+        mav.getFrame().setLocation(x, y);
+        mav.getFrame().setVisible(true);
     }
     
     public static void createNewMultipleArrayViewer() {
@@ -378,7 +416,7 @@ public class Manager {//A class to keep track of viewers
     }
     
     public static void displaySlideElementInfo(JFrame frame, MultipleArrayData data, int feature, int probe) {
-        new InfoDisplay(frame, data, feature, probe);
+    	new InfoDisplay(frame, data, feature, probe);
     }
     
     public static void displaySlideElementInfo(JFrame frame, ISlideData slideData, ISlideDataElement element, int probe) {
@@ -550,6 +588,26 @@ public class Manager {//A class to keep track of viewers
                 frame.setResizable(false);
                 frame.setVisible(true);
                 infoPanel.Start();
+            } else if( source == bugReportMenuItem ) {	//added 9.27.05 vu
+            	try {
+					BrowserLauncher.openURL( "http://sourceforge.net/tracker/?atid=656691&group_id=110558&func=browse" );
+				} catch( IOException e ) {
+					e.printStackTrace();
+					//BrowserLauncher doesn't work on this system, display dialog
+					JOptionPane.showMessageDialog( frame, 
+							"Go to http://sourceforge.net/tracker/?atid=656691&group_id=110558&func=browse",
+							"Input Error", JOptionPane.ERROR_MESSAGE );
+				}
+            } else if( source == featureReqMenuItem ) {	//added 9.27.05 vu
+            	try {
+					BrowserLauncher.openURL( "http://sourceforge.net/tracker/?atid=656694&group_id=110558&func=browse" );
+				} catch( IOException e ) {
+					e.printStackTrace();
+					//BrowserLauncher doesn't work on this system, display dialog
+					JOptionPane.showMessageDialog( frame, 
+							"Go to http://sourceforge.net/tracker/?atid=656694&group_id=110558&func=browse",
+							"Input Error", JOptionPane.ERROR_MESSAGE );
+				}
             }
             
             if (event.getActionCommand().equals("window-cmd")) {

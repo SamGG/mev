@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: TMEV.java,v $
- * $Revision: 1.10 $
- * $Date: 2005-03-10 15:44:14 $
- * $Author: braistedj $
+ * $Revision: 1.11 $
+ * $Date: 2005-09-28 21:52:22 $
+ * $Author: caliente $
  * $State: Exp $
  */
 
@@ -78,6 +78,9 @@ public class TMEV {
     
     //signals active save in progress
     public static boolean activeSave = false;
+    
+    //added for Rama (vu 2005.08.24)
+    public static String rPath = "127.0.0.1:6311";
     
     public static void main(String[] args) {
         try {
@@ -407,7 +410,7 @@ public class TMEV {
                 ioe.printStackTrace();
             }
             
-            
+            //
             String guiFactoryClassName = cfg.getString("gui.factory.class");
             if (guiFactoryClassName != null && !guiFactoryClassName.equals("null")) {
                 Class clazz = Class.forName(guiFactoryClassName);
@@ -427,6 +430,19 @@ public class TMEV {
                 while(stok.hasMoreTokens())
                     path += stok.nextToken()+sep;
                 TMEV.dataPath = path;
+                
+                //Mac/Linux needs to start with a /  vu4.8.05
+                if(System.getProperty("os.name").startsWith("Mac")) {
+                    //TMEV.dataPath = sep + path;
+                }
+            }
+            
+            //read the Rserve connection path
+            String sPath = cfg.getString( "rserve-path" );
+            if( sPath != null && ! sPath.equals("") ) {
+                TMEV.rPath = sPath;
+            } else {
+            	TMEV.rPath = "localhost:6311";
             }
             
         } catch (Exception e) {
@@ -434,8 +450,47 @@ public class TMEV {
         }
     }
     
+    public static String getRPath() {
+    	return rPath;
+    }
+    
     public static String getDataPath() {
         return dataPath;
+    }
+    
+    
+    public static void updateRPath( String rPath ) {
+        if(rPath == null)
+            return;
+        
+        //Read tmev.cfg
+        try{
+            BufferedReader br = new BufferedReader(new FileReader(TMEV.getFile("config/tmev.cfg")));
+            
+            StringBuffer sb = new StringBuffer();
+            String line;
+            while( (line = br.readLine()) != null ){
+            	if( line.startsWith( "rserve-path" ) ) {
+            		//write the new rserve-path
+            		sb.append( "rserve-path " );
+            		sb.append( rPath );
+            		sb.append( "\r\n" );
+            	} else {
+            		sb.append( line );
+            		sb.append( "\r\n" );
+            	}
+            }
+            
+            
+            BufferedWriter bfr = new BufferedWriter(new FileWriter(TMEV.getFile("config/tmev.cfg")));
+            bfr.write( sb.toString() );
+            bfr.flush();
+            bfr.close();
+            br.close();
+            
+        } catch (IOException e){
+            System.out.println("Error updating rserve path in tmev.cfg file.");
+        }
     }
     
     

@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayMenubar.java,v $
- * $Revision: 1.7 $
- * $Date: 2005-03-10 15:44:16 $
- * $Author: braistedj $
+ * $Revision: 1.8 $
+ * $Date: 2005-09-28 21:52:22 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -105,6 +105,12 @@ public class MultipleArrayMenubar extends JMenuBar {
         sampMenu.add(createJMenuItem("Median Center Samples/Columns", ActionManager.MEDIAN_CENTER_EXPERIMENTS_CMD, listener));
         sampMenu.add(createJMenuItem("Digitalize Samples/Columns", ActionManager.DIGITAL_EXPERIMENTS_CMD, listener));
         adjustMenu.add(sampMenu);
+        adjustMenu.addSeparator();
+        
+        //vu 7.22.05
+        JMenu repMenu = new JMenu( "Replicate Analysis" );
+        repMenu.add( createJMenuItem( "Rama", ActionManager.RAMA_CMD, listener ) );
+        adjustMenu.add( repMenu );
         adjustMenu.addSeparator();
         
         JMenu logMenu = new JMenu("Log Transformations");
