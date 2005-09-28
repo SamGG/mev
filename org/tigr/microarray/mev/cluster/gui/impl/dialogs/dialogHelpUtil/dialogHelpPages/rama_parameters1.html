@@ -1,0 +1,47 @@
+<html>
+    <body bgcolor = "#FFFFCC">
+    	<basefont face = "Arial" padding=10>
+		<h1>RAMA - Robust Analysis of Microarray</h1> 
+        <h1>Rama Initialization Dialog</h1>
+        <hr size = 1>
+        
+        <h2>Rama</h2>
+        Rama is an intensity normalization algorithm based on hierarchical Bayesian modeling.  
+        Rama has been designed to work with raw intensities ( Affymetrix or 2 color ), especially in 
+        dye-swap experimental designs.  It estimates intensities and as such requires there to be at 
+        least 2 data points for each color label.
+
+		<h2> Experiment Labeling </h2>
+		Each slide (experiment or hyb) loaded into MeV is listed here.  You must tell Rama how you've 
+		labeled your samples.
+		<br><br>
+		If you've loaded 2 color data, you are asked to indicate which color ( Cy3 or Cy5 ) dye was 
+		used on your control samples. It is assumed that the other was used for the treated sample 
+		on that slide.  Rama will infer from the labeling whether or not your experiment was dye-swapped 
+		based on your input here.  Keep in mind that Rama requires at least 2 of any color data.
+		<br><br>
+		
+		<h2>Advanced Parameters</h2>
+		# Iterations ( B ) - the number of iterations used by Rama
+		<br><br>
+		Burn In Period ( num.iter ) - the length of the burn-in period in the MCMC algorithm.  This 
+		should be less than # Iterations ( B )
+		<br><br>
+		
+		<h2>Rserve</h2>
+		This implementation has been built allow the user to connect to any Rserve daemon.  Upon 
+		load, the pull down menu is populated with the connection strings from the config file 
+		( config/tmev.cfg ).  The user can add a new connection string here if desired.  
+		<br><br>
+		The format is: ipaddress:port.
+		<br><br>
+		For example, if the server running Rserve is at IP address 192.168.0.1 and 
+		Rserve is running on its default port ( 6311 ), the connection string would be 192.168.0.1:6311.  
+		The user can type that into the text field, click add, make sure it is selected in the pull down 
+		menu and then run RAMA.  If the connection was made without any errors, the new connection 
+		string will be added automatically to the config file.  Of course, the user always has the option 
+		of manually adding/editing the connection strings in the config file.
+		
+        </basefont>
+    </body>
+</html>
