@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: ActionManager.java,v $
- * $Revision: 1.8 $
- * $Date: 2005-03-10 15:40:11 $
- * $Author: braistedj $
+ * $Revision: 1.9 $
+ * $Date: 2005-09-28 21:52:22 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.action;
@@ -326,6 +326,8 @@ public class ActionManager implements java.io.Serializable {
     public static final String USE_PERCENTAGE_CUTOFFS_CMD = "use-percentage-cutoffs-cmd";
     public static final String USE_VARIANCE_FILTER_CMD = "use-variance-filter-cmd";
     public static final String ADJUST_INTENSITIES_0_CMD = "adjust-intensities-0-cmd";
+    //vu 7.22.05
+    public static final String RAMA_CMD = "rama-cmd";
     
     // pcahan
     public static final String DIVIDE_GENES_MEDIAN_CMD = "divide-genes-median-cmd";

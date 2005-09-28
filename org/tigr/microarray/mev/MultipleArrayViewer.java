@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.22 $
- * $Date: 2005-03-10 15:44:15 $
- * $Author: braistedj $
+ * $Revision: 1.23 $
+ * $Date: 2005-09-28 21:52:22 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -92,6 +92,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.media.jai.JAI;
 import com.sun.media.jai.codec.ImageEncodeParam;
 
+
 import org.tigr.util.FloatMatrix;
 import org.tigr.microarray.file.AnnFileParser;
 import org.tigr.microarray.util.awt.SetElementSizeDialog;
@@ -133,6 +134,7 @@ import org.tigr.microarray.mev.file.AnnFileFilter;
 
 import org.tigr.microarray.mev.cluster.clusterUtil.*;
 import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
+import org.tigr.microarray.mev.rama.Rama;
 import org.tigr.microarray.mev.script.ScriptManager;
 
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HTMLMessageFileChooser;
@@ -1786,7 +1788,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     /**
      * Adds a specified node into the analysis node.
      */
-    private synchronized void addAnalysisResult(DefaultMutableTreeNode node) {
+    public synchronized void addAnalysisResult(DefaultMutableTreeNode node) {
         if (node == null) {
             return;
         }
@@ -1897,6 +1899,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      *
      */
     private void onSetData(boolean isSelected) {
+    	//System.out.println( "onSetData()" );
+    	
         boolean selected = isSelected;
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
         Object object = node.getUserObject();
@@ -2020,6 +2024,15 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         historyString += "Number of Samples: "+String.valueOf(numSamples);
         addHistory(historyString);
     }
+    
+    
+    //vu 7.22.05
+    private void onRama() {
+    	//to modularize code as much as possible, will create object here that
+    	//handles rama stuff
+    	Rama rama = new Rama(this, this.menubar);
+    }
+    
     
     /** pcahan
      * Sets the user specified Detection Filter.
@@ -3241,6 +3254,12 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                 onUseFoldFilter( (AbstractButton) event.getSource());
             }
              */
+            
+            //vu 7.22.05
+            else if ( command.equals( ActionManager.RAMA_CMD ) ) {
+            	onRama();
+            }
+            
             // pcahan
             else if (command.equals(ActionManager.SET_DETECTION_FILTER_CMD)) {
                 onSetDetectionFilter();
