@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayMenubar.java,v $
- * $Revision: 1.8 $
- * $Date: 2005-09-28 21:52:22 $
+ * $Revision: 1.9 $
+ * $Date: 2005-10-31 18:57:15 $
  * $Author: caliente $
  * $State: Exp $
  */
@@ -109,6 +109,7 @@ public class MultipleArrayMenubar extends JMenuBar {
         
         //vu 7.22.05
         JMenu repMenu = new JMenu( "Replicate Analysis" );
+        repMenu.add( createJMenuItem( "Rama Documentation", ActionManager.RAMA_DOC_CMD, listener ) );
         repMenu.add( createJMenuItem( "Rama", ActionManager.RAMA_CMD, listener ) );
         adjustMenu.add( repMenu );
         adjustMenu.addSeparator();

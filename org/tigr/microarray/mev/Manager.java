@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: Manager.java,v $
- * $Revision: 1.8 $
- * $Date: 2005-09-28 21:52:22 $
+ * $Revision: 1.9 $
+ * $Date: 2005-10-31 18:57:15 $
  * $Author: caliente $
  * $State: Exp $
  */

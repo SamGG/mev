@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.23 $
- * $Date: 2005-09-28 21:52:22 $
+ * $Revision: 1.24 $
+ * $Date: 2005-10-31 18:57:16 $
  * $Author: caliente $
  * $State: Exp $
  */
@@ -93,6 +93,7 @@ import javax.media.jai.JAI;
 import com.sun.media.jai.codec.ImageEncodeParam;
 
 
+import org.tigr.util.BrowserLauncher;
 import org.tigr.util.FloatMatrix;
 import org.tigr.microarray.file.AnnFileParser;
 import org.tigr.microarray.util.awt.SetElementSizeDialog;
@@ -134,7 +135,7 @@ import org.tigr.microarray.mev.file.AnnFileFilter;
 
 import org.tigr.microarray.mev.cluster.clusterUtil.*;
 import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
-import org.tigr.microarray.mev.rama.Rama;
+import org.tigr.microarray.mev.r.Rama;
 import org.tigr.microarray.mev.script.ScriptManager;
 
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HTMLMessageFileChooser;
@@ -2032,6 +2033,18 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     	//handles rama stuff
     	Rama rama = new Rama(this, this.menubar);
     }
+    private void onRamaDoc() {
+    	try {
+			BrowserLauncher.openURL( "http://www.expression.washington.edu:8080/ramaDoc/MeV-R_Documentation.html" );
+			//BrowserLauncher.openURL( "http://192.168.200.50:8080/ramaDoc/MeV-R_Documentation.html" );
+		} catch( IOException e ) {
+			e.printStackTrace();
+			//BrowserLauncher doesn't work on this system, display dialog
+			JOptionPane.showMessageDialog( framework.getFrame(), 
+					"Please see MeV-R_Documentation.html in the documentation folder",
+					"Input Error", JOptionPane.ERROR_MESSAGE );
+		}
+    }
     
     
     /** pcahan
@@ -3258,6 +3271,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             //vu 7.22.05
             else if ( command.equals( ActionManager.RAMA_CMD ) ) {
             	onRama();
+            } else if( command.equals( ActionManager.RAMA_DOC_CMD ) ) {
+            	onRamaDoc();
             }
             
             // pcahan

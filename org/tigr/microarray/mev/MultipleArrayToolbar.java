@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: MultipleArrayToolbar.java,v $
- * $Revision: 1.6 $
- * $Date: 2005-03-10 15:44:16 $
- * $Author: braistedj $
+ * $Revision: 1.7 $
+ * $Date: 2005-10-31 18:57:15 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
