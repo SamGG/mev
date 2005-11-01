@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: TtestInitDialog.java,v $
- * $Revision: 1.6 $
- * $Date: 2005-03-10 20:36:42 $
- * $Author: braistedj $
+ * $Revision: 1.7 $
+ * $Date: 2005-11-01 19:36:41 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 
@@ -55,6 +55,8 @@ import javax.swing.event.ChangeListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HCLSigOnlyPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
+import org.tigr.microarray.mev.cluster.gui.impl.sam.SAMGUI;
+import org.tigr.microarray.mev.cluster.gui.impl.sam.SAMLoadFileDialog;
 import org.tigr.util.StringSplitter;
 
 /**
@@ -99,7 +101,8 @@ public class TtestInitDialog extends AlgorithmDialog {
     
     boolean tooMany = false;
     int count;
-    
+   
+    final int fileLoadMin=20;
     /** Creates new TtestInitDialog */
     public TtestInitDialog(JFrame parentFrame, boolean modality, Vector exptNames) {
         super(parentFrame, "TTEST: T-test", modality);
@@ -214,7 +217,10 @@ public class TtestInitDialog extends AlgorithmDialog {
         gridbag.setConstraints(chooseDesignPane, constraints);
         pane.add(chooseDesignPane);
          */
-        
+        if(exptNames.size()>fileLoadMin){
+        	SAMLoadFileDialog slfDialog = new SAMLoadFileDialog(SAMGUI.SAMFrame, true);
+        	slfDialog.setVisible(true);
+        }
         pPanel.tDistButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 sPanel.justAlphaButton.setSelected(true);
@@ -654,6 +660,7 @@ public class TtestInitDialog extends AlgorithmDialog {
         DefaultListModel pairedListModel;
         boolean currentAFilled, currentBFilled;
         int currentAExpt, currentBExpt;
+        int numPanels = 0;
         Vector pairedAExpts, pairedBExpts;
         public TwoClassPairedPanel() {
             currentAExpt = -1;
@@ -677,10 +684,16 @@ public class TtestInitDialog extends AlgorithmDialog {
             
             pairedListModel = new DefaultListModel();
             pairedExptsList = new JList(pairedListModel);
+            numPanels = exptNames.size()/512 + 1;
+            JPanel [] panels = new JPanel[numPanels];
             
-            JPanel exptNamesPanel = new JPanel();
-            GridBagLayout grid1 = new GridBagLayout();
-            exptNamesPanel.setLayout(grid1);
+            int currPanel = 0;
+            for(int i = 0; i < panels.length; i++) {
+                panels[i] = new JPanel(gridbag);
+            }
+            //JPanel exptNamesPanel = new JPanel();
+            //GridBagLayout grid1 = new GridBagLayout();
+            //exptNamesPanel.setLayout(grid1);
             exptButtons = new ExperimentButton[exptNames.size()];
             
             int maxWidth = 0;
@@ -689,6 +702,8 @@ public class TtestInitDialog extends AlgorithmDialog {
             for (int i = 0; i < exptNames.size(); i++) {
                 //String s = (String)(exptNames.get(i));
                 exptButtons[i] = new ExperimentButton(i);
+           //set current panel
+                currPanel = i / 512;
                 
                 if (exptButtons[i].getPreferredSize().getWidth() > maxWidth) {
                     maxWidth = (int)Math.ceil(exptButtons[i].getPreferredSize().getWidth());
@@ -700,10 +715,9 @@ public class TtestInitDialog extends AlgorithmDialog {
                 if (currentNameLength > maxNameLength) {
                     maxNameLength = currentNameLength;
                 }
-                
-                buildConstraints(constraints, 0, i, 1, 1, 100, 100);
-                grid1.setConstraints(exptButtons[i], constraints);
-                exptNamesPanel.add(exptButtons[i]);
+                buildConstraints(constraints, 0, i%512, 1, 1, 100, 100);
+                gridbag.setConstraints(exptButtons[i], constraints);
+                panels[currPanel].add(exptButtons[i]);
             }
             
             currentATextField = new JTextField("", maxNameLength + 2);
@@ -717,8 +731,13 @@ public class TtestInitDialog extends AlgorithmDialog {
             currentBTextField.setBackground(Color.white);
             currentATextField.setEditable(false);
             currentBTextField.setEditable(false);   
+JPanel bigPanel = new JPanel(new GridBagLayout());
             
-            JScrollPane scroll = new JScrollPane(exptNamesPanel);
+            for(int i = 0; i < numPanels; i++) {
+                bigPanel.add(panels[i] ,new GridBagConstraints(0,i,1,1,1,1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+            }
+            
+            JScrollPane scroll = new JScrollPane(bigPanel);
             scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
             scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);            
             
@@ -966,6 +985,7 @@ public class TtestInitDialog extends AlgorithmDialog {
     class OneClassPanel extends JPanel {
         JTextField meanField;
         JCheckBox[] includeExpts;
+        int numPanels = 0;
         JButton saveButton, loadButton, resetButton;
         OneClassPanel() {
             this.setBackground(Color.white);
@@ -976,22 +996,30 @@ public class TtestInitDialog extends AlgorithmDialog {
             GridBagLayout gridbag = new GridBagLayout();
             GridBagConstraints constraints = new GridBagConstraints();
             this.setLayout(gridbag);
-            
-            JPanel exptPanel = new JPanel();
-            GridBagLayout grid1 = new GridBagLayout();
-            exptPanel.setLayout(grid1);
-            
-            //System.out.println("exptNames.size()" + exptNames.size());
-            
+            numPanels = exptNames.size()/512 + 1;
+             JPanel [] panels = new JPanel[numPanels];
+             
+             int currPanel = 0;
+             for(int i = 0; i < panels.length; i++) {
+                 panels[i] = new JPanel(gridbag);
+             }
+    
             for (int i = 0; i < exptNames.size(); i++) {
+            	 //set current panel
+                currPanel = i / 512;
                 //JLabel expLabel = new JLabel((String)(exptNames.get(i)));
                 includeExpts[i] = new JCheckBox((String)(exptNames.get(i)), true);
-                buildConstraints(constraints, 0, i, 1, 1, 100, 100);
-                grid1.setConstraints(includeExpts[i], constraints);
-                exptPanel.add(includeExpts[i]);
+                buildConstraints(constraints, 0, i%512, 1, 1, 100, 100);
+                gridbag.setConstraints(includeExpts[i], constraints);
+                panels[currPanel].add(includeExpts[i]);
+            }
+            JPanel bigPanel = new JPanel(new GridBagLayout());
+            
+            for(int i = 0; i < numPanels; i++) {
+                bigPanel.add(panels[i] ,new GridBagConstraints(0,i,1,1,1,1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
             }
             
-            JScrollPane scroll = new JScrollPane(exptPanel);
+            JScrollPane scroll = new JScrollPane(bigPanel);
             scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
             //scroll.add(exptPanel);
             
@@ -1174,12 +1202,12 @@ public class TtestInitDialog extends AlgorithmDialog {
     
     class GroupExperimentsPanel extends JPanel {
         JLabel[] expLabels;
+        int numPanels = 0;
         JRadioButton[] groupARadioButtons, groupBRadioButtons, neitherGroupRadioButtons;
         GroupExperimentsPanel(Vector exptNames) {
             this.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), "Group Assignments", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
             this.setBackground(Color.white);
-            JPanel panel1 = new JPanel();
-            // panel1.setBackground(Color.white);
+            numPanels = exptNames.size()/512 + 1;
             expLabels = new JLabel[exptNames.size()];
             groupARadioButtons = new JRadioButton[exptNames.size()];
             groupBRadioButtons = new JRadioButton[exptNames.size()];
@@ -1190,9 +1218,16 @@ public class TtestInitDialog extends AlgorithmDialog {
             GridBagLayout gridbag2 = new GridBagLayout();
             GridBagConstraints constraints = new GridBagConstraints();
             this.setLayout(gridbag2);
-            panel1.setLayout(gridbag);
+            JPanel [] panels = new JPanel[numPanels];
+            
+            int currPanel = 0;
+            for(int i = 0; i < panels.length; i++) {
+                panels[i] = new JPanel(gridbag);
+            }
             
             for (int i = 0; i < exptNames.size(); i++) {
+            	 //set current panel
+                currPanel = i / 512;
                 String s1 = (String)(exptNames.get(i));//permut
                 expLabels[i] = new JLabel(s1);
                 expLabels[i].setForeground(Color.black);
@@ -1200,41 +1235,50 @@ public class TtestInitDialog extends AlgorithmDialog {
                 groupARadioButtons[i] = new JRadioButton("Group A", true);
                 //      groupARadioButtons[i].setBackground(Color.white);
                 //      groupARadioButtons[i].setForeground(LABEL_COLOR);
+             
                 chooseGroup[i].add(groupARadioButtons[i]);
                 groupBRadioButtons[i] = new JRadioButton("Group B", false);
                 //groupBRadioButtons[i].setBackground(Color.white);
                 //groupBRadioButtons[i].setForeground(LABEL_COLOR);
+             
                 chooseGroup[i].add(groupBRadioButtons[i]);
                 
                 neitherGroupRadioButtons[i] = new JRadioButton("Neither group", false);
                 // neitherGroupRadioButtons[i].setBackground(Color.white);
                 //neitherGroupRadioButtons[i].setForeground(LABEL_COLOR);
+              
                 chooseGroup[i].add(neitherGroupRadioButtons[i]);
-                buildConstraints(constraints, 0, i, 1, 1, 25, 100);
+                buildConstraints(constraints, 0, i%512, 1, 1, 25, 100);
                 //constraints.fill = GridBagConstraints.BOTH;
                 gridbag.setConstraints(expLabels[i], constraints);
-                panel1.add(expLabels[i]);
+               
+                panels[currPanel].add(expLabels[i]);
                 
-                buildConstraints(constraints, 1, i, 1, 1, 25, 100);
+                buildConstraints(constraints, 1, i%512, 1, 1, 25, 100);
                 //constraints.fill = GridBagConstraints.BOTH;
                 gridbag.setConstraints(groupARadioButtons[i], constraints);
-                panel1.add(groupARadioButtons[i]);
                 
-                buildConstraints(constraints, 2, i, 1, 1, 25, 100);
+                panels[currPanel].add(groupARadioButtons[i]);
+                
+                buildConstraints(constraints, 2, i%512, 1, 1, 25, 100);
                 //constraints.fill = GridBagConstraints.BOTH;
                 gridbag.setConstraints(groupBRadioButtons[i], constraints);
-                panel1.add(groupBRadioButtons[i]);
+              
+                panels[currPanel].add(groupBRadioButtons[i]);
                 
-                buildConstraints(constraints, 3, i, 1, 1, 25, 100);
+                buildConstraints(constraints, 3, i%512, 1, 1, 25, 100);
                 //constraints.fill = GridBagConstraints.BOTH;
                 gridbag.setConstraints(neitherGroupRadioButtons[i], constraints);
-                panel1.add(neitherGroupRadioButtons[i]);
-                
-                
-                
+               
+                panels[currPanel].add(neitherGroupRadioButtons[i]);
+ 
+            }
+            JPanel bigPanel = new JPanel(new GridBagLayout());           
+            for(int i = 0; i < numPanels; i++) {
+                bigPanel.add(panels[i] ,new GridBagConstraints(0,i,1,1,1,1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
             }
             
-            JScrollPane scroll = new JScrollPane(panel1);
+            JScrollPane scroll = new JScrollPane(bigPanel);
             scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
             scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
             scroll.setBorder(BorderFactory.createLineBorder(Color.black,2));
