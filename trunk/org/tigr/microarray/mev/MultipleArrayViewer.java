@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.24 $
- * $Date: 2005-10-31 18:57:16 $
- * $Author: caliente $
+ * $Revision: 1.25 $
+ * $Date: 2005-11-01 18:28:13 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -43,14 +43,17 @@ import java.awt.event.WindowListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamConstants;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -92,9 +95,9 @@ import javax.swing.event.TreeSelectionListener;
 import javax.media.jai.JAI;
 import com.sun.media.jai.codec.ImageEncodeParam;
 
-
 import org.tigr.util.BrowserLauncher;
 import org.tigr.util.FloatMatrix;
+import org.tigr.util.QSort;
 import org.tigr.microarray.file.AnnFileParser;
 import org.tigr.microarray.util.awt.SetElementSizeDialog;
 import org.tigr.microarray.util.awt.SetSlideFilenameDialog;
@@ -132,6 +135,7 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 
 import org.tigr.microarray.mev.file.AnnFileFilter;
+import org.tigr.microarray.mev.file.StringSplitter;
 
 import org.tigr.microarray.mev.cluster.clusterUtil.*;
 import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
@@ -139,7 +143,7 @@ import org.tigr.microarray.mev.r.Rama;
 import org.tigr.microarray.mev.script.ScriptManager;
 
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HTMLMessageFileChooser;
-
+import java.text.DecimalFormat;
 public class MultipleArrayViewer extends ArrayViewer implements Printable {
     public static final long serialVersionUID = 100010201010001L;
     
@@ -162,6 +166,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     private IFramework framework = new FrameworkImpl();
     // features data
     private MultipleArrayData data = new MultipleArrayData();
+    private float sortedValues[];
     //Action Manager
     private ActionManager manager;
     
@@ -193,6 +198,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         manager = new ActionManager(eventListener, TMEV.getFieldNames(), TMEV.getGUIFactory());
         
         menubar = new MultipleArrayMenubar(manager);
+              
         mainframe.setJMenuBar(menubar);
         
         toolbar = new MultipleArrayToolbar(manager);
@@ -240,6 +246,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
        
         //need to populate the experiment label menu items
         menubar.addExperimentLabelMenuItems(arrayData.getSlideNameKeyVectorUnion());
+              
         mainframe.setJMenuBar(menubar);
         
         toolbar = new MultipleArrayToolbar(manager);
@@ -308,6 +315,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         
         //need to populate the experiment label menu items
         menubar.addExperimentLabelMenuItems(arrayData.getSlideNameKeyVectorUnion());
+       
         mainframe.setJMenuBar(menubar);
         
         toolbar = new MultipleArrayToolbar(manager);
@@ -350,14 +358,14 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         if (data.getDataType() == IData.DATA_TYPE_RATIO_ONLY || data.getDataType() == IData.DATA_TYPE_AFFY_ABS){
             this.menubar.enableNormalizationMenu(false);
         }
-        
+        	
         systemEnable(TMEV.DATA_AVAILABLE);
         fireDataChanged();
         
         //systemDisable(TMEV.DB_AVAILABLE);
         //systemDisable(TMEV.DATA_AVAILABLE);
     }
-    
+   
     /**
      * Sets toolbar and menubar states.
      */
@@ -1131,6 +1139,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             this.viewer.onDeselected();
         }
         this.viewer = viewer;
+     
         this.viewScrollPane.setViewportView(this.viewer.getContentComponent());
         
         //Top Header (column header)
@@ -1381,8 +1390,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      * Sets Initial Max CY3 and CY5 in menu
      */
     private void setMaxCY3AndCY5(){
-        this.menubar.setMaxCY3Scale(data.getMaxCY3());
-        this.menubar.setMaxCY5Scale(data.getMaxCY5());
+      this.menubar.setMaxCY3Scale(data.getMaxCY3());
+      this.menubar.setMaxCY5Scale(data.getMaxCY5());
     }
     
     /**
@@ -1789,7 +1798,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     /**
      * Adds a specified node into the analysis node.
      */
-    public synchronized void addAnalysisResult(DefaultMutableTreeNode node) {
+    private synchronized void addAnalysisResult(DefaultMutableTreeNode node) {
         if (node == null) {
             return;
         }
@@ -1900,8 +1909,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      *
      */
     private void onSetData(boolean isSelected) {
-    	//System.out.println( "onSetData()" );
-    	
         boolean selected = isSelected;
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
         Object object = node.getUserObject();
@@ -2025,28 +2032,24 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         historyString += "Number of Samples: "+String.valueOf(numSamples);
         addHistory(historyString);
     }
-    
-    
     //vu 7.22.05
-    private void onRama() {
-    	//to modularize code as much as possible, will create object here that
-    	//handles rama stuff
-    	Rama rama = new Rama(this, this.menubar);
-    }
-    private void onRamaDoc() {
-    	try {
-			BrowserLauncher.openURL( "http://www.expression.washington.edu:8080/ramaDoc/MeV-R_Documentation.html" );
-			//BrowserLauncher.openURL( "http://192.168.200.50:8080/ramaDoc/MeV-R_Documentation.html" );
-		} catch( IOException e ) {
-			e.printStackTrace();
-			//BrowserLauncher doesn't work on this system, display dialog
-			JOptionPane.showMessageDialog( framework.getFrame(), 
-					"Please see MeV-R_Documentation.html in the documentation folder",
-					"Input Error", JOptionPane.ERROR_MESSAGE );
-		}
-    }
-    
-    
+	     private void onRama() {
+	         //to modularize code as much as possible, will create object here that
+	         //handles rama stuff
+	         Rama rama = new Rama(this, this.menubar);
+	     }
+	     private void onRamaDoc() {
+  	         try {
+  	                BrowserLauncher.openURL( "http://www.expression.washington.edu:8080/ramaDoc/MeV-R_Documentation.html" );
+  	                         //BrowserLauncher.openURL( "http://192.168.200.50:8080/ramaDoc/MeV-R_Documentation.html" );
+  	                 } catch( IOException e ) {
+  	                         e.printStackTrace();
+  	                         //BrowserLauncher doesn't work on this system, display dialog
+  	                         JOptionPane.showMessageDialog( framework.getFrame(),
+  	                                         "Please see MeV-R_Documentation.html in the documentation folder",
+  	                                         "Input Error", JOptionPane.ERROR_MESSAGE );
+  	                 }
+  	     }
     /** pcahan
      * Sets the user specified Detection Filter.
      */
@@ -2154,9 +2157,54 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             addHistory(data.getExperiment().getNumberOfGenes() + " genes will be used in subsequent analyses");            
         }
     }
-        
-    /**
-     * Applies a variance filter
+    //add present call noise filter by wwang    
+    private void applyPresentCallFilter(){
+    	SetPresentCallDialog spcd = new SetPresentCallDialog(getFrame(), data.getPercentageCutoff());
+        if (spcd.showModal() == JOptionPane.OK_OPTION) {
+            boolean useCutoff = spcd.isCutoffFilterEnabled();
+            float percent = spcd.getPercentageCutoff();
+
+            data.setUsePresentCutoff(useCutoff);            
+            data.setPercentageCutoff(percent);
+            
+            Properties props = new Properties();
+            props.setProperty("Percentage", Float.toString(percent));
+            
+            if (data.isPresentCallCutoff()) {
+                 addAdjustmentResultNodes("Data Filter - Percentage Cutoff Filter", data.getExperiment(), props);
+                 addHistory("Percentage Cutoff Filter is ON ( percent = " +Float.toString(percent)+" )");
+            } else {
+                addHistory("Percentage Cutoff Filter is OFF");
+            }
+            addHistory(data.getExperiment().getNumberOfGenes() + " genes will be used in subsequent analyses");            
+        }
+    	
+    }
+
+    //add present call noise filter by wwang    
+    private void applyGCOSPercentageFilter(){
+    	SetPresentCallDialog spcd = new SetPresentCallDialog(getFrame(), data.getPercentageCutoff());
+        if (spcd.showModal() == JOptionPane.OK_OPTION) {
+            boolean useCutoff = spcd.isCutoffFilterEnabled();
+            float percent = spcd.getPercentageCutoff();
+
+            data.setUseGCOSPercentageCutoff(useCutoff);            
+            data.setPercentageCutoff(percent);
+            
+            Properties props = new Properties();
+            props.setProperty("Percentage", Float.toString(percent));
+            
+            if (data.isGCOSPercentCutoff()) {
+                 addAdjustmentResultNodes("Data Filter - Percentage Cutoff Filter", data.getExperiment(), props);
+                 addHistory("Percentage Cutoff Filter is ON ( percent = " +Float.toString(percent)+" )");
+            } else {
+                addHistory("Percentage Cutoff Filter is OFF");
+            }
+            addHistory(data.getExperiment().getNumberOfGenes() + " genes will be used in subsequent analyses");            
+        }
+    	
+    }
+    /* Applies a variance filter
      */
     private void applyVarianceFilter() {
         VarianceFilterDialog dialog = new VarianceFilterDialog(getFrame());
@@ -2342,7 +2390,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         fireDataChanged();
         addHistory("Log10 to Log2");
     }
-    
+    private void onLog2toLog10() {
+        data.log2toLog10();
+        fireDataChanged();
+        addHistory("Log2 to Log10");
+    }
     private void onAdjustIntensities(AbstractButton item) {
         data.setNonZero(item.isSelected());
         fireDataChanged();
@@ -2765,11 +2817,68 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     public DefaultMutableTreeNode getNode(Object object) {
         return this.tree.getNode(object);
     }
-    
+    /** add for sort MAD for auto-color scale
+     * by wwang
+     * @param m
+     * @return
+     */
+    public float [] initSortedValues(FloatMatrix m) {
+		float [] vals = m.getColumnPackedCopy();
+		QSort qsort = new QSort(vals, QSort.ASCENDING);
+		vals = qsort.getSorted();
+	
+		int numberNaN = 0;
+		
+		for(int i = 0; i < vals.length; i++) {		
+			if(Float.isNaN(vals[i]))
+				numberNaN++;
+			else
+				break;			
+		}
+		
+		int validN = vals.length-numberNaN;
+		
+		float [] values = new float[validN];
+		
+		for(int i = 0; i < values.length; i++) {
+			values[i] = vals[i+numberNaN];			
+		}
+		
+		return values;
+		
+	}
+    /** by wwang
+	 *  returns the median from the sorted array
+	 * @return
+	 */
+	public float getMedian() {
+		float median;
+		if(sortedValues.length % 2 == 0)
+			median = (sortedValues[sortedValues.length/2] + sortedValues[sortedValues.length/2 + 1])/2.0f;
+		else
+			median = sortedValues[sortedValues.length/2 + 1];	
+		return median;
+	}
+	
+	/** by wwang
+	 *  returns the maxScale(80% of total data)from the sorted array
+	 * @return
+	 */		
+	public float getMaxScale() {
+		int index=(int)Math.floor(sortedValues.length*0.8);
+		float max=sortedValues[index];
+		return max;
+	}
+
+	
     /**
      *  Handles new data load.  Vector contains ISlideData objects.
      */
     public void fireDataLoaded(ISlideData [] features, int dataType){
+    	//add for auto-color scaling format(onedecimalformat)
+    	DecimalFormat oneDecimalFormat = new DecimalFormat();
+		oneDecimalFormat.setMaximumFractionDigits(1);
+		//oneDecimalFormat.setMaximumIntegerDigits(5);
         if(features == null || features.length < 1)
             return;
         if(this.data.getFieldNames() != null && this.data.getFeaturesCount() < 1){
@@ -2790,6 +2899,16 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         }
         data.addFeatures(features);
         data.setDataType(dataType);
+        
+        // by wwang add for auto color scaling(for affy data) 
+        sortedValues=initSortedValues(data.getExperiment().getMatrix());
+        if (TMEV.getDataType() != TMEV.DATA_TYPE_TWO_DYE){
+         	this.menubar.setMinRatioScale(0f);
+         	//this.menubar.setMidRatioValue(Float.parseFloat(oneDecimalFormat.format(getMedian())));
+         	this.menubar.setMidRatioValue(getMedian());
+         	//this.menubar.setMaxRatioScale(Float.parseFloat(oneDecimalFormat.format(getMaxScale())));
+         	this.menubar.setMaxRatioScale(getMaxScale());
+         }
         // if we have field names and data is not loaded
         //if(TMEV.getDataType() == TMEV.DATA_TYPE_AFFY)
         //    this.menubar.addAffyFilterMenuItems();
@@ -3246,6 +3365,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                     onSetData(true);  //reset main view
             } else if (command.equals(ActionManager.USE_PERCENTAGE_CUTOFFS_CMD)) {
                 applyPercentageCutoffs();
+                //add mas5 present call noise filter
+            }else if(command.equals(ActionManager.USE_PRESENT_CALL_CMD)){   
+            	applyPresentCallFilter();
+            }else if(command.equals(ActionManager.USE_GCOS_PERCENTAGE_CUTOFF_CMD)){   
+            	applyGCOSPercentageFilter();	
             } else if (command.equals(ActionManager.USE_LOWER_CUTOFFS_CMD)) {
                 applyLowerCutoffs();
             } else if (command.equals(ActionManager.USE_VARIANCE_FILTER_CMD)) {
@@ -3267,13 +3391,12 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                 onUseFoldFilter( (AbstractButton) event.getSource());
             }
              */
-            
-            //vu 7.22.05
-            else if ( command.equals( ActionManager.RAMA_CMD ) ) {
-            	onRama();
-            } else if( command.equals( ActionManager.RAMA_DOC_CMD ) ) {
-            	onRamaDoc();
-            }
+//          vu 7.22.05
+	        else if ( command.equals( ActionManager.RAMA_CMD ) ) {
+	                 onRama();
+	       } else if( command.equals( ActionManager.RAMA_DOC_CMD ) ) {
+	                 onRamaDoc();
+	             }
             
             // pcahan
             else if (command.equals(ActionManager.SET_DETECTION_FILTER_CMD)) {
@@ -3316,6 +3439,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                 onDigitalExperiments();
             } else if (command.equals(ActionManager.LOG10_TO_LOG2_CMD)) {
                 onLog10toLog2();
+            } else if (command.equals(ActionManager.LOG2_TO_LOG10_CMD)) {
+                onLog2toLog10();    
             } else if (command.equals(ActionManager.ADJUST_INTENSITIES_0_CMD)) {
                 onAdjustIntensities((AbstractButton)event.getSource());
             } else if (command.equals(ActionManager.SAVE_MATRIX_COMMAND)) {
