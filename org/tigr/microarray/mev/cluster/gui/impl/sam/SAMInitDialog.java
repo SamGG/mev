@@ -77,7 +77,7 @@ public class SAMInitDialog extends AlgorithmDialog {
     PermutationsPanel pPanel;
     ImputationPanel iPanel;
     OKCancelPanel oPanel;
-    
+    final int fileLoadMin=20;
     boolean okPressed = false, allUniquePermsUsed = false;
     Vector exptNames;
     int numGenes, numUniquePerms;
@@ -118,25 +118,18 @@ public class SAMInitDialog extends AlgorithmDialog {
         javax.swing.UIManager.put("TabbedPane.selected", Color.white);
         tabPane = new JTabbedPane();
         gPanel = new GroupExperimentsPanel(exptNames);
+        
         tabPane.add("Two-class unpaired", gPanel);
         tcpmPanel = new TwoClassPairedMainPanel();
         tabPane.add("Two-class paired", tcpmPanel);
         mPanel = new MultiClassPanel(/*exptNames*/);
         tabPane.add("Multi-class", mPanel);
+        
         csPanel = new CensoredSurvivalPanel(exptNames);
         tabPane.add("Censored survival", csPanel);
         oneCPanel = new OneClassPanel();
         tabPane.add("One-Class", oneCPanel);
-        //tabPane.setEnabledAt(1, false);
-        //    tabPane.setBackground(Color.white);
-        
-        /*
-        tabPane.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                SAMInitDialog.this.validate();
-            }
-        });
-         */
+    
         buildConstraints(constraints, 0, 0, 1, 1, 100, 75);
         
         gridbag.setConstraints(tabPane, constraints);
@@ -159,41 +152,26 @@ public class SAMInitDialog extends AlgorithmDialog {
         buildConstraints(constraints, 0, 2, 1, 1, 0, 10);
         gridbag.setConstraints(sqPanel, constraints);
         pane.add(sqPanel);        
-        
-        /*
-        JButton numPermsButton = new JButton("numPermsPanel");
-        buildConstraints(constraints, 0, 1, 1, 1, 0, 15);
-        gridbag.setConstraints(numPermsButton, constraints);
-        pane.add(numPermsButton);
-         */
-        
+  
         iPanel = new ImputationPanel();
         buildConstraints(constraints, 0, 3, 1, 1, 0, 5);
         gridbag.setConstraints(iPanel, constraints);
         pane.add(iPanel);
-        
-        /*
-        JButton imputeButton = new JButton("imputationPanel");
-        buildConstraints(constraints, 0, 2, 1, 1, 0, 15);
-        gridbag.setConstraints(imputeButton, constraints);
-        pane.add(imputeButton);
-         */
         
         hclOpsPanel = new HCLSigOnlyPanel();
         buildConstraints(constraints, 0, 4, 1, 1, 0, 5);
         gridbag.setConstraints(hclOpsPanel, constraints);
         pane.add(hclOpsPanel);
         
-        /*
-        JButton bottomButton = new JButton("okCancelPanel");
-        buildConstraints(constraints, 0, 3, 1, 1, 0, 20);
-        gridbag.setConstraints(bottomButton, constraints);
-        pane.add(bottomButton);
-         */
         addContent(pane);
+        if(exptNames.size()>fileLoadMin){
+        	SAMLoadFileDialog slfDialog = new SAMLoadFileDialog(SAMGUI.SAMFrame, true);
+        	slfDialog.setVisible(true);
+        }
         EventListener listener = new EventListener();
         setActionListeners(listener);
         this.addWindowListener(listener);
+        
         //setContentPane(pane);
     }
     
@@ -230,9 +208,9 @@ public class SAMInitDialog extends AlgorithmDialog {
     
     class GroupExperimentsPanel extends JPanel {
         JLabel[] expLabels;
+        int numPanels = 0;
         JRadioButton[] groupARadioButtons, groupBRadioButtons, neitherGroupRadioButtons;
         GroupExperimentsPanel(Vector exptNames) {
-            //   this.setBorder(new TitledBorder(new EtchedBorder(), "Group Assignments"));
             this.setBorder(new TitledBorder(new EtchedBorder(), "Group Assignments", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
             setBackground(Color.white);
             JPanel panel1 = new JPanel();
@@ -248,6 +226,14 @@ public class SAMInitDialog extends AlgorithmDialog {
             this.setLayout(gridbag2);
             panel1.setLayout(gridbag);
             
+            numPanels = exptNames.size()/512 + 1;
+            JPanel [] panels = new JPanel[numPanels];
+            
+            int currPanel = 0;
+            for(int i = 0; i < panels.length; i++) {
+                panels[i] = new JPanel(gridbag);
+            }
+            
             for (int i = 0; i < exptNames.size(); i++) {
                 String s1 = (String)(exptNames.get(i));
                 expLabels[i] = new JLabel(s1);
@@ -258,97 +244,45 @@ public class SAMInitDialog extends AlgorithmDialog {
                 chooseGroup[i].add(groupBRadioButtons[i]);
                 neitherGroupRadioButtons[i] = new JRadioButton("Neither group", false);
                 chooseGroup[i].add(neitherGroupRadioButtons[i]);
+ 
+//              set current panel
+                currPanel = i / 512;
                 
-                /*
-                groupARadioButtons[i].addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent evt) {
-                        int[] groupCount = getGroupCount();
-                        if ((groupCount[0] < 2)|| (groupCount[1] < 2)) {
-                            pPanel.permsInfoLabel.setForeground(Color.red);
-                            pPanel.permsInfoLabel.setText("Group A and Group B must each contain more than one experiment");
-                            pPanel.useAllPermsButton.setEnabled(false);
-                        } else if ((groupCount[0] + groupCount[1]) > 20) {
-                            pPanel.permsInfoLabel.setForeground(Color.black);
-                            pPanel.permsInfoLabel.setText("There are too many possible permutations");
-                            pPanel.useAllPermsButton.setEnabled(false);
-                 
-                        } else {
-                            pPanel.permsInfoLabel.setForeground(Color.black);
-                            int numCombs = getNumCombs(groupCount[0] + groupCount[1], groupCount[0]);
-                            pPanel.permsInfoLabel.setText("There are " + numCombs + " permutations");
-                            pPanel.useAllPermsButton.setEnabled(true);
-                        }
-                    }
-                });
-                 
-                groupBRadioButtons[i].addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent evt) {
-                        int[] groupCount = getGroupCount();
-                        if ((groupCount[0] < 2)|| (groupCount[1] < 2)) {
-                            pPanel.permsInfoLabel.setForeground(Color.red);
-                            pPanel.permsInfoLabel.setText("Group A and Group B must each contain more than one experiment");
-                            pPanel.useAllPermsButton.setEnabled(false);
-                        } else if ((groupCount[0] + groupCount[1]) > 20) {
-                            pPanel.permsInfoLabel.setForeground(Color.black);
-                            pPanel.permsInfoLabel.setText("There are too many possible permutations");
-                            pPanel.useAllPermsButton.setEnabled(false);
-                 
-                        } else {
-                            pPanel.permsInfoLabel.setForeground(Color.black);
-                            int numCombs = getNumCombs(groupCount[0] + groupCount[1], groupCount[0]);
-                            pPanel.permsInfoLabel.setText("There are " + numCombs + " permutations");
-                            pPanel.useAllPermsButton.setEnabled(true);
-                        }
-                    }
-                });
-                 
-                    neitherGroupRadioButtons[i].addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent evt) {
-                        int[] groupCount = getGroupCount();
-                        if ((groupCount[0] < 2)|| (groupCount[1] < 2)) {
-                            pPanel.permsInfoLabel.setForeground(Color.red);
-                            pPanel.permsInfoLabel.setText("Group A and Group B must each contain more than one experiment");
-                            pPanel.useAllPermsButton.setEnabled(false);
-                        } else if ((groupCount[0] + groupCount[1]) > 20) {
-                            pPanel.permsInfoLabel.setForeground(Color.black);
-                            pPanel.permsInfoLabel.setText("There are too many possible permutations");
-                            pPanel.useAllPermsButton.setEnabled(false);
-                 
-                        } else {
-                            pPanel.permsInfoLabel.setForeground(Color.black);
-                            int numCombs = getNumCombs(groupCount[0] + groupCount[1], groupCount[0]);
-                            pPanel.permsInfoLabel.setText("There are " + numCombs + " permutations");
-                            pPanel.useAllPermsButton.setEnabled(true);
-                        }
-                    }
-                });
-                 */
-                
-                buildConstraints(constraints, 0, i, 1, 1, 25, 100);
+                buildConstraints(constraints, 0, i%512, 1, 1, 25, 100);
                 //constraints.fill = GridBagConstraints.BOTH;
                 gridbag.setConstraints(expLabels[i], constraints);
-                panel1.add(expLabels[i]);
+                panels[currPanel].add(expLabels[i]);
+              //  if(i<limit)
+              //panel1.add(expLabels[i]);
                 
-                buildConstraints(constraints, 1, i, 1, 1, 25, 100);
+                buildConstraints(constraints, 1, i%512, 1, 1, 25, 100);
                 //constraints.fill = GridBagConstraints.BOTH;
                 gridbag.setConstraints(groupARadioButtons[i], constraints);
-                panel1.add(groupARadioButtons[i]);
+                panels[currPanel].add(groupARadioButtons[i]);
+               // if(i<limit)
+               // panel1.add(groupARadioButtons[i]);
                 
-                buildConstraints(constraints, 2, i, 1, 1, 25, 100);
+                buildConstraints(constraints, 2, i%512, 1, 1, 25, 100);
                 //constraints.fill = GridBagConstraints.BOTH;
                 gridbag.setConstraints(groupBRadioButtons[i], constraints);
-                panel1.add(groupBRadioButtons[i]);
+                panels[currPanel].add(groupBRadioButtons[i]);
+                //if(i<limit)
+                //panel1.add(groupBRadioButtons[i]);
                 
-                buildConstraints(constraints, 3, i, 1, 1, 25, 100);
+                buildConstraints(constraints, 3, i%512, 1, 1, 25, 100);
                 //constraints.fill = GridBagConstraints.BOTH;
                 gridbag.setConstraints(neitherGroupRadioButtons[i], constraints);
-                panel1.add(neitherGroupRadioButtons[i]);
-                
-                
-                
+                //if(i<limit)
+                //panel1.add(neitherGroupRadioButtons[i]);
+                panels[currPanel].add(neitherGroupRadioButtons[i]);                                
             }
             
-            JScrollPane scroll = new JScrollPane(panel1);
+            JPanel bigPanel = new JPanel(new GridBagLayout());
+            
+            for(int i = 0; i < numPanels; i++) {
+                bigPanel.add(panels[i] ,new GridBagConstraints(0,i,1,1,1,1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+            }
+            JScrollPane scroll = new JScrollPane(bigPanel);
             scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
             scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
             
@@ -496,15 +430,7 @@ public class SAMInitDialog extends AlgorithmDialog {
             //constraints.fill = GridBagConstraints.BOTH;
             gridbag2.setConstraints(panel2, constraints);
             this.add(panel2);
-            
-            /*
-            JButton gButton = new JButton("groupExpts");
-            buildConstraints(constraints, 0, 0, 1, 1, 100, 100);
-            constraints.fill = GridBagConstraints.BOTH;
-            gridbag.setConstraints(gButton, constraints);
-            this.add(gButton);
-             */
-            
+           
         }
         /*
          *  Resets group selections
@@ -514,119 +440,89 @@ public class SAMInitDialog extends AlgorithmDialog {
                 groupARadioButtons[i].setSelected(true);
             }
         }
+        
+        
     }
     
     class CensoredSurvivalPanel extends JPanel {
         ExptTimeField[] fields;
-        //JLabel[] expLabels;
-        //JRadioButton[] censoredRadioButtons, deadRadioButtons;
-        //JCheckBox[] inAnalysisCheckBox;
-        //JTextField[] timeInputField;
-        //JRadioButton currentCensoredRadioButton, currentDeadRadioButton;
-        //JTextField currentTimeInputField;
-        //JLabel timeLabel;
-        //int counter;
+        int numPanels = 0;
         CensoredSurvivalPanel(Vector exptNames) {
             //            this.setBorder(new TitledBorder(new EtchedBorder(), "Time / State Assignments"));
+        	//System.out.print("Censor");
             this.setBorder(new TitledBorder(new EtchedBorder(), "Time / State Assignments", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
             setBackground(Color.white);
-            JPanel panel1 = new JPanel();
+           // JPanel panel1 = new JPanel();
             fields = new ExptTimeField[exptNames.size()];
-            //expLabels = new JLabel[exptNames.size()];
-            //censoredRadioButtons = new JRadioButton[exptNames.size()];
-            //deadRadioButtons = new JRadioButton[exptNames.size()];
-            //inAnalysisCheckBox = new  JCheckBox[exptNames.size()];
-            //timeInputField = new JTextField[exptNames.size()];
-            //ButtonGroup chooseGroup[] = new ButtonGroup[exptNames.size()];
-            //dummyCounters = new int[exptNames.size()];
-            
+            numPanels = exptNames.size()/512 + 1;
             GridBagLayout gridbag = new GridBagLayout();
             GridBagLayout gridbag2 = new GridBagLayout();
             GridBagConstraints constraints = new GridBagConstraints();
             this.setLayout(gridbag2);
-            panel1.setLayout(gridbag);
+           // panel1.setLayout(gridbag);
+            JPanel [] panels = new JPanel[numPanels];
+            
+            int currPanel = 0;
+            for(int i = 0; i < panels.length; i++) {
+                panels[i] = new JPanel(gridbag);
+            }
             
             for (int i = 0; i < exptNames.size(); i++) {
                 String s1 = (String)(exptNames.get(i));
                 fields[i] = new ExptTimeField(s1);
-                /*
-                expLabels[i] = new JLabel(s1);
-                timeInputField[i] = new JTextField(7);
-                chooseGroup[i] = new ButtonGroup();
-                censoredRadioButtons[i] = new JRadioButton("Censored", true);
-                chooseGroup[i].add(censoredRadioButtons[i]);
-                deadRadioButtons[i] = new JRadioButton("Dead", false);
-                chooseGroup[i].add(deadRadioButtons[i]);
-                inAnalysisCheckBox[i] = new JCheckBox("", true);
-                 
-                timeLabel = new JLabel("Time: ");
-                 */
-                
-                buildConstraints(constraints, 0, i, 1, 1, 20, 100);
+//              set current panel
+                currPanel = i / 512;
+            
+                buildConstraints(constraints, 0, i%512, 1, 1, 20, 100);
                 //constraints.fill = GridBagConstraints.BOTH;
                 gridbag.setConstraints(fields[i].inAnalysisCheckBox, constraints);
+               
+                panels[currPanel].add(fields[i].inAnalysisCheckBox);
                 
-                //addAnalysisCheckBoxListener(inAnalysisCheckBox[i], expLabels[i], timeInputField[i], censoredRadioButtons[i], deadRadioButtons[i], timeLabel);
-                //dummyCounters[i] = i;
-                /*
-                inAnalysisCheckBox[i].addItemListener(new ItemListener() {
-                    public void itemStateChanged(ItemEvent e) {
-                        if (e.getStateChange() == ItemEvent.DESELECTED) {
-                            currentExpLabel.setEnabled(false);
-                            currentTimeInputField.setBackground(Color.darkGray);
-                            currentTimeInputField.setEnabled(false);
-                            currentCensoredRadioButton.setEnabled(false);
-                            currentDeadRadioButton.setEnabled(false);
-                 
-                        }
-                 
-                        if (e.getStateChange() == ItemEvent.SELECTED) {
-                            currentExpLabel.setEnabled(true);
-                            currentTimeInputField.setBackground(Color.white);
-                            currentTimeInputField.setEnabled(true);
-                            currentCensoredRadioButton.setEnabled(true);
-                            currentDeadRadioButton.setEnabled(true);
-                        }
-                 
-                    }
-                });
-                 */
-                panel1.add(fields[i].inAnalysisCheckBox);
-                
-                buildConstraints(constraints, 1, i, 1, 1, 20, 100);
+                buildConstraints(constraints, 1, i%512, 1, 1, 20, 100);
                 //constraints.fill = GridBagConstraints.BOTH;
                 gridbag.setConstraints(fields[i].expLabel, constraints);
-                panel1.add(fields[i].expLabel);
+                
+                panels[currPanel].add(fields[i].expLabel);
                 
                 
-                buildConstraints(constraints, 2, i, 1, 1, 20, 100);
+                buildConstraints(constraints, 2, i%512, 1, 1, 20, 100);
                 //constraints.fill = GridBagConstraints.BOTH;
                 constraints.anchor = GridBagConstraints.EAST;
                 gridbag.setConstraints(fields[i].timeLabel, constraints);
-                panel1.add(fields[i].timeLabel);
+               
+                panels[currPanel].add(fields[i].timeLabel);
                 
-                buildConstraints(constraints, 3, i, 1, 1, 20, 100);
+                buildConstraints(constraints, 3, i%512, 1, 1, 20, 100);
                 //constraints.fill = GridBagConstraints.BOTH;
                 constraints.anchor = GridBagConstraints.WEST;
                 gridbag.setConstraints(fields[i].timeInputField, constraints);
-                panel1.add(fields[i].timeInputField);
+                
+                panels[currPanel].add(fields[i].timeInputField);
                 
                 constraints.anchor = GridBagConstraints.CENTER;
-                buildConstraints(constraints, 4, i, 1, 1, 20, 100);
+                buildConstraints(constraints, 4, i%512, 1, 1, 20, 100);
                 //constraints.fill = GridBagConstraints.BOTH;
                 gridbag.setConstraints(fields[i].censoredRadioButton, constraints);
-                panel1.add(fields[i].censoredRadioButton);
+                panels[currPanel].add(fields[i].censoredRadioButton);
                 
-                buildConstraints(constraints, 5, i, 1, 1, 20, 100);
+                buildConstraints(constraints, 5, i%512, 1, 1, 20, 100);
                 //constraints.fill = GridBagConstraints.BOTH;
                 gridbag.setConstraints(fields[i].deadRadioButton, constraints);
-                panel1.add(fields[i].deadRadioButton);
+ 
+                panels[currPanel].add(fields[i].deadRadioButton);
                 
                 
                 
             }
             
-            JScrollPane scroll = new JScrollPane(panel1);
+            JPanel bigPanel = new JPanel(new GridBagLayout());
+            
+            for(int i = 0; i < numPanels; i++) {
+                bigPanel.add(panels[i] ,new GridBagConstraints(0,i,1,1,1,1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+            }
+            
+            JScrollPane scroll = new JScrollPane(bigPanel);
             scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
             scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
             
@@ -634,14 +530,7 @@ public class SAMInitDialog extends AlgorithmDialog {
             constraints.fill = GridBagConstraints.BOTH;
             gridbag2.setConstraints(scroll, constraints);
             this.add(scroll);
-            /*
-            JLabel label1 = new JLabel("Note: Group A and Group B  MUST each contain more than one experiment.");
-            buildConstraints(constraints, 0, 1, 1, 1, 0, 5);
-            constraints.anchor = GridBagConstraints.EAST;
-            //constraints.fill = GridBagConstraints.BOTH;
-            gridbag2.setConstraints(label1, constraints);
-            this.add(label1);
-             */
+           
             JPanel panel2 = new JPanel();
             GridBagLayout gridbag3 = new GridBagLayout();
             panel2.setLayout(gridbag3);
@@ -756,38 +645,6 @@ public class SAMInitDialog extends AlgorithmDialog {
                                 }
                             }
                             
-                            
-                            
-                            /*
-                            st.init(line);
-                            Vector groupsVector = new Vector();
-                            while (st.hasMoreTokens()) {
-                                String current = st.nextToken();
-                                groupsVector.add(new Integer(current));
-                                //System.out.print(current);
-                            }
-                             
-                            int[] groupAssgn = getGroupAssignments();
-                            if (groupsVector.size() != groupAssgn.length) {
-                                JOptionPane.showMessageDialog(gPanel, "Incompatible file!", "Error", JOptionPane.WARNING_MESSAGE);
-                            } else {
-                                for (int i = 0; i < groupsVector.size(); i++) {
-                                    int currentExpt = ((Integer)groupsVector.get(i)).intValue();
-                                    if (currentExpt == 1) {
-                                        groupARadioButtons[i].setSelected(true);
-                                    } else if (currentExpt == 2) {
-                                        groupBRadioButtons[i].setSelected(true);
-                                    } else if (currentExpt == 3) {
-                                        neitherGroupRadioButtons[i].setSelected(true);
-                                    } else {
-                                        for (int j = 0; j < finNum; j++) {
-                                            groupARadioButtons[j].setSelected(true);
-                                        }
-                                        JOptionPane.showMessageDialog(gPanel, "Incompatible file!", "Error", JOptionPane.WARNING_MESSAGE);
-                                        break;
-                                    }
-                                }
-                            }*/
                         } catch (Exception e) {
                             for (int k = 0; k < finNum; k++) {
                                 fields[k].inAnalysisCheckBox.setSelected(false);
@@ -945,6 +802,7 @@ public class SAMInitDialog extends AlgorithmDialog {
     class OneClassPanel extends JPanel {
         JTextField meanField;
         JCheckBox[] includeExpts;
+        int numPanels = 0;
         JButton saveButton, loadButton, resetButton;
         OneClassPanel() {
             this.setBackground(Color.white);
@@ -955,22 +813,31 @@ public class SAMInitDialog extends AlgorithmDialog {
             GridBagLayout gridbag = new GridBagLayout();
             GridBagConstraints constraints = new GridBagConstraints();
             this.setLayout(gridbag);
+            numPanels = exptNames.size()/512 + 1;
+            JPanel [] panels = new JPanel[numPanels];
             
-            JPanel exptPanel = new JPanel();
-            GridBagLayout grid1 = new GridBagLayout();
-            exptPanel.setLayout(grid1);
-            
-            //System.out.println("exptNames.size()" + exptNames.size());
-            
+            int currPanel = 0;
+            for(int i = 0; i < panels.length; i++) {
+                panels[i] = new JPanel(gridbag);
+            }
             for (int i = 0; i < exptNames.size(); i++) {
+                //set current panel
+                currPanel = i / 512;
+                
                 //JLabel expLabel = new JLabel((String)(exptNames.get(i)));
                 includeExpts[i] = new JCheckBox((String)(exptNames.get(i)), true);
-                buildConstraints(constraints, 0, i, 1, 1, 100, 100);
-                grid1.setConstraints(includeExpts[i], constraints);
-                exptPanel.add(includeExpts[i]);
+                buildConstraints(constraints, 0, i%512, 1, 1, 100, 100);
+                gridbag.setConstraints(includeExpts[i], constraints);
+           
+                panels[currPanel].add(includeExpts[i]);
+            }
+            JPanel bigPanel = new JPanel(new GridBagLayout());
+            
+            for(int i = 0; i < numPanels; i++) {
+                bigPanel.add(panels[i] ,new GridBagConstraints(0,i,1,1,1,1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
             }
             
-            JScrollPane scroll = new JScrollPane(exptPanel);
+            JScrollPane scroll = new JScrollPane(bigPanel);
             scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
             //scroll.add(exptPanel);
             
@@ -1126,8 +993,6 @@ public class SAMInitDialog extends AlgorithmDialog {
             }
             meanField.setText("0");
         }
-        
-
     }    
     
     class TwoClassPairedMainPanel extends JPanel {
@@ -1135,9 +1000,13 @@ public class SAMInitDialog extends AlgorithmDialog {
         JButton saveButton, resetButton, loadButton;
         GridBagConstraints constraints;
         GridBagLayout gridbag;  
+        int dummy=0;
         
         public TwoClassPairedMainPanel() {
-            tcpPanel = new TwoClassPairedPanel();
+        	//if(exptNames.size()<11)
+        		tcpPanel = new TwoClassPairedPanel();
+        	//else
+        		//tcpPanel = new TwoClassPairedPanel(dummy);
             JPanel bottomPanel = new JPanel();
             bottomPanel.setBackground(Color.white);
             constraints = new GridBagConstraints();
@@ -1217,11 +1086,12 @@ public class SAMInitDialog extends AlgorithmDialog {
                                 int currA = ((Integer)(tcpPanel.pairedAExpts.get(i))).intValue();
                                 int currB = ((Integer)(tcpPanel.pairedBExpts.get(i))).intValue();
                                 String currPair = "A: " + (String)(exptNames.get(currA)) + " - B: " + (String)(exptNames.get(currB));
-                                tcpPanel.exptButtons[currA].setEnabled(false);
-                                tcpPanel.exptButtons[currB].setEnabled(false); 
+                              //  tcpPanel.exptButtons[currA].setEnabled(false);
+                               // tcpPanel.exptButtons[currB].setEnabled(false); 
                                 tcpPanel.pairedListModel.addElement(currPair);
                                 
                             }
+                            
                             if (tcpPanel.pairedAExpts.size() > 0) {
                                 tcpPanel.removeABPairButton.setEnabled(true);
                                 tcpPanel.pairedExptsList.setSelectedIndex(tcpPanel.pairedListModel.size() - 1);
@@ -1270,9 +1140,11 @@ public class SAMInitDialog extends AlgorithmDialog {
         boolean currentAFilled, currentBFilled;
         int currentAExpt, currentBExpt;
         Vector pairedAExpts, pairedBExpts;
+      
         public TwoClassPairedPanel() {
             currentAExpt = -1;
             currentBExpt = -1;
+            int numPanels = 0;
             currentAFilled = false;
             currentBFilled = false;
             pairedAExpts = new Vector();
@@ -1293,15 +1165,25 @@ public class SAMInitDialog extends AlgorithmDialog {
             pairedListModel = new DefaultListModel();
             pairedExptsList = new JList(pairedListModel);
             
-            JPanel exptNamesPanel = new JPanel();
+            /*JPanel exptNamesPanel = new JPanel();
             GridBagLayout grid1 = new GridBagLayout();
             exptNamesPanel.setLayout(grid1);
+           */
             exptButtons = new ExperimentButton[exptNames.size()];
             
-            int maxWidth = 0;
-            int maxNameLength = 0;
+            //wwang add for fixing 512 problem
+            numPanels = exptNames.size()/512 + 1;
+            JPanel [] panels = new JPanel[numPanels];
             
-            for (int i = 0; i < exptNames.size(); i++) {
+            int currPanel = 0;
+            for(int i = 0; i < panels.length; i++) {
+                panels[i] = new JPanel(gridbag);
+            }
+            
+            int maxWidth = 0,i=0;
+            int maxNameLength = 0;
+           
+            for ( i = 0; i <exptNames.size() ; i++) {
                 //String s = (String)(exptNames.get(i));
                 exptButtons[i] = new ExperimentButton(i);
                 
@@ -1316,9 +1198,14 @@ public class SAMInitDialog extends AlgorithmDialog {
                     maxNameLength = currentNameLength;
                 }
                 
-                buildConstraints(constraints, 0, i, 1, 1, 100, 100);
-                grid1.setConstraints(exptButtons[i], constraints);
-                exptNamesPanel.add(exptButtons[i]);
+//              set current panel
+                currPanel = i / 512;
+ 
+                buildConstraints(constraints, 0, i%512, 1, 1, 100, 100);
+                gridbag.setConstraints(exptButtons[i], constraints);
+                panels[currPanel].add(exptButtons[i]);
+               // if(i<maxButton)
+               // exptNamesPanel.add(exptButtons[i]);
             }
             
             currentATextField = new JTextField("", maxNameLength + 2);
@@ -1333,7 +1220,12 @@ public class SAMInitDialog extends AlgorithmDialog {
             currentATextField.setEditable(false);
             currentBTextField.setEditable(false);   
             
-            JScrollPane scroll = new JScrollPane(exptNamesPanel);
+            JPanel bigPanel = new JPanel(new GridBagLayout());
+            
+            for(int m = 0; m < numPanels; m++) {
+                bigPanel.add(panels[m] ,new GridBagConstraints(0,m,1,1,1,1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+            }
+            JScrollPane scroll = new JScrollPane(bigPanel);
             scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
             scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);            
             
@@ -1495,7 +1387,9 @@ public class SAMInitDialog extends AlgorithmDialog {
             
         }
         
+     
         public void reset() {
+        	
             for (int i = 0; i < exptButtons.length; i++) {
                 exptButtons[i].setEnabled(true);
                 currentATextField.setText("");
@@ -1564,7 +1458,7 @@ public class SAMInitDialog extends AlgorithmDialog {
         JPanel dummyPanel;
         MultiGroupExperimentsPanel mulgPanel;
         int numGroups;
-        //Vector exptNames;
+        //Vector exptNames;				
         
         public MultiClassPanel(/*Vector exptNames*/) {
             constraints = new GridBagConstraints();
@@ -1586,8 +1480,6 @@ public class SAMInitDialog extends AlgorithmDialog {
                             JOptionPane.showMessageDialog(null, "Please enter a positive integer >= 2!", "Error", JOptionPane.ERROR_MESSAGE);
                         } else {
                             mulgPanel = new MultiGroupExperimentsPanel(exptNames, numGroups);
-                            //System.out.println("OK Pressed");
-                            //JButton dummyButton  = new JButton("dummyButton");
                             buildConstraints(constraints, 0, 1, 1, 1, 0, 90);
                             constraints.fill = GridBagConstraints.BOTH;
                             gridbag.setConstraints(mulgPanel, constraints);
@@ -1599,8 +1491,7 @@ public class SAMInitDialog extends AlgorithmDialog {
                             ngPanel.okButton.setEnabled(false);
                             ngPanel.numGroupsField.setEnabled(false);
                         }
-                        //MultiClassPanel.this.repaint();
-                        //dispose();
+                       
                     } catch (NumberFormatException nfe) {
                         JOptionPane.showMessageDialog(null, "Please enter a positive integer >= 2!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
@@ -1697,14 +1588,14 @@ public class SAMInitDialog extends AlgorithmDialog {
             JLabel[] expLabels;
             JRadioButton[][] exptGroupRadioButtons;
             JRadioButton[] notInGroupRadioButtons;
+            int numPanels = 0;
             MultiGroupExperimentsPanel(Vector exptNames, int numGroups) {
                 this.setBorder(new TitledBorder(new EtchedBorder(), "Group Assignments"));
                 setBackground(Color.white);
-                JPanel panel1 = new JPanel();
+               // JPanel panel1 = new JPanel();
                 expLabels = new JLabel[exptNames.size()];
+                
                 exptGroupRadioButtons = new JRadioButton[numGroups][exptNames.size()];
-                //groupARadioButtons = new JRadioButton[exptNames.size()];
-                //groupBRadioButtons = new JRadioButton[exptNames.size()];
                 notInGroupRadioButtons = new JRadioButton[exptNames.size()];
                 ButtonGroup chooseGroup[] = new ButtonGroup[exptNames.size()];
                 
@@ -1712,8 +1603,14 @@ public class SAMInitDialog extends AlgorithmDialog {
                 GridBagLayout gridbag2 = new GridBagLayout();
                 GridBagConstraints constraints = new GridBagConstraints();
                 this.setLayout(gridbag2);
-                panel1.setLayout(gridbag);
-                
+                //wwang fix 512 problem
+                numPanels = exptNames.size()/512 + 1;
+                JPanel [] panels = new JPanel[numPanels];
+                int currPanel = 0;
+                for(int i = 0; i < panels.length; i++) {
+                    panels[i] = new JPanel(gridbag);
+                }
+       
                 for (int i = 0; i < exptNames.size(); i++) {
                     String s1 = (String)(exptNames.get(i));
                     expLabels[i] = new JLabel(s1);
@@ -1722,207 +1619,69 @@ public class SAMInitDialog extends AlgorithmDialog {
                         exptGroupRadioButtons[j][i] = new JRadioButton("Group " + (j + 1) + "     ", j == 0? true: false);
                         chooseGroup[i].add(exptGroupRadioButtons[j][i]);
                     }
-                        /*
-                        groupARadioButtons[i] = new JRadioButton("Group A", true);
-                        chooseGroup[i].add(groupARadioButtons[i]);
-                        groupBRadioButtons[i] = new JRadioButton("Group B", false);
-                        chooseGroup[i].add(groupBRadioButtons[i]);
-                         */
+                    //set current panel
+                    currPanel = i / 512;
+                     
                     notInGroupRadioButtons[i] = new JRadioButton("Not in groups", false);
                     chooseGroup[i].add(notInGroupRadioButtons[i]);
-                    
-                /*
-                groupARadioButtons[i].addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent evt) {
-                        int[] groupCount = getGroupCount();
-                        if ((groupCount[0] < 2)|| (groupCount[1] < 2)) {
-                            pPanel.permsInfoLabel.setForeground(Color.red);
-                            pPanel.permsInfoLabel.setText("Group A and Group B must each contain more than one experiment");
-                            pPanel.useAllPermsButton.setEnabled(false);
-                        } else if ((groupCount[0] + groupCount[1]) > 20) {
-                            pPanel.permsInfoLabel.setForeground(Color.black);
-                            pPanel.permsInfoLabel.setText("There are too many possible permutations");
-                            pPanel.useAllPermsButton.setEnabled(false);
-                 
-                        } else {
-                            pPanel.permsInfoLabel.setForeground(Color.black);
-                            int numCombs = getNumCombs(groupCount[0] + groupCount[1], groupCount[0]);
-                            pPanel.permsInfoLabel.setText("There are " + numCombs + " permutations");
-                            pPanel.useAllPermsButton.setEnabled(true);
-                        }
-                    }
-                });
-                 
-                groupBRadioButtons[i].addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent evt) {
-                        int[] groupCount = getGroupCount();
-                        if ((groupCount[0] < 2)|| (groupCount[1] < 2)) {
-                            pPanel.permsInfoLabel.setForeground(Color.red);
-                            pPanel.permsInfoLabel.setText("Group A and Group B must each contain more than one experiment");
-                            pPanel.useAllPermsButton.setEnabled(false);
-                        } else if ((groupCount[0] + groupCount[1]) > 20) {
-                            pPanel.permsInfoLabel.setForeground(Color.black);
-                            pPanel.permsInfoLabel.setText("There are too many possible permutations");
-                            pPanel.useAllPermsButton.setEnabled(false);
-                 
-                        } else {
-                            pPanel.permsInfoLabel.setForeground(Color.black);
-                            int numCombs = getNumCombs(groupCount[0] + groupCount[1], groupCount[0]);
-                            pPanel.permsInfoLabel.setText("There are " + numCombs + " permutations");
-                            pPanel.useAllPermsButton.setEnabled(true);
-                        }
-                    }
-                });
-                 
-                    neitherGroupRadioButtons[i].addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent evt) {
-                        int[] groupCount = getGroupCount();
-                        if ((groupCount[0] < 2)|| (groupCount[1] < 2)) {
-                            pPanel.permsInfoLabel.setForeground(Color.red);
-                            pPanel.permsInfoLabel.setText("Group A and Group B must each contain more than one experiment");
-                            pPanel.useAllPermsButton.setEnabled(false);
-                        } else if ((groupCount[0] + groupCount[1]) > 20) {
-                            pPanel.permsInfoLabel.setForeground(Color.black);
-                            pPanel.permsInfoLabel.setText("There are too many possible permutations");
-                            pPanel.useAllPermsButton.setEnabled(false);
-                 
-                        } else {
-                            pPanel.permsInfoLabel.setForeground(Color.black);
-                            int numCombs = getNumCombs(groupCount[0] + groupCount[1], groupCount[0]);
-                            pPanel.permsInfoLabel.setText("There are " + numCombs + " permutations");
-                            pPanel.useAllPermsButton.setEnabled(true);
-                        }
-                    }
-                });
-                 */
-                    
-                    /*
-                    buildConstraints(constraints, 0, i, 1, 1, 100, 100);
-                    //constraints.fill = GridBagConstraints.BOTH;
-                    gridbag.setConstraints(expLabels[i], constraints);
-                    panel1.add(expLabels[i]);
-                     */
-                    
+ 
                     for (int j = 0; j < numGroups; j++) {
-                        buildConstraints(constraints, j, i, 1, 1, 100, 100);
+                        buildConstraints(constraints, j, i%512, 1, 1, 100, 100);
                         //constraints.fill = GridBagConstraints.BOTH;
                         gridbag.setConstraints(exptGroupRadioButtons[j][i], constraints);
-                        panel1.add(exptGroupRadioButtons[j][i]);
+                        panels[currPanel].add(exptGroupRadioButtons[j][i]);
                     }
-                        /*
-                        buildConstraints(constraints, 1, i, 1, 1, 100, 100);
-                        //constraints.fill = GridBagConstraints.BOTH;
-                        gridbag.setConstraints(groupARadioButtons[i], constraints);
-                        panel1.add(groupARadioButtons[i]);
-                         
-                        buildConstraints(constraints, 2, i, 1, 1, 100, 100);
-                        //constraints.fill = GridBagConstraints.BOTH;
-                        gridbag.setConstraints(groupBRadioButtons[i], constraints);
-                        panel1.add(groupBRadioButtons[i]);
-                         */
                     
-                    buildConstraints(constraints, (numGroups + 1), i, 1, 1, 100, 100);
+                    buildConstraints(constraints, (numGroups + 1), i%512, 1, 1, 100, 100);
                     //constraints.fill = GridBagConstraints.BOTH;
                     gridbag.setConstraints(notInGroupRadioButtons[i], constraints);
-                    panel1.add(notInGroupRadioButtons[i]);
-                    
-                    
-                    
+                    panels[currPanel].add(notInGroupRadioButtons[i]);
+ 
                 }
                 
                 int maxLabelWidth = 0;
                 
-                for (int i = 0; i < expLabels.length; i++) {
-                    if (expLabels[i].getPreferredSize().getWidth() > maxLabelWidth) {
-                        maxLabelWidth = (int)Math.ceil(expLabels[i].getPreferredSize().getWidth());
+                for (int j= 0; j < expLabels.length; j++) {
+                    if (expLabels[j].getPreferredSize().getWidth() > maxLabelWidth) {
+                        maxLabelWidth = (int)Math.ceil(expLabels[j].getPreferredSize().getWidth());
                     }
                 }
                 
-                JScrollPane scroll = new JScrollPane(panel1);
+                JPanel bigPanel = new JPanel(new GridBagLayout());
+                
+                for(int m = 0; m< numPanels; m++) {
+                    bigPanel.add(panels[m] ,new GridBagConstraints(0,m,1,1,1,1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+                }
+                JScrollPane scroll = new JScrollPane(bigPanel);
                 scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
                 scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
                 
-                
-                
-                JPanel exptNameHeaderPanel = new JPanel();
+                //add by wwang
+                JPanel [] exptNameHeaderPanels = new JPanel[this.numPanels];
                 GridBagLayout exptHeaderGridbag = new GridBagLayout();
-                //exptNameHeaderPanel.HEIGHT = panel1.getHeight();
-                //System.out.println("panel1.preferredSise().height = " + panel1.getPreferredSize().height);
-                exptNameHeaderPanel.setSize(50, panel1.getPreferredSize().height);
-                exptNameHeaderPanel.setPreferredSize(new Dimension(maxLabelWidth + 10, panel1.getPreferredSize().height));
-                exptNameHeaderPanel.setLayout(exptHeaderGridbag);
-                //scroll.getRowHeader().setLayout(exptHeaderGridbag);
                 
-                
-                /*
-                JViewport rowHeader = new JViewport();
-                rowHeader.setPreferredSize(new Dimension(50, panel1.getHeight()));
-                scroll.setRowHeader(rowHeader);
-                 
-                GridBagLayout rowHeaderGrid = new GridBagLayout();
-                rowHeader.setLayout(rowHeaderGrid);
-                 
-                for (int i = 0; i < expLabels.length; i++) {
-                    buildConstraints(constraints, 0, i, 1, 1, 100, 100);
-                    constraints.fill = GridBagConstraints.BOTH;
-                    rowHeaderGrid.setConstraints(expLabels[i], constraints);
-                    rowHeader.add(expLabels[i]);
+                for(int i = 0; i< exptNameHeaderPanels.length; i++) {
+                    exptNameHeaderPanels[i] = new JPanel();
+                    exptNameHeaderPanels[i].setSize(50, panels[i].getPreferredSize().height);
+                    exptNameHeaderPanels[i].setPreferredSize(new Dimension(maxLabelWidth + 10, panels[i].getPreferredSize().height));
+                    exptNameHeaderPanels[i].setLayout(exptHeaderGridbag);
                 }
-                 */
-                
-                
-                
-                //rowHeader.setLayout(rowHeaderGrid);
-                /*
-                JScrollPane rowHeaderScroll = new JScrollPane(exptNameHeaderPanel);
-                rowHeaderScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-                rowHeaderScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-                 */
-                
-                for (int i = 0; i < expLabels.length; i++) {
-                    buildConstraints(constraints, 0, i, 1, 1, 100, 100);
+ 
+                //need to possibly add to additional panels if number of exp. excedes 512
+                for (int m = 0; m < expLabels.length; m++) {
+                    currPanel = m/512;
+                    buildConstraints(constraints, 0, m%512, 1, 1, 100, 100);
                     constraints.fill = GridBagConstraints.BOTH;
-                    exptHeaderGridbag.setConstraints(expLabels[i], constraints);
-                    exptNameHeaderPanel.add(expLabels[i]);
+                    exptHeaderGridbag.setConstraints(expLabels[m], constraints);
+                    exptNameHeaderPanels[currPanel].add(expLabels[m]);
+                }
+
+                JPanel headerPanel = new JPanel(new GridBagLayout());
+                for(int k = 0; k < exptNameHeaderPanels.length; k++) {
+                    headerPanel.add(exptNameHeaderPanels[k], new GridBagConstraints(0,k,1,1,1,1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0)); 
                 }
                 
-                //exptNameHeaderPanel.setMinimumSize(new Dimension(50, panel1.getHeight()));
-                
-                /*
-                JViewport rowHeaderViewport = new JViewport();
-                //rowHeaderViewport.setViewSize(new Dimension(70, panel1.getPreferredSize().height));
-                //rowHeaderViewport.setPreferredSize(new Dimension(70, panel1.getPreferredSize().height));
-                rowHeaderViewport.setView(exptNameHeaderPanel);
-                 */
-                
-                //rowHeader.setPreferredSize(new Dimension(50, panel1.getHeight()));
-                //scroll.setRowHeader(rowHeader);
-                scroll.setRowHeaderView(exptNameHeaderPanel);
-                /*
-                JScrollBar exptHeaderScrollBar = new JScrollBar(JScrollBar.HORIZONTAL);
-                exptHeaderScrollBar.addAdjustmentListener(new AdjustmentListener() {
-                    public void adjustmentValueChanged(AdjustmentEvent e) {
-                    }
-                });
-                 
-                scroll.setCorner(JScrollPane.LOWER_LEFT_CORNER, exptHeaderScrollBar);
-                 */
-                
-                
-                /*
-                GridBagLayout rowHeaderGrid = new GridBagLayout();
-                rowHeader.setLayout(rowHeaderGrid);
-                buildConstraints(constraints, 0, 0, 1, 1, 100, 100);
-                constraints.fill = GridBagConstraints.BOTH;
-                rowHeaderGrid.setConstraints(exptNameHeaderPanel, constraints);
-                rowHeader.add(exptNameHeaderPanel);
-                 */
-                
-                //scroll.setRowHeaderView(exptNameHeaderPanel);
-                //scroll.getRowHeader().setSize(50, panel1.getHeight());
-                //scroll.getRowHeader().setMinimumSize(new Dimension(50, panel1.getHeight()));
-                
-                
+                scroll.setRowHeaderView(headerPanel);
                 
                 buildConstraints(constraints, 0, 0, 1, 1, 100, 90);
                 constraints.fill = GridBagConstraints.BOTH;
