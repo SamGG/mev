@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayMenubar.java,v $
- * $Revision: 1.9 $
- * $Date: 2005-10-31 18:57:15 $
- * $Author: caliente $
+ * $Revision: 1.10 $
+ * $Date: 2005-11-01 16:20:17 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -106,17 +106,17 @@ public class MultipleArrayMenubar extends JMenuBar {
         sampMenu.add(createJMenuItem("Digitalize Samples/Columns", ActionManager.DIGITAL_EXPERIMENTS_CMD, listener));
         adjustMenu.add(sampMenu);
         adjustMenu.addSeparator();
-        
-        //vu 7.22.05
-        JMenu repMenu = new JMenu( "Replicate Analysis" );
+//      vu 7.22.05
+	    JMenu repMenu = new JMenu( "Replicate Analysis" );
         repMenu.add( createJMenuItem( "Rama Documentation", ActionManager.RAMA_DOC_CMD, listener ) );
-        repMenu.add( createJMenuItem( "Rama", ActionManager.RAMA_CMD, listener ) );
-        adjustMenu.add( repMenu );
-        adjustMenu.addSeparator();
+	    repMenu.add( createJMenuItem( "Rama", ActionManager.RAMA_CMD, listener ) );
+	    adjustMenu.add( repMenu );
+	    adjustMenu.addSeparator();
         
         JMenu logMenu = new JMenu("Log Transformations");
         logMenu.add(createJMenuItem("Log2 Transform", ActionManager.LOG2_TRANSFORM_CMD, listener));
         logMenu.add(createJMenuItem("Log10 to Log2", ActionManager.LOG10_TO_LOG2_CMD, listener));
+        logMenu.add(createJMenuItem("Log2 to Log10", ActionManager.LOG2_TO_LOG10_CMD, listener));
         adjustMenu.add(logMenu);
         adjustMenu.addSeparator();
         
@@ -124,6 +124,10 @@ public class MultipleArrayMenubar extends JMenuBar {
         filterMenu.add(createJMenuItem("Low Intensity Cutoff Filter", ActionManager.USE_LOWER_CUTOFFS_CMD, listener));
         filterMenu.addSeparator();
         filterMenu.add(createJMenuItem("Percentage Cutoff Filter", ActionManager.USE_PERCENTAGE_CUTOFFS_CMD, listener));
+        filterMenu.addSeparator();
+        filterMenu.add(createJMenuItem("Bioconductor detection call Noise Filter", ActionManager.USE_PRESENT_CALL_CMD, listener));
+        filterMenu.addSeparator();
+        filterMenu.add(createJMenuItem("Affymetrix detection call Noise Filter", ActionManager.USE_GCOS_PERCENTAGE_CUTOFF_CMD, listener));
         filterMenu.addSeparator();
         filterMenu.add(createJMenuItem("Variance Filter", ActionManager.USE_VARIANCE_FILTER_CMD, listener));
         adjustMenu.add(filterMenu);        
@@ -829,6 +833,7 @@ public class MultipleArrayMenubar extends JMenuBar {
      */
     void setMaxRatioScale(float scale) {
         displayMenu.maxRatioScale = scale;
+    	//displayMenu.maxRatioScale=200;
     }
     
     /**
