@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: ActionManager.java,v $
- * $Revision: 1.10 $
- * $Date: 2005-11-01 18:52:38 $
- * $Author: caliente $
+ * $Revision: 1.11 $
+ * $Date: 2005-11-02 13:49:05 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.action;
@@ -322,14 +322,17 @@ public class ActionManager implements java.io.Serializable {
     public static final String MEDIAN_CENTER_EXPERIMENTS_CMD = "median-center-experiments-cmd";
     public static final String DIGITAL_EXPERIMENTS_CMD = "digital-experiments-cmd";
     public static final String LOG10_TO_LOG2_CMD = "log10-to-log2-cmd";
+    public static final String LOG2_TO_LOG10_CMD = "log2-to-log10-cmd";
     public static final String USE_LOWER_CUTOFFS_CMD = "use-lower-cutoffs-cmd";
+    //add for mas5
+    public static final String USE_PRESENT_CALL_CMD = "use-present-call-cmd";
+    //add for GCOS
+    public static final String USE_GCOS_PERCENTAGE_CUTOFF_CMD = "use-gcos-percentage-cutoff-cmd";
     public static final String USE_PERCENTAGE_CUTOFFS_CMD = "use-percentage-cutoffs-cmd";
     public static final String USE_VARIANCE_FILTER_CMD = "use-variance-filter-cmd";
     public static final String ADJUST_INTENSITIES_0_CMD = "adjust-intensities-0-cmd";
     //vu 7.22.05
-    public static final String RAMA_CMD = "rama-cmd";
-    public static final String RAMA_DOC_CMD = "rama-doc-cmd";
-    
+	public static final String RAMA_CMD = "rama-cmd";
     // pcahan
     public static final String DIVIDE_GENES_MEDIAN_CMD = "divide-genes-median-cmd";
     public static final String UNDIVIDE_GENES_MEDIAN_CMD = "undivide-genes-median-cmd";
