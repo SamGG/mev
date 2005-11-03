@@ -1,0 +1,1247 @@
+<project name="mev" default="build-all" basedir=".">
+    
+    <description>
+       
+    </description>
+
+    <!-- Directory Properties
+    	   These properties specify key directories within the source
+         and destination areas.
+    -->
+    <property name="dest.dir" location="${basedir}/temp"/>
+    <property name="home.dir" location="${basedir}/../.."/>
+    <property name="source.dir" location="${basedir}/../source"/>
+    <property name="tigr.dir" location="${source.dir}/org/tigr"/>
+    <property name="mev.dir" location="${tigr.dir}/microarray/mev"/>
+    <property name="cluster.dir" location="${mev.dir}/cluster"/>
+    <property name="alg.impl.dir" location="${cluster.dir}/algorithm/impl"/>
+    <property name="gui.impl.dir" location="${cluster.dir}/gui/impl"/>
+    <property name="lib.dir" location="${home.dir}/lib"/>
+
+
+    <!-- This path element contains jar files to support module compilation -->
+    <path id="module.build.class.path">
+        <pathelement location="${lib.dir}/mev-util.jar"/>
+        <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+        <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+        <pathelement location="${lib.dir}/mev-base.jar"/>
+    </path>
+
+
+    <!-- Module Selection Properties	   
+	   
+	   *Modules that are set (not commented out) have associated targets 
+	   that will permit module compilation
+
+	   *module target execution includes compilation and entry of 
+	   module specfic key-value pairs into the factory.properties files        
+
+	   *these flags control gui and algorithm side compilation, however,
+	   a separate target controls the compilation of gui and algorithm compilation.
+
+           **See the "algorithm-modules" target below for important information about 
+           specification of algorithms to build and the order.
+    -->
+    <property name="HCL" value="y"/>
+    <property name="ST" value="y"/>
+    <property name="SOTA" value="y"/>
+    <property name="RN" value="y"/>
+    <property name="KMC" value="y"/>
+    <property name="KMCS" value="y"/>
+    <property name="CAST" value="y"/>
+    <property name="QTC" value="y"/>
+    <property name="GSH" value="y"/>
+    <property name="SOM" value="y"/>
+    <property name="FOM" value="y"/>
+    <property name="PTM" value="y"/>
+    <property name="TTEST" value="y"/>
+    <property name="SAM" value="y"/>
+    <property name="OWA" value="y"/>
+    <property name="TFA" value="y"/>
+    <property name="SVM" value="y"/>
+    <property name="KNNC" value="y"/>
+    <property name="DAM" value="n"/>
+    <property name="GDM" value="y"/>
+    <property name="PCA" value="y"/>
+    <property name="COA" value="y"/>
+    <property name="TRN" value="y"/>
+    <property name="EASE" value="y"/>
+
+    <!-- Property Files, These properties identify the properties files to be constructed during module compilation -->
+    <property name="gui.properties.file" value="${dest.dir}/org/tigr/microarray/mev/cluster/gui/impl/factory.properties"/>
+    <property name="alg.properties.file" value="${dest.dir}/org/tigr/microarray/mev/cluster/algorithm/impl/factory.properties"/>
+
+    <!-- TARGET ============================================		
+         	Target Name: algorithm-modules
+		Depends: ... build-base ... <algorithm module targets>
+
+         	Target Description: 
+					
+                  This target triggers building of the base mev classes and the algorithm
+                  module classes on both the gui.impl and the algorithm.impl areas.
+
+                  Note that the depends attribute of the target specifies the algorithms to
+                  be included in the distribution.  The targets will be compiled in this order and
+                  as a result the properties files will list the implementation names (gui.names) in
+                  this order.  This order dictates the order in which the module buttons will appear
+                  in the MultipleArrayViewer from left to right.
+
+                  In order for a module to be built it must have a property set above and must
+                  have it's target within the list in the 'depends' attribute below. 
+    -->   
+    <target name="algorithm-modules" depends="build-base,HCL,ST,SOTA,RN,KMC,KMCS,CAST,QTC,GSH,SOM,FOM,PTM,TTEST,SAM,OWA,TFA,SVM,KNNC,DAM,GDM,PCA,COA,TRN,EASE">
+    </target>
+
+
+    <!-- TARGET ============================================		
+         	Target Name: modules only
+		Depends: <algorithm module targets>
+
+         	Target Description: 
+		  This target triggers building of the algorithm module classes on both the gui.impl
+                  and the algorithm.impl areas.
+
+                  Note that the depends attribute of the target specifies the algorithms to
+                  be included in the distribution.  The targets will be compiled in this order and
+                  as a result the properties files will list the implementation names (gui.names) in
+                  this order.  This order dictates the order in which the module buttons will appear
+                  in the MultipleArrayViewer from left to right.
+
+                  In order for a module to be built it must have a property set above and must
+                  have it's target within the list in the 'depends' attribute below. 
+    -->   
+    <target name="modules-only" depends="HCL,ST,SOTA,RN,KMC,KMCS,CAST,QTC,GSH,SOM,FOM,PTM,TTEST,SAM,OWA,TFA,SVM,KNNC,DAM,GDM,PCA,COA,TRN,EASE">
+    </target>
+
+
+
+
+
+
+    <!-- ====================================================================
+	   
+         Utilities, Support, and Primary MeV Class Construction Targets
+
+         These targets produce mev-util.jar, mev-algorithm-support.jar, mev-gui-support.jar
+         and mev-base.jar
+
+         ==================================================================== -->	
+
+
+    <!-- TARGET ============================================		
+         	Target Name: init
+		Depends: none
+         	Target Description: makes the temp directory as destination for build
+    -->
+    <target name="init">
+        <tstamp/>
+        <delete dir="${dest.dir}"/>
+        <mkdir dir="${dest.dir}"/>
+    </target>
+
+
+
+    <!-- TARGET ============================================		
+         	Target Name: util
+		Depends: init
+         	Target Description: Compiles org/tigr/util and packages below
+         	Compilation Summary:
+				org/tigr/util
+				org/tigr/util/awt
+				org/tigr/util/swing
+    -->
+    <target name="util" depends="init">
+        <javac srcdir="${tigr.dir}/util" destdir="${dest.dir}">
+	  	<classpath>
+                <pathelement location="${lib.dir}/jai_core.jar"/>
+                <pathelement location="${lib.dir}/jai_codec.jar"/>
+                <pathelement location="${lib.dir}/images.jar"/>
+            </classpath>
+        </javac>
+    </target>
+
+
+
+    <!-- TARGET ============================================		
+         	Target Name: graph
+		Depends: util
+         	Target Description: Compiles graph package.
+         	Compilation Summary: org/tigr/graph
+    -->
+    <target name="graph" depends="util">
+        <javac srcdir="${tigr.dir}/graph" destdir="${dest.dir}">
+	  	<classpath>
+                <pathelement location="${lib.dir}/jai_core.jar"/>
+                <pathelement location="${lib.dir}/jai_codec.jar"/>
+                <pathelement location="${lib.dir}/images.jar"/>
+            </classpath>
+        </javac>
+    </target>
+
+
+
+    <!-- TARGET ============================================		
+         	Target Name: jar-util
+		Depends: graph
+         	Target Description: jars org/tigr/util and sub-directories
+         	Jar Contents: 
+				org/tigr/graph
+				org/tigr/util
+				org/tigr/util/awt
+				org/tigr/util/swing
+    -->
+    <target name="jar-util" depends="graph">
+        <jar destfile="${lib.dir}/mev-util.jar"
+             basedir="${dest.dir}"
+	       includes="org/tigr/util/**, org/tigr/graph/**"
+	
+        />        
+    </target>
+
+
+
+
+    <!-- TARGET ============================================		
+         	Target Name: algorithm-support
+		Depends: jar-util
+         	Target Description: Compiles non-module specific support on algorithm side
+         	Compilation Summary:
+				mev/cluster
+				mev/cluster/algorithm
+				mev/cluster/algorithm/impl (non-module classes)
+				mev/cluster/algorithm/impl/util
+    -->
+    <target name="algorithm-support" depends="jar-util">
+        <javac sourcepath="" srcdir="${cluster.dir}" destdir="${dest.dir}">
+            <include name="*.java"/>            
+        </javac>
+        <javac sourcepath="" srcdir="${cluster.dir}/algorithm" destdir="${dest.dir}">
+            <include name="*.java"/>            
+        </javac>
+        <javac sourcepath="" srcdir="${cluster.dir}/algorithm/impl" destdir="${dest.dir}">
+            <include name="ExperimentUtil.java"/>            
+            <include name="AlgorithmFactoryImpl.java"/>
+            <include name="util/*.java"/>	            
+        </javac>
+    </target>
+
+
+
+    <!-- TARGET ============================================		
+         	Target Name: jar-algorithm-support
+		Depends: algorithm-support
+         	Target Description: jars algorithm support classes
+    -->
+    <target name="jar-algorithm-support" depends="algorithm-support">
+        <jar destfile="${lib.dir}/mev-algorithm-support.jar"
+             basedir="${dest.dir}"
+	       includes="org/tigr/microarray/mev/cluster/*.class,
+                       org/tigr/microarray/mev/cluster/algorithm/*.class,
+	                 org/tigr/microarray/mev/cluster/algorithm/impl/*.class,            
+	                 org/tigr/microarray/mev/cluster/algorithm/impl/util/*.class"            
+        /> 
+    </target>
+    
+   
+
+
+    <!-- TARGET ============================================		
+         	Target Name: base
+		Depends: jar-algorithm-support
+         	Target Description: This is the main target for compilation of non-module code.
+         	Compilation Summary: 
+					tigr/remote
+                  		microarray/file/**
+		      		microarray/util/**
+					mev
+					mev/action
+					mev/file/**
+					mev/script/**
+    -->
+    <target name="base" depends="jar-algorithm-support">
+        <javac srcdir="${tigr.dir}/microarray:${tigr.dir}" destdir="${dest.dir}"
+            includes="file/**, remote/**, util/**, mev/*.java, mev/action/*.java, mev/file/**, mev/script/**,
+                      mev/cluster/gui/impl/*.java, mev/cluster/gui/impl/dialogs/**, mev/cluster/gui/impl/util/*.java, mev/cluster/gui/*.java,
+                      mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**">
+            <classpath>
+                <pathelement location="${lib.dir}/normalization.jar"/>	
+                <pathelement location="${lib.dir}/jai_codec.jar"/>	
+                <pathelement location="${lib.dir}/jama.jar"/>	
+                <pathelement location="${lib.dir}/JSciCore.jar"/>	
+
+                <pathelement location="${lib.dir}/jai_core.jar"/>	
+                <pathelement location="${lib.dir}/vecmath.jar"/>	
+
+                <pathelement location="${lib.dir}/j3dcore.jar"/>	
+                <pathelement location="${lib.dir}/j3dutils.jar"/>	
+
+                <pathelement location="${lib.dir}/xerces.jar"/>
+                <pathelement location="${lib.dir}/base64.jar"/>
+                <pathelement location="${lib.dir}/HTTPClient.jar"/>
+                <pathelement location="${lib.dir}/servlet.jar"/>
+                <pathelement location="${tigr.dir}/microarray/file"/>
+            </classpath>	    
+        </javac>
+    </target>
+
+
+
+
+    <!-- TARGET ============================================		
+         	Target Name: jar-gui-support
+		Depends: base
+         	Target Description: jars mev base classes
+		Note:	Calling this target will produce the following jars:
+			mev-util.jar, mev-algorithm-support.jar,
+			mev-gui-support.jar, mev-base.jar
+    -->
+    <target name="jar-gui-support" depends="base">
+        
+        <!-- make the images directory within the destination area -->
+        <mkdir dir="${dest.dir}/org/tigr/microarray/mev/cluster/gui/impl/images"/>       
+        
+        <!-- copy images (gifs) to images directory for inclusion in the jar -->        
+        <copy todir="${dest.dir}/org/tigr/microarray/mev/cluster/gui/impl/images">
+            <fileset dir="${gui.impl.dir}/images"/>
+        </copy>
+
+
+        <jar destfile="${lib.dir}/mev-gui-support.jar"
+            basedir="${dest.dir}"
+	      includes="org/tigr/microarray/mev/cluster/gui/*.class,                        
+  		        org/tigr/microarray/mev/cluster/gui/helpers/*.class,
+ 		        org/tigr/microarray/mev/cluster/gui/helpers/ktree/*.class"                    
+        />
+    </target>
+
+
+
+    <!-- TARGET ============================================
+         	Target Name: jar-images
+		Depends: None
+         	Target Description: jars org/tigr/images for gui support
+                                creates images.jar
+    -->
+    <target name="jar-images">
+        
+        <!-- make the images directory within the destination area -->
+        <mkdir dir="${dest.dir}/org/tigr/images"/>       
+        
+        <!-- copy images (gifs) to images directory for inclusion in the jar -->        
+        <copy todir="${dest.dir}/org/tigr/images">
+            <fileset dir="${tigr.dir}/images"/>
+        </copy>
+
+        <jar destfile="${lib.dir}/images.jar"
+            basedir="${dest.dir}"
+	      includes="org/tigr/images/*"
+        />
+    </target>
+
+
+
+    <!-- TARGET ============================================
+         	Target Name: jar-dialog-help
+		Depends: None
+         	Target Description: creates dialogHelp.jar from the html pages
+		within .../gui/impl/dialogs/dialogHelpUtil/dialogHelpPages
+    -->
+    <target name="jar-dialog-help">
+        
+        <!-- make the images directory within the destination area -->
+        <mkdir dir="${dest.dir}/org/tigr/microarray/mev/cluster/gui/impl/dialogs/dialogHelpUtil/dialogHelpPages"/>       
+        
+        <!-- copy images (gifs) to images directory for inclusion in the jar -->        
+        <copy todir="${dest.dir}/org/tigr/microarray/mev/cluster/gui/impl/dialogs/dialogHelpUtil/dialogHelpPages">
+            <fileset dir="${gui.impl.dir}/dialogs/dialogHelpUtil/dialogHelpPages"/>
+        </copy>
+
+        <jar destfile="${lib.dir}/dialogHelp.jar"
+             basedir="${dest.dir}"
+	     includes="org/tigr/microarray/mev/cluster/gui/impl/dialogs/dialogHelpUtil/dialogHelpPages/*"
+        />
+    </target>
+
+
+
+    <!-- TARGET ============================================		
+         	Target Name: build-base
+		Depends: jar-gui-support, jar-images, jar-dialog-help
+         	Target Description: jars mev base classes
+		Note:	Calling this target will produce the following jars:
+			mev-util.jar, mev-algorithm-support.jar,
+			mev-gui-support.jar, mev-base.jar
+    -->
+    <target name="build-base" depends="jar-gui-support, jar-images, jar-dialog-help">
+        <jar destfile="${lib.dir}/mev-base.jar"
+             basedir="${dest.dir}"
+	       includes= "org/tigr/remote/**,
+                  	org/tigr/microarray/file/*.class,
+		      	org/tigr/microarray/util/**,
+				org/tigr/microarray/mev/*.class,
+				org/tigr/microarray/mev/action/*.class,
+				org/tigr/microarray/mev/file/**,
+				org/tigr/microarray/mev/script/**,
+			      org/tigr/microarray/mev/cluster/clusterUtil/**"
+        />
+    </target>
+
+
+
+
+
+    <!-- ====================================================================
+	   
+         Module Targets
+
+         These targets produce mev-algorithm-impl.jar and mev-gui-impl.jar
+         Each algorithm's target is dependent on the corresponding GUI target and
+	   so for each 'algorithm' target a corresponding 'gui' target is executed.
+
+         Each module target's execution is triggered by the 'algorithm-modules' target
+         near the top of this script below the properties.  Each of these targets
+         also is executed on the condition that the corresponding module property
+         is set module properties list, also at the top of this script.
+
+         ==================================================================== -->
+
+
+    <target name="HCL" depends="HCL-GUI" if="HCL">
+        <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+		<classpath refid="module.build.class.path"/>
+            <include name="HCL.java"/>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+		<entry key="HCL" value="org.tigr.microarray.mev.cluster.algorithm.impl.HCL"/>
+        </propertyfile>
+    </target>
+
+    <target name="HCL-GUI">
+        <javac srcdir="${gui.impl.dir}/hcl" destdir="${dest.dir}">
+		<classpath refid="module.build.class.path"/>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="HCL:" operation="+"/>            
+            <entry key="HCL.name" value="HCL"/>
+            <entry key="HCL.class" value="org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI"/>
+            <entry key="HCL.smallIcon" value="analysis16.gif"/>
+            <entry key="HCL.largeIcon" value="hcl_button.gif"/>
+            <entry key="HCL.tooltip" value="Hierarchical Clustering"/>
+        </propertyfile>
+    </target>
+
+
+
+    <target name="ST" depends="ST-GUI" if="ST">
+        <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+		<classpath refid="module.build.class.path"/>
+            <include name="NodeSupports.java"/>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="ST" value="org.tigr.microarray.mev.cluster.algorithm.impl.NodeSupports"/>
+        </propertyfile>
+    </target>
+
+    <target name="ST-GUI">
+        <javac srcdir="${gui.impl.dir}/st" destdir="${dest.dir}">
+		<classpath refid="module.build.class.path"/>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="ST:" operation="+"/>
+            <entry key="ST.name" value="ST"/>
+            <entry key="ST.class" value="org.tigr.microarray.mev.cluster.gui.impl.st.STGUI"/>
+            <entry key="ST.smallIcon" value="analysis16.gif"/>
+            <entry key="ST.largeIcon" value="st_button.gif"/>
+            <entry key="ST.tooltip" value="HCL Support Trees"/>
+        </propertyfile>
+    </target>
+
+
+
+    <target name="SOTA" depends="SOTA-GUI" if="SOTA">
+        <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+		<classpath refid="module.build.class.path"/>
+            <include name="SOTACell.java"/>
+            <include name="SOTA.java"/>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="SOTA" value="org.tigr.microarray.mev.cluster.algorithm.impl.SOTA"/>
+        </propertyfile>
+    </target>
+
+    <target name="SOTA-GUI" if="SOTA">
+        <javac srcdir="${gui.impl.dir}/sota" destdir="${dest.dir}">
+		<classpath refid="module.build.class.path"/>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="SOTA:" operation="+"/>            
+            <entry key="SOTA.name" value="SOTA"/>
+            <entry key="SOTA.class" value="org.tigr.microarray.mev.cluster.gui.impl.sota.SOTAGUI"/>
+            <entry key="SOTA.smallIcon" value="analysis16.gif"/>
+            <entry key="SOTA.largeIcon" value="sota_button.gif"/>
+            <entry key="SOTA.tooltip" value="Self Organizing Tree Algorithm"/>
+        </propertyfile>
+    </target>
+
+
+
+    <target name="RN" depends="RN-GUI" if="RN">
+        <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+		<classpath refid="module.build.class.path"/>
+            <include name="RelNetComparator.java"/>
+            <include name="PermutationTest.java"/>
+            <include name="RN.java"/>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="RN" value="org.tigr.microarray.mev.cluster.algorithm.impl.RN"/>
+        </propertyfile>
+    </target>
+
+    <target name="RN-GUI">
+        <javac srcdir="${gui.impl.dir}/rn" destdir="${dest.dir}">
+		<classpath refid="module.build.class.path"/>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="RN:" operation="+"/>            
+            <entry key="RN.name" value="RN"/>
+            <entry key="RN.class" value="org.tigr.microarray.mev.cluster.gui.impl.rn.RNGUI"/>
+            <entry key="RN.smallIcon" value="analysis16.gif"/>
+            <entry key="RN.largeIcon" value="rn_button.gif"/>
+            <entry key="RN.tooltip" value="Relevance Networks"/>
+        </propertyfile>
+    </target>
+
+
+
+    <target name="KMC" depends="KMC-GUI" if="KMC">
+        <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+		<classpath refid="module.build.class.path"/>
+            <include name="KMC.java"/>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="KMC" value="org.tigr.microarray.mev.cluster.algorithm.impl.KMC"/>
+        </propertyfile>
+    </target>
+
+    <target name="KMC-GUI">
+        <javac srcdir="${gui.impl.dir}/kmc" destdir="${dest.dir}">
+		<classpath refid="module.build.class.path"/>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="KMC:" operation="+"/>
+            <entry key="KMC.name" value="KMC"/>
+            <entry key="KMC.class" value="org.tigr.microarray.mev.cluster.gui.impl.kmc.KMCGUI"/>
+            <entry key="KMC.smallIcon" value="analysis16.gif"/>
+            <entry key="KMC.largeIcon" value="kmc_button.gif"/>
+            <entry key="KMC.tooltip" value="k-Means/Medians Clustering"/>
+        </propertyfile>
+    </target>
+
+
+
+    <target name="KMCS" depends="KMCS-GUI" if="KMCS">
+        <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+		<classpath refid="module.build.class.path"/>
+            <include name="KMCSupport.java"/>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="KMCS" value="org.tigr.microarray.mev.cluster.algorithm.impl.KMCSupport"/>
+        </propertyfile>
+    </target>
+
+    <target name="KMCS-GUI">
+        <javac srcdir="${gui.impl.dir}/kmcs" destdir="${dest.dir}">
+		<classpath refid="module.build.class.path"/>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="KMCS:" operation="+"/>
+            <entry key="KMCS.name" value="KMS"/>
+            <entry key="KMCS.class" value="org.tigr.microarray.mev.cluster.gui.impl.kmcs.KMCSuppGUI"/>
+            <entry key="KMCS.smallIcon" value="analysis16.gif"/>
+            <entry key="KMCS.largeIcon" value="kms_button.gif"/>
+            <entry key="KMCS.tooltip" value="KMC Support"/>
+        </propertyfile>
+    </target>
+
+
+
+    <target name="CAST" depends="CAST-GUI" if="CAST">
+        <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+		<classpath refid="module.build.class.path"/>
+            <include name="CastClust.java"/>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="CAST" value="org.tigr.microarray.mev.cluster.algorithm.impl.CastClust"/>
+        </propertyfile>
+    </target>
+
+    <target name="CAST-GUI">
+        <javac srcdir="${gui.impl.dir}/cast" destdir="${dest.dir}">
+		<classpath refid="module.build.class.path"/>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="CAST:" operation="+"/>
+            <entry key="CAST.name" value="CAST"/>
+            <entry key="CAST.class" value="org.tigr.microarray.mev.cluster.gui.impl.cast.CASTGUI"/>
+            <entry key="CAST.smallIcon" value="analysis16.gif"/>
+            <entry key="CAST.largeIcon" value="cast_button.gif"/>
+            <entry key="CAST.tooltip" value="Cluster Affinity Search Technique"/>
+        </propertyfile>
+    </target>
+
+
+
+    <target name="QTC" depends="QTC-GUI" if="QTC">
+        <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+		<classpath refid="module.build.class.path"/>
+            <include name="QTC.java"/>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="QTC" value="org.tigr.microarray.mev.cluster.algorithm.impl.QTC"/>
+        </propertyfile>
+    </target>
+
+    <target name="QTC-GUI">
+        <javac srcdir="${gui.impl.dir}/qtc" destdir="${dest.dir}">
+		<classpath refid="module.build.class.path"/>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="QTC:" operation="+"/>
+            <entry key="QTC.name" value="QTC"/>
+            <entry key="QTC.class" value="org.tigr.microarray.mev.cluster.gui.impl.qtc.QTCGUI"/>
+            <entry key="QTC.smallIcon" value="analysis16.gif"/>
+            <entry key="QTC.largeIcon" value="qtc_button.gif"/>
+            <entry key="QTC.tooltip" value="QT Cluster"/>
+        </propertyfile>
+    </target>
+
+
+
+    <target name="GSH" depends="GSH-GUI" if="GSH">
+        <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+            <include name="GSH.java"/>
+            <classpath>
+                <pathelement location="${lib.dir}/jama.jar"/>
+
+                <!-- jars to support module compilation -->
+                <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+                <pathelement location="${lib.dir}/mev-base.jar"/>            
+            </classpath>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="GSH" value="org.tigr.microarray.mev.cluster.algorithm.impl.GSH"/>
+        </propertyfile>
+    </target>
+
+    <target name="GSH-GUI">
+        <javac srcdir="${gui.impl.dir}/gsh" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="GSH:" operation="+"/>
+            <entry key="GSH.name" value="GSH"/>
+            <entry key="GSH.class" value="org.tigr.microarray.mev.cluster.gui.impl.gsh.GSHGUI"/>
+            <entry key="GSH.smallIcon" value="analysis16.gif"/>
+            <entry key="GSH.largeIcon" value="gsh_button.gif"/>
+            <entry key="GSH.tooltip" value="Gene Shaving"/>
+        </propertyfile>
+    </target>
+
+
+
+    <target name="SOM" depends="SOM-GUI" if="SOM">
+        <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+            <include name="SOMMatrix.java"/>
+            <include name="SOM.java"/>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="SOM" value="org.tigr.microarray.mev.cluster.algorithm.impl.SOM"/>
+        </propertyfile>
+    </target>
+
+    <target name="SOM-GUI">
+        <javac srcdir="${gui.impl.dir}/som" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="SOM:" operation="+"/>
+            <entry key="SOM.name" value="SOM"/>
+            <entry key="SOM.class" value="org.tigr.microarray.mev.cluster.gui.impl.som.SOMGUI"/>
+            <entry key="SOM.smallIcon" value="analysis16.gif"/>
+            <entry key="SOM.largeIcon" value="som_button.gif"/>
+            <entry key="SOM.tooltip" value="Self Organizing Map"/>
+        </propertyfile>
+    </target>
+
+
+
+    <target name="FOM" depends="FOM-GUI" if="FOM">
+        <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+            <include name="FOM.java"/>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="FOM" value="org.tigr.microarray.mev.cluster.algorithm.impl.FOM"/>
+        </propertyfile>
+    </target>
+
+    <target name="FOM-GUI">
+        <javac srcdir="${gui.impl.dir}/fom" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="FOM:" operation="+"/>
+            <entry key="FOM.name" value="FOM"/>
+            <entry key="FOM.class" value="org.tigr.microarray.mev.cluster.gui.impl.fom.FOMGUI"/>
+            <entry key="FOM.smallIcon" value="analysis16.gif"/>
+            <entry key="FOM.largeIcon" value="fom_button.gif"/>
+            <entry key="FOM.tooltip" value="Figure of Merit"/>
+        </propertyfile>
+    </target>
+
+
+    <target name="PTM" depends="PTM-GUI" if="PTM">
+        <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+            <classpath> 
+	          <pathelement location="${lib.dir}/JSciCore.jar"/>
+
+                <!-- jars to support module compilation -->
+                <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+                <pathelement location="${lib.dir}/mev-base.jar"/> 
+            </classpath>
+            <include name="PavlidisTemplateMatching.java"/>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="PTM" value="org.tigr.microarray.mev.cluster.algorithm.impl.PavlidisTemplateMatching"/>
+        </propertyfile>
+    </target>
+
+    <target name="PTM-GUI">
+        <javac srcdir="${gui.impl.dir}/ptm" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="PTM:" operation="+"/>
+            <entry key="PTM.name" value="PTM"/>
+            <entry key="PTM.class" value="org.tigr.microarray.mev.cluster.gui.impl.ptm.PTMGUI"/>
+            <entry key="PTM.smallIcon" value="analysis16.gif"/>
+            <entry key="PTM.largeIcon" value="ptm_button.gif"/>
+            <entry key="PTM.tooltip" value="Pavlidis Template Matching"/>
+        </propertyfile>
+    </target>
+
+
+
+    <target name="TTEST" depends="TTEST-GUI" if="TTEST">
+        <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+            <include name="Ttest.java"/>
+            <classpath>
+                <pathelement location="${lib.dir}/JSciCore.jar"/>
+
+                <!-- jars to support module compilation -->
+                <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+                <pathelement location="${lib.dir}/mev-base.jar"/>            
+            </classpath>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="TTEST" value="org.tigr.microarray.mev.cluster.algorithm.impl.Ttest"/>
+        </propertyfile>
+    </target>
+
+    <target name="TTEST-GUI">
+        <javac srcdir="${gui.impl.dir}/ttest" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="TTEST:" operation="+"/>
+            <entry key="TTEST.name" value="TTEST"/>
+            <entry key="TTEST.class" value="org.tigr.microarray.mev.cluster.gui.impl.ttest.TtestGUI"/>
+            <entry key="TTEST.smallIcon" value="analysis16.gif"/>
+            <entry key="TTEST.largeIcon" value="ttest_button.gif"/>
+            <entry key="TTEST.tooltip" value="t Tests"/>
+        </propertyfile>
+    </target>
+
+
+
+    <target name="SAM" depends="SAM-GUI" if="SAM">
+        <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+            <include name="SAM.java"/>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="SAM" value="org.tigr.microarray.mev.cluster.algorithm.impl.SAM"/>
+        </propertyfile>
+    </target>
+
+    <target name="SAM-GUI">
+        <javac srcdir="${gui.impl.dir}/sam" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="SAM:" operation="+"/>
+            <entry key="SAM.name" value="SAM"/>
+            <entry key="SAM.class" value="org.tigr.microarray.mev.cluster.gui.impl.sam.SAMGUI"/>
+            <entry key="SAM.smallIcon" value="analysis16.gif"/>
+            <entry key="SAM.largeIcon" value="sam_button.gif"/>
+            <entry key="SAM.tooltip" value="Significance Analysis for Microarrays"/>
+        </propertyfile>
+    </target>
+
+
+
+    <target name="OWA" depends="OWA-GUI" if="OWA">
+        <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+            <include name="OneWayANOVA.java"/>
+            <classpath>
+                <pathelement location="${lib.dir}/JSciCore.jar"/>
+
+                <!-- jars to support module compilation -->
+                <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+                <pathelement location="${lib.dir}/mev-base.jar"/>            
+            </classpath>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="OWA" value="org.tigr.microarray.mev.cluster.algorithm.impl.OneWayANOVA"/>
+        </propertyfile>
+    </target>
+
+    <target name="OWA-GUI">
+        <javac srcdir="${gui.impl.dir}/owa" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="OWA:" operation="+"/>
+            <entry key="OWA.name" value="ANOVA"/>
+            <entry key="OWA.class" value="org.tigr.microarray.mev.cluster.gui.impl.owa.OWAGUI"/>
+            <entry key="OWA.smallIcon" value="analysis16.gif"/>
+            <entry key="OWA.largeIcon" value="owa_button.gif"/>
+            <entry key="OWA.tooltip" value="One-way ANOVA"/>
+        </propertyfile>
+    </target>
+
+
+
+    <target name="TFA" depends="TFA-GUI" if="TFA">
+        <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+            <include name="TFA.java"/>
+            <classpath>
+                <pathelement location="${lib.dir}/JSciCore.jar"/>
+
+                <!-- jars to support module compilation -->
+                <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+                <pathelement location="${lib.dir}/mev-base.jar"/>            
+            </classpath>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="TFA" value="org.tigr.microarray.mev.cluster.algorithm.impl.TFA"/>
+        </propertyfile>
+    </target>
+
+    <target name="TFA-GUI">
+        <javac srcdir="${gui.impl.dir}/tfa" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="TFA:" operation="+"/>
+            <entry key="TFA.name" value="2 Fact. ANOVA"/>
+            <entry key="TFA.class" value="org.tigr.microarray.mev.cluster.gui.impl.tfa.TFAGUI"/>
+            <entry key="TFA.smallIcon" value="analysis16.gif"/>
+            <entry key="TFA.largeIcon" value="tfa_button.gif"/>
+            <entry key="TFA.tooltip" value="Two-factor ANOVA"/>
+        </propertyfile>
+    </target>
+
+
+
+    <target name="SVM" depends="SVM-GUI" if="SVM">
+        <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+            <include name="SVM.java"/>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="SVM" value="org.tigr.microarray.mev.cluster.algorithm.impl.SVM"/>
+        </propertyfile>
+    </target>
+
+    <target name="SVM-GUI">
+        <javac srcdir="${gui.impl.dir}/svm" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="SVM:" operation="+"/>
+            <entry key="SVM.name" value="SVM"/>
+            <entry key="SVM.class" value="org.tigr.microarray.mev.cluster.gui.impl.svm.SVMGUI"/>
+            <entry key="SVM.smallIcon" value="analysis16.gif"/>
+            <entry key="SVM.largeIcon" value="svm_button.gif"/>
+            <entry key="SVM.tooltip" value="Support Vector Machines"/>
+        </propertyfile>
+    </target>
+
+
+
+    <target name="KNNC" depends="KNNC-GUI" if="KNNC">
+        <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+            <include name="KNNClassify.java"/>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="KNNC" value="org.tigr.microarray.mev.cluster.algorithm.impl.KNNClassify"/>
+        </propertyfile>
+    </target>
+
+    <target name="KNNC-GUI">
+        <javac srcdir="${gui.impl.dir}/knnc" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="KNNC:" operation="+"/>
+            <entry key="KNNC.name" value="KNNC"/>
+            <entry key="KNNC.class" value="org.tigr.microarray.mev.cluster.gui.impl.knnc.KNNCGUI"/>
+            <entry key="KNNC.smallIcon" value="analysis16.gif"/>
+            <entry key="KNNC.largeIcon" value="knnc_button.gif"/>
+            <entry key="KNNC.tooltip" value="K-Nearest Neighbors Classification"/>
+        </propertyfile>
+    </target>
+
+
+
+    <target name="DAM" depends="DAM-GUI" if="DAM">
+        <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+            <include name="DAM.java"/>
+            <classpath>
+                <pathelement location="${lib.dir}/jama.jar"/>	
+                <pathelement location="${lib.dir}/JSciCore.jar"/>	
+
+                <!-- jars to support module compilation -->
+                <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+                <pathelement location="${lib.dir}/mev-base.jar"/>            
+            </classpath>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="DAM" value="org.tigr.microarray.mev.cluster.algorithm.impl.DAM"/>
+        </propertyfile>
+    </target>
+
+    <target name="DAM-GUI">
+        <javac srcdir="${gui.impl.dir}/dam" destdir="${dest.dir}">
+            <classpath>
+                <pathelement location="${lib.dir}/vecmath.jar"/>	
+                <pathelement location="${lib.dir}/j3dcore.jar"/>	
+                <pathelement location="${lib.dir}/j3dutils.jar"/>
+
+                <!-- jars to support module compilation -->
+                <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+                <pathelement location="${lib.dir}/mev-base.jar"/>            
+            </classpath>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="DAM:" operation="+"/>
+            <entry key="DAM.name" value="DAM"/>
+            <entry key="DAM.class" value="org.tigr.microarray.mev.cluster.gui.impl.dam.DAMGUI"/>
+            <entry key="DAM.smallIcon" value="analysis16.gif"/>
+            <entry key="DAM.largeIcon" value="dam_button.gif"/>
+            <entry key="DAM.tooltip" value="Discriminant Analysis Classifier"/>
+        </propertyfile>
+    </target>
+
+
+
+    <target name="GDM" depends="GDM-GUI" if="GDM">
+        <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+            <include name="GDM.java"/>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="GDM" value="org.tigr.microarray.mev.cluster.algorithm.impl.GDM"/>
+        </propertyfile>
+    </target>
+
+    <target name="GDM-GUI">
+        <javac srcdir="${gui.impl.dir}/gdm" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="GDM:" operation="+"/>
+            <entry key="GDM.name" value="GDM"/>
+            <entry key="GDM.class" value="org.tigr.microarray.mev.cluster.gui.impl.gdm.GDMGUI"/>
+            <entry key="GDM.smallIcon" value="analysis16.gif"/>
+            <entry key="GDM.largeIcon" value="gdm_button.gif"/>
+            <entry key="GDM.tooltip" value="Gene Distance Matrix"/>
+        </propertyfile>
+    </target>
+
+
+
+    <target name="PCA" depends="PCA-GUI" if="PCA">
+        <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+            <include name="PCA.java"/>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="PCA" value="org.tigr.microarray.mev.cluster.algorithm.impl.PCA"/>
+        </propertyfile>
+    </target>
+
+    <target name="PCA-GUI">
+        <javac srcdir="${gui.impl.dir}/pca" destdir="${dest.dir}">
+            <classpath>
+	          <pathelement location="${lib.dir}/vecmath.jar"/>
+                <pathelement location="${lib.dir}/j3dcore.jar"/>	
+                <pathelement location="${lib.dir}/j3dutils.jar"/>
+
+                <!-- jars to support module compilation -->
+                <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+                <pathelement location="${lib.dir}/mev-base.jar"/>            
+            </classpath>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="PCA:" operation="+"/>
+            <entry key="PCA.name" value="PCA"/>
+            <entry key="PCA.class" value="org.tigr.microarray.mev.cluster.gui.impl.pca.PCAGUI"/>
+            <entry key="PCA.smallIcon" value="analysis16.gif"/>
+            <entry key="PCA.largeIcon" value="pca_button.gif"/>
+            <entry key="PCA.tooltip" value="Principal Component Analysis"/>
+        </propertyfile>
+    </target>
+
+
+
+    <target name="COA" depends="COA-GUI" if="COA">
+        <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+            <classpath>
+	          <pathelement location="${lib.dir}/vecmath.jar"/>
+	          <pathelement location="${lib.dir}/jama.jar"/>
+
+                <!-- jars to support module compilation -->
+                <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+                <pathelement location="${lib.dir}/mev-base.jar"/>            
+            </classpath>
+            <include name="COA.java"/>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="COA" value="org.tigr.microarray.mev.cluster.algorithm.impl.COA"/>
+        </propertyfile>
+    </target>
+
+    <target name="COA-GUI">
+        <javac srcdir="${gui.impl.dir}/coa" destdir="${dest.dir}">
+            <classpath>
+	          <pathelement location="${lib.dir}/vecmath.jar"/>
+                <pathelement location="${lib.dir}/j3dcore.jar"/>	
+                <pathelement location="${lib.dir}/j3dutils.jar"/>
+
+                <!-- jars to support module compilation -->
+                <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+                <pathelement location="${lib.dir}/mev-base.jar"/>            
+            </classpath>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="COA:" operation="+"/>
+            <entry key="COA.name" value="COA"/>
+            <entry key="COA.class" value="org.tigr.microarray.mev.cluster.gui.impl.coa.COAGUI"/>
+            <entry key="COA.smallIcon" value="analysis16.gif"/>
+            <entry key="COA.largeIcon" value="coa_button.gif"/>
+            <entry key="COA.tooltip" value="Correspondence Analysis"/>
+        </propertyfile>
+    </target>
+
+
+
+    <target name="TRN" depends="TRN-GUI" if="TRN">
+        <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+            <include name="terrain/**"/>
+            <classpath>
+	          <pathelement location="${lib.dir}/vecmath.jar"/>
+
+                <!-- jars to support module compilation -->
+                <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+                <pathelement location="${lib.dir}/mev-base.jar"/>            
+            </classpath>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="Terrain" value="org.tigr.microarray.mev.cluster.algorithm.impl.terrain.Terrain"/>
+        </propertyfile>
+    </target>
+
+
+    <target name="TRN-GUI">
+        <javac srcdir="${gui.impl.dir}/terrain" destdir="${dest.dir}">
+            <classpath>
+	          <pathelement location="${lib.dir}/vecmath.jar"/>
+                <pathelement location="${lib.dir}/j3dcore.jar"/>	
+                <pathelement location="${lib.dir}/j3dutils.jar"/>
+
+                <!-- jars to support module compilation -->
+                <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+                <pathelement location="${lib.dir}/mev-base.jar"/>            
+            </classpath>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="Terrain:" operation="+"/>
+            <entry key="Terrain.name" value="TRN"/>
+            <entry key="Terrain.class" value="org.tigr.microarray.mev.cluster.gui.impl.terrain.TerrainGUI"/>
+            <entry key="Terrain.smallIcon" value="analysis16.gif"/>
+            <entry key="Terrain.largeIcon" value="trn_button.gif"/>
+            <entry key="Terrain.tooltip" value="Expression Terrain Map"/>
+        </propertyfile>
+    </target>
+
+
+
+    <target name="EASE" depends="EASE-GUI" if="EASE">
+        <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+            <include name="ease/**"/>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="EASE" value="org.tigr.microarray.mev.cluster.algorithm.impl.ease.EASE"/>
+        </propertyfile>
+    </target>
+
+    <target name="EASE-GUI">
+        <javac srcdir="${gui.impl.dir}/ease" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+	    <entry key="gui.names" value="EASE:" operation="+"/>
+            <entry key="EASE.name" value="EASE"/>
+            <entry key="EASE.class" value="org.tigr.microarray.mev.cluster.gui.impl.ease.EASEGUI"/>
+            <entry key="EASE.smallIcon" value="analysis16.gif"/>
+            <entry key="EASE.largeIcon" value="ease_button.gif"/>
+            <entry key="EASE.tooltip" value="EASE Cluster Analysis"/>
+        </propertyfile>
+    </target>
+
+
+
+    <!-- Generic Algorithm Module Target Pair
+	   For new modules that require compilation targets, this generic target
+         pair can be used as a template by replacing *** with the package name
+         or appropriate class names.
+    -->
+    <target name="***" depends="***-GUI">
+        <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+            <include name="***.java"/>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="***" value="org.tigr.microarray.mev.cluster.algorithm.impl.***"/>
+        </propertyfile>
+    </target>
+
+    <!--Generic Model GUI module build -->
+    <target name="***-GUI">
+        <javac srcdir="${gui.impl.dir}/***" destdir="${dest.dir}">
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="***:" operation="+"/>
+            <entry key="***.name" value="***"/>
+            <entry key="***.class" value="org.tigr.microarray.mev.cluster.gui.impl.***"/>
+            <entry key="***.smallIcon" value="analysis16.gif"/>
+            <entry key="***.largeIcon" value="***_button.gif"/>
+            <entry key="***.tooltip" value=" "/>
+        </propertyfile>
+    </target>
+
+
+
+    <!-- TARGET ============================================		
+         	Target Name: jar-modules
+		Depends: algorithm-modules
+         	Target Description: jars algorithm and gui module implemenations
+		Note:	Calling this target will produce the following jars:
+		      mev-algorithm-impl.jar, mev-gui-impl.jar
+    --> 
+    <target name="jar-modules" depends="algorithm-modules">                
+
+        <!-- Jar the Algorithm Implementations -->
+        <jar destfile="${lib.dir}/mev-algorithm-impl.jar"
+            basedir="${dest.dir}"
+	      includes="org/tigr/microarray/mev/cluster/algorithm/impl/**"
+   
+        />
+
+        <!-- Jar the GUI Implementations -->
+        <jar destfile="${lib.dir}/mev-gui-impl.jar"
+            basedir="${dest.dir}"
+	      includes="org/tigr/microarray/mev/cluster/gui/impl/**"
+        />
+    </target>
+
+
+
+
+    <!-- TARGET ============================================		
+         	Target Name: build-all
+		Depends: jar-modules
+         	Target Description: Initial target to trigger full mev compilation.
+                                Following compilation and jar activities the temp
+					  destination file system is deleted.
+    -->   
+    <target name="build-all" depends="jar-modules">
+        <delete dir="${dest.dir}"/>
+    </target>
+
+
+
+    <target name="init-module-build">
+        <tstamp/>
+        <delete dir="${dest.dir}"/>
+        <mkdir dir="${dest.dir}"/>         
+    </target>
+
+
+    <!-- TARGET ============================================		
+         	Target Name: jar-modules-build-only
+		Depends: modules-only
+         	Target Description: jars algorithm and gui module implemenations
+		Note:	Calling this target will produce the following jars:
+		      mev-algorithm-impl.jar, mev-gui-impl.jar
+    --> 
+    <target name="jar-module-build-only" depends="modules-only">                
+
+        <!-- Jar the Algorithm Implementations -->
+        <jar destfile="${lib.dir}/mev-algorithm-impl.jar"
+             basedir="${dest.dir}"
+             includes="org/tigr/microarray/mev/cluster/algorithm/impl/**"
+        />
+        
+        <!-- Jar the GUI Implementations -->
+        <jar destfile="${lib.dir}/mev-gui-impl.jar"
+             basedir="${dest.dir}"
+  	     includes="org/tigr/microarray/mev/cluster/gui/impl/**"
+        />
+    </target>
+ 
+
+    <target name="build-modules" depends="init-module-build, jar-module-build-only">
+        <delete dir="${dest.dir}"/>
+    </target>
+
+</project>
+
