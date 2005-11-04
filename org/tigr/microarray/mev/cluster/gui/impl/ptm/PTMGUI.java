@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: PTMGUI.java,v $
- * $Revision: 1.9 $
- * $Date: 2005-03-10 20:22:03 $
+ * $Revision: 1.10 $
+ * $Date: 2005-11-04 14:42:08 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -167,8 +167,8 @@ public class PTMGUI implements IClusterGUI, IScriptGUI {
             expAssignedToACluster[i] = false;
         }
 
-                //can't assume that a null cluster color means that a gene is not in a cluster.
-        ClusterRepository expClusterRepository = framework.getClusterRepository(org.tigr.microarray.mev.cluster.clusterUtil.Cluster.GENE_CLUSTER);
+        //11.04.2005 JCB, bug fix, GENE_CLUSTER->EXPERIMENT_CLUSTER
+        ClusterRepository expClusterRepository = framework.getClusterRepository(org.tigr.microarray.mev.cluster.clusterUtil.Cluster.EXPERIMENT_CLUSTER);
         
         for(int i = 0; i < expClusterRepository.size(); i++) {
             ClusterList list = expClusterRepository.getClusterList(i);
