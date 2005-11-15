@@ -251,8 +251,9 @@
          	Target Description: This is the main target for compilation of non-module code.
          	Compilation Summary: 
 					tigr/remote
-                  		microarray/file/**
-		      		microarray/util/**
+					mev/r/**
+                  			microarray/file/**
+		      			microarray/util/**
 					mev
 					mev/action
 					mev/file/**
@@ -260,9 +261,9 @@
     -->
     <target name="base" depends="jar-algorithm-support">
         <javac srcdir="${tigr.dir}/microarray:${tigr.dir}" destdir="${dest.dir}"
-            includes="file/**, remote/**, util/**, mev/*.java, mev/action/*.java, mev/file/**, mev/script/**,
+            includes="mev/r/**, file/**, remote/**, util/**, mev/*.java, mev/action/*.java, mev/file/**, mev/script/**,
                       mev/cluster/gui/impl/*.java, mev/cluster/gui/impl/dialogs/**, mev/cluster/gui/impl/util/*.java, mev/cluster/gui/*.java,
-                      mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**">
+                      mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washington/cea/r/*.java">
             <classpath>
                 <pathelement location="${lib.dir}/normalization.jar"/>	
                 <pathelement location="${lib.dir}/jai_codec.jar"/>	
@@ -378,11 +379,12 @@
 	       includes= "org/tigr/remote/**,
                   	org/tigr/microarray/file/*.class,
 		      	org/tigr/microarray/util/**,
-				org/tigr/microarray/mev/*.class,
-				org/tigr/microarray/mev/action/*.class,
-				org/tigr/microarray/mev/file/**,
-				org/tigr/microarray/mev/script/**,
-			      org/tigr/microarray/mev/cluster/clusterUtil/**"
+			org/tigr/microarray/mev/r/*.class,
+			org/tigr/microarray/mev/*.class,
+			org/tigr/microarray/mev/action/*.class,
+			org/tigr/microarray/mev/file/**,
+			org/tigr/microarray/mev/script/**,
+			org/tigr/microarray/mev/cluster/clusterUtil/**"
         />
     </target>
 
