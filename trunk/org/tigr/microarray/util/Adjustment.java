@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: Adjustment.java,v $
- * $Revision: 1.4 $
- * $Date: 2005-03-10 15:39:21 $
- * $Author: braistedj $
+ * $Revision: 1.5 $
+ * $Date: 2005-12-01 19:19:10 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 package org.tigr.microarray.util;
@@ -176,7 +176,15 @@ public class Adjustment {
             }
         }
     }
-    
+    public static void log2toLog10(FloatMatrix matrix) {
+        float value;
+        for (int i=0; i<matrix.getRowDimension(); i++) {
+            for (int j=0; j<matrix.getColumnDimension(); j++) {
+                value=matrix.get(i,j);
+                if (!Float.isNaN(value)) matrix.set(i,j,(float)(value*0.301029995));
+            }
+        }
+    }
     private static void normalizeGene(FloatMatrix matrix, int GeneNumber) {
         double Mean=0.0;
         double StandardDeviation=0.0;
