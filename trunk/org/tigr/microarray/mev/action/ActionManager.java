@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ActionManager.java,v $
- * $Revision: 1.11 $
- * $Date: 2005-11-02 13:49:05 $
+ * $Revision: 1.12 $
+ * $Date: 2005-12-01 19:28:17 $
  * $Author: wwang67 $
  * $State: Exp $
  */
@@ -333,6 +333,7 @@ public class ActionManager implements java.io.Serializable {
     public static final String ADJUST_INTENSITIES_0_CMD = "adjust-intensities-0-cmd";
     //vu 7.22.05
 	public static final String RAMA_CMD = "rama-cmd";
+	public static final String RAMA_DOC_CMD = "rama-doc-cmd";
     // pcahan
     public static final String DIVIDE_GENES_MEDIAN_CMD = "divide-genes-median-cmd";
     public static final String UNDIVIDE_GENES_MEDIAN_CMD = "undivide-genes-median-cmd";
