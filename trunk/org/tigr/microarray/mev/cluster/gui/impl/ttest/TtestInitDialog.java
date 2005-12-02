@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: TtestInitDialog.java,v $
- * $Revision: 1.7 $
- * $Date: 2005-11-01 19:36:41 $
+ * $Revision: 1.8 $
+ * $Date: 2005-12-02 18:47:53 $
  * $Author: wwang67 $
  * $State: Exp $
  */
@@ -55,8 +55,6 @@ import javax.swing.event.ChangeListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HCLSigOnlyPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
-import org.tigr.microarray.mev.cluster.gui.impl.sam.SAMGUI;
-import org.tigr.microarray.mev.cluster.gui.impl.sam.SAMLoadFileDialog;
 import org.tigr.util.StringSplitter;
 
 /**
@@ -218,7 +216,7 @@ public class TtestInitDialog extends AlgorithmDialog {
         pane.add(chooseDesignPane);
          */
         if(exptNames.size()>fileLoadMin){
-        	SAMLoadFileDialog slfDialog = new SAMLoadFileDialog(SAMGUI.SAMFrame, true);
+        	TtestLoadFileDialog slfDialog = new TtestLoadFileDialog(TtestGUI.TtestFrame, true);
         	slfDialog.setVisible(true);
         }
         pPanel.tDistButton.addActionListener(new ActionListener() {
