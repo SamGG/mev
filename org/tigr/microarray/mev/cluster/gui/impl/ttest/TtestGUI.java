@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: TtestGUI.java,v $
- * $Revision: 1.10 $
- * $Date: 2005-03-10 20:36:42 $
- * $Author: braistedj $
+ * $Revision: 1.11 $
+ * $Date: 2005-12-02 18:46:34 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 
@@ -81,7 +81,7 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
     boolean[] isSig;
     double[] diffMeansBA, negLog10PValues;
     //JFrame tTestFrame;
-    
+    public static JFrame TtestFrame;
     public TtestGUI() {
     }
     
