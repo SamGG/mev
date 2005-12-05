@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: TtestInitDialog.java,v $
- * $Revision: 1.8 $
- * $Date: 2005-12-02 18:47:53 $
+ * $Revision: 1.9 $
+ * $Date: 2005-12-05 14:48:22 $
  * $Author: wwang67 $
  * $State: Exp $
  */
@@ -21,6 +21,8 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -55,6 +57,7 @@ import javax.swing.event.ChangeListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HCLSigOnlyPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
+
 import org.tigr.util.StringSplitter;
 
 /**
@@ -210,15 +213,13 @@ public class TtestInitDialog extends AlgorithmDialog {
         
         tcpmPanel = new TwoClassPairedMainPanel();
         chooseDesignPane.add("Paired", tcpmPanel);        
+        
         /*
         buildConstraints(constraints, 0, 0, 1, 1, 100, 45);
         gridbag.setConstraints(chooseDesignPane, constraints);
         pane.add(chooseDesignPane);
-         */
-        if(exptNames.size()>fileLoadMin){
-        	TtestLoadFileDialog slfDialog = new TtestLoadFileDialog(TtestGUI.TtestFrame, true);
-        	slfDialog.setVisible(true);
-        }
+        */
+        
         pPanel.tDistButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 sPanel.justAlphaButton.setSelected(true);
@@ -339,93 +340,7 @@ public class TtestInitDialog extends AlgorithmDialog {
                 }
             }
         });
-        /*
-        pPanel.tDistButton.addActionListener(new ActionListener() {
-            public void actionPerformed (ActionEvent evt) {
-                if (evt.getSource() == pPanel.tDistButton) {
-                        pPanel.permParamButton.setEnabled(false);
-                        oPanel.okButton.setEnabled(true);
-         
-         
-                }
-         
-                }
-            });
-        pPanel.permutButton.addActionListener(new ActionListener() {
-            public void actionPerformed (ActionEvent evt) {
-                    if (evt.getSource() == pPanel.permutButton) {
-                        pPanel.permParamButton.setEnabled(true);
-                        if (permParamOkPressed == false) {
-                            oPanel.okButton.setEnabled(false);
-         
-                        }
-                }
-            }
-         
-            });
-         
-         
-         */
-        /*
-          pPanel.permParamButton.addActionListener(new ActionListener() {
-            public void actionPerformed (ActionEvent evt) {
-                    if (evt.getSource() == pPanel.permParamButton) {
-                int[] grpAssignments = getGroupAssignments();
-                    int grpACounter = 0;
-                    int grpBCounter = 0;
-                    for (int i = 0; i < grpAssignments.length; i++) {
-                        if (grpAssignments[i] == GROUP_A) {
-                            grpACounter++;
-                        } else if (grpAssignments[i] == GROUP_B) {
-                            grpBCounter++;
-                        }
-                    }
-                    if ((grpACounter < 2) || (grpBCounter < 2)) {
-                        JOptionPane.showMessageDialog(gPanel, "Group A and Group B must each contain more than one experiment", "Error", JOptionPane.WARNING_MESSAGE);
-                    } else {
-         
-                        //if (pPanel.permutButton.isSelected()) {
-                            //System.out.println("grpACounter = " + grpACounter + ", grpBCounter = " + grpBCounter);
-                            int numCombs = 0;
-                            boolean tooMany = true;
-                            if ((grpACounter + grpBCounter) <= 20) {
-                                numCombs = getNumCombs((grpACounter + grpBCounter), grpACounter);
-                                tooMany = false;
-                            }
-         
-                            NumPermutationsDialog numPermsDialog = new NumPermutationsDialog(new JFrame(), true, numCombs, tooMany);
-                        //
-                       //     numPermsDialog.okay.addActionListener(new ActionListener() {
-                        //        public void actionPerformed (ActionEvent evt) {
-                        //            //if (evt.getSource() == numPermsDialog.okay) {
-                        //                permParamOkPressed = true;
-                        //                oPanel.okButton.setEnabled(true);
-                        //                hide();
-                        //                dispose();
-                        //            //}
-                       //         }
-                      //      });
-                      //      numPermsDialog.cancel.addActionListener(new ActionListener() {
-                       //         public void actionPerformed (ActionEvent evt) {
-                       //             //if (evt.getSource() == numPermsDialog.cancel) {
-                        //                permParamOkPressed = false;
-                        //                oPanel.okButton.setEnabled(false);
-                        //                hide();
-                       //                 dispose();
-                                    //}
-                        //        }
-                       //     });
-                        //
-                            //numPermsDialog.show();
-                       //     numPermsDialog.setVisible(true);
-                        //}
-         
-                        }
-                    }
-                }
-         
-            });
-         */
+      
         
         
         chooseDesignPane.addChangeListener(new ChangeListener() {
@@ -473,8 +388,16 @@ public class TtestInitDialog extends AlgorithmDialog {
         
         pane.add(hclOpsPanel);
         addContent(pane);
-        setActionListeners(new EventListener());
-        pack();
+        
+        if(exptNames.size()>fileLoadMin){
+        	TtestLoadFileDialog slfDialog = new TtestLoadFileDialog(TtestGUI.TtestFrame, true);
+        	slfDialog.setVisible(true);
+        }
+        
+        EventListener listener = new EventListener();
+        setActionListeners(listener);
+        //this.addWindowListener(listener);
+        //pack();
     }
     
     
