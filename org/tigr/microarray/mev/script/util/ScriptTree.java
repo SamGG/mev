@@ -281,10 +281,10 @@ public class ScriptTree extends JTree {
         
         //Algorithm Set collection
         Vector algSets = new Vector();
-        Enumeration enum = root.breadthFirstEnumeration();
+        Enumeration _enum = root.breadthFirstEnumeration();
         ScriptNode node, childNode;
-        while(enum.hasMoreElements()) {
-            node = (ScriptNode)enum.nextElement();
+        while(_enum.hasMoreElements()) {
+            node = (ScriptNode)_enum.nextElement();
             
             //if it's a data node with children (algs) make an alg set
             if(node instanceof DataNode && !node.isLeaf()) {
@@ -313,11 +313,11 @@ public class ScriptTree extends JTree {
     
     public DataNode getDataNodeNamed(String name) {
        DataNode root = (DataNode)(this.getModel().getRoot());
-       Enumeration enum = root.breadthFirstEnumeration();
+       Enumeration _enum = root.breadthFirstEnumeration();
        boolean found = false;
        ScriptNode node = null;
-       while(!found && enum.hasMoreElements()) {
-           node = (ScriptNode)enum.nextElement();
+       while(!found && _enum.hasMoreElements()) {
+           node = (ScriptNode)_enum.nextElement();
 //           if(! (node instanceof DataNode))
   //             continue;
            
@@ -490,11 +490,11 @@ public class ScriptTree extends JTree {
     public void scrollAllToVisible() {
         DefaultTreeModel model = (DefaultTreeModel)this.getModel();
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)model.getRoot();
-        Enumeration enum = node.depthFirstEnumeration();
+        Enumeration _enum = node.depthFirstEnumeration();
         TreeNode [] visPath;
         TreePath path;
-        while(enum.hasMoreElements()) {
-            node = (DefaultMutableTreeNode)enum.nextElement();
+        while(_enum.hasMoreElements()) {
+            node = (DefaultMutableTreeNode)_enum.nextElement();
             if(node.isLeaf()) {
                 visPath = node.getPath();
                 path = new TreePath(visPath);

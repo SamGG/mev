@@ -1212,11 +1212,11 @@ public class DocumentBase extends DefaultHandler implements Serializable {
      * @return
      */
     private boolean algorithmMatches(Hashtable attributes, Element algorithm) {
-        Enumeration enum = attributes.keys();
+        Enumeration _enum = attributes.keys();
         String key, value, algValue;
         boolean match = true;
-        while(enum.hasMoreElements()) {
-            key = (String)enum.nextElement();
+        while(_enum.hasMoreElements()) {
+            key = (String)_enum.nextElement();
             value = (String)attributes.get(key);
             algValue = algorithm.getAttribute(key);
             if(!algValue.equals(value))
