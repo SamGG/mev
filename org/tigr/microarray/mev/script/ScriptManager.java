@@ -563,13 +563,13 @@ public class ScriptManager implements Serializable {
      * @return
      */
     public DefaultMutableTreeNode getSiblingXMLNode(ScriptTreeViewer treeViewer) {
-        Enumeration enum = this.scriptManagerNode.depthFirstEnumeration();
+        Enumeration _enum = this.scriptManagerNode.depthFirstEnumeration();
         DefaultMutableTreeNode node, treeNode = null;
         IViewer viewer;
         LeafInfo leaf;
         
-        while(enum.hasMoreElements()) {
-            node = (DefaultMutableTreeNode)enum.nextElement();
+        while(_enum.hasMoreElements()) {
+            node = (DefaultMutableTreeNode)_enum.nextElement();
             if(node.isLeaf()) {
                 leaf = (LeafInfo)(node.getUserObject());
                 if(leaf != null && leaf.getViewer() != null) {
