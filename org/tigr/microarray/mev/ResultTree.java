@@ -119,10 +119,10 @@ public class ResultTree extends JTree implements java.io.Serializable {
      * @param object
      * @return  */
     public DefaultMutableTreeNode getNode(Object object) {
-        Enumeration enum = root.depthFirstEnumeration();
+        Enumeration _enum = root.depthFirstEnumeration();
         DefaultMutableTreeNode node;
-        while(enum.hasMoreElements()){
-            node = (DefaultMutableTreeNode)enum.nextElement();
+        while(_enum.hasMoreElements()){
+            node = (DefaultMutableTreeNode)_enum.nextElement();
             if(node.getUserObject() == object)
                 return node;
         }
@@ -263,7 +263,7 @@ public class ResultTree extends JTree implements java.io.Serializable {
         int childCount = analysisNode.getChildCount();
         //String algTitles = new String[analysisNode.getChildCount()];
         String algName = "";
-        Enumeration enum;
+        Enumeration _enum;
         
         for(int i = 0; i < childCount; i++){
             analysisRoot = ((DefaultMutableTreeNode)(analysisNode.getChildAt(i)));
@@ -275,9 +275,9 @@ public class ResultTree extends JTree implements java.io.Serializable {
                     algName = (String)object;
                 }
                 
-                enum = analysisRoot.depthFirstEnumeration();
-                while (!stop && enum.hasMoreElements()){
-                    currentNode = (DefaultMutableTreeNode)enum.nextElement();
+                _enum = analysisRoot.depthFirstEnumeration();
+                while (!stop && _enum.hasMoreElements()){
+                    currentNode = (DefaultMutableTreeNode)_enum.nextElement();
                     if(currentNode.getUserObject() instanceof LeafInfo){
                         viewer = ((LeafInfo)currentNode.getUserObject()).getViewer();
                         if(viewer != null) {
@@ -345,7 +345,7 @@ public class ResultTree extends JTree implements java.io.Serializable {
     private DefaultMutableTreeNode getSearchResults(int [] indices, DefaultMutableTreeNode analRoot, Hashtable expHash, Hashtable tabHash, boolean geneSearch) {
         boolean result = false;
         
-        Enumeration enum = analRoot.depthFirstEnumeration();
+        Enumeration _enum = analRoot.depthFirstEnumeration();
         DefaultMutableTreeNode currNode;
         Object currUserObject;
         IViewer currViewer;
@@ -364,9 +364,9 @@ public class ResultTree extends JTree implements java.io.Serializable {
         DefaultMutableTreeNode newRoot = new DefaultMutableTreeNode(analRoot.getUserObject());
         
       
-        while(enum.hasMoreElements()) {
+        while(_enum.hasMoreElements()) {
             
-            currNode = (DefaultMutableTreeNode)(enum.nextElement());
+            currNode = (DefaultMutableTreeNode)(_enum.nextElement());
             currUserObject = currNode.getUserObject();
             
             if(currUserObject instanceof LeafInfo) {
@@ -499,10 +499,10 @@ public class ResultTree extends JTree implements java.io.Serializable {
      *  Clears data selection over the tree
      */
     public void clearDataSelection() {
-        Enumeration  enum = this.root.depthFirstEnumeration();
+        Enumeration  _enum = this.root.depthFirstEnumeration();
         DefaultMutableTreeNode node;
-        while(enum.hasMoreElements()) {
-            node = (DefaultMutableTreeNode)(enum.nextElement());
+        while(_enum.hasMoreElements()) {
+            node = (DefaultMutableTreeNode)(_enum.nextElement());
             if(node.getUserObject() != null && node.getUserObject() instanceof LeafInfo)
                 ((LeafInfo)node.getUserObject()).setSelectedDataSource(false);
         }
