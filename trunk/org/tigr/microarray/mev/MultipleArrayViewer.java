@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.25 $
- * $Date: 2005-11-01 18:28:13 $
+ * $Revision: 1.26 $
+ * $Date: 2005-12-06 16:25:20 $
  * $Author: wwang67 $
  * $State: Exp $
  */
@@ -1798,7 +1798,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     /**
      * Adds a specified node into the analysis node.
      */
-    private synchronized void addAnalysisResult(DefaultMutableTreeNode node) {
+    public synchronized void addAnalysisResult(DefaultMutableTreeNode node) {
         if (node == null) {
             return;
         }
@@ -2241,10 +2241,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             if(props.size() > 1)
                 label += "s";
             DefaultMutableTreeNode parameterNode = new DefaultMutableTreeNode(label);
-            Enumeration enum = props.keys();
+            Enumeration _enum = props.keys();
             String key;
-            while(enum.hasMoreElements()) {
-                key = (String)enum.nextElement();
+            while(_enum.hasMoreElements()) {
+                key = (String)_enum.nextElement();
                 parameterNode.add(new DefaultMutableTreeNode(key+ ": " + (String)(props.get(key))));
             }
             filterNode.add(parameterNode);

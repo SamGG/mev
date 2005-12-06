@@ -497,13 +497,13 @@ public class ScriptRunner {
     private int [][] extractClusters(DefaultMutableTreeNode analysisNode) {
         
         int [][] clusters;
-        Enumeration enum = analysisNode.depthFirstEnumeration();
+        Enumeration _enum = analysisNode.depthFirstEnumeration();
         DefaultMutableTreeNode currentNode;
         IViewer viewer;
         Experiment exp;
         
-        while (enum.hasMoreElements()){
-            currentNode = (DefaultMutableTreeNode)enum.nextElement();
+        while (_enum.hasMoreElements()){
+            currentNode = (DefaultMutableTreeNode)_enum.nextElement();
             if(currentNode.getUserObject() instanceof LeafInfo){
                 viewer = ((LeafInfo)currentNode.getUserObject()).getViewer();
                 if(viewer != null) {

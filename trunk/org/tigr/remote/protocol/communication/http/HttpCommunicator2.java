@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: HttpCommunicator2.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:35:51 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2005-12-06 16:26:51 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 package org.tigr.remote.protocol.communication.http;
@@ -184,8 +184,8 @@ public class HttpCommunicator2 {
     private void setRequestProperties(Properties props) {
         String name;
         String value;
-        for (Enumeration enum = props.propertyNames(); enum.hasMoreElements();) {
-            name = (String)enum.nextElement();
+        for (Enumeration _enum = props.propertyNames(); _enum.hasMoreElements();) {
+            name = (String)_enum.nextElement();
             value = props.getProperty(name, "");
             connection.setRequestProperty(name, value);
         }

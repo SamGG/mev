@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
 * $RCSfile: GDMResultSelectionDialog.java,v $
-* $Revision: 1.3 $
-* $Date: 2005-03-10 20:22:00 $
-* $Author: braistedj $
+* $Revision: 1.4 $
+* $Date: 2005-12-06 16:29:15 $
+* $Author: wwang67 $
 * $State: Exp $
 */
 package org.tigr.microarray.mev.cluster.gui.impl.gdm;
@@ -112,11 +112,11 @@ public class GDMResultSelectionDialog extends AlgorithmDialog {
     }
     
  
-    private Vector sortAndLoadResultVector( Enumeration enum ) {
+    private Vector sortAndLoadResultVector( Enumeration _enum ) {
         Vector results = new Vector();
         
-        while(enum.hasMoreElements())
-            results.add(enum.nextElement());
+        while(_enum.hasMoreElements())
+            results.add(_enum.nextElement());
         
         //Need to restore order
         String [] names = new String[results.size()];

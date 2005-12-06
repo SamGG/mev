@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: JEASEStatistics.java,v $
- * $Revision: 1.4 $
- * $Date: 2005-03-10 15:46:48 $
- * $Author: braistedj $
+ * $Revision: 1.5 $
+ * $Date: 2005-12-06 16:30:25 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 /* 
@@ -220,9 +220,9 @@ public class JEASEStatistics {
 
                 end = true;  //start at true until no new indices are inserted
                 
-                for( Enumeration enum = implied_associations.keys(); enum.hasMoreElements(); ){
+                for( Enumeration _enum = implied_associations.keys(); _enum.hasMoreElements(); ){
                     
-                    cat = (String) enum.nextElement();
+                    cat = (String) _enum.nextElement();
                     
                     //if the category is represented, add the implied associations if they don't exist
                     if(categories.containsKey(cat)){
@@ -356,9 +356,9 @@ public class JEASEStatistics {
 
                 end = true;  //start at true until no new indices are inserted
                 
-                for( Enumeration enum = implied_associations.keys(); enum.hasMoreElements(); ){
+                for( Enumeration _enum = implied_associations.keys(); _enum.hasMoreElements(); ){
                     
-                    cat = (String) enum.nextElement();
+                    cat = (String) _enum.nextElement();
                     
                     //if the category is represented, add the implied associations if they don't exist
                     if(categories.containsKey(cat)){
@@ -420,8 +420,8 @@ public class JEASEStatistics {
             for(Enumeration enum1 = locus_ids.keys(); enum1.hasMoreElements();){
                 locus_id = (String)(enum1.nextElement());
                 
-                for(Enumeration enum = categories.keys(); enum.hasMoreElements();){
-                    key = (String)(enum.nextElement());
+                for(Enumeration _enum = categories.keys(); _enum.hasMoreElements();){
+                    key = (String)(_enum.nextElement());
                     hash_table = (Hashtable) (categories.get(key));
                     
                     if(hash_table.containsKey(locus_id)){
@@ -463,8 +463,8 @@ public class JEASEStatistics {
             
             for(Enumeration enum1 = locus_ids.keys(); enum1.hasMoreElements();){
                 locus_id = (String)(enum1.nextElement());
-                for(Enumeration enum = categories.keys(); enum.hasMoreElements();){
-                    key = (String)(enum.nextElement());
+                for(Enumeration _enum = categories.keys(); _enum.hasMoreElements();){
+                    key = (String)(_enum.nextElement());
                     hash_table = (Hashtable) (categories.get(key));
                     
                     if(hash_table.containsKey(locus_id)){
@@ -692,8 +692,8 @@ public class JEASEStatistics {
             for(Enumeration enum1 = locus_ids.keys(); enum1.hasMoreElements();){
                 locus_id = (String)(enum1.nextElement());
                 
-                for(Enumeration enum = categories.keys(); enum.hasMoreElements();){
-                    key = (String)(enum.nextElement());
+                for(Enumeration _enum = categories.keys(); _enum.hasMoreElements();){
+                    key = (String)(_enum.nextElement());
                     hash_table = (Hashtable) (categories.get(key));
                     
                     if(hash_table.containsKey(locus_id)){
@@ -736,8 +736,8 @@ public class JEASEStatistics {
             for(Enumeration enum1 = locus_ids.keys(); enum1.hasMoreElements();){
                 locus_id = (String)(enum1.nextElement());
                 
-                for(Enumeration enum = categories.keys(); enum.hasMoreElements();){
-                    key = (String)(enum.nextElement());
+                for(Enumeration _enum = categories.keys(); _enum.hasMoreElements();){
+                    key = (String)(_enum.nextElement());
                     hash_table = (Hashtable) (categories.get(key));
                     
                     if(hash_table.containsKey(locus_id)){
@@ -829,8 +829,8 @@ public class JEASEStatistics {
             for(Enumeration enum1 = locus_ids.keys(); enum1.hasMoreElements();){
                 locus_id = (String)(enum1.nextElement());
                 
-                for(Enumeration enum = categories.keys(); enum.hasMoreElements();){
-                    key = (String)(enum.nextElement());
+                for(Enumeration _enum = categories.keys(); _enum.hasMoreElements();){
+                    key = (String)(_enum.nextElement());
                     hash_table = (Hashtable) (categories.get(key));
                     
                     if(hash_table.containsKey(locus_id)){

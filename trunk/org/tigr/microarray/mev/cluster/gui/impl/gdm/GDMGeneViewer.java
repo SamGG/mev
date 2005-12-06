@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: GDMGeneViewer.java,v $
- * $Revision: 1.8 $
- * $Date: 2005-03-10 20:22:00 $
- * $Author: braistedj $
+ * $Revision: 1.9 $
+ * $Date: 2005-12-06 16:28:51 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.gdm;
@@ -1693,7 +1693,7 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
         int childCount = analysisNode.getChildCount();
         //String algTitles = new String[analysisNode.getChildCount()];
         String algName = "";
-        Enumeration enum;
+        Enumeration _enum;
         
         for(int i = 0; i < childCount; i++){
             analysisRoot = ((DefaultMutableTreeNode)(analysisNode.getChildAt(i)));
@@ -1705,9 +1705,9 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
                     algName = (String)object;
                 }
                 
-                enum = analysisRoot.depthFirstEnumeration();
-                while (!stop && enum.hasMoreElements()){
-                    currentNode = (DefaultMutableTreeNode)enum.nextElement();
+                _enum = analysisRoot.depthFirstEnumeration();
+                while (!stop && _enum.hasMoreElements()){
+                    currentNode = (DefaultMutableTreeNode)_enum.nextElement();
                     if(currentNode.getUserObject() instanceof LeafInfo){
                         viewer = ((LeafInfo)currentNode.getUserObject()).getViewer();
                         if(viewer != null) {
