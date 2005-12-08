@@ -251,7 +251,7 @@ public class HelpWindow extends JDialog {
             return "pca_result_config.html";  
         if(key.equals("PCA Selection Area Configuration"))
             return "pca_selection_area.html";  
-	if(key.equals("One Way ANOVA Initialization Dialog"))
+        if(key.equals("One Way ANOVA Initialization Dialog"))
             return "one_way_anova_parameters.html";
         if(key.equals("Cluster Save Dialog"))
             return "cluster_save_parameters.html";
@@ -317,8 +317,26 @@ public class HelpWindow extends JDialog {
             return "gene_annotation_import_parameters.html";
         if(key.equals("Color Scale Dialog"))
             return "set_ratio_scale_parameters.html";
-        else
-            return null;
+		if (key.equals("RAMA Initialization Dialog")) {
+			return "rama_parameters1.html";
+		}
+		if (key.equals("RAMA Connection Dialog")) {
+			return "rama_parameters2.html";
+		}
+		if (key.equals("USC Initialization Dialog")) {
+			return "usc_parameters1.html";
+		}
+		if (key.equals("USC Assign Label Dialog")) {
+			return "usc_parameters2.html";
+		}
+		if (key.equals("USC Delta Dialog")) {
+			return "usc_parameters3.html";
+		} 
+		if (key.equals("USC Load Result Dialog")) {
+			return "usc_parameters4.html";
+		} else {
+			return null;
+		}
     }
     
     public class FillPanel extends JPanel{
