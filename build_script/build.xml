@@ -66,6 +66,7 @@
     <property name="COA" value="y"/>
     <property name="TRN" value="y"/>
     <property name="EASE" value="y"/>
+    <property name="USC" value="y"/>
 
     <!-- Property Files, These properties identify the properties files to be constructed during module compilation -->
     <property name="gui.properties.file" value="${dest.dir}/org/tigr/microarray/mev/cluster/gui/impl/factory.properties"/>
@@ -89,7 +90,7 @@
                   In order for a module to be built it must have a property set above and must
                   have it's target within the list in the 'depends' attribute below. 
     -->   
-    <target name="algorithm-modules" depends="build-base,HCL,ST,SOTA,RN,KMC,KMCS,CAST,QTC,GSH,SOM,FOM,PTM,TTEST,SAM,OWA,TFA,SVM,KNNC,DAM,GDM,PCA,COA,TRN,EASE">
+    <target name="algorithm-modules" depends="build-base,HCL,ST,SOTA,RN,KMC,KMCS,CAST,QTC,GSH,SOM,FOM,PTM,TTEST,SAM,OWA,TFA,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE">
     </target>
 
 
@@ -110,7 +111,7 @@
                   In order for a module to be built it must have a property set above and must
                   have it's target within the list in the 'depends' attribute below. 
     -->   
-    <target name="modules-only" depends="HCL,ST,SOTA,RN,KMC,KMCS,CAST,QTC,GSH,SOM,FOM,PTM,TTEST,SAM,OWA,TFA,SVM,KNNC,DAM,GDM,PCA,COA,TRN,EASE">
+    <target name="modules-only" depends="HCL,ST,SOTA,RN,KMC,KMCS,CAST,QTC,GSH,SOM,FOM,PTM,TTEST,SAM,OWA,TFA,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE">
     </target>
 
 
@@ -888,6 +889,32 @@
             <entry key="SVM.smallIcon" value="analysis16.gif"/>
             <entry key="SVM.largeIcon" value="svm_button.gif"/>
             <entry key="SVM.tooltip" value="Support Vector Machines"/>
+        </propertyfile>
+    </target>
+
+
+
+    <target name="USC" depends="USC-GUI" if="USC">
+        <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+            <include name="USC.java"/>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="USC" value="org.tigr.microarray.mev.cluster.algorithm.impl.usc"/>
+        </propertyfile>
+    </target>
+
+    <target name="USC-GUI">
+        <javac srcdir="${gui.impl.dir}/usc" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="USC:" operation="+"/>
+            <entry key="USC.name" value="USC"/>
+            <entry key="USC.class" value="org.tigr.microarray.mev.cluster.gui.impl.usc.USCGUI"/>
+            <entry key="USC.smallIcon" value="analysis16.gif"/>
+            <entry key="USC.largeIcon" value="usc_button.gif"/>
+            <entry key="USC.tooltip" value="Uncorrelated Shrunken Centroid Classification"/>
         </propertyfile>
     </target>
 
