@@ -1,0 +1,47 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial" padding=10>
+	<h1>USC: Uncorrelated Shrunken Centroids</h1> 
+        <h1>Initialization Dialog</h1>
+            <hr size = 1>
+
+			<h2> Enter all Class Labels </h2>
+			Enter the labels for each of the classes that are in your training set.  If there are more than 2 classes, 
+			click the Up Arrow of the '# of Classes' spinner.  Be advised that you should be entering each and every 
+			unique class label here.  You will be asked later to assign these labels to your known training hybs.
+			<br>
+			
+			<h2>Analysis Options</h2>
+			The USC algorithm works performing through two main processes - training and classification.
+			One can elect to perform training (with the built in option of classification afterwords) or classification only.
+			<br><br>
+			The 'Training & Classify' option results in specific 'Delta' and 'Rho' values along with 'Training Ratios' 
+			which can stored as a file and used for classification at a later time.
+			<br><br>
+			The 'Classification Only' option takes a file input of ratios, delta and rho generated from training and 
+			results in a classification of the elements.
+			<br><br>
+			
+			<h2> Advanced Parameters </h2>
+			# Folds refers to the # of times one would like 'Random Permutations' to occur during cross validation.  
+			For example, if there are 10 training hybs, and # Folds is set to 5, 2 hybs will be removed and used as 
+			the 'test subset' during each Fold.  After 5 folds, all 10 hybs will have been removed and used in the 
+			'test subset' once.
+			<br><br>
+			#CV Runs is how many times one would like to run cross validation.
+			<br><br>
+			# Bins is the # of Delta values that one would like to try during cross validation.  For example, if 'Max Delta' 
+			is 20 and '# Bins' is 50, the Delta values would range from 0 - 20 by increments of 0.4 (20 / 50 = 0.4).  
+			Delta = { 0, 0.4, 0.8, 1.2... 20 }.
+			<br><br>
+			Max Delta is the maximum Delta (Shrinkage) value to use during cross validation.
+			<br><br>
+			Corr Low and Corr High are the minimum and maximum values one would like to try as a Correlation Threshold value.  
+			When the correlation between 2 genes is greater than this value, 1 of the genes will 
+			be removed from analysis.
+			<br><br>
+			Corr Step is the increment by which one would like to step between 'Corr Low' and 'Corr High'.  By default, 
+			cross validation will occur using the set Correlation Threshold = { 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 }.
+			<br>
+        </basefont>
+    </body>
+</html>
