@@ -61,6 +61,7 @@
     <property name="SVM" value="y"/>
     <property name="KNNC" value="y"/>
     <property name="DAM" value="n"/>
+    <property name="LEM" value="y"/>
     <property name="GDM" value="y"/>
     <property name="PCA" value="y"/>
     <property name="COA" value="y"/>
@@ -90,7 +91,7 @@
                   In order for a module to be built it must have a property set above and must
                   have it's target within the list in the 'depends' attribute below. 
     -->   
-    <target name="algorithm-modules" depends="build-base,HCL,ST,SOTA,RN,KMC,KMCS,CAST,QTC,GSH,SOM,FOM,PTM,TTEST,SAM,OWA,TFA,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE">
+    <target name="algorithm-modules" depends="build-base,HCL,ST,SOTA,RN,KMC,KMCS,CAST,QTC,GSH,SOM,FOM,PTM,TTEST,SAM,OWA,TFA,SVM,USC,KNNC,DAM,LEM,GDM,PCA,COA,TRN,EASE">
     </target>
 
 
@@ -111,7 +112,7 @@
                   In order for a module to be built it must have a property set above and must
                   have it's target within the list in the 'depends' attribute below. 
     -->   
-    <target name="modules-only" depends="HCL,ST,SOTA,RN,KMC,KMCS,CAST,QTC,GSH,SOM,FOM,PTM,TTEST,SAM,OWA,TFA,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE">
+    <target name="modules-only" depends="HCL,ST,SOTA,RN,KMC,KMCS,CAST,QTC,GSH,SOM,FOM,PTM,TTEST,SAM,OWA,TFA,SVM,USC,KNNC,DAM,LEM,GDM,PCA,COA,TRN,EASE">
     </target>
 
 
@@ -986,6 +987,32 @@
             <entry key="DAM.smallIcon" value="analysis16.gif"/>
             <entry key="DAM.largeIcon" value="dam_button.gif"/>
             <entry key="DAM.tooltip" value="Discriminant Analysis Classifier"/>
+        </propertyfile>
+    </target>
+
+
+
+    <target name="LEM" depends="LEM-GUI" if="LEM">
+        <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+            <include name="LEM.java"/>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="LEM" value="org.tigr.microarray.mev.cluster.algorithm.impl.LEM"/>
+        </propertyfile>
+    </target>
+
+    <target name="LEM-GUI">
+        <javac srcdir="${gui.impl.dir}/lem" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="LEM:" operation="+"/>
+            <entry key="LEM.name" value="LEM"/>
+            <entry key="LEM.class" value="org.tigr.microarray.mev.cluster.gui.impl.lem.LEMGUI"/>
+            <entry key="LEM.smallIcon" value="analysis16.gif"/>
+            <entry key="LEM.largeIcon" value="lem_button.gif"/>
+            <entry key="LEM.tooltip" value="Linear Expression Map"/>
         </propertyfile>
     </target>
 
