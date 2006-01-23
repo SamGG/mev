@@ -1,0 +1,45 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>LEM: Linear Expression Map</h1><h2>Parameter Information</h2>
+            <hr size = 10>
+
+These initialization parameters are used to direct MeV to information about the
+nature of the arrayed spots and the sampled genome.  The parameters that are 
+selected in this dialog will determine the Linear Expression Map that is produced.
+Incorrect selections will produce maps that are not correct.  If a map looks
+unusual you can check the entered parameters in the <i>LEM Mapping Summary</i>
+node on the result tree.
+
+<h2>Locus Identifier Selection</h2>
+This menu provides a list all spot annotation fields in MeV. 
+Select the annotation field that should be used to map each spot
+to an associated locus.
+
+<h2>Coordinate Data Selections</h2>
+
+<b><i>Use Coordinate File</i></b><br>
+This option, when selected, indicates that chromosome location and
+coordinate information will come from an auxilliary file.  The format of this
+file is shown in the manual section for LEM.  The coordinate file is a text
+tab delimited format file that contains no header and 3 or 4 columns.
+
+<br><center> &#60 locus_id &#62 [chromosome_id] &#60 5'_end &#62 &#60 3'_end &#62 </center><br>
+
+The second column, chromosome_id is only needed if the organisim under
+study has multple chromosomes.<br><br>
+
+<b><i>Multiple Chromosomes</i></b><br>
+If selected, this option indicates that there are spots from loci on 
+multiple chromosomes on the array.  When selected the information to map
+loci to chromosomes is expected to be in the input file or within an
+annoation field if the coordinate file is not used.  If not using a file one
+should indicate which field of spot annotation corresponds to chromosomal
+membership information. (mapping spots to chromosomes)<br><br>
+
+<b><i>Coordinate Information</i></b><br>
+If not using a coordinate file, these menus are used to
+select annotation fields that indicate 5' and 3' ends of the locus.<br>
+
+</basefont>
+</body>
+</html>

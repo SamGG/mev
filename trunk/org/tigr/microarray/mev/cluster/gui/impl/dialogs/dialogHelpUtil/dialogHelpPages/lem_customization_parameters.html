@@ -1,0 +1,51 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>LEM: Customization</h1><h2>Parameter Information</h2>
+            <hr size = 10>
+         
+Customization parameters are used to control scaling of arrows 
+that represent loci and the scaling of unsampled or intergenic
+regions.  These parameters can help constrain the length of an
+open (unsampled) regions or long loci.  
+
+<h2>Locus Arrow Dimensions</h2>
+These options control the rendering of locus arrows.  <b><i>Use Fixed
+Arrow Length</i></b> indicates that all loci should appear to be of the
+same length as indicated by the text field.  The input units are pixels and
+at any point the <i>Preview</i> button can be hit to see the
+impact of the current settings.  Using fixed length arrows helps to
+constrain the size of the viewer and fit more loci into a viewable
+area.<br><br>
+
+The <b><i>Use Scaled Arrow Length</i></b> option will scale arrows such 
+that each pixel corresponds
+to a given number of bases.  The <i>Scaling Factor</i> controls the scaling
+by applying a supplied factor in units of bases/pixel.  Decreasing
+this factor increases the length of the arrows and the resolution of sequence
+length differences by rendering fewer bases per pixel length.<br><br>
+
+The <i>Minimum</i> and <i>Maximum Scaled Arrow Length</i> parameters constrain 
+the redering
+so that very short sequences are rendered such that annotation can be
+read and very long sequences are not unreasonably long.  Regardless of the
+scaling, the 5' and 3' ends of the locus are always provided as
+annotation.
+
+<h2>Intergenic or Unsampled Region Dimensions</h2>
+This option allows you to cotrol the length of unsampled areas of
+the chromosome.  Using a fixed length constrains all areas not covered
+by a sampled locus to be constrained to 1 pixel.  This compresses areas
+that might be quite long and uninformative if sampled loci are spread far appart.
+If the fixed length option is not selected there is a parameter to constrain
+the length of these areas to fall below a supplied limit.
+
+<h2>Locus Replicate Rendering</h2>
+This option displays an arrow for each spot that corresponds to a given locus.
+If four spots map to a locus then one arrow is displayed for the mean expression
+and four arrows are shown to the right that correspond to the expression of
+each of the four spots.  If selected, arrow and unsampled regions are both
+moved to the fixed option to simplify rendering of the replicate arrows.
+
+</basefont>
+</body>
+</html>
