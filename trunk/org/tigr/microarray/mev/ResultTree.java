@@ -616,7 +616,11 @@ public class ResultTree extends JTree implements java.io.Serializable {
         /**
          * Data Filter Icon
          */
-        private Icon dataFilterIcon = GUIFactory.getIcon("DataFilterResult.gif");                 
+        private Icon dataFilterIcon = GUIFactory.getIcon("DataFilterResult.gif");
+        /**
+         * LEM Result Node
+         */
+        private Icon lemViewerIcon = GUIFactory.getIcon("LEM_result.gif");                 
         /** Parent node
          */
         private DefaultMutableTreeNode parent;
@@ -807,7 +811,9 @@ public class ResultTree extends JTree implements java.io.Serializable {
                         setIcon(goHierarchyViewerIcon);
                     } else if(text.equals("Data Source Selection")) {
                         setIcon(dataSelectionIcon);
-                    } 
+                    } else if(text.indexOf("LEM Viewer") != -1) {
+                    	setIcon(lemViewerIcon);
+                    }
                     //add new icons here for leaf icons
                     
                     
