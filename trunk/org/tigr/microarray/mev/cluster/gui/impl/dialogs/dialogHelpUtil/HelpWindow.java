@@ -334,9 +334,19 @@ public class HelpWindow extends JDialog {
 		} 
 		if (key.equals("USC Load Result Dialog")) {
 			return "usc_parameters4.html";
-		} else {
+		} 
+        	if(key.equals("LEM Initialization Dialog"))
+        		return "lem_parameters.html";
+        	if(key.equals("LEM Bin Color and Limits Selection Dialog"))
+        		return "lem_color_limits_parameters.html";
+        	if(key.equals("LEM Customization Dialog"))
+        		return "lem_customization_parameters.html";
+        	if(key.equals("LEM Selection Range Dialog"))
+        		return "lem_selection_range_paramters.html";
+		else {
 			return null;
 		}
+
     }
     
     public class FillPanel extends JPanel{
