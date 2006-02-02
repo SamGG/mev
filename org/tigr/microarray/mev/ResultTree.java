@@ -620,7 +620,28 @@ public class ResultTree extends JTree implements java.io.Serializable {
         /**
          * LEM Result Node
          */
-        private Icon lemViewerIcon = GUIFactory.getIcon("LEM_result.gif");                 
+        private Icon lemViewerIcon = GUIFactory.getIcon("LEM_result.gif");   
+        /**
+         * CGH Chromosome Views Icon
+         */
+        private Icon chrViewIcon = GUIFactory.getIcon("cgh_chrom.gif");
+        /**
+         * CGH Experiment Views Icon
+         */
+        private Icon exprViewIcon = GUIFactory.getIcon("cgh_circular.gif");
+        private Icon cirViewIcon = GUIFactory.getIcon("Chr_Circular.gif");
+        /**
+         * CGH Sex Chromosomes Icon
+         */
+        private Icon chrXYIcon = GUIFactory.getIcon("Chr_XY.gif");
+        /**
+         * CGH Autosomes Icon
+         */
+        private Icon chrIcon = GUIFactory.getIcon("Chr_Auto.gif");
+        /**
+         * CGH Amplification Deletion Icon
+         */
+        private Icon ampDelIcon = GUIFactory.getIcon("Cgh_Amp_Del.gif");       
         /** Parent node
          */
         private DefaultMutableTreeNode parent;
@@ -714,7 +735,28 @@ public class ResultTree extends JTree implements java.io.Serializable {
                     setIcon(searchIcon);                    
                 } else if(text.indexOf("Data Filter") != -1) {
                         setIcon(dataFilterIcon);
-                }
+                } else if(text.equals("Main View")){
+                    setIcon(mainViewIcon);
+                } /* CGH Icons */ else if(text.equals("Chromosome Views")){
+                    setIcon(chrViewIcon);
+                } else if(text.equals("Chromosome 1") | text.equals("Chromosome 2") | text.equals("Chromosome 3")
+                		 |text.equals("Chromosome 4") | text.equals("Chromosome 5") | text.equals("Chromosome 6")
+                		 |text.equals("Chromosome 7") | text.equals("Chromosome 8") | text.equals("Chromosome 9")
+                		 |text.equals("Chromosome 10") | text.equals("Chromosome 11") | text.equals("Chromosome 12")
+                		 |text.equals("Chromosome 13") | text.equals("Chromosome 14") | text.equals("Chromosome 15")
+                		 |text.equals("Chromosome 16") | text.equals("Chromosome 17") | text.equals("Chromosome 18")
+                		 |text.equals("Chromosome 19") | text.equals("Chromosome 20") | text.equals("Chromosome 21")
+                		 |text.equals("Chromosome 22")){
+                    setIcon(chrIcon);
+                } else if(text.equals("Chromosome X") | text.equals("Chromosome Y")){
+                    setIcon(chrXYIcon);
+                } else if(text.equals("Experiment Views")){
+                    setIcon(exprViewIcon);
+                } else if(text.equals("Results")| text.equals("A and B") | text.equals("B Only") | text.equals("A Only")) {
+                    setIcon(tableIcon);
+                } else if(text.indexOf("Amplifications") != -1 | text.indexOf("Deletions") != -1) {
+                    setIcon(ampDelIcon);
+                } /* CGH Icons */
                 
             } else {  //it's a leaf
                 setIcon(leafIcon);
@@ -813,7 +855,28 @@ public class ResultTree extends JTree implements java.io.Serializable {
                         setIcon(dataSelectionIcon);
                     } else if(text.indexOf("LEM Viewer") != -1) {
                     	setIcon(lemViewerIcon);
-                    }
+                    } /* CGH Icons */else if (text.equals("Experiment Views")) {
+                        setIcon(exprViewIcon);
+                    } else if(parentText.equals("Experiment Views")) {
+                        setIcon(cirViewIcon);
+                    } else if (text.equals("Chromosome Views")) {
+                        setIcon(chrViewIcon);
+                    } else if(text.equals("Chromosome 1") | text.equals("Chromosome 2") | text.equals("Chromosome 3")
+	                		 |text.equals("Chromosome 4") | text.equals("Chromosome 5") | text.equals("Chromosome 6")
+	                		 |text.equals("Chromosome 7") | text.equals("Chromosome 8") | text.equals("Chromosome 9")
+	                		 |text.equals("Chromosome 10") | text.equals("Chromosome 11") | text.equals("Chromosome 12")
+	                		 |text.equals("Chromosome 13") | text.equals("Chromosome 14") | text.equals("Chromosome 15")
+	                		 |text.equals("Chromosome 16") | text.equals("Chromosome 17") | text.equals("Chromosome 18")
+	                		 |text.equals("Chromosome 19") | text.equals("Chromosome 20") | text.equals("Chromosome 21")
+	                		 |text.equals("Chromosome 22") ){
+                    	setIcon(chrIcon);
+                    } else if(text.equals("Chromosome X") | text.equals("Chromosome Y")){
+                        setIcon(chrXYIcon);
+                    } else if(text.equals("Results") | text.equals("A and B") | text.equals("B Only") | text.equals("A Only")) {
+                        setIcon(tableIcon);
+                    } else if(text.indexOf("Amplifications") != -1 | text.indexOf("Deletions") != -1) {
+                        setIcon(ampDelIcon);
+                    } /* CGH Icons */
                     //add new icons here for leaf icons
                     
                     
