@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: SlideData.java,v $
- * $Revision: 1.8 $
- * $Date: 2005-03-10 15:44:14 $
- * $Author: braistedj $
+ * $Revision: 1.9 $
+ * $Date: 2006-02-02 20:04:48 $
+ * $Author: raktim $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -45,6 +45,14 @@ public class SlideData extends Vector implements ISlideData, ISlideMetaData, jav
     private String sampleLabelKey = "Default Slide Name";
     private Hashtable sampleLabels;
     private Vector sampleLabelKeys;
+    
+    /**
+     * Raktim Oct 31, 2005
+     * CGH FlankingRegions, and Slide Consts
+     * Vector of vectors of FlankingRegions corresponding to flanking regions
+     * for each chromosome
+     */
+    private Vector[] flankingRegions;
     
     /**
      * Constructs a <code>SlideData</code> which is a copy of specified original.
@@ -1116,4 +1124,73 @@ public class SlideData extends Vector implements ISlideData, ISlideMetaData, jav
         return this.getSlideDataElement(row).getDetection();
     }
     
+    /**
+     * CGH IFeatureData implemetations
+     * Raktim Oct 31, 2005
+     */
+    
+    /** 
+     * Raktim, CGH
+     * Setter for property flankingRegions.
+     * @param flankingRegions New value of property flankingRegions.
+     */
+    public void setFlankingRegions(java.util.Vector[] flankingRegions) {
+    	System.out.println("SlideData setFlankingRegion()");
+    	if (flankingRegions == null) System.out.println("NULL flankingRegions in SlideData.setFlankingRegion()");
+        this.flankingRegions = flankingRegions;
+    }
+    
+    /**
+     * Raktim, CGH
+     */
+    public int getNumFlankingRegions(int chromosomeIndex){
+    	if (flankingRegions == null) System.out.println("NULL flankingRegions in SlideData");
+        return flankingRegions[chromosomeIndex].size();
+    }
+    
+    /** 
+     * Raktim, CGH
+     * Getter for property flankingRegions.
+     * @return Value of property flankingRegions.
+     */
+    public java.util.Vector[] getFlankingRegions() {
+        return this.flankingRegions;
+    }
+    
+    /**
+     * Raktim, CGH
+     * Remember to fix this later
+     */
+    public boolean isMissingData(int cloneIndex){
+    	
+        if(Float.isNaN(getCY3(cloneIndex)) || Float.isNaN(getCY5(cloneIndex)))
+        	return true;
+        return false;
+    	/* Old Abramson Code. 
+    	 * Remember to Get Back to this Later
+        Iterator it = cy3Slides.iterator();
+        boolean cy3Missing = true;
+        boolean cy5Missing = true;
+        while(it.hasNext()){
+            CGHSlideData slideData = (CGHSlideData)it.next();
+            if(! Float.isNaN(slideData.getRatio(cloneIndex))){
+                cy3Missing = false;
+            }
+        }
+        if(cy3Missing){
+            return true;
+        }
+        
+        it = cy5Slides.iterator();
+        while(it.hasNext()){
+            CGHSlideData slideData = (CGHSlideData)it.next();
+            if(! Float.isNaN(slideData.getRatio(cloneIndex))){
+                cy5Missing = false;
+            }
+        }
+        if(cy5Missing){
+            return true;
+        }
+        */
+    }    
 }
