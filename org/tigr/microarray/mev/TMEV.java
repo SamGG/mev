@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: TMEV.java,v $
- * $Revision: 1.11 $
- * $Date: 2005-09-28 21:52:22 $
- * $Author: caliente $
+ * $Revision: 1.12 $
+ * $Date: 2006-02-02 20:06:21 $
+ * $Author: raktim $
  * $State: Exp $
  */
 
@@ -81,6 +81,20 @@ public class TMEV {
     
     //added for Rama (vu 2005.08.24)
     public static String rPath = "127.0.0.1:6311";
+    
+    /**
+     * Raktim
+     * Nov 07, 2005
+     * CGH default Values
+     */
+    public static boolean cloneDistributionsLogState = true;
+    public static int browserDefaultDyeSwapValue = 1;
+    public static int browserDefaultNoDyeSwapValue = 5;
+    public static int defaultCloneValue = 1;
+    public static int defaultFlankingRegionValue = 0;
+    public static final int CGH_SPECIES_HS = 0;
+    public static final int CGH_SPECIES_MM = 1;
+    public static final int CGH_SPECIES_Undef = -100;
     
     public static void main(String[] args) {
         try {
