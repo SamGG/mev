@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: IData.java,v $
- * $Revision: 1.6 $
- * $Date: 2005-03-10 20:38:25 $
- * $Author: braistedj $
+ * $Revision: 1.7 $
+ * $Date: 2006-02-02 20:07:43 $
+ * $Author: raktim $
  * $State: Exp $
  */
 
@@ -14,10 +14,12 @@ package org.tigr.microarray.mev.cluster.gui;
 
 import java.awt.Color;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.ISlideDataElement;
+import org.tigr.microarray.mev.cgh.CGHDataObj.CGHClone;
 
 public interface IData {
     //Log state
@@ -32,6 +34,14 @@ public interface IData {
     public final static int DATA_TYPE_AFFY_MEDIAN = 5;
     
     public final static String DEFAULT_SAMPLE_ANNOTATION_KEY = "Default Slide Name";
+
+	/**
+	 * Raktim
+	 * CGH Constants
+	 */
+	public final static int DATA_TYPE_CGH = 6;
+	public static final int BAD_CLONE = -10;
+    public static final int NO_COPY_CHANGE = -11;
 
     /**
      * Returns the experiment data (ratio values).
@@ -258,4 +268,98 @@ public interface IData {
      */
     public void setMedianIntensities(boolean areMedians);
 
+    /*******************************
+	 * CGH Specific Interface Defs
+	 * Raktim
+	 * Oct 3, 2005
+	 *******************************/
+	/**
+	 * Returns size of features.
+	 */
+	public int getFeaturesSize(int chromosome);
+
+	/**
+	 * Returns CY3 value.
+	 */
+	public float getCY3(int column, int row, int chromosome);
+
+	/**
+	 * Returns CY5 value.
+	 */
+	public float getCY5(int column, int row, int chromosome);
+
+	/**
+	 * Returns an element attribute.
+	 */
+	public String getElementAttribute(int row, int attr, int chromosome);
+
+	/**
+	 *  Returns the number of chromosomes
+	 */
+	public int getNumChromosomes();
+
+	/**
+	 * Returns the number of data points in a given chromosome
+	 */
+	public int getNumDataPointsInChrom(int chromosome);
+
+	public int getCloneIndex(int relativeIndex, int chromosome);
+
+	public int getRelativeIndex(int cloneIndex, int chromosome);
+
+	public CGHClone getCloneAt(int index);
+
+	public CGHClone getCloneAt(int index, int chromosome);
+
+	public float getValue(int experiment, int clone, int chromosome);
+
+	/**
+	 * Getter for property clones.
+	 * @return Value of property clones.
+	 */
+	public java.util.ArrayList getClones();
+
+	public ArrayList getFeaturesList();
+
+	public float getLogAverageInvertedValue(int experiment, int clone);
+
+	public int getCopyNumberDetermination(int experiment, int clone);
+
+	public float getPValueByLogCloneDistribution(int experiment, int clone);
+
+	public int[][] getChromosomeIndices();
+
+	public int[] getSamplesOrder();
+
+	/**
+	 * Getter for property annotations.
+	 * @return Value of property annotations.
+	 */
+	public org.tigr.microarray.mev.cgh.CGHDataObj.ICGHDataRegion[][] getAnnotations();
+
+	/**
+	 * ICGHFeatureData adaptations
+	 */
+	public boolean isMissingData(int cloneIndex);
+
+	public int getNumFlankingRegions(int experimentIndex, int chromosomeIndex);
+
+	public void setFlankingRegions(int experimentIndex, Vector[] flankingRegions);
+
+	/**
+	 * Added additionalinterface methods
+	 * Raktim
+	 */
+	public boolean isLog2Data();
+
+	public boolean isHasDyeSwap();
+
+	public int getCGHSpecies();
+
+	public boolean hasCloneDistribution();
+	/**
+	 * END
+	 * CGH Specific Interface Defs
+     */
+    
 }
