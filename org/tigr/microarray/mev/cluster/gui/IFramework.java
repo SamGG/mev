@@ -4,17 +4,20 @@ All rights reserved.
  */
 /*
  * $RCSfile: IFramework.java,v $
- * $Revision: 1.8 $
- * $Date: 2005-03-10 20:38:25 $
- * $Author: braistedj $
+ * $Revision: 1.9 $
+ * $Date: 2006-02-02 20:07:50 $
+ * $Author: raktim $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui;
 
 import java.awt.Color;
 import java.awt.Frame;
+import java.awt.Rectangle;
+
 import javax.swing.tree.DefaultMutableTreeNode;
 import org.tigr.microarray.mev.ResultTree;
+import org.tigr.microarray.mev.cgh.CGHDataModel.CytoBandsModel;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
@@ -153,4 +156,30 @@ public interface IFramework {
     
     /** Refreshes current viewer if it's an IViewer **/
     public void refreshCurrentViewer();
+    
+    /**
+	 * Raktim Nov 02, 2005
+	 * CGH Specific methods
+	 */
+
+	/**
+	 * Access to CGH Display Menu
+	 */
+	public ICGHDisplayMenu getCghDisplayMenu();
+	/**
+	 * Access to CGH Clones Menu
+	 * @return
+	 */
+	public ICGHCloneValueMenu getCghCloneValueMenu();
+	/**
+	 *
+	 * @return
+	 */
+	public Rectangle getViewerBounds();
+	/**
+	 * Returns the cytobandmodel associated with the CGH Data
+	 * @return
+	 */
+    public CytoBandsModel getCytoBandsModel();
+    
 }
