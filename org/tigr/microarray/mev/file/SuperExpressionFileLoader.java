@@ -4,9 +4,9 @@
  */
 /*
  * $RCSfile: SuperExpressionFileLoader.java,v $
- * $Revision: 1.11 $
- * $Date: 2005-11-01 18:55:51 $
- * $Author: wwang67 $
+ * $Revision: 1.12 $
+ * $Date: 2006-02-02 19:56:58 $
+ * $Author: raktim $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.file;
@@ -130,7 +130,7 @@ public class SuperExpressionFileLoader {
 
 		int defaultSelection = 0;
 
-		fileLoaders = new ExpressionFileLoader[11];
+		fileLoaders = new ExpressionFileLoader[12];/* Raktim, CGH Loader, changed 11 to 12 */
 		fileLoaders[0] = new MevFileLoader(this);
 
 		fileLoaders[1] = null;
@@ -142,7 +142,7 @@ public class SuperExpressionFileLoader {
 		fileLoaders[7] = null;
 		fileLoaders[8] = null;
 		fileLoaders[9] = null;
-		fileLoaders[10] = null;
+		fileLoaders[10] = null;		fileLoaders[11] = null; /* Raktim, CGH Loader */
 		/*
 		 * fileLoaders[1] = new StanfordFileLoader(this); 
 		 * fileLoaders[2] = new TavFileLoader(this); 
@@ -336,7 +336,7 @@ public class SuperExpressionFileLoader {
 			break;	
 		case 10:
 			loader = new DFCI_CoreFileLoader(this);
-			break;	
+			break;			case 11:            loader = new CGHStanfordFileLoader(this); /* Raktim, for CGH Loader */            break;
 		default:
 			loader = new MevFileLoader(this);
 			break;
@@ -423,7 +423,7 @@ public class SuperExpressionFileLoader {
 			break;		
 		case 10:
 			desc = "DFCI Microarray Core Format Files (*.*)";
-			break;		
+			break;		        case 11:            desc = "CGH Tab Delimited, Multiple Sample Files (*.*)"; /* Raktim, CGH Files */            break;
 		default:
 			desc = "TIGR MeV Files (*.mev)";
 			break;
@@ -547,7 +547,7 @@ public class SuperExpressionFileLoader {
 			try {
 				selectedFileLoader.showModal();
 				data = selectedFileLoader.loadExpressionFiles();
-				if (loaderIndex == 1||loaderIndex == 9)
+				if (loaderIndex == 1 || loaderIndex == 9 || loaderIndex == 11) /* Raktim, added check for 11, CGH Data */
 					dataType = IData.DATA_TYPE_RATIO_ONLY;
 				else if(loaderIndex == 5){
 					dataType = ((Mas5FileLoader)selectedFileLoader)
