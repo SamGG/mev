@@ -16,14 +16,15 @@ import javax.swing.JRadioButtonMenuItem;
 /**
  *
  * @author  Adam Margolin
+ * @author Raktim Sinha
  */
 
 public class MenuUtil {
-    
+
     /** Creates a new instance of AbstractMenubar */
     public MenuUtil() {
     }
-    
+
     /**
      * Creates a menu item with specified name and acton command.
      */
@@ -33,7 +34,7 @@ public class MenuUtil {
         item.addActionListener(listener);
         return item;
     }
-    
+
     /**
      * Creates a check box menu item with specified name, acton command and state.
      */
@@ -44,14 +45,14 @@ public class MenuUtil {
         item.setSelected(isSelected);
         return item;
     }
-    
+
     /**
      * Creates a check box menu item with specified name and acton command.
      */
     protected JCheckBoxMenuItem createJCheckBoxMenuItem(String name, String command, ActionListener listener) {
         return createJCheckBoxMenuItem(name, command, listener, false);
     }
-    
+
     /**
      * Creates a radio button menu item with specified name, acton command and state.
      */
@@ -65,7 +66,7 @@ public class MenuUtil {
         }
         return item;
     }
-    
+
     /**
      * Creates a radio button menu item with specified name, acton command and button group.
      */

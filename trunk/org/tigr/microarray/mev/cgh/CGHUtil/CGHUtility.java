@@ -13,18 +13,19 @@ import org.tigr.microarray.mev.TMEV;
 /**
  *
  * @author  Adam Margolin
+ * @author Raktim Sinha
  */
 
 public class CGHUtility {
-    
+
     /** Creates a new instance of Utility */
     public CGHUtility() {
     }
-    
+
     public static String encap(String str){
         return "'" + str + "'";
     }
-    
+
     public static int convertStringToChrom(String strChrom, int species){
         if(strChrom.endsWith("_random")){
             strChrom = strChrom.substring(0, strChrom.length() - 7);
@@ -75,7 +76,7 @@ public class CGHUtility {
             return 22;
         }else if("chrX".equalsIgnoreCase(strChrom) || "X".equalsIgnoreCase(strChrom)){
         	//return 23;
-        	
+
         	int chr = 0;
         	switch (species){
         		case TMEV.CGH_SPECIES_HS: {chr = 23; break;}
@@ -83,7 +84,7 @@ public class CGHUtility {
         		default: chr = -1; break;
         	}
         	return chr;
-        	
+
         }else if("chrY".equalsIgnoreCase(strChrom) || "Y".equalsIgnoreCase(strChrom)){
         	//return 24;
         	int chr = 0;
@@ -93,13 +94,13 @@ public class CGHUtility {
 	        	default: chr = -2; break;
         	}
         	return chr;
-        	
+
         }else{
             //System.out.println("Util convert chrom, not found: " + strChrom);
             return org.tigr.microarray.mev.cgh.CGHDataObj.CGHClone.NOT_FOUND;
         }
     }
-    
+
     private int XChrToSpecies(int species) {
     	int chr = 0;
     	switch (species){
@@ -109,15 +110,15 @@ public class CGHUtility {
     	}
     	return chr;
     }
-    
+
     public static String convertChromToString(int chrom, int species){
     	switch (species){
 	    	case TMEV.CGH_SPECIES_HS:
-		        if(chrom < 23 && chrom > 0) return "chr" + chrom;   
+		        if(chrom < 23 && chrom > 0) return "chr" + chrom;
 		        if(chrom == 23) return "chrX";
 		        if(chrom == 24) return "chrY";
-	    	case TMEV.CGH_SPECIES_MM: 
-	    		if(chrom < 20 && chrom > 0) return "chr" + chrom;     
+	    	case TMEV.CGH_SPECIES_MM:
+	    		if(chrom < 20 && chrom > 0) return "chr" + chrom;
 		        if(chrom == 20) return "chrX";
 		        if(chrom == 21) return "chrY";
 	    	case TMEV.CGH_SPECIES_Undef:
@@ -127,15 +128,15 @@ public class CGHUtility {
 		        return "";
     	}
     }
-    
+
     public static String convertChromToLongString(int chrom, int species){
     	switch (species){
 	    	case TMEV.CGH_SPECIES_HS:
-		        if(chrom < 23 && chrom > 0) return "Chromosome " + chrom;   
+		        if(chrom < 23 && chrom > 0) return "Chromosome " + chrom;
 		        if(chrom == 23) return "Chromosome X";
 		        if(chrom == 24) return "Chromosome Y";
-	    	case TMEV.CGH_SPECIES_MM: 
-	    		if(chrom < 20 && chrom > 0) return "Chromosome " + chrom;     
+	    	case TMEV.CGH_SPECIES_MM:
+	    		if(chrom < 20 && chrom > 0) return "Chromosome " + chrom;
 		        if(chrom == 20) return "Chromosome X";
 		        if(chrom == 21) return "Chromosome Y";
 	    	case TMEV.CGH_SPECIES_Undef:
@@ -145,31 +146,31 @@ public class CGHUtility {
 		        return "";
     	}
     }
-    
+
     public static String createQueryString(List values){
         String queryString = "(";
         if(values == null || values.size() < 1){
             return null;
         }
-       
+
         queryString += encap(values.get(0).toString());
         for(int i = 1; i < values.size(); i++){
             queryString += ", " + encap(values.get(i).toString());
         }
         return queryString + ")";
     }
-    
+
     public static String createIntegerQueryString(List values){
         String queryString = "(";
         if(values == null || values.size() < 1){
             return null;
         }
-       
+
         queryString += values.get(0);
         for(int i = 1; i < values.size(); i++){
             queryString += ", " + values.get(i);
         }
         return queryString + ")";
     }
-    
+
 }

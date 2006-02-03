@@ -14,23 +14,23 @@ import java.sql.Statement;
 /**
  *
  * @author  Adam Margolin
- * @version
+ * @author Raktim Sinha
  */
 
 public class DSqlHandler {
-    
+
     Connection connection;
-    
+
     /** Creates new DExperimentData */
     public DSqlHandler() {
     }
-    
-    
-    
-    
+
+
+
+
     public boolean saveItem(String sql){
         Statement statement = null;
-        
+
         int result = 0;
         try{
             connection = ConnectionFactory.getConnection("","");
@@ -52,10 +52,10 @@ public class DSqlHandler {
         }
         return(result == 1);
     }
-    
+
     public boolean saveItemTestServer(String sql){
         Statement statement = null;
-        
+
         int result = 0;
         try{
             connection = ConnectionFactory.getConnectionTestServer();
@@ -77,26 +77,26 @@ public class DSqlHandler {
         }
         return(result == 1);
     }
-    
+
     public ResultSet fetchItemsOracle(String sql){
         try{
             connection = OracleConnectionFactory.getConnectionOracle();
-            
+
             Statement statement = connection.createStatement();
-            
+
             ResultSet rs = statement.executeQuery(sql);
-            
+
             return rs;
-            
+
         }catch(Exception e){
             e.printStackTrace();
             return null;
         }
     }
-    
+
     /**
      * Raktim
-     * Trial Version of Driver used. 
+     * Trial Version of Driver used.
      * Max queries = 25
      * @param sql
      * @return
@@ -104,13 +104,13 @@ public class DSqlHandler {
     public ResultSet fetchItemsCSV(String sql){
         try{
             connection = ConnectionFactory.getConnectionCSV();
-            
+
             Statement statement = connection.createStatement();
-            
+
             ResultSet rs = statement.executeQuery(sql);
-            
+
             return rs;
-            
+
         }catch(Exception e){
             e.printStackTrace();
             return null;
