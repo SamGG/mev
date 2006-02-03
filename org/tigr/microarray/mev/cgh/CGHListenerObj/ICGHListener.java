@@ -9,6 +9,7 @@ package org.tigr.microarray.mev.cgh.CGHListenerObj;
 /**
  *
  * @author  Adam Margolin
+ * @author Raktim Sinha
  */
 
 public interface ICGHListener {

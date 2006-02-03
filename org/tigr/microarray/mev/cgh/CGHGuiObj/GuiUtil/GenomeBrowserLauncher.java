@@ -15,18 +15,19 @@ import edu.stanford.ejalbert.BrowserLauncher;
 /**
  *
  * @author  Adam Margolin
+ * @author Raktim Sinha
  */
 
 public class GenomeBrowserLauncher {
-    
+
 	private static final int ENSEMBLE = 1;
 	private static final int UCSC = 2;
 	private static final int NCBI = 3;
-	
+
     /** Creates a new instance of GenomeBrowserLauncher */
     public GenomeBrowserLauncher() {
     }
-    
+
     /** Lanches a browser to dislpay Ensembl
      * @param dataRegion the data region to display
      */
@@ -37,14 +38,14 @@ public class GenomeBrowserLauncher {
         int stop = dataRegion.getStop();
         String url = "http://www.ensembl.org/"+sp+"/contigview?chr="+chromosome+"&vc_start="+start+"&vc_end"
         +stop+"&x=15&y=8";
-        
+
         try{
             BrowserLauncher.openURL(url);
         }catch (IOException ioe){
             ioe.printStackTrace();
         }
     }
-    
+
     /** Lanches a browser to dislpay UCSC's Golden Path
      * @param dataRegion
      */
@@ -54,14 +55,14 @@ public class GenomeBrowserLauncher {
         int start = dataRegion.getStart();
         int stop = dataRegion.getStop();
         String url = "http://genome.ucsc.edu/cgi-bin/hgTracks?db="+sp+"&position=chr"+chromosome+":"+start+"-"+stop;
-        
+
         try{
             BrowserLauncher.openURL(url);
         }catch (IOException ioe){
             ioe.printStackTrace();
         }
     }
-    
+
     /** Lanches a browser to dislpay NCBI's map viewer
      * @param dataRegion
      */
@@ -77,7 +78,7 @@ public class GenomeBrowserLauncher {
             ioe.printStackTrace();
         }
     }
-    
+
     /** Lanches a browser to dislpay NCBI's map viewer
      * @param dataRegion
      */
@@ -93,7 +94,7 @@ public class GenomeBrowserLauncher {
             ioe.printStackTrace();
         }
     }
-    
+
     private static String getChromosomeName(int chr, int species){
         String chromosome = chr + "";
         if("20".equals(chromosome) && (species == TMEV.CGH_SPECIES_MM)){
@@ -107,7 +108,7 @@ public class GenomeBrowserLauncher {
         }
         return chromosome;
     }
-    
+
     private static String getSpeciesName(int browserSource, int sp){
     	String species = "";
     	switch (sp) {

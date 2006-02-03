@@ -11,6 +11,7 @@ import java.util.EventObject;
 /**
  *
  * @author  Adam Margolin
+ * @author Raktim Sinha
  */
 
 public interface IDataRegionSelectionListener {

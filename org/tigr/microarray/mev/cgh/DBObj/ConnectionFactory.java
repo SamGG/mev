@@ -11,7 +11,7 @@ import java.util.Properties;
 /**
  *
  * @author  Adam Margolin
- * @version 
+ * @author Raktim Sinha
  */
 
 public class ConnectionFactory {
@@ -29,7 +29,7 @@ public class ConnectionFactory {
             System.out.println("ERROR:  Exception loading driver class");
         }
     }
-    
+
     /**
      * Raktim
      * UNused
@@ -38,11 +38,11 @@ public class ConnectionFactory {
      * @return
      * @throws SQLException
      */
-    public static Connection getConnection(String username, String password) throws SQLException{ 
-        String url = "jdbc:microsoft:sqlserver://128.91.210.174:6430";    
+    public static Connection getConnection(String username, String password) throws SQLException{
+        String url = "jdbc:microsoft:sqlserver://128.91.210.174:6430";
         return DriverManager.getConnection(url, username, password);
     }
-    
+
     /**
      * Raktim
      * Unused
@@ -51,17 +51,17 @@ public class ConnectionFactory {
      */
     public static Connection getConnectionTestServer() throws SQLException{
         String url = "jdbc:microsoft:sqlserver://128.91.210.134:2433";
-        
+
         String username = "adam";
         String password = "Ambystoma";
-        
+
         return DriverManager.getConnection(url, username, password);
     }
-    
+
     /**
      * Raktim
      * Added to enable FLAT File based JDBC operations
-     * Trial Version of Driver used. 
+     * Trial Version of Driver used.
      * Max queries = 25
      * @return
      * @throws SQLException
@@ -73,19 +73,19 @@ public class ConnectionFactory {
 		myProp.put("_CSV_Header","true");
     	return DriverManager.getConnection(url, myProp);
     }
-    
+
     public static void close(ResultSet rs){
         try{
             rs.close();
         }catch(Exception ignored){}
     }
-    
+
     public static void close(Statement stmt){
         try{
             stmt.close();
         }catch (Exception ignored){}
     }
-    
+
     public static void close(Connection conn){
         try{
             conn.close();

@@ -13,14 +13,15 @@ import javax.swing.JFileChooser;
 /**
  *
  * @author  Adam Margolin
+ * @author Raktim Sinha
  */
 
 public class TableDataWriter {
-    
+
     /** Creates a new instance of TableDataWriter */
     public TableDataWriter() {
     }
-    
+
     public void writeTable(TableModel model){
         JFileChooser chooser = new JFileChooser();
         int returnVal = chooser.showOpenDialog(null);
@@ -30,7 +31,7 @@ public class TableDataWriter {
             writeDataToFile(dataToWrite, outputFile);
         }
     }
-    
+
     private String getTextContents(TableModel model){
         StringBuffer buffer = new StringBuffer();
         int i;
@@ -46,7 +47,7 @@ public class TableDataWriter {
         }
         return buffer.toString();
     }
-    
+
     private void writeDataToFile(String dataToWrite, File outputFile){
         try{
             BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
@@ -56,5 +57,5 @@ public class TableDataWriter {
             ioe.printStackTrace();
         }
     }
-    
+
 }

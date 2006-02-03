@@ -10,7 +10,7 @@ import java.sql.*;
 /**
  *
  * @author  Adam Margolin
- * @version 
+ * @author Raktim Sinha
  */
 
 public class OracleConnectionFactory {
@@ -23,28 +23,28 @@ public class OracleConnectionFactory {
             System.out.println("ERROR:  Exception loading driver class");
         }
     }
-    
-    public static Connection getConnectionOracle() throws SQLException{ 
+
+    public static Connection getConnectionOracle() throws SQLException{
         String url = "jdbc:oracle:thin:@158.130.47.16:1521:genomics";
-        
+
         String username = "margolia";
         String password = "richmond1";
-        
+
         return DriverManager.getConnection(url, username, password);
     }
-    
+
     public static void close(ResultSet rs){
         try{
             rs.close();
         }catch(Exception ignored){}
     }
-    
+
     public static void close(Statement stmt){
         try{
             stmt.close();
     }catch (Exception ignored){}
     }
-    
+
     public static void close(Connection conn){
         try{
             conn.close();

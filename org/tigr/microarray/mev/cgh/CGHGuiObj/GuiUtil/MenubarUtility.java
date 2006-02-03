@@ -17,14 +17,15 @@ import javax.swing.JRadioButtonMenuItem;
 /**
  *
  * @author  Adam Margolin
+ * @author Raktim Sinha
  */
 
 public class MenubarUtility {
-    
+
     /** Creates a new instance of MenubarUtility */
     public MenubarUtility() {
     }
-    
+
     /**
      * Creates a menu item from specified action.
      */
@@ -33,7 +34,7 @@ public class MenubarUtility {
         item.setActionCommand((String)action.getValue(Action.ACTION_COMMAND_KEY));
         return item;
     }
-    
+
     /**
      * Creates a menu item with specified name and acton command.
      */
@@ -43,7 +44,7 @@ public class MenubarUtility {
         item.addActionListener(listener);
         return item;
     }
-    
+
     /**
      * Creates a check box menu item with specified name, acton command and state.
      */
@@ -54,14 +55,14 @@ public class MenubarUtility {
         item.setSelected(isSelected);
         return item;
     }
-    
+
     /**
      * Creates a check box menu item with specified name and acton command.
      */
     public static JCheckBoxMenuItem createJCheckBoxMenuItem(String name, String command, ActionListener listener) {
         return createJCheckBoxMenuItem(name, command, listener, false);
     }
-    
+
     /**
      * Creates a radio button menu item with specified name, acton command and state.
      */
@@ -75,7 +76,7 @@ public class MenubarUtility {
         }
         return item;
     }
-    
+
     /**
      * Creates a radio button menu item with specified name, acton command, state and enabled/disabled.
      */
@@ -90,12 +91,12 @@ public class MenubarUtility {
         }
         return item;
     }
-    
+
     /**
      * Creates a radio button menu item with specified name, acton command and button group.
      */
     public static JRadioButtonMenuItem createJRadioButtonMenuItem(String name, String command, ActionListener listener, ButtonGroup buttonGroup) {
         return createJRadioButtonMenuItem(name, command, listener, buttonGroup, false);
     }
-    
+
 }

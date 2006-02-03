@@ -40,6 +40,7 @@ import org.tigr.util.StringSplitter;
 /**
  *
  * @author  Adam Margolin
+ * @author Raktim Sinha
  */
 public class GroupExperimentsPanel extends JPanel {
     public static final int GROUP_A = 1;
@@ -65,41 +66,41 @@ public class GroupExperimentsPanel extends JPanel {
         ButtonGroup chooseGroup[] = new ButtonGroup[2];
         chooseGroup[0] = new ButtonGroup();
         chooseGroup[1] = new ButtonGroup();
-        
+
         GridBagLayout gridbag = new GridBagLayout();
         GridBagLayout gridbag2 = new GridBagLayout();
         GridBagConstraints constraints = new GridBagConstraints();
         this.setLayout(gridbag2);
         panel1.setLayout(gridbag);
-        
+
         for (int i = 0; i < exptNames.size(); i++) {
             String s1 = (String)(exptNames.get(i));//permut
             expLabels[i] = new JLabel(s1);
             expLabels[i].setForeground(Color.black);
-            
+
             groupARadioButtons[i] = new JRadioButton("Group A", false);
-            
+
             groupBRadioButtons[i] = new JRadioButton("Group B", false);
-            
+
             //neitherGroupRadioButtons[i] = new JRadioButton("Neither group", false);
-            
+
             buildConstraints(constraints, 0, i, 1, 1, 25, 100);
-            
+
             gridbag.setConstraints(expLabels[i], constraints);
             panel1.add(expLabels[i]);
-            
+
             buildConstraints(constraints, 1, i, 1, 1, 25, 100);
             gridbag.setConstraints(groupARadioButtons[i], constraints);
             panel1.add(groupARadioButtons[i]);
-            
+
             buildConstraints(constraints, 2, i, 1, 1, 25, 100);
             gridbag.setConstraints(groupBRadioButtons[i], constraints);
             panel1.add(groupBRadioButtons[i]);
-            
+
             //buildConstraints(constraints, 3, i, 1, 1, 25, 100);
             //gridbag.setConstraints(neitherGroupRadioButtons[i], constraints);
             //panel1.add(neitherGroupRadioButtons[i]);
-            
+
             //chooseGroup[i] = new ButtonGroup();
             //chooseGroup[i].add(groupARadioButtons[i]);
             //chooseGroup[i].add(groupBRadioButtons[i]);
@@ -107,38 +108,38 @@ public class GroupExperimentsPanel extends JPanel {
             chooseGroup[0].add(groupARadioButtons[i]);
             chooseGroup[1].add(groupBRadioButtons[i]);
         }
-        
+
         if(exptNames.size() > 0){
             groupARadioButtons[0].setSelected(true);
         }
         if(exptNames.size() > 1){
             groupBRadioButtons[1].setSelected(true);
         }
-        
+
         JScrollPane scroll = new JScrollPane(panel1);
         scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         scroll.setBorder(BorderFactory.createLineBorder(Color.black,2));
-        
+
         buildConstraints(constraints, 0, 0, 1, 1, 100, 90);
         constraints.fill = GridBagConstraints.BOTH;
         gridbag2.setConstraints(scroll, constraints);
         this.add(scroll);
-        
+
         /*
         JLabel label1 = new JLabel("                                                Note: Group A and Group B  MUST each contain more than one experiment.");
         buildConstraints(constraints, 0, 1, 1, 1, 0, 5);
         constraints.anchor = GridBagConstraints.EAST;
         gridbag2.setConstraints(label1, constraints);
         this.add(label1);
-        
+
          */
-        
+
         JPanel panel2 = new JPanel();
         panel2.setBackground(Color.white);
         GridBagLayout gridbag3 = new GridBagLayout();
         panel2.setLayout(gridbag3);
-        
+
         JButton saveButton = new JButton(" Save grouping ");
         saveButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED, Color.gray, new Color(185,185,185), Color.darkGray, Color.darkGray));
         saveButton.setFocusPainted(false);
@@ -152,7 +153,7 @@ public class GroupExperimentsPanel extends JPanel {
         resetButton.setFocusPainted(false);
         resetButton.setPreferredSize(new Dimension(55,30));
         final int finNum = exptNames.size();
-        
+
         resetButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 for (int i = 0; i < finNum; i++) {
@@ -160,10 +161,10 @@ public class GroupExperimentsPanel extends JPanel {
                 }
             }
         });
-        
+
         final JFileChooser fc = new JFileChooser();
         fc.setCurrentDirectory(new File("Data"));
-        
+
         saveButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent evt) {
                 int returnVal = fc.showSaveDialog(GroupExperimentsPanel.this);
@@ -191,7 +192,7 @@ public class GroupExperimentsPanel extends JPanel {
                 }
             }
         });
-        
+
         loadButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent evt) {
                 int returnVal = fc.showOpenDialog(GroupExperimentsPanel.this);
@@ -235,7 +236,7 @@ public class GroupExperimentsPanel extends JPanel {
                         JOptionPane.showMessageDialog(gPanel, "Incompatible file!", "Error", JOptionPane.WARNING_MESSAGE);
                         //e.printStackTrace();
                     }
-                    
+
                     //this is where a real application would save the file.
                     //log.append("Saving: " + file.getName() + "." + newline);
                 } else {
@@ -243,29 +244,29 @@ public class GroupExperimentsPanel extends JPanel {
                 }
             }
         });
-        
+
         constraints.anchor = GridBagConstraints.CENTER;
         constraints.fill = GridBagConstraints.NONE;
         constraints.insets = new Insets(0,5,0,5);
-        
+
         buildConstraints(constraints, 0, 0, 1, 1, 33, 100);
         gridbag3.setConstraints(saveButton, constraints);
         panel2.add(saveButton);
-        
+
         buildConstraints(constraints, 1, 0, 1, 1, 33, 0);
         gridbag3.setConstraints(loadButton, constraints);
         panel2.add(loadButton);
-        
+
         buildConstraints(constraints, 2, 0, 1, 1, 34, 0);
         gridbag3.setConstraints(resetButton, constraints);
         panel2.add(resetButton);
-        
+
         buildConstraints(constraints, 0, 2, 1, 1, 0, 5);
         constraints.anchor = GridBagConstraints.CENTER;
         //constraints.fill = GridBagConstraints.BOTH;
         gridbag2.setConstraints(panel2, constraints);
         //this.add(panel2);
-        
+
             /*
             JButton gButton = new JButton("groupExpts");
             buildConstraints(constraints, 0, 0, 1, 1, 100, 100);
@@ -273,7 +274,7 @@ public class GroupExperimentsPanel extends JPanel {
             gridbag.setConstraints(gButton, constraints);
             this.add(gButton);
              */
-        
+
     }
     public void reset(){
         final int finNum = exptNames.size();
@@ -281,10 +282,10 @@ public class GroupExperimentsPanel extends JPanel {
             groupARadioButtons[i].setSelected(true);
         }
     }
-    
+
     void buildConstraints(GridBagConstraints gbc, int gx, int gy,
     int gw, int gh, int wx, int wy) {
-        
+
         gbc.gridx = gx;
         gbc.gridy = gy;
         gbc.gridwidth = gw;
@@ -292,10 +293,10 @@ public class GroupExperimentsPanel extends JPanel {
         gbc.weightx = wx;
         gbc.weighty = wy;
     }
-    
+
     public int[] getGroupAssignments() {
         int[] groupAssignments = {-1, -1};
-        
+
         for (int i = 0; i < exptNames.size(); i++) {
             if (gPanel.groupARadioButtons[i].isSelected()) {
                 groupAssignments[0] = i;
@@ -303,7 +304,7 @@ public class GroupExperimentsPanel extends JPanel {
                 groupAssignments[1] = i;
             }
         }
-        
+
         /*
         int[] groupAssignments = new int[exptNames.size()];
         for (int i = 0; i < exptNames.size(); i++) {
@@ -316,7 +317,7 @@ public class GroupExperimentsPanel extends JPanel {
             }
         }
          */
-        
+
         return groupAssignments;
     }
 }
