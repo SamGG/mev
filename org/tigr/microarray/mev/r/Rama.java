@@ -3,6 +3,8 @@
  */
 package org.tigr.microarray.mev.r;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,6 +13,8 @@ import java.util.Vector;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.tigr.microarray.mev.ISlideData;
@@ -34,6 +38,16 @@ public class Rama {
 	
 	private MultipleArrayViewer mav;
 	private MultipleArrayMenubar menuBar;
+	private IData data;
+	private RamaInitDialog initDialog;
+	private RSwingWorker worker;
+	
+	private int B;
+	private int minIter;
+	private int iGene;
+	
+	private RconnectionManager rcMan;
+	private Rconnection rc;
 	
 	
 	/**
@@ -46,10 +60,10 @@ public class Rama {
 		this.menuBar = menuBarP;
 			
 		//gather up necessary data
-		IData data = this.mav.getData();
+		this.data = this.mav.getData();
 		
 		//might as well verify that there is even enough data loaded to continue
-		if( data.getFeaturesCount() < 2 ) {
+		if( this.data.getFeaturesCount() < 2 ) {
 			//not enough to normalize
 			this.error( "The loaded dataset doesn't appear to be \"Ramalizable\"" 
 					+ "\r\nYou must have at least 2 replicates of each sample" );
@@ -64,9 +78,9 @@ public class Rama {
 		} else if( data.getDataType() == IData.DATA_TYPE_AFFY_ABS ) {
 			//deal with Affy Data
 			//System.out.println( "Affy Abs" );
-			this.ramify( data, true );
+			this.ramify( this.data, true );
 		} else {
-			this.ramify( data, false );
+			this.ramify( this.data, false );
 		}//end else - data looks like it may work
 	}//constructor
 		
@@ -77,50 +91,41 @@ public class Rama {
 	 */
 	private void ramify( IData data, boolean isAffy ) {
 		//we need to gather up the data and format it for RAMA
-		String[] hybNames = new String[ data.getFeaturesCount() ];
-		for( int h = 0; h < hybNames.length; h ++ ) {
-			hybNames[ h ] = data.getFullSampleName( h );
-		}
-		
-		//Display a dialog for initialization
-		RamaInitDialog initDialog;
+		String[] hybNames = this.gatherHybNames( data );
 		
 		//deal with two-color and affy data differently
 		if( isAffy ) {
-			initDialog = new RamaInitDialog( this.mav.getFrame(), 
-					hybNames, IData.DATA_TYPE_AFFY_ABS );
+			this.initDialog = new RamaInitDialog( this.mav.getFrame(), hybNames, IData.DATA_TYPE_AFFY_ABS );
 		} else {
-			initDialog = new RamaInitDialog( this.mav.getFrame(), 
-					hybNames, IData.DATA_TYPE_TWO_INTENSITY );
+			this.initDialog = new RamaInitDialog( this.mav.getFrame(), hybNames, IData.DATA_TYPE_TWO_INTENSITY );
 		}
 		
 		//make sure that the user clicked OK
-		if( initDialog.showModal() == JOptionPane.OK_OPTION ) {
+		if( this.initDialog.showModal() == JOptionPane.OK_OPTION ) {
 			//get the advanced parameters
-			int B = initDialog.getNumIter();
-			int minIter = initDialog.getBurnIn();
-			boolean allOut = initDialog.getAllOut();
-			String sConnPort = initDialog.getSelectedConnString();
-			int iPort = this.parseIPort( sConnPort );
+			this.B = this.initDialog.getNumIter();
+			this.minIter = this.initDialog.getBurnIn();
+			boolean allOut = this.initDialog.getAllOut();
+			String sConnPort = this.initDialog.getSelectedConnString();
 			String sConn = this.parseSPort( sConnPort );
+			int iPort = this.parseIPort( sConnPort );
 			
 			//Object to format MeV-IData structure into R data String
 			RDataFormatter rDataFormatter = new RDataFormatter( data );
 			
 			//declare all the necessary variables for the mcmc
 			String sData;
-			int iGene;
 			int nbCol1;
 			int iHybKount;
 			int iColorKount;
 			int iTwo;
 			
-			RamaHybSet rhs = initDialog.getRamaHybSet();
+			RamaHybSet rhs = this.initDialog.getRamaHybSet();
 			
 			//deal with affy and 2 color differently
 			if( isAffy ) {	//this is an affy array
 				sData =  rDataFormatter.ramaNonSwapString( rhs.getVRamaHyb() );
-				iGene = data.getExperiment().getNumberOfGenes();
+				this.iGene = data.getExperiment().getNumberOfGenes();
 				nbCol1 = 0;
 				iHybKount = rhs.getVRamaHyb().size();
 				iColorKount = iHybKount * 2;
@@ -133,7 +138,7 @@ public class Rama {
 					
 					//sData =  this.swapDataString( data, vTreatCy3, vTreatCy5 );
 					sData = rDataFormatter.ramaSwapString( vTreatCy3, vTreatCy5 );
-					iGene = data.getExperiment().getNumberOfGenes();
+					this.iGene = data.getExperiment().getNumberOfGenes();
 					nbCol1 = vTreatCy3.size();
 					iHybKount = vTreatCy3.size() + vTreatCy5.size();
 					iColorKount = iHybKount * 2;
@@ -141,100 +146,106 @@ public class Rama {
 				} else {	//not dye swap
 					//sData =  this.nonSwapDataString( data, rhs.getVRamaHyb() );
 					sData = rDataFormatter.ramaNonSwapString( rhs.getVRamaHyb() );
-					iGene = data.getExperiment().getNumberOfGenes();
+					this.iGene = data.getExperiment().getNumberOfGenes();
 					nbCol1 = 0;
 					iHybKount = rhs.getVRamaHyb().size();
 					iColorKount = iHybKount * 2;
 					iTwo = iHybKount + 1;
 				}//end rhs.isFlip() else
-			}
+			}//end if( isAffy )
+			
+			//display an inderterminate progress bar so user knows it's working
+			RamaProgress progress = new RamaProgress( this.mav.getFrame() );
 			
 			//try to get a connection
-			RconnectionManager rcMan = new RconnectionManager( this.mav.getFrame(), sConn, iPort );
-			Rconnection rc = rcMan.getConnection();
+			this.rcMan = new RconnectionManager( this.mav.getFrame(), sConn, iPort );
+			this.rc = this.rcMan.getConnection();
 			
 			//don't continue if we can't get a connection
 			if( rc != null ) {
-				try {
-					//should clear R
-					rc.voidEval( "rm( " + Rama.R_VECTOR_NAME + " )" );
-					
-					//load rama
-					rc.voidEval( "library(rama)" );
-					
-					//load data as vector
-					rc.voidEval( sData );
-					
-					//reform vector data into matrix
-					rc.voidEval( "dim(" + Rama.R_VECTOR_NAME + ") <- c(" + iGene + "," 
-							+ iColorKount + ")" );
-					
-					if( rhs.isFlip() ) {
-						//call fit.model()
-						rc.voidEval( this.createMcMc( allOut, iGene, iHybKount, 
-								iTwo, iColorKount, B, minIter, nbCol1, true ) );
-					} else {
-						//call fit.model()
-						rc.voidEval( this.createMcMc( allOut, iGene, iHybKount, 
-								iTwo, iColorKount, B, minIter, 0, false ) );
-					}
-					
-					//if the user wishes, output credible intervals
-					double[] qLo;
-					double[] qUp;
-					if( allOut ) {
-						//average the rows when doing all.out = TRUE
-						rc.voidEval( "gamma1<-mat.mean(mcmc.hiv$gamma1)[,1]" );
-						rc.voidEval( "gamma2<-mat.mean(mcmc.hiv$gamma2)[,1]" );
-														  
-						qLo = rc.eval( "mcmc.hiv$q.low" ).asDoubleArray();
-						qUp = rc.eval( "mcmc.hiv$q.up" ).asDoubleArray();
-					} else {
-						qLo = new double[ 0 ];
-						qUp = new double[ 0 ];
-					}
-					
-					//get normalized data vectors
-					double[] gamma1 = rc.eval( "gamma1" ).asDoubleArray();
-					double[] gamma2 = rc.eval( "gamma2" ).asDoubleArray();
-					
-					//get the shift
-					double shift = rc.eval( "mcmc.hiv$shift" ).asDouble();
-					
-					//need to know the gene annotation data
-					String[] geneNames = new String[ iGene ];
-					for( int g = 0; g < iGene; g ++ ) {
-						geneNames[ g ] = data.getGeneName( g );
-					}
-					
-					//save
-			        this.onSave( gamma1, gamma2, qLo, qUp, allOut, geneNames );
-			        
-			        //seemed to have worked so save the connection strings
-			        if( initDialog.connAdded() ) {
-			        	TMEV.updateRPath( initDialog.getRPathToWrite() );
-			        }
-					
-					MultipleArrayViewer newMav = this.spawnNewMav( data, gamma1, 
-							gamma2, geneNames, shift );
-					RamaSummaryViewer sumViewer = new RamaSummaryViewer( shift, 
-							B, minIter, rc, newMav.getFrame() );
-					LeafInfo li = new LeafInfo( "Rama Summary", sumViewer );
-					DefaultMutableTreeNode node = new DefaultMutableTreeNode( "Rama" );
-					node.add( new DefaultMutableTreeNode( li ) );
-					newMav.addAnalysisResult( node );
-				} catch( RSrvException e ) {
-					e.printStackTrace();
-					this.error( e.getMessage() );
+				//prepare all the R command strings
+				String sClear = "rm( " + Rama.R_VECTOR_NAME + " )";
+				String sLibrary = "library(rama)";
+				String sReform = "dim(" + Rama.R_VECTOR_NAME + ") <- c(" + iGene + "," + iColorKount + ")";
+				String sMcmc;
+				if( rhs.isFlip() ) {
+					sMcmc = this.createMcMc( allOut, iGene, iHybKount, iTwo, iColorKount, B, minIter, nbCol1, true );
+				} else {
+					sMcmc = this.createMcMc( allOut, iGene, iHybKount, iTwo, iColorKount, B, minIter, nbCol1, false );
 				}
+				String sAvgGamma1 = "gamma1<-mat.mean(mcmc." + Rama.R_VECTOR_NAME + "$gamma1)[,1]";
+				String sAvgGamma2 = "gamma2<-mat.mean(mcmc." + Rama.R_VECTOR_NAME + "$gamma2)[,1]";
+				String sQLo = "mcmc." + Rama.R_VECTOR_NAME + "$q.low";
+				String sQUp = "mcmc." + Rama.R_VECTOR_NAME + "$q.up";
+				String sShift = "mcmc." + Rama.R_VECTOR_NAME + "$shift";
+				
+				//run the R process in its own thread through a SwingWorker object
+		        final RSwingWorker rThread = new RSwingWorker( rc, sClear, 
+		        		sLibrary, sData, sReform, sMcmc, allOut, sAvgGamma1, 
+						sAvgGamma2, sQLo, sQUp, sShift, progress, this );
+		        rThread.start();
 			} else {	//end if( rc != null )
-				//couldn't get a connection
+				//couldn't get a connection, kill everything
+				progress.kill();
+				this.error( "MeV could not establish a connection with Rserve" );
 				System.out.println( "MeV could not establish a connection with Rserve" );
 			}
-			
-			//System.out.println("Done Rama.142" );
 		}//end if( RamaInitDialog.showModal == JOptionPane.OK_OPTION )
 	}//ramaTwoIntensityData()
+	
+	
+	/**
+	 * 
+	 * @param worker
+	 */
+	public void fireThreadFinished( RSwingWorker worker ) {
+		//check to see if it went ok
+		if( worker.isOk() ) {
+			boolean allOut = worker.isAllOut();
+			
+			//get the credible intervals (if allOut == true)
+			double[] qLo;
+			double[] qUp;
+			if( allOut ) {
+				qLo = worker.getQLo();
+				qUp = worker.getQUp();
+			} else {
+				qLo = new double[ 0 ];
+				qUp = new double[ 0 ];
+			}
+			
+			//get gammas
+			double[] gamma1 = worker.getGamma1();
+			double[] gamma2 = worker.getGamma2();
+			
+			//get shift
+			double shift = worker.getShift();
+			
+			//need to know the gene annotation data
+			String[] geneNames = new String[ iGene ];
+			for( int g = 0; g < iGene; g ++ ) {
+				geneNames[ g ] = this.data.getGeneName( g );
+			}
+			
+			//save
+	        this.onSave( gamma1, gamma2, qLo, qUp, allOut, geneNames );
+	        
+	        //seemed to have worked so save the connection strings
+	        if( initDialog.connAdded() ) {
+	        	TMEV.updateRPath( this.initDialog.getRPathToWrite() );
+	        }
+			
+	        //close old mav, open new one with results
+			MultipleArrayViewer newMav = this.spawnNewMav( data, gamma1, 
+					gamma2, geneNames, shift );
+			RamaSummaryViewer sumViewer = new RamaSummaryViewer( shift, 
+					this.B, this.minIter, rc, newMav.getFrame() );
+			LeafInfo li = new LeafInfo( "Rama Summary", sumViewer );
+			DefaultMutableTreeNode node = new DefaultMutableTreeNode( "Rama" );
+			node.add( new DefaultMutableTreeNode( li ) );
+			newMav.addAnalysisResult( node );
+		}//worker.isOK()
+	}//fireThreadFinished()
 	
 	
 	/**
@@ -253,11 +264,11 @@ public class Rama {
 	private String createMcMc( boolean allOut, int iGene, int iHybKount, int iTwo, 
 			int iColorKount, int B, int minIter, int nbCol1, boolean isDyeSwap ) {
 		StringBuffer sb = new StringBuffer();
-		sb.append( "mcmc.hiv <- fit.model( hiv[ 1:" );
+		sb.append( "mcmc." + Rama.R_VECTOR_NAME + " <- fit.model( " + Rama.R_VECTOR_NAME + "[ 1:" );
 		sb.append( iGene );
 		sb.append( " , c( 1:" );
 		sb.append( iHybKount );
-		sb.append( " )], hiv[ 1:" );
+		sb.append( " )], " + Rama.R_VECTOR_NAME + "[ 1:" );
 		sb.append( iGene );
 		sb.append( ", c( " );
 		sb.append( iTwo );
@@ -278,12 +289,54 @@ public class Rama {
 		if( allOut ) {
 			sb.append( ", all.out = TRUE" );
 		} else {
-			sb.append( ", all.out = FALSE )" );
+			sb.append( ", all.out = FALSE" );
 		}
 		sb.append( ")" );
 		//System.out.println(sb.toString());
 		return sb.toString();
-	}
+	}//createMcMc()
+	
+	
+	/**
+	 * 
+	 * @param data
+	 * @return
+	 */
+	private String[] gatherHybNames( IData data ) {
+		String[] hybNames = new String[ data.getFeaturesCount() ];
+		for( int h = 0; h < hybNames.length; h ++ ) {
+			hybNames[ h ] = data.getFullSampleName( h );
+		}
+		return hybNames;
+	}//gatherHybNames()
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	private JProgressBar createProgress(  ) {
+		//create a progressbar
+		JProgressBar bar = new JProgressBar();
+		bar.setString( "" );
+		bar.setIndeterminate( true );
+		bar.repaint();
+		
+		JPanel barPanel = new JPanel();
+		barPanel.add( bar );
+		barPanel.setSize( 200, 100 );
+		
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        JFrame frame = new JFrame( "Talking to R" );
+		frame.setSize( 300, 200 );
+		frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+		frame.setLocation( ( screenSize.width - frame.getSize().width)/2, 
+		( screenSize.height - frame.getSize().height)/2 );
+		frame.setContentPane( barPanel );
+		frame.show();
+		
+		return bar;
+	}//createProgress()
 	
 	
 	/**
@@ -464,20 +517,24 @@ public class Rama {
             if( chooser.getFileFilter() == textFilter ) {
                 //make sure to add .txt
                 String path = chooser.getSelectedFile().getPath();
+                //System.out.println( "path" + path );
                 if( path.toLowerCase().endsWith("txt") ) {
                     //great, already ok
                     saveFile = new File(path);
                 } else {
                     //add it
                     String subPath;
-                    int period = path.lastIndexOf(".");
+                    int period = path.lastIndexOf(".txt");
+                    //System.out.println( "period:" + period );
                     if( period != -1 ) {
-                        System.out.println("period  = -1");
+                        //System.out.println("period found");
                         subPath = path.substring(0, period);
                     } else {
+                        //System.out.println("period not found");
                         subPath = path;
                     }
                     String newPath = subPath + ".txt";
+                    //System.out.println( "newPath:" + newPath );
                     saveFile = new File(newPath);
                 }
             } else {
@@ -815,4 +872,99 @@ private void ramaAffyData( IData data ) {
 		//System.out.println(sbTreat.toString());
 		return sbTreat.toString();
 	}//createDataString()
+*/
+/*
+try {
+	//should clear R
+	rc.voidEval( "rm( " + Rama.R_VECTOR_NAME + " )" );
+	
+	//load rama
+	rc.voidEval( "library(rama)" );
+	
+	//load data as vector
+	rc.voidEval( sData );
+	
+	//reform vector data into matrix
+	rc.voidEval( sReform );
+	
+	//call fit.model()
+	rc.voidEval( sMcmc );
+	
+	//if the user wishes, output credible intervals
+	double[] qLo;
+	double[] qUp;
+	if( allOut ) {
+		//average the rows when doing all.out = TRUE
+		rc.voidEval( "gamma1<-mat.mean(mcmc.hiv$gamma1)[,1]" );
+		rc.voidEval( "gamma2<-mat.mean(mcmc.hiv$gamma2)[,1]" );
+										  
+		qLo = rc.eval( "mcmc.hiv$q.low" ).asDoubleArray();
+		qUp = rc.eval( "mcmc.hiv$q.up" ).asDoubleArray();
+	} else {
+		qLo = new double[ 0 ];
+		qUp = new double[ 0 ];
+	}
+	
+	//get normalized data vectors
+	double[] gamma1 = rc.eval( "gamma1" ).asDoubleArray();
+	double[] gamma2 = rc.eval( "gamma2" ).asDoubleArray();
+	
+	//get the shift
+	double shift = rc.eval( "mcmc.hiv$shift" ).asDouble();
+	*/
+/*
+} catch( RSrvException e ) {
+	e.printStackTrace();
+	this.error( e.getMessage() );
+}*/
+
+
+
+/*
+//check to see if it went ok
+if( rThread.isOk() ) {
+	//get the credible intervals (if allOut == true)
+	double[] qLo;
+	double[] qUp;
+	if( allOut ) {
+		qLo = rThread.getQLo();
+		qUp = rThread.getQUp();
+	} else {
+		qLo = new double[ 0 ];
+		qUp = new double[ 0 ];
+	}
+	
+	//get gammas
+	double[] gamma1 = rThread.getGamma1();
+	double[] gamma2 = rThread.getGamma2();
+	
+	//get shift
+	double shift = rThread.getShift();
+
+	//need to know the gene annotation data
+	String[] geneNames = new String[ iGene ];
+	for( int g = 0; g < iGene; g ++ ) {
+		geneNames[ g ] = data.getGeneName( g );
+	}
+	
+	//save
+    this.onSave( gamma1, gamma2, qLo, qUp, allOut, geneNames );
+    
+    //seemed to have worked so save the connection strings
+    if( initDialog.connAdded() ) {
+    	TMEV.updateRPath( initDialog.getRPathToWrite() );
+    }
+	
+	MultipleArrayViewer newMav = this.spawnNewMav( data, gamma1, 
+			gamma2, geneNames, shift );
+	RamaSummaryViewer sumViewer = new RamaSummaryViewer( shift, 
+			B, minIter, rc, newMav.getFrame() );
+	LeafInfo li = new LeafInfo( "Rama Summary", sumViewer );
+	DefaultMutableTreeNode node = new DefaultMutableTreeNode( "Rama" );
+	node.add( new DefaultMutableTreeNode( li ) );
+	newMav.addAnalysisResult( node );
+} else {
+	//throw error
+	System.out.println( "Rama Failed" );
+}
 */
