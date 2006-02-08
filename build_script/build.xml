@@ -68,6 +68,7 @@
     <property name="TRN" value="y"/>
     <property name="EASE" value="y"/>
     <property name="USC" value="y"/>
+    <property name="TEASE" value="y"/>
 
     <!-- Property Files, These properties identify the properties files to be constructed during module compilation -->
     <property name="gui.properties.file" value="${dest.dir}/org/tigr/microarray/mev/cluster/gui/impl/factory.properties"/>
@@ -91,7 +92,7 @@
                   In order for a module to be built it must have a property set above and must
                   have it's target within the list in the 'depends' attribute below. 
     -->   
-    <target name="algorithm-modules" depends="build-base,HCL,ST,SOTA,RN,KMC,KMCS,CAST,QTC,GSH,SOM,FOM,PTM,TTEST,SAM,OWA,TFA,SVM,USC,KNNC,DAM,LEM,GDM,PCA,COA,TRN,EASE">
+    <target name="algorithm-modules" depends="build-base,HCL,ST,SOTA,RN,KMC,KMCS,CAST,QTC,GSH,SOM,FOM,PTM,TTEST,SAM,OWA,TFA,SVM,USC,KNNC,DAM,LEM,GDM,PCA,COA,TRN,EASE,TEASE">
     </target>
 
 
@@ -112,7 +113,7 @@
                   In order for a module to be built it must have a property set above and must
                   have it's target within the list in the 'depends' attribute below. 
     -->   
-    <target name="modules-only" depends="HCL,ST,SOTA,RN,KMC,KMCS,CAST,QTC,GSH,SOM,FOM,PTM,TTEST,SAM,OWA,TFA,SVM,USC,KNNC,DAM,LEM,GDM,PCA,COA,TRN,EASE">
+    <target name="modules-only" depends="HCL,ST,SOTA,RN,KMC,KMCS,CAST,QTC,GSH,SOM,FOM,PTM,TTEST,SAM,OWA,TFA,SVM,USC,KNNC,DAM,LEM,GDM,PCA,COA,TRN,EASE,TEASE">
     </target>
 
 
@@ -916,6 +917,30 @@
             <entry key="USC.smallIcon" value="analysis16.gif"/>
             <entry key="USC.largeIcon" value="usc_button.gif"/>
             <entry key="USC.tooltip" value="Uncorrelated Shrunken Centroid Classification"/>
+        </propertyfile>
+    </target>
+
+    <target name="TEASE" depends="TEASE-GUI" if="TEASE">
+        <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+		<classpath refid="module.build.class.path"/>
+            <include name="tease/**"/>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+		<entry key="TEASE" value="org.tigr.microarray.mev.cluster.algorithm.impl.tease.TEASE"/>
+        </propertyfile>
+    </target>
+
+    <target name="TEASE-GUI">
+        <javac srcdir="${gui.impl.dir}/tease" destdir="${dest.dir}">
+		<classpath refid="module.build.class.path"/>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="TEASE:" operation="+"/>            
+            <entry key="TEASE.name" value="TEASE"/>
+            <entry key="TEASE.class" value="org.tigr.microarray.mev.cluster.gui.impl.tease.TEASEGUI"/>
+            <entry key="TEASE.smallIcon" value="analysis16.gif"/>
+            <entry key="TEASE.largeIcon" value="tease_button.gif"/>
+            <entry key="TEASE.tooltip" value="Tree EASE"/>
         </propertyfile>
     </target>
 
