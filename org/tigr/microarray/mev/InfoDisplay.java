@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: InfoDisplay.java,v $
- * $Revision: 1.8 $
- * $Date: 2005-03-10 15:44:14 $
- * $Author: braistedj $
+ * $Revision: 1.9 $
+ * $Date: 2006-02-09 18:31:00 $
+ * $Author: raktim $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -83,6 +83,12 @@ public class InfoDisplay extends ActionInfoDialog {
         //viewExperimentButton.setToolTipText("Temporarily Disabled -- visit www.tigr.org/software/TM4 for update.");
         viewExperimentButton.setActionCommand("view-experiment");
         viewExperimentButton.addActionListener(listener);
+        /**
+         * Raktim, Temporary Fix for CGH Data
+         * All graph views from this option deals with log10 or log transformed data.
+         * Need to figure out how to handle the scenario with CGH data
+         */
+        if(data.isCGHData()) viewExperimentButton.setEnabled(false);
         
         JButton setColorButton = new JButton("Set Gene Color");
         setColorButton.setActionCommand("set-color");
