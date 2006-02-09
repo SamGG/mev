@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASE.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-03-10 15:46:49 $
+ * $Revision: 1.6 $
+ * $Date: 2006-02-09 19:42:48 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -445,8 +445,12 @@ public class EASE extends AbstractAlgorithm {
         }
         
         //format the pvalues
-        for(int i = 0; i < newResult.length; i++)
-            newResult[i][pValueIndex] = format.format(Double.parseDouble(newResult[i][pValueIndex]));
+        for(int i = 0; i < newResult.length; i++) {
+        	newResult[i][pValueIndex] = format.format(Double.parseDouble(newResult[i][pValueIndex]));
+        	
+        	//handles international conventions where comma denotes decimal
+        	newResult[i][pValueIndex] = newResult[i][pValueIndex].replace(',','.');
+        }
         
         categoryNames = newCatNames;
         hitList = newHitList;
@@ -725,6 +729,10 @@ public class EASE extends AbstractAlgorithm {
             for(int row = 0; row < newResult.length; row++){
                 
                 newResult[row][resultCol] = format.format(currentArray[row]);
+     
+                //handles international conventions where comma denotes decimal
+                newResult[row][resultCol] = newResult[row][resultCol].replace(',','.');
+     
             }
         }
         result = newResult;
