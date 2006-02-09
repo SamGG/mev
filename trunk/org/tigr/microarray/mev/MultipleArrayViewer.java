@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.27 $
- * $Date: 2006-02-02 20:04:08 $
+ * $Revision: 1.28 $
+ * $Date: 2006-02-09 18:30:22 $
  * $Author: raktim $
  * $State: Exp $
  */
@@ -1492,9 +1492,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         IViewer viewer = getCurrentViewer();
         if (viewer == null) {
             return;
-        }
-        viewer.onMenuChanged(menubar.getDisplayMenu());
-        doViewLayout();
+        }        /* Raktim, Handle differently for CGH Menu */        if(viewer instanceof ICGHViewer){        	((ICGHViewer)viewer).onMenuChanged(menubar.getCghDisplayMenu());        } else {        	viewer.onMenuChanged(menubar.getDisplayMenu());        }        doViewLayout();
     }
     
     
