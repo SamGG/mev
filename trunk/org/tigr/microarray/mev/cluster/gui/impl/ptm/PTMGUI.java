@@ -1,11 +1,11 @@
 /*
-Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2006, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: PTMGUI.java,v $
- * $Revision: 1.10 $
- * $Date: 2005-11-04 14:42:08 $
+ * $Revision: 1.11 $
+ * $Date: 2006-02-14 15:31:10 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -130,20 +130,30 @@ public class PTMGUI implements IClusterGUI, IScriptGUI {
         
         //can't assume that a null cluster color means that a gene is not in a cluster.
         ClusterRepository geneClusterRepository = framework.getClusterRepository(org.tigr.microarray.mev.cluster.clusterUtil.Cluster.GENE_CLUSTER);
+
+        //need to get total cluster count
+        int numClusters = 0;
+        for(int i = 0; i < geneClusterRepository.size(); i++) {
+        	numClusters += geneClusterRepository.getClusterList(i).size();
+        } 
+
+        clusterColors = new Color[numClusters];
+        int clusterIndex = 0;
         
         for(int i = 0; i < geneClusterRepository.size(); i++) {
             ClusterList list = geneClusterRepository.getClusterList(i);
             Vector currentCluster;
             
-            clusterColors = new Color[list.size()];
+            //clusterColors = new Color[list.size()];
             
             for(int j = 0; j < list.size(); j++) {
                 //make a vector     
                 currentCluster = new Vector();
-                
+                                
                 //get cluster
                 org.tigr.microarray.mev.cluster.clusterUtil.Cluster mevCluster = list.getClusterAt(j);
-                clusterColors[j] = mevCluster.getClusterColor();
+                clusterColors[clusterIndex] = mevCluster.getClusterColor();
+                clusterIndex++;
                 
                 //check genes for membership and add to cluster vector
                 for(int m = 0 ; m < number_of_genes; m++) {
@@ -170,19 +180,27 @@ public class PTMGUI implements IClusterGUI, IScriptGUI {
         //11.04.2005 JCB, bug fix, GENE_CLUSTER->EXPERIMENT_CLUSTER
         ClusterRepository expClusterRepository = framework.getClusterRepository(org.tigr.microarray.mev.cluster.clusterUtil.Cluster.EXPERIMENT_CLUSTER);
         
+        //need to get total cluster count
+        numClusters = 0;
+        for(int i = 0; i < expClusterRepository.size(); i++) {
+        	numClusters += expClusterRepository.getClusterList(i).size();
+        } 
+
+        expClusterColors = new Color[numClusters];
+        clusterIndex = 0;        
+        
         for(int i = 0; i < expClusterRepository.size(); i++) {
             ClusterList list = expClusterRepository.getClusterList(i);
             Vector currentCluster;
-            
-            expClusterColors = new Color[list.size()];
-            
+                        
             for(int j = 0; j < list.size(); j++) {
                 //make a vector     
                 currentCluster = new Vector();
                 
                 //get cluster
                 org.tigr.microarray.mev.cluster.clusterUtil.Cluster mevCluster = list.getClusterAt(j);
-                expClusterColors[j] = mevCluster.getClusterColor();
+                expClusterColors[clusterIndex] = mevCluster.getClusterColor();
+                clusterIndex++;
                 
                 //check genes for membership and add to cluster vector
                 for(int m = 0 ; m < number_of_samples; m++) {
@@ -190,9 +208,8 @@ public class PTMGUI implements IClusterGUI, IScriptGUI {
                         currentCluster.add(new Integer(m));
                         expAssignedToACluster[m] = true;
                 }
-
-                expClusterVector.add(currentCluster);
                 
+                expClusterVector.add(currentCluster);                
             }  
         }
       /*  for (int i = 0; i < expClusterColors.length; i++) {

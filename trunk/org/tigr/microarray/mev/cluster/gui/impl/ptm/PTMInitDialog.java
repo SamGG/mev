@@ -1,11 +1,11 @@
 /* 
-Copyright @ 1999-2004, The Institute for Genomic Research (TIGR). 
+Copyright @ 1999-2006, The Institute for Genomic Research (TIGR). 
 All rights reserved. 
  */
 /* 
  * $RCSfile: PTMInitDialog.java,v $ 
- * $Revision: 1.5 $ 
- * $Date: 2005-03-10 20:22:03 $ 
+ * $Revision: 1.6 $ 
+ * $Date: 2006-02-14 15:31:10 $ 
  * $Author: braistedj $ 
  * $State: Exp $ 
  */
@@ -455,7 +455,18 @@ public class PTMInitDialog extends AlgorithmDialog {
     }    
         
     Vector getMeanProfile(Vector expInCluster) {        
+    	    	
         Vector meanProfile = new Vector();        
+        
+        //if empty just return a NaN profile
+        if(expInCluster.size() == 0) {
+        	Vector v = new Vector(this.numberOfExperiments);
+			for(int i = 0; i < numberOfExperiments; i++) {
+				v.add(new Float(Float.NaN));
+			}
+			return v;        	
+        }
+        	
         float[][] expMatrix = this.convertToFloatMatrix(expInCluster);        
         float[] meanArray;        
         int n = 0;        
@@ -1824,6 +1835,7 @@ public class PTMInitDialog extends AlgorithmDialog {
                     if ((Float.isNaN(((Float) currGene.elementAt(i)).floatValue()))||(Float.isNaN(((Float) currGene.elementAt(i+1)).floatValue()))) {                        
                         continue;                        
                     }                    
+           
                     GraphLine gl = new GraphLine(i /*+ 1*/, ((Float) currGene.elementAt(i)).floatValue(),                    
                     i + 1, ((Float) currGene.elementAt(i + 1)).floatValue(), clusterColors[index]);                    
                     profileDisplayPanel.addGraphElement(gl);                    
