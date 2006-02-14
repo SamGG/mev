@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.28 $
- * $Date: 2006-02-09 18:30:22 $
- * $Author: raktim $
+ * $Revision: 1.29 $
+ * $Date: 2006-02-14 22:01:45 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -2037,7 +2037,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 	     }
 	     private void onRamaDoc() {
   	         try {
-  	                BrowserLauncher.openURL( "http://www.expression.washington.edu:8080/ramaDoc/MeV-R_Documentation.html" );
+  	                BrowserLauncher.openURL( "http://www.expression.washington.edu/ramaDoc/MeV-R_Documentation.html" );
   	                         //BrowserLauncher.openURL( "http://192.168.200.50:8080/ramaDoc/MeV-R_Documentation.html" );
   	                 } catch( IOException e ) {
   	                         e.printStackTrace();
