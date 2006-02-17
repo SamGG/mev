@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.29 $
- * $Date: 2006-02-14 22:01:45 $
- * $Author: caliente $
+ * $Revision: 1.30 $
+ * $Date: 2006-02-17 14:50:00 $
+ * $Author: raktim $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -1492,7 +1492,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         IViewer viewer = getCurrentViewer();
         if (viewer == null) {
             return;
-        }        /* Raktim, Handle differently for CGH Menu */        if(viewer instanceof ICGHViewer){        	((ICGHViewer)viewer).onMenuChanged(menubar.getCghDisplayMenu());        } else {        	viewer.onMenuChanged(menubar.getDisplayMenu());        }        doViewLayout();
+        }        /* Raktim, Handle differently for CGH Menu */        if(viewer instanceof ICGHViewer){        	//((ICGHViewer)viewer).onMenuChanged(menubar.getCghDisplayMenu());        	((ICGHViewer)viewer).onMenuChanged(menubar.getDisplayMenu());        } else {        	viewer.onMenuChanged(menubar.getDisplayMenu());        }        doViewLayout();
     }
     
     
