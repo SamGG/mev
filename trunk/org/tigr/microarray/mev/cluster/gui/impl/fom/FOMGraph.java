@@ -4,29 +4,27 @@ All rights reserved.
  */
 /*
  * $RCSfile: FOMGraph.java,v $
- * $Revision: 1.7 $
- * $Date: 2005-03-10 20:31:06 $
- * $Author: braistedj $
+ * $Revision: 1.8 $
+ * $Date: 2006-02-23 20:59:51 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.fom;
 
 import java.awt.Color;
-import java.awt.Point;
-import java.awt.Insets;
-import java.awt.Graphics;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.awt.Point;
 import java.awt.RenderingHints;
-
-import java.awt.image.BufferedImage;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JPanel;

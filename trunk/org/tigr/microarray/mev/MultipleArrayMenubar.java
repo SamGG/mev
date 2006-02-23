@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayMenubar.java,v $
- * $Revision: 1.11 $
- * $Date: 2006-02-02 20:02:35 $
- * $Author: raktim $
+ * $Revision: 1.12 $
+ * $Date: 2006-02-23 20:59:41 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -14,29 +14,29 @@ package org.tigr.microarray.mev;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.GradientPaint;
+import java.awt.Graphics2D;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-
 import java.util.Vector;
 
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 
 import org.tigr.microarray.mev.action.ActionManager;
 import org.tigr.microarray.mev.action.DefaultAction;
+import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
+import org.tigr.microarray.mev.cluster.gui.ICGHCloneValueMenu;
+import org.tigr.microarray.mev.cluster.gui.ICGHDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
 
-import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
-import org.tigr.microarray.mev.cluster.gui.ICGHCloneValueMenu;import org.tigr.microarray.mev.cluster.gui.ICGHDisplayMenu;
 public class MultipleArrayMenubar extends JMenuBar {
     
     private DisplayMenu displayMenu = new DisplayMenu();

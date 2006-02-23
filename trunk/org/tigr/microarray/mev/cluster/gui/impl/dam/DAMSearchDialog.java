@@ -9,9 +9,16 @@ All rights reserved.
 
 package org.tigr.microarray.mev.cluster.gui.impl.dam;
 
-import java.awt.event.*;
-import javax.swing.*;
-import java.util.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.util.Vector;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
 

@@ -10,24 +10,22 @@ All rights reserved.
 
 package org.tigr.microarray.mev.cluster.gui.impl.tease;
 
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-
-import java.awt.Frame;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
-
 import java.io.File;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;

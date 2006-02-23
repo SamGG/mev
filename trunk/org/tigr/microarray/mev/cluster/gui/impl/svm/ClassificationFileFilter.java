@@ -4,15 +4,16 @@ All rights reserved.
 */
 /*
  * $RCSfile: ClassificationFileFilter.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 20:21:56 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 20:59:55 $
+ * $Author: caliente $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.gui.impl.svm;
 
 import java.io.File;
+
 import javax.swing.filechooser.FileFilter;
 
 public class ClassificationFileFilter extends FileFilter {

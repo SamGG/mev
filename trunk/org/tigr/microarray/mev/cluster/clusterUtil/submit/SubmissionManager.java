@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: SubmissionManager.java,v $
- * $Revision: 1.1 $
- * $Date: 2004-07-22 15:29:11 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2006-02-23 20:59:47 $
+ * $Author: caliente $
  * $State: Exp $
  */
 /*
@@ -19,9 +19,9 @@ package org.tigr.microarray.mev.cluster.clusterUtil.submit;
 
 import javax.swing.JOptionPane;
 
-import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
 
 /**
  *

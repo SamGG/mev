@@ -4,30 +4,31 @@ All rights reserved.
 */
 /*
  * $RCSfile: GDMAnnotationSizeDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2004-02-06 22:53:42 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2006-02-23 20:59:51 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.gdm;
 
-import org.tigr.util.awt.GBA;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
 import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+
+import org.tigr.util.awt.GBA;
 
 public class GDMAnnotationSizeDialog extends JDialog {
     private int result;

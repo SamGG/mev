@@ -6,10 +6,8 @@
 
 package org.tigr.microarray.mev.cgh.CGHDataObj;
 
-import java.util.Vector;
 import java.text.NumberFormat;
-
-import org.tigr.microarray.mev.cgh.CGHDataObj.ICGHDataRegion;
+import java.util.Vector;
 /**
  *
  * @author  Adam Margolin

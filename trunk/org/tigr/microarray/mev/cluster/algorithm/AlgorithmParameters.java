@@ -4,16 +4,19 @@ All rights reserved.
 */
 /*
  * $RCSfile: AlgorithmParameters.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-07-27 20:01:46 $
- * $Author: braisted $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 20:59:44 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.algorithm;
 
 import java.io.Serializable;
-import java.net.*;
-import java.util.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 public class AlgorithmParameters implements Serializable {
 

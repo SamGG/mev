@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASETableViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2005-03-10 20:31:06 $
- * $Author: braistedj $
+ * $Revision: 1.7 $
+ * $Date: 2006-02-23 20:59:50 $
+ * $Author: caliente $
  * $State: Exp $
  */
 /*
@@ -17,7 +17,16 @@ All rights reserved.
 
 package org.tigr.microarray.mev.cluster.gui.impl.ease;
 
-import org.tigr.util.BrowserLauncher;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Serializable;
+
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -25,25 +34,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Serializable;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
-
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
-
 import org.tigr.microarray.mev.cluster.gui.helpers.TableViewer;
-
-import org.tigr.microarray.mev.TMEV;
+import org.tigr.util.BrowserLauncher;
 
 /** Displays ease results
  */

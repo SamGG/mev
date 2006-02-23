@@ -4,36 +4,36 @@ All rights reserved.
 */
 /*
  * $RCSfile: CentroidViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2005-03-10 15:56:09 $
- * $Author: braistedj $
+ * $Revision: 1.7 $
+ * $Date: 2006-02-23 20:59:48 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.helpers;
 
-import java.awt.Font;
 import java.awt.Color;
-import java.awt.Rectangle;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.FontMetrics;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
+import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JComponent;
 
-import org.tigr.microarray.mev.cluster.gui.IViewer;
+import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
+import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-
-import org.tigr.microarray.mev.cluster.clusterUtil.*;
 
 
 public class CentroidViewer extends JPanel implements IViewer, java.io.Serializable {

@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLViewer.java,v $
- * $Revision: 1.13 $
- * $Date: 2005-03-10 20:22:02 $
- * $Author: braistedj $
+ * $Revision: 1.14 $
+ * $Date: 2006-02-23 20:59:51 $
+ * $Author: caliente $
  * $State: Exp $
  */
 /*
@@ -20,55 +20,47 @@ All rights reserved.
 package org.tigr.microarray.mev.cluster.gui.impl.hcl;
 
 import java.awt.Color;
-import java.awt.Frame;
-import java.awt.Insets;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridBagLayout;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
-
-
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
-
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 
-import javax.swing.JPanel;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.JComponent;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
-
-import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
+import org.tigr.microarray.mev.cluster.gui.LeafInfo;
+import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
-
-import org.tigr.util.FloatMatrix;
-import org.tigr.microarray.mev.cluster.gui.LeafInfo;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
-import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
-
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
+import org.tigr.util.FloatMatrix;
 
 public class HCLViewer extends JPanel implements IViewer {
 

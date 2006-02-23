@@ -4,19 +4,33 @@ All rights reserved.
 */
 /*
  * $RCSfile: SetNumericDialog.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:39:20 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 20:59:59 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.util.awt;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Hashtable;
 import java.util.Vector;
-import javax.swing.*;
-import org.tigr.util.awt.*;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+
+import org.tigr.util.awt.ActionInfoDialog;
+import org.tigr.util.awt.ActionInfoEvent;
+import org.tigr.util.awt.GBA;
 
 public class SetNumericDialog extends ActionInfoDialog {
     protected JFrame parent;

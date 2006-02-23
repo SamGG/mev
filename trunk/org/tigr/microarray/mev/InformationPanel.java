@@ -4,17 +4,25 @@ All rights reserved.
 */
 /*
  * $RCSfile: InformationPanel.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:44:16 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 20:59:41 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.text.*;
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
+
+import javax.swing.ImageIcon;
+import javax.swing.JPanel;
+import javax.swing.Timer;
 
 public class InformationPanel extends JPanel {
     

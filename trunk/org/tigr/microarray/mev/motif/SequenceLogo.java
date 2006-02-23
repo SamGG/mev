@@ -4,16 +4,20 @@ All rights reserved.
 */
 /*
  * $RCSfile: SequenceLogo.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:40:35 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 20:59:57 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.motif;
 
-import java.awt.*;
-import java.awt.geom.*;
-import java.awt.font.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextLayout;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 
 public class SequenceLogo {
     int[][] Matrix;

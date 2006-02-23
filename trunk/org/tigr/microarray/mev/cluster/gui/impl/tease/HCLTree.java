@@ -4,30 +4,28 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLTree.java,v $
- * $Revision: 1.1 $
- * $Date: 2006-02-08 18:17:16 $
+ * $Revision: 1.2 $
+ * $Date: 2006-02-23 20:59:55 $
  * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.tease;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Dimension;
 import java.awt.Polygon;
-import java.awt.Composite;
-import java.awt.AlphaComposite;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
-
+import java.awt.event.MouseEvent;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -39,10 +37,9 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.tigr.microarray.mev.TMEV;
-
 import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
 
 public class HCLTree extends JPanel implements java.io.Serializable {
     

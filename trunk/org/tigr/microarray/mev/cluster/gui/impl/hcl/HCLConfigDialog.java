@@ -4,49 +4,45 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLConfigDialog.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-03-10 20:22:02 $
- * $Author: braistedj $
+ * $Revision: 1.6 $
+ * $Date: 2006-02-23 20:59:51 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.hcl;
 
-import java.util.Hashtable;
-
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
-import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
-import java.awt.Dimension;
-import java.awt.GridBagLayout;
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-
-
-import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyListener;
-import javax.swing.event.ChangeListener;
+import java.awt.event.WindowEvent;
+import java.util.Hashtable;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JSlider;
-import javax.swing.UIManager;
-import javax.swing.JCheckBox;
-import javax.swing.JTextField;
-import javax.swing.JSeparator;
-import javax.swing.JOptionPane;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.border.BevelBorder;
+import javax.swing.event.ChangeListener;
 
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
-
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 
 public class HCLConfigDialog extends AlgorithmDialog {
     

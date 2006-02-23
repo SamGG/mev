@@ -4,14 +4,15 @@ All rights reserved.
 */
 /*
  * $RCSfile: ExpressionFileView.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:56:13 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 20:59:48 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.helpers;
 
 import java.io.File;
+
 import javax.swing.Icon;
 import javax.swing.filechooser.FileView;
 

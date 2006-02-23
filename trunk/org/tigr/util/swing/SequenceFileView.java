@@ -4,16 +4,18 @@ All rights reserved.
 */
 /*
  * $RCSfile: SequenceFileView.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:27:49 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 21:00:04 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.util.swing;
 
 import java.io.File;
-import javax.swing.*;
-import javax.swing.filechooser.*;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.filechooser.FileView;
 
 public class SequenceFileView extends FileView {
     Icon ExpressionIcon = new ImageIcon(SequenceFileView.class.getResource("/org/tigr/images/Sequence216.gif"));

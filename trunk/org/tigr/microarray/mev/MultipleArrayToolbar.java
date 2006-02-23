@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: MultipleArrayToolbar.java,v $
- * $Revision: 1.7 $
- * $Date: 2005-10-31 18:57:15 $
+ * $Revision: 1.8 $
+ * $Date: 2006-02-23 20:59:41 $
  * $Author: caliente $
  * $State: Exp $
  */
@@ -14,11 +14,11 @@ package org.tigr.microarray.mev;
 import java.awt.Component;
 import java.util.ArrayList;
 
-import javax.swing.Icon;
+import javax.swing.AbstractButton;
 import javax.swing.Action;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JToolBar;
-import javax.swing.AbstractButton;
 
 import org.tigr.microarray.mev.action.ActionManager;
 

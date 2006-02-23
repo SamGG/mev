@@ -4,26 +4,23 @@ All rights reserved.
 */
 /*
  * $RCSfile: Communicator.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:35:51 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 21:00:01 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.remote.protocol.communication.http;
 
-import org.tigr.util.ConfMap;
-
+import org.tigr.remote.RemoteException;
 import org.tigr.remote.communication.ClientCommunicator;
 import org.tigr.remote.communication.JobControl;
-
-import org.tigr.remote.RemoteException;
+import org.tigr.remote.protocol.FinishedJob;
 import org.tigr.remote.protocol.Request;
 import org.tigr.remote.protocol.Response;
 import org.tigr.remote.protocol.StartingJob;
 import org.tigr.remote.protocol.StopJob;
-import org.tigr.remote.protocol.FinishedJob;
-
 import org.tigr.remote.protocol.communication.Presentation;
+import org.tigr.util.ConfMap;
 
 public class Communicator implements ClientCommunicator {
 

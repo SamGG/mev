@@ -4,15 +4,16 @@ All rights reserved.
 */
 /*
  * $RCSfile: BreakFilterStream.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:35:12 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 21:00:02 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.remote.protocol.serializer;
 
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+
 import de.mnl.java.io.base64.Base64OutputStream;
 
 public class BreakFilterStream extends OutputStream {

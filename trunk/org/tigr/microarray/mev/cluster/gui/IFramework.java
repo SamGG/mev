@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: IFramework.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-02-02 20:07:50 $
- * $Author: raktim $
+ * $Revision: 1.10 $
+ * $Date: 2006-02-23 20:59:48 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui;
@@ -16,11 +16,11 @@ import java.awt.Frame;
 import java.awt.Rectangle;
 
 import javax.swing.tree.DefaultMutableTreeNode;
+
 import org.tigr.microarray.mev.ResultTree;
 import org.tigr.microarray.mev.cgh.CGHDataModel.CytoBandsModel;
-import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
-
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
+import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 
 /**
  * This class serves as an interface to the framework.

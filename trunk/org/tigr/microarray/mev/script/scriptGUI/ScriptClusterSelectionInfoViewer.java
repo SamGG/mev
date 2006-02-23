@@ -4,18 +4,19 @@ All rights reserved.
  */
 /*
  * $RCSfile: ScriptClusterSelectionInfoViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2005-03-10 15:39:55 $
- * $Author: braistedj $
+ * $Revision: 1.5 $
+ * $Date: 2006-02-23 20:59:58 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.script.scriptGUI;
 
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;

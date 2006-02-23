@@ -6,14 +6,12 @@
 
 package org.tigr.microarray.mev.cgh.CGHDataGenerator;
 
-import org.tigr.microarray.mev.cgh.CGHDataObj.*;
-//import org.abramson.microarray.cgh.CGHFcdObj.CGHMultipleArrayDataFcd;
-//import org.tigr.microarray.mev.cgh.CGHGuiObj.Menus.ICGHCloneValueMenu;
-import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.MultipleArrayData;
-
-//import java.util.Iterator;
 import java.util.Vector;
+
+import org.tigr.microarray.mev.MultipleArrayData;
+import org.tigr.microarray.mev.cgh.CGHDataObj.CGHClone;
+import org.tigr.microarray.mev.cgh.CGHDataObj.FlankingRegion;
+import org.tigr.microarray.mev.cluster.gui.IData;
 //import java.util.ArrayList;
 
 /**

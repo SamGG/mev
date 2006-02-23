@@ -7,52 +7,26 @@
 package org.tigr.microarray.mev.cluster.algorithm.impl.ease;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Frame;
-
-
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.BorderLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
-import java.awt.Dimension;
-
-import java.awt.event.KeyEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.ActionEvent;
-import java.awt.event.ItemListener;
-
 import java.io.File;
-
 import java.util.Vector;
 
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
-
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.UIManager;
 import javax.swing.JCheckBox;
-import javax.swing.JFileChooser;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JRadioButton;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.ButtonGroup;
-import javax.swing.BorderFactory;
 import javax.swing.border.BevelBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
 
 import org.tigr.microarray.mev.TMEV;
 

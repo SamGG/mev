@@ -10,34 +10,30 @@ All rights reserved.
 
 package org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil;
 
-import java.io.*;
-
-import java.awt.Toolkit;
 import java.awt.Color;
-import javax.swing.JDialog;
+import java.awt.Dimension;
+import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.io.IOException;
 import java.net.URL;
 
-import java.awt.Insets;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-
-import java.awt.GradientPaint;
-
-import javax.swing.JEditorPane;
-import javax.swing.JPanel;
-import javax.swing.JOptionPane;
 import javax.swing.BorderFactory;
-import javax.swing.border.BevelBorder;
-import javax.swing.JFrame;
 import javax.swing.JButton;
-import javax.swing.JScrollPane;
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.border.BevelBorder;
 
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 

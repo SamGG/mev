@@ -6,8 +6,8 @@
 
 package org.tigr.microarray.mev.cgh.CGHDataModel;
 
-import javax.swing.table.AbstractTableModel;
 import javax.swing.event.ChangeListener;
+import javax.swing.table.AbstractTableModel;
 
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;

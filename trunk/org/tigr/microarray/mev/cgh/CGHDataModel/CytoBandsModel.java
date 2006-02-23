@@ -6,13 +6,12 @@
 
 package org.tigr.microarray.mev.cgh.CGHDataModel;
 
-import org.tigr.microarray.mev.cgh.CGHDataObj.CytoBand;
-import org.tigr.microarray.mev.cgh.CGHDataObj.CytoBands;
-
+import java.awt.Color;
 import java.util.Iterator;
 import java.util.Vector;
 
-import java.awt.Color;
+import org.tigr.microarray.mev.cgh.CGHDataObj.CytoBand;
+import org.tigr.microarray.mev.cgh.CGHDataObj.CytoBands;
 
 /**
  *

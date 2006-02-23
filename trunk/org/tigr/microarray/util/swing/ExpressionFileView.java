@@ -4,17 +4,20 @@ All rights reserved.
 */
 /*
  * $RCSfile: ExpressionFileView.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:23 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2006-02-23 20:59:59 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.util.swing;
 
 import java.io.File;
-import javax.swing.*;
-import javax.swing.filechooser.*;
-import org.tigr.util.swing.*;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.filechooser.FileView;
+
+import org.tigr.util.swing.Utils;
 
 public class ExpressionFileView extends FileView {
     Icon ExpressionIcon = new ImageIcon(org.tigr.microarray.util.swing.ExpressionFileView.class.getResource("/org/tigr/images/GeneIcon.gif"));

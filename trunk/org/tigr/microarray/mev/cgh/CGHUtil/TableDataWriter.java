@@ -6,9 +6,13 @@
 
 package org.tigr.microarray.mev.cgh.CGHUtil;
 
-import javax.swing.table.TableModel;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import javax.swing.JFileChooser;
+import javax.swing.table.TableModel;
 
 /**
  *

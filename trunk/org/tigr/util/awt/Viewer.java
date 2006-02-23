@@ -4,18 +4,23 @@ All rights reserved.
 */
 /*
  * $RCSfile: Viewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:26:21 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 21:00:04 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.util.awt;
 
-import java.awt.*;
-import java.awt.print.*;
-import java.io.*;
-import java.util.*;
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Graphics;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.io.Serializable;
+import java.util.Vector;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 public abstract class Viewer extends JPanel implements Serializable, Printable {
     public static final long serialVersionUID = 100010301010001L;

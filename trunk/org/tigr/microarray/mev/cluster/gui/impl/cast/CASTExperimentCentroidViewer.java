@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: CASTExperimentCentroidViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2005-03-10 20:30:31 $
- * $Author: braistedj $
+ * $Revision: 1.8 $
+ * $Date: 2006-02-23 20:59:49 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.cast;
@@ -15,16 +15,16 @@ import java.awt.Color;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
-import javax.swing.JPopupMenu;
-import javax.swing.JOptionPane;
 import javax.swing.JColorChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 
 public class CASTExperimentCentroidViewer extends ExperimentClusterCentroidViewer {
        

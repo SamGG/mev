@@ -4,23 +4,21 @@ All rights reserved.
 */
 /*
  * $RCSfile: TMEVAlgorithmFactory.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:44:16 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 20:59:41 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
 import java.util.StringTokenizer;
 
-import org.tigr.util.ConfMap;
-
-import org.tigr.remote.RemoteAlgorithm;
-
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
+import org.tigr.remote.RemoteAlgorithm;
 import org.tigr.remote.communication.CommunicatorFactory;
+import org.tigr.util.ConfMap;
 
 public class TMEVAlgorithmFactory implements AlgorithmFactory {
     

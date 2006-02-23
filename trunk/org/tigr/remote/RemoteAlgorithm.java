@@ -4,30 +4,27 @@ All rights reserved.
 */
 /*
  * $RCSfile: RemoteAlgorithm.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:36:35 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 21:00:00 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.remote;
 
 import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
-
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.remote.communication.ClientCommunicator;
-import org.tigr.remote.communication.JobControl;
 import org.tigr.remote.communication.CommunicatorFactory;
-
-import org.tigr.remote.protocol.StartJob;
+import org.tigr.remote.communication.JobControl;
+import org.tigr.remote.protocol.ExecutedJob;
+import org.tigr.remote.protocol.FailedJob;
+import org.tigr.remote.protocol.FinishedJob;
 import org.tigr.remote.protocol.JobData;
 import org.tigr.remote.protocol.JobVisitor;
-import org.tigr.remote.protocol.FinishedJob;
-
+import org.tigr.remote.protocol.StartJob;
 import org.tigr.remote.protocol.SuccessfulJob;
-import org.tigr.remote.protocol.FailedJob;
-import org.tigr.remote.protocol.ExecutedJob;
 
 public class RemoteAlgorithm extends AbstractAlgorithm {
     

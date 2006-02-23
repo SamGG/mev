@@ -5,7 +5,11 @@ package org.tigr.microarray.mev.cgh.DBObj;
  *
  * Created on February 25, 2002, 1:31 AM
  */
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  *

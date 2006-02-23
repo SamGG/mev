@@ -6,7 +6,9 @@
 
 package org.tigr.microarray.mev.cgh.CGHGuiObj.GuiUtil;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.Window;
 
 /**
  *

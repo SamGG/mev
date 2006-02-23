@@ -4,17 +4,18 @@ All rights reserved.
 */
 /*
  * $RCSfile: DefaultAction.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:40:11 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 20:59:41 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.action;
 
-import javax.swing.Action;
-import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 import java.awt.event.ActionEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
 
 public class DefaultAction extends AbstractAction {
     

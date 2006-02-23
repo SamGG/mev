@@ -5,14 +5,15 @@
 
 /*
  * $RCSfile: GCOSSlideDataElement.java,v $
- * $Revision: 1.1 $
- * $Date: 2005-11-01 19:01:27 $
- * $Author: wwang67 $
+ * $Revision: 1.2 $
+ * $Date: 2006-02-23 20:59:41 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
 import java.io.Serializable;
+
 import org.tigr.microarray.mev.cluster.gui.IData;
 
 public class GCOSSlideDataElement extends ArrayElement implements ISlideDataElement, Serializable {

@@ -4,21 +4,41 @@ All rights reserved.
  */
 /*
  * $RCSfile: InfoDisplay.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-02-09 18:31:00 $
- * $Author: raktim $
+ * $Revision: 1.10 $
+ * $Date: 2006-02-23 20:59:41 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import javax.swing.*;
-import org.tigr.graph.*;
-import org.tigr.util.*;
-import org.tigr.util.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.Hashtable;
+import java.util.Vector;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+
+import org.tigr.graph.GC;
+import org.tigr.graph.GraphLine;
+import org.tigr.graph.GraphPoint;
+import org.tigr.graph.GraphTick;
+import org.tigr.graph.GraphViewer;
 import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.util.Xcon;
+import org.tigr.util.awt.ActionInfoDialog;
+import org.tigr.util.awt.GBA;
 
 public class InfoDisplay extends ActionInfoDialog {
     

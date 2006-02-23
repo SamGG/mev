@@ -4,29 +4,27 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMExperimentHeader.java,v $
- * $Revision: 1.4 $
- * $Date: 2005-03-10 20:22:04 $
- * $Author: braistedj $
+ * $Revision: 1.5 $
+ * $Date: 2006-02-23 20:59:53 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.ptm;
 
-import java.util.Vector;
-
-import java.awt.Font;
+import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Insets;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Dimension;
-import java.awt.FontMetrics;
-import java.awt.BorderLayout;
+import java.awt.Insets;
 import java.awt.RenderingHints;
-
 import java.awt.image.BufferedImage;
+import java.util.Vector;
 
-import javax.swing.JPanel;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 /**
  *

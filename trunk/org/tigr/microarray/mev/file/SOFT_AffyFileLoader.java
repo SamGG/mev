@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: SOFT_AffyFileLoader.java,v $
- * $Revision: 1.1 $
- * $Date: 2005-11-01 18:52:45 $
- * $Author: wwang67 $
+ * $Revision: 1.2 $
+ * $Date: 2006-02-23 20:59:56 $
+ * $Author: caliente $
  * $State: Exp $
  */
 
@@ -36,12 +36,11 @@ import javax.swing.DefaultListSelectionModel;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
-import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EtchedBorder;
@@ -51,11 +50,9 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import org.tigr.microarray.mev.FloatSlideData;
 import org.tigr.microarray.mev.GCOSSlideDataElement;
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.SlideData;
-import org.tigr.microarray.mev.SlideDataElement;
 import org.tigr.microarray.mev.TMEV;
 
 public class SOFT_AffyFileLoader extends ExpressionFileLoader {

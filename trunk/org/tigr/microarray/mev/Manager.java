@@ -4,26 +4,48 @@ All rights reserved.
  */
 /*
  * $RCSfile: Manager.java,v $
- * $Revision: 1.9 $
- * $Date: 2005-10-31 18:57:15 $
+ * $Revision: 1.10 $
+ * $Date: 2006-02-23 20:59:41 $
  * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.*;
-import javax.swing.*;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Event;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.File;
+import java.io.IOException;
+import java.util.Hashtable;
+import java.util.Vector;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
 
 import org.tigr.util.BrowserLauncher;
 import org.tigr.util.Query;
-import org.tigr.util.awt.ActionInfoListener;
 import org.tigr.util.awt.ActionInfoEvent;
-import org.tigr.util.awt.MessageDisplay;
+import org.tigr.util.awt.ActionInfoListener;
 import org.tigr.util.awt.ImageScreen;
-import org.tigr.microarray.mev.TMEV;
+import org.tigr.util.awt.MessageDisplay;
 
 public class Manager {//A class to keep track of viewers
     private static Vector activeComponents;

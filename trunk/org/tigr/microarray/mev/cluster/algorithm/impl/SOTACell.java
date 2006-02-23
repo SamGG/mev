@@ -4,14 +4,15 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOTACell.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2006-02-23 20:59:45 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.algorithm.impl;
 
-import java.util.*;
+import java.util.Vector;
+
 import org.tigr.util.FloatMatrix;
 
 public class SOTACell{

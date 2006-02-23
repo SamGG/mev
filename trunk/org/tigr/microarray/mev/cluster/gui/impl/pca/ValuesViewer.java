@@ -4,18 +4,18 @@ All rights reserved.
 */
 /*
  * $RCSfile: ValuesViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-07-27 19:59:16 $
- * $Author: braisted $
+ * $Revision: 1.5 $
+ * $Date: 2006-02-23 20:59:53 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.pca;
 
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.text.DecimalFormat;
 
 import javax.swing.JComponent;
@@ -23,8 +23,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-import org.tigr.util.FloatMatrix;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
+import org.tigr.util.FloatMatrix;
 
 public class ValuesViewer extends ViewerAdapter implements java.io.Serializable {
     public static final long serialVersionUID = 202011050001L;

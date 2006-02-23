@@ -4,25 +4,24 @@ All rights reserved.
  */
 /*
  * $RCSfile: FloatSlideData.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-02-02 20:03:04 $
- * $Author: raktim $
+ * $Revision: 1.10 $
+ * $Date: 2006-02-23 20:59:41 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
 import java.util.Hashtable;
-import java.util.Vector;
 import java.util.Properties;
+import java.util.Vector;
 
-import org.tigr.util.math.LinearEquation;
 import org.tigr.microarray.mev.cluster.gui.IData;
-
-import org.tigr.midas.util.ColumnWorker;
-import org.tigr.midas.engine.TotInt;
 import org.tigr.midas.engine.IterativeLinReg;
 import org.tigr.midas.engine.IterativeLogMean;
 import org.tigr.midas.engine.RatioStats;
+import org.tigr.midas.engine.TotInt;
+import org.tigr.midas.util.ColumnWorker;
+import org.tigr.util.math.LinearEquation;
 //import org.tigr.midas.display.ParameterPane;
 
 

@@ -13,9 +13,7 @@ package org.tigr.microarray.mev.cluster.gui.helpers.ktree;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
-
 import java.io.Serializable;
-
 import java.util.Vector;
 //import awt.ktree.ITreeNode;
 //import awt.ktree.ITreeNodeRenderer;

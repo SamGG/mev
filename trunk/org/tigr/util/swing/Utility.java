@@ -4,15 +4,17 @@ All rights reserved.
 */
 /*
  * $RCSfile: Utility.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:23 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2006-02-23 21:00:04 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.util.swing;
 
-import java.awt.*;
-import java.util.*;
+import java.awt.Color;
+import java.awt.GradientPaint;
+import java.awt.Graphics2D;
+import java.util.Vector;
 
 public class Utility {
     

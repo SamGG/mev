@@ -4,20 +4,20 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterWorker.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2006-02-23 20:59:46 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.clusterUtil;
-
-import org.tigr.microarray.mev.cluster.gui.Experiment;
 
 import java.awt.Color;
 import java.util.HashSet;
 import java.util.Iterator;
 
 import javax.swing.JOptionPane;
+
+import org.tigr.microarray.mev.cluster.gui.Experiment;
 
 public class ClusterWorker {  
     

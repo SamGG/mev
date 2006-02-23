@@ -4,22 +4,23 @@ All rights reserved.
  */
 /*
  * $RCSfile: ActionManager.java,v $
- * $Revision: 1.13 $
- * $Date: 2006-02-02 20:00:57 $
- * $Author: raktim $
+ * $Revision: 1.14 $
+ * $Date: 2006-02-23 20:59:41 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.action;
 
-import java.net.URL;
-import java.util.HashMap;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
+import java.util.HashMap;
+
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 
-import org.tigr.microarray.mev.cluster.gui.IGUIFactory;
 import org.tigr.microarray.mev.cluster.gui.AnalysisDescription;
+import org.tigr.microarray.mev.cluster.gui.IGUIFactory;
 
 public class ActionManager implements java.io.Serializable {
     public static final long serialVersionUID = 100010201010001L;

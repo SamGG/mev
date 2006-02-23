@@ -8,14 +8,16 @@
 
 package org.tigr.microarray.mev.r;
 
-import java.io.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /** <b>RFileOutputStream</b> is an {@link OutputStream} to transfer files
 from the client to <b>Rserve</b> server. It is used very much like
 a {@link FileOutputStream}. Currently mark and seek is not supported.
 The current implementation is also "one-shot" only, that means the file
 can be written only once.
-@version $Id: RFileOutputStream.java,v 1.1 2005-09-28 21:52:22 caliente Exp $
+@version $Id: RFileOutputStream.java,v 1.2 2006-02-23 20:59:57 caliente Exp $
 */
 
 public class RFileOutputStream extends OutputStream {

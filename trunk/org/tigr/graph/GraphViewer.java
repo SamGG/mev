@@ -4,28 +4,52 @@ All rights reserved.
  */
 /*
  * $RCSfile: GraphViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2005-03-10 15:22:39 $
- * $Author: braistedj $
+ * $Revision: 1.5 $
+ * $Date: 2006-02-23 20:59:40 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.graph;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.*;
-import java.util.*;
-import javax.swing.*;
-import org.tigr.util.awt.Drawable;
-import org.tigr.util.awt.Viewer;
-import org.tigr.util.awt.GBA;
-import org.tigr.util.awt.BoundariesDialog;
-import org.tigr.util.awt.ActionInfoListener;
-import org.tigr.util.awt.ActionInfoEvent;
-
-import javax.swing.JPopupMenu;
-import javax.swing.JMenuItem;
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridBagLayout;
+import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
+import java.util.Hashtable;
+import java.util.Vector;
+
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+
+import org.tigr.util.awt.ActionInfoEvent;
+import org.tigr.util.awt.ActionInfoListener;
+import org.tigr.util.awt.BoundariesDialog;
+import org.tigr.util.awt.Drawable;
+import org.tigr.util.awt.GBA;
+import org.tigr.util.awt.Viewer;
 
 public class GraphViewer extends Viewer {
    public static final long serialVersionUID = 1000101030001L;    

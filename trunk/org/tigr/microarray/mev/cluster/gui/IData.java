@@ -4,16 +4,15 @@ All rights reserved.
 */
 /*
  * $RCSfile: IData.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-02-02 20:07:43 $
- * $Author: raktim $
+ * $Revision: 1.8 $
+ * $Date: 2006-02-23 20:59:47 $
+ * $Author: caliente $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.gui;
 
 import java.awt.Color;
-
 import java.util.ArrayList;
 import java.util.Vector;
 

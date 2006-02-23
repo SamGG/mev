@@ -4,28 +4,28 @@ All rights reserved.
 */
 /*
  * $RCSfile: CentroidsViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2005-03-10 15:56:13 $
- * $Author: braistedj $
+ * $Revision: 1.8 $
+ * $Date: 2006-02-23 20:59:48 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.helpers;
 
-import java.awt.Font;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Rectangle;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
-import javax.swing.JPanel;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 
-import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
 
 /**
  * This class is used to draw set of centroid charts.

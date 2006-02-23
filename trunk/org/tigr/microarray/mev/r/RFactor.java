@@ -1,13 +1,13 @@
 package org.tigr.microarray.mev.r;
 
-import java.util.*;
+import java.util.Vector;
 
 /** representation of a factor variable. In R there is no actual xpression
     type called "factor", instead it is coded as an int vector with a list
     attribute. The parser code of REXP converts such constructs directly into
     the RFactor objects and defines an own XT_FACTOR type 
     
-    @version $Id: RFactor.java,v 1.1 2005-09-28 21:52:22 caliente Exp $
+    @version $Id: RFactor.java,v 1.2 2006-02-23 20:59:57 caliente Exp $
 */    
 public class RFactor extends Object {
     /** IDs (content: Integer) each entry corresponds to a case, ID specifies the category */

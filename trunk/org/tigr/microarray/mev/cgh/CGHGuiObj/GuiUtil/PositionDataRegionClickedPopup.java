@@ -6,8 +6,9 @@
 
 package org.tigr.microarray.mev.cgh.CGHGuiObj.GuiUtil;
 
-import javax.swing.*;
 import java.awt.event.ActionListener;
+
+import javax.swing.JPopupMenu;
 
 /**
  *

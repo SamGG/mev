@@ -4,17 +4,23 @@ All rights reserved.
 */
 /*
  * $RCSfile: TranskriptionFactor.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:40:35 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 20:59:57 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.motif;
 
-import java.io.*;
-import java.awt.*;
-import java.util.*;
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.Graphics2D;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.util.Vector;
+
+import javax.swing.JOptionPane;
 
 public class TranskriptionFactor {
     private static String fsep = System.getProperty("file.separator");

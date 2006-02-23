@@ -4,14 +4,15 @@ All rights reserved.
 */
 /*
  * $RCSfile: TXTFileFilter.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:23 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2006-02-23 21:00:04 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.util.swing;
 
 import java.io.File;
+
 import javax.swing.filechooser.FileFilter;
 
 public class TXTFileFilter extends FileFilter {

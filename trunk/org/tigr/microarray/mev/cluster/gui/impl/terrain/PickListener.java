@@ -4,14 +4,15 @@ All rights reserved.
 */
 /*
  * $RCSfile: PickListener.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 20:33:21 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 20:59:56 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.terrain;
 
 import java.awt.event.MouseEvent;
+
 import com.sun.j3d.utils.picking.PickCanvas;
 
 public interface PickListener {

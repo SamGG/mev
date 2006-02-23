@@ -10,7 +10,6 @@ All rights reserved.
 
 package org.tigr.microarray.mev.cluster.gui.impl.ease.gotree;
 
-import javax.swing.BorderFactory;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
@@ -18,11 +17,10 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-
 import java.awt.font.LineMetrics;
-
 import java.text.DecimalFormat;
 
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 import org.tigr.microarray.mev.cluster.gui.helpers.ktree.ITreeNodeRenderer;

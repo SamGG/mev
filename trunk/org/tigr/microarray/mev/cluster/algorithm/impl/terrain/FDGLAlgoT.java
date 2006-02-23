@@ -4,15 +4,17 @@ All rights reserved.
 */
 /*
  * $RCSfile: FDGLAlgoT.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:45:30 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 20:59:46 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.algorithm.impl.terrain; 
 
 import javax.vecmath.Vector2f;
-import org.tigr.microarray.mev.cluster.algorithm.impl.util.*;
+
+import org.tigr.microarray.mev.cluster.algorithm.impl.util.FloatArray;
+import org.tigr.microarray.mev.cluster.algorithm.impl.util.IntArray;
 
 public class FDGLAlgoT { // Force Directed Graph Layout algorithm
 

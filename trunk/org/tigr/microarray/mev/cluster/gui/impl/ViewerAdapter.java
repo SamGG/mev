@@ -10,11 +10,11 @@ All rights reserved.
 
  * $RCSfile: ViewerAdapter.java,v $
 
- * $Revision: 1.7 $
+ * $Revision: 1.8 $
 
- * $Date: 2005-03-10 20:36:57 $
+ * $Date: 2006-02-23 20:59:49 $
 
- * $Author: braistedj $
+ * $Author: caliente $
 
  * $State: Exp $
 
@@ -26,21 +26,13 @@ package org.tigr.microarray.mev.cluster.gui.impl;
 
 import java.awt.image.BufferedImage;
 
-
-
 import javax.swing.JComponent;
 
-
-
-import org.tigr.microarray.mev.cluster.gui.IViewer;
-
-import org.tigr.microarray.mev.cluster.gui.IFramework;
-
-import org.tigr.microarray.mev.cluster.gui.IData;
-
-import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
-
 import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
 
 
 

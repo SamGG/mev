@@ -4,16 +4,17 @@ All rights reserved.
 */
 /*
  * $RCSfile: TempFile.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:34:45 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 21:00:03 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.remote.protocol.util;
 
-import org.tigr.util.ConfMap;
-import java.io.IOException;
 import java.io.File;
+import java.io.IOException;
+
+import org.tigr.util.ConfMap;
 
 public class TempFile {
 

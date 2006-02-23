@@ -4,65 +4,63 @@ All rights reserved.
 */
 /*
  * $RCSfile: Content3D.java,v $
- * $Revision: 1.6 $
- * $Date: 2005-03-10 20:32:37 $
- * $Author: braistedj $
+ * $Revision: 1.7 $
+ * $Date: 2006-02-23 20:59:53 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.pca;
 
-import java.awt.Font;
-import java.awt.FontMetrics;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.GraphicsConfiguration;
 import java.awt.image.BufferedImage;
 
+import javax.media.j3d.AmbientLight;
+import javax.media.j3d.Appearance;
+import javax.media.j3d.Background;
+import javax.media.j3d.BoundingSphere;
+import javax.media.j3d.BranchGroup;
+import javax.media.j3d.Canvas3D;
+import javax.media.j3d.ColoringAttributes;
+import javax.media.j3d.Font3D;
+import javax.media.j3d.FontExtrusion;
+import javax.media.j3d.ImageComponent;
+import javax.media.j3d.ImageComponent2D;
+import javax.media.j3d.Light;
+import javax.media.j3d.LineAttributes;
+import javax.media.j3d.Material;
+import javax.media.j3d.PointArray;
+import javax.media.j3d.PointAttributes;
+import javax.media.j3d.PointLight;
+import javax.media.j3d.Screen3D;
+import javax.media.j3d.Shape3D;
+import javax.media.j3d.Text3D;
+import javax.media.j3d.Transform3D;
+import javax.media.j3d.TransformGroup;
+import javax.media.j3d.TransparencyAttributes;
+import javax.swing.JPanel;
 import javax.vecmath.Color3f;
-import javax.vecmath.Point3f;
 import javax.vecmath.Point3d;
+import javax.vecmath.Point3f;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 
-import javax.media.j3d.Light;
-import javax.media.j3d.Text3D;
-import javax.media.j3d.Font3D;
-import javax.media.j3d.Shape3D;
-import javax.media.j3d.Canvas3D;
-import javax.media.j3d.Screen3D;
-import javax.media.j3d.Material;
-import javax.media.j3d.PointArray;
-import javax.media.j3d.PointLight;
-import javax.media.j3d.Appearance;
-import javax.media.j3d.Background;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.AmbientLight;
-import javax.media.j3d.FontExtrusion;
-import javax.media.j3d.TransformGroup;
-import javax.media.j3d.BoundingSphere;
-import javax.media.j3d.LineAttributes;
-import javax.media.j3d.PointAttributes;
-import javax.media.j3d.ImageComponent;
-import javax.media.j3d.ImageComponent2D;
-import javax.media.j3d.ColoringAttributes;
-import javax.media.j3d.TransparencyAttributes;
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.util.FloatMatrix;
 
 import com.sun.j3d.utils.geometry.Box;
 import com.sun.j3d.utils.geometry.Cone;
-import com.sun.j3d.utils.geometry.Sphere;
 import com.sun.j3d.utils.geometry.Cylinder;
-import com.sun.j3d.utils.universe.SimpleUniverse;
-import com.sun.j3d.utils.picking.behaviors.PickZoomBehavior;
+import com.sun.j3d.utils.geometry.Sphere;
 import com.sun.j3d.utils.picking.behaviors.PickRotateBehavior;
 import com.sun.j3d.utils.picking.behaviors.PickTranslateBehavior;
-
-import javax.swing.JPanel;
-
-import org.tigr.util.FloatMatrix;
-import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IData;
+import com.sun.j3d.utils.picking.behaviors.PickZoomBehavior;
+import com.sun.j3d.utils.universe.SimpleUniverse;
 
 public class Content3D extends JPanel {
     

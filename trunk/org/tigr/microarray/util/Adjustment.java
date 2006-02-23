@@ -4,16 +4,16 @@ All rights reserved.
  */
 /*
  * $RCSfile: Adjustment.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-12-01 19:19:10 $
- * $Author: wwang67 $
+ * $Revision: 1.6 $
+ * $Date: 2006-02-23 20:59:59 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.ArrayList;
 
 import org.tigr.util.FloatMatrix;
 

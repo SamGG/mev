@@ -13,9 +13,9 @@ import com.klg.jclass.chart.ChartDataSupport;
 import com.klg.jclass.chart.ChartDataEvent;
 import com.klg.jclass.chart.ChartDataManageable;
 */
+import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.ISlideData;
 /*
 import java.util.Vector;
 import java.util.Iterator;

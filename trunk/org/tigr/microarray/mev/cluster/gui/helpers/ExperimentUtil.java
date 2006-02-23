@@ -4,31 +4,33 @@ All rights reserved.
  */
 /*
  * $RCSfile: ExperimentUtil.java,v $
- * $Revision: 1.8 $
- * $Date: 2005-03-10 15:56:10 $
- * $Author: braistedj $
+ * $Revision: 1.9 $
+ * $Date: 2006-02-23 20:59:48 $
+ * $Author: caliente $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.gui.helpers;
 
-import java.io.*;
+import java.awt.Frame;
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.PrintWriter;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import java.awt.Frame;
-import javax.swing.*;
 import javax.swing.JFileChooser;
-
-import org.tigr.util.StringSplitter;
-import org.tigr.util.BrowserLauncher;
-import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IData;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.util.BrowserLauncher;
+import org.tigr.util.StringSplitter;
 
 /**
  * This class contains set of static methods to store

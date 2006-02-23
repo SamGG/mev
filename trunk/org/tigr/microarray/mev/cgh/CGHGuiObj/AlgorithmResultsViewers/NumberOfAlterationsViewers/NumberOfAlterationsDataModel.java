@@ -7,8 +7,9 @@
 package org.tigr.microarray.mev.cgh.CGHGuiObj.AlgorithmResultsViewers.NumberOfAlterationsViewers;
 
 import javax.swing.table.AbstractTableModel;
-import org.tigr.microarray.mev.cgh.CGHDataObj.*;
+
 import org.tigr.microarray.mev.cgh.CGHDataObj.AlterationRegion;
+import org.tigr.microarray.mev.cgh.CGHDataObj.ICGHDataRegion;
 
 /**
  *
