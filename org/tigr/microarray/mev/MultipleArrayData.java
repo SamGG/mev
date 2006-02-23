@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayData.java,v $
- * $Revision: 1.19 $
- * $Date: 2006-02-23 20:59:41 $
+ * $Revision: 1.20 $
+ * $Date: 2006-02-23 21:19:41 $
  * $Author: caliente $
  * $State: Exp $
  */
@@ -2356,6 +2356,20 @@ public class MultipleArrayData implements IData, Serializable {
         }
 
         return annot;
+    }
+    
+    /**
+     * Overload getAnnotatilnList, using the full indices list if no int[] input
+     * @param fieldName
+     * @return 
+     */
+    public String[] getAnnotationList(String fieldName) {
+    	//System.out.println("MultipleArrayData, size of indicesList = " + this.experiment.getNumberOfGenes());
+    	int[] indices = new int[this.experiment.getNumberOfGenes()];
+    	for (int i = 0 ; i < indices.length; i ++) {
+    		indices[i] = i;
+    	}
+    	return this.getAnnotationList(fieldName, indices);
     }
 
     private void writeObject(ObjectOutputStream oos) throws IOException, ClassNotFoundException{

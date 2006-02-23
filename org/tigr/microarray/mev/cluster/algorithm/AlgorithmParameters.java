@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: AlgorithmParameters.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-02-23 20:59:44 $
+ * $Revision: 1.5 $
+ * $Date: 2006-02-23 21:19:42 $
  * $Author: caliente $
  * $State: Exp $
  */
@@ -82,6 +82,10 @@ public class AlgorithmParameters implements Serializable {
 
     public float getFloat(String key) {
         return Float.parseFloat(properties.getProperty(key));
+    }
+    
+    public double getDouble(String key) {
+    	return Double.parseDouble(properties.getProperty(key));
     }
 
     public float getFloat(String key, float defValue) {

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.31 $
- * $Date: 2006-02-23 20:59:41 $
+ * $Revision: 1.32 $
+ * $Date: 2006-02-23 21:19:41 $
  * $Author: caliente $
  * $State: Exp $
  */
@@ -3618,6 +3618,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         
         public IData getData() {
             return MultipleArrayViewer.this.getData();
+        }
+        public JFrame getJFrame() {
+        	return mainframe;
         }
         public AlgorithmFactory getAlgorithmFactory() {
             return MultipleArrayViewer.this.getAlgorithmFactory();

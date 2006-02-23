@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: AlgorithmData.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-02-23 20:59:44 $
+ * $Revision: 1.5 $
+ * $Date: 2006-02-23 21:19:42 $
  * $Author: caliente $
  * $State: Exp $
  */
@@ -33,7 +33,8 @@ public class AlgorithmData implements Serializable {
     private HashMap objectMatrices;
     private AlgorithmParameters parameters;
     private HashMap clusters;
-
+    private HashMap resultMap;  //resultMap used in TEASE
+    							//KEY: node number, value: algorithmData
     /**
      * Construct an <code>AlgorithmData</code>.
      */
@@ -45,7 +46,18 @@ public class AlgorithmData implements Serializable {
         objectMatrices = new HashMap();
         parameters = new AlgorithmParameters();
         clusters = new HashMap();
-
+        resultMap = new HashMap();
+    }
+    
+    public void copy(AlgorithmData data) {
+        this.matrixes   = data.matrixes;
+        this.intMatrices = data.intMatrices;
+        this.intArrays  = data.intArrays;
+        this.stringArrays = data.stringArrays;
+        this.objectMatrices = data.objectMatrices;
+        this.parameters = data.parameters;
+        this.clusters = data.clusters;
+        this.resultMap = data.resultMap;
     }
 
     /**
@@ -59,7 +71,7 @@ public class AlgorithmData implements Serializable {
     }
 
         /**
-     * Adds a matrix of float values by its name.
+     * Adds a matrix of int values by its name.
      *
      * @param name the name of the matrix.
      * @param matrix the <code>FloatMatrix</code> to be added.
@@ -132,6 +144,23 @@ public class AlgorithmData implements Serializable {
      */
     public void addIntArray(String name, int[] intArray) {
         intArrays.put(name, intArray);
+    }
+    
+    /**
+     * Stores resultMap from TEASE analysis 
+     * @param resultMap
+     */
+    public void addResultAlgorithmData(Integer key, AlgorithmData value) {
+    	//System.out.println(key+ " added");
+    	this.resultMap.put(key, value);
+    }
+    
+    /**
+     * Return the algorithmData corresponding to the key
+     * @return value, algorithmData
+     */
+    public AlgorithmData getResultAlgorithmData(Object key) {
+    	return (AlgorithmData)this.resultMap.get(key);
     }
 
     /**

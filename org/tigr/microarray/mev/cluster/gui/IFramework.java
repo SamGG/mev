@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: IFramework.java,v $
- * $Revision: 1.10 $
- * $Date: 2006-02-23 20:59:48 $
+ * $Revision: 1.11 $
+ * $Date: 2006-02-23 21:19:42 $
  * $Author: caliente $
  * $State: Exp $
  */
@@ -15,6 +15,7 @@ import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Rectangle;
 
+import javax.swing.JFrame;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.tigr.microarray.mev.ResultTree;
@@ -32,6 +33,8 @@ public interface IFramework {
      * Returns instance of <code>IData</code> interface implementation.
      */
     public IData getData();
+    
+    public JFrame getJFrame();
     
     /**
      * Returns instance of <code>AlgorithmFactory</code> interface implementation.

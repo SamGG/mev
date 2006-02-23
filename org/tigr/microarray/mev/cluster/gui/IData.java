@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: IData.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-02-23 20:59:47 $
+ * $Revision: 1.9 $
+ * $Date: 2006-02-23 21:19:42 $
  * $Author: caliente $
  * $State: Exp $
  */
@@ -360,5 +360,11 @@ public interface IData {
 	 * END
 	 * CGH Specific Interface Defs
      */
+
+	/**
+	 * @param annotationKeyType
+	 * @return
+	 */
+	public String[] getAnnotationList(String annotationKeyType);
     
 }
