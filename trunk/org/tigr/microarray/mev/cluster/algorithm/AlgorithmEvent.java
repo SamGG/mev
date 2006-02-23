@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: AlgorithmEvent.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:46:10 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 21:19:42 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.algorithm;
@@ -44,6 +44,8 @@ public class AlgorithmEvent extends EventObject {
      * This event id indicates that algorithm sends a warning.
      */
     public static final int WARNING        = 4;
+    
+    public static final int SET_VALUE = 5;
     
     private int id;
     private int intValue;
