@@ -4,30 +4,31 @@ All rights reserved.
 */
 /*
  * $RCSfile: SetChartRangeDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2006-02-03 14:35:43 $
- * $Author: raktim $
+ * $Revision: 1.2 $
+ * $Date: 2006-02-23 20:59:43 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cgh.CGHGuiObj.CGHBrowser;
 
-import org.tigr.util.awt.GBA;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
 import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+
+import org.tigr.util.awt.GBA;
 
 /**
  * @author Adam Margolin

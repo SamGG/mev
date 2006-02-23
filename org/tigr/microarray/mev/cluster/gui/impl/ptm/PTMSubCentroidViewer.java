@@ -4,19 +4,24 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMSubCentroidViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2003-12-08 17:07:43 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2006-02-23 20:59:53 $
+ * $Author: caliente $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.gui.impl.ptm;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.util.Vector;
 
-import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 
 /**
  *

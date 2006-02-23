@@ -4,18 +4,25 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMSearchDialog.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2006-02-23 20:59:55 $
+ * $Author: caliente $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.gui.impl.svm;
 
 
-import java.awt.event.*;
-import javax.swing.*;
-import java.util.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.util.Vector;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
 

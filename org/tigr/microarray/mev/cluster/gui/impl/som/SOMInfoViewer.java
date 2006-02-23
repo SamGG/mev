@@ -4,23 +4,23 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOMInfoViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-07-27 19:59:17 $
- * $Author: braisted $
+ * $Revision: 1.5 $
+ * $Date: 2006-02-23 20:59:54 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.som;
 
 import java.awt.Color;
-import java.awt.Insets;
 import java.awt.Dimension;
-import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.JComponent;
 
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 

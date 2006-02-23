@@ -1,10 +1,10 @@
 package org.tigr.microarray.mev.r;
 
-import java.util.*;
+import java.util.Vector;
 
 /** representation of R-eXpressions in Java
 
-    @version $Id: REXP.java,v 1.1 2005-09-28 21:52:22 caliente Exp $
+    @version $Id: REXP.java,v 1.2 2006-02-23 20:59:57 caliente Exp $
 */
 public class REXP extends Object {
     /** xpression type: NULL */

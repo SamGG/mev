@@ -7,7 +7,6 @@
 package org.tigr.microarray.mev.cgh.CGHDataObj;
 
 import java.util.Comparator;
-import org.tigr.microarray.mev.cgh.CGHDataObj.AlterationRegion;
 
 /**
  *

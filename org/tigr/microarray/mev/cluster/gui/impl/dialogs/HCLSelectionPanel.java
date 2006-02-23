@@ -10,12 +10,12 @@ All rights reserved.
 
 package org.tigr.microarray.mev.cluster.gui.impl.dialogs;
 
-import java.awt.Font;
 import java.awt.Color;
+import java.awt.Font;
 
-import javax.swing.JPanel;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
+import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;

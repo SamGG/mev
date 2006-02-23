@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: Mas5FileLoader.java,v $
- * $Revision: 1.1 $
- * $Date: 2005-11-01 18:49:17 $
- * $Author: wwang67 $
+ * $Revision: 1.2 $
+ * $Date: 2006-02-23 20:59:56 $
+ * $Author: caliente $
  * $State: Exp $
  */
 
@@ -14,12 +14,9 @@ package org.tigr.microarray.mev.file;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
@@ -29,17 +26,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Vector;
 
-import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
-import javax.swing.DefaultListSelectionModel;
-import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
@@ -57,7 +50,6 @@ import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.SlideDataElement;
 import org.tigr.microarray.mev.TMEV;
-import org.tigr.microarray.mev.cluster.gui.IData;
 
 public class Mas5FileLoader extends ExpressionFileLoader {
     

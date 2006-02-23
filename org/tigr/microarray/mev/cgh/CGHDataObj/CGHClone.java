@@ -9,7 +9,6 @@ package org.tigr.microarray.mev.cgh.CGHDataObj;
 //import java.sql.ResultSet;
 
 import org.tigr.microarray.mev.cgh.CGHUtil.CGHUtility;
-import org.tigr.microarray.mev.TMEV;
 /**
  *
  * @author  Adam Margolin

@@ -4,31 +4,29 @@ All rights reserved.
 */
 /*
  * $RCSfile: CastFOMContentComponentA.java,v $
- * $Revision: 1.4 $
- * $Date: 2004-07-27 19:59:16 $
- * $Author: braisted $
+ * $Revision: 1.5 $
+ * $Date: 2006-02-23 20:59:51 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.fom;
 
-import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
-
-import java.awt.image.BufferedImage;
-
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 
-import javax.swing.JList;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JButton;
-import javax.swing.JTextArea;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
-import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
 
 public class CastFOMContentComponentA extends JPanel implements java.io.Serializable {
     public static final long serialVersionUID = 202003020001L;

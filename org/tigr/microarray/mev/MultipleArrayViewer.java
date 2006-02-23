@@ -4,146 +4,168 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.30 $
- * $Date: 2006-02-17 14:50:00 $
- * $Author: raktim $
+ * $Revision: 1.31 $
+ * $Date: 2006-02-23 20:59:41 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
-import java.io.File;
-
-import java.awt.Frame;import java.awt.Rectangle;
-import java.awt.Color;
-import java.awt.Point;
-import java.awt.Cursor;
-import java.awt.Insets;
-import java.awt.Graphics;
-import java.awt.Dimension;
-import java.awt.Component;
-import java.awt.Graphics2D;
 import java.awt.BorderLayout;
-import java.awt.GridBagLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
-
-import java.awt.image.BufferedImage;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.geom.AffineTransform;
-
+import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
-
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-
-import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamConstants;
-import java.io.IOException;
-
-import java.util.ArrayList;import java.util.EventObject;import java.util.Iterator;
-import java.util.Collections;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.EventObject;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Properties;
+import java.util.StringTokenizer;
 import java.util.TimeZone;
 import java.util.Vector;
 
-import java.text.DateFormat;
-
-import java.util.StringTokenizer;
-
-import javax.swing.Action;import javax.swing.JDialog;import javax.swing.JMenuBar;
+import javax.media.jai.JAI;
 import javax.swing.AbstractButton;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
 import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTree;
 import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.ToolTipManager;
-import javax.swing.tree.DefaultTreeModel;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 
-import javax.media.jai.JAI;
-import com.sun.media.jai.codec.ImageEncodeParam;
-
-import org.tigr.util.BrowserLauncher;
-import org.tigr.util.FloatMatrix;
-import org.tigr.util.QSort;
 import org.tigr.microarray.file.AnnFileParser;
-import org.tigr.microarray.util.awt.SetElementSizeDialog;
-import org.tigr.microarray.util.awt.SetSlideFilenameDialog;
-
-import org.tigr.util.swing.ImageFileFilter;
-import org.tigr.util.swing.BMPFileFilter;
-import org.tigr.util.swing.JPGFileFilter;
-import org.tigr.util.swing.PNGFileFilter;
-import org.tigr.util.swing.TIFFFileFilter;
-import org.tigr.microarray.util.awt.ColorSchemeSelectionDialog;
-
-import org.tigr.microarray.mev.SetLowerCutoffsDialog;
-import org.tigr.microarray.mev.SetPercentageCutoffsDialog;
-
 import org.tigr.microarray.mev.action.ActionManager;
-
-import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.IViewer;
-import org.tigr.microarray.mev.cluster.gui.LeafInfo;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
-import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
-import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
-
-import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
-import org.tigr.microarray.mev.cluster.gui.helpers.TextViewer;
-
+import org.tigr.microarray.mev.cgh.CGHAlgorithms.NumberOfAlterations.NumberOfAlterationsCalculator;
+import org.tigr.microarray.mev.cgh.CGHAlgorithms.NumberOfAlterations.GeneAlterations.GeneAmplifications;
+import org.tigr.microarray.mev.cgh.CGHAlgorithms.NumberOfAlterations.GeneAlterations.GeneDeletions;
+import org.tigr.microarray.mev.cgh.CGHDataGenerator.FlankingRegionCalculator;
+import org.tigr.microarray.mev.cgh.CGHDataModel.CGHAnnotationsModel;
+import org.tigr.microarray.mev.cgh.CGHDataModel.CGHChartDataModel;
+import org.tigr.microarray.mev.cgh.CGHDataModel.CGHChartDataModelDyeSwap;
+import org.tigr.microarray.mev.cgh.CGHDataModel.CGHChartDataModelNoDyeSwap;
+import org.tigr.microarray.mev.cgh.CGHDataModel.CGHCircleViewerModel;
+import org.tigr.microarray.mev.cgh.CGHDataModel.CGHPositionGraphDataModel;
+import org.tigr.microarray.mev.cgh.CGHDataModel.CGHTableDataModel;
+import org.tigr.microarray.mev.cgh.CGHDataModel.CGHTableDataModelDyeSwap;
+import org.tigr.microarray.mev.cgh.CGHDataModel.CGHTableDataModelNoDyeSwap;
+import org.tigr.microarray.mev.cgh.CGHDataModel.CytoBandsModel;
+import org.tigr.microarray.mev.cgh.CGHDataObj.AlterationRegion;
+import org.tigr.microarray.mev.cgh.CGHDataObj.CGHDataRegionInfo;
+import org.tigr.microarray.mev.cgh.CGHDataObj.CytoBands;
+import org.tigr.microarray.mev.cgh.CGHDataObj.DataRegionGeneData;
+import org.tigr.microarray.mev.cgh.CGHDataObj.GeneDataSet;
+import org.tigr.microarray.mev.cgh.CGHDataObj.ICGHDataRegion;
+import org.tigr.microarray.mev.cgh.CGHGuiObj.CGHDataValuesDisplay;
+import org.tigr.microarray.mev.cgh.CGHGuiObj.CGHDisplayOrderChanger;
+import org.tigr.microarray.mev.cgh.CGHGuiObj.CGHThresholdSetter;
+import org.tigr.microarray.mev.cgh.CGHGuiObj.AlgorithmResultsViewers.NumberOfAlterationsViewers.NumberOfAlterationsViewer;
+import org.tigr.microarray.mev.cgh.CGHGuiObj.AlgorithmResultsViewers.NumberOfAlterationsViewers.NumberOfDeletionsAmpilficationsDataModel;
+import org.tigr.microarray.mev.cgh.CGHGuiObj.CGHBrowser.CGHBrowser;
+import org.tigr.microarray.mev.cgh.CGHGuiObj.CGHCircleViewer.CGHCircleViewerPanel;
+import org.tigr.microarray.mev.cgh.CGHGuiObj.CGHPositionGraph.CGHPositionGraphCombinedHeader;
+import org.tigr.microarray.mev.cgh.CGHGuiObj.CGHPositionGraph.CGHPositionGraphViewer;
+import org.tigr.microarray.mev.cgh.CGHGuiObj.GuiUtil.GuiUtil;
+import org.tigr.microarray.mev.cgh.CGHGuiObj.GuiUtil.SingleValueSelectorDialog;
+import org.tigr.microarray.mev.cgh.CGHListenerObj.ICGHListener;
+import org.tigr.microarray.mev.cgh.CGHListenerObj.IDataRegionSelectionListener;
+import org.tigr.microarray.mev.cgh.CGHUtil.CGHUtility;
 import org.tigr.microarray.mev.cluster.algorithm.AbortException;
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-
+import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
+import org.tigr.microarray.mev.cluster.clusterUtil.ClusterAttributesDialog;
+import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
+import org.tigr.microarray.mev.cluster.clusterUtil.ClusterTable;
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.ICGHCloneValueMenu;
+import org.tigr.microarray.mev.cluster.gui.ICGHDisplayMenu;
+import org.tigr.microarray.mev.cluster.gui.ICGHViewer;
+import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
+import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
+import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
+import org.tigr.microarray.mev.cluster.gui.LeafInfo;
+import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.TextViewer;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HTMLMessageFileChooser;
 import org.tigr.microarray.mev.file.AnnFileFilter;
-import org.tigr.microarray.mev.file.StringSplitter;
-
-import org.tigr.microarray.mev.cluster.clusterUtil.*;
 import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
 import org.tigr.microarray.mev.r.Rama;
 import org.tigr.microarray.mev.script.ScriptManager;
+import org.tigr.microarray.util.awt.ColorSchemeSelectionDialog;
+import org.tigr.microarray.util.awt.SetElementSizeDialog;
+import org.tigr.microarray.util.awt.SetSlideFilenameDialog;
+import org.tigr.util.BrowserLauncher;
+import org.tigr.util.FloatMatrix;
+import org.tigr.util.QSort;
+import org.tigr.util.swing.BMPFileFilter;
+import org.tigr.util.swing.ImageFileFilter;
+import org.tigr.util.swing.JPGFileFilter;
+import org.tigr.util.swing.PNGFileFilter;
+import org.tigr.util.swing.TIFFFileFilter;
 
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HTMLMessageFileChooser;
-import java.text.DecimalFormat;import org.tigr.microarray.mev.cgh.CGHAlgorithms.NumberOfAlterations.NumberOfAlterationsCalculator;import org.tigr.microarray.mev.cgh.CGHAlgorithms.NumberOfAlterations.GeneAlterations.GeneAmplifications;import org.tigr.microarray.mev.cgh.CGHAlgorithms.NumberOfAlterations.GeneAlterations.GeneDeletions;import org.tigr.microarray.mev.cgh.CGHDataGenerator.FlankingRegionCalculator;import org.tigr.microarray.mev.cgh.CGHDataModel.CGHAnnotationsModel;import org.tigr.microarray.mev.cgh.CGHDataModel.CGHChartDataModel;import org.tigr.microarray.mev.cgh.CGHDataModel.CGHChartDataModelDyeSwap;import org.tigr.microarray.mev.cgh.CGHDataModel.CGHChartDataModelNoDyeSwap;import org.tigr.microarray.mev.cgh.CGHDataModel.CGHCircleViewerModel;import org.tigr.microarray.mev.cgh.CGHDataModel.CGHPositionGraphDataModel;import org.tigr.microarray.mev.cgh.CGHDataModel.CGHTableDataModel;import org.tigr.microarray.mev.cgh.CGHDataModel.CGHTableDataModelDyeSwap;import org.tigr.microarray.mev.cgh.CGHDataModel.CGHTableDataModelNoDyeSwap;import org.tigr.microarray.mev.cgh.CGHDataModel.CytoBandsModel;import org.tigr.microarray.mev.cgh.CGHDataObj.AlterationRegion;import org.tigr.microarray.mev.cgh.CGHDataObj.CGHDataRegionInfo;import org.tigr.microarray.mev.cgh.CGHDataObj.CytoBands;import org.tigr.microarray.mev.cgh.CGHDataObj.DataRegionGeneData;import org.tigr.microarray.mev.cgh.CGHDataObj.GeneDataSet;import org.tigr.microarray.mev.cgh.CGHDataObj.ICGHDataRegion;import org.tigr.microarray.mev.cgh.CGHGuiObj.CGHDataValuesDisplay;import org.tigr.microarray.mev.cgh.CGHGuiObj.CGHDisplayOrderChanger;import org.tigr.microarray.mev.cgh.CGHGuiObj.CGHThresholdSetter;import org.tigr.microarray.mev.cgh.CGHGuiObj.AlgorithmResultsViewers.NumberOfAlterationsViewers.NumberOfAlterationsViewer;import org.tigr.microarray.mev.cgh.CGHGuiObj.AlgorithmResultsViewers.NumberOfAlterationsViewers.NumberOfDeletionsAmpilficationsDataModel;import org.tigr.microarray.mev.cgh.CGHGuiObj.CGHBrowser.CGHBrowser;import org.tigr.microarray.mev.cgh.CGHGuiObj.CGHCircleViewer.CGHCircleViewerPanel;import org.tigr.microarray.mev.cgh.CGHGuiObj.CGHPositionGraph.CGHPositionGraphCombinedHeader;import org.tigr.microarray.mev.cgh.CGHGuiObj.CGHPositionGraph.CGHPositionGraphViewer;import org.tigr.microarray.mev.cgh.CGHGuiObj.GuiUtil.GuiUtil;import org.tigr.microarray.mev.cgh.CGHGuiObj.GuiUtil.SingleValueSelectorDialog;import org.tigr.microarray.mev.cgh.CGHListenerObj.ICGHListener;import org.tigr.microarray.mev.cgh.CGHListenerObj.IDataRegionSelectionListener;import org.tigr.microarray.mev.cgh.CGHUtil.CGHUtility;import org.tigr.microarray.mev.cluster.gui.ICGHCloneValueMenu;import org.tigr.microarray.mev.cluster.gui.ICGHDisplayMenu;import org.tigr.microarray.mev.cluster.gui.ICGHViewer;import com.sun.media.jai.codec.ImageEncodeParam;
+import com.sun.media.jai.codec.ImageEncodeParam;
 public class MultipleArrayViewer extends ArrayViewer implements Printable {
     public static final long serialVersionUID = 100010201010001L;
     

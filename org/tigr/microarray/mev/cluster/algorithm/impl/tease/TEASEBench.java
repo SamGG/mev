@@ -4,9 +4,15 @@
  */
 package org.tigr.microarray.mev.cluster.algorithm.impl.tease;
 
-import java.util.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.math.BigDecimal;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Vector;
 
 import org.tigr.microarray.mev.cluster.algorithm.impl.ease.HypergeometricProbability;
 

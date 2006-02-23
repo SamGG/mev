@@ -4,16 +4,16 @@ All rights reserved.
 */
 /*
  * $RCSfile: ExperimentUtil.java,v $
- * $Revision: 1.4 $
- * $Date: 2005-03-10 15:45:27 $
- * $Author: braistedj $
+ * $Revision: 1.5 $
+ * $Date: 2006-02-23 20:59:45 $
+ * $Author: caliente $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.algorithm.impl;
 
-import org.tigr.util.FloatMatrix;
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
+import org.tigr.util.FloatMatrix;
 
 public class ExperimentUtil {
     

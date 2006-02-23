@@ -10,8 +10,9 @@ All rights reserved.
 
 package org.tigr.microarray.mev.cluster.gui.impl.sam;
 
-import org.tigr.util.FloatMatrix;
 import java.util.Vector;
+
+import org.tigr.util.FloatMatrix;
 /**
  *
  * @author  nbhagaba

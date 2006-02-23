@@ -4,18 +4,17 @@ All rights reserved.
 */
 /*
  * $RCSfile: ParserUtil.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:28:23 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 21:00:02 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.remote.protocol.parser;
 
-import org.xml.sax.XMLReader;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.XMLReaderFactory;
-
 import org.tigr.util.ConfMap;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 class ParserUtil {
     /**

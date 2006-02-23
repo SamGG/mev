@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: EaseElementList.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:46:49 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 20:59:45 $
+ * $Author: caliente $
  * $State: Exp $
  */
 /*
@@ -17,12 +17,11 @@ All rights reserved.
 
 package org.tigr.microarray.mev.cluster.algorithm.impl.ease;
 
-import java.util.Hashtable;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-
+import java.util.Hashtable;
 import java.util.Vector;
 
 /** The EaseElementList class is used to hold and manage <CODE>EaseDataElements</CODE>

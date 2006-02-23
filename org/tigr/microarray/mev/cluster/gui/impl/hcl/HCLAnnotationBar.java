@@ -4,27 +4,27 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLAnnotationBar.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-07-27 19:59:16 $
- * $Author: braisted $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 20:59:51 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.hcl;
 
-import java.awt.Font;
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Rectangle;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
+import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 
 import javax.swing.JPanel;
 
 import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
 
 public class HCLAnnotationBar extends JPanel implements java.io.Serializable {    
     public static final long serialVersionUID = 202006010001L;

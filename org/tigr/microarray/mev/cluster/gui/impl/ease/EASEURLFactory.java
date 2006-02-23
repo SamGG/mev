@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASEURLFactory.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-07-27 19:59:16 $
- * $Author: braisted $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 20:59:50 $
+ * $Author: caliente $
  * $State: Exp $
  */
 /*
@@ -16,9 +16,13 @@ All rights reserved.
  */
 package org.tigr.microarray.mev.cluster.gui.impl.ease;
 
-import java.io.*;
-import javax.swing.JOptionPane;
 import java.awt.Frame;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
+import javax.swing.JOptionPane;
 
 import org.tigr.microarray.mev.TMEV;
 /**

@@ -4,27 +4,26 @@ All rights reserved.
 */
 /*
  * $RCSfile: HCLColorBar.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-03-10 20:22:02 $
- * $Author: braistedj $
+ * $Revision: 1.6 $
+ * $Date: 2006-02-23 20:59:51 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.hcl;
 
-import java.awt.Font;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
+import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
-import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
 
 public class HCLColorBar extends JPanel implements java.io.Serializable {
     

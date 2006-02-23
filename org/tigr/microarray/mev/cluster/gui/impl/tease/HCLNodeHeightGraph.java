@@ -4,33 +4,34 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLNodeHeightGraph.java,v $
- * $Revision: 1.1 $
- * $Date: 2006-02-08 18:17:16 $
+ * $Revision: 1.2 $
+ * $Date: 2006-02-23 20:59:55 $
  * $Author: caliente $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.gui.impl.tease;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 
-import javax.swing.JPanel;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 
-import java.awt.Font;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.FontMetrics;
-import java.awt.image.BufferedImage;
-
-import org.tigr.graph.*;
-
+import org.tigr.graph.GC;
+import org.tigr.graph.GraphLine;
+import org.tigr.graph.GraphPoint;
+import org.tigr.graph.GraphTick;
+import org.tigr.graph.GraphViewer;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.IViewer;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
-import org.tigr.microarray.mev.cluster.gui.impl.tease.HCLTreeData;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
 
 public class HCLNodeHeightGraph extends JPanel implements IViewer {
     GraphViewer viewer;

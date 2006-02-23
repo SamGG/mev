@@ -4,15 +4,15 @@ All rights reserved.
 */
 /*
  * $RCSfile: OpenBehavior.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 20:32:37 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 20:59:53 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.pca;
 
-import java.util.Enumeration;
 import java.awt.event.KeyEvent;
+import java.util.Enumeration;
 
 import javax.media.j3d.Behavior;
 import javax.media.j3d.Transform3D;

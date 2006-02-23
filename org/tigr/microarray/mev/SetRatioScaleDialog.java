@@ -4,53 +4,50 @@
  */
 
 /*
- * $RCSfile: SetRatioScaleDialog.java,v $ $Revision: 1.4 $ $Date: 2005/02/10
- * 16:06:10 $ $Author: braistedj $ $State: Exp $
+ * $RCSfile: SetRatioScaleDialog.java,v $ $Revision: 1.5 $ $Date: 2005/02/10
+ * 16:06:10 $ $Author: caliente $ $State: Exp $
  */
 package org.tigr.microarray.mev;
 
 
 import java.awt.Color;
-import java.awt.GradientPaint;
-import java.awt.Graphics2D;
-import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.GradientPaint;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.FontMetrics;
-
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
 import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
-import javax.swing.JFrame; 
-import javax.swing.JLabel;
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
-import javax.swing.JOptionPane;
 
-import org.tigr.util.FloatMatrix;
-import org.tigr.util.QSort;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;
-
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
+import org.tigr.util.FloatMatrix;
+import org.tigr.util.QSort;
 
 
 /**

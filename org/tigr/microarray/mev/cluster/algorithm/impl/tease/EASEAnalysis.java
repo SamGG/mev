@@ -4,29 +4,36 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASEAnalysis.java,v $
- * $Revision: 1.1 $
- * $Date: 2006-02-08 18:17:16 $
+ * $Revision: 1.2 $
+ * $Date: 2006-02-23 20:59:46 $
  * $Author: caliente $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.algorithm.impl.tease;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.Hashtable;
+import java.util.Random;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
-import javax.swing.*;
-
-import org.tigr.util.FloatMatrix;
-import org.tigr.util.QSort;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
-import org.tigr.microarray.mev.cluster.algorithm.impl.ease.*;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
+import org.tigr.microarray.mev.cluster.algorithm.impl.ease.EaseElementList;
+import org.tigr.util.FloatMatrix;
+import org.tigr.util.QSort;
 
 /** 
  * Manages EASE analysis and raw result manipulation and return.

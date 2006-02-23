@@ -6,9 +6,8 @@
 
 package org.tigr.microarray.mev.cgh.CGHDataObj;
 
-import java.sql.*;
+import java.sql.ResultSet;
 
-import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cgh.CGHUtil.CGHUtility;
 
 /**

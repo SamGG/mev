@@ -4,22 +4,22 @@ All rights reserved.
 */
 /*
  * $RCSfile: HttpTransport.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:35:51 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 21:00:01 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.remote.protocol.communication.http;
 
-import org.tigr.remote.RemoteException;
-import org.tigr.remote.protocol.communication.Transport;
-import org.tigr.remote.protocol.communication.RequestMessage;
-import org.tigr.remote.protocol.communication.ResponseMessage;
-import org.tigr.util.ConfMap;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import org.tigr.remote.RemoteException;
+import org.tigr.remote.protocol.communication.RequestMessage;
+import org.tigr.remote.protocol.communication.ResponseMessage;
+import org.tigr.remote.protocol.communication.Transport;
+import org.tigr.util.ConfMap;
 
 class HttpTransport implements Transport {
 

@@ -4,20 +4,20 @@ All rights reserved.
 */
 /*
  * $RCSfile: Logger.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 20:30:32 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 20:59:50 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.dialogs;
 
-import java.awt.Frame;
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.Insets;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
 import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 

@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: GenePixFileLoader.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-03-10 15:39:39 $
- * $Author: braistedj $
+ * $Revision: 1.6 $
+ * $Date: 2006-02-23 20:59:56 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.file;
@@ -22,6 +22,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
+
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;

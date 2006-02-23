@@ -4,25 +4,24 @@ All rights reserved.
 */
 /*
  * $RCSfile: GUIFactory.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 20:36:57 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 20:59:49 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl;
 
 import java.net.URL;
-
 import java.util.ArrayList;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
-import java.util.MissingResourceException;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-import org.tigr.microarray.mev.cluster.gui.IGUIFactory;
 import org.tigr.microarray.mev.cluster.gui.AnalysisDescription;
+import org.tigr.microarray.mev.cluster.gui.IGUIFactory;
 
 public class GUIFactory implements IGUIFactory {
     

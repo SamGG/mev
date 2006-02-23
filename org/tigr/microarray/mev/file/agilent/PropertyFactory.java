@@ -1,6 +1,7 @@
 package org.tigr.microarray.mev.file.agilent;
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 /**
  */
 public final class PropertyFactory {

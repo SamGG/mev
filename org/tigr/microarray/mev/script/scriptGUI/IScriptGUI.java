@@ -12,10 +12,10 @@ package org.tigr.microarray.mev.script.scriptGUI;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
 
 /** IScriptGUI provides the methods required for an algorithm to
  * support scripting activities in MeV.

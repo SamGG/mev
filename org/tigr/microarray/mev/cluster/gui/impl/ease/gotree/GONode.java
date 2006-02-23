@@ -10,31 +10,25 @@ All rights reserved.
 
 package org.tigr.microarray.mev.cluster.gui.impl.ease.gotree;
 
-import java.util.Vector;
-
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-
-import java.awt.font.LineBreakMeasurer;
-
 import java.awt.font.FontRenderContext;
+import java.awt.font.LineBreakMeasurer;
+import java.awt.font.TextAttribute;
+import java.awt.font.TextLayout;
+import java.awt.geom.Point2D;
+import java.io.Serializable;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.text.DecimalFormat;
-
-import java.awt.font.TextAttribute;
-import java.awt.geom.Point2D;
-
-import java.awt.font.TextLayout;
+import java.util.Vector;
 
 import org.tigr.microarray.mev.cluster.gui.helpers.ktree.ITreeNodeRenderer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ktree.KNodeImpl;
-
-import java.io.Serializable;
 
 /**
  *

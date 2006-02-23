@@ -4,18 +4,20 @@ All rights reserved.
 */
 /*
  * $RCSfile: AlgorithmData.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-07-27 20:01:46 $
- * $Author: braisted $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 20:59:44 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.algorithm;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
-import org.tigr.util.FloatMatrix;
 import org.tigr.microarray.mev.cluster.Cluster;
+import org.tigr.util.FloatMatrix;
 
 /**
  * This class is used to pass data and necessary parameters 

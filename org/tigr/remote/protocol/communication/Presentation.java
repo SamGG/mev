@@ -4,21 +4,19 @@ All rights reserved.
 */
 /*
  * $RCSfile: Presentation.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:28:22 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 21:00:01 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.remote.protocol.communication;
 
-import org.tigr.util.ConfMap;
-
 import org.tigr.remote.RemoteException;
 import org.tigr.remote.protocol.Request;
 import org.tigr.remote.protocol.Response;
-
 import org.tigr.remote.protocol.parser.Parser;
-import org.tigr.remote.protocol.serializer.RequestSerializer ;
+import org.tigr.remote.protocol.serializer.RequestSerializer;
+import org.tigr.util.ConfMap;
 
 public class Presentation {
 

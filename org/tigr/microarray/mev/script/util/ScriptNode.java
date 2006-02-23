@@ -11,6 +11,7 @@ All rights reserved.
 package org.tigr.microarray.mev.script.util;
 
 import javax.swing.tree.DefaultMutableTreeNode;
+
 import org.w3c.dom.Element;
 
 /** The script node is the base node for the nodes

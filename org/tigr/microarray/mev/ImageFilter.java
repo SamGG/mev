@@ -4,16 +4,18 @@ All rights reserved.
 */
 /*
  * $RCSfile: ImageFilter.java,v $
- * $Revision: 1.4 $
- * $Date: 2005-03-10 15:44:14 $
- * $Author: braistedj $
+ * $Revision: 1.5 $
+ * $Date: 2006-02-23 20:59:41 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
 import java.io.File;
-import javax.swing.filechooser.*;
-import org.tigr.util.swing.*;
+
+import javax.swing.filechooser.FileFilter;
+
+import org.tigr.util.swing.Utils;
 
 public class ImageFilter extends FileFilter {
     

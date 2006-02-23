@@ -4,15 +4,15 @@ All rights reserved.
 */
 /*
  * $RCSfile: IQueue.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:36:11 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 21:00:01 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.remote.gateway.util;
 
-import java.util.Collection ;
-import java.util.Iterator ;
+import java.util.Collection;
+import java.util.Iterator;
 
 public interface IQueue {
     /**

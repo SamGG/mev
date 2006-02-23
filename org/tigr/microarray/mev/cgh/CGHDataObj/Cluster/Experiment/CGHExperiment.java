@@ -7,7 +7,6 @@
 package org.tigr.microarray.mev.cgh.CGHDataObj.Cluster.Experiment;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
-
 import org.tigr.util.FloatMatrix;
 
 /**

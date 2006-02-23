@@ -4,15 +4,18 @@ All rights reserved.
 */
 /*
  * $RCSfile: DomainUtil.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 20:33:21 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 20:59:56 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.terrain;
 
-import java.awt.*;
-import java.awt.image.*;
+import java.awt.Color;
+import java.awt.GradientPaint;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+
 import javax.vecmath.Point2f;
 
 public class DomainUtil {

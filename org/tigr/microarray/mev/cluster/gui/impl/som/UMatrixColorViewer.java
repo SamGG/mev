@@ -4,39 +4,35 @@ All rights reserved.
 */
 /*
  * $RCSfile: UMatrixColorViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2005-03-10 20:22:04 $
- * $Author: braistedj $
+ * $Revision: 1.8 $
+ * $Date: 2006-02-23 20:59:54 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.som;
 
-import java.awt.Font;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-
-import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentAdapter;
-
+import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 
-import javax.swing.JPanel;
 import javax.swing.JComponent;
-
-import org.tigr.util.FloatMatrix;
+import javax.swing.JPanel;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
-
+import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.util.Hexagon;
+import org.tigr.util.FloatMatrix;
 
 public class UMatrixColorViewer extends JPanel implements IViewer, java.io.Serializable {
     public static final long serialVersionUID = 202016030001L;

@@ -4,19 +4,23 @@ All rights reserved.
 */
 /*
  * $RCSfile: PermutationTest.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:45:28 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 20:59:45 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.algorithm.impl;
 
 import java.util.Arrays;
 
+import org.tigr.microarray.mev.cluster.algorithm.AbortException;
+import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
+import org.tigr.microarray.mev.cluster.algorithm.impl.util.IntSorter;
 import org.tigr.util.FloatMatrix;
-import org.tigr.microarray.mev.cluster.algorithm.*;
-
-import org.tigr.microarray.mev.cluster.algorithm.impl.util.*;
 
 public class PermutationTest extends AbstractAlgorithm {
 

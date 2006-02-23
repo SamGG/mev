@@ -4,16 +4,18 @@ All rights reserved.
  */
 /*
  * $RCSfile: Cluster.java,v $
- * $Revision: 1.7 $
- * $Date: 2005-03-10 15:48:48 $
- * $Author: braistedj $
+ * $Revision: 1.8 $
+ * $Date: 2006-02-23 20:59:46 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.clusterUtil;
 
 import java.awt.Color;
 import java.util.HashSet;
+
 import javax.swing.tree.DefaultMutableTreeNode;
+
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 
 /** The Cluster class encapsulates information required to define a cluster.

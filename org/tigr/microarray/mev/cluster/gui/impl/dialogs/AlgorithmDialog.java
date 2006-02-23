@@ -4,22 +4,36 @@ All rights reserved.
  */
 /*
  * $RCSfile: AlgorithmDialog.java,v $
- * $Revision: 1.4 $
- * $Date: 2005-03-10 20:30:32 $
- * $Author: braistedj $
+ * $Revision: 1.5 $
+ * $Date: 2006-02-23 20:59:50 $
+ * $Author: caliente $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.gui.impl.dialogs;
 
-import javax.swing.*;
-import javax.swing.border.*;
-import java.awt.*;
-
-//import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
+
+import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
 public class AlgorithmDialog extends JDialog {
     

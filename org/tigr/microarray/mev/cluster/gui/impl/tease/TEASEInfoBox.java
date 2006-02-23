@@ -11,7 +11,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Polygon;
 
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;

@@ -4,24 +4,22 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLExperimentHeader.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-03-10 20:22:03 $
- * $Author: braistedj $
+ * $Revision: 1.6 $
+ * $Date: 2006-02-23 20:59:51 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.hcl;
 
 import java.awt.Color;
 import java.awt.Dimension;
-
 import java.awt.event.MouseListener;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import javax.swing.JPanel;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 import org.tigr.microarray.mev.cluster.gui.helpers.IExperimentHeader;
 

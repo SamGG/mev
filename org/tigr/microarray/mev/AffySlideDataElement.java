@@ -5,14 +5,15 @@
 
 /*
  * $RCSfile: AffySlideDataElement.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-03-10 15:44:14 $
- * $Author: braistedj $
+ * $Revision: 1.6 $
+ * $Date: 2006-02-23 20:59:41 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
 import java.io.Serializable;
+
 import org.tigr.microarray.mev.cluster.gui.IData;
 
 public class AffySlideDataElement extends ArrayElement implements ISlideDataElement, Serializable {

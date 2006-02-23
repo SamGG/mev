@@ -4,16 +4,16 @@ All rights reserved.
 */
 /*
  * $RCSfile: Parser.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:28:23 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 21:00:02 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.remote.protocol.parser;
 
-import org.tigr.remote.protocol.Response;
 import java.io.InputStream;
 
+import org.tigr.remote.protocol.Response;
 import org.tigr.util.ConfMap;
 
 public abstract class Parser {

@@ -10,11 +10,11 @@ All rights reserved.
  
  * $RCSfile: Drawable.java,v $
  
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  
- * $Date: 2004-02-06 22:46:02 $
+ * $Date: 2006-02-23 20:59:40 $
  
- * $Author: braisted $
+ * $Author: caliente $
  
  * $State: Exp $
  
@@ -24,9 +24,14 @@ package org.tigr.graph;
 
 
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
 
-import javax.swing.*;
+import javax.swing.JPanel;
 
 
 

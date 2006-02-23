@@ -4,16 +4,16 @@ All rights reserved.
 */
 /*
  * $RCSfile: CommunicatorFactory.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:28:24 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 21:00:00 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.remote.communication;
 
-import org.tigr.util.ConfMap;
 import org.tigr.remote.RemoteException;
 import org.tigr.remote.protocol.communication.http.Communicator;
+import org.tigr.util.ConfMap;
 
 public class CommunicatorFactory {
     

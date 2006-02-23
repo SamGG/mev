@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: KMCCentroidViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2005-03-10 20:31:25 $
- * $Author: braistedj $
+ * $Revision: 1.7 $
+ * $Date: 2006-02-23 20:59:52 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.kmc;
@@ -14,15 +14,15 @@ package org.tigr.microarray.mev.cluster.gui.impl.kmc;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
-import javax.swing.JPopupMenu;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 
 public class KMCCentroidViewer extends CentroidViewer implements java.io.Serializable {
     public static final long serialVersionUID = 202007010001L;

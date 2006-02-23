@@ -6,12 +6,12 @@
 
 package org.tigr.microarray.mev.cgh.CGHGuiObj.AlgorithmResultsViewers.NumberOfAlterationsViewers;
 
-import javax.swing.*;
-
-import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
+import javax.swing.JComponent;
+import javax.swing.JTextArea;
 
 import org.tigr.microarray.mev.cluster.gui.ICGHCloneValueMenu;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
 /**
  *

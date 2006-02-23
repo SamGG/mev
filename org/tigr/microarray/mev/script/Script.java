@@ -6,8 +6,8 @@
 
 package org.tigr.microarray.mev.script;
 
-import org.tigr.microarray.mev.script.util.*;
-import org.tigr.microarray.mev.script.scriptGUI.*;
+import org.tigr.microarray.mev.script.scriptGUI.ScriptXMLViewer;
+import org.tigr.microarray.mev.script.util.ScriptTree;
 
 /** High level single script wrapper containing the basic script classes supporting
  * data storage and graphical representation.

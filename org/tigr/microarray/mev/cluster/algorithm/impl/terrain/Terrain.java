@@ -4,20 +4,32 @@ All rights reserved.
 */
 /*
  * $RCSfile: Terrain.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-05-19 13:18:09 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2006-02-23 20:59:46 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.algorithm.impl.terrain;
 
-import java.util.*;
-import javax.vecmath.Vector2f;
-import org.tigr.microarray.mev.cluster.*;
-import org.tigr.microarray.mev.cluster.algorithm.*;
-import org.tigr.microarray.mev.cluster.algorithm.impl.*;
-import org.tigr.microarray.mev.cluster.algorithm.impl.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
+import javax.vecmath.Vector2f;
+
+import org.tigr.microarray.mev.cluster.Cluster;
+import org.tigr.microarray.mev.cluster.Node;
+import org.tigr.microarray.mev.cluster.NodeList;
+import org.tigr.microarray.mev.cluster.NodeValue;
+import org.tigr.microarray.mev.cluster.NodeValueList;
+import org.tigr.microarray.mev.cluster.algorithm.AbortException;
+import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
+import org.tigr.microarray.mev.cluster.algorithm.impl.ExperimentUtil;
+import org.tigr.microarray.mev.cluster.algorithm.impl.util.FloatArray;
+import org.tigr.microarray.mev.cluster.algorithm.impl.util.IntArray;
 import org.tigr.util.FloatMatrix;
 
 public class Terrain extends AbstractAlgorithm implements InterfaceToObjects {

@@ -6,13 +6,14 @@
 
 package org.tigr.microarray.mev.cgh.CGHDataObj;
 
-import org.tigr.microarray.mev.TMEV;
-import org.tigr.microarray.mev.cgh.DBObj.*;
-import org.tigr.microarray.mev.cgh.CGHUtil.*;
 import java.sql.ResultSet;
-import java.util.Vector;
-import java.util.Iterator;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Vector;
+
+import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.cgh.CGHUtil.CGHUtility;
+import org.tigr.microarray.mev.cgh.DBObj.DSqlHandler;
 
 /**
  * @author  Adam Margolin

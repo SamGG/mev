@@ -5,7 +5,10 @@ All rights reserved.
 
 package org.tigr.util.awt;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.io.Serializable;
 
 public final class GBA implements Serializable {

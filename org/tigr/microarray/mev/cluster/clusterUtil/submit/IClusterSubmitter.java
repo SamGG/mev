@@ -7,8 +7,6 @@
 package org.tigr.microarray.mev.cluster.clusterUtil.submit;
 
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
-import org.tigr.microarray.mev.cluster.clusterUtil.submit.RepositoryConfigParser;
-
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 
 

@@ -4,14 +4,15 @@ All rights reserved.
  */
 /*
  * $RCSfile: IViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-03-10 20:38:25 $
- * $Author: braistedj $
+ * $Revision: 1.6 $
+ * $Date: 2006-02-23 20:59:48 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui;
 
 import java.awt.image.BufferedImage;
+
 import javax.swing.JComponent;
 
 /**

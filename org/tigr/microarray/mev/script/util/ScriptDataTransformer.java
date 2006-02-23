@@ -13,21 +13,18 @@ package org.tigr.microarray.mev.script.util;
 import java.util.Arrays;
 import java.util.Vector;
 
-import org.tigr.util.FloatMatrix;
-import org.tigr.util.QSort;
-import org.tigr.microarray.util.Adjustment;
-
 import org.tigr.microarray.mev.DetectionFilter;
 import org.tigr.microarray.mev.FoldFilter;
 import org.tigr.microarray.mev.ISlideData;
-
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 import org.tigr.microarray.mev.cluster.algorithm.impl.ExperimentUtil;
-
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.util.Adjustment;
+import org.tigr.util.FloatMatrix;
+import org.tigr.util.QSort;
 
 
 /** The ScriptDataTransformer class supports script execution by providing

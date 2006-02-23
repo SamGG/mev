@@ -4,17 +4,26 @@ All rights reserved.
 */
 /*
  * $RCSfile: BoundariesDialog.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:26:21 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 21:00:04 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.util.awt;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Font;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Hashtable;
-import javax.swing.*;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
 
 public class BoundariesDialog extends ActionInfoDialog {
     private JFrame parent;

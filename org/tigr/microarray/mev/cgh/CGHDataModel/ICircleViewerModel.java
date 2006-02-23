@@ -7,6 +7,7 @@
 package org.tigr.microarray.mev.cgh.CGHDataModel;
 
 import java.awt.Color;
+
 import org.tigr.microarray.mev.cgh.CGHDataObj.CGHClone;
 /**
  *

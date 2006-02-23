@@ -4,17 +4,28 @@ All rights reserved.
 */
 /*
  * $RCSfile: TransferDialog.java,v $
- * $Revision: 1.1.1.1 $
- * $Date: 2003-08-21 21:04:23 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2006-02-23 21:00:04 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.util.awt;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.AWTEventMulticaster;
+import java.awt.Container;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.List;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.Vector;
-import javax.swing.*;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 public class TransferDialog extends JDialog {
     private List availableList, selectedList;

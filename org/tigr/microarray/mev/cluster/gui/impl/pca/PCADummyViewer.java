@@ -6,22 +6,23 @@
 
 package org.tigr.microarray.mev.cluster.gui.impl.pca;
 
-import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
-import org.tigr.microarray.mev.cluster.gui.LeafInfo;
-import org.tigr.util.FloatMatrix;
-import org.tigr.microarray.mev.cluster.gui.Experiment;
-
-import javax.swing.*;
-import javax.swing.JPopupMenu;
-import javax.swing.JMenuItem;
-import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.Component;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.tree.DefaultMutableTreeNode;
+
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.LeafInfo;
+import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
+import org.tigr.util.FloatMatrix;
 
 /**
  *

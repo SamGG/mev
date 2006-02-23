@@ -4,18 +4,18 @@ All rights reserved.
 */
 /*
  * $RCSfile: ServletUtil.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:36:10 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 21:00:01 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.remote.gateway.util;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 
 public class ServletUtil {
 

@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
+
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -32,23 +33,20 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileFilter;
 
+import org.tigr.microarray.file.AgilentAnnFileParser;
+import org.tigr.microarray.file.AgilentMevFileParser;
 import org.tigr.microarray.mev.FloatSlideData;
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.ISlideMetaData;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.SlideDataElement;
 import org.tigr.microarray.mev.SpotInformationData;
-
 import org.tigr.microarray.mev.file.ExpressionFileLoader;
 import org.tigr.microarray.mev.file.FileTreePane;
 import org.tigr.microarray.mev.file.FileTreePaneEvent;
 import org.tigr.microarray.mev.file.FileTreePaneListener;
 import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
-
 import org.tigr.util.awt.GBA;
-
-import org.tigr.microarray.file.AgilentMevFileParser;
-import org.tigr.microarray.file.AgilentAnnFileParser;
 
 public class AgilentMevFileLoader extends ExpressionFileLoader {
     

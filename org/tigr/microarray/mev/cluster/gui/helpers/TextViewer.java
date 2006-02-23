@@ -11,10 +11,9 @@ All rights reserved.
 package org.tigr.microarray.mev.cluster.gui.helpers;
 
 import java.awt.Color;
-import java.awt.Insets;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-
+import java.awt.Insets;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;

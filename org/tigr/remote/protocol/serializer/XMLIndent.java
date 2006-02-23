@@ -4,15 +4,15 @@ All rights reserved.
 */
 /*
  * $RCSfile: XMLIndent.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:35:13 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 21:00:02 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.remote.protocol.serializer;
 
-import java.io.PrintWriter;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 
 class XMLIndent {
 

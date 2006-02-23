@@ -6,9 +6,9 @@
 
 package org.tigr.microarray.mev.cgh.CGHGuiObj;
 
-import org.tigr.microarray.mev.cluster.gui.IViewer;
-import org.tigr.microarray.mev.cluster.gui.ICGHDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.ICGHCloneValueMenu;
+import org.tigr.microarray.mev.cluster.gui.ICGHDisplayMenu;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
 
 /**
  *

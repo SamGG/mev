@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SliderBehavior.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 20:33:21 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 20:59:56 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.terrain;
@@ -14,11 +14,14 @@ package org.tigr.microarray.mev.cluster.gui.impl.terrain;
 import java.awt.event.MouseEvent;
 import java.util.Enumeration;
 
+import javax.media.j3d.Behavior;
+import javax.media.j3d.Transform3D;
+import javax.media.j3d.TransformGroup;
+import javax.media.j3d.WakeupCriterion;
+import javax.media.j3d.WakeupOnBehaviorPost;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import javax.media.j3d.*;
 import javax.vecmath.Vector3d;
 
 public class SliderBehavior extends Behavior implements ChangeListener {

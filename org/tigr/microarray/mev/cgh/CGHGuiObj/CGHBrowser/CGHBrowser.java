@@ -16,7 +16,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTable;
 
-import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cgh.CGHDataModel.CGHBrowserModelAdaptor;
 import org.tigr.microarray.mev.cgh.CGHDataModel.CGHChartDataModel;
 import org.tigr.microarray.mev.cgh.CGHDataModel.CGHTableDataModel;

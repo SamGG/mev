@@ -14,9 +14,9 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.JOptionPane;
 
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.*;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.*;
 import org.tigr.microarray.mev.cluster.clusterUtil.submit.PasswordDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 
 /**
  *

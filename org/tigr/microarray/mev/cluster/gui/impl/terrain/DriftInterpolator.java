@@ -4,17 +4,25 @@ All rights reserved.
 */
 /*
  * $RCSfile: DriftInterpolator.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 20:33:21 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 20:59:56 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.terrain;
 
-import java.util.Enumeration; 
+import java.util.Enumeration;
 
-import javax.media.j3d.*;
-import javax.vecmath.*;
+import javax.media.j3d.Alpha;
+import javax.media.j3d.BoundingLeaf;
+import javax.media.j3d.Interpolator;
+import javax.media.j3d.Transform3D;
+import javax.media.j3d.TransformGroup;
+import javax.media.j3d.WakeupOnBehaviorPost;
+import javax.vecmath.Matrix3d;
+import javax.vecmath.Point3d;
+import javax.vecmath.Vector3d;
+import javax.vecmath.Vector3f;
 
 public class DriftInterpolator extends Interpolator {
 

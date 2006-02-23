@@ -10,18 +10,15 @@ All rights reserved.
 
 package org.tigr.microarray.mev.cluster.gui.helpers.ktree;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
-
-import java.awt.AlphaComposite;
-import java.awt.Composite;
-
 import java.awt.geom.CubicCurve2D;
-
 import java.util.Vector;
 
 import javax.swing.JPanel;

@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayData.java,v $
- * $Revision: 1.18 $
- * $Date: 2006-02-02 20:03:55 $
- * $Author: raktim $
+ * $Revision: 1.19 $
+ * $Date: 2006-02-23 20:59:41 $
+ * $Author: caliente $
  * $State: Exp $
  */
 
@@ -14,45 +14,61 @@ package org.tigr.microarray.mev;
 
 import java.awt.Color;
 import java.awt.Frame;
-import java.awt.event.*;
-
-import java.util.ArrayList;import java.util.Iterator;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.IOException;
-import java.io.Serializable;
-
 import javax.swing.JOptionPane;
 
-import org.tigr.microarray.util.Adjustment;
-import org.tigr.util.FloatMatrix;
-import org.tigr.util.QSort;
-import org.tigr.microarray.util.SlideDataSorter;
-
+import org.tigr.microarray.mev.cgh.CGHDataGenerator.CGHCopyNumberCalculator;
+import org.tigr.microarray.mev.cgh.CGHDataGenerator.CGHCopyNumberCalculatorNoDyeSwap;
+import org.tigr.microarray.mev.cgh.CGHDataObj.AlterationRegion;
+import org.tigr.microarray.mev.cgh.CGHDataObj.AlterationRegions;
+import org.tigr.microarray.mev.cgh.CGHDataObj.AlterationRegionsComparator;
+import org.tigr.microarray.mev.cgh.CGHDataObj.CGHClone;
+import org.tigr.microarray.mev.cgh.CGHDataObj.Distribution;
+import org.tigr.microarray.mev.cgh.CGHDataObj.FlankingRegion;
+import org.tigr.microarray.mev.cgh.CGHDataObj.GeneDataSet;
+import org.tigr.microarray.mev.cgh.CGHDataObj.ICGHDataRegion;
+import org.tigr.microarray.mev.cgh.CGHDataObj.IGeneData;
+import org.tigr.microarray.mev.cgh.CGHDataObj.Cluster.Experiment.BacClonesExperimentParameters;
+import org.tigr.microarray.mev.cgh.CGHDataObj.Cluster.Experiment.CGHExperiment;
+import org.tigr.microarray.mev.cgh.CGHDataObj.Cluster.Experiment.DataRegionsExperimentParameters;
+import org.tigr.microarray.mev.cgh.CGHDataObj.Cluster.Experiment.GenesExperimentParameters;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-
-import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
+import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.ICGHCloneValueMenu;
+import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
-
-import org.tigr.microarray.mev.cluster.clusterUtil.*;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.normalization.IterativeLogMCNormInitDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.normalization.LinRegNormInitDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.normalization.RatioStatsNormInitDialog;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.normalization.IterativeLogMCNormInitDialog;
 import org.tigr.microarray.mev.file.StringSplitter;
-
+import org.tigr.microarray.util.Adjustment;
+import org.tigr.microarray.util.SlideDataSorter;
 import org.tigr.midas.engine.Parameter;
-import org.tigr.microarray.mev.cgh.CGHDataObj.CGHClone;import org.tigr.microarray.mev.cgh.CGHDataObj.Distribution;import org.tigr.microarray.mev.cgh.CGHDataObj.GeneDataSet;import org.tigr.microarray.mev.cgh.CGHDataObj.IGeneData;import org.tigr.microarray.mev.cgh.CGHDataObj.ICGHDataRegion;import org.tigr.microarray.mev.cgh.CGHDataObj.FlankingRegion;import org.tigr.microarray.mev.cgh.CGHDataObj.AlterationRegion;import org.tigr.microarray.mev.cgh.CGHDataObj.AlterationRegions;import org.tigr.microarray.mev.cgh.CGHDataObj.AlterationRegionsComparator;import org.tigr.microarray.mev.cgh.CGHDataObj.Cluster.Experiment.BacClonesExperimentParameters;import org.tigr.microarray.mev.cgh.CGHDataObj.Cluster.Experiment.CGHExperiment;import org.tigr.microarray.mev.cgh.CGHDataObj.Cluster.Experiment.DataRegionsExperimentParameters;import org.tigr.microarray.mev.cgh.CGHDataObj.Cluster.Experiment.GenesExperimentParameters;import org.tigr.microarray.mev.cgh.CGHDataGenerator.CGHCopyNumberCalculator;import org.tigr.microarray.mev.cgh.CGHDataGenerator.CGHCopyNumberCalculatorNoDyeSwap;import org.tigr.microarray.mev.cluster.gui.ICGHCloneValueMenu;import cern.jet.math.Arithmetic;import cern.jet.stat.Probability;
+import org.tigr.util.FloatMatrix;
+import org.tigr.util.QSort;
+
+import cern.jet.math.Arithmetic;
+import cern.jet.stat.Probability;
+
 public class MultipleArrayData implements IData, Serializable {
    public static final long serialVersionUID = 100010201040002L;
 

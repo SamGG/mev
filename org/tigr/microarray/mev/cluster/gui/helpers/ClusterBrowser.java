@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterBrowser.java,v $
- * $Revision: 1.7 $
- * $Date: 2005-03-10 15:56:13 $
- * $Author: braistedj $
+ * $Revision: 1.8 $
+ * $Date: 2006-02-23 20:59:48 $
+ * $Author: caliente $
  * $State: Exp $
  */
 /*
@@ -24,16 +24,15 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import java.util.Arrays;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
@@ -44,11 +43,12 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import org.tigr.util.FloatMatrix;
-import org.tigr.graph.*;
+import org.tigr.graph.GraphCanvas;
+import org.tigr.graph.GraphLine;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterList;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
+import org.tigr.util.FloatMatrix;
 
 /**
  * @author  braisted

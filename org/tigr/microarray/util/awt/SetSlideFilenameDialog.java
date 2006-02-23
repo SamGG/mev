@@ -4,35 +4,34 @@ All rights reserved.
 */
 /*
  * $RCSfile: SetSlideFilenameDialog.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:39:20 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 20:59:59 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.util.awt;
 
+import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
-import java.awt.Dimension;
-import java.awt.Container;
-import java.awt.GridBagLayout;
-
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.JLabel;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JComboBox;
-import javax.swing.JTextField;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 
 import org.tigr.util.awt.GBA;
 

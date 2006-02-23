@@ -4,17 +4,17 @@ All rights reserved.
 */
 /*
  * $RCSfile: RequestSerializer.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:35:13 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-23 21:00:02 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.remote.protocol.serializer;
 
 import java.io.OutputStream;
 
-import org.tigr.util.ConfMap;
 import org.tigr.remote.protocol.Request;
+import org.tigr.util.ConfMap;
 
 public abstract class RequestSerializer {
     /**

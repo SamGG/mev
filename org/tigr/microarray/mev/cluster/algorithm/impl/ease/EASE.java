@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASE.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-02-09 19:42:48 $
- * $Author: braistedj $
+ * $Revision: 1.7 $
+ * $Date: 2006-02-23 20:59:45 $
+ * $Author: caliente $
  * $State: Exp $
  */
 
@@ -17,23 +17,22 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Random;
 import java.text.DecimalFormat;
 import java.util.Hashtable;
+import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import org.tigr.util.FloatMatrix;
-import org.tigr.util.QSort;
-
 import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
+import org.tigr.util.FloatMatrix;
+import org.tigr.util.QSort;
 
 /** Manages EASE analysis and raw result manipulation and return.
  * @author braisted

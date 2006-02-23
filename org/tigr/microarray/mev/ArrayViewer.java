@@ -4,15 +4,14 @@ All rights reserved.
 */
 /*
  * $RCSfile: ArrayViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-03-10 15:44:14 $
- * $Author: braistedj $
+ * $Revision: 1.6 $
+ * $Date: 2006-02-23 20:59:41 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
 import java.awt.Cursor;
-
 import java.io.File;
 
 import javax.swing.JFileChooser;
@@ -21,10 +20,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 
-import org.tigr.util.swing.FileTransferDialog;
-import org.tigr.microarray.util.swing.TAVFileFilter;
-import org.tigr.util.swing.TXTFileFilter;
 import org.tigr.microarray.util.swing.SlideDataLoader;
+import org.tigr.microarray.util.swing.TAVFileFilter;
+import org.tigr.util.swing.FileTransferDialog;
+import org.tigr.util.swing.TXTFileFilter;
 
 abstract public class ArrayViewer extends JPanel {
     

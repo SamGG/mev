@@ -1,10 +1,23 @@
 package org.tigr.microarray.mev;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.GridBagLayout;
+import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import org.tigr.graph.GraphBar;
+import org.tigr.graph.GraphElement;
+import org.tigr.graph.GraphLine;
+import org.tigr.graph.GraphPoint;
+import org.tigr.graph.GraphTick;
+import org.tigr.graph.GraphViewer;
 import org.tigr.util.awt.GBA;
-import org.tigr.graph.*;
 
 public class BlockGraphViewer extends GraphViewer {
 	

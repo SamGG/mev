@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: KFOMViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2004-07-27 19:59:16 $
- * $Author: braisted $
+ * $Revision: 1.7 $
+ * $Date: 2006-02-23 20:59:51 $
+ * $Author: caliente $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.fom;
@@ -15,9 +15,8 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JComponent;
 
-import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
-
+import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
 public class KFOMViewer extends ViewerAdapter implements java.io.Serializable {

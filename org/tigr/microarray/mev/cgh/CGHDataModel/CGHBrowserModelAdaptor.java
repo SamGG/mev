@@ -7,13 +7,14 @@
 package org.tigr.microarray.mev.cgh.CGHDataModel;
 
 //import org.tigr.microarray.mev.cgh.CGHDataObj.ICGHFeatureData;
+import java.util.EventListener;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.EventListenerList;
+
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.cluster.gui.IData;
-
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
-import java.util.EventListener;
-import javax.swing.event.EventListenerList;
 
 /**
  *
