@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: AffyGCOSFileLoader.java,v $
- * $Revision: 1.2 $
- * $Date: 2006-02-23 20:59:56 $
- * $Author: caliente $
+ * $Revision: 1.3 $
+ * $Date: 2006-02-24 16:22:41 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 
@@ -49,6 +49,8 @@ import org.tigr.microarray.mev.FloatSlideData;
 import org.tigr.microarray.mev.GCOSSlideDataElement;
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.SlideData;
+import org.tigr.microarray.mev.ISlideMetaData;
+import org.tigr.microarray.mev.SlideDataElement;
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.IData;
 
@@ -108,18 +110,18 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
         float cy3, cy5;
 
         String[] moreFields = new String[1];
-        String[] extraFields = new String[1];
+        String[] extraFields=null;
         final int rColumns = 1;
         final int rRows = spotCount;
         
         ISlideData slideDataArray[]=null;
-        GCOSSlideDataElement sde=null;
+        AffySlideDataElement sde=null;
         FloatSlideData slideData=null;
         
         BufferedReader reader = new BufferedReader(new FileReader(f));
         StringSplitter ss = new StringSplitter((char)0x09);
         String currentLine;
-        int counter, row, column;
+        int counter, row, column,experimentCount=0;
         counter = 0;
         row = column = 1;
         this.setFilesCount(1);
@@ -135,7 +137,12 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
             }
             ss.init(currentLine);
             if (counter == 0) { // parse header
-            	int experimentCount = (ss.countTokens()+1- preExperimentColumns)/3;
+            	if(sflp.absoluteRadioButton.isSelected())
+            		experimentCount = ss.countTokens()- preExperimentColumns;
+            	if(sflp.absMeanRadioButton.isSelected())
+            		experimentCount = (ss.countTokens()+1- preExperimentColumns)/2;
+            	if(sflp.referenceRadioButton.isSelected())
+            		experimentCount = (ss.countTokens()+1- preExperimentColumns)/3;
             	slideDataArray = new ISlideData[experimentCount];
                 slideDataArray[0] = new SlideData(rRows, rColumns);
                 slideDataArray[0].setSlideFileName(f.getPath());
@@ -143,18 +150,35 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                     slideDataArray[i] = new FloatSlideData(slideDataArray[0].getSlideMetaData(),experimentCount-1);
                     slideDataArray[i].setSlideFileName(f.getPath());
                 }
-                
-                String [] fieldNames = new String[2];
-                fieldNames[0]="AffyID";
-                fieldNames[1]="Detection";
-                TMEV.setFieldNames(fieldNames);
-                
+                if(sflp.absoluteRadioButton.isSelected()){
+                	String [] fieldNames = new String[1];
+                	//extraFields = new String[1];
+                	fieldNames[0]="AffyID";
+                	TMEV.setFieldNames(fieldNames);
+                }else if(sflp.absMeanRadioButton.isSelected()){
+                	String [] fieldNames = new String[2];
+                	extraFields = new String[1];
+                    fieldNames[0]="AffyID";
+                    fieldNames[1]="Detection";
+                    TMEV.setFieldNames(fieldNames);	
+                }else{
+                	String [] fieldNames = new String[3];
+                	extraFields = new String[2];
+                    fieldNames[0]="AffyID";
+                    fieldNames[1]="Detection";
+                    fieldNames[2]="P-value";
+                    TMEV.setFieldNames(fieldNames);
+                }
                 ss.nextToken();//pares the blank on header
                 for (int i=0; i<experimentCount; i++) {
                 	
                     slideDataArray[i].setSlideDataName(ss.nextToken());
-                    ss.nextToken();//parse the detection
-                    ss.nextToken();//parse the pvalue
+                    if(sflp.referenceRadioButton.isSelected()){
+                    	ss.nextToken();//parse the detection
+                        ss.nextToken();//parse the pvalue
+                     }else if(sflp.absMeanRadioButton.isSelected()){
+                        	ss.nextToken();//parse the detection  
+                     }            
                 }
                 
             } else if (counter >= preSpotRows) { // data rows
@@ -170,7 +194,7 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                 //affy ID
                 moreFields[0] = ss.nextToken();
                
-                sde = new GCOSSlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields);
+                sde = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields);
                 slideDataArray[0].addSlideDataElement(sde);
                 int i=0;
                 for ( i=0; i<slideDataArray.length; i++) {                   
@@ -179,8 +203,12 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                         // Intensity
                         intensities[0] = 1.0f;
                         intensities[1] = ss.nextFloatToken(0.0f);
-                        extraFields[0]=ss.nextToken();//detection
-                        ss.nextToken();//p-value
+                        if(sflp.referenceRadioButton.isSelected()){
+                        	 extraFields[0]=ss.nextToken();//detection
+                             extraFields[1]=ss.nextToken();//p-value
+                        }else if(sflp.absMeanRadioButton.isSelected()){
+                        	extraFields[0]=ss.nextToken();//detection
+                        }
                         
                     } catch (Exception e) {
                         cy3 = 0;
@@ -189,12 +217,23 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                     if(i==0){
                     	slideDataArray[i].setIntensities(counter - preSpotRows, intensities[0], intensities[1]);
                     	//sde.setExtraFields(extraFields);
-                    	sde.setDetection(extraFields[0]);
+                    	 if(sflp.referenceRadioButton.isSelected()){
+                    		 sde.setDetection(extraFields[0]);
+                             sde.setPvalue(new Float(extraFields[1]).floatValue());
+                    	 }else if(sflp.absMeanRadioButton.isSelected()){
+                    		 sde.setDetection(extraFields[0]);
+                    	 }
                     }else{
                     	if(i==1)
                     		meta = slideDataArray[0].getSlideMetaData();                    	
                     	slideDataArray[i].setIntensities(counter-preSpotRows,intensities[0],intensities[1]);
-                    	((FloatSlideData)slideDataArray[i]).setDetection(counter-preSpotRows,extraFields[0]);
+                    	if(sflp.referenceRadioButton.isSelected()){
+                    		((FloatSlideData)slideDataArray[i]).setDetection(counter-preSpotRows,extraFields[0]);
+                    		((FloatSlideData)slideDataArray[i]).setPvalue(counter-preSpotRows,new Float(extraFields[1]).floatValue());
+                    	}
+                    	if(sflp.absMeanRadioButton.isSelected()){
+                    		((FloatSlideData)slideDataArray[i]).setDetection(counter-preSpotRows,extraFields[0]);
+                    	}
                     }
                 }
                
@@ -368,15 +407,19 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
         JScrollPane tableScrollPane;
         JPanel tablePanel;
         
-        JPanel AffyGCOSListPanel;
+        JPanel AffyGCOSListPanel,refSelectionPanel;
         JList AffyGCOSAvailableList;
         JScrollPane AffyGCOSAvailableScrollPane;
-        
+
+        ButtonGroup optionsButtonGroup;
+        JRadioButton absoluteRadioButton;
+        JRadioButton absMeanRadioButton;
+        JRadioButton referenceRadioButton;
         
         JTextField annoTextField;
         JPanel annoPanel;
         
-        JPanel fileLoaderPanel;
+        JPanel fileLoaderPanel,rightLoaderPanel;
         JSplitPane splitPane;
  
         private int xRow = -1;
@@ -400,7 +443,26 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                 pathPanel.setLayout(new GridBagLayout());
                 pathPanel.setBorder(new TitledBorder(new EtchedBorder(), getFileFilter().getDescription()));
                 gba.add(pathPanel, pathTextField, 0, 0, 2, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-               
+                
+                refSelectionPanel = new JPanel();
+                refSelectionPanel.setLayout(new GridBagLayout());
+                refSelectionPanel.setBorder(new TitledBorder(new EtchedBorder(), "Affymetrix Data Options"));
+                optionsButtonGroup = new ButtonGroup();
+                absoluteRadioButton = new JRadioButton("Only Intensity", true);
+                //absoluteRadioButton.addActionListener(new EventHandler());
+                optionsButtonGroup.add(absoluteRadioButton);
+
+                absMeanRadioButton = new JRadioButton("Intensity With Detection");
+                //absMeanRadioButton.addActionListener(new EventHandler());
+                optionsButtonGroup.add(absMeanRadioButton);
+
+                referenceRadioButton = new JRadioButton("Intensity with Detection and P-value");
+                //referenceRadioButton.addActionListener(new EventHandler());
+                optionsButtonGroup.add(referenceRadioButton);
+                gba.add(refSelectionPanel, absoluteRadioButton, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 50, 0, 5), 0, 0);
+                gba.add(refSelectionPanel, referenceRadioButton, 0, 1, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 50, 0, 5), 0, 0);
+                gba.add(refSelectionPanel, absMeanRadioButton, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 0, 5), 0, 0);
+
         
                 AffyGCOSAvailableList = new JList(new DefaultListModel());
                 AffyGCOSAvailableList.setCellRenderer(new ListRenderer());
@@ -409,7 +471,7 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                 AffyGCOSListPanel = new JPanel();
                 AffyGCOSListPanel.setLayout(new GridBagLayout());
                 AffyGCOSListPanel.setBorder(new TitledBorder(new EtchedBorder(), "Data File Available"));
-                gba.add(AffyGCOSListPanel, AffyGCOSAvailableScrollPane, 0, 0, 1, 8, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+                gba.add(AffyGCOSListPanel, AffyGCOSAvailableScrollPane, 0, 0, 2, 8, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
                 
                 expressionTable = new JTable();
                 expressionTable.setCellSelectionEnabled(true);
@@ -451,16 +513,18 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                 fileLoaderPanel = new JPanel();
                 fileLoaderPanel.setLayout(new GridBagLayout());
                 
-                gba.add(fileLoaderPanel,AffyGCOSListPanel, 0, 0, 1, 9, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-                //gba.add(fileLoaderPanel, refListPanel, 0, 6, 1, 4, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+                //gba.add(fileLoaderPanel,AffyGCOSListPanel, 0, 0, 2, 9, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+                gba.add(fileLoaderPanel, pathPanel, 0, 0, 1, 1, 3, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+                gba.add(fileLoaderPanel, refSelectionPanel, 0, 1, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+                gba.add(fileLoaderPanel, tablePanel, 0, 2, 1, 5, 3, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+                gba.add(fileLoaderPanel, annoPanel, 0, 7, 1, 1, 3, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);               
                 
-                gba.add(fileLoaderPanel, pathPanel, 2, 0, 1, 1, 3, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-                gba.add(fileLoaderPanel, tablePanel, 2, 1, 1, 7, 3, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-                gba.add(fileLoaderPanel, annoPanel, 2, 8, 1, 1, 3, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-                //gba.add(fileLoaderPanel, refPanel, 2, 8, 1, 1, 3, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-               
+                rightLoaderPanel=new JPanel();
+                rightLoaderPanel.setLayout(new GridBagLayout());
+                gba.add(rightLoaderPanel,AffyGCOSListPanel, 0, 0, 1, 9, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+                gba.add(rightLoaderPanel,fileLoaderPanel, 1, 0, 1, 9, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
                 
-                splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, fileTreePane, fileLoaderPanel);
+                splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, fileTreePane, rightLoaderPanel);
                 splitPane.setDividerLocation(200);
                 gba.add(this,splitPane,0,0,1,1,1,1,GBA.B,GBA.C, new Insets(5, 5, 5, 5), 0, 0);
                 

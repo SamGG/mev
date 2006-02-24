@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: SOFT_TwoChannelFileLoader.java,v $
- * $Revision: 1.2 $
- * $Date: 2006-02-23 20:59:56 $
- * $Author: caliente $
+ * $Revision: 1.3 $
+ * $Date: 2006-02-24 16:34:45 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 
@@ -49,7 +49,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-
+import org.tigr.microarray.mev.FloatSlideData;
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.SlideDataElement;

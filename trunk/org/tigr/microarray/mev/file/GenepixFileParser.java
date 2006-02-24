@@ -57,7 +57,9 @@ public class GenepixFileParser extends Thread{
   private final String ROW_N = "Row";
   private final String WAVE_KEY_1 = "ImageName";
   private final String WAVE_KEY_2 = "Wavelengths";
-
+  private final String FLAGS = "\"Flags\"";
+  private final String FLAGS_N = "Flags";
+  
   private boolean ready; // indicates if the process is completed.
   private boolean hasError;
   private File gprFile;
@@ -491,7 +493,7 @@ public class GenepixFileParser extends Thread{
     int maxCol = 0;
     int maxMetaCol, block, row, col, metaRow, metaCol, slideRow, slideCol;
     int i;
-    int flagInt, blockIndex, colIndex, rowIndex, nameIndex, idIndex;
+    int flagInt, blockIndex, colIndex, rowIndex, nameIndex, idIndex,flagIndex,flag;
     int f635m, b635m, f635s, f532m, f532s, b532m;
     int fSize;
     Vector gprFileContents;
@@ -538,6 +540,9 @@ public class GenepixFileParser extends Thread{
     rowIndex = findRightCol(colNames, RW, ROW_N);
     nameIndex = findRightCol(colNames, NAME, NAME_N);
     idIndex = findRightCol(colNames, ID, ID_N);
+    //wwang
+    flagIndex=findRightCol(colNames,FLAGS , FLAGS_N);
+    //System.out.print(flagIndex);
 
     aLine = (String)gprFileContents.elementAt(fSize-1);
     colValues = separateLine(aLine);
@@ -581,7 +586,9 @@ public class GenepixFileParser extends Thread{
         f532m = findRightCol(colNames, chB, chBn);
         f532s = findRightCol(colNames, chBs, chBsn);
         b532m = findRightCol(colNames, bgChB, bgChBn);
-
+        //wwang
+        flagIndex=findRightCol(colNames,FLAGS , FLAGS_N);
+        
         tavFile = new Vector(fSize - hLines, (fSize - hLines)>>2);
         counter = hLines;
 
@@ -592,7 +599,9 @@ public class GenepixFileParser extends Thread{
           block = Integer.parseInt(colValues[blockIndex]);
           col = Integer.parseInt(colValues[colIndex]);
           row = Integer.parseInt(colValues[rowIndex]);
-
+          //wwang got flag value
+          flag = Integer.parseInt(colValues[flagIndex]);
+          //System.out.print(flag);
            // channel A is always for Cy3 and B for Cy3 in .tav file
           densA = calculateDensity(colValues, f532m, f532s, b532m);
           densB = calculateDensity(colValues, f635m, f635s, b635m);
@@ -602,8 +611,8 @@ public class GenepixFileParser extends Thread{
           slideCol = (metaCol -1 ) * maxCol + col;
           name = colValues[nameIndex];
           id = colValues[idIndex];
-
-          tavLine = new Vector(8);
+          //wwang add loading flag
+          tavLine = new Vector(9);
           tavLine.add(new Integer(densA));
           tavLine.add(new Integer(densB));
           tavLine.add(new Integer(slideRow));
@@ -612,7 +621,7 @@ public class GenepixFileParser extends Thread{
           tavLine.add(new Integer(metaCol));
           tavLine.add(name);
           tavLine.add(id);
-
+          tavLine.add(new Integer(flag));
           tavFile.add(tavLine);
           counter++;
         } // end of the for loop for a single file.
