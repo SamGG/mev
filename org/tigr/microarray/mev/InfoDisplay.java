@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: InfoDisplay.java,v $
- * $Revision: 1.10 $
- * $Date: 2006-02-23 20:59:41 $
- * $Author: caliente $
+ * $Revision: 1.11 $
+ * $Date: 2006-02-24 15:01:22 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -428,7 +428,9 @@ public class InfoDisplay extends ActionInfoDialog {
               if(fieldNames[i].equals("Detection")){
                 message += "<tr valign=top><td><i>" + fieldNames[i] + "</i></td><td>" + element.getDetection() + "</td></tr>";
               }
-              else{
+              else if(fieldNames[i].equals("P-value")){
+            	  message += "<tr valign=top><td><i>" + fieldNames[i] + "</i></td><td>" + element.getPvalue() + "</td></tr>";;
+              }else{
                 message += "<tr valign=top><td><i>" + fieldNames[i] + "</i></td><td>" + element.getFieldAt(i) + "</td></tr>";  
               }               
            }
