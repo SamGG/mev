@@ -4,9 +4,9 @@
  */
 /*
  * $RCSfile: SuperExpressionFileLoader.java,v $
- * $Revision: 1.12 $
- * $Date: 2006-02-02 19:56:58 $
- * $Author: raktim $
+ * $Revision: 1.13 $
+ * $Date: 2006-02-24 16:43:12 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.file;
@@ -130,7 +130,8 @@ public class SuperExpressionFileLoader {
 
 		int defaultSelection = 0;
 
-		fileLoaders = new ExpressionFileLoader[12];/* Raktim, CGH Loader, changed 11 to 12 */
+
+		fileLoaders = new ExpressionFileLoader[11];
 		fileLoaders[0] = new MevFileLoader(this);
 
 		fileLoaders[1] = null;
@@ -141,8 +142,8 @@ public class SuperExpressionFileLoader {
 		fileLoaders[6] = null;
 		fileLoaders[7] = null;
 		fileLoaders[8] = null;
-		fileLoaders[9] = null;
-		fileLoaders[10] = null;		fileLoaders[11] = null; /* Raktim, CGH Loader */
+		fileLoaders[9] = null;		fileLoaders[10] = null; /* Raktim, CGH Loader */
+
 		/*
 		 * fileLoaders[1] = new StanfordFileLoader(this); 
 		 * fileLoaders[2] = new TavFileLoader(this); 
@@ -321,22 +322,23 @@ public class SuperExpressionFileLoader {
 		case 5:
 			loader = new Mas5FileLoader(this);
 			break;
+		/*
 		case 6: 
 			loader = new AffymetrixFileLoader(this);
 			break;
-		
-		case 7:
+		*/
+		case 6:
 			loader = new AffyGCOSFileLoader(this);
 			break;	
-		case 8:
+		case 7:
 			loader = new SOFT_AffyFileLoader(this);
 			break;		
-		case 9:
+		case 8:
 			loader = new SOFT_TwoChannelFileLoader(this);
 			break;	
-		case 10:
+		case 9:
 			loader = new DFCI_CoreFileLoader(this);
-			break;			case 11:            loader = new CGHStanfordFileLoader(this); /* Raktim, for CGH Loader */            break;
+			break;			case 10:            loader = new CGHStanfordFileLoader(this); /* Raktim, for CGH Loader */            break;
 		default:
 			loader = new MevFileLoader(this);
 			break;
@@ -409,21 +411,23 @@ public class SuperExpressionFileLoader {
 		case 5:
 			desc = "Bioconductor(using MAS5) Files(*.*)";
 			break;
+			/*
 		case 6:
 			desc = "Affymetrix Files (*.*)";
-			break;		
-		case 7:
+			break;
+			*/		
+		case 6:
 			desc = "Affymetrix GCOS(using MAS5) Files (*.*)";
 			break;	
-		case 8:
+		case 7:
 			desc = "GEO SOFT Affymetrix Format Files (*.*)";
 			break;
-		case 9:
+		case 8:
 			desc = "GEO SOFT Two Channel Format Files (*.*)";
 			break;		
-		case 10:
-			desc = "DFCI Microarray Core Format Files (*.*)";
-			break;		        case 11:            desc = "CGH Tab Delimited, Multiple Sample Files (*.*)"; /* Raktim, CGH Files */            break;
+		case 9:
+			desc = "dChip/DFCI_Core Format Files (*.*)";
+			break;			        case 10:            desc = "CGH Tab Delimited, Multiple Sample Files (*.*)"; /* Raktim, CGH Files */            break;
 		default:
 			desc = "TIGR MeV Files (*.mev)";
 			break;
@@ -547,22 +551,24 @@ public class SuperExpressionFileLoader {
 			try {
 				selectedFileLoader.showModal();
 				data = selectedFileLoader.loadExpressionFiles();
-				if (loaderIndex == 1 || loaderIndex == 9 || loaderIndex == 11) /* Raktim, added check for 11, CGH Data */
+				if (loaderIndex == 1 || loaderIndex == 8 || loaderIndex == 10) /* Raktim, added check for 11, CGH Data */
 					dataType = IData.DATA_TYPE_RATIO_ONLY;
 				else if(loaderIndex == 5){
 					dataType = ((Mas5FileLoader)selectedFileLoader)
 					.getAffyDataType();
 				}
+				/*
 				else if (loaderIndex == 6) {
 					dataType = ((AffymetrixFileLoader) selectedFileLoader)
 							.getAffyDataType();
-				}else if (loaderIndex == 7) {
+							*/
+				else if (loaderIndex == 6) {
 					dataType = ((AffyGCOSFileLoader) selectedFileLoader)
 							.getAffyDataType();
-				}else if (loaderIndex == 8) {
+				}else if (loaderIndex == 7) {
 					dataType = ((SOFT_AffyFileLoader) selectedFileLoader)
 							.getAffyDataType();
-				}else if (loaderIndex == 10) {
+				}else if (loaderIndex == 9) {
 					dataType = ((DFCI_CoreFileLoader) selectedFileLoader)
 					.getAffyDataType();	
 				}else 
