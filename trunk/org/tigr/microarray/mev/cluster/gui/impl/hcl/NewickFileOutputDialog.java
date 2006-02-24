@@ -176,7 +176,17 @@ public class NewickFileOutputDialog extends AlgorithmDialog {
                 }
             }
             else if (command.equals("browse-command")) {
-                JFileChooser chooser = new JFileChooser(TMEV.getFile("data"));
+            	String dataPath = TMEV.getDataPath();
+                File fileLoc = TMEV.getFile("data/"); 
+                // if the data path is null go to default, if not null and not exist then to to default
+                // else use the dataPath
+                if(dataPath != null) {
+                    fileLoc = new File(dataPath);
+                    if(!fileLoc.exists()) {
+                        fileLoc = TMEV.getFile("data/");
+                    }
+                }
+                JFileChooser chooser = new JFileChooser(fileLoc);
                 chooser.setFileSelectionMode(javax.swing.DefaultListSelectionModel.SINGLE_SELECTION);
                 if(chooser.showSaveDialog(NewickFileOutputDialog.this) == JFileChooser.APPROVE_OPTION) {
                     fileField.setText(chooser.getSelectedFile().getAbsolutePath());

@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLTree.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-02-23 20:59:51 $
- * $Author: caliente $
+ * $Revision: 1.9 $
+ * $Date: 2006-02-24 16:12:38 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.hcl;
@@ -883,7 +883,17 @@ public class HCLTree extends JPanel implements java.io.Serializable {
         int child1, child2;
         
         File file = null;
-        final JFileChooser fc = new JFileChooser(TMEV.getFile("data/"));
+        String dataPath = TMEV.getDataPath();
+        File fileLoc = TMEV.getFile("data/"); 
+        // if the data path is null go to default, if not null and not exist then to to default
+        // else use the dataPath
+        if(dataPath != null) {
+            fileLoc = new File(dataPath);
+            if(!fileLoc.exists()) {
+                fileLoc = TMEV.getFile("data/");
+            }
+        }
+        final JFileChooser fc = new JFileChooser(fileLoc);
         int ret = fc.showSaveDialog(new javax.swing.JFrame());
         if (ret == JFileChooser.APPROVE_OPTION) {
             file = fc.getSelectedFile();
@@ -925,7 +935,17 @@ public class HCLTree extends JPanel implements java.io.Serializable {
         int child1, child2;
         
         File file = null;
-        final JFileChooser fc = new JFileChooser(TMEV.getFile("data/"));
+        String dataPath = TMEV.getDataPath();
+        File fileLoc = TMEV.getFile("data/"); 
+        // if the data path is null go to default, if not null and not exist then to to default
+        // else use the dataPath
+        if(dataPath != null) {
+            fileLoc = new File(dataPath);
+            if(!fileLoc.exists()) {
+                fileLoc = TMEV.getFile("data/");
+            }
+        }
+        final JFileChooser fc = new JFileChooser(fileLoc);
         int ret = fc.showSaveDialog(new javax.swing.JFrame());
         if (ret == JFileChooser.APPROVE_OPTION) {
             file = fc.getSelectedFile();
