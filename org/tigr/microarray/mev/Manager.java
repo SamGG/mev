@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: Manager.java,v $
- * $Revision: 1.10 $
- * $Date: 2006-02-23 20:59:41 $
- * $Author: caliente $
+ * $Revision: 1.11 $
+ * $Date: 2006-02-24 15:04:13 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -74,6 +74,8 @@ public class Manager {//A class to keep track of viewers
     private JMenu helpMenu;
     private JMenuItem bugReportMenuItem;
     private JMenuItem featureReqMenuItem;
+    //added by wwang
+    private JMenuItem documentMenuItem;
     
     private static EventListener eventListener;
     
@@ -221,10 +223,12 @@ public class Manager {//A class to keep track of viewers
         
         //added 9.21.05 vu
         helpMenu = new JMenu( "Help" );
-        
+        //added wwang
+        documentMenuItem = new JMenuItem( "Mev Manual" );
+        documentMenuItem.addActionListener(eventListener);
         bugReportMenuItem = new JMenuItem( "Report Bug" );
         bugReportMenuItem.addActionListener( eventListener );
-        
+        helpMenu.add( documentMenuItem );
         helpMenu.add( bugReportMenuItem );
         
         featureReqMenuItem = new JMenuItem( "Request a Feature" );
@@ -369,6 +373,24 @@ public class Manager {//A class to keep track of viewers
         mav.getFrame().setLocation((screenSize.width - mav.getFrame().getSize().width)/2, (screenSize.height - mav.getFrame().getSize().height)/2);
         mav.getFrame().setVisible(true);
     }
+    
+    //wwang add for cumstomized toolbar
+    public static void createNewCustomMultipleArrayViewer() {
+    	//TMEV.customized=true;
+    	//CustomToolbarInitDialog ctg=new CustomToolbarInitDialog();
+        MultipleArrayViewer mav = new MultipleArrayViewer();
+        Manager.addComponent(mav);
+        
+        TMEV.clearFieldNames();
+        //Remove the next two lines (about DB system enabling)
+        //mav.systemEnable(TMEV.DB_AVAILABLE);
+        //mav.systemEnable(TMEV.DB_LOGIN);
+        mav.getFrame().setSize(1150, 700);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        mav.getFrame().setLocation((screenSize.width - mav.getFrame().getSize().width)/2, (screenSize.height - mav.getFrame().getSize().height)/2);
+        mav.getFrame().setVisible(true);
+    }
+    
     
     public static void createNewMultipleArrayViewer(MultipleArrayData data, String clusterLabel){
         MultipleArrayViewer mav = new MultipleArrayViewer(data);
@@ -630,8 +652,18 @@ public class Manager {//A class to keep track of viewers
 							"Go to http://sourceforge.net/tracker/?atid=656694&group_id=110558&func=browse",
 							"Input Error", JOptionPane.ERROR_MESSAGE );
 				}
-            }
+            }else if( source == documentMenuItem ) {	//added wwang
+            	try {
+					BrowserLauncher.openURL( "ftp://occams.dfci.harvard.edu/pub/bio/MeV/MeV_Manual_3_1.pdf" );
+				} catch( IOException e ) {
+					e.printStackTrace();
+					//BrowserLauncher doesn't work on this system, display dialog
+					JOptionPane.showMessageDialog( frame, 
+							"Go to ftp://occams.dfci.harvard.edu/pub/bio/MeV/MeV_Manual_3_1.pdf",
+							"Input Error", JOptionPane.ERROR_MESSAGE );
+				}
             
+            }
             if (event.getActionCommand().equals("window-cmd")) {
                 int compCount = windowMenu.getItemCount();
                 JMenuItem item = (JMenuItem)(event.getSource());
