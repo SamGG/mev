@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: HistoryViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-23 20:59:41 $
- * $Author: caliente $
+ * $Revision: 1.6 $
+ * $Date: 2006-02-24 14:57:05 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 /*
@@ -138,7 +138,18 @@ public class HistoryViewer extends ViewerAdapter implements java.io.Serializable
      */    
     private void saveHistory() {
         String sep = System.getProperty("file.separator");
-        JFileChooser chooser = new JFileChooser(TMEV.getFile("data/"));
+        String dataPath = TMEV.getDataPath();
+        File fileLoc = TMEV.getFile("data/");
+        // if the data path is null go to default, if not null and not exist then to to default
+        // else use the dataPath     
+        if(dataPath != null) {
+            fileLoc = new File(dataPath);
+            if(!fileLoc.exists()) {
+                fileLoc = TMEV.getFile("data/");
+            }
+        }
+        JFileChooser chooser = new JFileChooser(fileLoc);
+        
         if(chooser.showSaveDialog(content) == JOptionPane.OK_OPTION) {
             try {
                 File file = chooser.getSelectedFile();
