@@ -5,9 +5,9 @@
 
 /*
  * $RCSfile: AffySlideDataElement.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-02-23 20:59:41 $
- * $Author: caliente $
+ * $Revision: 1.7 $
+ * $Date: 2006-02-24 14:52:09 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -29,6 +29,9 @@ public class AffySlideDataElement extends ArrayElement implements ISlideDataElem
 	//protected String detection;
 	protected char detection;
 	
+	//wwang add for p-value filter
+	protected float pvalue;
+	protected int flags;
 	protected boolean isNull = false;
 	protected boolean isNonZero = true;
 	
@@ -70,6 +73,8 @@ public class AffySlideDataElement extends ArrayElement implements ISlideDataElem
 		this.trueIntensity = copyArray(sde.getTrueIntensity());
 		this.extraFields = sde.getExtraFields();
 		this.setDetection(sde.getDetection());
+		this.setPvalue(sde.getPvalue());
+		//System.out.print(this.getPvalue());
 	}
 	
 	/**
@@ -248,7 +253,12 @@ public class AffySlideDataElement extends ArrayElement implements ISlideDataElem
 	public void setDetection(String value){
 		detection = value.charAt(0);
 	}
-	
+	public void setPvalue(float value){
+		pvalue=value;
+	}
+	public void setGenePixFlags(int value){
+		flags=value;
+	}
 	/**
 	 * Sets true intensity value.
 	 */
@@ -390,7 +400,13 @@ public class AffySlideDataElement extends ArrayElement implements ISlideDataElem
 	public String getDetection(){
 		return String.valueOf(detection);
 	}
+	public float getPvalue(){
+		return pvalue;
+	}
 	
+	public int getGenePixFlags(){
+		return flags;
+	}
 	public String getAttributeString(int number) {
 		String retVal = "";
 		int coordinatePairs = TMEV.getCoordinatePairCount() * 2; //Did you see the (* 2)?

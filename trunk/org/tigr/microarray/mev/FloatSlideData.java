@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: FloatSlideData.java,v $
- * $Revision: 1.10 $
- * $Date: 2006-02-23 20:59:41 $
- * $Author: caliente $
+ * $Revision: 1.11 $
+ * $Date: 2006-02-24 14:54:59 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -53,6 +53,11 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
     //jcb
     //smaller data struct
     private char [] detection;
+    //wwang
+    //add for pvalue filter
+    private float[] pvalue;
+    //add for GenePix
+    private int[] flags;
     
     //Support multiple sample labels
     private String sampleLabelKey = "Default Slide Name";
@@ -89,6 +94,8 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
         trueCY3 = new float[size];
         trueCY5 = new float[size];
         detection = new char[size];
+        pvalue=new float[size];
+        flags=new int[size];
         sampleLabelKey = "Default Slide Name";
         sampleLabelKeys = new Vector();
         sampleLabels = new Hashtable();
@@ -508,6 +515,21 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
         return String.valueOf(detection[index]);
     }
     
+    //wwang add for affy p-value filter
+    public void setPvalue(int index, float value){
+    	//System.out.print(index+" "+value);
+		pvalue[index] = value;
+    }
+    
+    public float getPvalue(int index){
+        return  pvalue[index];
+    }
+    public int getGenePixFlags(int index){
+        return  flags[index];
+    }
+    public int setGenePixFlags(int index,int value){
+        return  flags[index]=value;
+    }
     /**
      * Returns max intencity of specified type.
      */
@@ -598,7 +620,8 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
         sde.setTrueIntensity(ISlideDataElement.CY5, getCY5(index));
         //pcahan
         sde.setDetection(getDetection(index));
-        
+        //wwang
+        sde.setPvalue(getPvalue(index));
         return sde;
     }
     
