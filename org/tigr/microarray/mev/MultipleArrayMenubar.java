@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayMenubar.java,v $
- * $Revision: 1.12 $
- * $Date: 2006-02-23 20:59:41 $
- * $Author: caliente $
+ * $Revision: 1.13 $
+ * $Date: 2006-02-24 15:12:06 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -81,6 +81,8 @@ public class MultipleArrayMenubar extends JMenuBar {
         fileMenu.addSeparator();
         fileMenu.add(createJMenuItem(manager.getAction(ActionManager.PRINT_IMAGE_ACTION)));
         fileMenu.addSeparator();
+        fileMenu.add(createJMenuItem(manager.getAction(ActionManager.NEW_MULTIPLEARRAYVIEWER)));
+        fileMenu.addSeparator();
         fileMenu.add(createJMenuItem(manager.getAction(ActionManager.CLOSE_ACTION)));
         add(fileMenu);
         
@@ -115,19 +117,31 @@ public class MultipleArrayMenubar extends JMenuBar {
         
         JMenu logMenu = new JMenu("Log Transformations");
         logMenu.add(createJMenuItem("Log2 Transform", ActionManager.LOG2_TRANSFORM_CMD, listener));
+        logMenu.add(createJMenuItem("UnLog2 Transform", ActionManager.UNLOG2_TRANSFORM_CMD, listener));
         logMenu.add(createJMenuItem("Log10 to Log2", ActionManager.LOG10_TO_LOG2_CMD, listener));
         logMenu.add(createJMenuItem("Log2 to Log10", ActionManager.LOG2_TO_LOG10_CMD, listener));
         adjustMenu.add(logMenu);
         adjustMenu.addSeparator();
         
-        filterMenu = new JMenu("Data Filters");          
-        filterMenu.add(createJMenuItem("Low Intensity Cutoff Filter", ActionManager.USE_LOWER_CUTOFFS_CMD, listener));
+        //wwang add low intensity filter of affy data and cdna
+        filterMenu = new JMenu("Data Filters"); 
+        JMenu lowIntensityMenu=new JMenu("Low Intensity Cutoff Filter");
+        lowIntensityMenu.add(manager.getAction(ActionManager.CDNA_LOW_INTENSITY_ACTION));
+       	lowIntensityMenu.add(manager.getAction(ActionManager.OLIGEN_LOW_INTENSITY_ACTION));
+        filterMenu.add(lowIntensityMenu);
         filterMenu.addSeparator();
-        filterMenu.add(createJMenuItem("Percentage Cutoff Filter", ActionManager.USE_PERCENTAGE_CUTOFFS_CMD, listener));
-        filterMenu.addSeparator();
+        
+        //wwang
+        filterMenu.add(createJMenuItem("Affymetrix detection call Noise Filter", ActionManager.USE_GCOS_PERCENTAGE_CUTOFF_CMD, listener));
+        //filterMenu.addSeparator();
+        filterMenu.add(createJMenuItem("Affymetrix P-value Filter", ActionManager.USE_PVALUE_CUTOFF_CMD, listener));
+        //filterMenu.addSeparator();
+        
         filterMenu.add(createJMenuItem("Bioconductor detection call Noise Filter", ActionManager.USE_PRESENT_CALL_CMD, listener));
         filterMenu.addSeparator();
-        filterMenu.add(createJMenuItem("Affymetrix detection call Noise Filter", ActionManager.USE_GCOS_PERCENTAGE_CUTOFF_CMD, listener));
+        filterMenu.add(createJMenuItem("GenePix Flags Filter", ActionManager.USE_GENEPIXFLAGS_CMD, listener));
+        filterMenu.addSeparator();
+        filterMenu.add(createJMenuItem("Percentage Cutoff Filter", ActionManager.USE_PERCENTAGE_CUTOFFS_CMD, listener));
         filterMenu.addSeparator();
         filterMenu.add(createJMenuItem("Variance Filter", ActionManager.USE_VARIANCE_FILTER_CMD, listener));
         adjustMenu.add(filterMenu);        
@@ -367,6 +381,7 @@ public class MultipleArrayMenubar extends JMenuBar {
                 setEnableMenuItem("File", ActionManager.NEW_SCRIPT_COMMAND, true);
                 setEnableMenuItem("File", ActionManager.LOAD_SCRIPT_COMMAND, true);
                 setEnableMenuItem("File", ActionManager.PRINT_IMAGE_COMMAND, true);
+                setEnableMenuItem("File", ActionManager.NEW_MAV_COMMAND, false);
                 setEnableMenu("Adjust Data", true);
                 setEnableMenu("Normalization", true);
                 setEnableMenu("Metrics", true);
@@ -616,13 +631,21 @@ public class MultipleArrayMenubar extends JMenuBar {
      * Adds analysis menu items.
      */
     private void addAnalysisMenu(JMenu menu, ActionManager manager) {
-        int index = 0;
+       
+    	int index = 0;
         Action action;
-        while ((action = manager.getAction(ActionManager.ANALYSIS_ACTION+String.valueOf(index)))!=null) {
-            menu.add(createJMenuItem(action));
-            index++;
+        String []category={"CLUSTERING","STATISTICS","CLASSIFICATION","DATA_REDUCTION","META_ANALYSIS","MISC"};
+        //System.out.print(manager.getAction(ActionManager.ANALYSIS_ACTION+String.valueOf(0)));
+        //while ((action = manager.getAction("HCL"))!=null) {
+        for(int i=0;i<category.length;i++){
+        	//while ((action = manager.getAction(ActionManager.ANALYSIS_ACTION+String.valueOf(index)))!=null) {
+        		menu.add(createJMenuItem(category[i],manager));
+        		//index++;
+        	}
         }
-    }
+    	
+    
+    
     
     /**
      * Returns an implementation of <code>IDisplayMenu</code> interface.
@@ -644,6 +667,26 @@ public class MultipleArrayMenubar extends JMenuBar {
     private JMenuItem createJMenuItem(Action action) {
         JMenuItem item = new JMenuItem(action);
         item.setActionCommand((String)action.getValue(Action.ACTION_COMMAND_KEY));
+        return item;
+    }
+    
+    /**
+     * Creates a menu item from specified action and category.
+     * add by wwang
+     */
+    private JMenu createJMenuItem(String category,ActionManager manager) {
+    	/*
+        JMenuItem item = new JMenuItem(action);
+        item.setActionCommand((String)action.getValue(Action.ACTION_COMMAND_KEY));
+        */
+    	int index=0;
+    	Action action;
+    	JMenu item = new JMenu(category);
+    	while ((action = manager.getAction(ActionManager.ANALYSIS_ACTION+String.valueOf(index)))!=null) {
+    		if((action.getValue(ActionManager.CATEGORY)).equals(category))
+    			item.add(createJMenuItem(action));
+        index++;
+    	}
         return item;
     }
     
