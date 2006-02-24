@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: AlgorithmDialog.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-23 20:59:50 $
- * $Author: caliente $
+ * $Revision: 1.6 $
+ * $Date: 2006-02-24 16:07:53 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 
@@ -196,6 +196,9 @@ public class AlgorithmDialog extends JDialog {
         this.okButton.setText(label);
     }
     
+    public void setResetButtonText(String label){
+    	this.resetButton.setText(label);
+    }
     public class FillPanel extends JPanel{
         
         public void paint(Graphics g){
