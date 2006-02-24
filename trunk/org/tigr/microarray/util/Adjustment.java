@@ -1,12 +1,13 @@
+
 /*
 Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: Adjustment.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-02-23 20:59:59 $
- * $Author: caliente $
+ * $Revision: 1.7 $
+ * $Date: 2006-02-24 16:52:41 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 package org.tigr.microarray.util;
@@ -35,7 +36,18 @@ public class Adjustment {
             }
         }
     }
-    
+
+    public static void unlog2Transform(FloatMatrix matrix) {
+        float value;
+        for (int i=0; i<matrix.getRowDimension(); i++) {
+            for (int j=0; j<matrix.getColumnDimension(); j++) {
+                value=matrix.get(i,j);
+                if (!Float.isNaN(value)) {
+                        matrix.set(i,j,(float)(Math.pow(2,value)));
+                }
+            }
+        }
+    }
     public static void normalizeSpots(FloatMatrix matrix) {
         for (int i=0; i<matrix.getRowDimension(); i++) {
             normalizeGene(matrix, i);
@@ -605,3 +617,4 @@ public class Adjustment {
         return median.floatValue();
     }
 }
+
