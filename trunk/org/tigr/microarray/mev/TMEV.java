@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: TMEV.java,v $
- * $Revision: 1.12 $
- * $Date: 2006-02-02 20:06:21 $
- * $Author: raktim $
+ * $Revision: 1.13 $
+ * $Date: 2006-02-24 15:49:28 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 
@@ -28,6 +28,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 import javax.swing.UIManager;
 
@@ -63,13 +64,14 @@ public class TMEV {
     private static boolean indicesAdjusted = false;
     private static String[] fieldNames;
     private static String[] databases;
+    private static int[] customerAnalysis=null;
     
     //Prompt user to save analysis on close
     public static boolean permitSavePrompt = true;
     
     //Initial data path
     private static String dataPath;
-    
+    private static int flag=0;
     // pcahan                       jcb:constant
     private static int dataType = DATA_TYPE_TWO_DYE;
     
@@ -291,6 +293,88 @@ public class TMEV {
             return new String[0];
         return TMEV.fieldNames;
     }
+    
+    //wwang for customer icon
+    //get initial algorithm list from file tmev.cfg
+    public static int[] getCustomerAnalysis() {
+	   String text = new String("");	   	   
+       try {
+           BufferedReader br = new java.io.BufferedReader(new FileReader(TMEV.getFile("config/tmev.cfg")));
+           String line;
+           while((line = br.readLine()) != null) {
+               if(line.indexOf("algorithm-list") != -1) {
+                   line = line.substring(15);
+                   if(TMEV.customerAnalysis==null)
+                	   TMEV.initCustomerAnalysis(line.length());
+                   for(int i=0;i<line.length();i++){
+                	 int m=(new Integer(line.substring(i,i+1))).intValue();
+                	 TMEV.customerAnalysis[i]=m;
+                   }
+                	   
+               }
+           }
+           br.close();
+       } catch (IOException ioe) {
+    	   System.out.print("File tmev.cfg not found");
+       }
+	   return TMEV.customerAnalysis;
+    }
+    
+   public static String getCustomerAnalysisList() {
+       String list="";
+	   for(int i=0;i<TMEV.customerAnalysis.length;i++)
+		   list=list+TMEV.customerAnalysis[i];
+	   return list;
+   }
+   
+   public static boolean validCustomerAnalysis() {
+	   int count=TMEV.customerAnalysis.length;
+	   for(int i=0;i<count;i++){
+		   if(TMEV.customerAnalysis[i]==1)
+			   return true;
+	   }
+	   return false;
+   }
+   
+   public static void initCustomerAnalysis(int total){
+		   TMEV.customerAnalysis=new int[total];
+		   for(int i=0;i<total;i++)
+			   TMEV.customerAnalysis[i]=1;
+	   }
+	   
+  
+   	   
+   public static void setCustomerAnalysis(int total,int index,int tag) {
+    	   TMEV.customerAnalysis[index]=tag;
+   }
+   
+   public static void setCustomerStatSave(){
+	   String lineSep = System.getProperty("line.separator");
+       if(lineSep == null)
+           lineSep = "\n";
+       String text = new String("");
+       try {
+           BufferedReader br = new java.io.BufferedReader(new FileReader(TMEV.getFile("config/tmev.cfg")));
+           String line;
+           while((line = br.readLine()) != null) {
+               if(line.indexOf("algorithm-list") != -1) {
+                   line = line.substring(0, line.lastIndexOf(" "));
+                   line += " "+TMEV.getCustomerAnalysisList();
+               }
+               text += line+lineSep;
+           }
+           
+           br.close();
+     
+           BufferedWriter bw = new java.io.BufferedWriter(new FileWriter(TMEV.getFile("config/tmev.cfg")));
+           bw.write(text);
+           bw.flush();
+           bw.close();
+       } catch (IOException ioe) {
+    	   System.out.print("File tmev.cfg not found");
+       }
+   }
+   
     public static String[] getDatabases() {return TMEV.databases;}
     public static int getUniqueIDIndex() {return TMEV.uniqueIDIndex;}
     public static int getNameIndex() {return TMEV.nameIndex;}
@@ -341,7 +425,7 @@ public class TMEV {
             String text = new String("");
             
             try {
-                BufferedReader br = new java.io.BufferedReader(new FileReader(fileName));
+                BufferedReader br = new java.io.BufferedReader(new FileReader(TMEV.getFile("config/tmev.cfg")));
                 String line;
                 while((line = br.readLine()) != null) {
                     if(line.indexOf("prompt-for-save") != -1) {
@@ -426,6 +510,7 @@ public class TMEV {
             
             //
             String guiFactoryClassName = cfg.getString("gui.factory.class");
+           
             if (guiFactoryClassName != null && !guiFactoryClassName.equals("null")) {
                 Class clazz = Class.forName(guiFactoryClassName);
                 guiFactory = (IGUIFactory)clazz.newInstance();
