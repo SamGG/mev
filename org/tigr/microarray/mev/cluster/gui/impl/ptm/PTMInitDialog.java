@@ -4,9 +4,9 @@ All rights reserved.
  */
 /* 
  * $RCSfile: PTMInitDialog.java,v $ 
- * $Revision: 1.6 $ 
- * $Date: 2006-02-14 15:31:10 $ 
- * $Author: braistedj $ 
+ * $Revision: 1.7 $ 
+ * $Date: 2006-02-24 16:15:29 $ 
+ * $Author: wwang67 $ 
  * $State: Exp $ 
  */
 package org.tigr.microarray.mev.cluster.gui.impl.ptm;
@@ -200,8 +200,18 @@ public class PTMInitDialog extends AlgorithmDialog {
         saveTemplateButton.setPreferredSize(new Dimension(175,30));        
         saveTemplateButton.addActionListener(new ActionListener(){            
             public void actionPerformed(ActionEvent evt) {                
-                if (evt.getSource() == saveTemplateButton) {                    
-                    JFileChooser fc = new JFileChooser(TMEV.getFile("data/"));                    
+                if (evt.getSource() == saveTemplateButton) {  
+                	String dataPath = TMEV.getDataPath();
+                    File fileLoc = TMEV.getFile("data/"); 
+                    // if the data path is null go to default, if not null and not exist then to to default
+                    // else use the dataPath
+                    if(dataPath != null) {
+                        fileLoc = new File(dataPath);
+                        if(!fileLoc.exists()) {
+                            fileLoc = TMEV.getFile("data/");
+                        }
+                    }
+                    JFileChooser fc = new JFileChooser(fileLoc);                    
                                         
                     int returnVal = fc.showSaveDialog(PTMInitDialog.this);                    
                     if (returnVal == JFileChooser.APPROVE_OPTION) {                        
