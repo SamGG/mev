@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: AnalysisAction.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-02-23 20:59:41 $
- * $Author: caliente $
+ * $Revision: 1.5 $
+ * $Date: 2006-02-24 15:55:19 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.action;
@@ -34,6 +34,7 @@ public class AnalysisAction extends AbstractAction {
 	putValue(Action.SMALL_ICON, desc.getSmallIcon());
 	putValue(ActionManager.LARGE_ICON, desc.getLargeIcon());
 	putValue(ActionManager.PARAMETER, desc.getClassName());
+	putValue(ActionManager.CATEGORY, desc.getCategory());
     }
     
     /**
