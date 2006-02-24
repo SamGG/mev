@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SetPresentCallDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2006-02-23 20:59:41 $
- * $Author: caliente $
+ * $Revision: 1.3 $
+ * $Date: 2006-02-24 15:44:52 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -57,9 +57,9 @@ public class SetPresentCallDialog extends AlgorithmDialog {
         enableCheckBox.setFocusPainted(false);        
         enableCheckBox.addActionListener(listener);
         
-	percentageLabel = new JLabel("Percentage Cutoff (" + percentage + "%): ");
+	percentageLabel = new JLabel("Absent Calls Percentage filter(A/(P+M+A)) (" + percentage + "%): ");
 	percentageLabel.setHorizontalTextPosition(JLabel.RIGHT);
-        percentageLabel.setHorizontalAlignment(JLabel.RIGHT);
+    percentageLabel.setHorizontalAlignment(JLabel.RIGHT);
    
 	textField = new JTextField(10);
     textField.setText(String.valueOf(percentage));
