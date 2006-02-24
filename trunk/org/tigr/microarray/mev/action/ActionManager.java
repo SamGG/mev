@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: ActionManager.java,v $
- * $Revision: 1.14 $
- * $Date: 2006-02-23 20:59:41 $
- * $Author: caliente $
+ * $Revision: 1.15 $
+ * $Date: 2006-02-24 15:54:13 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.action;
@@ -18,7 +18,7 @@ import java.util.HashMap;
 
 import javax.swing.Action;
 import javax.swing.ImageIcon;
-
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.AnalysisDescription;
 import org.tigr.microarray.mev.cluster.gui.IGUIFactory;
 
@@ -27,7 +27,7 @@ public class ActionManager implements java.io.Serializable {
     
     public static final String PARAMETER = "command-parameter";
     public static final String LARGE_ICON = "LargeIcon";
-    
+    public static final String CATEGORY="category";
     private HashMap actions = new HashMap();
     private ActionListener listener;
     
@@ -53,9 +53,8 @@ public class ActionManager implements java.io.Serializable {
      * Rturns an action by its name.
      */
     public Action getAction(String name) {
-        return(Action)actions.get(name);
+    		return(Action)actions.get(name);
     }
-    
     
     /**
      * Delegates this invokation to a wrapped action listener.
@@ -68,6 +67,7 @@ public class ActionManager implements java.io.Serializable {
      * Initializes main menu and toolbar actions.
      */
     private void initActions() {
+    	actions.put(NEW_MULTIPLEARRAYVIEWER, new DefaultAction(this, NEW_MAV_NAME, NEW_MAV_COMMAND, getIcon(NEW_MAV_SMALLICON), getIcon(NEW_MAV_LARGEICON)));
         actions.put(LOAD_ACTION, new DefaultAction(this, LOAD_NAME, LOAD_COMMAND, getIcon(LOAD_FILE_SMALLICON), getIcon(LOAD_FILE_LARGEICON)));
         actions.put(LOAD_ANALYSIS_ACTION, new DefaultAction(this, LOAD_ANALYSIS_NAME, LOAD_ANALYSIS_COMMAND, getIcon(LOAD_ANALYSIS_SMALLICON), getIcon(LOAD_ANALYSIS_LARGEICON)));
         actions.put(SAVE_ANALYSIS_ACTION, new DefaultAction(this, SAVE_ANALYSIS_NAME, SAVE_ANALYSIS_COMMAND, getIcon(SAVE_ANALYSIS_SMALLICON), getIcon(SAVE_ANALYSIS_LARGEICON)));
@@ -94,7 +94,11 @@ public class ActionManager implements java.io.Serializable {
 
         actions.put(APPEND_SAMPLE_ANNOTATION_ACTION, new DefaultAction(this, APPEND_SAMPLE_ANNOTATION_NAME, APPEND_SAMPLE_ANNOTATION_COMMAND, getIcon(APPEND_SAMPLE_ANNOTATION_ICON)));            
         actions.put(APPEND_GENE_ANNOTATION_ACTION, new DefaultAction(this, APPEND_GENE_ANNOTATION_NAME, APPEND_GENE_ANNOTATION_COMMAND, getIcon(APPEND_GENE_ANNOTATION_ICON)));            
+        actions.put(CDNA_LOW_INTENSITY_ACTION, new DefaultAction(this, CDNA_LOW_INTENSITY_NAME, CDNA_LOW_INTENSITY_CMD, getIcon(CDNA_LOW_INTENSITY_ICON)));
+        actions.put(OLIGEN_LOW_INTENSITY_ACTION, new DefaultAction(this, OLIGEN_LOW_INTENSITY_NAME, OLIGEN_LOW_INTENSITY_CMD, getIcon(OLIGEN_LOW_INTENSITY_ICON)));
+
         /*         * Raktim Sept 29, 05         * CGH Actions         */        actions.put(LOAD_SAMPLE_LIST_ACTION, new DefaultAction(this, LOAD_SAMPLE_LIST_NAME, LOAD_SAMPLE_LIST_ACTION, getIcon("TreeInfoLeaf.gif")));        actions.put(LOAD_WSL_ACTION, new DefaultAction(this, LOAD_WSL_NAME, LOAD_WSL_ACTION, getIcon(LOAD_WSL_SMALLICON)));        actions.put(LOAD_CLONE_DISTRIBUTIONS_ACTION, new DefaultAction(this, LOAD_CLONE_DISTRIBUTIONS_NAME, LOAD_CLONE_DISTRIBUTIONS_ACTION, getIcon("p.gif")));        actions.put(LOAD_CLONE_DISTRIBUTIONS_FROM_FILE_ACTION, new DefaultAction(this, LOAD_CLONE_DISTRIBUTIONS_FROM_FILE_NAME, LOAD_CLONE_DISTRIBUTIONS_FROM_FILE_ACTION, getIcon("p.gif")));    }
+
     
     /**
      * Initializes 'display/label' menu actions.
@@ -129,8 +133,8 @@ public class ActionManager implements java.io.Serializable {
         int counter = 0;
         for (int i=0; i<descs.length; i++) {
             if (isValidDescription(descs[i])) {
-                actions.put(ANALYSIS_ACTION+String.valueOf(i), new AnalysisAction(this, descs[i]));
-                counter++;
+            	actions.put(ANALYSIS_ACTION+String.valueOf(i), new AnalysisAction(this, descs[i]));
+            	counter++;
             }
         }
     }
@@ -157,6 +161,12 @@ public class ActionManager implements java.io.Serializable {
     public static final String ANALYSIS_ACTION = "analysis-action";
     public static final String ANALYSIS_COMMAND = "analysis-command";
     
+    //launch a new customized MAV
+    public static final String NEW_MULTIPLEARRAYVIEWER  = "new-mav-load";
+    public static final String  NEW_MAV_COMMAND = "newmav-command-load";
+    public static final String  NEW_MAV_NAME    = "Customized Application Menubar";
+    private static final String NEW_MAV_SMALLICON = "addmultiple16.gif";
+    private static final String NEW_MAV_LARGEICON = "addmultiple.gif";
     //load data action
     public static final String  LOAD_ACTION  = "action-load";
     public static final String  LOAD_COMMAND = "command-load";
@@ -299,7 +309,17 @@ public class ActionManager implements java.io.Serializable {
     // sort label actions
     public static final String SORT_LABEL_ACTION = "sort-label-action";
     public static final String SORT_LABEL_CMD    = "sort-label-cmd";
+   
+    //wwang add for low intensity filter(cdna and oligne)
+    public static final String CDNA_LOW_INTENSITY_ACTION="cdna-low-intensity-action";
+    public static final String CDNA_LOW_INTENSITY_NAME = "two color microarray";
+    public static final String CDNA_LOW_INTENSITY_ICON = "empty16.gif";
+    public static final String CDNA_LOW_INTENSITY_CMD="cdna-low-intensity-cmd";
     
+    public static final String OLIGEN_LOW_INTENSITY_ACTION="oligen-low-intensity-action";
+    public static final String OLIGEN_LOW_INTENSITY_NAME = "one color microarray";
+    public static final String OLIGEN_LOW_INTENSITY_ICON = "empty16.gif";
+    public static final String OLIGEN_LOW_INTENSITY_CMD="oligen-low-intensity-cmd";
     // pcahan
     public static final String SET_DETECTION_FILTER_CMD = "set-detection-filter-cmd";
     public static final String USE_DETECTION_FILTER_CMD = "use-detection-filter-cmd";
@@ -309,6 +329,8 @@ public class ActionManager implements java.io.Serializable {
     
     // adjust data commands
     public static final String LOG2_TRANSFORM_CMD  = "log2-transform-cmd";
+    //wwang
+    public static final String UNLOG2_TRANSFORM_CMD  = "unlog2-transform-cmd";
     public static final String NORMALIZE_SPOTS_CMD = "normalize-spots-cmd";
     public static final String DIVIDE_SPOTS_RMS_CMD = "divide-spots-rms-cmd";
     public static final String DIVIDE_SPOTS_SD_CMD = "divide-spots-sd-cmd";
@@ -328,12 +350,18 @@ public class ActionManager implements java.io.Serializable {
     public static final String USE_PRESENT_CALL_CMD = "use-present-call-cmd";
     //add for GCOS
     public static final String USE_GCOS_PERCENTAGE_CUTOFF_CMD = "use-gcos-percentage-cutoff-cmd";
+    //add for pvalue filter
+    public static final String USE_PVALUE_CUTOFF_CMD = "use-pvalue-percentage-cutoff-cmd";
+    //add for Genepix flags filter
+    public static final String USE_GENEPIXFLAGS_CMD = "use-genepixflags-cmd";
     public static final String USE_PERCENTAGE_CUTOFFS_CMD = "use-percentage-cutoffs-cmd";
     public static final String USE_VARIANCE_FILTER_CMD = "use-variance-filter-cmd";
     public static final String ADJUST_INTENSITIES_0_CMD = "adjust-intensities-0-cmd";
     //vu 7.22.05
 	public static final String RAMA_CMD = "rama-cmd";
+	public static final String RAMA_DOC_CMD = "rama-cmd";
 	public static final String RAMA_DOC_CMD = "rama-doc-cmd";
+
     // pcahan
     public static final String DIVIDE_GENES_MEDIAN_CMD = "divide-genes-median-cmd";
     public static final String UNDIVIDE_GENES_MEDIAN_CMD = "undivide-genes-median-cmd";
