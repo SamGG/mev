@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: MultipleArrayToolbar.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-02-23 20:59:41 $
- * $Author: caliente $
+ * $Revision: 1.9 $
+ * $Date: 2006-02-24 15:13:36 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -36,18 +36,38 @@ public class MultipleArrayToolbar extends JToolBar {
     /**
      * Adds actions into the toolbar.
      */
-    private void addAlgorithmActions(ActionManager manager) {
-	int index = 0;
-	Action action;
-	while ((action = manager.getAction(ActionManager.ANALYSIS_ACTION+String.valueOf(index)))!=null) {
-	    add(action);
-            if(index == 3 || index == 10 || index == 15 || index == 18 || index == 22)
-                this.addSeparator();
-	    index++;
-            
-	}
+  
+    private int algorithmCount(ActionManager manager){
+    	int count=0;
+    	Action action;
+    	while ((action = manager.getAction(ActionManager.ANALYSIS_ACTION+String.valueOf(count)))!=null){
+    		count++;
+    	}
+    	return count;
     }
-    
+    private void addAlgorithmActions(ActionManager manager) {
+    	int index = 0;
+    	Action action;
+    	String []category={"CLUSTERING","STATISTICS","CLASSIFICATION","DATA_REDUCTION","META_ANALYSIS","MISC"};
+    	for(int i=0;i<category.length;i++){
+   			 while ((action = manager.getAction(ActionManager.ANALYSIS_ACTION+String.valueOf(index)))!=null) {
+   				if((action.getValue(ActionManager.CATEGORY)).equals(category[i])){
+   					if(this.algorithmCount(manager)==TMEV.getCustomerAnalysis().length){
+   						if(TMEV.getCustomerAnalysis()[index]==1)
+   							add(action);
+   					}
+   				   else{
+   						 TMEV.initCustomerAnalysis(this.algorithmCount(manager));
+   						 index--;
+   				   }
+   				}
+   				index++;
+   			 }
+   			 this.addSeparator();
+   			 index=0;
+    		}
+    	}
+ 
     /**
      * Overriden from JToolBar.
      */
