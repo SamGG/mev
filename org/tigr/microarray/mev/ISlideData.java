@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: ISlideData.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-02-02 20:03:31 $
- * $Author: raktim $
+ * $Revision: 1.5 $
+ * $Date: 2006-02-24 14:59:20 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -248,5 +248,12 @@ public interface ISlideData {
     /**
      * Returns the detection status for the gene specified, Affy support
      */
+
+    public String getDetection(int row);
+    //add by wwang
+    public float getPvalue(int row);
+    public int getGenePixFlags(int row);
+
     public String getDetection(int row);    /**     * CGH Function from ICGHFeatureData     * @param flankingRegions     */    public void setFlankingRegions(java.util.Vector[] flankingRegions);    /**     * CGH Function from ICGHFeatureData     * @param chromosomeIndex     * @return     */    public int getNumFlankingRegions(int chromosomeIndex);    /**     * CGH Function from ICGHFeatureData     * @return     */    public java.util.Vector[] getFlankingRegions();    /**     * CGH Function from ICGHFeatureData     * @param cloneIndex     * @return     */    public boolean isMissingData(int cloneIndex);    
+
 }
