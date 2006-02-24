@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: SlideData.java,v $
- * $Revision: 1.11 $
- * $Date: 2006-02-23 20:59:41 $
- * $Author: caliente $
+ * $Revision: 1.12 $
+ * $Date: 2006-02-24 15:47:14 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -1122,6 +1122,15 @@ public class SlideData extends Vector implements ISlideData, ISlideMetaData, jav
         return this.getSlideDataElement(row).getDetection();
     }
 
+    //wwang add for affy p-value filter
+    public float getPvalue(int row) {
+        return this.getSlideDataElement(row).getPvalue();
+    }
+    public int getGenePixFlags(int row) {
+        return this.getSlideDataElement(row).getGenePixFlags();
+    }
+
+
     /**
      * CGH IFeatureData implemetations
      * Raktim Oct 31, 2005
@@ -1191,4 +1200,5 @@ public class SlideData extends Vector implements ISlideData, ISlideMetaData, jav
         }
         */
     }
+>>>>>>> 1.11
 }
