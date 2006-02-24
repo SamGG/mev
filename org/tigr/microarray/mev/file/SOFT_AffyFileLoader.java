@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: SOFT_AffyFileLoader.java,v $
- * $Revision: 1.2 $
- * $Date: 2006-02-23 20:59:56 $
- * $Author: caliente $
+ * $Revision: 1.3 $
+ * $Date: 2006-02-24 16:33:23 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 
@@ -49,7 +49,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-
+import org.tigr.microarray.mev.AffySlideDataElement;
+import org.tigr.microarray.mev.FloatSlideData;
 import org.tigr.microarray.mev.GCOSSlideDataElement;
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.SlideData;
@@ -81,7 +82,7 @@ public class SOFT_AffyFileLoader extends ExpressionFileLoader {
     
     public Vector loadSOFT_AffyExpressionFile(File f) throws IOException {
     	this.setTMEVDataType();
-    	GCOSSlideDataElement sde=null;
+    	AffySlideDataElement sde=null;
          float cy3, cy5;
          int[] rows = new int[] {0, 1, 0};
          int[] columns = new int[] {0, 1, 0};
@@ -131,7 +132,7 @@ public class SOFT_AffyFileLoader extends ExpressionFileLoader {
             	 for(int k=0;k<platforminfo.size()/2;k++)
             		 moreFields[totalColumns+k]=(String)platforminfo.elementAt(k);
              }
-             sde = new GCOSSlideDataElement(String.valueOf(i), rows, columns, new float[2], moreFields);
+             sde = new AffySlideDataElement(String.valueOf(i), rows, columns, new float[2], moreFields);
              slideData.addSlideDataElement(sde);
              slideData.setIntensities(i, intensities[0], intensities[1]);
              sde.setDetection(extraFields[0]); 

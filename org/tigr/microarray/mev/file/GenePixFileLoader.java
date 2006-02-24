@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: GenePixFileLoader.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-02-23 20:59:56 $
- * $Author: caliente $
+ * $Revision: 1.7 $
+ * $Date: 2006-02-24 16:29:17 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.file;
@@ -81,6 +81,8 @@ public class GenePixFileLoader extends ExpressionFileLoader {
             String [] fieldNames = new String[2];
             fieldNames[0] = "Name";
             fieldNames[1] = "ID";
+            
+            
             TMEV.setFieldNames(fieldNames);
         }
         return data;
@@ -98,9 +100,8 @@ public class GenePixFileLoader extends ExpressionFileLoader {
             int [] rows = new int[3];
             int [] cols = new int[3];
             float [] intensity = new float[2];
-            String [] moreFields = new String[2];
+            String [] moreFields;
             int numElements = data.size();
-            
             int maxRows = 0;
             int maxCols = 0;
             int currRow, currCol;
@@ -129,7 +130,9 @@ public class GenePixFileLoader extends ExpressionFileLoader {
                 cols[2] = ((Integer)spotData.elementAt(5)).intValue();
                 moreFields[0] = (String)spotData.elementAt(6);
                 moreFields[1] = (String)spotData.elementAt(7);
+                int flag  =((Integer)spotData.elementAt(8)).intValue();
                 sde = new SlideDataElement(String.valueOf(i+1), rows, cols, intensity, moreFields);
+                sde.setGenePixFlags(((Integer)spotData.elementAt(8)).intValue());
                 slideData.add(sde);
                 setFileProgress(i);
             }
@@ -144,7 +147,7 @@ public class GenePixFileLoader extends ExpressionFileLoader {
         FloatSlideData slideData = null;
         float cy3, cy5;
         Vector spotData;
-        
+        int m=0;
         GenepixFileParser parser = new GenepixFileParser(currentFile, false);
      //   parser.run();
         if(parser.isCompleted()){
@@ -153,10 +156,16 @@ public class GenePixFileLoader extends ExpressionFileLoader {
             int numElements = data.size();
             setLinesCount(numElements);
             for(int i = 0; i < numElements; i++){
-                spotData = (Vector)(data.elementAt(i));                
+                spotData = (Vector)(data.elementAt(i));  
                 cy3 = (float)((Integer)spotData.elementAt(0)).intValue();
                 cy5 = (float)((Integer)spotData.elementAt(1)).intValue();
+                spotData.elementAt(2);
+                spotData.elementAt(6);
                 slideData.setIntensities( i, cy3, cy5);
+                spotData.elementAt(7);
+                m=((Integer)spotData.elementAt(8)).intValue();
+                //System.out.print(m);
+                slideData.setGenePixFlags(i,m);
                 setFileProgress(i);
             }
             slideData.setSlideDataName(currentFile.getName());
