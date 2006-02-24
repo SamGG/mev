@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayData.java,v $
- * $Revision: 1.20 $
- * $Date: 2006-02-23 21:19:41 $
- * $Author: caliente $
+ * $Revision: 1.21 $
+ * $Date: 2006-02-24 15:09:37 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 
@@ -91,6 +91,7 @@ public class MultipleArrayData implements IData, Serializable {
 
     private float percentageCutoff = 0f;
     private boolean usePercentageCutoff = false;
+    private boolean usePvaluePercentageCutoff = false;
     private boolean usePresentCallCutoff = false;
     private boolean useGCOSPercentCutoff = false;
     
@@ -100,6 +101,11 @@ public class MultipleArrayData implements IData, Serializable {
     private float lowerCY3Cutoff = 0f;
     private float lowerCY5Cutoff = 0f;
     private boolean useLowerCutoffs = false;
+    
+//wwang add for genepix filter
+    private float genePixCutoff = 80f;
+    private boolean useGenePixCutoffs = false;
+    
 
     private Progress progressBar;
     private boolean normalizationAbort = false;
@@ -240,6 +246,13 @@ public class MultipleArrayData implements IData, Serializable {
             this.experiment = createExperiment();
         }
     }
+    public void setPvaluePercentageCutoff(float value) {
+        percentageCutoff = value;
+        if (isPvaluePercentageCutoff()) {
+            this.experiment = createExperiment();
+        }
+    }
+    
     public void setPresenCallCutoff(float value) {
         percentageCutoff = value;
         if (isPresentCallCutoff()) {
@@ -264,11 +277,18 @@ public class MultipleArrayData implements IData, Serializable {
     public void setUsePercentageCutoff(boolean value) {
         if (usePercentageCutoff == value) {
             return;
-        }
+        }   
         usePercentageCutoff = value;
         this.experiment = createExperiment();
     }
-
+    
+    public void setUsePvaluePercentageCutoff(boolean value) {
+        if (usePvaluePercentageCutoff == value) {
+            return;
+        }   
+        usePvaluePercentageCutoff = value;
+        this.experiment = createExperiment();
+    }
     public void setUsePresentCutoff(boolean value) {
         if (usePresentCallCutoff == value) {
             return;
@@ -287,6 +307,13 @@ public class MultipleArrayData implements IData, Serializable {
             return;
         }
         useGCOSPercentCutoff = value;
+        this.experiment = createExperiment();
+    }
+    public void setUseGenePixCutoff(boolean value) {
+        if (useGenePixCutoffs == value) {
+            return;
+        }
+        useGenePixCutoffs = value;
         this.experiment = createExperiment();
     }
     //pcahan for affy ********************************************
@@ -336,7 +363,10 @@ public class MultipleArrayData implements IData, Serializable {
     public boolean isFoldFilter() {
         return useFoldFilter;
     }
-
+  
+    public boolean isGenePixFilter() {
+        return useGenePixCutoffs;
+    }
     /**
      * Returns the detection filter. Change from bool -> detection filter class.
      */
@@ -364,7 +394,13 @@ public class MultipleArrayData implements IData, Serializable {
             this.experiment = createExperiment();
         }
     }
-
+    //add by wwang
+    public void setGenePixCutoff(float value){
+    	useGenePixCutoffs=true;
+    	percentageCutoff = value;
+    	if(isGenePixFilter())
+    	 this.experiment = createExperiment();
+    }
     public void setFoldFilter(FoldFilter filter) {
         foldFilter = filter;
         if (isFoldFilter()) {
@@ -385,13 +421,30 @@ public class MultipleArrayData implements IData, Serializable {
 
     // end affy specific methods ********************************************
 
+    //wwang add for p-value filter
+    public float getPvalue(int column, int row) {
+        if (featuresList.size() == 0) {
+            return 0.0f;
+        }
+
+        return ((ISlideData)(featuresList.get(column))).getPvalue(row);        
+    }
+    public int getGenePixFlags(int column, int row) {
+        if (featuresList.size() == 0) {
+            return 0;
+        }
+
+        return ((ISlideData)(featuresList.get(column))).getGenePixFlags(row);        
+    }
     /**
      * Returns the use percentage cutoff value.
      */
     public boolean isPercentageCutoff() {
         return usePercentageCutoff;
     }
-       
+    public boolean isPvaluePercentageCutoff() {
+        return usePvaluePercentageCutoff;
+    }  
     /**
      * Returns the use percentage cutoff value.
      */
@@ -1377,7 +1430,7 @@ public class MultipleArrayData implements IData, Serializable {
         int[] probes = null;
 
         // pcahan affy detection filter or fold filter
-        if ((isLowerCutoffs() || isPercentageCutoff()) || isPresentCallCutoff()||isGCOSPercentCutoff()||isVarianceFilter() || ( (TMEV.getDataType() == TMEV.DATA_TYPE_AFFY) && (isDetectionFilter() || isFoldFilter())) ) {
+        if ((isLowerCutoffs()||isGenePixFilter() || isPercentageCutoff()) ||isPvaluePercentageCutoff()|| isPresentCallCutoff()||isGCOSPercentCutoff()||isVarianceFilter() || ( (TMEV.getDataType() == TMEV.DATA_TYPE_AFFY) && (isDetectionFilter() || isFoldFilter())) ) {
             //features = createCutoffFeatures(featuresSize, probesSize);
             probes = createCutoffGeneList(featuresSize, probesSize);
             experiment = createExperiment(featuresSize, probes);
@@ -1558,15 +1611,16 @@ public class MultipleArrayData implements IData, Serializable {
         boolean varianceFilterCutoffCriterion = true;
         boolean detectionCriterion = true;
         boolean foldCriterion = true;
-        boolean presentCallCutoffCriterion = true;
+        boolean presentCallCutoffCriterion = true,genePixCutoffCriterion=true;
         boolean GCOSCutoffCriterion=true;
+        boolean pvaluepercentageCutoffCriterion = true;
         int mas5CallList[]=new int[slideData.length];
-        int percentageCount = 0;
+        int pvaluepercentCount=0,percentageCount = 0;
         int absentCount = 0;
         int percentCount=0;
-        
+        int genepixCount=0;
         int[]tagList=new int[probesSize];
-        
+      
         if(isPresentCallCutoff()){
         	try{
         		tagList=filterAbsentCall(probesSize,percentageCutoff);
@@ -1578,33 +1632,51 @@ public class MultipleArrayData implements IData, Serializable {
         for (int i = 0; i < slideData.length; i++) {
             slideData[i] = getFeature(i);
         }
-
+       //System.out.print(featuresSize);
         // iterate over each gene
         for (int probe = 0; probe < probesSize; probe++) {
 
             // arrays of length = number of chips
             float[] cy3 = new float[featuresSize];
             float[] cy5 = new float[featuresSize];
+            
             String[] detection = new String[featuresSize];
-
+            float[] pvalue=new float[featuresSize];
+            float[] flags=new float[featuresSize];
+            pvaluepercentCount=0;
             percentageCount = 0;
             percentCount=0;
             absentCount = 0;
+            genepixCount=0;
             lowerCutoffCriterion = true;
             percentageCutoffCriterion = true;
             detectionCriterion = true;
             foldCriterion = true;
             presentCallCutoffCriterion = true;
             GCOSCutoffCriterion=true;
+            pvaluepercentageCutoffCriterion = true;
+            genePixCutoffCriterion=true;
             
             if(tagList[probe]==1){
             	presentCallCutoffCriterion = false;
             }
             // iterate over each chip
+         
             for (int j = 0; j < cy3.length; j++) {
                 cy3[j] = slideData[j].getCY3(probe);
                 cy5[j] = slideData[j].getCY5(probe);
                 detection[j] = getDetection(j, probe);
+                pvalue[j]=getPvalue(j,probe);
+                flags[j]=getGenePixFlags(j,probe);   
+            }
+            
+            if(isGenePixFilter()){
+            	for (int j = 0; j < cy3.length; j++) {
+            	if(flags[j]<0)
+            		genepixCount++;
+            	}
+            	if((float)genepixCount/(float)featuresSize*100f >percentageCutoff)
+            		genePixCutoffCriterion=false;    
             }
 
             // run tests
@@ -1629,12 +1701,13 @@ public class MultipleArrayData implements IData, Serializable {
                 	}
             }
          
-            
+            //fiter on present calls A/(P+M+A)
             if(isGCOSPercentCutoff()){
             	for(int j = 0; j < cy3.length; j++) {                
                     detection[j] = getDetection(j, probe);
-                    if(((String)detection[j]).compareTo("A")==0)
+                    if(((String)detection[j]).compareTo("A")==0||((String)detection[j]).compareTo("a")==0)
                     	percentCount++;
+                    
             	}
             	if ((float)percentCount/(float)featuresSize*100f >percentageCutoff) {
                     GCOSCutoffCriterion = false;
@@ -1652,8 +1725,23 @@ public class MultipleArrayData implements IData, Serializable {
             if (isFoldFilter() ){
                 foldCriterion = foldFilter.keep_gene(cy5);
             }
-
-            if (lowerCutoffCriterion && percentageCutoffCriterion&&GCOSCutoffCriterion&&presentCallCutoffCriterion&& detectionCriterion && foldCriterion) {
+            
+            //wwang add for affy p-value filter:
+            //choose a percent below a particular
+            //p-value cutoff - for example 80% below p=0.001
+            if(isPvaluePercentageCutoff()){
+            	for(int j = 0; j < cy3.length; j++) {                
+                    pvalue[j] = getPvalue(j, probe);
+                    if(pvalue[j]>0.01)
+                    	pvaluepercentCount++;
+                    
+            	}
+            	if ((float)pvaluepercentCount/(float)featuresSize*100f >20) {
+            		pvaluepercentageCutoffCriterion = false;
+                	}
+            }
+            
+            if (lowerCutoffCriterion &&pvaluepercentageCutoffCriterion&& percentageCutoffCriterion&&GCOSCutoffCriterion&&presentCallCutoffCriterion&& detectionCriterion &&genePixCutoffCriterion&& foldCriterion) {
                 list.add(new Integer(probe));
             }
         }
@@ -2085,6 +2173,9 @@ public class MultipleArrayData implements IData, Serializable {
         Adjustment.log2Transform(experiment.getMatrix());
     }
 
+    void unlog2Transform() {
+        Adjustment.unlog2Transform(experiment.getMatrix());
+    }
     void normalizeSpots() {
         Adjustment.normalizeSpots(experiment.getMatrix());
     }
