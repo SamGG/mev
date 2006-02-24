@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.32 $
- * $Date: 2006-02-23 21:19:41 $
- * $Author: caliente $
+ * $Revision: 1.33 $
+ * $Date: 2006-02-24 15:19:44 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -21,6 +21,10 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Toolkit;
+
+
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -150,6 +154,10 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.TextViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HTMLMessageFileChooser;
 import org.tigr.microarray.mev.file.AnnFileFilter;
+import org.tigr.microarray.mev.GenePixCutoffDialog;
+import org.tigr.microarray.mev.file.StringSplitter;
+
+import org.tigr.microarray.mev.cluster.clusterUtil.*;
 import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
 import org.tigr.microarray.mev.r.Rama;
 import org.tigr.microarray.mev.script.ScriptManager;
@@ -164,8 +172,10 @@ import org.tigr.util.swing.ImageFileFilter;
 import org.tigr.util.swing.JPGFileFilter;
 import org.tigr.util.swing.PNGFileFilter;
 import org.tigr.util.swing.TIFFFileFilter;
-
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HTMLMessageFileChooser;
+import java.text.DecimalFormat;
 import com.sun.media.jai.codec.ImageEncodeParam;
+
 public class MultipleArrayViewer extends ArrayViewer implements Printable {
     public static final long serialVersionUID = 100010201010001L;
     
@@ -193,7 +203,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     private ActionManager manager;
     
     private int resultCount = 1;
-    
+    private boolean auto_scale=false;
     private ClusterRepository geneClusterRepository;
     private ClusterRepository experimentClusterRepository;
     private ClusterTable geneClusterManager;
@@ -238,7 +248,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         statusLabel = new JLabel("TIGR MultiExperiment Viewer");
         mainframe.getContentPane().add(statusLabel, BorderLayout.SOUTH);
         mainframe.pack();
-        splitPane.setDividerLocation(.2);
+        splitPane.setDividerLocation(150);
         
         systemDisable(TMEV.DB_AVAILABLE);
         systemDisable(TMEV.DATA_AVAILABLE);
@@ -298,7 +308,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         statusLabel = new JLabel("TIGR MultiExperiment Viewer");
         mainframe.getContentPane().add(statusLabel, BorderLayout.SOUTH);
         mainframe.pack();
-        splitPane.setDividerLocation(.2);
+        splitPane.setDividerLocation(150);
 
         if (data.getDataType() == IData.DATA_TYPE_RATIO_ONLY || data.getDataType() == IData.DATA_TYPE_AFFY_ABS){
             this.menubar.enableNormalizationMenu(false);
@@ -375,7 +385,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         statusLabel = new JLabel("TIGR MultiExperiment Viewer");
         mainframe.getContentPane().add(statusLabel, BorderLayout.SOUTH);
         mainframe.pack();
-        splitPane.setDividerLocation(.2);
+        splitPane.setDividerLocation(150);
 
         if (data.getDataType() == IData.DATA_TYPE_RATIO_ONLY || data.getDataType() == IData.DATA_TYPE_AFFY_ABS){
             this.menubar.enableNormalizationMenu(false);
@@ -451,19 +461,15 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         try {
             
             String dataPath = TMEV.getDataPath();
-            File fileLoc = TMEV.getFile("data/");
-            
+            File fileLoc = TMEV.getFile("data/"); 
             // if the data path is null go to default, if not null and not exist then to to default
             // else use the dataPath
-            
             if(dataPath != null) {
                 fileLoc = new File(dataPath);
-                
                 if(!fileLoc.exists()) {
                     fileLoc = TMEV.getFile("data/");
                 }
             }
-            
             final JFileChooser chooser = new JFileChooser(fileLoc);
             chooser.setFileView(new AnalysisFileView());
             chooser.setFileFilter(new AnalysisFileFilter());
@@ -1290,7 +1296,21 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      * Saves a current viewer image into the user specified file.
      */
     private void onSaveImage() {
-        final JFileChooser chooser = new JFileChooser(TMEV.getFile("data?"));
+    	String dataPath = TMEV.getDataPath();
+        File fileLoc = TMEV.getFile("data/");
+        
+        // if the data path is null go to default, if not null and not exist then to to default
+        // else use the dataPath
+        
+        if(dataPath != null) {
+            fileLoc = new File(dataPath);
+            
+            if(!fileLoc.exists()) {
+                fileLoc = TMEV.getFile("data/");
+            }
+        }
+    	
+        final JFileChooser chooser = new JFileChooser(fileLoc);
         chooser.setAcceptAllFileFilterUsed(false);
         chooser.addChoosableFileFilter(new BMPFileFilter());
         chooser.addChoosableFileFilter(new JPGFileFilter());
@@ -1322,7 +1342,27 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         }
     }
     
-    
+    //wwang customized MAV
+    private void onNewMultipleArrayViewer(){
+    	MultipleArrayViewer mav;
+    	CustomToolbarInitDialog ctg=new CustomToolbarInitDialog(manager);
+    	 if (ctg.showModal() == JOptionPane.OK_OPTION) {  
+    		 TMEV.setCustomerStatSave();
+    		 mav = new MultipleArrayViewer();
+    		onClose();
+    		
+    		Manager.addComponent(mav);
+        
+    		TMEV.clearFieldNames();
+        //Remove the next two lines (about DB system enabling)
+        //mav.systemEnable(TMEV.DB_AVAILABLE);
+        //mav.systemEnable(TMEV.DB_LOGIN);
+    		mav.getFrame().setSize(1150, 700);
+    		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    		mav.getFrame().setLocation((screenSize.width - mav.getFrame().getSize().width)/2, (screenSize.height - mav.getFrame().getSize().height)/2);
+    		mav.getFrame().setVisible(true);
+    	 }
+    }
     /**
      * Loads file with a microarray data.
      */
@@ -2128,7 +2168,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         
     
     /**
-     * Applys the percentage cutoff filter
+     * Applys the percentage cutoff filter for cDNA
      */
     private void applyLowerCutoffs() {                        
         SetLowerCutoffsDialog slcd = new SetLowerCutoffsDialog(getFrame(), data.getLowerCY3Cutoff(), data.getLowerCY5Cutoff());
@@ -2144,7 +2184,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             
             if (data.isLowerCutoffs()) {
                 addAdjustmentResultNodes("Data Filter - Low Intensity Cutoff Filter", data.getExperiment(), props);                
-                addHistory("Low Intensity Cutoff Filter is ON ( percent = cy3= " +Float.toString(slcd.getLowerCY3Cutoff())+"  cy5 ="+Float.toString(slcd.getLowerCY5Cutoff())+" )");
+                addHistory("Low Intensity Cutoff Filter is ON ( cy3= " +Float.toString(slcd.getLowerCY3Cutoff())+"  cy5 ="+Float.toString(slcd.getLowerCY5Cutoff())+" )");
             } else {
                 addHistory("Low Intensity Filter is OFF");
             }
@@ -2152,6 +2192,30 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         }
     }    
 
+    /**
+     * Applys the percentage cutoff filter for affy cy3=0.0
+     */
+    private void applySingleLowerCutoffs() {                        
+        SetSingleLowerCutoffsDialog slcd = new SetSingleLowerCutoffsDialog(getFrame(),data.getLowerCY5Cutoff());
+        if (slcd.showModal() == JOptionPane.OK_OPTION) {
+
+            boolean useCutoff = slcd.isLowerCutoffEnabled();
+
+            data.setUseLowerCutoffs(useCutoff);            
+            data.setLowerCutoffs(0.0f, slcd.getLowerCY5Cutoff());
+            Properties props = new Properties();
+            //props.setProperty("CY3 Cutoff", Float.toString(slcd.getLowerCY3Cutoff()));
+            props.setProperty("CY5 Cutoff", Float.toString(slcd.getLowerCY5Cutoff()));
+            
+            if (data.isLowerCutoffs()) {
+                addAdjustmentResultNodes("Data Filter - Low Intensity Cutoff Filter", data.getExperiment(), props);                
+                addHistory("Low Intensity Cutoff Filter is ON ( thresholds = " +Float.toString(slcd.getLowerCY5Cutoff())+" )");
+            } else {
+                addHistory("Low Intensity Filter is OFF");
+            }
+            addHistory(data.getExperiment().getNumberOfGenes() + " genes will be used in subsequent analyses");            
+        }
+    }    
     /**
      * Applys the percentage cutoff filter
      */
@@ -2199,6 +2263,30 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         }
     	
     }
+//  add genepix flags filter by wwang    
+    private void applyGenePixFlagsFilter(){
+    	GenePixCutoffDialog spcd = new GenePixCutoffDialog(mainframe,data.getPercentageCutoff() );
+    	if (spcd.showModal() == JOptionPane.OK_OPTION) {
+            boolean useCutoff = spcd.isCutoffFilterEnabled();
+            float percent = spcd.getPercentageCutoff();
+
+            data.setUseGenePixCutoff(useCutoff);            
+            data.setGenePixCutoff(percent);
+            
+            Properties props = new Properties();
+            props.setProperty("Percentage", Float.toString(percent));
+            
+            if (data.isGenePixFilter()) {
+                 addAdjustmentResultNodes("Data Filter - GenePix Flags Filter", data.getExperiment(), props);
+                 addHistory("GenePix Flags Filter is ON ( percent = " +Float.toString(percent)+" )");
+            } else {
+                addHistory("GenePix Flags Filter is OFF");
+            }
+            addHistory(data.getExperiment().getNumberOfGenes() + " genes will be used in subsequent analyses");            
+        }
+    	       
+    }
+    
 
     //add present call noise filter by wwang    
     private void applyGCOSPercentageFilter(){
@@ -2221,6 +2309,30 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             }
             addHistory(data.getExperiment().getNumberOfGenes() + " genes will be used in subsequent analyses");            
         }
+    	
+    }
+    
+    //add p-value filter
+    private void applyPvaluePercentageFilter(){
+    	//SetPresentCallDialog spcd = new SetPresentCallDialog(getFrame(), data.getPercentageCutoff());
+        //if (spcd.showModal() == JOptionPane.OK_OPTION) {
+            boolean pvalueCutoff = true;
+            float percent = 80.0f;
+
+            data.setUsePvaluePercentageCutoff(pvalueCutoff);            
+            data.setPvaluePercentageCutoff(percent);
+            
+            Properties props = new Properties();
+            props.setProperty("Percentage", Float.toString(percent));
+            
+            //if (data.isGCOSPercentCutoff()) {
+                 addAdjustmentResultNodes("Data Filter - Percentage Cutoff Filter", data.getExperiment(), props);
+                 addHistory("P-value Percentage Cutoff Filter is ON ( percent =  80%)");
+            //} else {
+             //   addHistory("Percentage Cutoff Filter is OFF");
+            //}
+            addHistory(data.getExperiment().getNumberOfGenes() + " genes will be used in subsequent analyses");            
+       // }
     	
     }
     /* Applies a variance filter
@@ -2318,7 +2430,12 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         fireDataChanged();
         addHistory("Log2 Transform");
     }
-    
+    private void onUnLog2Transform() {
+        //data.log10toLog2();
+        data.unlog2Transform();
+        fireDataChanged();
+        addHistory("Unlog2 Transform");
+    }
     private void onNormalizeSpots() {
         data.normalizeSpots();
         fireDataChanged();
@@ -2845,14 +2962,14 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 		float [] vals = m.getColumnPackedCopy();
 		QSort qsort = new QSort(vals, QSort.ASCENDING);
 		vals = qsort.getSorted();
-	
+		
 		int numberNaN = 0;
 		
 		for(int i = 0; i < vals.length; i++) {		
 			if(Float.isNaN(vals[i]))
 				numberNaN++;
 			else
-				break;			
+				break;
 		}
 		
 		int validN = vals.length-numberNaN;
@@ -2866,6 +2983,16 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 		return values;
 		
 	}
+    public boolean autoScale(float[] val){
+    	    int count=0;
+			for(int i=0;i<val.length;i++)
+				if(val[i]>0)
+					count++;
+			if((count*1.0)/(val.length*1.0)>0.8){
+				auto_scale=true;
+			}
+			return auto_scale;
+    }
     /** by wwang
 	 *  returns the median from the sorted array
 	 * @return
@@ -2921,13 +3048,18 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         
         // by wwang add for auto color scaling(for affy data) 
         sortedValues=initSortedValues(data.getExperiment().getMatrix());
-        if (TMEV.getDataType() != TMEV.DATA_TYPE_TWO_DYE){
+        auto_scale=autoScale(sortedValues);
+        //if (TMEV.getDataType() != TMEV.DATA_TYPE_TWO_DYE){
+        if(data.getDataType() == IData.DATA_TYPE_AFFY_ABS||auto_scale==true){
          	this.menubar.setMinRatioScale(0f);
          	//this.menubar.setMidRatioValue(Float.parseFloat(oneDecimalFormat.format(getMedian())));
          	this.menubar.setMidRatioValue(getMedian());
+         	
          	//this.menubar.setMaxRatioScale(Float.parseFloat(oneDecimalFormat.format(getMaxScale())));
          	this.menubar.setMaxRatioScale(getMaxScale());
+         	
          }
+        //}
         // if we have field names and data is not loaded
         //if(TMEV.getDataType() == TMEV.DATA_TYPE_AFFY)
         //    this.menubar.addAffyFilterMenuItems();
@@ -3271,6 +3403,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             String command = event.getActionCommand();
             if (command.equals(ActionManager.CLOSE_COMMAND)) {
                 onClose();
+            } else if (command.equals(ActionManager.NEW_MAV_COMMAND)) {
+                onNewMultipleArrayViewer();   
             } else if (command.equals(ActionManager.LOAD_FILE_COMMAND)) {
                 onLoadFile();
             } else if (command.equals(ActionManager.LOAD_EXPRESSION_COMMAND)) {
@@ -3386,8 +3520,12 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                 //add mas5 present call noise filter
             }else if(command.equals(ActionManager.USE_PRESENT_CALL_CMD)){   
             	applyPresentCallFilter();
+            }else if(command.equals(ActionManager.USE_GENEPIXFLAGS_CMD)){   
+            	applyGenePixFlagsFilter();	
             }else if(command.equals(ActionManager.USE_GCOS_PERCENTAGE_CUTOFF_CMD)){   
             	applyGCOSPercentageFilter();	
+            }else if(command.equals(ActionManager.USE_PVALUE_CUTOFF_CMD)){  
+            	applyPvaluePercentageFilter();	
             } else if (command.equals(ActionManager.USE_LOWER_CUTOFFS_CMD)) {
                 applyLowerCutoffs();
             } else if (command.equals(ActionManager.USE_VARIANCE_FILTER_CMD)) {
@@ -3396,8 +3534,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                 onImportList(Cluster.GENE_CLUSTER);
             } else if (command.equals(ActionManager.IMPORT_SAMPLE_LIST_COMMAND)) {
                 onImportList(Cluster.EXPERIMENT_CLUSTER);
-            }
-            
+        	} else if (command.equals(ActionManager.CDNA_LOW_INTENSITY_CMD)) {
+        		applyLowerCutoffs();
+        	}else if (command.equals(ActionManager.OLIGEN_LOW_INTENSITY_CMD)) {
+        		applySingleLowerCutoffs();
+        	}
             // pcahan
             /*else if (command.equals(ActionManager.SET_DETECTION_FILTER_CMD)) {
                 onSetDetectionFilter();
@@ -3431,6 +3572,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                 onDivideGenesMean();                
             } else if (command.equals(ActionManager.LOG2_TRANSFORM_CMD)) {
                 onLog2Transform();
+            } else if (command.equals(ActionManager.UNLOG2_TRANSFORM_CMD)) {
+                onUnLog2Transform();    
             } else if (command.equals(ActionManager.NORMALIZE_SPOTS_CMD)) {
                 onNormalizeSpots();
             } else if (command.equals(ActionManager.DIVIDE_SPOTS_RMS_CMD)) {
