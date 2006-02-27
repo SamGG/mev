@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SlideDataElement.java,v $
- * $Revision: 1.7 $
- * $Date: 2005-03-10 15:44:15 $
- * $Author: braistedj $
+ * $Revision: 1.8 $
+ * $Date: 2006-02-27 14:55:22 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -24,7 +24,8 @@ public class SlideDataElement extends ArrayElement implements ISlideDataElement,
     protected String[] extraFields;
     protected boolean isNull = false;
     protected boolean isNonZero = true;
-    
+     protected float pvalue=0;
+    protected int flags=0;
     /**
      * Constructs a <code>SlideDataElement</code> with specified meta rows,
      * meta columns, intensities and descriptions.
@@ -352,6 +353,22 @@ public class SlideDataElement extends ArrayElement implements ISlideDataElement,
     public void setDetection(String value){}
     public String getDetection(){
         return "";
+}
+    
+    //wwang add p-value for affy
+    public void setPvalue(float value){
+    	pvalue=value;
+    	}
+    
+    public float getPvalue(){
+    	return pvalue;
+    }
+    public void setGenePixFlags(int value){
+    	flags=value;
+    	}
+    
+    public int getGenePixFlags(){
+    	return flags;
     }
     
     /**
