@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ISlideData.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-24 14:59:20 $
+ * $Revision: 1.6 $
+ * $Date: 2006-02-27 14:30:23 $
  * $Author: wwang67 $
  * $State: Exp $
  */
@@ -254,6 +254,6 @@ public interface ISlideData {
     public float getPvalue(int row);
     public int getGenePixFlags(int row);
 
-    public String getDetection(int row);    /**     * CGH Function from ICGHFeatureData     * @param flankingRegions     */    public void setFlankingRegions(java.util.Vector[] flankingRegions);    /**     * CGH Function from ICGHFeatureData     * @param chromosomeIndex     * @return     */    public int getNumFlankingRegions(int chromosomeIndex);    /**     * CGH Function from ICGHFeatureData     * @return     */    public java.util.Vector[] getFlankingRegions();    /**     * CGH Function from ICGHFeatureData     * @param cloneIndex     * @return     */    public boolean isMissingData(int cloneIndex);    
+       /**     * CGH Function from ICGHFeatureData     * @param flankingRegions     */    public void setFlankingRegions(java.util.Vector[] flankingRegions);    /**     * CGH Function from ICGHFeatureData     * @param chromosomeIndex     * @return     */    public int getNumFlankingRegions(int chromosomeIndex);    /**     * CGH Function from ICGHFeatureData     * @return     */    public java.util.Vector[] getFlankingRegions();    /**     * CGH Function from ICGHFeatureData     * @param cloneIndex     * @return     */    public boolean isMissingData(int cloneIndex);    
 
 }
