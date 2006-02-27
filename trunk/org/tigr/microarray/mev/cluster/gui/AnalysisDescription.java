@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: AnalysisDescription.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 20:38:24 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-27 15:01:14 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui;
@@ -28,6 +28,7 @@ public class AnalysisDescription {
     private Icon largeIcon; // 32x32
     private String tooltip;
     private String classname;
+private String category;
     
     /**
      * Constructs an <code>AnalysisDescription</code> with specified
@@ -37,7 +38,7 @@ public class AnalysisDescription {
      * @param classname the class name of the algorithm.
      */
     public AnalysisDescription(String name, String classname) {
-	this(name, classname, null, null, null);
+	this(name, classname, null, null,null null);
     }
     
     /**
@@ -50,9 +51,10 @@ public class AnalysisDescription {
      * @param largeIcon the small 32x32 icon.
      * @param tooltip the tooltip.
      */
-    public AnalysisDescription(String name, String classname, Icon smallIcon, Icon largeIcon, String tooltip) {
+    public AnalysisDescription(String name, String classname,String category, Icon smallIcon, Icon largeIcon, String tooltip) {
 	this.name = name;
 	this.classname = classname;
+	this.category=category;
 	this.smallIcon = smallIcon;
 	this.largeIcon = largeIcon;
 	this.tooltip = tooltip;
@@ -93,6 +95,12 @@ public class AnalysisDescription {
 	return classname;
     }
     
+/**
+     * add by wwang Returns the analysis class name.
+     */
+    public String getCategory() {
+	return category;
+    }
     /**
      * Returns analysis small 16x16 icon.
      */
