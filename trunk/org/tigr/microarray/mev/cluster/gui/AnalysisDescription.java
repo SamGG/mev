@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: AnalysisDescription.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-27 15:06:06 $
+ * $Revision: 1.6 $
+ * $Date: 2006-02-27 15:08:09 $
  * $Author: wwang67 $
  * $State: Exp $
  */
@@ -38,7 +38,7 @@ private String category;
      * @param classname the class name of the algorithm.
      */
     public AnalysisDescription(String name, String classname) {
-	this(name, classname, null, null,null null);
+	this(name, classname, null, null,null, null);
     }
     
     /**
