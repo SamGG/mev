@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: AffyGCOSFileLoader.java,v $
- * $Revision: 1.3 $
- * $Date: 2006-02-24 16:22:41 $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-27 14:34:06 $
  * $Author: wwang67 $
  * $State: Exp $
  */
@@ -26,6 +26,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Vector;
 
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
@@ -44,9 +45,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-
+import javax.swing.JRadioButton;
 import org.tigr.microarray.mev.FloatSlideData;
-import org.tigr.microarray.mev.GCOSSlideDataElement;
+//import org.tigr.microarray.mev.GCOSSlideDataElement;
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.ISlideMetaData;

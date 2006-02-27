@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SlideData.java,v $
- * $Revision: 1.12 $
- * $Date: 2006-02-24 15:47:14 $
+ * $Revision: 1.13 $
+ * $Date: 2006-02-27 14:29:19 $
  * $Author: wwang67 $
  * $State: Exp $
  */
@@ -1200,5 +1200,5 @@ public class SlideData extends Vector implements ISlideData, ISlideMetaData, jav
         }
         */
     }
->>>>>>> 1.11
+
 }
