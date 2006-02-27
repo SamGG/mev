@@ -4,11 +4,11 @@ All rights reserved.
  */
 /*
  * $RCSfile: DFCI_CoreFileLoader.java,v $
- * $Revision: 1.3 $
- * $Date: 2006-02-24 16:26:14 $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-27 16:47:54 $
  * $Author: wwang67 $
- * $Revision: 1.3 $
- * $Date: 2006-02-24 16:26:14 $
+ * $Revision: 1.4 $
+ * $Date: 2006-02-27 16:47:54 $
  * $Author: wwang67 $
  * $State: Exp $
  */
@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Vector;
 
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -48,7 +49,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileFilter;
 import org.tigr.microarray.mev.AffySlideDataElement;
 import org.tigr.microarray.mev.FloatSlideData;
-import org.tigr.microarray.mev.GCOSSlideDataElement;
+//import org.tigr.microarray.mev.GCOSSlideDataElement;
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.ISlideMetaData;
 import org.tigr.microarray.mev.SlideData;
