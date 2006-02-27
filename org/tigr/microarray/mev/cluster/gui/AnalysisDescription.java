@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: AnalysisDescription.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-02-27 15:01:14 $
+ * $Revision: 1.5 $
+ * $Date: 2006-02-27 15:06:06 $
  * $Author: wwang67 $
  * $State: Exp $
  */
@@ -59,7 +59,14 @@ private String category;
 	this.largeIcon = largeIcon;
 	this.tooltip = tooltip;
     }
-    
+    public AnalysisDescription(String name, String classname,Icon smallIcon, Icon largeIcon, String tooltip) {
+	this.name = name;
+	this.classname = classname;
+	this.category=category;
+	this.smallIcon = smallIcon;
+	this.largeIcon = largeIcon;
+	this.tooltip = tooltip;
+    } 
     /**
      * Sets small 16x16 icon.
      */
