@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SOFT_AffyFileLoader.java,v $
- * $Revision: 1.3 $
- * $Date: 2006-02-24 16:33:23 $
+ * $Revision: 1.4 $
+ * $Date: 2006-03-01 13:44:09 $
  * $Author: wwang67 $
  * $State: Exp $
  */
@@ -51,7 +51,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import org.tigr.microarray.mev.AffySlideDataElement;
 import org.tigr.microarray.mev.FloatSlideData;
-import org.tigr.microarray.mev.GCOSSlideDataElement;
+//import org.tigr.microarray.mev.GCOSSlideDataElement;
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.TMEV;
