@@ -93,7 +93,7 @@
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="algorithm-modules"
-depends="build-base,HCL,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TFA,SVM,KNNC,DAM,GDM,PCA,COA,TRN,EASE">
+depends="build-base,HCL,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TFA,SVM,KNNC,DAM,GDM,PCA,COA,TRN,EASE,TEASE">
     </target>
 
 
@@ -115,7 +115,7 @@ depends="build-base,HCL,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,O
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="modules-only"
-depends="HCL,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TFA,SVM,KNNC,DAM,GDM,PCA,COA,TRN,EASE">
+depends="HCL,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TFA,SVM,KNNC,DAM,GDM,PCA,COA,TRN,EASE,TEASE">
     </target>
 
 
