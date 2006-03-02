@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: TMEV.java,v $
- * $Revision: 1.13 $
- * $Date: 2006-02-24 15:49:28 $
+ * $Revision: 1.14 $
+ * $Date: 2006-03-02 18:51:33 $
  * $Author: wwang67 $
  * $State: Exp $
  */
@@ -298,11 +298,14 @@ public class TMEV {
     //get initial algorithm list from file tmev.cfg
     public static int[] getCustomerAnalysis() {
 	   String text = new String("");	   	   
+       boolean haveCustomTag = false;
+	   String lineSep = System.getProperty("line.separator");
        try {
            BufferedReader br = new java.io.BufferedReader(new FileReader(TMEV.getFile("config/tmev.cfg")));
            String line;
            while((line = br.readLine()) != null) {
                if(line.indexOf("algorithm-list") != -1) {
+                   haveCustomTag=true;
                    line = line.substring(15);
                    if(TMEV.customerAnalysis==null)
                 	   TMEV.initCustomerAnalysis(line.length());
@@ -312,8 +315,19 @@ public class TMEV {
                    }
                 	   
                }
+               text += line+lineSep;
            }
            br.close();
+           if(!haveCustomTag){
+               text +="algorithm-list 1";
+               BufferedWriter bw = new java.io.BufferedWriter(new FileWriter(TMEV.getFile("config/tmev.cfg")));
+               bw.write(text);
+               bw.flush();
+               bw.close();
+               if(TMEV.customerAnalysis==null)
+            	   TMEV.initCustomerAnalysis(1);
+               TMEV.customerAnalysis[0]=1;
+           }
        } catch (IOException ioe) {
     	   System.out.print("File tmev.cfg not found");
        }
