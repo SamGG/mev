@@ -55,6 +55,7 @@
     <property name="FOM" value="y"/>
     <property name="PTM" value="y"/>
     <property name="TTEST" value="y"/>
+    <property name="BRIDGE" value="y"/>
     <property name="SAM" value="y"/>
     <property name="OWA" value="y"/>
     <property name="TFA" value="y"/>
@@ -93,7 +94,7 @@
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="algorithm-modules"
-depends="build-base,HCL,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TFA,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE,TEASE">
+depends="build-base,HCL,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE,TEASE">
     </target>
 
 
@@ -115,7 +116,7 @@ depends="build-base,HCL,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,O
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="modules-only"
-depends="HCL,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TFA,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE,TEASE">
+depends="HCL,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE,TEASE">
     </target>
 
 
@@ -792,6 +793,41 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 	  	<entry key="TTEST.smallIcon" value="analysis16.gif"/>
             <entry key="TTEST.largeIcon" value="ttest_button.gif"/>
             <entry key="TTEST.tooltip" value="t Tests"/>
+        </propertyfile>
+    </target>
+
+
+
+    <target name="BRIDGE" depends="BRIDGE-GUI" if="BRIDGE">
+        <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+            <include name="Bridge.java"/>
+            <classpath>
+                <pathelement location="${lib.dir}/JSciCore.jar"/>
+
+                <!-- jars to support module compilation -->
+                <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+                <pathelement location="${lib.dir}/mev-base.jar"/>            
+            </classpath>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="BRIDGE" value="org.tigr.microarray.mev.cluster.algorithm.impl.bridge"/>
+        </propertyfile>
+    </target>
+
+    <target name="BRIDGE-GUI">
+        <javac srcdir="${gui.impl.dir}/bridge" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="BRIDGE:" operation="+"/>
+            <entry key="BRIDGE.name" value="BRIDGE"/>
+            <entry key="BRIDGE.class" value="org.tigr.microarray.mev.cluster.gui.impl.bridge.BridgeGUI"/>
+	  	<entry key="BRIDGE.category" value="STATISTICS"/> 
+	  	<entry key="BRIDGE.smallIcon" value="analysis16.gif"/>
+            <entry key="BRIDGE.largeIcon" value="bridge_button.gif"/>
+            <entry key="BRIDGE.tooltip" value="BRIDGE"/>
         </propertyfile>
     </target>
 
