@@ -1,6 +1,6 @@
 package org.tigr.microarray.mev.r;
 
-import java.util.Vector;
+import java.util.*;
 
 /** implementation of R-lists<br>
     This is rather preliminary and may change in future since it's not really proper.
@@ -14,7 +14,7 @@ import java.util.Vector;
     parsed according to the structure - in that case "head" and "body" have to be evaluated
     separately according to their meaning in that context.
 
-    @version $Id: RList.java,v 1.2 2006-02-23 20:59:57 caliente Exp $
+    @version $Id: RList.java,v 1.3 2006-03-07 19:00:35 caliente Exp $
 */
 public class RList extends Object {
     /** xpressions containing head and body. 

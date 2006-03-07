@@ -5,7 +5,7 @@
 //  Created by Simon Urbanek on Mon Aug 18 2003.
 //  Copyright (c) 2003 __MyCompanyName__. All rights reserved.
 //
-//  $Id: RSrvException.java,v 1.1 2005-09-28 21:52:22 caliente Exp $
+//  $Id: RSrvException.java,v 1.2 2006-03-07 19:00:35 caliente Exp $
 //
 
 package org.tigr.microarray.mev.r;

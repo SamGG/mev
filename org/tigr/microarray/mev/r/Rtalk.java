@@ -10,7 +10,7 @@ import java.io.OutputStream;
     The current implementation supports long (0.3+/0102) data format only
     up to 32-bit and only for incoming packets.
     <p>
-    @version $Id: Rtalk.java,v 1.1 2005-09-28 21:52:22 caliente Exp $
+    @version $Id: Rtalk.java,v 1.2 2006-03-07 19:00:35 caliente Exp $
 */
 public class Rtalk {
     public static final int DT_INT=1;

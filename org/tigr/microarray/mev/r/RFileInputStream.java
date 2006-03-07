@@ -1,15 +1,13 @@
 package org.tigr.microarray.mev.r;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 /** <b>RFileInputStream</b> is an {@link InputStream} to transfer files
     from <b>Rserve</b> server to the client. It is used very much like
     a {@link FileInputStream}. Currently mark and seek is not supported.
     The current implementation is also "one-shot" only, that means the file
     can be read only once.
-    @version $Id: RFileInputStream.java,v 1.2 2006-02-23 20:59:57 caliente Exp $
+    @version $Id: RFileInputStream.java,v 1.3 2006-03-07 19:00:35 caliente Exp $
 */
 public class RFileInputStream extends InputStream {
     /** Rtalk class to use for communication with the Rserve */

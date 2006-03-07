@@ -5,7 +5,7 @@ package org.tigr.microarray.mev.r;
     value, you'll need to use {@link #isTRUE} or {@link #isFALSE} since there is
     no canonical representation of RBool in boolean
 
-    @version $Id: RBool.java,v 1.1 2005-09-28 21:52:22 caliente Exp $
+    @version $Id: RBool.java,v 1.2 2006-03-07 19:00:35 caliente Exp $
 */
 public class RBool extends Object {
     int val;

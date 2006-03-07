@@ -21,8 +21,9 @@ public class RDataFormatter {
 	}
 	
 	
-	public String ramaSwapString( Vector vTreatCy3, Vector vTreatCy5 ) {
-		StringBuffer sbTreat = new StringBuffer( Rama.R_VECTOR_NAME + " <- c(" );
+	public String rSwapString( String dataName, Vector vTreatCy3, Vector vTreatCy5 ) {
+		//System.out.println("ramaSwapString()");
+		StringBuffer sbTreat = new StringBuffer( dataName + " <- c(" );
 		StringBuffer sbControl = new StringBuffer();
 		
 		int iTreat3 = vTreatCy3.size();
@@ -35,7 +36,7 @@ public class RDataFormatter {
 			if( i > 0 ) {
 				sbTreat.append( Rama.COMMA );
 			}
-			RamaHyb hyb = ( RamaHyb ) vTreatCy3.elementAt( i );
+			RHyb hyb = ( RHyb ) vTreatCy3.elementAt( i );
 			int hybIndex = hyb.getHybIndex();
 			
 			//loop through the genes of this hyb
@@ -53,7 +54,7 @@ public class RDataFormatter {
 			if( i > 0 ) {
 				sbTreat.append( Rama.COMMA );
 			}
-			RamaHyb hyb = ( RamaHyb ) vTreatCy5.elementAt( i );
+			RHyb hyb = ( RHyb ) vTreatCy5.elementAt( i );
 			int hybIndex = hyb.getHybIndex();
 			
 			//loop through the genes of this hyb
@@ -71,7 +72,7 @@ public class RDataFormatter {
 			if( i > 0 ) {
 				sbTreat.append( Rama.COMMA );
 			}
-			RamaHyb hyb = ( RamaHyb ) vTreatCy3.elementAt( i );
+			RHyb hyb = ( RHyb ) vTreatCy3.elementAt( i );
 			int hybIndex = hyb.getHybIndex();
 			
 			//loop through the genes of this hyb
@@ -89,7 +90,7 @@ public class RDataFormatter {
 			if( i > 0 ) {
 				sbTreat.append( Rama.COMMA );
 			}
-			RamaHyb hyb = ( RamaHyb ) vTreatCy5.elementAt( i );
+			RHyb hyb = ( RHyb ) vTreatCy5.elementAt( i );
 			int hybIndex = hyb.getHybIndex();
 			
 			//loop through the genes of this hyb
@@ -107,12 +108,13 @@ public class RDataFormatter {
 	}//ramaSwapString()
 	
 	
-	public String ramaNonSwapString( Vector vRamaHyb ) {
-		StringBuffer sbTreat = new StringBuffer( Rama.R_VECTOR_NAME + " <- c(" );
+	public String rNonSwapString( String dataName, Vector vRamaHyb ) {
+		//System.out.println("ramaNonSwapString()");
+		StringBuffer sbTreat = new StringBuffer( dataName + " <- c(" );
 		StringBuffer sbControl = new StringBuffer();
 		
 		//figure out which color is which
-		RamaHyb firstHyb = ( RamaHyb ) vRamaHyb.elementAt( 0 );
+		RHyb firstHyb = ( RHyb ) vRamaHyb.elementAt( 0 );
 		boolean controlCy3 = firstHyb.controlCy3();
 		
 		//loop through all the hybs, they will all be the same color state
@@ -122,7 +124,7 @@ public class RDataFormatter {
 				sbControl.append( "," );
 			}
 			
-			RamaHyb hyb = ( RamaHyb ) vRamaHyb.elementAt( i );
+			RHyb hyb = ( RHyb ) vRamaHyb.elementAt( i );
 			int iHyb = hyb.getHybIndex();
 			
 			//loop through the genes

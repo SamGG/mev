@@ -76,7 +76,7 @@ import javax.swing.table.TableModel;
  * @version 2.0 02/27/04
  */
 
-public class TableSorter extends AbstractTableModel {
+public class RamaTableSorter extends AbstractTableModel {
     protected TableModel tableModel;
 
     public static final int DESCENDING = -1;
@@ -116,17 +116,17 @@ public class TableSorter extends AbstractTableModel {
     private Map columnComparators = new HashMap();
     private List sortingColumns = new ArrayList();
 
-    public TableSorter() {
+    public RamaTableSorter() {
         this.mouseListener = new MouseHandler();
         this.tableModelListener = new TableModelHandler();
     }
 
-    public TableSorter(TableModel tableModel) {
+    public RamaTableSorter(TableModel tableModel) {
         this();
         setTableModel(tableModel);
     }
 
-    public TableSorter(TableModel tableModel, JTableHeader tableHeader) {
+    public RamaTableSorter(TableModel tableModel, JTableHeader tableHeader) {
         this();
         setTableHeader(tableHeader);
         setTableModel(tableModel);
@@ -234,7 +234,7 @@ public class TableSorter extends AbstractTableModel {
     }
 
     protected Comparator getComparator(int column) {
-        /*
+        
         Class columnType = tableModel.getColumnClass(column);
         Comparator comparator = (Comparator) columnComparators.get(columnType);
         if (comparator != null) {
@@ -244,8 +244,8 @@ public class TableSorter extends AbstractTableModel {
             return COMPARABLE_COMAPRATOR;
         }
         return LEXICAL_COMPARATOR;
-        */
-        return TableSorter.NUMERIC_COMPARATOR;
+        
+        //return TableSorter.NUMERIC_COMPARATOR;
     }
 
     private Row[] getViewToModel() {
@@ -388,7 +388,7 @@ public class TableSorter extends AbstractTableModel {
                     && getSortingStatus(column) == NOT_SORTED
                     && modelToView != null) {
                 int viewIndex = getModelToView()[e.getFirstRow()];
-                fireTableChanged(new TableModelEvent(TableSorter.this, 
+                fireTableChanged(new TableModelEvent(RamaTableSorter.this, 
                                                      viewIndex, viewIndex, 
                                                      column, e.getType()));
                 return;
