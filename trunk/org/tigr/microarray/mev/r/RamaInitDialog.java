@@ -50,7 +50,7 @@ public class RamaInitDialog extends AlgorithmDialog {
 	private int dataType;
 	private boolean connAdded = false;
 	
-	private RamaHyb[] ramaHybs;
+	private RHyb[] ramaHybs;
 	
 	private Vector vCy3Radio;
 	private Vector vRamaHyb;
@@ -87,7 +87,7 @@ public class RamaInitDialog extends AlgorithmDialog {
 		//initialize variables
 		this.vCy3Radio = new Vector();
 		this.vRamaHyb = new Vector();
-		this.ramaHybs = new RamaHyb[ hybNames.length ];
+		this.ramaHybs = new RHyb[ hybNames.length ];
 		
 		JPanel mainPanel = new JPanel();
 		mainPanel.add( this.createTwoColorPanel( hybNames, this.dataType ), BorderLayout.CENTER );
@@ -181,9 +181,9 @@ public class RamaInitDialog extends AlgorithmDialog {
 		paramPanel.add( this.burnInSpinner );
 		paramPanel.add( this.numIterLabel );
 		paramPanel.add( this.numIterSpinner );
-		paramPanel.add( this.allOutLabel );
-		paramPanel.add( this.allOutBox );
-		SpringUtilities.makeCompactGrid( paramPanel, 3, 2, 5, 5, 5, 5 );
+		//paramPanel.add( this.allOutLabel );
+		//paramPanel.add( this.allOutBox );
+		SpringUtilities.makeCompactGrid( paramPanel, 2, 2, 5, 5, 5, 5 );
 		
 		JPanel leftPanel = new JPanel();
 		leftPanel.setLayout( new BorderLayout() );
@@ -318,13 +318,13 @@ public class RamaInitDialog extends AlgorithmDialog {
 				cy5Button.setBackground( Color.LIGHT_GRAY );
 			}
 			
-			RamaHyb hyb;
+			RHyb hyb;
 			
 			if( dataTypeP == IData.DATA_TYPE_AFFY_ABS ) {
-				hyb = new RamaHyb( h, hybNames[ h ], cy3Button, 
+				hyb = new RHyb( h, hybNames[ h ], cy3Button, 
 						IData.DATA_TYPE_AFFY_ABS );
 			} else {
-				hyb = new RamaHyb( h, hybNames[ h ], cy3Button, 
+				hyb = new RHyb( h, hybNames[ h ], cy3Button, 
 						IData.DATA_TYPE_TWO_INTENSITY );
 			}
 			this.ramaHybs[ h ] = hyb;
@@ -420,7 +420,7 @@ public class RamaInitDialog extends AlgorithmDialog {
 	
 	
 	private boolean verifyHybs() {
-		RamaHybSet rhs = this.getRamaHybSet();
+		RHybSet rhs = this.getRamaHybSet();
 		
 		if( this.dataType == IData.DATA_TYPE_TWO_INTENSITY ) {
 			if( rhs.isFlip() ) {
@@ -439,14 +439,14 @@ public class RamaInitDialog extends AlgorithmDialog {
 	 * @param rhs
 	 * @return
 	 */
-	private boolean atLeastTwo( RamaHybSet rhs ) {
+	private boolean atLeastTwo( RHybSet rhs ) {
 		Vector vRamaHyb = rhs.getVRamaHyb();
 		
 		int iOne = 0;
 		int iTwo = 0;
 		
 		for( int r = 0; r < vRamaHyb.size(); r ++ ) {
-			RamaHyb hyb = ( RamaHyb ) vRamaHyb.elementAt( r );
+			RHyb hyb = ( RHyb ) vRamaHyb.elementAt( r );
 			if( hyb.controlCy3() ) {
 				iOne ++;
 			} else {
@@ -469,14 +469,14 @@ public class RamaInitDialog extends AlgorithmDialog {
 	 * @param rhs
 	 * @return
 	 */
-	private boolean isBalanced( RamaHybSet rhs ) {
+	private boolean isBalanced( RHybSet rhs ) {
 		Vector vRamaHyb = rhs.getVRamaHyb();
 		
 		int iTreated = 0;
 		int iControl = 0;
 		
 		for( int r = 0; r < vRamaHyb.size(); r ++ ) {
-			RamaHyb hyb = ( RamaHyb ) vRamaHyb.elementAt( r );
+			RHyb hyb = ( RHyb ) vRamaHyb.elementAt( r );
 			if( hyb.oneIsTreated() ) {
 				iTreated ++;
 			} else {
@@ -573,8 +573,8 @@ public class RamaInitDialog extends AlgorithmDialog {
 		SpinnerNumberModel model = ( SpinnerNumberModel ) this.numIterSpinner.getModel();
 		return model.getNumber().intValue();
 	}
-	public RamaHybSet getRamaHybSet() {
-		return new RamaHybSet( this.vRamaHyb );
+	public RHybSet getRamaHybSet() {
+		return new RHybSet( this.vRamaHyb );
 	}
 	public String getSelectedConnString() {
 		return ( String ) this.connCombo.getSelectedItem();

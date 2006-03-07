@@ -34,13 +34,12 @@ public class Rama {
 	public static String COMMA = ",";
 	public static String END_LINE = "\r\n";
 	public static String TAB = "\t";
-	public static String R_VECTOR_NAME = "hiv";
+	public static String R_VECTOR_NAME = "ramaData";
 	
 	private MultipleArrayViewer mav;
 	private MultipleArrayMenubar menuBar;
 	private IData data;
 	private RamaInitDialog initDialog;
-	private RSwingWorker worker;
 	
 	private int B;
 	private int minIter;
@@ -120,11 +119,11 @@ public class Rama {
 			int iColorKount;
 			int iTwo;
 			
-			RamaHybSet rhs = this.initDialog.getRamaHybSet();
+			RHybSet rhs = this.initDialog.getRamaHybSet();
 			
 			//deal with affy and 2 color differently
 			if( isAffy ) {	//this is an affy array
-				sData =  rDataFormatter.ramaNonSwapString( rhs.getVRamaHyb() );
+				sData =  rDataFormatter.rNonSwapString( Rama.R_VECTOR_NAME, rhs.getVRamaHyb() );
 				this.iGene = data.getExperiment().getNumberOfGenes();
 				nbCol1 = 0;
 				iHybKount = rhs.getVRamaHyb().size();
@@ -137,7 +136,7 @@ public class Rama {
 					Vector vTreatCy5 = this.getVRamaHybTreatCy5( rhs.getVRamaHyb() );
 					
 					//sData =  this.swapDataString( data, vTreatCy3, vTreatCy5 );
-					sData = rDataFormatter.ramaSwapString( vTreatCy3, vTreatCy5 );
+					sData = rDataFormatter.rSwapString( Rama.R_VECTOR_NAME, vTreatCy3, vTreatCy5 );
 					this.iGene = data.getExperiment().getNumberOfGenes();
 					nbCol1 = vTreatCy3.size();
 					iHybKount = vTreatCy3.size() + vTreatCy5.size();
@@ -145,7 +144,7 @@ public class Rama {
 					iTwo = iHybKount + 1;
 				} else {	//not dye swap
 					//sData =  this.nonSwapDataString( data, rhs.getVRamaHyb() );
-					sData = rDataFormatter.ramaNonSwapString( rhs.getVRamaHyb() );
+					sData = rDataFormatter.rNonSwapString( Rama.R_VECTOR_NAME, rhs.getVRamaHyb() );
 					this.iGene = data.getExperiment().getNumberOfGenes();
 					nbCol1 = 0;
 					iHybKount = rhs.getVRamaHyb().size();
@@ -155,7 +154,8 @@ public class Rama {
 			}//end if( isAffy )
 			
 			//display an inderterminate progress bar so user knows it's working
-			RamaProgress progress = new RamaProgress( this.mav.getFrame() );
+			String message = "As a reference, 4 arrays (640 genes) takes about half an hour";
+			RProgress progress = new RProgress( this.mav.getFrame(), message );
 			
 			//try to get a connection
 			this.rcMan = new RconnectionManager( this.mav.getFrame(), sConn, iPort );
@@ -197,38 +197,28 @@ public class Rama {
 	/**
 	 * 
 	 * @param worker
+	 * @param result
 	 */
-	public void fireThreadFinished( RSwingWorker worker ) {
+	public void fireThreadFinished( RSwingWorker worker, RamaResult result ) {
 		//check to see if it went ok
 		if( worker.isOk() ) {
-			boolean allOut = worker.isAllOut();
-			
-			//get the credible intervals (if allOut == true)
-			double[] qLo;
-			double[] qUp;
-			if( allOut ) {
-				qLo = worker.getQLo();
-				qUp = worker.getQUp();
-			} else {
-				qLo = new double[ 0 ];
-				qUp = new double[ 0 ];
-			}
-			
-			//get gammas
-			double[] gamma1 = worker.getGamma1();
-			double[] gamma2 = worker.getGamma2();
-			
-			//get shift
-			double shift = worker.getShift();
-			
 			//need to know the gene annotation data
-			String[] geneNames = new String[ iGene ];
+			String[] geneNames = new String[ this.iGene ];
 			for( int g = 0; g < iGene; g ++ ) {
-				geneNames[ g ] = this.data.getGeneName( g );
-			}
+				geneNames[ g ] = data.getGeneName( g );
+			}//g
+			
+			//see if there were any non null genenames
+			for( int i = 0; i < geneNames.length; i ++ ) {
+				if( !geneNames[ i ].equalsIgnoreCase( "" ) ) {
+					result.setGenes( geneNames );
+				}
+			}//i
+			result.setB( this.B );
+			result.setMinIter( this.minIter );
 			
 			//save
-	        this.onSave( gamma1, gamma2, qLo, qUp, allOut, geneNames );
+			result.saveRamaResult( this.mav.getFrame() );
 	        
 	        //seemed to have worked so save the connection strings
 	        if( initDialog.connAdded() ) {
@@ -236,10 +226,11 @@ public class Rama {
 	        }
 			
 	        //close old mav, open new one with results
-			MultipleArrayViewer newMav = this.spawnNewMav( data, gamma1, 
-					gamma2, geneNames, shift );
-			RamaSummaryViewer sumViewer = new RamaSummaryViewer( shift, 
-					this.B, this.minIter, rc, newMav.getFrame() );
+			MultipleArrayViewer newMav = this.spawnNewMav( data, result.getGamma1(), 
+					result.getGamma2(), result.getGenes(), result.getShift() );
+			//RamaSummaryViewer sumViewer = new RamaSummaryViewer( result.getShift(), 
+					//this.B, this.minIter, rc, newMav.getFrame() );
+			RamaSummaryViewer sumViewer = new RamaSummaryViewer( result );
 			LeafInfo li = new LeafInfo( "Rama Summary", sumViewer );
 			DefaultMutableTreeNode node = new DefaultMutableTreeNode( "Rama" );
 			node.add( new DefaultMutableTreeNode( li ) );
@@ -279,6 +270,8 @@ public class Rama {
 		sb.append( ", min.iter = " );
 		sb.append( minIter );
 		sb.append( ", batch = 1, shift = NULL, mcmc.obj = NULL, dye.swap = " );
+		//sb.append( ", batch = 1, shift = 30, mcmc.obj = NULL, dye.swap = " );
+		//System.out.println("Dev Shift = 30");
 		if( isDyeSwap ) {
 			sb.append( "TRUE" );
 			sb.append( ", nb.col1 = " );
@@ -368,7 +361,7 @@ public class Rama {
 		//SlideData will be iNumGenes (rows) by 1 column
 		SlideData slideData = new SlideData( gamma1.length,1 );
 		//loop through the genes
-		for( int i = 0; i < genes.length; i ++ ) {
+		for( int i = 0; i < norm1.length; i ++ ) {
 			int[] rows = new int[ 3 ];
 			int[] cols = new int[ 3 ];
 			float[] intensities = new float[ 2 ];
@@ -454,7 +447,7 @@ public class Rama {
 		Vector vReturn = new Vector();
 		
 		for( int h = 0; h < ramaHybs.size(); h ++ ) {
-			RamaHyb hyb = ( RamaHyb ) ramaHybs.elementAt( h );
+			RHyb hyb = ( RHyb ) ramaHybs.elementAt( h );
 			if( ! hyb.controlCy3() ) {
 				vReturn.add( hyb );
 			}
@@ -470,7 +463,7 @@ public class Rama {
 		Vector vReturn = new Vector();
 
 		for( int h = 0; h < ramaHybs.size(); h ++ ) {
-			RamaHyb hyb = ( RamaHyb ) ramaHybs.elementAt( h );
+			RHyb hyb = ( RHyb ) ramaHybs.elementAt( h );
 			if( hyb.controlCy3() ) {
 				vReturn.add( hyb );
 			}

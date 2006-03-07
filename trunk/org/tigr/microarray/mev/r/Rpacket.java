@@ -1,7 +1,7 @@
 package org.tigr.microarray.mev.r;
 
 /** small class encapsulating packets from/to Rserv
-    @version $Id: Rpacket.java,v 1.1 2005-09-28 21:52:22 caliente Exp $
+    @version $Id: Rpacket.java,v 1.2 2006-03-07 19:00:35 caliente Exp $
 */
 public class Rpacket {
     int cmd;

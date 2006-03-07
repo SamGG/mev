@@ -1,12 +1,10 @@
 package org.tigr.microarray.mev.r;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Socket;
+import java.io.*;
+import java.net.*;
 
 /**  class providing TCP/IP connection to an Rserv
-     @version $Id: Rconnection.java,v 1.2 2006-02-23 20:59:57 caliente Exp $
+     @version $Id: Rconnection.java,v 1.3 2006-03-07 19:00:35 caliente Exp $
 */
 public class Rconnection {
     /** last error string */
