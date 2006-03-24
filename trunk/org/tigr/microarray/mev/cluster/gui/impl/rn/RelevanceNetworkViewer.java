@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: RelevanceNetworkViewer.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-03-24 15:51:24 $
+ * $Revision: 1.10 $
+ * $Date: 2006-03-24 20:13:35 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -653,7 +653,9 @@ public class RelevanceNetworkViewer extends JPanel implements IViewer, Scrollabl
                         this.draw[spot] = false;
                         x = (this.coords[spot][0])*scale+this.insets.left+this.elementSize.width/2+10;
                         y = (this.coords[spot][1])*scale+this.insets.top+this.elementSize.height/2;
-                        str = isGenes ? this.data.getElementAttribute(spot, this.labelIndex) : this.data.getSampleName(spot);
+                        //EH fix submitted by angier@imima.fr
+                      //str = isGenes ? this.data.getElementAttribute(spot, this.labelIndex) : this.data.getSampleName(spot);
+                        str = isGenes ? this.data.getElementAttribute(experiment.getGeneIndexMappedToData(spot), this.labelIndex) : this.data.getSampleName(spot);
                         if (isLabelIntersects(fm, bounds, str, (int)x, (int)y))
                             g.drawString(str, (int)x, (int)y);
                     }
