@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: CGHStanfordFileLoader.java,v $
- * $Revision: 1.1 $
- * $Date: 2006-02-02 19:56:28 $
- * $Author: raktim $
+ * $Revision: 1.2 $
+ * $Date: 2006-03-24 15:52:17 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -176,7 +176,8 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
                     //Raktim
                 	//System.out.println("preExpr Token " + fieldNames[i]);
                 }
-                TMEV.setFieldNames(fieldNames);
+                //TMEV.setFieldNames(fieldNames);
+                slideDataArray[0].getSlideMetaData().setFieldNames(fieldNames);
 
                 for (int i=0; i<experimentCount; i++) {
                     slideDataArray[i].setSlideDataName(ss.nextToken());
@@ -370,7 +371,7 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
         		//Swap SlideData Element for ordering
         		if (j == 0) {
         			CGHSlideDataElement rem_T = (CGHSlideDataElement)((SlideData)slideDataArray[j]).set(ind_T, sde_T1);
-        			((SlideData)slideDataArray[j]).setElementAt(rem_T, sortInd_T);
+        			((SlideData)slideDataArray[j]).insertElementAt(rem_T, sortInd_T);
         		}
         		else {
 	        		//Swap FloatMatrix Element for ordering, index 1 to n samples
@@ -429,7 +430,7 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
         		//Swap SlideData Element for ordering
         		if (j == 0) {
         			CGHSlideDataElement rem_T = (CGHSlideDataElement)((SlideData)slideDataArray[j]).set(ind_T, sde_T1);
-        			((SlideData)slideDataArray[j]).setElementAt(rem_T, sortInd_T);
+        			((SlideData)slideDataArray[j]).insertElementAt(rem_T, sortInd_T);
         		}
         		else {
 	        		//Swap FloatMatrix Element for ordering, index 1 to n samples

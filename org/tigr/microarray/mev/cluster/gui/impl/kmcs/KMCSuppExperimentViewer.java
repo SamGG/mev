@@ -4,15 +4,16 @@ All rights reserved.
 */
 /*
  * $RCSfile: KMCSuppExperimentViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-23 20:59:52 $
- * $Author: caliente $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:50:54 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.kmcs;
 
 import java.awt.Color;
 import java.awt.Frame;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -24,12 +25,29 @@ import javax.swing.JPopupMenu;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 
 
 public class KMCSuppExperimentViewer extends ExperimentViewer {
     
     private JPopupMenu popup;
+    
+    /**
+     * Reconstitute a saved instance of this class from an XML file.
+     * 
+     * 
+     * @param experiment
+     * @param clusters
+     * @param samplesOrder
+     * @param drawAnnotations
+     * @param header
+     * @param insets
+     */
+    public KMCSuppExperimentViewer(int[][] clusters, int[] samplesOrder,
+    		Boolean drawAnnotations, ExperimentHeader header, Insets insets, Integer exptID) {
+    	super(clusters, samplesOrder, drawAnnotations.booleanValue(), header, insets, exptID);
+    } 
     
     /**
      * Constructs a <code>HJCExperimentViewer</code> with specified
@@ -43,15 +61,6 @@ public class KMCSuppExperimentViewer extends ExperimentViewer {
 	getHeaderComponent().addMouseListener(listener);
     }
     
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        Listener listener = new Listener();
-        this.popup = createJPopupMenu(listener);
-        getContentComponent().addMouseListener(listener);
-        getHeaderComponent().addMouseListener(listener);        
-    }
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { }
-             
     
     /**
      * Creates a popup menu.

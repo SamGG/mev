@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: RNCentroidsViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-03-10 20:39:04 $
- * $Author: braistedj $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:51:24 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.rn;
@@ -28,7 +28,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
 public class RNCentroidsViewer extends CentroidsViewer implements java.io.Serializable {
-    public static final long serialVersionUID = 202014010001L;
+//    public static final long serialVersionUID = 202014010001L;
        
     private static final String SAVE_ALL_CLUSTERS_CMD = "save-all-clusters-cmd";
     private static final String SET_Y_TO_EXPERIMENT_MAX_CMD = "set-y-to-exp-max-cmd";
@@ -49,14 +49,9 @@ public class RNCentroidsViewer extends CentroidsViewer implements java.io.Serial
         getContentComponent().addMouseListener(listener);
     }
     
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {        
-        Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
-	getContentComponent().addMouseListener(listener);
-    }
     
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        
+    public RNCentroidsViewer(CentroidViewer cv) {
+   		super(cv);
     }
     
     /**

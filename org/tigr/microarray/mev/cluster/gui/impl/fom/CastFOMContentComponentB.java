@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: CastFOMContentComponentB.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-23 20:59:51 $
- * $Author: caliente $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:50:09 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.fom;
@@ -43,6 +43,10 @@ public class CastFOMContentComponentB extends JPanel implements java.io.Serializ
     float interval;
     float[] sortedFomValues;
     int[] sortedNumCastClusters;
+    JPanel listPanel;
+
+    private GridBagConstraints gbc;
+    
     public CastFOMContentComponentB(float[] fom_values, float interval, int[] numOfCastClusters) { // take average by default
 	setLayout(new GridBagLayout());
 	//System.out.println("Entered CastFOMComponentB");
@@ -66,6 +70,31 @@ public class CastFOMContentComponentB extends JPanel implements java.io.Serializ
 	add(createValuesList(sortedFomValues, numOfCastClusters), gbc);
     }
     
+    public static String[] getPersistenceDelegateArgs(){
+    	return new String[] {"fom_values", "interval", "numOfCastClusters"};
+    }
+    public CastFOMContentComponentB(){
+    	setLayout(new GridBagLayout());
+		gbc = new GridBagConstraints();
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridy = 0;
+		gbc.weighty = 1.0;
+    }
+
+	/**
+	 * @return Returns the fomGraphA.
+	 */
+	public FOMGraph getFomGraphB() {
+		return fomGraphB;
+	}
+	/**
+	 * @param fomGraphA The fomGraphA to set.
+	 */
+	public void setFomGraphB(FOMGraph fomGraphB) {
+		gbc.gridx = 0;
+		gbc.weightx = 0.9;
+		this.fomGraphB = fomGraphB;
+	}
     /*
     public BufferedImage getImageA() {
 	return this.fomGraphA.getImage();
@@ -101,6 +130,7 @@ public class CastFOMContentComponentB extends JPanel implements java.io.Serializ
 	    }
 	});
 	listPanel.add(button, gbc);
+		this.listPanel = listPanel;
 	return listPanel;
     }
     
@@ -187,6 +217,7 @@ public class CastFOMContentComponentB extends JPanel implements java.io.Serializ
      */
     
     public void onSelected(IFramework framework) {
+    	boolean test = framework.getDisplayMenu().isAntiAliasing();
 	this.fomGraphB.setAntiAliasing(framework.getDisplayMenu().isAntiAliasing());
     }
     
@@ -322,7 +353,30 @@ public class CastFOMContentComponentB extends JPanel implements java.io.Serializ
 	}
 	return items;
     }
-    
+	/**
+	 * @return Returns the fom_values.
+	 */
+	public float[] getFom_values() {
+		return fom_values;
+	}
+	/**
+	 * @param fom_values The fom_values to set.
+	 */
+	public void setFom_values(float[] fom_values) {
+		this.fom_values = fom_values;
+	}
+	/**
+	 * @return Returns the interval.
+	 */
+	public float getInterval() {
+		return interval;
+	}
+	/**
+	 * @param interval The interval to set.
+	 */
+	public void setInterval(float interval) {
+		this.interval = interval;
+	}
     /////////////////////////////////////////////////////////////////
   /*  public static void main(String[] args) throws Exception {
 	javax.swing.JFrame frame = new javax.swing.JFrame();
@@ -336,4 +390,22 @@ public class CastFOMContentComponentB extends JPanel implements java.io.Serializ
 	frame.setVisible(true);
     }
    **/
+	/**
+	 * @return Returns the numOfCastClusters.
+	 */
+	public int[] getNumOfCastClusters() {
+		return numOfCastClusters;
+	}
+	/**
+	 * @return Returns the sortedFomValues.
+	 */
+	public float[] getSortedFomValues() {
+		return sortedFomValues;
+	}
+	/**
+	 * @return Returns the sortedNumCastClusters.
+	 */
+	public int[] getSortedNumCastClusters() {
+		return sortedNumCastClusters;
+	}
 }

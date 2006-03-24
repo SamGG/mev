@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: LeafInfo.java,v $
- * $Revision: 1.6 $
- * $Date: 2005-03-10 20:38:25 $
- * $Author: braistedj $
+ * $Revision: 1.7 $
+ * $Date: 2006-03-24 15:49:53 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui;
@@ -22,7 +22,7 @@ import javax.swing.JPopupMenu;
  */
 public class LeafInfo implements java.io.Serializable {
         
-    public static final long serialVersionUID = 2020002L;
+//    public static final long serialVersionUID = 2020002L;
     
     // leaf name
     private String name;
@@ -82,7 +82,7 @@ public class LeafInfo implements java.io.Serializable {
      * @see IFramework#getUserObject
      */
     public LeafInfo(String name, IViewer viewer, Object userObject) {
-	this(name, viewer, (JPopupMenu)null, userObject);
+    	this(name, viewer, (JPopupMenu)null, userObject, false);
     }
     
     /**
@@ -109,10 +109,15 @@ public class LeafInfo implements java.io.Serializable {
      * @see IViewer
      * @see IFramework#getUserObject
      */
-    public LeafInfo(String name, IViewer viewer, JPopupMenu popup, Object userObject) {
+    public LeafInfo(String name, IViewer viewer, JPopupMenu popup, Object userObject, boolean selectedDataSource) {
 	this(name, viewer, popup, null);
 	this.userObject = userObject;
+		this.selectedDataSource = selectedDataSource;
     }
+    public static String[] getPersistenceDelegateArgs() {
+    	return new String[] {"name", "viewer", "popup", "userObject", "selectedDataSource"};
+    }
+    public boolean getSelectedDataSource(){return selectedDataSource;}
     
     /**
      * Constructs a <code>LeafInfo</code> with specified name,
@@ -205,22 +210,4 @@ public class LeafInfo implements java.io.Serializable {
     public void setPopupMenu(JPopupMenu menu){
         this.popup = menu;
     }
-       
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        oos.writeObject(this.name);
-        oos.writeObject(this.userObject);
-        oos.writeObject(this.tooltip);
-        oos.writeObject(this.viewer);
-        oos.writeBoolean(this.selectedDataSource);
-    }
-     
-   
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        this.name = (String)ois.readObject();
-        this.userObject = ois.readObject();
-        this.tooltip = (String)ois.readObject();
-        this.viewer = (IViewer)ois.readObject();
-        this.selectedDataSource = ois.readBoolean();
-    }   
 }

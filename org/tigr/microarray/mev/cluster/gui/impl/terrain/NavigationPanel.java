@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: NavigationPanel.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 20:33:21 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-03-24 15:52:04 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.terrain;
@@ -65,6 +65,7 @@ public class NavigationPanel extends JPanel implements ChangeListener, ActionLis
         mode_icons[ROT_MODE ] = GUIFactory.getIcon("rot_mode.gif");
     }
 
+    public NavigationPanel(){}
     public NavigationPanel(KeyMotionBehavior behavior) {
         setLayout(new GridBagLayout());
         this.behavior = behavior;

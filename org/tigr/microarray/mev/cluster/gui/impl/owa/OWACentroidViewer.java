@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: OWACentroidViewer.java,v $
- * $Revision: 1.8 $
- * $Date: 2005-03-10 20:32:39 $
- * $Author: braistedj $
+ * $Revision: 1.9 $
+ * $Date: 2006-03-24 15:51:02 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -18,6 +18,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.Expression;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
@@ -49,6 +50,25 @@ public class OWACentroidViewer extends CentroidViewer {
     /** Creates new OWACentroidViewer */
     public OWACentroidViewer(Experiment experiment, int[][] clusters, float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
         super(experiment, clusters);
+   
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public OWACentroidViewer(int[][] clusters, float[][] variances, float[][] means, float[][] codes, Integer id, float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
+    	super(clusters, variances, means, codes, id);
+    	initialize(geneGroupMeans, geneGroupSDs, rawPValues, adjPValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues);
+    }
+	/**
+	 * @inheritDoc
+	 */
+	public Expression getExpression(){
+		Object[] parentExpressionArgs = super.getExpression().getArguments();
+		return new Expression(this, this.getClass(), "new", 
+				new Object[]{parentExpressionArgs[0], parentExpressionArgs[1], parentExpressionArgs[2], parentExpressionArgs[3], parentExpressionArgs[4], geneGroupMeans, geneGroupSDs, rawPValues, adjPValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues});
+	}
+    public void initialize(float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
         Listener listener = new Listener();
         this.popup = createJPopupMenu(listener);
         this.rawPValues = rawPValues;
@@ -63,17 +83,6 @@ public class OWACentroidViewer extends CentroidViewer {
         getContentComponent().addMouseListener(listener);        
     }
     
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        oos.defaultWriteObject();
-    }
-
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        ois.defaultReadObject();
-        Listener listener = new Listener();
-        this.popup = createJPopupMenu(listener);
-        getContentComponent().addMouseListener(listener);
-    }    
-
     /**
      * Creates a popup menu.
      */

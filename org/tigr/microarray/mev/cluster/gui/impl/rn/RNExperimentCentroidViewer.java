@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: RNExperimentCentroidViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-03-10 20:39:03 $
- * $Author: braistedj $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:51:24 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.rn;
@@ -25,7 +25,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidView
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 
 public class RNExperimentCentroidViewer extends ExperimentClusterCentroidViewer implements java.io.Serializable {
-    public static final long serialVersionUID = 202014060001L;
+//    public static final long serialVersionUID = 202014060001L;
     
     private JPopupMenu popup;
 
@@ -39,14 +39,14 @@ public class RNExperimentCentroidViewer extends ExperimentClusterCentroidViewer 
 	this.popup = createJPopupMenu(listener);
 	getContentComponent().addMouseListener(listener);
     }
+    /*
+     * This constructor is used by XMLEncoder/Decoder and IViewerPersistenceDelegate
+     * to re-create a RNExperimentCentroidViewer from a saved xml file
+     */
     
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {        
-        Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
-	getContentComponent().addMouseListener(listener);
+    public RNExperimentCentroidViewer(int[][] clusters, Integer exptID, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes){
+    	super(clusters, exptID, clusterIndex, means, variances, codes);
     }
-    
-    private void writeObject(java.io.ObjectOutputStream ois) throws java.io.IOException { }
     
     /**
      * Creates a popup menu.

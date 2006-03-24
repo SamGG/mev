@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayCanvas.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-02-23 20:59:41 $
- * $Author: caliente $
+ * $Revision: 1.10 $
+ * $Date: 2006-03-24 15:49:44 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -29,6 +29,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
@@ -40,6 +41,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 
+import org.tigr.microarray.mev.MultipleArrayData;
 import org.tigr.microarray.mev.action.DefaultAction;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
@@ -50,8 +52,7 @@ import org.tigr.microarray.util.SlideDataSorter;
 import org.tigr.util.FloatMatrix;
 
 
-public class MultipleArrayCanvas extends JPanel implements IViewer, java.io.Serializable {
-    public static final long serialVersionUID = 100010201030001L;
+public class MultipleArrayCanvas extends JPanel implements IViewer {
     
     private static final int TRACE_SPACE = 50;
         
@@ -131,22 +132,11 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, java.io.Seri
         popup = createPopupMenu(listener);
     }
     
- /*   private void writeObject(java.io.ObjectOutputStream oos){
-        oos.writeObject();
-        oos.writeObject();
-        oos.writeObject();
-        oos.writeObject();
-        oos.writeObject();
-    }
-  **/
-    
     /**
      * Overriden to have focus. (deprecated as of 1.4, use isFocusable()
      */
-/*    public boolean isFocusTraversable() {
-        return true;
-    }
- */
+
+    
     /**
      * Overriden to have focus.
      */
@@ -889,9 +879,24 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, java.io.Seri
         return null;
     }
     
+    /**
+     * Implemented only to satisfy the IViewer interface.  Always returns null.
+     */
     public Experiment getExperiment() {
         return null;
     }
+    /**
+     * Implemented only to satisfy the IViewer interface.  Does nothing.
+     */
+    public void setExperiment(Experiment e){}
+    /**
+     * Implemented only to satisfy the IViewer interface.  Does nothing.
+     */
+    public void setExperimentID(int i){}
+    /**
+     * Implemented only to satisfy the IViewer interface.  Does nothing.
+     */
+    public int getExperimentID(){return 0;}
     
     /** Returns int value indicating viewer type
      * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
@@ -1200,5 +1205,14 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, java.io.Seri
         }
         
     }
+
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExpression()
+	 */
+	public Expression getExpression() {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
 }

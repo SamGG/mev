@@ -4,13 +4,18 @@ All rights reserved.
  */
 /*
  * $RCSfile: FloatSlideData.java,v $
- * $Revision: 1.11 $
- * $Date: 2006-02-24 14:54:59 $
- * $Author: wwang67 $
+ * $Revision: 1.12 $
+ * $Date: 2006-03-24 15:49:44 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
+import java.beans.PersistenceDelegate;
+import java.beans.XMLEncoder;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Vector;
@@ -31,7 +36,6 @@ import org.tigr.util.math.LinearEquation;
  *  was invalid.
  */
 public class FloatSlideData implements ISlideData, java.io.Serializable {
-    public static final long serialVersionUID = 10201060001L;
     
     private String name; // slide name
     private String filename; // slide file name
@@ -55,8 +59,12 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
     private char [] detection;
     //wwang
     //add for pvalue filter
+	//TODO this item needs to be added to the state-saving functions for 
+	//FloatSlideData
     private float[] pvalue;
     //add for GenePix
+	//TODO this item needs to be added to the state-saving functions for 
+	//FloatSlideData
     private int[] flags;
     
     //Support multiple sample labels
@@ -64,6 +72,8 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
     private Hashtable sampleLabels;
     private Vector sampleLabelKeys;
     
+	//TODO this item needs to be added to the state-saving functions for 
+	//FloatSlideData
     /**
      * Raktim Oct 31, 2005
      * CGH FlankingRegions, and Slide Consts
@@ -72,6 +82,32 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
      */
     private Vector[] flankingRegions;
     
+    /**
+     * Creates a new FloatSlideData with no intensity or detection data. Designed for use 
+     * with XMLEncoder/XMLDecoder for state-saving.
+     * 
+     * @param sampleLabelKeys
+     * @param sampleLabels
+     * @param filename
+     * @param name
+     * @param isNonZero
+     * @param normalizedState
+     * @param sortState
+     * @param spotInfoData
+     */
+    public FloatSlideData(Vector sampleLabelKeys, Hashtable sampleLabels, 
+    		String filename, String name, boolean isNonZero,
+			int normalizedState, int sortState, SpotInformationData spotInfoData, Integer dataType){
+    	this.sampleLabelKeys = sampleLabelKeys;
+    	this.sampleLabels = sampleLabels;
+    	this.filename = filename;
+    	this.name = name;
+    	this.setNonZero(isNonZero);
+    	this.normalizedState = normalizedState;
+    	this.sortState = sortState;
+    	this.spotInfoData = spotInfoData;
+    	this.dataType = dataType.intValue();
+    }    
     /**
      * Creates a <code>FloatSlideData</code> with specified reference
      * to a microarray meta data.
@@ -101,12 +137,75 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
         sampleLabels = new Hashtable();
     }
     
+    public void setCurrentCY3(float[] f){this.currentCY3=f;}
+    public void setCurrentCY5(float[] f){this.currentCY5=f;}
+    public void setTrueCY3(float[] f){this.trueCY3=f;}
+    public void setTrueCY5(float[] f){this.trueCY5=f;}
+    public char[] getDetection() {return detection;}
+    
+    public void loadIntensities(DataInputStream dis) throws IOException {
+    	currentCY3 = new float[dis.readInt()];
+    	for(int i=0; i<currentCY3.length; i++){
+    		currentCY3[i] = dis.readFloat();
+    	}
+    	currentCY5 = new float[dis.readInt()];
+    	for(int i=0; i<currentCY5.length; i++){
+    		currentCY5[i] = dis.readFloat();
+    	}
+    	trueCY3 = new float[dis.readInt()];
+    	for(int i=0; i<trueCY3.length; i++){
+    		trueCY3[i] = dis.readFloat();
+    	}
+    	trueCY5 = new float[dis.readInt()];
+    	for(int i=0; i<trueCY5.length; i++){
+    		trueCY5[i] = dis.readFloat();
+    	}
+    	detection = new char[dis.readInt()];
+    	for(int i=0; i<detection.length; i++){
+    		detection[i] = dis.readChar();
+    	}
+    }
+    public void writeIntensities(DataOutputStream dos) throws IOException {
+    	if(currentCY3 != null){
+    		dos.writeInt(currentCY3.length);
+    		for(int i=0; i<currentCY3.length; i++){
+    			dos.writeFloat(currentCY3[i]);
+    		}
+    	} else 
+    		dos.writeInt(0);
+
+    	if(currentCY5 != null){
+	    	dos.writeInt(currentCY5.length);
+	    	for(int i=0; i<currentCY5.length; i++){
+	    		dos.writeFloat(currentCY5[i]);
+	    	}
+    	} else
+    		dos.writeInt(0);
+
+    	dos.writeInt(trueCY3.length);
+    	for(int i=0; i<trueCY3.length; i++){
+    		dos.writeFloat(trueCY3[i]);
+    	}
+    	
+    	dos.writeInt(trueCY5.length);
+    	for(int i=0; i<trueCY5.length; i++){
+    		dos.writeFloat(trueCY5[i]);
+    	}
+    	
+    	dos.writeInt(detection.length);
+    	for(int i=0; i<detection.length; i++){
+    		dos.writeChar(detection[i]);
+    	}
+    }
+
     /**
      * Returns a reference to a microarray meta data.
      */
     public ISlideMetaData getSlideMetaData() {
         return slideMetaData;
     }
+    
+    public void setSlideMetaData(ISlideMetaData i){this.slideMetaData = i;}
     
     /**
      * Sets the data type attribute see static type variables in <code>IData</code>
@@ -218,6 +317,9 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
                 return this.filename;
             return this.filename.substring(0, 25)+"...";
         }
+    }
+    public String getFullSlideFileName() {
+    	return this.filename;
     }
     
     /**
@@ -371,7 +473,9 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
     public void setNonZero(boolean value) {
         isNonZero = value;
     }
-    
+    public boolean getIsNonZero() {
+    	return isNonZero;
+    }
     /**
      * Returns a ratio of specified values.
      * Raktim - Remember getRatio Glitch for CGH Data
@@ -621,7 +725,9 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
         //pcahan
         sde.setDetection(getDetection(index));
         //wwang
+        try{
         sde.setPvalue(getPvalue(index));
+        } catch (NullPointerException npe) {}
         return sde;
     }
     
@@ -1051,6 +1157,9 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
      */
     public void setDataLabelKey(String key) {
         this.sampleLabelKey = key;
+    }
+    public String getSampleLabelKey() {
+    	return sampleLabelKey;
     }
     
     /** Adds a new key and label value

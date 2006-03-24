@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: HCLCentroidViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2006-02-23 20:59:51 $
- * $Author: caliente $
+ * $Revision: 1.4 $
+ * $Date: 2006-03-24 15:50:40 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.hcl;
@@ -29,7 +29,18 @@ public class HCLCentroidViewer extends CentroidViewer implements java.io.Seriali
     
     private JPopupMenu popup;
     
-    
+    /**
+     * See superclass.  
+     * 
+     * @param clusters
+     * @param variances
+     * @param means
+     * @param codes
+     * @param id
+     */
+    public HCLCentroidViewer(int[][] clusters, float[][] variances, float[][] means, float[][] codes, Integer id) {
+    	super(clusters, variances, means, codes, id);
+    }
     /**
      * Construct a <code>HCLCentroidViewer</code> with specified experiment
      * and clusters.
@@ -41,15 +52,6 @@ public class HCLCentroidViewer extends CentroidViewer implements java.io.Seriali
 	getContentComponent().addMouseListener(listener);
     }
     
-   
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { }    
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {        
-        Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
-	getContentComponent().addMouseListener(listener);
-    }
-       
     /**
      * Creates a popup menu.
      */

@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: OWAInfoViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-02-23 20:59:52 $
- * $Author: caliente $
+ * $Revision: 1.8 $
+ * $Date: 2006-03-24 15:51:02 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.owa;
@@ -31,7 +31,6 @@ import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
  * @version 
  */
 public class OWAInfoViewer extends ViewerAdapter implements java.io.Serializable {
-    public static final long serialVersionUID = 202010020001L;
     
     private JComponent header;
     private JTextArea  content;
@@ -41,7 +40,11 @@ public class OWAInfoViewer extends ViewerAdapter implements java.io.Serializable
 	content = createContent(clusters, genes);
 	setMaxWidth(content, header);        
     }
-    
+    public OWAInfoViewer(JTextArea content, JComponent header){
+    	this.header = header;
+    	this.content = content;
+    	setMaxWidth(content, header);        
+    }
     /**
      * Returns component to be inserted into the framework scroll pane.
      */

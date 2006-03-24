@@ -4,9 +4,9 @@
  */
 /*
  * $RCSfile: SOMExperimentViewer.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-02-23 20:59:54 $
- * $Author: caliente $
+ * $Revision: 1.9 $
+ * $Date: 2006-03-24 15:51:36 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.som;
@@ -18,6 +18,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -39,8 +40,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.util.FloatMatrix;
 
-public class SOMExperimentViewer implements IViewer, java.io.Serializable {    
-	public static final long serialVersionUID = 202016010001L;
+public class SOMExperimentViewer implements IViewer {    
 	
 	private JPopupMenu popup;
 	private ExperimentViewer expViewer;
@@ -70,24 +70,31 @@ public class SOMExperimentViewer implements IViewer, java.io.Serializable {
 		this.header.setMissingColor(expViewer.getMissingColor());
 		this.header.addMouseListener(listener);
 	}
-	
-	
-	private void writeObject(ObjectOutputStream oos) throws IOException {
-		oos.writeObject(this.expViewer);
-		oos.writeObject(header);
+	public Expression getExpression(){
+		return new Expression(this, this.getClass(), "new", 
+				new Object[]{this.expViewer, this.getClusters(), this.header});
 	}    
-	
-	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-		this.expViewer = (ExperimentViewer)ois.readObject();
-		this.header = (CentroidExperimentHeader)ois.readObject();
-		
+	/**
+	 * @inheritDoc
+	 */
+    public SOMExperimentViewer(ExperimentViewer expViewer, int[][] clusters, CentroidExperimentHeader header) {
 		Listener listener = new Listener();	
-		this.expViewer.getContentComponent().addMouseListener(listener);
-		this.header.setNegAndPosColorImages(expViewer.getPosColorImage(), expViewer.getNegColorImage());
-		this.header.setMissingColor(expViewer.getMissingColor());
-		this.header.addMouseListener(listener);
 		this.popup = createJPopupMenu(listener);
+		
+		this.expViewer = expViewer;
+		this.expViewer.getContentComponent().addMouseListener(listener);
+		
+		this.header = header;
 	}        
+    
+    public void setExperiment(Experiment e){
+    	expViewer.setExperiment(e);
+    }
+    public void setExperimentID(int id){
+    	expViewer.setExperimentID(id);
+    }
+    public int getExperimentID(){return expViewer.getExperimentID();}
+    
 	
 	/**
 	 * Returns the header component.

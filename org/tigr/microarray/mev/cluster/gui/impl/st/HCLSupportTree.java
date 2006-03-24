@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLSupportTree.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 20:32:37 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-03-24 15:51:48 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.st;
@@ -17,6 +17,9 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.beans.Encoder;
+import java.beans.Expression;
+import java.beans.PersistenceDelegate;
 import java.text.DecimalFormat;
 import java.util.Vector;
 
@@ -48,6 +51,11 @@ public class HCLSupportTree extends HCLTree {
         format.setMaximumFractionDigits(0);
     }
     
+
+    public static PersistenceDelegate getPersistenceDelegate(){
+    	return new HCLSupportTreePersistenceDelegate();
+    }
+
     /*
     protected void updateSize(Dimension elementSize) {
         super.updateSize(elementSize);
@@ -396,6 +404,12 @@ public class HCLSupportTree extends HCLTree {
         } else /* percent < 0 */ {
             return Color.pink;
         }
+    }
+    private static class HCLSupportTreePersistenceDelegate extends PersistenceDelegate {
+    	public Expression instantiate(Object oldInstance, Encoder encoder) {
+    		HCLSupportTree aTree = (HCLSupportTree) oldInstance;
+    		return new Expression(aTree, aTree.getClass(), "new", new Object[]{aTree.treeData, new Integer(aTree.orientation), aTree.geneTreeSupportVector, aTree.exptTreeSupportVector});
+    	}
     }
     
 }

@@ -4,21 +4,23 @@ All rights reserved.
 */
 /*
  * $RCSfile: HCLTreeData.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-07-27 19:59:16 $
- * $Author: braisted $
+ * $Revision: 1.4 $
+ * $Date: 2006-03-24 15:50:40 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.hcl;
 
 public class HCLTreeData implements java.io.Serializable {
     
-    public static final long serialVersionUID = 202006070001L;
+ //   public static final long serialVersionUID = 202006070001L;
 
     public int[] child_1_array;
     public int[] child_2_array;
     public int[] node_order;
     public float[] height;
+    
+    public HCLTreeData(){}
     
     /** Getter for property child_1_array.
      * @return Value of property child_1_array.

@@ -109,43 +109,13 @@ public class PTMGeneStatsTableViewer extends ViewerAdapter implements java.io.Se
         setMaxWidth(getContentComponent(), getHeaderComponent());        
     }
     
+    public PTMGeneStatsTableViewer(JComponent content, JComponent header){
+    	this.content = content;
+    	this.header = header;
+        setMaxWidth(getContentComponent(), getHeaderComponent());         
+    }
     
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        oos.writeObject(this.experiment);
-        oos.writeObject(this.clusters);
-        oos.writeObject(this.fieldNames);
-
-        oos.writeObject(this.auxData);
-        oos.writeObject(this.auxTitles);
-
-        oos.writeObject(this.rows);
-        oos.writeObject(this.pAndRModel);        
-        oos.writeObject(this.origData);
-        oos.writeObject(this.pAndRValuesTable);
-        oos.writeObject(this.header);
-        oos.writeObject(this.sortedAscending);
-        oos.writeBoolean(this.sig);
-      }
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        this.experiment = (Experiment)ois.readObject();
-        this.clusters = (int [][])ois.readObject();
-        this.fieldNames = (String [])ois.readObject();
-
-        this.auxData = (Object [][])ois.readObject();
-        this.auxTitles = (String [])ois.readObject();
         
-        this.rows = (int [])ois.readObject();
-        this.pAndRModel = (PAndRValuesTableModel)ois.readObject();
-        this.origData = (Object [][])ois.readObject();
-        this.pAndRValuesTable = (JTable)ois.readObject();
-        this.header = (JComponent)ois.readObject();
-        this.sortedAscending = (boolean [])ois.readObject();
-        this.sig = ois.readBoolean();
-        
-        addMouseListenerToHeaderInTable(this.pAndRValuesTable);
-        this.header = header  = this.pAndRValuesTable.getTableHeader();
-    }    
     
     /**
      * Returns component to be inserted into the framework scroll pane.

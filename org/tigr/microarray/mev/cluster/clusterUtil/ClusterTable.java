@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterTable.java,v $
- * $Revision: 1.10 $
- * $Date: 2005-03-10 15:48:56 $
- * $Author: braistedj $
+ * $Revision: 1.11 $
+ * $Date: 2006-03-24 15:49:52 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -24,6 +24,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 import java.util.Arrays;
 import java.util.Vector;
 
@@ -1208,6 +1209,10 @@ public class ClusterTable extends JPanel implements IViewer {
         return null;
     }
     
+    /**
+     * Implemented to satisfy the IViewer interface - returns null because
+     * there is no associated Experiment.
+     */
     public Experiment getExperiment() {
         return null;
     }
@@ -1218,5 +1223,29 @@ public class ClusterTable extends JPanel implements IViewer {
     public int getViewerType() {
         return -1;
     }
+    /**
+     * Implemented to satisfy the IViewer interface. Does nothing because 
+     * ClusterTable has no Experiment object associated with it.
+     */
+    public void setExperimentID(int i){}
     
+    /**
+     * Implemented to satisfy the IViewer interface - always returns 0
+     * because ClusterTable has no Experiment object associated with it.
+     */
+    public int getExperimentID(){return 0;}
+    /**
+     * Implemented to satisfy the IViewer interface - does nothing.
+     */
+    public void setExperiment(Experiment e){}
+
+
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExpression()
+	 */
+	public Expression getExpression() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

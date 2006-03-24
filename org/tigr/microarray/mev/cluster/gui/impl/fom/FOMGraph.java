@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: FOMGraph.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-02-23 20:59:51 $
- * $Author: caliente $
+ * $Revision: 1.9 $
+ * $Date: 2006-03-24 15:50:09 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.fom;
@@ -74,6 +74,12 @@ public class FOMGraph extends JPanel implements java.io.Serializable {
         this.title = title;
         this.xLabel = xLabel;
         this.yLabel = yLabel;
+        this.mouseHandler = new MouseHandler();
+        addMouseMotionListener(mouseHandler);
+        addMouseListener(mouseHandler);
+    }
+    public FOMGraph(){
+        setBackground(Color.white);
         this.mouseHandler = new MouseHandler();
         addMouseMotionListener(mouseHandler);
         addMouseListener(mouseHandler);
@@ -349,4 +355,184 @@ public class FOMGraph extends JPanel implements java.io.Serializable {
         
     }
     
+	/**
+	 * @return Returns the haveIValues.
+	 */
+	public boolean isHaveIValues() {
+		return haveIValues;
+	}
+	/**
+	 * @param haveIValues The haveIValues to set.
+	 */
+	public void setHaveIValues(boolean haveIValues) {
+		this.haveIValues = haveIValues;
+	}
+	/**
+	 * @return Returns the insets.
+	 */
+	public Insets getInsets() {
+		return insets;
+	}
+	/**
+	 * @param insets The insets to set.
+	 */
+	public void setInsets(Insets insets) {
+		this.insets = insets;
+	}
+	/**
+	 * @return Returns the iValues.
+	 */
+	public float[][] getIValues() {
+		return iValues;
+	}
+	/**
+	 * @param values The iValues to set.
+	 */
+	public void setIValues(float[][] values) {
+		iValues = values;
+	}
+	/**
+	 * @return Returns the maxXItem.
+	 */
+	public int getMaxXItem() {
+		return maxXItem;
+	}
+	/**
+	 * @param maxXItem The maxXItem to set.
+	 */
+	public void setMaxXItem(int maxXItem) {
+		this.maxXItem = maxXItem;
+	}
+	/**
+	 * @return Returns the maxYItem.
+	 */
+	public int getMaxYItem() {
+		return maxYItem;
+	}
+	/**
+	 * @param maxYItem The maxYItem to set.
+	 */
+	public void setMaxYItem(int maxYItem) {
+		this.maxYItem = maxYItem;
+	}
+	/**
+	 * @return Returns the showIValues.
+	 */
+	public boolean isShowIValues() {
+		return showIValues;
+	}
+	/**
+	 * @param showIValues The showIValues to set.
+	 */
+	public void setShowIValues(boolean showIValues) {
+		this.showIValues = showIValues;
+	}
+	/**
+	 * @return Returns the showVariance.
+	 */
+	public boolean isShowVariance() {
+		return showVariance;
+	}
+	/**
+	 * @param showVariance The showVariance to set.
+	 */
+	public void setShowVariance(boolean showVariance) {
+		this.showVariance = showVariance;
+	}
+	/**
+	 * @return Returns the title.
+	 */
+	public String getTitle() {
+		return title;
+	}
+	/**
+	 * @param title The title to set.
+	 */
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	/**
+	 * @return Returns the values.
+	 */
+	public float[] getValues() {
+		return values;
+	}
+	/**
+	 * @param values The values to set.
+	 */
+	public void setValues(float[] values) {
+		this.values = values;
+	}
+	/**
+	 * @return Returns the variances.
+	 */
+	public float[] getVariances() {
+		return variances;
+	}
+	/**
+	 * @param variances The variances to set.
+	 */
+	public void setVariances(float[] variances) {
+		this.variances = variances;
+	}
+	/**
+	 * @return Returns the xItems.
+	 */
+	public String[] getXItems() {
+		return xItems;
+	}
+	/**
+	 * @param items The xItems to set.
+	 */
+	public void setXItems(String[] items) {
+		xItems = items;
+	}
+	/**
+	 * @return Returns the xLabel.
+	 */
+	public String getXLabel() {
+		return xLabel;
+	}
+	/**
+	 * @param label The xLabel to set.
+	 */
+	public void setXLabel(String label) {
+		xLabel = label;
+	}
+	/**
+	 * @return Returns the yItems.
+	 */
+	public String[] getYItems() {
+		return yItems;
+	}
+	/**
+	 * @param items The yItems to set.
+	 */
+	public void setYItems(String[] items) {
+		yItems = items;
+	}
+	/**
+	 * @return Returns the yLabel.
+	 */
+	public String getYLabel() {
+		return yLabel;
+	}
+	/**
+	 * @param label The yLabel to set.
+	 */
+	public void setYLabel(String label) {
+		yLabel = label;
+	}
+	/**
+	 * @return Returns the isAntiAliasing.
+	 */
+	public boolean isAntiAliasing() {
+		return isAntiAliasing;
+	}
+	/**
+	 * @return Returns the maxYValue.
+	 */
+	public float getMaxYValue() {
+		return maxYValue;
+	}
 }

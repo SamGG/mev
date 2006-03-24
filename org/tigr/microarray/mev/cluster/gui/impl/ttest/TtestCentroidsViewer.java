@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: TtestCentroidsViewer.java,v $
- * $Revision: 1.8 $
- * $Date: 2005-03-10 20:36:42 $
- * $Author: braistedj $
+ * $Revision: 1.9 $
+ * $Date: 2006-03-24 15:52:09 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -17,6 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.Expression;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
@@ -71,19 +72,31 @@ public class TtestCentroidsViewer extends CentroidsViewer {
         getContentComponent().addMouseListener(listener);
     }
 
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        oos.defaultWriteObject();
-    }
-    
-     private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        ois.defaultReadObject();
+	/**
+	 * 
+	 */
+	public TtestCentroidsViewer(CentroidViewer cv, Integer tTestDesign, Vector oneClassMeans, Vector oneClassSDs, Vector meansA, Vector meansB, Vector sdA, Vector sdB, Vector rawPValues, Vector adjPValues, Vector tValues, Vector dfValues) {
+		super(cv);
         Listener listener = new Listener();
         this.popup = createJPopupMenu(listener);
+        this.tTestDesign = tTestDesign.intValue();
+        this.oneClassMeans = oneClassMeans;
+        this.oneClassSDs = oneClassSDs;
+        this.rawPValues = rawPValues;
+        this.adjPValues = adjPValues;
+        this.tValues = tValues;
+        this.dfValues = dfValues;
+        this.meansA = meansA;
+        this.meansB = meansB;
+        this.sdA = sdA;
+        this.sdB = sdB;
         getContentComponent().addMouseListener(listener);      
      }
  
-     
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{this.centroidViewer, new Integer(this.tTestDesign), this.oneClassMeans, this.oneClassSDs, this.meansA, this.meansB, this.sdA, this.sdB, this.rawPValues, this.adjPValues, this.tValues, this.dfValues});
+    }
     /**
      * Creates a popup menu.
      */

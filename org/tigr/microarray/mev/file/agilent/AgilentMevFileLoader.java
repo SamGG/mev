@@ -113,12 +113,13 @@ public class AgilentMevFileLoader extends ExpressionFileLoader {
 		int length = annot.getSize();
 
 		String [] header = annot.getSpotInformationHeader();
-		Vector v = new Vector();
-		for(int i = 0; i < header.length; i++) {
-			v.add(header[i]);
-		}
-		setTMEVFieldNames(v);
+//		Vector v = new Vector();
+//		for(int i = 0; i < header.length; i++) {
+//			v.add(header[i]);
+//		}
+//		setTMEVFieldNames(v);
         
+		data.appendFieldNames(header);
 		for(int i = 1; i < length; i++){
 			((SlideDataElement)data.getSlideDataElement(i)).setExtraFields(annot.getSpotInformationArray(i));
 		}
@@ -227,7 +228,9 @@ public class AgilentMevFileLoader extends ExpressionFileLoader {
 			for(int i = 3; i < headers.size(); i++){
 				annotHeaders.add(((String)headers.elementAt(i)));
 			}
-			setTMEVFieldNames(annotHeaders);
+
+		//	data.appendFieldNames(annotHeaders);
+		//	setTMEVFieldNames(annotHeaders);
             
 			String [][] annMatrix = parser.getDataMatrix();
 			Hashtable hash = new Hashtable();

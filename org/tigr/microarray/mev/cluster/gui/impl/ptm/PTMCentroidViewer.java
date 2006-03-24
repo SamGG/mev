@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMCentroidViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2005-03-10 20:22:03 $
- * $Author: braistedj $
+ * $Revision: 1.7 $
+ * $Date: 2006-03-24 15:51:08 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.ptm;
@@ -22,6 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.Expression;
 import java.util.Vector;
 
 import javax.swing.JColorChooser;
@@ -52,24 +53,19 @@ public class PTMCentroidViewer extends CentroidViewer {
         this.auxData = auxData;
 	getContentComponent().addMouseListener(listener);
     }
-    
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        oos.writeObject(this.templateVector);
-        oos.writeObject(this.auxData);
-        oos.writeObject(this.auxTitles);
+    /**
+     * @inheritDoc
+     */
+    public PTMCentroidViewer(int[][] clusters, float[][] variances, float[][] means, float[][] codes, Integer id, Vector templateVector, String[] auxTitles, Object[][] auxData) {
+    	super(clusters, variances, means, codes, id);
+    	this.auxTitles = auxTitles;
+    	this.auxData = auxData;
+    	this.templateVector = templateVector;
     }    
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {        
-        this.templateVector = (Vector)ois.readObject();
-        this.auxData = (Object [][])ois.readObject();
-        this.auxTitles = (String [])ois.readObject();
-            
-        Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
-	getContentComponent().addMouseListener(listener);
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{this.clusters, this.variances, this.means, this.codes, new Integer(this.getExperimentID()), this.templateVector, this.auxTitles, this.auxData});
     }
-    
     
     /**
      * Creates a popup menu.

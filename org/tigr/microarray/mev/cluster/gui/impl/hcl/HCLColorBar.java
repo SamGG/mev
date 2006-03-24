@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: HCLColorBar.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-02-23 20:59:51 $
- * $Author: caliente $
+ * $Revision: 1.7 $
+ * $Date: 2006-03-24 15:50:40 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.hcl;
@@ -25,9 +25,7 @@ import javax.swing.JPanel;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 
-public class HCLColorBar extends JPanel implements java.io.Serializable {
-    
-    public static final long serialVersionUID = 202006040001L;
+public class HCLColorBar extends JPanel {
     
     private static final int BAR_WIDTH = 10;
     
@@ -46,6 +44,17 @@ public class HCLColorBar extends JPanel implements java.io.Serializable {
 	this.clusters = clusters;
 	this.featuresSize = featuresSize;
     }
+    
+    //EH additions for XMLEncoding/Decoding
+    public HCLColorBar() {
+		setBackground(Color.white);
+		setFont(new Font("monospaced",Font.PLAIN, 20));
+    }
+    public ArrayList getClusters(){return clusters;}
+    public int getFeaturesSize(){return featuresSize;}
+    public void setClusters(ArrayList a) {this.clusters = a;}
+    public void setFeaturesSize(int fs) {this.featuresSize = fs;}
+    //EH end additions
     
     /**
      * Paints the component into specified graphics.

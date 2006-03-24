@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: CentroidUserObject.java,v $
- * $Revision: 1.3 $
- * $Date: 2004-07-27 19:59:15 $
- * $Author: braisted $
+ * $Revision: 1.4 $
+ * $Date: 2006-03-24 15:49:54 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.helpers;
@@ -32,6 +32,18 @@ public class CentroidUserObject implements java.io.Serializable {
 	this.mode = mode;
     }
     
+    //EH 06/14/05 beanifying
+    public CentroidUserObject() {
+    	
+    }
+    public void setClusterIndex(int c) {
+    	clusterIndex = c;
+    }
+    public void setMode(int m) {
+    	this.mode = m;
+    }
+    //EH end beanifying
+        
     /**
      * Returns a cluster index.
      */

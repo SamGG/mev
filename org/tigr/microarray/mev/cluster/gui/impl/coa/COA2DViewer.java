@@ -24,6 +24,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 import java.text.DecimalFormat;
 import java.util.Vector;
 
@@ -51,8 +52,7 @@ import org.tigr.util.FloatMatrix;
  *
  * @author  nbhagaba
  */
-public class COA2DViewer extends JPanel implements IViewer, java.io.Serializable {
-    public static final long serialVersionUID = 202022030001L;
+public class COA2DViewer extends JPanel implements IViewer {
     
     private static final String SAVE_CMD    = "save-cmd";
     private static final String SAVE_GENE_CLUSTER_CMD    = "save-genes-cmd";
@@ -82,6 +82,7 @@ public class COA2DViewer extends JPanel implements IViewer, java.io.Serializable
     Rectangle currentRect = null;
     Rectangle rectToDraw = null;
     Rectangle previousRectDrawn = new Rectangle();    
+    private int exptID = 0;
     
     /** Creates a new instance of COA2DViewer */
     public COA2DViewer(Experiment experiment, float[] xArray, float[] yArray, int geneOrExpt, int axis1, int axis2) {
@@ -94,6 +95,7 @@ public class COA2DViewer extends JPanel implements IViewer, java.io.Serializable
         this.axis1 = axis1;
         this.axis2 = axis2;
         this.experiment = experiment;
+        this.exptID = experiment.getId();
         this.ellipse = new Ellipse2D.Double();
         this.setBackground(Color.white);   
         
@@ -116,6 +118,7 @@ public class COA2DViewer extends JPanel implements IViewer, java.io.Serializable
         this.showTickLabels = true;        
         this.geneOrExpt = geneOrExpt;
         this.experiment = experiment;
+        this.exptID = experiment.getId();
         this.ellipse = new Ellipse2D.Double();
         this.setBackground(Color.white); 
         
@@ -142,6 +145,7 @@ public class COA2DViewer extends JPanel implements IViewer, java.io.Serializable
         this.showTickLabels = true;
         this.geneOrExpt = geneOrExpt;
         this.experiment = experiment;
+        this.exptID = experiment.getId();
         this.ellipse = new Ellipse2D.Double();
         this.setBackground(Color.white);  
         
@@ -151,7 +155,60 @@ public class COA2DViewer extends JPanel implements IViewer, java.io.Serializable
         addMouseListener(graphListener);
         addMouseMotionListener(graphListener);        
     }
+    /**
+     * XMLEncoder/Decoder constructor
+     * @param exptID
+     * @param geneUMatrix
+     * @param expUMatrix
+     * @param xArray
+     * @param yArray
+     * @param geneOrExpt
+     * @param axis1
+     * @param axis2
+     */
+    public COA2DViewer(Integer exptID, FloatMatrix geneUMatrix, FloatMatrix expUMatrix, float[] xArray, float[] yArray, Integer geneOrExpt, Integer axis1, Integer axis2) {
+        this.exptID = exptID.intValue();
+        this.xArray = xArray;
+        this.yArray = yArray;
+        this.axis1 = axis1.intValue();
+        this.axis2 = axis2.intValue();        
+        this.displayExptNames = false;
+        this.showLargePoints = false;
+        this.showTickLabels = true;
+        this.geneOrExpt = geneOrExpt.intValue();
+        if(geneUMatrix != null)
+        	this.geneUMatrix = geneUMatrix;
+        if(expUMatrix != null)
+        	this.exptUMatrix = expUMatrix;
+        if (this.geneOrExpt == COAGUI.BOTH) {
+            scaledGeneUMatrix = (FloatMatrix)(geneUMatrix.clone());
+            scaledExptUMatrix = (FloatMatrix)(exptUMatrix.clone());   
+	    }     
+        this.ellipse = new Ellipse2D.Double();
+        this.setBackground(Color.white);  
+        
+        popup = createJPopupMenu();
     
+        GraphListener graphListener = new GraphListener();
+        addMouseListener(graphListener);
+        addMouseMotionListener(graphListener);        
+    }
+    /**
+     * @inheritDoc
+     */
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{new Integer(exptID), geneUMatrix, exptUMatrix, xArray, yArray, new Integer(geneOrExpt), new Integer(axis1), new Integer(axis2)});
+    }
+    
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
+	 */
+	public void setExperiment(Experiment e) {
+		this.experiment = e;
+		this.exptID = experiment.getId();
+	}
+
     private void scaleMatrices(FloatMatrix U1, FloatMatrix U2) { //brings them both to the same scale for plotting
         float max1 = 0f;
         float max2 = 0f;
@@ -663,48 +720,6 @@ public class COA2DViewer extends JPanel implements IViewer, java.io.Serializable
         this.data = data;
     }    
     
-    private void writeObject(java.io.ObjectOutputStream oos) throws  java.io.IOException {
-        oos.writeObject(this.experiment);
-        oos.writeInt(this.geneOrExpt);
-        if (this.geneOrExpt == COAGUI.BOTH) {
-            oos.writeObject(geneUMatrix);
-            oos.writeObject(exptUMatrix);
-        } 
-        oos.writeObject(this.UMatrix);
-        oos.writeInt(axis1);
-        oos.writeInt(axis2);
-        
-    }
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        this.experiment = (Experiment)ois.readObject();
-        this.geneOrExpt = ois.readInt();
-        if (geneOrExpt == COAGUI.BOTH) {
-            this.geneUMatrix = (FloatMatrix)ois.readObject();
-            this.exptUMatrix = (FloatMatrix)ois.readObject();
-        }
-        this.UMatrix = (FloatMatrix)ois.readObject();
-        this.axis1 = ois.readInt();
-        this.axis2 = ois.readInt();
-        
-        this.xArray = getFloatArray(UMatrix, axis1);
-        this.yArray = getFloatArray(UMatrix, axis2);
-        this.displayExptNames = false;
-        this.showLargePoints = false;  
-        this.showTickLabels = true;        
-        this.ellipse = new Ellipse2D.Double();
-        this.setBackground(Color.white); 
-        
-        currentRect = null;
-        rectToDraw = null;
-        previousRectDrawn = new Rectangle();       
-        //popup = createJPopupMenu();
-        
-        GraphListener graphListener = new GraphListener();
-        addMouseListener(graphListener);
-        addMouseMotionListener(graphListener);         
-    }    
-    
     private class GraphListener extends MouseInputAdapter {
        
         public void mousePressed(MouseEvent e) {
@@ -1109,5 +1124,21 @@ public class COA2DViewer extends JPanel implements IViewer, java.io.Serializable
             }
         }        
     }    
+    
+
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentID()
+	 */
+	public int getExperimentID() {
+		return exptID;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
+	 */
+	public void setExperimentID(int id) {
+		this.exptID = id;
+	}    
     
 }

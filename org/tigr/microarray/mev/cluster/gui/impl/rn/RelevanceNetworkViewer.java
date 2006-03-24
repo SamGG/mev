@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: RelevanceNetworkViewer.java,v $
- * $Revision: 1.8 $
- * $Date: 2005-03-10 20:39:03 $
- * $Author: braistedj $
+ * $Revision: 1.9 $
+ * $Date: 2006-03-24 15:51:24 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.rn;
@@ -32,6 +32,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -117,12 +118,81 @@ public class RelevanceNetworkViewer extends JPanel implements IViewer, Scrollabl
     private int labelIndex = -1;
     private String status;
     private int shape_type = SHAPE_RECT;
+    private int exptID;
     
     private int subnetIndex = 0;
 
     private JPopupMenu popup;
     private JWindow tipWindow;
 
+    /**
+     * Constructs a <code>RelevanceNetworkViewer</code> for specified experiment,
+     * clusters, weights and sorted indices.
+     */
+    public RelevanceNetworkViewer(boolean isGenes, Experiment experiment, int[][] clusters, float[][] weights, int[] indices) {
+        setLayout(null);
+        setBackground(Color.white);
+        setFont(new Font("monospaced", Font.BOLD, this.elementSize.height));
+        Listener listener = new Listener();
+        this.popup = createJPopupMenu(listener);
+        this.tipWindow = createTipWindow();
+        getContentComponent().addMouseListener(listener);
+        getContentComponent().addMouseMotionListener(listener);
+
+        this.isGenes = isGenes;
+        this.experiment = experiment;
+        this.clusters = clusters;
+        this.weights = weights;
+        this.weight_min = getWeightsMinValue(weights);
+        this.weight_scale = COLORS_DEEP/(getWeightsMaxValue(weights)-this.weight_min);
+        this.indices = indices;
+        RelevanceNetworkLayout layout = new RelevanceNetworkLayout();
+        this.coords = layout.doLayout(clusters, weights, RelevanceNetworkLayout.CIRCULAR_LAYOUT);
+        this.selected = createSelected(clusters);
+        this.draw = new boolean[clusters.length];
+        setPreferredSize(new Dimension(300, 300));
+        this.exptID = experiment.getId();
+    }
+    
+    /**
+     * Creates a new RelevanceNetworkViewer.  Used to restore the state of a
+     * viewer from a saved file.
+     * @author eleanorahowe
+     * 
+     * @param isGenes
+     * @param clusters
+     * @param weights
+     * @param indices
+     * @param exptID
+     */
+    public RelevanceNetworkViewer(Boolean isGenes, int[][] clusters, float[][] weights, int[] indices, Integer exptID){
+        setLayout(null);
+        setBackground(Color.white);
+        setFont(new Font("monospaced", Font.BOLD, this.elementSize.height));
+        Listener listener = new Listener();
+        this.popup = createJPopupMenu(listener);
+        this.tipWindow = createTipWindow();
+        getContentComponent().addMouseListener(listener);
+        getContentComponent().addMouseMotionListener(listener);
+
+        this.isGenes = isGenes.booleanValue();
+        this.exptID = exptID.intValue();
+        this.clusters = clusters;
+        this.weights = weights;
+        this.weight_min = getWeightsMinValue(weights);
+        this.weight_scale = COLORS_DEEP/(getWeightsMaxValue(weights)-this.weight_min);
+        this.indices = indices;
+        RelevanceNetworkLayout layout = new RelevanceNetworkLayout();
+        this.coords = layout.doLayout(clusters, weights, RelevanceNetworkLayout.CIRCULAR_LAYOUT);
+        this.selected = createSelected(clusters);
+        this.draw = new boolean[clusters.length];
+        setPreferredSize(new Dimension(300, 300));
+    }
+    
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{new Boolean(this.isGenes), this.clusters, this.weights, this.indices, new Integer(this.exptID)});
+    }
     public Color[] createPalette(Color color1, Color color2, int deep) {
         //BufferedImage image = new BufferedImage(deep, 1, BufferedImage.TYPE_3BYTE_BGR);
         //BufferedImage image = (BufferedImage)this.createImage(deep, 1);
@@ -158,33 +228,6 @@ public class RelevanceNetworkViewer extends JPanel implements IViewer, Scrollabl
         return max;
     }
 
-    /**
-     * Constructs a <code>RelevanceNetworkViewer</code> for specified experiment,
-     * clusters, weights and sorted indices.
-     */
-    public RelevanceNetworkViewer(boolean isGenes, Experiment experiment, int[][] clusters, float[][] weights, int[] indices) {
-        setLayout(null);
-        setBackground(Color.white);
-        setFont(new Font("monospaced", Font.BOLD, this.elementSize.height));
-        Listener listener = new Listener();
-        this.popup = createJPopupMenu(listener);
-        this.tipWindow = createTipWindow();
-        getContentComponent().addMouseListener(listener);
-        getContentComponent().addMouseMotionListener(listener);
-
-        this.isGenes = isGenes;
-        this.experiment = experiment;
-        this.clusters = clusters;
-        this.weights = weights;
-        this.weight_min = getWeightsMinValue(weights);
-        this.weight_scale = COLORS_DEEP/(getWeightsMaxValue(weights)-this.weight_min);
-        this.indices = indices;
-        RelevanceNetworkLayout layout = new RelevanceNetworkLayout();
-        this.coords = layout.doLayout(clusters, weights, RelevanceNetworkLayout.CIRCULAR_LAYOUT);
-        this.selected = createSelected(clusters);
-        this.draw = new boolean[clusters.length];
-        setPreferredSize(new Dimension(300, 300));
-    }
 
     /**
      * Prepares an array of false values.
@@ -1371,74 +1414,28 @@ public class RelevanceNetworkViewer extends JPanel implements IViewer, Scrollabl
     }
     
     
-    private void writeObject(ObjectOutputStream oos) throws IOException {
-        oos.writeObject(this.experiment);
-        oos.writeBoolean(this.isGenes);
-        oos.writeObject(this.clusters);
-        oos.writeObject(this.weights);
-        oos.writeObject(this.indices);
-        oos.writeObject(this.coords);
-        oos.writeObject(this.selected);
-        oos.writeObject(this.draw);
-        oos.writeFloat(this.links_threshold);
-        oos.writeBoolean(this.isLinksColor);
-        oos.writeObject(this.LINKS_PALETTE);
-        oos.writeFloat(this.weight_min);
-        oos.writeFloat(this.weight_scale);
- 
-        oos.writeObject(this.selectionColor);
-        oos.writeObject(this.labelColor);
-        oos.writeObject(this.insets);
-        oos.writeBoolean(this.isDrawBorders);
-        oos.writeBoolean(this.isAntiAliasing);
-        oos.writeObject(this.elementSize);
-        oos.writeInt(this.labelIndex);
-        oos.writeObject(status);
-        oos.writeInt(this.shape_type);
-        oos.writeObject(this.prevZoomRect);
-
-//    private JPopupMenu popup;
-  //  private JWindow tipWindow;
+    public void setExperiment(Experiment e){
+    	this.experiment = e;
+    	this.exptID = e.getId();
     }
     
-    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        this.experiment = (Experiment)ois.readObject();
-        this.isGenes = ois.readBoolean();
-        this.clusters = (int [][])ois.readObject();
-        this.weights = (float [][])ois.readObject();
-        this.indices = (int [])ois.readObject();
-        this.coords = (float [][])ois.readObject();
-        this.selected = (boolean [])ois.readObject();
-        this.draw = (boolean [])ois.readObject();
-        this.links_threshold = ois.readFloat();
-        this.isLinksColor = ois.readBoolean();
-        this.LINKS_PALETTE = (Color [])ois.readObject();
-        this.weight_min = ois.readFloat();
-        this.weight_scale = ois.readFloat();
-        this.selectionColor = (Color)ois.readObject();
-        this.labelColor = (Color)ois.readObject();
-        this.insets = (Insets)ois.readObject();
-        this.isDrawBorders = ois.readBoolean();
-        this.isAntiAliasing = ois.readBoolean();
-        this.elementSize = (Dimension)ois.readObject();
-        this.labelIndex = ois.readInt();
-        this.status = (String)ois.readObject();
-        this.shape_type = ois.readInt();
-        this.prevZoomRect = (Rectangle)ois.readObject();
-
-        Listener listener = new Listener();
-        this.popup = createJPopupMenu(listener);
-        this.tipWindow = createTipWindow();
-        getContentComponent().addMouseListener(listener);
-        getContentComponent().addMouseMotionListener(listener);
+    //EH begin added methods for state-saving
+    public int getExperimentID(){
+    	return exptID;
     }
-    
+    public void setExperimentID(int i){
+    	this.exptID = i;
+    }
+    //EH end added methods for state-saving
+
    public int[][] getClusters() {
-        return null;
+    //     return null;
+    	return clusters;
     }
     
     public Experiment getExperiment() {
-        return null;
+   //EH      return null;
+     	return experiment;
     }
     
     /** Returns int value indicating viewer type

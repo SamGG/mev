@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SlideLoaderProgressBar.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:39:38 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-03-24 15:52:17 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.file;
@@ -239,7 +239,7 @@ public class SlideLoaderProgressBar extends JDialog {
          * Sets common progress description.
          */
         public void setRemain(int count) {
-            filesLabel.setText("Remains: "+String.valueOf(count)+" file(s)");
+            filesLabel.setText(String.valueOf(count)+" file(s) remaining to load.");
         }
     }    
 }

@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: FStatsTableViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2005-03-10 20:32:37 $
- * $Author: braistedj $
+ * $Revision: 1.7 $
+ * $Date: 2006-03-24 15:51:02 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.owa;
@@ -113,69 +113,12 @@ public class FStatsTableViewer extends ViewerAdapter implements java.io.Serializ
         setMaxWidth(getContentComponent(), getHeaderComponent());         
     }
     
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        oos.writeObject(this.experiment);
-        oos.writeObject(this.clusters);
-        oos.writeObject(this.fieldNames);
-
-        
-        oos.writeObject(this.geneGroupMeans);
-        oos.writeObject(this.geneGroupSDs);
-
-        oos.writeObject(this.pValues);
-        oos.writeObject(this.fValues);
-        oos.writeObject(this.dfNumValues);
-        oos.writeObject(this.dfDenomValues);
-        oos.writeObject(this.ssError);
-        oos.writeObject(this.ssGroups);
-        
-        
-        oos.writeBoolean(this.sig);
-
-        oos.writeObject(this.rows);
-                
-        oos.writeObject(this.fModel);
-        oos.writeObject(this.origData);
-        oos.writeObject(this.fValuesTable);
-        oos.writeObject(this.header);
-        oos.writeObject(this.sortedAscending);
-        oos.writeInt(this.univCnt);
-        oos.writeInt(this.univCnt2);
-        oos.writeInt(this.univCnt3);
-      }
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        this.experiment = (Experiment)ois.readObject();
-        this.clusters = (int [][])ois.readObject();
-        this.fieldNames = (String [])ois.readObject();
-
-        this.geneGroupMeans = (float [][])ois.readObject();
-        this.geneGroupSDs = (float [][])ois.readObject();
-        
-        this.pValues = (Vector)ois.readObject();
-        this.fValues = (Vector)ois.readObject();
-
-        this.dfNumValues = (Vector)ois.readObject();
-        this.dfDenomValues = (Vector)ois.readObject();
-        this.ssError = (Vector)ois.readObject();
-        this.ssGroups = (Vector)ois.readObject();
-        
-        this.sig = ois.readBoolean();        
-        this.rows = (int [])ois.readObject();        
-        this.fModel = (FValuesTableModel)ois.readObject();
-        this.origData = (Object [][])ois.readObject();
-        this.fValuesTable = (JTable)ois.readObject();
-        this.header = (JComponent)ois.readObject();
-        this.sortedAscending = (boolean [])ois.readObject();
-        this.univCnt = ois.readInt();
-        this.univCnt2 = ois.readInt();
-        this.univCnt3 = ois.readInt();
-        
-        addMouseListenerToHeaderInTable(fValuesTable);
-        this.header = header  = fValuesTable.getTableHeader();
-        this.getContentComponent(); //builds the popup and sets listeners
+    public FStatsTableViewer(JComponent content, JComponent header){
+    	this.content = content;
+    	this.header = header;
+        setMaxWidth(getContentComponent(), getHeaderComponent());     
     }
+    
     
     
     /**

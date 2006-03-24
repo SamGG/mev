@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: TerrainGUI.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-02-23 20:59:56 $
- * $Author: caliente $
+ * $Revision: 1.7 $
+ * $Date: 2006-03-24 15:52:04 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.terrain;
@@ -194,7 +194,11 @@ public class TerrainGUI implements IClusterGUI, IScriptGUI {
         float[][] weights = convert2float(cluster);
         AlgorithmParameters params = result.getParams();
         float sigma = params.getFloat("sigma");
-        SerializedTerrainViewer viewer = new SerializedTerrainViewer(gi.isGenes, framework, clusters, weights, locations.A, sigma);
+        //EH: replaced SerializedTerrainViewer with TerrainViewer because state-saving has been
+        //changed so the SerializedTerrainViewer wrapper is no longer needed.
+//        SerializedTerrainViewer viewer = new SerializedTerrainViewer(gi.isGenes, framework, clusters, weights, locations.A, sigma);
+        TerrainViewer viewer = new TerrainViewer(gi.isGenes, framework.getData().getExperiment(), clusters, weights, locations.A, sigma, framework.getDisplayMenu().getLabelIndex());
+
         root.add(new DefaultMutableTreeNode(new LeafInfo("Map", viewer)));
     }
     

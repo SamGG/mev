@@ -341,13 +341,15 @@ public class Rama {
 	private MultipleArrayViewer spawnNewMav( IData data, double[] gamma1, double[] gamma2, 
 			String[] genes, double shift ) {
 		//get the field names before they're cleared from creating a new mav
-		String[] currentFieldNames = TMEV.getFieldNames();
+		//String[] currentFieldNames = TMEV.getFieldNames();
+		String[] currentFieldNames = data.getFieldNames();
 		
 		//create the new mav
 		Manager.createNewMultipleArrayViewer( 20, 20 );
 		
 		//reset the fieldnames
-		TMEV.setFieldNames( currentFieldNames );
+		//EH field names are set in SlideData now.
+		//TMEV.setFieldNames( currentFieldNames );
 		
 		//un log2 transform the ramafied intensities
 		double[] norm1 = this.unLogify( gamma1, 2 );
@@ -360,6 +362,9 @@ public class Rama {
 		
 		//SlideData will be iNumGenes (rows) by 1 column
 		SlideData slideData = new SlideData( gamma1.length,1 );
+		//EH
+		slideData.setFieldNames(currentFieldNames);
+		
 		//loop through the genes
 		for( int i = 0; i < norm1.length; i ++ ) {
 			int[] rows = new int[ 3 ];

@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: ExpressionFileLoader.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-03-10 15:39:38 $
- * $Author: braistedj $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:52:17 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -94,9 +94,12 @@ public abstract class ExpressionFileLoader extends SlideLoaderProgressBar { // i
         return count;
     }
     
+    //EH removed this method because annotation field names should be 
+    //put into the SlideData object instead of TMEV.java
     /**
      * Sets the annotation field names in TMEV, appends if names exist
      */
+    /*
     protected void setTMEVFieldNames(Vector annotNames){
         if(annotNames.size() > 0){
             String [] fieldNames = new String[annotNames.size()];
@@ -106,5 +109,5 @@ public abstract class ExpressionFileLoader extends SlideLoaderProgressBar { // i
             TMEV.appendFieldNames(fieldNames);
         }
     }
-    
+    */
 }

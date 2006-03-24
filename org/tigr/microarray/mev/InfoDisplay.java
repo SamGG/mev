@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: InfoDisplay.java,v $
- * $Revision: 1.11 $
- * $Date: 2006-02-24 15:01:22 $
- * $Author: wwang67 $
+ * $Revision: 1.12 $
+ * $Date: 2006-03-24 15:49:44 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -419,7 +419,9 @@ public class InfoDisplay extends ActionInfoDialog {
       //  message += "</table>";
         
         //gene annotation
-        String[] fieldNames = TMEV.getFieldNames();
+        //EH fieldnames are loaded into SlideData instead of TMEV
+//        String[] fieldNames = TMEV.getFieldNames();
+        String[] fieldNames = slideData.getSlideMetaData().getFieldNames();
         if(fieldNames != null && fieldNames.length > 0){
             message += "<th colspan=2 align=left valign=center><font size=6>Gene Annotation</font></th>";
             for (int i = 0; i < fieldNames.length; i++) {                

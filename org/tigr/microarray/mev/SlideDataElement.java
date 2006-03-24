@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SlideDataElement.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-02-27 14:55:22 $
- * $Author: wwang67 $
+ * $Revision: 1.9 $
+ * $Date: 2006-03-24 15:49:45 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -14,8 +14,7 @@ package org.tigr.microarray.mev;
 import org.tigr.microarray.mev.cluster.gui.IData;
 
 
-public class SlideDataElement extends ArrayElement implements ISlideDataElement, java.io.Serializable {
-    public static final long serialVersionUID = 100010201130001L;
+public class SlideDataElement extends ArrayElement implements ISlideDataElement {
     
     protected String UID;
     protected int[] rows;
@@ -26,6 +25,31 @@ public class SlideDataElement extends ArrayElement implements ISlideDataElement,
     protected boolean isNonZero = true;
      protected float pvalue=0;
     protected int flags=0;
+    private SlideDataElement(int[] rows, int[] cols, String[] extraFields, String uid){
+    	this.rows = rows;
+    	this.columns = cols;
+    	this.extraFields = extraFields;
+    	this.UID = uid;
+    	this.currentIntensity = new float[2];
+    	this.trueIntensity = new float[2];
+    }
+    public SlideDataElement(int[] rows, int[] cols, String[] extraFields, String uid, boolean isNull, boolean isNonZero){
+    	this(rows, cols, extraFields, uid);
+    	this.isNull = isNull;
+    	this.isNonZero = isNonZero;
+    }
+    public  SlideDataElement(int[] rows, int[] columns, float[] currentIntensities, float[] trueIntensities, String[] values) {
+        this.rows = copyArray(rows);
+        this.columns = copyArray(columns);
+        this.currentIntensity = copyArray(currentIntensities);
+        this.trueIntensity = copyArray(trueIntensities);
+        this.extraFields = copyArray(values);    	
+    }
+
+    public SlideDataElement() {
+    	this.currentIntensity = new float[2];
+    	this.trueIntensity = new float[2];
+    }
     /**
      * Constructs a <code>SlideDataElement</code> with specified meta rows,
      * meta columns, intensities and descriptions.
@@ -44,11 +68,7 @@ public class SlideDataElement extends ArrayElement implements ISlideDataElement,
      * meta columns, intensities and descriptions.
      */
     public SlideDataElement(int[] rows, int[] columns, float[] intensities, String[] values) {
-        this.rows = copyArray(rows);
-        this.columns = copyArray(columns);
-        this.currentIntensity = copyArray(intensities);
-        this.trueIntensity = copyArray(intensities);
-        this.extraFields = copyArray(values);
+    	this("", rows, columns, intensities, values);
     }
     
     /**
@@ -63,6 +83,9 @@ public class SlideDataElement extends ArrayElement implements ISlideDataElement,
         this.extraFields = sde.getExtraFields();
     }
 
+    public void setRows(int[] r){this.rows = copyArray(r);}
+    public void setColumns(int[] c){this.columns = copyArray(c);}
+    public String[] getValues() {return extraFields;}
     /**
      * Sets the extra fields (annotation)
      */
@@ -134,6 +157,8 @@ public class SlideDataElement extends ArrayElement implements ISlideDataElement,
      * Returns an array of spot descriptions.
      */
     public String[] getExtraFields() {
+    	if(extraFields == null)
+    		return new String[0];
         return extraFields;
     }
     
@@ -271,8 +296,10 @@ public class SlideDataElement extends ArrayElement implements ISlideDataElement,
     public float getTrueIntensity(int intensityType) {
         float targetIntensity = -1;
         switch (intensityType) {
-            case CY3: targetIntensity = trueIntensity[0]; break;
-            case CY5: targetIntensity = trueIntensity[1]; break;
+            case CY3: try {targetIntensity = trueIntensity[0]; break;} catch (NullPointerException npe) {targetIntensity = 0; break;}
+            case CY5: try {targetIntensity = trueIntensity[1]; break;} catch (NullPointerException npe) {targetIntensity = 0; break;}
+            //TODO remove try/catch blocks above.
+            //They fix saving/loading problems when using XMLEncoder, but probably screw things up for normal functioning.
         }
         return targetIntensity;
     }
@@ -398,7 +425,7 @@ public class SlideDataElement extends ArrayElement implements ISlideDataElement,
         String retVal = "";
         int coordinatePairs = TMEV.getCoordinatePairCount() * 2; //Did you see the (* 2)?
         int intensities = TMEV.getIntensityCount();
-        int extraFields = TMEV.getFieldNames().length;
+        int extraFields = this.extraFields.length;
         
         if (number < coordinatePairs) {
             if (number % 2 == 0)

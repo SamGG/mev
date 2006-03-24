@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: StanfordFileLoader.java,v $
- * $Revision: 1.8 $
- * $Date: 2005-03-10 15:39:39 $
- * $Author: braistedj $
+ * $Revision: 1.9 $
+ * $Date: 2006-03-24 15:52:17 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -139,7 +139,9 @@ public class StanfordFileLoader extends ExpressionFileLoader {
                 for(int i = 0; i < preExperimentColumns; i++){
                     fieldNames[i] = ss.nextToken();
                 }
-                TMEV.setFieldNames(fieldNames);
+                //EH fieldnames are saved to SlideData rather than TMEV
+                slideDataArray[0].getSlideMetaData().setFieldNames(fieldNames);
+                //TMEV.setFieldNames(fieldNames);
                 
                 for (int i=0; i<experimentCount; i++) {
                     slideDataArray[i].setSlideDataName(ss.nextToken());
@@ -257,7 +259,9 @@ public class StanfordFileLoader extends ExpressionFileLoader {
                 for(int i = 0; i < preExperimentColumns; i++){
                     fieldNames[i] = ss.nextToken();
                 }
-                TMEV.setFieldNames(fieldNames);
+                //EH field names are saved in SlideData rather than TMEV
+                slideDataArray[0].getSlideMetaData().setFieldNames(fieldNames);
+                //TMEV.setFieldNames(fieldNames);
                 
                 for (int i=0; i<experimentCount; i++) {
                     slideDataArray[i].setSlideDataName(ss.nextToken());

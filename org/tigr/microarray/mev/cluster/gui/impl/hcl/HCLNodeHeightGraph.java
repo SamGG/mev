@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLNodeHeightGraph.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-02-23 20:59:51 $
- * $Author: caliente $
+ * $Revision: 1.8 $
+ * $Date: 2006-03-24 15:50:40 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -17,6 +17,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 import java.text.DecimalFormat;
 
 import javax.swing.JComponent;
@@ -48,8 +49,24 @@ public class HCLNodeHeightGraph extends JPanel implements IViewer {
         treeData = data;
         initializeViewer();        
     }
-    
+    public HCLNodeHeightGraph(HCLTreeData data){
+    	this(data, false);
+    }
+    /**
+     * This constructor is used by XMLEncoder
+     *
+     */
     public HCLNodeHeightGraph() { }
+    
+    /**
+     * @inheritDoc
+     * @author eleanorahowe
+     * 
+     */
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{this.treeData});
+    }
     
     private void initializeViewer(){
         minX = findMinDistance();
@@ -242,6 +259,12 @@ public class HCLNodeHeightGraph extends JPanel implements IViewer {
     public Experiment getExperiment() {
         return null;
     }        
+    
+    public void setExperiment(Experiment e) {
+ //   	this.exptID = e.getId();
+    }
+    public int getExperimentID() {return 0;}
+    public void setExperimentID(int id) {}
     
     /** Returns int value indicating viewer type
      * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified

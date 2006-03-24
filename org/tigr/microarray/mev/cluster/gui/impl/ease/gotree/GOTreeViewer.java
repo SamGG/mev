@@ -32,6 +32,8 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
+import java.beans.Expression;
+
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
@@ -59,8 +61,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ktree.Ktree;
  *
  * @author  braisted
  */
-public class GOTreeViewer extends JPanel implements IViewer, Serializable {
-    public static final long serialVersionUID = 20200201010001L;
+public class GOTreeViewer extends JPanel implements IViewer {
     
     private String category;
     private Ktree tree;
@@ -82,6 +83,10 @@ public class GOTreeViewer extends JPanel implements IViewer, Serializable {
     
     private String baseFileSystem;
     
+    private GONode[][] storedNodes;
+    private String[] headerFields;
+    private int exptID = 0;
+    
     /** Creates a new instance of GOTreeViewer */
     public GOTreeViewer() {
         
@@ -96,6 +101,7 @@ public class GOTreeViewer extends JPanel implements IViewer, Serializable {
     
     public GOTreeViewer(GONode [][] data, DefaultMutableTreeNode viewerNode, String baseFileSystem) {
         super(new GridBagLayout());
+        this.storedNodes = data;
         this.baseFileSystem = baseFileSystem;
         tree = new Ktree(data);
         header = new GOTreeHeader(data[0][0], this, upper, lower);
@@ -116,18 +122,72 @@ public class GOTreeViewer extends JPanel implements IViewer, Serializable {
     
     public GOTreeViewer(String goCategory, String [] headerFields, String [][] data, DefaultMutableTreeNode viewerNode, String baseFileSystem) {
         super(new GridBagLayout());
+        
         this.viewerNode = viewerNode;
         this.baseFileSystem = baseFileSystem;
         category = goCategory;
-        GONode [][] nodes = constructTree(goCategory, headerFields, data);
-        tree = new Ktree(nodes);
-        header = new GOTreeHeader(nodes[0][0], this, upper, lower);
+        this.storedNodes = constructTree(goCategory, headerFields, data);
+        this.headerFields = headerFields;
+        tree = new Ktree(storedNodes);
+        header = new GOTreeHeader(storedNodes[0][0], this, upper, lower);
         add(tree, new GridBagConstraints(0,0,1,1,1.0,1.0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
         Listener listener = new Listener();
         tree.addMouseListener(listener);
         this.addMouseListener(listener);
         createPopupMenu(listener);
         setVerboseNodeStyle(false);
+    }
+    
+    /**
+     * Re-creates a GOTreeViewer from stored data in an XMLEncoded file.  
+     * 
+     * @param exptID
+     * @param storedNodes
+     * @param baseFileSystem
+     * @param category
+     * @param headerFields
+     * @param selectionPolarity
+     * @param verbose
+     * @param upper
+     * @param lower
+     */
+    public GOTreeViewer(Integer exptID, GONode[][] storedNodes, String baseFileSystem, 
+    		String category, String [] headerFields, Integer selectionPolarity, 
+			Boolean verbose, Double upper, Double lower){
+    	this.exptID = exptID.intValue();
+    	this.storedNodes = storedNodes;
+    	this.headerFields = headerFields;
+    	this.baseFileSystem = baseFileSystem;
+    	this.category = category;
+    	
+        this.tree = new Ktree(this.storedNodes);
+    	this.selectionPolarity = selectionPolarity.intValue();
+    	this.verbose = verbose.booleanValue();
+    	this.upper = upper.doubleValue();
+    	this.lower = lower.doubleValue();
+    	this.header = new GOTreeHeader(this.storedNodes[0][0], this, this.upper, this.lower);
+        
+    	this.nodes = new Vector();
+        for(int i = 0; i < storedNodes.length; i++) {
+            for(int j = 0; j < storedNodes[i].length; j++) {
+                nodes.addElement(storedNodes[i][j]);
+            }
+        }
+    	
+        this.setVerboseNodeStyle(this.verbose);
+    	Listener listener = new Listener();
+    	tree.addMouseListener(listener);
+    	this.addMouseListener(listener);
+    	createPopupMenu(listener);
+    }
+    /**
+     * @inheritDoc
+     */
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{new Integer(exptID), storedNodes, baseFileSystem,
+    			category, headerFields, new Integer(selectionPolarity), 
+				new Boolean(verbose), new Double(upper), new Double(lower)});
     }
     
     private GONode [][] constructTree(String goCategory, String [] header, String [][] data) {
@@ -503,8 +563,8 @@ public class GOTreeViewer extends JPanel implements IViewer, Serializable {
             this.viewerNode = (DefaultMutableTreeNode)(framework.getCurrentNode().getParent());
     }
     
-    private void setStraitConnectorStyle(boolean isStrait) {
-        tree.setStraitConnectorStyle(isStrait);
+    private void setStraightConnectorStyle(boolean isStraight) {
+        tree.setStraightConnectorStyle(isStraight);
         tree.repaint();
     }
     
@@ -832,8 +892,8 @@ public class GOTreeViewer extends JPanel implements IViewer, Serializable {
         bg.add(checkBoxItem);
         menu.add(checkBoxItem);
         
-        checkBoxItem = new JCheckBoxMenuItem("Strait");
-        checkBoxItem.setActionCommand("strait-connector-command");
+        checkBoxItem = new JCheckBoxMenuItem("Straight");
+        checkBoxItem.setActionCommand("straight-connector-command");
         checkBoxItem.addActionListener(listener);
         bg.add(checkBoxItem);
         menu.add(checkBoxItem);
@@ -919,10 +979,10 @@ public class GOTreeViewer extends JPanel implements IViewer, Serializable {
                 setVerboseNodeStyle(true);
             } else if (command.equals("simple-node-command")) {
                 setVerboseNodeStyle(false);
-            } else if (command.equals("strait-connector-command")) {
-                setStraitConnectorStyle(true);
+            } else if (command.equals("straight-connector-command")) {
+                setStraightConnectorStyle(true);
             } else if (command.equals("curved-connector-command")) {
-                setStraitConnectorStyle(false);
+                setStraightConnectorStyle(false);
             } else if (command.equals("set-thresholds-command")) {
                 setThresholds();
             } else if (command.equals("bipolar-selection-command")) {
@@ -974,34 +1034,6 @@ public class GOTreeViewer extends JPanel implements IViewer, Serializable {
         
     }
     
-    private void writeObject(ObjectOutputStream oos) throws IOException {
-        oos.writeObject(baseFileSystem);
-        oos.writeObject(category);
-        oos.writeObject(tree);
-        oos.writeObject(nodes);
-        oos.writeInt(selectionPolarity);
-        oos.writeBoolean(verbose);
-        oos.writeObject(header);
-        oos.writeDouble(upper);
-        oos.writeDouble(lower);
-    }
-    
-    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException{
-        this.baseFileSystem = (String)ois.readObject();
-        this.category = (String)ois.readObject();
-        this.tree = (Ktree)ois.readObject();
-        this.nodes = (Vector)ois.readObject();
-        this.selectionPolarity = ois.readInt();
-        this.verbose = ois.readBoolean();
-        this.header = (GOTreeHeader)ois.readObject();
-        this.upper = ois.readDouble();
-        this.lower = ois.readDouble();
-        
-        Listener listener = new Listener();
-        tree.addMouseListener(listener);
-        this.addMouseListener(listener);
-        createPopupMenu(listener);
-    }
     
     /** Returns int value indicating viewer type
      * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
@@ -1010,4 +1042,24 @@ public class GOTreeViewer extends JPanel implements IViewer, Serializable {
         return -1;
     }
     
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
+	 */
+	public void setExperiment(Experiment e) {
+		;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentID()
+	 */
+	public int getExperimentID() {
+		return this.exptID;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
+	 */
+	public void setExperimentID(int id) {
+		this.exptID = id;
+	}
 }

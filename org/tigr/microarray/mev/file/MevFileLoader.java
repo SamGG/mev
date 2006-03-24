@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MevFileLoader.java,v $
- * $Revision: 1.8 $
- * $Date: 2005-03-10 15:39:38 $
- * $Author: braistedj $
+ * $Revision: 1.9 $
+ * $Date: 2006-03-24 15:52:17 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.file;
@@ -138,11 +138,13 @@ public class MevFileLoader extends ExpressionFileLoader {
         int length = annot.getSize();
         
         String [] header = annot.getSpotInformationHeader();
-        Vector v = new Vector();
-        for(int i = 0; i < header.length; i++) {
-            v.add(header[i]);
-        }
-        setTMEVFieldNames(v);
+        //EH fieldnames are loaded into SlideData instead of TMEV
+        data.getSlideMetaData().appendFieldNames(header);
+//      Vector v = new Vector();
+//      for(int i = 0; i < header.length; i++) {
+//          v.add(header[i]);
+//      }
+        //setTMEVFieldNames(v);
         
         for(int i = 0; i < length; i++){
             ((SlideDataElement)data.getSlideDataElement(i)).setExtraFields(annot.getSpotInformationArray(i));
@@ -331,12 +333,12 @@ public class MevFileLoader extends ExpressionFileLoader {
                     ((String)(headers.get(2))).equalsIgnoreCase("C") )
                     firstAnnField = 3;
             }
-            
-            Vector annotHeaders = new Vector();
+//EH fieldnames are added into SlideData instead of TMEV.java            
+            String[] annotHeaders = new String[headers.size()-firstAnnField];
             for(int i = firstAnnField; i < headers.size(); i++){
-                annotHeaders.add(((String)headers.elementAt(i)));
+                annotHeaders[i-firstAnnField] = (String)headers.elementAt(i);
             }
-            setTMEVFieldNames(annotHeaders);
+            targetData.getSlideMetaData().appendFieldNames(annotHeaders);
             
             String [][] annMatrix;
             if(mflp.cutQuotesBox.isSelected())

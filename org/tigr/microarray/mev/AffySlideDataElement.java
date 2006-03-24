@@ -5,9 +5,9 @@
 
 /*
  * $RCSfile: AffySlideDataElement.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-02-24 14:52:09 $
- * $Author: wwang67 $
+ * $Revision: 1.8 $
+ * $Date: 2006-03-24 15:49:44 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -17,7 +17,6 @@ import java.io.Serializable;
 import org.tigr.microarray.mev.cluster.gui.IData;
 
 public class AffySlideDataElement extends ArrayElement implements ISlideDataElement, Serializable {
-	public static final long serialVersionUID = 100010201120001L;
 	
 	protected String UID;
 	protected int[] rows;
@@ -61,6 +60,30 @@ public class AffySlideDataElement extends ArrayElement implements ISlideDataElem
 		this.trueIntensity = copyArray(intensities);
 		this.extraFields = copyArray(values);
 	}
+	/**
+	 * Constructor used by XMLEncoder to restore a previously-saved state.  
+	 * 
+	 * Read state-saving developer documents before altering.
+	 * 
+	 * @param rows
+	 * @param cols
+	 * @param extraFields
+	 * @param uid
+	 * @param isNull
+	 * @param isNonZero
+	 * @param detection
+	 */
+	public AffySlideDataElement(int[] rows, int[] cols, String[] extraFields, String uid, boolean isNull, boolean isNonZero, char detection){
+		this.rows = copyArray(rows);
+		this.columns = copyArray(columns);
+		this.extraFields = copyArray(extraFields);
+		this.UID = uid;
+		this.isNull = isNull;
+		this.isNonZero = isNonZero;
+		this.detection = detection;
+		this.currentIntensity = new float[2];
+		this.trueIntensity = new float[2];
+	}
 	
 	/**
 	 * Copy constructor.
@@ -74,6 +97,8 @@ public class AffySlideDataElement extends ArrayElement implements ISlideDataElem
 		this.extraFields = sde.getExtraFields();
 		this.setDetection(sde.getDetection());
 		this.setPvalue(sde.getPvalue());
+		this.isNull = sde.getIsNull();
+		this.isNonZero = sde.isNonZero();
 		//System.out.print(this.getPvalue());
 	}
 	
@@ -411,7 +436,7 @@ public class AffySlideDataElement extends ArrayElement implements ISlideDataElem
 		String retVal = "";
 		int coordinatePairs = TMEV.getCoordinatePairCount() * 2; //Did you see the (* 2)?
 		int intensities = TMEV.getIntensityCount();
-		int extraFields = TMEV.getFieldNames().length;
+		int extraFields = this.extraFields.length;
 		
 		if (number < coordinatePairs) {
 			if (number % 2 == 0)

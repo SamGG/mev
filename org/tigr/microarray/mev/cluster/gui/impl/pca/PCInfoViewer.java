@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: PCInfoViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2005-03-10 20:32:37 $
- * $Author: braistedj $
+ * $Revision: 1.7 $
+ * $Date: 2006-03-24 15:51:05 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.pca;
@@ -16,6 +16,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.beans.Expression;
 import java.text.DecimalFormat;
 
 import javax.swing.JComponent;
@@ -27,8 +28,7 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 import org.tigr.util.FloatMatrix;
 
-public class PCInfoViewer extends ViewerAdapter implements java.io.Serializable {
-    public static final long serialVersionUID = 202011020001L;
+public class PCInfoViewer extends ViewerAdapter {
     
     private JComponent header;
     private JTextArea  content;
@@ -50,6 +50,13 @@ public class PCInfoViewer extends ViewerAdapter implements java.io.Serializable 
 	header  = createHeader(headerLabel=new JLabel("<html><body bgcolor='#FFFFFF'><font face='serif' size='5' color='#000080'><b>Eigenvector</b></font></body></html>"));
 	content = createContent();
 	setMaxWidth(content, header);
+    }
+    /**
+     * @inheritDoc
+     */
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{T});
     }
     
     /**

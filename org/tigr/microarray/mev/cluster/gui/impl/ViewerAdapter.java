@@ -10,11 +10,11 @@ All rights reserved.
 
  * $RCSfile: ViewerAdapter.java,v $
 
- * $Revision: 1.8 $
+ * $Revision: 1.9 $
 
- * $Date: 2006-02-23 20:59:49 $
+ * $Date: 2006-03-24 15:49:57 $
 
- * $Author: caliente $
+ * $Author: eleanorahowe $
 
  * $State: Exp $
 
@@ -25,6 +25,9 @@ package org.tigr.microarray.mev.cluster.gui.impl;
 
 
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
+
+
 
 import javax.swing.JComponent;
 
@@ -80,8 +83,16 @@ public class ViewerAdapter implements IViewer {
         return null;
     }
     
+    /**
+     * Implemented only to satisfy IViewer interface requirements.
+     */
     public Experiment getExperiment() {
         return null;
+    }
+    /**
+     * Implemented only to satisfy IViewer interface requirements.
+     */
+    public void setExperiment(Experiment e) {
     }
     
     /** Returns int value indicating viewer type
@@ -90,6 +101,30 @@ public class ViewerAdapter implements IViewer {
     public int getViewerType() {
         return -1;
     }    
+
+    /**
+     * Implemented only to satisfy IViewer interface requirements.
+     */
+    public int getExperimentID() {
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
+	 */
+	public void setExperimentID(int id) {}    
+	
+	/**
+	 * Provides the Expression required to express the state of this object
+	 * in a saved file.
+	 * @author eleanora
+	 *
+	 */
+	public Expression getExpression(){
+		return new Expression(this, this.getClass(), "new",
+				new Object[]{this.getContentComponent(), this.getHeaderComponent()});
+		
+	}
 
 }
 

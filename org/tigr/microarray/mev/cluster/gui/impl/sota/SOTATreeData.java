@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOTATreeData.java,v $
- * $Revision: 1.1.1.2 $
- * $Date: 2004-02-06 21:48:18 $
- * $Author: braisted $
+ * $Revision: 1.2 $
+ * $Date: 2006-03-24 15:51:44 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.sota;
@@ -31,5 +31,28 @@ public class SOTATreeData {
     
     /** Creates new SOTATreeData */
     public SOTATreeData() {
+    }
+    
+    /**
+     * XMLEncoder/Decoder constructor
+     *
+     */
+    public SOTATreeData(float[] nodeHeights, int[]leftChild, int[] rightChild, 
+    		int[] nodePopulation, Boolean absolute, Integer function, Float factor, 
+			int[] clusterPopulation, FloatMatrix clusterDiversity, int[] cluster, FloatMatrix centroidMatrix){
+    	this.nodeHeights = nodeHeights;
+    	this.leftChild = leftChild;
+    	this.rightChild = rightChild;
+    	this.nodePopulation = nodePopulation;
+    	this.absolute = absolute.booleanValue();
+    	this.function = function.intValue();
+    	this.factor = factor.floatValue();
+    	this.clusterPopulation = clusterPopulation;
+    	this.clusterDiversity = clusterDiversity;
+    	this.cluster = cluster;
+    	this.centroidMatrix = centroidMatrix;
+    }
+    public void setCentroidMatrix(FloatMatrix centroidMatrix){
+    	this.centroidMatrix = centroidMatrix;
     }
 }

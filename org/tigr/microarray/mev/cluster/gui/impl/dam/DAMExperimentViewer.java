@@ -11,6 +11,7 @@ package org.tigr.microarray.mev.cluster.gui.impl.dam;
 
 import java.awt.Color;
 import java.awt.Frame;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -22,6 +23,7 @@ import javax.swing.JPopupMenu;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 
 public class DAMExperimentViewer extends ExperimentViewer {
@@ -40,16 +42,12 @@ public class DAMExperimentViewer extends ExperimentViewer {
 	getHeaderComponent().addMouseListener(listener);
     }
     
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        Listener listener = new Listener();
-        this.popup = createJPopupMenu(listener);
-        getContentComponent().addMouseListener(listener);
-        getHeaderComponent().addMouseListener(listener);        
+    /**
+     * @inheritDoc
+     */ 
+    public DAMExperimentViewer(int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets, Integer exptID) {
+    	super(clusters, samplesOrder, drawAnnotations, header, insets, exptID);
     }
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { }
-    
     
     /**
      * Creates a popup menu.

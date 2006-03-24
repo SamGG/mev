@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: GraphViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-23 20:59:40 $
- * $Author: caliente $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:49:44 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.graph;
@@ -90,6 +90,25 @@ public class GraphViewer extends Viewer {
     protected DecimalFormat coordinateFormat;
     protected FontMetrics metrics;
     
+    public static String[] getPersistenceDelegateArgs() {
+    	return new String[] {"frame", "startx", "stopx", "starty", "stopy",
+    		    "graphstartx", "graphstopx", "graphstarty", "graphstopy",
+			    "preXSpacing", "postXSpacing", "preYSpacing", "postYSpacing",
+			    "title", "xLabel", "yLabel"};
+    }
+    
+    /*
+     * XMLEncoder/Decoder constructor
+     */
+    public GraphViewer(JFrame frame, Integer startx, Integer stopx, Integer starty, Integer stopy,
+    	    Double graphstartx, Double graphstopx, Double graphstarty, Double graphstopy,
+    	    Integer preXSpacing, Integer postXSpacing, Integer preYSpacing, Integer postYSpacing,
+    	    String title, String xLabel, String yLabel) {
+    	this(frame, startx.intValue(), stopx.intValue(), starty.intValue(), stopy.intValue(), 
+    			graphstartx.doubleValue(), graphstopx.doubleValue(), graphstarty.doubleValue(), graphstopy.doubleValue(),
+    			preXSpacing.intValue(), postXSpacing.intValue(), preYSpacing.intValue(), postYSpacing.intValue(), 
+				title, xLabel, yLabel);
+    }    
     public GraphViewer(JFrame frame, int startx, int stopx, int starty, int stopy,
     double graphstartx, double graphstopx, double graphstarty, double graphstopy,
     int preXSpacing, int postXSpacing, int preYSpacing, int postYSpacing,
@@ -120,9 +139,11 @@ public class GraphViewer extends Viewer {
         initializePopupMenu();
     }
     
-    public void setSubTitle(String subTitle){
-        this.subTitle = subTitle;
-    }
+    
+    public void setSubTitle(String subTitle){this.subTitle = subTitle;}
+    public String getSubTitle(){return this.subTitle;}
+    public void setTitle(String title){this.title = title;}
+    public String getTitle(){return this.title;}
     
     private void initializeViewer() {
         setLayout(new GridBagLayout());
@@ -314,6 +335,13 @@ public class GraphViewer extends Viewer {
     public double getGraphStartY() {return this.graphstarty;}
     public void setGraphStopY(double graphStopY) {this.graphstopy = graphStopY;}
     public double getGraphStopY() {return this.graphstopy;}
+    public double getStartX(){return startx;}
+    public double getStartY(){return starty;}
+    public int getStopX(){return stopx;}
+    public int getStopY(){return stopy;}
+
+    public int getPostXSpacing(){return postXSpacing;}
+    public int getPostYSpacing(){return postYSpacing;}
     
     public void setXAxisValue(double x) {this.xAxisValue = x;}
     public double getXAxisValue() {return this.xAxisValue;}
@@ -333,7 +361,9 @@ public class GraphViewer extends Viewer {
     public void setPostYSpacing(int y){ this.postYSpacing = y; }
     
     public String getXLabel(){ return this.xLabel; }
+    public void setXLabel(String xlabel) {this.xLabel = xlabel;}
     public String getYLabel(){ return this.yLabel; }
+    public void setYLabel(String ylabel) {this.yLabel = ylabel;}
     
     public void setTickFont(String fontName, int fontStyle, int fontSize) {
         tickFont = new Font(fontName, fontStyle, fontSize);

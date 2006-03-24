@@ -19,6 +19,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -1043,6 +1044,45 @@ public class LinearExpressionGraphViewer extends JPanel implements IViewer {
 			if(me.isPopupTrigger())
 				popup.show(graph.getGraphComponent(), me.getX(), me.getY());				
 		}
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
+	 */
+	public void setExperiment(Experiment e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentID()
+	 */
+	public int getExperimentID() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
+	 */
+	public void setExperimentID(int id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExpression()
+	 */
+	public Expression getExpression() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

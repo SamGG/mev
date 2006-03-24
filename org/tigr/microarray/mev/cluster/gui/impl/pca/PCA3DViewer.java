@@ -8,9 +8,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: PCA3DViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2005-03-10 20:32:37 $
- * $Author: braistedj $
+ * $Revision: 1.8 $
+ * $Date: 2006-03-24 15:51:05 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.pca;
@@ -20,6 +20,7 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
@@ -39,8 +40,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 import org.tigr.util.FloatMatrix;
 
-public class PCA3DViewer extends ViewerAdapter implements java.io.Serializable {
-    public static final long serialVersionUID = 202011010001L;
+public class PCA3DViewer extends ViewerAdapter {
     
     private static final String RESET_CMD   = "reset-cmd";
     private static final String OPTIONS_CMD = "options-cmd";
@@ -67,6 +67,7 @@ public class PCA3DViewer extends ViewerAdapter implements java.io.Serializable {
     private int xAxis, yAxis, zAxis;
     private int labelIndex = -1;    
     private PCASelectionAreaDialog dlg;
+    private int exptID = 0;
     
     /**
      * Constructs a <code>PCA3DViewer</code> with specified mode,
@@ -75,6 +76,7 @@ public class PCA3DViewer extends ViewerAdapter implements java.io.Serializable {
     public PCA3DViewer(Frame frame, int mode, FloatMatrix U, Experiment experiment, boolean geneViewer) {
         this.frame = frame;
         this.experiment = experiment;
+        this.exptID = experiment.getId();
         this.geneViewer = geneViewer;
         this.U = U;
         this.mode = mode;
@@ -86,6 +88,7 @@ public class PCA3DViewer extends ViewerAdapter implements java.io.Serializable {
     public PCA3DViewer(Frame frame, int mode, FloatMatrix U, Experiment experiment, boolean geneViewer, int xAxis, int yAxis, int zAxis) {
         this.frame = frame;
         this.experiment = experiment;
+        this.exptID = experiment.getId();
         this.geneViewer = geneViewer;
         this.U = U;
         this.mode = mode;
@@ -96,29 +99,32 @@ public class PCA3DViewer extends ViewerAdapter implements java.io.Serializable {
         dlg = new PCASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());
         popup = createJPopupMenu();
     }   
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws  java.io.IOException {
-        oos.writeObject(this.experiment);
-        oos.writeBoolean(this.geneViewer);
-        oos.writeObject(this.U);
-        oos.writeInt(this.mode);  
-        oos.writeInt(this.xAxis);
-        oos.writeInt(this.yAxis);
-        oos.writeInt(this.zAxis);
+    public PCA3DViewer(Integer exptID, Boolean geneViewer, FloatMatrix U, Integer mode, Integer xAxis, Integer yAxis, Integer zAxis){
+        this.exptID = exptID.intValue();
+    	this.geneViewer = geneViewer.booleanValue();
+        this.U = U;
+        this.mode = mode.intValue();
+        this.xAxis = xAxis.intValue();
+        this.yAxis = yAxis.intValue();
+        this.zAxis = zAxis.intValue();
     }
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        this.experiment = (Experiment)ois.readObject();
-        this.geneViewer = ois.readBoolean();
-        this.U = (FloatMatrix)ois.readObject();
-        this.mode = ois.readInt();
-        this.xAxis = ois.readInt();
-        this.yAxis = ois.readInt();
-        this.zAxis = ois.readInt();
+    /**
+     * @inheritDoc
+     */
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{new Integer(exptID), new Boolean(geneViewer), U, new Integer(mode), new Integer(xAxis), new Integer(yAxis), new Integer(zAxis)});
+    }
+    /**
+     * @inheritDoc
+     */
+    public void setExperiment(Experiment e){
+    	this.experiment = e;
+    	this.exptID = experiment.getId();
         content = createContent(mode, U, experiment, geneViewer, xAxis, yAxis, zAxis);  
         dlg = new PCASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());
-        
     }
+    public int getExperimentID(){return this.exptID;}
     
     /**
      * Updates the viewer data and its content.

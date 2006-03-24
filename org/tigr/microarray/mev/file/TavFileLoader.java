@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: TavFileLoader.java,v $
- * $Revision: 1.4 $
- * $Date: 2005-03-10 15:39:39 $
- * $Author: braistedj $
+ * $Revision: 1.5 $
+ * $Date: 2006-03-24 15:52:17 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -140,7 +140,7 @@ public class TavFileLoader extends ExpressionFileLoader {
         int[] rows = new int[coordinatePairCount];
         int[] columns = new int[coordinatePairCount];
         float[] intensities = new float[intensityCount];
-        String[] moreFields = new String[TMEV.getFieldNames().length];
+        Vector moreFields = new Vector();
         
         BufferedReader reader = new BufferedReader(new FileReader(file), BUFFER_SIZE);
         StringSplitter ss = new StringSplitter((char)0x09);
@@ -176,6 +176,14 @@ public class TavFileLoader extends ExpressionFileLoader {
             for (int j = 0; j < intensityCount; j++) {
                 intensities[j] = ss.nextFloatToken(0.0f);
             }
+            
+            //EH fieldnames are saved to SlideData rather than TMEV
+            while(ss.hasMoreTokens()) {
+                avoidNullString = ss.nextToken();
+                if (avoidNullString.equals("null")) moreFields.add("");
+                else moreFields.add(avoidNullString);
+            }
+            /*
             for (int j = 0; j < TMEV.getFieldNames().length; j++) {
                 if (ss.hasMoreTokens()) {
                     avoidNullString = ss.nextToken();
@@ -185,7 +193,14 @@ public class TavFileLoader extends ExpressionFileLoader {
                     moreFields[j] = "";
                 }
             }
-            slideDataElement = new SlideDataElement(String.valueOf(curpos),rows, columns, intensities, moreFields);
+            */
+            String[] allFields = new String[moreFields.size()];
+            for(int i=0; i<moreFields.size(); i++) {
+            	allFields[i] = (String)moreFields.get(i);
+            }
+            slideDataElement = new SlideDataElement(String.valueOf(curpos),rows, columns, intensities, allFields);
+            //EH end fieldnames loading change
+            
             slideData.addSlideDataElement(slideDataElement);
         }
         reader.close();
@@ -268,7 +283,10 @@ public class TavFileLoader extends ExpressionFileLoader {
         int[] columns = new int[coordinatePairCount];
         
         float[] intensities = new float[intensityCount];
-        String[] moreFields = new String[TMEV.getFieldNames().length];
+        
+        //EH fieldnames saved to SlideData rather than TMEV
+        //String[] moreFields = new String[TMEV.getFieldNames().length];
+        Vector moreFields = new Vector();
         
         BufferedReader reader = new BufferedReader(new FileReader(file), BUFFER_SIZE);
         StringSplitter ss = new StringSplitter((char)0x09);
@@ -308,6 +326,18 @@ public class TavFileLoader extends ExpressionFileLoader {
             for (int j = 0; j < intensityCount; j++) {
                 intensities[j] = ss.nextFloatToken(0.0f);
             }
+            
+            //EH loading fieldnames for additional annotation
+            while(ss.hasMoreTokens()) {
+                avoidNullString = ss.nextToken();
+                if (avoidNullString.equals("null")) moreFields.add("");
+                else moreFields.add(avoidNullString);
+            }
+            String[] allFields = new String[moreFields.size()];
+            for(int i=0; i<moreFields.size(); i++) {
+            	allFields[i] = (String)moreFields.get(i);
+            }
+            /*
             for (int j = 0; j < TMEV.getFieldNames().length; j++) {
                 if (ss.hasMoreTokens()) {
                     avoidNullString = ss.nextToken();
@@ -317,22 +347,23 @@ public class TavFileLoader extends ExpressionFileLoader {
                     moreFields[j] = "";
                 }
             }
+            */
             realData[rows[0]-1][columns[0]-1] = true;
-            slideDataElement = new SlideDataElement(String.valueOf(curpos), rows, columns, intensities, moreFields);
+            slideDataElement = new SlideDataElement(String.valueOf(curpos), rows, columns, intensities, allFields);
             slideData.addSlideDataElement(slideDataElement);
         }
         reader.close();
         intensities[0] = 0.0f;
         intensities[1] = 0.0f;
-        
+ /*       //EH
         String [] dummyString = new String[TMEV.getFieldNames().length];
         for(int i = 0; i < dummyString.length; i++)
             dummyString[i] = "";
-        
+*/        
         for(int i = 0; i < maxRows ; i++){
             for(int j = 0; j < maxColumns; j++){
                 if(!realData[i][j]){
-                    slideDataElement = new SlideDataElement(new int[]{i+1, 1, 1}, new int[]{j+1, 1,1}, intensities, dummyString);
+                    slideDataElement = new SlideDataElement(new int[]{i+1, 1, 1}, new int[]{j+1, 1,1}, intensities, new String[0]);
                     slideData.insertElementAt(slideDataElement, i*maxColumns+j);
                 }
             }
@@ -680,7 +711,9 @@ public class TavFileLoader extends ExpressionFileLoader {
                                 fieldNames[cnt] = ss.nextToken();
                                 cnt++;
                             }
-                            TMEV.setFieldNames(fieldNames);
+                            //TODO this is a problem - can't set field names 
+                            //for tav files because SlideData isn't accessible
+//                            TMEV.setFieldNames(fieldNames);
                             preferencesTextField.setText(target.getPath());
                         }
                     }

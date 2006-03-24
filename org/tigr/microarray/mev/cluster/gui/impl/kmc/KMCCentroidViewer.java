@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: KMCCentroidViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-02-23 20:59:52 $
- * $Author: caliente $
+ * $Revision: 1.8 $
+ * $Date: 2006-03-24 15:50:49 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.kmc;
@@ -25,7 +25,6 @@ import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 
 public class KMCCentroidViewer extends CentroidViewer implements java.io.Serializable {
-    public static final long serialVersionUID = 202007010001L;
     
     private JPopupMenu popup;
     
@@ -40,14 +39,16 @@ public class KMCCentroidViewer extends CentroidViewer implements java.io.Seriali
 	this.popup = createJPopupMenu(listener);
 	getContentComponent().addMouseListener(listener);
     }
-    
-   
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { }    
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {        
-        Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
-	getContentComponent().addMouseListener(listener);
+    /**
+     * Used by XMLDecoder when reconstructing this class from saved file.  Signature
+     * specified by CentroidViewer.getPersistenceDelegateArgs().
+     * 
+     * @param experiment
+     * @param clusters
+     * @param variances
+     */
+    public KMCCentroidViewer(int[][] clusters, float[][] variances, float[][] means, float[][] codes, Integer exptID) {
+    	super(clusters, variances, means, codes, exptID);
     }
        
     /**

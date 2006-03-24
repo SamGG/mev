@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOTADiversityViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2005-03-10 20:22:06 $
- * $Author: braistedj $
+ * $Revision: 1.7 $
+ * $Date: 2006-03-24 15:51:44 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 /*
@@ -18,6 +18,7 @@ package org.tigr.microarray.mev.cluster.gui.impl.sota;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -38,10 +39,8 @@ public class SOTADiversityViewer extends GraphViewer implements IViewer {
     private int numPoints;
     // private int maxValue;
     private float initValue;
-    
+    private FloatMatrix values;
     public SOTADiversityViewer(FloatMatrix values){
-	
-	
      /*       public GraphViewer(JFrame frame, int startx, int stopx, int starty, int stopy,
 		       double graphstartx, double graphstopx, double graphstarty, double graphstopy,
 		       int preXSpacing, int postXSpacing, int preYSpacing, int postYSpacing,
@@ -52,7 +51,9 @@ public class SOTADiversityViewer extends GraphViewer implements IViewer {
 	super(new JFrame(), 0, values.getRowDimension() , 0, (int)(values.get(0,0)), 0, values.getRowDimension(), 0, values.get(0,0),
 	75, 75, 75, 75, "SOTA Tree Diversity History",
 	"Cycle Number", "Diversity (% of Initial)");
-	
+		//Stored only so that this class can be re-created using a PersistenceDelegate
+		//See IViewerPersistenceDelegate
+		this.values = values;
 	numPoints = values.getRowDimension();
 	//   maxValue = maxYVal(values,0);
 	initValue = values.get(0,0);
@@ -81,7 +82,15 @@ public class SOTADiversityViewer extends GraphViewer implements IViewer {
 	    addGraphElement( new GraphTick(i*yTickIncrement, 10, Color.black, GC.VERTICAL, GC.W, String.valueOf(i*10), Color.black));
 	}
     }
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new",
+    			new Object[]{values});
+    }
     
+    //These methods are only here to satisfy the IViewer interface
+    public void setExperiment (Experiment e){}
+    public int getExperimentID(){return 0;}
+    public void setExperimentID(int i){}
     
     //Over write super's method to rotatate text
     

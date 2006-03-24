@@ -4,14 +4,15 @@ All rights reserved.
 */
 /*
  * $RCSfile: RelNetExperimentClusterViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-03-10 20:39:03 $
- * $Author: braistedj $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:51:24 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.rn;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,11 +26,11 @@ import javax.swing.JPopupMenu;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
 public class RelNetExperimentClusterViewer extends ExperimentClusterViewer implements java.io.Serializable {
-    public static final long serialVersionUID = 202014040001L;
 
     private static final String SET_COLOR_CMD = "set-color-cmd";
     private static final String SET_DEF_COLOR_CMD = "set-def-color-cmd";
@@ -49,14 +50,23 @@ public class RelNetExperimentClusterViewer extends ExperimentClusterViewer imple
         getContentComponent().addMouseListener(listener);
         getHeaderComponent().addMouseListener(listener);
     }
-
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        Listener listener = new Listener();
-        this.popup = createJPopupMenu(listener);
-        getContentComponent().addMouseListener(listener);
-    }
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {        
+    /**
+     * State-saving constructor
+     * @param clusters
+     * @param genesOrder
+     * @param drawAnnotations
+     * @param offset
+     * @param header
+     * @param hasCentroid
+     * @param centroids
+     * @param elementSize
+     * @param labelIndex
+     * @param exptID
+     */
+    public RelNetExperimentClusterViewer(int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
+    		Integer offset, ExperimentClusterHeader header, Boolean hasCentroid, float[][] centroids, 
+			Dimension elementSize, Integer labelIndex, Integer exptID) {
+    	super(clusters, genesOrder, drawAnnotations, offset, header, hasCentroid, centroids, elementSize, labelIndex, exptID);
     }
     
     /**

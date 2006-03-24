@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOTACentroidViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-23 20:59:55 $
- * $Author: caliente $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:51:44 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.sota;
@@ -40,15 +40,21 @@ public class SOTACentroidViewer extends CentroidViewer {
 	this.popup = createJPopupMenu(listener);
 	getContentComponent().addMouseListener(listener);
     }
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {        
-        Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
-	getContentComponent().addMouseListener(listener);
-    }
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        
+    /**
+     * This constructor is used by XMLEncoder/Decoder to store and retreive a 
+     * CentroidViewer object to/from and xml file.  This constructor must 
+     * always exist, with its current method signature, for purposes of 
+     * backwards-compatability in loading old save-files from MeV versions 
+     * of v3.2 and later.  
+     * 
+     * @param clusters
+     * @param variances
+     * @param means
+     * @param codes
+     * @param id
+     */
+    public SOTACentroidViewer(int[][] clusters, float[][] variances, float[][] means, float[][] codes, Integer id) {
+    	super(clusters, variances, means, codes, id);
     }
     
     /**

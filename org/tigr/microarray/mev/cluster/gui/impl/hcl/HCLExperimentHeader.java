@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLExperimentHeader.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-02-23 20:59:51 $
- * $Author: caliente $
+ * $Revision: 1.7 $
+ * $Date: 2006-03-24 15:50:40 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.hcl;
@@ -20,13 +20,12 @@ import java.io.ObjectOutputStream;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JComponent;
 
 import org.tigr.microarray.mev.cluster.gui.helpers.IExperimentHeader;
 
 
-public class HCLExperimentHeader extends JPanel implements java.io.Serializable {
-
-    public static final long serialVersionUID = 202006050002L;
+public class HCLExperimentHeader extends JPanel {
 
     // wrapped experiment header.
     private JComponent expHeader;

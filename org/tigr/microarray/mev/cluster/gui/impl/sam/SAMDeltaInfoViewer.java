@@ -77,27 +77,9 @@ public class SAMDeltaInfoViewer extends ViewerAdapter implements java.io.Seriali
 
     }
     
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        //oos.writeObject(this.deltaGrid);
-        //oos.writeObject(this.medNumFalse);
-        //System.out.println("In writeObject()");
-        //System.out.println("SAMState.firstRun = " + SAMState.firstRun);
-        //System.out.println("SAMState.groupAssignments.length = " + SAMState.groupAssignments.length);  
-
-        oos.writeObject(new SAMState());
-        oos.defaultWriteObject();
-        //oos.writeObject();
-        
-    }
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        ois.readObject();
-        ois.defaultReadObject();
-        //System.out.println("In readObject()");
-        //System.out.println("SAMState.firstRun = " + SAMState.firstRun);
-        //System.out.println("SAMState.groupAssignments.length = " + SAMState.groupAssignments.length);        
-        header = createHeader();
-        content = createContent();
+    public SAMDeltaInfoViewer(JTextArea content, JComponent header){
+    	this.header = header;
+    	this.content = content;
         setMaxWidth(content, header);
     }
     

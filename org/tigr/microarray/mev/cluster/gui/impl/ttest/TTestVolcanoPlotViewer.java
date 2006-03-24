@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: TTestVolcanoPlotViewer.java,v $
- * $Revision: 1.9 $
- * $Date: 2005-03-10 20:36:42 $
- * $Author: braistedj $
+ * $Revision: 1.10 $
+ * $Date: 2006-03-24 15:52:09 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.ttest;
@@ -31,6 +31,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
@@ -73,8 +74,7 @@ import org.tigr.util.awt.ActionInfoDialog;
  * @author  nbhagaba
  * @version
  */
-public class TTestVolcanoPlotViewer extends JPanel implements IViewer, java.io.Serializable /*, MouseMotionListener */{
-    public static final long serialVersionUID = 202021040001L;
+public class TTestVolcanoPlotViewer extends JPanel implements IViewer /*, MouseMotionListener */{
     
     private Experiment experiment;
     private IFramework framework;
@@ -91,12 +91,43 @@ public class TTestVolcanoPlotViewer extends JPanel implements IViewer, java.io.S
     double currentP, currentMean, oneClassMean;
     int tTestDesign;
     private Vector rawPValues, adjPValues, tValues, dfValues, meansA, meansB, sdA, sdB, oneClassMeans, oneClassSDs;
+    private int exptID;
     
     /** Creates new TTestVolcanoPlotViewer */
-    public TTestVolcanoPlotViewer(Experiment experiment, double[] xArray, double[] yArray, boolean[] isSig, int tTestDesign, double oneClassMean, Vector oneClassMeans, Vector oneClassSDs, Vector meansA, Vector meansB, Vector sdA, Vector sdB, Vector rawPValues, Vector adjPValues, Vector tValues, Vector dfValues) {
+    public TTestVolcanoPlotViewer(Experiment experiment, double[] xArray, double[] yArray, 
+    		boolean[] isSig, int tTestDesign, double oneClassMean, Vector oneClassMeans, 
+			Vector oneClassSDs, Vector meansA, Vector meansB, Vector sdA, Vector sdB, 
+			Vector rawPValues, Vector adjPValues, Vector tValues, Vector dfValues) {
         //System.out.println("Created Volcano plot");
         //this.tTestFrame = tTestFrame;
         this.experiment = experiment;
+        setExperimentID(experiment.getId());
+        initialize(xArray, yArray, isSig, tTestDesign, oneClassMean, oneClassMeans, 
+        		oneClassSDs, meansA, meansB, sdA, sdB, 
+				rawPValues, adjPValues, tValues, dfValues);
+    }
+ 
+    public TTestVolcanoPlotViewer(Integer exptID, double[] xArray, double[] yArray, 
+    		boolean[] isSig, Integer tTestDesign, Double oneClassMean, Vector oneClassMeans, 
+			Vector oneClassSDs, Vector meansA, Vector meansB, Vector sdA, Vector sdB, 
+			Vector rawPValues, Vector adjPValues, Vector tValues, Vector dfValues){
+    	setExperimentID(exptID.intValue());
+        initialize(xArray, yArray, isSig, tTestDesign.intValue(), oneClassMean.doubleValue(), oneClassMeans, 
+        		oneClassSDs, meansA, meansB, sdA, sdB, 
+				rawPValues, adjPValues, tValues, dfValues);
+    }
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{new Integer(this.exptID), this.xArray, this.yArray,
+    			this.isSig, new Integer(tTestDesign), new Double(oneClassMean), oneClassMeans, 
+				oneClassSDs, meansA, meansB, sdA, sdB,
+				rawPValues, adjPValues, tValues, dfValues});
+    }
+    
+    private void initialize(double[] xArray, double[] yArray, 
+    		boolean[] isSig, int tTestDesign, double oneClassMean, Vector oneClassMeans, 
+			Vector oneClassSDs, Vector meansA, Vector meansB, Vector sdA, Vector sdB, 
+			Vector rawPValues, Vector adjPValues, Vector tValues, Vector dfValues){
         this.xArray = xArray;
         this.yArray = yArray;
         this.isSig = isSig;
@@ -244,178 +275,30 @@ public class TTestVolcanoPlotViewer extends JPanel implements IViewer, java.io.S
         
     }
     
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        
-        oos.writeObject(this.experiment);
-        oos.writeObject(this.xArray);
-        oos.writeObject(this.yArray);
-        oos.writeObject(this.isSig);
-        oos.writeObject(this.rawPValues);
-        oos.writeObject(this.adjPValues);
-        oos.writeObject(this.tValues);
-        oos.writeObject(this.dfValues);
-        oos.writeObject(this.meansA);
-        oos.writeObject(this.meansB);
-        
-        oos.writeInt(this.tTestDesign);
-        
-        oos.writeObject(this.oneClassMeans);
-        oos.writeObject(this.oneClassSDs);
-        oos.writeObject(this.sdA);
-        oos.writeObject(this.sdB);
         
         
-    }
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        this.experiment = (Experiment)ois.readObject();
-        this.xArray = (double [])ois.readObject(); 
-        this.yArray = (double [])ois.readObject();
-        this.isSig = (boolean [])ois.readObject();
-        this.rawPValues = (Vector)ois.readObject();
-        this.adjPValues = (Vector)ois.readObject();
-        this.tValues = (Vector)ois.readObject();
-        this.dfValues = (Vector)ois.readObject();
-        this.meansA = (Vector)ois.readObject();
-        this.meansB = (Vector)ois.readObject();
-        this.tTestDesign = ois.readInt();
-        this.oneClassMeans = (Vector)ois.readObject();
-        this.oneClassSDs = (Vector)ois.readObject();
-        this.sdA = (Vector)ois.readObject();
-        this.sdB = (Vector)ois.readObject();
-        
-        // Have objects
-        //set defaults
-        useRefLines = true;
-        projectClusters = false;
-        usePosAndNeg = true;
-        usePosOnly = false;
-        useNegOnly = false;
-        currentMouseX = 0;
-        currentMouseY = 0;
-        currentXSliderPosition = 0;
-        currentYSliderPosition = 0;
-        
-        //Now add listeners and build the menu
-        
-        this.addMouseMotionListener(new MouseMotionListener() {
-            public void mouseMoved(java.awt.event.MouseEvent mouseEvent) {
-                if (useRefLines) {
-                    currentMouseX = mouseEvent.getX();
-                    currentMouseY = mouseEvent.getY();
-                    //System.out.println("X = " + currentMouseX + ", Y = " + currentMouseY);
-                    TTestVolcanoPlotViewer.this.repaint();
-                }
-            }
-            public void mouseDragged(java.awt.event.MouseEvent mouseEvent) {
-            }
-        });
-        
-        popup = new JPopupMenu();
-        useRefLinesBox = new JCheckBoxMenuItem("Use reference lines", true);
-        
-        useRefLinesBox.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent evt) {
-                if (evt.getStateChange() == ItemEvent.SELECTED) {
-                    useRefLines = true;
-                } else {
-                    useRefLines = false;
-                    TTestVolcanoPlotViewer.this.repaint();
-                }
-            }
-        });
-        popup.add(useRefLinesBox);
-        popup.addSeparator();
-        
-        projectClustersBox = new JCheckBoxMenuItem("Project previously stored cluster colors", false);
-        projectClustersBox.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent evt) {
-                if (evt.getStateChange() == ItemEvent.SELECTED) {
-                    projectClusters = true;
-                    TTestVolcanoPlotViewer.this.repaint();
-                } else {
-                    projectClusters = false;
-                    TTestVolcanoPlotViewer.this.repaint();
-                }
-            }
-        });
-        popup.add(projectClustersBox);
-        popup.addSeparator();
-        
-        JMenuItem showCutoffLines = new JMenuItem("Use gene selection sliders");
-        showCutoffLines.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                SelectionSliderPanel ssPanel = new SelectionSliderPanel(currentYSliderPosition, currentXSliderPosition);
-                TTestVolcanoPlotViewer.this.repaint();
-                ssPanel.setVisible(true);
-            }
-        });
-        popup.add(showCutoffLines);
-        
-        popup.addSeparator();
-        
-        JMenuItem storeClusterItem = new JMenuItem("Store selected genes as cluster", GUIFactory.getIcon("new16.gif"));
-        storeClusterItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                storeCluster();
-            }
-        });
-        popup.add(storeClusterItem);
-        
-        popup.addSeparator();
-        
-        JMenuItem launchNewSessionItem = new JMenuItem("Launch new session with selected genes", GUIFactory.getIcon("launch_new_mav.gif"));
-        launchNewSessionItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                launchNewSession();
-            }
-        });
-        popup.add(launchNewSessionItem);
-        
-        popup.addSeparator();
-        
-        JMenuItem saveGenesItem = new JMenuItem("Save selected genes as cluster", GUIFactory.getIcon("save16.gif"));
-        saveGenesItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                onSaveCluster();
-            }
-        });
-        popup.add(saveGenesItem);
-        
-        this.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-                maybeShowPopup(e);
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
+	 */
+	public void setExperiment(Experiment e) {
+		this.experiment = e;
+		this.exptID = e.getId();
             }
             
-            public void mouseReleased(MouseEvent e) {
-                maybeShowPopup(e);
-            }
-            
-            private void maybeShowPopup(MouseEvent e) {
-                if (e.isPopupTrigger()) {
-                    if ((currentXSliderPosition == 0) && (currentYSliderPosition == 0) && usePosAndNeg) {
-                        for (int i = 6; i < popup.getComponentCount(); i++) {
-                            Component item = popup.getComponent(i);
-                            if (item instanceof JMenuItem) {
-                                item.setEnabled(false);
-                            }
-                        }
-                    } else {
-                        for (int i = 6; i < popup.getComponentCount(); i++) {
-                            Component item = popup.getComponent(i);
-                            if (item instanceof JMenuItem) {
-                                item.setEnabled(true);
-                            }
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentID()
+	 */
+	public int getExperimentID() {
+		return exptID;
                         }
                         
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
+	 */
+	public void setExperimentID(int id) {
+		this.exptID = id;
                     }
-                    popup.show(e.getComponent(),
-                    e.getX(), e.getY());
-                }
-            }
-        });
         
-    }
     
     public void paint(Graphics g) {
         super.paint(g);
@@ -1446,5 +1329,6 @@ public class TTestVolcanoPlotViewer extends JPanel implements IViewer, java.io.S
         
         
     }
+    
     
 }

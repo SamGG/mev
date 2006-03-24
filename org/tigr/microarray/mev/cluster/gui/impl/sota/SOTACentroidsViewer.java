@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOTACentroidsViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2005-03-10 20:22:06 $
- * $Author: braistedj $
+ * $Revision: 1.5 $
+ * $Date: 2006-03-24 15:51:44 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.sota;
@@ -47,15 +47,8 @@ public class SOTACentroidsViewer extends CentroidsViewer {
         this.popup = createJPopupMenu(listener);
         getContentComponent().addMouseListener(listener);
     }
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {        
-        Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
-	getContentComponent().addMouseListener(listener);
-    }
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        
+	public SOTACentroidsViewer(CentroidViewer cv) {
+		super(cv);
     }
     
     /**

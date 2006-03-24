@@ -9,6 +9,7 @@ All rights reserved.
 package org.tigr.microarray.mev.cluster.gui.impl.dam;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,6 +22,7 @@ import javax.swing.JPopupMenu;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
 
 public class DAMExperimentClusterViewer extends ExperimentClusterViewer {
@@ -38,15 +40,14 @@ public class DAMExperimentClusterViewer extends ExperimentClusterViewer {
 	getContentComponent().addMouseListener(listener);
 	getHeaderComponent().addMouseListener(listener);
     }
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        Listener listener = new Listener();
-        this.popup = createJPopupMenu(listener);
-        getContentComponent().addMouseListener(listener);
-        getHeaderComponent().addMouseListener(listener);        
+    /**
+     * @inheritDoc
+     */
+    public DAMExperimentClusterViewer(int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
+    		Integer offset, ExperimentClusterHeader header, Boolean hasCentroid, float[][] centroids, 
+			Dimension elementSize, Integer labelIndex, Integer exptID) {
+    		super(clusters, genesOrder, drawAnnotations, offset, header, hasCentroid, centroids, elementSize, labelIndex, exptID);
     }
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { }    
     
     /**
      * Creates a popup menu.

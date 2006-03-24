@@ -4,28 +4,28 @@ All rights reserved.
 */
 /*
  * $RCSfile: ExperimentClusterHeader.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-23 20:59:48 $
- * $Author: caliente $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:49:54 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.helpers;
 
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.Color;
 import java.awt.Insets;
+import java.awt.Graphics;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.FontMetrics;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JComponent;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
@@ -54,7 +54,23 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
     
     private boolean useDoubleGradient = true;
     
-    
+    public static String[] getPersistenceDelegateArgs(){
+    	return new String[]{"samplesOrder", "centroidName", "elementWidth", "hasCentroid", "insets"};
+    }
+    public String getCentroidName() {return centroidName;}
+    public int[][] getSamplesOrder() {return samplesOrder;}
+    public int getElementWidth() {return elementWidth;}
+    public boolean getHasCentroid() {return hasCentroid;}
+    public Insets getInsets() {return insets;}
+    public void setExperiment(Experiment e) {
+    	this.experiment = e;
+    }
+    public ExperimentClusterHeader(int[][] samplesOrder, String centroidName, int elementWidth, boolean hasCentroid, Insets insets){
+    	this(null, samplesOrder, centroidName);
+    	this.elementWidth = elementWidth;
+    	this.hasCentroid = hasCentroid;
+    	this.insets = insets;
+    }
     /**
      * Construct an <code>ExperimentClusterHeader</code> with specified experiment
      * and samples order.
@@ -294,7 +310,7 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
             }
         }
     }
-        
+      /*
     private void writeObject(ObjectOutputStream oos) throws IOException {       
         oos.writeObject(experiment);            
         oos.writeObject(samplesOrder);
@@ -317,6 +333,6 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
             this.centroidName = (String)ois.readObject();
         }
     }
-    
+    */
 }
 

@@ -142,7 +142,7 @@ public class Ktree extends JPanel {
         return treeHeight;
     }    
     
-    public void setStraitConnectorStyle(boolean isStraitConn) {
+    public void setStraightConnectorStyle(boolean isStraitConn) {
         this.isStraitConnector = isStraitConn;
     }
     

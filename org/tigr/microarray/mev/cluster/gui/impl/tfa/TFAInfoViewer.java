@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: TFAInfoViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-23 20:59:56 $
- * $Author: caliente $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:52:06 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 /*
@@ -47,6 +47,11 @@ public class TFAInfoViewer extends ViewerAdapter implements java.io.Serializable
 	header  = createHeader();
 	content = createContent(clusters, genes);
 	setMaxWidth(content, header);        
+    }
+    public TFAInfoViewer(JTextArea content, JComponent header){
+    	this.content = content;
+    	this.header = header;
+		setMaxWidth(content, header);        
     }
     
     /**

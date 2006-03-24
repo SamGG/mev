@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: CastFOMViewerB.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-23 20:59:51 $
- * $Author: caliente $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:50:09 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.fom;
@@ -20,12 +20,14 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
 public class CastFOMViewerB extends ViewerAdapter implements java.io.Serializable {
-    public static final long serialVersionUID = 202003040001L;
-    
     private CastFOMContentComponentB content;
     
     public CastFOMViewerB(float[] fom_values, float interval, int[] numOfCastClusters) {
 	this.content = new CastFOMContentComponentB(fom_values, interval, numOfCastClusters);
+    }
+    
+    public CastFOMViewerB(CastFOMContentComponentB content, JComponent header){
+    	this.content = content;
     }
     
     public JComponent getContentComponent() {

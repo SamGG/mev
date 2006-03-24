@@ -4,14 +4,15 @@ All rights reserved.
  */
 /*
  * $RCSfile: IViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-02-23 20:59:48 $
- * $Author: caliente $
+ * $Revision: 1.7 $
+ * $Date: 2006-03-24 15:49:53 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui;
 
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 
 import javax.swing.JComponent;
 
@@ -100,4 +101,29 @@ public interface IViewer {
      * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
      */
     public int getViewerType();
+    
+    /**
+     * EH - state-saving
+     * Sets the Experiment field for this Viewer.  Used when restoring state.  
+     *
+     */
+    public void setExperiment(Experiment e);
+    
+    /**
+    * EH - state-saving
+    * Returns the ID value for the Experiment associated with this viewer.
+    */
+    public int getExperimentID();
+    
+    /**
+    * EH - state-saving
+    * Sets the ID value for the Experiment associated with this IViewer
+    */
+    public void setExperimentID(int id);
+    
+    /**
+     * EH testing
+     * @return An Expression that can be used to save the object's state.
+     */
+    public Expression getExpression();
 }

@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOTAExperimentCentroidViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 20:22:06 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-03-24 15:51:44 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.sota;
@@ -40,7 +40,13 @@ public class SOTAExperimentCentroidViewer extends ExperimentClusterCentroidViewe
 	this.popup = createJPopupMenu(listener);
 	getContentComponent().addMouseListener(listener);
     }
-    
+    /*
+     * This constructor is used by XMLEncoder/Decoder and IViewerPersistenceDelegate
+     * to re-create an ExperimentClusterCentroidViewer from a saved xml file
+     */
+    public SOTAExperimentCentroidViewer(int[][] clusters, Integer exptID, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes){
+    	super(clusters, exptID, clusterIndex, means, variances, codes);
+    }    
     /**
      * Creates a popup menu.
      */

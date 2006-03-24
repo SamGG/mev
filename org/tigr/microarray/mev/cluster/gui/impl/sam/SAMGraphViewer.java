@@ -15,6 +15,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 import java.text.DecimalFormat;
 
 import javax.swing.JComponent;
@@ -31,13 +32,13 @@ import org.tigr.microarray.mev.cluster.gui.IViewer;
  * @author  nbhagaba
  * @version 
  */
-public class SAMGraphViewer extends JPanel implements IViewer, java.io.Serializable {
-    public static final long serialVersionUID = 202015010001L;
+public class SAMGraphViewer extends JPanel implements IViewer {
 
     private double[] yArray, xArray;
     private double delta; 
     int originX, originY;
     int studyDesign;
+    int exptID = 0;
 
     /** Creates new SAMGraphViewer */
     public SAMGraphViewer(double[] xArray, double[] yArray, int studyDesign, double delta) {
@@ -48,6 +49,13 @@ public class SAMGraphViewer extends JPanel implements IViewer, java.io.Serializa
         this.setBackground(Color.white);
     }
     
+    public SAMGraphViewer(double[] xArray, double[] yArray, Integer studyDesign, Double delta){
+    	this(xArray, yArray, studyDesign.intValue(), delta.doubleValue());
+    }
+    public Expression getExpression() {
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{xArray, yArray, new Integer(studyDesign), new Double(delta)});
+    }
     public void paint(Graphics g) {
         super.paint(g);
         if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) || (studyDesign == SAMInitDialog.ONE_CLASS)) {
@@ -634,4 +642,25 @@ public class SAMGraphViewer extends JPanel implements IViewer, java.io.Serializa
         return -1;
     }
     
+	/** This method is only implemented to fulfill the IViewer interface requirements
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
+	 */
+	public void setExperiment(Experiment e) {
+		//This method is only implemented to fulfill the IViewer interface requirements
+	}
+
+	/** This method is only implemented to fulfill the IViewer interface requirements
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentID()
+	 */
+	public int getExperimentID() {
+		return exptID;
+	}
+
+	/** This method is only implemented to fulfill the IViewer interface requirements
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
+	 */
+	public void setExperimentID(int id) {
+		
+	}
+
 }

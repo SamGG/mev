@@ -24,6 +24,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 import java.text.DecimalFormat;
 import java.util.Vector;
 
@@ -51,8 +52,7 @@ import org.tigr.util.FloatMatrix;
  *
  * @author  nbhagaba
  */
-public class PCA2DViewer extends JPanel implements IViewer, java.io.Serializable {
-    public static final long serialVersionUID = 202011060001L; 
+public class PCA2DViewer extends JPanel implements IViewer {
     
     private static final String SAVE_CMD    = "save-cmd";
     private static final String SHOW_TEXT_CMD = "show-text-cmd";
@@ -76,6 +76,7 @@ public class PCA2DViewer extends JPanel implements IViewer, java.io.Serializable
     Rectangle currentRect = null;
     Rectangle rectToDraw = null;
     Rectangle previousRectDrawn = new Rectangle();    
+    private int exptID = 0;
     
     /** Creates a new instance of PCA2DViewer */
     public PCA2DViewer(Experiment experiment, float[] xArray, float[] yArray, boolean geneViewer, int axis1, int axis2) {
@@ -88,6 +89,7 @@ public class PCA2DViewer extends JPanel implements IViewer, java.io.Serializable
         this.axis1 = axis1;
         this.axis2 = axis2;
         this.experiment = experiment;
+        this.exptID = experiment.getId();
         this.ellipse = new Ellipse2D.Double();
         this.setBackground(Color.white);   
         
@@ -110,6 +112,7 @@ public class PCA2DViewer extends JPanel implements IViewer, java.io.Serializable
         this.showTickLabels = true;
         this.geneViewer = geneViewer;
         this.experiment = experiment;
+        this.exptID = experiment.getId();
         this.ellipse = new Ellipse2D.Double();
         this.setBackground(Color.white); 
         
@@ -119,8 +122,34 @@ public class PCA2DViewer extends JPanel implements IViewer, java.io.Serializable
         addMouseListener(graphListener);
         addMouseMotionListener(graphListener);        
     }    
+    /** Creates a new instance of PCA2DViewer */
+    public PCA2DViewer(Integer exptID, FloatMatrix UMatrix, Boolean geneViewer, Integer axis1, Integer axis2) {
+        this.exptID = exptID.intValue();
+    	this.UMatrix = UMatrix;
+        this.axis1 = axis1.intValue();
+        this.axis2 = axis2.intValue();
+        this.xArray = getFloatArray(UMatrix, this.axis1);
+        this.yArray = getFloatArray(UMatrix, this.axis2);
+        this.displayExptNames = false;
+        this.showLargePoints = false;
+        this.showTickLabels = true;
+        this.geneViewer = geneViewer.booleanValue();
+        this.ellipse = new Ellipse2D.Double();
+        this.setBackground(Color.white); 
     
+        popup = createJPopupMenu();
     
+        GraphListener graphListener = new GraphListener();
+        addMouseListener(graphListener);
+        addMouseMotionListener(graphListener);        
+    }     
+    /**
+     * @inheritDoc
+     */
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{new Integer(exptID), UMatrix, new Boolean(geneViewer), new Integer(axis1), new Integer(axis2)});
+    }
    
     
    private float[] getFloatArray(FloatMatrix matrix, int column) {
@@ -238,6 +267,7 @@ public class PCA2DViewer extends JPanel implements IViewer, java.io.Serializable
             for (int i = 0; i < xArray.length; i++) {
                 Color currPointColor = Color.black;
                 if (this.geneViewer) {
+                	this.experiment.toString();
                     currPointColor = this.data.getProbeColor(this.experiment.getGeneIndexMappedToData(i));
                     if (currPointColor == null) currPointColor = Color.black;
                 } else {
@@ -500,40 +530,6 @@ public class PCA2DViewer extends JPanel implements IViewer, java.io.Serializable
     
     public void setData(IData data) {
         this.data = data;
-    }    
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws  java.io.IOException {
-        oos.writeObject(this.experiment);
-        oos.writeBoolean(this.geneViewer);
-        oos.writeObject(this.UMatrix);
-        oos.writeInt(axis1);
-        oos.writeInt(axis2);
-        
-    }
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        this.experiment = (Experiment)ois.readObject();
-        this.geneViewer = ois.readBoolean();
-        this.UMatrix = (FloatMatrix)ois.readObject();
-        this.axis1 = ois.readInt();
-        this.axis2 = ois.readInt();
-        
-        this.xArray = getFloatArray(UMatrix, axis1);
-        this.yArray = getFloatArray(UMatrix, axis2);
-        this.displayExptNames = false;
-        this.showLargePoints = false;  
-        this.showTickLabels = true;
-        this.ellipse = new Ellipse2D.Double();
-        this.setBackground(Color.white); 
-        
-        currentRect = null;
-        rectToDraw = null;
-        previousRectDrawn = new Rectangle();       
-        //popup = createJPopupMenu();
-        
-        GraphListener graphListener = new GraphListener();
-        addMouseListener(graphListener);
-        addMouseMotionListener(graphListener);         
     }    
     
     private class GraphListener extends MouseInputAdapter {
@@ -822,4 +818,26 @@ public class PCA2DViewer extends JPanel implements IViewer, java.io.Serializable
         }        
     }    
     
+
+	/**
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
+	 */
+	public void setExperiment(Experiment e) {
+		this.experiment = e;
+		this.exptID = experiment.getId();
+	}
+
+	/**
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentID()
+	 */
+	public int getExperimentID() {
+		return this.exptID;
+	}
+
+	/**
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
+	 */
+	public void setExperimentID(int id) {
+		this.exptID = id;
+	}    
 }

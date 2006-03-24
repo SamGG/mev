@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: KMCInfoViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-23 20:59:52 $
- * $Author: caliente $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:50:49 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.kmc;
@@ -16,6 +16,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.beans.Expression;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -25,12 +26,21 @@ import javax.swing.JTextArea;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
 public class KMCInfoViewer extends ViewerAdapter implements java.io.Serializable {
-    public static final long serialVersionUID = 202007020001L;
+//    public static final long serialVersionUID = 202007020001L;
     
     private JComponent header;
     private JTextArea  content;
     private boolean clusterGenes;
     
+    public JTextArea getContent(){return content;}
+//    public boolean getClusterGenes(){return clusterGenes;}
+    
+    public KMCInfoViewer(JTextArea content, boolean clusterGenes) {
+    	header = createHeader();
+    	this.content = content;
+    	this.clusterGenes = clusterGenes;
+    	setMaxWidth(content, header);
+    }
     /**
      * Constructs a <code>KMCInfoViewer</code> with specified
      * clusters and number of genes.
@@ -51,6 +61,19 @@ public class KMCInfoViewer extends ViewerAdapter implements java.io.Serializable
         this.clusterGenes = clusterGenes;
         content = createContent(clusters, genes);
         setMaxWidth(content, header);
+    }
+
+    public KMCInfoViewer(JTextArea content, Boolean clusterGenes) {
+    	this(content, clusterGenes.booleanValue());
+    }
+    
+    /**
+     * @inheritDoc
+     * 
+     */
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{this.getContentComponent(), new Boolean(this.clusterGenes)});
     }
     
     /**

@@ -4,13 +4,16 @@ All rights reserved.
  */
 /*
  * $RCSfile: ISlideData.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-02-27 14:30:23 $
- * $Author: wwang67 $
+ * $Revision: 1.7 $
+ * $Date: 2006-03-24 15:49:44 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Vector;
@@ -34,7 +37,12 @@ public interface ISlideData {
     public final static int RATIO_STATISTICS_99_LIST = 105;
     public final static int ITERATIVE_LOG_LIST = 106;
     public final static int LOWESS_LIST = 107;
-    /**     * CGH Constants     */    public static final int CY3_SLIDES = 0;    public static final int CY5_SLIDES = 1;    
+    /**
+     * CGH Constants
+     */
+    public static final int CY3_SLIDES = 0;
+    public static final int CY5_SLIDES = 1;
+    
     /**
      * Returns the name of a microarray.
      */
@@ -45,6 +53,16 @@ public interface ISlideData {
      */
     public void setSlideDataName(String slideDataName);
     
+    /**
+     * Sets the current label index.
+     */
+
+    //TODO may need to add a method signature for adding more than one key at once
+    /*
+    public void setDataLabelKeys(Vector key);
+  */
+    
+    //TODO may need to disable this method.
     /**
      * Sets the current label index.
      */
@@ -66,7 +84,7 @@ public interface ISlideData {
     public Hashtable getSlideDataLabels();
     
     /**
-     * Sets the slide data lable hash
+     * Sets the slide data label hash
      */
     public void setSlideDataLabels(Vector keys, Hashtable labels);
     
@@ -241,6 +259,12 @@ public interface ISlideData {
     public void setSlideFileName(String fileName);
     
     /**
+     * Writes float values of intensities for this slide to an output stream.
+     * @param dos output stream to write to
+     */
+    public void writeIntensities(DataOutputStream dos) throws IOException;
+    public void loadIntensities(DataInputStream dis) throws IOException;
+    /**
      * Returns the slide's file name
      */
     public String getSlideFileName();
@@ -254,6 +278,30 @@ public interface ISlideData {
     public float getPvalue(int row);
     public int getGenePixFlags(int row);
 
-       /**     * CGH Function from ICGHFeatureData     * @param flankingRegions     */    public void setFlankingRegions(java.util.Vector[] flankingRegions);    /**     * CGH Function from ICGHFeatureData     * @param chromosomeIndex     * @return     */    public int getNumFlankingRegions(int chromosomeIndex);    /**     * CGH Function from ICGHFeatureData     * @return     */    public java.util.Vector[] getFlankingRegions();    /**     * CGH Function from ICGHFeatureData     * @param cloneIndex     * @return     */    public boolean isMissingData(int cloneIndex);    
+   
+    /**
+     * CGH Function from ICGHFeatureData
+     * @param flankingRegions
+     */
+    public void setFlankingRegions(java.util.Vector[] flankingRegions);
+    /**
+     * CGH Function from ICGHFeatureData
+     * @param chromosomeIndex
+     * @return
+     */
+    public int getNumFlankingRegions(int chromosomeIndex);
+    /**
+     * CGH Function from ICGHFeatureData
+     * @return
+     */
+    public java.util.Vector[] getFlankingRegions();
+    /**
+     * CGH Function from ICGHFeatureData
+     * @param cloneIndex
+     * @return
+     */
+    public boolean isMissingData(int cloneIndex);
+    
+    public String getSampleLabelKey();
 
 }

@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: CastFOMContentComponentA.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-23 20:59:51 $
- * $Author: caliente $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:50:09 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.fom;
@@ -29,18 +29,20 @@ import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 
 public class CastFOMContentComponentA extends JPanel implements java.io.Serializable {
-    public static final long serialVersionUID = 202003020001L;
     
     private FOMGraph fomGraphA;
     private FOMGraph fomGraphB;
     
     private float[] fom_values;
     float interval;
+    GridBagConstraints gbc;
+    int[] numOfCastClusters;
     
     public CastFOMContentComponentA(float[] fom_values, float interval, int[] numOfCastClusters) { // take average by default
 	setLayout(new GridBagLayout());
 	this.fom_values = fom_values;
 	this.interval = interval;
+		this.numOfCastClusters = numOfCastClusters;
 	this.fomGraphA = new FOMGraph(fom_values, null, "FOM value vs. Threshold", "Threshold", "Adjusted FOM", false);
 	this.fomGraphA.setItems(createXThresholdItems(fom_values.length), createYItems(fom_values));
 	this.fomGraphA.setMaxYValue((float)Math.ceil(getMaxValue(fom_values)));
@@ -54,6 +56,10 @@ public class CastFOMContentComponentA extends JPanel implements java.io.Serializ
 	gbc.gridx = 1;
 	gbc.weightx = 0.1;
 	add(createValuesList(fom_values), gbc);
+    }
+    
+    public static String[] getPersistenceDelegateArgs(){
+    	return new String[] {"fom_values", "interval", "numOfCastClusters"};
     }
     
     public BufferedImage getImageA() {
@@ -197,4 +203,22 @@ public class CastFOMContentComponentA extends JPanel implements java.io.Serializ
 	frame.setVisible(true);
     }
   */
+	/**
+	 * @return Returns the fom_values.
+	 */
+	public float[] getFom_values() {
+		return fom_values;
+	}
+	/**
+	 * @return Returns the interval.
+	 */
+	public float getInterval() {
+		return interval;
+	}
+	/**
+	 * @return Returns the numOfCastClusters.
+	 */
+	public int[] getNumOfCastClusters() {
+		return numOfCastClusters;
+	}
 }

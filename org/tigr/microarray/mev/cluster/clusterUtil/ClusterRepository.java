@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterRepository.java,v $
- * $Revision: 1.12 $
- * $Date: 2005-03-10 15:48:56 $
- * $Author: braistedj $
+ * $Revision: 1.13 $
+ * $Date: 2006-03-24 15:49:52 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -16,6 +16,7 @@ import java.awt.Color;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
@@ -33,7 +34,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
  * holding saved clusters particular analysis results.
  */
 public class ClusterRepository extends Vector implements java.io.Serializable {
-    public static final long serialVersionUID = 1000102010203030001L;
+//    public static final long serialVersionUID = 1000102010203030001L;
     
     public static final int GENE_CLUSTER = 0;
     public static final int EXPERIMENT_CLUSTER = 1;
@@ -57,6 +58,20 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
      */
     private IFramework framework;
     
+    /**
+     * Used by XMLEncoder/XMLDecoder in conjunction with getPersistenceDelegateArgs()
+     * @param isGeneClusterRepository
+     * @param numberOfElements
+     * @param elementClusters
+     * @param clusterSerialCounter
+     */
+    public ClusterRepository(Boolean isGeneClusterRepository, Integer numberOfElements, Integer clusterSerialCounter, ClusterList[] elementClusters) {
+    	this.geneClusterRepository = isGeneClusterRepository.booleanValue();
+    	this.numberOfElements = numberOfElements.intValue();
+    	this.elementClusters = elementClusters;
+    	this.clusterSerialCounter = clusterSerialCounter.intValue();
+    }
+    
     /** Creates new ClusterRepository with a specified element count
      */
     public ClusterRepository(int numberOfElements, IFramework framework) {
@@ -75,29 +90,40 @@ public class ClusterRepository extends Vector implements java.io.Serializable {
         this.addClusterList(new ClusterList("Cluster Ops."));
     }
     
-    private void writeObject(ObjectOutputStream oos) throws IOException {
-        oos.writeBoolean(this.geneClusterRepository);
-        oos.writeInt(this.clusterSerialCounter);
-        oos.writeObject(this.elementClusters);
-        oos.writeInt(this.numberOfElements);
         
+    //EH getter methods added to support constructer used by XMLEncoder/XMLDecoder
+    
+    public int getNumberOfElements(){return numberOfElements;}
+    public ClusterList[] getElementClusters(){
+    	return elementClusters;
+    }
+    public int getClusterSerialCounter() {return clusterSerialCounter;}
       /*
-       oos.writeInt(size());
-        for(int i = 0; i < size(); i++)
-            oos.writeObject(elementAt(i));
+     * Returns a Hashtable of all the Experiments contained within this ClusterRepository
+     * indexed on the Experiment.getId();
        */
+    public Hashtable getAllExperiments() {
+    	Hashtable allExpts = new Hashtable();
+    	for(int i=0; i<elementClusters.length; i++) {
+    		try {
+	    		for(int j=0; j<elementClusters[i].size(); j++){
+	        		Cluster c = (Cluster)elementClusters[i].get(j);
+	        		allExpts.put(new Integer(c.getExptID()), c.getExperiment());
+	    		}
+    		} catch (NullPointerException npe){}
+    	}
+    	return allExpts;
     }
     
-    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        this.geneClusterRepository = ois.readBoolean();
-        this.clusterSerialCounter = ois.readInt();
-        this.elementClusters = (ClusterList [])ois.readObject();
-        this.numberOfElements = ois.readInt();
-      /*
-        int n = ois.readInt();
-        for(int i = 0; i < n; i++)
-            addElement(ois.readObject());
-       */
+    public void populateExperiments(Hashtable allExpts){
+    	for(int i=0; i<elementClusters.length; i++) {
+    		try {
+	    		for(int j=0; j<elementClusters[i].size(); j++){
+	        		Cluster c = (Cluster)elementClusters[i].get(j);
+	        		c.setExperiment((Experiment)allExpts.get(new Integer(c.getExptID())));
+	    		}
+    		} catch (NullPointerException npe){}
+    	}    
     }
     
     /**

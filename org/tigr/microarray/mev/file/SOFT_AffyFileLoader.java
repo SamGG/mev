@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: SOFT_AffyFileLoader.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-03-01 13:44:09 $
- * $Author: wwang67 $
+ * $Revision: 1.5 $
+ * $Date: 2006-03-24 15:52:17 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -120,7 +120,8 @@ public class SOFT_AffyFileLoader extends ExpressionFileLoader {
         	 for(int k=0;k<platforminfo.size()/2;k++)
         		 fieldNames[totalColumns+k]="";
          }        	 
-         TMEV.setFieldNames(fieldNames);
+         slideData.getSlideMetaData().setFieldNames(fieldNames);
+//         TMEV.setFieldNames(fieldNames);
         
          for(int i=0;i<totalRows;i++){
         	 intensities[0] = 1.0f;

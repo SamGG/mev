@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: FloatMatrix.java,v $
- * $Revision: 1.4 $
- * $Date: 2005-03-10 15:27:01 $
- * $Author: braistedj $
+ * $Revision: 1.5 $
+ * $Date: 2006-03-24 15:52:35 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.util;
@@ -166,6 +166,10 @@ public class FloatMatrix implements Cloneable, java.io.Serializable {
 /* ------------------------
    Public Methods
  * ------------------------ */
+    
+    public static String[] getPersistenceDelegateArgs() {
+    	return new String[]{"array", "rowDimension", "columnDimension"};
+    }
     
     /** Construct a matrix from a copy of a 2-D array.
      * @param A    Two-dimensional array of doubles.

@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMInfoViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-23 20:59:55 $
- * $Author: caliente $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:51:53 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.svm;
@@ -51,6 +51,11 @@ public class SVMInfoViewer extends ViewerAdapter implements java.io.Serializable
         this.classifyGenes = classifyGenes;
         this.svmMode = svmMode;
         content = createContent(numPosExamples, numNegExamples, numNeutExamples, numPos, numTruePos, numFalseNeg, numNeg, numTrueNeg, numFalsePos, numPosRecFromNeut, numNegRecFromNeut);
+        setMaxWidth(content, header);
+    }
+    public SVMInfoViewer(JTextArea content, JComponent header){
+    	this.content = content;
+    	this.header = header;
         setMaxWidth(content, header);
     }
     

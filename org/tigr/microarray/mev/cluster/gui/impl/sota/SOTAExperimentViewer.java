@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: SOTAExperimentViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2005-03-10 20:22:05 $
- * $Author: braistedj $
+ * $Revision: 1.8 $
+ * $Date: 2006-03-24 15:51:44 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -23,6 +23,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
@@ -49,8 +50,7 @@ import org.tigr.util.FloatMatrix;
  * Class to display expression images with a <code>CentroidExperimentHeader</code>
  * and cluster information.
  */
-public class SOTAExperimentViewer extends ExperimentViewer implements IViewer, java.io.Serializable {
-    public static final long serialVersionUID = 202017030001L;
+public class SOTAExperimentViewer extends ExperimentViewer implements IViewer {
     
     protected static final String STORE_CLUSTER_CMD = "store-cluster-cmd";
     private static final String SET_DEF_COLOR_CMD = "set-def-color-cmd";
@@ -75,18 +75,22 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer, j
     private int function;
     private boolean geneClusterViewer = true;
     private boolean useDoubleGradient = true;
+    private FloatMatrix codes;
     
     /**
      * Constructs a <code>SOTAExperimentViewer</code> with specified
      * experiment, clusters (gene indices) and codes (centroid data)
+     * SOTAExperimentViewers created with this constructor always display gene clusters
      */
     public SOTAExperimentViewer(Experiment experiment, int[][] clusters, FloatMatrix codes, FloatMatrix clusterDiv, SOTATreeData sotaTreeData) {
         setLayout(new GridBagLayout());
         Listener listener = new Listener();
+        this.codes = codes;
         this.popup = createJPopupMenu(listener);
         this.clusters = clusters;
         this.clusterDivFM = clusterDiv;
         this.numberOfCells = 0;
+        this.exptID = experiment.getId();
         if(this.clusterDivFM != null)
             this.numberOfCells = clusterDivFM.getRowDimension();
         this.centroidDataFM = codes;
@@ -94,6 +98,7 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer, j
         this.function = sotaTreeData.function; //distance metric
         this.expViewer = new ExperimentViewer(experiment, clusters);
         this.expViewer.getContentComponent().addMouseListener(listener);
+        setInsets(new Insets(0,0,0,0));
         this.header = new CentroidExperimentHeader(this.expViewer.getHeaderComponent(), codes, clusters,"SOTA Centroid Vector");
         ((CentroidExperimentHeader)this.header).setNegAndPosColorImages(((ExperimentViewer)expViewer).getNegColorImage(), ((ExperimentViewer)expViewer).getPosColorImage());
         this.infoPanel = new InfoPanel();
@@ -114,7 +119,9 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer, j
      */
     public SOTAExperimentViewer(Experiment experiment, int[][] clusters, FloatMatrix codes, FloatMatrix clusterDiv, SOTATreeData sotaTreeData, boolean clusterGenes) {
         setLayout(new GridBagLayout());
+    	this.codes = codes;
         this.geneClusterViewer = clusterGenes;
+        this.exptID = experiment.getId();
         Listener listener = new Listener();
         this.popup = createJPopupMenu(listener);
         this.clusters = clusters;
@@ -128,14 +135,14 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer, j
         if(!clusterGenes){
             this.expViewer = new ExperimentClusterViewer(experiment, clusters, "Sota Centroid Vector", codes.getArrayCopy());
             this.header = (ExperimentClusterHeader)(expViewer.getHeaderComponent());
-        }
-        else{
+        } else {
             this.expViewer = new ExperimentViewer(experiment, clusters);
             this.header = new CentroidExperimentHeader(expViewer.getHeaderComponent(), codes, this.clusters, "SOTA Centroid Vector");
         }
         this.expViewer.getContentComponent().addMouseListener(listener);
         this.infoPanel = new InfoPanel();
         this.infoPanel.addMouseListener(listener);
+        setInsets(new Insets(0,0,0,0));
         viewPanel = new JPanel();
         viewPanel.setLayout(new GridBagLayout());
         viewPanel.add(((JComponent)expViewer), new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
@@ -143,53 +150,57 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer, j
         add(viewPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
     }
     
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        oos.writeObject(expViewer);
-        if(header instanceof CentroidExperimentHeader){
-            oos.writeObject("CentroidExperimentHeader");
-            CentroidExperimentHeader h = (CentroidExperimentHeader)header;
-            oos.writeObject(h);
-        } else {
-            oos.writeObject("ExperimentClusterHeader");
-            oos.writeObject((ExperimentClusterHeader)header);
-        }
-        
-        oos.writeObject(infoPanel);
-        oos.writeObject(viewPanel);
-        oos.writeObject(clusters);
-        oos.writeObject(clusterDivFM);
-        oos.writeObject(this.centroidDataFM);
-        oos.writeInt(numberOfCells);
-        oos.writeFloat(factor);
-        oos.writeInt(function);
-        oos.writeBoolean(geneClusterViewer);
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new",
+    			new Object[]{this.expViewer, new Float(this.factor), 
+    			new Integer(this.function), new Integer(this.numberOfCells), 
+				new Boolean(this.geneClusterViewer), new Boolean(this.useDoubleGradient), 
+				this.clusterDivFM, this.centroidDataFM, this.clusters, 
+				this.getHeaderComponent(), this.getInsets(), new Integer(this.exptID), 
+				this.codes, this.viewPanel});  
+	}
+    public SOTAExperimentViewer(IViewer exptViewer, Float factor, Integer function,
+    		Integer numberOfCells, Boolean geneClusterViewer, Boolean useDoubleGradient, 
+			FloatMatrix clusterDivFM, FloatMatrix centroidDataFM, int[][] clusters, 
+			JComponent header, 
+			Insets insets, Integer exptID, FloatMatrix codes, JPanel viewPanel) {
+    	setLayout(new GridBagLayout());
+
+    	this.expViewer = exptViewer;
+        this.factor = factor.floatValue();
+        this.function = function.intValue();
+        this.numberOfCells = numberOfCells.intValue();
+        this.geneClusterViewer = geneClusterViewer.booleanValue();
+        this.useDoubleGradient = useDoubleGradient.booleanValue();
+        this.clusterDivFM = clusterDivFM;
+        this.centroidDataFM = centroidDataFM;
+    	this.clusters = clusters;
+    	this.header = header;
+    	setInsets(insets);
+    	this.exptID = exptID.intValue();
+    	this.codes = codes;
+    	this.viewPanel = viewPanel;
     }
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        this.expViewer = (IViewer)ois.readObject();
-        String headerType = (String)ois.readObject();
- 
-        if(headerType.equals("CentroidExperimentHeader")){            
-            this.header = (CentroidExperimentHeader)ois.readObject();
-       } else
-            this.header = (ExperimentClusterHeader)ois.readObject();
-        
-        this.infoPanel = (SOTAExperimentViewer.InfoPanel)ois.readObject();
-        this.viewPanel = (JPanel)ois.readObject();
-        this.clusters = (int [][])ois.readObject();
-        this.clusterDivFM = (FloatMatrix)ois.readObject();
-        this.centroidDataFM = (FloatMatrix)ois.readObject();
-        this.numberOfCells = ois.readInt();
-        this.factor = ois.readFloat();
-        this.function = ois.readInt();
-        this.geneClusterViewer = ois.readBoolean();
-        
+    public void setExperiment(Experiment e) {
+    	super.setExperiment(e);
+        expViewer.setExperiment(e);
         Listener listener = new Listener();
-        this.popup = createJPopupMenu(listener);
+        this.expViewer.getContentComponent().addMouseListener(listener);
+        this.infoPanel = new InfoPanel();
         this.infoPanel.addMouseListener(listener);
-        
-        setLayout(new GridBagLayout());
-        viewPanel.setLayout(new GridBagLayout());
+    	this.header.addMouseListener(listener);
+        this.popup = createJPopupMenu(listener);
+        if(!geneClusterViewer){ //Experiment clusters (expViewer is an ExperimentClusterViewer)
+           this.header = (ExperimentClusterHeader)(expViewer.getHeaderComponent());
+           ((ExperimentClusterHeader)header).setExperiment(e);
+        } else { // gene clusters
+            this.header = new CentroidExperimentHeader(expViewer.getHeaderComponent(), codes, this.clusters, "SOTA Centroid Vector");
+            ((CentroidExperimentHeader)header).setExperiment(e);
+            ((CentroidExperimentHeader)this.header).setNegAndPosColorImages(((ExperimentViewer)expViewer).getNegColorImage(), ((ExperimentViewer)expViewer).getPosColorImage());
+            ((CentroidExperimentHeader)this.header).setNegAndPosColorImages(((ExperimentViewer)expViewer).getNegColorImage(), ((ExperimentViewer)expViewer).getPosColorImage());
+    	    ((CentroidExperimentHeader)this.header).setNegAndPosColorImages(((ExperimentViewer)expViewer).getNegColorImage(), ((ExperimentViewer)expViewer).getPosColorImage());
+    	    ((CentroidExperimentHeader)this.header).setMissingColor(((ExperimentViewer)expViewer).getMissingColor());
+    	}
         viewPanel.add(((JComponent)expViewer), new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         viewPanel.add(infoPanel, new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         add(viewPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
@@ -200,7 +211,6 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer, j
      *  Adds components to viewer
      */
     private void addComponents(JComponent header, ExperimentViewer expImageViewer, InfoPanel info){
-        //add(header, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 0, 0, 0), 0, 0));
         add(expImageViewer, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 0, 0, 0), 0, 0));
         add(info,  new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
     }
@@ -512,7 +522,7 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer, j
      * Displays information about the currently displayed cluster
      *
      */
-    public class InfoPanel extends JPanel implements java.io.Serializable {
+    private class InfoPanel extends JPanel {
         
         private int currCluster;
         public int INFO_PANEL_WIDTH = 300;
@@ -535,12 +545,13 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer, j
         private javax.swing.JLabel c2Label;
         private javax.swing.JLabel c2DivLabel;
         private javax.swing.JLabel c2PopLabel;
+		private SOTAInfoStats infoStats = new SOTAInfoStats();
         
         /**
          * Constructs a new InfoPanel.
          *
          */
-        public InfoPanel(){
+        private InfoPanel(){
             initComponents();
             currCluster = 0;
             
@@ -553,6 +564,7 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer, j
         
         private void initComponents() {
             
+        	
             jLabel10 = new javax.swing.JLabel();
             jLabel11 = new javax.swing.JLabel();
             jLabel12 = new javax.swing.JLabel();
@@ -569,6 +581,7 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer, j
             c2DivLabel = new javax.swing.JLabel();
             c2PopLabel = new javax.swing.JLabel();
             
+            setBackground(Color.white);
             this.setLayout(null);
             
             this.setBackground(java.awt.Color.white);
@@ -649,15 +662,18 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer, j
         
         /**
          * Sets viewable data into panel
+         * EH changed this method to take the bean SOTAInfoPanel instead of a long list of parameters
          */
-        private void setData(int c1, int clusterPop1, float div1, float dist, int c2, int clusterPop2, float div2){
-            this.c1Label.setText(String.valueOf(c1+1));
-            this.c1PopLabel.setText(String.valueOf(clusterPop1));
-            this.c1DivLabel.setText(String.valueOf(div1));
-            this.distLabel.setText(String.valueOf(dist*factor));  //factor sets polarity based on distance metric
-            this.c2Label.setText(String.valueOf(c2+1));
-            this.c2PopLabel.setText(String.valueOf(clusterPop2));
-            this.c2DivLabel.setText(String.valueOf(div2));
+       	private void setData1(SOTAInfoStats infoStats) {
+        	this.infoStats = infoStats;
+        	this.c1Label.setText(String.valueOf(infoStats.getC1()+1));
+            this.c1PopLabel.setText(String.valueOf(infoStats.getClusterPop1()));
+            this.c1DivLabel.setText(String.valueOf(infoStats.getDiv1()));
+            this.distLabel.setText(String.valueOf(infoStats.getDist()*factor));  //factor sets polarity based on distance metric
+            this.c2Label.setText(String.valueOf(infoStats.getC2()+1));
+            this.c2PopLabel.setText(String.valueOf(infoStats.getClusterPop2()));
+            this.c2DivLabel.setText(String.valueOf(infoStats.getDiv2()));
+           
             repaint();
         }
         
@@ -707,7 +723,6 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer, j
          *  Triggers preparation to display data on current cluster
          */
         public void onSelected(){
-            
             float neighborDist;
             int neighbor = getClosestCentroid(currCluster);
             
@@ -718,14 +733,19 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer, j
             
             if(neighborDist == Float.POSITIVE_INFINITY || neighborDist == 0 || neighbor >= numberOfCells || clusterDivFM == null || clusters[currCluster].length <=0)
                 clearData(currCluster);
-            else
-                setData(currCluster, clusters[currCluster].length , clusterDivFM.get(currCluster, 0), neighborDist, neighbor, clusters[neighbor].length ,
-                clusterDivFM.get(neighbor, 0));
+            else {
+            	//int c1, int clusterPop1, float div1, float dist, int c2, int clusterPop2, float div2){
+            	infoStats.setC1(currCluster);
+            	infoStats.setClusterPop1(clusters[currCluster].length);
+            	infoStats.setDiv1(clusterDivFM.get(currCluster, 0));
+            	infoStats.setDist(neighborDist);
+            	infoStats.setC2(neighbor);
+            	infoStats.setClusterPop2(clusters[neighbor].length);
+            	infoStats.setDiv2(clusterDivFM.get(neighbor, 0));
+            	setData1(infoStats);
+            }
         }
-        
-        
     }
-    
 }
 
 

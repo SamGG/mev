@@ -21,6 +21,7 @@ import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 import java.text.DecimalFormat;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -1061,5 +1062,37 @@ public class LEMGraphViewer extends JPanel implements IViewer, java.io.Serializa
 		}
 		
                
-    } 
+    }
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
+	 */
+	public void setExperiment(Experiment e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentID()
+	 */
+	public int getExperimentID() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
+	 */
+	public void setExperimentID(int id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExpression()
+	 */
+	public Expression getExpression() {
+		// TODO Auto-generated method stub
+		return null;
+	} 
 }

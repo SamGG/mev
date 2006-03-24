@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: UMatrixColorViewer.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-02-23 20:59:54 $
- * $Author: caliente $
+ * $Revision: 1.9 $
+ * $Date: 2006-03-24 15:51:36 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.som;
@@ -22,6 +22,7 @@ import java.awt.RenderingHints;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -34,8 +35,7 @@ import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.util.Hexagon;
 import org.tigr.util.FloatMatrix;
 
-public class UMatrixColorViewer extends JPanel implements IViewer, java.io.Serializable {
-    public static final long serialVersionUID = 202016030001L;
+public class UMatrixColorViewer extends JPanel implements IViewer {
      
     private int[][] clusters;
     private FloatMatrix u_matrix;
@@ -58,6 +58,29 @@ public class UMatrixColorViewer extends JPanel implements IViewer, java.io.Seria
 	setFont(new Font("monospaced", Font.PLAIN, 10));
 	addComponentListener(new Listener());
     }
+    /**
+     * An adapter constructor that simply calls UMatrixDistanceViewer(int[][] clusters, FloatMatrix u_matrix, int dim_x, int dim_y, String topology)
+     */
+    public UMatrixColorViewer(int[][] clusters, FloatMatrix u_matrix, Integer dim_x, Integer dim_y, String topology) {
+    	this(clusters, u_matrix, dim_x.intValue(), dim_y.intValue(), topology);
+    }
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    		new Object[]{this.clusters, this.u_matrix, new Integer(dim_x), new Integer(dim_y), this.topology});
+    }
+    
+    /**
+     * This method is only implemented to satisfy the IViewer interface - it returns 0 always.
+     */
+    public int getExperimentID(){return 0;}
+    /**
+     * This class is only implemented to satisfy the IViewer interface - does nothing.
+     */
+    public void setExperiment(Experiment e) {}
+    /**
+     * This class is only implemented to satisfy the IViewer interface - does nothing.
+     */
+    public void setExperimentID(int id){}
     
     /**
      * Sets the anti aliasing attribute.

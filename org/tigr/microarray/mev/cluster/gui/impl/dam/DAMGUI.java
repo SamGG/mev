@@ -164,7 +164,13 @@ public class DAMGUI implements IClusterGUI {
             Experiment experiment = framework.getData().getExperiment();
             
             if(classifyGenes) {
-                data.addMatrix("experiment", (experiment.getMatrix()).transpose());
+            	//Problem here: if the program has a gene cluster (maybe also if it
+            	//has an experiment cluster) the matrix returned is null.  
+                FloatMatrix temp;
+                temp = (experiment.getMatrix()).transpose();
+                System.out.println("floatmatrix size: " + temp.m + ", " + temp.n);
+            	data.addMatrix("experiment", temp);
+                
             } else {
                 data.addMatrix("experiment", experiment.getMatrix());
             }
@@ -240,7 +246,7 @@ public class DAMGUI implements IClusterGUI {
             int k = numberOfClasses*3;
             this.clusters = new int[k][];
             
-            System.out.println(" ");
+  //          System.out.println(" ");
             for (int i=0; i<k; i++) {
                 clusters[i] = nodeList.getNode(i).getFeaturesIndexes();
                 
@@ -251,7 +257,7 @@ public class DAMGUI implements IClusterGUI {
             
             this.geneClusters = new int[2][];
             
-            System.out.println(" ");
+  //          System.out.println(" ");
             for (int i=0; i<2; i++) {
                 geneClusters[i] = nodeList.getNode(i).getFeaturesIndexes();
                 

@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: QTCExperimentCentroidsViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2005-03-10 20:22:07 $
- * $Author: braistedj $
+ * $Revision: 1.5 $
+ * $Date: 2006-03-24 15:51:22 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.qtc;
@@ -23,6 +23,7 @@ import javax.swing.JPopupMenu;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidsViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
@@ -47,13 +48,12 @@ public class QTCExperimentCentroidsViewer extends ExperimentClusterCentroidsView
         this.popup = createJPopupMenu(listener);
         getContentComponent().addMouseListener(listener);
     }
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { }    
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {        
-        Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
-	getContentComponent().addMouseListener(listener);
+    /**
+     * Constructs a <code>CentroidsViewer</code> for specified experiment
+     * and clusters.
+     */
+    public QTCExperimentCentroidsViewer(ExperimentClusterCentroidViewer cv, Integer exptID) {
+    	super(cv, exptID);
     }    
     
     /**

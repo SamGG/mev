@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: KMCExperimentCentroidViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-23 20:59:52 $
- * $Author: caliente $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:50:49 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.kmc;
@@ -38,14 +38,19 @@ public class KMCExperimentCentroidViewer extends ExperimentClusterCentroidViewer
         this.popup = createJPopupMenu(listener);
         getContentComponent().addMouseListener(listener);
     }
-    
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { }
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        Listener listener = new Listener();
-        this.popup = createJPopupMenu(listener);
-        getContentComponent().addMouseListener(listener);
+    /**
+     * Used to recreate a KMCExperimentCentroidViewer from saved data written by 
+     * XMLEncoder.  
+     * 
+     * @param clusters
+     * @param exptID
+     * @param clusterIndex
+     * @param means
+     * @param variances
+     * @param codes
+     */
+    public KMCExperimentCentroidViewer(int[][] clusters, Integer exptID, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes) {
+    	super(clusters, exptID, clusterIndex, means, variances, codes);
     }
     
 

@@ -8,6 +8,7 @@ package org.tigr.microarray.mev.cgh.CGHGuiObj.CGHPositionGraph;
 
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 
 import javax.swing.JComponent;
 
@@ -192,6 +193,42 @@ public class CGHPositionGraphViewer extends javax.swing.JPanel implements Action
 	public int getViewerType() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
+	 */
+	public void setExperiment(Experiment e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentID()
+	 */
+	public int getExperimentID() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
+	 */
+	public void setExperimentID(int id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExpression()
+	 */
+	public Expression getExpression() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

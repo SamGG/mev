@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLViewer.java,v $
- * $Revision: 1.14 $
- * $Date: 2006-02-23 20:59:51 $
- * $Author: caliente $
+ * $Revision: 1.15 $
+ * $Date: 2006-03-24 15:50:40 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 /*
@@ -31,6 +31,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -99,6 +101,9 @@ public class HCLViewer extends JPanel implements IViewer {
     /** component to draw an experiment annotations */
     protected HCLAnnotationBar annotationBar;
     
+    protected HCLTreeData genes_result;
+    protected HCLTreeData samples_result;
+    
     protected IData data;
     protected Experiment experiment;
     protected ArrayList clusters = new ArrayList();
@@ -115,6 +120,8 @@ public class HCLViewer extends JPanel implements IViewer {
     protected int clusterIndex = 0;
     protected Listener listener;
     protected JPopupMenu popup;
+    private int exptID = 0;
+    protected int[] features;
     
     protected DefaultMutableTreeNode node;
     protected IFramework framework;
@@ -126,6 +133,7 @@ public class HCLViewer extends JPanel implements IViewer {
         setLayout(new GridBagLayout());
         setBackground(Color.white);
         this.experiment = experiment;
+        this.exptID = experiment.getId();
         listener = new Listener();
         this.addMouseListener(listener);
         features = features == null ? createDefaultFeatures(experiment) : features;
@@ -142,6 +150,7 @@ public class HCLViewer extends JPanel implements IViewer {
             this.genesTree = new HCLTree(genes_result, HCLTree.HORIZONTAL);
             this.genesTree.addMouseListener(listener);
             this.genesTree.setListener(listener);
+            this.genes_result = genes_result;
         }
         if (samples_result != null && experiment.getNumberOfSamples() > 1 && samples_result.node_order.length > 1) {
             this.sampleTree = new HCLTree(samples_result, HCLTree.VERTICAL);
@@ -150,14 +159,38 @@ public class HCLViewer extends JPanel implements IViewer {
                 this.sampleTree.setHorizontalOffset(10);
             this.sampleTree.addMouseListener(listener);
             this.sampleTree.setListener(listener);  //added for selection of experiment hcl nodes
+            this.samples_result = samples_result;
         }
         this.isExperimentCluster = false;
         this.numberOfSamples = experiment.getNumberOfSamples(); //know this is correct for gene clustering constructor
         addComponents(this.sampleTree, this.genesTree, this.expViewer.getContentComponent(), this.colorBar, this.annotationBar);
         this.popup = createJPopupMenu(listener);
     }
+    /**
+     * Constructs a <code>HCLViewer</code> for specified results
+     * This is the XMLEncoder/Decoder constructor
+     */
+    public HCLViewer(Integer exptID, int[] features, HCLTreeData genesResult, HCLTreeData samplesResult, int [][] sampleClusters, boolean isExperimentCluster, HCLTree genesTree, HCLTree sampleTree, Integer offset, ExperimentViewer expViewer) {
+        setLayout(new GridBagLayout());
+        setBackground(Color.white);
+        this.exptID = exptID.intValue();
+        this.offset = offset.intValue();
+        this.expViewer = expViewer;
+        listener = new Listener();
+        this.addMouseListener(listener);
+        this.features = features;
+        this.isExperimentCluster = isExperimentCluster;
+        this.sampleClusters = sampleClusters;
+        this.genes_result = genesResult;
+        this.samples_result = samplesResult;
+        this.genesTree = genesTree;
+        this.sampleTree = sampleTree;
+    }
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new",
+				new Object[]{new Integer(this.exptID), this.createDefaultFeatures(this.experiment), this.genes_result, this.samples_result, this.sampleClusters, new Boolean(this.isExperimentCluster), this.genesTree, this.sampleTree, new Integer(this.offset), (ExperimentViewer)this.expViewer});
     
-    public HCLViewer() {}
+    }
     
     /**
      * Constructs a <code>HCLViewer</code> for specified results
@@ -166,6 +199,7 @@ public class HCLViewer extends JPanel implements IViewer {
         setLayout(new GridBagLayout());
         setBackground(Color.white);
         this.experiment = experiment;
+        this.exptID = experiment.getId();
         listener = new Listener();
         this.addMouseListener(listener);
         features = features == null ? createDefaultFeatures(experiment) : features;
@@ -176,6 +210,8 @@ public class HCLViewer extends JPanel implements IViewer {
             this.numberOfSamples = experiment.getNumberOfSamples();
         this.genesOrder = createGenesOrder(experiment, createDefaultFeatures(experiment), genes_result);
         this.sampleClusters = sampleClusters;
+        this.genes_result = genes_result;
+        this.samples_result = samples_result;
         if(this.isExperimentCluster){
             if(genes_result != null){
                 offset = 0;
@@ -196,6 +232,7 @@ public class HCLViewer extends JPanel implements IViewer {
         this.colorBar.addMouseListener(listener);
         this.annotationBar = new HCLAnnotationBar(this.genesOrder);
         this.annotationBar.addMouseListener(listener);
+/*EH
         if (genes_result != null && experiment.getNumberOfGenes() > 1) {
             this.genesTree = new HCLTree(genes_result, HCLTree.HORIZONTAL);
             this.genesTree.addMouseListener(listener);
@@ -209,6 +246,7 @@ public class HCLViewer extends JPanel implements IViewer {
             this.sampleTree.addMouseListener(listener);
             this.sampleTree.setListener(listener);
         }
+*/
         addComponents(this.sampleTree, this.genesTree, this.expViewer.getContentComponent(), this.colorBar, this.annotationBar);
         this.popup = createJPopupMenu(listener);
     }
@@ -220,6 +258,7 @@ public class HCLViewer extends JPanel implements IViewer {
         setLayout(new GridBagLayout());
         setBackground(Color.white);
         this.experiment = experiment;
+        this.exptID = experiment.getId();
         listener = new Listener();
         this.addMouseListener(listener);
         this.node = node;
@@ -237,6 +276,7 @@ public class HCLViewer extends JPanel implements IViewer {
             this.genesTree = new HCLTree(genes_result, HCLTree.HORIZONTAL);
             this.genesTree.addMouseListener(listener);
             this.genesTree.setListener(listener);
+            this.genes_result = genes_result;
         }
         if (samples_result != null && experiment.getNumberOfSamples() > 1 && samples_result.node_order.length > 1) {
             this.sampleTree = new HCLTree(samples_result, HCLTree.VERTICAL);
@@ -245,6 +285,7 @@ public class HCLViewer extends JPanel implements IViewer {
                 this.sampleTree.setHorizontalOffset(10);
             this.sampleTree.addMouseListener(listener);
             this.sampleTree.setListener(listener);  //added for selection of experiment hcl nodes
+            this.samples_result = samples_result;
         }
         this.isExperimentCluster = false;
         this.numberOfSamples = experiment.getNumberOfSamples(); //know this is correct for gene clustering constructor
@@ -253,66 +294,46 @@ public class HCLViewer extends JPanel implements IViewer {
     }
     
     
-    private void writeObject(ObjectOutputStream oos) throws IOException {
-        
-        oos.writeObject(expViewer);
-        oos.writeObject(header);
-        oos.writeBoolean(genesTree != null);
-        if(genesTree != null){
-            oos.writeObject(genesTree);
-            oos.writeObject(this.genesOrder);
-        }
-        oos.writeBoolean(sampleTree != null);
-        if(sampleTree != null){
-            oos.writeObject(sampleTree);
-            oos.writeObject(this.samplesOrder);
-        }
-        oos.writeObject(colorBar);
-        oos.writeObject(annotationBar);
-        
-        
-        oos.writeObject(experiment);
-        
-        oos.writeObject(clusters);
-        oos.writeObject(experimentClusters);
-        oos.writeObject(sampleClusters);
-        oos.writeBoolean(this.isExperimentCluster);
-    }
-    
-    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        
-        this.expViewer = (IViewer)ois.readObject();        
-        this.header = (HCLExperimentHeader)ois.readObject();        
-        this.listener = new Listener();        
+    public void setExperiment(Experiment e) {
+    	this.experiment = e;
+    	this.exptID = e.getId();
+    	setLayout(new GridBagLayout());
+        setBackground(Color.white);
+        listener = new Listener();
         this.addMouseListener(listener);
+        features = features == null ? createDefaultFeatures(experiment) : features;
+        this.expViewer.getContentComponent().addMouseListener(listener);
+        this.expViewer.setExperiment(this.experiment);
+        this.header = new HCLExperimentHeader(this.expViewer.getHeaderComponent());
         this.header.addMouseListener(listener);
-        
-        if(ois.readBoolean()){
-            genesTree = (HCLTree)  ois.readObject();            
-            this.genesOrder = (int [])ois.readObject();            
-            genesTree.addMouseListener(listener);
-            genesTree.setListener(listener);
+        this.colorBar = new HCLColorBar(this.clusters, features.length);
+        this.colorBar.addMouseListener(listener);
+        this.genesOrder = createGenesOrder(experiment, features, genes_result);
+        this.annotationBar = new HCLAnnotationBar(this.genesOrder);
+        this.annotationBar.addMouseListener(listener);
+        if (genes_result != null && experiment.getNumberOfGenes() > 1 && genes_result.node_order.length > 1) {
+            this.genesTree.addMouseListener(listener);
+            this.genesTree.setListener(listener);
             this.genesTree.deselectAllNodes();
         }
-        
-        if(ois.readBoolean()){
-            sampleTree= (HCLTree) ois.readObject();            
-            this.samplesOrder = (int [])ois.readObject();            
-            sampleTree.addMouseListener(listener);
-            sampleTree.setListener(listener);
+        if (samples_result != null && experiment.getNumberOfSamples() > 1 && samples_result.node_order.length > 1) {
+            this.samplesOrder = createSamplesOrder(samples_result);
+            if(genes_result == null)
+                this.sampleTree.setHorizontalOffset(10);
+            this.sampleTree.addMouseListener(listener);
+            this.sampleTree.setListener(listener);  //added for selection of experiment hcl nodes
             this.sampleTree.deselectAllNodes();
         }
+        this.isExperimentCluster = false;
+        this.numberOfSamples = experiment.getNumberOfSamples(); //know this is correct for gene clustering constructor
+        addComponents(this.sampleTree, this.genesTree, this.expViewer.getContentComponent(), this.colorBar, this.annotationBar);
+        this.popup = createJPopupMenu(listener);
         
-        colorBar = (HCLColorBar)ois.readObject();
-        this.annotationBar = (HCLAnnotationBar)ois.readObject();        
-        experiment = (Experiment)ois.readObject();        
-        this.clusters = (ArrayList)ois.readObject();
-        this.experimentClusters = (ArrayList)ois.readObject();        
-        this.sampleClusters = (int[][])ois.readObject();    
-        this.isExperimentCluster = ois.readBoolean();
-        this.popup = this.createJPopupMenu(listener);        
     }
-    
+    public void setExperimentID(int id) {
+    	this.exptID = id;
+    }
+    public int getExperimentID() {return this.exptID;}
     
     /**
      * Adds wrapped viewers.

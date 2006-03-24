@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SAMInfoViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-23 20:59:54 $
- * $Author: caliente $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:51:28 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.sam;
@@ -41,6 +41,11 @@ public class SAMInfoViewer extends ViewerAdapter implements java.io.Serializable
 	content = createContent(clusters, genes);
        
 	setMaxWidth(content, header);
+    }
+    public SAMInfoViewer(JTextArea content, JComponent header){
+    	this.content = content;
+    	this.header = header;
+		setMaxWidth(content, header);
     }
     
     /**

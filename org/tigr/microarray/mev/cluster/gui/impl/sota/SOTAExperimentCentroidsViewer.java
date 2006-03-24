@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOTAExperimentCentroidsViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 20:22:06 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-03-24 15:51:44 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.sota;
@@ -23,6 +23,7 @@ import javax.swing.JPopupMenu;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidsViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
@@ -47,7 +48,13 @@ public class SOTAExperimentCentroidsViewer extends ExperimentClusterCentroidsVie
         this.popup = createJPopupMenu(listener);
         getContentComponent().addMouseListener(listener);
     }
-    
+    /**
+     * Constructs a <code>CentroidsViewer</code> for specified experiment
+     * and clusters.
+     */
+    public SOTAExperimentCentroidsViewer(ExperimentClusterCentroidViewer cv, Integer exptID) {
+    	super(cv, exptID);
+    }
     /**
      * Creates a popup menu.
      */

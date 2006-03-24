@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLNodeHeightGraph.java,v $
- * $Revision: 1.2 $
- * $Date: 2006-02-23 20:59:55 $
- * $Author: caliente $
+ * $Revision: 1.3 $
+ * $Date: 2006-03-24 15:51:58 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -17,6 +17,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 import java.text.DecimalFormat;
 
 import javax.swing.JComponent;
@@ -32,6 +33,7 @@ import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
+import org.tigr.microarray.mev.cluster.gui.impl.tease.HCLTreeData;
 
 public class HCLNodeHeightGraph extends JPanel implements IViewer {
     GraphViewer viewer;
@@ -250,5 +252,37 @@ public class HCLNodeHeightGraph extends JPanel implements IViewer {
     public int getViewerType() {
         return -1;
     }
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
+	 */
+	public void setExperiment(Experiment e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentID()
+	 */
+	public int getExperimentID() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
+	 */
+	public void setExperimentID(int id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExpression()
+	 */
+	public Expression getExpression() {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
 }

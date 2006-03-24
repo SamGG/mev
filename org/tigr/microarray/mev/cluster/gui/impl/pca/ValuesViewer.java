@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: ValuesViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-23 20:59:53 $
- * $Author: caliente $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:51:05 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.pca;
@@ -23,8 +23,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 import org.tigr.util.FloatMatrix;
+import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
 public class ValuesViewer extends ViewerAdapter implements java.io.Serializable {
     public static final long serialVersionUID = 202011050001L;
@@ -39,6 +39,11 @@ public class ValuesViewer extends ViewerAdapter implements java.io.Serializable 
 	content = createContent(S);
 	header = createHeader();
 	setMaxWidth(content, header);
+    }
+    public ValuesViewer(JComponent content, JComponent header){
+    	this.content = content;
+    	this.header = header;
+		setMaxWidth(content, header);
     }
     
     /**

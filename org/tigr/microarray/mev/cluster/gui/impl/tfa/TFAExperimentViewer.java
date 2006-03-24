@@ -17,10 +17,12 @@ package org.tigr.microarray.mev.cluster.gui.impl.tfa;
 
 import java.awt.Color;
 import java.awt.Frame;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.Expression;
 
 import javax.swing.JColorChooser;
 import javax.swing.JOptionPane;
@@ -28,6 +30,7 @@ import javax.swing.JPopupMenu;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 
@@ -40,23 +43,30 @@ public class TFAExperimentViewer extends ExperimentViewer {
     /** Creates a new instance of TFAExperimentViewer */
     public TFAExperimentViewer(Experiment experiment, int[][] clusters, String[] auxTitles, Object[][] auxData) {
 	super(experiment, clusters);
-        this.auxTitles = auxTitles;
-        this.auxData = auxData;
-	Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
-	getContentComponent().addMouseListener(listener);
-	getHeaderComponent().addMouseListener(listener);        
+    	initialize(auxTitles, auxData);
     }
     
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+    /**
+     * @inheritDoc
+     */ 
+    public TFAExperimentViewer(int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets, Integer exptID, String[] auxTitles, Object[][] auxData) {
+    	super(clusters, samplesOrder, drawAnnotations, header, insets, exptID);
+    	initialize(auxTitles, auxData);
+    } 
+	public Expression getExpression(){
+		Object[] parentConstructorArgs = super.getExpression().getArguments();
+		return new Expression(this, this.getClass(), "new", 
+				new Object[]{parentConstructorArgs[0], parentConstructorArgs[1], parentConstructorArgs[2], parentConstructorArgs[3], parentConstructorArgs[4], parentConstructorArgs[5], 
+				auxTitles, auxData});
+	}
+    private void initialize(String[] auxTitles, Object[][] auxData){
+        this.auxTitles = auxTitles;
+        this.auxData = auxData;
         Listener listener = new Listener();
         this.popup = createJPopupMenu(listener);
         getContentComponent().addMouseListener(listener);
         getHeaderComponent().addMouseListener(listener);        
     }
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { }
-    
     
     /**
      * Creates a popup menu.

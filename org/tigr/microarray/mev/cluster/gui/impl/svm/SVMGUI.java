@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: SVMGUI.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-02-23 20:59:55 $
- * $Author: caliente $
+ * $Revision: 1.9 $
+ * $Date: 2006-03-24 15:51:53 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -302,7 +302,7 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
                 }
                                 
                 DefaultMutableTreeNode root = new DefaultMutableTreeNode(new LeafInfo("SVM One-out Validation",
-                new SVMOneOutViewer( framework, experiment, this.data, cumDiscriminantMatrix, info, this.data.classifyGenes, this.classes, elementScores, iterationScores, numberOfNonNeutrals)));
+                new SVMOneOutViewer(experiment.getExperiment(), cumDiscriminantMatrix, this.data.classifyGenes, this.classes, elementScores, iterationScores, numberOfNonNeutrals)));
                 svmNode.add(root);
                 
                 AlgorithmData cumulativeData = constructCumulativeResult(cumDiscriminantMatrix);                
@@ -660,7 +660,8 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
                 }
                                      
                 DefaultMutableTreeNode root = new DefaultMutableTreeNode(new LeafInfo("SVM One-out Validation",
-                new SVMOneOutViewer( framework, this.experiment, this.data, cumDiscriminantMatrix, info, this.data.classifyGenes, this.classes, elementScores, iterationScores, numberOfNonNeutrals)));                
+                //new SVMOneOutViewer( framework, this.experiment, this.data, cumDiscriminantMatrix, info, this.data.classifyGenes, this.classes, elementScores, iterationScores, numberOfNonNeutrals)));                
+                new SVMOneOutViewer(this.experiment.getExperiment(), cumDiscriminantMatrix, this.data.classifyGenes, this.classes, elementScores, iterationScores, numberOfNonNeutrals)));                
                 svmNode.add(root);
                  
                 AlgorithmData cumulativeData = constructCumulativeResult(cumDiscriminantMatrix);
@@ -947,7 +948,8 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
      */
     protected DefaultMutableTreeNode createTrainingGUIResult() {
         DefaultMutableTreeNode root =  new DefaultMutableTreeNode(new LeafInfo("SVM Training Result",
-        new SVMTrainViewer( framework, experiment, experimentMap, data, Weights, info, this.data.classifyGenes )));
+      //new SVMTrainViewer( framework, experiment, experimentMap, data, Weights, info, this.data.classifyGenes )));
+        new SVMTrainViewer( experiment.getExperiment(), Weights, this.data.classifyGenes, data)));
         return root;
     }
     
@@ -1067,7 +1069,7 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
             data.negativeConstraint=Float.valueOf(Value).floatValue();
             
             in.readLine();
-            in.readLine(); //skip execution time
+            //in.readLine(); //skip execution time
             
             Dummy=in.readLine();
             Position=Dummy.indexOf(":");
@@ -1150,7 +1152,8 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
      */
     protected DefaultMutableTreeNode createClassificationGUIResult() {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(new LeafInfo("SVM Classification Result",
-        new SVMClassifyViewer( framework, experiment, data, discriminantMatrix, info, this.data.classifyGenes )));
+       // new SVMClassifyViewer( framework, experiment, data, discriminantMatrix, info, this.data.classifyGenes )));
+        		new SVMClassifyViewer(experiment.getExperiment(), discriminantMatrix, this.data.classifyGenes)));
         return root;
     }
     

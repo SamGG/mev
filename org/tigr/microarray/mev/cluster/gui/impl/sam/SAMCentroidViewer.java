@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SAMCentroidViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-03-10 20:21:59 $
- * $Author: braistedj $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:51:28 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 /*
@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.Expression;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
@@ -55,8 +56,28 @@ public class SAMCentroidViewer extends CentroidViewer {
     private boolean calculateQLowestFDR;
 
     /** Creates new SAMCentroidViewer */
-    public SAMCentroidViewer(Experiment experiment, int[][] clusters, int studyDesign, /*Vector geneNamesVector,*/ float[] dValues, float[] rValues, float[] foldChangeArray, float[] qLowestFDR, boolean calculateQLowestFDR) {
+    public SAMCentroidViewer(Experiment experiment, int[][] clusters, int studyDesign, float[] dValues, float[] rValues, float[] foldChangeArray, float[] qLowestFDR, boolean calculateQLowestFDR) {
 	super(experiment, clusters);
+		initialize(studyDesign, dValues, rValues, foldChangeArray, qLowestFDR, calculateQLowestFDR);
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public SAMCentroidViewer(int[][] clusters, float[][] variances, float[][] means, float[][] codes, Integer id,
+    		Integer studyDesign, float[] dValues, float[] rValues, float[] foldChangeArray, float[] qLowestFDR, Boolean calculateQLowestFDR) {
+    	super(clusters, variances, means, codes, id);
+		initialize(studyDesign.intValue(), dValues, rValues, foldChangeArray, qLowestFDR, calculateQLowestFDR.booleanValue());
+    }
+
+    public Expression getExpression(){
+    	Object[] temp = super.getExpression().getArguments();
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{temp[0], temp[1], temp[2], temp[3], temp[4],
+    			new Integer(studyDesign), dValues, rValues, foldChangeArray, qLowestFDR, new Boolean(calculateQLowestFDR)});
+    }
+    
+    private void initialize(int studyDesign, float[] dValues, float[] rValues, float[] foldChangeArray, float[] qLowestFDR, boolean calculateQLowestFDR) {
 	Listener listener = new Listener();
 	this.popup = createJPopupMenu(listener);
         this.studyDesign = studyDesign;
@@ -67,17 +88,6 @@ public class SAMCentroidViewer extends CentroidViewer {
         this.calculateQLowestFDR = calculateQLowestFDR;
         this.foldChangeArray = foldChangeArray;
 	getContentComponent().addMouseListener(listener);        
-    }
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        ois.defaultReadObject();
-        Listener listener = new Listener();
-        this.popup = createJPopupMenu(listener);
-        getContentComponent().addMouseListener(listener);
-    }
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { 
-        oos.defaultWriteObject();
     }
     
     

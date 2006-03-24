@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: FOMContentComponent.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-02-23 20:59:51 $
- * $Author: caliente $
+ * $Revision: 1.7 $
+ * $Date: 2006-03-24 15:50:09 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.fom;
@@ -29,12 +29,12 @@ import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 
 public class FOMContentComponent extends JPanel implements java.io.Serializable {
-    public static final long serialVersionUID = 202003050001L;
     
     private FOMGraph fomGraph;
     private float[] fom_values;
     private float[] variances;
     private boolean showVariance = false;
+    private GridBagConstraints gbc;
     
     public FOMContentComponent(float[] fom_values, float [] variances) {
 	setLayout(new GridBagLayout());
@@ -59,6 +59,9 @@ public class FOMContentComponent extends JPanel implements java.io.Serializable 
 	gbc.gridx = 1;
 	gbc.weightx = 0.1;
 	add(createValuesList(fom_values), gbc);
+    }
+    public static String[] getPersistenceDelegateArgs(){
+    	return new String[]{"fom_values", "variances"};
     }
     
     public void setFOMIterationValues(float [][] values) {
@@ -167,4 +170,58 @@ public class FOMContentComponent extends JPanel implements java.io.Serializable 
 	frame.setVisible(true);
     }
  **/
+	/**
+	 * @return Returns the fom_values.
+	 */
+	public float[] getFom_values() {
+		return fom_values;
+	}
+	/**
+	 * @param fom_values The fom_values to set.
+	 */
+	public void setFom_values(float[] fom_values) {
+		this.fom_values = fom_values;
+		gbc.gridx = 1;
+		gbc.weightx = 0.1;
+		add(createValuesList(fom_values), gbc);
+	}
+	/**
+	 * @return Returns the fomGraph.
+	 */
+	public FOMGraph getFomGraph() {
+		return fomGraph;
+	}
+	/**
+	 * @param fomGraph The fomGraph to set.
+	 */
+	public void setFomGraph(FOMGraph fomGraph) {
+		this.fomGraph = fomGraph;
+		gbc.gridx = 0;
+		gbc.weightx = 0.9;
+		add(this.fomGraph, gbc);
+	}
+	/**
+	 * @return Returns the showVariance.
+	 */
+	public boolean isShowVariance() {
+		return showVariance;
+	}
+	/**
+	 * @param showVariance The showVariance to set.
+	 */
+	public void setShowVariance(boolean showVariance) {
+		this.showVariance = showVariance;
+	}
+	/**
+	 * @return Returns the variances.
+	 */
+	public float[] getVariances() {
+		return variances;
+	}
+	/**
+	 * @param variances The variances to set.
+	 */
+	public void setVariances(float[] variances) {
+		this.variances = variances;
+	}
 }

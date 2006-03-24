@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: HCLSupportViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 20:32:37 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-03-24 15:51:48 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.st;
@@ -18,6 +18,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.Expression;
+import java.lang.reflect.Array;
 import java.util.Vector;
 
 import javax.swing.JCheckBoxMenuItem;
@@ -81,6 +83,30 @@ public class HCLSupportViewer extends HCLViewer {
         addComponents(this.sampleTree, this.genesTree, this.expViewer.getContentComponent(), this.colorBar, this.annotationBar);
         this.addMouseListener(listener);
         addSTMenuItems(popup);
+    }
+    public HCLSupportViewer(Integer exptID, int[] features, HCLTreeData genesResult, HCLTreeData samplesResult, int [][] sampleClusters, boolean isExperimentCluster, HCLTree genesTree, HCLTree sampleTree, Integer offset, ExperimentViewer expViewer, Vector geneTreeSupportVector, Vector exptTreeSupportVector) {
+    	super(exptID, features, genesResult, samplesResult, sampleClusters, isExperimentCluster, genesTree, sampleTree, offset, expViewer);
+
+        this.geneTreeSupportVector = geneTreeSupportVector;
+        this.exptTreeSupportVector = exptTreeSupportVector;
+        
+    }
+
+    public Expression getExpression(){
+    	Expression e = super.getExpression();
+    	int superArgsLength = e.getArguments().length;
+    	Object[] temp = new Object[superArgsLength + 2];
+    	for(int i=0; i<superArgsLength; i++){
+    		temp[i] = e.getArguments()[i];
+    	}
+    	temp[temp.length-2] = geneTreeSupportVector;
+    	temp[temp.length-1] = exptTreeSupportVector;
+		return new Expression(this, this.getClass(), "new", temp);
+		
+    }
+
+    public void setExperiment(Experiment e) {
+    	super.setExperiment(e);
     }
     
 
