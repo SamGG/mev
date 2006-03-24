@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMExperimentCentroidViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-03-10 20:22:03 $
- * $Author: braistedj $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:51:08 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.ptm;
@@ -22,6 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.Expression;
 import java.util.Vector;
 
 import javax.swing.JColorChooser;
@@ -58,23 +59,27 @@ public class PTMExperimentCentroidViewer extends ExperimentClusterCentroidViewer
 	getContentComponent().addMouseListener(listener);
     }
     
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        oos.writeObject(this.templateVector);
-        oos.writeInt(this.numberOfGenes);
-        oos.writeObject(this.auxData);
-        oos.writeObject(this.auxTitles);
-    }    
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {        
-        this.templateVector = (Vector)ois.readObject();
-        this.numberOfGenes = ois.readInt();
-        this.auxData = (Object [][])ois.readObject();
-        this.auxTitles = (String [])ois.readObject();
-            
+    /**
+     * @inheritDoc
+     */
+    public PTMExperimentCentroidViewer(int[][] clusters, Integer exptID, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes, 
+    		Vector templateVector, String[] auxTitles, Object[][] auxData){
+    	super(clusters, exptID, clusterIndex, means, variances, codes);
         Listener listener = new Listener();
 	this.popup = createJPopupMenu(listener);
+		this.templateVector = templateVector;
+        this.auxTitles = auxTitles;
+        this.auxData = auxData;        
 	getContentComponent().addMouseListener(listener);
     }    
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{this.clusters, new Integer(this.getExperimentID()), new Integer(this.clusterIndex), this.means, this.variances, this.codes, this.templateVector, this.auxTitles, this.auxData});
+    }
+    public void setExperiment(Experiment e){
+    	super.setExperiment(e);
+    	this.numberOfGenes = experiment.getNumberOfGenes();
+    }
     
     /**
      * Creates a popup menu.

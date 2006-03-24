@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: SlideData.java,v $
- * $Revision: 1.13 $
- * $Date: 2006-02-27 14:29:19 $
- * $Author: wwang67 $
+ * $Revision: 1.14 $
+ * $Date: 2006-03-24 15:49:45 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -24,10 +24,17 @@ import org.tigr.midas.util.ColumnWorker;
 import org.tigr.util.Xcon;
 import org.tigr.util.math.LinearEquation;
 
+//EH state-saving additions
+import org.tigr.microarray.mev.persistence.StateSavingProgressPanel;
+import javax.swing.JFrame;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
-public class SlideData extends Vector implements ISlideData, ISlideMetaData, java.io.Serializable {
-    public static final long serialVersionUID = 100010201050001L;
 
+public class SlideData implements ISlideData, ISlideMetaData {
+	//EH
+    private Vector allSlideDataElements;
     private String slideDataName;
     private String slideFileName;
     private SpotInformationData spotInfoData;
@@ -37,7 +44,7 @@ public class SlideData extends Vector implements ISlideData, ISlideMetaData, jav
     private boolean isNonZero = true;
     private boolean abbrName = false;
     private int dataType = IData.DATA_TYPE_TWO_INTENSITY;
-    //   boolean [] goodValues;
+    private String[] fieldNames;  //EH added so fieldNames are no longer in TMEV.java
 
     //Support multiple sample labels
     private String sampleLabelKey = "Default Slide Name";
@@ -69,36 +76,264 @@ public class SlideData extends Vector implements ISlideData, ISlideMetaData, jav
         sampleLabelKey = "Default Slide Name";
         sampleLabelKeys = original.getSlideDataKeys();
         sampleLabels = original.getSlideDataLabels();
+    	if(this.fieldNames == null)
+    		this.fieldNames = new String[0];   
     }
 
     /**
      * Constructs a <code>SlideData</code> with specified dimension.
      */
     public SlideData(int rows, int columns) {
-        super(rows * columns);
+    	allSlideDataElements = new Vector(rows * columns);
         this.rows = rows;
         this.columns = columns;
         sampleLabelKey = "Default Slide Name";
         sampleLabelKeys = new Vector();
         sampleLabels = new Hashtable();
+    	if(this.fieldNames == null)
+    		this.fieldNames = new String[0];
     }
 
     /**
      * Constructs a <code>SlideData</code> with specified size.
      */
     public SlideData(int size) {
-        super(size);
+    	allSlideDataElements = new Vector(size);
         rows = -1;
         columns = -1;
         sampleLabelKey = "Default Slide Name";
         sampleLabelKeys = new Vector();
         sampleLabels = new Hashtable();
+    	if(this.fieldNames == null)
+    		this.fieldNames = new String[0];
     }
 
     /**
      * Constructs a <code>SlideData</code> instance.
      */
-    public SlideData() {}
+    public SlideData() {
+    	if(this.fieldNames == null)
+    		this.fieldNames = new String[0];
+    }
+    
+    //
+    //EH begin classes added for state-saving update
+    //
+    /**
+     * This constructor is designed to re-create a previously built SlideData
+     * from parameters stored in an XML file (this file is written by the MultipleArrayViewer.saveState() method).
+     * The String[] returned by the method FloatSlideData.getPersistenceDelegateArgs() 
+     * should reflect the names and order of the values passed to this constructor.  
+     * 
+     */
+      public SlideData(String slideDataName, Vector sampleLabelKeys, String sampleLabelKey,
+    		Hashtable sampleLabels, String slideFileName, Boolean isNonZero, Integer rows, Integer columns,
+			Integer normalizedState, Integer sortState, SpotInformationData spotInfoData, 
+			/*boolean abbrName,*/ String[] fieldNames, Integer dataType){
+
+      	this.rows = rows.intValue();
+    	this.columns = columns.intValue();
+    	this.slideDataName = slideDataName;
+    	this.sampleLabelKeys = sampleLabelKeys;
+    	this.sampleLabelKey = sampleLabelKey;
+    	this.sampleLabels = sampleLabels;
+    	this.slideFileName = slideFileName;
+    	this.normalizedState = normalizedState.intValue();
+    	this.sortState = sortState.intValue();
+    	this.spotInfoData = spotInfoData;
+    	this.isNonZero = isNonZero.booleanValue();
+    	this.fieldNames = fieldNames;
+    	this.dataType = dataType.intValue();
+    }
+
+    public String getSampleLabelKey() {return sampleLabelKey;}
+    
+    public void writeAnnotation(DataOutputStream dos, JFrame pb) throws IOException {
+    	StateSavingProgressPanel progressPanel = (StateSavingProgressPanel)pb;
+    	int numSlideDataElements = allSlideDataElements.size();
+    	progressPanel.setMaximum(numSlideDataElements);
+    	ISlideDataElement sde;
+    	dos.writeInt(numSlideDataElements);
+    	   	 
+    	for(int i=0; i<numSlideDataElements; i++){
+   			sde = (ISlideDataElement)allSlideDataElements.get(i);
+    		
+    		String uid = sde.getUID();
+    		char[] temp = uid.toCharArray();
+    		dos.writeInt(temp.length);
+    		for(int j=0; j<temp.length; j++){
+    			dos.writeChar(temp[j]);
+    		}
+		
+    		int rowsize = sde.getRows().length;
+    		dos.writeInt(rowsize);
+    		for(int j=0; j<rowsize; j++){
+    			dos.writeInt(sde.getRows()[j]);
+    		}
+    		int colsize = sde.getColumns().length;
+    		dos.writeInt(colsize);
+    		for(int j=0; j<colsize; j++){
+    			dos.writeInt(sde.getColumns()[j]);
+    		}
+		
+    		int numFields = sde.getExtraFields().length;
+    		dos.writeInt(numFields);
+    		for(int j=0; j<numFields; j++){
+    			try {
+	    			temp = sde.getExtraFields()[j].toCharArray();
+	        		dos.writeInt(temp.length);
+	        		for(int k=0; k<temp.length; k++){
+	        			dos.writeChar(temp[k]);
+	        		}
+    			} catch (NullPointerException npe){
+    				dos.writeInt(0);
+    			}
+    		}
+
+    		dos.writeBoolean(sde.getIsNull());
+    		dos.writeBoolean(sde.isNonZero());
+			if(dataType == IData.DATA_TYPE_TWO_INTENSITY || dataType == IData.DATA_TYPE_RATIO_ONLY){
+				
+			} else {		//IData has affy data
+				dos.writeChar(((AffySlideDataElement)sde).getDetection().charAt(0));
+			}
+    		progressPanel.increment();
+    	}
+    	
+    }
+    public void loadAnnotation(DataInputStream dis, JFrame pb) throws IOException {
+    	StateSavingProgressPanel progressPanel = (StateSavingProgressPanel)pb;
+    	int numSlideDataElements = dis.readInt();
+    	progressPanel.setMaximum(numSlideDataElements);
+    	allSlideDataElements = new Vector(numSlideDataElements);
+    	
+    	int[] rows, cols;
+    	String[] extraFields;
+    	String uid;
+    	int temp;
+    	boolean isNull, isNonZero;
+    	for(int i=0; i<numSlideDataElements; i++){
+
+    		temp = dis.readInt();
+    		char[] buff = new char[temp];
+    		for(int j=0; j<temp; j++) {
+    			buff[j] = dis.readChar();
+    		}
+    		uid = new String(buff);
+
+    		rows = new int[dis.readInt()];
+    		for(int j=0; j<rows.length; j++){
+    			rows[j] = dis.readInt();
+    		}
+		
+    		cols = new int[dis.readInt()];
+    		for(int j=0; j<cols.length; j++){
+    			cols[j] = dis.readInt();
+    		}
+		
+    		extraFields = new String[dis.readInt()];
+    		for(int j=0; j<extraFields.length; j++){
+    			buff = new char[dis.readInt()];
+        		for(int k=0; k<buff.length; k++){
+        			buff[k] = dis.readChar();
+        		}
+        		extraFields[j] = new String(buff);
+    		}
+			isNull = dis.readBoolean();
+			isNonZero = dis.readBoolean();
+			if(dataType == IData.DATA_TYPE_TWO_INTENSITY || dataType == IData.DATA_TYPE_RATIO_ONLY){
+				allSlideDataElements.add(i, new SlideDataElement(rows, cols, extraFields, uid, isNull, isNonZero));
+			} else {		//IData has affy data
+				char detection = dis.readChar();
+				allSlideDataElements.add(i, new AffySlideDataElement(rows, cols, extraFields, uid, isNull, isNonZero, detection));
+
+			}
+    		progressPanel.increment();
+    	}
+    	
+    }
+
+    public void writeIntensities(DataOutputStream dos) throws IOException {
+    	ISlideDataElement sde;
+    	int numSlideDataElements = size();
+    	dos.writeInt(numSlideDataElements);
+    	for(int i=0; i<numSlideDataElements; i++){
+    		sde = (ISlideDataElement)allSlideDataElements.get(i);
+    		dos.writeFloat(sde.getIntensity(0));
+    		dos.writeFloat(sde.getIntensity(1));
+    		dos.writeFloat(sde.getTrueIntensity(0));
+    		dos.writeFloat(sde.getTrueIntensity(1));	
+    		if(dataType != IData.DATA_TYPE_TWO_INTENSITY && dataType != IData.DATA_TYPE_RATIO_ONLY){
+    			dos.writeChar(sde.getDetection().toCharArray()[0]);
+    		} 
+    	}
+    }   
+    public void loadIntensities(DataInputStream dis) throws IOException{
+    	ISlideDataElement sde;
+    	int numSlideDataElements = dis.readInt();
+    	for(int i=0; i<numSlideDataElements; i++){
+    		sde = (ISlideDataElement)allSlideDataElements.get(i);
+    		sde.setIntensity(0, dis.readFloat());
+    		sde.setIntensity(1, dis.readFloat());
+    		sde.setTrueIntensity(0, dis.readFloat());
+    		sde.setTrueIntensity(1, dis.readFloat());
+    		if(dataType != IData.DATA_TYPE_TWO_INTENSITY && dataType != IData.DATA_TYPE_RATIO_ONLY){
+        		sde.setDetection(new Character(dis.readChar()).toString());
+    		} 	
+    	}
+    }
+
+    public Vector getAllElements() {
+    	return allSlideDataElements;
+    }
+    
+    public void add(SlideDataElement newElement) {
+    	this.allSlideDataElements.add(newElement);
+    }
+    
+    public int size() {
+    	return allSlideDataElements.size();
+    }
+    public Object elementAt(int i){
+    	return allSlideDataElements.elementAt(i);
+    }
+    public void addElement(Object o){
+    	allSlideDataElements.addElement(o);
+    }
+    public void add(Object o){
+    	allSlideDataElements.add(o);
+    }
+    public Object set(int index, Object element){
+    	Object o = allSlideDataElements.get(index);
+    	allSlideDataElements.set(index, element);
+    	return o;
+    }
+    public void insertElementAt(Object o, int i){
+    	allSlideDataElements.insertElementAt(o, i);
+    }
+    //
+    // EH - end methods added for state-saving update
+    //
+    // begin methods brought in from TMEV.java
+    public void setFieldNames(String [] fieldNames){
+        this.fieldNames = fieldNames;
+    }
+    public void appendFieldNames(String [] fieldNames){
+        if(this.fieldNames == null || fieldNames == null)  //trying to set to null or initial set
+            this.fieldNames = fieldNames;
+        else {                  //names exist and new names exist, APPEND (ie. mev format, extra ann load)
+            String [] newNames = new String[this.fieldNames.length+fieldNames.length];
+            System.arraycopy(this.fieldNames, 0, newNames, 0, this.fieldNames.length);
+            System.arraycopy(fieldNames, 0, newNames, this.fieldNames.length, fieldNames.length);
+            this.fieldNames = newNames;
+        }
+    }
+    public void clearFieldNames(){
+        this.fieldNames = null;
+    }
+    // end methods brought in from TMEV
+    
+
 
     /**
      * Sets the data type attribute see static type variables in <code>IData</code>
@@ -128,6 +363,10 @@ public class SlideData extends Vector implements ISlideData, ISlideMetaData, jav
         this.spotInfoData = spotInfoData;
     }
 
+    public String[] getFieldNames() {
+    	return fieldNames;
+    }
+    
     /**
      * Returns the <code>SpotInformationData</code> object.
      */
@@ -331,7 +570,7 @@ public class SlideData extends Vector implements ISlideData, ISlideMetaData, jav
      */
     public String getSlideDataName() {
         if(sampleLabelKey == null)
-            System.out.println("NULLLLL SAMPLE LABEL KEY");
+            System.out.println("NULL SAMPLE LABEL KEY");
         String name = (String)this.sampleLabels.get(this.sampleLabelKey);
 
         if(name == null)
@@ -1121,7 +1360,9 @@ public class SlideData extends Vector implements ISlideData, ISlideMetaData, jav
     public String getDetection(int row) {
         return this.getSlideDataElement(row).getDetection();
     }
-
+    public Object clone(){
+    	return this.clone();
+    }
     //wwang add for affy p-value filter
     public float getPvalue(int row) {
         return this.getSlideDataElement(row).getPvalue();

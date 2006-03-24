@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: TtestExperimentViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2005-03-10 20:36:42 $
- * $Author: braistedj $
+ * $Revision: 1.8 $
+ * $Date: 2006-03-24 15:52:09 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -14,10 +14,12 @@ package org.tigr.microarray.mev.cluster.gui.impl.ttest;
 
 import java.awt.Color;
 import java.awt.Frame;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.Expression;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
@@ -32,12 +34,12 @@ import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileFilter;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
 
 public class TtestExperimentViewer extends ExperimentViewer implements java.io.Serializable {
-    public static final long serialVersionUID = 202021020001L;
 
     private JPopupMenu popup;
     private Vector tValues, rawPValues, adjPValues, dfValues, meansA, meansB, sdA, sdB, oneClassMeans, oneClassSDs;
@@ -65,18 +67,35 @@ public class TtestExperimentViewer extends ExperimentViewer implements java.io.S
 	getContentComponent().addMouseListener(listener);
 	getHeaderComponent().addMouseListener(listener);
     }
-       
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        oos.defaultWriteObject();
-    }
-    
-     private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        ois.defaultReadObject();
+    /**
+     * @inheritDoc
+     */ 
+    public TtestExperimentViewer(int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets, Integer exptID,
+    		Integer tTestDesign, Vector oneClassMeans, Vector oneClassSDs, Vector meansA, Vector meansB, Vector sdA, Vector sdB, Vector rawPValues, Vector adjPValues, Vector tValues, Vector dfValues) {
+    	super(clusters, samplesOrder, drawAnnotations, header, insets, exptID);
         Listener listener = new Listener();
         this.popup = createJPopupMenu(listener);
+	        this.tTestDesign = tTestDesign.intValue();
+	        this.oneClassMeans = oneClassMeans;
+	        this.oneClassSDs = oneClassSDs;        
+	        this.rawPValues = rawPValues;
+	        this.adjPValues = adjPValues;
+	        this.tValues = tValues;
+	        this.dfValues = dfValues;
+	        this.meansA = meansA;
+	        this.meansB = meansB;
+	        this.sdA = sdA; 
+	        this.sdB =sdB;        
         getContentComponent().addMouseListener(listener);
         getHeaderComponent().addMouseListener(listener);        
      }
+         
+    public Expression getExpression(){
+    	Object[] superExpressionArgs = super.getExpression().getArguments();
+    	
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{superExpressionArgs[0], superExpressionArgs[1], superExpressionArgs[2], superExpressionArgs[3], superExpressionArgs[4], superExpressionArgs[5], new Integer(this.tTestDesign), this.oneClassMeans, this.oneClassSDs, this.meansA, this.meansB, this.sdA, this.sdB, this.rawPValues, this.adjPValues, this.tValues, this.dfValues});
+    }
          
      /**
      * Creates a popup menu.

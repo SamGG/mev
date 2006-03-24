@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: SVMDiscriminantExperimentViewer.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-02-23 20:59:55 $
- * $Author: caliente $
+ * $Revision: 1.9 $
+ * $Date: 2006-03-24 15:51:53 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -29,6 +29,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -42,8 +44,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
-import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
-import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
+import org.tigr.microarray.mev.cluster.clusterUtil.*;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
@@ -56,8 +57,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
 
 
-public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer, java.io.Serializable {
-    public static final long serialVersionUID = 202018040001L;
+public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer {
     
     private int numRetainedPos;
     private int numRecruitedNeg;
@@ -105,6 +105,7 @@ public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer, 
     private boolean useDoubleGradient = true;
     
     private JPopupMenu popup;
+    private int exptID;
     
     /**
      * Creates new SVMDiscriminantExperimentViewer
@@ -114,6 +115,7 @@ public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer, 
             throw new IllegalArgumentException("experiment == null");
         }
         this.experiment = experiment;
+        this.exptID = experiment.getId();
         this.clusters = clusters == null ? defGenesOrder(experiment.getNumberOfGenes()) : clusters;
         this.discriminants = discriminants;
         this.samplesOrder = samplesOrder == null ? defSamplesOrder(experiment.getNumberOfSamples()) : samplesOrder;
@@ -130,6 +132,32 @@ public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer, 
         this.popup = createJPopupMenu(actionListener);
         numRetainedPos= NumRetainedPos;
         numRecruitedNeg= NumRecruitedNeg;
+    }
+    public SVMDiscriminantExperimentViewer(Integer exptID, int [][] clusters, int NumRetainedPos, int NumRecruitedNeg, float [][] discriminants, int [] samplesOrder, boolean classifyGenes, ExperimentHeader header) {
+    	this.exptID = exptID.intValue();
+    	this.clusters = clusters;
+    	this.discriminants = discriminants;
+        this.samplesOrder = samplesOrder;
+        this.classifyGenes = classifyGenes;
+        this.isDrawAnnotations = true;
+        this.header = header;
+        setBackground(Color.white);
+        Listener listener = new Listener();
+        addMouseListener(listener);
+        addMouseMotionListener(listener);
+    
+        SVMExperimentActionListener actionListener = new SVMExperimentActionListener();
+        addMouseListener(actionListener);
+        this.popup = createJPopupMenu(actionListener);
+        numRetainedPos= NumRetainedPos;
+        numRecruitedNeg= NumRecruitedNeg;
+    }  
+    /**
+     * @inheritDoc
+     */
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{new Integer(exptID), clusters, new Integer(numRetainedPos), new Integer(numRecruitedNeg), discriminants, samplesOrder, new Boolean(classifyGenes), header});
     }
     
     /**
@@ -826,50 +854,6 @@ public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer, 
         return null;
     }
     
-    private void writeObject(ObjectOutputStream oos) throws IOException {
-        oos.writeObject(header);
-        oos.writeObject(experiment);
-        oos.writeObject(clusters);
-        oos.writeObject(samplesOrder);
-        oos.writeObject(elementSize);
-        oos.writeInt(labelIndex);
-        oos.writeBoolean(this.isDrawAnnotations);
-        oos.writeObject(insets);
-        
-        oos.writeInt(clusterIndex);
-        oos.writeInt(this.numRetainedPos);
-        oos.writeInt(this.numRecruitedNeg);
-        oos.writeObject(this.RecruitColor);
-        oos.writeBoolean(this.classifyGenes);
-        oos.writeObject(this.discriminants);
-        oos.writeBoolean(useDoubleGradient);
-    }
-    
-    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        header = (ExperimentHeader)ois.readObject();
-        experiment = (Experiment)ois.readObject();
-        clusters = (int[][])ois.readObject();
-        samplesOrder = (int[])ois.readObject();
-        elementSize = (Dimension)ois.readObject();
-        labelIndex = ois.readInt();
-        this.isDrawAnnotations = ois.readBoolean();
-        insets = (Insets)ois.readObject();
-        
-        this.clusterIndex = ois.readInt();
-        this.numRetainedPos = ois.readInt();
-        this.numRecruitedNeg = ois.readInt();
-        this.RecruitColor = (Color)ois.readObject();
-        this.classifyGenes = ois.readBoolean();
-        this.discriminants = (float [][])ois.readObject();
-        this.useDoubleGradient = ois.readBoolean();
-        
-        this.firstSelectedRow = -1;
-        this.lastSelectedRow = -1;
-                
-        SVMExperimentActionListener actionListener = new SVMExperimentActionListener();
-        addMouseListener(actionListener);
-        this.popup = createJPopupMenu(actionListener);
-    }
     
     /** Returns int value indicating viewer type
      * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
@@ -997,4 +981,27 @@ public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer, 
         }
     }
     
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
+	 */
+	public void setExperiment(Experiment e) {
+		this.experiment = e;
+		this.exptID = e.getId();
+		this.header.setExperiment(e);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentID()
+	 */
+	public int getExperimentID() {
+		return exptID;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
+	 */
+	public void setExperimentID(int id) {
+		this.exptID = id;
+	}
+   
 }

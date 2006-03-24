@@ -4,50 +4,52 @@ All rights reserved.
  */
 /*
  * $RCSfile: ExperimentClusterViewer.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-02-23 20:59:48 $
- * $Author: caliente $
+ * $Revision: 1.9 $
+ * $Date: 2006-03-24 15:49:54 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.gui.helpers;
 
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
+import java.awt.Color;
 import java.awt.Frame;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Insets;
+import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.FontMetrics;
+import java.awt.GradientPaint;
 import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Vector;
 
+import javax.swing.JPanel;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
-import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
-import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
-import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
+import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
+
+import org.tigr.microarray.mev.cluster.clusterUtil.*;
 
 public class ExperimentClusterViewer extends JPanel implements IViewer {
     
@@ -95,6 +97,7 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
     private boolean haveColorBar = false;
     
     private boolean useDoubleGradient = true;
+    private int exptID = 0;
     
     /**
      * Constructs an <code>ExperimentClusterViewer</code> with specified
@@ -133,6 +136,7 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
             throw new IllegalArgumentException("experiment == null");
         }
         this.experiment = experiment;
+        this.exptID = experiment.getId();
         this.clusters = clusters == null ? defSamplesOrder(experiment.getNumberOfSamples()) : clusters;
         this.genesOrder = genesOrder == null ? defGenesOrder(experiment.getNumberOfGenes()) : genesOrder;
         this.isDrawAnnotations = drawAnnotations;
@@ -158,6 +162,7 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
             throw new IllegalArgumentException("experiment == null");
         }
         this.experiment = experiment;
+        this.exptID = experiment.getId();
         this.clusters = clusters == null ? defSamplesOrder(experiment.getNumberOfSamples()) : clusters;
         this.genesOrder = genesOrder == null ? defGenesOrder(experiment.getNumberOfGenes()) : genesOrder;
         this.insets.left = offset;
@@ -171,32 +176,6 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         addMouseMotionListener(listener);
     }
     
-    /**
-     * Constructs an <code>ExperimentClusterViewer</code> with specified
-     * experiment, clusters, samples order and draw annotations attribute.
-     *
-     * @param experiment the experiment data.
-     * @param clusters the two dimensional array with spots indices.
-     * @param samplesOrder the one dimensional array with samples indices.
-     * @param drawAnnotations true if this viewer must draw annotations.
-     *//*
-    public ExperimentClusterViewer(Experiment experiment, int[][] clusters, int[] genesOrder, boolean drawAnnotations, int offset) {
-        if (experiment == null) {
-            throw new IllegalArgumentException("experiment == null");
-        }
-        this.experiment = experiment;
-        this.clusters = clusters == null ? defSamplesOrder(experiment.getNumberOfSamples()) : clusters;
-        this.genesOrder = genesOrder == null ? defGenesOrder(experiment.getNumberOfGenes()) : genesOrder;
-        this.insets.left = offset;
-        this.isDrawAnnotations = drawAnnotations;
-        this.header = new ExperimentClusterHeader(this.experiment, this.clusters);
-        this.header.setNegAndPosColorImages(this.negColorImage, this.posColorImage);
-        this.header.setLeftInset(offset);
-        setBackground(Color.white);
-        Listener listener = new Listener();
-        addMouseListener(listener);
-        addMouseMotionListener(listener);
-    }*/
     
     /**
      * Constructs an <code>ExperimentClusterViewer</code> with specified
@@ -225,6 +204,7 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
             throw new IllegalArgumentException("experiment == null");
         }
         this.experiment = experiment;
+        this.exptID = experiment.getId();
         this.clusters = clusters == null ? defSamplesOrder(experiment.getNumberOfSamples()) : clusters;
         this.genesOrder = genesOrder == null ? defGenesOrder(experiment.getNumberOfGenes()) : genesOrder;
         this.insets.left = 10;
@@ -235,14 +215,70 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         }
         this.header = new ExperimentClusterHeader(this.experiment, this.clusters, centroidName);
         this.header.setNegAndPosColorImages(this.negColorImage, this.posColorImage);
-        // this.header.setLeftInset(offset);
         setBackground(Color.white);
         Listener listener = new Listener();
         addMouseListener(listener);
         addMouseMotionListener(listener);
     }
     
-    
+    /**
+     * Builds an ExperimentClusterViewer in the state specified by an xml file.  Used by XMLDecoder to restore the saved
+     * state of an ExperimentClusterViewer.  This constructor must work in concert with the setExperiment() 
+     * method.  
+     * 
+     * @param clusters
+     * @param genesOrder
+     * @param drawAnnotations
+     * @param offset
+     * @param header
+     * @param hasCentroid
+     * @param centroids
+     * @param elementSize
+     * @param labelIndex
+     * @param exptID
+     */
+    public ExperimentClusterViewer(int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
+    		Integer offset, ExperimentClusterHeader header, Boolean hasCentroid, float[][] centroids, 
+			Dimension elementSize, Integer labelIndex, Integer exptID) {
+    	this.clusters = clusters;
+        this.genesOrder = genesOrder;
+        this.insets.left = offset.intValue();
+        this.isDrawAnnotations = drawAnnotations.booleanValue();
+        this.hasCentroid = hasCentroid.booleanValue();
+        this.centroids = centroids;
+        this.elementSize = elementSize;
+        this.labelIndex = labelIndex.intValue();
+        this.header = header;
+        this.header.setData(data);
+        this.header.setNegAndPosColorImages(this.negColorImage, this.posColorImage);
+        this.header.setLeftInset(offset.intValue());
+        this.exptID = exptID.intValue();
+        setBackground(Color.white);
+        Listener listener = new Listener();
+        addMouseListener(listener);
+        addMouseMotionListener(listener);
+    }
+    /*
+    copy-paste this constructor into descendent classes
+    /**
+     * @inheritDoc
+     *
+    public ExperimentClusterViewer(int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
+    		Integer offset, ExperimentClusterHeader header, Boolean hasCentroid, float[][] centroids, 
+			Dimension elementSize, Integer labelIndex, Integer exptID) {
+    		super(clusters, genesOrder, drawAnnotations, offset, header, hasCentroid, centroids, elementSize, labelIndex, exptID);
+    }
+    */
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new",
+			new Object[]{clusters, genesOrder, new Boolean(this.isDrawAnnotations), new Integer(this.insets.left), this.header, new Boolean(this.hasCentroid), this.centroids, this.elementSize, new Integer(this.labelIndex), new Integer(this.exptID)});  
+    }
+    public void setExperiment(Experiment e) {
+    	this.experiment = e;
+        this.exptID = e.getId();
+        this.header.setExperiment(e);
+    }
+
     private static int[][] defSamplesOrder(int size) {
         int[][] order = new int[1][size];
         for (int i=0; i<order[0].length; i++) {
@@ -999,45 +1035,6 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         return null;
     }
         
-    private void writeObject(ObjectOutputStream oos) throws IOException {
-        oos.writeObject(header);
-        oos.writeObject(experiment);
-        oos.writeObject(clusters);
-        oos.writeObject(genesOrder);
-        oos.writeObject(elementSize);
-        oos.writeInt(labelIndex);
-        oos.writeBoolean(this.isDrawAnnotations);
-        oos.writeObject(insets);
-        oos.writeBoolean(this.hasCentroid);
-        if(hasCentroid)
-            oos.writeObject(this.centroids);
-    }
-        
-    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        header = (ExperimentClusterHeader)ois.readObject();
-        experiment = (Experiment)ois.readObject();
-        clusters = (int[][])ois.readObject();
-        this.genesOrder = (int[])ois.readObject();
-        elementSize = (Dimension)ois.readObject();
-        labelIndex = ois.readInt();
-        this.isDrawAnnotations = ois.readBoolean();
-        insets = (Insets)ois.readObject();
-        this.hasCentroid = ois.readBoolean();
-        if(this.hasCentroid)
-            this.centroids = (float [][])ois.readObject();
-        
-        this.firstSelectedRow = -1;
-        this.lastSelectedRow = -1;
-        this.firstSelectedColumn = -1;
-        this.lastSelectedColumn = -1;
-        
-        this.showClusters = true;
-        
-        Listener listener = new Listener();
-        addMouseListener(listener);
-        addMouseMotionListener(listener);
-    }
-    
     /** Returns int value indicating viewer type
      * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
      */
@@ -1050,7 +1047,7 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
      */
     private class Listener extends MouseAdapter implements MouseMotionListener {
         
-        private String oldStatusText;
+        private String oldStatusText = "";
         private int oldRow = -1;
         private int oldColumn = -1;
         
@@ -1124,6 +1121,20 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
             return(row == oldRow && column == oldColumn);
         }
     }
+    
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentID()
+	 */
+	public int getExperimentID() {
+		return this.exptID;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
+	 */
+	public void setExperimentID(int id) {
+		this.exptID = id;
+	}
     
 }
 

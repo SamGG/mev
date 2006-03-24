@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: GSHInfoViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-23 20:59:51 $
- * $Author: caliente $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:50:35 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.gsh;
@@ -25,7 +25,6 @@ import javax.swing.JTextArea;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
 public class GSHInfoViewer extends ViewerAdapter implements java.io.Serializable {
-    public static final long serialVersionUID = 202005010001L;
     
     private JComponent header;
     private JTextArea  content;
@@ -51,7 +50,14 @@ public class GSHInfoViewer extends ViewerAdapter implements java.io.Serializable
         content = createContent(clusters, genes);
         setMaxWidth(content, header);
     }
-    
+    /**
+     * Creates a GSHInfoViewer from stored content and headers.  
+     */
+    public GSHInfoViewer(JTextArea content, JComponent header){
+    	this.content = content;
+    	this.header = header;
+        setMaxWidth(content, header);
+    }
     /**
      * Returns component to be inserted into the framework scroll pane.
      */

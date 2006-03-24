@@ -4,26 +4,29 @@ All rights reserved.
  */
 /*
  * $RCSfile: Cluster.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-02-23 20:59:46 $
- * $Author: caliente $
+ * $Revision: 1.9 $
+ * $Date: 2006-03-24 15:49:52 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.clusterUtil;
 
 import java.awt.Color;
+import java.beans.Encoder;
+import java.beans.Expression;
+import java.beans.PersistenceDelegate;
 import java.util.HashSet;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
+//import org.tigr.microarray.mev.cluster.gui.impl.ptm.PTMExperimentHeader;
 
 /** The Cluster class encapsulates information required to define a cluster.
  * Methods include standard set... and get... methods to access and alter
  * the cluster definition.
  */
-public class Cluster implements java.io.Serializable {
-    public static final long serialVersionUID = 1000102010203010001L;
+public class Cluster {
 
     public static final int GENE_CLUSTER = 0;
     public static final int EXPERIMENT_CLUSTER = 1;
@@ -71,21 +74,31 @@ public class Cluster implements java.io.Serializable {
      */
     private boolean isShowColor;
 
-    /** Creates new cluster object
+    //EH
+    private int exptID = 0;
+
+    /** 
+     * EH Creates new cluster object
      */
-    public Cluster(int [] indices, String source, String clusterLabel, String algorithmName, String clusterID, String clusterDescription, int index, int serialNumber, Color clusterColor, Experiment experiment) {
+    public Cluster(int [] indices, String source, String clusterLabel, String algorithmName, 
+    		String clusterID, String clusterDescription, Integer index, 
+			Integer serialNumber, Color clusterColor, Integer exptID) {
         this.indices = indices;
         this.source = source;
         this.clusterLabel = clusterLabel;
         this.clusterID = clusterID;
         this.algorithmName = algorithmName;
-        this.algorithmIndex = index;
+        this.algorithmIndex = index.intValue();
         this.clusterColor = clusterColor;
         this.clusterDescription = clusterDescription;
-        this.serialNumber = serialNumber;
-        this.experiment = experiment;
+        this.serialNumber = serialNumber.intValue();
+        this.exptID = exptID.intValue();
         this.isShowColor = true;
-        this.experimentIndices = getIndicesMappedToExperiment();
+    }
+    /** Creates new cluster object
+     */
+    public Cluster(int [] indices, String source, String clusterLabel, String algorithmName, String clusterID, String clusterDescription, int index, int serialNumber, Color clusterColor, Experiment experiment) {
+        this(indices, source, clusterLabel, algorithmName, clusterID, clusterDescription, index, serialNumber, clusterColor, null, experiment);
     }
     
         /** Creates new cluster object
@@ -103,6 +116,7 @@ public class Cluster implements java.io.Serializable {
         this.node = node;
         this.userObject = node.getUserObject();
         this.experiment = experiment;
+        this.exptID = experiment.getId();
         this.isShowColor = true;
         this.experimentIndices = getIndicesMappedToExperiment();
     }
@@ -181,7 +195,14 @@ public class Cluster implements java.io.Serializable {
     public void setNode(DefaultMutableTreeNode myNode){ node = myNode; }
     /** Sets the Experiment for the cluster
      */
-    public void setExperiment(Experiment experiment){ this.experiment = experiment; }
+    public void setExperiment(Experiment experiment){ 
+    	this.experiment = experiment;
+    	this.exptID = experiment.getId();
+    	this.experimentIndices = getIndicesMappedToExperiment();
+    }
+
+    //EH
+    public int getExptID(){return exptID;}
     
     /** Returns true if supplied element index is a
      * member of the cluster
@@ -268,53 +289,24 @@ public class Cluster implements java.io.Serializable {
         }
         return expIndices;
     }
+    private static class ClusterPersistenceDelegate extends PersistenceDelegate {
     
-        private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {        
-        oos.writeObject(indices);
-        oos.writeObject(source);
-        oos.writeObject(clusterLabel);
-        oos.writeObject(clusterID);
-        oos.writeObject(algorithmName);
-        oos.writeInt(algorithmIndex);
-        oos.writeObject(clusterColor);
-        oos.writeObject(clusterDescription);
-        oos.writeInt(serialNumber);     
-        oos.writeObject(experiment);
-        oos.writeObject(experimentIndices);
-        oos.writeBoolean(isShowColor);
-        //Can't store node, store path names for finding node
-        oos.writeBoolean(node != null);
-        if(node != null){
-    /*        DefaultMutableTreeNode currNode = node;
-            path = new String[node.getLevel()];
-            for( int i = 0; i < path.length(); i++){
-                path[i] = currNode.getString();
-                currNode = (DefaultMutableTreeNode)currNode.getParent();
-            }
-            oos.writeObject(path);
-     **/
-            oos.writeObject(node.getUserObject());
+		protected Expression instantiate(Object o, Encoder encoder) {
+			Cluster oldInstance = (Cluster)o;
+			return new Expression(oldInstance, oldInstance.getClass(), "new", 
+					new Object[]{oldInstance.getIndices(), oldInstance.getSource(), oldInstance.getClusterLabel(), oldInstance.getAlgorithmName(), 
+						oldInstance.getClusterID(), oldInstance.getClusterDescription(), new Integer(oldInstance.getAlgorithmIndex()),
+						new Integer(oldInstance.getSerialNumber()), oldInstance.getClusterColor(), new Integer(oldInstance.getExptID())});
         }        
+		public void initialize(Class type, Object oldInstance, Object newInstance, Encoder encoder) {
+			return;
     }
     
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        indices = (int []) ois.readObject();
-        source = (String)ois.readObject();
-        clusterLabel = (String)ois.readObject();  
-        clusterID = (String)ois.readObject();
-        algorithmName = (String)ois.readObject();
-        algorithmIndex = ois.readInt();
-        clusterColor = (Color)ois.readObject();
-        clusterDescription = (String)ois.readObject();
-        serialNumber = ois.readInt();       
-        experiment = (Experiment)ois.readObject();
-        experimentIndices = (int [])ois.readObject();
-        this.isShowColor = ois.readBoolean();
-        //if a node path was stored get path and later restore node value
-        if(ois.readBoolean()){
-           // path = (String [])ois.readObject();
-           userObject = ois.readObject();
         }            
+	/**
+	 * @return
+	 */
+	public static PersistenceDelegate getPersistenceDelegate() {
+		return new ClusterPersistenceDelegate();
     }
 }

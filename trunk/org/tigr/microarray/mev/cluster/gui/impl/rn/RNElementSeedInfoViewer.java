@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: RNElementSeedInfoViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-02-23 20:59:53 $
- * $Author: caliente $
+ * $Revision: 1.5 $
+ * $Date: 2006-03-24 15:51:24 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.rn;
@@ -25,8 +25,12 @@ import javax.swing.JTextArea;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
+/**
+ * A viewer for Relevance Networks seed information.  
+ * 
+ */
 public class RNElementSeedInfoViewer extends ViewerAdapter implements java.io.Serializable {
-    public static final long serialVersionUID = 202014030001L;
+//    public static final long serialVersionUID = 202014030001L;
     
     private JComponent header;
     private JTextArea  content;
@@ -43,7 +47,11 @@ public class RNElementSeedInfoViewer extends ViewerAdapter implements java.io.Se
         content = createContent(clusters, genes);
         setMaxWidth(content, header);
     }
-    
+    public RNElementSeedInfoViewer(JTextArea content, JComponent header){
+    	this.header = header;
+    	this.content = content;
+    	setMaxWidth(content, header);
+    }
     /**
      * Constructs a <code>RNElementSeedInfoViewer</code> with specified
      * clusters and number of genes.

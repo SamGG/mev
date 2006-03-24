@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLExperimentCentroidsViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2006-02-23 20:59:51 $
- * $Author: caliente $
+ * $Revision: 1.4 $
+ * $Date: 2006-03-24 15:50:40 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.hcl;
@@ -23,6 +23,7 @@ import javax.swing.JPopupMenu;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidsViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
@@ -48,13 +49,16 @@ public class HCLExperimentCentroidsViewer extends ExperimentClusterCentroidsView
         getContentComponent().addMouseListener(listener);
     }
     
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { }
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        Listener listener = new Listener();
-        this.popup = createJPopupMenu(listener);
-        getContentComponent().addMouseListener(listener);
+    /**
+     * @inheritDoc
+     * Creates a new HCLExperimentCentroidsViewer.  Used by XMLEncoder/Decoder to restore
+     * the state of this class.  parameters match the objects provided by 
+     * ExperimentClusterCentroidsViewer.getExpression().
+     * @param cv
+     * @param exptID
+     */
+    public HCLExperimentCentroidsViewer(ExperimentClusterCentroidViewer cv, Integer exptID) {
+    	super(cv, exptID);
     }
     
     /**

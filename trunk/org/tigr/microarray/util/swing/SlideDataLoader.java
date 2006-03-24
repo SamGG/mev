@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SlideDataLoader.java,v $
- * $Revision: 1.2 $
- * $Date: 2006-02-23 20:59:59 $
- * $Author: caliente $
+ * $Revision: 1.3 $
+ * $Date: 2006-03-24 15:52:32 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.util.swing;
@@ -26,6 +26,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -260,8 +261,7 @@ public class SlideDataLoader extends JDialog {
         int[] columns = new int[coordinatePairCount];
         
         float[] intensities = new float[intensityCount];
-        String[] moreFields = new String[TMEV.getFieldNames().length];
-        
+        Vector moreFields = new Vector();
         BufferedReader reader = new BufferedReader(new FileReader(file), BUFFER_SIZE);
         StringSplitter ss = new StringSplitter((char)0x09);
         int currentRow, currentColumn;
@@ -300,31 +300,31 @@ public class SlideDataLoader extends JDialog {
             for (int j = 0; j < intensityCount; j++) {
                 intensities[j] = ss.nextFloatToken(0.0f);
             }
-            for (int j = 0; j < TMEV.getFieldNames().length; j++) {
-                if (ss.hasMoreTokens()) {
+            while(ss.hasMoreTokens()) {
                     avoidNullString = ss.nextToken();
-                    if (avoidNullString.equals("null")) moreFields[j] = "";
-                    else moreFields[j] = avoidNullString;
-                } else {
-                    moreFields[j] = "";
+                if (avoidNullString.equals("null")) moreFields.add("");
+                else moreFields.add(avoidNullString);
                 }
+            String[] allFields = new String[moreFields.size()];
+            for(int i=0;i<allFields.length;i++) {
+            	allFields[i] = (String)moreFields.get(i);
             }
             realData[rows[0]-1][columns[0]-1] = true;
-            slideDataElement = new SlideDataElement(rows, columns, intensities, moreFields);
+            slideDataElement = new SlideDataElement(rows, columns, intensities, allFields);
             slideData.addSlideDataElement(slideDataElement);
         }
         reader.close();
         intensities[0] = 0.0f;
         intensities[1] = 0.0f;
         
-        String [] dummyString = new String[TMEV.getFieldNames().length];
-        for(int i = 0; i < dummyString.length; i++)
-            dummyString[i] = "";
+//        String [] dummyString = new String[allFields.length];
+//        for(int i = 0; i < dummyString.length; i++)
+//            dummyString[i] = "";
         
         for(int i = 0; i < maxRows ; i++){
             for(int j = 0; j < maxColumns; j++){
                 if(!realData[i][j]){
-                    slideDataElement = new SlideDataElement(new int[]{i+1, 1, 1}, new int[]{j+1, 1,1}, intensities, dummyString);
+                    slideDataElement = new SlideDataElement(new int[]{i+1, 1, 1}, new int[]{j+1, 1,1}, intensities, new String[0]);
                     slideData.insertElementAt(slideDataElement, i*maxColumns+j);
                 }
             }
@@ -353,7 +353,8 @@ public class SlideDataLoader extends JDialog {
     }
     
     public static ISlideData fillBlankSpots(ISlideData slideData, int maxRows, int maxColumns) {
-        String [] dummyString = new String[TMEV.getFieldNames().length];
+//    	String [] dummyString = new String[TMEV.getFieldNames().length];
+    	String [] dummyString = new String[slideData.getSlideMetaData().getFieldNames().length];
         float [] intensities = new float[TMEV.getIntensityCount()];
         boolean [][] realData = new boolean[maxRows][maxColumns];
         ISlideDataElement element;
@@ -425,7 +426,7 @@ public class SlideDataLoader extends JDialog {
         int[] rows = new int[coordinatePairCount];
         int[] columns = new int[coordinatePairCount];
         float[] intensities = new float[intensityCount];
-        String[] moreFields = new String[TMEV.getFieldNames().length];
+//        String[] moreFields = new String[TMEV.getFieldNames().length];
         
         BufferedReader reader = new BufferedReader(new FileReader(file), BUFFER_SIZE);
         StringSplitter ss = new StringSplitter((char)0x09);
@@ -461,16 +462,17 @@ public class SlideDataLoader extends JDialog {
             for (int j = 0; j < intensityCount; j++) {
                 intensities[j] = ss.nextFloatToken(0.0f);
             }
-            for (int j = 0; j < TMEV.getFieldNames().length; j++) {
-                if (ss.hasMoreTokens()) {
+            Vector moreFields = new Vector();
+            while (ss.hasMoreTokens()) {
                     avoidNullString = ss.nextToken();
-                    if (avoidNullString.equals("null")) moreFields[j] = "";
-                    else moreFields[j] = avoidNullString;
-                } else {
-                    moreFields[j] = "";
+                if (avoidNullString.equals("null")) moreFields.add("");
+                else moreFields.add(avoidNullString);
                 }
+            String[] allFields = new String[moreFields.size()];
+            for (int i=0; i<moreFields.size(); i++) {
+            	allFields[i] = (String)moreFields.get(i);
             }
-            slideDataElement = new SlideDataElement(rows, columns, intensities, moreFields);
+            slideDataElement = new SlideDataElement(rows, columns, intensities, allFields);
             slideData.addSlideDataElement(slideDataElement);
         }
         reader.close();

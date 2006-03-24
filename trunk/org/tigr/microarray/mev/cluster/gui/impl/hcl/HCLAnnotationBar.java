@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLAnnotationBar.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-02-23 20:59:51 $
- * $Author: caliente $
+ * $Revision: 1.5 $
+ * $Date: 2006-03-24 15:50:40 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.hcl;
@@ -26,8 +26,7 @@ import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 
-public class HCLAnnotationBar extends JPanel implements java.io.Serializable {    
-    public static final long serialVersionUID = 202006010001L;
+public class HCLAnnotationBar extends JPanel {
     
     private IData data;
     private int[] rowsOrder;
@@ -43,22 +42,6 @@ public class HCLAnnotationBar extends JPanel implements java.io.Serializable {
         setBackground(Color.white);
         setSizes(10, 10);
     }
-        
-        private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-            oos.writeObject(rowsOrder);
-            oos.writeBoolean(isAntiAliasing);
-            oos.writeInt(elementHeight);
-            oos.writeInt(maxUniqueIDWidth);
-            oos.writeInt(maxGeneNameWidth);
-        }
-        
-        private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-            this.rowsOrder = (int [])ois.readObject();
-            this.isAntiAliasing = ois.readBoolean();
-            this.elementHeight = ois.readInt();
-            this.maxUniqueIDWidth = ois.readInt();
-            this.maxGeneNameWidth = ois.readInt();
-        }
         
         /**
          * Paints the bar into specified graphics.

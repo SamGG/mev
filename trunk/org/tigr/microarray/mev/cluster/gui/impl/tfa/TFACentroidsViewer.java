@@ -15,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.Expression;
 
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -45,6 +46,24 @@ public class TFACentroidsViewer extends CentroidsViewer {
     /** Creates a new instance of TFACentroidsViewer */
     public TFACentroidsViewer(Experiment experiment, int[][] clusters, String[] auxTitles, Object[][] auxData) {
         super(experiment, clusters);
+		initialize(auxTitles, auxData);
+    }
+	/**
+	 * @inheritDoc
+	 */
+	public TFACentroidsViewer(CentroidViewer cv, String[] auxTitles, Object[][] auxData) {
+		super(cv);
+		initialize(auxTitles, auxData);
+	}
+	
+	public Expression getExpression(){
+		Object[] parentConstructorArgs = super.getExpression().getArguments();
+		return new Expression(this, this.getClass(), "new", 
+				new Object[]{parentConstructorArgs[0], parentConstructorArgs[1], parentConstructorArgs[2], 
+				auxTitles, auxData});
+	}
+	
+	private void initialize(String[] auxTitles, Object[][] auxData){
         Listener listener = new Listener();
         this.popup = createJPopupMenu(listener);
         this.auxTitles = auxTitles;

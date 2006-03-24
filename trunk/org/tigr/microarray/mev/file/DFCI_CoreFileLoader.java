@@ -4,12 +4,12 @@ All rights reserved.
  */
 /*
  * $RCSfile: DFCI_CoreFileLoader.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-02-27 16:47:54 $
- * $Author: wwang67 $
- * $Revision: 1.4 $
- * $Date: 2006-02-27 16:47:54 $
- * $Author: wwang67 $
+ * $Revision: 1.5 $
+ * $Date: 2006-03-24 15:52:17 $
+ * $Author: eleanorahowe $
+ * $Revision: 1.5 $
+ * $Date: 2006-03-24 15:52:17 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.file;
@@ -81,7 +81,7 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
         fieldNames[0] = "Affy_ID";
         fieldNames[1] = "Detection";
         fieldNames[2] = "P-value";
-        TMEV.setFieldNames(fieldNames);
+        
         ISlideData [] data = null;
         files = new File[affymetrixFiles.length];
         for(int j = 0; j < affymetrixFiles.length ; j++)
@@ -107,6 +107,7 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
                 this.affyDataType = IData.DATA_TYPE_AFFY_REF;
             }
         }
+        data[0].getSlideMetaData().setFieldNames(fieldNames);
         Vector carrier = new Vector();
         if(data != null){
             TMEV.setDataType(TMEV.DATA_TYPE_AFFY);

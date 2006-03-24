@@ -17,6 +17,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -1570,6 +1571,39 @@ public class TEASEViewer extends JPanel implements IViewer{
 //	    		}
 	    	}
 	    }
+
+
+		/* (non-Javadoc)
+		 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
+		 */
+		public void setExperiment(Experiment e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		/* (non-Javadoc)
+		 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentID()
+		 */
+		public int getExperimentID() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
+		 */
+		public void setExperimentID(int id) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		/* (non-Javadoc)
+		 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExpression()
+		 */
+		public Expression getExpression() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	    
 //	    /**
 //	     * We have to provide our own glass pane so that it can paint.

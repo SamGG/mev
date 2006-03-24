@@ -10,6 +10,8 @@ All rights reserved.
 
 package org.tigr.microarray.mev;
 
+import java.beans.*;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
@@ -29,6 +31,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 
+import org.tigr.graph.GraphViewer;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
@@ -37,13 +40,14 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
+import org.tigr.util.FloatMatrix;
 
 /**
  *
  * @author  braisted
  */
 public class ResultTree extends JTree implements java.io.Serializable {
-    public static final long serialVersionUID = 100010201070001L;
+//    public static final long serialVersionUID = 100010201070001L;
     
     
     /** Root node
@@ -68,7 +72,13 @@ public class ResultTree extends JTree implements java.io.Serializable {
         
         dumpVector = new Vector();
     }
-    
+    public ResultTree(DefaultMutableTreeNode root, DefaultMutableTreeNode analysisNode) {
+        super(root);
+        this.root = root;
+        this.setCellRenderer(new ResultTreeNodeRenderer());
+        this.analysisNode = analysisNode;
+        dumpVector = new Vector();
+    }
     
     
     /** Returns the root node.
@@ -147,100 +157,31 @@ public class ResultTree extends JTree implements java.io.Serializable {
         return null;
     }
     
-    
-    /** Saves the analysis node state.
-     */
-    public void writeResults(ObjectOutputStream oos) throws IOException {
-        
-        DefaultMutableTreeNode timeNode = (DefaultMutableTreeNode)(analysisNode.getLastChild());
-        
-        boolean removedTimeNode = false;
-        
-        if(timeNode != null){
-            //last analysis node is childless AND user object is a String, indicates just a time stamp
-            if(timeNode.getChildCount() == 0 && timeNode.getUserObject() instanceof String){
-                DefaultTreeModel treeModel = (DefaultTreeModel)this.getModel();
-                treeModel.removeNodeFromParent(timeNode);
-                removedTimeNode = true;
-            }
+    /**
+    * EH - for state-saving
+    * Returns a hashtable of all the experiments contained within the result tree,
+    * keyed on their ExptID.  Used by state-saving methods.  
+    */
+    public Hashtable getAllExperiments() {
+    	Hashtable allExpts = new Hashtable();
+		Enumeration allTreeNodes = ((DefaultMutableTreeNode)analysisNode).breadthFirstEnumeration();
+		DefaultMutableTreeNode dmtn;
+		while(allTreeNodes.hasMoreElements()){
+			dmtn = (DefaultMutableTreeNode)allTreeNodes.nextElement();
+			Object o = dmtn.getUserObject();
+			if(o instanceof LeafInfo) {
+				LeafInfo l = (LeafInfo)o;
+				if(l.getViewer() != null){
+					Experiment e = l.getViewer().getExperiment();
+					if(e != null){
+						allExpts.put(new Integer(e.getId()), l.getViewer().getExperiment());
         }
-        
-        // work on analysis node
-        writeTree(oos, analysisNode, 0);
-        oos.writeInt(-1);
-        if(removedTimeNode){
-            DefaultTreeModel treeModel = (DefaultTreeModel)this.getModel();
-            treeModel.insertNodeInto(timeNode, analysisNode, analysisNode.getChildCount());
-        }
-        
-    }
-    
-    /** Writes the hitory node.
-     */
-    public void writeHistory(ObjectOutputStream oos, DefaultMutableTreeNode historyNode) throws IOException {
-        // work on analysis node
-        writeTree(oos, historyNode, 0);
-        oos.writeInt(-1);
-    }
-    
-    /** Writes the tree recursively.
-     * @param oos ObjectOutputStream
-     * @param node Current Node
-     * @param level Level from highest node.
-     * @throws IOException
-     */
-    private void writeTree(ObjectOutputStream oos, DefaultMutableTreeNode node, int level) throws IOException{
-        int cnt = node.getChildCount();
-        oos.writeInt(level);
-        Object obj = ((DefaultMutableTreeNode)node).getUserObject();
-        oos.writeObject(obj);
-        for(int i = 0; i < cnt; i++){
-            writeTree(oos, (DefaultMutableTreeNode) node.getChildAt(i), level+1);
         }
     }
-    
-    
-    /** Loads a new analysis node from an <CODE>ObjectInputStream</CODE>.
-     *
-     */
-    public DefaultMutableTreeNode loadResults(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        int currLevel = 0;
-        int level = 0;
-        int prevLevel = -1;
-        Object obj;
-        DefaultMutableTreeNode root = null, parent = null, child = null;
-        int levelChange = 0;
-        
-        boolean end = false;
-        while(!end){
-            currLevel = ois.readInt();
-            if(currLevel == 0){
-                obj = ois.readObject();
-                
-                root = new DefaultMutableTreeNode(obj);
-                parent = root;
-                child = root;
-                prevLevel = currLevel;
-            } else if(currLevel == -1){
-                end = true;
-            } else {
-                levelChange = currLevel - prevLevel;
-                prevLevel = currLevel;
-                if(levelChange > 0) {  //Deeper in tree
-                    parent = child;
-                } else if(levelChange < 0) { //Higer in tree
-                    for(int i = 0; i > levelChange; i--){
-                        parent = (DefaultMutableTreeNode)parent.getParent();
                     }
+		return allExpts;
                 }
                 
-                obj = ois.readObject();
-                child = new DefaultMutableTreeNode(obj);
-                parent.add(child);
-            }
-        }
-        return root;
-    }
     
     public Hashtable getResultHash(){
         Hashtable table = new Hashtable();

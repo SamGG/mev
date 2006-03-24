@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMExperimentClusterCentroidViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2005-03-10 20:21:56 $
- * $Author: braistedj $
+ * $Revision: 1.5 $
+ * $Date: 2006-03-24 15:51:53 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.svm;
@@ -40,13 +40,11 @@ public class SVMExperimentClusterCentroidViewer extends ExperimentClusterCentroi
 	this.popup = createJPopupMenu(listener);
 	getContentComponent().addMouseListener(listener);
     }
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { }    
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {        
-        Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
-	getContentComponent().addMouseListener(listener);
+    /**
+     * @inheritDoc
+     */
+    public SVMExperimentClusterCentroidViewer(int[][] clusters, Integer exptID, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes){
+    	super(clusters, exptID, clusterIndex, means, variances, codes);
     }    
     
     /**

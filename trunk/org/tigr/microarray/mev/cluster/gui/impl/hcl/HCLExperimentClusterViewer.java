@@ -4,14 +4,15 @@ All rights reserved.
 */
 /*
  * $RCSfile: HCLExperimentClusterViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2006-02-23 20:59:51 $
- * $Author: caliente $
+ * $Revision: 1.4 $
+ * $Date: 2006-03-24 15:50:40 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.hcl;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,6 +25,7 @@ import javax.swing.JPopupMenu;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
 
 public class HCLExperimentClusterViewer extends ExperimentClusterViewer {
@@ -41,16 +43,26 @@ public class HCLExperimentClusterViewer extends ExperimentClusterViewer {
 	getContentComponent().addMouseListener(listener);
 	getHeaderComponent().addMouseListener(listener);
     }
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        Listener listener = new Listener();
-        this.popup = createJPopupMenu(listener);
-        getContentComponent().addMouseListener(listener);
-        getHeaderComponent().addMouseListener(listener);
+    /**
+     * @inheritDoc
+     * @author eleanorahowe
+     * 
+     * @param clusters
+     * @param genesOrder
+     * @param drawAnnotations
+     * @param offset
+     * @param header
+     * @param hasCentroid
+     * @param centroids
+     * @param elementSize
+     * @param labelIndex
+     * @param exptID
+     */
+    public HCLExperimentClusterViewer(int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
+    		Integer offset, ExperimentClusterHeader header, Boolean hasCentroid, float[][] centroids, 
+			Dimension elementSize, Integer labelIndex, Integer exptID) {
+    	super(clusters, genesOrder, drawAnnotations, offset, header, hasCentroid, centroids, elementSize, labelIndex, exptID);
     }
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { }
-
     
     /**
      * Creates a popup menu.

@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: CentroidsViewer.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-02-23 20:59:48 $
- * $Author: caliente $
+ * $Revision: 1.9 $
+ * $Date: 2006-03-24 15:49:54 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.helpers;
@@ -17,15 +17,16 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 
-import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JComponent;
 
-import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 
 /**
  * This class is used to draw set of centroid charts.
@@ -34,7 +35,7 @@ import org.tigr.microarray.mev.cluster.gui.IViewer;
  * @author Aleksey D.Rezantsev
  */
 public class CentroidsViewer extends JPanel implements IViewer, java.io.Serializable {
-    public static final long serialVersionUID = 201020001L;
+    private int exptID = 0;
     
     /** Wrapped centroid viewer */
     protected CentroidViewer centroidViewer;
@@ -45,9 +46,6 @@ public class CentroidsViewer extends JPanel implements IViewer, java.io.Serializ
      */
     public CentroidsViewer(Experiment experiment, int[][] clusters) {
 		this(new CentroidViewer(experiment,clusters));
-	//	this.centroidViewer = new CentroidViewer(experiment, clusters);
-	//	setBackground(Color.white);
-	//	setFont(new Font("monospaced", Font.BOLD, 10));
     }
 	
     /**
@@ -56,9 +54,48 @@ public class CentroidsViewer extends JPanel implements IViewer, java.io.Serializ
      */    
 	public CentroidsViewer(CentroidViewer cv) {
 		this.centroidViewer = cv;
+		this.exptID = centroidViewer.getExperimentID();
 		setBackground(Color.white);
 		setFont(new Font("monospaced", Font.BOLD, 10));
 	}
+	
+	//EH begin additions for state-saving
+	/**
+	 * @inheritDoc
+	 * copy-paste this constructor into descendent classes
+	 *
+	public CentroidsViewer(CentroidViewer cv) {
+		super(cv);
+	}
+	*/
+	//TODO
+	/**
+	 * EH testing
+	 */
+	public Expression getExpression(){
+		return new Expression(this, this.getClass(), "new",
+				new Object[]{getCentroidViewer()});
+	}
+	public void setExperiment(Experiment e) {
+		this.centroidViewer.setExperiment(e);
+		this.exptID = e.getId();
+	}
+	
+    public CentroidViewer getCentroidViewer(){
+    	return this.centroidViewer;
+    }
+    
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentID()
+	 */
+	public int getExperimentID() {
+		return this.centroidViewer.getExperimentID();
+	}
+	
+	public void setExperimentID(int exptID){
+		this.exptID = exptID;
+	}
+	//EH end additions for new state-saving
 	
     /**
      * Returns component to be inserted into the framework scroll pane.
@@ -198,5 +235,6 @@ public class CentroidsViewer extends JPanel implements IViewer, java.io.Serializ
     public int getViewerType() {
         return org.tigr.microarray.mev.cluster.clusterUtil.Cluster.GENE_CLUSTER;
     }
+    
     
 }

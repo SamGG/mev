@@ -27,6 +27,7 @@ import java.text.AttributedString;
 import java.text.DecimalFormat;
 import java.util.Vector;
 
+import org.tigr.microarray.mev.cluster.gui.helpers.ktree.ITreeNode;
 import org.tigr.microarray.mev.cluster.gui.helpers.ktree.ITreeNodeRenderer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ktree.KNodeImpl;
 
@@ -34,8 +35,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ktree.KNodeImpl;
  *
  * @author  braisted
  */
-public class GONode extends KNodeImpl implements ITreeNodeRenderer, Serializable {
-    public static final long serialVersionUID = 20200201020001L;    
+public class GONode extends KNodeImpl implements ITreeNodeRenderer {
     /** GO ID
      */
     private String goID;
@@ -84,6 +84,21 @@ public class GONode extends KNodeImpl implements ITreeNodeRenderer, Serializable
     private int GO_STAT_HEIGHT = 20;
     private int GO_POP_HEIGHT = 20;
     
+    public void setParents(ITreeNode[] p){
+    	Vector v = new Vector(p.length);
+    	for(int i=0; i<p.length; i++){
+    		v.add(p[i]);
+    	}
+    	this.setParents(v);
+    }
+    public void setChildren(ITreeNode[] c){
+    	Vector v = new Vector(c.length);
+    	for(int i=0; i<c.length; i++){
+    		v.add(c[i]);
+    	}
+    	this.setChildren(v);
+    }
+    public GONode(){super();}
     public GONode(String goID, String goTerm, String goCategory, double pValue, int clusterHits, int clusterSize,
     int popHits, int popSize, int clusterIndex) {
         super();
@@ -360,7 +375,6 @@ public class GONode extends KNodeImpl implements ITreeNodeRenderer, Serializable
         Point2D.Float penPoint;
         while(lbm.getPosition() < iter.getEndIndex()) {
             layout = lbm.nextLayout(w - 2*5);
-            
             yLoc += layout.getAscent();
             
             penPoint = new Point2D.Float(marginLoc, yLoc);
@@ -397,4 +411,52 @@ public class GONode extends KNodeImpl implements ITreeNodeRenderer, Serializable
     }
     
 
+	/**
+	 * @return Returns the goCategory.
+	 */
+	public String getGoCategory() {
+		return goCategory;
+	}
+	/**
+	 * @param goCategory The goCategory to set.
+	 */
+	public void setGoCategory(String goCategory) {
+		this.goCategory = goCategory;
+	}
+	/**
+	 * @return Returns the goID.
+	 */
+	public String getGoID() {
+		return goID;
+	}
+	/**
+	 * @param goID The goID to set.
+	 */
+	public void setGoID(String goID) {
+		this.goID = goID;
+	}
+	/**
+	 * @return Returns the goTerm.
+	 */
+	public String getGoTerm() {
+		return goTerm;
+	}
+	/**
+	 * @param goTerm The goTerm to set.
+	 */
+	public void setGoTerm(String goTerm) {
+		this.goTerm = goTerm;
+	}
+	/**
+	 * @param clusterIndex The clusterIndex to set.
+	 */
+	public void setClusterIndex(int clusterIndex) {
+		this.clusterIndex = clusterIndex;
+	}
+	/**
+	 * @param value The pValue to set.
+	 */
+	public void setPValue(double value) {
+		pValue = value;
+	}
 }

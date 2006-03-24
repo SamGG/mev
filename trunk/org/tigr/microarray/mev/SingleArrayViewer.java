@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: SingleArrayViewer.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-02-23 20:59:41 $
- * $Author: caliente $
+ * $Revision: 1.9 $
+ * $Date: 2006-03-24 15:49:44 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -430,7 +430,7 @@ public class SingleArrayViewer extends ArrayViewer implements Printable {
         sortMenu.add(sortByRatioItem);
         buttonGroup.add(sortByRatioItem);
         
-        if (TMEV.getFieldNames() != null) addSortMenuItems(TMEV.getFieldNames(), buttonGroup);
+        if (getFieldNames() != null) addSortMenuItems(getFieldNames(), buttonGroup);
         
         menuBar.add(sortMenu);
         
@@ -569,6 +569,12 @@ public class SingleArrayViewer extends ArrayViewer implements Printable {
         catch (Exception e) {System.out.println("Exception (MultipleArrayViewer.loadData()): " + e);}
         }
      */
+    /**
+     * Returns all annotation fields
+     */
+    public String[] getFieldNames() {        
+        return slideData.getSlideMetaData().getFieldNames();
+    }
     
     public ISlideData loadDataFromDatabase() {
         ISlideData slideData = null;
@@ -852,8 +858,8 @@ public class SingleArrayViewer extends ArrayViewer implements Printable {
                     ps.println("Report for SlideFile: " + slideData.getSlideDataName());
                     ps.println("Normalization: " + SlideData.normalizationString(slideData.getNormalizedState()) + "\tThresholds: " + canvas.getLowDifference() + "/" + canvas.getHighDifference());
                     outputString = "Row\tColumn\tMetaRow\tMetaColumn\tSubRow\tSubColumn\tCy3\tCy5\tCy5/Cy3";
-                    for (int i = 0; i < TMEV.getFieldNames().length; i++) {
-                        outputString += "\t" + TMEV.getFieldNames()[i];
+                    for (int i = 0; i < getFieldNames().length; i++) {
+                        outputString += "\t" + getFieldNames()[i];
                     }
                     ps.println(outputString);
                     ISlideDataElement sde;
@@ -863,7 +869,7 @@ public class SingleArrayViewer extends ArrayViewer implements Printable {
                         sde = (ISlideDataElement)slideData.getSlideDataElement(indices[i]);
                         //!
                         if (sde != null) {
-                            for (int j = 0; j < TMEV.getFieldNames().length; j++) {
+                            for (int j = 0; j < getFieldNames().length; j++) {
                                 outputString += "\t" + sde.getFieldAt(j);
                             }
                             cy3 = sde.getIntensity(ISlideDataElement.CY3);
@@ -3101,7 +3107,7 @@ public class SingleArrayViewer extends ArrayViewer implements Printable {
                 trueColumn = slideDataElement.getColumn(ISlideDataElement.BASE);
                 cy3 = slideDataElement.getIntensity(ISlideDataElement.CY3);
                 cy5 = slideDataElement.getIntensity(ISlideDataElement.CY5);
-                fieldNames = TMEV.getFieldNames();
+                fieldNames = getFieldNames();
                 
                 String rowColLabel = "Row : Column";
                 String cy3cy5Label = "Cy3 : Cy5";

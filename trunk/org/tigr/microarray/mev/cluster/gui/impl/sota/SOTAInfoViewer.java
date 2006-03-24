@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOTAInfoViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-23 20:59:55 $
- * $Author: caliente $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:51:44 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.sota;
@@ -16,6 +16,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.beans.Expression;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -24,13 +25,26 @@ import javax.swing.JTextArea;
 
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
-public class SOTAInfoViewer extends ViewerAdapter implements java.io.Serializable {
-    public static final long serialVersionUID = 202017050001L;
+public class SOTAInfoViewer extends ViewerAdapter {
     
     private JComponent header;
     private JTextArea  content;
     private boolean clusterGenes;
     
+ 
+    /**
+     * XMLEncoder constructor. Review state-saving documentation for instructions on 
+     * backwards compatability before altering.
+     * @param header
+     * @param content
+     * @param clusterGenes
+     */
+    public SOTAInfoViewer(JComponent header, JTextArea content, Boolean clusterGenes){
+    	this.header = header;
+    	this.content = content;
+    	this.clusterGenes = clusterGenes.booleanValue();
+    	setMaxWidth(content, header);
+    }
     /**
      * Constructs a <code>SOTAInfoViewer</code> with specified
      * clusters and number of genes.
@@ -51,6 +65,11 @@ public class SOTAInfoViewer extends ViewerAdapter implements java.io.Serializabl
         this.clusterGenes = clusterGenes;
         content = createContent(clusters, genes);
         setMaxWidth(content, header);
+    }
+    
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new",
+    			new Object[]{this.header, this.content, new Boolean(this.clusterGenes)});
     }
     
     /**

@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SAMCentroidsViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-03-10 20:21:59 $
- * $Author: braistedj $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:51:28 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.sam;
@@ -64,6 +64,12 @@ public class SAMCentroidsViewer extends CentroidsViewer {
         this.calculateQLowestFDR = calculateQLowestFDR;
         getContentComponent().addMouseListener(listener);
     }
+    /**
+	 * @inheritDoc
+	 */
+	public SAMCentroidsViewer(CentroidViewer cv) {
+		super(cv);
+	}
     
     private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
         ois.defaultReadObject();

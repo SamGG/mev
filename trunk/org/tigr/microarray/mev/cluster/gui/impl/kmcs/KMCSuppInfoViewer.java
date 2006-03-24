@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: KMCSuppInfoViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-23 20:59:52 $
- * $Author: caliente $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:50:54 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.kmcs;
@@ -16,6 +16,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.beans.Expression;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -25,7 +26,6 @@ import javax.swing.JTextArea;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
 public class KMCSuppInfoViewer extends ViewerAdapter implements java.io.Serializable {
-    public static final long serialVersionUID = 202008010001L;
     
     private JComponent header;
     private JTextArea  content;
@@ -43,11 +43,21 @@ public class KMCSuppInfoViewer extends ViewerAdapter implements java.io.Serializ
         setMaxWidth(content, header);
     }
     
+    public KMCSuppInfoViewer(JTextArea content, JComponent header, Boolean clusterGenes){
+    	this.content = content; 
+    	this.header = header;
+    	this.clusterGenes = clusterGenes.booleanValue();
+        setMaxWidth(content, header);
+    }
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new",
+    			new Object[]{content, header, new Boolean(clusterGenes)});
+    }
     /**
      * Constructs a <code>KMCSuppInfoViewer</code> with specified
      * clusters and number of genes.
      */
-    public KMCSuppInfoViewer(int[][] clusters, int genes, boolean unassignedExists,boolean clusterGenes) {
+    public KMCSuppInfoViewer(int[][] clusters, int genes, boolean unassignedExists, boolean clusterGenes) {
         header  = createHeader();
         this.unassignedExists = unassignedExists;
         this.clusterGenes = clusterGenes;

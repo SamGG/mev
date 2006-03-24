@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMSubCentroidViewer.java,v $
- * $Revision: 1.3 $
- * $Date: 2006-02-23 20:59:53 $
- * $Author: caliente $
+ * $Revision: 1.4 $
+ * $Date: 2006-03-24 15:51:08 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -36,6 +36,12 @@ public class PTMSubCentroidViewer extends CentroidViewer {
     public PTMSubCentroidViewer(Experiment experiment, int[][] clusters, Vector templateVector) {
 	super(experiment, clusters);
 	this.templateVector = templateVector;
+    }
+    /**
+     * @inheritDoc
+     */
+    public PTMSubCentroidViewer(int[][] clusters, float[][] variances, float[][] means, float[][] codes, Integer id) {
+    	super(clusters, variances, means, codes, id);
     }
     
     /**

@@ -17,6 +17,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
@@ -40,8 +41,7 @@ import org.tigr.util.FloatMatrix;
  *
  * @author  nbhagaba
  */
-public class COA3DViewer  extends ViewerAdapter implements java.io.Serializable {    
-    public static final long serialVersionUID = 202022040001L;
+public class COA3DViewer  extends ViewerAdapter {  
     
     private static final String RESET_CMD   = "reset-cmd";
     private static final String OPTIONS_CMD = "options-cmd";
@@ -78,11 +78,13 @@ public class COA3DViewer  extends ViewerAdapter implements java.io.Serializable 
     private FloatMatrix geneUMatrix, exptUMatrix, U;
     private COASelectionAreaDialog dlg;
     //private int mode;    
+    private int exptID = 0;
     
     /** Creates a new instance of COA3DViewer */
     public COA3DViewer(Frame frame, FloatMatrix U, Experiment experiment, int geneOrExpt) {
         this.frame = frame;
         this.experiment = experiment;
+        this.exptID = experiment.getId();
         this.geneOrExpt = geneOrExpt;
         this.U = U;
         //this.mode = mode;
@@ -99,6 +101,7 @@ public class COA3DViewer  extends ViewerAdapter implements java.io.Serializable 
     public COA3DViewer(Frame frame, FloatMatrix U, Experiment experiment, int geneOrExpt, int xAxis, int yAxis, int zAxis) {
         this.frame = frame;
         this.experiment = experiment;
+        this.exptID = experiment.getId();
         this.geneOrExpt = geneOrExpt;
         this.U = U;
         this.xAxis = xAxis;
@@ -118,12 +121,12 @@ public class COA3DViewer  extends ViewerAdapter implements java.io.Serializable 
     public COA3DViewer(Frame frame, FloatMatrix geneUMatrix, FloatMatrix exptUMatrix, Experiment experiment, int geneOrExpt) {
         this.frame = frame;
         this.experiment = experiment;
+        this.exptID = experiment.getId();
         this.geneOrExpt = geneOrExpt;
         this.geneUMatrix = geneUMatrix;
         this.exptUMatrix = exptUMatrix;
         content = createContent(geneUMatrix, exptUMatrix, experiment, geneOrExpt);
         dlg = new COASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());        
-        //content = new JPanel();
         popup = createJPopupMenu(); 
         
         Listener listener2 = new Listener(); // this was an attempt to get the pop up menu to show up over the 3D viewer
@@ -134,6 +137,7 @@ public class COA3DViewer  extends ViewerAdapter implements java.io.Serializable 
     public COA3DViewer(Frame frame, FloatMatrix geneUMatrix, FloatMatrix exptUMatrix, Experiment experiment, int geneOrExpt, int xAxis, int yAxis, int zAxis) {
         this.frame = frame;
         this.experiment = experiment;
+        this.exptID = experiment.getId();
         this.geneOrExpt = geneOrExpt;
         this.geneUMatrix = geneUMatrix;
         this.exptUMatrix = exptUMatrix;
@@ -150,40 +154,42 @@ public class COA3DViewer  extends ViewerAdapter implements java.io.Serializable 
 	getContentComponent().addMouseListener(listener2);        
     }    
     
-    private void writeObject(java.io.ObjectOutputStream oos) throws  java.io.IOException {
-        oos.writeObject(this.experiment);
-        oos.writeInt(this.geneOrExpt);
-        if (this.geneOrExpt == COAGUI.BOTH) {
-        oos.writeObject(this.geneUMatrix);
-        oos.writeObject(this.exptUMatrix);
-        } else {
-            oos.writeObject(this.U);
-        }
-        oos.writeInt(this.xAxis);
-        oos.writeInt(this.yAxis);
-        oos.writeInt(this.zAxis);
-    }
     
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        this.experiment = (Experiment)ois.readObject();  
-        this.geneOrExpt = ois.readInt();
-        if (this.geneOrExpt == COAGUI.BOTH) {
-            this.geneUMatrix = (FloatMatrix)ois.readObject();
-            this.exptUMatrix = (FloatMatrix)ois.readObject();
-            this.xAxis = ois.readInt();
-            this.yAxis = ois.readInt();
-            this.zAxis = ois.readInt();
-            content = createContent(geneUMatrix, exptUMatrix, experiment, geneOrExpt, xAxis, yAxis, zAxis);
-            dlg = new COASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());            
-        } else {
-            this.U = (FloatMatrix)ois.readObject();
-            this.xAxis = ois.readInt();
-            this.yAxis = ois.readInt();
-            this.zAxis = ois.readInt();            
-            content = createContent(U, experiment, geneOrExpt, xAxis, yAxis, zAxis);
-            dlg = new COASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());
-        }        
+    public COA3DViewer(Integer exptID, FloatMatrix geneUMatrix, FloatMatrix exptUMatrix, Integer geneOrExpt, FloatMatrix U, Integer xAxis, Integer yAxis, Integer zAxis) {
+	    this.exptID = exptID.intValue();
+	    this.geneOrExpt = geneOrExpt.intValue();
+        this.geneUMatrix = geneUMatrix;
+        this.exptUMatrix = exptUMatrix;
+        this.U = U;
+        this.xAxis = xAxis.intValue();
+        this.yAxis = yAxis.intValue();
+        this.zAxis = zAxis.intValue();   
+	}
+    /**
+     * @inheritDoc
+     */
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{new Integer(exptID), geneUMatrix, exptUMatrix, new Integer(geneOrExpt), U, new Integer(xAxis), new Integer(yAxis), new Integer(zAxis)});
     }
+    /**
+     * @inheritDoc
+     */
+    public void setExperiment(Experiment e){
+    	this.experiment = e;
+    	this.exptID = experiment.getId();
+	    if (this.geneOrExpt == COAGUI.BOTH) {
+	        content = createContent(geneUMatrix, exptUMatrix, experiment, geneOrExpt, xAxis, yAxis, zAxis);
+	        dlg = new COASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());            
+	    } else {
+	        content = createContent(U, experiment, geneOrExpt, xAxis, yAxis, zAxis);
+	        dlg = new COASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());
+	    }   
+	    popup = createJPopupMenu(); 
+        
+    }
+    public Experiment getExperiment(){return this.experiment;}
+    public int getExperimentID(){return this.exptID;}
     
     /**
      * Updates the viewer data and its content.

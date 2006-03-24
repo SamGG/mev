@@ -4,19 +4,21 @@ All rights reserved.
 */
 /*
  * $RCSfile: SAMExperimentViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-03-10 20:22:00 $
- * $Author: braistedj $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:51:28 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.sam;
 
 import java.awt.Color;
 import java.awt.Frame;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.Expression;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
@@ -30,6 +32,7 @@ import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileFilter;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
@@ -47,8 +50,28 @@ public class SAMExperimentViewer extends ExperimentViewer {
      * Constructs a <code>KMCExperimentViewer</code> with specified
      * experiment and clusters.
      */
-    public SAMExperimentViewer(Experiment experiment, int[][] clusters, int studyDesign,/*Vector geneNamesVector,*/ float[] dValues, float[] rValues, float[] foldChangeArray, float[] qLowestFDR, boolean calculateQLowestFDR) {
+    public SAMExperimentViewer(Experiment experiment, int[][] clusters, int studyDesign, float[] dValues, float[] rValues, float[] foldChangeArray, float[] qLowestFDR, boolean calculateQLowestFDR) {
 	super(experiment, clusters);
+	 	initialize(studyDesign, dValues, rValues, foldChangeArray, qLowestFDR, calculateQLowestFDR);
+	}
+    
+    /**
+     * @inheritDoc
+     */ 
+    public SAMExperimentViewer(int[][] clusters, int[] samplesOrder, Boolean drawAnnotations, ExperimentHeader header, Insets insets, Integer exptID,
+    		Integer studyDesign, float[] dValues, float[] rValues, float[] foldChangeArray, float[] qLowestFDR, Boolean calculateQLowestFDR) {
+    	super(clusters, samplesOrder, drawAnnotations.booleanValue(), header, insets, exptID);
+    	initialize(studyDesign.intValue(), dValues, rValues, foldChangeArray, qLowestFDR, calculateQLowestFDR.booleanValue());
+    } 
+    
+    public Expression getExpression(){
+    	Object[] temp = super.getExpression().getArguments();
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], 
+    			new Integer(studyDesign), dValues, rValues, foldChangeArray, qLowestFDR, new Boolean(calculateQLowestFDR)});
+    }
+
+    private void initialize(int studyDesign, float[] dValues, float[] rValues, float[] foldChangeArray, float[] qLowestFDR, boolean calculateQLowestFDR){
 	Listener listener = new Listener();
 	this.popup = createJPopupMenu(listener);
         this.studyDesign = studyDesign;
@@ -61,20 +84,6 @@ public class SAMExperimentViewer extends ExperimentViewer {
 	getContentComponent().addMouseListener(listener);
 	getHeaderComponent().addMouseListener(listener);
     }
-    
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        ois.defaultReadObject();
-        Listener listener = new Listener();
-        this.popup = createJPopupMenu(listener);
-        getContentComponent().addMouseListener(listener);
-        getHeaderComponent().addMouseListener(listener);        
-    }
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        oos.defaultWriteObject();
-    }
-
     
     /**
      * Creates a popup menu.

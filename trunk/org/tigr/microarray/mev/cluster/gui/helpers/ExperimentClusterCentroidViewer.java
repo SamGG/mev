@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: ExperimentClusterCentroidViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2005-03-10 15:56:09 $
- * $Author: braistedj $
+ * $Revision: 1.7 $
+ * $Date: 2006-03-24 15:49:54 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.helpers;
@@ -20,6 +20,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
@@ -38,7 +39,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
 
 public class ExperimentClusterCentroidViewer extends JPanel implements IViewer, java.io.Serializable {
-    public static final long serialVersionUID = 201070001L;
+//    public static final long serialVersionUID = 201070001L;
     
     public static final Color DEF_CLUSTER_COLOR = Color.lightGray;
     protected static final Color bColor = new Color(0, 0, 128);
@@ -56,7 +57,7 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer, 
     protected Experiment experiment;
     protected IData data;
     protected IFramework framework;
-    protected int clusterIndex;
+    protected int clusterIndex = 0;
     protected int[][] clusters;
     protected float maxYValue;           //current max y range set for graph, from y = 0
     protected float maxClusterValue;     //max abs. value in current cluster
@@ -85,7 +86,36 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer, 
     protected boolean showRefLine = false;
     
     private boolean useDoubleGradient = true;
+    private int exptID = 0;
     
+    /**
+     * This constructor is used by XMLEncoder/Decoder and IViewerPersistenceDelegate
+     * to re-create an ExperimentClusterCentroidViewer from a saved xml file
+     */
+    public ExperimentClusterCentroidViewer(int[][] clusters, Integer exptID, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes){
+    	this.clusters = clusters;
+    	this.clusterIndex = clusterIndex.intValue();
+    	this.exptID = exptID.intValue();
+        setBackground(Color.white);
+        setFont(new Font("monospaced", Font.BOLD, 10));
+        this.means = means;
+        this.variances = variances;
+        this.codes = codes;
+        this.yRangeOption = ExperimentClusterCentroidViewer.USE_EXPERIMENT_MAX;
+    }
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new",
+			new Object[]{this.clusters, new Integer(this.exptID), new Integer(this.clusterIndex), this.means, this.variances, this.codes});  
+    }
+    /*
+     copy-paste this constructor into descendent classes
+    /**
+     * @inheritDoc
+     *
+    public ExperimentClusterCentroidViewer(int[][] clusters, Integer exptID, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes){
+    	super(clusters, exptID, clusterIndex, means, variances, codes);
+    }
+    */
     
     /**
      * Constructs a <code>ExperimentClusterCentroidViewer</code> for specified
@@ -99,58 +129,13 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer, 
             throw new IllegalArgumentException("experiment == null");
         }
         this.experiment = experiment;
+        this.exptID = this.experiment.getId();
         numberOfGenes = experiment.getNumberOfGenes();
         this.clusters = clusters;
         setBackground(Color.white);
         setFont(new Font("monospaced", Font.BOLD, 10));
         this.maxExperimentValue = experiment.getMaxAbsValue();
         this.yRangeOption = ExperimentClusterCentroidViewer.USE_EXPERIMENT_MAX;
-    }
-    
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        oos.writeObject(experiment);
-        oos.writeObject(clusters);
-        oos.writeInt(yRangeOption);
-        oos.writeBoolean(drawValues);
-        oos.writeBoolean(drawVariances);
-        oos.writeBoolean(drawCodes);
-        oos.writeBoolean(drawMarks);
-        oos.writeBoolean(isAntiAliasing);
-        oos.writeBoolean(gradientColors);
-        oos.writeBoolean(useDoubleGradient);
-
-        oos.writeObject(means);
-        oos.writeObject(variances);
-        if(codes != null){
-            oos.writeBoolean(true);
-            oos.writeObject(codes);
-        } else {
-            oos.writeBoolean(false);
-        }
-        
-    }
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        this.experiment = (Experiment)ois.readObject();
-        this.clusters = (int [][])ois.readObject();
-        this.yRangeOption = ois.readInt();
-        this.drawValues = ois.readBoolean();
-        this.drawVariances = ois.readBoolean();
-        this.drawCodes = ois.readBoolean();
-        this.drawMarks = ois.readBoolean();
-        this.isAntiAliasing = ois.readBoolean();
-        this.gradientColors = ois.readBoolean();
-        this.useDoubleGradient = ois.readBoolean();
-        this.means = (float [][])ois.readObject();
-        this.variances = (float [][])ois.readObject();
-        if(ois.readBoolean())
-            this.codes = (float [][])ois.readObject();             
-        setBackground(Color.white);
-        setFont(new Font("monospaced", Font.BOLD, 10));
-        this.maxExperimentValue = experiment.getMaxAbsValue();
-        this.yRangeOption = ExperimentClusterCentroidViewer.USE_EXPERIMENT_MAX;
-        this.numberOfGenes = this.experiment.getNumberOfGenes();
     }
     
     /**
@@ -755,6 +740,30 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer, 
     public int getViewerType() {
         return Cluster.EXPERIMENT_CLUSTER;
     }
+    
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
+	 */
+	public void setExperiment(Experiment e) {
+        this.experiment = e;
+        this.exptID = e.getId();
+        numberOfGenes = experiment.getNumberOfGenes();
+        this.maxExperimentValue = experiment.getMaxAbsValue();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentID()
+	 */
+	public int getExperimentID() {
+		return exptID;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
+	 */
+	public void setExperimentID(int id) {
+		this.exptID = id;
+	}
     
 }
 

@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: Experiment.java,v $
- * $Revision: 1.5 $
- * $Date: 2004-07-27 19:59:15 $
- * $Author: braisted $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:49:53 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui;
@@ -19,9 +19,13 @@ import org.tigr.util.FloatMatrix;
  * @version 1.0
  * @author Aleksey D.Rezantsev
  */
-public class Experiment implements java.io.Serializable {
-    public static final long serialVersionUID = 2010001L;
+public class Experiment {
+//    public static final long serialVersionUID = 2010001L;
     
+    /**
+    * EH this count is used as a unique identifier for each newly-created Experiment
+    */ 
+    public static int exptCount = 1;
     // matrix of ratio values
     private FloatMatrix matrix; 
     // data indices 
@@ -29,7 +33,22 @@ public class Experiment implements java.io.Serializable {
     // gene indices to map from a FloatMatrix that is a subset of the
     //full dataset back to a row index in the MultipleArrayData.
     private int[] rowMapping;
+    private int id;
     
+    public Experiment(int[] columns, int[] rows, int id, FloatMatrix fm) {
+    	this(null, columns, rows);
+    	this.id = id;
+    	//this.columns = columns;
+    	//this.rowMapping = rows;
+    	this.matrix = fm;
+    }
+    public Experiment(int[] columns, int[] rows, int id){
+    	//TODO the purpose of this constructor is only to debug state-saving.
+    	//Experiment objects should not be saved using XMLEncoder.
+    	this(columns, rows, id, null);
+    }
+    
+
     /**
      * Constructs an <code>Experiment</code> with specified
      * matrix of ratio values and columns indices.
@@ -43,10 +62,29 @@ public class Experiment implements java.io.Serializable {
      * matrix of ratio values, columns indices, and row indices
      */
     public Experiment(FloatMatrix matrix, int[] columns, int[] rows){
+    	exptCount++;
         this.matrix = matrix;
         this.columns = columns;
         this.rowMapping = rows;
+    	this.id = exptCount;
     }
+    
+    public int[] getRows() {return rowMapping;}
+    public int[] getColumns(){return columns;}
+
+    //EH end bean changes
+    //TODO Remove this.
+    public static String[] getPersistenceDelegateArgs() {
+    	return new String[]{"columns", "rows", "id"};
+    }
+    
+    public int getId(){return this.id;}
+    
+    public void fillMatrix(FloatMatrix fm){
+    	this.matrix = fm;
+    }
+    
+
     
     /**
      * Makes default sequential mapping of row indices

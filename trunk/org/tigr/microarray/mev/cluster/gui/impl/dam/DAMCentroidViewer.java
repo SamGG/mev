@@ -33,14 +33,13 @@ public class DAMCentroidViewer extends CentroidViewer {
 	this.popup = createJPopupMenu(listener);
 	getContentComponent().addMouseListener(listener);        
     }
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { }    
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {        
-        Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
-	getContentComponent().addMouseListener(listener);
+    /**
+     * @inheritDoc
+     */
+    public DAMCentroidViewer(int[][] clusters, float[][] variances, float[][] means, float[][] codes, Integer id) {
+    	super(clusters, variances, means, codes, id);
     }
+    
     
     
     /**

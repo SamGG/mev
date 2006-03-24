@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: ExperimentViewer.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-02-23 20:59:48 $
- * $Author: caliente $
+ * $Revision: 1.10 $
+ * $Date: 2006-03-24 15:49:54 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.helpers;
@@ -27,6 +27,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -55,7 +56,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
  */
 public class ExperimentViewer extends JPanel implements IViewer {
     
-    static final long serialVersionUID = 1L;
+    //static final long serialVersionUID = 1L;
     
     private static final float INITIAL_MAX_VALUE = 3f;
     private static final float INITIAL_MIN_VALUE = -3f;
@@ -71,7 +72,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
     private Experiment experiment;
     private IFramework framework;
     private IData data;
-    private int clusterIndex;
+    private int clusterIndex = 0;
     private int[][] clusters;
     private int[] samplesOrder;
     private Dimension elementSize = new Dimension(20, 5);
@@ -96,8 +97,8 @@ public class ExperimentViewer extends JPanel implements IViewer {
     private boolean useDoubleGradient = true;
     private boolean showClusters = true;
     private boolean haveColorBar = false;
-    //public static BufferedImage posColorImage = createGradientImage(Color.black, Color.red);
-    //public static BufferedImage negColorImage = createGradientImage(Color.green, Color.black);
+    protected int exptID = 0;
+    
     
     
     /**
@@ -137,6 +138,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
             throw new IllegalArgumentException("experiment == null");
         }
         this.experiment = experiment;
+        this.exptID = experiment.getId();
         this.clusters = clusters == null ? defGenesOrder(experiment.getNumberOfGenes()) : clusters;
         this.samplesOrder = samplesOrder == null ? defSamplesOrder(experiment.getNumberOfSamples()) : samplesOrder;
         this.isDrawAnnotations = drawAnnotations;
@@ -163,6 +165,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
             throw new IllegalArgumentException("experiment == null");
         }
         this.experiment = experiment;
+        this.exptID = experiment.getId();
         this.clusters = clusters == null ? defGenesOrder(experiment.getNumberOfGenes()) : clusters;
         this.samplesOrder = samplesOrder == null ? defSamplesOrder(experiment.getNumberOfSamples()) : samplesOrder;
         this.isDrawAnnotations = drawAnnotations;
@@ -177,7 +180,79 @@ public class ExperimentViewer extends JPanel implements IViewer {
     }
     
     public ExperimentViewer(){  }
+    public void setInsets(Insets i) {
+    	this.insets = i;
+    }    
+    /**
+     * This constructor is used to re-create an ExperimentViewer from information
+     * stored in a saved analysis file by XMLEncoder.  
+     * 
+     * @param experiment
+     * @param clusters
+     * @param samplesOrder
+     * @param drawAnnotations
+     * @param header
+     * @param insets
+     */
+    public ExperimentViewer(int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets, Integer exptID) {
+	    this.insets = insets;
+	    this.exptID = exptID.intValue();
+	    this.header = header;
+	    this.clusters = clusters;
+	    this.samplesOrder = samplesOrder;
+	    this.isDrawAnnotations = drawAnnotations;
+	    this.header = header;
     
+	    setBackground(Color.white);
+	    
+	    Listener listener = new Listener();
+	    addMouseListener(listener);
+	    addMouseMotionListener(listener);
+    }
+    /*
+    copy-paste this constructor into descendent classes
+    /**
+     * @inheritDoc
+     * 
+    public ExperimentViewer(int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets, Integer exptID) {
+    	super(clusters, samplesOrder, drawAnnotations, header, insets, exptID);
+    } 
+    */
+    
+    /**
+     * @inheritdoc
+     */
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new",
+				new Object[]{this.clusters, this.samplesOrder, new Boolean(this.isDrawAnnotations), this.header, this.insets, new Integer(this.exptID)});  
+    }
+    
+    public void setExperiment(Experiment e) {
+    	this.experiment = e;
+    	this.exptID = experiment.getId();
+    	if(this.header !=null){
+    		this.header.setExperiment(e);
+    	} else{
+    		this.header = new ExperimentHeader(this.experiment, this.clusters, this.samplesOrder);
+            this.header.setNegAndPosColorImages(this.negColorImage, this.posColorImage);
+    	}
+   		this.header.setIData(data);
+    }
+    /*
+    public ExperimentHeader getHeader() {
+    	return header;
+    }
+    public int[] getSamplesOrder(){
+    	return samplesOrder;
+    }
+    public boolean getIsDrawAnnotations(){return isDrawAnnotations;}
+
+    public Insets getInsets() {return insets;}
+
+    public void setInsets(Insets i) {
+    	this.insets = i;
+    }    
+    */
     private static int[] defSamplesOrder(int size) {
         int[] order = new int[size];
         for (int i=0; i<order.length; i++) {
@@ -391,8 +466,6 @@ public class ExperimentViewer extends JPanel implements IViewer {
         return this.clusters[this.clusterIndex][row];
     }
     
-    
-    
     private int getColumn(int column) {
         return samplesOrder[column];
     }
@@ -446,10 +519,6 @@ public class ExperimentViewer extends JPanel implements IViewer {
      * Sets public color for the current cluster related to genes or experiment indices.
      */
     public Color setHCLClusterColor(int [] clusterIndices, Color color, boolean areGeneIndices) {
-        // if(areGeneIndices)
-        //     this.data.setProbesColor(clusterIndices, color);
-        //  else
-        //     this.data.setExperimentColor(clusterIndices, color);
         Color clusterColor = null;
         if(areGeneIndices)
             clusterColor = framework.storeSubCluster(clusterIndices, experiment, ClusterRepository.GENE_CLUSTER);
@@ -549,7 +618,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
         }
         setFont(new Font("monospaced", Font.PLAIN, elementSize.height));
         Graphics2D g = (Graphics2D)getGraphics();
-        int width = elementSize.width*experiment.getNumberOfSamples()+1 + insets.left;
+        int width = elementSize.width*experiment.getNumberOfSamples() + 1 + insets.left;
         if (isDrawAnnotations) {
             this.annotationWidth = getMaxWidth(g);
             width += 20+this.annotationWidth;
@@ -662,13 +731,14 @@ public class ExperimentViewer extends JPanel implements IViewer {
      */
     public void paint(Graphics g) {
         super.paint(g);
+        
         if (this.data == null) {
             return;
         }
         if(this.elementSize.getHeight() < 1)
             return;
-        
         final int samples = experiment.getNumberOfSamples();
+        
         
         if (this.clusters == null || getCluster().length == 0) {
             g.setColor(new Color(0, 0, 128));
@@ -889,41 +959,6 @@ public class ExperimentViewer extends JPanel implements IViewer {
     }
     
     
-    private void writeObject(ObjectOutputStream oos) throws IOException {
-        oos.writeObject(header);
-        oos.writeObject(experiment);
-        oos.writeObject(clusters);
-        oos.writeObject(samplesOrder);
-        oos.writeObject(elementSize);
-        oos.writeInt(labelIndex);
-        oos.writeBoolean(this.isDrawAnnotations);
-        oos.writeObject(insets);
-        oos.writeBoolean(useDoubleGradient);
-    }
-        
-    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        header = (ExperimentHeader)ois.readObject();
-        experiment = (Experiment)ois.readObject();
-        clusters = (int[][])ois.readObject();
-        samplesOrder = (int[])ois.readObject();
-        elementSize = (Dimension)ois.readObject();
-        labelIndex = ois.readInt();
-        this.isDrawAnnotations = ois.readBoolean();
-        insets = (Insets)ois.readObject();
-        this.useDoubleGradient = ois.readBoolean();
-        
-        this.firstSelectedRow = -1;
-        this.lastSelectedRow = -1;
-        this.firstSelectedColumn = -1;
-        this.lastSelectedColumn = -1;
-        
-        this.showClusters = true;
-        
-        Listener listener = new Listener();
-        addMouseListener(listener);
-        addMouseMotionListener(listener);
-    }
-    
     
     /** Returns int value indicating viewer type
      * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
@@ -987,7 +1022,11 @@ public class ExperimentViewer extends JPanel implements IViewer {
         }
         
         public void mouseEntered(MouseEvent event) {
+        	try {
             oldStatusText = framework.getStatusText();
+        	} catch (NullPointerException npe) {
+        		npe.printStackTrace();
+        	}
         }
         
         public void mouseExited(MouseEvent event) {
@@ -1011,5 +1050,19 @@ public class ExperimentViewer extends JPanel implements IViewer {
             return(row == oldRow && column == oldColumn);
         }
     }
+    
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentID()
+	 */
+	public int getExperimentID() {
+		return exptID;
+	}
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
+	 */
+	public void setExperimentID(int id) {
+		this.exptID = id;
+		
+	}
     
 }

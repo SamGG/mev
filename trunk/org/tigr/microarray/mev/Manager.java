@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: Manager.java,v $
- * $Revision: 1.11 $
- * $Date: 2006-02-24 15:04:13 $
- * $Author: wwang67 $
+ * $Revision: 1.12 $
+ * $Date: 2006-03-24 15:49:44 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -96,7 +96,7 @@ public class Manager {//A class to keep track of viewers
     
 /*
     public void initializeFrame() {
-        frame = new JFrame("TIGR MultiExperiment Viewer");
+        frame = new JFrame("MultiExperiment Viewer");
         frame.addWindowListener(eventListener);
         frame.setVisible(true);
  
@@ -109,7 +109,7 @@ public class Manager {//A class to keep track of viewers
  */
   
    public void initializeFrame() {
-        frame = new JFrame("TIGR MultiExperiment Viewer");
+        frame = new JFrame("MultiExperiment Viewer");
         frame.addWindowListener(eventListener);
         
         initializeMenuBar(frame);
@@ -351,7 +351,7 @@ public class Manager {//A class to keep track of viewers
         MultipleArrayViewer mav = new MultipleArrayViewer();
         Manager.addComponent(mav);
         
-        TMEV.clearFieldNames();
+        //TMEV.clearFieldNames();
         mav.getFrame().setSize(1150, 700);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int x = (screenSize.width - mav.getFrame().getSize().width)/2 + xOffset;
@@ -364,7 +364,7 @@ public class Manager {//A class to keep track of viewers
         MultipleArrayViewer mav = new MultipleArrayViewer();
         Manager.addComponent(mav);
         
-        TMEV.clearFieldNames();
+        //TMEV.clearFieldNames();
         //Remove the next two lines (about DB system enabling)
         //mav.systemEnable(TMEV.DB_AVAILABLE);
         //mav.systemEnable(TMEV.DB_LOGIN);
@@ -381,7 +381,7 @@ public class Manager {//A class to keep track of viewers
         MultipleArrayViewer mav = new MultipleArrayViewer();
         Manager.addComponent(mav);
         
-        TMEV.clearFieldNames();
+        //TMEV.clearFieldNames();
         //Remove the next two lines (about DB system enabling)
         //mav.systemEnable(TMEV.DB_AVAILABLE);
         //mav.systemEnable(TMEV.DB_LOGIN);

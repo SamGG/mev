@@ -16,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.Expression;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
@@ -31,8 +32,7 @@ import org.tigr.util.FloatMatrix;
  *
  * @author  nbhagaba
  */
-public class COADummyViewer extends ViewerAdapter implements java.io.Serializable {
-    public static final long serialVersionUID = 202022010001L;
+public class COADummyViewer extends ViewerAdapter {
     
     private static final String ADD_NEW_3D_CMD = "add-new-3d-cmd";
     private static final String ADD_NEW_2D_CMD = "add-new-2d-cmd";    
@@ -48,22 +48,12 @@ public class COADummyViewer extends ViewerAdapter implements java.io.Serializabl
         this.exptUMatrix = exptUMatrix;
         popup = createJPopupMenu();        
     }
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        oos.writeObject(this.experiment);        
-        //oos.defaultWriteObject();
-        oos.writeObject(this.geneUMatrix);
-        oos.writeObject(this.exptUMatrix);
-        //oos.writeObject();;
-        
-    }
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        this.experiment = (Experiment)ois.readObject();        
-        this.geneUMatrix = (FloatMatrix)ois.readObject();
-        this.exptUMatrix = (FloatMatrix)ois.readObject();
-        //ois.readObject();
-        //ois.defaultReadObject();
+    /**
+     * @inheritDoc
+     */
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{geneUMatrix, exptUMatrix});
     }    
     
     public void onSelected(IFramework framework) {

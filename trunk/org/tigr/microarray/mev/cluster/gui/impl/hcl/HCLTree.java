@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLTree.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-02-24 16:12:38 $
- * $Author: wwang67 $
+ * $Revision: 1.10 $
+ * $Date: 2006-03-24 15:50:40 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.hcl;
@@ -20,6 +20,10 @@ import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.Encoder;
+import java.beans.Expression;
+import java.beans.PersistenceDelegate;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,9 +44,8 @@ import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 
-public class HCLTree extends JPanel implements java.io.Serializable {
+public class HCLTree extends JPanel {
     
-    public static final long serialVersionUID = 202006060001L;
     
     // These constants specify a horizontal or
     // vertical orientation.
@@ -123,61 +126,26 @@ public class HCLTree extends JPanel implements java.io.Serializable {
         
         initializeParentNodeArray();
         
-        
-        
         addMouseListener(new Listener());
     }
     
     private HCLTree() { }
     
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws IOException {
-        oos.writeInt(orientation);
-        oos.writeInt(min_pixels);
-        oos.writeInt(max_pixels);
-        oos.writeFloat(zero_threshold);
-        
-        oos.writeObject(this.lineColor);
-        oos.writeObject(this.belowThrColor);
-        oos.writeObject(this.selectedLineColor);
-        
-        oos.writeObject(treeData);
-        oos.writeFloat(minHeight);
-        oos.writeInt(stepSize);
-        oos.writeObject(pHeights);
-        oos.writeObject(positions);
-        oos.writeObject(selected);
-        oos.writeObject(nodesColors);
-        oos.writeObject(parentNodes);
-        oos.writeObject(terminalNodes);
-        oos.writeFloat(maxHeight);
-        oos.writeBoolean(flatTree);
-        oos.writeInt(horizontalOffset);
+    /**
+     * Creates a new HCLTree.  Used to restore state from a saved file.  
+     * This constructor must remain in place with the same signature to ensure 
+     * backwards-compatibility with future revisions of the class.  
+     * Add another constructor that calls this one, rather than change this one. 
+     * @author eleanorahowe
+     * 
+     * @param treeData
+     * @param orientation
+     */
+    public HCLTree(HCLTreeData treeData, Integer orientation) {
+    	this(treeData, orientation.intValue());
     }
-    
-    private void readObject(java.io.ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        this.orientation = ois.readInt();
-        this.min_pixels = ois.readInt();
-        this.max_pixels = ois.readInt();
-        this.zero_threshold = ois.readFloat();
-        
-        this.lineColor = (Color)ois.readObject();
-        this.belowThrColor = (Color)ois.readObject();
-        this.selectedLineColor = (Color)ois.readObject();
-        
-        this.treeData = (HCLTreeData)ois.readObject();
-        this.minHeight = ois.readFloat();
-        this.stepSize = ois.readInt();
-        this.pHeights = (int [])ois.readObject();
-        this.positions = (float [])ois.readObject();
-        this.selected = (boolean [])ois.readObject();
-        this.nodesColors = (Color [])ois.readObject();
-        this.parentNodes = (int [])ois.readObject();
-        this.terminalNodes = (boolean [])ois.readObject();
-        this.maxHeight = ois.readFloat();
-        this.flatTree = ois.readBoolean();
-        this.horizontalOffset = ois.readInt();
-        addMouseListener(new Listener());
+    public static PersistenceDelegate getPersistenceDelegate(){
+    	return new HCLTreePersistenceDelegate();
     }
     
     /**
@@ -186,7 +154,7 @@ public class HCLTree extends JPanel implements java.io.Serializable {
     public void setListener(HCLTreeListener treeListener) {
         this.treeListener = treeListener;
     }
-    
+    public HCLTreeData getTreeData(){return this.treeData;}
     
     private void initializeParentNodeArray(){
         parentNodes = new int[this.treeData.height.length];
@@ -1138,4 +1106,16 @@ public class HCLTree extends JPanel implements java.io.Serializable {
             selectNode(e.getX(), e.getY());
         }
     }
+    private static class HCLTreePersistenceDelegate extends PersistenceDelegate {
+    	public Expression instantiate(Object oldInstance, Encoder encoder) {
+    		HCLTree aTree = (HCLTree) oldInstance;
+    		return new Expression(aTree, aTree.getClass(), "new", new Object[]{aTree.treeData, new Integer(aTree.orientation)});
+    	}
+    }
+	/**
+	 * @return
+	 */
+	public int getOrientation() {
+		return this.orientation;
+	}
 }

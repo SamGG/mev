@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: GDMExpViewer.java,v $
- * $Revision: 1.9 $
- * $Date: 2005-12-06 16:28:08 $
- * $Author: wwang67 $
+ * $Revision: 1.10 $
+ * $Date: 2006-03-24 15:50:21 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.gdm;
@@ -32,6 +32,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -62,8 +63,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.util.FloatMatrix;
 import org.tigr.util.QSort;
 
-public class GDMExpViewer extends JPanel implements IViewer, java.io.Serializable {
-    public static final long serialVersionUID = 202004010001L;
+public class GDMExpViewer extends JPanel implements IViewer {
     
     private JPanel content;
     private GDMExpHeader expColumnHeaderSP;
@@ -169,9 +169,13 @@ public class GDMExpViewer extends JPanel implements IViewer, java.io.Serializabl
     public static final String SORT_BY_ORIGINAL_ORDER_CMD = "sort-by-original-order-cmd";
     public static final String SORT_BY_PROXIMITY_CMD = "sort-by-proximity-cmd";
     private static final String SAVE_NEIGHBORS_CMD = "save-k-neighbors";
+    
+    private int exptID = 0;
     /**
      * Constructs a <code>GDMExpViewer</code> for specified results.
      */
+    
+    public GDMExpViewer(){}
     
     public GDMExpViewer(IFramework fmwk, AlgorithmData aData, String distMetric, int displayEvery, int [][] clusters, int numOfClusters) {
         setBackground(Color.white);
@@ -185,6 +189,7 @@ public class GDMExpViewer extends JPanel implements IViewer, java.io.Serializabl
         
         this.expData = fmwk.getData();
         this.experiment = expData.getExperiment();
+        this.exptID = experiment.getId();
         this.probes = expData.getFeaturesSize();
         this.featuresCount = expData.getFeaturesCount();
         
@@ -256,82 +261,85 @@ public class GDMExpViewer extends JPanel implements IViewer, java.io.Serializabl
         
     }
     
-    public GDMExpViewer() {}
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        oos.writeObject(this.distanceMetric);
-        oos.writeInt(this.elementWidth);
-        oos.writeObject(this.elementSize);
-        oos.writeObject(this.experiment);
-        oos.writeInt(this.probes);
-        oos.writeInt(this.featuresCount);
-        oos.writeObject(this.expDistMatrix);
-        oos.writeObject(this.rawMatrix);
-        oos.writeFloat(this.minValue);
-        oos.writeFloat(this.origMaxValue);
-        oos.writeFloat(this.origMinValue);
-        oos.writeInt(this.displayEvery);
-        oos.writeObject(this.clusters);
-        oos.writeObject(this.indices);
-        oos.writeInt(this.numOfClusters);
-        oos.writeFloat(this.maxValue);
-        oos.writeInt(this.maxExpNameLength);
-        oos.writeInt(this.num_experiments);
-        oos.writeObject(this.borderColor);
-        oos.writeObject(this.clusterBorderColor);
-        oos.writeObject(this.insets);
-        oos.writeInt(this.xWidth);
-        oos.writeInt(this.xHeight);         
-    }
     
     
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+    /**
+     * Creates a new GDMExpViewer from saved state data.  
+     * setExperiment must be called for the viewer to be fully initialized.
+     * @param exptID
+     * @param expDistMatrix
+     * @param rawMatrix
+     * @param probes
+     * @param featuresCount
+     * @param minValue
+     * @param distMetric
+     * @param origMaxValue
+     * @param origMinValue
+     * @param maxValue
+     * @param maxExpNameLength
+     * @param displayEvery
+     * @param clusters
+     * @param numOfClusters
+     */
+    public GDMExpViewer(Integer exptID, FloatMatrix expDistMatrix, FloatMatrix rawMatrix, 
+			Integer probes, Integer featuresCount, Float minValue, String distMetric, 
+			Float origMaxValue, Float origMinValue, Float maxValue, Integer maxExpNameLength, 
+			Integer displayEvery, int [][] clusters, Integer numOfClusters) {
+    
+       	setBackground(Color.white);
         
-        //read critcal data
-        this.distanceMetric = (String)ois.readObject();
-        this.elementWidth = ois.readInt();
-        this.elementSize = (Dimension)ois.readObject();
+        this.distanceMetric = distMetric;
+        
         setElementWidth(elementSize.width);
-        this.experiment = (Experiment)ois.readObject();
-        this.probes = ois.readInt();
-        this.featuresCount = ois.readInt();
-        this.expDistMatrix = (FloatMatrix)ois.readObject();
-        this.rawMatrix = (FloatMatrix)ois.readObject();
-        this.minValue = ois.readFloat();
-        this.origMaxValue = ois.readFloat();
-        this.origMinValue = ois.readFloat();
-        this.displayEvery = ois.readInt();
-        this.clusters = (int [][])ois.readObject();
-        this.indices = (int [])ois.readObject();
-        this.numOfClusters = ois.readInt();
-        this.maxValue = ois.readFloat();
-        this.maxExpNameLength = ois.readInt();
-        this.num_experiments = ois.readInt();
-        this.borderColor = (Color)ois.readObject();
-        this.clusterBorderColor = (Color)ois.readObject();
-        this.insets = (Insets)ois.readObject();
-        this.xWidth  = ois.readInt();
-        this.xHeight = ois.readInt();
-
-        //set some defaults
+        this.exptID = exptID.intValue();
+        this.probes = probes.intValue();
+        this.featuresCount = featuresCount.intValue();
         
-        colorScheme = IDisplayMenu.GREEN_RED_SCHEME;
-        negGreenColorImage = createGradientImage(Color.green, Color.black);
-        posRedColorImage = createGradientImage(Color.black, Color.red);
-        negBlueColorImage = createGradientImage(Color.blue, Color.black);
-        posYellowColorImage = createGradientImage(Color.black, Color.yellow);
+        this.displayEvery = displayEvery.intValue();
+        this.expDistMatrix = expDistMatrix;
         
-        posColorImage = posRedColorImage;
-        negColorImage = negGreenColorImage;
+        this.rawMatrix = rawMatrix;
         
+        this.clusters = clusters;
+        this.numOfClusters = numOfClusters.intValue();
         
-        //constructor activity
+        this.maxValue = maxValue.floatValue();
+        this.minValue = minValue.floatValue();
+        this.origMaxValue = origMaxValue.floatValue();
+        this.origMinValue = origMinValue.floatValue();
+        
+        this.maxExpNameLength = maxExpNameLength.intValue();
+        
+        this.num_experiments = this.featuresCount/(displayEvery.intValue());
+        
+        this.borderColor = Color.black;
+        this.clusterBorderColor = Color.white;
+        
+        this.insets = new Insets(1, 1, 1, 1);
+        
+        xWidth = getXSize();
+        xHeight = getYSize();
     
         if(this.displayEvery==1) {
             setIndices(createIndices());
         } else if (this.displayEvery > 1) {
             setIndices(createIndices(this.displayEvery));
         }
+    }
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{new Integer(exptID), expDistMatrix, rawMatrix, 
+    			new Integer(probes), new Integer(featuresCount), new Float(minValue), distanceMetric,
+				new Float(origMaxValue), new Float(origMinValue), new Float(maxValue), new Integer(maxExpNameLength), 
+				new Integer(displayEvery), clusters, new Integer(numOfClusters)});
+    }  
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
+	 */
+	public void setExperiment(Experiment e) {
+		this.experiment = e;
+		this.exptID = experiment.getId();
 
         Listener listener = new Listener();
         addMouseListener(listener);
@@ -368,11 +376,6 @@ public class GDMExpViewer extends JPanel implements IViewer, java.io.Serializabl
     }
     
     
-    /*
-    public void setMultipleArrayData(IData data) {
-        this.arrayData = data;
-    }
-     */
     public void setMainFrame(JFrame mframe) {
         this.mainframe = mframe;
     }
@@ -881,6 +884,7 @@ public class GDMExpViewer extends JPanel implements IViewer, java.io.Serializabl
         
         this.framework = framework;
         this.expData = framework.getData();
+        onDataChanged(this.expData);
         
         this.probes = expData.getFeaturesSize();
         this.featuresCount = expData.getFeaturesCount();
@@ -1601,7 +1605,7 @@ public class GDMExpViewer extends JPanel implements IViewer, java.io.Serializabl
     }
     
     public Experiment getExperiment() {
-        return null;
+        return this.experiment;
     }
     
     /** Returns int value indicating viewer type
@@ -1797,4 +1801,19 @@ public class GDMExpViewer extends JPanel implements IViewer, java.io.Serializabl
         }
     }
     
+
+
+	/* (non-Javadoc)
+	 */
+	public int getExperimentID() {
+		return this.exptID;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
+	 */
+	public void setExperimentID(int id) {
+		this.exptID = id;
+	}
+
 }

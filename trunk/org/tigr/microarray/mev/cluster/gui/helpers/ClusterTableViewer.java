@@ -6,45 +6,29 @@
 
 package org.tigr.microarray.mev.cluster.gui.helpers;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 import java.util.Arrays;
 
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
+import javax.swing.*;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
+import javax.swing.JComponent;
 import javax.swing.border.Border;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
+import javax.swing.table.*;
 
-import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
-import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
-import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
+import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
+
+import org.tigr.microarray.mev.cluster.clusterUtil.*;
 import org.tigr.util.QSort;
 
 /**
@@ -52,7 +36,7 @@ import org.tigr.util.QSort;
  * @author  nbhagaba
  */
 public class ClusterTableViewer implements IViewer, java.io.Serializable {
-    public static final long serialVersionUID = 201050001L;
+//    public static final long serialVersionUID = 201050001L;
     
     private static final String NO_GENES_STR = "No Genes in Cluster!";
     private static final Font ERROR_FONT = new Font("monospaced", Font.BOLD, 20);
@@ -94,13 +78,14 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
     private ClusterTableModel clusterModel;  
     private ClusterTableSearchDialog searchDialog;
     private JMenuItem urlMenuItem;
-    //private JPanel clusterTablePanel;
+    private int exptID = 0;
     
-    /** Creates a new instance of ClusterTableViewer */
-    /*
-    public ClusterTableViewer(Experiment experiment, int[][] clusters) {
+
+
+    public ClusterTableViewer(Experiment experiment, int[][] clusters, IData data) {
+        this(experiment, clusters, data, new String[0], new Object[0][0]);
     }
-     */
+    
     
     public ClusterTableViewer(Experiment experiment, int[][] clusters, IData data, String[] auxTitles, Object[][] auxData) {
         if (experiment == null) {
@@ -108,9 +93,13 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
         }
         this.data = data;
         this.experiment = experiment;
+        this.exptID = experiment.getId();
         this.clusters = clusters;  
         this.fieldNames = data.getFieldNames();
         this.auxTitles = auxTitles;
+        if(this.auxTitles == null) {
+        	this.auxTitles = new String[0];
+        }
         this.auxData = auxData;
         this.lastSelectedAnnotationIndices = new int[2];
         //this.xRow = -1;
@@ -166,14 +155,90 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
         
 	Listener listener = new Listener();
 	this.popup = createJPopupMenu(listener);
-	//getContentComponent().addMouseListener(listener);  
         clusterTable.addMouseListener(listener);
     }    
     
-    public ClusterTableViewer(Experiment experiment, int[][] clusters, IData data) {
-        this(experiment, clusters, data, new String[0], new Object[0][0]);
+
+    //EH begin state-saving additions  
+    /**
+     * Re-creates a ClusterTableViewer from saved xml data
+     * @param clusters
+     * @param fieldNames
+     * @param auxTitles
+     * @param auxData
+     * @param exptID
+     */
+    public ClusterTableViewer(int[][] clusters, String[] fieldNames, String[] auxTitles, Object[][] auxData, Integer exptID) {
+        this.exptID = exptID.intValue();
+        this.clusters = clusters;  
+        this.fieldNames = fieldNames;
+        this.auxTitles = auxTitles;
+        this.auxData = auxData;
+        this.lastSelectedAnnotationIndices = new int[2];
+        //this.xRow = -1;
+        this.xColumn = -1;
+        for (int i = 0; i < lastSelectedAnnotationIndices.length; i++) {
+            lastSelectedAnnotationIndices[1] = 0;
+        }
+        this.sortedClusters = new int[clusters.length][];
+        
+        for (int i = 0; i < sortedClusters.length; i++) {
+            sortedClusters[i] = new int[clusters[i].length];
+        }
+        
+        for (int i = 0; i < sortedClusters.length; i++) {
+            for (int j = 0; j < sortedClusters[i].length; j++) {
+                sortedClusters[i][j] = clusters[i][j];
+            }
+        }
+        
+        this.clusterModel = new ClusterTableModel();
+        this.clusterTable = new JTable(clusterModel);
+        clusterTable.setCellSelectionEnabled(true);
+        clusterTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
+        TableColumn column = null;
+        for (int i = 0; i < clusterModel.getColumnCount(); i++) {
+            column = clusterTable.getColumnModel().getColumn(i);
+            column.setMinWidth(30);
     }
     
+        this.sortedAscending = new boolean[clusters.length][clusterModel.getColumnCount()];
+        for (int i = 0; i < sortedAscending.length; i++) {
+            for (int j = 0; j < sortedAscending[i].length; j++) {
+                sortedAscending[i][j] = false;
+            }
+        }    
+        addMouseListenerToHeaderInTable(clusterTable);
+        header  = clusterTable.getTableHeader();        
+        
+        searchDialog = new ClusterTableSearchDialog(JOptionPane.getFrameForComponent(clusterTable), clusterTable, false);  
+        setMaxWidth(getContentComponent(), getHeaderComponent());  
+        
+		Listener listener = new Listener();
+		this.popup = createJPopupMenu(listener);
+        clusterTable.addMouseListener(listener);
+    }  
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new",
+				new Object[]{this.clusters, this.fieldNames, this.auxTitles, this.auxData, new Integer(this.exptID)});
+
+    }
+	
+	public void setExperiment(Experiment e) {
+		this.experiment = e;
+		this.exptID = e.getId();
+	}
+	
+	public int getExperimentID() {
+		return this.exptID;
+	}
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
+	 */
+	public void setExperimentID(int id) {
+		this.exptID = id;
+	}    
+    //EH end state-saving additions
 
     
     /**
@@ -190,7 +255,6 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.anchor = GridBagConstraints.NORTH;
         
-        //clusterTable.addMouseListener(new Listener());
         
         buildConstraints(constraints, 0, 0, 1, 1, 100, 100);
         gridbag.setConstraints(clusterTable, constraints);
@@ -408,13 +472,17 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
     
     class ClusterTableModel extends AbstractTableModel {
         String[] columnNames;
-        //Object[][] tableData;
-        //int[] rows = getCluster();
+        private String NO_ANNOTATION = "No Annotation Loaded";
+        boolean hasAnnotation = true;
         
         public ClusterTableModel() {
+        	if(fieldNames.length + auxTitles.length == 0){ //No annotation loaded
+        		columnNames = new String[2];
+        		columnNames[1] = NO_ANNOTATION;
+        		hasAnnotation = false;
+        	} else {
            columnNames = new String[1 + fieldNames.length + auxTitles.length];  
            int counter;
-           columnNames[0] = "Stored Color";
             for (counter = 1; counter < fieldNames.length + 1; counter++) {
                 columnNames[counter] = fieldNames[counter - 1];
             }
@@ -422,14 +490,14 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
                 columnNames[i] = auxTitles[i - counter];
             }
         }
+	        columnNames[0] = "Stored Color";
+        }
 
         public int getColumnCount() {
             return columnNames.length;
         }
         
         public int getRowCount() {
-            //return tableData.length;
-            //System.out.println("Row count = " + getCluster().length);            
             return getCluster().length;
         }
         
@@ -440,12 +508,13 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
         public Object getValueAt(int row, int col) {
             if (col == 0) {
                 return data.getProbeColor(experiment.getGeneIndexMappedToData(getSortedCluster()[row])) == null? Color.white : data.getProbeColor(experiment.getGeneIndexMappedToData(getSortedCluster()[row]));
-            } else if (col < fieldNames.length+ 1) {
+            } else if(!hasAnnotation){
+            	return new Integer(row+1);
+            } else if (col < fieldNames.length + 1) {
                 return data.getElementAttribute(experiment.getGeneIndexMappedToData(getSortedCluster()[row]), col - 1);
             } else {
                 return String.valueOf(auxData[getSortedCluster()[row]][col - (fieldNames.length + 1)]);
             }
-            //return tableData[row][col];
         }
         
        public Class getColumnClass(int c) {

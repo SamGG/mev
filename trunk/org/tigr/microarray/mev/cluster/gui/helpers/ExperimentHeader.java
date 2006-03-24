@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: ExperimentHeader.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-02-23 20:59:48 $
- * $Author: caliente $
+ * $Revision: 1.7 $
+ * $Date: 2006-03-24 15:49:54 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.helpers;
@@ -38,7 +38,6 @@ import org.tigr.microarray.mev.cluster.gui.IData;
  */
 public class ExperimentHeader extends JPanel implements IExperimentHeader, java.io.Serializable {
     
-    public static final long serialVersionUID = 201090001L;
     
     private static final int RECT_HEIGHT = 15;
     private static final int COLOR_BAR_HEIGHT = 10;
@@ -53,11 +52,31 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader, java.
     private float minValue = -3f;
     private float midValue = 0.0f;
     private Insets insets = new Insets(0, 10, 0, 0);
-    
     private BufferedImage negColorImage;
     private BufferedImage posColorImage;
     
+    public void setExperiment(Experiment e) {
+    	this.experiment = e;
+    }
+    
     private boolean useDoubleGradient = true;
+    
+    /**
+     * Used for restoring an ExperimentHeader from saved xml file.
+     * @param clusters
+     * @param samplesOrder
+     * @param insets
+     */
+    public ExperimentHeader(int [][] clusters, int[] samplesOrder, Insets insets){
+        this.clusters = clusters;
+        this.samplesOrder = samplesOrder;
+        this.insets = insets;
+        setBackground(Color.white);
+    }
+    
+    
+    protected void setIData(IData d) {this.data = d;}
+    
     
     /**
      * Construct an <code>ExperimentHeader</code> with specified experiment.
@@ -76,7 +95,13 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader, java.
         this.samplesOrder = samplesOrder == null ? createSamplesOrder(experiment) : samplesOrder;
         setBackground(Color.white);
     }
-    
+    public Insets getInsets(){return insets;}
+    public Experiment getExperiment() {
+    	return experiment;
+    }
+    public int[][] getClusters() {
+    	return clusters;
+    }
     /**
      * Returns a component to be inserted into scroll pane view port.
      */
@@ -91,13 +116,16 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader, java.
         }
         return order;
     }
-    
+    public int[] getSamplesOrder(){return samplesOrder;}
+    public BufferedImage getPosColorImage(){return posColorImage;}
+    public BufferedImage getNegColorImage(){return negColorImage;}
     /**
      * Sets data.
      */
     public void setData(IData data) {
         this.data = data;
     }
+    public IData getData(){return data;}
     
     /**
      * Sets max and min experiment values.
@@ -286,25 +314,8 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader, java.
                     g.setColor(Color.white);
                 g.fillRect(sample*elementWidth + insets.left, getSize().height - COLOR_BAR_HEIGHT - 2, elementWidth, COLOR_BAR_HEIGHT);
             }
+        } else {
         }
     }
     
-    private void writeObject(ObjectOutputStream oos) throws IOException {       
-        oos.writeObject(experiment);        
-        oos.writeObject(clusters);        
-        oos.writeObject(samplesOrder);
-        oos.writeInt(elementWidth);
-        oos.writeObject(insets);
-        oos.writeBoolean(useDoubleGradient);
-    }
-    
-    
-    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {     
-        experiment = (Experiment)ois.readObject();
-        clusters = (int[][])ois.readObject();
-        samplesOrder = (int[])ois.readObject();
-        elementWidth = ois.readInt();
-        insets = (Insets)ois.readObject();
-        this.useDoubleGradient = ois.readBoolean();
-    }
 }

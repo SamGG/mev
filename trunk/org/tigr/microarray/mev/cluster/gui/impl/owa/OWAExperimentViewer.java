@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: OWAExperimentViewer.java,v $
- * $Revision: 1.8 $
- * $Date: 2005-03-10 20:32:39 $
- * $Author: braistedj $
+ * $Revision: 1.9 $
+ * $Date: 2006-03-24 15:51:02 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -14,10 +14,12 @@ package org.tigr.microarray.mev.cluster.gui.impl.owa;
 
 import java.awt.Color;
 import java.awt.Frame;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.Expression;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
@@ -32,6 +34,7 @@ import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileFilter;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
@@ -51,6 +54,25 @@ public class OWAExperimentViewer extends ExperimentViewer {
     /** Creates new OWAExperimentViewer */
     public OWAExperimentViewer(Experiment experiment, int[][] clusters, float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
 	super(experiment, clusters);
+		initialize(geneGroupMeans, geneGroupSDs, rawPValues, adjPValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues);
+    }
+    /**
+     * @inheritDoc
+     */ 
+    public OWAExperimentViewer(int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets, Integer exptID, float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
+    	super(clusters, samplesOrder, drawAnnotations, header, insets, exptID);
+    	initialize(geneGroupMeans, geneGroupSDs, rawPValues, adjPValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues);
+    } 
+	/**
+	 * @inheritDoc
+	 */
+	public Expression getExpression(){
+		Object[] parentExpressionArgs = super.getExpression().getArguments();
+		return new Expression(this, this.getClass(), "new", 
+				new Object[]{parentExpressionArgs[0], parentExpressionArgs[1], parentExpressionArgs[2], parentExpressionArgs[3], parentExpressionArgs[4], parentExpressionArgs[5], 
+				geneGroupMeans, geneGroupSDs, rawPValues, adjPValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues});
+	}
+    private void initialize(float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
 	Listener listener = new Listener();
 	this.popup = createJPopupMenu(listener);
         this.rawPValues = rawPValues;
@@ -64,17 +86,6 @@ public class OWAExperimentViewer extends ExperimentViewer {
         this.dfDenomValues = dfDenomValues;
 	getContentComponent().addMouseListener(listener);
 	getHeaderComponent().addMouseListener(listener);        
-    }
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        oos.defaultWriteObject();
-    }
-
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        ois.defaultReadObject();
-        Listener listener = new Listener();
-        getContentComponent().addMouseListener(listener);
-	getHeaderComponent().addMouseListener(listener);  
     }
     
     

@@ -19,6 +19,7 @@ import javax.swing.JPopupMenu;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidsViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
@@ -43,7 +44,12 @@ public class DAMExperimentCentroidsViewer extends ExperimentClusterCentroidsView
         this.popup = createJPopupMenu(listener);
         getContentComponent().addMouseListener(listener);
     }
-    
+    /**
+     * @inheritDoc
+     */
+    public DAMExperimentCentroidsViewer(ExperimentClusterCentroidViewer cv, Integer exptID) {
+    	super(cv, exptID);
+    }
     
     
     private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { }

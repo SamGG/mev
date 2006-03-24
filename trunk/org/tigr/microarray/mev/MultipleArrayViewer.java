@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.33 $
- * $Date: 2006-02-24 15:19:44 $
- * $Author: wwang67 $
+ * $Revision: 1.34 $
+ * $Date: 2006-03-24 15:49:44 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -42,13 +42,11 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.ObjectStreamConstants;
+import java.io.*;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -174,10 +172,17 @@ import org.tigr.util.swing.PNGFileFilter;
 import org.tigr.util.swing.TIFFFileFilter;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HTMLMessageFileChooser;
 import java.text.DecimalFormat;
+
+//EH
+import java.beans.*;
+import java.util.zip.GZIPOutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
+import org.tigr.microarray.mev.persistence.*;
 import com.sun.media.jai.codec.ImageEncodeParam;
 
 public class MultipleArrayViewer extends ArrayViewer implements Printable {
-    public static final long serialVersionUID = 100010201010001L;
     
     private MultipleArrayMenubar menubar;
     private MultipleArrayToolbar toolbar;
@@ -212,8 +217,15 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     private HistoryViewer historyLog;
     
     private File currentAnalysisFile;
-    private boolean modifiedResult = false;    /* Raktim, CGH Model for Cytoband */
+    private boolean modifiedResult = false;
+    /* Raktim, CGH Model for Cytoband */
     private CytoBandsModel cytoBandsModel;
+        //EH state-saving
+    XMLDecoder ois;
+	DataInputStream dis;
+	boolean keepRunning;
+	StateSavingProgressPanel progressPanel;
+	SessionMetaData smd;
     
     /**
      * Construct a <code>MultipleArrayViewer</code> with default title,
@@ -224,10 +236,22 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     public MultipleArrayViewer() {
         super(new JFrame("TIGR Multiple Array Viewer"));
         
+        //EH
+        initSessionMetaData();
+        
         // listener
         EventListener eventListener = new EventListener();
         mainframe.addWindowListener(eventListener);
-        manager = new ActionManager(eventListener, TMEV.getFieldNames(), TMEV.getGUIFactory());
+//        manager = new ActionManager(eventListener, TMEV.getFieldNames(), TMEV.getGUIFactory());
+        //EH
+        /*
+        * 06/27/05 moved FieldNames out of TMEV, so replacing 
+        * the argument with empty string array
+        * The actionmanager should be recreated by MultipleArrayData when data is loaded
+        * Field names should be given to that new manager.  
+        * manager = new ActionManager(eventListener, TMEV.getFieldNames(), TMEV.getGUIFactory());
+        */
+        manager = new ActionManager(eventListener, new String[0], TMEV.getGUIFactory());
         
         menubar = new MultipleArrayMenubar(manager);
               
@@ -262,7 +286,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      * a calculation result, creates a status bar.
      */
     public MultipleArrayViewer(MultipleArrayData arrayData) {
-        super(new JFrame("TIGR Multiple Array Viewer"));
+        super(new JFrame("Multiple Array Viewer"));
+        //EH
+        initSessionMetaData();
         
         // listener
         EventListener eventListener = new EventListener();
@@ -329,7 +355,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      * to dictate initial settings.
      */
     public MultipleArrayViewer(MultipleArrayData arrayData, MultipleArrayMenubar origMenubar) {
-        super(new JFrame("TIGR Multiple Array Viewer"));
+        super(new JFrame("Multiple Array Viewer"));
+        //EH
+        initSessionMetaData();
         
         // listener
         EventListener eventListener = new EventListener();
@@ -489,10 +517,13 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                             String ext = filter.getExtension(file);
                             
                             if(ext == null)
-                                file = new File(file.getPath()+".anl");
+                                file = new File(file.getPath() + ".anl");
                             
-                            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file));
-                            saveState(oos, file);
+                            //EH added DataOutputStream file type, changed ObjectOutputStream to GZIP.
+                            DataOutputStream dos = new DataOutputStream(new FileOutputStream("data.bin"));
+//                            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file));
+                            ObjectOutputStream oos = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(file)));
+                            saveState(dos, oos, file);
                             
                             //set tmev.cfg path to match formatted path
                             TMEV.updateDataPath(formatDataPath(file.getPath()));
@@ -572,8 +603,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         if(this.currentAnalysisFile != null) {
             try {
                 ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(this.currentAnalysisFile));
-                saveState(oos, currentAnalysisFile);
-            } catch (Exception e) {
+                //EH added DataOutputStream, changed saveState method call
+                DataOutputStream ds = new DataOutputStream(new FileOutputStream("data.bin"));
+                saveState(ds, oos, currentAnalysisFile);
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
@@ -582,118 +615,349 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         }
     }
     
+    //EH update to MeV v4.0 changed saveState dramatically. 
+  private void saveState(DataOutputStream ds, ObjectOutputStream os, File file) throws IOException {
     
-    private void saveState(ObjectOutputStream os, File file) throws IOException {
-        final ObjectOutputStream oos = os;
         final String filePath = file.getAbsolutePath();
         this.currentAnalysisFile = file;
         
         TMEV.activeSave = true;
-        
+		progressPanel = new StateSavingProgressPanel("Saving Current Analysis", this);
+		progressPanel.setLocationRelativeTo(mainframe);
+		progressPanel.setVisible(true);
+		keepRunning = true;
         Thread thread = new Thread(new Runnable() {
             public void run() {
                 try{
+                	//use for checking up on xml files after crashes
+                	final boolean debug = true;
+                	File tmpXML = File.createTempFile("mev_tmp", ".xml");
+                	File tmpBin = File.createTempFile("mev_tmp", ".bin");
+                	if(!debug){
+	                    tmpXML.deleteOnExit();
+	                    tmpBin.deleteOnExit();
+                	}                    
+                	ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(tmpXML));
+                	XMLEncoder oos = XMLEncoderFactory.getMAVEncoder(new XMLEncoder(os), tree);
+                    DataOutputStream dos = new DataOutputStream(new FileOutputStream(tmpBin));
+                	
+               		//Directs XMLEncoder errors to a log file. Very useful when debugging new
+               		//state-saving functions.
+                    System.out.println("Any save errors will be written to saving.log");
+            		oos.setExceptionListener(new ExceptionListener() {
+                        public void exceptionThrown(Exception exception) {
+                        	try {
+                        		PrintStream log = new PrintStream(new FileOutputStream(new File("saving.log"), true));//OutputStream(new FileOutputStream(new File("log.log"))));
+            	                log.println(new Date());
+                        		//if(exception.toString().indexOf("Listener")==-1)
+            	                	exception.printStackTrace(log);
+            	                System.out.println(exception.toString());
+                        	} catch (IOException ioe){
+                        		System.out.println("Could not open save log file.");
+                        	}
+                        }
+                    });
+            		
                     setCursor(new Cursor(Cursor.WAIT_CURSOR));
-                    oos.useProtocolVersion(ObjectStreamConstants.PROTOCOL_VERSION_2);
-                    // Save MeV tag
-                    oos.writeObject(TMEV.VERSION);
-                    //Save JRE Version
-                    String jre = System.getProperty("java.version");
-                    if(jre != null)
-                        oos.writeObject(jre);
-                    else
-                        oos.writeObject("unknown");
-                    //Save JVM Version
-                    String jvm = System.getProperty("java.vm.version");
-                    if(jvm != null)
-                        oos.writeObject(jvm);
-                    else
-                        oos.writeObject("unknown");
-                    // Save Date
-                    oos.writeLong(System.currentTimeMillis());
-                    // Save IData
+					setCursor(new Cursor(Cursor.WAIT_CURSOR));
+
+					progressPanel.update("Writing Metadata");
+					progressPanel.setIndeterminate(true);
+					oos.writeObject(smd);
+					progressPanel.setIndeterminate(false);
+					
+					//Write ISlideData objects to binary file
+					progressPanel.update("Writing Annotation");
+					if(!keepRunning){
+						progressPanel.dispose();
+						return;
+					}
+					int slideDataCount = data.getFeaturesCount();
+					dos.writeInt(slideDataCount);					
+		            ((ISlideMetaData)data.getFeature(0)).writeAnnotation(dos, progressPanel);
+					if(!keepRunning){
+						progressPanel.dispose();
+						return;
+					}
+					progressPanel.update("Writing Slides");
+					progressPanel.setMaximum(slideDataCount);
+					for(int i=0; i<slideDataCount; i++) {
+						((ISlideData)data.getFeature(i)).writeIntensities(dos);
+						progressPanel.increment();
+						if(!keepRunning){
+			            	progressPanel.dispose();
+							return;
+						}
+					}
+					
+					progressPanel.update("Writing Viewers");
+					oos.writeObject(new String("IData"));
                     oos.writeObject(data);
-                    // Save Analysis Counter
-                    oos.writeInt(resultCount);
-                    // Save Analysis Tree
-                    tree.writeResults(oos);
-                    // Save Cluster Repositories
+					oos.flush();
+					if(!keepRunning){
+		            	progressPanel.dispose();
+						return;
+					}
+					progressPanel.setValue(progressPanel.getMaximum());
+					
+					progressPanel.update("Writing Experiment Data");
+					
+					//allExpts contains all of the Experiment objects that should be written to the
+					//saved data file. This includes all Experiments associated with IViewers and 
+					//the current and alt experiments associated with MultipleArrayData data.
+					Hashtable allExpts = tree.getAllExperiments();
+					if(data.getGeneClusterRepository() != null)
+						allExpts.putAll(data.getGeneClusterRepository().getAllExperiments());
+					if(data.getExperimentClusterRepository() != null)
+						allExpts.putAll(data.getExperimentClusterRepository().getAllExperiments());
+					if(data.getAltExperiment() != null){
+						allExpts.put(new Integer(data.getAltExptId()), data.getAltExperiment());
+					} 
+					Enumeration expts = allExpts.elements();
+					progressPanel.setMaximum(allExpts.size()+1);
+					progressPanel.increment();
+
+					if(!keepRunning){
+		            	progressPanel.dispose();
+						return;
+					}	
+					
+					//write Experiments to binary file
+					dos.writeInt(allExpts.size());
+					while(expts.hasMoreElements()){
+						Experiment e = (Experiment)expts.nextElement();
+						int[] rows, cols;
+						if(e != null){
+							rows = e.getRows();
+							cols = e.getColumns();
+							dos.writeInt(e.getId());
+							dos.writeInt(rows.length);
+							dos.writeInt(cols.length);
+							for(int n=0; n<rows.length; n++){
+								dos.writeInt(rows[n]);
+							}
+							for(int n=0; n<cols.length; n++){
+								dos.writeInt(cols[n]);
+							}
+
+							FloatMatrix fm = e.getMatrix();
+							int numRows = fm.getRowDimension();
+							int numCols = fm.getColumnDimension();
+							float[][] matrix = fm.A;
+							dos.writeInt(numRows);
+							dos.writeInt(numCols);
+							for(int i=0; i<numRows; i++){
+								for(int j=0; j<numCols; j++){
+									dos.writeFloat(matrix[i][j]);
+								}
+							}
+						}
+						if(!keepRunning){
+			            	progressPanel.dispose();
+							return;
+						}
+						
+						progressPanel.increment();
+					}
+					//end writing experiment to bin file
+					
+					progressPanel.setIndeterminate(true);
+					progressPanel.update("Writing Clusters");
                     saveClusterRepositories(oos);
+					if(!keepRunning) {
+		            	progressPanel.dispose();
+						return;
+					}
+					oos.flush();
+					
+
+					progressPanel.setValue(progressPanel.getMaximum());
+					progressPanel.update("Writing Result Tree");
+					oos.writeObject(new String("Analysis Tree Node"));
+			    	oos.writeObject(tree.getAnalysisNode());
+					if(!keepRunning){
+		            	progressPanel.dispose();
+						return;
+					}
+					oos.flush();
+					        
+					// Save Analysis Counter
+					oos.writeObject(new String("Number of Results"));
+					oos.writeObject(new Integer(resultCount));
+					
                     // Record the save to history
-                    addHistory("Save Analysis: "+filePath);
-                    // Save History Tree
-                    tree.writeHistory(oos, historyNode);
+					addHistory("Save Analysis: " + filePath);
+					
+					// Save History Tree - writeHistory doesn't do anything anyway, so just using writeObject
+					oos.writeObject("History");
+					oos.writeObject(historyNode); 
+					
                     //reset result changed boolean
                     modifiedResult = false;
                     //enable save menu item, current file is already set
                     menubar.systemEnable(TMEV.ANALYSIS_LOADED);
-                    oos.flush();
-                    oos.close();
                     setCursor(Cursor.DEFAULT_CURSOR);
                     
                     TMEV.activeSave = false;
+					progressPanel.setIndeterminate(false);
+
+					oos.close();
+	              	dos.close();
+	                
+	              	//Zip binary file and xml file together into final .anl file
+	                ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(currentAnalysisFile));
+
+        	        byte[] buf = new byte[1024];
+        	        int len;
+        	        ZipEntry entry;
+        	        
+	        	    entry = new ZipEntry(tmpBin.getName());
+	        	    zos.putNextEntry(entry);
+	        	    FileInputStream fis = new FileInputStream(tmpBin);
+        	        while ((len = fis.read(buf)) > 0) {
+        	            zos.write(buf, 0, len);
+        	        }
+	            	zos.closeEntry();
+	            	fis.close();
+
+					if(!keepRunning){
+		            	progressPanel.dispose();
+						return;
+					}
+	                entry = new ZipEntry(tmpXML.getName());
+	                
+	        	    zos.putNextEntry(entry);
+	        	    fis = new FileInputStream(tmpXML);
+        	        while ((len = fis.read(buf)) > 0) {
+        	            zos.write(buf, 0, len);
+        	        }
+	        	    zos.closeEntry();
+	        	    
+	        	    fis.close();
+	            	zos.close();
                     
+	            	tmpXML.delete();
+	            	tmpBin.delete();
+
+                } catch (FileNotFoundException fnfe){
+                    setCursor(Cursor.DEFAULT_CURSOR);
+                    JOptionPane.showMessageDialog(MultipleArrayViewer.this, "Analysis was not saved.  Error writing output file.",
+                    "Save Error", JOptionPane.WARNING_MESSAGE);
+                    fnfe.printStackTrace();
+                    TMEV.activeSave = false;
                 } catch (IOException ioe){
                     setCursor(Cursor.DEFAULT_CURSOR);
                     JOptionPane.showMessageDialog(MultipleArrayViewer.this, "Analysis was not saved.  Error writing output file.",
                     "Save Error", JOptionPane.WARNING_MESSAGE);
                     ioe.printStackTrace();
                     TMEV.activeSave = false;
+                } catch (NullPointerException npe){
+                	npe.printStackTrace(System.out);
                 }
+                progressPanel.dispose();
             }
         });
         thread.setPriority(Thread.NORM_PRIORITY);
         thread.start();
     }
     
+	/**
+	* EH
+	* 
+	*/
+    public void cancelLoadState(){
+    	keepRunning = false;
+    }
+    /**
+     * EH
+     * Clean up the MultipleArrayViewer and return it to an empty state.  
+     *
+     */
+    private void cleanUp(){
+    	this.data = new MultipleArrayData();
+    	this.analysisNode.removeAllChildren();
+    	this.geneClusterRepository = null;
+    	this.experimentClusterRepository = null;
+    	this.clusterNode.removeAllChildren();
+    	this.experimentClusterManager = null;
+        fireMenuChanged();
+        fireDataChanged();
+        fireHeaderChanged();
+    	progressPanel.dispose();
+    }
     
-    private void loadState(ObjectInputStream is) throws IOException, ClassNotFoundException {
-        final ObjectInputStream ois = is;
+    /**
+    * EH this method has been rewritten for xml-based state saving
+    */
+  	private void loadState(DataInputStream ds, ObjectInputStream is) throws IOException, ClassNotFoundException {
+  	    ois = new XMLDecoder(is);    
+  	    dis = ds;
+  	    keepRunning = true;
+  	    /*
+        ois.setExceptionListener(new ExceptionListener() {
+            public void exceptionThrown(Exception exception) {
+                exception.printStackTrace(System.out);
+            }
+        });
+        */
+        
+        ois.setExceptionListener(new ExceptionListener() {
+            public void exceptionThrown(Exception exception) {
+            	try {
+            		PrintStream log = new PrintStream(new FileOutputStream(new File("loading.log"), true));//OutputStream(new FileOutputStream(new File("log.log"))));
+	                if(exception.toString().indexOf("Listener")==-1)
+	                	exception.printStackTrace(log);
+            	} catch (IOException ioe){}
+            }
+        });
+               
+        progressPanel = new StateSavingProgressPanel("Loading Saved Analysis", this);
+		progressPanel.setLocationRelativeTo(mainframe);
+		progressPanel.setVisible(true);
+    
         
         Thread thread = new Thread( new Runnable(){
             public void run() {
                 try {
-                    
-                    String savedMEVVersion = (String)ois.readObject();
-                    String savedJREVersion = (String)ois.readObject();
-                    String savedJVMVersion = (String)ois.readObject();
+					progressPanel.update("Reading Metadata");
+				    progressPanel.setIndeterminate(true);
+				    SessionMetaData savedSMD = (SessionMetaData)ois.readObject();
+				    String mevVersion = smd.getMevVersion();
+				    String savedMEVVersion = savedSMD.getMevVersion();
+				    String savedJREVersion = savedSMD.getJREVersion();
+				    String savedJVMVersion = savedSMD.getJVMVersion();
                     String jreVersion = System.getProperty("java.version");
                     String jvmVersion = System.getProperty("java.vm.version");
+				    progressPanel.setIndeterminate(false);
                     
-                    if(!savedMEVVersion.equals(TMEV.VERSION) || !savedJREVersion.equals(jreVersion) || !savedJVMVersion.equals(jvmVersion)) {
-                        String msg = "";
+				    //TODO remove
+				    //System.out.println("Current MeV Version: " + mevVersion + "\nSaved MeV Version: " + savedMEVVersion);
+				    
+		            if(!savedMEVVersion.equals(mevVersion)) { //if saved file was written by a different version of MeV
+		                String msg = "<html><body>";
+		                if(smd.getMevMajorVersion() < 4){
+		            		msg += "This saved file was created with an older version of MeV, version " + smd.getMevMajorVersion() + "." + smd.getMevMinorVersion() + "." + smd.getMevMicroVersion() + ".  \n" +
+		            				"MeV v3.1 and earlier cannot be opened by MeV version 4.0b and higher.  ";
+		            		keepRunning = false;	//cancel loading
+		            	} else if((new Float(savedMEVVersion)).floatValue() > (new Float(mevVersion)).floatValue()){
+		            		System.out.println("second else block: " + (new Float(savedMEVVersion)).floatValue() + ">" + (new Float(mevVersion)).floatValue());
+		            		msg += "This saved file was created with a newer version of MeV.  You need to upgrade to " +
+		            				"MeV version " + savedMEVVersion + " or higher.  You can download MeV at <a href=\"http://mev.tm4.org/\">mev.tm4.org</a>.<br>";
+		            		keepRunning = false;
+		            	} else if ((new Float(savedMEVVersion)).floatValue() < (new Float(mevVersion)).floatValue()){
+		            		System.out.println("third else block" + (new Float(savedMEVVersion)).floatValue() + "<" + (new Float(mevVersion)).floatValue());
+		            		msg += "This saved file was created with an older version of MeV.  " +
+		            				"It will most likely open correctly, however, if you encounter problems loading this file " +
+		            				"consider opening it with an older version of MeV."; 
+		            	}
+		            	msg += ".</body></html>";
                         String error = "<b>";
                         int errorCount = 0;
                         
-                        if(!savedMEVVersion.equals(TMEV.VERSION)) {
                             errorCount++;
                             error += "<br>";
                             error += "Current MeV Version: "+TMEV.VERSION+"<br>";
                             error += "Analysis File MeV Version: "+savedMEVVersion+"<br>";
-                        }
-                        if(!savedJREVersion.equals(jreVersion)) {
-                            errorCount++;
-                            error += "<br>";
-                            error += "Current Java Runtime Version: "+jreVersion+"<br>";
-                            error += "Java Runtime Version During Save: "+savedJREVersion+"<br>";
-                        }
-                        if(!savedJVMVersion.equals(jvmVersion)) {
-                            errorCount++;
-                            error += "<br>";
-                            error += "Current Java Virtual Machine Version: "+jvmVersion+"<br>";
-                            error += "Java Virtual Machine Version During Save: "+savedJVMVersion+"<br>";
-                        }
-                        
-                        msg += "<html><body><font face=arial size=4>The following inconsistenc"+(errorCount == 1 ? "y was" : "ies were")+
-                        " detected during analysis file loading:<br>" + error + "</b><br>";
-                        if(errorCount > 1) {
-                            msg += "These differences ";
-                        } else {
-                            msg += "This difference ";
-                        }
-                        msg += "could affect analysis file loading. <br><br>";
-                        msg += "Hit <b>\"OK\"</b> to continue loading. (Loading errors will be reported if they occur)<br>";
-                        msg += "Hit <b>\"Cancel\"</b> to abort the loading process.</body></html>";
                         
                         JPanel panel = new JPanel();
                         panel.setBackground(Color.white);
@@ -707,25 +971,83 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                         panel.add(pane);
                         
                         int choice = JOptionPane.showConfirmDialog(getFrame(), panel, "Analysis Load Version Confirmations", JOptionPane.WARNING_MESSAGE);
-                        //  JOptionPane.showMessageDialog(getFrame(), msg, "Analysis Load Version Confirmations", JOptionPane.WARNING_MESSAGE);
                         if(choice != JOptionPane.OK_OPTION)
                             return;
                     }
-                    long dateLong = ois.readLong();
-                    //Load IData object and set annotation field names
-                    loadIData(ois);
                     
-                    //set the current result count
-                    resultCount = ois.readInt();
+		//			Load IData object and set annotation field labels
+		            ois.readObject();						//load string that simply reads "IData"
+		            loadIData((MultipleArrayData)(ois.readObject()), dis, progressPanel);
+		            if(!keepRunning){
+		            	cleanUp();
+		            	return;
+		            }
+		        	progressPanel.update("Reading Experiments");
+		        	progressPanel.setIndeterminate(true);
+					Hashtable allExperiments = new Hashtable();
+					int numberExpts = dis.readInt();
+	            	progressPanel.setMaximum(numberExpts);
+					int id, numRows, numCols;
+					float[][] matrix;
+					int[] rows, cols;
+					for(int exptCount=0; exptCount<numberExpts; exptCount++){
+			            if(!keepRunning){
+			            	cleanUp();
+			            	return;
+			            }
+						id = dis.readInt();
+						rows = new int[dis.readInt()];
+						cols = new int[dis.readInt()];
+						for(int n=0; n<rows.length; n++){
+							rows[n] = dis.readInt();
+						}
+						for(int n=0; n<cols.length; n++){
+							cols[n] = dis.readInt();
+						}
+						numRows = dis.readInt();
+						numCols = dis.readInt();
+						matrix = new float[numRows][numCols];
+						for(int i=0; i<numRows; i++){
+							for(int j=0; j<numCols; j++){
+								matrix[i][j] = dis.readFloat();
+							}
+						}
+						Experiment e = new Experiment(cols, rows, id, new FloatMatrix(matrix));
+						
+						allExperiments.put(new Integer(e.getId()), e);
+					}
+					progressPanel.increment();
+					
+					if(allExperiments.containsKey(new Integer(data.getAltExptId()))){
+						data.setAlternateExperiment((Experiment)allExperiments.get(new Integer(data.getAltExptId())));
+					}
+					//end reading experiments from bin file
+					
+		
+		            progressPanel.update("Reading Cluster Repositories");
+		            if(!keepRunning){
+		            	cleanUp();
+		            	return;
+		            }
+		            
+		            loadClusterRepositories(ois, allExperiments);
                     
                     //load analysis viewers
-                    loadAnalysisNode(ois);
+		        	progressPanel.update("Reading Viewers");
+		            ois.readObject(); //reads a string of value "viewers"
+		            if(!keepRunning){
+		            	cleanUp();
+		            	return;
+		            }
+		            loadAnalysisNode((DefaultMutableTreeNode)ois.readObject(), allExperiments);
                     
-                    //load cluster repositories
-                    loadClusterRepositories(ois);
-                    
-                    //load history
-                    loadHistoryNode(ois);
+		            //set the current result count
+		            ois.readObject();//reads a string "number of results"
+		            resultCount = ((Integer)ois.readObject()).intValue();
+		            
+		            //load history - doesn't really work
+		            ois.readObject();
+		            loadHistoryNode((DefaultMutableTreeNode)ois.readObject());
                     
                     //Add time node to the analysis node
                     Date date = new Date(System.currentTimeMillis());
@@ -748,12 +1070,16 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                     if(TMEV.getDataType() == TMEV.DATA_TYPE_AFFY){
                         menubar.addAffyFilterMenuItems();
                     }
+		        	progressPanel.setIndeterminate(false);
+		        	((HistoryViewer)(((LeafInfo)(((DefaultMutableTreeNode)historyNode.getChildAt(0)).getUserObject())).getViewer())).addHistory("Load analysis: " + currentAnalysisFile);
                 } catch (Exception e) {
+		        	e.printStackTrace();
+		            cleanUp();
                     JOptionPane.showMessageDialog(MultipleArrayViewer.this, "Analysis was not loaded.  Error reading input file.",
                     "Load Analysis Error", JOptionPane.WARNING_MESSAGE);
-                    e.printStackTrace();
                     System.out.println(e.getMessage());
                 }
+		        progressPanel.dispose();
             }
         });
         thread.setPriority(Thread.MIN_PRIORITY);
@@ -761,19 +1087,26 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     }
     
     
-    private void loadClusterRepositories(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        if(ois.readBoolean()){
-            this.geneClusterRepository = (ClusterRepository)ois.readObject();
+    /**
+     * Loads Gene- and Experiment Clusters from xmld for display in MultipleArrayViewer.
+     * @param xmld The source file containing the data to be read into the clusters
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    private void loadClusterRepositories(XMLDecoder xmld, Hashtable exptHash) throws IOException, ClassNotFoundException {
+    	if(((Boolean)xmld.readObject()).booleanValue()){
+            this.geneClusterRepository = (ClusterRepository)xmld.readObject();
+        	this.geneClusterRepository.populateExperiments(exptHash);
             this.data.setGeneClusterRepository(this.geneClusterRepository);
             this.geneClusterRepository.setFramework(this.framework);
-            
             this.geneClusterManager = new ClusterTable(this.geneClusterRepository, framework);
             DefaultMutableTreeNode genesNode = new DefaultMutableTreeNode(new LeafInfo("Gene Clusters", this.geneClusterManager), false);
             addNode(this.clusterNode, genesNode);
             
         }
-        if(ois.readBoolean()){
-            this.experimentClusterRepository = (ClusterRepository)ois.readObject();
+        if(((Boolean)xmld.readObject()).booleanValue()){
+            this.experimentClusterRepository = (ClusterRepository)xmld.readObject();
+            this.experimentClusterRepository.populateExperiments(exptHash);
             this.data.setExperimentClusterRepository(this.experimentClusterRepository);
             this.experimentClusterRepository.setFramework(this.framework);
             
@@ -784,9 +1117,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     }
     
     
-    private void loadAnalysisNode(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+    private void loadAnalysisNode(DefaultMutableTreeNode d, Hashtable h) throws IOException, ClassNotFoundException {
         
-        DefaultMutableTreeNode node = tree.loadResults(ois);
+        DefaultMutableTreeNode node = d;
         
         if(node != null){
             
@@ -794,62 +1127,132 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             tree.removeNode(analysisNode);
             analysisNode = node;
             tree.insertNode(analysisNode, tree.getRoot(), location);
+            int exptID;
+            Enumeration allNodes = analysisNode.breadthFirstEnumeration();
+            DefaultMutableTreeNode dmtn;
+            while(allNodes.hasMoreElements()){
+            	dmtn = (DefaultMutableTreeNode)allNodes.nextElement();
+            	Object o = dmtn.getUserObject();
+            	if(o instanceof LeafInfo) {
+            		LeafInfo l = (LeafInfo)o;
+            		if(l.getViewer() != null){
+            			Integer viewerExptID = new Integer(l.getViewer().getExperimentID());
+            			if(h.containsKey(viewerExptID)){
+            				l.getViewer().setExperiment((Experiment)h.get(viewerExptID));
+            			}
+            		}
+            	}
+            }
             tree.setAnalysisNode(analysisNode);
         }
     }
     
-    private void loadHistoryNode(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        
-        DefaultMutableTreeNode node = tree.loadResults(ois);
-        
+    private void loadHistoryNode(DefaultMutableTreeNode d) throws IOException, ClassNotFoundException {
+        DefaultMutableTreeNode node = d;
         if(node != null){
             tree.removeNode(historyNode);
             historyNode = node;
             tree.insertNode(historyNode, tree.getRoot(), tree.getRoot().getChildCount());
+            this.historyNode = node;
             historyLog = (HistoryViewer)(((LeafInfo)(((DefaultMutableTreeNode)historyNode.getChildAt(0)).getUserObject())).getViewer());
         }
     }
     
-    
-    private void loadIData(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+    private void loadIData(MultipleArrayData d, DataInputStream dis, StateSavingProgressPanel sspp) throws IOException, ClassNotFoundException {
         //loads IData and sets TMEV field names fields
-        this.data = (MultipleArrayData)(ois.readObject());
         
+    	sspp.update("Loading Annotation");
+        this.data = d;
+        boolean savingSlideDatasInXMLFile = true;
+    	int numSlideData = dis.readInt();
+    	ArrayList allISlideDatas = (ArrayList)data.getFeaturesList();
+    	ISlideMetaData metaData = (ISlideMetaData)allISlideDatas.get(0);
+    	metaData.loadAnnotation(dis, sspp);
+        if(!keepRunning){
+        	cleanUp();
+        	return;
+        }
+    	ISlideData aSlideData;
+    	sspp.update("Loading Slides");
+    	sspp.setMaximum(numSlideData);
+      	for(int i=0; i<numSlideData; i++){
+      		if (!this.keepRunning){
+      			cleanUp(); 
+      			return;
+      		}
+    		aSlideData = (ISlideData)(allISlideDatas).get(i);
+    		aSlideData.loadIntensities(dis);
+    		if(aSlideData instanceof FloatSlideData)
+    			((FloatSlideData)aSlideData).setSlideMetaData(metaData);
+    		sspp.increment();
+    	}
+    	data.setFeaturesList(allISlideDatas);
+        data.setSampleLabelKey(((ISlideData)(data.getFeaturesList().get(0))).getSampleLabelKey());
         //pcahan
         int data_type = this.data.getDataType();
         if (data_type!=0 || data_type!=1){
             TMEV.setDataType(TMEV.DATA_TYPE_AFFY);
         }
+        sspp.update("Loading Cluster Repositories");
+    	sspp.setIndeterminate(true);
+        if(this.data.getGeneClusterRepository() != null) {
+	        this.geneClusterRepository = this.data.getGeneClusterRepository();
+	        this.geneClusterRepository.setFramework(this.framework);
+	        this.geneClusterManager = new ClusterTable(this.geneClusterRepository, framework);
+	        DefaultMutableTreeNode genesNode = new DefaultMutableTreeNode(new LeafInfo("Gene Clusters", this.geneClusterManager), false);
+	        addNode(this.clusterNode, genesNode);
+        }
+        if(this.data.getExperimentClusterRepository() != null) {
+	        this.experimentClusterRepository = this.data.getExperimentClusterRepository();
+	        this.experimentClusterRepository.setFramework(this.framework);
+	        this.experimentClusterManager = new ClusterTable(this.experimentClusterRepository, framework);
+	        DefaultMutableTreeNode experimentNode = new DefaultMutableTreeNode(new LeafInfo("Sample Clusters", this.experimentClusterManager), false);
+	        addNode(this.clusterNode, experimentNode);
+        }
         
         //resets the log state depending on data type
         this.data.setDataType(this.data.getDataType());
         
+        data.updateSpotColors();
+        data.updateExperimentColors();
+
         //get the experiment label keys
         this.menubar.replaceExperimentLabelMenuItems(data.getSlideNameKeyArray());
-        
+         data.setSampleLabelKey(MultipleArrayData.DEFAULT_SAMPLE_ANNOTATION_KEY);
         //populate the display menu
         this.menubar.replaceLabelMenuItems(this.data.getFieldNames());
         this.menubar.replaceSortMenuItems(this.data.getFieldNames());
         
+    	
         setMaxCY3AndCY5();
         systemEnable(TMEV.DATA_AVAILABLE);
         fireMenuChanged();
         fireDataChanged();
         fireHeaderChanged();
+    	sspp.setIndeterminate(false);
     }
     
     
-    private void saveClusterRepositories(ObjectOutputStream oos) throws IOException {
-        if(this.geneClusterRepository == null)
-            oos.writeBoolean(false);
-        else{
-            oos.writeBoolean(true);
+    
+    
+    private void saveClusterRepositories(XMLEncoder oos) throws IOException {
+		Boolean isGeneClusterRepository;
+		Boolean isExperimentClusterRepository;
+ 
+		if(this.geneClusterRepository == null) {
+			isGeneClusterRepository = new Boolean(false);
+			oos.writeObject(isGeneClusterRepository);
+		} else {
+			isGeneClusterRepository = new Boolean(true);
+		    oos.writeObject(isGeneClusterRepository);
             oos.writeObject(this.geneClusterRepository);
         }
-        if(this.experimentClusterRepository == null)
-            oos.writeBoolean(false);
-        else{
-            oos.writeBoolean(true);
+		if(this.experimentClusterRepository == null) {
+			isExperimentClusterRepository = new Boolean(false);
+			oos.writeObject(isExperimentClusterRepository);
+		} else{
+			isExperimentClusterRepository = new Boolean(true);
+			oos.writeObject(isExperimentClusterRepository);
             oos.writeObject(this.experimentClusterRepository);
         }
     }
@@ -857,6 +1260,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     
     private void loadAnalysis() {
         
+            	
         String dataPath = TMEV.getDataPath();
         File pathFile = TMEV.getFile("data/");
         
@@ -868,19 +1272,62 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         
         File file;
         try {
+                	
+            //opens a single zip file, unzips it, and reads from
+            //the resulting two files (1 binary, 1 ascii)
             JFileChooser chooser = new JFileChooser(pathFile);
             chooser.setFileView(new AnalysisFileView());
             chooser.setFileFilter(new AnalysisFileFilter());
+
+                	
+                
             if(chooser.showOpenDialog(this) == JOptionPane.OK_OPTION) {
                 file = chooser.getSelectedFile();
-                ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
-                loadState(ois);
+                int tempnumber = new Double(Math.random() * 100000).intValue();
+                String savepath = file.getPath().substring(0, file.getPath().lastIndexOf("."));
+                File tmpXML = File.createTempFile("mev_tmp", ".xml");
+                File tmpBin = File.createTempFile("mev_tmp", ".bin");
+                tmpXML.deleteOnExit();
+                tmpBin.deleteOnExit();
+               
+                FileWriter fw = new FileWriter(tmpXML);
+                DataOutputStream dos = new DataOutputStream(new FileOutputStream(tmpBin));
+                ZipInputStream zis = new ZipInputStream(new FileInputStream(file));
+
+        	    int len;
+        	    byte[] buf = new byte[1024];
+        	    ZipEntry entry;
+        	    
+                entry = zis.getNextEntry();
+    	        while ((len = zis.read(buf)) > 0) {
+    	            dos.write(buf, 0, len);
+    	        }
+                zis.closeEntry();
+                dos.close();
+                
+                entry = zis.getNextEntry();
+                buf = new byte[2];
+                InputStreamReader isr = new InputStreamReader(zis);
+    	        while ((len = isr.read()) != -1) {
+    	            fw.write(len);
+        	    }
+                fw.close();
+                zis.closeEntry();
+                zis.close();
+                
+                ObjectInputStream ois = new ObjectInputStream(new FileInputStream(tmpXML));
+                DataInputStream dis = new DataInputStream(new FileInputStream(tmpBin));
+                loadState(dis, ois);
+                
                 this.currentAnalysisFile = file;
                 //set tmev.cfg to formatted path
                 TMEV.updateDataPath(formatDataPath(file.getPath()));
                 //set variable to OS format path
                 TMEV.setDataPath(file.getParentFile().getPath());
             }
+                
+        	
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -909,6 +1356,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      * Returns the status bar text.
      */
     private String getStatusText() {
+    	if(statusLabel == null)
+    		return " ";
         return statusLabel.getText();
     }
     
@@ -962,7 +1411,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         this.viewer = new MultipleArrayCanvas(this.framework, new Insets(0, 10, 0, 20));
         
         LeafInfo mainViewLeafInfo = new LeafInfo("Main View", viewer);
-        //mainViewerNode = new DefaultMutableTreeNode(mainViewLeafInfo, false);        mainViewerNode = new DefaultMutableTreeNode(mainViewLeafInfo, true); /* To add new nodes at this level */
+        //mainViewerNode = new DefaultMutableTreeNode(mainViewLeafInfo, false);
+        mainViewerNode = new DefaultMutableTreeNode(mainViewLeafInfo, true); /* To add new nodes at this level */
         
         root.add(mainViewerNode);
         
@@ -1166,7 +1616,14 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         if (this.viewer != null) {
             this.viewer.onDeselected();
         }
-        this.viewer = viewer;        /* Raktim Nov 15, 2005 - CGH Specific         * Special case to handle CGHPositionGraphViewer.		 * CGHPositionGraphViewer needs onSelected called before setting the viewport		 */		if (this.viewer instanceof CGHPositionGraphViewer) {			this.viewer.onSelected(framework);        }
+        this.viewer = viewer;
+        /* Raktim Nov 15, 2005 - CGH Specific
+         * Special case to handle CGHPositionGraphViewer.
+		 * CGHPositionGraphViewer needs onSelected called before setting the viewport
+		 */
+		if (this.viewer instanceof CGHPositionGraphViewer) {
+			this.viewer.onSelected(framework);
+        }
      
         this.viewScrollPane.setViewportView(this.viewer.getContentComponent());
         
@@ -1199,7 +1656,15 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         if (cornerComponent != null)
             this.viewScrollPane.setCorner(JScrollPane.LOWER_LEFT_CORNER, cornerComponent);
         
-        //this.viewer.onSelected(framework);        /* Raktim Nov 15, 2005 - CGH Specific		 * New if condition.		 * Do not call onSelected if viewer id of type CGHPositionGraphViewer		 */		if (!(this.viewer instanceof CGHPositionGraphViewer)) {			this.viewer.onSelected(framework);        }        doViewLayout();
+        //this.viewer.onSelected(framework);
+        /* Raktim Nov 15, 2005 - CGH Specific
+		 * New if condition.
+		 * Do not call onSelected if viewer id of type CGHPositionGraphViewer
+		 */
+		if (!(this.viewer instanceof CGHPositionGraphViewer)) {
+			this.viewer.onSelected(framework);
+        }
+        doViewLayout();
     }
     
 
@@ -1353,7 +1818,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     		
     		Manager.addComponent(mav);
         
-    		TMEV.clearFieldNames();
+    		//TMEV.clearFieldNames();
         //Remove the next two lines (about DB system enabling)
         //mav.systemEnable(TMEV.DB_AVAILABLE);
         //mav.systemEnable(TMEV.DB_LOGIN);
@@ -1554,7 +2019,15 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         IViewer viewer = getCurrentViewer();
         if (viewer == null) {
             return;
-        }        /* Raktim, Handle differently for CGH Menu */        if(viewer instanceof ICGHViewer){        	//((ICGHViewer)viewer).onMenuChanged(menubar.getCghDisplayMenu());        	((ICGHViewer)viewer).onMenuChanged(menubar.getDisplayMenu());        } else {        	viewer.onMenuChanged(menubar.getDisplayMenu());        }        doViewLayout();
+        }
+        /* Raktim, Handle differently for CGH Menu */
+        if(viewer instanceof ICGHViewer){
+        	//((ICGHViewer)viewer).onMenuChanged(menubar.getCghDisplayMenu());
+        	((ICGHViewer)viewer).onMenuChanged(menubar.getDisplayMenu());
+        } else {
+        	viewer.onMenuChanged(menubar.getDisplayMenu());
+        }
+        doViewLayout();
     }
     
     
@@ -3027,6 +3500,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 		//oneDecimalFormat.setMaximumIntegerDigits(5);
         if(features == null || features.length < 1)
             return;
+        data.addFeatures(features);
+        data.setDataType(dataType);
         if(this.data.getFieldNames() != null && this.data.getFeaturesCount() < 1){
             this.menubar.addLabelMenuItems(this.data.getFieldNames());
             //add the experiment key vector that is longest
@@ -3039,12 +3514,24 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             this.menubar.setLabelIndex(0);
             
             //pcahan
+            //TODO change this to get the Data Type from an IData 
+            //first need to make sure that IData has that information.  Don't know yet.
             if (TMEV.getDataType() == TMEV.DATA_TYPE_AFFY){
                 this.menubar.addAffyFilterMenuItems();
-            }            /**			 * Raktim			 * Place to load CytoBand Information			 * Place to add CGH Menus if datatype is of such type			 * Load CGH Analysis factory here			 */			if(data.isCGHData()) {				loadCytoBandFile();				manager.initCghAnalysiActions(new org.tigr.microarray.mev.cgh.CGHAlgorithms.CGHAlgorithmFactory());				this.menubar.addCGHMenus();				mainframe.validate();            }
+            }
+            /**
+			 * Raktim
+			 * Place to load CytoBand Information
+			 * Place to add CGH Menus if datatype is of such type
+			 * Load CGH Analysis factory here
+			 */
+			if(data.isCGHData()) {
+				loadCytoBandFile();
+				manager.initCghAnalysiActions(new org.tigr.microarray.mev.cgh.CGHAlgorithms.CGHAlgorithmFactory());
+				this.menubar.addCGHMenus();
+				mainframe.validate();
+            }
         }
-        data.addFeatures(features);
-        data.setDataType(dataType);
         
         // by wwang add for auto color scaling(for affy data) 
         sortedValues=initSortedValues(data.getExperiment().getMatrix());
@@ -3064,6 +3551,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         //if(TMEV.getDataType() == TMEV.DATA_TYPE_AFFY)
         //    this.menubar.addAffyFilterMenuItems();
         
+        //TODO change this to get the Data Type from an IData only
+        //first need to make sure that IData has that information.  Don't know yet.
+
         // pcahan - convoluted but it works
         if ( (TMEV.getDataType() == TMEV.DATA_TYPE_AFFY) &&
         (data.getDataType() == IData.DATA_TYPE_AFFY_ABS) &&
@@ -3080,7 +3570,15 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         ((LeafInfo)(mainViewerNode.getUserObject())).setSelectedDataSource(true);
         //record main data as source      
         createDataSelectionNode((DefaultMutableTreeNode)(tree.getRoot().getChildAt(0)), data.getExperiment(), data.getExperiment().getNumberOfGenes(), Cluster.GENE_CLUSTER);              
-        tree.repaint();		/**         * Add CGH Specific Views & Menus         */        if(data.isCGHData()) {        	ExperimentsLoaded();        	onFlankingRegionDeterminationChanged();        }        
+        tree.repaint();
+		/**
+         * Add CGH Specific Views & Menus
+         */
+        if(data.isCGHData()) {
+        	ExperimentsLoaded();
+        	onFlankingRegionDeterminationChanged();
+        }
+        
         setMaxCY3AndCY5();
         systemEnable(TMEV.DATA_AVAILABLE);
         this.viewer.onSelected(framework);
@@ -3363,7 +3861,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                     if(updateCount > 0) {
                         
                         //update menubar and TMEV field names
-                        TMEV.appendFieldNames(newFields);
+                        
+                        //EH - moved field names to IData class instead of TMEV
+//                    	TMEV.appendFieldNames(newFields);
+                    	data.getSlideMetaData().appendFieldNames(newFields);
+                    	
                         menubar.replaceLabelMenuItems(data.getFieldNames());
                         
                         //add event to history log
@@ -3391,7 +3893,746 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             }
         }
     }
-	/* Start CGH Functions */    /**     * Raktim Nov 11, 05     * Adding CGH Listener Functions     */    public void onSetShowFlankingRegions(boolean show){    	//System.out.println("CGH onSetShowFlankingRegions " + show);    	menubar.setShowFlankingRegions(show);        //fireCghMenuChanged();    	fireMenuChanged();    }	/**     * Raktim     * CGH display element change     */    private void onChangeCghElementLength(double length){    	//System.out.println("CGH onChangeCghElementLength " + length);        menubar.setCghElementLength(length);        //fireCghMenuChanged();        fireMenuChanged();    }	/**     * Raktim     * CGH display element change     */    private void onChangeCghElementLengthOther(){        String s = (String)JOptionPane.showInputDialog(        		new JFrame(), "Enter Element Length", "Element Length", JOptionPane.PLAIN_MESSAGE);        if(s == null || s.length() == 0){            return;        }        try{            int val = Integer.parseInt(s);            onChangeCghElementLength(val);        }catch (NumberFormatException e){            JOptionPane.showMessageDialog(null, "Input Must Be An Integer", "Number Format Error", JOptionPane.PLAIN_MESSAGE);        }    }	/**     * Raktim     * CGH display element change     */    private void onChangeCghElementWidth(int width){    	//System.out.println("CGH onChangeCghElementWidth " + width);        menubar.setCghElementWidth(width);        //fireCghMenuChanged();        fireMenuChanged();    }	/**     * Raktim     * CGH display element change     */    private void onChangeCghElementWidthOther(){    	//System.out.println("onChangeCghElementWidthOther ");    	String s = (String)JOptionPane.showInputDialog(        new JFrame(), "Enter Element Width", "Element Width", JOptionPane.PLAIN_MESSAGE);        if(s == null || s.length() == 0){ return; }        try{            int val = Integer.parseInt(s);            onChangeCghElementWidth(val);        }catch (NumberFormatException e){            JOptionPane.showMessageDialog(null, "Input Must Be An Integer", "Number Format Error", JOptionPane.PLAIN_MESSAGE);        }    }    /**	 * Raktim	 * CGH display type change     */    private void onChangeCghDisplayType(int displayType){    	//System.out.println("CGH onChangeCghDisplayType " + displayType);        menubar.setCghDisplayType(displayType);        //fireCghMenuChanged();    	fireMenuChanged();    	/**    	 * Remember to change setCurrentViewer function    	 */        setCurrentViewer(getCurrentViewer());    }    /**     * Raktim     * CGH display label change     */    private void onChangeDisplayLabelType(int displayLabelType){    	//System.out.println("CGH onChangeDisplayLabelType " + displayLabelType);        menubar.setCghDisplayLabelType(displayLabelType);        //fireCghMenuChanged();        fireMenuChanged();    }    /**     * Raktim     * Sets the p-value threshold for deeming probes as aberrant if using the     * probe value distribution method of copy number determination     */    public void onSetClonePThresh(){    	//System.out.println("CGH onSetClonePThresh ");        SingleValueSelectorDialog dlg = new SingleValueSelectorDialog(framework.getFrame(), menubar.getCloneValueMenu().getClonePThresh() + "");        if(dlg.showModal() == JOptionPane.OK_OPTION){            String value = dlg.getValue();            try{                float val = Float.parseFloat(value);                menubar.setClonePThresh(val);            }catch (NumberFormatException e){                JOptionPane.showMessageDialog(null, "Input Must Be An Number", "Number Format Error", JOptionPane.PLAIN_MESSAGE);            }            fireThresholdsChanged();        }    }    /**     * Raktim     * On CGH threshold change     */    private void fireThresholdsChanged(){        onThresholdsChanged();        IViewer viewer = getCurrentViewer();        if (viewer == null) {            return;        }        doViewLayout();    }    /**     * Raktim     * Event processed when the probe copy determination thresholds     * have changed     */    public void onThresholdsChanged(){        ICGHCloneValueMenu menu = framework.getCghCloneValueMenu();        data.onCopyDeterminationChanged(menu);        onFlankingRegionDeterminationChanged();    }    /**     * Raktim     * event that is processed when the method of calculating     * flanking regions has changed     */    public void onFlankingRegionDeterminationChanged(){        int flankingRegionType = framework.getCghCloneValueMenu().getFlankingRegionType();        calculateFlankingRegions(flankingRegionType);    }    /**     * Raktim     * Calculates flanking regions for the data     * @param flankingRegionType the copy number determination method used to     * calculate the flanking regions     */    public void calculateFlankingRegions(int flankingRegionType){        FlankingRegionCalculator flCalc = new FlankingRegionCalculator();        flCalc.setExperiments(data.getFeaturesList());        flCalc.setData(data);        flCalc.setCopyDeterminationType(flankingRegionType);        flCalc.calculateFlankingRegions();    }    /**     * Raktim     * If CGH circle viewer background changes     */    private void onSetCircleViewerBackground(){    	//System.out.println("CGH onSetCircleViewerBackground ");        Color newColor = javax.swing.JColorChooser.showDialog(        new JFrame(), "Choose Background Color", Color.black);        menubar.setCircleViewerBackgroundColor(newColor);        //fireCghMenuChanged();        fireMenuChanged();    }    /**     * Raktim     * Changes the order in which experiments are displayed in the     * position graph     */    private void onChangeCghDisplayOrder(){    	//System.out.println("CGH onChangeCghDisplayOrder ");    	CGHDisplayOrderChanger changer = new CGHDisplayOrderChanger(data, framework.getFrame(), true);    	changer.show(true);    	if (changer.isCancelled())    		return;        fireDataChanged();    }    /**     * Raktim     * UN-Used     * Need to carefully take care of removing samples.     * Remember to revisit.     */    private void onDeleteSample(){    	System.out.println("CGH onDeleteSample. Code ready not validated");        //ctl.onDeleteSample();    	/*    	CGHSampleDeleter deleter = new CGHSampleDeleter(data, framework.getFrame(), true);        if(deleter.showModal() == JOptionPane.OK_OPTION){            int deletedSampleIndex = deleter.getDeletedIndex();            if(deletedSampleIndex != -1){                deleteSample(deletedSampleIndex);            }        }        fireDataChanged();        */    }    /**     * Raktim     * UN-Used     * Need to revisit for syncing     * @param sampleIndex     */    private void deleteSample(int sampleIndex){        int[] indicesOrder = data.getSamplesOrder();        int deletedSampleIndex = indicesOrder[sampleIndex];        data.getFeaturesList().remove(deletedSampleIndex);        int[] newIndicesOrder = new int[indicesOrder.length - 1];        int curIndex = 0;        for(int i = 0; i < indicesOrder.length; i++){            if(i != sampleIndex){                if(indicesOrder[i] > deletedSampleIndex){                    newIndicesOrder[curIndex] = indicesOrder[i] - 1;                }else{                    newIndicesOrder[curIndex] = indicesOrder[i];                }                curIndex++;            }        }        data.setSamplesOrder(newIndicesOrder);    }    /**     * Raktim     * Clear annotations if any from CGH views     */    private void onClearAnnotations(){    	//System.out.println("CGH onClearAnnotations ");        //ctl.onClearAnnotations();    	data.setAnnotations(new ICGHDataRegion[0][0]);        fireDataChanged();    }    /**     * Raktim     * Changes the method of calculating probe values     * @param cloneValueType     */    public void onChangeCloneValueType(int cloneValueType){    	//System.out.println("CGH onChangeCloneValueType " + cloneValueType);        menubar.setCloneValueType(cloneValueType);        //onChangeCloneValueType(cloneValueType);        fireCloneValuesChanged();    }    /**     * Raktim     * Changes the method of calculating flanking regions     * @param flankingRegionType     */    public void onChangeFlankingRegionType(int flankingRegionType){    	//System.out.println("CGH onChangeFlankingRegionType " + flankingRegionType);        menubar.setFlankingRegionType(flankingRegionType);        onFlankingRegionDeterminationChanged();        fireCloneValuesChanged();    }    /**     * Raktim     * Sets the threshold parameters for copy number determination based     * on probe value thresholds     */    private void onCghSetThresholds(){    	//System.out.println("CGH onCghSetThresholds ");        ICGHCloneValueMenu menu = menubar.getCloneValueMenu();        CGHThresholdSetter setter = new CGHThresholdSetter(getFrame(), menu.getAmpThresh(),        menu.getDelThresh(), menu.getAmpThresh2Copy(), menu.getDelThresh2Copy());        if(setter.showModal() == JOptionPane.OK_OPTION){            menubar.setAmpThresh(setter.getAmpThresh());            menubar.setDelThresh(setter.getDelThresh());            menubar.setAmpThresh2Copy(setter.getAmpThresh2Copy());            menubar.setDelThresh2Copy(setter.getDelThresh2Copy());            fireThresholdsChanged();        }    }    /**     * Raktim     * Renames a selected navigation tree node.     */    private void onRenameNode() {        DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();        if (node == null || node.getParent() == null) {            return;        }        if(node.getUserObject() instanceof org.tigr.microarray.mev.cluster.gui.LeafInfo){            String name = JOptionPane.showInputDialog(getFrame(), "Enter New Name");            if(name != null && name.length() > 0){                ((org.tigr.microarray.mev.cluster.gui.LeafInfo)node.getUserObject()).setName(name);                ((DefaultTreeModel)tree.getModel()).nodeChanged(node);            }        }else if(node.getUserObject() instanceof String){            String name = JOptionPane.showInputDialog(getFrame(), "Enter New Name");            if(name != null && name.length() > 0){                node.setUserObject(name);                ((DefaultTreeModel)tree.getModel()).nodeChanged(node);            }        }    }    /**     * Raktim     * Adds a CGH Data View     */    private void addDataView(DefaultMutableTreeNode node) {    	System.out.println("addDataView ");        if (node == null) {            return;        }        DefaultTreeModel treeModel = (DefaultTreeModel)tree.getModel();        //treeModel.insertNodeInto(node, mainViewNode, mainViewNode.getChildCount());        if (!mainViewerNode.getAllowsChildren()){        	mainViewerNode.setAllowsChildren(true);        	treeModel.insertNodeInto(node, mainViewerNode, mainViewerNode.getChildCount());        	mainViewerNode.setAllowsChildren(false);        } else {        	treeModel.insertNodeInto(node, mainViewerNode, mainViewerNode.getChildCount());        }        TreeSelectionModel selModel = tree.getSelectionModel();        TreePath treePath = new TreePath(node.getPath());        selModel.setSelectionPath(treePath);        tree.scrollPathToVisible(treePath);    }    /**     * Raktim     * Remember to revisit CGH algorithims after views are ready     * @param action     */    private void onCghAnalysis(Action action){    	//System.out.println("onCghAnalysis ");    	String className = (String)action.getValue(ActionManager.PARAMETER);        try {            Class clazz = Class.forName(className);            NumberOfAlterationsCalculator gui = (NumberOfAlterationsCalculator)clazz.newInstance();            DefaultMutableTreeNode result = gui.execute(framework);            addAnalysisResult(result);        } catch (ClassCastException e) {            System.out.println("Error: org.tigr.microarray.mev.cluster.gui.IClusterGUI interface is expected.");            ShowThrowableDialog.show(mainframe, "Analysis Error", false, e);        } catch (Exception e) {            ShowThrowableDialog.show(mainframe, "Analysis Error", false, e);        }    }    /**     * Raktim     * ICGHListener impl     * Event that is processed what the underlying data     * has changed     */    public void onDataChanged() {        fireDataChanged();    }    /**     * Raktim     * ICGHListener impl     * Event that is processed when the method of     * probe value calculation has changed     */    public void onCloneValuesChanged(){        fireCloneValuesChanged();    }    /**     * Raktim     * Once CGH clone values have been updated     */    private void fireCloneValuesChanged(){    	//System.out.println("fireCloneValuesChanged ");        IViewer viewer = getCurrentViewer();        if(viewer instanceof ICGHViewer){            ((ICGHViewer)viewer).onCloneValuesChanged(framework.getCghCloneValueMenu());            doViewLayout();        }    }    /**     * Raktim     * @param boolean show     * Removes/Adds the viewer header     */    private void onShowHeader(boolean show){    	//System.out.println("onShowHeader ");    	if(show){            getCurrentViewer().getHeaderComponent().setVisible(show);            viewScrollPane.getColumnHeader().setVisible(show);        }else{            getCurrentViewer().getHeaderComponent().setVisible(show);            viewScrollPane.getColumnHeader().setVisible(show);        }    }    /**     * Raktim     * ICGHListener Impl     * Event that is processed when a chromosome is selected to be displayed     * @param eventObj     */    public void onChromosomeSelected(java.util.EventObject eventObj) {    	//System.out.println("onChromosomeSelected ");        int chromosomeIndex = ((Integer)eventObj.getSource()).intValue();        TreeNode selectedNode = mainViewerNode.getChildAt(1).getChildAt(chromosomeIndex);        tree.setSelectionPath(new TreePath(((DefaultMutableTreeNode)selectedNode).getPath()));    }    /**     * Raktim     * ICGHListener Impl     * Event that is processed when clone distributions have been loaded     * Remember to re-visit     */    public void CloneDistributionsLoaded() {    	System.out.println("onCloneDistributionsLoaded ");        //menubar.onCloneDistributionsLoaded();    }    /**     * Raktim     * Remember     * Event that is processed when the window has been closed     * Clash with onClose() of MAV So renamed to onCGHClose() for time being     */    protected void onCGHClose(){    	/*        DefaultTreeModel model = (DefaultTreeModel)tree.getModel();        fireOnCloseEvent((DefaultMutableTreeNode)model.getRoot());        mainframe.dispose();        System.exit(0);        */    }    /**     * Raktim     * Getter for property menubar.     * @return Value of property menubar.     */    public MultipleArrayMenubar getMenubar() {        return menubar;    }    /**     * Raktim     * Setter for property menubar.     * @param menubar New value of property menubar.     */    //public void setMenubar(org.abramson.microarray.cgh.CGHMenubar menubar) {    public void setMenubar(MultipleArrayMenubar menubar) {        //this.menubar = menubar;        //super.menubar = menubar;    }    /**     * Raktim Nov 01, 2005     * CGH Event Handler     * Not Used Merged with MeV fireMenuChanged()    private void fireCghMenuChanged(){        IViewer viewer = getCurrentViewer();        if(viewer instanceof ICGHViewer){            //((ICGHViewer)viewer).onMenuChanged(((CGHMenubar)menubar).getCghDisplayMenu());        	((ICGHViewer)viewer).onMenuChanged(menubar.getCghDisplayMenu());            doViewLayout();        }    }    */    /**     * Raktim Nov 02, 2005     * Function to create Chr & Expr views     * CGH Specific     *     */    private Vector initializeViews(){        DefaultMutableTreeNode experimentViews = new DefaultMutableTreeNode(new LeafInfo("Experiment Views"), true);        DefaultMutableTreeNode chromosomeViews = new DefaultMutableTreeNode(new LeafInfo("Chromosome Views"), true);        /**         * Circle Viewer         */        for(int i = 0; i < data.getFeaturesCount(); i++){            CGHCircleViewerPanel circlePanel = new CGHCircleViewerPanel(new CGHCircleViewerModel(framework));            circlePanel.setExperimentIndex(i);            circlePanel.setBackground(Color.darkGray);            circlePanel.setDrsListener((EventListener)manager.getListener());            String name = data.getSampleName(i);            DefaultMutableTreeNode circleViewerNode = new DefaultMutableTreeNode(new LeafInfo(name, circlePanel), false);            experimentViews.add(circleViewerNode);        }        /**         * Raktim         * Chromomosome Viewer         */        CGHPositionGraphCombinedHeader combinedHeader = new CGHPositionGraphCombinedHeader(new java.awt.Insets(0,0,0,0));        for(int i = 0; i < data.getNumChromosomes(); i++){            CGHPositionGraphDataModel posModel = new CGHPositionGraphDataModel(/*fcd,*/ framework, i);            CGHAnnotationsModel annotationsModel = new CGHAnnotationsModel(/*fcd,*/ framework, i);            CGHPositionGraphViewer posGraphViewer = new CGHPositionGraphViewer(framework, combinedHeader);            posGraphViewer.setPositionGraphModel(posModel);            posGraphViewer.setAnnotationsModel(annotationsModel);            posGraphViewer.setCytoBandsModel(framework.getCytoBandsModel());            posGraphViewer.setDrsListener((EventListener)manager.getListener());            String name = CGHUtility.convertChromToLongString(i+1, data.getCGHSpecies());            DefaultMutableTreeNode chromosomeViewerNode = new DefaultMutableTreeNode(new LeafInfo(name, posGraphViewer), false);            chromosomeViews.add(chromosomeViewerNode);        }        Vector viewerNodes = new Vector(2);        viewerNodes.add(experimentViews);        viewerNodes.add(chromosomeViews);        //fireExperimentsLoaded(new EventObject(viewerNodes));        //onExperimentsLoaded(new EventObject(viewerNodes));        return viewerNodes;    }    /**     * Raktim     * IDataRegionSelection function impl for CGH view     * Imported from MevCtl class     * Shows a dialog displaying all of the data values in a data region     * @param eventObj contains the CGHDataRegionInfo object specifying the region for which     * to display the data values     */    public void DisplayDataValues(EventObject eventObj) {        CGHDataRegionInfo dataRegionInfo = (CGHDataRegionInfo)eventObj.getSource();        CGHDataValuesDisplay display = new CGHDataValuesDisplay(framework.getFrame(), true);        display.setData(data);        display.setDataRegionInfo(dataRegionInfo);        display.createTextDocument();        display.show();    }    /**     * Raktim     * Finds a Gene in RefGene DB and displays in how many samy samples its     * copy number has altered.     */    public void searchForGene(){        String geneName = (String)JOptionPane.showInputDialog(framework.getFrame(), "", "Enter Gene Name", JOptionPane.PLAIN_MESSAGE);        if(geneName == null || geneName.length() == 0){            return;        }        GeneDataSet geneDataSet = new GeneDataSet();        geneDataSet.loadGeneDataByGeneName(geneName, data.getCGHSpecies());        Vector vecGeneData = geneDataSet.getGeneData();        showGeneDataDlg(vecGeneData);    }    /**     * Raktim     * IDataRegionSelection function impl for CGH view     * Imported from MevCtl class     * Displays the genes in a data region     * @param eventObj contains the CGHDataRegionInfo object specifying the region for which     * to display the genes     */    public void ShowGenes(EventObject eventObj) {    	//Raktim    	System.out.println("Show Genes in Region");        CGHDataRegionInfo dataRegionInfo = (CGHDataRegionInfo)eventObj.getSource();        ICGHDataRegion dataRegion = dataRegionInfo.getDataRegion();        DataRegionGeneData geneDataSet = new DataRegionGeneData(dataRegion);        geneDataSet.loadGeneData(data.getCGHSpecies());        Vector vecGeneData = geneDataSet.getGeneData();        //Raktim        //System.out.println("Vector vecGeneData size: " + vecGeneData.size());        showGeneDataDlg(vecGeneData);    }    /**     * Raktim     * Helper for above     * @param vecGeneData     */    private void showGeneDataDlg(Vector vecGeneData){        GeneAmplifications amps = new GeneAmplifications(framework);        amps.setData(data);        GeneDeletions dels = new GeneDeletions(framework);        dels.setData(data);        Iterator it = vecGeneData.iterator();        Vector alterationRegions = new Vector();        while(it.hasNext()){            AlterationRegion alterationRegion = new AlterationRegion();            ICGHDataRegion dataRegion = (ICGHDataRegion)it.next();            alterationRegion.setDataRegion(dataRegion);            alterationRegion.setNumDeletions(dels.getNumAlterations(dataRegion));            alterationRegion.setNumAmplifications(amps.getNumAlterations(dataRegion));            alterationRegion.setNumSamples(data.getFeaturesCount());            alterationRegions.add(alterationRegion);        }        NumberOfDeletionsAmpilficationsDataModel dataModel = new NumberOfDeletionsAmpilficationsDataModel();        dataModel.setAlterationRegions((AlterationRegion[])alterationRegions.toArray(new AlterationRegion[(alterationRegions.size())]));        NumberOfAlterationsViewer viewer = new NumberOfAlterationsViewer();        viewer.setData(data);        viewer.addDrsListener((EventListener)manager.getListener());        viewer.setDataModel(dataModel);        JDialog dlg = new JDialog(framework.getFrame(), "Gene Alterations");        dlg.getContentPane().add(viewer);        dlg.setJMenuBar((JMenuBar)viewer.getHeaderComponent());        dlg.setSize(1000, 500);        GuiUtil.center(dlg);        dlg.show();    }    /**     * Raktim     * IDataRegionSelection function impl for CGH view     * Imported from MevCtl class     * Launches the CGH Browser     * @param eventObj contains the CGHDataRegionInfo object specifying     * the region to be displayed and highlighted on the browser     */    public void ShowBrowser(EventObject eventObj) {        CGHDataRegionInfo dataRegionInfo = (CGHDataRegionInfo)eventObj.getSource();        int experimentIndex = dataRegionInfo.getExperimentIndex();        ICGHDataRegion dataRegion = dataRegionInfo.getDataRegion();        int chromosomeIndex = dataRegion.getChromosomeIndex();        CGHChartDataModel chartModel;        CGHTableDataModel tableModel;        int browserCloneValues;        if(data.isHasDyeSwap()){            chartModel = new CGHChartDataModelDyeSwap(/*fcd,*/ framework, experimentIndex, chromosomeIndex);            tableModel = new CGHTableDataModelDyeSwap(/*fcd,*/ framework, experimentIndex, chromosomeIndex);            browserCloneValues = TMEV.browserDefaultDyeSwapValue;        }else{            chartModel = new CGHChartDataModelNoDyeSwap(/*fcd,*/ framework, experimentIndex, chromosomeIndex);            tableModel = new CGHTableDataModelNoDyeSwap(/*fcd,*/ framework, experimentIndex, chromosomeIndex);            browserCloneValues = TMEV.browserDefaultNoDyeSwapValue;        }        CGHBrowser browser = new CGHBrowser(data, experimentIndex, chromosomeIndex, chartModel, tableModel, browserCloneValues, data.isHasDyeSwap());        browser.show();        browser.setSelectedRegion(dataRegion);    }    /**     * Raktim     * IDataRegionSelection function impl for CGH view     * Imported from MevCtl class     * @param eventObj     */    public void AnnotationsSelected(EventObject eventObj) {        ICGHDataRegion[][] annotationRegions = (ICGHDataRegion[][])eventObj.getSource();        int chromIndex = getMinChromosomeIndex(annotationRegions);        if(chromIndex != -1){            fireChromosomeSelected(new EventObject(new Integer(chromIndex)));        }    }    /**     * Raktim     * @param annotationRegions     * @return     */    public int getMinChromosomeIndex(ICGHDataRegion[][] annotationRegions){        for(int i = 0; i < annotationRegions.length; i++){            if(annotationRegions[i].length > 0){                return i;            }        }        return -1;    }    /**     * Raktim     * @param eventObject     */    private void fireChromosomeSelected(EventObject eventObject){    	/*        Iterator it = cghArrayViewerListeners.iterator();        while(it.hasNext()){            ((ICGHListener)it.next()).onChromosomeSelected(eventObject);        }        */    	this.onChromosomeSelected(eventObject);    }    /**     * ICGHListenr Impl     * Raktim CGH     */    /**     * Not needed moved to onExperimentsLoaded(...)    public void onExperimentsInitialized(java.util.EventObject eventObj){        //initialize the clone values menu after the experiments have been loaded in order to        //create different menus based on the type of experiment that has been loaded.  For now,        //just dye swap or non dye swap experiments    	menubar.initCloneValuesMenu(data.isHasDyeSwap());    }    */    /**     * Raktim     * ICGHListner Impl     * Notifies viewer that experiments have been loaded     * Called from MAV.fireDataLoaded     * @param eventObj     */    public void ExperimentsLoaded(){        //initialize the clone values menu after the experiments have been loaded in order to        //create different menus based on the type of experiment that has been loaded. Moved    	//from onExperimentsInitialized(java.util.EventObject eventObj) to here    	menubar.initCloneValuesMenu(data.isHasDyeSwap());    	menubar.enableCloneDistributions(data.hasCloneDistribution(), data.isLog2Data());    	ICGHCloneValueMenu menu = framework.getCghCloneValueMenu();    	//Remember to replace with data.isHasDyeSwap()    	//data.setHasDyeSwap(TMEV.hasDyeSwap);    	//data.setCGHCopyNumberCalculator();        data.onCopyDeterminationChanged(menu);        //initializeViews() creates Chr & Circle viewers        //Vector viewerNodes = (Vector)eventObj.getSource();        Vector viewerNodes = initializeViews();        //Delete existing nodes from the main view        //removeChildren(mainViewNode);        removeChildren(mainViewerNode);        removeChildren(analysisNode);        Iterator it = viewerNodes.iterator();        while(it.hasNext()){            addDataView((DefaultMutableTreeNode)it.next());        }        tree.repaint();        //systemEnable(TMEV.DATA_AVAILABLE);    }    /**     * Raktim     * CGH Cytobands     */    private void loadCytoBandFile(){    	CytoBands cytoBands = new CytoBands();    	File cytoBandsFile = null;    	if (data.getCGHSpecies() == TMEV.CGH_SPECIES_HS)    		cytoBandsFile = new File("Data/Hs_CytoBands.txt");    	else if (data.getCGHSpecies() == TMEV.CGH_SPECIES_MM)    		cytoBandsFile = new File("Data/Mm_CytoBands.txt");        cytoBands.loadAllCytoBands(cytoBandsFile, data.getCGHSpecies());        cytoBandsModel = new CytoBandsModel(cytoBands);    }    /**     * Raktim     * Remove a node from View     */    protected void removeChildren(DefaultMutableTreeNode removeNode){        while(removeNode.getChildCount() > 0){            DefaultMutableTreeNode node = (DefaultMutableTreeNode)removeNode.getFirstChild();            if (node == null || node.getParent() == null) {                return;            }            fireOnCloseEvent(node);            TreePath parentPath = new TreePath(((DefaultMutableTreeNode)node.getParent()).getPath());            ((DefaultTreeModel)tree.getModel()).removeNodeFromParent(node);            ((TreeSelectionModel)tree.getSelectionModel()).setSelectionPath(parentPath);            tree.scrollPathToVisible(parentPath);        }    }	/* End CGH Functions*/ 
+	/* Start CGH Functions */
+    /**
+     * Raktim Nov 11, 05
+     * Adding CGH Listener Functions
+     */
+    public void onSetShowFlankingRegions(boolean show){
+    	//System.out.println("CGH onSetShowFlankingRegions " + show);
+    	menubar.setShowFlankingRegions(show);
+        //fireCghMenuChanged();
+    	fireMenuChanged();
+    }
+	/**
+     * Raktim
+     * CGH display element change
+     */
+    private void onChangeCghElementLength(double length){
+    	//System.out.println("CGH onChangeCghElementLength " + length);
+        menubar.setCghElementLength(length);
+        //fireCghMenuChanged();
+        fireMenuChanged();
+    }
+	/**
+     * Raktim
+     * CGH display element change
+     */
+    private void onChangeCghElementLengthOther(){
+        String s = (String)JOptionPane.showInputDialog(
+        		new JFrame(), "Enter Element Length", "Element Length", JOptionPane.PLAIN_MESSAGE);
+        if(s == null || s.length() == 0){
+            return;
+        }
+        try{
+            int val = Integer.parseInt(s);
+            onChangeCghElementLength(val);
+        }catch (NumberFormatException e){
+            JOptionPane.showMessageDialog(null, "Input Must Be An Integer", "Number Format Error", JOptionPane.PLAIN_MESSAGE);
+        }
+    }
+	/**
+     * Raktim
+     * CGH display element change
+     */
+    private void onChangeCghElementWidth(int width){
+    	//System.out.println("CGH onChangeCghElementWidth " + width);
+        menubar.setCghElementWidth(width);
+        //fireCghMenuChanged();
+        fireMenuChanged();
+    }
+	/**
+     * Raktim
+     * CGH display element change
+     */
+    private void onChangeCghElementWidthOther(){
+    	//System.out.println("onChangeCghElementWidthOther ");
+    	String s = (String)JOptionPane.showInputDialog(
+        new JFrame(), "Enter Element Width", "Element Width", JOptionPane.PLAIN_MESSAGE);
+        if(s == null || s.length() == 0){ return; }
+        try{
+            int val = Integer.parseInt(s);
+            onChangeCghElementWidth(val);
+        }catch (NumberFormatException e){
+            JOptionPane.showMessageDialog(null, "Input Must Be An Integer", "Number Format Error", JOptionPane.PLAIN_MESSAGE);
+        }
+    }
+    /**
+	 * Raktim
+	 * CGH display type change
+     */
+    private void onChangeCghDisplayType(int displayType){
+    	//System.out.println("CGH onChangeCghDisplayType " + displayType);
+        menubar.setCghDisplayType(displayType);
+        //fireCghMenuChanged();
+    	fireMenuChanged();
+    	/**
+    	 * Remember to change setCurrentViewer function
+    	 */
+        setCurrentViewer(getCurrentViewer());
+    }
+    /**
+     * Raktim
+     * CGH display label change
+     */
+    private void onChangeDisplayLabelType(int displayLabelType){
+    	//System.out.println("CGH onChangeDisplayLabelType " + displayLabelType);
+        menubar.setCghDisplayLabelType(displayLabelType);
+        //fireCghMenuChanged();
+        fireMenuChanged();
+    }
+    /**
+     * Raktim
+     * Sets the p-value threshold for deeming probes as aberrant if using the
+     * probe value distribution method of copy number determination
+     */
+    public void onSetClonePThresh(){
+    	//System.out.println("CGH onSetClonePThresh ");
+        SingleValueSelectorDialog dlg = new SingleValueSelectorDialog(framework.getFrame(), menubar.getCloneValueMenu().getClonePThresh() + "");
+        if(dlg.showModal() == JOptionPane.OK_OPTION){
+            String value = dlg.getValue();
+            try{
+                float val = Float.parseFloat(value);
+                menubar.setClonePThresh(val);
+            }catch (NumberFormatException e){
+                JOptionPane.showMessageDialog(null, "Input Must Be An Number", "Number Format Error", JOptionPane.PLAIN_MESSAGE);
+            }
+            fireThresholdsChanged();
+        }
+    }
+    /**
+     * Raktim
+     * On CGH threshold change
+     */
+    private void fireThresholdsChanged(){
+        onThresholdsChanged();
+        IViewer viewer = getCurrentViewer();
+        if (viewer == null) {
+            return;
+        }
+        doViewLayout();
+    }
+    /**
+     * Raktim
+     * Event processed when the probe copy determination thresholds
+     * have changed
+     */
+    public void onThresholdsChanged(){
+        ICGHCloneValueMenu menu = framework.getCghCloneValueMenu();
+        data.onCopyDeterminationChanged(menu);
+        onFlankingRegionDeterminationChanged();
+    }
+    /**
+     * Raktim
+     * event that is processed when the method of calculating
+     * flanking regions has changed
+     */
+    public void onFlankingRegionDeterminationChanged(){
+        int flankingRegionType = framework.getCghCloneValueMenu().getFlankingRegionType();
+        calculateFlankingRegions(flankingRegionType);
+    }
+    /**
+     * Raktim
+     * Calculates flanking regions for the data
+     * @param flankingRegionType the copy number determination method used to
+     * calculate the flanking regions
+     */
+    public void calculateFlankingRegions(int flankingRegionType){
+        FlankingRegionCalculator flCalc = new FlankingRegionCalculator();
+        flCalc.setExperiments(data.getFeaturesList());
+        flCalc.setData(data);
+        flCalc.setCopyDeterminationType(flankingRegionType);
+        flCalc.calculateFlankingRegions();
+    }
+    /**
+     * Raktim
+     * If CGH circle viewer background changes
+     */
+    private void onSetCircleViewerBackground(){
+    	//System.out.println("CGH onSetCircleViewerBackground ");
+        Color newColor = javax.swing.JColorChooser.showDialog(
+        new JFrame(), "Choose Background Color", Color.black);
+        menubar.setCircleViewerBackgroundColor(newColor);
+        //fireCghMenuChanged();
+        fireMenuChanged();
+    }
+    /**
+     * Raktim
+     * Changes the order in which experiments are displayed in the
+     * position graph
+     */
+    private void onChangeCghDisplayOrder(){
+    	//System.out.println("CGH onChangeCghDisplayOrder ");
+    	CGHDisplayOrderChanger changer = new CGHDisplayOrderChanger(data, framework.getFrame(), true);
+    	changer.show(true);
+    	if (changer.isCancelled())
+    		return;
+        fireDataChanged();
+    }
+    /**
+     * Raktim
+     * UN-Used
+     * Need to carefully take care of removing samples.
+     * Remember to revisit.
+     */
+    private void onDeleteSample(){
+    	System.out.println("CGH onDeleteSample. Code ready not validated");
+        //ctl.onDeleteSample();
+    	/*
+    	CGHSampleDeleter deleter = new CGHSampleDeleter(data, framework.getFrame(), true);
+        if(deleter.showModal() == JOptionPane.OK_OPTION){
+            int deletedSampleIndex = deleter.getDeletedIndex();
+            if(deletedSampleIndex != -1){
+                deleteSample(deletedSampleIndex);
+            }
+        }
+        fireDataChanged();
+        */
+    }
+    /**
+     * Raktim
+     * UN-Used
+     * Need to revisit for syncing
+     * @param sampleIndex
+     */
+    private void deleteSample(int sampleIndex){
+        int[] indicesOrder = data.getSamplesOrder();
+        int deletedSampleIndex = indicesOrder[sampleIndex];
+        data.getFeaturesList().remove(deletedSampleIndex);
+        int[] newIndicesOrder = new int[indicesOrder.length - 1];
+        int curIndex = 0;
+        for(int i = 0; i < indicesOrder.length; i++){
+            if(i != sampleIndex){
+                if(indicesOrder[i] > deletedSampleIndex){
+                    newIndicesOrder[curIndex] = indicesOrder[i] - 1;
+                }else{
+                    newIndicesOrder[curIndex] = indicesOrder[i];
+                }
+                curIndex++;
+            }
+        }
+        data.setSamplesOrder(newIndicesOrder);
+    }
+    /**
+     * Raktim
+     * Clear annotations if any from CGH views
+     */
+    private void onClearAnnotations(){
+    	//System.out.println("CGH onClearAnnotations ");
+        //ctl.onClearAnnotations();
+    	data.setAnnotations(new ICGHDataRegion[0][0]);
+        fireDataChanged();
+    }
+    /**
+     * Raktim
+     * Changes the method of calculating probe values
+     * @param cloneValueType
+     */
+    public void onChangeCloneValueType(int cloneValueType){
+    	//System.out.println("CGH onChangeCloneValueType " + cloneValueType);
+        menubar.setCloneValueType(cloneValueType);
+        //onChangeCloneValueType(cloneValueType);
+        fireCloneValuesChanged();
+    }
+    /**
+     * Raktim
+     * Changes the method of calculating flanking regions
+     * @param flankingRegionType
+     */
+    public void onChangeFlankingRegionType(int flankingRegionType){
+    	//System.out.println("CGH onChangeFlankingRegionType " + flankingRegionType);
+        menubar.setFlankingRegionType(flankingRegionType);
+        onFlankingRegionDeterminationChanged();
+        fireCloneValuesChanged();
+    }
+    /**
+     * Raktim
+     * Sets the threshold parameters for copy number determination based
+     * on probe value thresholds
+     */
+    private void onCghSetThresholds(){
+    	//System.out.println("CGH onCghSetThresholds ");
+        ICGHCloneValueMenu menu = menubar.getCloneValueMenu();
+        CGHThresholdSetter setter = new CGHThresholdSetter(getFrame(), menu.getAmpThresh(),
+        menu.getDelThresh(), menu.getAmpThresh2Copy(), menu.getDelThresh2Copy());
+        if(setter.showModal() == JOptionPane.OK_OPTION){
+            menubar.setAmpThresh(setter.getAmpThresh());
+            menubar.setDelThresh(setter.getDelThresh());
+            menubar.setAmpThresh2Copy(setter.getAmpThresh2Copy());
+            menubar.setDelThresh2Copy(setter.getDelThresh2Copy());
+            fireThresholdsChanged();
+        }
+    }
+    /**
+     * Raktim
+     * Renames a selected navigation tree node.
+     */
+    private void onRenameNode() {
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
+        if (node == null || node.getParent() == null) {
+            return;
+        }
+        if(node.getUserObject() instanceof org.tigr.microarray.mev.cluster.gui.LeafInfo){
+            String name = JOptionPane.showInputDialog(getFrame(), "Enter New Name");
+            if(name != null && name.length() > 0){
+                ((org.tigr.microarray.mev.cluster.gui.LeafInfo)node.getUserObject()).setName(name);
+                ((DefaultTreeModel)tree.getModel()).nodeChanged(node);
+            }
+        }else if(node.getUserObject() instanceof String){
+            String name = JOptionPane.showInputDialog(getFrame(), "Enter New Name");
+            if(name != null && name.length() > 0){
+                node.setUserObject(name);
+                ((DefaultTreeModel)tree.getModel()).nodeChanged(node);
+            }
+        }
+    }
+    /**
+     * Raktim
+     * Adds a CGH Data View
+     */
+    private void addDataView(DefaultMutableTreeNode node) {
+    	System.out.println("addDataView ");
+        if (node == null) {
+            return;
+        }
+        DefaultTreeModel treeModel = (DefaultTreeModel)tree.getModel();
+        //treeModel.insertNodeInto(node, mainViewNode, mainViewNode.getChildCount());
+        if (!mainViewerNode.getAllowsChildren()){
+        	mainViewerNode.setAllowsChildren(true);
+        	treeModel.insertNodeInto(node, mainViewerNode, mainViewerNode.getChildCount());
+        	mainViewerNode.setAllowsChildren(false);
+        } else {
+        	treeModel.insertNodeInto(node, mainViewerNode, mainViewerNode.getChildCount());
+        }
+        TreeSelectionModel selModel = tree.getSelectionModel();
+        TreePath treePath = new TreePath(node.getPath());
+        selModel.setSelectionPath(treePath);
+        tree.scrollPathToVisible(treePath);
+    }
+    /**
+     * Raktim
+     * Remember to revisit CGH algorithims after views are ready
+     * @param action
+     */
+    private void onCghAnalysis(Action action){
+    	//System.out.println("onCghAnalysis ");
+    	String className = (String)action.getValue(ActionManager.PARAMETER);
+        try {
+            Class clazz = Class.forName(className);
+            NumberOfAlterationsCalculator gui = (NumberOfAlterationsCalculator)clazz.newInstance();
+            DefaultMutableTreeNode result = gui.execute(framework);
+            addAnalysisResult(result);
+        } catch (ClassCastException e) {
+            System.out.println("Error: org.tigr.microarray.mev.cluster.gui.IClusterGUI interface is expected.");
+            ShowThrowableDialog.show(mainframe, "Analysis Error", false, e);
+        } catch (Exception e) {
+            ShowThrowableDialog.show(mainframe, "Analysis Error", false, e);
+        }
+    }
+    /**
+     * Raktim
+     * ICGHListener impl
+     * Event that is processed what the underlying data
+     * has changed
+     */
+    public void onDataChanged() {
+        fireDataChanged();
+    }
+    /**
+     * Raktim
+     * ICGHListener impl
+     * Event that is processed when the method of
+     * probe value calculation has changed
+     */
+    public void onCloneValuesChanged(){
+        fireCloneValuesChanged();
+    }
+    /**
+     * Raktim
+     * Once CGH clone values have been updated
+     */
+    private void fireCloneValuesChanged(){
+    	//System.out.println("fireCloneValuesChanged ");
+        IViewer viewer = getCurrentViewer();
+        if(viewer instanceof ICGHViewer){
+            ((ICGHViewer)viewer).onCloneValuesChanged(framework.getCghCloneValueMenu());
+            doViewLayout();
+        }
+    }
+    /**
+     * Raktim
+     * @param boolean show
+     * Removes/Adds the viewer header
+     */
+    private void onShowHeader(boolean show){
+    	//System.out.println("onShowHeader ");
+    	if(show){
+            getCurrentViewer().getHeaderComponent().setVisible(show);
+            viewScrollPane.getColumnHeader().setVisible(show);
+        }else{
+            getCurrentViewer().getHeaderComponent().setVisible(show);
+            viewScrollPane.getColumnHeader().setVisible(show);
+        }
+    }
+    /**
+     * Raktim
+     * ICGHListener Impl
+     * Event that is processed when a chromosome is selected to be displayed
+     * @param eventObj
+     */
+    public void onChromosomeSelected(java.util.EventObject eventObj) {
+    	//System.out.println("onChromosomeSelected ");
+        int chromosomeIndex = ((Integer)eventObj.getSource()).intValue();
+        TreeNode selectedNode = mainViewerNode.getChildAt(1).getChildAt(chromosomeIndex);
+        tree.setSelectionPath(new TreePath(((DefaultMutableTreeNode)selectedNode).getPath()));
+    }
+    /**
+     * Raktim
+     * ICGHListener Impl
+     * Event that is processed when clone distributions have been loaded
+     * Remember to re-visit
+     */
+    public void CloneDistributionsLoaded() {
+    	System.out.println("onCloneDistributionsLoaded ");
+        //menubar.onCloneDistributionsLoaded();
+    }
+    /**
+     * Raktim
+     * Remember
+     * Event that is processed when the window has been closed
+     * Clash with onClose() of MAV So renamed to onCGHClose() for time being
+     */
+    protected void onCGHClose(){
+    	/*
+        DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
+        fireOnCloseEvent((DefaultMutableTreeNode)model.getRoot());
+        mainframe.dispose();
+        System.exit(0);
+        */
+    }
+    /**
+     * Raktim
+     * Getter for property menubar.
+     * @return Value of property menubar.
+     */
+    public MultipleArrayMenubar getMenubar() {
+        return menubar;
+    }
+    /**
+     * Raktim
+     * Setter for property menubar.
+     * @param menubar New value of property menubar.
+     */
+    //public void setMenubar(org.abramson.microarray.cgh.CGHMenubar menubar) {
+    public void setMenubar(MultipleArrayMenubar menubar) {
+        //this.menubar = menubar;
+        //super.menubar = menubar;
+    }
+    /**
+     * Raktim Nov 01, 2005
+     * CGH Event Handler
+     * Not Used Merged with MeV fireMenuChanged()
+    private void fireCghMenuChanged(){
+        IViewer viewer = getCurrentViewer();
+        if(viewer instanceof ICGHViewer){
+            //((ICGHViewer)viewer).onMenuChanged(((CGHMenubar)menubar).getCghDisplayMenu());
+        	((ICGHViewer)viewer).onMenuChanged(menubar.getCghDisplayMenu());
+            doViewLayout();
+        }
+    }
+    */
+    /**
+     * Raktim Nov 02, 2005
+     * Function to create Chr & Expr views
+     * CGH Specific
+     *
+     */
+    private Vector initializeViews(){
+        DefaultMutableTreeNode experimentViews = new DefaultMutableTreeNode(new LeafInfo("Experiment Views"), true);
+        DefaultMutableTreeNode chromosomeViews = new DefaultMutableTreeNode(new LeafInfo("Chromosome Views"), true);
+        /**
+         * Circle Viewer
+         */
+        for(int i = 0; i < data.getFeaturesCount(); i++){
+            CGHCircleViewerPanel circlePanel = new CGHCircleViewerPanel(new CGHCircleViewerModel(framework));
+            circlePanel.setExperimentIndex(i);
+            circlePanel.setBackground(Color.darkGray);
+            circlePanel.setDrsListener((EventListener)manager.getListener());
+            String name = data.getSampleName(i);
+            DefaultMutableTreeNode circleViewerNode = new DefaultMutableTreeNode(new LeafInfo(name, circlePanel), false);
+            experimentViews.add(circleViewerNode);
+        }
+        /**
+         * Raktim
+         * Chromomosome Viewer
+         */
+        CGHPositionGraphCombinedHeader combinedHeader = new CGHPositionGraphCombinedHeader(new java.awt.Insets(0,0,0,0));
+        for(int i = 0; i < data.getNumChromosomes(); i++){
+            CGHPositionGraphDataModel posModel = new CGHPositionGraphDataModel(/*fcd,*/ framework, i);
+            CGHAnnotationsModel annotationsModel = new CGHAnnotationsModel(/*fcd,*/ framework, i);
+            CGHPositionGraphViewer posGraphViewer = new CGHPositionGraphViewer(framework, combinedHeader);
+            posGraphViewer.setPositionGraphModel(posModel);
+            posGraphViewer.setAnnotationsModel(annotationsModel);
+            posGraphViewer.setCytoBandsModel(framework.getCytoBandsModel());
+            posGraphViewer.setDrsListener((EventListener)manager.getListener());
+            String name = CGHUtility.convertChromToLongString(i+1, data.getCGHSpecies());
+            DefaultMutableTreeNode chromosomeViewerNode = new DefaultMutableTreeNode(new LeafInfo(name, posGraphViewer), false);
+            chromosomeViews.add(chromosomeViewerNode);
+        }
+        Vector viewerNodes = new Vector(2);
+        viewerNodes.add(experimentViews);
+        viewerNodes.add(chromosomeViews);
+        //fireExperimentsLoaded(new EventObject(viewerNodes));
+        //onExperimentsLoaded(new EventObject(viewerNodes));
+        return viewerNodes;
+    }
+    /**
+     * Raktim
+     * IDataRegionSelection function impl for CGH view
+     * Imported from MevCtl class
+     * Shows a dialog displaying all of the data values in a data region
+     * @param eventObj contains the CGHDataRegionInfo object specifying the region for which
+     * to display the data values
+     */
+    public void DisplayDataValues(EventObject eventObj) {
+        CGHDataRegionInfo dataRegionInfo = (CGHDataRegionInfo)eventObj.getSource();
+        CGHDataValuesDisplay display = new CGHDataValuesDisplay(framework.getFrame(), true);
+        display.setData(data);
+        display.setDataRegionInfo(dataRegionInfo);
+        display.createTextDocument();
+        display.show();
+    }
+    /**
+     * Raktim
+     * Finds a Gene in RefGene DB and displays in how many samy samples its
+     * copy number has altered.
+     */
+    public void searchForGene(){
+        String geneName = (String)JOptionPane.showInputDialog(framework.getFrame(), "", "Enter Gene Name", JOptionPane.PLAIN_MESSAGE);
+        if(geneName == null || geneName.length() == 0){
+            return;
+        }
+        GeneDataSet geneDataSet = new GeneDataSet();
+        geneDataSet.loadGeneDataByGeneName(geneName, data.getCGHSpecies());
+        Vector vecGeneData = geneDataSet.getGeneData();
+        showGeneDataDlg(vecGeneData);
+    }
+    /**
+     * Raktim
+     * IDataRegionSelection function impl for CGH view
+     * Imported from MevCtl class
+     * Displays the genes in a data region
+     * @param eventObj contains the CGHDataRegionInfo object specifying the region for which
+     * to display the genes
+     */
+    public void ShowGenes(EventObject eventObj) {
+    	//Raktim
+    	System.out.println("Show Genes in Region");
+        CGHDataRegionInfo dataRegionInfo = (CGHDataRegionInfo)eventObj.getSource();
+        ICGHDataRegion dataRegion = dataRegionInfo.getDataRegion();
+        DataRegionGeneData geneDataSet = new DataRegionGeneData(dataRegion);
+        geneDataSet.loadGeneData(data.getCGHSpecies());
+        Vector vecGeneData = geneDataSet.getGeneData();
+        //Raktim
+        //System.out.println("Vector vecGeneData size: " + vecGeneData.size());
+        showGeneDataDlg(vecGeneData);
+    }
+    /**
+     * Raktim
+     * Helper for above
+     * @param vecGeneData
+     */
+    private void showGeneDataDlg(Vector vecGeneData){
+        GeneAmplifications amps = new GeneAmplifications(framework);
+        amps.setData(data);
+        GeneDeletions dels = new GeneDeletions(framework);
+        dels.setData(data);
+        Iterator it = vecGeneData.iterator();
+        Vector alterationRegions = new Vector();
+        while(it.hasNext()){
+            AlterationRegion alterationRegion = new AlterationRegion();
+            ICGHDataRegion dataRegion = (ICGHDataRegion)it.next();
+            alterationRegion.setDataRegion(dataRegion);
+            alterationRegion.setNumDeletions(dels.getNumAlterations(dataRegion));
+            alterationRegion.setNumAmplifications(amps.getNumAlterations(dataRegion));
+            alterationRegion.setNumSamples(data.getFeaturesCount());
+            alterationRegions.add(alterationRegion);
+        }
+        NumberOfDeletionsAmpilficationsDataModel dataModel = new NumberOfDeletionsAmpilficationsDataModel();
+        dataModel.setAlterationRegions((AlterationRegion[])alterationRegions.toArray(new AlterationRegion[(alterationRegions.size())]));
+        NumberOfAlterationsViewer viewer = new NumberOfAlterationsViewer();
+        viewer.setData(data);
+        viewer.addDrsListener((EventListener)manager.getListener());
+        viewer.setDataModel(dataModel);
+        JDialog dlg = new JDialog(framework.getFrame(), "Gene Alterations");
+        dlg.getContentPane().add(viewer);
+        dlg.setJMenuBar((JMenuBar)viewer.getHeaderComponent());
+        dlg.setSize(1000, 500);
+        GuiUtil.center(dlg);
+        dlg.show();
+    }
+    /**
+     * Raktim
+     * IDataRegionSelection function impl for CGH view
+     * Imported from MevCtl class
+     * Launches the CGH Browser
+     * @param eventObj contains the CGHDataRegionInfo object specifying
+     * the region to be displayed and highlighted on the browser
+     */
+    public void ShowBrowser(EventObject eventObj) {
+        CGHDataRegionInfo dataRegionInfo = (CGHDataRegionInfo)eventObj.getSource();
+        int experimentIndex = dataRegionInfo.getExperimentIndex();
+        ICGHDataRegion dataRegion = dataRegionInfo.getDataRegion();
+        int chromosomeIndex = dataRegion.getChromosomeIndex();
+        CGHChartDataModel chartModel;
+        CGHTableDataModel tableModel;
+        int browserCloneValues;
+        if(data.isHasDyeSwap()){
+            chartModel = new CGHChartDataModelDyeSwap(/*fcd,*/ framework, experimentIndex, chromosomeIndex);
+            tableModel = new CGHTableDataModelDyeSwap(/*fcd,*/ framework, experimentIndex, chromosomeIndex);
+            browserCloneValues = TMEV.browserDefaultDyeSwapValue;
+        }else{
+            chartModel = new CGHChartDataModelNoDyeSwap(/*fcd,*/ framework, experimentIndex, chromosomeIndex);
+            tableModel = new CGHTableDataModelNoDyeSwap(/*fcd,*/ framework, experimentIndex, chromosomeIndex);
+            browserCloneValues = TMEV.browserDefaultNoDyeSwapValue;
+        }
+        CGHBrowser browser = new CGHBrowser(data, experimentIndex, chromosomeIndex, chartModel, tableModel, browserCloneValues, data.isHasDyeSwap());
+        browser.show();
+        browser.setSelectedRegion(dataRegion);
+    }
+    /**
+     * Raktim
+     * IDataRegionSelection function impl for CGH view
+     * Imported from MevCtl class
+     * @param eventObj
+     */
+    public void AnnotationsSelected(EventObject eventObj) {
+        ICGHDataRegion[][] annotationRegions = (ICGHDataRegion[][])eventObj.getSource();
+        int chromIndex = getMinChromosomeIndex(annotationRegions);
+        if(chromIndex != -1){
+            fireChromosomeSelected(new EventObject(new Integer(chromIndex)));
+        }
+    }
+    /**
+     * Raktim
+     * @param annotationRegions
+     * @return
+     */
+    public int getMinChromosomeIndex(ICGHDataRegion[][] annotationRegions){
+        for(int i = 0; i < annotationRegions.length; i++){
+            if(annotationRegions[i].length > 0){
+                return i;
+            }
+        }
+        return -1;
+    }
+    /**
+     * Raktim
+     * @param eventObject
+     */
+    private void fireChromosomeSelected(EventObject eventObject){
+    	/*
+        Iterator it = cghArrayViewerListeners.iterator();
+        while(it.hasNext()){
+            ((ICGHListener)it.next()).onChromosomeSelected(eventObject);
+        }
+        */
+    	this.onChromosomeSelected(eventObject);
+    }
+    /**
+     * ICGHListenr Impl
+     * Raktim CGH
+     */
+    /**
+     * Not needed moved to onExperimentsLoaded(...)
+    public void onExperimentsInitialized(java.util.EventObject eventObj){
+        //initialize the clone values menu after the experiments have been loaded in order to
+        //create different menus based on the type of experiment that has been loaded.  For now,
+        //just dye swap or non dye swap experiments
+    	menubar.initCloneValuesMenu(data.isHasDyeSwap());
+    }
+    */
+    /**
+     * Raktim
+     * ICGHListner Impl
+     * Notifies viewer that experiments have been loaded
+     * Called from MAV.fireDataLoaded
+     * @param eventObj
+     */
+    public void ExperimentsLoaded(){
+        //initialize the clone values menu after the experiments have been loaded in order to
+        //create different menus based on the type of experiment that has been loaded. Moved
+    	//from onExperimentsInitialized(java.util.EventObject eventObj) to here
+    	menubar.initCloneValuesMenu(data.isHasDyeSwap());
+    	menubar.enableCloneDistributions(data.hasCloneDistribution(), data.isLog2Data());
+    	ICGHCloneValueMenu menu = framework.getCghCloneValueMenu();
+    	//Remember to replace with data.isHasDyeSwap()
+    	//data.setHasDyeSwap(TMEV.hasDyeSwap);
+    	//data.setCGHCopyNumberCalculator();
+        data.onCopyDeterminationChanged(menu);
+        //initializeViews() creates Chr & Circle viewers
+        //Vector viewerNodes = (Vector)eventObj.getSource();
+        Vector viewerNodes = initializeViews();
+        //Delete existing nodes from the main view
+        //removeChildren(mainViewNode);
+        removeChildren(mainViewerNode);
+        removeChildren(analysisNode);
+        Iterator it = viewerNodes.iterator();
+        while(it.hasNext()){
+            addDataView((DefaultMutableTreeNode)it.next());
+        }
+        tree.repaint();
+        //systemEnable(TMEV.DATA_AVAILABLE);
+    }
+    /**
+     * Raktim
+     * CGH Cytobands
+     */
+    private void loadCytoBandFile(){
+    	CytoBands cytoBands = new CytoBands();
+    	File cytoBandsFile = null;
+    	if (data.getCGHSpecies() == TMEV.CGH_SPECIES_HS)
+    		cytoBandsFile = new File("Data/Hs_CytoBands.txt");
+    	else if (data.getCGHSpecies() == TMEV.CGH_SPECIES_MM)
+    		cytoBandsFile = new File("Data/Mm_CytoBands.txt");
+        cytoBands.loadAllCytoBands(cytoBandsFile, data.getCGHSpecies());
+        cytoBandsModel = new CytoBandsModel(cytoBands);
+    }
+    /**
+     * Raktim
+     * Remove a node from View
+     */
+    protected void removeChildren(DefaultMutableTreeNode removeNode){
+        while(removeNode.getChildCount() > 0){
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode)removeNode.getFirstChild();
+            if (node == null || node.getParent() == null) {
+                return;
+            }
+            fireOnCloseEvent(node);
+            TreePath parentPath = new TreePath(((DefaultMutableTreeNode)node.getParent()).getPath());
+            ((DefaultTreeModel)tree.getModel()).removeNodeFromParent(node);
+            ((TreeSelectionModel)tree.getSelectionModel()).setSelectionPath(parentPath);
+            tree.scrollPathToVisible(parentPath);
+        }
+    }
+	/* End CGH Functions*/
+     /**
+     * Initializes the SessionMetaData object associated with this MultipleArrayViewer.
+     * This object stores session-specific metadata, such as the current jvm version, 
+     * current MeV version, and other important items.  This class is used in state-saving
+     * for version compatability purposes.  
+     * EH
+     */
+    private void initSessionMetaData(){
+    	smd = new SessionMetaData();
+    	smd.setSaveDate(new Date());
+    	smd.setJREVersion(System.getProperty("java.version"));
+    	smd.setJVMVersion(System.getProperty("java.vm.version"));
+    	smd.setMevMajorVersion(4);
+    	smd.setMevMinorVersion(0);
+    	smd.setMevMicroVersion(0);
+    	smd.setBeta(true);
+    }
 
 
     /**
@@ -3628,7 +4869,93 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                 appendSampleAnnotation();
             } else if (command.equals(ActionManager.APPEND_GENE_ANNOTATION_COMMAND)) {
                 appendGeneAnnotation();
-            }             /**             * Raktim Sept 29, 05             * CGH Command Handlers             */            else if(command.equals(ActionManager.LOAD_CLONE_DISTRIBUTIONS_FROM_FILE_ACTION)){                //ctl.loadCloneDistributionsFromFile();            	//System.out.println("Called " + ActionManager.LOAD_CLONE_DISTRIBUTIONS_FROM_FILE_ACTION);            	JOptionPane.showMessageDialog(null, "Called " + ActionManager.LOAD_CLONE_DISTRIBUTIONS_FROM_FILE_ACTION, "alert", JOptionPane.INFORMATION_MESSAGE);            }else if(command.equals(ActionManager.SHOW_FLANKING_REGIONS)) {                onSetShowFlankingRegions( ((AbstractButton)event.getSource()).isSelected());            }else if(command.equals(ActionManager.CGH_ELEMENT_LENGTH_5)){                onChangeCghElementLength(5);            }else if(command.equals(ActionManager.CGH_ELEMENT_LENGTH_10)){                onChangeCghElementLength(10);            }else if(command.equals(ActionManager.CGH_ELEMENT_LENGTH_20)){                onChangeCghElementLength(20);            }else if(command.equals(ActionManager.CGH_ELEMENT_LENGTH_50)){                onChangeCghElementLength(50);            }else if(command.equals(ActionManager.CGH_ELEMENT_LENGTH_100)){                onChangeCghElementLength(100);            }else if(command.equals(ActionManager.CGH_ELEMENT_LENGTH_OTHER)){                onChangeCghElementLengthOther();            }else if(command.equals(ActionManager.CGH_ELEMENT_LENGTH_FIT)){                onChangeCghElementLength(ICGHDisplayMenu.FIT_SIZE);            }else if(command.equals(ActionManager.CGH_ELEMENT_WIDTH_5)){                onChangeCghElementWidth(5);            }else if(command.equals(ActionManager.CGH_ELEMENT_WIDTH_10)){                onChangeCghElementWidth(10);            }else if(command.equals(ActionManager.CGH_ELEMENT_WIDTH_20)){                onChangeCghElementWidth(20);            }else if(command.equals(ActionManager.CGH_ELEMENT_WIDTH_50)){                onChangeCghElementWidth(50);            }else if(command.equals(ActionManager.CGH_ELEMENT_WIDTH_100)){                onChangeCghElementWidth(100);            }else if(command.equals(ActionManager.CGH_ELEMENT_WIDTH_OTHER)){                onChangeCghElementWidthOther();            }else if(command.equals(ActionManager.CGH_ELEMENT_WIDTH_FIT)){                onChangeCghElementWidth((int)ICGHDisplayMenu.FIT_SIZE);            }else if(command.equals(ActionManager.CGH_DISPLAY_TYPE_COMBINED)){                onChangeCghDisplayType(ICGHDisplayMenu.DISPLAY_TYPE_COMBINED);            }else if(command.equals(ActionManager.CGH_DISPLAY_TYPE_SEPARATED)){                onChangeCghDisplayType(ICGHDisplayMenu.DISPLAY_TYPE_SEPARATED);            }else if(command.equals(ActionManager.CGH_DISPLAY_ORDER)){                onChangeCghDisplayOrder();            }else if(command.equals(ActionManager.CGH_DELETE_SAMPLE)){                onDeleteSample();            }else if(command.equals(ActionManager.CGH_DISPLAY_LABEL_WSL_ID)){                onChangeDisplayLabelType(ICGHDisplayMenu.DISPLAY_WSL_ID);            }else if(command.equals(ActionManager.CGH_DISPLAY_LABEL_ALIAS)){                onChangeDisplayLabelType(ICGHDisplayMenu.DISPLAY_ALIAS);            }else if(command.equals(ActionManager.CGH_DISPLAY_LABEL_ID1)){                onChangeDisplayLabelType(ICGHDisplayMenu.DISPLAY_ID1);            }else if(command.equals(ActionManager.CGH_SET_THRESHOLDS)){                onCghSetThresholds();            }else if(command.equals(ActionManager.CGH_CLEAR_ANNOTATIONS)){                onClearAnnotations();            }else if(command.equals(ActionManager.CGH_ANALYSIS_COMMAND)){                onCghAnalysis((Action)event.getSource());            }else if(command.equals(ActionManager.FIND_GENE)){            	searchForGene();            }else if(command.equals(ActionManager.CIRCLE_VIEWER_BACKGROUND)){                onSetCircleViewerBackground();            }else if(command.equals(ActionManager.COMPARE_EXPERIMENTS)){            }else if(command.equals(ActionManager.CLONE_VALUE_DISCRETE_DETERMINATION)){                onChangeCloneValueType(ICGHCloneValueMenu.CLONE_VALUE_DISCRETE_DETERMINATION);            }else if(command.equals(ActionManager.CLONE_VALUE_LOG_AVERAGE_INVERTED)){                onChangeCloneValueType(ICGHCloneValueMenu.CLONE_VALUE_LOG_AVERAGE_INVERTED);            }else if(command.equals(ActionManager.CLONE_VALUE_LOG_CLONE_DISTRIBUTION)){                onChangeCloneValueType(ICGHCloneValueMenu.CLONE_VALUE_LOG_CLONE_DISTRIBUTION);            }else if(command.equals(ActionManager.CLONE_VALUE_THRESHOLD_OR_CLONE_DISTRIBUTION)){                onChangeCloneValueType(ICGHCloneValueMenu.CLONE_VALUE_THRESHOLD_OR_CLONE_DISTRIBUTION);            }else if(command.equals(ActionManager.FLANKING_REGIONS_BY_THRESHOLD)){                onChangeFlankingRegionType(ICGHCloneValueMenu.FLANKING_REGIONS_BY_THRESHOLD);            }else if(command.equals(ActionManager.FLANKING_REGIONS_BY_LOG_CLONE_DISTRIBUTION)){                onChangeFlankingRegionType(ICGHCloneValueMenu.FLANKING_REGIONS_BY_LOG_CLONE_DISTRIBUTION);            }else if(command.equals(ActionManager.FLANKING_REGIONS_BY_THRESHOLD_OR_CLONE_DISTRIBUTION)){                onChangeFlankingRegionType(ICGHCloneValueMenu.FLANKING_REGIONS_BY_THRESHOLD_OR_CLONE_DISTRIBUTION);            }else if(command.equals(ActionManager.SHOW_HEADER)){                onShowHeader( ((AbstractButton)event.getSource()).isSelected());            }else if(command.equals(ActionManager.CLONE_P_THRESH)){                onSetClonePThresh();            }else if (command.equals(ActionManager.RENAME_NODE_CMD)) {                onRenameNode();            }            /* End CGH Command Handlers  */                  else {
+            } 
+            /**
+             * Raktim Sept 29, 05
+             * CGH Command Handlers
+             */
+            else if(command.equals(ActionManager.LOAD_CLONE_DISTRIBUTIONS_FROM_FILE_ACTION)){
+                //ctl.loadCloneDistributionsFromFile();
+            	//System.out.println("Called " + ActionManager.LOAD_CLONE_DISTRIBUTIONS_FROM_FILE_ACTION);
+            	JOptionPane.showMessageDialog(null, "Called " + ActionManager.LOAD_CLONE_DISTRIBUTIONS_FROM_FILE_ACTION, "alert", JOptionPane.INFORMATION_MESSAGE);
+            }else if(command.equals(ActionManager.SHOW_FLANKING_REGIONS)) {
+                onSetShowFlankingRegions( ((AbstractButton)event.getSource()).isSelected());
+            }else if(command.equals(ActionManager.CGH_ELEMENT_LENGTH_5)){
+                onChangeCghElementLength(5);
+            }else if(command.equals(ActionManager.CGH_ELEMENT_LENGTH_10)){
+                onChangeCghElementLength(10);
+            }else if(command.equals(ActionManager.CGH_ELEMENT_LENGTH_20)){
+                onChangeCghElementLength(20);
+            }else if(command.equals(ActionManager.CGH_ELEMENT_LENGTH_50)){
+                onChangeCghElementLength(50);
+            }else if(command.equals(ActionManager.CGH_ELEMENT_LENGTH_100)){
+                onChangeCghElementLength(100);
+            }else if(command.equals(ActionManager.CGH_ELEMENT_LENGTH_OTHER)){
+                onChangeCghElementLengthOther();
+            }else if(command.equals(ActionManager.CGH_ELEMENT_LENGTH_FIT)){
+                onChangeCghElementLength(ICGHDisplayMenu.FIT_SIZE);
+            }else if(command.equals(ActionManager.CGH_ELEMENT_WIDTH_5)){
+                onChangeCghElementWidth(5);
+            }else if(command.equals(ActionManager.CGH_ELEMENT_WIDTH_10)){
+                onChangeCghElementWidth(10);
+            }else if(command.equals(ActionManager.CGH_ELEMENT_WIDTH_20)){
+                onChangeCghElementWidth(20);
+            }else if(command.equals(ActionManager.CGH_ELEMENT_WIDTH_50)){
+                onChangeCghElementWidth(50);
+            }else if(command.equals(ActionManager.CGH_ELEMENT_WIDTH_100)){
+                onChangeCghElementWidth(100);
+            }else if(command.equals(ActionManager.CGH_ELEMENT_WIDTH_OTHER)){
+                onChangeCghElementWidthOther();
+            }else if(command.equals(ActionManager.CGH_ELEMENT_WIDTH_FIT)){
+                onChangeCghElementWidth((int)ICGHDisplayMenu.FIT_SIZE);
+            }else if(command.equals(ActionManager.CGH_DISPLAY_TYPE_COMBINED)){
+                onChangeCghDisplayType(ICGHDisplayMenu.DISPLAY_TYPE_COMBINED);
+            }else if(command.equals(ActionManager.CGH_DISPLAY_TYPE_SEPARATED)){
+                onChangeCghDisplayType(ICGHDisplayMenu.DISPLAY_TYPE_SEPARATED);
+            }else if(command.equals(ActionManager.CGH_DISPLAY_ORDER)){
+                onChangeCghDisplayOrder();
+            }else if(command.equals(ActionManager.CGH_DELETE_SAMPLE)){
+                onDeleteSample();
+            }else if(command.equals(ActionManager.CGH_DISPLAY_LABEL_WSL_ID)){
+                onChangeDisplayLabelType(ICGHDisplayMenu.DISPLAY_WSL_ID);
+            }else if(command.equals(ActionManager.CGH_DISPLAY_LABEL_ALIAS)){
+                onChangeDisplayLabelType(ICGHDisplayMenu.DISPLAY_ALIAS);
+            }else if(command.equals(ActionManager.CGH_DISPLAY_LABEL_ID1)){
+                onChangeDisplayLabelType(ICGHDisplayMenu.DISPLAY_ID1);
+            }else if(command.equals(ActionManager.CGH_SET_THRESHOLDS)){
+                onCghSetThresholds();
+            }else if(command.equals(ActionManager.CGH_CLEAR_ANNOTATIONS)){
+                onClearAnnotations();
+            }else if(command.equals(ActionManager.CGH_ANALYSIS_COMMAND)){
+                onCghAnalysis((Action)event.getSource());
+            }else if(command.equals(ActionManager.FIND_GENE)){
+            	searchForGene();
+            }else if(command.equals(ActionManager.CIRCLE_VIEWER_BACKGROUND)){
+                onSetCircleViewerBackground();
+            }else if(command.equals(ActionManager.COMPARE_EXPERIMENTS)){
+            }else if(command.equals(ActionManager.CLONE_VALUE_DISCRETE_DETERMINATION)){
+                onChangeCloneValueType(ICGHCloneValueMenu.CLONE_VALUE_DISCRETE_DETERMINATION);
+            }else if(command.equals(ActionManager.CLONE_VALUE_LOG_AVERAGE_INVERTED)){
+                onChangeCloneValueType(ICGHCloneValueMenu.CLONE_VALUE_LOG_AVERAGE_INVERTED);
+            }else if(command.equals(ActionManager.CLONE_VALUE_LOG_CLONE_DISTRIBUTION)){
+                onChangeCloneValueType(ICGHCloneValueMenu.CLONE_VALUE_LOG_CLONE_DISTRIBUTION);
+            }else if(command.equals(ActionManager.CLONE_VALUE_THRESHOLD_OR_CLONE_DISTRIBUTION)){
+                onChangeCloneValueType(ICGHCloneValueMenu.CLONE_VALUE_THRESHOLD_OR_CLONE_DISTRIBUTION);
+            }else if(command.equals(ActionManager.FLANKING_REGIONS_BY_THRESHOLD)){
+                onChangeFlankingRegionType(ICGHCloneValueMenu.FLANKING_REGIONS_BY_THRESHOLD);
+            }else if(command.equals(ActionManager.FLANKING_REGIONS_BY_LOG_CLONE_DISTRIBUTION)){
+                onChangeFlankingRegionType(ICGHCloneValueMenu.FLANKING_REGIONS_BY_LOG_CLONE_DISTRIBUTION);
+            }else if(command.equals(ActionManager.FLANKING_REGIONS_BY_THRESHOLD_OR_CLONE_DISTRIBUTION)){
+                onChangeFlankingRegionType(ICGHCloneValueMenu.FLANKING_REGIONS_BY_THRESHOLD_OR_CLONE_DISTRIBUTION);
+            }else if(command.equals(ActionManager.SHOW_HEADER)){
+                onShowHeader( ((AbstractButton)event.getSource()).isSelected());
+            }else if(command.equals(ActionManager.CLONE_P_THRESH)){
+                onSetClonePThresh();
+            }else if (command.equals(ActionManager.RENAME_NODE_CMD)) {
+                onRenameNode();
+            }
+            /* End CGH Command Handlers  */      
+            else {
                 System.out.println("unhandled command = " + command);
             }
         }
@@ -3749,15 +5076,62 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         public void windowIconified(WindowEvent e) {}
         public void windowDeiconified(WindowEvent e) {}
         public void windowActivated(WindowEvent e) {}
-        public void windowDeactivated(WindowEvent e) {}        /**         * Raktim Sept 29, 05         * Adding CGH Listener Functions         * IDataRegionSelectionListener functions         */        public void onShowBrowser(EventObject eventObj){        	  ShowBrowser(eventObj);        }        public void onDisplayDataValues(EventObject eventObj){        	DisplayDataValues(eventObj);        }        public void onShowGenes(EventObject eventObj){        	ShowGenes(eventObj);        }        public void onAnnotationsSelected(EventObject eventObj){        	AnnotationsSelected(eventObj);        }         /**          * Raktim Sept 29, 05          * Adding CGH Listener Functions          * ICGHListener functions          */        public void onDataChanged(){        	fireDataChanged();        }        public void onCloneValuesChanged(){        	fireCloneValuesChanged();        }        public void onChromosomeSelected(java.util.EventObject eventObj){        	fireChromosomeSelected(eventObj);        }        public void onCloneDistributionsLoaded(){        	CloneDistributionsLoaded();        }        //public void onExperimentsLoaded(java.util.EventObject eventObj);        //public void onExperimentsInitialized(java.util.EventObject eventObj);        public void onExperimentsLoaded(){        	ExperimentsLoaded();        }        /**         * Raktim         * Loads data from the user specified directory.         */        protected void onLoadDirectory() {        	onLoadDirectory();        	//ctl.onLoadDirectory();        }        
+        public void windowDeactivated(WindowEvent e) {}
+        /**
+         * Raktim Sept 29, 05
+         * Adding CGH Listener Functions
+         * IDataRegionSelectionListener functions
+         */
+        public void onShowBrowser(EventObject eventObj){
+        	  ShowBrowser(eventObj);
+        }
+        public void onDisplayDataValues(EventObject eventObj){
+        	DisplayDataValues(eventObj);
+        }
+        public void onShowGenes(EventObject eventObj){
+        	ShowGenes(eventObj);
+        }
+        public void onAnnotationsSelected(EventObject eventObj){
+        	AnnotationsSelected(eventObj);
+        }
+         /**
+          * Raktim Sept 29, 05
+          * Adding CGH Listener Functions
+          * ICGHListener functions
+          */
+        public void onDataChanged(){
+        	fireDataChanged();
+        }
+        public void onCloneValuesChanged(){
+        	fireCloneValuesChanged();
+        }
+        public void onChromosomeSelected(java.util.EventObject eventObj){
+        	fireChromosomeSelected(eventObj);
+        }
+        public void onCloneDistributionsLoaded(){
+        	CloneDistributionsLoaded();
+        }
+        //public void onExperimentsLoaded(java.util.EventObject eventObj);
+        //public void onExperimentsInitialized(java.util.EventObject eventObj);
+        public void onExperimentsLoaded(){
+        	ExperimentsLoaded();
+        }
+        /**
+         * Raktim
+         * Loads data from the user specified directory.
+         */
+        protected void onLoadDirectory() {
+        	onLoadDirectory();
+        	//ctl.onLoadDirectory();
+        }        
     }
     
     /**
      * This <code>IFramework</code> implementation delegates
      * all its invokations to the outer class.
      */
-    private class FrameworkImpl implements IFramework, java.io.Serializable {
-        public static final long serialVersionUID = 10201020001L;
+    private class FrameworkImpl implements IFramework {
+        //public static final long serialVersionUID = 10201020001L;
         
         public IData getData() {
             return MultipleArrayViewer.this.getData();
@@ -3870,6 +5244,39 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
          */
         public void storeOperationCluster(String source, String clusterID, int[] indices, boolean geneCluster) {
             MultipleArrayViewer.this.storeOperationCluster(source, clusterID, indices, geneCluster);
-        }                /**         * Raktim Nov 02, 2005         * CGH Specific methods         */        /**         * Raktim         * CGH Display Menu accessor         */        public ICGHDisplayMenu getCghDisplayMenu(){        	return menubar.getCghDisplayMenu();        }        /**         * Raktim         * CGH Clone Menu accessor         */        public ICGHCloneValueMenu getCghCloneValueMenu(){        	return menubar.getCloneValueMenu();        }        /**         * Raktim         * @return         */        public Rectangle getViewerBounds(){        	return viewScrollPane.getViewportBorderBounds();        }        /**         * Raktim         * Returns the cytoband model of the a species         */        public CytoBandsModel getCytoBandsModel(){        	return cytoBandsModel;        }
+        }
+        
+        /**
+         * Raktim Nov 02, 2005
+         * CGH Specific methods
+         */
+        /**
+         * Raktim
+         * CGH Display Menu accessor
+         */
+        public ICGHDisplayMenu getCghDisplayMenu(){
+        	return menubar.getCghDisplayMenu();
+        }
+        /**
+         * Raktim
+         * CGH Clone Menu accessor
+         */
+        public ICGHCloneValueMenu getCghCloneValueMenu(){
+        	return menubar.getCloneValueMenu();
+        }
+        /**
+         * Raktim
+         * @return
+         */
+        public Rectangle getViewerBounds(){
+        	return viewScrollPane.getViewportBorderBounds();
+        }
+        /**
+         * Raktim
+         * Returns the cytoband model of the a species
+         */
+        public CytoBandsModel getCytoBandsModel(){
+        	return cytoBandsModel;
+        }
     }
 }

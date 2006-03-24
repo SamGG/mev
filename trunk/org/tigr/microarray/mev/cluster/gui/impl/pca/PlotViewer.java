@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: PlotViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2005-03-10 20:32:37 $
- * $Author: braistedj $
+ * $Revision: 1.7 $
+ * $Date: 2006-03-24 15:51:05 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.pca;
@@ -16,23 +16,32 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.beans.Expression;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 import org.tigr.util.FloatMatrix;
 
 public class PlotViewer extends ViewerAdapter implements java.io.Serializable {
-    public static final long serialVersionUID = 202011040001L;
     
     private JComponent content;
-    
+    FloatMatrix S;
     /**
      * Constructs a <code>PlotViewer</code> for specified S-matrix.
      */
     public PlotViewer(FloatMatrix S) {
 	content = createContent(S);
+    	this.S = S;
+    }
+    /**
+     * @inheritDoc
+     */
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{S});
     }
     
     /**

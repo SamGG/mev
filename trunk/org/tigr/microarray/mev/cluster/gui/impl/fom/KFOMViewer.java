@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: KFOMViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-02-23 20:59:51 $
- * $Author: caliente $
+ * $Revision: 1.8 $
+ * $Date: 2006-03-24 15:50:09 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.fom;
@@ -20,12 +20,15 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
 public class KFOMViewer extends ViewerAdapter implements java.io.Serializable {
-    public static final long serialVersionUID = 202003070001L;
     
     private FOMContentComponent content;
     
     public KFOMViewer(float[] fom_values, float[] variances) {
 	this.content = new FOMContentComponent(fom_values, variances);
+    }
+    
+    public KFOMViewer(FOMContentComponent content, JComponent header){
+    	this.content = content;
     }
     
     public void setFOMIterationValues(float [][] values) {

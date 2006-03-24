@@ -4,14 +4,15 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMExperimentClusterViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-03-10 20:22:04 $
- * $Author: braistedj $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:51:08 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.ptm;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,6 +26,7 @@ import javax.swing.JPopupMenu;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 
@@ -49,27 +51,21 @@ public class PTMExperimentClusterViewer extends ExperimentClusterViewer {
     }
     
     /**
+     * @inheritDoc
+     */
+    public PTMExperimentClusterViewer(int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
+    		Integer offset, ExperimentClusterHeader header, Boolean hasCentroid, float[][] centroids, 
+			Dimension elementSize, Integer labelIndex, Integer exptID) {
+    		super(clusters, genesOrder, drawAnnotations, offset, header, hasCentroid, centroids, elementSize, labelIndex, exptID);
+    }
+    
+    /**
      * Creates a popup menu.
      */
     private JPopupMenu createJPopupMenu(Listener listener) {                
     	JPopupMenu popup = new JPopupMenu();
     	addMenuItems(popup, listener);
     	return popup;
-    }
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-    	this.auxData = (Object [][])ois.readObject();
-    	this.auxTitles = (String [])ois.readObject();
-    	
-    	Listener listener = new Listener();
-    	this.popup = createJPopupMenu(listener);
-    	getContentComponent().addMouseListener(listener);
-    	getHeaderComponent().addMouseListener(listener);
-    }
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-    	oos.writeObject(this.auxData);
-    	oos.writeObject(this.auxTitles);
     }
     
     

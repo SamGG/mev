@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: TtestInfoViewer.java,v $
- * $Revision: 1.11 $
- * $Date: 2006-02-23 20:59:56 $
- * $Author: caliente $
+ * $Revision: 1.12 $
+ * $Date: 2006-03-24 15:52:09 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.ttest;
@@ -25,7 +25,6 @@ import javax.swing.JTextArea;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
 public class TtestInfoViewer extends ViewerAdapter implements java.io.Serializable {
-    public static final long serialVersionUID = 202021030001L;
     
     private JComponent header;
     private JTextArea  content;
@@ -38,6 +37,11 @@ public class TtestInfoViewer extends ViewerAdapter implements java.io.Serializab
 	header  = createHeader();
 	content = createContent(clusters, genes);
 	setMaxWidth(content, header);
+    }
+    public TtestInfoViewer(JTextArea content, JComponent header){
+    	this.header = header;
+    	this.content = content;
+		setMaxWidth(content, header);
     }
     
     /**

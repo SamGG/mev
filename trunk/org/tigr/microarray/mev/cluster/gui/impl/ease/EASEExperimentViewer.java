@@ -4,15 +4,16 @@ All rights reserved.
 */
 /*
  * $RCSfile: EASEExperimentViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-02-23 20:59:50 $
- * $Author: caliente $
+ * $Revision: 1.5 $
+ * $Date: 2006-03-24 15:50:01 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.ease;
 
 import java.awt.Color;
 import java.awt.Frame;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -23,8 +24,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 
 public class EASEExperimentViewer extends ExperimentViewer {
         
@@ -41,17 +43,12 @@ public class EASEExperimentViewer extends ExperimentViewer {
 	getContentComponent().addMouseListener(listener);
 	getHeaderComponent().addMouseListener(listener);
     }
-    
-
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        Listener listener = new Listener();
-        this.popup = createJPopupMenu(listener);
-        getContentComponent().addMouseListener(listener);
-        getHeaderComponent().addMouseListener(listener);        
+    /**
+     * @inheritDoc
+     */ 
+    public EASEExperimentViewer(int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets, Integer exptID) {
+    	super(clusters, samplesOrder, drawAnnotations, header, insets, exptID);
     }
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { }
-    
     
     /**
      * Creates a popup menu.

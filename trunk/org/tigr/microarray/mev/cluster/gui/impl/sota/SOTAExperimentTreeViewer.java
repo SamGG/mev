@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: SOTAExperimentTreeViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-02-23 20:59:55 $
- * $Author: caliente $
+ * $Revision: 1.8 $
+ * $Date: 2006-03-24 15:51:44 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.sota;
@@ -22,6 +22,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -84,6 +85,8 @@ public class SOTAExperimentTreeViewer extends JPanel implements IViewer{
     private int currClusterNum = -1;
     private DefaultMutableTreeNode expImageNode;
     private JPopupMenu popup;
+    //EH
+    private int exptID = 0;
     
     /**
      * Creates a new instance of SOTAExperimentTreeViewer
@@ -115,56 +118,61 @@ public class SOTAExperimentTreeViewer extends JPanel implements IViewer{
         addMouseListener(listener);
         popup = this.createJPopupMenu(listener);
         this.experiment = experiment;
+        this.exptID = experiment.getId();
+    }
+
+    /**
+     * Creates a new instance of SOTAExperimentTreeViewer from xml-saved data
+     * written by XMLEncoder/XMLDecoder and IViewerPersistenceDelegate
+     * @param result result of SOTA clustering
+     * @param sota SOTA tree data structure
+     * @param hclSampleTree result from clustering samples by Hierarchical Clustering
+     * @param clusters Cluster gene indicies
+     */
+    public SOTAExperimentTreeViewer(Integer exptID, SOTATreeData sotaTreeData, 
+    		int[][] clusterIndices) {
+        setLayout(new GridBagLayout());
+        setBackground(Color.white);
+        listener = new Listener();
+        clusterPop = sotaTreeData.clusterPopulation;
+        clusterDivFM = sotaTreeData.clusterDiversity;
+        this.clusterIndices = clusterIndices;
+        function = sotaTreeData.function;
+        numberOfCells = sotaTreeData.clusterPopulation.length;
+        sotaTree = new SOTATree(sotaTreeData, false);
+        if(sotaTree != null)
+            sotaTree.addMouseListener(listener);
+        centroidDialog = null;
+        this.exptID = exptID.intValue();
     }
     
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {     
-        oos.writeInt(this.numberOfCells);
-        oos.writeInt(this.numberOfSamples);
-        oos.writeObject(this.centroidData);
-        oos.writeObject(this.sotaTree);
-        oos.writeObject(this.clusterDivFM);
-        oos.writeObject(this.clusterPop);
-        oos.writeObject(this.clusterIndices);
-        oos.writeObject(this.selectedClusterList);
-        oos.writeObject(this.expViewer);
-        oos.writeObject(this.elementSize);
-        oos.writeObject(this.experiment);
-      //  oos.writeObject(this.header);
-        oos.writeBoolean(this.sampleTree != null);
-        if(this.sampleTree != null)
-            oos.writeObject(this.sampleTree);
-        oos.writeInt(this.elementHeight);
-        oos.writeInt(this.elementWidth);
-        oos.writeInt(this.function);
-    }
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        this.numberOfCells = ois.readInt();
-        this.numberOfSamples = ois.readInt();
-        this.centroidData = (Experiment)ois.readObject();
-        this.sotaTree = (SOTATree)ois.readObject();
-        this.clusterDivFM = (FloatMatrix)ois.readObject();
-        this.clusterPop = (int [])ois.readObject();
-        this.clusterIndices = (int [][])ois.readObject();
-        this.selectedClusterList = (ArrayList)ois.readObject();
-        this.expViewer = (SOTAExpCentroidExpressionViewer)ois.readObject();
-        this.elementSize = (Dimension)ois.readObject();
-        this.experiment = (Experiment)ois.readObject();
-    //    this.header = (HCLExperimentHeader)ois.readObject();
-        if(ois.readBoolean())
-            this.sampleTree = (HCLTree)ois.readObject();
-        this.elementHeight = ois.readInt();
-        this.elementWidth = ois.readInt();
-        this.function = ois.readInt();
+    public SOTATreeData getSOTATreeData(){return sotaTree.getSotaTreeData();}
         
-        this.currClusterNum = -1;
-        this.listener = new Listener();
-        expViewer.addMouseListener(listener);
-      //  this.header.addMouseListener(listener);
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{new Integer(this.exptID), this.sotaTree.getSotaTreeData(), this.clusterIndices});
+    }
+    public int getExperimentID(){return exptID;}
+    public void setExperimentID(int e){
+    	exptID = e;
+    	expViewer.setExperimentID(e);
+    }
+    public void setExperiment(Experiment e){
+    	experiment = e;
+    	exptID = e.getId();
+        numberOfSamples = experiment.getNumberOfSamples();
+    	centroidData = new Experiment(sotaTree.getSotaTreeData().centroidMatrix.transpose(), getSamplesOrder(numberOfSamples));
+
+    	numberOfSamples = centroidData.getNumberOfSamples();
+        this.expViewer = new SOTAExpCentroidExpressionViewer(centroidData, experiment, null, getSamplesOrder(numberOfSamples), sotaTree.getSotaTreeData().clusterPopulation, sotaTree.getSotaTreeData().clusterDiversity, selectedClusterList);
+        this.expViewer.addMouseListener(listener);
+    	this.expViewer.setExperiment(e);
+    	
+        addComponents(sotaTree, expViewer);
         addMouseListener(listener);
         popup = this.createJPopupMenu(listener);
-    }
     
+    }
     /**
      *  sets a node to reference when jumping to expression images
      */

@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMTrainViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2005-03-10 20:21:56 $
- * $Author: braistedj $
+ * $Revision: 1.7 $
+ * $Date: 2006-03-24 15:51:53 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -16,10 +16,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import java.awt.Rectangle;
+import java.beans.Expression;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,63 +28,109 @@ import java.text.DecimalFormat;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.AbstractTableModel;
 
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.impl.svm.SVMResultViewer.MyListener;
 
 
-public class SVMTrainViewer extends SVMResultViewer implements java.io.Serializable {
-    public static final long serialVersionUID = 202018080001L;
+public class SVMTrainViewer extends SVMResultViewer {
 
     private float[] weights;
-    private IData experiment;
-    private Experiment analysisExperiment;
+    private Experiment experiment;
     private SVMData data;
     private GeneralInfo info;
     private boolean classifyGenes;
+    TrainViewerTableModel cvtm;
+    DecimalFormat floatFormat;
     
-    /**
-     * Constructs a <code>SVMTrainViewer</code> with specified data.
-     */
-    public SVMTrainViewer(IFramework framework, IData experiment, Experiment experimentObj, SVMData data, float[] weights, GeneralInfo info, boolean classifyGenes) {
-        super(framework);
-        this.analysisExperiment = experimentObj;
-        this.experiment = experiment;
-        this.data = data;
-        this.weights = weights;
-        this.info = info;
-        this.classifyGenes = classifyGenes;
-        resultPanel = new TrainResultPanel();        
-        displayData();
-        this.add(resultPanel,new GridBagConstraints(0,1,1,1,1.0,1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
+    public SVMTrainViewer(Experiment expt, float[] weights, boolean classifyGenes, SVMData data){
+    	super(expt);
+    	init(weights, classifyGenes, data);
+    }   
+    public SVMTrainViewer(Integer exptID, float[] weights, Boolean classifyGenes, SVMData data){
+    	super(exptID.intValue());
+    	init(weights, classifyGenes.booleanValue(), data);
     }
+    /**
+     * @inheritDoc
+     */
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{super.getExpression().getArguments()[0], weights, new Boolean(classifyGenes), data});
+    }
+    private void init(float[] weights, boolean classifyGenes, SVMData data){
+        this.weights = weights;
+        this.classifyGenes = classifyGenes;
+    	this.data = data;
     
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        this.analysisExperiment = (Experiment)ois.readObject();
-        this.weights = (float [])ois.readObject();
-        this.classifyGenes = ois.readBoolean();
-        this.data = (SVMData)ois.readObject();
-        this.info = (GeneralInfo)ois.readObject();
+        floatFormat = new DecimalFormat();
+        floatFormat.setMaximumFractionDigits(4);
+        floatFormat.setMinimumFractionDigits(4);
+        floatFormat.setGroupingUsed(false);
+        
+        setBackground(Color.white);
+        cvtm = new TrainViewerTableModel();
+     	this.resultTable = new JTable(cvtm);
+        
+        this.add(new JScrollPane(resultTable), new GridBagConstraints(0,0,1,1,1.0,1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
         
         MyListener listener = new MyListener();
-        getContentComponent().addMouseListener(listener);
+        resultTable.addMouseListener(listener);
+        resultTable.addMouseMotionListener(listener);
     }
     
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { 
-        oos.writeObject(this.analysisExperiment);
-        oos.writeObject(this.weights);
-        oos.writeBoolean(this.classifyGenes);
-        oos.writeObject(this.data);
-        oos.writeObject(this.info);
+    class TrainViewerTableModel extends AbstractTableModel{
+        String[] header = new String[]{"Index", "Weight", annotationLabel};
+    	public TrainViewerTableModel(){}
+    	public String getColumnName(int col){
+    		return header[col];
+    	}
+    	public Object getValueAt(int row, int col){
+    		if(col == 0){
+    			return new Integer(row+1);
+    		} else if (col == 1) {
+    			return floatFormat.format(weights[row]).toString();
+    		} else if (col == 2) {
+    			try{
+		    		if(classifyGenes){
+		    			new Integer(labelIndex);
+		    			getMultipleArrayDataRow(row);
+		    			iData.toString();
+						return iData.getElementAttribute(getMultipleArrayDataRow(row), labelIndex);
+		    		} else {
+						return iData.getFullSampleName(row);
+		    		}
+    			} catch (NullPointerException npe){
+        			npe.printStackTrace();
+    				return "";
+    			}
+    		}
+    		return new String("");
+    	}  
+    	public boolean isCellEditable(int row, int col) { return false; }
+
+		public int getColumnCount() {
+			return header.length;
+		}
+		
+		public int getRowCount() {
+			return weights.length;
+		}
     }
     
+    public void setExperiment(Experiment e){
+    	super.setExperiment(e);
+    	this.experiment = e;
+    }
     
     public void onSelected(IFramework frm) {
-        this.framework = frm;
-        this.experiment = frm.getData();
+    	super.onSelected(frm);
         onMenuChanged(frm.getDisplayMenu());
     }
     
@@ -102,43 +147,6 @@ public class SVMTrainViewer extends SVMResultViewer implements java.io.Serializa
     
     
     private void displayResult(boolean genes){
-        StringBuffer buffer = new StringBuffer();
-        String Dummy;
-        DecimalFormat format = new DecimalFormat();
-        format.setMaximumFractionDigits(4);
-        format.setMinimumFractionDigits(4);
-        format.setGroupingUsed(false);
-        if(data.classificationFile != null)
-            buffer.append("Classification file: "+data.classificationFile.getPath()+"\n");
-        else
-            buffer.append("Classification file: None (SVM classification editor was used)\n");
-        buffer.append("Constant : "+Float.toString(data.constant)+"\n");
-        buffer.append("Coefficient : "+Float.toString(data.coefficient)+"\n");
-        buffer.append("Power : "+Float.toString(data.power)+"\n");
-        buffer.append("Diagonal factor : "+Float.toString(data.diagonalFactor)+"\n");
-        buffer.append("Convergence threshold : "+Float.toString(data.convergenceThreshold)+"\n");
-        //buffer.append("Normalize : "+data.normalize+"\n");
-        buffer.append("Radial : "+data.radial+"\n");
-        buffer.append("Width factor : "+Float.toString(data.widthFactor)+"\n");
-        buffer.append("Use Constraint : "+data.constrainWeights+"\n");
-        buffer.append("Positive Constraint : "+Float.toString(data.positiveConstraint)+"\n");
-        buffer.append("Negative Constraint : "+Float.toString(data.negativeConstraint)+"\n");
-        buffer.append("Seed : "+Float.toString(data.seed)+"\n");
-        buffer.append("Calculation time : "+Float.toString( info.time )+" ms\n");
-        buffer.append("Objective : "+Float.toString(data.objective1)+"\n\n");
-        
-        if(genes){
-            if(labelIndex >= 0 && labelIndex < fieldNames.length)
-                buffer.append(" Weights       " + fieldNames[labelIndex]);
-            else
-                buffer.append(" Weights");
-        }        
-        else
-            buffer.append(" Weights       Experiments");
-        
-        Log.setText( buffer.toString());
-        Log.setCaretPosition(0);
-      //  Log.setSize(resultPanel.getWidth()*2, 16*Log.getFontMetrics(Log.getFont()).getHeight());
     }
     
     /**
@@ -155,23 +163,32 @@ public class SVMTrainViewer extends SVMResultViewer implements java.io.Serializa
         } else return;
         try {
             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(SVMFile)));
+            if(data.classificationFile != null)
+                out.write("Classification file: "+data.classificationFile.getPath()+"\n");
+                else
+            	out.write("Classification file: None (SVM classification editor was used)\n");
+            out.write("Constant : "+Float.toString(data.constant)+"\n");
+            out.write("Coefficient : "+Float.toString(data.coefficient)+"\n");
+            out.write("Power : "+Float.toString(data.power)+"\n");
+            out.write("Diagonal factor : "+Float.toString(data.diagonalFactor)+"\n");
+            out.write("Convergence threshold : "+Float.toString(data.convergenceThreshold)+"\n");
+            //buffer.append("Normalize : "+data.normalize+"\n");
+            out.write("Radial : "+data.radial+"\n");
+            out.write("Width factor : "+Float.toString(data.widthFactor)+"\n");
+            out.write("Use Constraint : "+data.constrainWeights+"\n");
+            out.write("Positive Constraint : "+Float.toString(data.positiveConstraint)+"\n");
+            out.write("Negative Constraint : "+Float.toString(data.negativeConstraint)+"\n");
+            out.write("Seed : "+Float.toString(data.seed)+"\n");
+            //out.write("Calculation time : " + Float.toString( info.time )+" ms\n");
+            out.write("Objective : "+Float.toString(data.objective1)+"\n\n");
+            
+            out.write("Weights\tGB#\n");
 
-            String logText = Log.getText();
-            logText = logText.substring(0, logText.lastIndexOf("Weights"));
-            out.write( logText  );
-            if(classifyGenes){
-                if(labelIndex >= 0 && labelIndex < fieldNames.length)
-                    out.write("Weights\t"+fieldNames[labelIndex]+"\t\n");
-                else
-                    out.write("Weights\t\n");
+            for(int row=0; row<cvtm.getRowCount(); row++){
+            	for(int col=1; col<cvtm.getColumnCount(); col++){
+            		out.write(cvtm.getValueAt(row, col).toString() + '\t');
             }
-            else
-                out.write("Weights\tExperiments\t\n");
-            for(int i = 0; i < weights.length; i++){
-                if(classifyGenes)
-                    out.write(String.valueOf(weights[i])+"\t"+experiment.getElementAttribute(getMultipleArrayDataRow(i), labelIndex)+ "\t\n");
-                else
-                    out.write(String.valueOf(weights[i])+"\t"+experiment.getFullSampleName(i)+ "\t\n");
+            	out.write('\n');
             }
             out.flush();
             out.close();
@@ -182,10 +199,10 @@ public class SVMTrainViewer extends SVMResultViewer implements java.io.Serializa
         }
     }
     
-    
+    /*
     protected Dimension updateSize(){
         return ((TrainResultPanel)resultPanel).updateSize();
-    }
+    }*/
     
     /** Returns a component to be inserted into the scroll pane row header
      */
@@ -200,113 +217,15 @@ public class SVMTrainViewer extends SVMResultViewer implements java.io.Serializa
         return null;  
     }
     
-    public class TrainResultPanel extends JPanel{
-        int lineHeight = 20;
-        int indexLength = 1;
-        DecimalFormat floatFormat;
-        String spacerString;
         
-        public TrainResultPanel(){
-            floatFormat = new DecimalFormat();
-            floatFormat.setMaximumFractionDigits(4);
-            floatFormat.setMinimumFractionDigits(4);
-            floatFormat.setGroupingUsed(false);
-            
-            setBackground(Color.white);
-            Dimension d = updateSize();
-            setSize(d.width, weights.length * lineHeight + 10);
-           setPreferredSize(new Dimension(d.width, weights.length * lineHeight + 5));
-        }
-        
-        public void paint(Graphics g){
-            super.paint(g);
-            
-            g.setFont(new Font("monospaced", Font.PLAIN, 14));
-            FontMetrics fm =g.getFontMetrics();
-            //int lineHeight = fm.getHeight() + vertSpace;
-            Rectangle rect = g.getClipBounds();
-            int index;
-            int top = getTopIndex(rect.y);
-            int bottom = getBottomIndex(rect.y+rect.height, weights.length + 1);
-            
-            for(int i = top; i < bottom; i++){
-                index = i;
-                if(!isLegalIndex(index))
-                    continue;
-                spacerString = getSpacerString(floatFormat.format(weights[index]));
-                if(classifyGenes){
-                    g.drawString(" "+floatFormat.format(weights[index]) + spacerString + experiment.getElementAttribute(getMultipleArrayDataRow(index), labelIndex), 10, (i+1)*lineHeight);  //map i to real data using exp
-                }
-                else{
-                    g.drawString(" "+floatFormat.format(weights[index]) + spacerString + experiment.getSampleName(analysisExperiment.getSampleIndex(index)), 10, (i+1)*lineHeight);  //map i to real data using exp
-                }
-            }
-        }
-        
-        private boolean isLegalIndex(int i){
-            return (i >=0 && i < weights.length);
-        }
-        
-        private int getTopIndex(int top) {
-            if (top < 0) {
-                return 0;
-            }
-            return top/lineHeight;
-        }
-        
-        private int getBottomIndex(int bottom, int limit) {
-            if (bottom < 0) {
-                return 0;
-            }
-            int result = bottom/lineHeight+1;
-            return result > limit ? limit : result;
-        }
-        
-        protected String getSpacerString(String weight){
-            
-            String s = "";
-            for(int i = 0; i < (15 - weight.length()); i++)
-                s += " ";
-            return s;
-        }
         
         protected Dimension updateSize(){
             FontMetrics fm = this.getFontMetrics(new Font("monospaced", Font.PLAIN, 14));
             int len = 0;
-            int numElem;
-            indexLength = String.valueOf(weights.length).length();
-            String s;
-            // String [] spacerStrings;
             
-            floatFormat = new DecimalFormat();
-            floatFormat.setMaximumFractionDigits(4);
-            floatFormat.setMinimumFractionDigits(4);
-            floatFormat.setGroupingUsed(false);
-            
-            if(classifyGenes)
-                numElem = analysisExperiment.getNumberOfGenes();
-            else
-                numElem = analysisExperiment.getNumberOfSamples();
-            
-            for(int i = 0; i < numElem; i++){
-                spacerString = getSpacerString(floatFormat.format(weights[i]));
-              
-                if(classifyGenes){
-                    s = (" "+floatFormat.format(weights[i]) + spacerString + experiment.getElementAttribute(getMultipleArrayDataRow(i), labelIndex));  //map i to real data using exp
-                }
-                else{
-                    s =(" "+floatFormat.format(weights[i]) + spacerString + experiment.getSampleName(analysisExperiment.getSampleIndex(i)));  //map i to real data using exp
-                }
-               
-                len = Math.max(len, fm.stringWidth(s));
-            }
-            setSize(len + 10, getHeight());
-            setPreferredSize(new Dimension(len+10, getHeight()));
             
             return new Dimension(len+10, getHeight());
         }
      
-        
-    }
 }
 

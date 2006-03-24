@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASETableViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-02-23 20:59:50 $
- * $Author: caliente $
+ * $Revision: 1.8 $
+ * $Date: 2006-03-24 15:50:01 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 /*
@@ -44,7 +44,6 @@ import org.tigr.util.BrowserLauncher;
 /** Displays ease results
  */
 public class EASETableViewer extends TableViewer implements Serializable {
-    public static final long serialVersionUID = 202002010001L;
     
     private DefaultMutableTreeNode easeRoot;
     private JPopupMenu menu;
@@ -97,45 +96,11 @@ public class EASETableViewer extends TableViewer implements Serializable {
     }
     
     
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        oos.writeObject(this.experiment);
-        oos.writeObject(this.clusters);
-        oos.writeObject(this.headerNames);
-        oos.writeBoolean(this.clusterAnalysis);
-        oos.writeBoolean(this.haveAccessionNumbers);
+    public EASETableViewer(String [] headerNames, Object [][] data) {
+   		super(headerNames, data);
     }
     
     
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        this.experiment = (Experiment)ois.readObject();
-        this.clusters = (int [][])ois.readObject();
-        this.headerNames = (String [])ois.readObject();
-        this.clusterAnalysis = ois.readBoolean();
-        this.haveAccessionNumbers = ois.readBoolean();
-        
-        setNumerical(0, true);
-        if(clusterAnalysis){
-            if(!haveAccessionNumbers){
-                setNumerical(3, true);
-            }
-            //set the rest to numerical for proper sorting
-            for(int i = 4; i < headerNames.length; i++)
-                setNumerical(i, true);
-        } else {
-            if(!haveAccessionNumbers){
-                setNumerical(3, true);
-            } else {
-                setNumerical(5, true);
-            }
-            setNumerical(4, true);
-        }
-        menu = createPopupMenu();
-
-        table.addMouseListener(new Listener());
-        if(table.getRowCount() > 0)
-            table.getSelectionModel().setSelectionInterval(0,0);
-    }
     
     /** Creats the context menu
      * @return  */

@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: QTCInfoViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-23 20:59:53 $
- * $Author: caliente $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:51:22 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.qtc;
@@ -25,7 +25,7 @@ import javax.swing.JTextArea;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
 public class QTCInfoViewer extends ViewerAdapter implements java.io.Serializable {
-    public static final long serialVersionUID = 202013010001L;
+//    public static final long serialVersionUID = 202013010001L;
        
     private JComponent header;
     private JTextArea  content;
@@ -51,7 +51,11 @@ public class QTCInfoViewer extends ViewerAdapter implements java.io.Serializable
         content = createContent(clusters, genes);
         setMaxWidth(content, header);
     }
-    
+    public QTCInfoViewer(JTextArea contentComponent, JComponent headerComponent){
+    	this.header = headerComponent;
+    	this.content = contentComponent;
+    	setMaxWidth(content, header);
+    }
     /**
      * Returns component to be inserted into the framework scroll pane.
      */

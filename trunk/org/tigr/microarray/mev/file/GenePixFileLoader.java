@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: GenePixFileLoader.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-02-24 16:29:17 $
- * $Author: wwang67 $
+ * $Revision: 1.8 $
+ * $Date: 2006-03-24 15:52:17 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.file;
@@ -81,9 +81,9 @@ public class GenePixFileLoader extends ExpressionFileLoader {
             String [] fieldNames = new String[2];
             fieldNames[0] = "Name";
             fieldNames[1] = "ID";
-            
-            
-            TMEV.setFieldNames(fieldNames);
+            //EH fieldnames are not loaded into TMEV anymore
+            //TMEV.setFieldNames(fieldNames);
+            meta.setFieldNames(fieldNames);
         }
         return data;
     }
@@ -100,8 +100,9 @@ public class GenePixFileLoader extends ExpressionFileLoader {
             int [] rows = new int[3];
             int [] cols = new int[3];
             float [] intensity = new float[2];
-            String [] moreFields;
+            String [] moreFields = new String[2];
             int numElements = data.size();
+            
             int maxRows = 0;
             int maxCols = 0;
             int currRow, currCol;

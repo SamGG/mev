@@ -48,7 +48,6 @@ import org.tigr.util.QSort;
  * @author  nbhagaba
  */
 public class PTMExpStatsTableViewer extends ViewerAdapter implements java.io.Serializable {
-    public static final long serialVersionUID = 202012020001L;
     
     private JComponent header;
     private JComponent content;
@@ -104,40 +103,10 @@ public class PTMExpStatsTableViewer extends ViewerAdapter implements java.io.Ser
         //content = createContent();
         setMaxWidth(getContentComponent(), getHeaderComponent());          
     }
-    
-   private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        oos.writeObject(this.experiment);
-        oos.writeObject(this.expClusters);
-
-        oos.writeObject(this.auxData);
-        oos.writeObject(this.auxTitles);
-
-        oos.writeObject(this.cols);
-        oos.writeObject(this.pAndRModel);        
-        oos.writeObject(this.origData);
-        oos.writeObject(this.pAndRValuesTable);
-        oos.writeObject(this.header);
-        oos.writeObject(this.sortedAscending);
-        oos.writeBoolean(this.sig);
-      }
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        this.experiment = (Experiment)ois.readObject();
-        this.expClusters = (int [][])ois.readObject();
-
-        this.auxData = (Object [][])ois.readObject();
-        this.auxTitles = (String [])ois.readObject();
-        
-        this.cols = (int [])ois.readObject();
-        this.pAndRModel = (PAndRValuesTableModel)ois.readObject();
-        this.origData = (Object [][])ois.readObject();
-        this.pAndRValuesTable = (JTable)ois.readObject();
-        this.header = (JComponent)ois.readObject();
-        this.sortedAscending = (boolean [])ois.readObject();
-        this.sig = ois.readBoolean();
-        
-        addMouseListenerToHeaderInTable(this.pAndRValuesTable);
-        this.header = header  = this.pAndRValuesTable.getTableHeader();
+    public PTMExpStatsTableViewer(JComponent content, JComponent header){
+    	this.content = content;
+    	this.header = header;
+        setMaxWidth(getContentComponent(), getHeaderComponent());         
     }      
     
     /**

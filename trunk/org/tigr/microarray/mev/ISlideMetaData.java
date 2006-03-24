@@ -4,12 +4,21 @@ All rights reserved.
 */
 /*
  * $RCSfile: ISlideMetaData.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:44:16 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-03-24 15:49:44 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.Vector;
+
+import javax.swing.JFrame;
+
+import org.tigr.util.swing.ProgressBar;
 
 public interface ISlideMetaData {
     /**
@@ -56,4 +65,19 @@ public interface ISlideMetaData {
      * Returns reference to an element with specified index.
      */
     public ISlideDataElement toSlideDataElement(int index);
+    
+    /**
+     * Returns a list of field names for the gene annotation 
+     * associated with this set of microarrays.
+     * @return
+     */
+    public String[] getFieldNames();
+    
+    public void clearFieldNames();
+    
+    public void appendFieldNames(String[] fieldNames);
+    public void writeAnnotation(DataOutputStream dos, JFrame progressBar) throws IOException; 
+    public void loadAnnotation(DataInputStream dis, JFrame progressBar) throws IOException; 
+    public void setFieldNames(String[] fieldNames);
+    
 }

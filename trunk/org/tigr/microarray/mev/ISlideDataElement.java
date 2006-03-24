@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: ISlideDataElement.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-02-27 14:49:32 $
- * $Author: wwang67 $
+ * $Revision: 1.5 $
+ * $Date: 2006-03-24 15:49:44 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -138,6 +138,8 @@ public interface ISlideDataElement {
     
     // pcahan
     public String getDetection();
+    public boolean isNonZero();
+    public boolean getIsNull();
  //wwang
     public void setPvalue(float value);
     public void setGenePixFlags(int value);

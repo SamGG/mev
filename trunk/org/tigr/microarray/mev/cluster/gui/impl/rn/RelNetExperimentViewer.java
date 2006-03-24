@@ -4,15 +4,16 @@ All rights reserved.
 */
 /*
  * $RCSfile: RelNetExperimentViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2005-03-10 20:39:04 $
- * $Author: braistedj $
+ * $Revision: 1.5 $
+ * $Date: 2006-03-24 15:51:24 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.rn;
 
 import java.awt.Color;
 import java.awt.Frame;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -25,6 +26,7 @@ import javax.swing.JPopupMenu;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
@@ -48,14 +50,20 @@ public class RelNetExperimentViewer extends ExperimentViewer implements java.io.
         getContentComponent().addMouseListener(listener);
         getHeaderComponent().addMouseListener(listener);
     }
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        Listener listener = new Listener();
-        this.popup = createJPopupMenu(listener);
-        getContentComponent().addMouseListener(listener);
+    /**
+     * This constructor is used to re-create an ExperimentViewer from information
+     * stored in a saved analysis file by XMLEncoder.  
+     * 
+     * @param experiment
+     * @param clusters
+     * @param samplesOrder
+     * @param drawAnnotations
+     * @param header
+     * @param insets
+     */
+    public RelNetExperimentViewer(int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets, Integer exptID) {
+    	super(clusters, samplesOrder, drawAnnotations, header, insets, exptID);
     }
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { }
     
     /**
      * Creates a popup menu.

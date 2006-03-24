@@ -43,7 +43,12 @@ public class DAMCentroidsViewer extends CentroidsViewer {
         getContentComponent().addMouseListener(listener);    
         
     }
-    
+	/**
+	 * @inheritDoc
+	 */
+	public DAMCentroidsViewer(CentroidViewer cv) {
+		super(cv);
+	}
     /**
      * Creates a popup menu.
      */

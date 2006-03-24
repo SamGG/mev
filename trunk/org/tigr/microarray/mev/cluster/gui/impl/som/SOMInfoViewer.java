@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOMInfoViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-23 20:59:54 $
- * $Author: caliente $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:51:36 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.som;
@@ -25,7 +25,6 @@ import javax.swing.JTextArea;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
 public class SOMInfoViewer extends ViewerAdapter implements java.io.Serializable {
-    public static final long serialVersionUID = 202016020001L;
      
     private JComponent header;
     private JTextArea  content;
@@ -37,6 +36,11 @@ public class SOMInfoViewer extends ViewerAdapter implements java.io.Serializable
     public SOMInfoViewer(int[][] clusters, int genes) {
         header  = createHeader();
         content = createContent(clusters, genes);
+        setMaxWidth(content, header);
+    }
+    public SOMInfoViewer(JTextArea content, JComponent header){
+    	this.header = header;
+    	this.content = content;
         setMaxWidth(content, header);
     }
     

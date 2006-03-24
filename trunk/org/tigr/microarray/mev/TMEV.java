@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: TMEV.java,v $
- * $Revision: 1.14 $
- * $Date: 2006-03-02 18:51:33 $
- * $Author: wwang67 $
+ * $Revision: 1.15 $
+ * $Date: 2006-03-24 15:49:45 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -38,7 +38,7 @@ import org.tigr.util.ConfMap;
 import org.tigr.util.awt.ImageScreen;
 
 public class TMEV {
-    public final static String VERSION = "3.1";
+    public final static String VERSION = "4.0b";
     
     public final static int SYSTEM = 1000;
     public final static int DB_AVAILABLE = 1001;
@@ -62,7 +62,7 @@ public class TMEV {
     private static int nameIndex;
     //FL
     private static boolean indicesAdjusted = false;
-    private static String[] fieldNames;
+//    private static String[] fieldNames;
     private static String[] databases;
     private static int[] customerAnalysis=null;
     
@@ -115,7 +115,7 @@ public class TMEV {
             
             os = System.getProperty("os.name");
             
-            System.out.println(System.currentTimeMillis());
+            //System.out.println(System.currentTimeMillis());
             System.out.println("Java Runtime Environment version: "+System.getProperty("java.version"));
             System.out.println("Java Runtime Environment vendor: "+System.getProperty("java.vendor"));
             System.out.println("Java Virtual Machine name: "+System.getProperty("java.vm.name"));
@@ -200,7 +200,7 @@ public class TMEV {
             for (int i = 0; ss.hasMoreTokens(); i++) {
                 TMEV.databases[i] = ss.nextToken();
             }
-            
+/* EH removed fieldnames from TMEV because they belong in SlideData            
             String additionalFields = TMEV.getSettingForOption("Additional Fields");
             ss = new StringTokenizer(additionalFields, ":");
             if (ss.countTokens() > 0) {
@@ -209,6 +209,7 @@ public class TMEV {
                     TMEV.fieldNames[i] = ss.nextToken();
                 }
             } else TMEV.fieldNames = null;
+*/
         } catch (Exception e) {
             e.printStackTrace();
             returnValue = false;
@@ -288,12 +289,13 @@ public class TMEV {
     public static int getIntensityCount() {return TMEV.intensityCount;}
     public static int getHeaderRowCount() {return TMEV.headerRowCount;}
     public static int getHeaderColumnCount() {return TMEV.headerColumnCount;}
+/* EH removed fieldNames from TMEV because they belong in SlideData
     public static String[] getFieldNames() {
         if(TMEV.fieldNames == null)
             return new String[0];
         return TMEV.fieldNames;
     }
-    
+*/    
     //wwang for customer icon
     //get initial algorithm list from file tmev.cfg
     public static int[] getCustomerAnalysis() {
@@ -403,15 +405,15 @@ public class TMEV {
         TMEV.uniqueIDIndex = (index < 0) ? 0 : index;
     }
     
-    
+    //TODO maybe this should be moved to IData?
     public static void setNameIndex(int index) {
         TMEV.nameIndex = (index < 0) ? 0 : index;
     }
-    
+/* EH removed fieldNames from TMEV because they belong in SlideData    
     public static void setFieldNames(String [] fieldNames){
         TMEV.fieldNames = fieldNames;
     }
-    
+   
     public static void appendFieldNames(String [] fieldNames){
         if(TMEV.fieldNames == null || fieldNames == null)  //trying to set to null or initial set
             TMEV.fieldNames = fieldNames;
@@ -426,7 +428,7 @@ public class TMEV {
     public static void clearFieldNames(){
         TMEV.fieldNames = null;
     }
-    
+*/     
     public static void setPermitPrompt(boolean permitPrompt) {
         boolean havePromptTag = false;
         

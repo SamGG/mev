@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: DAM.java,v $
- * $Revision: 1.2 $
- * $Date: 2005-03-10 15:45:20 $
- * $Author: braistedj $
+ * $Revision: 1.3 $
+ * $Date: 2006-03-24 15:49:51 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.algorithm.impl;
@@ -111,7 +111,7 @@ public class DAM extends AbstractAlgorithm {
          kValue = map.getInt("kValue", 3);
          alpha = (double) map.getFloat("alpha", 0.05f);
 
-         System.out.println("");
+ /*        System.out.println("");
          System.out.println("DAM.java: numberOfGenes = " + numberOfGenes);
          System.out.println("DAM.java: numberOfSamples = " + numberOfSamples);
 	 System.out.println("DAM.java: Algorithm = A" + whichAlgorithm);
@@ -121,15 +121,15 @@ public class DAM extends AbstractAlgorithm {
 	 System.out.println("DAM.java: kValue = " + kValue);
 	 System.out.println("DAM.java: alpha = " + alpha);
          System.out.println("");
-        
+   */     
          singularMatrix = new boolean[numberOfSamples];
 
          trainingIndices = data.getIntArray("trainingIndices");
          classes = data.getIntArray("classes");
          testIndices = data.getIntArray("testIndices");
 
-         System.out.println("DAM.java: trainingIndices: ");
-	 for(int i=0; i<trainingIndices.length; i++) {
+     //    System.out.println("DAM.java: trainingIndices: ");
+/*	 for(int i=0; i<trainingIndices.length; i++) {
              System.out.print(trainingIndices[i] + ", ");
          }
          System.out.println("");
@@ -150,7 +150,7 @@ public class DAM extends AbstractAlgorithm {
          System.out.println("");
          System.out.println("");
 
-/*
+
          System.out.print("DAM.java: expMatrix");
          for (int i=0; i<numberOfGenes; i++) {
              System.out.println("");
@@ -327,7 +327,7 @@ public class DAM extends AbstractAlgorithm {
 	     }
          }
 
-         System.out.println(" ");
+  /*       System.out.println(" ");
 	 for (int i = 0; i < classifiers.length; i++) {
              System.out.println("DAM.java - classifiers[" + i + "].size() = " + classifiers[i].size());
 	 }
@@ -341,7 +341,7 @@ public class DAM extends AbstractAlgorithm {
 	 for (int i = 0; i < classifierPlusClassified.length; i++) {
              System.out.println("DAM.java - classifierPlusClassified[" + i + "].size() = " + classifierPlusClassified[i].size());
 	 }
-
+*/
 
          clusters = new Vector[numberOfClasses*3]; 
          for (int i = 1; i <= numberOfClasses; i++) {
@@ -350,12 +350,12 @@ public class DAM extends AbstractAlgorithm {
              clusters[i-1 + numberOfClasses*2] = classifierPlusClassified[i];
          }
 
-         for (int i = 1; i <= numberOfClasses; i++) {
+ /*        for (int i = 1; i <= numberOfClasses; i++) {
              System.out.println("DAM.java - clusters 1 size " + clusters[i-1].size());
              System.out.println("DAM.java - clusters 2 size " + clusters[i-1 + numberOfClasses].size());
              System.out.println("DAM.java - clusters 3 size " + clusters[i-1 + numberOfClasses*2].size());
          }
- 
+ */
           
          Matrix means = getMeans(clusters);
          Matrix variances = getVariances(clusters, means);
@@ -564,9 +564,9 @@ public class DAM extends AbstractAlgorithm {
     public Vector[] geneSelection(Matrix expMatrix) {
 
          
-	 System.out.println(" ");
-	 System.out.println("**************** Begin geneSelection() *************** ");
-	 System.out.println(" ");
+//	 System.out.println(" ");
+//	 System.out.println("**************** Begin geneSelection() *************** ");
+//	 System.out.println(" ");
 
          Vector[] geneIndices;
 
@@ -585,30 +585,30 @@ public class DAM extends AbstractAlgorithm {
          fireValueChanged(event);
          event.setId(AlgorithmEvent.PROGRESS_VALUE);            
 
-         System.out.println("");
+ /*        System.out.println("");
          System.out.println("geneSelection() - numOfGenes = " + numOfGenes);
          System.out.println("geneSelection() - numOfSamples = " + numOfSamples);
          System.out.println("geneSelection() - numberOfClasses = " + numberOfClasses);
          System.out.println("geneSelection() - alpha = " + alpha);
-
+*/
          TDistribution testT = new TDistribution(numOfSamples-(numberOfClasses+1));
 	 tValue = -testT.inverse(alpha/2.0d);
 
 	 double tValue1 = getTValue(numOfSamples-(numberOfClasses+1), alpha);
 
-         System.out.println("geneSelection() - tValue = " + tValue);
-         System.out.println("geneSelection() - tValue1 = " + tValue1);
+     //    System.out.println("geneSelection() - tValue = " + tValue);
+     //    System.out.println("geneSelection() - tValue1 = " + tValue1);
 
          if (tValue < - 1.0) {
              return null;
          }
 
-         System.out.println("");
-         System.out.println("geneSelection() - tValue = " + tValue);
+    //     System.out.println("");
+    //     System.out.println("geneSelection() - tValue = " + tValue);
 
 	 // Obtain the Mean Square Error Estimate
 	 meanSquareError = getSampleVariance(expMatrix, getSampleMeans(expMatrix));
-         System.out.println("geneSelection() - meanSquareError = " + meanSquareError);
+     //    System.out.println("geneSelection() - meanSquareError = " + meanSquareError);
  
          // For each gene
          for (int gene=0; gene < numOfGenes; gene++) {
@@ -643,8 +643,8 @@ public class DAM extends AbstractAlgorithm {
             }
          }
 
-         System.out.println("");
-         System.out.println("geneSelection() - highestGeneRank = " + highestGeneRank);
+    //     System.out.println("");
+    //     System.out.println("geneSelection() - highestGeneRank = " + highestGeneRank);
 
          // Calculate the rank vector for storing gene indices
          geneIndices = new Vector[highestGeneRank+1]; 
@@ -665,7 +665,7 @@ public class DAM extends AbstractAlgorithm {
             }
          }
 
-         for (int rank=0; rank<highestGeneRank+1; rank++) {
+     /*    for (int rank=0; rank<highestGeneRank+1; rank++) {
              System.out.println("geneSelection() - rank = " + rank + ", geneIndices[rank].size()=" + geneIndices[rank].size());
          }
          System.out.println("");
@@ -673,7 +673,7 @@ public class DAM extends AbstractAlgorithm {
 	 System.out.println(" ");
 	 System.out.println("**************** End geneSelection() *************** ");
 	 System.out.println(" ");
-
+*/
          return geneIndices;
 
     } // end of geneSelection
@@ -711,17 +711,18 @@ public class DAM extends AbstractAlgorithm {
      */                     
     public Matrix [] mleAlgorithm(Matrix compMatrix, Matrix compResponseMatrix) throws AlgorithmException{
 
-	System.out.println(" ");
+/*	System.out.println(" ");
  	System.out.println("******************** Begin mleAlgorithm() ********************");
 	System.out.println(" ");
 
+*/
         int numOfGenes = compMatrix.getRowDimension();
         int numOfSamples = compMatrix.getColumnDimension();
-
+/*
         System.out.println(" ");
         System.out.println("mleAlgorithm() - numOfGenes = " + numOfGenes);
         System.out.println("mleAlgorithm() - numOfSamples = " + numOfSamples);
-
+*/
 
         AlgorithmEvent event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, numberOfGenes, "MLE Algorithm \n");
         fireValueChanged(event);
@@ -980,11 +981,11 @@ public class DAM extends AbstractAlgorithm {
 */
 
         }
-
+/*
 	System.out.println(" ");
  	System.out.println("******************** End mleAlgorithm() ********************");
 	System.out.println(" ");
-
+*/
         return newBeta;
 
     } // end of mleAlgorithm()
@@ -1025,11 +1026,11 @@ public class DAM extends AbstractAlgorithm {
      * the maximum partial likelihood estimate of beta.
      */                 
     public double[] pdaAlgorithm(Matrix testMatrix) {
-
+/*
 	System.out.println(" ");
 	System.out.println("******************** Begin pdaAlgorithm() ********************");
 	System.out.println(" ");
-
+*/
         int numOfGenes = testMatrix.getRowDimension();
         int numOfTestSamples = testMatrix.getColumnDimension();
       
@@ -1082,11 +1083,11 @@ public class DAM extends AbstractAlgorithm {
         System.out.println(" ");
         System.out.println("pdaAlgorithm() -- *******************************");
 */
-
+/*
 	System.out.println(" ");
 	System.out.println("******************** End pdaAlgorithm() ********************");
 	System.out.println(" ");
-
+*/
         return probFunction;
 
     } // end of pdaAlgorithm
@@ -1105,11 +1106,11 @@ public class DAM extends AbstractAlgorithm {
         int numOfGenes = compMatrix.getRowDimension();
         int numOfSamples = compMatrix.getColumnDimension();
 
-
+/*
         System.out.println(" ");
         System.out.println("********** Begin calculateQDAParameters() **********");
         System.out.println(" ");
-
+*/
 
 	Matrix [] subCompMatrix = new Matrix[numberOfClasses];
 
@@ -1240,10 +1241,10 @@ public class DAM extends AbstractAlgorithm {
 
             if (Math.abs(tempMatrix.det()) < 1E-10) {
 
-                System.out.println("calculateQDAParameters() -- Covariance Matrix is singular for class Id # " + classId);
-  	        System.out.println("calculateQDAParameters() -- det of covariance matrix for class " + 
-                    (covarianceMatrix[classId]).det());
-                System.out.println(" ");
+ //               System.out.println("calculateQDAParameters() -- Covariance Matrix is singular for class Id # " + classId);
+ // 	        System.out.println("calculateQDAParameters() -- det of covariance matrix for class " + 
+ //                   (covarianceMatrix[classId]).det());
+ //               System.out.println(" ");
 
                 JOptionPane.showMessageDialog(null, "QDA Algorithm: Covariance Matrix is Singular", "Alert", JOptionPane.WARNING_MESSAGE);
 
@@ -1312,16 +1313,16 @@ public class DAM extends AbstractAlgorithm {
         }
 
 
-        System.out.println(" ");
-        for (int classId=0; classId<numberOfClasses; classId++) {
-            System.out.println("calculateQDAParameters() -- cValues for class #" + classId + " is " + cValues[classId]);
-            System.out.println(" ");
-        }
-        System.out.println(" ");
+   //     System.out.println(" ");
+   //     for (int classId=0; classId<numberOfClasses; classId++) {
+   //         System.out.println("calculateQDAParameters() -- cValues for class #" + classId + " is " + cValues[classId]);
+   //         System.out.println(" ");
+    //    }
+   //     System.out.println(" ");
 
-        System.out.println(" ");
-        System.out.println("********** End calculateQDAParameters() **********");
-        System.out.println(" ");
+   //     System.out.println(" ");
+   //     System.out.println("********** End calculateQDAParameters() **********");
+   //     System.out.println(" ");
 
         return 1;
 
@@ -1340,9 +1341,9 @@ public class DAM extends AbstractAlgorithm {
      */
     public double[] qdaAlgorithm(Matrix testMatrix) {
 
-	System.out.println(" ");
-	System.out.println("************* Begin qdaAlgorithm() **************");
-	System.out.println(" ");
+//	System.out.println(" ");
+//	System.out.println("************* Begin qdaAlgorithm() **************");
+//	System.out.println(" ");
 
         // Calculate Q value for class i
         // Q(i,X)=X'A(i)X + C'X + c(i) 
@@ -1350,8 +1351,8 @@ public class DAM extends AbstractAlgorithm {
 	Matrix Q_Matrix = new Matrix(numberOfClasses, 1);
         Matrix temp = new Matrix(1,1);
 
-	System.out.println("qdaAlgorithm() -- testMatrix: ");
-	printMatrix(testMatrix);
+//	System.out.println("qdaAlgorithm() -- testMatrix: ");
+//	printMatrix(testMatrix);
 
         for (int classId=0; classId<numberOfClasses; classId++) {
 
@@ -1361,8 +1362,8 @@ public class DAM extends AbstractAlgorithm {
             Q_Matrix.set(classId, 0, temp.get(0,0) + cValues[classId]);
         }
 
-        System.out.println("qdaAlgorithm() -- Q_Matrix: ");
-        printMatrix(Q_Matrix);
+  //      System.out.println("qdaAlgorithm() -- Q_Matrix: ");
+  //      printMatrix(Q_Matrix);
  
         double sum = 0.0d;
  
@@ -1380,15 +1381,15 @@ public class DAM extends AbstractAlgorithm {
             probFunction[classId] = Math.exp(Q_Matrix.get(classId,0))/sum;
         }
 
-        System.out.println("qdaAlgorithm() -- probFunction: ");
-        for (int classId=0; classId<numberOfClasses; classId++) {
-            System.out.print(probFunction[classId] + ", ");
-        }
-        System.out.println(" ");
+ //       System.out.println("qdaAlgorithm() -- probFunction: ");
+ //       for (int classId=0; classId<numberOfClasses; classId++) {
+ //           System.out.print(probFunction[classId] + ", ");
+ //       }
+ //       System.out.println(" ");
 
-	System.out.println(" ");
-	System.out.println("************* End qdaAlgorithm() **************");
-	System.out.println(" ");
+//	System.out.println(" ");
+//	System.out.println("************* End qdaAlgorithm() **************");
+//	System.out.println(" ");
 
         return probFunction;
 
@@ -1434,9 +1435,9 @@ public class DAM extends AbstractAlgorithm {
      */
     public Matrix mplsAlgorithm(Matrix trainingMatrix, Matrix trainingResponseMatrix, Matrix testMatrix) {
 
-	System.out.println(" ");
-	System.out.println("************** Begin mplsAlgorithm() **************");
-	System.out.println(" ");
+//	System.out.println(" ");
+//	System.out.println("************** Begin mplsAlgorithm() **************");
+//	System.out.println(" ");
 
 	Matrix [] matrix_X = new Matrix[kValue+1]; // training matrix for each k iteration
 	Matrix [] matrix_Y = new Matrix[kValue+1]; // response matrix for each k iteration
@@ -1453,10 +1454,10 @@ public class DAM extends AbstractAlgorithm {
         int numOfTrainingSamples = trainingMatrix.getColumnDimension();
         int numOfTestSamples = testMatrix.getColumnDimension();
 
-        System.out.println("mplsAlgorithm() - numOfGenes = " + numOfGenes);
-        System.out.println("mplsAlgorithm() - numOfTrainingSamples = " + numOfTrainingSamples);
-        System.out.println("mplsAlgorithm() - numOfTestSamples = " + numOfTestSamples);
-        System.out.println(" ");
+//        System.out.println("mplsAlgorithm() - numOfGenes = " + numOfGenes);
+//        System.out.println("mplsAlgorithm() - numOfTrainingSamples = " + numOfTrainingSamples);
+//        System.out.println("mplsAlgorithm() - numOfTestSamples = " + numOfTestSamples);
+//        System.out.println(" ");
 
         AlgorithmEvent event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, kValue, "Dimension Reduction (MPLS)\n");
         fireValueChanged(event);
@@ -1471,7 +1472,7 @@ public class DAM extends AbstractAlgorithm {
         }
  
         
-        System.out.println("mplsAlgorithm() - Call getSampleMeans for trainingMatrix: ");
+//        System.out.println("mplsAlgorithm() - Call getSampleMeans for trainingMatrix: ");
         training_means_X = getSampleMeans(trainingMatrix);
         training_variances_X = getSampleVariances(trainingMatrix, training_means_X);
 
@@ -1486,7 +1487,7 @@ public class DAM extends AbstractAlgorithm {
            }
         }
 
-        System.out.println("mplsAlgorithm() - Call getSampleMeans for trainingResponseMatrix: ");
+//        System.out.println("mplsAlgorithm() - Call getSampleMeans for trainingResponseMatrix: ");
         training_means_Y = getSampleMeans(trainingResponseMatrix);
         training_variances_Y = getSampleVariances(trainingResponseMatrix, training_means_Y);
 
@@ -1624,7 +1625,7 @@ public class DAM extends AbstractAlgorithm {
                   delta = (((w.minus(w_prep)).transpose()).times(w.minus(w_prep))).get(0,0);
               }
 
-              System.out.println("mplsAlgorithm() - loop = " + loop + "  delta = " + delta);
+ //             System.out.println("mplsAlgorithm() - loop = " + loop + "  delta = " + delta);
 
 	      for(int i=0; i<numOfGenes; i++) {
 		  w_prep.set(i, 0, w.get(i, 0));
@@ -1703,9 +1704,9 @@ public class DAM extends AbstractAlgorithm {
            }
        }
 
-	System.out.println(" ");
-	System.out.println("************** End mplsAlgorithm() **************");
-	System.out.println(" ");
+//	System.out.println(" ");
+//	System.out.println("************** End mplsAlgorithm() **************");
+//	System.out.println(" ");
 
        return geneCompMatrix;
 
@@ -1715,9 +1716,9 @@ public class DAM extends AbstractAlgorithm {
 
     public Matrix InitialClassification(Matrix expMatrix) throws AlgorithmException {
 
-	 System.out.println(" ");
-  	 System.out.println("******************** Begin InitialClassification() ********************");
-	 System.out.println(" ");
+//	 System.out.println(" ");
+//  	 System.out.println("******************** Begin InitialClassification() ********************");
+//	 System.out.println(" ");
  
 	 Matrix selectedTrainingMatrix, trainingRespMatrix, testMatrix;
 
@@ -1763,9 +1764,9 @@ public class DAM extends AbstractAlgorithm {
 //             usedGeneIndices = new int[selectedGeneIndices[highestGeneRank].size()];
 //             unusedGeneIndices = new int[numberOfGenes-selectedGeneIndices[highestGeneRank].size()];
              
-             System.out.println("***********************************");
-             System.out.println("selected gene indices size for highest rank= "+selectedGeneIndices[highestGeneRank].size());
-             System.out.println("highest rank = "+highestGeneRank);
+//             System.out.println("***********************************");
+//             System.out.println("selected gene indices size for highest rank= "+selectedGeneIndices[highestGeneRank].size());
+//             System.out.println("highest rank = "+highestGeneRank);
              
              for (int i = 0; i < selectedGeneIndices[highestGeneRank].size(); i++) {
 //                  usedGeneIndices[i] = ((Integer)(selectedGeneIndices[highestGeneRank]).get(i)).intValue();
@@ -1831,9 +1832,9 @@ public class DAM extends AbstractAlgorithm {
 		 gene++;
 	     }
 
-	     System.out.println(" "); 
-	     System.out.println("InitialClassification() - numOfSelectedGenes = " + numOfSelectedGenes); 
-	     System.out.println(" "); 
+//	     System.out.println(" "); 
+//	     System.out.println("InitialClassification() - numOfSelectedGenes = " + numOfSelectedGenes); 
+//	     System.out.println(" "); 
 
          }
          else {
@@ -1866,25 +1867,25 @@ public class DAM extends AbstractAlgorithm {
 
          geneComponentMatrix = geneCompMatrix;
 
-         System.out.println(" ");
-         System.out.println("InitialClassification() - geneCompMatrix row = " + geneCompMatrix.getRowDimension());
-         System.out.println("InitialClassification() - geneCompMatrix column = " + geneCompMatrix.getColumnDimension());
+//         System.out.println(" ");
+//         System.out.println("InitialClassification() - geneCompMatrix row = " + geneCompMatrix.getRowDimension());
+//         System.out.println("InitialClassification() - geneCompMatrix column = " + geneCompMatrix.getColumnDimension());
 
-         System.out.println("InitialClassification() - geneCompMatrix: "); 
-         printMatrix(geneCompMatrix);
+//         System.out.println("InitialClassification() - geneCompMatrix: "); 
+ //        printMatrix(geneCompMatrix);
 
 
          // obtain Gene Comp Matrix and Response Matrix only for the training data
          trainingCompMatrix = geneCompMatrix.getMatrix(0, geneCompMatrix.getRowDimension()-1, trainingIndices);
 
-         System.out.println("InitialClassification() - trainingCompMatrix row = " + trainingCompMatrix.getRowDimension());
-         System.out.println("InitialClassification() - trainingCompMatrix column = " + trainingCompMatrix.getColumnDimension());
+//         System.out.println("InitialClassification() - trainingCompMatrix row = " + trainingCompMatrix.getRowDimension());
+//         System.out.println("InitialClassification() - trainingCompMatrix column = " + trainingCompMatrix.getColumnDimension());
 
-         System.out.println("InitialClassification() - trainingCompMatrix :");
-         printMatrix(trainingCompMatrix);
+ //        System.out.println("InitialClassification() - trainingCompMatrix :");
+//         printMatrix(trainingCompMatrix);
 
-         System.out.println("InitialClassification() - trainingRespMatrix :");
-         printMatrix(trainingRespMatrix);
+ //        System.out.println("InitialClassification() - trainingRespMatrix :");
+ //        printMatrix(trainingRespMatrix);
 
          // Call MLE algorithm to calculate beta value from geneComponentMatrix
 	 if (isPDA == true) {
@@ -1912,22 +1913,22 @@ public class DAM extends AbstractAlgorithm {
 
 	     testMatrix = new Matrix(numOfGenes, 1);
 
-	     System.out.println("InitialClassification() - numOfGenes " + numOfGenes);
-	     System.out.println("InitialClassification() - numOfTestSamples  " + numOfTestSamples);
+//	     System.out.println("InitialClassification() - numOfGenes " + numOfGenes);
+//	     System.out.println("InitialClassification() - numOfTestSamples  " + numOfTestSamples);
 
              int testSample;
 	     for(int testSampleId=0; testSampleId<testIndices.length; testSampleId++) {
 
                  testSample = testIndices[testSampleId]; 
 
-                 System.out.println(" ");
-                 System.out.println("InitialClassification() -- begin testSample = " + testSample);
+ //                System.out.println(" ");
+ //                System.out.println("InitialClassification() -- begin testSample = " + testSample);
 
 		 testMatrix = geneCompMatrix.getMatrix(0, numOfGenes-1, testSample, testSample);
 
-		 System.out.println(" "); 
-		 System.out.println("InitialClassification() - testMatrix: "); 
-		 printMatrix(testMatrix);
+//		 System.out.println(" "); 
+//		 System.out.println("InitialClassification() - testMatrix: "); 
+//		 printMatrix(testMatrix);
 
 		 if (isPDA == true) {
 		     probFunction[testSample] = pdaAlgorithm(testMatrix);
@@ -1938,19 +1939,19 @@ public class DAM extends AbstractAlgorithm {
 
 	    } 
 
-	    System.out.println(" ");
-	    System.out.println("InitialClassification() - Probability Function: " );
+//	    System.out.println(" ");
+//	    System.out.println("InitialClassification() - Probability Function: " );
 
 	    for(int testSampleId=0; testSampleId<testIndices.length; testSampleId++) {
 
                 testSample = testIndices[testSampleId]; 
 
-	        for (int classId=0; classId<numberOfClasses; classId++) {
-		    System.out.print(probFunction[testSample][classId] + ",  ");
-                }
-	        System.out.println(" ");
+//	        for (int classId=0; classId<numberOfClasses; classId++) {
+//		    System.out.print(probFunction[testSample][classId] + ",  ");
+ //               }
+//	        System.out.println(" ");
 	    }
-	    System.out.println(" ");
+//	    System.out.println(" ");
 
 
             double max=0.0;
@@ -1985,14 +1986,14 @@ public class DAM extends AbstractAlgorithm {
 
          	classified[maxClassId].add(new Integer(testSample));
 
-  		System.out.println("InitialClassification() - Sample # " + testSample + " is in class " + maxClassId);
+ // 		System.out.println("InitialClassification() - Sample # " + testSample + " is in class " + maxClassId);
 
 	    }
-	    System.out.println(" ");
+//	    System.out.println(" ");
 
-         System.out.println(" "); 
-         System.out.println("******************** End InitialClassification() ********************"); 
-         System.out.println(" ");
+//         System.out.println(" "); 
+//         System.out.println("******************** End InitialClassification() ********************"); 
+//         System.out.println(" ");
 
          return new Matrix(probFunction);
 
@@ -2013,9 +2014,9 @@ public class DAM extends AbstractAlgorithm {
      */
     public Matrix A0Algorithm(Matrix expMatrix) throws AlgorithmException{
  
-	 System.out.println(" ");
-  	 System.out.println("******************** Begin A0Algorithm() ********************");
-	 System.out.println(" ");
+//	 System.out.println(" ");
+//  	 System.out.println("******************** Begin A0Algorithm() ********************");
+//	 System.out.println(" ");
 
          Matrix selectedExpMatrix, geneCompMatrix;
 
@@ -2113,9 +2114,9 @@ public class DAM extends AbstractAlgorithm {
 		 gene++;
 	     }
 
-	     System.out.println(" "); 
-	     System.out.println("A0Algorithm() - numOfSelectedGenes = " + numOfSelectedGenes); 
-	     System.out.println(" "); 
+//	     System.out.println(" "); 
+//	     System.out.println("A0Algorithm() - numOfSelectedGenes = " + numOfSelectedGenes); 
+//	     System.out.println(" "); 
 
          }
          else {
@@ -2143,19 +2144,19 @@ public class DAM extends AbstractAlgorithm {
 
          geneComponentMatrix = geneCompMatrix;
 
-         System.out.println(" ");
-         System.out.println("A0Algorithm() - geneCompMatrix row = " + geneCompMatrix.getRowDimension());
-         System.out.println("A0Algorithm() - geneCompMatrix column = " + geneCompMatrix.getColumnDimension());
+//         System.out.println(" ");
+ //        System.out.println("A0Algorithm() - geneCompMatrix row = " + geneCompMatrix.getRowDimension());
+//         System.out.println("A0Algorithm() - geneCompMatrix column = " + geneCompMatrix.getColumnDimension());
 
-         System.out.println(" "); 
-         System.out.println("A0Algorithm() - geneCompMatrix: "); 
-         for (int row = 0; row < geneCompMatrix.getRowDimension(); row++) {
-             for (int column = 0; column < geneCompMatrix.getColumnDimension(); column++) {
-                 System.out.print(geneCompMatrix.get(row, column) + ", ");
-             }
-             System.out.println(" "); 
-             System.out.println(" "); 
-         }
+ //        System.out.println(" "); 
+ //        System.out.println("A0Algorithm() - geneCompMatrix: "); 
+   //      for (int row = 0; row < geneCompMatrix.getRowDimension(); row++) {
+   //          for (int column = 0; column < geneCompMatrix.getColumnDimension(); column++) {
+   //              System.out.print(geneCompMatrix.get(row, column) + ", ");
+    //         }
+  //           System.out.println(" "); 
+  //           System.out.println(" "); 
+   //      }
 
 
 	 // 3. (A0Algorithm) Classification/Prediction: Classification is based on LOOCV:
@@ -2175,13 +2176,13 @@ public class DAM extends AbstractAlgorithm {
 
 	     subResponseMatrix = new Matrix(numOfTestSamples-1, numberOfClasses);
 
-	     System.out.println("A0Algorithm() - numOfGenes " + numOfGenes);
-	     System.out.println("A0Algorithm() - numOfTestSamples  " + numOfTestSamples);
+//	     System.out.println("A0Algorithm() - numOfGenes " + numOfGenes);
+//	     System.out.println("A0Algorithm() - numOfTestSamples  " + numOfTestSamples);
 
              //3. Leave out one sample from geneCompMatrix
 	     for (int leaveOutSample=0; leaveOutSample<numOfTestSamples; leaveOutSample++) {
 
-                 System.out.println("A0Algorithm() -- begin leaveOutSample = " + leaveOutSample);
+//                 System.out.println("A0Algorithm() -- begin leaveOutSample = " + leaveOutSample);
 
                  singularMatrix[leaveOutSample] = false;
 
@@ -2205,28 +2206,28 @@ public class DAM extends AbstractAlgorithm {
 		     }
 		 }
 
-		 System.out.println(" "); 
+/*		 System.out.println(" "); 
 		 System.out.println("A0Algorithm() - columnList: "); 
 		 for (int column = 0; column < columnList.length ; column++) {
 			 System.out.print(columnList[column] + ", ");
 		 }
 		 System.out.println(" "); 
 		 System.out.println(" "); 
-
+*/
 		 subGeneCompMatrix = geneCompMatrix.getMatrix(0, numOfGenes-1, columnList); 
 		 subResponseMatrix = responseMatrix.getMatrix(columnList, 0, numberOfClasses-1); 
 
-		 System.out.println(" "); 
-		 System.out.println("A0Algorithm() - subGeneCompMatrix: " + subGeneCompMatrix.getRowDimension() + " X " + 
-                       subGeneCompMatrix.getColumnDimension() ); 
-                 printMatrix(subGeneCompMatrix);
+//		 System.out.println(" "); 
+//		 System.out.println("A0Algorithm() - subGeneCompMatrix: " + subGeneCompMatrix.getRowDimension() + " X " + 
+ //                      subGeneCompMatrix.getColumnDimension() ); 
+ //                printMatrix(subGeneCompMatrix);
 
   	         testMatrix = geneCompMatrix.getMatrix(0, numOfGenes-1, leaveOutSample, leaveOutSample);
 
-		 System.out.println(" "); 
-		 System.out.println("A0Algorithm() - testMatrix: " + testMatrix.getRowDimension() + " X " + testMatrix.getColumnDimension() ); 
-		 System.out.println("A0Algorithm() - testMatrix: "); 
-                 printMatrix(testMatrix);
+//		 System.out.println(" "); 
+//		 System.out.println("A0Algorithm() - testMatrix: " + testMatrix.getRowDimension() + " X " + testMatrix.getColumnDimension() ); 
+//		 System.out.println("A0Algorithm() - testMatrix: "); 
+//                 printMatrix(testMatrix);
 
                  // (A0Algorithm) Call PDA or QDA algorithm
 		 if (isPDA == true) {
@@ -2251,15 +2252,15 @@ public class DAM extends AbstractAlgorithm {
 
 	    } 
 
-	    System.out.println(" ");
-	    System.out.println("A0Algorithm() - Probability Function: " );
-	    for (int leaveOutSample=0; leaveOutSample<numOfTestSamples; leaveOutSample++) {
-	        for (int classId=0; classId<numberOfClasses; classId++) {
-		    System.out.print(probFunction[leaveOutSample][classId] + ",  ");
-                }
-	        System.out.println(" ");
-	    }
-	    System.out.println(" ");
+//	    System.out.println(" ");
+//	    System.out.println("A0Algorithm() - Probability Function: " );
+//	    for (int leaveOutSample=0; leaveOutSample<numOfTestSamples; leaveOutSample++) {
+//	        for (int classId=0; classId<numberOfClasses; classId++) {
+//		    System.out.print(probFunction[leaveOutSample][classId] + ",  ");
+//                }
+//	        System.out.println(" ");
+//	    }
+//	    System.out.println(" ");
 
 
             double max=0.0;
@@ -2296,24 +2297,24 @@ public class DAM extends AbstractAlgorithm {
 
          	classified[maxClassId].add(new Integer(leaveOutSample));
 
-                System.out.println("A0Algorithm() - Sample # " + leaveOutSample + " is in class # " + maxClassId);
+  //              System.out.println("A0Algorithm() - Sample # " + leaveOutSample + " is in class # " + maxClassId);
 
 	    }
-	    System.out.println(" ");
+//	    System.out.println(" ");
 
          }
 
-         System.out.println("DAM.java - A0Algorithm() -  classified.length = " + classified.length);
+   //      System.out.println("DAM.java - A0Algorithm() -  classified.length = " + classified.length);
 
-	 for (int i = 0; i < classified.length; i++) {
-             System.out.println("DAM.java - A0Algorithm() -  classified[" + i + "].size() = " + classified[i].size());
-	 }
+	// for (int i = 0; i < classified.length; i++) {
+   //          System.out.println("DAM.java - A0Algorithm() -  classified[" + i + "].size() = " + classified[i].size());
+	// }
 
-	 System.out.println(" ");
+	// System.out.println(" ");
 
-	 System.out.println(" ");
-  	 System.out.println("******************** End A0Algorithm() ********************");
-	 System.out.println(" ");
+	// System.out.println(" ");
+  	 //System.out.println("******************** End A0Algorithm() ********************");
+	 //System.out.println(" ");
          
          return new Matrix(probFunction);
     } // end of A0Algorithm
@@ -2331,9 +2332,9 @@ public class DAM extends AbstractAlgorithm {
      */
     public Matrix A1Algorithm(Matrix expMatrix) throws AlgorithmException{
 
-	 System.out.println(" ");
-  	 System.out.println("******************** Begin A1Algorithm() ********************");
-	 System.out.println(" ");
+	// System.out.println(" ");
+  //	 System.out.println("******************** Begin A1Algorithm() ********************");
+	// System.out.println(" ");
 
          Matrix selectedExpMatrix;
 
@@ -2414,12 +2415,11 @@ public class DAM extends AbstractAlgorithm {
 		 gene++;
 	     }
 
-	     System.out.println(" "); 
-	     System.out.println("A1Algorithm() - numOfSelectedGenes = " + numOfSelectedGenes); 
-	     System.out.println(" "); 
+	 //    System.out.println(" "); 
+	 //    System.out.println("A1Algorithm() - numOfSelectedGenes = " + numOfSelectedGenes); 
+	 //    System.out.println(" "); 
 
-         }
-         else {
+         } else {
 
   	     for (int i = 0; i < numberOfGenes; i++) {
                  reducedGeneSet[used].add(new Integer(i));  
@@ -2440,7 +2440,7 @@ public class DAM extends AbstractAlgorithm {
 
 	     int gene=0;
 
-             System.out.println("A1Algorithm() -- begin leaveOutSample = " + leaveOutSample);
+        //     System.out.println("A1Algorithm() -- begin leaveOutSample = " + leaveOutSample);
 
 	     int[] columnList = new int[numberOfSamples-1];
 
@@ -2452,13 +2452,13 @@ public class DAM extends AbstractAlgorithm {
 		 }
 	     }
 
-	     System.out.println(" "); 
-	     System.out.println("A1Algorithm() - columnList: "); 
-	     for (int column = 0; column < columnList.length ; column++) {
-		     System.out.print(columnList[column] + ", ");
-             }
-	     System.out.println(" "); 
-	     System.out.println(" "); 
+	//     System.out.println(" "); 
+	//     System.out.println("A1Algorithm() - columnList: "); 
+	//     for (int column = 0; column < columnList.length ; column++) {
+	//	     System.out.print(columnList[column] + ", ");
+    //         }
+	//     System.out.println(" "); 
+	 //    System.out.println(" "); 
 
 
              //  2. (A1Algorithm) Dimension Reduction: Fit PLS using selectedExpMatrix to obtain PLS gene component matrix, geneCompMatrix
@@ -2547,8 +2547,8 @@ public class DAM extends AbstractAlgorithm {
 	     }
          } 
 
- 	 System.out.println(" ");
-	 System.out.println("A1Algorithm() - Probablity Function: " );
+ 	/* System.out.println(" ");
+	// System.out.println("A1Algorithm() - Probablity Function: " );
 	 for (int leaveOutSample=0; leaveOutSample<numberOfSamples; leaveOutSample++) {
 	    for (int classId=0; classId<numberOfClasses; classId++) {
 		System.out.print(probFunction[leaveOutSample][classId] + ",  ");
@@ -2556,7 +2556,7 @@ public class DAM extends AbstractAlgorithm {
 	    System.out.println(" ");
 	 }
 	 System.out.println(" ");
-
+*/
 
             double max=0.0;
             int maxClassId = 0;
@@ -2592,22 +2592,22 @@ public class DAM extends AbstractAlgorithm {
 
          	classified[maxClassId].add(new Integer(leaveOutSample));
 
-                System.out.println("A1Algorithm() - Sample # " + leaveOutSample + " is in class # " + maxClassId);
+           //     System.out.println("A1Algorithm() - Sample # " + leaveOutSample + " is in class # " + maxClassId);
 
 	    }
-	    System.out.println(" ");
+	  //  System.out.println(" ");
 
-         System.out.println("DAM.java - A1Algorithm() -  classified.length = " + classified.length);
+      //   System.out.println("DAM.java - A1Algorithm() -  classified.length = " + classified.length);
 
-	 for (int i = 0; i < classified.length; i++) {
-             System.out.println("DAM.java - A1Algorithm() -  classified[" + i + "].size() = " + classified[i].size());
-	 }
+	// for (int i = 0; i < classified.length; i++) {
+    //         System.out.println("DAM.java - A1Algorithm() -  classified[" + i + "].size() = " + classified[i].size());
+	// }
 
-	 System.out.println(" ");
+	// System.out.println(" ");
 
-	 System.out.println(" ");
-  	 System.out.println("******************** End A1Algorithm() ********************");
-	 System.out.println(" ");
+	// System.out.println(" ");
+  	// System.out.println("******************** End A1Algorithm() ********************");
+	// System.out.println(" ");
 
          return new Matrix(probFunction);
     } // end of A1Algorithm
@@ -2625,9 +2625,9 @@ public class DAM extends AbstractAlgorithm {
      */
     public Matrix A2Algorithm(Matrix expMatrix) throws AlgorithmException{
 
-	 System.out.println(" ");
-  	 System.out.println("******************** Begin A2Algorithm() ********************");
-	 System.out.println(" ");
+	// System.out.println(" ");
+  	// System.out.println("******************** Begin A2Algorithm() ********************");
+	// System.out.println(" ");
 
          Matrix subExpMatrix, subResponseMatrix;
 
@@ -2648,14 +2648,14 @@ public class DAM extends AbstractAlgorithm {
 	 // For i=1 to N Do
 	 //    Leave out sample (row) i of expMatrix to obtain a subExpMatrix
 
-         System.out.println("A2Algorithm() Start ---------");
+        // System.out.println("A2Algorithm() Start ---------");
 
 
          for (int leaveOutSample=0; leaveOutSample<numberOfSamples; leaveOutSample++) {
 
              singularMatrix[leaveOutSample] = false;
 
-             System.out.println("A2Algorithm() -- For leaveOutSamp = " + leaveOutSample + " Start: ");
+        //     System.out.println("A2Algorithm() -- For leaveOutSamp = " + leaveOutSample + " Start: ");
 
 	     // 1. Select Genes: Select a set, geneSet, of p* genes giving  expression matrix, 
              //    TrainingsubMatrix of size (N-1) x p*
@@ -2670,14 +2670,14 @@ public class DAM extends AbstractAlgorithm {
 		 }
 	     }
 
-	     System.out.println(" "); 
+	/*     System.out.println(" "); 
 	     System.out.println("A2Algorithm() - columnList: "); 
 	     for (int column = 0; column < columnList.length ; column++) {
 		     System.out.print(columnList[column] + ", ");
              }
 	     System.out.println(" "); 
 	     System.out.println(" "); 
-
+*/
 	     subExpMatrix = expMatrix.getMatrix(0, numberOfGenes-1, columnList); 
   	     subResponseMatrix = responseMatrix.getMatrix(columnList, 0, numberOfClasses-1); 
          
@@ -2728,9 +2728,9 @@ public class DAM extends AbstractAlgorithm {
 		     }
 		 }
 
-		 System.out.println(" "); 
-		 System.out.println("A2Algorithm() - numOfSelectedGenes = " + numOfSelectedGenes); 
-		 System.out.println(" "); 
+	//	 System.out.println(" "); 
+	//	 System.out.println("A2Algorithm() - numOfSelectedGenes = " + numOfSelectedGenes); 
+	//	 System.out.println(" "); 
 
 		 //  Construct selectedExpMatrix for MPLS algorithm
 		 selectedExpMatrix = new Matrix(numOfSelectedGenes, numberOfSamples);
@@ -2746,12 +2746,11 @@ public class DAM extends AbstractAlgorithm {
 		     gene++;
 		 }
 
-		 System.out.println(" "); 
-		 System.out.println("A2Algorithm() - numOfSelectedGenes = " + numOfSelectedGenes); 
-		 System.out.println(" "); 
+	//	 System.out.println(" "); 
+	//	 System.out.println("A2Algorithm() - numOfSelectedGenes = " + numOfSelectedGenes); 
+	//	 System.out.println(" "); 
                  
-  	     }
-	     else {
+  	     } else {
 
     	         for (int i = 0; i < numberOfGenes; i++) {
                      reducedGeneSetForA2[leaveOutSample][used].add(new Integer(i));  
@@ -2846,14 +2845,14 @@ public class DAM extends AbstractAlgorithm {
 	         probFunction[leaveOutSample] = qdaAlgorithm(testMatrix);
 	     }
 
-             System.out.println("A2Algorithm() -- For leaveOutSamp = " + leaveOutSample + " End: ");
-             System.out.println(" ");
-             System.out.println(" ");
+     //        System.out.println("A2Algorithm() -- For leaveOutSamp = " + leaveOutSample + " End: ");
+      //       System.out.println(" ");
+      //       System.out.println(" ");
 
          } 
 
-	 System.out.println(" ");
-	 System.out.println("A2Algorithm() - Probablity Function: " );
+	/* System.out.println(" ");
+	// System.out.println("A2Algorithm() - Probablity Function: " );
 	 for (int leaveOutSample=0; leaveOutSample<numberOfSamples; leaveOutSample++) {
 	    for (int classId=0; classId<numberOfClasses; classId++) {
 		System.out.print(probFunction[leaveOutSample][classId] + ",  ");
@@ -2861,7 +2860,7 @@ public class DAM extends AbstractAlgorithm {
 	    System.out.println(" ");
 	 }
 	 System.out.println(" ");
-
+*/
 
             double max=0.0;
             int maxClassId = 0;
@@ -2897,23 +2896,23 @@ public class DAM extends AbstractAlgorithm {
 
          	classified[maxClassId].add(new Integer(leaveOutSample));
 
-                System.out.println("A2Algorithm() - Sample # " + leaveOutSample + " is in class # " + maxClassId);
+          //      System.out.println("A2Algorithm() - Sample # " + leaveOutSample + " is in class # " + maxClassId);
 
 	    }
-	    System.out.println(" ");
+	//    System.out.println(" ");
 
 
-         System.out.println("DAM.java - A2Algorithm() -  classified.length = " + classified.length);
+   //      System.out.println("DAM.java - A2Algorithm() -  classified.length = " + classified.length);
 
-	 for (int i = 0; i < classified.length; i++) {
-             System.out.println("DAM.java - A2Algorithm() -  classified[" + i + "].size() = " + classified[i].size());
-	 }
+	// for (int i = 0; i < classified.length; i++) {
+  //           System.out.println("DAM.java - A2Algorithm() -  classified[" + i + "].size() = " + classified[i].size());
+	// }
 
-	 System.out.println(" ");
+	// System.out.println(" ");
 
-	 System.out.println(" ");
-  	 System.out.println("******************** End A2Algorithm() ********************");
-	 System.out.println(" ");
+	// System.out.println(" ");
+  	// System.out.println("******************** End A2Algorithm() ********************");
+	// System.out.println(" ");
 
          return new Matrix(probFunction);
     } // end of A2algorithm
@@ -2984,7 +2983,7 @@ public class DAM extends AbstractAlgorithm {
 
      
       if (degreeOfFreedom <= 0) {
-         System.out.println("DAM.java: getTValue() - degreeOfFreedom <= 0, return");
+    //     System.out.println("DAM.java: getTValue() - degreeOfFreedom <= 0, return");
          return -2.0;
       } else if (degreeOfFreedom <= 30) {
          row = degreeOfFreedom-1;

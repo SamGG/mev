@@ -4,13 +4,15 @@ All rights reserved.
 */
 /*
  * $RCSfile: RNExperimentCentroidsViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-03-10 20:39:03 $
- * $Author: braistedj $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:51:24 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.rn;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,12 +25,13 @@ import javax.swing.JPopupMenu;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidsViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
 public class RNExperimentCentroidsViewer extends ExperimentClusterCentroidsViewer implements java.io.Serializable {
-    public static final long serialVersionUID = 202014050001L;
+//    public static final long serialVersionUID = 202014050001L;
     
     private static final String SAVE_ALL_CLUSTERS_CMD = "save-all-clusters-cmd";
     private static final String SET_Y_TO_EXPERIMENT_MAX_CMD = "set-y-to-exp-max-cmd";
@@ -48,15 +51,13 @@ public class RNExperimentCentroidsViewer extends ExperimentClusterCentroidsViewe
         this.popup = createJPopupMenu(listener);
         getContentComponent().addMouseListener(listener);
     }
+    /**
+     * Constructs a <code>RNExperimentCentroidsViewer</code> for specified experiment
+     * and clusters.
+     */
     
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {        
-        Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
-	getContentComponent().addMouseListener(listener);
-    }
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        
+    public RNExperimentCentroidsViewer(ExperimentClusterCentroidViewer cv, Integer exptID) {
+    	super(cv, exptID);
     }
     
     /**

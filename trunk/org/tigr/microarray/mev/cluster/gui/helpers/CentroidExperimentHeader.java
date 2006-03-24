@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: CentroidExperimentHeader.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-02-23 20:59:48 $
- * $Author: caliente $
+ * $Revision: 1.7 $
+ * $Date: 2006-03-24 15:49:54 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -24,6 +24,10 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.beans.Encoder;
+import java.beans.Expression;
+import java.beans.PersistenceDelegate;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -31,13 +35,14 @@ import java.io.ObjectOutputStream;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
+import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.util.FloatMatrix;
 
 /**
  *  Creates a header with a centroid vector image and centroid label
  */
 public class CentroidExperimentHeader extends JPanel implements java.io.Serializable {
-    public static final long serialVersionUID = 201010001L;    
+//    public static final long serialVersionUID = 201010001L;    
     
     private String vectorString;
     private CentroidVectorPanel centroidVectorPanel;
@@ -50,6 +55,7 @@ public class CentroidExperimentHeader extends JPanel implements java.io.Serializ
     private BufferedImage posColorImage;
     private BufferedImage negColorImage;
     private boolean useDoubleGradient = true;
+    private FloatMatrix centroidData;
     
     private FloatMatrix mainCentroidData;
     /**
@@ -59,9 +65,10 @@ public class CentroidExperimentHeader extends JPanel implements java.io.Serializ
      * @param centroidData, has data for all centroids that can be shown in the header
      * @param vectorString, label for centroid vector
      */
-    public CentroidExperimentHeader(JComponent expHeader, FloatMatrix centroidData, int [][] clusters, String VectorString) {
+    public CentroidExperimentHeader(JComponent expHeader, FloatMatrix centroidData, int [][] clusters, String vectorString) {
         super();
         setLayout(new GridBagLayout());
+        this.centroidData = centroidData;
         setBackground(Color.white);
         this.clusters = clusters;
         this.expHeader = (ExperimentHeader)expHeader;
@@ -69,41 +76,21 @@ public class CentroidExperimentHeader extends JPanel implements java.io.Serializ
         this.centroidVectorPanel = new CentroidVectorPanel(centroidData, insets);
         add(expHeader, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         add(centroidVectorPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-        vectorString = VectorString;
+        this.vectorString = vectorString;
         currWidth = currHeight = 0;
     }
     
-    public CentroidExperimentHeader(){ }
-    
-    private void writeObject(ObjectOutputStream oos) throws IOException {
-        oos.writeObject(expHeader);
-        
-        oos.writeObject(clusters);
-        oos.writeObject(mainCentroidData);
-        oos.writeInt(clusterIndex);
-        oos.writeObject(insets);
-        oos.writeObject(this.vectorString);
-        oos.writeInt(currWidth);
-        oos.writeInt(currHeight);
-        oos.writeObject(centroidVectorPanel);
-        oos.writeBoolean(useDoubleGradient);
+    public static PersistenceDelegate getPersistenceDelegate(){
+    	return new CentroidExperimentHeaderPersistenceDelegate();
     }
-    
-    
-    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        this.expHeader = (ExperimentHeader)ois.readObject();
-        
-        this.clusters = (int[][])ois.readObject();
-        this.mainCentroidData = (FloatMatrix)ois.readObject();
-        this.clusterIndex = ois.readInt();
-        this.insets = (Insets)ois.readObject();
-        this.vectorString = (String)ois.readObject();
-        this.currWidth = ois.readInt();
-        this.currHeight = ois.readInt();
-        this.centroidVectorPanel = (CentroidExperimentHeader.CentroidVectorPanel)ois.readObject();
-        this.useDoubleGradient = ois.readBoolean();
+    public JComponent getExpHeader(){return expHeader;}
+    public FloatMatrix getCentroidData(){return centroidData;}
+    public int[][] getClusters(){return clusters;}
+    public String getVectorString(){return vectorString;}
+    public void setExperiment(Experiment e){
+    	this.expHeader.setExperiment(e);
     }
-    
+    private CentroidExperimentHeader(){ }
     
     /**
      *  Returns the current width of the header.
@@ -118,13 +105,6 @@ public class CentroidExperimentHeader extends JPanel implements java.io.Serializ
     public int getCurrHeight(){
         return currHeight + this.expHeader.getHeight();
     }
-    
-    /**
-     *  Returns the current width of the header.
-     */
-    //  public int getWidth(){
-    //      return currWidth;
-    //  }
     
     /**
      * Sets index of current cluster to view
@@ -150,11 +130,24 @@ public class CentroidExperimentHeader extends JPanel implements java.io.Serializ
         return clusters[clusterIndex];
     }
     
+    private static class CentroidExperimentHeaderPersistenceDelegate extends PersistenceDelegate{
+
+		protected Expression instantiate(Object o, Encoder encoder) {
+			CentroidExperimentHeader oldInstance = (CentroidExperimentHeader)o;
+			return new Expression(oldInstance, oldInstance.getClass(), "new", 
+					new Object[]{oldInstance.getExpHeader(), oldInstance.getCentroidData(), oldInstance.getClusters(), oldInstance.getVectorString()});
+		}
+    	
+		public void initialize(Class type, Object oldInstance, Object newInstance, Encoder encoder) {
+			
+		}
+
+    }
     
     /**
      * The component to display som vector.
      */
-    public class CentroidVectorPanel extends JPanel implements java.io.Serializable {
+    public class CentroidVectorPanel extends JPanel {
         
         private FloatMatrix codes;
         private int cluster;
@@ -171,38 +164,13 @@ public class CentroidExperimentHeader extends JPanel implements java.io.Serializ
         /**
          * Constructs a <code>SOMVectorPanel</code> with specified codes.
          */
-        public CentroidVectorPanel(FloatMatrix codes, Insets insets) {
+        private CentroidVectorPanel(FloatMatrix codes, Insets insets) {
             setBackground(Color.white);
             this.codes = codes;
             this.insets = insets;
         }
         
-        public CentroidVectorPanel(){ }
-        
-        private void writeObject(ObjectOutputStream oos) throws IOException {
-            oos.defaultWriteObject();
-            oos.writeObject(codes);
-            oos.writeInt(this.cluster);
-            oos.writeFloat(this.minValue);
-            oos.writeFloat(this.maxValue);
-            oos.writeObject(elementSize);
-            oos.writeBoolean(this.drawBorders);
-            oos.writeBoolean(this.isAntiAliasing);
-            oos.writeObject(insets);
-        }
-        
-        private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-            ois.defaultReadObject();
-            this.codes = (FloatMatrix)ois.readObject();
-            this.cluster = ois.readInt();
-            this.minValue = ois.readFloat();
-            this.maxValue = ois.readFloat();
-            this.elementSize = (Dimension)ois.readObject();
-            this.drawBorders = ois.readBoolean();
-            this.isAntiAliasing = ois.readBoolean();
-            this.insets = (Insets)ois.readObject();
-        }
-        
+        private CentroidVectorPanel(){ }
         
         /**
          * Sets gradient images.

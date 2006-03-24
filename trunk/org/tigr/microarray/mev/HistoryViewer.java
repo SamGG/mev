@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: HistoryViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-02-24 14:57:05 $
- * $Author: wwang67 $
+ * $Revision: 1.7 $
+ * $Date: 2006-03-24 15:49:44 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 /*
@@ -50,8 +50,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
  *
  * @author braisted
  */
-public class HistoryViewer extends ViewerAdapter implements java.io.Serializable {        
-    public static final long serialVersionUID = 100010201080001L;
+public class HistoryViewer extends ViewerAdapter {
     
     /** Contains the text contents of the viewer.
      */    
@@ -64,6 +63,12 @@ public class HistoryViewer extends ViewerAdapter implements java.io.Serializable
     public HistoryViewer() {
         initContent();        
         addHistory("Open Multiple Array Viewer");
+        initMenu();
+        content.addMouseListener(new HistoryListener());
+    }
+    
+    public HistoryViewer(JTextArea content, JComponent header){
+    	this.content = content;
         initMenu();
         content.addMouseListener(new HistoryListener());
     }

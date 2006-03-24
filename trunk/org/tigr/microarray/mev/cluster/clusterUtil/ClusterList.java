@@ -4,17 +4,14 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterList.java,v $
- * $Revision: 1.6 $
- * $Date: 2005-03-10 15:48:56 $
- * $Author: braistedj $
+ * $Revision: 1.7 $
+ * $Date: 2006-03-24 15:49:52 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.clusterUtil;
 
 import java.awt.Color;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Vector;
 
 /** The ClusterList class is used to collect and administer
@@ -22,8 +19,8 @@ import java.util.Vector;
  * used to collect clusters created from a particular analysis run.
  *
  */
-public class ClusterList extends Vector implements java.io.Serializable {        
-    public static final long serialVersionUID = 1000102010203020001L;
+public class ClusterList extends Vector {        
+    //public static final long serialVersionUID = 1000102010203020001L;
     /** a String identifing the algorithm origin.
      * (possibly the origin will not be an algorithm)
      */    
@@ -50,16 +47,18 @@ public class ClusterList extends Vector implements java.io.Serializable {
         this.algorithmName = AlgorithmName;
     }
     
-    private void writeObject(ObjectOutputStream oos) throws IOException {
-        oos.writeInt(algorithmIndex);
-        oos.writeObject(algorithmName);
+    public static String[] getPersistenceDelegateArgs() {
+    	return new String[]{"vector", "algorithmName", "algorithmIndex"};
+    }
+    public Vector getVector() {
+    	return new Vector();
     }
     
-    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        algorithmIndex = ois.readInt();
-        algorithmName = (String)(ois.readObject());
+    public ClusterList(Vector v, String name, int index) {
+    	super(v);
+    	this.algorithmIndex = index;
+    	this.algorithmName = name;
     }
-    
     
     /** Adds a cluster to the list
      */
@@ -138,12 +137,18 @@ public class ClusterList extends Vector implements java.io.Serializable {
     public String getAlgorithmName(){
         return this.algorithmName;
     }
+    public void setAlgorithmName(String name) {
+    	algorithmName = name;
+    }
     
     /** Returns a result index for the ClusterList
      */    
     public int getAlgorithmIndex(){
         return this.algorithmIndex;
     } 
+    public void setAlgorithmIndex(int index) {
+    	this.algorithmIndex = index;
+    }
     
     /** Returns true if the index is in range.
      */    

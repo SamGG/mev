@@ -44,6 +44,11 @@ public class KNNCValidationInfoViewer extends ViewerAdapter implements java.io.S
         setMaxWidth(content, header);        
     }
     
+    public KNNCValidationInfoViewer(JTextArea content, JComponent header){
+    	this.content = content;
+    	this.header = header;
+        setMaxWidth(content, header);      
+    }
     /**
      * Returns component to be inserted into the framework scroll pane.
      */

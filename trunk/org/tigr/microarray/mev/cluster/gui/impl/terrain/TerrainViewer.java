@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: TerrainViewer.java,v $
- * $Revision: 1.9 $
- * $Date: 2005-03-10 20:33:21 $
- * $Author: braistedj $
+ * $Revision: 1.10 $
+ * $Date: 2006-03-24 15:52:04 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.terrain;
@@ -26,6 +26,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 import java.util.ArrayList;
 
 import javax.media.j3d.AmbientLight;
@@ -95,8 +96,8 @@ import com.sun.j3d.utils.picking.PickResult;
 import com.sun.j3d.utils.universe.PlatformGeometry;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
-public class TerrainViewer extends JPanel implements IViewer, java.io.Serializable {
-    public static final long serialVersionUID = 202018020001L;
+public class TerrainViewer extends JPanel implements IViewer {
+
 
     private IData data;
     private IFramework framework;
@@ -162,10 +163,13 @@ public class TerrainViewer extends JPanel implements IViewer, java.io.Serializab
     // undo zoom operation support
     private UndoManager undoManager = new UndoManager();
     private Experiment experiment;
+    private int exptID = 0;
+
 
     public TerrainViewer(boolean isGenes, Experiment experiment, int[][] clusters, float[][] weights, float[][] locations, float sigma, int labelIndex) {
         this.isGenes = isGenes;
         this.experiment = experiment;
+        this.exptID = experiment.getId();
         this.clusters = clusters;
         this.weights = weights;
         this.locations = locations;
@@ -246,30 +250,37 @@ public class TerrainViewer extends JPanel implements IViewer, java.io.Serializab
         this.onScreenCanvas.addMouseMotionListener(listener);
         this.onScreenCanvas.addKeyListener(listener);
     }
-    
-    public TerrainViewer(){  }
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        System.out.println("Serialize TRN viewer");
-        oos.writeBoolean(this.isGenes);
-        oos.writeObject(this.experiment);
-        oos.writeObject(this.clusters);
-        oos.writeObject(this.weights);
-        oos.writeObject(this.locations);
-        oos.writeFloat(this.sigma);
+    /**
+     * Constructs a new TerrainViewer from saved data.  Must be used in conjunction with 
+     * the setElement method.
+     * @param exptID
+     * @param isGenes
+     * @param clusters
+     * @param weights
+     * @param locations
+     * @param sigma
+     */
+    public TerrainViewer(Integer exptID, Boolean isGenes, int[][] clusters, 
+    		float[][] weights, float[][] locations, Float sigma, Integer labelIndex){
+    	this.exptID = exptID.intValue();
+        this.isGenes = isGenes.booleanValue();
+        this.clusters = clusters;
+        this.weights = weights;
+        this.locations = locations;
+        this.sigma = sigma.floatValue();
+        this.labelIndex = labelIndex.intValue();
     }
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        
-        //Data read
-        this.isGenes = ois.readBoolean();
-        this.experiment = (Experiment)ois.readObject();
-        this.clusters = (int [][])ois.readObject();
-        this.weights = (float [][])ois.readObject();
-        this.locations = (float [][])ois.readObject();
-        this.sigma = ois.readFloat();
-        
-        //construct other objects
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{new Integer(exptID), new Boolean(isGenes), clusters, 
+    			weights, locations, new Float(sigma), new Integer(labelIndex)});
+    }
+	/**
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
+	 */
+	public void setExperiment(Experiment e) {
+		this.experiment = e;
+		this.exptID = experiment.getId();
         setPreferredSize(new Dimension(10, 10));
         Listener listener = new Listener();
         // create the universe 
@@ -324,8 +335,6 @@ public class TerrainViewer extends JPanel implements IViewer, java.io.Serializab
         // add gene shapes
         this.genesShape = new GenesShape(GenesShape.POINTS, this.locations, this.up_left_point, this.bottom_right_point);
         this.genesShape.setBounds(boundingLeaf.getRegion());
-        // add labels
-        this.labelIndex = framework.getDisplayMenu().getLabelIndex();
         // create scene
         Node[] nodes = new Node[] {this.selectionShape, landTransform, sliderBehavior, this.keyMotionBehavior, this.driftInterpolator, this.genesShape, this.linksShape};
         this.sceneGroup = createSceneGraph(nodes, boundingLeaf);
@@ -1119,13 +1128,13 @@ public class TerrainViewer extends JPanel implements IViewer, java.io.Serializab
     /** Returns the viewer's clusters or null
      */
     public int[][] getClusters() {
-        return null;
+        return this.clusters;
     }    
     
     /**  Returns the viewer's experiment or null
      */
     public Experiment getExperiment() {
-        return null;
+        return this.experiment;
     }    
 
     /** Returns int value indicating viewer type
@@ -1292,5 +1301,21 @@ public class TerrainViewer extends JPanel implements IViewer, java.io.Serializab
             return "Zoom";
         }
     }
+
+
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentID()
+	 */
+	public int getExperimentID() {
+		return this.exptID;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
+	 */
+	public void setExperimentID(int id) {
+		this.exptID = id;
+	}
 
 }

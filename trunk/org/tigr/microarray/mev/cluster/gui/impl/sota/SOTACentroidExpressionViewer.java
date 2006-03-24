@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOTACentroidExpressionViewer.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-02-23 20:59:55 $
- * $Author: caliente $
+ * $Revision: 1.9 $
+ * $Date: 2006-03-24 15:51:44 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.sota;
@@ -26,6 +26,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -46,8 +48,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLCluster;
 import org.tigr.util.FloatMatrix;
 
 
-public class SOTACentroidExpressionViewer extends JPanel implements IViewer, java.io.Serializable {
-    public static final long serialVersionUID = 202017010001L;
+public class SOTACentroidExpressionViewer extends JPanel implements IViewer {
      
     private int numberOfCentroids;
     private int [] clusterPopulation;
@@ -86,6 +87,7 @@ public class SOTACentroidExpressionViewer extends JPanel implements IViewer, jav
     private int maxUniqueIDWidth, maxGeneNameWidth;
     private Listener listener;
     private boolean useDoubleGradient = true;
+    private int exptID = 0;
     
     /**
      * Constructs an <code>SOTACentroidEpressionViewer</code> with specified
@@ -104,6 +106,7 @@ public class SOTACentroidExpressionViewer extends JPanel implements IViewer, jav
         }
         
         this.experiment = centroidData;
+        this.exptID = experiment.getId();
         this.clusterPopulation = clusterPop;
         this.clusterDiversity = clusterDiv;
         this.numberOfCentroids = clusterPopulation.length;
@@ -119,40 +122,14 @@ public class SOTACentroidExpressionViewer extends JPanel implements IViewer, jav
         this.addMouseListener(listener);
     }
     
-    private void writeObject(ObjectOutputStream oos) throws IOException {
-        oos.writeObject(header);
-        oos.writeObject(experiment);
-        oos.writeObject(clusters);
-        oos.writeInt(numberOfCentroids);
-        oos.writeObject(clusterPopulation);
-        oos.writeObject(this.clusterDiversity);
-        oos.writeObject(this.selectedClusterList);
-        oos.writeObject(samplesOrder);
-        oos.writeObject(elementSize);
-        oos.writeBoolean(useDoubleGradient);
-    }
-        
-    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        header = (ExperimentHeader)ois.readObject();
-        experiment = (Experiment)ois.readObject();
-        clusters = (int[][])ois.readObject(); 
-        this.numberOfCentroids = ois.readInt();
-        this.clusterPopulation = (int [])ois.readObject();
-        this.clusterDiversity = (FloatMatrix)ois.readObject();
-        this.selectedClusterList = (ArrayList)ois.readObject();
-        samplesOrder = (int[])ois.readObject();
-        elementSize = (Dimension)ois.readObject();
-        this.useDoubleGradient = ois.readBoolean();
-        
-        TEXT_LEFT_MARGIN = 20; 
-        CLUSTER_POP_SPACER = 20;
-        POP_DIV_SPACER = 20;
-        
-        this.firstSelectedRow = -1;
-        this.lastSelectedRow = -1;
-        this.listener = new Listener();
-        addMouseListener(listener);
-        addMouseMotionListener(listener);
+    //These methods are used only for compatibility with IViewer
+    public Expression getExpression(){return null;}
+    public int getExperimentID(){return exptID;}
+    public void setExperimentID(int i){this.exptID = i;}
+    public void setExperiment(Experiment e){
+    	this.experiment = e;
+    	this.exptID = e.getId();
+    	this.header.setExperiment(e);
     }
     
     /**
@@ -361,18 +338,18 @@ public class SOTACentroidExpressionViewer extends JPanel implements IViewer, jav
     /**
      * Saves all the clusters.
      */
-    public void saveClusters(Frame frame) throws Exception {
-        frame = frame == null ? JOptionPane.getFrameForComponent(this) : frame;
-        ExperimentUtil.saveExperiment(frame, getExperiment(), getData(), getClusters());
-    }
+//    public void saveClusters(Frame frame) throws Exception {
+//        frame = frame == null ? JOptionPane.getFrameForComponent(this) : frame;
+//        ExperimentUtil.saveExperiment(frame, getExperiment(), getData(), getClusters());
+//    }
     
     /**
      * Saves current cluster.
      */
-    public void saveCluster(Frame frame) throws Exception {
-        frame = frame == null ? JOptionPane.getFrameForComponent(this) : frame;
-        ExperimentUtil.saveExperiment(frame, getExperiment(), getData(), getCluster());
-    }
+//    public void saveCluster(Frame frame) throws Exception {
+//        frame = frame == null ? JOptionPane.getFrameForComponent(this) : frame;
+//        ExperimentUtil.saveExperiment(frame, getExperiment(), getData(), getCluster());
+//    }
     
     /**
      * Sets a shape size.

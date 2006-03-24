@@ -12,6 +12,7 @@ package org.tigr.microarray.mev.cluster.gui.helpers;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.beans.Expression;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -47,13 +48,18 @@ import org.tigr.microarray.mev.cluster.gui.IViewer;
  */
 
 
-public class TableViewer extends JPanel implements IViewer, java.io.Serializable {
-    public static final long serialVersionUID = 201100001L;
+public class TableViewer extends JPanel implements IViewer {
+//    public static final long serialVersionUID = 201100001L;
     
     protected JTable table;
     protected TableModel model;
     protected JScrollPane pane;
     protected IFramework framework;
+    private int exptID = 0;
+    
+    //EH
+    Object[][] data;
+    String[] headerNames;
     
     /** Creates a new instance of TableViewer */
     public TableViewer() { }
@@ -63,6 +69,8 @@ public class TableViewer extends JPanel implements IViewer, java.io.Serializable
      * @param data table data
      */    
     public TableViewer(String [] headerNames, Object [][] data) {
+    	this.data = data;
+    	this.headerNames = headerNames;
         model = new DefaultViewerTableModel(headerNames, data);
         
         table = new JTable(model);
@@ -74,19 +82,11 @@ public class TableViewer extends JPanel implements IViewer, java.io.Serializable
         add(pane, new GridBagConstraints(0,0,1,1,1.0,1.0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
     }
     
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        oos.writeObject(this.model);
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{headerNames, data});
     }
-    
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {                
-        this.model = (TableModel)ois.readObject();
-        this.table = new JTable(model);
-        this.table.getTableHeader().addMouseListener(new TableHeaderMouseListener());       
-        pane = new JScrollPane(table);      
-        this.setLayout(new GridBagLayout());
-        add(pane, new GridBagConstraints(0,0,1,1,1.0,1.0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));        
-    }
+    public void setExperiment(Experiment e){}
     
     /** Allows the substitution of a specific table model.
      * @param model This model replaces the TableViewer's default TableModel.
@@ -143,7 +143,7 @@ public class TableViewer extends JPanel implements IViewer, java.io.Serializable
      *  Internal Classes
      *
      */    
-    public class DefaultViewerTableModel extends AbstractTableModel implements java.io.Serializable {
+    public class DefaultViewerTableModel extends AbstractTableModel {
         String[] columnNames;
         Object[][] tableData;
         boolean [] numerical;
@@ -415,5 +415,19 @@ public class TableViewer extends JPanel implements IViewer, java.io.Serializable
     public int getViewerType() {
         return -1;
     }
+    
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentID()
+	 */
+	public int getExperimentID() {
+		return this.exptID;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
+	 */
+	public void setExperimentID(int id) {
+		this.exptID = id;
+	}
     
 }

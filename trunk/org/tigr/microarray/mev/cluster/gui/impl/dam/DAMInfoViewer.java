@@ -52,6 +52,11 @@ public class DAMInfoViewer extends ViewerAdapter implements java.io.Serializable
         content = createContent(clusters, genes);
         setMaxWidth(content, header);
     }
+    public DAMInfoViewer(JTextArea content, JComponent header){
+    	this.content = content;
+    	this.header = header;
+        setMaxWidth(content, header);
+    }
     
     /**
      * Constructs a <code>KMCInfoViewer</code> with specified

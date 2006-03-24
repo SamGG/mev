@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: Viewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-02-23 21:00:04 $
- * $Author: caliente $
+ * $Revision: 1.5 $
+ * $Date: 2006-03-24 15:52:39 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.util.awt;
@@ -23,7 +23,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public abstract class Viewer extends JPanel implements Serializable, Printable {
-    public static final long serialVersionUID = 100010301010001L;
+//    public static final long serialVersionUID = 100010301010001L;
     
     protected JFrame frame;
     protected Vector palette;

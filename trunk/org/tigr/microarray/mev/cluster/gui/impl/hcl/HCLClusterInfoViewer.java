@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: HCLClusterInfoViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-23 20:59:51 $
- * $Author: caliente $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:50:40 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.hcl;
@@ -16,6 +16,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.beans.Expression;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -24,9 +25,7 @@ import javax.swing.JTextArea;
 
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
-public class HCLClusterInfoViewer extends ViewerAdapter implements java.io.Serializable {
-    
-    public static final long serialVersionUID = 202006030001L;
+public class HCLClusterInfoViewer extends ViewerAdapter {
 
     private JComponent header;
     private JTextArea  content;
@@ -56,6 +55,25 @@ public class HCLClusterInfoViewer extends ViewerAdapter implements java.io.Seria
         content = createContent(clusters, genes);
         setMaxWidth(content, header);
     }
+    /**
+     * XMLEncoder/Decoder constructor
+     * 
+     * @param content
+     * @param clusterGenes
+     * @param zThr
+     */
+    public HCLClusterInfoViewer(JTextArea content, boolean clusterGenes, float zThr) {
+    	this.zeroThreshold = zThr;
+    	this.header = createHeader();
+    	this.clusterGenes = clusterGenes;
+    	this.content = content;
+    	setMaxWidth(content, header);
+    }
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    		new Object[]{this.content, new Boolean(this.clusterGenes), new Float(this.zeroThreshold)});
+    }
+
     
     /**
      * Returns component to be inserted into the framework scroll pane.

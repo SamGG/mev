@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOMCentroidsViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2005-03-10 20:22:04 $
- * $Author: braistedj $
+ * $Revision: 1.5 $
+ * $Date: 2006-03-24 15:51:36 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.som;
@@ -48,13 +48,12 @@ public class SOMCentroidsViewer extends CentroidsViewer {
         getContentComponent().addMouseListener(listener);
     }
     
-
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { }
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {        
-        Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
-	getContentComponent().addMouseListener(listener);
+    /**
+     * Constructs a <code>CentroidsViewer</code> for specified experiment
+     * and clusters.
+     */    
+	public SOMCentroidsViewer(CentroidViewer cv) {
+		super(cv);
     }
     
     

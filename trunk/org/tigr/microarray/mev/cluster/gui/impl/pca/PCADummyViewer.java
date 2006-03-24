@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.Expression;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
@@ -48,22 +49,16 @@ public class PCADummyViewer extends ViewerAdapter implements java.io.Serializabl
         popup = createJPopupMenu();
     }
     
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        //oos.writeObject(this.experiment);        
-        //oos.defaultWriteObject();
-        oos.writeObject(this.U);     
-        oos.writeObject(this.S);
-        oos.writeInt(this.mode);
-        //oos.writeObject();;        
+    public PCADummyViewer(FloatMatrix U, FloatMatrix S, Integer mode){
+    	this(U, S, mode.intValue());
+
     }    
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        //this.experiment = (Experiment)ois.readObject();        
-        this.U = (FloatMatrix)ois.readObject();     
-        this.S = (FloatMatrix)ois.readObject();
-        this.mode = ois.readInt();
-        //ois.readObject();
-        //ois.defaultReadObject();
+    /**
+     * @inheritDoc
+     */
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{U, S, new Integer(mode)});
     }  
     
     public void onSelected(IFramework framework) {

@@ -9,9 +9,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: KNNCCentroidViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2005-03-10 20:21:58 $
- * $Author: braistedj $
+ * $Revision: 1.5 $
+ * $Date: 2006-03-24 15:50:57 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -45,13 +45,11 @@ public class KNNCCentroidViewer extends CentroidViewer {
 	this.popup = createJPopupMenu(listener);
 	getContentComponent().addMouseListener(listener);        
     }
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { }    
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {        
-        Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
-	getContentComponent().addMouseListener(listener);
+    /**
+     * @inheritDoc
+     */
+    public KNNCCentroidViewer(int[][] clusters, float[][] variances, float[][] means, float[][] codes, Integer id) {
+    	super(clusters, variances, means, codes, id);
     }
     
     

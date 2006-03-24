@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: DAM3DViewer.java,v $
- * $Revision: 1.1 $
- * $Date: 2005-03-10 15:20:14 $
- * $Author: braistedj $
+ * $Revision: 1.2 $
+ * $Date: 2006-03-24 15:49:59 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.dam;
@@ -16,6 +16,7 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
@@ -27,12 +28,13 @@ import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 import org.tigr.util.FloatMatrix;
 
-public class DAM3DViewer extends ViewerAdapter {
+public class DAM3DViewer extends ViewerAdapter implements IViewer {
     
     private static final String RESET_CMD   = "reset-cmd";
     private static final String OPTIONS_CMD = "options-cmd";
@@ -54,6 +56,10 @@ public class DAM3DViewer extends ViewerAdapter {
     private boolean geneViewer;
     private IFramework framework;
     
+    private FloatMatrix matrix3D;
+    private int mode;
+    private int exptID = 0;
+    
     /**
      * Constructs a <code>DAM3DViewer</code> with specified mode,
      * U-matrix and an experiment data.
@@ -61,10 +67,36 @@ public class DAM3DViewer extends ViewerAdapter {
     public DAM3DViewer(Frame frame, int mode, FloatMatrix matrix3D, Experiment experiment, boolean geneViewer) {
         this.frame = frame;
         this.experiment = experiment;
+        this.exptID = experiment.getId();
         this.geneViewer = geneViewer;
+        this.mode = mode;
+        this.matrix3D = matrix3D;
         content = createContent(mode, matrix3D, experiment, geneViewer);
         popup = createJPopupMenu();
     }
+    
+    public DAM3DViewer(int mode, FloatMatrix matrix3D, boolean geneViewer, Integer exptID) {
+     //   this.frame = frame;
+        this.mode = mode;
+        this.geneViewer = geneViewer;
+        this.exptID = exptID.intValue();
+        this.matrix3D = matrix3D;
+        popup = createJPopupMenu();
+    }
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{new Integer(this.mode), matrix3D, new Boolean(geneViewer), new Integer(exptID)});
+    }
+    public void setExperiment(Experiment e){
+    	this.experiment = e;
+    	this.exptID = e.getId();
+    	this.content = createContent(mode, matrix3D, experiment, geneViewer);
+        popup = createJPopupMenu();
+    }
+    public int getExperimentID(){return exptID;}
+    
+    
+    
     
     /**
      * Updates the viewer data and its content.

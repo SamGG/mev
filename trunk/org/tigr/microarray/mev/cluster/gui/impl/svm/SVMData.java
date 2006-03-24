@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMData.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-03-10 20:21:56 $
- * $Author: braistedj $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:51:53 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -19,8 +19,7 @@ import javax.swing.JOptionPane;
 
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 
-class SVMData implements java.io.Serializable {
-    public static final long serialVersionUID = 202018030001L;
+public class SVMData {
 
     public SVMData() {
         constant = 1.0f;

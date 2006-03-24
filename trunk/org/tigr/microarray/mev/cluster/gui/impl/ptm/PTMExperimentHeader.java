@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMExperimentHeader.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-23 20:59:53 $
- * $Author: caliente $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:51:08 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.ptm;
@@ -21,10 +21,15 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.beans.Encoder;
+import java.beans.Expression;
+import java.beans.PersistenceDelegate;
 import java.util.Vector;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+
+import org.tigr.microarray.mev.cluster.gui.helpers.CentroidExperimentHeader;
 
 /**
  *
@@ -39,28 +44,26 @@ public class PTMExperimentHeader extends javax.swing.JPanel {
     private BufferedImage posColorImage;
     private BufferedImage negColorImage;
     private boolean useDoubleGradient = true;
+    private JComponent expHeader;
+    private Vector templateVector;
 
     /** Creates new PTMExperimentHeader */
     
     public PTMExperimentHeader(JComponent expHeader, Vector templateVector) {
     	setLayout(new BorderLayout());
 		setBackground(Color.white);
+		this.expHeader = expHeader;
+		this.templateVector = templateVector;
 		this.ptmVectorPanel = new PTMVectorPanel(templateVector);
 		add(expHeader, BorderLayout.NORTH);
 		add(ptmVectorPanel, BorderLayout.SOUTH);
 	}
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        oos.writeObject(this.ptmVectorPanel);
-        oos.writeObject(this.insets);
-        oos.writeBoolean(useDoubleGradient);        
+    public static PersistenceDelegate getPersistenceDelegate(){
+    	return new PTMExperimentHeaderPersistenceDelegate();
     }
     
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        this.ptmVectorPanel = (PTMVectorPanel)ois.readObject();
-        this.insets = (Insets)ois.readObject();
-        this.useDoubleGradient = ois.readBoolean();
-    }
+    public Vector getTemplateVector(){return templateVector;}
+    public JComponent getExpHeader(){return expHeader;}
     
     public void setUseDoubleGradient(boolean useDouble) {
     	useDoubleGradient = useDouble;
@@ -358,4 +361,16 @@ public class PTMExperimentHeader extends javax.swing.JPanel {
 	ptmVectorPanel.setAntiAliasing(value);
     }
     
+    private static class PTMExperimentHeaderPersistenceDelegate extends PersistenceDelegate {
+
+		protected Expression instantiate(Object o, Encoder encoder) {
+			PTMExperimentHeader oldInstance = (PTMExperimentHeader)o;
+			return new Expression(oldInstance, oldInstance.getClass(), "new", 
+					new Object[]{oldInstance.getExpHeader(), oldInstance.getTemplateVector()});
+		}
+		public void initialize(Class type, Object oldInstance, Object newInstance, Encoder encoder) {
+			return;
+		}
+    	
+    }
 }

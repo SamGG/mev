@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMInfoViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-23 20:59:53 $
- * $Author: caliente $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:51:08 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.ptm;
@@ -25,7 +25,6 @@ import javax.swing.JTextArea;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
 public class PTMInfoViewer extends ViewerAdapter implements java.io.Serializable {
-    public static final long serialVersionUID = 202012040001L;
     
     private JComponent header;
     private JTextArea  content;
@@ -49,6 +48,11 @@ public class PTMInfoViewer extends ViewerAdapter implements java.io.Serializable
         header  = createHeader();
         this.clusterGenes = clusterGenes;
         content = createContent(clusters, genes);
+        setMaxWidth(content, header);
+    }
+    public PTMInfoViewer(JTextArea content, JComponent header){
+    	this.header = header;
+    	this.content = content;
         setMaxWidth(content, header);
     }
     

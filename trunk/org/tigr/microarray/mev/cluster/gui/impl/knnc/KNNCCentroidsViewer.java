@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: KNNCCentroidsViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-02-23 20:59:52 $
- * $Author: caliente $
+ * $Revision: 1.5 $
+ * $Date: 2006-03-24 15:50:57 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 /*
@@ -58,7 +58,12 @@ public class KNNCCentroidsViewer extends CentroidsViewer {
         getContentComponent().addMouseListener(listener);    
         
     }
-    
+	/**
+	 * @inheritDoc
+	 */
+	public KNNCCentroidsViewer(CentroidViewer cv) {
+		super(cv);
+	}
     /**
      * Creates a popup menu.
      */

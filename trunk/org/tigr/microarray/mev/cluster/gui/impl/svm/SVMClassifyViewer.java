@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMClassifyViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2005-03-10 20:21:56 $
- * $Author: braistedj $
+ * $Revision: 1.7 $
+ * $Date: 2006-03-24 15:51:53 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -14,6 +14,7 @@ package org.tigr.microarray.mev.cluster.gui.impl.svm;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.beans.Expression;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -30,19 +31,22 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.AbstractTableModel;
 
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileFilter;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
+import org.tigr.microarray.mev.cluster.gui.impl.svm.SVMResultViewer.MyListener;
 import org.tigr.util.FloatMatrix;
 
 public class SVMClassifyViewer extends SVMResultViewer {
-    public static final long serialVersionUID = 202018020001L;
 
     // calculation results
-    private IData  experiment;
     private FloatMatrix discriminant;
     private SVMData data;
     private GeneralInfo info;
@@ -50,56 +54,111 @@ public class SVMClassifyViewer extends SVMResultViewer {
     float [] classes;
     float [] discr;
     
-    /**
-     * Constructs a <code>SVMClassifyViewer</code> with specified data.
-     */
-    public SVMClassifyViewer(IFramework framework, IData experiment, SVMData data, FloatMatrix discriminant, GeneralInfo info, boolean classifyGenes) {
-        super(framework);
-        this.experiment   = experiment;
-        this.discriminant = discriminant;
-        this.data = data;
-        this.info = info;
-        this.classifyGenes = classifyGenes;
+    DecimalFormat floatFormat, intFormat, indexFormat;
+    int indexLength = 1;        
+    int lineHeight = 20;
+    String [] spacerStrings;
+    
+    ClassifyViewerTableModel cvtm; 
         
+
+    public SVMClassifyViewer(Experiment expt, FloatMatrix discriminant, boolean classifyGenes){
+    	super(expt);
         FloatMatrix M = discriminant.transpose();
-        classes = M.A[0];
-        discr = M.A[1];      
-        resultPanel = new ClassifyResultPanel();
-      //  MyListener listener = new MyListener();
-     //   resultPanel.addMouseListener(listener);
-     //   resultPanel.addMouseMotionListener(listener);
-        displayData();
-        this.add(resultPanel,new GridBagConstraints(0,1,1,1,1.0,1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
+        init(M.A[1], M.A[0], classifyGenes);
+    }
+    public SVMClassifyViewer(Integer exptID, float[] discr, float[] classes, Boolean classifyGenes){
+    	super(exptID.intValue());
+    	init(discr, classes, classifyGenes.booleanValue());
+    }
+    /**
+     * @inheritDoc
+     */
+    public Expression getExpression(){
+    	Object[] superExpressionArgs = super.getExpression().getArguments();
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{superExpressionArgs[0], discr, classes, new Boolean(classifyGenes)});
     }
     
+    private void init(float[] discr, float[] classes, boolean classifyGenes){
+        floatFormat = new DecimalFormat();
+        floatFormat.setMaximumFractionDigits(4);
+        floatFormat.setMinimumFractionDigits(4);
+        floatFormat.setGroupingUsed(false);
+
+        intFormat = new DecimalFormat();
+        intFormat.setMinimumFractionDigits(0);
+        intFormat.setMaximumFractionDigits(0);
+        intFormat.setGroupingUsed(false);
+
+        indexFormat = new DecimalFormat();
+        indexFormat = new DecimalFormat();
+        indexFormat.setMinimumFractionDigits(0);
+        indexFormat.setMaximumFractionDigits(0);
+        indexLength = String.valueOf(classes.length).length();
+        indexFormat.setMinimumIntegerDigits(indexLength);
+        indexFormat.setGroupingUsed(false);
     
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
+        this.classes = classes;
+        this.discr = discr;
+        this.classifyGenes = classifyGenes;
+        cvtm = new ClassifyViewerTableModel();
+     	this.resultTable = new JTable(cvtm);
         
-        this.discr = (float [])ois.readObject();
-        this.classes = (float [])ois.readObject();
-        this.discriminant = (FloatMatrix)ois.readObject();
-        
-        this.classifyGenes = ois.readBoolean();
-        this.data = (SVMData)ois.readObject();
-        this.info = (GeneralInfo)ois.readObject();
+        setBackground(Color.white);
+        this.add(new JScrollPane(resultTable), new GridBagConstraints(0,0,1,1,1.0,1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
         
         MyListener listener = new MyListener();
-        getContentComponent().addMouseListener(listener);
+        resultTable.addMouseListener(listener);
+        resultTable.addMouseMotionListener(listener);
     }
     
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { 
-        oos.writeObject(this.discr);
-        oos.writeObject(this.classes);
-        oos.writeObject(this.discriminant);
-        
-        oos.writeBoolean(this.classifyGenes);
-        oos.writeObject(this.data);
-        oos.writeObject(this.info);
+    class ClassifyViewerTableModel extends AbstractTableModel{
+    	String[] header = new String[]{"Index", "Class", "Discriminant", annotationLabel};
+    	FloatMatrix data;
+    	public ClassifyViewerTableModel(){}
+    	public String getColumnName(int col){
+    		return header[col];
+    	}
+    	public Object getValueAt(int row, int col){
+    		if(col == 0){
+    			return new Integer(row+1);
+    		} else if (col == 1) {
+        		if(classes[row] == -1.0f)
+    				return "none";
+        		return intFormat.format(classes[row]).toString();
+            } else if (col == 2) {
+    			return floatFormat.format(discr[row]).toString();
+    		} else if (col == 3) {
+    			try {
+		    		if(classifyGenes)
+						return iData.getElementAttribute(getMultipleArrayDataRow(row), labelIndex);
+					else 
+						return iData.getSampleName(row);
+    			} catch (NullPointerException npe){
+        			npe.printStackTrace();
+        			return "";
+    			}
+    		}
+    		return new String("");
+    	}  
+    	public boolean isCellEditable(int row, int col) { return false; }
+
+		public int getColumnCount() {
+			return header.length;
+    }
+    
+		public int getRowCount() {
+			return classes.length;
+		}
+    }
+
+    public void setExperiment(Experiment e){
+    	super.setExperiment(e);
     }
     
     public void onSelected(IFramework frm) {
-        this.framework = frm;
-        this.experiment = frm.getData();
+    	super.onSelected(frm);
         onMenuChanged(frm.getDisplayMenu());
     }
     
@@ -108,42 +167,9 @@ public class SVMClassifyViewer extends SVMResultViewer {
      */
     protected void displayData() {
         displayResult(this.classifyGenes);
-      //  this.resultPanel.repaint();
     }
     
     private void displayResult(boolean genes){
-        String Dummy;
-        StringBuffer buffer = new StringBuffer();
-        DecimalFormat format = new DecimalFormat();
-        DecimalFormat format2 = new DecimalFormat();
-        format.setMaximumFractionDigits(4);
-        format.setMinimumFractionDigits(4);
-        format.setGroupingUsed(false);
-        buffer.append("Constant : "+Float.toString(data.constant)+"\n");
-        buffer.append("Coefficient : "+Float.toString(data.coefficient)+"\n");
-        buffer.append("Power : "+Float.toString(data.power)+"\n");
-        buffer.append("Diagonal factor : "+Float.toString(data.diagonalFactor)+"\n");
-        buffer.append("Convergence threshold : "+Float.toString(data.convergenceThreshold)+"\n");
-        //buffer.append("Normalize : "+data.normalize+"\n");
-        buffer.append("Radial : "+data.radial+"\n");
-        buffer.append("Width factor : "+Float.toString(data.widthFactor)+"\n");
-        buffer.append("Use Constraint : "+data.constrainWeights+"\n");
-        buffer.append("Positive Constraint : "+Float.toString(data.positiveConstraint)+"\n");
-        buffer.append("Negative Constraint : "+Float.toString(data.negativeConstraint)+"\n");
-        buffer.append("Seed : "+Float.toString(data.seed)+"\n");
-        buffer.append("Calculation time : "+Float.toString(info.time)+" ms\n");
-        buffer.append("Objective : "+Float.toString(data.objective1)+"\n\n");
-        if(genes){
-            if(labelIndex >= 0 && labelIndex < fieldNames.length)
-                buffer.append(" Index    Class.   Discr.    "+fieldNames[labelIndex]);
-            else
-                buffer.append(" Index    Class.   Discr.");
-        }
-        else
-            buffer.append(" Index    Class.   Discr.     Experiment");
-        Log.setText( buffer.toString());
-        Log.setCaretPosition(0);
-   //     Log.setSize(resultPanel.getWidth()*2, 15*Log.getFontMetrics(Log.getFont()).getHeight());
     }
     
     /**
@@ -161,25 +187,13 @@ public class SVMClassifyViewer extends SVMResultViewer {
         } else return;
         try {
             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(SVMFile)));
-            int discrLength = discriminant.getRowDimension();
-            String logText = Log.getText();
-            logText = logText.substring(0, logText.lastIndexOf("Index"));
-            out.write( logText  );
-            if(classifyGenes){
-                if(labelIndex >= 0 && labelIndex < fieldNames.length)
-                    out.write("Index\tClass.\tDiscr.\t"+fieldNames[labelIndex]+"\t\n");
-                else
-                    out.write("Index\tClass.\tDiscr.\t\n");
+            
+            
+            for(int row=0; row<cvtm.getRowCount(); row++){
+            	for(int col=0; col<cvtm.getColumnCount(); col++){
+            		out.write(cvtm.getValueAt(row, col).toString() + '\t');
             }
-            else
-                out.write("Index\tClass.\tDiscr.\tExperiment\t\n");
-            for(int i = 0; i < discrLength; i++){
-                if(classifyGenes)
-                    out.write(String.valueOf(i+1)+"\t"+String.valueOf(discriminant.get(i,0))+"\t"+String.valueOf(discriminant.get(i,1))+
-                    "\t"+experiment.getElementAttribute(getMultipleArrayDataRow(i), labelIndex)+ "\t\n");
-                else
-                    out.write(String.valueOf(i+1)+"\t"+String.valueOf(discriminant.get(i,0))+"\t"+String.valueOf(discriminant.get(i,1))+
-                    "\t"+experiment.getSampleName(i) + "\t\n");
+            	out.write('\n');
             }
             out.flush();
             out.close();
@@ -191,9 +205,7 @@ public class SVMClassifyViewer extends SVMResultViewer {
     }
     
     
-    protected Dimension updateSize(){
-        return ((ClassifyResultPanel)resultPanel).updateSize();
-    }
+
     
     /** Returns a component to be inserted into the scroll pane row header
      */
@@ -208,70 +220,13 @@ public class SVMClassifyViewer extends SVMResultViewer {
         return null;
     }    
     
-    
-    public class ClassifyResultPanel extends JPanel implements java.io.Serializable {
-        int lineHeight = 20;
-        
-        int indexLength = 1;
-        DecimalFormat floatFormat;
-        DecimalFormat intFormat;
-        DecimalFormat indexFormat;
-        String [] spacerStrings;
-        
-        public ClassifyResultPanel(){
-            
-            floatFormat = new DecimalFormat();
-            floatFormat.setMaximumFractionDigits(4);
-            floatFormat.setMinimumFractionDigits(4);
-            floatFormat.setGroupingUsed(false);
-            
-            intFormat = new DecimalFormat();
-            intFormat.setMinimumFractionDigits(0);
-            intFormat.setMaximumFractionDigits(0);
-            intFormat.setGroupingUsed(false);
-            
-            indexFormat = new DecimalFormat();
-            indexFormat = new DecimalFormat();
-            indexFormat.setMinimumFractionDigits(0);
-            indexFormat.setMaximumFractionDigits(0);
-            indexLength = String.valueOf(classes.length).length();
-            indexFormat.setMinimumIntegerDigits(indexLength);
-            indexFormat.setGroupingUsed(false);
-            
-            setBackground(Color.white);
+	//TODO adding ResultPanel methods
+    public void setSize(){
             Dimension d = updateSize();
             setSize(d.width, classes.length * lineHeight + 10);
             setPreferredSize(new Dimension(d.width, classes.length * lineHeight + 5));
         }
         
-        public void paint(Graphics g){
-            super.paint(g);
-            
-            g.setFont(new Font("monospaced", Font.PLAIN, 14));
-            FontMetrics fm =g.getFontMetrics();
-            //int lineHeight = fm.getHeight() + vertSpace;
-            Rectangle rect = g.getClipBounds();
-            String [] spacerStrings;
-            int index;
-            
-            int top = getTopIndex(rect.y);
-            int bottom = getBottomIndex(rect.y+rect.height, classes.length + 1);
-            
-            for(int i = top; i < bottom; i++){
-                index = i;
-                if(!isLegalIndex(index))
-                    continue;
-                spacerStrings = getSpacerStrings( indexLength, intFormat.format(classes[index]), floatFormat.format(discr[index]));
-                if(classifyGenes){
-                    g.drawString(" "+indexFormat.format(i+1)+spacerStrings[0]+intFormat.format(classes[index])
-                    + spacerStrings[1]+ floatFormat.format(discr[index]) +spacerStrings[2] + experiment.getElementAttribute(getMultipleArrayDataRow(index), labelIndex), 10, (i+1)*lineHeight);  //map i to real data using exp
-                }
-                else{
-                    g.drawString(" "+indexFormat.format(i+1)+spacerStrings[0]+intFormat.format(classes[index])
-                    + spacerStrings[1]+ floatFormat.format(discr[index]) +spacerStrings[2] + experiment.getSampleName(index), 10, (i+1)*lineHeight);  //map i to real data using exp
-                }
-            }
-        }
         
         private boolean isLegalIndex(int i){
             return (i >=0 && i < classes.length);
@@ -311,53 +266,12 @@ public class SVMClassifyViewer extends SVMResultViewer {
         }
         
         protected Dimension updateSize(){
-            FontMetrics fm = this.getFontMetrics(new Font("monospaced", Font.PLAIN, 14));
+    //	resultTable.
+    //	FontMetrics fm = this.getFontMetrics(new Font("monospaced", Font.PLAIN, 14));
             int len = 0;
-            int numElem;
-            indexLength = String.valueOf(classes.length).length();
-            String s;
-            // String [] spacerStrings;
-            
-            floatFormat = new DecimalFormat();
-            floatFormat.setMaximumFractionDigits(4);
-            floatFormat.setMinimumFractionDigits(4);
-            floatFormat.setGroupingUsed(false);
-            
-            intFormat = new DecimalFormat();
-            intFormat.setMinimumFractionDigits(0);
-            intFormat.setMaximumFractionDigits(0);
-            intFormat.setGroupingUsed(false);
-            
-            indexFormat = new DecimalFormat();
-            indexFormat = new DecimalFormat();
-            indexFormat.setMinimumFractionDigits(0);
-            indexFormat.setMaximumFractionDigits(0);
-            indexFormat.setMinimumIntegerDigits(indexLength);
-            indexFormat.setGroupingUsed(false);
-                        
-            if(classifyGenes)
-                numElem = experiment.getFeaturesSize();
-            else
-                numElem = experiment.getFeaturesCount();
-            
-            for(int i = 0; i < numElem; i++){
-                spacerStrings = getSpacerStrings( indexLength, intFormat.format(classes[i]), floatFormat.format(discr[i]));
-                if(classifyGenes){
-                    s = " "+indexFormat.format(i+1)+spacerStrings[0]+intFormat.format(classes[i])
-                    + spacerStrings[1]+ floatFormat.format(discr[i]) +spacerStrings[2] + experiment.getElementAttribute(getMultipleArrayDataRow(i), labelIndex);  //map i to real data using exp
-                }
-                else{
-                    s = " "+indexFormat.format(i)+spacerStrings[0]+intFormat.format(classes[i])
-                    + spacerStrings[1]+ floatFormat.format(discr[i]) +spacerStrings[2] + experiment.getSampleName(i);  //map i to real data using exp
-                }
-                len = Math.max(len, fm.stringWidth(s));
-            }
-            setSize(len + 10, getHeight());
-            setPreferredSize(new Dimension(len+10, getHeight()));
-            
-            return new Dimension(len+10, getHeight());
-        }
        
+        //len = Math.max(len, fm.stringWidth(s));
+        return new Dimension(120, getHeight());
     }
     
 }

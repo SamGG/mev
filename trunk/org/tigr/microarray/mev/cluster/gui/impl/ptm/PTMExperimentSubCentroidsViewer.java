@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMExperimentSubCentroidsViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2005-03-10 20:22:04 $
- * $Author: braistedj $
+ * $Revision: 1.7 $
+ * $Date: 2006-03-24 15:51:08 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -18,6 +18,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 import java.util.Vector;
 
 import javax.swing.JComponent;
@@ -48,6 +49,20 @@ public class PTMExperimentSubCentroidsViewer extends JPanel implements IViewer {
 	setBackground(Color.white);
 	setFont(new Font("monospaced", Font.BOLD, 10));
     }
+    
+    public PTMExperimentSubCentroidsViewer(PTMExperimentCentroidViewer cv){
+    	this.centroidViewer = cv;
+    	setBackground(Color.white);
+		setFont(new Font("monospaced", Font.BOLD, 10));
+    }
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{this.centroidViewer});
+    }
+    
+    public int getExperimentID(){return centroidViewer.getExperimentID();}
+    public void setExperimentID(int id){centroidViewer.setExperimentID(id);}
+    public void setExperiment(Experiment e){centroidViewer.setExperiment(e);}
     
     /**
      * Returns component to be inserted into the framework scroll pane.

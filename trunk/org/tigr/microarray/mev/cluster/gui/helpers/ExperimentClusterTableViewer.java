@@ -10,44 +10,29 @@ All rights reserved.
 
 package org.tigr.microarray.mev.cluster.gui.helpers;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 import java.util.Arrays;
 
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
+import javax.swing.*;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
+import javax.swing.JComponent;
 import javax.swing.border.Border;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
+import javax.swing.table.*;
 
-import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
-import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
-import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
+import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
+
+import org.tigr.microarray.mev.cluster.clusterUtil.*;
 import org.tigr.util.QSort;
 
 /**
@@ -93,18 +78,78 @@ public class ExperimentClusterTableViewer implements IViewer, java.io.Serializab
     private JTable clusterTable;
     private ExperimentClusterTableModel clusterModel;  
     private ClusterTableSearchDialog searchDialog;    
+    private int exptID = 0;
+
+//    public String[] getAuxTitles() {return auxTitles;}
+//    public Object[][] getAuxData() {return auxData;}
+//    public int[][] getSortedClusters() {return sortedClusters;}
+    public int getExptID() {return exptID;}
+    /**
+     * This constructor creates a new object identical to the one saved to the
+     * xml file by XMLEncoder and IViewerPersistenceDelegate
+     * 
+     * @param clusters
+     * @param auxTitles
+     * @param auxData
+     * @param sortedClusters
+     * @param exptID
+     */
+    public ExperimentClusterTableViewer(int[][] clusters, String[] auxTitles, 
+    		Object[][] auxData, int[][] sortedClusters, Integer exptID) {
+    	this.clusters = clusters;
+    	this.auxTitles = auxTitles;
+    	this.auxData = auxData;
+    	this.sortedClusters = sortedClusters;
+    	this.exptID = exptID.intValue();
+        
+        this.clusterModel = new ExperimentClusterTableModel();
+        this.clusterTable = new JTable(clusterModel);
+        clusterTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
+        TableColumn column = null;
+        for (int i = 0; i < clusterModel.getColumnCount(); i++) {
+            column = clusterTable.getColumnModel().getColumn(i);
+            column.setMinWidth(30);
+        } 
+        
+        this.sortedAscending = new boolean[clusters.length][clusterModel.getColumnCount()];
+        for (int i = 0; i < sortedAscending.length; i++) {
+            for (int j = 0; j < sortedAscending[i].length; j++) {
+                sortedAscending[i][j] = false;
+            }
+        }
+        addMouseListenerToHeaderInTable(clusterTable);
+        header  = clusterTable.getTableHeader();        
+        
+        searchDialog = new ClusterTableSearchDialog(JOptionPane.getFrameForComponent(clusterTable), clusterTable, false);  
+        setMaxWidth(getContentComponent(), getHeaderComponent());  
+        
+		Listener listener = new Listener();
+		this.popup = createJPopupMenu(listener);
+		//getContentComponent().addMouseListener(listener);  
+        clusterTable.addMouseListener(listener);   
+        
+    }
+    //EH testing
+    /**
+     * @inheritdoc 
+     */
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new",
+			new Object[]{clusters, auxTitles, auxData, this.sortedClusters, new Integer(this.exptID)});  
+    }
     
     /** Creates a new instance of ExperimentClusterTableViewer */
     public ExperimentClusterTableViewer(Experiment experiment, int[][] clusters, IData data, String[] auxTitles, Object[][] auxData) {
         if (experiment == null) {
             throw new IllegalArgumentException("experiment == null");
         }
-        this.data = data;
+//        this.data = data;
         this.experiment = experiment;
         this.clusters = clusters;  
         //this.fieldNames = data.getFieldNames();
         this.auxTitles = auxTitles;
         this.auxData = auxData;
+        this.exptID = experiment.getId();
         
         this.sortedClusters = new int[clusters.length][];
         
@@ -955,5 +1000,26 @@ public class ExperimentClusterTableViewer implements IViewer, java.io.Serializab
     public int getViewerType() {
         return Cluster.EXPERIMENT_CLUSTER;
     }
+    
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
+	 */
+	public void setExperiment(Experiment e) {
+		this.experiment = e;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentID()
+	 */
+	public int getExperimentID() {
+		return exptID;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
+	 */
+	public void setExperimentID(int id) {
+		this.exptID = id;
+	}
     
 }

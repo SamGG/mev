@@ -4,92 +4,77 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMResultViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2005-03-10 20:21:56 $
- * $Author: braistedj $
+ * $Revision: 1.8 $
+ * $Date: 2006-03-24 15:51:53 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
 package org.tigr.microarray.mev.cluster.gui.impl.svm;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 
-import javax.swing.AbstractButton;
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextArea;
-import javax.swing.border.BevelBorder;
+import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
 
-import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.IViewer;
+import org.tigr.microarray.mev.cluster.gui.*;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
-abstract class SVMResultViewer extends JPanel implements IViewer, java.io.Serializable {
-    public static final long serialVersionUID = 202018070001L;
+abstract class SVMResultViewer extends JPanel implements IViewer {
     
-    // gui stuff
-    protected JTextArea Log;
-    protected JPanel resultPanel;
     private JPopupMenu MyPopup;
     private JMenuItem  menuItem1;
     protected int labelIndex;
     protected IFramework framework;
-    private Experiment analysisExperiment;
+    protected IData iData;
+    private Experiment experiment;
     protected String [] fieldNames;
-    JPanel panel1;
+    protected String annotationLabel = "";
+    private int exptID = 0;
     
-    public SVMResultViewer(IFramework framework) {
-        panel1 = new JPanel();
-        JPanel panel2 = new JPanel();
-        this.framework = framework;
-        labelIndex = framework.getDisplayMenu().getLabelIndex();
-        this.analysisExperiment = framework.getData().getExperiment();
-        fieldNames = framework.getData().getFieldNames();
-        BorderLayout borderLayout1 = new BorderLayout();
-        BorderLayout borderLayout2 = new BorderLayout();
-        JLabel imageControl1 = new JLabel();
-        Log = new JTextArea();
-        Log.setFont(new Font("monospaced", Font.PLAIN, 14));
-        Log.setTabSize(3);
-        Log.setEditable(false);
-        Log.setAutoscrolls(true);
-        Log.setBackground(new Color(208,208,208));
-        Log.setBorder(BorderFactory.createTitledBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED), "Parameters"));
+    JTable resultTable;
+    JScrollPane jsp;
 
+    public SVMResultViewer(Experiment e) {
+        this.experiment = e;
+        this.exptID = experiment.getId();
+        init();
+    }
+    public SVMResultViewer(int exptID){
+    	this.exptID = exptID;
+    	init();
+    }
+    /**
+     * @inheritDoc
+     * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExpression()
+     */
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{new Integer(exptID)});
+    }
+    private void init(){
+        this.setAutoscrolls(true);
         this.setLayout(new GridBagLayout());
-        this.add(Log,new GridBagConstraints(0,0,1,1,1.0,0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
+        resultTable = new JTable();
+        resultTable.setPreferredScrollableViewportSize(new Dimension(700,500));
+        resultTable.setAutoResizeMode(3);
+        resultTable.setFont(new Font("monospaced", Font.PLAIN, 12));
         MyPopup = new JPopupMenu();
         menuItem1 = new JMenuItem("Save classification...", GUIFactory.getIcon("save_as16.gif"));
         menuItem1.setActionCommand("save-result-command");
         menuItem1.addActionListener( new Listener()  );
+        MyListener listener = new MyListener();
+        resultTable.addMouseListener(listener);
+        resultTable.addMouseMotionListener(listener);
         MyPopup.add(menuItem1);
-        MyListener myListener = new MyListener();
-        this.addMouseListener(myListener);
-        this.addMouseMotionListener(myListener);
-        Log.addMouseListener(myListener);
-        Log.addMouseMotionListener(myListener);
     }
 
+    /*
     private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        this.analysisExperiment = (Experiment)ois.readObject();
+        this.experiment = (Experiment)ois.readObject();
         this.Log = (JTextArea)ois.readObject();
         this.resultPanel = (JPanel)ois.readObject();
         this.fieldNames = (String [])ois.readObject();
@@ -105,14 +90,24 @@ abstract class SVMResultViewer extends JPanel implements IViewer, java.io.Serial
     }
     
     private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { 
-        oos.writeObject(this.analysisExperiment);
+        oos.writeObject(this.experiment);
         oos.writeObject(this.Log);
         oos.writeObject(this.resultPanel);
         oos.writeObject(this.fieldNames);
         oos.writeInt(this.labelIndex);
     }
-        
-    public abstract void onSelected(IFramework frm);
+    */
+    public void setExperimentID(int i){this.exptID = i;}
+    public void setExperiment(Experiment e) {
+    	this.experiment = e;
+    	this.exptID = e.getId();
+    }
+    public int getExperimentID(){return exptID;}
+    public void onSelected(IFramework frm){
+    	this.framework = frm;
+        this.iData = frm.getData();
+        annotationLabel = framework.getData().getFieldNames()[framework.getDisplayMenu().getLabelIndex()];
+    }
     
     protected abstract void displayData();
     
@@ -136,7 +131,13 @@ abstract class SVMResultViewer extends JPanel implements IViewer, java.io.Serial
     public void onDataChanged(IData data) {}
     
     public void onMenuChanged(IDisplayMenu menu) {
+        try {
+            annotationLabel = framework.getData().getFieldNames()[framework.getDisplayMenu().getLabelIndex()];
         labelIndex = framework.getDisplayMenu().getLabelIndex();
+        } catch (NullPointerException npe){
+        	labelIndex = 0;
+        	annotationLabel = "";
+        }
         displayData();
         updateSize();
     }
@@ -151,7 +152,7 @@ abstract class SVMResultViewer extends JPanel implements IViewer, java.io.Serial
      *  the passed index
      */
     protected int getMultipleArrayDataRow(int row) {
-        return analysisExperiment.getGeneIndexMappedToData(row);
+        return experiment.getGeneIndexMappedToData(row);
     }
     
     /** Returns a component to be inserted into the scroll pane row header
@@ -176,7 +177,7 @@ abstract class SVMResultViewer extends JPanel implements IViewer, java.io.Serial
     /**  Returns the viewer's experiment or null
      */
     public Experiment getExperiment() {
-        return null;
+        return this.experiment;
     }    
     
     /** Returns int value indicating viewer type
@@ -185,7 +186,6 @@ abstract class SVMResultViewer extends JPanel implements IViewer, java.io.Serial
     public int getViewerType() {
         return -1;
     }
-    
     // GUI Listener class helpers
     class MyListener extends MouseInputAdapter {
         public void mousePressed(MouseEvent e) {

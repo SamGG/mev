@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOTATree.java,v $
- * $Revision: 1.4 $
- * $Date: 2005-03-10 20:22:06 $
- * $Author: braistedj $
+ * $Revision: 1.5 $
+ * $Date: 2006-03-24 15:51:44 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.sota;
@@ -48,6 +48,7 @@ public class SOTATree extends JPanel {
     private int origX;
     private int origY;
     private int utilCounter;
+    private SOTATreeData sotaTreeData;
     
     protected IData data;
     
@@ -57,9 +58,23 @@ public class SOTATree extends JPanel {
     int [] leftChild;
     int [] rightChild;
     int [] nodePopulation;
+    public boolean getGeneTree(){
+    	if(this.orientation == SOTATree.VERTICAL)
+    		return true;
+    	return false;
+    }
+    public SOTATreeData getSotaTreeData(){return sotaTreeData;}
+    
+    /**
+     * Used by SOTATreePersistenceDelegate to recreate a SOTATree from saved data
+     */
+    public SOTATree(SOTATreeData sotaTreeData, Boolean geneTree){
+    	this(sotaTreeData, geneTree.booleanValue());
+    }
     
     /** Creates new SOTATree */
     public SOTATree(SOTATreeData sotaTreeData, boolean geneTree){
+    	this.sotaTreeData = sotaTreeData;
         setBackground(Color.white);
         if(!geneTree)
             this.orientation = SOTATree.VERTICAL;
@@ -82,69 +97,6 @@ public class SOTATree extends JPanel {
             setSizes(height, width);
     }
     
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {    
-        oos.writeInt(TREE_X_ORIGIN);
-        oos.writeInt(orientation);
-        oos.writeObject(lineColor);
-        oos.writeObject(extenderColor);
-        
-        oos.writeInt(numberOfClusters);
-        oos.writeDouble(maxLeafToRootPath);
-        
-        oos.writeInt(treeHeight);
-        oos.writeInt(maxXPosition);
-        oos.writeInt(maxNodeHeight);
-        oos.writeInt(minNodeHeight);
-        oos.writeInt(height);
-        oos.writeInt(width);
-        
-        oos.writeInt(elementHeight);
-        oos.writeInt(elementWidth);
-        oos.writeInt(paintElementHeight);
-        
-        oos.writeInt(FACTOR);
-        oos.writeInt(origX);
-        oos.writeInt(origY);
-        oos.writeInt(utilCounter);
-        oos.writeInt(sign);
-        
-        oos.writeObject(nodeHeights);
-        oos.writeObject(leftChild);
-        oos.writeObject(rightChild);
-        oos.writeObject(nodePopulation);
-    }
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        this.TREE_X_ORIGIN = ois.readInt();
-        this.orientation = ois.readInt();
-        this.lineColor = (Color)ois.readObject();
-        this.extenderColor = (Color)ois.readObject();
-        
-        this.numberOfClusters = ois.readInt();
-        this.maxLeafToRootPath = ois.readDouble();
-        
-        this.treeHeight = ois.readInt();
-        this.maxXPosition = ois.readInt();
-        this.maxNodeHeight = ois.readInt();
-        this.minNodeHeight = ois.readInt();
-        this.height = ois.readInt();
-        this.width = ois.readInt();
-        
-        this.elementHeight = ois.readInt();
-        this.elementWidth = ois.readInt();
-        this.paintElementHeight = ois.readInt();
-        
-        this.FACTOR = ois.readInt();
-        this.origX = ois.readInt();
-        this.origY = ois.readInt();
-        this.utilCounter = ois.readInt();
-        this.sign = ois.readInt();
-        
-        this.nodeHeights = (float [])ois.readObject();
-        this.leftChild = (int [])ois.readObject();
-        this.rightChild = (int [])ois.readObject();
-        this.nodePopulation = (int [])ois.readObject();
-    }
     
     public void paint(Graphics g){
         super.paint(g);

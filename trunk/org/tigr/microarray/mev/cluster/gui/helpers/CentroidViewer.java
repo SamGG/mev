@@ -4,40 +4,40 @@ All rights reserved.
 */
 /*
  * $RCSfile: CentroidViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-02-23 20:59:48 $
- * $Author: caliente $
+ * $Revision: 1.8 $
+ * $Date: 2006-03-24 15:49:54 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.helpers;
 
-import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontMetrics;
+import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
+import java.awt.FontMetrics;
 import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 
-import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JComponent;
 
-import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
-import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
-import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
+import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
+import org.tigr.microarray.mev.cluster.clusterUtil.*;
 
-public class CentroidViewer extends JPanel implements IViewer, java.io.Serializable {
-    public static final long serialVersionUID = 201040001L;    
+
+public class CentroidViewer extends JPanel implements IViewer {
     
     public static final Color DEF_CLUSTER_COLOR = Color.lightGray;
     protected static final Color bColor = new Color(0, 0, 128);
@@ -91,8 +91,53 @@ public class CentroidViewer extends JPanel implements IViewer, java.io.Serializa
     protected int yref = 0;
     protected int currExpRefLine;
     protected boolean showRefLine = false;
+    private int exptID = 0;
     
     public CentroidViewer() { }
+    
+    /**
+     * This constructor is used by XMLEncoder/Decoder to store and retreive a 
+     * CentroidViewer object to/from and xml file.  This constructor must 
+     * always exist, with its current method signature, for purposes of 
+     * backwards-compatability in loading old save-files from MeV versions 
+     * of v3.2 and later.  
+     * 
+     * @param clusters
+     * @param variances
+     * @param means
+     * @param codes
+     * @param id
+     */
+    public CentroidViewer(int[][] clusters, float[][] variances, float[][] means, float[][] codes, Integer id) {
+    	this.clusters = clusters;
+    	this.exptID = id.intValue();
+    	this.setVariances(variances);
+    	this.setMeans(means);
+    	this.setCodes(codes);
+        setBackground(Color.white);
+        setFont(new Font("monospaced", Font.BOLD, 10));
+        this.yRangeOption = CentroidViewer.USE_EXPERIMENT_MAX;
+        this.addMouseMotionListener(new GraphListener()); 
+    }
+    //TODO EH testing
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new",
+				new Object[]{clusters, variances, means, codes, new Integer(exptID)});
+    }
+    /*
+    copy-paste this constructor into each descendent class
+    /**
+     * @inheritDoc
+     *
+    public CentroidViewer(int[][] clusters, float[][] variances, float[][] means, float[][] codes, Integer id) {
+    	super(clusters, variances, means, codes, id);
+    }
+     */
+    
+    //public float[][] getMeans(){return means;}
+    //public float[][] getVariances(){return variances;}
+    //public float[][] getCodes(){return codes;}
+    
     /**
      * Constructs a <code>CentroidViewer</code> for specified
      * experiment and clusters.
@@ -105,60 +150,36 @@ public class CentroidViewer extends JPanel implements IViewer, java.io.Serializa
             throw new IllegalArgumentException("experiment == null");
         }
         this.experiment = experiment;
+        this.exptID = experiment.getId();
         this.clusters = clusters;
         setBackground(Color.white);
         setFont(new Font("monospaced", Font.BOLD, 10));
-       // this.setGradient(this.checkGradient());
         this.maxExperimentValue = experiment.getMaxAbsValue();
         this.yRangeOption = CentroidViewer.USE_EXPERIMENT_MAX;
         this.addMouseMotionListener(new GraphListener());        
     }
     
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        oos.writeObject(experiment);
-        oos.writeObject(clusters);
-        oos.writeObject(centroidColor);
-        oos.writeBoolean(gradientToggle);
-        oos.writeInt(yRangeOption);
-        oos.writeBoolean(drawValues);
-        oos.writeBoolean(drawVariances);
-        oos.writeBoolean(drawCodes);
-        oos.writeBoolean(drawMarks);
-        oos.writeBoolean(isAntiAliasing);
-        oos.writeBoolean(gradientColors);
-
-        oos.writeObject(means);
-        oos.writeObject(variances);
-        if(codes != null){
-            oos.writeBoolean(true);
-            oos.writeObject(codes);
-        } else {
-            oos.writeBoolean(false);
-        }
-    }
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        this.experiment = (Experiment)ois.readObject();
-        this.clusters = (int [][])ois.readObject();
-        this.centroidColor = (Color)ois.readObject();
-        this.gradientToggle = ois.readBoolean();
-        this.yRangeOption = ois.readInt();
-        this.drawValues = ois.readBoolean();
-        this.drawVariances = ois.readBoolean();
-        this.drawCodes = ois.readBoolean();
-        this.drawMarks = ois.readBoolean();
-        this.isAntiAliasing = ois.readBoolean();
-        this.gradientColors = ois.readBoolean();
-        this.means = (float [][])ois.readObject();
-        this.variances = (float [][])ois.readObject();
-        if(ois.readBoolean())
-            this.codes = (float [][])ois.readObject();             
-        setBackground(Color.white);
-        setFont(new Font("monospaced", Font.BOLD, 10));
+    //EH begin state-saving additions
+    public void setExperiment(Experiment e){
+    	this.experiment = e;
+    	this.exptID = e.getId();
         this.maxExperimentValue = experiment.getMaxAbsValue();
-        this.yRangeOption = CentroidViewer.USE_EXPERIMENT_MAX;
-        this.addMouseMotionListener(new GraphListener());
+        }
+    
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentId()
+	 */
+	public int getExperimentID() {
+		return this.exptID;
     }
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentId(int)
+	 */
+	public void setExperimentID(int id) {
+		this.exptID = id;
+    
+    }
+	//EH end state-saving additions
     
     /**
      * Sets means values.

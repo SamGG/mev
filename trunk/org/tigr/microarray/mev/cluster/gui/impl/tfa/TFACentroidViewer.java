@@ -15,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.Expression;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -36,6 +37,22 @@ public class TFACentroidViewer extends CentroidViewer {
     /** Creates a new instance of TFACentroidViewer */
     public TFACentroidViewer(Experiment experiment, int[][] clusters, String[] auxTitles, Object[][] auxData) {
 	super(experiment, clusters);
+    	initialize(auxTitles, auxData);
+    }
+    /**
+     * @inheritDoc
+     */
+    public TFACentroidViewer(int[][] clusters, float[][] variances, float[][] means, float[][] codes, Integer id, String[] auxTitles, Object[][] auxData) {
+    	super(clusters, variances, means, codes, id);
+    	initialize(auxTitles, auxData);
+    }
+	public Expression getExpression(){
+		Object[] parentConstructorArgs = super.getExpression().getArguments();
+		return new Expression(this, this.getClass(), "new", 
+				new Object[]{parentConstructorArgs[0], parentConstructorArgs[1], parentConstructorArgs[2], parentConstructorArgs[3], parentConstructorArgs[4], 
+				auxTitles, auxData});
+	}
+    public void initialize(String[] auxTitles, Object[][] auxData){	        
         this.auxTitles = auxTitles;
         this.auxData = auxData;        
 	Listener listener = new Listener();
@@ -43,14 +60,6 @@ public class TFACentroidViewer extends CentroidViewer {
 	getContentComponent().addMouseListener(listener);        
     }
     
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { }    
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {        
-        Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
-	getContentComponent().addMouseListener(listener);
-    }    
-
     /**
      * Creates a popup menu.
      */

@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMExperimentCentroidsViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-03-10 20:22:04 $
- * $Author: braistedj $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:51:08 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.ptm;
@@ -16,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.Expression;
 import java.util.Vector;
 
 import javax.swing.JMenuItem;
@@ -52,22 +53,22 @@ public class PTMExperimentCentroidsViewer extends PTMExperimentSubCentroidsViewe
         this.popup = createJPopupMenu(listener);
         getContentComponent().addMouseListener(listener);
     }
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        oos.writeObject(this.auxData);
-        oos.writeObject(this.auxTitles);
-    }    
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {        
-        this.auxData = (Object [][])ois.readObject();
-        this.auxTitles = (String [])ois.readObject();
-            
+    public PTMExperimentCentroidsViewer(PTMExperimentCentroidViewer cv, String[] auxTitles, Object[][] auxData){
+    	super(cv);
+    	this.auxTitles = auxTitles;
+    	this.auxData = auxData;
         Listener listener = new Listener();
+        this.auxTitles = auxTitles;
+        this.auxData = auxData;         
 	this.popup = createJPopupMenu(listener);
 	getContentComponent().addMouseListener(listener);
     }    
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{this.centroidViewer, this.auxTitles, this.auxData});
+    }
     
-    /**
+	/**
      * Creates a popup menu.
      */
     private JPopupMenu createJPopupMenu(Listener listener) {

@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayData.java,v $
- * $Revision: 1.21 $
- * $Date: 2006-02-24 15:09:37 $
- * $Author: wwang67 $
+ * $Revision: 1.22 $
+ * $Date: 2006-03-24 15:49:44 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -59,6 +59,10 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.normalization.IterativeLogMCNormInitDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.normalization.LinRegNormInitDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.normalization.RatioStatsNormInitDialog;
+
+//EH - state-saving
+import org.tigr.microarray.mev.persistence.MultipleArrayDataPersistenceDelegate;
+import java.beans.PersistenceDelegate;
 import org.tigr.microarray.mev.file.StringSplitter;
 import org.tigr.microarray.util.Adjustment;
 import org.tigr.microarray.util.SlideDataSorter;
@@ -69,8 +73,11 @@ import org.tigr.util.QSort;
 import cern.jet.math.Arithmetic;
 import cern.jet.stat.Probability;
 
+//EH - state-saving
+import org.tigr.microarray.mev.persistence.MultipleArrayDataPersistenceDelegate;
+import java.beans.PersistenceDelegate;
+
 public class MultipleArrayData implements IData, Serializable {
-   public static final long serialVersionUID = 100010201040002L;
 
     private ArrayList featuresList = new ArrayList();
     private ArrayList indicesList  = new ArrayList(); // array of int[]'s
@@ -128,14 +135,109 @@ public class MultipleArrayData implements IData, Serializable {
     //fields for maintaining the 'experiment to use' statu
     private boolean useMainData = true;
     private Experiment alternateExperiment = null;
-	/**     * List of all clones ordered by chromosome and then start position.     * Raktim OCt 3, 2005     */    ArrayList clones = new ArrayList();    /**     * Start and stop index of each chromosome in clones ArrayList     * Raktim OCt 3, 2005     */    int[][] chromosomeIndices = new int[24][];    /**     * CGH Order that the samples are displayed     * Raktim Oct 3, 2005     */    int[] samplesOrder;    /**     * CGH private int cloneValueType and Distribution array;     * Imported from Facade Class     */    private int cloneValueType;    Distribution[] cloneDistributions;    CGHCopyNumberCalculator copyNumberCalculator;    ICGHDataRegion[][] annotations = new ICGHDataRegion[0][0];    /**     * Raktim     * Very Important CGH variable, imported from older FCD class     * gets set in fcd.getRatio(..), ctl.OnShowBrowser(..), CGHViewer.OnExperimentsINitialized(..)     */    boolean hasDyeSwap = false;    public boolean CGHData = false;    public boolean log2Data = false;    public int CGH_SPECIES = TMEV.CGH_SPECIES_Undef;    public boolean hasCloneDistribution = false;    
-
+    
+    //EH
+	private int altExptID = 0;
+	/**
+     * List of all clones ordered by chromosome and then start position.
+     * Raktim OCt 3, 2005
+     */
+    ArrayList clones = new ArrayList();
+    /**
+     * Start and stop index of each chromosome in clones ArrayList
+     * Raktim OCt 3, 2005
+     */
+    int[][] chromosomeIndices = new int[24][];
+    /**
+     * CGH Order that the samples are displayed
+     * Raktim Oct 3, 2005
+     */
+    int[] samplesOrder;
+    /**
+     * CGH private int cloneValueType and Distribution array;
+     * Imported from Facade Class
+     */
+    private int cloneValueType;
+    Distribution[] cloneDistributions;
+    CGHCopyNumberCalculator copyNumberCalculator;
+    ICGHDataRegion[][] annotations = new ICGHDataRegion[0][0];
+    /**
+     * Raktim
+     * Very Important CGH variable, imported from older FCD class
+     * gets set in fcd.getRatio(..), ctl.OnShowBrowser(..), CGHViewer.OnExperimentsINitialized(..)
+     */
+    boolean hasDyeSwap = false;
+    public boolean CGHData = false;
+    public boolean log2Data = false;
+    public int CGH_SPECIES = TMEV.CGH_SPECIES_Undef;
+    public boolean hasCloneDistribution = false;
+    
+    public MultipleArrayData(){}
+    /**
+     * PersistenceDelegate constructor.  This constructor can be used to recreate a
+     * previously-stored MultipleArrayData. 
+     * 
+     * @param useMainData
+     * @param percentageCutoff
+     * @param usePercentageCutoffs
+     * @param useVarianceFilter
+     * @param useDetectionFilter
+     * @param useFoldFilter
+     * @param dfSet
+     * @param ffSet
+     * @param df
+     * @param ff
+     * @param isMedianIntensities
+     * @param useLowerCutoffs
+     * @param lowerCY3Cutoff
+     * @param lowerCY5Cutoff
+     * @param experimentColors
+     * @param spotColors
+     * @param currentSampleLabelKey
+     * @param featuresList
+     */
+    public MultipleArrayData(
+    		Boolean useMainData, Integer altExptId, Float percentageCutoff, Boolean usePercentageCutoffs, 
+			Boolean useVarianceFilter, Boolean useDetectionFilter, Boolean useFoldFilter,
+			Boolean dfSet, Boolean ffSet, DetectionFilter df, FoldFilter ff, Boolean isMedianIntensities, 
+			Boolean useLowerCutoffs, Float lowerCY3Cutoff, Float lowerCY5Cutoff, 
+			ArrayList experimentColors, ArrayList spotColors, 
+			String currentSampleLabelKey, ArrayList featuresList, Integer dataType){
+    	this.featuresList = featuresList;
+    	this.altExptID = altExptId.intValue();
+    	this.indicesList = new ArrayList();
+    	this.useMainData = useMainData.booleanValue();
+    	this.percentageCutoff = percentageCutoff.floatValue();
+    	this.usePercentageCutoff = usePercentageCutoffs.booleanValue();
+        this.useVarianceFilter = useVarianceFilter.booleanValue(); 
+        this.useDetectionFilter = useDetectionFilter.booleanValue();
+        this.useFoldFilter = useFoldFilter.booleanValue();
+        this.dfSet = dfSet.booleanValue();
+        if(dfSet.booleanValue())
+        	this.detectionFilter = df;
+        this.ffSet = ffSet.booleanValue();
+        if(ffSet.booleanValue())
+        	this.foldFilter = ff;
+        this.isMedianIntensities = isMedianIntensities.booleanValue();
+        this.useLowerCutoffs = useLowerCutoffs.booleanValue();
+        this.lowerCY3Cutoff = lowerCY3Cutoff.floatValue();
+        this.lowerCY5Cutoff = lowerCY5Cutoff.floatValue();
+        this.experimentColors = experimentColors;
+        this.spotColors = spotColors;
+        setSampleLabelKey(currentSampleLabelKey);
+        this.dataType = dataType.intValue();
+    }
+    
     /**
      *  Sets the data objects feature list
      */
     public void setFeaturesList(ArrayList list) {
         this.featuresList = list;
-        //**update the experiment object
+        for(int i=0; i<featuresList.size(); i++){
+        	indicesList.add(createIndices((ISlideData)featuresList.get(i)));
+        }
+        updateSpotColors();
+        updateExperimentColors();
         this.experiment = this.createExperiment();
     }
  
@@ -162,12 +264,29 @@ public class MultipleArrayData implements IData, Serializable {
         if(this.useMainData)
             this.alternateExperiment = null;
     }
-    
+    public boolean getUseMainData() {
+    	return useMainData;
+    }
     /**
      * Set alternate experiment
      */
-    public void setAlternateExperiment(Experiment altExperiment) {
-        this.alternateExperiment = altExperiment;
+    public void setAlternateExperiment(Experiment e) {
+        this.alternateExperiment = e;
+        this.altExptID = e.getId();
+    }
+    /**
+    * EH - used by MulipleArrayViewer to get AlternateExperiment
+    * so it can be stored in a saved state file
+    */
+    public Experiment getAlternateExperiment() {
+    	return alternateExperiment;
+    }
+    /**
+    * EH - Used by MultipleArrayDataPersistenceDelegate to get the ID associated
+    * with the alternateExperiment so it can be stored in a saved state file
+    */
+    public int getAltExptId(){
+    	return this.altExptID;
     }
     
     public void constructAndSetAlternateExperiment(Experiment coreExperiment, int [] clusterIndices, int clusterType) {
@@ -189,8 +308,8 @@ public class MultipleArrayData implements IData, Serializable {
                 }                
                 newRowIndices[row] = origRowIndices[clusterIndices[row]];
             }
-            
-            alternateExperiment = new Experiment(newMatrix, origColIndices, newRowIndices);
+            //EH
+            setAlternateExperiment(new Experiment(newMatrix, origColIndices, newRowIndices));
             this.useMainData = false;
             
         } else {
@@ -205,13 +324,12 @@ public class MultipleArrayData implements IData, Serializable {
                 }
                 newColIndices[col] = origColIndices[clusterIndices[col]];
             }
-            
-            alternateExperiment = new Experiment(newMatrix, newColIndices, origRowIndices);            
+            //EH
+            setAlternateExperiment(new Experiment(newMatrix, newColIndices, origRowIndices));
             this.useMainData = false;
         }
     
     }
-    
     
     /**
      * Returns number of loaded microarrays.
@@ -229,7 +347,15 @@ public class MultipleArrayData implements IData, Serializable {
         }
         return((ISlideData)featuresList.get(0)).getSize();
     }
-    /**     * Raktim. For CGH Functions     * Returns a reference to the data objects feature list     */    public ArrayList getFeaturesList() {        return this.featuresList;    }
+    /**
+     * Raktim. For CGH Functions
+     * Returns a reference to the data objects feature list
+     * Also used for state-saving.
+     */
+    public ArrayList getFeaturesList() {
+        return this.featuresList;
+    }
+
     /**
      * Returns the percentage cutoff value.
      */
@@ -643,64 +769,66 @@ public class MultipleArrayData implements IData, Serializable {
         }
     }
     
+    /**
+     * Adds sample labels from <code>file</code>.  
+     * @param parent the parent frame
+     * @param file the text file containing the labels to associate with samples
+     * @return true if successful
+     * @throws IOException if there is something wrong with <code>file</code>
+     */
     public boolean addNewSampleLabels(Frame parent, File file) throws IOException {
-        
+		int sampleCount = this.getFeaturesCount();
+		String line;        
        BufferedReader reader = new BufferedReader(new FileReader(file));
-       String line;
-       int cnt = 0;
-       int sampleCount = this.getFeaturesCount();
-       while ((line = reader.readLine()) != null) {
-           cnt++;
-       }
-       
-       cnt--; //header
-       
-       if(cnt != sampleCount) {
-            JOptionPane.showMessageDialog(parent, "<html>The selected file size (number of rows) does not correspond to the<br>" +
-            "number of loaded samples.  The file should have a single header line and row for each loaded sample containing the samples<br>"+
-            "additional annotation.", "File Format Error", JOptionPane.ERROR_MESSAGE);
-            return false;
-       }
-              
-       reader = new BufferedReader(new FileReader(file));              
-       StringTokenizer stok;
-       
-       boolean firstRead = true;
-       String [] keys = null;
-       String [][] data = null;
-       int fieldCount;
-       int annCnt = 0;    
-       int rowCnt = 0;
- 
-       while( (line = reader.readLine()) != null) {
-           stok = new StringTokenizer(line, "\t");
-           
-           if(firstRead) {
-               keys = new String[stok.countTokens()];
-               for(int i = 0; i < keys.length; i++) {
-                   keys[i] = stok.nextToken();
-               }
-               
-               fieldCount = keys.length;               
-               data = new String[fieldCount][sampleCount];               
-               firstRead = false;
-               continue;
-           }
-           
-           annCnt = 0;
-           while(stok.hasMoreTokens()) {
-               data[annCnt][rowCnt] = stok.nextToken();
-               annCnt++;
-           }           
-           rowCnt++;
-       }
-       
-       for(int i= 0; i < keys.length; i++) {
-           addNewExperimentLabel(keys[i], data[i]);
-       }
-       
-       return true;
-    }
+		StringTokenizer stok;
+		boolean readingFirstRow = true;
+		String [] annKeys = null; //a list of the headers for each column in file
+		String[] annotationRow;
+		Vector data = new Vector();
+		int fieldCount;
+		int annCnt = 0;    
+		int rowCnt = 0;
+		Hashtable annotation = new Hashtable();
+		String fileName;
+		
+		line=reader.readLine();
+		stok = new StringTokenizer(line, "\t");
+		annKeys = new String[stok.countTokens()];
+		for(int i = 0; i < annKeys.length; i++) {
+			annKeys[i] = stok.nextToken();
+		}
+		fieldCount = annKeys.length;              
+
+		while( (line = reader.readLine()) != null) {
+			stok = new StringTokenizer(line, "\t");
+			annCnt = 0;
+			annotationRow = new String[fieldCount];
+			while(stok.hasMoreTokens()) {
+				annotationRow[annCnt] = stok.nextToken();
+				annCnt++;
+			}
+			annotation.put(annotationRow[0], annotationRow);
+			data.add(annotationRow);
+			rowCnt++;
+		}
+		
+		String thisSlideFileName;
+		String thisAnnotationValue;
+		for(int i = 0; i < featuresList.size(); i++) {
+			ISlideData thisSlide = getFeature(i);
+			thisSlideFileName = thisSlide.getSlideFileName();
+			thisSlideFileName = thisSlide.getSlideFileName().substring(thisSlideFileName.lastIndexOf(System.getProperty("file.separator"))+1);
+			if(annotation.containsKey(thisSlideFileName)) {
+				for(int j=0; j< annKeys.length; j++) {
+					thisAnnotationValue = ((String[])annotation.get(thisSlideFileName))[j];
+					thisSlide.addNewSampleLabel(annKeys[j], thisAnnotationValue);
+				}
+			} else {
+				System.out.println("No annotation for " + thisSlideFileName);
+			}
+		}
+		return true;
+	}    
     
     /** Adds new gene annotation present in the annMatrix, Note: annMatrix contains headers with field names
      */
@@ -850,10 +978,11 @@ public class MultipleArrayData implements IData, Serializable {
     }
 
     /**
+     * EH updated to get field names from slideData rather than TMEV
      * Returns all annotation fields
      */
     public String[] getFieldNames() {
-        return TMEV.getFieldNames();
+        return ((SlideData)featuresList.get(0)).getSlideMetaData().getFieldNames();
     }
     /**
      * Returns a spot base row.
@@ -878,6 +1007,18 @@ public class MultipleArrayData implements IData, Serializable {
         updateSpotColors();
         Color[] colors = new Color[spotColors.size()];
         return(Color[])spotColors.toArray(colors);
+    }
+    /**
+    * EH - added for state-saving. May not be necessary
+    */
+    public ArrayList getSpotColors() {
+    	return spotColors;
+    }
+    /**
+    * EH - added for state-saving. May not be necessary
+    */
+    public void setSpotColors(ArrayList sp) {
+    	this.spotColors = sp;
     }
 
     /**
@@ -909,8 +1050,7 @@ public class MultipleArrayData implements IData, Serializable {
                     spotColors.add(color);
                     this.colorIndices[i] = count;
                     count++;
-                }
-                else{
+                } else {
                     this.colorIndices[i] = index;
                 }
             }
@@ -954,6 +1094,19 @@ public class MultipleArrayData implements IData, Serializable {
         return this.experimentColorIndices;
     }
 
+    /**
+    * EH - added for state-saving
+    */
+    public void setColorIndices(int[] ci) {
+    	colorIndices = ci;
+    }
+    /**
+    * EH - added for state-saving
+    */
+    public void setExperimentColorIndices(int[] eci) {
+    	experimentColorIndices = eci;
+    }
+    
     /**
      * Sets a spot public color for specified rows.
      */
@@ -1024,6 +1177,16 @@ public class MultipleArrayData implements IData, Serializable {
         removeUnusedExperimentColors();
     }
 
+	/**
+	* EH - added for state-saving
+	*/
+    public void setExperimentColors(Color[] ec) {
+    	ArrayList al = new ArrayList(ec.length);
+    	for(int i=0; i<al.size(); i++) {
+    		al.set(i, ec[i]);
+    	}
+    	this.experimentColors = al;
+    }
 
     /**
      * Returns count of columns which have public color index equals to colorIndex.
@@ -1420,7 +1583,6 @@ public class MultipleArrayData implements IData, Serializable {
      */
     private Experiment createExperiment() {
         final int featuresSize = featuresList.size();
-        //System.out.print(featuresSize);
         if (featuresSize < 1) {
             return null;
         }
@@ -1434,10 +1596,8 @@ public class MultipleArrayData implements IData, Serializable {
             //features = createCutoffFeatures(featuresSize, probesSize);
             probes = createCutoffGeneList(featuresSize, probesSize);
             experiment = createExperiment(featuresSize, probes);
-        }
-        else{
+        } else {
             // all features used for experiment
-        	//System.out.print("w");
             features = createDefaultFeatures(featuresSize, probesSize);
             experiment = createExperiment(features, probesSize);
         }
@@ -1574,8 +1734,9 @@ public class MultipleArrayData implements IData, Serializable {
     	int tag=0;
     	int list[]=new int[generows+1];
     	boolean head=true;
-    	String [] fields=TMEV.getFieldNames();
-    	BufferedReader reader= new BufferedReader(new FileReader(fields[TMEV.getFieldNames().length-1]));
+    	String [] fields=this.getFieldNames();
+    	
+    	BufferedReader reader= new BufferedReader(new FileReader(fields[this.getFieldNames().length-1]));
     	StringSplitter ss = new StringSplitter((char)0x09);
     	String currentLine;
     	while((currentLine=reader.readLine())!=null){
@@ -1888,7 +2049,9 @@ public class MultipleArrayData implements IData, Serializable {
         return new Experiment(fm, columns);
     }
 
-    //The following method was added to correct the way "set Lower Cutoffs" and "Set %age cutoffs" is handled, i.e., to trim out rows (genes), rather than columns (experiments)
+    //The following method was added to correct the way "set Lower Cutoffs" 
+    //and "Set %age cutoffs" is handled, i.e., to trim out rows (genes), 
+    //rather than columns (experiments)
     //this is called if cutoffs have been used
     private Experiment createExperiment(final int columns, final int[] rows) {
         ISlideData sd;
@@ -2463,134 +2626,861 @@ public class MultipleArrayData implements IData, Serializable {
     	return this.getAnnotationList(fieldName, indices);
     }
 
-    private void writeObject(ObjectOutputStream oos) throws IOException, ClassNotFoundException{
-        oos.writeObject(TMEV.getFieldNames());
-
-        oos.writeObject(featuresList);  //ArrayList
-        oos.writeObject(indicesList); //ArrayList
-
-        oos.writeObject(spotColors);  //ArrayList
-        oos.writeObject(colorIndices); //int []
-
-        oos.writeObject(experimentColors); //ArrayList
-        oos.writeObject(experimentColorIndices); // int []
-        oos.writeObject(experiment); //Experiment
-        oos.writeInt(dataType); //int
-
-        oos.writeFloat(maxCy3);
-        oos.writeFloat(maxCy5);
-        oos.writeFloat(maxRatio);
-        oos.writeFloat(minRatio);
-
-        oos.writeFloat(percentageCutoff);
-        oos.writeBoolean(usePercentageCutoff);
-
-        oos.writeFloat(lowerCY3Cutoff);
-        oos.writeFloat(lowerCY5Cutoff);
-        oos.writeBoolean(useLowerCutoffs);
-
-        oos.writeBoolean(isMedianIntensities);
-        
-        oos.writeBoolean(useMainData);
-        
-        if(!useMainData)
-            oos.writeObject(alternateExperiment);
-
-        // pcahan
-        if(dataType !=  IData.DATA_TYPE_TWO_INTENSITY){
-
-            oos.writeBoolean(this.getdfSet());
-            oos.writeBoolean(this.getffSet());
-
-            if(this.getdfSet()){
-                oos.writeBoolean(useDetectionFilter);
-                oos.writeObject(detectionFilter);
-
-            }
-
-            if(this.getffSet()){
-                oos.writeBoolean(useFoldFilter);
-                oos.writeObject(foldFilter);
-            }
-        }
-
-        //private ClusterRepository geneClusterRepository;
-        //private ClusterRepository expClusterRepository;
-    }
-
-    private void readObject(ObjectInputStream ois)throws IOException, ClassNotFoundException{
-        TMEV.setFieldNames((String [])ois.readObject());
-
-        featuresList = (ArrayList)ois.readObject();  //ArrayList
-        indicesList = (ArrayList)ois.readObject(); //ArrayList
-
-        spotColors = (ArrayList)ois.readObject();  //ArrayList
-        colorIndices = (int [])ois.readObject(); //int []
-
-        experimentColors = (ArrayList)ois.readObject(); //ArrayList
-        experimentColorIndices = (int [])ois.readObject(); // int []
-        experiment = (Experiment)ois.readObject(); //Experiment
-        dataType = ois.readInt(); //int
-
-
-      /*
-    private float maxCy3 = 0f;
-    private float maxCy5 = 0f;
-    private float maxRatio = 0f;
-    private float minRatio = 0f;
-       */
-        maxCy3 = ois.readFloat();
-        maxCy5 = ois.readFloat();
-        maxRatio = ois.readFloat();
-        minRatio = ois.readFloat();
-
-        percentageCutoff = ois.readFloat();
-        usePercentageCutoff = ois.readBoolean();
-        //    private float percentageCutoff = 0f;
-        //    private boolean usePercentageCutoff = false;
-
-        lowerCY3Cutoff = ois.readFloat();
-        lowerCY5Cutoff = ois.readFloat();
-        useLowerCutoffs = ois.readBoolean();
-
-        isMedianIntensities = ois.readBoolean();
-        //    private float lowerCY3Cutoff = 0f;
-        //   private float lowerCY5Cutoff = 0f;
-        // private boolean useLowerCutoffs = false;
-
-        // private Progress progressBar;
-        //    private boolean normalizationAbort = false;
-
-        // pcahan
-        
-        useMainData = ois.readBoolean();
-        if(!useMainData)
-            alternateExperiment = (Experiment)ois.readObject();
-                
-        if(dataType !=  IData.DATA_TYPE_TWO_INTENSITY) {
-
-            dfSet = ois.readBoolean();
-            ffSet = ois.readBoolean();
-
-            if(dfSet){
-                useDetectionFilter = ois.readBoolean();
-                detectionFilter = (DetectionFilter)ois.readObject();
-            }
-
-            if(ffSet){
-                useFoldFilter = ois.readBoolean();
-                foldFilter = (FoldFilter)ois.readObject();
-            }
-        }
-
-        //private ClusterRepository geneClusterRepository;
-        //private ClusterRepository expClusterRepository;
-    }
-
     /** Returns the slected sample annotation
      */
     public String getSampleAnnotation(int column, String key) {
         return (String)(this.getFeature(column).getSlideDataLabels().get(key));
     }    
-	/*************************************************************************     * Raktim CGH Functions     * Oct 3rd, 2005     ************************************************************************/    public void setCGHCopyNumberCalculator(){    	copyNumberCalculator = new CGHCopyNumberCalculator(this);    }    /**     * CGH Function     */    public int getFeaturesSize(int chromosome){    	return chromosomeIndices[chromosome][1] - chromosomeIndices[chromosome][0];    }    /**     * CGH Returns CY3 value.     * For dye swap experiments, returns the value of the experiment     * with test DNA labeled with cy3 dye     * @param column the experiment index     * @param row the relative index of the probe on the specified chromosome     * @param chromosome the chromosome index     * @return     */    public float getCY3(int column, int row, int chromosome){    	return getCY3(column, chromosomeIndices[chromosome][0] + row);    }    /**     * CGH Returns CY5 value.     * For dye swap experiments, returns the value of the experiment     * with test DNA labeled with cy3 dye     * @param column the experiment index     * @param row the relative index of the probe on the specified chromosome     * @param chromosome the chromosome index     * @return    */    public float getCY5(int column, int row, int chromosome){    	return getCY5(column, chromosomeIndices[chromosome][0] + row);    }    /**     * Returns an element attribute.     */    public String getElementAttribute(int row, int attr, int chromosome){    	return getCloneAt(row).getName();    }    /**     *  CGH Returns the number of chromosomes     */    public int getNumChromosomes(){    	return chromosomeIndices.length;    }    /**     * CGH Returns the number of data points in a given chromosome     */    /**     * CGH Function     */    public int getNumDataPointsInChrom(int chromosome){    	return chromosomeIndices[chromosome][1] - chromosomeIndices[chromosome][0];    }    /**     * CGH Function     */    public int getCloneIndex(int relativeIndex, int chromosome){    	return chromosomeIndices[chromosome][0] + relativeIndex;    }    /**     * CGH Function     */    public int getRelativeIndex(int cloneIndex, int chromosome){    	return cloneIndex - chromosomeIndices[chromosome][0];    }    /** Getter for property chromosomeIndices.     * @return Value of property chromosomeIndices.     */    public int[][] getChromosomeIndices() {        return this.chromosomeIndices;    }    /** Setter for property chromosomeIndices.     * @param chromosomeIndices New value of property chromosomeIndices.     */    public void setChromosomeIndices(int[][] chromosomeIndices) {        this.chromosomeIndices = chromosomeIndices;        System.out.println("Chr Indices.len : " + chromosomeIndices.length + ", " + chromosomeIndices[0].length);        /*        for(int i=0; i < chromosomeIndices.length; i++){        	int j = 0;        	System.out.print("chromosomeIndices["+i+"]["+j+"]: ");        	for(; j < chromosomeIndices[0].length; j++){        		System.out.print(chromosomeIndices[i][j] + ", ");        	}        	System.out.println();        }        */    }    /**     * CGH Function     */    public int getChromosomeStartIndex(int chromosomeIndex){        return this.chromosomeIndices[chromosomeIndex][0];    }    /**     * CGH Function     */    public int getChromosomeEndIndex(int chromosomeIndex){        return this.chromosomeIndices[chromosomeIndex][1];    }    /**     * CGH Function     */    public CGHClone getCloneAt(int index){    	/*    	CGHSlideDataElement sde_T1 = (CGHSlideDataElement)((ISlideData)featuresList.get(0)).getSlideDataElement(index);    	CGHClone clone_T1 = sde_T1.getClone();    	return clone_T1;    	*/    	return (CGHClone)clones.get(index);    }    /**     * CGH Function     */    public CGHClone getCloneAt(int index, int chromosome){    	return getCloneAt(getCloneIndex(index, chromosome));    }    /**     * CGH Function     * corresponds to ISlideData function     */    public int getNumFlankingRegions(int experimentIndex, int chromosomeIndex){    	return ((ISlideData)featuresList.get(experimentIndex)).getNumFlankingRegions(chromosomeIndex);    }    /**     * CGH Function     * corresponds to ISlideData function     */    public void setFlankingRegions(int experimentIndex, Vector[] flankingRegions){    	((ISlideData)featuresList.get(experimentIndex)).setFlankingRegions(flankingRegions);    }    /**     * CGH Function     * Setter for property samplesOrder.     * @param samplesOrder New value of property samplesOrder.     */    public void setSamplesOrder(int[] samplesOrder) {        this.samplesOrder = samplesOrder;    }    /**     * CGH     * Getter for property samplesOrder.     * @return Value of property samplesOrder.     */    public int[] getSamplesOrder() {        return this.samplesOrder;    }    /*     * UN-used    public Vector getSlides(){        Vector slides = new Vector();        Iterator it = featuresList.iterator();        while(it.hasNext()){            CGHSampleData sampleData = (CGHSampleData)it.next();            Iterator cy3It = sampleData.getCy3Slides().iterator();            while(cy3It.hasNext()){                slides.add( (CGHSlideData) cy3It.next() );            }            Iterator cy5It = sampleData.getCy5Slides().iterator();            while(cy5It.hasNext()){                slides.add( (CGHSlideData) cy5It.next() );            }        }        return slides;    }    */    // Addition - Raktim, Oct 31, 05    /**     * @param experiment     * @param clone     * @param chromosome     * @return     */    public float getValue(int experiment, int clone, int chromosome){        //return getValue(experiment, data.getCloneIndex(clone, chromosome));    	return getValue(experiment, getCloneIndex(clone, chromosome));    }    /** Returns the appropriate data value based on     * the user selected clone value type.  This can be.     * for example, the log average inverted value, or     * any number of discrete copy number determination     * methods     * @param experiment     * @param clone     * @return     */    public float getValue(int experiment, int clone){        if(cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_DISCRETE_DETERMINATION){            return getCopyNumberDetermination(experiment, clone);        }else if(cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_LOG_AVERAGE_INVERTED){            //return getLogAverageInvertedValue(experiment, clone);            //return dataValues[clone][experiment];            return getRatio(experiment, clone, this.logState);        }else if(cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_LOG_CLONE_DISTRIBUTION){            return getCopyNumberDeterminationByLogCloneDistribution(experiment, clone);        }else if(cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_THRESHOLD_OR_CLONE_DISTRIBUTION){            return getCopyNumberDeterminationByThresholdOrCloneDistribution(experiment, clone);        }        return Float.NaN;    }    /**     * CGH Function     * Calculates the log average inverted value     * for a dye swap experiment.  Returns the log     * value if the experiment was not done in dye swap     */    public float getLogAverageInvertedValue(int experiment, int clone){        if(!hasDyeSwap){            return getRatio(experiment, clone, LOG);        }        float cy3Ratio = getCY3(experiment, clone);        float cy5Ratio = getCY5(experiment, clone);        if(cy3Ratio == IData.BAD_CLONE || cy5Ratio == IData.BAD_CLONE){            return Float.NaN;        }        if(cy3Ratio == 0 || cy5Ratio == 0){            return Float.NaN;        }        try{            float ratio = (float) (Arithmetic.log2(cy3Ratio) - Arithmetic.log2(cy5Ratio)) / 2;            return ratio;        }catch (Exception e){            return Float.NaN;        }    }    /** Alterts that the method of calculating a probe copy number     * has changed.  This can be either a change in the determination     * method or in the thresholds appropriate for classification     *     * @param menu     */    public void onCopyDeterminationChanged(ICGHCloneValueMenu menu){        this.cloneValueType = menu.getCloneValueType();        System.out.println("Print onCopyDeterminationChanged().this.cloneValueType " + this.cloneValueType);        this.copyNumberCalculator.onCopyDeterminationChanged(menu);    }    /**     * Raktim OCt 31, 05, CGH Function     * Calculates the copy number of a probe based     * on probe value thresholding     * @param experiment     * @param clone     * @return     */    public int getCopyNumberDetermination(int experiment, int clone){        return copyNumberCalculator.getCopyNumberDetermination(experiment, clone);    }    /**     * Raktim Oct 31, 2005     * @param experiment     * @param clone     * @param chromosome     * @return  */    public int getCopyNumberDetermination(int experiment, int clone, int chromosome){        return copyNumberCalculator.getCopyNumberDetermination(experiment, clone, chromosome);    }    /**     * Raktim OCt 31, 05, CGH Function     * Calculates the copy number of a probe based     * on the probe's normal distribution     * @param experiment     * @param clone     * @return     */    public int getCopyNumberDeterminationByLogCloneDistribution(int experiment, int clone){        return copyNumberCalculator.getCopyNumberDeterminationByLogCloneDistribution(experiment, clone);    }    /**     * Raktim OCt 31, 05, CGH Function     * Calculates the copy number of a probe based     * on the probe's normal distribution or probe value thresholding     * @param experiment     * @param clone     * @return     */    public int getCopyNumberDeterminationByThresholdOrCloneDistribution(int experiment, int clone){        return copyNumberCalculator.getCopyNumberDeterminationByThresholdOrCloneDistribution(experiment, clone);    }    /** Calculates the p-value of the probe's value     * based on the normal distribution curve corresponding     * to the probe, for an experiment not done in dye swap     * @param experiment     * @param clone     * @param logState     * @return  */    public float getPValueByLogCloneDistribution(int experiment, int clone){        double ratio = getRatio(experiment, clone, this.logState);        Distribution dist = getDistributionAt(clone);        if(dist == null){            return Float.NaN;        }else{            double mean = dist.getMean();            double sd = dist.getSd();            //double z = Probability.normal(mean, Descriptive.variance(sd), ratio);            double z = (ratio - mean) / sd;            double p = Probability.normal(z);            return (float)p;        }    }    /**     * Raktim Oct31, 2005     * CGH Function     * Getter for property cloneDistributions.     * @return Value of property cloneDistributions.     */    public Distribution[] getCloneDistributions() {        return cloneDistributions;    }    /**     * Raktim Oct31, 2005     * CGH Function     * Setter for property cloneDistributions.     * @param cloneDistributions New value of property cloneDistributions.     */    public void setCloneDistributions(Distribution[] cloneDistributions) {        this.cloneDistributions = cloneDistributions;    }    /**     * Raktim Oct31, 2005     * CGH Function     * @param index     * @return     */    public Distribution getDistributionAt(int index){        try{            return cloneDistributions[index];        }catch (Exception e){            return null;        }    }    /**     * Raktim October 31, 2005     * CGH createExperiment Function     */    public Experiment createExperiment(Object results){    	/*        ExperimentWizard wiz = new ExperimentWizard(framework.getFrame());        if(wiz.showModal() == javax.swing.JOptionPane.OK_OPTION){        */            //Object results = wiz.getResults();            if(results instanceof BacClonesExperimentParameters){                return createBacClonesExperiment((BacClonesExperimentParameters)results);            }else if(results instanceof GenesExperimentParameters){                return createGenesExperiment((GenesExperimentParameters)results);            }else if(results instanceof DataRegionsExperimentParameters){                return createDataRegionsExperiment((DataRegionsExperimentParameters)results);            }        /*        }else{            System.out.println("cancelled");        }        wiz = null;        */        return null;    }    /**     * Raktim     * Helper Method     * @param chromosomeIndices     * @return     */    private int getNumSelectedDataPoints(int[] chromosomeIndices){        int numBacs = 0;        for(int i = 0; i < chromosomeIndices.length; i++){            if(chromosomeIndices[i] == BacClonesExperimentParameters.ALL_CHROMOSOMES){                return getFeaturesSize();            }            numBacs += getNumDataPointsInChrom(chromosomeIndices[i]);        }        return numBacs;    }    /**     * Raktim     * Helper Method     * @return     */    public int[] createDefaultColumns(){        int[] defaultCols = new int[getFeaturesCount()];        for(int i = 0; i < defaultCols.length; i++){            defaultCols[i] = i;        }        return defaultCols;    }    /**     * Raktim     * Helper Method     * @param row     * @return     */    public boolean isMissingData(int row){        for(int col = 0; col < getFeaturesCount(); col++){            if(Float.isNaN(getRatio(row, col, this.logState))){                return true;            }        }        return false;    }    /**     * Raktim Oct 31, 2005     * @param parameters     * @return     */    private CGHExperiment createBacClonesExperiment(BacClonesExperimentParameters parameters){        if(parameters.isIncludeMissingBacs()){            return createBacClonesExperimentAllValues(parameters);        }else{            return createBacClonesExperimentNoMissing(parameters);        }    }    /**     *     * @param parameters     * @return     */    private CGHExperiment createBacClonesExperimentAllValues(BacClonesExperimentParameters parameters){        int[] chromosomeIndices = parameters.getChromosomeIndices();        int numSelectedBacs = getNumSelectedDataPoints(chromosomeIndices);        if(numSelectedBacs == getFeaturesSize()){            return createBacClonesExperimentAllValuesAllChromosomes();        }        float[][] fmData = new float[numSelectedBacs][getFeaturesCount()];        String[] annotations = new String[numSelectedBacs];        int counter = 0;        for(int chrom = 0; chrom < chromosomeIndices.length; chrom++){            int chromosomeIndex = chromosomeIndices[chrom];            for(int cloneIndex = 0; cloneIndex < getNumDataPointsInChrom(chromosomeIndex); cloneIndex++){                for(int col = 0; col < getFeaturesCount(); col++){                    fmData[counter][col] = getRatio(getCloneIndex(cloneIndex, chromosomeIndex), col, this.logState); //data.getRatio(col, cloneIndex, chromosomeIndex, 1);                    annotations[counter] = getCloneAt(cloneIndex, chromosomeIndex).getName();                }                counter++;            }        }        FloatMatrix fm = new FloatMatrix(fmData);        CGHExperiment exp = new CGHExperiment(fm, createDefaultColumns(), annotations);        return exp;    }    /**     * Raktim     * @return     */    private CGHExperiment createBacClonesExperimentAllValuesAllChromosomes(){        float[][] fmData = new float[getFeaturesSize()][getFeaturesCount()];        String[] annotations = new String[getFeaturesSize()];        for(int row = 0; row < getFeaturesSize(); row++){            for(int col = 0; col < getFeaturesCount(); col++){                fmData[row][col] = getRatio(row,col,this.logState);                annotations[row] = getCloneAt(row).getName();            }        }        FloatMatrix fm = new FloatMatrix(fmData);        CGHExperiment exp = new CGHExperiment(fm, createDefaultColumns(), annotations);        return exp;    }    /**     *     * @param parameters     * @return     */    private CGHExperiment createBacClonesExperimentNoMissing(BacClonesExperimentParameters parameters){        int[] chromosomeIndices = parameters.getChromosomeIndices();        int numSelectedBacs = getNumSelectedDataPoints(chromosomeIndices);        if(numSelectedBacs == getFeaturesSize()){            return createBacClonesExperimentAllChromosomesNoMissing();        }        float[][] fmDataTmp = new float[numSelectedBacs][getFeaturesCount()];        String[] annotationsTmp = new String[numSelectedBacs];        int counter = 0;        for(int chrom = 0; chrom < chromosomeIndices.length; chrom++){            int chromosomeIndex = chromosomeIndices[chrom];            for(int cloneIndex = 0; cloneIndex < getNumDataPointsInChrom(chromosomeIndex); cloneIndex++){                if(!isMissingData(getCloneIndex(cloneIndex, chromosomeIndex))){                    for(int col = 0; col < getFeaturesCount(); col++){                        //fmDataTmp[counter][col] = data.getRatio(col, cloneIndex, chromosomeIndex, 1);                        fmDataTmp[counter][col] = getRatio(getCloneIndex(cloneIndex, chromosomeIndex), col, this.logState);                        annotationsTmp[counter] = getCloneAt(cloneIndex, chromosomeIndex).getName();                    }                    counter++;                }            }        }        float[][] fmData = new float[counter][getFeaturesCount()];        String[] annotations = new String[counter];        for(int row = 0; row < counter; row++){            for(int col = 0; col < getFeaturesCount(); col++){                fmData[row][col] = fmDataTmp[row][col];                annotations[row] = annotationsTmp[row];            }        }        FloatMatrix fm = new FloatMatrix(fmData);        CGHExperiment exp = new CGHExperiment(fm, createDefaultColumns(), annotations);        return exp;    }    /**     * Raktim     * @return     */    private CGHExperiment createBacClonesExperimentAllChromosomesNoMissing(){        float[][] fmDataTmp = new float[getFeaturesSize()][getFeaturesCount()];        String[] annotationsTmp = new String[getFeaturesSize()];        int counter = 0;        for(int row = 0; row < getFeaturesSize(); row++){            if(!isMissingData(row)){                for(int col = 0; col < getFeaturesCount(); col++){                    //fmDataTmp[counter][col] = data.getRatio(col, counter, 1);                    fmDataTmp[counter][col] = getRatio(row, col, this.logState);                    annotationsTmp[counter] = getCloneAt(counter).getName();                }                counter++;            }        }        float[][] fmData = new float[counter][getFeaturesCount()];        String[] annotations = new String[counter];        for(int row = 0; row < counter; row++){            for(int col = 0; col < getFeaturesCount(); col++){                fmData[row][col] = fmDataTmp[row][col];                annotations[row] = annotationsTmp[row];            }        }        FloatMatrix fm = new FloatMatrix(fmData);        CGHExperiment exp = new CGHExperiment(fm, createDefaultColumns(), annotations);        return exp;    }    /**     * Raktim     * Should **NOT** be used without verification     * @param parameters     * @return     */    private CGHExperiment createGenesExperiment(GenesExperimentParameters parameters){        File genesFile = parameters.getGenesFile();        try{            BufferedReader reader = new BufferedReader(new FileReader(genesFile));            String line;            Vector geneNames = new Vector();            while((line = reader.readLine()) != null){                geneNames.add(line);            }            GeneDataSet geneDataSet = new GeneDataSet();            geneDataSet.loadGeneDataByGeneNames(geneNames, this.getCGHSpecies());            Vector geneData = geneDataSet.getGeneData();            float[][] fmData = new float[geneData.size()][getFeaturesCount()];            String[] annotations = new String[geneData.size()];            for(int row = 0; row < geneData.size(); row++){                for(int col = 0; col < getFeaturesCount(); col++){                    fmData[row][col] = getExperimentGeneValue((IGeneData)geneData.get(row), col);                    annotations[row] = ((IGeneData)geneData.get(row)).getName();                }            }            FloatMatrix fm = new FloatMatrix(fmData);            CGHExperiment exp = new CGHExperiment(fm, createDefaultColumns(), annotations);            return exp;        }catch (IOException e){            e.printStackTrace();        }        return null;    }    /**     * Helper for above     * Should **NOT** be used     * @param geneData     * @param experiment     * @return     */    private float getExperimentGeneValue(IGeneData geneData, int experiment){        int geneStart = geneData.getStart();        int geneEnd = geneData.getStop();        if(geneData.getChromosomeIndex() < 0){            System.out.println("Gene " + geneData.getName() + " Chrom = " + geneData.getChromosomeIndex());            return 0;        }        ISlideData featureData = (ISlideData)getFeaturesList().get(experiment);        Vector[] allFrs = featureData.getFlankingRegions();        Vector chromFrs = allFrs[geneData.getChromosomeIndex()];        Iterator it = chromFrs.iterator();        while(it.hasNext()){            FlankingRegion fr = (FlankingRegion)it.next();            int frStart = fr.getStart();            int frStop = fr.getStop();            if( (geneStart < frStop && geneStart > frStart) || (geneEnd < frStop && geneStart > frStart)  ){                if(fr.getType() == FlankingRegion.DELETION){                    return -1;                }else if(fr.getType() == FlankingRegion.AMPLIFICATION){                    return 1;                }            }        }        return 0;    }    /**     * Raktim     * @param parameters     * @return     */    private CGHExperiment createDataRegionsExperiment(DataRegionsExperimentParameters parameters){        int[] chromosomeIndices = parameters.getChromosomeIndices();        Vector dataRegions = new Vector();        dataRegions.addAll(getDataRegionsValues(FlankingRegion.DELETION, chromosomeIndices));        dataRegions.addAll(getDataRegionsValues(FlankingRegion.AMPLIFICATION, chromosomeIndices));        float[][] fmData = new float[dataRegions.size()][getFeaturesCount()];        String[] annotations = new String[dataRegions.size()];        for(int row = 0; row < fmData.length; row++){            fmData[row] = ((AlterationRegion)dataRegions.get(row)).getAlteredExperimentValues();            annotations[row] = ((AlterationRegion)dataRegions.get(row)).getName();        }        FloatMatrix fm = new FloatMatrix(fmData);        CGHExperiment exp = new CGHExperiment(fm, createDefaultColumns(), annotations);        return exp;    }    /**     * Helper for createDataRegionsExperiment(...)     * @param flankingRegionType     * @param chromosomeIndices     * @return     */    public Vector getDataRegionsValues(int flankingRegionType, int[] chromosomeIndices){        Vector allAlterationRegions = new Vector();        //for(int chromIndex = 0; chromIndex < data.getNumChromosomes(); chromIndex++){        for(int curChrom = 0; curChrom < chromosomeIndices.length; curChrom++){            int chromIndex = chromosomeIndices[curChrom];            AlterationRegions curAlterationRegions = new AlterationRegions(chromIndex);            Vector curFlankingRegions = new Vector(getFeaturesCount());            Iterator featuresIt = getFeaturesList().iterator();            while(featuresIt.hasNext()){                Vector curFrs = ((ISlideData)featuresIt.next()).getFlankingRegions()[chromIndex];                curFlankingRegions.add( curFrs.clone() );            }            int[] indices = new int[getFeaturesCount()];            for(int i = 0; i < getFeaturesCount(); i++){                indices[i] = 0;            }            boolean more = true;            while(more){                for(int i = 0; i < indices.length; i++){                    Vector expRegions = (Vector) curFlankingRegions.get(i);                    while(indices[i] < expRegions.size() && ((FlankingRegion)expRegions.get(indices[i])).getType() != flankingRegionType  ){                        indices[i] += 1;                    }                }                int minStartIndex = getMinStartIndex(curFlankingRegions, indices);                int minEndIndex = getMinEndIndex(curFlankingRegions, indices, minStartIndex);                for(int i = 0; i < indices.length; i++){                    Vector expRegions = (Vector) curFlankingRegions.get(i);                    if(indices[i] < expRegions.size()){                        FlankingRegion fr = (FlankingRegion) expRegions.get(indices[i]);                        int start = fr.getStart();                        int stop = fr.getStop();                        if(start == minStartIndex){                            AlterationRegion curAlterationRegion = curAlterationRegions.getAlterationRegion(minStartIndex, minEndIndex, flankingRegionType, getFeaturesCount());                            curAlterationRegion.incrementAlterations();                            if(flankingRegionType == FlankingRegion.AMPLIFICATION){                                curAlterationRegion.getAlteredExperimentValues()[i] = 1;                            }else{                                curAlterationRegion.getAlteredExperimentValues()[i] = -1;                            }                            if(stop == minEndIndex){                                indices[i] += 1;                            }else{                                FlankingRegion tmp = new FlankingRegion(minEndIndex, fr.getStop(),                                flankingRegionType, chromIndex);                                expRegions.set(indices[i], tmp);                            }                        }                    }                }                more = false;                for(int i = 0; i < indices.length; i++){                    Vector expRegions = (Vector) curFlankingRegions.get(i);                    if(indices[i] < expRegions.size()){                        more = true;                    }                }            }            allAlterationRegions.addAll(curAlterationRegions.getAlterationRegions());        }        java.util.Collections.sort(allAlterationRegions, new AlterationRegionsComparator());        return allAlterationRegions;    }    /**     * Raktim     * Helper for getDataRegionsValues     * @param flankingRegions     * @param indices     * @return     */    private int getMinStartIndex(Vector flankingRegions, int[] indices){        int min = Integer.MAX_VALUE;        for(int i = 0; i < indices.length; i++){            Vector expRegions = (Vector) flankingRegions.get(i);            if(indices[i] < expRegions.size()){                min = Math.min(min, ((FlankingRegion) expRegions.get(indices[i])).getStart());            }        }        return min;    }    /**     * Raktim     * Helper for getDataRegionsValues     * @param flankingRegions     * @param indices     * @param minStartIndex     * @return     */    private int getMinEndIndex(Vector flankingRegions, int[] indices, int minStartIndex) {        int min = Integer.MAX_VALUE;        for(int i = 0; i < indices.length; i++){            Vector expRegions = (Vector) flankingRegions.get(i);            if(indices[i] < expRegions.size()){                int start = ((FlankingRegion) expRegions.get(indices[i])).getStart();                if(start == minStartIndex){                    start = ((FlankingRegion) expRegions.get(indices[i])).getStop();                }                min = Math.min(min, start);            }        }        return min;    }    /**     * CGH Getter for property clones.     * @return Value of property clones.     */    public java.util.ArrayList getClones() {        return clones;    }    /**     * CGH Setter for property clones.     * @param clones New value of property clones.     */    public void setClones(java.util.ArrayList clones) {        this.clones = clones;    }    /**     * CGH     * Getter for property annotations.     * @return Value of property annotations.     */    public ICGHDataRegion[][] getAnnotations() {        return this.annotations;    }    /**     * CGH     * Setter for property annotations.     * @param annotations New value of property annotations.     */    public void setAnnotations(ICGHDataRegion[][] annotations) {        this.annotations = annotations;    }    /**     * CGH     * Getter for data swap status.     * @return     */    public boolean isHasDyeSwap() {    	return this.hasDyeSwap;    }    /**     * CGH     * Setter for property hasDyeSwap.     * @param hasDyeSwap New value of property hasDyeSwap.     */    public void setHasDyeSwap(boolean hasDyeSwap) {        this.hasDyeSwap = hasDyeSwap;        if(hasDyeSwap){            copyNumberCalculator = new CGHCopyNumberCalculator(this);        }else{            copyNumberCalculator = new CGHCopyNumberCalculatorNoDyeSwap(this);        }    }    /**     * Data is set to CGH Type     */    public void setCGHData(){    	CGHData = true;    }    /**     * Return true if data is CGH type     * @return     */    public boolean isCGHData() {    	return CGHData;    }    /**     * Data is set to CGH Type     */    public void setLog2Data(boolean isLog2){    	log2Data = isLog2;    }    /**     * Return true if data is CGH type     * @return     */    public boolean isLog2Data() {    	return log2Data;    }    /**     * Setter for CGH Data. Species type.     * @param species     */    public void setCGHSpecies(int species){    	if (species == TMEV.CGH_SPECIES_HS){    		CGH_SPECIES = TMEV.CGH_SPECIES_HS;    	} else if (species == TMEV.CGH_SPECIES_MM){    		CGH_SPECIES = TMEV.CGH_SPECIES_MM;    	} else {    		CGH_SPECIES = TMEV.CGH_SPECIES_Undef;    	}    }    /**     * Return CGH data Species     * @return     */    public int getCGHSpecies(){    	return CGH_SPECIES;    }    public void setHasCloneDistribution(boolean cloneDistribution) {    	hasCloneDistribution = cloneDistribution;    }    public boolean hasCloneDistribution() {    	return hasCloneDistribution;    }    /*******************************************************************************     * Raktim     * End CGH Functions     ******************************************************************************/
+	/*************************************************************************
+     * Raktim CGH Functions
+     * Oct 3rd, 2005
+     ************************************************************************/
+    public void setCGHCopyNumberCalculator(){
+    	copyNumberCalculator = new CGHCopyNumberCalculator(this);
+    }
+    /**
+     * CGH Function
+     */
+    public int getFeaturesSize(int chromosome){
+    	return chromosomeIndices[chromosome][1] - chromosomeIndices[chromosome][0];
+    }
+    /**
+     * CGH Returns CY3 value.
+     * For dye swap experiments, returns the value of the experiment
+     * with test DNA labeled with cy3 dye
+     * @param column the experiment index
+     * @param row the relative index of the probe on the specified chromosome
+     * @param chromosome the chromosome index
+     * @return
+     */
+    public float getCY3(int column, int row, int chromosome){
+    	return getCY3(column, chromosomeIndices[chromosome][0] + row);
+    }
+    /**
+     * CGH Returns CY5 value.
+     * For dye swap experiments, returns the value of the experiment
+     * with test DNA labeled with cy3 dye
+     * @param column the experiment index
+     * @param row the relative index of the probe on the specified chromosome
+     * @param chromosome the chromosome index
+     * @return
+    */
+    public float getCY5(int column, int row, int chromosome){
+    	return getCY5(column, chromosomeIndices[chromosome][0] + row);
+    }
+    /**
+     * Returns an element attribute.
+     */
+    public String getElementAttribute(int row, int attr, int chromosome){
+    	return getCloneAt(row).getName();
+    }
+    /**
+     *  CGH Returns the number of chromosomes
+     */
+    public int getNumChromosomes(){
+    	return chromosomeIndices.length;
+    }
+    /**
+     * CGH Returns the number of data points in a given chromosome
+     */
+    /**
+     * CGH Function
+     */
+    public int getNumDataPointsInChrom(int chromosome){
+    	return chromosomeIndices[chromosome][1] - chromosomeIndices[chromosome][0];
+    }
+    /**
+     * CGH Function
+     */
+    public int getCloneIndex(int relativeIndex, int chromosome){
+    	return chromosomeIndices[chromosome][0] + relativeIndex;
+    }
+    /**
+     * CGH Function
+     */
+    public int getRelativeIndex(int cloneIndex, int chromosome){
+    	return cloneIndex - chromosomeIndices[chromosome][0];
+    }
+    /** Getter for property chromosomeIndices.
+     * @return Value of property chromosomeIndices.
+     */
+    public int[][] getChromosomeIndices() {
+        return this.chromosomeIndices;
+    }
+    /** Setter for property chromosomeIndices.
+     * @param chromosomeIndices New value of property chromosomeIndices.
+     */
+    public void setChromosomeIndices(int[][] chromosomeIndices) {
+        this.chromosomeIndices = chromosomeIndices;
+        System.out.println("Chr Indices.len : " + chromosomeIndices.length + ", " + chromosomeIndices[0].length);
+        /*
+        for(int i=0; i < chromosomeIndices.length; i++){
+        	int j = 0;
+        	System.out.print("chromosomeIndices["+i+"]["+j+"]: ");
+        	for(; j < chromosomeIndices[0].length; j++){
+        		System.out.print(chromosomeIndices[i][j] + ", ");
+        	}
+        	System.out.println();
+        }
+        */
+    }
+    /**
+     * CGH Function
+     */
+    public int getChromosomeStartIndex(int chromosomeIndex){
+        return this.chromosomeIndices[chromosomeIndex][0];
+    }
+    /**
+     * CGH Function
+     */
+    public int getChromosomeEndIndex(int chromosomeIndex){
+        return this.chromosomeIndices[chromosomeIndex][1];
+    }
+    /**
+     * CGH Function
+     */
+    public CGHClone getCloneAt(int index){
+    	/*
+    	CGHSlideDataElement sde_T1 = (CGHSlideDataElement)((ISlideData)featuresList.get(0)).getSlideDataElement(index);
+    	CGHClone clone_T1 = sde_T1.getClone();
+    	return clone_T1;
+    	*/
+    	return (CGHClone)clones.get(index);
+    }
+    /**
+     * CGH Function
+     */
+    public CGHClone getCloneAt(int index, int chromosome){
+    	return getCloneAt(getCloneIndex(index, chromosome));
+    }
+    /**
+     * CGH Function
+     * corresponds to ISlideData function
+     */
+    public int getNumFlankingRegions(int experimentIndex, int chromosomeIndex){
+    	return ((ISlideData)featuresList.get(experimentIndex)).getNumFlankingRegions(chromosomeIndex);
+    }
+    /**
+     * CGH Function
+     * corresponds to ISlideData function
+     */
+    public void setFlankingRegions(int experimentIndex, Vector[] flankingRegions){
+    	((ISlideData)featuresList.get(experimentIndex)).setFlankingRegions(flankingRegions);
+    }
+    /**
+     * CGH Function
+     * Setter for property samplesOrder.
+     * @param samplesOrder New value of property samplesOrder.
+     */
+    public void setSamplesOrder(int[] samplesOrder) {
+        this.samplesOrder = samplesOrder;
+    }
+    /**
+     * CGH
+     * Getter for property samplesOrder.
+     * @return Value of property samplesOrder.
+     */
+    public int[] getSamplesOrder() {
+        return this.samplesOrder;
+    }
+    /*
+     * UN-used
+    public Vector getSlides(){
+        Vector slides = new Vector();
+        Iterator it = featuresList.iterator();
+        while(it.hasNext()){
+            CGHSampleData sampleData = (CGHSampleData)it.next();
+            Iterator cy3It = sampleData.getCy3Slides().iterator();
+            while(cy3It.hasNext()){
+                slides.add( (CGHSlideData) cy3It.next() );
+            }
+            Iterator cy5It = sampleData.getCy5Slides().iterator();
+            while(cy5It.hasNext()){
+                slides.add( (CGHSlideData) cy5It.next() );
+            }
+        }
+        return slides;
+    }
+    */
+    // Addition - Raktim, Oct 31, 05
+    /**
+     * @param experiment
+     * @param clone
+     * @param chromosome
+     * @return
+     */
+    public float getValue(int experiment, int clone, int chromosome){
+        //return getValue(experiment, data.getCloneIndex(clone, chromosome));
+    	return getValue(experiment, getCloneIndex(clone, chromosome));
+    }
+    /** Returns the appropriate data value based on
+     * the user selected clone value type.  This can be.
+     * for example, the log average inverted value, or
+     * any number of discrete copy number determination
+     * methods
+     * @param experiment
+     * @param clone
+     * @return
+     */
+    public float getValue(int experiment, int clone){
+        if(cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_DISCRETE_DETERMINATION){
+            return getCopyNumberDetermination(experiment, clone);
+        }else if(cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_LOG_AVERAGE_INVERTED){
+            //return getLogAverageInvertedValue(experiment, clone);
+            //return dataValues[clone][experiment];
+            return getRatio(experiment, clone, this.logState);
+        }else if(cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_LOG_CLONE_DISTRIBUTION){
+            return getCopyNumberDeterminationByLogCloneDistribution(experiment, clone);
+        }else if(cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_THRESHOLD_OR_CLONE_DISTRIBUTION){
+            return getCopyNumberDeterminationByThresholdOrCloneDistribution(experiment, clone);
+        }
+        return Float.NaN;
+    }
+    /**
+     * CGH Function
+     * Calculates the log average inverted value
+     * for a dye swap experiment.  Returns the log
+     * value if the experiment was not done in dye swap
+     */
+    public float getLogAverageInvertedValue(int experiment, int clone){
+        if(!hasDyeSwap){
+            return getRatio(experiment, clone, LOG);
+        }
+        float cy3Ratio = getCY3(experiment, clone);
+        float cy5Ratio = getCY5(experiment, clone);
+        if(cy3Ratio == IData.BAD_CLONE || cy5Ratio == IData.BAD_CLONE){
+            return Float.NaN;
+        }
+        if(cy3Ratio == 0 || cy5Ratio == 0){
+            return Float.NaN;
+        }
+        try{
+            float ratio = (float) (Arithmetic.log2(cy3Ratio) - Arithmetic.log2(cy5Ratio)) / 2;
+            return ratio;
+        }catch (Exception e){
+            return Float.NaN;
+        }
+    }
+    /** Alterts that the method of calculating a probe copy number
+     * has changed.  This can be either a change in the determination
+     * method or in the thresholds appropriate for classification
+     *
+     * @param menu
+     */
+    public void onCopyDeterminationChanged(ICGHCloneValueMenu menu){
+        this.cloneValueType = menu.getCloneValueType();
+        System.out.println("Print onCopyDeterminationChanged().this.cloneValueType " + this.cloneValueType);
+        this.copyNumberCalculator.onCopyDeterminationChanged(menu);
+    }
+    /**
+     * Raktim OCt 31, 05, CGH Function
+     * Calculates the copy number of a probe based
+     * on probe value thresholding
+     * @param experiment
+     * @param clone
+     * @return
+     */
+    public int getCopyNumberDetermination(int experiment, int clone){
+        return copyNumberCalculator.getCopyNumberDetermination(experiment, clone);
+    }
+    /**
+     * Raktim Oct 31, 2005
+     * @param experiment
+     * @param clone
+     * @param chromosome
+     * @return  */
+    public int getCopyNumberDetermination(int experiment, int clone, int chromosome){
+        return copyNumberCalculator.getCopyNumberDetermination(experiment, clone, chromosome);
+    }
+    /**
+     * Raktim OCt 31, 05, CGH Function
+     * Calculates the copy number of a probe based
+     * on the probe's normal distribution
+     * @param experiment
+     * @param clone
+     * @return
+     */
+    public int getCopyNumberDeterminationByLogCloneDistribution(int experiment, int clone){
+        return copyNumberCalculator.getCopyNumberDeterminationByLogCloneDistribution(experiment, clone);
+    }
+    /**
+     * Raktim OCt 31, 05, CGH Function
+     * Calculates the copy number of a probe based
+     * on the probe's normal distribution or probe value thresholding
+     * @param experiment
+     * @param clone
+     * @return
+     */
+    public int getCopyNumberDeterminationByThresholdOrCloneDistribution(int experiment, int clone){
+        return copyNumberCalculator.getCopyNumberDeterminationByThresholdOrCloneDistribution(experiment, clone);
+    }
+    /** Calculates the p-value of the probe's value
+     * based on the normal distribution curve corresponding
+     * to the probe, for an experiment not done in dye swap
+     * @param experiment
+     * @param clone
+     * @param logState
+     * @return  */
+    public float getPValueByLogCloneDistribution(int experiment, int clone){
+        double ratio = getRatio(experiment, clone, this.logState);
+        Distribution dist = getDistributionAt(clone);
+        if(dist == null){
+            return Float.NaN;
+        }else{
+            double mean = dist.getMean();
+            double sd = dist.getSd();
+            //double z = Probability.normal(mean, Descriptive.variance(sd), ratio);
+            double z = (ratio - mean) / sd;
+            double p = Probability.normal(z);
+            return (float)p;
+        }
+    }
+    /**
+     * Raktim Oct31, 2005
+     * CGH Function
+     * Getter for property cloneDistributions.
+     * @return Value of property cloneDistributions.
+     */
+    public Distribution[] getCloneDistributions() {
+        return cloneDistributions;
+    }
+    /**
+     * Raktim Oct31, 2005
+     * CGH Function
+     * Setter for property cloneDistributions.
+     * @param cloneDistributions New value of property cloneDistributions.
+     */
+    public void setCloneDistributions(Distribution[] cloneDistributions) {
+        this.cloneDistributions = cloneDistributions;
+    }
+    /**
+     * Raktim Oct31, 2005
+     * CGH Function
+     * @param index
+     * @return
+     */
+    public Distribution getDistributionAt(int index){
+        try{
+            return cloneDistributions[index];
+        }catch (Exception e){
+            return null;
+        }
+    }
+    /**
+     * Raktim October 31, 2005
+     * CGH createExperiment Function
+     */
+    public Experiment createExperiment(Object results){
+    	/*
+        ExperimentWizard wiz = new ExperimentWizard(framework.getFrame());
+        if(wiz.showModal() == javax.swing.JOptionPane.OK_OPTION){
+        */
+            //Object results = wiz.getResults();
+            if(results instanceof BacClonesExperimentParameters){
+                return createBacClonesExperiment((BacClonesExperimentParameters)results);
+            }else if(results instanceof GenesExperimentParameters){
+                return createGenesExperiment((GenesExperimentParameters)results);
+            }else if(results instanceof DataRegionsExperimentParameters){
+                return createDataRegionsExperiment((DataRegionsExperimentParameters)results);
+            }
+        /*
+        }else{
+            System.out.println("cancelled");
+        }
+        wiz = null;
+        */
+        return null;
+    }
+    /**
+     * Raktim
+     * Helper Method
+     * @param chromosomeIndices
+     * @return
+     */
+    private int getNumSelectedDataPoints(int[] chromosomeIndices){
+        int numBacs = 0;
+        for(int i = 0; i < chromosomeIndices.length; i++){
+            if(chromosomeIndices[i] == BacClonesExperimentParameters.ALL_CHROMOSOMES){
+                return getFeaturesSize();
+            }
+            numBacs += getNumDataPointsInChrom(chromosomeIndices[i]);
+        }
+        return numBacs;
+    }
+    /**
+     * Raktim
+     * Helper Method
+     * @return
+     */
+    public int[] createDefaultColumns(){
+        int[] defaultCols = new int[getFeaturesCount()];
+        for(int i = 0; i < defaultCols.length; i++){
+            defaultCols[i] = i;
+        }
+        return defaultCols;
+    }
+    /**
+     * Raktim
+     * Helper Method
+     * @param row
+     * @return
+     */
+    public boolean isMissingData(int row){
+        for(int col = 0; col < getFeaturesCount(); col++){
+            if(Float.isNaN(getRatio(row, col, this.logState))){
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
+     * Raktim Oct 31, 2005
+     * @param parameters
+     * @return
+     */
+    private CGHExperiment createBacClonesExperiment(BacClonesExperimentParameters parameters){
+        if(parameters.isIncludeMissingBacs()){
+            return createBacClonesExperimentAllValues(parameters);
+        }else{
+            return createBacClonesExperimentNoMissing(parameters);
+        }
+    }
+    /**
+     *
+     * @param parameters
+     * @return
+     */
+    private CGHExperiment createBacClonesExperimentAllValues(BacClonesExperimentParameters parameters){
+        int[] chromosomeIndices = parameters.getChromosomeIndices();
+        int numSelectedBacs = getNumSelectedDataPoints(chromosomeIndices);
+        if(numSelectedBacs == getFeaturesSize()){
+            return createBacClonesExperimentAllValuesAllChromosomes();
+        }
+        float[][] fmData = new float[numSelectedBacs][getFeaturesCount()];
+        String[] annotations = new String[numSelectedBacs];
+        int counter = 0;
+        for(int chrom = 0; chrom < chromosomeIndices.length; chrom++){
+            int chromosomeIndex = chromosomeIndices[chrom];
+            for(int cloneIndex = 0; cloneIndex < getNumDataPointsInChrom(chromosomeIndex); cloneIndex++){
+                for(int col = 0; col < getFeaturesCount(); col++){
+                    fmData[counter][col] = getRatio(getCloneIndex(cloneIndex, chromosomeIndex), col, this.logState); //data.getRatio(col, cloneIndex, chromosomeIndex, 1);
+                    annotations[counter] = getCloneAt(cloneIndex, chromosomeIndex).getName();
+                }
+                counter++;
+            }
+        }
+        FloatMatrix fm = new FloatMatrix(fmData);
+        CGHExperiment exp = new CGHExperiment(fm, createDefaultColumns(), annotations);
+        return exp;
+    }
+    /**
+     * Raktim
+     * @return
+     */
+    private CGHExperiment createBacClonesExperimentAllValuesAllChromosomes(){
+        float[][] fmData = new float[getFeaturesSize()][getFeaturesCount()];
+        String[] annotations = new String[getFeaturesSize()];
+        for(int row = 0; row < getFeaturesSize(); row++){
+            for(int col = 0; col < getFeaturesCount(); col++){
+                fmData[row][col] = getRatio(row,col,this.logState);
+                annotations[row] = getCloneAt(row).getName();
+            }
+        }
+        FloatMatrix fm = new FloatMatrix(fmData);
+        CGHExperiment exp = new CGHExperiment(fm, createDefaultColumns(), annotations);
+        return exp;
+    }
+    /**
+     *
+     * @param parameters
+     * @return
+     */
+    private CGHExperiment createBacClonesExperimentNoMissing(BacClonesExperimentParameters parameters){
+        int[] chromosomeIndices = parameters.getChromosomeIndices();
+        int numSelectedBacs = getNumSelectedDataPoints(chromosomeIndices);
+        if(numSelectedBacs == getFeaturesSize()){
+            return createBacClonesExperimentAllChromosomesNoMissing();
+        }
+        float[][] fmDataTmp = new float[numSelectedBacs][getFeaturesCount()];
+        String[] annotationsTmp = new String[numSelectedBacs];
+        int counter = 0;
+        for(int chrom = 0; chrom < chromosomeIndices.length; chrom++){
+            int chromosomeIndex = chromosomeIndices[chrom];
+            for(int cloneIndex = 0; cloneIndex < getNumDataPointsInChrom(chromosomeIndex); cloneIndex++){
+                if(!isMissingData(getCloneIndex(cloneIndex, chromosomeIndex))){
+                    for(int col = 0; col < getFeaturesCount(); col++){
+                        //fmDataTmp[counter][col] = data.getRatio(col, cloneIndex, chromosomeIndex, 1);
+                        fmDataTmp[counter][col] = getRatio(getCloneIndex(cloneIndex, chromosomeIndex), col, this.logState);
+                        annotationsTmp[counter] = getCloneAt(cloneIndex, chromosomeIndex).getName();
+                    }
+                    counter++;
+                }
+            }
+        }
+        float[][] fmData = new float[counter][getFeaturesCount()];
+        String[] annotations = new String[counter];
+        for(int row = 0; row < counter; row++){
+            for(int col = 0; col < getFeaturesCount(); col++){
+                fmData[row][col] = fmDataTmp[row][col];
+                annotations[row] = annotationsTmp[row];
+            }
+        }
+        FloatMatrix fm = new FloatMatrix(fmData);
+        CGHExperiment exp = new CGHExperiment(fm, createDefaultColumns(), annotations);
+        return exp;
+    }
+    /**
+     * Raktim
+     * @return
+     */
+    private CGHExperiment createBacClonesExperimentAllChromosomesNoMissing(){
+        float[][] fmDataTmp = new float[getFeaturesSize()][getFeaturesCount()];
+        String[] annotationsTmp = new String[getFeaturesSize()];
+        int counter = 0;
+        for(int row = 0; row < getFeaturesSize(); row++){
+            if(!isMissingData(row)){
+                for(int col = 0; col < getFeaturesCount(); col++){
+                    //fmDataTmp[counter][col] = data.getRatio(col, counter, 1);
+                    fmDataTmp[counter][col] = getRatio(row, col, this.logState);
+                    annotationsTmp[counter] = getCloneAt(counter).getName();
+                }
+                counter++;
+            }
+        }
+        float[][] fmData = new float[counter][getFeaturesCount()];
+        String[] annotations = new String[counter];
+        for(int row = 0; row < counter; row++){
+            for(int col = 0; col < getFeaturesCount(); col++){
+                fmData[row][col] = fmDataTmp[row][col];
+                annotations[row] = annotationsTmp[row];
+            }
+        }
+        FloatMatrix fm = new FloatMatrix(fmData);
+        CGHExperiment exp = new CGHExperiment(fm, createDefaultColumns(), annotations);
+        return exp;
+    }
+    /**
+     * Raktim
+     * Should **NOT** be used without verification
+     * @param parameters
+     * @return
+     */
+    private CGHExperiment createGenesExperiment(GenesExperimentParameters parameters){
+        File genesFile = parameters.getGenesFile();
+        try{
+            BufferedReader reader = new BufferedReader(new FileReader(genesFile));
+            String line;
+            Vector geneNames = new Vector();
+            while((line = reader.readLine()) != null){
+                geneNames.add(line);
+            }
+            GeneDataSet geneDataSet = new GeneDataSet();
+            geneDataSet.loadGeneDataByGeneNames(geneNames, this.getCGHSpecies());
+            Vector geneData = geneDataSet.getGeneData();
+            float[][] fmData = new float[geneData.size()][getFeaturesCount()];
+            String[] annotations = new String[geneData.size()];
+            for(int row = 0; row < geneData.size(); row++){
+                for(int col = 0; col < getFeaturesCount(); col++){
+                    fmData[row][col] = getExperimentGeneValue((IGeneData)geneData.get(row), col);
+                    annotations[row] = ((IGeneData)geneData.get(row)).getName();
+                }
+            }
+            FloatMatrix fm = new FloatMatrix(fmData);
+            CGHExperiment exp = new CGHExperiment(fm, createDefaultColumns(), annotations);
+            return exp;
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+    /**
+     * Helper for above
+     * Should **NOT** be used
+     * @param geneData
+     * @param experiment
+     * @return
+     */
+    private float getExperimentGeneValue(IGeneData geneData, int experiment){
+        int geneStart = geneData.getStart();
+        int geneEnd = geneData.getStop();
+        if(geneData.getChromosomeIndex() < 0){
+            System.out.println("Gene " + geneData.getName() + " Chrom = " + geneData.getChromosomeIndex());
+            return 0;
+        }
+        ISlideData featureData = (ISlideData)getFeaturesList().get(experiment);
+        Vector[] allFrs = featureData.getFlankingRegions();
+        Vector chromFrs = allFrs[geneData.getChromosomeIndex()];
+        Iterator it = chromFrs.iterator();
+        while(it.hasNext()){
+            FlankingRegion fr = (FlankingRegion)it.next();
+            int frStart = fr.getStart();
+            int frStop = fr.getStop();
+            if( (geneStart < frStop && geneStart > frStart) || (geneEnd < frStop && geneStart > frStart)  ){
+                if(fr.getType() == FlankingRegion.DELETION){
+                    return -1;
+                }else if(fr.getType() == FlankingRegion.AMPLIFICATION){
+                    return 1;
+                }
+            }
+        }
+        return 0;
+    }
+    /**
+     * Raktim
+     * @param parameters
+     * @return
+     */
+    private CGHExperiment createDataRegionsExperiment(DataRegionsExperimentParameters parameters){
+        int[] chromosomeIndices = parameters.getChromosomeIndices();
+        Vector dataRegions = new Vector();
+        dataRegions.addAll(getDataRegionsValues(FlankingRegion.DELETION, chromosomeIndices));
+        dataRegions.addAll(getDataRegionsValues(FlankingRegion.AMPLIFICATION, chromosomeIndices));
+        float[][] fmData = new float[dataRegions.size()][getFeaturesCount()];
+        String[] annotations = new String[dataRegions.size()];
+        for(int row = 0; row < fmData.length; row++){
+            fmData[row] = ((AlterationRegion)dataRegions.get(row)).getAlteredExperimentValues();
+            annotations[row] = ((AlterationRegion)dataRegions.get(row)).getName();
+        }
+        FloatMatrix fm = new FloatMatrix(fmData);
+        CGHExperiment exp = new CGHExperiment(fm, createDefaultColumns(), annotations);
+        return exp;
+    }
+    /**
+     * Helper for createDataRegionsExperiment(...)
+     * @param flankingRegionType
+     * @param chromosomeIndices
+     * @return
+     */
+    public Vector getDataRegionsValues(int flankingRegionType, int[] chromosomeIndices){
+        Vector allAlterationRegions = new Vector();
+        //for(int chromIndex = 0; chromIndex < data.getNumChromosomes(); chromIndex++){
+        for(int curChrom = 0; curChrom < chromosomeIndices.length; curChrom++){
+            int chromIndex = chromosomeIndices[curChrom];
+            AlterationRegions curAlterationRegions = new AlterationRegions(chromIndex);
+            Vector curFlankingRegions = new Vector(getFeaturesCount());
+            Iterator featuresIt = getFeaturesList().iterator();
+            while(featuresIt.hasNext()){
+                Vector curFrs = ((ISlideData)featuresIt.next()).getFlankingRegions()[chromIndex];
+                curFlankingRegions.add( curFrs.clone() );
+            }
+            int[] indices = new int[getFeaturesCount()];
+            for(int i = 0; i < getFeaturesCount(); i++){
+                indices[i] = 0;
+            }
+            boolean more = true;
+            while(more){
+                for(int i = 0; i < indices.length; i++){
+                    Vector expRegions = (Vector) curFlankingRegions.get(i);
+                    while(indices[i] < expRegions.size() && ((FlankingRegion)expRegions.get(indices[i])).getType() != flankingRegionType  ){
+                        indices[i] += 1;
+                    }
+                }
+                int minStartIndex = getMinStartIndex(curFlankingRegions, indices);
+                int minEndIndex = getMinEndIndex(curFlankingRegions, indices, minStartIndex);
+                for(int i = 0; i < indices.length; i++){
+                    Vector expRegions = (Vector) curFlankingRegions.get(i);
+                    if(indices[i] < expRegions.size()){
+                        FlankingRegion fr = (FlankingRegion) expRegions.get(indices[i]);
+                        int start = fr.getStart();
+                        int stop = fr.getStop();
+                        if(start == minStartIndex){
+                            AlterationRegion curAlterationRegion = curAlterationRegions.getAlterationRegion(minStartIndex, minEndIndex, flankingRegionType, getFeaturesCount());
+                            curAlterationRegion.incrementAlterations();
+                            if(flankingRegionType == FlankingRegion.AMPLIFICATION){
+                                curAlterationRegion.getAlteredExperimentValues()[i] = 1;
+                            }else{
+                                curAlterationRegion.getAlteredExperimentValues()[i] = -1;
+                            }
+                            if(stop == minEndIndex){
+                                indices[i] += 1;
+                            }else{
+                                FlankingRegion tmp = new FlankingRegion(minEndIndex, fr.getStop(),
+                                flankingRegionType, chromIndex);
+                                expRegions.set(indices[i], tmp);
+                            }
+                        }
+                    }
+                }
+                more = false;
+                for(int i = 0; i < indices.length; i++){
+                    Vector expRegions = (Vector) curFlankingRegions.get(i);
+                    if(indices[i] < expRegions.size()){
+                        more = true;
+                    }
+                }
+            }
+            allAlterationRegions.addAll(curAlterationRegions.getAlterationRegions());
+        }
+        java.util.Collections.sort(allAlterationRegions, new AlterationRegionsComparator());
+        return allAlterationRegions;
+    }
+    /**
+     * Raktim
+     * Helper for getDataRegionsValues
+     * @param flankingRegions
+     * @param indices
+     * @return
+     */
+    private int getMinStartIndex(Vector flankingRegions, int[] indices){
+        int min = Integer.MAX_VALUE;
+        for(int i = 0; i < indices.length; i++){
+            Vector expRegions = (Vector) flankingRegions.get(i);
+            if(indices[i] < expRegions.size()){
+                min = Math.min(min, ((FlankingRegion) expRegions.get(indices[i])).getStart());
+            }
+        }
+        return min;
+    }
+    /**
+     * Raktim
+     * Helper for getDataRegionsValues
+     * @param flankingRegions
+     * @param indices
+     * @param minStartIndex
+     * @return
+     */
+    private int getMinEndIndex(Vector flankingRegions, int[] indices, int minStartIndex) {
+        int min = Integer.MAX_VALUE;
+        for(int i = 0; i < indices.length; i++){
+            Vector expRegions = (Vector) flankingRegions.get(i);
+            if(indices[i] < expRegions.size()){
+                int start = ((FlankingRegion) expRegions.get(indices[i])).getStart();
+                if(start == minStartIndex){
+                    start = ((FlankingRegion) expRegions.get(indices[i])).getStop();
+                }
+                min = Math.min(min, start);
+            }
+        }
+        return min;
+    }
+    /**
+     * CGH Getter for property clones.
+     * @return Value of property clones.
+     */
+    public java.util.ArrayList getClones() {
+        return clones;
+    }
+    /**
+     * CGH Setter for property clones.
+     * @param clones New value of property clones.
+     */
+    public void setClones(java.util.ArrayList clones) {
+        this.clones = clones;
+    }
+    /**
+     * CGH
+     * Getter for property annotations.
+     * @return Value of property annotations.
+     */
+    public ICGHDataRegion[][] getAnnotations() {
+        return this.annotations;
+    }
+    /**
+     * CGH
+     * Setter for property annotations.
+     * @param annotations New value of property annotations.
+     */
+    public void setAnnotations(ICGHDataRegion[][] annotations) {
+        this.annotations = annotations;
+    }
+    /**
+     * CGH
+     * Getter for data swap status.
+     * @return
+     */
+    public boolean isHasDyeSwap() {
+    	return this.hasDyeSwap;
+    }
+    /**
+     * CGH
+     * Setter for property hasDyeSwap.
+     * @param hasDyeSwap New value of property hasDyeSwap.
+     */
+    public void setHasDyeSwap(boolean hasDyeSwap) {
+        this.hasDyeSwap = hasDyeSwap;
+        if(hasDyeSwap){
+            copyNumberCalculator = new CGHCopyNumberCalculator(this);
+        }else{
+            copyNumberCalculator = new CGHCopyNumberCalculatorNoDyeSwap(this);
+        }
+    }
+    /**
+     * Data is set to CGH Type
+     */
+    public void setCGHData(){
+    	CGHData = true;
+    }
+    /**
+     * Return true if data is CGH type
+     * @return
+     */
+    public boolean isCGHData() {
+    	return CGHData;
+    }
+    /**
+     * Data is set to CGH Type
+     */
+    public void setLog2Data(boolean isLog2){
+    	log2Data = isLog2;
+    }
+    /**
+     * Return true if data is CGH type
+     * @return
+     */
+    public boolean isLog2Data() {
+    	return log2Data;
+    }
+    /**
+     * Setter for CGH Data. Species type.
+     * @param species
+     */
+    public void setCGHSpecies(int species){
+    	if (species == TMEV.CGH_SPECIES_HS){
+    		CGH_SPECIES = TMEV.CGH_SPECIES_HS;
+    	} else if (species == TMEV.CGH_SPECIES_MM){
+    		CGH_SPECIES = TMEV.CGH_SPECIES_MM;
+    	} else {
+    		CGH_SPECIES = TMEV.CGH_SPECIES_Undef;
+    	}
+    }
+    /**
+     * Return CGH data Species
+     * @return
+     */
+    public int getCGHSpecies(){
+    	return CGH_SPECIES;
+    }
+    public void setHasCloneDistribution(boolean cloneDistribution) {
+    	hasCloneDistribution = cloneDistribution;
+    }
+    public boolean hasCloneDistribution() {
+    	return hasCloneDistribution;
+    }
+    /*******************************************************************************
+     * Raktim
+     * End CGH Functions
+     ******************************************************************************/
+
+	//EH state-saving
+    public String getCurrentSampleLabelKey() {
+    	return ((ISlideData)featuresList.get(0)).getSlideDataName();
+    }
+    public static PersistenceDelegate getPersistenceDelegate() {
+    	return new MultipleArrayDataPersistenceDelegate();
+    }
+    public ClusterRepository getExperimentClusterRepository() {
+    	return expClusterRepository;
+    }
+    public ClusterRepository getGeneClusterRepository() {
+    	return geneClusterRepository;
+    }
+    public MultipleArrayData(boolean useMainData) {
+    	this.useMainData = useMainData;
+    }
+    public Experiment getAltExperiment() {
+    	return alternateExperiment;
+    }
+
+    public ArrayList getExperimentColorsSaved(){return experimentColors;}
+    //EH end state-saving
 }

@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: CastFOMViewerA.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-23 20:59:51 $
- * $Author: caliente $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:50:09 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.fom;
@@ -26,6 +26,10 @@ public class CastFOMViewerA extends ViewerAdapter implements java.io.Serializabl
     
     public CastFOMViewerA(float[] fom_values, float interval, int[] numOfCastClusters) {
 	this.content = new CastFOMContentComponentA(fom_values, interval, numOfCastClusters);
+    }
+    
+    public CastFOMViewerA(CastFOMContentComponentA content, JComponent header){
+    	this.content = content;
     }
     
     public JComponent getContentComponent() {

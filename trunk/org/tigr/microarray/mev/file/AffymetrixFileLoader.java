@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: AffymetrixFileLoader.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-03-10 15:39:40 $
- * $Author: braistedj $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:52:17 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.file;
@@ -60,6 +60,7 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
     private String mode = "";
     private File [] files;
     private int affyDataType = IData.DATA_TYPE_AFFY_ABS;
+    private String[] fieldNames = new String[]{"Affy_ID", "Detection", "Description"};
 
     public AffymetrixFileLoader(SuperExpressionFileLoader superLoader) {
         super(superLoader);
@@ -71,11 +72,12 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
 
         Object[] affymetrixFiles = aflp.getAffymetrixSelectedListModel().toArray();
         Object[] refFiles = aflp.getRefSelectedListModel().toArray();
-        String [] fieldNames = new String[3];
-        fieldNames[0] = "Affy_ID";
-        fieldNames[1] = "Detection";
-        fieldNames[2] = "Description";
-        TMEV.setFieldNames(fieldNames);
+        //EH fieldNames added to SlideData instead of TMEV.java
+//        String [] fieldNames = new String[3];
+//       fieldNames[0] = "Affy_ID";
+//        fieldNames[1] = "Detection";
+//        fieldNames[2] = "Description";
+//        TMEV.setFieldNames(fieldNames);
         ISlideData [] data = null;
         files = new File[affymetrixFiles.length];
         for(int j = 0; j < affymetrixFiles.length ; j++)
@@ -457,7 +459,14 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
         return slideData;
     }
 
-
+    /**
+     * Creates a SlideData object containing the data for the first experiment
+     * listed in the Affy file plus metadata.
+     * 
+     * @param file
+     * @return
+     * @throws IOException
+     */
     private ISlideData loadAffySlideData(final File file) throws IOException {
 
         AffySlideDataElement slideDataElement;
@@ -556,6 +565,8 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
         reader.close();
         slideData.setSlideDataName(file.getName());
         slideData.setSlideFileName(file.getPath());
+        //EH field names added to SlideData instead of TMEV.java
+        slideData.setFieldNames(this.fieldNames);
         return slideData;
     }
 

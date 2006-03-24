@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: KNNCInfoViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-02-23 20:59:52 $
- * $Author: caliente $
+ * $Revision: 1.5 $
+ * $Date: 2006-03-24 15:50:57 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -43,6 +43,11 @@ public class KNNCInfoViewer extends ViewerAdapter implements java.io.Serializabl
         this.numClasses = numClasses;
         content = createContent(clusters, genes);
         setMaxWidth(content, header);        
+    }
+    public KNNCInfoViewer(JTextArea content, JComponent header){
+    	this.content = content;
+    	this.header = header;
+        setMaxWidth(content, header);      
     }
     
     /**

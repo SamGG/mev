@@ -4,9 +4,9 @@
  */
 /*
  * $RCSfile: PTMExperimentViewer.java,v $
- * $Revision: 1.8 $
- * $Date: 2005-03-10 20:22:03 $
- * $Author: braistedj $
+ * $Revision: 1.9 $
+ * $Date: 2006-03-24 15:51:08 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.ptm;
@@ -18,6 +18,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -40,8 +41,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
 
-public class PTMExperimentViewer extends ExperimentViewer implements IViewer, java.io.Serializable {
-	public static final long serialVersionUID = 202012010001L;
+public class PTMExperimentViewer extends ExperimentViewer implements IViewer {
 	
 	protected static final String STORE_CLUSTER_CMD = "store-cluster-cmd";
 	protected static final String SET_DEF_COLOR_CMD = "set-def-color-cmd";
@@ -68,33 +68,34 @@ public class PTMExperimentViewer extends ExperimentViewer implements IViewer, ja
 		this.auxTitles = auxTitles;
 		this.auxData = auxData;        
 		this.header = new PTMExperimentHeader(expViewer.getHeaderComponent(), templateVector);
-		//this.header.setColorImages(expViewer.getPosColorImage(), expViewer.getNegColorImage());
 		this.header.setColorImages(expViewer.getNegColorImage(), expViewer.getPosColorImage());
 		this.header.setMissingColor(expViewer.getMissingColor());
 		this.header.addMouseListener(listener);
 	}
+	public void setExperiment(Experiment e){expViewer.setExperiment(e);}
+	public void setExperimentID(int i){expViewer.setExperimentID(i);}
+	public int getExperimentID(){return expViewer.getExperimentID();}
 	
-	
-	private void writeObject(ObjectOutputStream oos) throws IOException {
-		oos.writeObject(this.expViewer);
-		oos.writeObject(this.header);
-		oos.writeObject(this.auxData);
-		oos.writeObject(this.auxTitles);
-	}    
-	
-	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-		this.expViewer = (ExperimentViewer)ois.readObject();
-		this.header = (PTMExperimentHeader)ois.readObject();
-		this.auxData = (Object [][])ois.readObject();
-		this.auxTitles = (String [])ois.readObject();
-		
+    /**
+     * 
+     */ 
+    public PTMExperimentViewer(ExperimentViewer exptViewer, PTMExperimentHeader exptHeader, String[] auxTitles, Object[][] auxData) {
+    	this.expViewer = exptViewer;
+    	this.header = exptHeader;
+    	this.auxTitles = auxTitles;
+    	this.auxData = auxData;
 		Listener listener = new Listener();	
+		this.popup = createJPopupMenu(listener);
 		this.expViewer.getContentComponent().addMouseListener(listener);
+		this.header.setColorImages(expViewer.getNegColorImage(), expViewer.getPosColorImage());
 		this.header.setMissingColor(expViewer.getMissingColor());
 		this.header.addMouseListener(listener);
-		this.popup = createJPopupMenu(listener);
-	}   
 	
+    }
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new",
+    			new Object[]{this.expViewer, this.header, this.auxTitles, this.auxData});
+    }
 	/**
 	 * Returns the header component.
 	 */
@@ -309,6 +310,5 @@ public class PTMExperimentViewer extends ExperimentViewer implements IViewer, ja
 			popup.show(e.getComponent(), e.getX(), e.getY());
 		}
 	}
-	
 	
 }

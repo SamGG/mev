@@ -98,8 +98,10 @@ public class DAMClassificationEditor extends JFrame {
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.framework = framework;
         this.data = framework.getData();
-        this.numGenes = data.getFeaturesSize();
-        this.numExps = data.getFeaturesCount();
+//        this.numGenes = data.getFeaturesSize();
+//        this.numExps = data.getFeaturesCount();
+        this.numGenes = data.getExperiment().getNumberOfGenes();
+        this.numExps = data.getExperiment().getNumberOfSamples();
         this.fieldNames = data.getFieldNames();
         this.classifyGenes = classifyGenes;
         this.numberOfClasses = numberOfClasses;
@@ -394,17 +396,17 @@ public class DAMClassificationEditor extends JFrame {
                 }
                 
                 tableData = new Object[numGenes][columnNames.length];
-                
-                for (int i = 0; i < tableData.length; i++) {
-                    for (int j = 0; j < columnNames.length; j++) {
-                        if (j == 0) {
-                            tableData[i][j] = new Integer(i);
-                        } else if ((j > 0) && (j < (numberOfClasses + 1))) {
-                            tableData[i][j] = new Boolean(false);
-                        } else if (j == numberOfClasses + 1) {
-                            tableData[i][j] = new Boolean(true);
+                //EH changed for loop counters from i,j to row,col for clarity
+                for (int row = 0; row < tableData.length; row++) {
+                    for (int col = 0; col < columnNames.length; col++) {
+                        if (col == 0) {
+                            tableData[row][col] = new Integer(row);
+                        } else if ((col > 0) && (col < (numberOfClasses + 1))) {
+                            tableData[row][col] = new Boolean(false);
+                        } else if (col == numberOfClasses + 1) {
+                            tableData[row][col] = new Boolean(true);
                         } else {
-                            tableData[i][j] = data.getElementAttribute(i, j - (numberOfClasses + 2));
+                            tableData[row][col] = data.getElementAttribute(row, col - (numberOfClasses + 2));
                         }
                     }
                 }
@@ -419,16 +421,17 @@ public class DAMClassificationEditor extends JFrame {
                 columnNames[numberOfClasses + 2] = "Sample/Experiment Name";
                 tableData = new Object[numExps][columnNames.length];
                 
-                for (int i = 0; i < tableData.length; i++) {
-                    for (int j = 0; j < columnNames.length; j++) {
-                        if (j == 0) {
-                            tableData[i][j] = new Integer(i);
-                        } else if ((j > 0) && (j < (numberOfClasses + 1))) {
-                            tableData[i][j] = new Boolean(false);
-                        } else if (j == numberOfClasses + 1) {
-                            tableData[i][j] = new Boolean(true);
-                        } else if (j == numberOfClasses + 2) {
-                            tableData[i][j] = data.getFullSampleName(i);
+                //EH changed for loop counters from i,j to row,col for clarity
+                for (int row = 0; row < tableData.length; row++) {
+                    for (int col = 0; col < columnNames.length; col++) {
+                        if (col == 0) {
+                            tableData[row][col] = new Integer(row);
+                        } else if ((col > 0) && (col < (numberOfClasses + 1))) {
+                            tableData[row][col] = new Boolean(false);
+                        } else if (col == numberOfClasses + 1) {
+                            tableData[row][col] = new Boolean(true);
+                        } else if (col == numberOfClasses + 2) {
+                            tableData[row][col] = data.getFullSampleName(row);
                         }
                     }
                 }

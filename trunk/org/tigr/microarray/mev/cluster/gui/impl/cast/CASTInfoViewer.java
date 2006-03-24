@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: CASTInfoViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-23 20:59:49 $
- * $Author: caliente $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-24 15:49:58 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.cast;
@@ -25,7 +25,7 @@ import javax.swing.JTextArea;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
 public class CASTInfoViewer extends ViewerAdapter implements java.io.Serializable {
-    public static final long serialVersionUID = 202001010001L;
+//    public static final long serialVersionUID = 202001010001L;
     
     private JComponent header;
     private JTextArea  content;
@@ -40,6 +40,17 @@ public class CASTInfoViewer extends ViewerAdapter implements java.io.Serializabl
         this.clusterGenes = true;
         content = createContent(clusters, genes);
         setMaxWidth(content, header);        
+    }
+    /**
+     * state-saving constructor
+     * @param content
+     * @param header
+     */
+    public CASTInfoViewer(JTextArea content, JComponent header){
+    	this.content = content;
+    	this.header = header;
+        this.clusterGenes = true;
+    	setMaxWidth(content, header);
     }
     
     /**
