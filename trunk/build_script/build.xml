@@ -268,8 +268,8 @@ depends="HCL,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,T
     -->
     <target name="base" depends="jar-algorithm-support">
         <javac srcdir="${tigr.dir}/microarray:${tigr.dir}" destdir="${dest.dir}"
-            includes="mev/r/**,file/**,remote/**,util/**,mev/*.java,mev/action/*.java,mev/file/**,mev/script/**,
-mev/cluster/gui/impl/*.java, mev/cgh/**,
+            includes="mev/r/**, file/**, remote/**, util/**, mev/*.java, mev/action/*.java, mev/persistence/**, mev/file/**, mev/script/**,
+mev/cluster/gui/impl/**, mev/cgh/**,
 mev/cluster/gui/impl/dialogs/**, mev/cluster/gui/impl/util/*.java, mev/cluster/gui/*.java,
 mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washington/cea/r/*.java">
             <classpath>
@@ -396,6 +396,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 			org/tigr/microarray/mev/action/*.class,
 			org/tigr/microarray/mev/file/**,
 			org/tigr/microarray/mev/script/**,
+        	org/tigr/microarray/mev/persistence/**,
 			org/tigr/microarray/mev/cluster/clusterUtil/**"
         />
     </target>
