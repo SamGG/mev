@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: GenePixFileLoader.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-03-24 15:52:17 $
- * $Author: eleanorahowe $
+ * $Revision: 1.9 $
+ * $Date: 2006-03-28 18:27:11 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.file;
@@ -284,7 +284,7 @@ public class GenePixFileLoader extends ExpressionFileLoader {
             
             fileTreePane = new FileTreePane(SuperExpressionFileLoader.DATA_PATH);
             fileTreePane.addFileTreePaneListener(new FileTreePaneEventHandler());
-            fileTreePane.setPreferredSize(new java.awt.Dimension(200, 50));
+            fileTreePane.setPreferredSize(new java.awt.Dimension(200, 500));
             
             pathTextField = new JTextField();
             pathTextField.setEditable(false);
@@ -344,7 +344,7 @@ public class GenePixFileLoader extends ExpressionFileLoader {
             gba.add(selectionPanel, genePixSelectionPanel, 0, 1, 1, 2, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             
             splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, fileTreePane, selectionPanel);
-            
+            splitPane.setPreferredSize(new java.awt.Dimension(600, 600));
             fileLoaderPanel = new JPanel();
             fileLoaderPanel.setLayout(new GridBagLayout());
             gba.add(fileLoaderPanel, splitPane, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
