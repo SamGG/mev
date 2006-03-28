@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: SOFT_AffyFileLoader.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-03-24 15:52:17 $
- * $Author: eleanorahowe $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-28 18:39:21 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 
@@ -120,8 +120,7 @@ public class SOFT_AffyFileLoader extends ExpressionFileLoader {
         	 for(int k=0;k<platforminfo.size()/2;k++)
         		 fieldNames[totalColumns+k]="";
          }        	 
-         slideData.getSlideMetaData().setFieldNames(fieldNames);
-//         TMEV.setFieldNames(fieldNames);
+         TMEV.setFieldNames(fieldNames);
         
          for(int i=0;i<totalRows;i++){
         	 intensities[0] = 1.0f;
@@ -464,7 +463,7 @@ public class SOFT_AffyFileLoader extends ExpressionFileLoader {
             
             //jcb
             splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, fileTreePane, fileLoaderPanel);
-            
+            splitPane.setPreferredSize(new java.awt.Dimension(600, 600));
             gba.add(this, splitPane, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             splitPane.setDividerLocation(200);
             

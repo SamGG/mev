@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: StanfordFileLoader.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-03-24 15:52:17 $
- * $Author: eleanorahowe $
+ * $Revision: 1.10 $
+ * $Date: 2006-03-28 18:41:44 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 
@@ -539,7 +539,7 @@ public class StanfordFileLoader extends ExpressionFileLoader {
             availableScrollPane = new JScrollPane(availableList);
             
             JPanel filePanel = new JPanel(new GridBagLayout());
-            filePanel.setPreferredSize(new Dimension(10, 100));
+            filePanel.setPreferredSize(new Dimension(120, 100));
             filePanel.setBorder(new TitledBorder(new EtchedBorder(), "Available Files (*.txt)"));
             gba.add(filePanel, availableScrollPane, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             

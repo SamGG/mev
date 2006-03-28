@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: SOFT_TwoChannelFileLoader.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-03-24 15:52:17 $
- * $Author: eleanorahowe $
+ * $Revision: 1.5 $
+ * $Date: 2006-03-28 18:40:42 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 
@@ -125,9 +125,8 @@ public class SOFT_TwoChannelFileLoader extends ExpressionFileLoader {
        	 	fieldNames[totalColumns]="Platform Information";        
        	 	for(int k=1;k<platforminfo.size()/2;k++)
        	 		fieldNames[totalColumns+k]="";
-        } 
-        slideData.getSlideMetaData().setFieldNames(fieldNames);
-//        TMEV.setFieldNames(fieldNames);
+        }        	 
+        TMEV.setFieldNames(fieldNames);
         
         for(int i=0;i<totalRows;i++){
         	intensities[0] = 1.0f;
@@ -367,7 +366,7 @@ public class SOFT_TwoChannelFileLoader extends ExpressionFileLoader {
          
             fileSelectionPanel = new JPanel();
             fileSelectionPanel.setLayout(new GridBagLayout());
-            fileSelectionPanel.setBorder(new TitledBorder(new EtchedBorder(), "Selected TDMS File"));
+            fileSelectionPanel.setBorder(new TitledBorder(new EtchedBorder(), "Selected GEO SOFT Two Channel File"));
             gba.add(fileSelectionPanel, fileNameTextField, 0, 0, 2, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
     
             expressionTable = new JTable();
@@ -458,7 +457,7 @@ public class SOFT_TwoChannelFileLoader extends ExpressionFileLoader {
             
             //jcb
             splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, fileTreePane, fileLoaderPanel);
-            
+            splitPane.setPreferredSize(new java.awt.Dimension(600, 600));
             gba.add(this, splitPane, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             splitPane.setDividerLocation(200);
             
