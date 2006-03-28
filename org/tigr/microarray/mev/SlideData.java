@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SlideData.java,v $
- * $Revision: 1.14 $
- * $Date: 2006-03-24 15:49:45 $
+ * $Revision: 1.15 $
+ * $Date: 2006-03-28 22:19:19 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -304,9 +304,10 @@ public class SlideData implements ISlideData, ISlideMetaData {
     	allSlideDataElements.add(o);
     }
     public Object set(int index, Object element){
-    	Object o = allSlideDataElements.get(index);
-    	allSlideDataElements.set(index, element);
-    	return o;
+    	return allSlideDataElements.set(index, element);
+    }
+    public void setElementAt(Object element, int index){
+    	allSlideDataElements.setElementAt(element, index);
     }
     public void insertElementAt(Object o, int i){
     	allSlideDataElements.insertElementAt(o, i);

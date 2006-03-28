@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: CGHStanfordFileLoader.java,v $
- * $Revision: 1.3 $
- * $Date: 2006-03-28 18:21:38 $
- * $Author: wwang67 $
+ * $Revision: 1.4 $
+ * $Date: 2006-03-28 22:19:20 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -371,7 +371,7 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
         		//Swap SlideData Element for ordering
         		if (j == 0) {
         			CGHSlideDataElement rem_T = (CGHSlideDataElement)((SlideData)slideDataArray[j]).set(ind_T, sde_T1);
-        			((SlideData)slideDataArray[j]).insertElementAt(rem_T, sortInd_T);
+        			((SlideData)slideDataArray[j]).setElementAt(rem_T, sortInd_T);
         		}
         		else {
 	        		//Swap FloatMatrix Element for ordering, index 1 to n samples
@@ -430,7 +430,7 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
         		//Swap SlideData Element for ordering
         		if (j == 0) {
         			CGHSlideDataElement rem_T = (CGHSlideDataElement)((SlideData)slideDataArray[j]).set(ind_T, sde_T1);
-        			((SlideData)slideDataArray[j]).insertElementAt(rem_T, sortInd_T);
+        			((SlideData)slideDataArray[j]).setElementAt(rem_T, sortInd_T);
         		}
         		else {
 	        		//Swap FloatMatrix Element for ordering, index 1 to n samples
