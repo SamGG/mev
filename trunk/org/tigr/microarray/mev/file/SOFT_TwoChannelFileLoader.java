@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: SOFT_TwoChannelFileLoader.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-03-28 18:40:42 $
- * $Author: wwang67 $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-28 22:30:33 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -126,7 +126,7 @@ public class SOFT_TwoChannelFileLoader extends ExpressionFileLoader {
        	 	for(int k=1;k<platforminfo.size()/2;k++)
        	 		fieldNames[totalColumns+k]="";
         }        	 
-        TMEV.setFieldNames(fieldNames);
+        slideData.getSlideMetaData().appendFieldNames(fieldNames);
         
         for(int i=0;i<totalRows;i++){
         	intensities[0] = 1.0f;
