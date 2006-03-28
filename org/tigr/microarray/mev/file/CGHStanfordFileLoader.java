@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: CGHStanfordFileLoader.java,v $
- * $Revision: 1.2 $
- * $Date: 2006-03-24 15:52:17 $
- * $Author: eleanorahowe $
+ * $Revision: 1.3 $
+ * $Date: 2006-03-28 18:21:38 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 
@@ -718,7 +718,7 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
 
             //jcb
             splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, fileTreePane, fileLoaderPanel);
-
+            splitPane.setPreferredSize(new java.awt.Dimension(600, 600));
             gba.add(this, splitPane, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             splitPane.setDividerLocation(0.50);
 
