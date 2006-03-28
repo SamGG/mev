@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: AffyGCOSFileLoader.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-03-24 15:52:17 $
- * $Author: eleanorahowe $
+ * $Revision: 1.7 $
+ * $Date: 2006-03-28 18:19:17 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 
@@ -67,7 +67,7 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
     private boolean stop = false;
     private AffyGCOSFileLoaderPanel sflp;
     private int affyDataType = IData.DATA_TYPE_AFFY_ABS;
-    
+
     public AffyGCOSFileLoader(SuperExpressionFileLoader superLoader) {
         super(superLoader);
         gba = new GBA();
@@ -88,6 +88,7 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
      public void setTMEVDataType(){
          TMEV.setDataType(TMEV.DATA_TYPE_AFFY);
      }
+     
     /*
      *  Handling of Mas5 data has been altered in version 3.0 to permit loading of
      *  "ratio" input without the creation of false cy3 and cy5.  cy5 values in data structures
@@ -161,23 +162,20 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                 	String [] fieldNames = new String[1];
                 	//extraFields = new String[1];
                 	fieldNames[0]="AffyID";
-                	//TMEV.setFieldNames(fieldNames);
-                	slideDataArray[0].getSlideMetaData().appendFieldNames(fieldNames);
-                } else if(sflp.absMeanRadioButton.isSelected()){
+                	TMEV.setFieldNames(fieldNames);
+                }else if(sflp.absMeanRadioButton.isSelected()){
                 	String [] fieldNames = new String[2];
                 	extraFields = new String[1];
                     fieldNames[0]="AffyID";
                     fieldNames[1]="Detection";
-                    //TMEV.setFieldNames(fieldNames);	
-                	slideDataArray[0].getSlideMetaData().appendFieldNames(fieldNames);
-                } else {
+                    TMEV.setFieldNames(fieldNames);	
+                }else{
                 	String [] fieldNames = new String[3];
                 	extraFields = new String[2];
                     fieldNames[0]="AffyID";
                     fieldNames[1]="Detection";
                     fieldNames[2]="P-value";
-                    //TMEV.setFieldNames(fieldNames);
-                	slideDataArray[0].getSlideMetaData().appendFieldNames(fieldNames);
+                    TMEV.setFieldNames(fieldNames);
                 }
                 ss.nextToken();//pares the blank on header
                 for (int i=0; i<experimentCount; i++) {
@@ -438,10 +436,8 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
         
         public AffyGCOSFileLoaderPanel() {                
                 setLayout(new GridBagLayout());
-
                 fileTreePane = new FileTreePane(SuperExpressionFileLoader.DATA_PATH);
                 fileTreePane.addFileTreePaneListener(new FileTreePaneEventHandler());
-                fileTreePane.setPreferredSize(new java.awt.Dimension(200, 50));
 
                 pathTextField = new JTextField();
                 pathTextField.setEditable(false);
@@ -535,6 +531,7 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                 gba.add(rightLoaderPanel,fileLoaderPanel, 1, 0, 1, 9, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
                 
                 splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, fileTreePane, rightLoaderPanel);
+                splitPane.setPreferredSize(new java.awt.Dimension(600, 600));
                 splitPane.setDividerLocation(200);
                 gba.add(this,splitPane,0,0,1,1,1,1,GBA.B,GBA.C, new Insets(5, 5, 5, 5), 0, 0);
                 
@@ -570,6 +567,7 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
         
         public void setDataFileName(String fileName) {
             pathTextField.setText(fileName);
+           // System.out.println(pathTextField);
         }
     
         
@@ -620,12 +618,10 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                 
                 String filePath = (String) event.getValue("Path");
                 Vector fileNames = (Vector) event.getValue("Filenames");
-                //System.out.print(filePath);
-                
+     
                 if(fileNames.size() < 1)
                     return;
                 
-               //String fileName = (String)(fileNames.elementAt(0));
                 FileFilter AffyGCOSFileFilter = getFileFilter();
 //                FileFilter AffyGCOSCallFileFilter = getFileFilter();
                 ((DefaultListModel)(AffyGCOSAvailableList.getModel())).clear();
