@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: Mas5FileLoader.java,v $
- * $Revision: 1.3 $
- * $Date: 2006-03-24 15:52:17 $
- * $Author: eleanorahowe $
+ * $Revision: 1.4 $
+ * $Date: 2006-03-28 18:36:19 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 
@@ -155,8 +155,7 @@ public class Mas5FileLoader extends ExpressionFileLoader {
                     fieldNames[i] = ss.nextToken();
                 }               
                 fieldNames[preExperimentColumns]=callfile;           
-                //TMEV.setFieldNames(fieldNames);
-                slideDataArray[0].getSlideMetaData().setFieldNames(fieldNames);
+                TMEV.setFieldNames(fieldNames);
      
                 for (int i=0; i<experimentCount; i++) {
                     slideDataArray[i].setSlideDataName(ss.nextToken());
@@ -476,6 +475,7 @@ public class Mas5FileLoader extends ExpressionFileLoader {
                
                 
                 splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, fileTreePane, fileLoaderPanel);
+                splitPane.setPreferredSize(new java.awt.Dimension(600, 600));
                 splitPane.setDividerLocation(200);
                 gba.add(this,splitPane,0,0,1,1,1,1,GBA.B,GBA.C, new Insets(5, 5, 5, 5), 0, 0);
                 

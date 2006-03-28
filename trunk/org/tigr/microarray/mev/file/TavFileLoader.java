@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: TavFileLoader.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-03-24 15:52:17 $
- * $Author: eleanorahowe $
+ * $Revision: 1.6 $
+ * $Date: 2006-03-28 18:42:25 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 
@@ -588,7 +588,7 @@ public class TavFileLoader extends ExpressionFileLoader {
             gba.add(selectionPanel, fieldsPanel, 0, 3, 1, 2, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             
             splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, fileTreePane, selectionPanel);
-            
+            splitPane.setPreferredSize(new java.awt.Dimension(600, 600));
             fileLoaderPanel = new JPanel();
             fileLoaderPanel.setLayout(new GridBagLayout());
             gba.add(fileLoaderPanel, splitPane, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
