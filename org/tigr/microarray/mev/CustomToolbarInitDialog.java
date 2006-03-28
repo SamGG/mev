@@ -33,6 +33,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.border.BevelBorder;
 
 import org.tigr.microarray.mev.action.ActionManager;
@@ -65,6 +66,7 @@ public class CustomToolbarInitDialog extends AlgorithmDialog {
      */    
     private AlgorithmSelectionPanel algSelPanel;
     
+    private JScrollPane sPane;
     /** Creates a new instance of CustomToolbarInitDialog
      * @param manager ActionManager to provide available algorithm
      */
@@ -78,9 +80,9 @@ public class CustomToolbarInitDialog extends AlgorithmDialog {
         this.setResetButtonText("Select All");
         //previewPanel = new PreviewPanel();
         algSelPanel = new AlgorithmSelectionPanel(actionManager);
-        
+        sPane=new JScrollPane(algSelPanel);
         //mainPanel.add(previewPanel, new GridBagConstraints(0,0,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
-        mainPanel.add(algSelPanel, new GridBagConstraints(0,0,1,2,1,1,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
+        mainPanel.add(sPane, new GridBagConstraints(0,0,1,2,1,1,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
         
         Listener listener = new Listener();
         addWindowListener(listener);
