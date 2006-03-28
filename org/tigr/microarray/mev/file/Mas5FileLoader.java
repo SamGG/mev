@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: Mas5FileLoader.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-03-28 18:36:19 $
- * $Author: wwang67 $
+ * $Revision: 1.5 $
+ * $Date: 2006-03-28 22:30:33 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -155,7 +155,7 @@ public class Mas5FileLoader extends ExpressionFileLoader {
                     fieldNames[i] = ss.nextToken();
                 }               
                 fieldNames[preExperimentColumns]=callfile;           
-                TMEV.setFieldNames(fieldNames);
+                slideDataArray[0].getSlideMetaData().appendFieldNames(fieldNames);
      
                 for (int i=0; i<experimentCount; i++) {
                     slideDataArray[i].setSlideDataName(ss.nextToken());

@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: AffyGCOSFileLoader.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-03-28 18:19:17 $
- * $Author: wwang67 $
+ * $Revision: 1.8 $
+ * $Date: 2006-03-28 22:30:33 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -162,20 +162,20 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                 	String [] fieldNames = new String[1];
                 	//extraFields = new String[1];
                 	fieldNames[0]="AffyID";
-                	TMEV.setFieldNames(fieldNames);
+                	slideDataArray[0].getSlideMetaData().appendFieldNames(fieldNames);
                 }else if(sflp.absMeanRadioButton.isSelected()){
                 	String [] fieldNames = new String[2];
                 	extraFields = new String[1];
                     fieldNames[0]="AffyID";
                     fieldNames[1]="Detection";
-                    TMEV.setFieldNames(fieldNames);	
+                    slideDataArray[0].getSlideMetaData().appendFieldNames(fieldNames);
                 }else{
                 	String [] fieldNames = new String[3];
                 	extraFields = new String[2];
                     fieldNames[0]="AffyID";
                     fieldNames[1]="Detection";
                     fieldNames[2]="P-value";
-                    TMEV.setFieldNames(fieldNames);
+                    slideDataArray[0].getSlideMetaData().appendFieldNames(fieldNames);
                 }
                 ss.nextToken();//pares the blank on header
                 for (int i=0; i<experimentCount; i++) {
