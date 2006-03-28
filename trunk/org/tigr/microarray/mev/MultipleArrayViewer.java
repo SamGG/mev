@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.34 $
- * $Date: 2006-03-24 15:49:44 $
+ * $Revision: 1.35 $
+ * $Date: 2006-03-28 22:19:19 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -3502,7 +3502,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             return;
         data.addFeatures(features);
         data.setDataType(dataType);
-        if(this.data.getFieldNames() != null && this.data.getFeaturesCount() < 1){
+        if(this.data.getFieldNames() != null && this.data.getFeaturesCount() > 0){
             this.menubar.addLabelMenuItems(this.data.getFieldNames());
             //add the experiment key vector that is longest
             this.menubar.addExperimentLabelMenuItems(getSlideNameKeyVectorUnion(features));
