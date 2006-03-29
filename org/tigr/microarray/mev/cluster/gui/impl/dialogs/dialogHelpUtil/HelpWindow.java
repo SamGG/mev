@@ -56,7 +56,7 @@ public class HelpWindow extends JDialog {
                 this.setTitle(abbr+": Parameter Information");
         }
         else
-            this.setTitle(this.dialogName+": Parameter Information");
+            this.setTitle(this.dialogName+":Parameter Information");
         
         JPanel iconPanel = new JPanel(new GridBagLayout());
         JLabel iconLabel = new JLabel(GUIFactory.getIcon("dialog_banner2.gif"));
@@ -97,7 +97,7 @@ public class HelpWindow extends JDialog {
         mainPanel.add(iconPanel, new GridBagConstraints(0,0,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
         mainPanel.add(scroll, new GridBagConstraints(0,1,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
         mainPanel.add(buttonPanel, new GridBagConstraints(0,2,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.HORIZONTAL,new Insets(0,0,0,0),0,0));
-        
+        mainPanel.setPreferredSize(new Dimension(600,600));
         this.getContentPane().add(mainPanel, new GridBagConstraints(0,0,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         
         validate();
@@ -163,7 +163,7 @@ public class HelpWindow extends JDialog {
         mainPanel.add(iconPanel, new GridBagConstraints(0,0,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
         mainPanel.add(scroll, new GridBagConstraints(0,1,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
         mainPanel.add(buttonPanel, new GridBagConstraints(0,2,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.HORIZONTAL,new Insets(0,0,0,0),0,0));
-        
+        mainPanel.setPreferredSize(new Dimension(600,600));
         this.getContentPane().add(mainPanel, new GridBagConstraints(0,0,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         
         validate();
@@ -200,7 +200,30 @@ public class HelpWindow extends JDialog {
     
     
     private String getFileName(String key){
-        
+    	if(key.equals("TDMS"))
+            return "TDMS.html";
+    	if(key.equals("Mev"))
+            return "Mev.html";
+    	if(key.equals("Tav"))
+            return "Tav.html";
+    	if(key.equals("GW"))
+            return "GW.html";
+    	if(key.equals("GCOS"))
+            return "GCOS.html";
+    	if(key.equals("bioconductor"))
+            return "bioconductor.html";
+    	if(key.equals("softAffy"))
+            return "softAffy.html";
+    	if(key.equals("softTwoChannel"))
+            return "softTwoChannel.html";
+    	if(key.equals("Agilent"))
+            return "Agilent.html";
+    	if(key.equals("CGH"))
+            return "CGH.html";
+    	if(key.equals("dChip"))
+            return "dChip.html";
+    	if(key.equals("GenePix"))
+            return "GenePix.html";
         if(key.equals("KMC Initialization Dialog"))
             return "kmc_parameters.html";
         if(key.equals("HCL Initialization Dialog"))
