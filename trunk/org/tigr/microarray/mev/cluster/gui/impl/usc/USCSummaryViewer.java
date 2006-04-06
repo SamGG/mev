@@ -46,8 +46,12 @@ public class USCSummaryViewer extends JPanel implements IViewer, ActionListener 
     private USCGene[] genes;
     private USCResult result;
     transient IFramework framework;
-
-
+    
+    //EH added for state-saving
+    private String[] hybNames;
+    private String[] uniqueClasses;
+    private String[] params;
+    
     /**
      * Constructor
      * 
@@ -61,8 +65,20 @@ public class USCSummaryViewer extends JPanel implements IViewer, ActionListener 
     public USCSummaryViewer(String[] hybNames, USCResult resultP,
             String[] uniqueClasses, String[] params, USCGene[] genesP,
             IFramework frameworkP) {
-        this.framework = frameworkP;
-
+    	this(hybNames, resultP, uniqueClasses, params, genesP);
+    	this.framework = frameworkP;
+    }
+    
+    public USCSummaryViewer(String[] hybNames, USCResult resultP,
+            String[] uniqueClasses, String[] params, USCGene[] genesP) {
+    	
+    	//EH - added for state-saving
+        //this.framework = frameworkP;
+    	this.hybNames = hybNames;
+    	this.uniqueClasses = uniqueClasses;
+    	this.params = params;
+    	//EH end state-saving
+    	
         this.result = resultP;
         this.genes = genesP;
 
@@ -374,7 +390,8 @@ public class USCSummaryViewer extends JPanel implements IViewer, ActionListener 
 
 
     public void onSelected(IFramework framework) {
-
+    	//EH
+    	this.framework = framework;
     }
 
 
@@ -421,40 +438,41 @@ public class USCSummaryViewer extends JPanel implements IViewer, ActionListener 
     }
 
 
-	/* (non-Javadoc)
+	/** implemented only to satisfy the IViewer interface
 	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
 	 */
 	public void setExperiment(Experiment e) {
-		// TODO Auto-generated method stub
-		
+		//do nothing
 	}
 
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentID()
 	 */
 	public int getExperimentID() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 
-	/* (non-Javadoc)
+	/** 
+	 * This method is implemented only to satisfy the IViewer interface
 	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
 	 */
 	public void setExperimentID(int id) {
-		// TODO Auto-generated method stub
-		
+		;
 	}
 
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExpression()
 	 */
 	public Expression getExpression() {
-		// TODO Auto-generated method stub
-		return null;
+		return new Expression(this, this.getClass(), "new", 
+				new Object[]{this.hybNames, this.result, this.uniqueClasses, this.params, this.genes});
 	}
+//	java.lang.RuntimeException: failed to evaluate: <unbound>=USCSummaryViewer.new(
+//			StringArray0, USCResult0, StringArray1, StringArray2, USCGeneArray0);	
+	
 }//end class
 
 /*

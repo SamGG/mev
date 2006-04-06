@@ -20,7 +20,7 @@ import org.tigr.microarray.mev.cluster.gui.IViewer;
  * @author vu
  */
 public class USCResultViewer extends JPanel implements IViewer, Serializable {
-
+	int exptID = 0;
 	
 	public JComponent getContentComponent() {
 		return this;
@@ -76,33 +76,32 @@ public class USCResultViewer extends JPanel implements IViewer, Serializable {
     public int getViewerType() {
         return 0;
     }
-	/* (non-Javadoc)
-	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
+	/**
+	 * This method implemented only to satisfy IViewer interface
 	 */
 	public void setExperiment(Experiment e) {
-		// TODO Auto-generated method stub
+		;
 		
 	}
 	/* (non-Javadoc)
 	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentID()
 	 */
 	public int getExperimentID() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.exptID;
 	}
 	/* (non-Javadoc)
 	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
 	 */
 	public void setExperimentID(int id) {
-		// TODO Auto-generated method stub
+		this.exptID = id;
 		
 	}
 	/* (non-Javadoc)
 	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExpression()
 	 */
 	public Expression getExpression() {
-		// TODO Auto-generated method stub
-		return null;
+		return new Expression(this, this.getClass(), "new", 
+				new Object[]{});
 	}
 
 }//end class
