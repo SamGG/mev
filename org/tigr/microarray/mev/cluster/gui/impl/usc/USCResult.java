@@ -12,6 +12,7 @@ public class USCResult implements java.io.Serializable {
 	private int iRhoBin;
 	private double delta;
 	private double rho;
+
 	/**
 	 * [ numTestHybs ][ numClasses ]
 	 */
@@ -36,11 +37,16 @@ public class USCResult implements java.io.Serializable {
 		this.rho = rho;
 		this.order = order;
 	}//end constructor
-	
+	/**
+	 * EH - Null constructor added to allow state-saving
+	 *
+	 */
+	public USCResult (){}
 	
 	public USCOrder[] getOrder() {
 		return this.order;
 	}
+
 	public void setDiscScores( double[][] discScores ) {
 		this.discScores = discScores;
 	}
@@ -68,5 +74,52 @@ public class USCResult implements java.io.Serializable {
 	}
 	public double getRho() {
 		return this.rho;
+	}
+	
+	//EH - get/set methods added for state-saving
+	/**
+	 * @return Returns the iDeltaBin.
+	 */
+	public int getIDeltaBin() {
+		return iDeltaBin;
+	}
+	/**
+	 * @param deltaBin The iDeltaBin to set.
+	 */
+	public void setIDeltaBin(int deltaBin) {
+		iDeltaBin = deltaBin;
+	}
+	/**
+	 * @return Returns the iRhoBin.
+	 */
+	public int getIRhoBin() {
+		return iRhoBin;
+	}
+	/**
+	 * @param rhoBin The iRhoBin to set.
+	 */
+	public void setIRhoBin(int rhoBin) {
+		iRhoBin = rhoBin;
+	}
+	/**
+	 * @param delta The delta to set.
+	 */
+	public void setDelta(double delta) {
+		this.delta = delta;
+	}
+	/**
+	 * @param numGenesUsed The numGenesUsed to set.
+	 */
+	public void setNumGenesUsed(int numGenesUsed) {
+		this.numGenesUsed = numGenesUsed;
+	}
+	/**
+	 * @param rho The rho to set.
+	 */
+	public void setRho(double rho) {
+		this.rho = rho;
+	}
+	public void setOrder(USCOrder[] u){
+		this.order = u;
 	}
 }//end class

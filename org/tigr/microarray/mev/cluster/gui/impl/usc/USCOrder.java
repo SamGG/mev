@@ -19,10 +19,15 @@ package org.tigr.microarray.mev.cluster.gui.impl.usc;
 public class USCOrder implements java.io.Serializable {
 	private int iOriginal;
 	private int iRelevant;
+
 	private boolean isRelevant;
 	private boolean isCorrelated;
 	private double beta;
 	
+	public USCOrder(){
+		this.isRelevant = false;
+		this.isCorrelated = false;
+	}
 	
 	public USCOrder( int iOriginal ) {
 		this.iOriginal = iOriginal;
@@ -65,7 +70,12 @@ public class USCOrder implements java.io.Serializable {
 			return false;
 		}
 	}
-	
+	/**
+	 * @param original The iOriginal to set.
+	 */
+	public void setIOriginal(int original) {
+		iOriginal = original;
+	}
 	
 	public static void main( String[] args ) {
 		boolean one = true;

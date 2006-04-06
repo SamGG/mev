@@ -10,6 +10,11 @@ public class USCGene {
 	private String geneName;
 	private String[] extraFields;
 	
+	/**
+	 * EH - Null constructor added to allow state-saving.
+	 *
+	 */
+	public USCGene(){}
 	
 	public USCGene( String geneNameP, String[] extraFieldsP ) {
 		this.geneName = geneNameP;
@@ -32,5 +37,18 @@ public class USCGene {
 		} else {
 			return this.extraFields.length;
 		}
+	}
+	//EH added accessor methods to make this class a JavaBean
+	/**
+	 * @param extraFields The extraFields to set.
+	 */
+	public void setExtraFields(String[] extraFields) {
+		this.extraFields = extraFields;
+	}
+	/**
+	 * @param geneName The geneName to set.
+	 */
+	public void setGeneName(String geneName) {
+		this.geneName = geneName;
 	}
 }//end class
