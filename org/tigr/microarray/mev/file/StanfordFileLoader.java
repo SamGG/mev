@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: StanfordFileLoader.java,v $
- * $Revision: 1.10 $
- * $Date: 2006-03-28 18:41:44 $
+ * $Revision: 1.11 $
+ * $Date: 2006-04-10 13:44:15 $
  * $Author: wwang67 $
  * $State: Exp $
  */
@@ -123,6 +123,10 @@ public class StanfordFileLoader extends ExpressionFileLoader {
         while ((currentLine = reader.readLine()) != null) {
             if (stop) {
                 return null;
+            }
+		//fix empty tabbs appending to the end of line by wwang
+            while(currentLine.endsWith("\t")){
+            	currentLine=currentLine.substring(0,currentLine.length()-1);
             }
             ss.init(currentLine);
             if (counter == 0) { // parse header
@@ -244,6 +248,11 @@ public class StanfordFileLoader extends ExpressionFileLoader {
             if (stop) {
                 return null;
             }
+		//fix empty tabbs appending to the end of line by wwang
+            while(currentLine.endsWith("\t")){
+            	currentLine=currentLine.substring(0,currentLine.length()-1);
+            }
+	
             ss.init(currentLine);
             if (counter == 0) { // parse header
                 int experimentCount = ss.countTokens()+1 - preExperimentColumns;
@@ -406,6 +415,10 @@ public class StanfordFileLoader extends ExpressionFileLoader {
             StringSplitter ss = new StringSplitter('\t');
             
             currentLine = reader.readLine();
+			//fix empty tabbs appending to the end of line by wwang
+            while(currentLine.endsWith("\t")){
+            	currentLine=currentLine.substring(0,currentLine.length()-1);
+            }
             ss.init(currentLine);
             
             for (int i = 0; i < ss.countTokens()+1; i++) {
