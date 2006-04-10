@@ -67,6 +67,7 @@ public class LinearExpressionGraphViewer extends JPanel implements IViewer {
 	private IFramework framework;
 	private JPopupMenu popup;
 	private boolean showRefLine = false;
+	private int exptID = 0;
 	
 	/**
 	 * Class: LinearExpressionGraphViewer Description: Provides a multiple sample
@@ -123,7 +124,13 @@ public class LinearExpressionGraphViewer extends JPanel implements IViewer {
 			updateViewerModeView();
 	}
 	
-
+	/**
+	 * EH State-saving constructor
+	 *
+	 */
+	public LinearExpressionGraphViewer(){
+		
+	}
 	
 	//TEST CONSTRUCTOR
 	
@@ -891,6 +898,7 @@ public class LinearExpressionGraphViewer extends JPanel implements IViewer {
 			int indices [] = new int[]{0};
 
 			setGraphsToDisplay(indices);
+			setBackground(Color.green);
 		}
 		
 		/**
@@ -1051,8 +1059,10 @@ public class LinearExpressionGraphViewer extends JPanel implements IViewer {
 	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
 	 */
 	public void setExperiment(Experiment e) {
-		// TODO Auto-generated method stub
-		
+		//TODO 
+		//this.experiment = e;
+		this.exptID = e.getId();
+		//this.header.setExperiment(e);
 	}
 
 
@@ -1061,8 +1071,7 @@ public class LinearExpressionGraphViewer extends JPanel implements IViewer {
 	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentID()
 	 */
 	public int getExperimentID() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.exptID;
 	}
 
 
@@ -1071,8 +1080,7 @@ public class LinearExpressionGraphViewer extends JPanel implements IViewer {
 	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
 	 */
 	public void setExperimentID(int id) {
-		// TODO Auto-generated method stub
-		
+		this.exptID = id;
 	}
 
 

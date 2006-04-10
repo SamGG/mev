@@ -41,6 +41,9 @@ public class TEASEInfoBox extends JLabel{
 	private Color color;     //color of the dots, indicates the significance of the result 
 	private String[][] matrix;   //a reference to the result matrix
 	
+	public TEASEInfoBox(){
+		
+	}
 	
 	/**
 	 * create an instance of TEASEInfoBox
@@ -188,4 +191,113 @@ public class TEASEInfoBox extends JLabel{
     	text += "x = " + this.x + "  y = " + this.y;
     	return text;
     }
+	/**
+	 * @return Returns the x.
+	 */
+	public int getX() {
+		return x;
+	}
+	/**
+	 * @param x The x to set.
+	 */
+	public void setX(int x) {
+		this.x = x;
+	}
+	/**
+	 * @return Returns the y.
+	 */
+	public int getY() {
+		return y;
+	}
+	/**
+	 * @param y The y to set.
+	 */
+	public void setY(int y) {
+		this.y = y;
+	}
+	/**
+	 * @return Returns the stepSize.
+	 */
+	public int getStepSize() {
+		return stepSize;
+	}
+	/**
+	 * @param stepSize The stepSize to set.
+	 */
+	public void setStepSize(int stepSize) {
+		this.stepSize = stepSize;
+	}
+
+	/**
+	 * @return Returns the color.
+	 */
+	public Color getColor() {
+		return color;
+	}
+	/**
+	 * @param color The color to set.
+	 */
+	public void setColor(Color color) {
+		this.color = color;
+	}
+	/**
+	 * @return Returns the isCluster.
+	 */
+	public boolean isCluster() {
+		return isCluster;
+	}
+	/**
+	 * @param isCluster The isCluster to set.
+	 */
+	public void setCluster(boolean isCluster) {
+		this.isCluster = isCluster;
+	}
+	/**
+	 * @return Returns the matrix.
+	 */
+	public String[][] getMatrix() {
+		return matrix;
+	}
+	/**
+	 * @param matrix The matrix to set.
+	 */
+	public void setMatrix(String[][] matrix) {
+		this.matrix = matrix;
+	}
+	/**
+	 * @return Returns the rootNode.
+	 */
+	public int getRootNode() {
+		return rootNode;
+	}
+	/**
+	 * @param rootNode The rootNode to set.
+	 */
+	public void setRootNode(int rootNode) {
+		this.rootNode = rootNode;
+	}
+	/**
+	 * @param lowerBound The lowerBound to set.
+	 */
+	public void setLowerBound(double lowerBound) {
+		this.lowerBound = lowerBound;
+	}
+	/**
+	 * @param upperBound The upperBound to set.
+	 */
+	public void setUpperBound(double upperBound) {
+		this.upperBound = upperBound;
+	}
+	/**
+	 * @return Returns the yPos.
+	 */
+	public float getYPos() {
+		return yPos;
+	}
+	/**
+	 * @param pos The yPos to set.
+	 */
+	public void setYPos(float pos) {
+		yPos = pos;
+	}
 }

@@ -23,7 +23,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
  * 
  * LEMInfoViewer displays text describing locus mapping
  */
-public class LEMInfoViewer extends ViewerAdapter implements java.io.Serializable {
+public class LEMInfoViewer extends ViewerAdapter {
     
     private JComponent header;
     private JTextPane  content;
@@ -41,6 +41,11 @@ public class LEMInfoViewer extends ViewerAdapter implements java.io.Serializable
         setMaxWidth(content, header);        
     }
         
+    public LEMInfoViewer(JComponent content, JComponent header){
+    	this.content = (JTextPane)content;
+    	this.header = header;
+    	setMaxWidth(content, header);
+    }
     /**
      * Returns component to be inserted into the framework scroll pane.
      */

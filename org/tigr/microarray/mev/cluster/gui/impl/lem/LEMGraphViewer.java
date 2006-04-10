@@ -44,7 +44,7 @@ import org.tigr.microarray.mev.cluster.gui.IViewer;
  * Basic JPanel extension for rendering a graph
  * 
  */
-public class LEMGraphViewer extends JPanel implements IViewer, java.io.Serializable {
+public class LEMGraphViewer extends JPanel implements IViewer {
 
 	protected LEMGraphHeader header;
 	
@@ -117,6 +117,8 @@ public class LEMGraphViewer extends JPanel implements IViewer, java.io.Serializa
 	protected int dragStartX;
 	protected int dragStopX;
 	
+	private int exptID = 0;
+	
 	public LEMGraphViewer() { }
 	
 	public LEMGraphViewer(Experiment experiment, float [][] data, String title, Hashtable properties, String [] locusNames, int [] start, int [] end) {
@@ -124,6 +126,7 @@ public class LEMGraphViewer extends JPanel implements IViewer, java.io.Serializa
 			throw new IllegalArgumentException("experiment == null");
 		}
 		this.experiment = experiment;
+		this.exptID = experiment.getId();
 		numberOfSamples = this.experiment.getNumberOfSamples();
 		this.means = data;
 		this.showSample = new boolean[experiment.getNumberOfSamples()];
@@ -163,6 +166,30 @@ public class LEMGraphViewer extends JPanel implements IViewer, java.io.Serializa
 		this.addMouseListener(listener);		
 	}
 		
+//	public LEMGraphViewer(float[][] means, String title, String[] locusNames, int[] start, int[] end){
+//		this.means = means;
+//		this.title = title;
+//		this.locusNames = locusNames;
+//		this.start = start;
+//		this.end = end;
+//	}
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
+	 */
+	public void setExperiment(Experiment e) {
+		this.experiment = e;
+		this.exptID = e.getId();
+		numberOfSamples = this.experiment.getNumberOfSamples();
+		this.showSample = new boolean[experiment.getNumberOfSamples()];
+		this.header = new LEMGraphHeader();
+		startIndex = 0;
+		endIndex = means.length-1;
+
+		GraphListener listener = new GraphListener();
+		this.addMouseMotionListener(listener);                  
+		this.addMouseListener(listener);		
+	}
 	/**
 	 * Sets means values.
 	 */
@@ -1064,28 +1091,19 @@ public class LEMGraphViewer extends JPanel implements IViewer, java.io.Serializa
                
     }
 
-	/* (non-Javadoc)
-	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
-	 */
-	public void setExperiment(Experiment e) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	/* (non-Javadoc)
 	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentID()
 	 */
 	public int getExperimentID() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.exptID;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
 	 */
 	public void setExperimentID(int id) {
-		// TODO Auto-generated method stub
-		
+		this.exptID = id;
 	}
 
 	/* (non-Javadoc)

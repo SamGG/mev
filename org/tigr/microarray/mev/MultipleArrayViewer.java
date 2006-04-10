@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.35 $
- * $Date: 2006-03-28 22:19:19 $
+ * $Revision: 1.36 $
+ * $Date: 2006-04-10 18:41:35 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -930,7 +930,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                     String jvmVersion = System.getProperty("java.vm.version");
 				    progressPanel.setIndeterminate(false);
                     
-				    //TODO remove
 				    //System.out.println("Current MeV Version: " + mevVersion + "\nSaved MeV Version: " + savedMEVVersion);
 				    
 		            if(!savedMEVVersion.equals(mevVersion)) { //if saved file was written by a different version of MeV
@@ -940,12 +939,12 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 		            				"MeV v3.1 and earlier cannot be opened by MeV version 4.0b and higher.  ";
 		            		keepRunning = false;	//cancel loading
 		            	} else if((new Float(savedMEVVersion)).floatValue() > (new Float(mevVersion)).floatValue()){
-		            		System.out.println("second else block: " + (new Float(savedMEVVersion)).floatValue() + ">" + (new Float(mevVersion)).floatValue());
+		            		//System.out.println("second else block: " + (new Float(savedMEVVersion)).floatValue() + ">" + (new Float(mevVersion)).floatValue());
 		            		msg += "This saved file was created with a newer version of MeV.  You need to upgrade to " +
 		            				"MeV version " + savedMEVVersion + " or higher.  You can download MeV at <a href=\"http://mev.tm4.org/\">mev.tm4.org</a>.<br>";
 		            		keepRunning = false;
 		            	} else if ((new Float(savedMEVVersion)).floatValue() < (new Float(mevVersion)).floatValue()){
-		            		System.out.println("third else block" + (new Float(savedMEVVersion)).floatValue() + "<" + (new Float(mevVersion)).floatValue());
+		            		//System.out.println("third else block" + (new Float(savedMEVVersion)).floatValue() + "<" + (new Float(mevVersion)).floatValue());
 		            		msg += "This saved file was created with an older version of MeV.  " +
 		            				"It will most likely open correctly, however, if you encounter problems loading this file " +
 		            				"consider opening it with an older version of MeV."; 
@@ -4191,7 +4190,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      * Adds a CGH Data View
      */
     private void addDataView(DefaultMutableTreeNode node) {
-    	System.out.println("addDataView ");
+    	//System.out.println("addDataView ");
         if (node == null) {
             return;
         }

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: Experiment.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-03-24 15:49:53 $
+ * $Revision: 1.7 $
+ * $Date: 2006-04-10 18:41:36 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -37,7 +37,7 @@ public class Experiment {
     
     public Experiment(int[] columns, int[] rows, int id, FloatMatrix fm) {
     	this(null, columns, rows);
-    	this.id = id;
+    	//this.id = id;
     	//this.columns = columns;
     	//this.rowMapping = rows;
     	this.matrix = fm;
@@ -66,7 +66,8 @@ public class Experiment {
         this.matrix = matrix;
         this.columns = columns;
         this.rowMapping = rows;
-    	this.id = exptCount;
+        if (new Integer(this.id).equals(null))
+        	this.id = exptCount;
     }
     
     public int[] getRows() {return rowMapping;}

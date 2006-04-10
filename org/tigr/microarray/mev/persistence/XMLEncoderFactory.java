@@ -63,7 +63,7 @@ public abstract class XMLEncoderFactory {
         		LeafInfo l = (LeafInfo)o;
         		if(l.getViewer() != null) {
         			Object aViewer = l.getViewer();
- //       			System.out.println(aViewer.getClass().toString());
+//        			System.out.println(aViewer.getClass().toString());
         			oos.setPersistenceDelegate(
     						aViewer.getClass(),
 							ivpd
@@ -131,6 +131,10 @@ public abstract class XMLEncoderFactory {
 				HCLTree.class,
 				HCLTree.getPersistenceDelegate()
 				//new DefaultPersistenceDelegate(HCLTree.getPersistenceDelegateArgs())
+			);
+		oos.setPersistenceDelegate(
+				org.tigr.microarray.mev.cluster.gui.impl.tease.HCLTree.class,
+				org.tigr.microarray.mev.cluster.gui.impl.tease.HCLTree.getPersistenceDelegate()
 			);
 		oos.setPersistenceDelegate(
 				HCLSupportTree.class,
