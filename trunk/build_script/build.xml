@@ -94,7 +94,7 @@
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="algorithm-modules"
-depends="build-base,HCL,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE,TEASE">
+depends="build-base,HCL,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,SVM,USC,LEM,KNNC,DAM,GDM,PCA,COA,TRN,EASE,TEASE">
     </target>
 
 
@@ -116,7 +116,7 @@ depends="build-base,HCL,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDG
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="modules-only"
-depends="HCL,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE,TEASE">
+depends="HCL,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,SVM,USC,LEM,KNNC,DAM,GDM,PCA,COA,TRN,EASE,TEASE">
     </target>
 
 
@@ -976,6 +976,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="USC:" operation="+"/>
             <entry key="USC.name" value="USC"/>
             <entry key="USC.class" value="org.tigr.microarray.mev.cluster.gui.impl.usc.USCGUI"/>
+	  		<entry key="USC.category" value="MISC"/>
             <entry key="USC.smallIcon" value="analysis16.gif"/>
             <entry key="USC.largeIcon" value="usc_button.gif"/>
             <entry key="USC.tooltip" value="Uncorrelated Shrunken Centroid Classification"/>
@@ -1000,6 +1001,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="TEASE:" operation="+"/>            
             <entry key="TEASE.name" value="TEASE"/>
             <entry key="TEASE.class" value="org.tigr.microarray.mev.cluster.gui.impl.tease.TEASEGUI"/>
+	  		<entry key="TEASE.category" value="CLUSTERING"/>
             <entry key="TEASE.smallIcon" value="analysis16.gif"/>
             <entry key="TEASE.largeIcon" value="tease_button.gif"/>
             <entry key="TEASE.tooltip" value="Tree EASE"/>
@@ -1097,6 +1099,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="LEM:" operation="+"/>
             <entry key="LEM.name" value="LEM"/>
             <entry key="LEM.class" value="org.tigr.microarray.mev.cluster.gui.impl.lem.LEMGUI"/>
+	  		<entry key="LEM.category" value="MISC"/>
             <entry key="LEM.smallIcon" value="analysis16.gif"/>
             <entry key="LEM.largeIcon" value="lem_button.gif"/>
             <entry key="LEM.tooltip" value="Linear Expression Map"/>
