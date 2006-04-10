@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SlideData.java,v $
- * $Revision: 1.15 $
- * $Date: 2006-03-28 22:19:19 $
+ * $Revision: 1.16 $
+ * $Date: 2006-04-10 18:41:36 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -112,6 +112,7 @@ public class SlideData implements ISlideData, ISlideMetaData {
      * Constructs a <code>SlideData</code> instance.
      */
     public SlideData() {
+    	allSlideDataElements = new Vector();
     	if(this.fieldNames == null)
     		this.fieldNames = new String[0];
     }
@@ -129,7 +130,7 @@ public class SlideData implements ISlideData, ISlideMetaData {
       public SlideData(String slideDataName, Vector sampleLabelKeys, String sampleLabelKey,
     		Hashtable sampleLabels, String slideFileName, Boolean isNonZero, Integer rows, Integer columns,
 			Integer normalizedState, Integer sortState, SpotInformationData spotInfoData, 
-			/*boolean abbrName,*/ String[] fieldNames, Integer dataType){
+			String[] fieldNames, Integer dataType){
 
       	this.rows = rows.intValue();
     	this.columns = columns.intValue();

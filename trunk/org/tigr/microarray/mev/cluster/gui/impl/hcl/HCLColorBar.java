@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: HCLColorBar.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-03-24 15:50:40 $
+ * $Revision: 1.8 $
+ * $Date: 2006-04-10 18:41:36 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -39,10 +39,10 @@ public class HCLColorBar extends JPanel {
      * Constructs a <code>HCLColorBar</code> for specified hcl clusters.
      */
     public HCLColorBar(ArrayList clusters, int featuresSize) {
-	setBackground(Color.white);
-	setFont(new Font("monospaced",Font.PLAIN, 20));
-	this.clusters = clusters;
-	this.featuresSize = featuresSize;
+		setBackground(Color.white);
+		setFont(new Font("monospaced",Font.PLAIN, 20));
+		this.clusters = clusters;
+		this.featuresSize = featuresSize;
     }
     
     //EH additions for XMLEncoding/Decoding

@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: HCLTreeData.java,v $
- * $Revision: 1.1 $
- * $Date: 2006-02-08 18:17:16 $
- * $Author: caliente $
+ * $Revision: 1.2 $
+ * $Date: 2006-04-10 18:41:37 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.tease;
@@ -20,6 +20,8 @@ public class HCLTreeData implements java.io.Serializable {
     public int[] node_order;
     public int[] node_list;
     public float[] height;
+    
+    public HCLTreeData(){}
     
     /** Getter for property child_1_array.
      * @return Value of property child_1_array.

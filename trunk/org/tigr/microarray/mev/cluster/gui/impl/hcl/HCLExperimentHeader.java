@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLExperimentHeader.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-03-24 15:50:40 $
+ * $Revision: 1.8 $
+ * $Date: 2006-04-10 18:41:36 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -31,6 +31,8 @@ public class HCLExperimentHeader extends JPanel {
     private JComponent expHeader;
     
     public HCLExperimentHeader(){ }
+    public JComponent getHeader(){return expHeader;}
+    public void setHeader(JComponent header){this.expHeader = header;}
     
     /**
      * Constructs a <code>HCLExperimentHeader</code> with wrapped header component.

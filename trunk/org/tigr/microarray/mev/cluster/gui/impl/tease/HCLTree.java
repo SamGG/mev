@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLTree.java,v $
- * $Revision: 1.2 $
- * $Date: 2006-02-23 20:59:55 $
- * $Author: caliente $
+ * $Revision: 1.3 $
+ * $Date: 2006-04-10 18:41:37 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.tease;
@@ -20,6 +20,8 @@ import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.Expression;
+import java.beans.PersistenceDelegate;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,6 +42,7 @@ import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
+
 
 public class HCLTree extends JPanel implements java.io.Serializable {
     
@@ -88,20 +91,38 @@ public class HCLTree extends JPanel implements java.io.Serializable {
     protected IFramework framework;
     
     /**
+     * Creates a new HCLTree.  Used to restore state from a saved file.  
+     * This constructor must remain in place with the same signature to ensure 
+     * backwards-compatibility with future revisions of the class.  
+     * Add another constructor that calls this one, rather than change this one. 
+     * @author eleanorahowe
+     * 
+     * @param treeData
+     * @param orientation
+     */
+    public HCLTree(HCLTreeData treeData, int orientation){
+    	this(treeData, new Integer(orientation), null);
+    }
+    
+    /**
      * Constructs a <code>HCLTree</code> for passed result and
      * with specified orientation.
      *
      * @param result the result of a hcl calculation.
      * @param orientation the tree orientation.
      */
-    public HCLTree(HCLTreeData treeData, int orientation) {
-    	setBackground(Color.white);
-        this.dots = new ArrayList();
+	public HCLTree(HCLTreeData treeData, Integer orientation, ArrayList dotsp){
+		setBackground(Color.white);
+    	if(dotsp == null) {
+    		this.dots = new ArrayList();
+    	} else
+    		this.dots = dotsp;
+    	
         this.treeData = treeData;
-        this.orientation = orientation;   //horizontal or vertical
+        this.orientation = orientation.intValue();   //horizontal or vertical
         // helpers
         this.flatTree = flatTreeCheck(treeData.height);
-        this.minHeight = getMinHeight(treeData.node_order, treeData.height);;
+        this.minHeight = getMinHeight(treeData.node_order, treeData.height);
         
         this.maxHeight = getMaxHeight(this.treeData.node_order, treeData.height);
         
@@ -137,54 +158,10 @@ public class HCLTree extends JPanel implements java.io.Serializable {
     
     private HCLTree() { }
     
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws IOException {
-        oos.writeInt(orientation);
-        oos.writeInt(min_pixels);
-        oos.writeInt(max_pixels);
-        oos.writeFloat(zero_threshold);
-        
-        oos.writeObject(this.lineColor);
-        oos.writeObject(this.belowThrColor);
-        oos.writeObject(this.selectedLineColor);
-        
-        oos.writeObject(treeData);
-        oos.writeFloat(minHeight);
-        oos.writeInt(stepSize);
-        oos.writeObject(pHeights);
-        oos.writeObject(positions);
-        oos.writeObject(selected);
-        oos.writeObject(nodesColors);
-        oos.writeObject(parentNodes);
-        oos.writeObject(terminalNodes);
-        oos.writeFloat(maxHeight);
-        oos.writeBoolean(flatTree);
-        oos.writeInt(horizontalOffset);
-    }
-    
-    private void readObject(java.io.ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        this.orientation = ois.readInt();
-        this.min_pixels = ois.readInt();
-        this.max_pixels = ois.readInt();
-        this.zero_threshold = ois.readFloat();
-        
-        this.lineColor = (Color)ois.readObject();
-        this.belowThrColor = (Color)ois.readObject();
-        this.selectedLineColor = (Color)ois.readObject();
-        
-        this.treeData = (HCLTreeData)ois.readObject();
-        this.minHeight = ois.readFloat();
-        this.stepSize = ois.readInt();
-        this.pHeights = (int [])ois.readObject();
-        this.positions = (float [])ois.readObject();
-        this.selected = (boolean [])ois.readObject();
-        this.nodesColors = (Color [])ois.readObject();
-        this.parentNodes = (int [])ois.readObject();
-        this.terminalNodes = (boolean [])ois.readObject();
-        this.maxHeight = ois.readFloat();
-        this.flatTree = ois.readBoolean();
-        this.horizontalOffset = ois.readInt();
-        addMouseListener(new Listener());
+
+
+    public static PersistenceDelegate getPersistenceDelegate(){
+    	return new HCLTreePersistenceDelegate();
     }
     
     
@@ -194,7 +171,7 @@ public class HCLTree extends JPanel implements java.io.Serializable {
     public void setListener(HCLTreeListener treeListener) {
         this.treeListener = treeListener;
     }
-    
+  public HCLTreeData getTreeData(){return this.treeData;}    
     
     public void addInfoBox(TEASEInfoBox infoBox) {
     	this.dots.add(infoBox);
@@ -917,7 +894,18 @@ public class HCLTree extends JPanel implements java.io.Serializable {
         int child1, child2;
         
         File file = null;
-        final JFileChooser fc = new JFileChooser(TMEV.getFile("data/"));
+//        final JFileChooser fc = new JFileChooser(TMEV.getFile("data/"));
+        String dataPath = TMEV.getDataPath();
+        File fileLoc = TMEV.getFile("data/"); 
+        // if the data path is null go to default, if not null and not exist then to to default
+        // else use the dataPath
+        if(dataPath != null) {
+            fileLoc = new File(dataPath);
+            if(!fileLoc.exists()) {
+                fileLoc = TMEV.getFile("data/");
+            }
+        }
+        final JFileChooser fc = new JFileChooser(fileLoc);
         int ret = fc.showSaveDialog(new javax.swing.JFrame());
         if (ret == JFileChooser.APPROVE_OPTION) {
             file = fc.getSelectedFile();
@@ -960,7 +948,18 @@ public class HCLTree extends JPanel implements java.io.Serializable {
         int child1, child2;
         
         File file = null;
-        final JFileChooser fc = new JFileChooser(TMEV.getFile("data/"));
+//        final JFileChooser fc = new JFileChooser(TMEV.getFile("data/"));
+        String dataPath = TMEV.getDataPath();
+        File fileLoc = TMEV.getFile("data/"); 
+        // if the data path is null go to default, if not null and not exist then to to default
+        // else use the dataPath
+        if(dataPath != null) {
+            fileLoc = new File(dataPath);
+            if(!fileLoc.exists()) {
+                fileLoc = TMEV.getFile("data/");
+            }
+        }
+        final JFileChooser fc = new JFileChooser(fileLoc);
         int ret = fc.showSaveDialog(new javax.swing.JFrame());
         if (ret == JFileChooser.APPROVE_OPTION) {
             file = fc.getSelectedFile();
@@ -1157,5 +1156,16 @@ public class HCLTree extends JPanel implements java.io.Serializable {
         }
     }
 
-
+	/**
+	 * @return
+	 */
+	public int getOrientation() {
+		return this.orientation;
+	}
+    private static class HCLTreePersistenceDelegate extends PersistenceDelegate {
+    	public Expression instantiate(Object oldInstance, java.beans.Encoder encoder) {
+    		HCLTree aTree = (HCLTree) oldInstance;
+    		return new Expression(aTree, aTree.getClass(), "new", new Object[]{aTree.treeData, new Integer(aTree.orientation), aTree.dots});
+    	}
+    }
 }

@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: GUIFactory.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-24 16:04:27 $
- * $Author: wwang67 $
+ * $Revision: 1.6 $
+ * $Date: 2006-04-10 18:41:36 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl;
@@ -71,7 +71,7 @@ public class GUIFactory implements IGUIFactory {
 		tooltip = bundle.getString(key+".tooltip").trim();
 		smallIcon = getIcon(bundle.getString(key+".smallIcon").trim());
 		largeIcon = getIcon(bundle.getString(key+".largeIcon").trim());
-		list.add(new AnalysisDescription(name, clazz,category, smallIcon, largeIcon, tooltip));
+		list.add(new AnalysisDescription(name, clazz, category, smallIcon, largeIcon, tooltip));
 		} catch (Exception e) {
 		System.out.println("Error while reading "+BUNDLE_NAME+".properties file: ");
 		e.printStackTrace();

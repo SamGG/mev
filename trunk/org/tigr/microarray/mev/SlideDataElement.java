@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SlideDataElement.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-03-24 15:49:45 $
+ * $Revision: 1.10 $
+ * $Date: 2006-04-10 18:41:36 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -25,6 +25,14 @@ public class SlideDataElement extends ArrayElement implements ISlideDataElement 
     protected boolean isNonZero = true;
      protected float pvalue=0;
     protected int flags=0;
+    
+    /**
+     * 
+     * @param rows
+     * @param cols
+     * @param extraFields
+     * @param uid
+     */
     private SlideDataElement(int[] rows, int[] cols, String[] extraFields, String uid){
     	this.rows = rows;
     	this.columns = cols;
@@ -299,8 +307,7 @@ public class SlideDataElement extends ArrayElement implements ISlideDataElement 
             case CY3: try {targetIntensity = trueIntensity[0]; break;} catch (NullPointerException npe) {targetIntensity = 0; break;}
             case CY5: try {targetIntensity = trueIntensity[1]; break;} catch (NullPointerException npe) {targetIntensity = 0; break;}
             //TODO remove try/catch blocks above.
-            //They fix saving/loading problems when using XMLEncoder, but probably screw things up for normal functioning.
-        }
+         }
         return targetIntensity;
     }
     

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLNodeHeightGraph.java,v $
- * $Revision: 1.3 $
- * $Date: 2006-03-24 15:51:58 $
+ * $Revision: 1.4 $
+ * $Date: 2006-04-10 18:41:37 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -50,8 +50,25 @@ public class HCLNodeHeightGraph extends JPanel implements IViewer {
         treeData = data;
         initializeViewer();        
     }
+    public HCLNodeHeightGraph(HCLTreeData data){
+    	this(data, false);
+    }
+    /**
+     * This constructor is used by XMLEncoder
+     *
+     */
     
     public HCLNodeHeightGraph() { }
+
+    /**
+     * @inheritDoc
+     * @author eleanorahowe
+     * 
+     */
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{this.treeData});
+    }
     
     private void initializeViewer(){
         minX = findMinDistance();
@@ -246,6 +263,12 @@ public class HCLNodeHeightGraph extends JPanel implements IViewer {
         return null;
     }        
     
+    public void setExperiment(Experiment e) {
+ //   	this.exptID = e.getId();
+    }
+    public int getExperimentID() {return 0;}
+    public void setExperimentID(int id) {}
+    
     /** Returns int value indicating viewer type
      * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
      */
@@ -253,36 +276,5 @@ public class HCLNodeHeightGraph extends JPanel implements IViewer {
         return -1;
     }
 
-	/* (non-Javadoc)
-	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
-	 */
-	public void setExperiment(Experiment e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentID()
-	 */
-	public int getExperimentID() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
-	 */
-	public void setExperimentID(int id) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExpression()
-	 */
-	public Expression getExpression() {
-		// TODO Auto-generated method stub
-		return null;
-	}
     
 }

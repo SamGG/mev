@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLTree.java,v $
- * $Revision: 1.10 $
- * $Date: 2006-03-24 15:50:40 $
+ * $Revision: 1.11 $
+ * $Date: 2006-04-10 18:41:36 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -1106,16 +1106,17 @@ public class HCLTree extends JPanel {
             selectNode(e.getX(), e.getY());
         }
     }
-    private static class HCLTreePersistenceDelegate extends PersistenceDelegate {
-    	public Expression instantiate(Object oldInstance, Encoder encoder) {
-    		HCLTree aTree = (HCLTree) oldInstance;
-    		return new Expression(aTree, aTree.getClass(), "new", new Object[]{aTree.treeData, new Integer(aTree.orientation)});
-    	}
-    }
+
 	/**
 	 * @return
 	 */
 	public int getOrientation() {
 		return this.orientation;
 	}
+    private static class HCLTreePersistenceDelegate extends PersistenceDelegate {
+    	public Expression instantiate(Object oldInstance, Encoder encoder) {
+    		HCLTree aTree = (HCLTree) oldInstance;
+    		return new Expression(aTree, aTree.getClass(), "new", new Object[]{aTree.treeData, new Integer(aTree.orientation)});
+    	}
+    }
 }
