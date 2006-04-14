@@ -21,6 +21,7 @@ public class BridgeResult {
 	private String[][] auxData;	//[ 4 ][ numGenes ]
 	
 	
+	
 	public BridgeResult( double[] g1, double[] g2, double[] pp, double t ) {
 		this.gamma1 = g1;
 		this.gamma2 = g2;

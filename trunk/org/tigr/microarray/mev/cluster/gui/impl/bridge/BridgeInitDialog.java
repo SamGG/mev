@@ -53,6 +53,8 @@ public class BridgeInitDialog extends AlgorithmDialog {
 	private int dataType;
 	private boolean connAdded = false;
 	
+	private AdvListener al;
+	
 	//private BridgeHyb[] bridgeHybs;
 	private RHyb[] rHybs;
 	
@@ -70,7 +72,19 @@ public class BridgeInitDialog extends AlgorithmDialog {
 	private JComboBox connCombo;
 	private JTextField newConn;
 	
+	private JRadioButton ratioButton;
+	private JRadioButton affyButton;
+	
+	private JLabel hybColLabel;
+	private JLabel cy3Label;
+	private JLabel cy5Label;
+	
+	private String yNum = "IntB";
+	private String yDen = "IntA";
+	
 	public static String DEFAULT_ADD_TEXT = "Enter a new location";
+	
+	
 	
 	
 	/**
@@ -80,7 +94,7 @@ public class BridgeInitDialog extends AlgorithmDialog {
 	 */
 	public BridgeInitDialog( Frame parent, String[] hybNames, int dataTypeP ) {
 		super( parent, "Bridge Initialization Dialog", true );
-		this.setSize( 600, 500 );
+		this.setSize( 600, 600 );
 		this.dataType = dataTypeP;
 		
 		//create the listener for this dialog and add it
@@ -88,16 +102,51 @@ public class BridgeInitDialog extends AlgorithmDialog {
 		super.addWindowListener(listener);
 		super.setActionListeners(listener);
 		
+		this.al = new AdvListener();
+		
 		//initialize variables
 		this.vRHyb = new Vector();
 		this.rHybs = new RHyb[ hybNames.length ];
 		
 		//create the GUI
 		JPanel mainPanel = new JPanel();
-		mainPanel.add( this.createTwoColorPanel( hybNames, this.dataType ), BorderLayout.CENTER );
+		if( dataTypeP == IData.DATA_TYPE_TWO_INTENSITY ) {
+			System.out.println( "dataType = TWO_INTENSITY" );
+			mainPanel.add( this.createDataTypePanel(), BorderLayout.NORTH );
+		} else {
+			System.out.println( "dataType = Unknown" );
+		}
+		mainPanel.add( this.createHybPanel( hybNames, this.dataType ), BorderLayout.CENTER );
 		mainPanel.add( this.createParamPanel(), BorderLayout.SOUTH );
 		this.addContent( mainPanel );
 	}//constructor
+	
+	
+	private JPanel createDataTypePanel() {
+		Font font11 = new Font( "Arial", Font.PLAIN, 11 );
+		Font font = new Font( "Arial", Font.PLAIN, 12 );
+		
+		this.ratioButton = new JRadioButton( "2 Color Data" );
+		this.affyButton = new JRadioButton( "Intensity Data" );
+		this.ratioButton.setSelected( true );
+		this.ratioButton.addActionListener( this.al );
+		this.affyButton.addActionListener( this.al );
+		
+		ButtonGroup dataTypeGroup = new ButtonGroup();
+		dataTypeGroup.add( this.ratioButton );
+		dataTypeGroup.add( this.affyButton );
+		
+		JPanel returnPanel = new JPanel();
+		returnPanel.setLayout( new BoxLayout( returnPanel, BoxLayout.X_AXIS ) );
+		returnPanel.add( Box.createRigidArea( new Dimension( 75, 50 ) ) );
+		returnPanel.add( this.ratioButton );
+		returnPanel.add( Box.createRigidArea( new Dimension( 75, 50 ) ) );
+		returnPanel.add( this.affyButton );
+		returnPanel.add( Box.createRigidArea( new Dimension( 75, 50 ) ) );
+		returnPanel.setBorder( BorderFactory.createTitledBorder( "Data Type" ) );
+		
+		return returnPanel;
+	}//createDataTypePanel()
 	
 	
 	/**
@@ -117,8 +166,8 @@ public class BridgeInitDialog extends AlgorithmDialog {
 		//create a JCheckBox allowing user to activate Adv Params
 		this.advCheckBox = new JCheckBox( "Advanced Parameters" );
 		this.advCheckBox.setFont( font11 );
-		AdvListener al = new AdvListener();
-		this.advCheckBox.addActionListener( al );
+		//AdvListener al = new AdvListener();
+		this.advCheckBox.addActionListener( this.al );
 		JPanel checkPanel = new JPanel();
 		checkPanel.add( this.advCheckBox );
 		
@@ -221,7 +270,7 @@ public class BridgeInitDialog extends AlgorithmDialog {
 	
 	
 	//need to list the hybs and let user label exp vs control
-	private JPanel createTwoColorPanel( String[] hybNames, int dataTypeP ) {
+	private JPanel createHybPanel( String[] hybNames, int dataTypeP ) {
 		//JPanel for listing the hybs and the radio buttons and check boxes
 		JPanel listPanel = new JPanel();
 		BoxLayout hybBox = new BoxLayout( listPanel, BoxLayout.Y_AXIS );
@@ -239,33 +288,35 @@ public class BridgeInitDialog extends AlgorithmDialog {
 		spacer.setPreferredSize( dCheck );
 		
 		//Column headers
-		JLabel hybColLabel;
-		JLabel cy3Label;
-		JLabel cy5Label;
+		
 		if( dataTypeP == IData.DATA_TYPE_AFFY_ABS ) {
-			hybColLabel = new JLabel( "For each chip, denote whether it is Treated or Control" );
-			cy3Label = new JLabel( "Treated" );
-			cy5Label = new JLabel( "Control" );
+			this.hybColLabel = new JLabel( "For each chip, denote whether it is Treated or Control" );
+			this.cy3Label = new JLabel( "Treated" );
+			this.cy5Label = new JLabel( "Control" );
+			this.yNum = "IntB";
+			this.yDen = "IntA";
 		} else {
-			hybColLabel = new JLabel( "For each slide, mark Control Sample's dye color" );
-			cy3Label = new JLabel( "Cy3" );
-			cy5Label = new JLabel( "Cy5" );
+			this.hybColLabel = new JLabel( "For each slide, mark the Control Sample's dye color" );
+			this.cy3Label = new JLabel( "Cy3" );
+			this.cy5Label = new JLabel( "Cy5" );
+			this.yNum = "Cy5";
+			this.yDen = "Cy3";
 		}
-		hybColLabel.setFont( font );
-		hybColLabel.setForeground( Color.gray );
-		hybColLabel.setMinimumSize( dLabel );
-		hybColLabel.setMaximumSize( dLabel );
-		hybColLabel.setPreferredSize( dLabel );
-		cy3Label.setFont( font );
-		cy3Label.setForeground( Color.gray );
-		cy3Label.setMinimumSize( dCheck );
-		cy3Label.setMaximumSize( dCheck );
-		cy3Label.setPreferredSize( dCheck );
-		cy5Label.setFont( font );
-		cy5Label.setForeground( Color.gray );
-		cy5Label.setMinimumSize( dCheck );
-		cy5Label.setMaximumSize( dCheck );
-		cy5Label.setPreferredSize( dCheck );
+		this.hybColLabel.setFont( font );
+		this.hybColLabel.setForeground( Color.DARK_GRAY );
+		this.hybColLabel.setMinimumSize( dLabel );
+		this.hybColLabel.setMaximumSize( dLabel );
+		this.hybColLabel.setPreferredSize( dLabel );
+		this.cy3Label.setFont( font );
+		this.cy3Label.setForeground( Color.DARK_GRAY );
+		this.cy3Label.setMinimumSize( dCheck );
+		this.cy3Label.setMaximumSize( dCheck );
+		this.cy3Label.setPreferredSize( dCheck );
+		this.cy5Label.setFont( font );
+		this.cy5Label.setForeground( Color.DARK_GRAY );
+		this.cy5Label.setMinimumSize( dCheck );
+		this.cy5Label.setMaximumSize( dCheck );
+		this.cy5Label.setPreferredSize( dCheck );
 		
 		JPanel titlePanel = new JPanel();
 		titlePanel.add( hybColLabel );
@@ -400,8 +451,49 @@ public class BridgeInitDialog extends AlgorithmDialog {
 					}
 				}
 			}
+			if( source == ratioButton ) {
+				onDataTypeSelected();
+			}
+			if( source == affyButton ) {
+				onDataTypeSelected();
+			}
 		}//end actionPerformed()
 	}//end class
+	
+	
+	private void onDataTypeSelected() {
+		//user selected either ratio or intensity data, refresh display
+		if( this.affyButton.isSelected() ) {
+			//affy data
+			hybColLabel.setText( "For each chip, denote whether it is Treated or Control" );
+			cy3Label.setText( "Treated" );
+			cy5Label.setText( "Control" );
+			this.repaint();
+			
+			//set the y axis labels accordingly
+			this.yNum = "IntB";
+			this.yDen = "IntA";
+		} else {
+			//ratio data
+			hybColLabel.setText( "For each slide, mark the Control Sample's dye color" );
+			cy3Label.setText( "Cy3" );
+			cy5Label.setText( "Cy5" );
+			this.repaint();
+			
+			this.yNum = "Cy5";
+			this.yDen = "Cy3";
+		}
+		/*
+		if( dataTypeP == IData.DATA_TYPE_AFFY_ABS ) {
+			this.hybColLabel = new JLabel( "For each chip, denote whether it is Treated or Control" );
+			this.cy3Label = new JLabel( "Treated" );
+			this.cy5Label = new JLabel( "Control" );
+		} else {
+			this.hybColLabel = new JLabel( "For each slide, mark Control Sample's dye color" );
+			this.cy3Label = new JLabel( "Cy3" );
+			this.cy5Label = new JLabel( "Cy5" );
+		}*/
+	}//onDataTypeSelected()
 	
 	
 	/**
@@ -525,6 +617,12 @@ public class BridgeInitDialog extends AlgorithmDialog {
 	public boolean connAdded() {
 		return this.connAdded;
 	}
+	public String getYNum() {
+		return this.yNum;
+	}
+	public String getYDen() {
+		return this.yDen;
+	}
 	
 	
 	//	test harness
@@ -541,8 +639,8 @@ public class BridgeInitDialog extends AlgorithmDialog {
 		names[ 6 ] = "seven";
 		names[ 7 ] = "eight";
 		
-		BridgeInitDialog uid = new BridgeInitDialog( new Frame(), names, IData.DATA_TYPE_AFFY_ABS );
-		//RamaInitDialog uid = new RamaInitDialog( new Frame(), names, IData.DATA_TYPE_TWO_INTENSITY );
+		//BridgeInitDialog uid = new BridgeInitDialog( new Frame(), names, IData.DATA_TYPE_AFFY_ABS );
+		BridgeInitDialog uid = new BridgeInitDialog( new Frame(), names, IData.DATA_TYPE_TWO_INTENSITY );
 		uid.showModal();
 	}//end main
 	
