@@ -976,7 +976,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="USC:" operation="+"/>
             <entry key="USC.name" value="USC"/>
             <entry key="USC.class" value="org.tigr.microarray.mev.cluster.gui.impl.usc.USCGUI"/>
-	  		<entry key="USC.category" value="MISC"/>
+	  		<entry key="USC.category" value="CLASSIFICATION"/>
             <entry key="USC.smallIcon" value="analysis16.gif"/>
             <entry key="USC.largeIcon" value="usc_button.gif"/>
             <entry key="USC.tooltip" value="Uncorrelated Shrunken Centroid Classification"/>
