@@ -342,6 +342,9 @@ public class HelpWindow extends JDialog {
 		if (key.equals("RAMA Connection Dialog")) {
 			return "rama_parameters2.html";
 		}
+		if( key.equals( "Bridge Initialization Dialog" ) ) {
+			return "bridge_parameters1.html";
+		}
 		if (key.equals("USC Initialization Dialog")) {
 			return "usc_parameters1.html";
 		}
