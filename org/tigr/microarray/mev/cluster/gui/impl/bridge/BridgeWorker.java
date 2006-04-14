@@ -3,6 +3,9 @@
  */
 package org.tigr.microarray.mev.cluster.gui.impl.bridge;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 import org.tigr.microarray.mev.r.RProgress;
 import org.tigr.microarray.mev.r.RSrvException;
 import org.tigr.microarray.mev.r.Rconnection;
@@ -53,14 +56,14 @@ public class BridgeWorker extends SwingWorker {
 	public Object construct() {
 		this.ok = false;
 		this.done = false;
-		/*
+		
 		//record the start time
 		Calendar startCal = new GregorianCalendar();
 		int startHour = startCal.get( Calendar.HOUR_OF_DAY );
 		int startMin = startCal.get( Calendar.MINUTE );
 		String startTime = startHour + ":" + startMin;
-		System.out.println( startTime );
-		*/
+		System.out.println( "Bridge started at " + startTime );
+		
 		try {
 			//should clear R
 			this.rc.voidEval( this.sClear );
@@ -85,14 +88,14 @@ public class BridgeWorker extends SwingWorker {
 			
 			//call fit.model()
 			this.rc.voidEval( this.sMcmc );
-			/*
+			
 			//record the end time
 			Calendar endCal = new GregorianCalendar();
 			int endHour = endCal.get( Calendar.HOUR_OF_DAY );
 			int endMin = endCal.get( Calendar.MINUTE );
 			String endTime = endHour + ":" + endMin;
-			System.out.println( endTime );
-			*/
+			System.out.println( "Bridge ended at " + endTime );
+			
 			//avg gammas first
 			this.rc.voidEval( this.sAvg1 );
 			this.rc.voidEval( this.sAvg2 );

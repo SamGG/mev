@@ -6,6 +6,7 @@ package org.tigr.microarray.mev.cluster.gui.impl.bridge;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.Vector;
 
 import javax.swing.JFileChooser;
@@ -22,7 +23,6 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
-import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.r.RDataFormatter;
@@ -43,6 +43,12 @@ public class BridgeGUI implements IClusterGUI {
 	
 	private double threshold;
 	
+	private RProgress progress;
+	
+	//Labels for the Y Axis of Expression Graphs
+	private String yNum = "IntB";
+	private String yDenom = "IntA";
+	
 	
 	
 	public DefaultMutableTreeNode execute(IFramework framework)
@@ -50,30 +56,55 @@ public class BridgeGUI implements IClusterGUI {
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode( "BRIDGE" );
 		IData data = framework.getData();
 		Experiment exp = data.getExperiment();
+		int dataType = data.getDataType();
 		
-		//might as well verify that there is even enough data loaded to continue
-		if( data.getFeaturesCount() < 2 ) {
-			//not enough to normalize
-			this.error( "The loaded dataset doesn't appear to be \"bridgeable\"" 
-					+ "\r\nYou must have at least 1 slide loaded" );
-		} else if( data.getDataType() == IData.DATA_TYPE_RATIO_ONLY ) {
+		if( dataType == IData.DATA_TYPE_RATIO_ONLY ) {
 			this.error( "bridge does not work on Ratio data.\nIt only works with Intensity data." );
-		} else if( data.getDataType() == IData.DATA_TYPE_AFFY_MEAN ) {
-			this.error( "bridge does not work on Ratio data.\nIt only works with Intensity data." );
-		} else if( data.getDataType() == IData.DATA_TYPE_AFFY_MEDIAN ) {
-			this.error( "bridge does not work on Ratio data.\nIt only works with Intensity data." );
-		} else if( data.getDataType() == IData.DATA_TYPE_AFFY_REF ) {
-			this.error( "bridge does not work on Ratio data.\nIt only works with Intensity data." );
+			return null;
+		} else if( dataType == IData.DATA_TYPE_AFFY_MEAN ) {
+			this.error( "bridge does not work on Affy Mean data.\nIt only works with Affy Absolute data." );
+			return null;
+		} else if( dataType == IData.DATA_TYPE_AFFY_MEDIAN ) {
+			this.error( "bridge does not work on Affy Median data.\nIt only works with Affy Absolute data." );
+			return null;
+		} else if( dataType == IData.DATA_TYPE_AFFY_REF ) {
+			this.error( "bridge does not work on Affy Reference data.\nIt only works with Affy Absolute data." );
+			return null;
 		} else {
-			BridgeResult br = this.bridgify( framework, data, data.getDataType() );
-			if( br != null ) {
-				this.createExpressionImages( root, data, br );
+			//data is either Affy or 2 color (both colors present as IA & IB rather than just a ratio)
+			
+			//first check to see if there is enough data to run (4 affy or 2 2Color)
+			int minFeatures = 4;
+			if( dataType == IData.DATA_TYPE_TWO_INTENSITY ) {
+				minFeatures = 2;
+			}
+			if( data.getFeaturesCount() < minFeatures ) {
+				//not enough
+				this.error( "bridge requires a minimum of 2 replicates per treatment type" );
+				return null;
 			} else {
-				//deal with null result
+				BridgeResult br = this.bridgify( framework, data, data.getDataType() );
+				if( br != null ) {
+					this.createExpressionImages( root, data, br, this.yNum, this.yDenom );
+					
+					//kill the progress bar if it is lingering (if user cancels)
+					if( this.progress != null ) {
+						this.progress.kill();
+					}
+					
+					return root;
+				} else {
+					//deal with null result
+
+					//kill the progress bar if it is lingering (if user cancels)
+					if( this.progress != null ) {
+						this.progress.kill();
+					}
+					
+					return null;
+				}
 			}
 		}//else
-		
-		return root;
 	}//constructor
 	
 	
@@ -104,6 +135,8 @@ public class BridgeGUI implements IClusterGUI {
 			String sConnPort = initDialog.getSelectedConnString();
 			int iPort = this.parseIPort( sConnPort );
 			String sConn = this.parseSPort( sConnPort );
+			this.setYNum( initDialog.getYNum() );
+			this.setYDenom( initDialog.getYDen() );
 
 			//Object to format MeV-IData structure into R data String
 			RDataFormatter rDataFormatter = new RDataFormatter( data );
@@ -139,8 +172,14 @@ public class BridgeGUI implements IClusterGUI {
 			}//end rhs.isFlip() else
 			
 			//display an inderterminate progress bar so user knows it's working
-			String message = "As a reference, 4 arrays (640 genes) takes about 15 minutes";
-			RProgress progress = new RProgress( ( JFrame ) framework.getFrame(), message );
+			double dTimePerCalc = 0.000015d;
+			double dIntensityKount = ( double ) iGene * ( double ) iHybKount;
+			double dTotalTime = dIntensityKount * dTimePerCalc * B;
+			double dMinutes = dTotalTime / 60d;
+			DecimalFormat df = new DecimalFormat( "###.#" );
+			String estTime = df.format( dMinutes );
+			String message = "It may take as long as " + estTime + " minutes with your data set";
+			this.progress = new RProgress( ( JFrame ) framework.getFrame(), message );
 			
 			//get a connection
 			RconnectionManager rcMan = new RconnectionManager( 
@@ -148,7 +187,7 @@ public class BridgeGUI implements IClusterGUI {
 			Rconnection rc = rcMan.getConnection();
 			
 			//don't continue if we can't get a connection
-		if( rc != null ) {
+			if( rc != null ) {
 				//create R command strings
 				String sClear = "rm(" + BridgeGUI.R_VECTOR_NAME + ")";
 				String sLibrary = "library(bridge)";
@@ -327,7 +366,7 @@ public class BridgeGUI implements IClusterGUI {
 			sb.append( "TRUE" );
 		}
 		sb.append( ", verbose = TRUE )" );
-		System.out.println(sb.toString());
+		//System.out.println(sb.toString());
 		return sb.toString();
 		//return "mcmc.hiv <- bridge.2samples( hiv[ 1:10 , c( 1:2 )], hiv[ 1:10, c( 2:2 )], B = 21000, min.iter = 1000, batch = 1, mcmc.obj = NULL, affy = FALSE, verbose = TRUE )";
 	}//createMcMc()
@@ -341,7 +380,7 @@ public class BridgeGUI implements IClusterGUI {
 	 * @return
 	 */
 	private void createExpressionImages( DefaultMutableTreeNode root,
-			IData data, BridgeResult br ) {
+			IData data, BridgeResult br, String yNum, String yDenom ) {
 		
 		DefaultMutableTreeNode expViewerNode = new DefaultMutableTreeNode( 
 				"Expression Images" );
@@ -360,7 +399,7 @@ public class BridgeGUI implements IClusterGUI {
 		expViewerNode.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", expViewer, new Integer(1))));
 		
 		//create centroid viewers for sig/nonsig gene sets
-		CentroidViewer centViewer = new CentroidViewer( exp, newClusters );
+		BridgeCentroidViewer centViewer = new BridgeCentroidViewer( exp, newClusters, yNum, yDenom );
 		centViewer.setMeans( this.calculateMeans( exp, br ) );
 		cenViewerNode.add(new DefaultMutableTreeNode(new LeafInfo(
         		"Significant Genes ", centViewer, new CentroidUserObject( 0, 
@@ -577,9 +616,15 @@ public class BridgeGUI implements IClusterGUI {
 		JOptionPane.showMessageDialog( new JFrame(), 
 				message, "Input Error", JOptionPane.ERROR_MESSAGE );
 	}//end error()
+	
+	
+	public void setYNum( String s ) {
+		this.yNum = s;
+	}
+	public void setYDenom( String s ) {
+		this.yDenom = s;
+	}
 }//end class
-
-
 /*
 //flip doesn't matter for bridge
 String sData =  this.BridgeNonSwapString( data, bhs.getVHyb() );
