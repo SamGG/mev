@@ -42,7 +42,7 @@
            **See the "algorithm-modules" target below for important information about 
            specification of algorithms to build and the order.
     -->
-    <property name="HCL" value="y"/>
+    <property name="TEASE" value="y"/>
     <property name="ST" value="y"/>
     <property name="SOTA" value="y"/>
     <property name="RN" value="y"/>
@@ -62,16 +62,24 @@
     <property name="SVM" value="y"/>
     <property name="KNNC" value="y"/>
     <property name="DAM" value="n"/>
-<property name="LEM" value="y"/>
+	<property name="LEM" value="y"/>
     <property name="GDM" value="y"/>
     <property name="PCA" value="y"/>
     <property name="COA" value="y"/>
     <property name="TRN" value="y"/>
     <property name="EASE" value="y"/>
-<property name="USC" value="y"/>
-    <property name="TEASE" value="y"/>
+	<property name="USC" value="y"/>
+	
+	<!-- Module category names -->
+	<property name="CLUSTERING" value="Clustering"/>
+	<property name="STATISTICS" value="Statistics"/>
+	<property name="CLASSIFICATION" value="Classification"/>
+	<property name="DATA_REDUCTION" value="Data Reduction"/>
+	<property name="META_ANALYSIS" value="Meta Analysis"/>
+	<property name="VISUALIZATION" value="Visualization"/>
+	<property name="MISC" value="Miscellaneous"/>
 
-    <!-- Property Files, These properties identify the properties files to be constructed during module compilation -->
+	<!-- Property Files, These properties identify the properties files to be constructed during module compilation -->
     <property name="gui.properties.file" value="${dest.dir}/org/tigr/microarray/mev/cluster/gui/impl/factory.properties"/>
     <property name="alg.properties.file" value="${dest.dir}/org/tigr/microarray/mev/cluster/algorithm/impl/factory.properties"/>
 
@@ -94,7 +102,7 @@
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="algorithm-modules"
-depends="build-base,HCL,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,SVM,USC,LEM,KNNC,DAM,GDM,PCA,COA,TRN,EASE,TEASE">
+depends="build-base,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,SVM,USC,LEM,KNNC,DAM,GDM,PCA,COA,TRN,EASE">
     </target>
 
 
@@ -116,7 +124,7 @@ depends="build-base,HCL,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDG
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="modules-only"
-depends="HCL,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,SVM,USC,LEM,KNNC,DAM,GDM,PCA,COA,TRN,EASE,TEASE">
+depends="TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE">
     </target>
 
 
@@ -439,7 +447,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="HCL:" operation="+"/>            
             <entry key="HCL.name" value="HCL"/>
             <entry key="HCL.class" value="org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI"/>
-	  		<entry key="HCL.category" value="CLUSTERING"/>
+	  		<entry key="HCL.category" value="${CLUSTERING}"/>
             <entry key="HCL.smallIcon" value="analysis16.gif"/>
             <entry key="HCL.largeIcon" value="hcl_button.gif"/>
             <entry key="HCL.tooltip" value="Hierarchical Clustering"/>
@@ -466,7 +474,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="ST:" operation="+"/>
             <entry key="ST.name" value="ST"/>
             <entry key="ST.class" value="org.tigr.microarray.mev.cluster.gui.impl.st.STGUI"/>
-	  	<entry key="ST.category" value="CLUSTERING"/>
+	  	<entry key="ST.category" value="${CLUSTERING}"/>
             <entry key="ST.smallIcon" value="analysis16.gif"/>
             <entry key="ST.largeIcon" value="st_button.gif"/>
             <entry key="ST.tooltip" value="HCL Support Trees"/>
@@ -494,7 +502,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="SOTA:" operation="+"/>            
             <entry key="SOTA.name" value="SOTA"/>
             <entry key="SOTA.class" value="org.tigr.microarray.mev.cluster.gui.impl.sota.SOTAGUI"/>
-	 	 	<entry key="SOTA.category" value="CLUSTERING"/>
+	 	 	<entry key="SOTA.category" value="${CLUSTERING}"/>
 	  	    <entry key="SOTA.smallIcon" value="analysis16.gif"/>
             <entry key="SOTA.largeIcon" value="sota_button.gif"/>
             <entry key="SOTA.tooltip" value="Self Organizing Tree Algorithm"/>
@@ -523,7 +531,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="RN:" operation="+"/>            
             <entry key="RN.name" value="RN"/>
             <entry key="RN.class" value="org.tigr.microarray.mev.cluster.gui.impl.rn.RNGUI"/>
-	  	<entry key="RN.category" value="DATA_REDUCTION"/>
+	  	<entry key="RN.category" value="${DATA_REDUCTION}"/>
 	  	   <entry key="RN.smallIcon" value="analysis16.gif"/>
             <entry key="RN.largeIcon" value="rn_button.gif"/>
             <entry key="RN.tooltip" value="Relevance Networks"/>
@@ -550,7 +558,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="KMC:" operation="+"/>
             <entry key="KMC.name" value="KMC"/>
             <entry key="KMC.class" value="org.tigr.microarray.mev.cluster.gui.impl.kmc.KMCGUI"/>
-	  	<entry key="KMC.category" value="CLUSTERING"/> 
+	  	<entry key="KMC.category" value="${CLUSTERING}"/> 
 	  	   <entry key="KMC.smallIcon" value="analysis16.gif"/>
             <entry key="KMC.largeIcon" value="kmc_button.gif"/>
             <entry key="KMC.tooltip" value="k-Means/Medians Clustering"/>
@@ -577,7 +585,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="KMCS:" operation="+"/>
             <entry key="KMCS.name" value="KMS"/>
             <entry key="KMCS.class" value="org.tigr.microarray.mev.cluster.gui.impl.kmcs.KMCSuppGUI"/>
-  	<entry key="KMCS.category" value="CLUSTERING"/>
+  	<entry key="KMCS.category" value="${CLUSTERING}"/>
   	        <entry key="KMCS.smallIcon" value="analysis16.gif"/>
             <entry key="KMCS.largeIcon" value="kms_button.gif"/>
             <entry key="KMCS.tooltip" value="KMC Support"/>
@@ -604,7 +612,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="CAST:" operation="+"/>
             <entry key="CAST.name" value="CAST"/>
             <entry key="CAST.class" value="org.tigr.microarray.mev.cluster.gui.impl.cast.CASTGUI"/>    
-	  	<entry key="CAST.category" value="CLUSTERING"/>
+	  	<entry key="CAST.category" value="${CLUSTERING}"/>
 	  	<entry key="CAST.smallIcon" value="analysis16.gif"/>
             <entry key="CAST.largeIcon" value="cast_button.gif"/>
             <entry key="CAST.tooltip" value="Cluster Affinity Search Technique"/>
@@ -631,7 +639,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="QTC:" operation="+"/>
             <entry key="QTC.name" value="QTC"/>
             <entry key="QTC.class" value="org.tigr.microarray.mev.cluster.gui.impl.qtc.QTCGUI"/>
-	  	<entry key="QTC.category" value="CLUSTERING"/>
+	  	<entry key="QTC.category" value="${CLUSTERING}"/>
 	  	    <entry key="QTC.smallIcon" value="analysis16.gif"/>
             <entry key="QTC.largeIcon" value="qtc_button.gif"/>
             <entry key="QTC.tooltip" value="QT Cluster"/>
@@ -666,7 +674,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="GSH:" operation="+"/>
             <entry key="GSH.name" value="GSH"/>
             <entry key="GSH.class" value="org.tigr.microarray.mev.cluster.gui.impl.gsh.GSHGUI"/>
-	  	<entry key="GSH.category" value="MISC"/>
+	  	<entry key="GSH.category" value="${MISC}"/>
 	  	    <entry key="GSH.smallIcon" value="analysis16.gif"/>
             <entry key="GSH.largeIcon" value="gsh_button.gif"/>
             <entry key="GSH.tooltip" value="Gene Shaving"/>
@@ -694,7 +702,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="SOM:" operation="+"/>
             <entry key="SOM.name" value="SOM"/>
             <entry key="SOM.class" value="org.tigr.microarray.mev.cluster.gui.impl.som.SOMGUI"/>
-	  	<entry key="SOM.category" value="CLUSTERING"/>
+	  	<entry key="SOM.category" value="${CLUSTERING}"/>
 	  	    <entry key="SOM.smallIcon" value="analysis16.gif"/>
             <entry key="SOM.largeIcon" value="som_button.gif"/>
             <entry key="SOM.tooltip" value="Self Organizing Map"/>
@@ -721,7 +729,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="FOM:" operation="+"/>
             <entry key="FOM.name" value="FOM"/>
             <entry key="FOM.class" value="org.tigr.microarray.mev.cluster.gui.impl.fom.FOMGUI"/>
-	  	<entry key="FOM.category" value="CLUSTERING"/>
+	  	<entry key="FOM.category" value="${CLUSTERING}"/>
 	  		<entry key="FOM.smallIcon" value="analysis16.gif"/>
             <entry key="FOM.largeIcon" value="fom_button.gif"/>
             <entry key="FOM.tooltip" value="Figure of Merit"/>
@@ -755,7 +763,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="PTM:" operation="+"/>
             <entry key="PTM.name" value="PTM"/>
             <entry key="PTM.class" value="org.tigr.microarray.mev.cluster.gui.impl.ptm.PTMGUI"/>
-	  	<entry key="PTM.category" value="STATISTICS"/> 
+	  	<entry key="PTM.category" value="${STATISTICS}"/> 
 	  	   <entry key="PTM.smallIcon" value="analysis16.gif"/>
             <entry key="PTM.largeIcon" value="ptm_button.gif"/>
             <entry key="PTM.tooltip" value="Pavlidis Template Matching"/>
@@ -790,7 +798,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="TTEST:" operation="+"/>
             <entry key="TTEST.name" value="TTEST"/>
             <entry key="TTEST.class" value="org.tigr.microarray.mev.cluster.gui.impl.ttest.TtestGUI"/>
-	  	<entry key="TTEST.category" value="STATISTICS"/> 
+	  	<entry key="TTEST.category" value="${STATISTICS}"/> 
 	  	<entry key="TTEST.smallIcon" value="analysis16.gif"/>
             <entry key="TTEST.largeIcon" value="ttest_button.gif"/>
             <entry key="TTEST.tooltip" value="t Tests"/>
@@ -825,7 +833,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="BRIDGE:" operation="+"/>
             <entry key="BRIDGE.name" value="BRIDGE"/>
             <entry key="BRIDGE.class" value="org.tigr.microarray.mev.cluster.gui.impl.bridge.BridgeGUI"/>
-	  	<entry key="BRIDGE.category" value="STATISTICS"/> 
+	  	<entry key="BRIDGE.category" value="${STATISTICS}"/> 
 	  	<entry key="BRIDGE.smallIcon" value="analysis16.gif"/>
             <entry key="BRIDGE.largeIcon" value="bridge_button.gif"/>
             <entry key="BRIDGE.tooltip" value="BRIDGE"/>
@@ -852,7 +860,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="SAM:" operation="+"/>
             <entry key="SAM.name" value="SAM"/>
             <entry key="SAM.class" value="org.tigr.microarray.mev.cluster.gui.impl.sam.SAMGUI"/>
-	  	<entry key="SAM.category" value="STATISTICS"/>  
+	  	<entry key="SAM.category" value="${STATISTICS}"/>  
 	  	   <entry key="SAM.smallIcon" value="analysis16.gif"/>
             <entry key="SAM.largeIcon" value="sam_button.gif"/>
             <entry key="SAM.tooltip" value="Significance Analysis for Microarrays"/>
@@ -887,7 +895,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="OWA:" operation="+"/>
             <entry key="OWA.name" value="ANOVA"/>
             <entry key="OWA.class" value="org.tigr.microarray.mev.cluster.gui.impl.owa.OWAGUI"/>
-	  	<entry key="OWA.category" value="STATISTICS"/>  
+	  	<entry key="OWA.category" value="${STATISTICS}"/>  
 	  	   <entry key="OWA.smallIcon" value="analysis16.gif"/>
             <entry key="OWA.largeIcon" value="owa_button.gif"/>
             <entry key="OWA.tooltip" value="One-way ANOVA"/>
@@ -922,7 +930,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="TFA:" operation="+"/>
             <entry key="TFA.name" value="2 Fact. ANOVA"/>
             <entry key="TFA.class" value="org.tigr.microarray.mev.cluster.gui.impl.tfa.TFAGUI"/>
-	  	<entry key="TFA.category" value="STATISTICS"/> 
+	  	<entry key="TFA.category" value="${STATISTICS}"/> 
 	  	    <entry key="TFA.smallIcon" value="analysis16.gif"/>
             <entry key="TFA.largeIcon" value="tfa_button.gif"/>
             <entry key="TFA.tooltip" value="Two-factor ANOVA"/>
@@ -949,7 +957,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="SVM:" operation="+"/>
             <entry key="SVM.name" value="SVM"/>
             <entry key="SVM.class" value="org.tigr.microarray.mev.cluster.gui.impl.svm.SVMGUI"/>
-	  	<entry key="SVM.category" value="CLASSIFICATION"/> 
+	  	<entry key="SVM.category" value="${CLASSIFICATION}"/> 
 	  	    <entry key="SVM.smallIcon" value="analysis16.gif"/>
             <entry key="SVM.largeIcon" value="svm_button.gif"/>
             <entry key="SVM.tooltip" value="Support Vector Machines"/>
@@ -976,7 +984,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="USC:" operation="+"/>
             <entry key="USC.name" value="USC"/>
             <entry key="USC.class" value="org.tigr.microarray.mev.cluster.gui.impl.usc.USCGUI"/>
-	  		<entry key="USC.category" value="CLASSIFICATION"/>
+	  	<entry key="USC.category" value="${CLASSIFICATION}"/>
             <entry key="USC.smallIcon" value="analysis16.gif"/>
             <entry key="USC.largeIcon" value="usc_button.gif"/>
             <entry key="USC.tooltip" value="Uncorrelated Shrunken Centroid Classification"/>
@@ -1001,10 +1009,10 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="TEASE:" operation="+"/>            
             <entry key="TEASE.name" value="TEASE"/>
             <entry key="TEASE.class" value="org.tigr.microarray.mev.cluster.gui.impl.tease.TEASEGUI"/>
-	  		<entry key="TEASE.category" value="CLUSTERING"/>
+	  		<entry key="TEASE.category" value="${CLUSTERING}"/>
             <entry key="TEASE.smallIcon" value="analysis16.gif"/>
-            <entry key="TEASE.largeIcon" value="tease_button.gif"/>
-            <entry key="TEASE.tooltip" value="Tree EASE"/>
+            <entry key="TEASE.largeIcon" value="hcl_button.gif"/>
+            <entry key="TEASE.tooltip" value="HCL and EASE"/>
         </propertyfile>
     </target>
 
@@ -1026,7 +1034,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="KNNC:" operation="+"/>
             <entry key="KNNC.name" value="KNNC"/>
             <entry key="KNNC.class" value="org.tigr.microarray.mev.cluster.gui.impl.knnc.KNNCGUI"/>
-	  	<entry key="KNNC.category" value="CLASSIFICATION"/>  
+	  	<entry key="KNNC.category" value="${CLASSIFICATION}"/>  
 	  	   <entry key="KNNC.smallIcon" value="analysis16.gif"/>
             <entry key="KNNC.largeIcon" value="knnc_button.gif"/>
             <entry key="KNNC.tooltip" value="K-Nearest Neighbors Classification"/>
@@ -1072,7 +1080,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="DAM:" operation="+"/>
             <entry key="DAM.name" value="DAM"/>
             <entry key="DAM.class" value="org.tigr.microarray.mev.cluster.gui.impl.dam.DAMGUI"/>
-	  	<entry key="DAM.category" value="CLASSIFICATION"/>  
+	  	<entry key="DAM.category" value="${CLASSIFICATION}"/>  
 	  	    <entry key="DAM.smallIcon" value="analysis16.gif"/>
             <entry key="DAM.largeIcon" value="dam_button.gif"/>
             <entry key="DAM.tooltip" value="Discriminant Analysis Classifier"/>
@@ -1099,7 +1107,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="LEM:" operation="+"/>
             <entry key="LEM.name" value="LEM"/>
             <entry key="LEM.class" value="org.tigr.microarray.mev.cluster.gui.impl.lem.LEMGUI"/>
-	  		<entry key="LEM.category" value="MISC"/>
+	  	<entry key="LEM.category" value="${VISUALIZATION}"/>
             <entry key="LEM.smallIcon" value="analysis16.gif"/>
             <entry key="LEM.largeIcon" value="lem_button.gif"/>
             <entry key="LEM.tooltip" value="Linear Expression Map"/>
@@ -1123,7 +1131,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="GDM:" operation="+"/>
             <entry key="GDM.name" value="GDM"/>
             <entry key="GDM.class" value="org.tigr.microarray.mev.cluster.gui.impl.gdm.GDMGUI"/>
-	  	<entry key="GDM.category" value="DATA_REDUCTION"/>   
+	  	<entry key="GDM.category" value="${VISUALIZATION}"/>   
 	  	   <entry key="GDM.smallIcon" value="analysis16.gif"/>
             <entry key="GDM.largeIcon" value="gdm_button.gif"/>
             <entry key="GDM.tooltip" value="Gene Distance Matrix"/>
@@ -1160,7 +1168,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="PCA:" operation="+"/>
             <entry key="PCA.name" value="PCA"/>
             <entry key="PCA.class" value="org.tigr.microarray.mev.cluster.gui.impl.pca.PCAGUI"/>
-	  	<entry key="PCA.category" value="DATA_REDUCTION"/>  
+	  	<entry key="PCA.category" value="${DATA_REDUCTION}"/>  
 	  	   <entry key="PCA.smallIcon" value="analysis16.gif"/>
             <entry key="PCA.largeIcon" value="pca_button.gif"/>
             <entry key="PCA.tooltip" value="Principal Component Analysis"/>
@@ -1206,7 +1214,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="COA:" operation="+"/>
             <entry key="COA.name" value="COA"/>
             <entry key="COA.class" value="org.tigr.microarray.mev.cluster.gui.impl.coa.COAGUI"/>
-	  	<entry key="COA.category" value="DATA_REDUCTION"/>   
+	  	<entry key="COA.category" value="${DATA_REDUCTION}"/>   
 	  	   <entry key="COA.smallIcon" value="analysis16.gif"/>
             <entry key="COA.largeIcon" value="coa_button.gif"/>
             <entry key="COA.tooltip" value="Correspondence Analysis"/>
@@ -1252,7 +1260,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="Terrain:" operation="+"/>
             <entry key="Terrain.name" value="TRN"/>
             <entry key="Terrain.class" value="org.tigr.microarray.mev.cluster.gui.impl.terrain.TerrainGUI"/>
-	  	<entry key="Terrain.category" value="DATA_REDUCTION"/>  
+	  	<entry key="Terrain.category" value="${DATA_REDUCTION}"/>  
 	  	    <entry key="Terrain.smallIcon" value="analysis16.gif"/>
             <entry key="Terrain.largeIcon" value="trn_button.gif"/>
             <entry key="Terrain.tooltip" value="Expression Terrain Map"/>
@@ -1279,7 +1287,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 	    <entry key="gui.names" value="EASE:" operation="+"/>
             <entry key="EASE.name" value="EASE"/>
             <entry key="EASE.class" value="org.tigr.microarray.mev.cluster.gui.impl.ease.EASEGUI"/>
-	  	<entry key="EASE.category" value="META_ANALYSIS"/>  
+	  		<entry key="EASE.category" value="${META_ANALYSIS}"/>  
 	  	    <entry key="EASE.smallIcon" value="analysis16.gif"/>
             <entry key="EASE.largeIcon" value="ease_button.gif"/>
             <entry key="EASE.tooltip" value="EASE Cluster Analysis"/>
@@ -1310,7 +1318,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 		<entry key="gui.names" value="***:" operation="+"/>
             <entry key="***.name" value="***"/>
             <entry key="***.class" value="org.tigr.microarray.mev.cluster.gui.impl.***"/>    
-	  	<entry key="***.category" value="DATA_REDUCTION"/>  
+	  	<entry key="***.category" value="${DATA_REDUCTION}"/>  
 	  	<entry key="***.smallIcon" value="analysis16.gif"/>
             <entry key="***.largeIcon" value="***_button.gif"/>
             <entry key="***.tooltip" value=" "/>
