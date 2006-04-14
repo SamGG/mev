@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: MultipleArrayToolbar.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-02-24 15:13:36 $
- * $Author: wwang67 $
+ * $Revision: 1.10 $
+ * $Date: 2006-04-14 21:08:51 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -48,7 +48,7 @@ public class MultipleArrayToolbar extends JToolBar {
     private void addAlgorithmActions(ActionManager manager) {
     	int index = 0;
     	Action action;
-    	String []category={"CLUSTERING","STATISTICS","CLASSIFICATION","DATA_REDUCTION","META_ANALYSIS","MISC"};
+    	String []category={"Clustering","Statistics","Classification","Data Reduction","Meta Analysis","Visualization","Miscellaneous"};
     	for(int i=0;i<category.length;i++){
    			 while ((action = manager.getAction(ActionManager.ANALYSIS_ACTION+String.valueOf(index)))!=null) {
    				if((action.getValue(ActionManager.CATEGORY)).equals(category[i])){

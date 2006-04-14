@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayMenubar.java,v $
- * $Revision: 1.13 $
- * $Date: 2006-02-24 15:12:06 $
- * $Author: wwang67 $
+ * $Revision: 1.14 $
+ * $Date: 2006-04-14 21:08:51 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -50,7 +50,17 @@ public class MultipleArrayMenubar extends JMenuBar {
     private ActionListener listener;
     private boolean affyNormAdded = false;
     private ButtonGroup experimentLabelGroup;
-	/**     * Raktim     * CGH Specific Menus     */    private JMenu cloneValuesMenu;    private JMenu cghDispMenu;    private JMenu cghAnalysisMenu;    private JMenu helpMenu;    CGHDisplayMenu cghDisplayMenu = new CGHDisplayMenu();    CGHCloneValueMenu cghCloneValueMenu = new CGHCloneValueMenu();   
+	/**
+     * Raktim
+     * CGH Specific Menus
+     */
+    private JMenu cloneValuesMenu;
+    private JMenu cghDispMenu;
+    private JMenu cghAnalysisMenu;
+    private JMenu helpMenu;
+    CGHDisplayMenu cghDisplayMenu = new CGHDisplayMenu();
+    CGHCloneValueMenu cghCloneValueMenu = new CGHCloneValueMenu();
+   
     private ActionManager actionManager;
     
     /**
@@ -634,7 +644,7 @@ public class MultipleArrayMenubar extends JMenuBar {
        
     	int index = 0;
         Action action;
-        String []category={"CLUSTERING","STATISTICS","CLASSIFICATION","DATA_REDUCTION","META_ANALYSIS","MISC"};
+        String []category={"Clustering","Statistics","Classification","Data Reduction","Meta Analysis","Visualization","Miscellaneous"};
         //System.out.print(manager.getAction(ActionManager.ANALYSIS_ACTION+String.valueOf(0)));
         //while ((action = manager.getAction("HCL"))!=null) {
         for(int i=0;i<category.length;i++){
@@ -1204,5 +1214,513 @@ public class MultipleArrayMenubar extends JMenuBar {
     
     static {
         JPopupMenu.setDefaultLightWeightPopupEnabled(false);
-    }    /**     * Raktim CGH Menus     * NOT USED     */    public void addCGHMenus2() {    	System.out.println("In addCGHMenus2()");        cloneValuesMenu = new JMenu("CloneValues");        add(cloneValuesMenu);        //Add conditional ClonesMenu        //initCloneValuesMenu(cloneValuesMenu, manager, boolean hasDyeSwap, int cloneValueType, int flankingRegionType);        setCloneValueType(TMEV.defaultCloneValue);        setFlankingRegionType(TMEV.defaultFlankingRegionValue);        initCloneValuesMenu(cloneValuesMenu, listener, false, cghCloneValueMenu.getCloneValueType(), cghCloneValueMenu.getFlankingRegionType());        //cghCloneValueMenu.setCloneValueType(ICGHCloneValueMenu.CLONE_VALUE_DISCRETE_DETERMINATION);        //cghCloneValueMenu.setFlankingRegionType(ICGHCloneValueMenu.FLANKING_REGIONS_BY_THRESHOLD);        cghDispMenu = new JMenu("CGH Display");        cghDispMenu.add(createJCheckBoxMenuItem("Flanking Regions", ActionManager.SHOW_FLANKING_REGIONS, listener, false));        cghDispMenu.addSeparator();        JMenu cghSizeMenu = new JMenu("Element Length");        ButtonGroup buttonGroup = new ButtonGroup();        cghSizeMenu.add(createJRadioButtonMenuItem("5", ActionManager.CGH_ELEMENT_LENGTH_5, listener, buttonGroup));        cghSizeMenu.add(createJRadioButtonMenuItem("10", ActionManager.CGH_ELEMENT_LENGTH_10, listener, buttonGroup));        cghSizeMenu.add(createJRadioButtonMenuItem("20", ActionManager.CGH_ELEMENT_LENGTH_20, listener, buttonGroup));        cghSizeMenu.add(createJRadioButtonMenuItem("50", ActionManager.CGH_ELEMENT_LENGTH_50, listener, buttonGroup));        cghSizeMenu.add(createJRadioButtonMenuItem("100", ActionManager.CGH_ELEMENT_LENGTH_100, listener, buttonGroup));        cghSizeMenu.add(createJRadioButtonMenuItem("Other", ActionManager.CGH_ELEMENT_LENGTH_OTHER, listener, buttonGroup));        cghSizeMenu.add(createJRadioButtonMenuItem("Fit", ActionManager.CGH_ELEMENT_LENGTH_FIT, listener, buttonGroup, true));        cghDispMenu.add(cghSizeMenu);        JMenu widthMenu = new JMenu("Element Width");        buttonGroup = new ButtonGroup();        widthMenu.add(createJRadioButtonMenuItem("5", ActionManager.CGH_ELEMENT_WIDTH_5, listener, buttonGroup));        widthMenu.add(createJRadioButtonMenuItem("10", ActionManager.CGH_ELEMENT_WIDTH_10, listener, buttonGroup));        widthMenu.add(createJRadioButtonMenuItem("20", ActionManager.CGH_ELEMENT_WIDTH_20, listener, buttonGroup));        widthMenu.add(createJRadioButtonMenuItem("50", ActionManager.CGH_ELEMENT_WIDTH_50, listener, buttonGroup));        widthMenu.add(createJRadioButtonMenuItem("100", ActionManager.CGH_ELEMENT_WIDTH_100, listener, buttonGroup));        widthMenu.add(createJRadioButtonMenuItem("Other", ActionManager.CGH_ELEMENT_WIDTH_OTHER, listener, buttonGroup));        widthMenu.add(createJRadioButtonMenuItem("Fit", ActionManager.CGH_ELEMENT_WIDTH_FIT, listener, buttonGroup, true));        cghDispMenu.add(widthMenu);        cghDispMenu.addSeparator();        JMenu displayTypeMenu = new JMenu("Display Type");        buttonGroup = new ButtonGroup();        displayTypeMenu.add(createJRadioButtonMenuItem("Mixed", ActionManager.CGH_DISPLAY_TYPE_COMBINED, listener, buttonGroup, true));        displayTypeMenu.add(createJRadioButtonMenuItem("Separated", ActionManager.CGH_DISPLAY_TYPE_SEPARATED, listener, buttonGroup));        cghDispMenu.add(displayTypeMenu);        cghDispMenu.addSeparator();        cghDispMenu.add(createJMenuItem("Display Order", ActionManager.CGH_DISPLAY_ORDER, listener));        //cghDisplayMenu.add(createJMenuItem("Circle Viewer Background", CGHActionManager.CIRCLE_VIEWER_BACKGROUND, listener));        cghDispMenu.add(createJCheckBoxMenuItem("Show Header", ActionManager.SHOW_HEADER, listener, true));        cghDispMenu.addSeparator();        cghDispMenu.add(createJMenuItem("Clear Annotations", ActionManager.CGH_CLEAR_ANNOTATIONS, listener));        add(cghDispMenu);        cghAnalysisMenu = new JMenu("CGH Analysis");        addCghAnalysisMenu(cghAnalysisMenu, /*manager*/ actionManager);        cghAnalysisMenu.addSeparator();        cghAnalysisMenu.add(createJMenuItem("Find Gene", ActionManager.FIND_GENE, listener));        /*        cghAnalysisMenu.addSeparator();        cghAnalysisMenu.add(createJMenuItem("Compare Experiments", ActionManager.COMPARE_EXPERIMENTS, listener));        */        add(cghAnalysisMenu);        helpMenu = new JMenu("Help");        helpMenu.add(createJMenuItem("Default Distances", ActionManager.DEFAULT_DISTANCES_CMD, listener));        helpMenu.add(createJMenuItem("Support Tree Legend", ActionManager.SHOW_SUPPORTTREE_LEGEND_COMMAND, listener));        add(helpMenu);        setDefaultValues();        //enableCloneDistributions(false);    }    public void addCGHMenus() {    	System.out.println("In addCGHMenus()");        cloneValuesMenu = new JMenu("CloneValues");        add(cloneValuesMenu);        //Add conditional ClonesMenu        //initCloneValuesMenu(cloneValuesMenu, manager, boolean hasDyeSwap, int cloneValueType, int flankingRegionType);        setCloneValueType(TMEV.defaultCloneValue);        setFlankingRegionType(TMEV.defaultFlankingRegionValue);        initCloneValuesMenu(cloneValuesMenu, listener, false, cghCloneValueMenu.getCloneValueType(), cghCloneValueMenu.getFlankingRegionType());        //cghCloneValueMenu.setCloneValueType(ICGHCloneValueMenu.CLONE_VALUE_DISCRETE_DETERMINATION);        //cghCloneValueMenu.setFlankingRegionType(ICGHCloneValueMenu.FLANKING_REGIONS_BY_THRESHOLD);        JMenu dispMenu = getJMenu("Display");        dispMenu.addSeparator();        dispMenu.add(createJCheckBoxMenuItem("Flanking Regions", ActionManager.SHOW_FLANKING_REGIONS, listener, false));        dispMenu.addSeparator();        JMenu cghSizeMenu = new JMenu("Element Length");        ButtonGroup buttonGroup = new ButtonGroup();        cghSizeMenu.add(createJRadioButtonMenuItem("5", ActionManager.CGH_ELEMENT_LENGTH_5, listener, buttonGroup));        cghSizeMenu.add(createJRadioButtonMenuItem("10", ActionManager.CGH_ELEMENT_LENGTH_10, listener, buttonGroup));        cghSizeMenu.add(createJRadioButtonMenuItem("20", ActionManager.CGH_ELEMENT_LENGTH_20, listener, buttonGroup));        cghSizeMenu.add(createJRadioButtonMenuItem("50", ActionManager.CGH_ELEMENT_LENGTH_50, listener, buttonGroup));        cghSizeMenu.add(createJRadioButtonMenuItem("100", ActionManager.CGH_ELEMENT_LENGTH_100, listener, buttonGroup));        cghSizeMenu.add(createJRadioButtonMenuItem("Other", ActionManager.CGH_ELEMENT_LENGTH_OTHER, listener, buttonGroup));        cghSizeMenu.add(createJRadioButtonMenuItem("Fit", ActionManager.CGH_ELEMENT_LENGTH_FIT, listener, buttonGroup, true));        dispMenu.add(cghSizeMenu);        JMenu widthMenu = new JMenu("Element Width");        buttonGroup = new ButtonGroup();        widthMenu.add(createJRadioButtonMenuItem("5", ActionManager.CGH_ELEMENT_WIDTH_5, listener, buttonGroup));        widthMenu.add(createJRadioButtonMenuItem("10", ActionManager.CGH_ELEMENT_WIDTH_10, listener, buttonGroup));        widthMenu.add(createJRadioButtonMenuItem("20", ActionManager.CGH_ELEMENT_WIDTH_20, listener, buttonGroup));        widthMenu.add(createJRadioButtonMenuItem("50", ActionManager.CGH_ELEMENT_WIDTH_50, listener, buttonGroup));        widthMenu.add(createJRadioButtonMenuItem("100", ActionManager.CGH_ELEMENT_WIDTH_100, listener, buttonGroup));        widthMenu.add(createJRadioButtonMenuItem("Other", ActionManager.CGH_ELEMENT_WIDTH_OTHER, listener, buttonGroup));        widthMenu.add(createJRadioButtonMenuItem("Fit", ActionManager.CGH_ELEMENT_WIDTH_FIT, listener, buttonGroup, true));        dispMenu.add(widthMenu);        dispMenu.addSeparator();        JMenu displayTypeMenu = new JMenu("Display Type");        buttonGroup = new ButtonGroup();        displayTypeMenu.add(createJRadioButtonMenuItem("Mixed", ActionManager.CGH_DISPLAY_TYPE_COMBINED, listener, buttonGroup, true));        displayTypeMenu.add(createJRadioButtonMenuItem("Separated", ActionManager.CGH_DISPLAY_TYPE_SEPARATED, listener, buttonGroup));        dispMenu.add(displayTypeMenu);        dispMenu.addSeparator();        dispMenu.add(createJMenuItem("Display Order", ActionManager.CGH_DISPLAY_ORDER, listener));        //cghDisplayMenu.add(createJMenuItem("Circle Viewer Background", CGHActionManager.CIRCLE_VIEWER_BACKGROUND, listener));        dispMenu.add(createJCheckBoxMenuItem("Show Header", ActionManager.SHOW_HEADER, listener, true));        dispMenu.addSeparator();        dispMenu.add(createJMenuItem("Clear Annotations", ActionManager.CGH_CLEAR_ANNOTATIONS, listener));        cghAnalysisMenu = new JMenu("CGH Analysis");        addCghAnalysisMenu(cghAnalysisMenu, /*manager*/ actionManager);        cghAnalysisMenu.addSeparator();        cghAnalysisMenu.add(createJMenuItem("Find Gene", ActionManager.FIND_GENE, listener));        /*        cghAnalysisMenu.addSeparator();        cghAnalysisMenu.add(createJMenuItem("Compare Experiments", ActionManager.COMPARE_EXPERIMENTS, listener));        */        add(cghAnalysisMenu);        helpMenu = new JMenu("Help");        helpMenu.add(createJMenuItem("Default Distances", ActionManager.DEFAULT_DISTANCES_CMD, listener));        helpMenu.add(createJMenuItem("Support Tree Legend", ActionManager.SHOW_SUPPORTTREE_LEGEND_COMMAND, listener));        add(helpMenu);        setDefaultValues();        //enableCloneDistributions(false);        // End Raktim CGH Menus    }	/**     * Adds CGH analysis menu items.     */    protected void addCghAnalysisMenu(JMenu menu, ActionManager manager) {        int index = 0;        Action action;        while ((action = manager.getAction(ActionManager.CGH_ANALYSIS_ACTION+String.valueOf(index)))!=null) {            menu.add(createJMenuItem(action));            index++;        }    }    /**     * Raktim     * CGH SetDefaultValues()     *     */    protected void setDefaultValues(){        setMinRatioScale(-1f);        setMaxRatioScale(1f);    }    /**     * Raktim CGH     * If CGH data is Ratio only, and/or Log2 transformed, Clone distribution     * is not avialable. Enable/Diasble ClonesMenu based on those.     */    public void enableCloneDistributions(boolean CloneDistState, boolean log2state){    	setEnableMenuItem("CloneValues", ActionManager.CLONE_VALUE_DISCRETE_DETERMINATION, !log2state);        setEnableMenuItem("CloneValues", ActionManager.CLONE_VALUE_LOG_CLONE_DISTRIBUTION, CloneDistState);        setEnableMenuItem("CloneValues", ActionManager.CLONE_VALUE_THRESHOLD_OR_CLONE_DISTRIBUTION, CloneDistState);        setEnableMenuItem("CloneValues", ActionManager.FLANKING_REGIONS_BY_LOG_CLONE_DISTRIBUTION, CloneDistState);        setEnableMenuItem("CloneValues", ActionManager.FLANKING_REGIONS_BY_THRESHOLD_OR_CLONE_DISTRIBUTION, CloneDistState);        setEnableMenuItem("CloneValues", ActionManager.CLONE_P_THRESH, CloneDistState);    }    /**     * Raktim CGH Dsiplay Menu     * A class to maintain state for CGH Display Menu     */    private class CGHDisplayMenu implements ICGHDisplayMenu {    	private boolean showFlankingRegions = false;        private double unitLength = ICGHDisplayMenu.FIT_SIZE;        private int elementWidth = (int)ICGHDisplayMenu.FIT_SIZE;        private int displayType;        private int displayLabelType = ICGHDisplayMenu.DISPLAY_WSL_ID;        Color circleViewerBackgroundColor = Color.black;        /** Getter for property showFlankingRegions.         * @return Value of property showFlankingRegions.         */        public boolean isShowFlankingRegions() {            return showFlankingRegions;        }        /** Setter for property showFlankingRegions.         * @param showFlankingRegions New value of property showFlankingRegions.         */        public void setShowFlankingRegions(boolean showFlankingRegions) {            this.showFlankingRegions = showFlankingRegions;        }        /** Getter for property unitLength.         * @return Value of property unitLength.         */        public double getUnitLength() {            return unitLength;        }        /** Setter for property unitLength.         * @param unitLength New value of property unitLength.         */        public void setUnitLength(double unitLength) {            if(unitLength == ICGHDisplayMenu.FIT_SIZE){                this.unitLength = unitLength;            }else{                this.unitLength = unitLength / 1000000;            }        }        /** Getter for property elementWidth.         * @return Value of property elementWidth.         */        public int getElementWidth() {            return elementWidth;        }        /** Setter for property elementWidth.         * @param elementWidth New value of property elementWidth.         */        public void setElementWidth(int elementWidth) {            this.elementWidth = elementWidth;        }        /** Getter for property displayType.         * @return Value of property displayType.         */        public int getDisplayType() {            return displayType;        }        /** Setter for property displayType.         * @param displayType New value of property displayType.         */        public void setDisplayType(int displayType) {            this.displayType = displayType;        }        /** Getter for property circleViewerBackgroundColor.         * @return Value of property circleViewerBackgroundColor.         */        public Color getCircleViewerBackgroundColor() {            return circleViewerBackgroundColor;        }        /** Setter for property circleViewerBackgroundColor.         * @param circleViewerBackgroundColor New value of property circleViewerBackgroundColor.         */        public void setCircleViewerBackgroundColor(java.awt.Color circleViewerBackgroundColor) {            this.circleViewerBackgroundColor = circleViewerBackgroundColor;        }        /** Getter for property displayLabel.         * @return Value of property displayLabel.         */        public int getDisplayLabelType() {            return displayLabelType;        }        /** Setter for property displayLabel.         * @param displayLabel New value of property displayLabel.         */        public void setDisplayLabelType(int displayLabelType) {            this.displayLabelType = displayLabelType;        }    }    /**     * Toggles the view of flanking regions     * @param show     */    public void setShowFlankingRegions(boolean show){        cghDisplayMenu.setShowFlankingRegions(show);    }    /**     * @param elementLength     */    public void setCghElementLength(double elementLength){        cghDisplayMenu.setUnitLength(elementLength);    }    /**     * @param elementWidth     */    public void setCghElementWidth(int elementWidth){        cghDisplayMenu.setElementWidth(elementWidth);    }    /**     * @param displayType     */    public void setCghDisplayType(int displayType){        cghDisplayMenu.setDisplayType(displayType);    }    /**     * Getter for property cghDisplayMenu.     * @return Value of property cghDisplayMenu.     */    public ICGHDisplayMenu getCghDisplayMenu() {        return cghDisplayMenu;    }    /**     * @param thresh     */    public void setAmpThresh(float thresh){        cghCloneValueMenu.setAmpThresh(thresh);    }    /**     * @param thresh     */    public void setDelThresh(float thresh){        cghCloneValueMenu.setDelThresh(thresh);    }    /**     * @param thresh     */    public void setAmpThresh2Copy(float thresh){        cghCloneValueMenu.setAmpThresh2Copy(thresh);    }    /**     * @param thresh     */    public void setDelThresh2Copy(float thresh){        cghCloneValueMenu.setDelThresh2Copy(thresh);    }    public void setCircleViewerBackgroundColor(java.awt.Color circleViewerBackgroundColor) {        cghDisplayMenu.circleViewerBackgroundColor = circleViewerBackgroundColor;    }    /**     * @return     */    public ICGHCloneValueMenu getCloneValueMenu(){        return cghCloneValueMenu;    }    /** sets the threshold to consider a probe as aberrant is probe     * distributions are used as the copy determination type     * @param clonePThresh     */    public void setClonePThresh(float clonePThresh){        this.cghCloneValueMenu.setClonePThresh(clonePThresh);    }    /** Sets the method by which to calculate flanking regions     * @param flankingRegionsType     */    public void setFlankingRegionType(int flankingRegionsType){        this.cghCloneValueMenu.setFlankingRegionType(flankingRegionsType);    }    /**     * @param cloneValueType  */    public void setCloneValueType(int cloneValueType){        this.cghCloneValueMenu.setCloneValueType(cloneValueType);    }    public void setCghDisplayLabelType(int displayLabelType){        this.cghDisplayMenu.setDisplayLabelType(displayLabelType);    }    /**     * Raktim CGH CGH Clones Value Menu Init     * Oct 3, 2005     * Make separate methods in case we want to give different     * options for determining clone values under different circumstances     */    public void initCloneValuesMenu(/*JMenu cloneValuesMenu, ActionListener listener,*/ boolean hasDyeSwap /*, int cloneValueType, int flankingRegionType*/){        //cloneValuesMenu.removeAll();    	JMenu cloneMenu = getJMenu("CloneValues");    	cloneMenu.removeAll();    	ICGHCloneValueMenu cloneValuesMenu =  getCloneValueMenu();    	setCloneValueType(TMEV.defaultCloneValue);    	setFlankingRegionType(TMEV.defaultFlankingRegionValue);        if(hasDyeSwap){            initCloneValuesMenuDyeSwap(cloneMenu, listener, cloneValuesMenu.getCloneValueType(), cloneValuesMenu.getFlankingRegionType());        }else{            initCloneValuesMenuNoDyeSwap(cloneMenu, listener, cloneValuesMenu.getCloneValueType(), cloneValuesMenu.getFlankingRegionType());        }    }    public void initCloneValuesMenu(JMenu cloneValuesMenu, ActionListener listener, boolean hasDyeSwap, int cloneValueType, int flankingRegionType){        cloneValuesMenu.removeAll();    	if(hasDyeSwap){            initCloneValuesMenuDyeSwap(cloneValuesMenu, listener, cloneValueType, flankingRegionType);        }else{            initCloneValuesMenuNoDyeSwap(cloneValuesMenu, listener, cloneValueType, flankingRegionType);        }    }    /**     * boolean isRatioOnly, boolean log2RatioOnly, boolean cloneDist     */    public void initCloneValuesMenuDyeSwap(JMenu cloneValuesMenu, ActionListener listener, int cloneValueType, int flankingRegionType){        ButtonGroup buttonGroup = new ButtonGroup();        cloneValuesMenu.add(createJRadioButtonMenuItem("Clone Ratio Threshold", ActionManager.CLONE_VALUE_DISCRETE_DETERMINATION, listener, buttonGroup, cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_DISCRETE_DETERMINATION));        cloneValuesMenu.add(createJRadioButtonMenuItem("Log Invert Average", ActionManager.CLONE_VALUE_LOG_AVERAGE_INVERTED, listener, buttonGroup, cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_LOG_AVERAGE_INVERTED));        cloneValuesMenu.add(createJRadioButtonMenuItem("Log Clone Distribution", ActionManager.CLONE_VALUE_LOG_CLONE_DISTRIBUTION, listener, buttonGroup, cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_LOG_CLONE_DISTRIBUTION));        cloneValuesMenu.add(createJRadioButtonMenuItem("Ratio Threshold or Clone Distribution", ActionManager.CLONE_VALUE_THRESHOLD_OR_CLONE_DISTRIBUTION, listener, buttonGroup, cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_THRESHOLD_OR_CLONE_DISTRIBUTION));        cloneValuesMenu.addSeparator();        buttonGroup = new ButtonGroup();        cloneValuesMenu.add(createJRadioButtonMenuItem("Flanking Regions By Threshold", ActionManager.FLANKING_REGIONS_BY_THRESHOLD, listener, buttonGroup, flankingRegionType == ICGHCloneValueMenu.FLANKING_REGIONS_BY_THRESHOLD));        cloneValuesMenu.add(createJRadioButtonMenuItem("Flanking Regions By Clone Distribution", ActionManager.FLANKING_REGIONS_BY_LOG_CLONE_DISTRIBUTION, listener, buttonGroup, flankingRegionType == ICGHCloneValueMenu.FLANKING_REGIONS_BY_LOG_CLONE_DISTRIBUTION));        cloneValuesMenu.add(createJRadioButtonMenuItem("Threshold or Clone Distribution", ActionManager.FLANKING_REGIONS_BY_THRESHOLD_OR_CLONE_DISTRIBUTION, listener, buttonGroup, flankingRegionType == ICGHCloneValueMenu.FLANKING_REGIONS_BY_THRESHOLD_OR_CLONE_DISTRIBUTION));        cloneValuesMenu.addSeparator();        cloneValuesMenu.add(createJMenuItem("Clone P Threshold", ActionManager.CLONE_P_THRESH, listener));        cloneValuesMenu.add(createJMenuItem("Set Thresholds", ActionManager.CGH_SET_THRESHOLDS, listener));    }    public void initCloneValuesMenuNoDyeSwap(JMenu cloneValuesMenu, ActionListener listener, int cloneValueType, int flankingRegionType){        ButtonGroup buttonGroup = new ButtonGroup();        cloneValuesMenu.add(createJRadioButtonMenuItem("Clone Ratio Threshold", ActionManager.CLONE_VALUE_DISCRETE_DETERMINATION, listener, buttonGroup, cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_DISCRETE_DETERMINATION));        cloneValuesMenu.add(createJRadioButtonMenuItem("Log Value", ActionManager.CLONE_VALUE_LOG_AVERAGE_INVERTED, listener, buttonGroup, cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_LOG_AVERAGE_INVERTED));        cloneValuesMenu.add(createJRadioButtonMenuItem("Log Clone Distribution", ActionManager.CLONE_VALUE_LOG_CLONE_DISTRIBUTION, listener, buttonGroup, cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_LOG_CLONE_DISTRIBUTION));        cloneValuesMenu.add(createJRadioButtonMenuItem("Ratio Threshold or Clone Distribution", ActionManager.CLONE_VALUE_THRESHOLD_OR_CLONE_DISTRIBUTION, listener, buttonGroup, cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_THRESHOLD_OR_CLONE_DISTRIBUTION));        cloneValuesMenu.addSeparator();        buttonGroup = new ButtonGroup();        cloneValuesMenu.add(createJRadioButtonMenuItem("Flanking Regions By Threshold", ActionManager.FLANKING_REGIONS_BY_THRESHOLD, listener, buttonGroup, flankingRegionType == ICGHCloneValueMenu.FLANKING_REGIONS_BY_THRESHOLD));        cloneValuesMenu.add(createJRadioButtonMenuItem("Flanking Regions By Clone Distribution", ActionManager.FLANKING_REGIONS_BY_LOG_CLONE_DISTRIBUTION, listener, buttonGroup, flankingRegionType == ICGHCloneValueMenu.FLANKING_REGIONS_BY_LOG_CLONE_DISTRIBUTION));        cloneValuesMenu.add(createJRadioButtonMenuItem("Threshold or Clone Distribution", ActionManager.FLANKING_REGIONS_BY_THRESHOLD_OR_CLONE_DISTRIBUTION, listener, buttonGroup, flankingRegionType == ICGHCloneValueMenu.FLANKING_REGIONS_BY_THRESHOLD_OR_CLONE_DISTRIBUTION));        cloneValuesMenu.addSeparator();        cloneValuesMenu.add(createJMenuItem("Clone P Threshold", ActionManager.CLONE_P_THRESH, listener));        cloneValuesMenu.add(createJMenuItem("Set Thresholds", ActionManager.CGH_SET_THRESHOLDS, listener));    }    /**     * Raktim CGH Dsiplay Menu     * A class to maintain state for CGH Clones Menu     */    protected class CGHCloneValueMenu implements ICGHCloneValueMenu {        //private int cloneValueType = ICGHCloneValueMenu.CLONE_VALUE_DISCRETE_DETERMINATION;        //private int flankingRegionType = ICGHCloneValueMenu.FLANKING_REGIONS_BY_THRESHOLD;        /**         * The following 2 statements needs to be revisited         */        private int cloneValueType = TMEV.defaultCloneValue;        private int flankingRegionType = TMEV.defaultFlankingRegionValue;        /**         * Old thresold defaults based on unlogged ratio        private float ampThresh = 1.2f;        private float delThresh = .8f;        private float ampThresh2Copy = 2.0f;        private float delThresh2Copy = .3f;        */        /**         * New CGH threshold based on log2 ratio cuttoffs         * Raktim Nov 21, 2005         */        private float ampThresh = 0.8f;        private float delThresh = -0.8f;        private float ampThresh2Copy = 1.0f;        private float delThresh2Copy = -1.0f;        private float clonePThresh = .85f;        public CGHCloneValueMenu(){  }        /**         * @return  */        public int getCloneValueType() {            return this.cloneValueType;        }        /**         * @param cloneValueType  */        public void setCloneValueType(int cloneValueType) {            this.cloneValueType = cloneValueType;        }        /**         * @return  */        public float getClonePThresh() {            return this.clonePThresh;        }        /**         * @param clonePThresh  */        public void setClonePThresh(float clonePThresh){            this.clonePThresh = clonePThresh;        }        /** Getter for property ampThresh.         * @return Value of property ampThresh.         */        public float getAmpThresh() {            return ampThresh;        }        /** Setter for property ampThresh.         * @param ampThresh New value of property ampThresh.         */        public void setAmpThresh(float ampThresh) {            this.ampThresh = ampThresh;        }        /** Getter for property delThresh.         * @return Value of property delThresh.         */        public float getDelThresh() {            return delThresh;        }        /** Setter for property delThresh.         * @param delThresh New value of property delThresh.         */        public void setDelThresh(float delThresh) {            this.delThresh = delThresh;        }        /** Getter for property ampThresh2Copy.         * @return Value of property ampThresh2Copy.         */        public float getAmpThresh2Copy() {            return ampThresh2Copy;        }        /** Setter for property ampThresh2Copy.         * @param ampThresh2Copy New value of property ampThresh2Copy.         */        public void setAmpThresh2Copy(float ampThresh2Copy) {            this.ampThresh2Copy = ampThresh2Copy;        }        /** Getter for property delThresh2Copy.         * @return Value of property delThresh2Copy.         */        public float getDelThresh2Copy() {            return delThresh2Copy;        }        /** Setter for property delThresh2Copy.         * @param delThresh2Copy New value of property delThresh2Copy.         */        public void setDelThresh2Copy(float delThresh2Copy) {            this.delThresh2Copy = delThresh2Copy;        }        /** Getter for property flankingRegionType.         * @return Value of property flankingRegionType.         */        public int getFlankingRegionType() {            return flankingRegionType;        }        /** Setter for property flankingRegionType.         * @param flankingRegionType New value of property flankingRegionType.         */        public void setFlankingRegionType(int flankingRegionType) {            this.flankingRegionType = flankingRegionType;        }    }
+    }
+    /**
+     * Raktim CGH Menus
+     * NOT USED
+     */
+    public void addCGHMenus2() {
+    	System.out.println("In addCGHMenus2()");
+        cloneValuesMenu = new JMenu("CloneValues");
+        add(cloneValuesMenu);
+        //Add conditional ClonesMenu
+        //initCloneValuesMenu(cloneValuesMenu, manager, boolean hasDyeSwap, int cloneValueType, int flankingRegionType);
+        setCloneValueType(TMEV.defaultCloneValue);
+        setFlankingRegionType(TMEV.defaultFlankingRegionValue);
+        initCloneValuesMenu(cloneValuesMenu, listener, false, cghCloneValueMenu.getCloneValueType(), cghCloneValueMenu.getFlankingRegionType());
+        //cghCloneValueMenu.setCloneValueType(ICGHCloneValueMenu.CLONE_VALUE_DISCRETE_DETERMINATION);
+        //cghCloneValueMenu.setFlankingRegionType(ICGHCloneValueMenu.FLANKING_REGIONS_BY_THRESHOLD);
+        cghDispMenu = new JMenu("CGH Display");
+        cghDispMenu.add(createJCheckBoxMenuItem("Flanking Regions", ActionManager.SHOW_FLANKING_REGIONS, listener, false));
+        cghDispMenu.addSeparator();
+        JMenu cghSizeMenu = new JMenu("Element Length");
+        ButtonGroup buttonGroup = new ButtonGroup();
+        cghSizeMenu.add(createJRadioButtonMenuItem("5", ActionManager.CGH_ELEMENT_LENGTH_5, listener, buttonGroup));
+        cghSizeMenu.add(createJRadioButtonMenuItem("10", ActionManager.CGH_ELEMENT_LENGTH_10, listener, buttonGroup));
+        cghSizeMenu.add(createJRadioButtonMenuItem("20", ActionManager.CGH_ELEMENT_LENGTH_20, listener, buttonGroup));
+        cghSizeMenu.add(createJRadioButtonMenuItem("50", ActionManager.CGH_ELEMENT_LENGTH_50, listener, buttonGroup));
+        cghSizeMenu.add(createJRadioButtonMenuItem("100", ActionManager.CGH_ELEMENT_LENGTH_100, listener, buttonGroup));
+        cghSizeMenu.add(createJRadioButtonMenuItem("Other", ActionManager.CGH_ELEMENT_LENGTH_OTHER, listener, buttonGroup));
+        cghSizeMenu.add(createJRadioButtonMenuItem("Fit", ActionManager.CGH_ELEMENT_LENGTH_FIT, listener, buttonGroup, true));
+        cghDispMenu.add(cghSizeMenu);
+        JMenu widthMenu = new JMenu("Element Width");
+        buttonGroup = new ButtonGroup();
+        widthMenu.add(createJRadioButtonMenuItem("5", ActionManager.CGH_ELEMENT_WIDTH_5, listener, buttonGroup));
+        widthMenu.add(createJRadioButtonMenuItem("10", ActionManager.CGH_ELEMENT_WIDTH_10, listener, buttonGroup));
+        widthMenu.add(createJRadioButtonMenuItem("20", ActionManager.CGH_ELEMENT_WIDTH_20, listener, buttonGroup));
+        widthMenu.add(createJRadioButtonMenuItem("50", ActionManager.CGH_ELEMENT_WIDTH_50, listener, buttonGroup));
+        widthMenu.add(createJRadioButtonMenuItem("100", ActionManager.CGH_ELEMENT_WIDTH_100, listener, buttonGroup));
+        widthMenu.add(createJRadioButtonMenuItem("Other", ActionManager.CGH_ELEMENT_WIDTH_OTHER, listener, buttonGroup));
+        widthMenu.add(createJRadioButtonMenuItem("Fit", ActionManager.CGH_ELEMENT_WIDTH_FIT, listener, buttonGroup, true));
+        cghDispMenu.add(widthMenu);
+        cghDispMenu.addSeparator();
+        JMenu displayTypeMenu = new JMenu("Display Type");
+        buttonGroup = new ButtonGroup();
+        displayTypeMenu.add(createJRadioButtonMenuItem("Mixed", ActionManager.CGH_DISPLAY_TYPE_COMBINED, listener, buttonGroup, true));
+        displayTypeMenu.add(createJRadioButtonMenuItem("Separated", ActionManager.CGH_DISPLAY_TYPE_SEPARATED, listener, buttonGroup));
+        cghDispMenu.add(displayTypeMenu);
+        cghDispMenu.addSeparator();
+        cghDispMenu.add(createJMenuItem("Display Order", ActionManager.CGH_DISPLAY_ORDER, listener));
+        //cghDisplayMenu.add(createJMenuItem("Circle Viewer Background", CGHActionManager.CIRCLE_VIEWER_BACKGROUND, listener));
+        cghDispMenu.add(createJCheckBoxMenuItem("Show Header", ActionManager.SHOW_HEADER, listener, true));
+        cghDispMenu.addSeparator();
+        cghDispMenu.add(createJMenuItem("Clear Annotations", ActionManager.CGH_CLEAR_ANNOTATIONS, listener));
+        add(cghDispMenu);
+        cghAnalysisMenu = new JMenu("CGH Analysis");
+        addCghAnalysisMenu(cghAnalysisMenu, /*manager*/ actionManager);
+        cghAnalysisMenu.addSeparator();
+        cghAnalysisMenu.add(createJMenuItem("Find Gene", ActionManager.FIND_GENE, listener));
+        /*
+        cghAnalysisMenu.addSeparator();
+        cghAnalysisMenu.add(createJMenuItem("Compare Experiments", ActionManager.COMPARE_EXPERIMENTS, listener));
+        */
+        add(cghAnalysisMenu);
+        helpMenu = new JMenu("Help");
+        helpMenu.add(createJMenuItem("Default Distances", ActionManager.DEFAULT_DISTANCES_CMD, listener));
+        helpMenu.add(createJMenuItem("Support Tree Legend", ActionManager.SHOW_SUPPORTTREE_LEGEND_COMMAND, listener));
+        add(helpMenu);
+        setDefaultValues();
+        //enableCloneDistributions(false);
+    }
+    public void addCGHMenus() {
+    	System.out.println("In addCGHMenus()");
+        cloneValuesMenu = new JMenu("CloneValues");
+        add(cloneValuesMenu);
+        //Add conditional ClonesMenu
+        //initCloneValuesMenu(cloneValuesMenu, manager, boolean hasDyeSwap, int cloneValueType, int flankingRegionType);
+        setCloneValueType(TMEV.defaultCloneValue);
+        setFlankingRegionType(TMEV.defaultFlankingRegionValue);
+        initCloneValuesMenu(cloneValuesMenu, listener, false, cghCloneValueMenu.getCloneValueType(), cghCloneValueMenu.getFlankingRegionType());
+        //cghCloneValueMenu.setCloneValueType(ICGHCloneValueMenu.CLONE_VALUE_DISCRETE_DETERMINATION);
+        //cghCloneValueMenu.setFlankingRegionType(ICGHCloneValueMenu.FLANKING_REGIONS_BY_THRESHOLD);
+        JMenu dispMenu = getJMenu("Display");
+        dispMenu.addSeparator();
+        dispMenu.add(createJCheckBoxMenuItem("Flanking Regions", ActionManager.SHOW_FLANKING_REGIONS, listener, false));
+        dispMenu.addSeparator();
+        JMenu cghSizeMenu = new JMenu("Element Length");
+        ButtonGroup buttonGroup = new ButtonGroup();
+        cghSizeMenu.add(createJRadioButtonMenuItem("5", ActionManager.CGH_ELEMENT_LENGTH_5, listener, buttonGroup));
+        cghSizeMenu.add(createJRadioButtonMenuItem("10", ActionManager.CGH_ELEMENT_LENGTH_10, listener, buttonGroup));
+        cghSizeMenu.add(createJRadioButtonMenuItem("20", ActionManager.CGH_ELEMENT_LENGTH_20, listener, buttonGroup));
+        cghSizeMenu.add(createJRadioButtonMenuItem("50", ActionManager.CGH_ELEMENT_LENGTH_50, listener, buttonGroup));
+        cghSizeMenu.add(createJRadioButtonMenuItem("100", ActionManager.CGH_ELEMENT_LENGTH_100, listener, buttonGroup));
+        cghSizeMenu.add(createJRadioButtonMenuItem("Other", ActionManager.CGH_ELEMENT_LENGTH_OTHER, listener, buttonGroup));
+        cghSizeMenu.add(createJRadioButtonMenuItem("Fit", ActionManager.CGH_ELEMENT_LENGTH_FIT, listener, buttonGroup, true));
+        dispMenu.add(cghSizeMenu);
+        JMenu widthMenu = new JMenu("Element Width");
+        buttonGroup = new ButtonGroup();
+        widthMenu.add(createJRadioButtonMenuItem("5", ActionManager.CGH_ELEMENT_WIDTH_5, listener, buttonGroup));
+        widthMenu.add(createJRadioButtonMenuItem("10", ActionManager.CGH_ELEMENT_WIDTH_10, listener, buttonGroup));
+        widthMenu.add(createJRadioButtonMenuItem("20", ActionManager.CGH_ELEMENT_WIDTH_20, listener, buttonGroup));
+        widthMenu.add(createJRadioButtonMenuItem("50", ActionManager.CGH_ELEMENT_WIDTH_50, listener, buttonGroup));
+        widthMenu.add(createJRadioButtonMenuItem("100", ActionManager.CGH_ELEMENT_WIDTH_100, listener, buttonGroup));
+        widthMenu.add(createJRadioButtonMenuItem("Other", ActionManager.CGH_ELEMENT_WIDTH_OTHER, listener, buttonGroup));
+        widthMenu.add(createJRadioButtonMenuItem("Fit", ActionManager.CGH_ELEMENT_WIDTH_FIT, listener, buttonGroup, true));
+        dispMenu.add(widthMenu);
+        dispMenu.addSeparator();
+        JMenu displayTypeMenu = new JMenu("Display Type");
+        buttonGroup = new ButtonGroup();
+        displayTypeMenu.add(createJRadioButtonMenuItem("Mixed", ActionManager.CGH_DISPLAY_TYPE_COMBINED, listener, buttonGroup, true));
+        displayTypeMenu.add(createJRadioButtonMenuItem("Separated", ActionManager.CGH_DISPLAY_TYPE_SEPARATED, listener, buttonGroup));
+        dispMenu.add(displayTypeMenu);
+        dispMenu.addSeparator();
+        dispMenu.add(createJMenuItem("Display Order", ActionManager.CGH_DISPLAY_ORDER, listener));
+        //cghDisplayMenu.add(createJMenuItem("Circle Viewer Background", CGHActionManager.CIRCLE_VIEWER_BACKGROUND, listener));
+        dispMenu.add(createJCheckBoxMenuItem("Show Header", ActionManager.SHOW_HEADER, listener, true));
+        dispMenu.addSeparator();
+        dispMenu.add(createJMenuItem("Clear Annotations", ActionManager.CGH_CLEAR_ANNOTATIONS, listener));
+        cghAnalysisMenu = new JMenu("CGH Analysis");
+        addCghAnalysisMenu(cghAnalysisMenu, /*manager*/ actionManager);
+        cghAnalysisMenu.addSeparator();
+        cghAnalysisMenu.add(createJMenuItem("Find Gene", ActionManager.FIND_GENE, listener));
+        /*
+        cghAnalysisMenu.addSeparator();
+        cghAnalysisMenu.add(createJMenuItem("Compare Experiments", ActionManager.COMPARE_EXPERIMENTS, listener));
+        */
+        add(cghAnalysisMenu);
+        helpMenu = new JMenu("Help");
+        helpMenu.add(createJMenuItem("Default Distances", ActionManager.DEFAULT_DISTANCES_CMD, listener));
+        helpMenu.add(createJMenuItem("Support Tree Legend", ActionManager.SHOW_SUPPORTTREE_LEGEND_COMMAND, listener));
+        add(helpMenu);
+        setDefaultValues();
+        //enableCloneDistributions(false);
+        // End Raktim CGH Menus
+    }
+	/**
+     * Adds CGH analysis menu items.
+     */
+    protected void addCghAnalysisMenu(JMenu menu, ActionManager manager) {
+        int index = 0;
+        Action action;
+        while ((action = manager.getAction(ActionManager.CGH_ANALYSIS_ACTION+String.valueOf(index)))!=null) {
+            menu.add(createJMenuItem(action));
+            index++;
+        }
+    }
+    /**
+     * Raktim
+     * CGH SetDefaultValues()
+     *
+     */
+    protected void setDefaultValues(){
+        setMinRatioScale(-1f);
+        setMaxRatioScale(1f);
+    }
+    /**
+     * Raktim CGH
+     * If CGH data is Ratio only, and/or Log2 transformed, Clone distribution
+     * is not avialable. Enable/Diasble ClonesMenu based on those.
+     */
+    public void enableCloneDistributions(boolean CloneDistState, boolean log2state){
+    	setEnableMenuItem("CloneValues", ActionManager.CLONE_VALUE_DISCRETE_DETERMINATION, !log2state);
+        setEnableMenuItem("CloneValues", ActionManager.CLONE_VALUE_LOG_CLONE_DISTRIBUTION, CloneDistState);
+        setEnableMenuItem("CloneValues", ActionManager.CLONE_VALUE_THRESHOLD_OR_CLONE_DISTRIBUTION, CloneDistState);
+        setEnableMenuItem("CloneValues", ActionManager.FLANKING_REGIONS_BY_LOG_CLONE_DISTRIBUTION, CloneDistState);
+        setEnableMenuItem("CloneValues", ActionManager.FLANKING_REGIONS_BY_THRESHOLD_OR_CLONE_DISTRIBUTION, CloneDistState);
+        setEnableMenuItem("CloneValues", ActionManager.CLONE_P_THRESH, CloneDistState);
+    }
+    /**
+     * Raktim CGH Dsiplay Menu
+     * A class to maintain state for CGH Display Menu
+     */
+    private class CGHDisplayMenu implements ICGHDisplayMenu {
+    	private boolean showFlankingRegions = false;
+        private double unitLength = ICGHDisplayMenu.FIT_SIZE;
+        private int elementWidth = (int)ICGHDisplayMenu.FIT_SIZE;
+        private int displayType;
+        private int displayLabelType = ICGHDisplayMenu.DISPLAY_WSL_ID;
+        Color circleViewerBackgroundColor = Color.black;
+        /** Getter for property showFlankingRegions.
+         * @return Value of property showFlankingRegions.
+         */
+        public boolean isShowFlankingRegions() {
+            return showFlankingRegions;
+        }
+        /** Setter for property showFlankingRegions.
+         * @param showFlankingRegions New value of property showFlankingRegions.
+         */
+        public void setShowFlankingRegions(boolean showFlankingRegions) {
+            this.showFlankingRegions = showFlankingRegions;
+        }
+        /** Getter for property unitLength.
+         * @return Value of property unitLength.
+         */
+        public double getUnitLength() {
+            return unitLength;
+        }
+        /** Setter for property unitLength.
+         * @param unitLength New value of property unitLength.
+         */
+        public void setUnitLength(double unitLength) {
+            if(unitLength == ICGHDisplayMenu.FIT_SIZE){
+                this.unitLength = unitLength;
+            }else{
+                this.unitLength = unitLength / 1000000;
+            }
+        }
+        /** Getter for property elementWidth.
+         * @return Value of property elementWidth.
+         */
+        public int getElementWidth() {
+            return elementWidth;
+        }
+        /** Setter for property elementWidth.
+         * @param elementWidth New value of property elementWidth.
+         */
+        public void setElementWidth(int elementWidth) {
+            this.elementWidth = elementWidth;
+        }
+        /** Getter for property displayType.
+         * @return Value of property displayType.
+         */
+        public int getDisplayType() {
+            return displayType;
+        }
+        /** Setter for property displayType.
+         * @param displayType New value of property displayType.
+         */
+        public void setDisplayType(int displayType) {
+            this.displayType = displayType;
+        }
+        /** Getter for property circleViewerBackgroundColor.
+         * @return Value of property circleViewerBackgroundColor.
+         */
+        public Color getCircleViewerBackgroundColor() {
+            return circleViewerBackgroundColor;
+        }
+        /** Setter for property circleViewerBackgroundColor.
+         * @param circleViewerBackgroundColor New value of property circleViewerBackgroundColor.
+         */
+        public void setCircleViewerBackgroundColor(java.awt.Color circleViewerBackgroundColor) {
+            this.circleViewerBackgroundColor = circleViewerBackgroundColor;
+        }
+        /** Getter for property displayLabel.
+         * @return Value of property displayLabel.
+         */
+        public int getDisplayLabelType() {
+            return displayLabelType;
+        }
+        /** Setter for property displayLabel.
+         * @param displayLabel New value of property displayLabel.
+         */
+        public void setDisplayLabelType(int displayLabelType) {
+            this.displayLabelType = displayLabelType;
+        }
+    }
+    /**
+     * Toggles the view of flanking regions
+     * @param show
+     */
+    public void setShowFlankingRegions(boolean show){
+        cghDisplayMenu.setShowFlankingRegions(show);
+    }
+    /**
+     * @param elementLength
+     */
+    public void setCghElementLength(double elementLength){
+        cghDisplayMenu.setUnitLength(elementLength);
+    }
+    /**
+     * @param elementWidth
+     */
+    public void setCghElementWidth(int elementWidth){
+        cghDisplayMenu.setElementWidth(elementWidth);
+    }
+    /**
+     * @param displayType
+     */
+    public void setCghDisplayType(int displayType){
+        cghDisplayMenu.setDisplayType(displayType);
+    }
+    /**
+     * Getter for property cghDisplayMenu.
+     * @return Value of property cghDisplayMenu.
+     */
+    public ICGHDisplayMenu getCghDisplayMenu() {
+        return cghDisplayMenu;
+    }
+    /**
+     * @param thresh
+     */
+    public void setAmpThresh(float thresh){
+        cghCloneValueMenu.setAmpThresh(thresh);
+    }
+    /**
+     * @param thresh
+     */
+    public void setDelThresh(float thresh){
+        cghCloneValueMenu.setDelThresh(thresh);
+    }
+    /**
+     * @param thresh
+     */
+    public void setAmpThresh2Copy(float thresh){
+        cghCloneValueMenu.setAmpThresh2Copy(thresh);
+    }
+    /**
+     * @param thresh
+     */
+    public void setDelThresh2Copy(float thresh){
+        cghCloneValueMenu.setDelThresh2Copy(thresh);
+    }
+    public void setCircleViewerBackgroundColor(java.awt.Color circleViewerBackgroundColor) {
+        cghDisplayMenu.circleViewerBackgroundColor = circleViewerBackgroundColor;
+    }
+    /**
+     * @return
+     */
+    public ICGHCloneValueMenu getCloneValueMenu(){
+        return cghCloneValueMenu;
+    }
+    /** sets the threshold to consider a probe as aberrant is probe
+     * distributions are used as the copy determination type
+     * @param clonePThresh
+     */
+    public void setClonePThresh(float clonePThresh){
+        this.cghCloneValueMenu.setClonePThresh(clonePThresh);
+    }
+    /** Sets the method by which to calculate flanking regions
+     * @param flankingRegionsType
+     */
+    public void setFlankingRegionType(int flankingRegionsType){
+        this.cghCloneValueMenu.setFlankingRegionType(flankingRegionsType);
+    }
+    /**
+     * @param cloneValueType  */
+    public void setCloneValueType(int cloneValueType){
+        this.cghCloneValueMenu.setCloneValueType(cloneValueType);
+    }
+    public void setCghDisplayLabelType(int displayLabelType){
+        this.cghDisplayMenu.setDisplayLabelType(displayLabelType);
+    }
+    /**
+     * Raktim CGH CGH Clones Value Menu Init
+     * Oct 3, 2005
+     * Make separate methods in case we want to give different
+     * options for determining clone values under different circumstances
+     */
+    public void initCloneValuesMenu(/*JMenu cloneValuesMenu, ActionListener listener,*/ boolean hasDyeSwap /*, int cloneValueType, int flankingRegionType*/){
+        //cloneValuesMenu.removeAll();
+    	JMenu cloneMenu = getJMenu("CloneValues");
+    	cloneMenu.removeAll();
+    	ICGHCloneValueMenu cloneValuesMenu =  getCloneValueMenu();
+    	setCloneValueType(TMEV.defaultCloneValue);
+    	setFlankingRegionType(TMEV.defaultFlankingRegionValue);
+        if(hasDyeSwap){
+            initCloneValuesMenuDyeSwap(cloneMenu, listener, cloneValuesMenu.getCloneValueType(), cloneValuesMenu.getFlankingRegionType());
+        }else{
+            initCloneValuesMenuNoDyeSwap(cloneMenu, listener, cloneValuesMenu.getCloneValueType(), cloneValuesMenu.getFlankingRegionType());
+        }
+    }
+    public void initCloneValuesMenu(JMenu cloneValuesMenu, ActionListener listener, boolean hasDyeSwap, int cloneValueType, int flankingRegionType){
+        cloneValuesMenu.removeAll();
+    	if(hasDyeSwap){
+            initCloneValuesMenuDyeSwap(cloneValuesMenu, listener, cloneValueType, flankingRegionType);
+        }else{
+            initCloneValuesMenuNoDyeSwap(cloneValuesMenu, listener, cloneValueType, flankingRegionType);
+        }
+    }
+    /**
+     * boolean isRatioOnly, boolean log2RatioOnly, boolean cloneDist
+     */
+    public void initCloneValuesMenuDyeSwap(JMenu cloneValuesMenu, ActionListener listener, int cloneValueType, int flankingRegionType){
+        ButtonGroup buttonGroup = new ButtonGroup();
+        cloneValuesMenu.add(createJRadioButtonMenuItem("Clone Ratio Threshold", ActionManager.CLONE_VALUE_DISCRETE_DETERMINATION, listener, buttonGroup, cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_DISCRETE_DETERMINATION));
+        cloneValuesMenu.add(createJRadioButtonMenuItem("Log Invert Average", ActionManager.CLONE_VALUE_LOG_AVERAGE_INVERTED, listener, buttonGroup, cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_LOG_AVERAGE_INVERTED));
+        cloneValuesMenu.add(createJRadioButtonMenuItem("Log Clone Distribution", ActionManager.CLONE_VALUE_LOG_CLONE_DISTRIBUTION, listener, buttonGroup, cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_LOG_CLONE_DISTRIBUTION));
+        cloneValuesMenu.add(createJRadioButtonMenuItem("Ratio Threshold or Clone Distribution", ActionManager.CLONE_VALUE_THRESHOLD_OR_CLONE_DISTRIBUTION, listener, buttonGroup, cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_THRESHOLD_OR_CLONE_DISTRIBUTION));
+        cloneValuesMenu.addSeparator();
+        buttonGroup = new ButtonGroup();
+        cloneValuesMenu.add(createJRadioButtonMenuItem("Flanking Regions By Threshold", ActionManager.FLANKING_REGIONS_BY_THRESHOLD, listener, buttonGroup, flankingRegionType == ICGHCloneValueMenu.FLANKING_REGIONS_BY_THRESHOLD));
+        cloneValuesMenu.add(createJRadioButtonMenuItem("Flanking Regions By Clone Distribution", ActionManager.FLANKING_REGIONS_BY_LOG_CLONE_DISTRIBUTION, listener, buttonGroup, flankingRegionType == ICGHCloneValueMenu.FLANKING_REGIONS_BY_LOG_CLONE_DISTRIBUTION));
+        cloneValuesMenu.add(createJRadioButtonMenuItem("Threshold or Clone Distribution", ActionManager.FLANKING_REGIONS_BY_THRESHOLD_OR_CLONE_DISTRIBUTION, listener, buttonGroup, flankingRegionType == ICGHCloneValueMenu.FLANKING_REGIONS_BY_THRESHOLD_OR_CLONE_DISTRIBUTION));
+        cloneValuesMenu.addSeparator();
+        cloneValuesMenu.add(createJMenuItem("Clone P Threshold", ActionManager.CLONE_P_THRESH, listener));
+        cloneValuesMenu.add(createJMenuItem("Set Thresholds", ActionManager.CGH_SET_THRESHOLDS, listener));
+    }
+    public void initCloneValuesMenuNoDyeSwap(JMenu cloneValuesMenu, ActionListener listener, int cloneValueType, int flankingRegionType){
+        ButtonGroup buttonGroup = new ButtonGroup();
+        cloneValuesMenu.add(createJRadioButtonMenuItem("Clone Ratio Threshold", ActionManager.CLONE_VALUE_DISCRETE_DETERMINATION, listener, buttonGroup, cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_DISCRETE_DETERMINATION));
+        cloneValuesMenu.add(createJRadioButtonMenuItem("Log Value", ActionManager.CLONE_VALUE_LOG_AVERAGE_INVERTED, listener, buttonGroup, cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_LOG_AVERAGE_INVERTED));
+        cloneValuesMenu.add(createJRadioButtonMenuItem("Log Clone Distribution", ActionManager.CLONE_VALUE_LOG_CLONE_DISTRIBUTION, listener, buttonGroup, cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_LOG_CLONE_DISTRIBUTION));
+        cloneValuesMenu.add(createJRadioButtonMenuItem("Ratio Threshold or Clone Distribution", ActionManager.CLONE_VALUE_THRESHOLD_OR_CLONE_DISTRIBUTION, listener, buttonGroup, cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_THRESHOLD_OR_CLONE_DISTRIBUTION));
+        cloneValuesMenu.addSeparator();
+        buttonGroup = new ButtonGroup();
+        cloneValuesMenu.add(createJRadioButtonMenuItem("Flanking Regions By Threshold", ActionManager.FLANKING_REGIONS_BY_THRESHOLD, listener, buttonGroup, flankingRegionType == ICGHCloneValueMenu.FLANKING_REGIONS_BY_THRESHOLD));
+        cloneValuesMenu.add(createJRadioButtonMenuItem("Flanking Regions By Clone Distribution", ActionManager.FLANKING_REGIONS_BY_LOG_CLONE_DISTRIBUTION, listener, buttonGroup, flankingRegionType == ICGHCloneValueMenu.FLANKING_REGIONS_BY_LOG_CLONE_DISTRIBUTION));
+        cloneValuesMenu.add(createJRadioButtonMenuItem("Threshold or Clone Distribution", ActionManager.FLANKING_REGIONS_BY_THRESHOLD_OR_CLONE_DISTRIBUTION, listener, buttonGroup, flankingRegionType == ICGHCloneValueMenu.FLANKING_REGIONS_BY_THRESHOLD_OR_CLONE_DISTRIBUTION));
+        cloneValuesMenu.addSeparator();
+        cloneValuesMenu.add(createJMenuItem("Clone P Threshold", ActionManager.CLONE_P_THRESH, listener));
+        cloneValuesMenu.add(createJMenuItem("Set Thresholds", ActionManager.CGH_SET_THRESHOLDS, listener));
+    }
+    /**
+     * Raktim CGH Dsiplay Menu
+     * A class to maintain state for CGH Clones Menu
+     */
+    protected class CGHCloneValueMenu implements ICGHCloneValueMenu {
+        //private int cloneValueType = ICGHCloneValueMenu.CLONE_VALUE_DISCRETE_DETERMINATION;
+        //private int flankingRegionType = ICGHCloneValueMenu.FLANKING_REGIONS_BY_THRESHOLD;
+        /**
+         * The following 2 statements needs to be revisited
+         */
+        private int cloneValueType = TMEV.defaultCloneValue;
+        private int flankingRegionType = TMEV.defaultFlankingRegionValue;
+        /**
+         * Old thresold defaults based on unlogged ratio
+        private float ampThresh = 1.2f;
+        private float delThresh = .8f;
+        private float ampThresh2Copy = 2.0f;
+        private float delThresh2Copy = .3f;
+        */
+        /**
+         * New CGH threshold based on log2 ratio cuttoffs
+         * Raktim Nov 21, 2005
+         */
+        private float ampThresh = 0.8f;
+        private float delThresh = -0.8f;
+        private float ampThresh2Copy = 1.0f;
+        private float delThresh2Copy = -1.0f;
+        private float clonePThresh = .85f;
+        public CGHCloneValueMenu(){  }
+        /**
+         * @return  */
+        public int getCloneValueType() {
+            return this.cloneValueType;
+        }
+        /**
+         * @param cloneValueType  */
+        public void setCloneValueType(int cloneValueType) {
+            this.cloneValueType = cloneValueType;
+        }
+        /**
+         * @return  */
+        public float getClonePThresh() {
+            return this.clonePThresh;
+        }
+        /**
+         * @param clonePThresh  */
+        public void setClonePThresh(float clonePThresh){
+            this.clonePThresh = clonePThresh;
+        }
+        /** Getter for property ampThresh.
+         * @return Value of property ampThresh.
+         */
+        public float getAmpThresh() {
+            return ampThresh;
+        }
+        /** Setter for property ampThresh.
+         * @param ampThresh New value of property ampThresh.
+         */
+        public void setAmpThresh(float ampThresh) {
+            this.ampThresh = ampThresh;
+        }
+        /** Getter for property delThresh.
+         * @return Value of property delThresh.
+         */
+        public float getDelThresh() {
+            return delThresh;
+        }
+        /** Setter for property delThresh.
+         * @param delThresh New value of property delThresh.
+         */
+        public void setDelThresh(float delThresh) {
+            this.delThresh = delThresh;
+        }
+        /** Getter for property ampThresh2Copy.
+         * @return Value of property ampThresh2Copy.
+         */
+        public float getAmpThresh2Copy() {
+            return ampThresh2Copy;
+        }
+        /** Setter for property ampThresh2Copy.
+         * @param ampThresh2Copy New value of property ampThresh2Copy.
+         */
+        public void setAmpThresh2Copy(float ampThresh2Copy) {
+            this.ampThresh2Copy = ampThresh2Copy;
+        }
+        /** Getter for property delThresh2Copy.
+         * @return Value of property delThresh2Copy.
+         */
+        public float getDelThresh2Copy() {
+            return delThresh2Copy;
+        }
+        /** Setter for property delThresh2Copy.
+         * @param delThresh2Copy New value of property delThresh2Copy.
+         */
+        public void setDelThresh2Copy(float delThresh2Copy) {
+            this.delThresh2Copy = delThresh2Copy;
+        }
+        /** Getter for property flankingRegionType.
+         * @return Value of property flankingRegionType.
+         */
+        public int getFlankingRegionType() {
+            return flankingRegionType;
+        }
+        /** Setter for property flankingRegionType.
+         * @param flankingRegionType New value of property flankingRegionType.
+         */
+        public void setFlankingRegionType(int flankingRegionType) {
+            this.flankingRegionType = flankingRegionType;
+        }
+    }
 }
