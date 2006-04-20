@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: ImageScreen.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:26:21 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-04-20 18:49:15 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.util.awt;
@@ -26,20 +26,20 @@ import javax.swing.JWindow;
 public class ImageScreen extends JWindow {
     
     public ImageScreen() { 
-	super();
-        addMouseListener(new Listener());
-       
-	ImageIcon image = new ImageIcon(ImageScreen.class.getResource("/org/tigr/images/mev_splash.gif"));
-	ImageCanvas canvas = new ImageCanvas(image);
-	canvas.setPreferredSize(new Dimension(image.getIconWidth()+4, image.getIconHeight()+5));     
-	getContentPane().add(canvas, BorderLayout.CENTER);
-	pack();
+		super();
+	        addMouseListener(new Listener());
+	       
+		ImageIcon image = new ImageIcon(ImageScreen.class.getResource("/org/tigr/images/mev_splash.gif"));
+		ImageCanvas canvas = new ImageCanvas(image);
+		canvas.setPreferredSize(new Dimension(image.getIconWidth()+4, image.getIconHeight()+5));     
+		getContentPane().add(canvas, BorderLayout.CENTER);
+		pack();
     }
         
     public void showImageScreen() {
-	Dimension screenSize = getToolkit().getScreenSize();
-	setLocation(screenSize.width/2 - getSize().width/2, screenSize.height/2 - getSize().height/2);
-	show();
+		Dimension screenSize = getToolkit().getScreenSize();
+		setLocation(screenSize.width/2 - getSize().width/2, screenSize.height/2 - getSize().height/2);
+		show();
     }
     
     public void showImageScreen(long millis) {
