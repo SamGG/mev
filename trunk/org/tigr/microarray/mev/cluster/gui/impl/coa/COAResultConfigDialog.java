@@ -92,7 +92,7 @@ public class COAResultConfigDialog extends AlgorithmDialog {
         panel3.setBorder(BorderFactory.createLineBorder(Color.gray));
         panel3.setBackground(Color.white);
         panel3.add(parameters, BorderLayout.WEST);
-        panel3.add(new JLabel(GUIFactory.getIcon("tigr_logo.gif")), BorderLayout.EAST);
+        panel3.add(new JLabel(GUIFactory.getIcon("dialog_button_bar.gif")), BorderLayout.EAST);
         
         JPanel panel1 = new JPanel(new BorderLayout());
         panel1.add(panel2, BorderLayout.SOUTH);

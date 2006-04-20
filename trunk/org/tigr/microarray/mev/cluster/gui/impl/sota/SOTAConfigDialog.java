@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: SOTAConfigDialog.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 20:22:06 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-04-20 18:55:04 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.sota;
@@ -91,7 +91,7 @@ public class SOTAConfigDialog extends AlgorithmDialog {
         panel3.setForeground(Color.white);
         panel3.setBorder(BorderFactory.createLineBorder(Color.gray));
         
-        JLabel imageControl2 = new JLabel(GUIFactory.getIcon("tigr_logo.gif"));
+        JLabel imageControl2 = new JLabel(GUIFactory.getIcon("dialog_button_bar.gif"));
         panel3.setBackground(Color.white);
         panel3.add(parameters1, BorderLayout.WEST);
         panel3.add(parameters2, BorderLayout.CENTER);
