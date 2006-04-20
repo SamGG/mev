@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: TMEV.java,v $
- * $Revision: 1.15 $
- * $Date: 2006-03-24 15:49:45 $
+ * $Revision: 1.16 $
+ * $Date: 2006-04-20 18:48:04 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -28,7 +28,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import javax.swing.UIManager;
 
@@ -49,6 +48,8 @@ public class TMEV {
     public final static int DATA_TYPE_AFFY = 2;
     
     public final static int ANALYSIS_LOADED = 101;
+    
+    //public final static String TMP_FOLDER_NAME = "mev_saved_state_tmp";
     
     private static Connection connection;
     private static Hashtable properties;
@@ -100,7 +101,7 @@ public class TMEV {
     
     public static void main(String[] args) {
         try {
-            System.out.println("TIGR MultiExperimentViewer (1109887083829) - version "+TMEV.VERSION+" - " + System.getProperty("os.name"));
+            System.out.println("MultiExperimentViewer - version "+TMEV.VERSION+" - " + System.getProperty("os.name"));
             String Java3DTitle, Java3DVendor, Java3DVersion;
             try {
                 InformationPanel info = new InformationPanel();
