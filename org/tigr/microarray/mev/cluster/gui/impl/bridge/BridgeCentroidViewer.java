@@ -12,6 +12,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
@@ -116,7 +117,7 @@ public class BridgeCentroidViewer extends JPanel implements IViewer, java.io.Ser
         this.yRangeOption = CentroidViewer.USE_EXPERIMENT_MAX;
         this.addMouseMotionListener(new GraphListener());        
     }
-    
+/*
     private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
         oos.writeObject(experiment);
         oos.writeObject(clusters);
@@ -162,7 +163,7 @@ public class BridgeCentroidViewer extends JPanel implements IViewer, java.io.Ser
         this.yRangeOption = CentroidViewer.USE_EXPERIMENT_MAX;
         this.addMouseMotionListener(new GraphListener());
     }
-    
+  */  
     /**
      * Sets means values.
      */
@@ -809,5 +810,30 @@ public class BridgeCentroidViewer extends JPanel implements IViewer, java.io.Ser
             yref = newY;
             repaint();        
         }
-    } 
+    }
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
+	 */
+	public void setExperiment(Experiment e) {
+	}
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentID()
+	 */
+	public int getExperimentID() {
+		return 0;
+	}
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
+	 */
+	public void setExperimentID(int id) {
+
+	}
+	/**
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExpression()
+	 */
+	public Expression getExpression() {
+		return new Expression(this, this.getClass(), "new", 
+			new Object[]{this.experiment, this.clusters, this.yAxisNumerator, this.yAxisDenominator});
+	} 
 }
