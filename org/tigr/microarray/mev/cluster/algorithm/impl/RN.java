@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: RN.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-02-23 20:59:45 $
- * $Author: caliente $
+ * $Revision: 1.5 $
+ * $Date: 2006-04-24 17:13:43 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.algorithm.impl;
@@ -84,7 +84,7 @@ public class RN extends AbstractAlgorithm {
             filteredSize = (int)((float)nGenes*fltTopNPercent/100f);
         }
 
-        AlgorithmEvent event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, 100, "Calculation Network");
+        AlgorithmEvent event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, 100, "Calculating Network");
         fireValueChanged(event);
 
         event.setId(AlgorithmEvent.PROGRESS_VALUE);
@@ -123,7 +123,7 @@ public class RN extends AbstractAlgorithm {
                 progress++;
                 if (progress%step == 0) {
                     event.setIntValue(progress/step);
-                    event.setDescription("Calculation Network ("+String.valueOf(links)+" links found)");
+                    event.setDescription("Calculating Network ("+String.valueOf(links)+" links found)");
                     fireValueChanged(event);
                 }
             }
