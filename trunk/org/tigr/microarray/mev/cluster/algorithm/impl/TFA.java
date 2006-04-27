@@ -174,6 +174,7 @@ public class TFA extends AbstractAlgorithm {
         }
         
         for (int i = 0; i < numGenes; i++) {
+            //System.out.println("i = " + i);
             boolean missing = false;
             for (int j = 0; j < numExps; j++) {
                 if ( (factorAAssignments[j] != 0) && (factorBAssignments[j] != 0) && (Float.isNaN(expMatrix.A[i][j])) ) {
@@ -200,7 +201,7 @@ public class TFA extends AbstractAlgorithm {
             //Vector[][] currentGeneAssignments = getCurrentGeneAssignments(i);
             Vector[][] currentGeneFactorValues = getCurrentGeneFactorValues(i);
             int currGeneFactorCondition = getCurrGeneFactorCondition(currentGeneFactorValues);
-            
+            //System.out.println("currGeneFactorCondition = " + currGeneFactorCondition);
             if (currGeneFactorCondition == HAS_EMPTY_CELL) {// not analyzed
                 origFactorAPValues[i] = Double.NaN;
                 origFactorBPValues[i] = Double.NaN;
@@ -245,6 +246,10 @@ public class TFA extends AbstractAlgorithm {
                 interactionDfValues[i] = fValuesAndDfs[5];
                 errorDfValues[i] = fValuesAndDfs[6];
                 if (!usePerms) {
+                    //System.out.println("i = " + i);
+                    //System.out.println("factorA: " + factorAFValues[i] +  ", " + (int)(factorADfValues[i]) + ", " + (int)(errorDfValues[i]));
+                    //System.out.println("factorB: " + factorBFValues[i] +  ", " + (int)(factorBDfValues[i]) + ", " + (int)(errorDfValues[i]));
+                    //System.out.println("interaction: " + interactionFValues[i] + ", " + (int)(interactionDfValues[i]) + ", " + (int)(errorDfValues[i]));
                     origFactorAPValues[i] = getPValueFromFDist(factorAFValues[i], (int)(factorADfValues[i]), (int)(errorDfValues[i]));
                     origFactorBPValues[i] = getPValueFromFDist(factorBFValues[i], (int)(factorBDfValues[i]), (int)(errorDfValues[i]));
                     origInteractionPValues[i] = getPValueFromFDist(interactionFValues[i], (int)(interactionDfValues[i]), (int)(errorDfValues[i]));
@@ -765,6 +770,17 @@ public class TFA extends AbstractAlgorithm {
         return pValue;
     }
     
+    private double convertNegFValues (double fValue) { //sometimes, if variance is very low, an F Value may be slightly negative due to 
+        // loss of precision in computation (effectively, F is zero). This makes such values slightly positive (Double.MIN_VALUE)
+        double convFValue;
+        if ((fValue > (-0.001)) && (fValue < 0)) {
+            convFValue = Double.MIN_VALUE;
+        }   else {
+            convFValue = fValue;
+        }
+        return convFValue;
+    }
+    
     private double[] getUnbalancedFValuesAndDfs(Vector[][] currGeneFactorValues) {
         double[][] unadjCellSums = getCellSums(currGeneFactorValues);
         double[][] cellMeans = new double[currGeneFactorValues.length][currGeneFactorValues[0].length];
@@ -824,9 +840,9 @@ public class TFA extends AbstractAlgorithm {
         double fInteraction = msInteraction/msError;        
         
         double[] fValuesAndDfs = new double[7];
-        fValuesAndDfs[0] = fA;
-        fValuesAndDfs[1] = fB;
-        fValuesAndDfs[2] = fInteraction;
+        fValuesAndDfs[0] = convertNegFValues(fA);
+        fValuesAndDfs[1] = convertNegFValues(fB);
+        fValuesAndDfs[2] = convertNegFValues(fInteraction);
         fValuesAndDfs[3] = (double)dfA;
         fValuesAndDfs[4] = (double)dfB;
         fValuesAndDfs[5] = (double)dfInteraction;
@@ -854,14 +870,16 @@ public class TFA extends AbstractAlgorithm {
         double msInteraction = (AB - A - B + T)/(double)dfInteraction;
         double msError = (Y - AB)/(double)dfError;
         
+        //System.out.println("A = " + A + ", T = " + T +  ", A - T = " + (A - T) + ", msA = " + msA + ", msB = " + msB + ", msInt = " + msInteraction + ", msErr = " + msError);
+        
         double fA = msA / msError;
         double fB = msB / msError;
         double fInteraction = msInteraction/msError;
         
         double[] fValuesAndDfs = new double[7];
-        fValuesAndDfs[0] = fA;
-        fValuesAndDfs[1] = fB;
-        fValuesAndDfs[2] = fInteraction;
+        fValuesAndDfs[0] = convertNegFValues(fA);
+        fValuesAndDfs[1] = convertNegFValues(fB);
+        fValuesAndDfs[2] = convertNegFValues(fInteraction);
         fValuesAndDfs[3] = (double)dfA;
         fValuesAndDfs[4] = (double)dfB;
         fValuesAndDfs[5] = (double)dfInteraction;
@@ -897,8 +915,8 @@ public class TFA extends AbstractAlgorithm {
         double fB = msB / msRemainder;  
         
         double[] fValuesAndDfs = new double[5]; 
-        fValuesAndDfs[0] = fA;
-        fValuesAndDfs[1] = fB;
+        fValuesAndDfs[0] = convertNegFValues(fA);
+        fValuesAndDfs[1] = convertNegFValues(fB);
         fValuesAndDfs[2] = (double)dfA;
         fValuesAndDfs[3] = (double)dfB;
         fValuesAndDfs[4] = (double)dfRemainder;
