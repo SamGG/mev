@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: NodeSupports.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:45:20 $
+ * $Revision: 1.4 $
+ * $Date: 2006-04-28 13:52:49 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -49,8 +49,8 @@ public class NodeSupports extends AbstractAlgorithm {
     
     public AlgorithmData execute(AlgorithmData data) throws AlgorithmException {
 	AlgorithmParameters map = data.getParams();
-	
-	int function = map.getInt("distance-function", EUCLIDEAN);
+	                         
+	int function = map.getInt("distance-function", EUCLIDEAN); 
 	float factor   = map.getFloat("distance-factor", 1.0f);
 	boolean absolute = map.getBoolean("distance-absolute", false);
 	boolean drawGeneTree = map.getBoolean("drawGeneTree", true);
@@ -95,18 +95,15 @@ public class NodeSupports extends AbstractAlgorithm {
 	
 	int number_of_genes   = expMatrix.getRowDimension();
 	int number_of_samples = expMatrix.getColumnDimension();
-	
-	//System.out.println("number-of-genes: " + number_of_genes);
-	//System.out.println("number-of-samples: " + number_of_samples);
-	
-	
+
 	Algorithm sub_algo = new HCL();
 	AlgorithmData sub_algo_data = new AlgorithmData();
 	
 	sub_algo_data.addMatrix("experiment", expMatrix);
 	sub_algo_data.addParam("distance-factor", String.valueOf(factor));
 	sub_algo_data.addParam("distance-absolute", String.valueOf(absolute));
-	sub_algo_data.addParam("distance-function", String.valueOf(function));
+	//HCL expects hcl-distance-function rather than distance-function tag
+	sub_algo_data.addParam("hcl-distance-function", String.valueOf(function));
 	
 	sub_algo_data.addParam("method-linkage", String.valueOf(method_linkage));
 	
@@ -228,7 +225,7 @@ public class NodeSupports extends AbstractAlgorithm {
 		resamp_algo_data.addMatrix("experiment", resampExpMatrix);
 		resamp_algo_data.addParam("distance-factor", String.valueOf(factor));
 		resamp_algo_data.addParam("distance-absolute", String.valueOf(absolute));
-		resamp_algo_data.addParam("distance-function", String.valueOf(function));
+		resamp_algo_data.addParam("hcl-distance-function", String.valueOf(function));
 		resamp_algo_data.addParam("method-linkage", String.valueOf(method_linkage));
 		resamp_algo_data.addParam("calculate-genes", "false");
 		
@@ -409,7 +406,7 @@ public class NodeSupports extends AbstractAlgorithm {
 		resamp_algo_data.addMatrix("experiment", resampExpMatrix);
 		resamp_algo_data.addParam("distance-factor", String.valueOf(factor));
 		resamp_algo_data.addParam("distance-absolute", String.valueOf(absolute));
-		resamp_algo_data.addParam("distance-function", String.valueOf(function));
+		resamp_algo_data.addParam("hcl-distance-function", String.valueOf(function));
 		resamp_algo_data.addParam("method-linkage", String.valueOf(method_linkage));
 		resamp_algo_data.addParam("calculate-genes", "true");
 		
