@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: MevFileFilter.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:39:39 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-05-02 20:52:48 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.file;
@@ -25,7 +25,7 @@ public class MevFileFilter extends ExpressionFileFilter {
     }
     
     public String getDescription() {
-	return "TIGR MeV Files (*.mev)";
+	return "MeV Files (*.mev)";
     }
     
     public Vector loadExpressionFile(File file) {

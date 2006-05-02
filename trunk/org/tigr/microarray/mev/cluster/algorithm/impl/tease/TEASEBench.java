@@ -709,7 +709,7 @@ public class TEASEBench {
     
     /**
      * (jcb)Modified Hit collection methods to accept a vector argument of annotation keys
-     * Modification of code to enable integration into TIGR MeV Ease module.
+     * Modification of code to enable integration into MeV Ease module.
      */
     
     /** 
