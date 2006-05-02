@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: MevFileParser.java,v $
- * $Revision: 1.4 $
- * $Date: 2005-03-10 15:38:44 $
- * $Author: braistedj $
+ * $Revision: 1.5 $
+ * $Date: 2006-05-02 20:52:47 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -100,7 +100,7 @@ public class MevFileParser {
 			}
 			
 			public String getDescription() {
-				return "TIGR MeV Files (*.mev)";
+				return "MeV Files (*.mev)";
 			}
 			
 		});

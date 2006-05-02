@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: AgilentAnnFileParser.java,v $
- * $Revision: 1.2 $
- * $Date: 2005-03-10 15:38:44 $
- * $Author: braistedj $
+ * $Revision: 1.3 $
+ * $Date: 2006-05-02 20:52:47 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -103,7 +103,7 @@ public class AgilentAnnFileParser {
 			}
 			
 			public String getDescription() {
-				return "TIGR MeV Annotation Files (*.txt)";
+				return "MeV Annotation Files (*.txt)";
 			}
 			
 		});

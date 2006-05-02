@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: Manager.java,v $
- * $Revision: 1.13 $
- * $Date: 2006-05-02 20:04:12 $
+ * $Revision: 1.14 $
+ * $Date: 2006-05-02 20:52:48 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -203,7 +203,7 @@ public class Manager {//A class to keep track of viewers
         papersMenuItem.addActionListener(eventListener);
         referencesMenu.add(papersMenuItem);
         
-        citationMenuItem = new JMenuItem("Referencing TMeV...");
+        citationMenuItem = new JMenuItem("Referencing MeV...");
         citationMenuItem.addActionListener(eventListener);
         referencesMenu.add(citationMenuItem);
         
@@ -654,12 +654,12 @@ public class Manager {//A class to keep track of viewers
 				}
             }else if( source == documentMenuItem ) {	//added wwang
             	try {
-					BrowserLauncher.openURL( "ftp://occams.dfci.harvard.edu/pub/bio/MeV/MeV_Manual_3_1.pdf" );
+					BrowserLauncher.openURL( "ftp://occams.dfci.harvard.edu/pub/bio/MeV/MeV_Manual_4_0b.pdf" );
 				} catch( IOException e ) {
 					e.printStackTrace();
 					//BrowserLauncher doesn't work on this system, display dialog
 					JOptionPane.showMessageDialog( frame, 
-							"Go to ftp://occams.dfci.harvard.edu/pub/bio/MeV/MeV_Manual_3_1.pdf",
+							"Go to ftp://occams.dfci.harvard.edu/pub/bio/MeV/MeV_Manual_4_0b.pdf",
 							"Input Error", JOptionPane.ERROR_MESSAGE );
 				}
             

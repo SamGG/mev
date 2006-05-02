@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: AnnFileParser.java,v $
- * $Revision: 1.2 $
- * $Date: 2004-07-27 19:46:11 $
- * $Author: braisted $
+ * $Revision: 1.3 $
+ * $Date: 2006-05-02 20:52:47 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -98,7 +98,7 @@ public class AnnFileParser {
 			}
 			
 			public String getDescription() {
-				return "TIGR MeV Annotation Files (*.ann, *.dat, *.txt)";
+				return "MeV Annotation Files (*.ann, *.dat, *.txt)";
 			}
 			
 		});

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MevFileLoader.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-03-24 15:52:17 $
+ * $Revision: 1.10 $
+ * $Date: 2006-05-02 20:52:48 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -379,7 +379,7 @@ public class MevFileLoader extends ExpressionFileLoader {
             }
             
             public String getDescription() {
-                return "TIGR MeV Expression Files (*.mev)";
+                return "MeV Expression Files (*.mev)";
             }
         };
         

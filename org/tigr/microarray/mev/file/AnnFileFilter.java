@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: AnnFileFilter.java,v $
- * $Revision: 1.2 $
- * $Date: 2005-03-10 15:39:38 $
- * $Author: braistedj $
+ * $Revision: 1.3 $
+ * $Date: 2006-05-02 20:52:48 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.file;
@@ -25,6 +25,6 @@ public class AnnFileFilter extends FileFilter {
     }
     
     public String getDescription() {
-        return "TIGR MeV Annotation Files (*.ann, *.dat)";
+        return "MeV Annotation Files (*.ann, *.dat)";
     }    
 }

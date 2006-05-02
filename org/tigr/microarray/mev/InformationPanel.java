@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: InformationPanel.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-02-23 20:59:41 $
- * $Author: caliente $
+ * $Revision: 1.5 $
+ * $Date: 2006-05-02 20:52:48 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -83,7 +83,7 @@ public class InformationPanel extends JPanel {
 	//g2.drawImage(DNA,this.getWidth()-200,100,this);
 	Font HeadlineFont = new Font("serif",Font.BOLD,54);
 	g2.setFont(HeadlineFont);
-	g2.drawString("TIGR MeV",40,70);
+	g2.drawString("MeV",40,70);
 	Font InfoFont = new Font("monospaced",Font.BOLD,14);
 	g2.setFont(InfoFont);
 	g2.drawString("Version "+TMEV.VERSION,40,90);

@@ -4,9 +4,9 @@
  */
 /*
  * $RCSfile: SuperExpressionFileLoader.java,v $
- * $Revision: 1.14 $
- * $Date: 2006-03-28 15:36:01 $
- * $Author: wwang67 $
+ * $Revision: 1.15 $
+ * $Date: 2006-05-02 20:52:48 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.file;
@@ -155,7 +155,8 @@ public class SuperExpressionFileLoader {
 		fileLoaders[7] = null;
 		fileLoaders[8] = null;
 		fileLoaders[9] = null;
-		fileLoaders[10] = null;		fileLoaders[11] = null; /* Raktim, CGH Loader */
+		fileLoaders[10] = null;
+		fileLoaders[11] = null; /* Raktim, CGH Loader */
 
 		selectedFileLoader = fileLoaders[defaultSelection];
 
@@ -192,20 +193,20 @@ public class SuperExpressionFileLoader {
 		
 		menuItem[1]= new JMenu("TIGR Files");
 		subMenuItem= new JMenuItem[2];
-		subMenuItem[0]=new JMenuItem("TIGR Mev Files");
+		subMenuItem[0]=new JMenuItem("MeV Files");
 		subMenuItem[0].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				if(st=="Hint to File Format"){
 				  HelpWindowDialog hwd= new HelpWindowDialog(mainFrame,HelpWindowDialog.createText("Mev"));
 				}else{
 				changeSelectedFileFilterAndLoader(0);
-				filetype.setText("TIGR Mev Files(*.mev)");
+				filetype.setText("MeV Files(*.mev)");
 				}
 			}
 		});
 		menuItem[1].add(subMenuItem[0]);
 		
-		subMenuItem[1]=new JMenuItem("TIGR ArrayViewer Files");
+		subMenuItem[1]=new JMenuItem("TIGR ArrayViewer (*.tav) Files");
 		subMenuItem[1].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				if(st=="Hint to File Format"){
@@ -375,7 +376,7 @@ public class SuperExpressionFileLoader {
 		
 		//HeaderImagePanel header = new HeaderImagePanel();
 		fileFilterLabel = new JLabel("Selected File Type:");
-		filetype=new JTextField("Default:TIGR MeV Files (*.mev)");
+		filetype=new JTextField("Default:MeV Files (*.mev)");
 		filetype.setEditable(false);
 		fileFilterPanel = new JPanel();
 		fileFilterPanel.setLayout(new GridBagLayout());
@@ -529,7 +530,10 @@ public class SuperExpressionFileLoader {
 			break;	
 		case 10:
 			loader = new DFCI_CoreFileLoader(this);
-			break;			case 11:            loader = new CGHStanfordFileLoader(this); /* Raktim, for CGH Loader */            break;
+			break;	
+		case 11:
+            loader = new CGHStanfordFileLoader(this); /* Raktim, for CGH Loader */
+            break;
 		default:
 			loader = new MevFileLoader(this);
 			break;
@@ -585,7 +589,7 @@ public class SuperExpressionFileLoader {
 		String desc;
 		switch (target) {
 		case 0:
-			desc = "TIGR MeV Files (*.mev)";
+			desc = "MeV Files (*.mev)";
 			break;
 		case 1:
 			desc = "Tab Delimited, Multiple Sample Files (TDMS) (*.*)";
@@ -618,9 +622,12 @@ public class SuperExpressionFileLoader {
 			break;		
 		case 10:
 			desc = "dChip/DFCI_Core Format Files (*.*)";
-			break;			        case 11:            desc = "CGH Tab Delimited, Multiple Sample Files (*.*)"; /* Raktim, CGH Files */            break;
+			break;			
+        case 11:
+            desc = "CGH Tab Delimited, Multiple Sample Files (*.*)"; /* Raktim, CGH Files */
+            break;
 		default:
-			desc = "TIGR MeV Files (*.mev)";
+			desc = "MeV Files (*.mev)";
 			break;
 		}
 		return desc;
