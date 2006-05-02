@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: AcknowlegementDialog.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-05-02 16:56:56 $
+ * $Revision: 1.10 $
+ * $Date: 2006-05-02 19:50:11 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -30,6 +30,9 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -98,78 +101,17 @@ public class AcknowlegementDialog extends JDialog implements java.awt.print.Prin
     }
     
     public static String createAcknowlegementText() {
-        String html = "";
-        
-        html += "<html><body><center>";
-        html += "<br><i><font size=5><b>The Institute for Genomic Research Microarray Software Team expresses sincere thanks for "+
-        "the contributions of those listed below.</font></b></i><br>";
-        html += "<table border=2 >";
-        html += "<font size=3><tr><th><b>Contributor</th><th><b>Affiliation</th><th><b>Contribution</th></tr></font>";        
-
-        html += "<tr valign=top><td>Alexander I. Saeed, Nirmal Bhagabati, John Braisted, Eleanor Howe, John Quackenbush</td>"+
-        "<td>The Institute for Genomic Research</td>"+
-        "<td>System design, core and module development and implementation, project coordination, documentation, optimization, and usability assurance</td></tr>";
-        
-        html += "<tr valign=top><td>Alexander Sturn, Zlatko Trajanoski</td>"+
-        "<td>Institute of Biomedical Engineering, Graz University of Technology</td>"+
-        "<td>Initial system architecture and viewer design, initial module development (HCL, KMC, SOM, PCA, SVM)</td></tr>";        
-        
-        html += "<tr valign=top><td>Mark Snuffin, Aleksey Rezantsev, Dennis Popov, Alex Ryltsov, Edward Kostukovich, Igor Borisovsky</td>"+
-        "<td>DataNaut, Inc.</td>"+
-        "<td>System architecture, module architecture, parallel processing system, primary module development (RN, TRN)</td></tr>"; 
-        
-        html += "<tr valign=top><td>Stu Golub, Zaigang Liu, Jane Ruan, Minhas Siddiqui</td>"+
-        "<td>Syntek Systems Corporation, Inc.</td>"+
-        "<td>Primary module development (CAST, FOM, GSH, GDM)</td></tr>"; 
-     
-        html += "<tr valign=top><td>Wei Liang</td>"+
-        "<td>The Institute for Genomic Research</td>"+
-        "<td>Normalization algorithm development, TM4 website maintenance</td></tr>"; 
-        
-        html += "<tr valign=top><td>Jerry Li, Vasily Sharov, Joe White, Mathangi Thiagarajan, Tracey Currier, Eleanor Howe</td>"+
-        "<td>The Institute for Genomic Research</td>"+
-        "<td>Additional development, software testing, documentation, support</td></tr>"; 
-        
-        html += "<tr valign=top><td>Patrick Cahan, Tim McCaffrey</td>"+
-        "<td>The George Washington University</td>"+
-        "<td>Affymetrix data loader and filters, Affymetrix loader rework, gene submission capability for "+
-        "the LOLA cluster repository</td></tr>"; 
-
-         html += "<tr valign=top><td>Todd Peterson</td>"+
-        "<td>National Center for Genome Resources</td>"+
-        "<td>GeneX-Lite to MeV connectivity</td></tr>";
- 
-        html += "<tr valign=top><td>Luke Somers</td>"+
-        "<td>Fox Chase Cancer Center</td>"+
-        "<td>QTC algorithm optimization and bug fix</td></tr>"; 
-
-        html += "<tr valign=top><td>Jim Johnson, Ernest Retzel</td>"+
-        "<td>Center for Computational Genomics and Bioinformatics, University of Minnesota</td>"+
-        "<td>Java WebStart configuration, scripts and consultation to support using ANT technologies for MeV development</td></tr>"; 
-        
-        html += "<tr valign=top><td>Glynn Dennis, Douglas Hosack, Richard Lempicki, Wei Gao</td>"+
-        "<td>National Institute of Allergy and Infectious Disease, NIH, Laboratory of Immunopathogenesis and Bioinformatics.</td>"+
-        "<td>EASEOpenSource Java package to support EASE development and helpful consultation during EASE integration and development.</td></tr>";
-     
-        html += "<tr valign=top><td>Eric Albert</td>"+
-        "<td>Independent Development</td>"+
-        "<td>Implementation of BrowserLauncher.java, utility to launch default web browser from within MeV</td></tr>";
-    
-        html += "<tr valign=top><td>Sally Gaddis</td>"+
-        "<td>University of Texas, MD Anderson Cancer Center</td>"+
-        "<td>Report and basic testing of Java3D support for mev 3D viewers on the Mac platform.</td></tr>";
-        
-        html += "<tr valign=top><td>Vu T. Chu</td>"+
-        "<td>University of Washington - Microbiology</td>"+
-        "<td>Design and implementation of Agilent File loading capabilities.</td></tr>";
-        
-        html += "<tr valign=top><td>Stephen C. Harris</td>"+
-        "<td>FDA, National Center for Toxicological Research</td>"+
-        "<td>T-test bug identification, and suggestion for improvement of adjusted Bonferroni correction.</td></tr>";
-        
-        html += "</table>";
-        html += "</center></body></html>";
-        
+        String thisLine, html;
+        html = "";
+        try {
+        	InputStream is = AcknowlegementDialog.class.getResourceAsStream("acknowledgements.html");
+        	BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        	while ((thisLine = br.readLine()) != null) {  
+        		html+=thisLine;
+            }
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
         return html;
     }
     

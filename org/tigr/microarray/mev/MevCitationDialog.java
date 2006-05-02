@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MevCitationDialog.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-02-23 20:59:41 $
- * $Author: caliente $
+ * $Revision: 1.5 $
+ * $Date: 2006-05-02 19:50:13 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -49,7 +49,7 @@ public class MevCitationDialog extends JDialog implements java.awt.print.Printab
     }
     
     public MevCitationDialog(Frame parent, String labelText) {
-        super(parent, "Contribution Acknowledgement :)", false);
+        super(parent, "Contribution Acknowledgements :)", false);
         EventListener listener = new EventListener();
         this.text = labelText;
         GBA gba = new GBA();
@@ -98,7 +98,7 @@ public class MevCitationDialog extends JDialog implements java.awt.print.Printab
         String html = "";
         
         html += "<html><body>";
-	html += "<h2>Referencing MeV</h2>";
+        html += "<h2>Referencing MeV</h2>";
         html += "<h3>Users of this program should cite:</h3>"; 
 
         html += "Saeed AI, Sharov V, White J, Li J, Liang W, Bhagabati N, Braisted J, Klapa M, Currier T, Thiagarajan M, Sturn A, Snuffin M, Rezantsev A, Popov D, Ryltsov A, Kostukovich E, Borisovsky I, Liu Z, Vinsavich A, Trush V, Quackenbush J. TM4: a free, open-source system for microarray data management and analysis. Biotechniques. 2003 Feb;34(2):374-8.";
