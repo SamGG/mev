@@ -49,16 +49,23 @@ public class TFAExperimentViewer extends ExperimentViewer {
     /**
      * @inheritDoc
      */ 
-    public TFAExperimentViewer(int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets, Integer exptID, String[] auxTitles, Object[][] auxData) {
-    	super(clusters, samplesOrder, drawAnnotations, header, insets, exptID);
+    public TFAExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets, String[] auxTitles, Object[][] auxData) {
+    	super(e, clusters, samplesOrder, drawAnnotations, header, insets);
     	initialize(auxTitles, auxData);
     } 
+    
 	public Expression getExpression(){
 		Object[] parentConstructorArgs = super.getExpression().getArguments();
-		return new Expression(this, this.getClass(), "new", 
-				new Object[]{parentConstructorArgs[0], parentConstructorArgs[1], parentConstructorArgs[2], parentConstructorArgs[3], parentConstructorArgs[4], parentConstructorArgs[5], 
-				auxTitles, auxData});
+		Object[] temp = new Object[parentConstructorArgs.length + 2];
+		int i=0;
+		for(i=0; i<parentConstructorArgs.length; i++){
+			temp[i] = parentConstructorArgs[i];
+		}
+		temp[i] = auxTitles;
+		temp[i+1] = auxData;
+		return new Expression(this, this.getClass(), "new", temp);
 	}
+	
     private void initialize(String[] auxTitles, Object[][] auxData){
         this.auxTitles = auxTitles;
         this.auxData = auxData;

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: KNNCExperimentClusterViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-03-24 15:50:57 $
+ * $Revision: 1.6 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -46,10 +46,9 @@ public class KNNCExperimentClusterViewer extends ExperimentClusterViewer {
     /**
      * @inheritDoc
      */
-    public KNNCExperimentClusterViewer(int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
-    		Integer offset, ExperimentClusterHeader header, Boolean hasCentroid, float[][] centroids, 
-			Dimension elementSize, Integer labelIndex, Integer exptID) {
-    		super(clusters, genesOrder, drawAnnotations, offset, header, hasCentroid, centroids, elementSize, labelIndex, exptID);
+    public KNNCExperimentClusterViewer(Experiment e, int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
+    		Integer offset){
+    		super(e, clusters, genesOrder, drawAnnotations, offset);
     }
     
     /**

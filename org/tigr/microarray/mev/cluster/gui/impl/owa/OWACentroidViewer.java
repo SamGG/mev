@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: OWACentroidViewer.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-03-24 15:51:02 $
+ * $Revision: 1.10 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -56,8 +56,8 @@ public class OWACentroidViewer extends CentroidViewer {
     /**
      * @inheritDoc
      */
-    public OWACentroidViewer(int[][] clusters, float[][] variances, float[][] means, float[][] codes, Integer id, float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
-    	super(clusters, variances, means, codes, id);
+    public OWACentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes, float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
+    	super(e, clusters, variances, means, codes);
     	initialize(geneGroupMeans, geneGroupSDs, rawPValues, adjPValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues);
     }
 	/**

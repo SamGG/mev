@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: RNCentroidsViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-03-24 15:51:24 $
+ * $Revision: 1.7 $
+ * $Date: 2006-05-02 16:57:04 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -27,8 +27,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.CentroidsViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
-public class RNCentroidsViewer extends CentroidsViewer implements java.io.Serializable {
-//    public static final long serialVersionUID = 202014010001L;
+public class RNCentroidsViewer extends CentroidsViewer {
        
     private static final String SAVE_ALL_CLUSTERS_CMD = "save-all-clusters-cmd";
     private static final String SET_Y_TO_EXPERIMENT_MAX_CMD = "set-y-to-exp-max-cmd";

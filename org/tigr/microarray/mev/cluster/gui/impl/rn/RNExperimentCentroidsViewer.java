@@ -4,15 +4,13 @@ All rights reserved.
 */
 /*
  * $RCSfile: RNExperimentCentroidsViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-03-24 15:51:24 $
+ * $Revision: 1.7 $
+ * $Date: 2006-05-02 16:57:04 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.rn;
 
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,8 +28,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidsVie
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
-public class RNExperimentCentroidsViewer extends ExperimentClusterCentroidsViewer implements java.io.Serializable {
-//    public static final long serialVersionUID = 202014050001L;
+public class RNExperimentCentroidsViewer extends ExperimentClusterCentroidsViewer {
     
     private static final String SAVE_ALL_CLUSTERS_CMD = "save-all-clusters-cmd";
     private static final String SET_Y_TO_EXPERIMENT_MAX_CMD = "set-y-to-exp-max-cmd";
@@ -56,8 +53,8 @@ public class RNExperimentCentroidsViewer extends ExperimentClusterCentroidsViewe
      * and clusters.
      */
     
-    public RNExperimentCentroidsViewer(ExperimentClusterCentroidViewer cv, Integer exptID) {
-    	super(cv, exptID);
+    public RNExperimentCentroidsViewer(ExperimentClusterCentroidViewer cv) {
+    	super(cv);
     }
     
     /**

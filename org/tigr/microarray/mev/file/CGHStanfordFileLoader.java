@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: CGHStanfordFileLoader.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-03-28 22:19:20 $
+ * $Revision: 1.5 $
+ * $Date: 2006-05-02 16:57:56 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -300,7 +300,7 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
      * @param clones
      * @return
      */
-    private int[][] calculateChromosomeIndices(List sortedList){
+    public static int[][] calculateChromosomeIndices(List sortedList){
     	int numClones  = sortedList.size();
         int numChromosomes = ((CGHClone)sortedList.get(sortedList.size()-1)).getChromosomeIndex() + 1;
         int[][] chromosomeIndices = new int[numChromosomes][2];

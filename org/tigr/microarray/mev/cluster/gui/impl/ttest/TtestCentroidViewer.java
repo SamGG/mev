@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: TtestCentroidViewer.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-03-24 15:52:09 $
+ * $Revision: 1.9 $
+ * $Date: 2006-05-02 16:57:56 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -67,9 +67,9 @@ public class TtestCentroidViewer extends CentroidViewer {
     /**
      * @inheritDoc
      */
-    public TtestCentroidViewer(int[][] clusters, float[][] variances, float[][] means, float[][] codes, Integer id,
+    public TtestCentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes,
     		 Integer tTestDesign, Vector oneClassMeans, Vector oneClassSDs, Vector meansA, Vector meansB, Vector sdA, Vector sdB, Vector rawPValues, Vector adjPValues, Vector tValues, Vector dfValues) {
-    	super(clusters, variances, means, codes, id);
+    	super(e, clusters, variances, means, codes);
         Listener listener = new Listener();
         this.popup = createJPopupMenu(listener);
         this.rawPValues = rawPValues;
@@ -88,7 +88,7 @@ public class TtestCentroidViewer extends CentroidViewer {
  
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{this.clusters, this.variances, this.means, this.codes, new Integer(this.getExperimentID()), 
+    			new Object[]{this.experiment, this.clusters, this.variances, this.means, this.codes,  
     			new Integer(this.tTestDesign), this.oneClassMeans, this.oneClassSDs, this.meansA, this.meansB, this.sdA, this.sdB, this.rawPValues, this.adjPValues, this.tValues, this.dfValues});
     }
     

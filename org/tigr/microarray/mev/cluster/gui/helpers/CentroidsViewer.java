@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: CentroidsViewer.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-03-24 15:49:54 $
+ * $Revision: 1.10 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -59,18 +59,8 @@ public class CentroidsViewer extends JPanel implements IViewer, java.io.Serializ
 		setFont(new Font("monospaced", Font.BOLD, 10));
 	}
 	
-	//EH begin additions for state-saving
 	/**
-	 * @inheritDoc
-	 * copy-paste this constructor into descendent classes
-	 *
-	public CentroidsViewer(CentroidViewer cv) {
-		super(cv);
-	}
-	*/
-	//TODO
-	/**
-	 * EH testing
+	 * 
 	 */
 	public Expression getExpression(){
 		return new Expression(this, this.getClass(), "new",

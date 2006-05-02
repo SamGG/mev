@@ -72,8 +72,6 @@ import org.tigr.util.FloatMatrix;
  */
 public class TEASEViewer extends JPanel implements IViewer{
 
-	  //public static final long serialVersionUID = 202006080002L;
-
 	    protected static final String STORE_CLUSTER_CMD = "store-cluster-cmd";
 	    protected static final String LAUNCH_NEW_SESSION_CMD = "launch-new-session-cmd";
 	    protected static final String SAVE_CLUSTER_CMD = "save-cluster-cmd";
@@ -125,10 +123,11 @@ public class TEASEViewer extends JPanel implements IViewer{
 	    protected DefaultMutableTreeNode node;
 	    protected IFramework framework;
 	    
-	    //EH
-	    private int exptID = 0;
+	    //EH added to store items necessary for restoring state
 	    private int[] features;
-
+	    HCLTreeData genes_result, samples_result;
+	    boolean hclOnly;
+	    AlgorithmData algdata;
 
 
 	    /**
@@ -139,9 +138,15 @@ public class TEASEViewer extends JPanel implements IViewer{
 	    		DefaultMutableTreeNode node, boolean hclOnly, AlgorithmData data) {
 	        setLayout(new GridBagLayout());
 	        this.setBackground(Color.white);
+	        
+	        this.genes_result = genes_result;
+	        this.samples_result = samples_result;
+	        this.hclOnly = hclOnly;
+	        this.features = features;
+	        this.algdata = data;
+	        
 	        this.dots = new ArrayList();
 	        this.experiment = experiment;
-	        this.exptID = experiment.getId();
 	        this.listener = new Listener();
 	        this.addMouseListener(this.listener);
 	        this.node = node;
@@ -195,34 +200,17 @@ public class TEASEViewer extends JPanel implements IViewer{
 	        }
 	        this.popup = createJPopupMenu(listener);
 	    }
-//TEASEViewer.new(Integer0, HCLExperimentHeader1, 
-	    //ArrayList0, intArray0, null, 
-	    //Boolean0, HCLTree0, null, 
-	    //Integer1, ExperimentViewer0);
+	    
 	    /**
-	     * Constructs a <code>HCLViewer</code> for specified results
-	     * This is the XMLEncoder/Decoder constructor
-	     */
-	    public TEASEViewer(Integer exptID, HCLExperimentHeader header, 
-	    		ArrayList dots, int[] features, int [][] sampleClusters, 
-				Boolean isExperimentCluster, HCLTree genesTree, HCLTree sampleTree, 
-				Integer offset, ExperimentViewer expViewer, Boolean isHCLOnly) {
-	        setLayout(new GridBagLayout());
-	        setBackground(Color.white);
-	        this.exptID = exptID.intValue();
-	        this.offset = offset.intValue();
-	        this.dots = dots;
-	        this.expViewer = expViewer;
-	        this.header = header;
-	        this.isHCLOnly = isHCLOnly.booleanValue();
-	        listener = new Listener();
-	        this.addMouseListener(listener);
-	        this.features = features;
-	        this.isExperimentCluster = isExperimentCluster.booleanValue();
-	        this.sampleClusters = sampleClusters;
-	        this.genesTree = genesTree;
-	        this.sampleTree = sampleTree;
-	    }	    
+		 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExpression()
+		 */
+	    public Expression getExpression(){
+	    	return new Expression(this, this.getClass(), "new",
+		   new Object[]{null, this.experiment, this.features, 
+		    		this.genes_result, this.samples_result, 
+		    		this.node, new Boolean(this.hclOnly), this.algdata}); 
+	    }
+    
 	    /**
 	     * set tooltip text for the gene tree panel, depends on where the cursor is
 	     * @param x cursor x location	
@@ -241,66 +229,6 @@ public class TEASEViewer extends JPanel implements IViewer{
 	    	return false;
 	    }
 	    
-	    
-	    private void writeObject(ObjectOutputStream oos) throws IOException {
-	        
-	        oos.writeObject(expViewer);
-	        oos.writeObject(header);
-	        oos.writeBoolean(genesTree != null);
-	        if(genesTree != null){
-	            oos.writeObject(genesTree);
-	            oos.writeObject(this.genesOrder);
-	        }
-	        oos.writeBoolean(sampleTree != null);
-	        if(sampleTree != null){
-	            oos.writeObject(sampleTree);
-	            oos.writeObject(this.samplesOrder);
-	        }
-	        oos.writeObject(colorBar);
-	        oos.writeObject(annotationBar);
-	        
-	        
-	        oos.writeObject(experiment);
-	        
-	        oos.writeObject(clusters);
-	        oos.writeObject(experimentClusters);
-	        oos.writeObject(sampleClusters);
-	        oos.writeBoolean(this.isExperimentCluster);
-	    }
-	    
-	    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-	        
-	        this.expViewer = (IViewer)ois.readObject();        
-	        this.header = (HCLExperimentHeader)ois.readObject();        
-	        this.listener = new Listener();        
-	        this.addMouseListener(listener);
-	        this.header.addMouseListener(listener);
-	        
-	        if(ois.readBoolean()){
-	            genesTree = (HCLTree)  ois.readObject();            
-	            this.genesOrder = (int [])ois.readObject();            
-	            genesTree.addMouseListener(listener);
-	            genesTree.setListener(listener);
-	            this.genesTree.deselectAllNodes();
-	        }
-	        
-	        if(ois.readBoolean()){
-	            sampleTree= (HCLTree) ois.readObject();            
-	            this.samplesOrder = (int [])ois.readObject();            
-	            sampleTree.addMouseListener(listener);
-	            sampleTree.setListener(listener);
-	            this.sampleTree.deselectAllNodes();
-	        }
-	        
-	        colorBar = (HCLColorBar)ois.readObject();
-	        this.annotationBar = (HCLAnnotationBar)ois.readObject();        
-	        experiment = (Experiment)ois.readObject();        
-	        this.clusters = (ArrayList)ois.readObject();
-	        this.experimentClusters = (ArrayList)ois.readObject();        
-	        this.sampleClusters = (int[][])ois.readObject();    
-	        this.isExperimentCluster = ois.readBoolean();
-	        this.popup = this.createJPopupMenu(listener);        
-	    }
 	    
 	    
 	    /**
@@ -1610,62 +1538,25 @@ public class TEASEViewer extends JPanel implements IViewer{
 		 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentID()
 		 */
 		public int getExperimentID() {
-			return this.exptID;
+			return 0;//this.exptID;
 		}
 
 		/* (non-Javadoc)
 		 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
 		 */
 		public void setExperimentID(int id) {
-			this.exptID = id;
+			//this.exptID = id;
 			
 		}
-	    /**
-		 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExpression()
-		 */
-	    public Expression getExpression(){
-	    	return new Expression(this, this.getClass(), "new",
-					new Object[]{new Integer(this.exptID), this.header, this.dots, this.createDefaultFeatures(this.experiment), this.sampleClusters, new Boolean(this.isExperimentCluster), this.genesTree, this.sampleTree, new Integer(this.offset), (ExperimentViewer)this.expViewer, new Boolean(this.isHCLOnly)});
-	    
-	    }
+
 	    
 		/**
 		 * 
 		 */
 	    public void setExperiment(Experiment e) {
 	    	this.experiment = e;
-	    	this.exptID = e.getId();
-	    	setLayout(new GridBagLayout());
-	        setBackground(Color.white);
-	        listener = new Listener();
-	        this.addMouseListener(listener);
-	        features = features == null ? createDefaultFeatures(experiment) : features;
-	        this.expViewer.getContentComponent().addMouseListener(listener);
-	        this.expViewer.setExperiment(this.experiment);
-	        this.header.addMouseListener(listener);
-	        this.colorBar = new HCLColorBar(this.clusters, features.length);
-	        this.colorBar.addMouseListener(listener);
-	        this.genesOrder = createGenesOrder(experiment, features, genesTree.getTreeData());
-	        this.annotationBar = new HCLAnnotationBar(this.genesOrder);
-	        this.annotationBar.addMouseListener(listener);
-	        if (this.genesTree != null) {
-	            this.genesTree.addMouseListener(listener);
-	            this.genesTree.setListener(listener);
-	            this.genesTree.deselectAllNodes();
-	        }
-	        if (sampleTree != null) {
-	            this.samplesOrder = createSamplesOrder(sampleTree.getTreeData());
-	            if(genesTree.getTreeData() == null)
-	                this.sampleTree.setHorizontalOffset(10);
-	            this.sampleTree.addMouseListener(listener);
-	            this.sampleTree.setListener(listener);  //added for selection of experiment hcl nodes
-	            this.sampleTree.deselectAllNodes();
-	        }
-	        this.isExperimentCluster = false;
-	        this.numberOfSamples = experiment.getNumberOfSamples(); //know this is correct for gene clustering constructor
-	        addComponents(this.sampleTree, this.genesTree, this.expViewer.getContentComponent(), this.colorBar, this.annotationBar);
-	        this.popup = createJPopupMenu(listener);
-	        
+	    	//this.exptID = e.getId();
+	    	
 	    }
 
 

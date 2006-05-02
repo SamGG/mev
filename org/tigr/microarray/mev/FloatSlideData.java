@@ -4,17 +4,17 @@ All rights reserved.
  */
 /*
  * $RCSfile: FloatSlideData.java,v $
- * $Revision: 1.12 $
- * $Date: 2006-03-24 15:49:44 $
+ * $Revision: 1.13 $
+ * $Date: 2006-05-02 16:56:56 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
-import java.beans.PersistenceDelegate;
-import java.beans.XMLEncoder;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Properties;
@@ -35,7 +35,7 @@ import org.tigr.util.math.LinearEquation;
  *  It is possible to get ArrayIndexOutOfBoundsException if an index
  *  was invalid.
  */
-public class FloatSlideData implements ISlideData, java.io.Serializable {
+public class FloatSlideData implements ISlideData {
     
     private String name; // slide name
     private String filename; // slide file name
@@ -97,7 +97,8 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
      */
     public FloatSlideData(Vector sampleLabelKeys, Hashtable sampleLabels, 
     		String filename, String name, boolean isNonZero,
-			int normalizedState, int sortState, SpotInformationData spotInfoData, Integer dataType){
+			int normalizedState, int sortState, SpotInformationData spotInfoData, 
+			Integer dataType, ISlideMetaData ismd) throws IOException {
     	this.sampleLabelKeys = sampleLabelKeys;
     	this.sampleLabels = sampleLabels;
     	this.filename = filename;
@@ -107,6 +108,7 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
     	this.sortState = sortState;
     	this.spotInfoData = spotInfoData;
     	this.dataType = dataType.intValue();
+    	this.slideMetaData = ismd;
     }    
     /**
      * Creates a <code>FloatSlideData</code> with specified reference
@@ -142,61 +144,11 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
     public void setTrueCY3(float[] f){this.trueCY3=f;}
     public void setTrueCY5(float[] f){this.trueCY5=f;}
     public char[] getDetection() {return detection;}
-    
-    public void loadIntensities(DataInputStream dis) throws IOException {
-    	currentCY3 = new float[dis.readInt()];
-    	for(int i=0; i<currentCY3.length; i++){
-    		currentCY3[i] = dis.readFloat();
-    	}
-    	currentCY5 = new float[dis.readInt()];
-    	for(int i=0; i<currentCY5.length; i++){
-    		currentCY5[i] = dis.readFloat();
-    	}
-    	trueCY3 = new float[dis.readInt()];
-    	for(int i=0; i<trueCY3.length; i++){
-    		trueCY3[i] = dis.readFloat();
-    	}
-    	trueCY5 = new float[dis.readInt()];
-    	for(int i=0; i<trueCY5.length; i++){
-    		trueCY5[i] = dis.readFloat();
-    	}
-    	detection = new char[dis.readInt()];
-    	for(int i=0; i<detection.length; i++){
-    		detection[i] = dis.readChar();
-    	}
-    }
-    public void writeIntensities(DataOutputStream dos) throws IOException {
-    	if(currentCY3 != null){
-    		dos.writeInt(currentCY3.length);
-    		for(int i=0; i<currentCY3.length; i++){
-    			dos.writeFloat(currentCY3[i]);
-    		}
-    	} else 
-    		dos.writeInt(0);
-
-    	if(currentCY5 != null){
-	    	dos.writeInt(currentCY5.length);
-	    	for(int i=0; i<currentCY5.length; i++){
-	    		dos.writeFloat(currentCY5[i]);
-	    	}
-    	} else
-    		dos.writeInt(0);
-
-    	dos.writeInt(trueCY3.length);
-    	for(int i=0; i<trueCY3.length; i++){
-    		dos.writeFloat(trueCY3[i]);
-    	}
-    	
-    	dos.writeInt(trueCY5.length);
-    	for(int i=0; i<trueCY5.length; i++){
-    		dos.writeFloat(trueCY5[i]);
-    	}
-    	
-    	dos.writeInt(detection.length);
-    	for(int i=0; i<detection.length; i++){
-    		dos.writeChar(detection[i]);
-    	}
-    }
+    public float[] getCurrentCY3(){return currentCY3;}
+    public float[] getCurrentCY5(){return currentCY5;}
+    public float[] getTrueCY3(){return trueCY3;}
+    public float[] getTrueCY5(){return trueCY5;}
+ 
 
     /**
      * Returns a reference to a microarray meta data.
@@ -613,7 +565,9 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
     public void setDetection(int index, String value){
 		detection[index] = value.charAt(0);
     }
-    
+    public void setDetection(char[] d){
+    	this.detection = d;
+    }
     // pcahan
     public String getDetection(int index){
         return String.valueOf(detection[index]);
@@ -1234,5 +1188,68 @@ public class FloatSlideData implements ISlideData, java.io.Serializable {
         }
         */
     }
+    
+    
+ /**
+  *  (non-Javadoc)
+  * @see org.tigr.microarray.mev.ISlideData#loadIntensities(java.io.DataInputStream)
+  * @deprecated 
+  */
+    public void loadIntensities(DataInputStream dis) throws IOException {
+    	currentCY3 = new float[dis.readInt()];
+    	for(int i=0; i<currentCY3.length; i++){
+    		currentCY3[i] = dis.readFloat();
+    	}
+    	currentCY5 = new float[dis.readInt()];
+    	for(int i=0; i<currentCY5.length; i++){
+    		currentCY5[i] = dis.readFloat();
+    	}
+    	trueCY3 = new float[dis.readInt()];
+    	for(int i=0; i<trueCY3.length; i++){
+    		trueCY3[i] = dis.readFloat();
+    	}
+    	trueCY5 = new float[dis.readInt()];
+    	for(int i=0; i<trueCY5.length; i++){
+    		trueCY5[i] = dis.readFloat();
+    	}
+    	detection = new char[dis.readInt()];
+    	for(int i=0; i<detection.length; i++){
+    		detection[i] = dis.readChar();
+    	}
+    }
+    /**
+     * @deprecated
+     */
+    public void writeIntensities(DataOutputStream dos) throws IOException {
+    	if(currentCY3 != null){
+    		dos.writeInt(currentCY3.length);
+    		for(int i=0; i<currentCY3.length; i++){
+    			dos.writeFloat(currentCY3[i]);
+    		}
+    	} else 
+    		dos.writeInt(0);
 
+    	if(currentCY5 != null){
+	    	dos.writeInt(currentCY5.length);
+	    	for(int i=0; i<currentCY5.length; i++){
+	    		dos.writeFloat(currentCY5[i]);
+	    	}
+    	} else
+    		dos.writeInt(0);
+
+    	dos.writeInt(trueCY3.length);
+    	for(int i=0; i<trueCY3.length; i++){
+    		dos.writeFloat(trueCY3[i]);
+    	}
+    	
+    	dos.writeInt(trueCY5.length);
+    	for(int i=0; i<trueCY5.length; i++){
+    		dos.writeFloat(trueCY5[i]);
+    	}
+    	
+    	dos.writeInt(detection.length);
+    	for(int i=0; i<detection.length; i++){
+    		dos.writeChar(detection[i]);
+    	}
+    }
 }

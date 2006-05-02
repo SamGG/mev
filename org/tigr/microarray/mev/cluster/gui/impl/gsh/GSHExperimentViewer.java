@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: GSHExperimentViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-03-24 15:50:35 $
+ * $Revision: 1.7 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -54,8 +54,8 @@ public class GSHExperimentViewer extends ExperimentViewer {
      * @param header
      * @param insets
      */
-    public GSHExperimentViewer(int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets, Integer exptID) {
-    	super(clusters, samplesOrder, drawAnnotations, header, insets, exptID);
+    public GSHExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets) {
+    	super(e, clusters, samplesOrder, drawAnnotations, header, insets);
     }
     
     /**

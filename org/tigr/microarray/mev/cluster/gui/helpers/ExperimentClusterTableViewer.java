@@ -39,8 +39,7 @@ import org.tigr.util.QSort;
  *
  * @author  nbhagaba
  */
-public class ExperimentClusterTableViewer implements IViewer, java.io.Serializable {
-    public static final long serialVersionUID = 201080001L;
+public class ExperimentClusterTableViewer implements IViewer {
     
     private static final String NO_GENES_STR = "No Genes in Cluster!";
     private static final Font ERROR_FONT = new Font("monospaced", Font.BOLD, 20);
@@ -93,7 +92,7 @@ public class ExperimentClusterTableViewer implements IViewer, java.io.Serializab
      * @param auxData
      * @param sortedClusters
      * @param exptID
-     */
+     
     public ExperimentClusterTableViewer(int[][] clusters, String[] auxTitles, 
     		Object[][] auxData, int[][] sortedClusters, Integer exptID) {
     	this.clusters = clusters;
@@ -128,14 +127,15 @@ public class ExperimentClusterTableViewer implements IViewer, java.io.Serializab
 		//getContentComponent().addMouseListener(listener);  
         clusterTable.addMouseListener(listener);   
         
-    }
+    }*/
     //EH testing
     /**
      * @inheritdoc 
      */
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new",
-			new Object[]{clusters, auxTitles, auxData, this.sortedClusters, new Integer(this.exptID)});  
+//			new Object[]{clusters, auxTitles, auxData, this.sortedClusters, new Integer(this.exptID)});  
+    		new Object[]{experiment, clusters, data, auxTitles, auxData});
     }
     
     /** Creates a new instance of ExperimentClusterTableViewer */

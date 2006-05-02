@@ -137,7 +137,15 @@ public class GOTreeViewer extends JPanel implements IViewer {
         createPopupMenu(listener);
         setVerboseNodeStyle(false);
     }
-    
+    /**
+     * @inheritDoc
+     */
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{storedNodes, baseFileSystem,
+    			category, headerFields, new Integer(selectionPolarity), 
+				new Boolean(verbose), new Double(upper), new Double(lower)});
+    }
     /**
      * Re-creates a GOTreeViewer from stored data in an XMLEncoded file.  
      * 
@@ -151,10 +159,9 @@ public class GOTreeViewer extends JPanel implements IViewer {
      * @param upper
      * @param lower
      */
-    public GOTreeViewer(Integer exptID, GONode[][] storedNodes, String baseFileSystem, 
+    public GOTreeViewer(GONode[][] storedNodes, String baseFileSystem, 
     		String category, String [] headerFields, Integer selectionPolarity, 
 			Boolean verbose, Double upper, Double lower){
-    	this.exptID = exptID.intValue();
     	this.storedNodes = storedNodes;
     	this.headerFields = headerFields;
     	this.baseFileSystem = baseFileSystem;
@@ -180,15 +187,7 @@ public class GOTreeViewer extends JPanel implements IViewer {
     	this.addMouseListener(listener);
     	createPopupMenu(listener);
     }
-    /**
-     * @inheritDoc
-     */
-    public Expression getExpression(){
-    	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{new Integer(exptID), storedNodes, baseFileSystem,
-    			category, headerFields, new Integer(selectionPolarity), 
-				new Boolean(verbose), new Double(upper), new Double(lower)});
-    }
+
     
     private GONode [][] constructTree(String goCategory, String [] header, String [][] data) {
         Hashtable termHash = new Hashtable(data.length);

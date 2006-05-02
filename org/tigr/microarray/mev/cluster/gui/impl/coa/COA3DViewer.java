@@ -151,12 +151,11 @@ public class COA3DViewer  extends ViewerAdapter {
         
         Listener listener2 = new Listener(); // this was an attempt to get the pop up menu to show up over the 3D viewer
         popup2 = createJPopupMenu(listener2); //didn't work because of the native mouse response behavior of the 3D API, but left it in for possible future use  
-	getContentComponent().addMouseListener(listener2);        
+        getContentComponent().addMouseListener(listener2);        
     }    
     
     
-    public COA3DViewer(Integer exptID, FloatMatrix geneUMatrix, FloatMatrix exptUMatrix, Integer geneOrExpt, FloatMatrix U, Integer xAxis, Integer yAxis, Integer zAxis) {
-	    this.exptID = exptID.intValue();
+    public COA3DViewer(Experiment e, FloatMatrix geneUMatrix, FloatMatrix exptUMatrix, Integer geneOrExpt, FloatMatrix U, Integer xAxis, Integer yAxis, Integer zAxis) {
 	    this.geneOrExpt = geneOrExpt.intValue();
         this.geneUMatrix = geneUMatrix;
         this.exptUMatrix = exptUMatrix;
@@ -164,13 +163,14 @@ public class COA3DViewer  extends ViewerAdapter {
         this.xAxis = xAxis.intValue();
         this.yAxis = yAxis.intValue();
         this.zAxis = zAxis.intValue();   
+        setExperiment(e);
 	}
     /**
      * @inheritDoc
      */
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{new Integer(exptID), geneUMatrix, exptUMatrix, new Integer(geneOrExpt), U, new Integer(xAxis), new Integer(yAxis), new Integer(zAxis)});
+    			new Object[]{this.experiment, geneUMatrix, exptUMatrix, new Integer(geneOrExpt), U, new Integer(xAxis), new Integer(yAxis), new Integer(zAxis)});
     }
     /**
      * @inheritDoc

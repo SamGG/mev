@@ -165,14 +165,13 @@ public class LEMGraphViewer extends JPanel implements IViewer {
 		this.addMouseMotionListener(listener);                  
 		this.addMouseListener(listener);		
 	}
-		
-//	public LEMGraphViewer(float[][] means, String title, String[] locusNames, int[] start, int[] end){
-//		this.means = means;
-//		this.title = title;
-//		this.locusNames = locusNames;
-//		this.start = start;
-//		this.end = end;
-//	}
+	
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExpression()
+	 */
+	public Expression getExpression() {
+		return null;
+	} 
 
 	/* (non-Javadoc)
 	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
@@ -196,10 +195,6 @@ public class LEMGraphViewer extends JPanel implements IViewer {
 	public void setMeans(float[][] means) {
 		this.means = means;
 	}
-	
-	//public void toggleGradient() {
-//		this.gradientToggle = !this.gradientToggle;
-	//}
 	
 	
 	/**
@@ -1106,11 +1101,5 @@ public class LEMGraphViewer extends JPanel implements IViewer {
 		this.exptID = id;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExpression()
-	 */
-	public Expression getExpression() {
-		// TODO Auto-generated method stub
-		return null;
-	} 
+
 }

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOMExperimentClusterViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-03-24 15:51:36 $
+ * $Revision: 1.7 $
+ * $Date: 2006-05-02 16:57:04 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -48,11 +48,9 @@ public class SOMExperimentClusterViewer extends ExperimentClusterViewer {
     /**
      * @inheritDoc
      */
-    public SOMExperimentClusterViewer(int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
-    		Integer offset, ExperimentClusterHeader header, Boolean hasCentroid, float[][] centroids, 
-			Dimension elementSize, Integer labelIndex, Integer exptID) {
-    	super(clusters, genesOrder, drawAnnotations, offset, header, hasCentroid, centroids, elementSize, 
-    			labelIndex, exptID);
+    public SOMExperimentClusterViewer(Experiment e, int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
+    		Integer offset){
+    	super(e, clusters, genesOrder, drawAnnotations, offset);
     }
     
     /**

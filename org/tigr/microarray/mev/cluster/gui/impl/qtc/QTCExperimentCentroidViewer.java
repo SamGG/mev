@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: QTCExperimentCentroidViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-03-24 15:51:22 $
+ * $Revision: 1.6 $
+ * $Date: 2006-05-02 16:57:04 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -44,8 +44,8 @@ public class QTCExperimentCentroidViewer extends ExperimentClusterCentroidViewer
      * This constructor is used by XMLEncoder/Decoder and IViewerPersistenceDelegate
      * to re-create an ExperimentClusterCentroidViewer from a saved xml file
      */
-    public QTCExperimentCentroidViewer(int[][] clusters, Integer exptID, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes){
-    	super(clusters, exptID, clusterIndex, means, variances, codes);
+    public QTCExperimentCentroidViewer(Experiment experiment, int[][] clusters, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes){
+    	super(experiment, clusters, clusterIndex, means, variances, codes);
     }
     
     /**

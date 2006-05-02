@@ -12,6 +12,18 @@ public class CGHSlideDataElement extends SlideDataElement {
 		super(UID, rows, columns, intensities, values);
 	}
 	
+	/**
+	 * @param rows
+	 * @param cols
+	 * @param extraFields
+	 * @param uid
+	 * @param isNull
+	 * @param isNonZero
+	 */
+	public CGHSlideDataElement(int[] rows, int[] cols, String[] extraFields, String uid, boolean isNull, boolean isNonZero) {
+		super(rows, cols, extraFields, uid, isNull, isNonZero);
+	}
+
 	public String getCloneID() {
 		return extraFields[CLONE_ID];
 	}

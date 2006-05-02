@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayData.java,v $
- * $Revision: 1.22 $
- * $Date: 2006-03-24 15:49:44 $
+ * $Revision: 1.23 $
+ * $Date: 2006-05-02 16:56:56 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -20,8 +20,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -62,6 +60,8 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.normalization.RatioStats
 
 //EH - state-saving
 import org.tigr.microarray.mev.persistence.MultipleArrayDataPersistenceDelegate;
+import org.tigr.microarray.mev.persistence.MultipleArrayDataState;
+
 import java.beans.PersistenceDelegate;
 import org.tigr.microarray.mev.file.StringSplitter;
 import org.tigr.microarray.util.Adjustment;
@@ -73,9 +73,6 @@ import org.tigr.util.QSort;
 import cern.jet.math.Arithmetic;
 import cern.jet.stat.Probability;
 
-//EH - state-saving
-import org.tigr.microarray.mev.persistence.MultipleArrayDataPersistenceDelegate;
-import java.beans.PersistenceDelegate;
 
 public class MultipleArrayData implements IData, Serializable {
 
@@ -136,8 +133,9 @@ public class MultipleArrayData implements IData, Serializable {
     private boolean useMainData = true;
     private Experiment alternateExperiment = null;
     
+    
     //EH
-	private int altExptID = 0;
+	MultipleArrayDataState mads;
 	/**
      * List of all clones ordered by chromosome and then start position.
      * Raktim OCt 3, 2005
@@ -172,7 +170,7 @@ public class MultipleArrayData implements IData, Serializable {
     public int CGH_SPECIES = TMEV.CGH_SPECIES_Undef;
     public boolean hasCloneDistribution = false;
     
-    public MultipleArrayData(){}
+    public MultipleArrayData(){mads = new MultipleArrayDataState();}
     /**
      * PersistenceDelegate constructor.  This constructor can be used to recreate a
      * previously-stored MultipleArrayData. 
@@ -195,23 +193,32 @@ public class MultipleArrayData implements IData, Serializable {
      * @param spotColors
      * @param currentSampleLabelKey
      * @param featuresList
+     * @param hasDyeSwap
+     * @param CGHData
+     * @param log2Data
+     * @param cgh_Sp
+     * @param hasCloneDistribution
+     * @param clones
      */
     public MultipleArrayData(
-    		Boolean useMainData, Integer altExptId, Float percentageCutoff, Boolean usePercentageCutoffs, 
+    		Experiment experiment, 
+    		Boolean useMainData, Experiment alternateExperiment, Float percentageCutoff, Boolean usePercentageCutoffs, 
 			Boolean useVarianceFilter, Boolean useDetectionFilter, Boolean useFoldFilter,
 			Boolean dfSet, Boolean ffSet, DetectionFilter df, FoldFilter ff, Boolean isMedianIntensities, 
 			Boolean useLowerCutoffs, Float lowerCY3Cutoff, Float lowerCY5Cutoff, 
 			ArrayList experimentColors, ArrayList spotColors, 
-			String currentSampleLabelKey, ArrayList featuresList, Integer dataType){
-    	this.featuresList = featuresList;
-    	this.altExptID = altExptId.intValue();
-    	this.indicesList = new ArrayList();
+			String currentSampleLabelKey, ArrayList featuresList, Integer dataType,
+			int[] samplesOrder, Boolean hasDyeSwap, Boolean CGHData, Boolean log2Data, ArrayList clones, Integer cgh_Sp, MultipleArrayDataState mads){
+    	this.experiment = experiment;
+    	this.setFeaturesList(featuresList);
+    	this.alternateExperiment = alternateExperiment;
     	this.useMainData = useMainData.booleanValue();
     	this.percentageCutoff = percentageCutoff.floatValue();
     	this.usePercentageCutoff = usePercentageCutoffs.booleanValue();
         this.useVarianceFilter = useVarianceFilter.booleanValue(); 
         this.useDetectionFilter = useDetectionFilter.booleanValue();
         this.useFoldFilter = useFoldFilter.booleanValue();
+        this.samplesOrder = samplesOrder;
         this.dfSet = dfSet.booleanValue();
         if(dfSet.booleanValue())
         	this.detectionFilter = df;
@@ -226,8 +233,26 @@ public class MultipleArrayData implements IData, Serializable {
         this.spotColors = spotColors;
         setSampleLabelKey(currentSampleLabelKey);
         this.dataType = dataType.intValue();
+
+        //Raktim 4/11. SS modifications
+        this.hasDyeSwap = hasDyeSwap.booleanValue();
+        this.CGHData = CGHData.booleanValue();
+        this.log2Data = log2Data.booleanValue();
+        this.clones = clones;
+        this.CGH_SPECIES = cgh_Sp.intValue();
+        loadMADS(mads);
     }
-    
+    /**
+	 * @param mads2
+	 */
+	private void loadMADS(MultipleArrayDataState mads) {
+    	this.mads = mads;
+    	setMaxCy3(mads.getMaxCY3());
+    	setMaxCy5(mads.getMaxCY5());
+	}
+	public MultipleArrayDataState getMultipleArrayDataState(){return mads;}
+
+
     /**
      *  Sets the data objects feature list
      */
@@ -272,7 +297,6 @@ public class MultipleArrayData implements IData, Serializable {
      */
     public void setAlternateExperiment(Experiment e) {
         this.alternateExperiment = e;
-        this.altExptID = e.getId();
     }
     /**
     * EH - used by MulipleArrayViewer to get AlternateExperiment
@@ -281,13 +305,7 @@ public class MultipleArrayData implements IData, Serializable {
     public Experiment getAlternateExperiment() {
     	return alternateExperiment;
     }
-    /**
-    * EH - Used by MultipleArrayDataPersistenceDelegate to get the ID associated
-    * with the alternateExperiment so it can be stored in a saved state file
-    */
-    public int getAltExptId(){
-    	return this.altExptID;
-    }
+
     
     public void constructAndSetAlternateExperiment(Experiment coreExperiment, int [] clusterIndices, int clusterType) {
         int [] origRowIndices = coreExperiment.getRowMappingArrayCopy();
@@ -2638,6 +2656,10 @@ public class MultipleArrayData implements IData, Serializable {
     public void setCGHCopyNumberCalculator(){
     	copyNumberCalculator = new CGHCopyNumberCalculator(this);
     }
+    public CGHCopyNumberCalculator getCGHCopyNumberCalculator(){
+    	return this.copyNumberCalculator;
+    }
+
     /**
      * CGH Function
      */
@@ -3483,4 +3505,28 @@ public class MultipleArrayData implements IData, Serializable {
 
     public ArrayList getExperimentColorsSaved(){return experimentColors;}
     //EH end state-saving
+	/**
+	 * @return Returns the maxCy3.
+	 */
+	public float getMaxCy3() {
+		return maxCy3;
+	}
+	/**
+	 * @param maxCy3 The maxCy3 to set.
+	 */
+	public void setMaxCy3(float maxCy3) {
+		this.maxCy3 = maxCy3;
+	}
+	/**
+	 * @return Returns the maxCy5.
+	 */
+	public float getMaxCy5() {
+		return maxCy5;
+	}
+	/**
+	 * @param maxCy5 The maxCy5 to set.
+	 */
+	public void setMaxCy5(float maxCy5) {
+		this.maxCy5 = maxCy5;
+	}
 }

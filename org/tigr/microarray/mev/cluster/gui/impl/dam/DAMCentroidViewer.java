@@ -36,8 +36,8 @@ public class DAMCentroidViewer extends CentroidViewer {
     /**
      * @inheritDoc
      */
-    public DAMCentroidViewer(int[][] clusters, float[][] variances, float[][] means, float[][] codes, Integer id) {
-    	super(clusters, variances, means, codes, id);
+    public DAMCentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes) {
+    	super(e, clusters, variances, means, codes);
     }
     
     

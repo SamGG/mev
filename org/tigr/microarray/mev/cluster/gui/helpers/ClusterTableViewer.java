@@ -35,8 +35,7 @@ import org.tigr.util.QSort;
  *
  * @author  nbhagaba
  */
-public class ClusterTableViewer implements IViewer, java.io.Serializable {
-//    public static final long serialVersionUID = 201050001L;
+public class ClusterTableViewer implements IViewer {
     
     private static final String NO_GENES_STR = "No Genes in Cluster!";
     private static final Font ERROR_FONT = new Font("monospaced", Font.BOLD, 20);
@@ -158,69 +157,9 @@ public class ClusterTableViewer implements IViewer, java.io.Serializable {
         clusterTable.addMouseListener(listener);
     }    
     
-
-    //EH begin state-saving additions  
-    /**
-     * Re-creates a ClusterTableViewer from saved xml data
-     * @param clusters
-     * @param fieldNames
-     * @param auxTitles
-     * @param auxData
-     * @param exptID
-     */
-    public ClusterTableViewer(int[][] clusters, String[] fieldNames, String[] auxTitles, Object[][] auxData, Integer exptID) {
-        this.exptID = exptID.intValue();
-        this.clusters = clusters;  
-        this.fieldNames = fieldNames;
-        this.auxTitles = auxTitles;
-        this.auxData = auxData;
-        this.lastSelectedAnnotationIndices = new int[2];
-        //this.xRow = -1;
-        this.xColumn = -1;
-        for (int i = 0; i < lastSelectedAnnotationIndices.length; i++) {
-            lastSelectedAnnotationIndices[1] = 0;
-        }
-        this.sortedClusters = new int[clusters.length][];
-        
-        for (int i = 0; i < sortedClusters.length; i++) {
-            sortedClusters[i] = new int[clusters[i].length];
-        }
-        
-        for (int i = 0; i < sortedClusters.length; i++) {
-            for (int j = 0; j < sortedClusters[i].length; j++) {
-                sortedClusters[i][j] = clusters[i][j];
-            }
-        }
-        
-        this.clusterModel = new ClusterTableModel();
-        this.clusterTable = new JTable(clusterModel);
-        clusterTable.setCellSelectionEnabled(true);
-        clusterTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
-        TableColumn column = null;
-        for (int i = 0; i < clusterModel.getColumnCount(); i++) {
-            column = clusterTable.getColumnModel().getColumn(i);
-            column.setMinWidth(30);
-    }
-    
-        this.sortedAscending = new boolean[clusters.length][clusterModel.getColumnCount()];
-        for (int i = 0; i < sortedAscending.length; i++) {
-            for (int j = 0; j < sortedAscending[i].length; j++) {
-                sortedAscending[i][j] = false;
-            }
-        }    
-        addMouseListenerToHeaderInTable(clusterTable);
-        header  = clusterTable.getTableHeader();        
-        
-        searchDialog = new ClusterTableSearchDialog(JOptionPane.getFrameForComponent(clusterTable), clusterTable, false);  
-        setMaxWidth(getContentComponent(), getHeaderComponent());  
-        
-		Listener listener = new Listener();
-		this.popup = createJPopupMenu(listener);
-        clusterTable.addMouseListener(listener);
-    }  
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new",
-				new Object[]{this.clusters, this.fieldNames, this.auxTitles, this.auxData, new Integer(this.exptID)});
+				new Object[]{this.experiment, this.clusters, this.data, this.auxTitles, this.auxData});
 
     }
 	

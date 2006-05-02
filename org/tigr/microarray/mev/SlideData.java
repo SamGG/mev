@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SlideData.java,v $
- * $Revision: 1.16 $
- * $Date: 2006-04-10 18:41:36 $
+ * $Revision: 1.17 $
+ * $Date: 2006-05-02 16:56:56 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -29,6 +29,9 @@ import org.tigr.microarray.mev.persistence.StateSavingProgressPanel;
 import javax.swing.JFrame;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 
@@ -50,6 +53,7 @@ public class SlideData implements ISlideData, ISlideMetaData {
     private String sampleLabelKey = "Default Slide Name";
     private Hashtable sampleLabels;
     private Vector sampleLabelKeys;
+    
 
     /**
      * Raktim Oct 31, 2005
@@ -59,6 +63,7 @@ public class SlideData implements ISlideData, ISlideMetaData {
      */
     private Vector[] flankingRegions;
 
+    public boolean isCGHData(){return allSlideDataElements.get(0) instanceof CGHSlideDataElement;}
     /**
      * Constructs a <code>SlideData</code> which is a copy of specified original.
      */
@@ -130,8 +135,8 @@ public class SlideData implements ISlideData, ISlideMetaData {
       public SlideData(String slideDataName, Vector sampleLabelKeys, String sampleLabelKey,
     		Hashtable sampleLabels, String slideFileName, Boolean isNonZero, Integer rows, Integer columns,
 			Integer normalizedState, Integer sortState, SpotInformationData spotInfoData, 
-			String[] fieldNames, Integer dataType){
-
+			String[] fieldNames, Integer dataType/*, String annotationFileName, String inputFileName*/) throws IOException {
+      	this();
       	this.rows = rows.intValue();
     	this.columns = columns.intValue();
     	this.slideDataName = slideDataName;
@@ -145,149 +150,22 @@ public class SlideData implements ISlideData, ISlideMetaData {
     	this.isNonZero = isNonZero.booleanValue();
     	this.fieldNames = fieldNames;
     	this.dataType = dataType.intValue();
+    	//loadAnnotation(new DataInputStream(new FileInputStream(System.getProperty("java.io.tmpdir") + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + annotationFileName)));
+    	//readDataFromInputFile(inputFileName);
     }
 
-    public String getSampleLabelKey() {return sampleLabelKey;}
-    
-    public void writeAnnotation(DataOutputStream dos, JFrame pb) throws IOException {
-    	StateSavingProgressPanel progressPanel = (StateSavingProgressPanel)pb;
-    	int numSlideDataElements = allSlideDataElements.size();
-    	progressPanel.setMaximum(numSlideDataElements);
-    	ISlideDataElement sde;
-    	dos.writeInt(numSlideDataElements);
-    	   	 
-    	for(int i=0; i<numSlideDataElements; i++){
-   			sde = (ISlideDataElement)allSlideDataElements.get(i);
-    		
-    		String uid = sde.getUID();
-    		char[] temp = uid.toCharArray();
-    		dos.writeInt(temp.length);
-    		for(int j=0; j<temp.length; j++){
-    			dos.writeChar(temp[j]);
-    		}
-		
-    		int rowsize = sde.getRows().length;
-    		dos.writeInt(rowsize);
-    		for(int j=0; j<rowsize; j++){
-    			dos.writeInt(sde.getRows()[j]);
-    		}
-    		int colsize = sde.getColumns().length;
-    		dos.writeInt(colsize);
-    		for(int j=0; j<colsize; j++){
-    			dos.writeInt(sde.getColumns()[j]);
-    		}
-		
-    		int numFields = sde.getExtraFields().length;
-    		dos.writeInt(numFields);
-    		for(int j=0; j<numFields; j++){
-    			try {
-	    			temp = sde.getExtraFields()[j].toCharArray();
-	        		dos.writeInt(temp.length);
-	        		for(int k=0; k<temp.length; k++){
-	        			dos.writeChar(temp[k]);
-	        		}
-    			} catch (NullPointerException npe){
-    				dos.writeInt(0);
-    			}
-    		}
 
-    		dos.writeBoolean(sde.getIsNull());
-    		dos.writeBoolean(sde.isNonZero());
-			if(dataType == IData.DATA_TYPE_TWO_INTENSITY || dataType == IData.DATA_TYPE_RATIO_ONLY){
-				
-			} else {		//IData has affy data
-				dos.writeChar(((AffySlideDataElement)sde).getDetection().charAt(0));
-			}
-    		progressPanel.increment();
-    	}
-    	
-    }
-    public void loadAnnotation(DataInputStream dis, JFrame pb) throws IOException {
-    	StateSavingProgressPanel progressPanel = (StateSavingProgressPanel)pb;
-    	int numSlideDataElements = dis.readInt();
-    	progressPanel.setMaximum(numSlideDataElements);
-    	allSlideDataElements = new Vector(numSlideDataElements);
-    	
-    	int[] rows, cols;
-    	String[] extraFields;
-    	String uid;
-    	int temp;
-    	boolean isNull, isNonZero;
-    	for(int i=0; i<numSlideDataElements; i++){
 
-    		temp = dis.readInt();
-    		char[] buff = new char[temp];
-    		for(int j=0; j<temp; j++) {
-    			buff[j] = dis.readChar();
-    		}
-    		uid = new String(buff);
+	public String getSampleLabelKey() {return sampleLabelKey;}
 
-    		rows = new int[dis.readInt()];
-    		for(int j=0; j<rows.length; j++){
-    			rows[j] = dis.readInt();
-    		}
-		
-    		cols = new int[dis.readInt()];
-    		for(int j=0; j<cols.length; j++){
-    			cols[j] = dis.readInt();
-    		}
-		
-    		extraFields = new String[dis.readInt()];
-    		for(int j=0; j<extraFields.length; j++){
-    			buff = new char[dis.readInt()];
-        		for(int k=0; k<buff.length; k++){
-        			buff[k] = dis.readChar();
-        		}
-        		extraFields[j] = new String(buff);
-    		}
-			isNull = dis.readBoolean();
-			isNonZero = dis.readBoolean();
-			if(dataType == IData.DATA_TYPE_TWO_INTENSITY || dataType == IData.DATA_TYPE_RATIO_ONLY){
-				allSlideDataElements.add(i, new SlideDataElement(rows, cols, extraFields, uid, isNull, isNonZero));
-			} else {		//IData has affy data
-				char detection = dis.readChar();
-				allSlideDataElements.add(i, new AffySlideDataElement(rows, cols, extraFields, uid, isNull, isNonZero, detection));
-
-			}
-    		progressPanel.increment();
-    	}
-    	
-    }
-
-    public void writeIntensities(DataOutputStream dos) throws IOException {
-    	ISlideDataElement sde;
-    	int numSlideDataElements = size();
-    	dos.writeInt(numSlideDataElements);
-    	for(int i=0; i<numSlideDataElements; i++){
-    		sde = (ISlideDataElement)allSlideDataElements.get(i);
-    		dos.writeFloat(sde.getIntensity(0));
-    		dos.writeFloat(sde.getIntensity(1));
-    		dos.writeFloat(sde.getTrueIntensity(0));
-    		dos.writeFloat(sde.getTrueIntensity(1));	
-    		if(dataType != IData.DATA_TYPE_TWO_INTENSITY && dataType != IData.DATA_TYPE_RATIO_ONLY){
-    			dos.writeChar(sde.getDetection().toCharArray()[0]);
-    		} 
-    	}
-    }   
-    public void loadIntensities(DataInputStream dis) throws IOException{
-    	ISlideDataElement sde;
-    	int numSlideDataElements = dis.readInt();
-    	for(int i=0; i<numSlideDataElements; i++){
-    		sde = (ISlideDataElement)allSlideDataElements.get(i);
-    		sde.setIntensity(0, dis.readFloat());
-    		sde.setIntensity(1, dis.readFloat());
-    		sde.setTrueIntensity(0, dis.readFloat());
-    		sde.setTrueIntensity(1, dis.readFloat());
-    		if(dataType != IData.DATA_TYPE_TWO_INTENSITY && dataType != IData.DATA_TYPE_RATIO_ONLY){
-        		sde.setDetection(new Character(dis.readChar()).toString());
-    		} 	
-    	}
-    }
 
     public Vector getAllElements() {
     	return allSlideDataElements;
     }
     
+    public void setAllElements(Vector v){
+    	this.allSlideDataElements = v;
+    }
     public void add(SlideDataElement newElement) {
     	this.allSlideDataElements.add(newElement);
     }
@@ -1385,7 +1263,7 @@ public class SlideData implements ISlideData, ISlideMetaData {
      * @param flankingRegions New value of property flankingRegions.
      */
     public void setFlankingRegions(java.util.Vector[] flankingRegions) {
-    	System.out.println("SlideData setFlankingRegion()");
+    	//System.out.println("SlideData setFlankingRegion()");
     	if (flankingRegions == null) System.out.println("NULL flankingRegions in SlideData.setFlankingRegion()");
         this.flankingRegions = flankingRegions;
     }
@@ -1443,5 +1321,206 @@ public class SlideData implements ISlideData, ISlideMetaData {
         }
         */
     }
+    /**
+    *
+    *@deprecated
+      
+   public void writeAnnotation(DataOutputStream dos, JFrame pb) throws IOException {
+   	StateSavingProgressPanel progressPanel = (StateSavingProgressPanel)pb;
+   	int numSlideDataElements = allSlideDataElements.size();
+   	progressPanel.setMaximum(numSlideDataElements);
+   	ISlideDataElement sde;
+   	dos.writeInt(numSlideDataElements);
+   	   	 
+   	for(int i=0; i<numSlideDataElements; i++){
+  			sde = (ISlideDataElement)allSlideDataElements.get(i);
+   		
+   		String uid = sde.getUID();
+   		char[] temp = uid.toCharArray();
+   		dos.writeInt(temp.length);
+   		for(int j=0; j<temp.length; j++){
+   			dos.writeChar(temp[j]);
+   		}
+		
+   		int rowsize = sde.getRows().length;
+   		dos.writeInt(rowsize);
+   		for(int j=0; j<rowsize; j++){
+   			dos.writeInt(sde.getRows()[j]);
+   		}
+   		int colsize = sde.getColumns().length;
+   		dos.writeInt(colsize);
+   		for(int j=0; j<colsize; j++){
+   			dos.writeInt(sde.getColumns()[j]);
+   		}
+		
+   		int numFields = sde.getExtraFields().length;
+   		dos.writeInt(numFields);
+   		for(int j=0; j<numFields; j++){
+   			try {
+	    			temp = sde.getExtraFields()[j].toCharArray();
+	        		dos.writeInt(temp.length);
+	        		for(int k=0; k<temp.length; k++){
+	        			dos.writeChar(temp[k]);
+	        		}
+   			} catch (NullPointerException npe){
+   				dos.writeInt(0);
+   			}
+   		}
 
+   		dos.writeBoolean(sde.getIsNull());
+   		dos.writeBoolean(sde.isNonZero());
+			if(dataType == IData.DATA_TYPE_TWO_INTENSITY || dataType == IData.DATA_TYPE_RATIO_ONLY){
+				
+			} else {		//IData has affy data
+				dos.writeChar(((AffySlideDataElement)sde).getDetection().charAt(0));
+			}
+   		progressPanel.increment();
+   	}
+   	
+   }
+   */
+   /**
+    * @deprecated
+    
+   public void loadAnnotation(DataInputStream dis) throws IOException {
+   	int numSlideDataElements = dis.readInt();
+   	allSlideDataElements = new Vector(numSlideDataElements);
+   	
+   	int[] rows, cols;
+   	String[] extraFields;
+   	String uid;
+   	int temp;
+   	boolean isNull, isNonZero;
+   	for(int i=0; i<numSlideDataElements; i++){
+
+   		temp = dis.readInt();
+   		char[] buff = new char[temp];
+   		for(int j=0; j<temp; j++) {
+   			buff[j] = dis.readChar();
+   		}
+   		uid = new String(buff);
+
+   		rows = new int[dis.readInt()];
+   		for(int j=0; j<rows.length; j++){
+   			rows[j] = dis.readInt();
+   		}
+		
+   		cols = new int[dis.readInt()];
+   		for(int j=0; j<cols.length; j++){
+   			cols[j] = dis.readInt();
+   		}
+		
+   		extraFields = new String[dis.readInt()];
+   		for(int j=0; j<extraFields.length; j++){
+   			buff = new char[dis.readInt()];
+       		for(int k=0; k<buff.length; k++){
+       			buff[k] = dis.readChar();
+       		}
+       		extraFields[j] = new String(buff);
+   		}
+			isNull = dis.readBoolean();
+			isNonZero = dis.readBoolean();
+			if(dataType == IData.DATA_TYPE_TWO_INTENSITY || dataType == IData.DATA_TYPE_RATIO_ONLY){
+				allSlideDataElements.add(i, new SlideDataElement(rows, cols, extraFields, uid, isNull, isNonZero));
+			} else {		//IData has affy data
+				char detection = dis.readChar();
+				allSlideDataElements.add(i, new AffySlideDataElement(rows, cols, extraFields, uid, isNull, isNonZero, detection));
+
+			}
+   	}
+   	
+   }*/
+   /*
+    * @deprecated
+    
+   public void loadAnnotation(DataInputStream dis, JFrame pb) throws IOException {
+   	StateSavingProgressPanel progressPanel = (StateSavingProgressPanel)pb;
+   	int numSlideDataElements = dis.readInt();
+   	progressPanel.setMaximum(numSlideDataElements);
+   	allSlideDataElements = new Vector(numSlideDataElements);
+   	
+   	int[] rows, cols;
+   	String[] extraFields;
+   	String uid;
+   	int temp;
+   	boolean isNull, isNonZero;
+   	for(int i=0; i<numSlideDataElements; i++){
+
+   		temp = dis.readInt();
+   		char[] buff = new char[temp];
+   		for(int j=0; j<temp; j++) {
+   			buff[j] = dis.readChar();
+   		}
+   		uid = new String(buff);
+
+   		rows = new int[dis.readInt()];
+   		for(int j=0; j<rows.length; j++){
+   			rows[j] = dis.readInt();
+   		}
+		
+   		cols = new int[dis.readInt()];
+   		for(int j=0; j<cols.length; j++){
+   			cols[j] = dis.readInt();
+   		}
+		
+   		extraFields = new String[dis.readInt()];
+   		for(int j=0; j<extraFields.length; j++){
+   			buff = new char[dis.readInt()];
+       		for(int k=0; k<buff.length; k++){
+       			buff[k] = dis.readChar();
+       		}
+       		extraFields[j] = new String(buff);
+   		}
+			isNull = dis.readBoolean();
+			isNonZero = dis.readBoolean();
+			if(dataType == IData.DATA_TYPE_TWO_INTENSITY || dataType == IData.DATA_TYPE_RATIO_ONLY){
+				allSlideDataElements.add(i, new SlideDataElement(rows, cols, extraFields, uid, isNull, isNonZero));
+			} else {		//IData has affy data
+				char detection = dis.readChar();
+				allSlideDataElements.add(i, new AffySlideDataElement(rows, cols, extraFields, uid, isNull, isNonZero, detection));
+
+			}
+   		progressPanel.increment();
+   	}
+   	
+   }*/
+
+
+   /**
+    * 
+    * @param dos
+    * @throws IOException
+    * @deprecated
+    
+   public void writeIntensities(DataOutputStream dos) throws IOException {
+   	ISlideDataElement sde;
+   	int numSlideDataElements = size();
+   	dos.writeInt(numSlideDataElements);
+   	for(int i=0; i<numSlideDataElements; i++){
+   		sde = (ISlideDataElement)allSlideDataElements.get(i);
+   		dos.writeFloat(sde.getIntensity(0));
+   		dos.writeFloat(sde.getIntensity(1));
+   		dos.writeFloat(sde.getTrueIntensity(0));
+   		dos.writeFloat(sde.getTrueIntensity(1));	
+   		if(dataType != IData.DATA_TYPE_TWO_INTENSITY && dataType != IData.DATA_TYPE_RATIO_ONLY){
+   			dos.writeChar(sde.getDetection().toCharArray()[0]);
+   		} 
+   	}
+   }   */
+   //TODO remove
+	/*
+   public void loadIntensities(DataInputStream dis) throws IOException{
+   	ISlideDataElement sde;
+   	int numSlideDataElements = dis.readInt();
+   	for(int i=0; i<numSlideDataElements; i++){
+   		sde = (ISlideDataElement)allSlideDataElements.get(i);
+   		sde.setIntensity(0, dis.readFloat());
+   		sde.setIntensity(1, dis.readFloat());
+   		sde.setTrueIntensity(0, dis.readFloat());
+   		sde.setTrueIntensity(1, dis.readFloat());
+   		if(dataType != IData.DATA_TYPE_TWO_INTENSITY && dataType != IData.DATA_TYPE_RATIO_ONLY){
+       		sde.setDetection(new Character(dis.readChar()).toString());
+   		} 	
+   	}
+   }*/
 }

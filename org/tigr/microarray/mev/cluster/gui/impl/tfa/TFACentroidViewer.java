@@ -42,8 +42,8 @@ public class TFACentroidViewer extends CentroidViewer {
     /**
      * @inheritDoc
      */
-    public TFACentroidViewer(int[][] clusters, float[][] variances, float[][] means, float[][] codes, Integer id, String[] auxTitles, Object[][] auxData) {
-    	super(clusters, variances, means, codes, id);
+    public TFACentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes, String[] auxTitles, Object[][] auxData) {
+    	super(e, clusters, variances, means, codes);
     	initialize(auxTitles, auxData);
     }
 	public Expression getExpression(){

@@ -47,7 +47,7 @@ import org.tigr.util.QSort;
  *
  * @author  nbhagaba
  */
-public class PTMExpStatsTableViewer extends ViewerAdapter implements java.io.Serializable {
+public class PTMExpStatsTableViewer extends ViewerAdapter {
     
     private JComponent header;
     private JComponent content;

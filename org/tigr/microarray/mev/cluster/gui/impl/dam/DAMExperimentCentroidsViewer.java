@@ -47,8 +47,8 @@ public class DAMExperimentCentroidsViewer extends ExperimentClusterCentroidsView
     /**
      * @inheritDoc
      */
-    public DAMExperimentCentroidsViewer(ExperimentClusterCentroidViewer cv, Integer exptID) {
-    	super(cv, exptID);
+    public DAMExperimentCentroidsViewer(ExperimentClusterCentroidViewer cv) {
+    	super(cv);
     }
     
     

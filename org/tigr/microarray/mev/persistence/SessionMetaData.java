@@ -25,11 +25,14 @@ public class SessionMetaData extends Beans {
 	int mevMajorVersion;
 	int mevMinorVersion;
 	int mevMicroVersion;
-	boolean isBeta;		//haha! I've thought of everything!
+	MEVSessionPrefs mevSessionPrefs;
+	boolean isBeta;
 	
 
 	public SessionMetaData(){
-		startDate = new Date();
+		if(startDate == null)
+			startDate = new Date();
+		mevSessionPrefs = new MEVSessionPrefs();
 	}
 	
 	/**
@@ -131,5 +134,23 @@ public class SessionMetaData extends Beans {
 	 */
 	public void setSaveDate(Date saveDate) {
 		this.saveDate = saveDate;
+	}
+	/**
+	 * @return Returns the msp.
+	 */
+	public MEVSessionPrefs getMevSessionPrefs() {
+		return mevSessionPrefs;
+	}
+	/**
+	 * @param msp The msp to set.
+	 */
+	public void setMevSessionPrefs(MEVSessionPrefs msp) {
+		this.mevSessionPrefs = msp;
+	}
+	/**
+	 * @param startDate The startDate to set.
+	 */
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
 	}
 }

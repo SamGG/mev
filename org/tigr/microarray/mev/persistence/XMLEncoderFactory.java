@@ -6,6 +6,7 @@
  */
 package org.tigr.microarray.mev.persistence;
    
+import java.awt.image.BufferedImage;
 import java.beans.DefaultPersistenceDelegate;
 import java.beans.XMLEncoder;
 import java.util.Enumeration;
@@ -53,7 +54,7 @@ public abstract class XMLEncoderFactory {
         DefaultMutableTreeNode dmtn;
     	IViewerPersistenceDelegate ivpd = new IViewerPersistenceDelegate();
     	
-        //Checks the ResultTree for IViewers and assignes a PersistenceDelegate
+        //Checks the ResultTree for IViewers and assigns a PersistenceDelegate
         //for each different type found.  All PersistenceDelegate Expression objects
         //for classes extending IViewer are found in the IViewerPersistenceDelegate class. 
         while(allNodes.hasMoreElements()){
@@ -63,7 +64,7 @@ public abstract class XMLEncoderFactory {
         		LeafInfo l = (LeafInfo)o;
         		if(l.getViewer() != null) {
         			Object aViewer = l.getViewer();
-//        			System.out.println(aViewer.getClass().toString());
+        			//System.out.println(aViewer.getClass().toString());
         			oos.setPersistenceDelegate(
     						aViewer.getClass(),
 							ivpd
@@ -94,11 +95,19 @@ public abstract class XMLEncoderFactory {
         
         //Below are other miscellaneous classes that need custom PersistenceDelegates to be
         //properly saved.
-        oos.setPersistenceDelegate(
+
+		oos.setPersistenceDelegate(
+				BufferedImageWrapper.class,
+				new BufferedImagePersistenceDelegate()
+			);
+		oos.setPersistenceDelegate(
     			LeafInfo.class, 
     			new DefaultPersistenceDelegate(LeafInfo.getPersistenceDelegateArgs())
     		);
-
+        oos.setPersistenceDelegate(
+    			FloatMatrix.class, 
+    			new FloatMatrixPersistenceDelegate()
+    		);
 		oos.setPersistenceDelegate(
 				ClusterList.class, 
 				new DefaultPersistenceDelegate(ClusterList.getPersistenceDelegateArgs())
@@ -125,12 +134,11 @@ public abstract class XMLEncoderFactory {
     	);
 		oos.setPersistenceDelegate(
 				Experiment.class, 
-				new DefaultPersistenceDelegate(Experiment.getPersistenceDelegateArgs())
+				new ExperimentPersistenceDelegate()
 	    );
 		oos.setPersistenceDelegate(
 				HCLTree.class,
 				HCLTree.getPersistenceDelegate()
-				//new DefaultPersistenceDelegate(HCLTree.getPersistenceDelegateArgs())
 			);
 		oos.setPersistenceDelegate(
 				org.tigr.microarray.mev.cluster.gui.impl.tease.HCLTree.class,
@@ -139,16 +147,12 @@ public abstract class XMLEncoderFactory {
 		oos.setPersistenceDelegate(
 				HCLSupportTree.class,
 				HCLSupportTree.getPersistenceDelegate()
-				//new DefaultPersistenceDelegate(HCLSupportTree.getPersistenceDelegateArgs())
 			);
 		oos.setPersistenceDelegate(
 				ExperimentClusterHeader.class,
 				new DefaultPersistenceDelegate(ExperimentClusterHeader.getPersistenceDelegateArgs())
 		);
-		oos.setPersistenceDelegate(
-				FloatMatrix.class,
-				new DefaultPersistenceDelegate(FloatMatrix.getPersistenceDelegateArgs())
-		);
+
 
 		oos.setPersistenceDelegate(
 				FOMContentComponent.class,  
@@ -177,7 +181,6 @@ public abstract class XMLEncoderFactory {
 				CentroidExperimentHeader.class,
 				CentroidExperimentHeader.getPersistenceDelegate()
 			);
-		
 		return oos;
 	}
 }

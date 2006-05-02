@@ -56,11 +56,16 @@ public class TFACentroidsViewer extends CentroidsViewer {
 		initialize(auxTitles, auxData);
 	}
 	
-	public Expression getExpression(){
+	public Expression getExpression(){		
 		Object[] parentConstructorArgs = super.getExpression().getArguments();
-		return new Expression(this, this.getClass(), "new", 
-				new Object[]{parentConstructorArgs[0], parentConstructorArgs[1], parentConstructorArgs[2], 
-				auxTitles, auxData});
+		Object[] temp = new Object[parentConstructorArgs.length + 2];
+		int i=0;
+		for(i=0; i<parentConstructorArgs.length; i++){
+			temp[i] = parentConstructorArgs[i];
+		}
+		temp[i] = auxTitles;
+		temp[i+1] = auxData;
+		return new Expression(this, this.getClass(), "new", temp);
 	}
 	
 	private void initialize(String[] auxTitles, Object[][] auxData){

@@ -8,8 +8,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: PCA3DViewer.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-03-24 15:51:05 $
+ * $Revision: 1.9 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -99,21 +99,21 @@ public class PCA3DViewer extends ViewerAdapter {
         dlg = new PCASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());
         popup = createJPopupMenu();
     }   
-    public PCA3DViewer(Integer exptID, Boolean geneViewer, FloatMatrix U, Integer mode, Integer xAxis, Integer yAxis, Integer zAxis){
-        this.exptID = exptID.intValue();
-    	this.geneViewer = geneViewer.booleanValue();
+    public PCA3DViewer(Experiment e, Boolean geneViewer, FloatMatrix U, Integer mode, Integer xAxis, Integer yAxis, Integer zAxis){
+        this.geneViewer = geneViewer.booleanValue();
         this.U = U;
         this.mode = mode.intValue();
         this.xAxis = xAxis.intValue();
         this.yAxis = yAxis.intValue();
         this.zAxis = zAxis.intValue();
+        setExperiment(e);
     }
     /**
      * @inheritDoc
      */
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{new Integer(exptID), new Boolean(geneViewer), U, new Integer(mode), new Integer(xAxis), new Integer(yAxis), new Integer(zAxis)});
+    			new Object[]{this.experiment, new Boolean(geneViewer), U, new Integer(mode), new Integer(xAxis), new Integer(yAxis), new Integer(zAxis)});
     }
     /**
      * @inheritDoc

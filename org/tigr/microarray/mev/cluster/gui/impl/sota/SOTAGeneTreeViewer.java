@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SOTAGeneTreeViewer.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-03-24 15:51:44 $
+ * $Revision: 1.10 $
+ * $Date: 2006-05-02 16:57:35 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -136,6 +136,7 @@ public class SOTAGeneTreeViewer extends JPanel implements IViewer {
      * @param sotaTreeData
      * @param hclSampleTree
      * @param clusters
+     * @deprecated
      */
     public SOTAGeneTreeViewer(Integer exptID, SOTATreeData sotaTreeData, 
     		Cluster hclSampleTree, int[][] clusters) { //, SOTACentroidExpressionViewer scev){
@@ -167,7 +168,7 @@ public class SOTAGeneTreeViewer extends JPanel implements IViewer {
     }
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new",
-    			new Object[]{new Integer(this.exptID), this.sotaTree.getSotaTreeData(), this.sampleTree, this.getClusters()}); //, eccv.getExpViewer()});
+    			new Object[]{this.experiment, this.sotaTree.getSotaTreeData(), this.sampleTree, this.getClusters()}); //, eccv.getExpViewer()});
     }
     
     public void setExperiment(Experiment e){

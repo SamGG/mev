@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: OWAExperimentViewer.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-03-24 15:51:02 $
+ * $Revision: 1.10 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -54,39 +54,43 @@ public class OWAExperimentViewer extends ExperimentViewer {
     /** Creates new OWAExperimentViewer */
     public OWAExperimentViewer(Experiment experiment, int[][] clusters, float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
 	super(experiment, clusters);
-		initialize(geneGroupMeans, geneGroupSDs, rawPValues, adjPValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues);
+		Listener listener = new Listener();
+		this.popup = createJPopupMenu(listener);
+	        this.rawPValues = rawPValues;
+	        this.adjPValues = adjPValues;
+	        this.fValues = fValues;
+	        this.ssGroups = ssGroups;
+	        this.ssError = ssError;
+	        this.geneGroupMeans = geneGroupMeans;
+	        this.geneGroupSDs = geneGroupSDs;
+	        this.dfNumValues = dfNumValues;
+	        this.dfDenomValues = dfDenomValues;
+		getContentComponent().addMouseListener(listener);
+		getHeaderComponent().addMouseListener(listener);  
     }
-    /**
-     * @inheritDoc
-     */ 
-    public OWAExperimentViewer(int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets, Integer exptID, float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
-    	super(clusters, samplesOrder, drawAnnotations, header, insets, exptID);
-    	initialize(geneGroupMeans, geneGroupSDs, rawPValues, adjPValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues);
-    } 
+
 	/**
 	 * @inheritDoc
 	 */
 	public Expression getExpression(){
 		Object[] parentExpressionArgs = super.getExpression().getArguments();
-		return new Expression(this, this.getClass(), "new", 
-				new Object[]{parentExpressionArgs[0], parentExpressionArgs[1], parentExpressionArgs[2], parentExpressionArgs[3], parentExpressionArgs[4], parentExpressionArgs[5], 
-				geneGroupMeans, geneGroupSDs, rawPValues, adjPValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues});
+		Object[] temp2 = new Object[parentExpressionArgs.length + 9];
+		int i=0;
+		for (i=0; i<parentExpressionArgs.length; i++){
+			temp2[i] = parentExpressionArgs[i];
+		}
+		temp2[i] = geneGroupMeans;
+		temp2[++i] = geneGroupSDs;
+		temp2[++i] = rawPValues;
+		temp2[++i] = adjPValues;
+		temp2[++i] = fValues;
+		temp2[++i] = ssGroups;
+		temp2[++i] = ssError;
+		temp2[++i] = dfNumValues;
+		temp2[++i] = dfDenomValues;
+		return new Expression(this, this.getClass(), "new", temp2);
 	}
-    private void initialize(float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
-	Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
-        this.rawPValues = rawPValues;
-        this.adjPValues = adjPValues;
-        this.fValues = fValues;
-        this.ssGroups = ssGroups;
-        this.ssError = ssError;
-        this.geneGroupMeans = geneGroupMeans;
-        this.geneGroupSDs = geneGroupSDs;
-        this.dfNumValues = dfNumValues;
-        this.dfDenomValues = dfDenomValues;
-	getContentComponent().addMouseListener(listener);
-	getHeaderComponent().addMouseListener(listener);        
-    }
+
     
     
     

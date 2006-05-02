@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: CASTCentroidViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-03-24 15:49:58 $
+ * $Revision: 1.7 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -54,8 +54,8 @@ public class CASTCentroidViewer extends CentroidViewer {
      * @param codes
      * @param id
      */
-    public CASTCentroidViewer(int[][] clusters, float[][] variances, float[][] means, float[][] codes, Integer id) {
-    	super(clusters, variances, means, codes, id);
+    public CASTCentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes) {
+    	super(e, clusters, variances, means, codes);
     }
     
     

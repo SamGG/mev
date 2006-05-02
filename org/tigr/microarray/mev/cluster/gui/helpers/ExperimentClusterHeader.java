@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: ExperimentClusterHeader.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-03-24 15:49:54 $
+ * $Revision: 1.7 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -55,7 +55,8 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
     private boolean useDoubleGradient = true;
     
     public static String[] getPersistenceDelegateArgs(){
-    	return new String[]{"samplesOrder", "centroidName", "elementWidth", "hasCentroid", "insets"};
+//    	return new String[]{"samplesOrder", "centroidName", "elementWidth", "hasCentroid", "insets"};
+    	return new String[]{"experiment", "samplesOrder"};
     }
     public String getCentroidName() {return centroidName;}
     public int[][] getSamplesOrder() {return samplesOrder;}

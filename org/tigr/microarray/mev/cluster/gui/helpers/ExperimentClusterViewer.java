@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ExperimentClusterViewer.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-03-24 15:49:54 $
+ * $Revision: 1.10 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -147,7 +147,25 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         addMouseListener(listener);
         addMouseMotionListener(listener);
     }
-    
+    /*
+    copy-paste this constructor into descendent classes
+    /**
+     * @inheritDoc
+     *
+    public ExperimentClusterViewer(int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
+    		Integer offset, ExperimentClusterHeader header, Boolean hasCentroid, float[][] centroids, 
+			Dimension elementSize, Integer labelIndex, Integer exptID) {
+    		super(clusters, genesOrder, drawAnnotations, offset, header, hasCentroid, centroids, elementSize, labelIndex, exptID);
+    }
+    */
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new",
+//			new Object[]{clusters, genesOrder, new Boolean(this.isDrawAnnotations), new Integer(this.insets.left), this.header, new Boolean(this.hasCentroid), this.centroids, this.elementSize, new Integer(this.labelIndex), new Integer(this.exptID)});  
+    			new Object[]{experiment, clusters, genesOrder, new Boolean(isDrawAnnotations), new Integer(this.insets.left)});
+    } 
+    public ExperimentClusterViewer(Experiment experiment, int[][] clusters, int[] genesOrder, Boolean drawAnnotations, Integer offset){
+    	this(experiment, clusters, genesOrder, drawAnnotations.booleanValue(), offset.intValue());
+    }
     /**
      * Constructs an <code>ExperimentClusterViewer</code> with specified
      * experiment, clusters, samples order and draw annotations attribute.
@@ -236,7 +254,7 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
      * @param elementSize
      * @param labelIndex
      * @param exptID
-     */
+     
     public ExperimentClusterViewer(int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
     		Integer offset, ExperimentClusterHeader header, Boolean hasCentroid, float[][] centroids, 
 			Dimension elementSize, Integer labelIndex, Integer exptID) {
@@ -258,21 +276,7 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         addMouseListener(listener);
         addMouseMotionListener(listener);
     }
-    /*
-    copy-paste this constructor into descendent classes
-    /**
-     * @inheritDoc
-     *
-    public ExperimentClusterViewer(int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
-    		Integer offset, ExperimentClusterHeader header, Boolean hasCentroid, float[][] centroids, 
-			Dimension elementSize, Integer labelIndex, Integer exptID) {
-    		super(clusters, genesOrder, drawAnnotations, offset, header, hasCentroid, centroids, elementSize, labelIndex, exptID);
-    }
-    */
-    public Expression getExpression(){
-    	return new Expression(this, this.getClass(), "new",
-			new Object[]{clusters, genesOrder, new Boolean(this.isDrawAnnotations), new Integer(this.insets.left), this.header, new Boolean(this.hasCentroid), this.centroids, this.elementSize, new Integer(this.labelIndex), new Integer(this.exptID)});  
-    }
+*/
     public void setExperiment(Experiment e) {
     	this.experiment = e;
         this.exptID = e.getId();

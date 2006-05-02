@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: KMCExperimentViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-03-24 15:50:49 $
+ * $Revision: 1.7 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -47,9 +47,9 @@ public class KMCExperimentViewer extends ExperimentViewer {
      * @param header
      * @param insets
      */
-    public KMCExperimentViewer(int[][] clusters, int[] samplesOrder,
-    		Boolean drawAnnotations, ExperimentHeader header, Insets insets, Integer exptID) {
-    	super(clusters, samplesOrder, drawAnnotations.booleanValue(), header, insets, exptID);
+    public KMCExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder,
+    		Boolean drawAnnotations, ExperimentHeader header, Insets insets) {
+    	super(e, clusters, samplesOrder, drawAnnotations.booleanValue(), header, insets);
     } 
 
     /**

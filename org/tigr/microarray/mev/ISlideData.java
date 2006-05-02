@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ISlideData.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-03-24 15:49:44 $
+ * $Revision: 1.8 $
+ * $Date: 2006-05-02 16:56:56 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -262,8 +262,8 @@ public interface ISlideData {
      * Writes float values of intensities for this slide to an output stream.
      * @param dos output stream to write to
      */
-    public void writeIntensities(DataOutputStream dos) throws IOException;
-    public void loadIntensities(DataInputStream dis) throws IOException;
+    //public void writeIntensities(DataOutputStream dos) throws IOException;
+    //public void loadIntensities(DataInputStream dis) throws IOException;
     /**
      * Returns the slide's file name
      */

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: KMCSuppCentroidViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-03-24 15:50:54 $
+ * $Revision: 1.7 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -49,8 +49,8 @@ public class KMCSuppCentroidViewer extends CentroidViewer {
      * @param clusters
      * @param variances
      */
-    public KMCSuppCentroidViewer(int[][] clusters, float[][] variances, float[][] means, float[][] codes, Integer exptID) {
-    	super(clusters, variances, means, codes, exptID);
+    public KMCSuppCentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes) {
+    	super(e, clusters, variances, means, codes);
     }
     
     /**

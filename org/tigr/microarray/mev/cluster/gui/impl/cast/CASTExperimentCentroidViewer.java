@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: CASTExperimentCentroidViewer.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-03-24 15:49:58 $
+ * $Revision: 1.10 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -43,8 +43,8 @@ public class CASTExperimentCentroidViewer extends ExperimentClusterCentroidViewe
     /**
      * State-saving constructor
      */
-    public CASTExperimentCentroidViewer(int[][] clusters, Integer exptID, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes){
-    	super(clusters, exptID, clusterIndex, means, variances, codes);
+    public CASTExperimentCentroidViewer(Experiment experiment, int[][] clusters, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes){
+    	super(experiment, clusters, clusterIndex, means, variances, codes);
     }
     
     /**

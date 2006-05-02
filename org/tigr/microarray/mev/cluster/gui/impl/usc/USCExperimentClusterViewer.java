@@ -47,10 +47,9 @@ public class USCExperimentClusterViewer extends ExperimentClusterViewer {
     /**
      * @inheritDoc
      */
-    public USCExperimentClusterViewer(int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
-    		Integer offset, ExperimentClusterHeader header, Boolean hasCentroid, float[][] centroids, 
-			Dimension elementSize, Integer labelIndex, Integer exptID) {
-    		super(clusters, genesOrder, drawAnnotations, offset, header, hasCentroid, centroids, elementSize, labelIndex, exptID);
+    public USCExperimentClusterViewer(Experiment e, int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
+    		Integer offset){
+    		super(e, clusters, genesOrder, drawAnnotations, offset);
     		Listener listener = new Listener();
     		this.popup = createJPopupMenu( listener );
     		this.getContentComponent().addMouseListener( listener );

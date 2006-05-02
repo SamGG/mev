@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLExperimentCentroidsViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-03-24 15:50:40 $
+ * $Revision: 1.5 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -57,8 +57,8 @@ public class HCLExperimentCentroidsViewer extends ExperimentClusterCentroidsView
      * @param cv
      * @param exptID
      */
-    public HCLExperimentCentroidsViewer(ExperimentClusterCentroidViewer cv, Integer exptID) {
-    	super(cv, exptID);
+    public HCLExperimentCentroidsViewer(ExperimentClusterCentroidViewer cv) {
+    	super(cv);
     }
     
     /**

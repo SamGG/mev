@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: AcknowlegementDialog.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-02-23 20:59:41 $
- * $Author: caliente $
+ * $Revision: 1.9 $
+ * $Date: 2006-05-02 16:56:56 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -51,7 +51,7 @@ public class AcknowlegementDialog extends JDialog implements java.awt.print.Prin
     }
     
     public AcknowlegementDialog(Frame parent, String labelText) {
-        super(parent, "Contribution Acknowledgement :)", false);
+        super(parent, "Contribution Acknowledgement", false);
         EventListener listener = new EventListener();
         addWindowListener(listener);
         this.text = labelText;

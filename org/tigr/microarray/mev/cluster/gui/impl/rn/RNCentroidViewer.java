@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: RNCentroidViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-03-24 15:51:24 $
+ * $Revision: 1.7 $
+ * $Date: 2006-05-02 16:57:04 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -24,8 +24,7 @@ import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 
-public class RNCentroidViewer extends CentroidViewer implements java.io.Serializable {
-    public static final long serialVersionUID = 202014020001L;    
+public class RNCentroidViewer extends CentroidViewer {
     
     private JPopupMenu popup;
 
@@ -34,13 +33,13 @@ public class RNCentroidViewer extends CentroidViewer implements java.io.Serializ
      * and clusters.
      */
     public RNCentroidViewer(Experiment experiment, int[][] clusters) {
-	super(experiment, clusters);
-	Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
-	getContentComponent().addMouseListener(listener);
+		super(experiment, clusters);
+		Listener listener = new Listener();
+		this.popup = createJPopupMenu(listener);
+		getContentComponent().addMouseListener(listener);
     }
-    public RNCentroidViewer(int[][] clusters, float[][] variances, float[][] means, float[][] codes, Integer id) {
-    	super(clusters, variances, means, codes, id);
+    public RNCentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes) {
+    	super(e, clusters, variances, means, codes);
     }    
     
     /**

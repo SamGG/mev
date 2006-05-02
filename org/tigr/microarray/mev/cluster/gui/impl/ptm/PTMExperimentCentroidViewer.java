@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMExperimentCentroidViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-03-24 15:51:08 $
+ * $Revision: 1.7 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -62,15 +62,15 @@ public class PTMExperimentCentroidViewer extends ExperimentClusterCentroidViewer
     /**
      * @inheritDoc
      */
-    public PTMExperimentCentroidViewer(int[][] clusters, Integer exptID, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes, 
+    public PTMExperimentCentroidViewer(Experiment experiment, int[][] clusters, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes, 
     		Vector templateVector, String[] auxTitles, Object[][] auxData){
-    	super(clusters, exptID, clusterIndex, means, variances, codes);
+    	super(experiment, clusters, clusterIndex, means, variances, codes);
         Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
+        this.popup = createJPopupMenu(listener);
 		this.templateVector = templateVector;
         this.auxTitles = auxTitles;
         this.auxData = auxData;        
-	getContentComponent().addMouseListener(listener);
+        getContentComponent().addMouseListener(listener);
     }    
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 

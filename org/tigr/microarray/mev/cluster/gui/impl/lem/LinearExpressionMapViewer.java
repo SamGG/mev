@@ -239,6 +239,30 @@ public class LinearExpressionMapViewer extends JPanel implements IViewer {
 	private int maxEndBaseLocation;
 	private int replicateSpacing = 22;
 	private float replicateLengthFraction = 0.6f;
+	
+	//EH state-saving
+	private int exptID;
+	
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExpression()
+	 */
+	public Expression getExpression(){
+		return new Expression(this, this.getClass(), "new", 
+				new Object[]{new Integer(exptID), fullExperiment.getMatrix(), experiment.getMatrix(), 
+				fullExperiment.getColumns(), fullExperiment.getRows(), experiment.getColumns(), experiment.getRows(),
+				this.sortedLocusIDs, this.start, this.end, this.replicates, this.isForward,
+				this.strata, new String(""), this.locusIDFieldName});
+	}
+	
+	public LinearExpressionMapViewer(Integer exptID, FloatMatrix fullExptFloatMatrix, FloatMatrix redExptFloatMatrix, 
+			int[] fullCols, int[] fullRows, int[] redCols, int[] redRows,
+			String[] sortedLocusIDs,
+			int[] sortedStartArray, int[] sortedEndArray, int [][] replicates, boolean[] isForward,
+			int[] strata, String chrID, String locusIDFieldName){
+		this(new Experiment(fullCols, fullRows, exptID.intValue(), fullExptFloatMatrix), new Experiment(redCols, redRows, 0, redExptFloatMatrix), sortedLocusIDs,
+				sortedStartArray, sortedEndArray, replicates, isForward,
+				strata, chrID, locusIDFieldName);
+	}
 	/**
 	 * LinearExpressionMapViewer Description: Provides a multiple sample
 	 * expression view that is organized by chromosomal coordinates Each
@@ -329,8 +353,7 @@ public class LinearExpressionMapViewer extends JPanel implements IViewer {
 		}
 
 		updateColumnSpacing();
-
-		setBackground(Color.WHITE);
+		setBackground(Color.white);
 
 		negColorImage = createGradient(lowestColor, midPointColor);
 		posColorImage = createGradient(midPointColor, highestColor);
@@ -349,7 +372,89 @@ public class LinearExpressionMapViewer extends JPanel implements IViewer {
 		this.addMouseListener(listener);
 		this.addMouseMotionListener(listener);
 	}
+	/**
+	 * EH - State-saving constructor
+	 */
+	public LinearExpressionMapViewer(Integer exptID, Integer numberOfSamples, String[] sortedLocusIDs,
+			int[] sortedStartArray, int[] sortedEndArray, int [][] replicates, boolean[] isForward,
+			int[] strata, String chrID, String locusIDFieldName) {
+		this.exptID = exptID.intValue();
+		this.numberOfSamples = numberOfSamples.intValue();
+		this.sortedLocusIDs = sortedLocusIDs;
+		this.start = sortedStartArray;
+		this.end = sortedEndArray;
+		this.replicates = replicates;
+		this.isForward = isForward;
+		this.strata = strata;
+		this.locusIDFieldName = locusIDFieldName;
+		this.locusCount = sortedLocusIDs.length;
 
+		//constrain bin size to 50 loci
+		boundryCount = locusCount/50;
+		
+		this.activeInfoDialogs = new Vector();
+		this.selectedIndicesVector = new Vector();
+		this.selected = new boolean[locusCount];
+		
+		this.maxNumReps = 0;
+		for(int i = 0; i < replicates.length; i++) {
+			this.maxNumReps = Math.max(this.maxNumReps, replicates[i].length);
+		}
+			
+		//constrain initial size of *scaled* map to 500-10000 pixels high.
+		if ((int) (sortedEndArray[sortedEndArray.length - 1] / bpPerPixel) > 10000)
+			bpPerPixel = (int) (sortedEndArray[sortedEndArray.length - 1] / 10000);
+		else if ((int) (sortedEndArray[sortedEndArray.length - 1] / bpPerPixel) < 500)
+			bpPerPixel = (int) (sortedEndArray[sortedEndArray.length - 1] / 500);
+		if (bpPerPixel == 0)
+			bpPerPixel = 1;
+
+		//initializes for scaled representation
+		coordStarts = new int[start.length];
+		coordEnds = new int[end.length];
+		annYPos = new int[sortedLocusIDs.length];
+
+		this.boundingRanges = new int[boundryCount][4];
+		
+		updateCoords();
+
+		maxStrata = 0;
+		maxEndBaseLocation = 0;
+		for (int i = 0; i < strata.length; i++) {
+			if (strata[i] > maxStrata) {
+				maxStrata = strata[i];				
+			}
+			//reverse search for largest end location
+			if(maxEndBaseLocation < end[end.length-i-1])
+				maxEndBaseLocation = end[end.length-i-1];
+		}
+
+		updateColumnSpacing();
+		setBackground(Color.white);
+
+		negColorImage = createGradient(lowestColor, midPointColor);
+		posColorImage = createGradient(midPointColor, highestColor);
+
+		updateLocusAnnotationWidth();
+
+		colorMode = COLOR_MODE_GRADIENT;
+		
+
+	}
+	
+	public Experiment getExperiment(){
+		return experiment;
+	}
+	
+	/**
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
+	 */
+	public void setExperiment(Experiment e) {
+	}
+
+
+
+	
 	/**
 	 * Paints the graphics context of the viewer
 	 */
@@ -1454,13 +1559,6 @@ public class LinearExpressionMapViewer extends JPanel implements IViewer {
 	}
 
 	/**
-	 *  Returns the full experiment
-	 */
-	public Experiment getExperiment() {
-		return fullExperiment;
-	}
-
-	/**
 	 * Returns the viewer type, gene or sample 
 	 */	
 	public int getViewerType() {
@@ -2233,36 +2331,20 @@ public class LinearExpressionMapViewer extends JPanel implements IViewer {
 		}		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
-	 */
-	public void setExperiment(Experiment e) {
-		// TODO Auto-generated method stub
-		
-	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentID()
 	 */
 	public int getExperimentID() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.exptID;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
 	 */
 	public void setExperimentID(int id) {
-		// TODO Auto-generated method stub
-		
+		this.exptID = id;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExpression()
-	 */
-	public Expression getExpression() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 		
 }

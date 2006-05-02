@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMExperimentClusterCentroidsViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-03-24 15:51:53 $
+ * $Revision: 1.6 $
+ * $Date: 2006-05-02 16:57:36 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -51,8 +51,8 @@ public class SVMExperimentClusterCentroidsViewer extends ExperimentClusterCentro
     /**
      * @inheritDoc
      */
-    public SVMExperimentClusterCentroidsViewer(ExperimentClusterCentroidViewer cv, Integer exptID) {
-    	super(cv, exptID);
+    public SVMExperimentClusterCentroidsViewer(ExperimentClusterCentroidViewer cv) {
+    	super(cv);
     }    
     
     /**

@@ -40,8 +40,8 @@ public class DAMExperimentCentroidViewer extends ExperimentClusterCentroidViewer
     /**
      * @inheritDoc
      */
-    public DAMExperimentCentroidViewer(int[][] clusters, Integer exptID, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes){
-    	super(clusters, exptID, clusterIndex, means, variances, codes);
+    public DAMExperimentCentroidViewer(Experiment experiment, int[][] clusters, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes){
+    	super(experiment, clusters, clusterIndex, means, variances, codes);
     }
     
     /**

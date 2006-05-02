@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SVMDiscriminantExperimentViewer.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-03-24 15:51:53 $
+ * $Revision: 1.10 $
+ * $Date: 2006-05-02 16:57:36 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -106,7 +106,9 @@ public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer {
     
     private JPopupMenu popup;
     private int exptID;
-    
+    public SVMDiscriminantExperimentViewer(Experiment experiment, int [][] clusters, Integer NumRetainedPos, Integer NumRecruitedNeg, float [][] discriminants, int [] samplesOrder, Boolean classifyGenes) {
+    	this(experiment, clusters, NumRetainedPos.intValue(), NumRecruitedNeg.intValue(), discriminants, samplesOrder, classifyGenes.booleanValue());
+    }
     /**
      * Creates new SVMDiscriminantExperimentViewer
      */
@@ -133,31 +135,12 @@ public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer {
         numRetainedPos= NumRetainedPos;
         numRecruitedNeg= NumRecruitedNeg;
     }
-    public SVMDiscriminantExperimentViewer(Integer exptID, int [][] clusters, int NumRetainedPos, int NumRecruitedNeg, float [][] discriminants, int [] samplesOrder, boolean classifyGenes, ExperimentHeader header) {
-    	this.exptID = exptID.intValue();
-    	this.clusters = clusters;
-    	this.discriminants = discriminants;
-        this.samplesOrder = samplesOrder;
-        this.classifyGenes = classifyGenes;
-        this.isDrawAnnotations = true;
-        this.header = header;
-        setBackground(Color.white);
-        Listener listener = new Listener();
-        addMouseListener(listener);
-        addMouseMotionListener(listener);
-    
-        SVMExperimentActionListener actionListener = new SVMExperimentActionListener();
-        addMouseListener(actionListener);
-        this.popup = createJPopupMenu(actionListener);
-        numRetainedPos= NumRetainedPos;
-        numRecruitedNeg= NumRecruitedNeg;
-    }  
     /**
      * @inheritDoc
      */
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{new Integer(exptID), clusters, new Integer(numRetainedPos), new Integer(numRecruitedNeg), discriminants, samplesOrder, new Boolean(classifyGenes), header});
+    			new Object[]{this.experiment, clusters, new Integer(numRetainedPos), new Integer(numRecruitedNeg), discriminants, samplesOrder, new Boolean(classifyGenes)});
     }
     
     /**

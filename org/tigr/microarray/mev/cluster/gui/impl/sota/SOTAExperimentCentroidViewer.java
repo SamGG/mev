@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOTAExperimentCentroidViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-03-24 15:51:44 $
+ * $Revision: 1.5 $
+ * $Date: 2006-05-02 16:57:35 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -44,8 +44,8 @@ public class SOTAExperimentCentroidViewer extends ExperimentClusterCentroidViewe
      * This constructor is used by XMLEncoder/Decoder and IViewerPersistenceDelegate
      * to re-create an ExperimentClusterCentroidViewer from a saved xml file
      */
-    public SOTAExperimentCentroidViewer(int[][] clusters, Integer exptID, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes){
-    	super(clusters, exptID, clusterIndex, means, variances, codes);
+    public SOTAExperimentCentroidViewer(Experiment e, int[][] clusters, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes){
+    	super(e, clusters, clusterIndex, means, variances, codes);
     }    
     /**
      * Creates a popup menu.

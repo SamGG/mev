@@ -43,10 +43,9 @@ public class DAMExperimentClusterViewer extends ExperimentClusterViewer {
     /**
      * @inheritDoc
      */
-    public DAMExperimentClusterViewer(int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
-    		Integer offset, ExperimentClusterHeader header, Boolean hasCentroid, float[][] centroids, 
-			Dimension elementSize, Integer labelIndex, Integer exptID) {
-    		super(clusters, genesOrder, drawAnnotations, offset, header, hasCentroid, centroids, elementSize, labelIndex, exptID);
+    public DAMExperimentClusterViewer(Experiment e, int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
+    		Integer offset){
+    		super(e, clusters, genesOrder, drawAnnotations, offset);
     }
     
     /**

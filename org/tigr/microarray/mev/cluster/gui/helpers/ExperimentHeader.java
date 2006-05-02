@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: ExperimentHeader.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-03-24 15:49:54 $
+ * $Revision: 1.8 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -36,7 +36,7 @@ import org.tigr.microarray.mev.cluster.gui.IData;
  * @version 1.0
  * @author Aleksey D.Rezantsev
  */
-public class ExperimentHeader extends JPanel implements IExperimentHeader, java.io.Serializable {
+public class ExperimentHeader extends JPanel implements IExperimentHeader {
     
     
     private static final int RECT_HEIGHT = 15;
@@ -66,13 +66,13 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader, java.
      * @param clusters
      * @param samplesOrder
      * @param insets
-     */
+     
     public ExperimentHeader(int [][] clusters, int[] samplesOrder, Insets insets){
         this.clusters = clusters;
         this.samplesOrder = samplesOrder;
         this.insets = insets;
         setBackground(Color.white);
-    }
+    }*/
     
     
     protected void setIData(IData d) {this.data = d;}

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SOTAExperimentViewer.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-03-24 15:51:44 $
+ * $Revision: 1.9 $
+ * $Date: 2006-05-02 16:57:35 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -76,6 +76,7 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer {
     private boolean geneClusterViewer = true;
     private boolean useDoubleGradient = true;
     private FloatMatrix codes;
+    private SOTATreeData sotaTreeData;
     
     /**
      * Constructs a <code>SOTAExperimentViewer</code> with specified
@@ -94,6 +95,7 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer {
         if(this.clusterDivFM != null)
             this.numberOfCells = clusterDivFM.getRowDimension();
         this.centroidDataFM = codes;
+        this.sotaTreeData = sotaTreeData;
         this.factor = sotaTreeData.factor;  //from SOTA, factor sets polarity of 'displayed' distances in viewer based on metric
         this.function = sotaTreeData.function; //distance metric
         this.expViewer = new ExperimentViewer(experiment, clusters);
@@ -112,7 +114,9 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer {
         viewPanel.add(infoPanel, new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         add(viewPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
     }
-    
+    public SOTAExperimentViewer(Experiment experiment, int[][] clusters, FloatMatrix codes, FloatMatrix clusterDiv, SOTATreeData sotaTreeData, Boolean clusterGenes) {
+    	this(experiment, clusters, codes, clusterDiv, sotaTreeData, clusterGenes.booleanValue());
+    }   
     /**
      * Constructs a <code>SOTAExperimentViewer</code> with specified
      * experiment, clusters (gene indices) and codes (centroid data)
@@ -130,6 +134,7 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer {
         if(this.clusterDivFM != null)
             this.numberOfCells = clusterDivFM.getRowDimension();
         this.centroidDataFM = codes;
+        this.sotaTreeData = sotaTreeData;
         this.factor = sotaTreeData.factor;  //from SOTA, factor sets polarity of 'displayed' distances in viewer based on metric
         this.function = sotaTreeData.function; //distance metric
         if(!clusterGenes){
@@ -152,12 +157,14 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer {
     
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new",
-    			new Object[]{this.expViewer, new Float(this.factor), 
-    			new Integer(this.function), new Integer(this.numberOfCells), 
-				new Boolean(this.geneClusterViewer), new Boolean(this.useDoubleGradient), 
-				this.clusterDivFM, this.centroidDataFM, this.clusters, 
-				this.getHeaderComponent(), this.getInsets(), new Integer(this.exptID), 
-				this.codes, this.viewPanel});  
+//(Experiment experiment, int[][] clusters, FloatMatrix codes, FloatMatrix clusterDiv, SOTATreeData sotaTreeData, boolean clusterGenes) {
+    			new Object[]{this.expViewer.getExperiment(), this.clusters, this.codes, this.clusterDivFM, this.sotaTreeData, new Boolean(this.geneClusterViewer)});
+//    			new Object[]{this.expViewer, new Float(this.factor), 
+ //   			new Integer(this.function), new Integer(this.numberOfCells), 
+//				new Boolean(this.geneClusterViewer), new Boolean(this.useDoubleGradient), 
+//				this.clusterDivFM, this.centroidDataFM, this.clusters, 
+//				this.getHeaderComponent(), this.getInsets(), new Integer(this.exptID), 
+//				this.codes, this.viewPanel});  
 	}
     public SOTAExperimentViewer(IViewer exptViewer, Float factor, Integer function,
     		Integer numberOfCells, Boolean geneClusterViewer, Boolean useDoubleGradient, 

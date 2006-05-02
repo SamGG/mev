@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: QTCExperimentCentroidsViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-03-24 15:51:22 $
+ * $Revision: 1.6 $
+ * $Date: 2006-05-02 16:57:04 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -52,8 +52,8 @@ public class QTCExperimentCentroidsViewer extends ExperimentClusterCentroidsView
      * Constructs a <code>CentroidsViewer</code> for specified experiment
      * and clusters.
      */
-    public QTCExperimentCentroidsViewer(ExperimentClusterCentroidViewer cv, Integer exptID) {
-    	super(cv, exptID);
+    public QTCExperimentCentroidsViewer(ExperimentClusterCentroidViewer cv) {
+    	super(cv);
     }    
     
     /**

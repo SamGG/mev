@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOMExperimentCentroidsViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-03-24 15:51:36 $
+ * $Revision: 1.6 $
+ * $Date: 2006-05-02 16:57:04 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -51,8 +51,8 @@ public class SOMExperimentCentroidsViewer extends ExperimentClusterCentroidsView
     /**
      * @inheritDoc
      */
-    public SOMExperimentCentroidsViewer(ExperimentClusterCentroidViewer cv, Integer exptID) {
-    	super(cv, exptID);
+    public SOMExperimentCentroidsViewer(ExperimentClusterCentroidViewer cv) {
+    	super(cv);
     }    
     
     /**

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ExperimentViewer.java,v $
- * $Revision: 1.10 $
- * $Date: 2006-03-24 15:49:54 $
+ * $Revision: 1.11 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -56,8 +56,6 @@ import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
  */
 public class ExperimentViewer extends JPanel implements IViewer {
     
-    //static final long serialVersionUID = 1L;
-    
     private static final float INITIAL_MAX_VALUE = 3f;
     private static final float INITIAL_MIN_VALUE = -3f;
     private static final String NO_GENES_STR = "No Genes in Cluster!";
@@ -100,7 +98,10 @@ public class ExperimentViewer extends JPanel implements IViewer {
     protected int exptID = 0;
     
     
-    
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    		new Object[]{this.experiment, this.clusters});
+    }
     /**
      * Constructs an <code>ExperimentViewer</code> with specified
      * experiment and clusters.
@@ -186,17 +187,17 @@ public class ExperimentViewer extends JPanel implements IViewer {
     /**
      * This constructor is used to re-create an ExperimentViewer from information
      * stored in a saved analysis file by XMLEncoder.  
-     * 
-     * @param experiment
+     * @param experiment TODO
      * @param clusters
      * @param samplesOrder
      * @param drawAnnotations
      * @param header
      * @param insets
+     * @param experiment
      */
-    public ExperimentViewer(int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets, Integer exptID) {
+    public ExperimentViewer(Experiment experiment, int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets) {
 	    this.insets = insets;
-	    this.exptID = exptID.intValue();
+	    this.experiment = experiment;
 	    this.header = header;
 	    this.clusters = clusters;
 	    this.samplesOrder = samplesOrder;
@@ -214,18 +215,18 @@ public class ExperimentViewer extends JPanel implements IViewer {
     /**
      * @inheritDoc
      * 
-    public ExperimentViewer(int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets, Integer exptID) {
-    	super(clusters, samplesOrder, drawAnnotations, header, insets, exptID);
+    public ExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets) {
+    	super(e, clusters, samplesOrder, drawAnnotations, header, insets);
     } 
     */
     
     /**
      * @inheritdoc
      */
-    public Expression getExpression(){
-    	return new Expression(this, this.getClass(), "new",
-				new Object[]{this.clusters, this.samplesOrder, new Boolean(this.isDrawAnnotations), this.header, this.insets, new Integer(this.exptID)});  
-    }
+//    public Expression getExpression(){
+//    	return new Expression(this, this.getClass(), "new",
+//				new Object[]{this.clusters, this.samplesOrder, new Boolean(this.isDrawAnnotations), this.header, this.insets, new Integer(this.exptID)});  
+//    }
     
     public void setExperiment(Experiment e) {
     	this.experiment = e;

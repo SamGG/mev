@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: TtestExperimentViewer.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-03-24 15:52:09 $
+ * $Revision: 1.9 $
+ * $Date: 2006-05-02 16:57:56 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -39,7 +39,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileFilter;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
 
-public class TtestExperimentViewer extends ExperimentViewer implements java.io.Serializable {
+public class TtestExperimentViewer extends ExperimentViewer {
 
     private JPopupMenu popup;
     private Vector tValues, rawPValues, adjPValues, dfValues, meansA, meansB, sdA, sdB, oneClassMeans, oneClassSDs;
@@ -70,22 +70,22 @@ public class TtestExperimentViewer extends ExperimentViewer implements java.io.S
     /**
      * @inheritDoc
      */ 
-    public TtestExperimentViewer(int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets, Integer exptID,
+    public TtestExperimentViewer(Experiment e, int[][] clusters, 
     		Integer tTestDesign, Vector oneClassMeans, Vector oneClassSDs, Vector meansA, Vector meansB, Vector sdA, Vector sdB, Vector rawPValues, Vector adjPValues, Vector tValues, Vector dfValues) {
-    	super(clusters, samplesOrder, drawAnnotations, header, insets, exptID);
+    	super(e, clusters);
         Listener listener = new Listener();
         this.popup = createJPopupMenu(listener);
-	        this.tTestDesign = tTestDesign.intValue();
-	        this.oneClassMeans = oneClassMeans;
-	        this.oneClassSDs = oneClassSDs;        
-	        this.rawPValues = rawPValues;
-	        this.adjPValues = adjPValues;
-	        this.tValues = tValues;
-	        this.dfValues = dfValues;
-	        this.meansA = meansA;
-	        this.meansB = meansB;
-	        this.sdA = sdA; 
-	        this.sdB =sdB;        
+        this.tTestDesign = tTestDesign.intValue();
+        this.oneClassMeans = oneClassMeans;
+        this.oneClassSDs = oneClassSDs;        
+        this.rawPValues = rawPValues;
+        this.adjPValues = adjPValues;
+        this.tValues = tValues;
+        this.dfValues = dfValues;
+        this.meansA = meansA;
+        this.meansB = meansB;
+        this.sdA = sdA; 
+        this.sdB =sdB;        
         getContentComponent().addMouseListener(listener);
         getHeaderComponent().addMouseListener(listener);        
      }
@@ -94,7 +94,7 @@ public class TtestExperimentViewer extends ExperimentViewer implements java.io.S
     	Object[] superExpressionArgs = super.getExpression().getArguments();
     	
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{superExpressionArgs[0], superExpressionArgs[1], superExpressionArgs[2], superExpressionArgs[3], superExpressionArgs[4], superExpressionArgs[5], new Integer(this.tTestDesign), this.oneClassMeans, this.oneClassSDs, this.meansA, this.meansB, this.sdA, this.sdB, this.rawPValues, this.adjPValues, this.tValues, this.dfValues});
+    			new Object[]{superExpressionArgs[0], superExpressionArgs[1], /*superExpressionArgs[2], superExpressionArgs[3], superExpressionArgs[4], superExpressionArgs[5], */new Integer(this.tTestDesign), this.oneClassMeans, this.oneClassSDs, this.meansA, this.meansB, this.sdA, this.sdB, this.rawPValues, this.adjPValues, this.tValues, this.dfValues});
     }
          
      /**

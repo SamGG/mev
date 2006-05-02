@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMTrainViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-03-24 15:51:53 $
+ * $Revision: 1.8 $
+ * $Date: 2006-05-02 16:57:36 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -53,9 +53,8 @@ public class SVMTrainViewer extends SVMResultViewer {
     	super(expt);
     	init(weights, classifyGenes, data);
     }   
-    public SVMTrainViewer(Integer exptID, float[] weights, Boolean classifyGenes, SVMData data){
-    	super(exptID.intValue());
-    	init(weights, classifyGenes.booleanValue(), data);
+    public SVMTrainViewer(Experiment experiment, float[] weights, Boolean classifyGenes, SVMData data){
+    	this(experiment, weights, classifyGenes.booleanValue(), data);
     }
     /**
      * @inheritDoc

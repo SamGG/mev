@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: RelNetExperimentViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-03-24 15:51:24 $
+ * $Revision: 1.6 $
+ * $Date: 2006-05-02 16:57:04 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -30,7 +30,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
-public class RelNetExperimentViewer extends ExperimentViewer implements java.io.Serializable {
+public class RelNetExperimentViewer extends ExperimentViewer {
 
     private static final String SET_COLOR_CMD = "set-color-cmd";
     private static final String SET_DEF_COLOR_CMD = "set-def-color-cmd";
@@ -61,8 +61,8 @@ public class RelNetExperimentViewer extends ExperimentViewer implements java.io.
      * @param header
      * @param insets
      */
-    public RelNetExperimentViewer(int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets, Integer exptID) {
-    	super(clusters, samplesOrder, drawAnnotations, header, insets, exptID);
+    public RelNetExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets) {
+    	super(e, clusters, samplesOrder, drawAnnotations, header, insets);
     }
     
     /**

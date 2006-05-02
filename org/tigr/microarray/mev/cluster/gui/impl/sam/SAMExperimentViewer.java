@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SAMExperimentViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-03-24 15:51:28 $
+ * $Revision: 1.7 $
+ * $Date: 2006-05-02 16:57:04 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -58,16 +58,16 @@ public class SAMExperimentViewer extends ExperimentViewer {
     /**
      * @inheritDoc
      */ 
-    public SAMExperimentViewer(int[][] clusters, int[] samplesOrder, Boolean drawAnnotations, ExperimentHeader header, Insets insets, Integer exptID,
+    public SAMExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder, Boolean drawAnnotations, ExperimentHeader header, Insets insets, Integer exptID,
     		Integer studyDesign, float[] dValues, float[] rValues, float[] foldChangeArray, float[] qLowestFDR, Boolean calculateQLowestFDR) {
-    	super(clusters, samplesOrder, drawAnnotations.booleanValue(), header, insets, exptID);
+    	super(e, clusters, samplesOrder, drawAnnotations.booleanValue(), header, insets);
     	initialize(studyDesign.intValue(), dValues, rValues, foldChangeArray, qLowestFDR, calculateQLowestFDR.booleanValue());
     } 
     
     public Expression getExpression(){
     	Object[] temp = super.getExpression().getArguments();
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], 
+    			new Object[]{temp[0], temp[1],
     			new Integer(studyDesign), dValues, rValues, foldChangeArray, qLowestFDR, new Boolean(calculateQLowestFDR)});
     }
 

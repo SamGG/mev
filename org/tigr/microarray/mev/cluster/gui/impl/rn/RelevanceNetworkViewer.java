@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: RelevanceNetworkViewer.java,v $
- * $Revision: 1.10 $
- * $Date: 2006-03-24 20:13:35 $
+ * $Revision: 1.11 $
+ * $Date: 2006-05-02 16:57:04 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -153,45 +153,9 @@ public class RelevanceNetworkViewer extends JPanel implements IViewer, Scrollabl
         setPreferredSize(new Dimension(300, 300));
         this.exptID = experiment.getId();
     }
-    
-    /**
-     * Creates a new RelevanceNetworkViewer.  Used to restore the state of a
-     * viewer from a saved file.
-     * @author eleanorahowe
-     * 
-     * @param isGenes
-     * @param clusters
-     * @param weights
-     * @param indices
-     * @param exptID
-     */
-    public RelevanceNetworkViewer(Boolean isGenes, int[][] clusters, float[][] weights, int[] indices, Integer exptID){
-        setLayout(null);
-        setBackground(Color.white);
-        setFont(new Font("monospaced", Font.BOLD, this.elementSize.height));
-        Listener listener = new Listener();
-        this.popup = createJPopupMenu(listener);
-        this.tipWindow = createTipWindow();
-        getContentComponent().addMouseListener(listener);
-        getContentComponent().addMouseMotionListener(listener);
-
-        this.isGenes = isGenes.booleanValue();
-        this.exptID = exptID.intValue();
-        this.clusters = clusters;
-        this.weights = weights;
-        this.weight_min = getWeightsMinValue(weights);
-        this.weight_scale = COLORS_DEEP/(getWeightsMaxValue(weights)-this.weight_min);
-        this.indices = indices;
-        RelevanceNetworkLayout layout = new RelevanceNetworkLayout();
-        this.coords = layout.doLayout(clusters, weights, RelevanceNetworkLayout.CIRCULAR_LAYOUT);
-        this.selected = createSelected(clusters);
-        this.draw = new boolean[clusters.length];
-        setPreferredSize(new Dimension(300, 300));
-    }
-    
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{new Boolean(this.isGenes), this.clusters, this.weights, this.indices, new Integer(this.exptID)});
+    			new Object[]{new Boolean(this.isGenes), this.experiment, this.clusters, this.weights, this.indices});
     }
     public Color[] createPalette(Color color1, Color color2, int deep) {
         //BufferedImage image = new BufferedImage(deep, 1, BufferedImage.TYPE_3BYTE_BGR);

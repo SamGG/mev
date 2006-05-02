@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMExperimentClusterViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-03-24 15:51:08 $
+ * $Revision: 1.7 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -48,15 +48,15 @@ public class PTMExperimentClusterViewer extends ExperimentClusterViewer {
     	this.auxData = auxData;         
     	getContentComponent().addMouseListener(listener);
     	getHeaderComponent().addMouseListener(listener);
+    	setBackground(Color.red);
     }
     
     /**
      * @inheritDoc
      */
-    public PTMExperimentClusterViewer(int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
-    		Integer offset, ExperimentClusterHeader header, Boolean hasCentroid, float[][] centroids, 
-			Dimension elementSize, Integer labelIndex, Integer exptID) {
-    		super(clusters, genesOrder, drawAnnotations, offset, header, hasCentroid, centroids, elementSize, labelIndex, exptID);
+    public PTMExperimentClusterViewer(Experiment e, int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
+    		Integer offset){
+    		super(e, clusters, genesOrder, drawAnnotations, offset);
     }
     
     /**

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: OWAInfoViewer.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-03-24 15:51:02 $
+ * $Revision: 1.9 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -30,7 +30,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
  * @author  nbhagaba
  * @version 
  */
-public class OWAInfoViewer extends ViewerAdapter implements java.io.Serializable {
+public class OWAInfoViewer extends ViewerAdapter {
     
     private JComponent header;
     private JTextArea  content;

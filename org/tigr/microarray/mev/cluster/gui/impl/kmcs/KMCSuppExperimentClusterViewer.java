@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: KMCSuppExperimentClusterViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-03-24 15:50:54 $
+ * $Revision: 1.7 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -55,10 +55,9 @@ public class KMCSuppExperimentClusterViewer extends ExperimentClusterViewer {
      * @param header
      * @param exptID
      */
-    public KMCSuppExperimentClusterViewer(int[][] clusters, int[] genesOrder, Boolean drawAnnotations, Integer offset, ExperimentClusterHeader header, Boolean hasCentroid, float[][] centroids, Dimension elementSize, Integer labelIndex, Integer exptID) {
-    	super(clusters, genesOrder, drawAnnotations, offset, header, hasCentroid, centroids, elementSize, labelIndex, exptID);
+    public KMCSuppExperimentClusterViewer(Experiment e, int[][] clusters, int[] genesOrder, Boolean drawAnnotations, Integer offset){//, ExperimentClusterHeader header, Boolean hasCentroid, float[][] centroids, Dimension elementSize, Integer labelIndex) {
+    	super(e, clusters, genesOrder, drawAnnotations, offset);
     }
-    
     
     /**
      * Creates a popup menu.

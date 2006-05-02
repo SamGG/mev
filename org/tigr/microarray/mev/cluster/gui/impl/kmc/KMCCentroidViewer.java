@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: KMCCentroidViewer.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-03-24 15:50:49 $
+ * $Revision: 1.9 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -24,7 +24,7 @@ import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 
-public class KMCCentroidViewer extends CentroidViewer implements java.io.Serializable {
+public class KMCCentroidViewer extends CentroidViewer {
     
     private JPopupMenu popup;
     
@@ -47,8 +47,8 @@ public class KMCCentroidViewer extends CentroidViewer implements java.io.Seriali
      * @param clusters
      * @param variances
      */
-    public KMCCentroidViewer(int[][] clusters, float[][] variances, float[][] means, float[][] codes, Integer exptID) {
-    	super(clusters, variances, means, codes, exptID);
+    public KMCCentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes) {
+    	super(e, clusters, variances, means, codes);
     }
        
     /**

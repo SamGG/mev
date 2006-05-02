@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMResultViewer.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-03-24 15:51:53 $
+ * $Revision: 1.9 $
+ * $Date: 2006-05-02 16:57:36 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -41,21 +41,6 @@ abstract class SVMResultViewer extends JPanel implements IViewer {
     public SVMResultViewer(Experiment e) {
         this.experiment = e;
         this.exptID = experiment.getId();
-        init();
-    }
-    public SVMResultViewer(int exptID){
-    	this.exptID = exptID;
-    	init();
-    }
-    /**
-     * @inheritDoc
-     * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExpression()
-     */
-    public Expression getExpression(){
-    	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{new Integer(exptID)});
-    }
-    private void init(){
         this.setAutoscrolls(true);
         this.setLayout(new GridBagLayout());
         resultTable = new JTable();
@@ -70,6 +55,14 @@ abstract class SVMResultViewer extends JPanel implements IViewer {
         resultTable.addMouseListener(listener);
         resultTable.addMouseMotionListener(listener);
         MyPopup.add(menuItem1);
+    }
+    /**
+     * @inheritDoc
+     * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExpression()
+     */
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{this.experiment});
     }
 
     /*

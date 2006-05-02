@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLViewer.java,v $
- * $Revision: 1.15 $
- * $Date: 2006-03-24 15:50:40 $
+ * $Revision: 1.16 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -65,8 +65,6 @@ import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.util.FloatMatrix;
 
 public class HCLViewer extends JPanel implements IViewer {
-
-    public static final long serialVersionUID = 202006080002L;
 
     protected static final String STORE_CLUSTER_CMD = "store-cluster-cmd";
     protected static final String LAUNCH_NEW_SESSION_CMD = "launch-new-session-cmd";
@@ -166,14 +164,19 @@ public class HCLViewer extends JPanel implements IViewer {
         addComponents(this.sampleTree, this.genesTree, this.expViewer.getContentComponent(), this.colorBar, this.annotationBar);
         this.popup = createJPopupMenu(listener);
     }
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new",
+				new Object[]{this.experiment, this.createDefaultFeatures(this.experiment), this.genes_result, this.samples_result, this.sampleClusters, new Boolean(this.isExperimentCluster), this.genesTree, this.sampleTree, new Integer(this.offset), (ExperimentViewer)this.expViewer});
+//    			new Object[]{this.experiment, this.features, this.genes_result, this.samples_result});
+    }
     /**
      * Constructs a <code>HCLViewer</code> for specified results
      * This is the XMLEncoder/Decoder constructor
      */
-    public HCLViewer(Integer exptID, int[] features, HCLTreeData genesResult, HCLTreeData samplesResult, int [][] sampleClusters, boolean isExperimentCluster, HCLTree genesTree, HCLTree sampleTree, Integer offset, ExperimentViewer expViewer) {
+    public HCLViewer(Experiment e, int[] features, HCLTreeData genesResult, HCLTreeData samplesResult, int [][] sampleClusters, boolean isExperimentCluster, HCLTree genesTree, HCLTree sampleTree, Integer offset, ExperimentViewer expViewer) {
         setLayout(new GridBagLayout());
         setBackground(Color.white);
-        this.exptID = exptID.intValue();
+        //this.exptID = exptID.intValue();
         this.offset = offset.intValue();
         this.expViewer = expViewer;
         listener = new Listener();
@@ -185,12 +188,9 @@ public class HCLViewer extends JPanel implements IViewer {
         this.samples_result = samplesResult;
         this.genesTree = genesTree;
         this.sampleTree = sampleTree;
+        setExperiment(e);
     }
-    public Expression getExpression(){
-    	return new Expression(this, this.getClass(), "new",
-				new Object[]{new Integer(this.exptID), this.createDefaultFeatures(this.experiment), this.genes_result, this.samples_result, this.sampleClusters, new Boolean(this.isExperimentCluster), this.genesTree, this.sampleTree, new Integer(this.offset), (ExperimentViewer)this.expViewer});
-    
-    }
+
     
     /**
      * Constructs a <code>HCLViewer</code> for specified results

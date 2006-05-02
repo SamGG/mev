@@ -123,8 +123,7 @@ public class PCA2DViewer extends JPanel implements IViewer {
         addMouseMotionListener(graphListener);        
     }    
     /** Creates a new instance of PCA2DViewer */
-    public PCA2DViewer(Integer exptID, FloatMatrix UMatrix, Boolean geneViewer, Integer axis1, Integer axis2) {
-        this.exptID = exptID.intValue();
+    public PCA2DViewer(Experiment e, FloatMatrix UMatrix, Boolean geneViewer, Integer axis1, Integer axis2) {
     	this.UMatrix = UMatrix;
         this.axis1 = axis1.intValue();
         this.axis2 = axis2.intValue();
@@ -141,14 +140,15 @@ public class PCA2DViewer extends JPanel implements IViewer {
     
         GraphListener graphListener = new GraphListener();
         addMouseListener(graphListener);
-        addMouseMotionListener(graphListener);        
+        addMouseMotionListener(graphListener);  
+        setExperiment(e);
     }     
     /**
      * @inheritDoc
      */
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{new Integer(exptID), UMatrix, new Boolean(geneViewer), new Integer(axis1), new Integer(axis2)});
+    			new Object[]{this.experiment, UMatrix, new Boolean(geneViewer), new Integer(axis1), new Integer(axis2)});
     }
    
     

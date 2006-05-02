@@ -103,7 +103,7 @@ public class USCGUI implements IClusterGUI {
 		USCClassDialog classDialog = new USCClassDialog( framework.getFrame() );
 		
 		if( classDialog.showModal() != JOptionPane.OK_OPTION ) {
-			System.out.println( "Cancelled out of USCClassDialog" );
+//			System.out.println( "Cancelled out of USCClassDialog" );
 			return null;
 		}
 		

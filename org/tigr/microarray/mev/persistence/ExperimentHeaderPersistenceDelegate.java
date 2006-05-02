@@ -26,8 +26,8 @@ public class ExperimentHeaderPersistenceDelegate extends PersistenceDelegate {
 	protected Expression instantiate(Object oldInstance, Encoder encoder) {
 		ExperimentHeader eh = (ExperimentHeader) oldInstance;
 		Expression e = new Expression((ExperimentHeader) oldInstance, oldInstance.getClass(), "new",
-				new Object[]{eh.getClusters(), eh.getSamplesOrder(), eh.getInsets()});
-			
+//				new Object[]{eh.getClusters(), eh.getSamplesOrder(), eh.getInsets()});
+				new Object[]{eh.getExperiment(), eh.getClusters(), eh.getSamplesOrder()});
 		return e;
 	}
 

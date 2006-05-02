@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: RNElementSeedInfoViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-03-24 15:51:24 $
+ * $Revision: 1.6 $
+ * $Date: 2006-05-02 16:57:04 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -29,8 +29,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
  * A viewer for Relevance Networks seed information.  
  * 
  */
-public class RNElementSeedInfoViewer extends ViewerAdapter implements java.io.Serializable {
-//    public static final long serialVersionUID = 202014030001L;
+public class RNElementSeedInfoViewer extends ViewerAdapter {
     
     private JComponent header;
     private JTextArea  content;
