@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: Manager.java,v $
- * $Revision: 1.12 $
- * $Date: 2006-03-24 15:49:44 $
+ * $Revision: 1.13 $
+ * $Date: 2006-05-02 20:04:12 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -399,7 +399,7 @@ public class Manager {//A class to keep track of viewers
         //mav.systemEnable(TMEV.DB_LOGIN);
         mav.getFrame().setSize(1150, 700);
         if(clusterLabel != null)
-            mav.getFrame().setTitle("TIGR Multiple Array Viewer, "+clusterLabel);
+            mav.getFrame().setTitle("Multiple Array Viewer, "+clusterLabel);
         Manager.addComponent(mav);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         mav.getFrame().setLocation((screenSize.width - mav.getFrame().getSize().width)/2, (screenSize.height - mav.getFrame().getSize().height)/2);
@@ -415,7 +415,7 @@ public class Manager {//A class to keep track of viewers
         //mav.systemEnable(TMEV.DB_LOGIN);
         mav.getFrame().setSize(1150, 700);
         if(clusterLabel != null)
-            mav.getFrame().setTitle("TIGR Multiple Array Viewer, "+clusterLabel);
+            mav.getFrame().setTitle("Multiple Array Viewer, "+clusterLabel);
         Manager.addComponent(mav);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         mav.getFrame().setLocation((screenSize.width - mav.getFrame().getSize().width)/2, (screenSize.height - mav.getFrame().getSize().height)/2);
