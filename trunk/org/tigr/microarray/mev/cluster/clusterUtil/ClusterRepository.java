@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterRepository.java,v $
- * $Revision: 1.13 $
- * $Date: 2006-03-24 15:49:52 $
+ * $Revision: 1.14 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -33,8 +33,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 /** The ClusterRepository contains ClusterList objects created for
  * holding saved clusters particular analysis results.
  */
-public class ClusterRepository extends Vector implements java.io.Serializable {
-//    public static final long serialVersionUID = 1000102010203030001L;
+public class ClusterRepository extends Vector {
     
     public static final int GENE_CLUSTER = 0;
     public static final int EXPERIMENT_CLUSTER = 1;

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: KMCSuppExperimentCentroidsViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-03-24 15:50:54 $
+ * $Revision: 1.7 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -55,8 +55,8 @@ public class KMCSuppExperimentCentroidsViewer extends ExperimentClusterCentroids
      * @param eccv the ExperimentClusterCentroidViewer associated with this object.
      * @param exptID the ID number of the Experiment object associated with this viewer
      */
-    public KMCSuppExperimentCentroidsViewer(ExperimentClusterCentroidViewer eccv, Integer exptID) {
-    	super(eccv, exptID);
+    public KMCSuppExperimentCentroidsViewer(ExperimentClusterCentroidViewer eccv) {
+    	super(eccv);
     }
     
     /**

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: CentroidExperimentHeader.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-03-24 15:49:54 $
+ * $Revision: 1.8 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -41,8 +41,7 @@ import org.tigr.util.FloatMatrix;
 /**
  *  Creates a header with a centroid vector image and centroid label
  */
-public class CentroidExperimentHeader extends JPanel implements java.io.Serializable {
-//    public static final long serialVersionUID = 201010001L;    
+public class CentroidExperimentHeader extends JPanel {
     
     private String vectorString;
     private CentroidVectorPanel centroidVectorPanel;

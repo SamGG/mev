@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ClusterList.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-03-24 15:49:52 $
+ * $Revision: 1.8 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -20,7 +20,7 @@ import java.util.Vector;
  *
  */
 public class ClusterList extends Vector {        
-    //public static final long serialVersionUID = 1000102010203020001L;
+	
     /** a String identifing the algorithm origin.
      * (possibly the origin will not be an algorithm)
      */    

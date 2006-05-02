@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: QTCCentroidViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-03-24 15:51:22 $
+ * $Revision: 1.6 $
+ * $Date: 2006-05-02 16:57:04 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -54,8 +54,8 @@ public class QTCCentroidViewer extends CentroidViewer {
      * @param codes
      * @param id
      */
-    public QTCCentroidViewer(int[][] clusters, float[][] variances, float[][] means, float[][] codes, Integer id) {
-    	super(clusters, variances, means, codes, id);
+    public QTCCentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes) {
+    	super(e, clusters, variances, means, codes);
     }
     
     /**

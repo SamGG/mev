@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: ExperimentClusterCentroidsViewer.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-03-24 15:49:54 $
+ * $Revision: 1.10 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -29,8 +29,7 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 
 
-public class ExperimentClusterCentroidsViewer extends JPanel implements IViewer, java.io.Serializable {
-//    public static final long serialVersionUID = 201060001L;
+public class ExperimentClusterCentroidsViewer extends JPanel implements IViewer {
     private int exptID = 0;
     
     /** Wrapped experiment cluster centroid viewer */
@@ -51,17 +50,15 @@ public class ExperimentClusterCentroidsViewer extends JPanel implements IViewer,
      * Constructs a <code>CentroidsViewer</code> for specified experiment
      * and clusters.
      */
-    public ExperimentClusterCentroidsViewer(ExperimentClusterCentroidViewer cv, Integer exptID) {
+    public ExperimentClusterCentroidsViewer(ExperimentClusterCentroidViewer cv) {
         this.centroidViewer = cv;
-        this.exptID = exptID.intValue();
-        cv.setExperimentID(exptID.intValue());
         setBackground(Color.white);
         setFont(new Font("monospaced", Font.BOLD, 10));
-    }
+    } 
     //EH begin state-saving additions
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new",
-				new Object[]{centroidViewer, new Integer(exptID)});  
+				new Object[]{centroidViewer});  
 	
     }
     /*
@@ -69,13 +66,12 @@ public class ExperimentClusterCentroidsViewer extends JPanel implements IViewer,
     /**
      * @inheritDoc
      *
-    public ExperimentClusterCentroidsViewer(ExperimentClusterCentroidViewer cv, Integer exptID) {
-    	super(cv, exptID);
+    public ExperimentClusterCentroidsViewer(ExperimentClusterCentroidViewer cv) {
+    	super(cv);
     }
     */
-    //Need this method so IViewerPersistenceDelegate can get arguments to create the constructor.
-//    public ExperimentClusterCentroidViewer getExperimentClusterCentroidViewer(){return centroidViewer;}
-	/* (non-Javadoc)
+
+    /* (non-Javadoc)
 	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
 	 */
 	public void setExperiment(Experiment e) {

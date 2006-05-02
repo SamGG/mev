@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: ExperimentClusterCentroidViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-03-24 15:49:54 $
+ * $Revision: 1.8 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -38,8 +38,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
 
 
-public class ExperimentClusterCentroidViewer extends JPanel implements IViewer, java.io.Serializable {
-//    public static final long serialVersionUID = 201070001L;
+public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
     
     public static final Color DEF_CLUSTER_COLOR = Color.lightGray;
     protected static final Color bColor = new Color(0, 0, 128);
@@ -91,31 +90,26 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer, 
     /**
      * This constructor is used by XMLEncoder/Decoder and IViewerPersistenceDelegate
      * to re-create an ExperimentClusterCentroidViewer from a saved xml file
+     * @param e 
      */
-    public ExperimentClusterCentroidViewer(int[][] clusters, Integer exptID, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes){
+    public ExperimentClusterCentroidViewer(Experiment e, int[][] clusters, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes){
     	this.clusters = clusters;
     	this.clusterIndex = clusterIndex.intValue();
-    	this.exptID = exptID.intValue();
+    	this.experiment = e;
+        numberOfGenes = experiment.getNumberOfGenes();
         setBackground(Color.white);
         setFont(new Font("monospaced", Font.BOLD, 10));
         this.means = means;
         this.variances = variances;
         this.codes = codes;
+        this.maxExperimentValue = experiment.getMaxAbsValue();
         this.yRangeOption = ExperimentClusterCentroidViewer.USE_EXPERIMENT_MAX;
     }
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new",
-			new Object[]{this.clusters, new Integer(this.exptID), new Integer(this.clusterIndex), this.means, this.variances, this.codes});  
+    			new Object[]{this.experiment, this.clusters, new Integer(this.clusterIndex), this.means, this.variances, this.codes});  
     }
-    /*
-     copy-paste this constructor into descendent classes
-    /**
-     * @inheritDoc
-     *
-    public ExperimentClusterCentroidViewer(int[][] clusters, Integer exptID, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes){
-    	super(clusters, exptID, clusterIndex, means, variances, codes);
-    }
-    */
+
     
     /**
      * Constructs a <code>ExperimentClusterCentroidViewer</code> for specified
@@ -125,11 +119,10 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer, 
      * @param clusters the array of clusters.
      */
     public ExperimentClusterCentroidViewer(Experiment experiment, int[][] clusters) {
-        if (experiment == null) {
+    	if (experiment == null) {
             throw new IllegalArgumentException("experiment == null");
         }
         this.experiment = experiment;
-        this.exptID = this.experiment.getId();
         numberOfGenes = experiment.getNumberOfGenes();
         this.clusters = clusters;
         setBackground(Color.white);
@@ -137,7 +130,7 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer, 
         this.maxExperimentValue = experiment.getMaxAbsValue();
         this.yRangeOption = ExperimentClusterCentroidViewer.USE_EXPERIMENT_MAX;
     }
-    
+
     /**
      * Determines whether any clusters are set
      */

@@ -69,6 +69,15 @@ public class LinearExpressionGraphViewer extends JPanel implements IViewer {
 	private boolean showRefLine = false;
 	private int exptID = 0;
 	
+	//EH state-saving additions
+	String chrID;
+	String[] sortedLocusIDs;
+	int[] sortedStartArray, sortedEndArray;
+	Experiment fullExperiment, reducedExperiment;
+	int[][] replicates;
+	String locusIDFieldName;
+	
+	
 	/**
 	 * Class: LinearExpressionGraphViewer Description: Provides a multiple sample
 	 * expression view that is organized by chromosomal coordinates Each
@@ -95,85 +104,45 @@ public class LinearExpressionGraphViewer extends JPanel implements IViewer {
 	 * @param chrID
 	 *            Identifies the chromosome in view.
 	 */		
-	public LinearExpressionGraphViewer(IData idata, Experiment fullExperiment,
+	public LinearExpressionGraphViewer(Experiment fullExperiment,
 			Experiment reducedExperiment, String[] sortedLocusIDs, int [] sortedStartArray,
 		    int[] sortedEndArray, int [][] replicates,
 			String chrID, String locusIDFieldName) {
 
 		super(new GridBagLayout());
 		
-			this.idata = idata;
-			numberOfSamples = idata.getFeaturesCount();
-			graph = new Graph(fullExperiment, reducedExperiment.getMatrix().A, chrID, sortedLocusIDs, sortedStartArray, sortedEndArray);
-			table = new SampleTable();
-			
-			//assign intial color scheme
-			graph.setSampleLineColors(table.lineColorVector);
-			graph.setSampleMarkerColors(table.markerColorVector);
+			this.numberOfSamples = fullExperiment.getNumberOfSamples();
 			
 			splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, graph, table);
-			//splitPane.setPreferredSize(new Dimension(500,500));
 			splitPane.setResizeWeight(1.0);
 			splitPane.setDividerLocation(0.7);
-			//splitPane.validate();
 			
 			Listener listener = new Listener();
 			popup = contructMenu(listener);
-			graph.getGraphComponent().addMouseListener(listener);
-			graph.getGraphComponent().enableOverlay(overlay);	
-			updateViewerModeView();
+			
+			//EH state-saving
+			this.chrID = chrID;
+			this.sortedLocusIDs = sortedLocusIDs;
+			this.sortedStartArray = sortedStartArray;
+			this.sortedEndArray = sortedEndArray;
+			this.replicates = replicates;
+			this.locusIDFieldName = locusIDFieldName;
+			this.fullExperiment = fullExperiment;
+			this.reducedExperiment = reducedExperiment;
 	}
-	
+
 	/**
-	 * EH State-saving constructor
-	 *
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExpression()
 	 */
-	public LinearExpressionGraphViewer(){
-		
+
+	public Expression getExpression(){
+		return new Expression(this, this.getClass(), "new", 
+			new Object[]{this.fullExperiment, this.reducedExperiment, 
+				this.sortedLocusIDs, this.sortedStartArray,
+				this.sortedEndArray, this.replicates, 
+				this.chrID, this.locusIDFieldName}); 
 	}
 	
-	//TEST CONSTRUCTOR
-	
-	/**
-	 * Contructs a LinearExpressionGraphViewer
-	 * @param sampleNames sample names
-	 * @param sampleNameHeader header of sample names
-	 * @param fullExperiment experiment will all values
-	 * @param reducedExperiment experiment with collapsed locus replicates
-	 * @param sortedLocusIDs sorted locus id array
-	 * @param sortedStartArray sorted start array
-	 * @param sortedEndArray sorted end array
-	 * @param replicates replicates, rows indexed by locus order, each
-	 *     row has one or more indexes to the experiment for the in-slide reps.
-	 * @param chrID chromosome id field name
-	 * @param locusIDFieldName locus id field name
-	 *//*
-	public LinearExpressionGraphViewer(String [][] sampleNames, String [] sampleNameHeader, Experiment fullExperiment,
-			Experiment reducedExperiment, String [] sortedLocusIDs, int [] sortedStartArray,
-		    int[] sortedEndArray, int [][] replicates,
-			String chrID, String locusIDFieldName) {
-
-			super(new GridBagLayout());
-		
-			numberOfSamples = sampleNames.length;
-			graph = new Graph(fullExperiment, reducedExperiment.getMatrix().A, chrID, sortedLocusIDs, sortedStartArray, sortedEndArray);
-			table = new SampleTable(sampleNames, sampleNameHeader);
-			
-			//assign intial color scheme
-			graph.setSampleLineColors(table.lineColorVector);
-			graph.setSampleMarkerColors(table.markerColorVector);
-			
-			splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, graph, table);
-			splitPane.setDividerLocation(0.7);
-			splitPane.setResizeWeight(1.0);
-
-			Listener listener = new Listener();
-			popup = contructMenu(listener);
-			graph.getGraphComponent().addMouseListener(listener);
-			graph.getGraphComponent().enableOverlay(overlay);				
-			updateViewerModeView();
-	}
-*/
 	/**
 	 * Updates the viewer to display the display mode
 	 *
@@ -252,7 +221,9 @@ public class LinearExpressionGraphViewer extends JPanel implements IViewer {
 	 * returns the header component
 	 */
 	public JComponent getHeaderComponent() {
+		if(graph != null)
 		return graph.getGraphComponent().getHeaderComponent();
+		return new LEMGraphHeader();
 	}
 
 	/**
@@ -275,6 +246,18 @@ public class LinearExpressionGraphViewer extends JPanel implements IViewer {
 	 */
 	public void onSelected(IFramework framework) {
 		this.framework = framework;
+		this.idata = framework.getData();
+		if(table == null)
+			table = new SampleTable();
+		
+		if(graph == null){
+			graph = new Graph(fullExperiment, reducedExperiment.getMatrix().A, chrID, sortedLocusIDs, sortedStartArray, sortedEndArray);
+			graph.setSampleLineColors(table.lineColorVector);
+			graph.setSampleMarkerColors(table.markerColorVector);
+			graph.getGraphComponent().addMouseListener(new Listener());
+			graph.getGraphComponent().enableOverlay(overlay);	
+		}	
+		updateViewerModeView();
 		graph.onSelected(framework);
 	}
 
@@ -485,85 +468,6 @@ public class LinearExpressionGraphViewer extends JPanel implements IViewer {
 			setSize(dim);
 		}
 		
-		//Initial Test Constructor
-		
-		/**
-		public SampleTable(String [][] sampleNames, String [] sampleNameHeader) {
-			super(new GridBagLayout());
-			//for generation of color parings
-			lineColorVector = new Vector();
-			lineColorVector.add(Color.magenta);
-			lineColorVector.add(new Color(0, 143, 0));
-			lineColorVector.add(Color.cyan);
-			lineColorVector.add(Color.blue);
-			lineColorVector.add(Color.red);
-			lineColorVector.add(Color.black);
-			lineColorVector.add(Color.pink);
-			lineColorVector.add(Color.gray);
-			lineColorVector.add(Color.green);
-			numberOfLineColors = lineColorVector.size();
-			
-			markerColorVector = new Vector();
-			markerColorVector.add(Color.black);
-			markerColorVector.add(Color.blue);
-			markerColorVector.add(Color.green);
-			numberOfMarkerColors = markerColorVector.size();
-
-			//get sample names
-			Vector headerNames = new Vector();
-			for(int i = 0; i < sampleNameHeader.length; i++)
-				headerNames.add(sampleNameHeader[i]);
-											
-			int numSampleAnnFields = headerNames.size();
-			//append additional columns
-			headerNames.add("Line Color");
-			headerNames.add("Marker Color");			
-			headerNames.add("Key");
-
-			int numberOfSamples = sampleNames.length;
-			Object [][] data = new Object[numberOfSamples][headerNames.size()];
-			
-			table = new JTable();
-			
-			for(int i = 0; i < data.length; i++) {
-				for(int j = 0; j < data[0].length; j++) {
-					if(j < numSampleAnnFields)
-						data[i][j] = sampleNames[i][j];
-					else {
-						if(j == data[0].length-3)
-							data [i][j] = (Color)lineColorVector.get(i%numberOfLineColors);
-						else if(j == data[0].length-2)
-							data [i][j] = (Color)markerColorVector.get(i%numberOfMarkerColors);
-						else if(j == data[0].length-1) {
-							data [i][j] = new LinePreview((Color)data[i][j-1], (Color)data[i][j-2], table.getSelectionBackground());
-						}							
-					}
-				}
-			}
-									
-			model = new SampleTableModel(data, headerNames);
-			table = new JTable(model);
-			table.setRowHeight(25);
-			LEGTableCellRenderer renderer = new LEGTableCellRenderer();
-			table.setDefaultRenderer(Color.class, renderer);
-			table.setDefaultRenderer(LinePreview.class, renderer);
-			
-			table.addMouseListener(new TableListener());
-			
-			pane = new JScrollPane(table);			
-			pane.setColumnHeaderView(table.getTableHeader());
-			
-			add(pane, new GridBagConstraints(0,0,1,1,1,1,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));			
-		
-			table.getSelectionModel().setSelectionInterval(0,0);
-			
-			addMouseListener(new TableListener());
-			Dimension dim = new Dimension(400, Math.min(VISIBLE_ROWS*ROW_HEIGHT, data.length*ROW_HEIGHT));
-			setPreferredSize(dim);
-			setSize(dim);
-		}	
-		*/	
-		
 		/**
 		 * handles mouse events such as table row selection and graph display
 		 */
@@ -694,7 +598,6 @@ public class LinearExpressionGraphViewer extends JPanel implements IViewer {
 			 * Returns the value at the specified location
 			 */
 			public Object getValueAt(int rowIndex, int columnIndex) {
-				// TODO Auto-generated method stub
 				return data[rowIndex][columnIndex];
 			}
 			
@@ -1055,14 +958,11 @@ public class LinearExpressionGraphViewer extends JPanel implements IViewer {
 	}
 
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
 	 */
 	public void setExperiment(Experiment e) {
-		//TODO 
-		//this.experiment = e;
-		this.exptID = e.getId();
-		//this.header.setExperiment(e);
+		
 	}
 
 
@@ -1084,13 +984,5 @@ public class LinearExpressionGraphViewer extends JPanel implements IViewer {
 	}
 
 
-
-	/* (non-Javadoc)
-	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExpression()
-	 */
-	public Expression getExpression() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
 }

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: CentroidViewer.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-03-24 15:49:54 $
+ * $Revision: 1.9 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -101,28 +101,28 @@ public class CentroidViewer extends JPanel implements IViewer {
      * always exist, with its current method signature, for purposes of 
      * backwards-compatability in loading old save-files from MeV versions 
      * of v3.2 and later.  
-     * 
+     * @param experiment TODO
      * @param clusters
      * @param variances
      * @param means
      * @param codes
-     * @param id
      */
-    public CentroidViewer(int[][] clusters, float[][] variances, float[][] means, float[][] codes, Integer id) {
+    public CentroidViewer(Experiment experiment, int[][] clusters, float[][] variances, float[][] means, float[][] codes) {
+    	this.experiment = experiment;
     	this.clusters = clusters;
-    	this.exptID = id.intValue();
     	this.setVariances(variances);
     	this.setMeans(means);
     	this.setCodes(codes);
         setBackground(Color.white);
         setFont(new Font("monospaced", Font.BOLD, 10));
+        this.maxExperimentValue = experiment.getMaxAbsValue();
         this.yRangeOption = CentroidViewer.USE_EXPERIMENT_MAX;
         this.addMouseMotionListener(new GraphListener()); 
     }
     //TODO EH testing
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new",
-				new Object[]{clusters, variances, means, codes, new Integer(exptID)});
+				new Object[]{experiment, clusters, variances, means, codes});
     }
     /*
     copy-paste this constructor into each descendent class
@@ -134,9 +134,7 @@ public class CentroidViewer extends JPanel implements IViewer {
     }
      */
     
-    //public float[][] getMeans(){return means;}
-    //public float[][] getVariances(){return variances;}
-    //public float[][] getCodes(){return codes;}
+
     
     /**
      * Constructs a <code>CentroidViewer</code> for specified

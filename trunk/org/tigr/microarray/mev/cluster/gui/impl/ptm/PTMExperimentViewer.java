@@ -4,8 +4,8 @@
  */
 /*
  * $RCSfile: PTMExperimentViewer.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-03-24 15:51:08 $
+ * $Revision: 1.10 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -54,6 +54,8 @@ public class PTMExperimentViewer extends ExperimentViewer implements IViewer {
 	private PTMExperimentHeader header;
 	private String[] auxTitles;
 	private Object[][] auxData;    
+	private int[][] clusters;
+	private Vector templateVector;
 	
 	/**
 	 * Constructs a <code>PTMExperimentViewer</code> with specified
@@ -66,36 +68,22 @@ public class PTMExperimentViewer extends ExperimentViewer implements IViewer {
 		this.expViewer = new ExperimentViewer(experiment, clusters);
 		this.expViewer.getContentComponent().addMouseListener(listener);
 		this.auxTitles = auxTitles;
-		this.auxData = auxData;        
+		this.auxData = auxData;
+		this.clusters = clusters;
+		this.templateVector = templateVector;
 		this.header = new PTMExperimentHeader(expViewer.getHeaderComponent(), templateVector);
 		this.header.setColorImages(expViewer.getNegColorImage(), expViewer.getPosColorImage());
 		this.header.setMissingColor(expViewer.getMissingColor());
 		this.header.addMouseListener(listener);
 	}
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new",
+    			new Object[]{this.expViewer.getExperiment(), this.clusters, this.templateVector, this.auxTitles, this.auxData});
+    }
 	public void setExperiment(Experiment e){expViewer.setExperiment(e);}
 	public void setExperimentID(int i){expViewer.setExperimentID(i);}
 	public int getExperimentID(){return expViewer.getExperimentID();}
-	
-    /**
-     * 
-     */ 
-    public PTMExperimentViewer(ExperimentViewer exptViewer, PTMExperimentHeader exptHeader, String[] auxTitles, Object[][] auxData) {
-    	this.expViewer = exptViewer;
-    	this.header = exptHeader;
-    	this.auxTitles = auxTitles;
-    	this.auxData = auxData;
-		Listener listener = new Listener();	
-		this.popup = createJPopupMenu(listener);
-		this.expViewer.getContentComponent().addMouseListener(listener);
-		this.header.setColorImages(expViewer.getNegColorImage(), expViewer.getPosColorImage());
-		this.header.setMissingColor(expViewer.getMissingColor());
-		this.header.addMouseListener(listener);
-	
-    }
-    public Expression getExpression(){
-    	return new Expression(this, this.getClass(), "new",
-    			new Object[]{this.expViewer, this.header, this.auxTitles, this.auxData});
-    }
+
 	/**
 	 * Returns the header component.
 	 */

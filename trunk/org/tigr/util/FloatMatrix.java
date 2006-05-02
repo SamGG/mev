@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: FloatMatrix.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-03-24 15:52:35 $
+ * $Revision: 1.6 $
+ * $Date: 2006-05-02 16:57:56 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -16,6 +16,7 @@ import java.io.PrintWriter;
 import java.io.StreamTokenizer;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+
 
 
 // Changed from double to float for memory demand reduction!
@@ -64,8 +65,7 @@ import java.text.NumberFormat;
  * @version 5 August 1998
  */
 
-public class FloatMatrix implements Cloneable, java.io.Serializable {
-    public static final long serialVersionUID = 1000103010001L;
+public class FloatMatrix implements Cloneable {
         
 /* ------------------------
    Class variables
@@ -113,7 +113,7 @@ public class FloatMatrix implements Cloneable, java.io.Serializable {
 	    }
 	}
     }
-    
+
     /** Construct a matrix from a 2-D array.
      * @param A    Two-dimensional array of doubles.
      * @exception  IllegalArgumentException All rows must have the same length
@@ -162,7 +162,7 @@ public class FloatMatrix implements Cloneable, java.io.Serializable {
 	    }
 	}
     }
-    
+
 /* ------------------------
    Public Methods
  * ------------------------ */

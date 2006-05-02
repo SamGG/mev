@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: GSHExperimentCentroidsViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-03-24 15:50:35 $
+ * $Revision: 1.7 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -52,8 +52,8 @@ public class GSHExperimentCentroidsViewer extends ExperimentClusterCentroidsView
      * Constructs a <code>CentroidsViewer</code> for specified experiment
      * and clusters.
      */
-    public GSHExperimentCentroidsViewer(ExperimentClusterCentroidViewer cv, Integer exptID) {
-    	super(cv, exptID);
+    public GSHExperimentCentroidsViewer(ExperimentClusterCentroidViewer cv) {
+    	super(cv);
     }
     
     

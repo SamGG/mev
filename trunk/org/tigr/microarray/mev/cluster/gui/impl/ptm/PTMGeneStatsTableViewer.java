@@ -45,8 +45,7 @@ import org.tigr.util.QSort;
  *
  * @author  nbhagaba
  */
-public class PTMGeneStatsTableViewer extends ViewerAdapter implements java.io.Serializable {
-    public static final long serialVersionUID = 202012030001L;
+public class PTMGeneStatsTableViewer extends ViewerAdapter {
     
     private JComponent header;
     private JComponent content;
@@ -541,7 +540,7 @@ public class PTMGeneStatsTableViewer extends ViewerAdapter implements java.io.Se
         Double doub = new Double(p);
         String dClass = doub.getClass().getName();
         
-        System.out.println("Class = " + dClass);
+        //System.out.println("Class = " + dClass);
         /*
         if (dClass.equals("java.lang.Double")) {
             System.out.println("This is a double");

@@ -1,5 +1,5 @@
 /*
- * Created on Nov 11, 2005
+ * Progress bar used for monitoring the state-saving and loading process.
  *
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
@@ -24,7 +24,7 @@ import org.tigr.microarray.mev.action.ActionManager;
 	public class StateSavingProgressPanel extends JFrame implements ActionListener {
 
 	    private JProgressBar progressBar;
-	    private JButton cancelButton;
+//	    private JButton cancelButton;
 	    MultipleArrayViewer mav;
 	    JPanel progressPanel;
 	    
@@ -40,13 +40,13 @@ import org.tigr.microarray.mev.action.ActionManager;
 	        progressBar.setStringPainted(true);
 	        progressBar.setPreferredSize(new Dimension(310, 30));
 
-	        cancelButton = new JButton("Cancel");
-	        cancelButton.setActionCommand("cancel");	      
-	        cancelButton.addActionListener(this);
-	        cancelButton.setPreferredSize(new Dimension(70, 30));
+//	        cancelButton = new JButton("Cancel");
+//	        cancelButton.setActionCommand("cancel");	      
+//	        cancelButton.addActionListener(this);
+//	        cancelButton.setPreferredSize(new Dimension(70, 30));
 
 	        progressPanel.add(progressBar, BorderLayout.PAGE_START);
-	        progressPanel.add(cancelButton, BorderLayout.CENTER);
+//	        progressPanel.add(cancelButton, BorderLayout.CENTER);
 	        progressPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 	        
 			setContentPane(progressPanel);

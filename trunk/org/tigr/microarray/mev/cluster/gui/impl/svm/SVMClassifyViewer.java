@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMClassifyViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-03-24 15:51:53 $
+ * $Revision: 1.8 $
+ * $Date: 2006-05-02 16:57:36 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -67,8 +67,9 @@ public class SVMClassifyViewer extends SVMResultViewer {
         FloatMatrix M = discriminant.transpose();
         init(M.A[1], M.A[0], classifyGenes);
     }
-    public SVMClassifyViewer(Integer exptID, float[] discr, float[] classes, Boolean classifyGenes){
-    	super(exptID.intValue());
+
+    public SVMClassifyViewer(Experiment e, float[] discr, float[] classes, Boolean classifyGenes){
+    	super(e);
     	init(discr, classes, classifyGenes.booleanValue());
     }
     /**

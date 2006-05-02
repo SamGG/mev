@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayMenubar.java,v $
- * $Revision: 1.14 $
- * $Date: 2006-04-14 21:08:51 $
+ * $Revision: 1.15 $
+ * $Date: 2006-05-02 16:56:56 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -928,7 +928,7 @@ public class MultipleArrayMenubar extends JMenuBar {
      * Sets color scheme index
      */
     void setColorSchemeIndex(int index){
-        displayMenu.colorScheme = index;
+    	displayMenu.colorScheme = index;
     }
     
     int getColorScheme(){
@@ -1175,6 +1175,7 @@ public class MultipleArrayMenubar extends JMenuBar {
             return palette;
         }
         
+
     }
     
     /**

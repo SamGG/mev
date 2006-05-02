@@ -40,8 +40,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
  * @author  nbhagaba
  * @version 
  */
-public class SAMDeltaInfoViewer extends ViewerAdapter implements java.io.Serializable {
-    public static final long serialVersionUID = 202015020001L;
+public class SAMDeltaInfoViewer extends ViewerAdapter {
     
     private JComponent header;
     private JTextArea  content; 

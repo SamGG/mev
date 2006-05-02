@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: CASTExperimentClusterViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-03-24 15:49:58 $
+ * $Revision: 1.7 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -37,17 +37,16 @@ public class CASTExperimentClusterViewer extends ExperimentClusterViewer {
      * experiment and clusters.
      */
     public CASTExperimentClusterViewer(Experiment experiment, int[][] clusters) {
-	super(experiment, clusters);
-	Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
-	getContentComponent().addMouseListener(listener);
-	getHeaderComponent().addMouseListener(listener);
+		super(experiment, clusters);
+		Listener listener = new Listener();
+		this.popup = createJPopupMenu(listener);
+		getContentComponent().addMouseListener(listener);
+		getHeaderComponent().addMouseListener(listener);
     }
     
-    public CASTExperimentClusterViewer(int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
-    		Integer offset, ExperimentClusterHeader header, Boolean hasCentroid, float[][] centroids, 
-			Dimension elementSize, Integer labelIndex, Integer exptID) {
-    	super(clusters, genesOrder, drawAnnotations, offset, header, hasCentroid, centroids, elementSize, labelIndex, exptID);
+    public CASTExperimentClusterViewer(Experiment e, int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
+    		Integer offset){
+    	super(e, clusters, genesOrder, drawAnnotations, offset);
     }
         
     
@@ -55,9 +54,9 @@ public class CASTExperimentClusterViewer extends ExperimentClusterViewer {
      * Creates a popup menu.
      */
     private JPopupMenu createJPopupMenu(Listener listener) {
-	JPopupMenu popup = new JPopupMenu();
-	addMenuItems(popup, listener);
-	return popup;
+		JPopupMenu popup = new JPopupMenu();
+		addMenuItems(popup, listener);
+		return popup;
     }
     
 

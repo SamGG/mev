@@ -4,13 +4,13 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.36 $
- * $Date: 2006-04-10 18:41:35 $
+ * $Revision: 1.37 $
+ * $Date: 2006-05-02 16:56:56 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
-
+import sun.awt.windows.Win32PeerlessImage;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -21,7 +21,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
 import java.awt.Toolkit;
 
 
@@ -152,10 +151,9 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.TextViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HTMLMessageFileChooser;
 import org.tigr.microarray.mev.file.AnnFileFilter;
+import org.tigr.microarray.mev.file.CGHStanfordFileLoader;
 import org.tigr.microarray.mev.GenePixCutoffDialog;
-import org.tigr.microarray.mev.file.StringSplitter;
 
-import org.tigr.microarray.mev.cluster.clusterUtil.*;
 import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
 import org.tigr.microarray.mev.r.Rama;
 import org.tigr.microarray.mev.script.ScriptManager;
@@ -170,16 +168,15 @@ import org.tigr.util.swing.ImageFileFilter;
 import org.tigr.util.swing.JPGFileFilter;
 import org.tigr.util.swing.PNGFileFilter;
 import org.tigr.util.swing.TIFFFileFilter;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HTMLMessageFileChooser;
-import java.text.DecimalFormat;
 
 //EH
 import java.beans.*;
-import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 import org.tigr.microarray.mev.persistence.*;
+
 import com.sun.media.jai.codec.ImageEncodeParam;
 
 public class MultipleArrayViewer extends ArrayViewer implements Printable {
@@ -226,6 +223,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 	boolean keepRunning;
 	StateSavingProgressPanel progressPanel;
 	SessionMetaData smd;
+	
+	public static String CURRENT_TEMP_DIR = "mev_temp";
     
     /**
      * Construct a <code>MultipleArrayViewer</code> with default title,
@@ -236,7 +235,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     public MultipleArrayViewer() {
         super(new JFrame("TIGR Multiple Array Viewer"));
         
-        //EH
         initSessionMetaData();
         
         // listener
@@ -484,7 +482,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      *  -Save the History Node via ResultTree
      *
      */
-    
     public void saveAnalysisAs() {
         try {
             
@@ -519,12 +516,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                             if(ext == null)
                                 file = new File(file.getPath() + ".anl");
                             
-                            //EH added DataOutputStream file type, changed ObjectOutputStream to GZIP.
-                            DataOutputStream dos = new DataOutputStream(new FileOutputStream("data.bin"));
-//                            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file));
-                            ObjectOutputStream oos = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(file)));
-                            saveState(dos, oos, file);
-                            
+                            saveState(file);
                             //set tmev.cfg path to match formatted path
                             TMEV.updateDataPath(formatDataPath(file.getPath()));
                             //set variable to OS specific path format
@@ -602,10 +594,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     public void saveAnalysis() {
         if(this.currentAnalysisFile != null) {
             try {
-                ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(this.currentAnalysisFile));
-                //EH added DataOutputStream, changed saveState method call
-                DataOutputStream ds = new DataOutputStream(new FileOutputStream("data.bin"));
-                saveState(ds, oos, currentAnalysisFile);
+                saveState(currentAnalysisFile);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -615,250 +604,142 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         }
     }
     
-    //EH update to MeV v4.0 changed saveState dramatically. 
-  private void saveState(DataOutputStream ds, ObjectOutputStream os, File file) throws IOException {
-    
-        final String filePath = file.getAbsolutePath();
+    /**
+     * Save MultipleArrayData state.
+     * @param file
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    private void saveState(File file) throws FileNotFoundException, IOException {
         this.currentAnalysisFile = file;
-        
-        TMEV.activeSave = true;
+    	final boolean debug = true;
+    	final String tempFilePath = System.getProperty("java.io.tmpdir") + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator");
+    	final File tempDir = new File(System.getProperty("java.io.tmpdir") + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator"));
+        if (!tempDir.mkdir()) {
+            System.out.println("Couldn't create directory for saving");
+            //TODO handle this better
+        }
+        File tmpXML = new File(tempFilePath + "mev_state" + ".xml");
+    	ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(tmpXML));
+    	final XMLEncoder oos = XMLEncoderFactory.getMAVEncoder(new XMLEncoder(os), tree);
+    	if(!debug)
+           tmpXML.deleteOnExit();
+   		
+
+    	//Directs XMLEncoder errors to a log file. Very useful when debugging new
+   		//state-saving functions.
+        System.out.println("Any save errors will be written to saving.log");
+		oos.setExceptionListener(new ExceptionListener() {
+            public void exceptionThrown(Exception exception) {
+            	try {
+            		if(exception.toString().indexOf("Listener")==-1){
+    	                PrintStream log = new PrintStream(new FileOutputStream(new File("saving.log"), false));//OutputStream(new FileOutputStream(new File("log.log"))));
+    	                log.println(new Date());
+            			exception.printStackTrace(log);
+            			System.out.println(exception.toString());
+            		}
+            	} catch (IOException ioe){
+            		System.out.println("Could not open save log file.");
+            	}
+            }
+        });
+		
 		progressPanel = new StateSavingProgressPanel("Saving Current Analysis", this);
 		progressPanel.setLocationRelativeTo(mainframe);
 		progressPanel.setVisible(true);
-		keepRunning = true;
+
+		prepSessionMetaData(smd.getMevSessionPrefs());
+		
         Thread thread = new Thread(new Runnable() {
             public void run() {
-                try{
-                	//use for checking up on xml files after crashes
-                	final boolean debug = true;
-                	File tmpXML = File.createTempFile("mev_tmp", ".xml");
-                	File tmpBin = File.createTempFile("mev_tmp", ".bin");
-                	if(!debug){
-	                    tmpXML.deleteOnExit();
-	                    tmpBin.deleteOnExit();
-                	}                    
-                	ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(tmpXML));
-                	XMLEncoder oos = XMLEncoderFactory.getMAVEncoder(new XMLEncoder(os), tree);
-                    DataOutputStream dos = new DataOutputStream(new FileOutputStream(tmpBin));
-                	
-               		//Directs XMLEncoder errors to a log file. Very useful when debugging new
-               		//state-saving functions.
-                    System.out.println("Any save errors will be written to saving.log");
-            		oos.setExceptionListener(new ExceptionListener() {
-                        public void exceptionThrown(Exception exception) {
-                        	try {
-                        		PrintStream log = new PrintStream(new FileOutputStream(new File("saving.log"), true));//OutputStream(new FileOutputStream(new File("log.log"))));
-            	                log.println(new Date());
-                        		//if(exception.toString().indexOf("Listener")==-1)
-            	                	exception.printStackTrace(log);
-            	                System.out.println(exception.toString());
-                        	} catch (IOException ioe){
-                        		System.out.println("Could not open save log file.");
-                        	}
-                        }
-                    });
-            		
-                    setCursor(new Cursor(Cursor.WAIT_CURSOR));
-					setCursor(new Cursor(Cursor.WAIT_CURSOR));
-
+            	try {
+			        setCursor(new Cursor(Cursor.WAIT_CURSOR));
+					
 					progressPanel.update("Writing Metadata");
 					progressPanel.setIndeterminate(true);
 					oos.writeObject(smd);
-					progressPanel.setIndeterminate(false);
-					
-					//Write ISlideData objects to binary file
-					progressPanel.update("Writing Annotation");
-					if(!keepRunning){
-						progressPanel.dispose();
-						return;
-					}
-					int slideDataCount = data.getFeaturesCount();
-					dos.writeInt(slideDataCount);					
-		            ((ISlideMetaData)data.getFeature(0)).writeAnnotation(dos, progressPanel);
-					if(!keepRunning){
-						progressPanel.dispose();
-						return;
-					}
-					progressPanel.update("Writing Slides");
-					progressPanel.setMaximum(slideDataCount);
-					for(int i=0; i<slideDataCount; i++) {
-						((ISlideData)data.getFeature(i)).writeIntensities(dos);
-						progressPanel.increment();
-						if(!keepRunning){
-			            	progressPanel.dispose();
-							return;
-						}
-					}
-					
-					progressPanel.update("Writing Viewers");
-					oos.writeObject(new String("IData"));
-                    oos.writeObject(data);
-					oos.flush();
-					if(!keepRunning){
-		            	progressPanel.dispose();
-						return;
-					}
-					progressPanel.setValue(progressPanel.getMaximum());
-					
-					progressPanel.update("Writing Experiment Data");
-					
-					//allExpts contains all of the Experiment objects that should be written to the
-					//saved data file. This includes all Experiments associated with IViewers and 
-					//the current and alt experiments associated with MultipleArrayData data.
-					Hashtable allExpts = tree.getAllExperiments();
-					if(data.getGeneClusterRepository() != null)
-						allExpts.putAll(data.getGeneClusterRepository().getAllExperiments());
-					if(data.getExperimentClusterRepository() != null)
-						allExpts.putAll(data.getExperimentClusterRepository().getAllExperiments());
-					if(data.getAltExperiment() != null){
-						allExpts.put(new Integer(data.getAltExptId()), data.getAltExperiment());
-					} 
-					Enumeration expts = allExpts.elements();
-					progressPanel.setMaximum(allExpts.size()+1);
-					progressPanel.increment();
-
-					if(!keepRunning){
-		            	progressPanel.dispose();
-						return;
-					}	
-					
-					//write Experiments to binary file
-					dos.writeInt(allExpts.size());
-					while(expts.hasMoreElements()){
-						Experiment e = (Experiment)expts.nextElement();
-						int[] rows, cols;
-						if(e != null){
-							rows = e.getRows();
-							cols = e.getColumns();
-							dos.writeInt(e.getId());
-							dos.writeInt(rows.length);
-							dos.writeInt(cols.length);
-							for(int n=0; n<rows.length; n++){
-								dos.writeInt(rows[n]);
-							}
-							for(int n=0; n<cols.length; n++){
-								dos.writeInt(cols[n]);
-							}
-
-							FloatMatrix fm = e.getMatrix();
-							int numRows = fm.getRowDimension();
-							int numCols = fm.getColumnDimension();
-							float[][] matrix = fm.A;
-							dos.writeInt(numRows);
-							dos.writeInt(numCols);
-							for(int i=0; i<numRows; i++){
-								for(int j=0; j<numCols; j++){
-									dos.writeFloat(matrix[i][j]);
-								}
-							}
-						}
-						if(!keepRunning){
-			            	progressPanel.dispose();
-							return;
-						}
-						
-						progressPanel.increment();
-					}
-					//end writing experiment to bin file
-					
+			    	
+					progressPanel.update("Writing Intensities");
 					progressPanel.setIndeterminate(true);
+			        oos.writeObject(data);
+			        
 					progressPanel.update("Writing Clusters");
-                    saveClusterRepositories(oos);
-					if(!keepRunning) {
-		            	progressPanel.dispose();
-						return;
-					}
-					oos.flush();
-					
-
-					progressPanel.setValue(progressPanel.getMaximum());
-					progressPanel.update("Writing Result Tree");
-					oos.writeObject(new String("Analysis Tree Node"));
+			        saveClusterRepositories(oos);
+			
+					progressPanel.update("Writing Analysis Results");
 			    	oos.writeObject(tree.getAnalysisNode());
-					if(!keepRunning){
-		            	progressPanel.dispose();
-						return;
-					}
+			    	
+					progressPanel.update("Writing History");
+			    	oos.writeObject(historyNode);
+			    	
 					oos.flush();
-					        
-					// Save Analysis Counter
-					oos.writeObject(new String("Number of Results"));
-					oos.writeObject(new Integer(resultCount));
-					
-                    // Record the save to history
-					addHistory("Save Analysis: " + filePath);
-					
-					// Save History Tree - writeHistory doesn't do anything anyway, so just using writeObject
-					oos.writeObject("History");
-					oos.writeObject(historyNode); 
-					
-                    //reset result changed boolean
-                    modifiedResult = false;
-                    //enable save menu item, current file is already set
-                    menubar.systemEnable(TMEV.ANALYSIS_LOADED);
-                    setCursor(Cursor.DEFAULT_CURSOR);
-                    
-                    TMEV.activeSave = false;
-					progressPanel.setIndeterminate(false);
-
 					oos.close();
-	              	dos.close();
-	                
-	              	//Zip binary file and xml file together into final .anl file
-	                ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(currentAnalysisFile));
-
-        	        byte[] buf = new byte[1024];
-        	        int len;
-        	        ZipEntry entry;
-        	        
-	        	    entry = new ZipEntry(tmpBin.getName());
-	        	    zos.putNextEntry(entry);
-	        	    FileInputStream fis = new FileInputStream(tmpBin);
-        	        while ((len = fis.read(buf)) > 0) {
-        	            zos.write(buf, 0, len);
-        	        }
-	            	zos.closeEntry();
-	            	fis.close();
-
-					if(!keepRunning){
-		            	progressPanel.dispose();
-						return;
-					}
-	                entry = new ZipEntry(tmpXML.getName());
-	                
-	        	    zos.putNextEntry(entry);
-	        	    fis = new FileInputStream(tmpXML);
-        	        while ((len = fis.read(buf)) > 0) {
-        	            zos.write(buf, 0, len);
-        	        }
-	        	    zos.closeEntry();
-	        	    
-	        	    fis.close();
-	            	zos.close();
-                    
-	            	tmpXML.delete();
-	            	tmpBin.delete();
-
-                } catch (FileNotFoundException fnfe){
-                    setCursor(Cursor.DEFAULT_CURSOR);
-                    JOptionPane.showMessageDialog(MultipleArrayViewer.this, "Analysis was not saved.  Error writing output file.",
-                    "Save Error", JOptionPane.WARNING_MESSAGE);
-                    fnfe.printStackTrace();
-                    TMEV.activeSave = false;
-                } catch (IOException ioe){
+			
+					progressPanel.setIndeterminate(false);
+					progressPanel.update("Compressing Data");
+					
+			      	//Zip all files in temp saving directory (one xml file, many binary files) into final .anl file
+			        ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(currentAnalysisFile));
+			        zipTempFiles(zos, tempFilePath, tempDir);
+			    	zos.close();
+					//End Zipping of temp files
+			
+					progressPanel.update("Cleaning Up");
+					progressPanel.setIndeterminate(false);
+					//Delete all temp files, including temp folder
+					File aFile;
+			    	String[] files = tempDir.list();
+			    	for(int i=0; i<files.length; i++){
+			    		aFile = new File(tempFilePath + files[i]);
+			    		aFile.deleteOnExit();
+			    		if(!(new File(tempFilePath + files[i]).delete()))
+			    			System.out.println("Couldn't delete " + tempFilePath + files[i]);
+			    	}
+			    	tempDir.deleteOnExit();
+			    	if(!tempDir.delete())
+			    		System.out.println("Couldn't delete " + tempDir.toString());
+			
+			    	progressPanel.dispose();
+			    	modifiedResult = false;
+            	} catch (IOException ioe){
                     setCursor(Cursor.DEFAULT_CURSOR);
                     JOptionPane.showMessageDialog(MultipleArrayViewer.this, "Analysis was not saved.  Error writing output file.",
                     "Save Error", JOptionPane.WARNING_MESSAGE);
                     ioe.printStackTrace();
                     TMEV.activeSave = false;
-                } catch (NullPointerException npe){
-                	npe.printStackTrace(System.out);
-                }
-                progressPanel.dispose();
+            	}
             }
-        });
+           });
         thread.setPriority(Thread.NORM_PRIORITY);
         thread.start();
+		
+    }
+
+
+
+	private void zipTempFiles(ZipOutputStream zos, String tempFilePath, File tempDir) throws IOException{
+	    byte[] buf = new byte[1024];
+	    int len;
+	    //Zips all files in temp saving directory saveDir into a zip file specified by user
+	    ZipEntry entry;
+	    File aFile;
+	    FileInputStream fis;
+	    String[] fileNames = tempDir.list();
+		progressPanel.setMaximum(fileNames.length);
+	    
+	    for(int i=0; i<fileNames.length; i++){
+	    	aFile = new File(tempFilePath + fileNames[i]);
+		    entry = new ZipEntry(aFile.getName());
+		    zos.putNextEntry(entry);
+		    fis = new FileInputStream(aFile);
+	        while ((len = fis.read(buf)) > 0) {
+	            zos.write(buf, 0, len);
+	        }
+	    	zos.closeEntry();
+	    	fis.close();
+			progressPanel.increment();
+	    	
+	    }
     }
     
 	/**
@@ -885,267 +766,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         fireHeaderChanged();
     	progressPanel.dispose();
     }
-    
-    /**
-    * EH this method has been rewritten for xml-based state saving
-    */
-  	private void loadState(DataInputStream ds, ObjectInputStream is) throws IOException, ClassNotFoundException {
-  	    ois = new XMLDecoder(is);    
-  	    dis = ds;
-  	    keepRunning = true;
-  	    /*
-        ois.setExceptionListener(new ExceptionListener() {
-            public void exceptionThrown(Exception exception) {
-                exception.printStackTrace(System.out);
-            }
-        });
-        */
-        
-        ois.setExceptionListener(new ExceptionListener() {
-            public void exceptionThrown(Exception exception) {
-            	try {
-            		PrintStream log = new PrintStream(new FileOutputStream(new File("loading.log"), true));//OutputStream(new FileOutputStream(new File("log.log"))));
-	                if(exception.toString().indexOf("Listener")==-1)
-	                	exception.printStackTrace(log);
-            	} catch (IOException ioe){}
-            }
-        });
-               
-        progressPanel = new StateSavingProgressPanel("Loading Saved Analysis", this);
-		progressPanel.setLocationRelativeTo(mainframe);
-		progressPanel.setVisible(true);
-    
-        
-        Thread thread = new Thread( new Runnable(){
-            public void run() {
-                try {
-					progressPanel.update("Reading Metadata");
-				    progressPanel.setIndeterminate(true);
-				    SessionMetaData savedSMD = (SessionMetaData)ois.readObject();
-				    String mevVersion = smd.getMevVersion();
-				    String savedMEVVersion = savedSMD.getMevVersion();
-				    String savedJREVersion = savedSMD.getJREVersion();
-				    String savedJVMVersion = savedSMD.getJVMVersion();
-                    String jreVersion = System.getProperty("java.version");
-                    String jvmVersion = System.getProperty("java.vm.version");
-				    progressPanel.setIndeterminate(false);
-                    
-				    //System.out.println("Current MeV Version: " + mevVersion + "\nSaved MeV Version: " + savedMEVVersion);
-				    
-		            if(!savedMEVVersion.equals(mevVersion)) { //if saved file was written by a different version of MeV
-		                String msg = "<html><body>";
-		                if(smd.getMevMajorVersion() < 4){
-		            		msg += "This saved file was created with an older version of MeV, version " + smd.getMevMajorVersion() + "." + smd.getMevMinorVersion() + "." + smd.getMevMicroVersion() + ".  \n" +
-		            				"MeV v3.1 and earlier cannot be opened by MeV version 4.0b and higher.  ";
-		            		keepRunning = false;	//cancel loading
-		            	} else if((new Float(savedMEVVersion)).floatValue() > (new Float(mevVersion)).floatValue()){
-		            		//System.out.println("second else block: " + (new Float(savedMEVVersion)).floatValue() + ">" + (new Float(mevVersion)).floatValue());
-		            		msg += "This saved file was created with a newer version of MeV.  You need to upgrade to " +
-		            				"MeV version " + savedMEVVersion + " or higher.  You can download MeV at <a href=\"http://mev.tm4.org/\">mev.tm4.org</a>.<br>";
-		            		keepRunning = false;
-		            	} else if ((new Float(savedMEVVersion)).floatValue() < (new Float(mevVersion)).floatValue()){
-		            		//System.out.println("third else block" + (new Float(savedMEVVersion)).floatValue() + "<" + (new Float(mevVersion)).floatValue());
-		            		msg += "This saved file was created with an older version of MeV.  " +
-		            				"It will most likely open correctly, however, if you encounter problems loading this file " +
-		            				"consider opening it with an older version of MeV."; 
-		            	}
-		            	msg += ".</body></html>";
-                        String error = "<b>";
-                        int errorCount = 0;
-                        
-                            errorCount++;
-                            error += "<br>";
-                            error += "Current MeV Version: "+TMEV.VERSION+"<br>";
-                            error += "Analysis File MeV Version: "+savedMEVVersion+"<br>";
-                        
-                        JPanel panel = new JPanel();
-                        panel.setBackground(Color.white);
-                        panel.setBorder(BorderFactory.createLineBorder(Color.black));
-                        javax.swing.JTextPane pane = new javax.swing.JTextPane();
-                        pane.setEditable(false);
-                        pane.setMargin(new Insets(10,10,10,10));
-                        pane.setBackground(Color.white);
-                        pane.setContentType("text/html");
-                        pane.setText(msg);
-                        panel.add(pane);
-                        
-                        int choice = JOptionPane.showConfirmDialog(getFrame(), panel, "Analysis Load Version Confirmations", JOptionPane.WARNING_MESSAGE);
-                        if(choice != JOptionPane.OK_OPTION)
-                            return;
-                    }
-                    
-		//			Load IData object and set annotation field labels
-		            ois.readObject();						//load string that simply reads "IData"
-		            loadIData((MultipleArrayData)(ois.readObject()), dis, progressPanel);
-		            if(!keepRunning){
-		            	cleanUp();
-		            	return;
-		            }
-		        	progressPanel.update("Reading Experiments");
-		        	progressPanel.setIndeterminate(true);
-					Hashtable allExperiments = new Hashtable();
-					int numberExpts = dis.readInt();
-	            	progressPanel.setMaximum(numberExpts);
-					int id, numRows, numCols;
-					float[][] matrix;
-					int[] rows, cols;
-					for(int exptCount=0; exptCount<numberExpts; exptCount++){
-			            if(!keepRunning){
-			            	cleanUp();
-			            	return;
-			            }
-						id = dis.readInt();
-						rows = new int[dis.readInt()];
-						cols = new int[dis.readInt()];
-						for(int n=0; n<rows.length; n++){
-							rows[n] = dis.readInt();
-						}
-						for(int n=0; n<cols.length; n++){
-							cols[n] = dis.readInt();
-						}
-						numRows = dis.readInt();
-						numCols = dis.readInt();
-						matrix = new float[numRows][numCols];
-						for(int i=0; i<numRows; i++){
-							for(int j=0; j<numCols; j++){
-								matrix[i][j] = dis.readFloat();
-							}
-						}
-						Experiment e = new Experiment(cols, rows, id, new FloatMatrix(matrix));
-						
-						allExperiments.put(new Integer(e.getId()), e);
-					}
-					progressPanel.increment();
-					
-					if(allExperiments.containsKey(new Integer(data.getAltExptId()))){
-						data.setAlternateExperiment((Experiment)allExperiments.get(new Integer(data.getAltExptId())));
-					}
-					//end reading experiments from bin file
-					
-		
-		            progressPanel.update("Reading Cluster Repositories");
-		            if(!keepRunning){
-		            	cleanUp();
-		            	return;
-		            }
-		            
-		            loadClusterRepositories(ois, allExperiments);
-                    
-                    //load analysis viewers
-		        	progressPanel.update("Reading Viewers");
-		            ois.readObject(); //reads a string of value "viewers"
-		            if(!keepRunning){
-		            	cleanUp();
-		            	return;
-		            }
-		            loadAnalysisNode((DefaultMutableTreeNode)ois.readObject(), allExperiments);
-                    
-		            //set the current result count
-		            ois.readObject();//reads a string "number of results"
-		            resultCount = ((Integer)ois.readObject()).intValue();
-		            
-		            //load history - doesn't really work
-		            ois.readObject();
-		            loadHistoryNode((DefaultMutableTreeNode)ois.readObject());
-                    
-                    //Add time node to the analysis node
-                    Date date = new Date(System.currentTimeMillis());
-                    DateFormat format = DateFormat.getDateTimeInstance();
-                    
-                    format.setTimeZone(TimeZone.getDefault());
-                    DefaultMutableTreeNode node = new DefaultMutableTreeNode(format.format(date));
-                    DefaultTreeModel treeModel = (DefaultTreeModel)tree.getModel();
-                    treeModel.insertNodeInto(node, analysisNode, analysisNode.getChildCount());
-                    
-                    TreePath path = new TreePath(((DefaultTreeModel)tree.getModel()).getPathToRoot(analysisNode));
-                    tree.expandPath(path);
-                    path = new TreePath(((DefaultTreeModel)tree.getModel()).getPathToRoot(historyNode));
-                    tree.expandPath(path);
-                    
-                    //signal mev analysis loaded
-                    menubar.systemEnable(TMEV.ANALYSIS_LOADED);
-                    
-                    //pcahan
-                    if(TMEV.getDataType() == TMEV.DATA_TYPE_AFFY){
-                        menubar.addAffyFilterMenuItems();
-                    }
-		        	progressPanel.setIndeterminate(false);
-		        	((HistoryViewer)(((LeafInfo)(((DefaultMutableTreeNode)historyNode.getChildAt(0)).getUserObject())).getViewer())).addHistory("Load analysis: " + currentAnalysisFile);
-                } catch (Exception e) {
-		        	e.printStackTrace();
-		            cleanUp();
-                    JOptionPane.showMessageDialog(MultipleArrayViewer.this, "Analysis was not loaded.  Error reading input file.",
-                    "Load Analysis Error", JOptionPane.WARNING_MESSAGE);
-                    System.out.println(e.getMessage());
-                }
-		        progressPanel.dispose();
-            }
-        });
-        thread.setPriority(Thread.MIN_PRIORITY);
-        thread.start();
-    }
-    
-    
-    /**
-     * Loads Gene- and Experiment Clusters from xmld for display in MultipleArrayViewer.
-     * @param xmld The source file containing the data to be read into the clusters
-     * @throws IOException
-     * @throws ClassNotFoundException
-     */
-    private void loadClusterRepositories(XMLDecoder xmld, Hashtable exptHash) throws IOException, ClassNotFoundException {
-    	if(((Boolean)xmld.readObject()).booleanValue()){
-            this.geneClusterRepository = (ClusterRepository)xmld.readObject();
-        	this.geneClusterRepository.populateExperiments(exptHash);
-            this.data.setGeneClusterRepository(this.geneClusterRepository);
-            this.geneClusterRepository.setFramework(this.framework);
-            this.geneClusterManager = new ClusterTable(this.geneClusterRepository, framework);
-            DefaultMutableTreeNode genesNode = new DefaultMutableTreeNode(new LeafInfo("Gene Clusters", this.geneClusterManager), false);
-            addNode(this.clusterNode, genesNode);
-            
-        }
-        if(((Boolean)xmld.readObject()).booleanValue()){
-            this.experimentClusterRepository = (ClusterRepository)xmld.readObject();
-            this.experimentClusterRepository.populateExperiments(exptHash);
-            this.data.setExperimentClusterRepository(this.experimentClusterRepository);
-            this.experimentClusterRepository.setFramework(this.framework);
-            
-            this.experimentClusterManager = new ClusterTable(this.experimentClusterRepository, framework);
-            DefaultMutableTreeNode experimentNode = new DefaultMutableTreeNode(new LeafInfo("Sample Clusters", this.experimentClusterManager), false);
-            addNode(this.clusterNode, experimentNode);
-        }
-    }
-    
-    
-    private void loadAnalysisNode(DefaultMutableTreeNode d, Hashtable h) throws IOException, ClassNotFoundException {
-        
-        DefaultMutableTreeNode node = d;
-        
-        if(node != null){
-            
-            int location = tree.getModel().getIndexOfChild(tree.getRoot(), analysisNode);
-            tree.removeNode(analysisNode);
-            analysisNode = node;
-            tree.insertNode(analysisNode, tree.getRoot(), location);
-            int exptID;
-            Enumeration allNodes = analysisNode.breadthFirstEnumeration();
-            DefaultMutableTreeNode dmtn;
-            while(allNodes.hasMoreElements()){
-            	dmtn = (DefaultMutableTreeNode)allNodes.nextElement();
-            	Object o = dmtn.getUserObject();
-            	if(o instanceof LeafInfo) {
-            		LeafInfo l = (LeafInfo)o;
-            		if(l.getViewer() != null){
-            			Integer viewerExptID = new Integer(l.getViewer().getExperimentID());
-            			if(h.containsKey(viewerExptID)){
-            				l.getViewer().setExperiment((Experiment)h.get(viewerExptID));
-            			}
-            		}
-            	}
-            }
-            tree.setAnalysisNode(analysisNode);
-        }
-    }
-    
+   
+
     private void loadHistoryNode(DefaultMutableTreeNode d) throws IOException, ClassNotFoundException {
         DefaultMutableTreeNode node = d;
         if(node != null){
@@ -1156,84 +778,34 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             historyLog = (HistoryViewer)(((LeafInfo)(((DefaultMutableTreeNode)historyNode.getChildAt(0)).getUserObject())).getViewer());
         }
     }
-    
-    private void loadIData(MultipleArrayData d, DataInputStream dis, StateSavingProgressPanel sspp) throws IOException, ClassNotFoundException {
-        //loads IData and sets TMEV field names fields
-        
-    	sspp.update("Loading Annotation");
-        this.data = d;
-        boolean savingSlideDatasInXMLFile = true;
-    	int numSlideData = dis.readInt();
-    	ArrayList allISlideDatas = (ArrayList)data.getFeaturesList();
-    	ISlideMetaData metaData = (ISlideMetaData)allISlideDatas.get(0);
-    	metaData.loadAnnotation(dis, sspp);
-        if(!keepRunning){
-        	cleanUp();
-        	return;
-        }
-    	ISlideData aSlideData;
-    	sspp.update("Loading Slides");
-    	sspp.setMaximum(numSlideData);
-      	for(int i=0; i<numSlideData; i++){
-      		if (!this.keepRunning){
-      			cleanUp(); 
-      			return;
-      		}
-    		aSlideData = (ISlideData)(allISlideDatas).get(i);
-    		aSlideData.loadIntensities(dis);
-    		if(aSlideData instanceof FloatSlideData)
-    			((FloatSlideData)aSlideData).setSlideMetaData(metaData);
-    		sspp.increment();
-    	}
-    	data.setFeaturesList(allISlideDatas);
-        data.setSampleLabelKey(((ISlideData)(data.getFeaturesList().get(0))).getSampleLabelKey());
-        //pcahan
-        int data_type = this.data.getDataType();
-        if (data_type!=0 || data_type!=1){
-            TMEV.setDataType(TMEV.DATA_TYPE_AFFY);
-        }
-        sspp.update("Loading Cluster Repositories");
-    	sspp.setIndeterminate(true);
-        if(this.data.getGeneClusterRepository() != null) {
-	        this.geneClusterRepository = this.data.getGeneClusterRepository();
-	        this.geneClusterRepository.setFramework(this.framework);
-	        this.geneClusterManager = new ClusterTable(this.geneClusterRepository, framework);
-	        DefaultMutableTreeNode genesNode = new DefaultMutableTreeNode(new LeafInfo("Gene Clusters", this.geneClusterManager), false);
-	        addNode(this.clusterNode, genesNode);
-        }
-        if(this.data.getExperimentClusterRepository() != null) {
-	        this.experimentClusterRepository = this.data.getExperimentClusterRepository();
-	        this.experimentClusterRepository.setFramework(this.framework);
-	        this.experimentClusterManager = new ClusterTable(this.experimentClusterRepository, framework);
-	        DefaultMutableTreeNode experimentNode = new DefaultMutableTreeNode(new LeafInfo("Sample Clusters", this.experimentClusterManager), false);
-	        addNode(this.clusterNode, experimentNode);
-        }
-        
-        //resets the log state depending on data type
-        this.data.setDataType(this.data.getDataType());
-        
-        data.updateSpotColors();
-        data.updateExperimentColors();
 
-        //get the experiment label keys
-        this.menubar.replaceExperimentLabelMenuItems(data.getSlideNameKeyArray());
-         data.setSampleLabelKey(MultipleArrayData.DEFAULT_SAMPLE_ANNOTATION_KEY);
-        //populate the display menu
-        this.menubar.replaceLabelMenuItems(this.data.getFieldNames());
-        this.menubar.replaceSortMenuItems(this.data.getFieldNames());
-        
-    	
-        setMaxCY3AndCY5();
-        systemEnable(TMEV.DATA_AVAILABLE);
-        fireMenuChanged();
-        fireDataChanged();
-        fireHeaderChanged();
-    	sspp.setIndeterminate(false);
-    }
-    
-    
-    
-    
+    /**
+     * Initializes cgh menus when data loaded is cgh data
+     *
+     */
+	 private void initializeCGH(){   
+		/**
+		 * Raktim Test SS
+		 */
+	    System.out.println("data.isCGHData(): " + data.isCGHData());
+	    if(data.isCGHData()) {
+	    	this.data.setChromosomeIndices(CGHStanfordFileLoader.calculateChromosomeIndices(this.data.getClones()));
+	    	this.data.setHasDyeSwap(this.data.isHasDyeSwap());
+	    	//this.data.setLog2Data(isLog2);
+	    	//this.data.setHasCloneDistribution(false);
+	    	//this.data.setCGHData();
+	    	//this.data.setCGHSpecies(species);
+	        
+	    	//From FireDataLoaded
+	    	loadCytoBandFile();
+			manager.initCghAnalysiActions(new org.tigr.microarray.mev.cgh.CGHAlgorithms.CGHAlgorithmFactory());
+			this.menubar.addCGHMenus();
+			mainframe.validate();
+			
+	    	ExperimentsLoaded();
+	    	onFlankingRegionDeterminationChanged();
+	    }
+	}
     private void saveClusterRepositories(XMLEncoder oos) throws IOException {
 		Boolean isGeneClusterRepository;
 		Boolean isExperimentClusterRepository;
@@ -1255,11 +827,258 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             oos.writeObject(this.experimentClusterRepository);
         }
     }
-    
-    
-    private void loadAnalysis() {
+    private void loadAnalysisFromFile(final File file) throws IOException, ClassNotFoundException {
+	    
+	    progressPanel = new StateSavingProgressPanel("Loading Saved Analysis", this);
+		progressPanel.setLocationRelativeTo(mainframe);
+		progressPanel.setVisible(true);
         
-            	
+        Thread thread = new Thread( new Runnable(){
+            public void run() {
+                try {
+                	File unzipDir = new File(System.getProperty("java.io.tmpdir") + MultipleArrayViewer.CURRENT_TEMP_DIR);
+            	    if (!unzipDir.mkdir()) {
+            	        System.out.println("Couldn't create directory for unzipping");
+            	    }
+            	    
+                	ZipFile zipFile = new ZipFile(file);
+                	ZipInputStream zis = new ZipInputStream(new FileInputStream(file));
+                	File tmpXML = new File(System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + "mev_tmp.xml");
+            	    tmpXML.deleteOnExit();
+
+					progressPanel.update("Uncompressing Data");
+				    progressPanel.setIndeterminate(false);
+					progressPanel.setMaximum(zipFile.size());
+				    int len;
+				    byte[] buf = new byte[1024];
+				    ZipEntry entry;
+				    while((entry = zis.getNextEntry()) != null){
+				    	if(entry.getName().endsWith(".xml")){		//XML file is only ascii file in there. 
+				            InputStreamReader isr = new InputStreamReader(zis);
+				            FileWriter fw = new FileWriter(tmpXML);
+					        while ((len = isr.read()) != -1) {
+					            fw.write(len);
+				    	    }
+				            fw.close();
+				    	} else {
+				    		String outFile = System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + entry.getName();
+				    		DataOutputStream dos = new DataOutputStream(new FileOutputStream(new File(outFile)));
+				   	        while ((len = zis.read(buf)) > 0) {
+					            dos.write(buf, 0, len);
+					        }
+				            dos.close();
+				    	}
+				        zis.closeEntry();
+						progressPanel.increment();
+				    }
+				    zis.close();
+					zipFile.close();
+					
+            	    ObjectInputStream ois = new ObjectInputStream(new FileInputStream(tmpXML));
+            		XMLDecoder xmld = new XMLDecoder(ois);
+    
+
+					progressPanel.update("Loading Metadata");
+				    progressPanel.setIndeterminate(true);
+    	
+			    	smd = (SessionMetaData)xmld.readObject();
+			    	processMeVPrefs(smd.getMevSessionPrefs());
+			    	
+					progressPanel.update("Loading Experiment Data");
+			        data = (MultipleArrayData)xmld.readObject();
+			        int data_type = data.getDataType();
+			        if (data_type!=0 || data_type!=1){
+			            TMEV.setDataType(TMEV.DATA_TYPE_AFFY);
+			        }
+
+					progressPanel.update("Loading Clusters");
+			    	if(((Boolean)xmld.readObject()).booleanValue()){
+			            geneClusterRepository = (ClusterRepository)xmld.readObject();
+			            data.setGeneClusterRepository(geneClusterRepository);
+			            geneClusterRepository.setFramework(framework);
+			            geneClusterManager = new ClusterTable(geneClusterRepository, framework);
+			            DefaultMutableTreeNode genesNode = new DefaultMutableTreeNode(new LeafInfo("Gene Clusters", geneClusterManager), false);
+			            addNode(clusterNode, genesNode);
+			            
+			        }
+			        if(((Boolean)xmld.readObject()).booleanValue()){
+			            experimentClusterRepository = (ClusterRepository)xmld.readObject();
+			            data.setExperimentClusterRepository(experimentClusterRepository);
+			            experimentClusterRepository.setFramework(framework);
+			            
+			            experimentClusterManager = new ClusterTable(experimentClusterRepository, framework);
+			            DefaultMutableTreeNode experimentNode = new DefaultMutableTreeNode(new LeafInfo("Sample Clusters", experimentClusterManager), false);
+			            addNode(clusterNode, experimentNode);
+			        }
+			        
+
+					progressPanel.update("Loading Analysis Results");
+			        int location = tree.getModel().getIndexOfChild(tree.getRoot(), analysisNode);
+			        tree.removeNode(analysisNode);
+			        analysisNode = (DefaultMutableTreeNode)xmld.readObject();
+			        tree.insertNode(analysisNode, tree.getRoot(), location);
+			        tree.setAnalysisNode(analysisNode);
+			
+			    	loadHistoryNode((DefaultMutableTreeNode)xmld.readObject());
+
+			        if(data.isCGHData()) {
+			        	initializeCGH();
+			        }
+			        
+			        //Refresh views, etc
+			        data.updateSpotColors();
+			        data.updateExperimentColors();
+			
+			        //get the experiment label keys
+			        menubar.replaceExperimentLabelMenuItems(data.getSlideNameKeyArray());
+			         data.setSampleLabelKey(MultipleArrayData.DEFAULT_SAMPLE_ANNOTATION_KEY);
+			        //populate the display menu
+			        menubar.replaceLabelMenuItems(data.getFieldNames());
+			        menubar.replaceSortMenuItems(data.getFieldNames());
+			        
+			        
+			        setMaxCY3AndCY5();
+			        systemEnable(TMEV.DATA_AVAILABLE);
+			        fireMenuChanged();
+			        fireDataChanged();
+			        fireHeaderChanged();
+			        
+			
+			        //Add time node to the analysis node
+			        Date date = new Date(System.currentTimeMillis());
+			        DateFormat format = DateFormat.getDateTimeInstance();
+			        
+			        format.setTimeZone(TimeZone.getDefault());
+			        DefaultMutableTreeNode node = new DefaultMutableTreeNode(format.format(date));
+			        DefaultTreeModel treeModel = (DefaultTreeModel)tree.getModel();
+			        treeModel.insertNodeInto(node, analysisNode, analysisNode.getChildCount());
+			        
+			        TreePath path = new TreePath(((DefaultTreeModel)tree.getModel()).getPathToRoot(analysisNode));
+			        tree.expandPath(path);
+			        path = new TreePath(((DefaultTreeModel)tree.getModel()).getPathToRoot(historyNode));
+			        tree.expandPath(path);
+			        
+			        //signal mev analysis loaded
+			        menubar.systemEnable(TMEV.ANALYSIS_LOADED);
+			        
+			        //pcahan
+			        if(TMEV.getDataType() == TMEV.DATA_TYPE_AFFY){
+			            menubar.addAffyFilterMenuItems();
+			        }
+                    
+                    //signal mev analysis loaded
+                    menubar.systemEnable(TMEV.ANALYSIS_LOADED);
+                    
+                    //pcahan
+                    if(TMEV.getDataType() == TMEV.DATA_TYPE_AFFY){
+                        menubar.addAffyFilterMenuItems();
+                    }
+		        	progressPanel.setIndeterminate(false);
+		        	((HistoryViewer)(((LeafInfo)(((DefaultMutableTreeNode)historyNode.getChildAt(0)).getUserObject())).getViewer())).addHistory("Load analysis: " + currentAnalysisFile);
+
+	        	    ois.close();
+	        		xmld.close();
+	        		
+	        	    currentAnalysisFile = file;
+	        	    //set tmev.cfg to formatted path
+	        	    TMEV.updateDataPath(formatDataPath(file.getPath()));
+	        	    //set variable to OS format path
+	        	    TMEV.setDataPath(file.getParentFile().getPath());
+	        	    
+	        		String[] files = unzipDir.list();
+	        		for(int i=0; i<files.length; i++){
+	        			if(!new File(unzipDir + System.getProperty("file.separator") + files[i]).delete())
+	        				System.out.println("Can't delete " + unzipDir + System.getProperty("file.separator") + files[i]);
+	        		}
+	        		if(!unzipDir.delete())
+	        			System.out.println("Couldn't delete " + unzipDir.toString());
+	        		
+	        		((HistoryViewer)(((LeafInfo)(((DefaultMutableTreeNode)historyNode.getChildAt(0)).getUserObject())).getViewer())).addHistory("Load analysis: " + file);
+
+                } catch (Exception e) {
+		        	e.printStackTrace();
+		            cleanUp();
+                    JOptionPane.showMessageDialog(MultipleArrayViewer.this, "Analysis was not loaded.  Error reading input file.",
+                    "Load Analysis Error", JOptionPane.WARNING_MESSAGE);
+                    System.out.println(e.getMessage());
+                }
+                progressPanel.dispose();
+            }
+        });
+        thread.setPriority(Thread.MIN_PRIORITY);
+        thread.start();
+	}
+    /**
+	 * Store MultipleArrayViewer graphical preferences here.  
+	 */
+	private void prepSessionMetaData(MEVSessionPrefs msp) {
+		try {
+			msp.setMaxRatioScale(menubar.getDisplayMenu().getMaxRatioScale());
+		} catch (NullPointerException npe){npe.printStackTrace();}
+		try {
+			msp.setMinRatioScale(menubar.getDisplayMenu().getMinRatioScale());
+		} catch (NullPointerException npe){npe.printStackTrace();}
+		try {
+			msp.setMidRatioScale(menubar.getDisplayMenu().getMidRatioValue());
+		} catch (NullPointerException npe){npe.printStackTrace();}
+		try {
+			msp.setMaxCY3(menubar.getDisplayMenu().getMaxCY3Scale());
+		} catch (NullPointerException npe){npe.printStackTrace();}
+		try {
+			msp.setMaxCY5(menubar.getDisplayMenu().getMaxCY5Scale());
+		} catch (NullPointerException npe){npe.printStackTrace();}
+		try {
+			msp.setColorGradientState(menubar.getDisplayMenu().getColorGradientState());
+		} catch (NullPointerException npe){npe.printStackTrace();}
+		try {
+			msp.setColorScheme(menubar.getColorScheme());
+		} catch (NullPointerException npe){npe.printStackTrace();}
+		try {
+			msp.setPositiveGradientImageWrapper(new BufferedImageWrapper(menubar.getDisplayMenu().getPositiveGradientImage()));
+		} catch (NullPointerException npe){npe.printStackTrace();}
+		try {
+			msp.setNegativeGradientImageWrapper(new BufferedImageWrapper(menubar.getDisplayMenu().getNegativeGradientImage()));
+		} catch (NullPointerException npe){npe.printStackTrace();}
+		try {
+			msp.setAutoScale(auto_scale);
+		} catch (NullPointerException npe){npe.printStackTrace();}
+		
+	}
+	private void processMeVPrefs(MEVSessionPrefs msp) {
+		try {
+			menubar.setMaxRatioScale(msp.getMaxRatioScale());
+		} catch (NullPointerException npe){npe.printStackTrace();}
+		try {
+			menubar.setMidRatioValue(msp.getMidRatioScale());
+		} catch (NullPointerException npe){npe.printStackTrace();}
+		try {
+			menubar.setMinRatioScale(msp.getMinRatioScale());
+		} catch (NullPointerException npe){npe.printStackTrace();}
+		try {
+			this.menubar.setMaxCY3Scale(msp.getMaxCY3());
+		} catch (NullPointerException npe){npe.printStackTrace();}
+		try {
+			this.menubar.setMaxCY5Scale(msp.getMaxCY5());
+		} catch (NullPointerException npe){npe.printStackTrace();}
+		try {
+			this.menubar.setColorGradientState(msp.isColorGradientState());
+		} catch (NullPointerException npe){npe.printStackTrace();}
+		try {
+			this.menubar.setColorSchemeIndex(msp.getColorScheme());
+		} catch (NullPointerException npe){npe.printStackTrace();}
+		try {
+			this.menubar.setPositiveCustomGradient(msp.getPositiveGradientImageWrapper().getBufferedImage());
+		} catch (NullPointerException npe){npe.printStackTrace();}
+		try {
+			this.menubar.setNegativeCustomGradient(msp.getNegativeGradientImageWrapper().getBufferedImage());
+		} catch (NullPointerException npe){npe.printStackTrace();}
+		try {
+			this.auto_scale = msp.isAutoScale();
+		} catch (NullPointerException npe){npe.printStackTrace();}
+		
+	}
+
+    private void loadAnalysis() {
         String dataPath = TMEV.getDataPath();
         File pathFile = TMEV.getFile("data/");
         
@@ -1273,60 +1092,15 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         try {
                 	
             //opens a single zip file, unzips it, and reads from
-            //the resulting two files (1 binary, 1 ascii)
+            //the resulting files
             JFileChooser chooser = new JFileChooser(pathFile);
             chooser.setFileView(new AnalysisFileView());
             chooser.setFileFilter(new AnalysisFileFilter());
-
-                	
                 
             if(chooser.showOpenDialog(this) == JOptionPane.OK_OPTION) {
                 file = chooser.getSelectedFile();
-                int tempnumber = new Double(Math.random() * 100000).intValue();
-                String savepath = file.getPath().substring(0, file.getPath().lastIndexOf("."));
-                File tmpXML = File.createTempFile("mev_tmp", ".xml");
-                File tmpBin = File.createTempFile("mev_tmp", ".bin");
-                tmpXML.deleteOnExit();
-                tmpBin.deleteOnExit();
-               
-                FileWriter fw = new FileWriter(tmpXML);
-                DataOutputStream dos = new DataOutputStream(new FileOutputStream(tmpBin));
-                ZipInputStream zis = new ZipInputStream(new FileInputStream(file));
-
-        	    int len;
-        	    byte[] buf = new byte[1024];
-        	    ZipEntry entry;
-        	    
-                entry = zis.getNextEntry();
-    	        while ((len = zis.read(buf)) > 0) {
-    	            dos.write(buf, 0, len);
-    	        }
-                zis.closeEntry();
-                dos.close();
-                
-                entry = zis.getNextEntry();
-                buf = new byte[2];
-                InputStreamReader isr = new InputStreamReader(zis);
-    	        while ((len = isr.read()) != -1) {
-    	            fw.write(len);
-        	    }
-                fw.close();
-                zis.closeEntry();
-                zis.close();
-                
-                ObjectInputStream ois = new ObjectInputStream(new FileInputStream(tmpXML));
-                DataInputStream dis = new DataInputStream(new FileInputStream(tmpBin));
-                loadState(dis, ois);
-                
-                this.currentAnalysisFile = file;
-                //set tmev.cfg to formatted path
-                TMEV.updateDataPath(formatDataPath(file.getPath()));
-                //set variable to OS format path
-                TMEV.setDataPath(file.getParentFile().getPath());
+                loadAnalysisFromFile(file);
             }
-                
-        	
-            
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1711,7 +1485,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      * Checks to see if the session should be saved
      */
     private void onSaveCheck() {
-        //meets three criteria, has data loaded, result is modified, allowed to prompt
+    	//meets three criteria, has data loaded, result is modified, allowed to prompt
         if(this.modifiedResult && this.data != null && TMEV.permitSavePrompt){
             AnalysisSaveDialog dialog = new AnalysisSaveDialog(this.getFrame());
             int result = dialog.showModal();
@@ -2370,16 +2144,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      */
     private void addHistory(String info) {
         historyLog.addHistory(info);
-        /*
-        DefaultMutableTreeNode node = new DefaultMutableTreeNode(info);
-        DefaultTreeModel treeModel = (DefaultTreeModel)tree.getModel();
-        treeModel.insertNodeInto(node, historyNode, historyNode.getChildCount());
-        TreeSelectionModel selModel = tree.getSelectionModel();
-        TreePath treePath = new TreePath(node.getPath());
-        selModel.setSelectionPath(treePath);
-        tree.scrollPathToVisible(treePath);
-        this.treeScrollPane.getHorizontalScrollBar().setValue(0);
-         */
     }
     
     /**
@@ -3465,6 +3229,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 			}
 			return auto_scale;
     }
+    
     /** by wwang
 	 *  returns the median from the sorted array
 	 * @return
@@ -3535,23 +3300,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         // by wwang add for auto color scaling(for affy data) 
         sortedValues=initSortedValues(data.getExperiment().getMatrix());
         auto_scale=autoScale(sortedValues);
-        //if (TMEV.getDataType() != TMEV.DATA_TYPE_TWO_DYE){
         if(data.getDataType() == IData.DATA_TYPE_AFFY_ABS||auto_scale==true){
          	this.menubar.setMinRatioScale(0f);
-         	//this.menubar.setMidRatioValue(Float.parseFloat(oneDecimalFormat.format(getMedian())));
          	this.menubar.setMidRatioValue(getMedian());
-         	
-         	//this.menubar.setMaxRatioScale(Float.parseFloat(oneDecimalFormat.format(getMaxScale())));
-         	this.menubar.setMaxRatioScale(getMaxScale());
-         	
+         	this.menubar.setMaxRatioScale(getMaxScale());    	
          }
-        //}
-        // if we have field names and data is not loaded
-        //if(TMEV.getDataType() == TMEV.DATA_TYPE_AFFY)
-        //    this.menubar.addAffyFilterMenuItems();
-        
-        //TODO change this to get the Data Type from an IData only
-        //first need to make sure that IData has that information.  Don't know yet.
 
         // pcahan - convoluted but it works
         if ( (TMEV.getDataType() == TMEV.DATA_TYPE_AFFY) &&

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: KNNCExperimentCentroidsViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-03-24 15:50:57 $
+ * $Revision: 1.6 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -51,8 +51,8 @@ public class KNNCExperimentCentroidsViewer extends ExperimentClusterCentroidsVie
     /**
      * @inheritDoc
      */
-    public KNNCExperimentCentroidsViewer(ExperimentClusterCentroidViewer cv, Integer exptID) {
-    	super(cv, exptID);
+    public KNNCExperimentCentroidsViewer(ExperimentClusterCentroidViewer cv) {
+    	super(cv);
     }
     
     

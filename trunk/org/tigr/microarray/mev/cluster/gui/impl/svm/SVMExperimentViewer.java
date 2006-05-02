@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMExperimentViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-03-24 15:51:53 $
+ * $Revision: 1.6 $
+ * $Date: 2006-05-02 16:57:36 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -46,8 +46,8 @@ public class SVMExperimentViewer extends ExperimentViewer {
     /**
      * @inheritDoc
      */ 
-    public SVMExperimentViewer(int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets, Integer exptID) {
-    	super(clusters, samplesOrder, drawAnnotations, header, insets, exptID);
+    public SVMExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets) {
+    	super(e, clusters, samplesOrder, drawAnnotations, header, insets);
     }
     
     /**

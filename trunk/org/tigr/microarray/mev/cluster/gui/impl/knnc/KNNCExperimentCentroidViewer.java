@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: KNNCExperimentCentroidViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-03-24 15:50:57 $
+ * $Revision: 1.7 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -41,8 +41,8 @@ public class KNNCExperimentCentroidViewer extends ExperimentClusterCentroidViewe
     /**
      * @inheritDoc
      */
-    public KNNCExperimentCentroidViewer(int[][] clusters, Integer exptID, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes){
-    	super(clusters, exptID, clusterIndex, means, variances, codes);
+    public KNNCExperimentCentroidViewer(Experiment experiment, int[][] clusters, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes){
+    	super(experiment, clusters, clusterIndex, means, variances, codes);
     }
     /**
      * Creates a popup menu.

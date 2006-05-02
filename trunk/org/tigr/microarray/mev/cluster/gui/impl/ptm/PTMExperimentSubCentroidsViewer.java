@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMExperimentSubCentroidsViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-03-24 15:51:08 $
+ * $Revision: 1.8 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -43,11 +43,11 @@ public class PTMExperimentSubCentroidsViewer extends JPanel implements IViewer {
     
     /** Creates new PTMSubCentroidsViewer */
     public PTMExperimentSubCentroidsViewer(Experiment experiment, int[][] clusters, Vector templateVector, String[] auxTitles, Object[][] auxData) {
-	//  super(experiment, clusters);
-	//this.templateVector = templateVector;
-	this.centroidViewer = new PTMExperimentCentroidViewer(experiment, clusters, templateVector, auxTitles, auxData);
-	setBackground(Color.white);
-	setFont(new Font("monospaced", Font.BOLD, 10));
+		//  super(experiment, clusters);
+		//this.templateVector = templateVector;
+		this.centroidViewer = new PTMExperimentCentroidViewer(experiment, clusters, templateVector, auxTitles, auxData);
+		setBackground(Color.white);
+		setFont(new Font("monospaced", Font.BOLD, 10));
     }
     
     public PTMExperimentSubCentroidsViewer(PTMExperimentCentroidViewer cv){

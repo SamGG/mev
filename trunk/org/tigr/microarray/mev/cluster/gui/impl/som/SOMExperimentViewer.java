@@ -4,8 +4,8 @@
  */
 /*
  * $RCSfile: SOMExperimentViewer.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-03-24 15:51:36 $
+ * $Revision: 1.10 $
+ * $Date: 2006-05-02 16:57:04 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -13,6 +13,7 @@ package org.tigr.microarray.mev.cluster.gui.impl.som;
 
 import java.awt.Color;
 import java.awt.Frame;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -36,6 +37,7 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.util.FloatMatrix;
@@ -51,6 +53,11 @@ public class SOMExperimentViewer implements IViewer {
 	protected static final String SAVE_CLUSTER_CMD = "save-cluster-cmd";
 	protected static final String SAVE_ALL_CLUSTERS_CMD = "save-all-clusters-cmd";
 	protected static final String LAUNCH_NEW_SESSION_CMD = "launch-new-session-cmd";
+	
+	//EH stored for state-saving
+	private FloatMatrix codes;
+	private Experiment experiment;
+	
 	/**
 	 * Constructs a <code>SOMExperimentViewer</code> with specified
 	 * experiment, clusters and codes.
@@ -63,29 +70,22 @@ public class SOMExperimentViewer implements IViewer {
 		this.expViewer.getContentComponent().addMouseListener(listener);
 		
 		this.header = new CentroidExperimentHeader(this.expViewer.getHeaderComponent(), codes, clusters, "SOM Vector");
+		this.codes = codes;
+		this.experiment = experiment; 
 		
 		//this.header = new SOMExperimentHeader(expViewer.getHeaderComponent(), codes, clusters);
 		//this.header.setColorImages(expViewer.getPosColorImage(), expViewer.getNegColorImage());
 		this.header.setNegAndPosColorImages(expViewer.getPosColorImage(), expViewer.getNegColorImage());
 		this.header.setMissingColor(expViewer.getMissingColor());
 		this.header.addMouseListener(listener);
+		this.header.setBackground(Color.white);
+		
 	}
+
 	public Expression getExpression(){
 		return new Expression(this, this.getClass(), "new", 
-				new Object[]{this.expViewer, this.getClusters(), this.header});
-	}    
-	/**
-	 * @inheritDoc
-	 */
-    public SOMExperimentViewer(ExperimentViewer expViewer, int[][] clusters, CentroidExperimentHeader header) {
-		Listener listener = new Listener();	
-		this.popup = createJPopupMenu(listener);
-		
-		this.expViewer = expViewer;
-		this.expViewer.getContentComponent().addMouseListener(listener);
-		
-		this.header = header;
-	}        
+				new Object[]{this.experiment, this.getClusters(), this.codes});
+	}   
     
     public void setExperiment(Experiment e){
     	expViewer.setExperiment(e);

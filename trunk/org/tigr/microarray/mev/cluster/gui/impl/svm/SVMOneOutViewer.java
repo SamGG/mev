@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SVMOneOutViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-03-24 15:51:53 $
+ * $Revision: 1.8 $
+ * $Date: 2006-05-02 16:57:36 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -65,16 +65,15 @@ public class SVMOneOutViewer extends SVMResultViewer {
          init(M.A[0], M.A[1], classifyGenes, initClasses, elementScores, iterationScores, nonNeuts);
     }
     
-    public SVMOneOutViewer(Integer exptID, float[] classes, float[] discr, Boolean classifyGenes, int [] initClasses, int [] elementScores, int [] iterationScores, Integer nonNeuts){
-   	 super(exptID.intValue());
-        init(classes, discr, classifyGenes.booleanValue(), initClasses, elementScores, iterationScores, nonNeuts.intValue());
+    public SVMOneOutViewer(Experiment experiment, FloatMatrix discriminant, Boolean classifyGenes, int [] initClasses, int [] elementScores, int [] iterationScores, Integer nonNeuts){
+    	this(experiment, discriminant, classifyGenes.booleanValue(), initClasses, elementScores, iterationScores, nonNeuts.intValue());
     }
     /**
      * @inheritDoc
      */
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{super.getExpression().getArguments()[0], classes, discr, new Boolean(classifyGenes), initClasses, elementScores, iterationScores, new Integer(nonNeuts)});
+    			new Object[]{super.getExpression().getArguments()[0], discriminant, new Boolean(classifyGenes), initClasses, elementScores, iterationScores, new Integer(nonNeuts)});
     }
     private void init(float[] classes, float[] discr, boolean classifyGenes, int[] initClasses, int[] elementScores, int[] iterationScores, int nonNeuts){
     	this.classes = classes;

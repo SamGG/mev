@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SAMCentroidViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-03-24 15:51:28 $
+ * $Revision: 1.7 $
+ * $Date: 2006-05-02 16:57:04 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -64,9 +64,9 @@ public class SAMCentroidViewer extends CentroidViewer {
     /**
      * @inheritDoc
      */
-    public SAMCentroidViewer(int[][] clusters, float[][] variances, float[][] means, float[][] codes, Integer id,
+    public SAMCentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes,
     		Integer studyDesign, float[] dValues, float[] rValues, float[] foldChangeArray, float[] qLowestFDR, Boolean calculateQLowestFDR) {
-    	super(clusters, variances, means, codes, id);
+    	super(e, clusters, variances, means, codes);
 		initialize(studyDesign.intValue(), dValues, rValues, foldChangeArray, qLowestFDR, calculateQLowestFDR.booleanValue());
     }
 

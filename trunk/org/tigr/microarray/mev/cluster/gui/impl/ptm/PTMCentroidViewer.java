@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMCentroidViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-03-24 15:51:08 $
+ * $Revision: 1.8 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -45,35 +45,35 @@ public class PTMCentroidViewer extends CentroidViewer {
      * and clusters.
      */
     public PTMCentroidViewer(Experiment experiment, int[][] clusters, Vector templateVector, String[] auxTitles, Object[][] auxData) {
-	super(experiment, clusters);
-	Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
-	this.templateVector = templateVector;
+		super(experiment, clusters);
+		Listener listener = new Listener();
+		this.popup = createJPopupMenu(listener);
+		this.templateVector = templateVector;
         this.auxTitles = auxTitles;
         this.auxData = auxData;
-	getContentComponent().addMouseListener(listener);
+		getContentComponent().addMouseListener(listener);
     }
     /**
      * @inheritDoc
      */
-    public PTMCentroidViewer(int[][] clusters, float[][] variances, float[][] means, float[][] codes, Integer id, Vector templateVector, String[] auxTitles, Object[][] auxData) {
-    	super(clusters, variances, means, codes, id);
+    public PTMCentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes, Vector templateVector, String[] auxTitles, Object[][] auxData) {
+    	super(e, clusters, variances, means, codes);
     	this.auxTitles = auxTitles;
     	this.auxData = auxData;
     	this.templateVector = templateVector;
     }    
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{this.clusters, this.variances, this.means, this.codes, new Integer(this.getExperimentID()), this.templateVector, this.auxTitles, this.auxData});
+    			new Object[]{this.experiment, this.clusters, this.variances, this.means, this.codes, this.templateVector, this.auxTitles, this.auxData});
     }
     
     /**
      * Creates a popup menu.
      */
     private JPopupMenu createJPopupMenu(Listener listener) {
-	JPopupMenu popup = new JPopupMenu();
-	addMenuItems(popup, listener);
-	return popup;
+		JPopupMenu popup = new JPopupMenu();
+		addMenuItems(popup, listener);
+		return popup;
     }    
     
     /**

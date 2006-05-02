@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: TerrainViewer.java,v $
- * $Revision: 1.10 $
- * $Date: 2006-03-24 15:52:04 $
+ * $Revision: 1.11 $
+ * $Date: 2006-05-02 16:57:36 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -165,7 +165,13 @@ public class TerrainViewer extends JPanel implements IViewer {
     private Experiment experiment;
     private int exptID = 0;
 
-
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{new Boolean(isGenes), this.experiment, this.clusters, this.weights, this.locations, new Float(this.sigma), new Integer(this.labelIndex)});
+    }
+    public TerrainViewer(Boolean isGenes, Experiment experiment, int[][] clusters, float[][] weights, float[][] locations, Float sigma, Integer labelIndex) {
+    	this(isGenes.booleanValue(), experiment, clusters, weights, locations, sigma.floatValue(), labelIndex.intValue());
+    }
     public TerrainViewer(boolean isGenes, Experiment experiment, int[][] clusters, float[][] weights, float[][] locations, float sigma, int labelIndex) {
         this.isGenes = isGenes;
         this.experiment = experiment;
@@ -250,110 +256,13 @@ public class TerrainViewer extends JPanel implements IViewer {
         this.onScreenCanvas.addMouseMotionListener(listener);
         this.onScreenCanvas.addKeyListener(listener);
     }
-    /**
-     * Constructs a new TerrainViewer from saved data.  Must be used in conjunction with 
-     * the setElement method.
-     * @param exptID
-     * @param isGenes
-     * @param clusters
-     * @param weights
-     * @param locations
-     * @param sigma
-     */
-    public TerrainViewer(Integer exptID, Boolean isGenes, int[][] clusters, 
-    		float[][] weights, float[][] locations, Float sigma, Integer labelIndex){
-    	this.exptID = exptID.intValue();
-        this.isGenes = isGenes.booleanValue();
-        this.clusters = clusters;
-        this.weights = weights;
-        this.locations = locations;
-        this.sigma = sigma.floatValue();
-        this.labelIndex = labelIndex.intValue();
-    }
-    public Expression getExpression(){
-    	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{new Integer(exptID), new Boolean(isGenes), clusters, 
-    			weights, locations, new Float(sigma), new Integer(labelIndex)});
-    }
+
+
 	/**
 	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
 	 */
 	public void setExperiment(Experiment e) {
-		this.experiment = e;
-		this.exptID = experiment.getId();
-        setPreferredSize(new Dimension(10, 10));
-        Listener listener = new Listener();
-        // create the universe 
-        GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
-        this.onScreenCanvas = new Canvas3D(config);
-        this.universe = new SimpleUniverse(this.onScreenCanvas);
-
-        this.offScreenCanvas = new Canvas3D(config, true);
-        Screen3D sOn = onScreenCanvas.getScreen3D();
-        Screen3D sOff = offScreenCanvas.getScreen3D();
-        sOff.setSize(sOn.getSize());
-        sOff.setPhysicalScreenWidth(sOn.getPhysicalScreenWidth());
-        sOff.setPhysicalScreenHeight(sOn.getPhysicalScreenHeight());
-        // attach the offscreen canvas to the view
-        this.universe.getViewer().getView().addCanvas3D(this.offScreenCanvas);
-        // set its bounds
-        BoundingLeaf boundingLeaf = new BoundingLeaf(new BoundingSphere(new Point3d(), 100d));
-        boundingLeaf.setCapability(BoundingLeaf.ALLOW_REGION_READ);
-        PlatformGeometry platformGeometry = new PlatformGeometry();
-        platformGeometry.addChild(boundingLeaf);
-        platformGeometry.compile();
-        this.universe.getViewingPlatform().setPlatformGeometry(platformGeometry);
-        // set distances
-        this.universe.getViewer().getView().setFrontClipDistance(0.001);
-        this.universe.getViewer().getView().setBackClipDistance(0.5);
-        // basis point
-        Point3d basis = new Point3d(0.5, 0, 0.5);
-        this.view_tg = universe.getViewingPlatform().getViewPlatformTransform();
-        // set initilal view point
-        setInitialViewPoint(view_tg, basis);
-        // drifting
-        this.driftInterpolator = new DriftInterpolator(this.view_tg, boundingLeaf);
-        // create heights
-        float[][] heights = DomainUtil.getHeights(this.locations, this.grid_size, this.sigma);
-        // selection shape
-        this.selectionShape = new SelectionShape();
-        // the landscape
-        this.landscape = new Landscape(heights);
-        this.landscape.setPoligonMode(PolygonAttributes.POLYGON_FILL);
-        TransformGroup landTransform = new TransformGroup();
-        landTransform.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
-        landTransform.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        landTransform.addChild(this.landscape);
-        // links shape
-        this.linksShape = new LinksShape(clusters, weights, locations);
-        // keyboard support
-        this.keyMotionBehavior = createKeyMotionBehavior(this.view_tg, basis, boundingLeaf);
-        // control panel
-        this.controlPanel = new ControlPanel(landTransform, this.keyMotionBehavior, boundingLeaf);
-        //this.controlPanel.setVisible(false);
-        Behavior sliderBehavior = this.controlPanel.getSliderBehavior();
-        // add gene shapes
-        this.genesShape = new GenesShape(GenesShape.POINTS, this.locations, this.up_left_point, this.bottom_right_point);
-        this.genesShape.setBounds(boundingLeaf.getRegion());
-        // create scene
-        Node[] nodes = new Node[] {this.selectionShape, landTransform, sliderBehavior, this.keyMotionBehavior, this.driftInterpolator, this.genesShape, this.linksShape};
-        this.sceneGroup = createSceneGraph(nodes, boundingLeaf);
-
-        this.pickBehavior = new PickBehavior(this.sceneGroup, this.onScreenCanvas, boundingLeaf.getRegion());
-        this.pickBehavior.setPickListener(listener);
-        this.sceneGroup.addChild(this.pickBehavior);
-
-        this.sceneGroup.compile();
-        // add the canvas to this panel
-        setLayout(new BorderLayout());
-        add(this.onScreenCanvas, BorderLayout.CENTER);
-        // control panel
-        add(this.controlPanel, BorderLayout.SOUTH);
-
-        this.popup = createJPopupMenu(listener);
-        this.onScreenCanvas.addMouseListener(listener);
-        this.onScreenCanvas.addMouseMotionListener(listener);
-        this.onScreenCanvas.addKeyListener(listener);        
+		this.experiment = e;   
     }
 
     // IViewer implementation

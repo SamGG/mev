@@ -49,7 +49,6 @@ import org.tigr.microarray.mev.cluster.gui.IViewer;
 
 
 public class TableViewer extends JPanel implements IViewer {
-//    public static final long serialVersionUID = 201100001L;
     
     protected JTable table;
     protected TableModel model;

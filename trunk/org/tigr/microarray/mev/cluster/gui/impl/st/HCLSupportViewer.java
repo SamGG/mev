@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: HCLSupportViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-03-24 15:51:48 $
+ * $Revision: 1.5 $
+ * $Date: 2006-05-02 16:57:36 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -84,8 +84,8 @@ public class HCLSupportViewer extends HCLViewer {
         this.addMouseListener(listener);
         addSTMenuItems(popup);
     }
-    public HCLSupportViewer(Integer exptID, int[] features, HCLTreeData genesResult, HCLTreeData samplesResult, int [][] sampleClusters, boolean isExperimentCluster, HCLTree genesTree, HCLTree sampleTree, Integer offset, ExperimentViewer expViewer, Vector geneTreeSupportVector, Vector exptTreeSupportVector) {
-    	super(exptID, features, genesResult, samplesResult, sampleClusters, isExperimentCluster, genesTree, sampleTree, offset, expViewer);
+    public HCLSupportViewer(Experiment e, int[] features, HCLTreeData genesResult, HCLTreeData samplesResult, int [][] sampleClusters, boolean isExperimentCluster, HCLTree genesTree, HCLTree sampleTree, Integer offset, ExperimentViewer expViewer, Vector geneTreeSupportVector, Vector exptTreeSupportVector) {
+    	super(e, features, genesResult, samplesResult, sampleClusters, isExperimentCluster, genesTree, sampleTree, offset, expViewer);
 
         this.geneTreeSupportVector = geneTreeSupportVector;
         this.exptTreeSupportVector = exptTreeSupportVector;

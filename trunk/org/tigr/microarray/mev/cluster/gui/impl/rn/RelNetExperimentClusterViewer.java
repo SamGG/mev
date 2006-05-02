@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: RelNetExperimentClusterViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-03-24 15:51:24 $
+ * $Revision: 1.7 $
+ * $Date: 2006-05-02 16:57:04 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -30,7 +30,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
-public class RelNetExperimentClusterViewer extends ExperimentClusterViewer implements java.io.Serializable {
+public class RelNetExperimentClusterViewer extends ExperimentClusterViewer {
 
     private static final String SET_COLOR_CMD = "set-color-cmd";
     private static final String SET_DEF_COLOR_CMD = "set-def-color-cmd";
@@ -63,10 +63,9 @@ public class RelNetExperimentClusterViewer extends ExperimentClusterViewer imple
      * @param labelIndex
      * @param exptID
      */
-    public RelNetExperimentClusterViewer(int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
-    		Integer offset, ExperimentClusterHeader header, Boolean hasCentroid, float[][] centroids, 
-			Dimension elementSize, Integer labelIndex, Integer exptID) {
-    	super(clusters, genesOrder, drawAnnotations, offset, header, hasCentroid, centroids, elementSize, labelIndex, exptID);
+    public RelNetExperimentClusterViewer(Experiment e, int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
+    		Integer offset){
+    	super(e, clusters, genesOrder, drawAnnotations, offset);
     }
     
     /**

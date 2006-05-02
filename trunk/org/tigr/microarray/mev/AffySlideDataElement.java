@@ -5,18 +5,16 @@
 
 /*
  * $RCSfile: AffySlideDataElement.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-03-24 15:49:44 $
+ * $Revision: 1.9 $
+ * $Date: 2006-05-02 16:56:56 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
-import java.io.Serializable;
-
 import org.tigr.microarray.mev.cluster.gui.IData;
 
-public class AffySlideDataElement extends ArrayElement implements ISlideDataElement, Serializable {
+public class AffySlideDataElement extends ArrayElement implements ISlideDataElement {
 	
 	protected String UID;
 	protected int[] rows;
@@ -73,7 +71,7 @@ public class AffySlideDataElement extends ArrayElement implements ISlideDataElem
 	 * @param isNonZero
 	 * @param detection
 	 */
-	public AffySlideDataElement(int[] rows, int[] cols, String[] extraFields, String uid, boolean isNull, boolean isNonZero, char detection){
+	public AffySlideDataElement(int[] rows, int[] columns, String[] extraFields, String uid, boolean isNull, boolean isNonZero, char detection, float pValue, int flags){
 		this.rows = copyArray(rows);
 		this.columns = copyArray(columns);
 		this.extraFields = copyArray(extraFields);
@@ -83,6 +81,8 @@ public class AffySlideDataElement extends ArrayElement implements ISlideDataElem
 		this.detection = detection;
 		this.currentIntensity = new float[2];
 		this.trueIntensity = new float[2];
+		this.pvalue = pValue;
+		this.flags = flags;
 	}
 	
 	/**

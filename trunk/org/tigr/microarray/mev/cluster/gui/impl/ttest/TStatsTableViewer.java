@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: TStatsTableViewer.java,v $
- * $Revision: 1.8 $
- * $Date: 2005-03-10 20:36:42 $
- * $Author: braistedj $
+ * $Revision: 1.9 $
+ * $Date: 2006-05-02 16:57:56 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.ttest;
@@ -49,8 +49,7 @@ import org.tigr.util.QSort;
  * @author  nbhagaba
  * @version
  */
-public class TStatsTableViewer extends ViewerAdapter implements java.io.Serializable {
-    public static final long serialVersionUID = 202021010001L;
+public class TStatsTableViewer extends ViewerAdapter {
     
     private JComponent header;
     private JComponent content;
@@ -123,60 +122,6 @@ public class TStatsTableViewer extends ViewerAdapter implements java.io.Serializ
         //header.setBackground(Color.white);
         //content = createContent();
         setMaxWidth(getContentComponent(), getHeaderComponent());
-    }
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
-        oos.writeObject(this.experiment);
-        oos.writeObject(this.clusters);
-        oos.writeObject(this.fieldNames);
-        oos.writeInt(this.tTestDesign);
-        
-        oos.writeObject(this.oneClassMeans);
-        oos.writeObject(this.oneClassSDs);
-        oos.writeObject(this.pValues);
-        oos.writeObject(this.tValues);
-        oos.writeObject(this.dfValues);
-        oos.writeObject(this.meansA);
-        oos.writeObject(this.meansB);
-        oos.writeObject(this.sdA);
-        oos.writeObject(this.sdB);
-        oos.writeBoolean(this.sig);
-
-        oos.writeObject(this.rows);
-        oos.writeObject(this.tModel);
-        oos.writeObject(this.origData);
-        oos.writeObject(this.tValuesTable);
-        oos.writeObject(this.header);
-        oos.writeObject(this.sortedAscending);
-      }
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        this.experiment = (Experiment)ois.readObject();
-        this.clusters = (int [][])ois.readObject();
-        this.fieldNames = (String [])ois.readObject();
-        this.tTestDesign = ois.readInt();
-
-        this.oneClassMeans = (Vector)ois.readObject();
-        this.oneClassSDs = (Vector)ois.readObject();
-        this.pValues = (Vector)ois.readObject();
-        this.tValues = (Vector)ois.readObject();
-        this.dfValues = (Vector)ois.readObject();
-        this.meansA = (Vector)ois.readObject();
-        this.meansB = (Vector)ois.readObject();
-        this.sdA = (Vector)ois.readObject();
-        this.sdB = (Vector)ois.readObject();
-        this.sig = ois.readBoolean();
-        
-        this.rows = (int [])ois.readObject();
-        this.tModel = (TValuesTableModel)ois.readObject();
-        this.origData = (Object [][])ois.readObject();
-        this.tValuesTable = (JTable)ois.readObject();
-        this.header = (JComponent)ois.readObject();
-        this.sortedAscending = (boolean [])ois.readObject();
-        
-        addMouseListenerToHeaderInTable(tValuesTable);
-        this.header = header  = tValuesTable.getTableHeader();
-        this.getContentComponent();  //builds popup and sets listeners
     }
     
     public void onSelected(IFramework framework){

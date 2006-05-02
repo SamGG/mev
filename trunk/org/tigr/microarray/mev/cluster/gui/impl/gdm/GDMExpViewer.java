@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: GDMExpViewer.java,v $
- * $Revision: 1.10 $
- * $Date: 2006-03-24 15:50:21 $
+ * $Revision: 1.11 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -170,13 +170,13 @@ public class GDMExpViewer extends JPanel implements IViewer {
     public static final String SORT_BY_PROXIMITY_CMD = "sort-by-proximity-cmd";
     private static final String SAVE_NEIGHBORS_CMD = "save-k-neighbors";
     
-    private int exptID = 0;
     /**
      * Constructs a <code>GDMExpViewer</code> for specified results.
      */
     
     public GDMExpViewer(){}
-    
+
+
     public GDMExpViewer(IFramework fmwk, AlgorithmData aData, String distMetric, int displayEvery, int [][] clusters, int numOfClusters) {
         setBackground(Color.white);
         
@@ -184,12 +184,12 @@ public class GDMExpViewer extends JPanel implements IViewer {
         this.distanceMetric = distMetric;
         
         IDisplayMenu menu = framework.getDisplayMenu();
-        
+
         setElementWidth(elementSize.width);
         
         this.expData = fmwk.getData();
         this.experiment = expData.getExperiment();
-        this.exptID = experiment.getId();
+        
         this.probes = expData.getFeaturesSize();
         this.featuresCount = expData.getFeaturesCount();
         
@@ -261,11 +261,17 @@ public class GDMExpViewer extends JPanel implements IViewer {
         
     }
     
-    
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{this.experiment, expDistMatrix, rawMatrix, 
+    			new Integer(probes), new Integer(featuresCount), new Float(minValue), distanceMetric,
+				new Float(origMaxValue), new Float(origMinValue), new Float(maxValue), new Integer(maxExpNameLength), 
+				new Integer(displayEvery), clusters, new Integer(numOfClusters)});
+    }  
     
     /**
      * Creates a new GDMExpViewer from saved state data.  
-     * setExperiment must be called for the viewer to be fully initialized.
+     * 
      * @param exptID
      * @param expDistMatrix
      * @param rawMatrix
@@ -281,7 +287,7 @@ public class GDMExpViewer extends JPanel implements IViewer {
      * @param clusters
      * @param numOfClusters
      */
-    public GDMExpViewer(Integer exptID, FloatMatrix expDistMatrix, FloatMatrix rawMatrix, 
+    public GDMExpViewer(Experiment e, FloatMatrix expDistMatrix, FloatMatrix rawMatrix, 
 			Integer probes, Integer featuresCount, Float minValue, String distMetric, 
 			Float origMaxValue, Float origMinValue, Float maxValue, Integer maxExpNameLength, 
 			Integer displayEvery, int [][] clusters, Integer numOfClusters) {
@@ -291,7 +297,6 @@ public class GDMExpViewer extends JPanel implements IViewer {
         this.distanceMetric = distMetric;
         
         setElementWidth(elementSize.width);
-        this.exptID = exptID.intValue();
         this.probes = probes.intValue();
         this.featuresCount = featuresCount.intValue();
         
@@ -325,21 +330,7 @@ public class GDMExpViewer extends JPanel implements IViewer {
         } else if (this.displayEvery > 1) {
             setIndices(createIndices(this.displayEvery));
         }
-    }
-    public Expression getExpression(){
-    	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{new Integer(exptID), expDistMatrix, rawMatrix, 
-    			new Integer(probes), new Integer(featuresCount), new Float(minValue), distanceMetric,
-				new Float(origMaxValue), new Float(origMinValue), new Float(maxValue), new Integer(maxExpNameLength), 
-				new Integer(displayEvery), clusters, new Integer(numOfClusters)});
-    }  
-
-	/* (non-Javadoc)
-	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
-	 */
-	public void setExperiment(Experiment e) {
-		this.experiment = e;
-		this.exptID = experiment.getId();
+        this.experiment = e;
 
         Listener listener = new Listener();
         addMouseListener(listener);
@@ -373,6 +364,14 @@ public class GDMExpViewer extends JPanel implements IViewer {
         
         setBackground(Color.white);
         setOpaque(true);
+    }
+
+
+	/* (non-Javadoc)
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
+	 */
+	public void setExperiment(Experiment e) {
+		this.experiment = e;
     }
     
     
@@ -1806,14 +1805,14 @@ public class GDMExpViewer extends JPanel implements IViewer {
 	/* (non-Javadoc)
 	 */
 	public int getExperimentID() {
-		return this.exptID;
+		return 0;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
 	 */
 	public void setExperimentID(int id) {
-		this.exptID = id;
+		;
 	}
 
 }

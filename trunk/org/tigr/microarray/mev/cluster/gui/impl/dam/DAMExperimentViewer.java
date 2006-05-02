@@ -45,8 +45,8 @@ public class DAMExperimentViewer extends ExperimentViewer {
     /**
      * @inheritDoc
      */ 
-    public DAMExperimentViewer(int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets, Integer exptID) {
-    	super(clusters, samplesOrder, drawAnnotations, header, insets, exptID);
+    public DAMExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets) {
+    	super(e, clusters, samplesOrder, drawAnnotations, header, insets);
     }
     
     /**

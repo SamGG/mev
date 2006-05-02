@@ -29,9 +29,8 @@ import org.tigr.util.FloatMatrix;
  *
  * @author  nbhagaba
  */
-public class PCADummyViewer extends ViewerAdapter implements java.io.Serializable {
-    public static final long serialVersionUID = 202011070001L;
-    
+public class PCADummyViewer extends ViewerAdapter {
+   
     private static final String ADD_NEW_3D_CMD = "add-new-3d-cmd";
     private static final String ADD_NEW_2D_CMD = "add-new-2d-cmd";    
     private JPopupMenu popup;

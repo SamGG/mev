@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMExperimentClusterViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-03-24 15:51:53 $
+ * $Revision: 1.6 $
+ * $Date: 2006-05-02 16:57:36 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -46,10 +46,9 @@ public class SVMExperimentClusterViewer extends ExperimentClusterViewer {
     /**
      * @inheritDoc
      */
-    public SVMExperimentClusterViewer(int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
-    		Integer offset, ExperimentClusterHeader header, Boolean hasCentroid, float[][] centroids, 
-			Dimension elementSize, Integer labelIndex, Integer exptID) {
-    		super(clusters, genesOrder, drawAnnotations, offset, header, hasCentroid, centroids, elementSize, labelIndex, exptID);
+    public SVMExperimentClusterViewer(Experiment e, int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
+    		Integer offset){
+    		super(e, clusters, genesOrder, drawAnnotations, offset);
     }
     
     /**

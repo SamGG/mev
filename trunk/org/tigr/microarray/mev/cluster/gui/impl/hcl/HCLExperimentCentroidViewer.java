@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLExperimentCentroidViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-03-24 15:50:40 $
+ * $Revision: 1.5 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -33,8 +33,8 @@ public class HCLExperimentCentroidViewer extends ExperimentClusterCentroidViewer
      * XMLEncoder/XMLDecoder constructor.
      *
      */ 
-    public HCLExperimentCentroidViewer(int[][] clusters, Integer exptID, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes){
-    	super(clusters, exptID, clusterIndex, means, variances, codes);
+    public HCLExperimentCentroidViewer(Experiment experiment, int[][] clusters, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes){
+    	super(experiment, clusters, clusterIndex, means, variances, codes);
     }
     
     /**

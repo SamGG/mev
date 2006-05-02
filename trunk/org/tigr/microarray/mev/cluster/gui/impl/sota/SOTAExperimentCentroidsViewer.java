@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SOTAExperimentCentroidsViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-03-24 15:51:44 $
+ * $Revision: 1.5 $
+ * $Date: 2006-05-02 16:57:35 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -52,8 +52,8 @@ public class SOTAExperimentCentroidsViewer extends ExperimentClusterCentroidsVie
      * Constructs a <code>CentroidsViewer</code> for specified experiment
      * and clusters.
      */
-    public SOTAExperimentCentroidsViewer(ExperimentClusterCentroidViewer cv, Integer exptID) {
-    	super(cv, exptID);
+    public SOTAExperimentCentroidsViewer(ExperimentClusterCentroidViewer cv) {
+    	super(cv);
     }
     /**
      * Creates a popup menu.

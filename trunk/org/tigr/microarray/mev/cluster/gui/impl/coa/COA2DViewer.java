@@ -166,8 +166,7 @@ public class COA2DViewer extends JPanel implements IViewer {
      * @param axis1
      * @param axis2
      */
-    public COA2DViewer(Integer exptID, FloatMatrix geneUMatrix, FloatMatrix expUMatrix, float[] xArray, float[] yArray, Integer geneOrExpt, Integer axis1, Integer axis2) {
-        this.exptID = exptID.intValue();
+    public COA2DViewer(Experiment e, FloatMatrix geneUMatrix, FloatMatrix expUMatrix, float[] xArray, float[] yArray, Integer geneOrExpt, Integer axis1, Integer axis2) {
         this.xArray = xArray;
         this.yArray = yArray;
         this.axis1 = axis1.intValue();
@@ -191,14 +190,15 @@ public class COA2DViewer extends JPanel implements IViewer {
     
         GraphListener graphListener = new GraphListener();
         addMouseListener(graphListener);
-        addMouseMotionListener(graphListener);        
+        addMouseMotionListener(graphListener);     
+        setExperiment(e);
     }
     /**
      * @inheritDoc
      */
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{new Integer(exptID), geneUMatrix, exptUMatrix, xArray, yArray, new Integer(geneOrExpt), new Integer(axis1), new Integer(axis2)});
+    			new Object[]{this.experiment, geneUMatrix, exptUMatrix, xArray, yArray, new Integer(geneOrExpt), new Integer(axis1), new Integer(axis2)});
     }
     
 	/* (non-Javadoc)

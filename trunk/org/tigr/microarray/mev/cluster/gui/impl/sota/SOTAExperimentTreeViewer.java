@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SOTAExperimentTreeViewer.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-03-24 15:51:44 $
+ * $Revision: 1.9 $
+ * $Date: 2006-05-02 16:57:35 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -128,6 +128,7 @@ public class SOTAExperimentTreeViewer extends JPanel implements IViewer{
      * @param sota SOTA tree data structure
      * @param hclSampleTree result from clustering samples by Hierarchical Clustering
      * @param clusters Cluster gene indicies
+     * @deprecated
      */
     public SOTAExperimentTreeViewer(Integer exptID, SOTATreeData sotaTreeData, 
     		int[][] clusterIndices) {
@@ -150,7 +151,7 @@ public class SOTAExperimentTreeViewer extends JPanel implements IViewer{
         
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{new Integer(this.exptID), this.sotaTree.getSotaTreeData(), this.clusterIndices});
+    			new Object[]{this.experiment, this.sotaTree.getSotaTreeData(), this.clusterIndices});
     }
     public int getExperimentID(){return exptID;}
     public void setExperimentID(int e){

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: PTMSubCentroidViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-03-24 15:51:08 $
+ * $Revision: 1.5 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -34,30 +34,30 @@ public class PTMSubCentroidViewer extends CentroidViewer {
     
     /** Creates new PTMSubCentroidViewer */
     public PTMSubCentroidViewer(Experiment experiment, int[][] clusters, Vector templateVector) {
-	super(experiment, clusters);
-	this.templateVector = templateVector;
+		super(experiment, clusters);
+		this.templateVector = templateVector;
     }
     /**
      * @inheritDoc
      */
-    public PTMSubCentroidViewer(int[][] clusters, float[][] variances, float[][] means, float[][] codes, Integer id) {
-    	super(clusters, variances, means, codes, id);
+    public PTMSubCentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes) {
+    	super(e, clusters, variances, means, codes);
     }
     
     /**
      * Paints chart into specified graphics.
      */
     public void paint(Graphics g) {
-	FontMetrics metrics = g.getFontMetrics();
-	Rectangle rect = new Rectangle(40, 20, getWidth()-80, getHeight() - 40 - getNamesWidth(metrics));
-	paint((Graphics2D)g, rect, true);
+		FontMetrics metrics = g.getFontMetrics();
+		Rectangle rect = new Rectangle(40, 20, getWidth()-80, getHeight() - 40 - getNamesWidth(metrics));
+		paint((Graphics2D)g, rect, true);
     }
     
     /**
      * Paints chart into specified graphics and with specified bounds.
      */
     public void paint(Graphics2D g, Rectangle rect, boolean drawMarks) {
-	super.subPaint(g, rect, drawMarks);
+    	super.subPaint(g, rect, drawMarks);
 	
 	if (isAntiAliasing) {
 	    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);

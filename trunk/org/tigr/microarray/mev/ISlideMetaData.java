@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: ISlideMetaData.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-03-24 15:49:44 $
+ * $Revision: 1.5 $
+ * $Date: 2006-05-02 16:56:56 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -76,8 +76,8 @@ public interface ISlideMetaData {
     public void clearFieldNames();
     
     public void appendFieldNames(String[] fieldNames);
-    public void writeAnnotation(DataOutputStream dos, JFrame progressBar) throws IOException; 
-    public void loadAnnotation(DataInputStream dis, JFrame progressBar) throws IOException; 
+    //public void writeAnnotation(DataOutputStream dos, JFrame progressBar) throws IOException; 
+    //public void loadAnnotation(DataInputStream dis, JFrame progressBar) throws IOException; 
     public void setFieldNames(String[] fieldNames);
     
 }

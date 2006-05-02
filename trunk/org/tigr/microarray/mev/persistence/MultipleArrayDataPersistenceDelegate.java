@@ -12,8 +12,9 @@ public class MultipleArrayDataPersistenceDelegate extends PersistenceDelegate {
 		MultipleArrayData mad = (MultipleArrayData) oldInstance;
 		Expression e = new Expression((MultipleArrayData)oldInstance, oldInstance.getClass(), "new",
 				new Object[]{ 
+						mad.getExperiment(), 
 						new Boolean(mad.getUseMainData()), 
-						new Integer(mad.getAltExptId()), 
+						mad.getAlternateExperiment(), 
 						new Float(mad.getPercentageCutoff()), 
 						new Boolean(mad.isPercentageCutoff()), 
 						new Boolean(mad.isVarianceFilter()), 
@@ -31,7 +32,15 @@ public class MultipleArrayDataPersistenceDelegate extends PersistenceDelegate {
 						mad.getSpotColors(), 
 						mad.getCurrentSampleLabelKey(),
 						mad.getFeaturesList(),
-						new Integer(mad.getDataType())
+						new Integer(mad.getDataType()),
+						//Raktim CGH variables. 04/11
+						mad.getSamplesOrder(),/*AsList()*/
+						new Boolean(mad.isHasDyeSwap()),
+						new Boolean(mad.isCGHData()),
+						new Boolean(mad.isLog2Data()),
+						mad.getClones(),
+						new Integer(mad.getCGHSpecies()),
+						mad.getMultipleArrayDataState()
 						});
 //		System.out.println("MultipleArrayDataPersistenceDelegate Expression: " + e.toString());
 		return e;

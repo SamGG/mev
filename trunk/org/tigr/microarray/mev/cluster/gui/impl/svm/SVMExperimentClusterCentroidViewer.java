@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SVMExperimentClusterCentroidViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-03-24 15:51:53 $
+ * $Revision: 1.6 $
+ * $Date: 2006-05-02 16:57:36 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -43,8 +43,8 @@ public class SVMExperimentClusterCentroidViewer extends ExperimentClusterCentroi
     /**
      * @inheritDoc
      */
-    public SVMExperimentClusterCentroidViewer(int[][] clusters, Integer exptID, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes){
-    	super(clusters, exptID, clusterIndex, means, variances, codes);
+    public SVMExperimentClusterCentroidViewer(Experiment e, int[][] clusters, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes){
+    	super(e, clusters, clusterIndex, means, variances, codes);
     }    
     
     /**

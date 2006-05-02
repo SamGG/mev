@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: GDMGeneViewer.java,v $
- * $Revision: 1.10 $
- * $Date: 2006-03-24 15:50:21 $
+ * $Revision: 1.11 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -69,7 +69,7 @@ import org.tigr.microarray.util.SlideDataSorter;
 import org.tigr.util.FloatMatrix;
 import org.tigr.util.QSort;
 
-public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializable {
+public class GDMGeneViewer extends JPanel implements IViewer {
     
     private JPanel content;
     private GDMGeneHeader geneColumnHeaderSP;
@@ -187,12 +187,13 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
     private static final String TOGGLE_PROXIMITY_SORT_CMD = "Toggle-proximity-cmd";
     private static final String SAVE_NEIGHBORS_CMD = "Save-neighbors-cmd";
     
-    private int exptID = 0;
+
+    
+
     
     /**
      * Constructs a <code>GDMGeneViewer</code> for specified results.
      */
-    
     public GDMGeneViewer(IFramework fmwk, AlgorithmData aData, String distMetric, int displayEvery, int [][] clusters, int numOfClusters) {
         setBackground(Color.white);
         
@@ -205,7 +206,7 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
         this.expData = fmwk.getData();
         this.fieldNames = this.expData.getFieldNames();
         this.experiment = expData.getExperiment();
-        this.exptID = experiment.getId();
+        
         //System.out.println("new GDMGeneViewer has exptID " + exptID);
         this.probes = expData.getFeaturesSize();
         this.featuresCount = expData.getFeaturesCount();
@@ -283,14 +284,19 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
     }
     
     public GDMGeneViewer() {}
+
+    /**
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExpression()
+	 */
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{new Integer(exptID), geneDistMatrix, rawMatrix, 
+    			new Object[]{this.experiment, geneDistMatrix, rawMatrix, 
     			new Integer(probes), new Integer(featuresCount), new Float(minValue), distanceMetric,
 				new Float(origMaxValue), new Float(origMinValue), new Float(maxValue), new Integer(maxGeneNameLength), 
 				fieldNames, 
 				new Integer(displayEvery), clusters, new Integer(numOfClusters)});
     }
+    
 	/**
 	 * 
      * Creates a new GDMExpViewer from saved state data.  
@@ -311,14 +317,13 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
 	 * @param clusters
 	 * @param numOfClusters
 	 */
-    public GDMGeneViewer(Integer exptID, FloatMatrix geneDistMatrix, FloatMatrix rawMatrix, 
+    public GDMGeneViewer(Experiment e, FloatMatrix geneDistMatrix, FloatMatrix rawMatrix, 
     		Integer probes, Integer featuresCount, Float minValue, String distMetric, 
 			Float origMaxValue, Float origMinValue, Float maxValue, Integer maxGeneNameLength, 
 			String[] fieldNames, 
 			Integer displayEvery, int [][] clusters, Integer numOfClusters) {
         setBackground(Color.white);
         this.distanceMetric = distMetric;
-        this.exptID = exptID.intValue();
         setElementWidth(elementSize.width);
         
         this.fieldNames = fieldNames;
@@ -354,14 +359,7 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
         } else if (this.displayEvery > 1) {
             setIndices(createIndices(this.displayEvery));
         }
-        
-    }
-	/** 
-	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
-	 */
-	public void setExperiment(Experiment e) {
 		this.experiment = e;
-		this.exptID = experiment.getId();
 
         listener = new Listener();
         addMouseMotionListener(listener);
@@ -397,6 +395,14 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
         
         setBackground(Color.white);
         setOpaque(true);
+        
+    }
+	/** 
+	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
+	 */
+	public void setExperiment(Experiment e) {
+		this.experiment = e;
+
     }
     
     /**
@@ -441,21 +447,6 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
     public Action getAction(String name) {
         return(Action)actions.get(name);
     }
-    
-  /*
-    public void setMultipleArrayData(IData data) {
-        this.expData = data;
-        if(this.displayEvery==1) {
-            setIndices(createIndices());
-        } else if (this.displayEvery > 1) {
-            setIndices(createIndices(this.displayEvery));
-        }
-   
-        int [] indexes = getIndices();
-        geneColumnHeaderSP.setIndices(indexes);
-        geneRowHeaderSP.setIndices(indexes);
-    }
-   */
     
     public void setMainFrame(JFrame mframe) {
         this.mainframe = mframe;
@@ -775,20 +766,6 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
         return image;
     }
     
-   /*
-    private Color getColor(float value) {
-        if (Float.isNaN(value) || posColorImage == null || negColorImage == null) {
-                return NaNColor;
-        }
-        float maximum = value < 0 ? this.minValue : this.maxValue;
-        int colorIndex = (int)(255*value/maximum);
-        colorIndex = colorIndex > 255 ? 255 : colorIndex;
-        int rgb = value < 0 ? negColorImage.getRGB(255-colorIndex, 0) : posColorImage.getRGB(colorIndex, 0);
-    
-        return new Color(rgb);
-    }
-    */
-    
     private Color getColor(float value) {
         if (Float.isNaN(value) || posColorImage == null || negColorImage == null) {
             return NaNColor;
@@ -905,12 +882,6 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
         geneColumnHeaderSP.setPosColorImages(posColorImage);
         geneRowHeaderSP.setPosColorImages(posColorImage);
         
-        // this.upperRightCornerSB.setValues(90, 10, 0, 100);
-        //this.lowerLeftCornerSB.setValues(0, 10, 0, 100);
-        
-        //  this.upperRightCornerSB.getModel().setValue(50);
-        //  this.upperRightCornerSB.setValue(50);
-        // this.upperRightCornerSB.fireAdjustmentValueChanged(
         repaint();
     }
     
@@ -1997,13 +1968,15 @@ public class GDMGeneViewer extends JPanel implements IViewer, java.io.Serializab
 	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentID()
 	 */
 	public int getExperimentID() {
-		return this.exptID;
+		return 0;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
 	 */
 	public void setExperimentID(int id) {
-		this.exptID = id;
+		;
 	}
+
+
 }

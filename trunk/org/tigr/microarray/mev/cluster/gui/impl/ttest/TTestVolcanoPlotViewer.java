@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: TTestVolcanoPlotViewer.java,v $
- * $Revision: 1.10 $
- * $Date: 2006-03-24 15:52:09 $
+ * $Revision: 1.11 $
+ * $Date: 2006-05-02 16:57:56 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -107,18 +107,17 @@ public class TTestVolcanoPlotViewer extends JPanel implements IViewer /*, MouseM
 				rawPValues, adjPValues, tValues, dfValues);
     }
  
-    public TTestVolcanoPlotViewer(Integer exptID, double[] xArray, double[] yArray, 
+    public TTestVolcanoPlotViewer(Experiment e, double[] xArray, double[] yArray, 
     		boolean[] isSig, Integer tTestDesign, Double oneClassMean, Vector oneClassMeans, 
 			Vector oneClassSDs, Vector meansA, Vector meansB, Vector sdA, Vector sdB, 
 			Vector rawPValues, Vector adjPValues, Vector tValues, Vector dfValues){
-    	setExperimentID(exptID.intValue());
-        initialize(xArray, yArray, isSig, tTestDesign.intValue(), oneClassMean.doubleValue(), oneClassMeans, 
+    	this(e, xArray, yArray, isSig, tTestDesign.intValue(), oneClassMean.doubleValue(), oneClassMeans, 
         		oneClassSDs, meansA, meansB, sdA, sdB, 
 				rawPValues, adjPValues, tValues, dfValues);
     }
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{new Integer(this.exptID), this.xArray, this.yArray,
+    			new Object[]{this.experiment, this.xArray, this.yArray,
     			this.isSig, new Integer(tTestDesign), new Double(oneClassMean), oneClassMeans, 
 				oneClassSDs, meansA, meansB, sdA, sdB,
 				rawPValues, adjPValues, tValues, dfValues});
@@ -283,7 +282,7 @@ public class TTestVolcanoPlotViewer extends JPanel implements IViewer /*, MouseM
 	public void setExperiment(Experiment e) {
 		this.experiment = e;
 		this.exptID = e.getId();
-            }
+    }
             
 	/* (non-Javadoc)
 	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentID()

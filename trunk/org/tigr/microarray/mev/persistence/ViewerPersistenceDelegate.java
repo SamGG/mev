@@ -34,13 +34,6 @@ public class ViewerPersistenceDelegate extends PersistenceDelegate {
 						ev.getTitle(),
 						ev.getXLabel(),
 						ev.getYLabel()});
-		    /*
-		      "frame", "startx", "stopx", "starty", "stopy",
-		      "graphstartx", "graphstopx", "graphstarty", "graphstopy",
-			  "preXSpacing", "postXSpacing", "preYSpacing", "postYSpacing",
-			  "title", "xLabel", "yLabel"};
-		    */
-		    
 		} else {
 			//No matching class found.
 			System.out.println("No Expression available for object " + oldInstance.toString());

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: Experiment.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-04-10 18:41:36 $
+ * $Revision: 1.8 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -20,7 +20,6 @@ import org.tigr.util.FloatMatrix;
  * @author Aleksey D.Rezantsev
  */
 public class Experiment {
-//    public static final long serialVersionUID = 2010001L;
     
     /**
     * EH this count is used as a unique identifier for each newly-created Experiment
@@ -37,16 +36,13 @@ public class Experiment {
     
     public Experiment(int[] columns, int[] rows, int id, FloatMatrix fm) {
     	this(null, columns, rows);
-    	//this.id = id;
-    	//this.columns = columns;
-    	//this.rowMapping = rows;
     	this.matrix = fm;
     }
-    public Experiment(int[] columns, int[] rows, int id){
+//    public Experiment(int[] columns, int[] rows, int id){
     	//TODO the purpose of this constructor is only to debug state-saving.
     	//Experiment objects should not be saved using XMLEncoder.
-    	this(columns, rows, id, null);
-    }
+//    	this(columns, rows, id, null);
+//    }
     
 
     /**
@@ -75,9 +71,9 @@ public class Experiment {
 
     //EH end bean changes
     //TODO Remove this.
-    public static String[] getPersistenceDelegateArgs() {
-    	return new String[]{"columns", "rows", "id"};
-    }
+//    public static String[] getPersistenceDelegateArgs() {
+//    	return new String[]{"columns", "rows", "id"};
+//    }
     
     public int getId(){return this.id;}
     

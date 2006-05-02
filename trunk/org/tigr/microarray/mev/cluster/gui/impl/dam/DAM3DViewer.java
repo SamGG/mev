@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: DAM3DViewer.java,v $
- * $Revision: 1.2 $
- * $Date: 2006-03-24 15:49:59 $
+ * $Revision: 1.3 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -75,17 +75,17 @@ public class DAM3DViewer extends ViewerAdapter implements IViewer {
         popup = createJPopupMenu();
     }
     
-    public DAM3DViewer(int mode, FloatMatrix matrix3D, boolean geneViewer, Integer exptID) {
-     //   this.frame = frame;
+    public DAM3DViewer(int mode, FloatMatrix matrix3D, boolean geneViewer, Experiment e) {
+    	this.experiment = e;
         this.mode = mode;
         this.geneViewer = geneViewer;
-        this.exptID = exptID.intValue();
         this.matrix3D = matrix3D;
+    	this.content = createContent(mode, matrix3D, experiment, geneViewer);
         popup = createJPopupMenu();
     }
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{new Integer(this.mode), matrix3D, new Boolean(geneViewer), new Integer(exptID)});
+    			new Object[]{new Integer(this.mode), matrix3D, new Boolean(geneViewer), this.experiment});
     }
     public void setExperiment(Experiment e){
     	this.experiment = e;

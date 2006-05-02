@@ -507,7 +507,7 @@ public class LEMGUI implements IClusterGUI { //IScriptGUI
 		//offset for overlaps
 		int [] strata = data.getIntArray("strata-array");
 				
-		LinearExpressionGraphViewer viewer = new LinearExpressionGraphViewer(framework.getData(), experiment,
+		LinearExpressionGraphViewer viewer = new LinearExpressionGraphViewer(/*framework.getData(), */experiment,
 				newExperiment, sortedLociNames, sortedStartCoordinates, sortedEndCoordinates,
 				replicationMatrix, chrName, locusFieldName);
 		
