@@ -4,13 +4,12 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.37 $
- * $Date: 2006-05-02 16:56:56 $
+ * $Revision: 1.38 $
+ * $Date: 2006-05-02 20:07:31 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
-import sun.awt.windows.Win32PeerlessImage;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -233,7 +232,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      * a calculation result, creates a status bar.
      */
     public MultipleArrayViewer() {
-        super(new JFrame("TIGR Multiple Array Viewer"));
+        super(new JFrame("Multiple Array Viewer"));
         
         initSessionMetaData();
         
@@ -267,7 +266,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         splitPane.setOneTouchExpandable(true);
         mainframe.getContentPane().add(splitPane, BorderLayout.CENTER);
         
-        statusLabel = new JLabel("TIGR MultiExperiment Viewer");
+        statusLabel = new JLabel("MultiExperiment Viewer");
         mainframe.getContentPane().add(statusLabel, BorderLayout.SOUTH);
         mainframe.pack();
         splitPane.setDividerLocation(150);
@@ -329,7 +328,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         splitPane.setOneTouchExpandable(true);
         mainframe.getContentPane().add(splitPane, BorderLayout.CENTER);
         
-        statusLabel = new JLabel("TIGR MultiExperiment Viewer");
+        statusLabel = new JLabel("MultiExperiment Viewer");
         mainframe.getContentPane().add(statusLabel, BorderLayout.SOUTH);
         mainframe.pack();
         splitPane.setDividerLocation(150);
@@ -408,7 +407,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         splitPane.setOneTouchExpandable(true);
         mainframe.getContentPane().add(splitPane, BorderLayout.CENTER);
         
-        statusLabel = new JLabel("TIGR MultiExperiment Viewer");
+        statusLabel = new JLabel("MultiExperiment Viewer");
         mainframe.getContentPane().add(statusLabel, BorderLayout.SOUTH);
         mainframe.pack();
         splitPane.setDividerLocation(150);
