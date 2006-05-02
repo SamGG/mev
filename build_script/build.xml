@@ -22,7 +22,9 @@
     <!-- This path element contains jar files to support module compilation -->
     <path id="module.build.class.path">
         <pathelement location="${lib.dir}/mev-util.jar"/>
+        <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
         <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+        <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
         <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
         <pathelement location="${lib.dir}/mev-base.jar"/>
     </path>
@@ -149,6 +151,14 @@ depends="TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA
     -->
     <target name="init">
         <tstamp/>
+    	<echo level="info" message="home.dir: ${home.dir}" />
+    	<echo level="info" message="source.dir: ${source.dir}" />
+    	<echo level="info" message="tigr.dir: ${tigr.dir}" />
+        <echo level="info" message="mev.dir: ${mev.dir}" />
+        <echo level="info" message="cluster.dir: ${cluster.dir}" />
+    	<echo level="info" message="alg.impl.dir: ${alg.impl.dir}" />
+    	<echo level="info" message="gui.impl.dir: ${gui.impl.dir}" />
+    	<echo level="info" message="lib.dir: ${lib.dir}" />
         <delete dir="${dest.dir}"/>
         <mkdir dir="${dest.dir}"/>
     </target>
@@ -395,12 +405,13 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
     <target name="build-base" depends="jar-gui-support, jar-images, jar-dialog-help">
         <jar destfile="${lib.dir}/mev-base.jar"
              basedir="${dest.dir}"
-	       includes= "org/tigr/remote/**,
-                  	org/tigr/microarray/file/*.class,
-		      	org/tigr/microarray/util/**,
+	       includes= 
+        	"org/tigr/remote/**,
+            org/tigr/microarray/file/*.class,
+		    org/tigr/microarray/util/**,
 			org/tigr/microarray/mev/r/*.class,
 			org/tigr/microarray/mev/cgh/**,
-                         org/tigr/microarray/mev/*.class,
+            org/tigr/microarray/mev/*.class,
 			org/tigr/microarray/mev/action/*.class,
 			org/tigr/microarray/mev/file/**,
 			org/tigr/microarray/mev/script/**,
@@ -428,7 +439,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 
          ==================================================================== -->
 
-
+	<!-- This target is no longer used.  Use TEASE instead -->
     <target name="HCL" depends="HCL-GUI" if="HCL">
         <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
 		<classpath refid="module.build.class.path"/>
@@ -439,6 +450,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
         </propertyfile>
     </target>
 
+	<!-- This target is no longer used.  Use TEASE-GUI instead -->
     <target name="HCL-GUI">
         <javac srcdir="${gui.impl.dir}/hcl" destdir="${dest.dir}">
 		<classpath refid="module.build.class.path"/>
@@ -650,14 +662,16 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 
     <target name="GSH" depends="GSH-GUI" if="GSH">
         <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
-            <include name="GSH.java"/>
+            <include name="GSH.java"/>	
             <classpath>
                 <pathelement location="${lib.dir}/jama.jar"/>
 
                 <!-- jars to support module compilation -->
                 <pathelement location="${lib.dir}/mev-util.jar"/>
                 <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
                 <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
                 <pathelement location="${lib.dir}/mev-base.jar"/>            
             </classpath>
 	  </javac>
@@ -744,7 +758,9 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 
                 <!-- jars to support module compilation -->
                 <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
                 <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
                 <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
                 <pathelement location="${lib.dir}/mev-base.jar"/> 
             </classpath>
@@ -780,7 +796,9 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 
                 <!-- jars to support module compilation -->
                 <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
                 <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
                 <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
                 <pathelement location="${lib.dir}/mev-base.jar"/>            
             </classpath>
@@ -815,7 +833,9 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 
                 <!-- jars to support module compilation -->
                 <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
                 <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
                 <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
                 <pathelement location="${lib.dir}/mev-base.jar"/>            
             </classpath>
@@ -877,7 +897,9 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 
                 <!-- jars to support module compilation -->
                 <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
                 <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
                 <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
                 <pathelement location="${lib.dir}/mev-base.jar"/>            
             </classpath>
@@ -912,7 +934,9 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 
                 <!-- jars to support module compilation -->
                 <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
                 <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
                 <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
                 <pathelement location="${lib.dir}/mev-base.jar"/>            
             </classpath>
@@ -990,12 +1014,21 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
             <entry key="USC.tooltip" value="Uncorrelated Shrunken Centroid Classification"/>
         </propertyfile>
     </target>
+	
 
     <target name="TEASE" depends="TEASE-GUI" if="TEASE">
+    	<!-- Compile HCL classes along with TEASE classes -->
+        <javac srcdir="${gui.impl.dir}/hcl" destdir="${dest.dir}">
+			<classpath refid="module.build.class.path"/>
+       	</javac>
+    	
         <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
 		<classpath refid="module.build.class.path"/>
             <include name="tease/**"/>
+            <include name="ease/**"/>
+            <include name="HCL.java"/>
 	  </javac>
+    	
 	  <propertyfile file="${alg.properties.file}">
 		<entry key="TEASE" value="org.tigr.microarray.mev.cluster.algorithm.impl.tease.TEASE"/>
         </propertyfile>
@@ -1052,7 +1085,9 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 
                 <!-- jars to support module compilation -->
                 <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
                 <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
                 <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
                 <pathelement location="${lib.dir}/mev-base.jar"/>            
             </classpath>
@@ -1071,7 +1106,9 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 
                 <!-- jars to support module compilation -->
                 <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
                 <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
                 <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
                 <pathelement location="${lib.dir}/mev-base.jar"/>            
             </classpath>
@@ -1159,7 +1196,9 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 
                 <!-- jars to support module compilation -->
                 <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
                 <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
                 <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
                 <pathelement location="${lib.dir}/mev-base.jar"/>            
             </classpath>
@@ -1185,7 +1224,9 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 
                 <!-- jars to support module compilation -->
                 <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
                 <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
                 <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
                 <pathelement location="${lib.dir}/mev-base.jar"/>            
             </classpath>
@@ -1205,7 +1246,9 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 
                 <!-- jars to support module compilation -->
                 <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
                 <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
                 <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
                 <pathelement location="${lib.dir}/mev-base.jar"/>            
             </classpath>
@@ -1231,7 +1274,9 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 
                 <!-- jars to support module compilation -->
                 <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
                 <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
                 <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
                 <pathelement location="${lib.dir}/mev-base.jar"/>            
             </classpath>
@@ -1251,7 +1296,9 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 
                 <!-- jars to support module compilation -->
                 <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
                 <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
                 <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
                 <pathelement location="${lib.dir}/mev-base.jar"/>            
             </classpath>
