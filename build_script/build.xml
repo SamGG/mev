@@ -410,6 +410,7 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
             org/tigr/microarray/file/*.class,
 		    org/tigr/microarray/util/**,
 			org/tigr/microarray/mev/r/*.class,
+        	org/tigr/microarray/mev/acknowledgements.html,
 			org/tigr/microarray/mev/cgh/**,
             org/tigr/microarray/mev/*.class,
 			org/tigr/microarray/mev/action/*.class,
