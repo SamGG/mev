@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: Manager.java,v $
- * $Revision: 1.14 $
- * $Date: 2006-05-02 20:52:48 $
+ * $Revision: 1.15 $
+ * $Date: 2006-05-02 21:00:11 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -193,9 +193,9 @@ public class Manager {//A class to keep track of viewers
         windowMenu.addActionListener(eventListener);
         menuBar.add(windowMenu);
         
-        referencesMenu = new JMenu("References");
+        referencesMenu = new JMenu("About");
         
-        acknolMenuItem = new JMenuItem("Contributions...");
+        acknolMenuItem = new JMenuItem("Credits");
         acknolMenuItem.addActionListener(eventListener);
         referencesMenu.add(acknolMenuItem);
         
