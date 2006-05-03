@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayData.java,v $
- * $Revision: 1.23 $
- * $Date: 2006-05-02 16:56:56 $
+ * $Revision: 1.24 $
+ * $Date: 2006-05-03 17:43:33 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -232,7 +232,7 @@ public class MultipleArrayData implements IData, Serializable {
         this.experimentColors = experimentColors;
         this.spotColors = spotColors;
         setSampleLabelKey(currentSampleLabelKey);
-        this.dataType = dataType.intValue();
+        setDataType(dataType.intValue());
 
         //Raktim 4/11. SS modifications
         this.hasDyeSwap = hasDyeSwap.booleanValue();
