@@ -18,12 +18,12 @@ public class GeneAmplifications extends GeneAlterations{
 
     /** Creates a new instance of GeneAmplifications */
     public GeneAmplifications() {
-        nodeName = "Gene Amplifications";
+        nodeName = "GeneAmplifications";
     }
 
     public GeneAmplifications(IFramework framework) {
     	super(framework);
-        nodeName = "Gene Amplifications";
+        nodeName = "GeneAmplifications";
     }
 
     protected int getAlterationType(){

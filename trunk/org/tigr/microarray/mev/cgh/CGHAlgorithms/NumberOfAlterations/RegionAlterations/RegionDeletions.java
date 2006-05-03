@@ -18,7 +18,7 @@ public class RegionDeletions extends RegionAlterations{
 
     /** Creates a new instance of RegionDeletions */
     public RegionDeletions() {
-        nodeName = "Region Deletions";
+        nodeName = "RegionDeletions";
     }
 
     public int getFlankingRegionType() {

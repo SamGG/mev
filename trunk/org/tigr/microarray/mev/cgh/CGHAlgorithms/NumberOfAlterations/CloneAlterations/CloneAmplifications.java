@@ -20,7 +20,7 @@ public class CloneAmplifications extends CloneAlterations {
 
     /** Creates a new instance of CloneAmplifications */
     public CloneAmplifications() {
-        nodeName = "Clone Amplifications";
+        nodeName = "CloneAmplifications";
     }
 
     protected boolean isAltered(int copyNumber) {

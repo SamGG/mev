@@ -18,6 +18,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import org.tigr.microarray.mev.cgh.CGHAlgorithms.NumberOfAlterations.NumberOfAlterationsCalculator;
 import org.tigr.microarray.mev.cgh.CGHDataObj.GeneDataSet;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
+import org.tigr.microarray.mev.cluster.gui.ICGHCloneValueMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 /**
  *
@@ -44,6 +45,25 @@ public class LoadGeneList extends NumberOfAlterationsCalculator{
             return null;
         }
     }
+    
+    /**
+     * Raktim 4/27
+     * Added to make State Saving Work
+     * @param framework
+     * @param file
+     * @return
+     * @throws AlgorithmException
+     */
+    public DefaultMutableTreeNode execute(IFramework framework, File file) throws AlgorithmException {
+        this.framework = framework;
+        this.data = framework.getData();
+        
+        if(file != null){
+            return loadGeneList(file, data.getCGHSpecies());
+        }else{
+            return null;
+        }
+    }
 
     public DefaultMutableTreeNode loadGeneList(File file, int species){
         Vector vecGeneData = null;
@@ -52,7 +72,7 @@ public class LoadGeneList extends NumberOfAlterationsCalculator{
             String line;
             Vector geneNames = new Vector();
             while((line = reader.readLine()) != null){
-                geneNames.add(line);
+                geneNames.add(line.trim());
             }
 
             GeneDataSet geneDataSet = new GeneDataSet();
@@ -63,17 +83,20 @@ public class LoadGeneList extends NumberOfAlterationsCalculator{
         }
 
         try{
-            DefaultMutableTreeNode root = new DefaultMutableTreeNode("Gene Alterations");
+            DefaultMutableTreeNode root = new DefaultMutableTreeNode("GeneAlterations");
             GeneAlterations alts = new GeneAmplifications();
             alts.setVecGeneData(vecGeneData);
             alts.setData(this.data);
+            alts.setAddGenInfo(false);
             root.add(alts.execute(framework));
 
             alts = new GeneDeletions();
             alts.setVecGeneData(vecGeneData);
             alts.setData(this.data);
+            alts.setAddGenInfo(false);
             root.add(alts.execute(framework));
 
+            addGeneralInfo(root, file.getAbsolutePath());
             return root;
         }catch (Exception e){
             e.printStackTrace();
@@ -81,4 +104,20 @@ public class LoadGeneList extends NumberOfAlterationsCalculator{
         }
     }
 
+    /**
+     * Raktim 4/27
+     * Added for State Saving to capture the File used for LoadGeneList
+     * @param root
+     * @param file
+     */
+    private void addGeneralInfo(DefaultMutableTreeNode root, String path) {
+    	ICGHCloneValueMenu menu = framework.getCghCloneValueMenu();
+    	DefaultMutableTreeNode node = new DefaultMutableTreeNode("General Information");
+        node.add(new DefaultMutableTreeNode("Amplification Threshold: " + menu.getAmpThresh()));
+        node.add(new DefaultMutableTreeNode("Deletion Threshold: " + menu.getDelThresh()));
+        node.add(new DefaultMutableTreeNode("Amplification 2 Copy Threshold: " + menu.getAmpThresh2Copy()));
+        node.add(new DefaultMutableTreeNode("Deletion 2 Copy Threshold: " + menu.getDelThresh2Copy()));
+        node.add(new DefaultMutableTreeNode("File: " + path));
+        root.add(node);
+    }
 }

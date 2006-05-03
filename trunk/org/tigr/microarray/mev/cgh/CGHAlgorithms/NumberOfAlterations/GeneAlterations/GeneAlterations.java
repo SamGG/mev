@@ -30,7 +30,8 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 
 public abstract class GeneAlterations extends NumberOfAlterationsCalculator{
     private Vector vecGeneData = null;
-
+    private boolean addGenInfo = true;
+    
     /** Creates a new instance of GeneAlterations */
     public GeneAlterations() {
     }
@@ -76,6 +77,8 @@ public abstract class GeneAlterations extends NumberOfAlterationsCalculator{
             alterationRegions.add(curAlterationRegion);
         }
         Collections.sort(alterationRegions, new AlterationRegionsComparator());
+        if (!addGenInfo) //Capture File Path if LoadGeneList called
+        	return createResultsTree(alterationRegions, addGenInfo);
         return createResultsTree(alterationRegions);
     }
 
@@ -137,4 +140,11 @@ public abstract class GeneAlterations extends NumberOfAlterationsCalculator{
         this.vecGeneData = vecGeneData;
     }
 
+    /**
+     * Used tp cpature file used as parameter
+     * @param path
+     */
+    public void setAddGenInfo(boolean val){
+    	addGenInfo = val;
+    }
 }

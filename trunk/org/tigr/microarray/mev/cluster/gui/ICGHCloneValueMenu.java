@@ -31,4 +31,9 @@ public interface ICGHCloneValueMenu {
     public float getAmpThresh2Copy();
     public float getDelThresh2Copy();
     
+    public void setAmpThresh(float thresh);
+    public void setDelThresh(float thresh);
+    public void setAmpThresh2Copy(float thresh);
+    public void setDelThresh2Copy(float thresh);
+    
 }

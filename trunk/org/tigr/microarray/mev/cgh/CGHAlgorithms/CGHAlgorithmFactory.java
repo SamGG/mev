@@ -23,7 +23,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
 public class CGHAlgorithmFactory implements IGUIFactory {
 
-    String[] names = {"CloneAmplifications", "CloneDeletions", "CloneDeletions2Copy", "CloneAmplifications2Copy",  "RegionAmplifications", "RegionDeletions",
+    static String[] names = {"CloneAmplifications", "CloneDeletions", "CloneDeletions2Copy", "CloneAmplifications2Copy",  "RegionAmplifications", "RegionDeletions",
         "GeneAmplifications", "GeneDeletions", "LoadGeneList", "CompareExperiments"};
 
     /** Creates a new instance of CGHAlgorithmFactory */
@@ -76,4 +76,7 @@ public class CGHAlgorithmFactory implements IGUIFactory {
         return new ImageIcon(url);
     }
 
+    public static String[] getAlgorithimNames(){
+    	return names;
+    }
 }

@@ -49,7 +49,6 @@ public class CGHPositionGraphDataModel extends CGHViewerDataModel implements IPo
         FlankingRegion fr = getFlankingRegionAt(expIndex, flankingRegionIndex);
 
         if(fr.getType() == FlankingRegion.DELETION){
-            //return COLOR_DEL_ONE_COPY;
             if(fr.getSpecifier() == FlankingRegion.DELETION_1_COPY){
                 return COLOR_DEL;
             }else if(fr.getSpecifier() == FlankingRegion.DELETION_2_COPY){

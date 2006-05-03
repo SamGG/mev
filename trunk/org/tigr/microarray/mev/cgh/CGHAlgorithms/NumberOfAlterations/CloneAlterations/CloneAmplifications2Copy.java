@@ -19,7 +19,7 @@ public class CloneAmplifications2Copy extends CloneAlterations{
 
     /** Creates a new instance of MostDeleted2Copy */
     public CloneAmplifications2Copy() {
-        nodeName = "Clone Amplfications 2 Copy";
+        nodeName = "CloneAmplifications2Copy";
     }
 
     protected boolean isAltered(int copyNumber) {
