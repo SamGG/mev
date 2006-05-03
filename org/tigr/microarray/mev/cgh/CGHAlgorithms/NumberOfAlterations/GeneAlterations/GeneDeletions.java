@@ -19,12 +19,12 @@ public class GeneDeletions extends GeneAlterations{
 
     /** Creates a new instance of GeneAmplifications */
     public GeneDeletions() {
-        nodeName = "Gene Deletions";
+        nodeName = "GeneDeletions";
     }
 
     public GeneDeletions(IFramework framework) {
     	super(framework);
-        nodeName = "Gene Deletions";
+        nodeName = "GeneDeletions";
     }
 
     protected int getAlterationType(){

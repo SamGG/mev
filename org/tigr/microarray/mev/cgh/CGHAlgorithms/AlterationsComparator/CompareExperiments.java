@@ -7,10 +7,11 @@
 package org.tigr.microarray.mev.cgh.CGHAlgorithms.AlterationsComparator;
 
 import java.util.Vector;
-
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.cgh.CGHAlgorithms.NumberOfAlterations.NumberOfAlterationsCalculator;
 import org.tigr.microarray.mev.cgh.CGHDataGenerator.ComparisonFlankingRegionCalculator;
 import org.tigr.microarray.mev.cgh.CGHDataObj.ICGHDataRegion;
@@ -65,7 +66,7 @@ public class CompareExperiments extends NumberOfAlterationsCalculator {
         int[] groupAssignments = gPanel.getGroupAssignments();
 
         //this.nodeName = data.getSampleName(groupAssignments[0]) + " vs. " + data.getSampleName(groupAssignments[1]);
-        this.nodeName = "Compare Experiments";
+        this.nodeName = "CompareExperiments";
         this.exprA = data.getSampleName(groupAssignments[0]);
         this.exprB = data.getSampleName(groupAssignments[1]);
 
@@ -119,6 +120,76 @@ public class CompareExperiments extends NumberOfAlterationsCalculator {
         addGeneralInfo(root);
         return root;
     }
+    
+    /**
+     * Raktim 4/27
+     * Added for State Saving
+     * @param framework
+     * @param groupAssignments
+     * @return
+     * @throws AlgorithmException
+     */
+    public DefaultMutableTreeNode execute(IFramework framework, int[] groupAssignments) throws AlgorithmException {
+        ComparisonFlankingRegionCalculator frCalc = new ComparisonFlankingRegionCalculator();
+        this.framework = framework;
+        this.data = framework.getData();
+
+        //this.nodeName = data.getSampleName(groupAssignments[0]) + " vs. " + data.getSampleName(groupAssignments[1]);
+        this.nodeName = "CompareExperiments";
+        this.exprA = data.getSampleName(groupAssignments[0]);
+        this.exprB = data.getSampleName(groupAssignments[1]);
+
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(nodeName);
+
+        TwoExperimentAlterationComparator comparator = new TwoExperimentAlterationComparator();
+        comparator.compareExperiments(this.data, groupAssignments[0], groupAssignments[1], TwoExperimentAlterationComparator.DELETION);
+
+        DefaultMutableTreeNode deletionsNode = new DefaultMutableTreeNode("Deletions");
+
+        DefaultMutableTreeNode cloneDeletionsNode = new DefaultMutableTreeNode("Clone Deletions");
+        deletionsAOnly = comparator.getAOnly();
+        cloneDeletionsNode.add(new DefaultMutableTreeNode(new LeafInfo("A Only", createComparisonViewer(deletionsAOnly))));
+        deletionsBOnly = comparator.getBOnly();
+        cloneDeletionsNode.add(new DefaultMutableTreeNode(new LeafInfo("B Only", createComparisonViewer(deletionsBOnly))));
+        deletionsAandB = comparator.getAAndB();
+        cloneDeletionsNode.add(new DefaultMutableTreeNode(new LeafInfo("A and B", createComparisonViewer(deletionsAandB))));
+
+        DefaultMutableTreeNode regionDeletionsNode = new DefaultMutableTreeNode("Region Amplifications");
+        regionDeletionsNode.add(new DefaultMutableTreeNode(new LeafInfo("A Only", createComparisonViewer(frCalc.calculateFlankingRegions(this.data, comparator.getAOnly(), comparator.getBOnly(), groupAssignments[0])))));
+        regionDeletionsNode.add(new DefaultMutableTreeNode(new LeafInfo("B Only", createComparisonViewer(frCalc.calculateFlankingRegions(this.data, comparator.getBOnly(), comparator.getAOnly(), groupAssignments[1])))));
+        regionDeletionsNode.add(new DefaultMutableTreeNode(new LeafInfo("A and B", createComparisonViewer(frCalc.calculateFlankingRegions(this.data, comparator.getAAndB(), null, groupAssignments)))));
+
+        deletionsNode.add(cloneDeletionsNode);
+        deletionsNode.add(regionDeletionsNode);
+
+        root.add(deletionsNode);
+
+        comparator.compareExperiments(this.data, groupAssignments[0], groupAssignments[1], TwoExperimentAlterationComparator.AMPLIFICATION);
+
+        DefaultMutableTreeNode amplificationsNode = new DefaultMutableTreeNode("Amplifications");
+
+        DefaultMutableTreeNode cloneAmplificationsNode = new DefaultMutableTreeNode("Clone Amplifications");
+        amplificationsAOnly = comparator.getAOnly();
+        cloneAmplificationsNode.add(new DefaultMutableTreeNode(new LeafInfo("A Only", createComparisonViewer(amplificationsAOnly))));
+        amplificationsBOnly = comparator.getBOnly();
+        cloneAmplificationsNode.add(new DefaultMutableTreeNode(new LeafInfo("B Only", createComparisonViewer(amplificationsBOnly))));
+        amplificationsAandB = comparator.getAAndB();
+        cloneAmplificationsNode.add(new DefaultMutableTreeNode(new LeafInfo("A and B", createComparisonViewer(amplificationsAandB))));
+
+        DefaultMutableTreeNode regionAmplificationsNode = new DefaultMutableTreeNode("Region Amplifications");
+        regionAmplificationsNode.add(new DefaultMutableTreeNode(new LeafInfo("A Only", createComparisonViewer(frCalc.calculateFlankingRegions(this.data, comparator.getAOnly(), comparator.getBOnly(), groupAssignments[0])))));
+        regionAmplificationsNode.add(new DefaultMutableTreeNode(new LeafInfo("B Only", createComparisonViewer(frCalc.calculateFlankingRegions(this.data, comparator.getBOnly(), comparator.getAOnly(), groupAssignments[1])))));
+        regionAmplificationsNode.add(new DefaultMutableTreeNode(new LeafInfo("A and B", createComparisonViewer(frCalc.calculateFlankingRegions(this.data, comparator.getAAndB(), null, groupAssignments)))));
+
+        amplificationsNode.add(cloneAmplificationsNode);
+        amplificationsNode.add(regionAmplificationsNode);
+
+        root.add(amplificationsNode);
+
+        addGeneralInfo(root);
+        return root;
+    }
+
 
     /**
      * Old UNUSED
@@ -243,8 +314,8 @@ public class CompareExperiments extends NumberOfAlterationsCalculator {
         node.add(new DefaultMutableTreeNode("Amplification 2 Copy Threshold: " + menu.getAmpThresh2Copy()));
         node.add(new DefaultMutableTreeNode("Deletion 2 Copy Threshold: " + menu.getDelThresh2Copy()));
 
-        node.add(new DefaultMutableTreeNode("Experiments A: " + this.exprA));
-        node.add(new DefaultMutableTreeNode("Experiments B: " + this.exprB));
+        node.add(new DefaultMutableTreeNode("Experiment A: " + this.exprA));
+        node.add(new DefaultMutableTreeNode("Experiment B: " + this.exprB));
         node.add(new DefaultMutableTreeNode("Deletions A Only: " + deletionsAOnly.length));
         node.add(new DefaultMutableTreeNode("Deletions B Only: " + deletionsBOnly.length));
         node.add(new DefaultMutableTreeNode("Deletions A and B: " + deletionsAandB.length));
@@ -254,4 +325,5 @@ public class CompareExperiments extends NumberOfAlterationsCalculator {
         node.add(new DefaultMutableTreeNode("Amplifications A and B: " + amplificationsAandB.length));
         root.add(node);
     }
+    
 }

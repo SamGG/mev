@@ -19,7 +19,7 @@ public class CloneDeletions2Copy extends CloneAlterations{
 
     /** Creates a new instance of MostDeleted2Copy */
     public CloneDeletions2Copy() {
-        nodeName = "Clone Deletions 2 Copy";
+        nodeName = "CloneDeletions2Copy";
     }
 
     protected boolean isAltered(int copyNumber) {

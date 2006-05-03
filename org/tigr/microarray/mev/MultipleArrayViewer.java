@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.38 $
- * $Date: 2006-05-02 20:07:31 $
- * $Author: eleanorahowe $
+ * $Revision: 1.39 $
+ * $Date: 2006-05-03 00:32:17 $
+ * $Author: raktim $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -90,7 +90,10 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.tigr.microarray.file.AnnFileParser;
 import org.tigr.microarray.mev.action.ActionManager;
+import org.tigr.microarray.mev.cgh.CGHAlgorithms.CGHAlgorithmFactory;
+import org.tigr.microarray.mev.cgh.CGHAlgorithms.AlterationsComparator.CompareExperiments;
 import org.tigr.microarray.mev.cgh.CGHAlgorithms.NumberOfAlterations.NumberOfAlterationsCalculator;
+import org.tigr.microarray.mev.cgh.CGHAlgorithms.NumberOfAlterations.GeneAlterations.LoadGeneList;
 import org.tigr.microarray.mev.cgh.CGHAlgorithms.NumberOfAlterations.GeneAlterations.GeneAmplifications;
 import org.tigr.microarray.mev.cgh.CGHAlgorithms.NumberOfAlterations.GeneAlterations.GeneDeletions;
 import org.tigr.microarray.mev.cgh.CGHDataGenerator.FlankingRegionCalculator;
@@ -779,13 +782,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     }
 
     /**
+     * Raktim 4/25
      * Initializes cgh menus when data loaded is cgh data
-     *
+     * For State Saving
      */
 	 private void initializeCGH(){   
-		/**
-		 * Raktim Test SS
-		 */
 	    System.out.println("data.isCGHData(): " + data.isCGHData());
 	    if(data.isCGHData()) {
 	    	this.data.setChromosomeIndices(CGHStanfordFileLoader.calculateChromosomeIndices(this.data.getClones()));
@@ -801,10 +802,271 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 			this.menubar.addCGHMenus();
 			mainframe.validate();
 			
+			/*
 	    	ExperimentsLoaded();
 	    	onFlankingRegionDeterminationChanged();
+	    	*/
 	    }
 	}
+	
+	 /**
+	  * Raktim CGH 4/26
+	  * for State Saving
+	  */
+	private void initializeCGHViews(){
+		ExperimentsLoaded();
+		onFlankingRegionDeterminationChanged();
+	}
+	
+	/**
+	 * Raktim CGH 4/26
+	 * for State Saving
+	 */
+	private void createCGHAnalysisNodes(){
+		if (this.analysisNode == null) return;
+		
+		float ampThresh, ampThresh_T = 0.0f;
+        float delThresh, delThresh_T = 0.0f;
+        float ampThresh2Copy, ampThresh2Copy_T = 0.0f;
+        float delThresh2Copy, delThresh2Copy_T = 0.0f;
+        Vector extraParam = null;
+        int index = -1;
+        
+        //For restoring later
+        ICGHCloneValueMenu menu = framework.getCghCloneValueMenu();
+        ampThresh = menu.getAmpThresh();
+        delThresh = menu.getDelThresh();
+        ampThresh2Copy = menu.getAmpThresh2Copy();
+        delThresh2Copy = menu.getDelThresh2Copy();
+                
+		DefaultMutableTreeNode analysisRoot;
+        DefaultMutableTreeNode currentNode;
+        Object object;
+        
+		int childCount = this.analysisNode.getChildCount();
+		System.out.println("analysisNode Child Count: " + childCount);
+        String algName= "";
+        String trimName = "";
+        Enumeration treeEnum;
+        
+        for(int i = 0; i < childCount; i++){
+        	index = -1;
+        	ampThresh_T = 0.0f;
+            delThresh_T = 0.0f;
+            ampThresh2Copy_T = 0.0f;
+            delThresh2Copy_T = 0.0f;
+            
+            analysisRoot = ((DefaultMutableTreeNode)(analysisNode.getChildAt(i)));
+            object = analysisRoot.getUserObject();
+            if(object != null){
+                if(object instanceof LeafInfo){
+                    algName = ((LeafInfo)object).toString();
+                } else if(object instanceof String) {
+                    algName = (String)object;
+                }
+                System.out.println(algName);
+                trimName = getCGHAlgoNameWihtoutIndex(algName);
+                if(trimName != null) {
+                	index = findCGHAlgoIndexFromFactory(trimName);
+                	System.out.println("CGH Algo index: " + index);
+                }
+                
+                if(index != -1) {
+                	extraParam = new Vector();
+	                treeEnum = analysisRoot.depthFirstEnumeration();
+	                while (treeEnum.hasMoreElements()){
+	                    currentNode = (DefaultMutableTreeNode)treeEnum.nextElement();
+	                    if(currentNode.getUserObject() instanceof LeafInfo){
+	                    	//System.out.println("\tLeafInfo");
+	                    	System.out.print("\t");
+	                    	System.out.println(((LeafInfo)currentNode.getUserObject()).getName());
+	                    } else if(currentNode.getUserObject() instanceof String) {
+	                    	//System.out.println("\tString");
+	                    	System.out.print("\t");
+	                    	String nodeStr = (String)currentNode.getUserObject();
+	                    	System.out.println(nodeStr);
+	                    	int i_T = nodeStr.lastIndexOf(":");
+	                    	if (i_T != -1) {
+	                    		String nodeSubStr = nodeStr.substring(0, i_T);
+	                    		float floatVal = 0.0f;
+	                    		boolean notFloat = false;
+	                    		try {
+	                    			floatVal = Float.parseFloat(nodeStr.substring(i_T+1, nodeStr.length()).trim());
+	                    		} catch (NumberFormatException ne){
+	                    			System.out.println("File Name or InValid parameter");
+	                    			notFloat = true;
+	                    			if(index == 8 || index == 9) {
+	                    				extraParam.add((nodeStr.substring(i_T+1, nodeStr.length()).trim()));
+	                    			}
+	                    		}
+	                    		if(!notFloat) {
+		                    		if(nodeSubStr.equals("Amplification Threshold")){
+		                    			ampThresh_T = floatVal;
+		                    		} else if (nodeSubStr.equals("Deletion Threshold")) {
+		                    			delThresh_T = floatVal;
+		                    		} else if (nodeSubStr.equals("Amplification 2 Copy Threshold")) {
+		                    			ampThresh2Copy_T = floatVal;
+		                    		} else if (nodeSubStr.equals("Deletion 2 Copy Threshold")) {
+		                    			delThresh2Copy_T = floatVal;
+		                    		} 
+	                    		} 
+	                    	}
+	                    }
+	                }
+	                //Re-creating analysis node
+	                System.out.println(algName + " " + ampThresh_T + " " + delThresh_T + " " + ampThresh2Copy_T + " " + delThresh2Copy_T);
+	                menu.setAmpThresh(ampThresh_T);
+	                menu.setDelThresh(delThresh_T);
+	                menu.setAmpThresh2Copy(ampThresh2Copy_T);
+	                menu.setDelThresh2Copy(delThresh2Copy_T);
+	                data.onCopyDeterminationChanged(menu);
+	                
+	                Action action = manager.getAction(ActionManager.CGH_ANALYSIS_ACTION+String.valueOf(index));
+	                if(index == 4 || index == 5 || index == 6 || index == 7 || index == 8){
+	                	onFlankingRegionDeterminationChanged();
+	                }
+	                runCghAnalysis(action, algName, i, extraParam);
+	                
+	                //Restore original thresholds
+	                menu.setAmpThresh(ampThresh);
+	                menu.setDelThresh(delThresh);
+	                menu.setAmpThresh2Copy(ampThresh2Copy);
+	                menu.setDelThresh2Copy(delThresh2Copy);
+	                data.onCopyDeterminationChanged(menu);
+	                
+	                removeCGHAnalysisNode(analysisRoot);
+                }
+            }
+        }
+	}
+	
+	/**
+	 * Raktim CGH 4/26
+	 * for State Saving
+	 * @param name
+	 * @return
+	 */
+	private String getCGHAlgoNameWihtoutIndex(String name) {
+		int last_Ind = name.lastIndexOf("(");
+		if (last_Ind == -1) return null;
+		return name.substring(0,last_Ind-1).trim();
+	}
+	/**
+	 * Raktim CGH 4/26
+	 * for State Saving
+	 * @param name
+	 * @return
+	 */
+	private int findCGHAlgoIndexFromFactory(String name){
+		String algNames[] = CGHAlgorithmFactory.getAlgorithimNames();
+		int i = 0;
+		for(;i < algNames.length; i++){
+			if (name.equals(algNames[i]))
+				return i;
+		}
+		//Special case for "LoadGeneList" option in CGHAnalysis Menu
+		if(name.equals("GeneAlterations")) return 8;
+		
+		return -1;
+	}
+	/**
+	 * Raktim CGH 4.26
+     * Deletes a CGH Analysis node for re-creation.
+     * For State Saving
+     */
+    private String removeCGHAnalysisNode(DefaultMutableTreeNode node) {
+        if (node == null || node.getParent() == null) {
+            return null;
+        }
+        
+        TreePath parentPath = new TreePath(((DefaultMutableTreeNode)node.getParent()).getPath());
+        ((DefaultTreeModel)tree.getModel()).removeNodeFromParent(node);
+        ((TreeSelectionModel)tree.getSelectionModel()).setSelectionPath(parentPath);
+        tree.scrollPathToVisible(parentPath);
+        
+        String nodeName = " ";
+        Object object = node.getUserObject();
+        if(object instanceof LeafInfo)
+            nodeName = ((LeafInfo)object).toString();
+        else if(object instanceof String)
+            nodeName = (String)object;
+      
+        return nodeName;
+        
+    }
+    
+    /**
+     * Raktim CGH 4/26
+     * Inserts a specified CGH Analysis node into the analysis node at a specific location.
+     * For State Saving
+     */
+    public synchronized void insertAnalysisResult(DefaultMutableTreeNode node, String nodeTitle, int location) {
+        if (node == null) {
+            return;
+        }
+        
+        modifiedResult = true;
+        node.setUserObject(nodeTitle);
+        DefaultTreeModel treeModel = (DefaultTreeModel)tree.getModel();
+        treeModel.insertNodeInto(node, analysisNode, location);
+        TreeSelectionModel selModel = tree.getSelectionModel();
+        TreePath treePath = new TreePath(node.getPath());
+        selModel.setSelectionPath(treePath);
+        tree.scrollPathToVisible(treePath);
+        JScrollBar bar = this.treeScrollPane.getHorizontalScrollBar();
+        if(bar != null)
+            bar.setValue(0);
+    }
+    
+    /**
+     * Raktim 4/25
+     * For State Saving
+     * @param action
+     */
+    private void runCghAnalysis(Action action, String nodeName, int location, Vector paramBuff){
+    	//System.out.println("onCghAnalysis ");
+    	DefaultMutableTreeNode result = null;
+    	String className = (String)action.getValue(ActionManager.PARAMETER);
+        try {
+            Class clazz = Class.forName(className);
+            NumberOfAlterationsCalculator gui = (NumberOfAlterationsCalculator)clazz.newInstance();
+            if(gui instanceof LoadGeneList) {
+            	File file = new File((String)paramBuff.get(0));
+            	result = ((LoadGeneList)gui).execute(framework, file);
+            } else if (gui instanceof CompareExperiments) {
+            	int[] indices = {getSampleIndex((String)paramBuff.get(0)),getSampleIndex((String)paramBuff.get(1))};
+            	System.out.println("Exprs: " + (String)paramBuff.get(0) + " " + (String)paramBuff.get(1));
+            	System.out.println("Indices: " + indices[0] + " " + indices[1]);
+            	result = ((CompareExperiments)gui).execute(framework, indices);
+            } else {
+            	result = gui.execute(framework);
+            }
+            insertAnalysisResult(result, nodeName, location);
+            //addAnalysisResult(result);
+        } catch (ClassCastException e) {
+            System.out.println("Error: org.tigr.microarray.mev.cluster.gui.IClusterGUI interface is expected.");
+            ShowThrowableDialog.show(mainframe, "Analysis Error", false, e);
+        } catch (Exception e) {
+            ShowThrowableDialog.show(mainframe, "Analysis Error", false, e);
+        }
+    }
+    
+    /**
+     * Raktim 4/27
+     * @param sampleName
+     * @return
+     */
+    private int getSampleIndex(String sampleName) {
+    	if (data == null) return -1;
+    	
+    	ArrayList featuresList = data.getFeaturesList();
+    	for(int i = 0; i < featuresList.size(); i++){
+    		if (((ISlideData)featuresList.get(i)).getSlideDataName().equals(sampleName))
+    			return i;
+    	}
+    	return -1;
+    }
+    
     private void saveClusterRepositories(XMLEncoder oos) throws IOException {
 		Boolean isGeneClusterRepository;
 		Boolean isExperimentClusterRepository;
@@ -889,7 +1151,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 			        if (data_type!=0 || data_type!=1){
 			            TMEV.setDataType(TMEV.DATA_TYPE_AFFY);
 			        }
-
+			        
+			        if(data.isCGHData()) {
+			        	initializeCGH();
+			        }
+			        
 					progressPanel.update("Loading Clusters");
 			    	if(((Boolean)xmld.readObject()).booleanValue()){
 			            geneClusterRepository = (ClusterRepository)xmld.readObject();
@@ -935,6 +1201,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 			        menubar.replaceLabelMenuItems(data.getFieldNames());
 			        menubar.replaceSortMenuItems(data.getFieldNames());
 			        
+			        if(data.isCGHData()) {
+			        	createCGHAnalysisNodes();
+			        	initializeCGHViews();
+			        }
 			        
 			        setMaxCY3AndCY5();
 			        systemEnable(TMEV.DATA_AVAILABLE);
@@ -1794,7 +2064,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         }
         /* Raktim, Handle differently for CGH Menu */
         if(viewer instanceof ICGHViewer){
-        	//((ICGHViewer)viewer).onMenuChanged(menubar.getCghDisplayMenu());
+        	((ICGHViewer)viewer).onMenuChanged(menubar.getCghDisplayMenu());
         	((ICGHViewer)viewer).onMenuChanged(menubar.getDisplayMenu());
         } else {
         	viewer.onMenuChanged(menubar.getDisplayMenu());
@@ -4327,7 +4597,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         //Delete existing nodes from the main view
         //removeChildren(mainViewNode);
         removeChildren(mainViewerNode);
-        removeChildren(analysisNode);
+        /* Raktim Removed for Sate Saving 4/24 */
+        //removeChildren(analysisNode);
         Iterator it = viewerNodes.iterator();
         while(it.hasNext()){
             addDataView((DefaultMutableTreeNode)it.next());

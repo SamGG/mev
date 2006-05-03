@@ -68,6 +68,30 @@ public abstract class NumberOfAlterationsCalculator implements IClusterGUI {
         addGeneralInfo(root);
         return root;
     }
+    
+    /**
+     * Raktim 4/27
+     * Added for State Saving to capture the File used for LoadGeneList
+     * @param results
+     * @param file
+     * @return
+     */
+    public DefaultMutableTreeNode createResultsTree(Collection results, String file){
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(nodeName);
+
+        root.add(new DefaultMutableTreeNode(new LeafInfo("Results", createResultsViewer(results))));
+        addGeneralInfo(root);
+        return root;
+    }
+    
+    public DefaultMutableTreeNode createResultsTree(Collection results, boolean addInfo){
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(nodeName);
+
+        root.add(new DefaultMutableTreeNode(new LeafInfo("Results", createResultsViewer(results))));
+        if(addInfo)
+        	addGeneralInfo(root);
+        return root;
+    }
 
     private IViewer createResultsViewer(Collection results){
         AlterationRegion[] alterationRegions = new AlterationRegion[results.size()];
@@ -105,7 +129,8 @@ public abstract class NumberOfAlterationsCalculator implements IClusterGUI {
         node.add(new DefaultMutableTreeNode("Deletion 2 Copy Threshold: " + menu.getDelThresh2Copy()));
         root.add(node);
     }
-
+    
+    
     /**
      * Getter for property fcd.
      * @return Value of property fcd.

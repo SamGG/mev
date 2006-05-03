@@ -18,7 +18,7 @@ public class RegionAmplifications extends RegionAlterations{
 
     /** Creates a new instance of RegionAmplifications */
     public RegionAmplifications() {
-        nodeName = "Region Amplifications";
+        nodeName = "RegionAmplifications";
     }
 
     public int getFlankingRegionType() {

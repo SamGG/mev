@@ -20,7 +20,7 @@ public class CloneDeletions extends CloneAlterations{
 
     /** Creates a new instance of CloneDeletions */
     public CloneDeletions() {
-        nodeName = "Clone Deletions";
+        nodeName = "CloneDeletions";
     }
 
     protected boolean isAltered(int copyNumber) {
