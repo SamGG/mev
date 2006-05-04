@@ -1,5 +1,6 @@
 package org.tigr.microarray.mev.persistence;
 
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.beans.Beans;
 
@@ -9,6 +10,7 @@ import java.beans.Beans;
  * This class stores MultipleArrayData state information.  
  */
 public class MEVSessionPrefs extends Beans {
+	private Dimension elementSize;
 	private float minRatioScale, maxRatioScale, midRatioScale, maxCY3, maxCY5;
 	private boolean colorGradientState, autoScale;
 	private int colorScheme;
@@ -136,5 +138,17 @@ public class MEVSessionPrefs extends Beans {
 	 */
 	public void setAutoScale(boolean autoScale) {
 		this.autoScale = autoScale;
+	}
+	/**
+	 * @return Returns the elementSize.
+	 */
+	public Dimension getElementSize() {
+		return elementSize;
+	}
+	/**
+	 * @param elementSize The elementSize to set.
+	 */
+	public void setElementSize(Dimension elementSize) {
+		this.elementSize = elementSize;
 	}
 }

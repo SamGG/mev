@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.39 $
- * $Date: 2006-05-03 00:32:17 $
- * $Author: raktim $
+ * $Revision: 1.40 $
+ * $Date: 2006-05-04 17:23:27 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -1311,7 +1311,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 		try {
 			msp.setAutoScale(auto_scale);
 		} catch (NullPointerException npe){npe.printStackTrace();}
-		
+		try {
+			msp.setElementSize(menubar.getDisplayMenu().getElementSize());
+		} catch (NullPointerException npe){npe.printStackTrace();}		
 	}
 	private void processMeVPrefs(MEVSessionPrefs msp) {
 		try {
@@ -1343,6 +1345,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 		} catch (NullPointerException npe){npe.printStackTrace();}
 		try {
 			this.auto_scale = msp.isAutoScale();
+		} catch (NullPointerException npe){npe.printStackTrace();}
+		try {
+			this.menubar.setElementSize(msp.getElementSize().width, msp.getElementSize().height);
 		} catch (NullPointerException npe){npe.printStackTrace();}
 		
 	}
