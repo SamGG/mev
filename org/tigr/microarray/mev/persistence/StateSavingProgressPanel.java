@@ -33,7 +33,7 @@ import org.tigr.microarray.mev.action.ActionManager;
             this.mav = mav;
             
 			progressPanel = new JPanel(new BorderLayout());
-			progressPanel.setPreferredSize(new Dimension(350, 120));
+			progressPanel.setPreferredSize(new Dimension(350, 80));
             
 	        progressBar = new JProgressBar(0, 100);
 	        progressBar.setValue(0);
