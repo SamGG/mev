@@ -41,6 +41,7 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
@@ -112,7 +113,6 @@ public class LinearExpressionGraphViewer extends JPanel implements IViewer {
 		super(new GridBagLayout());
 		
 			this.numberOfSamples = fullExperiment.getNumberOfSamples();
-			
 			splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, graph, table);
 			splitPane.setResizeWeight(1.0);
 			splitPane.setDividerLocation(0.7);
@@ -221,9 +221,24 @@ public class LinearExpressionGraphViewer extends JPanel implements IViewer {
 	 * returns the header component
 	 */
 	public JComponent getHeaderComponent() {
-		if(graph != null)
-		return graph.getGraphComponent().getHeaderComponent();
-		return new LEMGraphHeader();
+	    
+	    //JB, 5/5/06 state saving requires that graph be created
+	    //in onSelected but getHeaderComponent() is called first
+	    //construct graph to provide linked header rather than a new header
+	    
+		
+	    if(graph == null){
+	        graph = new Graph(fullExperiment, reducedExperiment.getMatrix().A, chrID, sortedLocusIDs, sortedStartArray, sortedEndArray);
+	    
+	       // JB 5/5/06 can't construct table without idata
+	       // so set graph line and marker colors in onSelected 
+	       // graph.setSampleLineColors(table.lineColorVector);
+	       // graph.setSampleMarkerColors(table.markerColorVector);
+	        graph.getGraphComponent().addMouseListener(new Listener());
+	        graph.getGraphComponent().enableOverlay(overlay);
+	        splitPane.setTopComponent(graph);
+	    }
+	    return graph.getGraphComponent().getHeaderComponent();
 	}
 
 	/**
@@ -247,16 +262,27 @@ public class LinearExpressionGraphViewer extends JPanel implements IViewer {
 	public void onSelected(IFramework framework) {
 		this.framework = framework;
 		this.idata = framework.getData();
-		if(table == null)
+	
+		if(table == null) {
 			table = new SampleTable();
-		
+			//JB: 5/5/06 add to bottom component of split pane
+			splitPane.setBottomComponent(table);
+		}
+			
 		if(graph == null){
 			graph = new Graph(fullExperiment, reducedExperiment.getMatrix().A, chrID, sortedLocusIDs, sortedStartArray, sortedEndArray);
 			graph.setSampleLineColors(table.lineColorVector);
 			graph.setSampleMarkerColors(table.markerColorVector);
 			graph.getGraphComponent().addMouseListener(new Listener());
-			graph.getGraphComponent().enableOverlay(overlay);	
+			graph.getGraphComponent().enableOverlay(overlay);
+			//JB: 5/5/06 add to top component of split pane
+			splitPane.setTopComponent(graph);
 		}	
+		
+		//set these to coordinate
+		graph.setSampleLineColors(table.lineColorVector);
+		graph.setSampleMarkerColors(table.markerColorVector);
+		
 		updateViewerModeView();
 		graph.onSelected(framework);
 	}
@@ -409,7 +435,7 @@ public class LinearExpressionGraphViewer extends JPanel implements IViewer {
 			numberOfMarkerColors = markerColorVector.size();
 
 			//get sample names
-			Vector headerNames = idata.getSampleAnnotationFieldNames();
+			Vector headerNames = idata.getSampleAnnotationFieldNames(); 
 			int numSampleAnnFields = headerNames.size();
 			//append additional columns
 			headerNames.add("Key");
