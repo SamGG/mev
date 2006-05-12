@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: FloatSlideData.java,v $
- * $Revision: 1.13 $
- * $Date: 2006-05-02 16:56:56 $
+ * $Revision: 1.14 $
+ * $Date: 2006-05-12 15:09:59 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -578,7 +578,18 @@ public class FloatSlideData implements ISlideData {
     	//System.out.print(index+" "+value);
 		pvalue[index] = value;
     }
-    
+    public float[] getPvalue(){
+    	return pvalue;
+    }
+    public void setPvalues(float[] p){
+    	this.pvalue = p;
+    }
+    public void setGenePixFlags(int[] f){
+    	this.flags = f;
+    }
+    public int[] getGenePixFlags(){
+    	return flags;
+    }
     public float getPvalue(int index){
         return  pvalue[index];
     }
