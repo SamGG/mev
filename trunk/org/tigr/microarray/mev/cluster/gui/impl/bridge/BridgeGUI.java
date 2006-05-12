@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.swing.JFileChooser;
@@ -48,11 +49,13 @@ public class BridgeGUI implements IClusterGUI {
 	//Labels for the Y Axis of Expression Graphs
 	private String yNum = "IntB";
 	private String yDenom = "IntA";
+	private String dataPath;
 	
 	
 	
 	public DefaultMutableTreeNode execute(IFramework framework)
 			throws AlgorithmException {
+		this.dataPath = TMEV.getDataPath();
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode( "BRIDGE" );
 		IData data = framework.getData();
 		Experiment exp = data.getExperiment();
@@ -83,29 +86,66 @@ public class BridgeGUI implements IClusterGUI {
 				this.error( "bridge requires a minimum of 2 replicates per treatment type" );
 				return null;
 			} else {
-				BridgeResult br = this.bridgify( framework, data, data.getDataType() );
-				if( br != null ) {
-					this.createExpressionImages( root, data, br, this.yNum, this.yDenom );
-					
-					//kill the progress bar if it is lingering (if user cancels)
-					if( this.progress != null ) {
-						this.progress.kill();
-					}
-					
-					return root;
-				} else {
-					//deal with null result
-
-					//kill the progress bar if it is lingering (if user cancels)
-					if( this.progress != null ) {
-						this.progress.kill();
-					}
-					
+				//now prescreen for NaN
+				if( this.dataHasNulls( data ) ) {
+					//problem
+					this.error( "Your dataset has null values in it.\r\n" +
+							"It will not work with bridge.\r\n" + 
+							"You may consider removing genes where null values appear." );
 					return null;
+				} else {
+					BridgeResult br = this.bridgify( framework, data, data.getDataType() );
+					if( br != null ) {
+						this.createExpressionImages( root, data, br, this.yNum, this.yDenom );
+						
+						//kill the progress bar if it is lingering (if user cancels)
+						if( this.progress != null ) {
+							this.progress.kill();
+						}
+						
+						return root;
+					} else {
+						//deal with null result
+	
+						//kill the progress bar if it is lingering (if user cancels)
+						if( this.progress != null ) {
+							this.progress.kill();
+						}
+						
+						return null;
+					}
 				}
 			}
 		}//else
 	}//constructor
+	
+	
+	/**
+	 * Prescreening method to look for NaN values in the dataset.
+	 * @param data
+	 * @return
+	 */
+	private boolean dataHasNulls( IData data ) {
+		boolean toReturn = false;
+		
+		Experiment exp = data.getExperiment();
+		
+		float[][] matrix = exp.getValues();
+		for( int i = 0; i < matrix.length; i ++ ) {
+			for( int j = 0; j < matrix[ i ].length; j ++ ) {
+				float fValue = matrix[ i ][ j ];
+				
+				//Float.compare( fValue, Float.NaN );
+				if( Float.isNaN( fValue ) ) {
+					//System.out.println( i + "," + j + " is NaN" );
+					toReturn = true;
+					break;
+				}
+			}
+		}
+		
+		return toReturn;
+	}//datahasNulls()
 	
 	
 	/**
@@ -140,7 +180,6 @@ public class BridgeGUI implements IClusterGUI {
 
 			//Object to format MeV-IData structure into R data String
 			RDataFormatter rDataFormatter = new RDataFormatter( data );
-			
 			RHybSet bhs = initDialog.getBridgeHybSet();
 			
 			//data that characterizes loaded data
@@ -214,22 +253,31 @@ public class BridgeGUI implements IClusterGUI {
 				//get the result
 				toReturn = bThread.getResult();
 				
-				//need to know the gene annotation data
-				String[] geneNames = new String[ iGene ];
-				for( int g = 0; g < iGene; g ++ ) {
-					geneNames[ g ] = data.getGeneName( g );
-				}//g
-				
-				//store these arrays in BridgeResult object
-				//toReturn = new BridgeResult( gamma1, gamma2, pprob, this.threshold );
-				toReturn.setGeneNames( geneNames );
-		        
-		        //seemed to have worked so save the connection strings
-		        if( initDialog.connAdded() ) {
-		        	TMEV.updateRPath( initDialog.getRPathToWrite() );
-		        }
+				if( toReturn != null ) {
+					//need to know the gene annotation data
+					String[] geneNames = new String[ iGene ];
+					for( int g = 0; g < iGene; g ++ ) {
+						String name = data.getGeneName( g );
+						if( name == null ) {
+							name = Integer.toString( g + 1 );
+						}
+						geneNames[ g ] = name;
+					}//g
+					
+					//store these arrays in BridgeResult object
+					//toReturn = new BridgeResult( gamma1, gamma2, pprob, this.threshold );
+					toReturn.setGeneNames( geneNames );
+			        
+			        //seemed to have worked so save the connection strings
+			        if( initDialog.connAdded() ) {
+			        	TMEV.updateRPath( initDialog.getRPathToWrite() );
+			        }
+				} else {
+					System.out.println("Null Results from BridgeWorker" );
+				}
 			} else { //end if( rc != null )
 				//deal with null connection, kill everything
+				this.error( "Couldn't establish an Rserve Connection" );
 			}
 		}//end OK_OPTION
 		
@@ -270,60 +318,6 @@ public class BridgeGUI implements IClusterGUI {
 		
 		return vReturn;
 	}//
-	
-	
-	/**
-	 * Arrange such that 
-	 * @param data
-	 * @param vBridgeHyb
-	 * @return
-	 */
-	private String BridgeNonSwapString( IData data, Vector vBridgeHyb ) {
-		StringBuffer sbTreat = new StringBuffer( BridgeGUI.R_VECTOR_NAME + " <- c(" );
-		StringBuffer sbControl = new StringBuffer();
-		
-		//figure out which color is treated, which is control
-		BridgeHyb firstHyb = ( BridgeHyb ) vBridgeHyb.elementAt( 0 );
-		boolean controlCy3 = firstHyb.controlCy3();
-		
-		//loop through all the hybs
-		for( int i = 0; i < vBridgeHyb.size(); i ++ ) {
-			if( i > 0 ) { 
-				sbTreat.append( "," );
-				sbControl.append( "," );
-			}
-			
-			BridgeHyb hyb = ( BridgeHyb ) vBridgeHyb.elementAt( i );
-			int iHyb = hyb.getHybIndex();
-			
-			//loop through the genes
-			int iGene = data.getExperiment().getNumberOfGenes();
-			for( int g = 0; g < iGene; g ++ ) {
-				if( g > 0 ) {
-					sbTreat.append( "," );
-					sbControl.append( "," );
-				}
-				
-				if( controlCy3 ) {
-					//treated is Cy5 for all hybs since they're all the same
-					sbTreat.append( data.getCY5( iHyb, g ) );
-					sbControl.append( data.getCY3( iHyb, g ) );
-					//System.out.println( i + "," + g + ":" + data.getCY5( iHyb, g ) );
-				} else {
-					//treated is Cy3 for all hybs since they're all the same
-					sbTreat.append( data.getCY3( iHyb, g ) );
-					sbControl.append( data.getCY5( iHyb, g ) );
-					//System.out.println( i + "," + g + ":" + data.getCY3( iHyb, g ) );
-				}
-			}//g
-		}//i
-		
-		sbTreat.append( "," );
-		sbTreat.append( sbControl );
-		sbTreat.append( ")" );
-		
-		return sbTreat.toString();
-	}//BridgeNonSwapString()
 	
 	
 	/**
@@ -526,10 +520,40 @@ public class BridgeGUI implements IClusterGUI {
             }
             
             this.writeFile(saveFile, sb.toString());
+            
+            //looks like it all went ok, save path
+            this.updateDataPath( saveFile.getAbsolutePath() );
         } else {
             //System.out.println("User cancelled Gene List Save");
         }
     }//onSaveGeneList()
+    
+
+	private void updateDataPath(String dataPath) {
+		if (dataPath == null)
+			return;
+		String renderedSep = "/";
+		String renderedPath = new String();
+
+		String sep = System.getProperty("file.separator");
+		String lineSep = System.getProperty("line.separator");
+
+		StringTokenizer stok = new StringTokenizer(dataPath, sep);
+
+		this.dataPath = new String();
+
+		String str;
+		while (stok.hasMoreTokens() && stok.countTokens() > 1) {
+			str = stok.nextToken();
+			renderedPath += str + renderedSep;
+			this.dataPath += str + sep;
+		}
+		// sets the data path in config to render well
+		TMEV.updateDataPath(renderedPath);
+
+		// sets variable to conform to OS spec.
+		TMEV.setDataPath(this.dataPath);
+	}
 
 
     /**
@@ -626,6 +650,61 @@ public class BridgeGUI implements IClusterGUI {
 	}
 }//end class
 /*
+	
+	
+	private String BridgeNonSwapString( IData data, Vector vBridgeHyb ) {
+		StringBuffer sbTreat = new StringBuffer( BridgeGUI.R_VECTOR_NAME + " <- c(" );
+		StringBuffer sbControl = new StringBuffer();
+		
+		//figure out which color is treated, which is control
+		BridgeHyb firstHyb = ( BridgeHyb ) vBridgeHyb.elementAt( 0 );
+		boolean controlCy3 = firstHyb.controlCy3();
+		
+		//loop through all the hybs
+		for( int i = 0; i < vBridgeHyb.size(); i ++ ) {
+			if( i > 0 ) { 
+				sbTreat.append( "," );
+				sbControl.append( "," );
+			}
+			
+			BridgeHyb hyb = ( BridgeHyb ) vBridgeHyb.elementAt( i );
+			int iHyb = hyb.getHybIndex();
+			
+			//loop through the genes
+			int iGene = data.getExperiment().getNumberOfGenes();
+			for( int g = 0; g < iGene; g ++ ) {
+				if( g > 0 ) {
+					sbTreat.append( "," );
+					sbControl.append( "," );
+				}
+				
+				float cy5 = data.getCY5( iHyb, g );
+				float cy3 = data.getCY3( iHyb, g );
+				
+				if( controlCy3 ) {
+					//treated is Cy5 for all hybs since they're all the same
+					//sbTreat.append( data.getCY5( iHyb, g ) );
+					//sbControl.append( data.getCY3( iHyb, g ) );
+					sbTreat.append( cy5 );
+					sbTreat.append( cy3 );
+					//System.out.println( i + "," + g + ":" + data.getCY5( iHyb, g ) );
+				} else {
+					//treated is Cy3 for all hybs since they're all the same
+					//sbTreat.append( data.getCY3( iHyb, g ) );
+					//sbControl.append( data.getCY5( iHyb, g ) );
+					sbTreat.append( cy3 );
+					sbTreat.append( cy5 );
+					//System.out.println( i + "," + g + ":" + data.getCY3( iHyb, g ) );
+				}
+			}//g
+		}//i
+		
+		sbTreat.append( "," );
+		sbTreat.append( sbControl );
+		sbTreat.append( ")" );
+		
+		return sbTreat.toString();
+	}//BridgeNonSwapString()
 //flip doesn't matter for bridge
 String sData =  this.BridgeNonSwapString( data, bhs.getVHyb() );
 int iGene = data.getExperiment().getNumberOfGenes();

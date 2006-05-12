@@ -117,7 +117,7 @@ public class BridgeCentroidViewer extends JPanel implements IViewer, java.io.Ser
         this.yRangeOption = CentroidViewer.USE_EXPERIMENT_MAX;
         this.addMouseMotionListener(new GraphListener());        
     }
-/*
+    
     private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
         oos.writeObject(experiment);
         oos.writeObject(clusters);
@@ -163,7 +163,7 @@ public class BridgeCentroidViewer extends JPanel implements IViewer, java.io.Ser
         this.yRangeOption = CentroidViewer.USE_EXPERIMENT_MAX;
         this.addMouseMotionListener(new GraphListener());
     }
-  */  
+    
     /**
      * Sets means values.
      */
@@ -815,8 +815,7 @@ public class BridgeCentroidViewer extends JPanel implements IViewer, java.io.Ser
 	/* (non-Javadoc)
 	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
 	 */
-	public void setExperiment(Experiment e) {
-	}
+	public void setExperiment(Experiment e) {}
 	/* (non-Javadoc)
 	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExperimentID()
 	 */
@@ -826,14 +825,11 @@ public class BridgeCentroidViewer extends JPanel implements IViewer, java.io.Ser
 	/* (non-Javadoc)
 	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperimentID(int)
 	 */
-	public void setExperimentID(int id) {
-
-	}
-	/**
+	public void setExperimentID(int id) {}
+	/* (non-Javadoc)
 	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExpression()
 	 */
 	public Expression getExpression() {
-		return new Expression(this, this.getClass(), "new", 
-			new Object[]{this.experiment, this.clusters, this.yAxisNumerator, this.yAxisDenominator});
+		return null;
 	} 
 }
