@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayMenubar.java,v $
- * $Revision: 1.15 $
- * $Date: 2006-05-02 16:56:56 $
+ * $Revision: 1.16 $
+ * $Date: 2006-05-12 15:09:12 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -18,6 +18,7 @@ import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.util.Enumeration;
 import java.util.Vector;
 
 import javax.swing.Action;
@@ -302,6 +303,7 @@ public class MultipleArrayMenubar extends JMenuBar {
         this.setNegativeCustomGradient(origDisplayMenu.getNegativeGradientImage());
         this.setPositiveCustomGradient(origDisplayMenu.getPositiveGradientImage());
         this.setUseDoubleGradient(origDisplayMenu.getUseDoubleGradient());
+        this.addLabelMenuItems((origMenubar).getLabelMenuItems());
         
         IDistanceMenu origDistanceMenu = origMenubar.getDistanceMenu();
         
@@ -485,7 +487,19 @@ public class MultipleArrayMenubar extends JMenuBar {
             index++;
         }
     }
-    
+    public String[] getLabelMenuItems(){
+    	//String[] temp = new String[labelGroup.getElements().];
+    	Vector temp = new Vector();
+    	Enumeration labels = labelGroup.getElements();
+    	while(labels.hasMoreElements()){
+    		JRadioButtonMenuItem aButton = (JRadioButtonMenuItem)labels.nextElement();
+    		temp.add((String)aButton.getLabel());
+    	}
+    	String[] temp2 = new String[temp.size()];
+    	for(int i=0; i<temp.size();i++)
+    		temp2[i] = (String)temp.get(i);
+   		return temp2;
+    }
     public void addLabelMenuItems(String [] fieldNames){
         JRadioButtonMenuItem item;
         ButtonGroup bg = new ButtonGroup();
@@ -1174,6 +1188,7 @@ public class MultipleArrayMenubar extends JMenuBar {
             
             return palette;
         }
+
         
 
     }
