@@ -44,7 +44,14 @@ public class RDataFormatter {
 				if( g > 0 ) {
 					sbTreat.append( Rama.COMMA );
 				}
-				sbTreat.append( this.data.getCY3( hybIndex, g ) );
+				
+				float cy3 = this.data.getCY3( hybIndex, g );
+				cy3 ++;
+				//if( cy3 == 0 ) {
+					//cy3 = 0.1f;
+				//}
+				sbTreat.append( cy3 );
+				//sbTreat.append( this.data.getCY3( hybIndex, g ) );
 				//System.out.println( "TreatCy3("+i+","+g+"):" + data.getCY3( hybIndex, g ) );
 			}//g
 		}//i
@@ -62,11 +69,20 @@ public class RDataFormatter {
 				if( g > 0 ) {
 					sbTreat.append( Rama.COMMA );
 				}
-				sbTreat.append( this.data.getCY5( hybIndex, g ) );
+				
+				float cy5 = this.data.getCY5( hybIndex, g );
+				cy5 ++;
+				//if( cy5 == 0 ) {
+					//cy5 = 0.1f;
+				//}
+				sbTreat.append( cy5 );
+				//sbTreat.append( this.data.getCY5( hybIndex, g ) );
 				//System.out.println( "TreatCy5("+i+","+g+"):" + data.getCY5( hybIndex, g ) );
 			}//g
 		}//i
 		sbTreat.append( Rama.COMMA );
+		
+		
 		//next control5
 		for( int i = 0; i < iTreat3; i ++ ) {
 			if( i > 0 ) {
@@ -80,7 +96,14 @@ public class RDataFormatter {
 				if( g > 0 ) {
 					sbTreat.append( Rama.COMMA );
 				}
-				sbTreat.append( this.data.getCY5( hybIndex, g ) );
+				
+				float cy5 = this.data.getCY5( hybIndex, g );
+				cy5++;
+				//if( cy5 == 0 ) {
+				//	cy5 = 0.1f;
+				//}
+				sbTreat.append( cy5 );
+				//sbTreat.append( this.data.getCY5( hybIndex, g ) );
 				//System.out.println( "ControlCy3("+i+","+g+"):" + data.getCY5( hybIndex, g ) );
 			}//g
 		}//i
@@ -98,7 +121,14 @@ public class RDataFormatter {
 				if( g > 0 ) {
 					sbTreat.append( Rama.COMMA );
 				}
-				sbTreat.append( this.data.getCY3( hybIndex, g ) );
+				
+				float cy3 = this.data.getCY3( hybIndex, g );
+				cy3 ++;
+				//if( cy3 == 0 ) {
+				//	cy3 = 0.1f;
+				//}
+				sbTreat.append( cy3 );
+				//sbTreat.append( this.data.getCY3( hybIndex, g ) );
 				//System.out.println( "ControlCy5("+i+","+g+"):" + data.getCY3( hybIndex, g ) );
 			}//g
 		}//i
