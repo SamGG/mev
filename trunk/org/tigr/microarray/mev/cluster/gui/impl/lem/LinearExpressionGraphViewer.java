@@ -134,7 +134,6 @@ public class LinearExpressionGraphViewer extends JPanel implements IViewer {
 	/**
 	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExpression()
 	 */
-
 	public Expression getExpression(){
 		return new Expression(this, this.getClass(), "new", 
 			new Object[]{this.fullExperiment, this.reducedExperiment, 

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayData.java,v $
- * $Revision: 1.24 $
- * $Date: 2006-05-03 17:43:33 $
+ * $Revision: 1.25 $
+ * $Date: 2006-05-12 15:11:24 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -74,7 +74,7 @@ import cern.jet.math.Arithmetic;
 import cern.jet.stat.Probability;
 
 
-public class MultipleArrayData implements IData, Serializable {
+public class MultipleArrayData implements IData {
 
     private ArrayList featuresList = new ArrayList();
     private ArrayList indicesList  = new ArrayList(); // array of int[]'s
@@ -215,7 +215,7 @@ public class MultipleArrayData implements IData, Serializable {
     	this.useMainData = useMainData.booleanValue();
     	this.percentageCutoff = percentageCutoff.floatValue();
     	this.usePercentageCutoff = usePercentageCutoffs.booleanValue();
-        this.useVarianceFilter = useVarianceFilter.booleanValue(); 
+    	this.useVarianceFilter = useVarianceFilter.booleanValue(); 
         this.useDetectionFilter = useDetectionFilter.booleanValue();
         this.useFoldFilter = useFoldFilter.booleanValue();
         this.samplesOrder = samplesOrder;
@@ -232,8 +232,10 @@ public class MultipleArrayData implements IData, Serializable {
         this.experimentColors = experimentColors;
         this.spotColors = spotColors;
         setSampleLabelKey(currentSampleLabelKey);
+        try{
         setDataType(dataType.intValue());
-
+        } catch (Exception e){e.printStackTrace();}
+        
         //Raktim 4/11. SS modifications
         this.hasDyeSwap = hasDyeSwap.booleanValue();
         this.CGHData = CGHData.booleanValue();
@@ -570,8 +572,7 @@ public class MultipleArrayData implements IData, Serializable {
         if (featuresList.size() == 0) {
             return 0.0f;
         }
-
-        return ((ISlideData)(featuresList.get(column))).getPvalue(row);        
+        return ((ISlideData)(featuresList.get(column))).getPvalue(row);
     }
     public int getGenePixFlags(int column, int row) {
         if (featuresList.size() == 0) {
@@ -1611,7 +1612,6 @@ public class MultipleArrayData implements IData, Serializable {
 
         // pcahan affy detection filter or fold filter
         if ((isLowerCutoffs()||isGenePixFilter() || isPercentageCutoff()) ||isPvaluePercentageCutoff()|| isPresentCallCutoff()||isGCOSPercentCutoff()||isVarianceFilter() || ( (TMEV.getDataType() == TMEV.DATA_TYPE_AFFY) && (isDetectionFilter() || isFoldFilter())) ) {
-            //features = createCutoffFeatures(featuresSize, probesSize);
             probes = createCutoffGeneList(featuresSize, probesSize);
             experiment = createExperiment(featuresSize, probes);
         } else {
