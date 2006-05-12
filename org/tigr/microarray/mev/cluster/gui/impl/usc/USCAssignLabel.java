@@ -181,8 +181,37 @@ public class USCAssignLabel extends AlgorithmDialog {
 			}
 		}
 		
+		//should also validate number of hybs/label to make sure USC can run
+		for( int i = 0; i < this.userLabelArray.length; i ++ ) {
+			String label = this.userLabelArray[ i ];
+			
+			if( label.equals( USCAssignLabel.TEST_LABEL ) ) {
+				//don't do anything
+			} else {
+				int iHyb = 0;
+				
+				//now count the number of hybs for this label
+				for( int j = 0; j < labels.length; j ++ ) {
+					if( label.equalsIgnoreCase( labels[ j ] ) ) {
+						iHyb ++;
+					}
+				}
+				
+				if( iHyb < 3 ) {
+					//problem
+					this.error( "There must be at least 3 experiments per class\r\n  " 
+							+ label + " only contains " + iHyb );
+					toReturn = false;
+					break;
+				}
+			}
+		}//end i
+		
 		return toReturn;
 	}//validateLabels()
+	
+	
+	
 	
     
 	/**

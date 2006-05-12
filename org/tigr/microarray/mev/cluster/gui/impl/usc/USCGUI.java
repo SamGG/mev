@@ -12,6 +12,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.swing.JFileChooser;
@@ -81,6 +82,7 @@ public class USCGUI implements IClusterGUI {
 	private String[] userLabelArray;
 	private String[] hybNames;
 	private String[] params;	//[ numBins, corrLo, corrHi, corrStep ]
+	private String dataPath;
 	
 	private USCResult finalResult;
 	private USCFoldResult[] foldResults;
@@ -95,6 +97,7 @@ public class USCGUI implements IClusterGUI {
 	 * @return 
 	 */
 	public DefaultMutableTreeNode execute( IFramework framework ) throws AlgorithmException {
+		this.dataPath = TMEV.getDataPath();
 		DefaultMutableTreeNode returnNode = new DefaultMutableTreeNode( "USC Result" );
 		
 		IData data = framework.getData();
@@ -667,11 +670,41 @@ public class USCGUI implements IClusterGUI {
 			}//end o
 		
 			this.writeFile( saveFile, sb.toString() );
+			
+			//seems to have gone ok, save new path
+			this.updateDataPath( saveFile.getAbsolutePath() );
 		} else {
 			System.out.println( "User Cancelled Saving Training File" );
 			return;
 		}
 	}//saveTraining()
+    
+
+	private void updateDataPath(String dataPath) {
+		if (dataPath == null)
+			return;
+		String renderedSep = "/";
+		String renderedPath = new String();
+
+		String sep = System.getProperty("file.separator");
+		String lineSep = System.getProperty("line.separator");
+
+		StringTokenizer stok = new StringTokenizer(dataPath, sep);
+
+		this.dataPath = new String();
+
+		String str;
+		while (stok.hasMoreTokens() && stok.countTokens() > 1) {
+			str = stok.nextToken();
+			renderedPath += str + renderedSep;
+			this.dataPath += str + sep;
+		}
+		// sets the data path in config to render well
+		TMEV.updateDataPath(renderedPath);
+
+		// sets variable to conform to OS spec.
+		TMEV.setDataPath(this.dataPath);
+	}
 	
 	
 	/**
