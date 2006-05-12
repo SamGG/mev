@@ -44,6 +44,7 @@
            **See the "algorithm-modules" target below for important information about 
            specification of algorithms to build and the order.
     -->
+    <property name="HCL" value="y"/>
     <property name="TEASE" value="y"/>
     <property name="ST" value="y"/>
     <property name="SOTA" value="y"/>
@@ -104,7 +105,7 @@
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="algorithm-modules"
-depends="build-base,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,SVM,USC,LEM,KNNC,DAM,GDM,PCA,COA,TRN,EASE">
+depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,SVM,USC,LEM,KNNC,DAM,GDM,PCA,COA,TRN,EASE">
     </target>
 
 
@@ -126,7 +127,7 @@ depends="build-base,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRI
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="modules-only"
-depends="TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE">
+depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE">
     </target>
 
 
@@ -286,10 +287,24 @@ depends="TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA
     -->
     <target name="base" depends="jar-algorithm-support">
         <javac srcdir="${tigr.dir}/microarray:${tigr.dir}" destdir="${dest.dir}"
-            includes="mev/r/**, file/**, remote/**, util/**, mev/*.java, mev/action/*.java, mev/persistence/**, mev/file/**, mev/script/**,
-mev/cluster/gui/impl/**, mev/cgh/**,
-mev/cluster/gui/impl/dialogs/**, mev/cluster/gui/impl/util/*.java, mev/cluster/gui/*.java,
-mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washington/cea/r/*.java">
+            includes=
+            "mev/r/**, 
+            file/**, 
+            remote/**, 
+            util/**, 
+            mev/**, 
+            mev/action/*.java, 
+            mev/persistence/**, 
+            mev/file/**, 
+            mev/script/**,
+			mev/cluster/gui/impl/**, 
+			mev/cgh/**,
+			mev/cluster/gui/impl/dialogs/**, 
+			mev/cluster/gui/impl/util/*.java, 
+			mev/cluster/gui/*.java,
+			mev/cluster/clusterUtil/**, 
+			mev/cluster/gui/helpers/**, 
+			${source.dir}/edu/washington/cea/r/*.java">
             <classpath>
                 <pathelement location="${lib.dir}/normalization.jar"/>	
                 <pathelement location="${lib.dir}/jai_codec.jar"/>	
@@ -440,7 +455,6 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
 
          ==================================================================== -->
 
-	<!-- This target is no longer used.  Use TEASE instead -->
     <target name="HCL" depends="HCL-GUI" if="HCL">
         <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
 		<classpath refid="module.build.class.path"/>
@@ -451,7 +465,6 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
         </propertyfile>
     </target>
 
-	<!-- This target is no longer used.  Use TEASE-GUI instead -->
     <target name="HCL-GUI">
         <javac srcdir="${gui.impl.dir}/hcl" destdir="${dest.dir}">
 		<classpath refid="module.build.class.path"/>
@@ -1045,8 +1058,8 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
             <entry key="TEASE.class" value="org.tigr.microarray.mev.cluster.gui.impl.tease.TEASEGUI"/>
 	  		<entry key="TEASE.category" value="${CLUSTERING}"/>
             <entry key="TEASE.smallIcon" value="analysis16.gif"/>
-            <entry key="TEASE.largeIcon" value="hcl_button.gif"/>
-            <entry key="TEASE.tooltip" value="HCL and EASE"/>
+            <entry key="TEASE.largeIcon" value="tease_button.gif"/>
+            <entry key="TEASE.tooltip" value="Tree EASE"/>
         </propertyfile>
     </target>
 
@@ -1448,5 +1461,11 @@ mev/cluster/clusterUtil/**, mev/cluster/gui/helpers/**, ${source.dir}/edu/washin
         <delete dir="${dest.dir}"/> 
     </target>
 -->
+	<target name="build_deploy" depends="build-all">
+		
+		<!--
+		zip lib dir, source dir, docs, config, sampledata, bat file into releasable zip file
+		-->
+	</target>
 </project>
 
