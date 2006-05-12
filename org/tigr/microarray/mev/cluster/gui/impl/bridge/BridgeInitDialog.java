@@ -111,10 +111,10 @@ public class BridgeInitDialog extends AlgorithmDialog {
 		//create the GUI
 		JPanel mainPanel = new JPanel();
 		if( dataTypeP == IData.DATA_TYPE_TWO_INTENSITY ) {
-			System.out.println( "dataType = TWO_INTENSITY" );
+			//System.out.println( "dataType = TWO_INTENSITY" );
 			mainPanel.add( this.createDataTypePanel(), BorderLayout.NORTH );
 		} else {
-			System.out.println( "dataType = Unknown" );
+			//System.out.println( "dataType = Unknown" );
 		}
 		mainPanel.add( this.createHybPanel( hybNames, this.dataType ), BorderLayout.CENTER );
 		mainPanel.add( this.createParamPanel(), BorderLayout.SOUTH );

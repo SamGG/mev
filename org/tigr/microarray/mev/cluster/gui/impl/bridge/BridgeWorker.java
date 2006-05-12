@@ -3,8 +3,14 @@
  */
 package org.tigr.microarray.mev.cluster.gui.impl.bridge;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import org.tigr.microarray.mev.r.RProgress;
 import org.tigr.microarray.mev.r.RSrvException;
@@ -51,6 +57,24 @@ public class BridgeWorker extends SwingWorker {
 		this.threshold = thresholdP;
 		this.progress = progressP;
 	}//constructor()
+
+
+    /**
+     * Write the String s to File f
+     * 
+     * @param f
+     * @param s
+     */
+    private void writeFile(File f, String s) {
+        try {
+            FileWriter fw = new FileWriter(f);
+            fw.write(s);
+            fw.flush();
+            fw.close();
+        } catch( IOException e ) {
+            e.printStackTrace();
+        }
+    }//writeFile()
 	
 	
 	public Object construct() {
@@ -76,15 +100,26 @@ public class BridgeWorker extends SwingWorker {
 			
 			//reform vector data into matrix
 			this.rc.voidEval( this.sReform );
-			/*
+			
 			//for testing
-			double[][] matrix = this.rc.eval( "bData[ 1:5, 1:8 ]" ).asDoubleMatrix();
+			double[][] matrix = this.rc.eval( "bData" ).asDoubleMatrix();
+			StringBuffer sb = new StringBuffer();
 			for( int i = 0; i < matrix.length; i ++ ) {
+				if( i > 0 ) {
+					sb.append( "\r\n" );
+				}
+				
 				for( int j = 0; j < matrix[ i ].length; j ++ ) {
-					System.out.println(i+":"+j + "="+matrix[ i ][j ]);
+					//System.out.println(i+":"+j + "="+matrix[ i ][j ]);
+					if( j > 0 ) {
+						sb.append( "\t" );
+					}
+					sb.append( matrix[ i ][ j ] );
 				}
 			}
-			*/
+			//File f = new File("/Users/iVu/Documents/Dev/MeV/out.txt");
+			//this.writeFile( f, sb.toString() );
+			
 			
 			//call fit.model()
 			this.rc.voidEval( this.sMcmc );
@@ -104,12 +139,6 @@ public class BridgeWorker extends SwingWorker {
 			double[] gamma1 = rc.eval( "gamma1" ).asDoubleArray();
 			double[] gamma2 = rc.eval( "gamma2" ).asDoubleArray();
 			
-			/*
-			for( int i = 0; i < 10; i ++ ) {
-				System.out.println( i + "=" + gamma1[ i ] +"," + gamma2[ i ]);
-			}
-			*/
-			
 			double[] postP = rc.eval( this.sPost ).asDoubleArray();
 			
 			this.result = new BridgeResult( gamma1, gamma2, postP, this.threshold );
@@ -122,6 +151,7 @@ public class BridgeWorker extends SwingWorker {
 			//this.rama.error( e.getMessage() );
 			this.ok = false;
 			this.done = false;
+			this.error( e.getMessage() );
 		} finally {
 			this.progress.kill();
 		}
@@ -136,6 +166,16 @@ public class BridgeWorker extends SwingWorker {
 		this.done = true;
 		//System.out.println( "Finished" );
 	}
+	
+	
+	/**
+	 * Displays an error dialog
+	 * @param message
+	 */
+	public void error( String message ) {
+		JOptionPane.showMessageDialog( new JFrame(), 
+				message, "Input Error", JOptionPane.ERROR_MESSAGE );
+	}//end error()
 	
 	
 	
