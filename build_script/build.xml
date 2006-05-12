@@ -9,7 +9,7 @@
          and destination areas.
     -->
     <property name="dest.dir" location="${basedir}/temp"/>
-    <property name="home.dir" location="${basedir}/../.."/>
+    <property name="home.dir" location="${basedir}/.."/>
     <property name="source.dir" location="${basedir}/../source"/>
     <property name="tigr.dir" location="${source.dir}/org/tigr"/>
     <property name="mev.dir" location="${tigr.dir}/microarray/mev"/>
@@ -287,6 +287,9 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     -->
     <target name="base" depends="jar-algorithm-support">
         <javac srcdir="${tigr.dir}/microarray:${tigr.dir}" destdir="${dest.dir}"
+        	fork="yes" 
+    		executable="C:\j2sdk1.4.2_07\bin\javac"
+    		memoryMaximumSize="256m"
             includes=
             "mev/r/**, 
             file/**, 
@@ -324,6 +327,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
                 <pathelement location="${lib.dir}/base64.jar"/>
                 <pathelement location="${lib.dir}/HTTPClient.jar"/>
                 <pathelement location="${lib.dir}/servlet.jar"/>
+                <pathelement location="${lib.dir}/ftpbean.jar"/>
                 <pathelement location="${tigr.dir}/microarray/file"/>
             </classpath>	    
         </javac>
@@ -1050,7 +1054,22 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
     <target name="TEASE-GUI">
         <javac srcdir="${gui.impl.dir}/tease" destdir="${dest.dir}">
-		<classpath refid="module.build.class.path"/>
+		<classpath>
+
+                <pathelement location="${lib.dir}/ftpbean.jar"/>
+
+
+
+                <!-- jars to support module compilation -->
+                <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+                <pathelement location="${lib.dir}/mev-base.jar"/> 
+
+
+		</classpath>
 	  </javac>
 	  <propertyfile file="${gui.properties.file}">
 		<entry key="gui.names" value="TEASE:" operation="+"/>            
@@ -1332,7 +1351,8 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
     <target name="EASE" depends="EASE-GUI" if="EASE">
         <javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
-            <classpath refid="module.build.class.path"/>
+            <classpath refid="module.build.class.path">
+		</classpath>
             <include name="ease/**"/>
 	  </javac>
 	  <propertyfile file="${alg.properties.file}">
@@ -1342,7 +1362,18 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
     <target name="EASE-GUI">
         <javac srcdir="${gui.impl.dir}/ease" destdir="${dest.dir}">
-            <classpath refid="module.build.class.path"/>
+            <classpath>
+                <pathelement location="${lib.dir}/ftpbean.jar"/>
+
+
+                <!-- jars to support module compilation -->
+                <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+                <pathelement location="${lib.dir}/mev-base.jar"/> 
+		</classpath>
 	  </javac>
 	  <propertyfile file="${gui.properties.file}">
 	    <entry key="gui.names" value="EASE:" operation="+"/>
