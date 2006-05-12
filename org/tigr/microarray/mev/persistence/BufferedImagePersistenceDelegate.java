@@ -9,7 +9,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.tigr.microarray.mev.MultipleArrayViewer;
-import org.tigr.util.FloatMatrix;
 
 
 public class BufferedImagePersistenceDelegate extends PersistenceDelegate {
