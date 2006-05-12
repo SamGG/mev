@@ -4,15 +4,17 @@ All rights reserved.
 */
 /*
  * $RCSfile: IDisplayMenu.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 20:38:25 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2006-05-12 15:17:29 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
+
+import javax.swing.JMenu;
 
 /**
  * This interface is used to access to framework display menu.
@@ -118,4 +120,5 @@ public interface IDisplayMenu {
      * Returns true if the gradient style is double 
      */
     public boolean getUseDoubleGradient();
+
 }
