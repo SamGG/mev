@@ -128,6 +128,19 @@ public class PersistenceObjectFactory {
     		detection[i] = dis.readChar();
     	}
     	fsd.setDetection(detection);
+    	
+    	float[] pvalues = new float[dis.readInt()];
+    	for(int i=0; i<pvalues.length; i++){
+    		pvalues[i] = dis.readFloat();
+    	}
+    	fsd.setPvalues(pvalues);
+    	
+    	int[] flags = new int[dis.readInt()];
+    	for(int i=0; i<flags.length; i++){
+    		flags[i] = dis.readInt();
+    	}
+    	fsd.setGenePixFlags(flags);
+    	
     	dis.close();
     	return fsd;
     }
@@ -348,6 +361,19 @@ public class PersistenceObjectFactory {
     	for(int i=0; i<detection.length; i++){
     		dos.writeChar(detection[i]);
     	}
+    	
+    	float[] pvalues = fsd.getPvalue();
+    	dos.writeInt(pvalues.length);
+    	for(int i=0; i<pvalues.length; i++){
+    		dos.writeFloat(pvalues[i]);
+    	}
+    	
+		int[] flags = fsd.getGenePixFlags();
+    	dos.writeInt(flags.length);
+    	for(int i=0; i<flags.length; i++){
+    		dos.writeInt(flags[i]);
+    	}
+    	
 	}
 
 	public static void writeBufferedImage(DataOutputStream dos, BufferedImage bi) throws IOException {
