@@ -126,6 +126,7 @@ public class EASEUpdateManager {
             "available<br>species and clone set files.  Update request cannot be fulfilled.", "EASE Update Error", JOptionPane.ERROR_MESSAGE);
             okStatus = false;
             progress.dispose();
+            //e.printStackTrace();
         }
     }
     
