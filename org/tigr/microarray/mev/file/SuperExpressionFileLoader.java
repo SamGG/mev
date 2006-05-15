@@ -4,8 +4,8 @@
  */
 /*
  * $RCSfile: SuperExpressionFileLoader.java,v $
- * $Revision: 1.15 $
- * $Date: 2006-05-02 20:52:48 $
+ * $Revision: 1.16 $
+ * $Date: 2006-05-15 20:30:08 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -196,7 +196,7 @@ public class SuperExpressionFileLoader {
 		subMenuItem[0]=new JMenuItem("MeV Files");
 		subMenuItem[0].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if(st=="Hint to File Format"){
+				if(st=="File Format Hint"){
 				  HelpWindowDialog hwd= new HelpWindowDialog(mainFrame,HelpWindowDialog.createText("Mev"));
 				}else{
 				changeSelectedFileFilterAndLoader(0);
@@ -367,16 +367,16 @@ public class SuperExpressionFileLoader {
 		menuItem(menu1,"Select Expression File Type");
 		menuBar.add(menu1);
 		
-		menu2 = new JMenu("Definition to File Formats");
+		menu2 = new JMenu("File Format Descriptions");
 		menu1.setMnemonic(KeyEvent.VK_H);
-		menuItem(menu2,"Hint to File Format");
+		menuItem(menu2,"File Format Hint");
 		menuBar.add(menu2);
 		menuBar.setBorderPainted(true);
 		mainFrame.setJMenuBar(menuBar);
 		
 		//HeaderImagePanel header = new HeaderImagePanel();
 		fileFilterLabel = new JLabel("Selected File Type:");
-		filetype=new JTextField("Default:MeV Files (*.mev)");
+		filetype=new JTextField("Default: MeV Files (*.mev and *.ann)");
 		filetype.setEditable(false);
 		fileFilterPanel = new JPanel();
 		fileFilterPanel.setLayout(new GridBagLayout());
@@ -589,7 +589,7 @@ public class SuperExpressionFileLoader {
 		String desc;
 		switch (target) {
 		case 0:
-			desc = "MeV Files (*.mev)";
+			desc = "MeV Files (*.mev and *.ann)";
 			break;
 		case 1:
 			desc = "Tab Delimited, Multiple Sample Files (TDMS) (*.*)";
@@ -627,7 +627,7 @@ public class SuperExpressionFileLoader {
             desc = "CGH Tab Delimited, Multiple Sample Files (*.*)"; /* Raktim, CGH Files */
             break;
 		default:
-			desc = "MeV Files (*.mev)";
+			desc = "MeV Files (*.mev and *.ann)";
 			break;
 		}
 		return desc;
