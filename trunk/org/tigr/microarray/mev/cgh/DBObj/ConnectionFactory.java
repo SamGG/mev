@@ -71,8 +71,8 @@ public class ConnectionFactory {
      * @throws SQLException
      */
     public static Connection getConnectionCSV () throws SQLException {
-    	//String url = "jdbc:jstels:csv:" + "data";
-    	String url = "jdbc:Text:///data";
+    	//String url = "jdbc:Text:///data";
+    	String url = "jdbc:Text:///data/CGH";
     	Properties myProp = new Properties();
 		myProp.put("_CSV_Header","true");
     	return DriverManager.getConnection(url, myProp);
