@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SingleArrayViewer.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-03-24 15:49:44 $
+ * $Revision: 1.10 $
+ * $Date: 2006-05-15 20:25:23 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -430,7 +430,9 @@ public class SingleArrayViewer extends ArrayViewer implements Printable {
         sortMenu.add(sortByRatioItem);
         buttonGroup.add(sortByRatioItem);
         
-        if (getFieldNames() != null) addSortMenuItems(getFieldNames(), buttonGroup);
+        try {
+        	if (getFieldNames() != null) addSortMenuItems(getFieldNames(), buttonGroup);
+        } catch (NullPointerException npe){}
         
         menuBar.add(sortMenu);
         
