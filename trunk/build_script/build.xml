@@ -17,6 +17,7 @@
     <property name="alg.impl.dir" location="${cluster.dir}/algorithm/impl"/>
     <property name="gui.impl.dir" location="${cluster.dir}/gui/impl"/>
     <property name="lib.dir" location="${home.dir}/lib"/>
+	<property name="javac-location" location="C:\j2sdk1.4.2_07\bin\javac"/>
 
 
     <!-- This path element contains jar files to support module compilation -->
@@ -288,7 +289,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     <target name="base" depends="jar-algorithm-support">
         <javac srcdir="${tigr.dir}/microarray:${tigr.dir}" destdir="${dest.dir}"
         	fork="yes" 
-    		executable="C:\j2sdk1.4.2_07\bin\javac"
+    		executable="${javac-location}"
     		memoryMaximumSize="256m"
             includes=
             "mev/r/**, 
@@ -429,7 +430,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
             org/tigr/microarray/file/*.class,
 		    org/tigr/microarray/util/**,
 			org/tigr/microarray/mev/r/*.class,
-        	org/tigr/microarray/mev/*.html,
+        	org/tigr/microarray/mev/*.html,	
 			org/tigr/microarray/mev/cgh/**,
             org/tigr/microarray/mev/*.class,
 			org/tigr/microarray/mev/action/*.class,
@@ -437,6 +438,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			org/tigr/microarray/mev/script/**,
         	org/tigr/microarray/mev/persistence/**,
 			org/tigr/microarray/mev/cluster/clusterUtil/**"
+        	update="true"
         />
     </target>
 

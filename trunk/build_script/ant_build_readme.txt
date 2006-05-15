@@ -22,7 +22,8 @@ or modification of environment variables as described in the installation
 instructions. 
 
 Once installed Ant will use the build.xml file to direct MeV compilation
-and jar construction.
+and jar construction.  Before using build.xml, you will need to update the file
+so that the "javac-location" property  refers to a java compiler.
 
 
 
