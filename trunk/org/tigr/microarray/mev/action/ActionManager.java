@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: ActionManager.java,v $
- * $Revision: 1.16 $
- * $Date: 2006-02-27 14:32:54 $
- * $Author: wwang67 $
+ * $Revision: 1.17 $
+ * $Date: 2006-05-15 21:15:33 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.action;
@@ -97,7 +97,15 @@ public class ActionManager implements java.io.Serializable {
         actions.put(CDNA_LOW_INTENSITY_ACTION, new DefaultAction(this, CDNA_LOW_INTENSITY_NAME, CDNA_LOW_INTENSITY_CMD, getIcon(CDNA_LOW_INTENSITY_ICON)));
         actions.put(OLIGEN_LOW_INTENSITY_ACTION, new DefaultAction(this, OLIGEN_LOW_INTENSITY_NAME, OLIGEN_LOW_INTENSITY_CMD, getIcon(OLIGEN_LOW_INTENSITY_ICON)));
 
-        /*         * Raktim Sept 29, 05         * CGH Actions         */        actions.put(LOAD_SAMPLE_LIST_ACTION, new DefaultAction(this, LOAD_SAMPLE_LIST_NAME, LOAD_SAMPLE_LIST_ACTION, getIcon("TreeInfoLeaf.gif")));        actions.put(LOAD_WSL_ACTION, new DefaultAction(this, LOAD_WSL_NAME, LOAD_WSL_ACTION, getIcon(LOAD_WSL_SMALLICON)));        actions.put(LOAD_CLONE_DISTRIBUTIONS_ACTION, new DefaultAction(this, LOAD_CLONE_DISTRIBUTIONS_NAME, LOAD_CLONE_DISTRIBUTIONS_ACTION, getIcon("p.gif")));        actions.put(LOAD_CLONE_DISTRIBUTIONS_FROM_FILE_ACTION, new DefaultAction(this, LOAD_CLONE_DISTRIBUTIONS_FROM_FILE_NAME, LOAD_CLONE_DISTRIBUTIONS_FROM_FILE_ACTION, getIcon("p.gif")));    }
+        /*
+         * Raktim Sept 29, 05
+         * CGH Actions
+         */
+        actions.put(LOAD_SAMPLE_LIST_ACTION, new DefaultAction(this, LOAD_SAMPLE_LIST_NAME, LOAD_SAMPLE_LIST_ACTION, getIcon("TreeInfoLeaf.gif")));
+        actions.put(LOAD_WSL_ACTION, new DefaultAction(this, LOAD_WSL_NAME, LOAD_WSL_ACTION, getIcon(LOAD_WSL_SMALLICON)));
+        actions.put(LOAD_CLONE_DISTRIBUTIONS_ACTION, new DefaultAction(this, LOAD_CLONE_DISTRIBUTIONS_NAME, LOAD_CLONE_DISTRIBUTIONS_ACTION, getIcon("p.gif")));
+        actions.put(LOAD_CLONE_DISTRIBUTIONS_FROM_FILE_ACTION, new DefaultAction(this, LOAD_CLONE_DISTRIBUTIONS_FROM_FILE_NAME, LOAD_CLONE_DISTRIBUTIONS_FROM_FILE_ACTION, getIcon("p.gif")));
+    }
 
     
     /**
@@ -138,7 +146,28 @@ public class ActionManager implements java.io.Serializable {
             }
         }
     }
-    /**     * Raktim     * Initializes The CGH Copy Number based analysis actions;     * @param factory     */    public void initCghAnalysiActions(IGUIFactory factory){	        if (factory == null) {		    return;		}		AnalysisDescription[] descs = factory.getAnalysisDescriptions();		if (descs == null) {		    return;		}		int counter = 0;		for (int i=0; i<descs.length; i++) {		    if (isValidDescription(descs[i])) {			actions.put(CGH_ANALYSIS_ACTION+String.valueOf(i), new AnalysisAction(this, descs[i]));			counter++;		    }		}    }    
+    /**
+     * Raktim
+     * Initializes The CGH Copy Number based analysis actions;
+     * @param factory
+     */
+    public void initCghAnalysiActions(IGUIFactory factory){
+	        if (factory == null) {
+		    return;
+		}
+		AnalysisDescription[] descs = factory.getAnalysisDescriptions();
+		if (descs == null) {
+		    return;
+		}
+		int counter = 0;
+		for (int i=0; i<descs.length; i++) {
+		    if (isValidDescription(descs[i])) {
+			actions.put(CGH_ANALYSIS_ACTION+String.valueOf(i), new AnalysisAction(this, descs[i]));
+			counter++;
+		    }
+		}
+    }
+    
     /**
      * Checkes if specified <code>AnalysisDescription</code> is valid.
      */
@@ -164,7 +193,7 @@ public class ActionManager implements java.io.Serializable {
     //launch a new customized MAV
     public static final String NEW_MULTIPLEARRAYVIEWER  = "new-mav-load";
     public static final String  NEW_MAV_COMMAND = "newmav-command-load";
-    public static final String  NEW_MAV_NAME    = "Customized Application Menubar";
+    public static final String  NEW_MAV_NAME    = "Customize Toolbar";
     private static final String NEW_MAV_SMALLICON = "addmultiple16.gif";
     private static final String NEW_MAV_LARGEICON = "addmultiple.gif";
     //load data action
@@ -436,5 +465,68 @@ public class ActionManager implements java.io.Serializable {
     public static final String APPEND_GENE_ANNOTATION_COMMAND = "append-gene-annotation-command";
     public static final String APPEND_GENE_ANNOTATION_ACTION = "append-gene-annotation-action";
     public static final String APPEND_GENE_ANNOTATION_NAME = "Append Gene Annotation";
-    public static final String APPEND_GENE_ANNOTATION_ICON = "append_gene_annotation.gif";    /**     * Raktim Spet 29, 05     * Adding CGH Commands     * CGH display commands     */    public static final String SHOW_FLANKING_REGIONS = "show-flanking-regions";    // popup commands    //public static final String DELETE_NODE_CMD = "delete-node-cmd";    public static final String RENAME_NODE_CMD = "rename-node-cmd";    // help commands    public static final String SHOW_SUPPORTTREE_LEGEND_COMMAND = "show-supporttree-legend-command";    public static final String CGH_ELEMENT_LENGTH_5  = "cgh-element-length-5";    public static final String CGH_ELEMENT_LENGTH_10  = "cgh-element-length-10";    public static final String CGH_ELEMENT_LENGTH_20 = "cgh-element-length-20";    public static final String CGH_ELEMENT_LENGTH_50  = "cgh-element-length-50";    public static final String CGH_ELEMENT_LENGTH_100  = "cgh-element-length-100";    public static final String CGH_ELEMENT_LENGTH_OTHER  = "cgh-element-length-other";    public static final String CGH_ELEMENT_LENGTH_FIT = "cgh-element-length-fit";    public static final String CGH_ELEMENT_WIDTH_5  = "cgh-element-width-5";    public static final String CGH_ELEMENT_WIDTH_10  = "cgh-element-width-10";    public static final String CGH_ELEMENT_WIDTH_20 = "cgh-element-width-20";    public static final String CGH_ELEMENT_WIDTH_50  = "cgh-element-width-50";    public static final String CGH_ELEMENT_WIDTH_100  = "cgh-element-width-100";    public static final String CGH_ELEMENT_WIDTH_OTHER  = "cgh-element-width-other";    public static final String CGH_ELEMENT_WIDTH_FIT = "cgh-element-width-fit";    public static final String CGH_DISPLAY_TYPE_COMBINED = "cgh-display-type-combined";    public static final String CGH_DISPLAY_TYPE_SEPARATED = "cgh-display-type-separated";    public static final String CGH_DISPLAY_ORDER = "cgh-display-order";    public static final String CGH_DELETE_SAMPLE = "cgh-delete-sample";    public static final String CGH_DISPLAY_LABEL_WSL_ID = "cgh-display-label-wsl-id";    public static final String CGH_DISPLAY_LABEL_ALIAS = "cgh-display-label-alias";    public static final String CGH_DISPLAY_LABEL_ID1 = "cgh-display-label-id1";    public static final String DELETED_BACS = "deleted-bacs";    public static final String LOAD_SAMPLE_LIST_ACTION = "action-load-sample-list";    public static final String LOAD_SAMPLE_LIST_NAME = "Load From Sample List";    public static final String LOAD_WSL_ACTION = "action-load-wsl";    public static final String LOAD_WSL_NAME = "Add Experiment from WSL";    private static final String LOAD_WSL_SMALLICON    = "addfromdb16.gif";    public static final String LOAD_CLONE_DISTRIBUTIONS_ACTION = "load-clone-distributions";    public static final String LOAD_CLONE_DISTRIBUTIONS_NAME = "Load Clone Distributions";    public static final String LOAD_CLONE_DISTRIBUTIONS_FROM_FILE_ACTION = "load-clone-distributions-from-file";    public static final String LOAD_CLONE_DISTRIBUTIONS_FROM_FILE_NAME = "Load Clone Distributions From File";    public static final String CGH_SET_THRESHOLDS = "cgh-set-thresholds";    public static final String CGH_SET_MMSDs = "cgh-set-mmsds";    public static final String CGH_COPY_NUMBER_BY_MMSDs = "cgh-copy-number-by-mmsds";    public static final String CGH_COPY_NUMBER_BY_THRESHOLDS = "cgh-copy-number-by-thresholds";    public static final String CGH_CLEAR_ANNOTATIONS = "cgh-clear-annotations";    public static final String CGH_ANALYSIS_ACTION = "cgh-analysis-action";    public static final String CGH_ANALYSIS_COMMAND = "cgh-analysis-command";    public static final String CIRCLE_VIEWER_BACKGROUND = "circle-viewer-background";    public static final String CLONE_VALUE_DISCRETE_DETERMINATION = "clone-ratio-discrete-determination";    public static final String CLONE_VALUE_LOG_AVERAGE_INVERTED = "clone-ratio-log-invert-average";    public static final String CLONE_VALUE_LOG_CLONE_DISTRIBUTION = "clone-ratio-log-clone-distribution";    public static final String CLONE_VALUE_THRESHOLD_OR_CLONE_DISTRIBUTION = "clone-value-threshold-or-clone-distribution";    public static final String SHOW_HEADER = "show-header";    public static final String CLONE_P_THRESH = "clone-p-thresh";    public static final String FLANKING_REGIONS_BY_THRESHOLD = "flanking-regions-by-threshold";    public static final String FLANKING_REGIONS_BY_LOG_CLONE_DISTRIBUTION = "flanking-regions-by-log-clone-distribution";    public static final String FLANKING_REGIONS_BY_THRESHOLD_OR_CLONE_DISTRIBUTION = "flanking-regions-by-threshold-or-clone-distribution";    public static final String FIND_GENE = "find-gene";    public static final String COMPARE_EXPERIMENTS = "compare-experiments";    /* End CGH Commands */    
+    public static final String APPEND_GENE_ANNOTATION_ICON = "append_gene_annotation.gif";
+    /**
+     * Raktim Spet 29, 05
+     * Adding CGH Commands
+     * CGH display commands
+     */
+    public static final String SHOW_FLANKING_REGIONS = "show-flanking-regions";
+    // popup commands
+    //public static final String DELETE_NODE_CMD = "delete-node-cmd";
+    public static final String RENAME_NODE_CMD = "rename-node-cmd";
+    // help commands
+    public static final String SHOW_SUPPORTTREE_LEGEND_COMMAND = "show-supporttree-legend-command";
+    public static final String CGH_ELEMENT_LENGTH_5  = "cgh-element-length-5";
+    public static final String CGH_ELEMENT_LENGTH_10  = "cgh-element-length-10";
+    public static final String CGH_ELEMENT_LENGTH_20 = "cgh-element-length-20";
+    public static final String CGH_ELEMENT_LENGTH_50  = "cgh-element-length-50";
+    public static final String CGH_ELEMENT_LENGTH_100  = "cgh-element-length-100";
+    public static final String CGH_ELEMENT_LENGTH_OTHER  = "cgh-element-length-other";
+    public static final String CGH_ELEMENT_LENGTH_FIT = "cgh-element-length-fit";
+    public static final String CGH_ELEMENT_WIDTH_5  = "cgh-element-width-5";
+    public static final String CGH_ELEMENT_WIDTH_10  = "cgh-element-width-10";
+    public static final String CGH_ELEMENT_WIDTH_20 = "cgh-element-width-20";
+    public static final String CGH_ELEMENT_WIDTH_50  = "cgh-element-width-50";
+    public static final String CGH_ELEMENT_WIDTH_100  = "cgh-element-width-100";
+    public static final String CGH_ELEMENT_WIDTH_OTHER  = "cgh-element-width-other";
+    public static final String CGH_ELEMENT_WIDTH_FIT = "cgh-element-width-fit";
+    public static final String CGH_DISPLAY_TYPE_COMBINED = "cgh-display-type-combined";
+    public static final String CGH_DISPLAY_TYPE_SEPARATED = "cgh-display-type-separated";
+    public static final String CGH_DISPLAY_ORDER = "cgh-display-order";
+    public static final String CGH_DELETE_SAMPLE = "cgh-delete-sample";
+    public static final String CGH_DISPLAY_LABEL_WSL_ID = "cgh-display-label-wsl-id";
+    public static final String CGH_DISPLAY_LABEL_ALIAS = "cgh-display-label-alias";
+    public static final String CGH_DISPLAY_LABEL_ID1 = "cgh-display-label-id1";
+    public static final String DELETED_BACS = "deleted-bacs";
+    public static final String LOAD_SAMPLE_LIST_ACTION = "action-load-sample-list";
+    public static final String LOAD_SAMPLE_LIST_NAME = "Load From Sample List";
+    public static final String LOAD_WSL_ACTION = "action-load-wsl";
+    public static final String LOAD_WSL_NAME = "Add Experiment from WSL";
+    private static final String LOAD_WSL_SMALLICON    = "addfromdb16.gif";
+    public static final String LOAD_CLONE_DISTRIBUTIONS_ACTION = "load-clone-distributions";
+    public static final String LOAD_CLONE_DISTRIBUTIONS_NAME = "Load Clone Distributions";
+    public static final String LOAD_CLONE_DISTRIBUTIONS_FROM_FILE_ACTION = "load-clone-distributions-from-file";
+    public static final String LOAD_CLONE_DISTRIBUTIONS_FROM_FILE_NAME = "Load Clone Distributions From File";
+    public static final String CGH_SET_THRESHOLDS = "cgh-set-thresholds";
+    public static final String CGH_SET_MMSDs = "cgh-set-mmsds";
+    public static final String CGH_COPY_NUMBER_BY_MMSDs = "cgh-copy-number-by-mmsds";
+    public static final String CGH_COPY_NUMBER_BY_THRESHOLDS = "cgh-copy-number-by-thresholds";
+    public static final String CGH_CLEAR_ANNOTATIONS = "cgh-clear-annotations";
+    public static final String CGH_ANALYSIS_ACTION = "cgh-analysis-action";
+    public static final String CGH_ANALYSIS_COMMAND = "cgh-analysis-command";
+    public static final String CIRCLE_VIEWER_BACKGROUND = "circle-viewer-background";
+    public static final String CLONE_VALUE_DISCRETE_DETERMINATION = "clone-ratio-discrete-determination";
+    public static final String CLONE_VALUE_LOG_AVERAGE_INVERTED = "clone-ratio-log-invert-average";
+    public static final String CLONE_VALUE_LOG_CLONE_DISTRIBUTION = "clone-ratio-log-clone-distribution";
+    public static final String CLONE_VALUE_THRESHOLD_OR_CLONE_DISTRIBUTION = "clone-value-threshold-or-clone-distribution";
+    public static final String SHOW_HEADER = "show-header";
+    public static final String CLONE_P_THRESH = "clone-p-thresh";
+    public static final String FLANKING_REGIONS_BY_THRESHOLD = "flanking-regions-by-threshold";
+    public static final String FLANKING_REGIONS_BY_LOG_CLONE_DISTRIBUTION = "flanking-regions-by-log-clone-distribution";
+    public static final String FLANKING_REGIONS_BY_THRESHOLD_OR_CLONE_DISTRIBUTION = "flanking-regions-by-threshold-or-clone-distribution";
+    public static final String FIND_GENE = "find-gene";
+    public static final String COMPARE_EXPERIMENTS = "compare-experiments";
+    /* End CGH Commands */
+    
 }
