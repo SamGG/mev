@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.40 $
- * $Date: 2006-05-04 17:23:27 $
- * $Author: eleanorahowe $
+ * $Revision: 1.41 $
+ * $Date: 2006-05-15 14:30:24 $
+ * $Author: raktim $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -4619,9 +4619,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     	CytoBands cytoBands = new CytoBands();
     	File cytoBandsFile = null;
     	if (data.getCGHSpecies() == TMEV.CGH_SPECIES_HS)
-    		cytoBandsFile = new File("Data/Hs_CytoBands.txt");
+    		cytoBandsFile = new File("Data/CGH/Hs_CytoBands.txt");
     	else if (data.getCGHSpecies() == TMEV.CGH_SPECIES_MM)
-    		cytoBandsFile = new File("Data/Mm_CytoBands.txt");
+    		cytoBandsFile = new File("Data/CGH/Mm_CytoBands.txt");
         cytoBands.loadAllCytoBands(cytoBandsFile, data.getCGHSpecies());
         cytoBandsModel = new CytoBandsModel(cytoBands);
     }
