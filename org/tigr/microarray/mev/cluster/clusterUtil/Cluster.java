@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: Cluster.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-03-24 15:49:52 $
+ * $Revision: 1.10 $
+ * $Date: 2006-05-18 20:07:49 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -79,6 +79,8 @@ public class Cluster {
 
     /** 
      * EH Creates new cluster object
+     * @deprecated Left in place for compatibility with saved analysis files from
+     * an early release of v4.0b.
      */
     public Cluster(int [] indices, String source, String clusterLabel, String algorithmName, 
     		String clusterID, String clusterDescription, Integer index, 
@@ -98,11 +100,42 @@ public class Cluster {
     /** Creates new cluster object
      */
     public Cluster(int [] indices, String source, String clusterLabel, String algorithmName, String clusterID, String clusterDescription, int index, int serialNumber, Color clusterColor, Experiment experiment) {
-        this(indices, source, clusterLabel, algorithmName, clusterID, clusterDescription, index, serialNumber, clusterColor, null, experiment);
+    	this.indices = indices;
+        this.source = source;
+        this.clusterLabel = clusterLabel;
+        this.clusterID = clusterID;
+        this.algorithmName = algorithmName;
+        this.algorithmIndex = index;
+        this.clusterColor = clusterColor;
+        this.clusterDescription = clusterDescription;
+        this.serialNumber = serialNumber;
+        this.experiment = experiment;
+        this.isShowColor = true;
+        this.experimentIndices = getIndicesMappedToExperiment();
     }
     
-        /** Creates new cluster object
-         */
+    /**
+     * State-saving constructor. 
+     * @param indices
+     * @param source
+     * @param clusterLabel
+     * @param algorithmName
+     * @param clusterID
+     * @param clusterDescription
+     * @param index
+     * @param serialNumber
+     * @param clusterColor
+     * @param node
+     * @param experiment
+     */
+    public Cluster(int [] indices, String source, String clusterLabel, String algorithmName, String clusterID, String clusterDescription, Integer index, Integer serialNumber, Color clusterColor, DefaultMutableTreeNode node, Experiment experiment) {
+    	this(indices, source, clusterLabel, algorithmName, clusterID, clusterDescription, index.intValue(), serialNumber.intValue(), clusterColor, null, experiment);
+//      TODO
+    	System.out.println("constructor 3");
+    }    
+    
+   /** Creates new cluster object
+    */
     public Cluster(int [] indices, String source, String clusterLabel, String algorithmName, String clusterID, String clusterDescription, int index, int serialNumber, Color clusterColor, DefaultMutableTreeNode node, Experiment experiment) {
         this.indices = indices;
         this.source = source;
@@ -113,8 +146,10 @@ public class Cluster {
         this.clusterColor = clusterColor;
         this.clusterDescription = clusterDescription;
         this.serialNumber = serialNumber;
-        this.node = node;
-        this.userObject = node.getUserObject();
+        if(node != null){
+        	this.node = node;
+        	this.userObject = node.getUserObject();
+        }
         this.experiment = experiment;
         this.exptID = experiment.getId();
         this.isShowColor = true;
@@ -294,10 +329,12 @@ public class Cluster {
 		protected Expression instantiate(Object o, Encoder encoder) {
 			Cluster oldInstance = (Cluster)o;
 			return new Expression(oldInstance, oldInstance.getClass(), "new", 
-					new Object[]{oldInstance.getIndices(), oldInstance.getSource(), oldInstance.getClusterLabel(), oldInstance.getAlgorithmName(), 
-						oldInstance.getClusterID(), oldInstance.getClusterDescription(), new Integer(oldInstance.getAlgorithmIndex()),
-						new Integer(oldInstance.getSerialNumber()), oldInstance.getClusterColor(), new Integer(oldInstance.getExptID())});
-        }        
+				new Object[]{oldInstance.indices, oldInstance.source, oldInstance.clusterLabel,
+				oldInstance.algorithmName, oldInstance.clusterID, oldInstance.clusterDescription, 
+				new Integer(oldInstance.algorithmIndex), new Integer(oldInstance.serialNumber), oldInstance.clusterColor, 
+				oldInstance.node, oldInstance.experiment
+				});
+		}        
 		public void initialize(Class type, Object oldInstance, Object newInstance, Encoder encoder) {
 			return;
     }
