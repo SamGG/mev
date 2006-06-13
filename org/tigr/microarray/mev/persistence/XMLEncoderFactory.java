@@ -6,7 +6,6 @@
  */
 package org.tigr.microarray.mev.persistence;
    
-import java.awt.image.BufferedImage;
 import java.beans.DefaultPersistenceDelegate;
 import java.beans.XMLEncoder;
 import java.util.Enumeration;
@@ -29,8 +28,9 @@ import org.tigr.microarray.mev.cluster.gui.impl.ptm.PTMExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.impl.sota.*;
 import org.tigr.microarray.mev.cluster.gui.impl.st.HCLSupportTree;
 import org.tigr.util.FloatMatrix;
+import org.tigr.util.awt.Viewer;
 
-import com.sun.j3d.utils.universe.Viewer;
+//import com.sun.j3d.utils.universe.Viewer;
 
 /**
  * Factory class for (@link java.beans.XMLEncoder}.  
