@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.41 $
- * $Date: 2006-05-15 14:30:24 $
- * $Author: raktim $
+ * $Revision: 1.42 $
+ * $Date: 2006-06-13 18:46:17 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -615,13 +615,18 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     private void saveState(File file) throws FileNotFoundException, IOException {
         this.currentAnalysisFile = file;
     	final boolean debug = true;
-    	final String tempFilePath = System.getProperty("java.io.tmpdir") + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator");
-    	final File tempDir = new File(System.getProperty("java.io.tmpdir") + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator"));
+    	String javaTempDir = System.getProperty("java.io.tmpdir");
+    	if(!javaTempDir.endsWith(System.getProperty("file.separator")))
+   			javaTempDir = javaTempDir + System.getProperty("file.separator");
+   			
+    	final String tempFilePath = javaTempDir + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator");
+    	final File tempDir = new File(javaTempDir + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator"));
         if (!tempDir.mkdir()) {
-            System.out.println("Couldn't create directory for saving");
+            System.out.println("Couldn't create directory for saving: " + tempFilePath);
             //TODO handle this better
         }
         File tmpXML = new File(tempFilePath + "mev_state" + ".xml");
+        System.out.println("mev state file: " + tmpXML);
     	ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(tmpXML));
     	final XMLEncoder oos = XMLEncoderFactory.getMAVEncoder(new XMLEncoder(os), tree);
     	if(!debug)
@@ -1097,14 +1102,17 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         Thread thread = new Thread( new Runnable(){
             public void run() {
                 try {
-                	File unzipDir = new File(System.getProperty("java.io.tmpdir") + MultipleArrayViewer.CURRENT_TEMP_DIR);
+                	String javaTempDir = System.getProperty("java.io.tmpdir");
+                	if(!javaTempDir.endsWith(System.getProperty("file.separator")))
+                		javaTempDir = javaTempDir + System.getProperty("file.separator");
+                	File unzipDir = new File(javaTempDir + MultipleArrayViewer.CURRENT_TEMP_DIR);
             	    if (!unzipDir.mkdir()) {
-            	        System.out.println("Couldn't create directory for unzipping");
+            	        System.out.println("Couldn't create directory for unzipping:" + unzipDir);
             	    }
             	    
                 	ZipFile zipFile = new ZipFile(file);
                 	ZipInputStream zis = new ZipInputStream(new FileInputStream(file));
-                	File tmpXML = new File(System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + "mev_tmp.xml");
+                	File tmpXML = new File(unzipDir + System.getProperty("file.separator") + "mev_state.xml");
             	    tmpXML.deleteOnExit();
 
 					progressPanel.update("Uncompressing Data");
@@ -1122,7 +1130,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 				    	    }
 				            fw.close();
 				    	} else {
-				    		String outFile = System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + entry.getName();
+				    		String outFile = unzipDir + System.getProperty("file.separator") + entry.getName();
 				    		DataOutputStream dos = new DataOutputStream(new FileOutputStream(new File(outFile)));
 				   	        while ((len = zis.read(buf)) > 0) {
 					            dos.write(buf, 0, len);
@@ -1134,7 +1142,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 				    }
 				    zis.close();
 					zipFile.close();
-					
+					System.out.println("tempXML: " + tmpXML);
             	    ObjectInputStream ois = new ObjectInputStream(new FileInputStream(tmpXML));
             		XMLDecoder xmld = new XMLDecoder(ois);
     
