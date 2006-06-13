@@ -42,7 +42,10 @@ public class PersistenceObjectFactory {
 	public static FloatMatrix readFloatMatrix(String inputFile) throws IOException{
     	//get location of tempfiles for this sytem, append directory name for temp unzipping directory
     	//use this as the path for inputFile
-		File binFile = new File(System.getProperty("java.io.tmpdir") + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + inputFile);
+		String javaTempDir = System.getProperty("java.io.tmpdir");
+		if(!javaTempDir.endsWith(System.getProperty("file.separator")))
+			javaTempDir = javaTempDir + System.getProperty("file.separator");
+		File binFile = new File(javaTempDir + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + inputFile);
 		FloatMatrix fm = new FloatMatrix(readMatrix(binFile));
 		return fm;
 	}
@@ -99,7 +102,11 @@ public class PersistenceObjectFactory {
     			filename, name, isNonZero.booleanValue(), 
 				normalizedState.intValue(), sortState.intValue(), spotInfoData, 
 				dataType, ismd);
-    	String filePath = System.getProperty("java.io.tmpdir") + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + intensityFileName;
+
+		String javaTempDir = System.getProperty("java.io.tmpdir");
+		if(!javaTempDir.endsWith(System.getProperty("file.separator")))
+			javaTempDir = javaTempDir + System.getProperty("file.separator");
+    	String filePath = javaTempDir + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + intensityFileName;
 //    	System.out.println("read FloatSlideData from " + filePath);
     	DataInputStream dis = new DataInputStream(new FileInputStream(filePath));
     	
@@ -150,6 +157,11 @@ public class PersistenceObjectFactory {
 			Integer normalizedState, Integer sortState, SpotInformationData spotInfoData, 
 			String[] fieldNames, Integer dataType,
 			String annotationFileName, String dataFile) throws IOException {
+
+		String javaTempDir = System.getProperty("java.io.tmpdir");
+		if(!javaTempDir.endsWith(System.getProperty("file.separator")))
+			javaTempDir = javaTempDir + System.getProperty("file.separator");
+		
     	SlideData aSlideData;
     	aSlideData = new SlideData(slideDataName, sampleLabelKeys, sampleLabelKey,
         		sampleLabels, slideFileName, isNonZero, rows, columns,
@@ -157,12 +169,12 @@ public class PersistenceObjectFactory {
 				fieldNames, dataType);
     	
     	//load annotation
-    	DataInputStream dis = new DataInputStream(new FileInputStream(System.getProperty("java.io.tmpdir") + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + annotationFileName));
+    	DataInputStream dis = new DataInputStream(new FileInputStream(javaTempDir + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + annotationFileName));
     	Vector allSlideDataElements = loadSlideDataAnnotation(dis, dataType.intValue());
     	dis.close();
     	
     	//load intensities
-    	dis = new DataInputStream(new FileInputStream(System.getProperty("java.io.tmpdir") + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + dataFile));
+    	dis = new DataInputStream(new FileInputStream(javaTempDir + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + dataFile));
     	ISlideDataElement sde;
     	int numSlideDataElements = dis.readInt();
     	for(int i=0; i<numSlideDataElements; i++){
@@ -384,29 +396,18 @@ public class PersistenceObjectFactory {
 		}
 	}
 	public static BufferedImageWrapper readBufferedImage(String inputFile) throws IOException {
-		File binFile = new File(System.getProperty("java.io.tmpdir") + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + inputFile);
+
+		String javaTempDir = System.getProperty("java.io.tmpdir");
+		if(!javaTempDir.endsWith(System.getProperty("file.separator")))
+			javaTempDir = javaTempDir + System.getProperty("file.separator");
+		
+		File binFile = new File(javaTempDir + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + inputFile);
 		DataInputStream dis = new DataInputStream(new FileInputStream(binFile));
 		BufferedImage bi = ImageIO.read(binFile);
 		dis.close();
 		return new BufferedImageWrapper(bi);
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
