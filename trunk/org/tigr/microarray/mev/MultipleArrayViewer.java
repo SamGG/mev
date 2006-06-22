@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.42 $
- * $Date: 2006-06-13 18:46:17 $
+ * $Revision: 1.43 $
+ * $Date: 2006-06-22 19:43:11 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -626,9 +626,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             //TODO handle this better
         }
         File tmpXML = new File(tempFilePath + "mev_state" + ".xml");
-        System.out.println("mev state file: " + tmpXML);
-    	ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(tmpXML));
-    	final XMLEncoder oos = XMLEncoderFactory.getMAVEncoder(new XMLEncoder(os), tree);
+//        System.out.println("mev state file: " + tmpXML);
+    	BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(tmpXML));
+    	final XMLEncoder oos = XMLEncoderFactory.getMAVEncoder(new XMLEncoder(os), tree);  	
     	if(!debug)
            tmpXML.deleteOnExit();
    		
@@ -1143,7 +1143,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 				    zis.close();
 					zipFile.close();
 					System.out.println("tempXML: " + tmpXML);
-            	    ObjectInputStream ois = new ObjectInputStream(new FileInputStream(tmpXML));
+					BufferedInputStream ois = new BufferedInputStream(new FileInputStream(tmpXML));
             		XMLDecoder xmld = new XMLDecoder(ois);
     
 
