@@ -153,6 +153,14 @@ public class LEM extends AbstractAlgorithm {
 		qsort = new QSort(minCoord);
 		int [] sortedIndices = qsort.getOrigIndx();
 		float [] sortedCoords = qsort.getSorted();
+		
+		//need to sort the direction of loci
+		int [] sortedDirection = new int[direction.length];
+
+		//order the direction array based on new sorted order
+		for(int i = 0; i < direction.length; i++) {
+			sortedDirection[i] = direction[sortedIndices[i]];
+		}
 				
 		//construct an ordered list of replicate sets and condensed FloatMatrix
 		int [][] replicates = new int[minCoord.length][];
@@ -265,12 +273,12 @@ public class LEM extends AbstractAlgorithm {
 		data.addIntArray("sorted-end", sortedEnd);
 
 		//direction indicator, 1 == forward, -1 == back
-		data.addIntArray("direction-array", direction);
+		data.addIntArray("direction-array", sortedDirection);
 		
 		//offset for overlaps
 		data.addIntArray("strata-array", strata);
 		data.addParam("missing-data-count", String.valueOf(missingDataCount));
-
+		
 		return data;
 	}
 
