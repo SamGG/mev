@@ -3,24 +3,29 @@
  */
 package org.tigr.microarray.mev.cluster.gui.impl.usc;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
-import java.util.Vector;
 
 import javax.swing.BorderFactory;
-import javax.swing.JComboBox;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.SpringLayout;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
 
+import org.tigr.microarray.mev.r.ClassAssigner;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
@@ -32,16 +37,19 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindo
  * @author vu
  */
 public class USCAssignLabel extends AlgorithmDialog {
-	static final String TEST_LABEL = "Unknown (Test)";
-	
 	private int result;
 	
 	private String[] userLabelArray;
 	
 	private JPanel mainPanel;
 	
-	private Vector vCombo;
-	private Vector vLabel;
+	//private Vector vCombo;
+	//private Vector vLabel;
+	
+	private JButton loadButton;
+	private JButton saveButton;
+	
+	private ClassAssigner ca;
 	
 
 	/**
@@ -53,15 +61,19 @@ public class USCAssignLabel extends AlgorithmDialog {
 		super( new JFrame(), "USCAssignLabel", true );
 		
 		this.userLabelArray = labelArray;
-
+		
+		/*
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		if( ( ( hybArray.length * 20 ) + 150 ) > screenSize.getHeight() ) {
 			this.setSize( 555, ( int ) screenSize.getHeight() - 50 );
 		} else {
 			this.setSize( 555, ( hybArray.length * 20 ) + 150 );
 		}
+		*/
+		this.setSize( 555, 600 );
 		
-		this.initializeGUI( hybArray, this.userLabelArray );
+		//this.initializeGUI( hybArray, this.userLabelArray );
+		this.initGUI( hybArray, labelArray );
 		
 		//add the AlgorithmDialog Listener
 		Listener l = new Listener();
@@ -70,56 +82,60 @@ public class USCAssignLabel extends AlgorithmDialog {
 	}//end constructor
 	
 	
-	/**
-	 * 
-	 * @param hybArray
-	 * @param labelArray
-	 */
-	private void initializeGUI( String[] hybArray, String[] labelArray ) {
+	private void initGUI( String[] hybs, String[] labels ) {
 		Dimension dLabel = new Dimension( 350, 20 );
 		Dimension dCombo = new Dimension( 150, 20 );
 		
-		int iHyb = hybArray.length;
-		int iLabel = labelArray.length;
+		int iHyb = hybs.length;
+		int iLabel = labels.length;
 		
-		this.vCombo = new Vector();
-		this.vLabel = new Vector();
-		
-		//
 		JPanel selectionPanel = new JPanel( new SpringLayout() );
 		selectionPanel.setBorder( BorderFactory.createTitledBorder( "Assign Labels" ) );
 		
-		//loop through hybs
-		for( int h = 0; h < iHyb; h ++ ) {
-			JLabel label = new JLabel( hybArray[ h ] );
-			label.setMaximumSize( dLabel );
-			label.setMinimumSize( dLabel );
-			label.setPreferredSize( dLabel );
-			label.setBackground( Color.WHITE );
-			label.setHorizontalAlignment( JLabel.LEFT );
-			label.setVerticalAlignment( JLabel.CENTER );
-			
-			JComboBox comboBox = new JComboBox( labelArray );
-			comboBox.setMaximumSize( dCombo );
-			comboBox.setMinimumSize( dCombo );
-			comboBox.setPreferredSize( dCombo );
-
-			selectionPanel.add( comboBox ); 
-			selectionPanel.add( label );
-			
-			this.vCombo.add( comboBox );
-			this.vLabel.add( label );
-		}//end h (hybs)
+		this.ca = new ClassAssigner( hybs, labels, true, 3 );
+		//JPanel assignPanel = this.ca.getMainPanel();
 		
-		SpringUtilities.makeCompactGrid( selectionPanel, iHyb, 2, 0, 5 , 5, 0 );
+		//JScrollPane jsp = new JScrollPane( assignPanel );
 		
 		this.mainPanel = new JPanel();
-		this.mainPanel.add( selectionPanel );
+		this.mainPanel.add( this.ca.getScrollPane(), BorderLayout.NORTH );
+		this.mainPanel.add( this.createButtonPanel(), BorderLayout.SOUTH );
+		this.addContent( this.mainPanel );
+	}
+	
+	
+	private JPanel createButtonPanel() {
+		JPanel toReturn = new JPanel();
+		toReturn.setLayout( new BoxLayout( toReturn, BoxLayout.X_AXIS ) );
 		
-		JScrollPane jsp = new JScrollPane( this.mainPanel );
+		Dimension dButton = new Dimension( 150, 20 );
 		
-		this.addContent( jsp );
-	}//end initializeGUI()
+		String title = "Assignments Files";
+		Border greyLine = BorderFactory.createLineBorder( Color.LIGHT_GRAY, 1 );
+		Font font11 = new Font( "Arial", Font.PLAIN, 11 );
+		TitledBorder border = BorderFactory.createTitledBorder( greyLine, 
+				title, TitledBorder.LEADING, TitledBorder.TOP, font11 );
+		toReturn.setBorder( border );
+		
+		this.loadButton = new JButton( "Load Assignments" );
+		this.loadButton.setPreferredSize( dButton );
+		
+		this.saveButton = new JButton( "Save Assignments" );
+		this.saveButton.setPreferredSize( dButton );
+		
+		//add listener
+		AdvListener al = new AdvListener();
+		this.loadButton.addActionListener( al );
+		this.saveButton.addActionListener( al );
+		
+		toReturn.add( Box.createHorizontalGlue() );
+		toReturn.add( this.saveButton );
+		toReturn.add( Box.createRigidArea( new Dimension( 50, 20 ) ) );
+		toReturn.add( this.loadButton );
+		toReturn.add( Box.createHorizontalGlue() );
+		
+		return toReturn;
+	}
 	
 	
 	/**
@@ -144,74 +160,20 @@ public class USCAssignLabel extends AlgorithmDialog {
 	
 	
 	/**
-	 * Make sure that all the userLabels have been assigned to at least one hyb so
-	 * we don't have any unaccounted for labels
-	 * @return
+	 * 
+	 * @author iVu
 	 */
-	private boolean validateLabels() {
-		boolean toReturn = true;
-		
-		//make sure that all unique labels are represented
-		String[] labels = this.getHybLabels();
-		
-		//loop through the labels entered by the user
-		for( int i = 0; i < this.userLabelArray.length; i ++ ) {
-			if( this.userLabelArray[ i ].equals( USCAssignLabel.TEST_LABEL ) ) {
-				//do nothing because user doesn't have to test anything if they don't want to 
-			} else {
-				boolean labelFound = false;
-				
-				//make sure that this label appears at least once in the assignments
-				for( int j = 0; j < labels.length; j ++ ) {
-					if( this.userLabelArray[ i ].toLowerCase().equals( labels[ j ].toLowerCase() ) ) {
-						labelFound = true;
-						break;
-					}
-				}
-				
-				if( labelFound ) {
-					//proceed
-				} else {
-					//wasn't found, return false
-					this.error( "You haven't assigned " + this.userLabelArray[ i ].toUpperCase() 
-					+ " to any hybs." );
-					toReturn = false;
-					break;
-				}
-			}
-		}
-		
-		//should also validate number of hybs/label to make sure USC can run
-		for( int i = 0; i < this.userLabelArray.length; i ++ ) {
-			String label = this.userLabelArray[ i ];
+	private class AdvListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			Object source = e.getSource();
 			
-			if( label.equals( USCAssignLabel.TEST_LABEL ) ) {
-				//don't do anything
-			} else {
-				int iHyb = 0;
-				
-				//now count the number of hybs for this label
-				for( int j = 0; j < labels.length; j ++ ) {
-					if( label.equalsIgnoreCase( labels[ j ] ) ) {
-						iHyb ++;
-					}
-				}
-				
-				if( iHyb < 3 ) {
-					//problem
-					this.error( "There must be at least 3 experiments per class\r\n  " 
-							+ label + " only contains " + iHyb );
-					toReturn = false;
-					break;
-				}
+			if( source == loadButton ) {
+				ca.onLoadAssignments();
+			} else if( source == saveButton ) {
+				ca.onSaveAssignments();
 			}
-		}//end i
-		
-		return toReturn;
-	}//validateLabels()
-	
-	
-	
+		}//end actionPerformed()
+	}//end class
 	
     
 	/**
@@ -222,12 +184,20 @@ public class USCAssignLabel extends AlgorithmDialog {
 		public void actionPerformed(ActionEvent e) {
 			String command = e.getActionCommand();
 			if (command.equals("ok-command")) {
+				if( ca.verifyLabeling() ) {
+					result = JOptionPane.OK_OPTION;
+					dispose();
+				} else {
+					//do nothing
+				}
+				/*
 				if( validateLabels() ) {
 					result = JOptionPane.OK_OPTION;
 					dispose();
 				} else {
 					//do nothing
 				}
+				*/
 			} else if (command.equals("cancel-command")) {
 				result = JOptionPane.CANCEL_OPTION;
 				dispose();
@@ -287,6 +257,74 @@ public class USCAssignLabel extends AlgorithmDialog {
 	
 	//--------------------------------------Getters & Setters----------------------------------
 	public String[] getHybLabels() {
+		String[] toReturn = new String[ this.ca.getVComboBox().size() ];
+		
+		for( int i = 0; i < this.ca.getVComboBox().size(); i ++ ) {
+			toReturn[ i ] = this.ca.getSelectedString( i );
+		}
+		
+		return toReturn;
+	}
+}//end class
+
+
+
+
+
+/**
+ * 
+ * @param hybArray
+ * @param labelArray
+ */
+/*
+private void initializeGUI( String[] hybArray, String[] labelArray ) {
+	Dimension dLabel = new Dimension( 350, 20 );
+	Dimension dCombo = new Dimension( 150, 20 );
+	
+	int iHyb = hybArray.length;
+	int iLabel = labelArray.length;
+	
+	//this.vCombo = new Vector();
+	//this.vLabel = new Vector();
+	
+	//
+	JPanel selectionPanel = new JPanel( new SpringLayout() );
+	selectionPanel.setBorder( BorderFactory.createTitledBorder( "Assign Labels" ) );
+	
+	//loop through hybs
+	for( int h = 0; h < iHyb; h ++ ) {
+		JLabel label = new JLabel( hybArray[ h ] );
+		label.setMaximumSize( dLabel );
+		label.setMinimumSize( dLabel );
+		label.setPreferredSize( dLabel );
+		label.setBackground( Color.WHITE );
+		label.setHorizontalAlignment( JLabel.LEFT );
+		label.setVerticalAlignment( JLabel.CENTER );
+		
+		JComboBox comboBox = new JComboBox( labelArray );
+		comboBox.setMaximumSize( dCombo );
+		comboBox.setMinimumSize( dCombo );
+		comboBox.setPreferredSize( dCombo );
+
+		selectionPanel.add( comboBox ); 
+		selectionPanel.add( label );
+		
+		//this.vCombo.add( comboBox );
+		//this.vLabel.add( label );
+	}//end h (hybs)
+	
+	SpringUtilities.makeCompactGrid( selectionPanel, iHyb, 2, 0, 5 , 5, 0 );
+	
+	this.mainPanel = new JPanel();
+	this.mainPanel.add( selectionPanel );
+	
+	JScrollPane jsp = new JScrollPane( this.mainPanel );
+	
+	this.addContent( jsp );
+}//end initializeGUI()
+*/
+	/*
+	public String[] getHybLabels() {
 		String[] toReturn = new String[ this.vCombo.size() ];
 		
 		for( int i = 0; i < this.vCombo.size(); i ++ ) {
@@ -324,4 +362,76 @@ public class USCAssignLabel extends AlgorithmDialog {
 		
 		return toReturn;
 	}
-}//end class
+	*/
+
+
+/**
+ * Make sure that all the userLabels have been assigned to at least one hyb so
+ * we don't have any unaccounted for labels
+ * @return
+ */
+/*
+private boolean validateLabels() {
+	boolean toReturn = true;
+	
+	//make sure that all unique labels are represented
+	String[] labels = this.getHybLabels();
+	
+	//loop through the labels entered by the user
+	for( int i = 0; i < this.userLabelArray.length; i ++ ) {
+		if( this.userLabelArray[ i ].equals( ClassAssigner.TEST_CLASS_STRING ) ) {
+			//do nothing because user doesn't have to test anything if they don't want to 
+		} else {
+			boolean labelFound = false;
+			
+			//make sure that this label appears at least once in the assignments
+			for( int j = 0; j < labels.length; j ++ ) {
+				if( this.userLabelArray[ i ].toLowerCase().equals( labels[ j ].toLowerCase() ) ) {
+					labelFound = true;
+					break;
+				}
+			}
+			
+			if( labelFound ) {
+				//proceed
+			} else {
+				//wasn't found, return false
+				this.error( "You haven't assigned " + this.userLabelArray[ i ].toUpperCase() 
+				+ " to any hybs." );
+				toReturn = false;
+				break;
+			}
+		}
+	}
+	
+	if( toReturn ) {
+		//should also validate number of hybs/label to make sure USC can run
+		for( int i = 0; i < this.userLabelArray.length; i ++ ) {
+			String label = this.userLabelArray[ i ];
+			
+			if( label.equals( ClassAssigner.TEST_CLASS_STRING ) ) {
+				//don't do anything
+			} else {
+				int iHyb = 0;
+				
+				//now count the number of hybs for this label
+				for( int j = 0; j < labels.length; j ++ ) {
+					if( label.equalsIgnoreCase( labels[ j ] ) ) {
+						iHyb ++;
+					}
+				}
+				
+				if( iHyb < 3 ) {
+					//problem
+					this.error( "There must be at least 3 experiments per class\r\n  " 
+							+ label + " only contains " + iHyb );
+					toReturn = false;
+					break;
+				}
+			}
+		}//end i
+	}
+	
+	return toReturn;
+}//validateLabels()
+*/

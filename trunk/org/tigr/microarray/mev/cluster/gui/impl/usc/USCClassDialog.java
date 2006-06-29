@@ -29,6 +29,7 @@ import javax.swing.SpringLayout;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.tigr.microarray.mev.r.ClassAssigner;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
@@ -679,7 +680,7 @@ public class USCClassDialog extends AlgorithmDialog {
 		}//end i
 		
 		//add the option to let algorithm know this is a test hyb
-		toReturn[ this.vField.size() ] = USCAssignLabel.TEST_LABEL;
+		toReturn[ this.vField.size() ] = ClassAssigner.TEST_CLASS_STRING;
 		
 		return toReturn;
 	}

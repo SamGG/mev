@@ -9,6 +9,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.r.ClassAssigner;
 
 /**
  * General loader.  
@@ -45,7 +46,7 @@ public class USCTrainFileLoader {
 		
 		//don't include the hybs labeled "Unknown (Test)"
 		for( int i = 0; i < hybLabels.length; i ++ ) {
-			if( ! hybLabels[ i ].equals( USCAssignLabel.TEST_LABEL ) ) {
+			if( ! hybLabels[ i ].equals( ClassAssigner.TEST_CLASS_STRING ) ) {
 				vInclude.add( new Integer( i ) );
 			} else {
 				vTest.add( new Integer( i ) );
@@ -91,7 +92,7 @@ public class USCTrainFileLoader {
 			
 			String sHybName = data.getFullSampleName( iIndex );
 			
-			USCHyb hyb = new USCHyb( h, USCAssignLabel.TEST_LABEL, sHybName, ratios[ iIndex ] );
+			USCHyb hyb = new USCHyb( h, ClassAssigner.TEST_CLASS_STRING, sHybName, ratios[ iIndex ] );
 			testArray[ h ] = hyb;
 		}
 		
@@ -122,7 +123,7 @@ public class USCTrainFileLoader {
 		
 		//loop through the hybs
 		for( int h = 0; h < ratios.length; h ++ ) {
-			testArray[ h ] = new USCHyb( h, USCAssignLabel.TEST_LABEL,
+			testArray[ h ] = new USCHyb( h, ClassAssigner.TEST_CLASS_STRING,
 			data.getFullSampleName( h ), ratios[ h ] );
 		}//end h
 		
