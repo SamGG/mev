@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: KMCInfoViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-06-30 15:20:57 $
- * $Author: braistedj $
+ * $Revision: 1.8 $
+ * $Date: 2006-06-30 17:52:19 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.kmc;
@@ -33,7 +33,6 @@ public class KMCInfoViewer extends ViewerAdapter implements java.io.Serializable
     private boolean clusterGenes;
     
     public JTextArea getContent(){return content;}
-//    public boolean getClusterGenes(){return clusterGenes;}
     
     /**
      * Constructs a <code>KMCInfoViewer</code> with specified
@@ -56,7 +55,29 @@ public class KMCInfoViewer extends ViewerAdapter implements java.io.Serializable
         content = createContent(clusters, genes, convIteration);
         setMaxWidth(content, header);
     }
-    
+    /**
+     * This constructor is used by the state-saving code for class persistence. 
+     * Do not delete or alter.
+     * 
+     * @param content
+     * @param clusterGenes
+     */
+    public KMCInfoViewer(JTextArea content, Boolean clusterGenes) { 	 
+        this(content, clusterGenes.booleanValue()); 	 
+    }
+    /**
+     * This constructor is used by the state-saving code for class persistence. 
+     * Do not delete or alter.
+     * 
+     * @param content
+     * @param clusterGenes
+     */
+    public KMCInfoViewer(JTextArea content, boolean clusterGenes) { 	 
+        header = createHeader(); 	 
+        this.content = content; 	 
+        this.clusterGenes = clusterGenes; 	 
+        setMaxWidth(content, header); 	 
+    }
     
     /**
      * @inheritDoc
