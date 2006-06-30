@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: TMEV.java,v $
- * $Revision: 1.16 $
- * $Date: 2006-04-20 18:48:04 $
+ * $Revision: 1.17 $
+ * $Date: 2006-06-30 17:56:47 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -37,7 +37,7 @@ import org.tigr.util.ConfMap;
 import org.tigr.util.awt.ImageScreen;
 
 public class TMEV {
-    public final static String VERSION = "4.0b";
+    public final static String VERSION = "4.0";
     
     public final static int SYSTEM = 1000;
     public final static int DB_AVAILABLE = 1001;
