@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: KMC.java,v $
- * $Revision: 1.4 $
- * $Date: 2005-03-10 15:45:20 $
+ * $Revision: 1.5 $
+ * $Date: 2006-06-30 15:22:27 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -27,6 +27,7 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 import org.tigr.util.FloatMatrix;
+import org.tigr.util.QSort;
 
 public class KMC extends AbstractAlgorithm {
     
@@ -48,6 +49,10 @@ public class KMC extends AbstractAlgorithm {
     
     private int hcl_function;
     private boolean hcl_absolute;
+    
+    //captures the interation number of each cluster reorganization
+    //this will indicate when particular clusters stabalized
+    int [] clusterConvergence;
     
     public AlgorithmData execute(AlgorithmData data) throws AlgorithmException {
         
@@ -74,6 +79,7 @@ public class KMC extends AbstractAlgorithm {
         number_of_genes   = this.expMatrix.getRowDimension();
         number_of_samples = this.expMatrix.getColumnDimension();
         
+        this.clusterConvergence = new int[number_of_clusters];
         
         //JCB MODIFIED FOR KMEDIANS
         KMCluster[] clusters;
@@ -93,7 +99,76 @@ public class KMC extends AbstractAlgorithm {
             variances = getVariances(clusters, medians);
         }
         
+
+        //clusterConvergence captures the last iteration that a cluster
+        //gave up or recieved an element
+        //Use the results to sort based on convergence iteration
+        //if two clusters converged on the iteration rank by decreasing size
         
+        //sort clusters (before posible HCL), means and variances
+        
+        //inefficient but convert to a matrix of floats to use our quicksort
+        //and use the sorted indices array from qsort
+        float [] tempConv = new float[clusterConvergence.length];
+        for(int i = 0; i < clusterConvergence.length; i++) {
+        	tempConv[i] = (float)clusterConvergence[i];
+        }
+        
+        QSort qsort = new QSort(tempConv); //automatically sorts
+        tempConv = qsort.getSorted();
+        int [] sortedClusterIndices = qsort.getOrigIndx(); // sorted ordering
+        int temp;
+        
+        //maybe bubble through array to sort out ties based on cluster size
+        for (int i = 0; i < number_of_clusters-1; i++) {
+        	for(int j = 0; j < number_of_clusters-1-i; j++) {
+ 
+        		//if they have the sampe iteration count we might swap the order
+        		if(tempConv[j] == tempConv[j+1]) {
+
+        			//check sizes
+        			if(clusters[sortedClusterIndices[j]].size() 
+        					< clusters[sortedClusterIndices[j+1]].size()) {
+        				//if we need to swap swap sorted indices
+        				//and swap the conversion indices will not swap since
+        				//the values are already equal
+        				temp = sortedClusterIndices[j];
+        				sortedClusterIndices[j] = sortedClusterIndices[j+1];
+        				sortedClusterIndices[j+1] = temp;        			
+        			}        			
+        		}
+        	}        		
+        }
+       
+        
+        //sort it out...
+        KMCluster [] newClusterOrder = new KMCluster[clusters.length];
+        FloatMatrix newMeansMedsOrder = new FloatMatrix(clusters.length, number_of_samples);
+        FloatMatrix newVariancesOrder = new FloatMatrix(clusters.length, number_of_samples);
+        
+        for(int i = 0; i < clusters.length; i++) {
+        	//sort clusters
+        	newClusterOrder[i] = clusters[sortedClusterIndices[i]];
+        	//sort variances 
+        	newVariancesOrder.A[i] = variances.A[sortedClusterIndices[i]];
+
+        	//sort means or medians
+        	if(calculateMeans)
+        		newMeansMedsOrder.A[i] = means.A[sortedClusterIndices[i]];
+        	else        		
+        		newMeansMedsOrder.A[i] = medians.A[sortedClusterIndices[i]];
+
+        	//use this loop to order the cluster convergence information
+        	clusterConvergence[i] = (int)(tempConv[i]);
+        }
+        
+        //reassign sorted object to main objects
+        clusters = newClusterOrder;
+        variances = newVariancesOrder;
+        if(calculateMeans)
+        	means = newMeansMedsOrder;
+        else
+        	medians = newMeansMedsOrder;
         
         AlgorithmEvent event = null;
         if (hierarchical_tree) {
@@ -136,6 +211,8 @@ public class KMC extends AbstractAlgorithm {
         result.addMatrix("clusters_variances", variances);
         result.addParam("iterations", String.valueOf(getIterations()));
         result.addParam("converged", String.valueOf(getConverged()));
+        result.addIntArray("convergence-iterations", clusterConvergence);
+                
         return result;
     }
     
@@ -289,6 +366,12 @@ public class KMC extends AbstractAlgorithm {
                 //clusters[location[current]].calculateMean();
                 //clusters[address].calculateMean();
                 location[current]=address;
+                
+                //tally the exchange of gene from old loc to current loc
+                //this indicates that an exchange occurred on this iteration
+                //used +1 so the first iteration is labeled as 1 for reporting to user
+                this.clusterConvergence[location[current]] = iterations+1;
+                this.clusterConvergence[address] = iterations+1;                
             }
             current++;
             if (current == number_of_genes) {
