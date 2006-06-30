@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.44 $
- * $Date: 2006-06-30 16:14:13 $
- * $Author: raktim $
+ * $Revision: 1.45 $
+ * $Date: 2006-06-30 17:55:56 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -1142,7 +1142,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 				    }
 				    zis.close();
 					zipFile.close();
-					System.out.println("tempXML: " + tmpXML);
+					
 					BufferedInputStream ois = new BufferedInputStream(new FileInputStream(tmpXML));
             		XMLDecoder xmld = new XMLDecoder(ois);
     
@@ -4666,7 +4666,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     	smd.setMevMajorVersion(4);
     	smd.setMevMinorVersion(0);
     	smd.setMevMicroVersion(0);
-    	smd.setBeta(true);
+    	smd.setBeta(false);
     }
 
 
