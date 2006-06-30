@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: KMCGUI.java,v $
- * $Revision: 1.11 $
- * $Date: 2006-02-23 20:59:52 $
- * $Author: caliente $
+ * $Revision: 1.12 $
+ * $Date: 2006-06-30 15:20:56 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.kmc;
@@ -19,36 +19,41 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.tigr.microarray.mev.cluster.Cluster;
-import org.tigr.microarray.mev.cluster.Node;
-import org.tigr.microarray.mev.cluster.NodeList;
-import org.tigr.microarray.mev.cluster.NodeValueList;
+import org.tigr.util.FloatMatrix;
+
+import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
+import org.tigr.microarray.mev.cluster.gui.LeafInfo;
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
+import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
+import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
+
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
-import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.IViewer;
-import org.tigr.microarray.mev.cluster.gui.LeafInfo;
-import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
-import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
+
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Monitor;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLInitDialog;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
+import org.tigr.microarray.mev.cluster.Cluster;
+import org.tigr.microarray.mev.cluster.NodeList;
+import org.tigr.microarray.mev.cluster.Node;
+import org.tigr.microarray.mev.cluster.NodeValueList;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
+import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
+import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
+
+
 import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
-import org.tigr.util.FloatMatrix;
 
 public class KMCGUI implements IClusterGUI, IScriptGUI {
     
@@ -62,6 +67,11 @@ public class KMCGUI implements IClusterGUI, IScriptGUI {
     private FloatMatrix means;
     private FloatMatrix variances;
     private boolean clusterGenes;
+    
+    // jcb 6/29/06 reports iteration of last membership change
+    // kmc orders cluster by order of convergence and secondly inverse size
+    // this puts early stable clusters of larger size first in output
+    private int [] convergenceIteration;     
     private int k;
     /**
      * Default constructor.
@@ -178,6 +188,7 @@ public class KMCGUI implements IClusterGUI, IScriptGUI {
             }
             this.means = result.getMatrix("clusters_means");
             this.variances = result.getMatrix("clusters_variances");
+            this.convergenceIteration = result.getIntArray("convergence-iterations");
             
             GeneralInfo info = new GeneralInfo();
             info.clusters = k;
@@ -360,6 +371,7 @@ public class KMCGUI implements IClusterGUI, IScriptGUI {
             }
             this.means = result.getMatrix("clusters_means");
             this.variances = result.getMatrix("clusters_variances");
+            this.convergenceIteration = result.getIntArray("convergence-iterations");
             
             GeneralInfo info = new GeneralInfo();
             info.clusters = k;
@@ -559,9 +571,9 @@ public class KMCGUI implements IClusterGUI, IScriptGUI {
     private void addClusterInfo(DefaultMutableTreeNode root) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Cluster Information");
         if(this.clusterGenes)
-            node.add(new DefaultMutableTreeNode(new LeafInfo("Genes in Clusters (#,%)", new KMCInfoViewer(this.clusters, this.experiment.getNumberOfGenes()))));
+            node.add(new DefaultMutableTreeNode(new LeafInfo("Genes in Clusters (#,%)", new KMCInfoViewer(this.clusters, this.experiment.getNumberOfGenes(), convergenceIteration))));
         else
-            node.add(new DefaultMutableTreeNode(new LeafInfo("Samples in Clusters (#,%)", new KMCInfoViewer(this.clusters, this.experiment.getNumberOfSamples(), false))));
+            node.add(new DefaultMutableTreeNode(new LeafInfo("Samples in Clusters (#,%)", new KMCInfoViewer(this.clusters, this.experiment.getNumberOfSamples(), convergenceIteration, false))));
         root.add(node);
     }
     

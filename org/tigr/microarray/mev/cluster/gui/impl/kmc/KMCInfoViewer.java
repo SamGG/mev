@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: KMCInfoViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-03-24 15:50:49 $
- * $Author: eleanorahowe $
+ * $Revision: 1.7 $
+ * $Date: 2006-06-30 15:20:57 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.kmc;
@@ -35,20 +35,14 @@ public class KMCInfoViewer extends ViewerAdapter implements java.io.Serializable
     public JTextArea getContent(){return content;}
 //    public boolean getClusterGenes(){return clusterGenes;}
     
-    public KMCInfoViewer(JTextArea content, boolean clusterGenes) {
-    	header = createHeader();
-    	this.content = content;
-    	this.clusterGenes = clusterGenes;
-    	setMaxWidth(content, header);
-    }
     /**
      * Constructs a <code>KMCInfoViewer</code> with specified
      * clusters and number of genes.
      */
-    public KMCInfoViewer(int[][] clusters, int genes) {
+    public KMCInfoViewer(int[][] clusters, int genes, int [] convIteration) {
         header  = createHeader();
         this.clusterGenes = true;
-        content = createContent(clusters, genes);
+        content = createContent(clusters, genes, convIteration);
         setMaxWidth(content, header);        
     }
     
@@ -56,16 +50,13 @@ public class KMCInfoViewer extends ViewerAdapter implements java.io.Serializable
      * Constructs a <code>KMCInfoViewer</code> with specified
      * clusters and number of genes.
      */
-    public KMCInfoViewer(int[][] clusters, int genes, boolean clusterGenes) {
+    public KMCInfoViewer(int[][] clusters, int genes, int [] convIteration, boolean clusterGenes) {
         header  = createHeader();
         this.clusterGenes = clusterGenes;
-        content = createContent(clusters, genes);
+        content = createContent(clusters, genes, convIteration);
         setMaxWidth(content, header);
     }
-
-    public KMCInfoViewer(JTextArea content, Boolean clusterGenes) {
-    	this(content, clusterGenes.booleanValue());
-    }
+    
     
     /**
      * @inheritDoc
@@ -106,7 +97,7 @@ public class KMCInfoViewer extends ViewerAdapter implements java.io.Serializable
     /**
      * Creates the viewer content component.
      */
-    private JTextArea createContent(int[][] clusters, int genes) {
+    private JTextArea createContent(int[][] clusters, int genes, int [] convIter) {
         JTextArea area = new JTextArea(clusters.length*3, 20);
         area.setEditable(false);
         area.setMargin(new Insets(0, 10, 0, 0));
@@ -118,6 +109,8 @@ public class KMCInfoViewer extends ViewerAdapter implements java.io.Serializable
                 sb.append("# of Genes in Cluster: "+clusters[counter].length);
                 sb.append("\n\t");
                 sb.append("% of Genes in Cluster: "+Math.round((float)clusters[counter].length/(float)genes*100f)+"%");
+                sb.append("\n\t");
+                sb.append("Last Iteration with Gene Exchange: "+convIter[counter]);                
                 sb.append("\n\n");
             }
         }
@@ -128,6 +121,8 @@ public class KMCInfoViewer extends ViewerAdapter implements java.io.Serializable
                 sb.append("# of Experiments in Cluster: "+clusters[counter].length);
                 sb.append("\n\t");
                 sb.append("% of Experiments in Cluster: "+Math.round((float)clusters[counter].length/(float)genes*100f)+"%");
+                sb.append("\n\t");
+                sb.append("Last Iteration with Experiment Exchange: "+convIter[counter]);                
                 sb.append("\n\n");
             }
         }
