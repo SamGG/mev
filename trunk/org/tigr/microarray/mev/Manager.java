@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: Manager.java,v $
- * $Revision: 1.15 $
- * $Date: 2006-05-02 21:00:11 $
+ * $Revision: 1.16 $
+ * $Date: 2006-07-05 19:27:32 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -654,12 +654,12 @@ public class Manager {//A class to keep track of viewers
 				}
             }else if( source == documentMenuItem ) {	//added wwang
             	try {
-					BrowserLauncher.openURL( "ftp://occams.dfci.harvard.edu/pub/bio/MeV/MeV_Manual_4_0b.pdf" );
+					BrowserLauncher.openURL( "ftp://occams.dfci.harvard.edu/pub/bio/MeV/MeV_Manual_4_0.pdf" );
 				} catch( IOException e ) {
 					e.printStackTrace();
 					//BrowserLauncher doesn't work on this system, display dialog
 					JOptionPane.showMessageDialog( frame, 
-							"Go to ftp://occams.dfci.harvard.edu/pub/bio/MeV/MeV_Manual_4_0b.pdf",
+							"Go to ftp://occams.dfci.harvard.edu/pub/bio/MeV/MeV_Manual_4_0.pdf",
 							"Input Error", JOptionPane.ERROR_MESSAGE );
 				}
             
