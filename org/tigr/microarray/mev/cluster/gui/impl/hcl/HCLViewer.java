@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLViewer.java,v $
- * $Revision: 1.16 $
- * $Date: 2006-05-02 16:56:57 $
+ * $Revision: 1.17 $
+ * $Date: 2006-07-06 13:49:44 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -177,7 +177,7 @@ public class HCLViewer extends JPanel implements IViewer {
         setLayout(new GridBagLayout());
         setBackground(Color.white);
         //this.exptID = exptID.intValue();
-        this.offset = offset.intValue();
+        this.offset = offset.intValue();        
         this.expViewer = expViewer;
         listener = new Listener();
         this.addMouseListener(listener);
@@ -188,6 +188,13 @@ public class HCLViewer extends JPanel implements IViewer {
         this.samples_result = samplesResult;
         this.genesTree = genesTree;
         this.sampleTree = sampleTree;
+        if(genesTree != null) {
+        	this.offset = 0;
+        	expViewer.setLeftInset(0);
+        	expViewer.setInsets(new Insets(0,0,0,0));        	
+        } else {
+        	sampleTree.setHorizontalOffset(10);
+        }
         setExperiment(e);
     }
 
