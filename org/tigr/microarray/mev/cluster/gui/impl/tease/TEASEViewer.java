@@ -127,8 +127,8 @@ public class TEASEViewer extends JPanel implements IViewer{
 	    private int[] features;
 	    HCLTreeData genes_result, samples_result;
 	    boolean hclOnly;
-	    AlgorithmData algdata;
 
+	    
 
 	    /**
 	     * Constructs a <code>HCLViewer</code> for specified results.
@@ -143,8 +143,6 @@ public class TEASEViewer extends JPanel implements IViewer{
 	        this.samples_result = samples_result;
 	        this.hclOnly = hclOnly;
 	        this.features = features;
-	        this.algdata = data;
-	        
 	        this.dots = new ArrayList();
 	        this.experiment = experiment;
 	        this.listener = new Listener();
@@ -183,7 +181,7 @@ public class TEASEViewer extends JPanel implements IViewer{
 	        if (!this.isHCLOnly) {
 		        int[] nodes = data.getIntArray("node-list");
 		        int root;
-		        int maxHeight = genesTree.pHeights[data.getIntArray("node-order").length*2-2];
+		      int maxHeight = genesTree.pHeights[data.getIntArray("node-order").length*2-2];
 		        for (int i = 0 ; i < nodes.length; i++) {
 		        	root = nodes[i];
 		        	AlgorithmData single = data.getResultAlgorithmData(new Integer(root));
@@ -200,15 +198,83 @@ public class TEASEViewer extends JPanel implements IViewer{
 	        }
 	        this.popup = createJPopupMenu(listener);
 	    }
+	    /**
+	     * State-saving constructor.  Do not delete or modify.  Create a new constructor
+	     * that calls this one instead.
+	     * @param frame
+	     * @param experiment
+	     * @param features
+	     * @param genes_result
+	     * @param samples_result
+	     * @param node
+	     * @param hclOnly
+	     * @param data
+	     */
+	    public TEASEViewer(JFrame frame, Experiment experiment, int[] features, 
+	    		HCLTree genesTree, HCLTree samplesTree, 
+	    		DefaultMutableTreeNode node, Boolean hclOnly, ArrayList dots) {
+	        setLayout(new GridBagLayout());
+	        this.setBackground(Color.white);
+	        this.genesTree = genesTree;
+	        this.sampleTree = samplesTree;
+	        if(genesTree != null)
+	        	this.genes_result = genesTree.getTreeData();
+	        if(samplesTree != null)
+	        	this.samples_result = samplesTree.getTreeData();
+	        this.hclOnly = hclOnly.booleanValue();
+	        this.features = features;
+	        this.dots = dots;
+	        this.experiment = experiment;
+	        this.listener = new Listener();
+	        this.addMouseListener(this.listener);
+	        this.node = node;
+	        features = features == null ? createDefaultFeatures(experiment) : features;
+	        this.expViewer = createExperimentViewer(experiment, features, genes_result, samples_result);
+	        this.expViewer.getContentComponent().addMouseListener(listener);
+	        this.header = new HCLExperimentHeader(this.expViewer.getHeaderComponent());
+	        this.header.addMouseListener(listener);
+	        this.colorBar = new HCLColorBar(this.clusters, features.length);
+	        this.colorBar.addMouseListener(listener);
+	        this.genesOrder = createGenesOrder(experiment, features, genes_result);
+	        this.annotationBar = new HCLAnnotationBar(this.genesOrder);
+	        this.annotationBar.addMouseListener(listener);
+	        if (genes_result != null && experiment.getNumberOfGenes() > 1 && genes_result.node_order.length > 1) {
+	            this.genesTree.addMouseListener(listener);
+	            this.genesTree.setListener(listener);
+	        }
+
+	        if (samples_result != null && experiment.getNumberOfSamples() > 1 && samples_result.node_order.length > 1) {
+	            this.samplesOrder = createSamplesOrder(samples_result);
+	        if(genes_result == null)
+	            this.sampleTree.setHorizontalOffset(10);
+	            this.sampleTree.addMouseListener(listener);
+	            this.sampleTree.setListener(listener);  //added for selection of experiment hcl nodes
+	        }
+
+	        this.isExperimentCluster = false;
+	        this.numberOfSamples = experiment.getNumberOfSamples(); //know this is correct for gene clustering constructor
+	        addComponents(this.sampleTree, this.genesTree, this.expViewer.getContentComponent(), this.colorBar, this.annotationBar);
+	        
+	        if (!this.isHCLOnly) {  
+	        	for(int i=0; i<dots.size(); i++){
+		        	genesTree.addInfoBox((TEASEInfoBox)dots.get(i));
+		        }
+
+		        genesTree.addMouseMotionListener(new MotionListener());
+		        addMouseMotionListener(new MotionListener());
+	        }
+	        this.popup = createJPopupMenu(listener);
+	    }
 	    
 	    /**
 		 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExpression()
 		 */
 	    public Expression getExpression(){
-	    	return new Expression(this, this.getClass(), "new",
+	    	Expression e = new Expression(this, this.getClass(), "new",
 		   new Object[]{null, this.experiment, this.features, 
-		    		this.genes_result, this.samples_result, 
-		    		this.node, new Boolean(this.hclOnly), this.algdata}); 
+		    		this.genesTree, this.sampleTree, 
+		    		this.node, new Boolean(this.hclOnly), this.dots}); 
+	    	return e;
 	    }
     
 	    /**

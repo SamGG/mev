@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLTree.java,v $
- * $Revision: 1.3 $
- * $Date: 2006-04-10 18:41:37 $
+ * $Revision: 1.4 $
+ * $Date: 2006-07-06 17:15:05 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -172,7 +172,9 @@ public class HCLTree extends JPanel implements java.io.Serializable {
         this.treeListener = treeListener;
     }
   public HCLTreeData getTreeData(){return this.treeData;}    
-    
+    public void setTreeData(HCLTreeData htd){
+    	this.treeData = htd;
+    }
     public void addInfoBox(TEASEInfoBox infoBox) {
     	this.dots.add(infoBox);
     	add(infoBox);
