@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: AffyGCOSFileLoader.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-03-28 22:30:33 $
- * $Author: eleanorahowe $
+ * $Revision: 1.9 $
+ * $Date: 2006-07-07 13:15:55 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 
@@ -103,7 +103,6 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
         final int preSpotRows = this.sflp.getXRow()+1;
         final int preExperimentColumns = this.sflp.getXColumn();
         int numLines = this.getCountOfLines(f);
-        
         int spotCount = numLines - preSpotRows;
 
         if (spotCount <= 0) {
@@ -143,6 +142,10 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
             if (stop) {
                 return null;
             }
+//          fix empty tabbs appending to the end of line by wwang
+            while(currentLine.endsWith("\t")){
+            	currentLine=currentLine.substring(0,currentLine.length()-1);
+            }
             ss.init(currentLine);
             if (counter == 0) { // parse header
             	if(sflp.absoluteRadioButton.isSelected())
@@ -155,8 +158,8 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                 slideDataArray[0] = new SlideData(rRows, rColumns);
                 slideDataArray[0].setSlideFileName(f.getPath());
                 for (int i=1; i<experimentCount; i++) {
-                    slideDataArray[i] = new FloatSlideData(slideDataArray[0].getSlideMetaData(),experimentCount-1);
-                    slideDataArray[i].setSlideFileName(f.getPath());
+                	slideDataArray[i] = new FloatSlideData(slideDataArray[0].getSlideMetaData(),spotCount);
+                	slideDataArray[i].setSlideFileName(f.getPath());
                 }
                 if(sflp.absoluteRadioButton.isSelected()){
                 	String [] fieldNames = new String[1];
@@ -179,7 +182,6 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                 }
                 ss.nextToken();//pares the blank on header
                 for (int i=0; i<experimentCount; i++) {
-                	
                     slideDataArray[i].setSlideDataName(ss.nextToken());
                     if(sflp.referenceRadioButton.isSelected()){
                     	ss.nextToken();//parse the detection
@@ -201,7 +203,6 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                 
                 //affy ID
                 moreFields[0] = ss.nextToken();
-               
                 sde = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields);
                 slideDataArray[0].addSlideDataElement(sde);
                 int i=0;
@@ -232,8 +233,9 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                     		 sde.setDetection(extraFields[0]);
                     	 }
                     }else{
-                    	if(i==1)
+                    	if(i==1){
                     		meta = slideDataArray[0].getSlideMetaData();                    	
+                    	}
                     	slideDataArray[i].setIntensities(counter-preSpotRows,intensities[0],intensities[1]);
                     	if(sflp.referenceRadioButton.isSelected()){
                     		((FloatSlideData)slideDataArray[i]).setDetection(counter-preSpotRows,extraFields[0]);
@@ -355,6 +357,10 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
         try {
             StringSplitter ss = new StringSplitter('\t');
             currentLine = reader.readLine();
+//          fix empty tabbs appending to the end of line by wwang
+            while(currentLine.endsWith("\t")){
+            	currentLine=currentLine.substring(0,currentLine.length()-1);
+            }
             ss.init(currentLine);
         
             for (int i = 0; i < ss.countTokens()+1; i++) {
