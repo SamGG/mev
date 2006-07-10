@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.45 $
- * $Date: 2006-06-30 17:55:56 $
- * $Author: eleanorahowe $
+ * $Revision: 1.46 $
+ * $Date: 2006-07-10 20:16:58 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -299,8 +299,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         
         menubar = new MultipleArrayMenubar(manager);
         
-        //have new session but need to build field names into menus
-        menubar.addLabelMenuItems(arrayData.getFieldNames());
+        //jcb 7/10/06 the Manager constructor takes care of adding field names
+        //arrayData now has field names but don't add them again
+        //menubar.addLabelMenuItems(arrayData.getFieldNames());       
+       
+        //menubar.addLabelMenuItems(arrayData.getFieldNames());
        
         //need to populate the experiment label menu items
         menubar.addExperimentLabelMenuItems(arrayData.getSlideNameKeyVectorUnion());
@@ -356,6 +359,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      */
     public MultipleArrayViewer(MultipleArrayData arrayData, MultipleArrayMenubar origMenubar) {
         super(new JFrame("Multiple Array Viewer"));
+ 
         //EH
         initSessionMetaData();
         
@@ -368,9 +372,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         
         menubar = new MultipleArrayMenubar(origMenubar, manager);
         
-        //have new session but need to build field names into menus
-        menubar.addLabelMenuItems(arrayData.getFieldNames());       
-        
+        //jcb 7/10/06 the Manager constructor takes care of adding field names
+        //arrayData now has field names but don't add them again
+        //menubar.addLabelMenuItems(arrayData.getFieldNames());       
+
         menubar.synchronizeSettings(origMenubar);
         
         //need to populate the experiment label menu items
@@ -3400,6 +3405,12 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         } else {
             newData = this.data.getDataSubset(indices, experiment.getRowMappingArrayCopy());
         }
+        
+        //String [] f = newData.getFieldNames();
+        
+       // for(int i = 0; i < f.length; i++) 
+       // 	System.out.println("f "+1+" "+f[i]);
+        
         Manager.createNewMultipleArrayViewer(this.menubar, newData, label);
         
         addHistory("Launch New MAV: "+label);

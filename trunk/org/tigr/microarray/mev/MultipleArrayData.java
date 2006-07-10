@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayData.java,v $
- * $Revision: 1.25 $
- * $Date: 2006-05-12 15:11:24 $
- * $Author: eleanorahowe $
+ * $Revision: 1.26 $
+ * $Date: 2006-07-10 20:16:58 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
@@ -1001,7 +1001,9 @@ public class MultipleArrayData implements IData {
      * Returns all annotation fields
      */
     public String[] getFieldNames() {
-        return ((SlideData)featuresList.get(0)).getSlideMetaData().getFieldNames();
+    	//6/10/06 jcb changed to ISlideData rather than Slide data since
+    	//the first feature might not be a SlideData object if it's a sample subset (cluster)
+        return ((ISlideData)featuresList.get(0)).getSlideMetaData().getFieldNames();
     }
     /**
      * Returns a spot base row.
@@ -2149,6 +2151,10 @@ public class MultipleArrayData implements IData {
                 }
 
                 metaData = (ISlideMetaData)slideData;
+ 
+                //7/10/06 jcb added to set field names in new data
+               metaData.clearFieldNames();
+               metaData.setFieldNames(this.getFieldNames());
 
             } else{
                 slideData = new FloatSlideData(metaData);
@@ -2174,7 +2180,7 @@ public class MultipleArrayData implements IData {
                 }
             }
             slideData.setNormalizedState(normalizedState);
-            data.addFeature(slideData);
+            data.addFeature(slideData);          
         }
         return data;
     }
@@ -2220,6 +2226,10 @@ public class MultipleArrayData implements IData {
                     slideData.addSlideDataElement(sde);
                 }
                 metaData = (ISlideMetaData)slideData;
+                
+                //7/10/06 jcb added to set field names in new data
+                metaData.clearFieldNames();                
+                metaData.setFieldNames(this.getFieldNames());
 
             } else {
                 slideData = new FloatSlideData(metaData);
