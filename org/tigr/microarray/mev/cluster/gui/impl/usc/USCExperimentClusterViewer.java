@@ -3,11 +3,13 @@
  */
 package org.tigr.microarray.mev.cluster.gui.impl.usc;
 
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
@@ -63,6 +65,33 @@ public class USCExperimentClusterViewer extends ExperimentClusterViewer {
 		addMenuItems(popup, listener);
 		return popup;
 	}
+    
+    
+    /**
+     * Saves clusters.
+     */
+    private void onSaveClusters() {
+		Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
+		try {
+		    saveClusters(frame);
+		} catch (Exception e) {
+		    JOptionPane.showMessageDialog(frame, "Can not save clusters!", e.toString(), JOptionPane.ERROR_MESSAGE);
+		    e.printStackTrace();
+		}
+    }
+    
+    /**
+     * Save the viewer cluster.
+     */
+    private void onSaveCluster() {
+		Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
+		try {
+		    saveCluster(frame);
+		} catch (Exception e) {
+		    JOptionPane.showMessageDialog(frame, "Can not save cluster!", e.toString(), JOptionPane.ERROR_MESSAGE);
+		    e.printStackTrace();
+		}
+    }
 
 	/**
 	 * The class to listen to mouse and action events.
@@ -71,15 +100,15 @@ public class USCExperimentClusterViewer extends ExperimentClusterViewer {
 		public void actionPerformed(ActionEvent e) {
 			String command = e.getActionCommand();
 			if (command.equals(SAVE_CLUSTER_CMD)) {
-				//onSaveCluster();
+				onSaveCluster();
 			} else if (command.equals(SAVE_ALL_CLUSTERS_CMD)) {
-				//onSaveClusters();
+				onSaveClusters();
 			} else if (command.equals(SET_DEF_COLOR_CMD)) {
 				//onSetDefaultColor();
 			} else if (command.equals(STORE_CLUSTER_CMD)) {
-				//storeCluster();
+				storeCluster();
 			} else if(command.equals(LAUNCH_NEW_SESSION_CMD)){
-				//launchNewSession();
+				launchNewSession();
 			}
 		}
 		
