@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: ExperimentHeader.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-05-02 16:56:57 $
+ * $Revision: 1.9 $
+ * $Date: 2006-07-13 16:08:37 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -61,20 +61,7 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
     
     private boolean useDoubleGradient = true;
     
-    /**
-     * Used for restoring an ExperimentHeader from saved xml file.
-     * @param clusters
-     * @param samplesOrder
-     * @param insets
-     
-    public ExperimentHeader(int [][] clusters, int[] samplesOrder, Insets insets){
-        this.clusters = clusters;
-        this.samplesOrder = samplesOrder;
-        this.insets = insets;
-        setBackground(Color.white);
-    }*/
-    
-    
+  
     protected void setIData(IData d) {this.data = d;}
     
     
@@ -316,6 +303,5 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
             }
         } else {
         }
-    }
-    
+    }  
 }

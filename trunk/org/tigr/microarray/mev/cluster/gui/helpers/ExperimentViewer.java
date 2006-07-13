@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ExperimentViewer.java,v $
- * $Revision: 1.11 $
- * $Date: 2006-05-02 16:56:57 $
+ * $Revision: 1.12 $
+ * $Date: 2006-07-13 16:08:37 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -100,7 +100,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
     
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
-    		new Object[]{this.experiment, this.clusters});
+    		new Object[]{this.experiment, this.clusters, this.samplesOrder, new Boolean(this.isDrawAnnotations)});
     }
     /**
      * Constructs an <code>ExperimentViewer</code> with specified
@@ -124,7 +124,16 @@ public class ExperimentViewer extends JPanel implements IViewer {
     public ExperimentViewer(Experiment experiment, int[][] clusters, boolean drawAnnotations) {
         this(experiment, clusters, null, drawAnnotations);
     }
-    
+    /**
+     * State-saving constructor
+     * @param experiment
+     * @param clusters
+     * @param samplesOrder
+     * @param drawAnnotations
+     */
+    public ExperimentViewer(Experiment experiment, int[][] clusters, int[] samplesOrder, Boolean drawAnnotations) {
+    	this(experiment, clusters, samplesOrder, drawAnnotations.booleanValue());
+    }
     /**
      * Constructs an <code>ExperimentViewer</code> with specified
      * experiment, clusters, samples order and draw annotations attribute.
@@ -203,7 +212,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
 	    this.samplesOrder = samplesOrder;
 	    this.isDrawAnnotations = drawAnnotations;
 	    this.header = header;
-    
+
 	    setBackground(Color.white);
 	    
 	    Listener listener = new Listener();
@@ -1065,5 +1074,5 @@ public class ExperimentViewer extends JPanel implements IViewer {
 		this.exptID = id;
 		
 	}
-    
+
 }
