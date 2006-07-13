@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLViewer.java,v $
- * $Revision: 1.17 $
- * $Date: 2006-07-06 13:49:44 $
+ * $Revision: 1.18 $
+ * $Date: 2006-07-13 16:14:25 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -167,7 +167,6 @@ public class HCLViewer extends JPanel implements IViewer {
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new",
 				new Object[]{this.experiment, this.createDefaultFeatures(this.experiment), this.genes_result, this.samples_result, this.sampleClusters, new Boolean(this.isExperimentCluster), this.genesTree, this.sampleTree, new Integer(this.offset), (ExperimentViewer)this.expViewer});
-//    			new Object[]{this.experiment, this.features, this.genes_result, this.samples_result});
     }
     /**
      * Constructs a <code>HCLViewer</code> for specified results
