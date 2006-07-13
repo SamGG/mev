@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: AgilentAnnFileParser.java,v $
- * $Revision: 1.3 $
- * $Date: 2006-05-02 20:52:47 $
- * $Author: eleanorahowe $
+ * $Revision: 1.4 $
+ * $Date: 2006-07-13 20:50:50 $
+ * $Author: caliente $
  * $State: Exp $
  */
 
@@ -146,7 +146,7 @@ public class AgilentAnnFileParser {
 		String s = null;
 		try {
 			MeVotation m = new MeVotation();
-			m.parseAgilentPattern(targetFile, "null");
+			m.parseAgilentPattern(targetFile, "MOTHRA");
 			s = m.getFileString();
 		} catch (UnrecognizedPatternException e) {
 			e.printStackTrace();
@@ -225,7 +225,7 @@ public class AgilentAnnFileParser {
 		String s = null;
 		try {
 			MeVotation m = new MeVotation();
-			m.parseAgilentPattern(f, "null");
+			m.parseAgilentPattern(f, "MOTHRA");
 			s = m.getFileString();
 		} catch (UnrecognizedPatternException e) {
 			//would like to ask for different file here, but can't get it to work
