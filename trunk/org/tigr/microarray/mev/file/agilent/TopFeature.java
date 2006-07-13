@@ -32,7 +32,7 @@ public class TopFeature extends AgilentFeature {
 		int kount = st.countTokens();
 		if( kount != 9 ) {
 			//big problems here
-			System.out.println("kount != 9:" + line);
+			//System.out.println("kount(" + kount + ") != 9:" + line);
 		} else {
 			//we're ok
 			String one = st.nextToken();
