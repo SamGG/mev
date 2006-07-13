@@ -42,7 +42,8 @@ public class MeVotation {
 		//read the file
 		Reader r = new Reader();
 		r.readFile(agilentPattern);
-		this.vLine = r.getVNullLine(blankReplacement);
+		//this.vLine = r.getVNullLine(blankReplacement);
+		this.vLine = r.getVNullLineBasedOnHeader( blankReplacement );
 		this.af = new AgilentFile(this.vLine);
 	}
 	
