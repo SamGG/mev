@@ -94,6 +94,10 @@ public class MeVotation {
 					sbReturn.append(this.nullify(TopFeature.parseAccession(tf.getTopHit())));
 					sbReturn.append(MeVotation.END_LINE);
 				}
+				
+				if( i == 100 ) {
+					//System.out.println(sbReturn.toString());
+				}
 			}//end i
 		} else {
 			//something really funky
