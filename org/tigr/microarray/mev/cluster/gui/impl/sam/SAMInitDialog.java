@@ -7,7 +7,6 @@ All rights reserved.
  *
  * Created on November 7, 2002, 2:06 PM
  */
-
 package org.tigr.microarray.mev.cluster.gui.impl.sam;
 
 import java.awt.Color;
@@ -29,7 +28,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.PrintWriter;
 import java.util.Vector;
-
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
@@ -53,12 +51,10 @@ import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HCLSigOnlyPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 import org.tigr.util.StringSplitter;
-
 /**
  *
  * @author  nbhagaba
@@ -82,7 +78,9 @@ public class SAMInitDialog extends AlgorithmDialog {
     Vector exptNames;
     int numGenes, numUniquePerms;
     HCLSigOnlyPanel hclOpsPanel;
-    //JFrame parentFrame;
+    boolean lotsOfSamples = false;
+    String lotsOfSamplesWarningText = "                                                Note: You can assign large numbers of samples quickly by using a saved text file.";
+    
     
     public static final int GROUP_A = 1;
     public static final int GROUP_B = 2;
@@ -105,6 +103,10 @@ public class SAMInitDialog extends AlgorithmDialog {
         setBounds(0, 0, 700, 800);
         setBackground(Color.white);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        
+        if(exptNames.size()>fileLoadMin){
+        	lotsOfSamples = true;
+        }
         
         forwardImage = new ImageIcon(Toolkit.getDefaultToolkit().getImage(this.getClass().getClassLoader().getResource("org/tigr/images/Forward24.gif")));        
         backImage = new ImageIcon(Toolkit.getDefaultToolkit().getImage(this.getClass().getClassLoader().getResource("org/tigr/images/Back24.gif")));        
@@ -129,25 +131,17 @@ public class SAMInitDialog extends AlgorithmDialog {
         tabPane.add("Censored survival", csPanel);
         oneCPanel = new OneClassPanel();
         tabPane.add("One-Class", oneCPanel);
-    
+   
         buildConstraints(constraints, 0, 0, 1, 1, 100, 75);
         
         gridbag.setConstraints(tabPane, constraints);
         
         pane.add(tabPane);
         
-        /*
-        JButton topButton = new JButton("topPanel");
-        buildConstraints(constraints, 0, 0, 1, 1, 100, 50);
-        gridbag.setConstraints(topButton, constraints);
-        pane.add(topButton);
-         */
-        
         pPanel = new PermutationsPanel();
         buildConstraints(constraints, 0, 1, 1, 1, 0, 5);
         gridbag.setConstraints(pPanel, constraints);
         pane.add(pPanel);
-
         sqPanel = new S0AndQValueCalcPanel();
         buildConstraints(constraints, 0, 2, 1, 1, 0, 10);
         gridbag.setConstraints(sqPanel, constraints);
@@ -164,15 +158,9 @@ public class SAMInitDialog extends AlgorithmDialog {
         pane.add(hclOpsPanel);
         
         addContent(pane);
-        if(exptNames.size()>fileLoadMin){
-        	SAMLoadFileDialog slfDialog = new SAMLoadFileDialog(SAMGUI.SAMFrame, true);
-        	slfDialog.setVisible(true);
-        }
         EventListener listener = new EventListener();
         setActionListeners(listener);
         this.addWindowListener(listener);
-        
-        //setContentPane(pane);
     }
     
     public void setVisible(boolean visible) {
@@ -196,8 +184,6 @@ public class SAMInitDialog extends AlgorithmDialog {
         gbc.weightx = wx;
         gbc.weighty = wy;
     }
-    
-    
     public boolean isOkPressed() {
         return okPressed;
     }
@@ -210,7 +196,9 @@ public class SAMInitDialog extends AlgorithmDialog {
         JLabel[] expLabels;
         int numPanels = 0;
         JRadioButton[] groupARadioButtons, groupBRadioButtons, neitherGroupRadioButtons;
-        GroupExperimentsPanel(Vector exptNames) {
+        JLabel lotsOfSamplesWarningLabel;
+     
+       GroupExperimentsPanel(Vector exptNames) {
             this.setBorder(new TitledBorder(new EtchedBorder(), "Group Assignments", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
             setBackground(Color.white);
             JPanel panel1 = new JPanel();
@@ -249,31 +237,18 @@ public class SAMInitDialog extends AlgorithmDialog {
                 currPanel = i / 512;
                 
                 buildConstraints(constraints, 0, i%512, 1, 1, 25, 100);
-                //constraints.fill = GridBagConstraints.BOTH;
                 gridbag.setConstraints(expLabels[i], constraints);
                 panels[currPanel].add(expLabels[i]);
-              //  if(i<limit)
-              //panel1.add(expLabels[i]);
                 
                 buildConstraints(constraints, 1, i%512, 1, 1, 25, 100);
-                //constraints.fill = GridBagConstraints.BOTH;
                 gridbag.setConstraints(groupARadioButtons[i], constraints);
                 panels[currPanel].add(groupARadioButtons[i]);
-               // if(i<limit)
-               // panel1.add(groupARadioButtons[i]);
                 
                 buildConstraints(constraints, 2, i%512, 1, 1, 25, 100);
-                //constraints.fill = GridBagConstraints.BOTH;
                 gridbag.setConstraints(groupBRadioButtons[i], constraints);
                 panels[currPanel].add(groupBRadioButtons[i]);
-                //if(i<limit)
-                //panel1.add(groupBRadioButtons[i]);
-                
                 buildConstraints(constraints, 3, i%512, 1, 1, 25, 100);
-                //constraints.fill = GridBagConstraints.BOTH;
                 gridbag.setConstraints(neitherGroupRadioButtons[i], constraints);
-                //if(i<limit)
-                //panel1.add(neitherGroupRadioButtons[i]);
                 panels[currPanel].add(neitherGroupRadioButtons[i]);                                
             }
             
@@ -298,6 +273,11 @@ public class SAMInitDialog extends AlgorithmDialog {
             constraints.fill = GridBagConstraints.BOTH;
             gridbag2.setConstraints(label1, constraints);
             this.add(label1);
+            if(lotsOfSamples){
+            	lotsOfSamplesWarningLabel = new JLabel(lotsOfSamplesWarningText);
+            	lotsOfSamplesWarningLabel.setBackground(Color.gray);
+            	this.add(lotsOfSamplesWarningLabel, new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+            }
             
             JPanel panel2 = new JPanel();
             panel2.setBackground(Color.white);
@@ -425,12 +405,11 @@ public class SAMInitDialog extends AlgorithmDialog {
             panel2.add(resetButton);
             
             constraints.insets = new Insets(0,0,0,0);
-            buildConstraints(constraints, 0, 2, 1, 1, 0, 5);
+            buildConstraints(constraints, 0, 3, 1, 1, 0, 5);
             constraints.anchor = GridBagConstraints.CENTER;
             //constraints.fill = GridBagConstraints.BOTH;
             gridbag2.setConstraints(panel2, constraints);
-            this.add(panel2);
-           
+            this.add(panel2);           
         }
         /*
          *  Resets group selections
@@ -447,9 +426,9 @@ public class SAMInitDialog extends AlgorithmDialog {
     class CensoredSurvivalPanel extends JPanel {
         ExptTimeField[] fields;
         int numPanels = 0;
+        JLabel lotsOfSamplesWarningLabel;
+        
         CensoredSurvivalPanel(Vector exptNames) {
-            //            this.setBorder(new TitledBorder(new EtchedBorder(), "Time / State Assignments"));
-        	//System.out.print("Censor");
             this.setBorder(new TitledBorder(new EtchedBorder(), "Time / State Assignments", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
             setBackground(Color.white);
            // JPanel panel1 = new JPanel();
@@ -502,17 +481,13 @@ public class SAMInitDialog extends AlgorithmDialog {
                 
                 constraints.anchor = GridBagConstraints.CENTER;
                 buildConstraints(constraints, 4, i%512, 1, 1, 20, 100);
-                //constraints.fill = GridBagConstraints.BOTH;
                 gridbag.setConstraints(fields[i].censoredRadioButton, constraints);
                 panels[currPanel].add(fields[i].censoredRadioButton);
                 
                 buildConstraints(constraints, 5, i%512, 1, 1, 20, 100);
-                //constraints.fill = GridBagConstraints.BOTH;
                 gridbag.setConstraints(fields[i].deadRadioButton, constraints);
  
                 panels[currPanel].add(fields[i].deadRadioButton);
-                
-                
                 
             }
             
@@ -530,6 +505,11 @@ public class SAMInitDialog extends AlgorithmDialog {
             constraints.fill = GridBagConstraints.BOTH;
             gridbag2.setConstraints(scroll, constraints);
             this.add(scroll);
+            if(lotsOfSamples){
+            	lotsOfSamplesWarningLabel = new JLabel(lotsOfSamplesWarningText);
+            	lotsOfSamplesWarningLabel.setBackground(Color.gray);
+            	this.add(lotsOfSamplesWarningLabel, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+            }
            
             JPanel panel2 = new JPanel();
             GridBagLayout gridbag3 = new GridBagLayout();
@@ -660,7 +640,7 @@ public class SAMInitDialog extends AlgorithmDialog {
                     }
                 }
             });
-            
+           
             
             constraints.anchor = GridBagConstraints.CENTER;
             constraints.fill = GridBagConstraints.NONE;
@@ -677,20 +657,10 @@ public class SAMInitDialog extends AlgorithmDialog {
             gridbag3.setConstraints(resetButton, constraints);
             panel2.add(resetButton);
             constraints.insets = new Insets(0,0,0,0);
-            buildConstraints(constraints, 0, 1, 1, 1, 0, 10);
+            buildConstraints(constraints, 0, 2, 1, 1, 0, 10);
             constraints.anchor = GridBagConstraints.CENTER;
-            //constraints.fill = GridBagConstraints.BOTH;
             gridbag2.setConstraints(panel2, constraints);
             this.add(panel2);
-            
-            /*
-            JButton gButton = new JButton("groupExpts");
-            buildConstraints(constraints, 0, 0, 1, 1, 100, 100);
-            constraints.fill = GridBagConstraints.BOTH;
-            gridbag.setConstraints(gButton, constraints);
-            this.add(gButton);
-             */
-            
         }
         
         /*
@@ -804,6 +774,8 @@ public class SAMInitDialog extends AlgorithmDialog {
         JCheckBox[] includeExpts;
         int numPanels = 0;
         JButton saveButton, loadButton, resetButton;
+        JLabel lotsOfSamplesWarningLabel;
+        
         OneClassPanel() {
             this.setBackground(Color.white);
             JLabel meanLabel = new JLabel("Enter the mean value to be tested against: ");
@@ -824,7 +796,6 @@ public class SAMInitDialog extends AlgorithmDialog {
                 //set current panel
                 currPanel = i / 512;
                 
-                //JLabel expLabel = new JLabel((String)(exptNames.get(i)));
                 includeExpts[i] = new JCheckBox((String)(exptNames.get(i)), true);
                 buildConstraints(constraints, 0, i%512, 1, 1, 100, 100);
                 gridbag.setConstraints(includeExpts[i], constraints);
@@ -839,17 +810,10 @@ public class SAMInitDialog extends AlgorithmDialog {
             
             JScrollPane scroll = new JScrollPane(bigPanel);
             scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-            //scroll.add(exptPanel);
             
             JPanel enterMeanPanel = new JPanel();
             GridBagLayout grid2 = new GridBagLayout();
-            enterMeanPanel.setLayout(grid2);            
-            /*
-            constraints.fill = GridBagConstraints.BOTH;
-            buildConstraints(constraints, 0, 0, 1, 1, 50, 100);
-            gridbag.setConstraints(scroll, constraints);
-            this.add(scroll); 
-             */           
+            enterMeanPanel.setLayout(grid2);        
             
             constraints.fill = GridBagConstraints.NONE;
             buildConstraints(constraints, 0, 0, 1, 1, 50, 100);
@@ -872,6 +836,11 @@ public class SAMInitDialog extends AlgorithmDialog {
             buildConstraints(constraints, 0, 0, 1, 1, 100, 80);
             gridbag.setConstraints(split, constraints);
             this.add(split);  
+            if(lotsOfSamples){
+            	lotsOfSamplesWarningLabel = new JLabel(lotsOfSamplesWarningText);
+            	lotsOfSamplesWarningLabel.setBackground(Color.gray);
+            	this.add(lotsOfSamplesWarningLabel, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+            }
             
             constraints.fill = GridBagConstraints.NONE;
             constraints.anchor = GridBagConstraints.CENTER;
@@ -981,7 +950,7 @@ public class SAMInitDialog extends AlgorithmDialog {
             lsrPanel.add(resetButton);            
             
             //constraints.fill = GridBagConstraints.BOTH;
-            buildConstraints(constraints, 0, 1, 1, 1, 0, 20);
+            buildConstraints(constraints, 0, 2, 1, 1, 0, 20);
             gridbag.setConstraints(lsrPanel, constraints);
             this.add(lsrPanel);            
         }
@@ -1001,6 +970,7 @@ public class SAMInitDialog extends AlgorithmDialog {
         GridBagConstraints constraints;
         GridBagLayout gridbag;  
         int dummy=0;
+        JLabel lotsOfSamplesWarningLabel;
         
         public TwoClassPairedMainPanel() {
         	//if(exptNames.size()<11)
@@ -1017,6 +987,11 @@ public class SAMInitDialog extends AlgorithmDialog {
             constraints.fill = GridBagConstraints.BOTH;
             gridbag.setConstraints(tcpPanel, constraints);
             this.add(tcpPanel);
+            if(lotsOfSamples){
+            	lotsOfSamplesWarningLabel = new JLabel(lotsOfSamplesWarningText);
+            	lotsOfSamplesWarningLabel.setBackground(Color.gray);
+            	this.add(lotsOfSamplesWarningLabel, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+            }
             
             GridBagLayout grid1 = new GridBagLayout();
             bottomPanel.setLayout(grid1);
@@ -1121,7 +1096,7 @@ public class SAMInitDialog extends AlgorithmDialog {
             grid1.setConstraints(resetButton, constraints);
             bottomPanel.add(resetButton);    
             
-            buildConstraints(constraints, 0, 1, 1, 1, 0, 10);
+            buildConstraints(constraints, 0, 2, 1, 1, 0, 10);
             //constraints.fill = GridBagConstraints.BOTH;
             gridbag.setConstraints(bottomPanel, constraints);
             this.add(bottomPanel);             
@@ -1589,6 +1564,7 @@ public class SAMInitDialog extends AlgorithmDialog {
             JRadioButton[][] exptGroupRadioButtons;
             JRadioButton[] notInGroupRadioButtons;
             int numPanels = 0;
+            JLabel lotsOfSamplesWarningLabel;
             MultiGroupExperimentsPanel(Vector exptNames, int numGroups) {
                 this.setBorder(new TitledBorder(new EtchedBorder(), "Group Assignments"));
                 setBackground(Color.white);
@@ -1676,7 +1652,7 @@ public class SAMInitDialog extends AlgorithmDialog {
                     exptNameHeaderPanels[currPanel].add(expLabels[m]);
                 }
 
-                JPanel headerPanel = new JPanel(new GridBagLayout());
+               JPanel headerPanel = new JPanel(new GridBagLayout());
                 for(int k = 0; k < exptNameHeaderPanels.length; k++) {
                     headerPanel.add(exptNameHeaderPanels[k], new GridBagConstraints(0,k,1,1,1,1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0)); 
                 }
@@ -1687,7 +1663,7 @@ public class SAMInitDialog extends AlgorithmDialog {
                 constraints.fill = GridBagConstraints.BOTH;
                 gridbag2.setConstraints(scroll, constraints);
                 this.add(scroll);
-                
+               
                 JLabel label1 = new JLabel("Note: Each group MUST each contain more than one sample.");
                 label1.setHorizontalAlignment(JLabel.CENTER);
                 buildConstraints(constraints, 0, 1, 1, 1, 0, 5);
@@ -1695,6 +1671,12 @@ public class SAMInitDialog extends AlgorithmDialog {
                 //constraints.fill = GridBagConstraints.BOTH;
                 gridbag2.setConstraints(label1, constraints);
                 this.add(label1);
+                
+                if(lotsOfSamples){
+                	lotsOfSamplesWarningLabel = new JLabel(lotsOfSamplesWarningText);
+                	lotsOfSamplesWarningLabel.setBackground(Color.gray);
+                	this.add(lotsOfSamplesWarningLabel, new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+                }
                 
                 JPanel panel2 = new JPanel();
                 GridBagLayout gridbag3 = new GridBagLayout();
@@ -1710,9 +1692,9 @@ public class SAMInitDialog extends AlgorithmDialog {
                 resetButton.setFocusPainted(false);
                 resetButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED, Color.lightGray, Color.darkGray));
                 
-                
-                final int finNum = exptNames.size();
-                
+              
+               final int finNum = exptNames.size();
+               
                 resetButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent evt) {
                         for (int i = 0; i < finNum; i++) {
@@ -1720,10 +1702,10 @@ public class SAMInitDialog extends AlgorithmDialog {
                         }
                     }
                 });
-                
+               
                 final JFileChooser fc = new JFileChooser();
                 fc.setCurrentDirectory(new File("Data"));
-                
+               
                 saveButton.addActionListener(new ActionListener(){
                     public void actionPerformed(ActionEvent evt) {
                         int returnVal = fc.showSaveDialog(MultiGroupExperimentsPanel.this);
@@ -1751,10 +1733,10 @@ public class SAMInitDialog extends AlgorithmDialog {
                         }
                     }
                 });
-                
-                
+               
+               
                 //NEED TO REWORK THIS FOR MULTICLASS
-                
+               
                 loadButton.addActionListener(new ActionListener(){
                     public void actionPerformed(ActionEvent evt) {
                         int returnVal = fc.showOpenDialog(MultiGroupExperimentsPanel.this);
@@ -1834,19 +1816,11 @@ public class SAMInitDialog extends AlgorithmDialog {
                 gridbag3.setConstraints(resetButton, constraints);
                 panel2.add(resetButton);
                 constraints.insets = new Insets(0,0,0,0);
-                buildConstraints(constraints, 0, 2, 1, 1, 0, 5);
+                buildConstraints(constraints, 0, 3, 1, 1, 0, 5);
                 constraints.anchor = GridBagConstraints.CENTER;
-                //constraints.fill = GridBagConstraints.BOTH;
                 gridbag2.setConstraints(panel2, constraints);
                 this.add(panel2);
-                
-            /*
-            JButton gButton = new JButton("groupExpts");
-            buildConstraints(constraints, 0, 0, 1, 1, 100, 100);
-            constraints.fill = GridBagConstraints.BOTH;
-            gridbag.setConstraints(gButton, constraints);
-            this.add(gButton);
-             */
+      
                 
             }
             
@@ -1874,30 +1848,6 @@ public class SAMInitDialog extends AlgorithmDialog {
             setBackground(Color.white);
             numPermsLabel = new JLabel("Enter number of permutations:   ");
             numPermsInputField = new JTextField("100", 7);
-            /*
-            permsInfoLabel = new JLabel("Group A and Group B must each contain more than one experiment");
-            permsInfoLabel.setForeground(Color.red);
-            numPermsInputField = new JTextField("100", 7);
-            useAllPermsButton = new JRadioButton("Use all permutations", false);
-            useAllPermsButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent evt) {
-                    numPermsInputField.setBackground(Color.gray);
-                    numPermsInputField.setText("");
-                }
-            });
-            useAllPermsButton.setEnabled(false);
-            numPermsButton = new JRadioButton("Enter number of permutations", true);
-            numPermsButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent evt) {
-                    numPermsInputField.setBackground(Color.white);
-                    numPermsInputField.setText("100");
-                }
-            });
-            ButtonGroup choosePerms = new ButtonGroup();
-            choosePerms.add(useAllPermsButton);
-            choosePerms.add(numPermsButton);
-             */
-            
             GridBagLayout gridbag = new GridBagLayout();
             GridBagConstraints constraints = new GridBagConstraints();
             this.setLayout(gridbag);
@@ -1911,26 +1861,7 @@ public class SAMInitDialog extends AlgorithmDialog {
             constraints.anchor = GridBagConstraints.WEST;
             gridbag.setConstraints(numPermsInputField, constraints);
             this.add(numPermsInputField);
-            
-            
-            /*
-             //buildConstraints(constraints, 0, 1, 1, 1, 0, 25);
-            buildConstraints(constraints, 0, 1, 2, 1, 0, 40);
-            gridbag.setConstraints(useAllPermsButton, constraints);
-            this.add(useAllPermsButton);
-             
-             //buildConstraints(constraints, 0, 2, 1, 1, 0, 25);
-            buildConstraints(constraints, 0, 2, 1, 1, 60, 40);
-            constraints.anchor = GridBagConstraints.EAST;
-            gridbag.setConstraints(numPermsButton, constraints);
-            this.add(numPermsButton);
-             
-             //buildConstraints(constraints, 0, 3, 1, 1, 0, 25);
-            buildConstraints(constraints, 1, 2, 1, 1, 40, 0);
-           constraints.anchor = GridBagConstraints.WEST;
-            gridbag.setConstraints(numPermsInputField, constraints);
-            this.add(numPermsInputField);
-             */
+           
         }
         
         public void reset(){
