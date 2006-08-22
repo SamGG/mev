@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayData.java,v $
- * $Revision: 1.26 $
- * $Date: 2006-07-10 20:16:58 $
- * $Author: braistedj $
+ * $Revision: 1.27 $
+ * $Date: 2006-08-22 17:50:19 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -2456,11 +2456,28 @@ public class MultipleArrayData implements IData {
         } else {
             this.logState = LOG;
         }
-
+        if(this.dataType == IData.DATA_TYPE_AFFY_ABS){
+        	convertToAffy();
+        }
         if(this.getFeaturesCount() > 0)
             this.experiment = createExperiment();
     }
 
+    private void convertToAffy(){
+    	SlideData ismd = (SlideData)getFeature(0);
+    	Vector allSlideDataElements = ismd.getAllElements();
+    	ISlideDataElement sde;
+    	for(int i=0; i<allSlideDataElements.size(); i++){
+    		sde = (ISlideDataElement)allSlideDataElements.get(i);
+    		if(!(sde instanceof AffySlideDataElement)){
+    			//If this slidedataelement isn't already an Affy slidedataelement, turn it into one
+    			AffySlideDataElement asde = new AffySlideDataElement(sde);
+    			allSlideDataElements.remove(i);
+    			allSlideDataElements.add(i, asde);
+    		}
+    	}
+    }
+    
     /** Returns gene or sample indices related to search terms.
      */
     public int [] search(AlgorithmData criteria) {
@@ -3539,4 +3556,6 @@ public class MultipleArrayData implements IData {
 	public void setMaxCy5(float maxCy5) {
 		this.maxCy5 = maxCy5;
 	}
+	
+
 }
