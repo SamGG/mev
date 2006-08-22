@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: RelNetExperimentClusterViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-05-02 16:57:04 $
+ * $Revision: 1.8 $
+ * $Date: 2006-08-22 18:02:32 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -66,6 +66,10 @@ public class RelNetExperimentClusterViewer extends ExperimentClusterViewer {
     public RelNetExperimentClusterViewer(Experiment e, int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
     		Integer offset){
     	super(e, clusters, genesOrder, drawAnnotations, offset);
+        Listener listener = new Listener();
+        this.popup = createJPopupMenu(listener);
+        getContentComponent().addMouseListener(listener);
+        getHeaderComponent().addMouseListener(listener);
     }
     
     /**
