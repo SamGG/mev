@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.47 $
- * $Date: 2006-08-22 17:44:06 $
+ * $Revision: 1.48 $
+ * $Date: 2006-08-22 18:12:08 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -735,13 +735,14 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      
 	        thread.setPriority(Thread.NORM_PRIORITY);
 	       	thread.start();
-	    } catch (Throwable t){
-	    	/*
+	       	/* } catch (Throwable t){
+	    	
     		System.out.println("Catching outer throwable");
     		JOptionPane.showMessageDialog(MultipleArrayViewer.this, "Analysis was not saved.  Not enough memory.",
                     "Save Error", JOptionPane.WARNING_MESSAGE);
     		progressPanel.dispose();
-    	}
+    	
+	       	}
     	*/
     }
     
