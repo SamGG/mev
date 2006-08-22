@@ -5,8 +5,8 @@
 
 /*
  * $RCSfile: AffySlideDataElement.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-05-02 16:56:56 $
+ * $Revision: 1.10 $
+ * $Date: 2006-08-22 17:49:12 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -95,7 +95,8 @@ public class AffySlideDataElement extends ArrayElement implements ISlideDataElem
 		this.currentIntensity = copyArray(sde.getCurrentIntensity());
 		this.trueIntensity = copyArray(sde.getTrueIntensity());
 		this.extraFields = sde.getExtraFields();
-		this.setDetection(sde.getDetection());
+		if(sde.getDetection() != null && sde.getDetection().length() != 0)
+			this.setDetection(sde.getDetection());
 		this.setPvalue(sde.getPvalue());
 		this.isNull = sde.getIsNull();
 		this.isNonZero = sde.isNonZero();
