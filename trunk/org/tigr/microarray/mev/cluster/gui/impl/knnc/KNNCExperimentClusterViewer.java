@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: KNNCExperimentClusterViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-05-02 16:56:57 $
+ * $Revision: 1.7 $
+ * $Date: 2006-08-22 18:01:59 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -49,6 +49,10 @@ public class KNNCExperimentClusterViewer extends ExperimentClusterViewer {
     public KNNCExperimentClusterViewer(Experiment e, int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
     		Integer offset){
     		super(e, clusters, genesOrder, drawAnnotations, offset);
+    		Listener listener = new Listener();
+    		this.popup = createJPopupMenu(listener);
+    		getContentComponent().addMouseListener(listener);
+    		getHeaderComponent().addMouseListener(listener);
     }
     
     /**
