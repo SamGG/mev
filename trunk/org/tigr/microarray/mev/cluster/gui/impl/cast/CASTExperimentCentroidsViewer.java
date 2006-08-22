@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: CASTExperimentCentroidsViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-05-02 16:56:57 $
+ * $Revision: 1.8 $
+ * $Date: 2006-08-22 17:54:29 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -50,6 +50,9 @@ public class CASTExperimentCentroidsViewer extends ExperimentClusterCentroidsVie
     }
     public CASTExperimentCentroidsViewer(ExperimentClusterCentroidViewer cv) {
     	super(cv);
+        Listener listener = new Listener();
+        this.popup = createJPopupMenu(listener);
+        getContentComponent().addMouseListener(listener);
     }
 
      

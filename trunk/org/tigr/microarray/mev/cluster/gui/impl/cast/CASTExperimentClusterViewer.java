@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: CASTExperimentClusterViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-05-02 16:56:57 $
+ * $Revision: 1.8 $
+ * $Date: 2006-08-22 17:54:29 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -47,6 +47,10 @@ public class CASTExperimentClusterViewer extends ExperimentClusterViewer {
     public CASTExperimentClusterViewer(Experiment e, int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
     		Integer offset){
     	super(e, clusters, genesOrder, drawAnnotations, offset);
+		Listener listener = new Listener();
+		this.popup = createJPopupMenu(listener);
+		getContentComponent().addMouseListener(listener);
+		getHeaderComponent().addMouseListener(listener);
     }
         
     
