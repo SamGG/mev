@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.46 $
- * $Date: 2006-07-10 20:16:58 $
- * $Author: braistedj $
+ * $Revision: 1.47 $
+ * $Date: 2006-08-22 17:44:06 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -618,6 +618,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      * @throws IOException
      */
     private void saveState(File file) throws FileNotFoundException, IOException {
+//    	try {
         this.currentAnalysisFile = file;
     	final boolean debug = true;
     	String javaTempDir = System.getProperty("java.io.tmpdir");
@@ -719,14 +720,31 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                     "Save Error", JOptionPane.WARNING_MESSAGE);
                     ioe.printStackTrace();
                     TMEV.activeSave = false;
-            	}
+                    /*
+            	} catch (Throwable t) {
+            		System.out.println("Catching throwable");
+            //    	thread.destroy();
+            		//ShowThrowableDialog.show(MultipleArrayViewer.this, "Out of Memory", false, t);
+            		JOptionPane.showMessageDialog(MultipleArrayViewer.this, "Analysis was not saved.  Not enough memory.",
+                            "Save Error", JOptionPane.WARNING_MESSAGE);
+            		
+            		*/
+                }
             }
            });
-        thread.setPriority(Thread.NORM_PRIORITY);
-        thread.start();
-		
+     
+	        thread.setPriority(Thread.NORM_PRIORITY);
+	       	thread.start();
+	    } catch (Throwable t){
+	    	/*
+    		System.out.println("Catching outer throwable");
+    		JOptionPane.showMessageDialog(MultipleArrayViewer.this, "Analysis was not saved.  Not enough memory.",
+                    "Save Error", JOptionPane.WARNING_MESSAGE);
+    		progressPanel.dispose();
+    	}
+    	*/
     }
-
+    
 
 
 	private void zipTempFiles(ZipOutputStream zos, String tempFilePath, File tempDir) throws IOException{
@@ -2450,6 +2468,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                         // analysis was canceled by the user
                     } catch (Exception e) {
                         ShowThrowableDialog.show(mainframe, "Analysis Error", false, e);
+                    } catch (Throwable t) {
+                    	ShowThrowableDialog.show(mainframe, "Out of Memory", false, t);
                     }
                 }
             });
@@ -3593,10 +3613,13 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         // by wwang add for auto color scaling(for affy data) 
         sortedValues=initSortedValues(data.getExperiment().getMatrix());
         auto_scale=autoScale(sortedValues);
-        if(data.getDataType() == IData.DATA_TYPE_AFFY_ABS||auto_scale==true){
+        if(data.getDataType() == IData.DATA_TYPE_AFFY_ABS || auto_scale==true){
          	this.menubar.setMinRatioScale(0f);
          	this.menubar.setMidRatioValue(getMedian());
          	this.menubar.setMaxRatioScale(getMaxScale());    	
+        	//EH  added so the data are considered affy data whenever they are scaled as
+         	//affy data.
+         	data.setDataType(IData.DATA_TYPE_AFFY_ABS);
          }
 
         // pcahan - convoluted but it works
@@ -4676,7 +4699,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     	smd.setJVMVersion(System.getProperty("java.vm.version"));
     	smd.setMevMajorVersion(4);
     	smd.setMevMinorVersion(0);
-    	smd.setMevMicroVersion(0);
+    	smd.setMevMicroVersion(01);
     	smd.setBeta(false);
     }
 
