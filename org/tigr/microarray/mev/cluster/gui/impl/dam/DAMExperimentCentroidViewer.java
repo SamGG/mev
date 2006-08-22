@@ -42,6 +42,9 @@ public class DAMExperimentCentroidViewer extends ExperimentClusterCentroidViewer
      */
     public DAMExperimentCentroidViewer(Experiment experiment, int[][] clusters, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes){
     	super(experiment, clusters, clusterIndex, means, variances, codes);
+    	Listener listener = new Listener();
+    	this.popup = createJPopupMenu(listener);
+    	getContentComponent().addMouseListener(listener);
     }
     
     /**

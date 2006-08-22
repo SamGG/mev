@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: EASECentroidViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-05-02 16:56:57 $
+ * $Revision: 1.7 $
+ * $Date: 2006-08-22 17:56:41 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -44,6 +44,9 @@ public class EASECentroidViewer extends CentroidViewer {
      */
     public EASECentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes) {
     	super(e, clusters, variances, means, codes);
+    	Listener listener = new Listener();
+    	this.popup = createJPopupMenu(listener);
+    	getContentComponent().addMouseListener(listener);
     }
     
     

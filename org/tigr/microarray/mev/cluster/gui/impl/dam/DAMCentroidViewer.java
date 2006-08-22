@@ -38,6 +38,9 @@ public class DAMCentroidViewer extends CentroidViewer {
      */
     public DAMCentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes) {
     	super(e, clusters, variances, means, codes);
+    	Listener listener = new Listener();
+    	this.popup = createJPopupMenu(listener);
+    	getContentComponent().addMouseListener(listener);   
     }
     
     

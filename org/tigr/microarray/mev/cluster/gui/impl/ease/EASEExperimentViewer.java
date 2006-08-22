@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: EASEExperimentViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-05-02 16:56:57 $
+ * $Revision: 1.7 $
+ * $Date: 2006-08-22 17:56:41 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -48,6 +48,10 @@ public class EASEExperimentViewer extends ExperimentViewer {
      */ 
     public EASEExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets) {
     	super(e, clusters, samplesOrder, drawAnnotations, header, insets);
+    	Listener listener = new Listener();
+    	this.popup = createJPopupMenu(listener);
+    	getContentComponent().addMouseListener(listener);
+    	getHeaderComponent().addMouseListener(listener);
     }
     
     /**

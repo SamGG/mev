@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: GSHExperimentClusterViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-05-02 16:56:57 $
+ * $Revision: 1.8 $
+ * $Date: 2006-08-22 17:57:27 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -46,6 +46,10 @@ public class GSHExperimentClusterViewer extends ExperimentClusterViewer {
     public GSHExperimentClusterViewer(Experiment e, int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
     		Integer offset){
     	super(e, clusters, genesOrder, drawAnnotations, offset);
+    	Listener listener = new Listener();
+    	this.popup = createJPopupMenu(listener);
+    	getContentComponent().addMouseListener(listener);
+    	getHeaderComponent().addMouseListener(listener);
     }
     
     

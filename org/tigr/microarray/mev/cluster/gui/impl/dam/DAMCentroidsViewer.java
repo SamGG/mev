@@ -48,6 +48,9 @@ public class DAMCentroidsViewer extends CentroidsViewer {
 	 */
 	public DAMCentroidsViewer(CentroidViewer cv) {
 		super(cv);
+        Listener listener = new Listener();
+        this.popup = createJPopupMenu(listener);
+        getContentComponent().addMouseListener(listener);   
 	}
     /**
      * Creates a popup menu.

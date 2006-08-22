@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: GSHExperimentCentroidViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-05-02 16:56:57 $
+ * $Revision: 1.8 $
+ * $Date: 2006-08-22 17:57:27 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -46,6 +46,9 @@ public class GSHExperimentCentroidViewer extends ExperimentClusterCentroidViewer
      */
     public GSHExperimentCentroidViewer(Experiment experiment, int[][] clusters, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes){
     	super(experiment, clusters, clusterIndex, means, variances, codes);
+    	Listener listener = new Listener();
+    	this.popup = createJPopupMenu(listener);
+    	getContentComponent().addMouseListener(listener);
     }
     
     
