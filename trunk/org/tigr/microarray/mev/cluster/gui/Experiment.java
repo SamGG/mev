@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: Experiment.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-05-02 16:56:57 $
+ * $Revision: 1.9 $
+ * $Date: 2006-08-22 17:53:19 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -38,12 +38,7 @@ public class Experiment {
     	this(null, columns, rows);
     	this.matrix = fm;
     }
-//    public Experiment(int[] columns, int[] rows, int id){
-    	//TODO the purpose of this constructor is only to debug state-saving.
-    	//Experiment objects should not be saved using XMLEncoder.
-//    	this(columns, rows, id, null);
-//    }
-    
+   
 
     /**
      * Constructs an <code>Experiment</code> with specified
@@ -69,11 +64,6 @@ public class Experiment {
     public int[] getRows() {return rowMapping;}
     public int[] getColumns(){return columns;}
 
-    //EH end bean changes
-    //TODO Remove this.
-//    public static String[] getPersistenceDelegateArgs() {
-//    	return new String[]{"columns", "rows", "id"};
-//    }
     
     public int getId(){return this.id;}
     
