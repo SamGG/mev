@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: KMCExperimentClusterViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-05-02 16:56:57 $
+ * $Revision: 1.8 $
+ * $Date: 2006-08-22 18:01:26 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -37,11 +37,11 @@ public class KMCExperimentClusterViewer extends ExperimentClusterViewer {
      * experiment and clusters.
      */
     public KMCExperimentClusterViewer(Experiment experiment, int[][] clusters) {
-	super(experiment, clusters);
-	Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
-	getContentComponent().addMouseListener(listener);
-	getHeaderComponent().addMouseListener(listener);
+		super(experiment, clusters);
+		Listener listener = new Listener();
+		this.popup = createJPopupMenu(listener);
+		getContentComponent().addMouseListener(listener);
+		getHeaderComponent().addMouseListener(listener);
     }
     /**
      * Used to reconstruct a KMCExperimentClusterViewer from saved xml data written 
@@ -56,15 +56,20 @@ public class KMCExperimentClusterViewer extends ExperimentClusterViewer {
      */
     public KMCExperimentClusterViewer(Experiment e, int[][] clusters, int[] genesOrder, Boolean drawAnnotations, Integer offset){//, ExperimentClusterHeader header, Boolean hasCentroid, float[][] centroids, Dimension elementSize, Integer labelIndex) {
     	super(e, clusters, genesOrder, drawAnnotations, offset);//, header, hasCentroid, centroids, elementSize, labelIndex);
+
+		Listener listener = new Listener();
+		this.popup = createJPopupMenu(listener);
+		getContentComponent().addMouseListener(listener);
+		getHeaderComponent().addMouseListener(listener);
     }
     
     /**
      * Creates a popup menu.
      */
     private JPopupMenu createJPopupMenu(Listener listener) {
-	JPopupMenu popup = new JPopupMenu();
-	addMenuItems(popup, listener);
-	return popup;
+		JPopupMenu popup = new JPopupMenu();
+		addMenuItems(popup, listener);
+		return popup;
     }
     
     

@@ -49,18 +49,12 @@ public class DAMExperimentCentroidsViewer extends ExperimentClusterCentroidsView
      */
     public DAMExperimentCentroidsViewer(ExperimentClusterCentroidViewer cv) {
     	super(cv);
-    }
-    
-    
-    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { }
-    
-    private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {        
         Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
-	getContentComponent().addMouseListener(listener);
+        this.popup = createJPopupMenu(listener);
+        getContentComponent().addMouseListener(listener);
     }
     
-    
+
     /**
      * Creates a popup menu.
      */

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: KMCExperimentCentroidsViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-05-02 16:56:57 $
+ * $Revision: 1.8 $
+ * $Date: 2006-08-22 18:01:26 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -56,6 +56,9 @@ public class KMCExperimentCentroidsViewer extends ExperimentClusterCentroidsView
      */
     public KMCExperimentCentroidsViewer(ExperimentClusterCentroidViewer eccv) {
     	super(eccv);
+        Listener listener = new Listener();
+        this.popup = createJPopupMenu(listener);
+        getContentComponent().addMouseListener(listener);
     }
     
     /**

@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: KMCCentroidViewer.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-05-02 16:56:57 $
+ * $Revision: 1.10 $
+ * $Date: 2006-08-22 18:01:26 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -49,6 +49,9 @@ public class KMCCentroidViewer extends CentroidViewer {
      */
     public KMCCentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes) {
     	super(e, clusters, variances, means, codes);
+    	Listener listener = new Listener();
+    	this.popup = createJPopupMenu(listener);
+    	getContentComponent().addMouseListener(listener);
     }
        
     /**

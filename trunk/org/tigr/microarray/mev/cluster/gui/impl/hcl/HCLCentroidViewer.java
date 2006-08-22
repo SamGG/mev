@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: HCLCentroidViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-05-02 16:56:57 $
+ * $Revision: 1.6 $
+ * $Date: 2006-08-22 17:58:50 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -46,19 +46,19 @@ public class HCLCentroidViewer extends CentroidViewer implements java.io.Seriali
      * and clusters.
      */
     public HCLCentroidViewer(Experiment experiment, int[][] clusters) {
-	super(experiment, clusters);
-	Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
-	getContentComponent().addMouseListener(listener);
+		super(experiment, clusters);
+		Listener listener = new Listener();
+		this.popup = createJPopupMenu(listener);
+		getContentComponent().addMouseListener(listener);
     }
     
     /**
      * Creates a popup menu.
      */
     private JPopupMenu createJPopupMenu(Listener listener) {
-	JPopupMenu popup = new JPopupMenu();
-	addMenuItems(popup, listener);
-	return popup;
+		JPopupMenu popup = new JPopupMenu();
+		addMenuItems(popup, listener);
+		return popup;
     }
     
     
@@ -66,26 +66,26 @@ public class HCLCentroidViewer extends CentroidViewer implements java.io.Seriali
      * Saves all clusters.
      */
     private void onSaveClusters() {
-	Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
-	try {
-	    ExperimentUtil.saveExperiment(frame, getExperiment(), getData(), getClusters());
-	} catch (Exception e) {
-	    JOptionPane.showMessageDialog(frame, "Can not save clusters!", e.toString(), JOptionPane.ERROR_MESSAGE);
-	    e.printStackTrace();
-	}
+		Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
+		try {
+		    ExperimentUtil.saveExperiment(frame, getExperiment(), getData(), getClusters());
+		} catch (Exception e) {
+		    JOptionPane.showMessageDialog(frame, "Can not save clusters!", e.toString(), JOptionPane.ERROR_MESSAGE);
+		    e.printStackTrace();
+		}
     }
     
     /**
      * Save the viewer cluster.
      */
     private void onSaveCluster() {
-	Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
-	try {
-	    ExperimentUtil.saveExperiment(frame, getExperiment(), getData(), getCluster());
-	} catch (Exception e) {
-	    JOptionPane.showMessageDialog(frame, "Can not save cluster!", e.toString(), JOptionPane.ERROR_MESSAGE);
-	    e.printStackTrace();
-	}
+		Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
+		try {
+		    ExperimentUtil.saveExperiment(frame, getExperiment(), getData(), getCluster());
+		} catch (Exception e) {
+		    JOptionPane.showMessageDialog(frame, "Can not save cluster!", e.toString(), JOptionPane.ERROR_MESSAGE);
+		    e.printStackTrace();
+		}
     }
     
     
@@ -93,7 +93,7 @@ public class HCLCentroidViewer extends CentroidViewer implements java.io.Seriali
      * Removes a public color.
      */
     private void onSetDefaultColor() {
-	setClusterColor(null);
+    	setClusterColor(null);
     }
     
     /**

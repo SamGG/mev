@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: HCLCentroidsViewer.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-03-24 15:50:40 $
+ * $Revision: 1.5 $
+ * $Date: 2006-08-22 17:58:50 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -44,6 +44,9 @@ public class HCLCentroidsViewer extends CentroidsViewer {
      */
     public HCLCentroidsViewer(HCLCentroidViewer hcv) {
     	super(hcv);
+        Listener listener = new Listener();
+        this.popup = createJPopupMenu(listener);
+        getContentComponent().addMouseListener(listener);
     }
     /**
      * Constructs a <code>HCLCentroidsViewer</code> for specified experiment

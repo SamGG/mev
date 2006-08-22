@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: HCLExperimentClusterViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-05-02 16:56:57 $
+ * $Revision: 1.6 $
+ * $Date: 2006-08-22 17:58:50 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -61,6 +61,10 @@ public class HCLExperimentClusterViewer extends ExperimentClusterViewer {
     public HCLExperimentClusterViewer(Experiment e, int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
     		Integer offset){
     	super(e, clusters, genesOrder, drawAnnotations, offset);
+    	Listener listener = new Listener();
+    	this.popup = createJPopupMenu(listener);
+    	getContentComponent().addMouseListener(listener);
+    	getHeaderComponent().addMouseListener(listener);
     }
     
     /**

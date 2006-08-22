@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLExperimentCentroidViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-05-02 16:56:57 $
+ * $Revision: 1.6 $
+ * $Date: 2006-08-22 17:58:50 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -35,6 +35,9 @@ public class HCLExperimentCentroidViewer extends ExperimentClusterCentroidViewer
      */ 
     public HCLExperimentCentroidViewer(Experiment experiment, int[][] clusters, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes){
     	super(experiment, clusters, clusterIndex, means, variances, codes);
+        Listener listener = new Listener();
+        this.popup = createJPopupMenu(listener);
+        getContentComponent().addMouseListener(listener);
     }
     
     /**
