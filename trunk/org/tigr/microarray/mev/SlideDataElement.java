@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: SlideDataElement.java,v $
- * $Revision: 1.10 $
- * $Date: 2006-04-10 18:41:36 $
+ * $Revision: 1.11 $
+ * $Date: 2006-09-06 23:28:47 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -24,7 +24,7 @@ public class SlideDataElement extends ArrayElement implements ISlideDataElement 
     protected boolean isNull = false;
     protected boolean isNonZero = true;
      protected float pvalue=0;
-    protected int flags=0;
+    protected int flags=0; 
     
     /**
      * 
@@ -51,7 +51,7 @@ public class SlideDataElement extends ArrayElement implements ISlideDataElement 
         this.columns = copyArray(columns);
         this.currentIntensity = copyArray(currentIntensities);
         this.trueIntensity = copyArray(trueIntensities);
-        this.extraFields = copyArray(values);    	
+        this.extraFields = copyArray(values);   
     }
 
     public SlideDataElement() {
@@ -304,8 +304,8 @@ public class SlideDataElement extends ArrayElement implements ISlideDataElement 
     public float getTrueIntensity(int intensityType) {
         float targetIntensity = -1;
         switch (intensityType) {
-            case CY3: try {targetIntensity = trueIntensity[0]; break;} catch (NullPointerException npe) {targetIntensity = 0; break;}
-            case CY5: try {targetIntensity = trueIntensity[1]; break;} catch (NullPointerException npe) {targetIntensity = 0; break;}
+            case CY3: try {targetIntensity = trueIntensity[0]; break;} catch (NullPointerException npe) {targetIntensity = 0; break;} catch (ArrayIndexOutOfBoundsException aioob) {targetIntensity = 0; break;}
+            case CY5: try {targetIntensity = trueIntensity[1]; break;} catch (NullPointerException npe) {targetIntensity = 0; break;} catch (ArrayIndexOutOfBoundsException aioob) {targetIntensity = 0; break;}
             //TODO remove try/catch blocks above.
          }
         return targetIntensity;

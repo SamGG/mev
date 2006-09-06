@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SlideData.java,v $
- * $Revision: 1.17 $
- * $Date: 2006-05-02 16:56:56 $
+ * $Revision: 1.18 $
+ * $Date: 2006-09-06 23:28:47 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -69,6 +69,7 @@ public class SlideData implements ISlideData, ISlideMetaData {
      */
     public SlideData(ISlideData original) {
         super();
+        this.allSlideDataElements = new Vector();
         this.rows = original.getSlideMetaData().getRows();
         this.columns = original.getSlideMetaData().getColumns();
         this.sortState = original.getSortState();

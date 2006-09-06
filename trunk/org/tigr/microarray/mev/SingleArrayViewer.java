@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SingleArrayViewer.java,v $
- * $Revision: 1.10 $
- * $Date: 2006-05-15 20:25:23 $
+ * $Revision: 1.11 $
+ * $Date: 2006-09-06 23:28:47 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -196,7 +196,7 @@ public class SingleArrayViewer extends ArrayViewer implements Printable {
         //System.out.println("*****SAV 2:");
         //slideData.output();
         //Draw the data
-        
+       
         panel.setXYScrollbars((long)slideData.getMaxIntensity(ISlideDataElement.CY3), (long)slideData.getMaxIntensity(ISlideDataElement.CY5));
         
         systemEnable(TMEV.DATA_AVAILABLE);
@@ -656,15 +656,15 @@ public class SingleArrayViewer extends ArrayViewer implements Printable {
     
     public void setSlideData(ISlideData newData) {
         if(newData instanceof SlideData){
-            SlideData dataClone = (SlideData)((SlideData)newData).clone();
+        	SlideData dataClone = new SlideData(newData);
             this.slideData = SlideDataLoader.fillBlankSpots(dataClone);
-        }
-        else if(newData instanceof FloatSlideData){
+        } else if(newData instanceof FloatSlideData){
+        	System.out.println("floatslidedata");
             this.slideData = new SlideData(newData);
-            this.slideData = SlideDataLoader.fillBlankSpots(this.slideData);
-        }
-        else
+            //this.slideData = SlideDataLoader.fillBlankSpots(this.slideData);
+        } else {
             this.slideData = newData;
+        }
         indices = createIndices();
         canvas.updateSizes();
     }
