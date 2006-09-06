@@ -423,6 +423,11 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			mev-gui-support.jar, mev-base.jar
     -->
     <target name="build-base" depends="jar-gui-support, jar-images, jar-dialog-help">
+    	<copy todir="${dest.dir}/org/tigr/microarray/mev">
+    		<fileset dir="${source.dir}/org/tigr/microarray/mev/">
+				<include name="*.html"/>
+    		</fileset>
+    	</copy>
         <jar destfile="${lib.dir}/mev-base.jar"
              basedir="${dest.dir}"
 	       includes= 
