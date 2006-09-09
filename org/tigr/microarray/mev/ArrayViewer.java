@@ -4,16 +4,18 @@ All rights reserved.
 */
 /*
  * $RCSfile: ArrayViewer.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-02-23 20:59:41 $
- * $Author: caliente $
+ * $Revision: 1.7 $
+ * $Date: 2006-09-09 18:56:56 $
+ * $Author: jdenvir $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
 import java.awt.Cursor;
 import java.io.File;
+import java.net.URL;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -33,6 +35,14 @@ abstract public class ArrayViewer extends JPanel {
 
     public ArrayViewer(JFrame mainframe) {
         this.mainframe = mainframe;
+        
+        //Added by JD to show icon in window and task bar
+        String iconFile = "org/tigr/images/icon.png";
+        URL iconURL = this.getClass().getClassLoader().getResource(iconFile);
+        ImageIcon imgIcon = new ImageIcon(iconURL);
+        if (imgIcon!=null) {
+        	mainframe.setIconImage(imgIcon.getImage());
+        }
     }
     
     public JFrame getFrame() {
