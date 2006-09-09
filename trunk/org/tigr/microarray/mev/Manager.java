@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: Manager.java,v $
- * $Revision: 1.16 $
- * $Date: 2006-07-05 19:27:32 $
- * $Author: eleanorahowe $
+ * $Revision: 1.17 $
+ * $Date: 2006-09-09 18:56:56 $
+ * $Author: jdenvir $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -22,10 +22,12 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -114,6 +116,14 @@ public class Manager {//A class to keep track of viewers
         
         initializeMenuBar(frame);
         frame.setSize(frame.getPreferredSize());
+        
+        // Added by JD to show icon in window and task bar
+        String iconFile = "org/tigr/images/icon.png";
+        URL iconURL = this.getClass().getClassLoader().getResource(iconFile);
+        ImageIcon imgIcon = new ImageIcon(iconURL);
+        if (imgIcon!=null) {
+        	frame.setIconImage(imgIcon.getImage());
+        }
 
         frame.setResizable(false);
         //frame.pack() was required for WindowsXP 
