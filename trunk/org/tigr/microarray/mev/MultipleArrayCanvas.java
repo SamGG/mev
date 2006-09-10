@@ -4,14 +4,15 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayCanvas.java,v $
- * $Revision: 1.10 $
- * $Date: 2006-03-24 15:49:44 $
- * $Author: eleanorahowe $
+ * $Revision: 1.11 $
+ * $Date: 2006-09-10 17:59:42 $
+ * $Author: jdenvir $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -40,6 +41,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JViewport;
+import javax.swing.Scrollable;
+import javax.swing.SwingConstants;
 
 import org.tigr.microarray.mev.MultipleArrayData;
 import org.tigr.microarray.mev.action.DefaultAction;
@@ -51,8 +55,9 @@ import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.util.SlideDataSorter;
 import org.tigr.util.FloatMatrix;
 
+// Updated by JD to implement javax.swing.Scrollable for intelligent scrolling 
 
-public class MultipleArrayCanvas extends JPanel implements IViewer {
+public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
     
     private static final int TRACE_SPACE = 50;
         
@@ -1206,6 +1211,7 @@ public class MultipleArrayCanvas extends JPanel implements IViewer {
         
     }
 
+    
 
 	/* (non-Javadoc)
 	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#getExpression()
@@ -1213,6 +1219,90 @@ public class MultipleArrayCanvas extends JPanel implements IViewer {
 	public Expression getExpression() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	// Added by JD for scrolling support
+	
+	public boolean getScrollableTracksViewportHeight() {
+		// Method called by JScrollPane: if true, component if forced to be same height as viewport
+		// If false, component has it's preferred size.
+		// Note true effectively disables vertical scrolling.
+		
+		// We force expansion to viewport if smaller than it, otherwise use our own size
+		
+		JViewport viewport = null ;
+		Component parent = getParent();
+		if (parent!=null && parent instanceof JViewport) {
+			viewport = (JViewport) parent ;
+		}
+		if (viewport != null) {
+			int prefHeight = getPreferredSize().height ;
+			int viewportHeight = viewport.getSize().height ;
+			return prefHeight<viewportHeight ;
+		}
+		return false;
+	}
+
+	//	 Added by JD for scrolling support
+	
+	public boolean getScrollableTracksViewportWidth() {
+		
+		JViewport viewport = null ;
+		Component parent = getParent();
+		if (parent!=null && parent instanceof JViewport) {
+			viewport = (JViewport) parent ;
+		}
+		if (viewport != null) {
+			int prefWidth = getPreferredSize().width ;
+			int viewportWidth = viewport.getSize().width ;
+			return prefWidth < viewportWidth ;
+		}
+		return false;
+	}
+
+//	 Added by JD for scrolling support
+	
+	public Dimension getPreferredScrollableViewportSize() {
+		return getPreferredSize();
+	}
+
+//	 Added by JD for scrolling support
+	public int getScrollableBlockIncrement(Rectangle arg0, int orientation, int direction) {
+		Component parent = getParent();
+		JViewport viewport = null ;
+		if (parent!=null && parent instanceof JViewport) {
+			viewport = (JViewport) parent ;
+		}
+		Insets insets = getInsets();
+		if (insets==null) {
+			insets = new Insets(0,0,0,0);
+		}
+		int returnVal ;
+		if (orientation==SwingConstants.HORIZONTAL){
+			if (viewport != null) {
+				returnVal = viewport.getSize().width - insets.left - insets.right ; 
+			} else {
+				returnVal = 1 ;
+			}
+		} else { // VERTICAL
+			if (viewport != null) {
+				returnVal = viewport.getSize().height - insets.top - insets.bottom ;
+			} else {
+				returnVal = 1 ;
+			}
+		}
+		return returnVal ;
+	}
+
+//	 Added by JD for scrolling support
+	public int getScrollableUnitIncrement(Rectangle arg0, int orientation, int direction) {
+		int returnVal ;
+		if (orientation==SwingConstants.HORIZONTAL){
+			returnVal = elementSize.width ;
+		} else { // VERTICAL
+			returnVal = elementSize.height ;
+		}
+		return returnVal;
 	}
     
 }
