@@ -49,8 +49,9 @@ public class TFAExperimentViewer extends ExperimentViewer {
     /**
      * @inheritDoc
      */ 
-    public TFAExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets, String[] auxTitles, Object[][] auxData) {
-    	super(e, clusters, samplesOrder, drawAnnotations, header, insets);
+    public TFAExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder, boolean drawAnnotations, 
+    		String[] auxTitles, Object[][] auxData) {
+    	super(e, clusters, samplesOrder, drawAnnotations);
     	initialize(auxTitles, auxData);
     } 
     
