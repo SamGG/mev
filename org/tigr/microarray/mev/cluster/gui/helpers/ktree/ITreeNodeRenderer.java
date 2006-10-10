@@ -1,5 +1,5 @@
 /*
-Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2006, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
@@ -28,4 +28,6 @@ public interface ITreeNodeRenderer {
         
     public void renderNode(Graphics2D g2, int x, int y, int modifier);
     
+    //added method to render a node tool tip when in minimal node info mode.
+    public void renderVerboseTip(Graphics2D g2);
 }
