@@ -1,5 +1,5 @@
 /*
-Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2006, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
@@ -15,12 +15,10 @@ import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.font.LineMetrics;
 import java.text.DecimalFormat;
 
-import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 import org.tigr.microarray.mev.cluster.gui.helpers.ktree.ITreeNodeRenderer;
@@ -45,30 +43,37 @@ public class GOTreeHeader extends JPanel {
         super();
         super.setBackground(Color.white);
         setBackground(Color.white);
-        setBorder(BorderFactory.createLineBorder(Color.black));
+        //setBorder(BorderFactory.createLineBorder(Color.black));
         displayNode = new GONode(node);
         displayNode.setRenderingHint(ITreeNodeRenderer.RENDERING_HINT_VERBOSE);
         parent = parentViewer;
         setThresholds(upper, lower);
     }
     
+    
     public void updateSize(int x, int y) {
-        setPreferredSize(new Dimension(x,y));
-        setSize(x,y);
+        //set preferred size, note added extra width for possible verbose tool tip    	
+        setPreferredSize(new Dimension(x+125,y));        
+        setSize(x+125,y);
     }
     
+   
+    /* jcb 10/9/06 stopped putting the selected node in the header
     public void updateInfo(GONode selectedNode) {
         displayNode = selectedNode;
         displayNode.setRenderingHint(ITreeNodeRenderer.RENDERING_HINT_VERBOSE);
         updateSize( parent.getViewerWidth(), displayNode.getHeight()+10);
         repaint();
     }
+    */
+   
     
     public void update() {
         displayNode.setRenderingHint(ITreeNodeRenderer.RENDERING_HINT_VERBOSE);
-        updateSize( parent.getViewerWidth(), displayNode.getHeight()+10);
+        updateSize( parent.getViewerWidth(), 35);
         repaint();
     }
+   
     
     public void setThresholds(double upper, double lower) {
         this.upperThr = upper;
@@ -112,55 +117,44 @@ public class GOTreeHeader extends JPanel {
         
         super.paint(g);
         Graphics2D g2 = (Graphics2D)g;
-        
-        Rectangle rect = g.getClip().getBounds();
-        
-        //   g.clearRect(rect.x, rect.y, rect.width, rect.height);
-        // Rectangle rect = g.getClipRect();
-        //  ((ITreeNodeRenderer)displayNode).renderNode(g2, rect.x+5, rect.y+5, ITreeNodeRenderer.STANDARD_NODE);
-        
-        //       if(displayNode.contains(rect))
-        //   if(!( rect.height < this.getHeight() ))
-        
-        //((ITreeNodeRenderer)displayNode).renderNode(g2, rect.x+5, 5, ITreeNodeRenderer.STANDARD_NODE);
-        
-        ((ITreeNodeRenderer)displayNode).renderNode(g2, 5, 5, ITreeNodeRenderer.STANDARD_NODE);
-        
+
+        // jcb 10/9/06 stop rendering node in header
+        //((ITreeNodeRenderer)displayNode).renderNode(g2, 5, 5, ITreeNodeRenderer.STANDARD_NODE);
+        // jcb 10/9/06 modified header rendering
         
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         
         FontMetrics fm = g.getFontMetrics();
-        /*g.drawString(upperStr, rect.x+5+displayNode.getWidth()+ 20, 5+fm.getHeight());
-        g.drawString(lowerStr, rect.x+5+displayNode.getWidth()+ 20, 5+2*fm.getHeight()+20);
-        g.drawString(nonsigStr, rect.x+5+displayNode.getWidth()+ 20, 5+2*fm.getHeight()+20);
-         
-        g.drawRect( rect.x+5+displayNode.getWidth()+ 20, 5+fm.getHeight(), 30, 10);
-        g.drawRect( rect.x+5+displayNode.getWidth()+ 20, fm.getHeight(), 30, 10);
-         */
         
         LineMetrics lm = fm.getLineMetrics(lowerStr, g);
         
-        g.drawRect( 5+displayNode.getWidth()+ 20, 5+(int)lm.getHeight()-(int)lm.getAscent(), 30, (int)lm.getAscent());
+        g.drawRect( 25, 5+(int)lm.getHeight()-(int)lm.getAscent(), 30, (int)lm.getAscent());
         g.setColor(Color.red);
-        g.fillRect(5+displayNode.getWidth()+ 20+1, 5+(int)lm.getHeight()-(int)lm.getAscent()+1, 30-1, (int)lm.getAscent()-1);
+        g.fillRect(26, 5+(int)lm.getHeight()-(int)lm.getAscent()+1, 30-1, (int)lm.getAscent()-1);
         g.setColor(Color.black);
-        g.drawString(lowerStr, 5+displayNode.getWidth()+ 55, 5+(int)lm.getHeight());
+        g.drawString(lowerStr, 60, 5+(int)lm.getHeight());
+        
+        int textWidth = g.getFontMetrics().stringWidth(lowerStr);
+        int currX = 60+textWidth;
         
         lm = fm.getLineMetrics(upperStr, g);
-        
-        g.drawRect( 5+displayNode.getWidth()+ 20, 5+2*(int)lm.getHeight()-(int)lm.getAscent()+20, 30, (int)lm.getAscent());
+         
+        g.drawRect( currX+25, 5+(int)lm.getHeight()-(int)lm.getAscent(), 30, (int)lm.getAscent());
         g.setColor(Color.orange);
-        g.fillRect( 5+displayNode.getWidth()+ 20+1, 5+2*(int)lm.getHeight()-(int)lm.getAscent()+20+1, 30-1, (int)lm.getAscent()-1);
+        g.fillRect( currX+26, 5+(int)lm.getHeight()-(int)lm.getAscent()+1, 30-1, (int)lm.getAscent()-1);
         g.setColor(Color.black);
-        g.drawString(upperStr, 5+displayNode.getWidth()+ 55, 5+2*(int)lm.getHeight()+20);
+        g.drawString(upperStr, currX+60, 5+(int)lm.getHeight());
+        
+        textWidth = g.getFontMetrics().stringWidth(upperStr);
+        currX += 60+textWidth;
         
         lm = fm.getLineMetrics(nonsigStr, g);
         
-        g.drawRect( 5+displayNode.getWidth()+ 20, 5+3*(int)lm.getHeight()-(int)lm.getAscent()+40, 30, (int)lm.getAscent());
+        g.drawRect( currX+25, 5+(int)lm.getHeight()-(int)lm.getAscent(), 30, (int)lm.getAscent());
         g.setColor(Color.green);
-        g.fillRect( 5+displayNode.getWidth()+ 20+1, 5+3*(int)lm.getHeight()-(int)lm.getAscent()+40+1, 30-1, (int)lm.getAscent()-1);
+        g.fillRect( currX+26, 5+(int)lm.getHeight()-(int)lm.getAscent()+1, 30-1, (int)lm.getAscent()-1);
         g.setColor(Color.black);
-        g.drawString(nonsigStr, 5+displayNode.getWidth()+ 55, 5+3*(int)lm.getHeight()+40);
+        g.drawString(nonsigStr, currX+60, 5+(int)lm.getHeight());
     }
     
 }
