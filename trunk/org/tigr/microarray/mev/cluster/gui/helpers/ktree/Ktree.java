@@ -1,5 +1,5 @@
 /*
-Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2006, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
@@ -28,8 +28,7 @@ import javax.swing.JPanel;
  * @author  braisted
  */
 public class Ktree extends JPanel {
-    
-    
+      
     /**
      * Array of tree nodes.  Nodes should be represeted by level.
      * Ordering represents left to right order
@@ -53,6 +52,8 @@ public class Ktree extends JPanel {
     
     Vector selectedPathNodes;
     ITreeNode selectedNode;
+    public ITreeNode nodeUnderMouse;
+        
     boolean isNodeSelected;
     
     /** Creates a new instance of Ktree */
@@ -111,6 +112,8 @@ public class Ktree extends JPanel {
         //to minimize cross overrs.
         //child nodes should be sorted within each child, assess child order and swap
         //accordingly to minimize crossing.
+    	
+    	//need to implement the 'detangle' method for this...
     }
     
     public ITreeNode getRoot() {
@@ -138,7 +141,10 @@ public class Ktree extends JPanel {
     
     public int getTreePixelHeight() {
         int levelHeight = nodes.length;
+        
+        //added extra node height for possible tool tip.
         int treeHeight = 2*xMargin + levelHeight * (interNodeHeight + nodes[0][0].getHeight()) - interNodeHeight;
+
         return treeHeight;
     }    
     
@@ -200,6 +206,24 @@ public class Ktree extends JPanel {
         return node;
     }
     
+    
+    public ITreeNode getNodeUnder(int x, int y) {
+        ITreeNode node = null;
+        int level = (int)((y-yMargin)/(interNodeHeight + nodes[0][0].getHeight()));
+        
+        if(level < 0 || level >= nodes.length)
+            return null;
+        
+        for(int i = 0; i < nodes[level].length; i++) {
+            if(nodes[level][i].contains(x,y)) {
+                node = nodes[level][i];
+                break;
+            }
+        }
+        return node;
+    }
+    
+    
     public Vector getPathNodes(ITreeNode node, int polarity) {
         Vector ancestors, successors;
         
@@ -234,6 +258,13 @@ public class Ktree extends JPanel {
         int height = getTreePixelHeight();
         setPreferredSize(new Dimension(width, height));
         setSize(width, height);
+    }
+    
+    public void updateSize(int bufferX, int bufferY) {
+        int width = getTreePixelWidth();
+        int height = getTreePixelHeight();
+        setPreferredSize(new Dimension(width+bufferX, height+bufferY));
+        setSize(width+bufferX, height+bufferY);
     }
     
     public void paint(Graphics g) {
@@ -282,7 +313,12 @@ public class Ktree extends JPanel {
             }
         }
         renderConnectors(g);
+        
+        //10/9/06 jcb added to allow mouse over node tips when in minimal node mode
+        if(this.nodeUnderMouse != null)
+        	((ITreeNodeRenderer)nodeUnderMouse).renderVerboseTip(g2);
     }
+    
     
     private void renderConnectors(Graphics g) {
         ITreeNode currNode;
@@ -305,27 +341,11 @@ public class Ktree extends JPanel {
                 
                 
                 if(children == null) {
-                    //         System.out.println("null children");
-                    // continue;
                     break;
                 }
 
-/*
-                if(i == nodes.length-1 && j == nodes[i].length-1) {
-                    System.out.println("rendering final connector");
-                    System.out.println("child count "+children.length);
-                    if(children.length > 0) {
-                        System.out.println("Child go term = "+ ((org.tigr.microarray.mev.cluster.gui.impl.ease.gotree.GONode)children[0]).getTerm());
-                        System.out.println("child depth = "+((org.tigr.microarray.mev.cluster.gui.impl.ease.gotree.GONode)children[0]).getLevel());
-                    }
-                }
-*/
-                
-                
-                //    System.out.println("children length = "+children.length);
                 start = currNode.getBottomAnchorPoint();
-                
-                //     System.out.println("start x, y = "+start.x + "  " + start.y);
+
                 for(int k = 0; k < children.length; k++) {
                     
                     selected = false;
@@ -338,11 +358,9 @@ public class Ktree extends JPanel {
                         AlphaComposite alphaComp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
                         g2.setComposite(alphaComp);
                     }
-                    
-                    //    System.out.println("draw line");
+
                     finish = children[k].getTopAnchorPoint();
-                    //    System.out.println("finish x, y = "+finish.x + "  " + finish.y);
-                    
+       
                     if(!isStraitConnector) {
                         CubicCurve2D conn = new CubicCurve2D.Double(start.x, start.y, start.x, start.y +15,
                         finish.x, finish.y-15, finish.x, finish.y);               
@@ -366,8 +384,5 @@ public class Ktree extends JPanel {
         }
     }
     
-    public static void main(String [] args) {
-        
-    }
     
 }
