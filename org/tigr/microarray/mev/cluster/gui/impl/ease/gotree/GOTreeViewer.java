@@ -1,5 +1,5 @@
 /*
-Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2006, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
@@ -19,20 +19,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.beans.Expression;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
-
-import java.beans.Expression;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
@@ -87,6 +84,11 @@ public class GOTreeViewer extends JPanel implements IViewer {
     private String[] headerFields;
     private int exptID = 0;
     
+    //10/9/06 jcb listens for mouse over events
+    private MouseOverListener mouseOverListener;
+    //10/8/06 always true but if we want to supress tool tip we can use this later
+    private boolean showToolTip = true;
+    
     /** Creates a new instance of GOTreeViewer */
     public GOTreeViewer() {
         
@@ -96,6 +98,8 @@ public class GOTreeViewer extends JPanel implements IViewer {
         super(new GridBagLayout());
         tree = new Ktree(root);
         add(tree, new GridBagConstraints(0,0,1,1,1.0,1.0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
+        mouseOverListener = new MouseOverListener();        
+        setVerboseNodeStyle(false);      
     }
 
     
@@ -106,7 +110,9 @@ public class GOTreeViewer extends JPanel implements IViewer {
         tree = new Ktree(data);
         header = new GOTreeHeader(data[0][0], this, upper, lower);
         this.viewerNode = viewerNode;
+  
         add(tree, new GridBagConstraints(0,0,1,1,1.0,1.0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
+
         nodes = new Vector();
         for(int i = 0; i < data.length; i++) {
             for(int j = 0; j < data[i].length; j++) {
@@ -117,6 +123,8 @@ public class GOTreeViewer extends JPanel implements IViewer {
         tree.addMouseListener(listener);
         this.addMouseListener(listener);
         createPopupMenu(listener);
+        mouseOverListener = new MouseOverListener();    
+        setVerboseNodeStyle(false);  
     }
 
     
@@ -130,13 +138,18 @@ public class GOTreeViewer extends JPanel implements IViewer {
         this.headerFields = headerFields;
         tree = new Ktree(storedNodes);
         header = new GOTreeHeader(storedNodes[0][0], this, upper, lower);
+   
         add(tree, new GridBagConstraints(0,0,1,1,1.0,1.0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
+
         Listener listener = new Listener();
         tree.addMouseListener(listener);
         this.addMouseListener(listener);
         createPopupMenu(listener);
         setVerboseNodeStyle(false);
+        mouseOverListener = new MouseOverListener();          
+        setVerboseNodeStyle(false);  
     }
+    
     /**
      * @inheritDoc
      */
@@ -146,6 +159,7 @@ public class GOTreeViewer extends JPanel implements IViewer {
     			category, headerFields, new Integer(selectionPolarity), 
 				new Boolean(verbose), new Double(upper), new Double(lower)});
     }
+    
     /**
      * Re-creates a GOTreeViewer from stored data in an XMLEncoded file.  
      * 
@@ -186,6 +200,8 @@ public class GOTreeViewer extends JPanel implements IViewer {
     	tree.addMouseListener(listener);
     	this.addMouseListener(listener);
     	createPopupMenu(listener);
+    	mouseOverListener = new MouseOverListener();          
+        setVerboseNodeStyle(false);  
     }
 
     
@@ -492,7 +508,7 @@ public class GOTreeViewer extends JPanel implements IViewer {
     /** Returns a component to be inserted into scroll pane view port.
      */
     public JComponent getContentComponent() {
-        return this.tree;
+        return this;
     }
     
     /** Returns the corner component corresponding to the indicated corner,
@@ -513,7 +529,7 @@ public class GOTreeViewer extends JPanel implements IViewer {
     public JComponent getHeaderComponent() {
         //  if(!this.verbose)
         return header;
-        //   return null;
+        // return null;
     }
     
     /** Invoked by the framework to save or to print viewer image.
@@ -573,20 +589,58 @@ public class GOTreeViewer extends JPanel implements IViewer {
             rendering = ITreeNodeRenderer.RENDERING_HINT_VERBOSE;
             tree.setInterNodeHeight(60);
             tree.setInterNodeWidth(30);
+
+            if(showToolTip) {
+            	
+        		tree.removeMouseMotionListener(mouseOverListener);
+                        
+        		//remove node under mouse
+        		tree.nodeUnderMouse = null;
+            }
+            
         } else {
+        	
             rendering = ITreeNodeRenderer.RENDERING_HINT_MINIMAL;
             tree.setInterNodeHeight(40);
             tree.setInterNodeWidth(15);
+            
+            //if renentering minimal add listener if appropriate
+        	if(showToolTip)
+        		tree.addMouseMotionListener(mouseOverListener);
+        	else
+        		tree.removeMouseMotionListener(mouseOverListener);
         }
         
         verbose = isVerbose;
         
+        	
         for(int i =0; i < nodes.size(); i++) {
             ((GONode)(nodes.elementAt(i))).setRenderingHint(rendering);
         }
+
+        //buffer for possible tool tip, if going to minimal this will
+        //capture verbose height.  send to tree size update
+        //if changing to verbose then we just will add a small (minimal) buffer to the bottom
+        int verticalBuffer = 0;
+        int horizontalBuffer = 0; 
         
-        tree.updateSize();  //update tree size
+        if(!verbose) {
+        	verticalBuffer = ((GONode)(nodes.elementAt(0))).getToolTipHeight();
+        	horizontalBuffer = ((GONode)(nodes.elementAt(0))).getToolTipWidth();
+        }
+        
+        tree.updateSize(horizontalBuffer,verticalBuffer); //update tree size
+        tree.validate();
+        
         header.update();    //THEN update header size
+
+        validate();
+                
+        if(this.framework != null) {
+        	this.framework.refreshCurrentViewer();
+        	this.framework.getFrame().validate();        
+        }
+        
         tree.repaint();
     }
     
@@ -621,9 +675,9 @@ public class GOTreeViewer extends JPanel implements IViewer {
         if(tree.checkSelection(x, y, selectionPolarity)) {
             newTreeMenu.setEnabled(true);
             launchMenu.setEnabled(true);
-            header.updateInfo(new GONode((GONode)tree.getSelectedNode()));
+            //header.updateInfo(new GONode((GONode)tree.getSelectedNode()));
         } else {
-            header.updateInfo((new GONode((GONode)this.tree.getRoot())));
+           // header.updateInfo((new GONode((GONode)this.tree.getRoot())));
             newTreeMenu.setEnabled(false);
             launchMenu.setEnabled(false);
         }
@@ -1032,6 +1086,20 @@ public class GOTreeViewer extends JPanel implements IViewer {
         }
         
     }
+    
+    /*
+     * Mouse motion listener to handle mouse-over events for showwing tool tips
+     * 
+     * @author braisted
+     */
+    private class MouseOverListener implements MouseMotionListener {		
+		public void mouseDragged(MouseEvent e) { }
+
+		public void mouseMoved(MouseEvent e) {
+			tree.nodeUnderMouse = tree.getNodeUnder(e.getX(), e.getY());	
+			repaint();	
+		}    	
+    }    
     
     
     /** Returns int value indicating viewer type

@@ -1,5 +1,5 @@
 /*
-Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+Copyright @ 1999-2006, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
@@ -15,13 +15,13 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.awt.geom.Point2D;
-import java.io.Serializable;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.text.DecimalFormat;
@@ -215,6 +215,14 @@ public class GONode extends KNodeImpl implements ITreeNodeRenderer {
     
     //Rendering methods
     
+    public int getToolTipHeight() {
+    	return VERBOSE_HEIGHT;
+    }
+
+    public int getToolTipWidth() {
+    	return VERBOSE_WIDTH;
+    }
+
     /**
      * Sets the rendering hint
      */
@@ -274,7 +282,7 @@ public class GONode extends KNodeImpl implements ITreeNodeRenderer {
             //render go term text
             int yLoc = y + yOffset +2;
             int marginLoc = x + 6;
-            renderGoTermText(g2, marginLoc, yLoc);
+            renderGoTermText(g2, marginLoc, yLoc, x, y);
             
             //render go term divider
             g2.drawLine(x, y + GO_TERM_HEIGHT + yOffset, x+w, y + GO_TERM_HEIGHT + yOffset);
@@ -344,6 +352,108 @@ public class GONode extends KNodeImpl implements ITreeNodeRenderer {
         g2.setComposite(composite);        
     }
     
+    /**
+     * 10/9/06 jcb
+     * Render verbose tool tip.  This is called when node style is minimal
+     * and the node is under the cursor.
+     */
+    public void renderVerboseTip(Graphics2D g2) {
+    	
+    	int x = this.x + this.NON_VERBOSE_WIDTH/2;
+    	int y = this.y + this.NON_VERBOSE_HEIGHT/2;
+    	
+    	renderingHint = ITreeNodeRenderer.RENDERING_HINT_VERBOSE;
+    	setDimensions();
+    	
+    	Color origColor = g2.getColor();
+    	Composite origComposite = g2.getComposite();
+
+        AlphaComposite alphaComp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f);
+        g2.setComposite(alphaComp);
+
+        //fill the center rectangle with a transparent overlay        
+        g2.setColor(Color.white);
+        g2.fillRect(x+2,y+2,w-4,h-4);
+        g2.setColor(origColor);
+        
+    	int yOffset = 0;
+
+    	if(pValue > upperThr)
+            g2.setColor(Color.green);
+        else if(pValue <= upperThr && pValue > lowerThr)
+            g2.setColor(Color.orange);
+        else
+            g2.setColor(Color.red); 
+        
+        
+        yOffset += 2;
+        g2.fillRect(x+2, y+yOffset, w-3, GO_ID_HEIGHT);
+
+        //reset composite to render lines and text darker
+        g2.setComposite(origComposite);
+        
+        //reset color
+        g2.setColor(origColor);
+        
+        yOffset = 0;
+        //draw 2 pixel border
+        g2.drawRect(x,y,w,h);
+        yOffset += 1;
+        g2.drawRect(x+1, y+yOffset, w-2, h-2);
+        
+        //set it below the two pixel line
+        yOffset += 1;
+        
+        //go below the go id area
+        yOffset += GO_ID_HEIGHT;
+
+        
+        //render go id text
+        TextLayout layout = new TextLayout(goID, g2.getFont(), g2.getFontRenderContext());
+        layout.draw(g2, x + (w - layout.getAdvance())/2, y + layout.getAscent() + (this.GO_ID_HEIGHT - layout.getAscent())/2);
+        
+        //render go id divider
+        g2.drawLine(x, y + yOffset, x+w, y + yOffset);
+        
+        //render go term text
+        int yLoc = y + yOffset +2;
+        int marginLoc = x + 6;
+        renderGoTermText(g2, marginLoc, yLoc, x, y);
+        
+        //render go term divider
+        g2.drawLine(x, y + GO_TERM_HEIGHT + yOffset, x+w, y + GO_TERM_HEIGHT + yOffset);
+        yOffset += GO_TERM_HEIGHT;
+        
+        //render pValue
+    	//renderPVaue(g2, yOffset);
+    	DecimalFormat format;
+        
+        String pStr;
+        if (pValue < 0.0001){    
+            format = new DecimalFormat("0.#####E00");
+            pStr = format.format(pValue);
+        } else {
+            format = new DecimalFormat("0.#####");
+            pStr = format.format(pValue);
+        }
+            
+        layout = new TextLayout("p = "+pStr, g2.getFont(), g2.getFontRenderContext());
+        layout.draw(g2, x + (w - layout.getAdvance())/2, y + yOffset + layout.getAscent() + (this.GO_STAT_HEIGHT - layout.getAscent())/2);
+       
+    	
+    	//layout = new TextLayout("p = "+pStr, g2.getFont(), g2.getFontRenderContext());
+    	//layout.draw(g2, x + (w - layout.getAdvance())/2, y + yOffset + layout.getAscent() + (this.GO_STAT_HEIGHT - layout.getAscent())/2);
+    	
+    	g2.drawLine(x, y + GO_STAT_HEIGHT + yOffset, x+w, y + GO_STAT_HEIGHT + yOffset);
+    	yOffset += GO_STAT_HEIGHT;            
+        
+        layout = new TextLayout("("+String.valueOf(listHits)+")   ("+String.valueOf(popHits)+")", g2.getFont(), g2.getFontRenderContext());            	       
+        layout.draw(g2, x + (w - layout.getAdvance())/2, y + yOffset + layout.getAscent() + (this.GO_POP_HEIGHT - layout.getAscent())/2 - 2);
+        
+    	renderingHint = ITreeNodeRenderer.RENDERING_HINT_MINIMAL;
+    	setDimensions();
+    }
+    
     private void renderPVaue(Graphics2D g2, int yOffset) {
         DecimalFormat format = new DecimalFormat();
         format.setMaximumFractionDigits(5);
@@ -355,8 +465,33 @@ public class GONode extends KNodeImpl implements ITreeNodeRenderer {
         layout.draw(g2, x + (w - layout.getAdvance())/2, y + yOffset + layout.getAscent() + (this.GO_STAT_HEIGHT - layout.getAscent())/2);
     }
     
-    private void renderGoTermText(Graphics2D g2, int marginLoc, int yLoc) {
-        TextLayout layout;
+    
+    /**
+     * Modified 10/9/06
+     * 
+     * @param g2 Graphics object
+     * @param marginLoc upper break in go term box
+     * @param yLoc Y location of text
+     * @param x  upper left x of the text box.
+     * @param y  upper left y of the text box.
+     */
+    private void renderGoTermText(Graphics2D g2, int marginLoc, int yLoc, int x, int y) {
+    	Rectangle origClip = g2.getClipBounds();
+    	
+    	//set appropriate clip size in case text is too long
+    	Rectangle newClip = new Rectangle(x, yLoc, x+w < origClip.x+origClip.width ? w : origClip.x+origClip.width-x, 
+    	yLoc + this.GO_TERM_HEIGHT < origClip.y+origClip.height ? this.GO_TERM_HEIGHT : origClip.y+origClip.height-yLoc);
+
+    	if(!origClip.intersects(newClip)) 
+    		return;
+
+    	// avoid clip for text entering the header
+    	if(newClip.y < origClip.y)
+    		newClip.y = origClip.y;
+    
+    	g2.setClip(newClip);    	
+
+    	TextLayout layout;
 
         AttributedString goTermAttStr = new AttributedString(goTerm);
         goTermAttStr.addAttribute(TextAttribute.JUSTIFICATION, TextAttribute.JUSTIFICATION_NONE);
@@ -375,12 +510,13 @@ public class GONode extends KNodeImpl implements ITreeNodeRenderer {
         Point2D.Float penPoint;
         while(lbm.getPosition() < iter.getEndIndex()) {
             layout = lbm.nextLayout(w - 2*5);
-            yLoc += layout.getAscent();
             
+            yLoc += layout.getAscent();
+                        
             penPoint = new Point2D.Float(marginLoc, yLoc);
             
             if(layouts.size() > 0) {
-                TextLayout prevLine = (TextLayout)layouts.elementAt(layouts.size()-1);
+                TextLayout prevLine = (TextLayout)layouts.elementAt(layouts.size()-1);                
                 prevLine = prevLine.getJustifiedLayout((w-2*5));
                 layouts.setElementAt(prevLine, layouts.size()-1);
             }
@@ -396,7 +532,11 @@ public class GONode extends KNodeImpl implements ITreeNodeRenderer {
             penPoint = (Point2D.Float)(penPos.elementAt(i));
             layout.draw(g2, penPoint.x, penPoint.y);
         }
+        
+        g2.setClip(origClip);
     }
+
+
     
     private void setDimensions() {
         if(renderingHint == ITreeNodeRenderer.RENDERING_HINT_VERBOSE) {
