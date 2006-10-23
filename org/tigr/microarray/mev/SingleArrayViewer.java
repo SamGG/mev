@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: SingleArrayViewer.java,v $
- * $Revision: 1.11 $
- * $Date: 2006-09-06 23:28:47 $
+ * $Revision: 1.12 $
+ * $Date: 2006-10-23 21:50:54 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -659,7 +659,7 @@ public class SingleArrayViewer extends ArrayViewer implements Printable {
         	SlideData dataClone = new SlideData(newData);
             this.slideData = SlideDataLoader.fillBlankSpots(dataClone);
         } else if(newData instanceof FloatSlideData){
-        	System.out.println("floatslidedata");
+        	//System.out.println("floatslidedata");
             this.slideData = new SlideData(newData);
             //this.slideData = SlideDataLoader.fillBlankSpots(this.slideData);
         } else {
