@@ -366,9 +366,9 @@ public class TEASEBench {
 
                 end = true;  //start at true until no new indices are inserted
                 
-                for( Enumeration enum = implied_associations.keys(); enum.hasMoreElements(); ){
+                for( Enumeration enum6 = implied_associations.keys(); enum6.hasMoreElements(); ){
                     
-                    cat = (String) enum.nextElement();
+                    cat = (String) enum6.nextElement();
                     
                     //if the category is represented, add the implied associations if they don't exist
                     if(categories.containsKey(cat)){
@@ -527,9 +527,9 @@ public class TEASEBench {
 
                 end = true;  //start at true until no new indices are inserted
                 
-                for( Enumeration enum = implied_associations.keys(); enum.hasMoreElements(); ){
+                for( Enumeration enum6 = implied_associations.keys(); enum6.hasMoreElements(); ){
                     
-                    cat = (String) enum.nextElement();
+                    cat = (String) enum6.nextElement();
                     
                     //if the category is represented, add the implied associations if they don't exist
                     if(categories.containsKey(cat)){
@@ -733,8 +733,8 @@ public class TEASEBench {
             for(Enumeration enum1 = locus_ids.keys(); enum1.hasMoreElements();){  //iterate through population list
                 locus_id = (String)(enum1.nextElement());
                 
-                for(Enumeration enum = categories.keys(); enum.hasMoreElements();){  //iterate through categories
-                    key = (String)(enum.nextElement());
+                for(Enumeration enum6 = categories.keys(); enum6.hasMoreElements();){  //iterate through categories
+                    key = (String)(enum6.nextElement());
                     hash_table = (Hashtable) (categories.get(key));
                     
                     if(hash_table.containsKey(locus_id)){
@@ -799,8 +799,8 @@ public class TEASEBench {
             for(Enumeration enum1 = locus_ids.keys(); enum1.hasMoreElements();){   //iterate through samples ids.
                 locus_id = (String)(enum1.nextElement());    //locus_id is hashtable
                 
-                for(Enumeration enum = this.categories.keys(); enum.hasMoreElements();){  //iterate through categories
-                    key = (String)(enum.nextElement());                                   //hashtable 
+                for(Enumeration enum6 = this.categories.keys(); enum6.hasMoreElements();){  //iterate through categories
+                    key = (String)(enum6.nextElement());                                   //hashtable 
                     hash_table = (Hashtable) (this.categories.get(key));
                     
                     if(hash_table.containsKey(locus_id)){                   //if sample id is present in the list of genes
@@ -913,8 +913,8 @@ public class TEASEBench {
             for(Enumeration enum1 = locus_ids.keys(); enum1.hasMoreElements();){
                 locus_id = (String)(enum1.nextElement());
 
-                for(Enumeration enum = categories.keys(); enum.hasMoreElements();){
-                    key = (String)(enum.nextElement());
+                for(Enumeration enum6 = categories.keys(); enum6.hasMoreElements();){
+                    key = (String)(enum6.nextElement());
                     hash_table = (Hashtable) (categories.get(key));
 
                     //if locus ID in the list can be found in the categories list
