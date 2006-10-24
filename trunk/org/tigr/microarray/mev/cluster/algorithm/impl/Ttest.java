@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: Ttest.java,v $
- * $Revision: 1.7 $
- * $Date: 2005-03-10 15:45:19 $
- * $Author: braistedj $
+ * $Revision: 1.8 $
+ * $Date: 2006-10-24 16:28:01 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -352,6 +352,9 @@ public class Ttest extends AbstractAlgorithm {
         // prepare the result
         AlgorithmData result = new AlgorithmData();
         result.addCluster("cluster", result_cluster);
+        //CCC 8/8/06 for AMP
+		result.setParams(map);
+		
         result.addParam("number-of-clusters", String.valueOf(clusters.length));
         //result.addParam("unassigned-genes-exist", String.valueOf(unassignedExists));
         result.addMatrix("clusters_means", means);
@@ -371,6 +374,11 @@ public class Ttest extends AbstractAlgorithm {
         result.addMatrix("isSigMatrix", isSigMatrix);
         result.addMatrix("oneClassMeansMatrix", oneClassMeansMatrix);
         result.addMatrix("oneClassSDsMatrix", oneClassSDsMatrix);
+
+//      CCC added 8/8/06
+		result.addMatrix("experiment",this.expMatrix);
+		//CCC end
+	
         return result;        
         //return null; //for now
     }

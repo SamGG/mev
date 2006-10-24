@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: TtestInitDialog.java,v $
- * $Revision: 1.11 $
- * $Date: 2006-08-11 18:20:48 $
+ * $Revision: 1.12 $
+ * $Date: 2006-10-24 16:28:03 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -365,6 +365,12 @@ public class TtestInitDialog extends AlgorithmDialog {
         
         EventListener listener = new EventListener();
         setActionListeners(listener);
+        
+
+        if (parentFrame == null)//CCC AMP
+        	cancelButton.setEnabled(false);
+       
+        
     }
     
     

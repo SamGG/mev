@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: FloatMatrix.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-05-02 16:57:56 $
+ * $Revision: 1.7 $
+ * $Date: 2006-10-24 16:28:05 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -81,6 +81,7 @@ public class FloatMatrix implements Cloneable {
      * @serial column dimension.
      */
     public int m, n;
+    int REVERSE = 1; //ccc
     
 /* ------------------------
    Constructors
@@ -1076,5 +1077,45 @@ public class FloatMatrix implements Cloneable {
 
 
     }
+    //CCC 928  -- print the matrix [a][b] in reverse order [b][a]
+    public FloatMatrix(String fileName, float[][] matrix, int flag) {
+         
+    	
+           try{
+           	
+               //PrintStream out = new PrintStream(new FileOutputStream(new File(fileName)));
+               //System.out.println("    Generating " + fileName + "...");
+               int row = matrix.length;// chipNum
+               int col = matrix[0].length;// probeSetNum
+               //matrix.length-- the length of the row = chip num
+               float[][] rMatrix = new float[col][row];
+               if (flag == REVERSE){
+               for ( int j = 0; j < col; j++){
+               	for ( int i = 0; i< row ; i++ ){
+                       //out.print(Double.toString(matrix[i][j]) + "\t");
+               		rMatrix[j][i] = matrix[i][j];
+                   }
+                   //out.println();
+               }
+               //out.close();
+               }
+           }catch(Exception ex){
+               ex.printStackTrace();
+           }
+       
+}
+ // CCC temp, should be consolidate, all double should be changed to float
+    
+    public FloatMatrix(double[][] A) {
+    	m = A.length;
+    	n = A[0].length;
+    	for (int i = 0; i < m; i++) {
+    	    if (A[i].length != n) 
+    	    	throw new IllegalArgumentException("All rows must have the same length.");
+    	    for (int j=0; j<n; j++)
+    	    	this.A[i][j] = (float) A[i][j];
+    	}
+    	
+        }
     
 }

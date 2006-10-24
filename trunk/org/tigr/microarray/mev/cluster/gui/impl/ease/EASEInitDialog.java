@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASEInitDialog.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-02-23 20:59:50 $
- * $Author: caliente $
+ * $Revision: 1.10 $
+ * $Date: 2006-10-24 16:28:02 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 /*
@@ -88,6 +88,7 @@ public class EASEInitDialog extends AlgorithmDialog {
     Font font;
     String sep;
     Frame parent;
+    classPanel cPanel;
     
     /** Creates a new instance of EaseInitDialog
      * @param parent Parent Frame
@@ -988,6 +989,16 @@ public class EASEInitDialog extends AlgorithmDialog {
                 manager.updateFiles();
             } else if (command.equals("ok-command")) {
                 result = JOptionPane.OK_OPTION;
+                if(cPanel!=null && !(cPanel.ChromBox.isSelected()|| cPanel.GOBox.isSelected() || cPanel.MeSHBox.isSelected()||cPanel.KEGGBox.isSelected()
+                		 ||cPanel.ChromBox.isSelected()||cPanel.UpstreamBox.isSelected()||cPanel.proteinBox.isSelected()))
+                 {
+                	 	JOptionPane.showMessageDialog(parent, "You have not selected any annotation/gene ontology linking files. \n"+
+                	 			"Please choose the annotation files.", "EASE Initialization: Missing Parameter", JOptionPane.WARNING_MESSAGE);
+                	 	return;
+                 }
+                 else if (cPanel==null)
+                 {	 
+                	 result = JOptionPane.OK_OPTION;
                 if(isClusterModeSelected() && popPanel.fileButton.isSelected()) {
                     String fileName = popPanel.popField.getText();
                     if(fileName == null || fileName.equals("") || fileName.equals(" ")) {
@@ -1018,6 +1029,7 @@ public class EASEInitDialog extends AlgorithmDialog {
                         easeParamPanel.browserButton.grabFocus();
                         return;
                     }
+                }                
                 }                
                 dispose();
             } else if (command.equals("cancel-command")) {
@@ -1052,13 +1064,140 @@ public class EASEInitDialog extends AlgorithmDialog {
         }
     }
     
+   
+    //CCC 6/6/06 for AMP
+    public EASEInitDialog(Frame parent) {
+        super(parent, "EASE: EASE Annotation Analysis", true);
+        this.parent = parent;
+        font = new Font("Dialog", Font.BOLD, 12);
+        listener = new EventListener();
+        addWindowListener(listener);
+        
+        //Tabbed pane creation
+        tabbedPane = new JTabbedPane();
+       
+        alphaPanel = new AlphaPanel();
+        tabbedPane.add("Statistical Parameters", alphaPanel);
+        
+        JPanel parameters = new JPanel(new GridBagLayout());
+        parameters.setBackground(Color.white);
+            
+        //mode panel
+        modePanel = new ModePanel(true);
+        cPanel = new classPanel();
+        parameters.add(cPanel, new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        parameters.add(tabbedPane, new GridBagConstraints(0,2,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+       
+        addContent(parameters);
+        setActionListeners(listener);
+  
+        this.setSize(570,750);
+      
+        if (parent==null)//AMP
+        cancelButton.setEnabled(false);
+      
+    }
+  
+   //CCC 4/9/06 for AMP 
+    private class classPanel extends JPanel{
+    	 private JCheckBox GOBox;
+         private JCheckBox KEGGBox;
+         private JCheckBox ChromBox;
+         private JCheckBox UpstreamBox;
+         private JCheckBox proteinBox;
+         private JCheckBox MeSHBox;
+    	public classPanel(){
+    	super(new GridBagLayout());
+        setBackground(Color.white);
+        setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Classification Selection", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
+       
+        //ButtonGroup bg = new ButtonGroup();
+        GOBox = new JCheckBox("GO terms", true);
+        GOBox.setBackground(Color.white);
+        GOBox.setFocusPainted(false);
+        //bg.add(GOBox);
+        GOBox.setActionCommand("GO-terms-command");
+        
+        MeSHBox = new JCheckBox("MeSH terms", false);
+        MeSHBox.setBackground(Color.white);
+        MeSHBox.setFocusPainted(false);
+        //bg.add(MeSHBox);
+        MeSHBox.setActionCommand("MeSH-terms-command");
+        
+        KEGGBox = new JCheckBox("KEGG pathways", false);
+        KEGGBox.setBackground(Color.white);
+        KEGGBox.setFocusPainted(false);
+        //bg.add(KEGGBox);
+        KEGGBox.setActionCommand("KEGG-pathways-command");
+        
+        ChromBox = new JCheckBox("Chromosomal Assignments", false);
+        ChromBox.setBackground(Color.white);
+        ChromBox.setFocusPainted(false);
+        //bg.add(ChromBox);
+        ChromBox.setActionCommand("Chromosomal-Assignments-command");
+        
+        UpstreamBox = new JCheckBox("Upstream promoters", false);
+        UpstreamBox.setBackground(Color.white);
+        UpstreamBox.setFocusPainted(false);
+        //bg.add(UpstreamBox);
+        UpstreamBox.setActionCommand("Upstream-promoters-command");
+        
+        proteinBox = new JCheckBox("Encoded protein domains", false);
+        proteinBox.setBackground(Color.white);
+        proteinBox.setFocusPainted(false);
+        //bg.add(proteinBox);
+        proteinBox.setActionCommand("Encoded-protein-domains-command");
+        
+        add(GOBox, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
+        add(MeSHBox, new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
+        add(KEGGBox, new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        add(ChromBox, new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,10,0),0,0));
+        add(UpstreamBox, new GridBagConstraints(1,1,1,1,1.0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
+        add(proteinBox, new GridBagConstraints(1,2,1,1,1.0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
+        
+    	
+    	}  
+    }
+    /** for pipeline.
+     */
+    public boolean isGoSelected(){
+        return cPanel.GOBox.isSelected();
+    }
+    /** for pipeline.
+     */
+    public boolean isMeSHSelected(){
+        return cPanel.MeSHBox.isSelected();
+    }
+    
+    /** for pipeline.
+     */
+    public boolean isChromSelected(){
+        return  cPanel.ChromBox.isSelected();
+    }
+   
+    /** for pipeline.
+     */
+    public boolean isKEGGSelected(){
+        return  cPanel.KEGGBox.isSelected();
+    }
+    /** for pipeline.
+     */
+    public boolean isUpstreamSelected(){
+        return cPanel.UpstreamBox.isSelected();
+    }
+    
+    /** for pipeline.
+     */
+    public boolean isProteinSelected(){
+        return  cPanel.proteinBox.isSelected();
+    }
+    
     public static void main(String [] args) {
-        String [] labels = new String [3];
-        labels[0] = "TC#";
-        labels[1] = "GB#";
-        labels[2] = "Role";
 
-        EASEInitDialog eid = new EASEInitDialog(new JFrame(), labels);
+     	String[] label = {"ProbeSet"};
+         EASEInitDialog eid = new EASEInitDialog(new JFrame(), label);
         eid.showModal();
     }
+    
+    
 }

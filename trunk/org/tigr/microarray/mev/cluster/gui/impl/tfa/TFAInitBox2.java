@@ -113,6 +113,10 @@ public class TFAInitBox2 extends AlgorithmDialog {
         EventListener listener = new EventListener();
         setActionListeners(listener);
         this.addWindowListener(listener);
+
+        if (parentFrame==null)//AMP
+        cancelButton.setEnabled(false);
+        
     }
     
     void buildConstraints(GridBagConstraints gbc, int gx, int gy, int gw, int gh, int wx, int wy) {

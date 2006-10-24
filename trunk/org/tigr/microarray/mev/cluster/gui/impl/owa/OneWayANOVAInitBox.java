@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: OneWayANOVAInitBox.java,v $
- * $Revision: 1.8 $
- * $Date: 2005-03-10 20:32:38 $
- * $Author: braistedj $
+ * $Revision: 1.9 $
+ * $Date: 2006-10-24 16:28:03 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -111,6 +111,10 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
         EventListener listener = new EventListener();
         setActionListeners(listener);
         this.addWindowListener(listener);  
+       
+        if (parentFrame==null)//AMP
+        cancelButton.setEnabled(false);
+     
         //pack();
     }
 

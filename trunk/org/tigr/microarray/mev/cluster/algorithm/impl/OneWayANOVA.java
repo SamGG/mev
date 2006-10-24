@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: OneWayANOVA.java,v $
- * $Revision: 1.6 $
- * $Date: 2005-03-10 15:45:21 $
- * $Author: braistedj $
+ * $Revision: 1.7 $
+ * $Date: 2006-10-24 16:28:01 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -322,6 +322,9 @@ public class OneWayANOVA extends AbstractAlgorithm {
         result.addMatrix("ssErrorMatrix", ssErrorMatrix);
         result.addMatrix("geneGroupMeansMatrix", getAllGeneGroupMeans());
         result.addMatrix("geneGroupSDsMatrix", getAllGeneGroupSDs());
+        //CCC 4/6/06 for AMP
+		result.addMatrix("experiment",this.expMatrix);
+		
 	return result;        
         //return null; //for now
     }

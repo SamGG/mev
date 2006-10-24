@@ -597,6 +597,9 @@ public class TFA extends AbstractAlgorithm {
         
 	// prepare the result
 	AlgorithmData result = new AlgorithmData();
+	//CCC 8/8/06 for AMP
+	result.setParams(map);
+	
 	result.addCluster("cluster", result_cluster);
 	result.addParam("number-of-clusters", String.valueOf(clusters.length));    
 	result.addMatrix("clusters_means", means);
@@ -614,6 +617,8 @@ public class TFA extends AbstractAlgorithm {
         result.addMatrix("adjFactorAPValuesMatrix", adjFactorAPValuesMatrix);
         result.addMatrix("adjFactorBPValuesMatrix", adjFactorBPValuesMatrix);
         result.addMatrix("adjInteractionPValuesMatrix", adjInteractionPValuesMatrix);        
+        //CCC 4/6/06 for AMP
+		result.addMatrix("experiment",this.expMatrix);
         
         return result;        
         //return null; //for now

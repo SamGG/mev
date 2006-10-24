@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: AlgorithmData.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-23 21:19:42 $
- * $Author: caliente $
+ * $Revision: 1.6 $
+ * $Date: 2006-10-24 16:27:59 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.algorithm;
@@ -242,4 +242,10 @@ public class AlgorithmData implements Serializable {
     public Map getStringArrays() { return this.stringArrays; }
     public Map getObjectMatrices() { return this.objectMatrices; }
     public Map getClusters()   { return clusters;  }
+  //CCC 4/6/06 for AMP
+    public void setMatrixes(HashMap mtx) { matrixes = mtx;}
+    public void setIntArrays(HashMap aintArray) {intArrays = aintArray;}   
+    public void setParams(AlgorithmParameters ap) {parameters = ap;  }
+   
+ //CCC AMP end 
 }

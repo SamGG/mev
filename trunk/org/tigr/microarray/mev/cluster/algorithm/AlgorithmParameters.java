@@ -4,14 +4,16 @@ All rights reserved.
 */
 /*
  * $RCSfile: AlgorithmParameters.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-02-23 21:19:42 $
- * $Author: caliente $
+ * $Revision: 1.6 $
+ * $Date: 2006-10-24 16:27:59 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.algorithm;
 
 import java.io.Serializable;
+import java.net.*;
+import java.util.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
@@ -110,5 +112,9 @@ public class AlgorithmParameters implements Serializable {
 
     public Set entrySet() {
         return properties.entrySet();
+    }
+//CCC 4/6/06 for AMP       
+    public Properties getProperty() {
+        return properties;
     }
 }
