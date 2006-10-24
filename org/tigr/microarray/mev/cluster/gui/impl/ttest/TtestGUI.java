@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: TtestGUI.java,v $
- * $Revision: 1.11 $
- * $Date: 2005-12-02 18:46:34 $
- * $Author: wwang67 $
+ * $Revision: 1.12 $
+ * $Date: 2006-10-24 16:28:03 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -69,8 +69,36 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
     private String[] auxTitles;
     private Object[][] auxData;
     
-    //private Vector sigTValues, nonSigTValues, sigPValues, nonSigPValues, additionalHeaders, additionalSigOutput, additionalNonSigOutput;
-    private Vector tValues, rawPValues, adjPValues, dfValues, meansA, meansB, sdA, sdB, oneClassMeans, oneClassSDs;
+	public static final int GROUP_A = 1;
+
+	public static final int GROUP_B = 2;
+
+	public static final int NEITHER_GROUP = 3;
+
+	public static final int JUST_ALPHA = 4;
+
+	public static final int STD_BONFERRONI = 5;
+
+	public static final int ADJ_BONFERRONI = 6;
+
+	public static final int BETWEEN_SUBJECTS = 7;
+
+	public static final int ONE_CLASS = 8;
+
+	public static final int MAX_T = 9;
+
+	public static final int MIN_P = 10;
+
+	public static final int PAIRED = 11;
+
+	public static final int FALSE_NUM = 12;
+
+	public static final int FALSE_PROP = 13;
+
+	// private Vector sigTValues, nonSigTValues, sigPValues, nonSigPValues,
+	// additionalHeaders, additionalSigOutput, additionalNonSigOutput;
+	private Vector tValues, rawPValues, adjPValues, dfValues, meansA, meansB,
+			sdA, sdB, oneClassMeans, oneClassSDs;
     private Vector pairedGroupAExpts, pairedGroupBExpts;
     private IData data;
     Vector exptNamesVector;
@@ -468,8 +496,266 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
         //return null; //FOR NOW
     }
     
+	public AlgorithmData execute(AlgorithmData data, String dir) {// throws
+		// AlgorithmException
+		// {
+		long start = System.currentTimeMillis();
+		long time = System.currentTimeMillis() - start;
+		AlgorithmData result = null;
+		Algorithm algorithm = new Ttest();
+		;
+		try {
+			result = algorithm.execute(data);
+
+		} catch (Exception e) {
+			// throw new AlgorithmException(e.toString());
+			e.printStackTrace();
+		}
+		data.addParam("name", "TTEST");
+		// getting the results
+		Cluster result_cluster = result.getCluster("cluster");
+		NodeList nodeList = result_cluster.getNodeList();
+		AlgorithmParameters params = data.getParams();
+		result.setParams(params);// pass all the parameters to result
+		// algorithmdata
+		int k = 2; // resultMap.getInt("number-of-clusters"); // NEED THIS TO
+		// GET THE VALUE OF NUMBER-OF-CLUSTERS
+
+		this.clusters = new int[k][];
+		for (int i = 0; i < k; i++) {
+			clusters[i] = nodeList.getNode(i).getFeaturesIndexes();
+		}
+		// this.means = result.getMatrix("clusters_means");
+		// this.variances = result.getMatrix("clusters_variances");
+		FloatMatrix sigPValuesMatrix = result.getMatrix("sigPValues");
+		FloatMatrix sigTValuesMatrix = result.getMatrix("sigTValues");
+		FloatMatrix nonSigPValuesMatrix = result.getMatrix("nonSigPValues");
+		FloatMatrix nonSigTValuesMatrix = result.getMatrix("nonSigTValues");
+		FloatMatrix rawPValuesMatrix = result.getMatrix("rawPValues");
+		FloatMatrix adjPValuesMatrix = result.getMatrix("adjPValues");
+		FloatMatrix tValuesMatrix = result.getMatrix("tValues");
+		FloatMatrix dfMatrix = result.getMatrix("dfValues");
+		FloatMatrix meansAMatrix = result.getMatrix("meansAMatrix");
+		FloatMatrix meansBMatrix = result.getMatrix("meansBMatrix");
+		FloatMatrix sdAMatrix = result.getMatrix("sdAMatrix");
+		FloatMatrix sdBMatrix = result.getMatrix("sdBMatrix");
+		FloatMatrix isSigMatrix = result.getMatrix("isSigMatrix");
+		FloatMatrix oneClassMeansMatrix = result
+				.getMatrix("oneClassMeansMatrix");
+		FloatMatrix oneClassSDsMatrix = result.getMatrix("oneClassSDsMatrix");
+
+		rawPValues = new Vector();
+		adjPValues = new Vector();
+		tValues = new Vector();
+		dfValues = new Vector();
+		meansA = new Vector();
+		meansB = new Vector();
+		sdA = new Vector();
+		sdB = new Vector();
+		oneClassMeans = new Vector();
+		oneClassSDs = new Vector();
     
-    /*********
+		for (int i = 0; i < rawPValuesMatrix.getRowDimension(); i++) {
+			rawPValues.add(new Float(rawPValuesMatrix.A[i][0]));
+			adjPValues.add(new Float(adjPValuesMatrix.A[i][0]));
+		}
+
+		for (int i = 0; i < tValuesMatrix.getRowDimension(); i++) {
+			tValues.add(new Float(tValuesMatrix.A[i][0]));
+		}
+
+		for (int i = 0; i < dfMatrix.getRowDimension(); i++) {
+			dfValues.add(new Float(dfMatrix.A[i][0]));
+		}
+
+		tTestDesign = params.getInt("tTestDesign",
+				TtestInitDialog.BETWEEN_SUBJECTS);
+
+		if (tTestDesign == TtestInitDialog.ONE_CLASS) {
+			for (int i = 0; i < oneClassMeansMatrix.getRowDimension(); i++) {
+				oneClassMeans.add(new Float(oneClassMeansMatrix.A[i][0]));
+			}
+			// System.out.println("==>after
+			// ONE_CLASS==i="+oneClassMeans.size());
+			for (int i = 0; i < oneClassSDsMatrix.getRowDimension(); i++) {
+				oneClassSDs.add(new Float(oneClassSDsMatrix.A[i][0]));
+			}
+		}
+
+		if ((tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS)
+				|| (tTestDesign == TtestInitDialog.PAIRED)) {
+
+			for (int i = 0; i < meansAMatrix.getRowDimension(); i++) {
+				meansA.add(new Float(meansAMatrix.A[i][0]));
+				meansB.add(new Float(meansBMatrix.A[i][0]));
+				sdA.add(new Float(sdAMatrix.A[i][0]));
+				sdB.add(new Float(sdBMatrix.A[i][0]));
+			}
+
+			isSig = new boolean[isSigMatrix.getRowDimension()];
+
+			for (int i = 0; i < isSig.length; i++) {
+				if (isSigMatrix.A[i][0] == 1.0f) {
+					isSig[i] = true;
+				} else {
+					isSig[i] = false;
+				}
+			}
+
+			diffMeansBA = new double[isSigMatrix.getRowDimension()];
+			for (int i = 0; i < diffMeansBA.length; i++) {
+				diffMeansBA[i] = (double) (meansBMatrix.A[i][0])
+						- (double) (meansAMatrix.A[i][0]);
+			}
+
+			negLog10PValues = new double[isSigMatrix.getRowDimension()];
+
+			double log10BaseE = Math.log(10);
+
+			for (int i = 0; i < negLog10PValues.length; i++) {
+				double currentP = (double) (adjPValuesMatrix.A[i][0]);
+				negLog10PValues[i] = (-1) * ((Math.log(currentP)) / log10BaseE);
+				// System.out.println("i = " + i + ", currentP = " + currentP +
+				// ", negLog10P = " + negLog10PValues[i]);
+			}
+		}
+
+		if (tTestDesign == TtestInitDialog.ONE_CLASS) {
+
+			isSig = new boolean[isSigMatrix.getRowDimension()];
+
+			for (int i = 0; i < isSig.length; i++) {
+				if (isSigMatrix.A[i][0] == 1.0f) {
+					isSig[i] = true;
+				} else {
+					isSig[i] = false;
+				}
+			}
+
+			diffMeansBA = new double[isSigMatrix.getRowDimension()];
+			for (int i = 0; i < diffMeansBA.length; i++) {
+				diffMeansBA[i] = (double) ((oneClassMeansMatrix.A[i][0]) - oneClassMean);
+			}
+
+			negLog10PValues = new double[isSigMatrix.getRowDimension()];
+
+			double log10BaseE = Math.log(10);
+
+			for (int i = 0; i < negLog10PValues.length; i++) {
+				double currentP = (double) (adjPValuesMatrix.A[i][0]);
+				negLog10PValues[i] = (-1) * ((Math.log(currentP)) / log10BaseE);
+				// System.out.println("i = " + i + ", currentP = " + currentP +
+				// ", negLog10P = " + negLog10PValues[i]);
+			}
+		}
+
+		String[] samples = data.getStringArray("sample_annotation");
+
+		String[] genes = data.getStringArray("gene_annotation");
+
+		GeneralInfo info = new GeneralInfo();
+
+		info.time = time;
+		// ADD MORE INFO PARAMETERS HERE
+
+		// ADD MORE INFO PARAMETERS HERE
+		info.alpha = params.getFloat("alpha");
+		info.sigMethod = getSigMethod(params.getInt("significance-method"));
+		boolean isPermut = params.getBoolean("is-permut");
+		info.pValueBasedOn = getPValueBasedOn(isPermut);
+		if (isPermut) {
+			info.useAllCombs = params.getBoolean("use-all-combs");
+			info.numCombs = params.getInt("num-combs");
+		}
+
+		Vector titlesVector = new Vector();
+		if ((tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS)
+				|| (tTestDesign == TtestInitDialog.PAIRED)) {
+			titlesVector.add("GroupA mean");
+			titlesVector.add("GroupA std.dev.");
+			titlesVector.add("GroupB mean");
+			titlesVector.add("GroupB std.dev.");
+			titlesVector.add("Absolute t value");
+		} else if (tTestDesign == TtestInitDialog.ONE_CLASS) {
+			titlesVector.add("Gene mean");
+			titlesVector.add("Gene std.dev.");
+			titlesVector.add("t value");
+		}
+		titlesVector.add("Degrees of freedom");
+		titlesVector.add("Raw p value");
+		int significanceMethod = data.getParams().getInt("significance-method");
+		if ((significanceMethod == TtestInitDialog.FALSE_NUM)
+				|| (significanceMethod == TtestInitDialog.FALSE_PROP)) {
+			if (calculateAdjFDRPVals)
+				titlesVector.add("Adj p value");
+		} else {
+			titlesVector.add("Adj p value");
+		}
+
+		auxTitles = new String[titlesVector.size()];
+		for (int i = 0; i < auxTitles.length; i++) {
+			auxTitles[i] = (String) (titlesVector.get(i));
+		}
+
+		result.addStringArray("titles", auxTitles);
+
+		try {
+
+			FloatMatrix exp = result.getMatrix("experiment");
+
+			int[] columns = new int[exp.getColumnDimension()];
+			// int[] columns = new int[3];
+			for (int i = 0; i < exp.getColumnDimension(); i++)
+				columns[i] = i;
+
+			experiment = new Experiment(result.getMatrix("experiment"), columns);
+			System.out.println("==>experiment.getNumberOfGenes()=="
+					+ experiment.getNumberOfGenes());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		auxData = new Object[experiment.getNumberOfGenes()][auxTitles.length];
+		for (int i = 0; i < auxData.length; i++) {
+			int counter = 0;
+			if ((tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS)
+					|| (tTestDesign == TtestInitDialog.PAIRED)) {
+				auxData[i][counter++] = meansA.get(i);
+				auxData[i][counter++] = sdA.get(i);
+				auxData[i][counter++] = meansB.get(i);
+				auxData[i][counter++] = sdB.get(i);
+			} else if (tTestDesign == TtestInitDialog.ONE_CLASS) {
+				auxData[i][counter++] = oneClassMeans.get(i);
+				auxData[i][counter++] = oneClassSDs.get(i);
+			}
+			auxData[i][counter++] = tValues.get(i);
+			auxData[i][counter++] = dfValues.get(i);
+			auxData[i][counter++] = rawPValues.get(i);
+			if ((significanceMethod == TtestInitDialog.FALSE_NUM)
+					|| (significanceMethod == TtestInitDialog.FALSE_PROP)) {
+				if (calculateAdjFDRPVals)
+					auxData[i][counter++] = adjPValues.get(i);
+			} else {
+				// System.out.println("==>i="+i);
+				// System.out.println("==>counter="+counter);
+				// System.out.println("==>adjPValues.get(i)="+adjPValues.get(i));
+				auxData[i][counter++] = adjPValues.get(i);
+				// System.out.println("==>counter++="+counter);
+			}
+		}
+		String[] outputNodes = new String[2];
+		outputNodes[0] = "Sig-Genes";
+		outputNodes[1] = "Nonsig-Genes";
+		result.addStringArray("output-nodes", outputNodes);
+		result.addObjectMatrix("auxData", auxData);
+		result.addStringArray("sample_annotation", samples);// sample_annotation
+		result.addStringArray("gene_annotation", genes);
+		// ClusterTableViewer ctv = createTableViews();
+		writeClustersReports(result, dir);
+		// writePopReport(result.getStringArray("gene_annotation"), dir);
+		return result;
+	}
+
+	/***************************************************************************
      *
      *  Script Implementation
      *
@@ -1324,6 +1610,287 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
             
             return design;
         }
+	}// class
+
+	// CCC for AMP write report 8/22/06 write population report, only has
+	// probeset names
+	public void writePopReport(String[] genes, String dir) {
+
+		try {// auxTitles is the titles for items listed, std, mean, group A,
+			// group B...etc
+			if (genes.length == 0)
+				return;
+			PrintWriter out = new PrintWriter(new FileOutputStream(dir));
+			out.print("ProbeSet");
+			out.print("\n");
+			for (int i = 0; i < genes.length; i++)
+				out.println(genes[i]);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+	// CCC for AMP 4/6/06 write the report output files
+	public void writeClustersReports(AlgorithmData data, String outDir) {
+
+		try {// auxTitles is the titles for items listed, std, mean, group A,
+			// group B...etc
+			if (auxTitles.length == 0) {
+				// ExperimentUtil.writeExperiment(path, experiment, clusters,
+				ExperimentUtil.writeExperiment(outDir, experiment, clusters,
+						data);
+			} else {
+				ExperimentUtil.writeAllGeneClustersWithAux(outDir, experiment,
+						clusters, data);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	// CCC for AMP 4/6/06 extract the parameters from dialog
+	public AlgorithmData getParams(ArrayList list) throws AlgorithmException {
+		Vector exptNamesVector = getExperiments(list);// get the cel file
+														// names from this
+														// directory
+
+		JFrame frame = null;
+		TtestInitDialog ttDialog = new TtestInitDialog(frame, true,
+				exptNamesVector);
+		ttDialog.setVisible(true);
+
+		if (!ttDialog.isOkPressed())
+			return null;
+
+		double alpha = 0.01d;// default
+		try {
+			alpha = ttDialog.getAlphaValue();
+		} catch (NumberFormatException nfe) {
+			JOptionPane.showMessageDialog(frame, "Invalid alpha value!",
+					"Error", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+
+		tTestDesign = ttDialog.getTestDesign();
+
+		oneClassMean = 0;
+		if (tTestDesign == TtestInitDialog.ONE_CLASS) {
+			groupAssignments = ttDialog.getOneClassAssignments();
+			oneClassMean = ttDialog.getOneClassMean();
+		} else if (tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS) {
+			groupAssignments = ttDialog.getGroupAssignments();
+		} else if (tTestDesign == TtestInitDialog.PAIRED) {
+			pairedGroupAExpts = ttDialog.getPairedAExpts();
+			pairedGroupBExpts = ttDialog.getPairedBExpts();
+		}
+
+		int significanceMethod = ttDialog.getSignificanceMethod();
+		if (significanceMethod == TtestInitDialog.FALSE_NUM) {
+			falseNum = ttDialog.getFalseNum();
+			calculateAdjFDRPVals = ttDialog.calculateFDRPVals();
+			doFastFDRApprox = ttDialog.doFastFDRApprox();
+		}
+		if (significanceMethod == TtestInitDialog.FALSE_PROP) {
+			falseProp = ttDialog.getFalseProp();
+			calculateAdjFDRPVals = ttDialog.calculateFDRPVals();
+			doFastFDRApprox = ttDialog.doFastFDRApprox();
+		}
+
+		// hcl
+		boolean isHierarchicalTree = ttDialog.isDrawTrees();
+		drawSigTreesOnly = true;
+		if (isHierarchicalTree) {
+			drawSigTreesOnly = ttDialog.drawSigTreesOnly();
+		}// hcl end
+
+		boolean isPermut = ttDialog.isPermut();
+		isPermutations = isPermut;
+		int numCombs = ttDialog.getUserNumCombs();
+		boolean useAllCombs = ttDialog.useAllCombs();
+		useWelchDf = ttDialog.useWelchDf();
+
+		// hcl init
+		int hcl_method = 0;
+		boolean hcl_samples = false;
+		boolean hcl_genes = false;
+
+		int function = Algorithm.EUCLIDEAN;// for pipeline, this is default
+
+		int hcl_function = 4;
+		boolean hcl_absolute = false;
+
+		if (isHierarchicalTree) {
+			HCLInitDialog hcl_dialog = new HCLInitDialog(frame,
+					"Euclidean Distance", hcl_absolute, true);
+
+			if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
+				return null;
+			}
+			hcl_method = hcl_dialog.getMethod();
+			hcl_samples = hcl_dialog.isClusterExperiments();
+			hcl_genes = hcl_dialog.isClusterGenes();
+			hcl_function = hcl_dialog.getDistanceMetric();
+			hcl_absolute = hcl_dialog.getAbsoluteSelection();
+		}
+
+		// hcl end
+		Listener listener = new Listener();
+		AlgorithmData adata = new AlgorithmData();
+		try {
         
+			algorithm = new AlgorithmFactoryImpl().getAlgorithm("TTEST");
+			algorithm.addAlgorithmListener(listener);
+			adata.addParam("tTestDesign", String.valueOf(tTestDesign));
+			if ((tTestDesign == ONE_CLASS) || (tTestDesign == BETWEEN_SUBJECTS)) {
+				adata.addIntArray("group-assignments", groupAssignments);
+			}
+
+			if (tTestDesign == ONE_CLASS) {
+				adata.addParam("oneClassMean", String.valueOf(oneClassMean));
+			}
+			if (tTestDesign == PAIRED) {
+				FloatMatrix pairedAExptsMatrix = new FloatMatrix(
+						pairedGroupAExpts.size(), 1);
+				FloatMatrix pairedBExptsMatrix = new FloatMatrix(
+						pairedGroupBExpts.size(), 1);
+
+				for (int i = 0; i < pairedGroupAExpts.size(); i++) {
+					pairedAExptsMatrix.A[i][0] = ((Integer) (pairedGroupAExpts
+							.get(i))).floatValue();
+					pairedBExptsMatrix.A[i][0] = ((Integer) (pairedGroupBExpts
+							.get(i))).floatValue();
+				}
+				adata.addMatrix("pairedAExptsMatrix", pairedAExptsMatrix);
+				adata.addMatrix("pairedBExptsMatrix", pairedBExptsMatrix);
+			}
+			adata.addParam("alpha", String.valueOf(alpha));
+			adata.addParam("significance-method", String
+					.valueOf(significanceMethod));
+			if (significanceMethod == FALSE_NUM) {
+				adata.addParam("falseNum", String.valueOf(falseNum));
+				adata.addParam("calculateAdjFDRPVals", String
+						.valueOf(calculateAdjFDRPVals));
+				adata.addParam("useFastFDRApprox", String
+						.valueOf(doFastFDRApprox));
+			}
+			if (significanceMethod == FALSE_PROP) {
+				adata.addParam("falseProp", String.valueOf((float) falseProp));
+				adata.addParam("calculateAdjFDRPVals", String
+						.valueOf(calculateAdjFDRPVals));
+				adata.addParam("useFastFDRApprox", String
+						.valueOf(doFastFDRApprox));
+			}
+			adata.addParam("is-permut", String.valueOf(isPermut));
+			adata.addParam("num-combs", String.valueOf(numCombs));
+			adata.addParam("use-all-combs", String.valueOf(useAllCombs));
+			adata.addParam("useWelchDf", String.valueOf(useWelchDf));
+
+			// hcl parameters
+			if (isHierarchicalTree) {
+				adata.addParam("hierarchical-tree", String.valueOf(true));
+				adata.addParam("draw-sig-trees-only", String
+						.valueOf(drawSigTreesOnly));
+				adata.addParam("method-linkage", String.valueOf(hcl_method));
+				adata.addParam("calculate-genes", String.valueOf(hcl_genes));
+				adata.addParam("calculate-experiments", String
+						.valueOf(hcl_samples));
+				adata.addParam("hcl-distance-function", String
+						.valueOf(hcl_function));
+				adata.addParam("hcl-distance-absolute", String
+						.valueOf(hcl_absolute));
+			}// hcl end
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		String[] sampleNames = new String[exptNamesVector.size()];
+		for (int i = 0; i < exptNamesVector.size(); i++)
+			sampleNames[i] = (String) exptNamesVector.get(i);
+
+		adata.addStringArray("sample_annotation", sampleNames);
+		if (algorithm != null) {
+			algorithm.removeAlgorithmListener(listener);
+		}
+
+		return adata;
+	}
+	// CCC for AMP 4/6/06 extract cel file names
+	public Vector getExperiments(ArrayList list) {
+
+		Vector v = new Vector();
+		String file = null;
+		for (int i = 0; i < list.size(); i++) {
+			file = (String) list.get(i);
+			String extension = file.substring(file.lastIndexOf('.') + 1);
+
+			if (extension.equalsIgnoreCase("cel"))
+				v.add(file);
+		}
+
+		return v;
+
+	}
+
+	// CCC AMP 6/10/06 for pipeline send parameters from Ttest window to servlet
+	// for further process
+
+	private void sendObject(AlgorithmData adata, String uid, String rid,
+			String notes, String returnURL) {
+		OutputStream out;
+		ObjectOutputStream objectStream;
+
+		try {
+			HTTPObject http = new HTTPObject(returnURL);
+			URLConnection connection = http.getConnectionToServlet();
+			out = connection.getOutputStream();
+
+			// now send the job object to the Servlet
+			objectStream = new ObjectOutputStream(out);
+			Vector v = new Vector();
+			v.add(uid);
+			v.add(rid);
+			v.add("TTEST");// to identify the pda that sends the object
+			v.add(adata);
+			v.add(notes);
+			objectStream.writeObject(v); // don't read POST in doget or
+			// you'll get responsecode 405
+			objectStream.flush();
+			objectStream.close();
+			out.close();
+			// get the inputstream (server response)
+			System.out.println(http.readTextInputStream(connection
+					.getInputStream(), connection));
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	// CCC AMP 6/10/06
+	public static void main(String args[]) {
+
+		String uid = args[0];// first argument is the user id, the second is
+		String rid = args[1];
+		String study = args[2];// the experiment names
+		String notes = args[3];
+		String returnURL = args[5];
+		System.out.println("0: " + args[0] + "\n1: " + args[1] + "\n2: "+ args[2] + "\n3: "+ args[3] + "\n4: "+ args[4] + "\n5: "+ args[5]);
+		System.out.println("TtestGUI.main returnURL: " + returnURL);
+		AlgorithmData adata = null;
+		ArrayList al = new ArrayList();
+		for (int i = 3; i < args.length; i++)
+			al.add(args[i]);
+
+		TtestGUI test = new TtestGUI();
+		try {
+			adata = (AlgorithmData) test.getParams(al);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		test.sendObject(adata, uid, rid, notes, returnURL);// pass the userid and rid back
+
     }
 }

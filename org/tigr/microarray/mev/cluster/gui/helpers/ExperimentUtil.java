@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: ExperimentUtil.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-02-23 20:59:48 $
- * $Author: caliente $
+ * $Revision: 1.10 $
+ * $Date: 2006-10-24 16:28:02 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -31,6 +31,8 @@ import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.util.BrowserLauncher;
 import org.tigr.util.StringSplitter;
+
+import org.tigr.microarray.mev.cluster.algorithm.*;
 
 /**
  * This class contains set of static methods to store
@@ -974,13 +976,145 @@ public class ExperimentUtil {
             return obType;
         }
     }
+
+	//CCC 8/8/06 for AMP write PDA output results
+	public static void writeExperiment(String path, Experiment experiment,
+			int[][] clusters, AlgorithmData adata) throws Exception {
+
+		AlgorithmParameters param = adata.getParams();
+		String analysis = param.getString("name");// analysis type, ttest, anova
+		String[] rptNames = adata.getStringArray("output-nodes");
+
+		for (int i = 0; i < clusters.length; i++) {
+			if (clusters[i] == null || clusters[i].length == 0) {
+				continue;
 }
 
+			File aFile = new File(path + analysis + "-" + rptNames[i] + ".txt");
+			writeCluster(aFile, experiment, adata, clusters[i]);
+		}
+	}
 
+	//CCC 8/8/06 for AMP write PDA output results
+	private static void writeCluster(File file, Experiment experiment,	AlgorithmData data, int[] rows) throws Exception {
+		PrintWriter out = new PrintWriter(new FileOutputStream(file));
 
+		String[] fieldNames = {"probeSet"};
 
+		Object[][] auxData = data.getObjectMatrix("auxData");
+		if (fieldNames == null)
+			return;
+		out.print("Original row");
+		out.print("\t");
+		for (int i = 0; i < fieldNames.length; i++) {
+			out.print(fieldNames[i]);
+			if (i < fieldNames.length - 1) {
+				out.print("\t");
+			}
+		}
+		// out.print("UniqueID\tName");
+		for (int i = 0; i < experiment.getNumberOfSamples(); i++) {
+			out.print("\t");
+			out.print(data.getStringArray("sample_annotation")[i]);// default slide name
+		}
+		out.print("\n");
+		String[] geneNames = data.getStringArray("gene_annotation");// probeSet name
+		for (int i = 0; i < rows.length; i++) {
+			out.print(Integer.toString(experiment
+					.getGeneIndexMappedToData(rows[i]) + 1)); 
+			out.print("\t");
+			out.print(geneNames[experiment.getGeneIndexMappedToData(rows[i]) + 1]); 
+			out.print("\t");
+			for (int k = 0; k < fieldNames.length; k++) {
+				out.print(auxData[experiment.getGeneIndexMappedToData(rows[i])][k]); 
 
+				if (k < fieldNames.length - 1) {
+					out.print("\t");
+				}
+			}// print out the input experiment data
+			for (int j = 0; j < experiment.getNumberOfSamples(); j++) {
+				out.print("\t");
+				out.print(Float.toString(experiment.get(rows[i], j)));
+			}
+			out.print("\n");
+		}
+		out.flush();
+		out.close();
+	}
 
+	//CCC 8/8/06 for AMP write output result
+	public static void writeAllGeneClustersWithAux(String path,
+			Experiment experiment, int[][] clusters, AlgorithmData adata)
+			throws Exception {
+		String[] fileNames = adata.getStringArray("output-nodes");
 
+		AlgorithmParameters param = adata.getParams();
+		String analName = param.getString("name");// ttest, anova
 
+		for (int i = 0; i < clusters.length; i++) {
+			if (clusters[i] == null || clusters[i].length == 0) {
+				continue;
+			}
 
+			File aFile = new File(path + analName + "-" + fileNames[i] + ".txt");
+			boolean success = (new File(path)).mkdirs();
+			writeGeneClusterWithAux(aFile, experiment, clusters[i], adata);
+		}
+
+	}
+//CCC 8/8/06 for AMP write output results
+	private static void writeGeneClusterWithAux(File file,
+			Experiment experiment, int[] rows, AlgorithmData adata)
+			throws Exception {
+
+		PrintWriter out = new PrintWriter(new FileOutputStream(file));
+
+		String[] fieldNames = {"probeSet"};
+		out.print("Original row");
+		out.print("\t");
+
+		for (int i = 0; i < fieldNames.length; i++) {
+			out.print(fieldNames[i]);
+			if (i < fieldNames.length - 1) {
+				out.print("\t");
+			}
+		}
+		String[] auxTitles = adata.getStringArray("titles");
+		Object[][] auxData = adata.getObjectMatrix("auxData");
+		for (int i = 0; i < auxTitles.length; i++) {
+			out.print("\t" + auxTitles[i]);
+		}
+
+		for (int i = 0; i < experiment.getNumberOfSamples(); i++) {
+			out.print("\t");
+
+			out.print(adata.getStringArray("sample_annotation")[i]);// default slide name
+
+		}
+		out.print("\n");
+
+		String[] geneNames = adata.getStringArray("gene_annotation");
+		for (int i = 0; i < rows.length; i++) {
+			out.print(Integer.toString(experiment
+					.getGeneIndexMappedToData(rows[i]) + 1)); 
+			out.print("\t");
+			out.print(geneNames[experiment.getGeneIndexMappedToData(rows[i])]); 
+			out.print("\t");
+
+			for (int j = 0; j < auxData[0].length; j++) {
+				out.print(auxData[rows[i]][j]);
+				out.print("\t");
+			}
+
+			for (int j = 0; j < experiment.getNumberOfSamples(); j++) {
+				out.print("\t");
+				out.print(Float.toString(experiment.get(rows[i], j)));
+			}
+			out.print("\n");
+		}
+
+		out.flush();
+		out.close();
+	}
+
+}

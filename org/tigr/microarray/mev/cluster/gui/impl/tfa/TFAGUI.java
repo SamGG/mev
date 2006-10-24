@@ -836,4 +836,395 @@ public class TFAGUI implements IClusterGUI, IScriptGUI {
         
     }
     
+	
+	// for pipeline, pass the normalized cell file entry-- multiple experiment
+	// to
+	// ttest window for user to choose for grouping and pairing
+	public Vector getExperiment(ArrayList list) {
+		Vector v = new Vector();// use vector to store files
+		for (int i = 0; i < list.size(); i++) {
+			String exp = (String) list.get(i);
+			v.add(exp);
+
+		}
+		return v;
+
+	}
+	//CCC 6/2/06 for AMP
+	public AlgorithmData execute(AlgorithmData algData, String dir)
+			throws AlgorithmException {
+		AlgorithmData result = null;
+		Algorithm algorithm = new TFA();
+		long start = System.currentTimeMillis();
+		try {
+
+			result = algorithm.execute(algData);
+
+		} catch (Exception e) {
+			throw new AlgorithmException(e.toString());
+		}
+		long time = System.currentTimeMillis() - start;
+		algData.addParam("name", "2-FACT-ANOVA");
+		this.clusterLabels = algData.getStringArray("output-nodes");
+		this.factorNames = algData.getStringArray("factor-names");
+		this.factorAAssignments = algData.getIntArray("factorAAssignments");
+		this.factorBAssignments = algData.getIntArray("factorBAssignments");
+		this.drawSigTreesOnly = algData.getParams().getBoolean(
+				"draw-sig-trees-only");
+
+		numFactorLevels = new int[2];
+
+		for (int i = 0; i < factorNames.length; i++)
+			factorNames[i] = factorNames[i].replace(' ', '-');
+
+		try {
+
+			// getting the results
+			Cluster result_cluster = result.getCluster("cluster");
+			NodeList nodeList = result_cluster.getNodeList();
+			System.out.println("-->in TFAGUI--execute--nodeList==" + nodeList);
+			AlgorithmParameters params = algData.getParams();
+			result.setParams(params);
+			int k = 7; // resultMap.getInt("number-of-clusters"); // NEED THIS
+						// TO GET THE VALUE OF NUMBER-OF-CLUSTERS
+
+			this.clusters = new int[k][];
+			for (int i = 0; i < k; i++) {
+				clusters[i] = nodeList.getNode(i).getFeaturesIndexes();
+			}
+			this.means = result.getMatrix("clusters_means");
+			this.variances = result.getMatrix("clusters_variances");
+			FloatMatrix factorAFValuesMatrix = result
+					.getMatrix("factorAFValuesMatrix");
+			FloatMatrix factorBFValuesMatrix = result
+					.getMatrix("factorBFValuesMatrix");
+			FloatMatrix interactionFValuesMatrix = result
+					.getMatrix("interactionFValuesMatrix");
+
+			FloatMatrix factorADfValuesMatrix = result
+					.getMatrix("factorADfValuesMatrix");
+			FloatMatrix factorBDfValuesMatrix = result
+					.getMatrix("factorBDfValuesMatrix");
+			FloatMatrix interactionDfValuesMatrix = result
+					.getMatrix("interactionDfValuesMatrix");
+			FloatMatrix errorDfValuesMatrix = result
+					.getMatrix("errorDfValuesMatrix");
+
+			FloatMatrix origFactorAPValuesMatrix = result
+					.getMatrix("origFactorAPValuesMatrix");
+			FloatMatrix origFactorBPValuesMatrix = result
+					.getMatrix("origFactorBPValuesMatrix");
+			FloatMatrix origInteractionPValuesMatrix = result
+					.getMatrix("origInteractionPValuesMatrix");
+
+			FloatMatrix adjFactorAPValuesMatrix = result
+					.getMatrix("adjFactorAPValuesMatrix");
+			FloatMatrix adjFactorBPValuesMatrix = result
+					.getMatrix("adjFactorBPValuesMatrix");
+			FloatMatrix adjInteractionPValuesMatrix = result
+					.getMatrix("adjInteractionPValuesMatrix");
+
+			auxTitles = new String[13];
+	
+			auxTitles[0] = "Adj. p-values (" + factorNames[0] + ")";
+			auxTitles[1] = "Adj. p-values (" + factorNames[1] + ")";
+			auxTitles[2] = "Adj. p-values (interaction)";
+			auxTitles[3] = "Orig. p-values (" + factorNames[0] + ")";
+			auxTitles[4] = "Orig. p-values (" + factorNames[1] + ")";
+			auxTitles[5] = "Orig. p-values (interaction)";
+			auxTitles[6] = "F-ratio (" + factorNames[0] + ")";
+			auxTitles[7] = "F-ratio (" + factorNames[1] + ")";
+			auxTitles[8] = "F-ratio (interaction)";
+			auxTitles[9] = "df (" + factorNames[0] + ")";
+			auxTitles[10] = "df (" + factorNames[1] + ")";
+			auxTitles[11] = "df (interaction)";
+			auxTitles[12] = "df (error)";
+
+			result.addStringArray("titles", auxTitles);
+
+			FloatMatrix exp = result.getMatrix("experiment");
+			int[] columns = new int[exp.getColumnDimension()];
+
+			for (int i = 0; i < exp.getColumnDimension(); i++)
+				columns[i] = i;
+
+			experiment = new Experiment(result.getMatrix("experiment"), columns);
+
+			auxData = new Object[factorAFValuesMatrix.A.length][13];
+
+			for (int i = 0; i < auxData.length; i++) {
+				auxData[i][0] = new Float(adjFactorAPValuesMatrix.A[i][0]);
+				auxData[i][1] = new Float(adjFactorBPValuesMatrix.A[i][0]);
+				auxData[i][2] = new Float(adjInteractionPValuesMatrix.A[i][0]);
+				auxData[i][3] = new Float(origFactorAPValuesMatrix.A[i][0]);
+				auxData[i][4] = new Float(origFactorBPValuesMatrix.A[i][0]);
+				auxData[i][5] = new Float(origInteractionPValuesMatrix.A[i][0]);
+				auxData[i][6] = new Float(factorAFValuesMatrix.A[i][0]);
+				auxData[i][7] = new Float(factorBFValuesMatrix.A[i][0]);
+				auxData[i][8] = new Float(interactionFValuesMatrix.A[i][0]);
+				auxData[i][9] = new Integer(
+						(int) (factorADfValuesMatrix.A[i][0]));
+				auxData[i][10] = new Integer(
+						(int) (factorBDfValuesMatrix.A[i][0]));
+				auxData[i][11] = new Integer(
+						(int) (interactionDfValuesMatrix.A[i][0]));
+				auxData[i][12] = new Integer(
+						(int) (errorDfValuesMatrix.A[i][0]));
+			}
+
+			GeneralInfo info = new GeneralInfo();
+			info.time = time;
+			// ADD MORE INFO PARAMETERS HERE
+			info.alpha = params.getFloat("alpha");
+			info.adjMethod = this.getAdjMethod(params
+					.getInt("adjustmentMethod"));
+			info.pValueBasedOn = getPValueBasedOn(params.getBoolean("usePerms"));
+			if (usePerms) {
+				// info.useAllCombs = useAllCombs;
+				info.numPerms = params.getInt("numPerms");
+			}
+	
+			info.hcl = params.getBoolean("hierarchical-tree");
+			info.hcl_genes = params.getBoolean("calculate-genes");
+			info.hcl_samples = params.getBoolean("calculate-experiments");
+			if (info.hcl)
+				info.hcl_method = params.getInt("method-linkage");
+	
+			String[] samples = algData.getStringArray("sample_annotation");
+			
+			String[] genes = algData.getStringArray("gene_annotation");
+			
+			result.addStringArray("output-nodes", clusterLabels);
+			result.addObjectMatrix("auxData", auxData);
+
+			result.addStringArray("sample_annotation", samples);// sample_annotation
+			result.addStringArray("gene_annotation", genes);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		writeClustersReports(result, dir);
+		return result;
+
+	}
+	//CCC 4/3/06 for AMP
+	public void writeClustersReports(AlgorithmData data, String outDir) {
+		String path = outDir;
+		try {
+			if (auxTitles.length == 0) {
+				ExperimentUtil
+						.writeExperiment(path, experiment, clusters, data);
+			} else {
+				ExperimentUtil.writeAllGeneClustersWithAux(path, experiment,
+						clusters, data);
+			}
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+	}
+	//CCC 3/4/06 for AMP extract parameters fro dialog
+	public AlgorithmData getParams(ArrayList list) throws AlgorithmException {
+
+		Vector exptNamesVector = getExperiment(list);
+		JFrame frame = null;
+		TFAInitBox1 t1Box = new TFAInitBox1(frame, true);
+		t1Box.setVisible(true);
+		if (!t1Box.isOkPressed())
+			return null;
+
+		factorNames = new String[2];
+		numFactorLevels = new int[2];
+
+		factorNames[0] = t1Box.getFactorAName();
+		factorNames[1] = t1Box.getFactorBName();
+
+		String[] localClustNames = {
+				factorNames[0].replaceAll(" ", "") + "-Sig-Genes",
+				factorNames[1].replaceAll(" ", "") + "-Sig-Genes",
+				"Int-Sig-Genes",
+				factorNames[0].replaceAll(" ", "") + "-Nonsig-Genes",
+				factorNames[1].replaceAll(" ", "") + "-Nonsig-Genes",
+				"Int-Nonsig-Genes", "Nonsig-for-All-Effects"};
+
+		clusterLabels = new String[localClustNames.length];
+
+		for (int i = 0; i < clusterLabels.length; i++) {
+			clusterLabels[i] = localClustNames[i];
+		}
+
+		numFactorLevels[0] = t1Box.getNumFactorALevels();
+		numFactorLevels[1] = t1Box.getNumFactorBLevels();
+
+		TFAInitBox2 t2Box = new TFAInitBox2(frame, true, exptNamesVector,
+				factorNames, numFactorLevels);
+		t2Box.setVisible(true);
+
+		if (!t2Box.isOkPressed())
+			return null;
+
+		boolean allCellsHaveOneSample = t2Box.allCellsHaveOneSample();
+		boolean isHierarchicalTree = t2Box.drawTrees();
+		drawSigTreesOnly = true;
+		if (isHierarchicalTree) {
+			drawSigTreesOnly = t2Box.drawSigTreesOnly();
+		}
+		int adjustmentMethod = t2Box.getAdjustmentMethod();
+		float alpha = t2Box.getAlpha();
+		factorAAssignments = t2Box.getFactorAAssignments();
+		factorBAssignments = t2Box.getFactorBAssignments();
+		Vector[][] bothFactorAssignments = t2Box.getBothFactorAssignments();
+		boolean isBalancedDesign = false;
+		if (!allCellsHaveOneSample) {
+			isBalancedDesign = t2Box.isBalancedDesign();
+		}
+		usePerms = t2Box.usePerms();
+		int numPerms = 0;
+		if (usePerms) {
+			numPerms = t2Box.getNumPerms();
+		}
+
+		int function = Algorithm.EUCLIDEAN;// for pipeline, this is default
+											// because no access of viewer
+		// hcl init
+		int hcl_method = 0;
+		boolean hcl_samples = false;
+		boolean hcl_genes = false;
+		int hcl_function = 4;
+		boolean hcl_absolute = false;
+		if (isHierarchicalTree) {
+			// HCLInitDialog hcl_dialog = new HCLInitDialog(frame,
+			// menu.getFunctionName(function), menu.isAbsoluteDistance(), true);
+			HCLInitDialog hcl_dialog = new HCLInitDialog(frame,
+					"Euclidean Distance", hcl_absolute, true);
+			if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
+				return null;
+			}
+			hcl_method = hcl_dialog.getMethod();
+			hcl_samples = hcl_dialog.isClusterExperiments();
+			hcl_genes = hcl_dialog.isClusterGenes();
+			hcl_function = hcl_dialog.getDistanceMetric();
+			hcl_absolute = hcl_dialog.getAbsoluteSelection();
+		}
+
+		Listener listener = new Listener();
+		AlgorithmData data = new AlgorithmData();
+		// hcl end
+		try {
+			algorithm = new AlgorithmFactoryImpl().getAlgorithm("TFA");
+			algorithm.addAlgorithmListener(listener);
+
+			data.addParam("distance-function", String.valueOf(function));
+			data.addIntArray("numFactorLevels", numFactorLevels);
+			data.addParam("allCellsHaveOneSample", String
+					.valueOf(allCellsHaveOneSample));
+			data.addParam("adjustmentMethod", String.valueOf(adjustmentMethod));
+			data.addParam("alpha", String.valueOf(alpha));
+			data.addIntArray("factorAAssignments", factorAAssignments);
+			data.addIntArray("factorBAssignments", factorBAssignments);
+			data
+					.addObjectMatrix("bothFactorAssignments",
+							bothFactorAssignments);
+			data.addParam("isBalancedDesign", String.valueOf(isBalancedDesign));
+			data.addParam("usePerms", String.valueOf(usePerms));
+			data.addParam("numPerms", String.valueOf(numPerms));
+
+			data.addStringArray("factor-names", factorNames);
+			data.addStringArray("cluster-labels", clusterLabels);
+			data.addStringArray("output-nodes", clusterLabels);
+			// hcl parameters
+			if (isHierarchicalTree) {
+				data.addParam("hierarchical-tree", String.valueOf(true));
+				data.addParam("draw-sig-trees-only", String
+						.valueOf(drawSigTreesOnly));
+				data.addParam("method-linkage", String.valueOf(hcl_method));
+				data.addParam("calculate-genes", String.valueOf(hcl_genes));
+				data.addParam("calculate-experiments", String
+						.valueOf(hcl_samples));
+				data.addParam("hcl-distance-function", String
+						.valueOf(hcl_function));
+				data.addParam("hcl-distance-absolute", String
+						.valueOf(hcl_absolute));
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		String[] sampleNames = new String[exptNamesVector.size()];
+		for (int i = 0; i < exptNamesVector.size(); i++)
+			sampleNames[i] = (String) exptNamesVector.get(i);
+
+		data.addStringArray("sample_annotation", sampleNames);//
+		if (algorithm != null) {
+			algorithm.removeAlgorithmListener(listener);
+		}
+		// sendObject(data, "2020");
+		return data;
+	}
+	//CCC 5/5/06 for AMP
+	private void sendObject(AlgorithmData adata, String uid, String rid,
+			String notes, String returnURL) {
+		OutputStream out;
+		ObjectOutputStream objectStream;
+
+		try {
+			HTTPObject http = new HTTPObject(returnURL);
+			URLConnection connection = http.getConnectionToServlet();
+			out = connection.getOutputStream();
+
+			// now send the job object to the Servlet
+			objectStream = new ObjectOutputStream(out);
+			Vector v = new Vector();
+			v.add(uid);
+			v.add(rid);
+			v.add("TFA");// to identify the pda that sends the object
+			if (adata != null)
+				System.out.println("adata=" + adata.toString());
+
+			v.add(adata);
+			v.add(notes);
+			objectStream.writeObject(v); // don't read POST in doget or
+											// you'll get responsecode 405
+			objectStream.flush();
+			objectStream.close();
+
+			out.close();
+
+			// get the inputstream (server response)
+			System.out.println(http.readTextInputStream(connection
+					.getInputStream(), connection));
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	public static void main(String args[]) {
+
+	
+		String uid = args[0];
+		String rid = args[1];
+		String study = args[2];
+		String notes = args[3];
+		//The URL of the action handler that will take the parameters
+		String returnURL = args[5];
+		AlgorithmData adata = null;
+		ArrayList al = new ArrayList();
+		for (int i = 6; i < args.length; i++)// the rest of argument is the
+												// experiment names
+		{
+			al.add(args[i]);
+		}
+
+		TFAGUI tfa = new TFAGUI();
+		try {
+			adata = (AlgorithmData) tfa.getParams(al);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		tfa.sendObject(adata, uid, rid, notes, returnURL);// pass the userid and rid back
+												// to server
+	
+	}
+
 }

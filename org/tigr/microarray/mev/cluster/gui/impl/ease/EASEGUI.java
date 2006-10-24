@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASEGUI.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-02-23 20:59:50 $
- * $Author: caliente $
+ * $Revision: 1.9 $
+ * $Date: 2006-10-24 16:28:02 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 /*
@@ -47,9 +47,25 @@ import org.tigr.microarray.mev.cluster.gui.impl.ease.gotree.GOTreeViewer;
 import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
 
 
-/** The <CODE>EASEGUI</CODE> class contains code to gather parameters
- * for EASE annotation analysis, to run the analysis, and to display
- * various results from the analysis.
+import org.tigr.microarray.mev.cluster.gui.impl.ease.EASETableViewer;
+import org.tm4.microarray.amp.engine.iAMP;
+import org.tm4.microarray.amp.util.HTTPObject;
+import org.tigr.microarray.mev.cluster.algorithm.impl.AlgorithmFactoryImpl;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+import java.util.Vector;
+import java.io.OutputStream;
+import java.io.ObjectOutputStream;
+import java.net.URLConnection;
+
+import java.awt.Frame;
+
+
+/**
+ * The <CODE>EASEGUI</CODE> class contains code to gather parameters for EASE
+ * annotation analysis, to run the analysis, and to display various results from
+ * the analysis.
  */
 public class EASEGUI implements IClusterGUI, IScriptGUI {
     
@@ -654,4 +670,119 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
             }
         }
     }
+
+//CCC 5/5/06 for AMP
+	public AlgorithmData execute(AlgorithmData data) throws AlgorithmException {
+		AlgorithmData result = null;
+		try {
+			result = algorithm.execute(data);
+		} catch (Exception e) {
+			throw new AlgorithmException(e.toString());
+		}
+		return result;
+
+	}
+
+
+	
+//CCC 4/4/06 for AMP extract parameters from dialog	
+	public AlgorithmData getParams(String cdf) throws AlgorithmException {
+
+		AlgorithmData adata = new AlgorithmData();
+		Frame frame = null;
+
+		EASEInitDialog dialog = new EASEInitDialog(frame);
+		if (dialog.showModal() != JOptionPane.OK_OPTION)
+			return null;
+		listener = new Listener();
+		isClusterAnalysis = true;
+
+		annotationKeyType = "ProbeSet";// the default annotation key type for
+										// pipeline
+		boolean isPvalueCorrectionSelected;
+		adata.addParam("report-ease-score", String.valueOf(dialog
+				.isEaseScoreSelected()));
+		isPvalueCorrectionSelected = dialog.isCorrectPvaluesSelected();
+		adata.addParam("p-value-corrections", String
+				.valueOf(isPvalueCorrectionSelected));
+		if (isPvalueCorrectionSelected) {
+			adata.addParam("bonferroni-correction", String.valueOf(dialog
+					.isBonferroniSelected()));
+			adata.addParam("bonferroni-step-down-correction", String
+					.valueOf(dialog.isStepDownBonferroniSelected()));
+			adata.addParam("sidak-correction", String.valueOf(dialog
+					.isSidakSelected()));
+		}
+
+		adata.addParam("run-permutation-analysis", String.valueOf(dialog
+				.isPermutationAnalysisSelected()));
+		if (dialog.isPermutationAnalysisSelected())
+			adata.addParam("permutation-count", String.valueOf(dialog
+					.getPermutationCount()));
+		adata.addParam("perform-cluster-analysis", String
+				.valueOf(isClusterAnalysis));
+
+		adata.addParam("go-term", String.valueOf(dialog.isGoSelected()));
+		adata.addParam("kegg", String.valueOf(dialog.isKEGGSelected()));
+		adata.addParam("mesh", String.valueOf(dialog.isMeSHSelected()));
+		adata.addParam("chrom", String.valueOf(dialog.isChromSelected()));
+		adata.addParam("upstream", String.valueOf(dialog.isUpstreamSelected()));
+		adata.addParam("protein", String.valueOf(dialog.isProteinSelected()));
+		String[] trimOptions = dialog.getTrimOptions();
+		adata.addParam("trim-option", trimOptions[0]);
+		adata.addParam("trim-value", trimOptions[1]);
+		algorithm = new AlgorithmFactoryImpl().getAlgorithm("EASE");
+		algorithm.addAlgorithmListener(listener);
+		if (algorithm != null) {
+			algorithm.removeAlgorithmListener(listener);
+		}
+		return adata;
+	}
+
+	private void sendObject(AlgorithmData adata, String uid, String rid) {
+		OutputStream out;
+		ObjectOutputStream objectStream;
+
+		try {
+			HTTPObject http = new HTTPObject();
+			URLConnection connection = http.getConnectionToServlet();
+			out = connection.getOutputStream();
+
+			objectStream = new ObjectOutputStream(out);
+			Vector v = new Vector();
+			v.add(uid);
+			v.add(rid);
+			v.add("EASE");
+			v.add(adata);
+			objectStream.writeObject(v); 
+			objectStream.flush();
+			objectStream.close();
+			out.close();
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	//CCC 6/6/06 for AMP
+	public static void main(String args[]) {
+
+		String uid = args[0];
+		String rid = args[1];
+		String cdf = args[2];
+		AlgorithmData adata = null;
+		ArrayList al = new ArrayList();
+		for (int i = 0; i < args.length; i++)
+				al.add(args[i]);
+
+		EASEGUI ease = new EASEGUI();
+		try {
+			adata = (AlgorithmData) ease.getParams(cdf);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		ease.sendObject(adata, uid, rid);
+
+	}
+
 }

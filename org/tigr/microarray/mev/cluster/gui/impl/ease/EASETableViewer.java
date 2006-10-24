@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASETableViewer.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-03-24 15:50:01 $
+ * $Revision: 1.9 $
+ * $Date: 2006-10-24 16:28:02 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -341,6 +341,35 @@ public class EASETableViewer extends TableViewer implements Serializable {
         
     }
     
+    public void writeEaseTable(String fileName){
+           
+            try{
+                PrintWriter pw = new PrintWriter(new FileOutputStream(fileName));
+                int rows = table.getRowCount();
+                int cols = table.getColumnCount();
+                for (int col = 0; col < cols; col++)
+                {
+                	pw.print(headerNames[col] + "\t");
+                }
+                pw.print("\n");
+              
+                
+                for(int row = 0; row < rows; row++){
+                    for(int col = 0; col < cols; col++){
+                        pw.print(((String)(table.getValueAt(row, col))) + "\t");
+                    }
+                    pw.print("\n");
+                }
+                pw.flush();
+                pw.close();
+            } catch ( IOException ioe) {
+                ioe.printStackTrace();
+                javax.swing.JOptionPane.showMessageDialog(this, ("Error Saving Table to file: "+fileName), "Output Error", JOptionPane.WARNING_MESSAGE);
+            }
+            
+        }
+    
+
     
     
 }

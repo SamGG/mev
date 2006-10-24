@@ -98,6 +98,10 @@ public class TFAInitBox1 extends AlgorithmDialog {
         EventListener listener = new EventListener();        
         setActionListeners(listener);
         this.addWindowListener(listener);        
+
+        if (parentFrame==null)//AMP
+        cancelButton.setEnabled(false);
+  
     }
     
     public void setVisible(boolean visible) {

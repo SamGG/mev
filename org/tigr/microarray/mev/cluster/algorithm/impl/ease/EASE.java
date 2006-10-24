@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASE.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-02-23 20:59:45 $
- * $Author: caliente $
+ * $Revision: 1.8 $
+ * $Date: 2006-10-24 16:28:01 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -22,7 +22,10 @@ import java.util.Hashtable;
 import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.Vector;
-
+import java.io.PrintStream;
+import java.io.FileOutputStream;
+import org.tigr.midas.util.FileBrowser;
+import org.tigr.microarray.mev.cluster.gui.impl.ease.EASETableViewer;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -1032,5 +1035,27 @@ public class EASE extends AbstractAlgorithm {
         this.categoryNames = newCategoryNames;
     }
     
-}
 
+	public void writeOutput(AlgorithmData result, String fileName) {
+		String dir = fileName.substring(0, fileName
+				.lastIndexOf(FileBrowser.fsep));
+		try {
+			boolean success = (new File(dir)).mkdirs();
+			if (success) 
+			{	
+				PrintStream out = new PrintStream(new FileOutputStream(new File(fileName)));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+}
+		Object[][] data = result.getObjectMatrix("result-matrix");
+		String[] headerNames = result.getStringArray("header-names");
+
+		if (data == null || data.length < 1)
+			return;
+
+		EASETableViewer tv = new EASETableViewer(headerNames, data, null, null,
+				null, false, true);
+		tv.writeEaseTable(fileName);
+	}
+}
