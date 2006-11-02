@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: AlgorithmParameters.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-10-24 16:27:59 $
+ * $Revision: 1.7 $
+ * $Date: 2006-11-02 19:53:51 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -21,8 +21,8 @@ import java.util.Properties;
 import java.util.Set;
 
 public class AlgorithmParameters implements Serializable {
-
-    private Properties properties;
+	private static final long serialVersionUID = 2921695136119710825L;
+	private Properties properties;
 
     public AlgorithmParameters() {
         this.properties = new Properties();
