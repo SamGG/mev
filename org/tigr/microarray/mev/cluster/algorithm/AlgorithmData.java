@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: AlgorithmData.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-10-24 16:27:59 $
+ * $Revision: 1.7 $
+ * $Date: 2006-11-07 17:27:39 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -25,15 +25,14 @@ import org.tigr.util.FloatMatrix;
  * calculation.
  */
 public class AlgorithmData implements Serializable {
-
-    private HashMap matrixes;
-    private HashMap intMatrices;
-    private HashMap intArrays;
-    private HashMap stringArrays;
-    private HashMap objectMatrices;
-    private AlgorithmParameters parameters;
-    private HashMap clusters;
-    private HashMap resultMap;  //resultMap used in TEASE
+    protected HashMap matrixes;
+    protected HashMap intMatrices;
+    protected HashMap intArrays;
+    protected HashMap stringArrays;
+    protected HashMap objectMatrices;
+    protected AlgorithmParameters parameters;
+    protected HashMap clusters;
+    protected HashMap resultMap;  //resultMap used in TEASE
     							//KEY: node number, value: algorithmData
     /**
      * Construct an <code>AlgorithmData</code>.
@@ -59,7 +58,6 @@ public class AlgorithmData implements Serializable {
         this.clusters = data.clusters;
         this.resultMap = data.resultMap;
     }
-
     /**
      * Adds a matrix of float values by its name.
      *
@@ -69,7 +67,6 @@ public class AlgorithmData implements Serializable {
     public void addMatrix(String name, FloatMatrix matrix) {
         matrixes.put( name, matrix );
     }
-
         /**
      * Adds a matrix of int values by its name.
      *
@@ -89,7 +86,6 @@ public class AlgorithmData implements Serializable {
     public void addCluster( String name, Cluster cluster ) {
         clusters.put( name, cluster );
     }
-
     /**
      * Gets a cluster by its name.
      *
@@ -98,7 +94,6 @@ public class AlgorithmData implements Serializable {
     public Cluster getCluster( String name ) {
         return(Cluster) clusters.get( name );
     }
-
     /**
      * Adds a parameter by its name.
      *
@@ -108,7 +103,6 @@ public class AlgorithmData implements Serializable {
     public void addParam( String name, String value ) {
         parameters.setProperty(name, value);
     }
-
     /**
      * Gets a matrix of float values by its name.
      *
@@ -126,7 +120,6 @@ public class AlgorithmData implements Serializable {
     public int [][] getIntMatrix(String name) {
         return(int [][])intMatrices.get( name );
     }
-
     /**
      * Returns true if this data contains matrix.
      *
@@ -135,7 +128,6 @@ public class AlgorithmData implements Serializable {
     public boolean containsMatrix(String name) {
         return matrixes.containsKey(name);
     }
-
     /**
      * Adds a matrix of int values by its name
      *
@@ -162,7 +154,6 @@ public class AlgorithmData implements Serializable {
     public AlgorithmData getResultAlgorithmData(Object key) {
     	return (AlgorithmData)this.resultMap.get(key);
     }
-
     /**
      * Gets a matrix of int values by its name.
      *
@@ -171,8 +162,6 @@ public class AlgorithmData implements Serializable {
     public int[] getIntArray(String name) {
         return(int[])intArrays.get(name);
     }
-
-
     /**
      * Adds a matrix of int values by its name
      *
@@ -182,7 +171,6 @@ public class AlgorithmData implements Serializable {
     public void addStringArray(String name, String [] stringArray) {
         stringArrays.put(name, stringArray);
     }
-
     /**
      * Gets a matrix of int values by its name.
      *
@@ -206,21 +194,18 @@ public class AlgorithmData implements Serializable {
     public int size() {
         return matrixes.size();
     }
-
     /**
      * Returns float matrixes names.
      */
     public String[] getMatrixNames() {
         return getKeys(matrixes);
     }
-
     /**
      * Returns clusters names.
      */
     public String[] getClusterNames() {
         return getKeys(clusters);
     }
-
     private String[] getKeys(HashMap map) {
         Iterator iter = map.keySet().iterator();
         String[] result = new String[map.size()];
@@ -229,12 +214,10 @@ public class AlgorithmData implements Serializable {
             result[counter++] = (String)iter.next();
         return result;
     }
-
     /**
      * Gets parameters.
      */
     public AlgorithmParameters getParams() { return parameters;}
-
     // utility functions
     public Map getProperties() { return parameters.getMap(); }
     public Map getMatrixes()   { return matrixes; }
@@ -242,10 +225,4 @@ public class AlgorithmData implements Serializable {
     public Map getStringArrays() { return this.stringArrays; }
     public Map getObjectMatrices() { return this.objectMatrices; }
     public Map getClusters()   { return clusters;  }
-  //CCC 4/6/06 for AMP
-    public void setMatrixes(HashMap mtx) { matrixes = mtx;}
-    public void setIntArrays(HashMap aintArray) {intArrays = aintArray;}   
-    public void setParams(AlgorithmParameters ap) {parameters = ap;  }
-   
- //CCC AMP end 
 }

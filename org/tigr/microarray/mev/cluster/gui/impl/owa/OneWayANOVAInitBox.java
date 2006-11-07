@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: OneWayANOVAInitBox.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-10-24 16:28:03 $
+ * $Revision: 1.10 $
+ * $Date: 2006-11-07 17:27:40 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -111,10 +111,6 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
         EventListener listener = new EventListener();
         setActionListeners(listener);
         this.addWindowListener(listener);  
-       
-        if (parentFrame==null)//AMP
-        cancelButton.setEnabled(false);
-     
         //pack();
     }
 
@@ -539,13 +535,13 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
             /**
              *  resets group assignments
              */
-            private void reset(){
+            protected void reset(){
                 for (int i = 0; i < exptNames.size(); i++) {
                     exptGroupRadioButtons[0][i].setSelected(true);
                 }
             }
         }
-        private void reset(){
+        protected void reset(){
             mulgPanel.reset();
         }
     }
@@ -805,7 +801,7 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
             this.add(FDRPanel);            
         }
         
-        private void reset() {
+        protected void reset() {
             pValueInputField.setText("0.01");
             justAlphaButton.setSelected(true);
         }

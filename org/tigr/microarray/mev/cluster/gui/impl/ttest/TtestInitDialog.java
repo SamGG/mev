@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: TtestInitDialog.java,v $
- * $Revision: 1.12 $
- * $Date: 2006-10-24 16:28:03 $
+ * $Revision: 1.13 $
+ * $Date: 2006-11-07 17:27:40 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -92,10 +92,10 @@ public class TtestInitDialog extends AlgorithmDialog {
     
     boolean okPressed = false;
     boolean permParamOkPressed = false;
-    private int userNumCombs = 0;
-    private boolean allCombsUsed = false;
-    private int allPossCombs;
-    private Color LABEL_COLOR = UIManager.getColor("Label.foreground");
+    protected int userNumCombs = 0;
+    protected boolean allCombsUsed = false;
+    protected int allPossCombs;
+    protected Color LABEL_COLOR = UIManager.getColor("Label.foreground");
     
     
     boolean tooMany = false;
@@ -365,12 +365,6 @@ public class TtestInitDialog extends AlgorithmDialog {
         
         EventListener listener = new EventListener();
         setActionListeners(listener);
-        
-
-        if (parentFrame == null)//CCC AMP
-        	cancelButton.setEnabled(false);
-       
-        
     }
     
     
@@ -1897,7 +1891,7 @@ public class TtestInitDialog extends AlgorithmDialog {
         }
     }
     
-    private long factorial(int n) {
+    protected long factorial(int n) {
         if ((n==1) || (n == 0)) {
             return 1;
         }
@@ -1906,7 +1900,7 @@ public class TtestInitDialog extends AlgorithmDialog {
         }
     }
     
-    private int getNumCombs(int n, int k) { // nCk
+    protected int getNumCombs(int n, int k) { // nCk
         
         /*
         System.out.println("n = " + n);

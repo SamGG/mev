@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ExperimentUtil.java,v $
- * $Revision: 1.10 $
- * $Date: 2006-10-24 16:28:02 $
+ * $Revision: 1.11 $
+ * $Date: 2006-11-07 17:27:39 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -31,8 +31,6 @@ import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.util.BrowserLauncher;
 import org.tigr.util.StringSplitter;
-
-import org.tigr.microarray.mev.cluster.algorithm.*;
 
 /**
  * This class contains set of static methods to store
@@ -114,7 +112,7 @@ public class ExperimentUtil {
         }
     }  
     
-    private static void saveGeneClusterWithAux(File file, Experiment experiment, IData data, int [] rows, String [] auxTitles, Object [][] auxData) throws Exception{
+    protected static void saveGeneClusterWithAux(File file, Experiment experiment, IData data, int [] rows, String [] auxTitles, Object [][] auxData) throws Exception{
         int[] typeArray = getTypes(auxData);
         PrintWriter out = new PrintWriter(new FileOutputStream(file));
         String[] fieldNames = data.getFieldNames();
@@ -220,7 +218,7 @@ public class ExperimentUtil {
     /**
      * Returns a file choosed by the user.
      */
-    private static File getFile(Frame frame) {
+    protected static File getFile(Frame frame) {
         
         String dataPath = TMEV.getDataPath();
         File pathFile = TMEV.getFile("data/");
@@ -260,7 +258,7 @@ public class ExperimentUtil {
     }
     
 
-    private static String formatDataPath(String dataPath) {
+    protected static String formatDataPath(String dataPath) {
         if(dataPath == null)
             return " ";
         
@@ -292,7 +290,7 @@ public class ExperimentUtil {
         }
     }
     
-    private static void saveGeneCluster(File file, IData data, int [] rows) throws Exception{
+    protected static void saveGeneCluster(File file, IData data, int [] rows) throws Exception{
         PrintWriter out = new PrintWriter(new FileOutputStream(file));
         String[] fieldNames = data.getFieldNames();
         
@@ -442,7 +440,7 @@ public class ExperimentUtil {
      * Saves experiment data as a cluster.
      */
     
-    private static void saveCluster(File file, Experiment experiment, IData data, int[] rows) throws Exception {
+    protected static void saveCluster(File file, Experiment experiment, IData data, int[] rows) throws Exception {
         PrintWriter out = new PrintWriter(new FileOutputStream(file));
         String[] fieldNames = data.getFieldNames();
         if(fieldNames == null)
@@ -571,7 +569,7 @@ public class ExperimentUtil {
     /**
      *  Saves experiment cluster with auxilary data
      */
-    private static void saveExperimentClusterWithAux(File file, Experiment experiment, IData data, int[] experiments, String [] auxTitles, Object [][] auxData) throws Exception {
+    protected static void saveExperimentClusterWithAux(File file, Experiment experiment, IData data, int[] experiments, String [] auxTitles, Object [][] auxData) throws Exception {
         int[] typeArray = getTypes(auxData);
         PrintWriter out = new PrintWriter(new FileOutputStream(file));
         String[] fieldNames = data.getFieldNames();
@@ -664,7 +662,7 @@ public class ExperimentUtil {
     /**
      *  Saves experiment cluster
      */
-    private static void saveExperimentCluster(File file, Experiment experiment, IData data, int[] experiments) throws Exception {
+    protected static void saveExperimentCluster(File file, Experiment experiment, IData data, int[] experiments) throws Exception {
         PrintWriter out = new PrintWriter(new FileOutputStream(file));
         String[] fieldNames = data.getFieldNames();
         
@@ -831,7 +829,7 @@ public class ExperimentUtil {
         //return indices;
     }    
     
-    private static String getCurrentURL(String currKey, String currAnn, String currTemplate) {
+    protected static String getCurrentURL(String currKey, String currAnn, String currTemplate) {
         //System.out.println("currKey = " + currKey);
         String urlToUse = "";
         if (currKey.equalsIgnoreCase("UniGene")) {
@@ -851,7 +849,7 @@ public class ExperimentUtil {
         return urlToUse;        
     }
     
-    private static boolean isFound(String annKey, String[] keys) {
+    protected static boolean isFound(String annKey, String[] keys) {
         for (int i = 0; i < keys.length; i++) {
             if (annKey.equalsIgnoreCase(keys[i]))
                 return true;
@@ -859,7 +857,7 @@ public class ExperimentUtil {
         return false;
     }
     
-    private static String[][] getAnnotationFieldsFromFile(File file) {
+    protected static String[][] getAnnotationFieldsFromFile(File file) {
         String[][] annFields = new String[2][];
         Vector annotFieldsVector = new Vector();
         Vector urlKeysVector = new Vector();
@@ -918,7 +916,7 @@ public class ExperimentUtil {
     /**
      * Creates array of integers with increasing order.
      */
-    private static int[] createDefaultRows(final int genes) {
+    protected static int[] createDefaultRows(final int genes) {
         int[] rows = new int[genes];
         for (int i=0; i<genes; i++) {
             rows[i] = i;
@@ -926,7 +924,7 @@ public class ExperimentUtil {
         return rows;
     }
     
-    private static void printDataType(PrintWriter out, Object obj, int dataType) {
+    protected static void printDataType(PrintWriter out, Object obj, int dataType) {
         switch(dataType) {
             case ExperimentUtil.BOOLEAN_TYPE:
                 out.print(((Boolean)obj).booleanValue());
@@ -951,7 +949,7 @@ public class ExperimentUtil {
         return;
     }
     
-    private static int[] getTypes (Object[][] objData) {
+    protected static int[] getTypes (Object[][] objData) {
         int[] types = new int[objData[0].length];
         for (int i = 0; i < types.length; i++) {
             types[i] = getObjectType(objData[0][i]);
@@ -960,7 +958,7 @@ public class ExperimentUtil {
         return types;
     }
     
-    private static int getObjectType(Object obj) {
+    protected static int getObjectType(Object obj) {
         int obType = -1;
         if (obj instanceof Boolean) {
             return ExperimentUtil.BOOLEAN_TYPE;
@@ -976,145 +974,13 @@ public class ExperimentUtil {
             return obType;
         }
     }
-
-	//CCC 8/8/06 for AMP write PDA output results
-	public static void writeExperiment(String path, Experiment experiment,
-			int[][] clusters, AlgorithmData adata) throws Exception {
-
-		AlgorithmParameters param = adata.getParams();
-		String analysis = param.getString("name");// analysis type, ttest, anova
-		String[] rptNames = adata.getStringArray("output-nodes");
-
-		for (int i = 0; i < clusters.length; i++) {
-			if (clusters[i] == null || clusters[i].length == 0) {
-				continue;
 }
 
-			File aFile = new File(path + analysis + "-" + rptNames[i] + ".txt");
-			writeCluster(aFile, experiment, adata, clusters[i]);
-		}
-	}
 
-	//CCC 8/8/06 for AMP write PDA output results
-	private static void writeCluster(File file, Experiment experiment,	AlgorithmData data, int[] rows) throws Exception {
-		PrintWriter out = new PrintWriter(new FileOutputStream(file));
 
-		String[] fieldNames = {"probeSet"};
 
-		Object[][] auxData = data.getObjectMatrix("auxData");
-		if (fieldNames == null)
-			return;
-		out.print("Original row");
-		out.print("\t");
-		for (int i = 0; i < fieldNames.length; i++) {
-			out.print(fieldNames[i]);
-			if (i < fieldNames.length - 1) {
-				out.print("\t");
-			}
-		}
-		// out.print("UniqueID\tName");
-		for (int i = 0; i < experiment.getNumberOfSamples(); i++) {
-			out.print("\t");
-			out.print(data.getStringArray("sample_annotation")[i]);// default slide name
-		}
-		out.print("\n");
-		String[] geneNames = data.getStringArray("gene_annotation");// probeSet name
-		for (int i = 0; i < rows.length; i++) {
-			out.print(Integer.toString(experiment
-					.getGeneIndexMappedToData(rows[i]) + 1)); 
-			out.print("\t");
-			out.print(geneNames[experiment.getGeneIndexMappedToData(rows[i]) + 1]); 
-			out.print("\t");
-			for (int k = 0; k < fieldNames.length; k++) {
-				out.print(auxData[experiment.getGeneIndexMappedToData(rows[i])][k]); 
 
-				if (k < fieldNames.length - 1) {
-					out.print("\t");
-				}
-			}// print out the input experiment data
-			for (int j = 0; j < experiment.getNumberOfSamples(); j++) {
-				out.print("\t");
-				out.print(Float.toString(experiment.get(rows[i], j)));
-			}
-			out.print("\n");
-		}
-		out.flush();
-		out.close();
-	}
 
-	//CCC 8/8/06 for AMP write output result
-	public static void writeAllGeneClustersWithAux(String path,
-			Experiment experiment, int[][] clusters, AlgorithmData adata)
-			throws Exception {
-		String[] fileNames = adata.getStringArray("output-nodes");
 
-		AlgorithmParameters param = adata.getParams();
-		String analName = param.getString("name");// ttest, anova
 
-		for (int i = 0; i < clusters.length; i++) {
-			if (clusters[i] == null || clusters[i].length == 0) {
-				continue;
-			}
 
-			File aFile = new File(path + analName + "-" + fileNames[i] + ".txt");
-			boolean success = (new File(path)).mkdirs();
-			writeGeneClusterWithAux(aFile, experiment, clusters[i], adata);
-		}
-
-	}
-//CCC 8/8/06 for AMP write output results
-	private static void writeGeneClusterWithAux(File file,
-			Experiment experiment, int[] rows, AlgorithmData adata)
-			throws Exception {
-
-		PrintWriter out = new PrintWriter(new FileOutputStream(file));
-
-		String[] fieldNames = {"probeSet"};
-		out.print("Original row");
-		out.print("\t");
-
-		for (int i = 0; i < fieldNames.length; i++) {
-			out.print(fieldNames[i]);
-			if (i < fieldNames.length - 1) {
-				out.print("\t");
-			}
-		}
-		String[] auxTitles = adata.getStringArray("titles");
-		Object[][] auxData = adata.getObjectMatrix("auxData");
-		for (int i = 0; i < auxTitles.length; i++) {
-			out.print("\t" + auxTitles[i]);
-		}
-
-		for (int i = 0; i < experiment.getNumberOfSamples(); i++) {
-			out.print("\t");
-
-			out.print(adata.getStringArray("sample_annotation")[i]);// default slide name
-
-		}
-		out.print("\n");
-
-		String[] geneNames = adata.getStringArray("gene_annotation");
-		for (int i = 0; i < rows.length; i++) {
-			out.print(Integer.toString(experiment
-					.getGeneIndexMappedToData(rows[i]) + 1)); 
-			out.print("\t");
-			out.print(geneNames[experiment.getGeneIndexMappedToData(rows[i])]); 
-			out.print("\t");
-
-			for (int j = 0; j < auxData[0].length; j++) {
-				out.print(auxData[rows[i]][j]);
-				out.print("\t");
-			}
-
-			for (int j = 0; j < experiment.getNumberOfSamples(); j++) {
-				out.print("\t");
-				out.print(Float.toString(experiment.get(rows[i], j)));
-			}
-			out.print("\n");
-		}
-
-		out.flush();
-		out.close();
-	}
-
-}
