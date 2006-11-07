@@ -4,16 +4,14 @@ All rights reserved.
 */
 /*
  * $RCSfile: AlgorithmParameters.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-11-02 19:53:51 $
+ * $Revision: 1.8 $
+ * $Date: 2006-11-07 17:27:39 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.algorithm;
 
 import java.io.Serializable;
-import java.net.*;
-import java.util.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
@@ -22,16 +20,14 @@ import java.util.Set;
 
 public class AlgorithmParameters implements Serializable {
 	private static final long serialVersionUID = 2921695136119710825L;
-	private Properties properties;
-
+    //EH changed from private to protected so this class could be extended
+    protected Properties properties;
     public AlgorithmParameters() {
         this.properties = new Properties();
     }
-
     public void setProperty(String name, String value) {
         properties.setProperty(name, value);
     }
-
     public String getString(String key) {
         return properties.getProperty(key);
     }
@@ -42,22 +38,18 @@ public class AlgorithmParameters implements Serializable {
             return defValue;
         return value;
     }
-
     public boolean getBoolean(String key) {
         return Boolean.valueOf(properties.getProperty(key)).booleanValue();
     }
-
     public boolean getBoolean(String key, boolean defValue) {
         String bool = properties.getProperty(key);
         if (bool == null)
             return defValue;
         return Boolean.valueOf(bool).booleanValue();
     }
-
     public int getInt(String key) {
         return Integer.parseInt(properties.getProperty(key));
     }
-
     public int getInt(String key, int defValue) {
         int value;
         try {
@@ -113,8 +105,7 @@ public class AlgorithmParameters implements Serializable {
     public Set entrySet() {
         return properties.entrySet();
     }
-//CCC 4/6/06 for AMP       
-    public Properties getProperty() {
-        return properties;
+    public Properties getProperty(){
+    	return properties;
     }
 }

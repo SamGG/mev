@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: Ttest.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-10-24 16:28:01 $
+ * $Revision: 1.9 $
+ * $Date: 2006-11-07 17:27:39 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -49,27 +49,27 @@ public class Ttest extends AbstractAlgorithm {
     public static final int FALSE_NUM = 12;
     public static final int FALSE_PROP = 13;    
     
-    private boolean stop = false;
+    protected boolean stop = false;
     
-    private int function;
-    private float factor;
-    private boolean absolute;
-    private FloatMatrix expMatrix;
+    protected int function;
+    protected float factor;
+    protected boolean absolute;
+    protected FloatMatrix expMatrix;
     
     boolean hierarchical_tree, drawSigTreesOnly;
     int method_linkage;
     boolean calculate_genes;
     boolean calculate_experiments;
     
-    private Vector[] clusters;
-    private int k; // # of clusters
+    protected Vector[] clusters;
+    protected int k; // # of clusters
     
-    private int numGenes, numExps, falseNum;
-    private float alpha, falseProp;
-    private int significanceMethod;
-    private boolean isPermut, useWelchDf, calculateAdjFDRPVals, useFastFDRApprox;
-    private int[] groupAssignments, pairedGroupAExpts, pairedGroupBExpts;
-    private int numCombs;
+    protected int numGenes, numExps, falseNum;
+    protected float alpha, falseProp;
+    protected int significanceMethod;
+    protected boolean isPermut, useWelchDf, calculateAdjFDRPVals, useFastFDRApprox;
+    protected int[] groupAssignments, pairedGroupAExpts, pairedGroupBExpts;
+    protected int numCombs;
     boolean useAllCombs;
     int tTestDesign;
     float oneClassMean = 0.0f;  
@@ -77,10 +77,10 @@ public class Ttest extends AbstractAlgorithm {
     AlgorithmEvent event;
     
     double[] tValues, oneClassMeans, groupAMeans, groupBMeans, oneClassSDs, groupASDs, groupBSDs, dfValues, origPVals, adjustedPVals; 
-    private boolean[] isSig;
+    protected boolean[] isSig;
 
-    private int hcl_function;
-    private boolean hcl_absolute;
+    protected int hcl_function;
+    protected boolean hcl_absolute;
     
     /** This method should interrupt the calculation.
      */
@@ -352,9 +352,6 @@ public class Ttest extends AbstractAlgorithm {
         // prepare the result
         AlgorithmData result = new AlgorithmData();
         result.addCluster("cluster", result_cluster);
-        //CCC 8/8/06 for AMP
-		result.setParams(map);
-		
         result.addParam("number-of-clusters", String.valueOf(clusters.length));
         //result.addParam("unassigned-genes-exist", String.valueOf(unassignedExists));
         result.addMatrix("clusters_means", means);
@@ -374,16 +371,11 @@ public class Ttest extends AbstractAlgorithm {
         result.addMatrix("isSigMatrix", isSigMatrix);
         result.addMatrix("oneClassMeansMatrix", oneClassMeansMatrix);
         result.addMatrix("oneClassSDsMatrix", oneClassSDsMatrix);
-
-//      CCC added 8/8/06
-		result.addMatrix("experiment",this.expMatrix);
-		//CCC end
-	
         return result;        
         //return null; //for now
     }
     
-    private NodeValueList calculateHierarchicalTree(int[] features, int method, boolean genes, boolean experiments) throws AlgorithmException {
+    protected NodeValueList calculateHierarchicalTree(int[] features, int method, boolean genes, boolean experiments) throws AlgorithmException {
         NodeValueList nodeList = new NodeValueList();
         AlgorithmData data = new AlgorithmData();
         FloatMatrix experiment = getSubExperiment(this.expMatrix, features);
@@ -408,14 +400,14 @@ public class Ttest extends AbstractAlgorithm {
         return nodeList;
     }
     
-    private void addNodeValues(NodeValueList target_list, AlgorithmData source_result) {
+    protected void addNodeValues(NodeValueList target_list, AlgorithmData source_result) {
         target_list.addNodeValue(new NodeValue("child-1-array", source_result.getIntArray("child-1-array")));
         target_list.addNodeValue(new NodeValue("child-2-array", source_result.getIntArray("child-2-array")));
         target_list.addNodeValue(new NodeValue("node-order", source_result.getIntArray("node-order")));
         target_list.addNodeValue(new NodeValue("height", source_result.getMatrix("height").getRowPackedCopy()));
     }
     
-    private FloatMatrix getSubExperiment(FloatMatrix experiment, int[] features) {
+    protected FloatMatrix getSubExperiment(FloatMatrix experiment, int[] features) {
         FloatMatrix subExperiment = new FloatMatrix(features.length, experiment.getColumnDimension());
         for (int i=0; i<features.length; i++) {
             subExperiment.A[i] = experiment.A[features[i]];
@@ -427,7 +419,7 @@ public class Ttest extends AbstractAlgorithm {
      * Checking the result of hcl algorithm calculation.
      * @throws AlgorithmException, if the result is incorrect.
      */
-    private void validate(AlgorithmData result) throws AlgorithmException {
+    protected void validate(AlgorithmData result) throws AlgorithmException {
         if (result.getIntArray("child-1-array") == null) {
             throw new AlgorithmException("parameter 'child-1-array' is null");
         }
@@ -442,7 +434,7 @@ public class Ttest extends AbstractAlgorithm {
         }
     }
     
-    private int[] convert2int(Vector source) {
+    protected int[] convert2int(Vector source) {
         int[] int_matrix = new int[source.size()];
         for (int i=0; i<int_matrix.length; i++) {
             int_matrix[i] = (int)((Integer)source.get(i)).intValue();
@@ -450,7 +442,7 @@ public class Ttest extends AbstractAlgorithm {
         return int_matrix;
     }
     
-    private FloatMatrix getMeans(Vector[] clusters) {
+    protected FloatMatrix getMeans(Vector[] clusters) {
         FloatMatrix means = new FloatMatrix(clusters.length, numExps);
         FloatMatrix mean;
         for (int i=0; i<clusters.length; i++) {
@@ -460,7 +452,7 @@ public class Ttest extends AbstractAlgorithm {
         return means;
     }
     
-    private FloatMatrix getMean(Vector cluster) {
+    protected FloatMatrix getMean(Vector cluster) {
         FloatMatrix mean = new FloatMatrix(1, numExps);
         float currentMean;
         int n = cluster.size();
@@ -482,7 +474,7 @@ public class Ttest extends AbstractAlgorithm {
         return mean;
     }
     
-    private FloatMatrix getVariances(Vector[] clusters, FloatMatrix means) {
+    protected FloatMatrix getVariances(Vector[] clusters, FloatMatrix means) {
         final int rows = means.getRowDimension();
         final int columns = means.getColumnDimension();
         FloatMatrix variances = new FloatMatrix(rows, columns);
@@ -496,7 +488,7 @@ public class Ttest extends AbstractAlgorithm {
     
     int validN;
     
-    private float getSampleNormalizedSum(Vector cluster, int column, float mean) {
+    protected float getSampleNormalizedSum(Vector cluster, int column, float mean) {
         final int size = cluster.size();
         float sum = 0f;
         float value;
@@ -511,12 +503,12 @@ public class Ttest extends AbstractAlgorithm {
         return sum;
     }
     
-    private float getSampleVariance(Vector cluster, int column, float mean) {
+    protected float getSampleVariance(Vector cluster, int column, float mean) {
         return(float)Math.sqrt(getSampleNormalizedSum(cluster, column, mean)/(float)(validN-1));
         
     }  
     
-    private boolean[] isGeneSigByFDRPropOld() throws AlgorithmException {
+    protected boolean[] isGeneSigByFDRPropOld() throws AlgorithmException {
         double[] nonNanPVals = new double[origPVals.length];
         for (int i = 0; i < origPVals.length; i++) { //gets rid of NaN's for sorting
             if (Double.isNaN(origPVals[i])) {
@@ -560,7 +552,7 @@ public class Ttest extends AbstractAlgorithm {
         //return null; // for now
     }
     
-    private boolean[] isGeneSigByFDRPropNew2() throws AlgorithmException {
+    protected boolean[] isGeneSigByFDRPropNew2() throws AlgorithmException {
         double[] nonNanPVals = new double[origPVals.length];
         for (int i = 0; i < origPVals.length; i++) { //gets rid of NaN's for sorting
             if (Double.isNaN(origPVals[i])) {
@@ -605,7 +597,7 @@ public class Ttest extends AbstractAlgorithm {
         return isGeneSig;
     }
     
-    private boolean[] isGeneSigByFDRPropNew() throws AlgorithmException {
+    protected boolean[] isGeneSigByFDRPropNew() throws AlgorithmException {
         double[] nonNanPVals = new double[origPVals.length];
         for (int i = 0; i < origPVals.length; i++) { //gets rid of NaN's for sorting
             if (Double.isNaN(origPVals[i])) {
@@ -697,7 +689,7 @@ public class Ttest extends AbstractAlgorithm {
         return isGeneSig;
     }
     
-    private double getYKFromPMatrix(double[][] pMatrix, int u) {
+    protected double getYKFromPMatrix(double[][] pMatrix, int u) {
         double[] uPlusOnePValArray = new double[pMatrix[u].length];
         for (int i = 0; i < pMatrix[u].length; i++) {
             uPlusOnePValArray[i] = pMatrix[u][i];
@@ -712,7 +704,7 @@ public class Ttest extends AbstractAlgorithm {
         return sortedPValArray[selectedIndex];        
     }
     
-    private double[][] getSortedPermPValMatrix(FloatMatrix inputMatrix) throws AlgorithmException {
+    protected double[][] getSortedPermPValMatrix(FloatMatrix inputMatrix) throws AlgorithmException {
         AlgorithmEvent event2 = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, numCombs);
         fireValueChanged(event2);
         event2.setId(AlgorithmEvent.PROGRESS_VALUE);        
@@ -766,7 +758,7 @@ public class Ttest extends AbstractAlgorithm {
         return pValMatrix; 
     }
     
-    private boolean[] isGeneSigByFDRNum() throws AlgorithmException {
+    protected boolean[] isGeneSigByFDRNum() throws AlgorithmException {
         double[] nonNanPVals = new double[origPVals.length];
         for (int i = 0; i < origPVals.length; i++) { //gets rid of NaN's for sorting
             if (Double.isNaN(origPVals[i])) {
@@ -806,7 +798,7 @@ public class Ttest extends AbstractAlgorithm {
     }
     
     /*
-    private double getY(double alphaQuantile, double[] T, int u) {
+    protected double getY(double alphaQuantile, double[] T, int u) {
         QSort sortT = new QSort(T);
         double[] sortedT = sortT.getSortedDouble();
         double[] smallT = new double[u + 1];
@@ -820,7 +812,7 @@ public class Ttest extends AbstractAlgorithm {
     }
      */
     
-    private double[] getYKArray() throws AlgorithmException {
+    protected double[] getYKArray() throws AlgorithmException {
         AlgorithmEvent event2 = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, numCombs);
         fireValueChanged(event2);
         event2.setId(AlgorithmEvent.PROGRESS_VALUE);  
@@ -1128,7 +1120,7 @@ public class Ttest extends AbstractAlgorithm {
         return yKArray;
     }
     
-    private double getYConservative(double alphaQuantile, int u) throws AlgorithmException {
+    protected double getYConservative(double alphaQuantile, int u) throws AlgorithmException {
         AlgorithmEvent event2 = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, numCombs);
         fireValueChanged(event2);
         event2.setId(AlgorithmEvent.PROGRESS_VALUE);
@@ -1415,12 +1407,12 @@ public class Ttest extends AbstractAlgorithm {
         //return null; //for now
     }
     
-    private double getMinY(double alphaQuantile, int r, int u) {//this is for exhaustive sampling for false significant number calculation
+    protected double getMinY(double alphaQuantile, int r, int u) {//this is for exhaustive sampling for false significant number calculation
         
         return 0.0d; // for now
     }
     
-    private double[] getOneClassRawPValsFromPerms() throws AlgorithmException {
+    protected double[] getOneClassRawPValsFromPerms() throws AlgorithmException {
         event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, numCombs);
         fireValueChanged(event);
         event.setId(AlgorithmEvent.PROGRESS_VALUE); 
@@ -1541,7 +1533,7 @@ public class Ttest extends AbstractAlgorithm {
         return rawPVals;
     }
     
-    private float getAllCombsOneClassProb(int gene) {
+    protected float getAllCombsOneClassProb(int gene) {
         
         int validNumExps = getNumValidOneClassExpts();
         int numAllPossOneClassPerms = (int)(Math.pow(2, validNumExps));
@@ -1587,7 +1579,7 @@ public class Ttest extends AbstractAlgorithm {
         return (float)prob;
     }    
     
-    private boolean[] getOneClassChangeSignArray(long seed, int[] validExpts) {
+    protected boolean[] getOneClassChangeSignArray(long seed, int[] validExpts) {
         boolean[] changeSignArray = new boolean[numExps];
         for (int i = 0; i < changeSignArray.length; i++) {
             changeSignArray[i] = false;            
@@ -1601,7 +1593,7 @@ public class Ttest extends AbstractAlgorithm {
         return changeSignArray;
     }  
     
-    private FloatMatrix getOneClassPermMatrix(FloatMatrix inputMatrix, boolean[] changeSign) {
+    protected FloatMatrix getOneClassPermMatrix(FloatMatrix inputMatrix, boolean[] changeSign) {
         FloatMatrix permutedMatrix = new FloatMatrix(inputMatrix.getRowDimension(), inputMatrix.getColumnDimension());
 
         for (int i = 0; i < inputMatrix.getRowDimension(); i++) {
@@ -1617,7 +1609,7 @@ public class Ttest extends AbstractAlgorithm {
         return permutedMatrix;
     } 
     
-    private boolean[] getOneClassChangeSignArrayAllUniquePerms(int num, int[] validExpts) {
+    protected boolean[] getOneClassChangeSignArrayAllUniquePerms(int num, int[] validExpts) {
         boolean[] changeSignArray = new boolean[numExps];
         for (int i = 0; i < changeSignArray.length; i++) {
             changeSignArray[i] = false;            
@@ -1722,7 +1714,7 @@ public class Ttest extends AbstractAlgorithm {
         return validNum;
     }
     
-    private float[] getOneClassGeneValues(int gene) {
+    protected float[] getOneClassGeneValues(int gene) {
         Vector currentGene = new Vector();
         
         for (int i = 0; i < numExps; i++) {
@@ -1740,7 +1732,7 @@ public class Ttest extends AbstractAlgorithm {
         return currGeneArray;
     }    
     
-    private double getOneClassTValue(int gene, FloatMatrix inputMatrix) {
+    protected double getOneClassTValue(int gene, FloatMatrix inputMatrix) {
         Vector currentGene = new Vector();
         
         for (int i = 0; i < numExps; i++) {
@@ -1758,7 +1750,7 @@ public class Ttest extends AbstractAlgorithm {
         return getOneClassTValue(currGeneArray);
     }   
     
-    private float getSomeCombsOneClassProb(int gene) {
+    protected float getSomeCombsOneClassProb(int gene) {
         
         int validNumExps = getNumValidOneClassExpts();
         //int numAllPossOneClassPerms = (int)(Math.pow(2, validNumExps));
@@ -1801,7 +1793,7 @@ public class Ttest extends AbstractAlgorithm {
         return (float)prob;
     }
     
-    private boolean[] getSomeCombsPermutArray(long seed) {
+    protected boolean[] getSomeCombsPermutArray(long seed) {
         boolean[] boolArray = new boolean[getNumValidOneClassExpts()];
         for (int i = 0; i < boolArray.length; i++) {
             boolArray[i] = false;
@@ -1826,7 +1818,7 @@ public class Ttest extends AbstractAlgorithm {
         return boolArray;
     }  
     
-    private double[] getPairedRawPValsFromPerms() throws AlgorithmException {
+    protected double[] getPairedRawPValsFromPerms() throws AlgorithmException {
         event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, numCombs);
         fireValueChanged(event);
         event.setId(AlgorithmEvent.PROGRESS_VALUE); 
@@ -1922,7 +1914,7 @@ public class Ttest extends AbstractAlgorithm {
         return rawPVals;
     }
     
-    private int[] permuteWithinPairsAllPerms(int num) {
+    protected int[] permuteWithinPairsAllPerms(int num) {
         int[] permutedValues = new int[numExps];
         for (int i = 0; i < permutedValues.length; i++) {
             permutedValues[i] = i;
@@ -2005,7 +1997,7 @@ public class Ttest extends AbstractAlgorithm {
         return permutArray;
     }    
     
-    private int[] permuteWithinPairs(long seed) {
+    protected int[] permuteWithinPairs(long seed) {
         int[] permutedValues = new int[numExps];
         for (int i = 0; i < permutedValues.length; i++) {
             permutedValues[i] = i;
@@ -2033,7 +2025,7 @@ public class Ttest extends AbstractAlgorithm {
         return permutedValues;
     }    
     
-    private double[] getTwoClassRawPValsFromPerms() throws AlgorithmException {
+    protected double[] getTwoClassRawPValsFromPerms() throws AlgorithmException {
         event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, numCombs);
         fireValueChanged(event);
         event.setId(AlgorithmEvent.PROGRESS_VALUE); 
@@ -2275,7 +2267,7 @@ public class Ttest extends AbstractAlgorithm {
         return rawPVals;
     }
     
-    private float[][] randomlyPermute(float[] gene, int[] groupedExpts, int groupALength, int groupBLength) {
+    protected float[][] randomlyPermute(float[] gene, int[] groupedExpts, int groupALength, int groupBLength) {
         float[][] groupedValues = new float[2][];
         groupedValues[0] = new float[groupALength];
         groupedValues[1] = new float[groupBLength];
@@ -2316,7 +2308,7 @@ public class Ttest extends AbstractAlgorithm {
         
     }    
     
-    private double[] getParametricPVals(double[] tVals, int dfs[]) {
+    protected double[] getParametricPVals(double[] tVals, int dfs[]) {
         double[] pVals = new double[numGenes];
         
         for (int i = 0; i < numGenes; i++) {
@@ -2335,7 +2327,7 @@ public class Ttest extends AbstractAlgorithm {
         return pVals;
     }
     
-    private double[] getRawPValsFromTDist() throws AlgorithmException {
+    protected double[] getRawPValsFromTDist() throws AlgorithmException {
         event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, numGenes);
         fireValueChanged(event);
         event.setId(AlgorithmEvent.PROGRESS_VALUE);      
@@ -2365,7 +2357,7 @@ public class Ttest extends AbstractAlgorithm {
         return rawPVals;
     }
     
-    private double[] getAdjPVals(double[] rawPVals, int adjMethod) throws AlgorithmException {
+    protected double[] getAdjPVals(double[] rawPVals, int adjMethod) throws AlgorithmException {
         event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, numGenes);
 	fireValueChanged(event);
 	event.setId(AlgorithmEvent.PROGRESS_VALUE); 
@@ -2398,7 +2390,7 @@ public class Ttest extends AbstractAlgorithm {
         return adjPVals;
     }  
     
-    private double[] getMaxTPVals() throws AlgorithmException {
+    protected double[] getMaxTPVals() throws AlgorithmException {
         double[] origTValues = tValues;
         double[] descTValues = new double[numGenes];
         int[] descGeneIndices = new int[numGenes];
@@ -2820,7 +2812,7 @@ public class Ttest extends AbstractAlgorithm {
         return tValsFromMatrix;
     }    
     
-    private boolean belongsInArray(int i, int[] arr) {
+    protected boolean belongsInArray(int i, int[] arr) {
         boolean belongs = false;
         
         for (int j = 0; j < arr.length; j++) {
@@ -2833,7 +2825,7 @@ public class Ttest extends AbstractAlgorithm {
         return belongs;
     }    
     
-    private float getTValue(int gene, FloatMatrix inputMatrix) {
+    protected float getTValue(int gene, FloatMatrix inputMatrix) {
         float[] geneValues = new float[numExps];
         for (int i = 0; i < numExps; i++) {
             geneValues[i] = inputMatrix.A[gene][i];
@@ -2870,7 +2862,7 @@ public class Ttest extends AbstractAlgorithm {
         return tValue;        
     }    
     
-    private double[] getTwoClassUnpairedTValues(FloatMatrix inputMatrix) {
+    protected double[] getTwoClassUnpairedTValues(FloatMatrix inputMatrix) {
         double[] tValsFromMatrix = new double[numGenes];
         for (int i = 0; i < numGenes; i++) {
             tValsFromMatrix[i] = Math.abs(getTValue(i, inputMatrix));
@@ -2879,7 +2871,7 @@ public class Ttest extends AbstractAlgorithm {
         return tValsFromMatrix;
     }
     
-    private FloatMatrix getPermutedMatrix(FloatMatrix inputMatrix, int[] permExpts) {
+    protected FloatMatrix getPermutedMatrix(FloatMatrix inputMatrix, int[] permExpts) {
         FloatMatrix permutedMatrix = new FloatMatrix(inputMatrix.getRowDimension(), inputMatrix.getColumnDimension());
         for (int i = 0; i < inputMatrix.getRowDimension(); i++) {
             for (int j = 0; j < inputMatrix.getColumnDimension(); j++) {
@@ -2889,7 +2881,7 @@ public class Ttest extends AbstractAlgorithm {
         return permutedMatrix;
     }    
     
-    private int[] getPermutedValues(int arrayLength, int[] validArray) {//returns an integer array of length "arrayLength", with the valid values (the currently included experiments) permuted
+    protected int[] getPermutedValues(int arrayLength, int[] validArray) {//returns an integer array of length "arrayLength", with the valid values (the currently included experiments) permuted
         int[] permutedValues = new int[arrayLength];
         for (int i = 0; i < permutedValues.length; i++) {
             permutedValues[i] = i;
@@ -2946,7 +2938,7 @@ public class Ttest extends AbstractAlgorithm {
         
     }    
     
-    private double[] getAdjBonfPVals(double[] rawPValArray) {
+    protected double[] getAdjBonfPVals(double[] rawPValArray) {
         double[] adjPValArray = new double[rawPValArray.length];
         isSig = new boolean[rawPValArray.length];
         for (int i = 0; i < isSig.length; i++) {
@@ -2980,7 +2972,7 @@ public class Ttest extends AbstractAlgorithm {
         return adjPValArray;
     }   
     
-    private int[] getPairedDfs(FloatMatrix inputMatrix) {
+    protected int[] getPairedDfs(FloatMatrix inputMatrix) {
         int[] pairedDfs = new int[numGenes];
         for (int gene = 0; gene < numGenes; gene++) {
             
@@ -3021,7 +3013,7 @@ public class Ttest extends AbstractAlgorithm {
         return pairedDfs;
     }
     
-    private int[] getTwoClassDfs(FloatMatrix inputMatrix) {
+    protected int[] getTwoClassDfs(FloatMatrix inputMatrix) {
         int[] twoClassDfs = new int[numGenes];
         for (int gene = 0; gene < numGenes; gene++) {
             float[] geneValues = new float[numExps];
@@ -3076,7 +3068,7 @@ public class Ttest extends AbstractAlgorithm {
         return twoClassDfs;        
     }
     
-    private int[] getOneClassDfs(FloatMatrix inputMatrix) {
+    protected int[] getOneClassDfs(FloatMatrix inputMatrix) {
         int[] oneClassDfValues = new int[numGenes];
         for (int gene = 0; gene < numGenes; gene++) {            
             Vector currentGene = new Vector();
@@ -3104,7 +3096,7 @@ public class Ttest extends AbstractAlgorithm {
         return oneClassDfValues;
     }
     
-    private void computeOneClassOrigVals() throws AlgorithmException {
+    protected void computeOneClassOrigVals() throws AlgorithmException {
         event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, numGenes);
         fireValueChanged(event);
         event.setId(AlgorithmEvent.PROGRESS_VALUE);
@@ -3151,7 +3143,7 @@ public class Ttest extends AbstractAlgorithm {
         }
     }
     
-    private double getOneClassTValue(float[] geneArray) {
+    protected double getOneClassTValue(float[] geneArray) {
         double tValue;
         
         float mean = getMean(geneArray);
@@ -3173,7 +3165,7 @@ public class Ttest extends AbstractAlgorithm {
         return Math.abs(tValue);
     }    
    
-    private void computePairedOrigVals() throws AlgorithmException {
+    protected void computePairedOrigVals() throws AlgorithmException {
         event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, numGenes);
         fireValueChanged(event);
         event.setId(AlgorithmEvent.PROGRESS_VALUE);     
@@ -3240,7 +3232,7 @@ public class Ttest extends AbstractAlgorithm {
         }       
     }
     
-    private double getPairedTValue(int gene, FloatMatrix inputMatrix) {//Jaccard & Becker, 2nd ed. pg 250
+    protected double getPairedTValue(int gene, FloatMatrix inputMatrix) {//Jaccard & Becker, 2nd ed. pg 250
         double sumDev = 0d;
         int N = 0;
 
@@ -3271,7 +3263,7 @@ public class Ttest extends AbstractAlgorithm {
         return Math.abs((meanDev/sHatDBar));
     }
     
-    private double[] getPairedTValues(FloatMatrix inputMatrix) {
+    protected double[] getPairedTValues(FloatMatrix inputMatrix) {
         double[] pairedTValues = new double[inputMatrix.getRowDimension()];
         for (int i = 0; i < pairedTValues.length; i++) {
             pairedTValues[i] = getPairedTValue(i, inputMatrix);
@@ -3279,7 +3271,7 @@ public class Ttest extends AbstractAlgorithm {
         return pairedTValues;
     }
     
-    private void computeBtnSubOrigVals() throws AlgorithmException {
+    protected void computeBtnSubOrigVals() throws AlgorithmException {
         event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, numGenes);
         fireValueChanged(event);
         event.setId(AlgorithmEvent.PROGRESS_VALUE);
@@ -3359,7 +3351,7 @@ public class Ttest extends AbstractAlgorithm {
         }
     }
     
-    private float calculateTValue(float[] groupA, float[] groupB) {
+    protected float calculateTValue(float[] groupA, float[] groupB) {
         if (useWelchDf) {
             int kA = groupA.length;
             int kB = groupB.length;
@@ -3433,7 +3425,7 @@ public class Ttest extends AbstractAlgorithm {
         }
     }   
     
-    private float getSumSquares(float[] arr) {
+    protected float getSumSquares(float[] arr) {
         int N = 0;
         float sumX = 0f;
         float sumXSquared = 0f;
@@ -3452,7 +3444,7 @@ public class Ttest extends AbstractAlgorithm {
         }
     }
     
-    private int calculateDf(float[] groupA, float[] groupB) {
+    protected int calculateDf(float[] groupA, float[] groupB) {
         int kA = 0;
         int kB = 0;
         for (int i =0; i < groupA.length; i++) {
@@ -3497,7 +3489,7 @@ public class Ttest extends AbstractAlgorithm {
         return df;
     } 
     
-    private float getMean(float[] group) {
+    protected float getMean(float[] group) {
         float sum = 0;
         int n = 0;
         
@@ -3522,7 +3514,7 @@ public class Ttest extends AbstractAlgorithm {
         return mean;
     }
     
-    private float getVar(float[] group) {
+    protected float getVar(float[] group) {
         float mean = getMean(group);
         int n = 0;
         

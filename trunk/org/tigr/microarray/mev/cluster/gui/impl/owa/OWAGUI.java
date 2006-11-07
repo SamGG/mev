@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: OWAGUI.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-10-24 16:28:03 $
+ * $Revision: 1.10 $
+ * $Date: 2006-11-07 17:27:40 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -55,28 +55,28 @@ import org.tigr.util.FloatMatrix;
  */
 public class OWAGUI implements IClusterGUI, IScriptGUI {
     
-    private Algorithm algorithm;
-    private Progress progress;
-    private Experiment experiment;
-    private int[][] clusters;
-    private FloatMatrix means;
-    private FloatMatrix variances;
+    protected Algorithm algorithm;
+    protected Progress progress;
+    protected Experiment experiment;
+    protected int[][] clusters;
+    protected FloatMatrix means;
+    protected FloatMatrix variances;
     
-    private String[] auxTitles;
-    private Object[][] auxData;
+    protected String[] auxTitles;
+    protected Object[][] auxData;
     
-    private Vector fValues, rawPValues, adjPValues, dfNumValues, dfDenomValues, ssGroups, ssError;
-    private float[][] geneGroupMeans, geneGroupSDs;
-    private boolean drawSigTreesOnly;
+    protected Vector fValues, rawPValues, adjPValues, dfNumValues, dfDenomValues, ssGroups, ssError;
+    protected float[][] geneGroupMeans, geneGroupSDs;
+    protected boolean drawSigTreesOnly;
     
-    //private boolean usePerms;
+    //protected boolean usePerms;
     
     Vector exptNamesVector;
-    int[] groupAssignments;
-    private int falseNum, correctionMethod;
-    private double falseProp;
-    private IData data;
-    private int numGroups, numPerms;
+    protected int[] groupAssignments;
+    protected int falseNum, correctionMethod;
+    protected double falseProp;
+    protected IData data;
+    protected int numGroups, numPerms;
     /** Creates new OWAGUI */
     public OWAGUI() {
     }
@@ -607,7 +607,7 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
     }
     
     
-    private String getSigMethod(int sigMethod) {
+    protected String getSigMethod(int sigMethod) {
         String methodName = "";
         
         if (sigMethod == OneWayANOVAInitBox.JUST_ALPHA) {
@@ -630,7 +630,7 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
     /**
      * Creates a result tree to be inserted into the framework analysis node.
      */
-    private DefaultMutableTreeNode createResultTree(Cluster result_cluster, GeneralInfo info) {
+    protected DefaultMutableTreeNode createResultTree(Cluster result_cluster, GeneralInfo info) {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("One-way ANOVA");
         addResultNodes(root, result_cluster, info);
         return root;
@@ -639,7 +639,7 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
     /**
      * Adds result nodes into the tree root.
      */
-    private void addResultNodes(DefaultMutableTreeNode root, Cluster result_cluster, GeneralInfo info) {
+    protected void addResultNodes(DefaultMutableTreeNode root, Cluster result_cluster, GeneralInfo info) {
         addExpressionImages(root);
         addHierarchicalTrees(root, result_cluster, info);
         addCentroidViews(root);
@@ -649,7 +649,7 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
         addGeneralInfo(root, info);
     }
     
-    private void addTableViews(DefaultMutableTreeNode root) {
+    protected void addTableViews(DefaultMutableTreeNode root) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table Views");
         IViewer tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData);
         for (int i=0; i<this.clusters.length; i++) {
@@ -666,7 +666,7 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
     /**
      * Adds nodes to display clusters data.
      */
-    private void addExpressionImages(DefaultMutableTreeNode root) {
+    protected void addExpressionImages(DefaultMutableTreeNode root) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Expression Images");
         IViewer expViewer = new OWAExperimentViewer(this.experiment, this.clusters, geneGroupMeans, geneGroupSDs, rawPValues, adjPValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues);
         for (int i=0; i<this.clusters.length; i++) {
@@ -683,7 +683,7 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
     /**
      * Adds nodes to display hierarchical trees.
      */
-    private void addHierarchicalTrees(DefaultMutableTreeNode root, Cluster result_cluster, GeneralInfo info) {
+    protected void addHierarchicalTrees(DefaultMutableTreeNode root, Cluster result_cluster, GeneralInfo info) {
         if (!info.hcl) {
             return;
         }
@@ -706,7 +706,7 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
     /**
      * Creates an <code>HCLViewer</code>.
      */
-    private IViewer createHCLViewer(Node clusterNode, GeneralInfo info) {
+    protected IViewer createHCLViewer(Node clusterNode, GeneralInfo info) {
         HCLTreeData genes_result = info.hcl_genes ? getResult(clusterNode, 0) : null;
         HCLTreeData samples_result = info.hcl_samples ? getResult(clusterNode, info.hcl_genes ? 4 : 0) : null;
         return new HCLViewer(this.experiment, clusterNode.getFeaturesIndexes(), genes_result, samples_result);
@@ -715,7 +715,7 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
     /**
      * Returns a hcl tree data from the specified cluster node.
      */
-    private HCLTreeData getResult(Node clusterNode, int pos) {
+    protected HCLTreeData getResult(Node clusterNode, int pos) {
         HCLTreeData data = new HCLTreeData();
         NodeValueList valueList = clusterNode.getValues();
         data.child_1_array = (int[])valueList.getNodeValue(pos).value;
@@ -728,7 +728,7 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
     /**
      * Adds node with cluster information.
      */
-    private void addClusterInfo(DefaultMutableTreeNode root) {
+    protected void addClusterInfo(DefaultMutableTreeNode root) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Cluster Information");
         node.add(new DefaultMutableTreeNode(new LeafInfo("Results (#,%)", new OWAInfoViewer(this.clusters, this.experiment.getNumberOfGenes()))));
         root.add(node);
@@ -737,7 +737,7 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
     /**
      * Adds nodes to display centroid charts.
      */
-    private void addCentroidViews(DefaultMutableTreeNode root) {
+    protected void addCentroidViews(DefaultMutableTreeNode root) {
         DefaultMutableTreeNode centroidNode = new DefaultMutableTreeNode("Centroid Graphs");
         DefaultMutableTreeNode expressionNode = new DefaultMutableTreeNode("Expression Graphs");
         OWACentroidViewer centroidViewer = new OWACentroidViewer(this.experiment, clusters, geneGroupMeans, geneGroupSDs, rawPValues, adjPValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues);
@@ -767,7 +767,7 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
     }
     
     /*
-    private void addFRatioInfoViews(DefaultMutableTreeNode root) {
+    protected void addFRatioInfoViews(DefaultMutableTreeNode root) {
         DefaultMutableTreeNode fRatioInfoNode = new DefaultMutableTreeNode("F-Ratio information");
         IViewer fSigViewer = new FStatsTableViewer(this.experiment, this.clusters, this.data, geneGroupMeans, geneGroupSDs, pValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues, true);
         IViewer fNonSigViewer = new FStatsTableViewer(this.experiment, this.clusters, this.data, geneGroupMeans, geneGroupSDs, pValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues, false);
@@ -782,7 +782,7 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
     /**
      * Adds node with general iformation.
      */
-    private void addGeneralInfo(DefaultMutableTreeNode root, GeneralInfo info) {
+    protected void addGeneralInfo(DefaultMutableTreeNode root, GeneralInfo info) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("General Information");
         node.add(getGroupAssignmentInfo());
         //node.add(new DefaultMutableTreeNode("Alpha (overall threshold p-value): "+info.alpha));
@@ -814,7 +814,7 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
         root.add(node);
     }
     
-    private DefaultMutableTreeNode getGroupAssignmentInfo() {
+    protected DefaultMutableTreeNode getGroupAssignmentInfo() {
         DefaultMutableTreeNode groupAssignmentInfo = new DefaultMutableTreeNode("Group assignments ");
         DefaultMutableTreeNode notInGroups = new DefaultMutableTreeNode("Not in groups");
         DefaultMutableTreeNode[] groups = new DefaultMutableTreeNode[numGroups];
@@ -846,8 +846,9 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
     /**
      * The class to listen to progress, monitor and algorithms events.
      */
-    private class Listener extends DialogListener implements AlgorithmListener {
-        
+    protected class Listener extends DialogListener implements AlgorithmListener {
+    	//EH added so AMP could extend this class
+        protected Listener(){super();}
         public void valueChanged(AlgorithmEvent event) {
             switch (event.getId()) {
                 case AlgorithmEvent.SET_UNITS:
@@ -885,7 +886,8 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
         }
     }
     
-    private class GeneralInfo {
+    protected class GeneralInfo {
+
         public int clusters;
         public String correctionMethod;
         //public String pValueBasedOn;
@@ -897,427 +899,18 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
         //public int numReps;
         //public double thresholdPercent;
         
-        private boolean hcl, usePerms;
-        private int hcl_method, numPerms;
-        private boolean hcl_genes;
-        private boolean hcl_samples;
-        
+        protected boolean hcl, usePerms;
+        protected int hcl_method, numPerms;
+        protected boolean hcl_genes;
+        protected boolean hcl_samples;
+    	//EH constructor added so AMP could extend
+        protected GeneralInfo(){
+    		super();
+    	}        
         public String getMethodName() {
             return hcl ? HCLGUI.GeneralInfo.getMethodName(hcl_method) : "no linkage";
         }
         
     }
     
-	public Vector getExperiment(ArrayList list) {
-		Vector v = new Vector();// use vector to store files
-		for (int i = 0; i < list.size(); i++) {
-			String exp = (String) list.get(i);
-			v.add(exp);
-
-		}
-		return v;
-
-	}
-	//CCC 6/4/06 for AMP
-	public AlgorithmData execute(AlgorithmData algData, String dir)
-			throws AlgorithmException {
-
-		AlgorithmData result = null;
-		Algorithm algorithm = new OneWayANOVA();
-		long start = System.currentTimeMillis();
-		try {
-
-			result = algorithm.execute(algData);
-
-		} catch (Exception e) {
-			throw new AlgorithmException(e.toString());
-		}
-		long time = System.currentTimeMillis() - start;
-		algData.addParam("name", "ANOVA");
-	
-		try {
-			this.groupAssignments = algData.getIntArray("group-assignments");
-			this.correctionMethod = algData.getParams().getInt(
-					"correction-method");
-			if (correctionMethod == OneWayANOVAInitBox.FALSE_NUM) {
-				falseNum = algData.getParams().getInt("falseNum");
-			}
-			if (correctionMethod == OneWayANOVAInitBox.FALSE_PROP) {
-				falseProp = algData.getParams().getFloat("falseProp");
-			}
-			this.drawSigTreesOnly = algData.getParams().getBoolean(
-					"draw-sig-trees-only");
-			this.rawPValues = new Vector();
-			this.adjPValues = new Vector();
-
-			// getting the results
-			Cluster result_cluster = result.getCluster("cluster");
-		
-			NodeList nodeList = result_cluster.getNodeList();
-			AlgorithmParameters param = algData.getParams();
-			result.setParams(param);
-			int k = 2; // resultMap.getInt("number-of-clusters"); // NEED THIS
-						// TO GET THE VALUE OF NUMBER-OF-CLUSTERS
-
-			this.clusters = new int[k][];
-			for (int i = 0; i < k; i++) {
-				clusters[i] = nodeList.getNode(i).getFeaturesIndexes();
-			}
-			// this.means = result.getMatrix("clusters_means");
-			// this.variances = result.getMatrix("clusters_variances");
-			FloatMatrix rawPValuesMatrix = result.getMatrix("rawPValues");
-			FloatMatrix adjPValuesMatrix = result.getMatrix("adjPValues");
-			FloatMatrix fValuesMatrix = result.getMatrix("fValues");
-			FloatMatrix dfNumMatrix = result.getMatrix("dfNumMatrix");
-			FloatMatrix dfDenomMatrix = result.getMatrix("dfDenomMatrix");
-			FloatMatrix ssGroupsMatrix = result.getMatrix("ssGroupsMatrix");
-			FloatMatrix ssErrorMatrix = result.getMatrix("ssErrorMatrix");
-			FloatMatrix geneGroupMeansMatrix = result
-					.getMatrix("geneGroupMeansMatrix");
-			FloatMatrix geneGroupSDsMatrix = result
-					.getMatrix("geneGroupSDsMatrix");
-
-			// pValues = new Vector();
-			fValues = new Vector();
-			ssGroups = new Vector();
-			ssError = new Vector();
-			
-			geneGroupMeans = new float[geneGroupMeansMatrix.getRowDimension()][geneGroupMeansMatrix
-					.getColumnDimension()];
-			geneGroupSDs = new float[geneGroupSDsMatrix.getRowDimension()][geneGroupSDsMatrix
-					.getColumnDimension()];
-			
-			for (int i = 0; i < geneGroupMeans.length; i++) {
-				for (int j = 0; j < geneGroupMeans[i].length; j++) {
-					geneGroupMeans[i][j] = geneGroupMeansMatrix.A[i][j];
-					geneGroupSDs[i][j] = geneGroupSDsMatrix.A[i][j];
-				}
-			}
-
-			for (int i = 0; i < rawPValuesMatrix.getRowDimension(); i++) {
-				rawPValues.add(new Float(rawPValuesMatrix.A[i][0]));
-				adjPValues.add(new Float(adjPValuesMatrix.A[i][0]));
-			}
-
-			for (int i = 0; i < fValuesMatrix.getRowDimension(); i++) {
-				fValues.add(new Float(fValuesMatrix.A[i][0]));
-			}
-
-			dfNumValues = new Vector();
-			dfDenomValues = new Vector();
-
-			for (int i = 0; i < dfNumMatrix.getRowDimension(); i++) {
-				dfNumValues.add(new Float(dfNumMatrix.A[i][0]));
-				dfDenomValues.add(new Float(dfDenomMatrix.A[i][0]));
-				ssGroups.add(new Float(ssGroupsMatrix.A[i][0]));
-				ssError.add(new Float(ssErrorMatrix.A[i][0]));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		AlgorithmParameters params = algData.getParams();
-
-		String[] samples = algData.getStringArray("sample_annotation");
-		
-		String[] genes = algData.getStringArray("gene_annotation");
-		
-		GeneralInfo info = new GeneralInfo();
-		info.time = time;
-		// ADD MORE INFO PARAMETERS HERE
-		info.alpha = params.getFloat("alpha");
-		numGroups = params.getInt("numGroups");
-		info.correctionMethod = getSigMethod(params.getInt("correction-method"));
-		info.usePerms = params.getBoolean("usePerms");
-		info.numPerms = params.getInt("numPerms");
-		/*
-		 * info.pValueBasedOn = getPValueBasedOn(isPermut); if (isPermut) {
-		 * info.useAllCombs = useAllCombs; info.numCombs = numCombs; }
-		 */
-		// info.function =
-		// framework.getDistanceMenu().getFunctionName(params.getInt("distance-function"));
-		info.hcl = params.getBoolean("hierarchical-tree");
-		info.hcl_genes = params.getBoolean("calculate-genes");
-		info.hcl_samples = params.getBoolean("calculate-experiments");
-		if (info.hcl)
-			info.hcl_method = params.getInt("method-linkage");
-
-		Vector titlesVector = new Vector();
-		for (int i = 0; i < geneGroupMeans[0].length; i++) {
-			titlesVector.add("Group" + (i + 1) + " mean");
-			titlesVector.add("Group" + (i + 1) + " std.dev");
-		}
-		titlesVector.add("F ratio");
-		titlesVector.add("SS(Groups)");
-		titlesVector.add("SS(Error)");
-		titlesVector.add("df (Groups)");
-		titlesVector.add("df (Error)");
-		titlesVector.add("Raw p value");
-		if (!((correctionMethod == OneWayANOVAInitBox.FALSE_NUM) || (correctionMethod == OneWayANOVAInitBox.FALSE_PROP))) {
-			titlesVector.add("Adj. p value");
-		}
-
-		auxTitles = new String[titlesVector.size()];
-		for (int i = 0; i < auxTitles.length; i++) {
-			auxTitles[i] = (String) (titlesVector.get(i));
-		}
-
-		result.addStringArray("titles", auxTitles);
-
-		try {
-
-			FloatMatrix exp = result.getMatrix("experiment");
-
-			int[] columns = new int[exp.getColumnDimension()];
-
-			for (int i = 0; i < exp.getColumnDimension(); i++)
-				columns[i] = i;
-
-			experiment = new Experiment(result.getMatrix("experiment"), columns);
-
-			auxData = new Object[experiment.getNumberOfGenes()][auxTitles.length];
-			for (int i = 0; i < auxData.length; i++) {
-				int counter = 0;
-				for (int j = 0; j < geneGroupMeans[i].length; j++) {
-					auxData[i][counter++] = new Float(geneGroupMeans[i][j]);
-					auxData[i][counter++] = new Float(geneGroupSDs[i][j]);
-				}
-
-				auxData[i][counter++] = fValues.get(i);
-				auxData[i][counter++] = ssGroups.get(i);
-				auxData[i][counter++] = ssError.get(i);
-				auxData[i][counter++] = dfNumValues.get(i);
-				auxData[i][counter++] = dfDenomValues.get(i);
-				auxData[i][counter++] = rawPValues.get(i);
-				if (!((correctionMethod == OneWayANOVAInitBox.FALSE_NUM) || (correctionMethod == OneWayANOVAInitBox.FALSE_PROP))) {
-					auxData[i][counter++] = adjPValues.get(i);
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		String[] outputNodes = new String[2];
-		outputNodes[0] = "Sig-Genes";
-		outputNodes[1] = "Nonsig-Genes";
-
-		result.addStringArray("output-nodes", outputNodes);
-		result.addObjectMatrix("auxData", auxData);
-		result.addStringArray("sample_annotation", samples);// sample_annotation
-		result.addStringArray("gene_annotation", genes);
-		// ClusterTableViewer ctv = createTableViews();
-		writeClustersReports(result, dir);
-		// writePopReport(result.getStringArray("gene_annotation"), dir);
-		return result;
-
-	}
-
-	public void writeClustersReports(AlgorithmData data, String outDir) {
-
-		String path = outDir;
-
-		try {
-			if (auxTitles.length == 0) {
-				ExperimentUtil
-						.writeExperiment(path, experiment, clusters, data);
-			} else {
-				ExperimentUtil.writeAllGeneClustersWithAux(path, experiment,
-						clusters, data);
-			}
-
-		} catch (Exception e) {
-
-			e.printStackTrace();
-		}
-
-	}
-
-	public AlgorithmData getParams(ArrayList list) throws AlgorithmException {
-
-		Vector exptNamesVector = getExperiment(list);
-
-		JFrame frame = null;
-
-		OneWayANOVAInitBox owaDialog = new OneWayANOVAInitBox(frame, true,
-				exptNamesVector);
-		owaDialog.setVisible(true);
-
-		if (!owaDialog.isOkPressed())
-			return null;
-
-		double alpha = owaDialog.getPValue();
-		numGroups = owaDialog.getNumGroups();
-		groupAssignments = owaDialog.getGroupAssignments();
-		boolean usePerms = owaDialog.usePerms();
-		int numPerms = 0;
-		if (usePerms) {
-			numPerms = owaDialog.getNumPerms();
-		}
-		correctionMethod = owaDialog.getCorrectionMethod();
-		if (correctionMethod == OneWayANOVAInitBox.FALSE_NUM) {
-			falseNum = owaDialog.getFalseNum();
-		}
-		if (correctionMethod == OneWayANOVAInitBox.FALSE_PROP) {
-			falseProp = owaDialog.getFalseProp();
-		}
-		boolean isHierarchicalTree = owaDialog.drawTrees();
-		drawSigTreesOnly = true;
-		if (isHierarchicalTree) {
-			drawSigTreesOnly = owaDialog.drawSigTreesOnly();
-		}
-
-		/*
-		 * IDistanceMenu menu = framework.getDistanceMenu(); int function =
-		 * menu.getDistanceFunction(); if (function == Algorithm.DEFAULT) {
-		 * function = Algorithm.EUCLIDEAN; }
-		 */
-		int function = Algorithm.EUCLIDEAN;// for pipeline, this is default
-											// because no access of viewer
-
-		// hcl init
-		int hcl_method = 0;
-		boolean hcl_samples = false;
-		boolean hcl_genes = false;
-		int hcl_function = 4;
-		boolean hcl_absolute = false;
-		if (isHierarchicalTree) {
-			// HCLInitDialog hcl_dialog = new
-			// HCLInitDialog(framework.getFrame(),
-			// menu.getFunctionName(function), menu.isAbsoluteDistance(), true);
-			HCLInitDialog hcl_dialog = new HCLInitDialog(frame,
-					"Euclidean Distance", hcl_absolute, true);
-			if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
-				return null;
-			}
-			hcl_method = hcl_dialog.getMethod();
-			hcl_samples = hcl_dialog.isClusterExperiments();
-			hcl_genes = hcl_dialog.isClusterGenes();
-			hcl_function = hcl_dialog.getDistanceMetric();
-			hcl_absolute = hcl_dialog.getAbsoluteSelection();
-		}
-
-		Listener listener = new Listener();
-		AlgorithmData data = new AlgorithmData();
-		try {
-			algorithm = new AlgorithmFactoryImpl().getAlgorithm("OWA");
-
-			algorithm.addAlgorithmListener(listener);
-
-			data.addParam("distance-function", String.valueOf(function));
-			data.addIntArray("group-assignments", groupAssignments);
-			data.addParam("usePerms", String.valueOf(usePerms));
-			data.addParam("numPerms", String.valueOf(numPerms));
-			data.addParam("alpha", String.valueOf(alpha));
-			data
-					.addParam("correction-method", String
-							.valueOf(correctionMethod));
-			data.addParam("numGroups", String.valueOf(numGroups));
-			if (correctionMethod == OneWayANOVAInitBox.FALSE_NUM) {
-				data.addParam("falseNum", String.valueOf(falseNum));
-			}
-			if (correctionMethod == OneWayANOVAInitBox.FALSE_PROP) {
-				data.addParam("falseProp", String.valueOf((float) falseProp));
-			}
-			// hcl parameters
-			if (isHierarchicalTree) {
-				data.addParam("hierarchical-tree", String.valueOf(true));
-				data.addParam("draw-sig-trees-only", String
-						.valueOf(drawSigTreesOnly));
-				data.addParam("method-linkage", String.valueOf(hcl_method));
-				data.addParam("calculate-genes", String.valueOf(hcl_genes));
-				data.addParam("calculate-experiments", String
-						.valueOf(hcl_samples));
-				data.addParam("hcl-distance-function", String
-						.valueOf(hcl_function));
-				data.addParam("hcl-distance-absolute", String
-						.valueOf(hcl_absolute));
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-
-		}
-		String[] sampleNames = new String[exptNamesVector.size()];
-		for (int i = 0; i < exptNamesVector.size(); i++)
-			sampleNames[i] = (String) exptNamesVector.get(i);
-
-		data.addStringArray("sample_annotation", sampleNames);
-
-		if (algorithm != null) {
-			algorithm.removeAlgorithmListener(listener);
-		}
-		return data;
-	}
-
-	public AlgorithmData execute(AlgorithmData data) throws AlgorithmException {
-		AlgorithmData result = null;
-		try {
-			result = algorithm.execute(data);
-		} catch (Exception e) {
-			throw new AlgorithmException(e.toString());
-		}
-		return result;
-
-	}
-	//CCC 6/6/06 for AMP
-	private void sendObject(AlgorithmData adata, String uid, String rid,
-			String notes, String returnURL) {
-		OutputStream out;
-		ObjectOutputStream objectStream;
-
-		try {
-			HTTPObject http = new HTTPObject(returnURL);
-			URLConnection connection = http.getConnectionToServlet();
-			out = connection.getOutputStream();
-
-			// now send the job object to the Servlet
-			objectStream = new ObjectOutputStream(out);
-			Vector v = new Vector();
-			v.add(uid);
-			v.add(rid);
-			v.add("ANOVA");// to identify the pda that sends the object
-
-			v.add(adata);
-			v.add(notes);
-			objectStream.writeObject(v); // don't read POST in doget or
-											// you'll get responsecode 405
-			objectStream.flush();
-			objectStream.close();
-			out.close();
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
-
-	
-	public static void main(String args[]) {
-
-		// get the experiment name.....pass to the dialog window
-		System.out.println("i m in OWAGUI");
-
-		String uid = args[0];// first argument is the user id, the second is
-								// the request id
-		String rid = args[1];
-		String study = args[2];// the experiment names
-		String notes = args[3];
-		String returnURL = args[5];
-		AlgorithmData adata = null;
-		ArrayList al = new ArrayList();
-
-		for (int i = 6; i < args.length; i++)// the rest of argument is the
-												// experiment names
-		{
-			al.add(args[i]);
-		}
-
-		OWAGUI owa = new OWAGUI();
-		try {
-			adata = (AlgorithmData) owa.getParams(al);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		owa.sendObject(adata, uid, rid, notes, returnURL);// pass the userid and rid back
-												// to server
-
-	}
-
 }

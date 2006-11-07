@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASEGUI.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-10-24 16:28:02 $
+ * $Revision: 1.10 $
+ * $Date: 2006-11-07 17:27:40 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -26,19 +26,10 @@ import java.util.Vector;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
+import org.tigr.microarray.mev.cluster.algorithm.*;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
-import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.IViewer;
-import org.tigr.microarray.mev.cluster.gui.LeafInfo;
+import org.tigr.microarray.mev.cluster.gui.*;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Logger;
@@ -47,75 +38,59 @@ import org.tigr.microarray.mev.cluster.gui.impl.ease.gotree.GOTreeViewer;
 import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
 
 
-import org.tigr.microarray.mev.cluster.gui.impl.ease.EASETableViewer;
-import org.tm4.microarray.amp.engine.iAMP;
-import org.tm4.microarray.amp.util.HTTPObject;
-import org.tigr.microarray.mev.cluster.algorithm.impl.AlgorithmFactoryImpl;
-import java.io.FilenameFilter;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
-import java.util.Vector;
-import java.io.OutputStream;
-import java.io.ObjectOutputStream;
-import java.net.URLConnection;
-
-import java.awt.Frame;
-
-
-/**
- * The <CODE>EASEGUI</CODE> class contains code to gather parameters for EASE
- * annotation analysis, to run the analysis, and to display various results from
- * the analysis.
+/** The <CODE>EASEGUI</CODE> class contains code to gather parameters
+ * for EASE annotation analysis, to run the analysis, and to display
+ * various results from the analysis.
  */
 public class EASEGUI implements IClusterGUI, IScriptGUI {
     
     /** The algorithm class for execution of EASE.
      */
-    private Algorithm algorithm;
+    protected Algorithm algorithm;
     /** The <CODE>AlgorithmData<\CODE> object to encapsulate parameters, input data, and results
      */
-    private AlgorithmData algorithmData;
+    protected AlgorithmData algorithmData;
     /** The <CODE>Experiment</CODE> data wrapper class.
      */
-    private Experiment experiment;
+    protected Experiment experiment;
     /** The input <CODE>Cluster</CODE> object for cluster analysis
      */
-    private Cluster cluster;
+    protected Cluster cluster;
     /** Encapsulates the indices of clusters created by the analysis.
      */
-    private int [][] clusters;
+    protected int [][] clusters;
     /** Names of the theme categories found in the gene list.
      */
-    private String [] categoryNames;
+    protected String [] categoryNames;
     /** The main result matrix for table display.
      */
-    private String [][] resultMatrix;
+    protected String [][] resultMatrix;
     /** Indicates if accession numbers were appended.
      */
-    private boolean haveAccessionNumbers;
+    protected boolean haveAccessionNumbers;
     /** Indicates if the mode is cluster analysis (or if not then a survey)
      */
-    private boolean isClusterAnalysis;
+    protected boolean isClusterAnalysis;
     /** Verbose progress dialog
      */
-    private Logger logger;
+    protected Logger logger;
     /** Optional progress bar.
      */
-    private Progress progress;
+    protected Progress progress;
     /** Algorithm event listener.
      */
-    private Listener listener;
+    protected Listener listener;
     
-    boolean stop = false;
+    protected boolean stop = false;
     /** Annotation type to use as a key (annotation field name)
      */
-    private String annotationKeyType;
+    protected String annotationKeyType;
     /** Indicates path of EASE base file system for this analysis
      */
-    private String baseFileSystem;
+    protected String baseFileSystem;
     /** Indicates if the algorithm run is via a script execution
      */
-    boolean isScripting = false;
+    protected boolean isScripting = false;
     
     /** Creates a new instance of EASEGUI */
     public EASEGUI() {
@@ -415,7 +390,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
     }
     
     
-    private String [] getPopulationKeysFromFile(String fileName) throws IOException {
+    protected String [] getPopulationKeysFromFile(String fileName) throws IOException {
         File file = new File(fileName);
         if(file.exists()) {
             BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -439,7 +414,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
      * @param clusters cluster indices
      * @return returns the result node
      */
-    private DefaultMutableTreeNode createResultNode(AlgorithmData result, int [][] clusters){
+    protected DefaultMutableTreeNode createResultNode(AlgorithmData result, int [][] clusters){
         DefaultMutableTreeNode root;
         if(this.isClusterAnalysis)
             root = new DefaultMutableTreeNode("EASE Analysis");
@@ -453,7 +428,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         return root;
     }
     
-    private void addGOTree(DefaultMutableTreeNode root, AlgorithmData result) {
+    protected void addGOTree(DefaultMutableTreeNode root, AlgorithmData result) {
         String [][] data = (String [][]) (result.getObjectMatrix("result-matrix"));
         String [] headerNames = result.getStringArray("header-names");
         
@@ -487,7 +462,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
     /** creates an empty result if the result is null.
      * @param result
      * @return  */
-    private DefaultMutableTreeNode createEmptyResultNode(AlgorithmData result){
+    protected DefaultMutableTreeNode createEmptyResultNode(AlgorithmData result){
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("EASE");
         root.add(new DefaultMutableTreeNode("No Annotation Hits"));
         addGeneralInfo(root, result);
@@ -498,7 +473,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
      * @param root root node
      * @param result result matrix
      */
-    private void addExpressionViewers(DefaultMutableTreeNode root, AlgorithmData result) {
+    protected void addExpressionViewers(DefaultMutableTreeNode root, AlgorithmData result) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Expression Viewers");
         
         IViewer expViewer = new EASEExperimentViewer(this.experiment, this.clusters);
@@ -527,7 +502,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
      * @param root root node
      * @param result
      */
-    private void addTableViewer(DefaultMutableTreeNode root, AlgorithmData result){
+    protected void addTableViewer(DefaultMutableTreeNode root, AlgorithmData result){
         Object [][] data = result.getObjectMatrix("result-matrix");
         String [] headerNames = result.getStringArray("header-names");
         
@@ -544,7 +519,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
      * @param indices
      * @return
      */
-    private int [] getDataIndices(int [] indices){
+    protected int [] getDataIndices(int [] indices){
         int [] dataIndices = new int[indices.length];
         for(int i = 0; i < dataIndices.length; i++){
             dataIndices[i] = this.experiment.getGeneIndexMappedToData(indices[i]);
@@ -556,7 +531,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
      * @param root root node
      * @param result
      */
-    private void addGeneralInfo(DefaultMutableTreeNode root, AlgorithmData result){
+    protected void addGeneralInfo(DefaultMutableTreeNode root, AlgorithmData result){
         DefaultMutableTreeNode generalInfo = new DefaultMutableTreeNode("General Information");
         String converterFileName = result.getParams().getString("converter-file-name");
         DefaultMutableTreeNode newNode;
@@ -624,7 +599,8 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
     
     /** Listens to algorithm events and updates the logger.
      */
-    private class Listener extends DialogListener implements AlgorithmListener{
+    protected class Listener extends DialogListener implements AlgorithmListener{
+
         String eventDescription;
         /** Handles algorithm events.
          * @param actionEvent event object
@@ -670,119 +646,4 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
             }
         }
     }
-
-//CCC 5/5/06 for AMP
-	public AlgorithmData execute(AlgorithmData data) throws AlgorithmException {
-		AlgorithmData result = null;
-		try {
-			result = algorithm.execute(data);
-		} catch (Exception e) {
-			throw new AlgorithmException(e.toString());
-		}
-		return result;
-
-	}
-
-
-	
-//CCC 4/4/06 for AMP extract parameters from dialog	
-	public AlgorithmData getParams(String cdf) throws AlgorithmException {
-
-		AlgorithmData adata = new AlgorithmData();
-		Frame frame = null;
-
-		EASEInitDialog dialog = new EASEInitDialog(frame);
-		if (dialog.showModal() != JOptionPane.OK_OPTION)
-			return null;
-		listener = new Listener();
-		isClusterAnalysis = true;
-
-		annotationKeyType = "ProbeSet";// the default annotation key type for
-										// pipeline
-		boolean isPvalueCorrectionSelected;
-		adata.addParam("report-ease-score", String.valueOf(dialog
-				.isEaseScoreSelected()));
-		isPvalueCorrectionSelected = dialog.isCorrectPvaluesSelected();
-		adata.addParam("p-value-corrections", String
-				.valueOf(isPvalueCorrectionSelected));
-		if (isPvalueCorrectionSelected) {
-			adata.addParam("bonferroni-correction", String.valueOf(dialog
-					.isBonferroniSelected()));
-			adata.addParam("bonferroni-step-down-correction", String
-					.valueOf(dialog.isStepDownBonferroniSelected()));
-			adata.addParam("sidak-correction", String.valueOf(dialog
-					.isSidakSelected()));
-		}
-
-		adata.addParam("run-permutation-analysis", String.valueOf(dialog
-				.isPermutationAnalysisSelected()));
-		if (dialog.isPermutationAnalysisSelected())
-			adata.addParam("permutation-count", String.valueOf(dialog
-					.getPermutationCount()));
-		adata.addParam("perform-cluster-analysis", String
-				.valueOf(isClusterAnalysis));
-
-		adata.addParam("go-term", String.valueOf(dialog.isGoSelected()));
-		adata.addParam("kegg", String.valueOf(dialog.isKEGGSelected()));
-		adata.addParam("mesh", String.valueOf(dialog.isMeSHSelected()));
-		adata.addParam("chrom", String.valueOf(dialog.isChromSelected()));
-		adata.addParam("upstream", String.valueOf(dialog.isUpstreamSelected()));
-		adata.addParam("protein", String.valueOf(dialog.isProteinSelected()));
-		String[] trimOptions = dialog.getTrimOptions();
-		adata.addParam("trim-option", trimOptions[0]);
-		adata.addParam("trim-value", trimOptions[1]);
-		algorithm = new AlgorithmFactoryImpl().getAlgorithm("EASE");
-		algorithm.addAlgorithmListener(listener);
-		if (algorithm != null) {
-			algorithm.removeAlgorithmListener(listener);
-		}
-		return adata;
-	}
-
-	private void sendObject(AlgorithmData adata, String uid, String rid) {
-		OutputStream out;
-		ObjectOutputStream objectStream;
-
-		try {
-			HTTPObject http = new HTTPObject();
-			URLConnection connection = http.getConnectionToServlet();
-			out = connection.getOutputStream();
-
-			objectStream = new ObjectOutputStream(out);
-			Vector v = new Vector();
-			v.add(uid);
-			v.add(rid);
-			v.add("EASE");
-			v.add(adata);
-			objectStream.writeObject(v); 
-			objectStream.flush();
-			objectStream.close();
-			out.close();
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
-	//CCC 6/6/06 for AMP
-	public static void main(String args[]) {
-
-		String uid = args[0];
-		String rid = args[1];
-		String cdf = args[2];
-		AlgorithmData adata = null;
-		ArrayList al = new ArrayList();
-		for (int i = 0; i < args.length; i++)
-				al.add(args[i]);
-
-		EASEGUI ease = new EASEGUI();
-		try {
-			adata = (AlgorithmData) ease.getParams(cdf);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		ease.sendObject(adata, uid, rid);
-
-	}
-
 }

@@ -34,21 +34,21 @@ public class Ktree extends JPanel {
      * Ordering represents left to right order
      */
     
-    private ITreeNode [][] nodes;
+    protected ITreeNode [][] nodes;
     
     /**
      * Root node
      */
-    private ITreeNode root;
-    private int xMargin = 15;
-    private int yMargin = 15;
-    private int maxWidth = 0;
+    protected ITreeNode root;
+    protected int xMargin = 15;
+    protected int yMargin = 15;
+    protected int maxWidth = 0;
     
-    private int interNodeHeight = 40;
-    private int interNodeWidth = 15;
+    protected int interNodeHeight = 40;
+    protected int interNodeWidth = 15;
     
-    private boolean nodeSelected = false;
-    private boolean isStraitConnector = false;
+    protected boolean nodeSelected = false;
+    protected boolean isStraitConnector = false;
     
     Vector selectedPathNodes;
     ITreeNode selectedNode;
@@ -81,7 +81,7 @@ public class Ktree extends JPanel {
         this.selectedPathNodes = new Vector();
     }
     
-    private void init() {
+    protected void init() {
         setBackground(Color.white);
         updateSize();
        /* getMaxLevelWidth();
@@ -105,7 +105,7 @@ public class Ktree extends JPanel {
         this.nodes = newNodes;
     }
     
-    private void minimizeBranchingOverlap() {
+    protected void minimizeBranchingOverlap() {
         //Iterative implementation to minimize the crossing of connectors
         //Top down
         //Traverse a level, list ordering of child nodes, swap child nodes
@@ -190,7 +190,7 @@ public class Ktree extends JPanel {
         return selectedNode;
     }
     
-    private ITreeNode getSelectedNode(int x, int y) {
+    protected ITreeNode getSelectedNode(int x, int y) {
         ITreeNode node = null;
         int level = (int)((y-yMargin)/(interNodeHeight + nodes[0][0].getHeight()));
         
@@ -320,7 +320,7 @@ public class Ktree extends JPanel {
     }
     
     
-    private void renderConnectors(Graphics g) {
+    protected void renderConnectors(Graphics g) {
         ITreeNode currNode;
         ITreeNode [] children;
         Point start, finish;
@@ -384,8 +384,5 @@ public class Ktree extends JPanel {
         }
     }
     
-    public static void main(String [] args) {
-        
-    }
     
 }

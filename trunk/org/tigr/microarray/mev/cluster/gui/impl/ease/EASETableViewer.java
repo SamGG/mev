@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASETableViewer.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-10-24 16:28:02 $
+ * $Revision: 1.10 $
+ * $Date: 2006-11-07 17:27:40 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -45,15 +45,15 @@ import org.tigr.util.BrowserLauncher;
  */
 public class EASETableViewer extends TableViewer implements Serializable {
     
-    private DefaultMutableTreeNode easeRoot;
-    private JPopupMenu menu;
+    protected DefaultMutableTreeNode easeRoot;
+    protected JPopupMenu menu;
     
-    private Experiment experiment;
-    private int [][] clusters;
-    private String [] headerNames;
-    private boolean clusterAnalysis;
-    private boolean haveAccessionNumbers;
-    private JMenuItem launchMenuItem;
+    protected Experiment experiment;
+    protected int [][] clusters;
+    protected String [] headerNames;
+    protected boolean clusterAnalysis;
+    protected boolean haveAccessionNumbers;
+    protected JMenuItem launchMenuItem;
     
     /** Creates a new instance of EASETableViewer
      * @param headerNames Header names
@@ -104,7 +104,7 @@ public class EASETableViewer extends TableViewer implements Serializable {
     
     /** Creats the context menu
      * @return  */
-    private JPopupMenu createPopupMenu(){
+    protected JPopupMenu createPopupMenu(){
         Listener listener = new Listener();
         JPopupMenu menu = new JPopupMenu();
         JMenuItem item;
@@ -174,7 +174,7 @@ public class EASETableViewer extends TableViewer implements Serializable {
     
     /** Handles opening cluster viewers.
      */
-    private void onOpenViewer(String viewerType){
+    protected void onOpenViewer(String viewerType){
         int index = getSelectedRow();
         
         if(index == -1 || easeRoot == null)
@@ -200,7 +200,7 @@ public class EASETableViewer extends TableViewer implements Serializable {
     
     /** Handles sotrage of clusters from selected line.
      */
-    private void onStoreCluster(){
+    protected void onStoreCluster(){
         int [] tableIndices = table.getSelectedRows();
         if(tableIndices == null || tableIndices.length == 0)
             return;
@@ -217,7 +217,7 @@ public class EASETableViewer extends TableViewer implements Serializable {
     
     /** Handles opening browser on accessions.
      */
-    private void onOpenBrowser(){
+    protected void onOpenBrowser(){
         int [] tableIndices = table.getSelectedRows();
         if( tableIndices == null || tableIndices.length < 1)
             return;
@@ -241,7 +241,7 @@ public class EASETableViewer extends TableViewer implements Serializable {
     
     /** Saves the ease table to file
      */
-    private void onSaveEaseTable(){
+    protected void onSaveEaseTable(){
         JFileChooser chooser = new JFileChooser(TMEV.getFile("/Data"));
         String fileName = "";
         if(chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION){
@@ -272,7 +272,7 @@ public class EASETableViewer extends TableViewer implements Serializable {
      * @param rows Selected rows
      * @return Associated indices
      */
-    private int [] getGeneIndices(int [] rows){
+    protected int [] getGeneIndices(int [] rows){
         int numGenes = 0;
         for(int i = 0; i < rows.length; i++)
             numGenes += clusters[rows[i]].length;
@@ -287,14 +287,14 @@ public class EASETableViewer extends TableViewer implements Serializable {
         return indices;
     }
     
-    private int [] mapExperimentIndicesToIData(int [] indices){
+    protected int [] mapExperimentIndicesToIData(int [] indices){
         int [] idataIndices = new int [indices.length];
         for(int i = 0; i < indices.length; i++)
             idataIndices[i] = this.experiment.getGeneIndexMappedToData(indices[i]);
         return idataIndices;
     }
     
-    private void validateMenuOptions(){
+    protected void validateMenuOptions(){
         int row = this.getSelectedRow();
         if(row < 0)
             return;
@@ -304,7 +304,7 @@ public class EASETableViewer extends TableViewer implements Serializable {
     
     /** Handles events
      */
-    private class Listener extends MouseAdapter implements ActionListener{
+    protected class Listener extends MouseAdapter implements ActionListener{
         
         public void actionPerformed(ActionEvent ae) {
             String command = ae.getActionCommand();
@@ -341,35 +341,6 @@ public class EASETableViewer extends TableViewer implements Serializable {
         
     }
     
-    public void writeEaseTable(String fileName){
-           
-            try{
-                PrintWriter pw = new PrintWriter(new FileOutputStream(fileName));
-                int rows = table.getRowCount();
-                int cols = table.getColumnCount();
-                for (int col = 0; col < cols; col++)
-                {
-                	pw.print(headerNames[col] + "\t");
-                }
-                pw.print("\n");
-              
-                
-                for(int row = 0; row < rows; row++){
-                    for(int col = 0; col < cols; col++){
-                        pw.print(((String)(table.getValueAt(row, col))) + "\t");
-                    }
-                    pw.print("\n");
-                }
-                pw.flush();
-                pw.close();
-            } catch ( IOException ioe) {
-                ioe.printStackTrace();
-                javax.swing.JOptionPane.showMessageDialog(this, ("Error Saving Table to file: "+fileName), "Output Error", JOptionPane.WARNING_MESSAGE);
-            }
-            
-        }
-    
-
     
     
 }

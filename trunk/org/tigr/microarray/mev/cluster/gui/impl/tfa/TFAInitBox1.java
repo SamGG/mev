@@ -98,10 +98,6 @@ public class TFAInitBox1 extends AlgorithmDialog {
         EventListener listener = new EventListener();        
         setActionListeners(listener);
         this.addWindowListener(listener);        
-
-        if (parentFrame==null)//AMP
-        cancelButton.setEnabled(false);
-  
     }
     
     public void setVisible(boolean visible) {
@@ -142,7 +138,7 @@ public class TFAInitBox1 extends AlgorithmDialog {
         return Integer.parseInt(factorBLevelsField.getText()); 
     }
     
-    private boolean isBlank(String str) {
+    protected boolean isBlank(String str) {
         boolean blank = true;
         char[] charArr = str.toCharArray();
         for (int i = 0; i < charArr.length; i++) {

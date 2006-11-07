@@ -42,35 +42,35 @@ public class TFA extends AbstractAlgorithm {
     public static final int BALANCED_WITH_REPLICATION = 24;
     public static final int UNBALANCED_WITH_REPLICATION = 25;
 
-    private boolean stop = false;
-    private int function;
-    private float factor;
-    private boolean absolute;
-    private FloatMatrix expMatrix;
+    protected boolean stop = false;
+    protected int function;
+    protected float factor;
+    protected boolean absolute;
+    protected FloatMatrix expMatrix;
     
     boolean hierarchical_tree;
     int method_linkage;
     boolean calculate_genes;
     boolean calculate_experiments;    
     
-    private Vector[] clusters;
-    private int k; // # of clusters    
+    protected Vector[] clusters;
+    protected int k; // # of clusters    
     
-    private int numGenes, numExps; 
+    protected int numGenes, numExps; 
     
-    private int[] numFactorLevels, factorAAssignments, factorBAssignments;
-    private boolean allCellsHaveOneSample, isBalancedDesign, usePerms, drawSigTreesOnly;
-    private int adjustmentMethod;
-    private float alpha;
-    //private Vector[][] bothFactorAssignments;
-    private int numPerms;
+    protected int[] numFactorLevels, factorAAssignments, factorBAssignments;
+    protected boolean allCellsHaveOneSample, isBalancedDesign, usePerms, drawSigTreesOnly;
+    protected int adjustmentMethod;
+    protected float alpha;
+    //protected Vector[][] bothFactorAssignments;
+    protected int numPerms;
     
     double[] origFactorAPValues, origFactorBPValues, origInteractionPValues, factorAFValues, factorBFValues, interactionFValues; 
     double[] factorADfValues, factorBDfValues, interactionDfValues, errorDfValues;
     double[] adjFactorAPValues, adjFactorBPValues, adjInteractionPValues;
     
-    private int hcl_function;
-    private boolean hcl_absolute;
+    protected int hcl_function;
+    protected boolean hcl_absolute;
     
     /**
      * This method should interrupt the calculation.
@@ -597,9 +597,6 @@ public class TFA extends AbstractAlgorithm {
         
 	// prepare the result
 	AlgorithmData result = new AlgorithmData();
-	//CCC 8/8/06 for AMP
-	result.setParams(map);
-	
 	result.addCluster("cluster", result_cluster);
 	result.addParam("number-of-clusters", String.valueOf(clusters.length));    
 	result.addMatrix("clusters_means", means);
@@ -617,14 +614,12 @@ public class TFA extends AbstractAlgorithm {
         result.addMatrix("adjFactorAPValuesMatrix", adjFactorAPValuesMatrix);
         result.addMatrix("adjFactorBPValuesMatrix", adjFactorBPValuesMatrix);
         result.addMatrix("adjInteractionPValuesMatrix", adjInteractionPValuesMatrix);        
-        //CCC 4/6/06 for AMP
-		result.addMatrix("experiment",this.expMatrix);
         
         return result;        
         //return null; //for now
     }
     
-    private NodeValueList calculateHierarchicalTree(int[] features, int method, boolean genes, boolean experiments) throws AlgorithmException {
+    protected NodeValueList calculateHierarchicalTree(int[] features, int method, boolean genes, boolean experiments) throws AlgorithmException {
 	NodeValueList nodeList = new NodeValueList();
 	AlgorithmData data = new AlgorithmData();
 	FloatMatrix experiment = getSubExperiment(this.expMatrix, features);
@@ -649,14 +644,14 @@ public class TFA extends AbstractAlgorithm {
 	return nodeList;
     }
     
-    private void addNodeValues(NodeValueList target_list, AlgorithmData source_result) {
+    protected void addNodeValues(NodeValueList target_list, AlgorithmData source_result) {
 	target_list.addNodeValue(new NodeValue("child-1-array", source_result.getIntArray("child-1-array")));
 	target_list.addNodeValue(new NodeValue("child-2-array", source_result.getIntArray("child-2-array")));
 	target_list.addNodeValue(new NodeValue("node-order", source_result.getIntArray("node-order")));
 	target_list.addNodeValue(new NodeValue("height", source_result.getMatrix("height").getRowPackedCopy()));
     }
     
-    private FloatMatrix getSubExperiment(FloatMatrix experiment, int[] features) {
+    protected FloatMatrix getSubExperiment(FloatMatrix experiment, int[] features) {
 	FloatMatrix subExperiment = new FloatMatrix(features.length, experiment.getColumnDimension());
 	for (int i=0; i<features.length; i++) {
 	    subExperiment.A[i] = experiment.A[features[i]];
@@ -668,7 +663,7 @@ public class TFA extends AbstractAlgorithm {
      * Checking the result of hcl algorithm calculation.
      * @throws AlgorithmException, if the result is incorrect.
      */
-    private void validate(AlgorithmData result) throws AlgorithmException {
+    protected void validate(AlgorithmData result) throws AlgorithmException {
 	if (result.getIntArray("child-1-array") == null) {
 	    throw new AlgorithmException("parameter 'child-1-array' is null");
 	}
@@ -683,7 +678,7 @@ public class TFA extends AbstractAlgorithm {
 	}
     }
     
-    private int[] convert2int(Vector source) {
+    protected int[] convert2int(Vector source) {
 	int[] int_matrix = new int[source.size()];
 	for (int i=0; i<int_matrix.length; i++) {
 	    int_matrix[i] = (int)((Integer)source.get(i)).intValue();
@@ -691,7 +686,7 @@ public class TFA extends AbstractAlgorithm {
 	return int_matrix;
     }
     
-    private FloatMatrix getMeans(Vector[] clusters) {
+    protected FloatMatrix getMeans(Vector[] clusters) {
 	FloatMatrix means = new FloatMatrix(clusters.length, numExps);
 	FloatMatrix mean;
 	for (int i=0; i<clusters.length; i++) {
@@ -701,7 +696,7 @@ public class TFA extends AbstractAlgorithm {
 	return means;
     }
     
-    private FloatMatrix getMean(Vector cluster) {
+    protected FloatMatrix getMean(Vector cluster) {
 	FloatMatrix mean = new FloatMatrix(1, numExps);
 	float currentMean;
 	int n = cluster.size();
@@ -723,7 +718,7 @@ public class TFA extends AbstractAlgorithm {
 	return mean;
     }
     
-    private FloatMatrix getVariances(Vector[] clusters, FloatMatrix means) {
+    protected FloatMatrix getVariances(Vector[] clusters, FloatMatrix means) {
 	final int rows = means.getRowDimension();
 	final int columns = means.getColumnDimension();
 	FloatMatrix variances = new FloatMatrix(rows, columns);
@@ -737,7 +732,7 @@ public class TFA extends AbstractAlgorithm {
     
     int validN;
     
-    private float getSampleNormalizedSum(Vector cluster, int column, float mean) {
+    protected float getSampleNormalizedSum(Vector cluster, int column, float mean) {
 	final int size = cluster.size();
 	float sum = 0f;
 	float value;
@@ -752,18 +747,18 @@ public class TFA extends AbstractAlgorithm {
 	return sum;
     }
     
-    private float getSampleVariance(Vector cluster, int column, float mean) {
+    protected float getSampleVariance(Vector cluster, int column, float mean) {
 	return(float)Math.sqrt(getSampleNormalizedSum(cluster, column, mean)/(float)(validN-1));
 	
     }    
     
     /*
-    private double getFactorAPValueBalanced(int gene) {
+    protected double getFactorAPValueBalanced(int gene) {
         //double FA = getBalancedFA(gene);
         
     }*/
     
-    private double getPValueFromFDist(double fValue, int groupsDF, int errorDF) {
+    protected double getPValueFromFDist(double fValue, int groupsDF, int errorDF) {
         FDistribution fDist = new FDistribution(groupsDF, errorDF);
         double cumulProb = fDist.cumulative(fValue);
         double pValue = 1 - cumulProb; // (1 - cumulProb) is the two-tailed test p-value
@@ -775,7 +770,7 @@ public class TFA extends AbstractAlgorithm {
         return pValue;
     }
     
-    private double convertNegFValues (double fValue) { //sometimes, if variance is very low, an F Value may be slightly negative due to 
+    protected double convertNegFValues (double fValue) { //sometimes, if variance is very low, an F Value may be slightly negative due to 
         // loss of precision in computation (effectively, F is zero). This makes such values slightly positive (Double.MIN_VALUE)
         double convFValue;
         if ((fValue > (-0.001)) && (fValue < 0)) {
@@ -786,7 +781,7 @@ public class TFA extends AbstractAlgorithm {
         return convFValue;
     }
     
-    private double[] getUnbalancedFValuesAndDfs(Vector[][] currGeneFactorValues) {
+    protected double[] getUnbalancedFValuesAndDfs(Vector[][] currGeneFactorValues) {
         double[][] unadjCellSums = getCellSums(currGeneFactorValues);
         double[][] cellMeans = new double[currGeneFactorValues.length][currGeneFactorValues[0].length];
         
@@ -855,7 +850,7 @@ public class TFA extends AbstractAlgorithm {
         return fValuesAndDfs;
     }
     
-    private double[] getBalancedFValuesAndDfs(Vector[][] currGeneFactorValues) {
+    protected double[] getBalancedFValuesAndDfs(Vector[][] currGeneFactorValues) {
         double[][] cellSums = getCellSums(currGeneFactorValues);
         int sampleSizePerCell = currGeneFactorValues[0][0].size();
         
@@ -895,7 +890,7 @@ public class TFA extends AbstractAlgorithm {
     
 
     
-    private double[] getBalancedMainEffectsFValuesAndDfs(Vector[][] currGeneFactorValues) {
+    protected double[] getBalancedMainEffectsFValuesAndDfs(Vector[][] currGeneFactorValues) {
         // implemented as in Biostatistical Analysis by Zar 4th ed. pg 249. 
         //Without replication in cells, only main effects are tested, and Remainder (Error) terms are the same as
         //the interaction terms in the case with equal replication.
@@ -931,7 +926,7 @@ public class TFA extends AbstractAlgorithm {
      
     
     /*
-    private double getBalancedFA(Vector[][] currGeneFactorVals) {
+    protected double getBalancedFA(Vector[][] currGeneFactorVals) {
         //Vector[][] currGeneFactorVals = getCurrentGeneFactorValues(gene);
         double A = getABalanced(currGeneFactorVals);
         double T = getTBalanced(currGeneFactorVals);
@@ -947,7 +942,7 @@ public class TFA extends AbstractAlgorithm {
         return fValue;
     }
     
-    private double getBalancedFB(Vector[][] currGeneFactorVals) {
+    protected double getBalancedFB(Vector[][] currGeneFactorVals) {
         double B = getBBalanced(currGeneFactorVals);
         double T = getTBalanced(currGeneFactorVals);
         
@@ -962,7 +957,7 @@ public class TFA extends AbstractAlgorithm {
         return fValue;        
     }
     
-    private double getMSErrorBalanced(Vector[][] currGeneFactorVals) {
+    protected double getMSErrorBalanced(Vector[][] currGeneFactorVals) {
         double Y = 0;
         for (int i = 0; i < currGeneFactorVals.length; i++) {
             for (int j = 0; j < currGeneFactorVals[i].length; j++) {
@@ -995,7 +990,7 @@ public class TFA extends AbstractAlgorithm {
     }
     */
     
-    private double getYBalanced(Vector[][] currGeneFactorVals) {
+    protected double getYBalanced(Vector[][] currGeneFactorVals) {
         double Y = 0;
         for (int i = 0; i < currGeneFactorVals.length; i++) {
             for (int j = 0; j < currGeneFactorVals[i].length; j++) {
@@ -1009,7 +1004,7 @@ public class TFA extends AbstractAlgorithm {
         return Y;
     }
     
-    private double getABUnbalanced(double[][] adjCellSums, double adjSampleSize) {
+    protected double getABUnbalanced(double[][] adjCellSums, double adjSampleSize) {
         double sumSquaresCellSums = 0;
         
         for (int i = 0; i < adjCellSums.length; i++) {
@@ -1022,7 +1017,7 @@ public class TFA extends AbstractAlgorithm {
         return ABUnbalanced;
     }
     
-    private double getABBalanced(Vector[][] currGeneFactorVals, double[][] cellSums) {
+    protected double getABBalanced(Vector[][] currGeneFactorVals, double[][] cellSums) {
         double sumSquaresCellSums = 0;
         //double[][] cellSums = getCellSums(currGeneFactorVals);    
         
@@ -1039,7 +1034,7 @@ public class TFA extends AbstractAlgorithm {
         return AB;
     }
     
-    private double getAUnbalanced(double[][] adjCellSums, double adjSampleSize) {
+    protected double getAUnbalanced(double[][] adjCellSums, double adjSampleSize) {
         double sumSquaresA = 0d;
         
         for (int i = 0; i < adjCellSums.length; i++) {
@@ -1055,7 +1050,7 @@ public class TFA extends AbstractAlgorithm {
         return AUnbalanced;
     }
     
-    private double getABalanced(Vector[][] currGeneFactorVals, double[][] cellSums) {
+    protected double getABalanced(Vector[][] currGeneFactorVals, double[][] cellSums) {
         //double[] sumsA = new double[numFactorLevels[0]];
         //double[][] cellSums = getCellSums(currGeneFactorVals);
         double sumSquaresA = 0d;
@@ -1076,7 +1071,7 @@ public class TFA extends AbstractAlgorithm {
         return ABalanced;
     }
     
-    private double getBUnbalanced(double[][] adjCellSums, double adjSampleSize) {
+    protected double getBUnbalanced(double[][] adjCellSums, double adjSampleSize) {
         double sumSquaresB = 0d;    
         
         for (int i = 0; i < adjCellSums[0].length; i++) {
@@ -1092,7 +1087,7 @@ public class TFA extends AbstractAlgorithm {
         return BUnbalanced;
     }
     
-    private double getBBalanced(Vector[][] currGeneFactorVals, double[][] cellSums) {
+    protected double getBBalanced(Vector[][] currGeneFactorVals, double[][] cellSums) {
         //double[][] cellSums = getCellSums(currGeneFactorVals);
         double sumSquaresB = 0d;    
         
@@ -1112,7 +1107,7 @@ public class TFA extends AbstractAlgorithm {
         return BBalanced;
     }
     
-    private double getTBalanced(Vector[][] currGeneFactorVals, double[][] cellSums) {
+    protected double getTBalanced(Vector[][] currGeneFactorVals, double[][] cellSums) {
         //double[][] cellSums = getCellSums(currGeneFactorVals);
         double totalSum = 0;
         for (int i = 0; i < cellSums.length; i++) {
@@ -1127,7 +1122,7 @@ public class TFA extends AbstractAlgorithm {
         return TBalanced;
     }
     
-    private double getTUnbalanced(double[][] adjCellSums, double adjSampleSize) {
+    protected double getTUnbalanced(double[][] adjCellSums, double adjSampleSize) {
         double adjTotalSum = 0d;
         
         for (int i = 0; i < adjCellSums.length; i++) {
@@ -1140,7 +1135,7 @@ public class TFA extends AbstractAlgorithm {
         return TUnbalanced;
     }
     
-    private double[][] getCellSums(Vector[][] currGeneFactorVals) {
+    protected double[][] getCellSums(Vector[][] currGeneFactorVals) {
         double[][] cellSums = new double[currGeneFactorVals.length][currGeneFactorVals[0].length];
         
         //int cellSumsCounter = 0;
@@ -1154,7 +1149,7 @@ public class TFA extends AbstractAlgorithm {
         return cellSums;
     }
     
-    private double[][] getCellMeans(Vector[][] currGeneFactorVals) {
+    protected double[][] getCellMeans(Vector[][] currGeneFactorVals) {
         double[][] cellMeans = new double[currGeneFactorVals.length][currGeneFactorVals[0].length];
         
         //int cellSumsCounter = 0;
@@ -1174,7 +1169,7 @@ public class TFA extends AbstractAlgorithm {
         return cellMeans;
     }    
     
-    private double getSum(Vector vect) {
+    protected double getSum(Vector vect) {
         double sum = 0d;        
         for (int i = 0; i < vect.size(); i++) {
             sum = sum + ((Float)(vect.get(i))).doubleValue();
@@ -1183,7 +1178,7 @@ public class TFA extends AbstractAlgorithm {
         return sum;
     }
     
-    private double getSumSquares(Vector vect) {
+    protected double getSumSquares(Vector vect) {
         double sumSquares = 0d;
         for (int i = 0; i < vect.size(); i++) {
             sumSquares = sumSquares + (((Float)(vect.get(i))).doubleValue())*(((Float)(vect.get(i))).doubleValue());            
@@ -1192,12 +1187,12 @@ public class TFA extends AbstractAlgorithm {
         return sumSquares;
     }
     
-    private double getSumSquaredDiffs(Vector vect) {
+    protected double getSumSquaredDiffs(Vector vect) {
         return ( getSumSquares(vect) - ((getSum(vect)*getSum(vect))/(double)(vect.size())) );
     }
     
     /*
-    private Vector[][] getCurrentGeneAssignments(int gene) {
+    protected Vector[][] getCurrentGeneAssignments(int gene) {
         Vector[][] currGeneAssignments = new Vector[numFactorLevels[0]][numFactorLevels[1]];
         
         for (int i = 0; i < currGeneAssignments.length; i++) {
@@ -1216,7 +1211,7 @@ public class TFA extends AbstractAlgorithm {
     }
      */
     
-    private int[] getPermutedValues(int arrayLength, int[] validArray) {//returns an integer array of length "arrayLength", with the valid values (the currently included experiments) permuted
+    protected int[] getPermutedValues(int arrayLength, int[] validArray) {//returns an integer array of length "arrayLength", with the valid values (the currently included experiments) permuted
         int[] permutedValues = new int[arrayLength];
         for (int i = 0; i < permutedValues.length; i++) {
             permutedValues[i] = i;
@@ -1252,7 +1247,7 @@ public class TFA extends AbstractAlgorithm {
         
     }    
     
-    private FloatMatrix getPermutedMatrix(FloatMatrix inputMatrix, int[] permExpts) {
+    protected FloatMatrix getPermutedMatrix(FloatMatrix inputMatrix, int[] permExpts) {
         FloatMatrix permutedMatrix = new FloatMatrix(inputMatrix.getRowDimension(), inputMatrix.getColumnDimension());
         for (int i = 0; i < inputMatrix.getRowDimension(); i++) {
             for (int j = 0; j < inputMatrix.getColumnDimension(); j++) {
@@ -1262,7 +1257,7 @@ public class TFA extends AbstractAlgorithm {
         return permutedMatrix;
     }    
     
-    private Vector[][] getCurrentGenePermutedFactorValues(int gene) {
+    protected Vector[][] getCurrentGenePermutedFactorValues(int gene) {
         Vector[][] permutedCurrGeneFactorValues = new Vector[numFactorLevels[0]][numFactorLevels[1]];
         Vector validIndices = new Vector();
         for (int i = 0; i < numExps; i++) {
@@ -1301,7 +1296,7 @@ public class TFA extends AbstractAlgorithm {
         return permutedCurrGeneFactorValues;
     }
     
-    private Vector[][] getCurrentGeneFactorValues(int gene) {
+    protected Vector[][] getCurrentGeneFactorValues(int gene) {
         Vector[][] currGeneFactorValues = new Vector[numFactorLevels[0]][numFactorLevels[1]]; 
         
         for (int i = 0; i < currGeneFactorValues.length; i++) {
@@ -1319,7 +1314,7 @@ public class TFA extends AbstractAlgorithm {
         return currGeneFactorValues;
     }
     
-    private Vector[][] getCurrentGeneFactorValuesFromPermMatrix(FloatMatrix permMatrix, int gene) {
+    protected Vector[][] getCurrentGeneFactorValuesFromPermMatrix(FloatMatrix permMatrix, int gene) {
         Vector[][] currGeneFactorValues = new Vector[numFactorLevels[0]][numFactorLevels[1]]; 
         
         for (int i = 0; i < currGeneFactorValues.length; i++) {
@@ -1337,7 +1332,7 @@ public class TFA extends AbstractAlgorithm {
         return currGeneFactorValues;        
     }
     
-    private int getCurrGeneFactorCondition(Vector[][] currGeneFactorAssignments) {
+    protected int getCurrGeneFactorCondition(Vector[][] currGeneFactorAssignments) {
         int[] cellSizes =new int[currGeneFactorAssignments.length*currGeneFactorAssignments[0].length];
         int cellCounter = 0;
         for (int i = 0; i < currGeneFactorAssignments.length; i++) {

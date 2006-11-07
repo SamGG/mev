@@ -62,7 +62,7 @@ public class TFAInitBox2 extends AlgorithmDialog {
     public static final int MIN_P = 10;
     
     boolean okPressed = false;
-    private boolean oneSamplePerCell = false;
+    protected boolean oneSamplePerCell = false;
     Vector exptNames;
     String[] factorNames;
     int[] numFactorLevels;
@@ -113,10 +113,6 @@ public class TFAInitBox2 extends AlgorithmDialog {
         EventListener listener = new EventListener();
         setActionListeners(listener);
         this.addWindowListener(listener);
-
-        if (parentFrame==null)//AMP
-        cancelButton.setEnabled(false);
-        
     }
     
     void buildConstraints(GridBagConstraints gbc, int gx, int gy, int gw, int gh, int wx, int wy) {

@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASE.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-10-24 16:28:01 $
+ * $Revision: 1.9 $
+ * $Date: 2006-11-07 17:27:39 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -22,10 +22,7 @@ import java.util.Hashtable;
 import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import java.io.PrintStream;
-import java.io.FileOutputStream;
-import org.tigr.midas.util.FileBrowser;
-import org.tigr.microarray.mev.cluster.gui.impl.ease.EASETableViewer;
+
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -43,25 +40,26 @@ import org.tigr.util.QSort;
 
 public class EASE extends AbstractAlgorithm {
     
-    private JEASEStatistics jstats;
-    private Vector sampleVector;
-    private Vector populationVector;
+    //EH changed private to protected so AMP can make subclasses
+    protected JEASEStatistics jstats;
+    protected Vector sampleVector;
+    protected Vector populationVector;
     
-    private String [] annotationFileList;
-    private String [][] result;
-    private String [][] hitList;
-    private String [] categoryNames;
+    protected String [] annotationFileList;
+    protected String [][] result;
+    protected String [][] hitList;
+    protected String [] categoryNames;
     /** True if accession numbers are appended.
      */
-    private boolean haveAccessionNumbers = false;
-    private boolean reportEaseScore = false;
-    private AlgorithmEvent event;
-    private Vector headerNames;
-    private DecimalFormat format;
-    private FloatMatrix expData;
+    protected boolean haveAccessionNumbers = false;
+    protected boolean reportEaseScore = false;
+    protected AlgorithmEvent event;
+    protected Vector headerNames;
+    protected DecimalFormat format;
+    protected FloatMatrix expData;
     
-    private boolean stop = false;
-    private boolean performClusterAnalysis;
+    protected boolean stop = false;
+    protected boolean performClusterAnalysis;
     
     long start;
     /** Creates a new instance of ease (Default)
@@ -97,7 +95,7 @@ public class EASE extends AbstractAlgorithm {
      * @throws AlgorithmException
      * @return
      */
-    private AlgorithmData performClusterAnnotationAnalysis(AlgorithmData algorithmData) throws AlgorithmException {
+    protected AlgorithmData performClusterAnnotationAnalysis(AlgorithmData algorithmData) throws AlgorithmException {
         AlgorithmParameters params = algorithmData.getParams();
         
         headerNames = new Vector();
@@ -270,7 +268,7 @@ public class EASE extends AbstractAlgorithm {
      * @param algorithmData
      * @throws AlgorithmException
      * @return  */
-    private AlgorithmData performSlideAnnotationSurvey(AlgorithmData algorithmData) throws AlgorithmException {
+    protected AlgorithmData performSlideAnnotationSurvey(AlgorithmData algorithmData) throws AlgorithmException {
         AlgorithmParameters params = algorithmData.getParams();
         
         headerNames = new Vector();
@@ -377,7 +375,7 @@ public class EASE extends AbstractAlgorithm {
     
     /** Creates header names based on analysis mode.
      */
-    private void intializeHeaderNames(){
+    protected void intializeHeaderNames(){
         if(performClusterAnalysis){
             headerNames.add("Index");
             headerNames.add("File");
@@ -404,7 +402,7 @@ public class EASE extends AbstractAlgorithm {
      * @param hitList List of acc. in each category
      * @return
      */
-    private int [][] getClusters(EaseElementList clusterList, String [][] hitList){
+    protected int [][] getClusters(EaseElementList clusterList, String [][] hitList){
         int [][] clusters = new int[hitList.length][];
         for(int i = 0; i < hitList.length; i++){
             clusters[i] = clusterList.getIndices(hitList[i]);
@@ -415,7 +413,7 @@ public class EASE extends AbstractAlgorithm {
     
     /** Sorts analysis results on stat.
      */
-    private void sortResults(){
+    protected void sortResults(){
         double [] stat = new double[result.length];
         int pValueIndex;
         if(reportEaseScore)
@@ -462,7 +460,7 @@ public class EASE extends AbstractAlgorithm {
     
     /** Sorts survey analysis results on population hits (high --> low)
      */
-    private void sortSurveyResults(){
+    protected void sortSurveyResults(){
         double [] hitCounts = new double[result.length];
         int hitIndex = this.headerNames.indexOf("Pop. Hits");
         hitIndex--; //decrement since no indexes inserted yet.
@@ -501,7 +499,7 @@ public class EASE extends AbstractAlgorithm {
      * @param fileNames File names.
      * @return
      */
-    private String [][] appendAccessions(String [][] resultMatrix, String [] fileNames){
+    protected String [][] appendAccessions(String [][] resultMatrix, String [] fileNames){
         
         if(resultMatrix == null || resultMatrix.length < 1)
             return resultMatrix;
@@ -538,7 +536,7 @@ public class EASE extends AbstractAlgorithm {
     
     /** Builds a result copy
      */
-    private void initializeNewResult(String [][] newResult, String [][] oldResult){
+    protected void initializeNewResult(String [][] newResult, String [][] oldResult){
         for(int i = 0; i < newResult.length; i++){
             for(int j = 0; j < oldResult[0].length; j++){
                 if(j < 1)
@@ -555,7 +553,7 @@ public class EASE extends AbstractAlgorithm {
     
     /** Inserts an index for each record in the result after sorting
      */
-    private void indexResult(){
+    protected void indexResult(){
         if(result == null || result.length < 1)
             return;
         String [][] newResult = new String[result.length][result[0].length+1];
@@ -574,7 +572,7 @@ public class EASE extends AbstractAlgorithm {
      * @param result Result data
      * @throws IOException
      */
-    private void insertAccessions(File file, String [][] result) throws IOException {
+    protected void insertAccessions(File file, String [][] result) throws IOException {
         if(file == null)
             return;
         
@@ -601,7 +599,7 @@ public class EASE extends AbstractAlgorithm {
      * @param fileName File name String
      * @return
      */
-    private File getAccessionFile(String fileName){
+    protected File getAccessionFile(String fileName){
         String sep = System.getProperty("file.separator");
         File file = new File(fileName);
         String accFileName = file.getName();
@@ -613,7 +611,7 @@ public class EASE extends AbstractAlgorithm {
     /** Returns header names based on criteria of the analysis mode and
      * depending on if accessions are found.
      * @return  */
-    private String [] getHeaderNames(){
+    protected String [] getHeaderNames(){
         String [] headerNamesArray = new String[headerNames.size()];
         for(int i = 0; i < headerNamesArray.length; i++){
             headerNamesArray[i] = (String)(headerNames.elementAt(i));
@@ -624,7 +622,7 @@ public class EASE extends AbstractAlgorithm {
     /**
      *  Calculates means for the clusters
      */
-    private FloatMatrix getMeans(FloatMatrix data, int [][] clusters){
+    protected FloatMatrix getMeans(FloatMatrix data, int [][] clusters){
         FloatMatrix means = new FloatMatrix(clusters.length, data.getColumnDimension());
         for(int i = 0; i < clusters.length; i++){
             means.A[i] = getMeans(data, clusters[i]);
@@ -635,7 +633,7 @@ public class EASE extends AbstractAlgorithm {
     /**
      *  Returns a set of means for an element
      */
-    private float [] getMeans(FloatMatrix data, int [] indices){
+    protected float [] getMeans(FloatMatrix data, int [] indices){
         int nSamples = data.getColumnDimension();
         float [] means = new float[nSamples];
         float sum = 0;
@@ -665,7 +663,7 @@ public class EASE extends AbstractAlgorithm {
      * @param clusters cluster indices
      * @return
      */
-    private FloatMatrix getVariances(FloatMatrix data, FloatMatrix means, int [][] clusters){
+    protected FloatMatrix getVariances(FloatMatrix data, FloatMatrix means, int [][] clusters){
         int nSamples = data.getColumnDimension();
         FloatMatrix variances = new FloatMatrix(clusters.length, nSamples);
         for(int i = 0; i < clusters.length; i++){
@@ -682,7 +680,7 @@ public class EASE extends AbstractAlgorithm {
      * @param clusterIndex the index for the cluster to work upon
      * @return
      */
-    private float [] getVariances(FloatMatrix data, FloatMatrix means, int [] indices, int clusterIndex){
+    protected float [] getVariances(FloatMatrix data, FloatMatrix means, int [] indices, int clusterIndex){
         int nSamples = data.getColumnDimension();
         float [] variances = new float[nSamples];
         float sse = 0;
@@ -711,7 +709,7 @@ public class EASE extends AbstractAlgorithm {
     /** Appends a result onto the main result
      * @param resultVector data to append
      */
-    private void appendResult(Vector resultVector){
+    protected void appendResult(Vector resultVector){
         int numCorr = resultVector.size();
         double [] currentArray;
         int rawPIndex = result[0].length;
@@ -743,7 +741,7 @@ public class EASE extends AbstractAlgorithm {
     
     /** Selects and makes calles to various multiplicity corrections.
      */
-    private void pValueCorrections(AlgorithmData inputData){
+    protected void pValueCorrections(AlgorithmData inputData){
         int k = this.result.length;
         double [] pValues = new double[k];
         double [] correctedP = new double[k];
@@ -783,7 +781,7 @@ public class EASE extends AbstractAlgorithm {
      * @param pValues Raw values
      * @return Returns corrected values.
      */
-    private double [] bonferroniCorrection(double [] pValues){
+    protected double [] bonferroniCorrection(double [] pValues){
         int k = pValues.length;
         double [] correctedP = new double[k];
         for(int i = 0; i < k; i++){
@@ -798,7 +796,7 @@ public class EASE extends AbstractAlgorithm {
      * @param pValues input values
      * @return returns corrected values
      */
-    private double [] stepDownBonferroniCorrection(double [] pValues){
+    protected double [] stepDownBonferroniCorrection(double [] pValues){
         int k = pValues.length;
         double [] correctedP = new double[k];
         int m = 0;
@@ -820,7 +818,7 @@ public class EASE extends AbstractAlgorithm {
      * @param pValues input
      * @return corrected output
      */
-    private double [] sidakCorrection(double [] pValues){
+    protected double [] sidakCorrection(double [] pValues){
         int k = pValues.length;
         double [] correctedP = new double[k];
         for(int i = 0; i < k; i++){
@@ -835,7 +833,7 @@ public class EASE extends AbstractAlgorithm {
      * the population.
      * @param p number of permutations
      */
-    private void permutationAnalysis(int p){
+    protected void permutationAnalysis(int p){
         //Get a list of categories, have a corresponding accumulator array
         //Have a population Vector of strings
         //take k elements from here to construct a new sample list
@@ -905,7 +903,7 @@ public class EASE extends AbstractAlgorithm {
     
     /** Returns the maximum number of population hits for any category.
      */
-    private int getMaxPopHits(String [][] result){
+    protected int getMaxPopHits(String [][] result){
         int max = Integer.MIN_VALUE;
         for(int i = 0; i < result.length; i++){
             max = Math.max(max, Integer.parseInt(result[i][4]));
@@ -915,7 +913,7 @@ public class EASE extends AbstractAlgorithm {
     
     /** Returns a random sample vector of indices.
      */
-    private Vector getRandomSampleVector(int sampleSize, Random rand){
+    protected Vector getRandomSampleVector(int sampleSize, Random rand){
         Vector sampleVector = new Vector(sampleSize);
         Vector dummyPopVector = (Vector)populationVector.clone();
         
@@ -935,7 +933,7 @@ public class EASE extends AbstractAlgorithm {
      * @param result
      * @param keys
      * @param accumulator  */
-    private void accumulateHits(String [][] result, String [] keys, int [] accumulator){
+    protected void accumulateHits(String [][] result, String [] keys, int [] accumulator){
         for(int i = 0; i < result.length; i++){
             for(int j = 0; j < keys.length; j++){
                 if((result[i][1]).equals(keys[j])){
@@ -949,7 +947,7 @@ public class EASE extends AbstractAlgorithm {
     
     /** Accumulates results from permutations.
      */
-    private void accumulateBinHits(String [][] newResult, int [] accumulator){
+    protected void accumulateBinHits(String [][] newResult, int [] accumulator){
         
         double minP;
         
@@ -973,7 +971,7 @@ public class EASE extends AbstractAlgorithm {
     
     /** Orders the bootstrap probabilities based on raw probability order.
      */
-    private double [] orderBootStrappedProb(double [] prob){
+    protected double [] orderBootStrappedProb(double [] prob){
         double [] orderedProb = new double[result.length];
         for(int i = 0; i < this.result.length; i++){
             orderedProb[i] = prob[Integer.parseInt(this.result[i][2])];
@@ -986,7 +984,7 @@ public class EASE extends AbstractAlgorithm {
      * @param trimOption Defines trim mode, "NO_TRIM", "N_TRIM", or "PERCENT_TRIM"
      * @param trimValue Trim parameter.
      */
-    private void trimResult(String trimOption, float trimValue){
+    protected void trimResult(String trimOption, float trimValue){
         
         boolean [] flagged = new boolean[result.length];
         int hitIndex;
@@ -1035,27 +1033,5 @@ public class EASE extends AbstractAlgorithm {
         this.categoryNames = newCategoryNames;
     }
     
-
-	public void writeOutput(AlgorithmData result, String fileName) {
-		String dir = fileName.substring(0, fileName
-				.lastIndexOf(FileBrowser.fsep));
-		try {
-			boolean success = (new File(dir)).mkdirs();
-			if (success) 
-			{	
-				PrintStream out = new PrintStream(new FileOutputStream(new File(fileName)));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
 }
-		Object[][] data = result.getObjectMatrix("result-matrix");
-		String[] headerNames = result.getStringArray("header-names");
 
-		if (data == null || data.length < 1)
-			return;
-
-		EASETableViewer tv = new EASETableViewer(headerNames, data, null, null,
-				null, false, true);
-		tv.writeEaseTable(fileName);
-	}
-}
