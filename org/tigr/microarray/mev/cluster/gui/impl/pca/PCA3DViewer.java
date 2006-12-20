@@ -8,9 +8,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: PCA3DViewer.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-05-02 16:56:57 $
- * $Author: eleanorahowe $
+ * $Revision: 1.10 $
+ * $Date: 2006-12-20 15:48:00 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.pca;
@@ -21,9 +21,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.beans.Expression;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Vector;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -46,6 +52,7 @@ public class PCA3DViewer extends ViewerAdapter {
     private static final String OPTIONS_CMD = "options-cmd";
     private static final String SELECTION_AREA_CMD = "select-cmd";
     private static final String SAVE_CMD    = "save-cmd";
+    private static final String SAVE_3D_CMD    = "save-3d-cmd";    
     private static final String SHOW_SELECTION_CMD = "show-selection-cmd";
     private static final String HIDE_SELECTION_BOX_CMD = "hide-selection-box-cmd";
     private static final String SHOW_SPHERES_CMD = "show-spheres-cmd";
@@ -250,6 +257,15 @@ public class PCA3DViewer extends ViewerAdapter {
         menuItem.setActionCommand(SAVE_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
+
+        menu.addSeparator();
+
+        menuItem = new JMenuItem("Save 3D coordinates...", GUIFactory.getIcon("save16.gif"));
+        menuItem.setEnabled(true);
+        menuItem.setActionCommand(SAVE_3D_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
         menu.addSeparator();
         
         menuItem = new JCheckBoxMenuItem("Show selection area");
@@ -465,6 +481,75 @@ public class PCA3DViewer extends ViewerAdapter {
     }
     
     /**
+     * outputs the 3D coordinates
+     * @param outputGenes true if output gene coords
+     */
+    private void output3DCoords() {
+    	
+    	JFileChooser fileChooser;
+    	
+    	fileChooser = new JFileChooser();
+    	
+    	String [] annFields;
+    	Vector sampleAnnFields;
+    	FloatMatrix coordMatrix = U;
+    	
+    	boolean outputGenes = this.geneViewer;
+    	
+    	
+    	if(outputGenes) {
+    		annFields = data.getFieldNames();
+    	} else {
+    		sampleAnnFields = data.getSampleAnnotationFieldNames();
+    		
+    		annFields = new String[sampleAnnFields.size()];
+    		for(int i = 0; i < annFields.length; i++) {
+    			annFields[i] = (String)(sampleAnnFields.get(i));
+    		}
+    	}
+    	
+    	try {
+    		if(fileChooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
+    			File file = fileChooser.getSelectedFile();
+    			
+    			PrintWriter pw = new PrintWriter(new FileWriter(file));
+    			
+    			for(int i = 0; i < annFields.length; i++) {
+    				pw.print(annFields[i]+"\t");
+    			}    		
+    			pw.println("X\tY\tZ");
+    			
+    			int nRows = coordMatrix.getRowDimension();
+    			
+    			if(outputGenes) {
+    				for(int i = 0; i < nRows; i++) {
+    					for(int j = 0; j < annFields.length; j++) {
+    						pw.print(data.getElementAttribute(experiment.getGeneIndexMappedToData(i),j)+"\t");
+    					}    				
+    					pw.print(coordMatrix.get(i,0)+"\t");
+    					pw.print(coordMatrix.get(i,1)+"\t");
+    					pw.println(coordMatrix.get(i,2));    				
+    				}
+    			} else {    			
+    				for(int i = 0; i < nRows; i++) {
+    					for(int j = 0; j < annFields.length; j++) {
+    						pw.print(data.getSampleAnnotation(i, annFields[j])+"\t");
+    					}    				
+    					pw.print(coordMatrix.get(i,0)+"\t");
+    					pw.print(coordMatrix.get(i,1)+"\t");
+    					pw.println(coordMatrix.get(i,2));
+    				}
+    			}
+    			pw.flush();
+    			pw.close();
+    		}
+    	} catch (IOException ioe) {
+    		JOptionPane.showMessageDialog(this.frame, "Error opening or saving to file", "Coordinate ouput Error", JOptionPane.ERROR_MESSAGE);
+    	}
+    }
+    
+    
+    /**
      * The listener to listen to menu items events.
      */
     private class Listener implements ActionListener {
@@ -492,7 +577,10 @@ public class PCA3DViewer extends ViewerAdapter {
                 storeCluster();
             } else if (command.equals(LAUNCH_NEW_SESSION_CMD)){
                 launchNewSession();
+            } else if(command.equals(SAVE_3D_CMD)) {
+            	output3DCoords();
             }
+            
         }        
     }
 }

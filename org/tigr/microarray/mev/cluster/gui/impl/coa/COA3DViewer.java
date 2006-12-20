@@ -18,9 +18,15 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.beans.Expression;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Vector;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -62,8 +68,11 @@ public class COA3DViewer  extends ViewerAdapter {
     private static final String LAUNCH_NEW_SESSION_CMD = "launch-new-session-cmd";
     private static final String LAUNCH_NEW_GENE_SESSION_CMD = "launch-new-gene-session-cmd";
     private static final String LAUNCH_NEW_EXPT_SESSION_CMD = "launch-new-expt-session-cmd";
-    
-    private IData data;
+    private static final String SAVE_3D_GENE_COORDS_CMD = "save-3d-gene-coords-cmd";
+    private static final String SAVE_3D_EXPT_COORDS_CMD = "save-3d-expt-coords-cmd";
+    	
+
+	private IData data;
     private Experiment experiment;
     private COAContent3D content;
     //private JPanel content;
@@ -82,7 +91,8 @@ public class COA3DViewer  extends ViewerAdapter {
     
     /** Creates a new instance of COA3DViewer */
     public COA3DViewer(Frame frame, FloatMatrix U, Experiment experiment, int geneOrExpt) {
-        this.frame = frame;
+
+    	this.frame = frame;
         this.experiment = experiment;
         this.exptID = experiment.getId();
         this.geneOrExpt = geneOrExpt;
@@ -99,7 +109,8 @@ public class COA3DViewer  extends ViewerAdapter {
     }
     
     public COA3DViewer(Frame frame, FloatMatrix U, Experiment experiment, int geneOrExpt, int xAxis, int yAxis, int zAxis) {
-        this.frame = frame;
+
+    	this.frame = frame;
         this.experiment = experiment;
         this.exptID = experiment.getId();
         this.geneOrExpt = geneOrExpt;
@@ -119,7 +130,8 @@ public class COA3DViewer  extends ViewerAdapter {
     }    
     
     public COA3DViewer(Frame frame, FloatMatrix geneUMatrix, FloatMatrix exptUMatrix, Experiment experiment, int geneOrExpt) {
-        this.frame = frame;
+
+    	this.frame = frame;
         this.experiment = experiment;
         this.exptID = experiment.getId();
         this.geneOrExpt = geneOrExpt;
@@ -135,7 +147,8 @@ public class COA3DViewer  extends ViewerAdapter {
     }
     
     public COA3DViewer(Frame frame, FloatMatrix geneUMatrix, FloatMatrix exptUMatrix, Experiment experiment, int geneOrExpt, int xAxis, int yAxis, int zAxis) {
-        this.frame = frame;
+
+    	this.frame = frame;
         this.experiment = experiment;
         this.exptID = experiment.getId();
         this.geneOrExpt = geneOrExpt;
@@ -152,11 +165,13 @@ public class COA3DViewer  extends ViewerAdapter {
         Listener listener2 = new Listener(); // this was an attempt to get the pop up menu to show up over the 3D viewer
         popup2 = createJPopupMenu(listener2); //didn't work because of the native mouse response behavior of the 3D API, but left it in for possible future use  
         getContentComponent().addMouseListener(listener2);        
+
     }    
     
     
     public COA3DViewer(Experiment e, FloatMatrix geneUMatrix, FloatMatrix exptUMatrix, Integer geneOrExpt, FloatMatrix U, Integer xAxis, Integer yAxis, Integer zAxis) {
-	    this.geneOrExpt = geneOrExpt.intValue();
+
+    	this.geneOrExpt = geneOrExpt.intValue();
         this.geneUMatrix = geneUMatrix;
         this.exptUMatrix = exptUMatrix;
         this.U = U;
@@ -164,7 +179,8 @@ public class COA3DViewer  extends ViewerAdapter {
         this.yAxis = yAxis.intValue();
         this.zAxis = zAxis.intValue();   
         setExperiment(e);
-	}
+        
+   	}
     /**
      * @inheritDoc
      */
@@ -366,7 +382,20 @@ public class COA3DViewer  extends ViewerAdapter {
             menuItem.setActionCommand(SHOW_EXPT_TEXT_FROM_BOTH_CMD);
             menuItem.addActionListener(listener);
             menu.add(menuItem);            
-            menu.addSeparator();            
+            menu.addSeparator();
+            
+            menuItem = new JMenuItem("Save 3D Gene Coordinates");
+            menuItem.setEnabled(true);
+            menuItem.setActionCommand(SAVE_3D_GENE_COORDS_CMD);
+            menuItem.addActionListener(listener);
+            menu.add(menuItem);            
+
+            menuItem = new JMenuItem("Save 3D Sample Coordinates");
+            menuItem.setEnabled(true);
+            menuItem.setActionCommand(SAVE_3D_EXPT_COORDS_CMD);
+            menuItem.addActionListener(listener);
+            menu.add(menuItem);            
+            menu.addSeparator();
         }
         else {
             menuItem = new JMenuItem("Store cluster...", GUIFactory.getIcon("new16.gif"));
@@ -843,8 +872,77 @@ public class COA3DViewer  extends ViewerAdapter {
     /** Returns a component to be inserted into the scroll pane row header
      */
     public JComponent getRowHeaderComponent() {
-        return null;
+    	return null;
     }
+    
+    
+    /**
+     * outputs the 3D coordinates
+     * @param outputGenes true if output gene coords
+     */
+    private void output3DCoords(boolean outputGenes) {
+    	
+    	JFileChooser fileChooser;
+    	
+    	fileChooser = new JFileChooser();
+    	
+    	String [] annFields;
+    	Vector sampleAnnFields;
+    	FloatMatrix coordMatrix;
+    	
+    	
+    	if(outputGenes) {
+    		annFields = data.getFieldNames();
+    		coordMatrix = this.geneUMatrix;
+    	} else {
+    		sampleAnnFields = data.getSampleAnnotationFieldNames();
+    		coordMatrix = this.exptUMatrix;
+    		
+    		annFields = new String[sampleAnnFields.size()];
+    		for(int i = 0; i < annFields.length; i++) {
+    			annFields[i] = (String)(sampleAnnFields.get(i));
+    		}
+    	}
+    	try {
+    		if(fileChooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
+    			File file = fileChooser.getSelectedFile();
+    			
+    			PrintWriter pw = new PrintWriter(new FileWriter(file));
+    			
+    			for(int i = 0; i < annFields.length; i++) {
+    				pw.print(annFields[i]+"\t");
+    			}    		
+    			pw.println("X\tY\tZ");
+    			
+    			int nRows = coordMatrix.getRowDimension();
+    			
+    			if(outputGenes) {
+    				for(int i = 0; i < nRows; i++) {
+    					for(int j = 0; j < annFields.length; j++) {
+    						pw.print(data.getElementAttribute(experiment.getGeneIndexMappedToData(i),j)+"\t");
+    					}    				
+    					pw.print(coordMatrix.get(i,0)+"\t");
+    					pw.print(coordMatrix.get(i,1)+"\t");
+    					pw.println(coordMatrix.get(i,2));    				
+    				}
+    			} else {    			
+    				for(int i = 0; i < nRows; i++) {
+    					for(int j = 0; j < annFields.length; j++) {
+    						pw.print(data.getSampleAnnotation(i, annFields[j])+"\t");
+    					}    				
+    					pw.print(coordMatrix.get(i,0)+"\t");
+    					pw.print(coordMatrix.get(i,1)+"\t");
+    					pw.println(coordMatrix.get(i,2));
+    				}
+    			}
+    			pw.flush();
+    			pw.close();
+    		}
+    	} catch (IOException ioe) {
+    		JOptionPane.showMessageDialog(this.frame, "Error opening or saving to file", "Coordinate ouput Error", JOptionPane.ERROR_MESSAGE);
+    	}
+    }
+    
     
     /**
      * The listener to listen to menu items events.
@@ -890,6 +988,10 @@ public class COA3DViewer  extends ViewerAdapter {
                 launchNewGeneSessionFromBoth();
             } else if (command.equals(LAUNCH_NEW_EXPT_SESSION_CMD)) {
                 launchNewExptSessionFromBoth();
+            } else if (command.equals(SAVE_3D_GENE_COORDS_CMD)) {
+            	output3DCoords(true);
+            } else if (command.equals(SAVE_3D_EXPT_COORDS_CMD)) {
+            	output3DCoords(false);            	
             }
         }     
         
