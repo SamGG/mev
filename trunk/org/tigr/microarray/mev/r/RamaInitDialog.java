@@ -28,6 +28,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -206,13 +207,14 @@ public class RamaInitDialog extends AlgorithmDialog {
 		returnPanel.add( leftPanel );
 		returnPanel.add( labelPanel );
 		returnPanel.add( comboPanel );
+		//returnPanel.add( comboScroll );
 		
 		return returnPanel;
 	}//createParamPanel()
 	
 	
 	//need to list the hybs and let user label exp vs control
-	private JPanel createTwoColorPanel( String[] hybNames, int dataTypeP ) {
+	private JScrollPane createTwoColorPanel( String[] hybNames, int dataTypeP ) {
 		//JPanel for listing the hybs and the radio buttons and check boxes
 		JPanel listPanel = new JPanel();
 		BoxLayout hybBox = new BoxLayout( listPanel, BoxLayout.Y_AXIS );
@@ -332,9 +334,15 @@ public class RamaInitDialog extends AlgorithmDialog {
 			listPanel.add( rowPanel );
 		}
 
+		//add comboPanel to jsp so it can scroll when needed
+		JScrollPane comboScroll = new JScrollPane( listPanel );
+		comboScroll.setPreferredSize(new Dimension(450, 280));
+		comboScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		comboScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+
 		listPanel.add( Box.createVerticalGlue() );
 		listPanel.setBorder( BorderFactory.createLineBorder( Color.LIGHT_GRAY, 1 ) );
-		return listPanel;
+		return comboScroll;
 	}
 	
 	/**
@@ -440,7 +448,7 @@ public class RamaInitDialog extends AlgorithmDialog {
 	 * @return
 	 */
 	private boolean atLeastTwo( RHybSet rhs ) {
-		Vector vRamaHyb = rhs.getVRamaHyb();
+		Vector vRamaHyb = rhs.getVRHyb();
 		
 		int iOne = 0;
 		int iTwo = 0;
@@ -470,7 +478,7 @@ public class RamaInitDialog extends AlgorithmDialog {
 	 * @return
 	 */
 	private boolean isBalanced( RHybSet rhs ) {
-		Vector vRamaHyb = rhs.getVRamaHyb();
+		Vector vRamaHyb = rhs.getVRHyb();
 		
 		int iTreated = 0;
 		int iControl = 0;

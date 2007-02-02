@@ -28,6 +28,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -88,9 +89,8 @@ public class BridgeInitDialog extends AlgorithmDialog {
 	
 	
 	/**
-	 * @param parent
-	 * @param title
-	 * @param modal
+	 * Constructor
+	 * @return
 	 */
 	public BridgeInitDialog( Frame parent, String[] hybNames, int dataTypeP ) {
 		super( parent, "Bridge Initialization Dialog", true );
@@ -122,6 +122,10 @@ public class BridgeInitDialog extends AlgorithmDialog {
 	}//constructor
 	
 	
+	/**
+	 * Creates the panel with all datatype selection buttons
+	 * @return
+	 */
 	private JPanel createDataTypePanel() {
 		Font font11 = new Font( "Arial", Font.PLAIN, 11 );
 		Font font = new Font( "Arial", Font.PLAIN, 12 );
@@ -270,7 +274,7 @@ public class BridgeInitDialog extends AlgorithmDialog {
 	
 	
 	//need to list the hybs and let user label exp vs control
-	private JPanel createHybPanel( String[] hybNames, int dataTypeP ) {
+	private JScrollPane createHybPanel( String[] hybNames, int dataTypeP ) {
 		//JPanel for listing the hybs and the radio buttons and check boxes
 		JPanel listPanel = new JPanel();
 		BoxLayout hybBox = new BoxLayout( listPanel, BoxLayout.Y_AXIS );
@@ -391,10 +395,15 @@ public class BridgeInitDialog extends AlgorithmDialog {
 			this.vRHyb.add( hyb );
 			listPanel.add( rowPanel );
 		}
+		
+		JScrollPane comboScroll = new JScrollPane( listPanel );
+		comboScroll.setPreferredSize(new Dimension(450, 280));
+		comboScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		comboScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
 		listPanel.add( Box.createVerticalGlue() );
 		listPanel.setBorder( BorderFactory.createLineBorder( Color.LIGHT_GRAY, 1 ) );
-		return listPanel;
+		return comboScroll;
 	}
 	
 	/**
