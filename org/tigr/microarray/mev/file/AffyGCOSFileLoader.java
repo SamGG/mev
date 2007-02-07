@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: AffyGCOSFileLoader.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-07-07 13:15:55 $
+ * $Revision: 1.10 $
+ * $Date: 2007-02-07 19:16:05 $
  * $Author: wwang67 $
  * $State: Exp $
  */
@@ -75,6 +75,7 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
     }
     
     public Vector loadExpressionFiles() throws IOException {
+    	
         return loadAffyGCOSExpressionFile(new File(this.sflp.pathTextField.getText()));
     }
     
@@ -154,6 +155,7 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
             		experimentCount = (ss.countTokens()+1- preExperimentColumns)/2;
             	if(sflp.referenceRadioButton.isSelected())
             		experimentCount = (ss.countTokens()+1- preExperimentColumns)/3;
+            	
             	slideDataArray = new ISlideData[experimentCount];
                 slideDataArray[0] = new SlideData(rRows, rColumns);
                 slideDataArray[0].setSlideFileName(f.getPath());
@@ -224,6 +226,7 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                         cy5 = Float.NaN;
                     }
                     if(i==0){
+                    	//System.out.print(intensities[1]);
                     	slideDataArray[i].setIntensities(counter - preSpotRows, intensities[0], intensities[1]);
                     	//sde.setExtraFields(extraFields);
                     	 if(sflp.referenceRadioButton.isSelected()){
@@ -263,7 +266,7 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
             	
             this.setFileProgress(counter);
            	counter++;
-           	
+           	//System.out.print(counter);
         	}
         reader.close();
         
