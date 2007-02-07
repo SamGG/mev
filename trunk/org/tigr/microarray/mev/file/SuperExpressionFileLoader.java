@@ -4,9 +4,9 @@
  */
 /*
  * $RCSfile: SuperExpressionFileLoader.java,v $
- * $Revision: 1.16 $
- * $Date: 2006-05-15 20:30:08 $
- * $Author: eleanorahowe $
+ * $Revision: 1.17 $
+ * $Date: 2007-02-07 19:17:09 $
+ * $Author: wwang67 $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.file;
@@ -143,8 +143,8 @@ public class SuperExpressionFileLoader {
 		int defaultSelection = 0;
 
 
-		fileLoaders = new ExpressionFileLoader[12];
-		fileLoaders[0] = new MevFileLoader(this);
+		fileLoaders = new ExpressionFileLoader[13];
+		fileLoaders[0] = new StanfordFileLoader(this);
 
 		fileLoaders[1] = null;
 		fileLoaders[2] = null;
@@ -157,7 +157,8 @@ public class SuperExpressionFileLoader {
 		fileLoaders[9] = null;
 		fileLoaders[10] = null;
 		fileLoaders[11] = null; /* Raktim, CGH Loader */
-
+		fileLoaders[12] = null;
+		
 		selectedFileLoader = fileLoaders[defaultSelection];
 
 		fileFilters = new FileFilter[fileLoaders.length];
@@ -181,10 +182,10 @@ public class SuperExpressionFileLoader {
 		
 		menuItem[0].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if(st=="Hint to File Format"){
+				if(st=="File Format Hint"){
 					helpWindow("TDMS");
 				}else{
-				changeSelectedFileFilterAndLoader(1);
+				changeSelectedFileFilterAndLoader(0);
 				filetype.setText("Tab Delimited, Multiple Sample Files (TDMS) (*.*)");
 				}
 			}
@@ -199,7 +200,7 @@ public class SuperExpressionFileLoader {
 				if(st=="File Format Hint"){
 				  HelpWindowDialog hwd= new HelpWindowDialog(mainFrame,HelpWindowDialog.createText("Mev"));
 				}else{
-				changeSelectedFileFilterAndLoader(0);
+				changeSelectedFileFilterAndLoader(1);
 				filetype.setText("MeV Files(*.mev)");
 				}
 			}
@@ -209,7 +210,7 @@ public class SuperExpressionFileLoader {
 		subMenuItem[1]=new JMenuItem("TIGR ArrayViewer (*.tav) Files");
 		subMenuItem[1].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if(st=="Hint to File Format"){
+				if(st=="File Format Hint"){
 					  HelpWindowDialog hwd =new HelpWindowDialog(mainFrame,HelpWindowDialog.createText("Tav"));
 					}else{
 				changeSelectedFileFilterAndLoader(2);
@@ -223,11 +224,11 @@ public class SuperExpressionFileLoader {
 		
 		menuItem[2] = new JMenu("Affymetrix Files");
 		
-        subMenuItem= new JMenuItem[4];
+        subMenuItem= new JMenuItem[5];
         subMenuItem[0]=new JMenuItem("Affymetrix GCOS(using MAS5)Files");
         subMenuItem[0].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if(st=="Hint to File Format"){
+				if(st=="File Format Hint"){
 					  helpWindow("GCOS");
 					}else{
 				changeSelectedFileFilterAndLoader(7);
@@ -241,7 +242,7 @@ public class SuperExpressionFileLoader {
 		menuItem[2].add(subMenuItem[1]);
 		subMenuItem[1].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if(st=="Hint to File Format"){
+				if(st=="File Format Hint"){
 					  helpWindow("dChip");
 					}else{
 				changeSelectedFileFilterAndLoader(10);
@@ -254,7 +255,7 @@ public class SuperExpressionFileLoader {
 		menuItem[2].add(subMenuItem[2]);
 		subMenuItem[2].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if(st=="Hint to File Format"){
+				if(st=="File Format Hint"){
 					  helpWindow("GW");
 					}else{
 				changeSelectedFileFilterAndLoader(6);
@@ -267,11 +268,23 @@ public class SuperExpressionFileLoader {
 		menuItem[2].add(subMenuItem[3]);
 		subMenuItem[3].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if(st=="Hint to File Format"){
+				if(st=="File Format Hint"){
 					  helpWindow("bioconductor");
 				}else{
 				changeSelectedFileFilterAndLoader(5);
 				filetype.setText("Bioconductor(using MAS5) Files");
+			}
+		}
+		});
+		subMenuItem[4] = new JMenuItem("RMA Files");
+		menuItem[2].add(subMenuItem[4]);
+		subMenuItem[4].addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				if(st=="File Format Hint"){
+					  helpWindow("RMA");
+				}else{
+				changeSelectedFileFilterAndLoader(12);
+				filetype.setText("RMA Files");
 			}
 		}
 		});
@@ -281,7 +294,7 @@ public class SuperExpressionFileLoader {
 		menuItem[3] = new JMenuItem("CGH");
 		menuItem[3].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if(st=="Hint to File Format"){
+				if(st=="File Format Hint"){
 					  helpWindow("CGH");
 				}else{
 				changeSelectedFileFilterAndLoader(11);
@@ -296,7 +309,7 @@ public class SuperExpressionFileLoader {
 		subMenuItem[0]=new JMenuItem("GEO SOFT Affymetrix Format Files");
 		subMenuItem[0].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if(st=="Hint to File Format"){
+				if(st=="File Format Hint"){
 					HelpWindowDialog hwd =new HelpWindowDialog(mainFrame,HelpWindowDialog.createText("GEOaffy"));
 				}else{
 				changeSelectedFileFilterAndLoader(8);
@@ -309,7 +322,7 @@ public class SuperExpressionFileLoader {
 		subMenuItem[1]=new JMenuItem("GEO SOFT Two Channel Format Files");
 		subMenuItem[1].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if(st=="Hint to File Format"){
+				if(st=="File Format Hint"){
 					HelpWindowDialog hwd =new HelpWindowDialog(mainFrame,HelpWindowDialog.createText("GEOtwo"));
 				}else{
 				changeSelectedFileFilterAndLoader(9);
@@ -327,7 +340,7 @@ public class SuperExpressionFileLoader {
 		subMenuItem[0]=new JMenuItem("GenePix Format Files");
 		subMenuItem[0].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if(st=="Hint to File Format"){
+				if(st=="File Format Hint"){
 					HelpWindowDialog hwd =new HelpWindowDialog(mainFrame,HelpWindowDialog.createText("GenePix"));
 				}else{
 				changeSelectedFileFilterAndLoader(3);
@@ -340,7 +353,7 @@ public class SuperExpressionFileLoader {
 		subMenuItem[1]=new JMenuItem("Agilent Format Files");
 		subMenuItem[1].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if(st=="Hint to File Format"){
+				if(st=="File Format Hint"){
 					HelpWindowDialog hwd =new HelpWindowDialog(mainFrame,HelpWindowDialog.createText("Agilent"));
 				}else{
 				changeSelectedFileFilterAndLoader(4);
@@ -376,7 +389,7 @@ public class SuperExpressionFileLoader {
 		
 		//HeaderImagePanel header = new HeaderImagePanel();
 		fileFilterLabel = new JLabel("Selected File Type:");
-		filetype=new JTextField("Default: MeV Files (*.mev and *.ann)");
+		filetype=new JTextField("Default:Tab Delimited, Multiple Sample Files (TDMS) (*.*)");
 		filetype.setEditable(false);
 		fileFilterPanel = new JPanel();
 		fileFilterPanel.setLayout(new GridBagLayout());
@@ -500,7 +513,7 @@ public class SuperExpressionFileLoader {
 			loader = fileLoaders[0];
 			break;
 		case 1:
-			loader = new StanfordFileLoader(this);
+			loader = new MevFileLoader(this);
 			break;
 		case 2:
 			loader = new TavFileLoader(this);
@@ -534,8 +547,10 @@ public class SuperExpressionFileLoader {
 		case 11:
             loader = new CGHStanfordFileLoader(this); /* Raktim, for CGH Loader */
             break;
+		case 12:
+			loader =new RMAFileLoader(this);//wwang for RMA
 		default:
-			loader = new MevFileLoader(this);
+			loader = new StanfordFileLoader(this);
 			break;
 		}
 		fileLoaders[target] = loader;
@@ -589,10 +604,10 @@ public class SuperExpressionFileLoader {
 		String desc;
 		switch (target) {
 		case 0:
-			desc = "MeV Files (*.mev and *.ann)";
+			desc = "Tab Delimited, Multiple Sample Files (TDMS) (*.*)";
 			break;
 		case 1:
-			desc = "Tab Delimited, Multiple Sample Files (TDMS) (*.*)";
+			desc = "MeV Files (*.mev and *.ann)";
 			break;
 		case 2:
 			desc = "TIGR ArrayViewer Files (*.tav)";
@@ -626,8 +641,12 @@ public class SuperExpressionFileLoader {
         case 11:
             desc = "CGH Tab Delimited, Multiple Sample Files (*.*)"; /* Raktim, CGH Files */
             break;
+        case 12:
+            desc = "RMA Files (*.*)"; /* wwang RMA Files */
+            break;
 		default:
-			desc = "MeV Files (*.mev and *.ann)";
+			desc = "Tab Delimited, Multiple Sample Files (TDMS) (*.*)";
+			
 			break;
 		}
 		return desc;
@@ -749,7 +768,7 @@ public class SuperExpressionFileLoader {
 			try {
 				selectedFileLoader.showModal();
 				data = selectedFileLoader.loadExpressionFiles();
-				if (loaderIndex == 1 || loaderIndex == 9 || loaderIndex == 11) /* Raktim, added check for 11, CGH Data */
+				if (loaderIndex == 0 || loaderIndex == 9 || loaderIndex == 11||loaderIndex==12) /* Raktim, added check for 11, CGH Data */
 					dataType = IData.DATA_TYPE_RATIO_ONLY;
 				else if(loaderIndex == 5){
 					dataType = ((Mas5FileLoader)selectedFileLoader)
@@ -769,7 +788,10 @@ public class SuperExpressionFileLoader {
 				}else if (loaderIndex == 10) {
 					dataType = ((DFCI_CoreFileLoader) selectedFileLoader)
 					.getAffyDataType();	
-				}else 
+				/*}else if (loaderIndex == 12) {
+					dataType = ((RMAFileLoader) selectedFileLoader)
+					.getAffyDataType();	
+				*/}else 
 					dataType = IData.DATA_TYPE_TWO_INTENSITY;
 				selectedFileLoader.dispose();
 				updateDataPath(selectedFileLoader.getFilePath());

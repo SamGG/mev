@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: StanfordFileLoader.java,v $
- * $Revision: 1.11 $
- * $Date: 2006-04-10 13:44:15 $
+ * $Revision: 1.12 $
+ * $Date: 2007-02-07 19:16:49 $
  * $Author: wwang67 $
  * $State: Exp $
  */
@@ -256,6 +256,7 @@ public class StanfordFileLoader extends ExpressionFileLoader {
             ss.init(currentLine);
             if (counter == 0) { // parse header
                 int experimentCount = ss.countTokens()+1 - preExperimentColumns;
+               //System.out.print(experimentCount+"\n");
                 slideDataArray = new ISlideData[experimentCount];
                 slideDataArray[0] = new SlideData(rRows, rColumns);
                 slideDataArray[0].setSlideFileName(f.getPath());
@@ -320,7 +321,9 @@ public class StanfordFileLoader extends ExpressionFileLoader {
             }
             
             this.setFileProgress(counter);
+            
             counter++;
+            //System.out.print(counter+"\t");
         }
         reader.close();
         
