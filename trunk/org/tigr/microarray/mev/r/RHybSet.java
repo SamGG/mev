@@ -6,31 +6,31 @@ package org.tigr.microarray.mev.r;
 import java.util.Vector;
 
 /**
- * RamaHybSet is the group of slides loaded into MeV and assigned to be "Ramafied"
+ * RHybSet is a group of RHyb objects representing the slides loaded into MeV
  * 
  * @author iVu
  */
 public class RHybSet {
-	private Vector vRamaHyb;
+	private Vector vRHyb;
 	private boolean isFlip;
 	
 	
-	public RHybSet( Vector vRamaHybP ) {
-		this.vRamaHyb = vRamaHybP;
-		this.determineFlipness( vRamaHybP );
+	public RHybSet( Vector vRHybP ) {
+		this.vRHyb = vRHybP;
+		this.determineFlipness( vRHybP );
 	}//constructor
 	
 	
 	/**
-	 * Just look through the RamaHybs to see if they're all the same, or if there
+	 * Just look through the RHybs to see if they're all the same, or if there
 	 * are flipped ones.
-	 * @param vRamaHybP
+	 * @param vRHybP
 	 */
-	private void determineFlipness( Vector vRamaHybP ) {
+	private void determineFlipness( Vector vRHybP ) {
 		this.isFlip = false;
 		boolean controlCy3 = false;
-		for( int i = 0; i < vRamaHybP.size(); i ++ ) {
-			RHyb hyb = ( RHyb ) vRamaHybP.elementAt( i );
+		for( int i = 0; i < vRHybP.size(); i ++ ) {
+			RHyb hyb = ( RHyb ) vRHybP.elementAt( i );
 			if( i == 0 ) {
 				controlCy3 = hyb.controlCy3();
 			} else {
@@ -44,11 +44,18 @@ public class RHybSet {
 		}
 	}//determineFlipness()
 	
-	
+	/**
+	 * Returns true if this was a flip color experiment
+	 * @return
+	 */
 	public boolean isFlip() {
 		return this.isFlip;
 	}
-	public Vector getVRamaHyb() {
-		return this.vRamaHyb;
+	/**
+	 * Returns a Vector of RHyb objects
+	 * @return
+	 */
+	public Vector getVRHyb() {
+		return this.vRHyb;
 	}
 }//end class

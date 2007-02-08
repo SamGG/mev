@@ -8,6 +8,9 @@ import java.awt.Frame;
 import javax.swing.JOptionPane;
 
 /**
+ * Singleton type for managing Rconnections.  When getConnection() is called, 
+ * the existing connection is returned.  If none exists, one is created and 
+ * returned.
  * @author iVu
  */
 public class RconnectionManager {

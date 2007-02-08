@@ -33,6 +33,17 @@ import org.tigr.microarray.mev.cluster.gui.impl.usc.Reader;
 import org.tigr.microarray.mev.cluster.gui.impl.usc.USCTextFileFilter;
 
 /**
+ * This class is generalized for assigning some type of label to some type of 
+ * entity.  Essentially, there is an array of named objects wherein each object 
+ * in the array can be assigned an arbitrary value of another array
+ * 
+ * The array of assignees is displayed in a column with a JComboBox.  The JComboBox 
+ * is populated with the Strings in the comboNamesP String[].  I chose JComboBoxes 
+ * rather than an matrix of JCheckBoxes because it allows users to use the keyboard 
+ * to select the pull down box item rather than being forced into using the mouse.  
+ * This can be quite a bit less tedious for large lists.
+ * 
+ * This class also allows the user to save their assignments for obvious reasons.
  * @author iVu
  */
 public class ClassAssigner {
@@ -54,8 +65,8 @@ public class ClassAssigner {
 	
 	/**
 	 * Constructor
-	 * @param rowNamesP
-	 * @param comboNamesP
+	 * @param rowNamesP	Names of the objects to be assigned something
+	 * @param comboNamesP	Names of the assignment values
 	 */
 	public ClassAssigner( String[] rowNamesP, String[] comboNamesP ) {
 		this.rowNames = rowNamesP;
@@ -409,10 +420,17 @@ public class ClassAssigner {
 		
 		for( int i = 0; i < this.vComboBox.size(); i ++ ) {
 			JComboBox box = ( JComboBox ) this.vComboBox.elementAt( i );
+			String selectedString = ( String ) box.getSelectedItem();
+			if( selectedString.equals( ClassAssigner.TEST_CLASS_STRING ) ) {
+				toReturn = true;
+				break;
+			}
+			/*
 			if( box.getSelectedIndex() != this.comboNames.length ) {
 				toReturn = true;
 				break;
 			}
+			*/
 		}
 		
 		return toReturn;
