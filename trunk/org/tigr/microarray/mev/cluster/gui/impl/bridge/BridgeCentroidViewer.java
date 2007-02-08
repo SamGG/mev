@@ -93,7 +93,7 @@ public class BridgeCentroidViewer extends JPanel implements IViewer, java.io.Ser
     private String yAxisDenominator;
     
     
-    public BridgeCentroidViewer() { }
+    //public BridgeCentroidViewer() { }
     /**
      * Constructs a <code>CentroidViewer</code> for specified
      * experiment and clusters.

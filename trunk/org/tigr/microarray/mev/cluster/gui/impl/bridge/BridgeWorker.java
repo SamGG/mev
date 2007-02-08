@@ -74,7 +74,7 @@ public class BridgeWorker extends SwingWorker {
         } catch( IOException e ) {
             e.printStackTrace();
         }
-    }//writeFile()
+    }//writeFile()http://www.youtube.com/watch?v=XpO2U-mXvsk
 	
 	
 	public Object construct() {

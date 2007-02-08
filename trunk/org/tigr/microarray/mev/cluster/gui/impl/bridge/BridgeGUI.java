@@ -52,7 +52,15 @@ public class BridgeGUI implements IClusterGUI {
 	private String dataPath;
 	
 	
-	
+	/**
+	 * Main method handling Bridge execution.
+	 * 
+	 * It first determines what type of data was loaded into MeV.  Bridge only works
+	 * with 2 channel intensity data.  
+	 * 
+	 * After doing some other error trapping, 
+	 * this.bridgify() is called, returning a BridgeResult object.
+	 */
 	public DefaultMutableTreeNode execute(IFramework framework)
 			throws AlgorithmException {
 		this.dataPath = TMEV.getDataPath();
@@ -149,7 +157,7 @@ public class BridgeGUI implements IClusterGUI {
 	
 	
 	/**
-	 * 
+	 * Procedural method, controlling user dialogs.
 	 * @param framework
 	 * @param data
 	 * @param dataType
@@ -192,8 +200,8 @@ public class BridgeGUI implements IClusterGUI {
 			
 			if( bhs.isFlip() ) {	//dealing with a dye swap experiment
 				//Split into color state
-				Vector vTreatCy3 = this.getVRamaHybTreatCy3( bhs.getVRamaHyb() );
-				Vector vTreatCy5 = this.getVRamaHybTreatCy5( bhs.getVRamaHyb() );
+				Vector vTreatCy3 = this.getVRamaHybTreatCy3( bhs.getVRHyb() );
+				Vector vTreatCy5 = this.getVRamaHybTreatCy5( bhs.getVRHyb() );
 				
 				sData = rDataFormatter.rSwapString( BridgeGUI.R_VECTOR_NAME, vTreatCy3, vTreatCy5 );
 				iGene = data.getExperiment().getNumberOfGenes();
@@ -202,10 +210,10 @@ public class BridgeGUI implements IClusterGUI {
 				iColorKount = iHybKount * 2;
 				iTwo = iHybKount + 1;
 			} else {	//not dye swap
-				sData = rDataFormatter.rNonSwapString( BridgeGUI.R_VECTOR_NAME, bhs.getVRamaHyb() );
+				sData = rDataFormatter.rNonSwapString( BridgeGUI.R_VECTOR_NAME, bhs.getVRHyb() );
 				iGene = data.getExperiment().getNumberOfGenes();
 				nbCol1 = 0;
-				iHybKount = bhs.getVRamaHyb().size();
+				iHybKount = bhs.getVRHyb().size();
 				iColorKount = iHybKount * 2;
 				iTwo = iHybKount + 1;
 			}//end rhs.isFlip() else
@@ -321,7 +329,7 @@ public class BridgeGUI implements IClusterGUI {
 	
 	
 	/**
-	 * 
+	 * Creates the mcmc R command line text
 	 * @param iGene
 	 * @param iHybKount
 	 * @param iOne
@@ -359,7 +367,8 @@ public class BridgeGUI implements IClusterGUI {
 		} else {
 			sb.append( "TRUE" );
 		}
-		sb.append( ", verbose = TRUE )" );
+		//sb.append( ", verbose = TRUE )" );
+		sb.append( ", all.out = FALSE, verbose = FALSE )" );
 		//System.out.println(sb.toString());
 		return sb.toString();
 		//return "mcmc.hiv <- bridge.2samples( hiv[ 1:10 , c( 1:2 )], hiv[ 1:10, c( 2:2 )], B = 21000, min.iter = 1000, batch = 1, mcmc.obj = NULL, affy = FALSE, verbose = TRUE )";
@@ -467,7 +476,7 @@ public class BridgeGUI implements IClusterGUI {
 
 
     /**
-     * 
+     * Save the results to a file
      * @param gamma1
      * @param gamma2
      * @param genes
@@ -528,7 +537,11 @@ public class BridgeGUI implements IClusterGUI {
         }
     }//onSaveGeneList()
     
-
+    
+    /**
+     * Updates the TMEV.datapath static variable and tmev.cfg file
+     * @param dataPath
+     */
 	private void updateDataPath(String dataPath) {
 		if (dataPath == null)
 			return;
