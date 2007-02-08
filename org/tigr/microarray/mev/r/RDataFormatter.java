@@ -8,7 +8,8 @@ import java.util.Vector;
 import org.tigr.microarray.mev.cluster.gui.IData;
 
 /**
- *
+ * This is a generic data formatting class.  If the data is dye-swapped, use 
+ * rSwapString().  If not, use rNonSwapString().
  * 
  * @author iVu
  */
@@ -16,11 +17,26 @@ public class RDataFormatter {
 	private IData data;
 	
 	
+	/**
+	 * Constructor.
+	 * @param dataP 
+	 */
 	public RDataFormatter( IData dataP ) {
 		this.data = dataP;
 	}
 	
 	
+	/**
+	 * This method returns a string that can be inserted into an Rconnection.eval() 
+	 * statement.  It takes 2 Vectors as parameters.  vTreatCy3 is the Vector of 
+	 * RHyb objects in which the Treated sample was labeled with Cy3.  vTreatCy5 
+	 * is naturally the opposite case.  The returned String is a comma-delimited, 
+	 * concatenation of [ treatedCy3, treatedCy5, controlCy3, controlCy5 ].
+	 * @param dataName	Name to be assigned for this data object in R
+	 * @param vTreatCy3	Vector of RHyb objects where the treated sample is Cy3
+	 * @param vTreatCy5	Vector of RHyb objects where the treated sample is Cy5
+	 * @return String [ treatedCy3, treatedCy5, controlCy3, controlCy5 ]
+	 */
 	public String rSwapString( String dataName, Vector vTreatCy3, Vector vTreatCy5 ) {
 		//System.out.println("ramaSwapString()");
 		StringBuffer sbTreat = new StringBuffer( dataName + " <- c(" );
@@ -47,9 +63,9 @@ public class RDataFormatter {
 				
 				float cy3 = this.data.getCY3( hybIndex, g );
 				cy3 ++;
-				//if( cy3 == 0 ) {
-					//cy3 = 0.1f;
-				//}
+				if( cy3 < 0 ) {
+					cy3 = 0.0001f;
+				}
 				sbTreat.append( cy3 );
 				//sbTreat.append( this.data.getCY3( hybIndex, g ) );
 				//System.out.println( "TreatCy3("+i+","+g+"):" + data.getCY3( hybIndex, g ) );
@@ -72,9 +88,9 @@ public class RDataFormatter {
 				
 				float cy5 = this.data.getCY5( hybIndex, g );
 				cy5 ++;
-				//if( cy5 == 0 ) {
-					//cy5 = 0.1f;
-				//}
+				if( cy5 < 0 ) {
+					cy5 = 0.0001f;
+				}
 				sbTreat.append( cy5 );
 				//sbTreat.append( this.data.getCY5( hybIndex, g ) );
 				//System.out.println( "TreatCy5("+i+","+g+"):" + data.getCY5( hybIndex, g ) );
@@ -99,9 +115,9 @@ public class RDataFormatter {
 				
 				float cy5 = this.data.getCY5( hybIndex, g );
 				cy5++;
-				//if( cy5 == 0 ) {
-				//	cy5 = 0.1f;
-				//}
+				if( cy5 < 0 ) {
+					cy5 = 0.0001f;
+				}
 				sbTreat.append( cy5 );
 				//sbTreat.append( this.data.getCY5( hybIndex, g ) );
 				//System.out.println( "ControlCy3("+i+","+g+"):" + data.getCY5( hybIndex, g ) );
@@ -124,9 +140,9 @@ public class RDataFormatter {
 				
 				float cy3 = this.data.getCY3( hybIndex, g );
 				cy3 ++;
-				//if( cy3 == 0 ) {
-				//	cy3 = 0.1f;
-				//}
+				if( cy3 < 0 ) {
+					cy3 = 0.0001f;
+				}
 				sbTreat.append( cy3 );
 				//sbTreat.append( this.data.getCY3( hybIndex, g ) );
 				//System.out.println( "ControlCy5("+i+","+g+"):" + data.getCY3( hybIndex, g ) );
@@ -137,7 +153,13 @@ public class RDataFormatter {
 		return sbTreat.toString();
 	}//ramaSwapString()
 	
-	
+	/**
+	 * This method returns a string that can be inserted into an Rconnection.eval()
+	 * statement.  It takes a Vector of RHyb objects as a parameter.
+	 * @param dataName	Name to be assigned for this data object in R
+	 * @param vRamaHyb	Vector RHyb objects
+	 * @return	String 
+	 */
 	public String rNonSwapString( String dataName, Vector vRamaHyb ) {
 		//System.out.println("ramaNonSwapString()");
 		StringBuffer sbTreat = new StringBuffer( dataName + " <- c(" );

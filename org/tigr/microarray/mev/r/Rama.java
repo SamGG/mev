@@ -82,7 +82,7 @@ public class Rama {
 			this.ramify( this.data, false );
 		}//end else - data looks like it may work
 	}//constructor
-		
+			
 	
 	/**
 	 * 
@@ -123,17 +123,17 @@ public class Rama {
 			
 			//deal with affy and 2 color differently
 			if( isAffy ) {	//this is an affy array
-				sData =  rDataFormatter.rNonSwapString( Rama.R_VECTOR_NAME, rhs.getVRamaHyb() );
+				sData =  rDataFormatter.rNonSwapString( Rama.R_VECTOR_NAME, rhs.getVRHyb() );
 				this.iGene = data.getExperiment().getNumberOfGenes();
 				nbCol1 = 0;
-				iHybKount = rhs.getVRamaHyb().size();
+				iHybKount = rhs.getVRHyb().size();
 				iColorKount = iHybKount * 2;
 				iTwo = iHybKount + 1;
 			} else {	//this is a 2 color array
 				if( rhs.isFlip() ) {	//dealing with a dye swap experiment
 					//Split into color state
-					Vector vTreatCy3 = this.getVRamaHybTreatCy3( rhs.getVRamaHyb() );
-					Vector vTreatCy5 = this.getVRamaHybTreatCy5( rhs.getVRamaHyb() );
+					Vector vTreatCy3 = this.getVRamaHybTreatCy3( rhs.getVRHyb() );
+					Vector vTreatCy5 = this.getVRamaHybTreatCy5( rhs.getVRHyb() );
 					
 					//sData =  this.swapDataString( data, vTreatCy3, vTreatCy5 );
 					sData = rDataFormatter.rSwapString( Rama.R_VECTOR_NAME, vTreatCy3, vTreatCy5 );
@@ -144,10 +144,10 @@ public class Rama {
 					iTwo = iHybKount + 1;
 				} else {	//not dye swap
 					//sData =  this.nonSwapDataString( data, rhs.getVRamaHyb() );
-					sData = rDataFormatter.rNonSwapString( Rama.R_VECTOR_NAME, rhs.getVRamaHyb() );
+					sData = rDataFormatter.rNonSwapString( Rama.R_VECTOR_NAME, rhs.getVRHyb() );
 					this.iGene = data.getExperiment().getNumberOfGenes();
 					nbCol1 = 0;
-					iHybKount = rhs.getVRamaHyb().size();
+					iHybKount = rhs.getVRHyb().size();
 					iColorKount = iHybKount * 2;
 					iTwo = iHybKount + 1;
 				}//end rhs.isFlip() else
