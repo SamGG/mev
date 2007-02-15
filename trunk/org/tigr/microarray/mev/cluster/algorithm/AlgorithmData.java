@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: AlgorithmData.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-11-07 17:27:39 $
+ * $Revision: 1.8 $
+ * $Date: 2007-02-15 15:58:41 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -25,7 +25,11 @@ import org.tigr.util.FloatMatrix;
  * calculation.
  */
 public class AlgorithmData implements Serializable {
-    protected HashMap matrixes;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5889525631233899519L;
+	protected HashMap matrixes;
     protected HashMap intMatrices;
     protected HashMap intArrays;
     protected HashMap stringArrays;
