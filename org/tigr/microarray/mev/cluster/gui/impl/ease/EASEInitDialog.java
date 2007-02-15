@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASEInitDialog.java,v $
- * $Revision: 1.11 $
- * $Date: 2006-11-07 17:27:40 $
+ * $Revision: 1.12 $
+ * $Date: 2007-02-15 15:58:16 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -230,7 +230,8 @@ public class EASEInitDialog extends AlgorithmDialog {
     public int showModal() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation((screenSize.width - getSize().width)/2, (screenSize.height - getSize().height)/2);
-        show();
+        //show();
+        setVisible(true);
         return result;
     }
     
