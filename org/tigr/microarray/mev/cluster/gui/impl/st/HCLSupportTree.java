@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLSupportTree.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-03-24 15:51:48 $
- * $Author: eleanorahowe $
+ * $Revision: 1.5 $
+ * $Date: 2007-03-09 19:57:26 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.st;
@@ -32,6 +32,7 @@ public class HCLSupportTree extends HCLTree {
     
     private Vector geneTreeSupportVector, exptTreeSupportVector;
     private boolean showSupportValues;
+    private boolean hideSupportColors;
     private int MIN_VALUE_TIC_HEIGHT = 2;
     private FontMetrics fm;
     private DecimalFormat format;
@@ -45,6 +46,7 @@ public class HCLSupportTree extends HCLTree {
     public HCLSupportTree(HCLTreeData treeData, int orientation, Vector geneTreeSupportVector, Vector exptTreeSupportVector) {
         super(treeData, orientation);
         showSupportValues = false;
+        hideSupportColors = false;
         this.geneTreeSupportVector = geneTreeSupportVector;
         this.exptTreeSupportVector = exptTreeSupportVector;
         this.format = new DecimalFormat();
@@ -271,6 +273,11 @@ public class HCLSupportTree extends HCLTree {
         adjustPixelHeightsForValueDisplay();
     }
     
+    public void hideSupportColors(boolean hideColors) {
+    	hideSupportColors = hideColors;
+    	repaint();
+    }
+    
     public void adjustPixelHeightsForValueDisplay() {
         
         if(showSupportValues) {
@@ -382,7 +389,10 @@ public class HCLSupportTree extends HCLTree {
         return legendPanel;
     }
     
-    public static Color getColorFromPercentage(double percent) {
+    public Color getColorFromPercentage(double percent) { 
+    	if(hideSupportColors)
+    		return Color.black;
+    	
         if (percent > 100) {
             return Color.gray;
         } else if (percent == 100) {
