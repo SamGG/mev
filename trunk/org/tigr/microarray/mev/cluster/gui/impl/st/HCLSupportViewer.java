@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: HCLSupportViewer.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-05-02 16:57:36 $
- * $Author: eleanorahowe $
+ * $Revision: 1.6 $
+ * $Date: 2007-03-09 19:58:31 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.st;
@@ -19,7 +19,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.Expression;
-import java.lang.reflect.Array;
 import java.util.Vector;
 
 import javax.swing.JCheckBoxMenuItem;
@@ -49,6 +48,7 @@ public class HCLSupportViewer extends HCLViewer {
     protected static final String SAMPLE_TREE_PROPERTIES_CMD = "sample-tree-properties-cmd";
     protected static final String SUPPORT_LEGEND_CMD = "support-legend-cmd";
     protected static final String SUPPORT_VALUES_CMD = "support-value-cmd";
+    protected static final String TOGGLE_SUPPORT_COLORS_CMD = "support-color-cmd";
    
     
     Vector geneTreeSupportVector, exptTreeSupportVector;
@@ -126,10 +126,14 @@ public class HCLSupportViewer extends HCLViewer {
         menuItem = new JMenuItem("Support tree legend...");
         menuItem.setActionCommand(SUPPORT_LEGEND_CMD);
         menuItem.addActionListener(listener);
-        
+                
         if(!haveResamplingData)
             menuItem.setEnabled(false);
 
+        JMenuItem hideSupportColorsItem = new JCheckBoxMenuItem("Hide support colors...", false);
+        hideSupportColorsItem.setActionCommand(TOGGLE_SUPPORT_COLORS_CMD);
+        hideSupportColorsItem.addActionListener(listener);
+        
         Component [] comps = menu.getComponents();
         
         menu.removeAll();
@@ -144,7 +148,8 @@ public class HCLSupportViewer extends HCLViewer {
             menuItem.setEnabled(false);
 
         menu.add(menuItem);
-        menu.addSeparator();
+        menu.add(hideSupportColorsItem);
+		menu.addSeparator();
         
         for(int i = 0; i < comps.length; i++) {
             menu.add(comps[i]);
@@ -182,6 +187,16 @@ public class HCLSupportViewer extends HCLViewer {
             ((HCLSupportTree)this.sampleTree).toggleShowSupportValues(showValues);        
         this.header.updateSize(getCommonWidth(), this.elementSize.width);       
         onSelected(framework);        
+    }
+  
+    
+    public void onHideSupportColors(boolean hideColors) {
+        if(this.genesTree != null)
+            ((HCLSupportTree)this.genesTree).hideSupportColors(hideColors);
+        if(this.sampleTree != null)
+            ((HCLSupportTree)this.sampleTree).hideSupportColors(hideColors);        
+        this.header.updateSize(getCommonWidth(), this.elementSize.width);       
+        onSelected(framework);  
     }
     
     /**
@@ -226,6 +241,8 @@ public class HCLSupportViewer extends HCLViewer {
                 onShowSupportTreeLegend();
             } else if (command.equals(SUPPORT_VALUES_CMD)) {                
                 onShowSupportValues(((JCheckBoxMenuItem)e.getSource()).isSelected());
+            } else if (command.equals(TOGGLE_SUPPORT_COLORS_CMD)) {
+            	onHideSupportColors(((JCheckBoxMenuItem)e.getSource()).isSelected());
             }
         }
         
