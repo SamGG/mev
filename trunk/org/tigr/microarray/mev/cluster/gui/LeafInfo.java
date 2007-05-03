@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: LeafInfo.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-03-24 15:49:53 $
+ * $Revision: 1.8 $
+ * $Date: 2007-05-03 14:08:45 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -115,7 +115,7 @@ public class LeafInfo implements java.io.Serializable {
 		this.selectedDataSource = selectedDataSource;
     }
     public static String[] getPersistenceDelegateArgs() {
-    	return new String[] {"name", "viewer", "popup", "userObject", "selectedDataSource"};
+    	return new String[] {"name", "viewer", "JPopupMenu", "userObject", "selectedDataSource"};
     }
     public boolean getSelectedDataSource(){return selectedDataSource;}
     
