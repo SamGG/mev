@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: GDMExpViewer.java,v $
- * $Revision: 1.11 $
- * $Date: 2006-05-02 16:56:57 $
- * $Author: eleanorahowe $
+ * $Revision: 1.12 $
+ * $Date: 2007-05-18 15:42:55 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.gdm;
@@ -33,13 +33,18 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.beans.Expression;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -169,7 +174,8 @@ public class GDMExpViewer extends JPanel implements IViewer {
     public static final String SORT_BY_ORIGINAL_ORDER_CMD = "sort-by-original-order-cmd";
     public static final String SORT_BY_PROXIMITY_CMD = "sort-by-proximity-cmd";
     private static final String SAVE_NEIGHBORS_CMD = "save-k-neighbors";
-    
+    private static final String SAVE_MATRIX_CMD = "save-matrix";
+        
     /**
      * Constructs a <code>GDMExpViewer</code> for specified results.
      */
@@ -1150,6 +1156,11 @@ public class GDMExpViewer extends JPanel implements IViewer {
         item.addActionListener(listener);
         menu.add(item);
         
+        item = new JMenuItem("Save Distance Matrix");
+        item.setActionCommand(SAVE_MATRIX_CMD);
+        item.addActionListener(listener);
+        menu.add(item);
+        
         menu.addSeparator();
         
         item = new JMenuItem("Impose Cluster Result");
@@ -1450,6 +1461,51 @@ public class GDMExpViewer extends JPanel implements IViewer {
     }
     
     
+    private void onSaveMatrix(){
+    	JFileChooser chooser = new JFileChooser();
+    	if(chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+    		try {
+    			PrintWriter bw = new PrintWriter(new FileWriter(chooser.getSelectedFile()));
+    			int rows = this.expDistMatrix.getRowDimension();
+    			int cols = this.expDistMatrix.getColumnDimension();
+    			//commnents
+    			Date da = new Date(System.currentTimeMillis());    			
+    			bw.println("# Save Date: "+da.toString());
+    			bw.println("# Distance Metric: "+this.distanceMetric);
+    			bw.println("#");
+    			
+    			//header    			
+    			String line = "\t"; //skip one column
+    			for(int i = 0; i < cols; i++) {
+    				line += framework.getData().getSampleName(indices[i]);
+    				if(i < cols-1)
+    					line += "\t";
+    			}
+    			bw.println(line);
+				line = "";
+
+    			for(int row = 0; row < rows; row++) {    				
+    				line += framework.getData().getSampleName(indices[row]) + "\t";
+    				for(int col = 0; col < cols; col++) {
+    					line += Float.toString(this.rawMatrix.get(indices[row], indices[col]));
+    					if(col < cols-1)
+    						line += "\t";
+    				}
+    				
+    				bw.println(line);
+    				line = "";
+    			}
+    			
+    			bw.flush();
+    			bw.close();
+    			
+    		} catch (IOException ioe) {
+    			ioe.printStackTrace();
+    		}
+    	}
+    }
+    
+    
     private int [] getRows(int k) {
         int [] rows = new int[k];
         for(int i = 0; i < k; i++){
@@ -1666,6 +1722,8 @@ public class GDMExpViewer extends JPanel implements IViewer {
                 onRestoreOriginalOrder();
             } else if (command.equals("impose-cluster-order")) {
                 imposeClusterOrder();
+            } else if (command.equals(SAVE_MATRIX_CMD)) {
+                onSaveMatrix();
             }
         }
         
