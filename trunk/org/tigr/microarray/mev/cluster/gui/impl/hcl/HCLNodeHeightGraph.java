@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLNodeHeightGraph.java,v $
- * $Revision: 1.8 $
- * $Date: 2006-03-24 15:50:40 $
- * $Author: eleanorahowe $
+ * $Revision: 1.9 $
+ * $Date: 2007-05-21 21:10:50 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
@@ -16,11 +16,19 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.beans.Expression;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.DecimalFormat;
+import java.util.Date;
 
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import org.tigr.graph.GC;
@@ -35,7 +43,7 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 
 public class HCLNodeHeightGraph extends JPanel implements IViewer {
-    GraphViewer viewer;
+    HCLGraphViewer viewer;
     HCLTreeData treeData;
     float minX;
     float maxX;
@@ -73,8 +81,7 @@ public class HCLNodeHeightGraph extends JPanel implements IViewer {
         maxX = findMaxDistance();
         minY = 0;
         maxY = treeData.node_order.length;
-        viewer = new GraphViewer(null, (int)minX, (int)maxX, (int)minY, (int)maxY, minX, maxX, minY, maxY,
-                    50, 50, 50, 50, "Node Heights", "Distance", "Number of Terminal Nodes");
+        viewer = new HCLGraphViewer();
         
         viewer.setYAxisValue(minX);
         viewer.setXAxisValue(minY);
@@ -157,7 +164,79 @@ public class HCLNodeHeightGraph extends JPanel implements IViewer {
             viewer.addGraphPoint(nodeHeight, terminalNodes); 
         }
        */
-        
+                
+    }
+    
+    private void printGraphData() {
+    	
+    	int [] nodeOrder = this.treeData.node_order;
+    	float [] height = this.treeData.height;
+    	double nodeHeight = 0d;
+    	double terminalNodes = nodeOrder.length;
+    	int numberOfNodes = (int)terminalNodes;
+    	
+    	if(nodeOrder.length>1){
+    		System.out.println(height[nodeOrder[0]]+ "  " +terminalNodes);
+    		
+    	}
+    	
+    	for(int i = 0; i < nodeOrder.length; i++){
+    		if(nodeOrder[i] > -1){
+    			nodeHeight = height[nodeOrder[i]];
+    			terminalNodes--;
+    			if(i+1<nodeOrder.length && nodeOrder[i+1] > -1){
+    				System.out.println(nodeHeight+"  "+terminalNodes);
+    			}                
+    		}    	
+    	}    
+    }
+    
+    private void onSaveGraphData(){
+    	JFileChooser chooser = new JFileChooser();
+    	if(chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+    		try {
+    			PrintWriter bw = new PrintWriter(new FileWriter(chooser.getSelectedFile()));
+
+    			//commnents
+    			Date da = new Date(System.currentTimeMillis());    			
+    			bw.println("# Node Height Data");
+    			bw.println("# Save Date: "+da.toString());
+    			
+    			//header
+    			bw.println("Lower Limit\tUpper Limit\tTerminal Nodes\tdelta (step width)");
+    			
+    	    	int [] nodeOrder = this.treeData.node_order;
+    	    	float [] height = this.treeData.height;
+    	    	double nodeHeight = 0d;
+    	    	double terminalNodes = nodeOrder.length;
+    	    	int numberOfNodes = (int)terminalNodes;
+    	    	
+    	    	if(nodeOrder.length>1){
+    	    		bw.println("\t"+height[nodeOrder[0]]+ "\t" +terminalNodes+"\t");    	    		
+    	    	}
+    	    	
+    	    	for(int i = 0; i < nodeOrder.length; i++){
+    	    		if(nodeOrder[i] > -1){
+    	    			nodeHeight = height[nodeOrder[i]];
+    	    			if(nodeOrder[i] > -1 && i > 0){
+    	    				bw.println(height[nodeOrder[i-1]]+"\t"+nodeHeight+"\t"+terminalNodes+"\t"+(nodeHeight-height[nodeOrder[i-1]]));
+    	    			}
+    	    			terminalNodes--;
+    	    		} else {
+    	    			//System.out.println("skip one level");
+    	    		}
+    	    	}
+    	    	
+    	    	bw.println(nodeHeight+"\t\t"+terminalNodes+"\t\t");
+    			
+    			
+    			bw.flush();
+    			bw.close();
+    			
+    		} catch (IOException ioe) {
+    			ioe.printStackTrace();
+    		}
+    	}
     }
     
     /**
@@ -241,7 +320,7 @@ public class HCLNodeHeightGraph extends JPanel implements IViewer {
         return null;
     }
     
-    public void setViewer(GraphViewer val){
+    public void setViewer(HCLGraphViewer val){
         viewer = val;
     }
     public GraphViewer getViewer(){
@@ -271,6 +350,27 @@ public class HCLNodeHeightGraph extends JPanel implements IViewer {
      */
     public int getViewerType() {
         return -1;
+    }
+    
+    public class HCLGraphViewer extends GraphViewer {
+    	public HCLGraphViewer() {
+    		
+    		super(null, (int)minX, (int)maxX, (int)minY, (int)maxY, minX, maxX, minY, maxY,
+                    50, 50, 50, 50, "Node Heights", "Distance", "Number of Terminal Nodes");
+
+    		//modify menu to suport output values
+ 
+    		JMenuItem dataOutputItem = new JMenuItem("Output Graph Data");
+    		dataOutputItem.addActionListener(new ActionListener(){
+    			public void actionPerformed(ActionEvent ae) {
+    				//printGraphData();
+    				onSaveGraphData();
+    			}
+    		});
+    		popup.addSeparator();
+    		popup.add(dataOutputItem);
+    	}
+    	
     }
     
 }
