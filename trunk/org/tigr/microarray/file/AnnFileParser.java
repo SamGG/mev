@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: AnnFileParser.java,v $
- * $Revision: 1.3 $
- * $Date: 2006-05-02 20:52:47 $
- * $Author: eleanorahowe $
+ * $Revision: 1.4 $
+ * $Date: 2007-08-20 20:49:03 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 
@@ -575,9 +575,9 @@ public class AnnFileParser {
 			for (int j = 0; j < matrix[i].length; j++) {
                             try{
 				matrix[i][j] = ss.nextToken();
-                                if(matrix[i][j].startsWith("\"") && matrix[i][j].endsWith("\"")) {
+                                if(matrix[i][j].startsWith("\"") && matrix[i][j].endsWith("\"") && matrix[i][j].length()>1) {
                                     matrix[i][j] = matrix[i][j].replaceFirst("\"", "");
-                                    matrix[i][j] = matrix[i][j].substring(0, matrix[i][j].length()-2);
+                                    matrix[i][j] = matrix[i][j].substring(0, matrix[i][j].length()-1);
                                 }
                             } catch (Exception e){
                                 matrix[i][j] = "";
