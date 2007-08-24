@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: GDMGeneViewer.java,v $
- * $Revision: 1.11 $
- * $Date: 2006-05-02 16:56:57 $
- * $Author: eleanorahowe $
+ * $Revision: 1.12 $
+ * $Date: 2007-08-24 21:46:05 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.gdm;
@@ -33,6 +33,10 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.beans.Expression;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -44,6 +48,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -186,7 +191,7 @@ public class GDMGeneViewer extends JPanel implements IViewer {
     private static final String CHANGE_ANNOTATION_WIDTH = "Change Annotation Width";
     private static final String TOGGLE_PROXIMITY_SORT_CMD = "Toggle-proximity-cmd";
     private static final String SAVE_NEIGHBORS_CMD = "Save-neighbors-cmd";
-    
+    private static final String SAVE_MATRIX_CMD = "save-matrix";    
 
     
 
@@ -1163,6 +1168,12 @@ public class GDMGeneViewer extends JPanel implements IViewer {
         item.setActionCommand(SAVE_NEIGHBORS_CMD);
         item.addActionListener(listener);
         menu.add(item);
+        
+        item = new JMenuItem("Save Distance Matrix");
+        item.setActionCommand(SAVE_MATRIX_CMD);
+        item.addActionListener(listener);
+        menu.add(item);
+        
         menu.addSeparator();
         
         sortMenu = new JMenu("Sort");
@@ -1551,6 +1562,53 @@ public class GDMGeneViewer extends JPanel implements IViewer {
         }
     }
     
+    
+    private void onSaveMatrix(){
+    	JFileChooser chooser = new JFileChooser();
+    	if(chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+    		try {
+    			PrintWriter bw = new PrintWriter(new FileWriter(chooser.getSelectedFile()));
+    			int rows = this.geneDistMatrix.getRowDimension();
+    			int cols = this.geneDistMatrix.getColumnDimension();
+    			//commnents
+    			Date da = new Date(System.currentTimeMillis());    			
+    			bw.println("# Save Date: "+da.toString());
+    			bw.println("# Distance Metric: "+this.distanceMetric);
+    			bw.println("#");
+    			
+    			//header    			
+    			String line = "\t"; //skip one column
+    			for(int i = 0; i < cols; i++) {
+    				
+    				line +=framework.getData().getElementAttribute(experiment.getGeneIndexMappedToData(indices[i]), this.labelIndex);
+    				if(i < cols-1)
+    					line += "\t";
+    			}
+    			bw.println(line);
+				line = "";
+
+    			for(int row = 0; row < rows; row++) {    				
+    				line +=framework.getData().getElementAttribute(indices[row], this.labelIndex) + "\t";
+
+    				for(int col = 0; col < cols; col++) {
+    					line += Float.toString(this.rawMatrix.get(indices[row], indices[col]));
+    					if(col < cols-1)
+    						line += "\t";
+    				}
+    				
+    				bw.println(line);
+    				line = "";
+    			}
+    			
+    			bw.flush();
+    			bw.close();
+    			
+    		} catch (IOException ioe) {
+    			ioe.printStackTrace();
+    		}
+    	}
+    }
+    
     private int [] getIDataRows(int k) {
         int [] rows = new int[k];
         for(int i = 0; i < k; i++){
@@ -1767,6 +1825,8 @@ public class GDMGeneViewer extends JPanel implements IViewer {
                 onSaveNeighbors();
             } else if (command.equals("impose-cluster-order")) {
                 imposeClusterOrder();
+            } else if (command.equals(SAVE_MATRIX_CMD)) {
+                onSaveMatrix();
             }
         }
         
