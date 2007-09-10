@@ -2,12 +2,10 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -15,23 +13,14 @@
 /* GetInteractionsModule.java
  * Copyright (C) 2005 Amira Djebbari
  */
-package org.tigr.microarray.mev.cluster.gui.impl.bn.getInteractions;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.Properties;
-import java.io.File;
+package org.tigr.microarray.mev.cluster.gui.impl.bn.getInteractions;import java.util.HashMap;import java.util.HashSet;import java.util.Iterator;import java.util.ArrayList;
+import java.util.Properties;import java.io.File;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.FileInputStream;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.UsefulInteractions;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.GetUnionOfInters;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.OutOfRangeException;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.algs.TransitiveClosure;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.algs.AllPairsShortestPaths;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.GetUnionOfInters;import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;import org.tigr.microarray.mev.cluster.gui.impl.bn.OutOfRangeException;import org.tigr.microarray.mev.cluster.gui.impl.bn.algs.TransitiveClosure;import org.tigr.microarray.mev.cluster.gui.impl.bn.algs.AllPairsShortestPaths;
 /**
  * The class <code>GetInteractionsModule</code> gets gene interactions from the literature or
  * from protein protein interactions (PPI) or both. If interactions are obtained from the literature,
@@ -68,14 +57,16 @@ public class GetInteractionsModule {
      try {
 	    if(props == null){
 		throw new NullArgumentException("The given properties were null");
-	    }
-  	    path=path+sep;
-	    String resFileName = path+props.getProperty("resourcererFileName");
+	    }  	    //path=path+sep; //Raktim - Use tmp Dir
+  	    String fileLoc=path+sep+"tmp"+sep;
+  	    String resFileLoc = path+sep;
+  	  
+  	    System.out.println("PATH Paiso: " + fileLoc);
+	    String resFileName = resFileLoc+props.getProperty("resourcererFileName");
   	    
-  	    //System.out.print(resFileName);
-  	    String gbAccessionsFileName = path+props.getProperty("gbAccessionsFileName");
-  	    String symbolsArticlesFromPubmedFileName = path+props.getProperty("symbolsArticlesFromPubmedFileName", null);
-  	    String symbolsArticlesFromGeneDbFileName = path+props.getProperty("symbolsArticlesFromGeneDbFileName", null);
+  	    //System.out.print(resFileName);  	    String gbAccessionsFileName = fileLoc+props.getProperty("gbAccessionsFileName");
+  	    String symbolsArticlesFromPubmedFileName = resFileLoc+props.getProperty("symbolsArticlesFromPubmedFileName", null);
+  	    String symbolsArticlesFromGeneDbFileName = resFileLoc+props.getProperty("symbolsArticlesFromGeneDbFileName", null);
 	   
   	    //Useful.checkFile(resFileName);
   	  //System.exit(0);
@@ -93,7 +84,6 @@ public class GetInteractionsModule {
 	    if(debug){
 		Useful.writeHashMapToFile(gbGOs, gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"gbGOs_test.txt");
 	    }
-
 	    HashMap gbArticlesFromRes = GetInteractionsUtil.getResourcererArticles(resFileName, gbAccessionsFileName);
 	    if(debug){
 		Useful.writeHashMapToFile(gbArticlesFromRes, gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"gbArticlesFromRes_test.txt");
@@ -171,12 +161,12 @@ public class GetInteractionsModule {
 	    if(props == null){
 		throw new NullArgumentException("The given properties were null");
 	    }
-	    // get props of ppi list, gbs, res
-	    path=path+sep;
-	    //System.out.print(path);
-	    String ppiFileName = path+props.getProperty("ppiFileName", null);
-	    String resFileName = path+props.getProperty("resourcererFileName", null);
-	    String gbAccessionsFileName = path+props.getProperty("gbAccessionsFileName", null);
+	    // get props of ppi list, gbs, res	    //path=path+sep;
+	    String fileLoc=path+sep+"tmp"+sep;
+  	    String resFileLoc = path+sep;
+	    //System.out.print(path);	    String ppiFileName = resFileLoc+props.getProperty("ppiFileName", null);
+	    String resFileName = resFileLoc+props.getProperty("resourcererFileName", null);
+	    String gbAccessionsFileName = fileLoc+props.getProperty("gbAccessionsFileName", null);
 	    //Useful.checkFile(ppiFileName);
 	    //Useful.checkFile(resFileName);
 	    //Useful.checkFile(gbAccessionsFileName);
@@ -491,7 +481,6 @@ public class GetInteractionsModule {
 	    String toWrite = "";
 	    origGBs = Useful.readUniqueNamesFromFile(gbAccessionsFileName);
 	    newGBs = UsefulInteractions.getNodes(interFromPpi);
-
 	    //getAccessions and write them to file
 	    if(newGBs != null && newGBs.size() != 0){
 		origAndUniqueNewGBs.addAll(origGBs);
@@ -511,7 +500,6 @@ public class GetInteractionsModule {
 	    System.out.println(nae);
 	}
     }
-
 
     /**
      * The <code>test</code> method test the GetInteractionsModule using the parameters in the given properties file
@@ -534,15 +522,17 @@ public class GetInteractionsModule {
 		//System.out.print(propertiesFileName);
 		//System.exit(1);
 	    Properties props = new Properties();
-	    props.load(new FileInputStream(propertiesFileName));
-	    //System.out.print(props.getProperty("resourcererFileName"));
+	    props.load(new FileInputStream(propertiesFileName));	    System.out.print(props.getProperty("resourcererFileName"));
 	    ArrayList interactions = getInteractions(props);
 	    if(interactions==null){
-		System.out.print("hhhhhhhhhhhhheee");    
+		System.out.print("Oh no NULL Interaction object. Bad...");    
 	    }
 	   String outInteractionsFileName = props.getProperty("outInteractionsFileName", "outInteractions.txt");
-	    //System.out.print(outInteractionsFileName);
-	    String fname_cyto="liter_mining_alone_network.sif";
+	    //System.out.print(outInteractionsFileName);	    //Raktim - Modified. Name File(s) uniquely
+	    //String fname_cyto= "liter_mining_alone_network.sif"; // Raktim - Old Way
+	    String fname_cyto= Useful.getUniqueFileID() +"_"+ "liter_mining_alone_network.sif";
+	    //System.out.println("fname_cyto " + fname_cyto);
+	    System.setProperty("LM_ONLY", fname_cyto);
 	    UsefulInteractions.writeSifFileUndir(interactions, fname_cyto);	
 	    UsefulInteractions.writeSifFileUndirWithWeights(interactions, outInteractionsFileName);	
 	}
@@ -552,17 +542,15 @@ public class GetInteractionsModule {
 	}
 	
 	catch(NullArgumentException nae){
-	    System.out.println(nae);
-	    nae.printStackTrace();
+	    System.out.println(nae);	    nae.printStackTrace(); 
 	}
 	catch(OutOfRangeException oore){
 	    System.out.println(oore);
 	    oore.printStackTrace();
 	}
-
     }
-    
-    /**
+        
+	/**
      * The <code>usage</code> method displays usage.
      *
      */

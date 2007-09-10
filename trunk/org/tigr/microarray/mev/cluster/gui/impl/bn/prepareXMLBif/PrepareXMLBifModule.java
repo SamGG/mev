@@ -2,12 +2,10 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -16,16 +14,9 @@
  * Copyright (C) 2005 Amira Djebbari
  */
 package org.tigr.microarray.mev.cluster.gui.impl.bn.prepareXMLBif;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Properties;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.algs.DFSModification;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
+import java.io.FileInputStream;import java.io.IOException;import java.io.FileOutputStream;
+import java.io.PrintWriter;import java.util.ArrayList;import java.util.HashMap;import java.util.Properties;import org.tigr.microarray.mev.cluster.gui.impl.bn.algs.DFSModification;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.NotDAGException;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.UsefulInteractions;
 /**
@@ -90,7 +81,6 @@ public class PrepareXMLBifModule {
 	}
 	return ParseGB_GO.getInteractionsFromGB_GOsRandom(interWithWeights, gbGOs, seed);
     }
-
     
     /**
      * The <code>getDAGFromUndirectedGraph</code> takes in a given undirected graph 
@@ -110,7 +100,6 @@ public class PrepareXMLBifModule {
 	}
 	return DFSModification.getDAGFromUndirectedGraph(interWithWeights);
     }
-
 
     /**
      * The <code>test</code> method tests the <code>getInteractionsFromGB_GOs</code> 
@@ -158,8 +147,8 @@ public class PrepareXMLBifModule {
      */
     public static void test(String propsFileName){	
     	String path=System.getProperty("user.dir");
-	String sep=System.getProperty("file.separator");
-	path=path+sep+"data"+sep+"bn"+sep;
+	String sep=System.getProperty("file.separator");	//path=path+sep+"data"+sep+"bn"+sep; //Raktim - Use tmp Dir
+	path=path+sep+"data"+sep+"bn"+sep+"tmp"+sep;
 	try {
 	    Properties props = new Properties();
 	    props.load(new FileInputStream(propsFileName));
@@ -171,13 +160,16 @@ public class PrepareXMLBifModule {
 	    boolean useGO = Boolean.getBoolean(props.getProperty("useGO", "false"));	    
 	    String gbGOsFileName = path+props.getProperty("gbGOsFileName", null);
 	    String namesFileName = path+props.getProperty("namesFileName",null);
-	    long seed = (long) Integer.parseInt(props.getProperty("seed", "1"));
+	    long seed = (long) Integer.parseInt(props.getProperty("seed", "1"));	    System.out.println("test()" + namesFileName);
+	    System.out.println("test()" + sifFileName);
 	    Useful.checkFile(sifFileName);
 	    Useful.checkFile(namesFileName);
 	    if(useGO){
 		Useful.checkFile(gbGOsFileName);
-	    }
-	    String outXMLBifFileName = System.getProperty("user.dir")+sep+props.getProperty("outXMLBifFileName","out_bif.xml");
+	    }	    //String outXMLBifFileName = System.getProperty("user.dir")+sep+props.getProperty("outXMLBifFileName","out_bif.xml");
+	    // Raktim - Use tmp Dir
+	    String fileLoc = System.getProperty("user.dir")+sep+"data"+sep+"bn"+sep+"tmp"+sep;
+	    String outXMLBifFileName = fileLoc+props.getProperty("outXMLBifFileName","out_bif.xml");
 	    ArrayList inter = UsefulInteractions.readInteractionsWithWeights(sifFileName);
 	    ArrayList names = Useful.readNamesFromFile(namesFileName);
 	    ArrayList newInter = null;

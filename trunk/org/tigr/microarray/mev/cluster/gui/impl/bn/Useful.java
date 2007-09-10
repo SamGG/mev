@@ -2,12 +2,10 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -15,21 +13,14 @@
 /* Useful.java
  * Copyright (C) 2005 Amira Djebbari
  */
-package org.tigr.microarray.mev.cluster.gui.impl.bn;
-import java.io.FileReader;
+package org.tigr.microarray.mev.cluster.gui.impl.bn;import java.io.FileReader;
 import java.io.LineNumberReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.HashMap;
+import java.io.File;import java.io.FileNotFoundException;import java.io.PrintWriter;
+import java.io.FileOutputStream;import java.io.IOException;import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashSet;import java.util.HashMap;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Set;
-import org.tigr.microarray.mev.TMEV;
-
+import java.util.Iterator;import java.util.Set;import org.tigr.microarray.mev.TMEV;
 /**
  * The class <code>Useful</code> contains many useful methods for reading/writing from/to files
  *
@@ -103,7 +94,7 @@ public class Useful {
      * @exception FileNotFoundException if an error occurs because the file denoted by the given fileName was not found
      */
     public static HashSet readUniqueNamesFromFile(String fileName) throws FileNotFoundException{
-    	String path=null;
+    	String path=null;    	System.out.println("readUniqueNamesFromFile()" + fileName);
     	checkFile(fileName);
     	
 	try {
@@ -171,7 +162,6 @@ public class Useful {
 	return null;
     }
 
-
     /**
      * The <code>readHashMapFromFile</code> method reads from a given file name
      * containing Strings in tab-delimited format (2 columns) 
@@ -184,8 +174,8 @@ public class Useful {
      * as keys and the second column Strings as values
      * @exception FileNotFoundException if an error occurs because the file denoted by the given fileName was not found
      */
-    public static HashMap readHashMapFromFile(String fileName) throws FileNotFoundException{
-	checkFile(fileName);
+    public static HashMap readHashMapFromFile(String fileName) throws FileNotFoundException{    	System.out.println("readHashMapFromFile()" + fileName);
+    	checkFile(fileName);
 	try {
 	    HashMap result = new HashMap();
 	    FileReader fr = new FileReader(fileName);
@@ -208,7 +198,6 @@ public class Useful {
 	}
 	return null;
     }
-
     /**
      * The <code>find</code> method searches for a given String in a given ArrayList of Strings
      *
@@ -230,7 +219,6 @@ public class Useful {
 	}
 	return false;
     }
-
     /**
      * The <code>find</code> method searches for a given String in a given HashSet of Strings
      *
@@ -253,7 +241,6 @@ public class Useful {
 	}
 	return false;
     }
-
     /**
      * The <code>writeHashMapToPrintWriter</code> method writes a given HashMap to a given PrintWriter
      *
@@ -279,7 +266,6 @@ public class Useful {
 	    System.out.println(e);
 	}
     }
-
     /**
      * The <code>writeHashMap</code> method writes a given HashMap to the standard output
      *
@@ -292,7 +278,6 @@ public class Useful {
 	}
 	writeHashMapToPrintWriter(hm, new PrintWriter(System.out, true));
     }
-
     /**
      * The <code>writeHashMapToFile</code> method writes a given HashMap to a given file
      *
@@ -314,7 +299,6 @@ public class Useful {
 	    System.out.println(ioe);
 	}
     }
-
     /**
      * The <code>writeStrToFile</code> method writes a given String to a given file
      *
@@ -337,7 +321,6 @@ public class Useful {
 	    System.out.println(ioe);
 	}
     }
-
     /**
      * The <code>dec2bin</code> method returns a bit string representation of a given decimal number 
      * in a given number of bits
@@ -376,7 +359,6 @@ public class Useful {
 	}
 	return false;
     }
-
     /**
      * The <code>getUniqueSymbols</code> method returns the unique values from a given HashMap
      *
@@ -396,7 +378,6 @@ public class Useful {
 	}
 	return uniqueSymbols;
     }
-
     /**
      * The <code>StringToHashSet</code> method takes in a String containing a comma-delimited elements 
      * and returns a HashSet representation of this String.
@@ -419,7 +400,6 @@ public class Useful {
 	    return hs;
 	}
     }
-
     /**
      * The <code>HashSetToString</code> method takes in a HashSet of elements 
      * and returns a comma-delimited String representation of the elements in the given HashSet.
@@ -441,7 +421,43 @@ public class Useful {
 	    return s.substring(0,s.length()-1);
 	}       
     }
+    /**
+     * Raktim - Modified
+     * To Generate a Unique for a File Name based on a Time Stamp.
+     * @return
+     */
+    public static String getUniqueFileID() {
+		Date now = new Date();
+        String dateString = now.toString();
 
+        SimpleDateFormat formatDt = new SimpleDateFormat("MMM_dd_yy_HH_mm_ss_SSS");
+        dateString = formatDt.format(now);
+        //System.out.println(" 2. " + dateString);
+		return dateString;
+	}
+    
+    public static String getWekaArgs(String path, String outArffFileName, String sAlgorithm, boolean useArc, String numParents, String sType, int kfolds) {
+    	
+    	String arguments = "-t " + path + outArffFileName + " -c 1 -x " + kfolds + " -Q weka.classifiers.bayes.net.search.local."+sAlgorithm+" -- ";
+        if(useArc){
+        	arguments +="-R";
+        }
+        arguments +=" -P "+numParents+" -S "+sType;
+        while(!BNGUI.done){
+        	try{
+        		Thread.sleep(10000);	
+        	}catch(InterruptedException x){
+        		//ignore;
+        	}
+        }
+        if(BNGUI.prior){     
+        	arguments += " -X " + path+ "resultBif.xml";
+        	//System.out.print("my prior");
+        }
+        arguments += " -E weka.classifiers.bayes.net.estimate.SimpleEstimator -- -A 0.5";
+        return arguments;
+    }
+    
 }
 
 

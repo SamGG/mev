@@ -2,12 +2,10 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -16,8 +14,7 @@
  * Copyright (C) 2005 Amira Djebbari
  */
 package org.tigr.microarray.mev.cluster.gui.impl.bn;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.Collection;import java.util.Iterator;
 /**
  * The class <code>GeneEdgeWithOtherInfo</code> contains a gene edge object containing from, to, 
  * weight fields and other information as an ArrayList 
@@ -68,7 +65,6 @@ public class GeneEdgeWithOtherInfo extends GeneEdge {
 	}
 	return result;
     }
-
     /**
      * The <code>clone</code> method provides a deep copy of this object
      *
@@ -86,7 +82,6 @@ public class GeneEdgeWithOtherInfo extends GeneEdge {
 	Iterator it = inOtherInfo.iterator();
 	this.otherInfo.add(it.next());
     }
-
     /**
      * The <code>getOtherInfo</code> method returns the other information associated with this GeneEdgeOtherInfo object
      *
@@ -96,6 +91,4 @@ public class GeneEdgeWithOtherInfo extends GeneEdge {
 	return this.otherInfo;
     }
 }
-
-
 

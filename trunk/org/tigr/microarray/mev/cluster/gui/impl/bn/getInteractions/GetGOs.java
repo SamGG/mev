@@ -84,6 +84,9 @@ public class GetGOs {
      */
     public static HashMap getGOsGivenResourcererAndGBsFileName(String resourcererFileName, String gbAccessionsFileName) throws FileNotFoundException {
 	try {
+		
+		System.out.println("getGOsGivenResourcererAndGBsFileName()" + resourcererFileName);
+		System.out.println("getGOsGivenResourcererAndGBsFileName()" + gbAccessionsFileName);
 	    Useful.checkFile(resourcererFileName);
 	    Useful.checkFile(gbAccessionsFileName);
 	    ArrayList gbs = Useful.readNamesFromFile(gbAccessionsFileName);
@@ -109,6 +112,9 @@ public class GetGOs {
      */
     public static void writeGOTermsGivenResourcererAndGBsList(String gbAccessionsFileName, String resourcererFileName, String outputFileName) throws FileNotFoundException{
 	try {
+		System.out.println("writeGOTermsGivenResourcererAndGBsList()" + gbAccessionsFileName);
+		System.out.println("writeGOTermsGivenResourcererAndGBsList()" + resourcererFileName);
+		System.out.println("writeGOTermsGivenResourcererAndGBsList()" + outputFileName);
 	    Useful.checkFile(resourcererFileName);
 	    Useful.checkFile(gbAccessionsFileName);
 	    ArrayList gbs = Useful.readNamesFromFile(gbAccessionsFileName);

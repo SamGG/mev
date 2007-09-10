@@ -10,56 +10,7 @@ All rights reserved.
 
 package org.tigr.microarray.mev.cluster.gui.impl.lm;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.util.Vector;
-
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.JTextPane;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
-import org.tigr.microarray.mev.TMEV;
-import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
-import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
-import org.tigr.microarray.mev.cluster.gui.helpers.ClusterBrowser;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.BNUpdateManager;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
+import java.awt.Color;import java.awt.Component;import java.awt.Dimension;import java.awt.Font;import java.awt.Frame;import java.awt.GridBagConstraints;import java.awt.GridBagLayout;import java.awt.Insets;import java.awt.Toolkit;import java.awt.event.ActionEvent;import java.awt.event.ActionListener;import java.awt.event.ItemEvent;import java.awt.event.ItemListener;import java.awt.event.WindowEvent;import java.io.File;import java.util.Vector;import javax.swing.BorderFactory;import javax.swing.ButtonGroup;import javax.swing.DefaultListCellRenderer;import javax.swing.DefaultListModel;import javax.swing.JButton;import javax.swing.JCheckBox;import javax.swing.JComboBox;import javax.swing.JFileChooser;import javax.swing.JFrame;import javax.swing.JLabel;import javax.swing.JList;import javax.swing.JOptionPane;import javax.swing.JPanel;import javax.swing.JRadioButton;import javax.swing.JScrollPane;import javax.swing.JTabbedPane;import javax.swing.JTextField;import javax.swing.JTextPane;import javax.swing.border.BevelBorder;import javax.swing.border.EtchedBorder;import javax.swing.border.TitledBorder;import javax.swing.event.ListSelectionEvent;import javax.swing.event.ListSelectionListener;import org.tigr.microarray.mev.TMEV;import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;import org.tigr.microarray.mev.cluster.gui.helpers.ClusterBrowser;import org.tigr.microarray.mev.cluster.gui.impl.bn.BNUpdateManager;import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 
 /** Accumulates parameters for execution of BN analysis.
  * Based on EASEInitDialog
@@ -69,8 +20,7 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
     
     /** Result when dialog is dismissed.
      */
-    private int result = JOptionPane.CANCEL_OPTION;
-    ConfigPanel configPanel;
+    private int result = JOptionPane.CANCEL_OPTION;    ConfigPanel configPanel;
     PriorSelectionPanel priorsPanel;
     DiscretizingPanel discPanel;
     ClassNumPanel classnumPanel;
@@ -102,8 +52,7 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
         //Tabbed pane creation
         tabbedPane = new JTabbedPane();
         
-        //config panel        
-        configPanel = new ConfigPanel();        
+        //config panel                configPanel = new ConfigPanel();        
         
         JPanel popNClusterPanel = new JPanel(new GridBagLayout());
         popNClusterPanel.setBackground(Color.white);
@@ -136,8 +85,8 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
         classnumPanel = new ClassNumPanel();
         useGoPanel = new XmlBifPanel();
        // runBNPanel=new RunBNPanel();
-        //tabbedPane.add("Running Bayesian Network Parameters", runBNPanel);
-        parameters.add(configPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));       
+        //tabbedPane.add("Running Bayesian Network Parameters", runBNPanel);        //Removed - Raktim
+        //parameters.add(configPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));       
         parameters.add(priorsPanel, new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         //parameters.add(discPanel, new GridBagConstraints(0,2,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         //parameters.add(classnumPanel, new GridBagConstraints(0,3,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
@@ -177,8 +126,7 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
         
         //Tabbed pane creation
         tabbedPane = new JTabbedPane();
-        
-        //config panel        
+                //config panel     
         configPanel = new ConfigPanel();        
         
         JPanel popNClusterPanel = new JPanel(new GridBagLayout());
@@ -221,8 +169,8 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
         classnumPanel = new ClassNumPanel();
         useGoPanel = new XmlBifPanel();
         //runBNPanel=new RunBNPanel(); 
-        //tabbedPane.add("Running Bayesian Network Parameters", runBNPanel);
-        parameters.add(configPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));       
+        //tabbedPane.add("Running Bayesian Network Parameters", runBNPanel);        //Removed - Raktim
+        //parameters.add(configPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));       
         parameters.add(priorsPanel, new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         //parameters.add(discPanel, new GridBagConstraints(0,2,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         //parameters.add(classnumPanel, new GridBagConstraints(0,3,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
@@ -307,8 +255,8 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
     
     /** Returns the base file location for BN file system
      */
-    public String getBaseFileLocation() {
-        return configPanel.getBaseFileLocation();
+    public String getBaseFileLocation() {        return configPanel.getBaseFileLocation();
+        //return configPanel.defaultFileBaseLocation.getText().trim();
     }
     public int getNumberClass(){
     	return this.classnumPanel.getNumClasses();
@@ -379,8 +327,7 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
         public PriorSelectionPanel(boolean haveClusters){
             super(new GridBagLayout());
             setLayout(new GridBagLayout());
-            setBackground(Color.white);
-            setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Network Sources", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
+            setBackground(Color.white);            setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Network Priors Sources", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
             
             litSourceCheckbox = new JCheckBox("Literature Mining",true);
             litSourceCheckbox.setFocusPainted(false);
@@ -674,17 +621,14 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
 	        super(new GridBagLayout());
 	        	setLayout(new GridBagLayout());
 	        	setBackground(Color.white);
-	        	useGoButton = new JRadioButton("Use GO Terms to direct edges",true); 
-	        	useGoButton.setHorizontalAlignment(JRadioButton.CENTER);
-	        	useDFSButton = new JRadioButton("Use Depth-First Search to direct edges");           	
+	        	useGoButton = new JRadioButton("Use GO Terms to direct edges"); 
+	        	useGoButton.setHorizontalAlignment(JRadioButton.CENTER);	        	useDFSButton = new JRadioButton("Use Depth-First Search to direct edges",true);           	
 	        	useDFSButton.setHorizontalAlignment(JRadioButton.CENTER);
 	        	bGroup=new ButtonGroup();
-	        	bGroup.add(useGoButton);
-	        	bGroup.add(useDFSButton);
+	        	bGroup.add(useDFSButton);	        	bGroup.add(useGoButton);
 	        	setBackground(Color.white);
-    			setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "How to direct edges for graph", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
-    			add(this.useGoButton, new GridBagConstraints(0,0,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
-    			add(this.useDFSButton, new GridBagConstraints(1,0,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
+    			setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "How to direct edges for graph", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));    			add(this.useDFSButton, new GridBagConstraints(0,0,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
+    			add(this.useGoButton, new GridBagConstraints(1,0,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
     	}
         
         public boolean useGoTerms(){
@@ -698,11 +642,9 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
      	  private JLabel scorelabel=new JLabel("Scoring Scheme: BDeu");
      	  private JTextField nParents=new JTextField("3");
    	  public RunBNPanel(){
-	        super(new GridBagLayout());
-	        
+	        super(new GridBagLayout());	        
 	        setLayout(new GridBagLayout());
-	        setBackground(Color.white);
-	                 	
+	        setBackground(Color.white);	                 	
    			setBackground(Color.white);
    			setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Running Bayesian Network Parameters ", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
    			add(this.slabel, new GridBagConstraints(0,0,1,1,0.0,0.0,GridBagConstraints.WEST,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
@@ -1223,8 +1165,7 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
         //        statParamsPanel.setEnablePermutations();
         //    } else if (command.equals("trim-result-command")){
         //        statParamsPanel.validateTrimOptions();
-            } else if (command.equals("select-file-base-command")) {
-                configPanel.selectFileSystem();
+            } else if (command.equals("select-file-base-command")) {                configPanel.selectFileSystem();
             } else if (command.equals("update-files-command")) {
         //TODO add an update manager like the one in EASE module
        	      BNUpdateManager manager = new BNUpdateManager((JFrame)parent,configPanel.getBaseFileLocation());

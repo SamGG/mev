@@ -74,7 +74,9 @@ public class GetSubsetKeyValuesGivenSubsetKeysAndKeyValues {
      * was not found
      */
     public static HashMap getSubsetKeyValues(HashSet subsetKeys, String keyValuesInTabDelimitedFormat) throws FileNotFoundException, NullArgumentException {
-	Useful.checkFile(keyValuesInTabDelimitedFormat);       
+    	System.out.println("getSubsetKeyValues()" + keyValuesInTabDelimitedFormat);
+    	Useful.checkFile(keyValuesInTabDelimitedFormat);     
+	
 	HashMap keyValues = Useful.readHashMapFromFile(keyValuesInTabDelimitedFormat);
 	HashMap subsetKeyValues = getSubsetKeyValues(subsetKeys, keyValues);
 	return subsetKeyValues;
@@ -96,6 +98,8 @@ public class GetSubsetKeyValuesGivenSubsetKeysAndKeyValues {
      */
     public static HashMap getSubsetKeyValues(String subsetKeysFileName, String keyValuesInTabDelimitedFormat) throws FileNotFoundException {
 	try {
+		System.out.println("getSubsetKeyValues()" + subsetKeysFileName);
+		System.out.println("getSubsetKeyValues()" + keyValuesInTabDelimitedFormat);
 	    Useful.checkFile(subsetKeysFileName);
 	    Useful.checkFile(keyValuesInTabDelimitedFormat);
 	    HashSet subsetKeys = Useful.readUniqueNamesFromFile(subsetKeysFileName);

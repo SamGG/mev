@@ -2,12 +2,10 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -15,13 +13,11 @@
 /* WekaBNGui.java
  * Copyright (C) 2006 Amira Djebbari
  */
-package org.tigr.microarray.mev.cluster.gui.impl.bn;
-import javax.swing.*;          
+package org.tigr.microarray.mev.cluster.gui.impl.bn;import javax.swing.*;          
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import weka.classifiers.bayes.BayesNet;
-import weka.classifiers.Evaluation;
+import weka.classifiers.bayes.BayesNet;import weka.classifiers.Evaluation;
 import cytoscape.CyMain;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.RunWekaProgressPanel;
 //import cytoscape.cytoscape;
@@ -83,7 +79,6 @@ public class WekaBNGui extends JPanel implements ActionListener {
 	 /*
 	    if (e.getSource() == initBifCheckBox) {
             int returnVal = fc.showOpenDialog(WekaBNGui.this);
-
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File file = fc.getSelectedFile();
 		//initBifFileName = file.getAbsolutePath();
@@ -104,7 +99,7 @@ public class WekaBNGui extends JPanel implements ActionListener {
 	     System.out.println("numParents="+numParents);
 	 }
 	 else if(e.getSource() == runWekaButton) {
-	     //System.out.println("Run weka");	     
+	     System.out.println("Run weka");	     
 	    /*
 	     if(!(new File(arffExpressionFileName)).exists()){
 		 System.out.println("ARFF expression file name is null!");
@@ -116,7 +111,6 @@ public class WekaBNGui extends JPanel implements ActionListener {
 	     */
 	     // Command to Weka should be like:
 	     // java weka.classifiers.bayes.BayesNet -t bla_arff.arff -c 1 -D -Q weka.classifiers.bayes.net.search.local.HillClimber -- -R -N -P 3 -S BAYES -X result_list_bif.xml -E weka.classifiers.bayes.net.estimate.SimpleEstimator -- -A 0.5
-
 	   //  try {
 	     //arffExpressionFileName=arffExpressionFileName.replaceAll(" ","_");
 	     String arguments = "-t "+ arffExpressionFileName+ " -c 1";
@@ -167,20 +161,21 @@ public class WekaBNGui extends JPanel implements ActionListener {
 						   JOptionPane.ERROR_MESSAGE);
 		 }
 		 else {
-                 */
-		 FileOutputStream fos = new FileOutputStream("result.sif");
-		 PrintWriter pw = new PrintWriter(fos, true);
-		 FromWekaToSif.fromWekaToSif(evalStr, pw);		     
+                 */		 //FileOutputStream fos = new FileOutputStream("result.sif"); //Raktim - Old Way
+		 //String fileName = System.getProperty("user.dir")+"/data/bn/results/"+Useful.getUniqueFileID()+ "_" + "result.sif";
+	     //Added Algorithim Name & Score Type to File Name
+	     String fileName = System.getProperty("user.dir")+"/data/bn/results/"+Useful.getUniqueFileID()+ "_" + "result.sif";
+		 FileOutputStream fos = new FileOutputStream(fileName);
+		 PrintWriter pw = new PrintWriter(fos, true);		 //FromWekaToSif.fromWekaToSif(evalStr, pw);		     
+		 FromWekaToSif.fromWekaToSif(evalStr, pw, false);
 		     // call cytoscape here
 		 final String[] argv = new String[4];
-		 argv[0] = "-i";
-                 argv[1] = "result.sif";
+		 argv[0] = "-i";		 //argv[1] = "result.sif"; //Raktim - Old Way
+		 argv[1] = fileName;
 		 argv[2] = "-p";
-		 argv[3] = System.getProperty("user.dir")+"/plugins/core/yLayouts.jar";
-		  Thread thread = new Thread( new Runnable(){
-		       public void run(){
-			    try{
-                              cytoscape.CyMain.main(argv);
+		 argv[3] = System.getProperty("user.dir")+"/plugins/core/yLayouts.jar";		 Thread thread = new Thread( new Runnable(){
+			 public void run(){
+			    try{			    	cytoscape.CyMain.main(argv);
 			    }catch(Exception ex){
 			    ex.printStackTrace();
 		    }
@@ -234,7 +229,6 @@ public class WekaBNGui extends JPanel implements ActionListener {
 	frame.setVisible(true);
     }
 
-
     public JPanel getScrollPanePanel(String evalString){
 	JPanel evalPanel = new JPanel();
 	evalPanel.setLayout(new BorderLayout());
@@ -249,7 +243,6 @@ public class WekaBNGui extends JPanel implements ActionListener {
 	evalPanel.add(showInCytoButton, BorderLayout.SOUTH);
 	return evalPanel;
     }
-
     protected static ImageIcon createImageIcon(String path) {
         java.net.URL imgURL = WekaBNGui.class.getResource(path);
         if (imgURL != null) {
@@ -260,9 +253,7 @@ public class WekaBNGui extends JPanel implements ActionListener {
         }
     }
 
-
-    public static void createAndShowGUI(String inArffExpressionFileName) {
-	arffExpressionFileName = inArffExpressionFileName;
+    public static void createAndShowGUI(String inArffExpressionFileName) {    	arffExpressionFileName = inArffExpressionFileName;
         //Make sure we have nice window decorations.
         JFrame.setDefaultLookAndFeelDecorated(true);
 

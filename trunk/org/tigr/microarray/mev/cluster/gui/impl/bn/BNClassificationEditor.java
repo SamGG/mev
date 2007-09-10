@@ -6,60 +6,22 @@ All rights reserved.
  * BNClassificationEditor.java
  *
  */
-
 package org.tigr.microarray.mev.cluster.gui.impl.bn;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.Vector;
-
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.border.EtchedBorder;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-
-import org.tigr.microarray.mev.TMEV;
-import org.tigr.microarray.mev.cluster.algorithm.impl.ExperimentUtil;
-import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.impl.dam.DAMClassificationEditor;
-import org.tigr.util.StringSplitter;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.WekaBNGui;
+import java.awt.BorderLayout;import java.awt.Color;import java.awt.Dimension;import java.awt.GridBagConstraints;import java.awt.GridBagLayout;import java.awt.Toolkit;import java.awt.event.ActionEvent;import java.awt.event.ActionListener;import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;import java.io.BufferedReader;import java.io.File;import java.io.FileInputStream;
+import java.io.FileNotFoundException;import java.io.FileOutputStream;import java.io.FileReader;import java.io.PrintWriter;import java.util.Arrays;import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Properties;
+import java.util.Vector;import javax.swing.ButtonGroup;
+import javax.swing.JButton;import javax.swing.JDialog;
+import javax.swing.JFileChooser;import javax.swing.JFrame;import javax.swing.JMenu;import javax.swing.JMenuBar;import javax.swing.JMenuItem;import javax.swing.JOptionPane;import javax.swing.JPanel;import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;import javax.swing.JTable;import javax.swing.JTextArea;import javax.swing.JTextField;
+import javax.swing.border.EtchedBorder;import javax.swing.event.TableModelEvent;import javax.swing.event.TableModelListener;import javax.swing.table.AbstractTableModel;import javax.swing.table.TableColumn;import javax.swing.table.TableColumnModel;import org.tigr.microarray.mev.TMEV;import org.tigr.microarray.mev.cluster.algorithm.impl.ExperimentUtil;
+import org.tigr.microarray.mev.cluster.gui.IData;import org.tigr.microarray.mev.cluster.gui.IFramework;import org.tigr.microarray.mev.cluster.gui.impl.dam.DAMClassificationEditor;
+import org.tigr.util.StringSplitter;import org.tigr.microarray.mev.cluster.gui.impl.bn.WekaBNGui;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
-import weka.classifiers.Evaluation;
-import weka.classifiers.bayes.BayesNet;
-import weka.gui.GUIChooser;
-import weka.gui.explorer.Explorer;
+import weka.classifiers.Evaluation;import weka.classifiers.bayes.BayesNet;import weka.gui.GUIChooser;import weka.gui.explorer.Explorer;
 import weka.gui.explorer.PreprocessPanel;
 import java.io.IOException;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.RunWekaProgressPanel;
@@ -80,8 +42,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
      JScrollPane evalScrollPane;
      String evalStr = null;
      RunWekaProgressPanel runProgressPanel;
-    int numClasses;
-    JButton showInCytoButton,showLitCytoButton; 
+    int numClasses;    JButton showInCytoButton,showLitCytoButton, showBootInCytoButton; 
     String[] fieldNames;
     int numGenes, numExps;
     JTable BNClassTable;
@@ -89,21 +50,31 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
     JMenuBar menuBar;
     JMenu fileMenu, editMenu, toolsMenu, assignSubMenu, sortAscMenu, sortDescMenu;
     JMenuItem saveItem, closeItem, fileMenuItem,selectAllItem, searchItem, sortByClassItem, origOrderItem;
-    JMenuItem[] classItem, labelsAscItem, labelsDescItem;
-    //JRadioButton saveButton, doNotSaveButton;
-    JButton nextButton,cancelButton,loadButton,saveButton;
+    JMenuItem[] classItem, labelsAscItem, labelsDescItem;    JRadioButton saveButton, doNotSaveButton;
+    JButton nextButton, cancelButton, loadButton, updateNetwork;
+    JTextField confThreshField;
     JFrame mainFrame;
-    String numBin,numParents,sAlgorithm,sType;
+    String numBin, numParents, sAlgorithm, sType;
     boolean useArc=true;
     //SortListener sorter;
     String[] label;
     Object[][] origData;
-    final String basePath;
-    /** Creates a new instance of BNClassificationEditor */
-    public BNClassificationEditor(final IFramework framework, boolean classifyGenes, final Cluster cl,String num,int numClasses,String parents,String algorithm,String scoreType,boolean uAr,String path) {
+    final String basePath;    //Raktim 
+	//String fileName;
+    String evalStrs[] = null;
+    Properties props = null;
+    boolean isBootstraping = false;
+    String bootNetFile = null;
+    int numIterations = 100;
+    float confThreshold = 0.07f;
+    int kfold = 10;
+    Hashtable<String, Integer> edgesTable = new Hashtable<String, Integer>();    
+
+    
+    /** Creates a new instance of BNClassificationEditor */    public BNClassificationEditor(final IFramework framework, boolean classifyGenes, final Cluster cl,String num,int numClasses,String parents,String algorithm,String scoreType,boolean uAr, boolean bootstrap, int iteration, float threshold, int kfolds, String path) {
         super(framework.getFrame(), true);
         this.setTitle("BN Classification Editor");
-        mainFrame = (JFrame)(framework.getFrame());
+        mainFrame = (JFrame)(framework.getFrame());        
         setBounds(0, 0, 550, 800);
         setBackground(Color.white);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -120,9 +91,12 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
         sAlgorithm=algorithm;
         sType=scoreType;
         useArc=uAr;
-        basePath=path+System.getProperty("file.separator");
-        //menuBar = new JMenuBar();
-        //this.setJMenuBar(menuBar);
+        basePath=path+System.getProperty("file.separator");        
+        this.isBootstraping = bootstrap;
+        this.numIterations = iteration;
+        this.confThreshold = threshold;
+        this.kfold = kfolds;
+        //menuBar = new JMenuBar();        //this.setJMenuBar(menuBar);  
         
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints constraints = new GridBagConstraints();
@@ -165,8 +139,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
             if(!pathFile.exists())
                 pathFile = TMEV.getFile("data/bn");
         }
-        fc1.setCurrentDirectory(new File(pathFile.getAbsolutePath()));
-        fc1.setDialogTitle("Load Settings");
+        fc1.setCurrentDirectory(new File(pathFile.getAbsolutePath()));        fc1.setDialogTitle("Open Classification");
 	
         JPanel bottomPanel = new JPanel();
         bottomPanel.setBorder(new EtchedBorder());
@@ -180,23 +153,8 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
                  if (returnVal == JFileChooser.APPROVE_OPTION) {
                        File file = fc1.getSelectedFile();  
                        loadFromFile(file);
-
                        //fileOpened = true;
                        //nextPressed = false;                        
-
-                  }
-        	}
-        });
-	    saveButton=new JButton("Save Settings");
-	    saveButton.addActionListener(new ActionListener(){
-        	public void actionPerformed(ActionEvent evt) {
-        		fc1.setDialogTitle("Save Settings");
-        		int returnVal = fc1.showSaveDialog(BNClassificationEditor.this);  
-                 if (returnVal == JFileChooser.APPROVE_OPTION) {
-                       File file = fc1.getSelectedFile();  
-                       //loadFromFile(file);
-                       saveToFile(file.toString());
-                       
                   }
         	}
         });
@@ -210,69 +168,173 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
         nextButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
 		        String sep = System.getProperty("file.separator");   
-                BNClassificationEditor.this.dispose(); 
-                saveToFile(basePath+sep+"label");
-		        saveWekaData(cl,framework,basePath);
-                tranSaveWeka(numBin,basePath);
-                  //WekaBNGui.createAndShowGUI(basePath+"outExpression.arff");
-		//WekaBNGui.createAndShowGUI("outExpression.arff");
-		String arguments = "-t outExpression.arff -c 1 -Q weka.classifiers.bayes.net.search.local."+sAlgorithm+" -- ";
-		if(useArc){
-		arguments +="-R";
-		}
-		arguments +=" -P "+numParents+" -S "+sType;
-		while(!BNGUI.done){
-		     try{
-		        Thread.sleep(5000);	
-		     }catch(InterruptedException x){
-		     //ignore;
-		     }
-		}
-		if(BNGUI.prior){     
-		     arguments += " -X resultBif.xml";
-		     //System.out.print("my prior");
-		 }
-		arguments += " -E weka.classifiers.bayes.net.estimate.SimpleEstimator -- -A 0.5";
-	    System.out.println("calling weka with arguments: \n"+arguments);
-	    final String[] argsWeka = arguments.split(" ");
-	    Thread thread = new Thread( new Runnable(){
-		       public void run(){
-			       try{     
-	               Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-				   runProgressPanel=new RunWekaProgressPanel();
-	               runProgressPanel.setIndeterminate(true);
-				   runProgressPanel.setLocation((screenSize.width-getSize().width)/2,(screenSize.height-getSize().height)/2);
-	               runProgressPanel.setVisible(true);
-				   evalStr = Evaluation.evaluateModel(new BayesNet(),argsWeka);
-			       }catch(Exception ex){
-			        ex.printStackTrace();
-			       }
-			       runProgressPanel.dispose();
-	               displayScrollPane(getScrollPanePanel(evalStr));
-			 
-			   }
-	           });
-	   thread.start();
-	     
-	    }
-	    
+                BNClassificationEditor.this.dispose();                 //saveToFile(basePath+sep+"label"); // Raktim - Use Tmp dir
+                saveToFile(basePath+sep+"tmp"+sep+"label");
+		        //saveWekaData(cl,framework,basePath); // Raktim - Use Tmp dir
+                saveWekaData(cl,framework,basePath+sep+"tmp");
+                //tranSaveWeka(numBin,basePath); // Raktim - Use Tmp dir
+                props = tranSaveWeka(numBin,basePath+sep+"tmp", isBootstraping, numIterations);
+                 //WekaBNGui.createAndShowGUI(basePath+"outExpression.arff");
+                 //WekaBNGui.createAndShowGUI("outExpression.arff");
+                /*
+                String path = basePath+sep+"tmp"+sep;
+                String outarff = "outExpression.arff";
+                String arguments = Useful.getWekaArgs(path, outarff, sAlgorithm, useArc, numParents, sType);
+                
+                String arguments = "-t " + basePath+sep+"tmp"+sep+ "outExpression.arff -c 1 -Q weka.classifiers.bayes.net.search.local."+sAlgorithm+" -- ";
+                if(useArc){
+                	arguments +="-R";
+                }
+                arguments +=" -P "+numParents+" -S "+sType;
+                while(!BNGUI.done){
+                	try{
+                		Thread.sleep(10000);	
+                	}catch(InterruptedException x){
+                		//ignore;
+                	}
+                }
+                if(BNGUI.prior){     
+                	arguments += " -X " + basePath+sep+"tmp"+sep+ "resultBif.xml";
+                	//System.out.print("my prior");
+                }
+                arguments += " -E weka.classifiers.bayes.net.estimate.SimpleEstimator -- -A 0.5";
+                
+                System.out.println("calling weka with arguments: \n"+arguments);
+                final String[] argsWeka = arguments.split(" ");
+                */
+                Thread thread = new Thread( new Runnable(){
+                	public void run(){
+                		try{     
+                			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                			runProgressPanel=new RunWekaProgressPanel();
+                			runProgressPanel.setIndeterminate(true);
+                			runProgressPanel.setLocation((screenSize.width-getSize().width)/2,(screenSize.height-getSize().height)/2);
+                			runProgressPanel.setVisible(true);
+                			
+                			String sep = System.getProperty("file.separator"); 
+                			String path = basePath+sep+"tmp"+sep;
+                            String outarff = "outExpression.arff";
+                            
+                    	    if(!isBootstraping) {
+                    	    	String arguments = Useful.getWekaArgs(path, outarff, sAlgorithm, useArc, numParents, sType, kfold);
+                    	    	System.out.println("calling weka with arguments: \n"+arguments);
+                    	    	final String[] argsWeka = arguments.split(" ");
+                                evalStr = Evaluation.evaluateModel(new BayesNet(), argsWeka);
+                    	    } else {
+                    	    	//WEKA on observed Data
+                    	    	String arguments = Useful.getWekaArgs(path, outarff, sAlgorithm, useArc, numParents, sType, kfold);
+                    	    	System.out.println("calling weka On Observed Data,  with arguments: \n"+arguments);
+                    	    	String[] argsWeka = arguments.split(" ");
+                                evalStr = Evaluation.evaluateModel(new BayesNet(), argsWeka);
+                                
+                    	    	//WEKA On bootstrapped data
+                    	    	String outarffbase = props.getProperty("rootOutputFileName");
+                                String outarffext = ".arff";
+                                evalStrs = new String[numIterations];
+                                
+	                			for(int i=0; i < numIterations; i++){
+	                				outarff = outarffbase + i + outarffext;
+	                				arguments = Useful.getWekaArgs(path, outarff, sAlgorithm, useArc, numParents, sType, kfold);
+	                				System.out.println("calling weka On Bootstrap Data, arguments: \n"+arguments);
+	                                argsWeka = arguments.split(" ");
+	                                // evalStr = Evaluation.evaluateModel(new BayesNet(), argsWeka);
+	                				evalStrs[i] = Evaluation.evaluateModel(new BayesNet(), argsWeka);
+	                				//evalStr = evalStrs[i];
+	                				System.out.println("Bootstrap Itr: " + i);
+	                				//if(BNGUI.cancelRun)
+	                					//break;
+	                			}
+	                			//if(!BNGUI.cancelRun)
+	                				bootNetFile = createNetworkFromBootstrapedEvals(evalStrs, numIterations, outarffbase, confThreshold);
+                    	    }
+                		}catch(Exception ex){
+                			ex.printStackTrace();
+                		}
+                		runProgressPanel.dispose();
+                		//if(!BNGUI.cancelRun)
+                			displayScrollPane(getScrollPanePanel(evalStr));
+                		//BNGUI.run=true;
+                	}
+
+					private String createNetworkFromBootstrapedEvals(String[] evalStrs, int numItr, String outarffbase, float threshold) {
+						String sep = System.getProperty("file.separator"); 
+            			String path = basePath+sep+"tmp"+sep;
+						String fileName = path + outarffbase;
+						
+						//Create sif files for every output of the resampled WEKA evaluation
+						try {
+							for(int i = 0; i < numItr; i++) {
+								//System.out.println("Creating file: " + fileName+i+outarffext);
+						    	FileOutputStream fos = new FileOutputStream(fileName+i+".sif");
+						    	PrintWriter pw = new PrintWriter(fos, true);
+						    	//FromWekaToSif.fromWekaToSif(evalStrs[i], pw);	
+						    	FromWekaToSif.fromWekaToSif(evalStrs[i], pw, false);
+							}
+						} catch (Exception e){
+							e.printStackTrace();
+						}
+						
+						// Count occurance of each edge accros all the iterations of the bootstrap
+						
+						try {
+							for(int i = 0; i < numItr; i++) {
+								System.out.println("Reading file: " + fileName+i+".sif");
+								BufferedReader br = new BufferedReader(new FileReader(fileName+i+".sif"));
+								String line = br.readLine();
+								while (line != null) {
+						          System.out.println(line);
+						          
+						          Integer count = (Integer)edgesTable.get(line.trim());
+						          if(count != null) {
+						        	  edgesTable.remove(line.trim());
+						        	  edgesTable.put(line.trim(), count + new Integer(1));
+						          }
+						          else {
+						        	  edgesTable.put(line.trim(), new Integer(1));
+						          }
+						          line = br.readLine();
+								}
+								br.close();
+							}
+						} catch (Exception e){
+							e.printStackTrace();
+						}
+						
+						// Remove edges below threshold
+						String bootNetFile = basePath+sep+"results"+sep+
+											Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" +
+											"boot_result_"+numIterations+"_"+confThreshold+".sif";
+						try {
+							FileOutputStream fos = new FileOutputStream(bootNetFile);
+							PrintWriter pw = new PrintWriter(fos, true);
+							Enumeration enumerate = edgesTable.keys();
+							while(enumerate.hasMoreElements()){
+								String edge = (String)enumerate.nextElement();
+								Integer count = (Integer)edgesTable.get(edge);
+								float presence = count.floatValue()/numItr;
+								System.out.println(edge + " : " + count.toString() + " presence : " + presence + " thresh : " + threshold);
+								if(presence >= threshold){
+									pw.println(edge);
+								}
+							}
+							fos.close();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						return bootNetFile;
+					}
+	           });	    		thread.start();
+            }
         });
-    	cleanUpFile();
-        constraints.fill = GridBagConstraints.NONE;
+    	cleanUpFile();        constraints.fill = GridBagConstraints.NONE; 
         
         buildConstraints(constraints, 0, 0, 1, 1, 10, 33);
 	    grid2.setConstraints(loadButton, constraints);
-    	bottomPanel.add(loadButton);
-    	
-    	buildConstraints(constraints, 1, 0, 1, 1, 10, 33);
-	    grid2.setConstraints(saveButton, constraints);
-    	bottomPanel.add(saveButton);
-        
-    	buildConstraints(constraints, 2, 0, 1, 1, 10, 33);
+    	bottomPanel.add(loadButton);	
+        buildConstraints(constraints, 1, 0, 1, 1, 10, 33);
 	    grid2.setConstraints(cancelButton, constraints);
         bottomPanel.add(cancelButton); 
-	
-        buildConstraints(constraints, 3, 0, 1, 1, 10, 33);
+	        buildConstraints(constraints, 2, 0, 1, 1, 10, 33);
         grid2.setConstraints(nextButton, constraints);
         bottomPanel.add(nextButton);        
         
@@ -322,106 +384,207 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
     }
     
      public void displayScrollPane(JPanel panel){
-	     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-	//JFrame.setDefaultLookAndFeelDecorated(true);
-        //Create and set up the window.
-        JFrame frame = new JFrame("Results from Weka");
-       // frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	frame.getContentPane().add(panel);
-	frame.pack();
-	frame.setLocation((screenSize.width-getSize().width)/2,(screenSize.height-getSize().height)/2);
-	frame.setVisible(true);
+	     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();	     //JFrame.setDefaultLookAndFeelDecorated(true);
+         //Create and set up the window.
+	    
+        //JDialog frame = new JDialog(new JFrame(), "Results from Weka", true);
+        JDialog frame = new JDialog(mainFrame, "Results from Weka", false);
+        // frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //frame
+        frame.getContentPane().add(panel);
+        frame.pack();
+        frame.setLocation((screenSize.width-getSize().width)/2,(screenSize.height-getSize().height)/2);
+        frame.setVisible(true);
     }
 
-
-    public JPanel getScrollPanePanel(String evalString){
-	//final JFrame frame;
-	final JPanel evalPanel = new JPanel();
-	evalPanel.setLayout(new BorderLayout());
-	textArea = new JTextArea(evalString, 50, 50);
-	evalScrollPane = new JScrollPane(textArea);
-	evalScrollPane.setPreferredSize(textArea.getPreferredScrollableViewportSize());	
-	evalScrollPane.revalidate(); // knows when to resize
-	evalPanel.add(evalScrollPane, BorderLayout.NORTH);
-	//frame=(JFrame)evalPanel.getParent();
-	showLitCytoButton = new JButton("Show network from literature mining in Cytoscape");
-	showLitCytoButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-		    try {	     
-		     // call cytoscape here
-		 final String[] argv = new String[4];
-		 argv[0] = "-i";
-                 argv[1] = System.getProperty("user.dir")+"/data/bn/liter_mining_alone_network.sif";
-		 argv[2] = "-p";
-		 argv[3] = System.getProperty("user.dir")+"/plugins/core/yLayouts.jar";
-		  Thread thread = new Thread( new Runnable(){
-		       public void run(){
-			    try{ 
-                    cytoscape.CyMain.main(argv);
-			      
-			    }catch(Exception ex){
-			    ex.printStackTrace();
-			    }
-			    }
-	              });
-	             thread.start(); 
-	     }catch(Exception ex){
-		 //System.out.println(ex);
-		 ex.printStackTrace();
-		 JOptionPane.showMessageDialog(null,
-					       ex.toString(),
-					       "Error",
-					       JOptionPane.ERROR_MESSAGE);
-	     }
+    public JPanel getScrollPanePanel(String evalString){		//final JFrame frame;
+		final JPanel evalPanel = new JPanel();
+		evalPanel.setLayout(new BorderLayout());
+		textArea = new JTextArea(evalString, 50, 50);
+		evalScrollPane = new JScrollPane(textArea);
+		evalScrollPane.setPreferredSize(textArea.getPreferredScrollableViewportSize());	
+		evalScrollPane.revalidate(); // knows when to resize
+		evalPanel.add(evalScrollPane, BorderLayout.NORTH);
+		//frame=(JFrame)evalPanel.getParent();
+		showLitCytoButton = new JButton("Literature Mining Network");
+		showLitCytoButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {			    try {	     
+				     // call cytoscape here
+					 final String[] argv = new String[4];
+					 //argv[0] = "-i";
+					 argv[0] = "-N";
+					 //Raktim - Modified. File name unique
+			         //argv[1] = System.getProperty("user.dir")+"/data/bn/liter_mining_alone_network.sif";
+					 System.out.println("System.getProperty(LM_ONLY) " + System.getProperty("LM_ONLY"));
+					 argv[1] = System.getProperty("user.dir")+"/data/bn/results/"+System.getProperty("LM_ONLY");
+					 argv[2] = "-p";
+					 //argv[3] = System.getProperty("user.dir")+"/plugins/core/yLayouts.jar";
+					 argv[3] = System.getProperty("user.dir")+"/plugins/yLayouts.jar";
+					 Thread thread = new Thread( new Runnable(){
+					     public void run(){
+							    try { 
+				                    cytoscape.CyMain.main(argv);
+							    }catch(Exception ex){
+							    	ex.printStackTrace();
+							    }
+					     }
+					 });
+					 thread.start(); 
+		     }catch(Exception ex){
+		    	 //System.out.println(ex);
+		    	 ex.printStackTrace();
+		    	 JOptionPane.showMessageDialog(null, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+		     }
 	    }
             
-	});
-	showInCytoButton = new JButton("Show network with priors in Cytoscape");
+	});	//showInCytoButton = new JButton("Show network with priors in Cytoscape");
+	showInCytoButton = new JButton("Observed Network with Priors");
 	showInCytoButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-		    try {
-		 FileOutputStream fos = new FileOutputStream("result.sif");
-		 PrintWriter pw = new PrintWriter(fos, true);
-		 FromWekaToSif.fromWekaToSif(evalStr, pw);		     
-		     // call cytoscape here
-		 final String[] argv = new String[4];
-		 argv[0] = "-i";
-                 argv[1] = "result.sif";
-		 argv[2] = "-p";
-		 argv[3] = System.getProperty("user.dir")+"/plugins/core/yLayouts.jar";
-		  Thread thread = new Thread( new Runnable(){
-		       public void run(){
-			    try{
-		              //frame.dispose();    
-                              cytoscape.CyMain.main(argv);
-			      
-			    }catch(Exception ex){
-			    ex.printStackTrace();
-		    }
+		    try {		    	
+		    	//FileOutputStream fos = new FileOutputStream("result.sif"); //Old Way - Raktim
+		    	// Raktim - Modified to make file name Unique
+		    	String fileName = System.getProperty("user.dir")+"/data/bn/results/"+Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" + "result.sif";
+		    	FileOutputStream fos = new FileOutputStream(fileName);
+		    	PrintWriter pw = new PrintWriter(fos, true);
+		    	//FromWekaToSif.fromWekaToSif(evalStr, pw);	
+		    	FromWekaToSif.fromWekaToSif(evalStr, pw, false);
+		    	//FromWekaToSif.fromWekaToSif(evalString, pw);
+		    	// call cytoscape here
+		    	final String[] argv = new String[4];
+		    	//argv[0] = "-i";
+		    	argv[0] = "-N";
+		    	argv[1] = fileName;
+		    	argv[2] = "-p";
+		    	//argv[3] = System.getProperty("user.dir")+"/plugins/core/yLayouts.jar";
+		    	argv[3] = System.getProperty("user.dir")+"/plugins/yLayouts.jar";
+		    	Thread thread = new Thread( new Runnable(){
+		    		public void run(){
+		    			try{
+		    				//frame.dispose();    
+                              cytoscape.CyMain.main(argv);                              //String command = "java -Xmx512M -jar ./lib/cytoscape.jar -N " + fileName + " -p plugins";
+                              //Runtime.getRuntime().exec(command);
+                              
+		    			}catch(Exception ex){
+		    				ex.printStackTrace();
+		    			}
 			       }
 	              });
 	             thread.start();
 	 
-	     }catch(IOException ioE){
-		ioE.printStackTrace();     
+	     }catch(IOException ioE){	    	 ioE.printStackTrace();     
 	     }catch(Exception ex){
 		 //System.out.println(ex);
-		 ex.printStackTrace();
-		 JOptionPane.showMessageDialog(null,
-					       ex.toString(),
-					       "Error",
-					       JOptionPane.ERROR_MESSAGE);
+		 ex.printStackTrace();		 	JOptionPane.showMessageDialog(null, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
 	     }
 	    }
 	   
-	});
-	evalScrollPane.setCorner(JScrollPane.LOWER_RIGHT_CORNER, showInCytoButton);
-	evalPanel.add(showLitCytoButton, BorderLayout.CENTER);
-	evalPanel.add(showInCytoButton, BorderLayout.SOUTH);
+	});	if(isBootstraping) {
+		//showBootInCytoButton = new JButton("Show network from BootStrap with priors in Cytoscape");
+		showBootInCytoButton = new JButton("Network from BootStrap");
+		showBootInCytoButton.addActionListener(new ActionListener() {
+	            public void actionPerformed(ActionEvent evt) {
+			    try {
+			    	//String fileName = System.getProperty("user.dir")+"/data/bn/results/"+Useful.getUniqueFileID()+ "_" + "result.sif";
+			    	// call cytoscape here
+			    	final String[] argv = new String[4];
+			    	//argv[0] = "-i";
+			    	argv[0] = "-N";
+			    	argv[1] = bootNetFile; //fileName;
+			    	argv[2] = "-p";
+			    	//argv[3] = System.getProperty("user.dir")+"/plugins/core/yLayouts.jar";
+			    	argv[3] = System.getProperty("user.dir")+"/plugins/yLayouts.jar";
+			    	Thread thread = new Thread( new Runnable(){
+			    		public void run(){
+			    			try{
+			    				cytoscape.CyMain.main(argv);
+			    			}catch(Exception ex){
+			    				ex.printStackTrace();
+			    			}
+				       }
+		              });
+		             thread.start();
+		   
+		     }catch(Exception ex){
+		    	 ex.printStackTrace();
+			 	JOptionPane.showMessageDialog(null, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+		     }
+		    }
+		   
+		});
+		
+		updateNetwork = new JButton("Update Network");
+		updateNetwork.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+    		    try {
+    		    	
+    		    	// Remove edges below threshold
+    		    	float confThres = Float.parseFloat(confThreshField.getText().trim());
+    		    	String sep= System.getProperty("file.separator");
+					String bootNetFile = basePath+sep+"results"+sep+
+										Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" +
+										"boot_result_"+numIterations+"_"+confThres+".sif";
+					try {
+						FileOutputStream fos = new FileOutputStream(bootNetFile);
+						PrintWriter pw = new PrintWriter(fos, true);
+						Enumeration enumerate = edgesTable.keys();
+						while(enumerate.hasMoreElements()){
+							String edge = (String)enumerate.nextElement();
+							Integer count = (Integer)edgesTable.get(edge);
+							float presence = count.floatValue()/numIterations;
+							System.out.println(edge + " : " + count.toString() + " presence : " + presence + " thresh : " + confThres);
+							if(presence >= confThres){
+								pw.println(edge);
+							}
+						}
+						fos.close();
+					} catch (Exception e) {
+						
+					}
+
+    		    	// call cytoscape here
+    		    	final String[] argv = new String[4];
+    		    	//argv[0] = "-i";
+    		    	argv[0] = "-N";
+    		    	argv[1] = bootNetFile;
+    		    	argv[2] = "-p";
+    		    	//argv[3] = System.getProperty("user.dir")+"/plugins/corts.jar";
+    		    	argv[3] = System.getProperty("user.dir")+"/plugins/yLayouts.jar";
+    		    	Thread thread = new Thread( new Runnable(){
+    		    		public void run(){
+    		    			try{
+    		    				//frame.dispose();    
+                                  cytoscape.CyMain.main(argv);
+    			      
+    		    			}catch(Exception ex){
+    		    				ex.printStackTrace();
+    		    			}
+    			       }
+    	              });
+    	             thread.start(); 
+    	     }catch(Exception ex){
+    		 //System.out.println(ex);
+    		 ex.printStackTrace();
+    		 	JOptionPane.showMessageDialog(null, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+    	     }
+    	    }
+    	   
+    	});
+			
+	    confThreshField = new JTextField("0.7");
+	    confThreshField.setPreferredSize(new Dimension(35, 10));
+	}
+	evalScrollPane.setCorner(JScrollPane.LOWER_RIGHT_CORNER, showInCytoButton);	evalPanel.add(showLitCytoButton, BorderLayout.PAGE_START);
+	evalPanel.add(showInCytoButton, BorderLayout.PAGE_END);
+	if(isBootstraping) {
+		evalPanel.add(showBootInCytoButton, BorderLayout.LINE_START);
+		evalPanel.add(confThreshField, BorderLayout.CENTER);
+		evalPanel.add(updateNetwork, BorderLayout.LINE_END);
+	}
 	return evalPanel;
     }
     
-     private void cleanUpFile(){
+     private void cleanUpFile(){    	 /*
 	    String[] files=new String[8];
 	    files[0]="getInterModLit.props";
 	    files[1]="getInterModBoth.props";
@@ -433,18 +596,18 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 	    files[7]="prepareXMLBifMod.props";
 	    
 	    String sep=System.getProperty("file.separator");
-	    String path=System.getProperty("user.dir");
-	    path=path+sep+"data"+sep+"bn"+sep;
+	    String path=System.getProperty("user.dir");	    //path=path+sep+"data"+sep+"bn"+sep; // Raktim - Use Tmp dir
+	    path=path+sep+"data"+sep+"bn"+sep+"tmp"+sep;
 	    for(int i=0;i<8;i++){
 	     File file=new File(path,files[i]);
               file.deleteOnExit();	    
-	    }
-	    
+	    }	    */
     }
     
-    private String[] convertFromFile(String path){
-	 String sep= System.getProperty("file.separator");    
-	 String filePath = path+sep+"list.txt";
+    private String[] convertFromFile(String path){    	
+	 String sep= System.getProperty("file.separator");    	 String filePath = path+sep+"list.txt"; // Raktim - USe Tmp dir
+	 //String filePath = path+sep+"tmp"+sep+"list.txt";
+	 System.out.println("convertFromFile(): " + filePath);
 	 String lineRead = "";
 	 Vector store=new Vector();
 	 String[] accList=null;
@@ -473,10 +636,11 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
     	//System.out.print(genes);
     	IData data=frame.getData();
     	int[] rows = new int[genes];
-    	rows=cl.getIndices();
-	String[] accList=new String[genes];
-         try{ 
-	PrintWriter out = new PrintWriter(new FileOutputStream(new File(basePath+"wekaData")));
+    	rows=cl.getIndices();    	String[] accList=new String[genes];
+         try{         	 //PrintWriter out = new PrintWriter(new FileOutputStream(new File(basePath+"wekaData"))); // Raktim - USe Tmp dir
+        	 String sep= System.getProperty("file.separator");    
+        	 PrintWriter out = new PrintWriter(new FileOutputStream(new File(basePath+sep+"tmp"+sep+"wekaData")));
+	
         String[] fieldNames = data.getFieldNames();
         String key;
         String val = new String(); 
@@ -518,10 +682,12 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
             e.printStackTrace();
         }
     }
-    
-    public void tranSaveWeka(String binNum,String path){  
-	String sep= System.getProperty("file.separator");    
-    	PrepareArrayDataModule.prepareArrayData(path+sep+"wekaData",binNum);
+        //public void tranSaveWeka(String binNum,String path){
+    public Properties tranSaveWeka(String binNum,String path, boolean bootStrap, int numIter){
+    	String sep= System.getProperty("file.separator");    
+    	return PrepareArrayDataModule.prepareArrayData(path+sep+"wekaData", binNum, bootStrap, numIter); 
+    	// Raktim - USe Tmp dir
+    	//PrepareArrayDataModule.prepareArrayData(path+sep+"tmp"+sep+"wekaData",binNum);
     }
     void buildConstraints(GridBagConstraints gbc, int gx, int gy,
     int gw, int gh, int wx, int wy) {
@@ -997,7 +1163,6 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
     }    
     
     private void saveToFile(String file) {
-    	//System.out.println(file);
         try {
             PrintWriter out = new PrintWriter(new FileOutputStream(new File(file)));
             for (int i = 0; i < kModel.getRowCount(); i++) {

@@ -97,6 +97,9 @@ public class GetAccessions {
      */
     public static void writeAccessionsGivenResourcererAndGeneSymbolsList(String geneSymbolsFileName, String resourcererFileName, String outputFileName) throws FileNotFoundException {
 	try {
+		System.out.println("writeAccessionsGivenResourcererAndGeneSymbolsList()" + geneSymbolsFileName);
+		System.out.println("writeAccessionsGivenResourcererAndGeneSymbolsList()" + resourcererFileName);
+		System.out.println("writeAccessionsGivenResourcererAndGeneSymbolsList()" + outputFileName);
 	    Useful.checkFile(geneSymbolsFileName);
 	    Useful.checkFile(resourcererFileName);
 	    ArrayList geneSymbols = Useful.readNamesFromFile(geneSymbolsFileName);
