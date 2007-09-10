@@ -7,6 +7,7 @@ public class CGHSlideDataElement extends SlideDataElement {
 	public static final int CHR = 1;
 	public static final int START = 2;
 	public static final int END = 3;
+	public static final int DESC = 4;
 		
 	public  CGHSlideDataElement(String UID, int[] rows, int[] columns, float[] intensities, String[] values){
 		super(UID, rows, columns, intensities, values);
@@ -44,6 +45,9 @@ public class CGHSlideDataElement extends SlideDataElement {
 		return getProbeEnd() - getProbeStart();
 	}
 	
+	public String getDesc(){
+		return extraFields[DESC];
+	}
 	public CGHClone getClone(int species) {
 		//System.out.println("getClone(): " + getCloneID() + ", " + getChromosome() + ", " + getProbeStart() + ", " + getProbeEnd());
 		return new CGHClone(getCloneID().trim(), getChromosome(), getProbeStart(), getProbeEnd(), species);

@@ -7,8 +7,12 @@
 package org.tigr.microarray.mev.cgh.CGHDataObj;
 
 //import java.sql.ResultSet;
+import java.util.ArrayList;
 
+import org.tigr.microarray.mev.CGHSlideDataElement;
+import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.cgh.CGHUtil.CGHUtility;
+import org.tigr.microarray.mev.cluster.gui.IData;
 /**
  *
  * @author  Adam Margolin
@@ -31,6 +35,12 @@ public class CGHClone implements ICGHDataRegion {
     /** Holds value of property stop. */
     protected int stop;
 
+    /** Additional/Optional property. Used in ChARM for holding a temp ratio */
+    protected float ratio = 0.0f;
+    
+    /** Stores sorted index of clones **/
+    protected int sortedIndex = 0;
+    
     /** Creates a new instance of CGHClone */
     public CGHClone() {
     }
@@ -191,5 +201,50 @@ public class CGHClone implements ICGHDataRegion {
 
     public Object clone(){
     	return new CGHClone(this.getName().trim(), this.getChromosome(), this.getStart(), this.getStop());
+    }
+    
+    /**
+     * Used as a temporary placeholder for *any experiment.
+     * ChARM addition for GeneList
+     * @param ratio
+     */
+    public void setRatio (float ratio){
+    	this.ratio = ratio;
+    }
+    
+    /**
+     * Used as a temporary placeholder for *any experiment.
+     * ChARM addition for GeneList
+     * @return
+     */
+    public float getRatio() {
+    	return ratio;
+    }
+    
+    /**
+     * Field to hold the absolute index of the clone once sorted by Chr & Pos.
+     * The Field id set up during the data loading once its sorted.
+     * Setter 
+     */
+    public void setSortedIndex(int ind) {
+    	sortedIndex = ind;
+    }
+    
+    /**
+     * Field to hold the absolute index of the clone once sorted by Chr & Pos.
+     * Getter 
+     */
+    public int getSortedIndex() {
+    	return sortedIndex;
+    }
+    
+    /**
+     * To Get extra Fiels Info
+     */
+    public String getDesc(IData data) {
+    	ArrayList features = data.getFeaturesList();
+    	ISlideData temp = (ISlideData)features.get(0);
+    	CGHSlideDataElement sde_T1 = (CGHSlideDataElement)temp.getSlideDataElement(this.sortedIndex);
+		return sde_T1.getDesc();
     }
 }

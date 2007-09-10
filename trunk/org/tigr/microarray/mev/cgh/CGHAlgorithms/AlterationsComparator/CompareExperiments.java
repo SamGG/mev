@@ -7,11 +7,10 @@
 package org.tigr.microarray.mev.cgh.CGHAlgorithms.AlterationsComparator;
 
 import java.util.Vector;
-import java.util.ArrayList;
+
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.cgh.CGHAlgorithms.NumberOfAlterations.NumberOfAlterationsCalculator;
 import org.tigr.microarray.mev.cgh.CGHDataGenerator.ComparisonFlankingRegionCalculator;
 import org.tigr.microarray.mev.cgh.CGHDataObj.ICGHDataRegion;

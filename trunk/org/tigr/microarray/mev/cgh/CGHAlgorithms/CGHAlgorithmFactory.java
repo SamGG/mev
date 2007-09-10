@@ -24,7 +24,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 public class CGHAlgorithmFactory implements IGUIFactory {
 
     static String[] names = {"CloneAmplifications", "CloneDeletions", "CloneDeletions2Copy", "CloneAmplifications2Copy",  "RegionAmplifications", "RegionDeletions",
-        "GeneAmplifications", "GeneDeletions", "LoadGeneList", "CompareExperiments"};
+        "GeneAmplifications", "GeneDeletions", "LoadGeneList", "CompareExperiments", "ChARM"};
 
     /** Creates a new instance of CGHAlgorithmFactory */
     public CGHAlgorithmFactory() {
@@ -54,6 +54,8 @@ public class CGHAlgorithmFactory implements IGUIFactory {
                 clazz = "org.tigr.microarray.mev.cgh.CGHAlgorithms.NumberOfAlterations.GeneAlterations." + name;
             }else if("CompareExperiments".equals(name)){
                 clazz = "org.tigr.microarray.mev.cgh.CGHAlgorithms.AlterationsComparator." + name;
+            }else if("ChARM".equals(name)){
+                clazz = "org.tigr.microarray.mev.cgh.CGHAlgorithms.Charm." + name;
             }else{
                 clazz = null;
             }

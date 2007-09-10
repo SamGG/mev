@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayData.java,v $
- * $Revision: 1.27 $
- * $Date: 2006-08-22 17:50:19 $
- * $Author: eleanorahowe $
+ * $Revision: 1.28 $
+ * $Date: 2007-09-10 17:16:41 $
+ * $Author: raktim $
  * $State: Exp $
  */
 
@@ -16,11 +16,11 @@ import java.awt.Color;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
+import java.beans.PersistenceDelegate;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -57,13 +57,9 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.normalization.IterativeLogMCNormInitDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.normalization.LinRegNormInitDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.normalization.RatioStatsNormInitDialog;
-
-//EH - state-saving
+import org.tigr.microarray.mev.file.StringSplitter;
 import org.tigr.microarray.mev.persistence.MultipleArrayDataPersistenceDelegate;
 import org.tigr.microarray.mev.persistence.MultipleArrayDataState;
-
-import java.beans.PersistenceDelegate;
-import org.tigr.microarray.mev.file.StringSplitter;
 import org.tigr.microarray.util.Adjustment;
 import org.tigr.microarray.util.SlideDataSorter;
 import org.tigr.midas.engine.Parameter;
@@ -2804,6 +2800,44 @@ public class MultipleArrayData implements IData {
     }
     /**
      * CGH Function
+     * ChARM
+     */
+    public CGHClone[] getClonesWithinIndices(int stIndex, int endIndex, int chromosome){
+    	CGHClone[] clones = new CGHClone[endIndex - stIndex];
+    	int i = 0;
+    	for (int index = stIndex; index <= endIndex; index++,i++){
+    		clones[i] = getCloneAt(getCloneIndex(index, chromosome));
+    	}
+    	return clones;
+    }
+    
+    /**
+     * CGH Function
+     * ChARM
+     */
+    public CGHClone[] getClonesWithinIndices(int stIndex, int endIndex, String experiment, int chromosome){
+    	CGHClone[] clones = new CGHClone[endIndex - stIndex + 1];
+    	int exprCol = getExperimentIndex(experiment);
+    	int i = 0;
+    	for (int index = stIndex; index <= endIndex; index++,i++){
+    		clones[i] = getCloneAt(getCloneIndex(index, chromosome-1));
+    		float ratio = this.getRatio(exprCol, index, IData.LOG);
+    		clones[i].setRatio(ratio);
+    	}
+    	return clones;
+    }
+    
+    public int getExperimentIndex(String expr) {
+  	  ArrayList featuresList = this.getFeaturesList();
+  	  for (int column = 0; column < featuresList.size(); column++){
+  			String name = (String)((ISlideData)featuresList.get(column)).getSlideDataName();
+  			//System.out.println("exprNames " + name);
+  			if(name.equals(expr)) return column;
+  		}
+  	  return -1;
+    }
+    /**
+     * CGH Function
      * corresponds to ISlideData function
      */
     public int getNumFlankingRegions(int experimentIndex, int chromosomeIndex){
@@ -3504,6 +3538,19 @@ public class MultipleArrayData implements IData {
     }
     public boolean hasCloneDistribution() {
     	return hasCloneDistribution;
+    }
+    
+    /**
+     * ChARM CGH function
+     * Uses 0 based Chr number
+     * @return
+     */
+    public float getChromWidth(int chr) {
+    	float width = 0.0f;
+    	int st = getChromosomeStartIndex(chr-1);
+        int end = getChromosomeEndIndex(chr-1);
+        width = ((CGHClone)this.getCloneAt(end)).getStop() - ((CGHClone)this.getCloneAt(st)).getStart();
+        return width;
     }
     /*******************************************************************************
      * Raktim

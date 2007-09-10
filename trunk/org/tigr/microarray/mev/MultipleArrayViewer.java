@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.48 $
- * $Date: 2006-08-22 18:12:08 $
- * $Author: eleanorahowe $
+ * $Revision: 1.49 $
+ * $Date: 2007-09-10 17:17:32 $
+ * $Author: raktim $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -20,12 +20,10 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Toolkit;
-
-
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -40,11 +38,21 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import java.beans.ExceptionListener;
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.*;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -57,6 +65,10 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
 import java.util.Vector;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import javax.media.jai.JAI;
 import javax.swing.AbstractButton;
@@ -93,9 +105,9 @@ import org.tigr.microarray.mev.action.ActionManager;
 import org.tigr.microarray.mev.cgh.CGHAlgorithms.CGHAlgorithmFactory;
 import org.tigr.microarray.mev.cgh.CGHAlgorithms.AlterationsComparator.CompareExperiments;
 import org.tigr.microarray.mev.cgh.CGHAlgorithms.NumberOfAlterations.NumberOfAlterationsCalculator;
-import org.tigr.microarray.mev.cgh.CGHAlgorithms.NumberOfAlterations.GeneAlterations.LoadGeneList;
 import org.tigr.microarray.mev.cgh.CGHAlgorithms.NumberOfAlterations.GeneAlterations.GeneAmplifications;
 import org.tigr.microarray.mev.cgh.CGHAlgorithms.NumberOfAlterations.GeneAlterations.GeneDeletions;
+import org.tigr.microarray.mev.cgh.CGHAlgorithms.NumberOfAlterations.GeneAlterations.LoadGeneList;
 import org.tigr.microarray.mev.cgh.CGHDataGenerator.FlankingRegionCalculator;
 import org.tigr.microarray.mev.cgh.CGHDataModel.CGHAnnotationsModel;
 import org.tigr.microarray.mev.cgh.CGHDataModel.CGHChartDataModel;
@@ -154,9 +166,12 @@ import org.tigr.microarray.mev.cluster.gui.helpers.TextViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HTMLMessageFileChooser;
 import org.tigr.microarray.mev.file.AnnFileFilter;
 import org.tigr.microarray.mev.file.CGHStanfordFileLoader;
-import org.tigr.microarray.mev.GenePixCutoffDialog;
-
 import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
+import org.tigr.microarray.mev.persistence.BufferedImageWrapper;
+import org.tigr.microarray.mev.persistence.MEVSessionPrefs;
+import org.tigr.microarray.mev.persistence.SessionMetaData;
+import org.tigr.microarray.mev.persistence.StateSavingProgressPanel;
+import org.tigr.microarray.mev.persistence.XMLEncoderFactory;
 import org.tigr.microarray.mev.r.Rama;
 import org.tigr.microarray.mev.script.ScriptManager;
 import org.tigr.microarray.util.awt.ColorSchemeSelectionDialog;
@@ -170,14 +185,6 @@ import org.tigr.util.swing.ImageFileFilter;
 import org.tigr.util.swing.JPGFileFilter;
 import org.tigr.util.swing.PNGFileFilter;
 import org.tigr.util.swing.TIFFFileFilter;
-
-//EH
-import java.beans.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
-import org.tigr.microarray.mev.persistence.*;
 
 import com.sun.media.jai.codec.ImageEncodeParam;
 
@@ -990,6 +997,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 		String algNames[] = CGHAlgorithmFactory.getAlgorithimNames();
 		int i = 0;
 		for(;i < algNames.length; i++){
+			if(name.equals("ChARM")) 
+				return -1;
 			if (name.equals(algNames[i]))
 				return i;
 		}
