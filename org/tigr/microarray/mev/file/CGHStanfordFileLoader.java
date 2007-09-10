@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: CGHStanfordFileLoader.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-05-02 16:57:56 $
- * $Author: eleanorahowe $
+ * $Revision: 1.6 $
+ * $Date: 2007-09-10 17:32:00 $
+ * $Author: raktim $
  * $State: Exp $
  */
 
@@ -303,7 +303,7 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
     public static int[][] calculateChromosomeIndices(List sortedList){
     	int numClones  = sortedList.size();
         int numChromosomes = ((CGHClone)sortedList.get(sortedList.size()-1)).getChromosomeIndex() + 1;
-        int[][] chromosomeIndices = new int[numChromosomes][2];
+        int[][] chromosomeIndices = new int[numChromosomes][3];
         
         chromosomeIndices[0][0] = 0;
         int curChromosomeIndex = 0;
@@ -311,6 +311,8 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
         int i = 0;
         while(clonesIt.hasNext()){
             CGHClone curClone = (CGHClone)clonesIt.next();
+            /* Set Clones sorted index */
+            curClone.setSortedIndex(i);
             while(curClone.getChromosomeIndex() > curChromosomeIndex){
                 chromosomeIndices[curChromosomeIndex][1] = i - 1;
                 curChromosomeIndex++;
@@ -319,7 +321,19 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
             i++;
         }
         chromosomeIndices[numChromosomes - 1][1] = numClones - 1;
-        
+        /**
+         * Store number of genes/probes in each Chromosome 
+         */
+        for(int ii = 0; ii < numChromosomes; ii++){
+        	chromosomeIndices[ii][2] = chromosomeIndices[ii][1] - chromosomeIndices[ii][0] + 1;
+        }
+//      Debug 9/8/06
+        for(int ii = 0; ii < numChromosomes; ii++){
+        	int st = chromosomeIndices[ii][0];
+        	int end = chromosomeIndices[ii][1];
+        	int len = chromosomeIndices[ii][2];
+        	System.out.println("Start " + st + " End " +  end + " Len " + len);
+        }
         return chromosomeIndices;
     }
     
