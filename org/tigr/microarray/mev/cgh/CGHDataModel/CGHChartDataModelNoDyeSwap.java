@@ -14,20 +14,6 @@ import com.klg.jclass.chart.ChartDataManageable;
 */
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
-/*
-import java.util.Vector;
-import java.util.Iterator;
-import java.util.Hashtable;
-import javax.swing.event.ChangeListener;
-
-import java.awt.Color;
-
-import org.tigr.microarray.mev.cgh.CGHDataObj.*;
-//import org.abramson.microarray.cgh.CGHFcdObj.CGHMultipleArrayDataFcd;
-import cern.jet.math.Arithmetic;
-
-import cern.jet.stat.Probability;
-*/
 
 /**
  *
