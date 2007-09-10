@@ -129,7 +129,7 @@ public class CGHPositionGraphViewer extends javax.swing.JPanel implements Action
     public void onMenuChanged(IDisplayMenu menu) {
         combinedViewer.onMenuChanged(menu);
         positionGraphModel.setMaxRatioScale(menu.getMaxRatioScale());
-	positionGraphModel.setMinRatioScale(menu.getMinRatioScale());
+        positionGraphModel.setMinRatioScale(menu.getMinRatioScale());
         positionGraphModel.setNegColorImage(menu.getNegativeGradientImage());
         positionGraphModel.setPosColorImage(menu.getPositiveGradientImage());
     }

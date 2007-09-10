@@ -250,7 +250,7 @@ public class CGHPositionGraphSeparatedViewer extends javax.swing.JPanel implemen
         ICGHDisplayMenu cghMenu = this.framework.getCghDisplayMenu();
         ICGHCloneValueMenu cloneValueMenu = this.framework.getCghCloneValueMenu();
 
-	onMenuChanged(cghMenu);
+        onMenuChanged(cghMenu);
         onCloneValuesChanged(cloneValueMenu);
     }
 

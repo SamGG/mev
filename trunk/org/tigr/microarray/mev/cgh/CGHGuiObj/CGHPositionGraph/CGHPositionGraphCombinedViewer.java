@@ -143,7 +143,7 @@ public class CGHPositionGraphCombinedViewer extends javax.swing.JPanel implement
         int height = (int)  ((cytoBandsModel.getMaxPosition() * unitLength) + (insets.top + insets.bottom ));
 
         setSize(width, height);
-	setPreferredSize(new Dimension(width, height));
+        setPreferredSize(new Dimension(width, height));
 
         //repaint();
     }

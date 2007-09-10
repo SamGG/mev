@@ -39,5 +39,5 @@ public interface IPositionGraphDataModel {
 
     public int getChromosomeIndex();
 
-     public CGHClone getCloneAt(int index);
+    public CGHClone getCloneAt(int index);
 }
