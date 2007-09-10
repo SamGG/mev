@@ -9,7 +9,6 @@ package org.tigr.microarray.mev.cgh.CGHGuiObj;
 import javax.swing.DefaultListModel;
 
 import org.tigr.microarray.mev.cluster.gui.IData;
-//import org.abramson.microarray.cgh.CGHFcdObj.CGHMultipleArrayDataFcd;
 
 
 /**

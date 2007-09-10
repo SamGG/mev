@@ -14,7 +14,6 @@ import org.tigr.microarray.mev.cgh.CGHDataObj.ICGHDataRegion;
 import org.tigr.microarray.mev.cgh.CGHDataObj.IGeneData;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
-//import org.tigr.microarray.mev.cgh.CGHFcdObj.CGHMultipleArrayDataFcd;
 
 /**
  *

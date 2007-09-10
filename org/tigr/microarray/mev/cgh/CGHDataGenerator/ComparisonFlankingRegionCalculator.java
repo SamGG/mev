@@ -12,7 +12,6 @@ import org.tigr.microarray.mev.MultipleArrayData;
 import org.tigr.microarray.mev.cgh.CGHDataObj.CGHClone;
 import org.tigr.microarray.mev.cgh.CGHDataObj.FlankingRegion;
 import org.tigr.microarray.mev.cluster.gui.IData;
-//import java.util.ArrayList;
 
 /**
  *
