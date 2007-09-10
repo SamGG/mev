@@ -2,12 +2,10 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -16,15 +14,9 @@
  * Copyright (C) 2005 Amira Djebbari
  */
 package org.tigr.microarray.mev.cluster.gui.impl.bn.getInteractions;
-import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.HashSet;
-import java.util.Set;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.UsefulInteractions;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.SimpleGeneEdge;
+import java.io.FileNotFoundException;import java.util.HashMap;import java.util.ArrayList;
+import java.util.Iterator;import java.util.HashSet;
+import java.util.Set;import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;import org.tigr.microarray.mev.cluster.gui.impl.bn.UsefulInteractions;import org.tigr.microarray.mev.cluster.gui.impl.bn.SimpleGeneEdge;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.OutOfRangeException;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
 /**
@@ -107,7 +99,6 @@ public class GeneInteractions {
 	}	
 	return interactions;
     }
-
     /**
      * The <code>getArticlesInCommon</code> method returns the elements in common between two HashSet objects, 
      * in the form of a HashSet
@@ -131,7 +122,6 @@ public class GeneInteractions {
 	}
 	return commonArticles;
     }
-
     /**
      * The <code>backwards</code> method takes in a HashMap of key value pairs and flips it 
      * so that it returns a new HashMap with keys corresponding to the values of the first HashMap
@@ -180,7 +170,6 @@ public class GeneInteractions {
 	}	
 	return artSymbols;
     }
-
     /**
      * The <code>filter</code> method takes in a HashMap of value key pairs, a HashMap of key value pairs 
      * and a threshold and removes values that are associated with more keys than the given threshold 
@@ -244,7 +233,6 @@ public class GeneInteractions {
 	}
 	return symbolsArticles;
     }
-
     /**
      * The <code>testCreateInteractions</code> method tests creating interactions from a given file
      * containing key values pairs (in this application, GenBank accessions with their corresponding articles)
@@ -252,7 +240,7 @@ public class GeneInteractions {
      * @param gbArticlesFileName a <code>String</code> denoting the name of the file containing key value pairs in tab-delimited format such that: key_1\tvalue_1,value_2,...,value_n
      */
     public static void testCreateInteractions(String gbArticlesFileName){      
-	try {
+	try {		System.out.println("testCreateInteractions()" + gbArticlesFileName);
 	    Useful.checkFile(gbArticlesFileName);
 	    HashMap gbArticles = Useful.readHashMapFromFile(gbArticlesFileName);
 	    System.out.println("gbArticles="+gbArticles);

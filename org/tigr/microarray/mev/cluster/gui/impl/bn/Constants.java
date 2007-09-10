@@ -2,12 +2,10 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -43,21 +41,15 @@ public class Constants {
      * in the tab-delimited Resourcerer file.
      */
     public static int GO_COLUMN_NUMBER = 9;
-
     /**
      * The variable <code>RESOURCERER_ARTICLES_COLUMN_NUMBER</code> denotes the articles column number 
      * in the tab-delimited Resourcerer file.
      */
     public static int RESOURCERER_ARTICLES_COLUMN_NUMBER = 8;
-
     /**
      * The variable <code>RANDOM_NUMBER_GENERATOR_SEED</code> corresponds to the seed of the random number generator.
      */
     public static int RANDOM_NUMBER_GENERATOR_SEED = 2;
 }
 
-
-
-
-
-
+

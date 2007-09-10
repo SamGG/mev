@@ -85,6 +85,9 @@ public class ReplaceSymbolsWithGbsInSymbolsArticles {
      */
     public static void test(String gbSymbolsFileName, String symbolsArticlesFileName, String outputFileName){
 	try {
+		System.out.println("test()" + gbSymbolsFileName);
+		System.out.println("test()" + symbolsArticlesFileName);
+		System.out.println("test()" + outputFileName);
 	    Useful.checkFile(gbSymbolsFileName);
 	    Useful.checkFile(symbolsArticlesFileName);
 	    HashMap gbSymbols = Useful.readHashMapFromFile(gbSymbolsFileName);

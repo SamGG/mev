@@ -2,12 +2,10 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -15,20 +13,13 @@
 /* WekaUtil.java
  * Copyright (C) 2005 Amira Djebbari
  */
-package org.tigr.microarray.mev.cluster.gui.impl.bn;
-import java.io.IOException;
-import java.io.File;
-import weka.core.Instances;
-import weka.core.converters.CSVLoader;
-import weka.core.converters.ArffLoader;
-import weka.core.converters.ArffSaver;
-import weka.core.converters.CSVSaver;
-
+package org.tigr.microarray.mev.cluster.gui.impl.bn;import java.io.IOException;import java.io.File;
+import weka.core.Instances;import weka.core.converters.CSVLoader;
+import weka.core.converters.ArffLoader;import weka.core.converters.ArffSaver;import weka.core.converters.CSVSaver;
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
 public class WekaUtil {
-
     /**
      * The <code>readInstancesCSV</code> method is given the name of data file in CSV format 
      * and returns a WEKA Instances object containing the data read from the given file name
@@ -51,31 +42,29 @@ public class WekaUtil {
      * <br>
      * @return an <code>Instances</code> corresponding to a WEKA Instances object containing the data read 
      * from the given file name in CSV format
-     */
-    public static Instances readInstancesCSV(String path,String inFileName) {
-	try {
-		String dataPath = TMEV.getDataPath();
-    	File pathFile = TMEV.getFile("data/");
-    	if(dataPath != null) {
-            pathFile = new File(dataPath);
-            if(!pathFile.exists())
-                pathFile = TMEV.getFile("data/");
-        }
-	    //Useful.checkFile(path);
-	    CSVLoader loader = new CSVLoader();
-	    //System.exit(1);
-	    loader.setSource(new File(inFileName));
-	    Instances data = loader.getDataSet();
-	    return data;
-	}
-	catch(IOException ioe){
-	    System.out.println(ioe);
-	    ioe.printStackTrace();
-	}	
-	return null;
+     */    public static Instances readInstancesCSV(/*String path,*/ String inFileName) {
+		try {
+			String dataPath = TMEV.getDataPath();
+	    	File pathFile = TMEV.getFile("data/");
+	    	if(dataPath != null) {
+	            pathFile = new File(dataPath);
+	            if(!pathFile.exists())
+	                pathFile = TMEV.getFile("data/");
+	        }
+		    //Useful.checkFile(path);
+		    CSVLoader loader = new CSVLoader();
+		    //System.exit(1);
+		    loader.setSource(new File(inFileName));
+		    Instances data = loader.getDataSet();
+		    return data;
+		}
+		catch(IOException ioe){
+		    System.out.println(ioe);
+		    ioe.printStackTrace();
+		}	
+		return null;
     }
     
-
     /**
      * The <code>readInstancesArff</code> method is given the name of the input file in ARFF format
      * and loads the data contained in the given file in WEKA Instances object
@@ -85,7 +74,7 @@ public class WekaUtil {
      * containing the data read from the given file name in ARFF format
      */
     public static Instances readInstancesArff(String inFileName) {
-	try {
+	try {		//System.out.println("readInstancesArff()" + inFileName);
 	    Useful.checkFile(inFileName);
 	    ArffLoader loader = new ArffLoader();
 	    loader.setSource(new File(inFileName));
@@ -99,7 +88,6 @@ public class WekaUtil {
 	return null;
     }
 
-
     /**
      * Describe <code>writeDataToArffFile</code> method is given a WEKA Instances object and the name of the output file name
      * and writes the given WEKA data to the output file in the WEKA ARFF format
@@ -110,10 +98,9 @@ public class WekaUtil {
      * will be written in WEKA ARFF format
      * @exception NullArgumentException if an error occurs because the given data is null
      */
-    public static void writeDataToArffFile(Instances data, String arffFileName) throws NullArgumentException{
-	//String sep = System.getProperty("file.separator");
-	String path = System.getProperty("user.dir");
-	//path=path+sep+"data"+sep+"bn"+sep;
+    public static void writeDataToArffFile(Instances data, String arffFileName) throws NullArgumentException{	String sep = System.getProperty("file.separator");
+	String path = System.getProperty("user.dir"); // Raktim - Use tmp Dir
+	path=path+sep+"data"+sep+"bn"+sep+"tmp"+sep;
 	if(data == null){
 	    throw new NullArgumentException("Parameter data passed to writeDataToArffFile method was null!");
 	}

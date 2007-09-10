@@ -2,12 +2,10 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -16,18 +14,10 @@
  * Copyright (C) 2005 Amira Djebbari
  */
 package org.tigr.microarray.mev.cluster.gui.impl.bn.prepareXMLBif;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Properties;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.UsefulInteractions;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.SimpleGeneEdge;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.algs.Cyclic;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
+import java.io.FileInputStream;import java.io.IOException;import java.io.FileOutputStream;
+import java.io.PrintWriter;import java.util.ArrayList;import java.util.HashSet;
+import java.util.Properties;import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;import org.tigr.microarray.mev.cluster.gui.impl.bn.UsefulInteractions;import org.tigr.microarray.mev.cluster.gui.impl.bn.SimpleGeneEdge;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.algs.Cyclic;import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.NotDAGException;
 /**
  * The class <code>SifToXMLBif</code> takes in a directed acyclic graph (DAG) in modified Cytoscape SIF format with weights
@@ -40,7 +30,6 @@ public class SifToXMLBif {
      * The variable <code>debug</code> is a debug flag.
      */
     public static boolean debug = false;
-
     /**
      * Describe <code>createXMLBifGivenSifFile</code> method takes in a directed acyclic graph
      * in modified Cytoscape SIF format with weights and transforms it into an XML BIF format
@@ -126,7 +115,6 @@ public class SifToXMLBif {
 	//System.out.println("before toXMLBIF");
 	toXMLBIF03(classValues,interactions,names.size(),names,values,distributions,pw);
     }
-
 
     /**
      * The <code>toXMLBIF03</code> method takes in a given DAG and given CPTs corresponding to a Bayesian network and
@@ -222,7 +210,6 @@ public class SifToXMLBif {
 	pw.print("</NETWORK>\n");
 	pw.print("</BIF>\n");	
     } 
-
     /**
      * The <code>test</code> method tests the <code>createXMLBifGivenSifFile</code> method
      *
@@ -235,7 +222,8 @@ public class SifToXMLBif {
 	    Properties props = new Properties();
 	    props.load(new FileInputStream(propsFileName));
 	    String sifFileName = props.getProperty("sifFileName",null);
-	    String namesFileName = props.getProperty("namesFileName",null);
+	    String namesFileName = props.getProperty("namesFileName",null);	    System.out.println("test()" + namesFileName);
+	    System.out.println("test()" + sifFileName);
 	    Useful.checkFile(sifFileName);
 	    Useful.checkFile(namesFileName);
 	    ArrayList interactions = UsefulInteractions.readDirectedInteractionsWithWeights(sifFileName);

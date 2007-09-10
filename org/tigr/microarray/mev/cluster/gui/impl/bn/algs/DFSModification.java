@@ -2,12 +2,10 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -15,21 +13,14 @@
 /* DFSModification.java
  * Copyright (C) 2005 Amira Djebbari
  */
-package org.tigr.microarray.mev.cluster.gui.impl.bn.algs;
-import java.io.FileOutputStream;
-import java.io.FileInputStream;
-import java.io.PrintWriter;
-import java.io.LineNumberReader;
+package org.tigr.microarray.mev.cluster.gui.impl.bn.algs;import java.io.FileOutputStream;import java.io.FileInputStream;
+import java.io.PrintWriter;import java.io.LineNumberReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Properties;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.UsefulInteractions;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.SimpleGeneEdge;
+import java.util.ArrayList;import java.util.Random;
+import java.util.Properties;import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.UsefulInteractions;import org.tigr.microarray.mev.cluster.gui.impl.bn.SimpleGeneEdge;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.algs.Cyclic;
 /**
  * The class <code>DFSModification</code> contains methods to convert a given undirected graph into a DAG
@@ -60,7 +51,6 @@ public class DFSModification {
     public static void setDebug(boolean isDebug){
 	debug = isDebug;
     }
-
     /**
      * The <code>setDebug</code> method sets the debug flag and logFileName
      *
@@ -79,11 +69,9 @@ public class DFSModification {
 	    System.out.println(ioe);
 	}
     }
-
     public static ArrayList getDAGFromUndirectedGraph(ArrayList inter) throws NullArgumentException {
 	return Cyclic.getDAGFromUndirectedGraph(inter);
     }
-
 
     /**
      * The <code>test</code> method tests the <code>getDAGFromUndirectedGraph</code> method
@@ -114,7 +102,7 @@ public class DFSModification {
 	    props.load(new FileInputStream(propsFileName));
 	    String sifFileName = props.getProperty("sifFileName", null);	    
 	    long seed = (long) Integer.parseInt(props.getProperty("seed", "1"));
-	    String newInterFileName = props.getProperty("outDirectedInteractionsFileName", "outDirectedInteractions.txt");
+	    String newInterFileName = props.getProperty("outDirectedInteractionsFileName", "outDirectedInteractions.txt");	    System.out.println("test()" + sifFileName);
 	    Useful.checkFile(sifFileName);
 	    ArrayList inter = UsefulInteractions.readInteractionsWithWeights(sifFileName);
 	    ArrayList newInter = getDAGFromUndirectedGraph(inter);

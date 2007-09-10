@@ -8,40 +8,7 @@ All rights reserved.
  * Created on January 19, 2005, 2:53 PM
  */
 package org.tigr.microarray.mev.cluster.gui.impl.bn;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.StringTokenizer;
-import java.util.Vector;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
-import org.tigr.microarray.mev.TMEV;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HTMLMessageFileChooser;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
-
-import ftp.FtpBean;
-import ftp.FtpListResult;
-import ftp.FtpObserver;
-
+import java.awt.event.ActionEvent;import java.awt.event.WindowEvent;import java.awt.event.WindowListener;import java.io.BufferedInputStream;import java.io.BufferedOutputStream;import java.io.BufferedReader;import java.io.File;import java.io.FileOutputStream;import java.io.IOException;import java.io.InputStream;import java.io.InputStreamReader;import java.net.URL;import java.net.URLConnection;import java.util.Enumeration;import java.util.Hashtable;import java.util.StringTokenizer;import java.util.Vector;import java.util.zip.ZipEntry;import java.util.zip.ZipFile;import javax.swing.JFileChooser;import javax.swing.JFrame;import javax.swing.JOptionPane;import org.tigr.microarray.mev.TMEV;import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HTMLMessageFileChooser;import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;import ftp.FtpBean;import ftp.FtpListResult;import ftp.FtpObserver;
 /**
  *
  * @author  braisted
@@ -49,7 +16,6 @@ import ftp.FtpObserver;
 public class BNUpdateManager {
       //wwang need for bn
 	private String FTP_CONFIG_URL = "http://www.tm4.org/bn/ftp_config.txt";
-
     private String FTP_SERVER;    
     private String REPOSITORY_ROOT;
     
@@ -95,11 +61,9 @@ public class BNUpdateManager {
             //and contains properties for that repository
             //(sets progress 1 and 2 during execution)
             Vector tabPropertyHashes = getRepositoryInfo();
-
             //prepare to visit repositories
             progress.setDescription("Visiting Repsoitory for Resource Checks");
             progress.setUnits(tabPropertyHashes.size());
-
             //go to the repository, get a list of directories and
             //files under each directory
             //(This uses the list held by the repository (taxon-file)
@@ -115,7 +79,6 @@ public class BNUpdateManager {
             	
             	//construct dialog given properties for each dialog tab
             	BNFileUpdateDialog dialog = new BNFileUpdateDialog(this.frame, tabPropertyHashes);
-
             	//if ok
             	if(dialog.showModal() == JOptionPane.OK_OPTION) {
             		
@@ -146,7 +109,6 @@ public class BNUpdateManager {
         }      
     }
     
-
     /**
      * Pulls the config file and parses the repository information
      * into a vector of repository properties Hashtables
@@ -162,7 +124,6 @@ public class BNUpdateManager {
     		
     		//add repository property hashes to the vector
     		repHashes = parseConfig(conn.getInputStream());			
-
     	} catch (Exception e) {
     		e.printStackTrace();
     	}
@@ -190,16 +151,13 @@ public class BNUpdateManager {
     	
     	Hashtable currHash = null;
     	String line;
-
     	//loop through the file to parse into 
     	while((line = br.readLine())!= null) {
     		
     		//comment line
     		if(line.startsWith("#"))
     			continue;
-
     		keyValue = line.split("\t");
-
     		//"tab-label" starts a new record
     		if(keyValue[0].equals("tab-label")) {
     			
@@ -215,12 +173,10 @@ public class BNUpdateManager {
     	}
     	//add the last currHash to vector
     	hashVector.add(currHash);
-
     	progress.setValue(2);
     	
     	return hashVector;
     }
-
     /**
      * Go to each repository (or tab in the dialog) and get menu information
      * @param tabHashes Vector of Repository Properties
@@ -267,7 +223,6 @@ public class BNUpdateManager {
     		
     		String tabName, upperLabel, lowerLabel;
     		while(stok.hasMoreElements()) {
-
     			//break lines on tabs
     			stok2 = new StringTokenizer((String)(stok.nextElement()), "\t");
     			
@@ -285,7 +240,6 @@ public class BNUpdateManager {
     				
     				//solve dos2unix problem if it exists
     				lowerLabel = lowerLabel.trim();
-
     				//if it's a new directory add it
     				if(!upperLevelKeys.contains(upperLabel))
     					upperLevelKeys.add(upperLabel);
@@ -381,7 +335,6 @@ public class BNUpdateManager {
         else
             JOptionPane.showMessageDialog(frame, "The BN file system update was terminated due to the reported error.", "BN File System Update", JOptionPane.ERROR_MESSAGE);
     }
-
     
     /** Downloads the file at sourceURL to output file (dest), returns true if successful
      */
@@ -393,11 +346,9 @@ public class BNUpdateManager {
         int length = 0;
         
         try {
-
             int overallLength = 0;            
 			int currentLength = 0;            
 			progress.setValue(0);
-
 
         	FtpBean ftp = new FtpBean();
         	ftp.ftpConnect(FTP_SERVER, "anonymous");
@@ -409,7 +360,6 @@ public class BNUpdateManager {
         			overallLength = (int)list.getSize();
         		}
         	}
-
         	progress.setUnits(overallLength);
         	listener.reset();
         	listener.setMax(overallLength);
@@ -435,7 +385,6 @@ public class BNUpdateManager {
     private boolean extractZipFile(File outputFile) {
         BufferedInputStream bis;
         BufferedOutputStream bos;
-
         progress.setTitle("Extracting zip file");
         progress.setDescription("Extracting zip file: "+outputFile.getAbsolutePath());
         
@@ -463,11 +412,9 @@ public class BNUpdateManager {
                 String entryName = entry.getName();
                 String entryFolder = (new File(entryName)).getParent();
                 File entryDirectory = new File(baseDir.getAbsolutePath()+"/"+entryFolder);
-
                 if(!entryDirectory.exists()) {
                     entryDirectory.mkdirs();
                 }
-
                 bos = new BufferedOutputStream(new FileOutputStream(baseDir.getAbsolutePath()+"/"+entry.getName()));
                 bis = new BufferedInputStream(zipFile.getInputStream(entry));
                 
@@ -509,7 +456,6 @@ public class BNUpdateManager {
      * The class to listen to progress, monitor and algorithms events.
      */
     private class ProgressListener extends DialogListener implements WindowListener, FtpObserver {
-
     	private int maxProgress = 0;
     	private int currProgress = 0;
     	
@@ -532,7 +478,6 @@ public class BNUpdateManager {
         public void windowClosing(WindowEvent e) {
             progress.dispose();
         }
-
 		/* (non-Javadoc)
 		 * @see ftp.FtpObserver#byteRead(int)
 		 */
@@ -543,7 +488,6 @@ public class BNUpdateManager {
 		
 				
 		}
-
 		/* (non-Javadoc)
 		 * @see ftp.FtpObserver#byteWrite(int)
 		 */
@@ -553,6 +497,5 @@ public class BNUpdateManager {
 				progress.setValue(bytes);			
 		}        
     }
-
 
 }

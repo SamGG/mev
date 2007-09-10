@@ -16,14 +16,7 @@
  * Copyright (C) 2005 Amira Djebbari
  */
 package org.tigr.microarray.mev.cluster.gui.impl.bn;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.io.FileNotFoundException;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.SimpleGeneEdge;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.UsefulInteractions;
+import java.io.FileNotFoundException;import java.util.ArrayList;
 /**
  * The class <code>GetUnionOfInters</code> computes the union of 2 sets of interactions represented 
  * as <code>ArrayList</code>s of <code>SimpleGeneEdge</code> objects

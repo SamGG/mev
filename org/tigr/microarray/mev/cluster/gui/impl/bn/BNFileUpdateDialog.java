@@ -8,31 +8,11 @@ All rights reserved.
  * Created on January 19, 2005, 4:25 PM
  */
 package org.tigr.microarray.mev.cluster.gui.impl.bn;
-
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.awt.Toolkit;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowEvent;
-
-import java.util.Hashtable;
-import java.util.Vector;
-
-import javax.swing.JFrame;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
-
+import java.awt.Color;import java.awt.Dimension;import java.awt.GridBagLayout;import java.awt.GridBagConstraints;
+import java.awt.Insets;import java.awt.Toolkit;
+import java.awt.event.ActionEvent;import java.awt.event.WindowEvent;
+import java.util.Hashtable;import java.util.Vector;import javax.swing.JFrame;import javax.swing.JComboBox;
+import javax.swing.JLabel;import javax.swing.JOptionPane;import javax.swing.JPanel;import javax.swing.JTabbedPane;import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 /**
  *
  * 
@@ -45,11 +25,9 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindo
  * but more importantly they contain content to popultate dialog controls
  */
 public class BNFileUpdateDialog extends AlgorithmDialog {
-
     private JTabbedPane pane;    
     private int result = JOptionPane.CANCEL_OPTION;        
     private Vector repositoryHashes;
-
   
     public BNFileUpdateDialog(JFrame parent, Vector repositoryPropertyHashes) {
         super(parent, "BN File Update Selection", true);
@@ -86,7 +64,6 @@ public class BNFileUpdateDialog extends AlgorithmDialog {
      * @param listener ActionListener for constructed controls
      */
     public void addNewTab(JTabbedPane pane, int tabIndex, Hashtable props, Listener listener) {
-
     	//label for the tab
     	String tabLabel = (String)props.get("tab-label");
     	//vector of level labels 
@@ -106,7 +83,6 @@ public class BNFileUpdateDialog extends AlgorithmDialog {
     	//trigger to update lower list from hash of arrays or species
     	box1.setActionCommand("upper-level-selection");
     	box1.addActionListener(listener);
-
     	//box will contain files for a given drectory after update
     	JComboBox box2 = new JComboBox();    	
     	//trigger just a new lower level selection
@@ -133,7 +109,6 @@ public class BNFileUpdateDialog extends AlgorithmDialog {
     	//we can implement this but probably not needed
     	//maybe switch to tab 0?
     }
-
     /**
      * Returns the selected species (upper level or folder name)
      * @return species or folder names
@@ -142,7 +117,6 @@ public class BNFileUpdateDialog extends AlgorithmDialog {
      	TabPanel panel = (TabPanel) (pane.getSelectedComponent());
      	return (String)panel.getBox1().getSelectedItem();
     }
-
     /**
      * Returns the selected file name (these are usually specified by array)
      * @return array of file name
@@ -180,7 +154,6 @@ public class BNFileUpdateDialog extends AlgorithmDialog {
      * Window - Preferences - Java - Code Style - Code Templates
      */
     private class TabPanel extends JPanel {
-
     	//directory and file lists
     	private JComboBox box1;
     	private JComboBox box2;
@@ -206,7 +179,6 @@ public class BNFileUpdateDialog extends AlgorithmDialog {
     	TabPanel(String box1Label, JComboBox b1, String box2Label, JComboBox b2, Hashtable menuHash, Hashtable repProps) {
         	setLayout(new GridBagLayout());
         	setBackground(Color.white);
-
         	box1 = b1;
         	box2 = b2;
         	box1ToBox2Hash = menuHash; 
@@ -216,9 +188,7 @@ public class BNFileUpdateDialog extends AlgorithmDialog {
         	JLabel label = new JLabel(box1Label);
         	add(label, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(20,0,5,0),0,0));
         	add(box1, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,20,0),0,0));        	  
-
         	box2JLabel = new JLabel(box2Label);
-
         	add(box2JLabel, new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0),0,0));
         	add(box2, new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,20,0),0,0));        	          	        	
     	
@@ -232,7 +202,6 @@ public class BNFileUpdateDialog extends AlgorithmDialog {
     	public JComboBox getBox1() {
     		return box1;
     	}
-
     	/**
     	 * Returns selected file
     	 * @return selected file
@@ -240,7 +209,6 @@ public class BNFileUpdateDialog extends AlgorithmDialog {
     	public JComboBox getBox2() {
     		return box2;
     	}
-
     	/**
     	 * Repository props for the selection
     	 * @return props 

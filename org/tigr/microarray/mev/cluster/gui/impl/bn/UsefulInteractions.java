@@ -2,12 +2,10 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -15,16 +13,10 @@
 /* UsefulInteractions.java
  * Copyright (C) 2005 Amira Djebbari
  */
-package org.tigr.microarray.mev.cluster.gui.impl.bn;
-import java.io.FileReader;
-import java.io.LineNumberReader;
-import java.io.PrintWriter;
-import java.io.FileOutputStream;
+package org.tigr.microarray.mev.cluster.gui.impl.bn;import java.io.FileReader;import java.io.LineNumberReader;import java.io.PrintWriter;import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
+import java.util.ArrayList;import java.util.HashSet;import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
 
 /**
@@ -70,7 +62,6 @@ public class UsefulInteractions {
 	}
 	return null;
     }
-
     /**
      * The <code>readInteractionsWithWeights</code> method takes in a String corresponding to the name of the file
      * containing interactions in a modified SIF format to contain weights and returns the interactions 
@@ -84,8 +75,8 @@ public class UsefulInteractions {
      * to the interactions with weights contained in the file denoted by the given file name.
      * @exception FileNotFoundException if an error occurs because the file denoted by the given fileName was not found
      */
-    public static ArrayList readInteractionsWithWeights(String fileName) throws FileNotFoundException{
-	Useful.checkFile(fileName);
+    public static ArrayList readInteractionsWithWeights(String fileName) throws FileNotFoundException{    	System.out.println("readInteractionsWithWeights()" + fileName);
+    	Useful.checkFile(fileName);
 	try {
 	    ArrayList inter = new ArrayList();
 	    FileReader fr = new FileReader(fileName);
@@ -114,7 +105,6 @@ public class UsefulInteractions {
 	}
 	return null;
     }
-
     /**
      * The <code>containsEitherWay</code> method checks whether a given undirected <code>SimpleGeneEdge</code> object 
      * is contained in an ArrayList of <code>SimpleGeneEdge</code> objects
@@ -185,7 +175,6 @@ public class UsefulInteractions {
 	}
 	return false;
     }	    
-
     /**
      * The <code>readDirectedInteractions</code> method takes in a String corresponding to the name of the file 
      * containing directed interactions in SIF format and returns the directed interactions in an ArrayList
@@ -197,7 +186,7 @@ public class UsefulInteractions {
      * the interactions contained in the file denoted by the given file name.
      * @exception FileNotFoundException if an error occurs because the file denoted by the given fileName was not found
      */
-    public static ArrayList readDirectedInteractions(String fileName) throws FileNotFoundException {
+    public static ArrayList readDirectedInteractions(String fileName) throws FileNotFoundException {    	System.out.println("readDirectedInteractions()" + fileName);
 	Useful.checkFile(fileName);
 	try {
 	    ArrayList inter = new ArrayList();
@@ -221,7 +210,6 @@ public class UsefulInteractions {
 	}
 	return null;
     }
-
     /**
      * The <code>readDirectedInteractionsWithWeights</code> method method takes in a String corresponding to
      * the name of the file containing directed interactions in a modified SIF format to contain weights 
@@ -235,7 +223,7 @@ public class UsefulInteractions {
      * the interactions with weights contained in the file denoted by the given file name.
      * @exception FileNotFoundException if an error occurs because the file denoted by the given fileName was not found
      */
-    public static ArrayList readDirectedInteractionsWithWeights(String fileName) throws FileNotFoundException {
+    public static ArrayList readDirectedInteractionsWithWeights(String fileName) throws FileNotFoundException {    	System.out.println("readDirectedInteractionsWithWeights()" + fileName);
 	Useful.checkFile(fileName);
 	try {
 	    ArrayList inter = new ArrayList();
@@ -264,7 +252,6 @@ public class UsefulInteractions {
 	}
 	return null;
     }
-
     /**
      * The <code>writeSifFile</code> method writes a given ArrayList of interactions to file.
      *
@@ -291,12 +278,11 @@ public class UsefulInteractions {
 	    System.out.println(ioe);
 	}
     }
-
         public static void writeSifFileUndir(ArrayList inter, String fileName) throws NullArgumentException {
         	 FileOutputStream fos=null;
 		 String path=System.getProperty("user.dir");
-		 String sep=System.getProperty("file.separator");
-		 path=path+sep+"data"+sep+"bn"+sep;
+		 String sep=System.getProperty("file.separator");		 //path=path+sep+"data"+sep+"bn"+sep; //Raktim - Old Way
+		 path=path+sep+"data"+sep+"bn"+sep+"results"+sep;
 	try {
 	    if(inter == null){
 		  System.out.println("UsefulInteractions-writeSif");  
@@ -316,7 +302,6 @@ public class UsefulInteractions {
 	    System.out.println(ioe);
 	}
     }
-
     /**
      * The <code>writeSifFileWithWeights</code> method writes a given ArrayList of interactions to file.
      *
@@ -330,8 +315,8 @@ public class UsefulInteractions {
      */
     public static void writeSifFileWithWeights(ArrayList inter, String fileName) throws NullArgumentException {
 	String path=System.getProperty("user.dir");
-	String sep=System.getProperty("file.separator");
-	path=path+sep+"data"+sep+"bn"+sep;
+	String sep=System.getProperty("file.separator");	//path=path+sep+"data"+sep+"bn"+sep;//Raktim - Old Way
+	path=path+sep+"data"+sep+"bn"+sep+"results"+sep;
 	    try {
 	    if(inter == null){
 		throw new NullArgumentException ("Given inter was null!");
@@ -349,7 +334,6 @@ public class UsefulInteractions {
 	}
     }
 
-
     /**
      * The <code>writeSifFileUndirWithWeights</code> method writes a given ArrayList of interactions to file.
      *
@@ -364,9 +348,9 @@ public class UsefulInteractions {
     
     public static void writeSifFileUndirWithWeights(ArrayList inter, String fileName) throws NullArgumentException{
     	FileOutputStream fos=null;
-    	String path=System.getProperty("user.dir");
-	String sep=System.getProperty("file.separator");
-	path=path+sep+"data"+sep+"bn"+sep;
+    	String path=System.getProperty("user.dir");    	String sep=System.getProperty("file.separator");
+		//path=path+sep+"data"+sep+"bn"+sep;//Raktim - Old Way
+		path=path+sep+"data"+sep+"bn"+sep+"tmp"+sep;
 	try {
 	    if(inter == null){
 		throw new NullArgumentException("Given inter was null!");

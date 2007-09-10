@@ -2,12 +2,10 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -15,21 +13,13 @@
 /* ParseGB_GO.java
  * Copyright (C) 2005 Amira Djebbari
  */
-package org.tigr.microarray.mev.cluster.gui.impl.bn.prepareXMLBif;
-import java.io.FileOutputStream;
-import java.io.FileInputStream;
+package org.tigr.microarray.mev.cluster.gui.impl.bn.prepareXMLBif;import java.io.FileOutputStream;import java.io.FileInputStream;
 import java.io.PrintWriter;
 import java.io.LineNumberReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Properties;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.UsefulInteractions;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.SimpleGeneEdge;
+import java.io.FileReader;import java.io.IOException;import java.util.HashMap;import java.util.ArrayList;
+import java.util.Random;import java.util.Properties;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.UsefulInteractions;import org.tigr.microarray.mev.cluster.gui.impl.bn.SimpleGeneEdge;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.algs.Cyclic;
 /**
  * The class <code>ParseGB_GO</code> parses GO terms associated with GenBank accessions 
@@ -60,7 +50,6 @@ public class ParseGB_GO {
     public static void setDebug(boolean isDebug){
 	debug = isDebug;
     }
-
     /**
      * The <code>setDebug</code> method sets the debug flag and logFileName
      *
@@ -79,7 +68,6 @@ public class ParseGB_GO {
 	    System.out.println(ioe);
 	}
     }
-
     /**
      * The <code>readGB_GOs</code> method takes in the name of the file containing GenBank accessions 
      * and their corresponding GO terms (space separated) in tab-delimited format: GB\tGO_1 GO_2 ... GO_n 
@@ -91,7 +79,7 @@ public class ParseGB_GO {
      * as read in the given file.
      */
     public static HashMap readGB_GOs(String fileName){
-	try {
+	try {		System.out.println("readGB_GOs()" + fileName);
 	    Useful.checkFile(fileName);
 	    HashMap hm = new HashMap();
 	    FileReader fr = new FileReader(fileName);
@@ -124,7 +112,6 @@ public class ParseGB_GO {
 	}
 	return null;
     }
-
     /**
      * The <code>getInteractionsFromGB_GOs</code> takes in a given graph 
      * in an <code>ArrayList</code> of <code>SimpleGeneEdge</code> objects representation 
@@ -195,7 +182,6 @@ public class ParseGB_GO {
 	}
 	return newInter;
     }
-
     
     /**
      * The <code>isTF</code> method takes in an <code>ArrayList</code> of GO terms
@@ -218,7 +204,6 @@ public class ParseGB_GO {
 	return false;
     }
 	
-
     /**
      * The <code>getInteractionsFromGB_GOsRandom</code> takes in a given undirected graph 
      * in an <code>ArrayList</code> of <code>SimpleGeneEdge</code> objects representation 
@@ -276,7 +261,6 @@ public class ParseGB_GO {
 	}
 	return newInter;
     }
-
     /**
      * The <code>getInteractionsFromGB_GOsRandom</code> takes in a given graph in an <code>ArrayList</code>
      * of <code>SimpleGeneEdge</code> objects representation and keyValuesPairs with GenBank accessions as keys 
@@ -350,7 +334,8 @@ public class ParseGB_GO {
 	    String sifFileName = props.getProperty("sifFileName", null);	    
 	    long seed = (long) Integer.parseInt(props.getProperty("seed", "1"));
 	    String newInterFileName = props.getProperty("outDirectedInteractionsFileName", "outDirectedInteractions.txt");
-	    String newInterAndRandomFileName = props.getProperty("outDirectedInteractionsAndRandomFileName", "outDirectedInteractionsAndRandom.txt");
+	    String newInterAndRandomFileName = props.getProperty("outDirectedInteractionsAndRandomFileName", "outDirectedInteractionsAndRandom.txt");	    System.out.println("test()" + gbGOsFileName);
+	    System.out.println("test()" + sifFileName);
 	    Useful.checkFile(gbGOsFileName);
 	    Useful.checkFile(sifFileName);
 	    ArrayList inter = UsefulInteractions.readInteractionsWithWeights(sifFileName);

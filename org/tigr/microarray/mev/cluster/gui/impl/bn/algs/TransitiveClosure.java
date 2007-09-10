@@ -2,12 +2,10 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -15,17 +13,11 @@
 /* TransitiveClosure.java
  * Copyright (C) 2005 Amira Djebbari
  */
-package org.tigr.microarray.mev.cluster.gui.impl.bn.algs;
-import java.io.IOException;
-import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.Properties;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
+package org.tigr.microarray.mev.cluster.gui.impl.bn.algs;import java.io.IOException;import java.io.FileInputStream;
+import java.util.ArrayList;import java.util.Properties;import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.SimpleGeneEdge;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.UsefulInteractions;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.OutOfRangeException;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;import org.tigr.microarray.mev.cluster.gui.impl.bn.OutOfRangeException;import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
 /**
  * The class <code>TransitiveClosure</code> contains methods to compute the transitive closure
  * of a given graph in an <code>ArrayList</code> of <code>SimpleGeneEdge</code> objects representation 
@@ -99,7 +91,6 @@ public class TransitiveClosure{
 	}
 	return result;
     }
-
     /**
      * The <code>getInteractionsWithReachableNodes</code> method returns the list of interactions 
      * between some queryNodes and all the nodes reachable from these in the given graph
@@ -127,7 +118,6 @@ public class TransitiveClosure{
 	}
 	return null;
     }
-
     /**
      * The <code>test</code> method tests the <code>getInteractionsWithReachableNodes</code> method
      *
@@ -148,7 +138,8 @@ public class TransitiveClosure{
 	    props.load(new FileInputStream(propsFileName));
 	    String ppiFileName = props.getProperty("ppiFileName", null);
 	    String queryNodesFileName = props.getProperty("queryNodesFileName", null);	    
-	    String outInterWithReachableFileName = props.getProperty("outInteractionsWithReachableNodesFileName", "outInteractionsWithReachableNodes.txt");	    
+	    String outInterWithReachableFileName = props.getProperty("outInteractionsWithReachableNodesFileName", "outInteractionsWithReachableNodes.txt");	    	    System.out.println("test()" + ppiFileName);
+	    System.out.println("test()" + queryNodesFileName);
 	    Useful.checkFile(ppiFileName);
 	    Useful.checkFile(queryNodesFileName);
 	    ArrayList ppi = UsefulInteractions.readDirectedInteractions(ppiFileName);
