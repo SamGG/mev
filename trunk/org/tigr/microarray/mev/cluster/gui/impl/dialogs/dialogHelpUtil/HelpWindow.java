@@ -173,7 +173,7 @@ public class HelpWindow extends JDialog {
         pane.setMargin(new Insets(10,15,10,15));
         
     }
-    
+
     
     public boolean getWindowContent(){
         String fileName = getFileName(dialogName);
@@ -328,6 +328,8 @@ public class HelpWindow extends JDialog {
             return "ease_threshold_parameters.html";
         if(key.equals("Newick File Output Dialog"))
             return "hcl_newick_output_parameters.html";
+        if(key.equals("Nexus File Output Dialog"))
+            return "hcl_nexus_output_parameters.html";
         if(key.equals("EASE File Update Dialog"))
             return "ease_file_update_parameters.html";
         if(key.equals("Variance Filter Dialog"))
@@ -365,6 +367,13 @@ public class HelpWindow extends JDialog {
         		return "lem_customization_parameters.html";
         	if(key.equals("LEM Selection Range Dialog"))
         		return "lem_selection_range_paramters.html";
+        	if(key.equals("NonpaR Mode Selection"))
+        		return "nonpar_mode_parameters.html";
+        	if(key.equals("NonpaR Significance Parameters"))
+        		return "nonpar_significance_parameters.html";
+        	if(key.equals("NonpaR Fisher Exact Parameters"))
+        		return "nonpar_fisher_exact_parameters.html";
+        	
 		else {
 			return null;
 		}
