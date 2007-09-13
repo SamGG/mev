@@ -46,8 +46,8 @@ public class NewickFileOutputDialog extends AlgorithmDialog {
     //private JCheckBox zeroRootBox;
     
     /** Creates a new instance of NewickFileOutputDialog */
-    public NewickFileOutputDialog(Frame parent, String[] annotationKeys, int orientation) {
-        super(parent, "Newick File Output Dialog", true);
+    public NewickFileOutputDialog(Frame parent, String[] annotationKeys, int orientation, String fileType) {
+        super(parent, fileType+" File Output Dialog", true);
 
         if(orientation == HCLTree.HORIZONTAL)
             isGeneTree = true;
@@ -132,7 +132,7 @@ public class NewickFileOutputDialog extends AlgorithmDialog {
         names[0] = "TC";
         names[1] = "GenBank";
         names[2] = "Putative Role (Guess)";
-        NewickFileOutputDialog d = new NewickFileOutputDialog(new Frame(), names, HCLTree.HORIZONTAL);
+        NewickFileOutputDialog d = new NewickFileOutputDialog(new Frame(), names, HCLTree.HORIZONTAL,  "Newick");
         d.showModal();
     }
     

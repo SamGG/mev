@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLViewer.java,v $
- * $Revision: 1.18 $
- * $Date: 2006-07-13 16:14:25 $
- * $Author: eleanorahowe $
+ * $Revision: 1.19 $
+ * $Date: 2007-09-13 19:07:31 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 /*
@@ -32,10 +32,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.beans.Expression;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -81,7 +77,9 @@ public class HCLViewer extends JPanel implements IViewer {
     
     protected static final String SAVE_GENE_NEWICK_CMD = "save-gene-newick-cmd";
     protected static final String SAVE_SAMPLE_NEWICK_CMD = "save-sample-newick-cmd";
-    
+    protected static final String SAVE_GENE_NEXUS_CMD = "save-gene-nexus-cmd";
+    protected static final String SAVE_SAMPLE_NEXUS_CMD = "save-sample-nexus-cmd";
+      
     // wrapped viewers
     /** component to draw an experiment data */
     protected IViewer expViewer;
@@ -634,7 +632,24 @@ public class HCLViewer extends JPanel implements IViewer {
             menuItem.setActionCommand(SAVE_SAMPLE_NEWICK_CMD);
             menuItem.addActionListener(listener);
             menu.add(menuItem);
-        }        
+        }
+        
+        menu.addSeparator();
+        
+     /*   if(this.genesTree != null) {
+            menuItem = new JMenuItem("Save Gene Tree To Nexus File", GUIFactory.getIcon("save_as16.gif"));
+            menuItem.setActionCommand(SAVE_GENE_NEXUS_CMD);
+            menuItem.addActionListener(listener);
+            menu.add(menuItem);
+        }
+       */
+        
+        if(this.sampleTree != null) {
+            menuItem = new JMenuItem("Save Sample Tree to Nexus File", GUIFactory.getIcon("save_as16.gif"));
+            menuItem.setActionCommand(SAVE_SAMPLE_NEXUS_CMD);
+            menuItem.addActionListener(listener);
+            menu.add(menuItem);
+        }   
     }
     
     /**
@@ -1465,6 +1480,10 @@ public class HCLViewer extends JPanel implements IViewer {
                 genesTree.saveAsNewickFile();
             } else if (command.equals(SAVE_SAMPLE_NEWICK_CMD)) {
                 sampleTree.saveAsNewickFile();                
+            } else if (command.equals(SAVE_GENE_NEXUS_CMD)) {
+                genesTree.saveAsNexusFile();
+            } else if (command.equals(SAVE_SAMPLE_NEXUS_CMD)) {
+                sampleTree.saveAsNexusFile();                
             }
         }
         
