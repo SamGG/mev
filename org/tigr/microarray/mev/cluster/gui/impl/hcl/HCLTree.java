@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: HCLTree.java,v $
- * $Revision: 1.11 $
- * $Date: 2006-04-10 18:41:36 $
- * $Author: eleanorahowe $
+ * $Revision: 1.12 $
+ * $Date: 2007-09-13 19:07:31 $
+ * $Author: braistedj $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.hcl;
@@ -106,6 +106,10 @@ public class HCLTree extends JPanel {
         this.zero_threshold = minHeight;
         this.terminalNodes = new boolean[this.treeData.height.length];
         
+        
+        initializeParentNodeArray();
+        
+        
         this.pHeights  = getPixelHeights(treeData.node_order, treeData.height);
         this.positions = getPositions(treeData.node_order, treeData.child_1_array, treeData.child_2_array);
         this.selected = new boolean[treeData.node_order.length*2];
@@ -123,9 +127,7 @@ public class HCLTree extends JPanel {
         } else {
             setSizes(0, 0);
         }
-        
-        initializeParentNodeArray();
-        
+
         addMouseListener(new Listener());
     }
     
@@ -498,7 +500,7 @@ public class HCLTree extends JPanel {
     /**
      * Returns nodes heights in pixels.
      */
-    private int[] getPixelHeights(int[] nodeOrder, float[] height) {
+  private int[] getPixelHeights(int[] nodeOrder, float[] height) {
         float scale = getScale();
         int[] pHeights = new int[nodeOrder.length*2];
         int node;
@@ -509,9 +511,32 @@ public class HCLTree extends JPanel {
             child_2 = treeData.child_2_array[node];
             
             pHeights[node] = Math.max(pHeights[child_1], pHeights[child_2]) + Math.max(Math.min((int)Math.round(height[node]*scale), max_pixels), min_pixels);
+
         }
         return pHeights;
     }
+  
+  
+    /*
+    private int[] getPixelHeights(int[] nodeOrder, float[] height) {
+        float scale = getScale();
+        int[] pHeights = new int[nodeOrder.length*2];
+        int node;
+        int child_1, child_2;
+        
+        pHeights[nodeOrder.length*2-1] = 100;
+        for (int i=nodeOrder.length-2; i>0; i--) {
+            node = nodeOrder[i];
+            if(node == -1)
+            	continue;
+            child_1 = treeData.child_1_array[node];
+            child_2 = treeData.child_2_array[node];
+            
+            pHeights[node] = pHeights[parentNodes[node]] - Math.max(Math.min((int)Math.round(height[node]*scale), max_pixels), min_pixels);
+        }
+        return pHeights;
+    }
+    */
     
     /**
      * Paints the tree into specified graphics.
@@ -537,7 +562,7 @@ public class HCLTree extends JPanel {
             sign = -1;
         }
         int max_node_height = this.pHeights[this.treeData.node_order[this.treeData.node_order.length-2]];
-        
+
         int node;
         int child_1, child_2;
         int child_1_x1, child_1_x2, child_1_y;
@@ -950,6 +975,40 @@ public class HCLTree extends JPanel {
     }
     
     
+    public void saveAsNexusFile() {
+        NexusFileOutputDialog dialog;
+        String nexusString;
+        String [] annKeys;
+                
+        String treeLabel;
+        boolean saveMatrix;
+		
+        if(this.orientation == HCLTree.HORIZONTAL) { //gene tree
+            annKeys = data.getFieldNames();
+        } else {  //sample tree
+            Vector annKeyVector = data.getSampleAnnotationFieldNames();
+            annKeys = new String[annKeyVector.size()];
+            for(int i = 0; i < annKeys.length; i++) {
+                annKeys[i] = (String)(annKeyVector.elementAt(i));
+            }
+        }
+        
+        dialog = new NexusFileOutputDialog(framework.getFrame(), annKeys, this.orientation, "Nexus");
+        
+        if(dialog.showModal() == JOptionPane.OK_OPTION) {
+
+        	treeLabel = dialog.getTreeLabel();
+        	saveMatrix = dialog.getSaveMatris();
+        	
+            if(this.orientation == HCLTree.HORIZONTAL)
+                nexusString = generateNexusStringForGeneTree(dialog.getAnnotationKey());
+            else
+                nexusString = generateNexusStringForSampleTree(dialog.getAnnotationKey(), saveMatrix, treeLabel);
+            
+            saveNexusString(nexusString, dialog.getOutputFile());            
+        }        
+    }
+    
     public void saveAsNewickFile() {
         NewickFileOutputDialog dialog;
         String newickString;
@@ -965,7 +1024,7 @@ public class HCLTree extends JPanel {
             }
         }
         
-        dialog = new NewickFileOutputDialog(framework.getFrame(), annKeys, this.orientation);
+        dialog = new NewickFileOutputDialog(framework.getFrame(), annKeys, this.orientation, "Newick");
         
         if(dialog.showModal() == JOptionPane.OK_OPTION) {
 
@@ -976,6 +1035,19 @@ public class HCLTree extends JPanel {
             
             saveNewickString(newickString, dialog.getOutputFile());            
         }        
+    }
+    
+    
+    private void saveNexusString(String s, File outputFile) {
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile));
+            bw.write(s);
+            bw.flush();
+            bw.close();
+        } catch (IOException ioe) {
+            JOptionPane.showMessageDialog(framework.getFrame(), "Error saving Newick file: "+outputFile.getAbsolutePath()+".<BR>"+
+            "Please check that file location is valid and permissions are open.", "IO Error Saving Newick File", JOptionPane.ERROR_MESSAGE);
+        }
     }
     
     private void saveNewickString(String s, File outputFile) {
@@ -1033,6 +1105,89 @@ public class HCLTree extends JPanel {
     }
     
     
+    
+    private String generateNexusStringForSampleTree(String annotationKey, boolean saveMatrix, String treeLabel) {
+        
+        String s = new String("");
+        
+        int node, leftChild, rightChild, parent;
+                
+        String [] leafNames = new String[this.data.getExperiment().getNumberOfSamples()];
+              
+        float leftHeight, rightHeight;
+        
+        Hashtable treeHash = new Hashtable();
+        String nodeName = "";
+        
+        for(int i = 0; i < treeData.node_order.length-1; i++) {
+            node = treeData.node_order[i];
+            
+            leftChild = treeData.child_1_array[node];
+            rightChild = treeData.child_2_array[node];
+            
+            leftHeight = treeData.height[leftChild];
+            rightHeight = treeData.height[rightChild];
+            
+            parent = parentNodes[node];
+            
+            //leaf
+            if(leftChild < this.treeData.height.length/2) {
+                s = String.valueOf(leftChild+1)+":"+String.valueOf(this.treeData.height[node]/2.0f);
+                treeHash.put(String.valueOf(leftChild+1),String.valueOf(leftChild+1));
+                leafNames[leftChild] = this.data.getSampleName(leftChild);
+            }
+            //leaf
+            if(rightChild < this.treeData.height.length/2) {
+                s = String.valueOf(rightChild+1)+":"+String.valueOf(this.treeData.height[node]/2.0f);
+                treeHash.put(String.valueOf(rightChild+1),String.valueOf(rightChild+1));
+                leafNames[rightChild] = this.data.getSampleName(rightChild);
+            }
+            //internal node
+            if(treeHash.containsKey(String.valueOf(leftChild+1)) && treeHash.containsKey(String.valueOf(rightChild+1))) {
+                s = "("+treeHash.get(String.valueOf(leftChild+1))+","+treeHash.get(String.valueOf(rightChild+1))+"):"+String.valueOf(this.treeData.height[parentNodes[node]]/2.0f);
+                treeHash.put(String.valueOf(node+1), s);
+                
+                //remove entries as they become obsolete
+                treeHash.remove(String.valueOf(leftChild+1));
+                treeHash.remove(String.valueOf(rightChild+1));
+            }
+            
+            /*
+            if(leftChild < this.treeData.height.length/2) {
+                s = this.data.getSampleAnnotation(leftChild, annotationKey)+":"+String.valueOf(this.treeData.height[node]/2.0f);
+                treeHash.put(String.valueOf(leftChild),s);
+            }
+            if(rightChild < this.treeData.height.length/2) {
+                s = this.data.getSampleAnnotation(rightChild, annotationKey)+":"+String.valueOf(this.treeData.height[node]/2.0f);
+                treeHash.put(String.valueOf(rightChild),s);
+            }
+            if(treeHash.containsKey(String.valueOf(leftChild)) && treeHash.containsKey(String.valueOf(rightChild))) {
+                s = "("+treeHash.get(String.valueOf(leftChild))+","+treeHash.get(String.valueOf(rightChild))+"):"+String.valueOf(this.treeData.height[parentNodes[node]]/2.0f);
+                treeHash.put(String.valueOf(node), s);
+                
+                //remove entries as they become obsolete
+                treeHash.remove(String.valueOf(leftChild));
+                treeHash.remove(String.valueOf(rightChild));
+            }
+            */
+        }
+        
+        //generate the list of leaf names and indices
+        String lineSep = System.getProperty("line.separator");
+        String str = "";
+        
+        str += "#NEXUS"+lineSep+"Begin trees;"+lineSep+"Translate"+lineSep;
+        
+        
+        for(int i = 0; i < leafNames.length; i++)
+        	str += "\t"+String.valueOf(i+1)+"\t"+leafNames[i].replace(' ','_')+(i<leafNames.length-1?",":"")+lineSep;        
+        str +=";"+lineSep + lineSep; 
+        str += "tree " + treeLabel.replace(' ','_') + " = [&U] ";
+        return str+s+";"+lineSep+"End;";        
+    }
+    
+    
+    
     private String generateNewickStringForGeneTree(String annotationKey) {
         
         String [] fieldNames = data.getFieldNames();
@@ -1046,7 +1201,7 @@ public class HCLTree extends JPanel {
         }
         
         String s = new String("");
-        
+   
         int node, leftChild, rightChild, parent;
         
         float leftHeight, rightHeight;
@@ -1065,6 +1220,7 @@ public class HCLTree extends JPanel {
             
             parent = parentNodes[node];
             
+            
             if(leftChild < this.treeData.height.length/2) {
                 s = this.data.getElementAttribute(leftChild, attIndex)+":"+String.valueOf(this.treeData.height[node]/2.0f);
                 treeHash.put(String.valueOf(leftChild),s);
@@ -1081,8 +1237,79 @@ public class HCLTree extends JPanel {
                 treeHash.remove(String.valueOf(leftChild));
                 treeHash.remove(String.valueOf(rightChild));
             }
+            
+            
+            
         }        
         return s+";";        
+    }
+    
+    
+    private String generateNexusStringForGeneTree(String annotationKey) {
+        
+        String [] fieldNames = data.getFieldNames();
+        
+        int attIndex = 0;  //element attribute index, annotation field index
+        for(int i = 0; i < fieldNames.length; i++) {
+            if(fieldNames[i].equals(annotationKey)) {
+                attIndex = i;
+                break;
+            }
+        }
+        
+        String s = new String("");
+        
+        int node, leftChild, rightChild, parent;
+        
+        float leftHeight, rightHeight;
+        
+        String [] leafNames = new String[this.data.getExperiment().getNumberOfGenes()];
+        
+        Hashtable treeHash = new Hashtable();
+        String nodeName = "";
+        
+        for(int i = 0; i < treeData.node_order.length-1; i++) {
+            node = treeData.node_order[i];
+            
+            leftChild = treeData.child_1_array[node];
+            rightChild = treeData.child_2_array[node];
+            
+            leftHeight = treeData.height[leftChild];
+            rightHeight = treeData.height[rightChild];
+            
+            parent = parentNodes[node];
+            
+            //leaf
+            if(leftChild < this.treeData.height.length/2) {
+                s = String.valueOf(leftChild+1)+":"+String.valueOf(this.treeData.height[node]/2.0f);
+                treeHash.put(String.valueOf(leftChild+1),String.valueOf(leftChild+1));
+                leafNames[leftChild] = this.data.getElementAttribute(leftChild, attIndex);
+            }
+            //leaf
+            if(rightChild < this.treeData.height.length/2) {
+                s = String.valueOf(rightChild+1)+":"+String.valueOf(this.treeData.height[node]/2.0f);
+                treeHash.put(String.valueOf(rightChild+1),String.valueOf(rightChild+1));
+                leafNames[rightChild] = this.data.getElementAttribute(rightChild, attIndex);
+            }
+            //internal node
+            if(treeHash.containsKey(String.valueOf(leftChild+1)) && treeHash.containsKey(String.valueOf(rightChild+1))) {
+                s = "("+treeHash.get(String.valueOf(leftChild+1))+","+treeHash.get(String.valueOf(rightChild+1))+"):"+String.valueOf(this.treeData.height[parentNodes[node]]/2.0f);
+                treeHash.put(String.valueOf(node+1), s);
+                
+                //remove entries as they become obsolete
+                treeHash.remove(String.valueOf(leftChild+1));
+                treeHash.remove(String.valueOf(rightChild+1));
+            }
+        }
+        
+        //generate the list of leaf names and indices
+        String lineSep = System.getProperty("line.sep");
+        String str = "";
+        for(int i = 0; i < leafNames.length; i++)
+        	str += String.valueOf(i+1)+"\t"+lineSep;
+        str +=lineSep + lineSep; 
+                
+        return str+s+";";        
     }
     
     /**
