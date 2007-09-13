@@ -1,0 +1,44 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>NonpaR: Nonparametric Tests</h1> <h2>Test Selection</h2>
+            <hr size = 10>
+
+<h2>Test Selection</h2>
+The NonpaR module provides several test options.  The sections below briefly describe 
+each test and the experimental design that is covered by the test.  The NonpaR manual section will provide additional
+information and a reference to books that describe these methods in greater detail.
+<br><br>
+<h3>Wilcoxon Rank Sum Test -- Two Experimental Groups</h3>
+The Wilcoxon Rank Sum Test is used to evaluate differences between exactly two 
+experimental groups.  The Wilcoxon statistic is linearly related to the U statistic
+which is produced by the Mann-Whitney test which means that these tests are generally
+considered equivalent.  The null hypothesis is that the population means from which the two
+samples are draw are the same.  The test presents results to help justify rejection of this null hypothesis
+when appropriate. 
+
+<h3>Kruskal-Wallace Test -- N Experimental Groups</h3>
+The Kruskal-Wallace Test is used to look for differences between N experimental groups where
+N is usually greater than or equal to 3 (for 2 groups the Wilcoxon tests is usually performed).
+The null hypothesis is that all population means from the populations being sampled are the same.  The test hypothesis is that
+at least one population mean is different from the others.
+
+<h3>Mack-Skillings Test -- Two Way Designs: Two Experimental Factors</h3>
+The Mack-Skillings Test is a generalization of the Friedman tests for two-factor designs.  The test covers the case where
+there are two experimental factors being studied and each factor has multiple levels.  An example might be where one factor
+is a pair of bacterial strains and a second factor is antibiotic concentration of which there are 3 concentrations.  This is a
+2x3 design, two strains, three antibiotic concentrations.  The design can be described in a 2x3 matrix.    
+Unlike the Friedman test, the Mack-Skillings test allows for replication with each cell of the design matrix.
+This tests will report significant findings with respect to the two factors under study.
+
+<h3>Fisher Exact Test -- Two Experimental Groups and Binned Categorical Data</h3>
+The Fisher Exact Test focuses on analyzing data where there are exactly two experimental groups and the underlying data can
+be binned into two categories.  One example is for CGH were values above or below a given threshold indicate
+the presence or absence of a gene and the samples can be split into group A and group B.  In this example the Fisher
+Exact test focuses on finding genes that are disproportionately present or absent in group A relative to group B.  This test
+requires that you provide a cutoff value to bin the data values into two groups.  A 2x2 matrix records the number of data values
+for a gene that fall into the two sample groups and the two data bins.  p-values from the test describe whether non-random
+associations exist between these two factors.
+
+        </basefont>
+    </body>
+</html>
