@@ -1,0 +1,23 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>NonpaR: Nonparametric Tests</h1> <h2>Significance Parameters</h2>
+            <hr size = 10>
+
+<h2>Alpha Value</h2>
+The alpha value is a p-value cutoff.  p-values below this value are considered as
+justification for rejection of the test's null hypothesis.  Lowering the alpha value, or critical p-value, makes the test
+more stringent by limiting chance of a single type two error.
+
+<h2>FDR: False Discovery Rate (when available)</h2>
+The False Discovery Rate (FDR) reports an estimate of the fraction of false positives among a set of genes called signficant.
+This option uses the Benjamini-Hochberg correction which is described as a correction on the p-value such that the FDR for
+the collection of genes with p-values less than a particular gene i, is less than the corrected p-value for gene i.  The FDR
+estimates the number of false positives such that if you call 100 genes positive and the FDR is 0.05 then it is estimated
+that 5 genes or fewer are falsely called significant.
+<br><br>
+There are two options for FDR, one in which you supply and FDR prior to the analysis, and a second option that supports
+a user interface to permit balancing the number of significant calls with FDR following computation of the results.  This second
+option presents a graph of FDR vs. number of significant genes.
+        </basefont>
+    </body>
+</html>

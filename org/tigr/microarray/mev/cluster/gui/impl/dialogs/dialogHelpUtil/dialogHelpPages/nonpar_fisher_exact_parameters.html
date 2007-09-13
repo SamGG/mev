@@ -1,0 +1,46 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>NonpaR: Nonparametric Tests</h1> <h2>Fisher Exact Parameters</h2>
+            <hr size = 10>
+
+<h2>Data Bin Partition Value</h2>
+Fisher Exact (FE) requires that the data fall into two bins.  Usually these are CGH
+absent/present calls using discrete data or if an expression value can be used as a cutoff,
+the input data can be essentially continuous.  The data bin partition splits that data by
+classifying each value as above the cutoff of below or equal to the cutoff.
+<br><br>
+The next to buttons allow you to associate one of your data bin names with the
+values that are greater than the supplied cutoff.
+
+<h2>Contingency Matrix Orientation</h2>
+The 2x2 contingency matrix that holds information indicating which values in an expression vector
+fall under a particular sample group and data bin, can have its columns and
+rows swapped.  Note that this has no impact on the reported p-values but rather
+is used to describe the observed effect if a user is interested in a one-tailed result.
+<br><br>
+In most studies one is generally going to look for disproportionality where a data bin is
+over represented in one sample group or the other.  In some cases, it might be more
+important to ask a more specific question such as which genes are over represented in
+sample group A.  The comparison that is of greatest interest should appear in the upper left
+quadrant of the contingency matrix.  The one tailed result will be focused on reporting on this
+observation.
+
+<h2>Alpha Value</h2>
+The alpha value is a p-value cutoff.  p-values below this value are considered as
+justification for rejection of the test's null hypothesis.  Lowering the alpha value, or critical p-value, makes the test
+more stringent by limiting chance of a single type two error.
+
+<h2>FDR: False Discovery Rate</h2>
+The False Discovery Rate (FDR) reports an estimate of the fraction of false positives among a set of genes called signficant.
+This option uses the Benjamini-Hochberg correction which is described as a correction on the p-value such that the FDR for
+the collection of genes with p-values less than a particular gene i, is less than the corrected p-value for gene i.  The FDR
+estimates the number of false positives such that if you call 100 genes positive and the FDR is 0.05 then it is estimated
+that 5 genes or fewer are falsely called significant.
+<br><br>
+There are two options for FDR, one in which you supply and FDR prior to the analysis, and a second option that supports
+a user interface to permit balancing the number of significant calls with FDR following computation of the results.  This second
+option presents a graph of FDR vs. number of significant genes.
+
+        </basefont>
+    </body>
+</html>
