@@ -107,7 +107,7 @@
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="algorithm-modules"
-depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,SVM,USC,LEM,KNNC,DAM,GDM,PCA,COA,TRN,EASE">
+depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,NONPAR,SVM,USC,LEM,KNNC,DAM,GDM,PCA,COA,TRN,EASE">
     </target>
 
 
@@ -129,7 +129,7 @@ depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="modules-only"
-depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE">
+depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,NONPAR,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE">
     </target>
 
 
