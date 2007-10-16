@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: CGHStanfordFileLoader.java,v $
- * $Revision: 1.6 $
- * $Date: 2007-09-10 17:32:00 $
+ * $Revision: 1.7 $
+ * $Date: 2007-10-16 18:48:04 $
  * $Author: raktim $
  * $State: Exp $
  */
@@ -657,7 +657,7 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
             
             log2RatioButton = new JRadioButton("Log2 Ratio", true);
             log2RatioButton.setFocusPainted(false);
-            justRatioButton = new JRadioButton("Just Ratio");
+            justRatioButton = new JRadioButton("Ratio");
             justRatioButton.setFocusPainted(false);
             ratioGroup = new ButtonGroup();
             ratioGroup.add(log2RatioButton);
