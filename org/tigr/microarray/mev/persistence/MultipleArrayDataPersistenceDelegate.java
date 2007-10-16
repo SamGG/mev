@@ -40,7 +40,12 @@ public class MultipleArrayDataPersistenceDelegate extends PersistenceDelegate {
 						new Boolean(mad.isLog2Data()),
 						mad.getClones(),
 						new Integer(mad.getCGHSpecies()),
+						//Raktim. 10/01.
+						mad.getChromosomeIndices(),/* n x 3 Dim Array of ints */
+						new Integer(mad.getCloneValueType()),
+						//new Integer(mad.getLogState()),
 						mad.getMultipleArrayDataState()
+						
 						});
 //		System.out.println("MultipleArrayDataPersistenceDelegate Expression: " + e.toString());
 		return e;

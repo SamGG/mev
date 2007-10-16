@@ -18,6 +18,7 @@ import org.tigr.microarray.mev.HistoryViewer;
 import org.tigr.microarray.mev.MultipleArrayData;
 import org.tigr.microarray.mev.ResultTree;
 import org.tigr.microarray.mev.SlideData;
+import org.tigr.microarray.mev.cgh.CGHDataModel.CharmDataModel.ResultContainer;
 import org.tigr.microarray.mev.cluster.clusterUtil.*;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
@@ -152,7 +153,10 @@ public abstract class XMLEncoderFactory {
 				ExperimentClusterHeader.class,
 				new DefaultPersistenceDelegate(ExperimentClusterHeader.getPersistenceDelegateArgs())
 		);
-
+		oos.setPersistenceDelegate(
+				ResultContainer.class,
+				new CharmResultContainerPersistenceDelegate()
+		);
 
 		oos.setPersistenceDelegate(
 				FOMContentComponent.class,  

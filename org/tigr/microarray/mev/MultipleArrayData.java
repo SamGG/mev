@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayData.java,v $
- * $Revision: 1.28 $
- * $Date: 2007-09-10 17:16:41 $
+ * $Revision: 1.29 $
+ * $Date: 2007-10-16 18:50:59 $
  * $Author: raktim $
  * $State: Exp $
  */
@@ -121,7 +121,8 @@ public class MultipleArrayData implements IData {
     private ClusterRepository geneClusterRepository;
     private ClusterRepository expClusterRepository;
 
-    private int logState = LOG;
+    // Raktim 10/01. Changed access to protected for State SAving 
+    int logState = LOG;
 
     private boolean isMedianIntensities = false;
     
@@ -151,7 +152,7 @@ public class MultipleArrayData implements IData {
      * CGH private int cloneValueType and Distribution array;
      * Imported from Facade Class
      */
-    private int cloneValueType;
+    int cloneValueType;
     Distribution[] cloneDistributions;
     CGHCopyNumberCalculator copyNumberCalculator;
     ICGHDataRegion[][] annotations = new ICGHDataRegion[0][0];
@@ -204,7 +205,8 @@ public class MultipleArrayData implements IData {
 			Boolean useLowerCutoffs, Float lowerCY3Cutoff, Float lowerCY5Cutoff, 
 			ArrayList experimentColors, ArrayList spotColors, 
 			String currentSampleLabelKey, ArrayList featuresList, Integer dataType,
-			int[] samplesOrder, Boolean hasDyeSwap, Boolean CGHData, Boolean log2Data, ArrayList clones, Integer cgh_Sp, MultipleArrayDataState mads){
+			int[] samplesOrder, Boolean hasDyeSwap, Boolean CGHData, Boolean log2Data, ArrayList clones, Integer cgh_Sp, 
+			MultipleArrayDataState mads){
     	this.experiment = experiment;
     	this.setFeaturesList(featuresList);
     	this.alternateExperiment = alternateExperiment;
@@ -228,6 +230,7 @@ public class MultipleArrayData implements IData {
         this.experimentColors = experimentColors;
         this.spotColors = spotColors;
         setSampleLabelKey(currentSampleLabelKey);
+        System.out.println("MAD Cons() currentSampleLabelKey: " + currentSampleLabelKey);
         try{
         setDataType(dataType.intValue());
         } catch (Exception e){e.printStackTrace();}
@@ -240,6 +243,35 @@ public class MultipleArrayData implements IData {
         this.CGH_SPECIES = cgh_Sp.intValue();
         loadMADS(mads);
     }
+    
+    public MultipleArrayData(
+    		Experiment experiment, 
+    		Boolean useMainData, Experiment alternateExperiment, Float percentageCutoff, Boolean usePercentageCutoffs, 
+			Boolean useVarianceFilter, Boolean useDetectionFilter, Boolean useFoldFilter,
+			Boolean dfSet, Boolean ffSet, DetectionFilter df, FoldFilter ff, Boolean isMedianIntensities, 
+			Boolean useLowerCutoffs, Float lowerCY3Cutoff, Float lowerCY5Cutoff, 
+			ArrayList experimentColors, ArrayList spotColors, 
+			String currentSampleLabelKey, ArrayList featuresList, Integer dataType,
+			int[] samplesOrder, Boolean hasDyeSwap, Boolean CGHData, Boolean log2Data, ArrayList clones, Integer cgh_Sp, 
+			int[][] chromosomeIndices, 
+			Integer cloneValueType, 
+			//Integer logState,
+			MultipleArrayDataState mads){
+    		this(experiment, 
+        		 useMainData,  alternateExperiment,  percentageCutoff,  usePercentageCutoffs, 
+    			 useVarianceFilter,  useDetectionFilter,  useFoldFilter,
+    			 dfSet,  ffSet,  df,  ff,  isMedianIntensities, 
+    			 useLowerCutoffs,  lowerCY3Cutoff,  lowerCY5Cutoff, 
+    			 experimentColors,  spotColors, 
+    			 currentSampleLabelKey,  featuresList,  dataType,
+    			 samplesOrder, hasDyeSwap, CGHData, log2Data, clones, cgh_Sp, mads);
+        //Raktim 10/01. SS Modifications
+    		System.out.println("using Raktim's new MAD constructor");
+        this.chromosomeIndices = chromosomeIndices;
+        this.cloneValueType = cloneValueType.intValue();
+        //this.logState = logState.intValue();
+    }
+    
     /**
 	 * @param mads2
 	 */
@@ -304,7 +336,17 @@ public class MultipleArrayData implements IData {
     	return alternateExperiment;
     }
 
+    /**
+     * Raktim 10/01
+     * For State SAving
+     */
+    public void setLogState(int state){
+    	logState = state;
+    }
     
+    public int getLogState(){
+    	return logState;
+    }
     public void constructAndSetAlternateExperiment(Experiment coreExperiment, int [] clusterIndices, int clusterType) {
         int [] origRowIndices = coreExperiment.getRowMappingArrayCopy();
         int [] origColIndices = coreExperiment.getColumnIndicesCopy();
@@ -2750,6 +2792,7 @@ public class MultipleArrayData implements IData {
      * @return Value of property chromosomeIndices.
      */
     public int[][] getChromosomeIndices() {
+    	//System.out.println("getChromosomeIndices(): " + this.chromosomeIndices.length);
         return this.chromosomeIndices;
     }
     /** Setter for property chromosomeIndices.
@@ -2775,11 +2818,26 @@ public class MultipleArrayData implements IData {
     public int getChromosomeStartIndex(int chromosomeIndex){
         return this.chromosomeIndices[chromosomeIndex][0];
     }
+    
+    /**
+     * For Sate Saving
+     * CGH Function
+     */
+    public void setChromosomeStartIndex(int chromosomeIndex, int val){
+        this.chromosomeIndices[chromosomeIndex][0] = val;
+    }
     /**
      * CGH Function
      */
     public int getChromosomeEndIndex(int chromosomeIndex){
         return this.chromosomeIndices[chromosomeIndex][1];
+    }
+    /**
+     * For Sate Saving
+     * CGH Function
+     */
+    public void setChromosomeEndIndex(int chromosomeIndex, int val){
+        this.chromosomeIndices[chromosomeIndex][1] = val;
     }
     /**
      * CGH Function
@@ -2906,11 +2964,15 @@ public class MultipleArrayData implements IData {
      * @return
      */
     public float getValue(int experiment, int clone){
+    	//System.out.println("Current Clone Value: getValue()." + cloneValueType);
+    	//System.out.println("Current Clone Value: getValue()." + this.logState);
+    	
         if(cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_DISCRETE_DETERMINATION){
             return getCopyNumberDetermination(experiment, clone);
         }else if(cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_LOG_AVERAGE_INVERTED){
             //return getLogAverageInvertedValue(experiment, clone);
             //return dataValues[clone][experiment];
+        	//System.out.println("expr, clone: " + experiment + ":" + clone);
             return getRatio(experiment, clone, this.logState);
         }else if(cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_LOG_CLONE_DISTRIBUTION){
             return getCopyNumberDeterminationByLogCloneDistribution(experiment, clone);
@@ -2918,6 +2980,23 @@ public class MultipleArrayData implements IData {
             return getCopyNumberDeterminationByThresholdOrCloneDistribution(experiment, clone);
         }
         return Float.NaN;
+    }
+    /**
+     * For State Saving
+     * CGH Function
+     * @return
+     */
+    public int getCloneValueType(){
+    	return this.cloneValueType;
+    }
+    
+    /**
+     * For State Saving
+     * CGH Function
+     * @param valType
+     */
+    public void setCloneValueType(int valType){
+    	this.cloneValueType = valType;
     }
     /**
      * CGH Function
@@ -3559,7 +3638,9 @@ public class MultipleArrayData implements IData {
 
 	//EH state-saving
     public String getCurrentSampleLabelKey() {
-    	return ((ISlideData)featuresList.get(0)).getSlideDataName();
+    	//return ((ISlideData)featuresList.get(0)).getSlideDataName();
+    	//Raktim 10.4. Commented out the above code. It was returning the SampleLabel instead of the key
+    	return ((ISlideData)featuresList.get(0)).getSampleLabelKey();
     }
     public static PersistenceDelegate getPersistenceDelegate() {
     	return new MultipleArrayDataPersistenceDelegate();
