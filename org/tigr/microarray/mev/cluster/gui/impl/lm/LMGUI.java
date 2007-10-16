@@ -64,7 +64,7 @@ public class LMGUI implements IClusterGUI {
        //if(cancelRun)
     	   //return null;
        
-       final String[] argv = new String[4];
+       final String[] argv = new String[6];
 	   //argv[0] = "-i";
 	   argv[0] = "-N";
        //argv[1] = System.getProperty("user.dir")+"/data/bn/liter_mining_alone_network.sif"; //Raktim - Old Way
@@ -72,6 +72,9 @@ public class LMGUI implements IClusterGUI {
 	   argv[1] = System.getProperty("user.dir")+"/data/bn/results/"+System.getProperty("LM_ONLY");
 	   argv[2] = "-p";	   //argv[3] = System.getProperty("user.dir")+"/plugins/core/yLayouts.jar";
 	   argv[3] = System.getProperty("user.dir")+"/plugins/yLayouts.jar";
+	   // Raktim - For Edge properties file
+		 argv[4] = "-V";
+		 argv[5] = System.getProperty("user.dir")+"/plugins/vizmap.props";
 	   
 	   done=false;
 	   GeneralInfo info = new GeneralInfo();
@@ -191,6 +194,7 @@ private void addGeneralInfo(DefaultMutableTreeNode root, GeneralInfo info) {
 	     }
 	     out= new PrintWriter(new FileOutputStream(new File(propFile[fileSize-1])));
 	     if(goTerms){
+	    	 System.out.println("Use GO Terms");
 	    	 out.println("useGo=true");
 		     out.println("gbGOsFileName=gbGOs.txt"); 
 	     }
@@ -307,7 +311,6 @@ private void addGeneralInfo(DefaultMutableTreeNode root, GeneralInfo info) {
 	PrepareXMLBifModule getModule=new PrepareXMLBifModule();		//getModule.test(path+sep+"prepareXMLBifMod.props"); //Raktim - USe tmp dir
 		getModule.test(path+sep+"tmp"+sep+"prepareXMLBifMod.props");
 	}
-	
 	 /**
      * General info structure.
      */
