@@ -125,7 +125,6 @@ public class Transpose {
 	}
     }
 
- 
     /**
      * The <code>transposeMatrix</code> method is given a 2D array of Strings
      * returns a new 2D array of Strings that is the transpose of the given array

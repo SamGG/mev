@@ -62,8 +62,6 @@ public class SimpleGeneEdge extends GeneEdge {
 	return result;
     }
 
-
-    
     /**
      * The <code>getWeight</code> method returns the weight of this edge
      *
@@ -86,7 +84,6 @@ public class SimpleGeneEdge extends GeneEdge {
 	}
 	return false;
     }
-    
     /**
      * The <code>compareTo</code> method compares the given SimpleGeneEdge with this SimpleGeneEdge using weight
      *

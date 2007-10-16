@@ -207,7 +207,6 @@ public class PrepareXMLBifModule {
 	System.exit(0);
     }
 
-    
     public static void main(String[] argv){
 	if(argv.length != 1){
 	    usage();

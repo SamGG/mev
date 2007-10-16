@@ -15,8 +15,13 @@
 /* GetUnionOfInters.java
  * Copyright (C) 2005 Amira Djebbari
  */
-package org.tigr.microarray.mev.cluster.gui.impl.bn;
-import java.io.FileNotFoundException;import java.util.ArrayList;
+package org.tigr.microarray.mev.cluster.gui.impl.bn;import java.util.ArrayList;import java.util.HashSet;
+import java.util.Iterator;
+import java.io.FileNotFoundException;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.SimpleGeneEdge;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.UsefulInteractions;
 /**
  * The class <code>GetUnionOfInters</code> computes the union of 2 sets of interactions represented 
  * as <code>ArrayList</code>s of <code>SimpleGeneEdge</code> objects
@@ -80,7 +85,9 @@ public class GetUnionOfInters {
      * This format is used for edgeAttributes files in Cytoscape except the initial comment line.
      */
     public static void test(String interFileName1, String interFileName2, String outUnionOfInterFileName){
-	try {
+	try {		System.out.println("test()" + interFileName1);
+		System.out.println("test()" + interFileName2);
+		System.out.println("test()" + outUnionOfInterFileName);
 	    Useful.checkFile(interFileName1);
 	    Useful.checkFile(interFileName2);
 	    ArrayList al1 = UsefulInteractions.readInteractionsWithWeights(interFileName1);
@@ -94,7 +101,6 @@ public class GetUnionOfInters {
 	    System.out.println(nae);
 	}
     }
-    
     /**
      * The <code>usage</code> method displays the usage of this class
      *
@@ -103,7 +109,6 @@ public class GetUnionOfInters {
 	    System.out.println("Usage: java GetUnionOfInters interWithWeights1 interWithWeights2 outUnionInterWithWeights");
 	    System.exit(0);
     }
-    
     public static void main(String[] argv){
 	if(argv.length != 3){
 	    usage();

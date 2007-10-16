@@ -192,7 +192,6 @@ public class AllPairsShortestPaths {
 	catch(NullArgumentException nae){
 	    System.out.println(nae);
 	}
-	
     }
 
     /**
@@ -238,7 +237,6 @@ public class AllPairsShortestPaths {
 	String propsFileName = argv[0];
 	test(propsFileName);
     }
-    
 }
 
 

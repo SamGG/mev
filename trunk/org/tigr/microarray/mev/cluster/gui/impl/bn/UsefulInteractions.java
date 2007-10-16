@@ -356,7 +356,6 @@ public class UsefulInteractions {
 		throw new NullArgumentException("Given inter was null!");
 	    }
 	    	fos = new FileOutputStream(path+fileName);
-	    
 	    PrintWriter pw = new PrintWriter(fos, true);
 	    SimpleGeneEdge sGE = null;
 	    for(int i = 0; i < inter.size(); i++){
@@ -375,9 +374,7 @@ public class UsefulInteractions {
 	    if(inter == null){
 		throw new NullArgumentException("Given inter was null!");
 	    }
-	   
 	    fos = new FileOutputStream(fileName);
-	    
 	    PrintWriter pw = new PrintWriter(fos, true);
 	    SimpleGeneEdge sGE = null;
 	    for(int i = 0; i < inter.size(); i++){
@@ -441,7 +438,6 @@ public class UsefulInteractions {
 	}
     }
 
-    
     /**
      * The <code>createWeightMatrix</code> method takes in an <code>ArrayList</code> of <code>SimpleGeneEdge</code>objects
      * corresponding to interactions and returns a 2D array of doubles corresponding to the weight matrix representation
@@ -580,7 +576,6 @@ public class UsefulInteractions {
 	}
 	return result;
     }
-	    
     /**
      * The <code>getNeighbors</code> method is given a set of interactions, a set of nodes and the index of
      * a particular node and returns the indices of the neighbors of this node in the given graph
@@ -641,7 +636,32 @@ public class UsefulInteractions {
 	}
 	System.out.println("Extra edges: "+e);
     }
-       
+    /**
+     * Raktim - New function to remove reverse edges between 2 nodes (cycles) from Lit mining interaction.
+	 * E.g - if there is an edge A -> B, there *cannot be an Edge B -> A to make it a DAG
+	 * This function takes a list of edges and removes all removes edge B - > A if edge A -> B already exists.
+     * @param unionOfInter
+     * @return
+     */
+    public static ArrayList removeReverseEdge(ArrayList unionOfInter) {
+    	ArrayList edges = new ArrayList();
+    	for(int i = 0; i < unionOfInter.size(); i++){
+    		SimpleGeneEdge curEdge = (SimpleGeneEdge)unionOfInter.get(i);
+    		String from = curEdge.getFrom();
+    		String to = curEdge.getTo();
+    		
+    		if(!to.equals("D") || !from.equals("D")){
+    			SimpleGeneEdge toFind = new SimpleGeneEdge(to, from);
+	    		unionOfInter.set(i, new SimpleGeneEdge("D", "D"));
+	    		int ind = unionOfInter.indexOf(toFind);
+	    		if(ind != -1){
+	    			unionOfInter.set(ind, new SimpleGeneEdge("D", "D"));
+	    		}
+	    		edges.add(curEdge);
+    		}
+    	}
+		return edges;
+	}
 }
 
 

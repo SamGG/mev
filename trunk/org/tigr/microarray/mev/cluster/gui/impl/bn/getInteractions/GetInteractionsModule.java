@@ -65,6 +65,7 @@ public class GetInteractionsModule {
 	    String resFileName = resFileLoc+props.getProperty("resourcererFileName");
   	    
   	    //System.out.print(resFileName);  	    String gbAccessionsFileName = fileLoc+props.getProperty("gbAccessionsFileName");
+	    //String gbAccessionsFileName = resFileLoc+props.getProperty("gbAccessionsFileName");
   	    String symbolsArticlesFromPubmedFileName = resFileLoc+props.getProperty("symbolsArticlesFromPubmedFileName", null);
   	    String symbolsArticlesFromGeneDbFileName = resFileLoc+props.getProperty("symbolsArticlesFromGeneDbFileName", null);
 	   
@@ -126,6 +127,10 @@ public class GetInteractionsModule {
 		UsefulInteractions.writeSifFileUndirWithWeights(interRes,gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"interRes");	    
 	    }	
 	    ArrayList unionOfInter = GetInteractionsUtil.uniquelyMergeArrayLists(interGeneDb, interRes, interPubmed);
+	    
+	    //Raktim - New function to remove reverse edges between 2 nodes (cycles) from Lit mining interaction.
+	    //E.g - if there is an edge A -> B, there *cannot be an Edge B -> A to make it a DAG
+	    unionOfInter = UsefulInteractions.removeReverseEdge(unionOfInter);
 	    return unionOfInter;
 	}
 	catch(IOException ioe){
@@ -134,6 +139,7 @@ public class GetInteractionsModule {
 	return null;
     }
    
+    
     /**
      * The <code>getInteractionsFromPpi</code> method gets protein protein interactions from given properties
      *
@@ -404,6 +410,7 @@ public class GetInteractionsModule {
 	ArrayList interFromPpiSyms = null;	
 	// get interactions from both literature and ppi
 	if(isLiteratureStr.equals("true")&&isPpiStr.equals("true")){
+		System.out.println("Only Lit & PPI");
 	    interFromPpiSyms = getInteractionsFromPpi(props);
 	    // replace symbols with gbs in interFromPpi
 	    interFromPpi = GetInteractionsUtil.replaceSymsWithGBsInInter(path+props.getProperty("resourcererFileName",null), interFromPpiSyms);
@@ -420,13 +427,13 @@ public class GetInteractionsModule {
 	// get interactions from literature but not from ppi
 	else if(isLiteratureStr.equals("true")&&!isPpiStr.equals("true")){
 	    interFromLit = getInteractionsFromLiterature(props);
-	    //System.out.println("hi");
+	    System.out.println("Only Lit");
 	    //System.exit(1);
 	    return interFromLit;
 	}
 	// get interactions from ppi but not from literature
 	else if(isPpiStr.equals("true")&&!isLiteratureStr.equals("true")){	
-		
+		System.out.println("Only PPI");
 	    interFromPpiSyms = getInteractionsFromPpi(props);
 	    //System.out.println(interFromPpiSyms.size());
 	    //System.exit(1);
@@ -468,7 +475,6 @@ public class GetInteractionsModule {
      * found from co-occurrences of genes in articles from Resourcerer, Entrez Gene and Pubmed
      */
     public static void prepareGBsForPpiNotDirectly(ArrayList interFromPpi, Properties props){
-   
     	try {
 	    ArrayList newGeneSymbols = null;
 	    HashSet origGBs = null;
