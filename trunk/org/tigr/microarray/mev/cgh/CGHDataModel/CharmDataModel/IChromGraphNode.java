@@ -1,5 +1,7 @@
 package org.tigr.microarray.mev.cgh.CGHDataModel.CharmDataModel;
-
+/**
+ * @author  Raktim Sinha
+ */
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 

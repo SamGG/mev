@@ -31,7 +31,7 @@ import com.borland.jbcl.layout.VerticalFlowLayout;
  * <p>Copyright: Copyright (c) 2004</p>
  * <p>Company: Princeton University</p>
  * @author Chad Myers, Xing Chen
- * @version 1.0
+ * @author  Raktim Sinha
  */
 public class CharmAnalyzeDialog extends JDialog {
   JPanel contentPane = new JPanel();

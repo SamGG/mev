@@ -1,5 +1,7 @@
 package org.tigr.microarray.mev.cgh.CGHGuiObj.CharmDataViewer;
-
+/**
+ * @author  Raktim Sinha
+ */
 import javax.swing.table.AbstractTableModel;
 
 public class TableDataModel extends AbstractTableModel {

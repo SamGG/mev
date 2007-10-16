@@ -10,7 +10,7 @@ package org.tigr.microarray.mev.cgh.CGHAlgorithms.Charm;
  * <p>Copyright: Copyright (c) 2004</p>
  * <p>Company: Princeton University</p>
  * @author Chad Myers, Xing Chen
- * @version 1.0
+ * @author  Raktim Sinha
  */
 
 public class PValue {

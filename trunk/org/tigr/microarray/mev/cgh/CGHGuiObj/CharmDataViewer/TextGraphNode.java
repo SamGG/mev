@@ -1,5 +1,7 @@
 package org.tigr.microarray.mev.cgh.CGHGuiObj.CharmDataViewer;
-
+/**
+ * @author  Raktim Sinha
+ */
 import java.awt.Font;
 import java.awt.geom.Rectangle2D;
 

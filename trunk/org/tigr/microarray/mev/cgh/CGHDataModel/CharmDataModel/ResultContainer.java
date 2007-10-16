@@ -1,9 +1,12 @@
 package org.tigr.microarray.mev.cgh.CGHDataModel.CharmDataModel;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.cgh.CGHAlgorithms.Charm.PValue;
@@ -20,7 +23,7 @@ import org.tigr.util.FloatMatrix;
  * <p>Copyright: Copyright (c) 2004</p>
  * <p>Company: Princeton University</p>
  * @author Chad Myers, Xing Chen
- * @version 1.0
+ * @author  Raktim Sinha
  */
 
 public class ResultContainer {
@@ -49,9 +52,29 @@ public class ResultContainer {
     //this.sourceData = data;
 	  
 	  this.data = data;
+	  if(this.data == null){
+	    	System.out.println("In Const. ResultContainer()- data is null");
+	    }
 	  this.experiments = exprNames;
 	  segmentHash = new HashMap();
   }
+  
+  /**
+   * Constructor for State Saving
+   * @param data
+   * @param exprNames
+   * @param map
+   */
+  public ResultContainer(IData data, ArrayList exprNames, HashMap map, String resID) {	  
+	  //System.out.println("In SS Const. ResultContainer()");
+	  this.data = data;
+		  if(this.data == null){
+		    	System.out.println("In SS Const. ResultContainer()- data is null");
+		    }
+		  this.experiments = exprNames;
+		  segmentHash = map;
+		  resultID = resID;
+	  }
 
   /**
    * Adds a segment (a set of gene identifiers between which an "interesting" region has been identified) to this result set
@@ -78,11 +101,27 @@ public class ResultContainer {
    */
   //public ArrayList getWindows(String exp, int chromosome) {
   public ArrayList getSegments(String exp, int chromosome) {
+	  //System.out.println("ChARM.getSegments(): Expr:Chr: " + exp + ":" + chromosome);
+	  //System.out.println("ChARM.getSegments():segmentHash.size():" + segmentHash.size());
+	  
+	  /*
+	  Set keys = segmentHash.keySet();
+	  
+	  Iterator keysItr = keys.iterator();
+	  while(keysItr.hasNext()){
+		  String str = (String)keysItr.next();
+		  System.out.println("ChARM.getSegments():segmentHash.Key: "+ str);
+	  }
+	  */
+	  
     ArrayList retArray = null;
     if(segmentHash.containsKey(exp + "," + chromosome)) {
+    	
       retArray = (ArrayList)segmentHash.get(exp + "," + chromosome);
+      //System.out.println("ChARM.getSegments(): Key Found: Expr,Chr: " + exp + "," + chromosome + "Segments Found: " + retArray.size());
     }
     else {
+    	//System.out.println("ChARM.getSegments(): Missing Key: Expr,Chr: " + exp + "," + chromosome);
       retArray = new ArrayList();
     }
     return retArray;
@@ -103,16 +142,53 @@ public class ResultContainer {
    * Values are ArrayLists of segments associated with each experiment, chromosome pair.
    * @return HashMap
    */
-  public HashMap getAllSegments() {
+  //public HashMap getAllSegments() {
+  public HashMap getSegmentHashMap() {
     return segmentHash;
   }
 
+  /**
+   * Sets all of them
+   * For State Saving.
+   * @param map
+   */
+  public void setSegmentHashMap(HashMap map){
+	  segmentHash = map;
+  }
+  
+  /**
+   * For State Saving.
+   * @return
+   */
+  public IData getData(){
+	  return this.data;
+  }
+  
+  /**
+   * For State Saving.
+   * @param dat
+   */
+  public void setData(IData dat) {
+	  this.data = dat;
+  }
+  
+  /**
+   * For State Saving.
+   * @param exprs
+   */
+  public void setExperiments(ArrayList exprs){
+	  this.experiments = exprs;
+  }
+  
+  public ArrayList getExperiments(){
+	  return this.experiments;
+  }
   /**
    * Merges the given result set with the current one.
    * @param moreResults ResultContainer
    */
   public void addResults(ResultContainer moreResults) {
-    HashMap newSegmentHash = moreResults.getAllSegments();
+    HashMap newSegmentHash = moreResults.getSegmentHashMap();
     ArrayList keyList = new ArrayList(newSegmentHash.keySet());
     for(int i=0; i<keyList.size(); i++) {
       if(((ArrayList)newSegmentHash.get(keyList.get(i))).size() > 0) segmentHash.put((String)keyList.get(i),(ArrayList)newSegmentHash.get(keyList.get(i)));
@@ -130,17 +206,35 @@ public class ResultContainer {
    * @return ArrayList
    */
   public ArrayList getSegmentsMeetingCriteria(String exp, int chromosome, PValue pvalueCutoff, int pvalTestType) {
-
+	  //System.out.println("ChARM.getSegmentsMeetingCriteria()");
     ArrayList allSegments = (ArrayList)this.getSegments(exp,chromosome);
     if (allSegments == null){
+    	//System.out.println("ChARM.getSegmentsMeetingCriteria() Segments NULL");
       return null;
     }
     else {
       ArrayList matches = new ArrayList();
 
       for (int i = 0; i < allSegments.size(); i++) {
-    	  SegmentInfo currSeg = ( (SegmentInfo) allSegments.get(i));
-        PValue pval = new PValue(currSeg.getStatistic(new String("Mean")),Math.min(currSeg.getStatistic(new String("Sign neg")),currSeg.getStatistic(new String("Sign pos"))));
+    	  SegmentInfo currSeg = ((SegmentInfo) allSegments.get(i));
+    	  // For Test Only - Remove
+    	  /*
+    	  System.out.println("ChARM.getSegmentsMeetingCriteria(). SegInfo Data: " + 
+    			  currSeg.getStatistic("Mean") + ":" +
+				  currSeg.getStatistic("Sign neg") + ":" +
+    			  currSeg.getStatistic("Sign pos"));
+    	  if(currSeg.getStatisticsHash() == null) {
+    		  System.out.println("ChARM.getSegmentsMeetingCriteria() CurSeg Stats Hash is NULL");
+	    	  currSeg.setStatistic(new String("Mean"), .5f);
+	    	  currSeg.setStatistic(new String("Sign pos"), 0.75f);
+	    	  currSeg.setStatistic(new String("Sign neg"), 0.05f);
+    	  }
+    	  */
+    	  //End Test - Remove
+    	  
+        PValue pval = new PValue(currSeg.getStatistic(new String("Mean")),
+        						Math.min(currSeg.getStatistic(new String("Sign neg")),
+        						currSeg.getStatistic(new String("Sign pos"))));
 
         if (pvalueCutoff.compareTo(pval,pvalTestType) >= 0) {
           matches.add(currSeg);

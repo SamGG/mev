@@ -11,7 +11,7 @@ import java.util.Arrays;
  * <p>Copyright: Copyright (c) 2004</p>
  * <p>Company: Princeton University</p>
  * @author Chad Myers, Xing Chen
- * @version 1.0
+ * @author  Raktim Sinha
  */
 
 public class Edge {
@@ -40,24 +40,6 @@ public class Edge {
   private int left_window;//sizes of windows- not indices
   private int right_window;
 
-  /*
-  private float left_mean;//means and variances for the distribution
-  private float left_var;
-  private float right_mean;
-  private float right_var;
-
-  private float[] left_posterior;//indexed from 0 to roi size/2- does not match data indices
-  private float[] right_posterior;
-  private float[] left_geneprobs;
-  private float[] right_geneprobs;
-  private float left_prior;
-  private float right_prior;
-
-  private boolean reset;
-  private boolean improving;
-
-  private float likelihood;
-*/
   private float left_mean;//means and variances for the distribution
   private float left_var;
   private float right_mean;

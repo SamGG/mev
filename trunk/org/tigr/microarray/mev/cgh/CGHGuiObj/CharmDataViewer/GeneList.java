@@ -23,7 +23,7 @@ import org.tigr.microarray.mev.cgh.CGHDataObj.CGHClone;
  * <p>Copyright: Copyright (c) 2004</p>
  * <p>Company: </p>
  * @author Xing Chen
- * @version 1.0
+ * @author  Raktim Sinha
  */
 
 public class GeneList extends JList {

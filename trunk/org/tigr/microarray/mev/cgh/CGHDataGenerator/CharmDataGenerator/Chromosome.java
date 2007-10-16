@@ -16,7 +16,7 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
  * <p>Copyright: Copyright (c) 2004</p>
  * <p>Company: Princeton University</p>
  * @author Chad Myers, Xing Chen
- * @version 1.0
+ * @author  Raktim Sinha
  */
 public class Chromosome implements Comparable{
 
@@ -67,9 +67,14 @@ public class Chromosome implements Comparable{
    * Adds a new gene to this chromosome.
    * @param newGene Gene
    */
+  /**
+   * Raktim - Not used (replaced) in MeV
+   */
+  /*
   public void addGene(Gene newGene){
     genes.add(newGene);
   }
+  */
 
   /**
    * Sets the size (in base pairs) of this chromosome.
@@ -99,7 +104,9 @@ public class Chromosome implements Comparable{
    */
   /**
    * Returns all experiment ratios of a single gene 
+   * Raktim - Not used (replaced) in MeV
    */
+  /*
   public Gene geneAtRatioIndex(int index,String exp,boolean includeNaNs){
     Gene returnGene=null;
 
@@ -115,7 +122,7 @@ public class Chromosome implements Comparable{
       int total_ct=0;
 
       for (int i = 0; i < genes.size(); i++) {
-    	float curr = ((CGHClone) genes.get(i)).getRatio(/*exp*/);
+    	float curr = ((CGHClone) genes.get(i)).getRatio();
         if (!Float.isNaN(curr)|| includeNaNs) {
           temp_ratios[ct] = curr;
           temp_gene_indicies[ct] = i;
@@ -140,7 +147,7 @@ public class Chromosome implements Comparable{
 
     return returnGene;
   }
-
+   */
   /**
    * Returns an ArrayList of genes between the given bounds.  The <code>includeNaNs</code>
    * flag determines whether or not NaN gene values are counted in finding these genes.
@@ -150,6 +157,10 @@ public class Chromosome implements Comparable{
    * @param includeNaNs boolean
    * @return ArrayList
    */
+  /*
+   * Raktim - Not used (replaced) in MeV
+   */
+  /*
   public ArrayList getGenesBetweenIndices(String exp, int ind1, int ind2, boolean includeNaNs) {
     ArrayList geneList = new ArrayList();
     for (int i=ind1; i<= ind2; i++ ){
@@ -157,7 +168,7 @@ public class Chromosome implements Comparable{
     }
     return geneList;
   }
-
+   */
   /**
    * Returns an ArrayList of gene names between the given bounds.  The <code>includeNaNs</code>
    * flag determines whether or not NaN gene values are counted in finding these genes.
@@ -167,6 +178,10 @@ public class Chromosome implements Comparable{
    * @param includeNaNs boolean
    * @return ArrayList
    */
+  /**
+   * Raktim - Not used (replaced) in MeV
+   */
+  /*
   public ArrayList getGeneNamesBetweenIndices(String exp, int ind1, int ind2, boolean includeNaNs) {
     ArrayList geneList = new ArrayList();
     for (int i=ind1; i<= ind2; i++ ){
@@ -174,7 +189,7 @@ public class Chromosome implements Comparable{
     }
     return geneList;
   }
-
+  */
   /**
    * Returns the number of genes for a given experiment.  The <code>includeNaNs</code>
    * flag determines whether or not NaN gene values are counted in finding these genes.
@@ -338,7 +353,10 @@ public class Chromosome implements Comparable{
      * @param includeNaNs boolean
      * @return double[]
      */
-/*
+    /**
+     * Raktim - Not used (replace) in MeV 
+     */
+    /*
     public float[] getRatioArray(String exp, boolean includeNaNs){
     	if(exp.equals(this.curr_exp) && ((includeNaNs && this.curr_includeNaNs) || (!includeNaNs && !this.curr_includeNaNs))) {
     	}
@@ -375,8 +393,8 @@ public class Chromosome implements Comparable{
     	curr_includeNaNs =includeNaNs;
 
     	return curr_ratios;
-  }
-*/
+  	}
+     */
   /**
    * Returns the number of genes on this chromosome.
    * @return int
@@ -398,10 +416,11 @@ public class Chromosome implements Comparable{
    * @param g Gene
    * @return int
    */
+  /*
   public int getGeneIndex(Gene g) {
     return genes.indexOf(g);
   }
-
+*/
   /**
    * Sorts all contained genes by base pair coordinates.
    */
