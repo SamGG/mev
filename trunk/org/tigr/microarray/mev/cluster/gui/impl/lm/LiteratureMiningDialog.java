@@ -17,7 +17,6 @@ import java.awt.Color;import java.awt.Component;import java.awt.Dimension;imp
  * @author eleanora
  */
 public class LiteratureMiningDialog extends AlgorithmDialog {
-    
     /** Result when dialog is dismissed.
      */
     private int result = JOptionPane.CANCEL_OPTION;    ConfigPanel configPanel;
@@ -36,7 +35,6 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
     Font font;
     String sep;
     Frame parent;
-    
     /** Creates a new instance of LiteratureMiningDialog
      * @param parent Parent Frame
      * @param repository Cluster repository to construct <CODE>ClusterBrowser</CODE>
@@ -48,10 +46,8 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
         font = new Font("Dialog", Font.BOLD, 12);
         listener = new EventListener();
         addWindowListener(listener);
-        
         //Tabbed pane creation
         tabbedPane = new JTabbedPane();
-        
         //config panel                configPanel = new ConfigPanel();        
         
         JPanel popNClusterPanel = new JPanel(new GridBagLayout());
@@ -59,25 +55,20 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
         popPanel = new PopSelectionPanel();
         browser = new ClusterBrowser(repository);
         
-        
         //re-enable this panel when population selection from file is available
         //popNClusterPanel.add(popPanel, new GridBagConstraints(0,0,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         popNClusterPanel.add(browser, new GridBagConstraints(0,1,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         tabbedPane.add("Population and Cluster Selection", popNClusterPanel);
-        
         bnParamPanel = new BNParameterPanel(annotationLabels);        
         //TODO removed tabbedpane until other features are enabled that require rearranging
         //the dialog
         //tabbedPane.add("Annotation Parameters", bnParamPanel);
-        
         //TODO removed tabbedpane until other features are enabled that require rearranging
         //the dialog
         //statParamsPanel = new AlphaPanel();
         //tabbedPane.add("Statistical Parameters", statParamsPanel);
-        
         JPanel parameters = new JPanel(new GridBagLayout());
         parameters.setBackground(Color.white);
-        
         //mode panel
         priorsPanel = new PriorSelectionPanel(!(repository == null || repository.isEmpty()));
         bootStrapPanel = new BootStrapPanel();
@@ -93,10 +84,8 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
         parameters.add(useGoPanel, new GridBagConstraints(0,2,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         //parameters.add(runBNPanel, new GridBagConstraints(0,5,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         parameters.add(tabbedPane, new GridBagConstraints(0,3,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-        
         addContent(parameters);
         setActionListeners(listener);
-        
         if(repository == null || repository.isEmpty()) {
             Component comp = tabbedPane.getComponentAt(0);
             JPanel panel = (JPanel)comp;
@@ -108,10 +97,8 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
             tabbedPane.setSelectedIndex(0);
             okButton.setEnabled(false);
         }
-        
         this.setSize(600,750);
     }
-    
     /** Creates a new instance of LiteratureMiningDialog
      * @param parent Parent Frame
      * @param repository Cluster repository to construct <CODE>ClusterBrowser</CODE>
@@ -123,17 +110,14 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
         font = new Font("Dialog", Font.BOLD, 12);
         listener = new EventListener();
         addWindowListener(listener);
-        
         //Tabbed pane creation
-        tabbedPane = new JTabbedPane();
-                //config panel     
+        tabbedPane = new JTabbedPane();        //config panel     
         configPanel = new ConfigPanel();        
         
         JPanel popNClusterPanel = new JPanel(new GridBagLayout());
         popNClusterPanel.setBackground(Color.white);
         popPanel = new PopSelectionPanel();
        // browser = new ClusterBrowser(repository);
-        
         JPanel emptyClusterPanel = new JPanel(new GridBagLayout());
         String text = "<center><b>Note: When running LM in script mode the cluster<br>";
         text += "under analysis is determined by the preceding algorithm<br>";
@@ -144,24 +128,19 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
         textArea.setContentType("text/html");
         textArea.setText(text);
         emptyClusterPanel.add(textArea, new GridBagConstraints(0,0,1,1,0.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-        
         popNClusterPanel.add(popPanel, new GridBagConstraints(0,0,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         popNClusterPanel.add(emptyClusterPanel, new GridBagConstraints(0,1,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         tabbedPane.add("Population and Cluster Selection", popNClusterPanel);
-        
         //bnParamPanel = new BNParameterPanel(annotationLabels);
         //TODO removed tabbedpane until other features are enabled that require rearranging
         //the dialog
         //tabbedPane.add("Runing Bayesian Network Parameters", bnParamPanel);
-        
         //statParamsPanel = new AlphaPanel();
         //TODO removed tabbedpane until other features are enabled that require rearranging
         //the dialog
         //tabbedPane.add("Statistical Parameters", statParamsPanel);
-        
         JPanel parameters = new JPanel(new GridBagLayout());
         parameters.setBackground(Color.white);
-            
         //mode paneli
         priorsPanel = new PriorSelectionPanel(true);
         bootStrapPanel = new BootStrapPanel();
@@ -177,10 +156,8 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
         parameters.add(useGoPanel, new GridBagConstraints(0,2,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         //parameters.add(runBNPanel, new GridBagConstraints(0,5,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         parameters.add(tabbedPane, new GridBagConstraints(0,3,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-       
         addContent(parameters);
         setActionListeners(listener);
-        
      /*   if(repository == null || repository.isEmpty()) {
             Component comp = tabbedPane.getComponentAt(0);
             JPanel panel = (JPanel)comp;
@@ -194,7 +171,6 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
         */
         this.setSize(600,750);
     }
-    
     /** Shows the dialog.
      * @return  */
     public int showModal() {
@@ -203,44 +179,36 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
         show();
         return result;
     }
-    
     /** Resets dialog controls.
      */
     private void resetControls(){
-        
     }
-    
     /** Indicates if mode is cluster analysis, if not mode is annotation survey.
      * @return  */
     public boolean isClusterModeSelected(){
         return this.priorsPanel.litSourceCheckbox.isSelected();
     }
-    
     /** Returns the cluster selected for analysis.
      * @return  */
     public Cluster getSelectedCluster(){
         return this.browser.getSelectedCluster();
     }
     
-    
     public boolean isPopFileModeSelected() {
         return popPanel.fileButton.isSelected();
     }
-    
     
     /** Returns the population fille to load
      */
     public String getPopulationFileName() {
         return this.popPanel.getPopFile();
     }
-    
     /** Returns the name of the converter file selected.
      * If none selected null is returned.
      */
     public String getConverterFileName(){
         return bnParamPanel.getConverterFileName();
     }
-    
     /** Returns the minimum clusters size if trimming result.
      */
     public int getMinClusterSize() {
@@ -252,7 +220,6 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
             return 0;
         }
     }
-    
     /** Returns the base file location for BN file system
      */
     public String getBaseFileLocation() {        return configPanel.getBaseFileLocation();
@@ -287,7 +254,6 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
     public String numParents(){
     	return this.runBNPanel.numParents();
     }
-    
     //TODO gray out file selection
     public boolean isClusterSource(){
     	return this.popPanel.dataButton.isSelected();
@@ -305,7 +271,6 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
     	return this.bootStrapPanel.isBootstrapping();
     }
 
-    
     /** Returns a list of file names corresponding to files mapping
      * indices to annotation terms (themes).
      */
@@ -313,14 +278,11 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
         return this.bnParamPanel.getAnnToGOFileList();
     }
     
-
-    
     /** Contains mode controls. (anal. or survey)
      */
     private class PriorSelectionPanel extends JPanel {
         private JCheckBox litSourceCheckbox;
         private JCheckBox ppiSourceCheckbox;
-        
         /** Constructs a mode panel.
          * @param haveClusters
          */
@@ -339,7 +301,6 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
                 }
             });
             
-            
             ppiSourceCheckbox = new JCheckBox("Protein-Protein Interactions");
             ppiSourceCheckbox.setToolTipText("Uses protein-protein interaction data to create a seed network.");
             ppiSourceCheckbox.setFocusPainted(false);
@@ -351,10 +312,8 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
                 }
             });
             
-           
            ppiSourceCheckbox.setSelected(false);
            litSourceCheckbox.setEnabled(true);
-            
            add(litSourceCheckbox, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
            add(ppiSourceCheckbox, new GridBagConstraints(1,0,1,1,1.0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
         }
@@ -364,7 +323,6 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
     private class DiscretizingPanel extends JPanel {
         private JTextField numLevelsField;
         private JLabel numLevelsLabel;
-        
         /** Constructs a mode panel.
          * @param haveClusters
          */
@@ -373,13 +331,10 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
             setLayout(new GridBagLayout());
             setBackground(Color.white);
             setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Discretizing Expression Values", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
-            
             numLevelsField = new JTextField("3", 1);
             numLevelsField.setBackground(Color.white);
-            
             numLevelsLabel = new JLabel(" Number of Levels");
             numLevelsLabel.setBackground(Color.white);
-            
             numLevelsField.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent ae) {
                     popPanel.setEnableControls(true);
@@ -388,7 +343,6 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
 
             add(numLevelsLabel, new GridBagConstraints(1,3,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,15,0),0,0));
             add(numLevelsField, new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.VERTICAL, new Insets(0,0,15,0),0,0));
-             
         }
         public int getNumLevels(){return new Integer(numLevelsField.getText()).intValue();}
     }    
@@ -397,7 +351,6 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
     private class ClassNumPanel extends JPanel {
         private JTextField numClassesField;
         private JLabel numClassesLabel;
-        
         /** Constructs a mode panel.
          * @param haveClusters
          */
@@ -406,13 +359,10 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
             setLayout(new GridBagLayout());
             setBackground(Color.white);
             setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Sample Classification", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
-            
             numClassesField = new JTextField("2", 2);
             numClassesField.setBackground(Color.white);
-            
             numClassesLabel = new JLabel(" Number of Sample Classes");
             numClassesLabel.setBackground(Color.white);
-            
             numClassesField.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent ae) {
                     popPanel.setEnableControls(true);
@@ -421,7 +371,6 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
 
             add(numClassesLabel, new GridBagConstraints(1,3,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,15,0),0,0));
             add(numClassesField, new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.VERTICAL, new Insets(0,0,15,0),0,0));
-             
         }
         public int getNumClasses(){return new Integer(numClassesField.getText()).intValue();}
     }    
@@ -434,9 +383,7 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
         private JLabel confThresholdLabel;
         private JCheckBox isBootstrappingCheckbox;
         private JLabel isBootStrappingLabel;
-        
         private JLabel bootstrappingNotAvailable;
-        
         /** Constructs a mode panel.
          * @param haveClusters
          */
@@ -445,7 +392,6 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
             setLayout(new GridBagLayout());
             setBackground(Color.white);
             setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Bootstrapping", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
-            
             isBootstrappingCheckbox = new JCheckBox();
             isBootstrappingCheckbox.setSelected(false);
             isBootstrappingCheckbox.setEnabled(true);
@@ -457,7 +403,6 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
                     bootStrapPanel.setEnableControls(isBootstrappingCheckbox.isSelected());
                 }
             });
-            
             numIterationsField = new JTextField("100", 4);
             numIterationsField.setBackground(Color.white);
             numIterationsLabel = new JLabel(" Number of Iterations");
@@ -476,7 +421,6 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
             isBootStrappingLabel.setForeground(Color.gray);
             numIterationsLabel.setForeground(Color.gray);
             confThresholdLabel.setForeground(Color.gray);
-            
             add(bootstrappingNotAvailable, 	new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,15,0),0,0));
             add(isBootstrappingCheckbox, 	new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,15,0),0,0));
             add(isBootStrappingLabel, 		new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.VERTICAL, new Insets(0,0,15,0),0,0));
@@ -484,7 +428,6 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
             add(numIterationsLabel, 		new GridBagConstraints(1,2,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,15,0),0,0));
             add(confThresholdField, 		new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.VERTICAL, new Insets(0,0,15,0),0,0));
             add(confThresholdLabel, 		new GridBagConstraints(1,3,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,15,0),0,0));
-             
         }
         public void setEnableControls(boolean enableControls){
         	numIterationsField.setEnabled(enableControls);
@@ -494,36 +437,28 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
         public float getConfThreshold(){return new Float(confThresholdField.getText()).floatValue();}
         public boolean isBootstrapping(){return isBootstrappingCheckbox.isSelected();}
     }    
-    
     private class PopSelectionPanel extends ParameterPanel {
-        
         JRadioButton fileButton;
         JRadioButton dataButton;
         JTextField popField;
         JButton browseButton;
         JLabel fileLabel;
-        
         public PopSelectionPanel() {
             super("Population Selection");
             setLayout(new GridBagLayout());
-            
             ButtonGroup bg = new ButtonGroup();
             fileButton = new JRadioButton("Population from File", true);
             fileButton.setBackground(Color.white);
             fileButton.setFocusPainted(false);
             bg.add(fileButton);
-            
             fileButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent ae) {
-                    
                     browseButton.setEnabled(fileButton.isSelected());
                     popField.setEnabled(fileButton.isSelected());
                     popField.setBackground(Color.white);
                     fileLabel.setEnabled(fileButton.isSelected());
-                    
                 }
             });
-            
             dataButton = new JRadioButton("Population from Current Viewer");
             dataButton.setBackground(Color.white);
             dataButton.setFocusPainted(false);
@@ -534,11 +469,9 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
                     popField.setEnabled(fileButton.isSelected());
                     popField.setBackground(Color.lightGray);
                     fileLabel.setEnabled(fileButton.isSelected());
-                    
                 }
             });
 
-            
             browseButton = new JButton("File Browser");
             browseButton.setFocusPainted(false);
             browseButton.setPreferredSize(new Dimension(150, 25));
@@ -553,10 +486,8 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
                     }
                 }
             });
-            
             fileLabel = new JLabel("File: ");
             popField = new JTextField(25);
-            
             //EH disabling 'select cluster from file' options until that feature is ready. 
             JLabel filePopNotAvailable = new JLabel("Population selection from file is not yet available.");
             filePopNotAvailable.setForeground(Color.red);
@@ -565,7 +496,6 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
             fileButton.setEnabled(false);
         	browseButton.setEnabled(false);
             dataButton.setSelected(true);
-            
             add(filePopNotAvailable,new GridBagConstraints(0,0,3,1,1,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,30,0,0), 0,0));
             add(fileButton, 		new GridBagConstraints(0,1,3,1,1,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,30,0,0), 0,0));
             add(fileLabel, 			new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,30,0,0), 0,0));
@@ -573,7 +503,6 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
             add(browseButton, 		new GridBagConstraints(2,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,25,0,20), 0,0));
             add(dataButton, 		new GridBagConstraints(0,3,3,1,1,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(15,30,20,0), 0,0));
         }
-        
         private void setEnableControls(boolean enable) {
             fileButton.setEnabled(enable);
             dataButton.setEnabled(enable);
@@ -583,16 +512,13 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
             setOpaque(enable);
             tabbedPane.setEnabledAt(0, enable);
         }
-        
         private void updatePopField(String file) {
             this.popField.setText(file);
         }
-        
         private String getPopFile() {
             return popField.getText();
         }        
     }
-    
 /*
     private class AnnotKeyPanel extends JPanel{
     	JComboBox fieldNamesBox;
@@ -607,13 +533,11 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
     			add(new JLabel("Genbank Accession Annotation Field:  "), new GridBagConstraints(0,0,1,1,0.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
     			add(this.fieldNamesBox, new GridBagConstraints(1,0,1,1,0.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
     	}
-        
         public String getAnnotationKeyType(){
             return (String)this.fieldNamesBox.getSelectedItem();
         }
     }
   */  
-    
     private class XmlBifPanel extends JPanel{
     	 private JRadioButton useGoButton,useDFSButton;
     	 private ButtonGroup bGroup;
@@ -630,12 +554,10 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
     			setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "How to direct edges for graph", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));    			add(this.useDFSButton, new GridBagConstraints(0,0,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
     			add(this.useGoButton, new GridBagConstraints(1,0,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
     	}
-        
         public boolean useGoTerms(){
             return useGoButton.isEnabled();
         }
     }
-    
     private class RunBNPanel extends JPanel{
     	private JLabel numLabel=new JLabel("Maximum Number of Parents:");
      	  private JLabel slabel=new JLabel("Search algorithm: Hill Climbing");
@@ -652,7 +574,6 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
    			add(this.numLabel, new GridBagConstraints(0,2,1,1,0.0,0.0,GridBagConstraints.WEST,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
    			add(this.nParents, new GridBagConstraints(0,3,1,1,0.0,0.0,GridBagConstraints.EAST,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
    	  }
-       
        public String numParents(){
            return nParents.getText();
        }
@@ -660,19 +581,16 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
     /** Contains annotation parameter controls.
      */
     private class BNParameterPanel extends JPanel {
-        
         JTextField converterFileField;
         JList fileList;
         JButton browserButton;
         JTextField minClusterSizeField;
         JComboBox fieldNamesBox;
-        
         JList annFileList;
         Vector annVector;
         JButton removeButton;
         JCheckBox useAnnBox;
         JLabel fileLabel;
-        
         /** Constructs a new BNParameterPanel
          * @param fieldNames annotation types
          */
@@ -687,12 +605,10 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
             useAnnBox.setBackground(Color.white);
             useAnnBox.setFocusPainted(false);
             useAnnBox.setEnabled(false);
-            
             converterFileField = new JTextField(30);
             converterFileField.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED, Color.lightGray, Color.gray));
             converterFileField.setEnabled(false);
             converterFileField.setBackground(Color.lightGray);
-            
             browserButton = new JButton("File Browser");
             browserButton.setActionCommand("converter-file-browser-command");
             browserButton.setFocusPainted(false);
@@ -700,10 +616,8 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
             browserButton.setSize(150, 25);
             browserButton.addActionListener(listener);
             browserButton.setEnabled(false);
-            
             JLabel converterNotAvailableLabel = new JLabel("Annotation conversion is not yet available");
             converterNotAvailableLabel.setForeground(Color.red);
-            
             fileLabel = new JLabel("File :");
             fileLabel.setEnabled(false);
             convPanel.add(converterNotAvailableLabel,	new GridBagConstraints(0,0,2,1,0.0,0.0, GridBagConstraints.EAST, GridBagConstraints.VERTICAL, new Insets(0,0,10,5), 0,0));
@@ -711,12 +625,10 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
             convPanel.add(fileLabel, 					new GridBagConstraints(0,2,1,1,0.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,15,15,0),0,0));
             convPanel.add(this.browserButton, 			new GridBagConstraints(0,3,3,1,0.0,0.0,GridBagConstraints.WEST,GridBagConstraints.VERTICAL,new Insets(0,15,0,0),0,0));
             convPanel.add(this.converterFileField, 		new GridBagConstraints(1,2,2,1,0.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,15,15,0),0,0));
-            
             //Annotation file panel
             JPanel annPanel = new JPanel(new GridBagLayout());
             annPanel.setBackground(Color.white);
             annPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Gene Annotation / Gene Ontology Linking Files", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
-            
             JLabel filesLabel = new JLabel("Files: ");
             annVector = new Vector();
             annFileList = new JList(new DefaultListModel());
@@ -730,7 +642,6 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
             annButton.setFocusPainted(false);
             annButton.setPreferredSize(new Dimension(150, 25));
             annButton.setSize(150, 25);
-            
             removeButton = new JButton("Remove Selected");
             removeButton.setActionCommand("remove-ann-file-command");
             removeButton.addActionListener(listener);
@@ -739,24 +650,20 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
             removeButton.setSize(150, 25);
             removeButton.setEnabled(false);
             
-            
             JPanel fillPanel = new JPanel();
             fillPanel.setBackground(Color.white);
-            
             //disabling annotation loading until feature is available
             JLabel annPanelNotAvailable = new JLabel("GO Annotation Linking is not yet available.");
             annPanelNotAvailable.setForeground(Color.red);
             annButton.setEnabled(false);
             annPane.setEnabled(false);
             filesLabel.setForeground(Color.gray);
-			
             annPanel.add(annPanelNotAvailable,		new GridBagConstraints(0,0,2,1,0.0,0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
             annPanel.add(fillPanel, 				new GridBagConstraints(0,1,1,1,0.0,0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
             annPanel.add(annButton, 				new GridBagConstraints(1,1,1,1,0.0,0.0, GridBagConstraints.EAST, GridBagConstraints.VERTICAL, new Insets(0,0,10,5), 0,0));
             annPanel.add(removeButton, 				new GridBagConstraints(2,1,1,1,0.0,0.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(0,5,10,0), 0,0));
             annPanel.add(filesLabel,			 	new GridBagConstraints(0,2,1,1,0.0,0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0));
             annPanel.add(annPane, 					new GridBagConstraints(1,2,2,1,0.0,1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
-            
             sep = System.getProperty("file.separator");
             File file = new File(getBaseFileLocation()+"/Data/Convert/");
             String tempPath = file.getPath();
@@ -774,38 +681,27 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
                 }
             }
             
-
-            
             minClusterSizeField = new JTextField(5);
             minClusterSizeField.setText("5");
-            
             JPanel contentPanel = new JPanel(new GridBagLayout());
-            
             JPanel bnFilePanel = new JPanel(new GridBagLayout());
-            
             this.setLayout(new GridBagLayout());
-            
             //annotKeyPanel = new AnnotKeyPanel(fieldNames);
 
-            
            // this.add(annotKeyPanel, new GridBagConstraints(0,0,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
             this.add(convPanel, new GridBagConstraints(0,1,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
             this.add(annPanel, new GridBagConstraints(0,2,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
         }
         
-        
         private void updateFileDirectoryField(){
-            
             File file = new File((String)this.fileList.getSelectedValue());
             if(file == null)
                 return;
-            
             String tempPath = file.getParent();
             int fileIndex = this.fileList.getSelectedIndex();
             String fileName = (String)(this.fileList.getModel().getElementAt(this.fileList.getSelectedIndex()));
             this.converterFileField.setText(tempPath+sep+fileName);
         }
-        
         private void updateAnnFileList(File [] files){
             File file;
             for(int i = 0; i < files.length; i++){
@@ -816,7 +712,6 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
             }
             annFileList.validate();
         }
-        
         /** Returns the converter file name (or null if none)
          */
         public String getConverterFileName(){
@@ -824,23 +719,19 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
                 return converterFileField.getText();
             return null;
         }
-        
         /** Returns the annotation type string.
          */
        // public String getAnnotationKeyType(){
          //   return annotKeyPanel.getAnnotationKeyType();
        // }
-        
         private class BNListListener implements ListSelectionListener {
             public void valueChanged(ListSelectionEvent listSelectionEvent) {
                 updateFileDirectoryField();
             }
         }
-        
         private void updateConverterFileField(String field){
             this.converterFileField.setText(field);
         }
-        
         /** Returns the list of annotation-theme mapping files.
          */
         public String [] getAnnToGOFileList(){
@@ -850,10 +741,8 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
             }
             return fileNames;
         }
-        
         public void removeSelectedFiles(){
             int [] indices = annFileList.getSelectedIndices();
-            
             for(int i = 0; i < indices.length; i++){
                 // annFileList.remove(indices[i]);
                 ((DefaultListModel)annFileList.getModel()).removeElementAt(indices[i]);
@@ -864,7 +753,6 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
             }
             annFileList.validate();
         }
-        
         private class ListRenderer extends DefaultListCellRenderer {
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
@@ -874,11 +762,9 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
             }
         }
     }
-    
     /** Contains statistical parameter controls.
      */
     private class AlphaPanel extends JPanel{
-        
         //Stats
         private JCheckBox fisherBox;
         private JCheckBox easeBox;
@@ -898,89 +784,71 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
         private JLabel trimPercentLabel;
         private JTextField trimPercentField;
         
-        
         /** Constucts a new AlphaPanel.
          */
         public AlphaPanel(){
             super(new GridBagLayout());
             setBackground(Color.white);
-            
             bootStrapPanel = new BootStrapPanel();  	
-            
             //STAT PANEL
             JPanel statPanel = new JPanel(new GridBagLayout());
             statPanel.setBackground(Color.white);
             statPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Reported Statistic", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
-            
             /*
             ButtonGroup bg = new ButtonGroup();
             fisherBox = new JCheckBox("Fisher Exact Probability", true);
             fisherBox.setBackground(Color.white);
             fisherBox.setFocusPainted(false);
             bg.add(fisherBox);
-            
             easeBox = new JCheckBox("EASE Score", false);
             easeBox.setBackground(Color.white);
             easeBox.setFocusPainted(false);
             bg.add(easeBox);
-            
             statPanel.add(fisherBox, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
             statPanel.add(easeBox, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,10,0),0,0));
-            
             
             //P-value Correction Panel
             JPanel correctionPanel = new JPanel(new GridBagLayout());
             correctionPanel.setBackground(Color.white);
             correctionPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Multiplicity Corrections", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
-            
             bonferroniBox = new JCheckBox("Bonferroni Correction", false);
             bonferroniBox.setBackground(Color.white);
             bonferroniBox.setFocusPainted(false);
-            
             bonferroniStepBox = new JCheckBox("Bonferroni Step Down Correction", false);
             bonferroniStepBox.setBackground(Color.white);
             bonferroniStepBox.setFocusPainted(false);
-            
             sidakBox = new JCheckBox("Sidak Method", false);
             sidakBox.setBackground(Color.white);
             sidakBox.setFocusPainted(false);
-            
             permBox = new JCheckBox("Resampling Probability Analysis", false);
             permBox.setActionCommand("permutation-analysis-command");
             permBox.setBackground(Color.white);
             permBox.setFocusPainted(false);
             permBox.addActionListener(listener);
             //permBox.setEnabled(false);
-            
             permField = new JTextField("1000", 10);
             permField.setBackground(Color.white);
             //permField.setEnabled(false);
-            
             permLabel = new JLabel("Number of Permutations");
             permLabel.setBackground(Color.white);
             //permLabel.setEnabled(false);
-            
             correctionPanel.add(bonferroniBox, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
             correctionPanel.add(sidakBox, new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
             correctionPanel.add(bonferroniStepBox, new GridBagConstraints(0,1,2,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,10,0),0,0));
             correctionPanel.add(permBox, new GridBagConstraints(0,2,2,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,5,0),0,0));
             correctionPanel.add(permLabel, new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,15,0),0,0));
             correctionPanel.add(permField, new GridBagConstraints(1,3,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.VERTICAL, new Insets(0,0,15,0),0,0));
-            
             //Trim Panel
             JPanel trimPanel = new JPanel(new GridBagLayout());
             trimPanel.setBackground(Color.white);
             trimPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Trim Parameters", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
-            
             trimBox = new JCheckBox("Trim Resulting Groups", false);
             trimBox.setActionCommand("trim-result-command");
             trimBox.addActionListener(listener);
             trimBox.setBackground(Color.white);
             trimBox.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
             trimBox.setFocusPainted(false);
-            
             bg = new ButtonGroup();
-            
             trimNBox = new JCheckBox("Select Minimum Hit Number", true);
             trimNBox.setActionCommand("trim-result-command");
             trimNBox.addActionListener(listener);
@@ -988,14 +856,11 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
             trimNBox.setBackground(Color.white);
             trimNBox.setFocusPainted(false);
             bg.add(trimNBox);
-            
             trimNLabel = new JLabel("Min. Hits");
             trimNLabel.setBackground(Color.white);
             trimNLabel.setEnabled(false);
-            
             trimNField = new JTextField("5", 10);
             trimNField.setEnabled(false);
-            
             trimPercentBox = new JCheckBox("Select Minimum Hit Percentage", false);
             trimPercentBox.setActionCommand("trim-result-command");
             trimPercentBox.addActionListener(listener);
@@ -1003,20 +868,15 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
             trimPercentBox.setBackground(Color.white);
             trimPercentBox.setFocusPainted(false);
             bg.add(trimPercentBox);
-            
             trimPercentLabel = new JLabel("Percent Hits");
             trimPercentLabel.setBackground(Color.white);
             trimPercentLabel.setEnabled(false);
-            
             trimPercentField = new JTextField("5", 10);
             trimPercentField.setEnabled(false);
-            
             trimPanel.add(trimBox, new GridBagConstraints(0,0,3,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,20,0),0,0));
-            
             trimPanel.add(trimNBox, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
             trimPanel.add(trimNLabel, new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.BOTH, new Insets(0,20,0,15),0,0));
             trimPanel.add(trimNField, new GridBagConstraints(2,1,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.NONE, new Insets(0,0,0,0),0,0));
-            
             trimPanel.add(trimPercentBox, new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
             trimPanel.add(trimPercentLabel, new GridBagConstraints(1,2,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.BOTH, new Insets(10,20,0,15),0,0));
             trimPanel.add(trimPercentField, new GridBagConstraints(2,2,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.NONE, new Insets(10,0,0,0),0,0));
@@ -1025,33 +885,26 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
             //add(statPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
             //add(correctionPanel, new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
             //add(trimPanel, new GridBagConstraints(0,2,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-            
             discPanel = new DiscretizingPanel();
             classnumPanel = new ClassNumPanel();
-            
             //TODO removed bootStrapPanel until bootstrapping is enabled in module
             add(discPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
             add(classnumPanel, new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
             //add(bootStrapPanel, new GridBagConstraints(0,2,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-            
         }
- 
         /** Indicates if permutations are selected.
          */
         public boolean performPermutations(){
             return permBox.isSelected();
         }
-        
         public void setEnablePermutations(){
             permLabel.setEnabled(permBox.isSelected());
             permField.setEnabled(permBox.isSelected());
         }
-        
         public void validateTrimOptions(){
             if(this.trimBox.isSelected()){
                 trimNBox.setEnabled(true);
                 trimPercentBox.setEnabled(true);
-                
                 trimNLabel.setEnabled(trimNBox.isSelected());
                 trimNField.setEnabled(trimNBox.isSelected());
                 trimPercentLabel.setEnabled(!trimNBox.isSelected());
@@ -1059,7 +912,6 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
             } else {
                 trimNBox.setEnabled(false);
                 trimPercentBox.setEnabled(false);
-                
                 trimNLabel.setEnabled(false);
                 trimNField.setEnabled(false);
                 trimPercentLabel.setEnabled(false);
@@ -1067,38 +919,30 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
             }
         }
     }
-    
     private class ConfigPanel extends ParameterPanel {
 
         JTextField defaultFileBaseLocation;
-        
         public ConfigPanel() {
             super("File Updates and Configuration");
             setLayout(new GridBagLayout());
-            
             JButton updateFilesButton = new JButton("Update LM File System");
             updateFilesButton.setActionCommand("update-files-command");
             updateFilesButton.setFocusPainted(false);
             updateFilesButton.addActionListener(listener);
             updateFilesButton.setToolTipText("<html>Downloads LM source files<br>for a selected species and array type.</html>");
-           
            //JButton browseFileBaseButton = new JButton("Select BN File System");
             JLabel fileLocation=new JLabel("All LM Source Files Location:");
-         
             //fileileBaseButton.setActionCommand("select-file-base-command");
             //browseFileBaseButton.setFocusPainted(false);
             //browseFileBaseButton.addActionListener(listener);
             //browseFileBaseButton.setToolTipText("<html>Helps select the BN annotation file system<br>that corresponds the current species and array type.</html>");
-            
             defaultFileBaseLocation = new JTextField(TMEV.getFile("data/bn").getAbsolutePath(), 25);
             defaultFileBaseLocation.setEditable(false);
-            
             add(fileLocation, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0, 0));
             add(defaultFileBaseLocation,  new GridBagConstraints(1,0,1,1,2,0,GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));            
             add(updateFilesButton, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,2,0), 0, 0));                               
             //add(updateFilesNotReady, new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0, 0));                               
            }
-        
         public void selectFileSystem() {
             String startDir = defaultFileBaseLocation.getText();
             File file = new File(startDir);
@@ -1114,17 +958,14 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
                 defaultFileBaseLocation.setText(chooser.getSelectedFile().getAbsolutePath());
             }
         }
-        
         public String getBaseFileLocation() {
             return defaultFileBaseLocation.getText();
         }
     }
-    
     /**
      * The class to listen to the dialog and check boxes items events.
      */
     private class EventListener extends DialogListener implements ItemListener {
-        
         public void actionPerformed(ActionEvent e) {
             String command = e.getActionCommand();
             if (command.equals("use-converter-command")) {
@@ -1149,7 +990,6 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
                 }
                 return;
             } else if (command.equals("ann-file-browser-command")){
-                
                 File classFile = new File(getBaseFileLocation()+"/Data/Class/");
                 JFileChooser chooser = new JFileChooser(classFile);
                 chooser.setDialogTitle("Annotation --> GO Term, File(s) Selection");
@@ -1184,7 +1024,6 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
                         return;
                     }
                 }
-                
                 /*
                 if(getAnnToGOFileList().length == 0) {
                     JOptionPane.showMessageDialog(parent, "You have not selected any gene annotation/gene ontology linking files. \n"+
@@ -1226,17 +1065,14 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
                 }
             }
         }
-        
         public void itemStateChanged(ItemEvent e) {
             //okButton.setEnabled(genes_box.isSelected() || cluster_box.isSelected());
         }
-        
         public void windowClosing(WindowEvent e) {
             result = JOptionPane.CLOSED_OPTION;
             dispose();
         }
     }
-    
     public static void main(String [] args) {
         String [] labels = new String [3];
         labels[0] = "TC#";
