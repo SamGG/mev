@@ -101,7 +101,6 @@ public class GetInteractionsUtil {
 	//Useful.checkFile(gbAccessionsFileName);
 	return GetResourcererArticles.getGBsArticlesGivenResourcererAndGBsFileName(resFileName, gbAccessionsFileName);
     }
-    
     /**
      * The <code>getUniqueSymbols</code> method takes in a <code>HashMap</code> with GenBank accessions as keys 
      * and their corresponding official gene symbols as values and returns a <code>HashSet</code>
@@ -119,7 +118,6 @@ public class GetInteractionsUtil {
 	}
 	return Useful.getUniqueSymbols(gbSymbols);
     }
-    
     /**
      * The <code>getSubsetSymbolsArticlesFromSymbolsArticles</code> method takes in a <code>HashSet</code>
      * of unique gene symbols and a <code>HashMap</code> of gene symbols as keys and corresponding articles as values
@@ -137,7 +135,6 @@ public class GetInteractionsUtil {
 	}
 	return GetSubsetKeyValuesGivenSubsetKeysAndKeyValues.getSubsetKeyValues(uniqueSymbols, symbolsArticles);
     }
-    
     /**
      * The <code>replaceSymbolsWithGbsInSymbolsArticles</code> method takes in 2 <code>HashMap</code>s
      * where the values of the first HashMap correspond to the keys of the second HashMap

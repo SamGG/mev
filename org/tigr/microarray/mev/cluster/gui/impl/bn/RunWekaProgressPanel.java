@@ -37,11 +37,9 @@ public class RunWekaProgressPanel extends JFrame implements WindowListener, Acti
 	        pack(); 
 	        setVisible(true);
 	    }
-	    
 	     public void setIndeterminate(boolean b){
 	    	progressBar.setIndeterminate(b);
 	    }
-	    
 	    public void actionPerformed(ActionEvent evt) {
 	    	String command = evt.getActionCommand();
             if (command.equals("cancel")) {

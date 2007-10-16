@@ -71,7 +71,6 @@ public class SifToXMLBifUtil {
 	return oneDistribution;
     }
 
-    
     /**
      * The <code>getNames</code> method takes in a given graph and returns the set of unique RVs
      * corresponding to the end-points of the edges in the given interactions
@@ -261,7 +260,6 @@ public class SifToXMLBifUtil {
 		valuesForOneGene = (ArrayList) values.get(j);
 		// for each parent of this RV
 		// compute the distribution of this RV given its parent
-		
 		while(index < card){
 		    if(index == valuesForOneGene.size()){
 			j++;

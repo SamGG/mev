@@ -269,5 +269,4 @@ public class WekaBNGui extends JPanel implements ActionListener {
         frame.pack();
         frame.setVisible(true);
     }
- 
 }

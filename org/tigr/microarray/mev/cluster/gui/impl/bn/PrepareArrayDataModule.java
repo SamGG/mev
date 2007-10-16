@@ -220,9 +220,7 @@ public class PrepareArrayDataModule {
     	    System.out.println(ioe);
     	    ioe.printStackTrace();    	    return null;
     	}
-    	
         }
-       
     /**
      * The <code>usage</code> method displays the usage.
      *
@@ -231,7 +229,6 @@ public class PrepareArrayDataModule {
 	    System.out.println("Usage: java PrepareArrayDataModule propertiesFileName\nExample: java PrepareArrayDataModule prepareArrayData.props");
 	    System.exit(0);	
     }
-    
 }
 
 

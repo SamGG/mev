@@ -154,7 +154,6 @@ public class TransitiveClosure{
 	    System.out.println(nae);
 	}
     }
-    
     /**
      * Describe <code>test</code> method tests the <code>getInteractionsWithReachableNodes</code> method 
      * with a graph G(V,E) where V = {a,b,c,d} and E = {(a,b),(b,c),(c,d)} and queryNodes = {b}

@@ -75,7 +75,10 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
         super(framework.getFrame(), true);
         this.setTitle("BN Classification Editor");
         mainFrame = (JFrame)(framework.getFrame());        
-        setBounds(0, 0, 550, 800);
+        //setBounds(0, 0, 550, 800);
+        int width = 300;
+        int height = 300;
+       
         setBackground(Color.white);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.framework = framework;
@@ -86,6 +89,31 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
         this.fieldNames = data.getFieldNames();
         this.classifyGenes = classifyGenes;
         this.numClasses = numClasses;
+        
+        if(numClasses < 1)
+        	width = 250;
+       	else if (numClasses >= 1 && numClasses <= 2)
+       		width = 350;
+       	else if (numClasses > 2 && numClasses <= 3)
+       		width = 450;
+       	else if (numClasses > 3 && numClasses <= 5)
+       		width = 550;
+       	else
+       		width = 600;
+        
+        if(this.numExps <= 5)
+        	height = 200;
+        else if (this.numExps > 5 && this.numExps <= 10)
+        	height = 250;
+        else if (this.numExps > 10 && this.numExps <= 15)
+        	height = 300;
+        else if (this.numExps > 15 && this.numExps < 20)
+        	height = 350;
+        else 
+        	height = 450;
+        
+        setBounds(0,0,width,height);
+        		
         numBin=num;
         numParents=parents;
         sAlgorithm=algorithm;
@@ -253,7 +281,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
                 		runProgressPanel.dispose();
                 		//if(!BNGUI.cancelRun)
                 			displayScrollPane(getScrollPanePanel(evalStr));
-                		//BNGUI.run=true;
+                		BNGUI.run=true;
                 	}
 
 					private String createNetworkFromBootstrapedEvals(String[] evalStrs, int numItr, String outarffbase, float threshold) {
@@ -278,11 +306,11 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 						
 						try {
 							for(int i = 0; i < numItr; i++) {
-								System.out.println("Reading file: " + fileName+i+".sif");
+								//System.out.println("Reading file: " + fileName+i+".sif");
 								BufferedReader br = new BufferedReader(new FileReader(fileName+i+".sif"));
 								String line = br.readLine();
 								while (line != null) {
-						          System.out.println(line);
+						          //System.out.println(line);
 						          
 						          Integer count = (Integer)edgesTable.get(line.trim());
 						          if(count != null) {
@@ -312,7 +340,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 								String edge = (String)enumerate.nextElement();
 								Integer count = (Integer)edgesTable.get(edge);
 								float presence = count.floatValue()/numItr;
-								System.out.println(edge + " : " + count.toString() + " presence : " + presence + " thresh : " + threshold);
+								//System.out.println(edge + " : " + count.toString() + " presence : " + presence + " thresh : " + threshold);
 								if(presence >= threshold){
 									pw.println(edge);
 								}
@@ -410,7 +438,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		showLitCytoButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {			    try {	     
 				     // call cytoscape here
-					 final String[] argv = new String[4];
+					 final String[] argv = new String[6];
 					 //argv[0] = "-i";
 					 argv[0] = "-N";
 					 //Raktim - Modified. File name unique
@@ -420,6 +448,9 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 					 argv[2] = "-p";
 					 //argv[3] = System.getProperty("user.dir")+"/plugins/core/yLayouts.jar";
 					 argv[3] = System.getProperty("user.dir")+"/plugins/yLayouts.jar";
+					 //Raktim - For Edge properties file
+					 argv[4] = "-V";
+					 argv[5] = System.getProperty("user.dir")+"/plugins/vizmap.props";
 					 Thread thread = new Thread( new Runnable(){
 					     public void run(){
 							    try { 
@@ -451,13 +482,16 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		    	FromWekaToSif.fromWekaToSif(evalStr, pw, false);
 		    	//FromWekaToSif.fromWekaToSif(evalString, pw);
 		    	// call cytoscape here
-		    	final String[] argv = new String[4];
+		    	final String[] argv = new String[6];
 		    	//argv[0] = "-i";
 		    	argv[0] = "-N";
 		    	argv[1] = fileName;
 		    	argv[2] = "-p";
 		    	//argv[3] = System.getProperty("user.dir")+"/plugins/core/yLayouts.jar";
 		    	argv[3] = System.getProperty("user.dir")+"/plugins/yLayouts.jar";
+		    	//Raktim - For Edge properties file
+				 argv[4] = "-V";
+				 argv[5] = System.getProperty("user.dir")+"/plugins/vizmap.props";
 		    	Thread thread = new Thread( new Runnable(){
 		    		public void run(){
 		    			try{
@@ -487,13 +521,16 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 			    try {
 			    	//String fileName = System.getProperty("user.dir")+"/data/bn/results/"+Useful.getUniqueFileID()+ "_" + "result.sif";
 			    	// call cytoscape here
-			    	final String[] argv = new String[4];
+			    	final String[] argv = new String[6];
 			    	//argv[0] = "-i";
 			    	argv[0] = "-N";
 			    	argv[1] = bootNetFile; //fileName;
 			    	argv[2] = "-p";
 			    	//argv[3] = System.getProperty("user.dir")+"/plugins/core/yLayouts.jar";
 			    	argv[3] = System.getProperty("user.dir")+"/plugins/yLayouts.jar";
+			    	//Raktim - For Edge properties file
+					 argv[4] = "-V";
+					 argv[5] = System.getProperty("user.dir")+"/plugins/vizmap.props";
 			    	Thread thread = new Thread( new Runnable(){
 			    		public void run(){
 			    			try{
@@ -532,7 +569,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 							String edge = (String)enumerate.nextElement();
 							Integer count = (Integer)edgesTable.get(edge);
 							float presence = count.floatValue()/numIterations;
-							System.out.println(edge + " : " + count.toString() + " presence : " + presence + " thresh : " + confThres);
+							//System.out.println(edge + " : " + count.toString() + " presence : " + presence + " thresh : " + confThres);
 							if(presence >= confThres){
 								pw.println(edge);
 							}
@@ -543,13 +580,16 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 					}
 
     		    	// call cytoscape here
-    		    	final String[] argv = new String[4];
+    		    	final String[] argv = new String[6];
     		    	//argv[0] = "-i";
     		    	argv[0] = "-N";
     		    	argv[1] = bootNetFile;
     		    	argv[2] = "-p";
     		    	//argv[3] = System.getProperty("user.dir")+"/plugins/corts.jar";
     		    	argv[3] = System.getProperty("user.dir")+"/plugins/yLayouts.jar";
+    		    	// Raktim - For Edge properties file
+					 argv[4] = "-V";
+					 argv[5] = System.getProperty("user.dir")+"/plugins/vizmap.props";
     		    	Thread thread = new Thread( new Runnable(){
     		    		public void run(){
     		    			try{
@@ -1342,5 +1382,10 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
             }
         }
     }
+
+	public String getWekaEvalString() {
+		// TODO Auto-generated method stub
+		return evalStr;
+	}
     
 }

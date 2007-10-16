@@ -1276,18 +1276,18 @@ public class BNInitDialog extends AlgorithmDialog {
                 String val = runBNPanel.kFolds().trim();
         		int fld = -1;
         		try {
-        			System.out.println("In Try block");
+        			//System.out.println("In Try block");
         			fld = Integer.parseInt(val);
         		}
         		catch(NumberFormatException nfe ){
-        			System.out.println("In Try block Excp");
+        			//System.out.println("In Try block Excp");
         			JOptionPane.showMessageDialog(parent, "Numbers only Pls", "Error", JOptionPane.ERROR_MESSAGE); 
         			runBNPanel.kFolds.grabFocus();
         			return;
         		}
         		int sampleCnt = framework.getData().getFeaturesCount();
         		if(fld < 2 | fld > sampleCnt){
-        			System.out.println("Invalid input " + fld);
+        			//System.out.println("Invalid input " + fld);
         			JOptionPane.showMessageDialog(parent, "Min is 2 and cannot be greater than # of sample.", "Error", JOptionPane.ERROR_MESSAGE); 
         			runBNPanel.kFolds.grabFocus();
         			return;
@@ -1299,7 +1299,7 @@ public class BNInitDialog extends AlgorithmDialog {
         				flt = Float.parseFloat(bootStrapPanel.confThresholdField.getText().trim());
         			}
         			catch (NumberFormatException nfe){
-        				System.out.println("In Try block Excp");
+        				//System.out.println("In Try block Excp");
             			JOptionPane.showMessageDialog(parent, "Float value only", "Error", JOptionPane.ERROR_MESSAGE); 
             			bootStrapPanel.confThresholdField.grabFocus();
             			return;
@@ -1312,11 +1312,11 @@ public class BNInitDialog extends AlgorithmDialog {
         			
         			int itr = 0;
         			try {
-            			System.out.println("In Try block");
+            			//System.out.println("In Try block");
             			itr = Integer.parseInt(bootStrapPanel.numIterationsField.getText().trim());
             		}
         			catch (NumberFormatException nfe){
-        				System.out.println("In Try block Excp");
+        				//System.out.println("In Try block Excp");
             			JOptionPane.showMessageDialog(parent, "Integers only", "Error", JOptionPane.ERROR_MESSAGE); 
             			bootStrapPanel.numIterationsField.grabFocus();
             			return;

@@ -93,10 +93,13 @@ public class GeneInteractions {
 			}
 			// add this key pair to the set of already done potential associations
 			done.add(symbol1+"_"+symbol2);
+						//Raktim - Debugging for LM DAG problem.
+						//System.out.println("Done Added: " + symbol1+"_"+symbol2);
 		    }
 		}   
 	    }
 	}	
+		//System.out.println("Done");
 	return interactions;
     }
     /**
@@ -255,7 +258,6 @@ public class GeneInteractions {
 	    System.out.println(nae);
 	}
     }
-    
     /**
      * The <code>testCreateInteractionsWithFilter</code> method tests creating interactions from a given file 
      * containing key values pairs (in this application, GenBank accessions with their corresponding articles)

@@ -149,8 +149,6 @@ public class Cyclic {
 	return cyclic;
     }
 
-    
-
     /**
      * The <code>DFSModification</code> method performs a Depth-First search on the given undirected graph 
      * in order to return a DAG
@@ -217,7 +215,6 @@ public class Cyclic {
     public static void usage(){
 	System.out.println("Usage: java Cyclic interFileName\nExample: java Cyclic myInter.sif");
     }
-    
     /**
      * The <code>test</code> method tests the <code>isCyclic</code> method with a given graph
      * 

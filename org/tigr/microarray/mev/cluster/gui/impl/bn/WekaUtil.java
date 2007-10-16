@@ -105,7 +105,6 @@ public class WekaUtil {
 	    throw new NullArgumentException("Parameter data passed to writeDataToArffFile method was null!");
 	}
 	try {
-	    	
 	    ArffSaver saver = new ArffSaver();
 	    saver.setInstances(data);
 	    saver.setFile(new File(path,arffFileName));

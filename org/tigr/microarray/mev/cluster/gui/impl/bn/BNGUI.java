@@ -2,37 +2,47 @@
  * Created on Aug 30, 2005
  */
 package org.tigr.microarray.mev.cluster.gui.impl.bn;
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.io.File;import java.io.FileWriter;import java.io.IOException;import java.util.Vector;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;import javax.swing.JOptionPane;import javax.swing.tree.DefaultMutableTreeNode;import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;import org.tigr.microarray.mev.cluster.clusterUtil.ClusterTable;
-import org.tigr.microarray.mev.cluster.gui.Experiment;import org.tigr.microarray.mev.cluster.gui.IClusterGUI;import org.tigr.microarray.mev.cluster.gui.IData;import org.tigr.microarray.mev.cluster.gui.IFramework;import org.tigr.microarray.mev.cluster.gui.LeafInfo;
-import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.prepareXMLBif.PrepareXMLBifModule;import org.tigr.microarray.mev.cluster.gui.impl.bn.getInteractions.GetInteractionsModule;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLNodeHeightGraph;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI.GeneralInfo;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
-//import java.util.Hashtable;
-import java.util.HashMap;
-import java.io.FileReader;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.FileOutputStream;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
+import javax.swing.tree.DefaultMutableTreeNode;
+
+import org.tigr.microarray.mev.HistoryViewer;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
+import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
+import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
+import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.LeafInfo;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.getInteractions.GetInteractionsModule;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.prepareXMLBif.PrepareXMLBifModule;
 
 public class BNGUI implements IClusterGUI {
 	String sep = System.getProperty("file.separator");
 	public static final int GENE_CLUSTER = 0;
 	public static boolean done=false;
-	//public static boolean run=false;
+	public static boolean run=false;
 	//public static boolean cancelRun=false;
 	public static boolean prior=true;
+	
+	HistoryViewer wekaOutputViewer;
+	
 	public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
 		done=false;
-		//run=false;
+		run=false;
 		//cancelRun=false;
 		prior=true;
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode( "BN" );
@@ -70,17 +80,23 @@ public class BNGUI implements IClusterGUI {
 	    //BNClassificationEditor bnEditor=new BNClassificationEditor(framework,false,dialog.getSelectedCluster(),(new Integer(dialog.getNumberBin())).toString(),dialog.getNumberClass(),dialog.numParents(),dialog.getAlgorithm(),dialog.getScoreType(),dialog.useArcRev(), dialog.getBaseFileLocation());
 	    BNClassificationEditor bnEditor=new BNClassificationEditor(framework,false,dialog.getSelectedCluster(),(new Integer(dialog.getNumberBin())).toString(),dialog.getNumberClass(),dialog.numParents(),dialog.getAlgorithm(),dialog.getScoreType(),dialog.useArcRev(), dialog.isBootstrapping(), dialog.getNumIterations(), dialog.getConfThreshold(), dialog.getKFolds(), dialog.getBaseFileLocation());
 		bnEditor.showModal(true);
-		/*
+		
 		while(!BNGUI.run){
         	try{
-        		Thread.sleep(10000);	
+        		Thread.sleep(3000);	
         	}catch(InterruptedException x){
         		//ignore;
         	}
         }
-        */
+        
 		//if(BNGUI.cancelRun) 
 			//return null;
+		
+		//Raktim - Added to record the Weka output for Observed BN analysis
+		wekaOutputViewer = new HistoryViewer(new JTextArea(), null);
+		String wekaResult = bnEditor.getWekaEvalString();
+		wekaOutputViewer.addHistory(wekaResult);
+		
 		GeneralInfo info = new GeneralInfo();
 		if(dialog.isBoth()){
 		info.prior="Literature Mining and PPI";
@@ -97,12 +113,15 @@ public class BNGUI implements IClusterGUI {
 	    info.numClass=dialog.getNumberClass();
 	    info.numParents=dialog.numParents();
 	    info.numGene=(dialog.getSelectedCluster()).getIndices().length;
-		return createResultTree(exp, info);
+	    info.kFolds = dialog.getKFolds();
+	    info.score = dialog.getScoreType();
+		return createResultTree(exp, wekaOutputViewer, info);
 	    //return root;
 	}
 	
-	private DefaultMutableTreeNode createResultTree(Experiment experiment, GeneralInfo info) {
+	private DefaultMutableTreeNode createResultTree(Experiment experiment, HistoryViewer out, GeneralInfo info) {
 	        DefaultMutableTreeNode root = new DefaultMutableTreeNode("BN");
+	        root.add(new DefaultMutableTreeNode(new LeafInfo("BN Details", out)));
 	        addGeneralInfo(root, info);
 	        return root;
 	    }
@@ -115,6 +134,8 @@ public class BNGUI implements IClusterGUI {
         node.add(new DefaultMutableTreeNode("Number of Sample Classes: "+info.numClass));
         node.add(new DefaultMutableTreeNode("Number of Parents: "+info.numParents));
         node.add(new DefaultMutableTreeNode("Algorithm: "+info.algorithm));
+        node.add(new DefaultMutableTreeNode("Score: "+info.score));
+        node.add(new DefaultMutableTreeNode("K-Folds: "+info.kFolds));
         root.add(node);
     }	/**
 	 * TODO Raktim
@@ -312,6 +333,7 @@ public class BNGUI implements IClusterGUI {
      * General info structure.
      */
     public static class GeneralInfo {
+    	public String score;
     	String prior="NO Priors";
     	String useGoTerms="Use modification of DFS";
     	String numParents;
@@ -319,6 +341,8 @@ public class BNGUI implements IClusterGUI {
     	int numBin;
     	int numGene;
     	String algorithm;
+    	int kFolds;
+    	
     }
 	/**
 	 * Displays an error dialog
@@ -328,4 +352,20 @@ public class BNGUI implements IClusterGUI {
 		JOptionPane.showMessageDialog( new JFrame(), 
 				message, "Input Error", JOptionPane.ERROR_MESSAGE );
 	}//end error()
+	
+	/**
+	 * State Saving Function
+	 * @param histViewer
+	 */
+	public void setHistoryViewer(HistoryViewer histViewer){
+		wekaOutputViewer = histViewer;
+	}
+	
+	/**
+	 * Sate SAving Function
+	 * @return
+	 */
+	public HistoryViewer getHistoryViewer(){
+		return wekaOutputViewer;
+	}
 }//end class
