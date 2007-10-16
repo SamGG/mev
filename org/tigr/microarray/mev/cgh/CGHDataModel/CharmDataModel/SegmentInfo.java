@@ -1,4 +1,7 @@
 package org.tigr.microarray.mev.cgh.CGHDataModel.CharmDataModel;
+/**
+ * @author  Raktim Sinha
+ */
 import java.util.HashMap;
 
 /**
@@ -171,6 +174,17 @@ public class SegmentInfo implements Comparable {
     numPermutations=0;
   }
 
+  /**
+   * For State Saving
+   * @param statsHash
+   */
+  public void setStatisticsHash(HashMap statsHash){
+	  statisticsHash = statsHash;
+  }
+  
+  public HashMap getStatisticsHash(){
+	  return statisticsHash;
+  }
   /**
    * Sets window type.
    * @param type int (options TYPE_MANUAL, TYPE_AUTO)

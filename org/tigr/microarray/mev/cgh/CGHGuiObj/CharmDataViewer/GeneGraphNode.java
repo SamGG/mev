@@ -16,7 +16,6 @@ import edu.umd.cs.piccolox.nodes.PLine;
  * <p>Copyright: Copyright (c) 2004</p>
  * <p>Company: </p>
  * @author not attributable
- * @version 1.0
  */
 
 public class GeneGraphNode extends PNode {

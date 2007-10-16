@@ -1,5 +1,7 @@
 package org.tigr.microarray.mev.cgh.CGHDataModel.CharmDataModel;
-
+/**
+ * @author  Raktim Sinha
+ */
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,13 +21,13 @@ import org.tigr.microarray.mev.cgh.CGHDataGenerator.CharmDataGenerator.Chromosom
  */
 
 public class DatasetContainer {
-  private String datasetId;
-  private String organism;
-  private String filename;
+  //private String datasetId;
+  //private String organism;
+  //private String filename;
 
   private ArrayList chromosomes;
   private ArrayList experiments; //Array of Strings with Expr Names
-  private HashMap extraData;
+  //private HashMap extraData;
   private HashMap chromosomeHash;
 
   /**
@@ -36,12 +38,12 @@ public class DatasetContainer {
    * @throws IOException
    */
   public DatasetContainer(String filename, String organism, String datasetID) throws IOException {
-    this.organism = organism;
-    this.filename = filename;
-    this.datasetId = datasetID;
+    //this.organism = organism;
+    //this.filename = filename;
+    //this.datasetId = datasetID;
 
     experiments = new ArrayList();
-    extraData = new HashMap();
+    //extraData = new HashMap();
     chromosomeHash = new HashMap();
 
     //GeneFileReader.loadDataFromFile(filename,organism,chromosomeHash,experiments,extraData);

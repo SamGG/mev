@@ -54,6 +54,7 @@ import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 
 import com.borland.jbcl.layout.XYConstraints;
 import com.borland.jbcl.layout.XYLayout;
@@ -71,7 +72,7 @@ import edu.umd.cs.piccolox.swing.PScrollPane;
  * <p>Copyright: Copyright (c) 2004</p>
  * <p>Company: Princeton University</p>
  * @author Chad Myers, Xing Chen
- * @version 1.0
+ * @author  Raktim Sinha
  */
 
 //public class MainFrame extends JPanel implements IViewer {
@@ -172,20 +173,19 @@ public class CharmGUI extends JPanel implements IViewer {
   GeneTable geneTable;
   int exptID;
   
-  private JToggleButton zoom_inbutton;
-  private JToggleButton zoom_outbutton;
-  private JButton zoom_reset;
-  private JToggleButton select_button;
-  private JToggleButton kgraph_button;
-  private JToggleButton predictgraph_button;
+  //private JToggleButton zoom_inbutton;
+  //private JToggleButton zoom_outbutton;
+  //private JButton zoom_reset;
+  //private JToggleButton select_button;
+  //private JToggleButton kgraph_button;
+  //private JToggleButton predictgraph_button;
 
   private JPanel expcheckboxes;
   private JPanel predcheckboxes;
 
-  private JDialog rundialog;
-  private JSpinner num_permute;
-
-  private JButton cancel_button;
+  //private JDialog rundialog;
+  //private JSpinner num_permute;
+  //private JButton cancel_button;
 
   private JTextField[] pvalue_fields;
   private JComboBox cutoff_box;
@@ -194,8 +194,8 @@ public class CharmGUI extends JPanel implements IViewer {
 
   private JScrollPane expscrollpane;
 
-  private int delay;
-  private int elapsedTime;
+  //private int delay;
+  //private int elapsedTime;
 
   XYLayout xYLayout1 = new XYLayout();
   //JMenuItem jMenuLoadDataset = new JMenuItem();
@@ -226,7 +226,7 @@ public class CharmGUI extends JPanel implements IViewer {
    * Class constructor.
    */
   public CharmGUI(IFramework framework, ChARM charm, int exprInidces[]) {
-	  System.out.println("In CharmGUI Constructor");
+	  //System.out.println("In CharmGUI Constructor");
 	this.framework = framework;
 	data = this.framework.getData();
 	analyzedExprIndices = exprInidces;
@@ -242,13 +242,57 @@ public class CharmGUI extends JPanel implements IViewer {
     }
   }
 
+  /**
+   * Const created for State Saving
+   * @param dat
+   * @param charm
+   * @param exprInidces
+   */
+  public CharmGUI(IData dat, ChARM charm, int exprInidces[]) {
+	  //System.out.println("In SS CharmGUI Constructor");
+	this.data = dat;
+	if(this.data == null){
+    	System.out.println("In Const. CharmGUI()- data is null");
+    }
+	this.analyzedExprIndices = exprInidces;
+	this.displayState = charm;
+	//System.out.println("Charm Selected Expr size(): "+ charm.getSelectedExperiments().size());
+	//System.out.println("Charm Selected Resultset size(): "+ charm.getSelectedResultSets().getExperiments().size());
+	//System.out.println("Charm Expr List:" + charm.getExperimentList().size());
+	
+	// Hack to set Charm's CharmGUI variable to this to avoid null gui during load up
+	charm.setCharmGUI(this);
+	//this.displayState.setPValueCutoff(new PValue(.01,.01));
+    //this.displayState.setPValueTestType(PValue.MEAN_AND_SIGN_TEST);
+	
+	try {
+	      jbInit();
+	    }
+	    catch (Exception e) {
+	    	System.out.println("Exception in CharmGUI constructor, jbInit()");
+	    	e.printStackTrace();
+	    }
+	    
+	      this.graphPanel.initializePredictionNodes(charm.getSelectedExperiments());
+	      this.togglePredictionsButton.setEnabled(true);
+	      this.togglePredictionsButton.setSelected(true);
+	      
+	      this.displayState.setStateVariable("Prediction Plot Toggle","on");
+	      
+	      this.jTabbedPane1.setSelectedIndex(1);
+	      this.graphPanel.updateGraph();
+	      this.validate();
+	      
+	      //updategraphPanel();
+	      //charm.updateCharmViewer();
+  }
   //Component initialization
   /**
    * Component initialization.
    * @throws Exception
    */
   private void jbInit() throws Exception {
-	  System.out.println("In CharmGUI jbInit()");
+	  //System.out.println("In CharmGUI jbInit()");
     //contentPane = (JPanel)this.getContentPane();
 	contentPane = (JPanel)this;
     //titledBorder1 = new TitledBorder("");
@@ -313,7 +357,7 @@ public class CharmGUI extends JPanel implements IViewer {
    * Initialize all interface buttons.
    */
   public void initButtons() {
-	  System.out.println("In CharmGUI initButtons()");
+	  //System.out.println("In CharmGUI initButtons()");
     jPanelToolBar.setLayout(xYLayout1);
     jPanelToolBar.setToolTipText("");
     jPanelToolBar.add(jToolBarZoom, new XYConstraints(5, 2, 0, 0));
@@ -527,7 +571,7 @@ public class CharmGUI extends JPanel implements IViewer {
    * Initialize GUI left panel.
    */
   public void initLeftPanel() {
-	  System.out.println("In CharmGUI initLeftPanel()");
+	  //System.out.println("In CharmGUI initLeftPanel()");
     //jTabbedPane1.setMaximumSize(new Dimension(LEFT_WIDTH, LEFT_HEIGHT));
     //jTabbedPane1.setMinimumSize(new Dimension(LEFT_WIDTH, LEFT_HEIGHT));
     //jTabbedPane1.setPreferredSize(new Dimension(LEFT_WIDTH, LEFT_HEIGHT));
@@ -545,7 +589,7 @@ public class CharmGUI extends JPanel implements IViewer {
    * Initialize the GUI prediction  options panel.
    */
   public void initPredOptionsPanel() {
-	  System.out.println("In CharmGUI initPredOptionsPanel()");
+	  //System.out.println("In CharmGUI initPredOptionsPanel()");
     //predictionOptionsBox.setPreferredSize(new Dimension(LEFT_WIDTH, LEFT_HEIGHT));
     pvaluePanel = new JPanel();
     //pvaluePanel.setPreferredSize(new Dimension(LEFT_WIDTH, LEFT_HEIGHT / 4));
@@ -636,7 +680,7 @@ public class CharmGUI extends JPanel implements IViewer {
    * Initializes Experiment Options panel.
    */
   public void initExpOptionsPanel() {
-	  System.out.println("In CharmGUI initExpOptionsPanel()");
+	  //System.out.println("In CharmGUI initExpOptionsPanel()");
     expOptionsBox.setBackground(Color.lightGray);
     //expOptionsBox.setPreferredSize(new Dimension(LEFT_WIDTH, LEFT_HEIGHT));
     expOptionsBox.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -670,7 +714,7 @@ public class CharmGUI extends JPanel implements IViewer {
    * Initializes View Results panel.
    */
   public void initViewResultsPanel() {
-	  System.out.println("In CharmGUI initViewResultsPanel()");
+	  //System.out.println("In CharmGUI initViewResultsPanel()");
     //viewResultsBox.setPreferredSize(new Dimension(LEFT_WIDTH, LEFT_HEIGHT));
 
     genelistPanel = new JPanel();
@@ -726,7 +770,12 @@ public class CharmGUI extends JPanel implements IViewer {
    * Initialize the right panel (experiment display panel).
    */
   public void initRightPanel() {
+	  //System.out.println("In CharmGUI initRightPanel()");
+	  scrollPaneRight = new PScrollPane();
+	  if(scrollPaneRight == null){System.out.println("In CharmGUI initRightPanel() scrollPaneRight is null");}
+	  if(displayState == null){System.out.println("In CharmGUI initRightPanel() displayState is null");}
     graphPanel = new GraphViewPanel(displayState,scrollPaneRight);
+    //System.out.println("In CharmGUI initRightPanel() - GraphViewPanel created");
     graphPanel.setLayout(new BoxLayout(graphPanel, BoxLayout.Y_AXIS));
     //graphPanel.setPreferredSize(new Dimension(GRAPH_WIDTH, GRAPH_HEIGHT));
     graphPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -738,6 +787,7 @@ public class CharmGUI extends JPanel implements IViewer {
     graphPanel.setParent(scrollPaneRight);
 
     scrollPaneRight.setKeyActionsDisabled(true);
+    //System.out.println("In CharmGUI initRightPanel() Just Before End");
     graphPanel.initializeGraph();
   }
 
@@ -820,15 +870,18 @@ public class CharmGUI extends JPanel implements IViewer {
    * Updates View Results panel with current display state
    */
   public void updateViewResults() {
+	 //System.out.println("CharmGUI.updateViewResults()");
     String graphSelectType = displayState.getStateVariable("Graph Selection Type");
     boolean zeroLength = false;
 
     if (graphSelectType.equals("gene")) {
+    	//System.out.println("updateViewResults():GENE View");
       ArrayList selectedGenes = displayState.getGraphSelectionGenes();
 
       if (selectedGenes != null ) {
         if(selectedGenes.size() > 0) {
           String exp = displayState.getGraphSelectionExperiment();
+          //System.out.println("updateViewResults():GENE View, Expr: " + exp);
           //genelist.setGenes(selectedGenes, exp);
           geneTable.setGenes(selectedGenes, exp);
           //Raktim Mar 13
@@ -843,10 +896,12 @@ public class CharmGUI extends JPanel implements IViewer {
       //this.runSigTestButton.setEnabled(true);
     }
     else if (graphSelectType.equals("window")) {
+    	//System.out.println("updateViewResults():WINDOW View");
       ArrayList segments = displayState.getGraphSelectionWindows();
 
       if (segments != null /*&& displayState.getCurrentDataset() != null*/) {
         String currExp = displayState.getGraphSelectionExperiment();
+        //System.out.println("updateViewResults():WINDOW View, Expr: " + currExp);
         //Chromosome currChrom = displayState.getCurrentDataset().getChromosome(displayState.getGraphSelectionChromosome());
         int currChrom = displayState.getGraphSelectionChromosome();
         
@@ -867,8 +922,8 @@ public class CharmGUI extends JPanel implements IViewer {
         CGHClone[] windowgenes = new CGHClone[size];
         //ArrayList windowgenes = new ArrayList();
         
-        System.out.println("updateViewResults()");
-        System.out.println("	#Segs:#CLones:Exp:Chr:--" + segments.size()+":"+ size +":"+currExp+":"+currChrom);
+        //System.out.println("updateViewResults()");
+        //System.out.println("	#Segs:#CLones:Exp:Chr:--" + segments.size()+":"+ size +":"+currExp+":"+currChrom);
         int j = 0;
         for (int i = 0; i < segments.size(); i++) {
           //getGenesBetweenIndices(currExp, int ind1, int ind2, boolean includeNaNs);
@@ -1595,8 +1650,16 @@ public class CharmGUI extends JPanel implements IViewer {
 	}
 	
 	public Expression getExpression() {
-		// TODO Auto-generated method stub
-		return null;
+		//return null;
+		
+		return new Expression(this, this.getClass(), "new", 
+				new Object[]{this.data, this.displayState, this.analyzedExprIndices });
+		
+		/*		new Object[]{this.experiment, this.createDefaultFeatures(this.experiment), 
+			this.genes_result, this.samples_result, this.sampleClusters, 
+			new Boolean(this.isExperimentCluster), this.genesTree, this.sampleTree, 
+			new Integer(this.offset), (ExperimentViewer)this.expViewer});
+			*/
 	}
 	
 	public JComponent getHeaderComponent() {
@@ -1641,8 +1704,8 @@ public class CharmGUI extends JPanel implements IViewer {
 	
 	public void onSelected(IFramework framework) {
 		// TODO Auto-generated method stub
-		//updategraphPanel();
-		graphPanel.updateGraph();
+		updategraphPanel();
+		//graphPanel.updateGraph();
 	}
 	
 	public void setExperiment(Experiment e) {

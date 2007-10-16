@@ -1,4 +1,8 @@
 package org.tigr.microarray.mev.cgh.CGHAlgorithms.Charm;
+
+/**
+ * @author  Raktim Sinha
+ */
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;

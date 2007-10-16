@@ -56,7 +56,7 @@ import edu.umd.cs.piccolox.swing.PScrollPane;
  * <p>Copyright: Copyright (c) 2004</p>
  * <p>Company: Princeton University</p>
  * @author Chad Myers, Xing Chen
- * @version 1.0
+ * @author  Raktim Sinha
  */
 
 public class GraphViewPanel extends PCanvas implements ICGHViewer {
@@ -161,11 +161,17 @@ public class GraphViewPanel extends PCanvas implements ICGHViewer {
    * @param parentPane PScrollPane- parent scroll pane
    */
   //public GraphViewPanel(DisplayStateManager disp, PScrollPane parentPane) {
-  public GraphViewPanel(ChARM disp, PScrollPane parentPane) {
+  public GraphViewPanel(ChARM disp, PScrollPane parentPane) {  
     super();
+    System.out.println("In GraphViewPanel Constructor");
     displayStateManager = disp;
-    this.framework = disp.getFramework();
-    this.data = this.framework.getData();
+    //System.out.println("In GraphViewPanel() Just Before disp.getFramework()");
+    //this.framework = disp.getFramework();
+    //this.data = this.framework.getData();
+    this.data = disp.getData();
+    if(this.data == null){
+    	System.out.println("In Const. GraphViewPanel()- data is null");
+    }
     parentScrollPane = parentPane;
 
     chromNodeHash = new HashMap();
@@ -202,7 +208,10 @@ public class GraphViewPanel extends PCanvas implements ICGHViewer {
     chromNodeHash.clear();
     //DatasetContainer currDataset = displayStateManager.getCurrentDataset();
     //if (currDataset == null) return;
-    if (this.data == null) return;
+    if (this.data == null) {
+    	System.out.println("In GraphViewPanel initializeGraph() this.data is null");
+    	return;
+    }
     else {
     	//System.out.println("In GraphViewPanel initializeGraph() Else");
        //ArrayList expList = currDataset.getExperiments();
@@ -217,7 +226,7 @@ public class GraphViewPanel extends PCanvas implements ICGHViewer {
 	   }
 	   */
        int numOfChr = data.getNumChromosomes();
-
+       System.out.println("numOfChr " + numOfChr);
        //for(int i=0; i<chromList.size(); i++) {
        for(int i = 0; i < numOfChr; i++) {
     	   int chrNumber = i + 1;
@@ -238,6 +247,7 @@ public class GraphViewPanel extends PCanvas implements ICGHViewer {
    * @param exp String
    */
   public void updatePredictionNode(int chromNumber, String exp) {
+	  //System.out.println("updatePredictionNode() Chr: Expr " + chromNumber +":"+exp);
     //if(displayStateManager.experimentAnalyzed(exp)) {
 	  /*ArrayList*/ ResultContainer selectedResults = displayStateManager.getSelectedResultSets();
       //for(int i=0; i<selectedResults.size(); i++) {
@@ -258,6 +268,7 @@ public class GraphViewPanel extends PCanvas implements ICGHViewer {
       /*ArrayList*/ ResultContainer selectedResults = displayStateManager.getSelectedResultSets();
 
       for (int i = 0; i < exps.size(); i++) {
+    	  //System.out.println("initializePredictionNodes(): Expr " + (String) exps.get(i));
         //for (int j = 0; j < chromList.size(); j++) {
     	for (int j = 0; j < data.getNumChromosomes(); j++) {
           //for(int k=0; k < selectedResults.size(); k++) {
@@ -394,6 +405,7 @@ public class GraphViewPanel extends PCanvas implements ICGHViewer {
        // this.getLayer().addChild(getTextObjectAt("No Experiments Selected.", 0, this.EXP_HEIGHT / 2, false));
       }
       else {
+    	  //System.out.println("In GraphViewPanel updateGraph(), else");
         //ArrayList chromList = currDataset.getChromosomes();
     	  //System.out.println("In GraphViewPanel updateGraph() Else ");
         double yOffset = 0;
@@ -402,8 +414,8 @@ public class GraphViewPanel extends PCanvas implements ICGHViewer {
 
           //for (int j = 0; j < chromList.size(); j++) {
         if (this.data == null) { 
-        	//System.out.println("data is null in updateGraph()");
-        	this.data = this.framework.getData();
+        	System.out.println("data is null in GraphViewPanel updateGraph()");
+        	//this.data = this.framework.getData();
         	//return; 
         	}
         //System.out.println("data.getNumChromosomes(): " + data.getNumChromosomes());
@@ -423,11 +435,16 @@ public class GraphViewPanel extends PCanvas implements ICGHViewer {
               //this.getLayer().addChild(getTextObjectAt(currExp,0,this.EXP_HEIGHT/2+yOffset,this.END_SPACE-10));
 
               //if (displayStateManager.getStateVariable("Data Plot Toggle").equals("on")) {
+              if(chromNodeHash == null){
+            	  System.out.println("In GraphViewPanel updateGraph(). chromNodeHash is NULL");
+              }
                 if (!chromNodeHash.containsKey(chromosome/*chromosome.getNumber()*/ + "," + selectedExps.get(i))) {
                   this.createChromDataGraphNode(chromosome/*chromosome.getNumber()*/, (String) selectedExps.get(i));
                 }
                 ChromDataGraphNode currChrNode = (ChromDataGraphNode)chromNodeHash.get(chromosome/*chromosome.getNumber()*/ + "," + selectedExps.get(i));
-
+                if(currChrNode == null){
+              	  System.out.println("In GraphViewPanel updateGraph(). currChrNode is NULL");
+                }
                 currChrNode.render();
                 currChrNode.reverseLastTranslation();
                 currChrNode.translate(xOffset, yOffset + this.EXP_HEIGHT / 2+this.TEXT_HEIGHT);
@@ -436,6 +453,7 @@ public class GraphViewPanel extends PCanvas implements ICGHViewer {
               //}
 
               if (displayStateManager.getStateVariable("Prediction Plot Toggle").equals("on")) {
+            	  //System.out.println("Prediction Plot Toggle ON");
                 yOffset = yOffset + this.EXP_PRED_SPACING;
 
                 //if (!displayStateManager.experimentAnalyzed(currExp)) {
@@ -444,6 +462,9 @@ public class GraphViewPanel extends PCanvas implements ICGHViewer {
                 //else {
 	               //ArrayList selectedResults = displayStateManager.getSelectedResultSets();
                    ResultContainer selectedResults = displayStateManager.getSelectedResultSets();
+                   if(selectedResults == null){
+                	   System.out.println("In GraphViewPanel updateGraph(). selectedResults is NULL");
+                   }
 	               //for (int m=0; m < selectedResults.size(); m++) {
 	
 	                  if (!chromNodeHash.containsKey(selectedResults.toString()/*(String)selectedResults.get(m)*/+","+chromosome/*chromosome.getNumber()*/ + "," + selectedExps.get(i) + "pred")) {
@@ -451,7 +472,9 @@ public class GraphViewPanel extends PCanvas implements ICGHViewer {
 	                  }
 	
 	                  ChromPredictionsGraphNode currPredNode = (ChromPredictionsGraphNode) chromNodeHash.get((String)selectedResults.toString()/*.get(m)*/+","+chromosome/*.getNumber()*/ + "," + selectedExps.get(i) +  "pred");
-	
+	                  if(currPredNode == null){
+	                  	  System.out.println("In GraphViewPanel updateGraph(). currPredNode is NULL");
+	                  }	
 	                  currPredNode.reverseLastTranslation();
 	                  currPredNode.translate(xOffset, yOffset);
 	                  this.getLayer().addChild(currPredNode);
@@ -469,7 +492,8 @@ public class GraphViewPanel extends PCanvas implements ICGHViewer {
       }
 
       this.mouseSelectionEventHandler.clearCurrentSelection();
-      //System.gc();
+      //System.out.println("In GraphViewPanel updateGraph(). THE END");
+      System.gc();
     }
 
     /**
@@ -559,6 +583,7 @@ public class GraphViewPanel extends PCanvas implements ICGHViewer {
     * @param currExp String
     */
    private void createPredictionGraphNode(String resultSet, int chrom, String currExp) {
+	   //System.out.println("createPredictionGraphNode(), Expr, Chr : " + currExp+":"+ chrom);
      ChromPredictionsGraphNode chromNode = new ChromPredictionsGraphNode(chrom,currExp,resultSet);
      //DatasetContainer currDataset = displayStateManager.getCurrentDataset();
 
@@ -569,13 +594,15 @@ public class GraphViewPanel extends PCanvas implements ICGHViewer {
 
      chromNode.setChromWidth(this.EXP_WIDTH*(currWidth/maxWidth));
      float[] data = getRatioArray(currExp, chrom, true); //chromosome.getRatioArray(currExp,true);
-     // Create arry of Indices with original data
+     // Create array of Indices with original data
      ArrayList indOrig = getOrigIndArray(currExp, chrom-1);
     // if(displayStateManager.experimentAnalyzed(currExp)) {
        ArrayList segments = displayStateManager.getPredictionSegments(/*resultSet,*/currExp,chrom/*chromosome.getNumber()*/);
-
+       //System.out.println("createPredictionGraphNode(), Expr, Chr, segment.size : " + currExp+":"+ chrom+":"+segments.size());
        for (int i = 0; i < segments.size(); i++) {
+    	   
     	   SegmentInfo currSeg = (SegmentInfo) segments.get(i);
+    	   //System.out.println("createPredictionGraphNode(), Expr, Chr, segment : " + currExp+":"+ chrom+":"+currSeg.getSize());
     	 /*
          int startIndex = chromosome.mapExcludeNaNIndexToRealIndex(currExp, currSeg.getStart());
          int endIndex = chromosome.mapExcludeNaNIndexToRealIndex(currExp, currSeg.getEnd());
@@ -595,6 +622,7 @@ public class GraphViewPanel extends PCanvas implements ICGHViewer {
 
     chromNode.setType(ChromDataGraphNode.TYPE_PREDICTIONS);
     chromNodeHash.put(resultSet+","+chrom/*chromosome.getNumber()*/ + "," + currExp + "pred", chromNode);
+    //System.out.println("createPredictionGraphNode(): chromNodeHash.size(): "+ chromNodeHash.size());
 }
 
 
@@ -801,9 +829,10 @@ public class GraphViewPanel extends PCanvas implements ICGHViewer {
 	 //System.out.println("featuresList Size " + featuresList.size());
 	 // ArayList for All Experiment Names loaded
 	 for (int column = 0; column < featuresList.size(); column++){
-			String name = (String)((ISlideData)featuresList.get(column)).getSlideDataName();
-			//System.out.println("exprNames " + name);
-			if (name.equals(currExp)){
+			//String name = (String)((ISlideData)featuresList.get(column)).getSlideDataName();
+		 	String name = data.getFullSampleName(column);
+			//System.out.println("getRatioArray() exprNames " + name);
+			if (name.equals(curExp)){
 				exprInd = column;
 				break;
 			}

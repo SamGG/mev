@@ -6,6 +6,9 @@
 
 package org.tigr.microarray.mev.cgh.CGHDataObj;
 
+/**
+ * @author  Raktim Sinha
+ */
 //import java.sql.ResultSet;
 import java.util.ArrayList;
 
