@@ -4,13 +4,14 @@ All rights reserved.
 */
 /*
  * $RCSfile: PCA.java,v $
- * $Revision: 1.3 $
- * $Date: 2005-03-10 15:45:20 $
- * $Author: braistedj $
+ * $Revision: 1.4 $
+ * $Date: 2007-10-22 16:10:00 $
+ * $Author: raktim $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.algorithm.impl;
 
+import java.util.Arrays;
 import java.util.Vector;
 
 import org.tigr.microarray.mev.cluster.algorithm.AbortException;
@@ -28,7 +29,8 @@ public class PCA extends AbstractAlgorithm {
     private boolean stop = false;
     private int numNeighbors;    
     private int numGenes, numExps;  
-    private float factor;    
+    private float factor;   
+    private int mode, center;
     
     public AlgorithmData execute(AlgorithmData data) throws AlgorithmException {
 	FloatMatrix expMatrix = data.getMatrix("experiment");
@@ -37,9 +39,12 @@ public class PCA extends AbstractAlgorithm {
 	int function = map.getInt("distance-function", COVARIANCE);
 	factor = map.getFloat("distance-factor", 1.0f);
 	boolean absolute = map.getBoolean("distance-absolute", false);
-	int mode = map.getInt("pca-mode", 0);
+	mode = map.getInt("pca-mode", 0);
 	numNeighbors = map.getInt("numNeighbors", 10);  
-        
+    
+	//Raktim - Indicate centering mode as mean or median or none
+	center  = map.getInt("centering", 3);
+	
 	numGenes = expMatrix.getRowDimension();
 	numExps = expMatrix.getColumnDimension();        
 	
@@ -70,10 +75,10 @@ public class PCA extends AbstractAlgorithm {
 	} else {
 	    matrix = new FloatMatrix(numberOfSamples, numberOfSamples);
 	    for (int column=0; column<numberOfSamples; column++) {
-		for (int row=0; row<numberOfSamples; row++) {
+	    	for (int row=0; row<numberOfSamples; row++) {
 		    //matrix.set(row, column, ExperimentUtil.distance(expMatrix, row, column, function, factor, absolute));
                     matrix.set(row, column, ExperimentUtil.distance(An, row, column, function, factor, absolute));
-		}
+	    	}
 	    }
 	}
 	
@@ -532,8 +537,8 @@ public class PCA extends AbstractAlgorithm {
 	return result;
     }
     
-    public void abort() {
-	stop = true;
+	public void abort() {
+		stop = true;
     }
     
     private FloatMatrix imputeKNearestMatrix(FloatMatrix inputMatrix, int k) throws AlgorithmException {
@@ -615,6 +620,9 @@ public class PCA extends AbstractAlgorithm {
             }
         }
         
+        //Raktim Center the data here by mean or median
+        resultMatrix = centerData(resultMatrix);
+    	
         return imputeRowAverageMatrix(resultMatrix);
     }   
     
@@ -835,4 +843,93 @@ public class PCA extends AbstractAlgorithm {
         return false;
     }    
     
+    /**
+     * Raktim to center float matrix
+     * @param expMatrix
+     * @param center
+     * @return
+     */
+    private FloatMatrix centerData(FloatMatrix expMatrix) {
+    	if(center == 3) // No Centering
+    		return expMatrix;
+    	else {
+    		if(mode == 3){ // Cluster Samples, Center Genes
+    			int rowDim = expMatrix.getRowDimension();
+        		int colDim = expMatrix.getColumnDimension();
+        		
+    			for(int i = 0; i < rowDim; i++){
+    				float centerBy;
+    	    		if(center == 1) centerBy = computeMedian(expMatrix.A[i]);
+    	    		else centerBy = computeMean(expMatrix.A[i]);
+    	    		for(int k = 0; k < colDim; k++){
+    	    			expMatrix.A[i][k] -= centerBy;
+    	    		}
+    			}
+    		} 
+    		
+    		if (mode == 1){ // Cluster Genes, Center Samples
+    			expMatrix = expMatrix.transpose();
+    			int rowDim = expMatrix.getRowDimension();
+        		int colDim = expMatrix.getColumnDimension();
+        		
+    			for(int i = 0; i < rowDim; i++){
+    				float centerBy;
+    				if(center == 1) centerBy = computeMedian(expMatrix.A[i]);
+    				else centerBy = computeMean(expMatrix.A[i]);
+    				for(int k = 0; k < colDim; k++){
+    	    			expMatrix.A[i][k] -= centerBy;
+    	    		}
+    			}
+    			expMatrix = expMatrix.transpose();
+    		}
+    	}
+		return expMatrix;
+	}
+
+    /**
+     * Computes the average value of the doubles in array
+     * 
+     * @param array
+     * @return
+     */
+    private float computeMean(float[] array) {
+    	float toReturn = 0;
+
+        for( int i = 0; i < array.length; i++ ) {
+            toReturn = toReturn + array[i];
+        }
+
+        return toReturn / ( float ) array.length;
+    }//end computeMean()
+
+
+    /**
+     * Finds or computes the median value in array
+     * 
+     * @param array
+     * @return
+     */
+    private float computeMedian(float[] array) {
+        //create a new array so we don't mess with the order of the original
+    	float[] copy = new float[array.length];
+        for( int i = 0; i < array.length; i++ ) {
+            copy[i] = array[i];
+        }
+
+        //sort the array first
+        Arrays.sort(copy);
+
+        //find the middle value
+        int half = copy.length / 2;
+        int remainder = copy.length % 2;
+        if( remainder == 0 ) {
+            //even number, use mean of 2 middle values
+            return copy[half];
+            //return ( copy[half - 1] + copy[half] ) / 2;
+        } else {
+            //odd number, use middle value
+            return copy[half];
+        }
+    }//end findMedian()
+
 }

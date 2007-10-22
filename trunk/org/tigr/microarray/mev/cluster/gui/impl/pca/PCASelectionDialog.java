@@ -29,6 +29,7 @@ import javax.swing.border.EtchedBorder;
 
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.SampleSelectionPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.CenteringModePanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 
 public class PCASelectionDialog extends AlgorithmDialog {
@@ -36,6 +37,8 @@ public class PCASelectionDialog extends AlgorithmDialog {
     private int result = JOptionPane.CANCEL_OPTION;
     
     private SampleSelectionPanel sampleSelectionPanel;
+    private CenteringModePanel centeringModePanel;
+    //Raktim - Modifications for 
     JTextField numNeighborsField;
     
     /** Creates new PCASelectionDialog */
@@ -62,6 +65,12 @@ public class PCASelectionDialog extends AlgorithmDialog {
         gridbag.setConstraints(sampleSelectionPanel, constraints);
         pane.add(sampleSelectionPanel);   
         
+        
+        centeringModePanel = new CenteringModePanel(Color.white, UIManager.getColor("Label.foreground"),true,"Centering Mode");
+        buildConstraints(constraints, 0, 1, 1, 1, 0, 50);
+        gridbag.setConstraints(centeringModePanel, constraints);
+        pane.add(centeringModePanel);  
+        
         JPanel numNeibsPanel = new JPanel();
         numNeibsPanel.setBackground(Color.white);
         GridBagLayout grid2 = new GridBagLayout();
@@ -76,7 +85,7 @@ public class PCASelectionDialog extends AlgorithmDialog {
         grid2.setConstraints(numNeighborsField, constraints);
         numNeibsPanel.add(numNeighborsField);    
         
-        buildConstraints(constraints, 0, 1, 1, 1, 0, 50);
+        buildConstraints(constraints, 0, 2, 1, 1, 0, 50);
         gridbag.setConstraints(numNeibsPanel, constraints);
         pane.add(numNeibsPanel);        
         
@@ -106,6 +115,14 @@ public class PCASelectionDialog extends AlgorithmDialog {
     
     public boolean isClusterGenesSelected(){
         return sampleSelectionPanel.isClusterGenesSelected();
+    }
+    
+    public boolean isCenteringNoneSelected(){
+    	return centeringModePanel.isNoneSelected();
+    }
+    
+    public boolean isCenteringMedianSelected(){
+    	return centeringModePanel.isMedianSelected();
     }
     
     public void resetControls(){

@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: PCAGUI.java,v $
- * $Revision: 1.5 $
- * $Date: 2005-03-10 20:32:37 $
- * $Author: braistedj $
+ * $Revision: 1.6 $
+ * $Date: 2007-10-22 16:11:56 $
+ * $Author: raktim $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.pca;
@@ -41,7 +41,7 @@ public class PCAGUI implements IClusterGUI, IScriptGUI {
     private static final String ADD_NEW_3D_CMD = "add-new-3d-cmd";
     private static final String ADD_NEW_2D_CMD = "add-new-2d-cmd";
     
-    private int mode, numNeibs;
+    private int mode, numNeibs, center;
     private FloatMatrix T;
     private FloatMatrix V;
     private FloatMatrix S;
@@ -69,6 +69,14 @@ public class PCAGUI implements IClusterGUI, IScriptGUI {
             else
                 this.mode = 3;
             
+            // Raktim - Get Centering mode (median, mean or none) 
+            if(dialog.isCenteringMedianSelected())
+                this.center = 1;
+            else if (dialog.isCenteringNoneSelected())
+                this.center = 3;
+            else 
+            	this.center = 2;
+            
             numNeibs = dialog.getNumNeighbors();
             
             algorithm = framework.getAlgorithmFactory().getAlgorithm("PCA");
@@ -93,6 +101,7 @@ public class PCAGUI implements IClusterGUI, IScriptGUI {
             }
             data.addParam("distance-function", String.valueOf(function));
             data.addParam("pca-mode", String.valueOf(mode));
+            data.addParam("centering", String.valueOf(center));
             data.addParam("numNeighbors", String.valueOf(numNeibs));
             AlgorithmData result = null;
             DefaultMutableTreeNode node = null;
