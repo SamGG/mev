@@ -37,6 +37,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -132,7 +133,7 @@ public class GroupSelectionColorPanel extends JPanel implements IWizardParameter
 		
 	
 	
-	public GroupSelectionColorPanel(JFrame parent, AlgorithmData parameters) {
+	public GroupSelectionColorPanel(AlgorithmData parameters) {
 		super(new GridBagLayout());
 		algData = parameters;
 		toggleClickSelection = true;
@@ -141,7 +142,7 @@ public class GroupSelectionColorPanel extends JPanel implements IWizardParameter
 	}
 	
 	
-	public GroupSelectionColorPanel(JFrame parent, AlgorithmData parameters, String [] groupNames, String [] sampleNames) {
+	public GroupSelectionColorPanel(AlgorithmData parameters, String [] groupNames, String [] sampleNames) {
 		super(new GridBagLayout());
 		algData = parameters;
 		groups = groupNames;
@@ -733,9 +734,7 @@ public class GroupSelectionColorPanel extends JPanel implements IWizardParameter
 			
 			Object source = e.getSource();
 			String command = e.getActionCommand();
-
-			System.out.println("action "+ command);
-			
+	
 			if(source instanceof JButton) {
 				
 				if (command.equals("load-groupings-command")){
