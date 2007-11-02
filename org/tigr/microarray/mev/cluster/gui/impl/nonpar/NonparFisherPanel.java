@@ -12,6 +12,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -46,28 +47,24 @@ IWizardParameterPanel {
 	private JRadioButton pValueButton;
 	private JRadioButton fdrButton;
 	private JCheckBox fdrGraphBox;
-	private JRadioButton selectedFDRButton;
 	
 	private JLabel alphaLabel;
 	private JTextField alphaField;
 	private JLabel fdrLimitLabel;
 	private JTextField fdrField;	
 	private JCheckBox hclBox;
-	
-	private int totNumPerms;
-	private boolean supportFDR;
-	
+
 	private int c1Index;
 	private int r1Index;
 	
-	private JFrame parent;
+	private JDialog parent;
 	
 	private String FISHER_TITLE = "Fisher Exact Test Parameters";
 	
-	public NonparFisherPanel(AlgorithmData parameters, JFrame parent) {
+	public NonparFisherPanel(AlgorithmData parameters, JDialog parent) {
 		super(new GridBagLayout());
 		this.parent = parent;
-		supportFDR = true;                
+		//supportFDR = true;                
 		algData = parameters;
 	}
 	
@@ -186,7 +183,7 @@ IWizardParameterPanel {
                    if(hw.getWindowContent()){
                        hw.setSize(600,600);
                        hw.setLocation();
-                       hw.show();
+                       hw.setVisible(true);
                    }
                    else {
                        hw.setVisible(false);
@@ -364,7 +361,7 @@ IWizardParameterPanel {
 		
 	}
 	
-	
+	/*
 	public static void main(String[] args) {
 		JFrame frame = new JFrame();
 		String [] names = {"Control", "Experimental"};
@@ -383,4 +380,5 @@ IWizardParameterPanel {
 		frame.pack();
 		frame.setVisible(true);
 	}
+	*/
 }

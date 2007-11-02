@@ -17,6 +17,7 @@ import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -42,13 +43,13 @@ public class NonparModePanel extends JPanel implements IWizardParameterPanel {
 	private JRadioButton kruskalButton;
 	private JRadioButton mackSkillingsButton;
 	private JRadioButton fisherExactButton;
-	JFrame parentFrame;
+	JDialog parent;
 	
-	public NonparModePanel(AlgorithmData paramData, JFrame parentFrame) {
+	public NonparModePanel(AlgorithmData paramData, JDialog parent) {
 		super(new GridBagLayout());
 		setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Select Test/Mode"));
 		algData = paramData;
-		this.parentFrame = parentFrame;
+		this.parent = parent;
 		constructPanel();
 	}
 	
@@ -98,11 +99,11 @@ public class NonparModePanel extends JPanel implements IWizardParameterPanel {
 
         infoButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent ae) {
-        		   HelpWindow hw = new HelpWindow(parentFrame, "NonpaR Mode Selection");
+        		   HelpWindow hw = new HelpWindow(parent, "NonpaR Mode Selection");
                    if(hw.getWindowContent()){
                        hw.setSize(600,600);
                        hw.setLocation();
-                       hw.show();
+                       hw.setVisible(true);
                    }
                    else {
                        hw.setVisible(false);
@@ -145,15 +146,13 @@ public class NonparModePanel extends JPanel implements IWizardParameterPanel {
 		
 	}
 	
-	
+	/*
 	public static void main(String [] args) {
 		JFrame frame = new JFrame();
 		NonparModePanel p = new NonparModePanel(new AlgorithmData(), frame);		
 		frame.getContentPane().add(p);
 		frame.setSize(300,300);
-		frame.setVisible(true);
-		
-		
+		frame.setVisible(true);		
 	}
-
+	*/
 }

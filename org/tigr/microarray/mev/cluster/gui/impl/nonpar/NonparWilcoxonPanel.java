@@ -12,6 +12,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -40,7 +41,6 @@ public class NonparWilcoxonPanel extends JPanel implements
 	private JRadioButton pValueButton;
 	private JRadioButton fdrButton;
 	private JCheckBox fdrGraphBox;
-	private JRadioButton selectedFDRButton;
 	
 	private JLabel alphaLabel;
 	private JTextField alphaField;
@@ -49,23 +49,22 @@ public class NonparWilcoxonPanel extends JPanel implements
 	
 	private JCheckBox hclBox;
 
-	private int totNumPerms;
 	private boolean supportFDR;
 	
 	private String WILCOXON_TITLE = "Wilcoxon, Mann-Whitney Test Parameters";
 	private String KRUSKAL_WALLIS_TITLE = "Kruskal-Wallis Test Parameters";
 	private String MACK_SKILLINGS_TITLE = "Mack-Skillings Test Parameters";
 	
-	private JFrame parent;
+	private JDialog parent;
 	
-	public NonparWilcoxonPanel(AlgorithmData parameters, JFrame parent) {
+	public NonparWilcoxonPanel(AlgorithmData parameters, JDialog parent) {
 		super(new GridBagLayout());
 		this.parent = parent;
 		supportFDR = true;
 		algData = parameters;		
 	}
 	
-	public NonparWilcoxonPanel(String [] groupNames, int numX, int numY, String mode, JFrame parent) {
+	public NonparWilcoxonPanel(String [] groupNames, int numX, int numY, String mode, JDialog parent) {
 		super(new GridBagLayout());
 		this.parent = parent;
 		supportFDR = true;
@@ -162,7 +161,7 @@ public class NonparWilcoxonPanel extends JPanel implements
                    if(hw.getWindowContent()){
                        hw.setSize(600,600);
                        hw.setLocation();
-                       hw.show();
+                       hw.setVisible(true);
                    }
                    else {
                        hw.setVisible(false);
@@ -239,7 +238,7 @@ public class NonparWilcoxonPanel extends JPanel implements
     	
     }
     
-
+    /*
 	public static void main(String[] args) {
 		JFrame frame = new JFrame();
 		String [] names = {"Control", "Experimental"};
@@ -250,4 +249,5 @@ public class NonparWilcoxonPanel extends JPanel implements
 		frame.setSize(400,400);
 		frame.setVisible(true);
 	}
+	*/
 }
