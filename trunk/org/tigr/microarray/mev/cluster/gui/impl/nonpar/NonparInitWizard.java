@@ -8,6 +8,7 @@ package org.tigr.microarray.mev.cluster.gui.impl.nonpar;
 
 import java.util.Vector;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -47,15 +48,13 @@ public class NonparInitWizard extends StatProcessWizard {
 
 	//parameter panels
 	private NonparWilcoxonPanel wilcoxonPanel;
-	private IWizardParameterPanel kruscalWallacePanel;
-	private IWizardParameterPanel mackSkillingsPanel;
+	//private IWizardParameterPanel kruscalWallacePanel;
+	//private IWizardParameterPanel mackSkillingsPanel;
 	private NonparFisherPanel fisherExactPanel;	
 	
 	private IWizardParameterPanel twoWayPanel;	
 	private IWizardParameterPanel currentPanel;
-	
-	private IData idata;
-	
+
 	/**
 	 * @param parent parent JFrame
 	 * @param title main dialog title
@@ -66,15 +65,15 @@ public class NonparInitWizard extends StatProcessWizard {
 	 */
 	public NonparInitWizard(IData idata, JFrame parent, String title, boolean modal, AlgorithmData algData, String[] steps, int stepCount, JPanel initPanel) {
 		super(parent, title, modal, algData, steps, stepCount, initPanel);
-		this.idata = idata;
-		modePanel = new NonparModePanel(algData, parent);
+
+		modePanel = new NonparModePanel(algData, this);
 		super.setInitialPanel(modePanel);
 		currentPanel = modePanel;
 		groupNumberAndNamesPanel = new GroupNumberAndNameSelectionPanel(algData, this, false);
-		groupSelectionPanel = new GroupSelectionColorPanel(parent, algData);
-		wilcoxonPanel = new NonparWilcoxonPanel(algData, parent);
+		groupSelectionPanel = new GroupSelectionColorPanel(algData);
+		wilcoxonPanel = new NonparWilcoxonPanel(algData, this);
 		feGroupAndBinNamesPanel = new NonparFEGroupAndDataBinNamePanel (algData, this);
-		fisherExactPanel = new NonparFisherPanel(algData, parent);
+		fisherExactPanel = new NonparFisherPanel(algData, this);
 		
 		Vector fieldNameVector = idata.getSampleAnnotationFieldNames();
 		String [] fieldNames = new String[fieldNameVector.size()];
@@ -180,7 +179,6 @@ public class NonparInitWizard extends StatProcessWizard {
 				//groupSelectionPanel.setStyle(GroupSelectionPanel.GROUP_SELECTION_DIALOG_ONE_FACTOR);
 			} else if(mode.equals(NonparConstants.MODE_MACK_SKILLINGS)) {
 				//groupSelectionPanel.setStyle(GroupSelectionPanel.GROUP_SELECTION_DIALOG_TWO_FACTOR);
-				String [] factorNames = currAlgData.getStringArray("factor-names");
 				String factorAName = currAlgData.getParams().getString("factor-A-name");
 				String factorBName = currAlgData.getParams().getString("factor-B-name");				
 				String [] factorANames = currAlgData.getStringArray("factor-A-level-names");
@@ -199,11 +197,7 @@ public class NonparInitWizard extends StatProcessWizard {
 		
 		//if current step is 2the we present parameter panels
 		else if(currentStepIndex == 2) {
-			if(mode.equals(NonparConstants.MODE_WILCOXON_MANN_WHITNEY)) {
-
-				String [] sampleNames = currAlgData.getStringArray("sample-names");
-				String [] groupNames = currAlgData.getStringArray("group-names");
-				
+			if(mode.equals(NonparConstants.MODE_WILCOXON_MANN_WHITNEY)) {		
 				nextPanel = wilcoxonPanel;
 				wilcoxonPanel.initializePanel(mode);
 				  

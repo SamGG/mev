@@ -6,6 +6,7 @@ package org.tigr.microarray.mev.cluster.gui.impl.nonpar;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -61,9 +62,8 @@ public class NonparGUI implements IClusterGUI {
 		AlgorithmData algData = new AlgorithmData();
 		
 		algData.addMatrix("matrix",matrix);
-		JFrame [][] frame = new JFrame[1][1];
-		frame[0][0] = (JFrame)(framework.getFrame());
-		algData.addObjectMatrix("main-frame", frame);  //used by Nonpar.java for fdr dialog
+		//JFrame [][] frame = new JFrame[1][1];
+		//frame[0][0] = (JFrame)(framework.getFrame());
 		
 		String [] sampleNames = new String[numSamples];
 		
@@ -78,8 +78,12 @@ public class NonparGUI implements IClusterGUI {
 				"Parameter selection.", "Execute"};		
 		
 		JFrame mainFrame = (JFrame)(framework.getFrame());
-	
-		NonparInitWizard wiz = new NonparInitWizard(idata, mainFrame, "Nonparameteric Tests Initialization", true, algData, steps, 3, new NonparModePanel(algData, framework.getJFrame()));
+
+		Object [][] frameArray = new Object[1][1];
+		frameArray[0][0] = mainFrame;		
+		algData.addObjectMatrix("main-frame", frameArray);  //used by Nonpar.java for fdr dialog
+		
+		NonparInitWizard wiz = new NonparInitWizard(idata, mainFrame, "Nonparameteric Tests Initialization", true, algData, steps, 3, new NonparModePanel(algData, new JDialog()));
 	
 		if(wiz.showModal() == JOptionPane.OK_OPTION) {
 
@@ -148,7 +152,6 @@ public class NonparGUI implements IClusterGUI {
 							|| mode.equals(NonparConstants.MODE_FISHER_EXACT)) {
 				clusters = algData.getIntMatrix("clusters");				
 			} else {
-				double alpha = algData.getParams().getDouble("alpha");
 				clusters = algData.getIntMatrix("clusters");												
 			}
 			
