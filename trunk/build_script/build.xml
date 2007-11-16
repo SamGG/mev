@@ -10,14 +10,15 @@
     -->
     <property name="dest.dir" location="${basedir}/temp"/>
     <property name="home.dir" location="${basedir}/.."/>
-    <property name="source.dir" location="${basedir}/../source"/>
+    <property name="source.dir" location="${home.dir}/source/"/>
     <property name="tigr.dir" location="${source.dir}/org/tigr"/>
     <property name="mev.dir" location="${tigr.dir}/microarray/mev"/>
     <property name="cluster.dir" location="${mev.dir}/cluster"/>
     <property name="alg.impl.dir" location="${cluster.dir}/algorithm/impl"/>
     <property name="gui.impl.dir" location="${cluster.dir}/gui/impl"/>
     <property name="lib.dir" location="${home.dir}/lib"/>
-	<property name="javac-location" location="C:\j2sdk1.4.2_05\bin\javac"/>
+	<property name="javac.loc" location="C:\Program Files\Java\jdk1.6.0_03\bin\javac.exe" />
+
 
 
     <!-- This path element contains jar files to support module compilation -->
@@ -74,6 +75,8 @@
     <property name="TRN" value="y"/>
     <property name="EASE" value="y"/>
 	<property name="USC" value="y"/>
+	<property name="BN" value="y" />
+	<property name="LM" value="y" />
 	
 	<!-- Module category names -->
 	<property name="CLUSTERING" value="Clustering"/>
@@ -295,8 +298,8 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     -->
     <target name="base" depends="jar-algorithm-support">
         <javac srcdir="${tigr.dir}/microarray:${tigr.dir}" destdir="${dest.dir}"
-        	 
-            executable="${javac-location}"
+
+        	executable="${javac.loc}"
     		fork="yes"
     		memoryMaximumSize="1024m"
             includes=
@@ -316,7 +319,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			mev/cluster/gui/*.java,
 			mev/cluster/clusterUtil/**, 
 			mev/cluster/gui/helpers/**">
-
+        	
             <classpath>
                 <pathelement location="${lib.dir}/normalization.jar"/>	
                 <pathelement location="${lib.dir}/jai_codec.jar"/>	
@@ -331,15 +334,29 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
                  <pathelement location="${lib.dir}/colt.jar"/>
                 <pathelement location="${lib.dir}/comcgh.jar"/>
                 <pathelement location="${lib.dir}/educgh.jar"/>
-                <pathelement location="${lib.dir}/Text_JDBC30.jar"/>
+				<pathelement location="${lib.dir}/Text_JDBC30.jar" />
+				<pathelement location="${lib.dir}/jbcl.jar" />
+				<pathelement location="${lib.dir}/piccolo.jar" />
+				<pathelement location="${lib.dir}/piccolox.jar" />
+
                 <pathelement location="${lib.dir}/xerces.jar"/>
                 <pathelement location="${lib.dir}/base64.jar"/>
                 <pathelement location="${lib.dir}/HTTPClient.jar"/>
                 <pathelement location="${lib.dir}/servlet.jar"/>
                 <pathelement location="${lib.dir}/ftpbean.jar"/>
+				<pathelement location="${lib.dir}/soap.jar" />
                 <pathelement location="${tigr.dir}/microarray/file"/>
+				<pathelement location="${lib.dir}/weka.jar" />
+				<pathelement location="${lib.dir}/cytoscape.jar" />
             </classpath>	    
         </javac>
+        <!-- Copy html files from source to dest directory so they can
+         be jar-ed up with the .class files -->
+    	<copy todir="${dest.dir}/org/tigr/microarray/mev/">
+    	    <fileset dir="${source.dir}/org/tigr/microarray/mev/">
+    	    	<include name="*.html"/>
+    		</fileset>
+    	</copy>
     </target>
 
 
@@ -360,7 +377,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
         
         <!-- copy images (gifs) to images directory for inclusion in the jar -->        
         <copy todir="${dest.dir}/org/tigr/microarray/mev/cluster/gui/impl/images">
-            <fileset dir="${gui.impl.dir}/images"/>
+			<fileset dir="${gui.impl.dir}/images" excludes=".svn .cvs" />
         </copy>
 
 
@@ -387,7 +404,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
         
         <!-- copy images (gifs) to images directory for inclusion in the jar -->        
         <copy todir="${dest.dir}/org/tigr/images">
-            <fileset dir="${tigr.dir}/images"/>
+			<fileset dir="${tigr.dir}/images" excludes=".svn .cvs"/>
         </copy>
 
         <jar destfile="${lib.dir}/images.jar"
@@ -411,7 +428,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
         
         <!-- copy images (gifs) to images directory for inclusion in the jar -->        
         <copy todir="${dest.dir}/org/tigr/microarray/mev/cluster/gui/impl/dialogs/dialogHelpUtil/dialogHelpPages">
-            <fileset dir="${gui.impl.dir}/dialogs/dialogHelpUtil/dialogHelpPages"/>
+            <fileset dir="${gui.impl.dir}/dialogs/dialogHelpUtil/dialogHelpPages" excludes=".svn .cvs"/>
         </copy>
 
         <jar destfile="${lib.dir}/dialogHelp.jar"
@@ -448,6 +465,9 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			org/tigr/microarray/mev/cluster/clusterUtil/**"
         	update="true"
         />
+		<mkdir dir="${dest.dir}/org/tigr/microarray/mev/cluster/algorithm"/>
+		<mkdir dir="${dest.dir}/org/tigr/microarray/mev/cluster/algorithm/impl"/>
+		<touch file="${alg.properties.file}"/>
     </target>
 
 
@@ -494,6 +514,82 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
         </propertyfile>
     </target>
 
+	<target name="BN" depends="BN-GUI" if="BN">
+		<javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}/">
+			<classpath refid="module.build.class.path" />
+			<include name="bn/**" />
+		</javac>
+		<propertyfile file="${alg.properties.file}">
+			<entry key="BN" value="org.tigr.microarray.mev.cluster.algorithm.impl.BN" />
+		</propertyfile>
+	</target>
+
+	<target name="BN-GUI">
+		<javac srcdir="${gui.impl.dir}/bn" destdir="${dest.dir}">
+			<classpath>
+				<pathelement location="${lib.dir}/ftpbean.jar" />
+				<pathelement location="${lib.dir}/weka.jar" />
+				<pathelement location="${lib.dir}/cytoscape.jar" />
+
+				<!-- jars to support module compilation -->
+				<pathelement location="${lib.dir}/mev-util.jar" />
+				<pathelement location="${lib.dir}/mev-gui-impl.jar" />
+				<pathelement location="${lib.dir}/mev-gui-support.jar" />
+				<pathelement location="${lib.dir}/mev-algorithm-impl.jar" />
+				<pathelement location="${lib.dir}/mev-algorithm-support.jar" />
+				<pathelement location="${lib.dir}/mev-base.jar" />
+			</classpath>
+
+
+		</javac>
+		<propertyfile file="${gui.properties.file}">
+			<entry key="gui.names" value="BN:" operation="+" />
+			<entry key="BN.name" value="BN" />
+			<entry key="BN.class" value="org.tigr.microarray.mev.cluster.gui.impl.bn.BNGUI" />
+			<entry key="BN.category" value="${MISC}" />
+			<entry key="BN.smallIcon" value="analysis16.gif" />
+			<entry key="BN.largeIcon" value="bn_button.gif" />
+			<entry key="BN.tooltip" value="Bayesian Network" />
+		</propertyfile>
+	</target>
+
+	<target name="LM" depends="LM-GUI" if="LM">
+		<javac sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}/">
+			<classpath refid="module.build.class.path" />
+			<include name="lm/**" />
+		</javac>
+		<propertyfile file="${alg.properties.file}">
+			<entry key="LM" value="org.tigr.microarray.mev.cluster.algorithm.impl.LM" />
+		</propertyfile>
+	</target>
+
+	<target name="LM-GUI">
+		<javac srcdir="${gui.impl.dir}/lm" destdir="${dest.dir}">
+			<classpath>
+				<pathelement location="${lib.dir}/ftpbean.jar" />
+				<pathelement location="${lib.dir}/weka.jar" />
+				<pathelement location="${lib.dir}/cytoscape.jar" />
+
+				<!-- jars to support module compilation -->
+				<pathelement location="${lib.dir}/mev-util.jar" />
+				<pathelement location="${lib.dir}/mev-gui-impl.jar" />
+				<pathelement location="${lib.dir}/mev-gui-support.jar" />
+				<pathelement location="${lib.dir}/mev-algorithm-impl.jar" />
+				<pathelement location="${lib.dir}/mev-algorithm-support.jar" />
+				<pathelement location="${lib.dir}/mev-base.jar" />
+			</classpath>
+
+		</javac>
+		<propertyfile file="${gui.properties.file}">
+			<entry key="gui.names" value="LM:" operation="+" />
+			<entry key="LM.name" value="LM" />
+			<entry key="LM.class" value="org.tigr.microarray.mev.cluster.gui.impl.lm.LMGUI" />
+			<entry key="LM.category" value="${MISC}" />
+			<entry key="LM.smallIcon" value="analysis16.gif" />
+			<entry key="LM.largeIcon" value="lm_button.gif" />
+			<entry key="LM.tooltip" value="Literature Mining" />
+		</propertyfile>
+	</target>
 
 
     <target name="ST" depends="ST-GUI" if="ST">
@@ -1538,11 +1634,12 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 -->
 	<target name="build_deploy" depends="build-all">
-		
+
 		<!--
 		zip lib dir, source dir, docs, config, sampledata, bat file into releasable zip file
 		-->
 	</target>
+
 </project>
 
 
