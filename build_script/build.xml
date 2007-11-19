@@ -17,6 +17,8 @@
     <property name="alg.impl.dir" location="${cluster.dir}/algorithm/impl"/>
     <property name="gui.impl.dir" location="${cluster.dir}/gui/impl"/>
     <property name="lib.dir" location="${home.dir}/lib"/>
+	<property name="version" value="4_1"/>
+	<property name="package.dir" location="${home.dir}/deploy"/>
 	<property name="javac.loc" location="C:\Program Files\Java\jdk1.6.0_03\bin\javac.exe" />
 
 
@@ -1633,13 +1635,77 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
         <delete dir="${dest.dir}"/> 
     </target>
 -->
-	<target name="build_deploy" depends="build-all">
-
+	<target name="build_package" depends="build-all">
+		<delete dir="${package.dir}"/>
+		<mkdir dir="${package.dir}"/>
+		<copy todir="${package.dir}/documentation">
+			<fileset dir="${home.dir}/user_docs" />
+		</copy>
+		<mkdir dir="${package.dir}/lib" />
+		<copy todir="${package.dir}/lib" >
+			<fileset dir="${home.dir}/lib/" includes="*.jar"/>
+		</copy>
+		<copy todir="${package.dir}/plugins" >
+			<fileset dir="${home.dir}/plugins/" includes="*.jar"/>
+		</copy>
+		<zip destfile="${package.dir}/MeV_${version}_source.zip"
+			basedir="${source.dir}"
+			includes="*"
+			excludes="CVS, CVS/**, .cvsignore, *.cvs, *.cvs/**"
+		/>
+		
+		<copy file="${home.dir}/MeV_4_1/Artistic_License.pdf" todir="${package.dir}" />
+		<copy file="${home.dir}/MeV_4_1/MeV_4_1_release_notes.pdf" todir="${package.dir}" />
+		<copy file="${home.dir}/MeV_4_1/tmev.bat" todir="${package.dir}" />
+		<copy file="${home.dir}/MeV_4_1/tmev.sh" todir="${package.dir}" />
+			
+		<mkdir dir="${package.dir}/data" />
+		<copy todir="${package.dir}/data">
+			<fileset dir="${home.dir}/MeV_4_1/data"/>
+		</copy>
+		
+		<mkdir dir="${package.dir}/config" />
+		<copy todir="${package.dir}/config">
+			<fileset dir="${home.dir}/MeV_4_1/config"/>
+		</copy>
+		
+		<mkdir dir="${package.dir}/MacOSX_MeV_4_1.app" />
+		<copy todir="${package.dir}/MacOSX_MeV_4_1.app">
+			<fileset dir="${home.dir}/MeV_4_1/MacOSX_MeV_4_1.app" excludes="${home.dir}/MeV_4_1/MacOSX_MeV_4_1.app/**/*.jar"/>
+		</copy>
+				
+		<zip destfile="${home.dir}/MeV_${version}.zip"
+			basedir="${package.dir}"
+			>
+		</zip>
 		<!--
 		zip lib dir, source dir, docs, config, sampledata, bat file into releasable zip file
 		-->
 	</target>
-
+	<target name="javadoc">
+		<delete dir="${home.dir}/javadoc"/>
+		<mkdir dir="${home.dir}/javadoc"/>
+        <javadoc 
+        	destdir="${home.dir}/javadoc" 
+        	access="protected" 
+        	source="4.1" 
+        	use="true" 
+        	notree="false" 
+        	nonavbar="false" 
+        	noindex="false" 
+        	splitindex="true" 
+        	author="true" 
+        	version="true" 
+        	nodeprecatedlist="false" 
+        	nodeprecated="false" 
+        	packagenames="org.tigr.microarray.mev, org.tigr.microarray.mev.persistence" 
+        	breakiterator="yes"
+        	overview="../documentation/overview.txt"
+        	sourcepath="${source.dir}" 
+        	classpath="../lib/jconn2.jar;../lib/JSciCore.jar;../lib/vecmath.jar;../lib/normalization.jar;" 
+        	doctitle="MultiExperimentViewer (MeV)"
+        />
+    </target>
 </project>
 
 
