@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: AcknowlegementDialog.java,v $
- * $Revision: 1.11 $
- * $Date: 2006-08-10 18:43:45 $
+ * $Revision: 1.12 $
+ * $Date: 2007-11-19 18:30:42 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -104,7 +104,7 @@ public class AcknowlegementDialog extends JDialog implements java.awt.print.Prin
         String thisLine, html;
         html = "";
         try {
-        	InputStream is = AcknowlegementDialog.class.getResourceAsStream("/org/tigr/microarray/mev/Acknowledgements.html");
+        	InputStream is = AcknowlegementDialog.class.getResourceAsStream("/org/tigr/microarray/mev/acknowledgements.html");
         	BufferedReader br = new BufferedReader(new InputStreamReader(is));
         	while ((thisLine = br.readLine()) != null) {  
         		html+=thisLine;
