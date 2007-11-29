@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASETableViewer.java,v $
- * $Revision: 1.10 $
- * $Date: 2006-11-07 17:27:40 $
+ * $Revision: 1.11 $
+ * $Date: 2007-11-29 16:30:12 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -21,6 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.Expression;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -38,6 +39,7 @@ import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.TableViewer;
 import org.tigr.util.BrowserLauncher;
 
@@ -54,6 +56,7 @@ public class EASETableViewer extends TableViewer implements Serializable {
     protected boolean clusterAnalysis;
     protected boolean haveAccessionNumbers;
     protected JMenuItem launchMenuItem;
+    protected Object[][] data;
     
     /** Creates a new instance of EASETableViewer
      * @param headerNames Header names
@@ -69,6 +72,7 @@ public class EASETableViewer extends TableViewer implements Serializable {
         this.headerNames = headerNames;
         this.clusterAnalysis = clusterAnalysis;
         this.haveAccessionNumbers = haveAccessionNumbers;
+        this.data = data;
         
         setNumerical(0, true);
         if(clusterAnalysis){
@@ -99,7 +103,6 @@ public class EASETableViewer extends TableViewer implements Serializable {
     public EASETableViewer(String [] headerNames, Object [][] data) {
    		super(headerNames, data);
     }
-    
     
     
     /** Creats the context menu
@@ -302,6 +305,14 @@ public class EASETableViewer extends TableViewer implements Serializable {
         this.launchMenuItem.setEnabled( this.table.getValueAt(row, 1) != null && !this.table.getValueAt(row, 1).equals(" ") );
     }
     
+    /**
+     * @inheritDoc
+     */
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{this.headerNames, this.data, this.easeRoot, this.experiment, this.clusters, this.haveAccessionNumbers, this.clusterAnalysis});
+    }  
+    
     /** Handles events
      */
     protected class Listener extends MouseAdapter implements ActionListener{
@@ -340,7 +351,7 @@ public class EASETableViewer extends TableViewer implements Serializable {
         }
         
     }
-    
+  
     
     
 }
