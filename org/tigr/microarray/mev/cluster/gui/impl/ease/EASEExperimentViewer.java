@@ -4,8 +4,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: EASEExperimentViewer.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-08-22 17:56:41 $
+ * $Revision: 1.8 $
+ * $Date: 2007-11-29 16:30:11 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -18,6 +18,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.Expression;
 
 import javax.swing.JColorChooser;
 import javax.swing.JOptionPane;
@@ -37,11 +38,11 @@ public class EASEExperimentViewer extends ExperimentViewer {
      * experiment and clusters.
      */
     public EASEExperimentViewer(Experiment experiment, int[][] clusters) {
-	super(experiment, clusters);
-	Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
-	getContentComponent().addMouseListener(listener);
-	getHeaderComponent().addMouseListener(listener);
+		super(experiment, clusters);
+		Listener listener = new Listener();
+		this.popup = createJPopupMenu(listener);
+		getContentComponent().addMouseListener(listener);
+		getHeaderComponent().addMouseListener(listener);
     }
     /**
      * @inheritDoc
@@ -52,6 +53,17 @@ public class EASEExperimentViewer extends ExperimentViewer {
     	this.popup = createJPopupMenu(listener);
     	getContentComponent().addMouseListener(listener);
     	getHeaderComponent().addMouseListener(listener);
+    }
+    /**
+     * State-saving constructor.
+     * @param e
+     * @param clusters
+     * @param samplesOrder
+     * @param drawAnnotations
+     */
+    public EASEExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder, boolean drawAnnotations) {
+    	super(e, clusters, samplesOrder, drawAnnotations, 10);
+    	
     }
     
     /**
@@ -106,7 +118,7 @@ public class EASEExperimentViewer extends ExperimentViewer {
     private void onSetDefaultColor() {
 	setClusterColor(null);
     }
-    
+
     /**
      * The class to listen to mouse and action events.
      */
@@ -124,7 +136,7 @@ public class EASEExperimentViewer extends ExperimentViewer {
 		onSetDefaultColor();
 	    } else if(command.equals(LAUNCH_NEW_SESSION_CMD)){
                 launchNewSession();
-            }
+	    }
 	}
 	
 	public void mouseReleased(MouseEvent event) {
