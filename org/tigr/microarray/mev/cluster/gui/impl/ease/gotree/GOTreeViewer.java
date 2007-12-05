@@ -155,10 +155,10 @@ public class GOTreeViewer extends JPanel implements IViewer {
      */
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{storedNodes, baseFileSystem,
-    			category, headerFields, new Integer(selectionPolarity), 
-				new Boolean(verbose), new Double(upper), new Double(lower)});
-    }
+    			new Object[]{storedNodes, viewerNode, baseFileSystem,
+    		});
+
+    	}
     
     /**
      * Re-creates a GOTreeViewer from stored data in an XMLEncoded file.  
@@ -176,6 +176,8 @@ public class GOTreeViewer extends JPanel implements IViewer {
     public GOTreeViewer(GONode[][] storedNodes, String baseFileSystem, 
     		String category, String [] headerFields, Integer selectionPolarity, 
 			Boolean verbose, Double upper, Double lower){
+        super(new GridBagLayout());
+
     	this.storedNodes = storedNodes;
     	this.headerFields = headerFields;
     	this.baseFileSystem = baseFileSystem;
