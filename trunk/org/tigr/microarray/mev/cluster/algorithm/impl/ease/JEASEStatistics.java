@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: JEASEStatistics.java,v $
- * $Revision: 1.7 $
- * $Date: 2006-05-02 20:52:48 $
+ * $Revision: 1.8 $
+ * $Date: 2007-12-05 22:18:32 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -131,14 +131,17 @@ public class JEASEStatistics {
         output_file_name = file_name;
     }
     
-    /**  Obtain the categories from the annotation files and create a hashtable using these categories as keys.*/
+    /**
+     * Obtain the categories from the annotation files and create a hashtable 
+     * using these categories as keys.
+     * 
+     */
     public void GetCategories() {
         BufferedReader in = null;
-        Hashtable hash_table = new Hashtable();
         Hashtable implied_associations = new Hashtable();
         String term;
         String line="", category="", file_name="";
-        int idx, c =0, idx2;        
+        int idx, idx2;        
         
         try{
             for(Enumeration e = annotation_file_names.elements(); e.hasMoreElements();){
@@ -270,14 +273,16 @@ public class JEASEStatistics {
     }
 
     
-    /**  Obtain the categories from the annotation files and create a hashtable using these categories as keys.*/
+    /**
+     * Obtain the categories from the annotation files and create a hashtable using 
+     * these categories as keys.
+     */
     public void GetCategories(Vector popVector) {
         BufferedReader in = null;
-        Hashtable hash_table = new Hashtable();
         Hashtable implied_associations = new Hashtable();
         String term;
         String line="", category="", file_name="";
-        int idx, c =0, idx2;        
+        int idx, idx2;        
         
         try{
             for(Enumeration e = annotation_file_names.elements(); e.hasMoreElements();){
@@ -405,6 +410,38 @@ public class JEASEStatistics {
         }
     }
     
+    /**
+     * Returns a list of gene indices that correspond to the functional class "term". Used by the 
+     * Nested EASE resampling functions.
+     * @param term the term to find the matching genes for
+     * @return the list of gene indices
+     */
+    public Vector<String> getSubPopulationForCategory(String term) {
+        String key="";
+        Hashtable<String, String> hash_table = new Hashtable<String, String>();
+        Vector<String> returnVector = new Vector<String>();
+        
+        System.out.println("Testing for term " + term);
+        
+        //for each annotation category (such as go terms)
+        for(Enumeration _enum = categories.keys(); _enum.hasMoreElements();){
+            key = (String)(_enum.nextElement());
+            hash_table = (Hashtable<String, String>)categories.get(key);
+        	//System.out.println("category key: " + key);
+        	
+        	if(key.equals(term)) {
+        		//System.out.println("getting category values for key " + key);
+        		for(Enumeration<String> e = hash_table.keys(); e.hasMoreElements();) {
+	            	String categoryKey = e.nextElement();
+	            	System.out.println(" value: " + categoryKey);
+	            	returnVector.add(categoryKey);
+	            }
+        	}
+        }
+        return returnVector;
+    }    
+    
+    
     /** Get the number of the genes in the population for each category that exists in the annotation files. */
     public void GetPopulationHitsByCategory() {
         BufferedReader in = null;
@@ -416,15 +453,18 @@ public class JEASEStatistics {
         int c = 0;
         
         try{
+        	//Read in population file full of locuslink ids
             in = new BufferedReader(new FileReader(population_file_name));
             
             while((line = in.readLine()) != null){
                 locus_ids.put(line.trim(), "");
             }
             
-            for(Enumeration enum1 = locus_ids.keys(); enum1.hasMoreElements();){
+            //For each gene (locuslink id) in the population file
+            for(Enumeration enum1 = locus_ids.keys(); enum1.hasMoreElements();) {
                 locus_id = (String)(enum1.nextElement());
                 
+                //for each annotation category (such as go terms)
                 for(Enumeration _enum = categories.keys(); _enum.hasMoreElements();){
                     key = (String)(_enum.nextElement());
                     hash_table = (Hashtable) (categories.get(key));
@@ -722,25 +762,26 @@ public class JEASEStatistics {
         }
     }
     
-    /** Get the number of the genes in the sample for each category that exists in the annotation files.
-     * @param list List indices.
+    /** Get the number of the genes in the sample for each category that exists 
+     * in the annotation files.
+     * @param list The list of locuslink accessions identifying the genes in the cluster list
      */
     public void GetListHitsByCategory(Vector list) {
-        BufferedReader in = null;
-        String category="", hits="", key="", locus_id;
+        String hits="", key="", locus_id;
         Hashtable locus_ids = new Hashtable();
         Hashtable hash_table = new Hashtable();
         Hashtable count_ids = new Hashtable();
         
-        int c = 0;
         try{
             int size = list.size();
             for(int i = 0; i < size; i++)
                 locus_ids.put((String)list.elementAt(i), "");
             
+            //for each gene in the cluster list
             for(Enumeration enum1 = locus_ids.keys(); enum1.hasMoreElements();){
                 locus_id = (String)(enum1.nextElement());
                 
+                //for each category (GO Term or Kegg pathway or whatever annotation)
                 for(Enumeration _enum = categories.keys(); _enum.hasMoreElements();){
                     key = (String)(_enum.nextElement());
                     hash_table = (Hashtable) (categories.get(key));
