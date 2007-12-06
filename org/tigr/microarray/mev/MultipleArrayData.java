@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayData.java,v $
- * $Revision: 1.29 $
- * $Date: 2007-10-16 18:50:59 $
- * $Author: raktim $
+ * $Revision: 1.30 $
+ * $Date: 2007-12-06 19:46:53 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -230,7 +230,7 @@ public class MultipleArrayData implements IData {
         this.experimentColors = experimentColors;
         this.spotColors = spotColors;
         setSampleLabelKey(currentSampleLabelKey);
-        System.out.println("MAD Cons() currentSampleLabelKey: " + currentSampleLabelKey);
+//        System.out.println("MAD Cons() currentSampleLabelKey: " + currentSampleLabelKey);
         try{
         setDataType(dataType.intValue());
         } catch (Exception e){e.printStackTrace();}
@@ -266,7 +266,7 @@ public class MultipleArrayData implements IData {
     			 currentSampleLabelKey,  featuresList,  dataType,
     			 samplesOrder, hasDyeSwap, CGHData, log2Data, clones, cgh_Sp, mads);
         //Raktim 10/01. SS Modifications
-    		System.out.println("using Raktim's new MAD constructor");
+//    		System.out.println("using Raktim's new MAD constructor");
         this.chromosomeIndices = chromosomeIndices;
         this.cloneValueType = cloneValueType.intValue();
         //this.logState = logState.intValue();
