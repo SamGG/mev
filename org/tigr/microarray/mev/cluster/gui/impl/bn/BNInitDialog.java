@@ -40,6 +40,7 @@ public class BNInitDialog extends AlgorithmDialog {
     String searchAlgorithm="TabuSearch"; //"HillClimber";
     String scoreType="BAYES"; //"BDeu";
     boolean useArc=true;
+    File fileDir = null;
     
     /** Creates a new instance of BNInitDialog
      * @param parent Parent Frame
@@ -59,7 +60,7 @@ public class BNInitDialog extends AlgorithmDialog {
         //Tabbed pane creation
         tabbedPane = new JTabbedPane();
         
-        //config panel                //configPanel = new ConfigPanel();        
+        //config panel                configPanel = new ConfigPanel();        
         
         JPanel popNClusterPanel = new JPanel(new GridBagLayout());
         popNClusterPanel.setBackground(Color.white);
@@ -92,7 +93,7 @@ public class BNInitDialog extends AlgorithmDialog {
         classnumPanel = new ClassNumPanel();
         useGoPanel = new XmlBifPanel();
         runBNPanel=new RunBNPanel();
-        tabbedPane.add("Running Bayesian Network Parameters", runBNPanel);        //parameters.add(configPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));       
+        tabbedPane.add("Running Bayesian Network Parameters", runBNPanel);        parameters.add(configPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));       
         parameters.add(priorsPanel, new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         parameters.add(discPanel, new GridBagConstraints(0,2,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         parameters.add(classnumPanel, new GridBagConstraints(0,3,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
@@ -132,7 +133,7 @@ public class BNInitDialog extends AlgorithmDialog {
         //Tabbed pane creation
         tabbedPane = new JTabbedPane();
         
-        //config panel                //configPanel = new ConfigPanel();        
+        //config panel                configPanel = new ConfigPanel();        
         
         JPanel popNClusterPanel = new JPanel(new GridBagLayout());
         popNClusterPanel.setBackground(Color.white);
@@ -174,7 +175,7 @@ public class BNInitDialog extends AlgorithmDialog {
         classnumPanel = new ClassNumPanel();
         useGoPanel = new XmlBifPanel();
         runBNPanel=new RunBNPanel(); 
-        tabbedPane.add("Running Bayesian Network Parameters", runBNPanel);        //parameters.add(configPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));       
+        tabbedPane.add("Running Bayesian Network Parameters", runBNPanel);        parameters.add(configPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));       
         parameters.add(priorsPanel, new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         parameters.add(discPanel, new GridBagConstraints(0,2,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         parameters.add(classnumPanel, new GridBagConstraints(0,3,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
@@ -195,7 +196,7 @@ public class BNInitDialog extends AlgorithmDialog {
             tabbedPane.setSelectedIndex(1);
         }
         */
-        this.setSize(600,750);
+        this.setSize(600,800);
     }
     
     /** Shows the dialog.
@@ -258,8 +259,8 @@ public class BNInitDialog extends AlgorithmDialog {
     
     /** Returns the base file location for BN file system
      */
-    public String getBaseFileLocation() {        //return configPanel.getBaseFileLocation();
-        return TMEV.getFile("data/bn").getAbsolutePath();
+    public String getBaseFileLocation() {        return configPanel.getBaseFileLocation();
+        //return TMEV.getFile("data/bn").getAbsolutePath();
     }
     public int getNumberClass(){
     	return this.classnumPanel.getNumClasses();
@@ -1144,11 +1145,18 @@ public class BNInitDialog extends AlgorithmDialog {
             super("File Updates and Configuration");
             setLayout(new GridBagLayout());
             
-            JButton updateFilesButton = new JButton("Update BN File System");
-            updateFilesButton.setActionCommand("update-files-command");
-            updateFilesButton.setFocusPainted(false);
-            updateFilesButton.addActionListener(listener);
-            updateFilesButton.setToolTipText("<html>Downloads BN annotation files<br>for a selected species and array type.</html>");
+            
+            
+            JButton cngFilesButton = new JButton("Change Location");
+            cngFilesButton.setActionCommand("select-file-base-command");
+            cngFilesButton.addActionListener(listener);
+            cngFilesButton.setToolTipText("<html>Select the directory where BN  files reside.</html>");
+            
+            //JButton updateFilesButton = new JButton("Update BN File System");
+            //updateFilesButton.setActionCommand("update-files-command");
+            //updateFilesButton.setFocusPainted(false);
+            //updateFilesButton.addActionListener(listener);
+            //updateFilesButton.setToolTipText("<html>Downloads BN annotation files<br>for a selected species and array type.</html>");
             
             
             //JButton browseFileBaseButton = new JButton("Select BN File System");
@@ -1156,18 +1164,21 @@ public class BNInitDialog extends AlgorithmDialog {
             //browseFileBaseButton.setFocusPainted(false);
             //browseFileBaseButton.addActionListener(listener);
             //browseFileBaseButton.setToolTipText("<html>Helps select the BN annotation file system<br>that corresponds the current species and array type.</html>");
-            JLabel fileLocation=new JLabel("All BN Source Files Location:");
-            defaultFileBaseLocation = new JTextField(TMEV.getFile("data/bn").getAbsolutePath(), 25);
+            JLabel fileLocation=new JLabel("BN Source Files Location:");
+            //defaultFileBaseLocation = new JTextField(TMEV.getFile("data/bn").getAbsolutePath(), 25);
+            defaultFileBaseLocation = new JTextField(new File(System.getProperty("user.dir")).getAbsolutePath());
             defaultFileBaseLocation.setEditable(true);
             
             add(fileLocation, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0, 0));
             add(defaultFileBaseLocation,  new GridBagConstraints(1,0,1,1,2,0,GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));            
-            add(updateFilesButton, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,2,0), 0, 0));  
+            //add(updateFilesButton, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,2,0), 0, 0));  
+            add(cngFilesButton, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,2,0), 0, 0));
             
            }
         
         public void selectFileSystem() {
             String startDir = defaultFileBaseLocation.getText();
+            
             File file = new File(startDir);
             if(!file.exists()) {                
                 file = TMEV.getFile("data/bn");
@@ -1178,11 +1189,23 @@ public class BNInitDialog extends AlgorithmDialog {
             JFileChooser chooser = new JFileChooser(file);
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             if(chooser.showOpenDialog(BNInitDialog.this) == JOptionPane.OK_OPTION) {
+            	String dir = chooser.getSelectedFile().getAbsolutePath().trim();
+                if(dir.contains(" ")){
+                	JOptionPane.showMessageDialog(parent, 
+                			"Spaces are not allowed in Path. \n Selected a different location", 
+                			"BN Initialization: Illegal Char in Path", 
+                			JOptionPane.ERROR_MESSAGE);
+                	defaultFileBaseLocation.grabFocus();
+                	defaultFileBaseLocation.selectAll();
+                	defaultFileBaseLocation.setCaretPosition(0);
+                	return;
+                }
                 defaultFileBaseLocation.setText(chooser.getSelectedFile().getAbsolutePath());
             }
         }
         
         public String getBaseFileLocation() {
+        	System.out.println("getBaseFileLocation() called");
             return defaultFileBaseLocation.getText();
         }
     }
@@ -1240,6 +1263,80 @@ public class BNInitDialog extends AlgorithmDialog {
               manager.updateFiles();
             } else if (command.equals("ok-command")) {
                 result = JOptionPane.OK_OPTION;
+                System.out.println("BN Dlg. OK Cmd");
+                //**
+                // Validate if selected options have supporting file(s)
+                String fileBase =  getBaseFileLocation(); //configPanel.getBaseFileLocation();
+                if(isLit()){
+                	//Check if Lit File(s) exist
+                	if(!(new File(fileBase + BNConstants.SEP + BNConstants.RESOURCERER_FILE)).exists()) {
+                		JOptionPane.showMessageDialog(
+                				parent, 
+                				"File: " + 
+                				fileBase + BNConstants.SEP + BNConstants.RESOURCERER_FILE + " is missing",
+                                "BN Initialization: Missing File", JOptionPane.ERROR_MESSAGE);
+                		return;
+                	}
+                	
+                	if(!(new File(fileBase + BNConstants.SEP + BNConstants.ACCESSION_FILE)).exists()) {
+                		JOptionPane.showMessageDialog(
+                				parent, 
+                				"File: " + 
+                				fileBase + BNConstants.SEP + BNConstants.ACCESSION_FILE + " is missing",
+                                "BN Initialization: Missing File", JOptionPane.ERROR_MESSAGE);
+                		return;
+                	}
+                	
+                	if(!(new File(fileBase + BNConstants.SEP + BNConstants.GENE_DB_FILE)).exists()) {
+                		JOptionPane.showMessageDialog(
+                				parent, 
+                				"File: " + 
+                				fileBase + BNConstants.SEP + BNConstants.GENE_DB_FILE + " is missing",
+                                "BN Initialization: Missing File", JOptionPane.ERROR_MESSAGE);
+                		return;
+                	}
+                	
+                	if(!(new File(fileBase + BNConstants.SEP + BNConstants.PUBMED_DB_FILE)).exists()) {
+                		JOptionPane.showMessageDialog(
+                				parent, 
+                				"File: " + 
+                				fileBase + BNConstants.SEP + BNConstants.PUBMED_DB_FILE + " is missing",
+                                "BN Initialization: Missing File", JOptionPane.ERROR_MESSAGE);
+                		return;
+                	}
+                }
+                
+                if(isPPI()) {
+                	if(!(new File(fileBase + BNConstants.SEP + BNConstants.PPI_FILE)).exists()) {
+                		JOptionPane.showMessageDialog(
+                				parent, 
+                				"File: " + 
+                				fileBase + BNConstants.SEP + BNConstants.PPI_FILE + " is missing",
+                                "BN Initialization: Missing File", JOptionPane.ERROR_MESSAGE);
+                		return;
+                	}
+                }
+                
+                if(isNone()) {
+                	JOptionPane.showMessageDialog(
+            				parent, 
+            				"Network Priors Source(s) not selected",
+                            "BN Initialization: Missing Selection", JOptionPane.ERROR_MESSAGE);
+            		return;
+                }
+                
+                if(useGoTerm()) {
+                	if(!(new File(fileBase + BNConstants.SEP + BNConstants.GB_GO_FILE)).exists()) {
+                		JOptionPane.showMessageDialog(
+                				parent, 
+                				"File: " + 
+                				fileBase + BNConstants.SEP + BNConstants.GB_GO_FILE + " is missing",
+                                "BN Initialization: Missing File", JOptionPane.ERROR_MESSAGE);
+                		return;
+                	}
+                }
+
+                //**End of Validation
                 if(isClusterModeSelected() && popPanel.fileButton.isSelected()) {
                     String fileName = popPanel.popField.getText();
                     if(fileName == null || fileName.equals("") || fileName.equals(" ")) {
@@ -1322,6 +1419,40 @@ public class BNInitDialog extends AlgorithmDialog {
             			return;
         			}
         		}
+        		
+        		//Create "tmp" & "results" directories if they don't exist report 
+        		//problems if any encountered.
+        		if(!(new File(fileBase + BNConstants.SEP + BNConstants.RESULT_DIR)).exists()) {
+	        		boolean success = (new File(fileBase + BNConstants.SEP + BNConstants.RESULT_DIR)).mkdir();
+	        	    if (!success) {
+	        	        // Directory creation failed
+	        	    	JOptionPane.showMessageDialog(
+	            				parent, 
+	            				"Dir: " + 
+	            				fileBase + BNConstants.SEP + BNConstants.RESULT_DIR + " cannot be created",
+	                            "BN Initialization: Dir create error", JOptionPane.ERROR_MESSAGE);
+	            		return;
+	        	    }
+	        	    System.out.println("Dir: " + 
+            				fileBase + BNConstants.SEP + BNConstants.RESULT_DIR + " created successfully !!");
+        		}
+        		
+        		if(!(new File(fileBase + BNConstants.SEP + BNConstants.TMP_DIR)).exists()) {
+	        		boolean success = (new File(fileBase + BNConstants.SEP + BNConstants.TMP_DIR)).mkdir();
+	        	    if (!success) {
+	        	        // Directory creation failed
+	        	    	JOptionPane.showMessageDialog(
+	            				parent, 
+	            				"Dir: " + 
+	            				fileBase + BNConstants.SEP + BNConstants.TMP_DIR + " cannot be created",
+	                            "BN Initialization: Dir create error", JOptionPane.ERROR_MESSAGE);
+	            		return;
+	        	    }
+	        	    System.out.println("Dir: " + 
+            				fileBase + BNConstants.SEP + BNConstants.TMP_DIR + " created successfully !!");
+        		}
+        	    
+        		BNConstants.setBaseFileLocation(fileBase);
                 dispose();
             } else if (command.equals("cancel-command")) {
                 result = JOptionPane.CANCEL_OPTION;

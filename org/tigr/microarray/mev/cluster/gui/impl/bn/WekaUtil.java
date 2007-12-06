@@ -13,6 +13,10 @@
 /* WekaUtil.java
  * Copyright (C) 2005 Amira Djebbari
  */
+/*
+ * This file is not used in BN/LIT module
+ * Raktim Sinha
+ */
 package org.tigr.microarray.mev.cluster.gui.impl.bn;import java.io.IOException;import java.io.File;
 import weka.core.Instances;import weka.core.converters.CSVLoader;
 import weka.core.converters.ArffLoader;import weka.core.converters.ArffSaver;import weka.core.converters.CSVSaver;
@@ -100,7 +104,8 @@ public class WekaUtil {
      */
     public static void writeDataToArffFile(Instances data, String arffFileName) throws NullArgumentException{	String sep = System.getProperty("file.separator");
 	String path = System.getProperty("user.dir"); // Raktim - Use tmp Dir
-	path=path+sep+"data"+sep+"bn"+sep+"tmp"+sep;
+	//path=path+sep+"data"+sep+"bn"+sep+"tmp"+sep;
+	path = BNConstants.getBaseFileLocation() + BNConstants.SEP + BNConstants.TMP_DIR + BNConstants.SEP;
 	if(data == null){
 	    throw new NullArgumentException("Parameter data passed to writeDataToArffFile method was null!");
 	}

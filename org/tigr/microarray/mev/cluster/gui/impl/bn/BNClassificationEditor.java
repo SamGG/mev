@@ -17,7 +17,8 @@ import java.util.Vector;import javax.swing.ButtonGroup;
 import javax.swing.JButton;import javax.swing.JDialog;
 import javax.swing.JFileChooser;import javax.swing.JFrame;import javax.swing.JMenu;import javax.swing.JMenuBar;import javax.swing.JMenuItem;import javax.swing.JOptionPane;import javax.swing.JPanel;import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;import javax.swing.JTable;import javax.swing.JTextArea;import javax.swing.JTextField;
-import javax.swing.border.EtchedBorder;import javax.swing.event.TableModelEvent;import javax.swing.event.TableModelListener;import javax.swing.table.AbstractTableModel;import javax.swing.table.TableColumn;import javax.swing.table.TableColumnModel;import org.tigr.microarray.mev.TMEV;import org.tigr.microarray.mev.cluster.algorithm.impl.ExperimentUtil;
+import javax.swing.border.EtchedBorder;import javax.swing.event.TableModelEvent;import javax.swing.event.TableModelListener;import javax.swing.table.AbstractTableModel;import javax.swing.table.TableColumn;import javax.swing.table.TableColumnModel;import org.tigr.microarray.mev.TMEV;import org.tigr.microarray.mev.cgh.CGHGuiObj.CharmDialogs.ExampleFileFilter;
+import org.tigr.microarray.mev.cluster.algorithm.impl.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.IData;import org.tigr.microarray.mev.cluster.gui.IFramework;import org.tigr.microarray.mev.cluster.gui.impl.dam.DAMClassificationEditor;
 import org.tigr.util.StringSplitter;import org.tigr.microarray.mev.cluster.gui.impl.bn.WekaBNGui;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
@@ -51,7 +52,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
     JMenu fileMenu, editMenu, toolsMenu, assignSubMenu, sortAscMenu, sortDescMenu;
     JMenuItem saveItem, closeItem, fileMenuItem,selectAllItem, searchItem, sortByClassItem, origOrderItem;
     JMenuItem[] classItem, labelsAscItem, labelsDescItem;    JRadioButton saveButton, doNotSaveButton;
-    JButton nextButton, cancelButton, loadButton, updateNetwork;
+    JButton nextButton, cancelButton, loadButton, saveSettingsButton, updateNetwork;
     JTextField confThreshField;
     JFrame mainFrame;
     String numBin, numParents, sAlgorithm, sType;
@@ -69,7 +70,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
     float confThreshold = 0.07f;
     int kfold = 10;
     Hashtable<String, Integer> edgesTable = new Hashtable<String, Integer>();    
-
+    File labelFile = null;
     
     /** Creates a new instance of BNClassificationEditor */    public BNClassificationEditor(final IFramework framework, boolean classifyGenes, final Cluster cl,String num,int numClasses,String parents,String algorithm,String scoreType,boolean uAr, boolean bootstrap, int iteration, float threshold, int kfolds, String path) {
         super(framework.getFrame(), true);
@@ -93,7 +94,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
         if(numClasses < 1)
         	width = 250;
        	else if (numClasses >= 1 && numClasses <= 2)
-       		width = 350;
+       		width = 360;
        	else if (numClasses > 2 && numClasses <= 3)
        		width = 450;
        	else if (numClasses > 3 && numClasses <= 5)
@@ -160,6 +161,12 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
         pane.add(tablePanel);
         
 	    final JFileChooser fc1 = new JFileChooser();
+	    final JFileChooser fc2 = new JFileChooser();
+	    ExampleFileFilter filter = new ExampleFileFilter("txt");
+	    fc2.setFileFilter(filter);
+	    
+	    //TODO
+	    //The following bloch may not be needed
         String dataPath = TMEV.getDataPath();
     	File pathFile = TMEV.getFile("data/bn");
     	if(dataPath != null) {
@@ -167,7 +174,14 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
             if(!pathFile.exists())
                 pathFile = TMEV.getFile("data/bn");
         }
-        fc1.setCurrentDirectory(new File(pathFile.getAbsolutePath()));        fc1.setDialogTitle("Open Classification");
+    	//End unnecessary Block
+    	
+        //fc1.setCurrentDirectory(new File(pathFile.getAbsolutePath()));
+        fc1.setCurrentDirectory(new File(basePath));        fc1.setDialogTitle("Open Classification");
+        
+        //fc2.setCurrentDirectory(new File(pathFile.getAbsolutePath()));
+        fc2.setCurrentDirectory(new File(basePath));
+        fc2.setDialogTitle("Save Classification");
 	
         JPanel bottomPanel = new JPanel();
         bottomPanel.setBorder(new EtchedBorder());
@@ -186,6 +200,19 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
                   }
         	}
         });
+	    saveSettingsButton=new JButton("Save Settings");
+	    saveSettingsButton.addActionListener(new ActionListener(){
+        	public void actionPerformed(ActionEvent evt) {
+        		int returnVal = fc2.showOpenDialog(BNClassificationEditor.this);  
+                 if (returnVal == JFileChooser.APPROVE_OPTION) {
+                       labelFile = fc2.getSelectedFile();
+                       //saveToFile(labelFile);
+                       //fileOpened = true;
+                       //nextPressed = false;                        
+
+                  }
+        	}
+        });
         cancelButton=new JButton("Cancel");
         cancelButton.addActionListener(new ActionListener(){
         	public void actionPerformed(ActionEvent evt) {
@@ -195,13 +222,16 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
         nextButton = new JButton("OK");
         nextButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-		        String sep = System.getProperty("file.separator");   
+		        //String sep = System.getProperty("file.separator");   
                 BNClassificationEditor.this.dispose();                 //saveToFile(basePath+sep+"label"); // Raktim - Use Tmp dir
-                saveToFile(basePath+sep+"tmp"+sep+"label");
+                saveToFile(basePath+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+"label");
+                if(labelFile != null) {
+                	saveToFile(labelFile);
+                }
 		        //saveWekaData(cl,framework,basePath); // Raktim - Use Tmp dir
-                saveWekaData(cl,framework,basePath+sep+"tmp");
+                saveWekaData(cl,framework,basePath+BNConstants.SEP+BNConstants.TMP_DIR);
                 //tranSaveWeka(numBin,basePath); // Raktim - Use Tmp dir
-                props = tranSaveWeka(numBin,basePath+sep+"tmp", isBootstraping, numIterations);
+                props = tranSaveWeka(numBin,basePath+BNConstants.SEP+BNConstants.TMP_DIR, isBootstraping, numIterations);
                  //WekaBNGui.createAndShowGUI(basePath+"outExpression.arff");
                  //WekaBNGui.createAndShowGUI("outExpression.arff");
                 /*
@@ -239,8 +269,8 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
                 			runProgressPanel.setLocation((screenSize.width-getSize().width)/2,(screenSize.height-getSize().height)/2);
                 			runProgressPanel.setVisible(true);
                 			
-                			String sep = System.getProperty("file.separator"); 
-                			String path = basePath+sep+"tmp"+sep;
+                			//String sep = System.getProperty("file.separator"); 
+                			String path = basePath+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP;
                             String outarff = "outExpression.arff";
                             
                     	    if(!isBootstraping) {
@@ -285,8 +315,8 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
                 	}
 
 					private String createNetworkFromBootstrapedEvals(String[] evalStrs, int numItr, String outarffbase, float threshold) {
-						String sep = System.getProperty("file.separator"); 
-            			String path = basePath+sep+"tmp"+sep;
+						//String sep = System.getProperty("file.separator"); 
+            			String path = basePath+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP;
 						String fileName = path + outarffbase;
 						
 						//Create sif files for every output of the resampled WEKA evaluation
@@ -329,7 +359,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 						}
 						
 						// Remove edges below threshold
-						String bootNetFile = basePath+sep+"results"+sep+
+						String bootNetFile = basePath+BNConstants.SEP+BNConstants.RESULT_DIR+BNConstants.SEP+
 											Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" +
 											"boot_result_"+numIterations+"_"+confThreshold+".sif";
 						try {
@@ -356,13 +386,17 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
         });
     	cleanUpFile();        constraints.fill = GridBagConstraints.NONE; 
         
-        buildConstraints(constraints, 0, 0, 1, 1, 10, 33);
+        buildConstraints(constraints, 0, 0, 1, 1, 5, 25);
 	    grid2.setConstraints(loadButton, constraints);
-    	bottomPanel.add(loadButton);	
-        buildConstraints(constraints, 1, 0, 1, 1, 10, 33);
+    	bottomPanel.add(loadButton);
+    	
+    	buildConstraints(constraints, 1, 0, 1, 1, 5, 25);
+	    grid2.setConstraints(saveSettingsButton, constraints);
+    	bottomPanel.add(saveSettingsButton);	
+        buildConstraints(constraints, 2, 0, 1, 1, 5, 25);
 	    grid2.setConstraints(cancelButton, constraints);
         bottomPanel.add(cancelButton); 
-	        buildConstraints(constraints, 2, 0, 1, 1, 10, 33);
+	        buildConstraints(constraints, 3, 0, 1, 1, 5, 25);
         grid2.setConstraints(nextButton, constraints);
         bottomPanel.add(nextButton);        
         
@@ -444,7 +478,8 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 					 //Raktim - Modified. File name unique
 			         //argv[1] = System.getProperty("user.dir")+"/data/bn/liter_mining_alone_network.sif";
 					 System.out.println("System.getProperty(LM_ONLY) " + System.getProperty("LM_ONLY"));
-					 argv[1] = System.getProperty("user.dir")+"/data/bn/results/"+System.getProperty("LM_ONLY");
+					 //argv[1] = System.getProperty("user.dir")+"/data/bn/results/"+System.getProperty("LM_ONLY");
+					 argv[1] = basePath + BNConstants.RESULT_DIR + BNConstants.SEP + System.getProperty("LM_ONLY");
 					 argv[2] = "-p";
 					 //argv[3] = System.getProperty("user.dir")+"/plugins/core/yLayouts.jar";
 					 argv[3] = System.getProperty("user.dir")+"/plugins/yLayouts.jar";
@@ -475,10 +510,12 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		    try {		    	
 		    	//FileOutputStream fos = new FileOutputStream("result.sif"); //Old Way - Raktim
 		    	// Raktim - Modified to make file name Unique
-		    	String fileName = System.getProperty("user.dir")+"/data/bn/results/"+Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" + "result.sif";
+		    	//String fileName = System.getProperty("user.dir")+"/data/bn/results/"+Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" + "result.sif";
+		    	String fileName = basePath + BNConstants.RESULT_DIR + BNConstants.SEP + Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" + "result.sif";
 		    	FileOutputStream fos = new FileOutputStream(fileName);
 		    	PrintWriter pw = new PrintWriter(fos, true);
 		    	//FromWekaToSif.fromWekaToSif(evalStr, pw);	
+		    	System.out.println("******evalStr******* " + evalStr);
 		    	FromWekaToSif.fromWekaToSif(evalStr, pw, false);
 		    	//FromWekaToSif.fromWekaToSif(evalString, pw);
 		    	// call cytoscape here
@@ -557,8 +594,8 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
     		    	
     		    	// Remove edges below threshold
     		    	float confThres = Float.parseFloat(confThreshField.getText().trim());
-    		    	String sep= System.getProperty("file.separator");
-					String bootNetFile = basePath+sep+"results"+sep+
+    		    	//String sep= System.getProperty("file.separator");
+					String bootNetFile = basePath+BNConstants.SEP+BNConstants.RESULT_DIR+BNConstants.SEP+
 										Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" +
 										"boot_result_"+numIterations+"_"+confThres+".sif";
 					try {
@@ -645,7 +682,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
     }
     
     private String[] convertFromFile(String path){    	
-	 String sep= System.getProperty("file.separator");    	 String filePath = path+sep+"list.txt"; // Raktim - USe Tmp dir
+	 //String sep= System.getProperty("file.separator");    	 String filePath = path + BNConstants.SEP + BNConstants.OUT_ACCESSION_FILE; // Raktim - path incls tmp dir
 	 //String filePath = path+sep+"tmp"+sep+"list.txt";
 	 System.out.println("convertFromFile(): " + filePath);
 	 String lineRead = "";
@@ -671,6 +708,13 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 	 return accList;
     }
     
+    /**
+     * Writes out observations in terms of UID & class groups
+     * E.g. Ref-Seq class1 class1 class2 class2
+     * @param cl
+     * @param frame
+     * @param path
+     */
     public void saveWekaData(Cluster cl, IFramework frame,String path) {
     	int genes=cl.getIndices().length;
     	//System.out.print(genes);
@@ -678,8 +722,8 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
     	int[] rows = new int[genes];
     	rows=cl.getIndices();    	String[] accList=new String[genes];
          try{         	 //PrintWriter out = new PrintWriter(new FileOutputStream(new File(basePath+"wekaData"))); // Raktim - USe Tmp dir
-        	 String sep= System.getProperty("file.separator");    
-        	 PrintWriter out = new PrintWriter(new FileOutputStream(new File(basePath+sep+"tmp"+sep+"wekaData")));
+        	 //String sep= System.getProperty("file.separator");    
+        	 PrintWriter out = new PrintWriter(new FileOutputStream(new File(basePath+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+"wekaData")));
 	
         String[] fieldNames = data.getFieldNames();
         String key;
@@ -724,8 +768,8 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
     }
         //public void tranSaveWeka(String binNum,String path){
     public Properties tranSaveWeka(String binNum,String path, boolean bootStrap, int numIter){
-    	String sep= System.getProperty("file.separator");    
-    	return PrepareArrayDataModule.prepareArrayData(path+sep+"wekaData", binNum, bootStrap, numIter); 
+    	//String sep= System.getProperty("file.separator");    
+    	return PrepareArrayDataModule.prepareArrayData(path+BNConstants.SEP+"wekaData", binNum, bootStrap, numIter, this.numClasses); 
     	// Raktim - USe Tmp dir
     	//PrepareArrayDataModule.prepareArrayData(path+sep+"tmp"+sep+"wekaData",binNum);
     }
@@ -817,7 +861,6 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
                     origData[i][j] = tableData[i][j];
                 }
             }
-            
         }
         
        
@@ -1205,6 +1248,38 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
     private void saveToFile(String file) {
         try {
             PrintWriter out = new PrintWriter(new FileOutputStream(new File(file)));
+            for (int i = 0; i < kModel.getRowCount(); i++) {
+                out.print(((Integer)(kModel.getValueAt(i, 0))).intValue());
+                out.print("\t");
+                for (int j = 1; j <= numClasses; j++) {
+                    if (((Boolean)(kModel.getValueAt(i, j))).booleanValue()) {
+                        out.print(j);
+                        label[i]=(new Integer(j)).toString();
+                        break;
+                    }
+                }
+                if (((Boolean)(kModel.getValueAt(i, numClasses + 1))).booleanValue()) {
+                	label[i]=(new Integer(-1)).toString();
+                    out.print(-1);
+                }
+                //out.print("\t");
+                for (int j = numClasses + 2; j < kModel.getColumnCount(); j++) {
+                    out.print("\t");
+                    out.print(kModel.getValueAt(i, j));
+                }
+                out.print("\n");
+            }
+            out.flush();
+            out.close();            
+            
+        } catch (Exception e) {
+            //e.printStackTrace();
+        }
+    }
+    
+    private void saveToFile(File file) {
+        try {
+            PrintWriter out = new PrintWriter(new FileOutputStream(file));
             for (int i = 0; i < kModel.getRowCount(); i++) {
                 out.print(((Integer)(kModel.getValueAt(i, 0))).intValue());
                 out.print("\t");

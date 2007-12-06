@@ -23,9 +23,7 @@ import java.io.FileInputStream;
 import java.io.File;
 import java.io.IOException;
 import weka.core.Instances;
-//import edu.harvard.dfci.compbio.bnUsingLit.shared.Useful;
-//import edu.harvard.dfci.compbio.bnUsingLit.prepareArrayData.WekaUtil;
-//import edu.harvard.dfci.compbio.bnUsingLit.shared.NullArgumentException;
+
 /**
  * The class <code>BootstrapModule</code> contains methods to perform bootstrap from a given dataset with given options
  * as specified in a properties file.
@@ -101,7 +99,8 @@ public class BootstrapModule {
 		//Raktim
 		String sep = System.getProperty("file.separator");
 		String path = System.getProperty("user.dir"); // Raktim - Use tmp Dir
-		path=path+sep+"data"+sep+"bn"+sep+"tmp"+sep;
+		//path=path+sep+"data"+sep+"bn"+sep+"tmp"+sep;
+		path = BNConstants.getBaseFileLocation() + BNConstants.SEP + BNConstants.TMP_DIR + BNConstants.SEP;
 		
 		int numBootstrapIterations = Integer.parseInt(props.getProperty("numBootstrapIterations","100"));
 		int numBins = Integer.parseInt(props.getProperty("numBins", "3"));

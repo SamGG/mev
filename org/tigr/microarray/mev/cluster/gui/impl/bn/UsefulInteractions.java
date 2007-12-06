@@ -264,14 +264,15 @@ public class UsefulInteractions {
     public static void writeSifFile(ArrayList inter, String fileName) throws NullArgumentException {
 	try {
 	    if(inter == null){
-		throw new NullArgumentException("Given inter was null!");
+	    	throw new NullArgumentException("Given inter was null!");
 	    }
-	    FileOutputStream fos = new FileOutputStream(fileName);
+	    String path = BNConstants.getBaseFileLocation() + BNConstants.SEP + BNConstants.RESULT_DIR + BNConstants.SEP;
+	    FileOutputStream fos = new FileOutputStream(path + fileName);
 	    PrintWriter pw = new PrintWriter(fos, true);
 	    SimpleGeneEdge sGE = null;
 	    for(int i = 0; i < inter.size(); i++){
-		sGE = (SimpleGeneEdge) inter.get(i);
-		pw.println(sGE.getFrom()+" pd "+sGE.getTo());
+	    	sGE = (SimpleGeneEdge) inter.get(i);
+	    	pw.println(sGE.getFrom() + " pd " + sGE.getTo());
 	    }
 	}
 	catch(IOException ioe){
@@ -282,20 +283,21 @@ public class UsefulInteractions {
         	 FileOutputStream fos=null;
 		 String path=System.getProperty("user.dir");
 		 String sep=System.getProperty("file.separator");		 //path=path+sep+"data"+sep+"bn"+sep; //Raktim - Old Way
-		 path=path+sep+"data"+sep+"bn"+sep+"results"+sep;
+		 //path=path+sep+"data"+sep+"bn"+sep+BNConstants.RESULT_DIR+sep;
+		 path = BNConstants.getBaseFileLocation() + BNConstants.SEP + BNConstants.RESULT_DIR + BNConstants.SEP;
 	try {
 	    if(inter == null){
 		  System.out.println("UsefulInteractions-writeSif");  
-		throw new NullArgumentException("Given inter was null!");
+		  throw new NullArgumentException("Given inter was null!");
 	    }
 	    
-	    fos = new FileOutputStream(path+fileName);
+	    fos = new FileOutputStream(path + fileName);
 	    PrintWriter pw = new PrintWriter(fos, true);
 	    SimpleGeneEdge sGE = null;
 	    for(int i = 0; i < inter.size(); i++){
-		sGE = (SimpleGeneEdge) inter.get(i);
-		//System.out.println("UsefulInteractions-writeSif"+inter.size());
-		pw.println(sGE.getFrom()+" pp "+sGE.getTo());
+	    	sGE = (SimpleGeneEdge) inter.get(i);
+	    	//System.out.println("UsefulInteractions-writeSif"+inter.size());
+	    	pw.println(sGE.getFrom() + " pp " + sGE.getTo());
 	    }
 	}
 	catch(IOException ioe){
@@ -316,7 +318,8 @@ public class UsefulInteractions {
     public static void writeSifFileWithWeights(ArrayList inter, String fileName) throws NullArgumentException {
 	String path=System.getProperty("user.dir");
 	String sep=System.getProperty("file.separator");	//path=path+sep+"data"+sep+"bn"+sep;//Raktim - Old Way
-	path=path+sep+"data"+sep+"bn"+sep+"results"+sep;
+	//path=path+sep+"data"+sep+"bn"+sep+BNConstants.RESULT_DIR+sep;
+	path = BNConstants.getBaseFileLocation() + BNConstants.SEP + BNConstants.RESULT_DIR + BNConstants.SEP;
 	    try {
 	    if(inter == null){
 		throw new NullArgumentException ("Given inter was null!");
@@ -350,7 +353,8 @@ public class UsefulInteractions {
     	FileOutputStream fos=null;
     	String path=System.getProperty("user.dir");    	String sep=System.getProperty("file.separator");
 		//path=path+sep+"data"+sep+"bn"+sep;//Raktim - Old Way
-		path=path+sep+"data"+sep+"bn"+sep+"tmp"+sep;
+		//path=path+sep+"data"+sep+"bn"+sep+"tmp"+sep;
+		path = BNConstants.getBaseFileLocation() + BNConstants.SEP + BNConstants.TMP_DIR + BNConstants.SEP;
 	try {
 	    if(inter == null){
 		throw new NullArgumentException("Given inter was null!");

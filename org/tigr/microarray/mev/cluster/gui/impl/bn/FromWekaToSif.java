@@ -29,6 +29,8 @@ public class FromWekaToSif {
 			if(s.startsWith("LogScore")){
 			    toProcess = false;
 			}
+			if(s.startsWith("CLASS"))
+				continue;
 			if(toProcess){
 				if(map)
 					fromWekaToSifOneLine(s, pw, map);
