@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: EASE.java,v $
- * $Revision: 1.10 $
- * $Date: 2007-12-05 22:18:32 $
+ * $Revision: 1.11 $
+ * $Date: 2007-12-06 19:45:07 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -32,7 +32,7 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-import org.tigr.microarray.mev.cluster.gui.impl.ease.NestedEaseSelectorDialog;
+//import org.tigr.microarray.mev.cluster.gui.impl.ease.NestedEaseSelectorDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.sam.SAMGUI;
 import org.tigr.microarray.mev.cluster.gui.impl.sam.SAMGraph;
 import org.tigr.util.FloatMatrix;
@@ -89,25 +89,27 @@ public class EASE extends AbstractAlgorithm {
         expData = algorithmData.getMatrix("expression");
         
         if(performClusterAnalysis) {
-        	if(!params.getBoolean("run-nease", true)) {
+//Uncomment if/else block when Nested EASE is ready for release        	
+//        	if(!params.getBoolean("run-nease", true)) {
         		return performClusterAnnotationAnalysis(algorithmData);
-        	} else {
-        		AlgorithmData temp = performClusterAnnotationAnalysis(algorithmData);
-        		return performNestedEaseAnalysis(temp);
-        	}	
+//        	} else {
+//        		AlgorithmData temp = performClusterAnnotationAnalysis(algorithmData);
+//        		return performNestedEaseAnalysis(temp);
+//        	}	
         } else {
             return performSlideAnnotationSurvey(algorithmData);
         }
     }
     
     /**
+     * Re-enable when Nested EASE is ready for release
      * Runs EASE on each set of previously-generated EASE results found in algorithmData. Attaches
      * the additional EASE results (AlgorithmDatas) to the returned AlgorithmData object.
      * 
      * @param algorithmData
      * @return The AlgorithmData argument, with new data added. 
      * @throws AlgorithmException
-     */
+     
     protected AlgorithmData performNestedEaseAnalysis(AlgorithmData algorithmData) throws AlgorithmException {
         int[] termlist;
         isNestedEaseRun = true;
@@ -196,6 +198,8 @@ public class EASE extends AbstractAlgorithm {
         }
         return algorithmData;
     }
+    */
+    
     
     /**
      * Creates a new AlgorithmData object with the same input parameters as the supplied 
