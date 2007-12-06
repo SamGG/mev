@@ -158,7 +158,7 @@ public class PrepareArrayDataModule {
      * </ul>
      */
       //public static void prepareArrayData(String fileName,String num){
-    public static Properties prepareArrayData(String fileName,String num, boolean bootStrap, int numIter){
+    public static Properties prepareArrayData(String fileName,String num, boolean bootStrap, int numIter, int numClasses){
     	try {
     	        		System.out.println("prepareArrayData()" + fileName);
     	    Useful.checkFile(fileName);    	    boolean isBootstrapStr = bootStrap; //Raktim - Temp. Need to handle differently later.
@@ -190,6 +190,8 @@ public class PrepareArrayDataModule {
         	    props.setProperty("numBins", numBins);
         	    props.setProperty("rootOutputFileName","boot_");
         	    props.setProperty("seed","1");
+        	    props.setProperty("class", Integer.toString(numClasses));  // Set # of classes Here
+        	   
         	    for(int i = 0; i < Integer.parseInt(numBins); i++){
             		props.setProperty("binLabel"+i,"state"+(i));
             	}

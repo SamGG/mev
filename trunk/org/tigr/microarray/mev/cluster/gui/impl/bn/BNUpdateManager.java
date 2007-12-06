@@ -284,8 +284,11 @@ public class BNUpdateManager {
     }
     
     
-    /** retrievs the File object to receive the file system download
+    /** 
+     * NOT USED
+     * retrievs the File object to receive the file system download
      */
+    
     private File getOutputFileLocation() {
         File file = null;
         

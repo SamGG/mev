@@ -45,7 +45,7 @@ public class GetAccessions {
 	try {
 	    //Useful.checkFile(resourcererFileName);
 	    if(geneSymbols == null){
-		throw new NullArgumentException("Given geneSymbols is null!");
+	    	throw new NullArgumentException("Given geneSymbols is null!");
 	    }
 	    HashMap hm = new HashMap();
 	    // Read tab-delimited Resourcerer file line by line
@@ -55,24 +55,28 @@ public class GetAccessions {
 	    if(GetInteractionParemeterBothDialog.path!=null)
 	    	fr = new FileReader(GetInteractionParemeterBothDialog.path+"\\"+resourcererFileName);    
 	    */
+	    System.out.println("GetAccessions.getAccessions() File Name: " + resourcererFileName);
 	    fr = new FileReader(resourcererFileName);
 	    LineNumberReader lnr = new LineNumberReader(fr);
 	    String s = null;
 	    String[] tokens = null;
 	    String[] subTokens = null;
-	    while((s = lnr.readLine())!=null){
-		s = s.trim();
-		tokens = s.split("\t");
-		if(tokens.length >= Constants.SYMBOLS_COLUMN_NUMBER){
-		    // Resourcerer file format for the official gene symbols is:
-		    // official gene symbol ; gene common name
-		    subTokens = tokens[Constants.SYMBOLS_COLUMN_NUMBER].split(";");
-		    if(subTokens.length >= 2){
-			if(Useful.find(geneSymbols,subTokens[0].trim())){
-			    hm.put(subTokens[0], tokens[Constants.GB_COLUMN_NUMBER]);
+	    int dummy = 2;
+	    while((s = lnr.readLine())!= null){
+	    	if(dummy <= 2)
+	    		continue; //Skip irst 2 lines
+			s = s.trim();
+			tokens = s.split("\t");
+			if(tokens.length >= Constants.SYMBOLS_COLUMN_NUMBER){
+			    // Resourcerer file format for the official gene symbols is:
+			    // official gene symbol ; gene common name
+			    subTokens = tokens[Constants.SYMBOLS_COLUMN_NUMBER].split(";");
+			    if(subTokens.length >= 2){
+			    	if(Useful.find(geneSymbols,subTokens[0].trim())){
+			    		hm.put(subTokens[0], tokens[Constants.GB_COLUMN_NUMBER]);
+			    	}
+			    }
 			}
-		    }
-		}
 	    }
 	    lnr.close();
 	    fr.close();

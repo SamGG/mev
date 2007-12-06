@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.io.IOException;
 import java.util.Random;
+import java.util.Vector;
 /**
  * The class <code>Bootstrap</code> is given a dataset in CSV format, creates a given number of bootstrapped datasets
  * in CSV format as well
@@ -44,7 +45,8 @@ public class Bootstrap {
      * of the given dataset
      */
     public static String[][] readDataSet(String dataSetFileName){
-		// initialize 2D array that will contain the dataset of size max iterations in either dimension
+    	System.out.println("readDataSet()");
+    	// initialize 2D array that will contain the dataset of size max iterations in either dimension
 		String[][] dataSet = new String[MAX_ITERATIONS][MAX_ITERATIONS];
 		for(int i = 0; i < MAX_ITERATIONS; i++){
 		    for(int j = 0; j < MAX_ITERATIONS; j++){
@@ -52,6 +54,7 @@ public class Bootstrap {
 		    }
 		}
 		int trueSizeX = 0;
+		
 		try {
 		    // read the given input file
 		    FileReader fr = new FileReader(dataSetFileName);
@@ -62,6 +65,7 @@ public class Bootstrap {
 		    	s = s.trim();
 		        dataSet[count] = s.split(",");
 		        trueSizeX = dataSet[count].length;
+		        //System.out.println("readDataSet(): " + dataSet[count][0]);
 		        count++;
 		    }
 		    String[][] result = new String[count][trueSizeX];
@@ -110,20 +114,45 @@ public class Bootstrap {
      * used to randomly resample the original dataset with replacement
      */
     public static void createDataSets(String origDataSetFileName, String rootOutFileName, int numIterations, long seed){
-		try { 
+    	System.out.println("createDataSets()");
+    	try { 
 		    String[][] origDataSet = readDataSet(origDataSetFileName);
 		    String[][] dataSet_i = null;
 		    FileOutputStream fos = null;
 		    PrintWriter pw = null;
 		    Random rand = new Random(seed);
-		    for(int i = 0; i < numIterations; i++){
-			fos = new FileOutputStream(rootOutFileName+i);
-			pw = new PrintWriter(fos, true);
-			// Construct a dataSet_i by resampling with replacement instances from origDataSet
-			dataSet_i = reSampleDataSet(rand, origDataSet);
-			printDataSet(pw, dataSet_i);
-			fos.close();
-			pw.close();
+		    
+		    Vector<String> classes = new Vector<String>();
+		    for(int i = 1; i < origDataSet.length; i++) {
+	        	if(!classes.contains(origDataSet[i][0])){
+	        		classes.add(origDataSet[i][0]);
+	        	}
+		    }
+		   
+		    int classSizes[] = new int[classes.size()];
+		    for(int i = 0; i < classSizes.length; i++) {
+		    	classSizes[i] = 0;
+		    }
+		    
+		    for(int i = 1; i < origDataSet.length; i++ ) {
+		    	int index = classes.indexOf(origDataSet[i][0]);
+		    	if(index == -1) System.out.println("Class Mismatch - createDataSets()");
+		    	else classSizes[index] = classSizes[index] + 1;
+		    	//System.out.println("createDataSets() classSizes " + classSizes[index]);
+		    }
+		    
+		    // Debug Only
+		    for(int i = 0; i < classes.size(); i++) {
+		    	System.out.println(classes.get(i) + " Size: " + classSizes[i]);
+		    }
+			for(int i = 0; i < numIterations; i++){
+				fos = new FileOutputStream(rootOutFileName+i);
+				pw = new PrintWriter(fos, true);
+				// Construct a dataSet_i by resampling with replacement instances from origDataSet
+				dataSet_i = reSampleDataSet(rand, origDataSet, classes, classSizes);
+				printDataSet(pw, dataSet_i);
+				fos.close();
+				pw.close();
 		    }
 		}
 		catch(IOException ioe){
@@ -141,21 +170,56 @@ public class Bootstrap {
      * @return a <code>String[][]</code> corresponding to a bootstrapped dataset obtained by
      * resampling with replacement the original dataset
      */
-    public static String[][] reSampleDataSet(Random rand, String[][] origDataSet){
-		// Initialize dataset to original dataset
+    public static String[][] reSampleDataSet(Random rand, String[][] origDataSet, Vector classes, int[]clsSizes){
+    	System.out.println("reSampleDataSet()");
+    	// Initialize dataset to original dataset
 		String[][] dataSet = new String[origDataSet.length][origDataSet[0].length];
 		int randomNumber = 0;
 		for(int k = 0; k < dataSet[0].length; k++){
 		    dataSet[0][k] = origDataSet[0][k];
 		}
+		
 		// resample with replacement original dataset
-		for(int i = 1; i < dataSet.length; i++) {
-		    randomNumber = rand.nextInt(origDataSet.length-1);
-		    randomNumber++;
-		    for(int j = 0; j < dataSet[1].length; j++) {
-			dataSet[i][j] = origDataSet[randomNumber][j];
-		    }
+		if(clsSizes.length == 1) {
+			for(int i = 1; i < dataSet.length; i++) {
+			    randomNumber = rand.nextInt(origDataSet.length-1);
+			    randomNumber++;
+			    //Randomize values from a row
+			    for(int j = 0; j < dataSet[1].length; j++) {
+			    	dataSet[i][j] = origDataSet[randomNumber][j];
+			    }
+			}
 		}
+		else {
+		//Recoded for multiple class bootstrapping
+			int dataSize = 1;
+			int[] classSizes = new int[clsSizes.length];
+			for(int i = 0; i < clsSizes.length; i++){
+				classSizes[i] = clsSizes[i];
+				//System.out.println("classSizes[i] Size: " + classSizes[i]);
+			}
+			while(dataSize < dataSet.length){
+				 randomNumber = rand.nextInt(origDataSet.length-1);
+				 randomNumber++;
+				 
+				 int ind = classes.indexOf(origDataSet[randomNumber][0]);
+				 if(ind == -1) System.out.println(origDataSet[randomNumber][0] + " not found");
+				 if(classSizes[ind] != 0) {
+					 for(int j = 0; j < dataSet[1].length; j++) {
+					    dataSet[dataSize][j] = origDataSet[randomNumber][j];
+					 }
+					 dataSize++;
+					 classSizes[ind] = classSizes[ind] - 1;
+					 //System.out.println("reSampleDataSet(): dataSize: " + dataSize);
+				 }
+			}
+		}
+		/*
+		System.out.println("End reSampleDataSet()");
+		for(int i = 0; i < classSizes.length; i++){
+			System.out.println("classSizes[i] Size: " + classSizes[i]);
+		}
+		*/
 		return dataSet;
     }
 

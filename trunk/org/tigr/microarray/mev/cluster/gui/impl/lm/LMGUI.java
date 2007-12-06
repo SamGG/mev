@@ -12,6 +12,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.bn.getInteractions.GetInteractio
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 //import org.tigr.microarray.mev.cluster.gui.impl.bn.BNGUI;
 import org.tigr.microarray.mev.cluster.gui.impl.lm.LiteratureMiningDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.BNConstants;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.RunWekaProgressPanel;//import java.util.Hashtable;
 import java.util.HashMap;
 import java.io.FileReader;
@@ -23,7 +24,7 @@ import java.io.BufferedWriter;
 import java.lang.reflect.InvocationTargetException;
 
 public class LMGUI implements IClusterGUI {
-	String sep = System.getProperty("file.separator");
+	//String sep = System.getProperty("file.separator");
 	public static final int GENE_CLUSTER = 0;
 	public static boolean done=false;
 	//public static boolean cancelRun=false;
@@ -40,6 +41,7 @@ public class LMGUI implements IClusterGUI {
 		final LiteratureMiningDialog dialog = new LiteratureMiningDialog(framework.getFrame(), repository, framework.getData().getFieldNames());
         if(dialog.showModal() != JOptionPane.OK_OPTION)
               return null;
+        String basePath = dialog.getBaseFileLocation() + BNConstants.SEP;
         converter(dialog.getSelectedCluster(),framework,dialog.getBaseFileLocation());
         buildPropertyFile(dialog.isLit(),dialog.isPPI(),dialog.isBoth(),dialog.useGoTerm(),dialog.getBaseFileLocation());		         		 
         Thread thread1 = new Thread( new Runnable(){
@@ -69,7 +71,8 @@ public class LMGUI implements IClusterGUI {
 	   argv[0] = "-N";
        //argv[1] = System.getProperty("user.dir")+"/data/bn/liter_mining_alone_network.sif"; //Raktim - Old Way
        //Raktim - Modified
-	   argv[1] = System.getProperty("user.dir")+"/data/bn/results/"+System.getProperty("LM_ONLY");
+	   //argv[1] = System.getProperty("user.dir")+"/data/bn/results/"+System.getProperty("LM_ONLY");
+	   argv[1] = basePath + BNConstants.RESULT_DIR + BNConstants.SEP + System.getProperty("LM_ONLY");
 	   argv[2] = "-p";	   //argv[3] = System.getProperty("user.dir")+"/plugins/core/yLayouts.jar";
 	   argv[3] = System.getProperty("user.dir")+"/plugins/yLayouts.jar";
 	   // Raktim - For Edge properties file
@@ -124,7 +127,7 @@ private void addGeneralInfo(DefaultMutableTreeNode root, GeneralInfo info) {
     root.add(node);
 }
 	private void buildPropertyFile(boolean lit,boolean ppi,boolean both,boolean goTerms,String path){
-	 String sep= System.getProperty("file.separator");    
+	 //String sep= System.getProperty("file.separator");    
 	 final int fileSize=4;
 	 String[] propFile=new String[fileSize];
 	 String[] outFile=new String[fileSize-1];
@@ -137,76 +140,75 @@ private void addGeneralInfo(DefaultMutableTreeNode root, GeneralInfo info) {
 	 outFile[0]="outInteractionsLit.txt";
 	 outFile[1]="outInteractionsPPI.txt"; 
 	 outFile[2]="outInteractionsBoth.txt";	  */
-	 propFile[0]= path+sep+"tmp"+sep+"getInterModLit.props";
-	 propFile[1]= path+sep+"tmp"+sep+"getInterModPPIDirectly.props";
-	 propFile[2]= path+sep+"tmp"+sep+"getInterModBoth.props";
-	 propFile[3]= path+sep+"tmp"+sep+"prepareXMLBifMod.props"; 
-	 outFile[0]="outInteractionsLit.txt";
-	 outFile[1]="outInteractionsPPI.txt"; 
-	 outFile[2]="outInteractionsBoth.txt";
+	 propFile[0]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.LIT_INTER_MODULE_FILE;
+	 propFile[1]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.PPI_INTER_MODULE_DIRECT_FILE;
+	 propFile[2]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.BOTH_INTER_MODULE_FILE;
+	 propFile[3]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.XML_BIF_MODULE_FILE; 
+	 outFile[0] = BNConstants.LIT_INTER_FILE;
+	 outFile[1] = BNConstants.PPI_INTER_FILE; 
+	 outFile[2] = BNConstants.BOTH_INTER_FILE;
 	 
 	 PrintWriter out=null;
 	 try{ 	 
 		 if(lit){
-		out= new PrintWriter(new FileOutputStream(new File(propFile[0])));	 
-	         out.println("resourcererFileName=res.txt");
-		 out.println("gbAccessionsFileName=list.txt");
-		 out.println("symbolsArticlesFromPubmedFileName=symArtsPubmed.txt");
-		 out.println("symbolsArticlesFromGeneDbFileName=symArtsGeneDb.txt");
-		 out.println("articleRemovalThreshold=2");		 
-		 out.println("fromLiterature=true");
-		 out.println("fromPpi=false");
-		 out.println("outInteractionsFileName="+outFile[0]);
-		 out.flush();
-                 out.close();
+			 out= new PrintWriter(new FileOutputStream(new File(propFile[0])));	 
+	         out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
+	         out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+	         out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
+	         out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
+			 out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 
+			 out.println(BNConstants.FRM_LIT + "=true");
+			 out.println(BNConstants.FRM_PPI + "=false");
+			 out.println(BNConstants.OUT_INTER_FILE_NAME + "=" +outFile[0]);
+			 out.flush();
+             out.close();
 		 }
 		  if(ppi){
-		out= new PrintWriter(new FileOutputStream(new File(propFile[1])));	 
-	         out.println("resourcererFileName=res.txt");
-		 out.println("gbAccessionsFileName=list.txt");
-		 out.println("symbolsArticlesFromPubmedFileName=symArtsPubmed.txt");
-		 out.println("symbolsArticlesFromGeneDbFileName=symArtsGeneDb.txt");
-		 out.println("articleRemovalThreshold=2");		 	  
-		 out.println("fromLiterature=false");
-		 out.println("fromPpi=true");
-		 out.println("outInteractionsFileName="+outFile[1]);
-		 out.println("usePpiDirectly=true");
-		 //out.println("usePpiOnlyWithin=true");
-		 out.println("ppiFileName=all_ppi.txt");
-		 out.flush();
-                 out.close();
+			  out= new PrintWriter(new FileOutputStream(new File(propFile[1])));	 
+	         out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
+			 out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+			 out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
+			 out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
+			 out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
+			 out.println(BNConstants.FRM_LIT + "=false");
+			 out.println(BNConstants.FRM_PPI + "=true");
+			 out.println(BNConstants.OUT_INTER_FILE_NAME + "=" + outFile[1]);
+			 out.println(BNConstants.USE_PPI_DIRECT + "=true");
+			 //out.println("usePpiOnlyWithin=true");
+			 out.println(BNConstants.PPI_FILE_NAME + "=" + BNConstants.PPI_FILE);
+			 out.flush();
+             out.close();
 		 
 		 }
 		  if(both){
 	          out= new PrintWriter(new FileOutputStream(new File(propFile[2])));	 
-	         out.println("resourcererFileName=res.txt");
-		 out.println("gbAccessionsFileName=list.txt");
-		 out.println("symbolsArticlesFromPubmedFileName=symArtsPubmed.txt");
-		 out.println("symbolsArticlesFromGeneDbFileName=symArtsGeneDb.txt");
-		 out.println("articleRemovalThreshold=2");		 	  
-		 
-	         out.println("fromLiterature=true");
-		 out.println("fromPpi=true");
-		 out.println("outInteractionsFileName="+outFile[2]);
-		  out.println("ppiFileName=all_ppi.txt");
-		  out.flush();
-                 out.close();
+	          out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
+	          out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+	          out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
+	          out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
+	          out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
+		      out.println(BNConstants.FRM_LIT + "=true");
+		      out.println(BNConstants.FRM_PPI + "=true");
+		      out.println(BNConstants.OUT_INTER_FILE_NAME + "=" + outFile[2]);
+		      out.println(BNConstants.PPI_FILE_NAME + "=" + BNConstants.PPI_FILE);
+		      out.flush();
+              out.close();
 	     }
 	     out= new PrintWriter(new FileOutputStream(new File(propFile[fileSize-1])));
 	     if(goTerms){
 	    	 System.out.println("Use GO Terms");
-	    	 out.println("useGo=true");
-		     out.println("gbGOsFileName=gbGOs.txt"); 
+	    	 out.println(BNConstants.USE_GO + "=" + "true");
+		     out.println(BNConstants.GB_GO_FILE_NAME + "=" + BNConstants.GB_GO_FILE); //"gbGOs.txt"
 	     }
-	     out.println("namesFileName=list.txt");
-	     out.println("distributionFromWeights=true");
-	     out.println("outXMLBifFileName=resultBif.xml");
+	     out.println(BNConstants.NAMES_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+	     out.println(BNConstants.DISTRIBUTION_FRM_WEIGHTS + "=" + "true");
+	     out.println(BNConstants.OUT_XML_BIF_FILE_NAME + "=" + BNConstants.BIF_RESULT_FILE);
 	     if(lit){
-	       out.println("sifFileName="+outFile[0]);
+	       out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[0]);
 	     }else if(ppi){
-                 out.println("sifFileName="+outFile[1]);
+                 out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[1]);
 	     } else if(both){
-	      out.println("sifFileName="+outFile[2]);
+	      out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[2]);
 	     }
 	     out.flush();
 	     out.close();
@@ -214,16 +216,25 @@ private void addGeneralInfo(DefaultMutableTreeNode root, GeneralInfo info) {
             e.printStackTrace();
         }
 	}
+	
+	/**
+	 * Function to read a cluster. 
+	 * It reads the UID(probe id, ref seq etc) 
+	 * and maps them to Genbank acc and writes them to a tmp file- list.txt 
+	 * @param cl
+	 * @param framework
+	 * @param path
+	 */
 	public void converter(Cluster cl,IFramework framework,String path){
         int genes=cl.getIndices().length;        //System.out.print(genes);
         IData data=framework.getData();
         int[] rows = new int[genes];
         rows=cl.getIndices();
-        String[] affyId=new String[genes];
+        String[] affyId = new String[genes];
         String[] accList =new String[genes];
         HashMap accHash = new HashMap();
         String lineRead = "";
-        String sep=System.getProperty("file.separator");
+        //String sep=System.getProperty("file.separator");
         System.out.println(0);
         for (int i=0; i<rows.length; i++) {
         	affyId[i] = data.getSlideDataElement(0,rows[i]).getFieldAt(0);
@@ -231,7 +242,7 @@ private void addGeneralInfo(DefaultMutableTreeNode root, GeneralInfo info) {
         }
         System.out.println(1);
         try {
-        	File file = new File(path,"affyID_accession.txt");
+        	File file = new File(path,BNConstants.ACCESSION_FILE);
         	FileReader fr = new FileReader(file);
         	BufferedReader br = new BufferedReader(fr);
         	String[] fields;
@@ -244,7 +255,7 @@ private void addGeneralInfo(DefaultMutableTreeNode root, GeneralInfo info) {
         		accHash.put(fields[0].trim(), fields[1].trim());
         		//System.out.println(fields[1] );
         	}
-        System.out.println(2);
+        	System.out.println(2);
         	for (int i = 0; i < accList.length; i++) {
         		accList[i] = (String)accHash.get((String)affyId[i].trim());
         	}
@@ -268,9 +279,9 @@ private void addGeneralInfo(DefaultMutableTreeNode root, GeneralInfo info) {
 	 return accList;
  }
  private void writeAccToFile (String[] accList, String path) {
-	 String sep=System.getProperty("file.separator");	 //String outFile = path + sep+"list.txt";
+	 //String sep=System.getProperty("file.separator");	 //String outFile = path + sep+"list.txt";
 	 //	 Raktim - Use tmp Dir
-	 String outFile = path + sep+ "tmp" + sep + "list.txt";
+	 String outFile = path + BNConstants.SEP+ BNConstants.TMP_DIR + BNConstants.SEP + BNConstants.OUT_ACCESSION_FILE;
 	 System.out.println(outFile);
 	BufferedWriter out = null;
 	int nRows = accList.length;
@@ -292,24 +303,46 @@ private void addGeneralInfo(DefaultMutableTreeNode root, GeneralInfo info) {
 	public void literatureMining(boolean lit,boolean ppi,boolean both,String path){
 		//System.out.print(sep);
 		GetInteractionsModule getModule=new GetInteractionsModule(path);
-		if(lit /*& !cancelRun*/){
+		if(lit && !both){
 			System.out.print("run");
 		  //getModule.test(path+sep+"getInterModLit.props"); 	//Raktim - USe tmp dir
-		  getModule.test(path+sep+"tmp"+sep+"getInterModLit.props");
+		  GetInteractionsModule.test(
+				  path +
+				  BNConstants.SEP +
+				  BNConstants.TMP_DIR +
+				  BNConstants.SEP +
+				  BNConstants.LIT_INTER_MODULE_FILE);
+		  return;
 		}
-		if(ppi /*& !cancelRun*/){
+		if(ppi && !both){
 		  //getModule.test(path+sep+"getInterModPPIDirectly.props"); //Raktim - USe tmp dir
-			getModule.test(path+sep+"tmp"+sep+"getInterModPPIDirectly.props"); 
+			GetInteractionsModule.test(
+					path +
+					BNConstants.SEP +
+					BNConstants.TMP_DIR +
+					BNConstants.SEP +
+					BNConstants.PPI_INTER_MODULE_DIRECT_FILE); 
+			return;
 		}
-		if(both /*& !cancelRun*/){
+		if(both){
 		  //getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
-			getModule.test(path+sep+"tmp"+sep+"getInterModBoth.props");
+			GetInteractionsModule.test(
+					path +
+					BNConstants.SEP +
+					BNConstants.TMP_DIR +
+					BNConstants.SEP +
+					BNConstants.BOTH_INTER_MODULE_FILE);
 		}
 		
 	}
 	public void prepareXMLBifFile(String path){
-	PrepareXMLBifModule getModule=new PrepareXMLBifModule();		//getModule.test(path+sep+"prepareXMLBifMod.props"); //Raktim - USe tmp dir
-		getModule.test(path+sep+"tmp"+sep+"prepareXMLBifMod.props");
+		PrepareXMLBifModule getModule=new PrepareXMLBifModule();		//getModule.test(path+sep+"prepareXMLBifMod.props"); //Raktim - USe tmp dir
+		PrepareXMLBifModule.test(
+				path +
+				BNConstants.SEP +
+				BNConstants.TMP_DIR +
+				BNConstants.SEP +
+				BNConstants.XML_BIF_MODULE_FILE);
 	}
 	 /**
      * General info structure.

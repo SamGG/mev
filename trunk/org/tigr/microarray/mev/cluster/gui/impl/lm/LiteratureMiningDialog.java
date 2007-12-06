@@ -10,7 +10,7 @@ All rights reserved.
 
 package org.tigr.microarray.mev.cluster.gui.impl.lm;
 
-import java.awt.Color;import java.awt.Component;import java.awt.Dimension;import java.awt.Font;import java.awt.Frame;import java.awt.GridBagConstraints;import java.awt.GridBagLayout;import java.awt.Insets;import java.awt.Toolkit;import java.awt.event.ActionEvent;import java.awt.event.ActionListener;import java.awt.event.ItemEvent;import java.awt.event.ItemListener;import java.awt.event.WindowEvent;import java.io.File;import java.util.Vector;import javax.swing.BorderFactory;import javax.swing.ButtonGroup;import javax.swing.DefaultListCellRenderer;import javax.swing.DefaultListModel;import javax.swing.JButton;import javax.swing.JCheckBox;import javax.swing.JComboBox;import javax.swing.JFileChooser;import javax.swing.JFrame;import javax.swing.JLabel;import javax.swing.JList;import javax.swing.JOptionPane;import javax.swing.JPanel;import javax.swing.JRadioButton;import javax.swing.JScrollPane;import javax.swing.JTabbedPane;import javax.swing.JTextField;import javax.swing.JTextPane;import javax.swing.border.BevelBorder;import javax.swing.border.EtchedBorder;import javax.swing.border.TitledBorder;import javax.swing.event.ListSelectionEvent;import javax.swing.event.ListSelectionListener;import org.tigr.microarray.mev.TMEV;import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;import org.tigr.microarray.mev.cluster.gui.helpers.ClusterBrowser;import org.tigr.microarray.mev.cluster.gui.impl.bn.BNUpdateManager;import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
+import java.awt.Color;import java.awt.Component;import java.awt.Dimension;import java.awt.Font;import java.awt.Frame;import java.awt.GridBagConstraints;import java.awt.GridBagLayout;import java.awt.Insets;import java.awt.Toolkit;import java.awt.event.ActionEvent;import java.awt.event.ActionListener;import java.awt.event.ItemEvent;import java.awt.event.ItemListener;import java.awt.event.WindowEvent;import java.io.File;import java.util.Vector;import javax.swing.BorderFactory;import javax.swing.ButtonGroup;import javax.swing.DefaultListCellRenderer;import javax.swing.DefaultListModel;import javax.swing.JButton;import javax.swing.JCheckBox;import javax.swing.JComboBox;import javax.swing.JFileChooser;import javax.swing.JFrame;import javax.swing.JLabel;import javax.swing.JList;import javax.swing.JOptionPane;import javax.swing.JPanel;import javax.swing.JRadioButton;import javax.swing.JScrollPane;import javax.swing.JTabbedPane;import javax.swing.JTextField;import javax.swing.JTextPane;import javax.swing.border.BevelBorder;import javax.swing.border.EtchedBorder;import javax.swing.border.TitledBorder;import javax.swing.event.ListSelectionEvent;import javax.swing.event.ListSelectionListener;import org.tigr.microarray.mev.TMEV;import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;import org.tigr.microarray.mev.cluster.gui.helpers.ClusterBrowser;import org.tigr.microarray.mev.cluster.gui.impl.bn.BNConstants;import org.tigr.microarray.mev.cluster.gui.impl.bn.BNUpdateManager;import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 
 /** Accumulates parameters for execution of BN analysis.
  * Based on EASEInitDialog
@@ -33,7 +33,7 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
     AlphaPanel statParamsPanel;
     JTabbedPane tabbedPane;
     Font font;
-    String sep;
+    //String sep;
     Frame parent;
     /** Creates a new instance of LiteratureMiningDialog
      * @param parent Parent Frame
@@ -77,7 +77,7 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
         useGoPanel = new XmlBifPanel();
        // runBNPanel=new RunBNPanel();
         //tabbedPane.add("Running Bayesian Network Parameters", runBNPanel);        //Removed - Raktim
-        //parameters.add(configPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));       
+        parameters.add(configPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));       
         parameters.add(priorsPanel, new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         //parameters.add(discPanel, new GridBagConstraints(0,2,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         //parameters.add(classnumPanel, new GridBagConstraints(0,3,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
@@ -149,7 +149,7 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
         useGoPanel = new XmlBifPanel();
         //runBNPanel=new RunBNPanel(); 
         //tabbedPane.add("Running Bayesian Network Parameters", runBNPanel);        //Removed - Raktim
-        //parameters.add(configPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));       
+        parameters.add(configPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));       
         parameters.add(priorsPanel, new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         //parameters.add(discPanel, new GridBagConstraints(0,2,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         //parameters.add(classnumPanel, new GridBagConstraints(0,3,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
@@ -664,7 +664,7 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
             annPanel.add(removeButton, 				new GridBagConstraints(2,1,1,1,0.0,0.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(0,5,10,0), 0,0));
             annPanel.add(filesLabel,			 	new GridBagConstraints(0,2,1,1,0.0,0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0));
             annPanel.add(annPane, 					new GridBagConstraints(1,2,2,1,0.0,1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
-            sep = System.getProperty("file.separator");
+            //sep = System.getProperty("file.separator");
             File file = new File(getBaseFileLocation()+"/Data/Convert/");
             String tempPath = file.getPath();
             Vector fileVector = new Vector();
@@ -672,12 +672,12 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
             if(file.exists()){
                 String [] listFileNames = file.list();
                 for(int i = 0; i < listFileNames.length; i++){
-                    File tempFile = new File(tempPath+sep+listFileNames[i]);
+                    File tempFile = new File(tempPath+BNConstants.SEP+listFileNames[i]);
                     if(tempFile.isFile())
                         fileVector.add(listFileNames[i]);
                 }
                 if(fileVector.size() > 0){
-                    converterFileField.setText(tempPath+sep+((String)fileVector.elementAt(0)));
+                    converterFileField.setText(tempPath+BNConstants.SEP+((String)fileVector.elementAt(0)));
                 }
             }
             
@@ -700,7 +700,7 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
             String tempPath = file.getParent();
             int fileIndex = this.fileList.getSelectedIndex();
             String fileName = (String)(this.fileList.getModel().getElementAt(this.fileList.getSelectedIndex()));
-            this.converterFileField.setText(tempPath+sep+fileName);
+            this.converterFileField.setText(tempPath+BNConstants.SEP+fileName);
         }
         private void updateAnnFileList(File [] files){
             File file;
@@ -924,37 +924,17 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
         JTextField defaultFileBaseLocation;
         public ConfigPanel() {
             super("File Updates and Configuration");
-            setLayout(new GridBagLayout());
-            JButton updateFilesButton = new JButton("Update LM File System");
-            updateFilesButton.setActionCommand("update-files-command");
-            updateFilesButton.setFocusPainted(false);
-            updateFilesButton.addActionListener(listener);
-            updateFilesButton.setToolTipText("<html>Downloads LM source files<br>for a selected species and array type.</html>");
-           //JButton browseFileBaseButton = new JButton("Select BN File System");
-            JLabel fileLocation=new JLabel("All LM Source Files Location:");
-            //fileileBaseButton.setActionCommand("select-file-base-command");
-            //browseFileBaseButton.setFocusPainted(false);
-            //browseFileBaseButton.addActionListener(listener);
-            //browseFileBaseButton.setToolTipText("<html>Helps select the BN annotation file system<br>that corresponds the current species and array type.</html>");
-            defaultFileBaseLocation = new JTextField(TMEV.getFile("data/bn").getAbsolutePath(), 25);
-            defaultFileBaseLocation.setEditable(false);
-            add(fileLocation, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0, 0));
-            add(defaultFileBaseLocation,  new GridBagConstraints(1,0,1,1,2,0,GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));            
-            add(updateFilesButton, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,2,0), 0, 0));                               
-            //add(updateFilesNotReady, new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0, 0));                               
+            setLayout(new GridBagLayout());            JButton cngFilesButton = new JButton("Change Location");            cngFilesButton.setActionCommand("select-file-base-command");            cngFilesButton.addActionListener(listener);            cngFilesButton.setToolTipText("<html>Select the directory where BN  files reside.</html>");            
+            //JButton updateFilesButton = new JButton("Update LM File System");            //updateFilesButton.setActionCommand("update-files-command");            //updateFilesButton.setFocusPainted(false);            //updateFilesButton.addActionListener(listener);            //updateFilesButton.setToolTipText("<html>Downloads LM source files<br>for a selected species and array type.</html>");           //JButton browseFileBaseButton = new JButton("Select BN File System");
+            JLabel fileLocation=new JLabel("LM Source Files Location:");            //fileileBaseButton.setActionCommand("select-file-base-command");            //browseFileBaseButton.setFocusPainted(false);            //browseFileBaseButton.addActionListener(listener);            //browseFileBaseButton.setToolTipText("<html>Helps select the BN annotation file system<br>that corresponds the current species and array type.</html>");            //defaultFileBaseLocation = new JTextField(TMEV.getFile("data/bn").getAbsolutePath(), 25);            defaultFileBaseLocation = new JTextField(new File(System.getProperty("user.dir")).getAbsolutePath());            defaultFileBaseLocation.setEditable(true);            add(fileLocation, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0, 0));            add(defaultFileBaseLocation,  new GridBagConstraints(1,0,1,1,2,0,GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));                        //add(updateFilesButton, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,2,0), 0, 0));                                           //add(updateFilesNotReady, new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0, 0));                                           add(cngFilesButton, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,2,0), 0, 0));
            }
         public void selectFileSystem() {
             String startDir = defaultFileBaseLocation.getText();
             File file = new File(startDir);
-            if(!file.exists()) {                
-                file = TMEV.getFile("data/bn");
-                if(file == null) {
-                    file = new File(System.getProperty("user.dir"));
-                }
-            }
+            if(!file.exists()) {                                file = TMEV.getFile("data/bn");                if(file == null) {                    file = new File(System.getProperty("user.dir"));                }            }
             JFileChooser chooser = new JFileChooser(file);
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            if(chooser.showOpenDialog(LiteratureMiningDialog.this) == JOptionPane.OK_OPTION) {
+            if(chooser.showOpenDialog(LiteratureMiningDialog.this) == JOptionPane.OK_OPTION) {            	String dir = chooser.getSelectedFile().getAbsolutePath().trim();                if(dir.contains(" ")){                	JOptionPane.showMessageDialog(parent,                 			"Spaces are not allowed in Path. \n Selected a different location",                 			"BN Initialization: Illegal Char in Path",                 			JOptionPane.ERROR_MESSAGE);                	defaultFileBaseLocation.grabFocus();                	defaultFileBaseLocation.selectAll();                	defaultFileBaseLocation.setCaretPosition(0);                	return;                }
                 defaultFileBaseLocation.setText(chooser.getSelectedFile().getAbsolutePath());
             }
         }
@@ -1010,8 +990,8 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
         //TODO add an update manager like the one in EASE module
        	      BNUpdateManager manager = new BNUpdateManager((JFrame)parent,configPanel.getBaseFileLocation());
               manager.updateFiles();
-            } else if (command.equals("ok-command")) {
-                result = JOptionPane.OK_OPTION;
+            } else if (command.equals("ok-command")) {            	System.out.println("LIT Mining Dlg. OK Cmd");
+                result = JOptionPane.OK_OPTION;                                // Validate if selected options have supporting file(s)                String fileBase = configPanel.getBaseFileLocation();                if(isLit()){                	//Check if Lit File(s) exist                	if(!(new File(fileBase + BNConstants.SEP + BNConstants.RESOURCERER_FILE)).exists()) {                		JOptionPane.showMessageDialog(                				parent,                 				"File: " +                 				fileBase + BNConstants.SEP + BNConstants.RESOURCERER_FILE + " is missing",                                "BN Initialization: Missing File", JOptionPane.WARNING_MESSAGE);                		return;                	}                	                	if(!(new File(fileBase + BNConstants.SEP + BNConstants.ACCESSION_FILE)).exists()) {                		JOptionPane.showMessageDialog(                				parent,                 				"File: " +                 				fileBase + BNConstants.SEP + BNConstants.ACCESSION_FILE + " is missing",                                "BN Initialization: Missing File", JOptionPane.WARNING_MESSAGE);                		return;                	}                	                	if(!(new File(fileBase + BNConstants.SEP + BNConstants.GENE_DB_FILE)).exists()) {                		JOptionPane.showMessageDialog(                				parent,                 				"File: " +                 				fileBase + BNConstants.SEP + BNConstants.GENE_DB_FILE + " is missing",                                "BN Initialization: Missing File", JOptionPane.WARNING_MESSAGE);                		return;                	}                	                	if(!(new File(fileBase + BNConstants.SEP + BNConstants.PUBMED_DB_FILE)).exists()) {                		JOptionPane.showMessageDialog(                				parent,                 				"File: " +                 				fileBase + BNConstants.SEP + BNConstants.PUBMED_DB_FILE + " is missing",                                "BN Initialization: Missing File", JOptionPane.WARNING_MESSAGE);                		return;                	}                }                                if(isPPI()) {                	if(!(new File(fileBase + BNConstants.SEP + BNConstants.PPI_FILE)).exists()) {                		JOptionPane.showMessageDialog(                				parent,                 				"File: " +                 				fileBase + BNConstants.SEP + BNConstants.PPI_FILE + " is missing",                                "BN Initialization: Missing File", JOptionPane.WARNING_MESSAGE);                		return;                	}                }                                if(isNone()) {                	JOptionPane.showMessageDialog(            				parent,             				"Network Priors Source(s) not selected",                            "BN Initialization: Missing Selection", JOptionPane.WARNING_MESSAGE);            		return;                }                                if(useGoTerm()) {                	if(!(new File(fileBase + BNConstants.SEP + BNConstants.GB_GO_FILE)).exists()) {                		JOptionPane.showMessageDialog(                				parent,                 				"File: " +                 				fileBase + BNConstants.SEP + BNConstants.GB_GO_FILE + " is missing",                                "BN Initialization: Missing File", JOptionPane.WARNING_MESSAGE);                		return;                	}                }                                //Create "tmp" & "results" directories if they don't exist report         		//problems if any encountered.        		if(!(new File(fileBase + BNConstants.SEP + BNConstants.RESULT_DIR)).exists()) {	        		boolean success = (new File(fileBase + BNConstants.SEP + BNConstants.RESULT_DIR)).mkdir();	        	    if (!success) {	        	        // Directory creation failed	        	    	JOptionPane.showMessageDialog(	            				parent, 	            				"Dir: " + 	            				fileBase + BNConstants.SEP + BNConstants.RESULT_DIR + " cannot be created",	                            "BN Initialization: Dir create error", JOptionPane.WARNING_MESSAGE);	            		return;	        	    }	        	    System.out.println("Dir: " +             				fileBase + BNConstants.SEP + BNConstants.RESULT_DIR + " created successfully !!");        		}        		        		if(!(new File(fileBase + BNConstants.SEP + BNConstants.TMP_DIR)).exists()) {	        		boolean success = (new File(fileBase + BNConstants.SEP + BNConstants.TMP_DIR)).mkdir();	        	    if (!success) {	        	        // Directory creation failed	        	    	JOptionPane.showMessageDialog(	            				parent, 	            				"Dir: " + 	            				fileBase + BNConstants.SEP + BNConstants.TMP_DIR + " cannot be created",	                            "BN Initialization: Dir create error", JOptionPane.WARNING_MESSAGE);	            		return;	        	    }	        	    System.out.println("Dir: " +             				fileBase + BNConstants.SEP + BNConstants.TMP_DIR + " created successfully !!");        		}        	    
                 if(isClusterModeSelected() && popPanel.fileButton.isSelected()) {
                     String fileName = popPanel.popField.getText();
                     if(fileName == null || fileName.equals("") || fileName.equals(" ")) {
@@ -1042,7 +1022,7 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
                         bnParamPanel.browserButton.grabFocus();
                         return;
                     }
-                }                
+                }                                BNConstants.setBaseFileLocation(fileBase);
                 dispose();
             } else if (command.equals("cancel-command")) {
                 result = JOptionPane.CANCEL_OPTION;

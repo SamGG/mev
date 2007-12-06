@@ -135,6 +135,7 @@ public class Useful {
     public static ArrayList readNamesFromFile(String fileName) throws FileNotFoundException{
 	try {
 	    ArrayList names = new ArrayList();
+	    /*
 	    String dataPath = TMEV.getDataPath();
     	File pathFile = TMEV.getFile("data/");
     	if(dataPath != null) {
@@ -142,6 +143,7 @@ public class Useful {
             if(!pathFile.exists())
                 pathFile = TMEV.getFile("data/");
         }
+        */
     	//FileReader fr = new FileReader(pathFile+fileName);
     	//System.out.print(fileName);
 	    FileReader fr = new FileReader(fileName);
@@ -149,8 +151,8 @@ public class Useful {
 	    String s = null;
 	    String[] tokens = null;
 	    while((s = lnr.readLine())!=null){
-		s = s.trim();
-		names.add(s);
+	    	s = s.trim();
+	    	names.add(s);
 	    }
 	    lnr.close();
 	    fr.close();

@@ -18,6 +18,8 @@ import java.util.Properties;import java.io.File;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.FileInputStream;
+
+import org.tigr.microarray.mev.cluster.gui.impl.bn.BNConstants;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.UsefulInteractions;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.GetUnionOfInters;import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;import org.tigr.microarray.mev.cluster.gui.impl.bn.OutOfRangeException;import org.tigr.microarray.mev.cluster.gui.impl.bn.algs.TransitiveClosure;import org.tigr.microarray.mev.cluster.gui.impl.bn.algs.AllPairsShortestPaths;
@@ -58,8 +60,8 @@ public class GetInteractionsModule {
 	    if(props == null){
 		throw new NullArgumentException("The given properties were null");
 	    }  	    //path=path+sep; //Raktim - Use tmp Dir
-  	    String fileLoc=path+sep+"tmp"+sep;
-  	    String resFileLoc = path+sep;
+  	    String fileLoc=path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP;
+  	    String resFileLoc = path+BNConstants.SEP;
   	  
   	    System.out.println("PATH Paiso: " + fileLoc);
 	    String resFileName = resFileLoc+props.getProperty("resourcererFileName");
@@ -79,34 +81,34 @@ public class GetInteractionsModule {
 	    HashMap gbSymbols = GetInteractionsUtil.getOfficialGeneSymbols(resFileName, gbAccessionsFileName);
 	    //System.exit(0);
 	    if(debug){
-		Useful.writeHashMapToFile(gbSymbols, gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"gbSymbols_test.txt");
+	    	Useful.writeHashMapToFile(gbSymbols, gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"gbSymbols_test.txt");
 	    }
 	    HashMap gbGOs = GetInteractionsUtil.getGOs(resFileName, gbAccessionsFileName);
 	    if(debug){
-		Useful.writeHashMapToFile(gbGOs, gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"gbGOs_test.txt");
+	    	Useful.writeHashMapToFile(gbGOs, gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"gbGOs_test.txt");
 	    }
 	    HashMap gbArticlesFromRes = GetInteractionsUtil.getResourcererArticles(resFileName, gbAccessionsFileName);
 	    if(debug){
-		Useful.writeHashMapToFile(gbArticlesFromRes, gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"gbArticlesFromRes_test.txt");
+	    	Useful.writeHashMapToFile(gbArticlesFromRes, gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"gbArticlesFromRes_test.txt");
 	    }
 	    HashSet uniqueSymbols = GetInteractionsUtil.getUniqueSymbols(gbSymbols);
 	    HashMap allSymbolsArticlesFromPubmed = Useful.readHashMapFromFile(symbolsArticlesFromPubmedFileName);
 	    HashMap symbolsArticlesFromPubmed = GetInteractionsUtil.getSubsetSymbolsArticlesFromSymbolsArticles(uniqueSymbols, allSymbolsArticlesFromPubmed);      
 	    if(debug){
-		Useful.writeHashMapToFile(symbolsArticlesFromPubmed, gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"symbolsArticlesFromPubmed_test.txt");
+	    	Useful.writeHashMapToFile(symbolsArticlesFromPubmed, gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"symbolsArticlesFromPubmed_test.txt");
 	    }
 	    HashMap allSymbolsArticlesFromGeneDb = Useful.readHashMapFromFile(symbolsArticlesFromGeneDbFileName);
 	    HashMap symbolsArticlesFromGeneDb = GetInteractionsUtil.getSubsetSymbolsArticlesFromSymbolsArticles(uniqueSymbols, allSymbolsArticlesFromGeneDb);
 	    if(debug){
-		Useful.writeHashMapToFile(symbolsArticlesFromGeneDb, gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"symbolsArticlesFromGeneDb_test.txt");
+	    	Useful.writeHashMapToFile(symbolsArticlesFromGeneDb, gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"symbolsArticlesFromGeneDb_test.txt");
 	    }
 	    HashMap gbArticlesFromPubmed = GetInteractionsUtil.replaceSymbolsWithGbsInSymbolsArticles(gbSymbols, symbolsArticlesFromPubmed);
 	    if(debug){
-		Useful.writeHashMapToFile(gbArticlesFromPubmed, gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"gbArticlesFromPubmed_test.txt");
+	    	Useful.writeHashMapToFile(gbArticlesFromPubmed, gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"gbArticlesFromPubmed_test.txt");
 	    }
 	    HashMap gbArticlesFromGeneDb = GetInteractionsUtil.replaceSymbolsWithGbsInSymbolsArticles(gbSymbols, symbolsArticlesFromGeneDb);
 	    if(debug){
-		Useful.writeHashMapToFile(gbArticlesFromGeneDb, gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"gbArticlesFromGeneDb_test.txt");
+	    	Useful.writeHashMapToFile(gbArticlesFromGeneDb, gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"gbArticlesFromGeneDb_test.txt");
 	    }
 	    GeneInteractions gI = new GeneInteractions();
 	    HashMap articlesGbs = gI.backwards(gbArticlesFromGeneDb);
@@ -122,9 +124,9 @@ public class GetInteractionsModule {
 	    articlesGbs = null;
 	    ArrayList interRes = (ArrayList) gI.createInteractions(gbArticlesFromRes);	
 	    if(debug){
-		UsefulInteractions.writeSifFileUndirWithWeights(interGeneDb,gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"interGeneDb");
-		UsefulInteractions.writeSifFileUndirWithWeights(interPubmed,gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"interPubmed");
-		UsefulInteractions.writeSifFileUndirWithWeights(interRes,gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"interRes");	    
+	    	UsefulInteractions.writeSifFileUndirWithWeights(interGeneDb,gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"interGeneDb");
+	    	UsefulInteractions.writeSifFileUndirWithWeights(interPubmed,gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"interPubmed");
+	    	UsefulInteractions.writeSifFileUndirWithWeights(interRes,gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"interRes");	    
 	    }	
 	    ArrayList unionOfInter = GetInteractionsUtil.uniquelyMergeArrayLists(interGeneDb, interRes, interPubmed);
 	    
@@ -168,27 +170,33 @@ public class GetInteractionsModule {
 		throw new NullArgumentException("The given properties were null");
 	    }
 	    // get props of ppi list, gbs, res	    //path=path+sep;
-	    String fileLoc=path+sep+"tmp"+sep;
-  	    String resFileLoc = path+sep;
-	    //System.out.print(path);	    String ppiFileName = resFileLoc+props.getProperty("ppiFileName", null);
-	    String resFileName = resFileLoc+props.getProperty("resourcererFileName", null);
-	    String gbAccessionsFileName = fileLoc+props.getProperty("gbAccessionsFileName", null);
+	    String fileLoc=path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP;
+  	    String resFileLoc = path+BNConstants.SEP;
+	    //System.out.print(path);	    String ppiFileName = resFileLoc+props.getProperty(BNConstants.PPI_FILE_NAME, null);
+	    String resFileName = resFileLoc+props.getProperty(BNConstants.RES_FILE_NAME, null);
+	    String gbAccessionsFileName = fileLoc+props.getProperty(BNConstants.GB_ACC_FILE_NAME, null);
 	    //Useful.checkFile(ppiFileName);
 	    //Useful.checkFile(resFileName);
 	    //Useful.checkFile(gbAccessionsFileName);
 	    // convert to unique symbols
 	    //System.exit(1);
 	    HashMap gbSymbols = GetInteractionsUtil.getOfficialGeneSymbols(resFileName, gbAccessionsFileName);
-	    //System.out.println("gbSymbol"+gbSymbols.size());  
+	    System.out.println("gbSymbol "+gbSymbols.size());  
 	    //System.exit(1);
 	    HashSet uniqueSymbols = GetInteractionsUtil.getUniqueSymbols(gbSymbols);
-	    //System.out.println("uniSymbol"+uniqueSymbols.size());
+	    System.out.println("uniSymbol "+uniqueSymbols.size());
 	    //System.exit(1);
 	    ArrayList queryNodes = new ArrayList();
 	    queryNodes.addAll(uniqueSymbols);
 	    ArrayList ppi = UsefulInteractions.readInteractions(ppiFileName);
+	    System.out.println("# PPI Interaction: "+uniqueSymbols.size());
 	    //System.exit(1);
-	    return getInteractionsFromPpi(ppi,queryNodes,props); 
+	    //return getInteractionsFromPpi(ppi,queryNodes,props);
+	    ArrayList ppiInterActions = getInteractionsFromPpi(ppi,queryNodes,props);
+	    //Raktim - New function to remove reverse edges between 2 nodes (cycles) from Lit mining interaction.
+	    //E.g - if there is an edge A -> B, there *cannot be an Edge B -> A to make it a DAG
+	    //ppiInterActions = UsefulInteractions.removeReverseEdge(ppiInterActions);
+	    return ppiInterActions;
 	}
 	catch(IOException ioe){
 	    System.out.println(ioe);
@@ -211,7 +219,7 @@ public class GetInteractionsModule {
     		throw new NullArgumentException("The given properties were null");
     	    }
     	    // get props of ppi list, gbs, res
-    	   // path=GetInteractionParemeterPPIDialog.path;
+    	    // path=GetInteractionParemeterPPIDialog.path;
     	    String ppiFileName = props.getProperty("ppiFileName", null);
     	    String resFileName = props.getProperty("resourcererFileName", null);
     	    String gbAccessionsFileName = props.getProperty("gbAccessionsFileName", null);
@@ -279,31 +287,41 @@ public class GetInteractionsModule {
 	// get props whether to construct ppi directly from subset	
 	// or from all pairs shortest paths algorithm, or from transitive closure algorithm
 	//path=path+sep;
-	String usePpiDirectlyStr = props.getProperty("usePpiDirectly", "true");
-	String usePpiOnlyWithinStr = props.getProperty("usePpiOnlyWithin", "true");
-	String useTransitiveClosureStr =props.getProperty("useTransitiveClosure", "false");
-    double distanceK = Double.parseDouble(props.getProperty("distanceK", "3.0"));
+	String usePpiDirectlyStr = props.getProperty(BNConstants.USE_PPI_DIRECT, "true");
+	String usePpiOnlyWithinStr = props.getProperty(BNConstants.USE_PPI_WITHIN, "true");
+	String useTransitiveClosureStr = props.getProperty(BNConstants.USE_TRANSITIVE_CLOSURE, "false");
+    double distanceK = Double.parseDouble(props.getProperty(BNConstants.DIST_K, BNConstants.DIST_K_VAL));
 	if(distanceK < 0){
 	    throw new OutOfRangeException("DistanceK is out of range (should be positive or equal to zero)!\ndistanceK="+distanceK);
 	}
+	ArrayList ppiIner = null;
 	if(usePpiDirectlyStr.equals("true")){
 	    if(usePpiOnlyWithinStr.equals("true")){
 	    	  //System.exit(1);
-		return UsefulInteractions.getSubsetInteractionsGivenNodesOnlyWithin(ppi, queryNodes);
+	    	//return UsefulInteractions.getSubsetInteractionsGivenNodesOnlyWithin(ppi, queryNodes);
+	    	ppiIner = UsefulInteractions.getSubsetInteractionsGivenNodesOnlyWithin(ppi, queryNodes);
 	    }
 	    else {
 	    	  //System.exit(1);
-		return UsefulInteractions.getSubsetInteractionsGivenNodes(ppi, queryNodes);
+	    	//return UsefulInteractions.getSubsetInteractionsGivenNodes(ppi, queryNodes);
+	    	ppiIner = UsefulInteractions.getSubsetInteractionsGivenNodes(ppi, queryNodes);
 	    }
 	}
 	else {
 	    if(useTransitiveClosureStr.equals("true")){
-		return TransitiveClosure.getInteractionsWithReachableNodes(ppi, queryNodes);
+	    	//return TransitiveClosure.getInteractionsWithReachableNodes(ppi, queryNodes);
+	    	ppiIner = TransitiveClosure.getInteractionsWithReachableNodes(ppi, queryNodes);
 	    }
 	    else {		
-		return AllPairsShortestPaths.getInteractionsWithNodesAtDistanceK(ppi, queryNodes, distanceK);
+	    	//return AllPairsShortestPaths.getInteractionsWithNodesAtDistanceK(ppi, queryNodes, distanceK);
+	    	ppiIner = AllPairsShortestPaths.getInteractionsWithNodesAtDistanceK(ppi, queryNodes, distanceK);
 	    }
 	}
+	if(ppiIner == null)
+		System.out.println("GetInteractionsModule.getInteractionsFromPpi() NO interactions!!");
+	else
+		System.out.println("GetInteractionsModule.getInteractionsFromPpi() " +  ppiIner.size() + " interaction");
+	return ppiIner;
     }
     /*
     public static ArrayList getInteractionsFromPpi(ArrayList ppi, ArrayList queryNodes, Properties props) throws NullArgumentException, OutOfRangeException{	
@@ -401,31 +419,32 @@ public class GetInteractionsModule {
 	    throw new NullArgumentException("The given properties were null");
 	}
 	//System.out.println(props);
-	String isLiteratureStr = props.getProperty("fromLiterature", "true");
+	String isLiteratureStr = props.getProperty(BNConstants.FRM_LIT, "true");
 	isLiteratureStr = isLiteratureStr.trim();
-	String isPpiStr = props.getProperty("fromPpi", "false");
+	String isPpiStr = props.getProperty(BNConstants.FRM_PPI, "false");
 	isPpiStr = isPpiStr.trim();
 	ArrayList interFromLit = null;
 	ArrayList interFromPpi = null;	
 	ArrayList interFromPpiSyms = null;	
 	// get interactions from both literature and ppi
-	if(isLiteratureStr.equals("true")&&isPpiStr.equals("true")){
+	if(isLiteratureStr.equals("true") && isPpiStr.equals("true")){
 		System.out.println("Only Lit & PPI");
 	    interFromPpiSyms = getInteractionsFromPpi(props);
+	    System.out.println("getInteractions()interFromPpiSyms Size: " + interFromPpiSyms.size());
 	    // replace symbols with gbs in interFromPpi
-	    interFromPpi = GetInteractionsUtil.replaceSymsWithGBsInInter(path+props.getProperty("resourcererFileName",null), interFromPpiSyms);
-	    if(props.getProperty("usePpiOnlyWithin", "true").equals("false")|| props.getProperty("usePpiDirectly", "true").equals("false")){
-		prepareGBsForPpiNotDirectly(interFromPpi, props);	
-		interFromLit = getInteractionsFromLiterature(props);
-		return GetUnionOfInters.uniquelyMergeArrayLists(interFromLit, interFromPpi);
+	    interFromPpi = GetInteractionsUtil.replaceSymsWithGBsInInter(path + BNConstants.SEP+props.getProperty(BNConstants.RES_FILE_NAME,null), interFromPpiSyms);
+	    if(props.getProperty(BNConstants.USE_PPI_WITHIN, "true").equals("false")|| props.getProperty(BNConstants.USE_PPI_DIRECT, "true").equals("false")){
+	    	prepareGBsForPpiNotDirectly(interFromPpi, props);	
+	    	interFromLit = getInteractionsFromLiterature(props);
+			return GetUnionOfInters.uniquelyMergeArrayLists(interFromLit, interFromPpi);
 	    }
 	    else { // usePpiDirectlyOnlyWithin was true
-		interFromLit = getInteractionsFromLiterature(props);
-		return GetUnionOfInters.uniquelyMergeArrayLists(interFromLit, interFromPpi);
+	    	interFromLit = getInteractionsFromLiterature(props);
+	    	return GetUnionOfInters.uniquelyMergeArrayLists(interFromLit, interFromPpi);
 	    }
 	}
 	// get interactions from literature but not from ppi
-	else if(isLiteratureStr.equals("true")&&!isPpiStr.equals("true")){
+	else if(isLiteratureStr.equals("true") && !isPpiStr.equals("true")){
 	    interFromLit = getInteractionsFromLiterature(props);
 	    System.out.println("Only Lit");
 	    //System.exit(1);
@@ -438,10 +457,10 @@ public class GetInteractionsModule {
 	    //System.out.println(interFromPpiSyms.size());
 	    //System.exit(1);
 	    // replace symbols with gbs in interFromPpi
-	    interFromPpi = GetInteractionsUtil.replaceSymsWithGBsInInter(path+props.getProperty("resourcererFileName"), interFromPpiSyms);
+	    interFromPpi = GetInteractionsUtil.replaceSymsWithGBsInInter(path  + BNConstants.SEP + props.getProperty(BNConstants.RES_FILE_NAME), interFromPpiSyms);
 	    //System.exit(1);
-	    if(props.getProperty("usePpiOnlyWithin", "true").equals("false") || props.getProperty("usePpiDirectly", "true").equals("false")){
-		prepareGBsForPpiNotDirectly(interFromPpi, props);	
+	    if(props.getProperty(BNConstants.USE_PPI_WITHIN, "true").equals("false") || props.getProperty(BNConstants.USE_PPI_DIRECT, "true").equals("false")){
+	    	prepareGBsForPpiNotDirectly(interFromPpi, props);	
 	    }
 	    return interFromPpi;
 	}
@@ -476,35 +495,34 @@ public class GetInteractionsModule {
      */
     public static void prepareGBsForPpiNotDirectly(ArrayList interFromPpi, Properties props){
     	try {
-	    ArrayList newGeneSymbols = null;
-	    HashSet origGBs = null;
-	    ArrayList newGBs = null;
-	    HashSet uniqueNewGBs = null;
-	    HashSet origAndUniqueNewGBs = new HashSet();
-	    Iterator it = null;
-	    String gbAccessionsFileName = path+props.getProperty("gbAccessionsFileName",null);
-	    String newGbAccessionsFileName = path+props.getProperty("newGbAccessionsFileName","newGBs.txt");
-	    String toWrite = "";
-	    origGBs = Useful.readUniqueNamesFromFile(gbAccessionsFileName);
-	    newGBs = UsefulInteractions.getNodes(interFromPpi);
-	    //getAccessions and write them to file
-	    if(newGBs != null && newGBs.size() != 0){
-		origAndUniqueNewGBs.addAll(origGBs);
-		origAndUniqueNewGBs.addAll(newGBs);
-		it = origAndUniqueNewGBs.iterator();
-		while(it.hasNext()){
-		    toWrite += it.next()+"\n";
-		}
-		
-		Useful.writeStrToFile(toWrite, newGbAccessionsFileName);
+		    ArrayList newGeneSymbols = null;
+		    HashSet origGBs = null;
+		    ArrayList newGBs = null;
+		    HashSet uniqueNewGBs = null;
+		    HashSet origAndUniqueNewGBs = new HashSet();
+		    Iterator it = null;
+		    String gbAccessionsFileName = path+props.getProperty(BNConstants.GB_ACC_FILE_NAME,null);
+		    String newGbAccessionsFileName = path+props.getProperty(BNConstants.NEW_GB_ACC_FILE_NAME,BNConstants.NEW_ACCESSION_FILE);
+		    String toWrite = "";
+		    origGBs = Useful.readUniqueNamesFromFile(gbAccessionsFileName);
+		    newGBs = UsefulInteractions.getNodes(interFromPpi);	
+		    //getAccessions and write them to file
+		    if(newGBs != null && newGBs.size() != 0){
+				origAndUniqueNewGBs.addAll(origGBs);
+				origAndUniqueNewGBs.addAll(newGBs);
+				it = origAndUniqueNewGBs.iterator();
+				while(it.hasNext()){
+				    toWrite += it.next()+"\n";
+				}
+				Useful.writeStrToFile(toWrite, newGbAccessionsFileName);
 	    }
 	}
-	catch(FileNotFoundException fnfe){
-	    System.out.println(fnfe);
-	}
-	catch(NullArgumentException nae){
-	    System.out.println(nae);
-	}
+		catch(FileNotFoundException fnfe){
+		    System.out.println(fnfe);
+		}
+		catch(NullArgumentException nae){
+		    System.out.println(nae);
+		}
     }
 
     /**
@@ -528,12 +546,12 @@ public class GetInteractionsModule {
 		//System.out.print(propertiesFileName);
 		//System.exit(1);
 	    Properties props = new Properties();
-	    props.load(new FileInputStream(propertiesFileName));	    System.out.print(props.getProperty("resourcererFileName"));
+	    props.load(new FileInputStream(propertiesFileName));	    System.out.print(props.getProperty(BNConstants.RES_FILE_NAME));
 	    ArrayList interactions = getInteractions(props);
 	    if(interactions==null){
-		System.out.print("Oh no NULL Interaction object. Bad...");    
+	    	System.out.print("Oh no NULL Interaction object. Bad...");    
 	    }
-	   String outInteractionsFileName = props.getProperty("outInteractionsFileName", "outInteractions.txt");
+	    String outInteractionsFileName = props.getProperty(BNConstants.OUT_INTER_FILE_NAME, BNConstants.OUT_INTERACTION_FILE);
 	    //System.out.print(outInteractionsFileName);	    //Raktim - Modified. Name File(s) uniquely
 	    //String fname_cyto= "liter_mining_alone_network.sif"; // Raktim - Old Way
 	    String fname_cyto= Useful.getUniqueFileID() +"_"+ "liter_mining_alone_network.sif";

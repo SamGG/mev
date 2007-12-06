@@ -31,7 +31,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.bn.getInteractions.GetInteractio
 import org.tigr.microarray.mev.cluster.gui.impl.bn.prepareXMLBif.PrepareXMLBifModule;
 
 public class BNGUI implements IClusterGUI {
-	String sep = System.getProperty("file.separator");
+	//String sep = System.getProperty("file.separator");
 	public static final int GENE_CLUSTER = 0;
 	public static boolean done=false;
 	public static boolean run=false;
@@ -147,19 +147,113 @@ public class BNGUI implements IClusterGUI {
 	 * @param path
 	 */
 	private void buildPropertyFile(boolean lit,boolean ppi,boolean both,boolean goTerms,String path){
+		 String sep= System.getProperty("file.separator");    
+		 final int fileSize=4;
+		 String[] propFile=new String[fileSize];
+		 String[] outFile=new String[fileSize-1];
+		 //String datPath=path+sep+"bn"+sep;
+		 //	 Raktim - USe Tmp dir
+		 /*
+		 propFile[0]= path+sep+"getInterModLit.props";
+		 propFile[1]= path+sep+"getInterModPPIDirectly.props";
+		 propFile[2]= path+sep+"getInterModBoth.props";
+		 propFile[3]= path+sep+"prepareXMLBifMod.props";
+		 outFile[0]="outInteractionsLit.txt";
+		 outFile[1]="outInteractionsPPI.txt"; 
+		 outFile[2]="outInteractionsBoth.txt";
+		  */
+		 propFile[0]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.LIT_INTER_MODULE_FILE;
+		 propFile[1]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.PPI_INTER_MODULE_DIRECT_FILE;
+		 propFile[2]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.BOTH_INTER_MODULE_FILE;
+		 propFile[3]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.XML_BIF_MODULE_FILE; 
+		 outFile[0] = BNConstants.LIT_INTER_FILE;
+		 outFile[1] = BNConstants.PPI_INTER_FILE; 
+		 outFile[2] = BNConstants.BOTH_INTER_FILE;
+		 
+		 PrintWriter out=null;
+		 try{ 	 
+			 if(lit){
+				 out= new PrintWriter(new FileOutputStream(new File(propFile[0])));	 
+		         out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
+		         out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+		         out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
+		         out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
+				 out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 
+				 out.println(BNConstants.FRM_LIT + "=true");
+				 out.println(BNConstants.FRM_PPI + "=false");
+				 out.println(BNConstants.OUT_INTER_FILE_NAME + "=" +outFile[0]);
+				 out.flush();
+	             out.close();
+			 }
+			  if(ppi){
+				  out= new PrintWriter(new FileOutputStream(new File(propFile[1])));	 
+		         out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
+				 out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+				 out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
+				 out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
+				 out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
+				 out.println(BNConstants.FRM_LIT + "=false");
+				 out.println(BNConstants.FRM_PPI + "=true");
+				 out.println(BNConstants.OUT_INTER_FILE_NAME + "=" + outFile[1]);
+				 out.println(BNConstants.USE_PPI_DIRECT + "=true");
+				 //out.println("usePpiOnlyWithin=true");
+				 out.println(BNConstants.PPI_FILE_NAME + "=" + BNConstants.PPI_FILE);
+				 out.flush();
+	             out.close();
+			 
+			 }
+			  if(both){
+		          out= new PrintWriter(new FileOutputStream(new File(propFile[2])));	 
+		          out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
+		          out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+		          out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
+		          out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
+		          out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
+			      out.println(BNConstants.FRM_LIT + "=true");
+			      out.println(BNConstants.FRM_PPI + "=true");
+			      out.println(BNConstants.OUT_INTER_FILE_NAME + "=" + outFile[2]);
+			      out.println(BNConstants.PPI_FILE_NAME + "=" + BNConstants.PPI_FILE);
+			      out.flush();
+	              out.close();
+		     }
+		     out= new PrintWriter(new FileOutputStream(new File(propFile[fileSize-1])));
+		     if(goTerms){
+		    	 System.out.println("Use GO Terms");
+		    	 out.println(BNConstants.USE_GO + "=" + "true");
+			     out.println(BNConstants.GB_GO_FILE_NAME + "=" + BNConstants.GB_GO_FILE); //"gbGOs.txt"
+		     }
+		     out.println(BNConstants.NAMES_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+		     out.println(BNConstants.DISTRIBUTION_FRM_WEIGHTS + "=" + "true");
+		     out.println(BNConstants.OUT_XML_BIF_FILE_NAME + "=" + BNConstants.BIF_RESULT_FILE);
+		     if(lit){
+		       out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[0]);
+		     }else if(ppi){
+	                 out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[1]);
+		     } else if(both){
+		      out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[2]);
+		     }
+		     out.flush();
+		     out.close();
+		}catch (Exception e){
+	            e.printStackTrace();
+	        }
+		}
+	
+	/*
+	private void buildPropertyFile(boolean lit,boolean ppi,boolean both,boolean goTerms,String path){
 	 String sep= System.getProperty("file.separator");    
 	 final int fileSize=4;
 	 String[] propFile=new String[fileSize];
 	 String[] outFile=new String[fileSize-1];
 	 //String datPath=path+sep+"bn"+sep;	 // Raktim - USe Tmp dir
-	 /*
-	 propFile[0]= path+sep+"getInterModLit.props";
-	 propFile[1]= path+sep+"getInterModPPIDirectly.props";
-	 propFile[2]= path+sep+"getInterModBoth.props";	 propFile[3]= path+sep+"prepareXMLBifMod.props"; 
-	 outFile[0]="outInteractionsLit.txt";
-	 outFile[1]="outInteractionsPPI.txt"; 
-	 outFile[2]="outInteractionsBoth.txt";
-	 */
+	 
+	 //propFile[0]= path+sep+"getInterModLit.props";
+	 //propFile[1]= path+sep+"getInterModPPIDirectly.props";
+	 //propFile[2]= path+sep+"getInterModBoth.props";	 //propFile[3]= path+sep+"prepareXMLBifMod.props"; 
+	 //outFile[0]="outInteractionsLit.txt";
+	 //outFile[1]="outInteractionsPPI.txt"; 
+	 //outFile[2]="outInteractionsBoth.txt";
+	 
 	 propFile[0]= path+sep+"tmp"+sep+"getInterModLit.props";
 	 propFile[1]= path+sep+"tmp"+sep+"getInterModPPIDirectly.props";
 	 propFile[2]= path+sep+"tmp"+sep+"getInterModBoth.props";
@@ -235,6 +329,7 @@ public class BNGUI implements IClusterGUI {
             e.printStackTrace();
         }
 	}
+	*/
 	
 	//from cluster to generate gene list file automatically 
 	public void converter(Cluster cl,IFramework framework,String path){
@@ -246,13 +341,13 @@ public class BNGUI implements IClusterGUI {
 	String[] accList =new String[genes];
 	HashMap accHash = new HashMap();
 	String lineRead = "";
-	String sep=System.getProperty("file.separator");	// TODO Raktim - Get ProbeIDs for Genes
+	//String sep=System.getProperty("file.separator");	// TODO Raktim - Get ProbeIDs for Genes
 	for (int i=0; i<rows.length; i++) {
     	  affyId[i]=data.getSlideDataElement(0,rows[i]).getFieldAt(0);    	  System.out.println("affyid :"+affyId[i] ); 
 	 }
 	
 	 try {
-	    File file = new File(path,"affyID_accession.txt");
+	    File file = new File(path, BNConstants.ACCESSION_FILE);
 	    FileReader fr = new FileReader(file);
 	    BufferedReader br = new BufferedReader(fr);
 	    String[] fields;
@@ -276,6 +371,7 @@ public class BNGUI implements IClusterGUI {
  		System.out.println("File Write Error ");
 	}
 	}
+	
    /**
  	Function to match a subset of ProbeIDs to their corresponding Acc Numbers
  	Return a list of Acc numbers
@@ -288,9 +384,9 @@ public class BNGUI implements IClusterGUI {
 	 return accList;
  }
  private void writeAccToFile (String[] accList, String path) {
-	 String sep=System.getProperty("file.separator");	 //String outFile = path + sep+"list.txt";
+	 //String sep=System.getProperty("file.separator");	 //String outFile = path + sep+"list.txt";
 	 // Raktim - Use tmp Dir
-	 String outFile = path + sep+ "tmp" + sep + "list.txt";
+	 String outFile = path + BNConstants.SEP + BNConstants.TMP_DIR + BNConstants.SEP + BNConstants.OUT_ACCESSION_FILE;
 	 System.out.println(outFile);
 	BufferedWriter out = null;
 	int nRows = accList.length;	System.out.println("accList Length " + accList.length);
@@ -314,19 +410,35 @@ public class BNGUI implements IClusterGUI {
 		//System.out.print(sep);
 		GetInteractionsModule getModule=new GetInteractionsModule(path);
 		if(lit){		  //getModule.test(path+sep+"getInterModLit.props"); //Raktim - USe tmp dir
-		  getModule.test(path+sep+"tmp"+sep+"getInterModLit.props");
+		  GetInteractionsModule.test(path + 
+				  BNConstants.SEP + 
+				  BNConstants.TMP_DIR + 
+				  BNConstants.SEP + 
+				  BNConstants.LIT_INTER_MODULE_FILE);
 		}
 		if(ppi){		  //getModule.test(path+sep+"getInterModPPIDirectly.props"); //Raktim - USe tmp dir
-		  getModule.test(path+sep+"tmp"+sep+"getInterModPPIDirectly.props"); 
+		  GetInteractionsModule.test(path +
+				  BNConstants.SEP +
+				  BNConstants.TMP_DIR +
+				  BNConstants.SEP +
+				  BNConstants.PPI_INTER_MODULE_DIRECT_FILE); 
 		}
 		if(both){		  //getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
-		  getModule.test(path+sep+"tmp"+sep+"getInterModBoth.props");
+		  GetInteractionsModule.test(path +
+				  BNConstants.SEP +
+				  BNConstants.TMP_DIR +
+				  BNConstants.SEP +
+				  BNConstants.BOTH_INTER_MODULE_FILE);
 		}
-		
-	}	// TODO Raktim - What is the bif file for ?
+	}
+		// TODO Raktim - What is the bif file for ?
 	public void prepareXMLBifFile(String path){
-	PrepareXMLBifModule getModule=new PrepareXMLBifModule();		//getModule.test(path+sep+"prepareXMLBifMod.props"); //Raktim - USe tmp dir
-		getModule.test(path+sep+"tmp"+sep+"prepareXMLBifMod.props");
+		PrepareXMLBifModule getModule = new PrepareXMLBifModule();		//getModule.test(path+sep+"prepareXMLBifMod.props"); //Raktim - USe tmp dir
+		PrepareXMLBifModule.test(path +
+				BNConstants.SEP +
+				BNConstants.TMP_DIR +
+				BNConstants.SEP +
+				BNConstants.XML_BIF_MODULE_FILE);
 	}
 	
 	 /**

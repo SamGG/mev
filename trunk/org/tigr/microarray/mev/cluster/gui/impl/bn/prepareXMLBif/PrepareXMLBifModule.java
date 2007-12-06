@@ -16,6 +16,7 @@
 package org.tigr.microarray.mev.cluster.gui.impl.bn.prepareXMLBif;
 import java.io.FileInputStream;import java.io.IOException;import java.io.FileOutputStream;
 import java.io.PrintWriter;import java.util.ArrayList;import java.util.HashMap;import java.util.Properties;import org.tigr.microarray.mev.cluster.gui.impl.bn.algs.DFSModification;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.BNConstants;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.NotDAGException;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.UsefulInteractions;
@@ -146,9 +147,12 @@ public class PrepareXMLBifModule {
      * </ul>
      */
     public static void test(String propsFileName){	
-    	String path=System.getProperty("user.dir");
-	String sep=System.getProperty("file.separator");	//path=path+sep+"data"+sep+"bn"+sep; //Raktim - Use tmp Dir
-	path=path+sep+"data"+sep+"bn"+sep+"tmp"+sep;
+    	//String path=System.getProperty("user.dir");
+    	String path=BNConstants.getBaseFileLocation();
+    	System.out.println("PrepareXMLBifModule path: user.dir: " + path);
+    	//String sep=System.getProperty("file.separator");    	//path=path+sep+"data"+sep+"bn"+sep; //Raktim - Use tmp Dir
+    	//path=path+BNConstants.SEP+"data"+BNConstants.SEP+"bn"+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP;
+    	path=path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP;
 	try {
 	    Properties props = new Properties();
 	    props.load(new FileInputStream(propsFileName));
@@ -156,46 +160,29 @@ public class PrepareXMLBifModule {
 	    if(isDebugStr.equals("true")){
 		debug = true;
 	    }
-	    String sifFileName = path+props.getProperty("sifFileName", null);
-	    boolean useGO = Boolean.getBoolean(props.getProperty("useGO", "false"));	    
-	    String gbGOsFileName = path+props.getProperty("gbGOsFileName", null);
-	    String namesFileName = path+props.getProperty("namesFileName",null);
+	    String sifFileName = path+props.getProperty(BNConstants.SIF_FILE_NAME, null);
+	    boolean useGO = Boolean.getBoolean(props.getProperty(BNConstants.USE_GO, "false"));	    
+	    String gbGOsFileName = path+props.getProperty(BNConstants.GB_GO_FILE_NAME, null); //"gbGOsFileName"
+	    String namesFileName = path+props.getProperty(BNConstants.NAMES_FILE_NAME,null);
 	    long seed = (long) Integer.parseInt(props.getProperty("seed", "1"));	    System.out.println("test()" + namesFileName);
 	    System.out.println("test()" + sifFileName);
 	    Useful.checkFile(sifFileName);
 	    Useful.checkFile(namesFileName);
 	    if(useGO){
-		Useful.checkFile(gbGOsFileName);
+	    	Useful.checkFile(gbGOsFileName);
 	    }	    //String outXMLBifFileName = System.getProperty("user.dir")+sep+props.getProperty("outXMLBifFileName","out_bif.xml");
 	    // Raktim - Use tmp Dir
-	    String fileLoc = System.getProperty("user.dir")+sep+"data"+sep+"bn"+sep+"tmp"+sep;
-	    String outXMLBifFileName = fileLoc+props.getProperty("outXMLBifFileName","out_bif.xml");
+	    //String fileLoc = System.getProperty("user.dir")+BNConstants.SEP+"data"+BNConstants.SEP+"bn"+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP;
+	    //String fileLoc = path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP;
+	    String outXMLBifFileName = path+props.getProperty(BNConstants.OUT_XML_BIF_FILE_NAME,BNConstants.OUT_XML_BIF_FILE);
 	    ArrayList inter = UsefulInteractions.readInteractionsWithWeights(sifFileName);
 	    ArrayList names = Useful.readNamesFromFile(namesFileName);
 	    ArrayList newInter = null;
-	    if(useGO){
-		HashMap gbGOs = ParseGB_GO.readGB_GOs(gbGOsFileName);
-		newInter = getInteractionsFromGB_GOsAndRandom(inter, gbGOs, seed);
-	    }
-	    else {
-		newInter = getDAGFromUndirectedGraph(inter);
-	    }
-	    PrintWriter pw = new PrintWriter(new FileOutputStream(outXMLBifFileName), true);	    
-	    SifToXMLBif.createXMLBifGivenSifFile(newInter, names, pw, props);
-	    pw.close();
-	}
-	catch(IOException ioe){
-	    System.out.println(ioe);
-	    ioe.printStackTrace();
-	}
-	catch(NullArgumentException nae){
-	    System.out.println(nae);
-	    nae.printStackTrace();
-	}
-	catch(NotDAGException nde){
-	    System.out.println(nde);
-	    nde.printStackTrace();
-	}
+	    if(useGO){	    	HashMap gbGOs = ParseGB_GO.readGB_GOs(gbGOsFileName);	    	newInter = getInteractionsFromGB_GOsAndRandom(inter, gbGOs, seed);	    }
+	    else {	    	newInter = getDAGFromUndirectedGraph(inter);	    }	    PrintWriter pw = new PrintWriter(new FileOutputStream(outXMLBifFileName), true);	    	    SifToXMLBif.createXMLBifGivenSifFile(newInter, names, pw, props);	    pw.close();	}
+	catch(IOException ioe){	    System.out.println(ioe);	    ioe.printStackTrace();	}
+	catch(NullArgumentException nae){	    System.out.println(nae);	    nae.printStackTrace();	}
+	catch(NotDAGException nde){	    System.out.println(nde);	    nde.printStackTrace();	}
     }
 
     /**
