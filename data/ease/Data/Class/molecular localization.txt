@@ -1,0 +1,3217 @@
+51513	DNA-associated (direct or indirect)	10828014
+579	DNA-associated (direct or indirect)	9344671
+27315	Integral membrane	10585768
+6331	Integral membrane	7651517
+6332	Integral membrane	1317577
+6334	Integral membrane	9828131
+6335	Integral membrane	7720699
+6336	Integral membrane	9839820
+6337	Integral membrane	8589714
+6338	Integral membrane	8521520
+6339	Integral membrane	7499195
+2050	Integral membrane	8188704
+3790	Integral membrane	10484328
+5395	DNA-associated (direct or indirect)	8072530
+3791	Integral membrane	1656371
+5396	DNA-associated (direct or indirect)	1509260
+3792	Integral membrane	1712490
+2055	Integral membrane	10508524
+55801	Soluble	10729163
+2056	Soluble	3838366
+3796	Tubulin-cytoskeleton associated	9177777
+2057	Integral membrane	1668606
+3797	Tubulin-cytoskeleton associated	9480755
+2058	Soluble	8188258
+3798	Tubulin-cytoskeleton associated	7514426
+3799	Tubulin-cytoskeleton associated	1607388
+588	Soluble	7698329
+6340	Integral membrane	8640238
+3000	Integral membrane	1356371
+27328	Integral membrane	10644456
+6344	Integral membrane	7612008
+4741	Intermediate-filament associated	3608989
+6347	Soluble	9973507
+6348	Soluble	9973507
+3005	DNA-associated (direct or indirect)	8325638
+6349	Soluble	10471782
+4747	Intermediate-filament associated	3034332
+1406	DNA-associated (direct or indirect)	9390563
+23047	DNA-associated (direct or indirect)	10215036
+2063	DNA-associated (direct or indirect)	2905047
+1407	DNA-associated (direct or indirect)	9801304
+55810	DNA-associated (direct or indirect)	10777590
+2065	Integral membrane	2687875
+55811	Soluble	9874775
+2066	Integral membrane	8383326
+2067	DNA-associated (direct or indirect)	10320375
+2068	DNA-associated (direct or indirect)	8413672
+2069	Soluble	9337852
+2069	Integral membrane	9337852
+56479	Integral membrane	10787416
+27332	DNA-associated (direct or indirect)	8647861
+27332	RNA-associated	8647861
+27333	Integral membrane	9201717
+6351	Soluble	9973507
+27336	DNA-associated (direct or indirect)	10454543
+6352	Soluble	9725197
+6354	Soluble	7916328
+6355	Soluble	9119400
+6356	Soluble	10699158
+6357	Soluble	9195948
+6359	Soluble	9548457
+4756	Integral membrane	9169140
+2071	DNA-associated (direct or indirect)	10827951
+2072	DNA-associated (direct or indirect)	8797827
+2073	DNA-associated (direct or indirect)	8090225
+2074	DNA-associated (direct or indirect)	7664335
+2077	DNA-associated (direct or indirect)	7588608
+2078	DNA-associated (direct or indirect)	8502479
+55824	Integral membrane	10790433
+7301	Integral membrane	7511603
+7307	RNA-associated	1388271
+27344	Soluble	10632593
+6360	Soluble	9642106
+27345	Integral membrane	10692449
+6361	Soluble	8702936
+6362	Soluble	9233607
+6363	Soluble	9153236
+4761	DNA-associated (direct or indirect)	8816493
+6366	Soluble	9235955
+4762	DNA-associated (direct or indirect)	8816493
+4763	Soluble	2116237
+6368	Soluble	9104803
+6369	Soluble	10713092
+2081	Integral membrane	9637683
+7311	Ribosome-associated	2581967
+51554	Integral membrane	10767544
+6370	Soluble	9285413
+6372	Soluble	9164944
+6374	Soluble	7929219
+6375	Soluble	7602097
+4771	Peripheral membrane	8379998
+6376	Soluble	9726990
+6376	Integral membrane	9726990
+4772	DNA-associated (direct or indirect)	10821850
+4774	DNA-associated (direct or indirect)	7590749
+4775	DNA-associated (direct or indirect)	7739550
+3036	Integral membrane	9169154
+4776	DNA-associated (direct or indirect)	7749981
+3037	Integral membrane	8798477
+3038	Integral membrane	9083017
+4778	DNA-associated (direct or indirect)	8355703
+3039	Soluble	
+2091	RNA-associated	1846968
+1435	Soluble	8981357
+1436	Integral membrane	2421165
+1437	Soluble	1675789
+1438	Integral membrane	2555171
+1439	Integral membrane	7556069
+2099	DNA-associated (direct or indirect)	10816575
+909	Integral membrane	1702817
+54107	DNA-associated (direct or indirect)	10880450
+5724	Integral membrane	8168510
+5725	RNA-associated	1906036
+6382	Integral membrane	2324102
+3040	Soluble	
+4780	DNA-associated (direct or indirect)	7937919
+4781	DNA-associated (direct or indirect)	7590749
+6386	Integral membrane	9391086
+4782	DNA-associated (direct or indirect)	7590749
+3043	Soluble	
+84991	RNA-associated	
+6387	Soluble	9743377
+4783	DNA-associated (direct or indirect)	7565758
+1440	Soluble	2420009
+4784	DNA-associated (direct or indirect)	7590749
+3045	Soluble	
+1441	Integral membrane	1701053
+25769	Integral membrane	10662833
+3046	Soluble	
+1442	Soluble	1378436
+3047	Soluble	
+1443	Soluble	1378436
+910	Integral membrane	1702817
+3048	Soluble	
+1444	Soluble	8083227
+911	Integral membrane	1702817
+3049	Soluble	
+914	Soluble	10380930
+914	Integral membrane	10380930
+915	Integral membrane	3478717
+916	Integral membrane	3478717
+917	Integral membrane	3478717
+919	Integral membrane	3478717
+5731	Integral membrane	8253813
+5732	Integral membrane	8078484
+5733	Integral membrane	8307176
+5734	Integral membrane	8163486
+5737	Integral membrane	8300593
+3050	Soluble	
+4790	DNA-associated (direct or indirect)	1992489
+5739	Integral membrane	7512962
+4791	DNA-associated (direct or indirect)	1876189
+3054	DNA-associated (direct or indirect)	8392914
+6398	Integral membrane	9480746
+3055	Peripheral membrane	3496523
+4798	DNA-associated (direct or indirect)	1777480
+3059	DNA-associated (direct or indirect)	2587259
+4799	DNA-associated (direct or indirect)	7964459
+923	Integral membrane	1919444
+925	Integral membrane	3871356
+926	Integral membrane	3145195
+928	Integral membrane	1840589
+55867	Integral membrane	10660625
+55869	DNA-associated (direct or indirect)	10748112
+51580	DNA-associated (direct or indirect)	9290259
+7342	DNA-associated (direct or indirect)	8114710
+4000	Intermediate-filament associated	8344919
+4001	Intermediate-filament associated	7557986
+5741	Soluble	7721880
+4004	DNA-associated (direct or indirect)	2303035
+5744	Soluble	8641188
+26729	Integral membrane	9119360
+7349	Soluble	8612563
+5745	Integral membrane	9745456
+5746	Integral membrane	7797535
+5747	Actin-cytoskeleton associated	10801330
+3061	Integral membrane	9491897
+3062	Integral membrane	9491897
+3064	Soluble	7568002
+3065	DNA-associated (direct or indirect)	8646880
+3066	DNA-associated (direct or indirect)	8917507
+930	Integral membrane	2472450
+1464	Integral membrane	8790396
+931	Integral membrane	9169438
+932	Integral membrane	7524084
+933	Integral membrane	1401903
+934	Integral membrane	7959762
+55870	DNA-associated (direct or indirect)	10860993
+55879	Integral membrane	10449790
+7350	Integral membrane	2380264
+7351	Integral membrane	9196039
+7352	Integral membrane	9196039
+4012	Integral membrane	9177475
+7356	Soluble	10587371
+25790	Soluble	10524255
+5754	Integral membrane	7478540
+25794	Actin-cytoskeleton associated	10783262
+3071	Integral membrane	1932118
+3077	Integral membrane	10638746
+940	Integral membrane	2157764
+1477	RNA-associated	1358884
+1478	RNA-associated	1741396
+944	Integral membrane	8391931
+1479	RNA-associated	7984242
+945	Integral membrane	3139766
+946	Integral membrane	9465907
+948	Integral membrane	2468669
+6708	Actin-cytoskeleton associated	1634521
+6709	Actin-cytoskeleton associated	2307671
+23404	RNA-associated	8600032
+26747	RNA-associated	10556305
+23406	Actin-cytoskeleton associated	10051563
+5764	Soluble	10706604
+4025	Soluble	10814547
+10300	Tubulin-cytoskeleton associated	6646120
+10302	DNA-associated (direct or indirect)	9732265
+1482	DNA-associated (direct or indirect)	9651244
+3087	DNA-associated (direct or indirect)	1360645
+950	Integral membrane	1374238
+951	Integral membrane	8436422
+953	Integral membrane	7930580
+10309	DNA-associated (direct or indirect)	2001396
+55890	Integral membrane	10783259
+1489	Soluble	7862649
+55892	DNA-associated (direct or indirect)	10873615
+958	Integral membrane	10748139
+959	Integral membrane	7678552
+6710	Actin-cytoskeleton associated	2195026
+8315	Soluble	9497340
+6712	Actin-cytoskeleton associated	9826670
+5770	Soluble	2546149
+7376	DNA-associated (direct or indirect)	7926814
+4033	Integral membrane	8021504
+23415	Integral membrane	10455180
+4035	Integral membrane	3266596
+23416	Integral membrane	10455180
+7379	Integral membrane	9515818
+5777	Actin-cytoskeleton associated	7781604
+3091	DNA-associated (direct or indirect)	10777486
+1490	Soluble	9371786
+10312	Integral membrane	10329006
+3096	DNA-associated (direct or indirect)	2106471
+10314	Integral membrane	9512664
+1493	Integral membrane	3220103
+10316	Integral membrane	9782091
+961	Integral membrane	7998989
+962	Integral membrane	1693656
+1497	Integral membrane	9537412
+963	Integral membrane	8307585
+1499	Actin-cytoskeleton associated	7806582
+965	Integral membrane	10380930
+966	Integral membrane	1381503
+967	Integral membrane	1993697
+968	Integral membrane	7680921
+8322	Integral membrane	10544037
+969	Integral membrane	8340758
+8323	Integral membrane	9480858
+8324	Integral membrane	9707618
+6720	DNA-associated (direct or indirect)	10949029
+6720	Peripheral membrane	8156598
+6721	DNA-associated (direct or indirect)	7903453
+8326	Integral membrane	9147651
+6722	DNA-associated (direct or indirect)	3203386
+7380	Integral membrane	9818021
+6726	RNA-associated	7730321
+6727	RNA-associated	2557625
+5782	Soluble	1472029
+4045	Peripheral membrane	8666243
+4046	Actin-cytoskeleton associated	8274738
+5786	Integral membrane	2169617
+23428	Integral membrane	10391915
+5787	Integral membrane	2170109
+4048	Soluble	1881903
+23429	DNA-associated (direct or indirect)	10369680
+5788	Integral membrane	2956090
+5789	Integral membrane	7896816
+10320	DNA-associated (direct or indirect)	8543809
+970	Integral membrane	8387892
+972	Integral membrane	6324166
+10329	Integral membrane	10072769
+975	Integral membrane	1650385
+976	Integral membrane	7636245
+977	Integral membrane	8627808
+6730	RNA-associated	10618370
+6730	Ribosome-associated	10618370
+6734	Integral membrane	2827661
+7391	DNA-associated (direct or indirect)	2249772
+7392	DNA-associated (direct or indirect)	1589769
+6737	DNA-associated (direct or indirect)	7832745
+6737	RNA-associated	10785401
+6738	RNA-associated	3200833
+5790	Integral membrane	8954783
+5791	Soluble	8838320
+5791	Integral membrane	8838320
+5792	Integral membrane	2972792
+5793	Integral membrane	8382771
+23435	DNA-associated (direct or indirect)	7745706
+5794	Integral membrane	8294459
+5795	Integral membrane	7937872
+4056	Integral membrane	8052639
+5796	Integral membrane	9047348
+5797	Integral membrane	1655529
+4058	Soluble	7685902
+4058	Integral membrane	7685902
+57804	DNA-associated (direct or indirect)	10751307
+23439	Integral membrane	10456317
+5798	Integral membrane	8024693
+4059	Integral membrane	7777537
+5799	Integral membrane	8798755
+10330	Integral membrane	10072769
+10331	Integral membrane	10072769
+10332	Integral membrane	10072769
+10333	Integral membrane	10231569
+989	Actin-cytoskeleton associated	8037772
+5000	DNA-associated (direct or indirect)	9353276
+5001	DNA-associated (direct or indirect)	9765232
+6741	RNA-associated	3192525
+5002	Integral membrane	9499412
+6742	DNA-associated (direct or indirect)	7789991
+6745	Integral membrane	8050590
+6746	Integral membrane	7789174
+5008	Soluble	
+1800	Peripheral membrane	2303490
+4061	Integral membrane	8650192
+6749	DNA-associated (direct or indirect)	1372440
+4062	Integral membrane	3028776
+4065	Integral membrane	9553150
+4066	DNA-associated (direct or indirect)	2752424
+58473	Integral membrane	10585447
+10343	Integral membrane	9949214
+10344	Soluble	10373330
+10345	Integral membrane	7588753
+10346	DNA-associated (direct or indirect)	7797467
+10347	Integral membrane	10873640
+6750	Soluble	6145156
+6751	Integral membrane	1346068
+6752	Integral membrane	7914078
+5013	DNA-associated (direct or indirect)	7959790
+6753	Integral membrane	1337145
+6754	Integral membrane	8100352
+6755	Integral membrane	7908405
+23450	RNA-associated	10490618
+4070	Integral membrane	7665234
+1810	DNA-associated (direct or indirect)	8670811
+4071	Integral membrane	8168850
+3416	Soluble	9830016
+1812	Integral membrane	1975640
+1813	Intermediate-filament associated	2531656
+1813	Integral membrane	8824240
+4074	Integral membrane	10799489
+1814	Integral membrane	10432116
+1815	Integral membrane	1319557
+4076	Integral membrane	7657653
+1816	Integral membrane	7727453
+23457	Integral membrane	10748049
+203	Soluble	2542324
+10352	Soluble	10072595
+56886	Soluble	10694380
+7703	DNA-associated (direct or indirect)	8325509
+9308	Integral membrane	8422464
+7704	DNA-associated (direct or indirect)	9770450
+5020	Soluble	1486803
+5021	Integral membrane	1313946
+5023	Integral membrane	9565569
+22801	Integral membrane	10486209
+5024	Integral membrane	9221902
+22802	Integral membrane	10437792
+5025	Integral membrane	9016352
+22803	RNA-associated	10409438
+5026	Integral membrane	9414125
+5027	Integral membrane	9038151
+5028	Integral membrane	8630005
+1820	DNA-associated (direct or indirect)	9722953
+5029	Integral membrane	8159738
+23462	DNA-associated (direct or indirect)	10415358
+22806	DNA-associated (direct or indirect)	10552935
+4082	Actin-cytoskeleton associated	1560845
+22807	DNA-associated (direct or indirect)	
+1823	Integral membrane	7679953
+4084	DNA-associated (direct or indirect)	8425218
+22809	DNA-associated (direct or indirect)	10373550
+4085	DNA-associated (direct or indirect)	8824189
+1825	Integral membrane	7929347
+1826	Integral membrane	9426258
+1827	DNA-associated (direct or indirect)	8595418
+23468	DNA-associated (direct or indirect)	8663349
+4089	DNA-associated (direct or indirect)	10871368
+57835	Integral membrane	10978526
+214	Integral membrane	7760007
+2488	Soluble	8220432
+9311	Integral membrane	9571199
+9312	Integral membrane	9612272
+9314	DNA-associated (direct or indirect)	8940147
+10369	Integral membrane	10221464
+7716	DNA-associated (direct or indirect)	8035792
+5030	Integral membrane	8537336
+5031	Integral membrane	8670200
+5032	Integral membrane	9405388
+6772	DNA-associated (direct or indirect)	10805787
+6773	DNA-associated (direct or indirect)	9020188
+3430	Soluble	10779520
+6774	DNA-associated (direct or indirect)	7512451
+3431	DNA-associated (direct or indirect)	
+6775	DNA-associated (direct or indirect)	9284918
+6776	DNA-associated (direct or indirect)	8631883
+23470	DNA-associated (direct or indirect)	9827568
+6777	DNA-associated (direct or indirect)	8631883
+23471	Integral membrane	1315422
+6778	DNA-associated (direct or indirect)	8810328
+1832	Intermediate-filament associated	1716629
+4094	DNA-associated (direct or indirect)	9616139
+2492	Integral membrane	9020851
+1836	Integral membrane	8528239
+4097	DNA-associated (direct or indirect)	9286713
+2494	DNA-associated (direct or indirect)	9786908
+11318	Integral membrane	9367907
+225	Integral membrane	10329405
+10376	Tubulin-cytoskeleton associated	6646120
+10379	DNA-associated (direct or indirect)	1630447
+9328	DNA-associated (direct or indirect)	10373544
+9329	DNA-associated (direct or indirect)	10523658
+7728	DNA-associated (direct or indirect)	8838321
+6780	RNA-associated	10022909
+6780	Ribosome-associated	10022909
+6780	Tubulin-cytoskeleton associated	10022909
+8385	Integral membrane	8004088
+6781	Soluble	8700837
+8388	Integral membrane	8004088
+6786	Integral membrane	8921403
+5048	Soluble	8028668
+5049	Soluble	9144386
+23487	DNA-associated (direct or indirect)	9827568
+23488	DNA-associated (direct or indirect)	9827568
+1848	Soluble	8670865
+23489	DNA-associated (direct or indirect)	9827568
+10381	Tubulin-cytoskeleton associated	2461292
+10382	Tubulin-cytoskeleton associated	6865944
+10383	Tubulin-cytoskeleton associated	3999141
+238	Integral membrane	9053841
+9330	DNA-associated (direct or indirect)	10373544
+9332	Integral membrane	8370408
+10389	DNA-associated (direct or indirect)	10331946
+9337	DNA-associated (direct or indirect)	9820826
+8390	Integral membrane	8004088
+8392	Integral membrane	8004088
+5050	Soluble	7669037
+5051	Soluble	8955149
+23490	DNA-associated (direct or indirect)	9827568
+3454	Integral membrane	8181059
+3455	Integral membrane	7588638
+3456	Soluble	10640778
+23493	DNA-associated (direct or indirect)	10415358
+56121	Integral membrane	10380929
+3459	Integral membrane	2971451
+56122	Integral membrane	10380929
+56124	Integral membrane	10380929
+11335	DNA-associated (direct or indirect)	8663349
+56125	Integral membrane	10380929
+56126	Integral membrane	10380929
+11337	Peripheral membrane	9892355
+10390	Integral membrane	10191259
+11338	RNA-associated	1538748
+9340	Integral membrane	9990065
+10396	Integral membrane	10198212
+9343	RNA-associated	9233818
+7741	DNA-associated (direct or indirect)	1569959
+6002	Peripheral membrane	9651375
+10399	Peripheral membrane	2499885
+6004	Peripheral membrane	9469939
+6005	Integral membrane	1417776
+6006	Integral membrane	1438298
+6007	Integral membrane	1438298
+2802	Peripheral membrane	9295333
+2803	Peripheral membrane	1400343
+5064	Integral membrane	9813098
+3460	Integral membrane	8910544
+2804	Integral membrane	7691276
+5066	Soluble	1448112
+5066	Integral membrane	1448112
+5068	Soluble	1325291
+56130	Integral membrane	10380929
+56131	Integral membrane	10380929
+56132	Integral membrane	10380929
+250	Peripheral membrane	3001717
+56133	Integral membrane	10380929
+56134	Integral membrane	10380929
+11345	Actin-cytoskeleton associated	10406962
+56135	Integral membrane	10380929
+56138	Integral membrane	10380929
+56139	Integral membrane	10380929
+6010	Integral membrane	2218504
+9356	Integral membrane	9950961
+6013	Soluble	6298628
+7753	DNA-associated (direct or indirect)	10748193
+6017	Soluble	9326942
+2811	Integral membrane	3353370
+2812	Integral membrane	8021244
+5073	RNA-associated	9736620
+2814	Integral membrane	7690959
+5075	DNA-associated (direct or indirect)	1358810
+2815	Integral membrane	2771955
+5076	DNA-associated (direct or indirect)	9106533
+5077	DNA-associated (direct or indirect)	9500554
+2817	Integral membrane	2148568
+1870	DNA-associated (direct or indirect)	8246996
+5079	DNA-associated (direct or indirect)	10524622
+1871	DNA-associated (direct or indirect)	10918599
+56140	Integral membrane	10380929
+1874	DNA-associated (direct or indirect)	7892279
+56141	Integral membrane	10380929
+1875	DNA-associated (direct or indirect)	7892279
+56142	Integral membrane	10380929
+56143	Integral membrane	10380929
+1877	DNA-associated (direct or indirect)	9121437
+56144	Integral membrane	10380929
+56145	Integral membrane	10380929
+56146	Integral membrane	10380929
+56147	Integral membrane	10380929
+267	Integral membrane	1649192
+9360	RNA-associated	9153302
+268	Soluble	
+51206	Integral membrane	10822077
+9365	Soluble	9464267
+9365	Integral membrane	9464267
+6024	DNA-associated (direct or indirect)	8121495
+9369	Integral membrane	1621094
+5080	DNA-associated (direct or indirect)	10747901
+2823	Integral membrane	8661015
+2824	Integral membrane	8661015
+3481	Soluble	
+2825	Integral membrane	7851889
+3482	Integral membrane	10799489
+2826	Integral membrane	7851889
+5087	DNA-associated (direct or indirect)	10500199
+3483	Soluble	1384485
+2827	Integral membrane	7639700
+2828	Integral membrane	8595909
+1880	Integral membrane	8383238
+2829	Integral membrane	9632725
+273	Peripheral membrane	8245793
+1889	Integral membrane	7695628
+27012	Integral membrane	8670833
+8714	Integral membrane	9813153
+8715	RNA-associated	9813152
+8718	Integral membrane	8994832
+9375	Integral membrane	9729438
+9376	Integral membrane	10049739
+27019	Tubulin-cytoskeleton associated	10577904
+9378	Integral membrane	1621094
+6035	RNA-associated	8049276
+6036	RNA-associated	2734298
+6037	Soluble	10706854
+6037	RNA-associated	2745977
+2830	Integral membrane	7832990
+6039	RNA-associated	8836175
+2831	Integral membrane	7590751
+2832	Integral membrane	7590751
+5093	RNA-associated	8833161
+4437	DNA-associated (direct or indirect)	10871409
+2833	Integral membrane	9064356
+5094	RNA-associated	8833161
+4438	DNA-associated (direct or indirect)	9299235
+2834	Integral membrane	8666380
+4439	DNA-associated (direct or indirect)	9740671
+2835	Integral membrane	8530049
+5097	Integral membrane	8508762
+2838	Integral membrane	8838812
+1890	Soluble	2005900
+5099	Integral membrane	9615233
+10713	RNA-associated	10022888
+10714	DNA-associated (direct or indirect)	10219083
+1896	Integral membrane	8696334
+55509	DNA-associated (direct or indirect)	10878360
+283	RNA-associated	2866795
+284	Soluble	
+285	Soluble	
+286	Actin-cytoskeleton associated	9430667
+8723	Peripheral membrane	9819414
+287	Actin-cytoskeleton associated	8253844
+27022	DNA-associated (direct or indirect)	8499623
+8724	Peripheral membrane	9819414
+9381	Integral membrane	10192385
+6040	RNA-associated	9799596
+7781	Integral membrane	8962159
+4440	RNA-associated	9790759
+9389	Integral membrane	10072596
+2840	Integral membrane	8558062
+2841	Integral membrane	9205118
+1102	DNA-associated (direct or indirect)	10089422
+2842	Integral membrane	8830667
+2843	Integral membrane	9073069
+1104	DNA-associated (direct or indirect)	10089422
+2844	Integral membrane	9073069
+1105	DNA-associated (direct or indirect)	9326634
+2845	Integral membrane	9073069
+1106	DNA-associated (direct or indirect)	9326634
+2846	Integral membrane	9073069
+1107	DNA-associated (direct or indirect)	9326634
+2847	Integral membrane	10421367
+1108	DNA-associated (direct or indirect)	9326634
+10721	DNA-associated (direct or indirect)	10395804
+2848	Integral membrane	9020062
+10723	Integral membrane	10347194
+10725	DNA-associated (direct or indirect)	10377394
+55515	Integral membrane	10852210
+290	Integral membrane	2564851
+291	Integral membrane	2823266
+292	Integral membrane	2168878
+51232	Integral membrane	10642437
+8731	RNA-associated	9705270
+8732	RNA-associated	9473487
+27032	Integral membrane	10615129
+9390	Integral membrane	10072596
+27033	DNA-associated (direct or indirect)	10572087
+9394	Integral membrane	9535912
+27036	Integral membrane	10567377
+7791	Integral membrane	8940160
+9398	Integral membrane	7722300
+1112	DNA-associated (direct or indirect)	9154802
+2852	Integral membrane	8920907
+2853	Integral membrane	9205127
+2854	Integral membrane	9653656
+2857	Integral membrane	10036181
+10732	DNA-associated (direct or indirect)	9763657
+2859	Integral membrane	9479505
+57126	Integral membrane	10753836
+57127	Integral membrane	11024028
+55523	RNA-associated	10836796
+10736	DNA-associated (direct or indirect)	10773454
+8740	Integral membrane	9462508
+8742	Integral membrane	9560343
+8743	Soluble	8777713
+8743	Integral membrane	8777713
+8744	Integral membrane	8088337
+7005	DNA-associated (direct or indirect)	9148898
+7009	Integral membrane	10087504
+3801	Tubulin-cytoskeleton associated	9782090
+3802	Integral membrane	7749980
+3803	Integral membrane	7749980
+3804	Integral membrane	7749980
+3805	Integral membrane	8946682
+3806	Integral membrane	8627176
+3807	Integral membrane	8627176
+3808	Integral membrane	7749980
+3809	Integral membrane	7749980
+2861	Integral membrane	9144577
+2862	Integral membrane	10381885
+2863	Integral membrane	9441746
+2864	Integral membrane	9344866
+2865	Integral membrane	9344866
+2866	Integral membrane	9344866
+2867	Integral membrane	9344866
+1128	Integral membrane	8508928
+57134	Integral membrane	10915796
+1129	Integral membrane	3037705
+2869	Soluble	7685906
+2869	Peripheral membrane	9813065
+10749	Tubulin-cytoskeleton associated	9685376
+7010	Integral membrane	8382358
+7011	RNA-associated	9020079
+7013	DNA-associated (direct or indirect)	7502076
+7014	DNA-associated (direct or indirect)	9326950
+8754	Integral membrane	8647900
+7015	DNA-associated (direct or indirect)	9288757
+5411	Intermediate-filament associated	10809736
+3810	Integral membrane	7749980
+3812	Integral membrane	7716543
+1130	Tubulin-cytoskeleton associated	9606205
+1131	Integral membrane	3443095
+1132	Integral membrane	3037705
+1133	Integral membrane	3272174
+1134	Integral membrane	7619526
+1135	Integral membrane	8906617
+1136	Integral membrane	8906617
+604	DNA-associated (direct or indirect)	9171827
+1137	Integral membrane	8906617
+1138	Integral membrane	1542648
+55540	Integral membrane	10749887
+2878	Soluble	3619451
+1139	Integral membrane	8906617
+10752	Integral membrane	9799093
+608	Integral membrane	1396583
+7020	DNA-associated (direct or indirect)	1916817
+53947	Integral membrane	10748143
+8761	RNA-associated	8524242
+7022	DNA-associated (direct or indirect)	9113991
+7023	DNA-associated (direct or indirect)	2833704
+8763	Soluble	10491205
+8763	Integral membrane	9763543
+7024	DNA-associated (direct or indirect)	8035790
+5420	Integral membrane	9188463
+8764	Integral membrane	9162061
+7025	DNA-associated (direct or indirect)	2739739
+7026	DNA-associated (direct or indirect)	1899293
+51266	Integral membrane	10671229
+27063	DNA-associated (direct or indirect)	7730328
+7027	DNA-associated (direct or indirect)	8405995
+5423	DNA-associated (direct or indirect)	8168825
+51267	Integral membrane	10671229
+5424	DNA-associated (direct or indirect)	3146346
+7029	DNA-associated (direct or indirect)	7784053
+5425	DNA-associated (direct or indirect)	8530069
+3821	Integral membrane	2007850
+5426	DNA-associated (direct or indirect)	8486689
+3822	Integral membrane	2007850
+27067	RNA-associated	10585778
+5427	DNA-associated (direct or indirect)	9405441
+5428	DNA-associated (direct or indirect)	8884268
+5429	DNA-associated (direct or indirect)	10856253
+4481	Integral membrane	2251254
+1140	Integral membrane	8872460
+1141	Integral membrane	8906617
+1142	Integral membrane	7690916
+4486	Integral membrane	8386824
+610	Integral membrane	10228147
+1143	Integral membrane	8906617
+611	Integral membrane	9089077
+1144	Integral membrane	8872460
+4488	DNA-associated (direct or indirect)	8968743
+1145	Integral membrane	8872460
+1146	Integral membrane	3967651
+10763	Intermediate-filament associated	1478958
+10765	DNA-associated (direct or indirect)	10336460
+7030	DNA-associated (direct or indirect)	1685140
+8771	Soluble	9872321
+50616	Soluble	10875937
+5430	DNA-associated (direct or indirect)	2999107
+51274	DNA-associated (direct or indirect)	10582345
+5431	DNA-associated (direct or indirect)	1518060
+7036	Integral membrane	10409623
+5432	DNA-associated (direct or indirect)	2187864
+5433	DNA-associated (direct or indirect)	9528765
+7038	Soluble	3016640
+5434	DNA-associated (direct or indirect)	7828586
+27075	Integral membrane	10719184
+7039	Soluble	2103501
+7039	Integral membrane	2103501
+5435	DNA-associated (direct or indirect)	7803819
+5436	DNA-associated (direct or indirect)	9256063
+3832	Tubulin-cytoskeleton associated	8548803
+5437	DNA-associated (direct or indirect)	8524256
+6094	Integral membrane	1610568
+5438	DNA-associated (direct or indirect)	8265347
+3834	Tubulin-cytoskeleton associated	9925916
+6095	DNA-associated (direct or indirect)	7926749
+5439	DNA-associated (direct or indirect)	8797801
+3835	DNA-associated (direct or indirect)	8599929
+6096	DNA-associated (direct or indirect)	7935491
+6097	DNA-associated (direct or indirect)	7811290
+6098	Integral membrane	3785223
+1153	RNA-associated	9434172
+1155	Tubulin-cytoskeleton associated	8978778
+2895	Integral membrane	9465309
+623	Integral membrane	8063797
+2896	Soluble	1542665
+624	Integral membrane	7916737
+2897	Integral membrane	8260617
+2898	Integral membrane	7536611
+2899	Integral membrane	7719709
+627	Soluble	
+10772	RNA-associated	9774382
+10773	DNA-associated (direct or indirect)	7958847
+10775	RNA-associated	10352175
+7040	Soluble	
+51280	Integral membrane	10831838
+29765	Actin-cytoskeleton associated	10662549
+7042	Soluble	
+29766	Actin-cytoskeleton associated	10662549
+7043	Soluble	
+51283	Integral membrane	10716992
+29767	Actin-cytoskeleton associated	10662549
+5440	DNA-associated (direct or indirect)	7651387
+50628	RNA-associated	10725331
+7045	Soluble	
+5441	DNA-associated (direct or indirect)	7651387
+7046	Integral membrane	8242743
+5442	DNA-associated (direct or indirect)	9097968
+8786	Peripheral membrane	9789084
+5443	Soluble	9620771
+2100	DNA-associated (direct or indirect)	9636657
+8787	Peripheral membrane	9765512
+7048	Integral membrane	1310899
+2101	DNA-associated (direct or indirect)	9344655
+8788	Soluble	7925474
+7049	Integral membrane	1333192
+51289	Integral membrane	10806363
+2103	DNA-associated (direct or indirect)	9344655
+5449	DNA-associated (direct or indirect)	1487156
+2107	Protein synthesis factor	7990965
+3848	Intermediate-filament associated	1380725
+1161	DNA-associated (direct or indirect)	7664335
+3849	Intermediate-filament associated	1380918
+631	Intermediate-filament associated	9628810
+634	Integral membrane	2457922
+10782	DNA-associated (direct or indirect)	10777669
+639	DNA-associated (direct or indirect)	1851123
+10786	Integral membrane	9149941
+50632	Integral membrane	10698743
+7050	DNA-associated (direct or indirect)	10764806
+29777	DNA-associated (direct or indirect)	10648625
+51294	Integral membrane	10380929
+27091	Integral membrane	10613843
+8794	Integral membrane	9314565
+5451	DNA-associated (direct or indirect)	2905684
+27092	Integral membrane	10613843
+8795	Integral membrane	9311998
+7056	Integral membrane	2822087
+5452	DNA-associated (direct or indirect)	2904653
+2110	Integral membrane	8306995
+5454	DNA-associated (direct or indirect)	7601453
+3851	Intermediate-filament associated	2452170
+3852	Intermediate-filament associated	2456903
+2113	DNA-associated (direct or indirect)	10918595
+8799	Integral membrane	9792670
+3853	Intermediate-filament associated	2410904
+2114	DNA-associated (direct or indirect)	10918595
+5458	DNA-associated (direct or indirect)	7623109
+3854	Intermediate-filament associated	9618173
+2115	DNA-associated (direct or indirect)	7700648
+5459	DNA-associated (direct or indirect)	7623109
+2117	DNA-associated (direct or indirect)	8020980
+3857	Intermediate-filament associated	8647270
+2118	DNA-associated (direct or indirect)	8441666
+3858	Intermediate-filament associated	1380725
+2119	DNA-associated (direct or indirect)	8152800
+3859	Intermediate-filament associated	9171831
+640	Peripheral membrane	7822795
+641	DNA-associated (direct or indirect)	10779560
+57180	Actin-cytoskeleton associated	10047519
+643	Integral membrane	1425907
+1179	Integral membrane	9828122
+646	DNA-associated (direct or indirect)	9099851
+8000	Integral membrane	9465086
+53981	RNA-associated	7969155
+10798	Integral membrane	9787077
+6402	Integral membrane	1692315
+10799	RNA-associated	9630247
+6403	Soluble	1701178
+6403	Integral membrane	1701178
+6404	Integral membrane	7505206
+4800	DNA-associated (direct or indirect)	2000400
+7062	Intermediate-filament associated	7685034
+4802	DNA-associated (direct or indirect)	10446203
+4803	Soluble	
+4804	Integral membrane	3022937
+7067	DNA-associated (direct or indirect)	2879242
+5463	DNA-associated (direct or indirect)	7908264
+2120	DNA-associated (direct or indirect)	7761424
+7068	DNA-associated (direct or indirect)	1618799
+3860	Intermediate-filament associated	9714826
+5465	DNA-associated (direct or indirect)	10860941
+4809	RNA-associated	10593953
+3861	Intermediate-filament associated	7525408
+2122	DNA-associated (direct or indirect)	10856240
+5467	DNA-associated (direct or indirect)	1333051
+2124	Integral membrane	1903357
+5468	DNA-associated (direct or indirect)	10622252
+3866	Intermediate-filament associated	2580298
+10001	DNA-associated (direct or indirect)	10024883
+1180	Integral membrane	7981750
+10002	DNA-associated (direct or indirect)	10220376
+3868	Intermediate-filament associated	2451124
+1181	Integral membrane	7795595
+10003	Integral membrane	10085079
+1182	Integral membrane	7665160
+650	Soluble	
+1183	Integral membrane	8069296
+651	Soluble	
+1184	Integral membrane	8559248
+10006	Soluble	9010225
+1185	Integral membrane	9224655
+653	Soluble	
+1186	Integral membrane	8543009
+654	Soluble	
+1187	Integral membrane	8041726
+1188	Integral membrane	8041726
+657	Integral membrane	8397373
+659	Integral membrane	7791754
+7070	Integral membrane	2864690
+7072	RNA-associated	1934064
+7073	DNA-associated (direct or indirect)	9207209
+7073	RNA-associated	1326761
+6418	DNA-associated (direct or indirect)	7753797
+7075	Integral membrane	1312667
+4815	Integral membrane	10627596
+2130	RNA-associated	8084618
+4818	Integral membrane	8458737
+2131	Integral membrane	9620772
+3872	Intermediate-filament associated	1281771
+3875	Intermediate-filament associated	2434380
+10014	DNA-associated (direct or indirect)	10869435
+8022	DNA-associated (direct or indirect)	10598593
+6421	RNA-associated	8449401
+6422	Peripheral membrane	9192640
+25803	DNA-associated (direct or indirect)	6857767
+25804	RNA-associated	10523320
+8028	DNA-associated (direct or indirect)	7888665
+6424	Soluble	10211996
+8029	Peripheral membrane	9572993
+6425	Soluble	10072424
+6426	RNA-associated	1830244
+6427	RNA-associated	8530103
+6429	RNA-associated	8321209
+7087	Integral membrane	8995416
+4828	Soluble	2458345
+3880	Intermediate-filament associated	2448790
+4829	Integral membrane	8391296
+3881	Intermediate-filament associated	9405442
+2145	DNA-associated (direct or indirect)	8921387
+3885	Intermediate-filament associated	9756910
+2147	Soluble	2719946
+10021	Integral membrane	10228147
+2149	Integral membrane	1672265
+672	DNA-associated (direct or indirect)	9662397
+676	DNA-associated (direct or indirect)	10365964
+677	DNA-associated (direct or indirect)	8595910
+8034	Integral membrane	2575220
+6430	RNA-associated	7556075
+6431	RNA-associated	7556075
+6432	RNA-associated	8013463
+6433	RNA-associated	8940107
+6434	RNA-associated	9546399
+25819	DNA-associated (direct or indirect)	10521507
+7095	Integral membrane	9020021
+26476	Integral membrane	1370859
+7096	Integral membrane	9435236
+7097	Integral membrane	9435236
+5493	Intermediate-filament associated	9521878
+2150	Integral membrane	8615752
+7098	Integral membrane	9435236
+2151	Integral membrane	9087410
+7099	Integral membrane	9435236
+4839	RNA-associated	1394192
+3891	Intermediate-filament associated	9084137
+3895	Integral membrane	7787243
+3899	DNA-associated (direct or indirect)	8555498
+680	Integral membrane	9367152
+10036	DNA-associated (direct or indirect)	7600578
+51621	DNA-associated (direct or indirect)	10023774
+684	Integral membrane	7607676
+685	Soluble	8144591
+687	DNA-associated (direct or indirect)	8051167
+688	DNA-associated (direct or indirect)	8479902
+6442	Soluble	7937874
+6442	Integral membrane	7937874
+25823	Integral membrane	10521469
+6443	Integral membrane	7581448
+6444	Integral membrane	8842738
+6445	Integral membrane	8641426
+4841	RNA-associated	8371983
+3104	DNA-associated (direct or indirect)	8661141
+55911	Integral membrane	10852956
+10048	Tubulin-cytoskeleton associated	9817760
+696	Integral membrane	8611614
+25833	DNA-associated (direct or indirect)	10473598
+3110	DNA-associated (direct or indirect)	9843207
+4851	Integral membrane	10206645
+26492	Integral membrane	9119360
+4852	Soluble	8132547
+26493	Integral membrane	9119360
+4854	Integral membrane	7835890
+4855	Integral membrane	9693032
+4857	RNA-associated	8558240
+2170	Soluble	8262516
+10050	Integral membrane	10319585
+10051	DNA-associated (direct or indirect)	9789013
+10052	Integral membrane	7966354
+9001	Actin-cytoskeleton associated	9361024
+10056	Soluble	10049785
+9002	Integral membrane	9618465
+10057	Integral membrane	9827529
+5800	Integral membrane	7665166
+8061	DNA-associated (direct or indirect)	10918580
+5802	Integral membrane	8524829
+5803	Integral membrane	8387522
+7408	Actin-cytoskeleton associated	7828592
+4864	Integral membrane	10521290
+3125	Integral membrane	8775462
+3126	Integral membrane	8775462
+1523	DNA-associated (direct or indirect)	1301999
+3127	Integral membrane	3456344
+1524	Integral membrane	9390561
+4868	Integral membrane	9660941
+1525	Integral membrane	9096397
+10061	Integral membrane	9878413
+10062	DNA-associated (direct or indirect)	7744246
+55937	Integral membrane	10531326
+9013	DNA-associated (direct or indirect)	7801123
+9014	DNA-associated (direct or indirect)	7801123
+9015	DNA-associated (direct or indirect)	7801123
+9016	Integral membrane	9852133
+5810	DNA-associated (direct or indirect)	9660799
+9019	Integral membrane	9792637
+7416	Integral membrane	8420959
+7417	Integral membrane	8420959
+5813	DNA-associated (direct or indirect)	1448097
+7418	Integral membrane	7517385
+7419	Integral membrane	9781040
+6473	DNA-associated (direct or indirect)	9259282
+5817	Soluble	2170108
+5817	Integral membrane	2170108
+5818	Integral membrane	9616127
+3131	DNA-associated (direct or indirect)	8639829
+5819	Integral membrane	9657005
+1534	Integral membrane	7980462
+2191	Integral membrane	7911242
+4879	Soluble	7601467
+2192	Soluble	2269669
+11014	Integral membrane	1325562
+2193	Soluble	9177188
+11016	DNA-associated (direct or indirect)	1694576
+2195	Integral membrane	8586420
+10070	Integral membrane	10463611
+2197	Ribosome-associated	8395683
+10071	Integral membrane	10463611
+10073	RNA-associated	9670026
+54207	Integral membrane	10880510
+10076	Integral membrane	8700514
+7421	DNA-associated (direct or indirect)	2849209
+7422	Soluble	1711045
+9028	Integral membrane	9662444
+8082	Integral membrane	9395445
+5824	Integral membrane	10051604
+8085	DNA-associated (direct or indirect)	9247308
+7429	Actin-cytoskeleton associated	2846586
+5825	Integral membrane	1301993
+5826	Integral membrane	9266848
+8087	RNA-associated	7781595
+8087	Ribosome-associated	9817930
+5828	Integral membrane	1750930
+8089	DNA-associated (direct or indirect)	9302258
+5829	Tubulin-cytoskeleton associated	10840040
+3142	DNA-associated (direct or indirect)	8094082
+6489	Integral membrane	8195250
+4886	Integral membrane	1317848
+4887	Integral membrane	7592910
+3148	DNA-associated (direct or indirect)	1551873
+4888	Integral membrane	8910373
+4889	Integral membrane	8824284
+11025	Integral membrane	9278324
+54212	Peripheral membrane	10747910
+10082	Integral membrane	7657705
+10084	DNA-associated (direct or indirect)	9875212
+9032	Integral membrane	9479038
+9033	Integral membrane	10517637
+9034	Integral membrane	9473515
+7431	Intermediate-filament associated	3792301
+10089	Integral membrane	10206991
+7432	Soluble	6571696
+7433	Integral membrane	8179610
+9038	Integral membrane	9464258
+7434	Integral membrane	7811244
+8092	DNA-associated (direct or indirect)	8756334
+7439	Integral membrane	10737974
+6492	DNA-associated (direct or indirect)	8812055
+6493	DNA-associated (direct or indirect)	8661114
+3150	DNA-associated (direct or indirect)	8047885
+6494	Peripheral membrane	9346962
+8099	DNA-associated (direct or indirect)	9506968
+4891	Integral membrane	7613023
+4892	Actin-cytoskeleton associated	9295142
+24139	Tubulin-cytoskeleton associated	10521658
+6499	RNA-associated	7610041
+11030	RNA-associated	8855282
+3157	Soluble	7913309
+4897	Integral membrane	8812479
+3159	DNA-associated (direct or indirect)	2505228
+4899	DNA-associated (direct or indirect)	8034649
+11034	Actin-cytoskeleton associated	8399167
+54221	Peripheral membrane	10747910
+11036	DNA-associated (direct or indirect)	10364255
+10090	Integral membrane	10187838
+10092	Actin-cytoskeleton associated	9230079
+10093	Actin-cytoskeleton associated	9230079
+10094	Actin-cytoskeleton associated	9230079
+10095	Actin-cytoskeleton associated	9230079
+10096	Actin-cytoskeleton associated	9230079
+10097	Actin-cytoskeleton associated	9230079
+9044	DNA-associated (direct or indirect)	9488487
+10098	Integral membrane	9714763
+9045	RNA-associated	9480843
+9045	Ribosome-associated	9480843
+10099	Integral membrane	9714763
+7442	Integral membrane	9349813
+9047	Soluble	9468509
+9048	Soluble	
+3164	DNA-associated (direct or indirect)	2626032
+3167	DNA-associated (direct or indirect)	7647458
+11041	Integral membrane	9405606
+11043	Tubulin-cytoskeleton associated	10644436
+11044	DNA-associated (direct or indirect)	10066793
+11047	Integral membrane	8033103
+9051	Peripheral membrane	9857189
+9052	Integral membrane	9857033
+9053	Tubulin-cytoskeleton associated	8408219
+9055	Tubulin-cytoskeleton associated	9885575
+9056	Integral membrane	9829974
+51692	RNA-associated	8929409
+9057	Integral membrane	9829974
+7453	Soluble	1761529
+9058	Integral membrane	8967342
+7454	Actin-cytoskeleton associated	8625410
+7456	Actin-cytoskeleton associated	9405671
+7458	Protein synthesis factor	9516461
+4118	Integral membrane	9003426
+3170	DNA-associated (direct or indirect)	10868948
+3171	DNA-associated (direct or indirect)	7739897
+5859	Soluble	8078941
+2516	DNA-associated (direct or indirect)	8205615
+3177	Integral membrane	7639753
+56923	Integral membrane	8940772
+11051	RNA-associated	9659921
+3178	RNA-associated	8521471
+11052	RNA-associated	9659921
+8402	Integral membrane	1457818
+8403	DNA-associated (direct or indirect)	9925951
+8406	Integral membrane	8634708
+7461	Tubulin-cytoskeleton associated	9799601
+6805	Integral membrane	8105537
+9068	Soluble	
+7466	Integral membrane	9771706
+2520	Soluble	7488110
+2521	RNA-associated	8510758
+2523	Integral membrane	2118655
+3181	RNA-associated	7789969
+3182	RNA-associated	8999813
+3183	RNA-associated	3457372
+3184	RNA-associated	10205060
+10402	Integral membrane	10206952
+3185	RNA-associated	7499401
+3187	RNA-associated	7499401
+3188	RNA-associated	7499401
+3189	RNA-associated	8999868
+11063	DNA-associated (direct or indirect)	10359848
+11064	DNA-associated (direct or indirect)	10359848
+8411	Peripheral membrane	7768953
+9071	Integral membrane	10508613
+9073	Integral membrane	
+8417	Integral membrane	10839363
+8419	Intermediate-filament associated	8636093
+9076	Integral membrane	9647647
+4130	Tubulin-cytoskeleton associated	8812494
+7474	Soluble	10491302
+4131	Tubulin-cytoskeleton associated	1881920
+7476	Soluble	8893824
+4133	Tubulin-cytoskeleton associated	9588626
+4134	Tubulin-cytoskeleton associated	1905296
+2532	Integral membrane	7689250
+4137	Tubulin-cytoskeleton associated	10747907
+3190	RNA-associated	1729596
+4139	Tubulin-cytoskeleton associated	
+2535	Integral membrane	8626800
+3191	RNA-associated	2687284
+5879	Peripheral membrane	2674130
+3192	DNA-associated (direct or indirect)	1628625
+3192	RNA-associated	1628625
+3198	DNA-associated (direct or indirect)	7622051
+11073	DNA-associated (direct or indirect)	9461304
+23521	Ribosome-associated	10580157
+6827	DNA-associated (direct or indirect)	8649394
+23522	DNA-associated (direct or indirect)	10497217
+9088	Integral membrane	9001210
+5880	Peripheral membrane	2674130
+4141	Soluble	8921912
+6829	DNA-associated (direct or indirect)	8975720
+4142	Integral membrane	3419518
+7486	DNA-associated (direct or indirect)	9288107
+5883	DNA-associated (direct or indirect)	10852904
+5884	DNA-associated (direct or indirect)	9660800
+4145	Soluble	8288563
+2542	Integral membrane	9822626
+5886	DNA-associated (direct or indirect)	10854423
+23528	DNA-associated (direct or indirect)	10448078
+5887	DNA-associated (direct or indirect)	10854423
+23529	Soluble	10500198
+5888	DNA-associated (direct or indirect)	11002423
+4149	DNA-associated (direct or indirect)	2006410
+5889	DNA-associated (direct or indirect)	9469824
+2547	DNA-associated (direct or indirect)	2466842
+10424	Integral membrane	9705155
+10426	Tubulin-cytoskeleton associated	9566967
+10427	Peripheral membrane	10075675
+8431	DNA-associated (direct or indirect)	11030331
+6830	DNA-associated (direct or indirect)	8786132
+6832	RNA-associated	9925937
+9094	Soluble	9538874
+8438	DNA-associated (direct or indirect)	8805304
+9095	DNA-associated (direct or indirect)	9888994
+8439	Soluble	8808629
+26872	Integral membrane	10588738
+23530	Integral membrane	9524818
+9096	DNA-associated (direct or indirect)	9888994
+23531	Integral membrane	7503749
+6837	Soluble	8586415
+4150	DNA-associated (direct or indirect)	1502157
+7494	DNA-associated (direct or indirect)	2321018
+6838	RNA-associated	10675619
+5890	DNA-associated (direct or indirect)	9512535
+4151	Soluble	
+6839	DNA-associated (direct or indirect)	10949293
+4152	DNA-associated (direct or indirect)	9774669
+5892	DNA-associated (direct or indirect)	9570954
+5893	DNA-associated (direct or indirect)	7774919
+2550	Integral membrane	9753614
+2551	DNA-associated (direct or indirect)	8441384
+23536	RNA-associated	10430867
+5896	DNA-associated (direct or indirect)	9630231
+4157	Integral membrane	9571181
+23538	Integral membrane	10512676
+4158	Integral membrane	9175632
+2554	Integral membrane	2465923
+23539	Integral membrane	10493836
+4159	Integral membrane	8463333
+2555	Integral membrane	8391122
+2556	Integral membrane	8391122
+2557	Integral membrane	8719416
+10431	Integral membrane	10339406
+2558	Integral membrane	1321750
+2559	Integral membrane	8632757
+10438	DNA-associated (direct or indirect)	9469821
+11099	Peripheral membrane	7519780
+5100	Integral membrane	9787079
+6840	Actin-cytoskeleton associated	9867483
+8446	RNA-associated	9685386
+6843	Integral membrane	1976629
+6844	Integral membrane	1976629
+8449	RNA-associated	9547260
+6846	Soluble	7875320
+6847	DNA-associated (direct or indirect)	1464329
+5108	Tubulin-cytoskeleton associated	8120099
+4160	Integral membrane	8392067
+4161	Integral membrane	7739752
+1901	Integral membrane	8626678
+4162	Integral membrane	2602381
+1902	Integral membrane	9070858
+1903	Integral membrane	9409733
+2560	Integral membrane	2465923
+3508	DNA-associated (direct or indirect)	8349627
+2561	Integral membrane	8264558
+1906	Soluble	2670930
+2562	Integral membrane	1664410
+1907	Soluble	1701397
+2563	Integral membrane	2176788
+4168	Intermediate-filament associated	3056717
+1908	Soluble	8298278
+2564	Integral membrane	9039914
+1909	Integral membrane	1326535
+2566	Integral membrane	2538761
+10440	Integral membrane	10339406
+2569	Integral membrane	10779366
+5111	DNA-associated (direct or indirect)	9552415
+8455	Integral membrane	10086356
+8456	DNA-associated (direct or indirect)	10767081
+8458	DNA-associated (direct or indirect)	9748214
+6854	Peripheral membrane	8964517
+8459	Integral membrane	9736702
+5116	Tubulin-cytoskeleton associated	8124707
+6856	Integral membrane	8034131
+1910	Integral membrane	8810293
+4171	DNA-associated (direct or indirect)	8175912
+1911	DNA-associated (direct or indirect)	9121482
+4172	DNA-associated (direct or indirect)	1549468
+1912	DNA-associated (direct or indirect)	9121482
+3516	DNA-associated (direct or indirect)	8406481
+4173	DNA-associated (direct or indirect)	8798650
+23554	Integral membrane	10719184
+2570	Integral membrane	1315307
+23555	Integral membrane	10719184
+1915	Protein synthesis factor	3512269
+1915	Ribosome-associated	3512269
+4179	Integral membrane	1711570
+9400	DNA-associated (direct or indirect)	9878247
+9401	DNA-associated (direct or indirect)	9878247
+10456	Soluble	9058808
+7802	Tubulin-cytoskeleton associated	9284741
+9407	Soluble	9565616
+9407	Integral membrane	9565616
+8460	Integral membrane	9501187
+9409	Integral membrane	9922452
+7805	Integral membrane	8661146
+8464	DNA-associated (direct or indirect)	9787080
+8467	DNA-associated (direct or indirect)	9730600
+6863	Soluble	9548509
+6865	Integral membrane	2173708
+6866	Soluble	10866201
+6868	Integral membrane	9574564
+6869	Integral membrane	1657150
+23566	Integral membrane	10488122
+23567	RNA-associated	10488071
+2587	Integral membrane	7524088
+10461	Soluble	8086340
+10461	Integral membrane	8086340
+56992	DNA-associated (direct or indirect)	10878014
+56992	Tubulin-cytoskeleton associated	10878014
+9410	RNA-associated	9774689
+319	Soluble	8093033
+56993	Integral membrane	10982837
+9412	DNA-associated (direct or indirect)	8598913
+56996	Integral membrane	10871601
+9414	Integral membrane	8824195
+9415	Integral membrane	9867867
+10469	Peripheral membrane	10339406
+9416	RNA-associated	9409622
+8470	Actin-cytoskeleton associated	9211900
+8471	Peripheral membrane	9553137
+6870	Integral membrane	1374246
+6871	DNA-associated (direct or indirect)	8552087
+5132	Soluble	8288249
+6872	DNA-associated (direct or indirect)	8450888
+8477	Integral membrane	9655242
+6873	DNA-associated (direct or indirect)	9774672
+6874	DNA-associated (direct or indirect)	8942982
+8479	DNA-associated (direct or indirect)	9710638
+6875	DNA-associated (direct or indirect)	8858156
+22913	RNA-associated	9376072
+22914	Integral membrane	9683661
+6877	DNA-associated (direct or indirect)	9045704
+6878	DNA-associated (direct or indirect)	8262073
+6879	DNA-associated (direct or indirect)	7824954
+4192	Soluble	7835084
+22918	Integral membrane	9047234
+2591	Integral membrane	8663203
+1936	Protein synthesis factor	8334168
+10472	DNA-associated (direct or indirect)	9756912
+328	DNA-associated (direct or indirect)	1722334
+10474	DNA-associated (direct or indirect)	9674425
+9423	Soluble	9950216
+9424	Integral membrane	10075682
+10478	Integral membrane	9874197
+10479	Integral membrane	9507001
+9427	Integral membrane	9931490
+8480	RNA-associated	9256445
+8480	Actin-cytoskeleton associated	9256445
+9429	Integral membrane	9850061
+8482	Peripheral membrane	9712866
+7827	Integral membrane	10742096
+8484	Integral membrane	9722565
+6880	DNA-associated (direct or indirect)	10821850
+5141	Soluble	8940140
+30001	Integral membrane	10671517
+6881	DNA-associated (direct or indirect)	7923369
+5142	Soluble	9371714
+6882	DNA-associated (direct or indirect)	9695952
+8487	RNA-associated	9295360
+6883	DNA-associated (direct or indirect)	7729427
+5144	Soluble	9371713
+6884	DNA-associated (direct or indirect)	9695952
+6886	DNA-associated (direct or indirect)	2303035
+5147	Peripheral membrane	9570951
+6887	DNA-associated (direct or indirect)	1763056
+22925	Soluble	7721806
+22925	Integral membrane	7721806
+1942	Integral membrane	8660976
+23583	DNA-associated (direct or indirect)	10074426
+3547	Integral membrane	9521868
+23584	Integral membrane	9862345
+1944	Integral membrane	8660976
+1945	Integral membrane	8660976
+1946	Integral membrane	9245480
+1947	Soluble	8798744
+1947	Integral membrane	8660976
+1948	Integral membrane	8660976
+332	Tubulin-cytoskeleton associated	9859993
+1949	Integral membrane	9126477
+16	Soluble	7654687
+338	Soluble	3773997
+10483	Peripheral membrane	8898360
+339	RNA-associated	8078915
+19	Integral membrane	10431236
+10488	DNA-associated (direct or indirect)	9271389
+9437	Integral membrane	9730896
+8490	Peripheral membrane	9747037
+9439	DNA-associated (direct or indirect)	9989412
+6890	Integral membrane	1946428
+6891	Integral membrane	1946428
+8496	Peripheral membrane	9624153
+6892	Integral membrane	9238042
+6894	RNA-associated	8846792
+6895	RNA-associated	2011739
+5156	Integral membrane	8586421
+3553	Soluble	
+6897	Soluble	2033077
+3554	Integral membrane	2530587
+5159	Integral membrane	8586421
+23592	Integral membrane	10671519
+6899	DNA-associated (direct or indirect)	9268629
+23596	Integral membrane	10234000
+1956	Actin-cytoskeleton associated	7640657
+1956	Integral membrane	7640657
+1958	DNA-associated (direct or indirect)	3127059
+20	Integral membrane	7766993
+1959	DNA-associated (direct or indirect)	9537424
+21	Integral membrane	9027511
+343	Integral membrane	9806845
+22	Integral membrane	9621516
+24	Integral membrane	9054934
+25	DNA-associated (direct or indirect)	8242749
+10492	RNA-associated	9847309
+348	Soluble	3283935
+10493	Integral membrane	8938427
+9440	DNA-associated (direct or indirect)	9989412
+9441	DNA-associated (direct or indirect)	9989412
+9442	DNA-associated (direct or indirect)	9989412
+9443	DNA-associated (direct or indirect)	9989412
+9445	Integral membrane	9795190
+7846	Tubulin-cytoskeleton associated	3693406
+2900	Integral membrane	8263508
+7849	DNA-associated (direct or indirect)	10377248
+2902	Integral membrane	7679115
+2903	Integral membrane	8768735
+4508	Integral membrane	
+2904	Integral membrane	8768735
+3560	Integral membrane	8514792
+2905	Integral membrane	9798920
+3561	Integral membrane	8514792
+2906	Integral membrane	9480759
+5167	Integral membrane	1315502
+2907	Integral membrane	8406459
+1960	DNA-associated (direct or indirect)	1906159
+2908	DNA-associated (direct or indirect)	8621628
+5169	Integral membrane	9344668
+1961	DNA-associated (direct or indirect)	1584812
+2909	DNA-associated (direct or indirect)	1894621
+3566	Integral membrane	2307934
+1964	Protein synthesis factor	8106356
+3568	Integral membrane	1495999
+3569	Soluble	
+351	Soluble	10806211
+351	Integral membrane	10806211
+1968	Protein synthesis factor	8106381
+1969	Integral membrane	2174105
+355	Integral membrane	7510905
+356	Integral membrane	7826947
+358	Integral membrane	7521540
+9451	Protein synthesis factor	10026192
+359	Integral membrane	8140421
+7852	Integral membrane	8752280
+7855	Integral membrane	8626800
+6117	DNA-associated (direct or indirect)	8756712
+6118	DNA-associated (direct or indirect)	2406247
+6119	DNA-associated (direct or indirect)	8454588
+2911	Integral membrane	7476890
+5172	Integral membrane	10192399
+2912	Integral membrane	7620613
+2913	Integral membrane	8840013
+2914	Integral membrane	8738157
+5175	Integral membrane	1690453
+2915	Integral membrane	7908515
+2916	Integral membrane	9215706
+2917	Integral membrane	9473604
+2918	Integral membrane	9473604
+22955	DNA-associated (direct or indirect)	10524249
+5179	Soluble	7057924
+2919	Soluble	10881932
+3576	Soluble	10881932
+1973	Protein synthesis factor	10880459
+1974	Protein synthesis factor	8521730
+1975	Protein synthesis factor	2390971
+3579	Integral membrane	8194768
+360	Integral membrane	7543093
+1977	Protein synthesis factor	10880459
+361	Integral membrane	7528931
+1978	Protein synthesis factor	7935836
+40	Integral membrane	8626462
+362	Integral membrane	8621489
+1979	Protein synthesis factor	7935836
+41	Integral membrane	9037075
+363	Integral membrane	8812490
+364	Integral membrane	9405233
+8800	Integral membrane	9714566
+43	Peripheral membrane	8488842
+366	Integral membrane	9514918
+367	DNA-associated (direct or indirect)	3353727
+51305	Integral membrane	10734076
+368	Integral membrane	8912525
+8805	DNA-associated (direct or indirect)	9115274
+9464	DNA-associated (direct or indirect)	9878849
+8808	Integral membrane	1833184
+6122	Ribosome-associated	2891103
+9466	Integral membrane	9600072
+6123	Ribosome-associated	8921388
+6124	Ribosome-associated	8268230
+4520	DNA-associated (direct or indirect)	8065932
+6125	Ribosome-associated	7772601
+6128	Ribosome-associated	8479925
+2920	Soluble	2643119
+6129	Ribosome-associated	8441630
+2922	Soluble	3027901
+4528	Protein synthesis factor	7829522
+2925	Integral membrane	8391296
+3581	Integral membrane	1376929
+2926	RNA-associated	8036161
+10800	Integral membrane	10391245
+2928	DNA-associated (direct or indirect)	9441739
+10802	Peripheral membrane	10075675
+1981	Protein synthesis factor	10880459
+10803	Integral membrane	10229797
+1982	Protein synthesis factor	9049310
+10804	Integral membrane	10610709
+1983	Protein synthesis factor	8663286
+1984	Protein synthesis factor	7622067
+3588	Integral membrane	9312047
+52	Soluble	1587862
+374	Soluble	
+53	Integral membrane	2776754
+8811	Integral membrane	9480833
+54	Integral membrane	2338077
+55	Soluble	8244395
+9470	RNA-associated	9582349
+8815	DNA-associated (direct or indirect)	10908652
+8817	Soluble	9742123
+6130	Ribosome-associated	8360149
+9475	Actin-cytoskeleton associated	9933571
+8819	DNA-associated (direct or indirect)	9651585
+7871	Integral membrane	9405447
+6132	Ribosome-associated	7506540
+6133	Ribosome-associated	8597601
+6135	Ribosome-associated	7748210
+6136	Ribosome-associated	8441690
+6137	Ribosome-associated	9582194
+6138	Ribosome-associated	9582194
+6139	Ribosome-associated	2402465
+5193	Integral membrane	9090384
+5194	Integral membrane	8858165
+2934	Actin-cytoskeleton associated	3020431
+3590	Integral membrane	7670098
+5195	Integral membrane	10212238
+10810	Actin-cytoskeleton associated	10381382
+3594	Integral membrane	7911493
+3595	Integral membrane	8943050
+3596	Soluble	10725748
+1993	RNA-associated	8158249
+1994	RNA-associated	8626503
+1995	RNA-associated	9799595
+1996	RNA-associated	1655278
+1999	DNA-associated (direct or indirect)	10821850
+29803	DNA-associated (direct or indirect)	10606657
+8820	DNA-associated (direct or indirect)	9620767
+8822	Soluble	9514906
+8823	Soluble	9473496
+9480	DNA-associated (direct or indirect)	9915796
+388	Peripheral membrane	3888408
+9481	Integral membrane	10025957
+9482	Integral membrane	10198254
+8826	Actin-cytoskeleton associated	8051149
+8826	Peripheral membrane	8051149
+8827	DNA-associated (direct or indirect)	9790734
+27125	DNA-associated (direct or indirect)	10588740
+6141	Ribosome-associated	8218404
+6142	Ribosome-associated	9582194
+6143	Ribosome-associated	1577483
+6144	Ribosome-associated	7772601
+9488	Integral membrane	8861954
+7884	RNA-associated	10825184
+6146	Ribosome-associated	8135813
+6147	Ribosome-associated	9417910
+4543	Integral membrane	8700109
+4544	Integral membrane	7568007
+26185	Integral membrane	9500546
+30061	Integral membrane	10693807
+1203	Integral membrane	9662406
+30062	DNA-associated (direct or indirect)	10625658
+4547	Soluble	8361539
+26188	Integral membrane	9119360
+1207	Integral membrane	9359436
+1208	Soluble	2045105
+1209	Integral membrane	9828125
+10825	Integral membrane	10405317
+390	Peripheral membrane	8649376
+70	Actin-cytoskeleton associated	9563954
+393	Peripheral membrane	8570618
+394	Peripheral membrane	8537347
+51332	Actin-cytoskeleton associated	10764729
+8832	Integral membrane	9310491
+8834	Integral membrane	2110658
+398	Peripheral membrane	9113980
+9493	Tubulin-cytoskeleton associated	1406973
+6150	Ribosome-associated	8541832
+8838	Soluble	9843955
+8839	Soluble	9843955
+6152	Ribosome-associated	9582194
+9496	DNA-associated (direct or indirect)	10945475
+6154	Ribosome-associated	8479925
+6156	Ribosome-associated	1577483
+6157	Ribosome-associated	7772601
+6158	Ribosome-associated	7772601
+6159	Ribosome-associated	8597591
+2956	DNA-associated (direct or indirect)	9428522
+2957	DNA-associated (direct or indirect)	8224848
+2959	DNA-associated (direct or indirect)	7671313
+81	Actin-cytoskeleton associated	9508771
+7100	Integral membrane	9435236
+8840	Soluble	9843955
+8841	DNA-associated (direct or indirect)	9501169
+7102	Integral membrane	8420826
+8842	Integral membrane	9389720
+7103	Integral membrane	2395876
+8843	Integral membrane	7505609
+7104	Integral membrane	7665614
+86	DNA-associated (direct or indirect)	9845365
+51344	Integral membrane	9059894
+7105	Integral membrane	9714763
+87	Actin-cytoskeleton associated	2349951
+7106	Integral membrane	9360996
+88	Actin-cytoskeleton associated	1339456
+7107	Integral membrane	9521871
+89	Actin-cytoskeleton associated	1339456
+7108	Integral membrane	9878250
+6160	Ribosome-associated	2780320
+51348	Integral membrane	10671213
+6161	Ribosome-associated	9284913
+3902	Integral membrane	1692078
+3903	Integral membrane	9285412
+6164	Ribosome-associated	7490091
+6165	Ribosome-associated	8786106
+6167	Ribosome-associated	7545944
+6168	Ribosome-associated	1437567
+2960	DNA-associated (direct or indirect)	10827951
+6169	Ribosome-associated	9375793
+2961	DNA-associated (direct or indirect)	10827951
+2962	DNA-associated (direct or indirect)	1734284
+2963	DNA-associated (direct or indirect)	7929273
+2965	DNA-associated (direct or indirect)	9118947
+2966	DNA-associated (direct or indirect)	8194529
+2967	DNA-associated (direct or indirect)	8194529
+2968	DNA-associated (direct or indirect)	9118947
+10842	Soluble	10051666
+2969	DNA-associated (direct or indirect)	9334314
+10844	Tubulin-cytoskeleton associated	9566967
+10847	DNA-associated (direct or indirect)	10347196
+90	Integral membrane	8397373
+10849	DNA-associated (direct or indirect)	9426281
+91	Integral membrane	8397373
+7110	DNA-associated (direct or indirect)	1409643
+92	Integral membrane	1314589
+94	Integral membrane	8397373
+7113	Integral membrane	9325052
+5511	RNA-associated	9153239
+8856	DNA-associated (direct or indirect)	9784494
+6170	Ribosome-associated	8908372
+6171	Ribosome-associated	1326959
+6175	Ribosome-associated	3323886
+6176	Ribosome-associated	3323886
+3916	Integral membrane	3174652
+1230	Integral membrane	7505609
+1231	Soluble	8995400
+1231	Integral membrane	8530354
+1232	Integral membrane	9302298
+2971	DNA-associated (direct or indirect)	7789179
+1233	Integral membrane	7642634
+2972	DNA-associated (direct or indirect)	8943358
+1234	Integral membrane	2907912
+1235	Integral membrane	9186513
+1236	Integral membrane	9153236
+2975	DNA-associated (direct or indirect)	8164661
+1237	Integral membrane	8816377
+2976	DNA-associated (direct or indirect)	7729686
+10850	Soluble	10588729
+1238	Integral membrane	9364936
+2977	Soluble	1683630
+58985	Integral membrane	10875937
+58986	Integral membrane	11006113
+10856	DNA-associated (direct or indirect)	10428817
+10857	Integral membrane	9705155
+29842	DNA-associated (direct or indirect)	10644752
+26503	Integral membrane	10581036
+8862	Soluble	9792798
+7124	Soluble	3856324
+7125	Actin-cytoskeleton associated	2373703
+27164	DNA-associated (direct or indirect)	10610715
+26508	DNA-associated (direct or indirect)	10415358
+5524	Soluble	8195217
+3920	Integral membrane	3198605
+26509	Integral membrane	10607832
+6181	Ribosome-associated	3323886
+3921	Integral membrane	2970671
+3921	Ribosome-associated	8760291
+8869	Integral membrane	9822625
+6182	Ribosome-associated	9169145
+6183	Ribosome-associated	9545647
+6184	Integral membrane	10660554
+4580	Integral membrane	8660965
+6185	Integral membrane	10660554
+3925	Soluble	2278968
+4582	Integral membrane	1697589
+6187	Ribosome-associated	2308862
+1240	Integral membrane	9425281
+6188	Ribosome-associated	1712897
+1241	Integral membrane	9177352
+6189	Ribosome-associated	1398113
+4585	Integral membrane	10024507
+2982	Soluble	9742212
+1244	Integral membrane	7559771
+2983	Soluble	9742212
+2984	Integral membrane	1680854
+2986	Integral membrane	7777544
+10864	Integral membrane	
+719	Integral membrane	8702752
+10865	DNA-associated (direct or indirect)	8649988
+29850	Integral membrane	10607831
+10867	Integral membrane	10719184
+7132	Soluble	2848815
+27173	Integral membrane	10610721
+3930	DNA-associated (direct or indirect)	8157662
+3930	Integral membrane	8157663
+27175	Tubulin-cytoskeleton associated	10903841
+6191	Ribosome-associated	8358435
+6192	Ribosome-associated	2124517
+6193	Ribosome-associated	7772601
+3934	Soluble	9339356
+6194	Ribosome-associated	1301164
+5539	Soluble	6373251
+4593	Integral membrane	7546737
+3938	Integral membrane	2460343
+4595	DNA-associated (direct or indirect)	7823963
+2993	Integral membrane	7622054
+56604	Tubulin-cytoskeleton associated	10828619
+2994	Integral membrane	3477806
+2995	Integral membrane	2416746
+56606	Integral membrane	10860667
+2996	Integral membrane	7622054
+1258	Integral membrane	7682292
+10870	Integral membrane	10426994
+1259	Integral membrane	7479749
+10871	Integral membrane	1349532
+728	Integral membrane	2007135
+10874	Soluble	10811630
+7140	Actin-cytoskeleton associated	8838323
+8880	DNA-associated (direct or indirect)	8125259
+26523	Protein synthesis factor	10534406
+5540	Integral membrane	7592911
+27181	Integral membrane	10625619
+8884	Integral membrane	9516450
+51385	DNA-associated (direct or indirect)	10029171
+26526	Integral membrane	10500248
+8886	RNA-associated	8861962
+26528	RNA-associated	10857750
+8888	DNA-associated (direct or indirect)	9712829
+2204	Integral membrane	2258698
+2205	Integral membrane	2964640
+27189	Soluble	10639155
+2206	Integral membrane	1535625
+2207	Integral membrane	1535625
+1261	Integral membrane	9517456
+2209	Integral membrane	1830050
+3949	Integral membrane	6327078
+1264	Actin-cytoskeleton associated	8526917
+1265	Actin-cytoskeleton associated	8889829
+735	Integral membrane	2426252
+1268	Integral membrane	1718258
+10880	Actin-cytoskeleton associated	10373328
+1269	Integral membrane	8679694
+10886	Integral membrane	
+7150	DNA-associated (direct or indirect)	2833744
+8891	Protein synthesis factor	10900014
+7153	DNA-associated (direct or indirect)	6267071
+51393	Integral membrane	
+8894	Protein synthesis factor	3044606
+8894	Ribosome-associated	10805737
+7155	DNA-associated (direct or indirect)	1309226
+7156	DNA-associated (direct or indirect)	8622991
+8896	DNA-associated (direct or indirect)	7841202
+7157	DNA-associated (direct or indirect)	10891493
+3952	Soluble	
+2214	Peripheral membrane	2138330
+2214	Integral membrane	2138330
+3953	Integral membrane	9207021
+5557	DNA-associated (direct or indirect)	8026492
+3954	Integral membrane	10486213
+5558	DNA-associated (direct or indirect)	8026492
+1270	Soluble	1840538
+3957	Soluble	8449510
+1271	Integral membrane	9559542
+3958	Soluble	8449510
+1272	Peripheral membrane	7959734
+10891	DNA-associated (direct or indirect)	10713165
+10893	Integral membrane	10363975
+10894	Integral membrane	10037799
+10895	DNA-associated (direct or indirect)	7887923
+8106	RNA-associated	9462747
+10899	Integral membrane	10321732
+29883	DNA-associated (direct or indirect)	9820826
+4901	DNA-associated (direct or indirect)	8939891
+6505	Integral membrane	7521911
+4902	Soluble	
+7162	Integral membrane	
+4904	DNA-associated (direct or indirect)	2977358
+6508	Integral membrane	7923606
+6509	Integral membrane	8910405
+4907	DNA-associated (direct or indirect)	2129526
+10100	Integral membrane	9714763
+10102	Protein synthesis factor	7615523
+10103	Integral membrane	9714763
+10106	Soluble	9315096
+10109	Actin-cytoskeleton associated	9230079
+8111	Integral membrane	8661159
+6510	Integral membrane	8702519
+6511	Integral membrane	7791878
+29892	DNA-associated (direct or indirect)	7887923
+6513	Integral membrane	3028891
+6514	Integral membrane	8027028
+6515	Integral membrane	1695905
+4913	DNA-associated (direct or indirect)	8990169
+6517	Integral membrane	2649253
+7173	Integral membrane	2548579
+4914	Integral membrane	9290260
+6518	Integral membrane	1634504
+4915	Integral membrane	1710174
+6519	Integral membrane	8054986
+4916	Integral membrane	7806211
+4919	Soluble	8875995
+4919	Integral membrane	1334494
+7179	Integral membrane	10598804
+3972	Soluble	10484773
+3973	Integral membrane	7719343
+5578	Peripheral membrane	10848585
+3975	DNA-associated (direct or indirect)	9212161
+2237	DNA-associated (direct or indirect)	8131753
+3976	Soluble	
+10111	DNA-associated (direct or indirect)	9705271
+3977	Integral membrane	1915266
+2239	Integral membrane	7657705
+3978	DNA-associated (direct or indirect)	8696349
+10113	DNA-associated (direct or indirect)	10194769
+762	Peripheral membrane	1311094
+768	Integral membrane	8661007
+6521	Integral membrane	4027230
+6522	Integral membrane	3015590
+6523	Integral membrane	8563765
+4920	Integral membrane	1334494
+6524	Integral membrane	8244402
+4921	Integral membrane	9659899
+6525	Actin-cytoskeleton associated	8707825
+7181	DNA-associated (direct or indirect)	3421977
+4922	Soluble	8954810
+6526	Integral membrane	1372904
+7182	DNA-associated (direct or indirect)	9006963
+4923	Integral membrane	8381365
+4924	DNA-associated (direct or indirect)	1520323
+6528	Integral membrane	9388506
+4925	DNA-associated (direct or indirect)	7811391
+5581	Peripheral membrane	10848585
+6529	Integral membrane	8530094
+3980	DNA-associated (direct or indirect)	7565692
+3981	DNA-associated (direct or indirect)	8798671
+4929	DNA-associated (direct or indirect)	7877627
+2243	Soluble	8097946
+2244	Soluble	6688356
+3983	Actin-cytoskeleton associated	9245787
+5587	Integral membrane	8119958
+2246	Soluble	3778488
+10120	Tubulin-cytoskeleton associated	7696711
+2247	Soluble	10490103
+10121	Tubulin-cytoskeleton associated	1528266
+2248	Soluble	2470007
+2249	Soluble	2959959
+56655	DNA-associated (direct or indirect)	10801849
+773	Integral membrane	8825650
+774	Integral membrane	1321501
+775	Integral membrane	8392192
+776	Integral membrane	1309948
+777	Integral membrane	8071363
+778	Integral membrane	9662400
+779	Integral membrane	8004673
+29118	RNA-associated	10608860
+6530	Integral membrane	2008212
+6531	Integral membrane	8628395
+6532	Integral membrane	7681602
+6533	Integral membrane	8010975
+6534	Integral membrane	7651355
+6536	Integral membrane	8183239
+6537	Integral membrane	8661037
+26574	DNA-associated (direct or indirect)	10580117
+4935	Integral membrane	7647783
+6539	Integral membrane	7861179
+2250	Soluble	9786939
+2251	Soluble	2649847
+4938	RNA-associated	9790745
+2252	Soluble	2475908
+4939	RNA-associated	9790745
+2253	Soluble	8700553
+2254	Soluble	8321227
+2255	Soluble	9287324
+2256	Soluble	8790420
+2257	Soluble	8790420
+2258	Soluble	8790420
+2259	Soluble	8790420
+3998	Integral membrane	7876089
+780	Integral membrane	8390675
+781	Integral membrane	1309651
+782	Integral membrane	1385409
+29121	Integral membrane	10541800
+783	Integral membrane	8494331
+10139	Peripheral membrane	8530503
+784	Integral membrane	8119293
+785	Integral membrane	9628818
+786	Integral membrane	8387489
+29128	DNA-associated (direct or indirect)	10646863
+6541	Integral membrane	1718082
+6542	Integral membrane	8954799
+8148	DNA-associated (direct or indirect)	9795213
+8148	RNA-associated	9795213
+4940	RNA-associated	9790745
+6545	Integral membrane	9598310
+6546	Integral membrane	1374913
+26584	DNA-associated (direct or indirect)	9736770
+6548	Integral membrane	2536298
+3206	DNA-associated (direct or indirect)	10766757
+1604	Soluble	2433596
+1604	Integral membrane	2433596
+2260	Integral membrane	1722683
+1605	Actin-cytoskeleton associated	1741056
+1605	Integral membrane	8798547
+3209	DNA-associated (direct or indirect)	9020844
+4948	Integral membrane	8302318
+2262	Integral membrane	7657705
+2266	Soluble	2990550
+10146	DNA-associated (direct or indirect)	9889278
+10146	RNA-associated	9889278
+10149	Integral membrane	9150425
+796	Soluble	2408883
+797	Soluble	2985435
+799	Integral membrane	7588285
+51738	Soluble	10604470
+6553	Integral membrane	9933641
+4950	Integral membrane	8601611
+6554	Integral membrane	8132774
+3212	DNA-associated (direct or indirect)	7876223
+6555	Integral membrane	7592981
+4952	Soluble	1840503
+6556	Integral membrane	8537108
+6558	Integral membrane	7629105
+6559	Integral membrane	8670281
+1615	Soluble	8449960
+10151	RNA-associated	8101480
+10153	DNA-associated (direct or indirect)	2247079
+10154	Integral membrane	9586637
+9103	Integral membrane	2531080
+5901	DNA-associated (direct or indirect)	7603572
+7507	DNA-associated (direct or indirect)	10946233
+7508	DNA-associated (direct or indirect)	8168482
+6560	Integral membrane	8663127
+5905	Soluble	8978815
+6563	Integral membrane	7989337
+6564	Integral membrane	7896779
+3222	DNA-associated (direct or indirect)	1346761
+6565	Integral membrane	7756356
+3223	DNA-associated (direct or indirect)	8870653
+6566	Integral membrane	8124722
+6567	Integral membrane	7981683
+1621	Soluble	3443096
+1621	Peripheral membrane	3443096
+6568	Integral membrane	8288239
+3226	DNA-associated (direct or indirect)	10835276
+6569	Integral membrane	8327470
+11100	RNA-associated	9733834
+3227	DNA-associated (direct or indirect)	9582375
+11102	RNA-associated	10024167
+3229	DNA-associated (direct or indirect)	10835276
+4968	DNA-associated (direct or indirect)	9223305
+11104	Tubulin-cytoskeleton associated	9658175
+1627	Actin-cytoskeleton associated	8216329
+1628	DNA-associated (direct or indirect)	8786133
+2286	Peripheral membrane	1713687
+11108	DNA-associated (direct or indirect)	10552934
+10160	Actin-cytoskeleton associated	9425278
+10163	Actin-cytoskeleton associated	9732292
+10165	Integral membrane	10642534
+10166	Integral membrane	10369256
+9114	Peripheral membrane	8250920
+9117	Integral membrane	9501016
+9118	Intermediate-filament associated	7769995
+8170	Integral membrane	8647271
+7514	Integral membrane	9368044
+9119	Intermediate-filament associated	9856802
+7515	DNA-associated (direct or indirect)	10773072
+7516	DNA-associated (direct or indirect)	9628903
+7517	DNA-associated (direct or indirect)	9660962
+5914	DNA-associated (direct or indirect)	10882117
+8175	RNA-associated	8211113
+5915	DNA-associated (direct or indirect)	2153268
+6571	Integral membrane	8095030
+6572	Integral membrane	8071310
+5917	Soluble	7590355
+6573	Integral membrane	7826387
+5918	Integral membrane	8601727
+6574	Integral membrane	8041748
+6575	Integral membrane	8302848
+6576	Integral membrane	9254007
+1630	Peripheral membrane	7926722
+4973	Integral membrane	9052782
+3235	DNA-associated (direct or indirect)	1756725
+4974	Integral membrane	8244377
+6578	Integral membrane	8787677
+6579	Integral membrane	9007731
+2290	DNA-associated (direct or indirect)	7957066
+2291	DNA-associated (direct or indirect)	7959731
+4978	Integral membrane	1333602
+1636	Soluble	1328889
+1636	Peripheral membrane	2849100
+2294	DNA-associated (direct or indirect)	8626802
+2295	DNA-associated (direct or indirect)	9722567
+2296	DNA-associated (direct or indirect)	7957066
+2297	DNA-associated (direct or indirect)	7957066
+10174	Actin-cytoskeleton associated	9885244
+9120	Integral membrane	9425115
+9121	Integral membrane	9425115
+9122	Integral membrane	9425115
+9123	Integral membrane	9425115
+7520	DNA-associated (direct or indirect)	7957065
+51761	Integral membrane	10551800
+9127	Integral membrane	9242461
+9128	RNA-associated	9328476
+9129	RNA-associated	9328476
+7528	DNA-associated (direct or indirect)	1946405
+6580	Integral membrane	9187257
+5925	DNA-associated (direct or indirect)	3657987
+6581	Integral membrane	9933568
+6582	Integral membrane	9260930
+8187	DNA-associated (direct or indirect)	9121460
+8187	RNA-associated	9121460
+6583	Integral membrane	9426230
+4982	Soluble	9108485
+1641	Tubulin-cytoskeleton associated	11001923
+6588	Integral membrane	9367679
+1642	DNA-associated (direct or indirect)	8798680
+4985	Integral membrane	7808419
+11120	Integral membrane	9382921
+1643	DNA-associated (direct or indirect)	8798680
+4986	Integral membrane	7624359
+4987	Integral membrane	8137918
+11122	Integral membrane	9602027
+3249	Integral membrane	1885621
+4988	Integral membrane	7905839
+11126	Integral membrane	9743336
+1649	DNA-associated (direct or indirect)	8510758
+10180	DNA-associated (direct or indirect)	10352938
+10180	RNA-associated	10352938
+10181	DNA-associated (direct or indirect)	10352938
+10181	RNA-associated	10352938
+9132	Integral membrane	10025409
+9136	RNA-associated	9418896
+5935	RNA-associated	8634703
+5936	RNA-associated	9169144
+5937	DNA-associated (direct or indirect)	7838710
+6594	DNA-associated (direct or indirect)	1408766
+4991	Integral membrane	8097991
+5939	DNA-associated (direct or indirect)	8041632
+5939	RNA-associated	8041632
+6595	DNA-associated (direct or indirect)	8670841
+4992	Integral membrane	9500546
+6597	DNA-associated (direct or indirect)	8208605
+4994	Integral membrane	8921386
+6598	DNA-associated (direct or indirect)	7801128
+4995	Integral membrane	8921386
+6599	DNA-associated (direct or indirect)	8804307
+1653	RNA-associated	7689221
+3257	Soluble	10625677
+3257	Peripheral membrane	10625677
+3257	Integral membrane	8896559
+1654	RNA-associated	9381176
+4998	DNA-associated (direct or indirect)	7502077
+11133	Actin-cytoskeleton associated	10099934
+1656	RNA-associated	1579499
+4999	DNA-associated (direct or indirect)	8808289
+1658	RNA-associated	8135819
+11136	Integral membrane	10471498
+1659	RNA-associated	7935475
+11139	Actin-cytoskeleton associated	10023074
+9143	Integral membrane	9760194
+9144	Integral membrane	9760194
+9145	Integral membrane	9760194
+10199	RNA-associated	9450966
+5940	RNA-associated	8269511
+5942	RNA-associated	9598316
+4204	DNA-associated (direct or indirect)	1606614
+4205	DNA-associated (direct or indirect)	1516833
+5944	RNA-associated	9598316
+4207	DNA-associated (direct or indirect)	1516833
+5946	RNA-associated	9598316
+4208	DNA-associated (direct or indirect)	8455629
+4209	DNA-associated (direct or indirect)	8575763
+1660	DNA-associated (direct or indirect)	9111062
+1660	RNA-associated	9111062
+3265	Peripheral membrane	9880516
+1662	RNA-associated	8660968
+1663	DNA-associated (direct or indirect)	9013641
+3267	RNA-associated	7634337
+1664	DNA-associated (direct or indirect)	9013641
+1665	RNA-associated	7935475
+3269	Integral membrane	7925364
+11143	DNA-associated (direct or indirect)	10438470
+11144	DNA-associated (direct or indirect)	8602360
+9152	Integral membrane	9845349
+9153	Integral membrane	9435697
+9154	Integral membrane	9124315
+9156	DNA-associated (direct or indirect)	9685493
+7552	DNA-associated (direct or indirect)	1923752
+4211	DNA-associated (direct or indirect)	7565694
+4212	DNA-associated (direct or indirect)	10764806
+30812	DNA-associated (direct or indirect)	10684944
+5954	Soluble	8416973
+5956	Integral membrane	9860863
+30815	Integral membrane	10702226
+2615	Integral membrane	8180135
+30818	DNA-associated (direct or indirect)	10078534
+2617	Soluble	7961834
+3274	Integral membrane	1714721
+11151	Actin-cytoskeleton associated	9778037
+1674	Intermediate-filament associated	8792816
+1677	DNA-associated (direct or indirect)	9108473
+11157	RNA-associated	10523320
+54345	DNA-associated (direct or indirect)	10807548
+8504	Integral membrane	10958759
+6900	Integral membrane	8425542
+8506	Integral membrane	9118959
+6902	Tubulin-cytoskeleton associated	8706133
+6903	Tubulin-cytoskeleton associated	8706133
+6904	Tubulin-cytoskeleton associated	8706133
+8509	Integral membrane	9601056
+6905	Tubulin-cytoskeleton associated	8706133
+6906	Soluble	3094014
+23601	Integral membrane	10449773
+6907	Peripheral membrane	10330347
+6908	DNA-associated (direct or indirect)	2194289
+23603	Actin-cytoskeleton associated	9778037
+9169	RNA-associated	9447963
+5961	Integral membrane	1749427
+6909	DNA-associated (direct or indirect)	8530034
+4224	Soluble	8262185
+4224	Integral membrane	8262185
+7568	DNA-associated (direct or indirect)	2288909
+2621	Soluble	
+4225	Integral membrane	9288916
+5965	DNA-associated (direct or indirect)	7527136
+23607	Actin-cytoskeleton associated	10339567
+2623	DNA-associated (direct or indirect)	2300555
+2624	DNA-associated (direct or indirect)	1370462
+2625	DNA-associated (direct or indirect)	2050118
+30827	DNA-associated (direct or indirect)	10688657
+10505	Integral membrane	10051670
+11166	DNA-associated (direct or indirect)	10441749
+11169	DNA-associated (direct or indirect)	9175701
+9170	Integral membrane	9525886
+8515	Integral membrane	9685391
+6911	DNA-associated (direct or indirect)	9933572
+6915	Integral membrane	1825698
+7572	DNA-associated (direct or indirect)	2288909
+9177	Integral membrane	9950429
+5970	DNA-associated (direct or indirect)	10747850
+4233	Integral membrane	1846706
+2631	Integral membrane	9615231
+5976	RNA-associated	8855285
+10513	Peripheral membrane	9843960
+10513	Tubulin-cytoskeleton associated	9843960
+3297	DNA-associated (direct or indirect)	10821850
+3298	DNA-associated (direct or indirect)	1871106
+3299	DNA-associated (direct or indirect)	8972228
+54360	Soluble	10857752
+8520	DNA-associated (direct or indirect)	9427644
+11178	DNA-associated (direct or indirect)	10097140
+8521	DNA-associated (direct or indirect)	8962155
+9181	Tubulin-cytoskeleton associated	9857026
+9183	DNA-associated (direct or indirect)	9298984
+9183	Tubulin-cytoskeleton associated	9298984
+6925	DNA-associated (direct or indirect)	8978694
+23620	Integral membrane	9851594
+23621	Integral membrane	10887202
+9187	Integral membrane	9478004
+9188	RNA-associated	8614622
+4241	Integral membrane	2419904
+5980	DNA-associated (direct or indirect)	9618506
+6928	DNA-associated (direct or indirect)	1677179
+9189	DNA-associated (direct or indirect)	9887332
+5981	DNA-associated (direct or indirect)	8248204
+6929	DNA-associated (direct or indirect)	10781029
+5982	DNA-associated (direct or indirect)	1313560
+5983	DNA-associated (direct or indirect)	7774928
+2641	Soluble	10861272
+5984	DNA-associated (direct or indirect)	7774928
+23626	DNA-associated (direct or indirect)	10534401
+7589	DNA-associated (direct or indirect)	2288909
+2642	Integral membrane	8144028
+4248	Integral membrane	8370666
+5989	DNA-associated (direct or indirect)	8600444
+10521	RNA-associated	8871553
+2648	DNA-associated (direct or indirect)	8552087
+10522	DNA-associated (direct or indirect)	9773984
+10524	DNA-associated (direct or indirect)	8607265
+10527	Soluble	9214382
+10528	RNA-associated	9372940
+10529	Actin-cytoskeleton associated	9733644
+8531	DNA-associated (direct or indirect)	8710501
+8534	Integral membrane	9639683
+6930	DNA-associated (direct or indirect)	8333869
+9191	DNA-associated (direct or indirect)	9774341
+6932	DNA-associated (direct or indirect)	1569101
+9194	Integral membrane	9786900
+8538	DNA-associated (direct or indirect)	10644443
+6935	DNA-associated (direct or indirect)	8138542
+7592	DNA-associated (direct or indirect)	10449920
+6936	DNA-associated (direct or indirect)	1370479
+9197	Integral membrane	9096318
+5990	DNA-associated (direct or indirect)	1505960
+6938	DNA-associated (direct or indirect)	1312219
+5991	DNA-associated (direct or indirect)	8289803
+5992	DNA-associated (direct or indirect)	8600444
+7597	DNA-associated (direct or indirect)	2027750
+4254	Soluble	
+5993	DNA-associated (direct or indirect)	9806546
+4255	DNA-associated (direct or indirect)	2188979
+5994	DNA-associated (direct or indirect)	9118943
+2652	Integral membrane	2937147
+5995	Integral membrane	8641686
+23637	Soluble	10202141
+23637	Tubulin-cytoskeleton associated	10202141
+5996	Peripheral membrane	8241276
+5997	Peripheral membrane	8673468
+5998	Peripheral membrane	8602223
+5999	Peripheral membrane	8602223
+11190	DNA-associated (direct or indirect)	9647649
+11190	Tubulin-cytoskeleton associated	9647649
+10535	RNA-associated	9789007
+11194	Integral membrane	9878413
+10538	DNA-associated (direct or indirect)	8630063
+11198	DNA-associated (direct or indirect)	10421373
+54386	DNA-associated (direct or indirect)	10850490
+8545	DNA-associated (direct or indirect)	8626781
+8548	DNA-associated (direct or indirect)	9129147
+5205	Integral membrane	9500542
+6944	DNA-associated (direct or indirect)	7702631
+8549	Integral membrane	9642114
+6945	DNA-associated (direct or indirect)	
+3604	Integral membrane	8262389
+4261	DNA-associated (direct or indirect)	7749984
+3607	DNA-associated (direct or indirect)	1339390
+3608	DNA-associated (direct or indirect)	7519613
+3609	DNA-associated (direct or indirect)	7519613
+23647	Actin-cytoskeleton associated	8670882
+4267	Integral membrane	2465491
+10540	DNA-associated (direct or indirect)	8647893
+2668	Soluble	
+2669	Peripheral membrane	7912851
+10544	Integral membrane	7929370
+10545	DNA-associated (direct or indirect)	8021251
+10545	Peripheral membrane	8021251
+10548	Integral membrane	9332367
+51052	Soluble	9607765
+6950	Tubulin-cytoskeleton associated	1630491
+8559	RNA-associated	9000057
+23650	DNA-associated (direct or indirect)	8188213
+2670	Intermediate-filament associated	2740350
+2672	DNA-associated (direct or indirect)	7789186
+401	DNA-associated (direct or indirect)	8661014
+23658	RNA-associated	10369684
+2675	Integral membrane	9192898
+2676	Integral membrane	9490034
+405	DNA-associated (direct or indirect)	10777486
+2677	Integral membrane	1749935
+10552	Actin-cytoskeleton associated	8978670
+407	Soluble	8224247
+408	Soluble	9924018
+10556	RNA-associated	9630247
+10557	RNA-associated	9630247
+10559	Integral membrane	9644260
+8560	Integral membrane	9188692
+7904	RNA-associated	8586425
+26205	DNA-associated (direct or indirect)	10523663
+8565	Soluble	9162081
+3622	DNA-associated (direct or indirect)	10072587
+3623	Soluble	3035540
+3624	Soluble	3267209
+5228	Soluble	
+3625	Soluble	3754442
+4281	Tubulin-cytoskeleton associated	10400985
+3626	Soluble	7826378
+3627	Soluble	10201901
+4284	Integral membrane	1840563
+4288	DNA-associated (direct or indirect)	10878014
+10560	Integral membrane	10391223
+417	Integral membrane	7947688
+10563	Soluble	9486651
+419	Integral membrane	9119374
+9513	RNA-associated	7489725
+9513	Ribosome-associated	9259278
+9514	Integral membrane	9030544
+10568	Integral membrane	10329428
+10569	RNA-associated	10197984
+26211	Integral membrane	9500546
+7913	DNA-associated (direct or indirect)	9050861
+9518	Soluble	
+8570	RNA-associated	9136930
+26214	Integral membrane	9500546
+8573	Actin-cytoskeleton associated	9660868
+26216	Integral membrane	9500546
+7919	RNA-associated	7601445
+26218	Integral membrane	9500546
+8577	Integral membrane	9730596
+3630	Soluble	381941
+23670	Integral membrane	10767548
+4292	DNA-associated (direct or indirect)	9827806
+3637	DNA-associated (direct or indirect)	7935390
+56301	Integral membrane	10734121
+4295	Soluble	10381885
+56302	Integral membrane	10944439
+2692	Integral membrane	7680413
+2693	Integral membrane	8688086
+4297	DNA-associated (direct or indirect)	10821850
+54700	RNA-associated	10758157
+4298	DNA-associated (direct or indirect)	8080983
+2695	Soluble	2890159
+2696	Integral membrane	7556958
+2697	Integral membrane	1850831
+429	DNA-associated (direct or indirect)	8390674
+8581	Peripheral membrane	7790363
+5241	DNA-associated (direct or indirect)	1557371
+5243	Integral membrane	3768958
+51087	DNA-associated (direct or indirect)	10100484
+51087	RNA-associated	10100484
+3640	Soluble	8020942
+5244	Integral membrane	7912658
+3641	Soluble	8702754
+3642	DNA-associated (direct or indirect)	8188699
+3643	Integral membrane	2859121
+3646	Protein synthesis factor	9295280
+432	Integral membrane	2982798
+54714	Integral membrane	10888875
+54715	RNA-associated	10814712
+439	Soluble	9736449
+10585	Integral membrane	10366449
+9533	DNA-associated (direct or indirect)	9540830
+10589	DNA-associated (direct or indirect)	8608938
+8590	Integral membrane	9787077
+51091	Soluble	10801173
+5250	Integral membrane	8144629
+5251	Integral membrane	9593714
+6992	Soluble	9843442
+3651	DNA-associated (direct or indirect)	8954967
+3652	Actin-cytoskeleton associated	10072760
+6996	DNA-associated (direct or indirect)	9489705
+6997	Soluble	
+3658	RNA-associated	1421965
+3659	DNA-associated (direct or indirect)	2475256
+10592	DNA-associated (direct or indirect)	9789013
+10594	RNA-associated	9774689
+9542	Soluble	
+7940	Integral membrane	7590964
+6201	Ribosome-associated	8522193
+7941	Soluble	8675689
+6202	Ribosome-associated	8432552
+10599	Integral membrane	10358072
+7942	DNA-associated (direct or indirect)	2115126
+6203	Ribosome-associated	7772601
+9547	Soluble	10049774
+6204	Ribosome-associated	7772601
+4601	DNA-associated (direct or indirect)	8425219
+6205	Ribosome-associated	3267208
+6206	Ribosome-associated	1861993
+4603	DNA-associated (direct or indirect)	7821437
+6207	Ribosome-associated	8332508
+6208	Ribosome-associated	3785212
+6209	Ribosome-associated	2044758
+3660	DNA-associated (direct or indirect)	7507207
+3661	DNA-associated (direct or indirect)	8524823
+3662	DNA-associated (direct or indirect)	8921401
+3665	DNA-associated (direct or indirect)	9315633
+5269	Soluble	8415716
+54738	DNA-associated (direct or indirect)	9121764
+6210	Ribosome-associated	9582194
+26251	Integral membrane	10551266
+4613	DNA-associated (direct or indirect)	3796607
+6217	Ribosome-associated	2016298
+7957	Ribosome-associated	11001928
+6218	Ribosome-associated	3240863
+26257	DNA-associated (direct or indirect)	9446603
+4617	DNA-associated (direct or indirect)	2311584
+3670	DNA-associated (direct or indirect)	7912209
+4618	DNA-associated (direct or indirect)	2311584
+4619	Actin-cytoskeleton associated	10077619
+3673	Integral membrane	2545729
+3674	Actin-cytoskeleton associated	8612741
+3674	Integral membrane	2845986
+3675	Integral membrane	1655803
+3676	Integral membrane	1537388
+56340	DNA-associated (direct or indirect)	10769191
+3678	Integral membrane	2454952
+3679	Integral membrane	7607681
+463	DNA-associated (direct or indirect)	1719379
+466	DNA-associated (direct or indirect)	2516827
+467	DNA-associated (direct or indirect)	7515060
+468	DNA-associated (direct or indirect)	1534408
+8909	Integral membrane	2350438
+6222	Ribosome-associated	8441687
+6223	Ribosome-associated	9988267
+6224	Ribosome-associated	8479924
+9568	Integral membrane	10328880
+9569	DNA-associated (direct or indirect)	9774679
+4622	Actin-cytoskeleton associated	10077619
+6227	Ribosome-associated	8332502
+6228	Ribosome-associated	8415000
+4625	Actin-cytoskeleton associated	2249844
+6229	Ribosome-associated	2210388
+26266	Integral membrane	10535998
+5284	Integral membrane	2920039
+3684	Integral membrane	2563162
+10902	DNA-associated (direct or indirect)	9368056
+3685	Integral membrane	2430295
+3687	Integral membrane	2303426
+10905	Integral membrane	9592125
+474	DNA-associated (direct or indirect)	8872459
+8910	Integral membrane	9405466
+8911	Integral membrane	10454147
+8912	Integral membrane	9670923
+476	Integral membrane	1975705
+8913	Integral membrane	9495342
+477	Integral membrane	2842249
+478	Integral membrane	2838329
+479	Integral membrane	8838794
+9572	DNA-associated (direct or indirect)	8622974
+6230	Ribosome-associated	1748303
+6231	Ribosome-associated	9602156
+6232	Ribosome-associated	8908372
+6234	Ribosome-associated	1679328
+6235	Ribosome-associated	7772601
+7975	DNA-associated (direct or indirect)	9150357
+7976	Integral membrane	10491302
+4633	Actin-cytoskeleton associated	8673105
+6238	Ribosome-associated	9628588
+7978	DNA-associated (direct or indirect)	9118945
+6239	DNA-associated (direct or indirect)	8816445
+26277	DNA-associated (direct or indirect)	10581025
+3690	Integral membrane	2452834
+4638	Actin-cytoskeleton associated	8575746
+3691	Integral membrane	2311577
+3692	Peripheral membrane	9374518
+3692	Intermediate-filament associated	9374518
+10911	Soluble	10499587
+3694	Integral membrane	2365683
+3695	Integral membrane	2040616
+3696	Integral membrane	1918072
+10915	DNA-associated (direct or indirect)	9315662
+481	Integral membrane	2559024
+54760	Soluble	
+483	Integral membrane	8798450
+29904	Protein synthesis factor	9144159
+486	Integral membrane	9048881
+487	Integral membrane	8841193
+9580	DNA-associated (direct or indirect)	10198172
+488	Integral membrane	2844796
+489	Integral membrane	8809064
+9583	Integral membrane	10393803
+9584	RNA-associated	8227358
+8928	DNA-associated (direct or indirect)	9702198
+9586	DNA-associated (direct or indirect)	8378084
+4640	Actin-cytoskeleton associated	
+27229	Tubulin-cytoskeleton associated	10562286
+26281	Soluble	10913340
+4641	Actin-cytoskeleton associated	
+50485	DNA-associated (direct or indirect)	10857751
+4644	Actin-cytoskeleton associated	9207796
+4645	Actin-cytoskeleton associated	8884266
+6249	Intermediate-filament associated	1600942
+6249	Tubulin-cytoskeleton associated	10052454
+26289	Soluble	10215863
+4649	Actin-cytoskeleton associated	10409426
+1308	Integral membrane	9012408
+10921	RNA-associated	9580558
+10923	DNA-associated (direct or indirect)	8062391
+490	Integral membrane	10748016
+492	Integral membrane	8765088
+493	Integral membrane	10748016
+8930	DNA-associated (direct or indirect)	9774669
+29915	DNA-associated (direct or indirect)	10196288
+495	Integral membrane	2160952
+27230	Ribosome-associated	10601334
+8932	DNA-associated (direct or indirect)	9774669
+8936	Actin-cytoskeleton associated	10970852
+8939	DNA-associated (direct or indirect)	8940189
+7991	Integral membrane	8661104
+26290	Integral membrane	10767557
+4650	Actin-cytoskeleton associated	8907710
+26291	Soluble	10858549
+7994	DNA-associated (direct or indirect)	8782817
+26292	DNA-associated (direct or indirect)	9797456
+6256	DNA-associated (direct or indirect)	1651173
+6257	DNA-associated (direct or indirect)	1662118
+4654	DNA-associated (direct or indirect)	1846704
+1312	Soluble	1707278
+1312	Peripheral membrane	1707278
+6259	Integral membrane	8386829
+4656	DNA-associated (direct or indirect)	1850513
+26298	DNA-associated (direct or indirect)	10644770
+1315	Peripheral membrane	1840503
+4659	Actin-cytoskeleton associated	9286714
+1317	Integral membrane	9207117
+10930	RNA-associated	10403781
+1318	Integral membrane	9207117
+10936	Integral membrane	10381362
+7200	Soluble	2126343
+8940	DNA-associated (direct or indirect)	9786843
+7201	Integral membrane	8395824
+27240	Integral membrane	10209036
+7203	Tubulin-cytoskeleton associated	8001976
+7204	Peripheral membrane	8643598
+28982	Integral membrane	10648427
+6261	Integral membrane	2298749
+6262	Integral membrane	10830164
+6263	Integral membrane	9395096
+4661	DNA-associated (direct or indirect)	1280325
+4666	Protein synthesis factor	8047162
+1325	Soluble	9125122
+10940	RNA-associated	8918471
+10943	DNA-associated (direct or indirect)	10395802
+57338	Integral membrane	10891348
+10945	Integral membrane	2172835
+10946	RNA-associated	7816610
+10949	RNA-associated	7585247
+29935	DNA-associated (direct or indirect)	7760808
+5610	RNA-associated	1351683
+27251	Integral membrane	7561685
+51455	DNA-associated (direct or indirect)	10536157
+7216	Integral membrane	7758945
+51458	Integral membrane	10852913
+27257	RNA-associated	10369684
+5617	Soluble	6260780
+27258	RNA-associated	10369684
+4670	Integral membrane	8088785
+5619	DNA-associated (direct or indirect)	2081589
+4673	DNA-associated (direct or indirect)	8297347
+4674	DNA-associated (direct or indirect)	8789438
+4675	DNA-associated (direct or indirect)	8976385
+4676	DNA-associated (direct or indirect)	9325046
+4677	Soluble	9421509
+4678	DNA-associated (direct or indirect)	1426632
+10951	DNA-associated (direct or indirect)	9169582
+10953	Integral membrane	9324309
+10956	Soluble	8634085
+10959	Integral membrane	8663407
+7220	Integral membrane	7568191
+50804	DNA-associated (direct or indirect)	2601707
+7222	Integral membrane	9215637
+7223	Integral membrane	8646775
+7224	Integral membrane	10493832
+5620	DNA-associated (direct or indirect)	2081589
+7225	Integral membrane	9930701
+7226	Integral membrane	9806837
+7227	DNA-associated (direct or indirect)	10615131
+5623	Soluble	
+5626	DNA-associated (direct or indirect)	9462743
+6282	Actin-cytoskeleton associated	10851017
+4680	Integral membrane	3220478
+4683	DNA-associated (direct or indirect)	9590180
+4684	Integral membrane	3576199
+4685	Integral membrane	9226371
+4686	RNA-associated	8069914
+811	Soluble	8107809
+4687	Soluble	2848318
+4688	Soluble	1692159
+10969	Integral membrane	7596406
+29953	Integral membrane	10491199
+8973	Integral membrane	8906617
+5630	Intermediate-filament associated	1378416
+51474	Actin-cytoskeleton associated	10806352
+8976	Actin-cytoskeleton associated	9422512
+5638	Integral membrane	9256434
+6294	DNA-associated (direct or indirect)	1324173
+4691	RNA-associated	2737305
+5639	Integral membrane	9256434
+6295	Soluble	2249983
+6297	DNA-associated (direct or indirect)	8975705
+6299	DNA-associated (direct or indirect)	9425907
+821	Integral membrane	8136357
+822	Actin-cytoskeleton associated	1322908
+1356	Soluble	7708681
+10970	Integral membrane	8314870
+10972	Integral membrane	8663407
+829	Actin-cytoskeleton associated	7665558
+7247	DNA-associated (direct or indirect)	7663511
+2300	DNA-associated (direct or indirect)	7957066
+8987	Integral membrane	9794794
+2302	DNA-associated (direct or indirect)	9073514
+8989	Integral membrane	10066796
+2304	DNA-associated (direct or indirect)	9214635
+2305	DNA-associated (direct or indirect)	9242644
+2306	DNA-associated (direct or indirect)	9403061
+2307	DNA-associated (direct or indirect)	9325056
+1363	Soluble	2334405
+830	Actin-cytoskeleton associated	9331217
+1365	Integral membrane	9441748
+832	Actin-cytoskeleton associated	7665558
+833	Soluble	7987009
+10987	DNA-associated (direct or indirect)	8837781
+10987	Protein synthesis factor	9341143
+28234	Integral membrane	10779507
+29974	RNA-associated	10669759
+7251	DNA-associated (direct or indirect)	10888872
+7252	Soluble	2792087
+8992	Integral membrane	9556572
+7253	Integral membrane	8552586
+5652	Integral membrane	10077646
+7257	DNA-associated (direct or indirect)	9013868
+8996	DNA-associated (direct or indirect)	10196175
+2312	Intermediate-filament associated	2740331
+2313	DNA-associated (direct or indirect)	1522903
+2314	Actin-cytoskeleton associated	9177775
+2315	Integral membrane	8170938
+2316	Actin-cytoskeleton associated	2391361
+2317	Actin-cytoskeleton associated	9651345
+2317	Integral membrane	8327473
+2318	Actin-cytoskeleton associated	7689010
+1378	Integral membrane	3031685
+846	Integral membrane	7759551
+10992	RNA-associated	8566756
+8200	Soluble	
+6601	DNA-associated (direct or indirect)	8804307
+6602	DNA-associated (direct or indirect)	8804307
+6603	DNA-associated (direct or indirect)	8804307
+8208	DNA-associated (direct or indirect)	7600578
+6604	DNA-associated (direct or indirect)	8804307
+6605	DNA-associated (direct or indirect)	9435219
+29986	Integral membrane	10681536
+5660	Soluble	1454804
+5660	Integral membrane	1454804
+29988	Integral membrane	10671487
+5663	DNA-associated (direct or indirect)	9298903
+5663	Integral membrane	9073509
+2321	Integral membrane	2158038
+5664	DNA-associated (direct or indirect)	9298903
+5664	Integral membrane	9073509
+2322	Integral membrane	8394751
+2323	Soluble	8180375
+2324	Integral membrane	8386825
+56731	DNA-associated (direct or indirect)	10825161
+10203	Integral membrane	7818539
+1385	DNA-associated (direct or indirect)	10909971
+1386	DNA-associated (direct or indirect)	10909971
+1387	DNA-associated (direct or indirect)	7913207
+10209	Protein synthesis factor	10347211
+1388	DNA-associated (direct or indirect)	8586413
+1389	DNA-associated (direct or indirect)	9693048
+857	Integral membrane	1360410
+9950	Integral membrane	9915833
+9953	Integral membrane	9988767
+6610	Integral membrane	9520418
+9955	Integral membrane	9988767
+8216	DNA-associated (direct or indirect)	7633402
+50852	Integral membrane	9687533
+9956	Integral membrane	9988767
+50853	Actin-cytoskeleton associated	9179494
+9957	Integral membrane	9988767
+50856	Integral membrane	10438934
+7273	Actin-cytoskeleton associated	7569978
+6617	DNA-associated (direct or indirect)	7715707
+6618	DNA-associated (direct or indirect)	7715707
+6619	DNA-associated (direct or indirect)	9003788
+29999	Actin-cytoskeleton associated	10783262
+7277	Tubulin-cytoskeleton associated	3785200
+26658	Integral membrane	9500546
+7278	Tubulin-cytoskeleton associated	9465305
+2332	Soluble	8401578
+2332	RNA-associated	7688265
+2332	Ribosome-associated	8528261
+2335	Soluble	2992939
+1390	DNA-associated (direct or indirect)	7916662
+1392	Soluble	7477348
+1393	Soluble	1846945
+860	DNA-associated (direct or indirect)	9207800
+1394	Integral membrane	7692441
+861	DNA-associated (direct or indirect)	10856244
+1395	Integral membrane	8536644
+10218	Soluble	8026862
+10219	Integral membrane	9842918
+1398	Actin-cytoskeleton associated	10748058
+864	DNA-associated (direct or indirect)	8386878
+53405	Actin-cytoskeleton associated	10793131
+9961	RNA-associated	7585126
+9962	Integral membrane	9804989
+51807	Tubulin-cytoskeleton associated	10772959
+9963	Integral membrane	10395795
+6621	DNA-associated (direct or indirect)	9418884
+9966	Soluble	9872942
+9966	Integral membrane	9872942
+7280	Tubulin-cytoskeleton associated	6688039
+6624	Actin-cytoskeleton associated	8647875
+6625	RNA-associated	3028775
+6626	RNA-associated	1831431
+7283	Tubulin-cytoskeleton associated	1904010
+6627	RNA-associated	2928112
+7284	Protein synthesis factor	9332382
+6628	RNA-associated	2531083
+6629	RNA-associated	2951739
+2346	Integral membrane	8417812
+2348	Peripheral membrane	2768245
+10223	Integral membrane	9012807
+10225	Integral membrane	1313846
+10227	Integral membrane	8353488
+10228	Integral membrane	10839363
+9970	DNA-associated (direct or indirect)	8020947
+9971	DNA-associated (direct or indirect)	9223286
+8233	RNA-associated	8586425
+6631	RNA-associated	2971157
+9975	DNA-associated (direct or indirect)	7997240
+6632	RNA-associated	3260384
+9976	Integral membrane	9038101
+6633	RNA-associated	1701240
+7290	DNA-associated (direct or indirect)	9731536
+6634	RNA-associated	7527560
+6635	RNA-associated	2143747
+7292	Integral membrane	7913952
+6636	RNA-associated	7744013
+7293	Integral membrane	7510240
+6637	RNA-associated	7744013
+6638	RNA-associated	1533223
+2353	DNA-associated (direct or indirect)	10918580
+5697	Soluble	7493937
+2355	DNA-associated (direct or indirect)	8954781
+2357	Integral membrane	2161213
+2358	Integral membrane	9054386
+2359	Integral membrane	8198572
+10236	RNA-associated	9421497
+881	Actin-cytoskeleton associated	7641791
+885	Soluble	3856870
+886	Integral membrane	8343165
+887	Integral membrane	7681836
+9982	Soluble	1885605
+8243	DNA-associated (direct or indirect)	7757074
+6640	Peripheral membrane	8576247
+6641	Peripheral membrane	8119949
+9985	DNA-associated (direct or indirect)	10207075
+6642	Peripheral membrane	9819414
+6643	Peripheral membrane	9819414
+9986	Integral membrane	10373325
+9987	RNA-associated	9538234
+6645	Peripheral membrane	8576247
+6649	Soluble	8034674
+26689	Integral membrane	9119360
+10242	Integral membrane	10097176
+10245	Integral membrane	10339406
+10246	Integral membrane	9149941
+10247	Protein synthesis factor	8530410
+10248	RNA-associated	9630247
+9990	Integral membrane	10187864
+9991	RNA-associated	10207106
+9992	Integral membrane	10219239
+9993	Integral membrane	7655455
+6650	DNA-associated (direct or indirect)	9722942
+6651	DNA-associated (direct or indirect)	8031013
+6653	Integral membrane	9157966
+101	Integral membrane	9126482
+1719	Soluble	
+103	RNA-associated	7862132
+104	RNA-associated	8559253
+10250	RNA-associated	9531537
+107	Integral membrane	8314585
+108	Integral membrane	1427768
+109	Integral membrane	9920776
+9201	Integral membrane	10036192
+10257	Integral membrane	2806887
+9208	RNA-associated	9705290
+9208	Actin-cytoskeleton associated	9671805
+6660	DNA-associated (direct or indirect)	8812465
+6662	DNA-associated (direct or indirect)	8640233
+6663	DNA-associated (direct or indirect)	9722528
+6664	DNA-associated (direct or indirect)	8666406
+6665	DNA-associated (direct or indirect)	9540826
+6666	DNA-associated (direct or indirect)	9215677
+6667	DNA-associated (direct or indirect)	10747986
+6668	DNA-associated (direct or indirect)	1341900
+11201	DNA-associated (direct or indirect)	10458907
+1725	Protein synthesis factor	7673224
+113	Integral membrane	7860067
+10260	DNA-associated (direct or indirect)	8056341
+115	Integral membrane	9628827
+10261	Integral membrane	9809579
+116	Soluble	10698193
+10262	RNA-associated	7958871
+117	Integral membrane	7902709
+118	Actin-cytoskeleton associated	1345173
+119	Actin-cytoskeleton associated	1840603
+10266	Integral membrane	9620797
+9213	Integral membrane	9990033
+10267	Integral membrane	9620797
+10268	Integral membrane	9620797
+9217	Integral membrane	9920726
+9218	Integral membrane	9920726
+6671	DNA-associated (direct or indirect)	7559627
+11211	Integral membrane	10448064
+1736	RNA-associated	10591218
+11218	RNA-associated	10383418
+11219	DNA-associated (direct or indirect)	10391904
+3344	DNA-associated (direct or indirect)	1639393
+6689	DNA-associated (direct or indirect)	1406622
+11222	Ribosome-associated	2891103
+11224	Ribosome-associated	2891103
+133	Soluble	10822232
+134	Integral membrane	1530647
+10280	Integral membrane	8954936
+135	Integral membrane	8670304
+136	Integral membrane	7558011
+10284	DNA-associated (direct or indirect)	9150135
+10285	RNA-associated	9817934
+10287	Peripheral membrane	9571244
+10288	Integral membrane	9079806
+3350	Integral membrane	3138543
+6693	Actin-cytoskeleton associated	10753822
+6693	Integral membrane	2241892
+3351	Integral membrane	1559993
+3352	Integral membrane	1652050
+3354	Integral membrane	1733778
+3355	Integral membrane	8380639
+3356	Integral membrane	9109547
+6699	Intermediate-filament associated	1438308
+3357	Integral membrane	8143856
+3358	Integral membrane	1302605
+11232	DNA-associated (direct or indirect)	9153213
+3359	Integral membrane	7565620
+140	Integral membrane	8399349
+1756	Actin-cytoskeleton associated	3282674
+1756	Peripheral membrane	1824797
+142	DNA-associated (direct or indirect)	10958667
+142	RNA-associated	10944198
+11236	Integral membrane	9689122
+143	DNA-associated (direct or indirect)	10100603
+143	RNA-associated	10477748
+10291	RNA-associated	7489498
+146	Integral membrane	7746284
+10292	DNA-associated (direct or indirect)	9225980
+147	Integral membrane	1328250
+148	Integral membrane	8396931
+9242	DNA-associated (direct or indirect)	9584154
+10296	Integral membrane	9763581
+9248	Integral membrane	8647286
+4303	DNA-associated (direct or indirect)	9010221
+2700	Integral membrane	9413992
+2701	Integral membrane	7680674
+2702	Integral membrane	7966354
+2703	Integral membrane	7796604
+3360	Integral membrane	9276448
+4308	Integral membrane	
+3361	Integral membrane	7988681
+2705	Integral membrane	2875078
+3362	Integral membrane	8522988
+2706	Integral membrane	1324944
+3363	Integral membrane	8226867
+1761	DNA-associated (direct or indirect)	10332030
+1763	DNA-associated (direct or indirect)	8938459
+1764	Tubulin-cytoskeleton associated	9373155
+11243	DNA-associated (direct or indirect)	10419538
+150	Integral membrane	1354394
+1766	Tubulin-cytoskeleton associated	9256245
+11244	DNA-associated (direct or indirect)	10441475
+151	Integral membrane	2164221
+1767	Tubulin-cytoskeleton associated	9256245
+11245	Integral membrane	7893747
+152	Integral membrane	9371698
+1768	Tubulin-cytoskeleton associated	8812413
+153	Integral membrane	10212248
+1769	Tubulin-cytoskeleton associated	9256245
+154	Integral membrane	9924018
+155	Integral membrane	1718744
+156	Soluble	1339451
+156	Peripheral membrane	1339451
+9255	Soluble	7545917
+9255	RNA-associated	9405472
+4311	Integral membrane	2521388
+1770	Tubulin-cytoskeleton associated	8812413
+3375	Soluble	2608057
+2719	Integral membrane	7657705
+3376	Soluble	7721108
+11250	Integral membrane	10036181
+1773	DNA-associated (direct or indirect)	2349940
+11251	Integral membrane	10036181
+1774	DNA-associated (direct or indirect)	9205125
+1775	DNA-associated (direct or indirect)	9205125
+11253	Integral membrane	10409699
+1776	DNA-associated (direct or indirect)	9070308
+11254	Integral membrane	10446133
+1777	DNA-associated (direct or indirect)	9714827
+11255	Integral membrane	10347254
+1778	Tubulin-cytoskeleton associated	8227145
+8600	Integral membrane	9312132
+11258	Tubulin-cytoskeleton associated	9722614
+8601	Peripheral membrane	9748280
+8604	Integral membrane	9722566
+8609	DNA-associated (direct or indirect)	9774444
+4323	Integral membrane	8015608
+4324	Integral membrane	7649159
+4325	Integral membrane	7559440
+4326	Integral membrane	8640782
+3383	Integral membrane	3349522
+3384	Integral membrane	2497351
+1780	Tubulin-cytoskeleton associated	10049579
+3385	Integral membrane	8459213
+3386	Integral membrane	6431896
+11260	RNA-associated	9512417
+10605	RNA-associated	9548260
+1786	DNA-associated (direct or indirect)	10888872
+11264	Integral membrane	10366717
+1787	DNA-associated (direct or indirect)	9425235
+1788	DNA-associated (direct or indirect)	10433969
+10609	DNA-associated (direct or indirect)	8862517
+1789	DNA-associated (direct or indirect)	10433969
+11266	Soluble	8670865
+11267	DNA-associated (direct or indirect)	10419521
+11269	RNA-associated	10428971
+177	Integral membrane	1378843
+8614	Soluble	9753616
+8618	Peripheral membrane	1516133
+9278	DNA-associated (direct or indirect)	9545376
+4335	DNA-associated (direct or indirect)	9184233
+4336	Soluble	7989345
+2733	RNA-associated	9618489
+2733	Peripheral membrane	9618489
+2735	DNA-associated (direct or indirect)	2832761
+2736	DNA-associated (direct or indirect)	9557682
+2737	DNA-associated (direct or indirect)	9054938
+3394	DNA-associated (direct or indirect)	1460054
+1791	DNA-associated (direct or indirect)	3467897
+11275	Actin-cytoskeleton associated	10397770
+183	Soluble	6089875
+11277	DNA-associated (direct or indirect)	10393201
+8620	Soluble	9224703
+185	Integral membrane	1378723
+54464	RNA-associated	9802570
+11278	DNA-associated (direct or indirect)	10704285
+186	Integral membrane	7945336
+187	Integral membrane	9792798
+8624	Integral membrane	9784380
+8625	DNA-associated (direct or indirect)	9806546
+9282	DNA-associated (direct or indirect)	9989412
+4340	Integral membrane	8530032
+9289	Integral membrane	10049584
+2740	Integral membrane	8405712
+2741	Integral membrane	2155780
+4345	Integral membrane	3032785
+2742	Integral membrane	2155780
+2743	Integral membrane	8717357
+1007	Integral membrane	10861224
+10621	DNA-associated (direct or indirect)	9171375
+10622	DNA-associated (direct or indirect)	9171375
+10623	DNA-associated (direct or indirect)	9171375
+11280	Integral membrane	
+11281	DNA-associated (direct or indirect)	8601806
+10625	RNA-associated	9696811
+190	DNA-associated (direct or indirect)	9384387
+11284	DNA-associated (direct or indirect)	10446192
+10629	DNA-associated (direct or indirect)	9674425
+54474	Intermediate-filament associated	8359595
+196	DNA-associated (direct or indirect)	8246913
+197	Soluble	3944104
+9290	Integral membrane	9931487
+8634	RNA-associated	9184239
+8635	RNA-associated	9192857
+9293	Integral membrane	9931487
+9295	Soluble	1896467
+9295	RNA-associated	1896467
+4350	DNA-associated (direct or indirect)	10854423
+4352	Integral membrane	8020956
+4353	DNA-associated (direct or indirect)	2829220
+4354	Integral membrane	1713685
+4355	Integral membrane	7590743
+4356	Integral membrane	8824795
+1015	Integral membrane	8153632
+4359	Integral membrane	7506095
+10630	Integral membrane	10393083
+22796	Peripheral membrane	7962052
+22797	DNA-associated (direct or indirect)	9256061
+10635	DNA-associated (direct or indirect)	9396801
+10636	Peripheral membrane	9168931
+8645	Integral membrane	9812978
+51146	Integral membrane	10430883
+8647	Integral membrane	9806540
+51148	Integral membrane	10608765
+8648	DNA-associated (direct or indirect)	7481822
+3703	Integral membrane	8838310
+4360	Integral membrane	1294118
+4361	DNA-associated (direct or indirect)	9651580
+4363	Integral membrane	1360704
+3709	Integral membrane	
+57030	Integral membrane	8632143
+2765	Integral membrane	8934543
+2767	Peripheral membrane	1902575
+10642	RNA-associated	9891060
+2769	Peripheral membrane	7797501
+10643	RNA-associated	9891060
+10644	RNA-associated	9891060
+8650	Integral membrane	7596406
+5310	Integral membrane	7663510
+5311	Actin-cytoskeleton associated	10760273
+5311	Integral membrane	8650545
+51156	Soluble	10460162
+3713	Peripheral membrane	2873896
+3714	Soluble	
+5318	Integral membrane	8922383
+3716	Peripheral membrane	1848670
+2770	Peripheral membrane	3110783
+2771	Peripheral membrane	9092559
+2773	Peripheral membrane	3109953
+2774	Peripheral membrane	8243272
+2775	Peripheral membrane	1899283
+2776	Peripheral membrane	8825633
+2778	Peripheral membrane	9159128
+10652	Integral membrane	9211930
+2779	Peripheral membrane	8673138
+10653	Soluble	9115294
+10653	Integral membrane	9346890
+9600	Integral membrane	9245688
+10655	DNA-associated (direct or indirect)	10332030
+10656	RNA-associated	10332027
+9603	DNA-associated (direct or indirect)	10037736
+10657	DNA-associated (direct or indirect)	1374686
+10657	RNA-associated	1374686
+10658	RNA-associated	8948631
+9605	Integral membrane	10231027
+10659	RNA-associated	9887331
+8661	Protein synthesis factor	9054404
+8662	Protein synthesis factor	8995410
+8663	Protein synthesis factor	8995409
+51164	DNA-associated (direct or indirect)	10671518
+51164	Tubulin-cytoskeleton associated	10671518
+8664	Protein synthesis factor	9341143
+8665	Protein synthesis factor	9341143
+8667	Protein synthesis factor	9341143
+8668	Protein synthesis factor	8995409
+5325	DNA-associated (direct or indirect)	9671765
+8669	Protein synthesis factor	9822659
+3725	DNA-associated (direct or indirect)	10918580
+3726	DNA-associated (direct or indirect)	10764760
+3727	DNA-associated (direct or indirect)	1903194
+23764	DNA-associated (direct or indirect)	10527846
+3728	Soluble	2726765
+3728	Peripheral membrane	2726765
+2780	Peripheral membrane	2902634
+2781	Peripheral membrane	3129724
+2782	Peripheral membrane	1979057
+1043	Integral membrane	1711975
+23767	Integral membrane	10644439
+2783	Peripheral membrane	3114742
+2784	Peripheral membrane	2107550
+1045	DNA-associated (direct or indirect)	9459001
+2786	Peripheral membrane	7665596
+515	Integral membrane	
+1048	Integral membrane	3814146
+10661	DNA-associated (direct or indirect)	7753194
+2788	Peripheral membrane	9600093
+516	Integral membrane	8328972
+517	Integral membrane	8328972
+518	Integral membrane	7698763
+10663	Integral membrane	9230441
+9610	Peripheral membrane	9144171
+10664	DNA-associated (direct or indirect)	8649389
+9611	DNA-associated (direct or indirect)	10882117
+10666	Integral membrane	8673704
+10667	Soluble	10329163
+50512	Integral membrane	10722749
+9617	Protein synthesis factor	9838146
+9619	Integral membrane	9034316
+8671	Integral membrane	9235899
+8672	Protein synthesis factor	9418880
+51174	Tubulin-cytoskeleton associated	10620804
+8674	Integral membrane	10839363
+51175	Tubulin-cytoskeleton associated	10620804
+3730	Peripheral membrane	8842728
+3732	Integral membrane	1842498
+3735	Soluble	9278442
+5339	Intermediate-filament associated	8633055
+3737	Integral membrane	2251283
+1050	DNA-associated (direct or indirect)	8643605
+3738	Integral membrane	1373731
+2790	Peripheral membrane	7665596
+1051	DNA-associated (direct or indirect)	10821850
+3739	Integral membrane	2001794
+2791	Peripheral membrane	7665596
+2792	Peripheral membrane	8661128
+523	Integral membrane	8463241
+57062	RNA-associated	10936056
+2796	Soluble	8692981
+524	Peripheral membrane	8463241
+10670	Peripheral membrane	8995684
+2797	Soluble	9419371
+525	Peripheral membrane	9916796
+1058	DNA-associated (direct or indirect)	7962047
+2798	Integral membrane	8386108
+526	Peripheral membrane	2145275
+1059	DNA-associated (direct or indirect)	2435739
+527	Integral membrane	1709739
+10672	Peripheral membrane	7791744
+528	Peripheral membrane	8250920
+10673	Soluble	10908663
+10673	Integral membrane	10398604
+9620	Integral membrane	9339365
+529	Peripheral membrane	8250920
+10675	Integral membrane	9950058
+10677	Actin-cytoskeleton associated	9664034
+10678	Integral membrane	9892646
+9628	Peripheral membrane	10083744
+8683	RNA-associated	7556075
+8685	Integral membrane	9468508
+2000	DNA-associated (direct or indirect)	8895518
+8687	Intermediate-filament associated	9756910
+2001	DNA-associated (direct or indirect)	9840936
+8688	Intermediate-filament associated	9756910
+3741	Integral membrane	1986382
+3742	Integral membrane	2347305
+2004	DNA-associated (direct or indirect)	7851904
+3744	Integral membrane	9177773
+2005	DNA-associated (direct or indirect)	7851904
+5348	Integral membrane	9169143
+3745	Integral membrane	7774931
+5349	Integral membrane	7836447
+3746	Integral membrane	8449507
+1060	DNA-associated (direct or indirect)	1339310
+3748	Integral membrane	1740329
+2009	Tubulin-cytoskeleton associated	9226380
+3749	Integral membrane	1920536
+1062	DNA-associated (direct or indirect)	2022189
+1063	DNA-associated (direct or indirect)	7542657
+56413	Integral membrane	10913346
+533	Integral membrane	9653649
+1068	Tubulin-cytoskeleton associated	8175926
+10682	Integral membrane	7706302
+10683	Integral membrane	10742114
+9630	Peripheral membrane	10191087
+538	Integral membrane	8947031
+9635	Integral membrane	10362588
+2011	Tubulin-cytoskeleton associated	9730619
+5354	Integral membrane	2479017
+8698	Integral membrane	9790765
+2012	Integral membrane	8996089
+5355	Integral membrane	9124532
+3753	Integral membrane	8900283
+5357	Actin-cytoskeleton associated	8139549
+3754	Integral membrane	9434767
+2015	Integral membrane	7601460
+5358	Actin-cytoskeleton associated	8428952
+3755	Integral membrane	9434767
+3756	Integral membrane	9738473
+2017	Soluble	9054437
+2017	Actin-cytoskeleton associated	9054437
+2017	Peripheral membrane	9054437
+3757	Integral membrane	7736582
+3759	Integral membrane	7696590
+1072	Actin-cytoskeleton associated	8195165
+540	Integral membrane	10942420
+545	DNA-associated (direct or indirect)	8843195
+546	DNA-associated (direct or indirect)	10570185
+10692	Integral membrane	9275222
+549	RNA-associated	7892223
+6301	Soluble	9431993
+6302	Integral membrane	8134123
+10699	Integral membrane	10329693
+6304	DNA-associated (direct or indirect)	1505028
+26343	Integral membrane	9119360
+4703	Actin-cytoskeleton associated	7739042
+6307	Integral membrane	8663358
+5361	Integral membrane	8570614
+3760	Integral membrane	8804710
+2021	DNA-associated (direct or indirect)	7789991
+5364	Integral membrane	8570614
+3761	Integral membrane	8051145
+2022	Integral membrane	7894484
+3762	Integral membrane	9169438
+2023	DNA-associated (direct or indirect)	
+5367	Soluble	1572663
+3764	Integral membrane	7890693
+5368	Soluble	9521323
+3766	Integral membrane	8995301
+2028	Integral membrane	8244382
+1080	Integral membrane	7553864
+3767	Integral membrane	
+1081	Soluble	481597
+3768	Integral membrane	7859381
+1082	Soluble	6194155
+551	Soluble	1740104
+552	Integral membrane	8106369
+553	Integral membrane	7805841
+554	Integral membrane	1356229
+1087	Integral membrane	7806520
+1088	Integral membrane	2208113
+1089	Integral membrane	2050678
+558	Integral membrane	1656220
+6310	Soluble	7647801
+5371	DNA-associated (direct or indirect)	10806494
+2030	Integral membrane	8986748
+3772	Integral membrane	8995301
+5376	Integral membrane	10697408
+2034	DNA-associated (direct or indirect)	9079689
+2035	Actin-cytoskeleton associated	3467321
+5378	DNA-associated (direct or indirect)	8072530
+3775	Integral membrane	8605869
+2037	Actin-cytoskeleton associated	9598318
+3776	Integral membrane	9003761
+2038	Peripheral membrane	8608138
+3777	Integral membrane	9312005
+2039	Actin-cytoskeleton associated	8341682
+3778	Integral membrane	7993625
+563	Soluble	2049092
+6322	DNA-associated (direct or indirect)	9570953
+27308	Integral membrane	9399956
+27309	DNA-associated (direct or indirect)	10593942
+6326	Integral membrane	1325650
+6328	Integral membrane	9589372
+6329	Integral membrane	1659948
+2040	Integral membrane	7592848
+2041	Integral membrane	2825356
+3780	Integral membrane	8781233
+2042	Integral membrane	1737782
+2043	Integral membrane	7898931
+3782	Integral membrane	8781233
+3783	Integral membrane	9380751
+3784	Integral membrane	8900283
+2046	Integral membrane	1648701
+3785	Integral membrane	9425895
+2047	Integral membrane	8666391
+3786	Integral membrane	9425900
+2048	Integral membrane	8589679
+2049	Integral membrane	8397371

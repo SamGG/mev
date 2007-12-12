@@ -1,0 +1,41 @@
+^SAMPLE=body wall rep1
+!Sample_title = body wall replicate 1
+!Sample_source_name = body wall
+!Sample_organism = Drosophila melanogaster
+!Sample_characteristics = Wild type, third instar larvae, body wall
+!Sample_molecule = total RNA
+!Sample_extract_protocol = Approximately 200 wild-type (Berlin strain) wandering third-instar larvae were dissected and the wing discs were collected in a drop of PBS on Sylgard (Dow Corning). Discs were cut between the presumptive hinge and the body wall regions using a 30-gauge syringe needle, and fragments were lysed in separate groups in RLT buffer (Qiagen).Total RNA was extracted from the tissue lysate using an RNeasy kit (Qiagen)."
+!Sample_label = biotin
+!Sample_label_protocol = Approximately 8 µg of total RNA was processed to produce biotinylated cRNA targets.
+!Sample_hyb_protocol = standard Affymetrix procedures
+!Sample_scan_protocol = standard Affymetrix procedures
+!Sample_description = Wild type third instar larvae imaginal wing discs
+!Sample_data_processing = Affymetrix Microarray Suite version 5.0
+!Sample_platform_id = GPL72
+#ID_REF = 
+#VALUE = MAS5-calculated Signal intensity
+#ABS_CALL = the call in an absolute analysis that indicates if the transcript was present (P), absent (A), marginal (M), or no call (NC)			
+#DETECTION P-VALUE = 'detection p-value', p-value that indicates the significance level of the detection call			
+!Sample_table_begin			
+ID_REF	VALUE	ABS_CALL	DETECTION P-VALUE
+141200_at	36.6	A	0.818657
+141201_at	41.5	A	0.703191
+141202_at	607.3	P	0.000944
+141203_at	1509.1	P	0.000762
+141204_at	837.3	P	0.000613
+141205_at	363.2	P	0.003815
+141206_at	1193.6	P	0.000491
+141207_at	346.6	P	0.001165
+141208_at	257.8	P	0.006575
+141209_at	337.1	P	0.002607
+141210_at	48	A	0.150145
+141211_at	130.7	P	0.005504
+141212_at	1454.3	P	0.000491
+141213_at	21.2	A	0.635055
+141214_at	2372.6	P	0.000491
+141215_at	452.9	P	0.017732
+141216_at	504.1	P	0.006575
+141217_at	716.9	P	0.004591
+141218_at	3248.8	P	0.000491
+141219_at	223.5	P	0.007827
+!Sample_table_end			

@@ -1,0 +1,3459 @@
+100	adenosine deaminase  superfamily
+1000	cadherin
+1000	cadherin  superfamily
+1000	cadherin repeat homology - 5 proteins
+1001	cadherin
+1003	cadherin  superfamily
+1003	cadherin repeat homology - 5 proteins
+1013	cadherin
+1017	kinase-related transforming protein
+1018	kinase-related transforming protein
+1018	kinase-related transforming protein  superfamily
+1021	kinase-related transforming protein  superfamily
+1025	kinase-related transforming protein  superfamily
+103	double-stranded RNA-binding repeat homology
+10327	aldehyde reductase  superfamily
+1033	dual specificity phosphoprotein phosphatase DUSP3  superfamily
+10382	tubulin
+10450	cyclophilin homology
+1062	kinesin motor domain homology
+10627	calmodulin
+1066	cholinesterase homology
+1072	cofilin
+10797	methylenetetrahydrofolate dehydrogenase
+10797	methylenetetrahydrofolate dehydrogenase (NAD+)  superfamily
+1080	cystic fibrosis transmembrane conductance regulator
+1081	glycoprotein hormones alpha chain
+1082	pituitary glycoprotein hormone beta chain
+1084	carcinoembryonic antigen precursor amino-terminal homology
+1088	carcinoembryonic antigen precursor amino-terminal homology
+10971	14-3-3 protein
+10988	human methionyl aminopeptidase
+10993	threonine dehydratase  superfamily
+110454	Ly-6 antigen
+1109	aldehyde reductase
+1113	chromogranin A
+1114	chromogranin B precursor
+11222	Escherichia coli ribosomal protein L3  superfamily
+11287	alpha-2-macroglobulin
+1134	acetylcholine receptor
+11350	human protein-tyrosine kinase abl
+11364	acyl-CoA dehydrogenase
+113902	cholinesterase homology
+114105	beta-thromboglobulin
+11423	cholinesterase
+11433	tartrate-resistant acid phosphatase
+11434	acrosin
+11443	acetylcholine receptor
+11447	acetylcholine receptor
+11448	acetylcholine receptor
+114593	natriuretic peptide C precursor
+114596	antileukoproteinase  superfamily
+114596	antileukoproteinase repeat homology
+114597	succinate--CoA ligase (ADP-forming) alpha chain
+114598	C-type lectin homology
+11461	actin
+11465	actin
+114768	urate oxidase
+114768	urate oxidase  superfamily
+114856	dual specificity phosphoprotein phosphatase 1  superfamily
+11486	adenosine deaminase  superfamily
+11489	disintegrin homology
+1152	creatine kinase
+1152	creatine kinase repeat homology
+11537	trypsin
+11545	NAD+ ADP-ribosyltransferase
+11545	NAD+ ADP-ribosyltransferase  superfamily
+11566	adenylosuccinate synthase
+11576	serum albumin
+1158	creatine kinase  superfamily
+1158	creatine kinase repeat homology
+1159	creatine kinase repeat homology
+11595	aggrecan
+11606	antithrombin III
+11625	alpha-2-HS-glycoprotein
+1163	cell division control protein CKS1  superfamily
+116483	lysine--tRNA ligase
+116484	thioredoxin
+11651	protein kinase akt
+116510	metalloproteinase inhibitor
+116547	S-100 protein
+11656	5-aminolevulinate synthase
+11656	5-aminolevulinate synthase  superfamily
+116564	membrane-bound guanylate cyclase
+116564	membrane-bound guanylate cyclase  superfamily
+116564	natriuretic peptide-binding domain homology
+116592	spasmolytic protein  superfamily
+116639	homeotic protein CDP
+116643	transitional endoplasmic reticulum ATPase
+11668	aldehyde dehydrogenase
+11669	aldehyde dehydrogenase
+116700	glycoprotein hormones alpha chain
+11674	fructose-bisphosphate aldolase
+11676	fructose-bisphosphate aldolase
+11684	arachidonate 5-lipoxygenase
+11684	arachidonate 5-lipoxygenase  superfamily
+11687	arachidonate 5-lipoxygenase
+11687	arachidonate 5-lipoxygenase  superfamily
+117020	CDC24 homology
+11705	inhibin
+117053	Escherichia coli ribosomal protein S8
+117057	brush border myosin heavy chain I
+117061	interstitial collagenase
+117063	protein-tyrosine-phosphatase, nonreceptor type 1
+117105	potassium channel protein drk1
+117106	lysosomal integral membrane protein II  superfamily
+11722	mammalian alpha-amylase
+11723	mammalian alpha-amylase
+117243	human long-chain-fatty-acid--CoA ligase
+117255	protein-tyrosine-phosphatase, nonreceptor type 12
+11727	pancreatic ribonuclease
+11733	ankyrin
+11739	ADP,ATP carrier protein
+11749	annexin VI
+117554	triacylglycerol lipase
+11757	alkyl hydroperoxidase c22 protein homology
+11770	myelin P2 protein
+11807	apolipoprotein A-I
+11808	apolipoprotein A-I
+11813	apolipoprotein A-I
+11815	lipocalin
+11816	apolipoprotein A-I
+11818	apolipoprotein H
+11821	adenine phosphoribosyltransferase  superfamily
+11826	lens fiber membrane major intrinsic protein
+11836	protein kinase A-raf
+11837	rat acidic ribosomal protein P0
+11839	amphiregulin
+11883	animal sulfatase  superfamily
+11898	argininosuccinate synthase
+11898	argininosuccinate synthase  superfamily
+11909	cAMP response element-binding protein 1
+1191	clusterin
+11931	Na+/K+-transporting ATPase beta chain
+11977	ATPase transduction domain homology
+11997	aldehyde reductase
+11998	oxytocin-neurophysin
+12010	immunoglobulin C region
+12043	bcl transforming protein
+12062	vertebrate rhodopsin
+1208	colipase
+1211	clathrin light chain
+1212	clathrin light chain
+1213	clathrin heavy chain
+1215	trypsin
+1215	trypsin  superfamily
+1215	trypsin homology
+12159	inhibin
+12183	phosphoglycerate mutase
+12259	complement subcomponent C1q chain A  superfamily
+12260	complement subcomponent C1q chain A  superfamily
+12262	complement C1q carboxyl-terminal homology
+12262	complement subcomponent C1q chain A  superfamily
+12263	complement C2
+12263	complement C2  superfamily
+12266	alpha-2-macroglobulin
+12268	alpha-2-macroglobulin
+12273	vertebrate rhodopsin
+12304	protein disulfide-isomerase
+12306	annexin I
+12317	calreticulin  superfamily
+12323	Ca2+/calmodulin-dependent protein kinase II
+12326	Ca2+/calmodulin-dependent protein kinase
+12345	actin-capping protein beta chain
+12345	actin-capping protein beta chain  superfamily
+124	alcohol dehydrogenase  superfamily
+124	long-chain alcohol dehydrogenase homology
+12406	antithrombin III
+12409	short-chain alcohol dehydrogenase homology
+12412	chromobox homology
+12416	chromobox homology
+12417	chromobox homology
+124323	Escherichia coli ribosomal protein S12
+124451	homeotic protein lim-1
+12481	T-cell surface glycoprotein CD2
+12487	T-cell surface glycoprotein CD28
+125	alcohol dehydrogenase
+12500	T-cell surface glycoprotein CD3 delta chain
+12504	T-cell surface glycoprotein CD4
+12506	B-cell surface glycoprotein blast-1
+12512	CD9 antigen
+12526	T-cell surface glycoprotein CD8 beta chain
+12531	human protein-tyrosine-phosphatase cdc25A  superfamily
+12532	human protein-tyrosine-phosphatase cdc25C  superfamily
+12550	cadherin
+12558	cadherin
+12561	cadherin
+12568	kinase-related transforming protein
+1259	cAMP receptor protein cyclic nucleotide-binding domain homology
+1259	cyclic nucleotide-gated channel
+12628	complement factor H
+12631	cofilin
+12638	cystic fibrosis transmembrane conductance regulator
+12640	glycoprotein hormones alpha chain
+12652	chromogranin A
+12653	chromogranin B precursor
+1267	2',3'-cyclic-nucleotide 3'-phosphodiesterase
+127	alcohol dehydrogenase
+1270	ciliary neurotrophic factor
+12709	creatine kinase repeat homology
+12715	creatine kinase repeat homology
+12716	creatine kinase repeat homology
+12759	clusterin
+12797	calponin
+12798	calponin
+12798	calponin repeat homology
+12798	smooth muscle protein SM22 homology
+12799	2',3'-cyclic-nucleotide 3'-phosphodiesterase
+128	alcohol dehydrogenase
+12813	complement C1q carboxyl-terminal homology
+1282	collagen alpha 1(IV) chain
+1282	collagen alpha 1(IV) chain  superfamily
+12826	collagen alpha 1(IV) chain
+12826	collagen alpha 1(IV) chain  superfamily
+12833	collagen alpha 1(VI) chain
+12837	collagen alpha 1(VIII) chain  superfamily
+12837	complement C1q carboxyl-terminal homology
+12843	collagen alpha 2(I) chain
+12843	collagen alpha 2(I) chain  superfamily
+12857	cytochrome-c oxidase chain IV
+12858	mammalian cytochrome-c oxidase chain Va  superfamily
+12859	mammalian cytochrome-c oxidase chain Vb  superfamily
+1286	collagen alpha 1(IV) chain  superfamily
+12866	mammalian cytochrome-c oxidase chain VIIa
+12869	cytochrome-c oxidase chain VIII  superfamily
+1287	collagen alpha 1(IV) chain
+1287	collagen alpha 1(IV) chain  superfamily
+12873	carboxypeptidase
+12873	carboxypeptidase  superfamily
+1288	collagen alpha 1(IV) chain  superfamily
+1289	collagen alpha 1(V) chain
+1289	fibrillar collagen carboxyl-terminal homology
+1290	collagen alpha 1(I) chain
+1290	fibrillar collagen carboxyl-terminal homology
+12902	complement C3d/Epstein-Barr virus receptor
+12903	myelin P2 protein
+1292	collagen alpha 1(VI) chain  superfamily
+1293	von Willebrand factor type A repeat homology
+12944	C-reactive protein
+1295	collagen alpha 1(VIII) chain  superfamily
+1296	collagen alpha 1(VIII) chain  superfamily
+12967	beta-crystallin
+12968	beta-crystallin
+12972	alcohol dehydrogenase
+12977	macrophage colony-stimulating factor
+12983	cytokine receptor homology
+12983	interleukin-3 receptor beta chain
+12985	interleukin-6
+12992	alpha-s2-casein  superfamily
+130	alcohol dehydrogenase
+1300	collagen alpha 1(VIII) chain  superfamily
+13003	versican
+1301	collagen alpha 1(V) chain
+1301	fibrillar collagen carboxyl-terminal homology
+13010	cystatin
+13026	choline-phosphate cytidylyltransferase  superfamily
+13030	papain
+13033	pepsin
+13039	papain
+13047	homeobox homology - diverse types
+13047	homeotic protein CDP
+13063	cytochrome c
+13067	cytochrome c
+13074	human cytochrome P450 CYP2D6
+13076	human cytochrome P450 CYP2D6
+13077	human cytochrome P450 CYP2D6
+131	alcohol dehydrogenase
+13101	human cytochrome P450 CYP2D6
+13105	human cytochrome P450 CYP2D6
+1314	WD repeat homology
+1314	yeast coatomer complex alpha chain  superfamily
+13142	D-amino-acid oxidase
+13166	peptidylglycine monooxygenase I homology
+13190	monophenol monooxygenase  superfamily
+13216	mammalian defensin  superfamily
+13239	mammalian defensin  superfamily
+1327	cytochrome-c oxidase chain IV
+1329	mammalian cytochrome-c oxidase chain Vb  superfamily
+1337	mammalian cytochrome-c oxidase chain VIa  superfamily
+1339	mammalian cytochrome-c oxidase chain VIa  superfamily
+1340	mammalian cytochrome-c oxidase chain VIb  superfamily
+13419	deoxyribonuclease I
+1346	mammalian cytochrome-c oxidase chain VIIa
+1347	mammalian cytochrome-c oxidase chain VIIa
+13489	vertebrate rhodopsin
+1351	cytochrome-c oxidase chain VIII
+1351	cytochrome-c oxidase chain VIII  superfamily
+1357	carboxypeptidase
+1358	carboxypeptidase
+1358	carboxypeptidase  superfamily
+1359	carboxypeptidase
+1359	carboxypeptidase  superfamily
+1360	carboxypeptidase
+1360	carboxypeptidase  superfamily
+13615	endothelin
+13619	SAM homology
+13627	translation elongation factor Tu
+13645	EGF homology - Type A
+13645	EGF homology - Type B
+13645	epidermal growth factor precursor
+13681	translation initiation factor eIF-4A  superfamily
+1371	coproporphyrinogen oxidase  superfamily
+13717	elastin
+1373	carbamoyl-phosphate synthase (ammonia) homology
+1373	carbamoyl-phosphate synthase (glutamine-hydrolyzing) large chain homology
+1373	carbamoyl-phosphate synthase (glutamine-hydrolyzing) small chain homology
+13808	enolase
+1381	myelin P2 protein
+1381	myelin P2 protein  superfamily
+1382	myelin P2 protein
+1382	myelin P2 protein  superfamily
+13857	erythropoietin receptor
+1386	cAMP response element-binding protein 1
+13870	excision repair protein
+13872	DNA excision repair cross-complementing protein ERCC3
+13884	cholinesterase homology
+1392	diuretic hormone homology
+1398	crk transforming protein
+13982	estrogen receptor
+14009	ets DNA-binding domain homology
+14009	transcription factor ER81
+1401	C-reactive protein
+14030	RNA-binding protein EWS  superfamily
+1404	link protein repeat homology
+1404	proteoglycan link protein
+140465	calmodulin
+140544	choline-phosphate cytidylyltransferase  superfamily
+140547	enoyl-CoA hydratase homology
+14061	thrombin
+14066	tissue factor
+140670	beta-adaptin
+140671	kinase-related transforming protein
+14069	coagulation factor VIII
+140694	human dynamin II
+14071	coagulation factor X
+1409	alpha-crystallin
+140908	kinase-related transforming protein
+1410	alpha-crystallin
+14128	IgE receptor II
+14130	immunoglobulin homology - C2 type
+14148	ferredoxin [2Fe-2S]
+14149	human ferredoxin--NADP+ reductase
+14164	fibroblast growth factor
+14173	fibroblast growth factor
+14174	fibroblast growth factor
+14175	fibroblast growth factor
+14182	basic fibroblast growth factor receptor 1
+1419	beta-crystallin
+142	NAD+ ADP-ribosyltransferase
+142	NAD+ ADP-ribosyltransferase  superfamily
+1420	beta-crystallin
+14225	BKBP-type peptidylprolyl isomerase
+14225	BKBP-type peptidylprolyl isomerase homology
+14228	human FK506-binding protein FKBP51
+14247	ets RII regulatory region homology
+14247	transcription factor erg
+14275	folate-binding protein
+14276	folate-binding protein
+14276	folate-binding protein  superfamily
+14281	fos transforming protein
+14282	fos/jun DNA-binding domain homology
+1429	alcohol dehydrogenase
+1435	macrophage colony-stimulating factor
+1436	macrophage colony-stimulating factor 1 receptor
+1437	granulocyte-macrophage colony-stimulating factor
+14381	glucose-6-phosphate dehydrogenase
+14390	ets DNA-binding domain homology
+14390	transcription factor elg  superfamily
+1440	interleukin-6
+14417	human glutamate decarboxylase
+1442	prolactin
+14433	glyceraldehyde-3-phosphate dehydrogenase
+1445	protein-tyrosine kinase src
+1447	beta-casein
+14473	serum albumin
+1448	kappa-casein  superfamily
+14528	GTP cyclohydrolase I  superfamily
+1457	kinase-related transforming protein
+1457	kinase-related transforming protein  superfamily
+1459	kinase-related transforming protein
+14599	prolactin
+14609	gap junction protein
+14612	gap junction protein
+14612	gap junction protein  superfamily
+14613	gap junction protein
+1462	C-type lectin homology
+1462	link protein repeat homology
+1462	versican
+14621	gap junction protein
+14621	gap junction protein  superfamily
+14622	gap junction protein
+14622	gap junction protein  superfamily
+14645	glutamate--ammonia ligase
+14661	glutamate dehydrogenase (NAD(P)+)
+14678	GTP-binding regulatory protein Gs alpha chain
+14681	GTP-binding regulatory protein Gs alpha chain
+14682	GTP-binding regulatory protein Gs alpha chain  superfamily
+14683	GTP-binding regulatory protein Gs alpha chain
+14685	GTP-binding regulatory protein Gs alpha chain
+1469	cystatin
+14696	GTP-binding regulatory protein beta chain
+14704	GTP-binding regulatory protein gamma chain
+14706	GTP-binding regulatory protein gamma chain
+1471	cystatin
+1471	cystatin  superfamily
+1471	cystatin homology
+1472	cystatin
+1472	cystatin  superfamily
+1472	cystatin homology
+1475	cystatin
+1475	cystatin  superfamily
+14751	glucose-6-phosphate isomerase
+14803	glutamate receptor homology
+14809	glutamate receptor homology
+14811	N-methyl-D-aspartate receptor 2A
+14815	glucocorticoid receptor
+14825	beta-thromboglobulin
+14862	glutathione transferase
+14863	glutathione transferase
+14869	glutathione transferase
+14870	glutathione transferase
+14915	guanylin
+14938	trypsin
+14938	trypsin  superfamily
+14939	trypsin
+14939	trypsin  superfamily
+14940	trypsin
+14942	trypsin  superfamily
+14943	trypsin
+1495	vinculin amino-terminal homology
+1495	vinculin carboxyl-terminal homology
+14957	histone H1
+14960	class II histocompatibility antigen
+14961	class II histocompatibility antigen
+14962	complement C2
+14962	complement C2  superfamily
+14964	class I histocompatibility antigen
+14968	class II histocompatibility antigen
+14969	class II histocompatibility antigen
+14972	class I histocompatibility antigen
+14980	class I histocompatibility antigen
+15007	class I histocompatibility antigen
+1503	CTP synthase  superfamily
+1504	trypsin  superfamily
+15040	class I histocompatibility antigen
+1508	papain
+1509	pepsin
+1509	pepsin  superfamily
+15126	globin
+15129	globin
+15139	alpha-2-macroglobulin
+1514	papain
+15162	SH2 homology
+15162	SH3 homology
+15162	protein-tyrosine kinase src
+15170	protein-tyrosine-phosphatase, nonreceptor type 6
+15200	heparin-binding EGF-like growth factor
+15211	beta-hexosaminidase
+15212	beta-hexosaminidase
+15234	hepatocyte growth factor
+15235	hepatocyte growth factor
+1528	cytochrome b5
+15289	nonhistone chromosomal protein HMG-2
+153	vertebrate rhodopsin
+15312	nonhistone chromosomal protein HMG-17
+15331	nonhistone chromosomal protein HMG-17
+15361	nonhistone chromosomal protein HMG-I  superfamily
+15364	nonhistone chromosomal protein HMG-I  superfamily
+15368	heme oxygenase
+15368	heme oxygenase (decyclizing)  superfamily
+1537	cytochrome c1 heme protein  superfamily
+1537	cytochrome c1 heme protein homology
+15370	erbA transforming protein homology
+15370	probable hormone receptor N10, nuclear
+15375	transcription factor HNF-3  superfamily
+15376	transcription factor HNF-3  superfamily
+15377	transcription factor HNF-3  superfamily
+15384	ribonucleoprotein repeat homology
+154	vertebrate rhodopsin
+15402	homeotic protein Hox A5
+15404	homeotic protein Hox A7  superfamily
+15407	homeotic protein Hox B1
+15410	homeotic protein Hox B3
+15412	homeotic protein Hox D4
+15413	homeotic protein Hox A5
+15423	homeotic protein Hox D4
+15426	homeobox homology - Antp, Abd-B, lab, eve, and cad types
+15426	homeobox homology - diverse types
+15426	homeotic protein Hox A7  superfamily
+1543	cytochrome P450 homology
+1544	human cytochrome P450 CYP2D6
+15452	hypoxanthine phosphoribosyltransferase
+1548	cytochrome P450 homology
+155	vertebrate rhodopsin
+15507	alpha-crystallin
+15510	chaperonin groEL
+15519	heat shock protein 90
+1565	cytochrome P450 homology
+1565	human cytochrome P450 CYP2D6
+1580	cytochrome P450 homology
+1580	human cytochrome P450 CYP4B1
+1581	cytochrome P450 homology
+1581	human cytochrome P450 CYP7A1
+1586	cytochrome P450 homology
+1586	human cytochrome P450 CYP2D6
+15874	calcitonin
+1588	cytochrome P450 homology
+1588	human cytochrome P450 CYP19
+1589	cytochrome P450 homology
+1589	human cytochrome P450 CYP2D6
+15894	intercellular adhesion molecule
+1591	human cytochrome P450 CYP11B1
+1593	human cytochrome P450 CYP11B1
+15931	animal sulfatase  superfamily
+15932	L-iduronidase
+15962	interferon alpha
+15965	interferon alpha
+15967	interferon alpha
+15969	interferon alpha
+15978	interferon gamma  superfamily
+16004	mannose 6-phosphate receptor, cation-independent
+16006	insulin-like growth factor binding protein 1
+1606	human diacylglycerol kinase  superfamily
+16069	J chain
+1608	human diacylglycerol kinase  superfamily
+1615	lysine--tRNA ligase
+16175	interleukin-1
+16176	interleukin-1
+16183	interleukin-2
+16184	interleukin-2 receptor alpha chain
+16187	interleukin-3  superfamily
+16189	interleukin-4  superfamily
+16190	cytokine receptor homology
+16190	interleukin-4 receptor
+16191	interleukin-5
+16194	ciliary neurotrophic factor receptor
+16194	ciliary neurotrophic factor receptor  superfamily
+16196	interleukin-7
+16197	interleukin-7 receptor
+1622	endozepine
+1622	endozepine  superfamily
+1622	endozepine homology
+163	beta-adaptin
+16323	inhibin
+16337	insulin receptor
+1634	decorin
+1634	leucine-rich alpha-2-glycoprotein repeat homology - set 4
+1636	mammalian peptidyl-dipeptidase A
+1638	monophenol monooxygenase  superfamily
+16398	unassigned collagens
+16409	cell surface glycoprotein CD11b
+16412	integrin beta chain
+16414	integrin beta chain
+16421	integrin beta chain
+16428	protein-tyrosine kinase tec
+16438	inositol-trisphosphate receptor
+1644	animal histidine decarboxylase homology
+1644	aromatic-L-amino-acid decarboxylase
+1645	aldehyde reductase
+1645	aldehyde reductase  superfamily
+16476	jun transforming protein
+16477	jun transforming protein
+16560	kinesin-related protein unc-104
+16563	kinesin motor domain homology
+16563	kinesin-related protein KIF2  superfamily
+16568	kinesin motor domain homology
+16590	macrophage colony-stimulating factor 1 receptor
+16618	trypsin
+16621	coagulation factor XI
+16622	trypsin
+16623	trypsin
+16661	cytoskeletal keratin
+1667	mammalian defensin  superfamily
+1668	mammalian defensin  superfamily
+1669	mammalian defensin  superfamily
+1670	mammalian defensin  superfamily
+1671	mammalian defensin  superfamily
+16728	neural cell adhesion molecule L1
+16728	neural cell adhesion molecule L1  superfamily
+1674	cytoskeletal keratin
+16772	laminin G repeat homology
+16773	laminin G repeat homology
+16784	lysosome-associated membrane protein
+16800	pleckstrin repeat homology
+16816	phosphatidylcholine--sterol acyltransferase
+16833	L-lactate dehydrogenase
+16846	leptin
+16852	beta-galactoside-binding lectin
+16867	glycoprotein hormone receptor
+16869	homeotic protein lim-1
+16871	homeotic protein lim-3
+16878	leukemia inhibitory factor
+16885	LIM protein kinase
+16890	hormone-sensitive lipase
+16909	LIM metal-binding repeat homology
+16918	myc transforming protein
+16918	myc transforming protein homology
+16952	annexin I
+16956	triacylglycerol lipase
+16992	tumor necrosis factor
+17025	porphobilinogen synthase
+170538	protein kinase C delta
+170538	protein kinase C delta  superfamily
+170538	protein kinase C zinc-binding repeat homology
+170667	vacuolar H+-transporting ATPase 16K chain
+170670	enoyl-CoA hydratase/3-hydroxyacyl-CoA dehydrogenase  superfamily
+17068	Ly-6 antigen  superfamily
+17068	Ly-6 homology
+170699	Na+/K+-transporting ATPase alpha chain
+17075	epithelial glycoprotein antigen GA733  superfamily
+170808	calpain large chain
+170808	calpain large chain  superfamily
+171045	interstitial collagenase
+171046	human transcription factor 3
+171046	human transcription factor 3  superfamily
+171052	interstitial collagenase
+171070	protein-tyrosine-phosphatase, nonreceptor type 14
+171075	IgE receptor II
+17113	mannose 6-phosphate receptor, cation-dependent
+171140	Ca2+/calmodulin-dependent protein kinase II
+171142	3-hydroxyacyl-CoA dehydrogenase homology
+171142	enoyl-CoA hydratase homology
+171142	enoyl-CoA hydratase/3-hydroxyacyl-CoA dehydrogenase
+171142	enoyl-CoA hydratase/3-hydroxyacyl-CoA dehydrogenase  superfamily
+171162	C-type lectin homology
+171162	tetranectin  superfamily
+171293	pepsin
+171335	cytochrome-c oxidase chain VIII
+171347	methionine adenosyltransferase
+171459	membrane glycoprotein 2 homology
+171519	calcitonin
+171522	human cytochrome P450 CYP2D6
+171551	beta-thromboglobulin
+171574	human dynamin II
+171574	pleckstrin repeat homology
+17179	SH3 homology - set 2
+17179	protein-tyrosine kinase src
+17189	globin
+1719	type I dihydrofolate reductase
+1719	type I dihydrofolate reductase homology
+17194	mannose-binding lectin
+17195	mannose-binding lectin
+17216	replication licensing factor MCM2
+17217	MCM homology
+17218	replication licensing factor MCM5
+17224	trypsin
+1727	cytochrome-b5 reductase
+1727	cytochrome-b5 reductase homology
+173	serum albumin  superfamily
+17304	discoidin I amino-terminal homology
+17304	milk fat globule protein
+17308	alpha-1,3-mannosyl-glycoprotein beta-1,2-N-acetylglucosaminyltransferase
+17313	osteocalcin
+1738	dihydrolipoamide dehydrogenase
+1738	dihydrolipoamide dehydrogenase homology
+17381	interstitial collagenase
+17384	interstitial collagenase
+17386	interstitial collagenase
+17390	gelatinase A
+17392	interstitial collagenase
+17392	matrix metalloproteinase homology
+17395	gelatinase A
+174	serum albumin
+174	serum albumin  superfamily
+174	serum albumin repeat homology
+17436	malate dehydrogenase
+17436	malate dehydrogenase (oxaloacetate-decarboxylating)  superfamily
+17448	L-lactate dehydrogenase
+17449	L-lactate dehydrogenase
+17523	myeloperoxidase homology
+1756	WW repeat homology
+1756	alpha-actinin actin-binding domain homology
+1756	dystrop
+1756	spectrin/dystrophin repeat homology
+17706	H+-transporting ATP synthase protein 8
+17709	cytochrome-c oxidase chain II
+17718	NADH dehydrogenase (ubiquinone) chain 3
+1773	deoxyribonuclease I
+17748	metallothionein
+17756	MAP2/tau repeat homology
+17756	microtubule-associated protein MAP2b
+17768	methylenetetrahydrofolate dehydrogenase
+17768	methylenetetrahydrofolate dehydrogenase (NAD+) homology
+17837	alpha-2-macroglobulin
+17840	lipocalin
+17840	lipocalin homology
+17843	lipocalin
+17843	lipocalin homology
+17844	lipocalin
+17863	myb transforming protein
+17864	myb transforming protein
+17865	myb transforming protein
+17869	myc transforming protein
+17896	calmodulin
+1791	DNA nucleotidylexotransferase
+17912	brush border myosin heavy chain I
+17916	protozoan myosin heavy chain IB  superfamily
+17918	myosin MYO2
+17967	neural cell adhesion molecule
+17975	nucleolin
+17975	ribonucleoprotein repeat homology
+1800	membrane dipeptidase  superfamily
+18026	neurofilament triplet H protein
+18039	cytoskeletal keratin
+18040	cytoskeletal keratin
+18049	nerve growth factor beta chain
+18050	trypsin
+18073	nidogen
+18109	myc transforming protein
+18115	NAD(P)+ transhydrogenase (B-specific) alpha chain homology
+18115	NAD(P)+ transhydrogenase (B-specific) beta chain homology
+18126	nitric-oxide synthase
+18126	nitric-oxide synthase  superfamily
+1813	vertebrate rhodopsin
+18157	natriuretic peptide A precursor
+18159	natriuretic peptide C precursor
+18160	membrane-bound guanylate cyclase
+18160	membrane-bound guanylate cyclase  superfamily
+18176	ras transforming protein
+18185	maf homology
+1819	GTP-binding protein DRG
+18212	nerve growth factor receptor, high affinity
+18227	probable hormone receptor N10, nuclear
+1824	cadherin
+1824	cadherin  superfamily
+1824	cadherin repeat homology - 5 proteins
+18242	ornithine--oxo-acid aminotransferase
+18263	ornithine decarboxylase
+1828	cadherin
+1828	cadherin  superfamily
+1829	cadherin
+1830	cadherin  superfamily
+1830	cadherin repeat homology - 5 proteins
+1839	heparin-binding EGF-like growth factor
+18405	lipocalin homology
+1841	dTMP kinase  superfamily
+18416	ornithine carbamoyltransferase
+18416	ornithine carbamoyltransferase  superfamily
+18429	oxytocin-neurophysin
+1843	VH1-type dual specificity phosphoprotein phosphatase homology
+1843	dual specificity phosphoprotein phosphatase 1  superfamily
+1844	VH1-type dual specificity phosphoprotein phosphatase homology
+1844	dual specificity phosphoprotein phosphatase 1  superfamily
+1845	VH1-type dual specificity phosphoprotein phosphatase homology
+1845	dual specificity phosphoprotein phosphatase DUSP3  superfamily
+18453	protein disulfide-isomerase
+1847	VH1-type dual specificity phosphoprotein phosphatase homology
+1847	dual specificity phosphoprotein phosphatase 1  superfamily
+18477	alkyl hydroperoxidase c22 protein homology
+18505	homeobox homology - prd-type
+18505	paired box homology
+18538	proliferating cell nuclear antigen
+1854	retroviral proteinase
+18548	kexin
+18549	kexin
+18550	kexin
+18552	subtilisin-like proteinase PACE4
+18552	subtilisin-like proteinase PACE4  superfamily
+18563	lipoyl/biotin-binding homology
+18563	lipoyl/biotin-binding homology - biotin subset
+18563	pyruvate carboxylase
+18574	3',5'-cyclic-nucleotide phosphodiesterase 1B, calmodulin-dependent
+18587	3',5'-cyclic-GMP phosphodiesterase alpha chain
+18588	3',5'-cyclic-GMP phosphodiesterase gamma chain
+18591	platelet-derived growth factor
+18595	macrophage colony-stimulating factor 1 receptor
+18612	transcription factor ER81
+18636	thrombospondin type 1 repeat homology
+18641	human 6-phosphofructokinase
+18643	profilin
+18667	progesterone receptor
+18669	multidrug resistance protein
+18670	multidrug resistance protein
+18671	multidrug resistance protein
+18682	kinase-related transforming protein
+18700	GPI-anchor biosynthesis protein PIG-A  superfamily
+18712	kinase-related transforming protein
+18715	kinase-related transforming protein
+18715	kinase-related transforming protein  superfamily
+18716	submandibular gland 14K protein  superfamily
+18747	kinase-related transforming protein
+18749	kinase-related transforming protein
+18750	protein kinase C alpha
+18753	protein kinase C delta
+18754	protein kinase C delta
+18755	protein kinase C delta
+18755	protein kinase C delta  superfamily
+18762	protein kinase C zeta
+18767	cAMP-dependent protein kinase inhibitor
+18779	phospholipase A2 receptor  superfamily
+18787	antithrombin III
+18788	antithrombin III
+18791	tissue plasminogen activator
+18792	urokinase-type plasminogen activator
+18792	urokinase-type plasminogen activator  superfamily
+18815	plasmin
+18815	plasminogen-related protein precursor homology
+18821	phospholamban
+18823	myelin proteolipid protein
+189	serine--pyruvate aminotransferase
+189	serine--pyruvate aminotransferase  superfamily
+18950	purine-nucleoside phosphorylase  superfamily
+18976	corticotropin-lipotropin
+18986	transcription factor Oct-1
+18999	transcription factor Oct-3  superfamily
+19009	transcription factor Brn-5
+19011	somatomedin B homology
+19016	erbA transforming protein homology
+19034	peptidylprolyl isomerase
+19039	scavenger receptor cysteine-rich domain homology - includes atypical sequences
+1906	endothelin
+1906	endothelin  superfamily
+1907	endothelin
+1907	endothelin  superfamily
+19073	proteoglycan 10K core protein
+1908	endothelin  superfamily
+19085	cAMP-dependent protein kinase regulatory chain
+19087	cAMP-dependent protein kinase regulatory chain
+191	adenosylhomocysteinase
+19106	double-stranded RNA-binding repeat homology
+19106	protein kinase TIK
+19118	sperm histone
+19119	sperm histone
+19122	major prion protein
+19123	coagulation factor X
+19128	plasma protein S
+19133	retinal degeneration slow protein
+191574	aldehyde reductase
+192155	pulmonary surfactant protein B
+192242	aldehyde reductase
+192262	complement subcomponent C1r  superfamily
+19227	parathyroid hormone-related protein
+19241	thymosin beta
+19242	pleiotrophin
+19248	protein-tyrosine-phosphatase, nonreceptor type 12
+19250	protein-tyrosine-phosphatase, nonreceptor type 14
+19252	dual specificity phosphoprotein phosphatase 1  superfamily
+19255	protein-tyrosine-phosphatase, nonreceptor type 1
+19258	protein-tyrosine-phosphatase, nonreceptor type 3
+19260	protein-tyrosine-phosphatase homology
+19262	leukocyte common antigen cytosolic domain homology
+19262	protein-tyrosine-phosphatase, receptor type alpha
+19267	protein-tyrosine-phosphatase, receptor type alpha
+19270	protein-tyrosine-phosphatase, receptor type gamma
+19272	MAM homology
+19272	protein-tyrosine-phosphatase, receptor type mu
+19274	protein-tyrosine-phosphatase, receptor type mu
+19275	protein-tyrosine-phosphatase homology
+19275	protein-tyrosine-phosphatase, receptor type N
+19279	protein-tyrosine-phosphatase, receptor type PTPBR7
+19294	poliovirus receptor  superfamily
+19324	ras transforming protein
+1933	translation elongation factor eEF-1 beta chain  superfamily
+1936	translation elongation factor eEF-1 beta chain  superfamily
+1937	translation elongation factor eEF-1 gamma chain
+1938	translation elongation factor 2
+19411	retinoic acid receptor alpha
+1950	LDL receptor YWTD-containing repeat homology
+1950	epidermal growth factor precursor
+1956	protein kinase homology
+1962	enoyl-CoA hydratase/3-hydroxyacyl-CoA dehydrogenase
+1968	translation initiation factor eIF-2 gamma chain
+1969	SAM homology
+19692	tetranectin  superfamily
+19693	tetranectin  superfamily
+19696	rel homology
+19696	rel transforming protein
+19697	rel homology
+197	alpha-2-HS-glycoprotein
+197	cystatin homology
+19701	pepsin
+19713	protein-tyrosine kinase ret
+19730	CDC25-type guanine nucleotide exchange activator homology
+19731	CDC25-type guanine nucleotide exchange activator homology
+19752	pancreatic ribonuclease
+1977	translation initiation factor eIF-4E
+1984	translation initiation factor eIF-5A
+19886	kinase-related protein ros
+19899	rat ribosomal protein L18
+1991	trypsin
+1992	antithrombin III
+19921	rat ribosomal protein L19
+19941	rat ribosomal protein L26
+19941	rat ribosomal protein L26  superfamily
+19944	rat ribosomal protein L29
+19946	rat ribosomal protein L30
+19946	rat ribosomal protein L30  superfamily
+19951	rat ribosomal protein L32
+19981	rat ribosomal protein L37a
+2	alpha-2-macroglobulin
+2002	ets DNA-binding domain homology
+20028	phosducin
+20042	rat ribosomal protein S12
+20104	rat ribosomal protein S6
+201097	histone H1
+20111	ribosomal protein S6 kinase II
+20116	rat ribosomal protein S8
+20182	retinoic acid receptor alpha  superfamily
+20183	retinoic acid receptor alpha  superfamily
+20194	S-100 protein
+20198	S-100 protein
+20200	S-100 protein
+20201	S-100 protein
+20202	S-100 protein
+20203	S-100 protein
+20219	C-reactive protein
+20250	mammalian stearoyl-CoA desaturase
+20250	stearoyl-CoA desaturase homology
+2026	enolase
+20287	glucagon
+20290	macrophage inflammatory protein  superfamily
+20296	macrophage inflammatory protein  superfamily
+20302	macrophage inflammatory protein  superfamily
+20303	macrophage inflammatory protein  superfamily
+20310	beta-thromboglobulin
+20311	beta-thromboglobulin
+2033	bromodomain homology
+20343	L-selectin
+20389	pulmonary surfactant protein C
+2039	villin headpiece homology
+20394	neuroendocrine protein 7B2
+20442	beta-galactoside alpha-2,3-sialyltransferase
+20444	beta-galactoside alpha-2,3-sialyltransferase
+20479	FtsH/SEC18/CDC48-type ATP-binding domain homology
+205	adenylate kinase
+2052	epoxide hydrolase
+2052	epoxide hydrolase  superfamily
+20533	band 3 anion transport protein
+2056	erythropoietin
+2057	cytokine receptor homology
+2058	amino acid--tRNA ligase repeat homology
+2058	glutamine--tRNA ligase homology
+20597	acid sphingomyelinase
+20604	somatostatin
+20639	small nuclear ribonucleoprotein U1A
+20657	superoxide dismutase
+20662	CDC25-type guanine nucleotide exchange activator homology
+20663	CDC25-type guanine nucleotide exchange activator homology
+2067	excision repair protein
+20678	HMG box homology
+20692	osteonectin
+20692	osteonectin  superfamily
+20692	osteonectin homology
+20699	antithrombin III
+207	protein kinase akt
+2071	DNA excision repair cross-complementing protein ERCC3
+20714	antithrombin III
+20716	antithrombin III
+20717	antithrombin III
+20730	pancreatic secretory trypsin inhibitor
+20739	spectrin alpha chain
+20750	osteopontin
+20750	osteopontin  superfamily
+208	protein kinase akt
+20863	cystatin
+20963	protein-tyrosine kinase ZAP-70
+20980	synaptotagmin
+2099	erbA transforming protein homology
+2099	estrogen receptor
+20997	T-box homology
+20997	mouse gene T protein
+210	porphobilinogen synthase
+2101	erbA transforming protein homology
+2107	translation releasing factor eRF-1
+2108	electron transfer flavoprotein alpha chain  superfamily
+2109	electron transfer flavoprotein beta chain  superfamily
+211	5-aminolevulinate synthase
+211	5-aminolevulinate synthase  superfamily
+211	glycine C-acetyltransferase homology
+2113	ets DNA-binding domain homology
+2113	ets RII regulatory region homology
+2113	transcription factor ets
+2115	transcription factor ER81
+2118	transcription factor ER81
+2119	transcription factor ER81
+212	5-aminolevulinate synthase  superfamily
+2128	homeobox homology - Antp, Abd-B, lab, eve, and cad types
+213	serum albumin
+213	serum albumin  superfamily
+2130	RNA-binding protein EWS  superfamily
+21385	T-box homology
+21405	transcription factor HNF-1
+21410	transcription factor HNF-1
+21418	transcription factor AP-2
+21419	transcription factor AP-2
+2147	Gla domain homology
+2147	kringle homology - selected coagulation factors
+2147	thrombin
+2147	trypsin homology
+2152	tissue factor
+2155	Gla domain homology
+2157	coagulation factor VIII
+2157	discoidin I amino-terminal homology
+2157	ferroxidase repeat homology
+2158	EGF homology - Type A
+2158	EGF homology - Type B
+2158	Gla domain homology
+2158	coagulation factor X
+2158	trypsin homology
+2159	EGF homology - Type A
+2159	EGF homology - Type B
+2159	Gla domain homology
+2159	coagulation factor X
+2159	trypsin homology
+216	aldehyde dehydrogenase
+216	aldehyde dehydrogenase (NAD+)  superfamily
+216	aldehyde dehydrogenase homology
+2160	coagulation factor XI
+2160	trypsin homology
+2161	EGF homology - Type A
+2161	fibronectin type I repeat homology
+2161	fibronectin type II repeat homology
+2161	kringle homology - selected coagulation factors
+2161	trypsin homology
+2167	myelin P2 protein
+21673	DNA nucleotidylexotransferase
+2168	myelin P2 protein
+2168	myelin P2 protein  superfamily
+21682	protein-tyrosine kinase tec
+21687	protein-tyrosine kinase, receptor type tie
+2169	myelin P2 protein  superfamily
+217	aldehyde dehydrogenase
+2170	myelin P2 protein
+218	aldehyde dehydrogenase
+2180	human long-chain-fatty-acid--CoA ligase
+2180	human long-chain-fatty-acid--CoA ligase  superfamily
+21802	transforming growth factor alpha precursor
+21803	inhibin
+21808	inhibin
+21824	thrombomodulin
+21825	thrombospondin 1
+21826	thrombospondin 1
+21826	thrombospondin type 1 repeat homology
+21827	thrombospondin 3
+21833	thyroid hormone receptor
+21838	immunoglobulin V region
+21844	CDC24 homology
+21846	protein-tyrosine kinase, receptor type tie
+21857	metalloproteinase inhibitor
+21858	metalloproteinase inhibitor
+21859	metalloproteinase inhibitor
+21877	thymidine kinase
+21923	fibrinogen beta/gamma homology
+21923	tenascin
+21926	tumor necrosis factor
+21937	tumor necrosis factor receptor type 1
+21938	tumor necrosis factor receptor type 2
+21958	spermatid transition protein 1
+21969	eukaryotic type I DNA topoisomerase
+21991	triose-phosphate isomerase
+220	aldehyde dehydrogenase
+22018	complement factor H repeat homology
+22018	thyroid peroxidase
+22042	transferrin receptor
+22044	thyroliberin precursor
+22044	thyroliberin precursor  superfamily
+22059	cellular tumor antigen p53
+22059	cellular tumor antigen p53  superfamily
+22070	IgE-dependent histamine-releasing factor
+22070	IgE-dependent histamine-releasing factor  superfamily
+2208	C-type lectin homology
+2208	IgE receptor II
+22094	pituitary glycoprotein hormone beta chain
+22139	transthyretin
+22166	thioredoxin
+22173	monophenol monooxygenase
+22173	monophenol monooxygenase  superfamily
+22174	protein-tyrosine kinase axl
+22178	monophenol monooxygenase  superfamily
+22187	polyubiquitin 4
+22201	ubiquitin-activating enzyme E1
+2224	farnesyl-pyrophosphate synthetase
+2224	farnesyl-pyrophosphate synthetase  superfamily
+22262	urate oxidase
+22262	urate oxidase  superfamily
+2230	ferredoxin [2Fe-2S]
+2230	ferredoxin [2Fe-2S] homology
+2232	human ferredoxin--NADP+ reductase
+22350	ezrin
+22408	int-1 transforming protein
+2241	SH2 homology
+2241	protein-tyrosine kinase fps  superfamily
+2242	SH2 homology
+2242	protein kinase homology
+2243	fibrinogen alpha chain
+2243	fibrinogen disulfide ring homology
+22436	xanthine dehydrogenase
+22436	xanthine dehydrogenase  superfamily
+2244	fibrinogen beta/gamma homology
+2244	fibrinogen disulfide ring homology
+2245	CDC24 homology
+2246	fibroblast growth factor
+2247	fibroblast growth factor
+2248	fibroblast growth factor
+2249	fibroblast growth factor
+2251	fibroblast growth factor
+2252	fibroblast growth factor
+22590	DNA excision repair protein XPAC  superfamily
+226	fructose-bisphosphate aldolase
+226	fructose-bisphosphate aldolase  superfamily
+2260	basic fibroblast growth factor receptor 1
+2260	protein kinase homology
+22601	WW repeat homology
+22608	Y box-binding protein 1
+2261	basic fibroblast growth factor receptor 1
+22627	14-3-3 protein
+2263	basic fibroblast growth factor receptor 1
+22637	protein-tyrosine kinase ZAP-70
+2264	basic fibroblast growth factor receptor 1
+2266	fibrinogen beta/gamma homology
+2266	fibrinogen gamma chain
+2266	fibrinogen gamma chain  superfamily
+22666	POZ domain homology
+2268	protein-tyrosine kinase src
+2271	fumarate hydratase
+2271	fumarate hydratase  superfamily
+22787	sperm-binding glycoprotein ZP2
+22788	sperm-binding glycoprotein ZP3
+22788	sperm-binding glycoprotein ZP3  superfamily
+2280	BKBP-type peptidylprolyl isomerase
+22800	ras transforming protein
+2281	BKBP-type peptidylprolyl isomerase
+2286	BKBP-type peptidylprolyl isomerase homology
+2287	BKBP-type peptidylprolyl isomerase homology
+2288	BKBP-type peptidylprolyl isomerase homology
+2288	human FK506-binding protein FKBP51
+2289	human FK506-binding protein FKBP51
+229	fructose-bisphosphate aldolase
+230	fructose-bisphosphate aldolase
+231	aldehyde reductase
+231	aldehyde reductase  superfamily
+2313	transcription factor erg
+2326	dimethylaniline monooxygenase
+2328	dimethylaniline monooxygenase
+23327	ubiquitin--protein ligase homology
+23433	ras transforming protein
+2348	folate-binding protein
+2350	folate-binding protein
+2352	folate-binding protein
+2353	fos transforming protein
+23759	cyclophilin homology
+239	arachidonate 5-lipoxygenase
+239	arachidonate 5-lipoxygenase  superfamily
+23918	IMP dehydrogenase
+240	arachidonate 5-lipoxygenase
+240	arachidonate 5-lipoxygenase  superfamily
+24055	pleckstrin repeat homology
+24153	alpha-2-macroglobulin
+24157	acetyl-CoA acetyltransferase
+24158	acyl-CoA dehydrogenase
+24161	protein-tyrosine-phosphatase, low molecular weight
+24162	mammalian acid phosphatase  superfamily
+24177	serum albumin
+24177	serum albumin repeat homology
+24179	antithrombin III
+24185	protein kinase akt
+24186	serum albumin
+24189	fructose-bisphosphate aldolase
+24190	fructose-bisphosphate aldolase
+24192	aldehyde reductase
+24206	acylaminoacyl-peptidase
+24210	hepatic lectin
+24218	ATPase transduction domain homology
+24221	oxytocin-neurophysin
+24223	immunoglobulin C region
+24232	alpha-2-macroglobulin
+24235	C4b-binding protein alpha chain
+24241	calcitonin
+24242	calmodulin
+24242	calmodulin repeat homology - selected molecules with X-ray structure
+24242	calmodulins
+24244	calmodulin
+24244	calmodulin repeat homology - selected molecules with X-ray structure
+24244	calmodulins
+24245	Ca2+/calmodulin-dependent protein kinase II
+24246	Ca2+/calmodulin-dependent protein kinase II
+24248	catalase
+24249	S-100 protein
+24250	CBS homology
+24250	cystathionine beta-synthase
+24258	chromogranin A
+24261	acetylcholine receptor
+24264	creatine kinase
+24264	creatine kinase repeat homology
+24265	creatine kinase
+24265	creatine kinase repeat homology
+24271	carboxypeptidase
+24271	carboxypeptidase  superfamily
+24273	alpha-crystallin
+24277	beta-crystallin
+24291	trypsin
+24296	human cytochrome P450 CYP2D6
+24307	human cytochrome P450 CYP4B1
+24310	mammalian peptidyl-dipeptidase A
+24311	aromatic-L-amino-acid decarboxylase
+24318	vertebrate rhodopsin
+24331	trypsin
+24332	trypsin
+24335	erythropoietin
+24336	erythropoietin receptor
+24368	fumarate hydratase
+24368	fumarate hydratase  superfamily
+24370	fork head DNA-binding domain homology
+24377	glucose-6-phosphate dehydrogenase
+24377	glucose-6-phosphate dehydrogenase  superfamily
+24379	human glutamate decarboxylase
+24380	human glutamate decarboxylase
+24383	glyceraldehyde-3-phosphate dehydrogenase
+24392	gap junction protein
+24399	glutamate dehydrogenase (NAD(P)+)
+24407	glutamate receptor homology
+24408	glutamate receptor homology
+24409	N-methyl-D-aspartate receptor 2A
+24409	glutamate receptor homology
+24410	N-methyl-D-aspartate receptor 2A
+24410	glutamate receptor homology
+24412	N-methyl-D-aspartate receptor 2D
+24413	glucocorticoid receptor
+24421	glutathione transferase
+24424	glutathione transferase
+24426	glutathione transferase
+24446	hepatocyte growth factor
+24451	heme oxygenase
+24451	heme oxygenase (decyclizing)  superfamily
+24464	haptoglobin
+24465	hypoxanthine phosphoribosyltransferase
+24471	alpha-crystallin
+24476	calcitonin
+24479	yeast isocitrate dehydrogenase
+24483	insulin
+24484	insulin-like growth factor binding protein 1
+24484	thyroglobulin type I repeat homology
+24493	interleukin-1
+24495	interleukin-3  superfamily
+24499	ciliary neurotrophic factor receptor
+24499	ciliary neurotrophic factor receptor  superfamily
+24504	inhibin
+24511	integrin beta chain
+24513	acyl-CoA dehydrogenase  superfamily
+24517	jun transforming protein
+24528	lysozyme c
+24539	triacylglycerol lipase
+24547	myelin basic protein
+24560	immunoglobulin homology - C2 type
+24566	hepatocyte growth factor
+24567	metallothionein
+24577	myc transforming protein
+24581	myc transforming protein homology
+24583	myosin heavy chain
+24584	calmodulin
+24585	calmodulin
+24587	neurofilament triplet H protein
+24588	cytoskeletal keratin
+24590	neprilysin
+24594	trypsin
+24596	nerve growth factor receptor
+245962	B-cell surface glycoprotein blast-1
+245964	ribonuclease inhibitor
+24599	NADPH--ferrihemoprotein reductase homology
+24599	flavodoxin homology
+24599	nitric-oxide synthase
+246	arachidonate 5-lipoxygenase
+246	arachidonate 5-lipoxygenase  superfamily
+24602	natriuretic peptide A precursor
+24603	guanylate cyclase catalytic domain homology
+24603	membrane-bound guanylate cyclase
+24603	membrane-bound guanylate cyclase  superfamily
+246074	mammalian stearoyl-CoA desaturase
+246074	stearoyl-CoA desaturase homology
+24609	ornithine decarboxylase
+246138	Ly-6 antigen
+246138	Ly-6 antigen  superfamily
+24614	lipocalin homology
+24615	S-100 protein
+24616	phenylalanine 4-monooxygenase
+24617	antithrombin III
+24638	6-phosphofructo-2-kinase / fructose-2,6-bisphosphate 2-phosphatase
+24640	6-phosphofructo-2-kinase / fructose-2,6-bisphosphate 2-phosphatase
+24645	phosphoglucomutase
+24649	kinase-related transforming protein
+24655	1-phosphatidylinositol-4,5-bisphosphate phosphodiesterase domain X homology
+24655	1-phosphatidylinositol-4,5-bisphosphate phosphodiesterase domain Y homology
+24672	phosphoprotein phosphatase
+24673	phosphoprotein phosphatase
+24677	pancreatic hormone
+24681	protein kinase C alpha
+24681	protein kinase C zinc-binding repeat homology
+24683	prolactin
+24686	major prion protein
+24689	ribose-phosphate pyrophosphokinase catalytic chain
+24691	trypsin
+24694	parathyroid hormone homology
+24695	parathyroid hormone-related protein
+24697	protein-tyrosine-phosphatase, nonreceptor type 1
+24703	protein kinase A-raf
+24710	myelin P2 protein
+24717	vertebrate rhodopsin
+24769	glucagon
+24770	macrophage inflammatory protein  superfamily
+24773	mannose-binding lectin
+24775	sex hormone-binding globulin homology
+24775	sex steroid-binding protein
+24779	band 3 anion transport protein
+24787	superoxide dismutase
+24788	alcohol dehydrogenase
+24797	somatostatin
+24805	synaptotagmin
+24806	substance P precursor
+24817	transcription factor HNF-1
+24827	transforming growth factor alpha precursor
+24832	immunoglobulin V region
+24833	pancreatic secretory trypsin inhibitor
+24837	troponin T
+24839	spermatid transition protein 1
+24841	trypsin
+24841	trypsin  superfamily
+24842	cellular tumor antigen p53
+24842	cellular tumor antigen p53  superfamily
+24854	clusterin
+24856	transthyretin
+24864	pepsin
+2488	pituitary glycoprotein hormone beta chain
+24890	estrogen receptor
+24896	GTP-binding regulatory protein Gs alpha chain
+249	alkaline phosphatase  superfamily
+24903	kininogen
+24916	RING finger homology
+24924	pleiotrophin
+24926	carcinoembryonic antigen precursor amino-terminal homology
+24931	T-cell surface glycoprotein CD8 beta chain
+24936	CD9 antigen
+24943	myelin proteolipid protein
+24944	lysosome-associated membrane protein
+2495	ferritin
+24952	glucagon
+24954	insulin receptor
+24956	carbamoyl-phosphate synthase (glutamine-hydrolyzing) large chain homology
+24956	trpG homology
+24957	glutamate--ammonia ligase
+24959	phosphoglycerate mutase
+250	alkaline phosphatase  superfamily
+25008	tumor necrosis factor
+25010	uteroglobin  superfamily
+25028	AMP deaminase
+25031	1-phosphatidylinositol-4,5-bisphosphate phosphodiesterase domain X homology
+25031	1-phosphatidylinositol-4,5-bisphosphate phosphodiesterase domain Y homology
+25035	cytochrome-b5 reductase
+25040	glucagon
+25043	elastin
+25045	endozepine
+25046	secretory component
+25046	secretory component  superfamily
+25048	coagulation factor XI
+25050	Ca2+/calmodulin-dependent protein kinase
+25054	nerve growth factor receptor, high affinity
+25054	nerve growth factor receptor, high affinity  superfamily
+25056	myelin P2 protein
+25056	myelin P2 protein  superfamily
+25059	human hexokinase I
+25060	hexokinase homology
+25060	human hexokinase I
+25080	apolipoprotein A-I
+25084	interleukin-4 receptor
+25085	phenylalanine 4-monooxygenase
+25085	phenylalanine 4-monooxygenase  superfamily
+25098	transcription factor HNF-3  superfamily
+25100	fork head DNA-binding domain homology
+25100	transcription factor HNF-3  superfamily
+25104	lipoyl/biotin-binding homology - biotin subset
+25116	11beta-hydroxysteroid dehydrogenase
+25118	unassigned collagens
+2512	ferritin
+25121	kexin
+25123	calponin repeat homology
+25123	smooth muscle protein SM22
+25123	smooth muscle protein SM22 homology
+25128	ZP domain homology
+25128	membrane glycoprotein 2 homology
+25128	uromodulin
+25146	human cytochrome P450 CYP2D6
+25147	human cytochrome P450 CYP19
+25153	mas transforming protein
+25154	progesterone receptor
+2517	alpha-L-fucosidase  superfamily
+25201	soluble guanylate cyclase  superfamily
+25202	guanylate cyclase catalytic domain homology
+25202	soluble guanylate cyclase
+25202	soluble guanylate cyclase  superfamily
+25204	kexin
+25206	guanylate cyclase catalytic domain homology
+25206	soluble guanylate cyclase  superfamily
+2521	RNA-binding protein EWS  superfamily
+25232	fibronectin type III repeat homology
+25232	protein-tyrosine kinase axl
+25233	protein kinase akt
+25238	beta-adrenergic-receptor kinase
+25239	lipocalin
+25240	lens fiber membrane major intrinsic protein
+25241	lens fiber membrane major intrinsic protein
+25244	pyruvate dehydrogenase (lipoamide) alpha chain
+25266	platelet-derived growth factor
+25267	macrophage colony-stimulating factor 1 receptor
+25268	coagulation factor X
+25269	parvalbumin
+25274	thiosulfate sulfurtransferase
+25282	mammalian cytochrome-c oxidase chain VIa  superfamily
+25287	acyl-CoA dehydrogenase  superfamily
+25288	human long-chain-fatty-acid--CoA ligase
+25290	arachidonate 5-lipoxygenase
+25290	arachidonate 5-lipoxygenase  superfamily
+252922	alpha-2-macroglobulin
+252934	mammalian cytochrome-c oxidase chain Va  superfamily
+25295	osteocalcin
+25296	inhibin
+25298	gastrin
+25307	cystatin
+25308	cystatin
+25308	cystatin homology
+25309	cytochrome c
+25310	cytochrome c
+25313	epidermal growth factor precursor
+25315	epoxide hydrolase
+25317	fibroblast growth factor
+25329	pituitary glycoprotein hormone beta chain
+25331	methionine adenosyltransferase
+25332	methylated-DNA--protein-cysteine S-methyltransferase
+25332	methylated-DNA--protein-cysteine S-methyltransferase  superfamily
+25335	matrix metalloproteinase homology
+2534	SH2 homology
+2534	SH3 homology
+2534	protein-tyrosine kinase src
+25343	phosducin
+25345	sperm histone
+25347	rat ribosomal protein L39
+25347	rat ribosomal protein L39  superfamily
+25348	Escherichia coli ribosomal protein S14
+25350	pulmonary surfactant protein D
+25352	superoxide dismutase
+25353	osteopontin
+25362	zinc transporter ZnT-2  superfamily
+25372	beta-adrenergic-receptor kinase
+25374	porphobilinogen synthase
+25375	aldehyde dehydrogenase
+25375	aldehyde dehydrogenase (NAD+)  superfamily
+25378	inhibin
+25380	annexin I
+25386	lens fiber membrane major intrinsic protein
+2539	glucose-6-phosphate dehydrogenase
+2539	glucose-6-phosphate dehydrogenase  superfamily
+25391	ATPase nucleotide-binding domain homology
+25392	ATPase inhibitor, mitochondrial  superfamily
+25399	calcium channel alpha-2 chain
+25400	Ca2+/calmodulin-dependent protein kinase II
+25421	beta-crystallin
+25428	human cytochrome P450 CYP7A1
+25433	heparin-binding EGF-like growth factor
+25434	osteonectin homology
+25459	HMG box homology
+25459	nonhistone chromosomal protein HMG-2
+25464	intercellular adhesion molecule
+25473	laminin beta-1 chain
+25473	laminin beta-1 chain  superfamily
+25477	glycoprotein hormone receptor
+25477	glycoprotein hormone receptor  superfamily
+25477	leucine-rich alpha-2-glycoprotein repeat homology - set 3
+2548	sucrase/isomaltase homology
+2548	trefoil homology
+25489	WW repeat homology
+25489	ubiquitin--protein ligase homology
+25498	nucleophosmin
+25503	calmodulin repeat homology - selected molecules with X-ray structure
+25504	oxytocin-neurophysin
+25506	protein disulfide-isomerase
+25506	thioredoxin homology
+25507	subtilisin-like proteinase PACE4
+25508	peptidylglycine monooxygenase II
+25517	transcription factor Pit-1
+25518	peptidylprolyl isomerase
+25522	protein kinase C zeta
+25524	saposin
+25524	saposin repeat homology - includes atypical sequences
+25534	retinal degeneration slow protein
+25563	trefoil homology
+25569	thyroliberin precursor
+25571	cellular retinaldehyde-binding protein  superfamily
+25576	14-3-3 protein
+25595	microtubule-associated protein MAP2b
+25598	myelin P2 protein  superfamily
+25608	leptin
+25611	aspartate/ornithine carbamoyltransferase homology
+25611	ornithine carbamoyltransferase
+25611	ornithine carbamoyltransferase  superfamily
+25617	heat shock protein 70
+25619	urokinase-type plasminogen activator  superfamily
+25622	protein-tyrosine-phosphatase, nonreceptor type 6
+25625	tumor necrosis factor receptor type 1
+25633	deoxyribonuclease I
+25634	glucose-6-phosphatase catalytic domain homology
+25640	transcription factor HNF-1
+25643	GTP-binding regulatory protein Gs alpha chain
+25649	apolipoprotein A-I
+25650	Na+/K+-transporting ATPase beta chain
+25653	pituitary glycoprotein hormone beta chain
+25655	gap junction protein
+25656	guanylin
+25657	sodium channel protein
+25661	fibronectin
+25665	sodium channel protein
+25679	inositol-trisphosphate receptor
+25684	meprin A
+25684	meprin A  superfamily
+25686	GTP-binding regulatory protein Gs alpha chain
+25692	tissue plasminogen activator
+25698	argininosuccinate synthase
+25698	argininosuccinate synthase  superfamily
+25700	insulysin  superfamily
+25704	interleukin-2 receptor alpha chain
+25707	ciliary neurotrophic factor
+2571	human glutamate decarboxylase
+2572	human glutamate decarboxylase
+25720	human transcription factor 3
+25721	aspartate aminotransferase
+25722	sodium channel protein
+25725	cAMP-dependent protein kinase regulatory chain
+25732	tartrate-resistant acid phosphatase
+25736	potassium channel protein drk1
+25737	proliferating cell nuclear antigen
+25738	1-phosphatidylinositol-4,5-bisphosphate phosphodiesterase domain X homology
+25738	1-phosphatidylinositol-4,5-bisphosphate phosphodiesterase domain Y homology
+25740	GTP-binding regulatory protein Gs alpha chain
+25742	S-100 protein
+25751	human dynamin II
+257634	homeobox homology - diverse types
+257634	homeotic protein lim-1
+2588	animal sulfatase  superfamily
+259	animal Kunitz-type proteinase inhibitor homology
+259	lipocalin homology
+259	protein HC  superfamily
+2592	UDPglucose--hexose-1-phosphate uridylyltransferase
+259246	lipocalin
+259246	lipocalin homology
+2597	glyceraldehyde-3-phosphate dehydrogenase
+2618	phosphoribosylamine--glycine ligase homology
+2618	phosphoribosylformylglycinamidine cyclo-ligase homology
+2618	phosphoribosylglycinamide formyltransferase homology
+26198	cytochrome-c oxidase chain II
+262	eukaryotic adenosylmethionine decarboxylase
+262	eukaryotic adenosylmethionine decarboxylase  superfamily
+2621	Gla domain homology
+2621	sex hormone-binding globulin homology
+2623	transcription factor GATA-1  superfamily
+26362	protein-tyrosine kinase axl
+26365	carcinoembryonic antigen precursor amino-terminal homology
+2638	serum albumin
+2638	serum albumin  superfamily
+2638	serum albumin repeat homology
+2641	glucagon
+26423	steroid hormone receptor Ad4BP
+26424	steroid hormone receptor Ad4BP
+2643	GTP cyclohydrolase I  superfamily
+26451	rat ribosomal protein L27a
+2646	glucokinase regulator
+2653	glycine cleavage system protein H
+266602	pancreatic secretory trypsin inhibitor
+266674	human cytochrome P450 CYP4B1
+266684	human cytochrome P450 CYP2D6
+2673	glutamine--fructose-6-phosphate aminotransferase (isomerizing)  superfamily
+2678	gamma-glutamyltransferase
+2678	gamma-glutamyltransferase  superfamily
+268	inhibin
+2687	gamma-glutamyltransferase  superfamily
+2688	prolactin
+2689	prolactin
+2691	glucagon
+2694	gastric intrinsic factor  superfamily
+2695	glucagon
+26955	lipoyl/biotin-binding homology
+26955	lipoyl/biotin-binding homology - lipoyl subset
+26956	adenylate kinase
+2697	gap junction protein
+2697	gap junction protein  superfamily
+26986	ribonucleoprotein repeat homology
+27	human protein-tyrosine kinase abl
+2705	gap junction protein
+27050	rat ribosomal protein S3
+2706	gap junction protein
+271	AMP deaminase
+2710	xylulokinase  superfamily
+27139	rat ribosomal protein S26
+2717	alpha-galactosidase
+2717	alpha-galactosidase  superfamily
+272	AMP deaminase
+2745	glutaredoxin  superfamily
+2745	glutaredoxin homology
+2746	glutamate dehydrogenase (NAD(P)+)
+2746	glutamate dehydrogenase (NAD(P)+)  superfamily
+2764	glia maturation factor beta
+2766	IMP dehydrogenase amino-terminal homology
+2766	IMP dehydrogenase catalytic homology
+2767	GTP-binding regulatory protein Gs alpha chain
+2767	GTP-binding regulatory protein Gs alpha chain  superfamily
+2770	GTP-binding regulatory protein Gs alpha chain
+2771	GTP-binding regulatory protein Gs alpha chain
+2771	GTP-binding regulatory protein Gs alpha chain  superfamily
+2773	GTP-binding regulatory protein Gs alpha chain
+2773	GTP-binding regulatory protein Gs alpha chain  superfamily
+2775	GTP-binding regulatory protein Gs alpha chain
+2775	GTP-binding regulatory protein Gs alpha chain  superfamily
+2778	GTP-binding regulatory protein Gs alpha chain
+2778	GTP-binding regulatory protein Gs alpha chain  superfamily
+2779	GTP-binding regulatory protein Gs alpha chain
+2780	GTP-binding regulatory protein Gs alpha chain
+2780	GTP-binding regulatory protein Gs alpha chain  superfamily
+2781	GTP-binding regulatory protein Gs alpha chain
+2781	GTP-binding regulatory protein Gs alpha chain  superfamily
+2782	GTP-binding regulatory protein beta chain
+2782	GTP-binding regulatory protein beta chain  superfamily
+2783	GTP-binding regulatory protein beta chain
+2784	GTP-binding regulatory protein beta chain
+2784	GTP-binding regulatory protein beta chain  superfamily
+2784	WD repeat homology
+279	mammalian alpha-amylase
+2799	animal sulfatase  superfamily
+2806	aspartate aminotransferase
+280686	tissue factor
+280691	histone H4
+280695	globin
+280706	cholinesterase homology
+280718	inhibin
+280728	oxytocin-neurophysin
+280729	immunoglobulin C region
+280734	lipopolysaccharide-binding protein
+280742	carbonate dehydratase
+280742	carbonate dehydratase  superfamily
+280746	CD9 antigen
+280749	glycoprotein hormones alpha chain
+280750	clusterin
+280752	2',3'-cyclic-nucleotide 3'-phosphodiesterase
+280759	lipoyl/biotin-binding homology - lipoyl subset
+280762	animal histidine decarboxylase homology
+280789	coagulation factor XII
+280789	coagulation factor XII  superfamily
+280799	galanin
+280823	interleukin-3  superfamily
+280826	interleukin-6
+280846	transferrin
+280846	transferrin repeat homology
+280859	lens fiber membrane major intrinsic protein
+280903	parathyroid hormone homology
+280904	pleiotrophin
+280932	somatostatin
+280941	protein-tyrosine kinase, receptor type tie
+280964	sperm-binding glycoprotein ZP3
+280977	protein-tyrosine-phosphatase, low molecular weight
+280988	alpha-2-HS-glycoprotein
+280988	cystatin homology
+280991	protein kinase akt
+280994	fibrinogen beta/gamma homology
+2810	14-3-3 protein
+281019	link protein repeat homology
+281043	macrophage inflammatory protein  superfamily
+281062	cadherin
+281063	cadherin
+281067	cystic fibrosis transmembrane conductance regulator
+281090	cytochrome-c oxidase chain IV
+281091	cytochrome-c oxidase chain VIII
+281095	granulocyte-macrophage colony-stimulating factor
+2811	leucine-rich alpha-2-glycoprotein repeat homology - set 4
+281110	cytochrome b5
+281110	cytochrome b5 core homology
+281126	vertebrate rhodopsin
+281137	endothelin
+281157	ferredoxin [2Fe-2S]
+2812	platelet glycoprotein Ib beta chain  superfamily
+2812	proteoglycan amino-terminal homology - includes atypical sequences
+2812	proteoglycan carboxyl-terminal homology
+281202	GTP-binding regulatory protein beta chain
+281203	GTP-binding regulatory protein gamma chain
+281203	GTP-binding regulatory protein gamma chain  superfamily
+281204	GTP-binding regulatory protein gamma chain
+281204	GTP-binding regulatory protein gamma chain  superfamily
+281236	interferon alpha
+281250	interleukin-1
+281254	inhibin
+281271	cytosol aminopeptidase
+281271	cytosol aminopeptidase  superfamily
+281283	triacylglycerol lipase, lingual
+281296	microtubule-associated protein tau
+281308	interstitial collagenase
+281308	matrix metalloproteinase homology
+281363	5'-nucleotidase
+281373	protein disulfide-isomerase
+281375	antithrombin III
+281387	proenkephalin
+281401	secretory component
+281401	secretory component  superfamily
+281408	urokinase-type plasminogen activator  superfamily
+281413	phenylethanolamine N-methyltransferase
+281416	corticotropin-lipotropin
+281427	major prion protein
+281457	rhodopsin kinase  superfamily
+281511	synaptotagmin
+281512	substance P precursor
+281529	thrombomodulin
+281537	spermatid transition protein 1
+281542	cellular tumor antigen p53
+281542	cellular tumor antigen p53  superfamily
+281552	pituitary glycoprotein hormone beta chain
+281565	UTP--glucose-1-phosphate uridylyltransferase  superfamily
+281613	adenylate kinase
+281646	osteocalcin
+281651	C4b-binding protein alpha chain
+281658	S-100 protein
+281658	calmodulin repeat homology - selected molecules with X-ray structure
+281698	clathrin light chain
+281700	cyclic nucleotide-gated channel
+281719	alpha-crystallin
+281724	beta-crystallin
+281793	GTP-binding regulatory protein Gs alpha chain
+281794	GTP-binding regulatory protein Gs alpha chain
+281794	GTP-binding regulatory protein Gs alpha chain  superfamily
+281795	GTP-binding regulatory protein Gs alpha chain
+281796	GTP-binding regulatory protein gamma chain  superfamily
+281801	rhodopsin kinase
+281824	3beta-hydroxy-Delta5-steroid dehydrogenase
+281861	interleukin-2 receptor alpha chain
+281867	inhibin
+281888	cytoskeletal keratin
+281894	lysozyme c
+281936	brush border myosin heavy chain I
+281936	myosin motor domain homology
+281948	steroid hormone receptor Ad4BP
+281970	3',5'-cyclic-nucleotide phosphodiesterase 1B, calmodulin-dependent
+281974	3',5'-cyclic-GMP phosphodiesterase alpha chain
+281977	3',5'-cyclic-GMP phosphodiesterase gamma chain
+281983	Ly-6 homology
+282001	protein kinase C C2 region homology
+282001	protein kinase C alpha
+282001	protein kinase homology
+282006	plasma protein S
+282006	sex hormone-binding globulin homology
+282009	enteropeptidase
+282038	cellular retinaldehyde-binding protein  superfamily
+282038	cellular retinaldehyde-binding protein homology
+282093	metalloproteinase inhibitor
+282139	arachidonate 5-lipoxygenase  superfamily
+282147	vacuolar H+-transporting ATPase 69K chain
+282149	pyruvate dehydrogenase (lipoamide) alpha chain
+282150	pyruvate dehydrogenase (lipoamide) beta chain
+282179	acetylcholine receptor
+282183	beta-adaptin
+282199	mammalian cytochrome-c oxidase chain VIa  superfamily
+282200	mammalian cytochrome-c oxidase chain VIa  superfamily
+282201	myelin P2 protein
+282201	myelin P2 protein  superfamily
+282209	alpha-s2-casein
+282209	alpha-s2-casein  superfamily
+282211	human cytochrome P450 CYP2D6
+282217	deoxyribonuclease I
+282237	acetylcholine receptor
+282259	insulin-like growth factor binding protein 1
+282261	insulin-like growth factor binding protein 1
+282290	NADH dehydrogenase (ubiquinone) I chain E homology
+282304	6-phosphofructo-2-kinase / fructose-2,6-bisphosphate 2-phosphatase
+282306	phosphatidylinositol 3-kinase  superfamily
+282315	transcription factor Pit-1
+282321	calmodulin
+282321	calmodulin repeat homology - selected molecules with X-ray structure
+282322	kinase-related transforming protein
+282322	protein kinase homology
+282323	kinase-related transforming protein
+282325	protein kinase C alpha
+282372	superoxide dismutase
+282385	thymosin beta
+282394	mitochondrial processing peptidase alpha chain
+282419	kinase-related transforming protein
+282433	soluble guanylate cyclase
+282433	soluble guanylate cyclase  superfamily
+282457	phospholipase A2
+282463	cAMP-dependent protein kinase regulatory chain
+282466	S-100 protein
+282478	ADP,ATP carrier protein
+282478	ADP,ATP carrier protein repeat homology
+282480	ADP,ATP carrier protein
+282578	H+-transporting ATP synthase alpha chain
+282604	human ferredoxin--NADP+ reductase
+28298	rat ribosomal protein L32
+283	pancreatic ribonuclease
+286	ankyrin
+286	ankyrin repeat homology
+2868	rhodopsin kinase  superfamily
+2869	rhodopsin kinase
+2870	rhodopsin kinase
+2870	rhodopsin kinase  superfamily
+2890	glutamate receptor homology
+29	CDC24 homology
+2900	glutamate receptor homology
+2903	N-methyl-D-aspartate receptor 2A
+2908	erbA transforming protein homology
+2908	glucocorticoid receptor
+291	ADP,ATP carrier protein
+29141	galanin
+29154	calpain large chain
+29154	calpain large chain  superfamily
+29155	calpain large chain
+29155	calpain large chain  superfamily
+29183	amphiregulin
+29184	lysosomal integral membrane protein II  superfamily
+29186	CD9 antigen
+29189	ferredoxin [2Fe-2S]
+2919	beta-thromboglobulin
+29190	proenkephalin
+29190	proenkephalin  superfamily
+29191	neurokinin B precursor
+292	ADP,ATP carrier protein
+2920	beta-thromboglobulin
+29206	Y box-binding protein 1
+2921	beta-thromboglobulin
+29222	prothymosin alpha
+29224	ribitol dehydrogenase
+2923	protein disulfide-isomerase
+29237	proenkephalin
+29239	histone H1
+29242	carbonate dehydratase  superfamily
+29243	coagulation factor X
+29244	GTP cyclohydrolase I  superfamily
+29251	thrombin
+29266	trypsin
+29283	rat ribosomal protein L29
+29284	Escherichia coli ribosomal protein S11
+29285	Escherichia coli ribosomal protein S19
+29286	rat ribosomal protein S17
+29292	ferritin
+293	ADP,ATP carrier protein
+29304	rat ribosomal protein S6
+29332	stathmin
+29337	1-phosphatidylinositol-4,5-bisphosphate phosphodiesterase domain X homology
+29337	1-phosphatidylinositol-4,5-bisphosphate phosphodiesterase domain Y homology
+2934	gelsolin
+2934	gelsolin repeat homology
+29345	antithrombin III
+29353	kinase-related transforming protein
+2936	dihydrolipoamide dehydrogenase  superfamily
+2936	dihydrolipoamide dehydrogenase homology
+29373	inhibin
+2939	glutathione transferase
+29409	immunoglobulin homology - C2 type
+29422	acetylcholine receptor
+29436	tissue factor pathway inhibitor
+29437	actin
+29438	glutathione transferase
+2944	glutathione transferase
+29441	NADPH--ferrihemoprotein reductase
+29441	NADPH--ferrihemoprotein reductase homology
+29443	adenosylhomocysteinase
+29445	cytochrome-c oxidase chain IV
+2946	glutathione transferase
+29468	protein disulfide-isomerase
+29468	thioredoxin homology
+2947	glutathione transferase
+29484	system b(0,+) amino acid transporter-involved protein
+29489	dynein heavy chain, cytosolic
+2949	glutathione transferase
+29495	guanylate kinase homology
+2950	glutathione transferase
+29507	mammalian cytochrome-c oxidase chain VIIa
+29524	LIM protein kinase
+29526	phospholipase A2
+29539	aldehyde dehydrogenase
+29543	metalloproteinase inhibitor
+29552	lipocalin homology
+29556	myosin heavy chain
+29557	myosin heavy chain
+29562	ribose-phosphate pyrophosphokinase catalytic chain
+29563	myelin P2 protein
+29565	translation elongation factor 2
+29584	gap junction protein
+29584	gap junction protein  superfamily
+29585	gap junction protein
+29585	gap junction protein  superfamily
+29586	gap junction protein
+2959	transcription initiation factor IIB
+2959	transcription initiation factor IIB  superfamily
+2959	transcription initiation factor IIB homology
+29599	ATPase nucleotide-binding domain homology
+29615	leukocyte common antigen cytosolic domain homology
+29628	glutamate receptor homology
+29632	3beta-hydroxy-Delta5-steroid dehydrogenase
+29644	protein-tyrosine-phosphatase, nonreceptor type 5  superfamily
+29651	aldehyde dehydrogenase
+29663	beta-adaptin
+29668	multicatalytic endopeptidase complex chain C9
+29669	multicatalytic endopeptidase complex chain C9
+29671	multicatalytic endopeptidase complex chain C9
+29673	multicatalytic endopeptidase complex chain C9
+29680	human cytochrome P450 CYP11B1
+29687	complement subcomponent C1q chain A  superfamily
+29691	3',5'-cyclic-nucleotide phosphodiesterase 1B, calmodulin-dependent
+29699	cAMP-dependent protein kinase regulatory chain
+2972	transcription initiation factor IIB homology
+29749	calmodulin
+2977	soluble guanylate cyclase  superfamily
+2980	guanylin
+2982	soluble guanylate cyclase  superfamily
+2983	soluble guanylate cyclase
+2993	glycophorin
+2993	glycophorin  superfamily
+2994	glycophorin
+2996	glycophorin
+30	acetyl-CoA acetyltransferase
+3001	trypsin
+3005	histone H1
+3008	histone H1
+301	annexin I
+301	annexin I  superfamily
+301	annexin repeat homology
+30126	fork head DNA-binding domain homology
+30126	transcription factor HNF-3  superfamily
+30147	transcription factor isl-1
+30151	transcription factor isl-1
+30157	transcription factor isl-1
+302	annexin I
+302	annexin I  superfamily
+302	annexin repeat homology
+3020	histone H3
+3021	histone H3
+3022	histone H4
+30275	inhibin
+30291	cadherin
+30295	vertebrate rhodopsin
+30317	homeotic protein Hox A5
+30317	homeotic protein Hox A5  superfamily
+3033	3-hydroxyacyl-CoA dehydrogenase
+3033	3-hydroxyacyl-CoA dehydrogenase  superfamily
+30333	POU domain homology
+30333	homeobox homology - POU-type
+3035	amino acid--tRNA ligase repeat homology
+3035	histidine--tRNA ligase homology
+30379	homeotic protein Hox A5  superfamily
+3039	globin
+3039	globin homology
+30399	T-box homology
+30399	mouse gene T protein
+3040	globin
+3040	globin homology
+3043	globin
+3043	globin homology
+3046	globin
+3047	globin
+3050	globin
+3055	protein-tyrosine kinase src
+30567	paired box transcription factor Pax-6  superfamily
+306	annexin I  superfamily
+3067	animal histidine decarboxylase homology
+307	annexin I  superfamily
+3073	beta-hexosaminidase
+3074	beta-hexosaminidase
+3075	complement factor H
+308	annexin repeat homology
+3082	hepatocyte growth factor
+3082	hepatocyte growth factor  superfamily
+3083	coagulation factor XII  superfamily
+3083	fibronectin type II repeat homology
+309	annexin VI
+309	annexin repeat homology
+3098	hexokinase homology
+3098	human hexokinase I
+31	lipoyl/biotin-binding homology - biotin subset
+3106	class I histocompatibility antigen
+3107	class I histocompatibility antigen
+3111	class II histocompatibility antigen
+3113	class II histocompatibility antigen
+3115	class II histocompatibility antigen
+3117	class II histocompatibility antigen
+31181	SAM homology
+31185	3-hydroxyisobutyrate dehydrogenase homology
+31185	phosphogluconate dehydrogenase (decarboxylating)  superfamily
+3119	class II histocompatibility antigen
+312	annexin I  superfamily
+3122	class II histocompatibility antigen
+3123	class II histocompatibility antigen
+3125	class II histocompatibility antigen
+3127	class II histocompatibility antigen
+31293	ankyrin repeat homology
+313	saposin repeat homology - includes atypical sequences
+31357	DNA excision repair protein XPAC  superfamily
+31379	T-box homology
+31442	small nuclear ribonucleoprotein U1A
+3146	nonhistone chromosomal protein HMG-2
+3148	nonhistone chromosomal protein HMG-2
+3150	nonhistone chromosomal protein HMG-17
+3151	nonhistone chromosomal protein HMG-17
+3155	hydroxymethylglutaryl-CoA lyase  superfamily
+3156	hydroxymethylglutaryl-CoA reductase
+3159	nonhistone chromosomal protein HMG-I  superfamily
+316	xanthine dehydrogenase  superfamily
+3162	heme oxygenase
+3162	heme oxygenase (decyclizing)  superfamily
+3164	probable hormone receptor N10, nuclear
+31722	bromodomain homology
+31802	homeobox homology - prd-type
+3183	ribonucleoprotein repeat homology
+3201	homeotic protein Hox D4
+3201	homeotic protein Hox D4  superfamily
+3202	homeotic protein Hox A5
+3202	homeotic protein Hox A5  superfamily
+32083	GLGF domain homology
+32083	SH3 homology - set 2
+32083	guanylate kinase homology
+3211	homeotic protein Hox B1
+3212	homeobox homology - Antp, Abd-B, lab, eve, and cad types
+3213	homeobox homology - Antp, Abd-B, lab, eve, and cad types
+3213	homeotic protein Hox B3
+3213	homeotic protein Hox B3  superfamily
+3214	homeotic protein Hox D4
+3214	homeotic protein Hox D4  superfamily
+3215	homeotic protein Hox A5
+3215	homeotic protein Hox A5  superfamily
+3221	homeotic protein Hox D4  superfamily
+3222	homeotic protein Hox A5  superfamily
+3223	homeobox homology - Antp, Abd-B, lab, eve, and cad types
+3232	homeotic protein Hox B3  superfamily
+3233	homeotic protein Hox D4
+3233	homeotic protein Hox D4  superfamily
+3240	haptoglobin
+3248	short-chain alcohol dehydrogenase homology
+3250	haptoglobin
+3251	hypoxanthine phosphoribosyltransferase
+32536	TEA DNA-binding domain homology
+32537	clathrin heavy chain
+32543	myb DNA-binding repeat homology
+32544	GTP-binding regulatory protein beta chain
+32544	GTP-binding regulatory protein beta chain  superfamily
+3263	hemopexin
+3263	hemopexin repeat homology
+3265	ras transforming protein
+327	acylaminoacyl-peptidase
+3273	cystatin homology
+32746	alpha-actinin actin-binding domain homology
+32746	spectrin beta-G chain
+3283	3beta-hydroxy-Delta5-steroid dehydrogenase
+3284	3beta-hydroxy-Delta5-steroid dehydrogenase
+3284	3beta-hydroxy-Delta5-steroid dehydrogenase  superfamily
+3290	11beta-hydroxysteroid dehydrogenase
+3292	short-chain alcohol dehydrogenase homology
+3297	HSF DNA-binding domain homology
+32974	glucose-6-phosphate dehydrogenase
+32974	glucose-6-phosphate dehydrogenase  superfamily
+3298	HSF DNA-binding domain homology
+33019	annexin I  superfamily
+3315	alpha-crystallin
+3320	heat shock protein 90
+3320	heat shock protein 90  superfamily
+33204	1-phosphatidylinositol-4,5-bisphosphate phosphodiesterase domain X homology
+33204	1-phosphatidylinositol-4,5-bisphosphate phosphodiesterase domain Y homology
+33214	rat acidic ribosomal protein P1
+3326	heat shock protein 90
+3329	chaperonin groEL
+3337	dnaJ amino-terminal homology - includes atypical sequences
+3346	statherin/histatin signal sequence homology
+33461	phosphoglycerate kinase
+3347	statherin/histatin signal sequence homology
+33473	protein kinase C C2 region homology
+33473	synaptotagmin
+335	apolipoprotein A-I
+33501	tubulin
+336	apolipoprotein A-I
+33629	ubiquitin/ribosomal protein CEP52
+337	apolipoprotein A-I
+3375	calcitonin
+33781	translation initiation factor eIF-4A  superfamily
+3383	intercellular adhesion molecule
+3383	intercellular adhesion molecule  superfamily
+3385	intercellular adhesion molecule  superfamily
+33986	phosphoribosylamine--glycine ligase homology
+33986	phosphoribosylformylglycinamidine cyclo-ligase homology
+34	acyl-CoA dehydrogenase
+34	acyl-CoA dehydrogenase  superfamily
+341	apolipoprotein A-I
+34149	rat ribosomal protein S13
+3416	insulysin  superfamily
+3423	animal sulfatase  superfamily
+3425	L-iduronidase
+34309	Escherichia coli ribosomal protein S5
+34359	multicatalytic endopeptidase complex chain C9
+3439	interferon alpha
+344	apolipoprotein A-I
+3440	interferon alpha
+3441	interferon alpha
+34411	kinase-related transforming protein
+34420	ribosomal protein S27a homology
+34420	ubiquitin / rat ribosomal protein S27a
+3443	interferon alpha
+34430	transcription initiation factor IIB
+34430	transcription initiation factor IIB homology
+3445	interferon alpha
+3446	interferon alpha
+3448	interferon alpha
+3449	interferon alpha
+345	apolipoprotein A-I
+3451	interferon alpha
+3452	interferon alpha
+3458	interferon gamma
+3458	interferon gamma  superfamily
+34629	homeobox homology - diverse types
+34629	homeobox homology - prd-type
+34629	paired box homology
+34669	homeobox homology - POU-type
+3467	interferon alpha
+34673	homeobox homology - POU-type
+347	lipocalin
+3479	insulin
+34790	CDC25-type guanine nucleotide exchange activator homology
+348	apolipoprotein A-I
+3480	insulin receptor
+3481	insulin
+3483	leucine-rich alpha-2-glycoprotein repeat homology - set 2
+3484	insulin-like growth factor binding protein 1
+3486	insulin-like growth factor binding protein 1
+3488	thyroglobulin type I repeat homology
+3489	thyroglobulin type I repeat homology
+34954	cdc25-type protein-tyrosine-phosphatase homology
+34954	protein-tyrosine-phosphatase string  superfamily
+350	apolipoprotein H
+350	complement factor H repeat homology
+35047	rel homology
+35098	rat ribosomal protein S26
+351	Alzheimer's disease amyloid beta protein
+3514	immunoglobulin C region
+353	adenine phosphoribosyltransferase  superfamily
+35341	homeobox homology - Antp, Abd-B, lab, eve, and cad types
+35422	translation elongation factor 2
+35509	LIM metal-binding repeat homology
+3552	interleukin-1
+3553	interleukin-1
+3558	interleukin-2
+3559	interleukin-2 receptor alpha chain
+3562	interleukin-3
+3562	interleukin-3  superfamily
+3565	interleukin-4
+3565	interleukin-4  superfamily
+3567	interleukin-5
+3569	interleukin-6
+3570	ciliary neurotrophic factor receptor
+3570	ciliary neurotrophic factor receptor  superfamily
+3570	cytokine receptor homology
+3574	interleukin-7
+3575	interleukin-7 receptor
+3576	beta-thromboglobulin
+358	lens fiber membrane major intrinsic protein
+359	lens fiber membrane major intrinsic protein
+36	acyl-CoA dehydrogenase  superfamily
+36057	fos/jun DNA-binding domain homology
+36059	14-3-3 protein
+36060	human 6-phosphofructokinase  superfamily
+36076	animal histidine decarboxylase homology
+36104	GTP-binding regulatory protein Gs alpha chain
+36104	GTP-binding regulatory protein Gs alpha chain  superfamily
+3615	IMP dehydrogenase
+3615	IMP dehydrogenase  superfamily
+3615	IMP dehydrogenase amino-terminal homology
+3615	IMP dehydrogenase catalytic homology
+3623	inhibin
+3624	inhibin
+36240	homeobox homology - diverse types
+3625	inhibin
+36288	GTP-binding protein DRG
+36329	calmodulin
+36329	calmodulins
+3643	insulin receptor
+3667	pleckstrin repeat homology
+3670	homeobox homology - diverse types
+3670	transcription factor isl-1
+3670	transcription factor isl-1  superfamily
+3673	unassigned collagens
+36746	leucine-rich alpha-2-glycoprotein repeat homology - set 
+36746	proteoglycan amino-terminal homology - includes atypical sequences
+36746	proteoglycan carboxyl-terminal homology
+36810	kinesin heavy chain
+36810	kinesin motor domain homology
+3684	cell surface glycoprotein CD11b
+36855	rat acidic ribosomal protein P1
+3688	integrin beta chain
+3689	integrin beta chain
+369	protein kinase A-raf
+369	protein kinase C zinc-binding repeat homology
+369	protein kinase homology
+3695	integrin beta chain
+36985	rat ribosomal protein L18a
+3702	pleckstrin repeat homology
+3702	protein-tyrosine kinase tec
+37065	double-stranded RNA-binding repeat homology
+37068	HSF DNA-binding domain homology
+3713	involucrin
+37131	phosphoenolpyruvate carboxykinase
+37214	BKBP-type peptidylprolyl isomerase
+37214	BKBP-type peptidylprolyl isomerase homology
+3726	jun transforming protein
+3727	fos/jun DNA-binding domain homology
+374	amphiregulin
+3745	potassium channel protein drk1
+37767	HMG box homology
+37805	GTP-binding regulatory protein Gs alpha chain
+37805	GTP-binding regulatory protein Gs alpha chain  superfamily
+3799	kinesin heavy chain
+3799	kinesin motor domain homology
+37995	rat ribosomal protein L19
+3815	macrophage colony-stimulating factor 1 receptor
+3815	protein kinase homology
+3816	trypsin
+38160	protein-tyrosine-phosphatase homology
+3818	coagulation factor XI
+38244	ras transforming protein
+3827	kininogen
+3845	ras transforming protein
+38456	polyubiquitin 3
+38456	ubiquitin
+38484	human glutamate decarboxylase
+38494	ras transforming protein
+3858	cytoskeletal keratin
+38580	dynein heavy chain, cytosolic
+3860	cytoskeletal keratin
+3861	cytoskeletal keratin
+3866	cytoskeletal keratin
+387	ras transforming protein
+38746	phenylalanine 4-monooxygenase  superfamily
+38752	homeobox homology - POU-type
+38765	GTP-binding regulatory protein Gs alpha chain
+38765	GTP-binding regulatory protein Gs alpha chain  superfamily
+388	ras transforming protein
+3880	cytoskeletal keratin
+389	ras transforming protein
+3897	neural cell adhesion molecule L1
+3897	neural cell adhesion molecule L1  superfamily
+39	acetyl-CoA acetyltransferase
+3906	lysozyme c
+39088	rat ribosomal protein S17
+3910	laminin G repeat homology
+3912	laminin beta-1 chain
+3912	laminin-type EGF-like homology
+3916	lysosome-associated membrane protein  superfamily
+3920	lysosome-associated membrane protein
+3920	lysosome-associated membrane protein  superfamily
+3925	stathmin
+39251	superoxide dismutase
+3929	lipopolysaccharide-binding protein
+3931	phosphatidylcholine--sterol acyltransferase
+3933	lipocalin
+3936	calmodulin repeat homology
+3936	plastin
+3936	plastin  superfamily
+3939	L-lactate dehydrogenase
+39443	protein-tyrosine-phosphatase homology
+3945	L-lactate dehydrogenase
+3949	EGF homology - Type B
+3949	LDL receptor YWTD-containing repeat homology
+3949	LDL receptor ligand-binding repeat homology
+3952	leptin
+3956	beta-galactoside-binding lectin
+3972	pituitary glycoprotein hormone beta chain
+3973	glycoprotein hormone receptor
+3973	glycoprotein hormone receptor  superfamily
+3976	leukemia inhibitory factor
+3984	LIM protein kinase
+3988	triacylglycerol lipase, lingual
+39962	ets DNA-binding domain homology
+39999	erbA transforming protein homology
+4000	cytoskeletal keratin
+4001	cytoskeletal keratin
+4004	LIM metal-binding repeat homology
+40048	catalase
+4016	protein-lysine 6-oxidase  superfamily
+40224	phosphoesterase core homology
+4023	triacylglycerol lipase
+4025	myeloperoxidase homology
+40306	cAMP-dependent protein kinase regulatory chain
+40444	actin
+40451	rat acidic ribosomal protein P0
+4048	leukotriene-A4 hydrolase
+4049	tumor necrosis factor
+4057	transferrin
+4057	transferrin repeat homology
+4067	SH2 homology
+4067	protein-tyrosine kinase src
+4069	lysozyme c
+4070	epithelial glycoprotein antigen GA733  superfamily
+4072	epithelial glycoprotein antigen GA733  superfamily
+4074	mannose 6-phosphate receptor, cation-dependent
+40817	homeobox homology - Antp, Abd-B, lab, eve, and cad types
+40832	homeobox homology - Antp, Abd-B, lab, eve, and cad types
+40990	paired box homology
+410	animal sulfatase  superfamily
+41022	dihydroorotate oxidase  superfamily
+411	animal sulfatase  superfamily
+41118	protein-tyrosine kinase fps  superfamily
+41140	ras transforming protein
+41311	alcohol dehydrogenase
+4133	microtubule-associated protein MAP2b
+4134	MAP2/tau repeat homology
+4137	MAP2/tau repeat homology
+4137	microtubule-associated protein tau
+414	animal sulfatase
+4142	mas transforming protein
+4143	methionine adenosyltransferase
+4144	methionine adenosyltransferase
+4145	protein-tyrosine kinase src
+415	animal sulfatase
+4151	globin
+4151	globin homology
+4153	C-type lectin homology
+4153	mannose-binding lectin
+4155	myelin basic protein
+4171	MCM homology
+4171	replication licensing factor MCM2
+4176	MCM homology
+41773	histone H4
+41843	translation initiation factor eIF-2 gamma chain
+4185	disintegrin homology
+4200	malate dehydrogenase
+4200	malate dehydrogenase (oxaloacetate-decarboxylating)  superfamily
+4224	astacin homology
+4224	meprin A
+4224	meprin A  superfamily
+4225	meprin A
+4225	meprin A  superfamily
+4233	hepatocyte growth factor receptor  superfamily
+4233	protein kinase homology
+4240	discoidin I amino-terminal homology
+4240	milk fat globule protein
+4241	transferrin repeat homology
+4245	alpha-1,3-mannosyl-glycoprotein beta-1,2-N-acetylglucosaminyltransferase
+42492	annexin I  superfamily
+4255	methylated-DNA--protein-cysteine S-methyltransferase
+4255	methylated-DNA--protein-cysteine S-methyltransferase  superfamily
+4255	methylated-DNA--protein-cysteine S-methyltransferase homology
+4256	osteocalcin
+42757	ets RII regulatory region homology
+42761	rat ribosomal protein S3
+42832	glutamate dehydrogenase (NAD(P)+)  superfamily
+42834	amino acid--tRNA ligase repeat homology
+42834	glutamine--tRNA ligase homology
+4284	lens fiber membrane major intrinsic protein
+4288	kinase interaction domain homology
+42889	myosin heavy chain 95F
+42918	acetylcholine receptor
+42919	acetylcholine receptor
+4295	motilin
+43	cholinesterase
+43	cholinesterase homology
+4311	neprilysin
+4311	neprilysin  superfamily
+4312	hemopexin repeat homology
+4312	interstitial collagenase
+4312	interstitial collagenase  superfamily
+4313	fibronectin type II repeat homology
+4313	gelatinase A
+4313	gelatinase A  superfamily
+4314	hemopexin repeat homology
+4314	interstitial collagenase
+4314	interstitial collagenase  superfamily
+4316	matrix metalloproteinase homology
+4317	hemopexin repeat homology
+4317	interstitial collagenase
+4317	interstitial collagenase  superfamily
+4317	matrix metalloproteinase homology
+43183	fructose-bisphosphate aldolase
+43183	fructose-bisphosphate aldolase  superfamily
+4319	hemopexin repeat homology
+4319	interstitial collagenase
+4319	matrix metalloproteinase homology
+432	C-type lectin homology
+432	hepatic lectin
+4322	interstitial collagenase
+4323	matrix metalloproteinase homology
+4324	matrix metalloproteinase homology
+4327	matrix metalloproteinase homology
+433	hepatic lectin
+4331	RING finger homology
+43349	rat ribosomal protein L4
+43383	fork head DNA-binding domain homology
+4342	kinase-related transforming protein
+43428	protein kinase C delta
+43428	protein kinase C delta  superfamily
+435	argininosuccinate lyase
+43517	kinesin motor domain homology
+43517	kinesin-related protein KLPA  superfamily
+4353	myeloperoxidase
+4353	myeloperoxidase homology
+4357	thiosulfate sulfurtransferase
+4359	myelin P0 protein
+4360	C-type lectin homology
+4360	phospholipase A2 receptor  superfamily
+43650	homeobox homology - diverse types
+43873	CBS homology
+43873	IMP dehydrogenase
+43873	IMP dehydrogenase  superfamily
+440	asparagine synthase
+440	asparagine synthase (glutamine-hydrolyzing)  superfamily
+44014	calpain catalytic domain homology
+44150	Escherichia coli ribosomal protein S8
+44307	vacuolar H+-transporting ATPase 16K chain
+44317	calmodulin
+445	argininosuccinate synthase
+445	argininosuccinate synthase  superfamily
+44505	POZ domain homology
+44540	cut repeat homology
+44540	homeobox homology - diverse types
+44573	kinase-related transforming protein  superfamily
+4478	ezrin
+4478	protein 4.1 membrane-binding domain homology
+44817	cAMP receptor protein cyclic nucleotide-binding domain homology
+4485	hepatocyte growth factor
+4485	hepatocyte growth factor  superfamily
+4486	hepatocyte growth factor receptor  superfamily
+4489	metallothionein
+4490	metallothionein
+4493	metallothionein
+4494	metallothionein
+4495	metallothionein
+4502	metallothionein
+4521	mutT domain homology
+4522	C1-tetrahydrofolate synthase
+4522	formate--tetrahydrofolate ligase homology
+45821	SH3 homology
+45928	human dynamin II
+4598	mevalonate kinase  superfamily
+4602	myb transforming protein
+4605	myb transforming protein
+4609	myc transforming protein
+4609	myc transforming protein homology
+4610	myc transforming protein
+4611	myc transforming protein
+4613	myc transforming protein
+4613	myc transforming protein homology
+462	antithrombin III
+4621	myosin heavy chain
+4621	myosin motor domain homology
+4624	myosin heavy chain
+4625	myosin heavy chain
+4632	calmodulin
+4633	calmodulin
+4634	calmodulin
+4635	calmodulin
+4637	calmodulin
+4643	protozoan myosin heavy chain IB  superfamily
+4644	myosin MYO2
+46456	calmodulin
+4668	alpha-galactosidase
+4668	alpha-galactosidase  superfamily
+4684	neural cell adhesion molecule
+4687	SH3 homology
+4691	nucleolin
+471	purH bifunctional enzyme
+4723	NADH dehydrogenase (ubiquinone) I chain F homology
+4723	NADH dehydrogenase (ubiquinone) chain F
+4729	NADH dehydrogenase (ubiquinone) I chain E homology
+4741	cytoskeletal keratin
+4744	neurofilament triplet H protein
+4763	ras-specific GAP catalytic domain homology
+4771	protein 4.1 membrane-binding domain homology
+47763	homeobox homology - Antp, Abd-B, lab, eve, and cad types
+47895	methylenetetrahydrofolate dehydrogenase
+47895	methylenetetrahydrofolate dehydrogenase (NAD+) homology
+4791	rel homology
+4804	NGF receptor repeat homology
+4804	nerve growth factor receptor
+481	Na+/K+-transporting ATPase beta chain
+48224	adenine phosphoribosyltransferase  superfamily
+48312	DNA-directed RNA polymerase chain RPO26
+48312	DNA-directed RNA polymerase chain RPO26  superfamily
+4843	nitric-oxide synthase
+4843	nitric-oxide synthase  superfamily
+4846	nitric-oxide synthase
+4846	nitric-oxide synthase  superfamily
+48535	helix-destabilizing protein  superfamily
+48552	methionine adenosyltransferase
+4860	purine-nucleoside phosphorylase  superfamily
+4869	nucleophosmin
+4878	natriuretic peptide A precursor
+4879	natriuretic peptide A precursor
+4880	natriuretic peptide C precursor
+4881	membrane-bound guanylate cyclase
+4881	membrane-bound guanylate cyclase  superfamily
+4881	natriuretic peptide-binding domain homology
+4883	natriuretic peptide-binding domain homology
+4893	ras transforming protein
+49	acrosin
+4904	Y box-binding protein 1
+4904	Y box-binding protein 1  superfamily
+4904	cold shock domain homology
+49045	rhodopsin kinase
+4907	5'-nucleotidase
+4907	5'-nucleotidase  superfamily
+4907	5'-nucleotidase homology
+4907	phosphoesterase core homology
+4914	nerve growth factor receptor, high affinity  superfamily
+4914	protein kinase homology
+4915	nerve growth factor receptor, high affinity
+4915	nerve growth factor receptor, high affinity  superfamily
+4916	nerve growth factor receptor, high affinity
+4916	nerve growth factor receptor, high affinity  superfamily
+4919	neurotrophic receptor ror
+4920	neurotrophic receptor ror
+4929	probable hormone receptor N10, nuclear
+4938	oligo(A) synthetase
+4942	ornithine--oxo-acid aminotransferase
+4951	parvalbumin  superfamily
+4953	ornithine decarboxylase
+4953	ornithine decarboxylase  superfamily
+4974	leucine-rich alpha-2-glycoprotein repeat homology - set 1
+498	H+-transporting ATP synthase alpha chain
+5009	ornithine carbamoyltransferase
+5009	ornithine carbamoyltransferase  superfamily
+5018	stage III sporulation protein homology
+5020	oxytocin-neurophysin
+5033	procollagen-proline,2-oxoglutarate 4-dioxygenase alpha chain
+5034	protein disulfide-isomerase
+5045	kexin
+5045	subtilisin homology
+5046	subtilisin-like proteinase PACE4
+5046	subtilisin-like proteinase PACE4  superfamily
+5052	alkyl hydroperoxidase c22 protein homology
+5053	phenylalanine 4-monooxygenase
+5053	phenylalanine 4-monooxygenase  superfamily
+5054	antithrombin III
+50549	human cytochrome P450 CYP4B1
+5055	antithrombin III
+50563	gap junction protein
+50563	gap junction protein  superfamily
+50592	glutamate receptor homology
+5066	peptidylglycine monooxygenase I homology
+5066	peptidylglycine monooxygenase II
+50663	calmodulin
+50663	calmodulin repeat homology - selected molecules with X-ray structure
+50663	calmodulins
+50664	GTP-binding regulatory protein Gs alpha chain
+50665	thymosin beta
+50671	3-oxoacyl-[acyl-carrier-protein] synthase I homology
+50671	[acyl-carrier-protein] S-malonyltransferase homology
+50671	acyl carrier protein homology
+50671	oleoyl-[acyl-carrier-protein] hydrolase homology
+50681	acyl-CoA oxidase
+50682	triacylglycerol lipase, lingual
+50683	pulmonary surfactant protein C
+50686	kinase-related transforming protein
+50686	kinase-related transforming protein  superfamily
+50701	trypsin
+50709	histone H1
+5079	paired box homology
+5080	paired box transcription factor Pax-6  superfamily
+509	H+-transporting ATP synthase gamma chain
+5091	lipoyl/biotin-binding homology - biotin subset
+5091	pyruvate carboxylase
+5095	biotin carboxylase homology
+5095	lipoyl/biotin-binding homology
+5095	lipoyl/biotin-binding homology - biotin subset
+51	acyl-CoA oxidase
+5111	proliferating cell nuclear antigen
+5122	kexin
+5126	kexin
+513	H+-transporting ATP synthase epsilon chain
+5130	choline-phosphate cytidylyltransferase  superfamily
+5132	phosducin
+5144	3',5'-cyclic-nucleotide phosphodiesterase homology
+5146	3',5'-cyclic-nucleotide phosphodiesterase homology
+5148	3',5'-cyclic-GMP phosphodiesterase gamma chain
+5151	3',5'-cyclic-nucleotide phosphodiesterase homology
+5153	3',5'-cyclic-nucleotide phosphodiesterase 1B, calmodulin-dependent
+5153	3',5'-cyclic-nucleotide phosphodiesterase homology
+5154	platelet-derived growth factor
+5154	platelet-derived growth factor  superfamily
+5155	platelet-derived growth factor
+5155	platelet-derived growth factor  superfamily
+5156	macrophage colony-stimulating factor 1 receptor
+5158	3',5'-cyclic-GMP phosphodiesterase alpha chain
+5159	immunoglobulin homology - C2 type
+5160	pyruvate dehydrogenase (lipoamide) alpha chain
+5160	pyruvate dehydrogenase (lipoamide) alpha chain  superfamily
+5160	thiamin pyrophosphate-binding domain homology
+5161	pyruvate dehydrogenase (lipoamide) alpha chain
+5162	pyruvate dehydrogenase (lipoamide) beta chain
+5168	nucleotide pyrophosphatase  superfamily
+5173	proenkephalin
+5173	proenkephalin  superfamily
+5179	proenkephalin
+5179	proenkephalin  superfamily
+5196	beta-thromboglobulin
+5197	beta-thromboglobulin
+5199	thrombospondin type 1 repeat homology - 6 repeat proteins
+52	protein-tyrosine-phosphatase, low molecular weight
+52	protein-tyrosine-phosphatase, low molecular weight  superfamily
+5207	6-phosphofructo-2-kinase / fructose-2,6-bisphosphate 2-phosphatase
+5216	profilin
+522	coupling factor 6
+5222	pepsin
+5223	phosphoglycerate mutase
+5223	phosphoglycerate mutase homology
+5224	phosphoglycerate mutase
+5230	phosphoglycerate kinase
+5236	phosphoglucomutase
+5243	multidrug resistance protein
+5244	multidrug resistance protein
+5261	kinase-related transforming protein
+5261	kinase-related transforming protein  superfamily
+5265	antithrombin III
+5269	antithrombin III
+527	vacuolar H+-transporting ATPase 16K chain
+5277	GPI-anchor biosynthesis protein PIG-A  superfamily
+5284	secretory component
+5284	secretory component  superfamily
+5290	phosphatidylinositol 3-kinase  superfamily
+5291	phosphatidylinositol 3-kinase  superfamily
+5292	kinase-related transforming protein
+5292	kinase-related transforming protein  superfamily
+5292	protein kinase homology
+53	mammalian acid phosphatase  superfamily
+5304	submandibular gland 14K protein  superfamily
+5315	pyruvate kinase
+5319	phospholipase A2
+5327	EGF homology - Type A
+5327	fibronectin type I repeat homology
+5327	kringle homology - selected coagulation factors
+5327	tissue plasminogen activator
+5327	trypsin homology
+5330	1-phosphatidylinositol-4,5-bisphosphate phosphodiesterase domain Y homology
+5341	pleckstrin repeat homology
+5342	plasminogen-related protein precursor homology
+5350	phospholamban
+5354	myelin proteolipid protein
+5358	plastin
+53607	small nuclear ribonucleoprotein U1A
+5375	myelin P2 protein
+54	phosphoesterase core homology
+54	tartrate-resistant acid phosphatase
+540	heavy-metal-associated homology
+540	human copper-transporting ATPase  superfamily
+5406	triacylglycerol lipase
+5407	triacylglycerol lipase
+5408	triacylglycerol lipase
+5409	phenylethanolamine N-methyltransferase
+54205	cytochrome c
+54205	cytochrome c  superfamily
+54205	cytochrome c homology
+54237	kinase-related transforming protein
+54241	clathrin heavy chain
+54248	human diacylglycerol kinase  superfamily
+54250	fibroblast growth factor
+54256	gap junction protein  superfamily
+54257	glutamate receptor homology
+5426	DNA-directed DNA polymerase II  superfamily
+54278	probable hormone receptor N10, nuclear
+54281	kexin
+54283	6-phosphofructo-2-kinase / fructose-2,6-bisphosphate 2-phosphatase
+54287	protein kinase TIK
+54314	thyroid peroxidase
+54318	translation initiation factor eIF-2 alpha chain
+54322	cytochrome-c oxidase chain VIc
+5435	DNA-directed RNA polymerase chain RPO26
+5435	DNA-directed RNA polymerase chain RPO26  superfamily
+5438	DNA-directed RNA polymerase II chain RPB9  superfamily
+54410	nucleotide pyrophosphatase  superfamily
+5443	corticotropin-lipotropin
+5447	NADPH--ferrihemoprotein reductase
+5447	NADPH--ferrihemoprotein reductase  superfamily
+5449	POU domain homology
+5449	homeobox homology - POU-type
+5449	transcription factor Pit-1
+5452	homeobox homology - POU-type
+5457	POU domain homology
+5457	homeobox homology - POU-type
+5460	POU domain homology
+5460	homeobox homology - POU-type
+5460	transcription factor Oct-3  superfamily
+5463	POU domain homology
+5463	homeobox homology - POU-type
+5463	transcription factor Brn-5
+5473	beta-thromboglobulin
+5476	serine carboxypeptidase  superfamily
+5478	peptidylprolyl isomerase
+5478	peptidylprolyl isomerase  superfamily
+5481	cyclophilin homology
+549	enoyl-CoA hydratase homology
+55	mammalian acid phosphatase  superfamily
+551	oxytocin-neurophysin
+5515	phosphoprotein phosphatase
+5515	phosphoprotein phosphatase  superfamily
+5515	phosphoprotein phosphatase homology
+5516	phosphoprotein phosphatase
+5530	calcineurin catalytic chain
+5532	calcineurin catalytic chain
+5533	calcineurin catalytic chain
+5533	phosphoprotein phosphatase homology
+5534	calmodulin
+5539	pancreatic hormone
+5543	proline-rich protein
+5552	proteoglycan 10K core protein
+5553	eosinophil major basic protein precursor  superfamily
+5566	kinase-related transforming protein
+5567	kinase-related transforming protein
+5569	cAMP-dependent protein kinase inhibitor
+5573	cAMP-dependent protein kinase regulatory chain
+5576	cAMP receptor protein cyclic nucleotide-binding domain homology
+5576	cAMP-dependent protein kinase regulatory chain
+5577	cAMP-dependent protein kinase regulatory chain
+5578	protein kinase C alpha
+5578	protein kinase C zinc-binding repeat homology
+5579	protein kinase C alpha
+558	protein-tyrosine kinase axl
+558	protein-tyrosine kinase axl  superfamily
+5580	protein kinase C delta
+5581	protein kinase C delta
+5583	protein kinase C delta
+5584	protein kinase C zeta
+5588	protein kinase C delta  superfamily
+5590	protein kinase C zeta
+5592	cGMP-dependent protein kinase  superfamily
+5595	kinase-related transforming protein  superfamily
+56010	14-3-3 protein
+56011	14-3-3 protein
+5603	kinase-related transforming protein  superfamily
+56045	SAM homology
+5610	double-stranded RNA-binding repeat homology
+5610	protein kinase TIK
+5611	dnaJ amino-terminal homology - includes atypical sequences
+5617	prolactin
+5619	sperm histone
+5620	sperm histone
+5621	major prion protein
+5624	EGF homology - Type B
+5624	Gla domain homology
+5624	coagulation factor X
+5624	trypsin homology
+5627	Gla domain homology
+5627	plasma protein S
+5627	sex hormone-binding globulin homology
+5631	ribose-phosphate pyrophosphokinase catalytic chain
+5631	ribose-phosphate pyrophosphokinase catalytic chain  superfamily
+5634	ribose-phosphate pyrophosphokinase catalytic chain
+5634	ribose-phosphate pyrophosphokinase catalytic chain  superfamily
+5644	trypsin
+5644	trypsin homology
+5645	trypsin
+5648	C1r/C1s repeat homology
+5648	complement subcomponent C1r  superfamily
+5651	enteropeptidase
+5651	scavenger receptor cysteine-rich domain homology - includes atypical sequences
+566	trypsin
+566	trypsin homology
+5660	saposin
+5660	saposin repeat homology - includes atypical sequences
+56646	beta-galactoside-binding lectin
+567	immunoglobulin C region
+56778	Ly-6 antigen
+56780	mammalian acid phosphatase  superfamily
+56781	calmodulin
+56782	proteoglycan 10K core protein
+5682	multicatalytic endopeptidase complex chain C9
+5683	multicatalytic endopeptidase complex chain C9
+5685	multicatalytic endopeptidase complex chain C9
+5687	multicatalytic endopeptidase complex chain C9
+57233	transcription factor isl-1
+57233	transcription factor isl-1  superfamily
+57298	glutathione transferase
+5741	parathyroid hormone homology
+5744	parathyroid hormone homology
+5744	parathyroid hormone-related protein
+5757	prothymosin alpha
+5764	pleiotrophin
+5770	protein-tyrosine-phosphatase, nonreceptor type 1
+5774	GLGF domain homology
+5774	protein 4.1 membrane-binding domain homology
+5774	protein-tyrosine-phosphatase, nonreceptor type 3
+5775	protein 4.1 membrane-binding domain homology
+5775	protein-tyrosine-phosphatase homology
+5775	protein-tyrosine-phosphatase, nonreceptor type 3
+5777	protein-tyrosine-phosphatase, nonreceptor type 6
+5778	protein-tyrosine-phosphatase homology
+5778	protein-tyrosine-phosphatase, nonreceptor type 5  superfamily
+5780	cellular retinaldehyde-binding protein homology
+5780	protein-tyrosine-phosphatase homology
+5780	protein-tyrosine-phosphatase, nonreceptor type 9  superfamily
+57809	rat ribosomal protein L35a
+5781	protein-tyrosine-phosphatase homology
+5781	protein-tyrosine-phosphatase, nonreceptor type 6
+5782	protein-tyrosine-phosphatase, nonreceptor type 12
+5784	protein-tyrosine-phosphatase homology
+5784	protein-tyrosine-phosphatase, nonreceptor type 14
+5786	leukocyte common antigen cytosolic domain homology
+5786	protein-tyrosine-phosphatase homology
+5786	protein-tyrosine-phosphatase, receptor type alpha
+5787	protein-tyrosine-phosphatase homology
+5791	protein-tyrosine-phosphatase, receptor type alpha
+5792	fibronectin type III repeat homology
+5792	leukocyte common antigen cytosolic domain homology
+5792	protein-tyrosine-phosphatase homology
+5794	protein-tyrosine-phosphatase homology
+5797	MAM homology
+5797	fibronectin type III repeat homology
+5797	protein-tyrosine-phosphatase homology
+5797	protein-tyrosine-phosphatase, receptor type mu
+58	actin
+5800	fibronectin type III repeat homology
+5800	protein-tyrosine-phosphatase homology
+5803	carbonic anhydrase homology
+5803	protein-tyrosine-phosphatase homology
+5816	parvalbumin  superfamily
+5817	poliovirus receptor
+5817	poliovirus receptor  superfamily
+5829	LIM metal-binding repeat homology
+5836	phosphorylase  superfamily
+5859	glutamine--tRNA ligase homology
+5861	ras transforming protein
+5879	ras transforming protein
+58813	5'-nucleotidase
+58826	eosinophil major basic protein precursor  superfamily
+58853	probable hormone receptor N10, nuclear
+58917	hemopexin
+5894	protein kinase A-raf
+58977	protein phosphatase inhibitor 1
+5898	ras transforming protein
+5899	ras transforming protein
+59	actin
+590	cholinesterase
+590	cholinesterase  superfamily
+590	cholinesterase homology
+5901	ras transforming protein
+5903	cyclophilin homology
+5908	ras transforming protein
+59085	argininosuccinate lyase
+59086	inhibin
+59109	nerve growth factor receptor, high affinity  superfamily
+5912	ras transforming protein
+5914	erbA transforming protein homology
+5914	retinoic acid receptor alpha
+5914	retinoic acid receptor alpha  superfamily
+5915	retinoic acid receptor alpha
+5915	retinoic acid receptor alpha  superfamily
+5916	retinoic acid receptor alpha
+5916	retinoic acid receptor alpha  superfamily
+5917	arginine--tRNA ligase  superfamily
+5921	SH3 homology - set 2
+5921	ras-specific GAP catalytic domain homology
+5922	pleckstrin repeat homology
+5923	CDC24 homology
+5923	CDC25-type guanine nucleotide exchange activator homology
+5929	WD repeat homology
+593	pyruvate dehydrogenase (lipoamide) alpha chain
+593	pyruvate dehydrogenase (lipoamide) alpha chain  superfamily
+593	thiamin pyrophosphate-binding domain homology
+594	pyruvate dehydrogenase (lipoamide) beta chain
+5947	myelin P2 protein
+5947	myelin P2 protein  superfamily
+5949	interphotoreceptor retinoid-binding protein
+5950	lipocalin
+5950	lipocalin homology
+596	bcl transforming protein
+5961	retinal degeneration slow protein
+5962	ezrin
+5965	recQ helicase homology
+5966	rel homology
+5966	rel transforming protein
+5967	C-type lectin homology
+5967	tetranectin  superfamily
+5970	rel homology
+5972	pepsin
+5979	protein-tyrosine kinase ret
+5987	rfp transforming protein  superfamily
+60	actin
+6010	vertebrate rhodopsin
+6013	insulin
+6015	RING finger homology
+6017	cellular retinaldehyde-binding protein  superfamily
+6017	cellular retinaldehyde-binding protein homology
+6019	insulin
+60325	antithrombin III
+604	POZ domain homology
+6050	ribonuclease inhibitor
+60581	lipoyl/biotin-binding homology - biotin subset
+6117	replication protein A1  superfamily
+6122	rat ribosomal protein L3
+6129	rat ribosomal protein L7
+613	CDC24 homology
+6130	rat ribosomal protein L7a
+6135	Escherichia coli ribosomal protein L5
+6136	rat ribosomal protein L12
+6139	rat ribosomal protein L17
+6142	rat ribosomal protein L18a
+6143	rat ribosomal protein L19
+6144	rat ribosomal protein L21
+6152	rat ribosomal protein L24
+6154	rat ribosomal protein L26
+6154	rat ribosomal protein L26  superfamily
+6155	rat ribosomal protein L27
+6159	rat ribosomal protein L29
+6160	rat ribosomal protein L31
+6160	rat ribosomal protein L31  superfamily
+6161	rat ribosomal protein L32
+6164	rat ribosomal protein L34
+6165	rat ribosomal protein L35a
+6165	rat ribosomal protein L35a  superfamily
+6166	rat ribosomal protein L36a
+6167	rat ribosomal protein L37
+6168	rat ribosomal protein L37a
+6169	rat ribosomal protein L38
+6170	rat ribosomal protein L39  superfamily
+6175	rat acidic ribosomal protein P0
+6176	rat acidic ribosomal protein P1
+6181	rat acidic ribosomal protein P1
+6187	Escherichia coli ribosomal protein S5
+6188	rat ribosomal protein S3
+6191	rat ribosomal protein S4
+6192	rat ribosomal protein S4
+6193	Escherichia coli ribosomal protein S7
+6194	rat ribosomal protein S6
+6198	ribosomal protein S6 kinase
+6202	rat ribosomal protein S8
+6204	rat ribosomal protein S10
+6204	ribosomal protein S10 homology
+6205	Escherichia coli ribosomal protein S17
+6206	rat ribosomal protein S12
+6206	rat ribosomal protein S12  superfamily
+6207	eubacterial ribosomal protein S15 homology
+6207	rat ribosomal protein S13
+6207	rat ribosomal protein S13  superfamily
+6209	Escherichia coli ribosomal protein S19
+6210	Escherichia coli ribosomal protein S8
+6217	Escherichia coli ribosomal protein S9
+6218	rat ribosomal protein S17
+6222	Escherichia coli ribosomal protein S13
+6223	rat ribosomal protein S19  superfamily
+6224	Escherichia coli ribosomal protein S10
+6227	rat ribosomal protein S21
+6228	Escherichia coli ribosomal protein S12
+6230	rat ribosomal protein S25
+6233	ribosomal protein S27a homology
+6233	ubiquitin / rat ribosomal protein S27a
+6233	ubiquitin homology
+6237	ras transforming protein
+624	vertebrate rhodopsin
+6240	herpesvirus ribonucleoside-diphosphate reductase large chain
+6256	retinoic acid receptor alpha  superfamily
+6261	ryanodine receptor
+6271	S-100 protein
+6271	S-100 protein  superfamily
+6275	S-100 protein
+6275	S-100 protein  superfamily
+6276	S-100 protein  superfamily
+6277	S-100 protein  superfamily
+6278	S-100 protein  superfamily
+6279	S-100 protein
+6279	S-100 protein  superfamily
+6280	S-100 protein
+6280	S-100 protein  superfamily
+6281	S-100 protein
+6281	S-100 protein  superfamily
+6285	S-100 protein
+6285	S-100 protein  superfamily
+6286	S-100 protein  superfamily
+6288	amyloid protein
+6289	amyloid protein
+629	complement C2
+629	complement C2  superfamily
+629	complement factor H repeat homology
+632	osteocalcin
+633	decorin
+633	proteoglycan amino-terminal homology - includes atypical sequences
+633	proteoglycan carboxyl-terminal homology
+6331	sodium channel protein
+6335	sodium channel protein
+634	carcinoembryonic antigen precursor amino-terminal homology
+6346	macrophage inflammatory protein  superfamily
+6348	macrophage inflammatory protein  superfamily
+6351	macrophage inflammatory protein  superfamily
+6352	macrophage inflammatory protein  superfamily
+6374	beta-thromboglobulin
+63868	chaperonin groEL
+6389	fumarate reductase flavoprotein
+6389	fumarate reductase flavoprotein  superfamily
+63938	3-hydroxyisobutyrate dehydrogenase homology
+64001	cytochrome b5
+6401	C-type lectin homology
+64030	macrophage colony-stimulating factor 1 receptor
+641	recQ helicase homology
+64158	tubulin
+64159	spectrin alpha chain
+64198	mitochondrial processing peptidase alpha chain  superfamily
+64204	ribosomal protein S10 homology
+64298	rat ribosomal protein L31
+64298	rat ribosomal protein L31  superfamily
+64304	acyl-CoA dehydrogenase  superfamily
+64306	rat ribosomal protein L27
+64307	rat ribosomal protein L24
+64313	ornithine--oxo-acid aminotransferase
+64349	beta-crystallin
+6435	mannose-binding lectin
+64363	protein kinase A-raf
+64370	human methionyl aminopeptidase
+64373	ras transforming protein
+6440	pulmonary surfactant protein C
+6441	C-type lectin homology
+6441	pulmonary surfactant protein D
+64442	beta-galactoside alpha-2,3-sialyltransferase
+64444	transcription factor isl-1
+64456	thrombospondin type 1 repeat homology - 6 repeat proteins
+64529	papain
+6462	sex hormone-binding globulin homology
+6462	sex steroid-binding protein
+64627	histone H4
+64640	rat ribosomal protein L30
+64646	histone H2A
+64668	mannose-binding lectin
+64669	oleoyl-[acyl-carrier-protein] hydrolase  superfamily
+64669	oleoyl-[acyl-carrier-protein] hydrolase homology
+64672	phospholamban
+64678	transferrin receptor
+6470	glycine hydroxymethyltransferase
+6472	glycine hydroxymethyltransferase
+6476	sucrase/isomaltase homology
+6482	beta-galactoside alpha-2,3-sialyltransferase
+6483	beta-galactoside alpha-2,3-sialyltransferase
+649	C1r/C1s repeat homology
+649	astacin homology
+6497	ski transforming protein
+650	inhibin
+65039	lipocalin
+65039	lipocalin homology
+65136	rat ribosomal protein S8
+65151	hypothetical protein HI0719  superfamily
+65155	5-aminolevulinate synthase
+65155	5-aminolevulinate synthase  superfamily
+65172	LIM protein kinase
+65183	aldehyde dehydrogenase
+6519	system b(0,+) amino acid transporter-involved protein
+652	inhibin
+65204	calponin
+65204	smooth muscle protein SM22 homology
+6521	band 3 anion transport protein
+65279	alpha-2-macroglobulin
+653	inhibin
+654	inhibin
+655	inhibin
+6590	antileukoproteinase  superfamily
+6590	antileukoproteinase repeat homology
+6609	acid sphingomyelinase
+6609	phosphoesterase core homology
+6609	saposin repeat homology - includes atypical sequences
+6625	ribonucleoprotein repeat homology
+6626	small nuclear ribonucleoprotein U1A
+6626	small nuclear ribonucleoprotein U1A  superfamily
+6627	leucine-rich alpha-2-glycoprotein repeat homology - set 4
+6629	ribonucleoprotein repeat homology
+6629	small nuclear ribonucleoprotein U1A
+6629	small nuclear ribonucleoprotein U1A  superfamily
+6647	superoxide dismutase
+6649	superoxide dismutase
+6652	alcohol dehydrogenase
+6652	alcohol dehydrogenase  superfamily
+6652	long-chain alcohol dehydrogenase homology
+6678	Kazal proteinase inhibitor homology
+6678	calmodulin repeat homology - selected molecules with X-ray structure
+6678	osteonectin
+6678	osteonectin  superfamily
+6678	osteonectin homology
+669	phosphoglycerate mutase
+669	phosphoglycerate mutase homology
+6690	pancreatic secretory trypsin inhibitor
+6690	pancreatic secretory trypsin inhibitor  superfamily
+6691	pancreatic secretory trypsin inhibitor  superfamily
+6696	osteopontin
+6696	osteopontin  superfamily
+6708	SH3 homology
+6708	spectrin alpha chain
+6709	spectrin alpha chain
+671	lipopolysaccharide-binding protein
+6711	alpha-actinin actin-binding domain homology
+6711	pleckstrin repeat homology
+6711	spectrin beta-G chain
+6718	aldehyde reductase
+6722	serum response factor DNA-binding domain homology
+6737	RING finger homology
+6737	rfp transforming protein  superfamily
+6741	ribonucleoprotein La
+6741	ribonucleoprotein repeat homology
+6742	single-stranded DNA-binding protein homology
+6749	HMG box homology
+6750	somatostatin
+6779	statherin/histatin signal sequence homology
+6821	sulfite oxidase
+6850	protein-tyrosine kinase ZAP-70
+6857	protein kinase C C2 region homology
+6857	synaptotagmin
+6863	substance P precursor
+6872	bromodomain homology
+6876	smooth muscle protein SM22
+6876	smooth muscle protein SM22  superfamily
+6897	threonine--tRNA ligase  superfamily
+6925	human transcription factor 3
+6928	transcription factor HNF-1
+6928	transcription factor HNF-1  superfamily
+6929	human transcription factor 3
+6929	human transcription factor 3  superfamily
+6932	HMG box homology
+6938	human transcription factor 3
+6938	human transcription factor 3  superfamily
+6947	gastric intrinsic factor  superfamily
+6948	gastric intrinsic factor  superfamily
+70	actin
+7006	pleckstrin repeat homology
+7010	protein-tyrosine kinase, receptor type tie
+7010	protein-tyrosine kinase, receptor type tie  superfamily
+7018	transferrin
+7018	transferrin repeat homology
+7020	transcription factor AP-2
+7031	trefoil homology
+7032	spasmolytic protein
+7032	spasmolytic protein  superfamily
+7035	animal Kunitz-type proteinase inhibitor homology
+7035	tissue factor pathway inhibitor
+7037	transferrin receptor
+7039	EGF homology - Type A
+7039	transforming growth factor alpha precursor
+7040	inhibin
+7049	transforming growth factor beta receptor type III
+7052	protein-glutamine gamma-glutamyltransferase
+7054	phenylalanine 4-monooxygenase
+7056	thrombomodulin
+7057	thrombospondin 1
+7057	thrombospondin type 1 repeat homology
+7059	thrombospondin 3
+7060	thrombospondin 3
+7062	trichohyalin
+7064	thimet oligopeptidase
+7064	thimet oligopeptidase  superfamily
+7068	erbA transforming protein homology
+7068	thyroid hormone receptor
+7070	immunoglobulin V region
+7072	ribonucleoprotein repeat homology
+7076	metalloproteinase inhibitor
+7076	metalloproteinase inhibitor  superfamily
+7077	metalloproteinase inhibitor
+7077	metalloproteinase inhibitor  superfamily
+7078	metalloproteinase inhibitor
+7078	metalloproteinase inhibitor  superfamily
+7082	GLGF domain homology
+7083	thymidine kinase
+7090	WD repeat homology
+71	actin
+7114	thymosin beta
+712	complement C1q carboxyl-terminal homology
+712	complement subcomponent C1q chain A  superfamily
+7123	C-type lectin homology
+7123	tetranectin  superfamily
+7124	tumor necrosis factor
+7125	calmodulin
+713	complement C1q carboxyl-terminal homology
+713	complement subcomponent C1q chain A  superfamily
+7132	NGF receptor repeat homology
+7132	tumor necrosis factor receptor type 1
+7133	NGF receptor repeat homology
+7133	tumor necrosis factor receptor type 2
+7134	calmodulin
+7135	troponin I
+7136	troponin I
+7137	troponin I
+7141	spermatid transition protein 1
+7142	spermatid transition protein 2
+715	C1r/C1s repeat homology
+715	complement subcomponent C1r  superfamily
+7150	eukaryotic type I DNA topoisomerase
+7150	eukaryotic type I DNA topoisomerase  superfamily
+7157	cellular tumor antigen p53
+7157	cellular tumor antigen p53  superfamily
+716	C1r/C1s repeat homology
+716	complement factor H repeat homology
+716	complement subcomponent C1r  superfamily
+7167	triose-phosphate isomerase
+717	complement C2
+717	complement C2  superfamily
+717	complement factor H repeat homology
+7173	myeloperoxidase homology
+7173	thyroid peroxidase
+7178	IgE-dependent histamine-releasing factor
+7178	IgE-dependent histamine-releasing factor  superfamily
+718	alpha-2-macroglobulin
+7187	RING finger homology
+720	alpha-2-macroglobulin
+7200	thyroliberin precursor
+7200	thyroliberin precursor  superfamily
+722	C4b-binding protein alpha chain
+722	complement factor H repeat homology
+7252	pituitary glycoprotein hormone beta chain
+727	alpha-2-macroglobulin
+7276	transthyretin
+728	vertebrate rhodopsin
+7283	tubulin
+729	LDL receptor ligand-binding repeat homology
+729	complement c6  superfamily
+729	thrombospondin type 1 repeat homology
+7295	thioredoxin
+7295	thioredoxin  superfamily
+7298	thymidylate synthase homology
+7299	monophenol monooxygenase
+7299	monophenol monooxygenase  superfamily
+730	LDL receptor ligand-binding repeat homology
+730	complement c6  superfamily
+730	thrombospondin type 1 repeat homology
+7301	protein-tyrosine kinase axl
+7301	protein-tyrosine kinase axl  superfamily
+7306	monophenol monooxygenase  superfamily
+731	complement C9  superfamily
+731	thrombospondin type 1 repeat homology
+7311	ribosomal protein CEP52 homology
+7311	ubiquitin/ribosomal protein CEP52
+7314	polyubiquitin 3
+7317	ubiquitin-activating enzyme E1
+732	LDL receptor ligand-binding repeat homology
+732	complement C9  superfamily
+732	thrombospondin type 1 repeat homology
+7336	conserved hypothetical protein YGL087c
+735	EGF homology - Type A
+735	LDL receptor ligand-binding repeat homology
+735	complement C9  superfamily
+735	thrombospondin type 1 repeat homology
+7369	membrane glycoprotein 2 homology
+7369	uromodulin
+7372	orotate phosphoribosyltransferase homology
+7374	uracil-DNA glycosylase  superfamily
+7381	ubiquinol--cytochrome-c reductase 14K protein  superfamily
+7385	mitochondrial processing peptidase alpha chain
+7385	mitochondrial processing peptidase alpha chain  superfamily
+7388	ubiquinol--cytochrome-c reductase 11K protein  superfamily
+7388	ubiquinol--cytochrome-c reductase 11K protein homology
+7402	WW repeat homology
+7402	alpha-actinin actin-binding domain homology
+7414	vinculin amino-terminal homology
+7414	vinculin carboxyl-terminal homology
+7417	porin  superfamily
+7429	gelsolin repeat homology
+7429	villin headpiece homology
+7430	ezrin
+7430	protein 4.1 membrane-binding domain homology
+7432	glucagon
+7436	LDL receptor
+7450	von Willebrand factor
+7450	von Willebrand factor type A repeat homology
+7450	von Willebrand factor type C repeat homology
+7471	int-1 transforming protein
+7494	fos/jun DNA-binding domain homology
+7498	ferredoxin [2Fe-2S] homology
+7498	xanthine dehydrogenase
+7498	xanthine dehydrogenase  superfamily
+7507	DNA excision repair protein XPAC  superfamily
+7525	protein-tyrosine kinase src
+7529	14-3-3 protein
+7533	14-3-3 protein
+7534	14-3-3 protein
+759	carbonate dehydratase
+759	carbonate dehydratase  superfamily
+759	carbonic anhydrase homology
+7597	POZ domain homology
+760	carbonate dehydratase
+760	carbonate dehydratase  superfamily
+761	carbonate dehydratase  superfamily
+762	carbonate dehydratase  superfamily
+762	carbonic anhydrase homology
+763	carbonate dehydratase  superfamily
+763	carbonic anhydrase homology
+766	carbonate dehydratase  superfamily
+766	carbonic anhydrase homology
+7703	RING finger homology
+7704	POZ domain homology
+7706	RING finger homology
+7783	ZP domain homology
+7783	sperm-binding glycoprotein ZP2
+7784	ZP domain homology
+7784	sperm-binding glycoprotein ZP3
+7784	sperm-binding glycoprotein ZP3  superfamily
+781	calcium channel alpha-2 chain
+7844	RING finger homology
+7867	kinase-related transforming protein  superfamily
+78975	AMP-activated protein kinase  superfamily
+79125	annexin VI
+7919	translation initiation factor eIF-4A  superfamily
+79220	glutamate receptor homology
+79239	heme oxygenase (decyclizing)  superfamily
+79240	probable hormone receptor N10, nuclear
+794	calmodulin repeat homology
+79449	rat ribosomal protein L21
+795	S-100 protein
+795	S-100 protein  superfamily
+796	calcitonin
+797	calcitonin
+800	caldesmon
+801	calmodulin
+801	calmodulins
+805	calmodulin
+805	calmodulins
+80858	aldehyde reductase
+8091	nonhistone chromosomal protein HMG-I  superfamily
+810	calmodulin
+810	calmodulins
+811	calreticulin  superfamily
+814	Ca2+/calmodulin-dependent protein kinase
+81503	beta-thromboglobulin
+81519	alpha-1,3-mannosyl-glycoprotein beta-1,2-N-acetylglucosaminyltransferase
+81574	sodium channel protein
+81613	carcinoembryonic antigen precursor amino-terminal homology
+81639	arachidonate 5-lipoxygenase
+81639	arachidonate 5-lipoxygenase  superfamily
+81640	eukaryotic adenosylmethionine decarboxylase
+81647	cAMP response element-binding protein 1
+81648	corticoliberin-endorpholiberin
+81661	glia maturation factor beta
+81664	GTP-binding regulatory protein Gs alpha chain
+81668	prolactin
+81673	transcription initiation factor IIB
+81673	transcription initiation factor IIB homology
+81678	inositol-trisphosphate receptor
+81684	thimet oligopeptidase  superfamily
+81686	gelatinase A
+81687	gelatinase A
+81707	matrix metalloproteinase homology
+81708	aldehyde dehydrogenase
+81727	mevalonate kinase  superfamily
+81728	NADH dehydrogenase (ubiquinone) I chain E homology
+81749	protein kinase C delta
+81754	ras transforming protein
+81763	rat ribosomal protein L5
+81766	rat ribosomal protein L18
+81767	rat ribosomal protein L19
+81769	rat ribosomal protein L36a
+81770	rat ribosomal protein L37
+81772	rat ribosomal protein S9
+81773	rat ribosomal protein S10
+81774	Escherichia coli ribosomal protein S17
+81775	rat ribosomal protein S21
+81776	rat ribosomal protein S24
+81777	ubiquitin / rat ribosomal protein S27a
+81778	S-100 protein
+81783	ribonucleoprotein La
+81805	sulfite oxidase
+81814	thymosin beta
+81829	L-lactate dehydrogenase
+81869	glutathione transferase
+8187	nitric-oxide synthase
+8187	nitric-oxide synthase  superfamily
+8192	endopeptidase Clp chain P  superfamily
+822	severin
+822	severin  superfamily
+823	calpain catalytic domain homology
+823	calpain large chain
+823	calpain large chain  superfamily
+825	calpain large chain
+825	calpain large chain  superfamily
+826	calpain small chain
+8288	myeloperoxidase
+8288	myeloperoxidase homology
+8329	histone H2A
+8330	histone H2A
+8332	histone H2A
+8336	histone H2A
+8339	histone H2B
+83427	WD repeat homology
+8343	histone H2B
+8344	histone H2B
+8346	histone H2B
+8347	histone H2B
+8350	histone H3
+8352	histone H3
+8353	histone H3
+8354	histone H3
+8359	histone H4
+8360	histone H4
+8361	histone H4
+8362	histone H4
+8364	histone H4
+8365	histone H4
+83791	farnesyl-pyrophosphate synthetase
+83817	cholinesterase homology
+83826	steroid hormone receptor Ad4BP
+83839	calretinin
+83840	protein kinase homology
+83840	ribosomal protein S6 kinase
+8402	ADP,ATP carrier protein repeat homology
+84027	kinase-related transforming protein
+84029	(S)-2-hydroxy-acid oxidase  superfamily
+84029	(S)-2-hydroxy-acid oxidase homology
+84050	nucleotide pyrophosphatase  superfamily
+84050	somatomedin B homology
+844	calsequestrin
+847	catalase
+8513	triacylglycerol lipase, lingual
+8531	Y box-binding protein 1
+8531	Y box-binding protein 1  superfamily
+8558	kinase-related transforming protein  superfamily
+8581	Ly-6 antigen  superfamily
+8581	Ly-6 homology
+8654	3',5'-cyclic-nucleotide phosphodiesterase homology
+87	alpha-actinin
+87	alpha-actinin  superfamily
+87	alpha-actinin actin-binding domain homology
+871	antithrombin III
+873	ribitol dehydrogenase
+873	short-chain alcohol dehydrogenase homology
+875	cystathionine beta-synthase
+88	alpha-actinin
+8814	kinase-related transforming protein  superfamily
+8826	WW repeat homology
+885	gastrin
+8858	Gla domain homology
+89	alpha-actinin
+8907	amino acid--tRNA ligase repeat homology
+8909	somatomedin B homology
+8925	ubiquitin--protein ligase homology
+8968	histone H3
+8969	histone H2A
+8970	histone H2B
+910	class I histocompatibility antigen
+911	class I histocompatibility antigen
+912	class I histocompatibility antigen
+914	T-cell surface glycoprotein CD2
+915	T-cell surface glycoprotein CD3 delta chain
+915	immunoglobulin homology - C2 type
+9168	thymosin beta
+92	activin receptor II
+920	T-cell surface glycoprotein CD4
+923	scavenger receptor cysteine-rich domain homology - includes atypical sequences
+926	T-cell surface glycoprotein CD8 beta chain
+9261	kinase-related transforming protein  superfamily
+928	CD9 antigen
+9332	scavenger receptor cysteine-rich domain homology - includes atypical sequences
+9360	cyclophilin homology
+9377	mammalian cytochrome-c oxidase chain Va  superfamily
+940	T-cell surface glycoprotein CD28
+94106	lipocalin
+94194	mammalian cytochrome-c oxidase chain Vb  superfamily
+94195	S-100 protein
+94199	membrane dipeptidase  superfamily
+94271	coupling factor 6
+948	lysosomal integral membrane protein II  superfamily
+949	lysosomal integral membrane protein II  superfamily
+9601	protein disulfide-isomerase
+9601	thioredoxin homology
+962	B-cell surface glycoprotein blast-1
+965	immunoglobulin homology - C2 type
+966	Ly-6 antigen  superfamily
+966	Ly-6 homology
+967	CD9 antigen
+969	C-type lectin homology
+97	acylphosphatase
+97165	nonhistone chromosomal protein HMG-2
+983	kinase-related transforming protein
+983	kinase-related transforming protein  superfamily
+993	cdc25-type protein-tyrosine-phosphatase homology
+993	human protein-tyrosine-phosphatase cdc25A  superfamily
+994	cdc25-type protein-tyrosine-phosphatase homology
+995	cdc25-type protein-tyrosine-phosphatase homology
+995	human protein-tyrosine-phosphatase cdc25C  superfamily
+999	cadherin
+999	cadherin  superfamily

@@ -1,0 +1,2584 @@
+570	Other metabolism	2037576
+51513	Pol II transcription	10828014
+579	Pol II transcription	9344671
+4734	Pol II transcription	9990509
+4734	Protein degradation	9990509
+4734	Differentiation	9990509
+4738	Protein degradation	9694792
+5395	DNA repair	10871409
+2052	Other metabolism	7516776
+2053	Other metabolism	7868134
+2056	Differentiation	3838366
+2056	Cell stress	2849206
+2057	Differentiation	1668606
+2058	Protein synthesis	8188258
+2058	RNA processing/modification	8188258
+586	Amino-acid metabolism	6933702
+587	Amino-acid metabolism	8702755
+6341	Energy generation	9878253
+4741	Cell structure	3608989
+3005	Chromatin/chromosome structure	8325638
+4747	Cell structure	3034332
+9	Other metabolism	10908296
+1406	Pol II transcription	9390563
+1406	Differentiation	9537410
+1407	Pol II transcription	10531061
+1408	Pol II transcription	10531061
+55810	Pol II transcription	10777590
+2066	Differentiation	8383326
+2067	DNA repair	6462228
+2068	Pol II transcription	9771713
+2068	DNA repair	8413672
+590	Other metabolism	2339692
+593	Amino-acid metabolism	3224821
+594	Amino-acid metabolism	1889817
+56478	Nuclear-cytoplasmic transport	10856257
+596	Other	10506221
+27336	Pol II transcription	10454543
+27338	Protein degradation	1379239
+4758	Other metabolism	8985184
+2071	Pol II transcription	10827951
+2071	DNA repair	8663148
+1415	Cell structure	8224918
+4759	Other metabolism	10191093
+2072	DNA repair	8797827
+2073	DNA repair	8090225
+2074	Pol II transcription	7664335
+2074	DNA repair	1339317
+2077	Pol II transcription	7588608
+51540	Amino-acid metabolism	10692412
+5700	Protein degradation	8811196
+5701	Protein degradation	8811196
+7306	Other metabolism	1577487
+5702	Pol II transcription	8419915
+5702	Protein degradation	8811196
+7307	RNA splicing	1388271
+7307	RNA processing/modification	1388271
+5704	Protein degradation	8603043
+5705	Pol II transcription	7870181
+5705	Protein degradation	8811196
+5706	Protein degradation	8811196
+5707	Protein degradation	8811196
+5708	Protein degradation	8811196
+4760	Differentiation	8786144
+5709	Protein degradation	8811196
+4761	Pol II transcription	8816493
+4761	Differentiation	8816493
+4762	Pol II transcription	8816493
+4762	Differentiation	8816493
+1421	Cell structure	9927684
+3029	Other metabolism	8550579
+2081	Cell stress	9637683
+1427	Cell structure	7733876
+7311	Protein synthesis	2581967
+5710	Protein degradation	8811196
+5711	Protein degradation	8811196
+5713	Protein degradation	8811196
+7318	Protein degradation	1311632
+5714	Protein degradation	8811196
+7319	DNA repair	1559696
+5715	Protein degradation	10799514
+5716	Protein degradation	8811196
+5717	Protein degradation	8811196
+3030	Energy generation	
+5718	Protein degradation	8811196
+5719	Protein degradation	8811196
+3032	Energy generation	
+4772	Pol II transcription	10821850
+3033	Energy generation	
+3034	Amino-acid metabolism	8530107
+4774	DNA synthesis	7590749
+1431	Energy generation	9543345
+4775	Pol II transcription	7739550
+1432	Cell stress	7493921
+4776	Pol II transcription	7749981
+1434	Nuclear-cytoplasmic transport	9323134
+1434	Protein translocation	9323134
+4778	Pol II transcription	8355703
+2091	RNA processing/modification	1846968
+1435	Differentiation	1540160
+902	Pol II transcription	9465303
+902	DNA repair	9465303
+4779	Pol II transcription	8248256
+1437	Differentiation	1675789
+904	Pol II transcription	9499409
+905	Pol II transcription	9499409
+2099	Pol II transcription	1577818
+54107	DNA synthesis	10801849
+7320	DNA repair	1559696
+5720	Protein degradation	10799514
+5721	Protein degradation	8811196
+5723	Amino-acid metabolism	9188776
+5725	RNA splicing	1906036
+5725	RNA processing/modification	1906036
+4780	Pol II transcription	7937919
+4781	DNA synthesis	7590749
+4782	Pol II transcription	8710515
+84991	RNA splicing	
+84991	RNA processing/modification	
+4783	Pol II transcription	7565758
+1440	Differentiation	2420009
+4784	Pol II transcription	7937100
+1441	Differentiation	1371413
+6389	Energy generation	7798181
+7334	Protein degradation	8902611
+7336	Differentiation	9418904
+7337	Protein degradation	8221889
+6390	Energy generation	2302193
+6391	Energy generation	9533030
+6392	Energy generation	9533030
+4790	Pol II transcription	1992489
+3052	Energy generation	8661044
+3054	Pol II transcription	8392914
+3055	Differentiation	3453117
+1453	DNA repair	8786104
+1454	DNA repair	7797465
+4798	Pol II transcription	1777480
+3059	Pol II transcription	2587259
+4799	Pol II transcription	7964459
+55869	Pol II transcription	10748112
+55869	Chromatin/chromosome structure	10748112
+51580	Pol II transcription	9290259
+7341	Nuclear-cytoplasmic transport	9019411
+7342	Pol II transcription	8114710
+7343	Pol I transcription	2330041
+4000	Cell structure	8344919
+4001	Cell structure	7557986
+51586	Pol II transcription	
+4004	Differentiation	2303035
+5747	Cell structure	10801330
+25788	DNA repair	10851248
+3065	Chromatin/chromosome structure	8602529
+3066	Chromatin/chromosome structure	8917507
+1462	Differentiation	2583089
+3067	Other metabolism	1768863
+3067	Amino-acid metabolism	1768863
+934	Differentiation	7959762
+55870	Pol II transcription	10860993
+55870	Chromatin/chromosome structure	10860993
+7350	Energy generation	2380264
+7351	Energy generation	9054939
+7352	Energy generation	9196039
+7353	Protein degradation	9063746
+4012	Protein degradation	8550619
+4014	Cell structure	8673107
+7358	Other metabolism	9737970
+4017	Aging	9079631
+25793	Protein degradation	10531035
+5757	Pol II transcription	10854063
+25794	Cell structure	10783262
+1477	RNA processing/modification	1358884
+1478	RNA processing/modification	1741396
+1479	RNA processing/modification	7984242
+6702	Cell structure	3133554
+8309	Energy generation	8943006
+7362	Other metabolism	1898728
+7363	Other metabolism	7835904
+6708	Cell structure	1634521
+7365	Other metabolism	8333863
+6709	Cell structure	2307671
+23404	RNA processing/modification	8600032
+7366	Other metabolism	7835232
+26747	RNA processing/modification	10556305
+5763	DNA synthesis	10854063
+7368	Other metabolism	8661025
+3081	Amino-acid metabolism	8782815
+10300	Cell structure	8221885
+10302	Pol II transcription	9732265
+10302	Pol III transcription	9732265
+1482	Pol II transcription	9651244
+1482	Differentiation	8900537
+3087	Pol II transcription	1360645
+3087	Differentiation	1360645
+10309	DNA repair	2001396
+55892	Pol II transcription	10873615
+6710	Cell structure	8226774
+8315	Nuclear-cytoplasmic transport	9497340
+6712	Cell structure	9826670
+8318	DNA synthesis	9660782
+7374	DNA repair	10805771
+23414	Pol II transcription	10438528
+7376	Pol II transcription	7926814
+5774	Cell structure	1648725
+4036	Protein translocation	7768901
+4037	Protein translocation	9693042
+3091	Pol II transcription	7539918
+3091	Cell stress	9079689
+3092	Cell structure	9140394
+3093	Protein degradation	8702625
+1491	Amino-acid metabolism	1339280
+1497	Amino-acid metabolism	9537412
+1499	Pol II transcription	9065402
+6720	Pol II transcription	8156598
+6721	Pol II transcription	7903453
+6722	Pol II transcription	3203386
+6723	Other metabolism	2069720
+7381	Energy generation	3056408
+6726	Protein translocation	7730321
+23421	Pol II transcription	10490654
+6727	Protein translocation	2557625
+4040	Protein translocation	9704021
+7384	Energy generation	8407948
+6728	Protein translocation	1678319
+4041	Protein translocation	9714764
+7385	Energy generation	8288258
+6729	Protein translocation	9016569
+7388	Energy generation	2826252
+7389	Other metabolism	9806541
+4046	Cell structure	8274738
+23428	Amino-acid metabolism	10391915
+23429	Pol II transcription	10369680
+6730	Protein translocation	10618370
+6732	RNA splicing	8208298
+6733	RNA splicing	9472028
+7390	Other metabolism	2037278
+6734	Protein translocation	2827661
+7391	Pol II transcription	2249772
+23435	Pol II transcription	7745706
+4057	Other metabolism	3356163
+57804	DNA synthesis	10751307
+5000	DNA synthesis	9353276
+5001	DNA synthesis	9765232
+6741	RNA processing/modification	10983981
+6741	RNA turnover	9154801
+6741	Pol III transcription	3192525
+3400	Pol II transcription	7665172
+6745	Protein translocation	8050590
+6746	Protein translocation	7789174
+5009	Amino-acid metabolism	2983225
+1801	Other metabolism	8603384
+1801	Protein synthesis	8603384
+1802	Other metabolism	7559470
+990	DNA synthesis	9566895
+10347	Differentiation	10873640
+23450	RNA splicing	10490618
+23450	RNA processing/modification	10490618
+5018	Energy generation	9247084
+1810	Pol II transcription	8670811
+5019	Energy generation	8751852
+23452	Differentiation	10473614
+3416	Protein degradation	2293021
+3417	Energy generation	9866202
+4074	Protein translocation	10799489
+3418	Energy generation	8954790
+2475	DNA repair	9099849
+10352	Protein synthesis	10072595
+10352	RNA processing/modification	10072595
+207	Cell stress	10958679
+56882	Cell structure	10816584
+7702	Pol II transcription	9566884
+7702	Pol III transcription	9566884
+7704	Chromatin/chromosome structure	9770450
+7707	Pol II transcription	9457682
+3421	Energy generation	9286695
+22803	RNA processing/modification	10409438
+22803	RNA turnover	10409438
+6768	Protein degradation	10373424
+3425	Other metabolism	1551868
+23462	Pol II transcription	10415358
+22806	Pol II transcription	10552935
+1823	Cell structure	7679953
+4084	Differentiation	7829091
+22809	Pol II transcription	10373550
+210	Other metabolism	3758678
+4087	Pol II transcription	10823886
+211	Other metabolism	2347585
+23468	Chromatin/chromosome structure	8663349
+4088	Pol II transcription	10823886
+212	Other metabolism	2347585
+57834	Other metabolism	10964514
+4089	Pol II transcription	10823886
+10362	Chromatin/chromosome structure	10773667
+9313	Protein degradation	9398237
+56896	Differentiation	10851247
+9318	Pol II transcription	7776974
+9319	Pol II transcription	7776974
+7716	Pol II transcription	8035792
+6772	Pol II transcription	9630226
+6773	Pol II transcription	9020188
+6774	Pol II transcription	7512451
+6775	Pol II transcription	9284918
+6776	Pol II transcription	8631883
+23470	Pol II transcription	9827568
+6777	Pol II transcription	8631883
+23471	Protein translocation	1315422
+6778	Pol II transcription	8810328
+4091	Cell stress	9256479
+4092	Cell stress	9256479
+1832	Cell structure	1716629
+4094	Pol II transcription	9616139
+23475	Other metabolism	9473669
+4097	Pol II transcription	9286713
+1838	Cell structure	9395493
+2494	Pol II transcription	9786908
+2495	Other metabolism	6589621
+11319	Pol II transcription	9928932
+9321	Pol II transcription	9373237
+9322	Cell structure	9210375
+10376	Cell structure	6646120
+9323	Pol II transcription	7776974
+9324	Pol II transcription	7776974
+9325	Pol II transcription	7776974
+10379	Pol II transcription	1630447
+9326	Pol II transcription	7776974
+9328	Pol III transcription	10373544
+9329	Pol III transcription	10523658
+6780	RNA processing/modification	10022909
+6782	Cell stress	8131751
+22824	Cell stress	10524232
+1840	Pol II transcription	9590294
+6788	Cell stress	8816758
+6789	Cell stress	8816758
+1843	Cell stress	1406996
+1846	Differentiation	9205128
+23487	Pol II transcription	9827568
+1847	Cell stress	7961985
+23488	Pol II transcription	9827568
+1848	Differentiation	9205128
+23489	Pol II transcription	9827568
+1849	Differentiation	9205128
+10381	Cell structure	2461292
+10382	Cell structure	6865944
+10383	Cell structure	3999141
+9330	Pol III transcription	10373544
+10389	Pol II transcription	10331946
+9337	Pol II transcription	9820826
+9338	Pol II transcription	7971997
+5053	Amino-acid metabolism	3856322
+23490	Pol II transcription	9827568
+23491	Other metabolism	10518925
+6799	Other metabolism	9119390
+23493	Pol II transcription	10415358
+1854	DNA synthesis	1325640
+23498	Other metabolism	7514594
+11335	Chromatin/chromosome structure	8663349
+11337	Cell structure	9892355
+11338	RNA splicing	1538748
+11338	RNA processing/modification	1538748
+10393	Protein degradation	10318877
+9343	RNA splicing	9233818
+9343	RNA processing/modification	9233818
+10398	Cell structure	
+5064	Cell structure	9813098
+2805	Amino-acid metabolism	3207426
+5066	Other metabolism	2357221
+2806	Amino-acid metabolism	3207426
+5068	Differentiation	8188210
+1861	Cell stress	9288096
+1869	Pol II transcription	10199402
+9354	Protein degradation	10089879
+6018	Chromatin/chromosome structure	1649386
+5073	RNA processing/modification	9736620
+5074	Pol II transcription	8943350
+5075	Pol II transcription	1358810
+5076	Pol II transcription	8760285
+5077	Pol II transcription	9500554
+1870	Pol II transcription	8246995
+5079	Pol II transcription	10524622
+5079	Differentiation	10524622
+1871	Pol II transcription	8246996
+1876	Pol II transcription	9501179
+262	Other metabolism	7789170
+9360	RNA splicing	9153302
+9361	Protein degradation	8248235
+51207	Differentiation	10585869
+6024	Chromatin/chromosome structure	8121495
+3482	Protein translocation	10799489
+5087	Pol II transcription	10500199
+3487	DNA synthesis	1377672
+270	Energy generation	644316
+275	Amino-acid metabolism	8188235
+8715	RNA processing/modification	9813152
+9377	Energy generation	2853101
+6035	RNA turnover	8049276
+6036	RNA turnover	2734298
+6037	RNA turnover	2745977
+6039	RNA turnover	8836175
+5092	Pol II transcription	10098606
+5092	Other metabolism	8618906
+4436	DNA repair	8252616
+5093	RNA processing/modification	8833161
+4437	DNA repair	8782829
+5094	RNA processing/modification	8833161
+5095	Amino-acid metabolism	3460076
+4439	DNA repair	9740671
+5096	Amino-acid metabolism	3460076
+1890	DNA synthesis	9924029
+1891	Energy generation	7558027
+55502	Pol II transcription	10851137
+10713	RNA splicing	10022888
+10713	RNA processing/modification	10022888
+1892	Energy generation	9073515
+10714	DNA synthesis	10219083
+55509	Pol II transcription	10878360
+283	RNA turnover	2866795
+51222	Pol II transcription	10819330
+8721	Differentiation	9813014
+8722	Protein degradation	9822672
+286	Cell structure	9430667
+54566	Cell structure	10783258
+51224	Pol II transcription	10692460
+287	Cell structure	8253844
+27022	Pol II transcription	8499623
+9380	Other metabolism	10484776
+288	Cell structure	8666667
+8725	Pol II transcription	9819440
+8726	Pol II transcription	9806832
+6040	RNA turnover	9799596
+6047	Pol II transcription	9710597
+1102	Nuclear-cytoplasmic transport	10089422
+1102	Chromatin/chromosome structure	10089422
+1104	Nuclear-cytoplasmic transport	10089422
+1104	Chromatin/chromosome structure	10089422
+1105	Pol II transcription	9326634
+1105	Chromatin/chromosome structure	9326634
+1106	Pol II transcription	9326634
+1106	Chromatin/chromosome structure	9326634
+1107	Pol II transcription	9326634
+1107	Chromatin/chromosome structure	9326634
+10720	Other metabolism	8333863
+1108	Pol II transcription	9326634
+1108	Chromatin/chromosome structure	9326634
+10721	DNA repair	10395804
+10725	Pol II transcription	10051678
+291	Energy generation	2823266
+292	Energy generation	2168878
+293	Energy generation	8490661
+8731	RNA processing/modification	9705270
+54575	Other metabolism	9295054
+27030	DNA repair	10615123
+8732	RNA processing/modification	9473487
+54576	Other metabolism	9295054
+54577	Other metabolism	9295054
+27033	Pol II transcription	10572087
+9391	Pol II transcription	9556563
+54579	Other metabolism	9295054
+8736	Cell structure	7505783
+6050	RNA turnover	2081593
+6059	RNA turnover	7539425
+1117	Other	8702629
+10732	Pol II transcription	9763657
+10732	Differentiation	9763657
+55523	RNA processing/modification	10836796
+10734	Chromatin/chromosome structure	10698974
+10736	Pol II transcription	10773454
+7001	Cell stress	7607688
+7005	Pol II transcription	9148898
+7007	Cell structure	9590290
+5409	Other metabolism	3372503
+7011	Chromatin/chromosome structure	9020079
+7013	Chromatin/chromosome structure	1406665
+7014	Chromatin/chromosome structure	9326950
+7015	DNA synthesis	9288757
+7015	Chromatin/chromosome structure	9288757
+5411	Cell structure	8922384
+5413	Cell structure	9611266
+7018	Other metabolism	6585826
+5414	Cell structure	9889007
+3817	Protein degradation	10463585
+4478	Cell structure	1924289
+602	Differentiation	2180580
+2875	Amino-acid metabolism	5581908
+7020	Pol II transcription	1916817
+7021	Pol II transcription	8661133
+8761	Protein synthesis	8524242
+8761	RNA processing/modification	8524242
+8761	RNA turnover	8524242
+7022	Pol II transcription	9113991
+7023	Pol II transcription	2123466
+7024	Pol II transcription	8157699
+7026	Pol II transcription	1899293
+7027	Pol II transcription	8405995
+5423	DNA synthesis	8168825
+5423	DNA repair	8168825
+5424	DNA synthesis	1722322
+5424	DNA repair	3146346
+51268	Amino-acid metabolism	10772957
+7029	Pol II transcription	9027491
+7029	DNA synthesis	9027491
+7029	Differentiation	9027491
+5425	DNA synthesis	8530069
+5426	DNA synthesis	8486689
+5427	DNA synthesis	9405441
+5427	DNA repair	9405441
+5428	DNA synthesis	8884268
+5429	DNA synthesis	10856253
+5429	DNA repair	10856253
+4482	Cell stress	10452521
+4482	Amino-acid metabolism	10452521
+2880	Cell stress	9639555
+4489	Other metabolism	3856101
+4489	Cell stress	3856101
+2885	Cell structure	8253073
+617	Energy generation	9878253
+10763	Cell structure	1478958
+10763	Differentiation	1478958
+10765	Chromatin/chromosome structure	10336460
+10766	Pol II transcription	10602502
+10767	Protein synthesis	9872408
+7030	Pol II transcription	1685140
+5430	Pol II transcription	2999107
+5431	Pol II transcription	1518060
+7036	Protein translocation	10409623
+5432	Pol II transcription	2187864
+5433	Pol II transcription	9528765
+5434	Pol II transcription	7828586
+5435	Pol II transcription	7803819
+5436	Pol II transcription	9256063
+5436	DNA repair	9256063
+5436	Cell stress	7579693
+6093	Cell structure	10436159
+5437	Pol II transcription	8524256
+5438	Pol II transcription	8265347
+6095	Pol II transcription	7926749
+5439	Pol II transcription	8797801
+6096	Pol II transcription	7935491
+3836	Nuclear-cytoplasmic transport	7754385
+3836	Protein translocation	7754385
+4493	Other metabolism	3856101
+4493	Cell stress	3856101
+3837	Nuclear-cytoplasmic transport	7615630
+3837	Protein translocation	7615630
+3838	Nuclear-cytoplasmic transport	9020106
+3838	Protein translocation	9020106
+3839	Nuclear-cytoplasmic transport	9435235
+3839	Protein translocation	9435235
+1152	Energy generation	7808454
+1153	Cell stress	9434172
+1155	Cell structure	8978778
+1158	Energy generation	7808454
+1159	Energy generation	2914937
+10771	Pol II transcription	7621829
+10772	RNA splicing	9774382
+10772	RNA processing/modification	9774382
+10775	RNA splicing	10352175
+10775	RNA processing/modification	10352175
+29761	Protein degradation	10644437
+7041	Pol II transcription	10075738
+29765	Cell structure	10662549
+29766	Cell structure	10662549
+29767	Cell structure	10662549
+5440	Pol II transcription	7651387
+5440	Pol I transcription	7651387
+5440	Pol III transcription	7651387
+50628	RNA splicing	10725331
+50628	RNA processing/modification	10725331
+5441	Pol II transcription	8524256
+5441	Pol I transcription	8786124
+5441	Pol III transcription	8786124
+5442	DNA synthesis	9097968
+2100	Pol II transcription	8769313
+2101	Pol II transcription	9286700
+8788	Differentiation	8095043
+5445	Other metabolism	8661009
+3842	Nuclear-cytoplasmic transport	9144189
+3842	Protein translocation	9144189
+2103	Pol II transcription	9344655
+3843	Nuclear-cytoplasmic transport	9114010
+3843	Protein translocation	9114010
+5449	Pol II transcription	1487156
+3846	Cell structure	1703541
+2107	Protein synthesis	7990965
+1160	Energy generation	2324105
+2108	Energy generation	8617498
+3848	Cell structure	1380725
+1161	Pol II transcription	7664335
+1161	DNA repair	7664335
+2109	Energy generation	7912128
+3849	Cell structure	1380918
+631	Cell structure	9628810
+636	RNA processing/modification	9367685
+10782	Pol II transcription	10777669
+639	Pol II transcription	1851123
+639	Differentiation	8921366
+10788	Cell structure	8756646
+7050	Pol II transcription	8537382
+7050	Differentiation	8537382
+29777	Pol II transcription	10648625
+7054	Other metabolism	9920892
+5450	Pol II transcription	7859290
+5451	Pol II transcription	2905684
+5452	Pol II transcription	9442393
+5452	Differentiation	9442393
+8796	Cell structure	9813070
+2110	Energy generation	8306995
+3851	Cell structure	2452170
+3852	Cell structure	2456903
+2113	Pol II transcription	7753825
+27097	Pol II transcription	9674425
+5457	Pol II transcription	8995448
+5457	Differentiation	8995448
+3853	Cell structure	2410904
+2114	Pol II transcription	8596630
+3854	Cell structure	9618173
+2115	Pol II transcription	7700648
+3855	Cell structure	
+3856	Cell structure	
+3857	Cell structure	8647270
+3858	Cell structure	1380725
+3859	Cell structure	9171831
+641	DNA repair	7585968
+57180	Cell structure	10047519
+57180	Cell elongation	10047519
+642	Protein degradation	9546396
+644	Other metabolism	10858451
+645	Other metabolism	8117274
+1178	Differentiation	8400237
+53981	RNA processing/modification	7969155
+10797	Other metabolism	8218174
+10799	RNA processing/modification	9630247
+4800	Pol II transcription	2000400
+7062	Cell structure	7685034
+4802	Pol II transcription	10446203
+7066	Differentiation	8202159
+7067	Pol II transcription	2879242
+2120	Pol II transcription	7761424
+7068	Pol II transcription	1618799
+3860	Cell structure	9714826
+5464	Other metabolism	10542310
+3861	Cell structure	7525408
+4809	RNA processing/modification	10593953
+5465	Pol II transcription	7684926
+5467	Pol II transcription	1333051
+5468	Pol II transcription	9568716
+5468	Differentiation	9568716
+5469	Pol II transcription	9653119
+3866	Cell structure	2580298
+10001	Pol II transcription	10024883
+10002	Pol II transcription	10220376
+3868	Cell structure	2451124
+10003	Protein degradation	10085079
+6414	Cell stress	2037562
+7072	RNA processing/modification	1934064
+7073	Pol II transcription	9207209
+7074	Cell structure	10835422
+6418	DNA synthesis	7753797
+4817	Other metabolism	9671749
+7078	Protein degradation	
+3872	Cell structure	1281771
+5476	Protein degradation	3107551
+3875	Cell structure	2434380
+10014	Chromatin/chromosome structure	10220385
+660	Differentiation	9520419
+8021	Nuclear-cytoplasmic transport	8108440
+8022	Pol II transcription	10598593
+6421	RNA splicing	8449401
+6421	RNA processing/modification	8449401
+25803	Pol II transcription	6857767
+25804	RNA splicing	10523320
+25804	RNA processing/modification	10523320
+25806	Pol II transcription	10485894
+25806	Differentiation	10485894
+6426	RNA splicing	1830244
+6426	RNA processing/modification	1830244
+6427	RNA splicing	8530103
+6427	RNA processing/modification	8530103
+4824	Differentiation	9226374
+6429	RNA splicing	8321209
+6429	RNA processing/modification	8321209
+3880	Cell structure	2448790
+3881	Cell structure	9405442
+3883	Cell structure	7565656
+2145	Pol II transcription	8921387
+2145	Chromatin/chromosome structure	8921387
+3884	Cell structure	7565656
+2146	Chromatin/chromosome structure	8954776
+3887	Cell structure	7556444
+3889	Cell structure	9084137
+670	Other metabolism	7759552
+10025	Pol II transcription	10235266
+672	Pol II transcription	9662397
+672	DNA repair	9703501
+672	Cell stress	9703501
+676	Chromatin/chromosome structure	10365964
+8031	Pol II transcription	8643607
+6430	RNA splicing	7556075
+6430	RNA processing/modification	7556075
+6431	RNA splicing	7556075
+6431	RNA processing/modification	7556075
+6432	RNA splicing	8013463
+6432	RNA processing/modification	8013463
+6433	RNA splicing	8940107
+6433	RNA processing/modification	8940107
+6434	RNA splicing	9546399
+6434	RNA processing/modification	9546399
+4830	Pol II transcription	8392752
+25819	Pol II transcription	10521507
+7095	Protein translocation	9020021
+4835	Other metabolism	1691923
+5493	Cell structure	9521878
+5494	Cell stress	9003755
+4839	RNA processing/modification	1394192
+5498	Other metabolism	7713909
+3898	Cell structure	9119369
+3899	Pol II transcription	8555498
+10036	Chromatin/chromosome structure	7600578
+10038	DNA repair	7260241
+51621	Pol II transcription	10023774
+10039	DNA repair	7260241
+686	Other metabolism	7550325
+687	Pol II transcription	8051167
+688	Pol II transcription	8479902
+689	Pol II transcription	2320128
+9782	Cell structure	2033075
+25822	Cell stress	10570961
+25824	Cell stress	10521424
+27429	Cell stress	10644717
+4841	RNA processing/modification	9360842
+6446	Cell stress	9114008
+4842	Other metabolism	7558036
+25827	Protein degradation	10531035
+4843	Other metabolism	7558036
+6448	Other metabolism	7493035
+1501	Cell structure	9223106
+4846	Amino-acid metabolism	1378832
+1504	Protein degradation	2917002
+1506	Protein degradation	9065485
+1508	Protein degradation	3463996
+1509	Protein degradation	3927292
+10048	Cell structure	9817760
+695	Differentiation	8090769
+25833	Pol II transcription	10473598
+3110	Pol II transcription	9843207
+3110	Differentiation	9843207
+1510	Protein degradation	2674141
+1511	Protein degradation	2569462
+4854	Differentiation	7698746
+1512	Protein degradation	2849458
+1513	Protein degradation	7818555
+1514	Protein degradation	8419312
+4857	RNA splicing	8398153
+4857	RNA processing/modification	8398153
+26499	Cell structure	10419454
+1519	Protein degradation	7929457
+2175	DNA repair	8896564
+2176	DNA repair	1574115
+10051	Chromatin/chromosome structure	9789013
+10056	Protein synthesis	10049785
+10056	RNA processing/modification	10049785
+10059	Cell structure	9786947
+7402	Cell structure	8977119
+8061	Pol II transcription	10918580
+7405	DNA repair	9169138
+7408	Cell structure	7828592
+5805	Other metabolism	3308682
+5805	Amino-acid metabolism	3308682
+1520	Protein degradation	1373132
+6469	Differentiation	8269518
+1523	Pol II transcription	1301999
+1523	Differentiation	1301999
+1528	Energy generation	1712589
+2184	Amino-acid metabolism	9305902
+10062	Pol II transcription	7744246
+2189	DNA repair	9256465
+10063	Energy generation	9050918
+9013	Pol II transcription	7801123
+9013	Pol I transcription	7801123
+9014	Pol II transcription	7801123
+9014	Pol I transcription	7801123
+9015	Pol II transcription	7801123
+9015	Pol I transcription	7801123
+7414	Cell structure	2116004
+5810	DNA repair	9716408
+5813	DNA synthesis	1545807
+6470	Amino-acid metabolism	8505317
+6472	Amino-acid metabolism	8505317
+6473	Pol II transcription	9259282
+6473	Differentiation	9590293
+6474	Differentiation	9482898
+3131	Pol II transcription	8639829
+6477	Protein degradation	9334332
+6478	Protein degradation	9334332
+1534	Energy generation	7559396
+1535	Energy generation	2243141
+1536	Energy generation	3600769
+1537	Energy generation	2536365
+2193	Protein synthesis	9177188
+2193	RNA processing/modification	9177188
+1539	Cell structure	7737358
+2197	Protein synthesis	8395683
+54205	Energy generation	2849112
+54206	Cell stress	10749885
+10073	Nuclear-cytoplasmic transport	9670026
+7428	Pol II transcription	7660122
+7428	Protein degradation	10973499
+5824	Protein translocation	10051604
+8085	Pol II transcription	9247308
+7429	Cell structure	2846586
+8087	Nuclear-cytoplasmic transport	10888599
+5828	Protein translocation	1750930
+3141	Other metabolism	7842009
+3142	Pol II transcription	7806220
+3142	Differentiation	8094082
+3145	Other metabolism	2025226
+1544	Other metabolism	2813353
+1548	Other metabolism	9827545
+10084	Pol II transcription	10198427
+7431	Cell structure	3792301
+5830	Protein translocation	7790377
+9039	Protein degradation	9694792
+8091	Chromatin/chromosome structure	7606786
+5831	Amino-acid metabolism	1730675
+8092	Pol II transcription	8756334
+8092	Differentiation	8756334
+5832	Amino-acid metabolism	8761662
+6492	Pol II transcription	8812055
+6493	Pol II transcription	8661114
+3150	Pol II transcription	8047885
+8099	DNA synthesis	9331572
+6496	Differentiation	10369266
+4892	Cell structure	9295142
+24139	Cell structure	10521658
+6498	Pol II transcription	10531062
+3155	Energy generation	8440722
+3155	Amino-acid metabolism	8440722
+6499	Protein synthesis	7610041
+11030	RNA processing/modification	8855282
+3158	Other metabolism	7851882
+4899	Pol II transcription	8034649
+4899	Energy generation	7629110
+11034	Cell structure	8399167
+11036	Pol II transcription	10364255
+10092	Cell structure	9230079
+10092	Cell elongation	9230079
+10093	Cell structure	9230079
+10093	Cell elongation	9230079
+10094	Cell structure	9230079
+10094	Cell elongation	9230079
+10095	Cell structure	9230079
+10095	Cell elongation	9230079
+10096	Cell structure	9230079
+10096	Cell elongation	9230079
+10097	Cell structure	9230079
+10097	Cell elongation	9230079
+9044	Pol II transcription	9488487
+9044	Pol III transcription	9488487
+9045	Protein synthesis	9480843
+51684	Protein degradation	10564661
+9049	Pol II transcription	9447995
+51686	Other metabolism	10781085
+3162	Other metabolism	3345742
+3163	Other metabolism	1575508
+3166	Pol II transcription	1360670
+3167	Pol II transcription	7647458
+3167	Differentiation	7647458
+11043	Cell structure	10644436
+11044	DNA repair	10066793
+11044	Chromatin/chromosome structure	10066793
+9053	Cell structure	8408219
+9053	Cell polarity	8408219
+9054	Other metabolism	9885568
+9056	Amino-acid metabolism	9829974
+51692	RNA processing/modification	8929409
+9057	Amino-acid metabolism	9829974
+7453	Protein synthesis	1761529
+7453	RNA processing/modification	1761529
+7454	Cell structure	8625410
+7456	Cell structure	9405671
+7458	Protein synthesis	9516461
+2512	Other metabolism	7493028
+3170	Pol II transcription	10868948
+3171	Pol II transcription	7739897
+5859	Protein synthesis	8078941
+5859	RNA processing/modification	8078941
+2516	Pol II transcription	8205615
+3172	Pol II transcription	9294105
+3174	Pol II transcription	8622695
+1571	Other metabolism	8307581
+1572	Other metabolism	1974816
+3176	Other metabolism	7943261
+11051	RNA processing/modification	9659921
+3178	Nuclear-cytoplasmic transport	8521471
+3178	RNA processing/modification	8521471
+11052	RNA processing/modification	9659921
+1576	Other metabolism	2492107
+5860	Other metabolism	3033643
+5860	Amino-acid metabolism	3033643
+2521	RNA processing/modification	8510758
+58530	Differentiation	10384126
+3181	RNA processing/modification	7789969
+3182	RNA processing/modification	8999813
+3183	RNA splicing	3110598
+3183	RNA processing/modification	3110598
+3184	RNA processing/modification	10205060
+3184	RNA turnover	10205060
+3185	RNA processing/modification	7499401
+3187	RNA processing/modification	7499401
+10406	Protein degradation	1686187
+3189	RNA splicing	8999868
+3189	RNA processing/modification	8999868
+11064	Pol II transcription	10359848
+11065	Protein degradation	9122200
+11068	Protein degradation	9122200
+9070	Pol II transcription	10393421
+8419	Cell structure	8636093
+6817	Other metabolism	8661000
+4130	Cell structure	8812494
+6818	Other metabolism	7829089
+4131	Cell structure	1881920
+6819	Other metabolism	9169148
+5871	Differentiation	7515885
+4133	Cell structure	9588626
+4134	Cell structure	1905296
+4137	Cell structure	9836646
+3190	RNA processing/modification	8107114
+3191	RNA processing/modification	2687284
+4139	Cell structure	
+5879	Differentiation	10821761
+3192	RNA processing/modification	1628625
+1592	Other metabolism	9228017
+3198	Pol II transcription	7622051
+3198	Differentiation	7622051
+11073	Chromatin/chromosome structure	9461304
+11077	Pol II transcription	9651507
+6820	Other metabolism	9799594
+6821	Amino-acid metabolism	9428520
+7482	Differentiation	8761309
+23521	Protein synthesis	10580157
+7483	Differentiation	9441749
+6827	Pol II transcription	8649394
+6827	Chromatin/chromosome structure	8649394
+23522	Pol II transcription	10497217
+23522	Chromatin/chromosome structure	10497217
+7484	Differentiation	9441749
+4141	Protein synthesis	8921912
+4141	RNA processing/modification	8921912
+6829	Pol II transcription	8975720
+6829	Chromatin/chromosome structure	9199507
+7486	DNA repair	10880505
+7486	Aging	10779560
+4143	Other metabolism	1772450
+4143	Amino-acid metabolism	1772450
+5883	DNA repair	10852904
+4144	Other metabolism	7665609
+4144	Amino-acid metabolism	7665609
+5884	DNA repair	9660800
+5885	DNA repair	8812457
+5886	DNA repair	10854423
+23528	Pol II transcription	10448078
+5887	DNA repair	10854423
+5888	DNA repair	8358431
+4149	Pol II transcription	8425218
+5889	DNA repair	9469824
+2547	DNA repair	9826654
+11080	Cell stress	9546042
+10425	Differentiation	10422847
+10426	Cell structure	9566967
+8431	Pol II transcription	11030331
+8433	Pol II transcription	9748258
+6830	Pol II transcription	8786132
+6830	Chromatin/chromosome structure	8786132
+6832	RNA processing/modification	9925937
+8438	DNA repair	8805304
+6834	Energy generation	9843204
+23530	Energy generation	9524818
+4150	Pol II transcription	1502157
+7494	Pol II transcription	2321018
+5890	DNA repair	9512535
+6839	Chromatin/chromosome structure	10949293
+4152	Pol II transcription	9774669
+5892	DNA repair	9570954
+23534	Nuclear-cytoplasmic transport	10366588
+5893	DNA repair	7774919
+2551	Pol II transcription	8441384
+23536	RNA processing/modification	10430867
+2552	Pol II transcription	8441384
+2553	Pol II transcription	8441384
+10431	Protein translocation	10339406
+11096	Protein degradation	10438522
+11097	Nuclear-cytoplasmic transport	10358091
+6840	Cell structure	9867483
+8446	RNA processing/modification	9685386
+5104	Protein degradation	1714450
+8449	RNA splicing	9547260
+5108	Cell structure	8120099
+23542	Cell structure	10490659
+23549	Other metabolism	9632644
+10440	Protein translocation	10339406
+10449	Energy generation	
+8453	Protein degradation	10973499
+5111	DNA synthesis	9552415
+5111	DNA repair	9552415
+8456	Pol II transcription	10767081
+8458	Pol II transcription	9748214
+5116	Cell structure	8124707
+4170	Differentiation	8790944
+1911	Chromatin/chromosome structure	9121482
+4171	DNA synthesis	8798650
+1912	Chromatin/chromosome structure	9121482
+4172	DNA synthesis	1549468
+4173	DNA synthesis	7601140
+4174	DNA synthesis	8751386
+2571	Amino-acid metabolism	1549570
+1915	Protein synthesis	3512269
+2572	Amino-acid metabolism	1549570
+4176	DNA synthesis	8798650
+1917	Protein synthesis	8812466
+9400	DNA synthesis	9878247
+9400	DNA repair	9878247
+9401	DNA synthesis	9878247
+9401	DNA repair	9878247
+9401	Aging	10779560
+9406	Pol II transcription	9931435
+9406	RNA splicing	9931435
+9409	Protein translocation	9837814
+8462	Pol II transcription	9748269
+8464	Pol II transcription	9787080
+8464	Differentiation	9674425
+6862	Pol II transcription	8963900
+8467	Pol II transcription	9730600
+23564	Other metabolism	10493931
+23567	RNA processing/modification	10488071
+4188	Pol II transcription	8797820
+313	Other metabolism	1883828
+314	Other metabolism	9119395
+316	Other metabolism	7570184
+56990	Cell structure	10816584
+9410	RNA splicing	9774689
+9410	RNA processing/modification	9774689
+56993	Protein translocation	10982837
+10465	RNA splicing	9570313
+9412	Pol II transcription	8598913
+56998	Pol II transcription	10898789
+10469	Protein translocation	10339406
+9416	RNA splicing	9409622
+9416	RNA processing/modification	9409622
+56999	Protein degradation	10936055
+7813	Differentiation	9618176
+8470	Cell structure	9211900
+6871	Pol II transcription	8552087
+6871	Differentiation	9674425
+5133	Differentiation	9332365
+8479	Chromatin/chromosome structure	9710638
+22913	RNA processing/modification	9376072
+6877	Pol II transcription	9045704
+4192	Differentiation	1639750
+23576	Other metabolism	9874257
+1936	Protein synthesis	8334168
+54600	Other metabolism	1910331
+2593	Other metabolism	8547310
+325	Chromatin/chromosome structure	10972085
+10472	Chromatin/chromosome structure	9756912
+327	Protein degradation	2006156
+328	Pol II transcription	1380454
+328	DNA repair	8942627
+10474	Pol II transcription	9674425
+10474	Differentiation	9674425
+9421	Pol II transcription	9931445
+9421	Differentiation	9931445
+8480	Nuclear-cytoplasmic transport	10209021
+30000	Nuclear-cytoplasmic transport	9298975
+6880	Pol II transcription	10821850
+8487	RNA splicing	9323130
+8487	RNA processing/modification	9323130
+6886	Differentiation	2303035
+22926	Pol II transcription	9271374
+22926	Cell stress	9837962
+23583	DNA repair	10074426
+1948	Differentiation	9630219
+10	Other metabolism	2340091
+13	Other metabolism	8063807
+10482	Nuclear-cytoplasmic transport	9660949
+15	Other metabolism	8661026
+16	Protein synthesis	7654687
+16	RNA processing/modification	7654687
+339	RNA processing/modification	8078915
+18	Amino-acid metabolism	7721088
+10486	Cell polarity	7962207
+10487	Cell polarity	1406678
+10488	Pol II transcription	9271389
+7832	Differentiation	8944033
+9439	Pol II transcription	9989412
+6892	Protein translocation	9238042
+6894	Pol II transcription	8846792
+8499	Cell structure	9624153
+6895	Pol II transcription	2011739
+6897	Protein synthesis	2033077
+6897	RNA processing/modification	2033077
+1950	Cell structure	7640657
+1950	DNA synthesis	9482941
+1950	Chromatin/chromosome structure	10436156
+22936	Pol II transcription	9108030
+23594	DNA synthesis	
+22938	Pol II transcription	9632709
+3558	Other	10570282
+23595	DNA synthesis	10402192
+1956	Cell structure	7640657
+23	Protein synthesis	9790762
+25	RNA processing/modification	8242749
+10492	Nuclear-cytoplasmic transport	9847309
+10492	RNA splicing	9847309
+10492	RNA processing/modification	9847309
+26	Other metabolism	1356107
+348	Differentiation	3283935
+9440	Pol II transcription	9989412
+10494	Cell stress	8887545
+9441	Pol II transcription	9989412
+9442	Pol II transcription	9989412
+9443	Pol II transcription	9989412
+6101	Cell stress	10391211
+7846	Cell structure	3693406
+4504	Other metabolism	1873033
+7849	Differentiation	9590297
+2908	Pol II transcription	7769088
+2909	Pol II transcription	1894621
+1962	Energy generation	8188243
+1964	Protein synthesis	8106356
+1967	Protein synthesis	7495858
+351	Cell stress	8596911
+1968	Protein synthesis	8106381
+30	Energy generation	1679347
+32	Energy generation	
+33	Energy generation	1774065
+355	Other	10506221
+34	Energy generation	6857268
+35	Energy generation	2565344
+36	Energy generation	7698750
+36	Amino-acid metabolism	7698750
+37	Energy generation	7668252
+9451	Protein synthesis	10026192
+38	Energy generation	
+39	Energy generation	
+9457	Pol II transcription	10086359
+9457	Differentiation	10086359
+4512	Energy generation	8240356
+6117	DNA synthesis	8756712
+6117	DNA repair	8756712
+4513	Energy generation	6246917
+6118	DNA synthesis	2406247
+4514	Energy generation	6246917
+6119	DNA synthesis	8454588
+6119	DNA repair	8454588
+4519	Energy generation	6363134
+5178	Pol II transcription	9500555
+22955	Pol II transcription	10524249
+1973	Protein synthesis	10880459
+1974	Protein synthesis	8521730
+1975	Protein synthesis	2390971
+1977	Protein synthesis	10880459
+1978	Protein synthesis	7935836
+1979	Protein synthesis	7935836
+8803	Energy generation	9765291
+367	Pol II transcription	2594783
+367	Differentiation	10840043
+8804	Pol II transcription	9710587
+8804	Differentiation	9710587
+8805	Pol II transcription	9115274
+8805	Chromatin/chromosome structure	9191165
+9464	Pol II transcription	9878849
+6121	Other metabolism	9326941
+6122	Protein synthesis	2891103
+6123	Protein synthesis	8921388
+6124	Protein synthesis	8268230
+4520	Pol II transcription	3208749
+4520	Other metabolism	8065932
+6125	Protein synthesis	7772601
+4521	DNA repair	7713500
+4521	Cell stress	8226881
+4522	Other metabolism	3053686
+7867	Cell stress	8626550
+6128	Protein synthesis	8479925
+4524	Amino-acid metabolism	7647779
+6129	Protein synthesis	8441630
+4528	Protein synthesis	7829522
+5184	Protein degradation	1972707
+5184	Amino-acid metabolism	1972707
+2926	RNA processing/modification	8036161
+2928	Pol II transcription	9441739
+5188	Protein synthesis	9878253
+1981	Protein synthesis	10880459
+5189	Protein translocation	9398848
+1982	Protein synthesis	9049310
+1983	Protein synthesis	8663286
+1984	Protein synthesis	7622067
+10808	Cell stress	9931472
+50	Energy generation	9630632
+51	Energy generation	8159712
+8812	Pol II transcription	9632813
+9470	Protein synthesis	9582349
+54658	Other metabolism	1339448
+8815	Chromatin/chromosome structure	10908652
+58	Cell structure	
+54659	Other metabolism	9295054
+59	Cell structure	
+6130	Protein synthesis	8360149
+9475	Cell structure	9933571
+8819	Chromatin/chromosome structure	9651585
+6132	Protein synthesis	7506540
+6133	Protein synthesis	8597601
+9477	Pol II transcription	9933582
+6135	Protein synthesis	7748210
+6136	Protein synthesis	8441690
+6137	Protein synthesis	9582194
+6138	Protein synthesis	9582194
+5190	Protein translocation	8670792
+6139	Protein synthesis	2402465
+4535	Energy generation	1959619
+5191	Protein translocation	9090382
+5193	Protein translocation	9090384
+2934	Cell structure	3020431
+4538	Energy generation	1959619
+5194	Protein translocation	8858165
+2935	Protein synthesis	2511002
+5195	Protein translocation	9653144
+2936	Cell stress	947404
+2936	Amino-acid metabolism	2185014
+10810	Cell structure	10381382
+2937	Cell stress	465367
+2937	Amino-acid metabolism	8896573
+1990	Protein degradation	
+2939	Cell stress	3138230
+1991	Protein degradation	2902087
+1994	RNA turnover	10848602
+1996	RNA processing/modification	1655278
+60	Cell structure	
+1999	Pol II transcription	10821850
+1999	Differentiation	9234700
+383	Amino-acid metabolism	3540966
+29803	DNA synthesis	10606657
+384	Amino-acid metabolism	8898077
+8820	Differentiation	9620767
+387	Cell structure	10436159
+9480	Pol II transcription	9915796
+9480	Differentiation	9915796
+8824	Other metabolism	9169443
+9481	Energy generation	10025957
+8826	Cell structure	8051149
+27125	Pol II transcription	10588740
+6141	Protein synthesis	8218404
+51329	RNA splicing	10708573
+6142	Protein synthesis	9582194
+6143	Protein synthesis	1577483
+6144	Protein synthesis	7772601
+27129	Cell stress	10593960
+7884	RNA processing/modification	9049306
+6146	Protein synthesis	8135813
+6147	Protein synthesis	9417910
+1200	Protein degradation	9295267
+2940	Cell stress	9480897
+2941	Cell stress	9820822
+30062	Pol II transcription	10625658
+2944	Cell stress	9452477
+4548	Amino-acid metabolism	9587027
+10825	Other metabolism	10405317
+390	Cell structure	9531558
+70	Cell structure	9563954
+71	Cell structure	
+72	Cell structure	
+51332	Cell structure	10764729
+54677	Energy generation	10486279
+6150	Protein synthesis	8541832
+6152	Protein synthesis	9582194
+9496	Pol II transcription	10945475
+26190	Protein degradation	10531035
+6154	Protein synthesis	8479925
+26191	Differentiation	10068674
+9499	Cell structure	10369880
+6156	Protein synthesis	1577483
+4552	Amino-acid metabolism	9501215
+6157	Protein synthesis	7772601
+6158	Protein synthesis	7772601
+6159	Protein synthesis	8597591
+2952	Cell stress	8198545
+2954	Amino-acid metabolism	9417084
+2956	DNA repair	9428522
+2957	Pol II transcription	8224848
+2959	Pol II transcription	7671313
+81	Cell structure	9508771
+56288	Cell polarity	10934474
+56288	Asymmetric cell division	10934474
+8841	Chromatin/chromosome structure	9501169
+51343	Protein degradation	11003657
+86	Chromatin/chromosome structure	9845365
+87	Cell structure	2349951
+88	Cell structure	1339456
+8846	DNA repair	8600462
+89	Cell structure	1339456
+6160	Protein synthesis	2780320
+8848	Pol II transcription	9022669
+6161	Protein synthesis	9284913
+6164	Protein synthesis	7490091
+6165	Protein synthesis	8786106
+6167	Protein synthesis	7545944
+6168	Protein synthesis	1437567
+2960	Pol II transcription	1956398
+6169	Protein synthesis	9375793
+2961	Pol II transcription	1956398
+2962	Pol II transcription	1734283
+2963	Pol II transcription	7929273
+2965	Pol II transcription	9118947
+2965	DNA repair	9118947
+2966	Pol II transcription	8194529
+2966	DNA repair	8194529
+10840	Other metabolism	10204077
+2967	Pol II transcription	8194529
+2967	DNA repair	8194529
+10841	Other metabolism	10029623
+2968	Pol II transcription	9118947
+2968	DNA repair	9118947
+2969	Pol II transcription	9334314
+10844	Cell structure	9566967
+10847	Pol II transcription	10347196
+10849	Pol I transcription	9426281
+7110	Pol II transcription	1409643
+8850	Chromatin/chromosome structure	8684459
+7111	Cell structure	1370827
+95	Protein degradation	8394326
+95	Amino-acid metabolism	8394326
+7114	Cell structure	8617195
+8854	Other metabolism	8797830
+5511	RNA turnover	9153239
+8856	Pol II transcription	9784494
+6170	Protein synthesis	8908372
+6171	Protein synthesis	1326959
+27158	Other metabolism	10625700
+6175	Protein synthesis	3323886
+6176	Protein synthesis	3323886
+2971	Pol III transcription	7789179
+2972	Pol III transcription	8943358
+2975	Pol III transcription	8164661
+2976	Pol III transcription	7729686
+706	Protein translocation	1326278
+10856	DNA synthesis	10428817
+10856	DNA repair	10428817
+29842	Pol II transcription	10644752
+51362	RNA splicing	9524131
+7125	Cell structure	
+51366	Protein degradation	10030672
+27164	Pol II transcription	10610715
+26508	Pol II transcription	10415358
+27165	Amino-acid metabolism	10620514
+6181	Protein synthesis	3323886
+3921	Protein synthesis	8760291
+6182	Protein synthesis	9169145
+6183	Protein synthesis	9545647
+6187	Protein synthesis	2308862
+6188	Protein synthesis	1712897
+6189	Protein synthesis	1398113
+29855	Pol II transcription	10725330
+7134	Cell structure	
+7135	Cell structure	
+5532	Pol II transcription	8978785
+7136	Cell structure	
+26517	Protein translocation	10552927
+7137	Cell structure	
+3930	Chromatin/chromosome structure	8157662
+7138	Cell structure	
+27175	Cell structure	10903841
+26519	Protein translocation	10552927
+6191	Protein synthesis	8358435
+7139	Cell structure	
+8878	Protein degradation	8702753
+5536	Pol II transcription	7925273
+6192	Protein synthesis	2124517
+3933	Protein degradation	8999869
+6193	Protein synthesis	7772601
+6194	Protein synthesis	1301164
+4593	Differentiation	7546737
+4595	DNA repair	8682794
+56604	Cell structure	10828619
+26520	Protein translocation	10552927
+7140	Cell structure	
+26521	Protein translocation	10552927
+8880	Pol II transcription	8125259
+26523	Protein synthesis	10534406
+51385	Pol II transcription	10029171
+51385	Differentiation	10029171
+8888	Nuclear-cytoplasmic transport	9712829
+8888	DNA synthesis	9712829
+3949	Protein translocation	6091915
+1264	Cell structure	8526917
+1265	Cell structure	8889829
+10880	Cell structure	10373328
+10881	Cell structure	10373328
+8891	Protein synthesis	10900014
+7153	Pol II transcription	9795238
+7153	DNA synthesis	9795238
+7153	Chromatin/chromosome structure	9795238
+5550	Protein degradation	9695945
+7155	Pol II transcription	1309226
+7155	DNA synthesis	1309226
+7155	Chromatin/chromosome structure	1309226
+8894	Protein synthesis	3044606
+7156	Chromatin/chromosome structure	8622991
+7157	DNA repair	11002423
+8896	Pol II transcription	7841202
+5557	DNA synthesis	8026492
+8899	RNA splicing	9102632
+5558	DNA synthesis	8026492
+10891	Pol II transcription	10713165
+10895	Pol II transcription	7887923
+8106	RNA processing/modification	9462747
+29882	Protein degradation	9469815
+4901	Pol II transcription	8939891
+7161	DNA repair	10391249
+4904	Pol II transcription	3174636
+29888	Cell structure	
+7166	Amino-acid metabolism	2889273
+5564	Cell stress	9575201
+5565	Cell stress	9575201
+10102	Protein synthesis	7615523
+10109	Cell structure	9230079
+10109	Cell elongation	9230079
+8115	Differentiation	7809072
+29892	Pol II transcription	7887923
+29895	Cell structure	
+4913	DNA repair	8990169
+7174	Protein degradation	9974389
+6519	Amino-acid metabolism	8054986
+7175	Nuclear-cytoplasmic transport	7798308
+2230	Energy generation	2969697
+5573	Pol II transcription	1832337
+2232	Energy generation	2845396
+2235	Other metabolism	1376018
+2235	Energy generation	1729699
+3975	Pol II transcription	9212161
+3975	Differentiation	9212161
+2237	DNA synthesis	9778254
+2237	DNA repair	9778254
+10110	Cell stress	10548550
+10111	DNA repair	9705271
+3978	DNA synthesis	2204063
+3978	DNA repair	10827190
+10113	Pol II transcription	10194769
+29107	Nuclear-cytoplasmic transport	10567585
+6521	Cell structure	8841202
+6525	Cell structure	8707825
+7182	Pol II transcription	9006963
+7184	Cell stress	2377606
+4926	Cell structure	1541630
+4927	Nuclear-cytoplasmic transport	9049309
+3980	DNA repair	7565692
+4928	Nuclear-cytoplasmic transport	7736573
+2242	Differentiation	6264598
+3981	DNA repair	8798671
+4929	Pol II transcription	7877627
+3983	Cell structure	9245787
+2245	Cell structure	8969170
+2246	Differentiation	10903182
+2247	Differentiation	10903182
+56655	DNA synthesis	10801849
+51716	Other metabolism	10452915
+6533	Amino-acid metabolism	8010975
+6534	Amino-acid metabolism	7651355
+6536	Amino-acid metabolism	8183239
+26574	Pol II transcription	10580117
+5591	DNA repair	7671312
+2250	Differentiation	9786939
+4938	Protein synthesis	2416561
+5594	Cell stress	10958679
+2255	Differentiation	9916808
+5599	Cell stress	8137421
+3996	Cell structure	7542763
+10131	Cell stress	8756626
+3998	Protein translocation	9546392
+10136	Protein degradation	2826474
+8140	Amino-acid metabolism	9751058
+29128	Pol II transcription	10646863
+51728	Pol III transcription	9869639
+6541	Amino-acid metabolism	1348489
+6542	Amino-acid metabolism	8954799
+6545	Amino-acid metabolism	9598310
+26582	Pol II transcription	
+4942	Amino-acid metabolism	3456579
+26584	Pol II transcription	9736770
+3205	Differentiation	8563754
+93974	Energy generation	
+26585	Differentiation	9660951
+3206	Pol II transcription	10766757
+3206	Differentiation	8972230
+4946	Other metabolism	7813017
+1604	Other	7545711
+4947	Other metabolism	9428668
+1605	Cell structure	1406935
+3209	Differentiation	9020844
+51733	Other metabolism	10542323
+3212	Differentiation	7876223
+1610	Amino-acid metabolism	2901986
+4953	Other metabolism	3036086
+93986	Pol II transcription	
+4957	Cell structure	10072582
+1615	Protein synthesis	8449960
+1615	RNA processing/modification	8449960
+2271	Energy generation	3828494
+10151	RNA processing/modification	8101480
+10153	Pol II transcription	2247079
+10154	Protein translocation	9586637
+5901	Nuclear-cytoplasmic transport	7603572
+5901	DNA synthesis	8421051
+5903	Nuclear-cytoplasmic transport	7603572
+7507	DNA repair	1601884
+51747	RNA splicing	10631324
+7508	DNA repair	1522891
+3222	Pol II transcription	1346761
+3223	Pol II transcription	8870653
+3223	Differentiation	8870653
+3226	Pol II transcription	10835276
+3227	Pol II transcription	9582375
+11100	Nuclear-cytoplasmic transport	9733834
+11100	RNA processing/modification	9733834
+4967	Energy generation	1542694
+3229	Pol II transcription	10835276
+4968	DNA repair	9223305
+11102	RNA processing/modification	10024167
+1627	Cell structure	8216329
+11104	Cell structure	9658175
+1628	Pol II transcription	8786133
+1629	Amino-acid metabolism	2837277
+10160	Cell structure	9425278
+11108	Pol II transcription	10552934
+10163	Cell structure	9732292
+9111	Pol II transcription	9989503
+10166	Amino-acid metabolism	10369256
+53353	Protein translocation	10766186
+7514	Nuclear-cytoplasmic transport	9368044
+9118	Cell structure	7769995
+7515	DNA repair	10773072
+9119	Cell structure	9856802
+7516	DNA repair	9628903
+7517	DNA repair	9660962
+5914	Pol II transcription	2825025
+5914	Differentiation	2825025
+7518	DNA repair	8548796
+5915	Pol II transcription	2833708
+5915	Differentiation	2153268
+8175	RNA splicing	8211113
+8175	RNA processing/modification	8211113
+5917	Protein synthesis	7590355
+5917	RNA processing/modification	7590355
+8178	Pol II transcription	8596958
+4973	Protein translocation	9828121
+4973	Protein degradation	9052782
+3235	Pol II transcription	1756725
+1632	Energy generation	
+3236	Pol II transcription	1756725
+3239	Pol II transcription	
+1638	Other metabolism	8148378
+2294	Pol II transcription	8626802
+1639	Axonal transport	1828535
+2295	Pol II transcription	9722567
+10174	Cell structure	9885244
+7520	DNA repair	8073286
+9125	Differentiation	9447985
+9128	RNA splicing	9328476
+9128	RNA processing/modification	9328476
+9129	RNA splicing	9328476
+9129	RNA processing/modification	9328476
+7528	Pol II transcription	1946405
+5925	Pol II transcription	9491888
+5926	Pol II transcription	8414517
+5927	Pol II transcription	8414517
+8187	Pol II transcription	9121460
+8187	RNA processing/modification	9121460
+3242	Amino-acid metabolism	7851880
+1642	DNA repair	8798680
+1643	DNA repair	8798680
+1647	DNA repair	7973727
+1647	Cell stress	7973727
+1649	Cell stress	1339368
+10180	RNA processing/modification	10352938
+10181	RNA processing/modification	10352938
+53371	Nuclear-cytoplasmic transport	8707840
+9136	RNA processing/modification	9418896
+5931	Differentiation	7503932
+7536	Pol II transcription	9660765
+7536	RNA splicing	9660765
+8192	Protein degradation	8543061
+7538	RNA turnover	9703499
+5935	RNA processing/modification	8634703
+6591	Pol II transcription	10866665
+5936	RNA processing/modification	9169144
+5937	RNA processing/modification	8041632
+6594	Chromatin/chromosome structure	1408766
+5939	RNA processing/modification	8041632
+6595	Pol II transcription	8223438
+6597	Pol II transcription	8208605
+6598	Pol II transcription	7801128
+1652	Other metabolism	9480844
+6599	Pol II transcription	8804307
+4998	DNA synthesis	7502077
+1656	Protein synthesis	1394235
+4999	Pol II transcription	8808289
+4999	DNA synthesis	8808289
+11133	Cell structure	10099934
+1659	RNA splicing	7935475
+1659	RNA processing/modification	7935475
+11136	Amino-acid metabolism	10471498
+11139	Cell structure	10023074
+9140	Protein degradation	9852036
+10197	Protein degradation	8811196
+10199	RNA processing/modification	9450966
+5940	RNA processing/modification	8269511
+5942	RNA processing/modification	9598316
+4204	Pol II transcription	9620804
+4205	Pol II transcription	8575763
+5944	RNA processing/modification	9598316
+4207	Pol II transcription	8575763
+5946	RNA processing/modification	9598316
+4208	Pol II transcription	8575763
+5947	Other metabolism	2992469
+4209	Pol II transcription	8575763
+4209	Differentiation	8269842
+5948	Other metabolism	2992469
+5949	Other metabolism	2542268
+3263	Other metabolism	3855550
+3267	Nuclear-cytoplasmic transport	7637788
+1665	RNA splicing	9388478
+3269	Differentiation	10818238
+1666	Energy generation	
+11143	DNA synthesis	10438470
+11143	Chromatin/chromosome structure	10438470
+9150	Pol II transcription	9765293
+9152	Amino-acid metabolism	9845349
+9156	DNA synthesis	9685493
+9156	DNA repair	10364235
+4211	Pol II transcription	7565694
+5950	Other metabolism	6316270
+4212	Pol II transcription	10764806
+7555	Pol II transcription	2562787
+7556	Pol II transcription	9278146
+7556	Pol III transcription	9278146
+30812	Pol II transcription	10684944
+30813	Pol II transcription	10673340
+30813	Differentiation	10673340
+4216	Cell stress	9305639
+4217	Cell stress	8974401
+5959	Other metabolism	9115228
+30818	Pol II transcription	10078534
+2617	Protein synthesis	7961834
+2617	RNA processing/modification	7961834
+3275	RNA processing/modification	9545638
+1674	Cell structure	8792816
+11151	Cell structure	9778037
+11157	RNA splicing	10523320
+11157	RNA processing/modification	10523320
+8500	Cell structure	7796809
+54345	Pol II transcription	10807548
+8504	Protein translocation	10958759
+8507	Differentiation	9566959
+9166	Differentiation	9418891
+4221	Pol II transcription	9989505
+6908	Pol II transcription	2194289
+4222	Differentiation	7987315
+9169	RNA splicing	9447963
+9169	RNA processing/modification	9447963
+4223	Differentiation	7713505
+7566	Pol II transcription	2288909
+2620	Cell structure	1607387
+7568	Pol II transcription	2288909
+5965	DNA synthesis	7961977
+5965	DNA repair	7961977
+23607	Cell structure	10339567
+2623	Pol II transcription	2300555
+5966	Pol II transcription	8423996
+2624	Pol II transcription	1370462
+2625	Pol II transcription	1871134
+2626	Pol II transcription	7665171
+2627	Differentiation	8975704
+2628	Other metabolism	9148748
+10507	Differentiation	8876214
+11166	Pol II transcription	10441749
+9172	Cell structure	7505783
+6917	Pol II transcription	1708494
+5970	Pol II transcription	8188306
+5971	Pol II transcription	8188306
+5976	RNA processing/modification	8855285
+5976	RNA turnover	8855285
+2637	Differentiation	9346236
+2639	Amino-acid metabolism	7490088
+3297	Pol II transcription	10821850
+3297	Cell stress	1871105
+3298	Cell stress	1871106
+3299	Cell stress	8972228
+11173	Protein degradation	10464288
+11174	Protein degradation	10464288
+8520	Chromatin/chromosome structure	9427644
+11178	Pol II transcription	10097140
+6921	Pol II transcription	7660129
+6921	Protein degradation	10973499
+9181	Cell structure	9857026
+6923	Pol II transcription	7660129
+6923	Protein degradation	10973499
+6924	Pol II transcription	7660129
+8528	Amino-acid metabolism	9163533
+6925	Pol II transcription	8978694
+6927	Pol II transcription	2044952
+5980	DNA synthesis	10856253
+5980	DNA repair	9618506
+5981	DNA synthesis	8248204
+5981	Chromatin/chromosome structure	8954124
+6929	Pol II transcription	8001125
+5982	DNA synthesis	1313560
+5983	DNA synthesis	7774928
+5984	DNA synthesis	7774928
+7589	Pol II transcription	2288909
+5989	Pol II transcription	1505960
+2648	Pol II transcription	8552087
+2648	Chromatin/chromosome structure	8552087
+10521	RNA processing/modification	8871553
+10522	Pol II transcription	9773984
+10524	Pol II transcription	8607265
+10525	Cell stress	9020069
+10527	Nuclear-cytoplasmic transport	9214382
+11184	Cell stress	8824585
+10528	RNA processing/modification	9372940
+10529	Cell structure	9733644
+8531	Pol II transcription	8710501
+6930	Mitochondrial transcription	8333869
+6930	DNA synthesis	8333869
+6930	Pol I transcription	8333869
+8535	Chromatin/chromosome structure	9315667
+9191	Pol I transcription	9774341
+6932	Differentiation	1569101
+6934	Pol II transcription	9065401
+8538	Pol II transcription	10644443
+8538	Differentiation	10644443
+6935	Pol II transcription	8138542
+6936	Pol II transcription	1370479
+7593	Pol II transcription	1860835
+5990	Pol II transcription	1505960
+6938	Pol II transcription	1312219
+5991	Pol II transcription	8600444
+5992	Pol II transcription	8600444
+5993	Pol II transcription	9806546
+4255	DNA repair	2188979
+5994	Pol II transcription	9118943
+23636	Nuclear-cytoplasmic transport	1915414
+2653	Amino-acid metabolism	3348809
+11190	Chromatin/chromosome structure	9647649
+10535	DNA synthesis	9789007
+10535	RNA turnover	9789007
+10537	Protein degradation	9368598
+11198	Pol II transcription	10421373
+11198	Chromatin/chromosome structure	10421373
+54386	Chromatin/chromosome structure	10850490
+8544	Pol II transcription	9079676
+5204	Pol II transcription	9792694
+8548	Pol II transcription	9129147
+6945	Pol II transcription	
+4261	Pol II transcription	8402893
+6949	Nuclear-cytoplasmic transport	9096354
+3608	Pol II transcription	7519613
+3609	Pol II transcription	7519613
+10545	DNA repair	9636207
+8550	Cell stress	9628874
+8553	Differentiation	9240428
+8557	Cell structure	9817758
+5216	Cell structure	3356709
+8559	RNA splicing	9000057
+8559	RNA processing/modification	9000057
+23650	Pol II transcription	8188213
+2670	Cell structure	2740350
+2672	Pol II transcription	7789186
+4276	Cell stress	10426993
+401	Pol II transcription	8661014
+401	Differentiation	8661014
+4277	Cell stress	9497295
+23658	RNA splicing	10369684
+23658	RNA processing/modification	10369684
+402	Other	10831612
+405	Nuclear-cytoplasmic transport	1852076
+405	Pol II transcription	1317062
+405	Cell stress	1317062
+2678	Amino-acid metabolism	2904146
+2679	Amino-acid metabolism	2573352
+10552	Cell structure	8978670
+408	Protein translocation	9924018
+10553	Pol II transcription	9482853
+10556	RNA processing/modification	9630247
+10557	RNA processing/modification	9630247
+9507	Protein degradation	10751421
+7904	RNA splicing	8586425
+7904	RNA processing/modification	8586425
+26205	Pol II transcription	10523663
+8564	Other metabolism	9237672
+8565	Protein synthesis	9162081
+8565	RNA processing/modification	9162081
+8566	Other metabolism	9099727
+3620	Amino-acid metabolism	2109605
+5225	Protein degradation	3335549
+4281	Cell structure	10400985
+410	Other metabolism	2562955
+411	Other metabolism	2303452
+4287	DNA repair	10915768
+4288	Chromatin/chromosome structure	10878014
+4289	Cell structure	10640805
+414	Other metabolism	7720070
+2687	Amino-acid metabolism	1676842
+415	Other metabolism	9192838
+416	Other metabolism	9192838
+9513	Nuclear-cytoplasmic transport	10888599
+9516	Pol II transcription	10200294
+10569	RNA splicing	10197984
+10569	RNA processing/modification	10197984
+7913	Pol II transcription	9050861
+7913	RNA processing/modification	10908574
+8570	RNA splicing	9136930
+8570	RNA processing/modification	9136930
+7915	Other metabolism	7814412
+9519	Pol II transcription	10220372
+8574	Other metabolism	9576847
+8578	Protein translocation	9395444
+8578	Protein degradation	9395444
+5239	Cell structure	8631316
+4292	DNA repair	8128251
+3637	Pol II transcription	7935390
+56301	Amino-acid metabolism	10734121
+4297	Pol II transcription	10821850
+54700	Pol I transcription	10758157
+23678	Cell stress	10548550
+4298	Pol II transcription	8080983
+429	Pol II transcription	8390674
+10575	Pol II transcription	8626763
+26223	Protein degradation	10531035
+26224	Protein degradation	10531035
+5241	Pol II transcription	1557371
+26226	Protein degradation	10531035
+26227	Amino-acid metabolism	8758134
+51087	Pol II transcription	10100484
+51087	Protein synthesis	10100484
+3646	Protein synthesis	9295280
+435	Amino-acid metabolism	282632
+439	Nuclear-cytoplasmic transport	9736449
+9533	Pol I transcription	9540830
+10588	Other metabolism	8522195
+10589	Pol II transcription	8608938
+26231	Protein degradation	10531037
+9537	Cell stress	9305847
+26232	Protein degradation	10531035
+26233	Protein degradation	10531035
+26234	Protein degradation	10531035
+5250	Energy generation	8168843
+26235	Protein degradation	10531035
+5251	Protein degradation	7550339
+3651	Pol II transcription	8988180
+3651	Differentiation	8988180
+3652	Cell structure	10072760
+6996	DNA repair	9489705
+6999	Amino-acid metabolism	8666386
+3658	Protein synthesis	7489724
+3658	RNA turnover	7489724
+3659	Pol II transcription	2475256
+443	Amino-acid metabolism	8252036
+445	Amino-acid metabolism	6194510
+10592	Chromatin/chromosome structure	9789013
+9541	Chromatin/chromosome structure	9874765
+10594	RNA splicing	9774689
+10594	RNA processing/modification	9774689
+6201	Protein synthesis	8522193
+6202	Protein synthesis	8432552
+6203	Protein synthesis	7772601
+7942	Pol II transcription	2115126
+6204	Protein synthesis	7772601
+6205	Protein synthesis	3267208
+6206	Protein synthesis	1861993
+4603	Pol II transcription	7821437
+6207	Protein synthesis	8332508
+6208	Protein synthesis	3785212
+4605	Pol II transcription	8812502
+6209	Protein synthesis	2044758
+4608	Cell structure	8486381
+3661	Pol II transcription	8524823
+4609	Pol II transcription	9924025
+3665	Pol II transcription	9786932
+54738	Pol II transcription	9121764
+6210	Protein synthesis	9582194
+4613	Pol II transcription	3796607
+6217	Protein synthesis	2016298
+6218	Protein synthesis	3240863
+7957	Protein synthesis	11001928
+4616	Cell stress	9827804
+26257	Pol II transcription	9446603
+4617	Pol II transcription	2311584
+4617	Differentiation	2721498
+3670	Pol II transcription	7912209
+4618	Pol II transcription	2311584
+4618	Differentiation	2311584
+26259	Protein degradation	10531035
+4619	Cell structure	10077619
+56342	RNA splicing	10944437
+56342	RNA processing/modification	10944437
+463	Pol II transcription	1719379
+6222	Protein synthesis	8441687
+6223	Protein synthesis	9988267
+26260	Protein degradation	10531035
+6224	Protein synthesis	8479924
+26262	Protein degradation	10531035
+4622	Cell structure	10077619
+9569	Pol II transcription	9774679
+26263	Protein degradation	10531035
+6227	Protein synthesis	8332502
+26264	Protein degradation	10531035
+6228	Protein synthesis	8415000
+4625	Cell structure	2249844
+6229	Protein synthesis	2210388
+26267	Protein degradation	10531035
+26269	Protein degradation	10531035
+10902	Pol II transcription	9368056
+472	DNA repair	9733515
+472	Cell stress	9733515
+474	Pol II transcription	8872459
+51412	Chromatin/chromosome structure	10380635
+475	Cell stress	9430722
+9572	Pol II transcription	8622974
+6230	Protein synthesis	1748303
+6231	Protein synthesis	9602156
+6232	Protein synthesis	8908372
+9575	Pol II transcription	10198158
+26270	Protein degradation	10531035
+6234	Protein synthesis	1679328
+26271	Protein degradation	10531035
+6235	Protein synthesis	7772601
+9578	Cell polarity	9418861
+4632	Cell structure	9566891
+7975	Pol II transcription	9150357
+26273	Protein degradation	10531035
+4634	Cell structure	
+6238	Protein translocation	9628588
+6238	Protein synthesis	9628588
+4635	Cell structure	
+6239	Pol II transcription	8816445
+6239	Differentiation	8816445
+7978	Pol II transcription	9118945
+4636	Cell structure	
+26277	Chromatin/chromosome structure	10581025
+4637	Cell structure	
+3692	Cell structure	9374518
+10912	DNA repair	9827804
+10912	Cell stress	9827804
+10915	Pol II transcription	9315662
+29904	Protein synthesis	9144159
+51426	DNA synthesis	10620008
+51426	DNA repair	10620008
+8927	Cell structure	10329005
+51428	RNA processing/modification	10607561
+9584	RNA splicing	8227358
+9584	RNA processing/modification	8227358
+8929	Pol II transcription	10395798
+8929	Differentiation	10395798
+9586	Pol II transcription	8378084
+50484	DNA repair	10716435
+27229	Cell structure	10562286
+4641	Cell structure	
+50485	Pol II transcription	10857751
+50485	Chromatin/chromosome structure	10857751
+4644	Cell structure	9207796
+4645	Cell structure	8884266
+6249	Cell structure	1356075
+4646	Cell structure	
+4647	Cell structure	7870171
+4649	Cell structure	10409426
+10921	RNA processing/modification	9580558
+10923	Pol II transcription	8062391
+8930	DNA repair	10097147
+29915	Pol II transcription	10196288
+27230	Cell stress	10601334
+51433	Protein degradation	9469815
+51435	Cell stress	9580669
+27232	Amino-acid metabolism	10843803
+8936	Cell structure	9843499
+8939	Pol II transcription	8940189
+4650	Cell structure	8907710
+7994	Chromatin/chromosome structure	8782817
+26292	Pol II transcription	9797456
+6256	Pol II transcription	1651173
+4653	Cell structure	9169133
+6257	Pol II transcription	1662118
+4654	Pol II transcription	1846704
+4654	Differentiation	1846704
+4656	Pol II transcription	1850513
+4656	Differentiation	1850513
+10930	RNA processing/modification	10403781
+10935	Cell stress	7733872
+10939	Protein degradation	10395799
+8940	Chromatin/chromosome structure	9786843
+8942	Amino-acid metabolism	9180257
+5600	Cell stress	8663524
+5601	Cell stress	7969172
+29929	Other metabolism	10359825
+8945	Protein degradation	9660940
+5603	Cell stress	9218798
+27244	Cell stress	9926927
+5609	Cell stress	9535930
+4661	Pol II transcription	1280325
+4666	Protein translocation	8047162
+4666	Protein synthesis	8047162
+4668	Other metabolism	2372288
+4669	Other metabolism	8650226
+1327	Energy generation	2157630
+10940	RNA processing/modification	8918471
+1329	Energy generation	1646156
+10941	Other metabolism	10359671
+10943	Pol II transcription	10395802
+10946	RNA splicing	7816610
+10946	RNA processing/modification	7816610
+10949	RNA processing/modification	7585247
+5610	Protein synthesis	7686884
+51455	DNA synthesis	10536157
+5612	Cell stress	9447982
+6271	Cell structure	7620916
+6271	Energy generation	7620916
+27257	RNA splicing	10369684
+27257	RNA processing/modification	10369684
+27258	RNA processing/modification	10369684
+4670	Protein translocation	7558047
+5619	Chromatin/chromosome structure	2081589
+4673	DNA synthesis	8297347
+4673	Chromatin/chromosome structure	8297347
+4674	Chromatin/chromosome structure	8789438
+4675	Chromatin/chromosome structure	8976385
+4676	Chromatin/chromosome structure	9325046
+4677	Protein synthesis	9421509
+4677	RNA processing/modification	9421509
+4678	Chromatin/chromosome structure	1426632
+1337	Energy generation	2549515
+1339	Energy generation	9284905
+10951	Chromatin/chromosome structure	9169582
+10953	Protein translocation	9324309
+50804	Pol II transcription	2601707
+29945	Protein degradation	9469815
+5620	Chromatin/chromosome structure	2081589
+7227	Pol II transcription	10615131
+5625	Amino-acid metabolism	9385373
+5626	Pol II transcription	9462743
+5626	Differentiation	9462743
+6282	DNA synthesis	10851017
+4683	DNA repair	9590180
+1340	Energy generation	1650756
+4686	RNA processing/modification	8069914
+811	Pol II transcription	8107809
+1345	Energy generation	2849755
+1346	Energy generation	9344674
+1347	Energy generation	1327965
+1349	Energy generation	8382530
+29953	Protein degradation	10491199
+5630	Cell structure	1378416
+8976	Cell structure	9422512
+6293	Protein translocation	9790748
+6294	Chromatin/chromosome structure	1324173
+4691	RNA processing/modification	2394707
+1350	Energy generation	2155413
+6297	Pol II transcription	8975705
+4694	Energy generation	10200266
+1351	Energy generation	2543673
+4695	Energy generation	9878551
+1352	Energy generation	8078902
+6299	Pol II transcription	9425907
+4696	Energy generation	9878551
+1353	Energy generation	9878253
+821	Protein translocation	8136357
+1355	Energy generation	9878253
+822	Cell structure	1322908
+1356	Other metabolism	9445478
+1357	Protein degradation	2920728
+1358	Protein degradation	7896805
+826	Protein degradation	8702541
+829	Cell structure	7665558
+10975	Energy generation	9161705
+28227	DNA synthesis	10629059
+27284	Other metabolism	9443824
+5644	Protein degradation	3011602
+5645	Protein degradation	3011602
+5646	Protein degradation	2326201
+2303	Pol II transcription	9169153
+2304	Pol II transcription	9214635
+2304	Differentiation	9214635
+2305	Cell stress	9032290
+1360	Protein degradation	1370825
+2309	Pol II transcription	10102273
+1361	Protein degradation	1939207
+830	Cell structure	9331217
+832	Cell structure	7665558
+833	Protein synthesis	7987009
+833	RNA processing/modification	7987009
+834	Protein degradation	7876192
+835	Protein degradation	8087842
+836	Protein degradation	10942389
+837	Protein degradation	7797510
+838	Protein degradation	7797592
+839	Protein degradation	7796396
+10987	Pol II transcription	8837781
+10987	Protein synthesis	9341143
+29974	RNA processing/modification	10669759
+8991	Other metabolism	9027582
+27294	Other metabolism	10477285
+8996	RNA splicing	10196175
+8996	RNA processing/modification	10196175
+2312	Cell structure	2740331
+2316	Cell structure	2391361
+2318	Cell structure	7689010
+1371	Other metabolism	8159699
+1373	Other metabolism	1840546
+840	Protein degradation	8576161
+1374	Energy generation	7892212
+841	Protein degradation	8681376
+1375	Energy generation	10408760
+842	Protein degradation	9390557
+843	Protein degradation	8521391
+847	Cell stress	3755525
+10992	RNA splicing	8566756
+10992	RNA processing/modification	8566756
+10993	Amino-acid metabolism	2674117
+8202	Pol II transcription	9238002
+9942	Energy generation	9763671
+8204	Pol II transcription	7641693
+9943	Cell stress	10083736
+6601	Pol II transcription	8804307
+6602	Pol II transcription	8804307
+6603	Pol II transcription	8804307
+6604	Pol II transcription	8804307
+8208	Chromatin/chromosome structure	7600578
+6605	Pol II transcription	9435219
+7263	Other metabolism	9070219
+2326	Other metabolism	1712018
+2327	Other metabolism	9804831
+2328	Other metabolism	1542660
+2329	Other metabolism	1417778
+1381	Differentiation	1309505
+10204	Nuclear-cytoplasmic transport	7744965
+1384	Energy generation	7829107
+1385	Pol II transcription	2974179
+1387	Pol II transcription	7913207
+1388	Pol II transcription	8586413
+10209	Protein synthesis	10347211
+1389	Pol II transcription	9693048
+6611	Other metabolism	7546290
+50853	Cell structure	9179494
+6617	Pol II transcription	7715707
+6617	Pol III transcription	7715707
+7273	Cell structure	7569978
+6618	Pol II transcription	7715707
+6618	Pol III transcription	7715707
+6619	Pol II transcription	7715707
+6619	Pol III transcription	7715707
+29999	Cell structure	10783262
+7277	Cell structure	3785200
+7278	Cell structure	9465305
+2332	Nuclear-cytoplasmic transport	10888599
+1390	Pol II transcription	7916662
+10213	Protein degradation	9374539
+860	Pol II transcription	9207800
+862	Pol II transcription	9618262
+10218	Cell stress	8144038
+864	Pol II transcription	7607690
+865	Pol II transcription	8351518
+9960	Protein degradation	10480896
+51805	Other metabolism	10777520
+9961	Nuclear-cytoplasmic transport	7585126
+51807	Cell structure	
+6621	Pol II transcription	9418884
+6621	Pol III transcription	9418884
+6624	Cell structure	8647875
+7280	Cell structure	6688039
+9967	Pol II transcription	10198638
+6625	RNA splicing	3028775
+6625	RNA processing/modification	3028775
+6626	RNA splicing	1831431
+6626	RNA processing/modification	1831431
+9968	Pol II transcription	10198638
+6627	RNA splicing	2928112
+6627	RNA processing/modification	2928112
+9969	Pol II transcription	10198638
+6628	RNA splicing	2531083
+6628	RNA processing/modification	2531083
+7284	Protein synthesis	9332382
+6629	RNA splicing	2951739
+6629	RNA processing/modification	2951739
+5682	Protein degradation	10799514
+5683	Protein degradation	8811196
+5684	Protein degradation	8811196
+5685	Protein degradation	8811196
+5686	Protein degradation	8811196
+5688	Protein degradation	8811196
+2346	Other metabolism	9838072
+5689	Protein degradation	8811196
+10224	Cell stress	9731181
+871	Cell stress	1309665
+873	Cell stress	8432528
+10229	Energy generation	10501970
+875	Amino-acid metabolism	681363
+9970	Pol II transcription	8020947
+9971	Pol II transcription	10334992
+8233	RNA splicing	8586425
+8233	RNA processing/modification	8586425
+9972	Nuclear-cytoplasmic transport	8110839
+6631	RNA splicing	2971157
+6631	RNA processing/modification	2971157
+6632	RNA splicing	1701240
+6632	RNA processing/modification	1701240
+9975	Pol II transcription	7997240
+6633	RNA splicing	1701240
+6633	RNA processing/modification	1701240
+6634	RNA splicing	1701240
+6634	RNA processing/modification	1701240
+7290	Pol II transcription	9731536
+6635	RNA splicing	2143747
+6635	RNA processing/modification	2143747
+7291	Pol II transcription	8988166
+7291	Chromatin/chromosome structure	10025406
+6636	RNA splicing	7744013
+6636	RNA processing/modification	7744013
+9978	Protein degradation	10230407
+6637	RNA splicing	7744013
+6637	RNA processing/modification	7744013
+5690	Protein degradation	8811196
+6638	RNA splicing	1533223
+6638	RNA processing/modification	1533223
+5691	Protein degradation	8811196
+5692	Protein degradation	8811196
+5693	Protein degradation	8811196
+5695	Protein degradation	8811196
+7299	Amino-acid metabolism	2120217
+2353	Pol II transcription	10918580
+2353	Chromatin/chromosome structure	9888853
+5696	Protein degradation	8811196
+2355	Pol II transcription	8954781
+5698	Protein degradation	8811196
+2356	Amino-acid metabolism	7721888
+5699	Protein degradation	8811196
+881	Cell structure	7641791
+10236	RNA processing/modification	9421497
+883	Other metabolism	7883047
+8243	Chromatin/chromosome structure	7757074
+9984	RNA processing/modification	7525595
+6642	Protein degradation	8638121
+3301	Cell stress	8334160
+9987	RNA processing/modification	9538234
+3303	Cell stress	10205060
+3303	RNA turnover	10205060
+6647	Cell stress	6316150
+6648	Cell stress	7493016
+10245	Protein translocation	10339406
+10247	Protein synthesis	8530410
+10248	RNA processing/modification	9630247
+10249	Other metabolism	7802672
+9991	Differentiation	10207106
+3316	Cell stress	10958679
+103	RNA processing/modification	7862132
+104	RNA processing/modification	8559253
+10250	RNA splicing	9531537
+9200	Differentiation	10644438
+10257	Cell stress	2806887
+8260	Chromatin/chromosome structure	7981673
+9208	Pol II transcription	9705290
+6660	Pol II transcription	8812465
+6663	Pol II transcription	9722528
+6665	Pol II transcription	9540826
+6666	Pol II transcription	9215677
+6667	Pol II transcription	9353275
+6668	Pol II transcription	1341900
+1723	Energy generation	8211381
+11201	DNA synthesis	10458907
+11201	DNA repair	10856253
+1725	Protein synthesis	7673224
+1727	Energy generation	9207238
+1728	Cell stress	10393963
+1729	Cell structure	9360932
+10262	RNA splicing	7958871
+10262	RNA processing/modification	7958871
+118	Cell structure	1345173
+119	Cell structure	1840603
+9219	Chromatin/chromosome structure	10444591
+6671	Pol II transcription	7559627
+6676	Cell structure	9691178
+1730	Cell structure	9497258
+3336	Cell stress	7698325
+1733	Other metabolism	1400883
+80204	Protein degradation	
+1734	Other metabolism	8755651
+1735	Other metabolism	9787088
+1736	RNA processing/modification	10556300
+1736	Chromatin/chromosome structure	10591218
+120	Cell structure	8893809
+1737	Energy generation	3174635
+1738	Energy generation	3278312
+2395	Energy generation	9241271
+1739	Cell structure	10859302
+11218	RNA processing/modification	10601333
+11219	DNA repair	10391904
+127	Other metabolism	3466164
+9227	Other metabolism	9920938
+7629	Pol II transcription	9705341
+7629	Pol III transcription	9705341
+6687	Protein degradation	9635427
+6687	Energy generation	9635427
+1743	Energy generation	8009371
+11221	Cell stress	10391943
+11222	Protein synthesis	2891103
+11224	Protein synthesis	2891103
+1749	Differentiation	7907794
+55072	Differentiation	10422847
+10284	Pol II transcription	9150135
+10284	Chromatin/chromosome structure	9150135
+9231	Cell structure	9738934
+9232	Pol II transcription	9811450
+10285	RNA splicing	9731529
+10285	RNA processing/modification	9731529
+10286	RNA splicing	9731529
+10286	RNA processing/modification	9731529
+7639	Pol II transcription	9839802
+3350	DNA synthesis	1330092
+6693	Cell polarity	10753822
+1750	Differentiation	7907794
+6697	Other metabolism	9792819
+6699	Cell structure	1438308
+11231	Protein translocation	10799540
+1755	Protein translocation	9288095
+11232	DNA synthesis	9153213
+1756	Cell structure	3282674
+1757	Other metabolism	10444331
+142	Pol II transcription	10944198
+142	DNA repair	3103132
+142	Chromatin/chromosome structure	3103132
+143	DNA repair	10100603
+146	DNA synthesis	10969806
+146	Differentiation	10820200
+10291	RNA splicing	7489498
+10291	RNA processing/modification	7489498
+147	Differentiation	10820200
+9242	Pol II transcription	9584154
+10296	Differentiation	9763581
+10298	Cell structure	9822598
+9249	Other metabolism	9705317
+4303	Pol II transcription	10783894
+4306	Pol II transcription	3037703
+3364	DNA repair	9872989
+1763	DNA synthesis	8938459
+11241	Pol II transcription	10393251
+150	Other	6259160
+11243	Pol II transcription	10419538
+11244	Pol II transcription	10441475
+9252	Cell stress	9873047
+9255	Protein synthesis	9405472
+4311	Protein degradation	1660144
+4312	Protein degradation	2167156
+4313	Protein degradation	2834383
+4314	Protein degradation	3360803
+4316	Protein degradation	1497627
+4317	Protein degradation	2164002
+4318	Protein degradation	2551898
+4319	Protein degradation	2844164
+3371	Cell structure	10953015
+3376	Protein synthesis	7721108
+3376	RNA processing/modification	7721108
+11252	Cell structure	10431838
+11254	Amino-acid metabolism	10446133
+165	Pol II transcription	8920928
+11258	Cell structure	9722614
+8607	Pol II transcription	9588198
+8609	Pol II transcription	9774444
+9266	Cell structure	9417041
+4320	Protein degradation	1701851
+4321	Protein degradation	8226919
+4322	Protein degradation	8207000
+3383	Protein translocation	2538243
+2729	Amino-acid metabolism	2294991
+10602	Cell structure	11035016
+11260	Nuclear-cytoplasmic transport	9512417
+10605	Protein synthesis	9548260
+1786	Chromatin/chromosome structure	8940105
+1787	Chromatin/chromosome structure	9425235
+1788	Differentiation	10433969
+1789	Differentiation	10433969
+1789	Chromatin/chromosome structure	10433969
+10609	Chromatin/chromosome structure	8862517
+175	Protein degradation	2775174
+11267	Pol II transcription	10419521
+176	Cell structure	1985970
+11269	Nuclear-cytoplasmic transport	10428971
+4331	Pol II transcription	8521818
+4331	DNA repair	8521818
+2730	Amino-acid metabolism	9841137
+4335	Pol II transcription	9184233
+4335	Differentiation	9184233
+2731	Amino-acid metabolism	2268343
+4337	Other metabolism	9812897
+2733	Nuclear-cytoplasmic transport	9618489
+4338	Other metabolism	9812897
+2734	Protein translocation	8985126
+2735	Pol II transcription	9524201
+2736	Pol II transcription	9557682
+2737	Pol II transcription	9054938
+1791	DNA synthesis	3467897
+3397	Pol II transcription	8586447
+11275	Cell structure	10397770
+11277	DNA repair	10393201
+54464	RNA processing/modification	9802570
+54464	RNA turnover	9802570
+8621	Differentiation	1731328
+11278	Pol II transcription	10704285
+189	Other metabolism	2045108
+8625	Pol II transcription	9806546
+9282	Pol II transcription	9989412
+8628	Protein degradation	9624166
+2745	DNA synthesis	8838810
+2746	Amino-acid metabolism	8486350
+2747	Amino-acid metabolism	
+10621	Pol III transcription	9171375
+10622	Pol III transcription	9171375
+10623	Pol III transcription	9171375
+10625	RNA splicing	9696811
+10625	RNA processing/modification	9696811
+11281	Pol II transcription	8601806
+190	Pol II transcription	9384387
+191	Other metabolism	7079734
+191	Amino-acid metabolism	7079734
+11284	DNA repair	10446192
+11284	Cell stress	10446192
+10629	Chromatin/chromosome structure	9674425
+54474	Cell structure	7689500
+196	Pol II transcription	9170146
+196	Differentiation	9170146
+196	Cell stress	9170146
+8634	RNA splicing	9184239
+8634	RNA processing/modification	9184239
+8635	RNA turnover	9192857
+8639	Other metabolism	8972912
+9295	RNA splicing	1896467
+9295	RNA processing/modification	1896467
+4350	DNA repair	10854423
+7695	Pol II transcription	7649249
+4353	DNA repair	2829220
+4353	Cell stress	2829220
+2752	Amino-acid metabolism	2888076
+4357	Other metabolism	1953758
+4359	Cell structure	7693129
+10635	DNA repair	9396801
+10638	DNA synthesis	7799938
+8648	Pol II transcription	7481822
+4361	DNA repair	9705271
+4362	DNA repair	9931460
+1022	Pol II transcription	7533895
+23746	Nuclear-cytoplasmic transport	10331942
+2768	Differentiation	8423800
+10642	Protein synthesis	9891060
+10643	Protein synthesis	9891060
+10643	RNA processing/modification	9891060
+10644	Protein synthesis	9891060
+3712	Amino-acid metabolism	1310317
+8659	Amino-acid metabolism	8621661
+3714	Differentiation	9315665
+1036	Amino-acid metabolism	7524679
+1039	Pol II transcription	10465786
+506	Energy generation	2870059
+509	Energy generation	8227057
+9603	Pol II transcription	10037736
+9603	Differentiation	10037736
+10656	RNA processing/modification	10332027
+9604	Pol II transcription	10085091
+10657	RNA processing/modification	1374686
+9605	Energy generation	10231027
+10658	RNA processing/modification	8948631
+10659	RNA processing/modification	9887331
+8661	Protein synthesis	9054404
+50506	Other metabolism	10601291
+8662	Protein synthesis	8995410
+50507	Energy generation	10869423
+8663	Protein synthesis	8995409
+8664	Protein synthesis	9341143
+8665	Protein synthesis	9341143
+51167	Energy generation	10611283
+8667	Protein synthesis	9341143
+8668	Protein synthesis	8995409
+8669	Protein synthesis	9822659
+3726	Pol II transcription	2513129
+3727	Pol II transcription	1903194
+23764	Pol II transcription	10527846
+3728	Cell structure	1639850
+1044	Differentiation	8530027
+1045	Pol II transcription	9459001
+1045	Differentiation	9459001
+514	Energy generation	10727396
+10661	Pol II transcription	9778250
+518	Energy generation	7698763
+9611	Pol II transcription	7566114
+10664	Pol II transcription	8649389
+9612	Pol II transcription	8813722
+10667	Protein synthesis	10329163
+10667	RNA processing/modification	10329163
+9616	Cell stress	10082581
+9617	Protein synthesis	9838146
+8672	Protein synthesis	9418880
+51174	Cell structure	10620804
+51175	Cell structure	10620804
+5339	Cell structure	8696340
+3735	Protein synthesis	9278442
+3735	RNA processing/modification	9278442
+1050	Pol II transcription	8643605
+1051	Pol II transcription	10821850
+1052	Pol II transcription	8314590
+522	Energy generation	1825642
+57062	RNA processing/modification	10936056
+1058	Chromatin/chromosome structure	7962047
+1059	Chromatin/chromosome structure	2435739
+10677	Cell structure	9664034
+8683	RNA splicing	7556075
+8683	RNA processing/modification	7556075
+2000	Pol II transcription	8895518
+2001	Pol II transcription	9840936
+2004	Pol II transcription	7851904
+2005	Pol II transcription	7851904
+2006	Cell structure	9580666
+1060	Chromatin/chromosome structure	1339310
+2009	Cell structure	9226380
+1066	Other metabolism	1918003
+1068	Cell structure	8175926
+9631	Nuclear-cytoplasmic transport	10191094
+9633	Other metabolism	10191092
+9637	Cell structure	9096408
+5354	Cell structure	2479017
+2011	Cell polarity	9730619
+8697	Protein degradation	9790767
+2012	Differentiation	8884260
+2013	Differentiation	8884260
+5357	Cell structure	8139549
+2014	Differentiation	8884260
+5358	Cell structure	8428952
+1072	Nuclear-cytoplasmic transport	8800436
+1072	Cell structure	8195165
+1075	Protein degradation	9092576
+545	DNA repair	9636169
+545	Differentiation	9590286
+545	Chromatin/chromosome structure	10545197
+546	Pol II transcription	7697714
+546	DNA repair	7697714
+546	Chromatin/chromosome structure	10742099
+549	RNA turnover	7892223
+6301	Protein synthesis	9431993
+6301	RNA processing/modification	9431993
+6303	Other metabolism	1985966
+4700	Energy generation	9345899
+6304	Chromatin/chromosome structure	1505028
+4701	Energy generation	9878551
+4703	Cell structure	7739042
+4705	Energy generation	9878551
+4706	Energy generation	9878551
+4708	Energy generation	9878551
+2021	DNA synthesis	7789991
+2023	Pol II transcription	
+4710	Energy generation	9878551
+4711	Energy generation	9425316
+4712	Energy generation	9760212
+4713	Energy generation	9878551
+4714	Energy generation	9878551
+5371	Pol II transcription	10806494
+4715	Energy generation	8661098
+4716	Energy generation	9878551
+4717	Energy generation	9425316
+4718	Energy generation	9878551
+4719	Energy generation	9878551
+5376	Cell structure	10697408
+2033	Pol II transcription	10205054
+2034	Pol II transcription	9079689
+5378	DNA repair	8072530
+2035	Cell structure	3467321
+2037	Cell structure	9598318
+2038	Cell structure	1350227
+2039	Cell structure	8341682
+6322	Pol II transcription	9570953
+4720	Energy generation	9647766
+4722	Energy generation	9647766
+4723	Energy generation	8288251
+4726	Energy generation	9647766
+4728	Energy generation	9666055
+4729	Energy generation	7488192

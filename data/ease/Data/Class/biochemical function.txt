@@ -1,0 +1,5952 @@
+4734	Protein conjugation factor	9990509
+4734	Inhibitor or repressor	10642508
+2050	Transferase	8188704
+2050	Receptor (signalling)	8188704
+4738	Protein conjugation factor	9694792
+2051	Inhibitor or repressor	10984508
+2051	Receptor (signalling)	9207182
+5395	DNA-binding protein	8072530
+2052	Hydrolase	7516776
+5396	DNA-binding protein	1509260
+2057	Receptor (signalling)	8506290
+2059	Receptor (signalling)	8084614
+2	Inhibitor or repressor	1281457
+1400	Hydrolase	8973361
+9	Transferase	10908296
+1406	DNA-binding protein	9390563
+1406	Activator	10192380
+23047	ATP-binding cassette	10215036
+23047	Inhibitor or repressor	10963680
+23047	DNA-binding protein	10215036
+2063	DNA-binding protein	2905047
+2063	Receptor (signalling)	2905047
+1407	DNA-binding protein	9801304
+2064	Transferase	10851066
+2064	Receptor (signalling)	2999974
+55810	DNA-binding protein	10777590
+55810	Activator	10777590
+2065	Transferase	8188716
+2065	Receptor (signalling)	8188716
+1409	Chaperones	10217480
+55811	Lyase	9874775
+2066	Transferase	8383326
+2066	Receptor (signalling)	8383326
+2067	Nuclease [endo, exo, ribo, deoxyribo]	10320375
+2067	Hydrolase	10320375
+56474	Ligase	10899599
+56475	Inhibitor or repressor	10930422
+56478	Nuclear import/export protein	10856257
+56479	Channel [passive transporter]	10787416
+1410	Chaperones	9731540
+4756	Adhesin/agglutinin	9169140
+4758	Hydrolase	8985184
+2071	DNA-binding protein	8663148
+4759	Hydrolase	10191093
+2072	Nuclease [endo, exo, ribo, deoxyribo]	8797827
+2072	Hydrolase	8797827
+2073	Nuclease [endo, exo, ribo, deoxyribo]	8090225
+2073	Hydrolase	8090225
+2077	Inhibitor or repressor	7588608
+2077	DNA-binding protein	7588608
+2078	DNA-binding protein	8502479
+55825	Oxidoreductase	10811639
+7301	Transferase	7511603
+7301	Receptor (signalling)	7511603
+7305	Receptor (signalling)	9490415
+7305	Activator	9490415
+7307	RNA-binding protein	1388271
+7307	Spliceosomal subunit	1388271
+4761	DNA-binding protein	8816493
+4762	DNA-binding protein	8816493
+4763	Inhibitor or repressor	1570015
+4763	GTPase activating protein	1568247
+2081	Nuclease [endo, exo, ribo, deoxyribo]	9637683
+2081	Hydrolase	9637683
+7311	RNA-binding protein	2581967
+7311	Protein conjugation factor	2581967
+7311	Ribosomal subunit	2581967
+7314	Protein conjugation factor	9422699
+7318	Protein conjugation factor	1311632
+7318	Activator	1311632
+7319	Protein conjugation factor	1559696
+4772	DNA-binding protein	9506523
+4772	Activator	10821850
+4774	DNA-binding protein	7590749
+1431	Lyase	9543345
+4775	DNA-binding protein	7739550
+4775	Activator	7739550
+1432	Transferase	10706854
+4776	DNA-binding protein	7749981
+4776	Activator	7749981
+900	Regulatory subunit	8626390
+1434	Nuclear import/export protein	9323134
+901	Regulatory subunit	8626390
+4778	DNA-binding protein	8355703
+4778	Activator	8355703
+2091	RNA-binding protein	1846968
+902	Regulatory subunit	8069918
+4779	Activator	8248256
+1436	Receptor (signalling)	8981357
+904	Regulatory subunit	9499409
+1438	Receptor (signalling)	1358805
+905	Regulatory subunit	9499409
+1439	Receptor (signalling)	8180376
+908	Chaperones	8034610
+2099	Inhibitor or repressor	10816575
+2099	DNA-binding protein	10829018
+2099	Receptor (signalling)	2040605
+2099	Activator	10816575
+7320	Protein conjugation factor	1559696
+7321	Protein conjugation factor	8090726
+7321	Ligase	8090726
+7322	Protein conjugation factor	8090726
+7322	Ligase	8090726
+7323	Protein conjugation factor	8090726
+7323	Ligase	8090726
+7324	Protein conjugation factor	8576257
+7324	Ligase	8576257
+7327	Protein conjugation factor	9693041
+7327	Ligase	9693041
+7328	Protein conjugation factor	8132613
+7328	Ligase	8132613
+7329	Protein conjugation factor	10806190
+4780	DNA-binding protein	7937919
+4781	DNA-binding protein	7590749
+4782	DNA-binding protein	7590749
+4782	Activator	8710515
+4783	Inhibitor or repressor	1620116
+4783	DNA-binding protein	7565758
+4783	Activator	7565758
+4784	DNA-binding protein	7590749
+4784	Activator	8340106
+1441	Receptor (signalling)	7542747
+1447	Inhibitor or repressor	2387396
+1447	Small molecule-binding protein	2387396
+914	Adhesin/agglutinin	10380930
+914	Receptor (signalling)	10380930
+7332	Protein conjugation factor	8576257
+7332	Ligase	8576257
+7334	Protein conjugation factor	8902611
+7334	Ligase	8902611
+7337	Protein conjugation factor	8221889
+4790	DNA-binding protein	10625680
+4791	DNA-binding protein	1876189
+4791	Activator	1876189
+4792	Inhibitor or repressor	10747850
+4794	Inhibitor or repressor	9135156
+1452	Transferase	10777483
+4796	Inhibitor or repressor	7738005
+920	Receptor (signalling)	10358157
+1454	Transferase	7797465
+4798	DNA-binding protein	1777480
+4798	Activator	1777480
+1455	Transferase	9403068
+4799	Inhibitor or repressor	7964459
+4799	DNA-binding protein	7964459
+1456	Transferase	9925945
+923	Adhesin/agglutinin	9013954
+1457	Transferase	2174700
+929	Receptor (signalling)	8798531
+55867	Active transporter, secondary	10660625
+55867	Major Facilitator Superfamily	10660625
+55869	Inhibitor or repressor	10748112
+55869	Hydrolase	10748112
+7341	Protein conjugation factor	9019411
+7342	Inhibitor or repressor	8114710
+7342	DNA-binding protein	8114710
+7342	Activator	8114710
+7345	Protease (other than proteasomal)	2163617
+7347	Protease (other than proteasomal)	2530630
+4004	DNA-binding protein	2303035
+25782	GTPase activating protein	9733780
+25782	Activator	9733780
+930	Activator	1373518
+1464	Adhesin/agglutinin	8790396
+931	Channel [passive transporter]	9169438
+933	Adhesin/agglutinin	7925291
+55870	DNA-binding protein	10860993
+1469	Inhibitor or repressor	3446578
+55879	Channel [passive transporter]	10449790
+55879	Receptor (signalling)	10449790
+7353	Protease (other than proteasomal)	9063746
+7353	Hydrolase	9063746
+4012	Protease (other than proteasomal)	9177475
+4012	Hydrolase	9177475
+7357	Transferase	8643456
+7358	Oxidoreductase	9737970
+4016	Oxidoreductase	7689553
+4017	Oxidoreductase	9079631
+25793	Protein conjugation factor	10531035
+4018	Inhibitor or repressor	8047165
+25794	Complex assembly protein	10783262
+25796	Hydrolase	10518023
+25797	Transferase	7999256
+1470	Inhibitor or repressor	3446578
+1471	Inhibitor or repressor	2900981
+1472	Inhibitor or repressor	1898352
+1473	Inhibitor or repressor	1939105
+1474	Inhibitor or repressor	9099741
+1475	Inhibitor or repressor	9522124
+942	Receptor (signalling)	7694363
+1476	Inhibitor or repressor	3053245
+943	Receptor (signalling)	1310894
+1478	RNA-binding protein	1741396
+1479	Complex assembly protein	7984242
+945	Adhesin/agglutinin	10611343
+945	Inhibitor or repressor	10611343
+945	Receptor (signalling)	10611343
+948	Adhesin/agglutinin	2468670
+949	Receptor (protein translocation)	9211901
+6702	Small molecule-binding protein	3133554
+7360	Transferase	8631325
+7362	Transferase	1898728
+7364	Transferase	2159463
+7366	Transferase	7835232
+4023	Hydrolase	7818530
+7368	Transferase	8661025
+4025	Oxidoreductase	10814547
+1482	DNA-binding protein	9651244
+1486	Hydrolase	1527079
+952	Hydrolase	10777496
+952	Other	10777496
+1487	Inhibitor or repressor	8440238
+953	Adhesin/agglutinin	7930580
+953	Hydrolase	8955160
+954	Hydrolase	9271669
+55890	Receptor (signalling)	10783259
+955	Hydrolase	9676430
+55891	DNA-binding protein	7641850
+956	Hydrolase	9676430
+55892	DNA-binding protein	10873615
+957	Hydrolase	9676430
+958	Receptor (signalling)	10092834
+6714	Transferase	10734107
+6715	Oxidoreductase	1686016
+7372	Transferase	6893554
+6716	Oxidoreductase	1944596
+6717	Regulatory subunit	9668070
+7374	Hydrolase	1923798
+6718	Oxidoreductase	7508385
+7375	Protease (other than proteasomal)	9464533
+7375	Hydrolase	9464533
+7376	DNA-binding protein	7926814
+7376	Receptor (signalling)	7926814
+7378	Lyase	7488099
+4035	Receptor (protein translocation)	10880251
+4036	Receptor (protein translocation)	7768901
+4037	Receptor (protein translocation)	9693042
+965	Adhesin/agglutinin	10380930
+966	Inhibitor or repressor	7683594
+969	Receptor (signalling)	8340758
+6720	DNA-binding protein	10949029
+6720	Activator	8156598
+6721	DNA-binding protein	7903453
+6721	Activator	7903453
+6722	DNA-binding protein	3203386
+6722	Activator	3203386
+6723	Transferase	2069720
+6726	RNA-binding protein	7730321
+6727	RNA-binding protein	2557625
+4040	Receptor (protein translocation)	9704021
+4041	Receptor (protein translocation)	9714764
+6729	RNA-binding protein	9016569
+4043	Chaperones	8654360
+4047	Isomerase	7639730
+4048	Protease (other than proteasomal)	1881903
+4048	Hydrolase	1881903
+971	Receptor (signalling)	2141045
+976	Receptor (signalling)	8955192
+977	Adhesin/agglutinin	9602068
+978	Hydrolase	7923172
+6730	Receptor (protein translocation)	10618370
+6732	Transferase	8208298
+6733	Transferase	9472028
+6734	Receptor (protein translocation)	2827661
+7391	DNA-binding protein	2249772
+7392	DNA-binding protein	1589769
+6737	DNA-binding protein	7832745
+6738	RNA-binding protein	3200833
+4051	Oxidoreductase	8486631
+4053	Anchor Protein	9709808
+4053	Inhibitor or repressor	9709808
+4053	Regulatory subunit	9709808
+7398	Protease (other than proteasomal)	9806842
+7398	Hydrolase	9806842
+4055	Receptor (signalling)	8171323
+4056	Transferase	1454853
+4057	Protease (other than proteasomal)	9770539
+4057	Hydrolase	9770539
+4057	Small molecule-binding protein	3356163
+4058	Receptor (signalling)	7685902
+57804	DNA polymerase or subunit	10751307
+4059	Adhesin/agglutinin	7954395
+983	Transferase	9001210
+984	Transferase	1639388
+989	Hydrolase	8037772
+989	GTP-binding protein/GTPase	8037772
+6741	RNA-binding protein	9154801
+6742	DNA-binding protein	7789991
+3400	Inhibitor or repressor	7665172
+6745	Receptor (protein translocation)	8050590
+6746	Receptor (protein translocation)	7789174
+6749	DNA-binding protein	1372440
+4063	Adhesin/agglutinin	7797269
+4065	Receptor (signalling)	9553150
+4066	DNA-binding protein	2752424
+4067	Transferase	10748115
+994	Hydrolase	1836978
+997	Protein conjugation factor	9367342
+999	Adhesin/agglutinin	7824937
+999	Activator	10963665
+6751	Receptor (signalling)	8405411
+6752	Receptor (signalling)	7914078
+6753	Receptor (signalling)	8405411
+6754	Receptor (signalling)	8100352
+6755	Receptor (signalling)	7908405
+4070	Receptor (signalling)	7665234
+4074	Receptor (protein translocation)	10799489
+3418	Oxidoreductase	8954790
+203	Transferase	2542324
+203	Other kinase	2542324
+204	Transferase	9504408
+204	Other kinase	9504408
+207	Transferase	7774014
+208	Transferase	1409633
+6760	Activator	10072425
+3420	Oxidoreductase	10601238
+3421	Oxidoreductase	9286695
+3422	Isomerase	8020941
+3423	Hydrolase	2122463
+6768	Protease (other than proteasomal)	10831593
+6768	Hydrolase	10373424
+3425	Hydrolase	1551868
+3426	Protease (other than proteasomal)	2956252
+3426	Hydrolase	2956252
+4084	Inhibitor or repressor	8425218
+4084	DNA-binding protein	8425218
+210	Lyase	3758678
+57834	Oxidoreductase	10964514
+4089	DNA-binding protein	10871368
+213	Small molecule-binding protein	8064810
+214	Adhesin/agglutinin	7760007
+216	Oxidoreductase	1709013
+217	Oxidoreductase	8903321
+218	Oxidoreductase	1737758
+9311	Channel [passive transporter]	9744806
+9312	Channel [passive transporter]	9612272
+9313	Protease (other than proteasomal)	9398237
+9313	Hydrolase	9398237
+9314	DNA-binding protein	8940147
+6770	Activator	7761400
+6772	DNA-binding protein	10805787
+6773	DNA-binding protein	9020188
+6773	Activator	9020188
+6774	DNA-binding protein	7512451
+3431	DNA-binding protein	7693701
+6775	DNA-binding protein	9284918
+6776	DNA-binding protein	8631883
+6777	DNA-binding protein	8631883
+6778	DNA-binding protein	8810328
+6778	Activator	8810328
+4091	Inhibitor or repressor	9436979
+4092	Inhibitor or repressor	9215638
+4094	DNA-binding protein	9616139
+4097	DNA-binding protein	9286713
+223	Oxidoreductase	2925663
+11318	Receptor (signalling)	9367907
+225	ATP-binding cassette	10329405
+225	Hydrolase	10329405
+11319	Activator	9928932
+226	Lyase	2825199
+229	Lyase	3383242
+9321	Activator	9373237
+9325	Activator	7776974
+9328	DNA-binding protein	10373544
+9329	Transferase	10523658
+9329	DNA-binding protein	10523658
+9329	Activator	10523658
+6780	RNA-binding protein	10022909
+6782	Hydrolase	8131751
+6783	Transferase	8185618
+6787	Transferase	8208544
+6788	Transferase	8816758
+6789	Transferase	7665586
+11320	Transferase	10024668
+230	Lyase	3105602
+231	Oxidoreductase	2112546
+11329	Transferase	7761441
+238	Transferase	8122112
+238	Receptor (signalling)	9053841
+9330	DNA-binding protein	10373544
+9331	Transferase	9597550
+9332	Receptor (protein translocation)	8370408
+9333	Transferase	9452468
+9334	Transferase	9597550
+6790	Transferase	9153231
+6792	Transferase	9721213
+6793	Transferase	10199912
+6794	Transferase	9428765
+6795	Transferase	10066797
+3454	Receptor (signalling)	8181059
+3455	Receptor (signalling)	8798579
+6799	Transferase	9119390
+11330	Protease (other than proteasomal)	8635596
+11330	Hydrolase	8635596
+11332	Hydrolase	10578051
+3459	Receptor (signalling)	2971451
+241	Small molecule-binding protein	2300173
+11335	DNA-binding protein	8663349
+242	Oxidoreductase	9618483
+11337	Anchor Protein	9892355
+11338	RNA-binding protein	1538748
+11338	Spliceosomal subunit	1538748
+247	Oxidoreductase	9177185
+9340	Receptor (signalling)	9990065
+9341	Docking protein	9885218
+9342	Docking protein	10839363
+9343	Spliceosomal subunit	9233818
+9343	GTP-binding protein/GTPase	9233818
+6002	GTPase activating protein	9651375
+6002	Activator	
+6004	GTPase activating protein	10747990
+6004	Activator	
+9348	Transferase	6230352
+9348	Hydrolase	
+6009	Hydrolase	8543055
+6009	GTP-binding protein/GTPase	8543055
+11343	Hydrolase	9495531
+9351	Regulatory subunit	9748260
+259	Inhibitor or repressor	1708673
+259	Small molecule-binding protein	1708673
+9352	Oxidoreductase	9668102
+6010	Receptor (signalling)	2218504
+9354	Protein conjugation factor	10089879
+6011	Transferase	1656454
+9356	Active transporter, secondary	9950961
+9356	Major Facilitator Superfamily	9950961
+6014	Hydrolase	8918462
+6014	GTP-binding protein/GTPase	8918462
+9358	Receptor (signalling)	10051402
+6015	DNA-binding protein	7681583
+6016	Hydrolase	8918462
+6016	GTP-binding protein/GTPase	8918462
+6016	Small molecule-binding protein	8918462
+6017	Small molecule-binding protein	9326942
+2811	Receptor (signalling)	2628181
+2812	Receptor (signalling)	8021244
+2814	Adhesin/agglutinin	7690959
+2815	Adhesin/agglutinin	2771955
+2819	Oxidoreductase	7772607
+51200	Hydrolase	
+8701	Motor protein	9256245
+8701	Hydrolase	9256245
+8702	Transferase	9792633
+267	Receptor (signalling)	1649192
+8703	Transferase	9405390
+51205	Hydrolase	10506173
+51205	Other phosphatase	10506173
+9360	Isomerase	8973360
+8704	Transferase	9405390
+51206	Receptor (signalling)	10822077
+9361	Protease (other than proteasomal)	8248235
+9361	Hydrolase	8248235
+8705	Transferase	9417100
+269	Transferase	7493017
+269	Receptor (signalling)	7493017
+51207	Hydrolase	10585869
+8706	Transferase	9417100
+9363	Hydrolase	7688322
+9363	GTP-binding protein/GTPase	7688322
+8707	Transferase	9417100
+9364	Hydrolase	8647132
+9364	GTP-binding protein/GTPase	8647132
+9367	Hydrolase	9126495
+9367	GTP-binding protein/GTPase	9126495
+6024	DNA-binding protein	8121495
+9368	Regulatory subunit	9430655
+2820	Oxidoreductase	8549872
+2821	Isomerase	8575767
+2822	Hydrolase	2017684
+3480	Receptor (signalling)	10829031
+2825	Receptor (signalling)	7851889
+3482	Receptor (protein translocation)	10799489
+3482	Receptor (signalling)	7753549
+2826	Receptor (signalling)	7851889
+2827	Receptor (signalling)	7639700
+2828	Receptor (signalling)	7498459
+2829	Receptor (signalling)	10679309
+3487	Inhibitor or repressor	1377672
+3489	Inhibitor or repressor	7539002
+272	Hydrolase	9291127
+8710	Inhibitor or repressor	9182567
+8711	Transferase	8632913
+276	Hydrolase	2423416
+27012	Inhibitor or repressor	8670833
+27012	Regulatory subunit	8670833
+8714	ATP-binding cassette	9813153
+8714	Hydrolase	9813153
+8714	Active transporter, primary	9813153
+8715	RNA-binding protein	9813152
+279	Hydrolase	2788608
+9372	Anchor Protein	9865696
+9373	Activator	9931468
+8717	Regulatory subunit	7758105
+8718	Receptor (signalling)	8994832
+9376	Active transporter, secondary	10049739
+9376	Major Facilitator Superfamily	10049739
+9377	Oxidoreductase	2853101
+27019	Motor protein	10577904
+6036	Nuclease [endo, exo, ribo, deoxyribo]	2734298
+6037	Nuclease [endo, exo, ribo, deoxyribo]	2745977
+2830	Receptor (signalling)	7832990
+6039	Nuclease [endo, exo, ribo, deoxyribo]	8836175
+6039	Hydrolase	8836175
+2831	Receptor (signalling)	7590751
+2832	Receptor (signalling)	7590751
+2833	Receptor (signalling)	9064356
+3490	Inhibitor or repressor	8939990
+2834	Receptor (signalling)	8666380
+2835	Receptor (signalling)	8530049
+2837	Receptor (signalling)	10499587
+2838	Receptor (signalling)	8838812
+10713	RNA-binding protein	10022888
+10713	Complex assembly protein	10022888
+10714	DNA polymerase or subunit	10219083
+10714	DNA-binding protein	10219083
+280	Hydrolase	2401405
+10717	Vesicle coat protein	10066790
+53904	Motor protein	10936054
+53904	Transferase	10936054
+53904	Hydrolase	10936054
+53905	Oxidoreductase	10806195
+283	Nuclease [endo, exo, ribo, deoxyribo]	2866795
+284	Activator	10766762
+8720	Protease (other than proteasomal)	9809072
+8720	Hydrolase	9809072
+285	Inhibitor or repressor	10766762
+8722	Protease (other than proteasomal)	9822672
+8722	Hydrolase	9822672
+286	Anchor Protein	9430667
+287	Anchor Protein	8253844
+27022	DNA-binding protein	8499623
+9380	Oxidoreductase	10484776
+288	Anchor Protein	7836469
+8725	Inhibitor or repressor	9819440
+8726	Inhibitor or repressor	9806832
+6040	RNA-binding protein	9799596
+6040	Nuclease [endo, exo, ribo, deoxyribo]	9799596
+6040	DNA-binding protein	9799596
+6040	Hydrolase	9799596
+9388	Hydrolase	10318835
+9389	Active transporter, secondary	10072596
+6047	Activator	9710597
+2840	Receptor (signalling)	8558062
+2841	Receptor (signalling)	9205118
+2842	Receptor (signalling)	8830667
+2843	Receptor (signalling)	9073069
+2844	Receptor (signalling)	9073069
+2845	Receptor (signalling)	9073069
+2846	Receptor (signalling)	9073069
+10720	Transferase	8333863
+2847	Receptor (signalling)	10421367
+10721	Transferase	10395804
+10721	DNA polymerase or subunit	10395804
+10721	DNA-binding protein	10395804
+2848	Receptor (signalling)	9020062
+10723	Active transporter, secondary	10347194
+10724	Hydrolase	9811929
+57118	Transferase	11050006
+10725	DNA-binding protein	10377394
+291	Active transporter, secondary	2823266
+292	Active transporter, secondary	2168878
+293	Active transporter, secondary	2829183
+8731	RNA-binding protein	9705270
+8731	Transferase	9705270
+54575	Transferase	9295054
+8732	Transferase	9473487
+8732	Hydrolase	9473487
+8732	Other phosphatase	9473487
+54576	Transferase	9295054
+8733	Anchor Protein	9828142
+54577	Transferase	9295054
+27032	Hydrolase	10615129
+27032	Active transporter, primary	10615129
+9390	Active transporter, secondary	10072596
+27033	Inhibitor or repressor	10572087
+9391	Inhibitor or repressor	9556563
+54579	Transferase	9295054
+27034	Oxidoreductase	10524212
+8737	Transferase	7538908
+6050	Inhibitor or repressor	3219362
+9394	Transferase	9535912
+27036	Small molecule-binding protein	10567377
+8739	Inhibitor or repressor	9130713
+9397	Transferase	9506952
+2850	Receptor (signalling)	10833454
+6059	Inhibitor or repressor	7539425
+2852	Receptor (signalling)	8920907
+2853	Receptor (signalling)	9205127
+2854	Receptor (signalling)	9653656
+2857	Receptor (signalling)	10036181
+10732	DNA-binding protein	9763657
+2859	Receptor (signalling)	9479505
+57126	Receptor (signalling)	10753836
+10733	Transferase	10607900
+10736	DNA-binding protein	10773454
+8747	Protease (other than proteasomal)	9469942
+8747	Hydrolase	9469942
+8748	Protease (other than proteasomal)	9469942
+8748	Hydrolase	9469942
+8749	Protease (other than proteasomal)	10395895
+8749	Hydrolase	10395895
+5408	Hydrolase	1379598
+2861	Receptor (signalling)	9144577
+2862	Receptor (signalling)	10381885
+2863	Receptor (signalling)	9441746
+2864	Receptor (signalling)	9344866
+2865	Receptor (signalling)	9344866
+2866	Receptor (signalling)	9344866
+2867	Receptor (signalling)	9344866
+57134	Hydrolase	10915796
+2869	Transferase	10852916
+10747	Protease (other than proteasomal)	9087411
+10747	Hydrolase	9087411
+10748	Receptor (signalling)	9645365
+10749	Motor protein	9685376
+10749	Hydrolase	9685376
+8751	Protease (other than proteasomal)	9516430
+8751	Hydrolase	9516430
+8754	Protease (other than proteasomal)	8647900
+8754	Hydrolase	8647900
+5413	Hydrolase	9385360
+5413	GTP-binding protein/GTPase	9385360
+5414	Hydrolase	9889007
+5414	GTP-binding protein/GTPase	9889007
+2870	Transferase	10852916
+2872	Transferase	8415712
+2873	Inhibitor or repressor	8943324
+2874	Inhibitor or repressor	8943324
+2875	Transferase	9119391
+2878	Oxidoreductase	3619451
+10752	Adhesin/agglutinin	9799093
+2879	Oxidoreductase	8039723
+10753	Protease (other than proteasomal)	9524069
+10753	Hydrolase	9524069
+53947	Transferase	10748143
+8761	RNA-binding protein	8524242
+8763	Adhesin/agglutinin	9680353
+8764	Receptor (signalling)	9162061
+51265	Transferase	10463609
+51266	Receptor (signalling)	10671229
+27063	DNA-binding protein	7730328
+8766	Hydrolase	9662449
+8766	GTP-binding protein/GTPase	9662449
+5423	DNA polymerase or subunit	8168825
+51267	Receptor (signalling)	10671229
+8767	Transferase	9642260
+5424	DNA polymerase or subunit	1722322
+51268	Oxidoreductase	10642506
+5425	DNA polymerase or subunit	8530069
+5425	Regulatory subunit	8530069
+5426	DNA polymerase or subunit	8486689
+27067	RNA-binding protein	10585778
+5427	DNA polymerase or subunit	9405441
+5427	Regulatory subunit	9405441
+5428	Transferase	3619920
+5428	DNA polymerase or subunit	8884268
+5429	Transferase	10385124
+5429	DNA polymerase or subunit	10856253
+5429	DNA-binding protein	10856253
+2880	Oxidoreductase	9639555
+2889	Guanine nucleotide exchange factor	7512734
+10765	DNA-binding protein	10336460
+10766	Inhibitor or repressor	10602502
+10767	Hydrolase	9872408
+10767	GTP-binding protein/GTPase	9872408
+50613	Protein conjugation factor	10831842
+8771	Inhibitor or repressor	9872321
+8771	Receptor (signalling)	9872321
+51273	Oxidoreductase	10777549
+8773	Docking protein	10839363
+5430	Transferase	2999107
+5430	RNA polymerase subunit	2999107
+51274	Inhibitor or repressor	10582345
+51274	DNA-binding protein	10582345
+27071	Small molecule-binding protein	10432293
+5431	RNA polymerase subunit	1518060
+5432	RNA polymerase subunit	2187864
+8776	Hydrolase	8640223
+5433	Transferase	9528765
+5433	RNA polymerase subunit	9528765
+5434	RNA polymerase subunit	7828586
+5435	RNA polymerase subunit	7803819
+6092	Receptor (signalling)	9458045
+5436	RNA polymerase subunit	9256063
+6093	Transferase	8798490
+5437	RNA polymerase subunit	8524256
+5438	RNA polymerase subunit	8265347
+6095	DNA-binding protein	7926749
+6095	Receptor (signalling)	7926749
+5439	Transferase	8797801
+5439	RNA polymerase subunit	8797801
+6096	DNA-binding protein	7935491
+6096	Receptor (signalling)	7935491
+6097	DNA-binding protein	7811290
+6098	Transferase	3785223
+6098	Receptor (signalling)	2827175
+2890	Channel [passive transporter]	1311100
+2890	Receptor (signalling)	1311100
+2891	Channel [passive transporter]	8003671
+2891	Receptor (signalling)	8003671
+2892	Channel [passive transporter]	1709304
+2892	Receptor (signalling)	1709304
+2893	Channel [passive transporter]	8589990
+2893	Receptor (signalling)	8589990
+2895	Channel [passive transporter]	9465309
+2895	Receptor (signalling)	9465309
+2897	Channel [passive transporter]	8260617
+2897	Receptor (signalling)	8260617
+2898	Channel [passive transporter]	7536611
+2898	Receptor (signalling)	7536611
+10771	Inhibitor or repressor	7621829
+2899	Channel [passive transporter]	7719709
+2899	Receptor (signalling)	7719709
+10772	RNA-binding protein	9774382
+10772	Spliceosomal subunit	9774382
+10773	DNA-binding protein	7958847
+10775	RNA-binding protein	10352175
+10775	Nuclease [endo, exo, ribo, deoxyribo]	10352175
+29761	Protease (other than proteasomal)	10644437
+29761	Hydrolase	10644437
+51283	Inhibitor or repressor	10716992
+5440	RNA polymerase subunit	7651387
+50628	RNA-binding protein	10725331
+50628	Spliceosomal subunit	10725331
+8784	Receptor (signalling)	10074428
+5441	RNA polymerase subunit	8786124
+5442	Transferase	9097968
+5442	RNA polymerase subunit	9097968
+8786	GTPase activating protein	9789084
+8786	Activator	
+2100	DNA-binding protein	9636657
+2100	Receptor (signalling)	8769313
+2100	Activator	8769313
+8787	GTPase activating protein	9765512
+8787	Activator	
+2101	DNA-binding protein	9344655
+8788	Inhibitor or repressor	8500166
+5445	Hydrolase	8661009
+51289	Receptor (signalling)	10806363
+2103	DNA-binding protein	9344655
+27087	Transferase	10783264
+8789	Hydrolase	9678974
+5449	DNA-binding protein	1487156
+2107	RNA-binding protein	7990965
+10782	Inhibitor or repressor	10777669
+10782	DNA-binding protein	10777669
+10786	Active transporter, secondary	9149941
+10788	Inhibitor or repressor	8756646
+10788	GTPase activating protein	8756646
+50632	Regulatory subunit	10698743
+8790	Transferase	9804772
+8792	Receptor (signalling)	9367155
+29777	DNA-binding protein	10648625
+29777	Activator	10648625
+8793	Receptor (signalling)	9430226
+5450	Activator	7859290
+51294	Adhesin/agglutinin	10380929
+27091	Channel [passive transporter]	10613843
+8794	Receptor (signalling)	9314565
+5451	DNA-binding protein	2905684
+27092	Channel [passive transporter]	10613843
+8795	Receptor (signalling)	9311998
+5452	DNA-binding protein	2904653
+27093	Regulatory subunit	10585773
+2110	Oxidoreductase	8306995
+8797	Receptor (signalling)	9082980
+5454	DNA-binding protein	7601453
+51298	Regulatory subunit	10747865
+8798	Transferase	9748265
+2113	Inhibitor or repressor	7753825
+2113	DNA-binding protein	10918595
+5457	Activator	8995448
+2114	DNA-binding protein	10918595
+5458	Inhibitor or repressor	8995448
+5458	DNA-binding protein	7623109
+2115	DNA-binding protein	7700648
+5459	DNA-binding protein	7623109
+2117	DNA-binding protein	8020980
+2118	DNA-binding protein	8441666
+2119	DNA-binding protein	8152800
+57180	Complex assembly protein	10047519
+53981	RNA-binding protein	7969155
+10797	Ligase	8218174
+10797	Hydrolase	8218174
+10797	Oxidoreductase	8218174
+10798	Receptor (signalling)	9787077
+4800	DNA-binding protein	2000400
+4800	Activator	2000400
+4802	DNA-binding protein	10446203
+4804	Receptor (signalling)	3022937
+5463	DNA-binding protein	7908264
+2120	DNA-binding protein	7761424
+5464	Hydrolase	10542310
+5464	Other phosphatase	10542310
+5465	DNA-binding protein	10860941
+5465	Receptor (signalling)	7684926
+5465	Activator	7684926
+4809	RNA-binding protein	10593953
+5467	DNA-binding protein	1333051
+5467	Receptor (signalling)	1333051
+5467	Activator	1333051
+5468	Inhibitor or repressor	10781090
+5468	DNA-binding protein	10622252
+5468	Receptor (signalling)	9568716
+5468	Activator	10622252
+5469	Activator	9653119
+10000	Transferase	10092583
+10002	DNA-binding protein	10220376
+10002	Receptor (signalling)	10220376
+10003	Protease (other than proteasomal)	10085079
+10003	Hydrolase	10085079
+10005	Hydrolase	10092594
+10007	Hydrolase	9438414
+50650	Guanine nucleotide exchange factor	10873612
+5470	Hydrolase	9326663
+4814	Adhesin/agglutinin	9261151
+5471	Transferase	8106516
+4815	Adhesin/agglutinin	10627596
+4817	Hydrolase	9671749
+2130	RNA-binding protein	8084618
+2131	Transferase	10639137
+5475	Hydrolase	9215685
+2132	Transferase	10639137
+5476	Hydrolase	2244901
+5478	Chaperones	2644542
+5478	Isomerase	2179953
+10014	Hydrolase	10220385
+8021	Nuclear import/export protein	8108440
+8022	DNA-binding protein	10598593
+25801	Small molecule-binding protein	1530588
+25803	DNA-binding protein	6857767
+25803	Activator	6857767
+25804	RNA-binding protein	10523320
+25804	Spliceosomal subunit	10523320
+8028	DNA-binding protein	7888665
+4820	Isomerase	8421688
+8029	Receptor (signalling)	9572993
+5481	Isomerase	1544925
+4826	Regulatory subunit	8813377
+26469	Hydrolase	8950995
+4829	Receptor (signalling)	7838118
+10020	Isomerase	10334995
+2147	Protease (other than proteasomal)	7507931
+2147	Hydrolase	7507931
+2147	Activator	10823824
+10021	Channel [passive transporter]	10228147
+2149	Receptor (signalling)	1672265
+10025	Activator	10235266
+10026	Transferase	9356492
+8031	Activator	8643607
+8034	Active transporter, secondary	2575220
+8038	Protease (other than proteasomal)	10849447
+8038	Hydrolase	9417060
+4830	Inhibitor or repressor	8392752
+4830	Transferase	8392752
+4830	Other kinase	8392752
+4833	Transferase	9099850
+4833	Other kinase	9099850
+25818	Protease (other than proteasomal)	10608802
+25818	Hydrolase	10608802
+4835	Oxidoreductase	1691923
+26476	Receptor (signalling)	1370859
+4836	Transferase	9506952
+2150	Receptor (signalling)	8615752
+5494	Hydrolase	9003755
+2151	Receptor (signalling)	9087410
+5495	Hydrolase	9684878
+4839	RNA-binding protein	1394192
+2152	Receptor (signalling)	2719931
+5496	Hydrolase	9276438
+5498	Oxidoreductase	7713909
+10036	Complex assembly protein	7600578
+10038	Transferase	7260241
+10039	Transferase	7260241
+25822	Chaperones	10570961
+25823	Protease (other than proteasomal)	10521469
+25823	Hydrolase	10521469
+25824	Oxidoreductase	10521424
+25825	Protease (other than proteasomal)	10677483
+25825	Hydrolase	10677483
+4841	RNA-binding protein	8371983
+25827	Protein conjugation factor	10508920
+4846	Oxidoreductase	1378832
+1503	Ligase	2113467
+1506	Protease (other than proteasomal)	9065485
+1506	Hydrolase	9065485
+1508	Protease (other than proteasomal)	3463996
+55911	Receptor (protein translocation)	10852956
+2166	Hydrolase	10788462
+2169	Small molecule-binding protein	2824476
+10048	Complex assembly protein	9817760
+8050	Oxidoreductase	9242632
+25833	DNA-binding protein	10473598
+25834	Transferase	5701727
+4851	Receptor (signalling)	10206645
+26492	Receptor (signalling)	9119360
+26493	Receptor (signalling)	9119360
+4857	RNA-binding protein	8558240
+1515	Protease (other than proteasomal)	9563472
+1515	Hydrolase	9563472
+1519	Protease (other than proteasomal)	7929457
+1519	Hydrolase	7929457
+10050	Active transporter, secondary	10319585
+10052	Channel [passive transporter]	7966354
+2179	Ligase	1531127
+10054	Protein conjugation factor	10187858
+10054	Activator	10187858
+10055	Protein conjugation factor	10187858
+10055	Activator	10187858
+10057	ATP-binding cassette	9325169
+10057	Hydrolase	9827529
+10057	Active transporter, primary	9827529
+10059	Hydrolase	9570752
+10059	GTP-binding protein/GTPase	9570752
+8061	DNA-binding protein	10918580
+8065	Receptor (signalling)	9581826
+1520	Protease (other than proteasomal)	1373132
+1520	Hydrolase	1373132
+1521	Protease (other than proteasomal)	9823953
+1521	Hydrolase	9823953
+1522	Protease (other than proteasomal)	9642240
+1522	Hydrolase	9642240
+1523	Inhibitor or repressor	1301999
+1523	DNA-binding protein	1301999
+1524	Receptor (signalling)	9390561
+2182	Ligase	9598324
+2184	Hydrolase	1998338
+2185	Transferase	10867021
+10060	Channel [passive transporter]	8826984
+10061	ATP-binding cassette	9878413
+10061	Hydrolase	9878413
+10061	Active transporter, primary	9878413
+10062	DNA-binding protein	7744246
+10062	Receptor (signalling)	7744246
+10062	Activator	7744246
+10063	Small molecule-binding protein	9050918
+7412	Adhesin/agglutinin	1715583
+7414	Inhibitor or repressor	2116004
+7416	Channel [passive transporter]	8420959
+8073	Hydrolase	8529999
+7417	Channel [passive transporter]	8420959
+7418	Channel [passive transporter]	7517385
+7419	Channel [passive transporter]	9781040
+8078	Protease (other than proteasomal)	7578059
+8078	Hydrolase	7578059
+1535	Oxidoreductase	2243141
+1536	Oxidoreductase	3600769
+2193	RNA-binding protein	9177188
+2193	Ligase	9177188
+2193	tRNA synthetase	9177188
+2194	Transferase	7835891
+2195	Adhesin/agglutinin	8586420
+2197	RNA-binding protein	8395683
+2197	Protein conjugation factor	8395683
+2197	Ribosomal subunit	8395683
+10072	Protease (other than proteasomal)	10387075
+10072	Hydrolase	10387075
+10073	RNA-binding protein	9670026
+10073	Nuclear import/export protein	9670026
+10076	Hydrolase	8700514
+7421	DNA-binding protein	2849209
+7421	Receptor (signalling)	2849209
+7428	Inhibitor or repressor	10353251
+7428	Activator	10973499
+8085	DNA-binding protein	9247308
+8085	Activator	9247308
+7429	Complex assembly protein	2846586
+8087	RNA-binding protein	7781595
+4881	Lyase	1979052
+4881	Receptor (signalling)	1979052
+4882	Lyase	1979052
+4882	Receptor (signalling)	10082481
+4883	Receptor (signalling)	2169733
+4886	Receptor (signalling)	8095935
+4887	Receptor (signalling)	7592910
+1544	Oxidoreductase	2813353
+1545	Oxidoreductase	8910454
+4889	Receptor (signalling)	8824284
+10084	DNA-binding protein	9875212
+10084	Activator	10198427
+10087	Transferase	10212244
+10089	Channel [passive transporter]	10206991
+7433	Receptor (signalling)	8179610
+7434	Receptor (signalling)	7811244
+8092	Inhibitor or repressor	8756334
+8092	DNA-binding protein	8756334
+7436	Receptor (signalling)	10380922
+8099	Regulatory subunit	9506968
+4892	Anchor Protein	9295142
+4893	Hydrolase	8607982
+4893	GTP-binding protein/GTPase	8607982
+1553	Oxidoreductase	7668294
+4897	Adhesin/agglutinin	8812479
+4898	Protease (other than proteasomal)	9581555
+4898	Hydrolase	9581555
+4899	DNA-binding protein	8034649
+4899	Activator	7629110
+1557	Oxidoreductase	8110777
+10090	Transferase	10187838
+10092	Complex assembly protein	9230079
+10093	Complex assembly protein	9230079
+10094	Complex assembly protein	9230079
+10095	Complex assembly protein	9230079
+10096	Complex assembly protein	9230079
+10097	Complex assembly protein	9230079
+7442	Channel [passive transporter]	9349813
+7443	Transferase	9344656
+7444	Transferase	9344656
+7450	Adhesin/agglutinin	10764791
+7450	Complex assembly protein	3874428
+7453	RNA-binding protein	1761529
+7453	Ligase	1761529
+7453	tRNA synthetase	1761529
+7454	Complex assembly protein	8625410
+7455	Adhesin/agglutinin	9126492
+7456	Complex assembly protein	9405671
+7458	RNA-binding protein	9516461
+1571	Oxidoreductase	3233219
+1573	Oxidoreductase	8631948
+1576	Oxidoreductase	2492107
+1577	Oxidoreductase	2732228
+1579	Oxidoreductase	7679927
+6805	Channel [passive transporter]	8105537
+4121	Hydrolase	8223597
+4124	Hydrolase	8524845
+4125	Hydrolase	8910458
+4126	Hydrolase	9384606
+4129	Oxidoreductase	8602220
+1582	Oxidoreductase	10051404
+1583	Oxidoreductase	3024157
+1586	Oxidoreductase	2808364
+1588	Oxidoreductase	2848247
+6817	Transferase	8661000
+6818	Transferase	7829089
+6819	Transferase	9169148
+4139	Transferase	
+1591	Oxidoreductase	8506296
+1592	Oxidoreductase	9228017
+1594	Oxidoreductase	9344864
+1595	Oxidoreductase	
+6820	Transferase	9799594
+6822	Transferase	1588921
+4141	RNA-binding protein	8921912
+4141	Ligase	8921912
+4141	tRNA synthetase	8921912
+4142	Receptor (signalling)	3419518
+7486	Nuclease [endo, exo, ribo, deoxyribo]	10871373
+7486	DNA-binding protein	9288107
+7486	Hydrolase	9288107
+4144	Transferase	7665609
+4145	Transferase	7530249
+4149	DNA-binding protein	2006410
+6832	RNA-binding protein	9925937
+6832	Hydrolase	9925937
+6833	Channel [passive transporter]	7502040
+6833	ATP-binding cassette	7502040
+6833	Receptor (signalling)	7502040
+6834	Complex assembly protein	9843204
+4150	DNA-binding protein	1502157
+7494	DNA-binding protein	1718857
+6838	RNA-binding protein	10675619
+4151	Oxidoreductase	10779502
+6839	Transferase	10949293
+4152	Inhibitor or repressor	10866667
+4152	DNA-binding protein	9774669
+7496	Hydrolase	9653645
+4157	Receptor (signalling)	9571181
+4158	Receptor (signalling)	9175632
+4159	Receptor (signalling)	8175743
+6840	Anchor Protein	9867483
+6847	Complex assembly protein	1464329
+4160	Receptor (signalling)	8392067
+4161	Receptor (signalling)	7739752
+4162	Adhesin/agglutinin	8378324
+4163	Inhibitor or repressor	1848370
+4163	Receptor (signalling)	1848370
+3508	DNA-binding protein	8349627
+6850	Transferase	10748099
+6853	Vesicle coat protein	2110562
+6854	Vesicle coat protein	8964517
+4170	Inhibitor or repressor	8790944
+4171	DNA-binding protein	8175912
+4171	Hydrolase	8175912
+4172	DNA-binding protein	1549468
+4172	Hydrolase	1549468
+3516	DNA-binding protein	8406481
+4173	DNA-binding protein	8798650
+4173	Hydrolase	7601140
+301	Inhibitor or repressor	2936963
+4179	Receptor (signalling)	8402913
+306	Hydrolase	1830024
+307	Inhibitor or repressor	2530088
+308	Inhibitor or repressor	2967495
+9400	DNA-binding protein	9878247
+9400	Hydrolase	9878247
+9401	DNA-binding protein	9878247
+9401	Hydrolase	9878247
+9406	RNA-binding protein	9931435
+9407	Protease (other than proteasomal)	9565616
+9407	Hydrolase	9565616
+6862	DNA-binding protein	8963900
+6865	Receptor (signalling)	8307161
+6868	Protease (other than proteasomal)	9034191
+6868	Hydrolase	9034191
+6869	Receptor (signalling)	8985172
+310	Channel [passive transporter]	2542947
+4188	Inhibitor or repressor	8797820
+313	Hydrolase	1883828
+314	Oxidoreductase	9119395
+318	Hydrolase	7487923
+318	Other phosphatase	7487923
+9410	RNA-binding protein	9774689
+9410	Spliceosomal subunit	9774689
+9411	GTPase activating protein	9305890
+9411	Activator	9305890
+9412	RNA polymerase subunit	8598913
+9414	Transferase	8824195
+9414	Other kinase	8824195
+9415	Oxidoreductase	9867867
+9416	RNA-binding protein	9409622
+9416	Spliceosomal subunit	9409622
+6870	Receptor (signalling)	8990205
+6872	Other kinase	8625415
+6874	Activator	9192867
+6875	Inhibitor or repressor	8858156
+6877	DNA-binding protein	9045704
+4193	Inhibitor or repressor	7791904
+320	Complex assembly protein	9753324
+54600	Transferase	1910331
+4199	Oxidoreductase	7622060
+325	Chaperones	10812074
+54606	Hydrolase	10749921
+328	Nuclease [endo, exo, ribo, deoxyribo]	8942627
+328	Inhibitor or repressor	7961715
+328	Activator	1380454
+9420	Oxidoreductase	9802883
+329	Inhibitor or repressor	8552191
+9424	Channel [passive transporter]	10075682
+9427	Protease (other than proteasomal)	9931490
+9427	Hydrolase	9931490
+9429	ATP-binding cassette	9850061
+9429	Hydrolase	9850061
+9429	Active transporter, primary	9850061
+6880	Activator	10821850
+6885	Transferase	9466656
+6886	DNA-binding protein	2303035
+6887	DNA-binding protein	1763056
+6888	Lyase	9524206
+3549	Transferase	8824192
+330	Inhibitor or repressor	8548810
+331	Inhibitor or repressor	9230442
+332	Inhibitor or repressor	9859993
+10	Transferase	2340091
+12	Inhibitor or repressor	2404007
+14	Adhesin/agglutinin	7743515
+15	Transferase	8661026
+16	RNA-binding protein	7654687
+16	Ligase	7654687
+16	tRNA synthetase	7654687
+339	RNA-binding protein	7736571
+339	Hydrolase	8078915
+19	ATP-binding cassette	10431236
+19	Hydrolase	10431236
+19	Active transporter, primary	10431236
+9435	Transferase	9722682
+9436	Receptor (signalling)	10049942
+9437	Receptor (signalling)	9730896
+9439	Activator	9989412
+6890	ATP-binding cassette	2259383
+6890	Hydrolase	1946428
+6890	Active transporter, primary	1946428
+6891	ATP-binding cassette	2259383
+6891	Hydrolase	1946428
+6891	Active transporter, primary	1946428
+6894	RNA-binding protein	8846792
+6895	RNA-binding protein	2011739
+6897	RNA-binding protein	2033077
+3554	Receptor (signalling)	2530587
+6899	DNA-binding protein	9268629
+3557	Inhibitor or repressor	10786823
+3559	Receptor (signalling)	2785715
+20	ATP-binding cassette	7766993
+20	Hydrolase	7766993
+20	Active transporter, primary	7766993
+343	Channel [passive transporter]	9806845
+21	ATP-binding cassette	9027511
+21	Hydrolase	9027511
+21	Active transporter, primary	9027511
+22	ATP-binding cassette	9621516
+22	Hydrolase	9621516
+22	Active transporter, primary	9621516
+23	ATP-binding cassette	9790762
+23	Hydrolase	9790762
+24	ATP-binding cassette	9054934
+24	Hydrolase	9054934
+24	Active transporter, primary	9054934
+25	Transferase	8242749
+25	DNA-binding protein	8242749
+26	Oxidoreductase	1356107
+26	Small molecule-binding protein	8182053
+9440	Activator	9989412
+27	Transferase	2198571
+9441	Activator	9989412
+9442	Activator	9989412
+29	GTPase activating protein	8262969
+29	Activator	8262969
+9443	Activator	9989412
+9446	Transferase	
+9448	Transferase	9890973
+2900	Channel [passive transporter]	8263508
+2900	Receptor (signalling)	8263508
+2902	Channel [passive transporter]	7679115
+2902	Receptor (signalling)	7679115
+2903	Channel [passive transporter]	8768735
+2903	Receptor (signalling)	8768735
+3560	Receptor (signalling)	2333293
+2904	Channel [passive transporter]	8768735
+2904	Receptor (signalling)	8768735
+3561	Receptor (signalling)	8266078
+2905	Channel [passive transporter]	9798920
+2905	Receptor (signalling)	9798920
+3563	Receptor (signalling)	1833064
+2907	Channel [passive transporter]	8406459
+2907	Receptor (signalling)	8406459
+2908	Inhibitor or repressor	7769088
+2908	DNA-binding protein	7769088
+2908	Receptor (signalling)	2867473
+2908	Activator	7769088
+2909	Inhibitor or repressor	1894621
+2909	DNA-binding protein	1894621
+3566	Receptor (signalling)	2307934
+3568	Receptor (signalling)	1495999
+351	Inhibitor or repressor	2507928
+31	Ligase	7732023
+32	Ligase	8670171
+355	Receptor (signalling)	1375228
+36	Oxidoreductase	7698750
+37	Oxidoreductase	7668252
+358	Channel [passive transporter]	7521540
+9451	Transferase	10026192
+359	Channel [passive transporter]	8140421
+39	Transferase	7911016
+9457	Activator	10086359
+6117	DNA-binding protein	8756712
+6118	DNA-binding protein	2406247
+6119	DNA-binding protein	8454588
+2911	Receptor (signalling)	7476890
+2912	Receptor (signalling)	7620613
+2913	Receptor (signalling)	8840013
+3570	Receptor (signalling)	3136546
+2914	Receptor (signalling)	8738157
+2915	Receptor (signalling)	7908515
+3572	Receptor (signalling)	2261637
+2916	Receptor (signalling)	9215706
+2917	Receptor (signalling)	9473604
+2918	Receptor (signalling)	9473604
+3575	Receptor (signalling)	2317865
+3577	Receptor (signalling)	1840701
+3579	Receptor (signalling)	10820279
+360	Channel [passive transporter]	7543093
+361	Channel [passive transporter]	7559426
+40	Channel [passive transporter]	8626462
+362	Channel [passive transporter]	8621489
+41	Channel [passive transporter]	9037075
+363	Channel [passive transporter]	8812490
+364	Channel [passive transporter]	9405233
+51301	Transferase	10753916
+51302	Oxidoreductase	10748047
+366	Channel [passive transporter]	9514918
+8803	Ligase	9765291
+367	DNA-binding protein	3353727
+367	Receptor (signalling)	10835690
+51305	Channel [passive transporter]	10734076
+8804	Inhibitor or repressor	9710587
+47	Lyase	1371749
+368	ATP-binding cassette	8912525
+368	Hydrolase	8912525
+368	Active transporter, primary	8912525
+8805	Activator	9115274
+369	Transferase	3029685
+9462	GTPase activating protein	9877179
+9462	Activator	9877179
+8807	Receptor (signalling)	9792649
+6120	Isomerase	3366467
+9464	DNA-binding protein	9878849
+8808	Receptor (signalling)	1833184
+9465	Anchor Protein	9545239
+8809	Receptor (signalling)	9325300
+6122	RNA-binding protein	2891103
+6122	Ribosomal subunit	2891103
+9466	Receptor (signalling)	9600072
+6123	RNA-binding protein	8921388
+6123	Ribosomal subunit	8921388
+6124	RNA-binding protein	8268230
+6124	Ribosomal subunit	8268230
+9468	Transferase	9593753
+6125	RNA-binding protein	7772601
+6125	Ribosomal subunit	7772601
+9469	Transferase	9883891
+6128	RNA-binding protein	8479925
+6128	Ribosomal subunit	8479925
+6129	RNA-binding protein	8441630
+6129	Ribosomal subunit	8441630
+3581	Receptor (signalling)	1376929
+2925	Receptor (signalling)	7838118
+2926	RNA-binding protein	8036161
+10800	Receptor (signalling)	10391245
+10801	Hydrolase	10339604
+10801	GTP-binding protein/GTPase	10339604
+2928	DNA-binding protein	9441739
+10802	Vesicle coat protein	10329445
+10803	Receptor (signalling)	10229797
+3587	Receptor (signalling)	8407942
+3588	Receptor (signalling)	10954742
+10808	Chaperones	9931472
+50	Lyase	9630632
+51	Oxidoreductase	8159712
+373	Hydrolase	8473324
+373	Activator	8473324
+373	GTP-binding protein/GTPase	8473324
+52	Hydrolase	1587862
+52	Other phosphatase	1587862
+53	Hydrolase	3191910
+375	Hydrolase	7990966
+375	GTP-binding protein/GTPase	1577740
+8811	Receptor (signalling)	9480833
+8812	Regulatory subunit	9632813
+8813	Transferase	9535917
+377	Hydrolase	1744102
+377	Activator	1744102
+377	GTP-binding protein/GTPase	1744102
+9470	RNA-binding protein	9582349
+8814	Transferase	1639063
+378	Hydrolase	2107548
+378	Activator	2107548
+378	GTP-binding protein/GTPase	2107548
+54658	Transferase	1339448
+8815	DNA-binding protein	10908652
+379	Hydrolase	7590735
+379	GTP-binding protein/GTPase	7590735
+54659	Transferase	9295054
+6130	RNA-binding protein	8360149
+6130	Ribosomal subunit	8360149
+27115	Hydrolase	10814504
+8818	Regulatory subunit	9724629
+9475	Transferase	9933571
+6132	RNA-binding protein	7506540
+6132	Ribosomal subunit	7506540
+9476	Protease (other than proteasomal)	9877162
+9476	Hydrolase	9877162
+6133	RNA-binding protein	8597601
+6133	Ribosomal subunit	8597601
+9478	Inhibitor or repressor	9920909
+9478	Small molecule-binding protein	9920909
+6135	RNA-binding protein	7748210
+6135	Ribosomal subunit	7748210
+9479	Inhibitor or repressor	9933567
+6136	RNA-binding protein	8441690
+6136	Ribosomal subunit	8441690
+6137	RNA-binding protein	9582194
+6137	Ribosomal subunit	9582194
+6138	RNA-binding protein	9582194
+6138	Ribosomal subunit	9582194
+6139	RNA-binding protein	2402465
+6139	Ribosomal subunit	2402465
+2932	Transferase	7980435
+3590	Receptor (signalling)	8786120
+2934	Complex assembly protein	1321812
+2935	Hydrolase	2511002
+2935	GTP-binding protein/GTPase	2511002
+2936	Oxidoreductase	947404
+10810	Regulatory subunit	10381382
+2937	Ligase	7646467
+3594	Receptor (signalling)	7911493
+3595	Receptor (signalling)	8943050
+2939	Transferase	3138230
+10814	Docking protein	7553862
+3597	Receptor (signalling)	9013879
+10817	Anchor Protein	8761293
+381	Hydrolase	1993656
+381	Activator	1993656
+381	GTP-binding protein/GTPase	1993656
+10818	Anchor Protein	9660748
+382	Hydrolase	1993656
+382	Activator	1993656
+382	GTP-binding protein/GTPase	1993656
+383	Hydrolase	3540966
+29803	DNA-binding protein	10606657
+384	Hydrolase	8898077
+8820	DNA-binding protein	9620767
+8821	Hydrolase	9295334
+8821	Other phosphatase	9295334
+27120	Regulatory subunit	10570958
+387	Hydrolase	10436159
+387	GTP-binding protein/GTPase	10436159
+9480	DNA-binding protein	9915796
+8824	Hydrolase	9169443
+388	Hydrolase	3888408
+388	GTP-binding protein/GTPase	3888408
+8825	Anchor Protein	9753324
+389	Hydrolase	8468062
+389	GTP-binding protein/GTPase	8468062
+9482	Docking protein	10839363
+9482	Regulatory subunit	10198254
+8826	Inhibitor or repressor	8051149
+8826	GTPase activating protein	8051149
+8827	DNA-binding protein	9790734
+27125	DNA-binding protein	10588740
+8828	Receptor (signalling)	9529250
+6141	RNA-binding protein	8218404
+6141	Ribosomal subunit	8218404
+51329	Serine rich protein	10708573
+8829	Receptor (signalling)	9288753
+6142	RNA-binding protein	9582194
+6142	Ribosomal subunit	9582194
+9486	Transferase	9478973
+6143	RNA-binding protein	1577483
+6143	Ribosomal subunit	1577483
+27128	Guanine nucleotide exchange factor	10652308
+27128	Receptor (signalling)	10652308
+6144	RNA-binding protein	7772601
+6144	Ribosomal subunit	7772601
+9488	Transferase	8861954
+6146	RNA-binding protein	8135813
+6146	Ribosomal subunit	8135813
+6147	RNA-binding protein	9417910
+6147	Ribosomal subunit	9417910
+2940	Transferase	9480897
+2941	Transferase	9480897
+2946	Transferase	2034681
+10825	Hydrolase	10405317
+390	GTP-binding protein/GTPase	8649376
+391	Hydrolase	1620121
+391	GTP-binding protein/GTPase	1620121
+392	GTPase activating protein	10799524
+392	Activator	8288572
+393	GTPase activating protein	8570618
+393	Activator	8570618
+394	GTPase activating protein	8537347
+394	Hydrolase	8537347
+394	GTP-binding protein/GTPase	8537347
+395	GTPase activating protein	9417914
+395	Activator	8570618
+396	Inhibitor or repressor	8262133
+54676	Hydrolase	10833435
+54676	GTP-binding protein/GTPase	10833435
+397	Inhibitor or repressor	8356058
+54677	Transferase	10486279
+8834	Receptor (signalling)	2110658
+398	Inhibitor or repressor	9113980
+8835	Inhibitor or repressor	9266833
+399	Hydrolase	9226377
+399	GTP-binding protein/GTPase	9226377
+8836	Protease (other than proteasomal)	8816764
+8836	Hydrolase	8816764
+9493	Motor protein	1406973
+9493	Hydrolase	1406973
+6150	RNA-binding protein	8541832
+6150	Ribosomal subunit	8541832
+9495	Anchor Protein	1512224
+6152	RNA-binding protein	9582194
+6152	Ribosomal subunit	9582194
+9496	DNA-binding protein	10945475
+6154	RNA-binding protein	8479925
+6154	Ribosomal subunit	8479925
+6156	RNA-binding protein	1577483
+6156	Ribosomal subunit	1577483
+6157	RNA-binding protein	7772601
+6157	Ribosomal subunit	7772601
+6158	RNA-binding protein	7772601
+6158	Ribosomal subunit	7772601
+2950	Transferase	8340390
+6159	RNA-binding protein	8597591
+6159	Ribosomal subunit	8597591
+2954	Transferase	9396740
+2954	Isomerase	9417084
+2956	DNA-binding protein	9428522
+2957	Activator	8224850
+8841	Inhibitor or repressor	10777477
+8841	Hydrolase	9464271
+51343	Protein conjugation factor	11003657
+51343	Activator	11003657
+51343	Regulatory subunit	11003657
+8843	Receptor (signalling)	7505609
+51344	Receptor (signalling)	9430220
+8844	Transferase	10764733
+5502	Inhibitor or repressor	8611507
+51347	Inhibitor or repressor	10559204
+51347	Transferase	10559204
+6160	RNA-binding protein	2780320
+6160	Ribosomal subunit	2780320
+5504	Inhibitor or repressor	8119416
+51348	Receptor (signalling)	10671213
+8848	DNA-binding protein	9022669
+8848	Activator	9022669
+6161	RNA-binding protein	9284913
+6161	Ribosomal subunit	9284913
+5506	Inhibitor or repressor	7926294
+5507	Regulatory subunit	8985175
+6164	RNA-binding protein	7490091
+6164	Ribosomal subunit	7490091
+6165	RNA-binding protein	8786106
+6165	Ribosomal subunit	8786106
+5509	Regulatory subunit	9414128
+6167	RNA-binding protein	7545944
+6167	Ribosomal subunit	7545944
+6168	RNA-binding protein	1437567
+6168	Ribosomal subunit	1437567
+2960	DNA-binding protein	10827951
+6169	RNA-binding protein	9375793
+6169	Ribosomal subunit	9375793
+2961	DNA-binding protein	10827951
+2965	Transferase	7533895
+2965	Other kinase	7533895
+2966	DNA-binding protein	8194529
+10840	Oxidoreductase	10204077
+2967	DNA-binding protein	8194529
+10841	Transferase	10029623
+10841	Hydrolase	10029623
+10842	Inhibitor or repressor	10051666
+10842	Regulatory subunit	10051666
+2969	DNA-binding protein	9334314
+2969	Activator	10854432
+10844	Complex assembly protein	9566967
+10846	Hydrolase	10373451
+10847	Hydrolase	10347196
+10847	Activator	10347196
+10848	Inhibitor or repressor	10336463
+90	Receptor (signalling)	8389764
+91	Transferase	8397373
+91	Receptor (signalling)	8397373
+92	Receptor (signalling)	1314589
+93	Transferase	8161782
+93	Receptor (signalling)	8161782
+8851	Regulatory subunit	8090221
+94	Receptor (signalling)	8397373
+8852	Anchor Protein	9822690
+95	Protease (other than proteasomal)	1707030
+95	Hydrolase	1707030
+8853	GTPase activating protein	9819391
+8853	Activator	9819391
+5510	Regulatory subunit	7498485
+8854	Oxidoreductase	8797830
+5511	RNA-binding protein	9153239
+5511	Nuclease [endo, exo, ribo, deoxyribo]	9153239
+5511	Hydrolase	9153239
+5511	Regulatory subunit	7499293
+97	Hydrolase	3026468
+97	Other phosphatase	3026468
+98	Hydrolase	8268218
+98	Other phosphatase	8268218
+8856	DNA-binding protein	9784494
+8856	Receptor (signalling)	9784494
+8856	Activator	9784494
+6170	RNA-binding protein	8908372
+6170	Ribosomal subunit	8908372
+8858	Protease (other than proteasomal)	2244898
+8858	Hydrolase	2244898
+6171	RNA-binding protein	1326959
+6171	Ribosomal subunit	1326959
+8859	Transferase	9812991
+27158	Oxidoreductase	10625700
+5518	Regulatory subunit	2159327
+6175	RNA-binding protein	3323886
+6175	Ribosomal subunit	3323886
+5519	Regulatory subunit	9765152
+6176	RNA-binding protein	3323886
+6176	Ribosomal subunit	3323886
+2971	DNA-binding protein	7789179
+2975	DNA-binding protein	8164661
+2977	Lyase	1683630
+2978	Activator	7983048
+2979	Activator	1409606
+10855	Hydrolase	10395326
+50700	Oxidoreductase	10753906
+10856	DNA-binding protein	10428817
+10856	Hydrolase	10428817
+10857	Receptor (signalling)	9705155
+10858	Oxidoreductase	10377398
+29842	Inhibitor or repressor	10644752
+29842	DNA-binding protein	10644752
+10859	Inhibitor or repressor	9285411
+10859	Receptor (signalling)	9285411
+51360	Protease (other than proteasomal)	9659902
+51360	Hydrolase	9659902
+29843	Protease (other than proteasomal)	10652325
+29843	Hydrolase	10652325
+26503	Active transporter, secondary	10581036
+5520	Regulatory subunit	1849734
+5521	Regulatory subunit	1849734
+51365	Hydrolase	10196188
+51366	Protein conjugation factor	10030672
+51366	Ligase	10030672
+5523	Regulatory subunit	8392071
+27164	DNA-binding protein	10610715
+26508	DNA-binding protein	10415358
+8867	Hydrolase	9428629
+8867	Other phosphatase	9428629
+5524	Activator	8195217
+27165	Hydrolase	10620514
+6181	RNA-binding protein	3323886
+6181	Ribosomal subunit	3323886
+5525	Regulatory subunit	7592815
+8869	Transferase	9822625
+6182	RNA-binding protein	8626705
+6182	Ribosomal subunit	9169145
+5526	Regulatory subunit	7592815
+6183	RNA-binding protein	9545647
+6183	Ribosomal subunit	9545647
+6184	Transferase	10660554
+5528	Regulatory subunit	8703017
+6185	Transferase	10660554
+5529	Regulatory subunit	8703017
+6187	RNA-binding protein	2308862
+6187	Ribosomal subunit	2308862
+6188	RNA-binding protein	1712897
+6188	Ribosomal subunit	1712897
+6189	RNA-binding protein	1398113
+6189	Ribosomal subunit	1398113
+2981	Activator	8605041
+2982	Lyase	9742212
+2982	Receptor (signalling)	9742212
+2983	Lyase	9742212
+2983	Receptor (signalling)	9742212
+2984	Lyase	1680854
+2984	Receptor (signalling)	1680854
+2986	Lyase	7777544
+2986	Receptor (signalling)	7777544
+2987	Transferase	8663313
+2987	Other kinase	8663313
+10863	Protease (other than proteasomal)	10587367
+10863	Hydrolase	10587367
+10864	Active transporter, secondary	
+10864	Major Facilitator Superfamily	
+10865	DNA-binding protein	8649988
+29851	Receptor (signalling)	9930702
+8870	Inhibitor or repressor	9703517
+26512	Inhibitor or repressor	10467397
+8874	Guanine nucleotide exchange factor	9659915
+27173	Active transporter, secondary	10610721
+26517	Receptor (protein translocation)	10552927
+8877	Transferase	10751414
+8877	Other kinase	10751414
+26519	Receptor (protein translocation)	10552927
+6191	RNA-binding protein	8358435
+6191	Ribosomal subunit	8358435
+6192	RNA-binding protein	2124517
+6192	Ribosomal subunit	2124517
+5536	Hydrolase	7925273
+6193	RNA-binding protein	7772601
+6193	Ribosomal subunit	7772601
+5537	Hydrolase	9013334
+6194	RNA-binding protein	1301164
+6194	Ribosomal subunit	1301164
+6195	Transferase	8141249
+6197	Transferase	10436156
+6198	Transferase	1922062
+2990	Hydrolase	3468507
+6199	Transferase	9804755
+2992	Hydrolase	9346895
+2997	Transferase	2493642
+10870	Complex assembly protein	10426994
+10870	Receptor (signalling)	10426994
+2998	Transferase	1731614
+10871	Receptor (signalling)	1349532
+10873	Oxidoreductase	7818469
+26520	Receptor (protein translocation)	10552927
+26521	Receptor (protein translocation)	10552927
+8880	DNA-binding protein	8125259
+5540	Receptor (signalling)	7592911
+27181	Receptor (signalling)	10625619
+27181	Small molecule-binding protein	10625619
+26525	Inhibitor or repressor	10512743
+8884	Active transporter, secondary	9516450
+51385	Inhibitor or repressor	10029171
+51385	DNA-binding protein	10029171
+27183	ATP-binding cassette	10637304
+27183	Hydrolase	10637304
+8886	RNA-binding protein	8861962
+8886	Hydrolase	8861962
+26528	RNA-binding protein	10857750
+8888	DNA-binding protein	9712829
+8888	Hydrolase	9712829
+2203	Hydrolase	8387495
+2204	Receptor (signalling)	8836118
+5547	Protease (other than proteasomal)	28321
+5547	Hydrolase	28321
+2205	Receptor (signalling)	2146219
+2206	Receptor (signalling)	2146219
+2207	Receptor (signalling)	2146219
+2208	Receptor (signalling)	3034567
+2209	Receptor (signalling)	10879688
+10886	Receptor (signalling)	
+10888	Receptor (signalling)	10760605
+51393	Channel [passive transporter]	
+5551	Channel [passive transporter]	1505959
+8895	Small molecule-binding protein	9430674
+8896	DNA-binding protein	7841202
+8897	Hydrolase	10733931
+2212	Receptor (signalling)	9843982
+2213	Receptor (signalling)	2142460
+8899	Transferase	9102632
+5557	DNA polymerase or subunit	8026492
+5558	Transferase	8026492
+5558	DNA polymerase or subunit	8026492
+2217	Receptor (protein translocation)	7964511
+56624	Hydrolase	10781606
+10891	DNA-binding protein	10713165
+10893	Protease (other than proteasomal)	10363975
+10893	Hydrolase	10363975
+10894	Receptor (signalling)	10037799
+10895	DNA-binding protein	7887923
+10895	Activator	7887923
+29880	Transferase	10359825
+8106	RNA-binding protein	9462747
+29882	Protein conjugation factor	9469815
+4901	DNA-binding protein	1729696
+4901	Activator	8939891
+4904	DNA-binding protein	1738588
+29888	Small molecule-binding protein	10748158
+5562	Transferase	8557660
+5563	Transferase	7959015
+4907	Hydrolase	2129526
+5564	Regulatory subunit	9575201
+5565	Regulatory subunit	9575201
+2224	Transferase	2690933
+10101	Conserved ATPase domain	10486206
+10105	Chaperones	1744118
+10105	Isomerase	1744118
+10109	Complex assembly protein	9230079
+8111	Receptor (signalling)	8661159
+29892	DNA-binding protein	7887923
+29892	Activator	7887923
+4913	Nuclease [endo, exo, ribo, deoxyribo]	8990169
+4913	Lyase	8990169
+4913	Hydrolase	8990169
+4914	Receptor (signalling)	9290260
+5571	Transferase	2342480
+4915	Transferase	1710174
+4915	Receptor (signalling)	1710174
+4916	Transferase	7806211
+4916	Receptor (signalling)	7806211
+5573	Regulatory subunit	3426618
+2230	Oxidoreductase	2969697
+5575	Regulatory subunit	1358799
+4919	Transferase	1334494
+4919	Receptor (signalling)	1334494
+5576	Regulatory subunit	2540040
+5577	Regulatory subunit	2851102
+2235	Lyase	2260980
+10110	Transferase	10548550
+2237	Nuclease [endo, exo, ribo, deoxyribo]	8131753
+2237	Hydrolase	8131753
+10111	Nuclease [endo, exo, ribo, deoxyribo]	9705271
+10111	Hydrolase	9705271
+10113	Activator	10194769
+10114	Transferase	9748262
+8120	Vesicle coat protein	7671305
+29107	Nuclear import/export protein	10567585
+8128	Transferase	10766765
+4920	Transferase	1334494
+4920	Receptor (signalling)	1334494
+4921	Transferase	9659899
+4921	Receptor (signalling)	9659899
+4923	Receptor (signalling)	8381365
+5580	Transferase	8357834
+4924	DNA-binding protein	1520323
+5581	Transferase	1382605
+4925	DNA-binding protein	7811391
+5583	Transferase	1986216
+4927	Nuclear import/export protein	9049309
+5584	Transferase	8226978
+4928	Docking protein	7736573
+4928	Nuclear import/export protein	7736573
+5585	Transferase	10792047
+2242	Transferase	6183005
+4929	DNA-binding protein	7877627
+4929	Receptor (signalling)	7877627
+5586	Transferase	7851406
+5587	Transferase	8119958
+2245	Guanine nucleotide exchange factor	8969170
+10123	Hydrolase	10462049
+10123	GTP-binding protein/GTPase	10462049
+10124	Hydrolase	10462049
+10124	GTP-binding protein/GTPase	10462049
+56655	DNA polymerase or subunit	10801849
+29110	Transferase	10581243
+10127	Inhibitor or repressor	9256059
+29118	RNA-binding protein	10608860
+29118	Hydrolase	10608860
+4931	ATP-binding cassette	9286697
+4931	Hydrolase	9286697
+26574	DNA-binding protein	10580117
+5591	Transferase	7671312
+4935	Receptor (signalling)	10471510
+5593	Transferase	8607838
+5594	Transferase	10706854
+5595	Transferase	10570282
+4939	Transferase	9790745
+5596	Transferase	7969157
+5599	Transferase	8137421
+10130	Isomerase	7590364
+10131	Chaperones	8756626
+10133	Inhibitor or repressor	9488477
+10136	Protease (other than proteasomal)	2460440
+10136	Hydrolase	2460440
+29121	Receptor (signalling)	10541800
+10139	GTP-binding protein/GTPase	8530503
+29124	Hydrolase	10527825
+8140	Active transporter, secondary	9751058
+29128	DNA-binding protein	10646863
+8148	RNA-binding protein	9795213
+8148	DNA-binding protein	9795213
+4940	Transferase	9790745
+4942	Transferase	3456579
+26584	DNA-binding protein	9736770
+26584	Activator	9736770
+93974	Inhibitor or repressor	
+26585	Inhibitor or repressor	9660951
+1603	Transferase	9144178
+4946	Inhibitor or repressor	7813017
+1604	Inhibitor or repressor	2433596
+2260	Transferase	10918587
+2260	Receptor (signalling)	10748122
+4947	Inhibitor or repressor	9428668
+1605	Receptor (protein translocation)	8798547
+1605	Anchor Protein	1741056
+2261	Transferase	10918587
+2261	Receptor (signalling)	1847508
+1606	Transferase	2175712
+1606	Other kinase	2175712
+1608	Transferase	8034597
+1608	Other kinase	8034597
+2264	Transferase	10918587
+2264	Receptor (signalling)	1385111
+1609	Transferase	9099683
+1609	Other kinase	9099683
+10140	Inhibitor or repressor	8632892
+2268	Transferase	2995972
+10142	Anchor Protein	10390370
+10142	Regulatory subunit	10390370
+10146	RNA-binding protein	9889278
+10146	DNA-binding protein	9889278
+10148	Receptor (signalling)	8551575
+10149	Receptor (signalling)	9150425
+8153	Hydrolase	8938427
+8153	GTP-binding protein/GTPase	8938427
+4952	Hydrolase	7761412
+4952	Other phosphatase	7761412
+1610	Oxidoreductase	2901986
+1613	Transferase	9488481
+1615	Ligase	8449960
+2271	Lyase	3828494
+2272	Hydrolase	8794732
+1617	RNA-binding protein	7670487
+1618	RNA-binding protein	8968755
+10151	RNA-binding protein	8101480
+10152	Inhibitor or repressor	7590236
+10152	DNA-binding protein	7590236
+10153	DNA-binding protein	2247079
+10153	Activator	2247079
+10154	Receptor (protein translocation)	9586637
+10155	Inhibitor or repressor	8769649
+7507	DNA-binding protein	10946233
+7508	DNA-binding protein	10873465
+8165	Anchor Protein	9065479
+25942	Inhibitor or repressor	10773092
+1621	Oxidoreductase	3443096
+4968	Lyase	9223305
+4968	DNA-binding protein	9223305
+1628	DNA-binding protein	8786133
+2288	Isomerase	1279700
+2289	Isomerase	9001212
+10164	Transferase	10330415
+10165	Active transporter, secondary	10642534
+10166	Active transporter, secondary	10369256
+53353	Receptor (protein translocation)	10766186
+7511	Protease (other than proteasomal)	
+7511	Hydrolase	
+7512	Protease (other than proteasomal)	9375790
+7512	Hydrolase	9375790
+8170	Active transporter, secondary	8647271
+7514	Nuclear import/export protein	9368044
+7515	DNA-binding protein	10773072
+8174	Adhesin/agglutinin	8502297
+8175	RNA-binding protein	8211113
+8175	Spliceosomal subunit	8211113
+8178	RNA polymerase subunit	8596958
+8178	Activator	10995463
+4973	Receptor (protein translocation)	9828121
+1633	Transferase	1996353
+1633	Other kinase	1996353
+2290	DNA-binding protein	7957066
+1635	Hydrolase	7685356
+2291	DNA-binding protein	7959731
+1638	Oxidoreductase	8148378
+2294	DNA-binding protein	8626802
+2294	Activator	8626802
+2295	DNA-binding protein	9722567
+2295	Activator	9722567
+2296	DNA-binding protein	7957066
+2297	DNA-binding protein	7957066
+2298	DNA-binding protein	7957066
+10173	Activator	10585455
+7520	DNA-binding protein	7957065
+7520	Hydrolase	7957065
+7520	Regulatory subunit	7957065
+7525	Transferase	2436037
+7528	Inhibitor or repressor	1946405
+7528	DNA-binding protein	1946405
+7528	Activator	1946405
+7529	Regulatory subunit	9428519
+8187	RNA-binding protein	9121460
+8187	DNA-binding protein	9121460
+4982	Receptor (signalling)	9108485
+4983	GTPase activating protein	9582072
+1642	DNA-binding protein	8798680
+4985	Receptor (signalling)	7808419
+1643	DNA-binding protein	8798680
+4986	Receptor (signalling)	7624359
+4987	Receptor (signalling)	10965058
+1645	Oxidoreductase	7515059
+1645	Small molecule-binding protein	8486699
+4988	Receptor (signalling)	7905839
+1646	Oxidoreductase	8486699
+1646	Small molecule-binding protein	8573067
+1649	Inhibitor or repressor	8510758
+10180	RNA-binding protein	10352938
+10180	DNA-binding protein	10352938
+10181	RNA-binding protein	10352938
+10181	DNA-binding protein	10352938
+53371	Nuclear import/export protein	8707840
+28512	Inhibitor or repressor	10657303
+28512	Hydrolase	10657303
+28512	GTP-binding protein/GTPase	10657303
+10188	Inhibitor or repressor	8497321
+10188	Transferase	8497321
+28516	Receptor (signalling)	2974163
+7532	Regulatory subunit	10433554
+7533	Regulatory subunit	9428519
+28518	Receptor (signalling)	3186718
+7534	Regulatory subunit	9428519
+8192	Protease (other than proteasomal)	8543061
+8192	Hydrolase	8543061
+7536	Inhibitor or repressor	9660765
+8193	DNA-binding protein	8812431
+7538	RNA-binding protein	9703499
+7538	Inhibitor or repressor	9703499
+8195	Chaperones	10802661
+4991	Receptor (signalling)	8097991
+4992	Receptor (signalling)	9500546
+1650	Transferase	9367678
+4994	Receptor (signalling)	8921386
+1652	Isomerase	9480844
+4995	Receptor (signalling)	8921386
+1653	RNA-binding protein	7689221
+1653	Hydrolase	7689221
+1654	RNA-binding protein	9381176
+1654	Hydrolase	9381176
+4998	DNA-binding protein	7502077
+1656	RNA-binding protein	1579499
+1656	Hydrolase	1579499
+4999	DNA-binding protein	8808289
+1658	RNA-binding protein	8135819
+1658	Hydrolase	8135819
+1659	RNA-binding protein	7935475
+1659	Hydrolase	7935475
+10190	Oxidoreductase	
+10196	Transferase	9642256
+10197	Proteasome subunit	7951316
+10197	Activator	7951316
+10199	RNA-binding protein	9450966
+4200	Oxidoreductase	1993674
+4204	Inhibitor or repressor	10773092
+4204	DNA-binding protein	9620804
+4205	DNA-binding protein	8575763
+4205	Activator	8575763
+4207	DNA-binding protein	8575763
+4207	Activator	8575763
+4208	DNA-binding protein	8575763
+4208	Activator	8575763
+4209	DNA-binding protein	8575763
+4209	Activator	8575763
+1660	RNA-binding protein	9111062
+1660	DNA-binding protein	9111062
+1660	Hydrolase	9111062
+1662	RNA-binding protein	8660968
+1662	Hydrolase	8660968
+1663	DNA-binding protein	9013641
+1663	Hydrolase	9013641
+1664	DNA-binding protein	9013641
+1664	Hydrolase	9013641
+1665	RNA-binding protein	7935475
+1665	Hydrolase	9388478
+1666	Oxidoreductase	7818482
+1667	Other	10914484
+1668	Other	10914484
+7552	DNA-binding protein	1923752
+4211	DNA-binding protein	7565694
+7555	Inhibitor or repressor	2562787
+7555	DNA-binding protein	2562787
+4212	Inhibitor or repressor	10764806
+7556	Inhibitor or repressor	9278146
+4214	Transferase	9808624
+4215	Transferase	9006902
+4216	Transferase	9305639
+4217	Transferase	8974401
+25996	Nuclease [endo, exo, ribo, deoxyribo]	10851236
+1675	Protease (other than proteasomal)	1374388
+1675	Hydrolase	1374388
+1676	Nuclease [endo, exo, ribo, deoxyribo]	9108473
+1676	Hydrolase	9108473
+1677	Nuclease [endo, exo, ribo, deoxyribo]	9108473
+1677	Hydrolase	9108473
+6902	Chaperones	8706133
+6903	Chaperones	8706133
+6904	Chaperones	8706133
+6905	Chaperones	8706133
+6906	Inhibitor or repressor	7499319
+6906	Small molecule-binding protein	3094014
+6907	Regulatory subunit	10330347
+6908	DNA-binding protein	2194289
+4221	Inhibitor or repressor	9989505
+6909	DNA-binding protein	8530034
+4224	Protease (other than proteasomal)	1939172
+4224	Hydrolase	1939172
+7568	DNA-binding protein	2288909
+4225	Protease (other than proteasomal)	9288916
+4225	Hydrolase	9288916
+6911	DNA-binding protein	9933572
+6915	Receptor (signalling)	1825698
+7572	DNA-binding protein	2288909
+6917	Regulatory subunit	1708494
+28559	Receptor (signalling)	8163948
+4233	Transferase	10871856
+4233	Receptor (signalling)	10871856
+4234	Transferase	10329009
+6921	Activator	10973499
+6921	Regulatory subunit	7660129
+28563	Receptor (signalling)	3865189
+6923	Activator	10973499
+6923	Regulatory subunit	7660129
+6925	DNA-binding protein	8978694
+6925	Activator	1681116
+28567	Receptor (signalling)	3865189
+4240	Adhesin/agglutinin	8639264
+28568	Receptor (signalling)	8872162
+7584	Activator	1572646
+6928	DNA-binding protein	1677179
+4241	Small molecule-binding protein	2419904
+4245	Transferase	1702225
+7589	DNA-binding protein	2288909
+4247	Transferase	7635144
+6930	DNA-binding protein	8333869
+6930	Activator	8333869
+28571	Receptor (signalling)	8206523
+6932	DNA-binding protein	1569101
+6932	Activator	1569101
+6934	Activator	9065401
+28575	Receptor (signalling)	3772297
+6935	Inhibitor or repressor	8138542
+6935	DNA-binding protein	8138542
+6935	Activator	8138542
+28576	Receptor (signalling)	6202421
+7592	Inhibitor or repressor	10449920
+6936	Inhibitor or repressor	1370479
+6936	DNA-binding protein	1370479
+28577	Receptor (signalling)	3772297
+7593	DNA-binding protein	1860835
+6938	DNA-binding protein	1312219
+6938	Activator	1312219
+6939	Activator	8825648
+7596	Inhibitor or repressor	9570955
+4253	Activator	9356211
+4255	Transferase	2188979
+4255	DNA-binding protein	2188979
+4258	Transferase	8703034
+4259	Transferase	9278457
+28580	Receptor (signalling)	2272661
+28582	Receptor (signalling)	2272661
+6944	DNA-binding protein	7702631
+3601	Receptor (signalling)	7641685
+6945	Inhibitor or repressor	
+6945	DNA-binding protein	
+6947	Small molecule-binding protein	2777761
+3604	Inhibitor or repressor	8639902
+3604	Receptor (signalling)	8262389
+6948	Small molecule-binding protein	1708393
+4261	DNA-binding protein	7749984
+4261	Activator	8402893
+6949	Nuclear import/export protein	9096354
+3607	DNA-binding protein	1339390
+3608	DNA-binding protein	7519613
+3609	DNA-binding protein	7519613
+4267	Adhesin/agglutinin	2479542
+28590	Receptor (signalling)	3865189
+6950	Chaperones	1630491
+3611	Transferase	8538749
+28595	Receptor (signalling)	1660526
+28596	Receptor (signalling)	1660526
+3613	Hydrolase	9322233
+3613	Other phosphatase	9322233
+28597	Receptor (signalling)	1660526
+28598	Receptor (signalling)	1660526
+400	Hydrolase	9624189
+400	Activator	9624189
+400	GTP-binding protein/GTPase	9624189
+401	DNA-binding protein	8661014
+402	Inhibitor or repressor	10831612
+402	Hydrolase	8415637
+402	GTP-binding protein/GTPase	8415637
+403	Hydrolase	8034651
+403	GTP-binding protein/GTPase	8034651
+65108	Small molecule-binding protein	
+405	DNA-binding protein	1317062
+405	Activator	1317062
+407	Complex assembly protein	8224247
+407	Inhibitor or repressor	8224247
+408	Complex assembly protein	9924018
+408	Inhibitor or repressor	2163110
+9507	Protease (other than proteasomal)	10751421
+9507	Hydrolase	10827174
+9509	Protease (other than proteasomal)	10417273
+9509	Hydrolase	10417273
+3620	Oxidoreductase	2109605
+3621	Inhibitor or repressor	8944021
+3622	DNA-binding protein	10072587
+4284	Channel [passive transporter]	1840563
+4285	Protease (other than proteasomal)	9073519
+4285	Hydrolase	9073519
+410	Hydrolase	2562955
+411	Hydrolase	2303452
+412	Hydrolase	6957717
+4288	DNA-binding protein	10878014
+415	Hydrolase	9192838
+55350	Hydrolase	
+416	Hydrolase	9192838
+417	Transferase	7947688
+9510	Protease (other than proteasomal)	10438512
+9510	Hydrolase	10438512
+419	Transferase	9119374
+9512	Protease (other than proteasomal)	9653160
+9512	Hydrolase	9653160
+9513	RNA-binding protein	7489725
+9514	Transferase	9030544
+9517	Transferase	9363775
+9518	Inhibitor or repressor	9326641
+3631	Hydrolase	7608176
+3631	Other phosphatase	7608176
+3635	Hydrolase	8769125
+3635	Other phosphatase	8769125
+4292	Hydrolase	9827806
+3637	DNA-binding protein	7935390
+4296	Transferase	10799501
+4297	DNA-binding protein	10821850
+4297	Activator	10821850
+4298	Activator	10995463
+427	Hydrolase	8955159
+9520	Protease (other than proteasomal)	9048733
+429	DNA-binding protein	8390674
+9527	Vesicle coat protein	8636227
+6982	Receptor (signalling)	2938743
+6983	Receptor (signalling)	2969332
+6984	Receptor (signalling)	2969332
+6985	Receptor (signalling)	2969758
+3642	DNA-binding protein	8188699
+3643	Transferase	6849137
+3643	Receptor (signalling)	2859121
+3645	Transferase	2768234
+3645	Receptor (signalling)	2768234
+432	Receptor (signalling)	2982798
+433	Receptor (signalling)	3863106
+435	Lyase	282632
+54714	Channel [passive transporter]	10888875
+54715	RNA-binding protein	10814712
+9530	Inhibitor or repressor	9915703
+9531	Inhibitor or repressor	9873016
+439	Hydrolase	9736449
+9532	Inhibitor or repressor	9873016
+9533	Transferase	9540830
+9533	RNA polymerase subunit	9540830
+9536	Isomerase	10377395
+6992	Inhibitor or repressor	9843442
+3651	DNA-binding protein	8954967
+6996	DNA-binding protein	9489705
+6996	Hydrolase	9489705
+3654	Transferase	8599092
+3655	Receptor (signalling)	9185503
+3656	Transferase	9374458
+3658	RNA-binding protein	1421965
+3658	Inhibitor or repressor	7489724
+3658	Lyase	1421965
+3659	DNA-binding protein	2475256
+3659	Activator	7507207
+443	Hydrolase	8252036
+444	Oxidoreductase	7821814
+9541	Inhibitor or repressor	9874765
+9543	Adhesin/agglutinin	9922388
+6201	RNA-binding protein	8522193
+6201	Ribosomal subunit	8522193
+9545	Hydrolase	10023084
+9545	GTP-binding protein/GTPase	10023084
+6202	RNA-binding protein	8432552
+6202	Ribosomal subunit	8432552
+6203	RNA-binding protein	7772601
+6203	Ribosomal subunit	7772601
+6204	RNA-binding protein	7772601
+6204	Ribosomal subunit	7772601
+6205	RNA-binding protein	3267208
+6205	Ribosomal subunit	3267208
+6206	RNA-binding protein	1861993
+6206	Ribosomal subunit	1861993
+6207	RNA-binding protein	8332508
+6207	Ribosomal subunit	8332508
+6208	RNA-binding protein	3785212
+6208	Ribosomal subunit	3785212
+6209	RNA-binding protein	2044758
+6209	Ribosomal subunit	2044758
+3660	Inhibitor or repressor	7507207
+3660	DNA-binding protein	7507207
+3661	DNA-binding protein	8524823
+3662	DNA-binding protein	8921401
+3665	Inhibitor or repressor	9315633
+3665	DNA-binding protein	9315633
+3665	Activator	9786932
+54738	Inhibitor or repressor	9121764
+54738	DNA-binding protein	9121764
+6210	RNA-binding protein	9582194
+6210	Ribosomal subunit	9582194
+6217	RNA-binding protein	2016298
+6217	Ribosomal subunit	2016298
+6218	RNA-binding protein	3240863
+6218	Ribosomal subunit	3240863
+3670	DNA-binding protein	7912209
+3673	Adhesin/agglutinin	10942362
+3673	Inhibitor or repressor	10944199
+3673	Receptor (signalling)	2545729
+3673	Activator	10944199
+3674	Receptor (signalling)	10429193
+3675	Receptor (signalling)	1655803
+3676	Receptor (signalling)	1537388
+3678	Receptor (signalling)	2454952
+3679	Receptor (signalling)	9473524
+462	Inhibitor or repressor	2991253
+463	DNA-binding protein	1719379
+51400	Hydrolase	10318862
+8900	Regulatory subunit	9041194
+466	DNA-binding protein	2516827
+467	Inhibitor or repressor	7515060
+467	DNA-binding protein	7515060
+467	Activator	7515060
+8904	Small molecule-binding protein	9430674
+468	Inhibitor or repressor	1534408
+468	DNA-binding protein	1534408
+8905	Vesicle coat protein	
+9563	Oxidoreductase	10349511
+8908	Hydrolase	1281472
+8909	Protease (other than proteasomal)	2350438
+8909	Hydrolase	2350438
+6222	RNA-binding protein	8441687
+6222	Ribosomal subunit	8441687
+6223	RNA-binding protein	9988267
+6223	Ribosomal subunit	9988267
+9567	Hydrolase	9070279
+9567	GTP-binding protein/GTPase	9070279
+6224	RNA-binding protein	8479924
+6224	Ribosomal subunit	8479924
+9568	Receptor (signalling)	10328880
+9569	DNA-binding protein	9774679
+6227	RNA-binding protein	8332502
+6227	Ribosomal subunit	8332502
+6228	RNA-binding protein	8415000
+6228	Ribosomal subunit	8415000
+6229	RNA-binding protein	2210388
+6229	Ribosomal subunit	2210388
+3680	Receptor (signalling)	8245132
+3682	Receptor (signalling)	8119947
+3683	Receptor (signalling)	2537322
+10901	Oxidoreductase	10333503
+3684	Receptor (signalling)	2563162
+10902	Activator	9368056
+3685	Receptor (signalling)	2430295
+3687	Receptor (signalling)	2303426
+10905	Hydrolase	9592125
+3688	Inhibitor or repressor	10944199
+3688	Receptor (signalling)	2958481
+3688	Activator	10944199
+3689	Receptor (signalling)	7514637
+471	Transferase	8567683
+471	Hydrolase	8567683
+10908	Hydrolase	9576844
+472	Transferase	10802669
+474	DNA-binding protein	8872459
+8911	Channel [passive transporter]	10454147
+475	Small molecule-binding protein	9430722
+8912	Channel [passive transporter]	9670923
+8913	Channel [passive transporter]	9495342
+9570	Vesicle coat protein	9349823
+9572	Inhibitor or repressor	8622974
+9572	DNA-binding protein	1971514
+9572	Receptor (signalling)	1971514
+6230	RNA-binding protein	1748303
+6230	Ribosomal subunit	1748303
+6231	RNA-binding protein	9602156
+6231	Ribosomal subunit	9602156
+6232	RNA-binding protein	8908372
+6232	Ribosomal subunit	8908372
+9577	Inhibitor or repressor	9737713
+6234	RNA-binding protein	1679328
+6234	Ribosomal subunit	1679328
+9578	Hydrolase	9418861
+9578	GTP-binding protein/GTPase	9418861
+6235	RNA-binding protein	7772601
+6235	Ribosomal subunit	7772601
+6236	Hydrolase	8248782
+6236	GTP-binding protein/GTPase	8248782
+6237	Hydrolase	3098437
+6237	GTP-binding protein/GTPase	3098437
+6238	Receptor (protein translocation)	9628588
+6239	DNA-binding protein	8816445
+3690	Receptor (signalling)	10429193
+3691	Receptor (signalling)	2311577
+3692	Anchor Protein	9374518
+3693	Receptor (signalling)	2211615
+3694	Receptor (signalling)	2365683
+3695	Receptor (signalling)	2040616
+3696	Receptor (signalling)	1918072
+3697	Regulatory subunit	1380832
+3698	Regulatory subunit	1385302
+10915	DNA-binding protein	9315662
+10915	Activator	9315662
+54760	Protease (other than proteasomal)	
+54760	Hydrolase	
+29904	Transferase	9144159
+29906	Transferase	9199191
+486	Hydrolase	9048881
+486	Active transporter, primary	9048881
+487	Hydrolase	8841193
+487	Active transporter, primary	8841193
+9580	DNA-binding protein	10198172
+8925	Guanine nucleotide exchange factor	8861955
+489	Hydrolase	8809064
+489	Active transporter, primary	8809064
+9583	Hydrolase	10393803
+9583	Other phosphatase	10393803
+9584	RNA-binding protein	8227358
+9584	Spliceosomal subunit	8227358
+8928	DNA-binding protein	9702198
+8928	Activator	9702198
+8928	Regulatory subunit	9702198
+9586	DNA-binding protein	8378084
+27229	Complex assembly protein	10562286
+6248	Regulatory subunit	8836035
+10921	RNA-binding protein	9580558
+10922	Transferase	7544399
+10923	DNA-binding protein	8062391
+10923	Activator	8062391
+10926	Activator	10373557
+10926	Regulatory subunit	10373557
+491	Hydrolase	1313367
+491	Active transporter, primary	1313367
+10928	GTPase activating protein	7673236
+10928	Activator	7673236
+492	Hydrolase	8765088
+492	Active transporter, primary	8765088
+8930	Nuclease [endo, exo, ribo, deoxyribo]	10097147
+8930	DNA-binding protein	9774669
+8930	Hydrolase	10097147
+29915	Activator	10196288
+8932	DNA-binding protein	9774669
+51433	Protein conjugation factor	9469815
+9590	Anchor Protein	10858453
+8934	Hydrolase	9284931
+8934	GTP-binding protein/GTPase	9284931
+498	Hydrolase	1830491
+498	Active transporter, primary	1830491
+27232	Transferase	10843803
+6251	Inhibitor or repressor	1508180
+8939	DNA-binding protein	8940189
+6256	DNA-binding protein	1651173
+6256	Receptor (signalling)	1310260
+6256	Activator	1651173
+6257	DNA-binding protein	1662118
+6257	Receptor (signalling)	1662118
+6257	Activator	1662118
+6259	Receptor (signalling)	8386829
+10930	RNA-binding protein	10403781
+10930	Hydrolase	10403781
+10935	Oxidoreductase	7733872
+10936	Receptor (signalling)	10381362
+10939	Chaperones	10395799
+10939	Protease (other than proteasomal)	10395799
+10939	Hydrolase	10395799
+51440	Small molecule-binding protein	10520747
+8940	Topoisomerase	9786843
+8940	Isomerase	9786843
+8940	DNA-binding protein	9786843
+8941	Regulatory subunit	7592934
+27240	Anchor Protein	10209036
+8942	Hydrolase	9180257
+8943	Vesicle coat protein	9303295
+5600	Transferase	8663524
+5601	Transferase	8654373
+29929	Transferase	10359825
+8945	Protein conjugation factor	9660940
+5602	Transferase	8654373
+5603	Transferase	9218798
+51447	Hydrolase	10574768
+51447	Other kinase	10574768
+5604	Transferase	10570282
+6261	Channel [passive transporter]	7511586
+6261	Receptor (signalling)	7511586
+6262	Channel [passive transporter]	10463072
+6262	Receptor (signalling)	10463072
+5606	Transferase	7839144
+6263	Channel [passive transporter]	9395096
+6263	Receptor (signalling)	9395096
+5607	Transferase	7759517
+5608	Transferase	8621675
+5609	Transferase	9535930
+10940	RNA-binding protein	8918471
+10941	Transferase	10359671
+10942	Protease (other than proteasomal)	10397266
+10942	Hydrolase	10397266
+10943	DNA-binding protein	10395802
+10946	RNA-binding protein	7816610
+10946	Spliceosomal subunit	7816610
+10949	RNA-binding protein	7585247
+51451	Transferase	10600115
+29935	DNA-binding protein	7760808
+5610	RNA-binding protein	1351683
+5610	Transferase	1695551
+5611	Inhibitor or repressor	7511204
+51455	Transferase	10536157
+5612	Inhibitor or repressor	9447982
+6271	Small molecule-binding protein	1998503
+6272	Receptor (protein translocation)	9013611
+5616	Transferase	9154127
+27257	RNA-binding protein	10369684
+27257	Spliceosomal subunit	10369684
+27258	RNA-binding protein	10369684
+5618	Receptor (signalling)	2369845
+6275	Small molecule-binding protein	8204608
+5619	DNA-binding protein	2081589
+6277	Small molecule-binding protein	3036810
+6278	Small molecule-binding protein	1940442
+10950	Inhibitor or repressor	9632145
+10951	DNA-binding protein	9169582
+10953	Receptor (protein translocation)	9324309
+10954	Chaperones	7556671
+10954	Oxidoreductase	7556671
+50801	Channel [passive transporter]	10767409
+29941	Transferase	10441506
+50804	DNA-binding protein	2601707
+50804	Activator	2601707
+29945	Protein conjugation factor	6180011
+5620	DNA-binding protein	2081589
+50808	Transferase	10544043
+50808	Other kinase	10544043
+5624	Protease (other than proteasomal)	8947506
+5624	Hydrolase	8947506
+5625	Oxidoreductase	9385373
+6282	Inhibitor or repressor	10851017
+5626	DNA-binding protein	9462743
+6283	Small molecule-binding protein	7626002
+5627	Inhibitor or repressor	8146182
+6286	Small molecule-binding protein	1633809
+10961	Isomerase	9738895
+29950	Regulatory subunit	6434876
+29952	Protease (other than proteasomal)	10567372
+29952	Hydrolase	10567372
+29953	Protease (other than proteasomal)	10491199
+29953	Hydrolase	10491199
+50814	Oxidoreductase	10710235
+8972	Hydrolase	9446624
+8973	Channel [passive transporter]	8906617
+8973	Receptor (signalling)	8906617
+8974	Oxidoreductase	9211872
+5631	Transferase	8253776
+5631	Other kinase	8253776
+51475	Small molecule-binding protein	10625670
+8975	Protease (other than proteasomal)	9841226
+8975	Hydrolase	9841226
+51476	Small molecule-binding protein	10625670
+8976	Complex assembly protein	9422512
+51478	Oxidoreductase	10544267
+5635	Inhibitor or repressor	8132556
+5635	Regulatory subunit	8132556
+5636	Regulatory subunit	9545573
+6293	Docking protein	9790748
+6294	DNA-binding protein	1324173
+6295	Inhibitor or repressor	2550422
+6297	DNA-binding protein	8975705
+6299	DNA-binding protein	9425907
+10971	Regulatory subunit	7603573
+10975	Oxidoreductase	9161705
+5641	Protease (other than proteasomal)	9065484
+5641	Hydrolase	9065484
+8985	Oxidoreductase	9724729
+8986	Transferase	9792677
+2300	DNA-binding protein	7957066
+27284	Transferase	9443824
+2302	DNA-binding protein	9073514
+8989	Channel [passive transporter]	10066796
+2304	DNA-binding protein	9214635
+2305	DNA-binding protein	9242644
+2306	DNA-binding protein	9403061
+2307	DNA-binding protein	9325056
+2309	Activator	10102273
+10983	Regulatory subunit	7493655
+10987	DNA-binding protein	8837781
+50831	Receptor (signalling)	10761934
+10988	Protease (other than proteasomal)	8858118
+10988	Hydrolase	8858118
+50832	Receptor (signalling)	10761934
+50833	Receptor (signalling)	10761934
+50834	Receptor (signalling)	10761934
+29974	RNA-binding protein	10669759
+8991	Small molecule-binding protein	9027582
+8992	Hydrolase	9556572
+8992	Active transporter, primary	9556572
+5650	Protease (other than proteasomal)	8034709
+5650	Hydrolase	8034709
+5652	Protease (other than proteasomal)	8034638
+5652	Hydrolase	8034638
+5653	Protease (other than proteasomal)	9003450
+5653	Hydrolase	9003450
+27294	Oxidoreductase	10477285
+8996	RNA-binding protein	10196175
+8996	Inhibitor or repressor	9560245
+5654	Protease (other than proteasomal)	9852107
+5654	Hydrolase	9852107
+8997	Guanine nucleotide exchange factor	9285789
+5655	Protease (other than proteasomal)	8764136
+5655	Hydrolase	8764136
+2313	DNA-binding protein	1522903
+27297	Receptor (signalling)	8622957
+8999	Transferase	9000130
+2316	Anchor Protein	2391361
+2317	Anchor Protein	9694715
+2319	Adhesin/agglutinin	8051082
+10990	Receptor (signalling)	9548455
+10992	RNA-binding protein	8566756
+10992	Spliceosomal subunit	8566756
+10993	Lyase	2674117
+8202	Activator	9252329
+8204	Activator	7641693
+10998	Ligase	
+8208	Complex assembly protein	7600578
+29986	Active transporter, secondary	10681536
+5660	Activator	2717620
+50848	Adhesin/agglutinin	10395639
+29988	Active transporter, secondary	10671487
+29988	Major Facilitator Superfamily	10671487
+2321	Receptor (signalling)	2158038
+2322	Receptor (signalling)	8394751
+2324	Transferase	10835628
+2324	Receptor (signalling)	10835628
+10202	Oxidoreductase	7556196
+56731	DNA-binding protein	10825161
+10203	Receptor (signalling)	7818539
+10204	Nuclear import/export protein	7744965
+8216	DNA-binding protein	7633402
+8218	Vesicle coat protein	
+50856	Receptor (signalling)	10438934
+29999	Complex assembly protein	10783262
+26658	Receptor (signalling)	9500546
+2332	RNA-binding protein	7688265
+2335	Docking protein	9636140
+2339	Transferase	8494894
+10213	Proteasome subunit	9374539
+10219	Receptor (signalling)	9842918
+53405	Channel [passive transporter]	10793131
+8225	Hydrolase	9466997
+8225	GTP-binding protein/GTPase	9466997
+50865	Small molecule-binding protein	10640688
+5681	Transferase	2948189
+5682	Proteasome subunit	10799514
+5683	Proteasome subunit	2025653
+5684	Proteasome subunit	2025653
+5685	Proteasome subunit	2025653
+2342	Transferase	8494894
+5686	Proteasome subunit	1888762
+5688	Proteasome subunit	8764072
+5689	Proteasome subunit	2025653
+2346	Hydrolase	9838072
+10221	Transferase	9342215
+2348	Small molecule-binding protein	2768245
+10227	Active transporter, secondary	8353488
+10227	Major Facilitator Superfamily	8353488
+10228	Docking protein	10839363
+10229	Activator	10501970
+8233	RNA-binding protein	8586425
+8233	Spliceosomal subunit	8586425
+8237	Protease (other than proteasomal)	8845848
+8237	Hydrolase	8845848
+8239	Protease (other than proteasomal)	8922996
+8239	Hydrolase	8922996
+5690	Proteasome subunit	7918633
+5691	Proteasome subunit	7918633
+5692	Proteasome subunit	7918633
+5693	Proteasome subunit	8066462
+2350	Small molecule-binding protein	2605182
+5695	Proteasome subunit	8666937
+2352	Small molecule-binding protein	8110752
+5696	Proteasome subunit	1429565
+2353	DNA-binding protein	10918580
+5698	Proteasome subunit	1681432
+2355	DNA-binding protein	8954781
+5699	Proteasome subunit	9551082
+2356	Ligase	1409616
+2357	Receptor (signalling)	10820279
+2358	Receptor (signalling)	9054386
+2359	Receptor (signalling)	8198572
+10235	Inhibitor or repressor	9789079
+10235	Guanine nucleotide exchange factor	9789079
+10235	Activator	9789079
+10236	RNA-binding protein	9421497
+8243	Motor protein	7757074
+26689	Receptor (signalling)	9119360
+10242	Inhibitor or repressor	10097176
+10242	Regulatory subunit	10097176
+10244	Docking protein	9230071
+10245	Receptor (protein translocation)	10339406
+10246	Active transporter, secondary	9149941
+10249	Transferase	7802672
+1716	Transferase	8692979
+1716	Other kinase	8692979
+1717	Oxidoreductase	9634533
+10250	RNA-binding protein	9531537
+10250	Spliceosomal subunit	9531537
+10257	ATP-binding cassette	2806887
+10257	Hydrolase	2806887
+10257	Active transporter, primary	2806887
+8260	Transferase	7981673
+8266	Protein conjugation factor	2829204
+1723	Oxidoreductase	1446837
+1725	Oxidoreductase	7673224
+1728	Oxidoreductase	2843525
+10260	DNA-binding protein	8056341
+10261	Receptor (signalling)	9809579
+10262	RNA-binding protein	7958871
+10262	Spliceosomal subunit	7958871
+10266	Regulatory subunit	9620797
+10267	Regulatory subunit	9620797
+10268	Regulatory subunit	9620797
+10269	Protease (other than proteasomal)	10373325
+10269	Hydrolase	10373325
+8277	Transferase	8838793
+1733	Hydrolase	1400883
+80204	Protein conjugation factor	
+1737	Transferase	3174635
+1738	Oxidoreductase	3278312
+1739	Transferase	8825652
+1739	Other kinase	8825652
+10270	Anchor Protein	9473338
+10273	Inhibitor or repressor	10330192
+10273	Regulatory subunit	10330192
+28603	Receptor (signalling)	1660526
+10276	Guanine nucleotide exchange factor	8649828
+28605	Receptor (signalling)	1660526
+28606	Receptor (signalling)	1660526
+7629	DNA-binding protein	9705341
+7629	Activator	9705341
+8287	Protease (other than proteasomal)	8922996
+8287	Hydrolase	8922996
+8288	Oxidoreductase	7809065
+1742	Anchor Protein	7477295
+1742	Transferase	9286702
+1742	Other kinase	9286702
+1743	Transferase	8009371
+10284	Inhibitor or repressor	9150135
+10285	Spliceosomal subunit	9731529
+10286	Spliceosomal subunit	9731529
+10287	GTPase activating protein	9571244
+10287	Activator	
+10288	Receptor (signalling)	9079806
+8292	Anchor Protein	9689136
+7639	Inhibitor or repressor	9839802
+7639	DNA-binding protein	9839802
+1755	Receptor (protein translocation)	9288095
+1755	Inhibitor or repressor	9288095
+1757	Oxidoreductase	10444331
+1759	Hydrolase	10944110
+1759	GTP-binding protein/GTPase	10944110
+10291	RNA-binding protein	7489498
+10291	Spliceosomal subunit	7489498
+10292	DNA-binding protein	9225980
+10293	Inhibitor or repressor	9104814
+10293	Regulatory subunit	9104814
+10296	Adhesin/agglutinin	9763581
+10297	Regulatory subunit	9823329
+10298	Transferase	9822598
+4301	Anchor Protein	10856295
+4303	DNA-binding protein	9010221
+4303	Activator	10783894
+4306	Receptor (signalling)	3037703
+4306	Activator	3037703
+4308	Channel [passive transporter]	
+1760	Transferase	1310900
+1761	DNA-binding protein	10332030
+1763	DNA-binding protein	8938459
+1763	Hydrolase	8938459
+1764	Motor protein	9373155
+1764	Hydrolase	9373155
+1766	Motor protein	9256245
+1766	Hydrolase	9256245
+1767	Motor protein	9256245
+1767	Hydrolase	9256245
+1768	Motor protein	8812413
+1768	Hydrolase	8812413
+1769	Motor protein	9256245
+1769	Hydrolase	9256245
+28638	Receptor (signalling)	3860845
+4311	Protease (other than proteasomal)	1660144
+4311	Hydrolase	2521388
+4318	Protease (other than proteasomal)	2551898
+4318	Hydrolase	2551898
+1770	Motor protein	8812413
+1770	Hydrolase	8812413
+1773	Nuclease [endo, exo, ribo, deoxyribo]	2349940
+1774	Nuclease [endo, exo, ribo, deoxyribo]	8541839
+1775	Nuclease [endo, exo, ribo, deoxyribo]	9205125
+1775	Hydrolase	9205125
+1776	Nuclease [endo, exo, ribo, deoxyribo]	9070308
+1776	Hydrolase	9070308
+1777	Nuclease [endo, exo, ribo, deoxyribo]	9714827
+1777	Hydrolase	9714827
+1778	Motor protein	8227145
+1778	Hydrolase	8227145
+4324	Activator	7559440
+4326	Protease (other than proteasomal)	8640782
+4326	Hydrolase	8640782
+1780	Motor protein	10049579
+1785	Hydrolase	7590285
+1785	GTP-binding protein/GTPase	7590285
+56052	Transferase	10704531
+1786	Transferase	8940105
+1787	Transferase	9425235
+1787	DNA-binding protein	9425235
+1788	Transferase	10433969
+1789	Transferase	10433969
+1789	DNA-binding protein	10433969
+4331	Complex assembly protein	8521818
+7677	DNA-binding protein	1339395
+4335	Inhibitor or repressor	9184233
+4335	DNA-binding protein	9184233
+1791	DNA polymerase or subunit	3467897
+1798	Transferase	9451016
+4342	Transferase	9552420
+1000	Adhesin/agglutinin	2384753
+1001	Adhesin/agglutinin	2793940
+1002	Adhesin/agglutinin	2059658
+1003	Adhesin/agglutinin	9219219
+1004	Adhesin/agglutinin	7743525
+1006	Adhesin/agglutinin	2059658
+1007	Adhesin/agglutinin	10861224
+1009	Adhesin/agglutinin	8163513
+28672	Receptor (signalling)	3501368
+7692	Inhibitor or repressor	9278146
+4350	DNA-binding protein	10854423
+4350	Hydrolase	10854423
+4351	Isomerase	8307007
+7695	Inhibitor or repressor	7649249
+4352	Receptor (signalling)	8020956
+4353	DNA-binding protein	2829220
+4353	Oxidoreductase	10777476
+4354	Transferase	1310897
+4354	Other kinase	1310897
+1012	Adhesin/agglutinin	8673923
+4355	Transferase	7590743
+4355	Other kinase	7590743
+1013	Adhesin/agglutinin	9545347
+4356	Transferase	8824795
+4356	Other kinase	8824795
+1014	Adhesin/agglutinin	9721215
+4357	Transferase	1953758
+1015	Adhesin/agglutinin	8153632
+4359	Adhesin/agglutinin	7693129
+1017	Transferase	10748174
+1018	Transferase	1639063
+1019	Transferase	10748174
+55423	Inhibitor or repressor	9062191
+22797	Inhibitor or repressor	9256061
+22797	DNA-binding protein	9256061
+22797	Activator	9256061
+28680	Receptor (signalling)	2993909
+3700	Regulatory subunit	9756925
+4360	Receptor (signalling)	2373685
+3705	Transferase	8662638
+3705	Other kinase	8662638
+4361	Nuclease [endo, exo, ribo, deoxyribo]	9651580
+4361	Hydrolase	9651580
+3706	Transferase	1847047
+3706	Other kinase	1847047
+3707	Transferase	1654894
+3707	Other kinase	1654894
+4363	ATP-binding cassette	1360704
+4363	Hydrolase	1360704
+4363	Active transporter, primary	1360704
+1021	Transferase	8114739
+3708	Channel [passive transporter]	7500840
+3708	Receptor (signalling)	7500840
+1022	Transferase	7533895
+3709	Channel [passive transporter]	8081734
+3709	Receptor (signalling)	8081734
+1025	Transferase	8170997
+1026	Inhibitor or repressor	8242751
+1026	Activator	10848585
+1026	Regulatory subunit	8242751
+1027	Inhibitor or repressor	10944199
+1027	Regulatory subunit	8033212
+1028	Inhibitor or repressor	7729684
+1028	Regulatory subunit	7729684
+1029	Inhibitor or repressor	7972006
+1029	Regulatory subunit	7972006
+3710	Channel [passive transporter]	8288584
+3710	Receptor (signalling)	8288584
+1030	Inhibitor or repressor	8078588
+1030	Regulatory subunit	8078588
+3717	Transferase	1848670
+1031	Inhibitor or repressor	8001816
+1031	Regulatory subunit	8001816
+1032	Inhibitor or repressor	7739547
+1032	Regulatory subunit	7739547
+1033	Hydrolase	8242750
+1036	Oxidoreductase	7524679
+506	Hydrolase	2870059
+506	Active transporter, primary	2870059
+1039	Inhibitor or repressor	10465786
+509	Hydrolase	8168843
+509	Active transporter, primary	8168843
+9603	DNA-binding protein	10037736
+9603	Activator	10037736
+9604	Activator	10085091
+9605	Active transporter, primary	10231027
+9609	Hydrolase	9920784
+9609	GTP-binding protein/GTPase	9920784
+3725	DNA-binding protein	9443941
+3726	Inhibitor or repressor	2513129
+3726	DNA-binding protein	10764760
+3726	Activator	2513129
+1040	Transferase	8863531
+3727	DNA-binding protein	1903194
+1041	Adhesin/agglutinin	9395522
+1045	DNA-binding protein	9459001
+513	Hydrolase	1531933
+513	Active transporter, primary	1531933
+1047	Channel [passive transporter]	9177349
+515	Hydrolase	1831354
+515	Active transporter, primary	1831354
+516	Hydrolase	8328972
+516	Active transporter, primary	8328972
+517	Hydrolase	8328972
+517	Active transporter, primary	8328972
+518	Hydrolase	7698763
+518	Active transporter, primary	7698763
+9610	Complex assembly protein	3874369
+9610	Inhibitor or repressor	3874369
+9611	Inhibitor or repressor	7566114
+9615	Hydrolase	10075721
+9615	Small molecule-binding protein	10075721
+9619	ATP-binding cassette	9034316
+9619	Hydrolase	9034316
+9619	Active transporter, primary	9034316
+3735	RNA-binding protein	9278442
+3735	Ligase	9278442
+3735	tRNA synthetase	9278442
+3736	Channel [passive transporter]	8845167
+1050	DNA-binding protein	8643605
+3737	Channel [passive transporter]	2251283
+1051	DNA-binding protein	2112087
+1051	Activator	10821850
+3738	Channel [passive transporter]	1373731
+3739	Channel [passive transporter]	2001794
+522	Hydrolase	1830479
+522	Active transporter, primary	1830479
+1058	DNA-binding protein	7962047
+1059	DNA-binding protein	2435739
+528	Hydrolase	8250920
+528	Regulatory subunit	8250920
+528	Active transporter, primary	8250920
+529	Regulatory subunit	8250920
+9622	Protease (other than proteasomal)	10077646
+9622	Hydrolase	10077646
+9626	Activator	10037746
+9628	GTPase activating protein	10083744
+9628	Activator	
+9629	Channel [passive transporter]	10095065
+3741	Channel [passive transporter]	1986382
+3742	Channel [passive transporter]	2347305
+3744	Channel [passive transporter]	9177773
+3745	Channel [passive transporter]	7774931
+3746	Channel [passive transporter]	8449507
+1060	DNA-binding protein	1339310
+3748	Channel [passive transporter]	1740329
+1062	Motor protein	9363944
+3749	Channel [passive transporter]	1920536
+533	Hydrolase	9653649
+533	Active transporter, primary	9653649
+1066	Hydrolase	1918003
+537	Hydrolase	8733135
+537	Active transporter, primary	8733135
+9630	Hydrolase	10191087
+9630	GTP-binding protein/GTPase	10191087
+9631	Nuclear import/export protein	10191094
+539	Hydrolase	7490082
+539	Active transporter, primary	7490082
+9633	Small molecule-binding protein	10191092
+9635	Channel [passive transporter]	10362588
+3753	Channel [passive transporter]	8900283
+3754	Channel [passive transporter]	9434767
+3755	Channel [passive transporter]	9434767
+3756	Channel [passive transporter]	9738473
+3757	Channel [passive transporter]	7736582
+1071	Transferase	8132678
+3758	Channel [passive transporter]	9015377
+1072	Complex assembly protein	10436159
+3759	Channel [passive transporter]	7696590
+540	Active transporter, primary	10942420
+545	Transferase	8843195
+546	Hydrolase	7874112
+547	Motor protein	10323250
+549	RNA-binding protein	7892223
+549	Lyase	7892223
+6300	Transferase	8633070
+6301	RNA-binding protein	9431993
+6301	Ligase	9431993
+6301	tRNA synthetase	9431993
+6303	Transferase	1985966
+6304	DNA-binding protein	1505028
+6307	Oxidoreductase	8663358
+6309	Oxidoreductase	
+3760	Channel [passive transporter]	8804710
+3761	Channel [passive transporter]	8051145
+3762	Channel [passive transporter]	8834003
+3763	Channel [passive transporter]	7796919
+3764	Channel [passive transporter]	7890693
+3765	Channel [passive transporter]	8575783
+3766	Channel [passive transporter]	8995301
+1080	ATP-binding cassette	2475911
+1080	Hydrolase	9931011
+1080	Active transporter, primary	9931011
+3767	Channel [passive transporter]	7502040
+3768	Channel [passive transporter]	7859381
+552	Receptor (signalling)	8106369
+553	Receptor (signalling)	7805841
+554	Receptor (signalling)	8999963
+558	Transferase	1656220
+558	Receptor (signalling)	1656220
+6317	Inhibitor or repressor	7724531
+6319	Oxidoreductase	7909540
+3772	Channel [passive transporter]	8995301
+3774	Inhibitor or repressor	8647284
+3774	Regulatory subunit	8647284
+3775	Channel [passive transporter]	8605869
+3776	Channel [passive transporter]	9003761
+3777	Channel [passive transporter]	9312005
+3778	Channel [passive transporter]	7993625
+3779	Regulatory subunit	8799178
+27306	Isomerase	9353279
+6322	Inhibitor or repressor	9570953
+6322	DNA-binding protein	9570953
+6324	Regulatory subunit	8394762
+6326	Channel [passive transporter]	1325650
+6327	Regulatory subunit	9295116
+6328	Channel [passive transporter]	9589372
+6329	Channel [passive transporter]	10218481
+3780	Channel [passive transporter]	8781233
+3782	Channel [passive transporter]	8781233
+3783	Channel [passive transporter]	9380751
+3784	Channel [passive transporter]	8900283
+3785	Channel [passive transporter]	9677360
+3786	Channel [passive transporter]	9677360
+570	Transferase	2037576
+571	DNA-binding protein	9544839
+573	Inhibitor or repressor	7834747
+575	Inhibitor or repressor	7531056
+51513	DNA-binding protein	10828014
+576	Inhibitor or repressor	9533023
+577	Inhibitor or repressor	9533023
+579	DNA-binding protein	9344671
+27314	Hydrolase	8863739
+27314	GTP-binding protein/GTPase	8863739
+6331	Channel [passive transporter]	7651517
+6332	Channel [passive transporter]	1317577
+6334	Channel [passive transporter]	9828131
+6335	Channel [passive transporter]	7720699
+6336	Channel [passive transporter]	9839820
+6337	Channel [passive transporter]	8589714
+6338	Channel [passive transporter]	8521520
+6339	Channel [passive transporter]	7499195
+3790	Regulatory subunit	10484328
+3791	Receptor (signalling)	1656371
+3795	Transferase	7833921
+3795	Other kinase	7833921
+3796	Motor protein	9177777
+3796	Hydrolase	9177777
+3797	Motor protein	9480755
+3798	Motor protein	7514426
+3798	Hydrolase	7514426
+3799	Motor protein	7514426
+3799	Hydrolase	7514426
+586	Transferase	6933702
+587	Transferase	8702755
+6340	Channel [passive transporter]	8640238
+6341	Complex assembly protein	9878253
+3000	Lyase	1356371
+3000	Receptor (signalling)	1356371
+27328	Adhesin/agglutinin	10644456
+6344	Receptor (signalling)	7612008
+3003	Protease (other than proteasomal)	8656064
+3003	Hydrolase	8656064
+3005	DNA-binding protein	8325638
+590	Hydrolase	2339692
+593	Oxidoreductase	3224821
+594	Oxidoreductase	1889817
+27330	Transferase	10644430
+596	Inhibitor or repressor	10871848
+27332	RNA-binding protein	8647861
+27332	DNA-binding protein	8647861
+27338	Protein conjugation factor	1379239
+27338	Ligase	1379239
+51540	Lyase	10692412
+5700	Proteasome subunit	1429620
+5700	Hydrolase	10970867
+5701	Proteasome subunit	8500623
+5701	Hydrolase	8500623
+5702	Proteasome subunit	10799514
+5702	Hydrolase	8621709
+27344	Inhibitor or repressor	10632593
+5704	Proteasome subunit	8603043
+27345	Channel [passive transporter]	10792058
+27345	Regulatory subunit	10692449
+5705	Proteasome subunit	10799514
+5705	Hydrolase	10970867
+5706	Proteasome subunit	8674546
+5706	Hydrolase	8674546
+5707	Proteasome subunit	8816993
+27348	Chaperones	10644435
+27348	Hydrolase	10644435
+5708	Proteasome subunit	8774743
+5709	Proteasome subunit	9017604
+3026	Small molecule-binding protein	8827452
+3028	Oxidoreductase	9338779
+3029	Hydrolase	8550579
+5710	Proteasome subunit	10799514
+51554	Receptor (signalling)	10734104
+5711	Proteasome subunit	7559544
+5713	Proteasome subunit	7755639
+5714	Proteasome subunit	7621825
+5715	Proteasome subunit	9653651
+5715	Regulatory subunit	9653651
+5716	Proteasome subunit	9714768
+3030	Lyase	8135828
+3030	Oxidoreductase	8135828
+5717	Proteasome subunit	9119060
+5718	Proteasome subunit	9426256
+5719	Proteasome subunit	9714768
+3033	Oxidoreductase	8687463
+3036	Transferase	8798544
+3037	Transferase	9169154
+3038	Transferase	9083017
+54107	DNA polymerase or subunit	10801849
+54107	DNA-binding protein	10880450
+51560	Hydrolase	10893188
+51560	GTP-binding protein/GTPase	10893188
+51562	Inhibitor or repressor	10801814
+5720	Proteasome subunit	10799514
+5720	Activator	7789512
+5721	Proteasome subunit	10799514
+5723	Hydrolase	9188776
+5723	Other phosphatase	9188776
+5724	Receptor (signalling)	8168510
+5724	Other	10601267
+5725	RNA-binding protein	1906036
+5727	Receptor (signalling)	8906787
+5728	Hydrolase	9367992
+5728	Other phosphatase	10866658
+84991	Spliceosomal subunit	
+6389	Oxidoreductase	7798181
+5731	Receptor (signalling)	8253813
+5732	Receptor (signalling)	8078484
+5733	Receptor (signalling)	8307176
+5734	Receptor (signalling)	8163486
+6390	Oxidoreductase	2302193
+6391	Oxidoreductase	9533030
+6392	Oxidoreductase	9533030
+5737	Receptor (signalling)	8300593
+3052	Lyase	8661044
+5739	Receptor (signalling)	7512962
+3053	Inhibitor or repressor	2647747
+3054	Complex assembly protein	8392914
+6397	Small molecule-binding protein	8697811
+3059	DNA-binding protein	2587259
+51580	DNA-binding protein	9290259
+51582	Inhibitor or repressor	9349715
+5740	Isomerase	8831668
+5743	Oxidoreductase	1380156
+26729	Receptor (signalling)	9119360
+5745	Receptor (signalling)	10770955
+5746	Receptor (signalling)	7797535
+5747	Transferase	8422239
+3061	Receptor (signalling)	9491897
+3062	Receptor (signalling)	9491897
+3064	Inhibitor or repressor	10823891
+3065	Inhibitor or repressor	10777477
+3065	Hydrolase	8602529
+3067	Lyase	1768863
+5753	Transferase	8036022
+5754	Transferase	7478540
+5754	Receptor (signalling)	7478540
+5756	Transferase	7507208
+3074	Hydrolase	8663217
+3077	Regulatory subunit	10085150
+8301	Complex assembly protein	8643484
+50940	Hydrolase	10725373
+8309	Oxidoreductase	8943006
+23404	RNA-binding protein	8600032
+23404	Nuclease [endo, exo, ribo, deoxyribo]	8600032
+23404	Hydrolase	8600032
+26747	RNA-binding protein	10556305
+23406	Anchor Protein	10051563
+23408	Transferase	10381378
+23409	Transferase	10381378
+3083	Protease (other than proteasomal)	8226803
+3083	Hydrolase	8226803
+10300	Regulatory subunit	9568719
+3087	DNA-binding protein	1360645
+10309	DNA-binding protein	2001396
+10309	Hydrolase	2001396
+8310	Oxidoreductase	9271077
+8312	Inhibitor or repressor	9230313
+8312	Regulatory subunit	9230313
+8314	Protease (other than proteasomal)	9528852
+8314	Hydrolase	9528852
+8317	Transferase	9250678
+26750	Transferase	10552933
+23410	Transferase	10381378
+23411	Transferase	10381378
+23414	Inhibitor or repressor	10438528
+23414	Activator	10438528
+23415	Channel [passive transporter]	10455180
+5775	Hydrolase	1648233
+23416	Channel [passive transporter]	10455180
+23417	Lyase	9869665
+5777	Hydrolase	1732748
+5778	Hydrolase	1530918
+3093	Protein conjugation factor	8702625
+3093	Ligase	8702625
+3094	Inhibitor or repressor	8812426
+3094	Hydrolase	9770345
+3094	Other phosphatase	9770345
+3096	DNA-binding protein	2106471
+10314	Receptor (signalling)	9512664
+3098	Transferase	3207429
+3098	Other kinase	3207429
+3099	Transferase	9278438
+3099	Other kinase	9278438
+10316	Receptor (signalling)	10811630
+10317	Transferase	10212226
+8321	Receptor (signalling)	9813155
+8322	Receptor (signalling)	10544037
+8323	Receptor (signalling)	9480858
+8324	Receptor (signalling)	9707618
+8326	Receptor (signalling)	9147651
+23421	Activator	10490654
+5780	Hydrolase	1557404
+5781	Hydrolase	7681589
+5782	Hydrolase	8454633
+5783	Hydrolase	8287977
+5784	Hydrolase	7733990
+5786	Receptor (signalling)	2172030
+5787	Receptor (signalling)	2169617
+5787	Hydrolase	2170109
+23428	Active transporter, secondary	10391915
+5788	Receptor (signalling)	2853967
+5788	Hydrolase	2853967
+23429	Inhibitor or repressor	10369680
+5789	Receptor (signalling)	7896816
+10320	DNA-binding protein	8543809
+10325	GTP-binding protein/GTPase	7499430
+10327	Oxidoreductase	2498333
+23430	Protease (other than proteasomal)	9920877
+23430	Hydrolase	9920877
+5791	Receptor (signalling)	2170109
+5791	Hydrolase	2170109
+5793	Receptor (signalling)	8382771
+5794	Hydrolase	8294459
+23435	Inhibitor or repressor	8599929
+23435	DNA-binding protein	7745706
+5795	Receptor (signalling)	7937872
+5795	Hydrolase	7937872
+5796	Receptor (signalling)	8663237
+5797	Receptor (signalling)	1655529
+5797	Hydrolase	10809770
+5798	Receptor (signalling)	8024693
+5798	Hydrolase	8024693
+23439	Hydrolase	10456317
+23439	Active transporter, primary	10456317
+5799	Receptor (signalling)	9220540
+5799	Hydrolase	8798755
+10333	Receptor (signalling)	10231569
+5000	DNA-binding protein	9353276
+5001	DNA-binding protein	9765232
+1803	Protease (other than proteasomal)	9710254
+1807	Hydrolase	9718352
+1808	Hydrolase	8973361
+1809	Hydrolase	8973361
+10346	Inhibitor or repressor	7797467
+10347	ATP-binding cassette	10873640
+10347	Hydrolase	10873640
+5013	DNA-binding protein	7959790
+23450	RNA-binding protein	10490618
+23450	Complex assembly protein	10490618
+23450	Spliceosomal subunit	10490618
+1810	Inhibitor or repressor	8670811
+5018	Complex assembly protein	9247084
+5019	Transferase	8751852
+1812	Receptor (signalling)	8264547
+1814	Receptor (signalling)	10432116
+1815	Receptor (signalling)	1319557
+1816	Receptor (signalling)	1826762
+23457	ATP-binding cassette	10748049
+23457	Hydrolase	10748049
+23457	Active transporter, primary	10748049
+1819	Hydrolase	7929244
+1819	GTP-binding protein/GTPase	7929244
+2475	Transferase	9099849
+2475	Other kinase	9099849
+10352	RNA-binding protein	10072595
+10352	Ligase	10072595
+10352	tRNA synthetase	10072595
+56882	Inhibitor or repressor	10816584
+56886	Transferase	10694380
+7702	DNA-binding protein	7641696
+7702	Activator	9566884
+7703	DNA-binding protein	8325509
+7704	Inhibitor or repressor	9770450
+7707	Inhibitor or repressor	9457682
+5021	Receptor (signalling)	1313946
+5023	Channel [passive transporter]	9565569
+5023	Receptor (signalling)	9565569
+22800	Hydrolase	10777492
+22800	GTP-binding protein/GTPase	10777492
+5024	Channel [passive transporter]	9221902
+5024	Receptor (signalling)	9221902
+22801	Receptor (signalling)	10486209
+5025	Channel [passive transporter]	9016352
+5025	Receptor (signalling)	9016352
+22802	Channel [passive transporter]	10437792
+5026	Channel [passive transporter]	9414125
+5026	Receptor (signalling)	9414125
+22803	Nuclease [endo, exo, ribo, deoxyribo]	10409438
+22803	Hydrolase	10409438
+5027	Channel [passive transporter]	9038151
+5027	Receptor (signalling)	9038151
+1820	DNA-binding protein	9722953
+5028	Receptor (signalling)	8630005
+5029	Receptor (signalling)	8159738
+22806	DNA-binding protein	10552935
+23462	Inhibitor or repressor	10415358
+23462	DNA-binding protein	10415358
+1823	Adhesin/agglutinin	8486729
+22807	DNA-binding protein	
+23463	Transferase	9614111
+1824	Adhesin/agglutinin	2037591
+22808	Hydrolase	9400994
+22808	GTP-binding protein/GTPase	9400994
+1825	Adhesin/agglutinin	7929347
+22809	Inhibitor or repressor	10373550
+22809	DNA-binding protein	10373550
+1826	Adhesin/agglutinin	9426258
+1827	DNA-binding protein	8595418
+1828	Adhesin/agglutinin	1770008
+23468	DNA-binding protein	8663349
+1829	Adhesin/agglutinin	8143788
+7712	Inhibitor or repressor	8586441
+10369	Channel [passive transporter]	10221464
+7716	DNA-binding protein	8035792
+8372	Hydrolase	10339581
+5030	Receptor (signalling)	8537336
+5031	Receptor (signalling)	8670200
+5032	Receptor (signalling)	9405388
+5033	Oxidoreductase	2556027
+5034	Isomerase	2846539
+5034	Oxidoreductase	2846539
+1830	Adhesin/agglutinin	8143788
+23470	DNA-binding protein	9827568
+23471	Receptor (protein translocation)	1315422
+23475	Transferase	9473669
+1836	Active transporter, secondary	7923357
+2492	Receptor (signalling)	9020851
+2494	DNA-binding protein	9786908
+2494	Receptor (signalling)	9786908
+2494	Activator	9786908
+2495	Small molecule-binding protein	3020541
+2495	Other	10833524
+10370	Activator	9434189
+10379	DNA-binding protein	1630447
+10379	Activator	1630447
+7726	DNA-binding protein	8530076
+8382	Transferase	9742940
+8382	Other kinase	9742940
+7727	Inhibitor or repressor	7673192
+8385	Receptor (signalling)	8004088
+22821	GTPase activating protein	7637787
+22821	Activator	7637787
+5045	Protease (other than proteasomal)	9927419
+5045	Hydrolase	7737999
+8388	Receptor (signalling)	8004088
+5047	Small molecule-binding protein	7829063
+1840	Activator	9590294
+1841	Transferase	8024690
+1841	Other kinase	8024690
+5049	Hydrolase	9144386
+1843	Hydrolase	1406996
+1844	Hydrolase	8107850
+1845	Hydrolase	1281549
+1846	Hydrolase	7535768
+1847	Hydrolase	7961985
+23487	DNA-binding protein	9827568
+1848	Hydrolase	8670865
+23488	DNA-binding protein	9827568
+1849	Hydrolase	8670865
+23489	DNA-binding protein	9827568
+10380	Hydrolase	10224133
+10380	Other phosphatase	10224133
+10389	Inhibitor or repressor	10331946
+10389	DNA-binding protein	10331946
+8390	Receptor (signalling)	8004088
+8392	Receptor (signalling)	8004088
+5050	Hydrolase	7669037
+5051	Hydrolase	8955149
+8394	Transferase	8955136
+8394	Other kinase	8955136
+5053	Oxidoreductase	3856322
+8396	Transferase	9753329
+8396	Other kinase	9753329
+5054	Inhibitor or repressor	7892190
+5055	Inhibitor or repressor	7499264
+8398	Hydrolase	9417066
+1850	Hydrolase	7561881
+5058	Transferase	8805275
+23490	DNA-binding protein	9827568
+23491	Hydrolase	10518925
+1852	Hydrolase	9030581
+23493	Inhibitor or repressor	10415358
+23493	DNA-binding protein	10415358
+56121	Adhesin/agglutinin	10380929
+1854	Hydrolase	1325640
+1854	Other phosphatase	1325640
+23495	Receptor (signalling)	9311921
+56122	Adhesin/agglutinin	10380929
+56124	Adhesin/agglutinin	10380929
+23498	Oxidoreductase	7514594
+56125	Adhesin/agglutinin	10380929
+1859	Transferase	8769099
+56126	Adhesin/agglutinin	10380929
+10390	Transferase	10191259
+10392	Regulatory subunit	10329646
+10393	Protein conjugation factor	10318877
+10395	GTPase activating protein	9605766
+10395	Activator	9605766
+10396	Hydrolase	10198212
+10396	Active transporter, primary	10198212
+7741	DNA-binding protein	1569959
+10398	Regulatory subunit	2526655
+10399	Regulatory subunit	2499885
+7743	Inhibitor or repressor	9653648
+5062	Transferase	7744004
+5063	Transferase	9731525
+5066	Oxidoreductase	2357221
+5068	Adhesin/agglutinin	8997243
+1861	Chaperones	9288096
+1861	Hydrolase	9288096
+5069	Protease (other than proteasomal)	8620868
+5069	Hydrolase	8620868
+56130	Adhesin/agglutinin	10380929
+56131	Adhesin/agglutinin	10380929
+56132	Adhesin/agglutinin	10380929
+56133	Adhesin/agglutinin	10380929
+56134	Adhesin/agglutinin	10380929
+56135	Adhesin/agglutinin	10380929
+1869	Inhibitor or repressor	10199402
+56138	Adhesin/agglutinin	10380929
+56139	Adhesin/agglutinin	10380929
+7753	Inhibitor or repressor	10748193
+7753	DNA-binding protein	10748193
+5071	Protein conjugation factor	10888878
+5073	Nuclease [endo, exo, ribo, deoxyribo]	9736620
+5074	Inhibitor or repressor	8943350
+5075	DNA-binding protein	1358810
+5075	Activator	1358810
+5076	DNA-binding protein	9106533
+5076	Activator	8760285
+5077	DNA-binding protein	9500554
+5077	Activator	9500554
+1870	DNA-binding protein	8246996
+1871	DNA-binding protein	10918599
+5079	DNA-binding protein	10524622
+5079	Activator	10524622
+56140	Adhesin/agglutinin	10380929
+1874	DNA-binding protein	7892279
+22858	Transferase	10699974
+56141	Adhesin/agglutinin	10380929
+1875	DNA-binding protein	7892279
+56142	Adhesin/agglutinin	10380929
+1876	Inhibitor or repressor	9501179
+56143	Adhesin/agglutinin	10380929
+1877	DNA-binding protein	10869426
+1877	Activator	9121437
+56144	Adhesin/agglutinin	10380929
+56145	Adhesin/agglutinin	10380929
+56146	Adhesin/agglutinin	10380929
+56147	Adhesin/agglutinin	10380929
+26061	Lyase	10468558
+7764	Activator	9671742
+5080	DNA-binding protein	10747901
+5082	Regulatory subunit	10095058
+5087	DNA-binding protein	10500199
+1880	Receptor (signalling)	8383238
+1889	Protease (other than proteasomal)	7805846
+1889	Hydrolase	7805846
+4435	Activator	9434189
+5091	Ligase	8048912
+5092	Lyase	8618906
+5092	Activator	10098606
+4437	DNA-binding protein	10871409
+5093	RNA-binding protein	8833161
+4438	DNA-binding protein	9299235
+5094	RNA-binding protein	8833161
+5096	Ligase	8188292
+55500	Transferase	11044454
+55500	Other kinase	11044454
+5097	Adhesin/agglutinin	8508762
+1890	Transferase	9924029
+55501	Transferase	10781601
+1891	Lyase	7558027
+55502	Inhibitor or repressor	10851137
+1892	Lyase	9073515
+55509	Inhibitor or repressor	10878360
+55509	DNA-binding protein	10878360
+7781	Active transporter, secondary	8962159
+4440	RNA-binding protein	9790759
+7783	Adhesin/agglutinin	8385033
+7784	Adhesin/agglutinin	1478648
+7786	Transferase	8663324
+1102	Guanine nucleotide exchange factor	10089422
+1102	Nuclear import/export protein	10089422
+1103	Transferase	10861222
+1104	Guanine nucleotide exchange factor	10089422
+1104	Nuclear import/export protein	10089422
+1105	DNA-binding protein	9326634
+1105	Hydrolase	9326634
+1106	DNA-binding protein	9326634
+1106	Hydrolase	9326634
+1107	DNA-binding protein	9326634
+1107	Hydrolase	9326634
+1108	DNA-binding protein	9326634
+1108	Hydrolase	9326634
+55510	RNA-binding protein	10919659
+55510	Hydrolase	10919659
+1109	Oxidoreductase	8172617
+55512	Hydrolase	10823942
+55515	Channel [passive transporter]	10852210
+1111	Transferase	9278511
+1112	DNA-binding protein	9154802
+1116	Hydrolase	8245017
+1117	Hydrolase	8702629
+1118	Hydrolase	7836450
+55523	RNA-binding protein	10836796
+55523	Hydrolase	10836796
+7001	Oxidoreductase	8144038
+7005	DNA-binding protein	9148898
+7006	Transferase	7934162
+3801	Motor protein	9782090
+3802	Inhibitor or repressor	7749980
+3802	Receptor (signalling)	7749980
+3803	Inhibitor or repressor	7749980
+3803	Receptor (signalling)	7749980
+3804	Inhibitor or repressor	7749980
+3804	Receptor (signalling)	7749980
+3805	Receptor (signalling)	8946682
+3806	Receptor (signalling)	8627176
+3806	Activator	8627176
+1120	Other kinase	9487136
+3807	Receptor (signalling)	8627176
+3807	Activator	8627176
+3808	Receptor (signalling)	8765026
+3808	Activator	8765026
+3809	Receptor (signalling)	7749980
+1123	GTPase activating protein	8336731
+1123	Activator	8336731
+1124	GTPase activating protein	8175705
+1124	Activator	8175705
+1128	Receptor (signalling)	9614217
+1129	Receptor (signalling)	10895079
+7010	Transferase	8382358
+7010	Receptor (signalling)	10766762
+7011	RNA-binding protein	9020079
+7013	DNA-binding protein	1406665
+7014	DNA-binding protein	9326950
+7015	DNA polymerase or subunit	9252327
+7015	DNA-binding protein	9288757
+7016	Transferase	8537404
+3810	Receptor (signalling)	8765026
+3810	Activator	8765026
+7018	Small molecule-binding protein	6585826
+3812	Inhibitor or repressor	7716543
+3812	Receptor (signalling)	7716543
+3814	Inhibitor or repressor	9192814
+3815	Transferase	9990072
+3815	Receptor (signalling)	9990072
+3816	Protease (other than proteasomal)	2686621
+3816	Hydrolase	2686621
+1131	Receptor (signalling)	10940357
+1132	Receptor (signalling)	9603968
+1133	Receptor (signalling)	3272174
+1134	Channel [passive transporter]	7619526
+1134	Receptor (signalling)	7619526
+1135	Channel [passive transporter]	8906617
+1135	Receptor (signalling)	8906617
+602	Inhibitor or repressor	1501714
+1136	Channel [passive transporter]	8906617
+1136	Receptor (signalling)	8906617
+1137	Channel [passive transporter]	8906617
+1137	Receptor (signalling)	8906617
+604	Inhibitor or repressor	9171827
+604	DNA-binding protein	9171827
+1138	Channel [passive transporter]	1542648
+1138	Receptor (signalling)	1542648
+605	Serine rich protein	8605326
+1139	Channel [passive transporter]	10771023
+1139	Receptor (signalling)	10771023
+608	Receptor (signalling)	10908663
+7020	DNA-binding protein	1916817
+7020	Activator	8321221
+7022	DNA-binding protein	9113991
+7023	DNA-binding protein	2833704
+7023	Activator	2123466
+7024	DNA-binding protein	8035790
+7025	DNA-binding protein	2739739
+7025	Receptor (signalling)	2739739
+7025	Activator	2739739
+7026	Inhibitor or repressor	1899293
+7026	DNA-binding protein	1899293
+7026	Receptor (signalling)	1899293
+7027	DNA-binding protein	8405995
+7027	Activator	8405995
+3820	Receptor (signalling)	8077657
+3821	Receptor (signalling)	2007850
+7029	DNA-binding protein	7784053
+3822	Receptor (signalling)	8436421
+3824	Receptor (signalling)	7589107
+4481	Receptor (signalling)	2251254
+4482	Oxidoreductase	10452521
+1140	Channel [passive transporter]	8872460
+1140	Receptor (signalling)	8872460
+1141	Channel [passive transporter]	8906617
+1141	Receptor (signalling)	8906617
+1142	Channel [passive transporter]	7690916
+1142	Receptor (signalling)	7690916
+1143	Channel [passive transporter]	8906617
+1143	Receptor (signalling)	8906617
+610	Channel [passive transporter]	10228147
+4486	Transferase	10871856
+4486	Receptor (signalling)	10871856
+1144	Channel [passive transporter]	8872460
+1144	Receptor (signalling)	8872460
+611	Receptor (signalling)	2937147
+1145	Channel [passive transporter]	8872460
+1145	Receptor (signalling)	8872460
+4488	DNA-binding protein	8968743
+1146	Channel [passive transporter]	3967651
+1146	Receptor (signalling)	3967651
+613	Transferase	1657398
+613	GTPase activating protein	1903516
+4489	Small molecule-binding protein	3856101
+1147	Transferase	10747982
+1149	Activator	9564035
+617	Complex assembly protein	9878253
+617	Conserved ATPase domain	9878253
+7030	DNA-binding protein	1685140
+7035	Inhibitor or repressor	1993173
+7036	Receptor (protein translocation)	10409623
+7037	Receptor (protein translocation)	6273413
+3831	Motor protein	8786116
+7039	Transferase	10918572
+3832	Motor protein	8548803
+3832	Hydrolase	8548803
+3834	Motor protein	9925916
+3835	Motor protein	8599929
+3835	DNA-binding protein	8599929
+3836	Receptor (protein translocation)	8631802
+3836	Nuclear import/export protein	8631802
+3837	Receptor (protein translocation)	7627554
+4493	Small molecule-binding protein	3856101
+3838	Receptor (protein translocation)	7754385
+3838	Nuclear import/export protein	9020106
+3839	Receptor (protein translocation)	9435235
+1153	RNA-binding protein	9151692
+622	Oxidoreductase	1639787
+623	Receptor (signalling)	8063797
+624	Receptor (signalling)	7916737
+7041	Activator	10075738
+7042	Inhibitor or repressor	3322813
+7045	Inhibitor or repressor	8024701
+7046	Receptor (signalling)	8242743
+7048	Transferase	1310899
+7048	Receptor (signalling)	1310899
+7049	Receptor (signalling)	1333192
+3842	Nuclear import/export protein	8808633
+3843	Receptor (protein translocation)	9114010
+3845	Hydrolase	3310850
+3845	GTP-binding protein/GTPase	3310850
+1163	Regulatory subunit	8601310
+1164	Regulatory subunit	8211159
+635	Transferase	8798461
+639	DNA-binding protein	1851123
+55577	Transferase	10824116
+55577	Other kinase	10824116
+7050	DNA-binding protein	10764806
+7053	Transferase	8099584
+7054	Oxidoreductase	9920892
+7056	Receptor (signalling)	2822087
+7057	Adhesin/agglutinin	9304800
+7058	Adhesin/agglutinin	1459996
+1173	Vesicle coat protein	7989329
+640	Transferase	2404338
+1174	Vesicle coat protein	9653655
+641	DNA-binding protein	10823897
+641	Hydrolase	9388193
+1175	Vesicle coat protein	9040778
+642	Ligase	9546396
+642	Protease (other than proteasomal)	9546396
+642	Hydrolase	9546396
+1176	Vesicle coat protein	9118953
+643	Receptor (signalling)	1425907
+644	Oxidoreductase	10858451
+1178	Hydrolase	8400237
+1179	Channel [passive transporter]	9828122
+646	DNA-binding protein	9099851
+55586	Oxidoreductase	10944187
+6401	Adhesin/agglutinin	2466335
+6402	Adhesin/agglutinin	10747985
+6403	Adhesin/agglutinin	1701178
+7060	Adhesin/agglutinin	7852353
+7062	Anchor Protein	7685034
+7064	Protease (other than proteasomal)	7639763
+7064	Hydrolase	7639763
+7067	DNA-binding protein	2879242
+7067	Receptor (signalling)	2879242
+7067	Activator	2879242
+7068	DNA-binding protein	1618799
+7068	Receptor (signalling)	1618799
+1180	Channel [passive transporter]	9122265
+1181	Channel [passive transporter]	7795595
+1182	Channel [passive transporter]	7665160
+1183	Channel [passive transporter]	8069296
+1184	Channel [passive transporter]	8559248
+1185	Channel [passive transporter]	9224655
+1186	Channel [passive transporter]	8543009
+1187	Channel [passive transporter]	8041726
+1188	Channel [passive transporter]	8041726
+657	Receptor (signalling)	8397373
+659	Transferase	7791754
+659	Receptor (signalling)	7644468
+7071	Inhibitor or repressor	9748269
+7072	RNA-binding protein	1934064
+7073	RNA-binding protein	1326761
+7073	DNA-binding protein	9207209
+6418	Inhibitor or repressor	8626647
+6418	DNA polymerase or subunit	7753797
+7074	Guanine nucleotide exchange factor	10835422
+7075	Receptor (signalling)	1312667
+7076	Inhibitor or repressor	3903517
+7077	Inhibitor or repressor	10764764
+7078	Inhibitor or repressor	3903517
+1192	Channel [passive transporter]	9139710
+1193	Channel [passive transporter]	9339381
+660	Transferase	7970727
+1195	Transferase	1704889
+1196	Transferase	7990150
+663	GTPase activating protein	10799524
+51601	Transferase	10103005
+1198	Transferase	7990150
+669	Isomerase	2542247
+669	Hydrolase	2542247
+669	Other phosphatase	2542247
+6421	RNA-binding protein	8449401
+6421	Spliceosomal subunit	8449401
+6422	Inhibitor or repressor	9192640
+6425	Inhibitor or repressor	10072424
+6426	RNA-binding protein	1830244
+6426	Spliceosomal subunit	1830244
+6427	RNA-binding protein	1373910
+6427	Spliceosomal subunit	8530103
+7084	Transferase	9079672
+7084	Other kinase	9079672
+6429	RNA-binding protein	8321209
+6429	Spliceosomal subunit	8321209
+7086	Transferase	1567394
+7087	Adhesin/agglutinin	8995416
+64714	Isomerase	
+670	Hydrolase	7759552
+672	DNA-binding protein	9662397
+672	Activator	9662397
+673	Transferase	2284096
+675	Inhibitor or repressor	8640235
+676	DNA-binding protein	10365964
+677	DNA-binding protein	8595910
+6430	RNA-binding protein	7556075
+6430	Spliceosomal subunit	7556075
+6431	RNA-binding protein	7556075
+6431	Spliceosomal subunit	7556075
+6432	RNA-binding protein	7629084
+6432	Spliceosomal subunit	8013463
+6433	RNA-binding protein	8940107
+6433	Spliceosomal subunit	8940107
+6434	RNA-binding protein	9546399
+7093	Protease (other than proteasomal)	10516436
+7093	Hydrolase	10516436
+7096	Receptor (signalling)	9435236
+7097	Receptor (signalling)	9435236
+7098	Receptor (signalling)	9435236
+7099	Receptor (signalling)	9435236
+3895	Anchor Protein	7787243
+3897	Adhesin/agglutinin	7920659
+3898	Anchor Protein	9119369
+3899	DNA-binding protein	8555498
+3899	Activator	8555498
+680	Receptor (signalling)	9367152
+51621	DNA-binding protein	10023774
+51621	Activator	10023774
+686	Hydrolase	7509806
+687	DNA-binding protein	8051167
+687	Activator	1356762
+688	DNA-binding protein	8479902
+688	Activator	8479902
+6442	Anchor Protein	7937874
+27429	Protease (other than proteasomal)	10644717
+27429	Hydrolase	10644717
+6446	Transferase	9114008
+6446	Activator	10884438
+3104	DNA-binding protein	8661141
+6447	Hydrolase	3134253
+6447	GTP-binding protein/GTPase	3134253
+6448	Hydrolase	7493035
+3108	Chaperones	10631952
+3109	Chaperones	10631952
+694	Inhibitor or repressor	1373383
+696	Receptor (signalling)	8611614
+699	Transferase	10198256
+6452	Inhibitor or repressor	9299232
+3110	DNA-binding protein	9843207
+9002	Receptor (signalling)	9618465
+58189	Inhibitor or repressor	10967136
+5800	Receptor (signalling)	7665166
+5800	Hydrolase	7753550
+5802	Receptor (signalling)	8524829
+5802	Hydrolase	8524829
+5803	Receptor (signalling)	8387522
+5803	Hydrolase	1323835
+5805	Lyase	3308682
+6462	Small molecule-binding protein	2249477
+11001	Ligase	
+11004	Motor protein	9434124
+11006	Inhibitor or repressor	9151699
+11006	Receptor (signalling)	9151699
+11009	Inhibitor or repressor	9826712
+9016	Active transporter, secondary	9852133
+5810	Nuclease [endo, exo, ribo, deoxyribo]	9660799
+5810	Hydrolase	9660799
+9019	Anchor Protein	10681522
+51655	Guanine nucleotide exchange factor	10840027
+51655	Hydrolase	10471929
+51655	GTP-binding protein/GTPase	10471929
+5813	DNA-binding protein	1448097
+284366	Protease (other than proteasomal)	
+284366	Hydrolase	
+5816	Small molecule-binding protein	1559707
+6473	DNA-binding protein	9259282
+3131	DNA-binding protein	8639829
+6476	Hydrolase	1560017
+6478	Inhibitor or repressor	10207103
+11012	Protease (other than proteasomal)	9765601
+11012	Hydrolase	9765601
+11014	Receptor (protein translocation)	1316805
+11016	DNA-binding protein	1694576
+54206	Activator	10749885
+54206	Small molecule-binding protein	10749885
+54207	Channel [passive transporter]	10880510
+9020	Transferase	9799091
+9021	Inhibitor or repressor	9266833
+54209	Receptor (signalling)	10799849
+9022	Channel [passive transporter]	9880541
+9023	Hydrolase	9852097
+9027	Transferase	9852678
+5825	ATP-binding cassette	9521874
+5825	Hydrolase	9521874
+5825	Active transporter, primary	9521874
+5826	ATP-binding cassette	9266848
+5826	Hydrolase	9266848
+5826	Active transporter, primary	9266848
+6482	Transferase	10504389
+6483	Transferase	9266697
+6484	Transferase	8557707
+3142	DNA-binding protein	8094082
+6487	Transferase	8333853
+6489	Transferase	10766765
+3148	DNA-binding protein	1551873
+11021	Hydrolase	7811277
+11021	GTP-binding protein/GTPase	7811277
+54210	Receptor (signalling)	10799849
+11024	Receptor (signalling)	9548455
+11025	Receptor (signalling)	9382880
+11026	Receptor (signalling)	9151699
+11027	Receptor (signalling)	9548455
+9033	Channel [passive transporter]	10517637
+9034	Receptor (signalling)	9473515
+5830	Receptor (protein translocation)	7790377
+9038	Receptor (signalling)	9464258
+5831	Oxidoreductase	1730675
+9039	Protein conjugation factor	9694792
+9039	Activator	9694792
+5832	Transferase	8761662
+5832	Oxidoreductase	8761662
+5836	Transferase	9529348
+6492	DNA-binding protein	8812055
+3150	DNA-binding protein	8047885
+5837	Transferase	9633816
+6493	DNA-binding protein	8661114
+6494	GTPase activating protein	9346962
+6494	Activator	9346962
+6498	Inhibitor or repressor	10531062
+6499	RNA-binding protein	7610041
+6499	Hydrolase	7610041
+3157	Lyase	7913309
+11030	RNA-binding protein	8855282
+11031	Hydrolase	8863739
+11031	GTP-binding protein/GTPase	8863739
+3159	Inhibitor or repressor	10871404
+3159	DNA-binding protein	10871404
+3159	Activator	10871404
+11033	GTPase activating protein	10333475
+11033	Hydrolase	10333475
+11033	Activator	10333475
+11034	Complex assembly protein	8399167
+11035	Transferase	10358032
+11036	Activator	10364255
+9040	Protein conjugation factor	9694792
+9040	Ligase	9694792
+9044	Inhibitor or repressor	9488487
+9044	Hydrolase	9488487
+9045	RNA-binding protein	9480843
+9045	Ribosomal subunit	9480843
+9048	Activator	9883723
+51684	Inhibitor or repressor	10559945
+9049	Inhibitor or repressor	8972861
+9049	Activator	9447995
+51686	Inhibitor or repressor	10781085
+3163	Oxidoreductase	1575508
+3164	DNA-binding protein	2626032
+3164	Receptor (signalling)	2626032
+3166	DNA-binding protein	1360670
+3167	DNA-binding protein	7647458
+11040	Transferase	9804974
+11041	Transferase	9405606
+11044	Transferase	10066793
+11044	DNA-binding protein	10066793
+9051	Regulatory subunit	9857189
+9052	Receptor (signalling)	9857033
+9054	Complex assembly protein	9885568
+9056	Active transporter, secondary	9829974
+51692	RNA-binding protein	8929409
+9057	Active transporter, secondary	9829974
+9058	Active transporter, secondary	8967342
+2512	Small molecule-binding protein	7493028
+3170	DNA-binding protein	10868948
+2515	Protease (other than proteasomal)	9041139
+2515	Hydrolase	9041139
+3171	DNA-binding protein	7739897
+2516	DNA-binding protein	8205615
+2516	Receptor (signalling)	8205615
+2516	Activator	8205615
+3172	Receptor (signalling)	9048927
+5859	RNA-binding protein	8078941
+5859	Ligase	8078941
+5859	tRNA synthetase	8078941
+2517	Hydrolase	4074382
+3176	Transferase	7943261
+3177	Active transporter, secondary	9396714
+56923	Receptor (signalling)	10894543
+3178	RNA-binding protein	8521471
+11051	RNA-binding protein	9659921
+11052	RNA-binding protein	9659921
+8402	Active transporter, secondary	1457818
+8403	DNA-binding protein	9925951
+9060	Transferase	9771708
+9060	Other kinase	9771708
+9061	Transferase	9668121
+9061	Other kinase	9668121
+8407	Complex assembly protein	9693045
+8408	Transferase	9693035
+9064	Transferase	9875215
+5860	Oxidoreductase	3033643
+5861	Hydrolase	2501306
+5861	GTP-binding protein/GTPase	2501306
+5862	Hydrolase	2501306
+5862	GTP-binding protein/GTPase	2501306
+2521	RNA-binding protein	8510758
+5864	Hydrolase	2501306
+5864	GTP-binding protein/GTPase	2501306
+5865	Hydrolase	2501306
+5865	GTP-binding protein/GTPase	2501306
+2523	Transferase	2118655
+2524	Transferase	7876235
+5867	Hydrolase	2501306
+5867	GTP-binding protein/GTPase	2501306
+2525	Transferase	1977660
+3181	RNA-binding protein	7789969
+5868	Hydrolase	2501306
+5868	GTP-binding protein/GTPase	2501306
+2526	Transferase	1716630
+3182	RNA-binding protein	8999813
+5869	Hydrolase	1541686
+5869	GTP-binding protein/GTPase	1541686
+2527	Transferase	1339443
+3183	RNA-binding protein	3457372
+10400	Transferase	9989271
+2528	Transferase	8175676
+3184	RNA-binding protein	10205060
+10401	Inhibitor or repressor	10319586
+2529	Transferase	8207002
+3185	RNA-binding protein	7499401
+10402	Transferase	10206952
+3187	RNA-binding protein	7499401
+10404	Protease (other than proteasomal)	10206990
+10404	Hydrolase	10206990
+11060	Protein conjugation factor	9169421
+3188	RNA-binding protein	7499401
+11061	Inhibitor or repressor	10103018
+3189	RNA-binding protein	8999868
+10406	Inhibitor or repressor	1686187
+11063	DNA-binding protein	10359848
+11063	Activator	10359848
+11064	DNA-binding protein	10359848
+11065	Protein conjugation factor	9122200
+11065	Ligase	9122200
+11068	Protein conjugation factor	9122200
+11069	Guanine nucleotide exchange factor	9856955
+9070	DNA-binding protein	10393421
+8417	Docking protein	10839363
+8418	Transferase	7608218
+9077	Hydrolase	9874798
+9077	GTP-binding protein/GTPase	9874798
+5870	Hydrolase	2501306
+5870	GTP-binding protein/GTPase	2501306
+5871	Transferase	7515885
+5872	Hydrolase	8294494
+5872	GTP-binding protein/GTPase	8294494
+2530	Transferase	9133635
+5873	Hydrolase	9066979
+5873	GTP-binding protein/GTPase	9066979
+5874	Hydrolase	9066979
+5874	GTP-binding protein/GTPase	9066979
+2532	Receptor (signalling)	9058825
+5875	Transferase	8380507
+5876	Transferase	8380507
+2534	Transferase	3526330
+3190	RNA-binding protein	8107114
+5877	Guanine nucleotide exchange factor	9441742
+2535	Receptor (signalling)	8626800
+3191	RNA-binding protein	2687284
+5878	Hydrolase	8646882
+5878	GTP-binding protein/GTPase	8646882
+3192	RNA-binding protein	1628625
+3192	DNA-binding protein	1628625
+5879	Hydrolase	2674130
+5879	Activator	10779525
+5879	GTP-binding protein/GTPase	2674130
+2538	Hydrolase	8211187
+2538	Other phosphatase	8211187
+10411	Guanine nucleotide exchange factor	9853756
+2539	Oxidoreductase	2836867
+11070	Guanine nucleotide exchange factor	9856955
+3198	DNA-binding protein	7622051
+11073	Regulatory subunit	9461304
+10419	Inhibitor or repressor	9843966
+8424	Oxidoreductase	9753662
+8428	Transferase	9353338
+23521	RNA-binding protein	10580157
+23521	Ribosomal subunit	10580157
+5880	Hydrolase	2674130
+5880	GTP-binding protein/GTPase	2674130
+9088	Transferase	9001210
+23522	Inhibitor or repressor	10497217
+23522	Transferase	10497217
+23522	Activator	10497217
+5881	Hydrolase	9252344
+5881	GTP-binding protein/GTPase	9252344
+5883	DNA-binding protein	10852904
+2542	Active transporter, secondary	9428641
+5886	DNA-binding protein	10854423
+5887	DNA-binding protein	10854423
+23528	DNA-binding protein	10448078
+5888	DNA-binding protein	11002423
+5888	Hydrolase	8358431
+5889	DNA-binding protein	9469824
+5889	Hydrolase	9469824
+2547	DNA-binding protein	7957065
+10420	Transferase	10512679
+2548	Hydrolase	3049072
+2549	Docking protein	8596638
+10424	Receptor (signalling)	9705155
+11080	Chaperones	9546042
+56953	Nuclease [endo, exo, ribo, deoxyribo]	10899995
+56953	Hydrolase	10899995
+56954	Hydrolase	
+10427	Vesicle coat protein	10075675
+11085	Protease (other than proteasomal)	10512762
+11085	Hydrolase	10512762
+11086	Protease (other than proteasomal)	10512762
+11086	Hydrolase	10512762
+8431	Inhibitor or repressor	11030331
+8431	Receptor (signalling)	9603951
+8433	Activator	9748258
+8435	Transferase	9756920
+9091	Transferase	9729469
+8436	Small molecule-binding protein	10191091
+8437	GTPase activating protein	9751798
+8437	Activator	9751798
+8437	Small molecule-binding protein	9751798
+9093	Chaperones	9683573
+8438	Hydrolase	8805304
+9095	DNA-binding protein	9888994
+9096	DNA-binding protein	9888994
+23530	Oxidoreductase	9524818
+5890	DNA-binding protein	9512535
+5890	Hydrolase	9512535
+5891	Transferase	10421840
+9099	Protease (other than proteasomal)	9827704
+9099	Hydrolase	9827704
+5892	DNA-binding protein	9570954
+5892	Hydrolase	9570954
+2550	Receptor (signalling)	9753614
+5893	DNA-binding protein	7774919
+23534	Nuclear import/export protein	10366588
+2551	DNA-binding protein	8441384
+2551	Activator	8441384
+5894	Transferase	8929532
+2552	Activator	8441384
+23536	RNA-binding protein	10430867
+23536	Hydrolase	10430867
+2553	Activator	9016666
+5896	DNA-binding protein	9630231
+2554	Channel [passive transporter]	2465923
+2554	Receptor (signalling)	2465923
+23538	Receptor (signalling)	10512676
+2555	Channel [passive transporter]	8391122
+2555	Receptor (signalling)	8391122
+5898	Hydrolase	2550440
+5898	GTP-binding protein/GTPase	2550440
+23539	Active transporter, secondary	10493836
+2556	Channel [passive transporter]	8391122
+2556	Receptor (signalling)	8391122
+5899	Hydrolase	2120779
+5899	GTP-binding protein/GTPase	2120779
+2557	Channel [passive transporter]	8719416
+2557	Receptor (signalling)	8719416
+2558	Channel [passive transporter]	1321750
+2558	Receptor (signalling)	1321750
+10431	Receptor (protein translocation)	10339406
+2559	Channel [passive transporter]	8632757
+2559	Receptor (signalling)	8632757
+10434	Hydrolase	10064899
+10438	DNA-binding protein	9469821
+11095	Protease (other than proteasomal)	10610729
+11095	Hydrolase	10610729
+11096	Protease (other than proteasomal)	10438522
+11096	Hydrolase	10438522
+11097	Nuclear import/export protein	10358091
+11099	Hydrolase	7519780
+5100	Adhesin/agglutinin	9787079
+8443	Transferase	9459311
+8444	Transferase	9748265
+8445	Transferase	9748265
+8446	Hydrolase	9685386
+8446	Other phosphatase	9685386
+5104	Inhibitor or repressor	1714450
+5105	Lyase	8490617
+8448	Small molecule-binding protein	7826360
+5106	Lyase	8645161
+8449	RNA-binding protein	9547260
+8449	Hydrolase	9547260
+1901	Receptor (signalling)	8626678
+1902	Receptor (signalling)	9070858
+1903	Receptor (signalling)	9409733
+2560	Channel [passive transporter]	2465923
+2560	Receptor (signalling)	2465923
+2561	Channel [passive transporter]	8264558
+2561	Receptor (signalling)	8264558
+2562	Channel [passive transporter]	1664410
+2562	Receptor (signalling)	1664410
+2563	Channel [passive transporter]	2176788
+2563	Receptor (signalling)	2176788
+2564	Channel [passive transporter]	9039914
+2564	Receptor (signalling)	9039914
+1909	Receptor (signalling)	1326535
+23549	Protease (other than proteasomal)	9632644
+23549	Hydrolase	9632644
+2566	Channel [passive transporter]	2538761
+2566	Receptor (signalling)	2538761
+10440	Receptor (protein translocation)	10339406
+2569	Channel [passive transporter]	1849271
+2569	Receptor (signalling)	1849271
+10446	Receptor (signalling)	9662332
+53632	Regulatory subunit	10698692
+10449	Transferase	8241273
+8453	Activator	10973499
+5111	DNA polymerase or subunit	9552415
+5111	DNA-binding protein	9552415
+8455	Protease (other than proteasomal)	9736737
+8455	Receptor (signalling)	10086356
+8455	Hydrolase	9736737
+8456	DNA-binding protein	10767081
+8458	Hydrolase	9748214
+8459	Transferase	9736702
+1910	Receptor (signalling)	8810293
+1911	Inhibitor or repressor	9121482
+5119	Protease (other than proteasomal)	8863740
+5119	Hydrolase	8863740
+1912	Inhibitor or repressor	9121482
+23553	Hydrolase	10493834
+2570	Channel [passive transporter]	1315307
+2570	Receptor (signalling)	1315307
+2571	Lyase	1549570
+1915	Hydrolase	3512269
+1915	GTP-binding protein/GTPase	3512269
+2572	Lyase	1549570
+23559	Ligase	7644498
+10450	Chaperones	9747881
+10450	Isomerase	9747881
+10454	Activator	8638164
+10455	Isomerase	10419495
+7802	Motor protein	9284741
+7803	Hydrolase	9018080
+7804	Receptor (signalling)	10380922
+8460	Transferase	9501187
+8462	Inhibitor or repressor	9748269
+8462	DNA-binding protein	9748269
+8465	Transferase	9153231
+8467	Hydrolase	9730600
+5125	Protease (other than proteasomal)	8901832
+5125	Hydrolase	8901832
+8468	Isomerase	9782077
+5127	Transferase	1437147
+5128	Transferase	1639063
+5129	Transferase	8088790
+23563	Transferase	10491328
+23564	Hydrolase	10493931
+2582	Isomerase	8593531
+23566	Receptor (signalling)	10488122
+2583	Transferase	1601877
+23567	RNA-binding protein	10488071
+2584	Transferase	7670469
+2584	Other kinase	7670469
+2585	Transferase	8798585
+2585	Other kinase	8798585
+23569	Hydrolase	10488123
+2587	Receptor (signalling)	7524088
+2588	Hydrolase	8325655
+10461	Transferase	8086340
+10461	Receptor (signalling)	8086340
+56990	Inhibitor or repressor	10816584
+2589	Transferase	7592619
+56992	Motor protein	10878014
+56992	DNA-binding protein	10878014
+56992	Hydrolase	10878014
+56993	Receptor (protein translocation)	10982837
+56994	Transferase	10893425
+10465	Isomerase	9570313
+56996	Regulatory subunit	10871601
+10468	Inhibitor or repressor	3380788
+56998	Inhibitor or repressor	10898789
+10469	Receptor (protein translocation)	10339406
+56999	Protease (other than proteasomal)	10936055
+56999	Hydrolase	10936055
+8470	Anchor Protein	9211900
+8473	Transferase	9083068
+5132	Inhibitor or repressor	7961975
+8476	Transferase	9092543
+8477	Receptor (signalling)	9655242
+5136	Hydrolase	8557689
+5137	Hydrolase	8557689
+22913	RNA-binding protein	9376072
+5138	Hydrolase	9210593
+22914	Receptor (signalling)	2007850
+5139	Hydrolase	1315035
+2590	Transferase	9592121
+22918	Receptor (signalling)	9047234
+2591	Transferase	9592121
+2592	Transferase	1427861
+1936	Guanine nucleotide exchange factor	8334168
+23576	Hydrolase	9874257
+2593	Transferase	8547310
+2597	Oxidoreductase	6095107
+10472	Inhibitor or repressor	9756912
+10477	Protein conjugation factor	10343118
+10477	Ligase	10343118
+10478	Active transporter, secondary	9874197
+10479	Active transporter, secondary	9507001
+8480	RNA-binding protein	9256445
+8480	Nuclear import/export protein	10209021
+5140	Hydrolase	8884271
+8483	Hydrolase	9722584
+8483	Other phosphatase	9722584
+5141	Hydrolase	8940140
+8484	Receptor (signalling)	9722565
+30001	Oxidoreductase	10671517
+5142	Hydrolase	8413254
+5143	Hydrolase	7843419
+22920	Complex assembly protein	8900189
+5144	Hydrolase	9371713
+8487	Spliceosomal subunit	9323130
+5145	Hydrolase	7493036
+5146	Hydrolase	8641425
+5147	Regulatory subunit	9570951
+5148	Inhibitor or repressor	7828894
+5148	Regulatory subunit	7828894
+5149	Inhibitor or repressor	8786098
+5149	Regulatory subunit	8786098
+22925	Receptor (signalling)	7721806
+22926	Activator	9271374
+23583	Hydrolase	10074426
+22928	Transferase	8986768
+22929	Transferase	7665581
+10486	Regulatory subunit	7962207
+10487	Regulatory subunit	1406678
+10488	DNA-binding protein	9271389
+10488	Activator	9389645
+8490	GTPase activating protein	9747037
+8490	Activator	
+8491	Transferase	9275185
+8492	Protease (other than proteasomal)	9540828
+8492	Hydrolase	9540828
+5150	Hydrolase	8389765
+8493	Hydrolase	9177166
+5152	Hydrolase	9624146
+5153	Hydrolase	9419816
+5156	Receptor (signalling)	10806482
+22933	Transferase	10381378
+5158	Hydrolase	1322354
+5159	Receptor (signalling)	2536956
+1956	Receptor (signalling)	7640657
+23596	Receptor (signalling)	10234000
+1958	DNA-binding protein	3127059
+1959	DNA-binding protein	9537424
+10490	Docking protein	9446565
+10492	RNA-binding protein	9847309
+10494	Transferase	9160885
+10497	Receptor (signalling)	9607201
+7841	Hydrolase	7635146
+4504	Small molecule-binding protein	1873033
+5160	Oxidoreductase	3034892
+5161	Oxidoreductase	2249846
+5162	Oxidoreductase	2376596
+7849	DNA-binding protein	10377248
+5163	Transferase	7499431
+5164	Transferase	10748134
+5165	Transferase	10748134
+5166	Transferase	8798399
+5167	Hydrolase	1315502
+5167	Other phosphatase	1315502
+22943	Inhibitor or repressor	10383463
+1960	DNA-binding protein	1906159
+5168	Hydrolase	7982964
+5168	Other phosphatase	8579579
+22944	DNA-binding protein	1923796
+1961	DNA-binding protein	1584812
+5169	Hydrolase	9344668
+5169	Other phosphatase	9344668
+22949	Oxidoreductase	8576264
+1967	Guanine nucleotide exchange factor	7495858
+1968	Hydrolase	8106381
+1968	GTP-binding protein/GTPase	8106381
+1969	Receptor (signalling)	2174105
+7852	Receptor (signalling)	10415069
+7855	Receptor (signalling)	9054360
+5170	Transferase	10792047
+5175	Adhesin/agglutinin	1690453
+5176	Inhibitor or repressor	8473338
+5178	Activator	9500555
+22954	Activator	7778269
+22955	Inhibitor or repressor	10524249
+22955	DNA-binding protein	10524249
+1973	RNA-binding protein	3215517
+1973	Hydrolase	3215517
+1974	RNA-binding protein	8521730
+1974	Hydrolase	8521730
+1975	RNA-binding protein	2390971
+1977	RNA-binding protein	3469651
+1978	Inhibitor or repressor	7935836
+1979	Inhibitor or repressor	7935836
+4520	DNA-binding protein	8065932
+4521	Hydrolase	7713500
+4524	Oxidoreductase	7647779
+7867	Transferase	8626550
+1981	RNA-binding protein	1429670
+5189	Hydrolase	9398848
+1982	RNA-binding protein	9049310
+1983	Hydrolase	8663286
+1983	GTP-binding protein/GTPase	8663286
+7874	Protease (other than proteasomal)	9130697
+7874	Hydrolase	9130697
+4534	Hydrolase	8640223
+5190	Hydrolase	8670792
+4535	Oxidoreductase	1959619
+5191	Receptor (protein translocation)	9090382
+7879	Hydrolase	8954989
+7879	GTP-binding protein/GTPase	8954989
+4538	Oxidoreductase	1959619
+5194	Docking protein	8858165
+5195	Docking protein	9653144
+1990	Protease (other than proteasomal)	2834346
+1990	Hydrolase	2834346
+1993	RNA-binding protein	8158249
+22977	Oxidoreductase	10383892
+1994	RNA-binding protein	8626503
+22978	Hydrolase	
+1995	RNA-binding protein	9799595
+1996	RNA-binding protein	1655278
+1999	DNA-binding protein	9234700
+1999	Activator	10821850
+7881	Regulatory subunit	7499366
+7884	RNA-binding protein	10825184
+1200	Protease (other than proteasomal)	9295267
+1200	Hydrolase	9295267
+4543	Receptor (signalling)	8700109
+1201	Chaperones	8980123
+4544	Receptor (signalling)	7568007
+26185	Receptor (signalling)	9500546
+30062	DNA-binding protein	10625658
+4547	Small molecule-binding protein	1439810
+26188	Receptor (signalling)	9119360
+1208	Hydrolase	
+26190	Protein conjugation factor	10531035
+26191	Hydrolase	10068674
+4552	Oxidoreductase	9501215
+1211	Vesicle coat protein	
+1212	Vesicle coat protein	
+1215	Protease (other than proteasomal)	1894611
+1216	Adhesin/agglutinin	1560826
+55620	Docking protein	10980601
+7100	Receptor (signalling)	9435236
+7109	Channel [passive transporter]	7633421
+3903	Receptor (signalling)	9285412
+7110	DNA-binding protein	1409643
+7111	Regulatory subunit	1370827
+7113	Protease (other than proteasomal)	9325052
+7113	Hydrolase	9325052
+7114	Inhibitor or repressor	8617195
+1230	Receptor (signalling)	10770925
+1231	Receptor (signalling)	9886417
+1232	Receptor (signalling)	10415069
+1233	Receptor (signalling)	7642634
+701	Transferase	10477750
+1234	Receptor (signalling)	10201901
+1235	Receptor (signalling)	9186513
+1236	Receptor (signalling)	9153236
+1237	Receptor (signalling)	9417093
+705	Adhesin/agglutinin	9560222
+1238	Receptor (signalling)	9364936
+706	Receptor (protein translocation)	1326278
+58985	Receptor (signalling)	10875937
+708	Inhibitor or repressor	8195709
+7125	Regulatory subunit	
+3921	Receptor (signalling)	2970671
+1240	Receptor (signalling)	9425281
+1241	Receptor (signalling)	9177352
+710	Inhibitor or repressor	1363816
+1244	ATP-binding cassette	9425227
+1244	Hydrolase	7559771
+1244	Active transporter, primary	7559771
+715	Protease (other than proteasomal)	2834284
+715	Hydrolase	2834284
+716	Protease (other than proteasomal)	3500856
+716	Hydrolase	3500856
+718	Activator	8702752
+719	Receptor (signalling)	8605247
+9815	GTPase activating protein	10896954
+7132	Receptor (signalling)	2158863
+7133	Receptor (signalling)	8702885
+7134	Regulatory subunit	
+7135	Inhibitor or repressor	
+7135	Regulatory subunit	
+7136	Inhibitor or repressor	
+7136	Regulatory subunit	
+7137	Inhibitor or repressor	
+3930	DNA-binding protein	8157662
+7138	Regulatory subunit	
+7139	Regulatory subunit	
+3933	Inhibitor or repressor	8999869
+3934	Protease (other than proteasomal)	7683678
+4593	Transferase	7546737
+4593	Receptor (signalling)	7546737
+3938	Hydrolase	2460343
+3939	Oxidoreductase	1953713
+4599	Hydrolase	8798556
+4599	GTP-binding protein/GTPase	8798556
+1258	Channel [passive transporter]	7682292
+1258	Regulatory subunit	7682292
+1259	Channel [passive transporter]	7479749
+726	Protease (other than proteasomal)	9339374
+726	Hydrolase	9339374
+727	Activator	8702752
+728	Receptor (signalling)	10352266
+7140	Regulatory subunit	8838323
+3945	Oxidoreductase	3435492
+3948	Oxidoreductase	2440048
+1261	Channel [passive transporter]	9517456
+3949	Receptor (protein translocation)	6091915
+1263	Transferase	8702627
+733	Small molecule-binding protein	8172891
+1267	Hydrolase	2835044
+1268	Receptor (signalling)	1718258
+1269	Receptor (signalling)	8679694
+7150	Topoisomerase	10827183
+7150	Isomerase	2833744
+7153	Topoisomerase	6267071
+7153	Isomerase	6267071
+7153	DNA-binding protein	6267071
+7155	Topoisomerase	1309226
+7155	Isomerase	1309226
+7155	DNA-binding protein	1309226
+7156	Topoisomerase	8622991
+7156	Isomerase	8622991
+7156	DNA-binding protein	8622991
+7157	Nuclease [endo, exo, ribo, deoxyribo]	11002423
+7157	Inhibitor or repressor	8023157
+7157	DNA-binding protein	2047879
+7157	Hydrolase	11002423
+3953	Receptor (signalling)	9537324
+1271	Receptor (signalling)	1648265
+3959	Receptor (signalling)	8390986
+1272	Adhesin/agglutinin	7959734
+6504	Receptor (signalling)	7617038
+6507	Active transporter, secondary	7521911
+6508	Active transporter, secondary	7923606
+6509	Active transporter, secondary	8340364
+6509	Channel [passive transporter]	8910405
+7167	Isomerase	2579079
+7168	Inhibitor or repressor	
+759	Lyase	1916821
+6510	Active transporter, secondary	8702519
+6511	Active transporter, secondary	7791878
+6511	Channel [passive transporter]	7791878
+6513	Active transporter, secondary	9462754
+6513	Major Facilitator Superfamily	9462754
+6514	Active transporter, secondary	8027028
+6514	Major Facilitator Superfamily	8027028
+6515	Active transporter, secondary	1695905
+6515	Major Facilitator Superfamily	1695905
+7172	Transferase	8316220
+6517	Active transporter, secondary	2649253
+6517	Major Facilitator Superfamily	2649253
+7173	Oxidoreductase	10748076
+6518	Active transporter, secondary	1634504
+6518	Major Facilitator Superfamily	1634504
+6519	Active transporter, secondary	8054986
+7175	Nuclear import/export protein	7798308
+7179	Hydrolase	10598804
+3973	Receptor (signalling)	9626653
+3975	DNA-binding protein	9212161
+3977	Receptor (signalling)	1915266
+3978	Ligase	8696349
+3978	DNA-binding protein	8696349
+760	Lyase	1928091
+761	Lyase	3099285
+763	Lyase	8356065
+51701	Transferase	10863097
+768	Lyase	8661007
+6521	Active transporter, secondary	8841202
+6522	Active transporter, secondary	3015590
+6523	Active transporter, secondary	8563765
+6524	Active transporter, secondary	8244402
+7181	DNA-binding protein	3421977
+7181	Receptor (signalling)	2597158
+6526	Active transporter, secondary	1372904
+7182	DNA-binding protein	9006963
+7182	Receptor (signalling)	9006963
+7182	Activator	9006963
+6528	Active transporter, secondary	8806637
+7184	Small molecule-binding protein	2325637
+6529	Active transporter, secondary	8530094
+3980	Ligase	7565692
+3980	DNA-binding protein	7565692
+3981	Ligase	8798671
+3981	DNA-binding protein	8798671
+3984	Transferase	8537403
+3988	Hydrolase	1718995
+770	Lyase	9878543
+771	Lyase	9636197
+773	Channel [passive transporter]	8825650
+774	Channel [passive transporter]	1321501
+775	Channel [passive transporter]	8392192
+776	Channel [passive transporter]	1849233
+777	Channel [passive transporter]	8071363
+778	Channel [passive transporter]	9662400
+779	Channel [passive transporter]	8004673
+51716	Hydrolase	10452915
+6530	Active transporter, secondary	2008212
+6531	Active transporter, secondary	8628395
+6532	Active transporter, secondary	7681602
+6533	Active transporter, secondary	8010975
+6534	Active transporter, secondary	7651355
+6535	Active transporter, secondary	7953292
+6536	Active transporter, secondary	8183239
+6537	Active transporter, secondary	8661037
+6539	Active transporter, secondary	7861179
+3992	Oxidoreductase	10601301
+3998	Chaperones	9546392
+780	Transferase	8390675
+780	Receptor (signalling)	7848919
+781	Channel [passive transporter]	1309651
+782	Channel [passive transporter]	1385409
+783	Channel [passive transporter]	8494331
+784	Channel [passive transporter]	8119293
+784	Regulatory subunit	8119293
+785	Channel [passive transporter]	9628818
+785	Regulatory subunit	9628818
+786	Channel [passive transporter]	8387489
+51727	Transferase	10462544
+51727	Other kinase	10462544
+51728	RNA polymerase subunit	9869639
+6541	Active transporter, secondary	1348489
+6542	Active transporter, secondary	8954799
+6545	Active transporter, secondary	9598310
+6546	Active transporter, secondary	1374913
+6548	Active transporter, secondary	2536298
+3206	Inhibitor or repressor	10766757
+3206	DNA-binding protein	10766757
+3208	Small molecule-binding protein	9931466
+3209	DNA-binding protein	9020844
+793	Small molecule-binding protein	3691519
+794	Small molecule-binding protein	1906795
+795	Small molecule-binding protein	1610358
+51733	Hydrolase	10542323
+799	Receptor (signalling)	7588285
+6553	Active transporter, secondary	9933641
+6554	Active transporter, secondary	8132774
+3212	DNA-binding protein	7876223
+6555	Active transporter, secondary	7592981
+6557	Active transporter, secondary	8640224
+6558	Active transporter, secondary	7629105
+6559	Active transporter, secondary	8670281
+9100	Protease (other than proteasomal)	8724849
+9100	Hydrolase	8724849
+9101	Protease (other than proteasomal)	9628861
+9101	Hydrolase	9628861
+9103	Receptor (signalling)	2531080
+9104	Small molecule-binding protein	7548213
+51741	Oxidoreductase	10786676
+9107	Hydrolase	9736772
+5900	Guanine nucleotide exchange factor	8094051
+9108	Hydrolase	9736772
+51744	Receptor (signalling)	10358138
+5901	Hydrolase	10408446
+5901	GTP-binding protein/GTPase	10408446
+5902	Inhibitor or repressor	7882974
+5902	Activator	7882974
+5903	Nuclear import/export protein	7603572
+51747	Serine rich protein	10631324
+6560	Active transporter, secondary	8663127
+5905	GTPase activating protein	7878053
+5905	Activator	7878053
+5906	Hydrolase	10777492
+5906	GTP-binding protein/GTPase	10777492
+6563	Active transporter, secondary	7989337
+6564	Active transporter, secondary	7896779
+3222	DNA-binding protein	1346761
+5909	GTPase activating protein	1904317
+5909	Activator	1904317
+6565	Active transporter, secondary	7756356
+3223	Inhibitor or repressor	8870653
+3223	DNA-binding protein	8870653
+6566	Active transporter, secondary	8124722
+6568	Active transporter, secondary	8288239
+3226	DNA-binding protein	10835276
+6569	Active transporter, secondary	8327470
+3227	DNA-binding protein	9582375
+11100	RNA-binding protein	9733834
+3229	DNA-binding protein	10835276
+11102	RNA-binding protein	10024167
+11104	Hydrolase	9658175
+11108	DNA-binding protein	10552934
+9110	Hydrolase	9736772
+9111	Activator	9989503
+9113	Transferase	9988268
+9114	Regulatory subunit	8250920
+9117	Docking protein	9501016
+5911	Hydrolase	1900290
+5911	GTP-binding protein/GTPase	1900290
+5912	Hydrolase	2118648
+5912	GTP-binding protein/GTPase	2118648
+5914	Receptor (signalling)	2825025
+5914	Activator	2825025
+5915	DNA-binding protein	2153268
+5915	Receptor (signalling)	2833708
+6572	Active transporter, secondary	8071310
+5917	RNA-binding protein	7590355
+5918	Receptor (signalling)	8601727
+6574	Active transporter, secondary	8041748
+5919	Receptor (signalling)	9204961
+6575	Receptor (protein translocation)	8302848
+6575	Active transporter, secondary	8302848
+6576	Active transporter, secondary	9254007
+3235	DNA-binding protein	1756725
+3236	DNA-binding protein	1756725
+3239	DNA-binding protein	
+11113	Transferase	9792683
+51761	Hydrolase	10551800
+51761	Active transporter, primary	10551800
+9127	Channel [passive transporter]	9242461
+9127	Receptor (signalling)	9242461
+51763	Hydrolase	10753883
+51763	Other phosphatase	10753883
+5920	Receptor (signalling)	9204961
+9128	RNA-binding protein	9328476
+9128	Spliceosomal subunit	9328476
+5921	GTPase activating protein	2188736
+5921	Activator	2188736
+9129	RNA-binding protein	9328476
+9129	Spliceosomal subunit	9328476
+5922	GTPase activating protein	8699317
+5922	Activator	8699317
+5923	Guanine nucleotide exchange factor	7684828
+5923	Activator	7684828
+5924	Guanine nucleotide exchange factor	9707409
+5924	Activator	9707409
+6580	Active transporter, secondary	9187257
+6580	Major Facilitator Superfamily	9187257
+5925	Inhibitor or repressor	9491888
+5925	DNA-binding protein	3657987
+6581	Active transporter, secondary	9933568
+6581	Major Facilitator Superfamily	9933568
+6582	Active transporter, secondary	9260930
+6582	Major Facilitator Superfamily	9260930
+6583	Active transporter, secondary	9426230
+6583	Major Facilitator Superfamily	9426230
+3241	Small molecule-binding protein	8038222
+5928	Inhibitor or repressor	8350924
+6584	Active transporter, secondary	9685390
+6584	Major Facilitator Superfamily	9685390
+3248	Oxidoreductase	1697582
+11122	Receptor (signalling)	9602027
+11122	Hydrolase	9602027
+11126	Receptor (signalling)	9973372
+9131	Oxidoreductase	9989411
+9132	Channel [passive transporter]	10025409
+9134	Regulatory subunit	9858585
+9135	Docking protein	8521472
+9136	RNA-binding protein	9418896
+9138	Guanine nucleotide exchange factor	8810315
+6590	Inhibitor or repressor	3640338
+5935	RNA-binding protein	8634703
+6591	Inhibitor or repressor	10866665
+5936	RNA-binding protein	9169144
+5937	RNA-binding protein	8041632
+5937	DNA-binding protein	7838710
+6594	Hydrolase	1408766
+5939	RNA-binding protein	8041632
+5939	DNA-binding protein	8041632
+6595	Hydrolase	8223438
+6595	Activator	8223438
+6596	Hydrolase	7876228
+6597	Hydrolase	8208605
+6597	Activator	8208605
+11131	Protease (other than proteasomal)	10409436
+11131	Hydrolase	10409436
+11131	Small molecule-binding protein	10409436
+11132	Protease (other than proteasomal)	11017071
+11132	Hydrolase	11017071
+11133	Complex assembly protein	10099934
+11136	Active transporter, secondary	10471498
+11139	Transferase	10023074
+9140	Protein conjugation factor	9852036
+54328	Receptor (signalling)	10833454
+54329	Receptor (signalling)	10833454
+5940	RNA-binding protein	8269511
+9149	Transferase	9918863
+5942	RNA-binding protein	9598316
+5944	RNA-binding protein	9598316
+5946	RNA-binding protein	9598316
+5947	Small molecule-binding protein	2992469
+5948	Small molecule-binding protein	2992469
+5949	Small molecule-binding protein	2542268
+3263	Small molecule-binding protein	3855550
+3265	Hydrolase	8607982
+3265	GTP-binding protein/GTPase	2121270
+3267	Nuclear import/export protein	7637788
+3267	Activator	7634337
+11140	Chaperones	8666233
+11141	Receptor (signalling)	10471494
+3269	Receptor (signalling)	7925364
+11143	Transferase	10438470
+11144	DNA-binding protein	8602360
+9150	Hydrolase	9765293
+9152	Active transporter, secondary	9845349
+9153	Active transporter, secondary	9435697
+9154	Active transporter, secondary	9124315
+9156	Nuclease [endo, exo, ribo, deoxyribo]	9685493
+9156	Hydrolase	9685493
+5950	Small molecule-binding protein	6316270
+30811	Transferase	10662544
+30812	DNA-binding protein	10684944
+30812	Activator	10684944
+30813	DNA-binding protein	10673340
+5954	Small molecule-binding protein	8416973
+5955	Small molecule-binding protein	8034671
+30814	Hydrolase	10681567
+30815	Transferase	10702226
+3270	Small molecule-binding protein	2037293
+5957	Activator	1672047
+5957	Small molecule-binding protein	1672047
+5959	Oxidoreductase	9115228
+30818	Inhibitor or repressor	10078534
+30818	DNA-binding protein	10078534
+2617	RNA-binding protein	7961834
+2617	Ligase	7961834
+2617	tRNA synthetase	7961834
+30819	Regulatory subunit	10676964
+3274	Receptor (signalling)	9725260
+3275	Transferase	9545638
+2619	Inhibitor or repressor	8127893
+3276	Transferase	9545638
+11154	Vesicle coat protein	10436028
+11157	RNA-binding protein	10523320
+11157	Spliceosomal subunit	10523320
+11158	Hydrolase	10444334
+11158	GTP-binding protein/GTPase	10444334
+54345	DNA-binding protein	10807548
+11159	Hydrolase	10444334
+11159	GTP-binding protein/GTPase	10444334
+8503	Regulatory subunit	9524259
+8505	Hydrolase	9925755
+8506	Receptor (signalling)	9118959
+9162	Transferase	9830018
+9162	Other kinase	9830018
+8509	Transferase	9601056
+8509	Hydrolase	
+23600	Isomerase	10770938
+23601	Receptor (signalling)	10449773
+23601	Small molecule-binding protein	10449773
+30820	Regulatory subunit	10676964
+9169	RNA-binding protein	9447963
+9169	Spliceosomal subunit	9447963
+5962	Anchor Protein	8486357
+23604	Transferase	10629061
+5965	DNA-binding protein	7527136
+5965	Hydrolase	7527136
+2623	DNA-binding protein	2300555
+23607	Complex assembly protein	10339567
+2624	DNA-binding protein	1370462
+3281	Regulatory subunit	9649501
+2625	DNA-binding protein	2050118
+30827	DNA-binding protein	10688657
+3283	Isomerase	1401999
+3283	Oxidoreductase	1401999
+2628	Transferase	9148748
+11163	Hydrolase	10777568
+11164	Hydrolase	10567213
+11164	Other phosphatase	10722730
+11165	Hydrolase	9822604
+11166	DNA-binding protein	10441749
+11169	DNA-binding protein	9175701
+8513	Hydrolase	3304425
+8514	Regulatory subunit	8838324
+9170	Receptor (signalling)	9525886
+8515	Receptor (signalling)	9685391
+8516	Receptor (signalling)	7768999
+9173	Receptor (signalling)	1482686
+8518	Complex assembly protein	9751059
+8519	Receptor (signalling)	7559564
+9175	Transferase	9353328
+9177	Channel [passive transporter]	9950429
+9177	Receptor (signalling)	9950429
+5970	DNA-binding protein	2001591
+5971	Inhibitor or repressor	1577270
+9179	Vesicle coat protein	
+5973	Inhibitor or repressor	9285790
+26958	Vesicle coat protein	10556286
+30833	Nuclease [endo, exo, ribo, deoxyribo]	10681516
+30833	Hydrolase	10681516
+2632	Transferase	8613547
+2633	Small molecule-binding protein	1715024
+5976	RNA-binding protein	8855285
+5976	Hydrolase	8855285
+3290	Oxidoreductase	7670488
+2634	Hydrolase	1715024
+2634	GTP-binding protein/GTPase	1715024
+3291	Oxidoreductase	7859916
+3292	Oxidoreductase	9435439
+5979	Transferase	7824936
+5979	Receptor (signalling)	7824936
+2638	Small molecule-binding protein	1696927
+3295	Hydrolase	9880674
+3295	Oxidoreductase	7487879
+2639	Oxidoreductase	8541831
+10513	Motor protein	9843960
+10513	Hydrolase	9843960
+3297	DNA-binding protein	1871105
+3297	Activator	10821850
+3298	DNA-binding protein	1871106
+3298	Activator	1871106
+3299	Inhibitor or repressor	8972228
+3299	DNA-binding protein	8972228
+11173	Protease (other than proteasomal)	10464288
+11173	Hydrolase	10464288
+11174	Protease (other than proteasomal)	10464288
+11174	Hydrolase	10464288
+10519	Regulatory subunit	9030514
+8520	Transferase	9427644
+8521	DNA-binding protein	8962155
+11178	DNA-binding protein	10097140
+9180	Receptor (signalling)	8999038
+8525	Transferase	8626588
+8525	Other kinase	8626588
+9181	Guanine nucleotide exchange factor	9857026
+8526	Transferase	8626589
+8526	Other kinase	8626589
+8527	Transferase	8626538
+8527	Other kinase	8626538
+8528	Oxidoreductase	9163533
+8529	Oxidoreductase	8026587
+9185	Small molecule-binding protein	9928989
+23620	Receptor (signalling)	9851594
+9187	Active transporter, secondary	9478004
+23621	Protease (other than proteasomal)	10591214
+23621	Hydrolase	10591214
+5980	Transferase	9618506
+5980	DNA polymerase or subunit	9618506
+5980	DNA-binding protein	10856253
+9188	RNA-binding protein	8614622
+9188	Hydrolase	8614622
+5981	Transferase	8248204
+5981	DNA polymerase or subunit	8248204
+5981	Activator	8248204
+5982	Transferase	1313560
+5982	DNA polymerase or subunit	1313560
+5982	Activator	1313560
+5983	Transferase	7774928
+5983	DNA polymerase or subunit	7774928
+5983	Activator	7774928
+5984	Transferase	7774928
+5984	DNA polymerase or subunit	7774928
+5984	Activator	7774928
+2642	Receptor (signalling)	8144028
+23626	Transferase	10534401
+23626	DNA-binding protein	10534401
+2643	Hydrolase	7730309
+2645	Transferase	1570017
+2645	Other kinase	1570017
+2646	Inhibitor or repressor	8662230
+5989	DNA-binding protein	8600444
+30849	Activator	8999962
+2648	Transferase	8552087
+10521	RNA-binding protein	8871553
+10521	Hydrolase	8871553
+2649	Receptor (signalling)	9134503
+10522	DNA-binding protein	9773984
+10522	Activator	9773984
+10524	Activator	8607265
+10524	Regulatory subunit	8607265
+11181	Hydrolase	9427547
+10527	Inhibitor or repressor	9214382
+10527	Nuclear import/export protein	9214382
+11183	Transferase	9038372
+11184	Transferase	8824585
+10528	RNA-binding protein	9372940
+8530	Inhibitor or repressor	9733783
+11187	Adhesin/agglutinin	10374265
+8531	Inhibitor or repressor	8710501
+8531	DNA-binding protein	8710501
+8532	Protease (other than proteasomal)	9099699
+8532	Hydrolase	9099699
+8534	Transferase	9405439
+8535	Inhibitor or repressor	9315667
+9191	Inhibitor or repressor	9774341
+9191	DNA-binding protein	9774341
+8536	Transferase	9395448
+8538	DNA-binding protein	10644443
+9194	Active transporter, secondary	9786900
+8539	Inhibitor or repressor	9307294
+9196	Regulatory subunit	9857044
+5990	DNA-binding protein	1505960
+5991	DNA-binding protein	8600444
+5991	Activator	8289803
+5992	DNA-binding protein	8600444
+2650	Transferase	1329093
+5993	DNA-binding protein	9806546
+5993	Activator	9806546
+5994	DNA-binding protein	9118943
+5994	Activator	9118943
+2652	Receptor (signalling)	2937147
+5995	Receptor (signalling)	8641686
+23636	Nuclear import/export protein	1915414
+2653	Transferase	3348809
+5996	GTPase activating protein	10747990
+5996	Activator	
+23637	GTPase activating protein	10202141
+23637	Activator	10202141
+5997	GTPase activating protein	10747990
+5997	Activator	
+5998	GTPase activating protein	8602223
+5998	Activator	
+5999	GTPase activating protein	10747990
+5999	Activator	
+10531	Protease (other than proteasomal)	10360838
+10531	Hydrolase	10360838
+10533	Protein conjugation factor	10233149
+10533	Hydrolase	10233149
+10533	Activator	10233149
+10535	Nuclease [endo, exo, ribo, deoxyribo]	9789007
+10535	Hydrolase	9789007
+10537	Protein conjugation factor	9368598
+10538	DNA-binding protein	8630063
+11194	ATP-binding cassette	9878413
+11194	Hydrolase	9878413
+11194	Active transporter, primary	9878413
+10539	Oxidoreductase	
+8540	Transferase	9553082
+11197	Inhibitor or repressor	10201374
+51042	Inhibitor or repressor	9115366
+54386	DNA-binding protein	10850490
+5201	Chaperones	8744932
+8545	DNA-binding protein	8626781
+51046	Transferase	10766765
+5204	Inhibitor or repressor	9792694
+5205	Hydrolase	9500542
+5205	Active transporter, primary	9500542
+8548	DNA-binding protein	9129147
+8549	Receptor (signalling)	9642114
+5207	Transferase	2837207
+5207	Other phosphatase	2837207
+23640	Inhibitor or repressor	9830037
+5208	Transferase	9652401
+5208	Hydrolase	9652401
+5208	Other kinase	9652401
+5208	Other phosphatase	9652401
+23643	Receptor (signalling)	10359581
+23646	Hydrolase	9140189
+23647	Hydrolase	8670882
+23647	GTP-binding protein/GTPase	8670882
+2664	Inhibitor or repressor	7849400
+2665	Inhibitor or repressor	7513052
+2669	Hydrolase	7912851
+2669	GTP-binding protein/GTPase	7912851
+10544	Receptor (signalling)	7929370
+10545	DNA-binding protein	8021251
+10545	Regulatory subunit	9636207
+10549	Oxidoreductase	9388242
+51050	Inhibitor or repressor	9473672
+8550	Transferase	9628874
+51053	Inhibitor or repressor	9635433
+5211	Transferase	2948503
+5211	Other kinase	2948503
+8554	Inhibitor or repressor	10805787
+8556	Hydrolase	9367992
+8558	Transferase	8208557
+5216	Regulatory subunit	3356709
+8559	RNA-binding protein	9000057
+8559	Spliceosomal subunit	9000057
+5217	Regulatory subunit	8365484
+23650	DNA-binding protein	8188213
+2672	DNA-binding protein	7789186
+2673	Transferase	1460020
+23658	RNA-binding protein	10369684
+23658	Spliceosomal subunit	10369684
+2674	Receptor (signalling)	10829012
+23659	Hydrolase	10092508
+2675	Receptor (signalling)	10829012
+2676	Receptor (signalling)	9576965
+2677	Transferase	1749935
+10554	Transferase	9212163
+10555	Transferase	9212163
+10558	Transferase	9363775
+7903	Transferase	10766765
+7904	RNA-binding protein	8586425
+7904	Spliceosomal subunit	8586425
+8560	Oxidoreductase	9188692
+26205	Activator	10523663
+8564	Oxidoreductase	9237672
+5222	Protease (other than proteasomal)	2714789
+5222	Hydrolase	2714789
+8565	RNA-binding protein	9162081
+8565	Ligase	9162081
+8565	tRNA synthetase	9162081
+5223	Transferase	6282177
+8566	Transferase	9099727
+8566	Other kinase	9099727
+5226	Oxidoreductase	3858849
+8569	Transferase	10859165
+5229	Transferase	8106351
+2687	Transferase	1676842
+10564	Guanine nucleotide exchange factor	10212200
+10565	Guanine nucleotide exchange factor	10212200
+10566	Anchor Protein	10319321
+10568	Active transporter, secondary	10329428
+10569	Spliceosomal subunit	10197984
+26211	Receptor (signalling)	9500546
+7913	DNA-binding protein	9050861
+8570	RNA-binding protein	9136930
+8570	Spliceosomal subunit	9136930
+8570	Inhibitor or repressor	10911989
+7915	Oxidoreductase	7814412
+26214	Receptor (signalling)	9500546
+5230	Transferase	6188151
+5230	Other kinase	6188151
+8573	Anchor Protein	9660868
+8573	Transferase	9660868
+8573	Other kinase	9660868
+8574	Oxidoreductase	9576847
+26216	Receptor (signalling)	9500546
+7919	RNA-binding protein	7601445
+7919	Hydrolase	7601445
+8575	Activator	9687506
+8575	Regulatory subunit	9687506
+8576	Transferase	9712705
+26218	Receptor (signalling)	9500546
+8578	Receptor (protein translocation)	9395444
+5236	Isomerase	1530890
+56301	Active transporter, secondary	10734121
+2690	Receptor (signalling)	9140387
+56302	Channel [passive transporter]	10944439
+2692	Receptor (signalling)	7680413
+2693	Receptor (signalling)	8688086
+23678	Transferase	10548550
+2694	Small molecule-binding protein	2071148
+2696	Receptor (signalling)	7556958
+2697	Channel [passive transporter]	1696265
+10574	Chaperones	9819444
+10575	Chaperones	9819444
+10576	Chaperones	9819444
+7923	Oxidoreductase	8812499
+26223	Protein conjugation factor	10531035
+8581	Adhesin/agglutinin	7790363
+26224	Protein conjugation factor	10531035
+5241	DNA-binding protein	1557371
+5241	Receptor (signalling)	1557371
+5241	Activator	1557371
+26226	Protein conjugation factor	10531035
+26227	Oxidoreductase	8758134
+5243	ATP-binding cassette	9272126
+5243	Hydrolase	3022150
+5243	Active transporter, primary	3022150
+51087	RNA-binding protein	10100484
+51087	Inhibitor or repressor	10100484
+51087	DNA-binding protein	10100484
+26228	Docking protein	10518561
+5244	ATP-binding cassette	7912658
+5244	Hydrolase	7912658
+5244	Active transporter, primary	7912658
+23683	Transferase	10231560
+10585	Transferase	10366449
+10587	Oxidoreductase	9923614
+10588	Ligase	8522195
+26230	Guanine nucleotide exchange factor	10512681
+10589	Inhibitor or repressor	8608938
+26231	Protein conjugation factor	10531037
+26232	Protein conjugation factor	10531035
+8590	Receptor (signalling)	9787077
+26233	Protein conjugation factor	10531035
+26234	Protein conjugation factor	10531035
+5250	Active transporter, secondary	1777677
+5251	Protease (other than proteasomal)	9593714
+5251	Hydrolase	9593714
+26237	Lyase	7689884
+5255	Regulatory subunit	10487978
+5256	Regulatory subunit	7549948
+5257	Regulatory subunit	10487978
+10594	RNA-binding protein	9774689
+10594	Spliceosomal subunit	9774689
+7941	Hydrolase	10748027
+4600	Hydrolase	8798556
+4600	GTP-binding protein/GTPase	8798556
+4601	Inhibitor or repressor	8425219
+4601	DNA-binding protein	8425219
+4603	Inhibitor or repressor	7821437
+4603	DNA-binding protein	7821437
+4603	Activator	7821437
+5260	Transferase	2297530
+5264	Oxidoreductase	8954107
+5265	Inhibitor or repressor	6387509
+4609	Inhibitor or repressor	10962037
+4609	Activator	9924025
+5266	Inhibitor or repressor	2394696
+5267	Inhibitor or repressor	1334488
+5268	Inhibitor or repressor	10828881
+5269	Inhibitor or repressor	8415716
+26251	Channel [passive transporter]	10551266
+4613	DNA-binding protein	3796607
+5270	Inhibitor or repressor	7665170
+7957	Hydrolase	11001928
+5271	Inhibitor or repressor	8530382
+5272	Inhibitor or repressor	8530382
+26257	DNA-binding protein	9446603
+26257	Activator	9446603
+5273	Inhibitor or repressor	7592909
+4617	DNA-binding protein	2311584
+5274	Inhibitor or repressor	9070919
+4618	DNA-binding protein	2311584
+26259	Protein conjugation factor	10531035
+5275	Inhibitor or repressor	10512713
+5276	Inhibitor or repressor	9624529
+5277	Transferase	8900170
+5279	Transferase	8806613
+56340	Regulatory subunit	10769191
+26260	Protein conjugation factor	10531035
+4621	Motor protein	2771643
+4621	Hydrolase	2771643
+26262	Protein conjugation factor	10531035
+4622	Motor protein	10077619
+4622	Hydrolase	10077619
+26263	Protein conjugation factor	10531035
+26264	Protein conjugation factor	10531035
+5281	Transferase	8463218
+26266	Active transporter, secondary	10535998
+26267	Protein conjugation factor	10531035
+5283	Transferase	8900170
+4627	Motor protein	1967836
+4627	Hydrolase	1967836
+5284	Receptor (protein translocation)	1682231
+26269	Protein conjugation factor	10531035
+5286	Transferase	9337861
+5286	Other kinase	9337861
+5288	Transferase	9878262
+5288	Other kinase	9878262
+5289	Transferase	7628435
+5289	Other kinase	7628435
+26270	Protein conjugation factor	10531035
+26271	Protein conjugation factor	10531035
+7975	DNA-binding protein	9150357
+26273	Protein conjugation factor	10531035
+4633	Regulatory subunit	1386340
+7976	Receptor (signalling)	10491302
+4634	Regulatory subunit	
+26275	Hydrolase	8824301
+5291	Other kinase	10570282
+4635	Regulatory subunit	
+7978	DNA-binding protein	9118945
+5292	Transferase	1825810
+4636	Regulatory subunit	1284596
+26277	DNA-binding protein	10581025
+4637	Regulatory subunit	
+5294	Transferase	7624799
+5294	Other kinase	7624799
+4638	Transferase	8575746
+4638	Small molecule-binding protein	8575746
+26279	Hydrolase	10455175
+5296	Regulatory subunit	1314371
+5297	Transferase	7961848
+5297	Other kinase	7961848
+5298	Transferase	9020160
+5298	Other kinase	9020160
+5299	Inhibitor or repressor	2842251
+28964	Activator	
+7980	Inhibitor or repressor	8914837
+28965	Ligase	10479480
+26280	Receptor (signalling)	10757639
+4640	Motor protein	
+4640	Hydrolase	
+50484	Oxidoreductase	10716435
+4641	Motor protein	
+4641	Hydrolase	
+7984	Regulatory subunit	8134109
+50485	DNA-binding protein	10857751
+50485	Hydrolase	10857751
+50487	Hydrolase	10713052
+4644	Motor protein	9207796
+4644	Hydrolase	9207796
+50488	Transferase	10708748
+4645	Motor protein	8884266
+4645	Hydrolase	8884266
+50489	Receptor (signalling)	10661407
+26286	GTPase activating protein	10704287
+26286	Activator	10704287
+4646	Motor protein	9259267
+4646	Hydrolase	9259267
+4647	Motor protein	7870171
+4647	Hydrolase	7870171
+26289	Transferase	10215863
+26289	Other kinase	10215863
+26290	Transferase	10767557
+4650	Motor protein	8907710
+4650	GTPase activating protein	8907710
+4650	Hydrolase	8907710
+7994	Transferase	8782817
+26292	DNA-binding protein	9797456
+26292	Activator	9797456
+4654	DNA-binding protein	1846704
+1312	Transferase	1707278
+4656	DNA-binding protein	1850513
+26297	Guanine nucleotide exchange factor	10571079
+1314	Vesicle coat protein	8647451
+26298	DNA-binding protein	10527851
+1315	Vesicle coat protein	7982906
+4659	Regulatory subunit	9286714
+7201	Receptor (signalling)	8395824
+7203	Chaperones	8001976
+7204	Transferase	8643598
+7204	Guanine nucleotide exchange factor	8643598
+7204	Other kinase	8643598
+28982	Major Facilitator Superfamily	10648427
+4660	Activator	9570949
+4660	Regulatory subunit	9570949
+4661	DNA-binding protein	1280325
+4661	Activator	1280325
+4665	Inhibitor or repressor	8668170
+4668	Hydrolase	2372288
+4669	Hydrolase	10857861
+1326	Transferase	2072910
+7216	Adhesin/agglutinin	7758945
+4670	Receptor (protein translocation)	7558047
+4673	Complex assembly protein	8297347
+4674	Complex assembly protein	8789438
+4675	Complex assembly protein	8976385
+4676	Chaperones	9325046
+4676	Complex assembly protein	9325046
+4677	RNA-binding protein	9421509
+4677	Ligase	9421509
+4677	tRNA synthetase	9421509
+801	Small molecule-binding protein	9923700
+808	Small molecule-binding protein	2223880
+7220	Channel [passive transporter]	8663995
+7222	Channel [passive transporter]	9215637
+7223	Channel [passive transporter]	8646775
+7224	Channel [passive transporter]	10493832
+7225	Channel [passive transporter]	9930701
+7226	Channel [passive transporter]	9806837
+7227	DNA-binding protein	10615131
+4680	Receptor (signalling)	3220478
+4681	Inhibitor or repressor	8084583
+4682	Conserved ATPase domain	7926816
+4682	Hydrolase	7926816
+1340	Oxidoreductase	1650756
+4684	Adhesin/agglutinin	3281256
+4685	Adhesin/agglutinin	9226371
+4686	RNA-binding protein	8069914
+810	Small molecule-binding protein	8428750
+4687	Oxidoreductase	2848318
+811	Inhibitor or repressor	8107809
+811	Small molecule-binding protein	8107808
+4688	Oxidoreductase	1692159
+4689	Oxidoreductase	8839867
+814	Transferase	8089075
+815	Transferase	10851169
+816	Transferase	9060999
+818	Transferase	9224693
+4691	RNA-binding protein	2737305
+4694	Oxidoreductase	10200266
+4695	Oxidoreductase	9878551
+1352	Transferase	8078902
+4696	Oxidoreductase	9878551
+1353	Oxidoreductase	9878253
+4697	Oxidoreductase	9352085
+821	Chaperones	8136357
+821	Small molecule-binding protein	8136357
+4698	Oxidoreductase	9048877
+822	Complex assembly protein	1322908
+1355	Oxidoreductase	9878253
+1356	Oxidoreductase	7708681
+1357	Protease (other than proteasomal)	2920728
+1357	Hydrolase	2920728
+825	Protease (other than proteasomal)	9642272
+825	Hydrolase	9642272
+1359	Protease (other than proteasomal)	1629626
+1359	Hydrolase	1629626
+826	Regulatory subunit	8702541
+828	Small molecule-binding protein	2540953
+829	Complex assembly protein	9331217
+28227	Regulatory subunit	10629059
+7247	DNA-binding protein	7663511
+7249	Chaperones	10585443
+7249	GTPase activating protein	9045618
+1361	Protease (other than proteasomal)	1939207
+1361	Hydrolase	1939207
+1362	Protease (other than proteasomal)	9355738
+1362	Hydrolase	9355738
+830	Complex assembly protein	9331217
+831	Inhibitor or repressor	
+833	RNA-binding protein	7987009
+834	Protease (other than proteasomal)	1373520
+836	Protease (other than proteasomal)	10896157
+836	Hydrolase	10942389
+837	Protease (other than proteasomal)	7797510
+838	Protease (other than proteasomal)	7797592
+838	Hydrolase	7797592
+839	Protease (other than proteasomal)	7796396
+7251	DNA-binding protein	10888872
+7251	Regulatory subunit	9241264
+7253	Receptor (signalling)	8552586
+7257	DNA-binding protein	9013868
+1371	Oxidoreductase	8159699
+1373	Ligase	1840546
+841	Protease (other than proteasomal)	8681376
+841	Hydrolase	8681376
+842	Protease (other than proteasomal)	9390557
+1375	Transferase	10408760
+843	Protease (other than proteasomal)	8521391
+844	Small molecule-binding protein	7945294
+1378	Receptor (signalling)	3031685
+846	Receptor (signalling)	7759551
+847	Oxidoreductase	3755525
+9942	Transferase	9763671
+9942	Other kinase	9763671
+9943	Transferase	10083736
+9943	Other kinase	10083736
+9945	Transferase	10198162
+6605	DNA-binding protein	9435219
+7263	Transferase	9070219
+7264	Isomerase	8910301
+7264	Oxidoreductase	8910301
+1380	Receptor (signalling)	2528587
+1381	Small molecule-binding protein	1309505
+1382	Small molecule-binding protein	1654334
+1386	DNA-binding protein	2529117
+1386	Activator	2529117
+1387	Complex assembly protein	7913207
+9951	Transferase	9988767
+6610	Hydrolase	9520418
+9953	Transferase	9988767
+6611	Transferase	7546290
+6612	Protein conjugation factor	9119407
+9955	Transferase	9988767
+6613	Protein conjugation factor	9556629
+9956	Transferase	9988767
+9957	Transferase	9346953
+9958	Protease (other than proteasomal)	10444327
+9958	Hydrolase	10444327
+7272	Transferase	1639825
+7274	Small molecule-binding protein	7887897
+6619	DNA-binding protein	9003788
+7276	Small molecule-binding protein	7946531
+1390	Regulatory subunit	7916662
+860	DNA-binding protein	9207800
+1393	Inhibitor or repressor	1846945
+1394	Receptor (signalling)	7692441
+1395	Receptor (signalling)	8536644
+1396	Small molecule-binding protein	9126610
+864	ATP-binding cassette	7835892
+864	DNA-binding protein	8386878
+866	Inhibitor or repressor	3299377
+9960	Protease (other than proteasomal)	10480896
+9960	Hydrolase	10480896
+51805	Transferase	10777520
+51806	Small molecule-binding protein	10777582
+9962	Active transporter, secondary	9804989
+6620	Inhibitor or repressor	9806846
+9963	Active transporter, secondary	9804989
+6621	DNA-binding protein	9418884
+51809	Transferase	10544240
+6624	Complex assembly protein	3886649
+9967	Activator	10198638
+6625	RNA-binding protein	3028775
+6625	Spliceosomal subunit	3028775
+6626	RNA-binding protein	1831431
+6626	Spliceosomal subunit	1831431
+9968	Activator	10198638
+6627	RNA-binding protein	2928112
+6627	Spliceosomal subunit	2928112
+9969	Activator	10198638
+6628	RNA-binding protein	2531083
+6628	Spliceosomal subunit	2531083
+6629	RNA-binding protein	2951739
+6629	Spliceosomal subunit	2951739
+871	Inhibitor or repressor	1309665
+874	Oxidoreductase	9740676
+875	Lyase	681363
+9970	Inhibitor or repressor	8020947
+9970	DNA-binding protein	8020947
+9970	Receptor (signalling)	8020947
+9970	Activator	8020947
+9971	Inhibitor or repressor	10334992
+9971	DNA-binding protein	9223286
+9971	Receptor (signalling)	10334993
+9971	Activator	10334992
+9972	Nuclear import/export protein	8110839
+9973	Small molecule-binding protein	9295278
+6631	RNA-binding protein	2971157
+6631	Spliceosomal subunit	2971157
+6632	RNA-binding protein	3260384
+9975	DNA-binding protein	7997240
+9975	Receptor (signalling)	7997240
+6633	RNA-binding protein	1701240
+6633	Spliceosomal subunit	1701240
+6634	Spliceosomal subunit	1701240
+6635	RNA-binding protein	2143747
+6635	Spliceosomal subunit	2143747
+7291	Regulatory subunit	10025406
+6636	RNA-binding protein	7744013
+6636	Spliceosomal subunit	7744013
+9978	Protein conjugation factor	10230407
+9978	Ligase	10230407
+6637	RNA-binding protein	7744013
+6637	Spliceosomal subunit	7744013
+7293	Receptor (signalling)	7510240
+6638	RNA-binding protein	1533223
+6638	Spliceosomal subunit	1533223
+7295	Oxidoreductase	3170595
+7296	Oxidoreductase	9671710
+7299	Oxidoreductase	2120217
+883	Transferase	7883047
+886	Receptor (signalling)	8343165
+887	Receptor (signalling)	7681836
+9981	Receptor (protein translocation)	8360162
+9982	Inhibitor or repressor	1885605
+6641	Anchor Protein	8119949
+6641	Complex assembly protein	8119949
+3300	Chaperones	1599432
+3301	Chaperones	8334160
+9986	Protease (other than proteasomal)	10085068
+9987	RNA-binding protein	9538234
+9987	DNA-binding protein	9538234
+6646	Transferase	8407899
+6647	Oxidoreductase	6316150
+6648	Oxidoreductase	10748080
+3306	Chaperones	3037489
+3308	Hydrolase	9115634
+3309	Chaperones	8020977
+890	Regulatory subunit	1312467
+892	Regulatory subunit	1833066
+894	Regulatory subunit	1386335
+896	Regulatory subunit	1386336
+9990	Active transporter, secondary	10187864
+899	Regulatory subunit	7896286
+9991	RNA-binding protein	10207106
+9992	Channel [passive transporter]	10219239
+6650	Protease (other than proteasomal)	9722942
+6650	DNA-binding protein	9722942
+6650	Hydrolase	9722942
+6651	DNA-binding protein	8031013
+9994	Activator	10235259
+6652	Oxidoreductase	8088829
+6653	Receptor (protein translocation)	8940146
+6654	Guanine nucleotide exchange factor	8493579
+3315	Inhibitor or repressor	10859165
+3316	Chaperones	9490724
+3316	Inhibitor or repressor	10958679
+102	Protease (other than proteasomal)	9305925
+102	Hydrolase	9305925
+103	RNA-binding protein	9020165
+103	Hydrolase	7862132
+104	Hydrolase	8559253
+107	Lyase	8314585
+109	Lyase	9920776
+9200	Hydrolase	10644438
+9201	Transferase	9747029
+9201	Receptor (signalling)	10036192
+9208	RNA-binding protein	9705290
+9208	Inhibitor or repressor	9705290
+6660	DNA-binding protein	8812465
+6662	Activator	8640233
+6663	DNA-binding protein	9722528
+6663	Activator	9722528
+6664	DNA-binding protein	8666406
+6665	DNA-binding protein	9540826
+6666	DNA polymerase or subunit	9215677
+6667	DNA-binding protein	10747986
+6667	Activator	10816575
+6668	DNA-binding protein	1341900
+6668	Activator	1341900
+11201	Transferase	10458907
+11201	DNA polymerase or subunit	10458907
+11201	DNA-binding protein	10458907
+11202	Protease (other than proteasomal)	10102990
+11202	Hydrolase	10102990
+115	Lyase	9628827
+116	Activator	10698193
+117	Receptor (signalling)	7902709
+118	Complex assembly protein	1840603
+119	Complex assembly protein	1840603
+9213	Receptor (signalling)	9990033
+9215	Transferase	9892679
+9218	Docking protein	9657962
+9219	Regulatory subunit	10444591
+6671	DNA-binding protein	7559627
+6671	Activator	7559627
+6675	Transferase	9603950
+6677	Lyase	8195297
+6677	Hydrolase	8195297
+6678	Small molecule-binding protein	7034958
+3336	Chaperones	7698325
+11211	Receptor (signalling)	10448064
+11213	Transferase	10383454
+11213	Receptor (signalling)	10383454
+11214	Anchor Protein	1618839
+11214	Guanine nucleotide exchange factor	
+11214	Activator	
+11215	Anchor Protein	10209101
+124	Oxidoreductase	9982
+125	Oxidoreductase	2398055
+11218	RNA-binding protein	10383418
+11218	Hydrolase	10383418
+126	Oxidoreductase	3397059
+11219	Nuclease [endo, exo, ribo, deoxyribo]	10391904
+11219	Hydrolase	10391904
+127	Oxidoreductase	8032153
+128	Oxidoreductase	8460164
+9227	Transferase	9920938
+3340	Transferase	9915799
+3340	Hydrolase	
+6683	Hydrolase	10610178
+3344	DNA-binding protein	1639393
+6687	Chaperones	9635427
+6687	Protease (other than proteasomal)	9635427
+6687	Hydrolase	9635427
+6689	DNA-binding protein	1406622
+11221	Hydrolase	10391943
+11222	RNA-binding protein	2891103
+11222	Ribosomal subunit	2891103
+130	Oxidoreductase	1755855
+131	Oxidoreductase	7876099
+11224	RNA-binding protein	2891103
+11224	Ribosomal subunit	2891103
+11226	Transferase	10464263
+134	Receptor (signalling)	1530647
+11227	Transferase	10545594
+135	Receptor (signalling)	8670304
+136	Receptor (signalling)	10101031
+9230	Hydrolase	7811277
+9230	GTP-binding protein/GTPase	7811277
+9231	Transferase	9738934
+9231	Other kinase	9738934
+9232	Activator	9811450
+6690	Inhibitor or repressor	3501289
+6691	Inhibitor or repressor	8428671
+6692	Inhibitor or repressor	9045658
+3350	Receptor (signalling)	3138543
+6693	Receptor (signalling)	2023632
+6693	Activator	2023632
+3351	Receptor (signalling)	1559993
+3352	Receptor (signalling)	1652050
+3354	Receptor (signalling)	1733778
+6697	Oxidoreductase	1883349
+3355	Receptor (signalling)	8380639
+3356	Receptor (signalling)	9109547
+3357	Receptor (signalling)	8143856
+3358	Receptor (signalling)	1302605
+11231	Receptor (protein translocation)	10799540
+3359	Channel [passive transporter]	7565620
+3359	Receptor (signalling)	7565620
+11232	DNA polymerase or subunit	9153213
+140	Receptor (signalling)	9380026
+141	Hydrolase	8349667
+142	Inhibitor or repressor	10944198
+142	Transferase	3029772
+142	DNA-binding protein	2513174
+143	Transferase	10477748
+11236	Receptor (signalling)	9689122
+146	Receptor (signalling)	7746284
+147	Receptor (signalling)	1328250
+148	Receptor (signalling)	8396931
+9241	Inhibitor or repressor	10080184
+54429	Receptor (signalling)	10761935
+9242	Inhibitor or repressor	9584154
+9242	DNA-binding protein	9584154
+9244	Receptor (signalling)	9686600
+9245	Transferase	9988682
+9246	Protein conjugation factor	9153201
+9246	Ligase	9153201
+9247	DNA-binding protein	10343099
+9248	Receptor (signalling)	8647286
+9249	Oxidoreductase	9705317
+2700	Channel [passive transporter]	9413992
+2701	Channel [passive transporter]	7680674
+2702	Channel [passive transporter]	7966354
+2703	Channel [passive transporter]	7796604
+3360	Receptor (signalling)	9276448
+3361	Receptor (signalling)	7988681
+2705	Channel [passive transporter]	2875078
+3362	Receptor (signalling)	8522988
+2706	Channel [passive transporter]	1324944
+3363	Receptor (signalling)	8226867
+150	Receptor (signalling)	10896916
+11243	DNA-binding protein	10419538
+11243	Activator	10419538
+151	Receptor (signalling)	2164221
+11244	DNA-binding protein	10441475
+152	Receptor (signalling)	9371698
+11245	Receptor (signalling)	7893747
+153	Receptor (signalling)	10212248
+154	Receptor (signalling)	9924018
+154	Activator	
+155	Receptor (signalling)	1718744
+156	Transferase	1339451
+157	Transferase	8427589
+9252	Transferase	9873047
+9255	RNA-binding protein	9405472
+2710	Transferase	7987308
+2710	Other kinase	7987308
+3373	Hydrolase	9223416
+2717	Hydrolase	2152885
+3376	RNA-binding protein	7721108
+11250	Receptor (signalling)	10036181
+11251	Receptor (signalling)	9973380
+11253	Hydrolase	10409699
+11254	Active transporter, secondary	10446133
+162	Vesicle coat protein	7987321
+11255	Receptor (signalling)	10347254
+163	Vesicle coat protein	1969413
+164	Vesicle coat protein	
+165	Protease (other than proteasomal)	8920928
+165	Hydrolase	8920928
+8601	GTPase activating protein	9748280
+8601	Activator	
+11258	Complex assembly protein	9722614
+8604	Active transporter, secondary	9722566
+9261	Transferase	8280084
+9262	Transferase	9786912
+8607	Conserved ATPase domain	9813143
+9263	Transferase	9786912
+8608	Oxidoreductase	9677409
+8609	DNA-binding protein	9774444
+8609	Activator	9774444
+9265	Guanine nucleotide exchange factor	9707577
+9265	Receptor (signalling)	9742223
+9266	Guanine nucleotide exchange factor	9417041
+9267	Guanine nucleotide exchange factor	9050849
+2720	Transferase	3084469
+3383	Receptor (protein translocation)	2538243
+3383	Adhesin/agglutinin	3349522
+10600	Protease (other than proteasomal)	10077596
+10600	Hydrolase	10077596
+3384	Adhesin/agglutinin	2497351
+3385	Adhesin/agglutinin	1448173
+2729	Ligase	8825659
+3386	Adhesin/agglutinin	8566017
+11260	RNA-binding protein	9512417
+11260	Nuclear import/export protein	9512417
+11261	Regulatory subunit	8901634
+11266	Hydrolase	10446167
+175	Hydrolase	2775174
+11267	DNA-binding protein	10419521
+8611	Hydrolase	9305923
+177	Receptor (signalling)	1378843
+8612	Hydrolase	9607309
+11269	RNA-binding protein	10428971
+11269	Hydrolase	10428971
+8613	Hydrolase	9305923
+8615	Docking protein	9478999
+9274	Serine rich protein	8605326
+9275	Serine rich protein	8605326
+9276	Vesicle coat protein	8335000
+9278	DNA-binding protein	9545376
+2730	Regulatory subunit	9841137
+2731	Oxidoreductase	2268343
+2733	Nuclear import/export protein	9618489
+2734	Receptor (protein translocation)	8985126
+2735	DNA-binding protein	2832761
+2735	Activator	9524201
+2736	DNA-binding protein	9557682
+2736	Activator	9557682
+2737	DNA-binding protein	9054938
+10610	Transferase	
+3394	Inhibitor or repressor	1460054
+3394	DNA-binding protein	1460054
+2739	Lyase	7684374
+3398	Inhibitor or repressor	1741406
+3399	Inhibitor or repressor	8437843
+11274	Protease (other than proteasomal)	10777664
+11274	Hydrolase	10777664
+183	Inhibitor or repressor	3397061
+183	Activator	8477848
+11275	Small molecule-binding protein	10397770
+185	Receptor (signalling)	1378723
+11277	Nuclease [endo, exo, ribo, deoxyribo]	10393201
+11277	Hydrolase	10393201
+54464	Nuclease [endo, exo, ribo, deoxyribo]	9802570
+54464	Hydrolase	9802570
+186	Receptor (signalling)	7945336
+8621	Transferase	9013549
+11278	Inhibitor or repressor	10704285
+11278	DNA-binding protein	10704285
+187	Receptor (signalling)	9792798
+189	Transferase	2045108
+8625	DNA-binding protein	9806546
+8625	Activator	9806546
+8626	Inhibitor or repressor	9662378
+9282	Activator	9989412
+8628	Protease (other than proteasomal)	9624166
+9289	Receptor (signalling)	10049584
+2740	Receptor (signalling)	8405712
+2741	Channel [passive transporter]	2155780
+2741	Receptor (signalling)	2155780
+2742	Channel [passive transporter]	2155780
+2742	Receptor (signalling)	2155780
+2743	Channel [passive transporter]	8717357
+2743	Receptor (signalling)	8717357
+23729	Transferase	10673275
+23729	Other kinase	10673275
+2745	Oxidoreductase	7851394
+2747	Oxidoreductase	
+10621	Transferase	9171375
+10621	RNA polymerase subunit	9171375
+10622	Transferase	9171375
+10622	RNA polymerase subunit	9171375
+57016	Oxidoreductase	9565553
+10623	Transferase	9171375
+10623	RNA polymerase subunit	9171375
+11280	Channel [passive transporter]	
+11281	DNA-binding protein	8601806
+11282	Transferase	10372966
+190	Inhibitor or repressor	9384387
+190	DNA-binding protein	9384387
+11283	Oxidoreductase	10405341
+11284	Transferase	10446192
+11284	Hydrolase	10446192
+11284	Other kinase	10446192
+11284	Other phosphatase	10446192
+10629	DNA-binding protein	9674425
+11285	Transferase	10473568
+8630	Oxidoreductase	9188497
+196	DNA-binding protein	8246913
+196	Receptor (signalling)	9170146
+8633	Receptor (signalling)	9126742
+8634	RNA-binding protein	9184239
+8634	Ligase	9184239
+9290	Receptor (signalling)	9931487
+8635	Nuclease [endo, exo, ribo, deoxyribo]	9192857
+8635	Hydrolase	9192857
+9293	Receptor (signalling)	9931487
+8639	Oxidoreductase	8972912
+9295	RNA-binding protein	1896467
+9295	Spliceosomal subunit	1896467
+9296	Hydrolase	8581736
+9296	Active transporter, primary	8581736
+10631	Adhesin/agglutinin	8363580
+10633	Hydrolase	8975699
+10633	GTP-binding protein/GTPase	8975699
+10635	RNA-binding protein	9396801
+10635	DNA-binding protein	9396801
+10636	GTPase activating protein	9168931
+10636	Activator	
+8641	Adhesin/agglutinin	9199196
+8642	Adhesin/agglutinin	9199196
+5300	Chaperones	10391244
+5300	Isomerase	8606777
+8644	Oxidoreductase	9792917
+8645	Channel [passive transporter]	9812978
+51146	Transferase	10430883
+5303	Isomerase	10100858
+8646	Inhibitor or repressor	9782094
+8647	ATP-binding cassette	9806540
+8647	Hydrolase	9806540
+8647	Active transporter, primary	9806540
+51148	Adhesin/agglutinin	10608765
+5305	Transferase	7852364
+5305	Other kinase	7852364
+8648	Activator	7481822
+8649	Activator	9733512
+23746	Chaperones	10331942
+23746	Nuclear import/export protein	10331942
+2762	Isomerase	9525924
+2764	Inhibitor or repressor	8639570
+2764	Activator	8798479
+2767	Hydrolase	1902575
+2767	GTP-binding protein/GTPase	8530500
+2768	Hydrolase	8290554
+2768	GTP-binding protein/GTPase	8290554
+2769	Hydrolase	7797501
+2769	GTP-binding protein/GTPase	7797501
+10642	RNA-binding protein	9891060
+10643	RNA-binding protein	9891060
+10644	RNA-binding protein	9891060
+8651	Inhibitor or repressor	9202125
+5311	Channel [passive transporter]	8650545
+8655	Motor protein	8628263
+8655	Inhibitor or repressor	8864115
+51156	Inhibitor or repressor	10460162
+5313	Transferase	3378452
+5313	Other kinase	3378452
+8659	Oxidoreductase	8621661
+5317	Adhesin/agglutinin	9326952
+2770	Hydrolase	3110783
+2770	GTP-binding protein/GTPase	3110783
+2771	Hydrolase	3100330
+2771	GTP-binding protein/GTPase	3100330
+2773	Hydrolase	3109953
+2773	GTP-binding protein/GTPase	3109953
+2774	Hydrolase	8243272
+2774	GTP-binding protein/GTPase	8243272
+2775	Hydrolase	1899283
+2775	GTP-binding protein/GTPase	1899283
+2776	Hydrolase	8825633
+2776	GTP-binding protein/GTPase	8825633
+2778	Hydrolase	9159128
+2778	GTP-binding protein/GTPase	9159128
+2779	Hydrolase	8673138
+2779	GTP-binding protein/GTPase	8673138
+10652	Docking protein	9211930
+10653	Inhibitor or repressor	9346890
+10654	Transferase	10191291
+10655	DNA-binding protein	10332030
+10656	RNA-binding protein	10332027
+10657	RNA-binding protein	1374686
+10657	DNA-binding protein	1374686
+10658	RNA-binding protein	8948631
+10659	RNA-binding protein	9887331
+50506	Oxidoreductase	10601291
+50507	Oxidoreductase	10869423
+51167	Oxidoreductase	10611283
+5325	Inhibitor or repressor	9671765
+5325	DNA-binding protein	9671765
+5329	Receptor (signalling)	10749881
+23764	DNA-binding protein	10527846
+2780	Hydrolase	2902634
+2780	GTP-binding protein/GTPase	2902634
+2781	Hydrolase	3129724
+2781	GTP-binding protein/GTPase	3129724
+2782	Regulatory subunit	7649993
+2783	Regulatory subunit	7649993
+2784	Regulatory subunit	2107550
+2785	Regulatory subunit	10075696
+2786	Regulatory subunit	7665596
+2788	Regulatory subunit	9600093
+10661	DNA-binding protein	7753194
+10661	Activator	9778250
+10663	Receptor (signalling)	9166430
+10664	Inhibitor or repressor	8649389
+10666	Adhesin/agglutinin	8673704
+10667	RNA-binding protein	10329163
+10667	Ligase	10329163
+10667	tRNA synthetase	10329163
+50514	Inhibitor or repressor	10612805
+8671	Active transporter, secondary	9235899
+51172	Hydrolase	10551838
+8672	RNA-binding protein	9418880
+8673	Docking protein	9614193
+8674	Docking protein	10839363
+8676	Docking protein	9553086
+5334	Hydrolase	7633416
+5337	Hydrolase	10747870
+5339	Anchor Protein	8696340
+2790	Regulatory subunit	7665596
+2791	Regulatory subunit	7665596
+2792	Regulatory subunit	8661128
+2794	Hydrolase	8180467
+2794	GTP-binding protein/GTPase	8180467
+57062	RNA-binding protein	10936056
+57062	Hydrolase	10936056
+10670	GTP-binding protein/GTPase	7499430
+2798	Receptor (signalling)	8386108
+10672	Hydrolase	7791744
+10672	GTP-binding protein/GTPase	7791744
+10678	Transferase	9892646
+8683	RNA-binding protein	7556075
+8683	Spliceosomal subunit	7556075
+5341	Small molecule-binding protein	2897630
+8685	Receptor (signalling)	9468508
+2000	DNA-binding protein	8895518
+2000	Activator	8895518
+2001	DNA-binding protein	9840936
+5345	Inhibitor or repressor	2433286
+5347	Transferase	8127874
+2004	DNA-binding protein	7851904
+5348	Channel [passive transporter]	9169143
+5348	Regulatory subunit	9169143
+2005	DNA-binding protein	7851904
+5349	Channel [passive transporter]	7836447
+5349	Regulatory subunit	7836447
+56413	Receptor (signalling)	10934230
+10682	Isomerase	10391219
+51190	Hydrolase	10601312
+8690	Regulatory subunit	9240447
+8692	Hydrolase	9712871
+5350	Regulatory subunit	9345259
+8693	Transferase	9804815
+5351	Oxidoreductase	1577494
+8694	Transferase	9789033
+51195	Guanine nucleotide exchange factor	9789079
+5352	Oxidoreductase	9054364
+2011	Transferase	9730619
+5355	Channel [passive transporter]	9124532
+8698	Receptor (signalling)	10679247
+2015	Receptor (signalling)	7601460
+10690	Transferase	10386598
+10691	DNA-binding protein	10386584
+10691	Activator	10386584
+10692	Receptor (signalling)	9275222
+10693	Chaperones	8812458
+10699	Protease (other than proteasomal)	10329693
+10699	Hydrolase	10329693
+4700	Oxidoreductase	9345899
+4701	Oxidoreductase	9878551
+26343	Receptor (signalling)	9119360
+5361	Receptor (signalling)	8570614
+4705	Oxidoreductase	9878551
+4706	Oxidoreductase	9878551
+4707	Oxidoreductase	9425316
+5364	Receptor (signalling)	8570614
+4708	Oxidoreductase	9878551
+2021	Nuclease [endo, exo, ribo, deoxyribo]	7789991
+2021	Hydrolase	7789991
+2022	Receptor (signalling)	8370410
+2023	Inhibitor or repressor	
+2023	Lyase	3529090
+2023	DNA-binding protein	
+2026	Lyase	2045099
+2027	Lyase	8513787
+57099	Inhibitor or repressor	10949025
+4710	Oxidoreductase	9878551
+4711	Oxidoreductase	9425316
+4712	Oxidoreductase	9760212
+26353	Transferase	10833516
+4713	Adhesin/agglutinin	2302251
+4713	Oxidoreductase	9878551
+4714	Oxidoreductase	9878551
+5371	DNA-binding protein	8394219
+4715	Oxidoreductase	8661098
+5372	Isomerase	9070917
+4716	Oxidoreductase	9878551
+4717	Oxidoreductase	9425316
+2030	Active transporter, secondary	8986748
+4718	Oxidoreductase	9878551
+4719	Oxidoreductase	1935949
+2033	Activator	10205054
+2034	DNA-binding protein	9079689
+2034	Activator	9079689
+5378	DNA-binding protein	8072530
+4720	Oxidoreductase	9647766
+4722	Oxidoreductase	9647766
+4724	Oxidoreductase	9463323
+4725	Oxidoreductase	10070614
+4726	Oxidoreductase	9647766
+4728	Oxidoreductase	9666055
+2041	Receptor (signalling)	2825356
+4729	Oxidoreductase	9570948
+2042	Transferase	1737782
+2042	Receptor (signalling)	1737782
+2043	Transferase	7898931
+2043	Receptor (signalling)	7898931
+2044	Transferase	7898931
+2044	Receptor (signalling)	7898931
+2045	Transferase	7898931
+2045	Receptor (signalling)	7898931
+2046	Receptor (signalling)	1648701
+2047	Receptor (signalling)	8666391
+2048	Transferase	8589679
+2048	Receptor (signalling)	8589679
+2049	Receptor (signalling)	8397371

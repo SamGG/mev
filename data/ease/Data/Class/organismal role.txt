@@ -1,0 +1,4166 @@
+572	Cell death/Apoptosis	7834748
+573	Cell death/Apoptosis	8947043
+575	Angiogenesis	7531056
+578	Cell death/Apoptosis	7715730
+579	Bone Development and Maintenance	9344671
+6331	Muscle action	7889574
+6332	Muscle action	1317577
+6334	CNS-specific functions	9828131
+6335	Neuronal transmission	7720699
+6336	Neuronal transmission	9839820
+6336	Pain sensation	9839820
+6336	PNS-specific functions	9839820
+6337	Osmoregulation and Excretion	8589714
+6338	Osmoregulation and Excretion	8521520
+4734	Osmoregulation and Excretion	10642508
+4738	Embryonic development	9694792
+2055	CNS-specific functions	10508524
+55801	Anti-pathogen response	10729163
+55801	Cell-to-cell signalling	10729163
+2056	Cell-to-cell signalling	3838366
+2056	Control of Cell Proliferation	3838366
+2057	Other development	1664413
+2057	Cell fate specification	1664413
+3798	Neuronal transmission	7514426
+2059	Cell-to-cell signalling	8084614
+2059	Control of Cell Proliferation	8084614
+55806	Epidermal Development and Maintenance	
+580	Control of Cell Proliferation	9425226
+581	Cell death/Apoptosis	8961277
+588	Anti-pathogen response	7698329
+588	Cell-to-cell signalling	3547651
+588	Control of Cell Proliferation	7698329
+6340	Osmoregulation and Excretion	8640238
+3000	Photoreception	9888789
+6344	Osmoregulation and Excretion	7612008
+3001	Cell death/Apoptosis	8288245
+3001	Anti-pathogen response	8288245
+2	CNS-specific functions	1281457
+3002	Anti-pathogen response	2049336
+6346	Cell migration/motility	9417093
+6346	Response to injury	9211859
+6346	Anti-pathogen response	9417093
+6346	Cell-to-cell signalling	2212659
+3003	Anti-pathogen response	8656064
+6347	Cell migration/motility	10623817
+6347	Response to injury	2004761
+6347	Anti-pathogen response	10942204
+6347	Cell-to-cell signalling	2004761
+3004	Anti-pathogen response	7713495
+1400	Neuronal development	8973361
+6348	Cell migration/motility	10660125
+6348	Response to injury	8525373
+6348	Anti-pathogen response	10751368
+6348	Cell-to-cell signalling	10679098
+1401	Anti-pathogen response	10408362
+6349	Response to injury	1694014
+6349	Cell-to-cell signalling	1694014
+4745	CNS-specific functions	8975702
+2060	Control of Cell Proliferation	8183552
+1404	Extracellular matrix component	2286376
+1404	Bone Development and Maintenance	2286376
+1404	Connective Tissue Development and Maintenance	2286376
+1406	Photoreception	10192380
+23047	Control of Cell Proliferation	10963680
+1407	Photoreception	8909283
+1408	Photoreception	8909283
+1409	Photoreception	10217480
+2066	Control of Cell Proliferation	8383326
+2069	Cell-to-cell signalling	9337852
+2069	Control of Cell Proliferation	9337852
+56479	Neuronal transmission	10787416
+56479	CNS-specific functions	10787416
+596	Cell death/Apoptosis	10506221
+596	Anti-pathogen response	1908951
+596	Control of Cell Proliferation	10848600
+596	CNS-specific functions	7753817
+597	Anti-pathogen response	8605321
+598	Cell death/Apoptosis	10365962
+599	Cell death/Apoptosis	9500547
+6351	Cell migration/motility	9759849
+6351	Anti-pathogen response	10841574
+6351	Cell-to-cell signalling	2521882
+27336	Pathogenic Invasion	10454543
+6352	Cell migration/motility	10770925
+6352	Response to injury	8525373
+6352	Anti-pathogen response	10640778
+6352	Cell-to-cell signalling	10734056
+6352	Pathogenic Invasion	10583963
+6354	Cell migration/motility	9780207
+6354	Response to injury	7916328
+6354	Anti-pathogen response	7916328
+6354	Cell-to-cell signalling	7916328
+6355	Cell migration/motility	9468473
+6355	Response to injury	9119400
+6355	Anti-pathogen response	9468473
+6355	Cell-to-cell signalling	10734056
+6356	Cell migration/motility	10706854
+6356	Response to injury	8631813
+6356	Anti-pathogen response	9558100
+6356	Cell-to-cell signalling	10713092
+6356	Other development	10708591
+6357	Cell migration/motility	9195948
+6357	Response to injury	9195948
+6357	Anti-pathogen response	9195948
+6357	Cell-to-cell signalling	9195948
+4753	CNS-specific functions	8975702
+1410	Photoreception	9731540
+1410	Muscle action	9731540
+6358	Control of Cell Proliferation	8551235
+3015	General cellular role	
+1411	Photoreception	8999933
+6359	Cell migration/motility	9600961
+6359	Anti-pathogen response	9600961
+6359	Cell-to-cell signalling	9548457
+4756	Cell migration/motility	9169140
+4756	Cell-to-cell signalling	9169140
+4756	Other development	9169140
+4756	Neuronal development	9169140
+3017	General cellular role	
+1413	Photoreception	8999933
+3018	General cellular role	
+2070	Photoreception	9887327
+2070	Embryonic development	9887327
+1414	Photoreception	8626774
+1415	Photoreception	8812489
+4759	Muscle action	10191093
+1417	Photoreception	8999933
+1418	Photoreception	3670288
+2077	Control of Cell Proliferation	7588608
+2078	Control of Cell Proliferation	3476934
+55824	Anti-pathogen response	10790433
+7305	Anti-pathogen response	9490415
+5701	Pathogenic Invasion	1377363
+7306	Epidermal Development and Maintenance	1577487
+27344	Cell-to-cell signalling	10632593
+6360	Cell migration/motility	9642106
+6360	Anti-pathogen response	9642106
+6360	Cell-to-cell signalling	9642106
+27345	Neuronal transmission	10692449
+6361	Cell migration/motility	8702936
+6361	Anti-pathogen response	8702936
+6361	Cell-to-cell signalling	8702936
+6362	Cell migration/motility	9233607
+6362	Anti-pathogen response	9233607
+6362	Cell-to-cell signalling	9233607
+6363	Cell migration/motility	10861057
+6363	Anti-pathogen response	9153236
+6363	Cell-to-cell signalling	9153236
+3020	General cellular role	
+6364	Cell migration/motility	10521347
+6364	Response to injury	9038201
+6364	Anti-pathogen response	9038201
+6364	Cell-to-cell signalling	9038201
+4760	Neuronal development	8786144
+3021	General cellular role	
+4761	Neuronal development	8816493
+6366	Cell migration/motility	10861057
+6366	Response to injury	9235955
+6366	Anti-pathogen response	9235955
+6366	Cell-to-cell signalling	9235955
+4762	Neuronal development	8816493
+6367	Cell migration/motility	10861057
+6367	Response to injury	9151897
+6367	Anti-pathogen response	9151897
+6367	Cell-to-cell signalling	9151897
+6367	Pathogenic Invasion	9381181
+4763	Control of Cell Proliferation	1570015
+6368	Cell migration/motility	9104803
+6368	Response to injury	9104803
+6368	Anti-pathogen response	9104803
+6368	Cell-to-cell signalling	9104803
+1421	Photoreception	9927684
+6369	Cell migration/motility	9104803
+6369	Response to injury	9104803
+6369	Anti-pathogen response	10713092
+6369	Cell-to-cell signalling	9104803
+1427	Photoreception	7733876
+1428	Photoreception	1384048
+1429	Photoreception	8088825
+51554	Cell migration/motility	10706668
+51554	Anti-pathogen response	10706668
+6370	Cell migration/motility	10640743
+6370	Anti-pathogen response	9285413
+6372	Response to injury	8399143
+6372	Anti-pathogen response	9164944
+6372	Cell-to-cell signalling	9164944
+6373	Cell migration/motility	10233762
+6373	Response to injury	10233762
+6373	Anti-pathogen response	10233762
+6373	Cell-to-cell signalling	10233762
+6374	Cell migration/motility	10820279
+6374	Response to injury	7929219
+6374	Anti-pathogen response	7929219
+6374	Cell-to-cell signalling	7929219
+6374	Control of Cell Proliferation	10463948
+6375	Cell migration/motility	7973732
+6375	Anti-pathogen response	7602097
+6375	Cell-to-cell signalling	7602097
+4771	Control of Cell Proliferation	8453669
+6376	Cell migration/motility	9024663
+6376	Response to injury	9024663
+6376	Anti-pathogen response	9024663
+6376	Cell-to-cell signalling	9024663
+4772	Anti-pathogen response	8202141
+4774	Pathogenic Invasion	7590749
+25759	PNS-specific functions	9507002
+25759	CNS-specific functions	9507002
+4775	Anti-pathogen response	7739550
+3036	Cell migration/motility	8798544
+3036	Response to injury	8798544
+3036	Angiogenesis	8798544
+3036	Extracellular matrix maintenance	8798544
+1432	Cell migration/motility	10706854
+1432	Anti-pathogen response	7997261
+4776	Anti-pathogen response	7749981
+3037	Extracellular matrix maintenance	9169154
+1434	Cell death/Apoptosis	7479798
+1434	Control of Cell Proliferation	7479798
+4778	Intercellular transport	8355703
+4778	Blood clotting	7774011
+3039	Intercellular transport	
+1435	Anti-pathogen response	1540160
+1435	Control of Cell Proliferation	1540160
+4779	Intercellular transport	8248256
+1436	Reproduction	8981357
+1436	Anti-pathogen response	8981357
+1436	Control of Cell Proliferation	8981357
+1437	Cell-to-cell signalling	1675789
+1437	Other development	2999978
+1437	Control of Cell Proliferation	2999978
+904	Pathogenic Invasion	10985245
+1438	Anti-pathogen response	2828352
+1439	Anti-pathogen response	1833065
+1439	Gas exchange	9410898
+2099	Reproduction	10749889
+2099	Angiogenesis	10816575
+909	Anti-pathogen response	9601940
+7322	Pathogenic Invasion	7724550
+51562	Anti-pathogen response	1495496
+5724	Cell migration/motility	10601267
+5724	Response to injury	8978777
+5724	Anti-pathogen response	8892648
+5724	Pathogenic Invasion	7566121
+5727	Control of Cell Proliferation	8681379
+5727	Embryonic development	8906787
+3040	Intercellular transport	
+5728	Control of Cell Proliferation	10918569
+5728	Cell fate specification	9140396
+4781	Pathogenic Invasion	7590749
+4782	Pathogenic Invasion	7590749
+3043	Intercellular transport	
+6387	Cell migration/motility	10620615
+6387	Response to injury	8752280
+6387	Anti-pathogen response	10772939
+6387	Cell-to-cell signalling	10644702
+6387	Pathogenic Invasion	10583963
+4783	Anti-pathogen response	7565758
+1440	Cell-to-cell signalling	2420009
+1440	Other development	2420009
+1440	Control of Cell Proliferation	2420009
+4784	Pathogenic Invasion	8340106
+3045	Intercellular transport	
+1441	Anti-pathogen response	7542747
+1441	Cell fate specification	1371413
+25769	Photoreception	10662833
+3046	Intercellular transport	
+1442	Cell-to-cell signalling	593368
+3047	Intercellular transport	
+1443	Cell-to-cell signalling	1378436
+910	Anti-pathogen response	9601940
+3048	Intercellular transport	
+1444	Cell-to-cell signalling	8083227
+911	Anti-pathogen response	9601940
+3049	Intercellular transport	
+912	Anti-pathogen response	9601940
+1446	Progeny nutrition	7619062
+1447	Progeny nutrition	2387396
+914	Anti-pathogen response	10380930
+914	Cell-to-cell signalling	10380930
+915	Anti-pathogen response	2859526
+916	Anti-pathogen response	2859526
+917	Anti-pathogen response	2826124
+917	Other development	2826124
+919	Anti-pathogen response	3785426
+7336	Control of Cell Proliferation	9418904
+7337	Pathogenic Invasion	8221889
+7337	Neuronal development	8221889
+5733	Cell death/Apoptosis	10947062
+5734	Anti-pathogen response	8862514
+3050	Intercellular transport	
+4790	Anti-pathogen response	10426996
+5739	Cell-to-cell signalling	7512962
+3052	General cellular role	8661044
+4792	Cell death/Apoptosis	10747850
+4792	Anti-pathogen response	10928981
+3053	Blood clotting	1671335
+6398	Anti-pathogen response	9480746
+6398	Other development	9480746
+920	Pathogenic Invasion	10413516
+4798	Anti-pathogen response	1777480
+4799	Response to injury	7964459
+4799	Anti-pathogen response	7964459
+923	Anti-pathogen response	9013954
+923	Cell-to-cell signalling	9013954
+925	Anti-pathogen response	3871356
+926	Anti-pathogen response	3145195
+928	Anti-pathogen response	1840589
+929	Anti-pathogen response	9548256
+51580	Anti-pathogen response	9290259
+7341	Cell death/Apoptosis	8906799
+7342	Pathogenic Invasion	8114710
+7345	PNS-specific functions	10471497
+5741	Cell-to-cell signalling	7721880
+5741	Bone Development and Maintenance	10913913
+5742	Angiogenesis	9630216
+51586	Neuronal development	
+51586	CNS-specific functions	
+5743	Cell migration/motility	9630216
+5743	Anti-pathogen response	9630216
+5743	Angiogenesis	9630216
+4004	Control of Cell Proliferation	2303035
+5744	Cell-to-cell signalling	2549037
+5744	Control of Cell Proliferation	10773581
+5744	Epidermal Development and Maintenance	8058749
+4005	Other development	1923511
+26729	Chemosensation and response	9119360
+7349	Cell-to-cell signalling	8612563
+5745	Bone Development and Maintenance	9927325
+5745	Control of body size	7701349
+3061	Neuronal transmission	9491897
+3061	Feeding	9491897
+3062	Neuronal transmission	9491897
+3062	Feeding	9491897
+3064	Cell death/Apoptosis	9778247
+3064	Embryonic development	7774020
+3064	CNS-specific functions	7951324
+25789	CNS-specific functions	10527841
+1462	Extracellular matrix component	2583089
+1462	Extracellular matrix maintenance	2583089
+1462	Control of Cell Proliferation	7528742
+1463	Cell migration/motility	9795216
+1463	CNS-specific functions	9795216
+930	Anti-pathogen response	1373518
+3068	Control of Cell Proliferation	7929202
+1464	Cell migration/motility	8790396
+931	Anti-pathogen response	9169438
+3069	Intercellular transport	1318310
+933	Anti-pathogen response	8496602
+933	Cell-to-cell signalling	8496602
+934	Anti-pathogen response	7959762
+55879	Neuronal transmission	10449790
+7350	Energy Storage	2380264
+7351	Energy Storage	9054939
+7351	Thermoregulation	9054939
+7351	Control of body size	9054939
+7352	Muscle action	9196039
+7352	Energy Storage	9196039
+7352	Thermoregulation	10935638
+4012	Cell-to-cell signalling	8550619
+50939	Photoreception	10702256
+50939	Extracellular matrix component	10702256
+7356	Reproduction	10587371
+7356	Cell-to-cell signalling	10587371
+7357	Epidermal Development and Maintenance	9545298
+4014	Epidermal Development and Maintenance	2007607
+4015	Connective Tissue Development and Maintenance	1685472
+5757	Control of Cell Proliferation	7916742
+25794	Photoreception	10783262
+25794	Embryonic development	10783262
+3075	Anti-pathogen response	9312129
+3077	Intercellular transport	10085150
+1473	Feeding	1939105
+940	Anti-pathogen response	2825196
+940	Pathogenic Invasion	10754293
+3078	Anti-pathogen response	1711047
+941	Anti-pathogen response	1370389
+941	Cell-to-cell signalling	1370389
+1475	Response to injury	
+1475	Epidermal Development and Maintenance	
+942	Anti-pathogen response	7694363
+942	Control of Cell Proliferation	7694363
+1476	CNS-specific functions	8596935
+943	Anti-pathogen response	10192335
+944	Cell death/Apoptosis	8391931
+944	Cell-to-cell signalling	8391931
+944	Control of Cell Proliferation	8391931
+945	Cell-to-cell signalling	10611343
+945	Control of Cell Proliferation	10611343
+946	Cell-to-cell signalling	9465907
+948	Blood clotting	2468670
+8302	Anti-pathogen response	9683661
+949	Cell death/Apoptosis	9211901
+6700	Epidermal Development and Maintenance	8325635
+6701	Epidermal Development and Maintenance	8325635
+6702	Epidermal Development and Maintenance	8325635
+6707	Epidermal Development and Maintenance	9889002
+4023	Energy Storage	
+5763	Anti-pathogen response	2776490
+7368	PNS-specific functions	8661025
+7368	CNS-specific functions	8661025
+5764	Neuronal development	2270483
+5764	Control of Cell Proliferation	2270483
+4025	Progeny nutrition	10814547
+4025	Anti-pathogen response	10814547
+7369	Control of Cell Proliferation	2409603
+3082	Cell migration/motility	10848592
+3082	Response to injury	1838014
+3082	Control of Cell Proliferation	1838014
+3082	Embryonic development	8898205
+3083	Cell migration/motility	1838014
+3083	Response to injury	7683665
+1482	Muscle action	9651244
+3087	Anti-pathogen response	8096636
+1485	Reproduction	9605863
+952	Cell death/Apoptosis	10777496
+952	Energy Storage	8253715
+1487	Control of Cell Proliferation	7479821
+953	Cell death/Apoptosis	10997340
+953	Anti-pathogen response	7930580
+953	Cell-to-cell signalling	7930580
+953	Blood clotting	8955160
+1489	Cell-to-cell signalling	7862649
+1489	Control of Cell Proliferation	7862649
+958	Anti-pathogen response	10092834
+958	Other development	7518550
+958	Pathogenic Invasion	10092834
+959	Anti-pathogen response	7678552
+959	Cell-to-cell signalling	7678552
+8314	Control of Cell Proliferation	9528852
+8317	Control of Cell Proliferation	9250678
+6715	Cell-to-cell signalling	1686016
+6716	Male specific development	1944596
+6716	Cell-to-cell signalling	1944596
+6717	Muscle action	9668070
+4035	Intercellular transport	3266596
+7379	Osmoregulation and Excretion	8175808
+5776	CNS-specific functions	7490079
+4037	Intercellular transport	
+23418	Cell-to-cell signalling	10508521
+5777	Cell death/Apoptosis	10506221
+3092	CNS-specific functions	9140394
+3093	CNS-specific functions	8702625
+1490	Cell migration/motility	10809757
+1490	Control of Cell Proliferation	9371786
+1490	Epidermal Development and Maintenance	10809757
+10312	Anti-pathogen response	10329006
+1493	Anti-pathogen response	3220103
+961	Cell-to-cell signalling	8294396
+962	Anti-pathogen response	2828034
+10318	Pathogenic Invasion	9923610
+963	Anti-pathogen response	8404042
+963	Control of Cell Proliferation	8404042
+10319	Extracellular matrix component	10225960
+965	Anti-pathogen response	10380930
+965	Cell-to-cell signalling	10380930
+966	Anti-pathogen response	1381503
+966	Blood clotting	1381503
+8320	Embryonic development	9888994
+967	Blood clotting	1993697
+968	Anti-pathogen response	10985244
+8322	Cell fate specification	10544037
+969	Anti-pathogen response	8340758
+8323	Other development	9480858
+8323	Cell fate specification	8626800
+8324	Other development	9707618
+8324	Cell fate specification	9707618
+8326	Neuronal development	9147651
+6722	Control of Cell Proliferation	3203386
+7381	General cellular role	3056408
+4040	Intercellular transport	
+4040	Embryonic development	11029007
+7384	General cellular role	8407948
+4041	Intercellular transport	
+7385	General cellular role	8288258
+4045	Neuronal development	8666243
+4046	Cell migration/motility	8274738
+4046	Anti-pathogen response	2174784
+4048	Response to injury	7628486
+4048	Anti-pathogen response	7628486
+2444	Control of Cell Proliferation	7664264
+23429	Other development	10369680
+4049	Cell death/Apoptosis	3001529
+4049	Anti-pathogen response	6334807
+4049	Cell-to-cell signalling	6334807
+10322	Other development	8754834
+10324	Muscle action	9655184
+970	Cell death/Apoptosis	8387892
+970	Cell-to-cell signalling	8387892
+970	Control of Cell Proliferation	8120384
+971	Anti-pathogen response	1711157
+971	Cell-to-cell signalling	1711157
+972	Anti-pathogen response	6324166
+973	Anti-pathogen response	1538135
+974	Anti-pathogen response	8486355
+975	Anti-pathogen response	1695320
+975	Control of Cell Proliferation	1695320
+976	Cell migration/motility	7636245
+976	Anti-pathogen response	7636245
+976	Cell-to-cell signalling	7636245
+8339	General cellular role	
+23430	Anti-pathogen response	9920877
+7392	Osmoregulation and Excretion	8954795
+4050	Anti-pathogen response	7916655
+4050	Cell-to-cell signalling	7916655
+5790	Anti-pathogen response	7961877
+4051	Anti-pathogen response	8486631
+4053	Extracellular matrix component	9709808
+23435	Pathogenic Invasion	8599929
+7399	Photoreception	9624053
+7399	Extracellular matrix component	9624053
+5795	Cell-to-cell signalling	7937872
+4056	Response to injury	8052639
+4056	Anti-pathogen response	8052639
+4057	Intercellular transport	3356163
+4057	Pathogenic Invasion	9770539
+10333	Anti-pathogen response	10231569
+984	Control of Cell Proliferation	8195233
+8340	General cellular role	
+8341	General cellular role	
+8342	General cellular role	
+8343	General cellular role	
+8344	General cellular role	
+8345	General cellular role	
+5002	Osmoregulation and Excretion	9744804
+5002	Embryonic development	9499412
+8346	General cellular role	
+8347	General cellular role	
+5004	Anti-pathogen response	2970990
+8348	General cellular role	
+6744	Embryonic development	1555770
+5005	Anti-pathogen response	2970990
+8349	General cellular role	
+5008	Cell-to-cell signalling	9920829
+5008	Control of Cell Proliferation	1717982
+4060	Extracellular matrix component	7665616
+4060	Connective Tissue Development and Maintenance	7665616
+1800	Osmoregulation and Excretion	2303490
+4062	Anti-pathogen response	9799603
+4062	CNS-specific functions	9799603
+4063	Anti-pathogen response	7797269
+1803	Anti-pathogen response	9710254
+1803	Pathogenic Invasion	9710254
+4064	Anti-pathogen response	8975706
+4065	Anti-pathogen response	9553150
+1808	Neuronal development	8973361
+4069	Anti-pathogen response	3413092
+1809	Neuronal development	9115293
+58473	Photoreception	10585447
+57817	Anti-pathogen response	11034317
+10344	Cell migration/motility	10373330
+10344	Response to injury	10373330
+10344	Anti-pathogen response	10373330
+10344	Cell-to-cell signalling	10373330
+10345	Muscle action	7588753
+990	Control of Cell Proliferation	9566895
+10346	Anti-pathogen response	7797467
+993	Control of Cell Proliferation	7667636
+994	Control of Cell Proliferation	8276402
+995	Control of Cell Proliferation	1828290
+996	Control of Cell Proliferation	7736578
+8350	General cellular role	
+8351	General cellular role	
+8352	General cellular role	
+999	Pathogenic Invasion	10963665
+8353	General cellular role	
+5010	CNS-specific functions	8661061
+8354	General cellular role	
+6750	Cell death/Apoptosis	8961277
+6750	Neuronal transmission	9437026
+6750	Cell-to-cell signalling	6145156
+6750	Control of Cell Proliferation	9886848
+6750	Nutrient Absorption	6145156
+8355	General cellular role	
+6751	Cell-to-cell signalling	1346068
+6751	Control of Cell Proliferation	9886848
+6751	Nutrient Absorption	1346068
+8356	General cellular role	
+6752	Cell-to-cell signalling	1346068
+6752	Control of Cell Proliferation	9892014
+6752	Nutrient Absorption	1346068
+8357	General cellular role	
+6753	Cell death/Apoptosis	8961277
+6753	Cell-to-cell signalling	1337145
+8358	General cellular role	
+6754	Control of Cell Proliferation	9892014
+8359	General cellular role	
+6755	Cell-to-cell signalling	6145156
+6755	Control of Cell Proliferation	9892014
+5016	Reproduction	7819450
+5018	General cellular role	9247084
+4070	Control of Cell Proliferation	7665234
+1811	Osmoregulation and Excretion	8896562
+1811	Nutrient Absorption	8896562
+23452	Angiogenesis	10473614
+3416	Cell-to-cell signalling	2293021
+3416	CNS-specific functions	9830016
+1812	Neuronal transmission	10051231
+1812	Neuronal development	1975640
+1812	Addiction	1975640
+1813	Neuronal transmission	8824240
+1813	Neuronal development	8824240
+1814	Addiction	8815892
+1815	Neuronal transmission	8413587
+1815	Addiction	8528256
+1816	Neuronal transmission	7727453
+207	Cell death/Apoptosis	10748004
+7700	Embryonic development	8268908
+9308	Anti-pathogen response	8422464
+8360	General cellular role	
+8361	General cellular role	
+8362	General cellular role	
+7706	Reproduction	8248217
+7706	Cell-to-cell signalling	8248217
+8363	General cellular role	
+7707	Anti-pathogen response	8355710
+5020	Progeny nutrition	1486803
+8364	General cellular role	
+5021	Progeny nutrition	1313946
+5021	Muscle action	1313946
+8365	General cellular role	
+8366	General cellular role	
+5023	Neuronal transmission	9565569
+8367	General cellular role	
+8368	General cellular role	
+8369	General cellular role	
+5026	Anti-pathogen response	9414125
+5026	CNS-specific functions	9414125
+5028	Cell-to-cell signalling	8630005
+5029	Osmoregulation and Excretion	8159738
+4081	Cell fate specification	8733127
+1821	CNS-specific functions	8640231
+23462	Other development	10415358
+23462	Neuronal development	10415358
+22806	Other development	10552935
+6769	Neuronal transmission	8954993
+4082	Cell migration/motility	1560845
+3426	Anti-pathogen response	8604219
+1822	CNS-specific functions	7647802
+4084	Control of Cell Proliferation	7829091
+1826	Neuronal development	9426258
+1827	Neuronal development	8595418
+1827	CNS-specific functions	8595418
+1828	Epidermal Development and Maintenance	9405290
+214	Anti-pathogen response	7760007
+214	CNS-specific functions	7760007
+2487	Bone Development and Maintenance	8824257
+2488	Reproduction	8220432
+9311	Reproduction	9571199
+9311	Pain sensation	9744806
+9312	Muscle action	9612272
+10366	Pathogenic Invasion	9303539
+9313	Feeding	9398237
+9313	Extracellular matrix maintenance	9398237
+56896	Neuronal development	10851247
+56896	Embryonic development	10851247
+9314	Control of Cell Proliferation	8702718
+9314	Epidermal Development and Maintenance	10431239
+10369	CNS-specific functions	10221464
+9319	Pathogenic Invasion	9223484
+7716	Anti-pathogen response	8035792
+5030	Cell-to-cell signalling	8617367
+5032	Anti-pathogen response	9405388
+6772	Cell death/Apoptosis	10692450
+5033	Extracellular matrix maintenance	2556027
+5034	Extracellular matrix maintenance	3034602
+6774	Cell migration/motility	9670957
+6774	Anti-pathogen response	7512451
+8379	Pathogenic Invasion	9546394
+8379	Control of Cell Proliferation	9546394
+6775	Anti-pathogen response	9284918
+6776	Anti-pathogen response	7719937
+1830	Epidermal Development and Maintenance	1720352
+6779	Bone Development and Maintenance	1313424
+1833	Connective Tissue Development and Maintenance	8975717
+1834	Other development	8995371
+1834	Extracellular matrix component	8995371
+1834	Bone Development and Maintenance	8995371
+2492	Reproduction	9020851
+1836	Extracellular matrix maintenance	7923357
+1837	Neuronal transmission	9119373
+1837	Muscle action	10767327
+2494	Pathogenic Invasion	9786908
+11316	Response to injury	10404641
+11316	Anti-pathogen response	10404641
+4099	Neuronal transmission	2447011
+2495	Control of Cell Proliferation	9924025
+1839	Pathogenic Invasion	10749879
+1839	Control of Cell Proliferation	8347598
+224	Epidermal Development and Maintenance	8528251
+224	CNS-specific functions	8528251
+226	General cellular role	2825199
+7727	Germline maintenance	7673192
+8385	Chemosensation and response	8004088
+6781	Cell-to-cell signalling	8700837
+3440	Cell death/Apoptosis	10477584
+3440	Anti-pathogen response	10477584
+3440	Cell-to-cell signalling	10477584
+8388	Chemosensation and response	8004088
+5045	Cell-to-cell signalling	7737999
+3441	Anti-pathogen response	3891272
+3441	Cell-to-cell signalling	3891272
+5046	Cell-to-cell signalling	1741956
+3443	Anti-pathogen response	4057246
+5048	Cell migration/motility	9063735
+5048	Neuronal development	9063735
+3444	Anti-pathogen response	2995168
+3444	Cell-to-cell signalling	2995168
+1840	Embryonic development	9590294
+23481	Embryonic development	8985183
+1842	Cell-to-cell signalling	9790758
+1842	Extracellular matrix component	9790758
+3447	Anti-pathogen response	1385305
+1846	Cell death/Apoptosis	9205128
+1848	Cell death/Apoptosis	9205128
+1849	Cell death/Apoptosis	9205128
+10380	CNS-specific functions	10224133
+9332	Anti-pathogen response	8370408
+9333	Epidermal Development and Maintenance	9452468
+10389	Embryonic development	10331946
+8390	Chemosensation and response	8004088
+8392	Chemosensation and response	8004088
+7737	Other development	9096764
+7737	Neuronal development	9096764
+5050	Neuronal development	7669037
+5054	Blood clotting	2840665
+5055	Cell death/Apoptosis	7499264
+3451	Anti-pathogen response	3891272
+3451	Cell-to-cell signalling	3891272
+3454	Anti-pathogen response	2153461
+23491	CNS-specific functions	10518925
+3455	Anti-pathogen response	7588638
+3456	Anti-pathogen response	10640778
+23493	Other development	10415358
+23493	Neuronal development	10415358
+56121	Neuronal development	10380929
+56121	CNS-specific functions	10380929
+3458	Cell migration/motility	10477596
+3458	Anti-pathogen response	7590734
+3458	Cell-to-cell signalling	7590734
+3459	Anti-pathogen response	8456300
+1855	Neuronal development	8817329
+1855	Embryonic development	8817329
+56122	Neuronal development	10380929
+56122	Epidermal Development and Maintenance	9182820
+56122	CNS-specific functions	10380929
+11333	Control of Cell Proliferation	8780057
+240	Response to injury	2829172
+240	Anti-pathogen response	2829172
+11334	Cell-to-cell signalling	8780057
+11334	Control of Cell Proliferation	8780057
+1857	Embryonic development	8817329
+241	Response to injury	2300173
+241	Anti-pathogen response	2300173
+56124	Neuronal development	10380929
+56124	CNS-specific functions	10380929
+242	Epidermal Development and Maintenance	9618483
+56125	Neuronal development	10380929
+56125	CNS-specific functions	10380929
+1859	Neuronal development	8975710
+56126	Neuronal development	10380929
+56126	CNS-specific functions	10380929
+11337	Neuronal transmission	9892355
+246	Anti-pathogen response	10200270
+10392	Cell death/Apoptosis	10329646
+9340	Control of Cell Proliferation	9990065
+249	Bone Development and Maintenance	10865224
+10394	Anti-pathogen response	10318872
+10398	Muscle action	2526655
+7741	Control of Cell Proliferation	1569959
+6004	Photoreception	9469939
+5063	CNS-specific functions	9731525
+5064	Cell migration/motility	9813098
+3460	Anti-pathogen response	8124716
+5068	Control of Cell Proliferation	1325291
+1861	Neuronal transmission	9288096
+56130	Neuronal development	10380929
+56130	CNS-specific functions	10380929
+11341	Neuronal development	9660755
+11341	CNS-specific functions	9660755
+56131	Neuronal development	10380929
+56131	CNS-specific functions	10380929
+56132	Neuronal development	10380929
+56132	CNS-specific functions	10380929
+11343	Anti-pathogen response	9495531
+56133	Neuronal development	10380929
+56133	CNS-specific functions	10380929
+56134	Neuronal development	10380929
+56134	CNS-specific functions	10380929
+56135	Neuronal development	10380929
+56135	CNS-specific functions	10380929
+1869	Cell death/Apoptosis	8653790
+1869	Control of Cell Proliferation	10199402
+56138	Neuronal development	10380929
+56138	CNS-specific functions	10380929
+56139	Neuronal development	10380929
+56139	CNS-specific functions	10380929
+259	Intercellular transport	1708673
+9352	Cell death/Apoptosis	9668102
+9353	Other development	9813312
+9353	Neuronal development	9813312
+6010	Photoreception	2218504
+6011	Photoreception	9020843
+6014	Neuronal transmission	8918462
+6017	Photoreception	9326942
+5071	CNS-specific functions	9560156
+2811	Blood clotting	2628181
+2812	Blood clotting	8021244
+5074	Cell death/Apoptosis	8943350
+5074	Control of Cell Proliferation	8943350
+2814	Blood clotting	7690959
+2815	Blood clotting	2771955
+5076	Osmoregulation and Excretion	9106533
+5076	Photoreception	9106533
+5077	Cell death/Apoptosis	10871843
+5077	Neuronal development	9500554
+5077	CNS-specific functions	9500554
+5078	Cell fate specification	9480859
+1870	Control of Cell Proliferation	8246996
+5079	Embryonic development	10524622
+1871	Control of Cell Proliferation	8246996
+56140	Neuronal development	10380929
+56140	CNS-specific functions	10380929
+1874	Control of Cell Proliferation	7892279
+56141	Neuronal development	10380929
+56141	CNS-specific functions	10380929
+3479	Cell migration/motility	10766744
+3479	Bone Development and Maintenance	10448861
+1875	Control of Cell Proliferation	7892279
+56142	Neuronal development	10380929
+56142	CNS-specific functions	10380929
+56143	Neuronal development	10380929
+56143	CNS-specific functions	10380929
+56144	Neuronal development	10380929
+56144	CNS-specific functions	10380929
+56145	Neuronal development	10380929
+56145	CNS-specific functions	10380929
+56146	Neuronal development	10380929
+56146	CNS-specific functions	10380929
+56147	Neuronal development	10380929
+56147	CNS-specific functions	10380929
+265	Extracellular matrix component	1734713
+265	Bone Development and Maintenance	1734713
+8701	Cell migration/motility	9256245
+266	Extracellular matrix component	2004775
+266	Bone Development and Maintenance	2004775
+268	Cell-to-cell signalling	3754790
+9362	Neuronal development	9645480
+9369	Neuronal transmission	1621094
+5080	Photoreception	10441571
+5080	Embryonic development	10441571
+2820	Nutrient Absorption	9070847
+5081	Cell death/Apoptosis	10871843
+5081	Control of Cell Proliferation	9339373
+5081	Embryonic development	9339373
+2821	Anti-pathogen response	3352745
+2821	Neuronal development	3352745
+2823	Neuronal development	8661015
+3480	Cell death/Apoptosis	8710868
+3480	Control of Cell Proliferation	10749889
+2824	Neuronal development	8661015
+3481	Other development	6382022
+3481	Bone Development and Maintenance	8298652
+3481	Control of body size	8298652
+3484	Control of Cell Proliferation	2461294
+1880	Anti-pathogen response	8383238
+1880	Pathogenic Invasion	8383238
+2829	Cell migration/motility	9632725
+2829	Response to injury	9632725
+2829	Anti-pathogen response	9632725
+3486	Cell migration/motility	10766744
+3487	Bone Development and Maintenance	1377672
+3487	Control of Cell Proliferation	1377672
+3488	Cell migration/motility	10766744
+3489	Control of Cell Proliferation	7539002
+270	Muscle action	644316
+1889	Cell-to-cell signalling	7695628
+273	Neuronal transmission	9182667
+274	Control of Cell Proliferation	8782822
+8710	Other development	9182567
+9370	Energy Storage	10095105
+8717	Cell death/Apoptosis	7758105
+8718	Cell death/Apoptosis	8994832
+27018	Reproduction	2171551
+9377	General cellular role	2853101
+9378	Neuronal transmission	1621094
+6036	Anti-pathogen response	2745977
+6037	Anti-pathogen response	2745977
+6039	Anti-pathogen response	8836175
+4435	Epidermal Development and Maintenance	9721210
+2831	Neuronal transmission	7590751
+2832	Neuronal transmission	7590751
+2833	Cell migration/motility	10741397
+2833	Response to injury	9064356
+2833	Anti-pathogen response	9064356
+3490	Control of Cell Proliferation	8939990
+2834	Progeny nutrition	9607765
+3491	Control of Cell Proliferation	9135077
+3491	Embryonic development	9135077
+3491	Cell fate specification	9135077
+5097	Cell-to-cell signalling	8508762
+5097	Neuronal development	8508762
+5097	CNS-specific functions	8508762
+2838	Pathogenic Invasion	10985245
+1890	Cell-to-cell signalling	2005900
+1890	Angiogenesis	2005900
+1890	Control of Cell Proliferation	2005900
+55501	Bone Development and Maintenance	10781601
+1893	Extracellular matrix component	9367673
+10716	Embryonic development	7619531
+10716	CNS-specific functions	7619531
+1896	Epidermal Development and Maintenance	8696334
+1896	Embryonic development	10484778
+53904	Photoreception	10936054
+55509	Anti-pathogen response	10878360
+283	Angiogenesis	2866795
+284	Angiogenesis	8980223
+285	Angiogenesis	9204896
+8721	Angiogenesis	9813014
+54567	Angiogenesis	10837024
+8726	Pathogenic Invasion	9880543
+8726	Embryonic development	9765275
+7781	Neuronal transmission	8962159
+4440	Neuronal development	9790759
+1103	Neuronal transmission	10861222
+2847	Feeding	10421367
+2847	Energy Storage	10421367
+10724	Extracellular matrix maintenance	9811929
+57118	Anti-pathogen response	11050006
+10725	Osmoregulation and Excretion	10051678
+10726	Other development	10210332
+10726	Control of Cell Proliferation	10210332
+290	Pathogenic Invasion	1350662
+51232	Other development	10642437
+51232	Neuronal development	10642437
+27032	Epidermal Development and Maintenance	10615129
+8736	Muscle action	7505783
+8737	Cell death/Apoptosis	8612133
+9394	Extracellular matrix maintenance	9535912
+8738	Cell death/Apoptosis	9044836
+27036	Anti-pathogen response	10567377
+8739	Cell death/Apoptosis	9130713
+7791	Cell-to-cell signalling	8940160
+9398	Anti-pathogen response	7722300
+9399	CNS-specific functions	9931417
+1111	Control of Cell Proliferation	9278511
+6059	Anti-pathogen response	7539425
+1116	Extracellular matrix maintenance	8245017
+1117	Anti-pathogen response	8702629
+1118	Anti-pathogen response	7592832
+57124	Angiogenesis	10947988
+57125	Angiogenesis	10947988
+10733	Control of Cell Proliferation	10607900
+57127	Osmoregulation and Excretion	11024028
+10736	Embryonic development	10773454
+8740	Cell death/Apoptosis	10799510
+8740	Pathogenic Invasion	9462508
+8741	Control of Cell Proliferation	9743536
+27040	Anti-pathogen response	9529333
+8742	Cell death/Apoptosis	9560343
+8743	Cell death/Apoptosis	8777713
+8743	Cell-to-cell signalling	8777713
+8744	Cell death/Apoptosis	8088337
+8744	Cell-to-cell signalling	8088337
+8744	Control of Cell Proliferation	8088337
+8745	CNS-specific functions	9693107
+7007	Extracellular matrix component	9590290
+3801	Photoreception	9782090
+5406	Energy Storage	
+5406	Nutrient Absorption	1783385
+3802	Anti-pathogen response	7749980
+3803	Anti-pathogen response	7749980
+3804	Anti-pathogen response	7749980
+3805	Anti-pathogen response	8946682
+3806	Anti-pathogen response	8627176
+3807	Anti-pathogen response	8627176
+3808	Anti-pathogen response	8765026
+1121	Photoreception	2215697
+3809	Anti-pathogen response	7749980
+2862	Peristalsis	10381885
+1128	Control of Cell Proliferation	8063729
+2868	CNS-specific functions	8135832
+1129	Neuronal development	2739737
+10747	Anti-pathogen response	9087411
+10748	Anti-pathogen response	9645365
+7010	Angiogenesis	8980225
+7018	Intercellular transport	9570576
+3810	Anti-pathogen response	8765026
+3812	Anti-pathogen response	7716543
+3814	Extracellular matrix maintenance	9192814
+3818	Blood clotting	1993180
+1131	Control of Cell Proliferation	8063729
+1132	Control of Cell Proliferation	2739737
+1133	Control of Cell Proliferation	8063729
+1134	Neuronal transmission	7619526
+1134	Muscle action	7619526
+4478	Cell migration/motility	8188263
+1135	Neuronal transmission	8906617
+1136	Neuronal transmission	8906617
+604	Anti-pathogen response	9171827
+604	Control of Cell Proliferation	9171827
+1137	Neuronal transmission	7550350
+1137	CNS-specific functions	7550350
+10750	Cell-to-cell signalling	8647802
+1138	Neuronal transmission	1542648
+55540	Anti-pathogen response	10749887
+1139	Neuronal transmission	8906617
+2879	General cellular role	8039723
+608	Anti-pathogen response	8165126
+608	Other development	8165126
+608	Control of Cell Proliferation	10908663
+7020	Embryonic development	8661133
+8761	Anti-pathogen response	8524242
+8761	Blood clotting	9030741
+7022	Cell-to-cell signalling	9113991
+7023	Pathogenic Invasion	8786101
+8763	Anti-pathogen response	9763543
+8763	Other development	9680353
+8763	Control of Cell Proliferation	9763543
+7024	Pathogenic Invasion	8035790
+8764	Pathogenic Invasion	8898196
+7026	Intercellular transport	1899293
+51266	Anti-pathogen response	10671229
+7027	Control of Cell Proliferation	8405995
+51267	Anti-pathogen response	10671229
+8767	Cell death/Apoptosis	9642260
+3820	Anti-pathogen response	8077657
+3821	Anti-pathogen response	2007850
+3822	Anti-pathogen response	9683661
+3823	Anti-pathogen response	9683661
+3824	Anti-pathogen response	7589107
+1140	Neuronal transmission	8651643
+1140	Muscle action	8651643
+1141	Neuronal transmission	8906617
+1142	Neuronal transmission	7690916
+4486	Cell migration/motility	9045873
+4486	Control of Cell Proliferation	10871856
+610	Neuronal transmission	9630217
+610	Muscle action	10228147
+610	CNS-specific functions	9630217
+1143	Neuronal transmission	1330682
+4487	Bone Development and Maintenance	8696335
+4487	Feeding	8696335
+4487	Embryonic development	2565810
+611	Photoreception	2937147
+1144	Neuronal transmission	8872460
+1144	Muscle action	8872460
+4488	Bone Development and Maintenance	8106171
+1145	Neuronal transmission	8872460
+1145	Muscle action	8872460
+2885	Cell-to-cell signalling	8253073
+2885	Control of Cell Proliferation	8253073
+1146	Neuronal transmission	3967651
+1146	Muscle action	8040310
+1147	Anti-pathogen response	9346484
+2887	Cell-to-cell signalling	9006901
+1149	Cell death/Apoptosis	9564035
+10763	Neuronal development	1478958
+10763	CNS-specific functions	1478958
+10766	Control of Cell Proliferation	10602502
+7031	Response to injury	9043862
+8771	Cell death/Apoptosis	9872321
+7032	Response to injury	9043862
+8772	Anti-pathogen response	8955195
+7033	Response to injury	9043862
+51274	Other development	10582345
+7035	Blood clotting	9252393
+7038	Cell-to-cell signalling	3016640
+5434	Pathogenic Invasion	7828586
+7039	Cell-to-cell signalling	2103501
+7039	Control of Cell Proliferation	10861448
+6091	Neuronal development	9608531
+6092	Neuronal development	9458045
+6094	Photoreception	1610568
+2890	Neuronal transmission	10364548
+2891	Neuronal transmission	1311100
+2892	Neuronal transmission	1709304
+2893	Neuronal transmission	1319477
+623	Response to injury	8063797
+623	Anti-pathogen response	8063797
+623	Pain sensation	8063797
+2896	Cell-to-cell signalling	1542665
+2896	Control of Cell Proliferation	1542665
+624	Response to injury	7835885
+624	Pain sensation	7835885
+624	Pathogenic Invasion	10469138
+2897	Neuronal transmission	10580501
+2897	Neuronal development	8260617
+2897	CNS-specific functions	10580501
+2898	Neuronal transmission	7536611
+10771	Control of Cell Proliferation	7621829
+2899	Neuronal transmission	8128318
+627	Neuronal development	2236018
+629	Anti-pathogen response	6149579
+29760	Anti-pathogen response	9697839
+29760	Other development	10583958
+7040	Cell death/Apoptosis	9918798
+7040	Cell-to-cell signalling	3487831
+7040	Control of Cell Proliferation	3487831
+7040	Cell fate specification	3487831
+29765	Muscle action	10662549
+7042	Cell-to-cell signalling	3322813
+7042	Control of Cell Proliferation	3322813
+7043	Cell-to-cell signalling	3164476
+51283	Cell death/Apoptosis	10716992
+29767	CNS-specific functions	10662549
+7044	Reproduction	9153275
+7044	Other development	10053005
+8784	Cell death/Apoptosis	10074428
+5443	Cell-to-cell signalling	9620771
+5443	Control of body size	9620771
+2100	Reproduction	10749889
+2100	Cell-to-cell signalling	8769313
+5449	Cell-to-cell signalling	9392392
+3846	Epidermal Development and Maintenance	1703541
+2107	General cellular role	7990965
+1160	Muscle action	2324105
+3848	Epidermal Development and Maintenance	1381288
+3849	Epidermal Development and Maintenance	1380918
+631	Photoreception	9628810
+632	Bone Development and Maintenance	10865224
+634	Anti-pathogen response	7504281
+636	Embryonic development	9367685
+637	Cell death/Apoptosis	9727491
+638	Cell death/Apoptosis	8521816
+639	Anti-pathogen response	8921366
+10787	Cell death/Apoptosis	10673335
+10787	CNS-specific functions	10673335
+50632	CNS-specific functions	10698743
+7051	Epidermal Development and Maintenance	7824952
+8792	Anti-pathogen response	9367155
+7053	Epidermal Development and Maintenance	8099584
+51293	Cell-to-cell signalling	10727470
+51293	Control of Cell Proliferation	10727470
+7054	Neuronal development	9920892
+7054	Embryonic development	7715703
+5450	Anti-pathogen response	7859290
+51294	Neuronal development	10380929
+8795	Cell death/Apoptosis	9311998
+7056	Blood clotting	9252393
+5452	Other development	9442393
+8796	Epidermal Development and Maintenance	9813070
+7057	Cell migration/motility	9304800
+7057	Angiogenesis	9304800
+7057	Other development	9304800
+7057	Neuronal development	9304800
+7057	Blood clotting	9304800
+27094	Neuronal transmission	10585773
+8797	Cell death/Apoptosis	9082980
+5454	Neuronal development	7601453
+5454	CNS-specific functions	7601453
+7059	Cell migration/motility	7759526
+5455	CNS-specific functions	8703082
+3851	Epidermal Development and Maintenance	7493030
+3852	Epidermal Development and Maintenance	7520042
+5457	Neuronal development	8995448
+3853	Epidermal Development and Maintenance	1713141
+2114	Bone Development and Maintenance	8596630
+5458	Photoreception	8995448
+5458	Neuronal development	8995448
+3854	Epidermal Development and Maintenance	9618173
+5459	Neuronal development	9506947
+3855	Epidermal Development and Maintenance	1713141
+3857	Epidermal Development and Maintenance	8647270
+2118	Pathogenic Invasion	8441666
+3858	Epidermal Development and Maintenance	1380725
+3859	Photoreception	9171831
+640	Anti-pathogen response	7845672
+641	Anti-pathogen response	9388193
+57180	Neuronal development	10806390
+643	Cell migration/motility	1425907
+643	Anti-pathogen response	1425907
+1178	Anti-pathogen response	8400237
+646	Control of Cell Proliferation	8034748
+646	Epidermal Development and Maintenance	1332044
+649	Bone Development and Maintenance	3201241
+649	Extracellular matrix maintenance	3201241
+6401	Anti-pathogen response	2466335
+10798	Chemosensation and response	9787077
+6402	Cell migration/motility	10882119
+6402	Anti-pathogen response	1692315
+6403	Anti-pathogen response	1701178
+7060	Cell migration/motility	7852353
+6404	Anti-pathogen response	7505206
+6404	Pathogenic Invasion	10834846
+6405	Embryonic development	8786119
+7062	Epidermal Development and Maintenance	7685034
+6406	Reproduction	2912989
+6407	Reproduction	1517240
+4803	Cell-to-cell signalling	6688123
+4803	Neuronal development	6688123
+5460	Embryonic development	8088794
+7066	Other development	8202159
+4807	Neuronal development	1328219
+4808	Neuronal development	1328219
+3860	Epidermal Development and Maintenance	7493031
+2121	Bone Development and Maintenance	10700184
+5465	Energy Storage	7684926
+3861	Epidermal Development and Maintenance	1717157
+5467	Energy Storage	1333051
+5468	Other development	10973253
+5468	Energy Storage	10622252
+2125	Epidermal Development and Maintenance	8707850
+5469	Other development	9653119
+3866	Epidermal Development and Maintenance	2580298
+1180	Muscle action	7981750
+10002	Photoreception	10220376
+3868	Epidermal Development and Maintenance	7539673
+10003	Cell-to-cell signalling	10085079
+650	Cell-to-cell signalling	2315314
+650	Bone Development and Maintenance	2315314
+10005	Anti-pathogen response	10092594
+10005	Pathogenic Invasion	9153233
+651	Cell-to-cell signalling	3201241
+651	Bone Development and Maintenance	3201241
+1184	Osmoregulation and Excretion	8559248
+652	Bone Development and Maintenance	9701626
+1187	Osmoregulation and Excretion	8041726
+1188	Osmoregulation and Excretion	9326936
+656	Bone Development and Maintenance	1460021
+7070	Anti-pathogen response	3917857
+7071	Bone Development and Maintenance	10816551
+7071	Control of Cell Proliferation	9748269
+4811	Extracellular matrix component	7557988
+7072	Cell death/Apoptosis	1934064
+7073	Cell death/Apoptosis	1326761
+7073	Anti-pathogen response	1326761
+5470	Photoreception	9326663
+4814	Response to injury	9261151
+4814	Neuronal development	9261151
+4815	Response to injury	10627596
+7076	Photoreception	7507419
+7076	Other development	3839290
+7076	Extracellular matrix maintenance	7507419
+7076	Control of Cell Proliferation	3839290
+7077	Extracellular matrix maintenance	10764764
+5473	Response to injury	1830861
+5473	Blood clotting	1830861
+7078	Photoreception	7894485
+7078	Extracellular matrix maintenance	
+2131	Bone Development and Maintenance	9620772
+2132	Bone Development and Maintenance	8894688
+3872	Epidermal Development and Maintenance	7539673
+5478	Anti-pathogen response	7590732
+5478	Pathogenic Invasion	8513493
+5479	Anti-pathogen response	2000394
+2138	Embryonic development	9020840
+1191	Reproduction	1585460
+1191	Anti-pathogen response	2387851
+1191	Other development	1585460
+10014	Control of Cell Proliferation	
+662	Cell death/Apoptosis	7954800
+10017	Cell death/Apoptosis	9829980
+663	Cell death/Apoptosis	7954800
+10018	Cell death/Apoptosis	9430630
+664	Cell death/Apoptosis	7954800
+665	Cell death/Apoptosis	9973195
+667	Epidermal Development and Maintenance	8349819
+669	Gas exchange	2542247
+6422	Cell fate specification	9192640
+25803	Control of Cell Proliferation	6857767
+6424	Reproduction	10211996
+4820	Anti-pathogen response	8421688
+8029	Nutrient Absorption	10080186
+6425	Photoreception	10072424
+6425	Cell fate specification	10072424
+25806	Photoreception	10485894
+25806	Embryonic development	10485894
+5480	Anti-pathogen response	1652374
+4824	Male specific development	9226374
+4826	Neuronal development	8813377
+7087	Anti-pathogen response	8995416
+7087	CNS-specific functions	8995416
+2140	Photoreception	9049631
+2140	Embryonic development	9049631
+26468	CNS-specific functions	10393337
+7088	Cell fate specification	8808280
+4828	Cell-to-cell signalling	2458345
+7089	Cell fate specification	8808280
+4829	Control of Cell Proliferation	7723750
+3881	Epidermal Development and Maintenance	7578244
+3882	Epidermal Development and Maintenance	7556444
+3883	Epidermal Development and Maintenance	7565656
+3884	Epidermal Development and Maintenance	7565656
+2145	Embryonic development	8921387
+3885	Epidermal Development and Maintenance	9756910
+3886	Epidermal Development and Maintenance	8823373
+2147	Cell death/Apoptosis	10692450
+2147	Response to injury	2719946
+2147	Pathogenic Invasion	7566121
+2147	Blood clotting	9252393
+2147	Connective Tissue Development and Maintenance	9639571
+10021	Muscle action	10228147
+3887	Epidermal Development and Maintenance	7556444
+2149	Cell migration/motility	9701242
+2149	Cell death/Apoptosis	10692450
+2149	Response to injury	1672265
+2149	Blood clotting	1672265
+2149	Embryonic development	9701242
+2149	Connective Tissue Development and Maintenance	9639571
+3889	Epidermal Development and Maintenance	9084137
+671	Anti-pathogen response	2722846
+8031	Male specific development	8643607
+7090	Cell fate specification	8808280
+50674	Neuronal development	9000438
+50674	PNS-specific functions	9000438
+50674	CNS-specific functions	9000438
+6435	Gas exchange	2995821
+25816	Cell death/Apoptosis	10644768
+4832	Other development	7638209
+25818	Epidermal Development and Maintenance	10514489
+6439	Gas exchange	1346779
+26476	Chemosensation and response	1370859
+7096	Anti-pathogen response	9435236
+7097	Anti-pathogen response	10426996
+7098	Anti-pathogen response	9435236
+2151	Response to injury	9087410
+2151	Blood clotting	9087410
+7099	Anti-pathogen response	10835634
+3891	Epidermal Development and Maintenance	9084137
+2152	Anti-pathogen response	2719931
+2152	Blood clotting	2719931
+2153	Blood clotting	9252393
+2155	Blood clotting	3037537
+5499	Control of Cell Proliferation	2161401
+2157	Blood clotting	2987704
+3897	Neuronal development	7920659
+3897	PNS-specific functions	7920659
+3897	CNS-specific functions	7920659
+2158	Blood clotting	2472424
+3898	Extracellular matrix component	9119369
+2159	Blood clotting	6587384
+3899	Other development	8555498
+680	Feeding	9367152
+680	Control of body size	9367152
+680	CNS-specific functions	9367152
+682	Extracellular matrix maintenance	9767135
+683	Other development	8202488
+51621	Anti-pathogen response	10023774
+684	Other development	8522202
+685	Control of Cell Proliferation	8144591
+686	Epidermal Development and Maintenance	7550325
+686	CNS-specific functions	7550325
+687	Neuronal development	8051167
+687	CNS-specific functions	8051167
+6440	Gas exchange	3479771
+6441	Anti-pathogen response	8428971
+6441	Gas exchange	8428971
+6442	Muscle action	8069911
+25824	Anti-pathogen response	10521424
+4842	Reproduction	7528745
+4842	Neuronal transmission	1385308
+4842	Cell-to-cell signalling	7528745
+4842	Muscle action	7545544
+4843	Anti-pathogen response	7558036
+1501	Neuronal development	9342840
+6449	Pathogenic Invasion	9740675
+4846	Cell migration/motility	8999856
+4846	Angiogenesis	10376603
+2160	Blood clotting	10823824
+3108	Anti-pathogen response	8849454
+2161	Blood clotting	2888762
+3109	Anti-pathogen response	8849454
+2162	Blood clotting	10801785
+2165	Blood clotting	2877457
+55911	Intercellular transport	
+2169	Control of body size	8954037
+694	Control of Cell Proliferation	1373383
+695	Cell death/Apoptosis	8688094
+695	Anti-pathogen response	8090769
+699	Control of Cell Proliferation	9790499
+25833	Epidermal Development and Maintenance	10473598
+3110	Anti-pathogen response	7914194
+3110	Embryonic development	9843207
+4851	Cell fate specification	10206645
+26492	Chemosensation and response	9119360
+6456	CNS-specific functions	9169142
+4852	Cell migration/motility	10488139
+4852	Feeding	10698177
+4852	Control of Cell Proliferation	10488139
+4852	CNS-specific functions	1321422
+26493	Chemosensation and response	9119360
+6457	CNS-specific functions	9169142
+4854	Embryonic development	7698746
+3115	Anti-pathogen response	8105536
+4856	Osmoregulation and Excretion	8622864
+4856	Embryonic development	8622864
+1513	Bone Development and Maintenance	9143502
+4857	Neuronal transmission	8558240
+4857	CNS-specific functions	8558240
+2171	Epidermal Development and Maintenance	8092987
+2173	Neuronal development	9375786
+2175	Other development	8896563
+2176	Other development	1574115
+80781	Angiogenesis	9008168
+80781	Connective Tissue Development and Maintenance	10942434
+10052	Intercellular transport	7966354
+10052	Muscle action	7966354
+9001	Neuronal transmission	9361024
+9001	CNS-specific functions	9668110
+9002	Response to injury	9618465
+9002	Blood clotting	9618465
+58189	Control of Cell Proliferation	10967136
+7402	Muscle action	9288751
+7404	Anti-pathogen response	9499428
+7404	Male specific development	9499428
+7408	Cell migration/motility	7828592
+8065	Control of Cell Proliferation	9037604
+6462	Reproduction	2249477
+6462	Intercellular transport	2249477
+5806	Anti-pathogen response	1429570
+4861	Neuronal development	9012850
+4861	CNS-specific functions	9012850
+4862	Neuronal development	9012850
+4862	CNS-specific functions	9012850
+1520	Anti-pathogen response	8157683
+4864	CNS-specific functions	9211849
+1521	Anti-pathogen response	9823953
+3125	Anti-pathogen response	8775462
+6469	Embryonic development	8269518
+3126	Anti-pathogen response	8775462
+1523	Other development	1301999
+3127	Anti-pathogen response	3456344
+4867	Osmoregulation and Excretion	9361039
+1524	Cell migration/motility	9390561
+1524	Anti-pathogen response	9390561
+1524	Pathogenic Invasion	10731151
+4868	Osmoregulation and Excretion	9660941
+1525	Pathogenic Invasion	9096397
+1528	Intercellular transport	3951505
+11006	Anti-pathogen response	9548455
+2185	Cell death/Apoptosis	10880513
+2185	Control of Cell Proliferation	10867021
+2186	Neuronal development	7621746
+11009	Cell death/Apoptosis	9826712
+2189	Other development	9806548
+55937	Energy Storage	10531326
+10068	Anti-pathogen response	10023777
+7412	Blood clotting	1715583
+9019	Cell-to-cell signalling	9792637
+51655	Extracellular matrix maintenance	10673050
+7416	Cell death/Apoptosis	10365962
+8076	Extracellular matrix component	8557636
+6473	Bone Development and Maintenance	9590293
+6473	Control of body size	9590293
+5817	Pathogenic Invasion	10841575
+6474	Embryonic development	9482898
+5818	Pathogenic Invasion	9616127
+3131	Other development	1386162
+5819	Pathogenic Invasion	9657005
+6477	Neuronal development	9334332
+6477	Embryonic development	9403064
+3135	Anti-pathogen response	9539768
+1535	Anti-pathogen response	2243141
+2191	Response to injury	7911242
+2191	Cell-to-cell signalling	7911242
+4879	Osmoregulation and Excretion	7601467
+1536	Anti-pathogen response	3600769
+2192	Extracellular matrix component	2269669
+1539	Reproduction	7737358
+2195	Cell-to-cell signalling	8586420
+2195	Embryonic development	8586420
+11018	Cell-to-cell signalling	8621446
+54205	Cell death/Apoptosis	10801801
+2199	Extracellular matrix component	7806230
+54207	Neuronal transmission	10880510
+54209	Anti-pathogen response	10799849
+7422	Angiogenesis	9202027
+7423	Angiogenesis	8637916
+7424	Angiogenesis	8617204
+8082	Muscle action	9395445
+7428	Control of Cell Proliferation	7660130
+6480	Anti-pathogen response	7786324
+5824	Neuronal development	10051604
+5824	CNS-specific functions	10051604
+7429	Nutrient Absorption	2846586
+5825	Neuronal development	9199576
+5825	CNS-specific functions	9199576
+5826	CNS-specific functions	9266848
+8087	Cell death/Apoptosis	9642279
+8087	Anti-pathogen response	9642279
+5828	Neuronal development	8020947
+5828	CNS-specific functions	8020947
+5829	Cell migration/motility	9785458
+3142	Other development	7806220
+4882	Osmoregulation and Excretion	1327579
+4882	Control of Cell Proliferation	10082481
+4884	Neuronal transmission	8884281
+4886	Feeding	1321422
+4886	CNS-specific functions	1321422
+4887	Locomotion	9692752
+4887	Feeding	1321422
+4887	CNS-specific functions	9692752
+1545	Photoreception	9097971
+1545	Other development	9097971
+54210	Anti-pathogen response	10799849
+11024	Anti-pathogen response	9548455
+11025	Anti-pathogen response	9548455
+54212	CNS-specific functions	10747910
+11026	Anti-pathogen response	9151699
+11027	Anti-pathogen response	9548455
+9034	Cell migration/motility	9473515
+9034	Anti-pathogen response	9473515
+7432	Osmoregulation and Excretion	6571696
+7432	Cell-to-cell signalling	6571696
+7432	Muscle action	6571696
+7432	Control of Cell Proliferation	8389448
+9037	Cell-to-cell signalling	9464278
+9037	Neuronal development	9464278
+7433	Neuronal transmission	8390245
+7433	Anti-pathogen response	8390245
+7433	Muscle action	8390245
+7433	Control of Cell Proliferation	8389448
+9038	Neuronal transmission	9464258
+7434	Cell migration/motility	8757618
+5830	Neuronal development	7790377
+5830	CNS-specific functions	7790377
+8092	Connective Tissue Development and Maintenance	8756334
+7436	Intercellular transport	
+7436	CNS-specific functions	10380922
+6490	Epidermal Development and Maintenance	8592076
+6492	Embryonic development	8812055
+5836	Energy Storage	9529348
+6493	Neuronal development	8661114
+6493	Embryonic development	8812055
+5837	Muscle action	9633816
+5837	Energy Storage	9633816
+6494	Control of Cell Proliferation	9346962
+6496	Photoreception	10369266
+6496	Neuronal development	10369266
+4892	Muscle action	9295142
+3156	Cell migration/motility	9853754
+3156	Germline maintenance	9853754
+3156	Embryonic development	9853754
+4897	Neuronal development	8812479
+11034	Cell migration/motility	8399167
+54221	CNS-specific functions	10747910
+11035	Cell death/Apoptosis	10358032
+10092	Cell migration/motility	9230079
+10093	Cell migration/motility	9230079
+10094	Cell migration/motility	9230079
+10095	Cell migration/motility	9230079
+10096	Cell migration/motility	9230079
+9043	Reproduction	9480848
+10097	Cell migration/motility	9230079
+9045	General cellular role	9480843
+7441	Anti-pathogen response	3258819
+7442	Thermoreception and response	9349813
+7442	PNS-specific functions	9349813
+7442	Chemosensation and response	9349813
+9047	Anti-pathogen response	9468509
+9048	Neuronal development	9883723
+7448	Anti-pathogen response	2418831
+11040	Control of Cell Proliferation	9804974
+11043	Embryonic development	10400986
+9051	Anti-pathogen response	9857189
+7450	Blood clotting	3874428
+7453	Control of Cell Proliferation	1761529
+9058	Osmoregulation and Excretion	8967342
+7454	Anti-pathogen response	8069912
+7454	Blood clotting	8069912
+7454	Epidermal Development and Maintenance	8069912
+7458	General cellular role	9516461
+2516	Male specific development	9590178
+2516	Cell-to-cell signalling	10369247
+3172	Blood clotting	9294105
+1573	Muscle action	9570962
+56923	Cell-to-cell signalling	10894543
+56923	Feeding	10894543
+56923	CNS-specific functions	10894543
+8403	Neuronal development	9925951
+9060	Bone Development and Maintenance	9771708
+6804	Neuronal transmission	9177791
+6805	Neuronal transmission	8105537
+7466	Photoreception	9771706
+7466	Neuronal development	9771706
+7466	Energy Storage	9771706
+2520	Peristalsis	7488110
+2520	Muscle action	7488110
+7468	Embryonic development	9618163
+58530	Other development	10384126
+2528	Anti-pathogen response	8175676
+2529	Anti-pathogen response	8207002
+11061	Angiogenesis	10103018
+11061	Bone Development and Maintenance	10103018
+11061	Extracellular matrix maintenance	9731231
+10406	Reproduction	1686187
+10407	Reproduction	8167223
+1586	Male specific development	9326943
+11065	Control of Cell Proliferation	9122200
+10409	CNS-specific functions	9749536
+8419	Photoreception	9628810
+4130	Neuronal development	8812494
+7474	Cell-to-cell signalling	8288227
+7474	Angiogenesis	10491302
+7474	Embryonic polarity	9054360
+6818	Neuronal transmission	7829089
+4131	Neuronal development	1881920
+7476	Cell-to-cell signalling	8893824
+7476	Embryonic development	9161407
+7479	Cell-to-cell signalling	9536085
+7479	Neuronal development	9536085
+5875	Photoreception	8380507
+2532	Cell-to-cell signalling	7689250
+2532	Pathogenic Invasion	7689250
+4137	Cell death/Apoptosis	10747907
+4137	Neuronal development	10747907
+2533	Anti-pathogen response	9207119
+5879	Cell migration/motility	9572733
+5879	Response to injury	9572733
+10411	Control of Cell Proliferation	9853756
+10411	Cell fate specification	9853756
+2538	Energy Storage	8640227
+1593	CNS-specific functions	2019602
+11075	Neuronal development	8622778
+10419	Control of Cell Proliferation	9843966
+8425	Cell-to-cell signalling	9271198
+9083	Reproduction	9381176
+7480	Cell-to-cell signalling	9121776
+7481	Cell-to-cell signalling	9757009
+7481	Embryonic development	9757009
+7482	Embryonic development	8761309
+23521	General cellular role	10580157
+7483	Cell-to-cell signalling	9441749
+7483	Embryonic development	9441749
+7484	Cell-to-cell signalling	9441749
+7484	Embryonic development	9441749
+5880	Pathogenic Invasion	2674130
+4142	Control of Cell Proliferation	3419518
+4142	Embryonic development	8661154
+7486	Aging	9288107
+4143	Neuronal transmission	8770875
+4145	Control of Cell Proliferation	8288563
+4146	Extracellular matrix component	9083061
+4146	Bone Development and Maintenance	9083061
+2542	Energy Storage	212064
+4148	Extracellular matrix component	9350998
+4148	Bone Development and Maintenance	9350998
+23529	Anti-pathogen response	10448081
+23529	Cell-to-cell signalling	10500198
+4149	Control of Cell Proliferation	2006410
+2547	Anti-pathogen response	8954777
+10421	Anti-pathogen response	9843987
+2548	Energy Storage	3049072
+2549	Control of Cell Proliferation	8596638
+56955	Bone Development and Maintenance	10945470
+9093	Pathogenic Invasion	9683573
+6833	Energy Storage	7716548
+9094	Neuronal transmission	9761287
+9094	Photoreception	9761287
+6834	General cellular role	9843204
+9095	Embryonic development	9888994
+9096	Embryonic development	9888994
+7494	Anti-pathogen response	1718857
+4151	Response to injury	10779502
+6839	Embryonic development	10949293
+4153	Anti-pathogen response	1303250
+5894	Cell death/Apoptosis	8929532
+5894	Control of Cell Proliferation	8063729
+4155	Neuronal transmission	2434243
+5896	Anti-pathogen response	9630231
+4157	Epidermal Development and Maintenance	7581459
+23538	Chemosensation and response	10512676
+2554	Neuronal transmission	1330891
+5898	Cell migration/motility	10848592
+2555	Neuronal transmission	8391122
+2556	Neuronal transmission	8391122
+2557	Neuronal transmission	8719416
+2558	Neuronal transmission	1321750
+2559	Neuronal transmission	8632757
+11095	Control of Cell Proliferation	10438512
+10439	CNS-specific functions	9039501
+11096	Connective Tissue Development and Maintenance	10438522
+5100	Cell-to-cell signalling	9787079
+5100	CNS-specific functions	9787079
+6843	Neuronal transmission	1976629
+5104	Blood clotting	1714450
+8448	Neuronal transmission	7826360
+8448	CNS-specific functions	7826360
+6846	Anti-pathogen response	7875320
+6846	Cell-to-cell signalling	7875320
+4160	Feeding	9771698
+4160	Control of body size	9771699
+1901	Angiogenesis	10555146
+1901	Cell fate specification	2160972
+4162	Embryonic development	8378324
+1903	Anti-pathogen response	8649355
+1903	Angiogenesis	10555146
+1903	Control of Cell Proliferation	10617617
+2560	Neuronal transmission	2465923
+2561	Neuronal transmission	8264558
+1906	Cell-to-cell signalling	2670930
+1906	Control of Cell Proliferation	8144511
+2562	Neuronal transmission	1664410
+1907	Cell-to-cell signalling	1840558
+2563	Neuronal transmission	2176788
+1908	Cell-to-cell signalling	8298278
+2564	Neuronal transmission	9039914
+1909	Muscle action	8114678
+1909	Control of Cell Proliferation	8702836
+2566	Neuronal transmission	2538761
+2569	Neuronal transmission	1849271
+8452	Control of Cell Proliferation	9733711
+6850	Control of Cell Proliferation	10748099
+5111	Control of Cell Proliferation	2565339
+8455	Anti-pathogen response	9736737
+8455	Feeding	10086356
+8455	Control of body size	10086356
+8456	Epidermal Development and Maintenance	10767081
+6853	Neuronal transmission	2110562
+6854	Neuronal transmission	8964517
+6856	Neuronal transmission	8034131
+6857	Neuronal transmission	1840599
+5118	Extracellular matrix maintenance	9933570
+4170	Cell death/Apoptosis	7682708
+1910	Neuronal development	9556633
+2570	Neuronal transmission	1315307
+2571	Neuronal transmission	8954991
+2572	Neuronal transmission	8954991
+23557	Neuronal transmission	10195194
+301	Cell migration/motility	10882119
+302	Bone Development and Maintenance	7961821
+4179	Anti-pathogen response	1711570
+4179	Pathogenic Invasion	1711570
+307	Blood clotting	2530088
+308	Blood clotting	1683830
+9402	Anti-pathogen response	9878555
+9402	Cell-to-cell signalling	9878555
+10457	Control of Cell Proliferation	7814155
+9404	Anti-pathogen response	9565592
+10458	Neuronal development	10343108
+7802	Cell migration/motility	9284741
+9407	Gas exchange	9565616
+8460	Response to injury	9501187
+8460	Anti-pathogen response	9501187
+7804	Intercellular transport	
+7804	Neuronal development	10380922
+9409	Neuronal development	9922452
+9409	CNS-specific functions	9922452
+8462	Control of Cell Proliferation	9748269
+5121	CNS-specific functions	8914602
+6861	Neuronal transmission	9177789
+5122	Cell-to-cell signalling	9207799
+6862	Embryonic development	8963900
+6863	Reproduction	1708336
+6863	Cell-to-cell signalling	1708336
+5125	Cell-to-cell signalling	8901832
+6865	Muscle action	2173708
+5126	Cell-to-cell signalling	1594602
+6868	Cell-to-cell signalling	9034190
+6869	CNS-specific functions	9733503
+2581	CNS-specific functions	3278379
+23566	Neuronal transmission	10488122
+23567	Cell death/Apoptosis	10488071
+4188	Embryonic development	8797820
+4189	Other development	9533036
+313	Anti-pathogen response	1883828
+314	Photoreception	9119395
+2587	Neuronal transmission	7524088
+2587	Peristalsis	7524088
+2587	Nutrient Absorption	8670213
+10461	Cell-to-cell signalling	8086340
+317	Cell death/Apoptosis	9267021
+317	Embryonic development	9753320
+317	CNS-specific functions	9753320
+56992	Control of Cell Proliferation	10878014
+319	Intercellular transport	
+10468	Reproduction	3380788
+56998	Control of Cell Proliferation	10898789
+56998	Embryonic development	10898789
+7813	Control of Cell Proliferation	9618176
+7818	Cell death/Apoptosis	7499268
+6870	Pain sensation	
+5132	Photoreception	8288249
+5133	Cell death/Apoptosis	1396582
+5133	Anti-pathogen response	9332365
+8477	Cell death/Apoptosis	9655242
+8477	Anti-pathogen response	9655242
+8477	Cell fate specification	9655242
+5134	Cell death/Apoptosis	7606924
+6875	Cell death/Apoptosis	10849440
+6875	Anti-pathogen response	8858156
+22914	Anti-pathogen response	2007850
+5138	CNS-specific functions	9210593
+22915	Blood clotting	7629143
+4192	Cell-to-cell signalling	7835084
+4192	Neuronal development	8406506
+4192	Control of Cell Proliferation	1639750
+22918	Anti-pathogen response	9047234
+22919	Control of Cell Proliferation	7606712
+320	Neuronal transmission	9753324
+320	Neuronal development	9753324
+321	CNS-specific functions	9890987
+2593	Muscle action	8547310
+2593	CNS-specific functions	8547310
+2596	Response to injury	3272162
+2596	Neuronal development	3272162
+325	Anti-pathogen response	10972085
+326	Anti-pathogen response	9398839
+10472	Neuronal development	9568537
+329	Cell death/Apoptosis	8552191
+9421	Embryonic development	9931445
+9423	Cell migration/motility	9950216
+9423	Cell-to-cell signalling	9950216
+9423	Neuronal development	9950216
+9427	CNS-specific functions	9931490
+8482	Anti-pathogen response	9712866
+8483	Connective Tissue Development and Maintenance	9722584
+7827	Osmoregulation and Excretion	10742096
+8484	Neuronal transmission	9722565
+8484	Feeding	9722565
+8484	CNS-specific functions	9722565
+5141	CNS-specific functions	8009369
+5142	CNS-specific functions	8413254
+5143	CNS-specific functions	8009369
+5144	CNS-specific functions	8009369
+5145	Photoreception	7493036
+5146	Photoreception	8641425
+6886	Control of Cell Proliferation	2303035
+5147	Photoreception	9570951
+5148	Photoreception	7828894
+30008	Extracellular matrix component	10601734
+23581	Other development	10203698
+23581	Epidermal Development and Maintenance	10203698
+5149	Photoreception	8786098
+3545	Other development	8406611
+1942	Cell-to-cell signalling	8660976
+1943	Cell-to-cell signalling	9826538
+1944	Cell-to-cell signalling	8660976
+1945	Cell-to-cell signalling	8660976
+3549	Embryonic development	7590746
+330	Cell death/Apoptosis	8552191
+1946	Cell-to-cell signalling	9245480
+1946	Neuronal development	9245480
+331	Cell death/Apoptosis	8654366
+1947	Cell-to-cell signalling	8798744
+332	Cell death/Apoptosis	9256286
+1948	Cell-to-cell signalling	8559144
+333	CNS-specific functions	9521588
+1949	Cell-to-cell signalling	9126477
+335	Intercellular transport	
+10481	Response to injury	9665387
+10481	Epidermal Development and Maintenance	9665387
+14	Cell migration/motility	7743515
+336	Intercellular transport	
+15	Biological rhythm	8661026
+337	Intercellular transport	
+338	Intercellular transport	
+19	Intercellular transport	10431236
+9436	Anti-pathogen response	10049942
+7832	Control of Cell Proliferation	8944033
+9437	Anti-pathogen response	9730896
+8493	Cell death/Apoptosis	9177166
+8493	Control of Cell Proliferation	9177166
+6890	Anti-pathogen response	1946428
+6891	Anti-pathogen response	1946428
+6892	Anti-pathogen response	9238042
+5153	Cell death/Apoptosis	8855339
+5153	CNS-specific functions	9419816
+5154	Cell-to-cell signalling	2842868
+5154	Control of Cell Proliferation	2842868
+3550	Anti-pathogen response	7970704
+3550	Cell-to-cell signalling	7970704
+6894	Pathogenic Invasion	8846792
+6895	Pathogenic Invasion	2011739
+5156	Control of Cell Proliferation	10806482
+3552	Cell death/Apoptosis	10748004
+3552	Anti-pathogen response	6209582
+3552	Cell-to-cell signalling	3486405
+3552	Pathogenic Invasion	7566121
+3553	Cell death/Apoptosis	10779559
+3553	Anti-pathogen response	6209582
+3553	Cell-to-cell signalling	2989698
+5158	Photoreception	1322354
+1950	Control of Cell Proliferation	7640657
+3554	Anti-pathogen response	9120302
+3556	Anti-pathogen response	9065432
+6899	Embryonic development	9268629
+3557	Anti-pathogen response	1386337
+3558	Anti-pathogen response	10201969
+3558	Cell-to-cell signalling	3925347
+3559	Anti-pathogen response	3925551
+1956	Control of Cell Proliferation	10861448
+341	Intercellular transport	
+343	Osmoregulation and Excretion	9806845
+1959	Neuronal development	9537424
+1959	Control of Cell Proliferation	9537424
+1959	CNS-specific functions	9537424
+344	Intercellular transport	
+344	Energy Storage	
+345	Intercellular transport	
+345	Energy Storage	
+24	Photoreception	9054934
+346	Intercellular transport	
+25	Cell death/Apoptosis	10391249
+347	Intercellular transport	
+348	Anti-pathogen response	3283935
+348	Intercellular transport	
+348	Neuronal development	3283935
+10493	Neuronal transmission	8938427
+10497	Cell death/Apoptosis	9607201
+10497	Osmoregulation and Excretion	9607201
+6101	Photoreception	10391211
+9445	CNS-specific functions	9795190
+6102	Photoreception	9697692
+6103	Photoreception	9399904
+7844	CNS-specific functions	9070305
+4504	Neuronal development	1873033
+4504	Control of Cell Proliferation	1873033
+2900	Neuronal transmission	8263508
+7849	Embryonic development	9590296
+7849	Cell fate specification	9590297
+2902	Neuronal transmission	8768735
+2903	Neuronal transmission	8768735
+3560	Anti-pathogen response	3925551
+2904	Neuronal transmission	8768735
+3561	Anti-pathogen response	8266077
+2905	Neuronal transmission	9798920
+3562	Cell-to-cell signalling	3497400
+3562	Other development	3497400
+3562	Control of Cell Proliferation	9551928
+5167	Energy Storage	7830796
+3563	Other development	7887951
+2907	Neuronal transmission	8406459
+5168	Cell migration/motility	1733949
+1960	Biological rhythm	9488654
+3565	Cell migration/motility	10725748
+3565	Anti-pathogen response	10725748
+3565	Cell-to-cell signalling	2535858
+3566	Anti-pathogen response	2307934
+3567	Anti-pathogen response	8892648
+3567	Cell-to-cell signalling	3024129
+3567	Other development	3498940
+3568	Anti-pathogen response	8228251
+3569	Anti-pathogen response	2829354
+3569	Cell-to-cell signalling	2829354
+3569	Bone Development and Maintenance	9927325
+3569	Control of Cell Proliferation	7511596
+3569	Cell fate specification	7511596
+350	Anti-pathogen response	1582254
+350	Intercellular transport	
+351	Cell death/Apoptosis	10884510
+351	CNS-specific functions	2507928
+355	Cell death/Apoptosis	10871852
+356	Cell death/Apoptosis	7826947
+356	Cell-to-cell signalling	7826947
+37	Muscle action	7479827
+358	Osmoregulation and Excretion	1722319
+359	Osmoregulation and Excretion	8140421
+7850	Anti-pathogen response	8898719
+7852	Cell migration/motility	10802710
+7852	Cell death/Apoptosis	10942389
+7852	Anti-pathogen response	7592830
+7852	Cell-to-cell signalling	10644702
+7852	Pathogenic Invasion	10754293
+7855	Embryonic development	11029007
+2911	Neuronal transmission	8824806
+2911	CNS-specific functions	9076744
+2912	Neuronal transmission	8824806
+2912	CNS-specific functions	7620613
+2913	Neuronal transmission	8840013
+2913	CNS-specific functions	8840013
+3570	Anti-pathogen response	3136546
+3570	Bone Development and Maintenance	9927325
+3570	Control of Cell Proliferation	3136546
+3570	Cell fate specification	3136546
+2914	Neuronal transmission	8824806
+2914	CNS-specific functions	8738157
+5175	Cell migration/motility	7994021
+5175	Angiogenesis	1690453
+2915	Neuronal transmission	7908515
+2915	CNS-specific functions	7908515
+22952	Chemosensation and response	8561797
+5176	Angiogenesis	10398599
+5176	Embryonic development	8434014
+3572	Anti-pathogen response	2261637
+2916	Photoreception	9215706
+2917	Neuronal transmission	8824806
+2917	CNS-specific functions	9473604
+3574	Anti-pathogen response	2643102
+3574	Cell-to-cell signalling	2643102
+3574	Other development	2643102
+2918	Neuronal transmission	8824806
+2918	Photoreception	9473604
+22955	Embryonic development	10524249
+5179	Neuronal transmission	2893547
+5179	Cell-to-cell signalling	2893547
+3575	Anti-pathogen response	9495344
+2919	Cell migration/motility	10820279
+2919	Response to injury	2217207
+2919	Anti-pathogen response	2217207
+2919	Control of Cell Proliferation	9551928
+3576	Cell migration/motility	10620615
+3576	Anti-pathogen response	10985244
+3576	Cell-to-cell signalling	10734056
+3576	Angiogenesis	9323208
+3576	Other development	1840701
+3576	Control of Cell Proliferation	9551928
+3577	Cell migration/motility	10725748
+3577	Anti-pathogen response	10725748
+3577	Cell-to-cell signalling	10734056
+3577	Other development	1840701
+1973	General cellular role	9168945
+3578	Anti-pathogen response	9371819
+3578	Cell-to-cell signalling	1680606
+3578	Other development	8516290
+1974	General cellular role	8521730
+3579	Cell migration/motility	10725748
+3579	Anti-pathogen response	10725748
+3579	Cell-to-cell signalling	10734056
+3579	Other development	1840701
+3579	Control of Cell Proliferation	10881932
+1975	General cellular role	2390971
+360	Osmoregulation and Excretion	7543093
+361	Osmoregulation and Excretion	7528931
+361	CNS-specific functions	7528931
+1977	General cellular role	3469651
+40	Neuronal transmission	8626462
+40	PNS-specific functions	8626462
+40	CNS-specific functions	8626462
+362	Osmoregulation and Excretion	8621489
+1978	General cellular role	7935836
+363	Osmoregulation and Excretion	8812490
+1979	General cellular role	7935836
+364	Osmoregulation and Excretion	9405233
+364	Energy Storage	9405233
+43	Neuronal transmission	2734315
+366	Osmoregulation and Excretion	9514918
+366	Anti-pathogen response	9514918
+367	Male specific development	10840043
+367	Cell-to-cell signalling	10835690
+8804	Control of Cell Proliferation	9710587
+8807	Anti-pathogen response	9792649
+8808	Anti-pathogen response	8332913
+6121	Photoreception	9326941
+8809	Anti-pathogen response	9325300
+6122	General cellular role	2891103
+9466	Anti-pathogen response	9600072
+6124	General cellular role	8268230
+6125	General cellular role	7772601
+9469	Extracellular matrix maintenance	9883891
+6128	General cellular role	8479925
+2920	Response to injury	2643119
+2920	Anti-pathogen response	2643119
+2920	Chemosensation and response	2643119
+6129	General cellular role	8441630
+7869	Cell-to-cell signalling	8633026
+2922	Control of Cell Proliferation	3027901
+4528	General cellular role	7829522
+3581	Anti-pathogen response	1376929
+3581	Other development	1376929
+2925	Control of Cell Proliferation	1655761
+10800	Anti-pathogen response	10391245
+10800	Gas exchange	10391245
+5187	Biological rhythm	9323128
+2928	Embryonic development	9150167
+5189	Neuronal development	2606480
+5189	CNS-specific functions	2606480
+1981	General cellular role	1429670
+10803	Cell migration/motility	10640743
+10803	Anti-pathogen response	10229797
+3586	Anti-pathogen response	9162098
+3586	Cell-to-cell signalling	1847510
+1982	General cellular role	9049310
+1983	General cellular role	8663286
+1984	General cellular role	7622067
+1984	Pathogenic Invasion	7759117
+3589	Cell-to-cell signalling	2145578
+374	Cell-to-cell signalling	2466334
+374	Control of Cell Proliferation	2466334
+375	Pathogenic Invasion	2474826
+8811	Reproduction	9480833
+8811	Neuronal transmission	9832121
+8811	Peristalsis	9832121
+8811	Feeding	9480833
+8811	CNS-specific functions	9480833
+56	Reproduction	1693291
+8815	Pathogenic Invasion	9465049
+58	Muscle action	10508519
+8817	Cell-to-cell signalling	9742123
+8817	Control of Cell Proliferation	9742123
+8817	Embryonic development	9742123
+6130	General cellular role	8360149
+9474	Cell death/Apoptosis	9563500
+126961	General cellular role	
+9475	Muscle action	9933571
+7871	Muscle action	9405447
+6132	General cellular role	7506540
+6133	General cellular role	8597601
+6134	General cellular role	1658743
+9478	CNS-specific functions	9920909
+7874	Pathogenic Invasion	9130697
+6135	General cellular role	7748210
+6136	General cellular role	8441690
+6137	General cellular role	9582194
+6138	General cellular role	9582194
+6139	General cellular role	2402465
+2932	Cell fate specification	7980435
+3592	Anti-pathogen response	10320373
+2936	Anti-pathogen response	947404
+3593	Anti-pathogen response	10320373
+2937	CNS-specific functions	8896573
+22974	Control of Cell Proliferation	9207457
+3594	Anti-pathogen response	9603733
+5199	Anti-pathogen response	8530058
+1991	Anti-pathogen response	2902087
+1991	Connective Tissue Development and Maintenance	2902087
+3596	Cell migration/motility	10725748
+3596	Anti-pathogen response	10725748
+3596	Cell-to-cell signalling	8096327
+1993	Neuronal development	10848602
+10815	Neuronal transmission	7553862
+3598	Anti-pathogen response	9083087
+1995	Neuronal development	10848602
+1996	Neuronal development	10848602
+60	Cell migration/motility	6202424
+29802	Anti-pathogen response	10702669
+1999	Embryonic development	9395241
+8820	Neuronal development	9620767
+8820	Embryonic development	9620767
+27120	Embryonic development	10570958
+27120	Cell fate specification	10570958
+8822	Cell-to-cell signalling	9514906
+8822	Neuronal development	9514906
+8823	Cell-to-cell signalling	9473496
+8823	Other development	9473496
+8823	Energy Storage	9473496
+8823	Thermoregulation	9473496
+9480	Cell fate specification	9915796
+8824	Addiction	9169443
+9481	Energy Storage	10025957
+9481	Thermoregulation	10025957
+9481	CNS-specific functions	10025957
+8825	Pathogenic Invasion	9482110
+8825	Neuronal development	9753324
+8827	Neuronal development	9373037
+8827	CNS-specific functions	9373037
+8828	Neuronal development	9288754
+8828	Embryonic development	9288754
+6141	General cellular role	8218404
+8829	Cell-to-cell signalling	9288753
+8829	Angiogenesis	9529250
+6142	General cellular role	9582194
+9486	Neuronal development	9478973
+6143	General cellular role	1577483
+6144	General cellular role	7772601
+6146	General cellular role	8135813
+6147	General cellular role	9417910
+4543	Reproduction	7946354
+4543	Biological rhythm	9645677
+1200	CNS-specific functions	9295267
+4544	Neuronal transmission	7568007
+2940	Embryonic development	9480897
+26185	Chemosensation and response	9500546
+2941	Aging	9820822
+30061	Nutrient Absorption	10693807
+1203	CNS-specific functions	9662406
+30062	Photoreception	10625658
+30062	Other development	10625658
+4547	Nutrient Absorption	1439810
+26188	Chemosensation and response	9119360
+4548	Neuronal development	8968737
+1207	Photoreception	7887970
+2946	Muscle action	2034681
+2947	Germline maintenance	2345169
+2947	CNS-specific functions	2345169
+2949	CNS-specific functions	8473333
+10824	Anti-pathogen response	8133036
+70	Muscle action	9563954
+8832	Anti-pathogen response	9310491
+397	Anti-pathogen response	8356058
+8837	Cell death/Apoptosis	9208847
+8838	Cell-to-cell signalling	9843955
+9495	Neuronal transmission	1512224
+8839	Cell-to-cell signalling	9843955
+6152	General cellular role	9582194
+6154	General cellular role	8479925
+26191	Anti-pathogen response	10068674
+9499	Muscle action	10958653
+6156	General cellular role	1577483
+6157	General cellular role	7772601
+6158	General cellular role	7772601
+2950	CNS-specific functions	9802272
+6159	General cellular role	8597591
+1216	Extracellular matrix component	1560826
+7100	Anti-pathogen response	9435236
+8840	Cell-to-cell signalling	9843955
+27141	Cell death/Apoptosis	10837461
+7104	Control of Cell Proliferation	7665614
+86	Anti-pathogen response	9845365
+51344	Anti-pathogen response	3501368
+7107	Other development	9521871
+89	Muscle action	1339456
+6160	General cellular role	2780320
+5504	Energy Storage	9126490
+51348	Anti-pathogen response	10671213
+6161	General cellular role	9284913
+5506	Energy Storage	7926294
+3902	Anti-pathogen response	1692078
+3903	Anti-pathogen response	9285412
+6164	General cellular role	7490091
+6165	General cellular role	8786106
+3906	Cell death/Apoptosis	7644538
+3906	Progeny nutrition	7708733
+3906	Cell-to-cell signalling	7644538
+6167	General cellular role	7545944
+6168	General cellular role	1437567
+3908	Extracellular matrix component	2185464
+3908	Muscle action	7550355
+6169	General cellular role	9375793
+3909	Cell migration/motility	10801807
+3909	Extracellular matrix component	10801807
+3909	Epidermal Development and Maintenance	8586427
+10842	CNS-specific functions	10051666
+2969	Anti-pathogen response	9012831
+2969	Neuronal development	9466987
+10849	Anti-pathogen response	10373416
+8850	Control of Cell Proliferation	8684459
+7112	Anti-pathogen response	7517549
+8852	Cell migration/motility	9822690
+8857	Anti-pathogen response	9182547
+6170	General cellular role	8764829
+3910	Extracellular matrix component	7959779
+8858	Blood clotting	9578570
+6171	General cellular role	1326959
+3911	Extracellular matrix component	9271224
+3912	Extracellular matrix component	10801807
+3913	Osmoregulation and Excretion	7698745
+3913	Neuronal transmission	7698745
+3913	Extracellular matrix component	7698745
+3914	Extracellular matrix component	7550320
+3914	Epidermal Development and Maintenance	7774918
+6175	General cellular role	3323886
+6176	General cellular role	3323886
+1230	Cell migration/motility	10770925
+1230	Response to injury	7505609
+1230	Anti-pathogen response	7505609
+1230	Cell-to-cell signalling	10734056
+1230	Pathogenic Invasion	10583963
+3918	Extracellular matrix component	10801807
+3918	Epidermal Development and Maintenance	8012394
+1231	Cell migration/motility	10623817
+1231	Response to injury	8146186
+1231	Anti-pathogen response	10751368
+1231	Pathogenic Invasion	10888629
+1232	Cell migration/motility	10201960
+1232	Response to injury	9302298
+1232	Anti-pathogen response	9302298
+1232	Pathogenic Invasion	10713092
+1233	Cell migration/motility	7642634
+1233	Anti-pathogen response	7642634
+1234	Cell migration/motility	10741397
+1234	Anti-pathogen response	8639485
+1234	Cell-to-cell signalling	10679098
+1234	Pathogenic Invasion	10640778
+701	Control of Cell Proliferation	10477750
+1235	Cell migration/motility	11001880
+1235	Anti-pathogen response	9186513
+1236	Cell migration/motility	9153236
+1236	Anti-pathogen response	9153236
+1236	Pathogenic Invasion	9153236
+1237	Cell migration/motility	10910894
+1237	Anti-pathogen response	8816377
+1237	Pathogenic Invasion	10888633
+2976	Control of Cell Proliferation	7729686
+10850	Cell migration/motility	10588729
+10850	Cell-to-cell signalling	10588729
+1238	Cell migration/motility	9364936
+1238	Anti-pathogen response	9364936
+1238	Other development	9364936
+706	Cell-to-cell signalling	8307574
+2978	Photoreception	7983048
+2979	Osmoregulation and Excretion	1327879
+2979	Cell-to-cell signalling	1409606
+58985	Anti-pathogen response	10875937
+708	Anti-pathogen response	8195709
+10855	Angiogenesis	10446189
+10855	Extracellular matrix maintenance	10395326
+50700	Photoreception	10753906
+10858	CNS-specific functions	10377398
+10859	Anti-pathogen response	9285411
+29844	Cell death/Apoptosis	10644725
+7123	Bone Development and Maintenance	7798325
+7124	Cell death/Apoptosis	10748004
+7124	Response to injury	10839541
+7124	Anti-pathogen response	10490959
+7124	Cell-to-cell signalling	2537468
+8864	Biological rhythm	9427249
+7125	Muscle action	2373703
+26508	Other development	10415358
+26508	Neuronal development	10415358
+26508	Embryonic development	10415358
+26509	Muscle action	10607832
+6181	General cellular role	3323886
+5525	Muscle action	7592815
+27166	Other development	10784606
+6182	General cellular role	9169145
+5526	CNS-specific functions	7592815
+5528	CNS-specific functions	8703017
+5529	CNS-specific functions	8812429
+6187	General cellular role	2308862
+1240	Cell migration/motility	9425281
+1240	Anti-pathogen response	9425281
+6188	General cellular role	1712897
+1241	Cell migration/motility	9177352
+1241	Response to injury	9177352
+1241	Anti-pathogen response	9177352
+1241	Muscle action	8702478
+6189	General cellular role	1398113
+3929	Anti-pathogen response	8432532
+2981	Osmoregulation and Excretion	8605041
+4588	Response to injury	7680650
+4588	Anti-pathogen response	7680650
+712	Anti-pathogen response	9461517
+712	Cell-to-cell signalling	9461517
+2984	Pathogenic Invasion	1718270
+713	Anti-pathogen response	1706597
+2986	Photoreception	7777544
+715	Anti-pathogen response	737019
+2987	Photoreception	8647247
+716	Anti-pathogen response	9856483
+717	Anti-pathogen response	8621452
+718	Anti-pathogen response	4097977
+719	Cell migration/motility	9694514
+719	Response to injury	8765043
+719	Muscle action	9694514
+29851	Anti-pathogen response	9930702
+29851	Cell-to-cell signalling	9930702
+29851	Control of Cell Proliferation	9930702
+7130	Anti-pathogen response	1730767
+7130	Cell-to-cell signalling	1730767
+8870	Cell death/Apoptosis	9196025
+8870	Embryonic development	9196025
+7134	Muscle action	2250022
+7135	Muscle action	2341402
+7136	Muscle action	9016781
+5532	Control of Cell Proliferation	8978785
+7137	Muscle action	9241277
+5533	Male specific development	1339277
+7138	Muscle action	8135831
+7139	Muscle action	8205619
+3931	Intercellular transport	1859405
+6191	General cellular role	8358435
+6192	General cellular role	2124517
+3933	Response to injury	8999869
+3933	Anti-pathogen response	8999869
+6193	General cellular role	7772601
+3934	Anti-pathogen response	9339356
+5538	Neuronal development	8325646
+6194	General cellular role	1301164
+6195	Control of Cell Proliferation	8141249
+3937	Anti-pathogen response	7706237
+720	Anti-pathogen response	6316164
+721	Anti-pathogen response	6881182
+2993	Pathogenic Invasion	7040988
+722	Anti-pathogen response	3840370
+2995	Other development	2416746
+4599	Anti-pathogen response	2154602
+725	Anti-pathogen response	2300577
+725	Blood clotting	8325877
+1258	Photoreception	7682292
+10870	Anti-pathogen response	10426994
+1259	Photoreception	7479749
+2998	Energy Storage	9691087
+10871	Anti-pathogen response	1349532
+727	Cell migration/motility	10820279
+727	Anti-pathogen response	8759757
+727	Chemosensation and response	10352266
+728	Cell migration/motility	8779720
+728	Anti-pathogen response	8779720
+728	Chemosensation and response	10352266
+10874	Cell-to-cell signalling	7619205
+10874	Muscle action	7619205
+729	Anti-pathogen response	2789218
+7140	Muscle action	8838323
+8881	Control of Cell Proliferation	7736578
+26523	General cellular role	10534406
+8882	Control of Cell Proliferation	9763455
+7143	Extracellular matrix component	8626505
+7143	CNS-specific functions	8626505
+5540	Feeding	7592911
+5540	CNS-specific functions	7592911
+26525	Anti-pathogen response	10512743
+8884	Progeny nutrition	9516450
+8884	Nutrient Absorption	9516450
+2200	Photoreception	8188302
+2200	Extracellular matrix component	10931876
+2200	Bone Development and Maintenance	8188302
+2200	Connective Tissue Development and Maintenance	10931876
+8887	Cell death/Apoptosis	10435631
+2201	Extracellular matrix component	8120105
+2201	Connective Tissue Development and Maintenance	8120105
+2202	Photoreception	10369267
+2202	Extracellular matrix component	10369267
+2204	Anti-pathogen response	10835685
+2205	Anti-pathogen response	2146219
+27189	Cell-to-cell signalling	10639155
+2206	Anti-pathogen response	2146219
+5549	Extracellular matrix component	7592739
+2207	Anti-pathogen response	2146219
+2208	Anti-pathogen response	3034567
+1261	Photoreception	9662398
+2209	Anti-pathogen response	8270248
+3949	Intercellular transport	6091915
+730	Anti-pathogen response	3335508
+731	Anti-pathogen response	6771072
+731	Pathogenic Invasion	6771072
+1264	Muscle action	8526917
+732	Anti-pathogen response	8098723
+732	Pathogenic Invasion	8098723
+733	Anti-pathogen response	8172891
+56616	Cell death/Apoptosis	10929711
+1267	Neuronal transmission	1322358
+1267	CNS-specific functions	1322358
+735	Anti-pathogen response	9570574
+1268	Addiction	1718258
+1268	CNS-specific functions	1718258
+1269	Anti-pathogen response	7556170
+1269	Addiction	7556170
+10882	CNS-specific functions	9878755
+10883	Pathogenic Invasion	8611628
+10886	Pain sensation	
+51393	Pain sensation	
+51393	Thermoreception and response	
+27190	Anti-pathogen response	10639155
+27190	Cell-to-cell signalling	10639155
+5550	Cell-to-cell signalling	9695945
+5550	CNS-specific functions	9695945
+5551	Cell death/Apoptosis	10779745
+5551	Anti-pathogen response	1505959
+7157	Cell death/Apoptosis	8961277
+5553	Response to injury	7531438
+5553	Anti-pathogen response	7531438
+3950	Anti-pathogen response	9545637
+3950	Bone Development and Maintenance	9545637
+3950	Chemosensation and response	9545637
+2212	Anti-pathogen response	9843982
+2213	Anti-pathogen response	2142460
+3952	Cell-to-cell signalling	9537324
+3952	Energy Storage	9537324
+3952	Control of body size	9054940
+2214	Anti-pathogen response	2138330
+3953	Energy Storage	9537324
+3953	Control of body size	9537324
+2215	Anti-pathogen response	2139735
+3955	Embryonic development	9187150
+2217	Anti-pathogen response	7964511
+3956	Cell death/Apoptosis	1713454
+3956	Control of Cell Proliferation	8432540
+1270	Neuronal transmission	1840538
+1270	Cell-to-cell signalling	1840538
+1270	Neuronal development	1840538
+1270	CNS-specific functions	1840538
+2218	Neuronal development	9690476
+3957	Control of Cell Proliferation	8449510
+1271	Neuronal development	7585948
+2219	Anti-pathogen response	8576206
+3958	Control of Cell Proliferation	8449510
+1272	Neuronal development	7959734
+3959	Anti-pathogen response	8034587
+744	Neuronal development	7527372
+1277	Extracellular matrix component	9639571
+1277	Bone Development and Maintenance	8841196
+1277	Epidermal Development and Maintenance	1303238
+1277	Connective Tissue Development and Maintenance	8841196
+1278	Extracellular matrix component	2777764
+1278	Bone Development and Maintenance	8841196
+1278	Epidermal Development and Maintenance	1303238
+1278	Connective Tissue Development and Maintenance	1303238
+8100	Osmoregulation and Excretion	7633404
+10893	Extracellular matrix maintenance	10363975
+10894	Cell migration/motility	10037799
+10894	Response to injury	10037799
+10894	Embryonic development	10037799
+10895	Gas exchange	7887923
+10896	Mechanoreception and response (including touch)	10362512
+8106	Muscle action	9462747
+4900	CNS-specific functions	10075657
+6504	Anti-pathogen response	7617038
+7161	Cell death/Apoptosis	10391249
+4901	Photoreception	10192380
+6505	Neuronal transmission	7521911
+7162	Cell migration/motility	
+4902	Neuronal development	9286710
+6506	Neuronal transmission	7521911
+6507	Neuronal transmission	7521911
+4904	Anti-pathogen response	3174636
+29888	Neuronal transmission	10748158
+7165	Control of Cell Proliferation	9484778
+7166	Neuronal transmission	2889273
+2220	Anti-pathogen response	8576206
+7168	Muscle action	3336363
+4908	Cell-to-cell signalling	2236018
+4908	Neuronal development	1542658
+5568	Male specific development	9598317
+1280	Extracellular matrix component	7550321
+1280	Bone Development and Maintenance	
+1280	Connective Tissue Development and Maintenance	7550321
+10102	General cellular role	7615523
+1281	Extracellular matrix component	1672129
+1281	Epidermal Development and Maintenance	1672129
+1281	Connective Tissue Development and Maintenance	1672129
+1282	Extracellular matrix component	2987919
+1282	Connective Tissue Development and Maintenance	2987919
+1284	Extracellular matrix component	3025878
+1284	Connective Tissue Development and Maintenance	3025878
+1285	Extracellular matrix component	8016138
+1285	Control of Cell Proliferation	10837460
+1285	Connective Tissue Development and Maintenance	8016138
+1286	Extracellular matrix component	2318822
+1286	Connective Tissue Development and Maintenance	2318822
+1287	Extracellular matrix component	10821854
+1287	Connective Tissue Development and Maintenance	2349482
+10109	Cell migration/motility	9230079
+1288	Extracellular matrix component	8661006
+1288	Connective Tissue Development and Maintenance	8661006
+1289	Extracellular matrix component	9042913
+1289	Epidermal Development and Maintenance	9042913
+1289	Connective Tissue Development and Maintenance	9042913
+6511	Neuronal transmission	7791878
+29895	Muscle action	
+7176	Anti-pathogen response	2677049
+4917	CNS-specific functions	9143507
+7178	Anti-pathogen response	7542803
+3972	Cell-to-cell signalling	10484773
+3973	Male specific development	9626653
+5578	Cell death/Apoptosis	10825394
+5578	Control of Cell Proliferation	8077302
+3975	Neuronal development	9212161
+3975	Embryonic development	9212161
+3976	Cell-to-cell signalling	9920829
+3976	Control of Cell Proliferation	3143918
+3976	Cell fate specification	3143918
+1290	Extracellular matrix component	9425231
+1290	Epidermal Development and Maintenance	9425231
+1290	Connective Tissue Development and Maintenance	9425231
+1291	Extracellular matrix component	10329467
+1291	Bone Development and Maintenance	10329467
+1291	Connective Tissue Development and Maintenance	10329467
+2239	Control of Cell Proliferation	9787072
+1292	Extracellular matrix component	8782832
+1292	Connective Tissue Development and Maintenance	8782832
+1293	Extracellular matrix component	8782832
+1293	Connective Tissue Development and Maintenance	8782832
+1294	Extracellular matrix component	9375848
+1294	Epidermal Development and Maintenance	9375848
+1294	Connective Tissue Development and Maintenance	9375848
+1295	Extracellular matrix component	2029894
+1296	Photoreception	2019595
+1296	Extracellular matrix component	2019595
+1297	Bone Development and Maintenance	3473493
+1297	Connective Tissue Development and Maintenance	3473493
+1298	Extracellular matrix component	10364514
+1298	Bone Development and Maintenance	10364514
+1299	Extracellular matrix component	8528240
+1299	Bone Development and Maintenance	8528240
+29108	Cell death/Apoptosis	10567338
+8125	Anti-pathogen response	8192856
+6523	Nutrient Absorption	8563765
+8128	Embryonic development	9054414
+6525	Muscle action	8707825
+7182	Neuronal development	9006963
+4922	Neuronal transmission	8075503
+6526	Osmoregulation and Excretion	7789985
+4923	Neuronal transmission	9763490
+5581	Cell death/Apoptosis	10438519
+6529	Neuronal transmission	8530094
+7187	Cell death/Apoptosis	10799510
+2242	Control of Cell Proliferation	6264598
+4929	Anti-pathogen response	7877627
+2243	Response to injury	10467729
+2243	Blood clotting	10467729
+2244	Response to injury	10467729
+2244	Blood clotting	10467729
+3983	Photoreception	9245787
+3983	Other development	9245787
+5587	Control of Cell Proliferation	8119958
+3984	Cell migration/motility	10436159
+3984	CNS-specific functions	8689688
+2246	Cell-to-cell signalling	3778488
+2246	Angiogenesis	1693186
+2246	Other development	10903182
+2246	Control of Cell Proliferation	1693186
+2246	Embryonic development	1693186
+2247	Cell migration/motility	10848592
+2247	Cell-to-cell signalling	2435575
+2247	Angiogenesis	10666184
+2247	Other development	10903182
+2248	Cell-to-cell signalling	2470007
+2248	Embryonic development	2470007
+2249	Cell-to-cell signalling	2959959
+2249	Control of Cell Proliferation	2959959
+773	Neuronal transmission	8988170
+773	CNS-specific functions	8988170
+774	Neuronal transmission	1321501
+774	CNS-specific functions	9030575
+775	Muscle action	8392192
+777	CNS-specific functions	8071363
+778	Neuronal transmission	9662400
+778	Photoreception	9662400
+29116	Cell migration/motility	10593918
+29116	Neuronal development	10593918
+779	Muscle action	8004673
+6530	Neuronal transmission	2008212
+6532	Neuronal transmission	7681602
+6534	Neuronal transmission	7651355
+6534	CNS-specific functions	7651355
+6535	Neuronal transmission	7953292
+6535	Muscle action	8661155
+6536	Neuronal transmission	8183239
+26574	Cell death/Apoptosis	10580117
+5590	Cell death/Apoptosis	10770953
+4935	Photoreception	7647783
+5591	Anti-pathogen response	7671312
+5592	Muscle action	9192852
+5592	Blood clotting	8613202
+2250	Cell-to-cell signalling	9786939
+2250	Neuronal development	9786939
+2250	Control of Cell Proliferation	3211147
+26578	Bone Development and Maintenance	10092216
+2251	Cell-to-cell signalling	2649847
+2251	Angiogenesis	1549352
+2251	Control of Cell Proliferation	2649847
+4938	Anti-pathogen response	3753689
+5594	Cell death/Apoptosis	10958679
+5594	Neuronal transmission	10051431
+2252	Cell-to-cell signalling	2475908
+2252	Control of Cell Proliferation	2475908
+3991	Energy Storage	3420405
+4939	Anti-pathogen response	9790745
+2253	Cell-to-cell signalling	8700553
+2253	Embryonic development	8700553
+2254	Cell-to-cell signalling	8575785
+2254	Control of Cell Proliferation	8575785
+2255	Cell-to-cell signalling	9287324
+2256	Cell-to-cell signalling	8790420
+2256	Neuronal development	8790420
+2257	Cell-to-cell signalling	8790420
+2257	Neuronal development	8790420
+3996	Control of Cell Proliferation	7542763
+2258	Cell-to-cell signalling	8790420
+2258	Neuronal development	8790420
+2259	Cell-to-cell signalling	8790420
+2259	Neuronal development	8790420
+3998	Blood clotting	9546392
+10133	Pathogenic Invasion	9488477
+10135	Cell-to-cell signalling	8289818
+782	Muscle action	1385409
+29121	Anti-pathogen response	10541800
+783	Muscle action	8494331
+786	Muscle action	8387489
+29126	Anti-pathogen response	10581077
+29126	Control of Cell Proliferation	10581077
+29128	Control of Cell Proliferation	1868030
+4940	Anti-pathogen response	9790745
+4942	Photoreception	3456579
+6546	Muscle action	1374913
+26585	Other development	9660951
+1602	Embryonic development	9651501
+1603	Cell death/Apoptosis	8413235
+3207	Embryonic development	9745033
+1604	Anti-pathogen response	2433596
+2260	Cell-to-cell signalling	1846977
+2260	Bone Development and Maintenance	7874169
+1605	Extracellular matrix component	8798547
+1605	Pathogenic Invasion	9851928
+1605	Muscle action	1406935
+1605	Embryonic development	9851927
+2261	Bone Development and Maintenance	8601314
+3209	Reproduction	9020844
+3209	Bone Development and Maintenance	9020844
+4948	Epidermal Development and Maintenance	8302318
+2262	CNS-specific functions	9070915
+2266	Response to injury	10467729
+2266	Blood clotting	10467729
+10140	Control of Cell Proliferation	8632892
+10141	Neuronal development	9016955
+10142	Neuronal transmission	9482789
+10143	Extracellular matrix component	10524194
+10143	Connective Tissue Development and Maintenance	10524194
+10148	Anti-pathogen response	8551575
+10149	Reproduction	9150425
+794	Photoreception	7643192
+796	Cell-to-cell signalling	2408883
+796	Bone Development and Maintenance	10822112
+797	Cell-to-cell signalling	6091915
+799	Bone Development and Maintenance	10865224
+6550	Nutrient Absorption	8843774
+51738	Cell-to-cell signalling	10604470
+4950	Pathogenic Invasion	10749869
+6554	Nutrient Absorption	8132774
+6555	Nutrient Absorption	9109432
+4952	Embryonic development	1321346
+6556	Anti-pathogen response	7717395
+6557	Osmoregulation and Excretion	8640224
+1611	Cell death/Apoptosis	7828849
+3215	Embryonic development	3000607
+1612	Cell death/Apoptosis	7828849
+1613	Cell death/Apoptosis	9488481
+93986	Neuronal development	
+93986	CNS-specific functions	
+1616	Cell death/Apoptosis	9215629
+1617	Reproduction	7670487
+1618	Reproduction	8968755
+2277	Control of Cell Proliferation	9479493
+10154	Anti-pathogen response	9586637
+10154	Pathogenic Invasion	9586637
+9103	Anti-pathogen response	2531080
+51744	Anti-pathogen response	3772297
+6564	Nutrient Absorption	7896779
+3222	Embryonic development	1346761
+1621	Neuronal transmission	2880016
+6568	Osmoregulation and Excretion	8288239
+1622	Neuronal transmission	3020548
+3226	Embryonic development	10835276
+6569	Osmoregulation and Excretion	8693007
+11100	Pathogenic Invasion	9733834
+3227	Embryonic development	9582375
+2280	Anti-pathogen response	1930186
+3229	Embryonic development	10835276
+11108	Control of Cell Proliferation	10552934
+10164	Cell migration/motility	10330415
+10164	Anti-pathogen response	10330415
+10164	Cell-to-cell signalling	10330415
+9111	Anti-pathogen response	9989503
+9113	Control of Cell Proliferation	9988268
+53353	Intercellular transport	
+53358	CNS-specific functions	8808684
+9119	Epidermal Development and Maintenance	9856802
+5913	Neuronal transmission	8812503
+8174	Anti-pathogen response	8502297
+5914	Embryonic development	2825025
+6571	Neuronal transmission	8095030
+6572	Neuronal transmission	8071310
+6573	Nutrient Absorption	8276792
+8178	Control of Cell Proliferation	10995463
+3232	Embryonic development	1712489
+6575	Pathogenic Invasion	8302848
+1630	Cell death/Apoptosis	9796814
+4974	CNS-specific functions	8244377
+4975	Chemosensation and response	8790421
+1634	Extracellular matrix component	7961765
+2290	Neuronal development	7959731
+2290	CNS-specific functions	7959731
+2291	CNS-specific functions	7599184
+3239	Other development	
+1638	Epidermal Development and Maintenance	8206391
+2294	Gas exchange	7959731
+2294	Embryonic development	9722567
+11116	Control of Cell Proliferation	9949182
+1639	Neuronal development	9805007
+2295	Gas exchange	7959731
+2295	Embryonic development	7957066
+11117	Extracellular matrix component	10358019
+11117	Connective Tissue Development and Maintenance	10358019
+2296	Photoreception	9620769
+2296	Embryonic polarity	8940278
+2296	Embryonic development	8940278
+2297	Osmoregulation and Excretion	8702877
+2298	Embryonic development	7957066
+10175	Anti-pathogen response	10209299
+10178	Anti-pathogen response	9771704
+10178	Control of Cell Proliferation	10556288
+9127	Muscle action	9242461
+7528	Anti-pathogen response	1946405
+7528	Pathogenic Invasion	1655281
+6582	Osmoregulation and Excretion	9260930
+3240	Anti-pathogen response	7036344
+3241	CNS-specific functions	8038222
+5928	Control of Cell Proliferation	8350924
+6585	Other development	9813312
+6585	Neuronal development	9813312
+4982	Bone Development and Maintenance	9108485
+6586	Other development	9813312
+4983	Neuronal development	9582072
+1641	Neuronal development	9489699
+1641	CNS-specific functions	9489699
+4985	Anti-pathogen response	10385123
+4985	Pain sensation	10385123
+4985	Addiction	1335167
+4985	CNS-specific functions	10385123
+4986	Neuronal transmission	7624359
+4986	Anti-pathogen response	8755601
+4986	Pain sensation	7624359
+4986	Addiction	7624359
+4986	CNS-specific functions	7624359
+1644	Neuronal transmission	1540578
+4987	Pain sensation	7566152
+4987	CNS-specific functions	8137918
+11122	CNS-specific functions	9486824
+4988	Pain sensation	9689128
+4988	Control of Cell Proliferation	2159143
+4988	Addiction	9689128
+4988	CNS-specific functions	9689128
+11124	Cell death/Apoptosis	10462485
+1647	Cell death/Apoptosis	10828065
+11126	Anti-pathogen response	9973372
+9131	Cell death/Apoptosis	9989411
+7531	Control of Cell Proliferation	7644510
+28516	Anti-pathogen response	9074928
+7532	Control of Cell Proliferation	10433554
+28518	Anti-pathogen response	8951372
+8190	Control of Cell Proliferation	7923218
+9139	Control of Cell Proliferation	9447981
+5931	Control of Cell Proliferation	7503932
+8193	Cell death/Apoptosis	8812431
+7538	Anti-pathogen response	9703499
+8195	Embryonic development	10802661
+6591	Embryonic development	9182671
+4990	Embryonic development	10512683
+4991	Cell migration/motility	1370859
+4991	Chemosensation and response	8097991
+4992	Chemosensation and response	9500546
+4994	Chemosensation and response	8921386
+4995	Chemosensation and response	8921386
+11133	Cell migration/motility	10099934
+11133	Blood clotting	10099934
+11138	Angiogenesis	10373574
+9140	Cell death/Apoptosis	9852036
+9141	Cell death/Apoptosis	9920759
+9143	Neuronal transmission	9760194
+9144	Neuronal transmission	9760194
+9148	Neuronal development	9519875
+9148	Cell fate specification	9519875
+4201	Male specific development	2813404
+7545	CNS-specific functions	8542595
+7546	Neuronal development	9771712
+7546	Embryonic development	9771712
+7547	Other development	7747776
+4208	Neuronal development	8455629
+5948	Epidermal Development and Maintenance	1654334
+5949	Photoreception	2542268
+3263	Intercellular transport	3855550
+3265	Cell migration/motility	10848592
+3267	Pathogenic Invasion	7634337
+11141	CNS-specific functions	10471494
+3269	Anti-pathogen response	7925364
+11146	Anti-pathogen response	8955134
+54332	Neuronal development	10217254
+9152	Neuronal transmission	9845349
+30813	Photoreception	10673340
+5955	Pathogenic Invasion	7624774
+30814	Anti-pathogen response	10681567
+4217	Cell death/Apoptosis	8974401
+5956	Photoreception	7643192
+3270	Muscle action	2037293
+5957	Photoreception	1672047
+30816	Embryonic development	10693809
+5959	Photoreception	10369264
+3273	Blood clotting	2347592
+30819	Neuronal transmission	10676964
+1670	Anti-pathogen response	1429669
+3274	Anti-pathogen response	9725260
+1671	Anti-pathogen response	8626737
+2619	Control of Cell Proliferation	8127893
+1672	Anti-pathogen response	9038346
+1672	Pathogenic Invasion	10521347
+3276	Anti-pathogen response	9029147
+1673	Cell migration/motility	10521347
+1673	Anti-pathogen response	10456937
+11151	Cell migration/motility	9778037
+11151	Pathogenic Invasion	10338208
+1674	Muscle action	9697706
+1675	Anti-pathogen response	1374388
+1676	Cell death/Apoptosis	9108473
+1677	Cell death/Apoptosis	9108473
+1678	Other development	8841189
+6900	Neuronal development	8425542
+6901	Muscle action	9382096
+8506	Neuronal transmission	9118959
+8506	Cell-to-cell signalling	9118959
+8507	Neuronal development	9566959
+6906	Intercellular transport	3094014
+23601	Anti-pathogen response	10449773
+6907	Photoreception	10330347
+4221	Control of Cell Proliferation	9989505
+30820	Neuronal transmission	10676964
+23603	Cell migration/motility	9778037
+5961	Photoreception	1749427
+4223	Angiogenesis	7713505
+2620	Cell death/Apoptosis	1607387
+2621	Control of Cell Proliferation	7854420
+23607	Cell migration/motility	10339567
+2623	Other development	2467208
+3280	Neuronal development	8020957
+5967	Control of Cell Proliferation	2332435
+5969	Control of Cell Proliferation	8549770
+3283	Cell-to-cell signalling	1401999
+10505	Cell-to-cell signalling	10051670
+10505	Neuronal development	10051670
+10507	Anti-pathogen response	8876214
+11165	Cell-to-cell signalling	10419486
+11167	Control of Cell Proliferation	9786430
+6910	Embryonic development	8988165
+6911	Embryonic development	9888994
+9172	Muscle action	7505783
+6912	Embryonic development	9545502
+8517	Cell death/Apoptosis	9927690
+8517	Anti-pathogen response	9751060
+8518	Anti-pathogen response	9751059
+8519	Control of Cell Proliferation	7559564
+6915	Muscle action	1825698
+6915	Blood clotting	1825698
+6916	Blood clotting	8325653
+9177	Neuronal transmission	9950429
+23612	Embryonic development	10594239
+5970	Cell death/Apoptosis	10747850
+28559	Anti-pathogen response	1660526
+4232	Embryonic development	9158153
+4233	Control of Cell Proliferation	10871856
+2632	Energy Storage	8613547
+4236	Extracellular matrix component	7835894
+4237	Extracellular matrix component	7759096
+3290	Cell-to-cell signalling	7670488
+4238	Extracellular matrix component	7782085
+3291	Cell-to-cell signalling	7859916
+4239	Extracellular matrix component	7633408
+3292	Reproduction	9435439
+3292	Cell-to-cell signalling	9435439
+5979	Neuronal development	8114939
+5979	Embryonic development	8114939
+2637	Anti-pathogen response	9346236
+2637	Neuronal development	8838315
+2637	Embryonic development	8838315
+3293	Reproduction	8075637
+3293	Male specific development	8075637
+3293	Cell-to-cell signalling	8075637
+3294	Reproduction	7759109
+3294	Cell-to-cell signalling	7759109
+10512	Anti-pathogen response	9168980
+3295	Reproduction	7487879
+3295	Cell-to-cell signalling	7487879
+11171	Pathogenic Invasion	10049359
+10516	Angiogenesis	10428823
+8521	Cell fate specification	8962155
+9180	Control of Cell Proliferation	8999038
+28563	Anti-pathogen response	8951372
+9184	Control of Cell Proliferation	9660858
+6925	Anti-pathogen response	2105528
+23620	Pain sensation	8795617
+23620	Thermoreception and response	8795617
+6926	Bone Development and Maintenance	9207801
+6926	Embryonic development	9207801
+28567	Anti-pathogen response	8951372
+6929	Anti-pathogen response	8001125
+6929	Control of Cell Proliferation	2799390
+2641	Control of Cell Proliferation	10861272
+2642	Osmoregulation and Excretion	7773293
+2642	Energy Storage	7773293
+2642	Nutrient Absorption	7773293
+23627	Embryonic development	10525406
+5986	Embryonic development	9187150
+2645	Nutrient Absorption	1570017
+10522	Embryonic development	9773984
+2649	Embryonic development	9134503
+10523	CNS-specific functions	8896557
+10524	Pathogenic Invasion	8607265
+11184	Other development	8824585
+10529	Muscle action	9733644
+8530	Anti-pathogen response	9632704
+8531	Anti-pathogen response	8710501
+28571	Anti-pathogen response	1660526
+9191	Cell death/Apoptosis	9774341
+6932	Anti-pathogen response	1569101
+6932	Other development	1569101
+8538	Neuronal development	10644443
+8538	Embryonic development	10644443
+6934	Control of Cell Proliferation	9065401
+28575	Anti-pathogen response	6402305
+8539	Cell death/Apoptosis	9307294
+28576	Anti-pathogen response	9074928
+28577	Anti-pathogen response	8951372
+7593	Other development	1860835
+7594	Anti-pathogen response	8467795
+5990	Anti-pathogen response	1505960
+6938	Anti-pathogen response	1312219
+6939	Embryonic development	8041747
+2650	Anti-pathogen response	1329093
+4254	Anti-pathogen response	2208279
+4254	Control of Cell Proliferation	2208279
+5993	Anti-pathogen response	7744245
+5994	Anti-pathogen response	9118943
+2652	Photoreception	7643192
+4256	Extracellular matrix component	9916809
+4256	Bone Development and Maintenance	9916809
+5995	Photoreception	8641686
+5996	Anti-pathogen response	8241276
+4258	Anti-pathogen response	8703034
+4258	Cell-to-cell signalling	8703034
+4259	Anti-pathogen response	9278457
+4259	Cell-to-cell signalling	9278457
+10537	Anti-pathogen response	9368598
+10538	Anti-pathogen response	8630063
+51041	Gas exchange	7580940
+11197	Cell-to-cell signalling	10201374
+11197	Neuronal development	10201374
+8542	Intercellular transport	
+28580	Anti-pathogen response	1660526
+6941	Control of Cell Proliferation	1868030
+51046	Neuronal development	
+28582	Anti-pathogen response	6420501
+3600	Anti-pathogen response	8178155
+3600	Cell-to-cell signalling	7759105
+6943	Embryonic development	9507058
+8548	Control of Cell Proliferation	9129147
+3603	Anti-pathogen response	9144227
+3603	Cell-to-cell signalling	7910967
+3604	Anti-pathogen response	9207223
+3604	Control of Cell Proliferation	9207223
+3605	Cell death/Apoptosis	7499828
+3605	Anti-pathogen response	7499828
+3605	Cell-to-cell signalling	7499828
+4261	Anti-pathogen response	8402893
+3606	Anti-pathogen response	8666798
+3606	Cell-to-cell signalling	9792649
+6949	Other development	9096354
+6949	Bone Development and Maintenance	9096354
+6949	Embryonic development	8563749
+23643	Anti-pathogen response	10359581
+23645	Cell death/Apoptosis	9153226
+23647	Cell migration/motility	8670882
+4267	Anti-pathogen response	2479542
+10540	Control of Cell Proliferation	8647893
+2668	Neuronal development	8637574
+10542	Pathogenic Invasion	9499022
+2669	Anti-pathogen response	7912851
+10544	Response to injury	7929370
+10544	Anti-pathogen response	7929370
+10545	Control of Cell Proliferation	8021251
+10549	Control of Cell Proliferation	9388242
+8553	Bone Development and Maintenance	9240428
+28590	Anti-pathogen response	9074928
+8556	Control of Cell Proliferation	9367992
+5213	Energy Storage	2140573
+8557	Muscle action	9817758
+28595	Anti-pathogen response	3413078
+28596	Anti-pathogen response	8163948
+28597	Anti-pathogen response	1404388
+28598	Anti-pathogen response	3865189
+3617	Photoreception	9691169
+3617	Extracellular matrix component	9691169
+2670	CNS-specific functions	2740350
+4276	Anti-pathogen response	10426993
+401	Neuronal transmission	8661014
+401	Neuronal development	8661014
+4277	Anti-pathogen response	9497295
+2675	Other development	9192898
+2675	Neuronal development	9192898
+2676	Neuronal development	9576965
+2676	PNS-specific functions	9576965
+65108	CNS-specific functions	
+2677	Blood clotting	9845520
+407	Photoreception	8224247
+10553	Cell death/Apoptosis	9174052
+9507	Connective Tissue Development and Maintenance	10827174
+9509	Connective Tissue Development and Maintenance	10417273
+26205	Pathogenic Invasion	10523663
+8565	Cell migration/motility	10102815
+8565	Cell death/Apoptosis	10102815
+8565	Cell-to-cell signalling	10102815
+5224	Muscle action	6262916
+3621	Control of Cell Proliferation	8944021
+3623	Reproduction	3754442
+3623	Cell-to-cell signalling	3035540
+3624	Reproduction	3267209
+3624	Cell-to-cell signalling	3267209
+3624	Bone Development and Maintenance	10865214
+3624	Cell fate specification	3267209
+5228	Cell-to-cell signalling	9467961
+5228	Angiogenesis	7681160
+5228	Control of Cell Proliferation	7681160
+3625	Reproduction	3754442
+3625	Cell-to-cell signalling	3754442
+4281	Other development	9354791
+4281	Control of Cell Proliferation	9354791
+4281	Embryonic development	9354791
+4282	Anti-pathogen response	8188240
+4282	Cell-to-cell signalling	8188240
+3627	Cell migration/motility	10903763
+3627	Anti-pathogen response	3925348
+3627	Cell-to-cell signalling	3925348
+4283	Cell migration/motility	10903763
+4283	Cell-to-cell signalling	8476424
+4284	Cell-to-cell signalling	1840563
+2683	Progeny nutrition	9597550
+4287	Cell death/Apoptosis	8640226
+4287	Neuronal transmission	7655453
+4287	CNS-specific functions	9124802
+412	Epidermal Development and Maintenance	9252398
+4288	Control of Cell Proliferation	10878014
+4289	Cell migration/motility	10640805
+10560	Nutrient Absorption	10391221
+415	Bone Development and Maintenance	7720070
+415	Extracellular matrix maintenance	7720070
+415	Embryonic development	7720070
+10561	Pathogenic Invasion	7925411
+10563	Cell migration/motility	9486651
+10563	Anti-pathogen response	9486651
+10563	Cell-to-cell signalling	9486651
+9510	Control of Cell Proliferation	10438512
+9516	Anti-pathogen response	10200294
+26211	Chemosensation and response	9500546
+7913	Pathogenic Invasion	9050861
+9518	Anti-pathogen response	9326641
+9518	Cell-to-cell signalling	9326641
+26214	Chemosensation and response	9500546
+26216	Chemosensation and response	9500546
+8575	Anti-pathogen response	9687506
+26218	Chemosensation and response	9500546
+3630	Cell-to-cell signalling	6243748
+3630	Energy Storage	10969839
+8578	Intercellular transport	9395444
+56300	Anti-pathogen response	10744718
+56300	Cell-to-cell signalling	10744718
+2690	Bone Development and Maintenance	9140387
+2690	Control of Cell Proliferation	9341147
+2690	Control of body size	9140387
+3638	Control of Cell Proliferation	9268630
+4294	Cell death/Apoptosis	10801775
+2691	Cell-to-cell signalling	6192430
+2691	Control of body size	8670892
+4295	Peristalsis	10381885
+4295	Cell-to-cell signalling	10381885
+56302	Nutrient Absorption	10944439
+23676	Muscle action	10598820
+2692	Control of Cell Proliferation	9482665
+2692	Control of body size	8528260
+2693	Control of body size	8688086
+4297	Control of Cell Proliferation	10995463
+4298	Control of Cell Proliferation	10995463
+2695	Osmoregulation and Excretion	2890159
+2695	Energy Storage	2890159
+2695	Nutrient Absorption	2890159
+2696	Osmoregulation and Excretion	7556958
+2696	Energy Storage	7556958
+2696	Nutrient Absorption	7556958
+10570	Neuronal development	9652388
+2697	Intercellular transport	1696265
+2697	Muscle action	7715640
+2697	Embryonic development	7715640
+10572	Cell death/Apoptosis	9177220
+10572	Anti-pathogen response	9177220
+427	CNS-specific functions	8955159
+9520	CNS-specific functions	9048733
+429	Neuronal development	8390674
+10575	Pathogenic Invasion	8626763
+10577	Reproduction	8418812
+10578	Anti-pathogen response	9756476
+8581	Epidermal Development and Maintenance	7790363
+5241	Cell-to-cell signalling	1557371
+6982	Anti-pathogen response	2938743
+26228	Anti-pathogen response	10518561
+3640	Reproduction	10391220
+3640	Cell-to-cell signalling	8253799
+6983	Anti-pathogen response	2969332
+3641	Cell-to-cell signalling	8702754
+3641	Other development	8702754
+3641	Control of Cell Proliferation	8702754
+6984	Anti-pathogen response	2969332
+6985	Anti-pathogen response	2969758
+3643	Other development	7693131
+3643	Energy Storage	2859121
+3643	Control of body size	7693131
+3645	Cell-to-cell signalling	2768234
+3646	Pathogenic Invasion	9295280
+430	Embryonic development	9175731
+434	Cell-to-cell signalling	7757071
+434	Energy Storage	7937887
+54714	Photoreception	10888875
+9530	Cell death/Apoptosis	9915703
+10584	Anti-pathogen response	10224141
+10585	Other development	10366449
+10586	Neuronal development	10556287
+10586	Cell fate specification	10556287
+9536	Anti-pathogen response	10377395
+9536	Cell-to-cell signalling	10377395
+9537	Cell death/Apoptosis	9305847
+9538	Cell death/Apoptosis	9305847
+8590	Chemosensation and response	9787077
+5251	Bone Development and Maintenance	9070861
+26239	Epidermal Development and Maintenance	9344646
+3651	Energy Storage	8954967
+3651	Embryonic development	8988180
+5255	Energy Storage	7874115
+5256	Energy Storage	7549948
+5257	Energy Storage	9402963
+3654	Anti-pathogen response	8599092
+6997	Cell-to-cell signalling	1882841
+3655	Epidermal Development and Maintenance	9185503
+6999	CNS-specific functions	8666386
+444	Muscle action	10974562
+10591	Control of Cell Proliferation	9271375
+9541	Cell fate specification	9874765
+9542	Cell-to-cell signalling	9168115
+9542	Other development	9168115
+9543	Neuronal development	9922388
+9543	Embryonic development	9922388
+7940	Anti-pathogen response	7590964
+6201	General cellular role	8522193
+9545	Other development	10023084
+7941	Anti-pathogen response	8675689
+6202	General cellular role	8432552
+7942	Anti-pathogen response	2115126
+6203	General cellular role	7772601
+9547	Cell migration/motility	10049774
+9547	Response to injury	10049774
+9547	Anti-pathogen response	10049774
+9547	Cell-to-cell signalling	10049774
+4600	Anti-pathogen response	8798556
+6204	General cellular role	7772601
+4601	Control of Cell Proliferation	9624006
+6205	General cellular role	3267208
+6206	General cellular role	1861993
+6207	General cellular role	8332508
+5260	Energy Storage	8530014
+6208	General cellular role	3785212
+5261	Energy Storage	8896567
+6209	General cellular role	2159154
+4607	Muscle action	7744002
+4608	Muscle action	8486381
+5264	CNS-specific functions	9326940
+4609	Control of Cell Proliferation	10962037
+5265	Gas exchange	6387509
+5265	Extracellular matrix maintenance	6387509
+5265	Connective Tissue Development and Maintenance	6387509
+5266	Extracellular matrix maintenance	7685029
+5266	Epidermal Development and Maintenance	7685029
+5268	Cell migration/motility	8290962
+5268	Extracellular matrix maintenance	8290962
+3665	Pathogenic Invasion	9315633
+5269	Blood clotting	8415716
+3669	Control of Cell Proliferation	9569007
+6210	General cellular role	9582194
+26253	Anti-pathogen response	10528209
+6217	General cellular role	2016298
+26254	Extracellular matrix component	10636917
+5270	Neuronal transmission	7665170
+6218	General cellular role	3240863
+4616	Cell death/Apoptosis	9827804
+3670	Energy Storage	7912209
+5274	PNS-specific functions	9070919
+5274	CNS-specific functions	9070919
+5275	Epidermal Development and Maintenance	10512713
+5276	Cell migration/motility	10097100
+3673	Angiogenesis	9391074
+3673	Blood clotting	2933589
+3673	Control of Cell Proliferation	10944199
+3674	Blood clotting	10429193
+460	Neuronal development	9070947
+462	Blood clotting	2991253
+463	Embryonic development	1719379
+6222	General cellular role	8441687
+9567	Anti-pathogen response	9070279
+6224	General cellular role	8479924
+9568	Neuronal transmission	9872316
+9568	CNS-specific functions	10087195
+9569	Muscle action	9774679
+4622	Muscle action	10077619
+6227	General cellular role	8332502
+4624	Muscle action	2144212
+6228	General cellular role	8415000
+4625	Muscle action	7909436
+6229	General cellular role	2210388
+26266	Anti-pathogen response	10535998
+5284	Intercellular transport	1682231
+3683	Cell migration/motility	10477596
+3685	Control of Cell Proliferation	10837460
+3688	Control of Cell Proliferation	10944199
+3689	Anti-pathogen response	7686755
+474	Neuronal development	8872459
+51411	Other development	10903846
+8911	CNS-specific functions	10454147
+8913	CNS-specific functions	9495342
+8914	Biological rhythm	9856465
+8915	Cell death/Apoptosis	9989495
+6230	General cellular role	1748303
+6231	General cellular role	9602156
+9575	Biological rhythm	10198158
+6232	General cellular role	8908372
+6234	General cellular role	1679328
+6235	General cellular role	7772601
+4632	Muscle action	2458299
+7976	Angiogenesis	10491302
+4633	Muscle action	8673105
+4634	Muscle action	8673105
+4635	Muscle action	2129532
+5291	Cell migration/motility	10570282
+5292	Other development	2682662
+7979	Embryonic development	8733122
+3690	Blood clotting	10429193
+3690	Control of Cell Proliferation	10837460
+26279	Anti-pathogen response	10455175
+10911	Neuronal transmission	10499587
+10911	Muscle action	10499587
+10915	Pathogenic Invasion	9315662
+54760	Cell-to-cell signalling	
+54766	Control of Cell Proliferation	10995567
+487	Muscle action	8841193
+9580	Embryonic development	10198172
+488	Epidermal Development and Maintenance	
+8927	Neuronal transmission	10329005
+7980	Extracellular matrix maintenance	8914837
+8929	Neuronal development	10395798
+26280	Anti-pathogen response	7959766
+26281	Cell-to-cell signalling	10913340
+1300	Extracellular matrix component	2037056
+1300	Bone Development and Maintenance	8554571
+1300	Connective Tissue Development and Maintenance	2037056
+6247	Photoreception	9326935
+6247	Other development	9326935
+1301	Photoreception	8872475
+4644	Anti-pathogen response	9207796
+4644	Other development	9207796
+4644	Epidermal Development and Maintenance	9207796
+1302	Extracellular matrix component	7859284
+1302	Bone Development and Maintenance	7859284
+1302	Connective Tissue Development and Maintenance	7859284
+50489	Anti-pathogen response	10661407
+1303	Extracellular matrix component	3476925
+4647	Photoreception	7870171
+1305	Extracellular matrix component	9624150
+1306	Extracellular matrix component	1427836
+1306	Connective Tissue Development and Maintenance	1427836
+1307	Connective Tissue Development and Maintenance	1284248
+1308	Epidermal Development and Maintenance	9012408
+1308	Connective Tissue Development and Maintenance	9012408
+10922	Cell death/Apoptosis	7544399
+10928	Cell migration/motility	10848592
+8936	Cell migration/motility	2775266
+9593	Anti-pathogen response	8228263
+9593	Other development	8228263
+9594	Anti-pathogen response	8228263
+9594	Other development	8228263
+8938	Neuronal transmission	9790924
+7993	Reproduction	9027507
+26291	Cell-to-cell signalling	10858549
+1310	Extracellular matrix component	9143499
+1310	Connective Tissue Development and Maintenance	9143499
+4653	Photoreception	9169133
+1311	Extracellular matrix component	7713493
+1311	Bone Development and Maintenance	7670472
+1311	Connective Tissue Development and Maintenance	7713493
+1312	Neuronal transmission	8941353
+1315	Pathogenic Invasion	7982906
+10934	Aging	9891081
+10936	Photoreception	10381362
+10936	CNS-specific functions	10381362
+7200	Cell-to-cell signalling	2126343
+5600	Anti-pathogen response	8663524
+28982	Other development	10648427
+5603	Response to injury	9218798
+5603	Anti-pathogen response	9218798
+27244	Control of Cell Proliferation	9926927
+5604	Cell migration/motility	10912793
+6261	Muscle action	8220423
+28985	Control of Cell Proliferation	9766643
+6262	Muscle action	10830164
+28986	Cell death/Apoptosis	10948432
+5608	Control of Cell Proliferation	10848581
+4661	Neuronal development	1280325
+4665	Control of Cell Proliferation	8668170
+4665	Cell fate specification	8668170
+4666	General cellular role	8047162
+1325	Neuronal transmission	9125122
+1325	Sleep	9125122
+4669	CNS-specific functions	8650226
+1327	General cellular role	2157630
+10941	Chemosensation and response	10359671
+1329	General cellular role	1646156
+57338	CNS-specific functions	10891348
+5610	Anti-pathogen response	7686883
+51454	Cell death/Apoptosis	10574763
+27251	Photoreception	7561685
+51458	Reproduction	10852913
+51458	Osmoregulation and Excretion	10852913
+27255	CNS-specific functions	9486763
+6271	Cell-to-cell signalling	7620916
+6271	Neuronal development	7620916
+5617	Control of Cell Proliferation	10854700
+4671	Cell death/Apoptosis	8552191
+4671	Neuronal development	7813013
+6277	Cell-to-cell signalling	7759097
+6278	Epidermal Development and Maintenance	1940442
+6279	Response to injury	3313057
+6279	Anti-pathogen response	3313057
+1337	General cellular role	2549515
+10950	Control of Cell Proliferation	9632145
+1339	General cellular role	9284905
+50805	Embryonic development	10625552
+7222	Photoreception	9215637
+7224	Neuronal development	10493832
+5621	Neuronal transmission	1677164
+5621	CNS-specific functions	1677164
+7226	CNS-specific functions	9806837
+5623	Neuronal development	9491986
+5623	CNS-specific functions	9491986
+5624	Blood clotting	9252393
+6280	Anti-pathogen response	3313057
+8968	General cellular role	
+5625	CNS-specific functions	10192398
+6281	Epidermal Development and Maintenance	8276421
+5626	Embryonic development	9462743
+5626	Control of body size	9462743
+5627	Blood clotting	9252393
+6283	Anti-pathogen response	7626002
+6283	Pathogenic Invasion	7626002
+4680	Cell-to-cell signalling	3220478
+6285	Neuronal development	8202493
+1340	General cellular role	1650756
+4684	Neuronal transmission	3281256
+4684	Cell-to-cell signalling	3281256
+4684	Neuronal development	3576199
+4684	PNS-specific functions	3576199
+4684	CNS-specific functions	3576199
+6288	Response to injury	7851899
+6288	Anti-pathogen response	7851899
+4685	CNS-specific functions	9226371
+4687	Anti-pathogen response	2848318
+1345	General cellular role	2849755
+4688	Anti-pathogen response	1692159
+4689	Anti-pathogen response	8839867
+1347	General cellular role	1327965
+815	Neuronal transmission	8980240
+815	CNS-specific functions	8980240
+1349	General cellular role	8382530
+29950	Control of Cell Proliferation	6434876
+29953	Cell-to-cell signalling	10491199
+8970	General cellular role	
+8973	Neuronal transmission	8906617
+8974	Extracellular matrix maintenance	9211872
+5631	Neuronal development	8253776
+51475	CNS-specific functions	10625670
+51476	CNS-specific functions	10625670
+8976	Cell migration/motility	9422512
+51478	Reproduction	10544267
+51478	Cell-to-cell signalling	10544267
+6295	Photoreception	7670478
+4692	Neuronal development	9630521
+4692	Control of Cell Proliferation	9630521
+4692	CNS-specific functions	9630521
+1350	General cellular role	7926688
+4693	Photoreception	8252044
+4693	Cell-to-cell signalling	8298646
+4693	Angiogenesis	10484772
+4693	Control of Cell Proliferation	8298646
+4693	CNS-specific functions	8252044
+1351	General cellular role	2543673
+4694	General cellular role	10200266
+4694	Muscle action	8938439
+4695	General cellular role	9878551
+6299	Embryonic development	9425907
+1353	General cellular role	9878253
+820	Anti-pathogen response	8681941
+4697	Muscle action	9352085
+4697	CNS-specific functions	9352085
+1355	General cellular role	9878253
+822	Anti-pathogen response	1322908
+4698	Muscle action	9048877
+4698	CNS-specific functions	9048877
+829	Cell migration/motility	9331217
+8985	Extracellular matrix maintenance	9724729
+27283	Osmoregulation and Excretion	10652240
+2300	Embryonic development	7957066
+7248	Control of Cell Proliferation	10915759
+8987	Muscle action	9794794
+2302	Cell migration/motility	9073514
+2302	Other development	9073514
+2302	CNS-specific functions	9073514
+2304	Embryonic development	9214635
+2305	Control of Cell Proliferation	9032290
+5648	Anti-pathogen response	8018603
+2306	Osmoregulation and Excretion	9403061
+5649	Neuronal development	9049633
+5649	CNS-specific functions	9049633
+2307	Embryonic development	9325056
+2308	Cell death/Apoptosis	10871843
+2309	Cell death/Apoptosis	10102273
+1363	Cell-to-cell signalling	2334405
+1363	Control of body size	7663508
+830	Cell migration/motility	9331217
+1364	Pathogenic Invasion	9334247
+831	Connective Tissue Development and Maintenance	
+1365	Pathogenic Invasion	9334247
+834	Cell death/Apoptosis	7876192
+834	CNS-specific functions	10353249
+835	Cell death/Apoptosis	8087842
+836	Cell death/Apoptosis	7774019
+836	CNS-specific functions	10319819
+10982	Anti-pathogen response	9233623
+837	Cell death/Apoptosis	7797510
+838	Cell death/Apoptosis	7797592
+839	Cell death/Apoptosis	7796396
+50831	Chemosensation and response	10761934
+50832	Chemosensation and response	10761934
+50833	Chemosensation and response	10761934
+50834	Chemosensation and response	10761934
+7252	Cell-to-cell signalling	2792087
+7253	Cell-to-cell signalling	7920658
+7253	Control of body size	7920658
+8993	Anti-pathogen response	9707603
+5650	Epidermal Development and Maintenance	8034709
+8995	Cell death/Apoptosis	10074428
+8995	Cell-to-cell signalling	10074428
+5653	CNS-specific functions	9003450
+8996	Cell death/Apoptosis	9560245
+5654	Connective Tissue Development and Maintenance	9852107
+8997	CNS-specific functions	9285789
+2312	Epidermal Development and Maintenance	2740331
+2314	Muscle action	9177775
+5657	Control of Cell Proliferation	2598267
+2316	Cell migration/motility	9883725
+2316	Neuronal development	9883725
+2319	Epidermal Development and Maintenance	8051082
+840	Cell death/Apoptosis	8576161
+1374	Energy Storage	10408760
+841	Cell death/Apoptosis	8681376
+1375	Energy Storage	10408760
+842	Cell death/Apoptosis	9390557
+1376	Muscle action	8358442
+843	Cell death/Apoptosis	8521391
+1378	Anti-pathogen response	3031685
+10990	Anti-pathogen response	9548455
+846	Bone Development and Maintenance	7874174
+846	Chemosensation and response	7759551
+846	Control of body size	7874174
+8200	Cell-to-cell signalling	8589725
+8200	Bone Development and Maintenance	8589725
+7262	Cell death/Apoptosis	9328465
+5660	Intercellular transport	1454804
+50848	Cell migration/motility	10395639
+50848	Anti-pathogen response	10395639
+6609	Neuronal development	7670466
+29989	Chemosensation and response	10607840
+5663	Cell death/Apoptosis	10805794
+5663	CNS-specific functions	8878479
+2321	Angiogenesis	10194760
+5664	Cell death/Apoptosis	8939861
+5664	CNS-specific functions	8878479
+1380	Anti-pathogen response	2528587
+1381	Other development	1309505
+1382	Epidermal Development and Maintenance	1654334
+10205	Other development	9585423
+10206	Embryonic development	9599022
+10209	General cellular role	10347211
+9951	Extracellular matrix maintenance	9988767
+9953	Extracellular matrix maintenance	9988767
+29991	Chemosensation and response	10607840
+9955	Extracellular matrix maintenance	9988767
+8216	Embryonic development	7633402
+50852	Anti-pathogen response	9687533
+9956	Extracellular matrix maintenance	9988767
+9957	Blood clotting	8900198
+50855	Pathogenic Invasion	9482110
+7272	Control of Cell Proliferation	1639825
+50856	Anti-pathogen response	10438934
+7273	Muscle action	7569978
+7276	Intercellular transport	7946531
+26658	Chemosensation and response	9500546
+2331	Extracellular matrix component	8093006
+26659	Chemosensation and response	9268701
+2334	CNS-specific functions	8673086
+2335	Cell migration/motility	10809722
+2335	Cell-to-cell signalling	9636140
+1392	Neuronal transmission	7477348
+1392	Anti-pathogen response	9620773
+1392	Addiction	9620773
+860	Bone Development and Maintenance	9207800
+1394	Response to injury	7692441
+1394	Anti-pathogen response	7692441
+861	Control of Cell Proliferation	10508512
+10216	Control of Cell Proliferation	10545950
+10216	Connective Tissue Development and Maintenance	10545950
+1396	Anti-pathogen response	9126610
+862	Energy Storage	9618262
+10218	Anti-pathogen response	8026862
+10218	Angiogenesis	9727400
+863	Control of Cell Proliferation	9447981
+10219	Anti-pathogen response	9842918
+865	Anti-pathogen response	9751756
+51804	Embryonic development	10640827
+869	Neuronal development	1704129
+869	CNS-specific functions	1704129
+51806	Epidermal Development and Maintenance	10777582
+50861	Neuronal development	9603203
+9965	Neuronal development	9931477
+6622	Cell death/Apoptosis	10818098
+6622	Neuronal development	9197268
+6622	CNS-specific functions	9197268
+9966	Cell-to-cell signalling	9872942
+9966	Angiogenesis	9872942
+50863	Neuronal development	7891157
+9968	Neuronal development	9702738
+7284	General cellular role	9332382
+7287	Photoreception	9462750
+5688	Pathogenic Invasion	8764072
+2346	Neuronal transmission	9838072
+10221	Control of Cell Proliferation	9342215
+10224	Cell death/Apoptosis	9731181
+10225	Anti-pathogen response	1313846
+10229	Aging	9020081
+51816	Control of Cell Proliferation	10756095
+9976	Anti-pathogen response	9038101
+7290	Other development	7633437
+7291	Bone Development and Maintenance	8988166
+7291	Embryonic development	8988166
+7292	Anti-pathogen response	7913952
+7292	Cell-to-cell signalling	7913952
+7292	Control of Cell Proliferation	7913952
+7293	Anti-pathogen response	7510240
+6638	CNS-specific functions	1533223
+7295	Cell migration/motility	10947064
+7295	Anti-pathogen response	10947064
+7295	Cell-to-cell signalling	10947064
+7295	Control of Cell Proliferation	3170595
+5696	Anti-pathogen response	8666937
+5697	Cell migration/motility	10488139
+5697	Cell-to-cell signalling	7493937
+5697	Feeding	10698177
+5697	Control of Cell Proliferation	10488139
+5698	Anti-pathogen response	8666937
+2356	Control of Cell Proliferation	7721888
+5699	Anti-pathogen response	8666937
+2357	Cell migration/motility	10857861
+2357	Pathogenic Invasion	1373134
+2358	Cell migration/motility	9054386
+2358	Response to injury	9054386
+2358	Anti-pathogen response	9054386
+2359	Cell migration/motility	8198572
+885	Cell-to-cell signalling	3856870
+886	Feeding	8503909
+886	Nutrient Absorption	8503909
+887	Pain sensation	7681836
+887	Feeding	7681836
+887	Control of Cell Proliferation	10400698
+9981	Gas exchange	8360162
+9982	Cell-to-cell signalling	1885605
+6640	Muscle action	8576247
+6641	Muscle action	8183929
+3300	Neuronal transmission	1599432
+6647	CNS-specific functions	8351519
+6649	Extracellular matrix maintenance	8034674
+26689	Chemosensation and response	9119360
+10241	Pathogenic Invasion	7540613
+10242	Neuronal transmission	10097176
+10242	Muscle action	10097176
+56776	Embryonic development	10781961
+56776	CNS-specific functions	10781961
+9992	Muscle action	10219239
+9994	Cell death/Apoptosis	10235259
+6654	Cell death/Apoptosis	10943841
+6654	Control of Cell Proliferation	10943841
+6654	Epidermal Development and Maintenance	10943841
+6656	Neuronal development	9337405
+6656	CNS-specific functions	9337405
+6657	Embryonic development	7590241
+3316	Cell death/Apoptosis	10958679
+100	Anti-pathogen response	7570001
+102	Cell-to-cell signalling	9305925
+103	Anti-pathogen response	7618288
+104	CNS-specific functions	9111310
+10251	Cell-to-cell signalling	9458049
+10252	Cell-to-cell signalling	9458049
+10253	Cell-to-cell signalling	9458049
+9201	Neuronal development	10036192
+9201	CNS-specific functions	9747029
+9203	CNS-specific functions	10486218
+6662	Bone Development and Maintenance	8640233
+6663	Neuronal development	9462749
+6664	Neuronal development	8666406
+6664	CNS-specific functions	8666406
+6665	Male specific development	9540826
+6668	Anti-pathogen response	1341900
+11202	Neuronal development	10102990
+11202	CNS-specific functions	10102990
+1725	Control of Cell Proliferation	8549832
+1727	Intercellular transport	1400360
+114	Addiction	8076676
+114	CNS-specific functions	8076676
+10261	Anti-pathogen response	9809579
+116	Cell-to-cell signalling	2302217
+119	Cell migration/motility	1840603
+9211	Control of Cell Proliferation	9879993
+9211	CNS-specific functions	9879993
+9213	Pathogenic Invasion	9927670
+9214	Cell death/Apoptosis	9586636
+9214	Anti-pathogen response	9586636
+6671	Reproduction	1454515
+6671	CNS-specific functions	1454515
+6678	Bone Development and Maintenance	7034958
+11211	Other development	10448064
+11211	Cell fate specification	10448064
+1736	Control of Cell Proliferation	9590285
+1736	Epidermal Development and Maintenance	10591218
+2395	CNS-specific functions	8841185
+1739	Cell-to-cell signalling	8825652
+9220	Cell death/Apoptosis	9918798
+28603	Anti-pathogen response	8951372
+9223	CNS-specific functions	9647739
+28605	Anti-pathogen response	1660526
+28606	Anti-pathogen response	3865189
+9229	Neuronal transmission	9286858
+8288	Anti-pathogen response	10386597
+3344	Pathogenic Invasion	1639393
+6687	Neuronal development	9635427
+1742	Neuronal development	9286702
+11222	General cellular role	2891103
+11224	General cellular role	2891103
+1747	Bone Development and Maintenance	9467018
+1747	Embryonic development	9467018
+1749	Neuronal development	7907794
+1749	Bone Development and Maintenance	7907794
+133	Osmoregulation and Excretion	10867102
+133	Cell-to-cell signalling	8074714
+134	Cell death/Apoptosis	7818494
+134	Cell-to-cell signalling	7818494
+134	CNS-specific functions	8450977
+10280	Addiction	9453537
+135	Cell death/Apoptosis	7818494
+135	Pain sensation	9262401
+135	Cell-to-cell signalling	7818494
+135	Blood clotting	10899090
+135	CNS-specific functions	10945659
+136	Defecation	7836474
+9231	Control of Cell Proliferation	9738934
+10285	Cell death/Apoptosis	9817934
+10288	Anti-pathogen response	9382880
+9235	Anti-pathogen response	1729377
+8290	General cellular role	
+8291	Muscle action	9731526
+8292	Neuronal transmission	9689136
+8294	General cellular role	
+6692	Response to injury	9045658
+6692	Control of Cell Proliferation	9045658
+6693	Cell migration/motility	10753822
+6693	Anti-pathogen response	1683685
+3351	Neuronal transmission	1351684
+6694	Bone Development and Maintenance	7814406
+3352	Neuronal transmission	1565658
+6695	Cell migration/motility	8389704
+6695	Reproduction	8389704
+6695	Control of Cell Proliferation	8389704
+6696	Bone Development and Maintenance	10766759
+3354	Neuronal transmission	1608964
+1750	Neuronal development	7907794
+1750	Bone Development and Maintenance	7907794
+3355	Neuronal transmission	8380639
+6698	Epidermal Development and Maintenance	8325635
+3356	Neuronal transmission	9109547
+6699	Epidermal Development and Maintenance	1438308
+3358	Neuronal transmission	1302605
+3359	Neuronal transmission	7565620
+3359	Peristalsis	7565620
+1756	Muscle action	1824797
+140	Response to injury	9837869
+1758	Extracellular matrix component	8509401
+1758	Bone Development and Maintenance	8509401
+142	Cell death/Apoptosis	10958667
+146	Cell death/Apoptosis	10969806
+146	Cell-to-cell signalling	1656955
+146	Control of Cell Proliferation	10820200
+146	Cell fate specification	10820200
+10292	Neuronal development	9225980
+147	Cell-to-cell signalling	1328250
+147	Cell fate specification	10820200
+10293	Cell death/Apoptosis	9104814
+10293	Anti-pathogen response	9104814
+148	Cell death/Apoptosis	10671514
+148	Cell-to-cell signalling	8396931
+148	Muscle action	8183249
+148	Control of Cell Proliferation	10860850
+9240	CNS-specific functions	10050892
+9241	Bone Development and Maintenance	10080184
+9241	Embryonic development	10080184
+54429	Chemosensation and response	10761935
+9242	Anti-pathogen response	9584154
+10296	Cell death/Apoptosis	9763581
+10296	Other development	9763581
+9244	Anti-pathogen response	9686600
+10298	Cell migration/motility	9822598
+9248	Cell-to-cell signalling	8647286
+9249	Photoreception	9705317
+4303	Control of Cell Proliferation	10783894
+2700	Photoreception	10205266
+2700	Intercellular transport	9413992
+2701	Intercellular transport	7680674
+2702	Intercellular transport	7966354
+2702	Muscle action	7966354
+4306	Osmoregulation and Excretion	9662404
+2703	Photoreception	9497259
+3360	PNS-specific functions	9276448
+2705	Neuronal transmission	8266101
+2705	Intercellular transport	1319395
+3362	Neuronal transmission	8522988
+2706	Intercellular transport	1324944
+3363	Neuronal transmission	8226867
+1760	Muscle action	1303233
+1761	Male specific development	10332030
+1764	Cell migration/motility	9373155
+1766	Cell migration/motility	9256245
+150	Cell migration/motility	9624180
+1767	Cell migration/motility	9256245
+151	Cell-to-cell signalling	2164221
+11245	CNS-specific functions	7893747
+152	Cell-to-cell signalling	9371698
+152	CNS-specific functions	10945659
+1769	Cell migration/motility	9256245
+155	Thermoregulation	2570461
+155	Control of body size	10786926
+9253	Neuronal development	9303539
+9255	Response to injury	7545917
+9255	Anti-pathogen response	7545917
+9255	Cell-to-cell signalling	9405472
+28638	Anti-pathogen response	8951372
+4311	Cell-to-cell signalling	2521388
+4312	Extracellular matrix maintenance	2167156
+4312	Connective Tissue Development and Maintenance	3027129
+4313	Extracellular matrix maintenance	2834383
+4314	Extracellular matrix maintenance	3360803
+4316	Extracellular matrix maintenance	1497627
+4317	Extracellular matrix maintenance	2164002
+4318	Extracellular matrix maintenance	2551898
+3371	Extracellular matrix component	10953015
+4319	Extracellular matrix maintenance	2844164
+1770	Cell migration/motility	8812413
+3375	Cell death/Apoptosis	8152488
+3375	Cell-to-cell signalling	2608057
+2719	Control of Cell Proliferation	9931407
+2719	Embryonic development	9931407
+11250	CNS-specific functions	10036181
+11251	Anti-pathogen response	9973380
+11251	CNS-specific functions	10036181
+8600	Anti-pathogen response	9367155
+8600	Bone Development and Maintenance	9568710
+165	Bone Development and Maintenance	8920928
+165	Energy Storage	8920928
+8601	Neuronal transmission	9748279
+8601	CNS-specific functions	9748279
+9262	Cell death/Apoptosis	9786912
+9263	Cell death/Apoptosis	9786912
+8608	Cell-to-cell signalling	9677409
+4320	Cell migration/motility	7746327
+4320	Extracellular matrix maintenance	1701851
+4321	Cell migration/motility	7782320
+4321	Extracellular matrix maintenance	8226919
+4322	Extracellular matrix maintenance	8207000
+4322	Connective Tissue Development and Maintenance	8609233
+4323	Extracellular matrix maintenance	8015608
+4324	Extracellular matrix maintenance	7559440
+4325	Extracellular matrix maintenance	7559440
+3383	Anti-pathogen response	10985244
+3383	Pathogenic Invasion	3349522
+10601	Neuronal development	9225980
+3384	Anti-pathogen response	2497351
+3385	Anti-pathogen response	1448173
+10603	Anti-pathogen response	9233773
+11262	Anti-pathogen response	8910577
+174	Osmoregulation and Excretion	1379776
+174	Anti-pathogen response	1379776
+8611	Other development	9305923
+8611	Control of Cell Proliferation	9305923
+176	Extracellular matrix component	1985970
+176	Extracellular matrix maintenance	1985970
+176	Connective Tissue Development and Maintenance	1985970
+177	Response to injury	10399917
+177	Anti-pathogen response	10399917
+8613	Other development	9305923
+8613	Control of Cell Proliferation	9305923
+8614	Cell-to-cell signalling	9753616
+4335	Control of Cell Proliferation	9184233
+4336	Neuronal development	7989345
+4336	CNS-specific functions	7989345
+2736	Other development	9731531
+2737	Other development	9054938
+3394	Anti-pathogen response	8861914
+3394	Other development	8861914
+10612	Neuronal development	10391919
+1791	Anti-pathogen response	2833741
+1793	Cell death/Apoptosis	9548255
+181	Feeding	9751529
+181	Control of body size	9311920
+181	Nutrient Absorption	9311920
+183	Cell-to-cell signalling	8513325
+8620	Neuronal transmission	9224703
+186	Cell death/Apoptosis	10406457
+8625	Anti-pathogen response	10072068
+8626	Cell death/Apoptosis	9662378
+8628	Cell death/Apoptosis	9624166
+4340	Neuronal transmission	8530032
+9289	Cell-to-cell signalling	10049584
+2740	Osmoregulation and Excretion	8392011
+2740	Energy Storage	8392011
+2740	Nutrient Absorption	8392011
+2741	Neuronal transmission	8651283
+2741	CNS-specific functions	8298642
+2742	Neuronal transmission	2155780
+2743	Neuronal transmission	8717357
+2746	CNS-specific functions	6121377
+2747	Neuronal transmission	
+1009	Bone Development and Maintenance	8163513
+11280	Neuronal transmission	
+11281	Photoreception	8601806
+10625	Pathogenic Invasion	9696811
+11285	Connective Tissue Development and Maintenance	10473568
+54472	Cell-to-cell signalling	10854325
+8630	Cell-to-cell signalling	9188497
+8631	Anti-pathogen response	9195899
+196	Cell death/Apoptosis	9170146
+8633	Neuronal development	9126742
+197	Anti-pathogen response	3474608
+197	Bone Development and Maintenance	3474608
+51135	Anti-pathogen response	3772297
+199	Response to injury	8912632
+199	Angiogenesis	9614071
+28672	Anti-pathogen response	8951372
+9294	Control of Cell Proliferation	10617617
+8639	Anti-pathogen response	9653080
+23732	CNS-specific functions	10603000
+4352	Control of Cell Proliferation	8020956
+4353	Cell death/Apoptosis	10801811
+4353	Anti-pathogen response	8621627
+2752	CNS-specific functions	8975719
+1016	Neuronal development	9030594
+1016	CNS-specific functions	9030594
+4359	Neuronal transmission	7693130
+4359	PNS-specific functions	7693130
+1017	Control of Cell Proliferation	10908655
+10631	Bone Development and Maintenance	8363580
+22795	Extracellular matrix component	9733643
+10633	CNS-specific functions	8975699
+55423	Cell-to-cell signalling	9062191
+8641	Response to injury	9199196
+8642	Response to injury	9199196
+5300	Neuronal transmission	10391244
+28680	Anti-pathogen response	8206523
+8644	Control of Cell Proliferation	9862446
+8645	Osmoregulation and Excretion	9812978
+8646	Cell-to-cell signalling	9782094
+8646	Cell fate specification	9782094
+8647	Nutrient Absorption	9806540
+51148	Cell migration/motility	10608765
+3702	Anti-pathogen response	8364206
+5307	Bone Development and Maintenance	9070926
+5307	Embryonic development	9070926
+5308	Neuronal development	8944018
+5308	Embryonic development	8944018
+5309	Photoreception	9620774
+5309	Embryonic development	9620774
+23746	Photoreception	10615133
+2764	Neuronal development	1712830
+2765	Cell death/Apoptosis	8934543
+1026	Cell death/Apoptosis	7655464
+1026	Control of Cell Proliferation	10692450
+1027	Control of Cell Proliferation	10828884
+2768	Blood clotting	8290554
+10642	Embryonic development	9891060
+10643	Control of Cell Proliferation	9178771
+10643	Embryonic development	9891060
+10644	Embryonic development	9891060
+8650	CNS-specific functions	7596406
+5310	Osmoregulation and Excretion	8554072
+5311	Osmoregulation and Excretion	8650545
+5311	Other development	9171830
+51156	Blood clotting	10460162
+8659	General cellular role	8621661
+5317	Cell-to-cell signalling	9326952
+5317	Epidermal Development and Maintenance	9326952
+3714	Embryonic development	9315665
+3714	Cell fate specification	9315665
+5319	Cell migration/motility	9886417
+3716	Anti-pathogen response	8232552
+3717	Cell migration/motility	9670957
+3717	Cell death/Apoptosis	10692450
+3717	Control of Cell Proliferation	9670957
+3718	Anti-pathogen response	7659163
+2771	Neuronal transmission	9637720
+2771	Nutrient Absorption	8587610
+2774	Chemosensation and response	8243272
+2775	Muscle action	9050846
+2775	Neuronal development	9050846
+2776	Blood clotting	9238049
+1038	CNS-specific functions	3474619
+2778	Control of Cell Proliferation	8541861
+1039	CNS-specific functions	2014264
+2779	Photoreception	8673138
+9600	Photoreception	9680295
+509	Muscle action	8227057
+10655	Male specific development	10332030
+9603	Cell fate specification	10037736
+9604	Male specific development	10085091
+10658	Neuronal transmission	8948631
+10658	Muscle action	8948631
+26301	Pathogenic Invasion	10506200
+9607	Cell-to-cell signalling	8647455
+9607	CNS-specific functions	8647455
+8660	Energy Storage	7675087
+50509	Extracellular matrix component	10722718
+50509	Epidermal Development and Maintenance	10722718
+50509	Connective Tissue Development and Maintenance	10722718
+3720	Neuronal development	8894700
+5324	Other development	9020842
+5325	Cell death/Apoptosis	9184226
+5327	Response to injury	3087818
+5327	Blood clotting	3839198
+5328	Blood clotting	6589620
+5329	Blood clotting	8049431
+1040	Photoreception	9806839
+2780	Photoreception	8406495
+1041	Epidermal Development and Maintenance	9395522
+2781	CNS-specific functions	3129724
+1044	Other development	8530027
+1045	Other development	9459001
+1047	Reproduction	9177349
+10661	Intercellular transport	8924208
+10666	Anti-pathogen response	8673704
+9615	Neuronal development	10542258
+50514	Control of Cell Proliferation	10612805
+9617	General cellular role	9838146
+8672	General cellular role	9418880
+3730	Cell migration/motility	1922361
+3730	Cell-to-cell signalling	1913827
+3730	Extracellular matrix component	8832397
+3730	Neuronal development	1922361
+3730	Embryonic development	1922361
+3730	Chemosensation and response	1913827
+8678	Cell death/Apoptosis	9765397
+8678	Anti-pathogen response	9765397
+3732	Anti-pathogen response	1842498
+5337	Cell migration/motility	10848592
+5339	Muscle action	8696340
+5339	Epidermal Development and Maintenance	8696340
+3736	Neuronal transmission	7842011
+3736	Muscle action	7842011
+1050	Energy Storage	8643605
+1050	Control of body size	8643605
+1051	Anti-pathogen response	2112087
+2792	Photoreception	8661128
+1053	Anti-pathogen response	8661101
+2796	Reproduction	2867548
+2796	Cell-to-cell signalling	1310542
+2796	Control of Cell Proliferation	10832105
+10670	Cell death/Apoptosis	8995684
+525	Osmoregulation and Excretion	9916796
+2798	Reproduction	10686191
+10673	Control of Cell Proliferation	10908663
+9620	CNS-specific functions	9339365
+10675	CNS-specific functions	9950058
+9622	Reproduction	10077646
+10677	Neuronal development	9664034
+9626	Photoreception	10037746
+9627	CNS-specific functions	10319874
+5340	Angiogenesis	8910613
+5340	Blood clotting	8910613
+8685	Anti-pathogen response	9468508
+8687	Epidermal Development and Maintenance	9756910
+2001	Control of Cell Proliferation	9840936
+8688	Epidermal Development and Maintenance	9756910
+5345	Blood clotting	2433286
+8689	Epidermal Development and Maintenance	9756910
+5347	Control of Cell Proliferation	8127874
+2006	Angiogenesis	9580666
+2006	Extracellular matrix component	9580666
+2006	Connective Tissue Development and Maintenance	9580666
+3749	Neuronal transmission	1381835
+56413	Cell migration/motility	10889186
+56413	Anti-pathogen response	10934230
+10682	Bone Development and Maintenance	10391219
+10683	Bone Development and Maintenance	10742114
+10686	Osmoregulation and Excretion	10390358
+9637	Neuronal development	9096408
+9638	Neuronal development	9096408
+5350	Muscle action	9345259
+8694	Energy Storage	9789033
+5351	Extracellular matrix maintenance	8449506
+5351	Epidermal Development and Maintenance	5027136
+51195	CNS-specific functions	9789079
+5352	Extracellular matrix maintenance	9054364
+2010	Muscle action	7894480
+5354	Neuronal transmission	2479017
+8698	Anti-pathogen response	9790765
+2012	Epidermal Development and Maintenance	7499420
+2013	Cell death/Apoptosis	8884260
+2013	Control of Cell Proliferation	8996089
+2014	Cell death/Apoptosis	8884260
+2014	Control of Cell Proliferation	8996089
+3753	Muscle action	9020846
+2016	Neuronal development	7959790
+2018	Neuronal development	7959790
+3757	Muscle action	7736582
+2019	Embryonic development	8094370
+3758	Osmoregulation and Excretion	9015377
+1075	Anti-pathogen response	9092576
+57086	Anti-pathogen response	10823842
+10692	Photoreception	9275222
+6300	Control of Cell Proliferation	10848581
+6302	Control of Cell Proliferation	8134123
+10699	Embryonic development	10329693
+26343	Chemosensation and response	9119360
+4703	Muscle action	10051637
+4705	General cellular role	9878551
+5361	Neuronal development	8570614
+4708	General cellular role	9878551
+2022	Angiogenesis	7894484
+5367	Cell-to-cell signalling	1572663
+5367	Feeding	1572663
+5368	Pain sensation	9521323
+2028	Cell-to-cell signalling	8346219
+2028	Control of Cell Proliferation	8346219
+1080	Osmoregulation and Excretion	9875854
+1080	Gas exchange	9875854
+1080	Pathogenic Invasion	9590693
+2029	Nutrient Absorption	9653196
+1081	Cell-to-cell signalling	481597
+3768	Muscle action	7859381
+1082	Cell death/Apoptosis	7723844
+1082	Cell-to-cell signalling	6194155
+551	Cell-to-cell signalling	1740104
+551	Energy Storage	1740104
+552	Energy Storage	8106369
+553	Cell-to-cell signalling	7929452
+554	Osmoregulation and Excretion	1356229
+1088	Anti-pathogen response	2208113
+57096	Photoreception	10958647
+57099	Cell death/Apoptosis	10949025
+6310	Neuronal transmission	7647801
+6310	CNS-specific functions	7647801
+6311	CNS-specific functions	8896557
+4710	General cellular role	9878551
+6314	Photoreception	9288099
+6314	CNS-specific functions	9288099
+26353	Control of Cell Proliferation	10833516
+5375	Neuronal transmission	8288226
+2033	Neuronal development	7523245
+5376	Neuronal transmission	8275092
+5376	PNS-specific functions	8275092
+3776	Pain sensation	10321245
+3776	CNS-specific functions	9003761
+3777	Neuronal transmission	9312005
+3778	Neuronal transmission	7993625
+3778	Muscle action	8612769
+3779	Neuronal transmission	8799178
+3779	Muscle action	8612769
+566	Anti-pathogen response	1919011
+6320	Cell-to-cell signalling	9705843
+284217	Extracellular matrix component	
+27306	Anti-pathogen response	9323136
+27306	Locomotion	10781097
+27306	Cell-to-cell signalling	9353279
+27306	Sleep	10781097
+6322	Embryonic development	9570953
+27308	Cell death/Apoptosis	9399956
+27308	CNS-specific functions	9399956
+6324	Neuronal transmission	9697698
+6324	CNS-specific functions	9697698
+4723	General cellular role	8288251
+6327	Neuronal transmission	9295116
+6328	Neuronal transmission	9589372
+6329	Muscle action	1338909
+3780	Neuronal transmission	8781233
+4728	CNS-specific functions	9837812
+4729	CNS-specific functions	9570948
+3782	Neuronal transmission	8781233
+3783	Anti-pathogen response	9407042
+3784	Muscle action	8528244
+3785	Neuronal transmission	9425895
+3785	CNS-specific functions	9425895
+3786	Neuronal transmission	9836639
+3786	CNS-specific functions	9425900

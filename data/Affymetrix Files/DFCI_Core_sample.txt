@@ -1,0 +1,39 @@
+Expression Analysis: Metrics Tab
+
+	Analysis Name	Probe Set Name	Stat Pairs	Stat Pairs Used	Signal	Detection	Detection p-value	Stat Common Pairs	Signal Log Ratio	Signal Log Ratio Low	Signal Log Ratio High	Change	Change p-value	Positive	Negative	Pairs	Pairs Used	Pairs InAvg	Pos Fraction	Log Avg	Pos/Neg	Avg Diff	Abs Call	Inc	Dec	Inc Ratio	Dec Ratio	Pos Change	Neg Change	Inc/Dec	DPos-DNeg Ratio	Log Avg Ratio Change	Diff Call	Avg Diff Change	B=A	Fold Change	Sort Score
+1	RS2003082124A	AFFX-BioB-5_at	20	20	162.5	P	0.001593																														
+2	RS2003082124A	AFFX-BioB-M_at	20	20	256.3	P	0.000081																														
+3	RS2003082124A	AFFX-BioB-3_at	20	20	108.6	P	0.000340																														
+4	RS2003082124A	AFFX-BioC-5_at	20	20	299.7	P	0.000095																														
+5	RS2003082124A	AFFX-BioC-3_at	20	20	226.4	P	0.000052																														
+6	RS2003082124A	AFFX-BioDn-5_at	20	20	247.7	P	0.000070																														
+7	RS2003082124A	AFFX-BioDn-3_at	20	20	1719.5	P	0.000095																														
+8	RS2003082124A	AFFX-CreX-5_at	20	20	2956.6	P	0.000044																														
+9	RS2003082124A	AFFX-CreX-3_at	20	20	5051.7	P	0.000044																														
+10	RS2003082124A	AFFX-DapX-5_at	20	20	1.2	A	0.470241																														
+11	RS2003082124A	AFFX-DapX-M_at	20	20	11.4	A	0.185131																														
+12	RS2003082124A	AFFX-DapX-3_at	20	20	1.4	A	0.966323																														
+13	RS2003082124A	AFFX-LysX-5_at	20	20	5.3	A	0.470241																														
+14	RS2003082124A	AFFX-LysX-M_at	20	20	2.5	A	0.760937																														
+15	RS2003082124A	AFFX-LysX-3_at	20	20	2.2	A	0.724854																														
+16	RS2003082124A	AFFX-PheX-5_at	20	20	0.8	A	0.927300																														
+17	RS2003082124A	AFFX-PheX-M_at	20	20	11.7	A	0.712257																														
+18	RS2003082124A	AFFX-PheX-3_at	20	20	6.2	A	0.588620																														
+19	RS2003082124A	AFFX-ThrX-5_at	20	20	3.3	A	0.544587																														
+20	RS2003082124A	AFFX-ThrX-M_at	20	20	11.3	A	0.165861																														
+21	RS2003082124A	AFFX-ThrX-3_at	20	20	14.2	A	0.686277																														
+22	RS2003082124A	AFFX-TrpnX-5_at	20	20	11.0	A	0.411380																														
+23	RS2003082124A	AFFX-TrpnX-M_at	20	20	1.0	A	0.960339																														
+24	RS2003082124A	AFFX-TrpnX-3_at	20	20	0.6	A	0.724854																														
+25	RS2003082124A	AFFX-r2-Ec-bioB-5_at	11	11	128.4	P	0.000244																														
+26	RS2003082124A	AFFX-r2-Ec-bioB-M_at	11	11	248.3	P	0.000244																														
+27	RS2003082124A	AFFX-r2-Ec-bioB-3_at	11	11	166.4	P	0.000244																														
+28	RS2003082124A	AFFX-r2-Ec-bioC-5_at	11	11	496.2	P	0.000244																														
+29	RS2003082124A	AFFX-r2-Ec-bioC-3_at	11	11	519.6	P	0.000244																														
+30	RS2003082124A	AFFX-r2-Ec-bioD-5_at	11	11	1385.2	P	0.000244																														
+31	RS2003082124A	AFFX-r2-Ec-bioD-3_at	11	11	1598.8	P	0.000244																														
+32	RS2003082124A	AFFX-r2-P1-cre-5_at	11	11	7649.5	P	0.000244																														
+33	RS2003082124A	AFFX-r2-P1-cre-3_at	11	11	7559.2	P	0.000244																														
+34	RS2003082124A	AFFX-r2-Bs-dap-5_at	11	11	1.8	A	0.888428																														
+35	RS2003082124A	AFFX-r2-Bs-dap-M_at	11	11	0.5	A	0.985840																														
+36	RS2003082124A	AFFX-r2-Bs-dap-3_at	11	11	4.7	A	0.432373																							
