@@ -1,0 +1,3438 @@
+570	Cytoplasmic	2037576
+575	Growth cone	10343108
+575	Cell junction	9647739
+51513	Nuclear	10828014
+51517	Nuclear	10648423
+27314	Golgi	9792283
+27315	Unspecified membrane	10585768
+6331	Unspecified membrane	7651517
+6332	Unspecified membrane	1317577
+6334	Unspecified membrane	9828131
+6335	Unspecified membrane	7720699
+6336	Unspecified membrane	9839820
+6337	Unspecified membrane	8589714
+6338	Unspecified membrane	8521520
+4734	Cytoplasmic	9990509
+6339	Unspecified membrane	7499195
+5393	Nuclear	2007859
+5393	Nuclear nucleolus	2007859
+5394	Nuclear nucleolus	1383382
+3790	Unspecified membrane	10484328
+5395	Nuclear	8072530
+2052	Microsomal fraction	7892276
+3792	Cytoskeletal	1712490
+2053	Cytoplasmic	7868134
+2055	Unspecified membrane	10508524
+55801	Extracellular (excluding cell wall)	10729163
+2056	Extracellular (excluding cell wall)	3838366
+3796	Cytoskeletal	9177777
+2057	Dendrite	10984541
+2057	Cell body (soma)	10984541
+3797	Cytoskeletal	9480755
+2058	Cytoplasmic	8188258
+3798	Cytoskeletal	7514426
+3798	Unspecified membrane	7514426
+3798	Cell body (soma)	7514426
+3799	Cytoskeletal	1607388
+586	Cytoplasmic	9165094
+587	Mitochondrial	9165094
+6341	Mitochondrial	9878253
+4741	Cytoskeletal	3608989
+6346	Extracellular (excluding cell wall)	2212659
+3005	Nuclear	8325638
+1401	Extracellular (excluding cell wall)	10408362
+3006	Nuclear	
+3007	Nuclear	
+4747	Cytoskeletal	3034332
+3008	Nuclear	
+1404	Extracellular (excluding cell wall)	2286376
+1404	Extracellular matrix (cuticle and basement membrane)	2286376
+3009	Nuclear	
+23047	Nuclear	10215036
+55810	Nuclear	10777590
+2065	Unspecified membrane	2687875
+55811	Cytoplasmic	9874775
+2066	Unspecified membrane	8383326
+2067	Nuclear	10320375
+2069	Extracellular (excluding cell wall)	9337852
+56475	Cytoplasmic	10930422
+593	Mitochondrial	1889817
+594	Mitochondrial	1889817
+56478	Nuclear	10856257
+56478	Cytoplasmic	10856257
+56479	Unspecified membrane	10787416
+596	Mitochondrial	2250705
+598	Mitochondrial	10365962
+27332	Nuclear	8647861
+27333	Golgi	9201717
+6351	Extracellular (excluding cell wall)	2521882
+27336	Nuclear	10454543
+3010	Nuclear	
+6354	Extracellular (excluding cell wall)	7916328
+3012	Nuclear	
+6356	Extracellular (excluding cell wall)	8631813
+3013	Nuclear	
+6357	Extracellular (excluding cell wall)	9195948
+3014	Nuclear	
+6358	Extracellular (excluding cell wall)	8551235
+3015	Nuclear	
+3017	Nuclear	
+3018	Nuclear	
+4758	Lysosome/vacuole	8985184
+4759	Cytoplasmic	8253770
+2078	Nuclear	8502479
+51540	Cytoplasmic	10692412
+7306	Unspecified membrane	1577487
+7307	Nuclear	1388271
+27344	Extracellular (excluding cell wall)	10632593
+27345	Unspecified membrane	10692449
+5705	Nuclear	10970867
+5705	Cytoplasmic	10970867
+3020	Nuclear	
+6364	Extracellular (excluding cell wall)	9038201
+3021	Nuclear	
+4763	Cytoplasmic	2116237
+3024	Nuclear	
+6369	Extracellular (excluding cell wall)	9104803
+3026	Extracellular (excluding cell wall)	8827452
+3028	Cytoplasmic	9338779
+7311	Cytoplasmic	2581967
+3030	Mitochondrial	8135828
+4771	Endosome/Endosomal vesicles	10861283
+4771	Cytoskeletal	8379998
+3032	Mitochondrial	8135828
+3033	Mitochondrial	8687463
+1431	Mitochondrial	9543345
+1434	Nuclear	9323134
+1434	Cytoplasmic	9323134
+3039	Cytoplasmic	
+2091	Nuclear nucleolus	1846968
+902	Nuclear	10973491
+1437	Extracellular (excluding cell wall)	1675789
+908	Cytoplasmic	8034610
+2099	Nuclear	10829018
+54107	Nuclear	10801849
+51560	Golgi	10893188
+51560	Unspecified membrane	10893188
+51560	Secretory vesicles	10893188
+51562	Nuclear	10801814
+5725	Nuclear	1641332
+5727	Unspecified membrane	
+3040	Cytoplasmic	
+5728	Cytoplasmic	9367992
+6386	Other vesicles of the secretory/endocytic pathways	9391086
+3043	Cytoplasmic	
+84991	Nuclear	
+1440	Extracellular (excluding cell wall)	2420009
+3045	Cytoplasmic	
+25769	Unspecified membrane	10662833
+6389	Mitochondrial	7798181
+3046	Cytoplasmic	
+1442	Extracellular (excluding cell wall)	1378436
+3047	Cytoplasmic	
+1443	Extracellular (excluding cell wall)	1378436
+3048	Cytoplasmic	
+1444	Extracellular (excluding cell wall)	8083227
+3049	Cytoplasmic	
+1445	Cytoplasmic	1377109
+5730	Unspecified membrane	1902577
+5733	Nuclear	10336471
+5733	Unspecified membrane	8307176
+6390	Mitochondrial	2302193
+6391	Unspecified membrane	9533030
+6391	Mitochondrial	2302193
+6392	Unspecified membrane	9533030
+6392	Mitochondrial	2302193
+3050	Cytoplasmic	
+4790	Nuclear	10856288
+4790	Cytoplasmic	9865694
+3052	Mitochondrial	8661044
+4792	Cytoplasmic	10869418
+3053	Extracellular (excluding cell wall)	1671335
+6397	Golgi	8697811
+6397	Unspecified membrane	8697811
+6398	Golgi	9480746
+6398	Extracellular (excluding cell wall)	9480746
+4794	Cytoplasmic	9135156
+922	Extracellular (excluding cell wall)	9045627
+1457	Nuclear	10799509
+55869	Nuclear	10748112
+7341	Nuclear	8806687
+7343	Nuclear nucleolus	2330041
+4000	Nuclear	3453101
+4001	Nuclear	8838815
+4001	Cytoskeletal	7557986
+5743	Cytoplasmic	10842192
+5744	Nuclear	10803599
+5744	Cytoplasmic	10803599
+5744	Nuclear nucleolus	10947864
+5745	Nuclear	10709993
+5745	Cytoplasmic	10709993
+5747	Cytoplasmic	10801330
+5747	Cytoskeletal	10801330
+5747	Unspecified membrane	10801330
+3064	Nuclear	10823891
+3064	Cytoplasmic	7568002
+3064	Extracellular (excluding cell wall)	10823891
+25788	Nuclear	10851248
+25789	Unspecified membrane	10527841
+3066	Nuclear	10888872
+1462	Extracellular (excluding cell wall)	2583089
+1462	Extracellular matrix (cuticle and basement membrane)	2583089
+3068	Cytoplasmic	7929202
+3068	Extracellular (excluding cell wall)	7929202
+932	Unspecified membrane	7524084
+55870	Nuclear	10860993
+55870	Cell junction	10860993
+7350	Unspecified membrane	2380264
+7350	Mitochondrial	2380264
+7351	Unspecified membrane	9196039
+7351	Mitochondrial	9196039
+7352	Unspecified membrane	9196039
+7352	Mitochondrial	9196039
+50939	Extracellular (excluding cell wall)	10702256
+50939	Extracellular matrix (cuticle and basement membrane)	10702256
+7357	Unspecified membrane	8643456
+25792	Nuclear	10529385
+4017	Extracellular (excluding cell wall)	9079631
+5757	Nuclear	10891508
+25794	Cytoskeletal	10783262
+3071	Unspecified membrane	1932118
+3073	Lysosome/vacuole	2952641
+3074	Lysosome/vacuole	2147427
+3075	Extracellular (excluding cell wall)	9312129
+3077	Other vesicles of the secretory/endocytic pathways	10085150
+3078	Extracellular (excluding cell wall)	1711047
+1474	Extracellular (excluding cell wall)	8995380
+1477	Nuclear	1358884
+1478	Nuclear	1741396
+1479	Nuclear	7984242
+946	Cytoplasmic	9465907
+946	Unspecified membrane	9465907
+6702	Cytoplasmic	3133554
+7364	Unspecified membrane	2159463
+6708	Cytoskeletal	1634521
+6708	Unspecified membrane	1634521
+6709	Cytoskeletal	2307671
+6709	Unspecified membrane	2307671
+23404	Nuclear	8600032
+23404	Cytoplasmic	8600032
+26747	Nuclear	10556305
+7367	Unspecified membrane	8798464
+5763	Nuclear	10854063
+23406	Cytoskeletal	10051563
+5764	Extracellular (excluding cell wall)	10706604
+4025	Extracellular (excluding cell wall)	10814547
+7369	Extracellular (excluding cell wall)	3453112
+3080	Extracellular (excluding cell wall)	1711047
+10300	Nuclear	9568719
+10300	Centrosome/spindle pole body	9568719
+10300	Cytoskeletal	8221885
+10302	Nuclear	9732265
+3087	Nuclear	10871399
+950	Lysosome/vacuole	7539776
+950	Unspecified membrane	1374238
+1486	Lysosome/vacuole	1527079
+10309	Nuclear	2001396
+8314	Nuclear	9528852
+6710	Cytoskeletal	8226774
+6710	Unspecified membrane	8226774
+8315	Cytoplasmic	9497340
+6712	Golgi	9826670
+6712	Other vesicles of the secretory/endocytic pathways	9826670
+6712	Cytoskeletal	9826670
+8317	Nuclear	9250678
+8317	Cytoplasmic	9250678
+8318	Nuclear	9660782
+6714	Cytoskeletal	9924018
+5770	Cytoplasmic	2546149
+7375	Cytoplasmic	9464533
+7376	Nuclear	7926814
+4033	Cytoplasmic	8798562
+5774	Cytoplasmic	8253532
+4035	Unspecified membrane	3266596
+4036	Lysosome/vacuole	7768901
+23417	Cytoplasmic	10455107
+3091	Nuclear	10777486
+3092	Cytoskeletal	9147654
+3092	Unspecified membrane	9147654
+3094	Nuclear	9770345
+3094	Cytoskeletal	8812426
+1490	Extracellular (excluding cell wall)	9371786
+1490	Extracellular matrix (cuticle and basement membrane)	10809757
+3096	Nuclear	2106471
+3099	Mitochondrial	7622509
+1497	Lysosome/vacuole	9537412
+1497	Unspecified membrane	9537412
+10319	Extracellular matrix (cuticle and basement membrane)	10225960
+10319	Unspecified membrane	10225960
+1499	Nuclear	9065401
+1499	Cell junction	10801826
+967	Lysosome/vacuole	1993697
+968	Unspecified membrane	7680921
+6720	Nuclear	10949029
+6722	Nuclear	3203386
+7380	Unspecified membrane	9818021
+8329	Nuclear	
+7381	Mitochondrial	3056408
+6726	Cytoplasmic	7730321
+23421	Nuclear	10490654
+23421	Cytoplasmic	7593198
+6727	Cytoplasmic	8196634
+7384	Mitochondrial	8407948
+7385	Mitochondrial	8288258
+6729	Cytoplasmic	9016569
+5782	Cytoplasmic	1472029
+7388	Mitochondrial	2826252
+4046	Cytoskeletal	8274738
+2444	Nuclear	7696183
+10328	Nuclear	10337626
+10328	Cytoplasmic	10337626
+10328	Mitochondrial	10337626
+10329	Unspecified membrane	10072769
+8330	Nuclear	
+8331	Nuclear	
+8332	Nuclear	
+8334	Nuclear	
+6730	Cytoplasmic	10618370
+6730	Nuclear nucleolus	10618370
+8335	Nuclear	
+8336	Nuclear	
+6732	Nuclear	8208298
+8337	Nuclear	
+6733	Nuclear	9472028
+8338	Nuclear	
+8339	Nuclear	
+7391	Nuclear	2249772
+23431	Secretory vesicles	10436028
+5791	Cytoplasmic	8838320
+4053	Extracellular (excluding cell wall)	9709808
+23435	Nuclear	7745706
+4056	Unspecified membrane	8052639
+4056	Microsomal fraction	8052639
+4057	Extracellular (excluding cell wall)	3356163
+57804	Nuclear	10751307
+10330	Unspecified membrane	10072769
+10331	Unspecified membrane	10072769
+10332	Unspecified membrane	10072769
+983	Nuclear	10767298
+8340	Nuclear	
+8341	Nuclear	
+8342	Nuclear	
+989	Cytoskeletal	8037772
+8343	Nuclear	
+5000	Nuclear	9353276
+8344	Nuclear	
+5001	Nuclear	9765232
+8345	Nuclear	
+6741	Nuclear	9173875
+5002	Apical plasma membrane	9744804
+8346	Nuclear	
+6742	Mitochondrial	7789991
+8347	Nuclear	
+5004	Extracellular (excluding cell wall)	2409529
+8348	Nuclear	
+5005	Extracellular (excluding cell wall)	2970990
+8349	Nuclear	
+5007	Cytoplasmic	1970801
+5008	Extracellular (excluding cell wall)	2779549
+4060	Extracellular (excluding cell wall)	7665616
+4060	Extracellular matrix (cuticle and basement membrane)	7665616
+4062	Unspecified membrane	3028776
+23443	Golgi	10393322
+4069	Extracellular (excluding cell wall)	2829884
+58473	Unspecified membrane	10585447
+10343	Unspecified membrane	9949214
+10344	Extracellular (excluding cell wall)	9104803
+10345	Unspecified membrane	7588753
+990	Nuclear	9566895
+990	Cytoplasmic	9566895
+10346	Nuclear	7797467
+991	Centrosome/spindle pole body	7513050
+10347	Unspecified membrane	10873640
+996	Centrosome/spindle pole body	7736578
+8350	Nuclear	
+8351	Nuclear	
+8352	Nuclear	
+8353	Nuclear	
+8354	Nuclear	
+6750	Extracellular (excluding cell wall)	9437026
+8355	Nuclear	
+8356	Nuclear	
+8357	Nuclear	
+8358	Nuclear	
+8359	Nuclear	
+5016	Extracellular (excluding cell wall)	7819450
+23450	Nuclear	10490618
+6756	Nuclear	10072425
+5018	Mitochondrial	9247084
+4070	Cytoplasmic	10192395
+1811	Unspecified membrane	8896562
+23452	Extracellular (excluding cell wall)	10473614
+3416	Cytoplasmic	2293021
+3416	Extracellular (excluding cell wall)	9830016
+1812	Dendrite	10051231
+1812	Cell body (soma)	10051231
+3417	Cytoplasmic	9866202
+1813	Dendrite	10051231
+1813	Cell body (soma)	10051231
+3418	Mitochondrial	8954790
+3419	Mitochondrial	8833160
+4076	Apical plasma membrane	7657653
+4076	Basolateral plasma membrane	7657653
+23457	Lysosome/vacuole	10748049
+23457	Unspecified membrane	10748049
+202	Cytoskeletal	9096375
+203	Cytoplasmic	2542324
+10352	Mitochondrial	10072595
+58488	Cytoplasmic	10542325
+8360	Nuclear	
+7704	Nuclear	9770450
+8361	Nuclear	
+7705	Nuclear	8665923
+8362	Nuclear	
+8363	Nuclear	
+8364	Nuclear	
+6760	Nuclear	10072425
+5021	Cytoplasmic	8593829
+5021	Endosome/Endosomal vesicles	10858434
+8365	Nuclear	
+8366	Nuclear	
+8367	Nuclear	
+3420	Mitochondrial	10601238
+8368	Nuclear	
+22803	Nuclear	10409438
+8369	Nuclear	
+3423	Lysosome/vacuole	2122463
+6768	Extracellular matrix (cuticle and basement membrane)	10373424
+3425	Lysosome/vacuole	2170400
+4082	Cytoskeletal	1560845
+3426	Extracellular (excluding cell wall)	2956252
+1822	Nuclear	10814707
+1822	Cytoplasmic	7647802
+1823	Unspecified membrane	7679953
+1824	Cell junction	2037591
+1825	Cell junction	7929347
+4087	Nuclear	8980228
+4087	Cytoplasmic	8980228
+1827	Nuclear	8595418
+23468	Nuclear	8663349
+1828	Cell junction	1770008
+1829	Cell junction	8143788
+57835	Unspecified membrane	10978526
+2487	Unspecified membrane	8824257
+216	Cytoplasmic	2987944
+10362	Nuclear	10773667
+217	Mitochondrial	1306115
+218	Cytoplasmic	1306115
+9312	Unspecified membrane	9612272
+9313	Extracellular (excluding cell wall)	9398237
+9314	Nuclear	8702718
+10369	Unspecified membrane	10221464
+9319	Nuclear	7776974
+6770	Mitochondrial	7761400
+6772	Nuclear	10820245
+6772	Cytoplasmic	10820245
+3430	Nuclear	8288566
+3430	Cytoplasmic	10779520
+3430	Cytoskeletal	10779520
+6774	Nuclear	7512451
+6774	Cytoplasmic	7512451
+3431	Nuclear	7693701
+8379	Centrosome/spindle pole body	9546394
+1830	Cell junction	8143788
+1832	Cytoskeletal	1716629
+1834	Extracellular (excluding cell wall)	8995371
+1834	Extracellular matrix (cuticle and basement membrane)	8995371
+1836	Unspecified membrane	8528239
+11315	Nuclear	9070310
+11315	Cytoplasmic	9070310
+1838	Cytoskeletal	9395493
+2495	Cytoplasmic	
+10370	Nuclear	9434189
+10371	Unspecified membrane	8269517
+229	Cytoplasmic	3383242
+10376	Cytoskeletal	6646120
+10379	Nuclear	1630447
+10379	Cytoplasmic	1630447
+6782	Microsomal fraction	8131751
+5045	Golgi	9927419
+3441	Extracellular (excluding cell wall)	3891272
+5048	Cytoplasmic	8028668
+3444	Extracellular (excluding cell wall)	2995168
+5049	Cytoplasmic	9144386
+1842	Extracellular (excluding cell wall)	9790758
+1842	Extracellular matrix (cuticle and basement membrane)	9790758
+1844	Nuclear	8107850
+1846	Nuclear	7535768
+1848	Cytoplasmic	8670865
+10381	Cytoskeletal	2461292
+11329	Nuclear	7761441
+10382	Cytoskeletal	6865944
+10383	Cytoskeletal	3999141
+9337	Nuclear	9820826
+9338	Nuclear	7971997
+5050	Cytoplasmic	7669037
+6790	Nuclear	9153231
+6790	Centrosome/spindle pole body	9153231
+5051	Cytoplasmic	8955149
+8398	Cytoplasmic	9417066
+5055	Extracellular (excluding cell wall)	2303256
+3451	Extracellular (excluding cell wall)	3891272
+6795	Nuclear	10066797
+6795	Centrosome/spindle pole body	10066797
+1850	Cytoplasmic	7561881
+3455	Extracellular (excluding cell wall)	7588638
+1852	Nuclear	9030581
+1852	Cytoplasmic	9030581
+1854	Nuclear	8631816
+1854	Mitochondrial	8631816
+11332	Cytoplasmic	10578051
+1855	Cytoplasmic	9192851
+1856	Cytoplasmic	9192851
+241	Unspecified membrane	2300173
+11335	Nuclear	8663349
+1859	Nuclear	9070862
+10390	Unspecified membrane	10191259
+11338	Nuclear	1538748
+10396	Unspecified membrane	10198212
+9343	Nuclear	9233818
+10397	Cytoplasmic	8939898
+10397	Basolateral plasma membrane	8939898
+10398	Cytoskeletal	
+7741	Nuclear	1569959
+6002	Nuclear	10869340
+6006	Unspecified membrane	1438298
+6007	Unspecified membrane	1438298
+2800	Golgi	9324025
+2801	Golgi	8315394
+2802	Golgi	9295333
+2803	Golgi	1400343
+2804	Golgi	7691276
+2805	Cytoplasmic	2777255
+2806	Mitochondrial	2777255
+5068	Extracellular (excluding cell wall)	1325291
+5069	Extracellular (excluding cell wall)	7508748
+1861	Cytoplasmic	10814722
+11341	Extracellular (excluding cell wall)	9660755
+11345	Cytoplasmic	10406962
+9351	Nuclear	9054412
+9352	Cytoplasmic	9668102
+9353	Extracellular (excluding cell wall)	9813312
+9356	Unspecified membrane	9950961
+6013	Extracellular (excluding cell wall)	6298628
+7753	Nuclear	10748193
+2810	Cytoplasmic	8515476
+2810	Extracellular (excluding cell wall)	8515476
+5073	Nuclear	9736620
+5073	Cytoplasmic	9736620
+2813	Unspecified membrane	9605860
+5074	Nuclear	8943350
+5074	Cytoplasmic	8943350
+2817	Extracellular (excluding cell wall)	2148568
+51201	Unspecified membrane	10918388
+265	Extracellular (excluding cell wall)	1734713
+265	Extracellular matrix (cuticle and basement membrane)	1734713
+266	Extracellular (excluding cell wall)	2004775
+266	Extracellular matrix (cuticle and basement membrane)	2004775
+51205	Mitochondrial	10506173
+9360	Nuclear	9153302
+9360	Nuclear matrix	9153302
+268	Extracellular (excluding cell wall)	3754790
+9361	Mitochondrial	8248235
+9365	Extracellular (excluding cell wall)	9464267
+9365	Unspecified membrane	9464267
+6024	Nuclear	8121495
+2820	Mitochondrial	8549872
+2823	Unspecified membrane	8661015
+2824	Unspecified membrane	8661015
+3483	Extracellular (excluding cell wall)	1384485
+3484	Extracellular (excluding cell wall)	2454104
+3485	Extracellular (excluding cell wall)	2479552
+3486	Extracellular (excluding cell wall)	1373120
+3488	Extracellular (excluding cell wall)	7525452
+3489	Extracellular (excluding cell wall)	10087296
+273	Other vesicles of the secretory/endocytic pathways	7757077
+1889	Cytoplasmic	10833511
+1889	Unspecified membrane	7695628
+274	Cytoskeletal	9182667
+275	Mitochondrial	8188235
+27012	Unspecified membrane	8670833
+8714	Unspecified membrane	9813153
+8715	Nuclear	9813152
+8715	Nuclear nucleolus	9813152
+279	Extracellular (excluding cell wall)	6336237
+9375	Endosome/Endosomal vesicles	9729438
+9376	Unspecified membrane	10049739
+9377	Mitochondrial	2853101
+27019	Cilia	10577904
+6035	Extracellular (excluding cell wall)	8049276
+6036	Extracellular (excluding cell wall)	2734298
+6036	Secretory vesicles	2734298
+6037	Extracellular (excluding cell wall)	10706854
+6037	Secretory vesicles	2745977
+6039	Extracellular (excluding cell wall)	8836175
+6039	Secretory vesicles	8836175
+5091	Mitochondrial	7918683
+4435	Nuclear	9721210
+5092	Nuclear	10098606
+5092	Cytoplasmic	10098606
+2833	Cytoplasmic	10903743
+4438	Nuclear	9299235
+5095	Mitochondrial	8188292
+5096	Mitochondrial	8188292
+5097	Cell junction	8508762
+10713	Nuclear	10022888
+1892	Mitochondrial	8012501
+10714	Nuclear	10219083
+1893	Extracellular (excluding cell wall)	9367673
+1893	Extracellular matrix (cuticle and basement membrane)	9367673
+1896	Cytoskeletal	10484778
+1896	Unspecified membrane	8696334
+10717	Golgi	10066790
+10717	Secretory vesicles	10066790
+55509	Nuclear	10878360
+53905	Apical plasma membrane	10806195
+51222	Nuclear	10819330
+286	Cytoskeletal	9430667
+54566	Cytoskeletal	10783258
+287	Cytoskeletal	8253844
+287	Unspecified membrane	1830053
+288	Cytoplasmic	8666667
+288	Golgi	8666667
+288	Cytoskeletal	8666667
+288	Axon	7836469
+9381	Cytoplasmic	10192385
+9381	Unspecified membrane	10192385
+8725	Cytoplasmic	9878255
+8726	Nuclear	9880543
+7781	Unspecified membrane	8962159
+7783	Extracellular (excluding cell wall)	8385033
+7784	Extracellular (excluding cell wall)	1478648
+9389	Unspecified membrane	10072596
+7786	Cytoplasmic	8663324
+6047	Nuclear	9710597
+1102	Nuclear	10089422
+1103	Nuclear	10861222
+1103	Cytoplasmic	10861222
+1104	Nuclear	10089422
+10721	Nuclear	10395804
+1109	Cytoplasmic	2187532
+55512	Golgi	10823942
+55512	Unspecified membrane	10823942
+10725	Nuclear	10377394
+290	Apical plasma membrane	10734069
+291	Mitochondrial	2823266
+51232	Unspecified membrane	10642437
+8731	Nuclear	9705270
+27030	Nuclear	10615123
+8732	Nuclear	9473487
+8733	Unspecified membrane	9468317
+27032	Unspecified membrane	10615129
+9390	Unspecified membrane	10072596
+27033	Nuclear	10572087
+8736	M-lines	7505783
+27034	Mitochondrial	
+7791	Cell junction	8940160
+1113	Extracellular (excluding cell wall)	3814131
+1114	Extracellular (excluding cell wall)	3608978
+1116	Extracellular (excluding cell wall)	8245017
+1117	Extracellular (excluding cell wall)	8702629
+1118	Extracellular (excluding cell wall)	7836450
+10732	Nuclear	9763657
+57126	Unspecified membrane	10753836
+10734	Nuclear	10698974
+54583	Cytoplasmic	8606489
+7001	Cytoplasmic	8026862
+7007	Extracellular (excluding cell wall)	9590290
+7007	Extracellular matrix (cuticle and basement membrane)	9590290
+27044	Nuclear	7651391
+3801	Cytoskeletal	9782090
+8749	Unspecified membrane	10395895
+1128	Unspecified membrane	7925360
+57134	Golgi	10915796
+1129	Axon	9579781
+2869	Cytoplasmic	7685906
+10749	Golgi	9685376
+7011	Nuclear	9020079
+7013	Nuclear	7502076
+7014	Nuclear	9326950
+7015	Nuclear	9252327
+5411	Cell junction	8922384
+7018	Endosome/Endosomal vesicles	9570576
+7018	Extracellular (excluding cell wall)	6585826
+3818	Extracellular (excluding cell wall)	1993180
+4477	Extracellular (excluding cell wall)	2590204
+604	Nuclear	9171827
+10750	Cytoplasmic	8647802
+2877	Cytoplasmic	8428933
+2878	Extracellular (excluding cell wall)	3619451
+8761	Cytoplasmic	8524242
+27063	Nuclear	7730328
+5423	Nuclear	8168825
+5424	Nuclear	1722322
+27065	Nuclear	9013775
+27065	Cytoplasmic	9013775
+5425	Nuclear	8530069
+5428	Mitochondrial	3619920
+5429	Nuclear	10385124
+2880	Extracellular (excluding cell wall)	9639555
+610	Unspecified membrane	10228147
+2885	Unspecified membrane	1322798
+2887	Cytoplasmic	9006901
+617	Mitochondrial	9878253
+10763	Cytoskeletal	1478958
+10765	Nuclear	10336460
+10766	Nuclear	10602502
+50616	Extracellular (excluding cell wall)	10875937
+8772	Cytoplasmic	8955195
+8773	Secretory vesicles	9727496
+5430	Nuclear	2999107
+8774	Secretory vesicles	8455721
+7035	Extracellular (excluding cell wall)	1993173
+5431	Nuclear	1518060
+8775	Secretory vesicles	8455721
+7036	Unspecified membrane	10409623
+5432	Nuclear	2187864
+7037	Endosome/Endosomal vesicles	8394993
+5433	Nuclear	9528765
+7038	Extracellular (excluding cell wall)	3016640
+5434	Nuclear	7828586
+27075	Unspecified membrane	10719184
+7039	Extracellular (excluding cell wall)	2103501
+6091	Unspecified membrane	9608531
+5435	Nuclear	7803819
+3831	Cytoskeletal	8274221
+5436	Nuclear	9256063
+3832	Centrosome/spindle pole body	8548803
+5437	Nuclear	8524256
+5438	Nuclear	8265347
+3834	Cytoskeletal	9925916
+6095	Nuclear	7926749
+5439	Nuclear	8797801
+3835	Nuclear	8599929
+6096	Nuclear	7935491
+3836	Nuclear transport factor	8631802
+3837	Nuclear	7615630
+3837	Cytoplasmic	7615630
+3837	Nuclear transport factor	7627554
+6098	Unspecified membrane	3785223
+3838	Cytoplasmic	7754385
+3838	Nuclear transport factor	9020106
+3839	Nuclear transport factor	9154134
+1152	Cytoplasmic	2914937
+1155	Cytoskeletal	8978778
+622	Mitochondrial	1639787
+1158	Cytoplasmic	2914937
+1159	Mitochondrial	2914937
+10771	Nuclear	7621829
+10772	Nuclear	9774382
+10773	Nuclear	7958847
+10775	Nuclear	10352175
+51280	Golgi	10831838
+51280	Unspecified membrane	10831838
+29765	Cytoskeletal	10662549
+7042	Extracellular (excluding cell wall)	3162414
+29766	Cytoskeletal	10662549
+51283	Unspecified membrane	10716992
+29767	Cytoskeletal	10662549
+5440	Nuclear	7651387
+50628	Nuclear	10725331
+50628	Cytoplasmic	10725331
+50628	Nuclear nucleolus	10725331
+7045	Extracellular (excluding cell wall)	1388724
+5441	Nuclear	8786124
+8785	Extracellular (excluding cell wall)	9827539
+5442	Mitochondrial	9097968
+2101	Nuclear	9286700
+8788	Unspecified membrane	8500166
+8788	Secretory vesicles	7925474
+3842	Nuclear	9144189
+3842	Cytoplasmic	9144189
+2103	Nuclear	9344655
+3843	Nuclear	9114010
+3843	Cytoplasmic	9114010
+3846	Cytoskeletal	1703541
+2107	Cytoplasmic	7990965
+2108	Mitochondrial	3170610
+1160	Mitochondrial	2324105
+3848	Cytoskeletal	1380725
+2109	Mitochondrial	8504797
+3849	Cytoskeletal	1380918
+631	Cytoskeletal	9628810
+634	Unspecified membrane	2457922
+10782	Nuclear	10777669
+10782	Nuclear nucleolus	10777669
+637	Cytoplasmic	8918887
+637	Unspecified membrane	8918887
+637	Mitochondrial	9727491
+10786	Unspecified membrane	9149941
+50632	Dendrite	10698743
+7050	Nuclear	10764806
+7051	Unspecified membrane	1348508
+29777	Nuclear	10648625
+27091	Unspecified membrane	10613843
+8796	Cytoplasmic	9813070
+7057	Extracellular (excluding cell wall)	9304800
+7057	Extracellular matrix (cuticle and basement membrane)	9304800
+2110	Unspecified membrane	8306995
+2110	Mitochondrial	8306995
+7058	Extracellular matrix (cuticle and basement membrane)	9442117
+7059	Extracellular matrix (cuticle and basement membrane)	7759526
+3851	Cytoskeletal	2452170
+3852	Cytoskeletal	2456903
+8799	Unspecified membrane	9792670
+3853	Cytoskeletal	2410904
+3854	Cytoskeletal	9618173
+3855	Cytoskeletal	
+3856	Cytoskeletal	
+3857	Cytoskeletal	8647270
+3858	Cytoskeletal	1380725
+3859	Cytoskeletal	9171831
+1173	Secretory vesicles	8595912
+640	Unspecified membrane	7822795
+641	Nuclear nucleolus	10779560
+641	Nuclear matrix	10851073
+57180	Cytoskeletal	10047519
+642	Nuclear	8639621
+642	Cytoplasmic	8639621
+646	Nuclear	1332044
+648	Nuclear	10825164
+53981	Nuclear	7969155
+10797	Mitochondrial	8218174
+10799	Nuclear	9630247
+6403	Secretory vesicles	2466574
+7060	Extracellular (excluding cell wall)	7852353
+6404	Unspecified membrane	7505206
+6405	Extracellular (excluding cell wall)	8786119
+7062	Cytoskeletal	7685034
+6406	Extracellular (excluding cell wall)	2912989
+6407	Extracellular (excluding cell wall)	1517240
+7067	Nuclear	2879242
+7068	Nuclear	1618799
+3860	Cytoskeletal	9714826
+5465	Nuclear	9792666
+4809	Nuclear	10593953
+4809	Nuclear nucleolus	10593953
+2122	Nuclear	10856240
+3861	Cytoskeletal	7525408
+5467	Nuclear	1333051
+5468	Nuclear	9425261
+2125	Cytoplasmic	8707850
+2125	Unspecified membrane	8707850
+5469	Nuclear	9653119
+3866	Cytoskeletal	2580298
+10001	Nuclear	10024883
+10002	Nuclear	10220376
+1181	Unspecified membrane	7795595
+3868	Cytoskeletal	2451124
+1182	Unspecified membrane	7665160
+1183	Unspecified membrane	8069296
+10006	Cytoplasmic	9593709
+1185	Unspecified membrane	9224655
+1186	Unspecified membrane	8543009
+1187	Unspecified membrane	8041726
+10009	Nuclear	10207085
+1188	Unspecified membrane	8041726
+4811	Extracellular (excluding cell wall)	7557988
+4811	Extracellular matrix (cuticle and basement membrane)	7557988
+4811	Basement membrane (extracellular matrix)	7557988
+6418	Nuclear	8626647
+7076	Extracellular (excluding cell wall)	3903517
+7077	Extracellular (excluding cell wall)	2793861
+2131	Golgi	10639137
+2132	Golgi	10639137
+3872	Cytoskeletal	1281771
+3875	Cytoskeletal	2434380
+1192	Nuclear	9139710
+1192	Unspecified membrane	9139710
+10014	Nuclear	10869435
+10014	Cytoplasmic	10869435
+1193	Unspecified membrane	9339381
+10017	Unspecified membrane	9878060
+10018	Unspecified membrane	9430630
+665	Mitochondrial	9973195
+667	Extracellular (excluding cell wall)	2461961
+667	Extracellular matrix (cuticle and basement membrane)	2461961
+667	Basement membrane (extracellular matrix)	2461961
+667	Cell junction	2461961
+25801	Cytoplasmic	1530588
+6421	Nuclear	8449401
+25802	Unspecified membrane	2026759
+6422	Extracellular (excluding cell wall)	9192640
+25804	Nuclear	10523320
+8028	Nuclear	7888665
+6424	Extracellular (excluding cell wall)	10211996
+25805	Unspecified membrane	8621228
+6425	Extracellular (excluding cell wall)	10072424
+7082	Cell junction	8486731
+7082	Unspecified membrane	8486731
+6426	Nuclear	1830244
+7083	Cytoplasmic	3335503
+6427	Nuclear	10893273
+7084	Mitochondrial	605384
+5480	Cytoplasmic	1652374
+6429	Nuclear	8321209
+7088	Nuclear	1303260
+3880	Cytoskeletal	2448790
+7089	Nuclear	1303260
+3881	Cytoskeletal	9405442
+3882	Cytoskeletal	7556444
+3883	Cytoskeletal	7565656
+3884	Cytoskeletal	7565656
+3885	Cytoskeletal	9756910
+2147	Extracellular (excluding cell wall)	3242619
+3886	Cytoskeletal	8823373
+10021	Unspecified membrane	10228147
+3887	Cytoskeletal	7556444
+2149	Golgi	7961693
+3889	Cytoskeletal	9084137
+10024	Cytoplasmic	7758945
+10025	Nuclear	10235266
+672	Nuclear	10851248
+677	Nuclear	8595910
+8031	Nuclear	8643607
+8034	Mitochondrial	2575220
+6430	Nuclear	7556075
+6431	Nuclear	7556075
+6432	Nuclear	8013463
+7090	Nuclear	1303260
+6434	Nuclear	9212162
+7091	Nuclear	1303260
+6435	Extracellular (excluding cell wall)	2995821
+25819	Nuclear	10521507
+6439	Extracellular (excluding cell wall)	1346779
+5493	Cytoskeletal	9521878
+2150	Golgi	8615752
+4839	Nuclear	1394192
+4839	Nuclear nucleolus	1394192
+2152	Cytoplasmic	10896200
+3891	Cytoskeletal	9084137
+5498	Mitochondrial	7713909
+3895	Unspecified membrane	7787243
+2158	Extracellular (excluding cell wall)	237463
+3897	Unspecified membrane	7920659
+2159	Extracellular (excluding cell wall)	3011603
+3898	Extracellular (excluding cell wall)	9119369
+3898	Extracellular matrix (cuticle and basement membrane)	9119369
+3898	Basement membrane (extracellular matrix)	9119369
+3899	Nuclear	8555498
+10036	Nuclear	7600578
+9782	Nuclear	2033075
+9782	Nuclear matrix	2033075
+6440	Extracellular (excluding cell wall)	3479771
+25824	Mitochondrial	10521424
+25825	Unspecified membrane	10677483
+4841	Nuclear	8371983
+4842	Unspecified membrane	7545544
+25827	Cytoplasmic	10508920
+6447	Secretory vesicles	3134253
+4843	Cytoplasmic	10842192
+6448	Lysosome/vacuole	7493035
+1501	Cytoplasmic	9342840
+4846	Cytoplasmic	9794441
+1508	Lysosome/vacuole	3463996
+1509	Lysosome/vacuole	10748089
+2166	Unspecified membrane	9122178
+2168	Cytoplasmic	9250612
+10048	Cytoskeletal	9817760
+695	Cytoplasmic	8013627
+8050	Mitochondrial	9467010
+699	Centrosome/spindle pole body	9660858
+4852	Cell body (soma)	2444979
+1512	Lysosome/vacuole	2587265
+1514	Lysosome/vacuole	8419312
+2170	Cytoplasmic	8262516
+2171	Cytoplasmic	8092987
+2172	Cytoplasmic	7588781
+2175	Nuclear	9398857
+2175	Cytoplasmic	9398857
+2176	Nuclear	9398857
+2176	Cytoplasmic	9398857
+80781	Basement membrane (extracellular matrix)	10942434
+10050	Unspecified membrane	10319585
+10051	Nuclear	9789013
+10052	Cell junction	7966354
+9001	Cytoskeletal	9361024
+10056	Cytoplasmic	10049785
+58189	Extracellular (excluding cell wall)	10967136
+10057	Unspecified membrane	9827529
+10059	Golgi	9570752
+7402	Cytoskeletal	1426262
+7402	Unspecified membrane	1426262
+8061	Nuclear	10918580
+7405	Cytoplasmic	9169138
+7408	Cytoskeletal	7828592
+7409	Nuclear	2477241
+6462	Extracellular (excluding cell wall)	2249477
+1520	Lysosome/vacuole	8157683
+4864	Lysosome/vacuole	9927649
+4864	Unspecified membrane	10521290
+4869	Nuclear	2478125
+4869	Nuclear nucleolus	2478125
+1528	Mitochondrial	1712589
+2185	Cytoplasmic	7499242
+2186	Nuclear	7621746
+2186	Cytoplasmic	7621746
+10061	Unspecified membrane	9878413
+10061	Mitochondrial	9878413
+10062	Nuclear	7744246
+10063	Cytoplasmic	9050918
+55937	Unspecified membrane	10531326
+10066	Unspecified membrane	9378760
+10067	Unspecified membrane	9378760
+7411	Cytoplasmic	8674032
+9016	Mitochondrial	9852133
+7414	Cytoskeletal	2116004
+7414	Cell junction	2116004
+5810	Nuclear	10852904
+7416	Mitochondrial	8420959
+7417	Mitochondrial	8420959
+7418	Mitochondrial	7517385
+6470	Cytoplasmic	8505317
+7419	Mitochondrial	9781040
+8076	Extracellular (excluding cell wall)	8557636
+8076	Extracellular matrix (cuticle and basement membrane)	8557636
+6472	Mitochondrial	8505317
+5817	Extracellular (excluding cell wall)	2170108
+5817	Unspecified membrane	2170108
+5818	Unspecified membrane	9616127
+3131	Nuclear	1386162
+6476	Unspecified membrane	1560017
+6477	Cytoplasmic	9334332
+6478	Cytoplasmic	10207103
+1534	Secretory vesicles	7980462
+1535	Mitochondrial	2243141
+2191	Unspecified membrane	7911242
+4879	Extracellular (excluding cell wall)	7601467
+1536	Mitochondrial	3600769
+2192	Extracellular (excluding cell wall)	2269669
+2192	Extracellular matrix (cuticle and basement membrane)	2269669
+11014	Golgi	1316805
+1537	Mitochondrial	2536365
+2193	Cytoplasmic	9177188
+1539	Cytoplasmic	7737358
+11018	Unspecified membrane	8621446
+2197	Cytoplasmic	8395683
+10071	Unspecified membrane	10463611
+54205	Mitochondrial	10818086
+2199	Extracellular (excluding cell wall)	7806230
+2199	Extracellular matrix (cuticle and basement membrane)	7806230
+54206	Cytoplasmic	10749885
+10073	Nuclear	9670026
+10073	Nuclear transport factor	9670026
+54207	Unspecified membrane	10880510
+9022	Nuclear	9880541
+9022	Unspecified membrane	9880541
+9023	Unspecified membrane	9852097
+9028	Unspecified membrane	9662444
+7428	Nuclear	7604013
+5824	Unspecified membrane	10051604
+8085	Nuclear	9247308
+7429	Cytoskeletal	2846586
+5825	Unspecified membrane	9521874
+5826	Unspecified membrane	9599016
+8087	Nuclear	10888599
+8087	Cytoplasmic	7781595
+5828	Unspecified membrane	1750930
+8089	Nuclear	9302258
+5829	Cytoplasmic	9785458
+5829	Cytoskeletal	10840040
+4882	Unspecified membrane	1327579
+1544	Microsomal fraction	2813353
+1548	Microsomal fraction	2322567
+54212	Cytoplasmic	10747910
+10084	Nuclear	10198427
+9033	Unspecified membrane	10517637
+7431	Cytoplasmic	10852918
+10089	Unspecified membrane	10206991
+5830	Cytoplasmic	7790377
+6490	Extracellular (excluding cell wall)	8592076
+7439	Unspecified membrane	10737974
+8099	Nuclear	9506968
+8099	Cytoplasmic	9506968
+4892	Cytoskeletal	9295142
+24139	Cytoskeletal	10521658
+3155	Mitochondrial	8102917
+3156	Unspecified membrane	2991281
+3157	Cytoplasmic	7913309
+3158	Mitochondrial	7851882
+11033	Cytoplasmic	10333475
+4899	Nuclear	7629110
+11034	Cytoskeletal	8399167
+54221	Cytoplasmic	10747910
+10092	Cytoskeletal	9230079
+10093	Cytoskeletal	9230079
+10094	Cytoskeletal	9230079
+10095	Cytoskeletal	9230079
+10096	Cytoskeletal	9230079
+9043	Extracellular (excluding cell wall)	9480848
+10097	Cytoskeletal	9230079
+10098	Unspecified membrane	9714763
+9045	Cytoplasmic	9480843
+10099	Unspecified membrane	9714763
+9047	Cytoplasmic	9468509
+51684	Nuclear	10559945
+51684	Cytoplasmic	10559945
+9049	Cytoplasmic	8972861
+7448	Extracellular (excluding cell wall)	2418831
+3162	Unspecified membrane	3345742
+24147	Extracellular (excluding cell wall)	10072791
+11043	Cytoskeletal	10644436
+11044	Nuclear	10066793
+9053	Cytoskeletal	8408219
+9054	Nuclear	9885568
+9054	Cytoplasmic	9885568
+9054	Mitochondrial	9885568
+7450	Cytoplasmic	2584182
+7450	Secretory vesicles	10880054
+9055	Nuclear	9885575
+51692	Nuclear	7969155
+7453	Cytoplasmic	1761529
+9058	Unspecified membrane	8967342
+7454	Cytoskeletal	8625410
+7456	Cytoskeletal	9405671
+7458	Cytoplasmic	9516461
+2512	Cytoplasmic	
+3170	Nuclear	10868948
+4118	Endosome/Endosomal vesicles	9003426
+4118	Unspecified membrane	9003426
+3171	Nuclear	7739897
+5859	Cytoplasmic	8078941
+2516	Nuclear	8205615
+3172	Nuclear	9048927
+2517	Lysosome/vacuole	2803312
+3177	Nuclear nucleolus	7639753
+11051	Nuclear	9659921
+3178	Nuclear	8521471
+3178	Cytoplasmic	8521471
+11052	Nuclear	9659921
+1576	Microsomal fraction	
+1577	Microsomal fraction	2732228
+11055	Extracellular (excluding cell wall)	9378618
+8405	Nuclear	9414087
+8406	Unspecified membrane	8634708
+7461	Cytoskeletal	9799601
+4121	Unspecified membrane	8223597
+7465	Nuclear	8348613
+7466	Unspecified membrane	9771706
+4124	Golgi	8524845
+4124	Unspecified membrane	8524845
+2521	Nuclear	8510758
+4125	Lysosome/vacuole	8166692
+2523	Golgi	2118655
+2523	Unspecified membrane	2118655
+4128	Unspecified membrane	7063850
+2525	Unspecified membrane	1977660
+3181	Nuclear	7789969
+4129	Unspecified membrane	7063850
+2526	Unspecified membrane	1716630
+3183	Nuclear	3457372
+2528	Golgi	10900002
+3184	Nuclear	10205060
+1581	Microsomal fraction	1358792
+2529	Unspecified membrane	8207002
+3185	Nuclear	7499401
+10403	Nuclear	9315664
+10404	Extracellular (excluding cell wall)	10206990
+1583	Mitochondrial	1863359
+3187	Nuclear	7499401
+11061	Extracellular (excluding cell wall)	10103018
+11061	Extracellular matrix (cuticle and basement membrane)	10103018
+1584	Mitochondrial	2592361
+3188	Nuclear	7499401
+10406	Extracellular (excluding cell wall)	1686187
+3189	Nuclear	8999868
+10407	Extracellular (excluding cell wall)	8167223
+1586	Microsomal fraction	9326943
+11064	Nuclear	10359848
+1588	Unspecified membrane	2848247
+8411	Endosome/Endosomal vesicles	7768953
+11069	Unspecified membrane	10777494
+9070	Nuclear	10393421
+9071	Cell junction	10508613
+8417	Endosome/Endosomal vesicles	10839363
+8419	Cytoskeletal	8636093
+9076	Cell junction	9647647
+9076	Basolateral plasma membrane	9647647
+4130	Cytoskeletal	8812494
+7474	Extracellular (excluding cell wall)	10491302
+6818	Cytoplasmic	8363592
+4131	Cytoskeletal	1881920
+6819	Cytoplasmic	9169148
+7476	Extracellular (excluding cell wall)	8893824
+5872	Cell junction	8294494
+4133	Cytoskeletal	9588626
+4133	Dendrite	9588626
+4133	Cell body (soma)	9588626
+4134	Cytoskeletal	1905296
+2531	Extracellular (excluding cell wall)	8417785
+4137	Cytoplasmic	10747907
+4137	Cytoskeletal	10747907
+3190	Nuclear	1729596
+2535	Unspecified membrane	7558010
+3191	Nuclear	2687284
+4139	Cytoskeletal	
+5879	Cytoplasmic	10821761
+3192	Nuclear	1628625
+10411	Unspecified membrane	10777494
+2538	Microsomal fraction	8640227
+1593	Mitochondrial	1708392
+1594	Mitochondrial	9428799
+11073	Nuclear	9461304
+10417	Extracellular (excluding cell wall)	10512675
+6820	Cytoplasmic	9799594
+8425	Extracellular matrix (cuticle and basement membrane)	9271198
+7482	Extracellular (excluding cell wall)	8761309
+23521	Cytoplasmic	10580157
+6827	Nuclear	8649394
+23522	Nuclear	10497217
+9088	Golgi	9001210
+4141	Cytoplasmic	8921912
+7485	Nuclear	9544840
+6829	Nuclear	9199507
+7486	Nuclear	9288107
+5883	Nuclear	10852904
+5884	Nuclear	10852904
+2542	Unspecified membrane	9428641
+2542	Microsomal fraction	9675154
+4146	Extracellular (excluding cell wall)	9083061
+4146	Extracellular matrix (cuticle and basement membrane)	9083061
+5887	Nuclear	8168482
+4148	Extracellular (excluding cell wall)	9350998
+4148	Extracellular matrix (cuticle and basement membrane)	9350998
+23529	Extracellular (excluding cell wall)	10500198
+5888	Nuclear	10851248
+5889	Nuclear	9469824
+2547	Nuclear	10508516
+10421	Cytoplasmic	9843987
+2548	Lysosome/vacuole	3049072
+10424	Unspecified membrane	9705155
+56953	Mitochondrial	10899995
+10426	Centrosome/spindle pole body	9566967
+10426	Cytoskeletal	9566967
+56955	Extracellular (excluding cell wall)	10945470
+10427	Other vesicles of the secretory/endocytic pathways	10075675
+11086	Unspecified membrane	10512762
+8431	Nuclear	11030331
+8434	Unspecified membrane	9789069
+6830	Nuclear	8786132
+9092	Cytoplasmic	9449708
+6832	Mitochondrial	9925937
+9094	Unspecified membrane	9538874
+8438	Nuclear	8805304
+6834	Mitochondrial	9843204
+8439	Cytoplasmic	8808629
+23530	Mitochondrial	9524818
+23531	Unspecified membrane	7503749
+6837	Cytoplasmic	8586415
+6838	Nuclear	10675619
+6838	Nuclear nucleolus	10675619
+5890	Nuclear	9512535
+6839	Nuclear	10949293
+5891	Cytoplasmic	10421840
+5892	Nuclear	9570954
+23534	Nuclear transport factor	10366588
+5893	Nuclear	7774919
+5894	Mitochondrial	8929532
+2551	Nuclear	9016666
+2552	Nuclear	9016666
+23539	Unspecified membrane	10493836
+10434	Unspecified membrane	10064899
+10437	Extracellular (excluding cell wall)	3136170
+10437	Lysosome/vacuole	3136170
+10438	Nuclear	9469821
+11099	Cytoskeletal	7519780
+6840	Nuclear	9867483
+6840	Cytoskeletal	9867483
+8445	Cytoplasmic	9748265
+8446	Nuclear	9685386
+6843	Secretory vesicles	1976629
+5104	Extracellular (excluding cell wall)	3027058
+8448	Other vesicles of the secretory/endocytic pathways	7826360
+6844	Secretory vesicles	1976629
+5105	Cytoplasmic	1657985
+8449	Nuclear	9547260
+5106	Mitochondrial	8645161
+6847	Nuclear	1464329
+5108	Cytoplasmic	8120099
+5108	Cytoskeletal	8120099
+23542	Cytoplasmic	10490659
+1906	Extracellular (excluding cell wall)	2670930
+4168	Cytoplasmic	3281159
+4168	Cytoskeletal	3056717
+10445	Nuclear	9765390
+10445	Cytoplasmic	9765390
+10449	Mitochondrial	8241273
+5111	Nuclear	9552415
+8455	Extracellular (excluding cell wall)	9736737
+8456	Nuclear	10767081
+6853	Secretory vesicles	2110562
+8459	Golgi	9733778
+5116	Centrosome/spindle pole body	8124707
+5116	Cytoskeletal	8124707
+6857	Secretory vesicles	1840599
+1911	Nuclear	9121482
+4171	Nuclear	8175912
+1912	Nuclear	9121482
+4172	Nuclear	1549468
+4173	Nuclear	7601140
+23554	Unspecified membrane	10719184
+4174	Nuclear	8751386
+23555	Unspecified membrane	10719184
+1915	Cytoplasmic	3512269
+23557	Secretory vesicles	10195194
+9402	Cytoplasmic	9878555
+10456	Nuclear	9058808
+10456	Mitochondrial	9058808
+9404	Cytoplasmic	9565592
+10458	Cytoplasmic	10343108
+9406	Nuclear	9931435
+7802	Cilia	9284741
+7802	Cytoskeletal	9284741
+7803	Nuclear	9642300
+8460	Golgi	9501187
+9409	Unspecified membrane	9922452
+7805	Lysosome/vacuole	8661146
+8462	Nuclear	9748269
+8464	Nuclear	9787080
+8465	Nuclear	9771714
+8467	Nuclear	9730600
+6866	Extracellular (excluding cell wall)	10866201
+2581	Lysosome/vacuole	7601472
+23567	Nuclear	10488071
+23567	Nuclear nucleolus	10488071
+2583	Unspecified membrane	1601877
+2584	Cytoplasmic	8908517
+4188	Cytoplasmic	8797820
+2588	Lysosome/vacuole	8020961
+317	Cytoplasmic	9267021
+56992	Centrosome/spindle pole body	10878014
+56992	Cytoskeletal	10878014
+9410	Nuclear	9774689
+319	Extracellular (excluding cell wall)	6816269
+56993	Mitochondrial	10982837
+10465	Nuclear	9570313
+9412	Nuclear	8598913
+56996	Unspecified membrane	10871601
+9414	Cell junction	8824195
+9415	Unspecified membrane	9867867
+9416	Nuclear	9409622
+56999	Extracellular (excluding cell wall)	10936055
+8470	Cytoskeletal	9211900
+8473	Nuclear	9083067
+8473	Cytoplasmic	9083067
+6871	Nuclear	8552087
+5132	Cytoplasmic	8288249
+22913	Nuclear	9376072
+6877	Nuclear	9045704
+4192	Extracellular (excluding cell wall)	1639750
+4193	Nuclear	10871849
+2591	Unspecified membrane	8663203
+1936	Cytoplasmic	8334168
+1939	Cytoplasmic	2482295
+4199	Cytoplasmic	8187880
+325	Nuclear	10972085
+326	Nuclear	9398839
+10472	Nuclear	9756912
+54606	Nuclear nucleolus	10749921
+328	Nuclear	1722334
+9420	Microsomal fraction	9802883
+10474	Nuclear	9674425
+9423	Extracellular (excluding cell wall)	9950216
+9424	Unspecified membrane	10075682
+10479	Mitochondrial	9507001
+8480	Nuclear	9256445
+8480	Cytoplasmic	9256445
+9429	Unspecified membrane	9850061
+8482	Extracellular (excluding cell wall)	9712866
+8482	Unspecified membrane	9712866
+8483	Extracellular (excluding cell wall)	9722584
+6880	Nuclear	10821850
+30001	Unspecified membrane	10671517
+8487	Nuclear	9323130
+8487	Cytoplasmic	9323130
+30008	Extracellular (excluding cell wall)	10601734
+30008	Extracellular matrix (cuticle and basement membrane)	10601734
+30008	Basement membrane (extracellular matrix)	10601734
+22925	Extracellular (excluding cell wall)	7721806
+22925	Unspecified membrane	7721806
+22926	Nuclear	10866666
+23584	Unspecified membrane	9862345
+331	Cytoplasmic	8654366
+332	Cytoskeletal	9859993
+23589	Cytoplasmic	9712905
+333	Unspecified membrane	9521588
+13	Microsomal fraction	8063807
+16	Cytoplasmic	7654687
+10483	Other vesicles of the secretory/endocytic pathways	8898360
+10484	Cytoplasmic	8898360
+10484	Secretory vesicles	8898360
+19	Unspecified membrane	10431236
+8493	Nuclear	9177166
+6890	Unspecified membrane	1946428
+6891	Unspecified membrane	1946428
+5154	Extracellular (excluding cell wall)	3754619
+3550	Extracellular (excluding cell wall)	7970704
+30014	Nuclear	10906052
+30014	Cytoplasmic	10906052
+8498	Nuclear	9637251
+6894	Nuclear	8846792
+6895	Nuclear	2011739
+3552	Extracellular (excluding cell wall)	1924307
+22933	Cytoplasmic	10393250
+3553	Extracellular (excluding cell wall)	3493774
+6897	Cytoplasmic	2033077
+23592	Nuclear	10671519
+23592	Unspecified membrane	10671519
+3557	Extracellular (excluding cell wall)	1385987
+22938	Nuclear	9569025
+3558	Extracellular (excluding cell wall)	6608729
+1956	Endosome/Endosomal vesicles	10734107
+23597	Mitochondrial	10383425
+20	Unspecified membrane	7766993
+21	Unspecified membrane	9027511
+22	Unspecified membrane	10196363
+22	Mitochondrial	9621516
+24	Unspecified membrane	9202155
+25	Nuclear	8242749
+10492	Nuclear	9847309
+10493	Unspecified membrane	8938427
+27	Cytoplasmic	2198571
+10495	Cytoplasmic	8150545
+10497	Cytoplasmic	9607201
+10497	Golgi	9607201
+9445	Unspecified membrane	9795190
+7841	Unspecified membrane	7635146
+7846	Cytoskeletal	3693406
+5160	Mitochondrial	3034892
+5162	Mitochondrial	2376596
+5163	Mitochondrial	7499431
+4508	Unspecified membrane	9883875
+4508	Mitochondrial	9883875
+5165	Mitochondrial	7499431
+5166	Mitochondrial	8798399
+22944	Nuclear	1923796
+2908	Nuclear	8621628
+2908	Cytoplasmic	9873044
+2909	Nuclear	1894621
+3565	Extracellular (excluding cell wall)	3016727
+1964	Cytoplasmic	8106356
+3568	Extracellular (excluding cell wall)	1495999
+3569	Cytoplasmic	10925276
+3569	Extracellular (excluding cell wall)	3023045
+351	Golgi	10922078
+1968	Cytoplasmic	8106381
+33	Mitochondrial	1774065
+34	Mitochondrial	1731887
+35	Mitochondrial	2565344
+36	Mitochondrial	7698750
+37	Mitochondrial	8466512
+9451	Cytoplasmic	10026192
+38	Mitochondrial	1979337
+359	Apical plasma membrane	7532304
+359	Secretory vesicles	7532304
+39	Cytoplasmic	7911016
+7852	Cytoplasmic	10415069
+7855	Unspecified membrane	9054360
+4512	Mitochondrial	8240356
+6117	Nuclear	8756712
+4513	Mitochondrial	6246917
+7857	Secretory vesicles	2745426
+6118	Nuclear	2406247
+4514	Mitochondrial	6246917
+6119	Nuclear	8454588
+5172	Unspecified membrane	10192399
+5175	Cell junction	1690453
+4519	Mitochondrial	6363134
+2919	Extracellular (excluding cell wall)	8380167
+3575	Extracellular (excluding cell wall)	2317865
+3576	Extracellular (excluding cell wall)	10823949
+1973	Cytoplasmic	10880459
+1974	Cytoplasmic	8521730
+1975	Cytoplasmic	2390971
+3579	Cytoplasmic	10878382
+360	Unspecified membrane	7543093
+1977	Cytoplasmic	10880459
+40	Unspecified membrane	8626462
+8800	Unspecified membrane	9714566
+43	Extracellular (excluding cell wall)	1609795
+43	Axon	9579781
+51302	Microsomal fraction	10748047
+8802	Mitochondrial	9128182
+367	Nuclear	3353727
+8805	Nuclear	9115274
+6122	Cytoplasmic	2891103
+7862	Nuclear	7906940
+6123	Cytoplasmic	8921388
+6124	Cytoplasmic	8268230
+4520	Nuclear	3208749
+9468	Cytoplasmic	9593753
+6125	Cytoplasmic	7772601
+7867	Nuclear	10781029
+6128	Cytoplasmic	8479925
+2920	Extracellular (excluding cell wall)	2643119
+6129	Cytoplasmic	8441630
+4528	Mitochondrial	7829522
+3581	Extracellular (excluding cell wall)	1376929
+2926	Cytoplasmic	8036161
+10800	Unspecified membrane	10391245
+10801	Cytoplasmic	10339604
+5188	Mitochondrial	9878253
+10802	Golgi	10329445
+1981	Cytoplasmic	10880459
+1982	Cytoplasmic	9049310
+3586	Extracellular (excluding cell wall)	9689103
+1983	Cytoplasmic	8663286
+1984	Cytoplasmic	7622067
+10808	Cytoplasmic	9931472
+50	Mitochondrial	9630632
+52	Cytoplasmic	1587862
+374	Extracellular (excluding cell wall)	3413110
+53	Lysosome/vacuole	3191910
+55	Extracellular (excluding cell wall)	8244395
+56	Other vesicles of the secretory/endocytic pathways	8288254
+8815	Nuclear	10908652
+58	Cytoskeletal	
+59	Cytoskeletal	
+8817	Extracellular (excluding cell wall)	9742123
+6130	Cytoplasmic	8360149
+9474	Cytoplasmic	9563500
+126961	Nuclear	
+9475	Cytoskeletal	9933571
+8819	Nuclear	9651585
+6132	Cytoplasmic	7506540
+6133	Cytoplasmic	8597601
+9477	Nuclear	9933582
+7874	Nuclear	9130697
+6137	Cytoplasmic	9582194
+6138	Cytoplasmic	9582194
+5190	Cytoplasmic	8670792
+6139	Cytoplasmic	2402465
+4535	Unspecified membrane	1959619
+4535	Mitochondrial	1959619
+4536	Unspecified membrane	1900003
+4536	Mitochondrial	1900003
+5193	Unspecified membrane	9090384
+4537	Unspecified membrane	9878551
+4537	Mitochondrial	9878551
+5194	Unspecified membrane	8858165
+4538	Unspecified membrane	1959619
+4538	Mitochondrial	1959619
+2934	Cytoskeletal	3020431
+5195	Unspecified membrane	10212238
+4539	Unspecified membrane	9878551
+4539	Mitochondrial	9878551
+3592	Extracellular (excluding cell wall)	1673147
+10810	Cytoskeletal	10381382
+3593	Extracellular (excluding cell wall)	1673147
+22974	Nuclear	9207457
+22974	Centrosome/spindle pole body	9207457
+5199	Extracellular (excluding cell wall)	8530058
+22978	Cytoplasmic	7999131
+3598	Extracellular (excluding cell wall)	9083087
+10818	Unspecified membrane	9660748
+60	Cytoskeletal	
+1999	Nuclear	10821850
+383	Cytoplasmic	3540966
+384	Mitochondrial	8898077
+27120	Extracellular (excluding cell wall)	10570958
+8822	Extracellular (excluding cell wall)	9514906
+8823	Extracellular (excluding cell wall)	9473496
+27122	Extracellular (excluding cell wall)	10570958
+27123	Extracellular (excluding cell wall)	10570958
+9481	Unspecified membrane	10025957
+9481	Mitochondrial	10025957
+9482	Centrosome/spindle pole body	10781590
+8827	Extracellular (excluding cell wall)	9790734
+8828	Unspecified membrane	9288754
+6141	Cytoplasmic	8218404
+51329	Nuclear	10708573
+8829	Unspecified membrane	9288753
+7881	Cytoplasmic	9857044
+6142	Cytoplasmic	9582194
+9486	Golgi	9478973
+9486	Unspecified membrane	9478973
+6143	Cytoplasmic	1577483
+6144	Cytoplasmic	7772601
+4540	Unspecified membrane	1900003
+4540	Mitochondrial	1900003
+4541	Unspecified membrane	1417830
+4541	Mitochondrial	1417830
+6146	Cytoplasmic	8135813
+6147	Cytoplasmic	9417910
+1200	Lysosome/vacuole	9295267
+1201	Mitochondrial	8980123
+1203	Unspecified membrane	9662406
+4547	Microsomal fraction	1439810
+2944	Cytoplasmic	8403204
+1208	Nuclear	1643046
+1209	Unspecified membrane	9828125
+70	Cytoskeletal	9563954
+393	Cytoplasmic	8570618
+71	Cytoskeletal	
+72	Cytoskeletal	
+394	Cytoplasmic	8537347
+51332	Golgi	
+51332	Cytoskeletal	
+398	Cytoplasmic	9113980
+9493	Centrosome/spindle pole body	1406973
+6150	Mitochondrial	8541832
+27136	Nuclear	10369865
+6152	Cytoplasmic	9582194
+6154	Cytoplasmic	8479925
+9499	Cytoskeletal	10369880
+6156	Cytoplasmic	1577483
+6157	Cytoplasmic	7772601
+6158	Cytoplasmic	7772601
+1211	Secretory vesicles	
+6159	Cytoplasmic	8597591
+1212	Secretory vesicles	
+81	Nuclear	9508771
+81	Cytoplasmic	9508771
+81	Cytoskeletal	9508771
+7101	Nuclear	8047143
+56288	Cell junction	10934474
+7104	Unspecified membrane	7665614
+7105	Unspecified membrane	9714763
+87	Cytoskeletal	2349951
+88	Cytoskeletal	1339456
+7107	Unspecified membrane	9521871
+89	Cytoskeletal	1339456
+6160	Cytoplasmic	2780320
+7109	Unspecified membrane	7633421
+6161	Cytoplasmic	9284913
+6164	Cytoplasmic	7490091
+6165	Cytoplasmic	8786106
+3906	Extracellular (excluding cell wall)	7644538
+6167	Cytoplasmic	7545944
+6168	Cytoplasmic	1437567
+3908	Extracellular (excluding cell wall)	2185464
+3908	Extracellular matrix (cuticle and basement membrane)	2185464
+3908	Basement membrane (extracellular matrix)	2185464
+6169	Cytoplasmic	9375793
+3909	Extracellular (excluding cell wall)	8586427
+3909	Extracellular matrix (cuticle and basement membrane)	10801807
+3909	Basement membrane (extracellular matrix)	8586427
+10841	Cytoplasmic	10029623
+2969	Nuclear	10854432
+2969	Cytoplasmic	10854432
+10844	Cytoskeletal	9566967
+10848	Nuclear	10336463
+10849	Nuclear	9426281
+10849	Nuclear nucleolus	9426281
+8850	Nuclear	10891508
+7112	Nuclear	8530026
+8852	Cytoskeletal	9822690
+95	Cytoplasmic	8394326
+6170	Cytoplasmic	8908372
+3910	Extracellular (excluding cell wall)	7959779
+3910	Extracellular matrix (cuticle and basement membrane)	7959779
+3910	Basement membrane (extracellular matrix)	7959779
+8858	Extracellular (excluding cell wall)	2244898
+6171	Cytoplasmic	1326959
+3911	Extracellular (excluding cell wall)	9271224
+3911	Extracellular matrix (cuticle and basement membrane)	9271224
+3911	Basement membrane (extracellular matrix)	9271224
+8859	Nuclear	9812991
+3912	Extracellular (excluding cell wall)	1975589
+3912	Extracellular matrix (cuticle and basement membrane)	10801807
+3912	Basement membrane (extracellular matrix)	1975589
+3913	Extracellular (excluding cell wall)	7698745
+3913	Extracellular matrix (cuticle and basement membrane)	7698745
+3913	Basement membrane (extracellular matrix)	7698745
+27158	Cytoplasmic	10625700
+3914	Extracellular (excluding cell wall)	7550320
+3914	Extracellular matrix (cuticle and basement membrane)	7550320
+3914	Basement membrane (extracellular matrix)	7550320
+6175	Cytoplasmic	3323886
+3915	Extracellular (excluding cell wall)	3552045
+3915	Extracellular matrix (cuticle and basement membrane)	3552045
+3915	Basement membrane (extracellular matrix)	3552045
+6176	Cytoplasmic	3323886
+3916	Lysosome/vacuole	3174652
+3916	Unspecified membrane	3174652
+3918	Extracellular (excluding cell wall)	8012394
+3918	Extracellular matrix (cuticle and basement membrane)	10801807
+3918	Basement membrane (extracellular matrix)	8012394
+1234	Cytoplasmic	10415069
+1234	Endosome/Endosomal vesicles	10679098
+701	Nuclear	10477750
+705	Cytoplasmic	9560222
+2977	Cytoplasmic	1683630
+706	Mitochondrial	8307574
+58985	Unspecified membrane	10875937
+10857	Unspecified membrane	9705155
+29843	Nuclear	10652325
+29844	Nuclear	10644725
+26502	Nuclear	10514485
+26503	Lysosome/vacuole	10581036
+26503	Unspecified membrane	10581036
+8862	Extracellular (excluding cell wall)	10525157
+7123	Extracellular (excluding cell wall)	7798325
+7124	Extracellular (excluding cell wall)	10747938
+7125	Cytoskeletal	2373703
+7127	Extracellular (excluding cell wall)	1374453
+8867	Other vesicles of the secretory/endocytic pathways	9428629
+3920	Lysosome/vacuole	2032724
+27165	Mitochondrial	10620514
+26509	Nuclear	10607832
+6181	Cytoplasmic	3323886
+5525	Cytoplasmic	8703017
+6182	Mitochondrial	8626705
+5526	Cytoplasmic	8703017
+6183	Mitochondrial	9545647
+5528	Nuclear	8703017
+5529	Cytoplasmic	8703017
+3925	Cytoplasmic	2278968
+6187	Cytoplasmic	2308862
+4583	Extracellular (excluding cell wall)	8300571
+6188	Cytoplasmic	1712897
+6189	Cytoplasmic	1398113
+3929	Dense bodies	8432532
+3929	Extracellular (excluding cell wall)	2402637
+4586	Extracellular (excluding cell wall)	7826332
+710	Extracellular (excluding cell wall)	3458172
+2982	Cytoplasmic	9742212
+1244	Unspecified membrane	7559771
+1244	Basolateral plasma membrane	7559771
+2983	Cytoplasmic	9742212
+4588	Extracellular (excluding cell wall)	9195947
+712	Extracellular (excluding cell wall)	9461517
+717	Extracellular (excluding cell wall)	8621452
+10864	Unspecified membrane	
+10865	Nuclear	8649988
+10867	Unspecified membrane	10719184
+29855	Nuclear	10725330
+7134	Cytoskeletal	
+7135	Cytoskeletal	
+7136	Cytoskeletal	
+27173	Unspecified membrane	10610721
+7137	Cytoskeletal	
+3930	Nuclear matrix	8157663
+7138	Cytoskeletal	
+27175	Cytoskeletal	10903841
+8878	Cytoplasmic	8650207
+6191	Cytoplasmic	8358435
+7139	Cytoskeletal	
+5536	Nuclear	7925273
+6192	Cytoplasmic	2124517
+6193	Cytoplasmic	7772601
+3934	Cytoplasmic	9339356
+6194	Cytoplasmic	1301164
+2990	Lysosome/vacuole	8348154
+3938	Unspecified membrane	2460343
+4594	Mitochondrial	2567699
+3939	Cytoplasmic	2434947
+4595	Nuclear	7823963
+56604	Cytoskeletal	10828619
+4599	Cytoplasmic	8798556
+56606	Unspecified membrane	10860667
+2996	Unspecified membrane	2295603
+1258	Unspecified membrane	7682292
+727	Extracellular (excluding cell wall)	106884
+10874	Extracellular (excluding cell wall)	7619205
+10876	Extracellular (excluding cell wall)	7514008
+10878	Extracellular (excluding cell wall)	8428964
+10879	Extracellular (excluding cell wall)	7982889
+7140	Cytoskeletal	8838323
+8881	Centrosome/spindle pole body	7736578
+26523	Cytoplasmic	10534406
+8882	Nuclear	9763455
+8882	Cytoplasmic	9763455
+7143	Extracellular (excluding cell wall)	8940128
+7143	Extracellular matrix (cuticle and basement membrane)	8626505
+7143	Axon	8940128
+26524	Nuclear	10673337
+8883	Cytoplasmic	8626687
+27181	Unspecified membrane	10625619
+8884	Unspecified membrane	9516450
+51385	Nuclear	10029171
+26526	Unspecified membrane	10500248
+5542	Extracellular (excluding cell wall)	8422499
+2200	Extracellular (excluding cell wall)	10931876
+2200	Extracellular matrix (cuticle and basement membrane)	10931876
+5543	Extracellular (excluding cell wall)	8422499
+2201	Extracellular (excluding cell wall)	8120105
+2201	Extracellular matrix (cuticle and basement membrane)	8120105
+2202	Extracellular (excluding cell wall)	10369267
+2202	Extracellular matrix (cuticle and basement membrane)	10369267
+5545	Extracellular (excluding cell wall)	8422499
+8888	Nuclear	9712829
+27189	Extracellular (excluding cell wall)	10639155
+5549	Extracellular matrix (cuticle and basement membrane)	7592739
+1261	Unspecified membrane	9517456
+1264	Cytoskeletal	8526917
+1265	Cytoskeletal	8889829
+1265	Cell junction	8889829
+56616	Mitochondrial	10929711
+10880	Cytoskeletal	10373328
+10881	Cytoskeletal	10373328
+10885	Nuclear	10395803
+7150	Nuclear	8811173
+8891	Cytoplasmic	10900014
+7153	Nuclear	6267071
+5550	Cytoplasmic	7959018
+8894	Cytoplasmic	3044606
+5551	Secretory vesicles	3419519
+7155	Nuclear	1309226
+7156	Nuclear	8622991
+8896	Nuclear	7841202
+5553	Dense bodies	7531438
+7157	Nuclear	10842192
+3950	Extracellular (excluding cell wall)	9545637
+5554	Extracellular (excluding cell wall)	2993301
+7158	Nuclear	9748285
+7158	Cytoplasmic	9748285
+5555	Extracellular (excluding cell wall)	2993301
+7159	Cytoplasmic	9748285
+3952	Extracellular (excluding cell wall)	9054940
+5557	Nuclear	8026492
+3954	Unspecified membrane	10486213
+5558	Nuclear	8026492
+2218	Extracellular (excluding cell wall)	9690476
+3958	Apical plasma membrane	9162064
+1272	Unspecified membrane	7959734
+3959	Extracellular (excluding cell wall)	8390986
+56624	Mitochondrial	10781606
+1277	Extracellular (excluding cell wall)	9639571
+1277	Extracellular matrix (cuticle and basement membrane)	9639571
+1278	Extracellular (excluding cell wall)	1303238
+1278	Extracellular matrix (cuticle and basement membrane)	2777764
+10891	Nuclear	10713165
+10894	Unspecified membrane	10037799
+10895	Nuclear	7887923
+10899	Unspecified membrane	10321732
+29883	Nuclear	9820826
+4901	Nuclear	8939891
+6505	Unspecified membrane	7521911
+6506	Unspecified membrane	7521911
+6507	Unspecified membrane	7521911
+4904	Nuclear	3174636
+6508	Unspecified membrane	7923606
+29888	Cytoplasmic	10748158
+29888	Unspecified membrane	10748158
+6509	Unspecified membrane	8910405
+4907	Unspecified membrane	2129526
+3960	Cytoplasmic	9162064
+10100	Unspecified membrane	9714763
+1280	Extracellular (excluding cell wall)	7550321
+1280	Extracellular matrix (cuticle and basement membrane)	7550321
+10102	Mitochondrial	7615523
+1281	Extracellular (excluding cell wall)	1672129
+1281	Extracellular matrix (cuticle and basement membrane)	1672129
+10103	Unspecified membrane	9714763
+1282	Extracellular (excluding cell wall)	2987919
+1282	Extracellular matrix (cuticle and basement membrane)	2987919
+1282	Basement membrane (extracellular matrix)	2987919
+10105	Unspecified membrane	1744118
+1284	Extracellular (excluding cell wall)	3025878
+1284	Extracellular matrix (cuticle and basement membrane)	3025878
+1284	Basement membrane (extracellular matrix)	3025878
+1285	Extracellular (excluding cell wall)	3025878
+1285	Extracellular matrix (cuticle and basement membrane)	8016138
+1285	Basement membrane (extracellular matrix)	8016138
+1286	Extracellular (excluding cell wall)	2318822
+1286	Extracellular matrix (cuticle and basement membrane)	2318822
+1286	Basement membrane (extracellular matrix)	2318822
+1287	Extracellular (excluding cell wall)	2349482
+1287	Extracellular matrix (cuticle and basement membrane)	10821854
+1287	Basement membrane (extracellular matrix)	10821854
+10109	Cytoskeletal	9230079
+1288	Extracellular (excluding cell wall)	8661006
+1288	Extracellular matrix (cuticle and basement membrane)	8661006
+1288	Basement membrane (extracellular matrix)	8661006
+1289	Extracellular (excluding cell wall)	9042913
+1289	Extracellular matrix (cuticle and basement membrane)	9042913
+759	Cytoplasmic	7574487
+6510	Unspecified membrane	8702519
+6511	Unspecified membrane	7791878
+6513	Unspecified membrane	9462754
+6514	Unspecified membrane	8027028
+6515	Unspecified membrane	1695905
+29895	Cytoskeletal	
+4913	Nuclear	8990169
+6517	Unspecified membrane	2649253
+7173	Unspecified membrane	2548579
+6519	Unspecified membrane	8054986
+7175	Cytoplasmic	7798308
+2230	Mitochondrial	2969697
+7178	Extracellular (excluding cell wall)	7542803
+2232	Mitochondrial	2845396
+5576	Cytoplasmic	10799517
+3973	Endosome/Endosomal vesicles	10617611
+5578	Cytoplasmic	10912793
+5578	Unspecified membrane	10912793
+5579	Cytoplasmic	10828076
+2237	Nuclear	9778254
+3976	Extracellular (excluding cell wall)	9349722
+10111	Nuclear	10802669
+1290	Extracellular (excluding cell wall)	9425231
+1290	Extracellular matrix (cuticle and basement membrane)	9425231
+1291	Extracellular (excluding cell wall)	10329467
+1291	Extracellular matrix (cuticle and basement membrane)	10329467
+3978	Nuclear	8696349
+10113	Nuclear	10194769
+1292	Extracellular (excluding cell wall)	8782832
+1292	Extracellular matrix (cuticle and basement membrane)	8782832
+760	Cytoplasmic	7574487
+1293	Extracellular matrix (cuticle and basement membrane)	8782832
+761	Cytoplasmic	7574487
+1294	Extracellular (excluding cell wall)	9375848
+1294	Extracellular matrix (cuticle and basement membrane)	9375848
+1294	Basement membrane (extracellular matrix)	10821839
+762	Unspecified membrane	6811592
+1295	Extracellular (excluding cell wall)	2029894
+1295	Extracellular matrix (cuticle and basement membrane)	2029894
+1296	Extracellular (excluding cell wall)	2019595
+1296	Extracellular matrix (cuticle and basement membrane)	2019595
+1296	Basement membrane (extracellular matrix)	2019595
+763	Mitochondrial	8356065
+1297	Extracellular (excluding cell wall)	3473493
+1297	Extracellular matrix (cuticle and basement membrane)	3473493
+56647	Nuclear	
+1298	Extracellular (excluding cell wall)	10364514
+1298	Extracellular matrix (cuticle and basement membrane)	10364514
+765	Extracellular (excluding cell wall)	1899030
+1299	Extracellular (excluding cell wall)	8528240
+1299	Extracellular matrix (cuticle and basement membrane)	8528240
+8120	Secretory vesicles	7671305
+768	Unspecified membrane	8661007
+29107	Nuclear transport factor	10567585
+29109	Cytoplasmic	10352228
+8125	Cytoplasmic	8192856
+6522	Unspecified membrane	3015590
+6523	Unspecified membrane	8563765
+6524	Unspecified membrane	8244402
+7180	Extracellular (excluding cell wall)	8665901
+6525	Cytoskeletal	8707825
+6526	Unspecified membrane	1372904
+7182	Nuclear	8016112
+4923	Dendrite	9763490
+4923	Axon	9763490
+4924	Extracellular (excluding cell wall)	1520323
+5580	Cytoplasmic	7925449
+6528	Unspecified membrane	9388506
+4925	Cytoplasmic	7811391
+4925	Extracellular (excluding cell wall)	7811391
+5581	Cytoplasmic	
+5581	Unspecified membrane	7935319
+6529	Unspecified membrane	2387399
+4926	Nuclear	1541636
+4926	Centrosome/spindle pole body	7004645
+3980	Nuclear	7565692
+3981	Nuclear	8798671
+4929	Nuclear	7877627
+2243	Extracellular (excluding cell wall)	10467729
+2244	Extracellular (excluding cell wall)	10467729
+3983	Cytoskeletal	9245787
+5587	Golgi	10856238
+3984	Cytoplasmic	8537403
+2246	Extracellular (excluding cell wall)	1693186
+10120	Cytoskeletal	7696711
+10121	Cytoskeletal	1528266
+2248	Extracellular (excluding cell wall)	10749884
+3988	Lysosome/vacuole	1718995
+10124	Nuclear	10462049
+56655	Nuclear	10801849
+29116	Cytoskeletal	10593918
+779	Unspecified membrane	8004673
+29118	Cytoplasmic	10608860
+6530	Unspecified membrane	2008212
+6531	Cytoplasmic	10823899
+6531	Unspecified membrane	8628395
+6533	Unspecified membrane	8010975
+6534	Unspecified membrane	7651355
+4931	Nuclear	9286697
+6536	Unspecified membrane	8183239
+6537	Unspecified membrane	8661037
+26574	Nuclear	10580117
+5590	Cytoplasmic	7925449
+4935	Unspecified membrane	7647783
+6539	Unspecified membrane	7861179
+2250	Extracellular (excluding cell wall)	9786939
+4938	Cytoplasmic	3754863
+4938	Microsomal fraction	2440675
+4939	Unspecified membrane	2440675
+4939	Microsomal fraction	2440675
+2253	Extracellular (excluding cell wall)	8700553
+3992	Unspecified membrane	10601301
+2254	Extracellular (excluding cell wall)	8321227
+2255	Extracellular (excluding cell wall)	9287324
+2256	Extracellular (excluding cell wall)	8790420
+2257	Extracellular (excluding cell wall)	8790420
+3996	Cytoskeletal	7542763
+10131	Nuclear	8756626
+10131	Cytoplasmic	8756626
+2258	Extracellular (excluding cell wall)	8790420
+2259	Extracellular (excluding cell wall)	8790420
+3998	Golgi	7876089
+10133	Cytoplasmic	9488477
+781	Unspecified membrane	1309651
+782	Unspecified membrane	1385409
+29121	Unspecified membrane	10541800
+783	Unspecified membrane	8494331
+784	Unspecified membrane	8119293
+785	Unspecified membrane	9628818
+786	Unspecified membrane	8387489
+788	Mitochondrial	9399886
+51727	Nuclear	10462544
+51727	Cytoplasmic	10462544
+51729	Nuclear	10593949
+6542	Unspecified membrane	8954799
+6545	Unspecified membrane	9598310
+26584	Nuclear	9736770
+93974	Mitochondrial	
+26585	Extracellular (excluding cell wall)	9660951
+1603	Microsomal fraction	9144178
+1605	Cytoskeletal	1406935
+1605	Extracellular matrix (cuticle and basement membrane)	1741056
+1605	Unspecified membrane	8798547
+4948	Unspecified membrane	8302318
+2266	Extracellular (excluding cell wall)	10467729
+10142	Centrosome/spindle pole body	10202149
+10143	Extracellular (excluding cell wall)	10524194
+10143	Extracellular matrix (cuticle and basement membrane)	10524194
+10146	Nuclear	9889278
+10146	Cytoplasmic	8649363
+10148	Extracellular (excluding cell wall)	8551575
+6550	Unspecified membrane	8843774
+51738	Extracellular (excluding cell wall)	10604470
+6553	Unspecified membrane	9933641
+4950	Cell junction	8601611
+4952	Golgi	1840503
+6556	Unspecified membrane	8537108
+6557	Apical plasma membrane	7929272
+6557	Unspecified membrane	7929272
+6558	Unspecified membrane	7629105
+6559	Unspecified membrane	8670281
+1613	Nuclear	9488481
+1615	Cytoplasmic	8449960
+2271	Cytoplasmic	8200987
+2271	Mitochondrial	8200987
+2274	Nuclear	9150430
+5901	Nuclear	10400640
+8161	Nuclear nucleolus	7971277
+7507	Nuclear	1601884
+51747	Nuclear	10631324
+6560	Unspecified membrane	8663127
+7508	Nuclear	10873465
+5905	Cytoplasmic	8978815
+25942	Nuclear	10773092
+6564	Unspecified membrane	7896779
+6566	Unspecified membrane	8124722
+6567	Unspecified membrane	7981683
+1621	Cytoplasmic	3443096
+1621	Unspecified membrane	3443096
+6568	Unspecified membrane	8288239
+11100	Nuclear	9733834
+11102	Nuclear	10024167
+4968	Nuclear	9223305
+11104	Cytoskeletal	9658175
+1627	Cytoskeletal	8216329
+1629	Mitochondrial	1429740
+10160	Cytoskeletal	9425278
+2288	Cytoplasmic	2378870
+10165	Mitochondrial	10369257
+9111	Cytoplasmic	10779520
+10166	Mitochondrial	10369256
+9114	Unspecified membrane	8250920
+9118	Cytoskeletal	7769995
+7514	Nuclear	9368044
+7514	Cytoplasmic	9368044
+8170	Unspecified membrane	8647271
+9119	Cytoskeletal	9856802
+8174	Unspecified membrane	8502297
+6571	Other vesicles of the secretory/endocytic pathways	8095030
+6571	Unspecified membrane	8095030
+8175	Nuclear	8211113
+6572	Other vesicles of the secretory/endocytic pathways	8071310
+6572	Unspecified membrane	8071310
+5917	Cytoplasmic	7590355
+6573	Unspecified membrane	8276792
+6575	Unspecified membrane	8302848
+4973	Unspecified membrane	9052782
+4974	Unspecified membrane	8244377
+6578	Unspecified membrane	8787677
+1632	Mitochondrial	7829074
+4975	Cytoplasmic	8790421
+6579	Unspecified membrane	9007731
+1634	Extracellular matrix (cuticle and basement membrane)	7961765
+3239	Nuclear	
+11113	Cytoplasmic	9792683
+1636	Cytoplasmic	1328889
+1636	Unspecified membrane	2849100
+1638	Unspecified membrane	8206391
+2295	Nuclear	9722567
+11117	Extracellular (excluding cell wall)	10625608
+11117	Extracellular matrix (cuticle and basement membrane)	10625608
+10174	Cytoskeletal	9885244
+10174	Cell junction	9885244
+9120	Unspecified membrane	9425115
+9121	Unspecified membrane	9425115
+9122	Unspecified membrane	9425115
+9123	Unspecified membrane	9425115
+7520	Nuclear	7957065
+51761	Unspecified membrane	10551800
+9126	Nuclear	9506951
+51763	Cytoplasmic	10753883
+9128	Nuclear	9328476
+9129	Nuclear	9328476
+6580	Unspecified membrane	9187257
+5925	Nuclear	3657987
+6581	Unspecified membrane	9933568
+6582	Unspecified membrane	9260930
+8187	Nuclear	9121460
+5928	Nuclear	8350924
+5929	Nuclear	7558034
+6585	Extracellular (excluding cell wall)	9813312
+6586	Extracellular (excluding cell wall)	9813312
+1641	Cytoskeletal	11001923
+6588	Unspecified membrane	9367679
+1645	Cytoplasmic	8486699
+4988	Golgi	9242668
+1647	Nuclear	7798274
+1649	Nuclear	8510758
+10180	Nuclear	10352938
+10181	Nuclear	10352938
+9130	Nuclear	9339379
+9131	Nuclear	9989411
+9131	Mitochondrial	9989411
+53371	Nuclear	8707840
+53371	Cytoplasmic	8707840
+9132	Unspecified membrane	10025409
+10188	Cytoplasmic	8497321
+9135	Endosome/Endosomal vesicles	8521472
+9136	Nuclear nucleolus	9418896
+8190	Extracellular (excluding cell wall)	7923218
+5932	Nuclear	10764811
+7536	Nuclear	7912130
+7538	Cytoplasmic	9703499
+6591	Nuclear	10866665
+6594	Nuclear	1408766
+25975	Extracellular (excluding cell wall)	10610727
+6595	Nuclear	8670841
+6596	Nuclear	7876228
+6597	Nuclear	8208605
+6598	Nuclear	7801128
+6599	Nuclear	8804307
+3257	Dense bodies	8896559
+3257	Lysosome/vacuole	8896559
+3257	Unspecified membrane	8896559
+4998	Nuclear	7502077
+11133	Nuclear	1372044
+11133	Growth cone	1372044
+11133	Centrosome/spindle pole body	1372044
+11133	Cytoskeletal	10099934
+4999	Nuclear	8808289
+1658	Nuclear	8135819
+1659	Nuclear	7935475
+11137	Nuclear	7828893
+11139	Cytoskeletal	10023074
+9140	Cytoplasmic	9852036
+10196	Cytoplasmic	9642256
+10198	Golgi	8885239
+7541	Nuclear	9177479
+10199	Nuclear nucleolus	9450966
+9146	Endosome/Endosomal vesicles	10861283
+4200	Mitochondrial	1993674
+5940	Nuclear	9598316
+9149	Nuclear	9918863
+5942	Nuclear	9598316
+4204	Nuclear	10773092
+4205	Nuclear	1516833
+5944	Nuclear	9598316
+4207	Nuclear	1516833
+5946	Nuclear	9598316
+3263	Extracellular (excluding cell wall)	3855550
+1660	Nuclear	9111062
+3265	Cytoplasmic	10842192
+1663	Nuclear	9013641
+1663	Nuclear nucleolus	9013641
+3267	Nuclear	7637788
+3267	Nuclear transport factor	7634337
+1664	Nuclear	9013641
+1664	Nuclear nucleolus	9013641
+1665	Nuclear	9388478
+11143	Nuclear	10438470
+1666	Mitochondrial	7818482
+11149	Unspecified membrane	10441744
+9152	Unspecified membrane	9845349
+9153	Unspecified membrane	9435697
+9154	Unspecified membrane	9124315
+9156	Nuclear	9685493
+9158	Nuclear	9806903
+9158	Unspecified membrane	9806903
+9158	Mitochondrial	9806903
+30814	Extracellular (excluding cell wall)	10681567
+5959	Unspecified membrane	8884265
+2617	Cytoplasmic	7961834
+3273	Extracellular (excluding cell wall)	2347592
+3275	Nuclear	9545638
+3276	Cytoplasmic	9029147
+11151	Cytoskeletal	9778037
+1674	Cytoskeletal	8792816
+1676	Nuclear	9108473
+1676	Cytoplasmic	9108473
+11154	Secretory vesicles	10436028
+1677	Nuclear	9108473
+1677	Cytoplasmic	9108473
+11157	Nuclear	10523320
+8500	Cytoplasmic	7796809
+8502	Cell junction	8937994
+8505	Cytoplasmic	9925755
+9162	Nuclear	9830018
+9162	Cytoplasmic	9830018
+6902	Cytoskeletal	8706133
+8506	Unspecified membrane	9118959
+6903	Cytoskeletal	8706133
+8507	Nuclear	9566959
+8507	Nuclear matrix	9566959
+6904	Cytoskeletal	8706133
+6905	Cytoskeletal	8706133
+6906	Extracellular (excluding cell wall)	3094014
+4221	Nuclear	9465067
+23603	Cytoskeletal	9778037
+9169	Nuclear	9447963
+5961	Unspecified membrane	1749427
+23604	Cytoplasmic	10629061
+4224	Extracellular (excluding cell wall)	8262185
+5965	Nuclear	7961977
+23607	Cytoplasmic	10339567
+23607	Cytoskeletal	10339567
+2623	Nuclear	2300555
+2624	Nuclear	1370462
+3281	Nuclear	9649501
+2628	Mitochondrial	8313955
+11167	Extracellular (excluding cell wall)	9786430
+8514	Cytoplasmic	7649300
+9172	M-lines	7505783
+9175	Unspecified membrane	9353328
+5970	Nuclear	10747850
+5970	Cytoplasmic	10903762
+9179	Golgi	10066790
+26958	Secretory vesicles	
+2631	Unspecified membrane	9615231
+30833	Cytoplasmic	10899995
+4236	Extracellular (excluding cell wall)	7835894
+4236	Extracellular matrix (cuticle and basement membrane)	7835894
+4237	Extracellular (excluding cell wall)	7759096
+4237	Extracellular matrix (cuticle and basement membrane)	7759096
+5976	Cytoplasmic	8855285
+4238	Extracellular (excluding cell wall)	7782085
+4238	Extracellular matrix (cuticle and basement membrane)	7782085
+4239	Extracellular (excluding cell wall)	7633408
+4239	Extracellular matrix (cuticle and basement membrane)	7633408
+30837	Nuclear	9344857
+3292	Cytoplasmic	8547176
+3293	Microsomal fraction	8075637
+2638	Extracellular (excluding cell wall)	1696927
+2639	Mitochondrial	8541831
+10513	Cytoplasmic	9843960
+10513	Cytoskeletal	9843960
+10513	Unspecified membrane	9843960
+10513	Secretory vesicles	9843960
+3297	Nuclear	10821850
+3298	Nuclear	1871106
+10516	Extracellular (excluding cell wall)	10428823
+3299	Nuclear	8972228
+54360	Extracellular (excluding cell wall)	10857752
+8520	Nuclear	9427644
+8525	Nuclear	9716136
+9182	Endosome/Endosomal vesicles	9837933
+9184	Nuclear	9660858
+6925	Nuclear	1681116
+23621	Unspecified membrane	10887202
+9187	Unspecified membrane	9478004
+4240	Lipid particles	8639264
+6927	Nuclear	10944108
+9188	Nuclear	8614622
+9188	Nuclear nucleolus	8614622
+5980	Nuclear	9618506
+6928	Nuclear	1677179
+9189	Nuclear	9887332
+5981	Nuclear	8248204
+6929	Nuclear	10781029
+5982	Nuclear	1313560
+5983	Nuclear	7774928
+4245	Golgi	9020882
+5984	Nuclear	7774928
+30844	Nuclear	10673336
+4247	Golgi	7797505
+30845	Nuclear	10673336
+5987	Unspecified membrane	3078962
+30846	Nuclear	10673336
+5989	Nuclear	8289803
+10521	Nuclear	8871553
+2648	Nuclear	8552087
+10522	Nuclear	9773984
+10524	Nuclear	8607265
+10528	Nuclear	9372940
+10528	Nuclear nucleolus	9372940
+10529	Cytoskeletal	9733644
+11187	Cell junction	10374265
+8531	Nuclear	7628487
+8531	Cytoplasmic	7628487
+6930	Mitochondrial	8333869
+9191	Nuclear	9774341
+9191	Cytoplasmic	9774341
+9191	Nuclear nucleolus	9774341
+8535	Nuclear	9315667
+9194	Unspecified membrane	9786900
+9196	Cytoplasmic	9857044
+9197	Unspecified membrane	9096318
+5990	Nuclear	1505960
+23632	Unspecified membrane	10512682
+5991	Nuclear	8289803
+5992	Nuclear	8289803
+2650	Unspecified membrane	1329093
+5993	Nuclear	9806546
+2651	Golgi	9134435
+2651	Unspecified membrane	8449405
+4255	Nuclear	2188979
+5994	Nuclear	9118943
+4256	Extracellular (excluding cell wall)	9916809
+4256	Extracellular matrix (cuticle and basement membrane)	9916809
+23637	Nuclear	10202141
+23637	Cytoplasmic	10202141
+23637	Centrosome/spindle pole body	10202141
+2653	Mitochondrial	3348809
+4257	Microsomal fraction	3372534
+4258	Unspecified membrane	8703034
+4258	Microsomal fraction	8703034
+4259	Unspecified membrane	9278457
+4259	Microsomal fraction	9278457
+5998	Cytoplasmic	9858594
+5999	Cytoplasmic	10869340
+11190	Cytoskeletal	9647649
+11194	Unspecified membrane	9878413
+11194	Mitochondrial	9878413
+11196	Cytoplasmic	10400679
+8542	Extracellular (excluding cell wall)	9325276
+54386	Nuclear	10850490
+5201	Cytoplasmic	8744932
+8544	Nuclear	9079676
+3600	Cytoplasmic	10851076
+3600	Endosome/Endosomal vesicles	10851076
+3600	Golgi	10851076
+8547	Extracellular (excluding cell wall)	9694814
+5205	Unspecified membrane	9500542
+6944	Nuclear	7702631
+8548	Nuclear	9129147
+3603	Extracellular (excluding cell wall)	9144227
+23641	Nuclear	10403563
+3605	Extracellular (excluding cell wall)	7499828
+6948	Extracellular (excluding cell wall)	1708393
+26985	Lysosome/vacuole	10024875
+6949	Nuclear	9096354
+6949	Nuclear nucleolus	9096354
+3607	Nuclear	1909027
+3608	Nuclear	7519613
+3609	Nuclear	7519613
+2662	Extracellular (excluding cell wall)	8679252
+10540	Centrosome/spindle pole body	8647893
+10543	Nuclear	8668148
+10543	Cytoplasmic	9584194
+10543	Centrosome/spindle pole body	9584194
+10545	Nuclear	8021251
+10548	Unspecified membrane	9332367
+51052	Extracellular (excluding cell wall)	9607765
+6950	Cytoplasmic	1630491
+6950	Cytoskeletal	1630491
+8554	Nuclear	9724754
+8556	Nuclear	9367992
+8557	Cytoplasmic	9817758
+8559	Nuclear	9000057
+3617	Extracellular (excluding cell wall)	9691169
+3617	Extracellular matrix (cuticle and basement membrane)	9691169
+2670	Cytoskeletal	9693047
+23658	Nuclear	10369684
+405	Nuclear	10777486
+2677	Unspecified membrane	1749935
+10552	Cytoskeletal	8978670
+407	Cytoplasmic	8224247
+2679	Unspecified membrane	8104871
+10553	Nuclear	9482853
+408	Cytoplasmic	10823817
+408	Endosome/Endosomal vesicles	10823817
+409	Cytoplasmic	9346876
+9501	Cytoplasmic	9367993
+10556	Nuclear	9630247
+10557	Nuclear	9630247
+10559	Golgi	9644260
+7904	Nuclear	8586425
+8560	Unspecified membrane	9188692
+8565	Cytoplasmic	9162081
+8565	Extracellular (excluding cell wall)	10102815
+26207	Cytoplasmic	10531358
+8567	Cytoplasmic	8988362
+5225	Extracellular (excluding cell wall)	3335549
+8568	Nuclear	9192856
+4281	Cytoskeletal	10400985
+4282	Extracellular (excluding cell wall)	2552447
+4283	Extracellular (excluding cell wall)	8476424
+4284	Unspecified membrane	1840563
+4285	Mitochondrial	9073519
+410	Lysosome/vacuole	2562955
+411	Lysosome/vacuole	2303452
+2683	Golgi	10900002
+4287	Nuclear	10915768
+4287	Cytoplasmic	10915768
+4287	Nuclear matrix	9580663
+412	Unspecified membrane	2668275
+412	Microsomal fraction	6957717
+4288	Nuclear	10878014
+4288	Nuclear nucleolus	2571566
+4289	Cytoplasmic	10640805
+2687	Unspecified membrane	1676842
+9512	Mitochondrial	9653160
+9513	Nuclear	10888599
+9513	Cytoplasmic	9259278
+9514	Unspecified membrane	9030544
+10568	Unspecified membrane	10329428
+10569	Nuclear	10197984
+7913	Nuclear	10908574
+9518	Extracellular (excluding cell wall)	9326641
+8570	Nuclear	9136930
+8573	Basolateral plasma membrane	9660868
+7919	Nuclear	7601445
+3630	Cytoplasmic	381941
+8577	Unspecified membrane	9730596
+8578	Unspecified membrane	9395444
+23670	Unspecified membrane	10767548
+5239	Cell junction	8631316
+3637	Nuclear	7935390
+56301	Unspecified membrane	10734121
+56302	Unspecified membrane	10944439
+4297	Nuclear	9129043
+2694	Extracellular (excluding cell wall)	2071148
+4298	Nuclear	8080983
+2697	Cell junction	1696265
+9520	Cytoplasmic	9048733
+10574	Cytoplasmic	9819444
+10575	Cytoplasmic	9819444
+9522	Unspecified membrane	9378760
+10576	Cytoplasmic	9819444
+10578	Extracellular (excluding cell wall)	2212946
+7922	Unspecified membrane	8812499
+9527	Other vesicles of the secretory/endocytic pathways	8636227
+5243	Unspecified membrane	3022150
+51087	Nuclear	10100484
+51087	Cytoplasmic	10100484
+3640	Extracellular (excluding cell wall)	8020942
+5244	Unspecified membrane	7912658
+3641	Extracellular (excluding cell wall)	8702754
+3646	Cytoplasmic	9295280
+432	Basolateral plasma membrane	10734069
+434	Extracellular (excluding cell wall)	7937887
+10580	Cell junction	10085297
+435	Cytoplasmic	282632
+54715	Cytoplasmic	10814712
+54715	Golgi	10814712
+10584	Cytoplasmic	10224141
+439	Nuclear	9736449
+439	Cytoplasmic	9736449
+439	Nuclear nucleolus	9736449
+10586	Nuclear	10556287
+9533	Nuclear	9540830
+10587	Mitochondrial	10215850
+9536	Unspecified membrane	10377395
+5250	Mitochondrial	8144629
+5253	Nuclear	10051327
+3652	Cytoskeletal	10072760
+6996	Nuclear	9489705
+3658	Cytoplasmic	2172968
+445	Cytoplasmic	6194510
+10591	Nuclear	9271375
+10592	Nuclear	9789013
+10594	Nuclear	9774689
+6201	Cytoplasmic	8522193
+7940	Unspecified membrane	7590964
+6202	Cytoplasmic	8432552
+7941	Extracellular (excluding cell wall)	8675689
+10599	Unspecified membrane	10358072
+6203	Cytoplasmic	7772601
+7942	Nuclear	2115126
+4600	Nuclear	8798556
+4600	Cytoplasmic	8798556
+6204	Cytoplasmic	7772601
+6205	Cytoplasmic	3267208
+6206	Cytoplasmic	1861993
+6207	Cytoplasmic	8332508
+4604	Cytoskeletal	3011605
+6208	Cytoplasmic	3785212
+6209	Cytoplasmic	2044758
+4606	Cytoskeletal	3011605
+4607	Cytoskeletal	7493025
+4608	Cytoskeletal	8486381
+4609	Nuclear	9187264
+5266	Extracellular (excluding cell wall)	7685029
+5269	Cytoplasmic	8415716
+3669	Nuclear matrix	9235947
+6210	Cytoplasmic	9582194
+9555	Nuclear	
+4613	Nuclear	3796607
+6217	Cytoplasmic	2016298
+26254	Extracellular (excluding cell wall)	10636917
+26254	Extracellular matrix (cuticle and basement membrane)	10636917
+6218	Cytoplasmic	3240863
+7957	Cytoplasmic	11001928
+5272	Cytoplasmic	8910377
+4618	Nuclear	2311584
+4619	Cytoskeletal	10077619
+3674	Cytoskeletal	8612741
+462	Extracellular (excluding cell wall)	2991253
+8905	Secretory vesicles	
+8906	Golgi	9762922
+9564	Cytoplasmic	10801330
+9564	Unspecified membrane	10801330
+6222	Cytoplasmic	8441687
+6223	Cytoplasmic	9988267
+6224	Cytoplasmic	8479924
+9569	Nuclear	9774679
+4622	Cytoskeletal	10077619
+6227	Cytoplasmic	8332502
+6228	Cytoplasmic	8415000
+4625	Cytoskeletal	2249844
+6229	Cytoplasmic	2210388
+26266	Unspecified membrane	10535998
+3684	Secretory vesicles	10748078
+10902	Nuclear	9368056
+10905	Unspecified membrane	9592125
+473	Nuclear	10814707
+51412	Nuclear	10380635
+8911	Unspecified membrane	10454147
+476	Unspecified membrane	1975705
+8913	Unspecified membrane	9495342
+9570	Other vesicles of the secretory/endocytic pathways	9349823
+478	Unspecified membrane	2838329
+479	Unspecified membrane	8838794
+9572	Nuclear	8622974
+6230	Cytoplasmic	1748303
+6231	Cytoplasmic	9602156
+6232	Cytoplasmic	8908372
+6234	Cytoplasmic	1679328
+6235	Cytoplasmic	7772601
+4632	Cytoskeletal	9566891
+4633	Cytoskeletal	8673105
+4634	Cytoskeletal	
+4635	Cytoskeletal	
+6239	Nuclear	8816445
+7978	Mitochondrial	9118945
+4636	Cytoskeletal	
+26277	Nuclear	10581025
+4637	Cytoskeletal	
+3692	Nuclear	9374518
+3692	Cytoskeletal	9374518
+5298	Cytoplasmic	9584208
+5298	Endosome/Endosomal vesicles	9584208
+3697	Extracellular (excluding cell wall)	1380832
+10915	Nuclear	9315662
+481	Unspecified membrane	2559024
+54760	Extracellular (excluding cell wall)	
+483	Unspecified membrane	8798450
+29904	Cytoplasmic	9144159
+486	Unspecified membrane	9048881
+487	Unspecified membrane	8841193
+488	Unspecified membrane	2844796
+488	Microsomal fraction	2844796
+8925	Cytoplasmic	8861955
+8925	Golgi	8861955
+489	Unspecified membrane	8809064
+9583	Lysosome/vacuole	10393803
+8927	Cytoskeletal	10329005
+9584	Nuclear	8227358
+7980	Extracellular matrix (cuticle and basement membrane)	8914837
+4640	Apical plasma membrane	
+27229	Cytoskeletal	10562286
+26281	Extracellular (excluding cell wall)	10913340
+4641	Cytoskeletal	
+50485	Nuclear	10857751
+1300	Extracellular (excluding cell wall)	2037056
+1300	Extracellular matrix (cuticle and basement membrane)	2037056
+6247	Extracellular (excluding cell wall)	10915776
+50487	Extracellular (excluding cell wall)	10713052
+1301	Extracellular (excluding cell wall)	8872475
+1301	Extracellular matrix (cuticle and basement membrane)	8872475
+4644	Cytoskeletal	9207796
+1302	Extracellular (excluding cell wall)	7859284
+1302	Extracellular matrix (cuticle and basement membrane)	7859284
+4645	Cytoskeletal	8884266
+6249	Endosome/Endosomal vesicles	1356075
+6249	Cytoskeletal	1356075
+1303	Extracellular (excluding cell wall)	3476925
+1303	Extracellular matrix (cuticle and basement membrane)	3476925
+4646	Cytoskeletal	
+4647	Cytoskeletal	7870171
+1305	Extracellular matrix (cuticle and basement membrane)	9624150
+26289	Cytoplasmic	10215863
+1306	Extracellular (excluding cell wall)	1427836
+1306	Extracellular matrix (cuticle and basement membrane)	1427836
+4649	Cytoskeletal	10409426
+1307	Extracellular (excluding cell wall)	1284248
+1308	Extracellular (excluding cell wall)	9012408
+1308	Cell junction	9012408
+10921	Nuclear	9580558
+10923	Nuclear	8062391
+8930	Nuclear	9774669
+495	Unspecified membrane	2160952
+8932	Nuclear	9774669
+51434	Centrosome/spindle pole body	9469815
+9590	Cytoplasmic	10858453
+498	Unspecified membrane	1830491
+498	Mitochondrial	1830491
+8936	Cytoskeletal	9843499
+7991	Unspecified membrane	8661104
+26290	Unspecified membrane	10767557
+4650	Cytoplasmic	8907710
+4650	Cytoskeletal	8907710
+26291	Extracellular (excluding cell wall)	10858549
+26292	Nuclear	9797456
+26292	Cytoplasmic	9797456
+6256	Nuclear	1651173
+1310	Extracellular (excluding cell wall)	9143499
+1310	Extracellular matrix (cuticle and basement membrane)	9143499
+4653	Cilia	9169133
+4653	Cytoskeletal	9169133
+6257	Nuclear	1662118
+1311	Extracellular (excluding cell wall)	7713493
+1311	Extracellular matrix (cuticle and basement membrane)	7713493
+4654	Nuclear	3175662
+1312	Cytoplasmic	1707278
+1312	Microsomal fraction	1707278
+26297	Nuclear	10571079
+26297	Cytoplasmic	10571079
+1314	Secretory vesicles	8647451
+1315	Golgi	1840503
+4659	Cytoskeletal	9286714
+10939	Mitochondrial	10395799
+8940	Nuclear	9786843
+7203	Cytoplasmic	8573069
+7203	Cytoskeletal	8001976
+8943	Golgi	9151686
+27244	Nuclear	9926927
+6261	Unspecified membrane	2298749
+6263	Unspecified membrane	9395096
+4666	Cytoplasmic	8047162
+4668	Lysosome/vacuole	2372288
+4669	Lysosome/vacuole	8650226
+1327	Mitochondrial	
+10940	Nuclear	8918471
+10940	Nuclear nucleolus	8918471
+1329	Mitochondrial	
+10942	Cytoplasmic	10397266
+10942	Unspecified membrane	9826525
+10943	Nuclear	10395802
+10945	Unspecified membrane	2172835
+10946	Nuclear	7816610
+10948	Cytoplasmic	9139840
+10948	Unspecified membrane	9139840
+10949	Nuclear	7585247
+29935	Nuclear	7760808
+5611	Cytoplasmic	8666242
+27252	Cytoplasmic	10888605
+6272	Golgi	9927419
+27257	Nuclear	10369684
+5617	Extracellular (excluding cell wall)	6260780
+27258	Nuclear	10369684
+4670	Unspecified membrane	8088785
+5619	Nuclear	2081589
+6276	Axon	10882717
+4673	Nuclear	8297347
+4674	Nuclear	8789438
+4675	Nuclear	8976385
+800	Cytoskeletal	1555769
+4676	Nuclear	9325046
+801	Cytoplasmic	10899953
+801	Unspecified membrane	10899953
+4677	Cytoplasmic	9421509
+4678	Nuclear	1426632
+1337	Mitochondrial	
+1339	Mitochondrial	
+10951	Nuclear	9169582
+10955	Unspecified membrane	10559794
+29941	Nuclear	10441506
+29941	Golgi	10441506
+10959	Unspecified membrane	8663407
+10959	Microsomal fraction	8663407
+50804	Nuclear	2601707
+5620	Nuclear	2081589
+7227	Nuclear	10615131
+8968	Nuclear	
+6282	Nuclear	10851017
+6282	Cytoplasmic	10851017
+8969	Nuclear	
+1340	Mitochondrial	
+4683	Nuclear	9590180
+4686	Nuclear	7937105
+811	Nuclear	8107808
+4687	Cytoplasmic	2848318
+1345	Mitochondrial	
+4688	Cytoplasmic	1692159
+1346	Mitochondrial	9344674
+4689	Cytoplasmic	8839867
+1347	Mitochondrial	1327965
+1349	Mitochondrial	8382530
+10963	Nuclear	1569099
+10963	Golgi	1569099
+50810	Nuclear	10581169
+29953	Unspecified membrane	10491199
+8970	Nuclear	
+8971	Nuclear	
+5630	Cytoskeletal	1378416
+51474	Cytoskeletal	10806352
+51474	Cell junction	10806352
+29959	Nuclear	10843813
+8976	Cytoskeletal	9422512
+4690	Cytoplasmic	2107526
+6294	Nuclear	1324173
+4691	Nuclear	2394707
+4691	Nuclear nucleolus	2394707
+6295	Cytoplasmic	2249983
+1350	Mitochondrial	
+4693	Extracellular (excluding cell wall)	8298646
+1351	Mitochondrial	2543673
+4694	Unspecified membrane	10200266
+4694	Mitochondrial	10200266
+4695	Unspecified membrane	9878551
+4695	Mitochondrial	9878551
+1353	Mitochondrial	9878253
+4696	Unspecified membrane	9878551
+4696	Mitochondrial	9878551
+4697	Mitochondrial	9352085
+1355	Mitochondrial	9878253
+822	Cytoplasmic	1322908
+4698	Unspecified membrane	9048877
+4698	Mitochondrial	9048877
+1356	Extracellular (excluding cell wall)	7708681
+10970	Unspecified membrane	8314870
+10972	Unspecified membrane	8663407
+10972	Microsomal fraction	8663407
+829	Cytoskeletal	7665558
+10975	Mitochondrial	
+28227	Nuclear	10629059
+27283	Extracellular matrix (cuticle and basement membrane)	10652240
+7247	Nuclear	7663511
+5644	Extracellular (excluding cell wall)	3011602
+8987	Unspecified membrane	9794794
+7249	Cytoplasmic	10807585
+7249	Apical plasma membrane	10807585
+8989	Unspecified membrane	10066796
+5649	Extracellular (excluding cell wall)	9049633
+1361	Extracellular (excluding cell wall)	1939207
+1362	Unspecified membrane	9064476
+1363	Unspecified membrane	2334405
+830	Cytoskeletal	9331217
+1364	Basolateral plasma membrane	9892664
+1365	Unspecified membrane	9441748
+832	Cytoskeletal	7665558
+833	Cytoplasmic	7987009
+1368	Unspecified membrane	7797563
+29970	Cytoplasmic	10669747
+28234	Basolateral plasma membrane	10779507
+8992	Unspecified membrane	9556572
+7253	Basolateral plasma membrane	1570295
+27291	Mitochondrial	
+29979	Cytoplasmic	9303440
+5652	Extracellular (excluding cell wall)	10077646
+8996	Nuclear	10196175
+5654	Extracellular (excluding cell wall)	9852107
+2312	Cytoskeletal	2740331
+2315	Unspecified membrane	8170938
+2316	Cytoskeletal	2391361
+2317	Cytoskeletal	9651345
+2318	Cytoskeletal	7689010
+1371	Mitochondrial	8407975
+1373	Mitochondrial	1840546
+840	Cytoplasmic	8576161
+1374	Mitochondrial	7892212
+841	Cytoskeletal	10891503
+841	Mitochondrial	10891503
+1375	Mitochondrial	10408760
+844	Mitochondrial	7945294
+10992	Nuclear	8566756
+8202	Nuclear	9252329
+8204	Nuclear	7641693
+6601	Nuclear	8804307
+6602	Nuclear	8804307
+6603	Nuclear	8804307
+6604	Nuclear	8804307
+8208	Nuclear	7600578
+6605	Nuclear	9435219
+7263	Mitochondrial	1953758
+5660	Extracellular (excluding cell wall)	1454804
+5660	Unspecified membrane	1454804
+6608	Unspecified membrane	9422511
+50848	Cell junction	10395639
+5663	Nuclear	9298903
+5663	Unspecified membrane	9073509
+5664	Nuclear	9298903
+5664	Golgi	10922078
+5664	Unspecified membrane	9073509
+5669	Extracellular (excluding cell wall)	7794280
+10202	Nuclear	7556196
+1381	Cytoplasmic	1309505
+56731	Nuclear	10825161
+10204	Cytoplasmic	7744965
+10204	Nuclear transport factor	7744965
+10205	Cytoskeletal	9585423
+1384	Mitochondrial	7829107
+1385	Nuclear	2974179
+1387	Nuclear	10893273
+1387	Cytoplasmic	7913207
+10209	Cytoplasmic	10347211
+1388	Nuclear	8586413
+1389	Nuclear	9693048
+9950	Golgi	9915833
+50853	Cytoskeletal	9179494
+9957	Golgi	9346953
+8218	Secretory vesicles	
+7273	Cytoskeletal	7569978
+6618	Nuclear	7715707
+6619	Nuclear	7715707
+7275	Nuclear	11000483
+7275	Cytoplasmic	11000483
+29999	Cytoskeletal	10783262
+5672	Extracellular (excluding cell wall)	7794280
+7276	Extracellular (excluding cell wall)	10841549
+5673	Extracellular (excluding cell wall)	7794280
+7277	Cytoskeletal	3785200
+2331	Extracellular matrix (cuticle and basement membrane)	8093006
+7278	Cytoskeletal	9465305
+2332	Nuclear	8515814
+2332	Cytoplasmic	8401578
+5675	Extracellular (excluding cell wall)	7794280
+5676	Extracellular (excluding cell wall)	7794280
+2335	Extracellular (excluding cell wall)	2992939
+2335	Extracellular matrix (cuticle and basement membrane)	2992939
+5678	Extracellular (excluding cell wall)	7794280
+1390	Nuclear	7916662
+2339	Cytoplasmic	8599089
+10216	Extracellular (excluding cell wall)	10545950
+1396	Cytoplasmic	9126610
+10218	Cytoplasmic	8026862
+1398	Nuclear	10748058
+1398	Cytoplasmic	10748058
+53405	Cytoplasmic	10793131
+9961	Nuclear	7585126
+9961	Cytoplasmic	7585126
+9962	Unspecified membrane	9804989
+51807	Cytoskeletal	10772959
+9963	Unspecified membrane	9804989
+8224	Secretory vesicles	9539796
+6621	Nuclear	7715707
+6622	Cytoplasmic	8248242
+50863	Unspecified membrane	7891157
+9967	Nuclear	10198638
+6624	Cytoskeletal	8647875
+7280	Cytoskeletal	6688039
+6625	Nuclear	3028775
+9968	Nuclear	10198638
+6626	Nuclear	1831431
+6627	Nuclear	2928112
+7283	Centrosome/spindle pole body	1904010
+7283	Cytoskeletal	1904010
+5680	Extracellular (excluding cell wall)	7794280
+6628	Nuclear	2531083
+7284	Mitochondrial	9332382
+6629	Nuclear	2951739
+2342	Cytoplasmic	8599089
+2346	Unspecified membrane	8417812
+10221	Cytoplasmic	9342215
+2348	Unspecified membrane	2768245
+10226	Cytoplasmic	9590177
+10226	Endosome/Endosomal vesicles	9590177
+10227	Unspecified membrane	8353488
+10228	Endosome/Endosomal vesicles	10839363
+10228	Golgi	10839363
+873	Cytoplasmic	7705364
+874	Cytoplasmic	7705364
+9971	Nuclear	9223286
+9972	Nuclear transport factor	8110839
+8233	Nuclear	8586425
+9973	Cytoplasmic	9295278
+6631	Nuclear	2971157
+6632	Nuclear	3260384
+6633	Nuclear	1701240
+6634	Nuclear	1701240
+7290	Nuclear	9710638
+6635	Nuclear	2143747
+6636	Nuclear	7744013
+6637	Nuclear	7744013
+6638	Nuclear	1533223
+7294	Cytoplasmic	7951233
+2350	Unspecified membrane	2605182
+2352	Unspecified membrane	8110752
+7299	Golgi	10823941
+2353	Nuclear	10918580
+2356	Cytoplasmic	1409616
+2356	Mitochondrial	7721888
+2357	Endosome/Endosomal vesicles	10823817
+10236	Nuclear	9421497
+881	Cytoskeletal	7641791
+887	Cytoplasmic	10741470
+887	Basolateral plasma membrane	10741470
+9982	Extracellular (excluding cell wall)	1885605
+8243	Nuclear	7757074
+6640	Unspecified membrane	8576247
+9984	Nuclear matrix	7525595
+9985	Nuclear	10207075
+9987	Nuclear	9538234
+6645	Unspecified membrane	8576247
+3303	Nuclear	10205060
+3303	Cytoplasmic	10859165
+6646	Unspecified membrane	8407899
+6647	Cytoplasmic	6316150
+6648	Mitochondrial	7493016
+6649	Extracellular matrix (cuticle and basement membrane)	8034674
+10241	Nuclear	7540613
+10242	Unspecified membrane	10097176
+10244	Endosome/Endosomal vesicles	9230071
+10246	Unspecified membrane	9149941
+10247	Cytoplasmic	8530410
+10248	Nuclear	9630247
+10249	Mitochondrial	7802672
+896	Nuclear	10891505
+9990	Unspecified membrane	10187864
+9992	Unspecified membrane	10219239
+9993	Unspecified membrane	7655455
+3313	Other vesicles of the secretory/endocytic pathways	7829505
+3313	Mitochondrial	7684501
+3315	Cytoplasmic	10859165
+1716	Mitochondrial	8692979
+1717	Unspecified membrane	9465114
+101	Unspecified membrane	9126482
+103	Nuclear	7862132
+104	Nuclear	8559253
+10250	Nuclear	9531537
+10250	Nuclear matrix	9531537
+9201	Unspecified membrane	9747029
+10256	Cell junction	9814705
+10257	Unspecified membrane	2806887
+9208	Nuclear	9705290
+9208	Cytoplasmic	9671805
+8260	Nuclear	7981673
+6662	Nuclear	10805756
+3321	Unspecified membrane	9790749
+6667	Nuclear	10825178
+1723	Mitochondrial	1446837
+11201	Nuclear	10458907
+1727	Mitochondrial	
+1728	Axon	9579781
+10262	Nuclear	7958871
+118	Cytoskeletal	1345173
+118	Unspecified membrane	1840603
+119	Cytoskeletal	1840603
+119	Unspecified membrane	1840603
+10266	Cytoplasmic	10882736
+10268	Cytoplasmic	10882736
+6672	Nuclear	2258622
+6678	Extracellular matrix (cuticle and basement membrane)	7034958
+3338	Unspecified membrane	9473517
+11212	Cytoplasmic	10496079
+3339	Extracellular (excluding cell wall)	10545953
+1736	Nuclear	10556300
+1736	Nuclear nucleolus	10556300
+1737	Mitochondrial	3174635
+1738	Mitochondrial	3278312
+2395	Mitochondrial	9241270
+1739	Cytoplasmic	10859302
+1739	Cell junction	8825652
+1739	Basolateral plasma membrane	10859302
+123	Lipid particles	9003395
+11218	Nuclear	10383418
+11218	Cytoplasmic	10601333
+11218	Cytoskeletal	10383418
+10270	Nuclear	9473338
+10272	Extracellular (excluding cell wall)	9671416
+10273	Cytoplasmic	10330192
+10274	Nuclear	9305759
+9220	Nuclear	9918798
+9221	Cytoplasmic	7657714
+9221	Nuclear nucleolus	7657714
+9223	Cell junction	9647739
+6683	Nuclear	10610178
+6687	Mitochondrial	9635427
+1742	Other vesicles of the secretory/endocytic pathways	10859302
+11221	Nuclear	10391943
+11221	Cytoplasmic	10391943
+11224	Cytoplasmic	2891103
+10280	Unspecified membrane	8954936
+135	Unspecified membrane	10051547
+64976	Nuclear	
+10284	Nuclear	9150135
+9231	Cytoplasmic	9738934
+10285	Nuclear	9817934
+9232	Nuclear	9811450
+9232	Cytoplasmic	9811450
+10286	Nuclear	9731529
+10287	Golgi	9571244
+10287	Unspecified membrane	9571244
+10288	Unspecified membrane	9079806
+9235	Extracellular (excluding cell wall)	1729377
+8290	Nuclear	
+8292	Extracellular (excluding cell wall)	9689136
+8292	Extracellular matrix (cuticle and basement membrane)	9689136
+8292	Basement membrane (extracellular matrix)	9689136
+8294	Nuclear	
+7639	Nuclear	9839802
+6692	Extracellular (excluding cell wall)	9045658
+6692	Unspecified membrane	9045658
+6693	Cytoskeletal	10753822
+6694	Extracellular (excluding cell wall)	9533032
+6695	Extracellular (excluding cell wall)	8389704
+6696	Extracellular (excluding cell wall)	2404984
+6696	Extracellular matrix (cuticle and basement membrane)	10751402
+6699	Cytoplasmic	1438308
+11232	Mitochondrial	9153213
+1756	Cytoskeletal	3282674
+1757	Mitochondrial	10444331
+142	Nuclear	2513174
+1758	Extracellular (excluding cell wall)	8509401
+1758	Extracellular matrix (cuticle and basement membrane)	8509401
+143	Nuclear	10477748
+11238	Mitochondrial	10409679
+10291	Nuclear	7489498
+10292	Nuclear	9225980
+9240	Nuclear	10050892
+9240	Cytoplasmic	10050892
+9240	Nuclear nucleolus	10050892
+9241	Extracellular (excluding cell wall)	10080184
+10295	Mitochondrial	1889817
+9244	Extracellular (excluding cell wall)	9686600
+10298	Golgi	9822598
+9245	Unspecified membrane	9988682
+4300	Nuclear	8506309
+4301	Cell junction	10856295
+4303	Nuclear	9010221
+2700	Cell junction	9413992
+2701	Cell junction	7680674
+2702	Cell junction	7966354
+2703	Cell junction	7796604
+4308	Unspecified membrane	
+2705	Cell junction	2875078
+2706	Cell junction	1324944
+3364	Nuclear	10852904
+1763	Nuclear	8938459
+1764	Cytoskeletal	9373155
+11243	Nuclear	10419538
+1766	Cytoplasmic	9556328
+1766	Cytoskeletal	9256245
+11244	Nuclear	10441475
+1767	Cytoskeletal	9256245
+152	Endosome/Endosomal vesicles	10196213
+1768	Cytoskeletal	8812413
+1769	Cytoskeletal	9256245
+154	Endosome/Endosomal vesicles	10734107
+154	Extracellular (excluding cell wall)	9507004
+156	Cytoplasmic	1339451
+9255	Extracellular (excluding cell wall)	7545917
+4312	Extracellular (excluding cell wall)	2167156
+4313	Extracellular (excluding cell wall)	2834383
+4314	Extracellular (excluding cell wall)	3360803
+4316	Extracellular (excluding cell wall)	1497627
+4317	Extracellular (excluding cell wall)	2164002
+4318	Extracellular (excluding cell wall)	2551898
+3371	Extracellular (excluding cell wall)	1704365
+3371	Extracellular matrix (cuticle and basement membrane)	10953015
+4319	Extracellular (excluding cell wall)	2844164
+3373	Extracellular (excluding cell wall)	9223416
+3373	Lysosome/vacuole	10339581
+2717	Lysosome/vacuole	2152885
+1770	Cytoskeletal	8812413
+3376	Cytoplasmic	7721108
+1773	Extracellular (excluding cell wall)	2349940
+11252	Cytoplasmic	10431838
+1777	Lysosome/vacuole	9714827
+162	Secretory vesicles	
+1778	Cytoplasmic	8227145
+1778	Cytoskeletal	8227145
+163	Secretory vesicles	1969413
+11258	Cytoplasmic	9722614
+167	Extracellular (excluding cell wall)	8838800
+8604	Mitochondrial	9722566
+9261	Nuclear	8280084
+8605	Unspecified membrane	10085124
+9262	Nuclear	9786912
+9263	Nuclear	9786912
+8607	Nuclear matrix	9813143
+8608	Microsomal fraction	9677409
+4320	Extracellular (excluding cell wall)	1701851
+4321	Extracellular (excluding cell wall)	8226919
+4322	Extracellular (excluding cell wall)	8207000
+2720	Nuclear	10891505
+2720	Lysosome/vacuole	3084469
+10600	Cytoplasmic	10077596
+1780	Cytoplasmic	10049579
+1780	Cytoskeletal	10049579
+11260	Nuclear	9660920
+10605	Cytoplasmic	9548260
+11262	Nuclear	8695863
+1786	Nuclear	8940105
+11264	Unspecified membrane	10366717
+1787	Nuclear	9425235
+1788	Nuclear	10433969
+10609	Nuclear	8862517
+10609	Nuclear nucleolus	8862517
+1789	Nuclear	10433969
+175	Lysosome/vacuole	1904874
+176	Extracellular (excluding cell wall)	1985970
+176	Extracellular matrix (cuticle and basement membrane)	1985970
+11269	Cytoplasmic	10428971
+8612	Unspecified membrane	9705349
+8613	Unspecified membrane	9305923
+8615	Golgi	9478999
+9276	Cytoplasmic	8335000
+9276	Golgi	8335000
+9276	Secretory vesicles	8335000
+9278	Nuclear	9545376
+2733	Nuclear	9618489
+2734	Golgi	8985126
+2737	Nuclear	10077605
+2737	Cytoplasmic	10077605
+10612	Cytoplasmic	10391919
+10612	Growth cone	10391919
+11270	Nuclear	10402458
+1793	Cytoplasmic	8661160
+11272	Extracellular (excluding cell wall)	7544782
+11274	Nuclear	10777664
+10618	Golgi	9422759
+11275	Cytoskeletal	10397770
+11275	Axon	10397770
+11276	Cytoplasmic	10477754
+11276	Golgi	10477754
+11276	Secretory vesicles	10477754
+54464	Cytoplasmic	9802570
+8624	Unspecified membrane	9784380
+2746	Mitochondrial	8486350
+2747	Mitochondrial	
+10621	Nuclear	9171375
+10622	Nuclear	9171375
+10623	Nuclear	9171375
+11280	Unspecified membrane	
+10625	Nuclear	9696811
+10626	Cytoplasmic	9817599
+190	Nuclear	9384387
+11284	Nuclear	10446193
+10629	Nuclear	9674425
+195	Nuclear	1608957
+54474	Cytoskeletal	8359595
+196	Nuclear	8246913
+54476	Nuclear	10422847
+197	Extracellular (excluding cell wall)	3944104
+8634	Nuclear	9184239
+8635	Extracellular (excluding cell wall)	9192857
+199	Nuclear	9614071
+8636	Nuclear	9430706
+9295	Nuclear	1896467
+9296	Unspecified membrane	8581736
+4350	Nuclear	9790531
+4353	Nuclear	2829220
+4353	Lysosome/vacuole	8621627
+4354	Unspecified membrane	1713685
+4355	Unspecified membrane	7590743
+4356	Unspecified membrane	8824795
+4357	Mitochondrial	1953758
+1017	Nuclear	10767298
+1017	Cytoplasmic	10767298
+10630	Apical plasma membrane	10393083
+22795	Extracellular (excluding cell wall)	9733643
+22795	Extracellular matrix (cuticle and basement membrane)	9733643
+22795	Basement membrane (extracellular matrix)	9733643
+22796	Golgi	7962052
+10635	Nuclear	9396801
+8645	Unspecified membrane	9812978
+51146	Unspecified membrane	10430883
+5303	Mitochondrial	10364457
+8647	Unspecified membrane	9806540
+51148	Unspecified membrane	10608765
+8648	Nuclear	7481822
+3703	Unspecified membrane	8838310
+4361	Nuclear	10802669
+4363	Unspecified membrane	1360704
+1022	Nuclear	7936635
+57030	Unspecified membrane	8632143
+1025	Nuclear	8170997
+2765	Unspecified membrane	8934543
+1026	Nuclear	10891505
+1027	Nuclear	10891505
+1027	Cytoplasmic	10973491
+2767	Cytoplasmic	9175863
+1029	Nuclear	10891505
+10642	Cytoplasmic	9891060
+10643	Cytoplasmic	9891060
+10644	Cytoplasmic	9891060
+10647	Extracellular (excluding cell wall)	10066439
+10648	Extracellular (excluding cell wall)	10066439
+8650	Unspecified membrane	7596406
+5310	Unspecified membrane	10861291
+5311	Cytoskeletal	10760273
+5311	Basolateral plasma membrane	10770959
+5311	Cell body (soma)	10760273
+8655	Cytoplasmic	8628263
+51156	Extracellular (excluding cell wall)	10460162
+8659	Mitochondrial	8621661
+3712	Mitochondrial	2063866
+3713	Unspecified membrane	2873896
+5317	Cell junction	7527055
+5318	Nuclear	8922383
+5318	Cell junction	8922383
+3716	Unspecified membrane	1848670
+2775	Growth cone	9050846
+2776	Cytoplasmic	9175863
+1039	Cytoplasmic	10465786
+506	Mitochondrial	2900241
+10652	Golgi	9211930
+10653	Extracellular (excluding cell wall)	9346890
+57047	Unspecified membrane	10930526
+509	Unspecified membrane	8168843
+509	Mitochondrial	8227057
+57048	Unspecified membrane	10930526
+10656	Nuclear	10332027
+10658	Nuclear	8948631
+9607	Extracellular (excluding cell wall)	8647455
+9609	Golgi	9920784
+8661	Cytoplasmic	9054404
+8662	Cytoplasmic	8995410
+8663	Cytoplasmic	8995409
+51164	Cytoplasmic	10671518
+51164	Centrosome/spindle pole body	10671518
+8664	Cytoplasmic	9341143
+5321	Cytoplasmic	1904318
+50509	Extracellular (excluding cell wall)	10722718
+50509	Extracellular matrix (cuticle and basement membrane)	10722718
+8665	Cytoplasmic	9341143
+51167	Cytoplasmic	10611283
+8667	Cytoplasmic	9341143
+8668	Cytoplasmic	8995409
+8669	Cytoplasmic	9822659
+5328	Extracellular (excluding cell wall)	6589620
+3725	Nuclear	10918580
+5329	Unspecified membrane	8049431
+3728	Cytoplasmic	2726765
+1041	Cell junction	9395522
+2781	Dendrite	2117645
+2781	Axon	2117645
+1043	Unspecified membrane	1711975
+23767	Unspecified membrane	10644439
+513	Unspecified membrane	1531933
+513	Mitochondrial	1531933
+514	Mitochondrial	10727396
+515	Unspecified membrane	1831354
+515	Mitochondrial	2868890
+516	Unspecified membrane	8328972
+516	Mitochondrial	8328972
+517	Unspecified membrane	8328972
+517	Mitochondrial	8328972
+518	Unspecified membrane	7698763
+518	Mitochondrial	7698763
+10664	Nuclear	8649389
+9612	Nuclear	8813722
+10667	Mitochondrial	10329163
+50512	Unspecified membrane	10722749
+9615	Cell body (soma)	10542258
+9617	Mitochondrial	9838146
+9618	Nuclear	7592751
+9619	Unspecified membrane	9034316
+8671	Unspecified membrane	9235899
+51172	Unspecified membrane	10551838
+8672	Cytoplasmic	9418880
+8673	Endosome/Endosomal vesicles	9614193
+51174	Cytoskeletal	10620804
+51175	Cytoskeletal	10620804
+8675	Cytoplasmic	9587053
+8675	Golgi	9587053
+8675	Microsomal fraction	9587053
+8677	Golgi	9446797
+3730	Extracellular (excluding cell wall)	8842728
+3730	Extracellular matrix (cuticle and basement membrane)	8832397
+5337	Unspecified membrane	8530346
+3735	Cytoplasmic	9278442
+5339	Cytoskeletal	8633055
+3736	Unspecified membrane	8845167
+3737	Unspecified membrane	2251283
+3738	Unspecified membrane	1373731
+1051	Nuclear	10821850
+3739	Unspecified membrane	2001794
+522	Unspecified membrane	7698763
+522	Mitochondrial	1830479
+523	Unspecified membrane	8463241
+10670	Cytoplasmic	8995684
+1058	Nuclear	7962047
+525	Apical plasma membrane	9916796
+525	Unspecified membrane	9916796
+1059	Nuclear	2435739
+526	Unspecified membrane	2145275
+2799	Lysosome/vacuole	3391615
+527	Unspecified membrane	8741845
+528	Unspecified membrane	8250920
+529	Unspecified membrane	8250920
+10675	Unspecified membrane	9950058
+10677	Cytoskeletal	9664034
+9627	Cytoplasmic	10319874
+9629	Extracellular (excluding cell wall)	10095065
+8683	Nuclear	7556075
+8685	Unspecified membrane	9468508
+8687	Cytoskeletal	9756910
+8688	Cytoskeletal	9756910
+3741	Unspecified membrane	1986382
+5345	Extracellular (excluding cell wall)	2433286
+8689	Cytoskeletal	9756910
+3742	Unspecified membrane	2347305
+3744	Unspecified membrane	9177773
+3745	Unspecified membrane	7774931
+2006	Extracellular (excluding cell wall)	9580666
+2006	Extracellular matrix (cuticle and basement membrane)	9580666
+3746	Unspecified membrane	8449507
+1060	Nuclear	1339310
+3748	Unspecified membrane	1740329
+2009	Cytoskeletal	9226380
+3749	Unspecified membrane	1920536
+1062	Nuclear	2022189
+1063	Nuclear	7542657
+533	Unspecified membrane	9653649
+1068	Cytoskeletal	8175926
+537	Unspecified membrane	8733135
+538	Golgi	10942420
+538	Unspecified membrane	8490659
+539	Unspecified membrane	7490082
+539	Mitochondrial	7490082
+10686	Cell junction	10390358
+8690	Nuclear	9240447
+8692	Lysosome/vacuole	9712871
+8693	Golgi	9804815
+51195	Unspecified membrane	9582122
+2010	Nuclear	8589715
+2010	Unspecified membrane	8589715
+2011	Cytoskeletal	9730619
+5354	Unspecified membrane	2479017
+2012	Unspecified membrane	8996089
+5355	Unspecified membrane	9124532
+2013	Unspecified membrane	8884260
+5356	Nuclear	9765207
+3753	Unspecified membrane	8900283
+2014	Unspecified membrane	8884260
+5357	Cytoskeletal	8139549
+3754	Unspecified membrane	9434767
+5358	Cytoskeletal	8428952
+3755	Unspecified membrane	9434767
+3756	Unspecified membrane	9738473
+2017	Cytoplasmic	9054437
+2017	Cytoskeletal	9054437
+3757	Unspecified membrane	7736582
+3758	Unspecified membrane	9015377
+3759	Unspecified membrane	7696590
+1072	Cytoskeletal	8195165
+540	Golgi	10942420
+540	Unspecified membrane	8298641
+540	Secretory vesicles	10942420
+1075	Lysosome/vacuole	9092576
+57082	Nuclear	10980622
+545	Nuclear	8843195
+546	Nuclear	10851248
+57088	Unspecified membrane	10930526
+6301	Cytoplasmic	9431993
+6302	Unspecified membrane	8134123
+10699	Apical plasma membrane	10880574
+4700	Unspecified membrane	9345899
+4700	Mitochondrial	9345899
+4701	Unspecified membrane	9878551
+4701	Mitochondrial	9878551
+4702	Unspecified membrane	9860297
+4702	Mitochondrial	9860297
+4703	Cytoskeletal	7739042
+4705	Unspecified membrane	9878551
+4705	Mitochondrial	9878551
+4706	Unspecified membrane	9878551
+4706	Mitochondrial	9878551
+4707	Mitochondrial	9425316
+3760	Unspecified membrane	8804710
+2021	Mitochondrial	7789991
+4708	Unspecified membrane	9878551
+4708	Mitochondrial	9878551
+3761	Unspecified membrane	8051145
+3764	Unspecified membrane	7890693
+3765	Unspecified membrane	8575783
+3767	Unspecified membrane	
+1080	Unspecified membrane	10799517
+3768	Unspecified membrane	7859381
+552	Endosome/Endosomal vesicles	10858434
+553	Endosome/Endosomal vesicles	10858434
+554	Endosome/Endosomal vesicles	10858434
+554	Golgi	10880054
+1089	Unspecified membrane	2050678
+6310	Nuclear	7647801
+6310	Cytoplasmic	7647801
+6311	Cytoplasmic	10973246
+4710	Unspecified membrane	9878551
+4710	Mitochondrial	9878551
+6314	Nuclear	10441328
+6314	Nuclear nucleolus	10441328
+6314	Nuclear matrix	10441328
+4711	Mitochondrial	9425316
+4712	Unspecified membrane	9760212
+4712	Mitochondrial	9760212
+4713	Unspecified membrane	9878551
+4713	Mitochondrial	9878551
+4714	Unspecified membrane	9878551
+4714	Mitochondrial	9878551
+4715	Unspecified membrane	8661098
+4715	Mitochondrial	8661098
+5371	Nuclear	1311253
+4716	Unspecified membrane	9878551
+4716	Mitochondrial	9878551
+2030	Unspecified membrane	8986748
+4717	Mitochondrial	9425316
+4718	Unspecified membrane	9878551
+4718	Mitochondrial	9878551
+4719	Unspecified membrane	9878551
+4719	Mitochondrial	9878551
+5375	Cytoplasmic	8288226
+3772	Unspecified membrane	8995301
+2033	Nuclear	10893273
+5376	Unspecified membrane	10697408
+2035	Cytoskeletal	3467321
+5378	Nuclear	8072530
+3775	Unspecified membrane	8605869
+2037	Cytoskeletal	9598318
+2037	Unspecified membrane	9598318
+2038	Cytoskeletal	1350227
+3778	Unspecified membrane	7993625
+2039	Cytoskeletal	8341682
+563	Extracellular (excluding cell wall)	2049092
+6320	Extracellular (excluding cell wall)	9705843
+284217	Extracellular (excluding cell wall)	
+284217	Extracellular matrix (cuticle and basement membrane)	
+284217	Basement membrane (extracellular matrix)	
+27306	Cytoplasmic	9353279
+27308	Extracellular (excluding cell wall)	9399956
+27308	Unspecified membrane	9399956
+4720	Unspecified membrane	9647766
+4720	Mitochondrial	9647766
+6324	Unspecified membrane	8394762
+27309	Centrosome/spindle pole body	10593942
+27309	Nuclear nucleolus	10593942
+4722	Unspecified membrane	9647766
+4722	Mitochondrial	9647766
+4723	Unspecified membrane	8288251
+4723	Mitochondrial	8288251
+6327	Unspecified membrane	9295116
+4724	Unspecified membrane	9463323
+4724	Mitochondrial	9463323
+6328	Unspecified membrane	9589372
+4725	Unspecified membrane	10070614
+4725	Mitochondrial	10070614
+6329	Unspecified membrane	1659948
+4726	Unspecified membrane	9647766
+4726	Mitochondrial	9647766
+2040	Unspecified membrane	7592848
+3780	Unspecified membrane	8781233
+4728	Unspecified membrane	9666055
+4728	Mitochondrial	9666055
+4729	Unspecified membrane	7488192
+4729	Mitochondrial	7488192
+3782	Unspecified membrane	8781233
+3783	Unspecified membrane	9380751
+3784	Unspecified membrane	8900283
+3785	Unspecified membrane	9425895
+3786	Unspecified membrane	9425900

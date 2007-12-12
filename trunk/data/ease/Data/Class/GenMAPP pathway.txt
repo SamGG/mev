@@ -1,0 +1,4334 @@
+19013	Mm_Nuclear Receptors
+20181	Mm_Nuclear Receptors
+20182	Mm_Nuclear Receptors
+20183	Mm_Nuclear Receptors
+26423	Mm_Nuclear Receptors
+19015	Mm_Nuclear Receptors
+19016	Mm_Nuclear Receptors
+21834	Mm_Nuclear Receptors
+21834	Mm_Nuclear Receptors
+11819	Mm_Nuclear Receptors
+13864	Mm_Nuclear Receptors
+26424	Mm_Nuclear Receptors
+22337	Mm_Nuclear Receptors
+22026	Mm_Nuclear Receptors
+15378	Mm_Nuclear Receptors
+19883	Mm_Nuclear Receptors
+19883	Mm_Nuclear Receptors
+19885	Mm_Nuclear Receptors
+18667	Mm_Nuclear Receptors
+18227	Mm_Nuclear Receptors
+13865	Mm_Nuclear Receptors
+22260	Mm_Nuclear Receptors
+21833	Mm_Nuclear Receptors
+11614	Mm_Nuclear Receptors
+26380	Mm_Nuclear Receptors
+21907	Mm_Nuclear Receptors
+22259	Mm_Nuclear Receptors
+16995	Mm_Nucleotide GPCRs
+18442	Mm_Nucleotide GPCRs
+18441	Mm_Nucleotide GPCRs
+11539	Mm_Nucleotide GPCRs
+11540	Mm_Nucleotide GPCRs
+11541	Mm_Nucleotide GPCRs
+11542	Mm_Nucleotide GPCRs
+13609	Mm_Orphan GPCRs
+13349	Mm_Orphan GPCRs
+14767	Mm_Orphan GPCRs
+14762	Mm_Orphan GPCRs
+17171	Mm_Orphan GPCRs
+14608	Mm_Orphan GPCRs
+14738	Mm_Orphan GPCRs
+14748	Mm_Orphan GPCRs
+11536	Mm_Orphan GPCRs
+14769	Mm_Orphan GPCRs
+14739	Mm_Orphan GPCRs
+12778	Mm_Orphan GPCRs
+14747	Mm_Orphan GPCRs
+11688	Mm_Eicosanoid Synthesis
+21817	Mm_Eicosanoid Synthesis
+19224	Mm_Eicosanoid Synthesis
+16993	Mm_Eicosanoid Synthesis
+11690	Mm_Eicosanoid Synthesis
+13479	Mm_Eicosanoid Synthesis
+18780	Mm_Eicosanoid Synthesis
+21391	Mm_Eicosanoid Synthesis
+11687	Mm_Eicosanoid Synthesis
+11684	Mm_Eicosanoid Synthesis
+66350	Mm_Eicosanoid Synthesis
+18781	Mm_Eicosanoid Synthesis
+11689	Mm_Eicosanoid Synthesis
+11685	Mm_Eicosanoid Synthesis
+18781	Mm_Eicosanoid Synthesis
+53357	Mm_Eicosanoid Synthesis
+19225	Mm_Eicosanoid Synthesis
+17001	Mm_Eicosanoid Synthesis
+11983	Mm_Electron Transport Chain
+54405	Mm_Electron Transport Chain
+13063	Mm_Electron Transport Chain
+13067	Mm_Electron Transport Chain
+17711	Mm_Electron Transport Chain
+17708	Mm_Electron Transport Chain
+17705	Mm_Electron Transport Chain
+17718	Mm_Electron Transport Chain
+20930	Mm_Electron Transport Chain
+54322	Mm_Electron Transport Chain
+22227	Mm_Electron Transport Chain
+12858	Mm_Electron Transport Chain
+12867	Mm_Electron Transport Chain
+12859	Mm_Electron Transport Chain
+12857	Mm_Electron Transport Chain
+12862	Mm_Electron Transport Chain
+12861	Mm_Electron Transport Chain
+11951	Mm_Electron Transport Chain
+11370	Mm_Fatty Acid Degradation
+11363	Mm_Fatty Acid Degradation
+12896	Mm_Fatty Acid Degradation
+12894	Mm_Fatty Acid Degradation
+11409	Mm_Fatty Acid Degradation
+15107	Mm_Fatty Acid Degradation
+14933	Mm_Fatty Acid Degradation
+14571	Mm_Fatty Acid Degradation
+50790	Mm_Fatty Acid Degradation
+19082	Mm_Fatty Acid Synthesis
+20250	Mm_Fatty Acid Synthesis
+20249	Mm_Fatty Acid Synthesis
+14104	Mm_Fatty Acid Synthesis
+20280	Mm_Fatty Acid Synthesis
+18563	Mm_Fatty Acid Synthesis
+15107	Mm_Fatty Acid Synthesis
+104112	Mm_Fatty Acid Synthesis
+100705	Mm_Fatty Acid Synthesis
+19079	Mm_Fatty Acid Synthesis
+15497	Mm_Glucocorticoid & Mineralocorticoid Metabolism
+13079	Mm_Glucocorticoid & Mineralocorticoid Metabolism
+13072	Mm_Glucocorticoid & Mineralocorticoid Metabolism
+15492	Mm_Glucocorticoid & Mineralocorticoid Metabolism
+15493	Mm_Glucocorticoid & Mineralocorticoid Metabolism
+15494	Mm_Glucocorticoid & Mineralocorticoid Metabolism
+13074	Mm_Glucocorticoid & Mineralocorticoid Metabolism
+15483	Mm_Glucocorticoid & Mineralocorticoid Metabolism
+15484	Mm_Glucocorticoid & Mineralocorticoid Metabolism
+15496	Mm_Glucocorticoid & Mineralocorticoid Metabolism
+15495	Mm_Glucocorticoid & Mineralocorticoid Metabolism
+77337	Mm_Glucocorticoid & Mineralocorticoid Metabolism
+13070	Mm_Glucocorticoid & Mineralocorticoid Metabolism
+18682	Mm_Glycogen Metabolism
+24672	Mm_Glycogen Metabolism
+18679	Mm_Glycogen Metabolism
+14937	Mm_Glycogen Metabolism
+110854	Mm_Glycogen Metabolism
+26931	Mm_Glycogen Metabolism
+26932	Mm_Glycogen Metabolism
+68961	Mm_Glycogen Metabolism
+27357	Mm_Glycogen Metabolism
+19309	Mm_Glycogen Metabolism
+56637	Mm_Glycogen Metabolism
+19054	Mm_Glycogen Metabolism
+14936	Mm_Glycogen Metabolism
+15277	Mm_Glycolysis and Gluconeogenesis
+13382	Mm_Glycolysis and Gluconeogenesis
+56012	Mm_Glycolysis and Gluconeogenesis
+16833	Mm_Glycolysis and Gluconeogenesis
+11676	Mm_Glycolysis and Gluconeogenesis
+11674	Mm_Glycolysis and Gluconeogenesis
+14718	Mm_Glycolysis and Gluconeogenesis
+14719	Mm_Glycolysis and Gluconeogenesis
+16828	Mm_Glycolysis and Gluconeogenesis
+14751	Mm_Glycolysis and Gluconeogenesis
+17448	Mm_Glycolysis and Gluconeogenesis
+18663	Mm_Glycolysis and Gluconeogenesis
+18655	Mm_Glycolysis and Gluconeogenesis
+18641	Mm_Glycolysis and Gluconeogenesis
+17449	Mm_Glycolysis and Gluconeogenesis
+16832	Mm_Glycolysis and Gluconeogenesis
+14433	Mm_Glycolysis and Gluconeogenesis
+13806	Mm_Glycolysis and Gluconeogenesis
+13807	Mm_Glycolysis and Gluconeogenesis
+15275	Mm_Glycolysis and Gluconeogenesis
+21991	Mm_Glycolysis and Gluconeogenesis
+13808	Mm_Glycolysis and Gluconeogenesis
+18597	Mm_Glycolysis and Gluconeogenesis
+18598	Mm_Glycolysis and Gluconeogenesis
+14377	Mm_Glycolysis and Gluconeogenesis
+12287	Mm_Calcium Channels
+12299	Mm_Calcium Channels
+58226	Mm_Calcium Channels
+12300	Mm_Calcium Channels
+16438	Mm_Calcium Channels
+12297	Mm_Calcium Channels
+16440	Mm_Calcium Channels
+12286	Mm_Calcium Channels
+12288	Mm_Calcium Channels
+20190	Mm_Calcium Channels
+12290	Mm_Calcium Channels
+12289	Mm_Calcium Channels
+170706	Mm_Calcium Channels
+54377	Mm_Calcium Channels
+14617	Mm_Gap Junction Proteins-Connexins
+14609	Mm_Gap Junction Proteins-Connexins
+14615	Mm_Gap Junction Proteins-Connexins
+14618	Mm_Gap Junction Proteins-Connexins
+14620	Mm_Gap Junction Proteins-Connexins
+14612	Mm_Gap Junction Proteins-Connexins
+14616	Mm_Gap Junction Proteins-Connexins
+17339	Mm_Gap Junction Proteins-Connexins
+14623	Mm_Gap Junction Proteins-Connexins
+14619	Mm_Gap Junction Proteins-Connexins
+14613	Mm_Gap Junction Proteins-Connexins
+14621	Mm_Gap Junction Proteins-Connexins
+14622	Mm_Gap Junction Proteins-Connexins
+14611	Mm_Gap Junction Proteins-Connexins
+14610	Mm_Gap Junction Proteins-Connexins
+17388	Mm_Matrix Metalloproteinases
+17384	Mm_Matrix Metalloproteinases
+17394	Mm_Matrix Metalloproteinases
+26561	Mm_Matrix Metalloproteinases
+21926	Mm_Matrix Metalloproteinases
+21857	Mm_Matrix Metalloproteinases
+12215	Mm_Matrix Metalloproteinases
+21858	Mm_Matrix Metalloproteinases
+17392	Mm_Matrix Metalloproteinases
+17390	Mm_Matrix Metalloproteinases
+17386	Mm_Matrix Metalloproteinases
+17381	Mm_Matrix Metalloproteinases
+21859	Mm_Matrix Metalloproteinases
+17395	Mm_Matrix Metalloproteinases
+17387	Mm_Matrix Metalloproteinases
+30800	Mm_Matrix Metalloproteinases
+17385	Mm_Matrix Metalloproteinases
+17393	Mm_Matrix Metalloproteinases
+21411	Mm_Matrix Metalloproteinases
+83995	Mm_Matrix Metalloproteinases
+110595	Mm_Matrix Metalloproteinases
+58223	Mm_Matrix Metalloproteinases
+17391	Mm_Matrix Metalloproteinases
+23948	Mm_Matrix Metalloproteinases
+17389	Mm_Matrix Metalloproteinases
+12669	Mm_Monoamine GPCRs
+11555	Mm_Monoamine GPCRs
+11556	Mm_Monoamine GPCRs
+15551	Mm_Monoamine GPCRs
+11552	Mm_Monoamine GPCRs
+13490	Mm_Monoamine GPCRs
+15563	Mm_Monoamine GPCRs
+15564	Mm_Monoamine GPCRs
+12672	Mm_Monoamine GPCRs
+15566	Mm_Monoamine GPCRs
+15560	Mm_Monoamine GPCRs
+11554	Mm_Monoamine GPCRs
+15558	Mm_Monoamine GPCRs
+11536	Mm_Monoamine GPCRs
+13491	Mm_Monoamine GPCRs
+15465	Mm_Monoamine GPCRs
+15562	Mm_Monoamine GPCRs
+15466	Mm_Monoamine GPCRs
+11550	Mm_Monoamine GPCRs
+11548	Mm_Monoamine GPCRs
+11549	Mm_Monoamine GPCRs
+11553	Mm_Monoamine GPCRs
+11551	Mm_Monoamine GPCRs
+15559	Mm_Monoamine GPCRs
+15557	Mm_Monoamine GPCRs
+15552	Mm_Monoamine GPCRs
+15552	Mm_Monoamine GPCRs
+13492	Mm_Monoamine GPCRs
+13488	Mm_Monoamine GPCRs
+15550	Mm_Monoamine GPCRs
+12671	Mm_Monoamine GPCRs
+15565	Mm_Monoamine GPCRs
+13983	Mm_Nuclear Receptors
+26379	Mm_Nuclear Receptors
+12355	Mm_Nuclear Receptors
+18171	Mm_Nuclear Receptors
+14815	Mm_Nuclear Receptors
+19401	Mm_Nuclear Receptors
+15370	Mm_Nuclear Receptors
+81812	Mm_Nuclear Receptors
+19411	Mm_Nuclear Receptors
+11835	Mm_Nuclear Receptors
+13982	Mm_Nuclear Receptors
+19411	Mm_Nuclear Receptors
+19401	Mm_Nuclear Receptors
+12145	Mm_Orphan GPCRs
+14744	Mm_Orphan GPCRs
+14760	Mm_Orphan GPCRs
+23796	Mm_Orphan GPCRs
+14763	Mm_Orphan GPCRs
+14160	Mm_Orphan GPCRs
+56696	Mm_Orphan GPCRs
+14764	Mm_Orphan GPCRs
+10663	Mm_Peptide GPCRs
+12425	Mm_Peptide GPCRs
+14294	Mm_Peptide GPCRs
+20609	Mm_Peptide GPCRs
+12267	Mm_Peptide GPCRs
+12458	Mm_Peptide GPCRs
+12209	Mm_Peptide GPCRs
+18101	Mm_Peptide GPCRs
+18168	Mm_Peptide GPCRs
+18216	Mm_Peptide GPCRs
+12766	Mm_Peptide GPCRs
+14429	Mm_Peptide GPCRs
+14428	Mm_Peptide GPCRs
+14829	Mm_Peptide GPCRs
+22045	Mm_Peptide GPCRs
+11607	Mm_Peptide GPCRs
+11608	Mm_Peptide GPCRs
+21336	Mm_Peptide GPCRs
+21337	Mm_Peptide GPCRs
+16867	Mm_Peptide GPCRs
+20605	Mm_Peptide GPCRs
+20606	Mm_Peptide GPCRs
+20607	Mm_Peptide GPCRs
+12273	Mm_Peptide GPCRs
+12062	Mm_Peptide GPCRs
+18386	Mm_Peptide GPCRs
+17201	Mm_Peptide GPCRs
+18387	Mm_Peptide GPCRs
+14293	Mm_Peptide GPCRs
+12765	Mm_Peptide GPCRs
+11609	Mm_Peptide GPCRs
+18389	Mm_Peptide GPCRs
+14309	Mm_Peptide GPCRs
+17203	Mm_Peptide GPCRs
+18390	Mm_Peptide GPCRs
+2826	Mm_Peptide GPCRs
+22095	Mm_Peptide GPCRs
+12775	Mm_Peptide GPCRs
+21338	Mm_Peptide GPCRs
+13618	Mm_Peptide GPCRs
+20608	Mm_Peptide GPCRs
+12768	Mm_Peptide GPCRs
+12770	Mm_Peptide GPCRs
+12771	Mm_Peptide GPCRs
+12773	Mm_Peptide GPCRs
+12774	Mm_Peptide GPCRs
+12772	Mm_Peptide GPCRs
+17202	Mm_Peptide GPCRs
+14427	Mm_Peptide GPCRs
+12426	Mm_Peptide GPCRs
+12776	Mm_Peptide GPCRs
+18217	Mm_Peptide GPCRs
+12767	Mm_Peptide GPCRs
+18167	Mm_Peptide GPCRs
+18430	Mm_Peptide GPCRs
+17199	Mm_Peptide GPCRs
+14715	Mm_Peptide GPCRs
+18166	Mm_Peptide GPCRs
+12145	Mm_Peptide GPCRs
+19065	Mm_Peptide GPCRs
+12061	Mm_Peptide GPCRs
+18169	Mm_Peptide GPCRs
+13617	Mm_Peptide GPCRs
+54140	Mm_Peptide GPCRs
+17200	Mm_Peptide GPCRs
+26361	Mm_Peptide GPCRs
+12769	Mm_Peptide GPCRs
+13051	Mm_Peptide GPCRs
+13609	Mm_Small ligand GPCRs
+19218	Mm_Small ligand GPCRs
+21390	Mm_Small ligand GPCRs
+19219	Mm_Small ligand GPCRs
+19216	Mm_Small ligand GPCRs
+19220	Mm_Small ligand GPCRs
+19222	Mm_Small ligand GPCRs
+12801	Mm_Small ligand GPCRs
+12802	Mm_Small ligand GPCRs
+19214	Mm_Small ligand GPCRs
+244701	Mm_Small ligand GPCRs
+14745	Mm_Small ligand GPCRs
+17773	Mm_Small ligand GPCRs
+19204	Mm_Small ligand GPCRs
+19217	Mm_Small ligand GPCRs
+13611	Mm_Small ligand GPCRs
+13610	Mm_Small ligand GPCRs
+13610	Mm_Small ligand GPCRs
+27267	Mm_tRNA Synthetases
+20226	Mm_tRNA Synthetases
+22375	Mm_tRNA Synthetases
+15115	Mm_tRNA Synthetases
+69684	Mm_tRNA Synthetases
+110960	Mm_tRNA Synthetases
+85305	Mm_tRNA Synthetases
+107508	Mm_tRNA Synthetases
+70223	Mm_tRNA Synthetases
+104458	Mm_tRNA Synthetases
+23874	Mm_tRNA Synthetases
+22321	Mm_tRNA Synthetases
+12660	Mm_Acetylcholine Synthesis
+11423	Mm_Acetylcholine Synthesis
+18597	Mm_Acetylcholine Synthesis
+18598	Mm_Acetylcholine Synthesis
+13026	Mm_Acetylcholine Synthesis
+12647	Mm_Acetylcholine Synthesis
+18618	Mm_Acetylcholine Synthesis
+13195	Mm_Catacholamine Biosynthesis
+21823	Mm_Catacholamine Biosynthesis
+18948	Mm_Catacholamine Biosynthesis
+13166	Mm_Catacholamine Biosynthesis
+13360	Mm_Cholesterol Biosynthesis
+235293	Mm_Cholesterol Biosynthesis
+15356	Mm_Cholesterol Biosynthesis
+20775	Mm_Cholesterol Biosynthesis
+14137	Mm_Cholesterol Biosynthesis
+15360	Mm_Cholesterol Biosynthesis
+15357	Mm_Cholesterol Biosynthesis
+3422	Mm_Cholesterol Biosynthesis
+192156	Mm_Cholesterol Biosynthesis
+17855	Mm_Cholesterol Biosynthesis
+14593	Mm_Cholesterol Biosynthesis
+14593	Mm_Cholesterol Biosynthesis
+19215	Mm_Eicosanoid Synthesis
+19223	Mm_Eicosanoid Synthesis
+12866	Mm_Electron Transport Chain
+12869	Mm_Electron Transport Chain
+11739	Mm_Electron Transport Chain
+11740	Mm_Electron Transport Chain
+17994	Mm_Electron Transport Chain
+57423	Mm_Electron Transport Chain
+67126	Mm_Electron Transport Chain
+67942	Mm_Electron Transport Chain
+228033	Mm_Electron Transport Chain
+110323	Mm_Electron Transport Chain
+12865	Mm_Electron Transport Chain
+66142	Mm_Electron Transport Chain
+11947	Mm_Electron Transport Chain
+22229	Mm_Electron Transport Chain
+22228	Mm_Electron Transport Chain
+11957	Mm_Electron Transport Chain
+66576	Mm_Electron Transport Chain
+11946	Mm_Electron Transport Chain
+11958	Mm_Electron Transport Chain
+20463	Mm_Electron Transport Chain
+17992	Mm_Electron Transport Chain
+11950	Mm_Electron Transport Chain
+12868	Mm_Electron Transport Chain
+27425	Mm_Electron Transport Chain
+22272	Mm_Electron Transport Chain
+66091	Mm_Electron Transport Chain
+22273	Mm_Electron Transport Chain
+67530	Mm_Electron Transport Chain
+67003	Mm_Electron Transport Chain
+11949	Mm_Electron Transport Chain
+66945	Mm_Electron Transport Chain
+67680	Mm_Electron Transport Chain
+20523	Mm_Electron Transport Chain
+16956	Mm_Fatty Acid Degradation
+21991	Mm_Fatty Acid Degradation
+20280	Mm_Fatty Acid Degradation
+14081	Mm_Fatty Acid Degradation
+11364	Mm_Fatty Acid Degradation
+12908	Mm_Fatty Acid Degradation
+18642	Mm_Glycolysis and Gluconeogenesis
+18746	Mm_Glycolysis and Gluconeogenesis
+103988	Mm_Glycolysis and Gluconeogenesis
+18770	Mm_Glycolysis and Gluconeogenesis
+14120	Mm_Glycolysis and Gluconeogenesis
+14121	Mm_Glycolysis and Gluconeogenesis
+14122	Mm_Glycolysis and Gluconeogenesis
+18563	Mm_Glycolysis and Gluconeogenesis
+14447	Mm_Glycolysis and Gluconeogenesis
+235339	Mm_Glycolysis and Gluconeogenesis
+56421	Mm_Glycolysis and Gluconeogenesis
+18534	Mm_Glycolysis and Gluconeogenesis
+11656	Mm_Heme Biosynthesis
+17025	Mm_Heme Biosynthesis
+14151	Mm_Heme Biosynthesis
+15288	Mm_Heme Biosynthesis
+12892	Mm_Heme Biosynthesis
+22276	Mm_Heme Biosynthesis
+19044	Mm_Heme Biosynthesis
+22275	Mm_Heme Biosynthesis
+11655	Mm_Heme Biosynthesis
+13382	Mm_Krebs-TCA Cycle
+13382	Mm_Krebs-TCA Cycle
+27273	Mm_Krebs-TCA Cycle
+17448	Mm_Krebs-TCA Cycle
+17449	Mm_Krebs-TCA Cycle
+18597	Mm_Krebs-TCA Cycle
+18598	Mm_Krebs-TCA Cycle
+269951	Mm_Krebs-TCA Cycle
+15929	Mm_Krebs-TCA Cycle
+14194	Mm_Krebs-TCA Cycle
+18563	Mm_Krebs-TCA Cycle
+18293	Mm_Krebs-TCA Cycle
+235339	Mm_Krebs-TCA Cycle
+236900	Mm_Krebs-TCA Cycle
+11429	Mm_Krebs-TCA Cycle
+12974	Mm_Krebs-TCA Cycle
+18604	Mm_Krebs-TCA Cycle
+56451	Mm_Krebs-TCA Cycle
+66945	Mm_Krebs-TCA Cycle
+67680	Mm_Krebs-TCA Cycle
+20917	Mm_Krebs-TCA Cycle
+20916	Mm_Krebs-TCA Cycle
+20280	Mm_Mitochondiral fatty acid betaoxidation
+14081	Mm_Mitochondiral fatty acid betaoxidation
+13177	Mm_Mitochondiral fatty acid betaoxidation
+11364	Mm_Mitochondiral fatty acid betaoxidation
+11370	Mm_Mitochondiral fatty acid betaoxidation
+11363	Mm_Mitochondiral fatty acid betaoxidation
+12896	Mm_Mitochondiral fatty acid betaoxidation
+12894	Mm_Mitochondiral fatty acid betaoxidation
+11409	Mm_Mitochondiral fatty acid betaoxidation
+15107	Mm_Mitochondiral fatty acid betaoxidation
+111175	Mm_Mitochondiral fatty acid betaoxidation
+74205	Mm_Mitochondiral fatty acid betaoxidation
+74147	Mm_Mitochondiral fatty acid betaoxidation
+50790	Mm_Mitochondiral fatty acid betaoxidation
+57279	Mm_Mitochondiral fatty acid betaoxidation
+13361	Mm_Nucleotide Metabolism
+15452	Mm_Nucleotide Metabolism
+5423	Mm_Nucleotide Metabolism
+20133	Mm_Nucleotide Metabolism
+5634	Mm_Nucleotide Metabolism
+17768	Mm_Nucleotide Metabolism
+18968	Mm_Nucleotide Metabolism
+19290	Mm_Nucleotide Metabolism
+20229	Mm_Nucleotide Metabolism
+23917	Mm_Nucleotide Metabolism
+18971	Mm_Nucleotide Metabolism
+5428	Mm_Nucleotide Metabolism
+18245	Mm_Nucleotide Metabolism
+11564	Mm_Nucleotide Metabolism
+18103	Mm_Nucleotide Metabolism
+20810	Mm_Nucleotide Metabolism
+21881	Mm_Pentose Phosphate Pathway
+19895	Mm_Pentose Phosphate Pathway
+14380	Mm_Pentose Phosphate Pathway
+14381	Mm_Pentose Phosphate Pathway
+21351	Mm_Pentose Phosphate Pathway
+110208	Mm_Pentose Phosphate Pathway
+15497	Mm_Steroid Biosynthesis
+15497	Mm_Steroid Biosynthesis
+15490	Mm_Steroid Biosynthesis
+15492	Mm_Steroid Biosynthesis
+15493	Mm_Steroid Biosynthesis
+15494	Mm_Steroid Biosynthesis
+13074	Mm_Steroid Biosynthesis
+15485	Mm_Steroid Biosynthesis
+15486	Mm_Steroid Biosynthesis
+15488	Mm_Steroid Biosynthesis
+15487	Mm_Steroid Biosynthesis
+14060	Mm_Steroid Biosynthesis
+15496	Mm_Steroid Biosynthesis
+15495	Mm_Steroid Biosynthesis
+12018	Mm_Apoptosis
+12368	Mm_Apoptosis
+11796	Mm_Apoptosis
+16151	Mm_Apoptosis
+11783	Mm_Apoptosis
+12370	Mm_Apoptosis
+13067	Mm_Apoptosis
+17869	Mm_Apoptosis
+22059	Mm_Apoptosis
+14939	Mm_Apoptosis
+16476	Mm_Apoptosis
+21926	Mm_Apoptosis
+12043	Mm_Apoptosis
+18646	Mm_Apoptosis
+11545	Mm_Apoptosis
+17246	Mm_Apoptosis
+21937	Mm_Apoptosis
+21938	Mm_Apoptosis
+14102	Mm_Apoptosis
+18033	Mm_Apoptosis
+12366	Mm_Apoptosis
+22029	Mm_Apoptosis
+22030	Mm_Apoptosis
+14103	Mm_Apoptosis
+26398	Mm_Apoptosis
+22035	Mm_Apoptosis
+26401	Mm_Apoptosis
+12122	Mm_Apoptosis
+12367	Mm_Apoptosis
+17210	Mm_Apoptosis
+12369	Mm_Apoptosis
+19697	Mm_Apoptosis
+12028	Mm_Apoptosis
+19766	Mm_Apoptosis
+11798	Mm_Apoptosis
+14082	Mm_Apoptosis
+26414	Mm_Apoptosis
+11797	Mm_Apoptosis
+12048	Mm_Apoptosis
+12371	Mm_Apoptosis
+53859	Mm_Apoptosis
+18035	Mm_Apoptosis
+58992	Mm_Blood Clotting Cascade
+14058	Mm_Blood Clotting Cascade
+14067	Mm_Blood Clotting Cascade
+14058	Mm_Blood Clotting Cascade
+18792	Mm_Blood Clotting Cascade
+18791	Mm_Blood Clotting Cascade
+18788	Mm_Blood Clotting Cascade
+14190	Mm_Blood Clotting Cascade
+14071	Mm_Blood Clotting Cascade
+14061	Mm_Blood Clotting Cascade
+18815	Mm_Blood Clotting Cascade
+18787	Mm_Blood Clotting Cascade
+14068	Mm_Blood Clotting Cascade
+14070	Mm_Blood Clotting Cascade
+14069	Mm_Blood Clotting Cascade
+14060	Mm_Blood Clotting Cascade
+14161	Mm_Blood Clotting Cascade
+22371	Mm_Blood Clotting Cascade
+14068	Mm_Blood Clotting Cascade
+18816	Mm_Blood Clotting Cascade
+12266	Mm_Complement Activation, Classical
+12279	Mm_Complement Activation, Classical
+15139	Mm_Complement Activation, Classical
+12260	Mm_Complement Activation, Classical
+12263	Mm_Complement Activation, Classical
+17174	Mm_Complement Activation, Classical
+12259	Mm_Complement Activation, Classical
+12262	Mm_Complement Activation, Classical
+13136	Mm_Complement Activation, Classical
+13137	Mm_Complement Activation, Classical
+12274	Mm_Complement Activation, Classical
+16031	Mm_Inflammatory Response Pathway
+15978	Mm_Inflammatory Response Pathway
+16175	Mm_Inflammatory Response Pathway
+16184	Mm_Inflammatory Response Pathway
+16781	Mm_Inflammatory Response Pathway
+16777	Mm_Inflammatory Response Pathway
+14969	Mm_Inflammatory Response Pathway
+16183	Mm_Inflammatory Response Pathway
+16191	Mm_Inflammatory Response Pathway
+16818	Mm_Inflammatory Response Pathway
+21926	Mm_Inflammatory Response Pathway
+16189	Mm_Inflammatory Response Pathway
+12825	Mm_Inflammatory Response Pathway
+16193	Mm_Inflammatory Response Pathway
+16992	Mm_Inflammatory Response Pathway
+16176	Mm_Inflammatory Response Pathway
+12842	Mm_Inflammatory Response Pathway
+14268	Mm_Inflammatory Response Pathway
+16185	Mm_Inflammatory Response Pathway
+16190	Mm_Inflammatory Response Pathway
+16192	Mm_Inflammatory Response Pathway
+21937	Mm_Inflammatory Response Pathway
+21938	Mm_Inflammatory Response Pathway
+14129	Mm_Inflammatory Response Pathway
+21939	Mm_Inflammatory Response Pathway
+21947	Mm_Inflammatory Response Pathway
+22370	Mm_Inflammatory Response Pathway
+12487	Mm_Inflammatory Response Pathway
+17390	Mm_Inflammatory Response Pathway
+16186	Mm_Inflammatory Response Pathway
+12524	Mm_Inflammatory Response Pathway
+22637	Mm_Inflammatory Response Pathway
+12519	Mm_Inflammatory Response Pathway
+12843	Mm_Inflammatory Response Pathway
+17829	Mm_Inflammatory Response Pathway
+21827	Mm_Inflammatory Response Pathway
+16776	Mm_Inflammatory Response Pathway
+16782	Mm_Inflammatory Response Pathway
+16779	Mm_Inflammatory Response Pathway
+16154	Mm_Inflammatory Response Pathway
+13983	Mm_Ovarian Infertility Genes
+13653	Mm_Ovarian Infertility Genes
+22788	Mm_Ovarian Infertility Genes
+22787	Mm_Ovarian Infertility Genes
+12608	Mm_Ovarian Infertility Genes
+14612	Mm_Ovarian Infertility Genes
+13075	Mm_Ovarian Infertility Genes
+21374	Mm_Ovarian Infertility Genes
+12444	Mm_Ovarian Infertility Genes
+12567	Mm_Ovarian Infertility Genes
+16867	Mm_Ovarian Infertility Genes
+26423	Mm_Ovarian Infertility Genes
+14309	Mm_Ovarian Infertility Genes
+12167	Mm_Ovarian Infertility Genes
+12576	Mm_Ovarian Infertility Genes
+22337	Mm_Ovarian Infertility Genes
+18667	Mm_Ovarian Infertility Genes
+20597	Mm_Ovarian Infertility Genes
+16322	Mm_Ovarian Infertility Genes
+14566	Mm_Ovarian Infertility Genes
+19116	Mm_Ovarian Infertility Genes
+20185	Mm_Ovarian Infertility Genes
+13404	Mm_Ovarian Infertility Genes
+19217	Mm_Ovarian Infertility Genes
+11920	Mm_Ovarian Infertility Genes
+13164	Mm_Ovarian Infertility Genes
+17127	Mm_Ovarian Infertility Genes
+17350	Mm_Ovarian Infertility Genes
+268903	Mm_Ovarian Infertility Genes
+19170	Mm_Proteasome Degradation
+19185	Mm_Proteasome Degradation
+19167	Mm_Proteasome Degradation
+19182	Mm_Proteasome Degradation
+15978	Mm_Proteasome Degradation
+22187	Mm_Proteasome Degradation
+22123	Mm_Proteasome Degradation
+3013	Mm_Proteasome Degradation
+15270	Mm_Proteasome Degradation
+16913	Mm_Proteasome Degradation
+22201	Mm_Proteasome Degradation
+17999	Mm_Proteasome Degradation
+19166	Mm_Proteasome Degradation
+22193	Mm_Proteasome Degradation
+23996	Mm_Proteasome Degradation
+19177	Mm_Proteasome Degradation
+19186	Mm_Proteasome Degradation
+19172	Mm_Proteasome Degradation
+19172	Mm_Proteasome Degradation
+22201	Mm_Proteasome Degradation
+224756	Mm_Proteasome Degradation
+19175	Mm_Proteasome Degradation
+26443	Mm_Proteasome Degradation
+26441	Mm_Proteasome Degradation
+26446	Mm_Proteasome Degradation
+26445	Mm_Proteasome Degradation
+26440	Mm_Proteasome Degradation
+26444	Mm_Proteasome Degradation
+26442	Mm_Proteasome Degradation
+19933	Mm_Ribosomal Proteins
+57808	Mm_Ribosomal Proteins
+20044	Mm_Ribosomal Proteins
+20068	Mm_Ribosomal Proteins
+27176	Mm_Ribosomal Proteins
+26451	Mm_Ribosomal Proteins
+20055	Mm_Ribosomal Proteins
+19989	Mm_Ribosomal Proteins
+16785	Mm_Ribosomal Proteins
+11837	Mm_Ribosomal Proteins
+27050	Mm_Ribosomal Proteins
+19952	Mm_Ribosomal Proteins
+20111	Mm_Ribosomal Proteins
+110651	Mm_Ribosomal Proteins
+22121	Mm_Ribosomal Proteins
+16898	Mm_Ribosomal Proteins
+27367	Mm_Ribosomal Proteins
+269261	Mm_Ribosomal Proteins
+19899	Mm_Ribosomal Proteins
+19934	Mm_Ribosomal Proteins
+19943	Mm_Ribosomal Proteins
+19988	Mm_Ribosomal Proteins
+19944	Mm_Ribosomal Proteins
+56040	Mm_Ribosomal Proteins
+19983	Mm_Ribosomal Proteins
+19898	Mm_Ribosomal Proteins
+54217	Mm_Ribosomal Proteins
+20005	Mm_Ribosomal Proteins
+19896	Mm_Ribosomal Proteins
+27370	Mm_Ribosomal Proteins
+20091	Mm_Ribosomal Proteins
+20103	Mm_Ribosomal Proteins
+68172	Mm_Ribosomal Proteins
+19942	Mm_Ribosomal Proteins
+67891	Mm_Ribosomal Proteins
+65019	Mm_Ribosomal Proteins
+66480	Mm_Ribosomal Proteins
+20085	Mm_Ribosomal Proteins
+68436	Mm_Ribosomal Proteins
+78294	Mm_Ribosomal Proteins
+67281	Mm_Ribosomal Proteins
+67671	Mm_Ribosomal Proteins
+20112	Mm_Ribosomal Proteins
+58988	Mm_Ribosomal Proteins
+13631	Mm_Translation Factors
+16418	Mm_Translation Factors
+55944	Mm_Translation Factors
+55949	Mm_Translation Factors
+13627	Mm_Translation Factors
+1984	Mm_Translation Factors
+13682	Mm_Translation Factors
+13669	Mm_Translation Factors
+13628	Mm_Translation Factors
+18458	Mm_Translation Factors
+20918	Mm_Translation Factors
+66656	Mm_Translation Factors
+225363	Mm_Translation Factors
+13688	Mm_Translation Factors
+19106	Mm_Translation Factors
+13664	Mm_Translation Factors
+13685	Mm_Translation Factors
+13629	Mm_Translation Factors
+13667	Mm_Translation Factors
+18459	Mm_Translation Factors
+13690	Mm_Translation Factors
+3646	Mm_Translation Factors
+67204	Mm_Translation Factors
+218693	Mm_Translation Factors
+22384	Mm_Translation Factors
+26905	Mm_Translation Factors
+26908	Mm_Translation Factors
+53356	Mm_Translation Factors
+13666	Mm_Translation Factors
+15467	Mm_Translation Factors
+14687	Mm_G Protein Signaling
+18584	Mm_G Protein Signaling
+805	Mm_G Protein Signaling
+14683	Mm_G Protein Signaling
+18747	Mm_G Protein Signaling
+24681	Mm_G Protein Signaling
+18176	Mm_G Protein Signaling
+16653	Mm_G Protein Signaling
+14678	Mm_G Protein Signaling
+16438	Mm_G Protein Signaling
+19087	Mm_G Protein Signaling
+19085	Mm_G Protein Signaling
+14702	Mm_G Protein Signaling
+14681	Mm_G Protein Signaling
+14681	Mm_G Protein Signaling
+18750	Mm_G Protein Signaling
+19055	Mm_G Protein Signaling
+14672	Mm_G Protein Signaling
+14682	Mm_G Protein Signaling
+18755	Mm_G Protein Signaling
+14673	Mm_G Protein Signaling
+14674	Mm_G Protein Signaling
+18753	Mm_G Protein Signaling
+14696	Mm_G Protein Signaling
+14675	Mm_G Protein Signaling
+14676	Mm_G Protein Signaling
+19088	Mm_G Protein Signaling
+16653	Mm_G Protein Signaling
+19056	Mm_G Protein Signaling
+19057	Mm_G Protein Signaling
+14706	Mm_G Protein Signaling
+18797	Mm_G Protein Signaling
+11513	Mm_G Protein Signaling
+11515	Mm_G Protein Signaling
+14693	Mm_G Protein Signaling
+14697	Mm_G Protein Signaling
+18583	Mm_G Protein Signaling
+11514	Mm_G Protein Signaling
+238871	Mm_G Protein Signaling
+18574	Mm_G Protein Signaling
+11512	Mm_G Protein Signaling
+18761	Mm_G Protein Signaling
+18762	Mm_G Protein Signaling
+14695	Mm_G Protein Signaling
+14699	Mm_G Protein Signaling
+14708	Mm_G Protein Signaling
+14710	Mm_G Protein Signaling
+14677	Mm_G Protein Signaling
+14679	Mm_G Protein Signaling
+14680	Mm_G Protein Signaling
+20544	Mm_G Protein Signaling
+60323	Mm_G Protein Signaling
+15461	Mm_G Protein Signaling
+18573	Mm_G Protein Signaling
+18759	Mm_G Protein Signaling
+18760	Mm_G Protein Signaling
+18575	Mm_G Protein Signaling
+11848	Mm_G Protein Signaling
+29863	Mm_G Protein Signaling
+26407	Mm_G13 Signaling Pathway
+26407	Mm_G13 Signaling Pathway
+13367	Mm_G13 Signaling Pathway
+18709	Mm_G13 Signaling Pathway
+18707	Mm_G13 Signaling Pathway
+51789	Mm_G13 Signaling Pathway
+18718	Mm_G13 Signaling Pathway
+59009	Mm_G13 Signaling Pathway
+12704	Mm_G13 Signaling Pathway
+12313	Mm_G13 Signaling Pathway
+17901	Mm_G13 Signaling Pathway
+18643	Mm_G13 Signaling Pathway
+19353	Mm_G13 Signaling Pathway
+12631	Mm_G13 Signaling Pathway
+12540	Mm_G13 Signaling Pathway
+14674	Mm_G13 Signaling Pathway
+19046	Mm_G13 Signaling Pathway
+18706	Mm_G13 Signaling Pathway
+12632	Mm_G13 Signaling Pathway
+12704	Mm_G13 Signaling Pathway
+16885	Mm_G13 Signaling Pathway
+22376	Mm_G13 Signaling Pathway
+19877	Mm_G13 Signaling Pathway
+19878	Mm_G13 Signaling Pathway
+53311	Mm_G13 Signaling Pathway
+18481	Mm_G13 Signaling Pathway
+14787	Mm_G13 Signaling Pathway
+20166	Mm_G13 Signaling Pathway
+16801	Mm_G13 Signaling Pathway
+11857	Mm_G13 Signaling Pathway
+26414	Mm_G13 Signaling Pathway
+14570	Mm_G13 Signaling Pathway
+73178	Mm_G13 Signaling Pathway
+29875	Mm_G13 Signaling Pathway
+11848	Mm_G13 Signaling Pathway
+26397	Mm_MAPK Cascade
+26400	Mm_MAPK Cascade
+17196	Mm_MAPK Cascade
+11836	Mm_MAPK Cascade
+16476	Mm_MAPK Cascade
+18176	Mm_MAPK Cascade
+20130	Mm_MAPK Cascade
+17756	Mm_MAPK Cascade
+109880	Mm_MAPK Cascade
+26395	Mm_MAPK Cascade
+16653	Mm_MAPK Cascade
+13712	Mm_MAPK Cascade
+20469	Mm_MAPK Cascade
+26398	Mm_MAPK Cascade
+26416	Mm_MAPK Cascade
+18797	Mm_MAPK Cascade
+26401	Mm_MAPK Cascade
+26399	Mm_MAPK Cascade
+19414	Mm_MAPK Cascade
+26405	Mm_MAPK Cascade
+26406	Mm_MAPK Cascade
+15461	Mm_MAPK Cascade
+26414	Mm_MAPK Cascade
+26417	Mm_MAPK Cascade
+26396	Mm_MAPK Cascade
+13609	Mm_S1P Signaling
+29857	Mm_S1P Signaling
+18705	Mm_S1P Signaling
+20598	Mm_S1P Signaling
+20698	Mm_S1P Signaling
+14678	Mm_S1P Signaling
+11651	Mm_S1P Signaling
+18797	Mm_S1P Signaling
+11652	Mm_S1P Signaling
+14677	Mm_S1P Signaling
+14679	Mm_S1P Signaling
+50772	Mm_S1P Signaling
+26417	Mm_S1P Signaling
+94226	Mm_S1P Signaling
+54447	Mm_S1P Signaling
+56632	Mm_S1P Signaling
+14739	Mm_S1P Signaling
+23797	Mm_S1P Signaling
+26934	Mm_S1P Signaling
+23939	Mm_S1P Signaling
+13610	Mm_S1P Signaling
+17130	Mm_TGF Beta Signaling Pathway
+17131	Mm_TGF Beta Signaling Pathway
+21814	Mm_TGF Beta Signaling Pathway
+14106	Mm_TGF Beta Signaling Pathway
+14281	Mm_TGF Beta Signaling Pathway
+13645	Mm_TGF Beta Signaling Pathway
+15978	Mm_TGF Beta Signaling Pathway
+21803	Mm_TGF Beta Signaling Pathway
+16476	Mm_TGF Beta Signaling Pathway
+21926	Mm_TGF Beta Signaling Pathway
+21926	Mm_TGF Beta Signaling Pathway
+16878	Mm_TGF Beta Signaling Pathway
+20750	Mm_TGF Beta Signaling Pathway
+12159	Mm_TGF Beta Signaling Pathway
+18787	Mm_TGF Beta Signaling Pathway
+18033	Mm_TGF Beta Signaling Pathway
+14225	Mm_TGF Beta Signaling Pathway
+16842	Mm_TGF Beta Signaling Pathway
+21825	Mm_TGF Beta Signaling Pathway
+20846	Mm_TGF Beta Signaling Pathway
+20848	Mm_TGF Beta Signaling Pathway
+12914	Mm_TGF Beta Signaling Pathway
+14313	Mm_TGF Beta Signaling Pathway
+22411	Mm_TGF Beta Signaling Pathway
+16451	Mm_TGF Beta Signaling Pathway
+21815	Mm_TGF Beta Signaling Pathway
+17125	Mm_TGF Beta Signaling Pathway
+17129	Mm_TGF Beta Signaling Pathway
+18121	Mm_TGF Beta Signaling Pathway
+17128	Mm_TGF Beta Signaling Pathway
+12387	Mm_TGF Beta Signaling Pathway
+16323	Mm_TGF Beta Signaling Pathway
+12393	Mm_TGF Beta Signaling Pathway
+20481	Mm_TGF Beta Signaling Pathway
+15461	Mm_TGF Beta Signaling Pathway
+21813	Mm_TGF Beta Signaling Pathway
+17126	Mm_TGF Beta Signaling Pathway
+26417	Mm_TGF Beta Signaling Pathway
+13805	Mm_TGF Beta Signaling Pathway
+209446	Mm_TGF Beta Signaling Pathway
+12399	Mm_TGF Beta Signaling Pathway
+21812	Mm_TGF Beta Signaling Pathway
+68010	Mm_TGF Beta Signaling Pathway
+55994	Mm_TGF Beta Signaling Pathway
+24136	Mm_TGF Beta Signaling Pathway
+26420	Mm_TGF Beta Signaling Pathway
+16420	Mm_TGF Beta Signaling Pathway
+22412	Mm_Wnt Signaling
+12005	Mm_Wnt Signaling
+22414	Mm_Wnt Signaling
+14362	Mm_Wnt Signaling
+17869	Mm_Wnt Signaling
+22408	Mm_Wnt Signaling
+16476	Mm_Wnt Signaling
+24681	Mm_Wnt Signaling
+18792	Mm_Wnt Signaling
+18754	Mm_Wnt Signaling
+22415	Mm_Wnt Signaling
+18750	Mm_Wnt Signaling
+22417	Mm_Wnt Signaling
+22418	Mm_Wnt Signaling
+22419	Mm_Wnt Signaling
+22420	Mm_Wnt Signaling
+18755	Mm_Wnt Signaling
+22421	Mm_Wnt Signaling
+12443	Mm_Wnt Signaling
+22416	Mm_Wnt Signaling
+22422	Mm_Wnt Signaling
+18753	Mm_Wnt Signaling
+12444	Mm_Wnt Signaling
+12445	Mm_Wnt Signaling
+16835	Mm_Wnt Signaling
+22410	Mm_Wnt Signaling
+22411	Mm_Wnt Signaling
+14283	Mm_Wnt Signaling
+13542	Mm_Wnt Signaling
+14296	Mm_Wnt Signaling
+22409	Mm_Wnt Signaling
+21414	Mm_Wnt Signaling
+18761	Mm_Wnt Signaling
+12387	Mm_Wnt Signaling
+18762	Mm_Wnt Signaling
+30050	Mm_Wnt Signaling
+13543	Mm_Wnt Signaling
+26931	Mm_Wnt Signaling
+13544	Mm_Wnt Signaling
+14365	Mm_Wnt Signaling
+14366	Mm_Wnt Signaling
+14368	Mm_Wnt Signaling
+14369	Mm_Wnt Signaling
+14370	Mm_Wnt Signaling
+26932	Mm_Wnt Signaling
+16971	Mm_Wnt Signaling
+11789	Mm_Wnt Signaling
+26414	Mm_Wnt Signaling
+18759	Mm_Wnt Signaling
+18760	Mm_Wnt Signaling
+14367	Mm_Wnt Signaling
+57265	Mm_Wnt Signaling
+11848	Mm_Wnt Signaling
+27373	Mm_Wnt Signaling
+93735	Mm_Wnt Signaling
+14371	Mm_Wnt Signaling
+26420	Mm_Wnt Signaling
+56637	Mm_Wnt Signaling
+26934	Mm_Wnt Signaling
+14064	Mm_GPCRs, Class A Rhodopsin-like
+59289	Mm_GPCRs, Class A Rhodopsin-like
+12425	Mm_GPCRs, Class A Rhodopsin-like
+14294	Mm_GPCRs, Class A Rhodopsin-like
+20609	Mm_GPCRs, Class A Rhodopsin-like
+12267	Mm_GPCRs, Class A Rhodopsin-like
+20132	Mm_GPCRs, Class A Rhodopsin-like
+54199	Mm_GPCRs, Class A Rhodopsin-like
+14539	Mm_GPCRs, Class A Rhodopsin-like
+12458	Mm_GPCRs, Class A Rhodopsin-like
+12209	Mm_GPCRs, Class A Rhodopsin-like
+18101	Mm_GPCRs, Class A Rhodopsin-like
+14761	Mm_GPCRs, Class A Rhodopsin-like
+11549	Mm_GPCRs, Class A Rhodopsin-like
+14767	Mm_GPCRs, Class A Rhodopsin-like
+54199	Mm_GPCRs, Class A Rhodopsin-like
+18168	Mm_GPCRs, Class A Rhodopsin-like
+171469	Mm_GPCRs, Class A Rhodopsin-like
+18216	Mm_GPCRs, Class A Rhodopsin-like
+12766	Mm_GPCRs, Class A Rhodopsin-like
+14762	Mm_GPCRs, Class A Rhodopsin-like
+14765	Mm_GPCRs, Class A Rhodopsin-like
+14288	Mm_GPCRs, Class A Rhodopsin-like
+14289	Mm_GPCRs, Class A Rhodopsin-like
+14290	Mm_GPCRs, Class A Rhodopsin-like
+14291	Mm_GPCRs, Class A Rhodopsin-like
+14065	Mm_GPCRs, Class A Rhodopsin-like
+12000	Mm_GPCRs, Class A Rhodopsin-like
+14429	Mm_GPCRs, Class A Rhodopsin-like
+14428	Mm_GPCRs, Class A Rhodopsin-like
+16995	Mm_GPCRs, Class A Rhodopsin-like
+12669	Mm_GPCRs, Class A Rhodopsin-like
+212541	Mm_GPCRs, Class A Rhodopsin-like
+11555	Mm_GPCRs, Class A Rhodopsin-like
+14829	Mm_GPCRs, Class A Rhodopsin-like
+22045	Mm_GPCRs, Class A Rhodopsin-like
+18312	Mm_GPCRs, Class A Rhodopsin-like
+11556	Mm_GPCRs, Class A Rhodopsin-like
+15551	Mm_GPCRs, Class A Rhodopsin-like
+11607	Mm_GPCRs, Class A Rhodopsin-like
+11608	Mm_GPCRs, Class A Rhodopsin-like
+11552	Mm_GPCRs, Class A Rhodopsin-like
+17171	Mm_GPCRs, Class A Rhodopsin-like
+19218	Mm_GPCRs, Class A Rhodopsin-like
+14062	Mm_GPCRs, Class A Rhodopsin-like
+13490	Mm_GPCRs, Class A Rhodopsin-like
+16867	Mm_GPCRs, Class A Rhodopsin-like
+14608	Mm_GPCRs, Class A Rhodopsin-like
+20605	Mm_GPCRs, Class A Rhodopsin-like
+20606	Mm_GPCRs, Class A Rhodopsin-like
+20607	Mm_GPCRs, Class A Rhodopsin-like
+15563	Mm_GPCRs, Class A Rhodopsin-like
+21390	Mm_GPCRs, Class A Rhodopsin-like
+12273	Mm_GPCRs, Class A Rhodopsin-like
+15564	Mm_GPCRs, Class A Rhodopsin-like
+12672	Mm_GPCRs, Class A Rhodopsin-like
+19219	Mm_GPCRs, Class A Rhodopsin-like
+12062	Mm_GPCRs, Class A Rhodopsin-like
+18386	Mm_GPCRs, Class A Rhodopsin-like
+15566	Mm_GPCRs, Class A Rhodopsin-like
+17201	Mm_GPCRs, Class A Rhodopsin-like
+18387	Mm_GPCRs, Class A Rhodopsin-like
+14293	Mm_GPCRs, Class A Rhodopsin-like
+15560	Mm_GPCRs, Class A Rhodopsin-like
+11554	Mm_GPCRs, Class A Rhodopsin-like
+12765	Mm_GPCRs, Class A Rhodopsin-like
+15558	Mm_GPCRs, Class A Rhodopsin-like
+11609	Mm_GPCRs, Class A Rhodopsin-like
+19216	Mm_GPCRs, Class A Rhodopsin-like
+18389	Mm_GPCRs, Class A Rhodopsin-like
+14309	Mm_GPCRs, Class A Rhodopsin-like
+18442	Mm_GPCRs, Class A Rhodopsin-like
+14738	Mm_GPCRs, Class A Rhodopsin-like
+14748	Mm_GPCRs, Class A Rhodopsin-like
+17203	Mm_GPCRs, Class A Rhodopsin-like
+18390	Mm_GPCRs, Class A Rhodopsin-like
+19220	Mm_GPCRs, Class A Rhodopsin-like
+19222	Mm_GPCRs, Class A Rhodopsin-like
+12801	Mm_GPCRs, Class A Rhodopsin-like
+22095	Mm_GPCRs, Class A Rhodopsin-like
+12802	Mm_GPCRs, Class A Rhodopsin-like
+13618	Mm_GPCRs, Class A Rhodopsin-like
+18441	Mm_GPCRs, Class A Rhodopsin-like
+20608	Mm_GPCRs, Class A Rhodopsin-like
+13491	Mm_GPCRs, Class A Rhodopsin-like
+12057	Mm_GPCRs, Class A Rhodopsin-like
+12768	Mm_GPCRs, Class A Rhodopsin-like
+12770	Mm_GPCRs, Class A Rhodopsin-like
+12771	Mm_GPCRs, Class A Rhodopsin-like
+12773	Mm_GPCRs, Class A Rhodopsin-like
+12774	Mm_GPCRs, Class A Rhodopsin-like
+12772	Mm_GPCRs, Class A Rhodopsin-like
+14063	Mm_GPCRs, Class A Rhodopsin-like
+14427	Mm_GPCRs, Class A Rhodopsin-like
+12426	Mm_GPCRs, Class A Rhodopsin-like
+12776	Mm_GPCRs, Class A Rhodopsin-like
+12778	Mm_GPCRs, Class A Rhodopsin-like
+15465	Mm_GPCRs, Class A Rhodopsin-like
+19214	Mm_GPCRs, Class A Rhodopsin-like
+18217	Mm_GPCRs, Class A Rhodopsin-like
+12767	Mm_GPCRs, Class A Rhodopsin-like
+15562	Mm_GPCRs, Class A Rhodopsin-like
+15466	Mm_GPCRs, Class A Rhodopsin-like
+18167	Mm_GPCRs, Class A Rhodopsin-like
+14747	Mm_GPCRs, Class A Rhodopsin-like
+11550	Mm_GPCRs, Class A Rhodopsin-like
+11548	Mm_GPCRs, Class A Rhodopsin-like
+18430	Mm_GPCRs, Class A Rhodopsin-like
+11553	Mm_GPCRs, Class A Rhodopsin-like
+11551	Mm_GPCRs, Class A Rhodopsin-like
+17199	Mm_GPCRs, Class A Rhodopsin-like
+15559	Mm_GPCRs, Class A Rhodopsin-like
+15557	Mm_GPCRs, Class A Rhodopsin-like
+18166	Mm_GPCRs, Class A Rhodopsin-like
+12145	Mm_GPCRs, Class A Rhodopsin-like
+11540	Mm_GPCRs, Class A Rhodopsin-like
+11541	Mm_GPCRs, Class A Rhodopsin-like
+14744	Mm_GPCRs, Class A Rhodopsin-like
+19065	Mm_GPCRs, Class A Rhodopsin-like
+14760	Mm_GPCRs, Class A Rhodopsin-like
+12061	Mm_GPCRs, Class A Rhodopsin-like
+17773	Mm_GPCRs, Class A Rhodopsin-like
+18169	Mm_GPCRs, Class A Rhodopsin-like
+15552	Mm_GPCRs, Class A Rhodopsin-like
+18313	Mm_GPCRs, Class A Rhodopsin-like
+19204	Mm_GPCRs, Class A Rhodopsin-like
+19217	Mm_GPCRs, Class A Rhodopsin-like
+54140	Mm_GPCRs, Class A Rhodopsin-like
+15550	Mm_GPCRs, Class A Rhodopsin-like
+17200	Mm_GPCRs, Class A Rhodopsin-like
+58861	Mm_GPCRs, Class A Rhodopsin-like
+84112	Mm_GPCRs, Class A Rhodopsin-like
+84111	Mm_GPCRs, Class A Rhodopsin-like
+70839	Mm_GPCRs, Class A Rhodopsin-like
+18442	Mm_GPCRs, Class A Rhodopsin-like
+15466	Mm_GPCRs, Class A Rhodopsin-like
+76854	Mm_GPCRs, Class A Rhodopsin-like
+66786	Mm_GPCRs, Class A Rhodopsin-like
+66786	Mm_GPCRs, Class A Rhodopsin-like
+17171	Mm_GPCRs, Class A Rhodopsin-like
+19220	Mm_GPCRs, Class A Rhodopsin-like
+22095	Mm_GPCRs, Class A Rhodopsin-like
+74191	Mm_GPCRs, Class A Rhodopsin-like
+11548	Mm_GPCRs, Class A Rhodopsin-like
+12425	Mm_GPCRs, Class A Rhodopsin-like
+258594	Mm_GPCRs, Class A Rhodopsin-like
+80885	Mm_GPCRs, Class A Rhodopsin-like
+258589	Mm_GPCRs, Class A Rhodopsin-like
+258350	Mm_GPCRs, Class A Rhodopsin-like
+259037	Mm_GPCRs, Class A Rhodopsin-like
+259035	Mm_GPCRs, Class A Rhodopsin-like
+258597	Mm_GPCRs, Class A Rhodopsin-like
+18360	Mm_GPCRs, Class A Rhodopsin-like
+258276	Mm_GPCRs, Class A Rhodopsin-like
+258501	Mm_GPCRs, Class A Rhodopsin-like
+258434	Mm_GPCRs, Class A Rhodopsin-like
+258498	Mm_GPCRs, Class A Rhodopsin-like
+258323	Mm_GPCRs, Class A Rhodopsin-like
+258811	Mm_GPCRs, Class A Rhodopsin-like
+258269	Mm_GPCRs, Class A Rhodopsin-like
+258883	Mm_GPCRs, Class A Rhodopsin-like
+258794	Mm_GPCRs, Class A Rhodopsin-like
+258333	Mm_GPCRs, Class A Rhodopsin-like
+258868	Mm_GPCRs, Class A Rhodopsin-like
+258802	Mm_GPCRs, Class A Rhodopsin-like
+258328	Mm_GPCRs, Class A Rhodopsin-like
+258740	Mm_GPCRs, Class A Rhodopsin-like
+80706	Mm_GPCRs, Class A Rhodopsin-like
+17202	Mm_GPCRs, Class A Rhodopsin-like
+81006	Mm_GPCRs, Class A Rhodopsin-like
+93690	Mm_GPCRs, Class A Rhodopsin-like
+170732	Mm_GPCRs, Class A Rhodopsin-like
+18371	Mm_GPCRs, Class A Rhodopsin-like
+12671	Mm_GPCRs, Class A Rhodopsin-like
+64095	Mm_GPCRs, Class A Rhodopsin-like
+140795	Mm_GPCRs, Class A Rhodopsin-like
+18316	Mm_GPCRs, Class A Rhodopsin-like
+18390	Mm_GPCRs, Class A Rhodopsin-like
+57385	Mm_GPCRs, Class A Rhodopsin-like
+58861	Mm_GPCRs, Class A Rhodopsin-like
+18314	Mm_GPCRs, Class A Rhodopsin-like
+57251	Mm_GPCRs, Class A Rhodopsin-like
+12766	Mm_GPCRs, Class A Rhodopsin-like
+15559	Mm_GPCRs, Class A Rhodopsin-like
+18340	Mm_GPCRs, Class A Rhodopsin-like
+15466	Mm_GPCRs, Class A Rhodopsin-like
+30044	Mm_GPCRs, Class A Rhodopsin-like
+14763	Mm_GPCRs, Class A Rhodopsin-like
+56014	Mm_GPCRs, Class A Rhodopsin-like
+56015	Mm_GPCRs, Class A Rhodopsin-like
+29849	Mm_GPCRs, Class A Rhodopsin-like
+29847	Mm_GPCRs, Class A Rhodopsin-like
+29846	Mm_GPCRs, Class A Rhodopsin-like
+29845	Mm_GPCRs, Class A Rhodopsin-like
+18390	Mm_GPCRs, Class A Rhodopsin-like
+15565	Mm_GPCRs, Class A Rhodopsin-like
+23890	Mm_GPCRs, Class A Rhodopsin-like
+18390	Mm_GPCRs, Class A Rhodopsin-like
+18390	Mm_GPCRs, Class A Rhodopsin-like
+12458	Mm_GPCRs, Class A Rhodopsin-like
+11542	Mm_GPCRs, Class A Rhodopsin-like
+26361	Mm_GPCRs, Class A Rhodopsin-like
+56858	Mm_GPCRs, Class A Rhodopsin-like
+56861	Mm_GPCRs, Class A Rhodopsin-like
+13603	Mm_GPCRs, Class A Rhodopsin-like
+12769	Mm_GPCRs, Class A Rhodopsin-like
+23796	Mm_GPCRs, Class A Rhodopsin-like
+13051	Mm_GPCRs, Class A Rhodopsin-like
+14763	Mm_GPCRs, Class A Rhodopsin-like
+18348	Mm_GPCRs, Class A Rhodopsin-like
+57811	Mm_GPCRs, Class A Rhodopsin-like
+14764	Mm_GPCRs, Class A Rhodopsin-like
+14652	Mm_GPCRs, Class B Secretin-like
+14602	Mm_GPCRs, Class B Secretin-like
+12921	Mm_GPCRs, Class B Secretin-like
+22355	Mm_GPCRs, Class B Secretin-like
+19228	Mm_GPCRs, Class B Secretin-like
+11517	Mm_GPCRs, Class B Secretin-like
+12922	Mm_GPCRs, Class B Secretin-like
+12311	Mm_GPCRs, Class B Secretin-like
+13733	Mm_GPCRs, Class B Secretin-like
+14527	Mm_GPCRs, Class B Secretin-like
+26364	Mm_GPCRs, Class B Secretin-like
+22354	Mm_GPCRs, Class B Secretin-like
+26364	Mm_GPCRs, Class B Secretin-like
+54598	Mm_GPCRs, Class B Secretin-like
+22354	Mm_GPCRs, Class B Secretin-like
+54598	Mm_GPCRs, Class B Secretin-like
+54598	Mm_GPCRs, Class B Secretin-like
+26364	Mm_GPCRs, Class B Secretin-like
+22308	Mm_GPCRs, Class C Metabotropic glutamate, pheromon
+22308	Mm_GPCRs, Class C Metabotropic glutamate, pheromon
+22310	Mm_GPCRs, Class C Metabotropic glutamate, pheromon
+22305	Mm_GPCRs, Class C Metabotropic glutamate, pheromon
+56552	Mm_GPCRs, Class C Metabotropic glutamate, pheromon
+56544	Mm_GPCRs, Class C Metabotropic glutamate, pheromon
+14823	Mm_GPCRs, Class C Metabotropic glutamate, pheromon
+14816	Mm_GPCRs, Class C Metabotropic glutamate, pheromon
+93746	Mm_GPCRs, Class C Metabotropic glutamate, pheromon
+12374	Mm_GPCRs, Class C Metabotropic glutamate, pheromon
+108069	Mm_GPCRs, Class C Metabotropic glutamate, pheromon
+54393	Mm_GPCRs, Class C Metabotropic glutamate, pheromon
+12614	Mm_GPCRs, Other
+22308	Mm_GPCRs, Other
+22311	Mm_GPCRs, Other
+22312	Mm_GPCRs, Other
+22313	Mm_GPCRs, Other
+12376	Mm_GPCRs, Other
+12377	Mm_GPCRs, Other
+20609	Mm_GPCRs, Other
+13349	Mm_GPCRs, Other
+18357	Mm_GPCRs, Other
+259044	Mm_GPCRs, Other
+14362	Mm_GPCRs, Other
+14788	Mm_GPCRs, Other
+18371	Mm_GPCRs, Other
+18310	Mm_GPCRs, Other
+258802	Mm_GPCRs, Other
+18360	Mm_GPCRs, Other
+12775	Mm_GPCRs, Other
+21338	Mm_GPCRs, Other
+14769	Mm_GPCRs, Other
+14739	Mm_GPCRs, Other
+17202	Mm_GPCRs, Other
+18241	Mm_GPCRs, Other
+244701	Mm_GPCRs, Other
+22354	Mm_GPCRs, Other
+14816	Mm_GPCRs, Other
+11539	Mm_GPCRs, Other
+18387	Mm_GPCRs, Other
+258986	Mm_GPCRs, Other
+18328	Mm_GPCRs, Other
+258986	Mm_GPCRs, Other
+258986	Mm_GPCRs, Other
+18307	Mm_GPCRs, Other
+18373	Mm_GPCRs, Other
+258498	Mm_GPCRs, Other
+18371	Mm_GPCRs, Other
+18349	Mm_GPCRs, Other
+18308	Mm_GPCRs, Other
+18306	Mm_GPCRs, Other
+18372	Mm_GPCRs, Other
+18371	Mm_GPCRs, Other
+18309	Mm_GPCRs, Other
+15552	Mm_GPCRs, Other
+13492	Mm_GPCRs, Other
+13617	Mm_GPCRs, Other
+13488	Mm_GPCRs, Other
+11542	Mm_GPCRs, Other
+18331	Mm_GPCRs, Other
+18319	Mm_GPCRs, Other
+18329	Mm_GPCRs, Other
+18326	Mm_GPCRs, Other
+18316	Mm_GPCRs, Other
+18323	Mm_GPCRs, Other
+18332	Mm_GPCRs, Other
+18315	Mm_GPCRs, Other
+18320	Mm_GPCRs, Other
+18321	Mm_GPCRs, Other
+18322	Mm_GPCRs, Other
+18327	Mm_GPCRs, Other
+18330	Mm_GPCRs, Other
+18318	Mm_GPCRs, Other
+258826	Mm_GPCRs, Other
+18324	Mm_GPCRs, Other
+15553	Mm_GPCRs, Other
+15554	Mm_GPCRs, Other
+15550	Mm_GPCRs, Other
+171469	Mm_GPCRs, Other
+53883	Mm_GPCRs, Other
+80290	Mm_GPCRs, Other
+94226	Mm_GPCRs, Other
+80978	Mm_GPCRs, Other
+80910	Mm_GPCRs, Other
+13609	Mm_GPCRs, Other
+110326	Mm_GPCRs, Other
+110326	Mm_GPCRs, Other
+11554	Mm_GPCRs, Other
+23890	Mm_GPCRs, Other
+66786	Mm_GPCRs, Other
+14369	Mm_GPCRs, Other
+26364	Mm_GPCRs, Other
+20132	Mm_GPCRs, Other
+78249	Mm_GPCRs, Other
+76206	Mm_GPCRs, Other
+71111	Mm_GPCRs, Other
+113852	Mm_GPCRs, Other
+113849	Mm_GPCRs, Other
+113853	Mm_GPCRs, Other
+64378	Mm_GPCRs, Other
+113851	Mm_GPCRs, Other
+14608	Mm_GPCRs, Other
+81010	Mm_GPCRs, Other
+81011	Mm_GPCRs, Other
+81012	Mm_GPCRs, Other
+81013	Mm_GPCRs, Other
+81014	Mm_GPCRs, Other
+81015	Mm_GPCRs, Other
+81016	Mm_GPCRs, Other
+81017	Mm_GPCRs, Other
+259007	Mm_GPCRs, Other
+258343	Mm_GPCRs, Other
+258703	Mm_GPCRs, Other
+258702	Mm_GPCRs, Other
+171195	Mm_GPCRs, Other
+113865	Mm_GPCRs, Other
+113864	Mm_GPCRs, Other
+113863	Mm_GPCRs, Other
+113862	Mm_GPCRs, Other
+113861	Mm_GPCRs, Other
+113860	Mm_GPCRs, Other
+113859	Mm_GPCRs, Other
+113858	Mm_GPCRs, Other
+113857	Mm_GPCRs, Other
+113856	Mm_GPCRs, Other
+113855	Mm_GPCRs, Other
+113854	Mm_GPCRs, Other
+113850	Mm_GPCRs, Other
+113848	Mm_GPCRs, Other
+113847	Mm_GPCRs, Other
+113846	Mm_GPCRs, Other
+113845	Mm_GPCRs, Other
+14367	Mm_GPCRs, Other
+170732	Mm_GPCRs, Other
+18316	Mm_GPCRs, Other
+259009	Mm_GPCRs, Other
+258986	Mm_GPCRs, Other
+107934	Mm_GPCRs, Other
+57265	Mm_GPCRs, Other
+57265	Mm_GPCRs, Other
+58861	Mm_GPCRs, Other
+57260	Mm_GPCRs, Other
+58182	Mm_GPCRs, Other
+12777	Mm_GPCRs, Other
+258859	Mm_GPCRs, Other
+18316	Mm_GPCRs, Other
+13349	Mm_GPCRs, Other
+18356	Mm_GPCRs, Other
+18389	Mm_GPCRs, Other
+18345	Mm_GPCRs, Other
+18345	Mm_GPCRs, Other
+27216	Mm_GPCRs, Other
+14539	Mm_GPCRs, Other
+14766	Mm_GPCRs, Other
+53883	Mm_GPCRs, Other
+23832	Mm_GPCRs, Other
+213527	Mm_GPCRs, Other
+14371	Mm_GPCRs, Other
+14371	Mm_GPCRs, Other
+14371	Mm_GPCRs, Other
+258326	Mm_GPCRs, Other
+259115	Mm_GPCRs, Other
+24112	Mm_GPCRs, Other
+11539	Mm_GPCRs, Other
+107797	Mm_GPCRs, Other
+22296	Mm_GPCRs, Other
+22297	Mm_GPCRs, Other
+170648	Mm_GPCRs, Other
+18363	Mm_GPCRs, Other
+18362	Mm_GPCRs, Other
+18361	Mm_GPCRs, Other
+18359	Mm_GPCRs, Other
+18358	Mm_GPCRs, Other
+18356	Mm_GPCRs, Other
+18357	Mm_GPCRs, Other
+18355	Mm_GPCRs, Other
+18354	Mm_GPCRs, Other
+258962	Mm_GPCRs, Other
+18352	Mm_GPCRs, Other
+18351	Mm_GPCRs, Other
+258942	Mm_GPCRs, Other
+18347	Mm_GPCRs, Other
+18346	Mm_GPCRs, Other
+18361	Mm_GPCRs, Other
+18344	Mm_GPCRs, Other
+18343	Mm_GPCRs, Other
+18342	Mm_GPCRs, Other
+18341	Mm_GPCRs, Other
+56696	Mm_GPCRs, Other
+53883	Mm_GPCRs, Other
+14718	Mm_Alanine-Aspartate Metabolism
+11898	Mm_Alanine-Aspartate Metabolism
+12908	Mm_Alanine-Aspartate Metabolism
+14415	Mm_Alanine-Aspartate Metabolism
+15492	Mm_Androgen and Estrogen Metabolism
+15492	Mm_Androgen and Estrogen Metabolism
+20860	Mm_Androgen and Estrogen Metabolism
+20905	Mm_Androgen and Estrogen Metabolism
+22236	Mm_Androgen and Estrogen Metabolism
+22236	Mm_Androgen and Estrogen Metabolism
+22236	Mm_Androgen and Estrogen Metabolism
+22236	Mm_Androgen and Estrogen Metabolism
+13079	Mm_C-21 Steroid Hormone Metabolism
+15492	Mm_C-21 Steroid Hormone Metabolism
+15492	Mm_C-21 Steroid Hormone Metabolism
+12235	Mm_Cell Cycle
+15181	Mm_Cell Cycle
+13557	Mm_Cell Cycle
+12649	Mm_Cell Cycle
+8556	Mm_Cell Cycle
+8555	Mm_Cell Cycle
+50496	Mm_Cell Cycle
+26428	Mm_Cell Cycle
+15183	Mm_Cell Cycle
+23834	Mm_Cell Cycle
+11350	Mm_Cell Cycle
+22059	Mm_Cell Cycle
+21803	Mm_Cell Cycle
+12550	Mm_Cell Cycle
+12534	Mm_Cell Cycle
+19645	Mm_Cell Cycle
+18538	Mm_Cell Cycle
+17246	Mm_Cell Cycle
+268697	Mm_Cell Cycle
+17215	Mm_Cell Cycle
+12442	Mm_Cell Cycle
+12444	Mm_Cell Cycle
+12445	Mm_Cell Cycle
+12567	Mm_Cell Cycle
+12531	Mm_Cell Cycle
+12575	Mm_Cell Cycle
+12576	Mm_Cell Cycle
+22390	Mm_Cell Cycle
+13197	Mm_Cell Cycle
+12530	Mm_Cell Cycle
+12532	Mm_Cell Cycle
+17217	Mm_Cell Cycle
+17218	Mm_Cell Cycle
+12578	Mm_Cell Cycle
+12428	Mm_Cell Cycle
+5347	Mm_Cell Cycle
+15182	Mm_Cell Cycle
+17216	Mm_Cell Cycle
+17219	Mm_Cell Cycle
+19090	Mm_Cell Cycle
+12566	Mm_Cell Cycle
+17128	Mm_Cell Cycle
+21781	Mm_Cell Cycle
+9700	Mm_Cell Cycle
+8243	Mm_Cell Cycle
+18393	Mm_Cell Cycle
+12427	Mm_Cell Cycle
+12447	Mm_Cell Cycle
+66671	Mm_Cell Cycle
+13555	Mm_Cell Cycle
+13559	Mm_Cell Cycle
+17220	Mm_Cell Cycle
+17476	Mm_Cell Cycle
+11920	Mm_Cell Cycle
+12571	Mm_Cell Cycle
+19650	Mm_Cell Cycle
+19650	Mm_Cell Cycle
+27401	Mm_Cell Cycle
+30939	Mm_Cell Cycle
+268930	Mm_Cell Cycle
+107995	Mm_Cell Cycle
+50793	Mm_Cell Cycle
+56233	Mm_Cell Cycle
+27214	Mm_Cell Cycle
+17120	Mm_Cell Cycle
+56452	Mm_Cell Cycle
+26429	Mm_Cell Cycle
+56637	Mm_Cell Cycle
+12237	Mm_Cell Cycle
+12545	Mm_Cell Cycle
+54610	Mm_Cell Cycle
+56150	Mm_Cell Cycle
+18392	Mm_Cell Cycle
+12236	Mm_Cell Cycle
+12544	Mm_Cell Cycle
+12448	Mm_Cell Cycle
+50883	Mm_Cell Cycle
+15185	Mm_Cell Cycle
+15184	Mm_Cell Cycle
+14718	Mm_Cysteine Metabolism
+16828	Mm_Cysteine Metabolism
+14718	Mm_Glutamate Metabolism
+14661	Mm_Glutamate Metabolism
+14415	Mm_Glutamate Metabolism
+13433	Mm_Methionine Metabolism
+785	Hs_Calcium Channels
+773	Hs_Calcium Channels
+8913	Hs_Calcium Channels
+10368	Hs_Calcium Channels
+778	Hs_Calcium Channels
+8912	Hs_Calcium Channels
+6261	Hs_Calcium Channels
+784	Hs_Calcium Channels
+781	Hs_Calcium Channels
+774	Hs_Calcium Channels
+776	Hs_Calcium Channels
+782	Hs_Calcium Channels
+782	Hs_Calcium Channels
+782	Hs_Calcium Channels
+786	Hs_Calcium Channels
+783	Hs_Calcium Channels
+779	Hs_Calcium Channels
+775	Hs_Calcium Channels
+3709	Hs_Calcium Channels
+3710	Hs_Calcium Channels
+3708	Hs_Calcium Channels
+6263	Hs_Calcium Channels
+777	Hs_Calcium Channels
+6262	Hs_Calcium Channels
+59284	Hs_Calcium Channels
+27092	Hs_Calcium Channels
+27091	Hs_Calcium Channels
+10369	Hs_Calcium Channels
+2707	Hs_Gap Junction Proteins-Connexins
+2709	Hs_Gap Junction Proteins-Connexins
+10804	Hs_Gap Junction Proteins-Connexins
+2705	Hs_Gap Junction Proteins-Connexins
+2697	Hs_Gap Junction Proteins-Connexins
+2706	Hs_Gap Junction Proteins-Connexins
+4284	Hs_Gap Junction Proteins-Connexins
+2701	Hs_Gap Junction Proteins-Connexins
+2702	Hs_Gap Junction Proteins-Connexins
+10052	Hs_Gap Junction Proteins-Connexins
+2703	Hs_Gap Junction Proteins-Connexins
+3982	Hs_Gap Junction Proteins-Connexins
+81025	Hs_Gap Junction Proteins-Connexins
+57369	Hs_Gap Junction Proteins-Connexins
+2700	Hs_Gap Junction Proteins-Connexins
+9313	Hs_Matrix Metalloproteinases
+7076	Hs_Matrix Metalloproteinases
+7124	Hs_Matrix Metalloproteinases
+4313	Hs_Matrix Metalloproteinases
+4314	Hs_Matrix Metalloproteinases
+4316	Hs_Matrix Metalloproteinases
+4319	Hs_Matrix Metalloproteinases
+4318	Hs_Matrix Metalloproteinases
+7077	Hs_Matrix Metalloproteinases
+4317	Hs_Matrix Metalloproteinases
+4320	Hs_Matrix Metalloproteinases
+682	Hs_Matrix Metalloproteinases
+7078	Hs_Matrix Metalloproteinases
+4321	Hs_Matrix Metalloproteinases
+4322	Hs_Matrix Metalloproteinases
+4323	Hs_Matrix Metalloproteinases
+4324	Hs_Matrix Metalloproteinases
+4325	Hs_Matrix Metalloproteinases
+4327	Hs_Matrix Metalloproteinases
+7079	Hs_Matrix Metalloproteinases
+83995	Hs_Matrix Metalloproteinases
+79148	Hs_Matrix Metalloproteinases
+64066	Hs_Matrix Metalloproteinases
+6942	Hs_Matrix Metalloproteinases
+64386	Hs_Matrix Metalloproteinases
+56547	Hs_Matrix Metalloproteinases
+8510	Hs_Matrix Metalloproteinases
+4326	Hs_Matrix Metalloproteinases
+10893	Hs_Matrix Metalloproteinases
+154	Hs_Monoamine GPCRs
+1129	Hs_Monoamine GPCRs
+1132	Hs_Monoamine GPCRs
+153	Hs_Monoamine GPCRs
+3350	Hs_Monoamine GPCRs
+1133	Hs_Monoamine GPCRs
+150	Hs_Monoamine GPCRs
+1128	Hs_Monoamine GPCRs
+155	Hs_Monoamine GPCRs
+1813	Hs_Monoamine GPCRs
+151	Hs_Monoamine GPCRs
+152	Hs_Monoamine GPCRs
+1131	Hs_Monoamine GPCRs
+1812	Hs_Monoamine GPCRs
+1815	Hs_Monoamine GPCRs
+1816	Hs_Monoamine GPCRs
+3274	Hs_Monoamine GPCRs
+146	Hs_Monoamine GPCRs
+3352	Hs_Monoamine GPCRs
+3351	Hs_Monoamine GPCRs
+3356	Hs_Monoamine GPCRs
+3358	Hs_Monoamine GPCRs
+3354	Hs_Monoamine GPCRs
+3355	Hs_Monoamine GPCRs
+15564	Hs_Monoamine GPCRs
+3363	Hs_Monoamine GPCRs
+148	Hs_Monoamine GPCRs
+3269	Hs_Monoamine GPCRs
+147	Hs_Monoamine GPCRs
+1814	Hs_Monoamine GPCRs
+3357	Hs_Monoamine GPCRs
+3361	Hs_Monoamine GPCRs
+3362	Hs_Monoamine GPCRs
+3360	Hs_Monoamine GPCRs
+2494	Hs_Nuclear Receptors
+8856	Hs_Nuclear Receptors
+2103	Hs_Nuclear Receptors
+2099	Hs_Nuclear Receptors
+2908	Hs_Nuclear Receptors
+5241	Hs_Nuclear Receptors
+367	Hs_Nuclear Receptors
+5914	Hs_Nuclear Receptors
+2063	Hs_Nuclear Receptors
+7025	Hs_Nuclear Receptors
+5915	Hs_Nuclear Receptors
+7067	Hs_Nuclear Receptors
+7068	Hs_Nuclear Receptors
+7421	Hs_Nuclear Receptors
+2101	Hs_Nuclear Receptors
+5916	Hs_Nuclear Receptors
+6256	Hs_Nuclear Receptors
+3164	Hs_Nuclear Receptors
+5916	Hs_Nuclear Receptors
+7026	Hs_Nuclear Receptors
+6257	Hs_Nuclear Receptors
+6095	Hs_Nuclear Receptors
+5468	Hs_Nuclear Receptors
+5468	Hs_Nuclear Receptors
+7068	Hs_Nuclear Receptors
+3172	Hs_Nuclear Receptors
+4929	Hs_Nuclear Receptors
+6258	Hs_Nuclear Receptors
+7182	Hs_Nuclear Receptors
+6097	Hs_Nuclear Receptors
+190	Hs_Nuclear Receptors
+7376	Hs_Nuclear Receptors
+4919	Hs_Nuclear Receptors
+5467	Hs_Nuclear Receptors
+5465	Hs_Nuclear Receptors
+10062	Hs_Nuclear Receptors
+2516	Hs_Nuclear Receptors
+9970	Hs_Nuclear Receptors
+9975	Hs_Nuclear Receptors
+2100	Hs_Nuclear Receptors
+7101	Hs_Nuclear Receptors
+135	Hs_Nucleotide GPCRs
+136	Hs_Nucleotide GPCRs
+134	Hs_Nucleotide GPCRs
+140	Hs_Nucleotide GPCRs
+5029	Hs_Nucleotide GPCRs
+10161	Hs_Nucleotide GPCRs
+5028	Hs_Nucleotide GPCRs
+5030	Hs_Nucleotide GPCRs
+5031	Hs_Nucleotide GPCRs
+1241	Hs_Nucleotide GPCRs
+2846	Hs_Nucleotide GPCRs
+2861	Hs_Orphan GPCRs
+13349	Hs_Orphan GPCRs
+8549	Hs_Orphan GPCRs
+4142	Hs_Orphan GPCRs
+1901	Hs_Orphan GPCRs
+1901	Hs_Orphan GPCRs
+57007	Hs_Orphan GPCRs
+643	Hs_Orphan GPCRs
+187	Hs_Orphan GPCRs
+2827	Hs_Orphan GPCRs
+2835	Hs_Orphan GPCRs
+2831	Hs_Orphan GPCRs
+2842	Hs_Orphan GPCRs
+1902	Hs_Orphan GPCRs
+1240	Hs_Orphan GPCRs
+29933	Hs_Orphan GPCRs
+11251	Hs_Orphan GPCRs
+10663	Hs_Peptide GPCRs
+8811	Hs_Peptide GPCRs
+8484	Hs_Peptide GPCRs
+7253	Hs_Peptide GPCRs
+6865	Hs_Peptide GPCRs
+2357	Hs_Peptide GPCRs
+728	Hs_Peptide GPCRs
+3973	Hs_Peptide GPCRs
+2492	Hs_Peptide GPCRs
+1910	Hs_Peptide GPCRs
+3577	Hs_Peptide GPCRs
+3579	Hs_Peptide GPCRs
+2359	Hs_Peptide GPCRs
+2358	Hs_Peptide GPCRs
+1909	Hs_Peptide GPCRs
+6869	Hs_Peptide GPCRs
+4886	Hs_Peptide GPCRs
+4829	Hs_Peptide GPCRs
+6870	Hs_Peptide GPCRs
+6870	Hs_Peptide GPCRs
+624	Hs_Peptide GPCRs
+554	Hs_Peptide GPCRs
+2925	Hs_Peptide GPCRs
+185	Hs_Peptide GPCRs
+5021	Hs_Peptide GPCRs
+6751	Hs_Peptide GPCRs
+6752	Hs_Peptide GPCRs
+2798	Hs_Peptide GPCRs
+4923	Hs_Peptide GPCRs
+7852	Hs_Peptide GPCRs
+6754	Hs_Peptide GPCRs
+6754	Hs_Peptide GPCRs
+886	Hs_Peptide GPCRs
+887	Hs_Peptide GPCRs
+4160	Hs_Peptide GPCRs
+1230	Hs_Peptide GPCRs
+1230	Hs_Peptide GPCRs
+680	Hs_Peptide GPCRs
+1236	Hs_Peptide GPCRs
+643	Hs_Peptide GPCRs
+6753	Hs_Peptide GPCRs
+4161	Hs_Peptide GPCRs
+7201	Hs_Peptide GPCRs
+4988	Hs_Peptide GPCRs
+552	Hs_Peptide GPCRs
+553	Hs_Peptide GPCRs
+4985	Hs_Peptide GPCRs
+4986	Hs_Peptide GPCRs
+4987	Hs_Peptide GPCRs
+1231	Hs_Peptide GPCRs
+4159	Hs_Peptide GPCRs
+2826	Hs_Peptide GPCRs
+623	Hs_Peptide GPCRs
+2587	Hs_Peptide GPCRs
+4887	Hs_Peptide GPCRs
+1524	Hs_Peptide GPCRs
+2833	Hs_Peptide GPCRs
+186	Hs_Peptide GPCRs
+5540	Hs_Peptide GPCRs
+1232	Hs_Peptide GPCRs
+1233	Hs_Peptide GPCRs
+1234	Hs_Peptide GPCRs
+1235	Hs_Peptide GPCRs
+1237	Hs_Peptide GPCRs
+10803	Hs_Peptide GPCRs
+4158	Hs_Peptide GPCRs
+4157	Hs_Peptide GPCRs
+185	Hs_Peptide GPCRs
+4889	Hs_Peptide GPCRs
+2532	Hs_Peptide GPCRs
+719	Hs_Peptide GPCRs
+10396	Hs_Peptide GPCRs
+1901	Hs_Small ligand GPCRs
+1268	Hs_Small ligand GPCRs
+6915	Hs_Small ligand GPCRs
+5724	Hs_Small ligand GPCRs
+1269	Hs_Small ligand GPCRs
+5731	Hs_Small ligand GPCRs
+5734	Hs_Small ligand GPCRs
+5737	Hs_Small ligand GPCRs
+5733	Hs_Small ligand GPCRs
+5732	Hs_Small ligand GPCRs
+5739	Hs_Small ligand GPCRs
+4543	Hs_Small ligand GPCRs
+4544	Hs_Small ligand GPCRs
+5729	Hs_Small ligand GPCRs
+1902	Hs_Small ligand GPCRs
+1903	Hs_Small ligand GPCRs
+4677	Hs_tRNA Synthetases
+2058	Hs_tRNA Synthetases
+3035	Hs_tRNA Synthetases
+1615	Hs_tRNA Synthetases
+7453	Hs_tRNA Synthetases
+6897	Hs_tRNA Synthetases
+7407	Hs_tRNA Synthetases
+2617	Hs_tRNA Synthetases
+3376	Hs_tRNA Synthetases
+5859	Hs_tRNA Synthetases
+16	Hs_tRNA Synthetases
+833	Hs_tRNA Synthetases
+23438	Hs_tRNA Synthetases
+6301	Hs_tRNA Synthetases
+5917	Hs_tRNA Synthetases
+8565	Hs_tRNA Synthetases
+4141	Hs_tRNA Synthetases
+3735	Hs_tRNA Synthetases
+10056	Hs_tRNA Synthetases
+51520	Hs_tRNA Synthetases
+2193	Hs_tRNA Synthetases
+5160	Hs_Acetylcholine Synthesis
+43	Hs_Acetylcholine Synthesis
+1103	Hs_Acetylcholine Synthesis
+5161	Hs_Acetylcholine Synthesis
+1119	Hs_Acetylcholine Synthesis
+5130	Hs_Acetylcholine Synthesis
+10400	Hs_Acetylcholine Synthesis
+7054	Hs_Catacholamine Biosynthesis
+1621	Hs_Catacholamine Biosynthesis
+5409	Hs_Catacholamine Biosynthesis
+117159	Hs_Catacholamine Biosynthesis
+6309	Hs_Cholesterol Biosynthesis
+9453	Hs_Cholesterol Biosynthesis
+3156	Hs_Cholesterol Biosynthesis
+2224	Hs_Cholesterol Biosynthesis
+3155	Hs_Cholesterol Biosynthesis
+2222	Hs_Cholesterol Biosynthesis
+4047	Hs_Cholesterol Biosynthesis
+4597	Hs_Cholesterol Biosynthesis
+3158	Hs_Cholesterol Biosynthesis
+4598	Hs_Cholesterol Biosynthesis
+3422	Hs_Cholesterol Biosynthesis
+6713	Hs_Cholesterol Biosynthesis
+10654	Hs_Cholesterol Biosynthesis
+1717	Hs_Cholesterol Biosynthesis
+247	Hs_Eicosanoid Synthesis
+8398	Hs_Eicosanoid Synthesis
+8398	Hs_Eicosanoid Synthesis
+240	Hs_Eicosanoid Synthesis
+4048	Hs_Eicosanoid Synthesis
+5320	Hs_Eicosanoid Synthesis
+5320	Hs_Eicosanoid Synthesis
+246	Hs_Eicosanoid Synthesis
+246	Hs_Eicosanoid Synthesis
+1800	Hs_Eicosanoid Synthesis
+239	Hs_Eicosanoid Synthesis
+241	Hs_Eicosanoid Synthesis
+7052	Hs_Eicosanoid Synthesis
+5742	Hs_Eicosanoid Synthesis
+6916	Hs_Eicosanoid Synthesis
+5743	Hs_Eicosanoid Synthesis
+5730	Hs_Eicosanoid Synthesis
+5740	Hs_Eicosanoid Synthesis
+4056	Hs_Eicosanoid Synthesis
+4728	Hs_Electron Transport Chain
+4697	Hs_Electron Transport Chain
+6392	Hs_Electron Transport Chain
+9167	Hs_Electron Transport Chain
+4706	Hs_Electron Transport Chain
+27089	Hs_Electron Transport Chain
+10975	Hs_Electron Transport Chain
+4694	Hs_Electron Transport Chain
+4724	Hs_Electron Transport Chain
+4711	Hs_Electron Transport Chain
+4709	Hs_Electron Transport Chain
+4717	Hs_Electron Transport Chain
+4695	Hs_Electron Transport Chain
+4725	Hs_Electron Transport Chain
+1355	Hs_Electron Transport Chain
+4727	Hs_Electron Transport Chain
+4720	Hs_Electron Transport Chain
+4726	Hs_Electron Transport Chain
+4707	Hs_Electron Transport Chain
+4722	Hs_Electron Transport Chain
+6341	Hs_Electron Transport Chain
+10476	Hs_Electron Transport Chain
+10632	Hs_Electron Transport Chain
+4712	Hs_Electron Transport Chain
+4696	Hs_Electron Transport Chain
+4710	Hs_Electron Transport Chain
+4714	Hs_Electron Transport Chain
+4708	Hs_Electron Transport Chain
+4701	Hs_Electron Transport Chain
+9016	Hs_Electron Transport Chain
+4718	Hs_Electron Transport Chain
+4705	Hs_Electron Transport Chain
+9481	Hs_Electron Transport Chain
+4716	Hs_Electron Transport Chain
+54205	Hs_Electron Transport Chain
+4519	Hs_Electron Transport Chain
+4512	Hs_Electron Transport Chain
+4513	Hs_Electron Transport Chain
+6392	Hs_Krebs-TCA Cycle
+3420	Hs_Krebs-TCA Cycle
+1431	Hs_Krebs-TCA Cycle
+8803	Hs_Krebs-TCA Cycle
+8801	Hs_Krebs-TCA Cycle
+2271	Hs_Krebs-TCA Cycle
+5160	Hs_Krebs-TCA Cycle
+1738	Hs_Krebs-TCA Cycle
+1738	Hs_Krebs-TCA Cycle
+1737	Hs_Krebs-TCA Cycle
+5162	Hs_Krebs-TCA Cycle
+5091	Hs_Krebs-TCA Cycle
+6390	Hs_Krebs-TCA Cycle
+5161	Hs_Krebs-TCA Cycle
+6389	Hs_Krebs-TCA Cycle
+1743	Hs_Krebs-TCA Cycle
+4190	Hs_Krebs-TCA Cycle
+4191	Hs_Krebs-TCA Cycle
+3418	Hs_Krebs-TCA Cycle
+3419	Hs_Krebs-TCA Cycle
+3421	Hs_Krebs-TCA Cycle
+8802	Hs_Krebs-TCA Cycle
+4967	Hs_Krebs-TCA Cycle
+5163	Hs_Krebs-TCA Cycle
+5164	Hs_Krebs-TCA Cycle
+5165	Hs_Krebs-TCA Cycle
+5166	Hs_Krebs-TCA Cycle
+6391	Hs_Krebs-TCA Cycle
+50	Hs_Krebs-TCA Cycle
+54704	Hs_Krebs-TCA Cycle
+57546	Hs_Krebs-TCA Cycle
+1719	Hs_Nucleotide Metabolism
+3251	Hs_Nucleotide Metabolism
+5423	Hs_Nucleotide Metabolism
+5422	Hs_Nucleotide Metabolism
+5634	Hs_Nucleotide Metabolism
+10797	Hs_Nucleotide Metabolism
+6723	Hs_Nucleotide Metabolism
+3614	Hs_Nucleotide Metabolism
+6303	Hs_Nucleotide Metabolism
+4831	Hs_Nucleotide Metabolism
+6240	Hs_Nucleotide Metabolism
+5424	Hs_Nucleotide Metabolism
+159	Hs_Nucleotide Metabolism
+158	Hs_Nucleotide Metabolism
+5428	Hs_Nucleotide Metabolism
+4946	Hs_Nucleotide Metabolism
+6120	Hs_Pentose Phosphate Pathway
+25796	Hs_Pentose Phosphate Pathway
+2539	Hs_Pentose Phosphate Pathway
+7086	Hs_Pentose Phosphate Pathway
+6888	Hs_Pentose Phosphate Pathway
+22934	Hs_Pentose Phosphate Pathway
+5226	Hs_Pentose Phosphate Pathway
+1586	Hs_Steroid Biosynthesis
+2165	Hs_Steroid Biosynthesis
+3283	Hs_Steroid Biosynthesis
+3283	Hs_Steroid Biosynthesis
+3283	Hs_Steroid Biosynthesis
+3283	Hs_Steroid Biosynthesis
+3283	Hs_Steroid Biosynthesis
+3283	Hs_Steroid Biosynthesis
+3283	Hs_Steroid Biosynthesis
+3292	Hs_Steroid Biosynthesis
+3284	Hs_Steroid Biosynthesis
+3284	Hs_Steroid Biosynthesis
+3293	Hs_Steroid Biosynthesis
+3294	Hs_Steroid Biosynthesis
+3295	Hs_Steroid Biosynthesis
+51478	Hs_Steroid Biosynthesis
+317	Hs_Apoptosis
+54205	Hs_Apoptosis
+4609	Hs_Apoptosis
+7124	Hs_Apoptosis
+7157	Hs_Apoptosis
+3725	Hs_Apoptosis
+142	Hs_Apoptosis
+3002	Hs_Apoptosis
+596	Hs_Apoptosis
+5551	Hs_Apoptosis
+7132	Hs_Apoptosis
+4790	Hs_Apoptosis
+7133	Hs_Apoptosis
+355	Hs_Apoptosis
+4792	Hs_Apoptosis
+836	Hs_Apoptosis
+835	Hs_Apoptosis
+6416	Hs_Apoptosis
+4514	Hs_Electron Transport Chain
+4508	Hs_Electron Transport Chain
+4535	Hs_Electron Transport Chain
+4536	Hs_Electron Transport Chain
+4537	Hs_Electron Transport Chain
+4539	Hs_Electron Transport Chain
+4538	Hs_Electron Transport Chain
+4540	Hs_Electron Transport Chain
+4541	Hs_Electron Transport Chain
+4509	Hs_Electron Transport Chain
+292	Hs_Electron Transport Chain
+516	Hs_Electron Transport Chain
+506	Hs_Electron Transport Chain
+7388	Hs_Electron Transport Chain
+1345	Hs_Electron Transport Chain
+1351	Hs_Electron Transport Chain
+1329	Hs_Electron Transport Chain
+1337	Hs_Electron Transport Chain
+291	Hs_Electron Transport Chain
+293	Hs_Electron Transport Chain
+1327	Hs_Electron Transport Chain
+1347	Hs_Electron Transport Chain
+1340	Hs_Electron Transport Chain
+7381	Hs_Electron Transport Chain
+1350	Hs_Electron Transport Chain
+4713	Hs_Electron Transport Chain
+522	Hs_Electron Transport Chain
+4729	Hs_Electron Transport Chain
+9377	Hs_Electron Transport Chain
+6390	Hs_Electron Transport Chain
+7385	Hs_Electron Transport Chain
+1346	Hs_Electron Transport Chain
+1349	Hs_Electron Transport Chain
+515	Hs_Electron Transport Chain
+498	Hs_Electron Transport Chain
+7350	Hs_Electron Transport Chain
+4719	Hs_Electron Transport Chain
+513	Hs_Electron Transport Chain
+6389	Hs_Electron Transport Chain
+7384	Hs_Electron Transport Chain
+509	Hs_Electron Transport Chain
+7386	Hs_Electron Transport Chain
+539	Hs_Electron Transport Chain
+518	Hs_Electron Transport Chain
+4723	Hs_Electron Transport Chain
+4702	Hs_Electron Transport Chain
+7351	Hs_Electron Transport Chain
+7352	Hs_Electron Transport Chain
+9551	Hs_Electron Transport Chain
+4731	Hs_Electron Transport Chain
+514	Hs_Electron Transport Chain
+521	Hs_Electron Transport Chain
+4700	Hs_Electron Transport Chain
+1339	Hs_Electron Transport Chain
+517	Hs_Electron Transport Chain
+10063	Hs_Electron Transport Chain
+6834	Hs_Electron Transport Chain
+4698	Hs_Electron Transport Chain
+4704	Hs_Electron Transport Chain
+6391	Hs_Electron Transport Chain
+27109	Hs_Electron Transport Chain
+29796	Hs_Electron Transport Chain
+55967	Hs_Electron Transport Chain
+93974	Hs_Electron Transport Chain
+4715	Hs_Electron Transport Chain
+1353	Hs_Electron Transport Chain
+788	Hs_Fatty Acid Degradation
+2182	Hs_Fatty Acid Degradation
+2181	Hs_Fatty Acid Degradation
+7167	Hs_Fatty Acid Degradation
+4023	Hs_Fatty Acid Degradation
+34	Hs_Fatty Acid Degradation
+35	Hs_Fatty Acid Degradation
+1376	Hs_Fatty Acid Degradation
+33	Hs_Fatty Acid Degradation
+2710	Hs_Fatty Acid Degradation
+2180	Hs_Fatty Acid Degradation
+3030	Hs_Fatty Acid Degradation
+2179	Hs_Fatty Acid Degradation
+10449	Hs_Fatty Acid Degradation
+1384	Hs_Fatty Acid Degradation
+2820	Hs_Fatty Acid Degradation
+36	Hs_Fatty Acid Degradation
+37	Hs_Fatty Acid Degradation
+1374	Hs_Fatty Acid Degradation
+3032	Hs_Fatty Acid Degradation
+2713	Hs_Fatty Acid Degradation
+2712	Hs_Fatty Acid Degradation
+3033	Hs_Fatty Acid Degradation
+1375	Hs_Fatty Acid Degradation
+23305	Hs_Fatty Acid Degradation
+51703	Hs_Fatty Acid Degradation
+32	Hs_Fatty Acid Synthesis
+6319	Hs_Fatty Acid Synthesis
+5565	Hs_Fatty Acid Synthesis
+5091	Hs_Fatty Acid Synthesis
+20250	Hs_Fatty Acid Synthesis
+10449	Hs_Fatty Acid Synthesis
+2194	Hs_Fatty Acid Synthesis
+6576	Hs_Fatty Acid Synthesis
+47	Hs_Fatty Acid Synthesis
+5571	Hs_Fatty Acid Synthesis
+5563	Hs_Fatty Acid Synthesis
+31	Hs_Fatty Acid Synthesis
+5562	Hs_Fatty Acid Synthesis
+3033	Hs_Fatty Acid Synthesis
+53632	Hs_Fatty Acid Synthesis
+51422	Hs_Fatty Acid Synthesis
+5564	Hs_Fatty Acid Synthesis
+1586	Hs_Glucocorticoid & Mineralocorticoid Metabolism
+1583	Hs_Glucocorticoid & Mineralocorticoid Metabolism
+1589	Hs_Glucocorticoid & Mineralocorticoid Metabolism
+3283	Hs_Glucocorticoid & Mineralocorticoid Metabolism
+1585	Hs_Glucocorticoid & Mineralocorticoid Metabolism
+3284	Hs_Glucocorticoid & Mineralocorticoid Metabolism
+3290	Hs_Glucocorticoid & Mineralocorticoid Metabolism
+6718	Hs_Glucocorticoid & Mineralocorticoid Metabolism
+3291	Hs_Glucocorticoid & Mineralocorticoid Metabolism
+8908	Hs_Glycogen Metabolism
+805	Hs_Glycogen Metabolism
+5515	Hs_Glycogen Metabolism
+5836	Hs_Glycogen Metabolism
+5834	Hs_Glycogen Metabolism
+5837	Hs_Glycogen Metabolism
+2997	Hs_Glycogen Metabolism
+5261	Hs_Glycogen Metabolism
+5518	Hs_Glycogen Metabolism
+5519	Hs_Glycogen Metabolism
+178	Hs_Glycogen Metabolism
+5236	Hs_Glycogen Metabolism
+5256	Hs_Glycogen Metabolism
+5255	Hs_Glycogen Metabolism
+2992	Hs_Glycogen Metabolism
+2931	Hs_Glycogen Metabolism
+2932	Hs_Glycogen Metabolism
+2998	Hs_Glycogen Metabolism
+5521	Hs_Glycogen Metabolism
+5520	Hs_Glycogen Metabolism
+2632	Hs_Glycogen Metabolism
+5523	Hs_Glycogen Metabolism
+5527	Hs_Glycogen Metabolism
+5528	Hs_Glycogen Metabolism
+5525	Hs_Glycogen Metabolism
+5526	Hs_Glycogen Metabolism
+5524	Hs_Glycogen Metabolism
+5529	Hs_Glycogen Metabolism
+5260	Hs_Glycogen Metabolism
+7360	Hs_Glycogen Metabolism
+5257	Hs_Glycogen Metabolism
+5522	Hs_Glycogen Metabolism
+28227	Hs_Glycogen Metabolism
+8050	Hs_Glycolysis and Gluconeogenesis
+8789	Hs_Glycolysis and Gluconeogenesis
+26330	Hs_Glycolysis and Gluconeogenesis
+3939	Hs_Glycolysis and Gluconeogenesis
+2597	Hs_Glycolysis and Gluconeogenesis
+2806	Hs_Glycolysis and Gluconeogenesis
+5230	Hs_Glycolysis and Gluconeogenesis
+7167	Hs_Glycolysis and Gluconeogenesis
+226	Hs_Glycolysis and Gluconeogenesis
+2597	Hs_Glycolysis and Gluconeogenesis
+229	Hs_Glycolysis and Gluconeogenesis
+2023	Hs_Glycolysis and Gluconeogenesis
+2821	Hs_Glycolysis and Gluconeogenesis
+3945	Hs_Glycolysis and Gluconeogenesis
+5232	Hs_Glycolysis and Gluconeogenesis
+3948	Hs_Glycolysis and Gluconeogenesis
+5213	Hs_Glycolysis and Gluconeogenesis
+5160	Hs_Glycolysis and Gluconeogenesis
+2026	Hs_Glycolysis and Gluconeogenesis
+2203	Hs_Glycolysis and Gluconeogenesis
+1738	Hs_Glycolysis and Gluconeogenesis
+230	Hs_Glycolysis and Gluconeogenesis
+1737	Hs_Glycolysis and Gluconeogenesis
+5162	Hs_Glycolysis and Gluconeogenesis
+5091	Hs_Glycolysis and Gluconeogenesis
+2027	Hs_Glycolysis and Gluconeogenesis
+5315	Hs_Glycolysis and Gluconeogenesis
+5315	Hs_Glycolysis and Gluconeogenesis
+5224	Hs_Glycolysis and Gluconeogenesis
+2805	Hs_Glycolysis and Gluconeogenesis
+5211	Hs_Glycolysis and Gluconeogenesis
+5223	Hs_Glycolysis and Gluconeogenesis
+3098	Hs_Glycolysis and Gluconeogenesis
+5161	Hs_Glycolysis and Gluconeogenesis
+5313	Hs_Glycolysis and Gluconeogenesis
+2645	Hs_Glycolysis and Gluconeogenesis
+5105	Hs_Glycolysis and Gluconeogenesis
+2538	Hs_Glycolysis and Gluconeogenesis
+4190	Hs_Glycolysis and Gluconeogenesis
+4191	Hs_Glycolysis and Gluconeogenesis
+3099	Hs_Glycolysis and Gluconeogenesis
+3101	Hs_Glycolysis and Gluconeogenesis
+5214	Hs_Glycolysis and Gluconeogenesis
+26237	Hs_Glycolysis and Gluconeogenesis
+92483	Hs_Glycolysis and Gluconeogenesis
+7389	Hs_Heme Biosynthesis
+3145	Hs_Heme Biosynthesis
+7390	Hs_Heme Biosynthesis
+211	Hs_Heme Biosynthesis
+210	Hs_Heme Biosynthesis
+212	Hs_Heme Biosynthesis
+2235	Hs_Heme Biosynthesis
+1371	Hs_Heme Biosynthesis
+5498	Hs_Heme Biosynthesis
+8050	Hs_Krebs-TCA Cycle
+2160	Hs_Blood Clotting Cascade
+7450	Hs_Blood Clotting Cascade
+5055	Hs_Blood Clotting Cascade
+5054	Hs_Blood Clotting Cascade
+2165	Hs_Blood Clotting Cascade
+5345	Hs_Blood Clotting Cascade
+2155	Hs_Blood Clotting Cascade
+2153	Hs_Blood Clotting Cascade
+8263	Hs_Blood Clotting Cascade
+715	Hs_Complement Activation, Classical
+718	Hs_Complement Activation, Classical
+727	Hs_Complement Activation, Classical
+712	Hs_Complement Activation, Classical
+713	Hs_Complement Activation, Classical
+714	Hs_Complement Activation, Classical
+735	Hs_Complement Activation, Classical
+717	Hs_Complement Activation, Classical
+731	Hs_Complement Activation, Classical
+732	Hs_Complement Activation, Classical
+1604	Hs_Complement Activation, Classical
+716	Hs_Complement Activation, Classical
+730	Hs_Complement Activation, Classical
+729	Hs_Complement Activation, Classical
+5648	Hs_Complement Activation, Classical
+3911	Hs_Inflammatory Response Pathway
+3458	Hs_Inflammatory Response Pathway
+3558	Hs_Inflammatory Response Pathway
+3559	Hs_Inflammatory Response Pathway
+3493	Hs_Inflammatory Response Pathway
+3494	Hs_Inflammatory Response Pathway
+1277	Hs_Inflammatory Response Pathway
+1281	Hs_Inflammatory Response Pathway
+2335	Hs_Inflammatory Response Pathway
+7448	Hs_Inflammatory Response Pathway
+3565	Hs_Inflammatory Response Pathway
+3567	Hs_Inflammatory Response Pathway
+3932	Hs_Inflammatory Response Pathway
+3912	Hs_Inflammatory Response Pathway
+1278	Hs_Inflammatory Response Pathway
+940	Hs_Inflammatory Response Pathway
+3915	Hs_Inflammatory Response Pathway
+3560	Hs_Inflammatory Response Pathway
+4582	Hs_Inflammatory Response Pathway
+7132	Hs_Inflammatory Response Pathway
+7133	Hs_Inflammatory Response Pathway
+3566	Hs_Inflammatory Response Pathway
+958	Hs_Inflammatory Response Pathway
+959	Hs_Inflammatory Response Pathway
+3561	Hs_Inflammatory Response Pathway
+941	Hs_Inflammatory Response Pathway
+942	Hs_Inflammatory Response Pathway
+7535	Hs_Inflammatory Response Pathway
+7059	Hs_Inflammatory Response Pathway
+3913	Hs_Inflammatory Response Pathway
+3568	Hs_Inflammatory Response Pathway
+3918	Hs_Inflammatory Response Pathway
+658	Hs_Ovarian Infertility Genes
+4439	Hs_Ovarian Infertility Genes
+2661	Hs_Ovarian Infertility Genes
+3623	Hs_Ovarian Infertility Genes
+5241	Hs_Ovarian Infertility Genes
+7421	Hs_Ovarian Infertility Genes
+1588	Hs_Ovarian Infertility Genes
+1019	Hs_Ovarian Infertility Genes
+5618	Hs_Ovarian Infertility Genes
+6609	Hs_Ovarian Infertility Genes
+1051	Hs_Ovarian Infertility Genes
+1958	Hs_Ovarian Infertility Genes
+6908	Hs_Ovarian Infertility Genes
+7784	Hs_Ovarian Infertility Genes
+3973	Hs_Ovarian Infertility Genes
+2492	Hs_Ovarian Infertility Genes
+894	Hs_Ovarian Infertility Genes
+2701	Hs_Ovarian Infertility Genes
+4292	Hs_Ovarian Infertility Genes
+5732	Hs_Ovarian Infertility Genes
+1027	Hs_Ovarian Infertility Genes
+8204	Hs_Ovarian Infertility Genes
+7783	Hs_Ovarian Infertility Genes
+7784	Hs_Ovarian Infertility Genes
+2516	Hs_Ovarian Infertility Genes
+472	Hs_Ovarian Infertility Genes
+11144	Hs_Ovarian Infertility Genes
+20185	Hs_Ovarian Infertility Genes
+2100	Hs_Ovarian Infertility Genes
+1618	Hs_Ovarian Infertility Genes
+17127	Hs_Ovarian Infertility Genes
+5688	Hs_Proteasome Degradation
+5709	Hs_Proteasome Degradation
+3458	Hs_Proteasome Degradation
+22187	Hs_Proteasome Degradation
+8335	Hs_Proteasome Degradation
+3014	Hs_Proteasome Degradation
+5702	Hs_Proteasome Degradation
+5689	Hs_Proteasome Degradation
+7317	Hs_Proteasome Degradation
+5682	Hs_Proteasome Degradation
+5683	Hs_Proteasome Degradation
+5684	Hs_Proteasome Degradation
+5685	Hs_Proteasome Degradation
+5696	Hs_Proteasome Degradation
+5698	Hs_Proteasome Degradation
+5698	Hs_Proteasome Degradation
+5692	Hs_Proteasome Degradation
+5694	Hs_Proteasome Degradation
+5693	Hs_Proteasome Degradation
+5701	Hs_Proteasome Degradation
+5699	Hs_Proteasome Degradation
+7318	Hs_Proteasome Degradation
+5704	Hs_Proteasome Degradation
+4734	Hs_Proteasome Degradation
+5705	Hs_Proteasome Degradation
+5714	Hs_Proteasome Degradation
+5691	Hs_Proteasome Degradation
+7321	Hs_Proteasome Degradation
+5710	Hs_Proteasome Degradation
+5720	Hs_Proteasome Degradation
+5708	Hs_Proteasome Degradation
+5711	Hs_Proteasome Degradation
+5695	Hs_Proteasome Degradation
+5707	Hs_Proteasome Degradation
+5721	Hs_Proteasome Degradation
+6176	Hs_Ribosomal Proteins
+6181	Hs_Ribosomal Proteins
+6175	Hs_Ribosomal Proteins
+6208	Hs_Ribosomal Proteins
+6218	Hs_Ribosomal Proteins
+3921	Hs_Ribosomal Proteins
+6130	Hs_Ribosomal Proteins
+356	Hs_Apoptosis
+8743	Hs_Apoptosis
+5602	Hs_Apoptosis
+840	Hs_Apoptosis
+842	Hs_Apoptosis
+839	Hs_Apoptosis
+637	Hs_Apoptosis
+331	Hs_Apoptosis
+4193	Hs_Apoptosis
+5970	Hs_Apoptosis
+581	Hs_Apoptosis
+598	Hs_Apoptosis
+4170	Hs_Apoptosis
+7186	Hs_Apoptosis
+7185	Hs_Apoptosis
+8772	Hs_Apoptosis
+4214	Hs_Apoptosis
+330	Hs_Apoptosis
+329	Hs_Apoptosis
+8737	Hs_Apoptosis
+841	Hs_Apoptosis
+8717	Hs_Apoptosis
+578	Hs_Apoptosis
+9020	Hs_Apoptosis
+8517	Hs_Apoptosis
+2157	Hs_Blood Clotting Cascade
+2147	Hs_Blood Clotting Cascade
+2158	Hs_Blood Clotting Cascade
+2159	Hs_Blood Clotting Cascade
+5340	Hs_Blood Clotting Cascade
+2161	Hs_Blood Clotting Cascade
+5328	Hs_Blood Clotting Cascade
+5327	Hs_Blood Clotting Cascade
+2243	Hs_Blood Clotting Cascade
+2244	Hs_Blood Clotting Cascade
+2266	Hs_Blood Clotting Cascade
+1938	Hs_Translation Factors
+5610	Hs_Translation Factors
+8894	Hs_Translation Factors
+1975	Hs_Translation Factors
+1933	Hs_Translation Factors
+1937	Hs_Translation Factors
+1936	Hs_Translation Factors
+1968	Hs_Translation Factors
+10209	Hs_Translation Factors
+2107	Hs_Translation Factors
+1964	Hs_Translation Factors
+8892	Hs_Translation Factors
+1983	Hs_Translation Factors
+8662	Hs_Translation Factors
+3692	Hs_Translation Factors
+1981	Hs_Translation Factors
+1917	Hs_Translation Factors
+8893	Hs_Translation Factors
+8668	Hs_Translation Factors
+1978	Hs_Translation Factors
+1979	Hs_Translation Factors
+8661	Hs_Translation Factors
+8622	Hs_G Protein Signaling
+111	Hs_G Protein Signaling
+9630	Hs_G Protein Signaling
+4893	Hs_G Protein Signaling
+3265	Hs_G Protein Signaling
+3845	Hs_G Protein Signaling
+3845	Hs_G Protein Signaling
+805	Hs_G Protein Signaling
+2778	Hs_G Protein Signaling
+2770	Hs_G Protein Signaling
+2771	Hs_G Protein Signaling
+5579	Hs_G Protein Signaling
+5582	Hs_G Protein Signaling
+5579	Hs_G Protein Signaling
+387	Hs_G Protein Signaling
+2769	Hs_G Protein Signaling
+5575	Hs_G Protein Signaling
+5577	Hs_G Protein Signaling
+2774	Hs_G Protein Signaling
+114	Hs_G Protein Signaling
+5584	Hs_G Protein Signaling
+5533	Hs_G Protein Signaling
+5533	Hs_G Protein Signaling
+3760	Hs_G Protein Signaling
+2776	Hs_G Protein Signaling
+2786	Hs_G Protein Signaling
+2790	Hs_G Protein Signaling
+113	Hs_G Protein Signaling
+5136	Hs_G Protein Signaling
+5153	Hs_G Protein Signaling
+5587	Hs_G Protein Signaling
+9138	Hs_G Protein Signaling
+27115	Hs_G Protein Signaling
+51764	Hs_G Protein Signaling
+55970	Hs_G Protein Signaling
+94235	Hs_G Protein Signaling
+5293	Hs_G13 Signaling Pathway
+8976	Hs_G13 Signaling Pathway
+5296	Hs_G13 Signaling Pathway
+11113	Hs_G13 Signaling Pathway
+1729	Hs_G13 Signaling Pathway
+5063	Hs_G13 Signaling Pathway
+12313	Hs_G13 Signaling Pathway
+387	Hs_G13 Signaling Pathway
+5216	Hs_G13 Signaling Pathway
+19353	Hs_G13 Signaling Pathway
+1072	Hs_G13 Signaling Pathway
+12540	Hs_G13 Signaling Pathway
+19046	Hs_G13 Signaling Pathway
+4893	Hs_MAPK Cascade
+3265	Hs_MAPK Cascade
+3845	Hs_MAPK Cascade
+4155	Hs_MAPK Cascade
+5894	Hs_MAPK Cascade
+3725	Hs_MAPK Cascade
+6237	Hs_MAPK Cascade
+369	Hs_MAPK Cascade
+4133	Hs_MAPK Cascade
+673	Hs_MAPK Cascade
+2002	Hs_MAPK Cascade
+5921	Hs_MAPK Cascade
+5595	Hs_MAPK Cascade
+5594	Hs_MAPK Cascade
+6416	Hs_MAPK Cascade
+6416	Hs_MAPK Cascade
+5608	Hs_MAPK Cascade
+5602	Hs_MAPK Cascade
+5331	Hs_MAPK Cascade
+5604	Hs_MAPK Cascade
+4214	Hs_MAPK Cascade
+1432	Hs_MAPK Cascade
+26396	Hs_MAPK Cascade
+4215	Hs_MAPK Cascade
+10746	Hs_MAPK Cascade
+5287	Hs_S1P Signaling
+9294	Hs_S1P Signaling
+2770	Hs_S1P Signaling
+2771	Hs_S1P Signaling
+2773	Hs_S1P Signaling
+1901	Hs_S1P Signaling
+5595	Hs_S1P Signaling
+5594	Hs_S1P Signaling
+5596	Hs_S1P Signaling
+207	Hs_S1P Signaling
+208	Hs_S1P Signaling
+6300	Hs_S1P Signaling
+5330	Hs_S1P Signaling
+5331	Hs_S1P Signaling
+5598	Hs_S1P Signaling
+427	Hs_S1P Signaling
+5597	Hs_S1P Signaling
+7311	Hs_Ribosomal Proteins
+6233	Hs_Ribosomal Proteins
+6187	Hs_Ribosomal Proteins
+6217	Hs_Ribosomal Proteins
+6165	Hs_Ribosomal Proteins
+6129	Hs_Ribosomal Proteins
+6139	Hs_Ribosomal Proteins
+6192	Hs_Ribosomal Proteins
+6188	Hs_Ribosomal Proteins
+6169	Hs_Ribosomal Proteins
+6198	Hs_Ribosomal Proteins
+6206	Hs_Ribosomal Proteins
+6137	Hs_Ribosomal Proteins
+6134	Hs_Ribosomal Proteins
+6147	Hs_Ribosomal Proteins
+6136	Hs_Ribosomal Proteins
+6133	Hs_Ribosomal Proteins
+6227	Hs_Ribosomal Proteins
+6146	Hs_Ribosomal Proteins
+6124	Hs_Ribosomal Proteins
+6223	Hs_Ribosomal Proteins
+6122	Hs_Ribosomal Proteins
+6135	Hs_Ribosomal Proteins
+23521	Hs_Ribosomal Proteins
+6232	Hs_Ribosomal Proteins
+11224	Hs_Ribosomal Proteins
+6157	Hs_Ribosomal Proteins
+6125	Hs_Ribosomal Proteins
+6144	Hs_Ribosomal Proteins
+6158	Hs_Ribosomal Proteins
+6203	Hs_Ribosomal Proteins
+6193	Hs_Ribosomal Proteins
+6204	Hs_Ribosomal Proteins
+6159	Hs_Ribosomal Proteins
+6164	Hs_Ribosomal Proteins
+6189	Hs_Ribosomal Proteins
+9801	Hs_Ribosomal Proteins
+9045	Hs_Ribosomal Proteins
+6197	Hs_Ribosomal Proteins
+4736	Hs_Ribosomal Proteins
+6142	Hs_Ribosomal Proteins
+6207	Hs_Ribosomal Proteins
+6128	Hs_Ribosomal Proteins
+6141	Hs_Ribosomal Proteins
+6196	Hs_Ribosomal Proteins
+6195	Hs_Ribosomal Proteins
+6123	Hs_Ribosomal Proteins
+6199	Hs_Ribosomal Proteins
+27330	Hs_Ribosomal Proteins
+25873	Hs_Ribosomal Proteins
+8665	Hs_Translation Factors
+29904	Hs_Translation Factors
+9086	Hs_Translation Factors
+8664	Hs_Translation Factors
+8667	Hs_Translation Factors
+8672	Hs_Translation Factors
+10605	Hs_Translation Factors
+8637	Hs_Translation Factors
+9669	Hs_Translation Factors
+23277	Hs_Translation Factors
+8666	Hs_Translation Factors
+8669	Hs_Translation Factors
+1915	Hs_Translation Factors
+1965	Hs_Translation Factors
+1977	Hs_Translation Factors
+1984	Hs_Translation Factors
+26986	Hs_Translation Factors
+1967	Hs_Translation Factors
+1974	Hs_Translation Factors
+7458	Hs_Translation Factors
+3646	Hs_Translation Factors
+8663	Hs_Translation Factors
+27102	Hs_Translation Factors
+8891	Hs_Translation Factors
+23708	Hs_Translation Factors
+9451	Hs_Translation Factors
+8890	Hs_Translation Factors
+10209	Hs_Translation Factors
+2793	Hs_G Protein Signaling
+10681	Hs_G Protein Signaling
+112	Hs_G Protein Signaling
+2788	Hs_G Protein Signaling
+109	Hs_G Protein Signaling
+115	Hs_G Protein Signaling
+5151	Hs_G Protein Signaling
+23683	Hs_G Protein Signaling
+2773	Hs_G Protein Signaling
+2775	Hs_G Protein Signaling
+6237	Hs_G Protein Signaling
+2783	Hs_G Protein Signaling
+5576	Hs_G Protein Signaling
+2784	Hs_G Protein Signaling
+5578	Hs_G Protein Signaling
+5566	Hs_G Protein Signaling
+2781	Hs_G Protein Signaling
+6548	Hs_G Protein Signaling
+5568	Hs_G Protein Signaling
+5567	Hs_G Protein Signaling
+5583	Hs_G Protein Signaling
+5141	Hs_G Protein Signaling
+2775	Hs_G Protein Signaling
+2767	Hs_G Protein Signaling
+5331	Hs_G Protein Signaling
+5581	Hs_G Protein Signaling
+2768	Hs_G Protein Signaling
+5588	Hs_G Protein Signaling
+5590	Hs_G Protein Signaling
+5580	Hs_G Protein Signaling
+5142	Hs_G Protein Signaling
+5530	Hs_G Protein Signaling
+2792	Hs_G Protein Signaling
+108	Hs_G Protein Signaling
+5143	Hs_G Protein Signaling
+5144	Hs_G Protein Signaling
+107	Hs_G Protein Signaling
+5150	Hs_G Protein Signaling
+5137	Hs_G Protein Signaling
+10672	Hs_G Protein Signaling
+3708	Hs_G Protein Signaling
+5290	Hs_G13 Signaling Pathway
+5291	Hs_G13 Signaling Pathway
+7454	Hs_G13 Signaling Pathway
+8826	Hs_G13 Signaling Pathway
+397	Hs_G13 Signaling Pathway
+3984	Hs_G13 Signaling Pathway
+5602	Hs_G13 Signaling Pathway
+5305	Hs_G13 Signaling Pathway
+4608	Hs_G13 Signaling Pathway
+10788	Hs_G13 Signaling Pathway
+10672	Hs_G13 Signaling Pathway
+5585	Hs_G13 Signaling Pathway
+9138	Hs_G13 Signaling Pathway
+85415	Hs_G13 Signaling Pathway
+398	Hs_G13 Signaling Pathway
+6242	Hs_G13 Signaling Pathway
+1073	Hs_G13 Signaling Pathway
+4216	Hs_G13 Signaling Pathway
+4216	Hs_G13 Signaling Pathway
+5606	Hs_MAPK Cascade
+5609	Hs_MAPK Cascade
+1903	Hs_S1P Signaling
+53637	Hs_S1P Signaling
+23236	Hs_S1P Signaling
+56848	Hs_S1P Signaling
+8877	Hs_S1P Signaling
+29127	Hs_S1P Signaling
+51190	Hs_S1P Signaling
+10000	Hs_S1P Signaling
+4092	Hs_TGF Beta Signaling Pathway
+4091	Hs_TGF Beta Signaling Pathway
+9839	Hs_TGF Beta Signaling Pathway
+8928	Hs_TGF Beta Signaling Pathway
+23090	Hs_TGF Beta Signaling Pathway
+9372	Hs_TGF Beta Signaling Pathway
+2353	Hs_TGF Beta Signaling Pathway
+3265	Hs_TGF Beta Signaling Pathway
+1950	Hs_TGF Beta Signaling Pathway
+7040	Hs_TGF Beta Signaling Pathway
+7040	Hs_TGF Beta Signaling Pathway
+7124	Hs_TGF Beta Signaling Pathway
+3716	Hs_TGF Beta Signaling Pathway
+5595	Hs_TGF Beta Signaling Pathway
+1499	Hs_TGF Beta Signaling Pathway
+7046	Hs_TGF Beta Signaling Pathway
+7048	Hs_TGF Beta Signaling Pathway
+6774	Hs_TGF Beta Signaling Pathway
+6772	Hs_TGF Beta Signaling Pathway
+5601	Hs_TGF Beta Signaling Pathway
+7049	Hs_TGF Beta Signaling Pathway
+2033	Hs_TGF Beta Signaling Pathway
+9241	Hs_TGF Beta Signaling Pathway
+4089	Hs_TGF Beta Signaling Pathway
+864	Hs_TGF Beta Signaling Pathway
+860	Hs_TGF Beta Signaling Pathway
+7050	Hs_TGF Beta Signaling Pathway
+4087	Hs_TGF Beta Signaling Pathway
+4086	Hs_TGF Beta Signaling Pathway
+1387	Hs_TGF Beta Signaling Pathway
+4088	Hs_TGF Beta Signaling Pathway
+4090	Hs_TGF Beta Signaling Pathway
+55994	Hs_TGF Beta Signaling Pathway
+51176	Hs_TGF Beta Signaling Pathway
+8326	Hs_Wnt signaling
+7480	Hs_Wnt signaling
+7476	Hs_Wnt signaling
+1855	Hs_Wnt signaling
+1856	Hs_Wnt signaling
+6424	Hs_Wnt signaling
+7484	Hs_Wnt signaling
+8312	Hs_Wnt signaling
+8323	Hs_Wnt signaling
+8324	Hs_Wnt signaling
+7481	Hs_Wnt signaling
+5328	Hs_Wnt signaling
+4609	Hs_Wnt signaling
+3949	Hs_Wnt signaling
+7471	Hs_Wnt signaling
+5579	Hs_Wnt signaling
+89780	Hs_Wnt signaling
+54361	Hs_Wnt signaling
+7477	Hs_Wnt signaling
+5581	Hs_Wnt signaling
+5588	Hs_Wnt signaling
+5590	Hs_Wnt signaling
+5580	Hs_Wnt signaling
+5527	Hs_Wnt signaling
+7855	Hs_Wnt signaling
+2535	Hs_Wnt signaling
+5587	Hs_Wnt signaling
+5529	Hs_Wnt signaling
+10023	Hs_Wnt signaling
+1857	Hs_Wnt signaling
+7482	Hs_Wnt signaling
+80326	Hs_Wnt signaling
+81029	Hs_Wnt signaling
+8325	Hs_Wnt signaling
+7976	Hs_Wnt signaling
+51384	Hs_Wnt signaling
+26190	Hs_Wnt signaling
+11211	Hs_Wnt signaling
+8321	Hs_Wnt signaling
+7475	Hs_Wnt signaling
+29909	Hs_GPCRs, Class A Rhodopsin-like 2
+2864	Hs_GPCRs, Class A Rhodopsin-like 2
+2865	Hs_GPCRs, Class A Rhodopsin-like 2
+2866	Hs_GPCRs, Class A Rhodopsin-like 2
+2867	Hs_GPCRs, Class A Rhodopsin-like 2
+2863	Hs_GPCRs, Class A Rhodopsin-like 2
+11250	Hs_GPCRs, Class A Rhodopsin-like 2
+8477	Hs_GPCRs, Class A Rhodopsin-like 2
+23432	Hs_GPCRs, Class A Rhodopsin-like 2
+10936	Hs_GPCRs, Class A Rhodopsin-like 2
+116511	Hs_GPCRs, Class A Rhodopsin-like 2
+8843	Hs_GPCRs, Class A Rhodopsin-like 2
+8111	Hs_GPCRs, Class A Rhodopsin-like 2
+27198	Hs_GPCRs, Class A Rhodopsin-like 2
+57105	Hs_GPCRs, Class A Rhodopsin-like 2
+57105	Hs_GPCRs, Class A Rhodopsin-like 2
+2857	Hs_GPCRs, Class A Rhodopsin-like 2
+10800	Hs_GPCRs, Class A Rhodopsin-like 2
+11250	Hs_GPCRs, Class A Rhodopsin-like 2
+2848	Hs_GPCRs, Class A Rhodopsin-like
+2151	Hs_GPCRs, Class A Rhodopsin-like
+2853	Hs_GPCRs, Class A Rhodopsin-like
+5733	Hs_GPCRs, Class A Rhodopsin-like
+5733	Hs_GPCRs, Class A Rhodopsin-like
+27334	Hs_GPCRs, Class A Rhodopsin-like
+9034	Hs_GPCRs, Class A Rhodopsin-like
+1238	Hs_GPCRs, Class A Rhodopsin-like
+26333	Hs_GPCRs, Class A Rhodopsin-like
+10692	Hs_GPCRs, Class A Rhodopsin-like
+5733	Hs_GPCRs, Class A Rhodopsin-like
+2861	Hs_GPCRs, Class A Rhodopsin-like
+554	Hs_GPCRs, Class A Rhodopsin-like
+2862	Hs_GPCRs, Class A Rhodopsin-like
+3458	Hs_TGF Beta Signaling Pathway
+7471	Hs_TGF Beta Signaling Pathway
+5054	Hs_TGF Beta Signaling Pathway
+3725	Hs_TGF Beta Signaling Pathway
+7057	Hs_TGF Beta Signaling Pathway
+3624	Hs_TGF Beta Signaling Pathway
+6696	Hs_TGF Beta Signaling Pathway
+652	Hs_TGF Beta Signaling Pathway
+652	Hs_TGF Beta Signaling Pathway
+6497	Hs_TGF Beta Signaling Pathway
+6498	Hs_TGF Beta Signaling Pathway
+3976	Hs_TGF Beta Signaling Pathway
+2022	Hs_TGF Beta Signaling Pathway
+3694	Hs_TGF Beta Signaling Pathway
+7030	Hs_TGF Beta Signaling Pathway
+4790	Hs_TGF Beta Signaling Pathway
+10468	Hs_TGF Beta Signaling Pathway
+2280	Hs_TGF Beta Signaling Pathway
+4052	Hs_TGF Beta Signaling Pathway
+5582	Hs_Wnt signaling
+3725	Hs_Wnt signaling
+387	Hs_Wnt signaling
+7472	Hs_Wnt signaling
+5879	Hs_Wnt signaling
+8061	Hs_Wnt signaling
+5578	Hs_Wnt signaling
+595	Hs_Wnt signaling
+5583	Hs_Wnt signaling
+324	Hs_Wnt signaling
+894	Hs_Wnt signaling
+896	Hs_Wnt signaling
+1499	Hs_Wnt signaling
+6932	Hs_Wnt signaling
+7474	Hs_Wnt signaling
+5584	Hs_Wnt signaling
+5048	Hs_Wnt signaling
+5601	Hs_Wnt signaling
+1454	Hs_Wnt signaling
+2932	Hs_Wnt signaling
+5602	Hs_Wnt signaling
+7473	Hs_Wnt signaling
+5734	Hs_GPCRs, Class A Rhodopsin-like
+187	Hs_GPCRs, Class A Rhodopsin-like
+1814	Hs_GPCRs, Class A Rhodopsin-like
+552	Hs_GPCRs, Class A Rhodopsin-like
+4985	Hs_GPCRs, Class A Rhodopsin-like
+4986	Hs_GPCRs, Class A Rhodopsin-like
+4987	Hs_GPCRs, Class A Rhodopsin-like
+5029	Hs_GPCRs, Class A Rhodopsin-like
+3357	Hs_GPCRs, Class A Rhodopsin-like
+1231	Hs_GPCRs, Class A Rhodopsin-like
+4159	Hs_GPCRs, Class A Rhodopsin-like
+4159	Hs_GPCRs, Class A Rhodopsin-like
+5737	Hs_GPCRs, Class A Rhodopsin-like
+5733	Hs_GPCRs, Class A Rhodopsin-like
+5732	Hs_GPCRs, Class A Rhodopsin-like
+5739	Hs_GPCRs, Class A Rhodopsin-like
+10161	Hs_GPCRs, Class A Rhodopsin-like
+2827	Hs_GPCRs, Class A Rhodopsin-like
+2825	Hs_GPCRs, Class A Rhodopsin-like
+2826	Hs_GPCRs, Class A Rhodopsin-like
+2828	Hs_GPCRs, Class A Rhodopsin-like
+2829	Hs_GPCRs, Class A Rhodopsin-like
+2830	Hs_GPCRs, Class A Rhodopsin-like
+623	Hs_GPCRs, Class A Rhodopsin-like
+2587	Hs_GPCRs, Class A Rhodopsin-like
+2835	Hs_GPCRs, Class A Rhodopsin-like
+5995	Hs_GPCRs, Class A Rhodopsin-like
+4994	Hs_GPCRs, Class A Rhodopsin-like
+4996	Hs_GPCRs, Class A Rhodopsin-like
+8385	Hs_GPCRs, Class A Rhodopsin-like
+8388	Hs_GPCRs, Class A Rhodopsin-like
+8392	Hs_GPCRs, Class A Rhodopsin-like
+8390	Hs_GPCRs, Class A Rhodopsin-like
+5030	Hs_GPCRs, Class A Rhodopsin-like
+1232	Hs_GPCRs, Class A Rhodopsin-like
+1233	Hs_GPCRs, Class A Rhodopsin-like
+1234	Hs_GPCRs, Class A Rhodopsin-like
+1235	Hs_GPCRs, Class A Rhodopsin-like
+1237	Hs_GPCRs, Class A Rhodopsin-like
+10803	Hs_GPCRs, Class A Rhodopsin-like
+2150	Hs_GPCRs, Class A Rhodopsin-like
+4158	Hs_GPCRs, Class A Rhodopsin-like
+4157	Hs_GPCRs, Class A Rhodopsin-like
+1814	Hs_GPCRs, Class A Rhodopsin-like
+5729	Hs_GPCRs, Class A Rhodopsin-like
+2840	Hs_GPCRs, Class A Rhodopsin-like
+9248	Hs_GPCRs, Class A Rhodopsin-like
+10798	Hs_GPCRs, Class A Rhodopsin-like
+26211	Hs_GPCRs, Class A Rhodopsin-like
+3360	Hs_GPCRs, Class A Rhodopsin-like
+148	Hs_GPCRs, Class A Rhodopsin-like
+185	Hs_GPCRs, Class A Rhodopsin-like
+148	Hs_GPCRs, Class A Rhodopsin-like
+3973	Hs_GPCRs, Class A Rhodopsin-like
+7932	Hs_GPCRs, Class A Rhodopsin-like
+5031	Hs_GPCRs, Class A Rhodopsin-like
+9934	Hs_GPCRs, Class A Rhodopsin-like
+26729	Hs_GPCRs, Class A Rhodopsin-like
+26188	Hs_GPCRs, Class A Rhodopsin-like
+26493	Hs_GPCRs, Class A Rhodopsin-like
+26659	Hs_GPCRs, Class A Rhodopsin-like
+1241	Hs_GPCRs, Class A Rhodopsin-like
+2842	Hs_GPCRs, Class A Rhodopsin-like
+4889	Hs_GPCRs, Class A Rhodopsin-like
+2847	Hs_GPCRs, Class A Rhodopsin-like
+56670	Hs_GPCRs, Class A Rhodopsin-like
+84636	Hs_GPCRs, Class A Rhodopsin-like
+53836	Hs_GPCRs, Class A Rhodopsin-like
+53836	Hs_GPCRs, Class A Rhodopsin-like
+5032	Hs_GPCRs, Class A Rhodopsin-like
+81491	Hs_GPCRs, Class A Rhodopsin-like
+81491	Hs_GPCRs, Class A Rhodopsin-like
+151	Hs_GPCRs, Class A Rhodopsin-like
+150	Hs_GPCRs, Class A Rhodopsin-like
+81697	Hs_GPCRs, Class A Rhodopsin-like
+26716	Hs_GPCRs, Class A Rhodopsin-like
+26531	Hs_GPCRs, Class A Rhodopsin-like
+64106	Hs_GPCRs, Class A Rhodopsin-like
+57121	Hs_GPCRs, Class A Rhodopsin-like
+23596	Hs_GPCRs, Class A Rhodopsin-like
+144124	Hs_GPCRs, Class A Rhodopsin-like
+8597	Hs_GPCRs, Class A Rhodopsin-like
+64805	Hs_GPCRs, Class A Rhodopsin-like
+152	Hs_GPCRs, Class A Rhodopsin-like
+10316	Hs_GPCRs, Class A Rhodopsin-like
+2859	Hs_GPCRs, Class A Rhodopsin-like
+8811	Hs_GPCRs, Class A Rhodopsin-like
+3061	Hs_GPCRs, Class A Rhodopsin-like
+3062	Hs_GPCRs, Class A Rhodopsin-like
+10316	Hs_GPCRs, Class A Rhodopsin-like
+4992	Hs_GPCRs, Class A Rhodopsin-like
+26696	Hs_GPCRs, Class A Rhodopsin-like
+26538	Hs_GPCRs, Class A Rhodopsin-like
+26532	Hs_GPCRs, Class A Rhodopsin-like
+26658	Hs_GPCRs, Class A Rhodopsin-like
+148	Hs_GPCRs, Class A Rhodopsin-like
+8484	Hs_GPCRs, Class A Rhodopsin-like
+10969	Hs_GPCRs, Class A Rhodopsin-like
+6915	Hs_GPCRs, Class A Rhodopsin-like
+1234	Hs_GPCRs, Class A Rhodopsin-like
+9034	Hs_GPCRs, Class A Rhodopsin-like
+2854	Hs_GPCRs, Class A Rhodopsin-like
+26707	Hs_GPCRs, Class A Rhodopsin-like
+9002	Hs_GPCRs, Class A Rhodopsin-like
+26659	Hs_GPCRs, Class A Rhodopsin-like
+79541	Hs_GPCRs, Class A Rhodopsin-like
+8592	Hs_GPCRs, Class A Rhodopsin-like
+8590	Hs_GPCRs, Class A Rhodopsin-like
+4993	Hs_GPCRs, Class A Rhodopsin-like
+26701	Hs_GPCRs, Class A Rhodopsin-like
+23620	Hs_GPCRs, Class A Rhodopsin-like
+611	Hs_GPCRs, Class A Rhodopsin-like
+5956	Hs_GPCRs, Class A Rhodopsin-like
+2652	Hs_GPCRs, Class A Rhodopsin-like
+4142	Hs_GPCRs, Class A Rhodopsin-like
+154	Hs_GPCRs, Class A Rhodopsin-like
+6010	Hs_GPCRs, Class A Rhodopsin-like
+1129	Hs_GPCRs, Class A Rhodopsin-like
+1132	Hs_GPCRs, Class A Rhodopsin-like
+153	Hs_GPCRs, Class A Rhodopsin-like
+3350	Hs_GPCRs, Class A Rhodopsin-like
+1133	Hs_GPCRs, Class A Rhodopsin-like
+150	Hs_GPCRs, Class A Rhodopsin-like
+1128	Hs_GPCRs, Class A Rhodopsin-like
+155	Hs_GPCRs, Class A Rhodopsin-like
+1813	Hs_GPCRs, Class A Rhodopsin-like
+7253	Hs_GPCRs, Class A Rhodopsin-like
+151	Hs_GPCRs, Class A Rhodopsin-like
+152	Hs_GPCRs, Class A Rhodopsin-like
+1131	Hs_GPCRs, Class A Rhodopsin-like
+2357	Hs_GPCRs, Class A Rhodopsin-like
+1268	Hs_GPCRs, Class A Rhodopsin-like
+1812	Hs_GPCRs, Class A Rhodopsin-like
+728	Hs_GPCRs, Class A Rhodopsin-like
+6915	Hs_GPCRs, Class A Rhodopsin-like
+1815	Hs_GPCRs, Class A Rhodopsin-like
+1816	Hs_GPCRs, Class A Rhodopsin-like
+3973	Hs_GPCRs, Class A Rhodopsin-like
+2492	Hs_GPCRs, Class A Rhodopsin-like
+1910	Hs_GPCRs, Class A Rhodopsin-like
+3274	Hs_GPCRs, Class A Rhodopsin-like
+3577	Hs_GPCRs, Class A Rhodopsin-like
+3579	Hs_GPCRs, Class A Rhodopsin-like
+2359	Hs_GPCRs, Class A Rhodopsin-like
+2358	Hs_GPCRs, Class A Rhodopsin-like
+146	Hs_GPCRs, Class A Rhodopsin-like
+1909	Hs_GPCRs, Class A Rhodopsin-like
+5724	Hs_GPCRs, Class A Rhodopsin-like
+57007	Hs_GPCRs, Class A Rhodopsin-like
+2149	Hs_GPCRs, Class A Rhodopsin-like
+4886	Hs_GPCRs, Class A Rhodopsin-like
+3352	Hs_GPCRs, Class A Rhodopsin-like
+3351	Hs_GPCRs, Class A Rhodopsin-like
+3356	Hs_GPCRs, Class A Rhodopsin-like
+3358	Hs_GPCRs, Class A Rhodopsin-like
+4829	Hs_GPCRs, Class A Rhodopsin-like
+3354	Hs_GPCRs, Class A Rhodopsin-like
+135	Hs_GPCRs, Class A Rhodopsin-like
+136	Hs_GPCRs, Class A Rhodopsin-like
+624	Hs_GPCRs, Class A Rhodopsin-like
+554	Hs_GPCRs, Class A Rhodopsin-like
+134	Hs_GPCRs, Class A Rhodopsin-like
+2925	Hs_GPCRs, Class A Rhodopsin-like
+185	Hs_GPCRs, Class A Rhodopsin-like
+5021	Hs_GPCRs, Class A Rhodopsin-like
+6751	Hs_GPCRs, Class A Rhodopsin-like
+6752	Hs_GPCRs, Class A Rhodopsin-like
+3355	Hs_GPCRs, Class A Rhodopsin-like
+8387	Hs_GPCRs, Class A Rhodopsin-like
+26476	Hs_GPCRs, Class A Rhodopsin-like
+4923	Hs_GPCRs, Class A Rhodopsin-like
+7852	Hs_GPCRs, Class A Rhodopsin-like
+6754	Hs_GPCRs, Class A Rhodopsin-like
+886	Hs_GPCRs, Class A Rhodopsin-like
+887	Hs_GPCRs, Class A Rhodopsin-like
+4160	Hs_GPCRs, Class A Rhodopsin-like
+1230	Hs_GPCRs, Class A Rhodopsin-like
+680	Hs_GPCRs, Class A Rhodopsin-like
+1236	Hs_GPCRs, Class A Rhodopsin-like
+643	Hs_GPCRs, Class A Rhodopsin-like
+6753	Hs_GPCRs, Class A Rhodopsin-like
+4161	Hs_GPCRs, Class A Rhodopsin-like
+140	Hs_GPCRs, Class A Rhodopsin-like
+3363	Hs_GPCRs, Class A Rhodopsin-like
+1269	Hs_GPCRs, Class A Rhodopsin-like
+7201	Hs_GPCRs, Class A Rhodopsin-like
+4991	Hs_GPCRs, Class A Rhodopsin-like
+5731	Hs_GPCRs, Class A Rhodopsin-like
+6755	Hs_GPCRs, Class A Rhodopsin-like
+148	Hs_GPCRs, Class A Rhodopsin-like
+3269	Hs_GPCRs, Class A Rhodopsin-like
+147	Hs_GPCRs, Class A Rhodopsin-like
+152	Hs_GPCRs, Class A Rhodopsin-like
+4988	Hs_GPCRs, Class A Rhodopsin-like
+4995	Hs_GPCRs, Class A Rhodopsin-like
+3361	Hs_GPCRs, Class A Rhodopsin-like
+5028	Hs_GPCRs, Class A Rhodopsin-like
+553	Hs_GPCRs, Class A Rhodopsin-like
+4543	Hs_GPCRs, Class A Rhodopsin-like
+2831	Hs_GPCRs, Class A Rhodopsin-like
+2832	Hs_GPCRs, Class A Rhodopsin-like
+4887	Hs_GPCRs, Class A Rhodopsin-like
+1524	Hs_GPCRs, Class A Rhodopsin-like
+4544	Hs_GPCRs, Class A Rhodopsin-like
+2833	Hs_GPCRs, Class A Rhodopsin-like
+2834	Hs_GPCRs, Class A Rhodopsin-like
+2834	Hs_GPCRs, Class A Rhodopsin-like
+2838	Hs_GPCRs, Class A Rhodopsin-like
+186	Hs_GPCRs, Class A Rhodopsin-like
+5540	Hs_GPCRs, Class A Rhodopsin-like
+3362	Hs_GPCRs, Class A Rhodopsin-like
+3973	Hs_GPCRs, Class A Rhodopsin-like
+887	Hs_GPCRs, Class A Rhodopsin-like
+1909	Hs_GPCRs, Class A Rhodopsin-like
+719	Hs_GPCRs, Class A Rhodopsin-like
+2693	Hs_GPCRs, Class A Rhodopsin-like
+4888	Hs_GPCRs, Class A Rhodopsin-like
+2852	Hs_GPCRs, Class A Rhodopsin-like
+4888	Hs_GPCRs, Class A Rhodopsin-like
+2846	Hs_GPCRs, Class A Rhodopsin-like
+2843	Hs_GPCRs, Class A Rhodopsin-like
+2844	Hs_GPCRs, Class A Rhodopsin-like
+2845	Hs_GPCRs, Class A Rhodopsin-like
+2847	Hs_GPCRs, Class A Rhodopsin-like
+1240	Hs_GPCRs, Class A Rhodopsin-like
+53829	Hs_GPCRs, Class A Rhodopsin-like
+1241	Hs_GPCRs, Class A Rhodopsin-like
+2149	Hs_GPCRs, Class A Rhodopsin-like
+51554	Hs_GPCRs, Class A Rhodopsin-like
+56656	Hs_GPCRs, Class A Rhodopsin-like
+56923	Hs_GPCRs, Class A Rhodopsin-like
+2357	Hs_GPCRs, Class A Rhodopsin-like
+54328	Hs_GPCRs, Class A Rhodopsin-like
+2850	Hs_GPCRs, Class A Rhodopsin-like
+887	Hs_GPCRs, Class A Rhodopsin-like
+10888	Hs_GPCRs, Class A Rhodopsin-like
+1813	Hs_GPCRs, Class A Rhodopsin-like
+8383	Hs_GPCRs, Class A Rhodopsin-like
+4157	Hs_GPCRs, Class A Rhodopsin-like
+2840	Hs_GPCRs, Class A Rhodopsin-like
+976	Hs_GPCRs, Class B Secretin-like
+22859	Hs_GPCRs, Class B Secretin-like
+23266	Hs_GPCRs, Class B Secretin-like
+9340	Hs_GPCRs, Class B Secretin-like
+799	Hs_GPCRs, Class B Secretin-like
+7433	Hs_GPCRs, Class B Secretin-like
+1394	Hs_GPCRs, Class B Secretin-like
+117	Hs_GPCRs, Class B Secretin-like
+7434	Hs_GPCRs, Class B Secretin-like
+2740	Hs_GPCRs, Class B Secretin-like
+2642	Hs_GPCRs, Class B Secretin-like
+6344	Hs_GPCRs, Class B Secretin-like
+2696	Hs_GPCRs, Class B Secretin-like
+976	Hs_GPCRs, Class B Secretin-like
+9568	Hs_GPCRs, Class C Metabotropic glutamate, pheromon
+9052	Hs_GPCRs, Class C Metabotropic glutamate, pheromon
+846	Hs_GPCRs, Class C Metabotropic glutamate, pheromon
+2915	Hs_GPCRs, Class C Metabotropic glutamate, pheromon
+2911	Hs_GPCRs, Class C Metabotropic glutamate, pheromon
+2912	Hs_GPCRs, Class C Metabotropic glutamate, pheromon
+2917	Hs_GPCRs, Class C Metabotropic glutamate, pheromon
+2913	Hs_GPCRs, Class C Metabotropic glutamate, pheromon
+2914	Hs_GPCRs, Class C Metabotropic glutamate, pheromon
+55890	Hs_GPCRs, Class C Metabotropic glutamate, pheromon
+55507	Hs_GPCRs, Class C Metabotropic glutamate, pheromon
+55890	Hs_GPCRs, Class C Metabotropic glutamate, pheromon
+51704	Hs_GPCRs, Class C Metabotropic glutamate, pheromon
+8392	Hs_GPCRs, Other
+4995	Hs_GPCRs, Other
+8392	Hs_GPCRs, Other
+26185	Hs_GPCRs, Other
+26214	Hs_GPCRs, Other
+81417	Hs_GPCRs, Other
+26216	Hs_GPCRs, Other
+26211	Hs_GPCRs, Other
+26211	Hs_GPCRs, Other
+26216	Hs_GPCRs, Other
+1951	Hs_GPCRs, Other
+84059	Hs_GPCRs, Other
+9090	Hs_GPCRs, Other
+221395	Hs_GPCRs, Other
+23284	Hs_GPCRs, Other
+23266	Hs_GPCRs, Other
+8594	Hs_GPCRs, Other
+8579	Hs_GPCRs, Other
+9289	Hs_GPCRs, Other
+4923	Hs_GPCRs, Other
+4923	Hs_GPCRs, Other
+1880	Hs_GPCRs, Other
+5737	Hs_GPCRs, Other
+4994	Hs_GPCRs, Other
+4994	Hs_GPCRs, Other
+4935	Hs_GPCRs, Other
+2841	Hs_GPCRs, Other
+11245	Hs_GPCRs, Other
+64582	Hs_GPCRs, Other
+26245	Hs_GPCRs, Other
+26651	Hs_GPCRs, Other
+26492	Hs_GPCRs, Other
+26343	Hs_GPCRs, Other
+26494	Hs_GPCRs, Other
+26652	Hs_GPCRs, Other
+59352	Hs_GPCRs, Other
+118442	Hs_GPCRs, Other
+83873	Hs_GPCRs, Other
+54112	Hs_GPCRs, Other
+57191	Hs_GPCRs, Other
+81700	Hs_GPCRs, Class A Rhodopsin-like
+81696	Hs_GPCRs, Class A Rhodopsin-like
+81797	Hs_GPCRs, Class A Rhodopsin-like
+94233	Hs_GPCRs, Class A Rhodopsin-like
+1813	Hs_GPCRs, Class A Rhodopsin-like
+9034	Hs_GPCRs, Class A Rhodopsin-like
+10803	Hs_GPCRs, Class A Rhodopsin-like
+9293	Hs_GPCRs, Class A Rhodopsin-like
+26692	Hs_GPCRs, Class A Rhodopsin-like
+26539	Hs_GPCRs, Class A Rhodopsin-like
+26189	Hs_GPCRs, Class A Rhodopsin-like
+11255	Hs_GPCRs, Class A Rhodopsin-like
+11255	Hs_GPCRs, Class A Rhodopsin-like
+11255	Hs_GPCRs, Class A Rhodopsin-like
+10886	Hs_GPCRs, Class A Rhodopsin-like
+11251	Hs_GPCRs, Class A Rhodopsin-like
+10149	Hs_GPCRs, Class B Secretin-like
+5746	Hs_GPCRs, Class B Secretin-like
+2692	Hs_GPCRs, Class B Secretin-like
+5745	Hs_GPCRs, Class B Secretin-like
+1395	Hs_GPCRs, Class B Secretin-like
+2015	Hs_GPCRs, Class B Secretin-like
+10203	Hs_GPCRs, Class B Secretin-like
+23284	Hs_GPCRs, Class B Secretin-like
+22859	Hs_GPCRs, Class B Secretin-like
+2692	Hs_GPCRs, Class B Secretin-like
+64123	Hs_GPCRs, Class B Secretin-like
+30817	Hs_GPCRs, Class B Secretin-like
+23266	Hs_GPCRs, Class B Secretin-like
+23266	Hs_GPCRs, Class B Secretin-like
+2918	Hs_GPCRs, Class C Metabotropic glutamate, pheromon
+2916	Hs_GPCRs, Class C Metabotropic glutamate, pheromon
+51704	Hs_GPCRs, Class C Metabotropic glutamate, pheromon
+2550	Hs_GPCRs, Class C Metabotropic glutamate, pheromon
+9038	Hs_GPCRs, Other
+26716	Hs_GPCRs, Other
+26716	Hs_GPCRs, Other
+26713	Hs_GPCRs, Other
+26713	Hs_GPCRs, Other
+81409	Hs_GPCRs, Other
+26716	Hs_GPCRs, Other
+26648	Hs_GPCRs, Other
+26218	Hs_GPCRs, Other
+4992	Hs_GPCRs, Other
+4992	Hs_GPCRs, Other
+4992	Hs_GPCRs, Other
+4992	Hs_GPCRs, Other
+4992	Hs_GPCRs, Other
+1815	Hs_GPCRs, Other
+27239	Hs_GPCRs, Other
+2532	Hs_GPCRs, Other
+1952	Hs_GPCRs, Other
+2798	Hs_GPCRs, Other
+135	Hs_GPCRs, Other
+1815	Hs_GPCRs, Other
+1815	Hs_GPCRs, Other
+6608	Hs_GPCRs, Other
+2918	Hs_GPCRs, Other
+29933	Hs_GPCRs, Other
+84539	Hs_GPCRs, Other
+1814	Hs_GPCRs, Other
+84658	Hs_GPCRs, Other
+53829	Hs_GPCRs, Other
+59340	Hs_GPCRs, Other
+30817	Hs_GPCRs, Other
+30817	Hs_GPCRs, Other
+2692	Hs_GPCRs, Other
+1131	Hs_GPCRs, Other
+59352	Hs_GPCRs, Other
+59350	Hs_GPCRs, Other
+1952	Hs_GPCRs, Other
+56413	Hs_GPCRs, Other
+56413	Hs_GPCRs, Other
+79541	Hs_GPCRs, Other
+53831	Hs_GPCRs, Other
+26537	Hs_GPCRs, Other
+51289	Hs_GPCRs, Other
+283383	Hs_GPCRs, Other
+9620	Hs_GPCRs, Other
+1951	Hs_GPCRs, Other
+81044	Hs_GPCRs, Other
+81370	Hs_GPCRs, Other
+81045	Hs_GPCRs, Other
+8387	Hs_GPCRs, Other
+81370	Hs_GPCRs, Other
+81050	Hs_GPCRs, Other
+9288	Hs_GPCRs, Other
+9287	Hs_GPCRs, Other
+81042	Hs_GPCRs, Other
+27202	Hs_GPCRs, Other
+3579	Hs_GPCRs, Other
+3579	Hs_GPCRs, Other
+3577	Hs_GPCRs, Other
+3577	Hs_GPCRs, Other
+3577	Hs_GPCRs, Other
+3577	Hs_GPCRs, Other
+8594	Hs_GPCRs, Other
+26651	Hs_GPCRs, Other
+9290	Hs_GPCRs, Other
+57211	Hs_GPCRs, Other
+30817	Hs_GPCRs, Other
+9289	Hs_GPCRs, Other
+29929	Hs_GPCRs, Other
+4677	Hs_Alanine-Aspartate Metabolism
+5188	Hs_Alanine-Aspartate Metabolism
+445	Hs_Alanine-Aspartate Metabolism
+435	Hs_Alanine-Aspartate Metabolism
+440	Hs_Alanine-Aspartate Metabolism
+5091	Hs_Alanine-Aspartate Metabolism
+1615	Hs_Alanine-Aspartate Metabolism
+2805	Hs_Alanine-Aspartate Metabolism
+2875	Hs_Alanine-Aspartate Metabolism
+159	Hs_Alanine-Aspartate Metabolism
+6783	Hs_Androgen and Estrogen Metabolism
+414	Hs_Androgen and Estrogen Metabolism
+6718	Hs_Androgen and Estrogen Metabolism
+51004	Hs_Androgen and Estrogen Metabolism
+1586	Hs_C-21 Steroid Hormone Metabolism
+1583	Hs_C-21 Steroid Hormone Metabolism
+1589	Hs_C-21 Steroid Hormone Metabolism
+3283	Hs_C-21 Steroid Hormone Metabolism
+3283	Hs_C-21 Steroid Hormone Metabolism
+1584	Hs_C-21 Steroid Hormone Metabolism
+15492	Hs_C-21 Steroid Hormone Metabolism
+15492	Hs_C-21 Steroid Hormone Metabolism
+3290	Hs_C-21 Steroid Hormone Metabolism
+6718	Hs_C-21 Steroid Hormone Metabolism
+7157	Hs_Cell cycle
+596	Hs_Cell cycle
+2840	Hs_GPCRs, Other
+2837	Hs_GPCRs, Other
+84059	Hs_GPCRs, Other
+26186	Hs_GPCRs, Other
+8389	Hs_GPCRs, Other
+29933	Hs_GPCRs, Other
+158	Hs_Alanine-Aspartate Metabolism
+1384	Hs_Alanine-Aspartate Metabolism
+443	Hs_Alanine-Aspartate Metabolism
+16	Hs_Alanine-Aspartate Metabolism
+18	Hs_Alanine-Aspartate Metabolism
+2571	Hs_Alanine-Aspartate Metabolism
+8528	Hs_Alanine-Aspartate Metabolism
+10720	Hs_Androgen and Estrogen Metabolism
+11185	Hs_Androgen and Estrogen Metabolism
+412	Hs_Androgen and Estrogen Metabolism
+3283	Hs_Androgen and Estrogen Metabolism
+3283	Hs_Androgen and Estrogen Metabolism
+3292	Hs_Androgen and Estrogen Metabolism
+1584	Hs_Androgen and Estrogen Metabolism
+6715	Hs_Androgen and Estrogen Metabolism
+3290	Hs_Androgen and Estrogen Metabolism
+7043	Hs_Cell cycle
+1019	Hs_Cell cycle
+890	Hs_Cell cycle
+595	Hs_Cell cycle
+1647	Hs_Cell cycle
+898	Hs_Cell cycle
+1017	Hs_Cell cycle
+1026	Hs_Cell cycle
+1029	Hs_Cell cycle
+1027	Hs_Cell cycle
+997	Hs_Cell cycle
+4193	Hs_Cell cycle
+1869	Hs_Cell cycle
+581	Hs_Cell cycle
+7027	Hs_Cell cycle
+8317	Hs_Cell cycle
+1871	Hs_Cell cycle
+9088	Hs_Cell cycle
+1111	Hs_Cell cycle
+8841	Hs_Cell cycle
+8556	Hs_Cell cycle
+8555	Hs_Cell cycle
+699	Hs_Cell cycle
+9184	Hs_Cell cycle
+5001	Hs_Cell cycle
+5000	Hs_Cell cycle
+701	Hs_Cell cycle
+10926	Hs_Cell cycle
+8318	Hs_Cell cycle
+1876	Hs_Cell cycle
+9133	Hs_Cell cycle
+9232	Hs_Cell cycle
+10744	Hs_Cell cycle
+26255	Hs_Cell cycle
+11200	Hs_Cell cycle
+9134	Hs_Cell cycle
+25	Hs_Cell cycle
+7040	Hs_Cell cycle
+995	Hs_Cell cycle
+4173	Hs_Cell cycle
+4174	Hs_Cell cycle
+4176	Hs_Cell cycle
+1026	Hs_Cell cycle
+1029	Hs_Cell cycle
+1027	Hs_Cell cycle
+4171	Hs_Cell cycle
+2932	Hs_Cell cycle
+902	Hs_Cell cycle
+5347	Hs_Cell cycle
+9759	Hs_Cell cycle
+8900	Hs_Cell cycle
+5591	Hs_Cell cycle
+1021	Hs_Cell cycle
+4193	Hs_Cell cycle
+1869	Hs_Cell cycle
+2033	Hs_Cell cycle
+991	Hs_Cell cycle
+4085	Hs_Cell cycle
+6502	Hs_Cell cycle
+8379	Hs_Cell cycle
+472	Hs_Cell cycle
+4998	Hs_Cell cycle
+4999	Hs_Cell cycle
+4089	Hs_Cell cycle
+3065	Hs_Cell cycle
+7027	Hs_Cell cycle
+1870	Hs_Cell cycle
+4175	Hs_Cell cycle
+9700	Hs_Cell cycle
+8243	Hs_Cell cycle
+1875	Hs_Cell cycle
+1874	Hs_Cell cycle
+3066	Hs_Cell cycle
+990	Hs_Cell cycle
+55869	Hs_Cell cycle
+51564	Hs_Cell cycle
+51270	Hs_Cell cycle
+23595	Hs_Cell cycle
+2729	Hs_Glutamate Metabolism
+2937	Hs_Glutamate Metabolism
+8833	Hs_Glutamate Metabolism
+18	Hs_Glutamate Metabolism
+5471	Hs_Glutamate Metabolism
+2571	Hs_Glutamate Metabolism
+191	Hs_Methionine Metabolism
+1786	Hs_Methionine Metabolism
+1491	Hs_Methionine Metabolism
+4141	Hs_Methionine Metabolism
+4143	Hs_Methionine Metabolism
+635	Hs_Methionine Metabolism
+4548	Hs_Methionine Metabolism
+38	Hs_Synthesis and Degradation of Ketone Bodies
+3155	Hs_Synthesis and Degradation of Ketone Bodies
+3158	Hs_Synthesis and Degradation of Ketone Bodies
+5019	Hs_Synthesis and Degradation of Ketone Bodies
+7157	Hs_Cell cycle
+5925	Hs_Cell cycle
+983	Hs_Cell cycle
+983	Hs_Cell cycle
+1019	Hs_Cell cycle
+5111	Hs_Cell cycle
+891	Hs_Cell cycle
+890	Hs_Cell cycle
+5299	Hs_Cell cycle
+1647	Hs_Cell cycle
+898	Hs_Cell cycle
+1017	Hs_Cell cycle
+4172	Hs_Cell cycle
+5933	Hs_Cell cycle
+5933	Hs_Cell cycle
+894	Hs_Cell cycle
+896	Hs_Cell cycle
+7465	Hs_Cell cycle
+993	Hs_Cell cycle
+994	Hs_Cell cycle
+10013	Hs_Cell cycle
+10459	Hs_Cell cycle
+10014	Hs_Cell cycle
+23594	Hs_Cell cycle
+3939	Hs_Cysteine Metabolism
+2805	Hs_Cysteine Metabolism
+10993	Hs_Cysteine Metabolism
+1491	Hs_Cysteine Metabolism
+833	Hs_Cysteine Metabolism
+5188	Hs_Glutamate Metabolism
+2746	Hs_Glutamate Metabolism
+2936	Hs_Glutamate Metabolism
+2058	Hs_Glutamate Metabolism
+2752	Hs_Glutamate Metabolism
+2805	Hs_Glutamate Metabolism
+2875	Hs_Glutamate Metabolism
+790	Hs_Glutamate Metabolism
+1373	Hs_Glutamate Metabolism
+5859	Hs_Glutamate Metabolism
+622	Hs_Synthesis and Degradation of Ketone Bodies
+79217	Rn_Gap Junction Proteins-Connexins
+117055	Rn_Gap Junction Proteins-Connexins
+114903	Rn_Gap Junction Proteins-Connexins
+25655	Rn_Gap Junction Proteins-Connexins
+65205	Rn_Matrix Metalloproteinases
+63849	Rn_Matrix Metalloproteinases
+171045	Rn_Matrix Metalloproteinases
+117061	Rn_Matrix Metalloproteinases
+24835	Rn_Matrix Metalloproteinases
+171052	Rn_Matrix Metalloproteinases
+25246	Rn_Matrix Metalloproteinases
+116510	Rn_Matrix Metalloproteinases
+29543	Rn_Matrix Metalloproteinases
+81686	Rn_Matrix Metalloproteinases
+25358	Rn_Matrix Metalloproteinases
+25335	Rn_Matrix Metalloproteinases
+81687	Rn_Matrix Metalloproteinases
+25481	Rn_Matrix Metalloproteinases
+81707	Rn_Matrix Metalloproteinases
+117033	Rn_Matrix Metalloproteinases
+83513	Rn_Matrix Metalloproteinases
+25229	Rn_Monoamine GPCRs
+24260	Rn_Monoamine GPCRs
+25111	Rn_Monoamine GPCRs
+25187	Rn_Monoamine GPCRs
+53949	Rn_Monoamine GPCRs
+24176	Rn_Monoamine GPCRs
+81645	Rn_Monoamine GPCRs
+29595	Rn_Monoamine GPCRs
+24173	Rn_Monoamine GPCRs
+24925	Rn_Monoamine GPCRs
+24316	Rn_Monoamine GPCRs
+29238	Rn_Monoamine GPCRs
+24473	Rn_Monoamine GPCRs
+24174	Rn_Monoamine GPCRs
+24175	Rn_Monoamine GPCRs
+25083	Rn_Monoamine GPCRs
+29413	Rn_Monoamine GPCRs
+25461	Rn_Monoamine GPCRs
+25195	Rn_Monoamine GPCRs
+25645	Rn_Monoamine GPCRs
+25075	Rn_Monoamine GPCRs
+25323	Rn_Monoamine GPCRs
+25323	Rn_Monoamine GPCRs
+25432	Rn_Monoamine GPCRs
+60448	Rn_Monoamine GPCRs
+29581	Rn_Monoamine GPCRs
+64354	Rn_Monoamine GPCRs
+24448	Rn_Monoamine GPCRs
+29307	Rn_Monoamine GPCRs
+65032	Rn_Monoamine GPCRs
+25689	Rn_Monoamine GPCRs
+79247	Rn_Monoamine GPCRs
+29412	Rn_Monoamine GPCRs
+25324	Rn_Monoamine GPCRs
+245980	Rn_Nuclear Receptors
+113984	Rn_Nuclear Receptors
+25664	Rn_Nuclear Receptors
+24890	Rn_Nuclear Receptors
+24413	Rn_Nuclear Receptors
+2103	Rn_Nuclear Receptors
+24873	Rn_Nuclear Receptors
+24208	Rn_Nuclear Receptors
+81812	Rn_Nuclear Receptors
+24831	Rn_Nuclear Receptors
+25735	Rn_Nuclear Receptors
+79240	Rn_Nuclear Receptors
+25747	Rn_Nuclear Receptors
+25006	Rn_Nuclear Receptors
+83826	Rn_Nuclear Receptors
+50659	Rn_Nuclear Receptors
+58850	Rn_Nuclear Receptors
+25271	Rn_Nuclear Receptors
+54278	Rn_Nuclear Receptors
+58852	Rn_Nuclear Receptors
+58851	Rn_Nuclear Receptors
+25149	Rn_Nuclear Receptors
+25154	Rn_Nuclear Receptors
+24239	Rn_Calcium Channels
+29716	Rn_Calcium Channels
+25262	Rn_Calcium Channels
+81678	Rn_Calcium Channels
+25398	Rn_Calcium Channels
+25297	Rn_Calcium Channels
+29658	Rn_Calcium Channels
+257648	Rn_Calcium Channels
+54234	Rn_Calcium Channels
+25679	Rn_Calcium Channels
+50564	Rn_Gap Junction Proteins-Connexins
+29584	Rn_Gap Junction Proteins-Connexins
+24392	Rn_Gap Junction Proteins-Connexins
+25480	Rn_Gap Junction Proteins-Connexins
+29585	Rn_Gap Junction Proteins-Connexins
+29586	Rn_Gap Junction Proteins-Connexins
+50563	Rn_Gap Junction Proteins-Connexins
+140671	Rn_Glycogen Metabolism
+117104	Rn_Glycogen Metabolism
+64561	Rn_Glycogen Metabolism
+24551	Rn_Glycolysis and Gluconeogenesis
+25721	Rn_Glycolysis and Gluconeogenesis
+24190	Rn_Glycolysis and Gluconeogenesis
+81829	Rn_Glycolysis and Gluconeogenesis
+24533	Rn_Glycolysis and Gluconeogenesis
+24333	Rn_Glycolysis and Gluconeogenesis
+24383	Rn_Glycolysis and Gluconeogenesis
+24189	Rn_Glycolysis and Gluconeogenesis
+25058	Rn_Glycolysis and Gluconeogenesis
+24334	Rn_Glycolysis and Gluconeogenesis
+81654	Rn_Glycolysis and Gluconeogenesis
+24191	Rn_Glycolysis and Gluconeogenesis
+25630	Rn_Glycolysis and Gluconeogenesis
+24651	Rn_Glycolysis and Gluconeogenesis
+24401	Rn_Glycolysis and Gluconeogenesis
+25438	Rn_Glycolysis and Gluconeogenesis
+24959	Rn_Glycolysis and Gluconeogenesis
+24644	Rn_Glycolysis and Gluconeogenesis
+24385	Rn_Glycolysis and Gluconeogenesis
+24362	Rn_Glycolysis and Gluconeogenesis
+29634	Rn_Glycolysis and Gluconeogenesis
+24642	Rn_Glycolysis and Gluconeogenesis
+29554	Rn_Glycolysis and Gluconeogenesis
+25059	Rn_Glycolysis and Gluconeogenesis
+25060	Rn_Glycolysis and Gluconeogenesis
+25741	Rn_Glycolysis and Gluconeogenesis
+18598	Rn_Glycolysis and Gluconeogenesis
+24534	Rn_Glycolysis and Gluconeogenesis
+25634	Rn_Glycolysis and Gluconeogenesis
+65152	Rn_Glycolysis and Gluconeogenesis
+60416	Rn_Glycolysis and Gluconeogenesis
+24849	Rn_Glycolysis and Gluconeogenesis
+25104	Rn_Glycolysis and Gluconeogenesis
+25374	Rn_Heme Biosynthesis
+65155	Rn_Heme Biosynthesis
+25709	Rn_Heme Biosynthesis
+29421	Rn_Heme Biosynthesis
+25748	Rn_Heme Biosynthesis
+89813	Rn_Krebs-TCA Cycle
+81829	Rn_Krebs-TCA Cycle
+114597	Rn_Krebs-TCA Cycle
+24368	Rn_Krebs-TCA Cycle
+29554	Rn_Krebs-TCA Cycle
+25179	Rn_Krebs-TCA Cycle
+25104	Rn_Krebs-TCA Cycle
+26955	Rn_Krebs-TCA Cycle
+117098	Rn_Krebs-TCA Cycle
+81530	Rn_Krebs-TCA Cycle
+79250	Rn_Krebs-TCA Cycle
+113976	Rn_Mitochondrial fatty acid betaoxidation
+94340	Rn_Mitochondrial fatty acid betaoxidation
+24158	Rn_Mitochondrial fatty acid betaoxidation
+170465	Rn_Mitochondrial fatty acid betaoxidation
+140547	Rn_Mitochondrial fatty acid betaoxidation
+25287	Rn_Mitochondrial fatty acid betaoxidation
+64304	Rn_Mitochondrial fatty acid betaoxidation
+25288	Rn_Mitochondrial fatty acid betaoxidation
+25413	Rn_Mitochondrial fatty acid betaoxidation
+29740	Rn_Mitochondrial fatty acid betaoxidation
+25757	Rn_Mitochondrial fatty acid betaoxidation
+117243	Rn_Mitochondrial fatty acid betaoxidation
+25363	Rn_Mitochondrial fatty acid betaoxidation
+117035	Rn_Mitochondrial fatty acid betaoxidation
+114024	Rn_Mitochondrial fatty acid betaoxidation
+25756	Rn_Mitochondrial fatty acid betaoxidation
+170670	Rn_Mitochondrial fatty acid betaoxidation
+117543	Rn_Mitochondrial fatty acid betaoxidation
+113965	Rn_Mitochondrial fatty acid betaoxidation
+24377	Rn_Pentose Phosphate Pathway
+64524	Rn_Pentose Phosphate Pathway
+83688	Rn_Pentose Phosphate Pathway
+117182	Rn_Steroid Biosynthesis
+25146	Rn_Steroid Biosynthesis
+29632	Rn_Steroid Biosynthesis
+29632	Rn_Steroid Biosynthesis
+24470	Rn_Steroid Biosynthesis
+25322	Rn_Steroid Biosynthesis
+79244	Rn_Steroid Biosynthesis
+79243	Rn_Steroid Biosynthesis
+29632	Rn_Steroid Biosynthesis
+29540	Rn_Steroid Biosynthesis
+259241	Rn_Nuclear Receptors
+65035	Rn_Nuclear Receptors
+84385	Rn_Nuclear Receptors
+29290	Rn_Nucleotide GPCRs
+25370	Rn_Nucleotide GPCRs
+29316	Rn_Nucleotide GPCRs
+25369	Rn_Nucleotide GPCRs
+29597	Rn_Nucleotide GPCRs
+25265	Rn_Nucleotide GPCRs
+60669	Rn_Orphan GPCRs
+84348	Rn_Orphan GPCRs
+25153	Rn_Orphan GPCRs
+80840	Rn_Orphan GPCRs
+29307	Rn_Orphan GPCRs
+29363	Rn_Orphan GPCRs
+29733	Rn_Orphan GPCRs
+140664	Rn_Orphan GPCRs
+83518	Rn_Orphan GPCRs
+117029	Rn_Peptide GPCRs
+60628	Rn_Peptide GPCRs
+84022	Rn_Peptide GPCRs
+29234	Rn_Peptide GPCRs
+117027	Rn_Peptide GPCRs
+60463	Rn_Peptide GPCRs
+84007	Rn_Peptide GPCRs
+29235	Rn_Peptide GPCRs
+24807	Rn_Peptide GPCRs
+24808	Rn_Peptide GPCRs
+25477	Rn_Peptide GPCRs
+25007	Rn_Peptide GPCRs
+25449	Rn_Peptide GPCRs
+50672	Rn_Peptide GPCRs
+25360	Rn_Peptide GPCRs
+29358	Rn_Peptide GPCRs
+25264	Rn_Peptide GPCRs
+25245	Rn_Peptide GPCRs
+24180	Rn_Peptide GPCRs
+24326	Rn_Peptide GPCRs
+25033	Rn_Peptide GPCRs
+81638	Rn_Peptide GPCRs
+81638	Rn_Peptide GPCRs
+24889	Rn_Peptide GPCRs
+25706	Rn_Peptide GPCRs
+25107	Rn_Peptide GPCRs
+54305	Rn_Peptide GPCRs
+171044	Rn_Peptide GPCRs
+25555	Rn_Peptide GPCRs
+25354	Rn_Peptide GPCRs
+81668	Rn_Peptide GPCRs
+29310	Rn_Peptide GPCRs
+24613	Rn_Peptide GPCRs
+25601	Rn_Peptide GPCRs
+29335	Rn_Peptide GPCRs
+29363	Rn_Peptide GPCRs
+25726	Rn_Peptide GPCRs
+24182	Rn_Peptide GPCRs
+29256	Rn_Peptide GPCRs
+29385	Rn_Peptide GPCRs
+171056	Rn_Peptide GPCRs
+29462	Rn_Peptide GPCRs
+24938	Rn_Peptide GPCRs
+25342	Rn_Peptide GPCRs
+25635	Rn_Peptide GPCRs
+54258	Rn_Peptide GPCRs
+113959	Rn_Peptide GPCRs
+81509	Rn_Peptide GPCRs
+25108	Rn_Peptide GPCRs
+25570	Rn_Peptide GPCRs
+50577	Rn_Peptide GPCRs
+64636	Rn_Peptide GPCRs
+29471	Rn_Peptide GPCRs
+25340	Rn_Peptide GPCRs
+25248	Rn_Small ligand GPCRs
+24816	Rn_Small ligand GPCRs
+24929	Rn_Small ligand GPCRs
+84023	Rn_Small ligand GPCRs
+25652	Rn_Small ligand GPCRs
+58949	Rn_Small ligand GPCRs
+29733	Rn_Small ligand GPCRs
+114211	Rn_Small ligand GPCRs
+25637	Rn_Small ligand GPCRs
+81752	Rn_Small ligand GPCRs
+192646	Rn_Small ligand GPCRs
+57302	Rn_Small ligand GPCRs
+171557	Rn_tRNA Synthetases
+116483	Rn_tRNA Synthetases
+25009	Rn_tRNA Synthetases
+140544	Rn_Acetylcholine Synthesis
+29554	Rn_Acetylcholine Synthesis
+29194	Rn_Acetylcholine Synthesis
+117098	Rn_Acetylcholine Synthesis
+25511	Rn_Acetylcholine Synthesis
+25085	Rn_Catacholamine Biosynthesis
+24661	Rn_Catacholamine Biosynthesis
+24311	Rn_Catacholamine Biosynthesis
+25699	Rn_Catacholamine Biosynthesis
+89784	Rn_Cholesterol Biosynthesis
+83791	Rn_Cholesterol Biosynthesis
+81727	Rn_Cholesterol Biosynthesis
+24450	Rn_Cholesterol Biosynthesis
+81681	Rn_Cholesterol Biosynthesis
+25675	Rn_Cholesterol Biosynthesis
+29230	Rn_Cholesterol Biosynthesis
+79238	Rn_Cholesterol Biosynthesis
+29580	Rn_Cholesterol Biosynthesis
+81726	Rn_Cholesterol Biosynthesis
+64191	Rn_Cholesterol Biosynthesis
+25290	Rn_Eicosanoid Synthesis
+29692	Rn_Eicosanoid Synthesis
+29624	Rn_Eicosanoid Synthesis
+25526	Rn_Eicosanoid Synthesis
+94199	Rn_Eicosanoid Synthesis
+29527	Rn_Eicosanoid Synthesis
+29387	Rn_Eicosanoid Synthesis
+24886	Rn_Eicosanoid Synthesis
+29387	Rn_Eicosanoid Synthesis
+116672	Rn_Eicosanoid Synthesis
+81639	Rn_Eicosanoid Synthesis
+25527	Rn_Eicosanoid Synthesis
+24693	Rn_Eicosanoid Synthesis
+114097	Rn_Eicosanoid Synthesis
+114630	Rn_Electron Transport Chain
+26193	Rn_Electron Transport Chain
+24860	Rn_Electron Transport Chain
+26196	Rn_Electron Transport Chain
+25310	Rn_Electron Transport Chain
+171374	Rn_Electron Transport Chain
+25278	Rn_Electron Transport Chain
+25282	Rn_Electron Transport Chain
+29445	Rn_Electron Transport Chain
+252934	Rn_Electron Transport Chain
+94194	Rn_Electron Transport Chain
+65262	Rn_Electron Transport Chain
+25250	Rn_Electron Transport Chain
+94271	Rn_Electron Transport Chain
+245958	Rn_Electron Transport Chain
+140608	Rn_Electron Transport Chain
+29507	Rn_Electron Transport Chain
+245965	Rn_Electron Transport Chain
+29478	Rn_Electron Transport Chain
+25708	Rn_Electron Transport Chain
+54315	Rn_Electron Transport Chain
+171335	Rn_Electron Transport Chain
+25392	Rn_Electron Transport Chain
+85333	Rn_Electron Transport Chain
+29754	Rn_Electron Transport Chain
+171082	Rn_Electron Transport Chain
+192241	Rn_Electron Transport Chain
+25176	Rn_Electron Transport Chain
+85263	Rn_Electron Transport Chain
+64463	Rn_Electron Transport Chain
+113976	Rn_Fatty Acid Degradation
+94340	Rn_Fatty Acid Degradation
+24158	Rn_Fatty Acid Degradation
+170465	Rn_Fatty Acid Degradation
+25287	Rn_Fatty Acid Degradation
+64304	Rn_Fatty Acid Degradation
+25288	Rn_Fatty Acid Degradation
+25413	Rn_Fatty Acid Degradation
+25757	Rn_Fatty Acid Degradation
+117243	Rn_Fatty Acid Degradation
+25062	Rn_Fatty Acid Degradation
+25363	Rn_Fatty Acid Degradation
+24849	Rn_Fatty Acid Degradation
+25618	Rn_Fatty Acid Degradation
+117035	Rn_Fatty Acid Degradation
+24539	Rn_Fatty Acid Degradation
+171155	Rn_Fatty Acid Degradation
+79223	Rn_Fatty Acid Degradation
+114024	Rn_Fatty Acid Degradation
+25756	Rn_Fatty Acid Degradation
+170670	Rn_Fatty Acid Degradation
+113965	Rn_Fatty Acid Degradation
+246074	Rn_Fatty acid synthesis
+60581	Rn_Fatty acid synthesis
+50671	Rn_Fatty acid synthesis
+170465	Rn_Fatty acid synthesis
+140547	Rn_Fatty acid synthesis
+24159	Rn_Fatty acid synthesis
+29743	Rn_Fatty acid synthesis
+25104	Rn_Fatty acid synthesis
+65248	Rn_Fatty acid synthesis
+25520	Rn_Fatty acid synthesis
+83803	Rn_Fatty acid synthesis
+83792	Rn_Fatty acid synthesis
+78975	Rn_Fatty acid synthesis
+117543	Rn_Fatty acid synthesis
+64562	Rn_Fatty acid synthesis
+113965	Rn_Fatty acid synthesis
+25146	Rn_Glucocorticoid & Mineralocorticoid Metabolism
+29680	Rn_Glucocorticoid & Mineralocorticoid Metabolism
+25116	Rn_Glucocorticoid & Mineralocorticoid Metabolism
+29632	Rn_Glucocorticoid & Mineralocorticoid Metabolism
+29632	Rn_Glucocorticoid & Mineralocorticoid Metabolism
+191574	Rn_Glucocorticoid & Mineralocorticoid Metabolism
+24470	Rn_Glucocorticoid & Mineralocorticoid Metabolism
+192242	Rn_Glucocorticoid & Mineralocorticoid Metabolism
+25117	Rn_Glucocorticoid & Mineralocorticoid Metabolism
+29632	Rn_Glucocorticoid & Mineralocorticoid Metabolism
+81675	Rn_Glycogen Metabolism
+24701	Rn_Glycogen Metabolism
+29353	Rn_Glycogen Metabolism
+25623	Rn_Glycogen Metabolism
+84027	Rn_Glycogen Metabolism
+24675	Rn_Glycogen Metabolism
+25008	Rn_Inflammatory Response Pathway
+24497	Rn_Inflammatory Response Pathway
+29169	Rn_Inflammatory Response Pathway
+24494	Rn_Inflammatory Response Pathway
+117539	Rn_Inflammatory Response Pathway
+114103	Rn_Inflammatory Response Pathway
+24567	Rn_Oxidative Stress
+24786	Rn_Oxidative Stress
+81524	Rn_Oxidative Stress
+58819	Rn_Oxidative Stress
+24296	Rn_Oxidative Stress
+29292	Rn_Oxidative Stress
+24404	Rn_Oxidative Stress
+24248	Rn_Oxidative Stress
+24314	Rn_Oxidative Stress
+24451	Rn_Oxidative Stress
+24786	Rn_Oxidative Stress
+24787	Rn_Oxidative Stress
+171341	Rn_Oxidative Stress
+25319	Rn_Oxidative Stress
+25283	Rn_Oxidative Stress
+29253	Rn_Oxidative Stress
+29289	Rn_Oxidative Stress
+64317	Rn_Oxidative Stress
+24517	Rn_Oxidative Stress
+29487	Rn_Oxidative Stress
+116686	Rn_Oxidative Stress
+79462	Rn_Oxidative Stress
+25352	Rn_Oxidative Stress
+79129	Rn_Oxidative Stress
+50551	Rn_Oxidative Stress
+25712	Rn_Proteasome Degradation
+29669	Rn_Proteasome Degradation
+29668	Rn_Proteasome Degradation
+94198	Rn_Proteasome Degradation
+29670	Rn_Proteasome Degradation
+29671	Rn_Proteasome Degradation
+24968	Rn_Proteasome Degradation
+29666	Rn_Proteasome Degradation
+29672	Rn_Proteasome Degradation
+58854	Rn_Proteasome Degradation
+58854	Rn_Proteasome Degradation
+29676	Rn_Proteasome Degradation
+29675	Rn_Proteasome Degradation
+29674	Rn_Proteasome Degradation
+79435	Rn_Proteasome Degradation
+25581	Rn_Proteasome Degradation
+29677	Rn_Proteasome Degradation
+117262	Rn_Proteasome Degradation
+117262	Rn_Proteasome Degradation
+29630	Rn_Proteasome Degradation
+29614	Rn_Proteasome Degradation
+85492	Rn_Proteasome Degradation
+140662	Rn_Ribosomal Proteins
+29286	Rn_Ribosomal Proteins
+57809	Rn_Ribosomal Proteins
+81775	Rn_Ribosomal Proteins
+81763	Rn_Ribosomal Proteins
+6130	Rn_Ribosomal Proteins
+81766	Rn_Ribosomal Proteins
+29284	Rn_Ribosomal Proteins
+7311	Rn_Ribosomal Proteins
+6217	Rn_Ribosomal Proteins
+27050	Rn_Ribosomal Proteins
+29287	Rn_Ribosomal Proteins
+29257	Rn_Ribosomal Proteins
+83584	Rn_Apoptosis
+64026	Rn_Apoptosis
+24577	Rn_Apoptosis
+24842	Rn_Apoptosis
+25310	Rn_Apoptosis
+24835	Rn_Apoptosis
+24516	Rn_Apoptosis
+25625	Rn_Apoptosis
+25591	Rn_Apoptosis
+50669	Rn_Apoptosis
+25385	Rn_Apoptosis
+25272	Rn_Apoptosis
+24224	Rn_Apoptosis
+24888	Rn_Apoptosis
+25402	Rn_Apoptosis
+64314	Rn_Apoptosis
+116667	Rn_Apoptosis
+246097	Rn_Apoptosis
+81736	Rn_Apoptosis
+24887	Rn_Apoptosis
+25493	Rn_Apoptosis
+78963	Rn_Apoptosis
+84352	Rn_Inflammatory Response Pathway
+25661	Rn_Inflammatory Response Pathway
+84032	Rn_Inflammatory Response Pathway
+25473	Rn_Inflammatory Response Pathway
+24493	Rn_Inflammatory Response Pathway
+24835	Rn_Inflammatory Response Pathway
+116562	Rn_Inflammatory Response Pathway
+24498	Rn_Inflammatory Response Pathway
+25625	Rn_Inflammatory Response Pathway
+25746	Rn_Inflammatory Response Pathway
+25704	Rn_Inflammatory Response Pathway
+25660	Rn_Inflammatory Response Pathway
+81686	Rn_Inflammatory Response Pathway
+140433	Rn_Inflammatory Response Pathway
+117036	Rn_Inflammatory Response Pathway
+59328	Rn_TGF Beta Signaling Pathway
+84353	Rn_TGF Beta Signaling Pathway
+29494	Rn_TGF Beta Signaling Pathway
+79257	Rn_Wnt Signaling
+24680	Rn_Wnt Signaling
+170538	Rn_Wnt Signaling
+29340	Rn_Wnt Signaling
+25522	Rn_Wnt Signaling
+24577	Rn_Wnt Signaling
+25445	Rn_Wnt Signaling
+24516	Rn_Wnt Signaling
+84027	Rn_Wnt Signaling
+25619	Rn_Wnt Signaling
+300438	Rn_Wnt Signaling
+58919	Rn_Wnt Signaling
+25193	Rn_Wnt Signaling
+50658	Rn_Wnt Signaling
+25272	Rn_Wnt Signaling
+24205	Rn_Wnt Signaling
+64033	Rn_Wnt Signaling
+24260	Rn_GPCRs, Class A Rhodopsin-like
+25111	Rn_GPCRs, Class A Rhodopsin-like
+25187	Rn_GPCRs, Class A Rhodopsin-like
+24176	Rn_GPCRs, Class A Rhodopsin-like
+81645	Rn_GPCRs, Class A Rhodopsin-like
+25153	Rn_GPCRs, Class A Rhodopsin-like
+29595	Rn_GPCRs, Class A Rhodopsin-like
+24173	Rn_GPCRs, Class A Rhodopsin-like
+25477	Rn_GPCRs, Class A Rhodopsin-like
+24925	Rn_GPCRs, Class A Rhodopsin-like
+29238	Rn_GPCRs, Class A Rhodopsin-like
+24473	Rn_GPCRs, Class A Rhodopsin-like
+24174	Rn_GPCRs, Class A Rhodopsin-like
+25248	Rn_GPCRs, Class A Rhodopsin-like
+25449	Rn_GPCRs, Class A Rhodopsin-like
+50672	Rn_GPCRs, Class A Rhodopsin-like
+25360	Rn_GPCRs, Class A Rhodopsin-like
+29358	Rn_GPCRs, Class A Rhodopsin-like
+24175	Rn_GPCRs, Class A Rhodopsin-like
+25354	Rn_GPCRs, Class A Rhodopsin-like
+25354	Rn_GPCRs, Class A Rhodopsin-like
+60448	Rn_GPCRs, Class A Rhodopsin-like
+80840	Rn_GPCRs, Class A Rhodopsin-like
+29581	Rn_GPCRs, Class A Rhodopsin-like
+64354	Rn_GPCRs, Class A Rhodopsin-like
+24448	Rn_GPCRs, Class A Rhodopsin-like
+29310	Rn_GPCRs, Class A Rhodopsin-like
+65032	Rn_GPCRs, Class A Rhodopsin-like
+24613	Rn_GPCRs, Class A Rhodopsin-like
+25601	Rn_GPCRs, Class A Rhodopsin-like
+25601	Rn_GPCRs, Class A Rhodopsin-like
+29335	Rn_GPCRs, Class A Rhodopsin-like
+24816	Rn_GPCRs, Class A Rhodopsin-like
+24929	Rn_GPCRs, Class A Rhodopsin-like
+29363	Rn_GPCRs, Class A Rhodopsin-like
+25726	Rn_GPCRs, Class A Rhodopsin-like
+24182	Rn_GPCRs, Class A Rhodopsin-like
+25689	Rn_GPCRs, Class A Rhodopsin-like
+79247	Rn_GPCRs, Class A Rhodopsin-like
+50577	Rn_GPCRs, Class A Rhodopsin-like
+81752	Rn_GPCRs, Class A Rhodopsin-like
+117097	Rn_GPCRs, Class A Rhodopsin-like
+64636	Rn_GPCRs, Class A Rhodopsin-like
+29471	Rn_GPCRs, Class A Rhodopsin-like
+25340	Rn_GPCRs, Class A Rhodopsin-like
+116677	Rn_GPCRs, Class A Rhodopsin-like
+81644	Rn_GPCRs, Class A Rhodopsin-like
+18442	Rn_GPCRs, Class A Rhodopsin-like
+83518	Rn_GPCRs, Class A Rhodopsin-like
+65275	Rn_GPCRs, Class A Rhodopsin-like
+57302	Rn_GPCRs, Class A Rhodopsin-like
+252859	Rn_GPCRs, Class A Rhodopsin-like
+81657	Rn_GPCRs, Class A Rhodopsin-like
+56813	Rn_GPCRs, Class B Secretin-like
+24953	Rn_GPCRs, Class B Secretin-like
+24875	Rn_GPCRs, Class B Secretin-like
+116506	Rn_GPCRs, Class B Secretin-like
+24167	Rn_GPCRs, Class B Secretin-like
+25051	Rn_GPCRs, Class B Secretin-like
+29555	Rn_GPCRs, Class B Secretin-like
+287001	Rn_GPCRs, Other
+65140	Rn_GPCRs, Other
+65140	Rn_GPCRs, Other
+65140	Rn_GPCRs, Other
+24414	Rn_GPCRs, Other
+29290	Rn_GPCRs, Other
+24326	Rn_GPCRs, Other
+25323	Rn_GPCRs, Other
+25370	Rn_GPCRs, Other
+24875	Rn_GPCRs, Other
+29733	Rn_GPCRs, Other
+25635	Rn_GPCRs, Other
+25273	Rn_GPCRs, Other
+58868	Rn_GPCRs, Other
+64512	Rn_GPCRs, Other
+18387	Rn_GPCRs, Other
+13492	Rn_GPCRs, Other
+116741	Rn_GPCRs, Other
+25698	Rn_Alanine-Aspartate Metabolism
+24792	Rn_Alanine-Aspartate Metabolism
+24401	Rn_Alanine-Aspartate Metabolism
+116483	Rn_Alanine-Aspartate Metabolism
+24379	Rn_Alanine-Aspartate Metabolism
+24295	Rn_C-21 Steroid Hormone Metabolism
+25116	Rn_C-21 Steroid Hormone Metabolism
+29632	Rn_C-21 Steroid Hormone Metabolism
+29632	Rn_C-21 Steroid Hormone Metabolism
+191574	Rn_C-21 Steroid Hormone Metabolism
+171516	Rn_C-21 Steroid Hormone Metabolism
+8317	Rn_Cell cycle
+1871	Rn_Cell cycle
+9088	Rn_Cell cycle
+8556	Rn_Cell cycle
+8555	Rn_Cell cycle
+699	Rn_Cell cycle
+9184	Rn_Cell cycle
+5001	Rn_Cell cycle
+5000	Rn_Cell cycle
+701	Rn_Cell cycle
+50554	Rn_Cell cycle
+10926	Rn_Cell cycle
+8318	Rn_Cell cycle
+58918	Rn_Apoptosis
+64044	Rn_Apoptosis
+116502	Rn_Apoptosis
+64625	Rn_Apoptosis
+63879	Rn_Apoptosis
+29251	Rn_Blood Clotting Cascade
+25692	Rn_Blood Clotting Cascade
+24617	Rn_Blood Clotting Cascade
+60325	Rn_Blood Clotting Cascade
+25619	Rn_Blood Clotting Cascade
+116669	Rn_Blood Clotting Cascade
+84586	Rn_Blood Clotting Cascade
+24232	Rn_Complement Activation, Classical
+29687	Rn_Complement Activation, Classical
+117512	Rn_Complement Activation, Classical
+25712	Rn_Inflammatory Response Pathway
+64638	Rn_Ribosomal Proteins
+140661	Rn_Ribosomal Proteins
+64205	Rn_Ribosomal Proteins
+79449	Rn_Ribosomal Proteins
+83840	Rn_Ribosomal Proteins
+117042	Rn_Ribosomal Proteins
+6169	Rn_Ribosomal Proteins
+25538	Rn_Ribosomal Proteins
+94266	Rn_Ribosomal Proteins
+29283	Rn_Ribosomal Proteins
+83789	Rn_Ribosomal Proteins
+81772	Rn_Ribosomal Proteins
+6147	Rn_Ribosomal Proteins
+317646	Rn_Ribosomal Proteins
+29236	Rn_Ribosomal Proteins
+6135	Rn_Ribosomal Proteins
+58927	Rn_Ribosomal Proteins
+81765	Rn_Ribosomal Proteins
+81768	Rn_Ribosomal Proteins
+29288	Rn_Ribosomal Proteins
+81777	Rn_Ribosomal Proteins
+64302	Rn_Ribosomal Proteins
+81729	Rn_Ribosomal Proteins
+6207	Rn_Ribosomal Proteins
+65043	Rn_Ribosomal Proteins
+81771	Rn_Ribosomal Proteins
+29565	Rn_Translation Factors
+54318	Rn_Translation Factors
+29652	Rn_Translation Factors
+13628	Rn_Translation Factors
+25435	Rn_Translation Factors
+171145	Rn_Translation Factors
+56783	Rn_Translation Factors
+84005	Rn_Translation Factors
+27137	Rn_Translation Factors
+117019	Rn_Translation Factors
+64514	Rn_Translation Factors
+192234	Rn_Translation Factors
+94171	Rn_Translation Factors
+29702	Rn_Translation Factors
+81744	Rn_G Protein Signaling
+117273	Rn_G Protein Signaling
+89788	Rn_G Protein Signaling
+805	Rn_G Protein Signaling
+14683	Rn_G Protein Signaling
+81664	Rn_G Protein Signaling
+50664	Rn_G Protein Signaling
+24680	Rn_G Protein Signaling
+24681	Rn_G Protein Signaling
+24525	Rn_G Protein Signaling
+25643	Rn_G Protein Signaling
+170538	Rn_G Protein Signaling
+29340	Rn_G Protein Signaling
+25522	Rn_G Protein Signaling
+25686	Rn_G Protein Signaling
+29699	Rn_G Protein Signaling
+24679	Rn_G Protein Signaling
+24627	Rn_G Protein Signaling
+25740	Rn_G Protein Signaling
+24675	Rn_G Protein Signaling
+19055	Rn_G Protein Signaling
+64508	Rn_G Protein Signaling
+24782	Rn_G Protein Signaling
+81636	Rn_G Protein Signaling
+54223	Rn_G Protein Signaling
+25636	Rn_G Protein Signaling
+25262	Rn_G Protein Signaling
+50664	Rn_G Protein Signaling
+24611	Rn_G Protein Signaling
+29241	Rn_G Protein Signaling
+58979	Rn_G Protein Signaling
+24525	Rn_G Protein Signaling
+60449	Rn_G Protein Signaling
+24400	Rn_G Protein Signaling
+81667	Rn_G Protein Signaling
+81667	Rn_G Protein Signaling
+14697	Rn_G Protein Signaling
+25725	Rn_G Protein Signaling
+81666	Rn_G Protein Signaling
+29691	Rn_G Protein Signaling
+25289	Rn_G Protein Signaling
+64532	Rn_G Protein Signaling
+24605	Rn_G Protein Signaling
+60323	Rn_G Protein Signaling
+81663	Rn_G Protein Signaling
+81742	Rn_G Protein Signaling
+81749	Rn_G Protein Signaling
+81662	Rn_G Protein Signaling
+117273	Rn_G13 Signaling Pathway 
+83708	Rn_G13 Signaling Pathway 
+805	Rn_G13 Signaling Pathway 
+56781	Rn_G13 Signaling Pathway 
+29271	Rn_G13 Signaling Pathway 
+25272	Rn_G13 Signaling Pathway 
+65172	Rn_G13 Signaling Pathway 
+60323	Rn_G13 Signaling Pathway 
+29433	Rn_G13 Signaling Pathway 
+29741	Rn_G13 Signaling Pathway 
+24547	Rn_MAPK Cascade
+24525	Rn_MAPK Cascade
+24703	Rn_MAPK Cascade
+64363	Rn_MAPK Cascade
+25595	Rn_MAPK Cascade
+24516	Rn_MAPK Cascade
+50689	Rn_MAPK Cascade
+58960	Rn_MAPK Cascade
+25272	Rn_MAPK Cascade
+81649	Rn_MAPK Cascade
+170851	Rn_MAPK Cascade
+24605	Rn_MAPK Cascade
+116667	Rn_MAPK Cascade
+29322	Rn_MAPK Cascade
+29372	Rn_MAPK Cascade
+116720	Rn_S1P Signaling
+81664	Rn_S1P Signaling
+25686	Rn_S1P Signaling
+50689	Rn_S1P Signaling
+58840	Rn_S1P Signaling
+24185	Rn_S1P Signaling
+25233	Rn_S1P Signaling
+29733	Rn_S1P Signaling
+14679	Rn_S1P Signaling
+29414	Rn_S1P Signaling
+60352	Rn_S1P Signaling
+114104	Rn_S1P Signaling
+85435	Rn_TGF Beta Signaling Pathway
+29357	Rn_TGF Beta Signaling Pathway
+50554	Rn_TGF Beta Signaling Pathway
+81516	Rn_TGF Beta Signaling Pathway
+25712	Rn_TGF Beta Signaling Pathway
+25313	Rn_TGF Beta Signaling Pathway
+25353	Rn_TGF Beta Signaling Pathway
+24835	Rn_TGF Beta Signaling Pathway
+59086	Rn_TGF Beta Signaling Pathway
+24516	Rn_TGF Beta Signaling Pathway
+60584	Rn_TGF Beta Signaling Pathway
+29200	Rn_TGF Beta Signaling Pathway
+24617	Rn_TGF Beta Signaling Pathway
+24373	Rn_TGF Beta Signaling Pathway
+50689	Rn_TGF Beta Signaling Pathway
+29610	Rn_TGF Beta Signaling Pathway
+81810	Rn_TGF Beta Signaling Pathway
+50658	Rn_TGF Beta Signaling Pathway
+25125	Rn_TGF Beta Signaling Pathway
+29591	Rn_TGF Beta Signaling Pathway
+25671	Rn_TGF Beta Signaling Pathway
+25296	Rn_TGF Beta Signaling Pathway
+25495	Rn_TGF Beta Signaling Pathway
+81736	Rn_TGF Beta Signaling Pathway
+25124	Rn_TGF Beta Signaling Pathway
+161452	Rn_TGF Beta Signaling Pathway
+1876	Rn_Cell cycle
+9133	Rn_Cell cycle
+9232	Rn_Cell cycle
+10744	Rn_Cell cycle
+26255	Rn_Cell cycle
+11200	Rn_Cell cycle
+9134	Rn_Cell cycle
+25	Rn_Cell cycle
+25737	Rn_Cell cycle
+983	Rn_Cell cycle
+24842	Rn_Cell cycle
+59086	Rn_Cell cycle
+84027	Rn_Cell cycle
+890	Rn_Cell cycle
+5299	Rn_Cell cycle
+4172	Rn_Cell cycle
+5933	Rn_Cell cycle
+5933	Rn_Cell cycle
+25203	Rn_Cell cycle
+995	Rn_Cell cycle
+24708	Rn_Cell cycle
+4173	Rn_Cell cycle
+4174	Rn_Cell cycle
+4176	Rn_Cell cycle
+94201	Rn_Cell cycle
+1026	Rn_Cell cycle
+25729	Rn_Cell cycle
+54237	Rn_Cell cycle
+1029	Rn_Cell cycle
+1027	Rn_Cell cycle
+25112	Rn_Cell cycle
+25193	Rn_Cell cycle
+171102	Rn_Cell cycle
+171103	Rn_Cell cycle
+4171	Rn_Cell cycle
+5347	Rn_Cell cycle
+8900	Rn_Cell cycle
+5591	Rn_Cell cycle
+4193	Rn_Cell cycle
+64033	Rn_Cell cycle
+2033	Rn_Cell cycle
+991	Rn_Cell cycle
+4085	Rn_Cell cycle
+6502	Rn_Cell cycle
+8379	Rn_Cell cycle
+472	Rn_Cell cycle
+4998	Rn_Cell cycle
+4999	Rn_Cell cycle
+1870	Rn_Cell cycle
+9700	Rn_Cell cycle
+8243	Rn_Cell cycle
+1874	Rn_Cell cycle
+29685	Rn_Cell cycle
+116651	Rn_Cell cycle
+1111	Rn_Cell cycle
+990	Rn_Cell cycle
+1021	Rn_Cell cycle
+10013	Rn_Cell cycle
+10014	Rn_Cell cycle
+9759	Rn_Cell cycle
+8841	Rn_Cell cycle
+3066	Rn_Cell cycle
+3065	Rn_Cell cycle
+55869	Rn_Cell cycle
+51564	Rn_Cell cycle
+51270	Rn_Cell cycle
+83502	Rn_Cell cycle
+84389	Rn_Cell cycle
+23595	Rn_Cell cycle
+10459	Rn_Cell cycle
+23594	Rn_Cell cycle
+89784	Rn_Cholesterol biosynthesis
+83791	Rn_Cholesterol biosynthesis
+83791	Rn_Cholesterol biosynthesis
+81727	Rn_Cholesterol biosynthesis
+25675	Rn_Cholesterol biosynthesis
+29230	Rn_Cholesterol biosynthesis
+29580	Rn_Cholesterol biosynthesis
+81681	Rn_Cholesterol biosynthesis
+81726	Rn_Cholesterol biosynthesis
+117278	Rn_Cholesterol biosynthesis
+64191	Rn_Cholesterol biosynthesis
+24533	Rn_Cysteine Metabolism
+25044	Rn_Cysteine Metabolism
+24401	Rn_Cysteine Metabolism
+81718	Rn_Cysteine Metabolism
+192172	Rn_Cysteine Metabolism
+24956	Rn_Glutamate Metabolism
+24957	Rn_Glutamate Metabolism
+24399	Rn_Glutamate Metabolism
+24401	Rn_Glutamate Metabolism
+24379	Rn_Glutamate Metabolism
+81670	Rn_Glutamate Metabolism
+192268	Rn_Glutamate Metabolism
+117544	Rn_Glutamate Metabolism
+25458	Rn_Glutamate Metabolism
+29739	Rn_Glutamate Metabolism
+81632	Rn_Glutamate Metabolism
+29505	Rn_Glutamate Metabolism
+81508	Rn_Methionine Metabolism
+29443	Rn_Methionine Metabolism
+25331	Rn_Methionine Metabolism
+24962	Rn_Methionine Metabolism
+24250	Rn_Methionine Metabolism
+25014	Rn_Synthesis and Degradation of Ketone Bodies
+24450	Rn_Synthesis and Degradation of Ketone Bodies
+117099	Rn_Synthesis and Degradation of Ketone Bodies
+79238	Rn_Synthesis and Degradation of Ketone Bodies
+58868	Rn_Wnt Signaling
+64512	Rn_Wnt Signaling
+81749	Rn_Wnt Signaling
+84426	Rn_Wnt Signaling
+64566	Rn_Wnt Signaling
+64558	Rn_Wnt Signaling
+84353	Rn_Wnt Signaling
+83721	Rn_Wnt Signaling
+117029	Rn_GPCRs, Class A Rhodopsin-like
+60628	Rn_GPCRs, Class A Rhodopsin-like
+60628	Rn_GPCRs, Class A Rhodopsin-like
+29234	Rn_GPCRs, Class A Rhodopsin-like
+140473	Rn_GPCRs, Class A Rhodopsin-like
+89810	Rn_GPCRs, Class A Rhodopsin-like
+60669	Rn_GPCRs, Class A Rhodopsin-like
+117027	Rn_GPCRs, Class A Rhodopsin-like
+60463	Rn_GPCRs, Class A Rhodopsin-like
+84007	Rn_GPCRs, Class A Rhodopsin-like
+29235	Rn_GPCRs, Class A Rhodopsin-like
+84348	Rn_GPCRs, Class A Rhodopsin-like
+25229	Rn_GPCRs, Class A Rhodopsin-like
+25083	Rn_GPCRs, Class A Rhodopsin-like
+29413	Rn_GPCRs, Class A Rhodopsin-like
+25264	Rn_GPCRs, Class A Rhodopsin-like
+25245	Rn_GPCRs, Class A Rhodopsin-like
+24180	Rn_GPCRs, Class A Rhodopsin-like
+25461	Rn_GPCRs, Class A Rhodopsin-like
+25645	Rn_GPCRs, Class A Rhodopsin-like
+25075	Rn_GPCRs, Class A Rhodopsin-like
+25323	Rn_GPCRs, Class A Rhodopsin-like
+25033	Rn_GPCRs, Class A Rhodopsin-like
+25370	Rn_GPCRs, Class A Rhodopsin-like
+81638	Rn_GPCRs, Class A Rhodopsin-like
+29316	Rn_GPCRs, Class A Rhodopsin-like
+25369	Rn_GPCRs, Class A Rhodopsin-like
+24889	Rn_GPCRs, Class A Rhodopsin-like
+25706	Rn_GPCRs, Class A Rhodopsin-like
+25107	Rn_GPCRs, Class A Rhodopsin-like
+54305	Rn_GPCRs, Class A Rhodopsin-like
+25432	Rn_GPCRs, Class A Rhodopsin-like
+171044	Rn_GPCRs, Class A Rhodopsin-like
+25555	Rn_GPCRs, Class A Rhodopsin-like
+29256	Rn_GPCRs, Class A Rhodopsin-like
+29385	Rn_GPCRs, Class A Rhodopsin-like
+171056	Rn_GPCRs, Class A Rhodopsin-like
+29597	Rn_GPCRs, Class A Rhodopsin-like
+84023	Rn_GPCRs, Class A Rhodopsin-like
+25652	Rn_GPCRs, Class A Rhodopsin-like
+29412	Rn_GPCRs, Class A Rhodopsin-like
+58949	Rn_GPCRs, Class A Rhodopsin-like
+29462	Rn_GPCRs, Class A Rhodopsin-like
+114211	Rn_GPCRs, Class A Rhodopsin-like
+25265	Rn_GPCRs, Class A Rhodopsin-like
+24717	Rn_GPCRs, Class A Rhodopsin-like
+24938	Rn_GPCRs, Class A Rhodopsin-like
+25342	Rn_GPCRs, Class A Rhodopsin-like
+140664	Rn_GPCRs, Class A Rhodopsin-like
+25637	Rn_GPCRs, Class A Rhodopsin-like
+113959	Rn_GPCRs, Class A Rhodopsin-like
+81509	Rn_GPCRs, Class A Rhodopsin-like
+25570	Rn_GPCRs, Class A Rhodopsin-like
+25324	Rn_GPCRs, Class A Rhodopsin-like
+58959	Rn_GPCRs, Class B Secretin-like
+64680	Rn_GPCRs, Class B Secretin-like
+25321	Rn_GPCRs, Class B Secretin-like
+25029	Rn_GPCRs, Class B Secretin-like
+286915	Rn_GPCRs, Class C Metabotropic glutamate, pheromon
+286981	Rn_GPCRs, Class C Metabotropic glutamate, pheromon
+266778	Rn_GPCRs, Class C Metabotropic glutamate, pheromon
+24414	Rn_GPCRs, Class C Metabotropic glutamate, pheromon
+24416	Rn_GPCRs, Class C Metabotropic glutamate, pheromon
+24247	Rn_GPCRs, Class C Metabotropic glutamate, pheromon
+60590	Rn_GPCRs, Class C Metabotropic glutamate, pheromon
+81657	Rn_GPCRs, Class C Metabotropic glutamate, pheromon
+24176	Rn_GPCRs, Other
+24808	Rn_GPCRs, Other
+24925	Rn_GPCRs, Other
+24316	Rn_GPCRs, Other
+24473	Rn_GPCRs, Other
+287000	Rn_GPCRs, Other
+59085	Rn_Alanine-Aspartate Metabolism
+81670	Rn_Alanine-Aspartate Metabolism
+25612	Rn_Alanine-Aspartate Metabolism
+81632	Rn_Alanine-Aspartate Metabolism
+25104	Rn_Alanine-Aspartate Metabolism
+83784	Rn_Alanine-Aspartate Metabolism
+79251	Rn_Alanine-Aspartate Metabolism
+113992	Rn_Androgen and Estrogen Metabolism
+24800	Rn_Androgen and Estrogen Metabolism
+29632	Rn_Androgen and Estrogen Metabolism
+29632	Rn_Androgen and Estrogen Metabolism
+24861	Rn_Androgen and Estrogen Metabolism
+154516	Rn_Androgen and Estrogen Metabolism
+154516	Rn_Androgen and Estrogen Metabolism
+25146	Rn_C-21 Steroid Hormone Metabolism
+29680	Rn_C-21 Steroid Hormone Metabolism
