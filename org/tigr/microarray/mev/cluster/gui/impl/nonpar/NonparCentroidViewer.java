@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: NonparCentroidViewer.java,v $
- * $Revision: 1.1 $
- * $Date: 2007-09-13 18:43:18 $
- * $Author: braistedj $
+ * $Revision: 1.2 $
+ * $Date: 2007-12-17 22:10:37 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.nonpar;
@@ -16,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.Expression;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -36,12 +37,12 @@ public class NonparCentroidViewer extends CentroidViewer {
      * and clusters.
      */
     public NonparCentroidViewer(Experiment experiment, int[][] clusters, String [] auxTitles, String [][] auxData) {
-	super(experiment, clusters);
-	Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
-	getContentComponent().addMouseListener(listener);
-    this.auxTitles = auxTitles;
-    this.auxData = auxData;
+		super(experiment, clusters);
+		Listener listener = new Listener();
+		this.popup = createJPopupMenu(listener);
+		getContentComponent().addMouseListener(listener);
+	    this.auxTitles = auxTitles;
+	    this.auxData = auxData;
     }
     /**
      * Used by XMLDecoder when reconstructing this class from saved file.  Signature
@@ -58,6 +59,10 @@ public class NonparCentroidViewer extends CentroidViewer {
     	getContentComponent().addMouseListener(listener);
         this.auxTitles = auxTitles;
         this.auxData = auxData;
+    }
+    public Expression getExpression() {
+    	return new Expression(this, this.getClass(), "new",
+				new Object[]{experiment, clusters, variances, means, codes, auxTitles, auxData});
     }
        
     /**
