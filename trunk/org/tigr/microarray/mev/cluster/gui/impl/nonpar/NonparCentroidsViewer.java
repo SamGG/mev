@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: NonparCentroidsViewer.java,v $
- * $Revision: 1.1 $
- * $Date: 2007-09-13 18:43:18 $
- * $Author: braistedj $
+ * $Revision: 1.2 $
+ * $Date: 2007-12-17 22:10:37 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.nonpar;
@@ -16,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.Expression;
 
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -62,6 +63,10 @@ public class NonparCentroidsViewer extends CentroidsViewer {
         this.auxData = auxData;
     }
     
+    public Expression getExpression() {
+		return new Expression(this, this.getClass(), "new",
+				new Object[]{getCentroidViewer(), auxTitles, auxData});
+    }
     
     /**
      * Creates a popup menu.

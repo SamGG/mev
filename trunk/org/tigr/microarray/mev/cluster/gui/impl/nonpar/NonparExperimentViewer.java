@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: NonparExperimentViewer.java,v $
- * $Revision: 1.1 $
- * $Date: 2007-09-13 18:43:18 $
- * $Author: braistedj $
+ * $Revision: 1.2 $
+ * $Date: 2007-12-17 22:10:37 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.nonpar;
@@ -17,6 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.Expression;
 
 import javax.swing.JColorChooser;
 import javax.swing.JOptionPane;
@@ -57,6 +58,19 @@ public class NonparExperimentViewer extends ExperimentViewer {
     	this.auxTitles = auxTitles;
     }
 
+    public Expression getExpression() {
+    	Expression e = super.getExpression();
+    	Object[] args = e.getArguments();
+    	Object[] temp = new Object[args.length+2];
+    	int i = 0;
+    	for(; i<args.length; i++) {
+    		temp[i] = args[i];
+    	}
+    	temp[i] = auxTitles;
+    	temp[i+1] = auxData;
+    	return new Expression(this, this.getClass(), "new", temp);
+    }
+    
     /**
      * Constructs a <code>KMCExperimentViewer</code> with specified
      * experiment and clusters.
