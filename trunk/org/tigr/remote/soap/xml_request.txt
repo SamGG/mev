@@ -1,0 +1,22 @@
+apache.axis2
+<?xml version='1.0' encoding='UTF-8'?>
+  <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+    <soapenv:Body>
+      <rsrcSOAP:http://web-dev.dfci.harvard.edu/rsrcSOAP#getLastUpdate xmlns:rsrcSOAP="http://web-dev.dfci.harvard.edu/rsrcSOAP" />
+    </soapenv:Body>
+  </soapenv:Envelope>
+
+<?xml version='1.0' encoding='UTF-8'?>
+  <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+    <soapenv:Body>
+      <namesp1:getLastUpdate xmlns:namesp1="http://web-dev.dfci.harvard.edu/rsrcSOAP" />
+    </soapenv:Body>
+  </soapenv:Envelope> 
+
+SOAP::Lite (perl) 
+<?xml version="1.0" encoding="UTF-8"?>
+  <SOAP-ENV:Envelope xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/1999/XMLSchema" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+    <SOAP-ENV:Body>
+      <namesp1:getLastUpdate xmlns:namesp1="http://web-dev.dfci.harvard.edu/rsrcSOAP"/>
+    </SOAP-ENV:Body>
+  </SOAP-ENV:Envelope>
