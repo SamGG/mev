@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: InfoDisplay.java,v $
- * $Revision: 1.12 $
- * $Date: 2006-03-24 15:49:44 $
- * $Author: eleanorahowe $
+ * $Revision: 1.13 $
+ * $Date: 2007-12-19 21:39:34 $
+ * $Author: saritanair $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -35,14 +35,21 @@ import org.tigr.graph.GraphLine;
 import org.tigr.graph.GraphPoint;
 import org.tigr.graph.GraphTick;
 import org.tigr.graph.GraphViewer;
+import org.tigr.microarray.mev.annotation.AnnoAttributeObj;
+import org.tigr.microarray.mev.annotation.IAnnotation;
+import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.util.Xcon;
 import org.tigr.util.awt.ActionInfoDialog;
 import org.tigr.util.awt.GBA;
 
-public class InfoDisplay extends ActionInfoDialog {
+public class InfoDisplay extends ActionInfoDialog  {
     
-    private int feature;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private int feature;
     private int probe;
     private MultipleArrayData data;
     private ISlideData slideData;
@@ -82,6 +89,8 @@ public class InfoDisplay extends ActionInfoDialog {
         JEditorPane infoDisplayTextPane = new JEditorPane();
         infoDisplayTextPane.setContentType("text/html");
         
+        
+        
         infoDisplayTextPane.setFont(infoDisplayFont);
         infoDisplayTextPane.setBackground(new Color(Integer.parseInt("FFFFCC",16)));
         infoDisplayTextPane.setEditable(false);
@@ -89,7 +98,8 @@ public class InfoDisplay extends ActionInfoDialog {
         infoDisplayTextPane.setText(createMessage(element));
         infoDisplayTextPane.setCaretPosition(0);
         
-        infoDisplayTextPane.addKeyListener(listener);
+        
+        
         
         JButton viewGeneGraphButton = new JButton("Gene Graph");
         viewGeneGraphButton.setActionCommand("view-gene-graph");
@@ -344,9 +354,12 @@ public class InfoDisplay extends ActionInfoDialog {
      **/
     
     private String createMessage(ISlideDataElement element) {
+    	
+    	
         int stringLength = 0;
         int trueRow = element.getRow(ISlideDataElement.BASE);
         int trueColumn = element.getColumn(ISlideDataElement.BASE);
+        
         float cy3 = this.slideData.getCY3(this.probe);
         float cy5 = this.slideData.getCY5(this.probe);
         
@@ -418,27 +431,64 @@ public class InfoDisplay extends ActionInfoDialog {
         }
       //  message += "</table>";
         
-        //gene annotation
-        //EH fieldnames are loaded into SlideData instead of TMEV
-//        String[] fieldNames = TMEV.getFieldNames();
-        String[] fieldNames = slideData.getSlideMetaData().getFieldNames();
-        if(fieldNames != null && fieldNames.length > 0){
-            message += "<th colspan=2 align=left valign=center><font size=6>Gene Annotation</font></th>";
-            for (int i = 0; i < fieldNames.length; i++) {                
-                
-              //pcahan change to call getDetection on the element rather than the field  
-              if(fieldNames[i].equals("Detection")){
-                message += "<tr valign=top><td><i>" + fieldNames[i] + "</i></td><td>" + element.getDetection() + "</td></tr>";
-              }
-              else if(fieldNames[i].equals("P-value")){
-            	  message += "<tr valign=top><td><i>" + fieldNames[i] + "</i></td><td>" + element.getPvalue() + "</td></tr>";;
-              }else{
-                message += "<tr valign=top><td><i>" + fieldNames[i] + "</i></td><td>" + element.getFieldAt(i) + "</td></tr>";  
-              }               
-           }
-          //  message += "</table>";
-        }
         
+        /**
+         * Added by Sarita
+         * This loop was introduced to enable display of annotation loaded in the MevAnnotation object
+         * in the Spot Information box.
+         * This has been implemented such that the static boolean variable "isAnnotationLoaded" is first checked,
+         * to ensure that annotation has been loaded. If so, the Spot Information box displays
+         * all the available annotation for that spot present in the MevAnnotation object.
+         * 
+         * If Annotation has not been loaded, then the information in "ExtraFields" is displayed.
+         * "Extra Fields" has a subset of information present in MevAnnnotation.
+         * 
+         * 
+         * 
+         */
+       
+        String[] fieldNames = slideData.getSlideMetaData().getFieldNames();
+        if(data.isAnnotationLoaded()) {
+        	
+        	message += "<th colspan=2 align=left valign=center><font size=6>Gene Annotation</font></th>";
+        	
+        	for (int i = 0; i < MevAnnotation.getFieldNames().length; i++) {                
+        		IAnnotation anno=element.getElementAnnotation();
+        		String[]annotations=data.getElementAnnotation(this.probe, MevAnnotation.getFieldNames()[i]); 
+        		System.out.println("InfoDisplay:annotations"+annotations[0]);
+        		if(annotations.length>1) {
+        			message += "<tr valign=top><td><i>" + "<html><font color=#0000ff><u>"+MevAnnotation.getFieldNames()[i]+"</u></font></html>" + "</i></td><td>" + ((AnnoAttributeObj)data.getElementAnnotationObject(i, MevAnnotation.getFieldNames()[i])).toString() + "</td></tr>";
+        		System.out.println("annotation size is >1:");
+        		}
+        		else
+        			
+        		message += "<tr valign=top><td><i>" + "<html><font color=#0000ff><u>"+MevAnnotation.getFieldNames()[i] +"</i></td><td>" + annotations[0]+"</u></font></html>" +"</td></tr>";
+        		
+        	}               
+        }
+
+
+
+        else {
+        if(fieldNames != null && fieldNames.length > 0){
+
+        	message += "<th colspan=2 align=left valign=center><font size=6>Gene Annotation</font></th>";
+        	for (int i = 0; i < fieldNames.length; i++) {                
+
+        		//pcahan change to call getDetection on the element rather than the field  
+        		if(fieldNames[i].equals("Detection")){
+        			message += "<tr valign=top><td><i>" + fieldNames[i] + "</i></td><td>" + element.getDetection() + "</td></tr>";
+        		}
+        		else if(fieldNames[i].equals("P-value")){
+        			message += "<tr valign=top><td><i>" + fieldNames[i] + "</i></td><td>" + element.getPvalue() + "</td></tr>";;
+        		}else{
+        			message += "<tr valign=top><td><i>" + fieldNames[i] + "</i></td><td>" + element.getFieldAt(i) + "</td></tr>";  
+        		}               
+        	}
+
+        }
+        }
+
         //spot specific information
         SpotInformationData spotData = this.slideData.getSpotInformationData();
         if(spotData != null){
@@ -573,7 +623,7 @@ public class InfoDisplay extends ActionInfoDialog {
         graph.setVisible(true);
     }
     
-    class EventListener implements ActionListener, KeyListener {
+    class EventListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
             String command = event.getActionCommand();
             if (command.equals("close"))
@@ -588,15 +638,8 @@ public class InfoDisplay extends ActionInfoDialog {
                 dispose();
             } else if (command.equals("set-color")) {
             }
+            		
         }
-        
-        public void keyPressed(KeyEvent event) {
-            if (event.getKeyCode() == KeyEvent.VK_ENTER) {
-                dispose();
-            }
-        }
-        
-        public void keyReleased(KeyEvent event) {}
-        public void keyTyped(KeyEvent event) {}
-    }
+
+    }	     
 }

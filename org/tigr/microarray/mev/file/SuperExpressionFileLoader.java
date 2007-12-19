@@ -4,9 +4,9 @@
  */
 /*
  * $RCSfile: SuperExpressionFileLoader.java,v $
- * $Revision: 1.17 $
- * $Date: 2007-02-07 19:17:09 $
- * $Author: wwang67 $
+ * $Revision: 1.18 $
+ * $Date: 2007-12-19 21:39:37 $
+ * $Author: saritanair $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.file;
@@ -40,10 +40,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.BevelBorder;
 import javax.swing.filechooser.FileFilter;
 
-import org.tigr.microarray.mev.AcknowlegementDialog;
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.MultipleArrayViewer;
 import org.tigr.microarray.mev.TMEV;
@@ -51,13 +52,14 @@ import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindowDialog;
 import org.tigr.microarray.mev.file.agilent.AgilentMevFileLoader;
+import org.tigr.microarray.mev.file.agilent.AgilentMevFileLoader;
 
 // Loads expression data in various file formats
 
 public class SuperExpressionFileLoader {
 
 	public static String DATA_PATH = TMEV.getDataPath();
-
+	
 	public final static ImageIcon ICON_COMPUTER = new ImageIcon(Toolkit
 			.getDefaultToolkit().getImage(
 					SuperExpressionFileLoader.class.getClassLoader()
@@ -91,7 +93,11 @@ public class SuperExpressionFileLoader {
 	protected JPanel fileFilterPanel;
 
 	protected JLabel fileFilterLabel;
-
+	//Added by Sarita
+	protected JLabel fileType;
+	protected JComboBox fileTypeList;
+	//
+	
 	protected JComboBox fileFilterComboBox;
 
 	protected JPanel fileLoaderPanel;
@@ -118,12 +124,17 @@ public class SuperExpressionFileLoader {
 
 	protected int loaderIndex = 0;
 	protected JMenuBar menuBar;
-	protected JMenu menu1,menu2;
+	protected JMenu menu1,menu2, menu3, menu4;
+	//Added by Sarita
+	protected JMenu helpMenu;
+	//
 	protected JMenuItem menuItem[];
 	protected JMenuItem subMenuItem[];
 	protected JTextField filetype=null;
 	
 	public SuperExpressionFileLoader(MultipleArrayViewer viewer) {
+	
+
 		this.viewer = viewer;
 		loader = new Loader();
 		initializeDataPath();
@@ -132,7 +143,7 @@ public class SuperExpressionFileLoader {
 	}
 
 	public SuperExpressionFileLoader() {
-		// this.viewer = viewer;
+		
 		loader = new Loader();
 		initializeFileLoaders();
 		initializeGUI();
@@ -142,10 +153,11 @@ public class SuperExpressionFileLoader {
 
 		int defaultSelection = 0;
 
-
-		fileLoaders = new ExpressionFileLoader[13];
+		//Added by Sarita: Changed file loaders from 13 to 14
+		fileLoaders = new ExpressionFileLoader[15];
+		
 		fileLoaders[0] = new StanfordFileLoader(this);
-
+		
 		fileLoaders[1] = null;
 		fileLoaders[2] = null;
 		fileLoaders[3] = null;
@@ -158,6 +170,9 @@ public class SuperExpressionFileLoader {
 		fileLoaders[10] = null;
 		fileLoaders[11] = null; /* Raktim, CGH Loader */
 		fileLoaders[12] = null;
+		//Added by Sarita
+		fileLoaders[13] = null;
+		fileLoaders[14] = null;
 		
 		selectedFileLoader = fileLoaders[defaultSelection];
 
@@ -178,7 +193,7 @@ public class SuperExpressionFileLoader {
 	}
 	public void menuItem(JMenu jItem,final String st){
 		menuItem=new JMenuItem[6];
-		menuItem[0]= new JMenuItem("Tab Delimited, Multiple Sample Files (TDMS) (*.*)");
+		menuItem[0]= new JMenuItem("Tab Delimited, Multiple Sample Files");
 		
 		menuItem[0].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
@@ -186,7 +201,7 @@ public class SuperExpressionFileLoader {
 					helpWindow("TDMS");
 				}else{
 				changeSelectedFileFilterAndLoader(0);
-				filetype.setText("Tab Delimited, Multiple Sample Files (TDMS) (*.*)");
+				
 				}
 			}
 		});
@@ -201,7 +216,7 @@ public class SuperExpressionFileLoader {
 				  HelpWindowDialog hwd= new HelpWindowDialog(mainFrame,HelpWindowDialog.createText("Mev"));
 				}else{
 				changeSelectedFileFilterAndLoader(1);
-				filetype.setText("MeV Files(*.mev)");
+				//filetype.setText("MeV Files(*.mev)");
 				}
 			}
 		});
@@ -214,7 +229,7 @@ public class SuperExpressionFileLoader {
 					  HelpWindowDialog hwd =new HelpWindowDialog(mainFrame,HelpWindowDialog.createText("Tav"));
 					}else{
 				changeSelectedFileFilterAndLoader(2);
-				filetype.setText("TIGR ArrayViewer Files(*.tav)");
+				//filetype.setText("TIGR ArrayViewer Files(*.tav)");
 			}
 			}
 		});
@@ -231,8 +246,8 @@ public class SuperExpressionFileLoader {
 				if(st=="File Format Hint"){
 					  helpWindow("GCOS");
 					}else{
-				changeSelectedFileFilterAndLoader(7);
-				filetype.setText("Affymetrix GCOS(using MAS5)Files");
+				changeSelectedFileFilterAndLoader(3);
+				//filetype.setText("Affymetrix GCOS(using MAS5)Files");
 					}
 			}
 		});
@@ -245,8 +260,8 @@ public class SuperExpressionFileLoader {
 				if(st=="File Format Hint"){
 					  helpWindow("dChip");
 					}else{
-				changeSelectedFileFilterAndLoader(10);
-				filetype.setText("dChip/DFCI_Core Format Files");
+				changeSelectedFileFilterAndLoader(4);
+				//filetype.setText("dChip/DFCI_Core Format Files");
 			}
 			}
 		});
@@ -258,8 +273,8 @@ public class SuperExpressionFileLoader {
 				if(st=="File Format Hint"){
 					  helpWindow("GW");
 					}else{
-				changeSelectedFileFilterAndLoader(6);
-				filetype.setText("GW Affymetrix Files");
+				changeSelectedFileFilterAndLoader(5);
+				//filetype.setText("GW Affymetrix Files");
 			}
 			}
 		});
@@ -271,8 +286,8 @@ public class SuperExpressionFileLoader {
 				if(st=="File Format Hint"){
 					  helpWindow("bioconductor");
 				}else{
-				changeSelectedFileFilterAndLoader(5);
-				filetype.setText("Bioconductor(using MAS5) Files");
+				changeSelectedFileFilterAndLoader(6);
+				//filetype.setText("Bioconductor(using MAS5) Files");
 			}
 		}
 		});
@@ -283,54 +298,83 @@ public class SuperExpressionFileLoader {
 				if(st=="File Format Hint"){
 					  helpWindow("RMA");
 				}else{
-				changeSelectedFileFilterAndLoader(12);
-				filetype.setText("RMA Files");
+				changeSelectedFileFilterAndLoader(7);
+				//filetype.setText("RMA Files");
 			}
 		}
 		});
 		
 		jItem.add(menuItem[2]);
 	
-		menuItem[3] = new JMenuItem("CGH");
+		menuItem[3] = new JMenuItem("CGH Tab Delimited, Multiple Sample");
 		menuItem[3].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				if(st=="File Format Hint"){
 					  helpWindow("CGH");
 				}else{
-				changeSelectedFileFilterAndLoader(11);
-				filetype.setText("CGH Files");
+				changeSelectedFileFilterAndLoader(8);
+				//filetype.setText("CGH Files");
 			}
 		}
 		});
 		jItem.add(menuItem[3]);
 		
 		menuItem[4]= new JMenu("GEO Files");
-		subMenuItem= new JMenuItem[2];
-		subMenuItem[0]=new JMenuItem("GEO SOFT Affymetrix Format Files");
+		//Added by Sarita:Submenu items increased to 4
+		subMenuItem= new JMenuItem[4];
+		subMenuItem[0]=new JMenuItem("GPL Family Format Files (Affymetrix)");
 		subMenuItem[0].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				if(st=="File Format Hint"){
 					HelpWindowDialog hwd =new HelpWindowDialog(mainFrame,HelpWindowDialog.createText("GEOaffy"));
 				}else{
-				changeSelectedFileFilterAndLoader(8);
-				filetype.setText("GEO SOFT Affymetrix Format Files");
+				changeSelectedFileFilterAndLoader(9);
+				//filetype.setText("GEO SOFT Affymetrix Format Files");
 			}
 			}
 		});
 		menuItem[4].add(subMenuItem[0]);
 		
-		subMenuItem[1]=new JMenuItem("GEO SOFT Two Channel Format Files");
+		subMenuItem[1]=new JMenuItem("GPL Family Format Files (Two Channel)");
 		subMenuItem[1].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				if(st=="File Format Hint"){
 					HelpWindowDialog hwd =new HelpWindowDialog(mainFrame,HelpWindowDialog.createText("GEOtwo"));
 				}else{
-				changeSelectedFileFilterAndLoader(9);
-				filetype.setText("GEO SOFT Two Channel Format Files");
+				changeSelectedFileFilterAndLoader(10);
+				//filetype.setText("GEO SOFT Two Channel Format Files");
 			}
 		}
 		});
 		menuItem[4].add(subMenuItem[1]);
+		
+	//Added by Sarita	
+		
+		subMenuItem[2]=new JMenuItem("GEO Series Matrix Files");
+		subMenuItem[2].addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				if(st=="File Format Hint"){
+					HelpWindowDialog hwd =new HelpWindowDialog(mainFrame,HelpWindowDialog.createText("GEOSeriesMatrix"));
+				}else{
+				changeSelectedFileFilterAndLoader(13);
+				//filetype.setText("GEO SOFT Two Channel Format Files");
+			}
+		}
+		});
+		menuItem[4].add(subMenuItem[2]);
+	
+		subMenuItem[3]=new JMenuItem("GEO GDS Format Files");
+		subMenuItem[3].addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				if(st=="File Format Hint"){
+					HelpWindowDialog hwd =new HelpWindowDialog(mainFrame,HelpWindowDialog.createText("GEO GDS Format Files"));
+				}else{
+				changeSelectedFileFilterAndLoader(14);
+				//filetype.setText("GEO SOFT Two Channel Format Files");
+			}
+		}
+		});
+		menuItem[4].add(subMenuItem[3]);
 		
 		jItem.add(menuItem[4]);
 		
@@ -343,21 +387,21 @@ public class SuperExpressionFileLoader {
 				if(st=="File Format Hint"){
 					HelpWindowDialog hwd =new HelpWindowDialog(mainFrame,HelpWindowDialog.createText("GenePix"));
 				}else{
-				changeSelectedFileFilterAndLoader(3);
-				filetype.setText("GenePix Format Files");
+				changeSelectedFileFilterAndLoader(11);
+			//	filetype.setText("GenePix Format Files");
 			}
 		}
 		});
 		menuItem[5].add(subMenuItem[0]);
 		
-		subMenuItem[1]=new JMenuItem("Agilent Format Files");
+		subMenuItem[1]=new JMenuItem("Agilent Files");
 		subMenuItem[1].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				if(st=="File Format Hint"){
 					HelpWindowDialog hwd =new HelpWindowDialog(mainFrame,HelpWindowDialog.createText("Agilent"));
 				}else{
-				changeSelectedFileFilterAndLoader(4);
-				filetype.setText("Agilent Format Files");
+				changeSelectedFileFilterAndLoader(12);
+				//filetype.setText("Agilent Format Files");
 			}
 		}
 		});
@@ -367,42 +411,61 @@ public class SuperExpressionFileLoader {
 		
 	}
 	public void initializeGUI() {
+		
+		try {
+			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
 		gba = new GBA();
 		eventListener = new EventListener();
 
 		mainFrame = new JFrame("Expression File Loader");
+		//mainFrame.getContentPane().setBackground(new Color(220, 220, 220));
 		mainFrame.getContentPane().setLayout(new GridBagLayout());
 
 		menuBar = new JMenuBar();
 		
-		menu1 = new JMenu("Select");
+	//Commented by Sarita	
+		menu1 = new JMenu("Select File Loader");
 		menu1.setMnemonic(KeyEvent.VK_S);
 		menuItem(menu1,"Select Expression File Type");
 		menuBar.add(menu1);
 		
-		menu2 = new JMenu("File Format Descriptions");
-		menu1.setMnemonic(KeyEvent.VK_H);
+	/*	menu3 = new JMenu("  ");
+		menu3.setMnemonic(KeyEvent.VK_S);
+		menuItem(menu3,"Select Expression File Type");
+		menuBar.add(menu1);
+		
+		
+		menu4 = new JMenu("  ");
+		menu4.setMnemonic(KeyEvent.VK_S);
+		menuItem(menu4,"Select Expression File Type");
+		menuBar.add(menu1);*/
+		
+		
+		menu2 = new JMenu("Help");
+		menu2.setMnemonic(KeyEvent.VK_H);
 		menuItem(menu2,"File Format Hint");
 		menuBar.add(menu2);
 		menuBar.setBorderPainted(true);
 		mainFrame.setJMenuBar(menuBar);
 		
-		//HeaderImagePanel header = new HeaderImagePanel();
-		fileFilterLabel = new JLabel("Selected File Type:");
-		filetype=new JTextField("Default:Tab Delimited, Multiple Sample Files (TDMS) (*.*)");
-		filetype.setEditable(false);
-		fileFilterPanel = new JPanel();
-		fileFilterPanel.setLayout(new GridBagLayout());
-		//gba.add(fileFilterPanel, menuBar, 0, 0, 1, 1, 0, 0, GBA.H,
-			//	GBA.NE, new Insets(5, 5, 5, 5), 0, 0);
-		gba.add(fileFilterPanel, fileFilterLabel, 0, 0, 1, 1, 0, 0, GBA.H,
-				GBA.E, new Insets(5, 5, 5, 5), 0, 0);
-		gba.add(fileFilterPanel, filetype, 1, 0, 1, 1, 1, 0, GBA.H,
-				GBA.E, new Insets(5, 5, 5, 5), 0, 0);
+		
+		fileFilterLabel=new JLabel();
+	
+			
 		fileLoaderPanel = selectedFileLoader.getFileLoaderPanel();
-		fileLoaderPanel.setSize(new Dimension(600, 600));
-		fileLoaderPanel.setPreferredSize(new Dimension(600, 600));
-
+	//	fileLoaderPanel.setSize(new Dimension(600, 600));// commented by sarita, temporarily
+		//fileLoaderPanel.setPreferredSize(new Dimension(600, 600));// commented temporarily by sarita
+		//fileLoaderPanel.setSize(new Dimension(650, 650)); //Works except when you add more stuff to AnnotationPanel
+		//fileLoaderPanel.setPreferredSize(new Dimension(650, 650)); 
+		
+		fileLoaderPanel.setSize(new Dimension(750, 750)); 
+		fileLoaderPanel.setPreferredSize(new Dimension(750, 750)); 
+		
+	
+		
 		infoButton = new JButton(
 				null,
 				new ImageIcon(
@@ -456,18 +519,42 @@ public class SuperExpressionFileLoader {
 
 		//gba.add(mainFrame.getContentPane(), header, 0, 0, 1, 1, 1, 0, GBA.H,
 			//	GBA.C);
-		gba.add(mainFrame.getContentPane(), fileFilterPanel, 0, 0, 1, 1, 1, 1,
-				GBA.B, GBA.C);
+		//Check why this configuration works fine for TDMS but NOT for RMA
+	//	gba.add(mainFrame.getContentPane(), fileFilterPanel, 0, 0, 1, 1, 1, 1,
+		//		GBA.B, GBA.C);
+		
+	//	gba.add(mainFrame.getContentPane(), fileFilterLabel, 0, 0, 1, 1, 1, 0,
+		//		GBA.H, GBA.C);///-----------commented temporarily by sarita
 		gba.add(mainFrame.getContentPane(), fileLoaderPanel, 0, 1, 1, 3, 1, 1,
 				GBA.B, GBA.C);
 		gba.add(mainFrame.getContentPane(), buttonPanel, 0, 4, 1, 1, 1, 0,
 				GBA.H, GBA.C);
 
-		mainFrame.setSize(1000, 780);
+		//mainFrame.setSize(1000, 780); //Original size, Commented by sarita
+		
+		//Commented temporarily--Dec 08,07.
+		//mainFrame.setSize(1000, 840);//Stops GUI shaking when trying to add stuff to Annotation panel
+		mainFrame.setSize(800, 680);
+		
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		
+		//Added by Sarita
+		Dimension frameSize = mainFrame.getSize();
+		
+		if (frameSize.height > screenSize.height) {
+			   frameSize.height = screenSize.height;
+			}
+		if (frameSize.width > screenSize.width) {
+			   frameSize.width = screenSize.width;
+		}
+		//		
+		
 		mainFrame.setLocation(
 				(screenSize.width - mainFrame.getSize().width) / 2,
 				(screenSize.height - mainFrame.getSize().height) / 2);
+		
+		
+	
 		mainFrame.setVisible(true);
 		selectedFileLoader.openDataPath();
 	}
@@ -503,8 +590,10 @@ public class SuperExpressionFileLoader {
 	private ExpressionFileLoader getFileLoader(int target) {
 
 		ExpressionFileLoader loader;
+		
 		if (target >= 0 && target < fileLoaders.length
 				&& fileLoaders[target] != null) {
+			
 			return fileLoaders[target];
 		}
 
@@ -513,43 +602,64 @@ public class SuperExpressionFileLoader {
 			loader = fileLoaders[0];
 			break;
 		case 1:
+			//loader = new MevFileLoader(this);
 			loader = new MevFileLoader(this);
 			break;
 		case 2:
+			//loader = new TavFileLoader(this);
 			loader = new TavFileLoader(this);
 			break;
 		case 3:
-			loader = new GenePixFileLoader(this);
+			//loader = new AffyGCOSFileLoader(this);
+			loader = new AffyGCOSFileLoader(this);
 			break;
 		case 4:
-			loader = new AgilentMevFileLoader(this);
+			//loader = new DFCI_CoreFileLoader(this);
+			loader = new DFCI_CoreFileLoader(this);
 			break;
 		case 5:
-			loader = new Mas5FileLoader(this);
-			break;
-		
-		case 6: 
+			//loader = new AffymetrixFileLoader(this);
 			loader = new AffymetrixFileLoader(this);
 			break;
 		
-		case 7:
-			loader = new AffyGCOSFileLoader(this);
+		case 6: 	
+			//loader = new Mas5FileLoader(this);
+			loader = new Mas5FileLoader(this);
+			break;
+		
+		case 7://loader =new RMAFileLoader(this);	//wwang for RMA
+			loader =new RMAFileLoader(this);
 			break;	
 		case 8:
-			loader = new SOFT_AffyFileLoader(this);
-			break;		
+			 //loader = new CGHStanfordFileLoader(this); /* Raktim, for CGH Loader */
+			 loader = new CGHStanfordFileLoader(this);
+			 break;		
 		case 9:
-			loader = new SOFT_TwoChannelFileLoader(this);
+			
+			//loader = new SOFT_AffyFileLoader(this);
+			loader = new SOFT_AffymetrixFileLoader(this);
 			break;	
 		case 10:
-			loader = new DFCI_CoreFileLoader(this);
+			//loader = new SOFT_TwoChannelFileLoader(this);
+			loader = new SOFT_TwoChannelFileLoader(this);
 			break;	
+	
 		case 11:
-            loader = new CGHStanfordFileLoader(this); /* Raktim, for CGH Loader */
-            break;
+			loader = new GenePixFileLoader(this);
+			break;
 		case 12:
-			loader =new RMAFileLoader(this);//wwang for RMA
+			loader = new AgilentMevFileLoader(this);
+		//	loader = new AgilentMevFileLoader(this);
+			break;
+		//Added by Sarita
+		case 13:
+			loader = new GEOSeriesMatrixLoader(this);
+			break;	
+		case 14:
+			loader = new GEO_GDSFileLoader(this);
+			break;
 		default:
+			//loader = new StanfordFileLoader(this);
 			loader = new StanfordFileLoader(this);
 			break;
 		}
@@ -564,6 +674,7 @@ public class SuperExpressionFileLoader {
 			return;
 
 		selectedFileLoader = getFileLoader(target);
+		
 		this.mainFrame.toFront();
 		fileFilters[target] = selectedFileLoader.getFileFilter();
 		selectedFileFilter = fileFilters[target];
@@ -574,9 +685,10 @@ public class SuperExpressionFileLoader {
 	public void changeFileLoaderPanel(ExpressionFileLoader targetFileLoader) {
 
 		Container cp = mainFrame.getContentPane();
-
+		
 		cp.remove(fileLoaderPanel); // Remove the old fileLoaderPanel
 		fileLoaderPanel = targetFileLoader.getFileLoaderPanel();
+		
 		gba.add(cp, fileLoaderPanel, 0, 1, 1, 3, 1, 1, GBA.B, GBA.C);
 		checkLoadEnable();
 		cp.validate();
@@ -600,6 +712,9 @@ public class SuperExpressionFileLoader {
 		}
 	}
 
+	
+	
+	
 	public String getFileDescription(int target) {
 		String desc;
 		switch (target) {
@@ -613,36 +728,42 @@ public class SuperExpressionFileLoader {
 			desc = "TIGR ArrayViewer Files (*.tav)";
 			break;
 		case 3:
-			desc = "GenePix Files (*.*)";
+			desc = "Affymetrix GCOS(using MAS5) Files";
 			break;
 		case 4:
-			desc = "Agilent Files (*.*)";
+			desc = "dChip/DFCI_Core Format Files";
 			break;
 		case 5:
-			desc = "Bioconductor(using MAS5) Files(*.*)";
+			desc = "GW Affymetrix Files";
 			break;
 			
 		case 6:
-			desc = "Affymetrix Files (*.*)";
+			desc ="Bioconductor(using MAS5) Files";
 			break;
-					
+				
 		case 7:
-			desc = "Affymetrix GCOS(using MAS5) Files (*.*)";
+			desc = "RMA Files";
 			break;	
 		case 8:
-			desc = "GEO SOFT Affymetrix Format Files (*.*)";
+			desc = "CGH Tab Delimited, Multiple Sample";
 			break;
 		case 9:
-			desc = "GEO SOFT Two Channel Format Files (*.*)";
+			desc = "GEO SOFT Affymetrix Format Files";
 			break;		
 		case 10:
-			desc = "dChip/DFCI_Core Format Files (*.*)";
+			desc =  "GEO SOFT Two Channel Format Files";
 			break;			
         case 11:
-            desc = "CGH Tab Delimited, Multiple Sample Files (*.*)"; /* Raktim, CGH Files */
+            desc = "GenePix Format Files";
             break;
         case 12:
-            desc = "RMA Files (*.*)"; /* wwang RMA Files */
+            desc =  "Agilent Files";
+        case 13:
+            desc =  "GEO Series Matrix Files";
+              
+            break;
+        case 14:
+            desc =  "GEO GDS Format Files";
             break;
 		default:
 			desc = "Tab Delimited, Multiple Sample Files (TDMS) (*.*)";
@@ -655,6 +776,76 @@ public class SuperExpressionFileLoader {
 	public void checkLoadEnable() {
 		selectedFileLoader.checkLoadEnable();
 	}
+	
+	
+	//Added by Sarita
+	 public void onSelectingFileType(Object selectedItem) {
+     	//String sft=(String)fileTypeList.getSelectedItem();
+     	String sft=(String)selectedItem;
+     	if(sft.equalsIgnoreCase("Tab Delimited, Multiple Sample")) {
+     		changeSelectedFileFilterAndLoader(0);
+     	}
+     	
+     	if(sft.equalsIgnoreCase("MeV")) {
+     		changeSelectedFileFilterAndLoader(1);
+     	}
+     	
+     	if(sft.equalsIgnoreCase("TIGR Array Viewer (*.tav)")) {
+     		changeSelectedFileFilterAndLoader(2);
+     	}
+     	
+    	if(sft.equalsIgnoreCase("Affymetrix GCOS(using MAS5) Files")) {
+     		changeSelectedFileFilterAndLoader(3);
+     	}
+     	
+    	if(sft.equalsIgnoreCase("dChip/DFCI_Core Format Files")) {
+     		changeSelectedFileFilterAndLoader(4);
+     	}
+    	
+    	if(sft.equalsIgnoreCase("GW Affymetrix Files")) {
+     		changeSelectedFileFilterAndLoader(5);
+     	} 	
+    	          	
+     	if(sft.equalsIgnoreCase("Bioconductor(using MAS5) Files")) {
+     		changeSelectedFileFilterAndLoader(6);
+     	}
+     	
+     	if(sft.equalsIgnoreCase("RMA Files")) {
+     		changeSelectedFileFilterAndLoader(7);
+     	}
+     	
+     	if(sft.equalsIgnoreCase("CGH Tab Delimited, Multiple Sample")) {
+     		changeSelectedFileFilterAndLoader(8);
+     	}
+    	
+       	if(sft.equalsIgnoreCase("GEO SOFT Affymetrix Format Files")) {
+     		changeSelectedFileFilterAndLoader(9);
+     	}
+     	
+    	if(sft.equalsIgnoreCase("GEO SOFT Two Channel Format Files")) {
+     		changeSelectedFileFilterAndLoader(10);
+     	}
+    	
+    	
+    	if(sft.equalsIgnoreCase("GenePix Format Files")) {
+     		changeSelectedFileFilterAndLoader(11);
+     	}
+     	
+    
+     	if(sft.equalsIgnoreCase("Agilent Files")) {
+     		changeSelectedFileFilterAndLoader(12);
+     	}
+     	
+    	if(sft.equalsIgnoreCase("GEO Series Matrix Files")) {
+     		changeSelectedFileFilterAndLoader(13);
+     	}
+    	
+    	if(sft.equalsIgnoreCase("GEO GDS Format Files")) {
+     		changeSelectedFileFilterAndLoader(14);
+     	}
+ 	}
+     
+  
 
 	public void onInfo() {
 		HelpWindow hw = new HelpWindow(SuperExpressionFileLoader.this
@@ -695,14 +886,16 @@ public class SuperExpressionFileLoader {
 		return this.viewer;
 	}
 
-	public static void main(String[] args) {
+	//main mETHOD COMMENTED BY sARITA
+	/*public static void main(String[] args) {
 		SuperExpressionFileLoader loader = new SuperExpressionFileLoader();
-	}
+	}*/
 
 	private ISlideData[] toISlideDataArray(Vector dataVector) {
 		if (dataVector == null || dataVector.size() < 1)
 			return null;
 		ISlideData[] data = new ISlideData[dataVector.size()];
+	
 		for (int i = 0; i < data.length; i++) {
 			data[i] = (ISlideData) (dataVector.elementAt(i));
 		}
@@ -710,6 +903,8 @@ public class SuperExpressionFileLoader {
 	}
 
 	private void updateDataPath(String dataPath) {
+		
+		
 		if (dataPath == null)
 			return;
 		String renderedSep = "/";
@@ -751,6 +946,7 @@ public class SuperExpressionFileLoader {
 			} else if (source == loadButton) {
 				onLoad();
 			}
+			
 		}
 	}
 
@@ -763,43 +959,67 @@ public class SuperExpressionFileLoader {
 		}
 
 		public void run() {
+		//	System.out.println("Run");
 			Vector data = null;
 			int dataType = 0;
 			try {
 				selectedFileLoader.showModal();
 				data = selectedFileLoader.loadExpressionFiles();
-				if (loaderIndex == 0 || loaderIndex == 9 || loaderIndex == 11||loaderIndex==12) /* Raktim, added check for 11, CGH Data */
+				if (loaderIndex == 0 || loaderIndex == 10 || loaderIndex == 8||loaderIndex==7) /* Raktim, added check for 8, CGH Data */
 					dataType = IData.DATA_TYPE_RATIO_ONLY;
-				else if(loaderIndex == 5){
+				else if(loaderIndex == 6){
+					//dataType = ((Mas5FileLoader)selectedFileLoader)
+					//.getAffyDataType();
 					dataType = ((Mas5FileLoader)selectedFileLoader)
-					.getAffyDataType();
+						.getAffyDataType();
 				}
 				
-				else if (loaderIndex == 6) {
+				else if (loaderIndex == 5) {
+				//	dataType = ((AffymetrixFileLoader) selectedFileLoader)
+					//		.getAffyDataType();
 					dataType = ((AffymetrixFileLoader) selectedFileLoader)
-							.getAffyDataType();
+					.getAffyDataType();
 				}
-				else if (loaderIndex == 7) {
+				else if (loaderIndex == 3) {
 					dataType = ((AffyGCOSFileLoader) selectedFileLoader)
-							.getAffyDataType();
-				}else if (loaderIndex == 8) {
-					dataType = ((SOFT_AffyFileLoader) selectedFileLoader)
-							.getAffyDataType();
-				}else if (loaderIndex == 10) {
+					.getAffyDataType();
+									
+					//dataType = ((AffyGCOSFileLoader) selectedFileLoader)
+						//	.getAffyDataType();
+				}else if (loaderIndex == 9) {
+					dataType = ((SOFT_AffymetrixFileLoader) selectedFileLoader)
+							.getDataType();
+									
+					
+				}else if (loaderIndex == 4) {
+					//dataType = ((DFCI_CoreFileLoader) selectedFileLoader)
+					//.getAffyDataType();	
 					dataType = ((DFCI_CoreFileLoader) selectedFileLoader)
 					.getAffyDataType();	
-				/*}else if (loaderIndex == 12) {
-					dataType = ((RMAFileLoader) selectedFileLoader)
-					.getAffyDataType();	
-				*/}else 
+								
+	
+				}else if (loaderIndex == 13) {
+				 dataType = ((GEOSeriesMatrixLoader) selectedFileLoader)
+					.getDataType();	
+					
+	
+				}else if (loaderIndex == 14) {
+					dataType = ((GEO_GDSFileLoader) selectedFileLoader)
+					.getDataType();
+								
+	
+				}else 
 					dataType = IData.DATA_TYPE_TWO_INTENSITY;
 				selectedFileLoader.dispose();
+				
 				updateDataPath(selectedFileLoader.getFilePath());
 				if (data != null) {
 					viewer.fireDataLoaded(toISlideDataArray(data), dataType);					
 				}
 			} catch (Exception ioe) {
+			
 				ioe.printStackTrace();
+				ioe.getCause();
 			}
 		}
 	}

@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: TMEV.java,v $
- * $Revision: 1.18 $
- * $Date: 2006-08-22 17:50:47 $
- * $Author: eleanorahowe $
+ * $Revision: 1.19 $
+ * $Date: 2007-12-19 21:39:35 $
+ * $Author: saritanair $
  * $State: Exp $
  */
 
@@ -29,6 +29,7 @@ import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
@@ -103,8 +104,9 @@ public class TMEV {
         try {
             System.out.println("MultiExperimentViewer - version "+TMEV.VERSION+" - " + System.getProperty("os.name"));
             String Java3DTitle, Java3DVendor, Java3DVersion;
+            InformationPanel info = new InformationPanel();
             try {
-                InformationPanel info = new InformationPanel();
+               
                 Java3DTitle = info.getJava3DRunTimeEnvironment();
                 Java3DVendor = info.getJava3DVendor();
                 Java3DVersion = info.getJava3DVersion();

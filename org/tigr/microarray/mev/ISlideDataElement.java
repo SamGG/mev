@@ -4,12 +4,14 @@ All rights reserved.
 */
 /*
  * $RCSfile: ISlideDataElement.java,v $
- * $Revision: 1.5 $
- * $Date: 2006-03-24 15:49:44 $
- * $Author: eleanorahowe $
+ * $Revision: 1.6 $
+ * $Date: 2007-12-19 21:39:34 $
+ * $Author: saritanair $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
+import org.tigr.microarray.mev.annotation.IAnnotation;
+import org.tigr.microarray.mev.annotation.MevAnnotation;
 
 public interface ISlideDataElement {
     //Coordinate types
@@ -145,4 +147,12 @@ public interface ISlideDataElement {
     public void setGenePixFlags(int value);
     public float getPvalue();
     public int getGenePixFlags();
+    
+    /**
+     * Raktim - Return Annotation Object Model
+     */
+    public IAnnotation getElementAnnotation();
+    //Sarita-- Annotation State saving 
+    public void setElementAnnotation(IAnnotation obj);
+    
 }

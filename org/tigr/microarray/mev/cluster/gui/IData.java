@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: IData.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-02-23 21:19:42 $
- * $Author: caliente $
+ * $Revision: 1.10 $
+ * $Date: 2007-12-19 21:39:36 $
+ * $Author: saritanair $
  * $State: Exp $
  */
 
@@ -19,6 +19,7 @@ import java.util.Vector;
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.ISlideDataElement;
 import org.tigr.microarray.mev.cgh.CGHDataObj.CGHClone;
+import org.tigr.microarray.mev.annotation.AnnoAttributeObj;
 
 public interface IData {
     //Log state
@@ -366,5 +367,18 @@ public interface IData {
 	 * @return
 	 */
 	public String[] getAnnotationList(String annotationKeyType);
+	
+	/**
+	 * Raktim - Annotation model Object
+	 * @param i
+	 * @param attr
+	 * @return
+	 */
+	public String[] getElementAnnotation(int index, String attr);
+	public AnnoAttributeObj getElementAnnotationObject(int index, String attr);
+	public boolean isAnnotationLoaded() ;
+	public void setAnnotationLoaded(boolean isAnnotationLoaded) ;
+	
+	
     
 }

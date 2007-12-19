@@ -1,12 +1,13 @@
-    /*
+
+/*
 Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*
  * $RCSfile: AffyGCOSFileLoader.java,v $
- * $Revision: 1.10 $
- * $Date: 2007-02-07 19:16:05 $
- * $Author: wwang67 $
+ * $Revision: 1.11 $
+ * $Date: 2007-12-19 21:39:36 $
+ * $Author: saritanair $
  * $State: Exp $
  */
 
@@ -27,18 +28,21 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
-import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
@@ -50,16 +54,24 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import javax.swing.JRadioButton;
+
 import org.tigr.microarray.mev.AffySlideDataElement;
 import org.tigr.microarray.mev.FloatSlideData;
-//import org.tigr.microarray.mev.GCOSSlideDataElement;
 import org.tigr.microarray.mev.ISlideData;
+import org.tigr.microarray.mev.MultipleArrayData;
+import org.tigr.microarray.mev.MultipleArrayViewer;
 import org.tigr.microarray.mev.SlideData;
-import org.tigr.microarray.mev.ISlideMetaData;
-import org.tigr.microarray.mev.SlideDataElement;
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.annotation.AnnotationDialog;
+import org.tigr.microarray.mev.annotation.AnnotationFileReader;
+import org.tigr.microarray.mev.annotation.MevAnnotation;
+import org.tigr.microarray.mev.annotation.PublicURL;
 import org.tigr.microarray.mev.cluster.gui.IData;
+
+
+import org.tigr.microarray.util.FileLoaderUtility;
+import org.tigr.microarray.util.MyCellRenderer;
+
 
 public class AffyGCOSFileLoader extends ExpressionFileLoader {
     
@@ -67,16 +79,74 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
     private boolean stop = false;
     private AffyGCOSFileLoaderPanel sflp;
     private int affyDataType = IData.DATA_TYPE_AFFY_ABS;
+    
+    
+    /**
+     * Raktim - Annotation Specific
+     * Place Holder for reading in Affy Anno 
+     * MAV needed to pass ont he the ref to MevAnnotation Obj for MAV Index
+     **/
+    private Hashtable _tempAnno=new Hashtable();
+    private MultipleArrayViewer mav;
+    protected MevAnnotation mevAnno=new MevAnnotation();
+    private String annotationFileName;
+   // private boolean isAnnotationLoaded=false;
+
 
     public AffyGCOSFileLoader(SuperExpressionFileLoader superLoader) {
-        super(superLoader);
+    	
+    	super(superLoader);
+    	this.mav = superLoader.getArrayViewer();
         gba = new GBA();
         sflp = new AffyGCOSFileLoaderPanel();
     }
     
     public Vector loadExpressionFiles() throws IOException {
-    	
-        return loadAffyGCOSExpressionFile(new File(this.sflp.pathTextField.getText()));
+    	 /**
+         * TODO
+         * Raktim - Annotation Addition. 
+         * Code to load Affy Annotation File into a Indexed Object
+         */
+        
+        
+        /*Loop added by Sarita to check if Annotation has been loaded
+         * "isAnnotationLoaded" is a function in IData, which is set
+         * to "true" in the function onAnnotationFileBrowse() and
+         * onConnect().
+         * 
+         * The loop was included so as to enable loading data
+         * irrespective of whether annotation was loaded or not
+         * 
+         */
+        if(this.mav.getData().isAnnotationLoaded()) {
+        	_tempAnno = loadAffyAnno(new File(getAnnotationFileName()));
+        	//mav.getData().setAnnotationLoaded(true);
+        	
+        }
+        
+     
+        /**
+         * TODO
+         * Raktim - Annotation Demo Only. 
+         * Good Place to initialize URLS.
+         */
+        if(PublicURL.loadURLs(new File("config/annotation_URLs.txt")) != 0){
+        	JOptionPane.showMessageDialog(new JFrame(), "URLs will not be loaded", "Warning", JOptionPane.WARNING_MESSAGE);
+        }
+       
+        
+        try {
+        	//System.out.println("1: " + PublicURL.getURL(AnnotationURLConstants.NCBI_GENE, new String[] {"MYC"}));
+        }catch(Exception e){
+        	e.printStackTrace();
+        }
+        try {
+        	//System.out.println("1: " + PublicURL.getURL(AnnotationURLConstants.NCBI_MAPVIEWER, new String[] {"9606", "16Abc", "12345", "223456"}));
+        } catch(Exception e){
+        	e.printStackTrace();
+        }
+
+        return loadAffyGCOSExpressionFile(new File(this.sflp.selectedFiles.getText()));
     }
     
     public ISlideData loadExpressionFile(File f){
@@ -89,6 +159,23 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
      public void setTMEVDataType(){
          TMEV.setDataType(TMEV.DATA_TYPE_AFFY);
      }
+     
+     
+     private Hashtable loadAffyAnno(File affyFile) {
+    	       	Hashtable _temp = null;
+    	    	AnnotationFileReader reader = new AnnotationFileReader();
+    	    	try {
+    	    		_temp = reader.loadAffyAnnotation(affyFile);
+    	    		
+    	    		
+    	    		//reader.loadAffyAnnotation(affyFile);
+    			} catch (Exception e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
+    			return _temp;
+    	    }
+     
      
     /*
      *  Handling of Mas5 data has been altered in version 3.0 to permit loading of
@@ -148,13 +235,18 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
             	currentLine=currentLine.substring(0,currentLine.length()-1);
             }
             ss.init(currentLine);
+            
             if (counter == 0) { // parse header
-            	if(sflp.absoluteRadioButton.isSelected())
+            	
+            	if(sflp.onlyIntensityRadioButton.isSelected()) 
             		experimentCount = ss.countTokens()- preExperimentColumns;
-            	if(sflp.absMeanRadioButton.isSelected())
+            		
+            	if(sflp.intensityWithDetectionRadioButton.isSelected()) 
             		experimentCount = (ss.countTokens()+1- preExperimentColumns)/2;
-            	if(sflp.referenceRadioButton.isSelected())
+            		
+            	if(sflp.intensityWithDetectionPvalRadioButton.isSelected()) 
             		experimentCount = (ss.countTokens()+1- preExperimentColumns)/3;
+            	
             	
             	slideDataArray = new ISlideData[experimentCount];
                 slideDataArray[0] = new SlideData(rRows, rColumns);
@@ -162,13 +254,14 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                 for (int i=1; i<experimentCount; i++) {
                 	slideDataArray[i] = new FloatSlideData(slideDataArray[0].getSlideMetaData(),spotCount);
                 	slideDataArray[i].setSlideFileName(f.getPath());
+                	//System.out.println("slideDataArray[i].slide file name: "+ f.getPath());
                 }
-                if(sflp.absoluteRadioButton.isSelected()){
+                if(sflp.onlyIntensityRadioButton.isSelected()){
                 	String [] fieldNames = new String[1];
                 	//extraFields = new String[1];
                 	fieldNames[0]="AffyID";
                 	slideDataArray[0].getSlideMetaData().appendFieldNames(fieldNames);
-                }else if(sflp.absMeanRadioButton.isSelected()){
+                }else if(sflp.intensityWithDetectionRadioButton.isSelected()){
                 	String [] fieldNames = new String[2];
                 	extraFields = new String[1];
                     fieldNames[0]="AffyID";
@@ -181,75 +274,122 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                     fieldNames[1]="Detection";
                     fieldNames[2]="P-value";
                     slideDataArray[0].getSlideMetaData().appendFieldNames(fieldNames);
+                   
                 }
-                ss.nextToken();//pares the blank on header
+                ss.nextToken();//parse the blank on header
                 for (int i=0; i<experimentCount; i++) {
-                    slideDataArray[i].setSlideDataName(ss.nextToken());
-                    if(sflp.referenceRadioButton.isSelected()){
+                	slideDataArray[i].setSlideDataName(ss.nextToken());//commented by sarita
+                	 
+                    if(sflp.intensityWithDetectionPvalRadioButton.isSelected()){
                     	ss.nextToken();//parse the detection
                         ss.nextToken();//parse the pvalue
-                     }else if(sflp.absMeanRadioButton.isSelected()){
+                     }else if(sflp.intensityWithDetectionRadioButton.isSelected()){
                         	ss.nextToken();//parse the detection  
                      }            
                 }
                 
             } else if (counter >= preSpotRows) { // data rows
-                rows[0] = rows[2] = row;
-                columns[0] = columns[2] = column;
-                if (column == rColumns) {
-                    column = 1;
-                    row++;
-                } else {
-                    column++;
+            	rows[0] = rows[2] = row;
+            	columns[0] = columns[2] = column;
+            	if (column == rColumns) {
+            		column = 1;
+            		row++;//commented by sarita
+            		
+            		
+            	} else {
+            		column++;//commented by sarita
+            		
+            		
+            	}
+
+            	//affy ID
+            	moreFields[0] = ss.nextToken();
+            
+            	
+            	
+                String cloneName = moreFields[0];
+               if(_tempAnno.size()!=0) {
+            	   
+            	           	   
+                if(((MevAnnotation)_tempAnno.get(cloneName))!=null) {
+                	MevAnnotation mevAnno = (MevAnnotation)_tempAnno.get(cloneName);
+                mevAnno.setViewer(this.mav);
+               sde = new AffySlideDataElement(String.valueOf(row+1), rows, columns, intensities, moreFields, mevAnno);
+               }else {
+            	 /*  String eMsg = "<html>The Probes IDs in your data <br>"+
+            	   		"<html>must be a subset or match all the Probe ID's<br>" +
+            	   		"<html>in the Annotation files. This does not seem to be the case..<br></html>";
+            	   		 JOptionPane.showMessageDialog(null, eMsg, "ERROR", JOptionPane.ERROR_MESSAGE);
+            	   		 */
+            		MevAnnotation mevAnno = new MevAnnotation();
+            		mevAnno.setCloneID(cloneName);
+                    mevAnno.setViewer(this.mav);
+                    sde = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields, mevAnno);
+            	   		 
+               }
+               }
+                /* Added by Sarita
+                 * Checks if annotation was loaded and accordingly use
+                 * the appropriate constructor.
+                 * 
+                 * 
+                 */
+                
+               else {
+                sde = new AffySlideDataElement(String.valueOf(row+1), rows, columns, intensities, moreFields);
                 }
                 
-                //affy ID
-                moreFields[0] = ss.nextToken();
-                sde = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields);
-                slideDataArray[0].addSlideDataElement(sde);
-                int i=0;
-                for ( i=0; i<slideDataArray.length; i++) {                   
-                    try {	
-                    	
-                        // Intensity
-                        intensities[0] = 1.0f;
-                        intensities[1] = ss.nextFloatToken(0.0f);
-                        if(sflp.referenceRadioButton.isSelected()){
-                        	 extraFields[0]=ss.nextToken();//detection
-                             extraFields[1]=ss.nextToken();//p-value
-                        }else if(sflp.absMeanRadioButton.isSelected()){
-                        	extraFields[0]=ss.nextToken();//detection
-                        }
-                        
-                    } catch (Exception e) {
-                        cy3 = 0;
-                        cy5 = Float.NaN;
-                    }
-                    if(i==0){
-                    	//System.out.print(intensities[1]);
-                    	slideDataArray[i].setIntensities(counter - preSpotRows, intensities[0], intensities[1]);
-                    	//sde.setExtraFields(extraFields);
-                    	 if(sflp.referenceRadioButton.isSelected()){
-                    		 sde.setDetection(extraFields[0]);
-                             sde.setPvalue(new Float(extraFields[1]).floatValue());
-                    	 }else if(sflp.absMeanRadioButton.isSelected()){
-                    		 sde.setDetection(extraFields[0]);
-                    	 }
-                    }else{
-                    	if(i==1){
-                    		meta = slideDataArray[0].getSlideMetaData();                    	
-                    	}
-                    	slideDataArray[i].setIntensities(counter-preSpotRows,intensities[0],intensities[1]);
-                    	if(sflp.referenceRadioButton.isSelected()){
-                    		((FloatSlideData)slideDataArray[i]).setDetection(counter-preSpotRows,extraFields[0]);
-                    		((FloatSlideData)slideDataArray[i]).setPvalue(counter-preSpotRows,new Float(extraFields[1]).floatValue());
-                    	}
-                    	if(sflp.absMeanRadioButton.isSelected()){
-                    		((FloatSlideData)slideDataArray[i]).setDetection(counter-preSpotRows,extraFields[0]);
-                    	}
-                    }
-                }
-               
+            	
+            	//sde = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields);
+
+            	slideDataArray[0].addSlideDataElement(sde);
+            	int i=0;
+
+            	for ( i=0; i<slideDataArray.length; i++) {                   
+            		try {	
+
+            			// Intensity
+            			intensities[0] = 1.0f;
+            			intensities[1] = ss.nextFloatToken(0.0f);
+            		
+            			if(sflp.intensityWithDetectionPvalRadioButton.isSelected()){
+            				
+            				extraFields[0]=ss.nextToken();//detection
+            				extraFields[1]=ss.nextToken();//p-value
+            				
+            			}else if(sflp.intensityWithDetectionRadioButton.isSelected()){
+            				extraFields[0]=ss.nextToken();//detection
+            			}
+
+            		} catch (Exception e) {
+            			
+            			intensities[1] = Float.NaN;
+            		}
+            		if(i==0){
+            			
+            			slideDataArray[i].setIntensities(counter - preSpotRows, intensities[0], intensities[1]);
+            			//sde.setExtraFields(extraFields);
+            			if(sflp.intensityWithDetectionPvalRadioButton.isSelected()){
+            				sde.setDetection(extraFields[0]);
+            				sde.setPvalue(new Float(extraFields[1]).floatValue());
+            			}else if(sflp.intensityWithDetectionRadioButton.isSelected()){
+            				sde.setDetection(extraFields[0]);
+            			}
+            		}else{
+            			if(i==1){
+            				meta = slideDataArray[0].getSlideMetaData();                    	
+            			}
+            			slideDataArray[i].setIntensities(counter-preSpotRows,intensities[0],intensities[1]);
+            			if(sflp.intensityWithDetectionPvalRadioButton.isSelected()){
+            				((FloatSlideData)slideDataArray[i]).setDetection(counter-preSpotRows,extraFields[0]);
+            				((FloatSlideData)slideDataArray[i]).setPvalue(counter-preSpotRows,new Float(extraFields[1]).floatValue());
+            			}
+            			if(sflp.intensityWithDetectionRadioButton.isSelected()){
+            				((FloatSlideData)slideDataArray[i]).setDetection(counter-preSpotRows,extraFields[0]);
+            			}
+            		}
+            	}
+
             } else {
                 //we have additional sample annoation
                 
@@ -258,6 +398,7 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
             			ss.nextToken();
             		}
             		String key = ss.nextToken();
+            		
                 
             		for(int j = 0; j < slideDataArray.length; j++) {
             			slideDataArray[j].addNewSampleLabel(key, ss.nextToken());
@@ -270,6 +411,7 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
         	}
         reader.close();
         
+       
         Vector data = new Vector(slideDataArray.length);
         
         for(int j = 0; j < slideDataArray.length; j++)
@@ -400,13 +542,24 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
     
     
     public String getFilePath() {
-        return this.sflp.pathTextField.getText();
+        return this.sflp.selectedFiles.getText();
     }
     
     public void openDataPath() {
         this.sflp.openDataPath();
     }
     
+    
+    
+	 public String getAnnotationFileName() {
+	    	return this.annotationFileName;
+	 }
+	    
+	 public void setAnnotationFileName(String name) {
+	    	this.annotationFileName=name;
+	    }
+	    
+  
 /*
 //
 //	AffyGCOSFileLoader - Internal Classes
@@ -414,86 +567,187 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
  */
     
     private class AffyGCOSFileLoaderPanel extends JPanel {
-    	FileTreePane fileTreePane;
+    	
         
-    	JTextField pathTextField;
-        JPanel pathPanel;
-        
+    	JPanel fileSelectionPanel;
         JTable expressionTable;
         JLabel instructionsLabel;
         JScrollPane tableScrollPane;
         JPanel tablePanel;
         
-        JPanel AffyGCOSListPanel,refSelectionPanel;
-        JList AffyGCOSAvailableList;
-        JScrollPane AffyGCOSAvailableScrollPane;
+        JPanel additionalRequirementPanel;
+       
+        
+
+        JTextField fileNameTextField;
+        JTextField selectedFiles;
+        //
 
         ButtonGroup optionsButtonGroup;
-        JRadioButton absoluteRadioButton;
-        JRadioButton absMeanRadioButton;
-        JRadioButton referenceRadioButton;
+        JRadioButton onlyIntensityRadioButton;
+        JRadioButton intensityWithDetectionRadioButton;
+        JRadioButton intensityWithDetectionPvalRadioButton;
         
-        JTextField annoTextField;
-        JPanel annoPanel;
+        JPanel  annotationPanel, mainPanel;
+        JLabel getAnnotation,  customAnnotation;
+        JLabel fileSelectionLabel, dataSelection;
         
-        JPanel fileLoaderPanel,rightLoaderPanel;
-        JSplitPane splitPane;
- 
+    	
+    	JButton connectButton, browseButton2;
+    	
+    	JTextField annFileListTextField;
+    
+    	        
+        JButton browseButton1;
+        protected EventListener eventListener;
+        JPanel fileLoaderPanel;
+       
         private int xRow = -1;
         private int xColumn = -1;
         
         
         public AffyGCOSFileLoaderPanel() {                
                 setLayout(new GridBagLayout());
-                fileTreePane = new FileTreePane(SuperExpressionFileLoader.DATA_PATH);
-                fileTreePane.addFileTreePaneListener(new FileTreePaneEventHandler());
+                
+                eventListener=new EventListener();
+                fileNameTextField = new JTextField();
+                fileNameTextField.setEditable(false);
+                fileNameTextField.setForeground(Color.black);
+                fileNameTextField.setFont(new Font("monospaced", Font.BOLD, 12));
+             
+         
+                
+     //Added by Sarita    
+                
+                selectedFiles = new JTextField();
+                selectedFiles.setEditable(false);
+                selectedFiles.setForeground(Color.black);
+                selectedFiles.setFont(new Font("monospaced", Font.BOLD, 12));
+             
+                
+                fileSelectionLabel=new JLabel();
+                fileSelectionLabel.setForeground(java.awt.Color.BLACK);
+                String fileTypeChoices = "<html> Selected files </html>";
+                fileSelectionLabel.setText(fileTypeChoices);
 
-                pathTextField = new JTextField();
-                pathTextField.setEditable(false);
-                pathTextField.setBorder(new TitledBorder(new EtchedBorder(), "Selected Path"));
-                pathTextField.setForeground(Color.black);
-                pathTextField.setFont(new Font("monospaced", Font.BOLD, 12));
                 
-                pathPanel = new JPanel();
-                pathPanel.setLayout(new GridBagLayout());
-                pathPanel.setBorder(new TitledBorder(new EtchedBorder(), getFileFilter().getDescription()));
-                gba.add(pathPanel, pathTextField, 0, 0, 2, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+                dataSelection=new JLabel();
+                dataSelection.setForeground(java.awt.Color.BLACK);
+                String chooseFile="<html>Select expression data file</html>";
+                dataSelection.setText(chooseFile);
+               
+                               
+                browseButton1=new JButton("Browse");
+                browseButton1.addActionListener(eventListener);
+               	browseButton1.setSize(100, 30);
+        		browseButton1.setPreferredSize(new Dimension(100, 30));
+        		
+ 
                 
-                refSelectionPanel = new JPanel();
-                refSelectionPanel.setLayout(new GridBagLayout());
-                refSelectionPanel.setBorder(new TitledBorder(new EtchedBorder(), "Affymetrix Data Options"));
+                fileSelectionPanel = new JPanel();
+                fileSelectionPanel.setLayout(new GridBagLayout());
+                fileSelectionPanel.setBorder(new TitledBorder(new EtchedBorder(), "File    (Affy GCOS Format Files)"));
+                
+                
+             /*   gba.add(fileSelectionPanel, dataSelection, 0, 0, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+        		gba.add(fileSelectionPanel, fileNameTextField, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+        		gba.add(fileSelectionPanel, browseButton1, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+
+        		gba.add(fileSelectionPanel, fileSelectionLabel, 0, 2, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+                gba.add(fileSelectionPanel, selectedFiles, 1, 2, 1, 1, 2, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0); 
+                  */
+           
+                gba.add(fileSelectionPanel, dataSelection, 0, 0, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+        		gba.add(fileSelectionPanel, fileNameTextField, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+        		gba.add(fileSelectionPanel, browseButton1, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+
+        		gba.add(fileSelectionPanel, fileSelectionLabel, 0, 2, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+                gba.add(fileSelectionPanel, selectedFiles, 1, 2, 1, 1, 2, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0); 
+
+                
+                
+                
+                annotationPanel = new JPanel();
+                annotationPanel.setLayout(new GridBagLayout());
+                annotationPanel.setBorder(new TitledBorder(new EtchedBorder(), "Annotation"));
+                
+               
+
+        		getAnnotation=new JLabel("Retrieve  Annotation  from  Resourcerer");
+
+
+        		connectButton = new JButton("Connect");
+        		connectButton.setSize(new Dimension(100, 30));
+        		connectButton.setPreferredSize(new Dimension(100, 30));
+        		connectButton.addActionListener(eventListener);
+
+        		
+        		
+        		customAnnotation=new JLabel("OR upload annotation of your choice");
+        		
+        		annFileListTextField=new JTextField();
+        		annFileListTextField.setEditable(false);
+        		annFileListTextField.setForeground(Color.black);
+        		annFileListTextField.setFont(new Font("monospaced", Font.BOLD, 12));
+        		
+        		browseButton2 = new JButton("Browse");
+        		browseButton2.setSize(new Dimension(100, 30));
+        		browseButton2.setPreferredSize(new Dimension(100, 30));
+        		browseButton2.addActionListener(eventListener);
+        		
+        	/*	gba.add(annotationPanel, getAnnotation, 0, 0, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+        		gba.add(annotationPanel, connectButton, 1, 0, GBA.RELATIVE, 1, 0, 0,GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+        		
+        		
+        		gba.add(annotationPanel, customAnnotation, 0, 2, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5,5,5,5),0,0);
+        		gba.add(annotationPanel, annFileListTextField, 1, 2, 1, 1, 1, 0, GBA.H,	GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+        		gba.add(annotationPanel, browseButton2, 2, 2, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+        	*/
+        	       		
+        		gba.add(annotationPanel, getAnnotation, 0, 0, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+        		gba.add(annotationPanel, connectButton, 1, 0, GBA.RELATIVE, 1, 0, 0,GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+        		
+        		
+        		gba.add(annotationPanel, customAnnotation, 0, 2, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(2,2,2,2),0,0);
+        		gba.add(annotationPanel, annFileListTextField, 1, 2, 1, 1, 1, 0, GBA.H,	GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+        		gba.add(annotationPanel, browseButton2, 2, 2, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+        		
+        		additionalRequirementPanel = new JPanel();
+                additionalRequirementPanel.setLayout(new GridBagLayout());
+                additionalRequirementPanel.setBorder(new TitledBorder(new EtchedBorder(), "Additional Requirements"));
                 optionsButtonGroup = new ButtonGroup();
-                absoluteRadioButton = new JRadioButton("Only Intensity", true);
+                onlyIntensityRadioButton = new JRadioButton("Only Intensity", true);
                 //absoluteRadioButton.addActionListener(new EventHandler());
-                optionsButtonGroup.add(absoluteRadioButton);
+                optionsButtonGroup.add(onlyIntensityRadioButton);
 
-                absMeanRadioButton = new JRadioButton("Intensity With Detection");
+                intensityWithDetectionRadioButton = new JRadioButton("Intensity With Detection");
                 //absMeanRadioButton.addActionListener(new EventHandler());
-                optionsButtonGroup.add(absMeanRadioButton);
+                optionsButtonGroup.add(intensityWithDetectionRadioButton);
 
-                referenceRadioButton = new JRadioButton("Intensity with Detection and P-value");
-                //referenceRadioButton.addActionListener(new EventHandler());
-                optionsButtonGroup.add(referenceRadioButton);
-                gba.add(refSelectionPanel, absoluteRadioButton, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 50, 0, 5), 0, 0);
-                gba.add(refSelectionPanel, referenceRadioButton, 0, 1, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 50, 0, 5), 0, 0);
-                gba.add(refSelectionPanel, absMeanRadioButton, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 0, 5), 0, 0);
-
-        
-                AffyGCOSAvailableList = new JList(new DefaultListModel());
-                AffyGCOSAvailableList.setCellRenderer(new ListRenderer());
-                AffyGCOSAvailableList.addListSelectionListener(new ListListener());
-                AffyGCOSAvailableScrollPane = new JScrollPane(AffyGCOSAvailableList);
-                AffyGCOSListPanel = new JPanel();
-                AffyGCOSListPanel.setLayout(new GridBagLayout());
-                AffyGCOSListPanel.setBorder(new TitledBorder(new EtchedBorder(), "Data File Available"));
-                gba.add(AffyGCOSListPanel, AffyGCOSAvailableScrollPane, 0, 0, 2, 8, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+                intensityWithDetectionPvalRadioButton = new JRadioButton("Intensity with Detection and P-value");
+                optionsButtonGroup.add(intensityWithDetectionPvalRadioButton);
+               
+                            
+            /*	gba.add(additionalRequirementPanel, onlyIntensityRadioButton, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 0, 5), 0, 0);
+                gba.add(additionalRequirementPanel, intensityWithDetectionPvalRadioButton, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 0, 5), 0, 0);
+                gba.add(additionalRequirementPanel, intensityWithDetectionRadioButton, 0, 1, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+               */
+                
+                gba.add(additionalRequirementPanel, onlyIntensityRadioButton, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 0, 2), 0, 0);
+                gba.add(additionalRequirementPanel, intensityWithDetectionPvalRadioButton, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 0, 2), 0, 0);
+                gba.add(additionalRequirementPanel, intensityWithDetectionRadioButton, 0, 1, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+                
                 
                 expressionTable = new JTable();
+                expressionTable.setDefaultRenderer(Object.class, new MyCellRenderer());
+    			expressionTable.setGridColor(Color.LIGHT_GRAY);
                 expressionTable.setCellSelectionEnabled(true);
                 expressionTable.setColumnSelectionAllowed(false);
                 expressionTable.setRowSelectionAllowed(false);
                 expressionTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
                 expressionTable.getTableHeader().setReorderingAllowed(false);
+                
+             
                 expressionTable.addMouseListener(new MouseAdapter() {
                     public void mousePressed(MouseEvent event) {
                         xRow = expressionTable.rowAtPoint(event.getPoint());
@@ -502,7 +756,9 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                     }
                 });
                 
+                
                 tableScrollPane = new JScrollPane(expressionTable, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+                
                 instructionsLabel = new JLabel();
                 instructionsLabel.setForeground(java.awt.Color.red);
                 String instructions = "<html>Click the upper-leftmost expression value. Click the <b>Load</b> button to finish.</html>";
@@ -511,45 +767,93 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                 tablePanel = new JPanel();
                 tablePanel.setLayout(new GridBagLayout());
                 tablePanel.setBorder(new TitledBorder(new EtchedBorder(), "Expression Table"));
-                gba.add(tablePanel, tableScrollPane, 0, 0, 1, 5, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-                gba.add(tablePanel, instructionsLabel, 0, 6, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
- 
+              /*  gba.add(tablePanel, tableScrollPane, 0, 0, 1, 2, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+                gba.add(tablePanel, instructionsLabel, 0, 2, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+                */
+                 
+                gba.add(tablePanel, tableScrollPane, 0, 0, 1, 2, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+                gba.add(tablePanel, instructionsLabel, 0, 2, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
                 
-                annoTextField = new JTextField();
-                annoTextField.setEditable(false);
-                annoTextField.setForeground(Color.black);
-                annoTextField.setFont(new Font("serif", Font.BOLD, 12));
-                
-                annoPanel = new JPanel();
-                annoPanel.setLayout(new GridBagLayout());
-                annoPanel.setBorder(new TitledBorder(new EtchedBorder(), "Annotation Fields"));
-                gba.add(annoPanel, annoTextField, 0, 0, 2, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
                
                 fileLoaderPanel = new JPanel();
                 fileLoaderPanel.setLayout(new GridBagLayout());
                 
-                //gba.add(fileLoaderPanel,AffyGCOSListPanel, 0, 0, 2, 9, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-                gba.add(fileLoaderPanel, pathPanel, 0, 0, 1, 1, 3, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-                gba.add(fileLoaderPanel, refSelectionPanel, 0, 1, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-                gba.add(fileLoaderPanel, tablePanel, 0, 2, 1, 5, 3, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-                gba.add(fileLoaderPanel, annoPanel, 0, 7, 1, 1, 3, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);               
+           /*     gba.add(fileLoaderPanel,fileSelectionPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+                gba.add(fileLoaderPanel, annotationPanel, 0, 2, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+                gba.add(fileLoaderPanel, additionalRequirementPanel, 0, 4, 1, 2, 3, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+                gba.add(fileLoaderPanel, tablePanel, 0, 7, 1, 6, 3, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+                gba.add(this, fileLoaderPanel,0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+             */
                 
-                rightLoaderPanel=new JPanel();
-                rightLoaderPanel.setLayout(new GridBagLayout());
-                gba.add(rightLoaderPanel,AffyGCOSListPanel, 0, 0, 1, 9, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-                gba.add(rightLoaderPanel,fileLoaderPanel, 1, 0, 1, 9, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+                gba.add(fileLoaderPanel,fileSelectionPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+                gba.add(fileLoaderPanel, annotationPanel, 0, 2, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+                gba.add(fileLoaderPanel, additionalRequirementPanel, 0, 4, 1, 2, 3, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+                gba.add(fileLoaderPanel, tablePanel, 0, 7, 1, 6, 3, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+                gba.add(this, fileLoaderPanel,0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+              
                 
-                splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, fileTreePane, rightLoaderPanel);
-                splitPane.setPreferredSize(new java.awt.Dimension(600, 600));
-                splitPane.setDividerLocation(200);
-                gba.add(this,splitPane,0,0,1,1,1,1,GBA.B,GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+                
+                
+                
                 
         }
         
         public void openDataPath() {
-            fileTreePane.openDataPath();
+            //fileTreePane.openDataPath();
         }     
- 
+        
+        
+        
+
+        
+        public void onBrowse() {
+        	JFileChooser fileChooser=new JFileChooser(SuperExpressionFileLoader.DATA_PATH);
+        	int retVal=fileChooser.showOpenDialog(AffyGCOSFileLoaderPanel.this);
+        	
+        	if(retVal==JFileChooser.APPROVE_OPTION) {
+        	File selectedFile=fileChooser.getSelectedFile();
+        	fileNameTextField.setText(selectedFile.getAbsolutePath());
+        	processAffyGCOSFile(selectedFile);
+        	}
+           		
+    	}
+        
+        public void onConnect() {
+        	AnnotationDialog annDialog=new AnnotationDialog(new JFrame());
+        	if(annDialog.showModal()==JOptionPane.OK_OPTION) {
+        	setAnnotationFileName(annDialog.getAnnotationFileName());
+        	mav.getData().setAnnotationLoaded(true);
+        	//isAnnotationLoaded=true;
+        	}else {
+        		mav.getData().setAnnotationLoaded(false);
+        		//isAnnotationLoaded=true;
+        	}
+        
+            } 
+        
+        public void onAnnotationFileBrowse() {
+         	FileLoaderUtility fileLoad = new FileLoaderUtility();
+            	File selectedFile;
+            	JFileChooser fileChooser = new JFileChooser(
+            			SuperExpressionFileLoader.DATA_PATH);
+            	fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            	int retVal = fileChooser.showOpenDialog(AffyGCOSFileLoaderPanel.this);
+
+            	if (retVal == JFileChooser.APPROVE_OPTION) {
+            		
+            		selectedFile = fileChooser.getSelectedFile();
+            		setAnnotationFileName(selectedFile.getAbsolutePath());
+            		annFileListTextField.setText(selectedFile.getAbsolutePath());
+            		mav.getData().setAnnotationLoaded(true);
+            		//isAnnotationLoaded=true;
+            		
+            	}
+    			
+            }
+            
+        
+        
+        
        
         public JTable getTable() {
             return expressionTable;
@@ -563,19 +867,11 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
             return xRow;
         }
         
-        public void selectAffyGCOSFile() {
-            JFileChooser jfc = new JFileChooser(SuperExpressionFileLoader.DATA_PATH);
-            jfc.setFileFilter(getFileFilter());
-            int activityCode = jfc.showDialog(this, "Select");
-            
-            if (activityCode == JFileChooser.APPROVE_OPTION) {
-                File target = jfc.getSelectedFile();
-                processAffyGCOSFile(target);
-            }
-        }
+                
+        
         
         public void setDataFileName(String fileName) {
-            pathTextField.setText(fileName);
+            selectedFiles.setText(fileName);
            // System.out.println(pathTextField);
         }
     
@@ -590,64 +886,29 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
         }
         
         public void setFieldsText(String fieldsText) {
-            annoTextField.setText(fieldsText);
+           
         }
         
+        private class EventListener implements ActionListener {
+    		public void actionPerformed(ActionEvent event) {
+    			Object source = event.getSource();
+    			if (source == browseButton1) {
+    				onBrowse();
+    			} 
+    			if (source == browseButton2) {
+    				onAnnotationFileBrowse();
+    			} 
+    			
+    			if (source == connectButton) {
+    				onConnect();
+    			} 
+    	
+    			
+    			}
+    		}
+      
         
-        private class ListRenderer extends DefaultListCellRenderer {
-            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                File file = (File) value;
-                setText(file.getName());
-                return this;
-            }
-        }
-        
-        
-        
-        private class ListListener implements javax.swing.event.ListSelectionListener {
-            
-            public void valueChanged(ListSelectionEvent lse) {
-            	File file;
-            	//Object source=lse.getSource();
-            	file = (File)(AffyGCOSAvailableList.getSelectedValue());
-            	if(file == null || !(file.exists()))
-            		return;
-            	processAffyGCOSFile(file);
-            	return;
-            	
-            }
-        }
-        
-     
-        
-        private class FileTreePaneEventHandler implements FileTreePaneListener {
-            
-            public void nodeSelected(FileTreePaneEvent event) {
-                
-                String filePath = (String) event.getValue("Path");
-                Vector fileNames = (Vector) event.getValue("Filenames");
-     
-                if(fileNames.size() < 1)
-                    return;
-                
-                FileFilter AffyGCOSFileFilter = getFileFilter();
-//                FileFilter AffyGCOSCallFileFilter = getFileFilter();
-                ((DefaultListModel)(AffyGCOSAvailableList.getModel())).clear();
-                
-                for (int i = 0; i < fileNames.size(); i++) {
-                    
-                    File targetFile = new File((String) fileNames.elementAt(i));
-                      
-                    if (AffyGCOSFileFilter.accept(targetFile)) {
-                        ((DefaultListModel)(AffyGCOSAvailableList.getModel())).addElement(new File((String) fileNames.elementAt(i)));
-                    }
-                }
-            }
-            
-            public void nodeCollapsed(FileTreePaneEvent event) {}
-            public void nodeExpanded(FileTreePaneEvent event) {}
-        }
+       
     }  
     }
 

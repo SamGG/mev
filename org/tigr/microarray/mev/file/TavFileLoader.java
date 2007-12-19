@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: TavFileLoader.java,v $
- * $Revision: 1.6 $
- * $Date: 2006-03-28 18:42:25 $
- * $Author: wwang67 $
+ * $Revision: 1.7 $
+ * $Date: 2007-12-19 21:39:37 $
+ * $Author: saritanair $
  * $State: Exp $
  */
 
@@ -26,13 +26,16 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Vector;
 
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -50,6 +53,8 @@ import org.tigr.microarray.mev.ISlideMetaData;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.SlideDataElement;
 import org.tigr.microarray.mev.TMEV;
+
+import org.tigr.microarray.util.FileLoaderUtility;
 
 public class TavFileLoader extends ExpressionFileLoader {
     
@@ -78,28 +83,40 @@ public class TavFileLoader extends ExpressionFileLoader {
             return null;
         
         setFilesCount(tavFiles.length);
-        int countOfLines = getCountOfLines((File)tavFiles[0]);
+        
+        File ffile=new File(this.tflp.pathTextField.getText(),((File)tavFiles[0]).getName());
+    //   int countOfLines = getCountOfLines((File)tavFiles[0]);--original code commented by Sarita
+        int countOfLines = getCountOfLines(ffile);
+      
         for (int i = 0; i < tavFiles.length; i++) {
-            //data.add(loadExpressionFile((File) tavFiles[i]));
+        	File file=new File(this.tflp.pathTextField.getText(),((File)tavFiles[i]).getName());
+        	
             if (stop) {
                 return null;
             }
             setFilesProgress(i);
             setRemain(tavFiles.length-i);
-            setFileName(((File)tavFiles[i]).getPath());
+            //setFileName(((File)tavFiles[i]).getPath());
+            setFileName(file.getPath());
             if (i == 0) {                
                 setLinesCount(countOfLines);
                 if (meta == null) {
-                    if(fillMissingSpots)
-                        slideData = loadSlideDataFillAllSpots((File)tavFiles[i]);
-                    else
-                        slideData = loadSlideData((File)tavFiles[i]);
+                    if(fillMissingSpots) {
+                       // slideData = loadSlideDataFillAllSpots((File)tavFiles[i]);
+                    	 slideData = loadSlideDataFillAllSpots(file);
+                    }
+                    else {
+                       // slideData = loadSlideData((File)tavFiles[i]);
+                    	slideData = loadSlideData(file);
+                    }
                     meta = slideData.getSlideMetaData();
                 } else {
-                    slideData = loadFloatSlideData((File)tavFiles[i], countOfLines, meta);
+                  //  slideData = loadFloatSlideData((File)tavFiles[i], countOfLines, meta);
+                	  slideData = loadFloatSlideData(file, countOfLines, meta);
                 }
             } else {
-                slideData = loadFloatSlideData((File)tavFiles[i], countOfLines, meta);
+              //  slideData = loadFloatSlideData((File)tavFiles[i], countOfLines, meta);
+            	slideData = loadFloatSlideData(file, countOfLines, meta);
             }
             data.add(slideData);            
         }
@@ -235,6 +252,7 @@ public class TavFileLoader extends ExpressionFileLoader {
         int header_row = 0;
         int index  = 0;
         while ((currentLine = reader.readLine()) != null) {
+        	
             if (header_row < preSpotRows) {
                 header_row++;
                 continue;
@@ -432,7 +450,7 @@ public class TavFileLoader extends ExpressionFileLoader {
     }
     
     public void openDataPath() {
-        this.tflp.openDataPath();
+     //   this.tflp.openDataPath();
     }
     
 /*
@@ -443,7 +461,7 @@ public class TavFileLoader extends ExpressionFileLoader {
     
     private class TavFileLoaderPanel extends JPanel {
         
-        FileTreePane fileTreePane;
+       
         JTextField pathTextField;
         
         JPanel tavSelectionPanel;
@@ -461,7 +479,7 @@ public class TavFileLoader extends ExpressionFileLoader {
         JPanel tavButtonPanel;
         
         JTextField preferencesTextField;
-        JButton browseButton;
+        JButton browseButton2;
         JPanel preferencesSelectionPanel;
         JPanel preferencesPanel;
         JPanel manualPanel;
@@ -473,97 +491,148 @@ public class TavFileLoader extends ExpressionFileLoader {
         JSplitPane splitPane;
         JPanel fileLoaderPanel;
         
+        //Added by Sarita
+        JPanel selectFilePanel;
+		JLabel selectFile, selectAnnotation;
+		JButton browseButton1;
+		
+        
         public TavFileLoaderPanel() {
             
             setLayout(new GridBagLayout());
-            
-            fileTreePane = new FileTreePane(SuperExpressionFileLoader.DATA_PATH);
-            fileTreePane.addFileTreePaneListener(new FileTreePaneEventHandler());
-            fileTreePane.setPreferredSize(new java.awt.Dimension(200, 50));
-            
-            pathTextField = new JTextField();
-            pathTextField.setEditable(false);
-            pathTextField.setBorder(new TitledBorder(new EtchedBorder(), "Selected Path"));
-            pathTextField.setForeground(Color.black);
-            pathTextField.setFont(new Font("monospaced", Font.BOLD, 12));
-            
-            tavSelectionPanel = new JPanel();
-            tavSelectionPanel.setLayout(new GridBagLayout());
-            tavSelectionPanel.setBorder(new TitledBorder(new EtchedBorder(), getFileFilter().getDescription()));
-            
-            tavAvailableLabel = new JLabel("Available");
-            tavSelectedLabel = new JLabel("Selected");
-            tavAvailableList = new JList(new DefaultListModel());
-            tavAvailableList.setCellRenderer(new ListRenderer());
-            tavSelectedList = new JList(new DefaultListModel());
-            tavSelectedList.setCellRenderer(new ListRenderer());
-            tavAvailableScrollPane = new JScrollPane(tavAvailableList);
-            tavSelectedScrollPane = new JScrollPane(tavSelectedList);
-            tavAddButton = new JButton("Add");
-            tavAddButton.addActionListener(new EventHandler());
-            tavAddAllButton = new JButton("Add All");
-            tavAddAllButton.addActionListener(new EventHandler());
-            tavRemoveButton = new JButton("Remove");
-            tavRemoveButton.addActionListener(new EventHandler());
-            tavRemoveAllButton = new JButton("Remove All");
-            tavRemoveAllButton.addActionListener(new EventHandler());
-            
-            Dimension largestTavButtonSize = tavRemoveAllButton.getPreferredSize();
-            tavAddButton.setPreferredSize(largestTavButtonSize);
-            tavAddAllButton.setPreferredSize(largestTavButtonSize);
-            tavRemoveButton.setPreferredSize(largestTavButtonSize);
-            tavRemoveAllButton.setPreferredSize(largestTavButtonSize);
-            
-            tavAddButton.setFocusPainted(false);
-            tavAddAllButton.setFocusPainted(false);
-            tavRemoveButton.setFocusPainted(false);
-            tavRemoveAllButton.setFocusPainted(false);
-            
-            tavButtonPanel = new JPanel();
-            tavButtonPanel.setLayout(new GridBagLayout());
-            
-            gba.add(tavButtonPanel, tavAddButton, 0, 0, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(tavButtonPanel, tavAddAllButton, 0, 1, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(tavButtonPanel, tavRemoveButton, 0, 2, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(tavButtonPanel, tavRemoveAllButton, 0, 3, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            
-            tavListPanel = new JPanel();
-            tavListPanel.setLayout(new GridBagLayout());
-            
-            gba.add(tavListPanel, tavAvailableLabel, 0, 0, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(tavListPanel, tavSelectedLabel, 2, 0, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(tavListPanel, tavAvailableScrollPane, 0, 1, 1, 4, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(tavListPanel, tavButtonPanel, 1, 1, 1, 4, 0, 1, GBA.V, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(tavListPanel, tavSelectedScrollPane, 2, 1, 1, 4, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            
-            gba.add(tavSelectionPanel, tavListPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            
-            preferencesTextField = new JTextField();
-            preferencesTextField.setEditable(false);
-            preferencesTextField.setForeground(Color.black);
-            preferencesTextField.setFont(new Font("monospaced", Font.BOLD, 12));
-            
-            browseButton = new JButton("Browse Preferences");
-            browseButton.addActionListener(new EventHandler());
-            
-            preferencesSelectionPanel = new JPanel();
-            preferencesSelectionPanel.setLayout(new GridBagLayout());
-            preferencesSelectionPanel.setBorder(new TitledBorder(new EtchedBorder(), "Selected Preferences File"));
-            gba.add(preferencesSelectionPanel, preferencesTextField, 0, 0, 2, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(preferencesSelectionPanel, browseButton, 2, 0, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            
-            preferencesPanel = new JPanel();
-            preferencesPanel.setLayout(new GridBagLayout());
-            gba.add(preferencesPanel, preferencesSelectionPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            
-            manualPanel = new JPanel();
-            manualPanel.setLayout(new GridBagLayout());
-            gba.add(manualPanel, new JPanel(), 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            
-            genericPanel = new JPanel();
-            genericPanel.setLayout(new GridBagLayout());
-            gba.add(genericPanel, new JPanel(), 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            
+            selectFilePanel = new JPanel();
+			// selectFilePanel.setSize(new Dimension(100,20));
+			selectFilePanel.setLayout(new GridBagLayout());
+
+			selectFile = new JLabel("Select expression data directory");
+
+			browseButton1 = new JButton("Browse");
+			browseButton1.setSize(new Dimension(100, 30));
+			browseButton1.setPreferredSize(new Dimension(100, 30));
+			browseButton1.addActionListener(new EventHandler());
+		
+			
+			pathTextField = new JTextField();
+			pathTextField.setEditable(false);
+			pathTextField.setForeground(Color.black);
+			pathTextField.setFont(new Font("monospaced", Font.BOLD, 12));
+
+		
+			gba.add(selectFilePanel, selectFile, 0, 0, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+    		gba.add(selectFilePanel, pathTextField, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+    		gba.add(selectFilePanel, browseButton1, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+
+    	      
+			
+			
+			
+			/*gba.add(selectFilePanel, selectFile, 0, 0, 1, 1, 0, 0, GBA.B,
+					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(selectFilePanel, pathTextField, 1, 0, 1, 1, 1, 0, GBA.H,
+					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(selectFilePanel, browseButton1, 2, 0, GBA.RELATIVE, 0, 1,
+					1, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			*/
+			
+			//
+
+			tavSelectionPanel = new JPanel();
+			tavSelectionPanel.setLayout(new GridBagLayout());
+
+			tavSelectionPanel.setBorder(new TitledBorder(new EtchedBorder(),
+					"File    (TaV Format Files)"));
+
+			tavAvailableLabel = new JLabel("Available");
+			tavSelectedLabel = new JLabel("Selected");
+			tavAvailableList = new JList(new DefaultListModel());
+			tavSelectedList = new JList(new DefaultListModel());
+
+			tavAvailableScrollPane = new JScrollPane(tavAvailableList);
+			tavSelectedScrollPane = new JScrollPane(tavSelectedList);
+			tavAddButton = new JButton("Add");
+			tavAddButton.setPreferredSize(new Dimension(100, 20));
+
+			tavAddButton.addActionListener(new EventHandler());
+			tavAddAllButton = new JButton("Add All");
+
+			tavAddAllButton.setPreferredSize(new Dimension(100, 20));
+
+			tavAddAllButton.addActionListener(new EventHandler());
+			tavRemoveButton = new JButton("Remove");
+
+			tavRemoveButton.setPreferredSize(new Dimension(100, 20));
+
+			tavRemoveButton.addActionListener(new EventHandler());
+			tavRemoveAllButton = new JButton("Remove All");
+
+			tavRemoveAllButton.setPreferredSize(new Dimension(100, 20));
+
+			tavRemoveAllButton.addActionListener(new EventHandler());
+
+			tavButtonPanel = new JPanel();
+			tavButtonPanel.setLayout(new GridBagLayout());
+
+			gba.add(tavButtonPanel, tavAddButton, 0, 0, 1, 1, 0, 0, GBA.N,
+					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(tavButtonPanel, tavAddAllButton, 0, 1, 1, 1, 0, 0, GBA.N,
+					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(tavButtonPanel, tavRemoveButton, 0, 2, 1, 1, 0, 0, GBA.N,
+					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(tavButtonPanel, tavRemoveAllButton, 0, 3, 1, 1, 0, 0,
+					GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+
+			// Medians vs. Integrate intensities
+			
+			tavListPanel = new JPanel();
+			tavListPanel.setLayout(new GridBagLayout());
+
+			gba.add(tavListPanel, tavAvailableLabel, 0, 0, 1, 1, 0, 0, GBA.N,
+					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(tavListPanel, tavAvailableScrollPane, 0, 1, 1, 4, 5, 1,
+					GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(tavListPanel, new JPanel(), 1, 0, 1, 1, 0, 0, GBA.B, GBA.C,
+					new Insets(0, 0, 0, 0), 0, 0);
+			gba.add(tavListPanel, tavButtonPanel, 1, 1, 1, 4, 1, 1, GBA.B,
+					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(tavListPanel, tavSelectedLabel, 2, 0, 1, 1, 0, 0, GBA.N,
+					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(tavListPanel, tavSelectedScrollPane, 2, 1, 1, 4, 5, 1,
+					GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+
+			gba.add(tavSelectionPanel, selectFilePanel, 0, 0, 1, 1, 1, 0,
+					GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			//gba.add(tavSelectionPanel, buttonPanel, 0, 1, 1, 1, 1, 1, GBA.B,
+			//		GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(tavSelectionPanel, tavListPanel, 0, 1, 1, 1, 1, 1, GBA.B,
+					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+
+			
+			 preferencesTextField = new JTextField();
+	            preferencesTextField.setEditable(false);
+	            preferencesTextField.setForeground(Color.black);
+	            preferencesTextField.setFont(new Font("monospaced", Font.BOLD, 12));
+	            
+	            browseButton2 = new JButton("Browse Preferences");
+	            browseButton2.addActionListener(new EventHandler());
+	            
+	            preferencesSelectionPanel = new JPanel();
+	            preferencesSelectionPanel.setLayout(new GridBagLayout());
+	            preferencesSelectionPanel.setBorder(new TitledBorder(new EtchedBorder(), "Selected Preferences File"));
+	            gba.add(preferencesSelectionPanel, preferencesTextField, 0, 0, 2, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+	            gba.add(preferencesSelectionPanel, browseButton2, 2, 0, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+	            
+	            preferencesPanel = new JPanel();
+	            preferencesPanel.setLayout(new GridBagLayout());
+	            gba.add(preferencesPanel, preferencesSelectionPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+	            
+	            manualPanel = new JPanel();
+	            manualPanel.setLayout(new GridBagLayout());
+	            gba.add(manualPanel, new JPanel(), 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+	            
+	            genericPanel = new JPanel();
+	            genericPanel.setLayout(new GridBagLayout());
+	            gba.add(genericPanel, new JPanel(), 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+	            
             fieldsTabbedPane = new JTabbedPane();
             fieldsTabbedPane.addTab("Preferences", preferencesPanel);
             fieldsTabbedPane.addTab("Manual", manualPanel);
@@ -578,31 +647,79 @@ public class TavFileLoader extends ExpressionFileLoader {
             
             fieldsPanel = new JPanel();
             fieldsPanel.setLayout(new GridBagLayout());
-            fieldsPanel.setBorder(new TitledBorder(new EtchedBorder(), "Additional Fields Selection"));
+            fieldsPanel.setBorder(new TitledBorder(new EtchedBorder(), "Additional Requirements"));
             gba.add(fieldsPanel, fieldsTabbedPane, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             
             selectionPanel = new JPanel();
             selectionPanel.setLayout(new GridBagLayout());
-            gba.add(selectionPanel, pathTextField, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(selectionPanel, tavSelectionPanel, 0, 1, 1, 2, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            //gba.add(selectionPanel, pathTextField, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            gba.add(selectionPanel, tavSelectionPanel, 0, 0, 1, 2, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             gba.add(selectionPanel, fieldsPanel, 0, 3, 1, 2, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             
-            splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, fileTreePane, selectionPanel);
-            splitPane.setPreferredSize(new java.awt.Dimension(600, 600));
+          
             fileLoaderPanel = new JPanel();
             fileLoaderPanel.setLayout(new GridBagLayout());
-            gba.add(fileLoaderPanel, splitPane, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            gba.add(fileLoaderPanel, selectionPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             
             gba.add(this, fileLoaderPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
         }
         
-        public void setPath(String path) {
+    public void onTavFileBrowse() {
+		FileLoaderUtility fileLoad=new FileLoaderUtility();
+		Vector retrievedFileNames=new Vector();
+		JFileChooser fileChooser = new JFileChooser(
+				SuperExpressionFileLoader.DATA_PATH);
+		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		int retVal = fileChooser.showOpenDialog(TavFileLoaderPanel.this);
+
+		if (retVal == JFileChooser.APPROVE_OPTION) {
+			((DefaultListModel) tavAvailableList.getModel()).clear();
+			((DefaultListModel) tavSelectedList.getModel()).clear();
+
+			File selectedFile = fileChooser.getSelectedFile();
+			pathTextField.setText(selectedFile.getAbsolutePath());
+			String path=selectedFile.getAbsolutePath();
+			retrievedFileNames=fileLoad.getFileNameList(selectedFile.getAbsolutePath());
+			
+			for (int i = 0; i < retrievedFileNames.size(); i++) {
+				Object fileName=retrievedFileNames.get(i);
+				boolean acceptFile=getFileFilter().accept((File)fileName);
+
+				if(acceptFile) {
+					String Name=fileChooser.getName((File) fileName);
+				/*	Object addItem = fileName;
+					((DefaultListModel) tavAvailableList.getModel())
+					.addElement(addItem);*/
+					((DefaultListModel) tavAvailableList.getModel())
+					.addElement(new File(Name));
+					
+				}
+			}
+
+		}
+		    
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    public void setPath(String path) {
             pathTextField.setText(path);
         }
 
         public void openDataPath(){
-            this.fileTreePane.openDataPath();
-        }        
+           // this.fileTreePane.openDataPath();
+        }       
+        
+        
+        
         
         public void validateLists() {
             
@@ -774,8 +891,11 @@ public class TavFileLoader extends ExpressionFileLoader {
                     onTavRemove();
                 } else if (source == tavRemoveAllButton) {
                     onTavRemoveAll();
-                } else if (source == browseButton) {
+                } else if (source == browseButton2) {
                     selectPreferencesFile();
+                }
+                else if (source == browseButton1) {
+                    onTavFileBrowse();
                 }
             }
         }

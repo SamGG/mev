@@ -2,7 +2,15 @@
 package org.tigr.microarray.mev.persistence;
 
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -11,13 +19,14 @@ import javax.imageio.ImageIO;
 import org.tigr.microarray.mev.AffySlideDataElement;
 import org.tigr.microarray.mev.CGHSlideDataElement;
 import org.tigr.microarray.mev.FloatSlideData;
-import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.ISlideDataElement;
 import org.tigr.microarray.mev.ISlideMetaData;
 import org.tigr.microarray.mev.MultipleArrayViewer;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.SlideDataElement;
 import org.tigr.microarray.mev.SpotInformationData;
+import org.tigr.microarray.mev.annotation.AnnotationStateSavingParser;
+import org.tigr.microarray.mev.annotation.IAnnotation;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.util.FloatMatrix;
 
@@ -156,7 +165,7 @@ public class PersistenceObjectFactory {
     		Hashtable sampleLabels, String slideFileName, Boolean isNonZero, Integer rows, Integer columns,
 			Integer normalizedState, Integer sortState, SpotInformationData spotInfoData, 
 			String[] fieldNames, Integer dataType,
-			String annotationFileName, String dataFile) throws IOException {
+			String annotationFileName, String dataFile, String iAnnotationFileName) throws IOException {
 
 		String javaTempDir = System.getProperty("java.io.tmpdir");
 		if(!javaTempDir.endsWith(System.getProperty("file.separator")))
@@ -173,6 +182,24 @@ public class PersistenceObjectFactory {
     	Vector allSlideDataElements = loadSlideDataAnnotation(dis, dataType.intValue());
     	dis.close();
     	
+    	//load IAnnotation
+    	Vector<IAnnotation> allIAnnotations = new Vector<IAnnotation>();
+    	//if(iAnnotationFileName!=null) {
+    	File iAnnotFile=new File(javaTempDir + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + iAnnotationFileName);
+    	FileReader fr=new FileReader(iAnnotFile);
+    	
+    	try {
+    		//allIAnnotations = new AnnotationStateSavingParser().readSavedAnnotation(iAnnotationFileName, iAnnotFile.getAbsolutePath());
+    	//	allIAnnotations = new AnnotationStateSavingParser().readSavedAnnotation(iAnnotFile);
+    		
+    		//allIAnnotations=loadSlideDataIAnnotation(fr);
+    		if(iAnnotFile.length()>1)
+    		allIAnnotations=loadSlideDataIAnnotation(iAnnotFile);
+        }catch(Exception e) {
+    		e.printStackTrace();
+    	}
+        
+    	//}//end of iAnnotationFileName check if block
     	//load intensities
     	dis = new DataInputStream(new FileInputStream(javaTempDir + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + dataFile));
     	ISlideDataElement sde;
@@ -186,6 +213,9 @@ public class PersistenceObjectFactory {
     		if(dataType.intValue() != IData.DATA_TYPE_TWO_INTENSITY && dataType.intValue() != IData.DATA_TYPE_RATIO_ONLY){
         		sde.setDetection(new Character(dis.readChar()).toString());
     		} 	
+    	
+    		if(allIAnnotations.size()>0)
+    		sde.setElementAnnotation((IAnnotation)allIAnnotations.get(i));
     	}
     	dis.close();
     	
@@ -307,6 +337,7 @@ public class PersistenceObjectFactory {
 				dos.writeChar(((AffySlideDataElement)sde).getDetection().charAt(0));
 				dos.writeFloat(((AffySlideDataElement)sde).getPvalue());
 				dos.writeInt(((AffySlideDataElement)sde).getGenePixFlags());
+				
 			}
     	}
 	}
@@ -406,6 +437,41 @@ public class PersistenceObjectFactory {
 		BufferedImage bi = ImageIO.read(binFile);
 		dis.close();
 		return new BufferedImageWrapper(bi);
+	}
+
+
+	public static void writeSlideDataIAnnotation(PrintWriter pw,
+		SlideData sd) throws Exception {
+		String iAnnotationFileName=null;
+		if(sd.getAllElements().get(0) instanceof AffySlideDataElement) {
+			AnnotationStateSavingParser asp=new AnnotationStateSavingParser();
+			Vector <IAnnotation>annotationVector=new Vector<IAnnotation>();
+			Vector allslideData=sd.getAllElements();
+
+			for(int i=0; i<allslideData.size(); i++) {
+				//We need to create a function getIAnnotation in ISlideDataElement/AffySlideDataElement
+				ISlideDataElement sde=(ISlideDataElement)allslideData.get(i);
+				IAnnotation annot;
+				if( ( annot=sde.getElementAnnotation())!=null) {
+					annotationVector.add(annot);
+				}
+			}
+			AnnotationStateSavingParser fileParser = new AnnotationStateSavingParser();
+			if(annotationVector!=null)
+			fileParser.writeAnnotationFile(annotationVector, pw);
+			//System.out.println("writeSlideDataIAnnotation");
+		}
+	}
+	
+	//public static Vector<IAnnotation> loadSlideDataIAnnotation(FileReader fr) throws Exception{
+	public static Vector<IAnnotation> loadSlideDataIAnnotation(File file) throws Exception{
+		Vector<IAnnotation> allAnnotations = new Vector<IAnnotation>();
+		AnnotationStateSavingParser fileParser = new AnnotationStateSavingParser();
+		
+		
+		allAnnotations=fileParser.readSavedAnnotation(file);
+		
+		return allAnnotations;
 	}
 }
 

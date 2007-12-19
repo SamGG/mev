@@ -3,7 +3,7 @@ package org.tigr.microarray.mev.persistence;
 public class MultipleArrayDataState{
 	float maxCY3, maxCY5;
 	public MultipleArrayDataState(){}
-	
+	public boolean isAnnotationLoaded=false;
 	/**
 	 * @return Returns the maxCY3.
 	 */
@@ -29,4 +29,11 @@ public class MultipleArrayDataState{
 		this.maxCY5 = maxCY5;
 	}
 	private float maxRatio = 0f;
+	
+	public boolean isAnnotationLoaded() {
+		return isAnnotationLoaded;
+	}
+	public void setAnnotationLoaded(boolean isAnnotationLoaded) {
+		this.isAnnotationLoaded = isAnnotationLoaded;
+	}
 }

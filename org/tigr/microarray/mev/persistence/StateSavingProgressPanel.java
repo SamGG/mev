@@ -6,13 +6,18 @@
  */
 package org.tigr.microarray.mev.persistence;
 
+import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import javax.swing.JProgressBar;
 
 import org.tigr.microarray.mev.MultipleArrayViewer;
-import org.tigr.microarray.mev.action.ActionManager;
 
 /**
  * @author eleanora
@@ -23,9 +28,11 @@ import org.tigr.microarray.mev.action.ActionManager;
 //public class StateSavingProgressPanel extends JPanel implements ActionListener {
 	public class StateSavingProgressPanel extends JFrame implements ActionListener {
 
-	    private JProgressBar progressBar;
+	    public JProgressBar progressBar;
 //	    private JButton cancelButton;
-	    MultipleArrayViewer mav;
+	    //MultipleArrayViewer variable made private, to enable SoapCall class
+	    //to extend StateSavingProgressPanel without disturbing any varibles.
+	    private MultipleArrayViewer mav;
 	    JPanel progressPanel;
 	    
 	    public StateSavingProgressPanel(String initialMessage, MultipleArrayViewer mav) {

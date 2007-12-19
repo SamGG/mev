@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayData.java,v $
- * $Revision: 1.30 $
- * $Date: 2007-12-06 19:46:53 $
- * $Author: eleanorahowe $
+ * $Revision: 1.31 $
+ * $Date: 2007-12-19 21:39:34 $
+ * $Author: saritanair $
  * $State: Exp $
  */
 
@@ -30,6 +30,8 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
+import org.tigr.microarray.mev.annotation.AnnoAttributeObj;
+import org.tigr.microarray.mev.annotation.IAnnotation;
 import org.tigr.microarray.mev.cgh.CGHDataGenerator.CGHCopyNumberCalculator;
 import org.tigr.microarray.mev.cgh.CGHDataGenerator.CGHCopyNumberCalculatorNoDyeSwap;
 import org.tigr.microarray.mev.cgh.CGHDataObj.AlterationRegion;
@@ -347,6 +349,7 @@ public class MultipleArrayData implements IData {
     public int getLogState(){
     	return logState;
     }
+    
     public void constructAndSetAlternateExperiment(Experiment coreExperiment, int [] clusterIndices, int clusterType) {
         int [] origRowIndices = coreExperiment.getRowMappingArrayCopy();
         int [] origColIndices = coreExperiment.getColumnIndicesCopy();
@@ -1019,7 +1022,38 @@ public class MultipleArrayData implements IData {
         ISlideDataElement element = slideData.getSlideDataElement(row);
         return element.getFieldAt(attr);
     }
-
+    
+    /**
+     * Raktim - Annotation Model Method
+     */
+    public String[] getElementAnnotation(int row, String attr) {
+        if (featuresList.size() == 0) {
+            return null;
+        }
+        ISlideData slideData = (ISlideData)featuresList.get(0);
+        ISlideDataElement element = slideData.getSlideDataElement(row);
+      
+        IAnnotation annot = element.getElementAnnotation();
+        return(annot.getAttribute(attr));
+        
+    }
+    
+    /**
+     * Raktim - Annotation Model Method
+     */
+    public AnnoAttributeObj getElementAnnotationObject(int row, String attr) {
+    	if (featuresList.size() == 0) {
+            return null;
+        }
+        ISlideData slideData = (ISlideData)featuresList.get(0);
+        ISlideDataElement element = slideData.getSlideDataElement(row);
+        IAnnotation annot = element.getElementAnnotation();
+      //  System.out.println("Annotation:"+annot.getGenBankAcc());
+        return annot.getAttributeObj(attr);
+	}
+    
+    
+    
     /**
      * Returns a gene unique id.
      */
@@ -1512,7 +1546,7 @@ public class MultipleArrayData implements IData {
                     updateMaxValues(slideData);
                 }
                 if(normalizationAbort){
-                    System.out.println("Abort");
+                  //  System.out.println("Abort");
                     progressBar.setVisible(false);
                     progressBar.dispose();
                     for (int feature=0; feature<size; feature++) {
@@ -3683,6 +3717,12 @@ public class MultipleArrayData implements IData {
 	 */
 	public void setMaxCy5(float maxCy5) {
 		this.maxCy5 = maxCy5;
+	}
+	public boolean isAnnotationLoaded() {
+		return mads.isAnnotationLoaded();
+	}
+	public void setAnnotationLoaded(boolean isAnnotationLoaded) {
+		this.mads.setAnnotationLoaded(isAnnotationLoaded);
 	}
 	
 

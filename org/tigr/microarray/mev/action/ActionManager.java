@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: ActionManager.java,v $
- * $Revision: 1.17 $
- * $Date: 2006-05-15 21:15:33 $
- * $Author: eleanorahowe $
+ * $Revision: 1.18 $
+ * $Date: 2007-12-19 21:39:36 $
+ * $Author: saritanair $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.action;
@@ -18,7 +18,7 @@ import java.util.HashMap;
 
 import javax.swing.Action;
 import javax.swing.ImageIcon;
-import org.tigr.microarray.mev.TMEV;
+
 import org.tigr.microarray.mev.cluster.gui.AnalysisDescription;
 import org.tigr.microarray.mev.cluster.gui.IGUIFactory;
 
@@ -97,6 +97,13 @@ public class ActionManager implements java.io.Serializable {
         actions.put(CDNA_LOW_INTENSITY_ACTION, new DefaultAction(this, CDNA_LOW_INTENSITY_NAME, CDNA_LOW_INTENSITY_CMD, getIcon(CDNA_LOW_INTENSITY_ICON)));
         actions.put(OLIGEN_LOW_INTENSITY_ACTION, new DefaultAction(this, OLIGEN_LOW_INTENSITY_NAME, OLIGEN_LOW_INTENSITY_CMD, getIcon(OLIGEN_LOW_INTENSITY_ICON)));
 
+       
+        /* Raktim - Annotation Demo Only */
+        actions.put(GENOME_ANNOTATION_ACTION, new DefaultAction(this, GENOME_ANNOTATION_NAME, GENOME_ANNOTATION_COMMAND, getIcon(GENOME_ANNOTATION_ICON)));
+        /*
+
+     
+        
         /*
          * Raktim Sept 29, 05
          * CGH Actions
@@ -105,6 +112,10 @@ public class ActionManager implements java.io.Serializable {
         actions.put(LOAD_WSL_ACTION, new DefaultAction(this, LOAD_WSL_NAME, LOAD_WSL_ACTION, getIcon(LOAD_WSL_SMALLICON)));
         actions.put(LOAD_CLONE_DISTRIBUTIONS_ACTION, new DefaultAction(this, LOAD_CLONE_DISTRIBUTIONS_NAME, LOAD_CLONE_DISTRIBUTIONS_ACTION, getIcon("p.gif")));
         actions.put(LOAD_CLONE_DISTRIBUTIONS_FROM_FILE_ACTION, new DefaultAction(this, LOAD_CLONE_DISTRIBUTIONS_FROM_FILE_NAME, LOAD_CLONE_DISTRIBUTIONS_FROM_FILE_ACTION, getIcon("p.gif")));
+   
+    
+    
+    
     }
 
     
@@ -422,7 +433,9 @@ public class ActionManager implements java.io.Serializable {
     public static final String SPEARMAN_RANK_CORRELATION_CMD = "spearman-rank-correlation-cmd";
     public static final String KENDALLS_TAU_CMD = "kendalls-tau-cmd";
     public static final String ABSOLUTE_DISTANCE_CMD = "absolute-distance-cmd";
-    // display commands
+    // display commands\
+    //Added by Sarita
+    public static final String ACCESSIBLE_COLOR_SCHEME_CMD = "display-accessible-color-scheme-cmd";
     public static final String GREEN_RED_COLOR_SCHEME_CMD = "display-green-red-scheme-cmd";
     public static final String BLUE_YELLOW_COLOR_SCHEME_CMD = "display-blue-yellow-scheme-cmd";
     public static final String RAINBOW_COLOR_SCHEME_CMD = "display-rainbow-scheme-cmd";
@@ -466,6 +479,18 @@ public class ActionManager implements java.io.Serializable {
     public static final String APPEND_GENE_ANNOTATION_ACTION = "append-gene-annotation-action";
     public static final String APPEND_GENE_ANNOTATION_NAME = "Append Gene Annotation";
     public static final String APPEND_GENE_ANNOTATION_ICON = "append_gene_annotation.gif";
+   
+    
+   
+     
+     /* Raktim - Annotation Demo Only */
+     public static final String GENOME_ANNOTATION_COMMAND = "genome-annotation-command";
+     public static final String GENOME_ANNOTATION_ACTION = "genome-annotation-action";
+     public static final String GENOME_ANNOTATION_NAME = "Genome Annotation";
+     public static final String GENOME_ANNOTATION_ICON = "genome-annotation.gif";
+
+    
+    
     /**
      * Raktim Spet 29, 05
      * Adding CGH Commands
@@ -528,5 +553,8 @@ public class ActionManager implements java.io.Serializable {
     public static final String FIND_GENE = "find-gene";
     public static final String COMPARE_EXPERIMENTS = "compare-experiments";
     /* End CGH Commands */
+    
+  
+    
     
 }

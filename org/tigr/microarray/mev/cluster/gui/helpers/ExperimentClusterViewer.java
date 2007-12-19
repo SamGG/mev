@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: ExperimentClusterViewer.java,v $
- * $Revision: 1.10 $
- * $Date: 2006-05-02 16:56:57 $
- * $Author: eleanorahowe $
+ * $Revision: 1.11 $
+ * $Date: 2007-12-19 21:39:36 $
+ * $Author: saritanair $
  * $State: Exp $
  */
 
@@ -42,11 +42,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
-import org.tigr.microarray.mev.cluster.gui.IViewer;
+import org.tigr.microarray.mev.annotation.MevAnnotation;
+import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
+import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
 import org.tigr.microarray.mev.cluster.clusterUtil.*;
@@ -806,13 +809,29 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
                 if(haveColorBar)
                     uniqX += this.elementSize.width;
                 int annY;
+                String[]annot=new String[] {""};
+                int fieldNamesLength=data.getFieldNames().length-1;
                 for (int row=top; row<bottom; row++) {
                     if (labelIndex >= 0) {
                         label = data.getElementAttribute(getMultipleArrayDataRow(row), labelIndex);
+                       // System.out.println("ExperimentClusterViewer:getElementAttrinute() "+ label);
+                        
+                    	if(labelIndex <= data.getFieldNames().length-1) {
+                    		annot[0] = data.getElementAttribute(getMultipleArrayDataRow(row), labelIndex);
+                    		System.out.println("Extra Field selected is:"+annot[0]);
+                    	}
+                    	else {
+                    		System.out.println("Annotation selected is:"+MevAnnotation.getFieldNames()[labelIndex-fieldNamesLength-1]);
+                    		annot= data.getElementAnnotation(getMultipleArrayDataRow(row), MevAnnotation.getFieldNames()[labelIndex-fieldNamesLength-1]);
+                    	}
+                        
+                        
+                   
                     }
                     annY = (row+1)*elementSize.height;
                     
-                    g.drawString(label, uniqX + insets.left, annY);
+                    //g.drawString(label, uniqX + insets.left, annY);
+                    g.drawString(annot[0], uniqX + insets.left, annY);
                 }
             }
         }

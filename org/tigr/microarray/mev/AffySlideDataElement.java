@@ -5,13 +5,16 @@
 
 /*
  * $RCSfile: AffySlideDataElement.java,v $
- * $Revision: 1.10 $
- * $Date: 2006-08-22 17:49:12 $
- * $Author: eleanorahowe $
+ * $Revision: 1.11 $
+ * $Date: 2007-12-19 21:39:34 $
+ * $Author: saritanair $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
+import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.annotation.IAnnotation;
+import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.cluster.gui.IData;
 
 public class AffySlideDataElement extends ArrayElement implements ISlideDataElement {
@@ -32,7 +35,29 @@ public class AffySlideDataElement extends ArrayElement implements ISlideDataElem
 	protected boolean isNull = false;
 	protected boolean isNonZero = true;
 	
-	// pcahan
+	
+	
+	/**
+	 * Raktim - Model MeVAnnotation Object
+	 * 6/12/07
+	 */
+	
+	MevAnnotation annotation;
+	
+	/**
+	 * Raktim - MeVAnnotation Constructor
+	 * Constructs a <code>SlideDataElement</code> with specified meta rows,
+	 * meta columns, intensities, descriptions and an Annotation Object.
+	 */
+	public AffySlideDataElement(String UID, int[] rows, int[] columns, float[] intensities, String[] values, MevAnnotation ann) {
+		this.UID = UID;
+		this.rows = copyArray(rows);
+		this.columns = copyArray(columns);
+		this.currentIntensity = copyArray(intensities);
+		this.trueIntensity = copyArray(intensities);
+		this.extraFields = copyArray(values);
+		this.annotation = ann;
+	}
 	
 	/**
 	 * Constructs a <code>SlideDataElement</code> with specified meta rows,
@@ -484,6 +509,19 @@ public class AffySlideDataElement extends ArrayElement implements ISlideDataElem
 	 */
 	public String getUID() {
 		return this.UID;
+	}
+	
+	/**
+	 * Raktim - Element Annotation Object
+	 */
+	public IAnnotation getElementAnnotation() {
+		return annotation;
+	}
+	
+	// Sarita--State saving trial
+	
+	public void setElementAnnotation(IAnnotation annotation) {
+		this.annotation=(MevAnnotation)annotation;
 	}
     
 }
