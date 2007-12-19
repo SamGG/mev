@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.49 $
- * $Date: 2007-09-10 17:17:32 $
- * $Author: raktim $
+ * $Revision: 1.50 $
+ * $Date: 2007-12-19 21:39:35 $
+ * $Author: saritanair $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -100,6 +100,11 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+//Raktim
+import org.tigr.microarray.mev.annotation.GenomeAnnoDialog;
+import org.tigr.microarray.mev.annotation.MevAnnotation;
+
+
 import org.tigr.microarray.file.AnnFileParser;
 import org.tigr.microarray.mev.action.ActionManager;
 import org.tigr.microarray.mev.cgh.CGHAlgorithms.CGHAlgorithmFactory;
@@ -160,9 +165,12 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableSearchDialog;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.TextViewer;
+import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HTMLMessageFileChooser;
 import org.tigr.microarray.mev.file.AnnFileFilter;
 import org.tigr.microarray.mev.file.CGHStanfordFileLoader;
@@ -174,6 +182,7 @@ import org.tigr.microarray.mev.persistence.StateSavingProgressPanel;
 import org.tigr.microarray.mev.persistence.XMLEncoderFactory;
 import org.tigr.microarray.mev.r.Rama;
 import org.tigr.microarray.mev.script.ScriptManager;
+import org.tigr.microarray.util.awt.AccessibleColorSchemeSelectionDialog;
 import org.tigr.microarray.util.awt.ColorSchemeSelectionDialog;
 import org.tigr.microarray.util.awt.SetElementSizeDialog;
 import org.tigr.microarray.util.awt.SetSlideFilenameDialog;
@@ -234,6 +243,19 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 	SessionMetaData smd;
 	
 	public static String CURRENT_TEMP_DIR = "mev_temp";
+	
+	
+	/* Raktim - MAV tracking the index of its current instance */
+	private int mevInstanceIndex;
+
+	
+	//Added by sarita
+	private ClusterRepository clusterRepository;
+	private Experiment experiment;
+	private int[][]clusters;
+	private int clusterIndex;
+	private ClusterTableSearchDialog searchDialog;  
+	
     
     /**
      * Construct a <code>MultipleArrayViewer</code> with default title,
@@ -261,7 +283,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         manager = new ActionManager(eventListener, new String[0], TMEV.getGUIFactory());
         
         menubar = new MultipleArrayMenubar(manager);
-              
+       
         mainframe.setJMenuBar(menubar);
         
         toolbar = new MultipleArrayToolbar(manager);
@@ -481,6 +503,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     private void displaySlideElementInfo(int column, int row) {
         Manager.displaySlideElementInfo(mainframe, data, column, row);
     }
+    
+    
+ 
+    
     
     /*********************************************
      *  This section of code defines methods to save the state of MeV
@@ -823,7 +849,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      * For State Saving
      */
 	 private void initializeCGH(){   
-	    System.out.println("data.isCGHData(): " + data.isCGHData());
+	  //  System.out.println("data.isCGHData(): " + data.isCGHData());
 	    if(data.isCGHData()) {
 	    	this.data.setChromosomeIndices(CGHStanfordFileLoader.calculateChromosomeIndices(this.data.getClones()));
 	    	this.data.setHasDyeSwap(this.data.isHasDyeSwap());
@@ -880,7 +906,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         Object object;
         
 		int childCount = this.analysisNode.getChildCount();
-		System.out.println("analysisNode Child Count: " + childCount);
+	//	System.out.println("analysisNode Child Count: " + childCount);
         String algName= "";
         String trimName = "";
         Enumeration treeEnum;
@@ -900,11 +926,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                 } else if(object instanceof String) {
                     algName = (String)object;
                 }
-                System.out.println(algName);
+               // System.out.println(algName);
                 trimName = getCGHAlgoNameWihtoutIndex(algName);
                 if(trimName != null) {
                 	index = findCGHAlgoIndexFromFactory(trimName);
-                	System.out.println("CGH Algo index: " + index);
+                	//System.out.println("CGH Algo index: " + index);
                 }
                 
                 if(index != -1) {
@@ -915,12 +941,12 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 	                    if(currentNode.getUserObject() instanceof LeafInfo){
 	                    	//System.out.println("\tLeafInfo");
 	                    	System.out.print("\t");
-	                    	System.out.println(((LeafInfo)currentNode.getUserObject()).getName());
+	                    	//System.out.println(((LeafInfo)currentNode.getUserObject()).getName());
 	                    } else if(currentNode.getUserObject() instanceof String) {
 	                    	//System.out.println("\tString");
 	                    	System.out.print("\t");
 	                    	String nodeStr = (String)currentNode.getUserObject();
-	                    	System.out.println(nodeStr);
+	                    	//System.out.println(nodeStr);
 	                    	int i_T = nodeStr.lastIndexOf(":");
 	                    	if (i_T != -1) {
 	                    		String nodeSubStr = nodeStr.substring(0, i_T);
@@ -950,7 +976,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 	                    }
 	                }
 	                //Re-creating analysis node
-	                System.out.println(algName + " " + ampThresh_T + " " + delThresh_T + " " + ampThresh2Copy_T + " " + delThresh2Copy_T);
+	               // System.out.println(algName + " " + ampThresh_T + " " + delThresh_T + " " + ampThresh2Copy_T + " " + delThresh2Copy_T);
 	                menu.setAmpThresh(ampThresh_T);
 	                menu.setDelThresh(delThresh_T);
 	                menu.setAmpThresh2Copy(ampThresh2Copy_T);
@@ -1127,7 +1153,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         }
     }
     private void loadAnalysisFromFile(final File file) throws IOException, ClassNotFoundException {
-	    
+	    System.out.println("loading ananlysis from file function");
 	    progressPanel = new StateSavingProgressPanel("Loading Saved Analysis", this);
 		progressPanel.setLocationRelativeTo(mainframe);
 		progressPanel.setVisible(true);
@@ -1237,9 +1263,22 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 			
 			        //get the experiment label keys
 			        menubar.replaceExperimentLabelMenuItems(data.getSlideNameKeyArray());
-			         data.setSampleLabelKey(MultipleArrayData.DEFAULT_SAMPLE_ANNOTATION_KEY);
+			        data.setSampleLabelKey(MultipleArrayData.DEFAULT_SAMPLE_ANNOTATION_KEY);
 			        //populate the display menu
-			        menubar.replaceLabelMenuItems(data.getFieldNames());
+			         
+			      
+			        
+			         /*Added by Sarita*/
+			        
+			       if((data.getSlideDataElement(0,0).getElementAnnotation())!=null) {
+			    	   menubar.replaceLabelMenuItems(data.getFieldNames(), MevAnnotation.getFieldNames());
+			       }else {
+			    	   menubar.replaceLabelMenuItems(data.getFieldNames());
+			       }
+			        
+			      
+			        /////////////////////////////////////////////// 
+			      //  menubar.replaceLabelMenuItems(data.getFieldNames());--original code commented by Sarita
 			        menubar.replaceSortMenuItems(data.getFieldNames());
 			        
 			        if(data.isCGHData()) {
@@ -1342,6 +1381,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 		} catch (NullPointerException npe){npe.printStackTrace();}
 		try {
 			msp.setColorScheme(menubar.getColorScheme());
+			//System.out.println("MAViewer:prepSessionMetaData"+menubar.getColorScheme());
 		} catch (NullPointerException npe){npe.printStackTrace();}
 		try {
 			msp.setPositiveGradientImageWrapper(new BufferedImageWrapper(menubar.getDisplayMenu().getPositiveGradientImage()));
@@ -1350,7 +1390,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 			msp.setNegativeGradientImageWrapper(new BufferedImageWrapper(menubar.getDisplayMenu().getNegativeGradientImage()));
 		} catch (NullPointerException npe){npe.printStackTrace();}
 		try {
-			msp.setAutoScale(auto_scale);
+			//commented by Sarita
+			//msp.setAutoScale(auto_scale);
 		} catch (NullPointerException npe){npe.printStackTrace();}
 		try {
 			msp.setElementSize(menubar.getDisplayMenu().getElementSize());
@@ -1965,8 +2006,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             return;
         }
         String filename = ssfd.getFileName();
-        System.out.println("db  : "+database);
-        System.out.println("file: "+filename);
+       
     }
     
     /**
@@ -2015,6 +2055,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         String index = (String)action.getValue(ActionManager.PARAMETER);
         menubar.setLabelIndex(Integer.parseInt(index));
         fireMenuChanged();
+       
     }
     
     /**
@@ -2038,8 +2079,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         
         //get the longest key set from loaded samples
         Vector featureAttributes = this.data.getSlideNameKeyVectorUnion();
-        
-        
+      
         ExperimentLabelEditor editor = new ExperimentLabelEditor(this.getFrame(), featureAttributes, this.data, safeToReorderExperiments);
         
         //return if not OK
@@ -2105,6 +2145,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      */
     private void fireMenuChanged() {
         IViewer viewer = getCurrentViewer();
+      
         if (viewer == null) {
             return;
         }
@@ -2114,6 +2155,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         	((ICGHViewer)viewer).onMenuChanged(menubar.getDisplayMenu());
         } else {
         	viewer.onMenuChanged(menubar.getDisplayMenu());
+        	//System.out.println("MultipleArrayViewer: fireMenuChanged");
         }
         doViewLayout();
     }
@@ -2140,6 +2182,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      */
     private void doViewLayout() {
         JViewport header = viewScrollPane.getColumnHeader();
+       
         if (header != null) {
             header.doLayout();
         }
@@ -2206,9 +2249,16 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     
     /**
      * Sets the color pallete colors
+     * 
+     * @author Sarita Nair
+     * Added a color blind friendly palette to the existing ones.
+     * Details provided in ColorBlindPalette.java
+     * 
+     * 
      */
     private void onColorSchemeChange(int colorScheme){
         int initColorScheme = menubar.getColorScheme();
+       
         if(colorScheme == IDisplayMenu.GREEN_RED_SCHEME || colorScheme == IDisplayMenu.BLUE_YELLOW_SCHEME || colorScheme == IDisplayMenu.RAINBOW_COLOR_SCHEME) {
             this.menubar.setColorSchemeIndex(colorScheme);
             if(colorScheme == IDisplayMenu.RAINBOW_COLOR_SCHEME) {
@@ -2216,10 +2266,19 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             } else {
                 this.menubar.setUseDoubleGradient(true);  //use double gradient
             }
+        }else if(colorScheme==IDisplayMenu.ACCESSIBLE_COLOR_SCHEME) {//Added by Sarita
+        	        	
+        	AccessibleColorSchemeSelectionDialog adialog = new AccessibleColorSchemeSelectionDialog((Frame)getFrame(), true, menubar.getNegativeGradientImage(), menubar.getPositiveGradientImage(), this.menubar.getDisplayMenu().getUseDoubleGradient());            
+            adialog.showModal();
+             this.menubar.setPositiveAccessibleGradient(adialog.getPositiveGradient());
+             this.menubar.setNegativeAccessibleGradient(adialog.getNegativeGradient());
+             this.menubar.setColorSchemeIndex(colorScheme);
+             this.menubar.setUseDoubleGradient(adialog.getUseDoubleGradient());     
+          
+        	
         } else { 
         	//select a custom color scheme
-        	
-        	// using rainbow scheme set current to standard green/black/red first
+           	// using rainbow scheme set current to standard green/black/red first
         	boolean rainbowScheme = (initColorScheme == IDisplayMenu.RAINBOW_COLOR_SCHEME);
         	if(rainbowScheme) {
         		menubar.setColorSchemeIndex(IDisplayMenu.GREEN_RED_SCHEME);
@@ -2416,17 +2475,20 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     }
     
     /**
-     * Adds a specified node into the analysis node.
+     * Adds a specified node into the Analysis Result node.
      */
     public synchronized void addAnalysisResult(DefaultMutableTreeNode node) {
         if (node == null) {
             return;
         }
         String nodeTitle = (String) node.getUserObject();
+        
+       
         nodeTitle += " ("+resultCount+")";
         resultCount++;
         modifiedResult = true;
         node.setUserObject(nodeTitle);
+       
         DefaultTreeModel treeModel = (DefaultTreeModel)tree.getModel();
         treeModel.insertNodeInto(node, analysisNode, analysisNode.getChildCount());
         TreeSelectionModel selModel = tree.getSelectionModel();
@@ -2466,8 +2528,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      */
     private void onAnalysis(Action action) {
         String className = (String)action.getValue(ActionManager.PARAMETER);
+        
         try {
             Class clazz = Class.forName(className);
+           
             final IClusterGUI gui = (IClusterGUI)clazz.newInstance();
             Thread thread = new Thread(new Runnable() {
                 public void run() {
@@ -2516,6 +2580,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         addHistory("Deleted Node: "+nodeName);
         
     }
+    
+    
+    
+   
+    
     
     /**
      *
@@ -2864,7 +2933,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         }
     	
     }
-    
+   
     //add p-value filter
     private void applyPvaluePercentageFilter(){
     	//SetPresentCallDialog spcd = new SetPresentCallDialog(getFrame(), data.getPercentageCutoff());
@@ -3157,6 +3226,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
      */
     private void addNode(DefaultMutableTreeNode parent, DefaultMutableTreeNode child){
         DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
+       
         model.insertNodeInto(child,parent, parent.getChildCount());
         this.treeScrollPane.getHorizontalScrollBar().setValue(0);
         fireDataChanged();
@@ -3171,77 +3241,95 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     /**
      * Stores a cluster with specified indices.
      */
-    private Color storeCluster(int [] indices, Experiment experiment, int clusterType){
-        DefaultTreeModel model = (DefaultTreeModel) this.tree.getModel();
-        TreePath path = this.tree.getSelectionPath();
-        DefaultMutableTreeNode clusterNode = (DefaultMutableTreeNode)path.getLastPathComponent();
-        Object leafInfo = clusterNode.getUserObject();
-        if(!(leafInfo instanceof LeafInfo))
-            return null;
-        if(path.getPathCount() < 3)
-            return null;
-        Cluster cluster;
-        Color clusterColor = null;
-        String clusterID = ((LeafInfo)clusterNode.getUserObject()).toString();
-        DefaultMutableTreeNode algorithmNode = (DefaultMutableTreeNode)path.getPathComponent(2);
-        String algorithmName = (String)algorithmNode.getUserObject();
-        if(clusterType == ClusterRepository.GENE_CLUSTER){
-            if(this.geneClusterRepository == null){
-                this.geneClusterRepository = new ClusterRepository(data.getFeaturesSize(), framework, true);
-                this.data.setGeneClusterRepository(this.geneClusterRepository);
-            }
-            cluster = geneClusterRepository.storeCluster(this.resultCount-1, algorithmName, clusterID, indices, clusterNode, experiment);
-            if(cluster != null) {
-                clusterColor = cluster.getClusterColor();
-                if(geneClusterManager == null){
-                    this.geneClusterManager = new ClusterTable(this.geneClusterRepository, framework);
-                    DefaultMutableTreeNode genesNode = new DefaultMutableTreeNode(new LeafInfo("Gene Clusters", this.geneClusterManager), false);
-                    addNode(this.clusterNode, genesNode);
-                } else {
-                    geneClusterManager.onRepositoryChanged(geneClusterRepository);
-                }
-            }
-            geneClusterRepository.printRepository();
-        } else {
-            if(this.experimentClusterRepository == null){
-                this.experimentClusterRepository = new ClusterRepository(data.getFeaturesCount(), framework);
-                this.data.setExperimentClusterRepository(this.experimentClusterRepository);
-            }
-            cluster = experimentClusterRepository.storeCluster(this.resultCount-1, algorithmName, clusterID, indices, clusterNode, experiment);
-            if(cluster != null) {
-                clusterColor = cluster.getClusterColor();
-                if(experimentClusterManager == null){
-                    this.experimentClusterManager = new ClusterTable(this.experimentClusterRepository, framework);
-                    DefaultMutableTreeNode experimentNode = new DefaultMutableTreeNode(new LeafInfo("Sample Clusters", this.experimentClusterManager), false);
-                    addNode(this.clusterNode, experimentNode);
-                } else {
-                    experimentClusterManager.onRepositoryChanged(experimentClusterRepository);
-                }
-            }
-            experimentClusterRepository.printRepository();
-        }
-        
-        if(cluster != null) {
-            int serNum = cluster.getSerialNumber();
-            String algName = cluster.getAlgorithmName();
-            
-            if(clusterType == Cluster.GENE_CLUSTER)
-                addHistory("Save Gene Cluster: Serial #: "+String.valueOf(serNum)+", Algorithm: "+
-                algName+", Cluster: "+clusterID);
-            else
-                addHistory("Save Experiment Cluster: Serial #: "+String.valueOf(serNum)+", Algorithm: "+
-                algName+", Cluster: "+clusterID);
-        }
-        
-        fireDataChanged();
-        tree.repaint();
-        return clusterColor;
+    private Color storeCluster(int[] indices, Experiment experiment,int clusterType) {
+     	DefaultTreeModel model = (DefaultTreeModel) this.tree.getModel();
+    	TreePath path = this.tree.getSelectionPath();
+    	DefaultMutableTreeNode clusterNode = (DefaultMutableTreeNode) path
+    	.getLastPathComponent();
+    	Object leafInfo = clusterNode.getUserObject();
+    	if (!(leafInfo instanceof LeafInfo))
+    		return null;
+    	if (path.getPathCount() < 3)
+    		return null;
+    	Cluster cluster;
+    	Color clusterColor = null;
+    	String clusterID = ((LeafInfo) clusterNode.getUserObject()).toString();
+    	DefaultMutableTreeNode algorithmNode = (DefaultMutableTreeNode) path
+    	.getPathComponent(2);
+    	String algorithmName = (String) algorithmNode.getUserObject();
+    	if (clusterType == ClusterRepository.GENE_CLUSTER) {
+    		if (this.geneClusterRepository == null) {
+    			this.geneClusterRepository = new ClusterRepository(data
+    					.getFeaturesSize(), framework, true);
+    			this.data.setGeneClusterRepository(this.geneClusterRepository);
+    		}
+    		cluster = geneClusterRepository.storeCluster(this.resultCount - 1,
+    				algorithmName, clusterID, indices, clusterNode, experiment);
+    		if (cluster != null) {
+    			clusterColor = cluster.getClusterColor();
+    			if (geneClusterManager == null) {
+    				this.geneClusterManager = new ClusterTable(
+    						this.geneClusterRepository, framework);
+    				DefaultMutableTreeNode genesNode = new DefaultMutableTreeNode(
+    						new LeafInfo("Gene Clusters",
+    								this.geneClusterManager), false);
+    				addNode(this.clusterNode, genesNode);
+    			} else {
+    				geneClusterManager
+    				.onRepositoryChanged(geneClusterRepository);
+    			}
+    		}
+    		geneClusterRepository.printRepository();
+    	} else {
+    		if (this.experimentClusterRepository == null) {
+    			this.experimentClusterRepository = new ClusterRepository(data
+    					.getFeaturesCount(), framework);
+    			this.data
+    			.setExperimentClusterRepository(this.experimentClusterRepository);
+    		}
+    		cluster = experimentClusterRepository.storeCluster(
+    				this.resultCount - 1, algorithmName, clusterID, indices,
+    				clusterNode, experiment);
+    		if (cluster != null) {
+    			clusterColor = cluster.getClusterColor();
+    			if (experimentClusterManager == null) {
+    				this.experimentClusterManager = new ClusterTable(
+    						this.experimentClusterRepository, framework);
+    				DefaultMutableTreeNode experimentNode = new DefaultMutableTreeNode(
+    						new LeafInfo("Sample Clusters",
+    								this.experimentClusterManager), false);
+    				addNode(this.clusterNode, experimentNode);
+    			} else {
+    				experimentClusterManager
+    				.onRepositoryChanged(experimentClusterRepository);
+    			}
+    		}
+    		experimentClusterRepository.printRepository();
+    	}
+
+    	if (cluster != null) {
+    		int serNum = cluster.getSerialNumber();
+    		String algName = cluster.getAlgorithmName();
+
+    		if (clusterType == Cluster.GENE_CLUSTER)
+    			addHistory("Save Gene Cluster: Serial #: "
+    					+ String.valueOf(serNum) + ", Algorithm: " + algName
+    					+ ", Cluster: " + clusterID);
+    		else
+    			addHistory("Save Experiment Cluster: Serial #: "
+    					+ String.valueOf(serNum) + ", Algorithm: " + algName
+    					+ ", Cluster: " + clusterID);
+    	}
+
+    	fireDataChanged();
+    	tree.repaint();
+    	return clusterColor;
     }
-    
+
     /**
-     * Stores cluster with provieded indices, allows storage if indices are a subset of
-     * the displayed clusters (as in <code>HCLViewer</code>
-     */
+	 * Stores cluster with provieded indices, allows storage if indices are a
+	 * subset of the displayed clusters (as in <code>HCLViewer</code>
+	 */
     private Color storeSubCluster(int [] indices, Experiment experiment, int clusterType){
         DefaultTreeModel model = (DefaultTreeModel) this.tree.getModel();
         TreePath path = this.tree.getSelectionPath();
@@ -3542,6 +3630,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 		return values;
 		
 	}
+    
+    
     public boolean autoScale(float[] val){
     	    int count=0;
 			for(int i=0;i<val.length;i++)
@@ -3550,7 +3640,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 			if((count*1.0)/(val.length*1.0)>0.8){
 				auto_scale=true;
 			}
+			
 			return auto_scale;
+			
     }
     
     /** by wwang
@@ -3590,14 +3682,35 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         data.addFeatures(features);
         data.setDataType(dataType);
         if(this.data.getFieldNames() != null && this.data.getFeaturesCount() > 0){
-            this.menubar.addLabelMenuItems(this.data.getFieldNames());
-            //add the experiment key vector that is longest
+        	//Raktim - Modified to display the fileds from Annotation Model
+        
+        	/**
+        	 * Added by Sarita: This loop checks if annotation has been loaded and if so,
+        	 * adds all the fields in AnnotationFieldConstants class, retrived through
+        	 * the function call MevAnnotation.getFieldNames()+ data.getFieldNames() to the LabelMenu.
+        	 * 
+        	 * If annotation has not been loaded, LabelMenu is set to the default annotation
+        	 * obtained through the function call data.getFieldNames();
+        	 * 
+        	 * 
+        	 */ 
+        	
+        	if(this.getData().isAnnotationLoaded()) {
+           	String[] annoFields = MevAnnotation.getFieldNames();
+        	this.menubar.addLabelMenuItems(this.data.getFieldNames(), annoFields);
+        	}
+        	else
+        	 this.menubar.addLabelMenuItems(this.data.getFieldNames());//--Commented by Raktim for demo
+           
+        	
+        	//add the experiment key vector that is longest
             this.menubar.addExperimentLabelMenuItems(getSlideNameKeyVectorUnion(features));
             //this.menubar.addSortMenuItems(this.data.getFieldNames());
             
             //have the main scroll pane and canvas
-            ((MultipleArrayCanvas)this.viewer).addSortMenuItems(data.getFieldNames());
+        ((MultipleArrayCanvas)this.viewer).addSortMenuItems(data.getFieldNames());
   
+            
             this.menubar.setLabelIndex(0);
             
             //pcahan
@@ -3623,7 +3736,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         // by wwang add for auto color scaling(for affy data) 
         sortedValues=initSortedValues(data.getExperiment().getMatrix());
         auto_scale=autoScale(sortedValues);
-        if(data.getDataType() == IData.DATA_TYPE_AFFY_ABS || auto_scale==true){
+        //This if loop has been commented out temporarily by Sarita
+       if(data.getDataType() == IData.DATA_TYPE_AFFY_ABS || auto_scale==true){
          	this.menubar.setMinRatioScale(0f);
          	this.menubar.setMidRatioValue(getMedian());
          	this.menubar.setMaxRatioScale(getMaxScale());    	
@@ -3934,6 +4048,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 
                     String [] newFields = importDialog.getSelectedAnnotationFields();
                     
+                   // System.out.println("After Gene Annotation Upload");
+                    //System.out.println("New Fields:"+newFields[0]);
+                    
                     int updateCount = data.addNewGeneAnnotation(annMatrix, importDialog.getDataAnnotationKey(), importDialog.getFileAnnotationKey(), newFields);
                     
                     if(updateCount > 0) {
@@ -3971,6 +4088,14 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             }
         }
     }
+    
+    
+    
+  
+    
+    
+    
+    
 	/* Start CGH Functions */
     /**
      * Raktim Nov 11, 05
@@ -4712,11 +4837,33 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     	smd.setMevMicroVersion(01);
     	smd.setBeta(false);
     }
+    
+    
+    
+    /**
+     * Raktim - Annotation Model specific Functions 
+     * Returns the current instance index in the order of creation.
+     */ 
+    public int getInstanceIndex() {
+    	return mevInstanceIndex;
+    }
+    
+    /**
+     * Raktim - Annotation Model specific Functions 
+     * Sets the current instance index in the order of creation.
+     * @param index
+     */
+    public void setInstanceIndex(int index) {
+    	this.mevInstanceIndex = index;
+    }
+
+
 
 
     /**
      * The listener to listen to mouse, action, tree, keyboard and window events.
      */
+    
     private class EventListener extends MouseAdapter implements ActionListener, TreeSelectionListener, KeyListener, WindowListener, java.io.Serializable, IDataRegionSelectionListener, ICGHListener  {
         
         public void actionPerformed(ActionEvent event) {
@@ -4769,7 +4916,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                 onColorSchemeChange(IDisplayMenu.RAINBOW_COLOR_SCHEME);
             } else if (command.equals(ActionManager.CUSTOM_COLOR_SCHEME_CMD)){
                 onColorSchemeChange(IDisplayMenu.CUSTOM_COLOR_SCHEME);
-            } else if (command.equals(ActionManager.COLOR_GRADIENT_CMD)){
+            } else if (command.equals(ActionManager.ACCESSIBLE_COLOR_SCHEME_CMD)){//Added by Sarita
+                onColorSchemeChange(IDisplayMenu.ACCESSIBLE_COLOR_SCHEME);
+            }else if (command.equals(ActionManager.COLOR_GRADIENT_CMD)){
                 onColorGradientChange(((javax.swing.JCheckBoxMenuItem)(event.getSource())).isSelected());
             } else if (command.equals(ActionManager.DISPLAY_DRAW_BORDERS_CMD)) {
                 onDrawBorders();
@@ -4859,17 +5008,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         	}else if (command.equals(ActionManager.OLIGEN_LOW_INTENSITY_CMD)) {
         		applySingleLowerCutoffs();
         	}
-            // pcahan
-            /*else if (command.equals(ActionManager.SET_DETECTION_FILTER_CMD)) {
-                onSetDetectionFilter();
-            } else if (command.equals(ActionManager.SET_FOLD_FILTER_CMD)) {
-                onSetFoldFilter();
-            } else if (command.equals(ActionManager.USE_DETECTION_FILTER_CMD)) {
-                onUseDetectionFilter( (AbstractButton) event.getSource());
-            } else if (command.equals(ActionManager.USE_FOLD_FILTER_CMD)) {
-                onUseFoldFilter( (AbstractButton) event.getSource());
-            }
-             */
+           
 //          vu 7.22.05
 	        else if ( command.equals( ActionManager.RAMA_CMD ) ) {
 	                 onRama();
@@ -5033,11 +5172,32 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             }else if (command.equals(ActionManager.RENAME_NODE_CMD)) {
                 onRenameNode();
             }
-            /* End CGH Command Handlers  */      
+            /* End CGH Command Handlers  */   
+            /* Raktim - Annotation Demo Only */
+        	else if (command.equals(ActionManager.GENOME_ANNOTATION_COMMAND)) {
+        		onGenomeAnnotation();
+        	}
+  
             else {
                 System.out.println("unhandled command = " + command);
             }
         }
+        
+        
+        
+        /* Raktim - Annotation Demo Only */
+        private void onGenomeAnnotation() {
+			//System.out.println("onGenomeAnnotation() Called");
+			GenomeAnnoDialog dlg = new GenomeAnnoDialog(new javax.swing.JFrame());
+	        if (dlg.showModal() == JOptionPane.OK_OPTION) {
+	            System.out.println("ok");
+	        }
+		}
+
+   
+        
+        
+        
         
         public void valueChanged(TreeSelectionEvent event) {
             onNodeChanged(event);
@@ -5054,57 +5214,87 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         /**
          * Shows a popup menu for a selected navigation tree node.
          */
+       
+        
+        
+        
+        
+        
         private void maybeShowPopup(MouseEvent e) {
-            
-            if (!e.isPopupTrigger()) {
-                return;
-            }
-            TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
-            if (selPath == null) {
-                return;
-            }
-            tree.setSelectionPaths(new TreePath[] {selPath});
-            JPopupMenu popup = null;
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode)selPath.getLastPathComponent();
-            Object userObject = node.getUserObject();
-            if (userObject instanceof LeafInfo) {
-                popup = ((LeafInfo)userObject).getJPopupMenu();
-            }
-            // adds the delete menu item for a custom node
-            if (selPath.getPathCount() > 2) {
-                if(node.getParent() == clusterNode)
-                    return;
-                if (popup == null) {
-                    popup = new JPopupMenu();
-                    if(userObject instanceof LeafInfo) {
-                        Object viewerObj = ((LeafInfo)userObject).getViewer();
-                        if(viewerObj == null) {
-                            popup.add(createDeleteMenuItem());
-                        } else if(viewerObj instanceof IViewer && ((IViewer)viewerObj).getClusters() != null && ((IViewer)viewerObj).getExperiment() != null && ((IViewer)viewerObj).getViewerType() != -1) {
-                            popup.add(createDeleteMenuItem());
-                            popup.addSeparator();
-                            popup.add(createSetDataMenuItem(((LeafInfo)userObject).isSelectedDataSource()));
-                        }
-                    } else {
-                        popup.add(createDeleteMenuItem());
-                    }
-                } else {
-                    if (!isContainsDeleteItem(popup)) {
-                        popup.addSeparator();
-                        popup.add(createDeleteMenuItem());
-                    }
-                }
-            } else if( ((LeafInfo)userObject).toString().equals("Main View") && data.getFeaturesCount() != 0 ) {
-                popup = new JPopupMenu();
-                JMenuItem item = new JMenuItem("Set as Data Source");
-                item.setActionCommand(ActionManager.SET_DATA_SOURCE_COMMAND);
-                item.addActionListener(this);
-                popup.add(item);
-            }
-            if (popup != null) {
-                popup.show(e.getComponent(), e.getX(), e.getY());
-            }
+
+        	if (!e.isPopupTrigger()) {
+        		return;
+        	}
+        	TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+
+
+        	if (selPath == null) {
+        		return;
+        	}
+
+        	tree.setSelectionPaths(new TreePath[] {selPath});
+        	JPopupMenu popup = null;
+        	DefaultMutableTreeNode node = (DefaultMutableTreeNode)selPath.getLastPathComponent();
+
+        	Object userObject = node.getUserObject();
+      
+
+
+        	//Original code. Commented out temporarily by sarita	
+        	if (userObject instanceof LeafInfo) {
+        		popup = ((LeafInfo)userObject).getJPopupMenu();
+
+        	}
+        	// adds the delete menu item for a custom node
+        	
+        	
+        	
+        	
+        	//Original code. Commented temporarily by sarita//  	
+        	if (selPath.getPathCount() > 2) {
+        		if(node.getParent() == clusterNode)
+        			return;
+        	
+      	
+        		if (popup == null) {
+        			popup = new JPopupMenu();
+        			if(userObject instanceof LeafInfo) {
+        				      				
+        				Object viewerObj = ((LeafInfo)userObject).getViewer();
+        				//Added by sarita
+        				
+        				if(viewerObj == null) {
+        					
+        					popup.add(createDeleteMenuItem());
+        				} else if(viewerObj instanceof IViewer && ((IViewer)viewerObj).getClusters() != null && ((IViewer)viewerObj).getExperiment() != null && ((IViewer)viewerObj).getViewerType() != -1) {
+        					popup.add(createDeleteMenuItem());
+        					popup.addSeparator();
+        					popup.add(createSetDataMenuItem(((LeafInfo)userObject).isSelectedDataSource()));
+        				}
+        			} else {
+        				popup.add(createDeleteMenuItem());
+        			}
+        		} else {
+        			if (!isContainsDeleteItem(popup)) {
+        				popup.addSeparator();
+        				popup.add(createDeleteMenuItem());
+        			}
+        		}
+        	} else if( ((LeafInfo)userObject).toString().equals("Main View") && data.getFeaturesCount() != 0 ) {
+        		popup = new JPopupMenu();
+        		JMenuItem item = new JMenuItem(" Set as Data Source ");
+        		item.setActionCommand(ActionManager.SET_DATA_SOURCE_COMMAND);
+        		item.addActionListener(this);
+        		popup.add(item);
+        	}
+        	if (popup != null) {
+        		popup.show(e.getComponent(), e.getX(), e.getY());
+        	}
+
         }
+
+
+      
         
         /**
          * Creates a delete menu item.
@@ -5115,7 +5305,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             menuItem.addActionListener(this);
             return menuItem;
         }
-        
+     
         
         /**
          * Creates a data source CheckBox menu item.
@@ -5129,7 +5319,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         
         
         /**
-         * Checkes if node already contains the delete item.
+         * Checks if node already contains the delete item.
          */
         private boolean isContainsDeleteItem(JPopupMenu popup) {
             Component[] components = popup.getComponents();
@@ -5156,6 +5346,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         public void windowDeiconified(WindowEvent e) {}
         public void windowActivated(WindowEvent e) {}
         public void windowDeactivated(WindowEvent e) {}
+        
+       
+        
+        
         /**
          * Raktim Sept 29, 05
          * Adding CGH Listener Functions
@@ -5192,6 +5386,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         }
         //public void onExperimentsLoaded(java.util.EventObject eventObj);
         //public void onExperimentsInitialized(java.util.EventObject eventObj);
+
         public void onExperimentsLoaded(){
         	ExperimentsLoaded();
         }
@@ -5357,5 +5552,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         public CytoBandsModel getCytoBandsModel(){
         	return cytoBandsModel;
         }
+        
+      
+   
+        
+        
     }
 }

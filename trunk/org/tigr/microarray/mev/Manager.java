@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: Manager.java,v $
- * $Revision: 1.17 $
- * $Date: 2006-09-09 18:56:56 $
- * $Author: jdenvir $
+ * $Revision: 1.18 $
+ * $Date: 2007-12-19 21:39:34 $
+ * $Author: saritanair $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -26,6 +26,8 @@ import java.net.URL;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import javax.swing.MenuElement;
+import javax.swing.JButton;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
@@ -48,6 +50,8 @@ import org.tigr.util.awt.ActionInfoEvent;
 import org.tigr.util.awt.ActionInfoListener;
 import org.tigr.util.awt.ImageScreen;
 import org.tigr.util.awt.MessageDisplay;
+//Added by sarita
+import org.tigr.microarray.mev.action.ActionManager;
 
 public class Manager {//A class to keep track of viewers
     private static Vector activeComponents;
@@ -80,6 +84,8 @@ public class Manager {//A class to keep track of viewers
     private JMenuItem documentMenuItem;
     
     private static EventListener eventListener;
+    /* Raktim -  Annotation Model. Variable tracks number of MAV instances created.*/
+    private static int MavInstanceCount = 0;
     
     public Manager() {
         try {
@@ -297,6 +303,7 @@ public class Manager {//A class to keep track of viewers
     
     public static void addComponent(Component component) {
         activeComponents.addElement(component);
+        MavInstanceCount++; // Raktim - Annotation Model specific
         updateWindowMenu();
     }
     
@@ -360,7 +367,7 @@ public class Manager {//A class to keep track of viewers
     public static void createNewMultipleArrayViewer( int xOffset, int yOffset ) {
         MultipleArrayViewer mav = new MultipleArrayViewer();
         Manager.addComponent(mav);
-        
+        mav.setInstanceIndex(MavInstanceCount-1); // Raktim - Annotation Model specific
         //TMEV.clearFieldNames();
         mav.getFrame().setSize(1150, 700);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -373,7 +380,8 @@ public class Manager {//A class to keep track of viewers
     public static void createNewMultipleArrayViewer() {
         MultipleArrayViewer mav = new MultipleArrayViewer();
         Manager.addComponent(mav);
-        
+        mav.setInstanceIndex(MavInstanceCount-1); // Raktim - Annotation Model specific
+      
         //TMEV.clearFieldNames();
         //Remove the next two lines (about DB system enabling)
         //mav.systemEnable(TMEV.DB_AVAILABLE);
@@ -390,7 +398,7 @@ public class Manager {//A class to keep track of viewers
     	//CustomToolbarInitDialog ctg=new CustomToolbarInitDialog();
         MultipleArrayViewer mav = new MultipleArrayViewer();
         Manager.addComponent(mav);
-        
+        mav.setInstanceIndex(MavInstanceCount-1); // Raktim - Annotation Model specific
         //TMEV.clearFieldNames();
         //Remove the next two lines (about DB system enabling)
         //mav.systemEnable(TMEV.DB_AVAILABLE);
@@ -411,6 +419,8 @@ public class Manager {//A class to keep track of viewers
         if(clusterLabel != null)
             mav.getFrame().setTitle("Multiple Array Viewer, "+clusterLabel);
         Manager.addComponent(mav);
+        mav.setInstanceIndex(MavInstanceCount-1); // Raktim - Annotation Model specific
+        System.out.println("getInstanceIndex(): " + mav.getInstanceIndex());
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         mav.getFrame().setLocation((screenSize.width - mav.getFrame().getSize().width)/2, (screenSize.height - mav.getFrame().getSize().height)/2);
         mav.getFrame().setVisible(true);
@@ -427,6 +437,8 @@ public class Manager {//A class to keep track of viewers
         if(clusterLabel != null)
             mav.getFrame().setTitle("Multiple Array Viewer, "+clusterLabel);
         Manager.addComponent(mav);
+        mav.setInstanceIndex(MavInstanceCount-1); // Raktim - Annotation Model specific
+        System.out.println("getInstanceIndex(): " + mav.getInstanceIndex());
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         mav.getFrame().setLocation((screenSize.width - mav.getFrame().getSize().width)/2, (screenSize.height - mav.getFrame().getSize().height)/2);
         mav.getFrame().setVisible(true);

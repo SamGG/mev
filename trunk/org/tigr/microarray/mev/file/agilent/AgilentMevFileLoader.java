@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: AgilentMevFileLoader.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-07-21 17:24:18 $
- * $Author: caliente $
+ * $Revision: 1.5 $
+ * $Date: 2007-12-19 21:39:37 $
+ * $Author: saritanair $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.file.agilent;
@@ -29,6 +29,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -57,6 +58,8 @@ import org.tigr.microarray.mev.file.GBA;
 import org.tigr.microarray.mev.file.SlideLoaderProgressBar;
 import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
 
+import org.tigr.microarray.util.FileLoaderUtility;
+
 public class AgilentMevFileLoader extends ExpressionFileLoader {
     
     private GBA gba;
@@ -74,14 +77,18 @@ public class AgilentMevFileLoader extends ExpressionFileLoader {
         super(superLoader);
         gba = new GBA();
         amflp = new AgilentMevFileLoaderPanel();
-        amflp.splitPane.setDividerLocation(0.6);
-        amflp.validate();
+       // amflp.splitPane.setDividerLocation(0.6);
+        //amflp.validate();
     }
     
     public Vector loadExpressionFiles() throws IOException {
 
         Object[] mevFiles = amflp.getMevSelectedListModel().toArray();
         Object[] annFiles = amflp.getAnnSelectedListModel().toArray();
+        
+        
+        
+        
         Vector data = new Vector();
         ISlideMetaData metaData = null;
         ISlideData slideData;
@@ -94,24 +101,29 @@ public class AgilentMevFileLoader extends ExpressionFileLoader {
         for (int i = 0; i < mevFiles.length; i++) {
             setFileName(((File) mevFiles[i]).getName());
             if(i == 0){
-                slideData = loadSlideData((File) mevFiles[i]);
+            	File file=new File(this.amflp.pathTextField.getText(),((File) mevFiles[i]).getName());
+                slideData = loadSlideData(file);
                 if(slideData == null)
                     return null;
                 data.add(slideData);
                 metaData = slideData.getSlideMetaData();
             }
-            else
-                data.add(loadFloatSlideData((File) mevFiles[i], metaData));
+            else {
+               	File file=new File(this.amflp.pathTextField.getText(),((File) mevFiles[i]).getName());
+                data.add(loadFloatSlideData(file, metaData));
+            }
             
             setRemain(mevFiles.length-i-1);
             setFilesProgress(i);
         }
         if(!amflp.noAnnFileBox.isSelected()) {
             for (int i = 0; i < annFiles.length; i++){
-                loadAnnotationFile((SlideData)data.elementAt(0), (File)annFiles[i]);
+            	File file=new File(this.amflp.annFileListTextField.getText(),((File) annFiles[i]).getName());
+                loadAnnotationFile((SlideData)data.elementAt(0), file);
             }
         } else {
-            loadAnnotationFromMevFile((File)mevFiles[0], (SlideData)data.elementAt(0));
+        	File file=new File(this.amflp.pathTextField.getText(),((File) mevFiles[0]).getName());
+            loadAnnotationFromMevFile(file, (SlideData)data.elementAt(0));
         }
         
         //check for existance of annotation matches, just set to true if ann. is from mev file
@@ -458,8 +470,7 @@ public class AgilentMevFileLoader extends ExpressionFileLoader {
     }
     
     public void openDataPath() {
-        this.amflp.splitPane.setDividerLocation(0.3);
-        this.amflp.openDataPath();
+      
     }
     
     
@@ -470,299 +481,516 @@ public class AgilentMevFileLoader extends ExpressionFileLoader {
  */
     
     private class AgilentMevFileLoaderPanel extends JPanel {
-        
-        FileTreePane fileTreePane;
-        JTextField pathTextField;
-        
-        JPanel mevSelectionPanel;
-        JPanel mevListPanel;
-        JLabel mevAvailableLabel;
-        JLabel mevSelectedLabel;
-        JList mevAvailableList;
-        JList mevSelectedList;
-        JScrollPane mevAvailableScrollPane;
-        JScrollPane mevSelectedScrollPane;
-        JButton mevAddButton;
-        JButton mevAddAllButton;
-        JButton mevRemoveButton;
-        JButton mevRemoveAllButton;
-        JPanel mevButtonPanel;
-        
-        JPanel annSelectionPanel;
-        JPanel annListPanel;
-        JLabel annAvailableLabel;
-        JLabel annSelectedLabel;
-        JList annAvailableList;
-        JList annSelectedList;
-        JScrollPane annAvailableScrollPane;
-        JScrollPane annSelectedScrollPane;
-        JButton annAddButton;
-        JButton annAddAllButton;
-        JButton annRemoveButton;
-        JButton annRemoveAllButton;
-        JPanel annButtonPanel;
-        JTextField annFieldsTextField;
-        
-        JPanel selectionPanel;
-        JSplitPane splitPane;
-        JPanel fileLoaderPanel;
-        
-        JCheckBox noAnnFileBox;
-        JCheckBox saveSpotInfoBox;
-        //JCheckBox cutQuotesBox;
-        
-        JRadioButton loadIButton;
-        JRadioButton loadMedButton;
-        
-        public AgilentMevFileLoaderPanel() {
-            
-            setLayout(new GridBagLayout());
-            
-            fileTreePane = new FileTreePane(SuperExpressionFileLoader.DATA_PATH);
-            fileTreePane.addFileTreePaneListener(new FileTreePaneEventHandler());
-            fileTreePane.setPreferredSize(new java.awt.Dimension(200, 50));
-            
-            pathTextField = new JTextField();
-            pathTextField.setEditable(false);
-            pathTextField.setBorder(new TitledBorder(new EtchedBorder(), "Selected Path"));
-            pathTextField.setForeground(Color.black);
-            pathTextField.setFont(new Font("monospaced", Font.BOLD, 12));
-            
-            mevSelectionPanel = new JPanel();
-            mevSelectionPanel.setLayout(new GridBagLayout());
-            mevSelectionPanel.setBorder(new TitledBorder(new EtchedBorder(), getFileFilter().getDescription()));
-            
-            mevAvailableLabel = new JLabel("Available");
-            mevSelectedLabel = new JLabel("Selected");
-            mevAvailableList = new JList(new DefaultListModel());
-            mevAvailableList.setCellRenderer(new ListRenderer());
-            mevSelectedList = new JList(new DefaultListModel());
-            mevSelectedList.setCellRenderer(new ListRenderer());
-            mevAvailableScrollPane = new JScrollPane(mevAvailableList);
-            mevSelectedScrollPane = new JScrollPane(mevSelectedList);
-            mevAddButton = new JButton("Add");
-            mevAddButton.setPreferredSize(new Dimension(100,20));
-            //mevAddButton.setSize(100,20);
-            mevAddButton.addActionListener(new EventHandler());
-            mevAddAllButton = new JButton("Add All");
-            //mevAddAllButton.setSize(100,20);
-            mevAddAllButton.setPreferredSize(new Dimension(100,20));
-            
-            mevAddAllButton.addActionListener(new EventHandler());
-            mevRemoveButton = new JButton("Remove");
-            //mevRemoveButton.setSize(100,20);
-            mevRemoveButton.setPreferredSize(new Dimension(100,20));
-            
-            mevRemoveButton.addActionListener(new EventHandler());
-            mevRemoveAllButton = new JButton("Remove All");
-            //mevRemoveAllButton.setSize(100,20);
-            mevRemoveAllButton.setPreferredSize(new Dimension(100,20));
-            
-            mevRemoveAllButton.addActionListener(new EventHandler());
-            
-            //  Dimension largestMevButtonSize = mevRemoveAllButton.getPreferredSize();
-            // mevAddButton.setPreferredSize(largestMevButtonSize);
-            //   mevAddAllButton.setPreferredSize(largestMevButtonSize);
-            ////     mevRemoveButton.setPreferredSize(largestMevButtonSize);
-            //     mevRemoveAllButton.setPreferredSize(largestMevButtonSize);
-            
-            mevButtonPanel = new JPanel();
-            mevButtonPanel.setLayout(new GridBagLayout());
-            //mevButtonPanel.setSize(110, 150);
-            //mevButtonPanel.setPreferredSize(new Dimension(110, 150));
-            
-            gba.add(mevButtonPanel, mevAddButton, 0, 0, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(mevButtonPanel, mevAddAllButton, 0, 1, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(mevButtonPanel, mevRemoveButton, 0, 2, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(mevButtonPanel, mevRemoveAllButton, 0, 3, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            
-            
-            //Medians vs. Integrate intensities
-            loadIButton = new JRadioButton("Load Integrated Spot Intensities", true);
-            loadIButton.setFocusPainted(false);
-            loadMedButton = new JRadioButton("Load Median Spot Intensities");
-            loadMedButton.setFocusPainted(false);
-            ButtonGroup bg = new ButtonGroup();
-            bg.add(loadIButton);
-            bg.add(loadMedButton);
-            
-            noAnnFileBox = new JCheckBox("Use Annotation Contained in MeV File (no annotation file)", false);
-            noAnnFileBox.setFocusPainted(false);
-            noAnnFileBox.setActionCommand("use-annotation-in-mev-file");
-            noAnnFileBox.addActionListener(new EventHandler());
-            
-            saveSpotInfoBox = new JCheckBox("Load Auxiliary Spot Information", false);
-            saveSpotInfoBox.setFocusPainted(false);
-            
-            //cutQuotesBox = new JCheckBox("Remove Annotation Quotes(\"...\")", false);
-            //cutQuotesBox.setHorizontalAlignment(JCheckBox.CENTER);
-            //cutQuotesBox.setFocusPainted(false);
-            
-            selectionPanel = new JPanel();
-            selectionPanel.setLayout(new GridBagLayout());
 
-            JPanel buttonPanel = new JPanel();
-            buttonPanel.setLayout(new GridBagLayout());
-            
-            gba.add(buttonPanel, loadIButton, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(0, 20, 0, 5), 0, 0);
-            gba.add(buttonPanel, saveSpotInfoBox, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(0, 20, 0, 5), 0, 0);
-            
-            gba.add(buttonPanel, loadMedButton, 0, 1, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(0, 20, 0, 5), 0, 0);
-            gba.add(buttonPanel, noAnnFileBox, 1, 1, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(0, 20, 0, 5), 0, 0);            
+		FileTreePane fileTreePane;
 
-            //gba.add(buttonPanel, cutQuotesBox, 0, 2, 2, 1, 1, 0, GBA.H, GBA.E, new Insets(0, 118, 0, 5), 0, 0);
-            
-            mevListPanel = new JPanel();
-            mevListPanel.setLayout(new GridBagLayout());
-            
-            //            gba.add(mevSelectionPanel, selectionPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            
-            gba.add(mevListPanel, mevAvailableLabel, 0, 0, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(mevListPanel, mevAvailableScrollPane, 0, 1, 1, 4, 5, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(mevListPanel, new JPanel(), 1, 0, 1, 1, 0, 0, GBA.B, GBA.C, new Insets(0,0,0,0), 0, 0);
-            gba.add(mevListPanel, mevButtonPanel, 1, 1, 1, 4, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(mevListPanel, mevSelectedLabel, 2, 0, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(mevListPanel, mevSelectedScrollPane, 2, 1, 1, 4, 5, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            
-                        
-            gba.add(mevSelectionPanel, buttonPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(mevSelectionPanel, mevListPanel, 0, 1, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
- 
-            gba.add(selectionPanel, pathTextField, 0, 0, 2, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(selectionPanel, mevSelectionPanel, 0, 1, 2, 2, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            
-            
-          /*
-           
-                gba.add(mevListPanel, mevAvailableLabel, 0, 0, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(mevListPanel, mevSelectedLabel, 2, 0, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(mevListPanel, mevAvailableScrollPane, 0, 1, 1, 4, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(mevListPanel, mevButtonPanel, 1, 1, 1, 4, 0, 1, GBA.V, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(mevListPanel, mevSelectedScrollPane, 2, 1, 1, 4, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-           
-            gba.add(mevSelectionPanel, mevListPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-           */
-            
-            
-            annSelectionPanel = new JPanel();
-            annSelectionPanel.setLayout(new GridBagLayout());
-            annSelectionPanel.setBorder(new TitledBorder(new EtchedBorder(), getAnnotationFileFilter().getDescription()));
-            
-            annAvailableLabel = new JLabel("Available");
-            annSelectedLabel = new JLabel("Selected");
-            annAvailableList = new JList(new DefaultListModel());
-            annAvailableList.setCellRenderer(new ListRenderer());
-            annSelectedList = new JList(new DefaultListModel());
-            annSelectedList.setCellRenderer(new ListRenderer());
-            annAvailableScrollPane = new JScrollPane(annAvailableList);
-            annSelectedScrollPane = new JScrollPane(annSelectedList);
-            annAddButton = new JButton("Add");
-            annAddButton.addActionListener(new EventHandler());
-            annAddAllButton = new JButton("Add All");
-            annAddAllButton.addActionListener(new EventHandler());
-            annRemoveButton = new JButton("Remove");
-            annRemoveButton.addActionListener(new EventHandler());
-            annRemoveAllButton = new JButton("Remove All");
-            annRemoveAllButton.addActionListener(new EventHandler());
-            
-            Dimension buttonSize = new Dimension(100, 20);
-            
-            Dimension largestAnnButtonSize = annRemoveAllButton.getPreferredSize();
-            annAddButton.setPreferredSize(buttonSize);
-            annAddAllButton.setPreferredSize(buttonSize);
-            annRemoveButton.setPreferredSize(buttonSize);
-            annRemoveAllButton.setPreferredSize(buttonSize);
-            
-            this.mevAddAllButton.setFocusPainted(false);
-            this.mevAddButton.setFocusPainted(false);
-            this.mevRemoveAllButton.setFocusPainted(false);
-            this.mevRemoveButton.setFocusPainted(false);
-            
-            this.annAddAllButton.setFocusPainted(false);
-            this.annAddButton.setFocusPainted(false);
-            this.annRemoveAllButton.setFocusPainted(false);
-            this.annRemoveButton.setFocusPainted(false);
-            
-            annButtonPanel = new JPanel();
-            annButtonPanel.setLayout(new GridBagLayout());
-            
-            gba.add(annButtonPanel, annAddButton, 0, 0, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(annButtonPanel, annAddAllButton, 0, 1, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(annButtonPanel, annRemoveButton, 0, 2, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(annButtonPanel, annRemoveAllButton, 0, 3, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            
-            annListPanel = new JPanel();
-            annListPanel.setLayout(new GridBagLayout());
-            
-            gba.add(annListPanel, annAvailableLabel, 0, 0, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(annListPanel, annSelectedLabel, 2, 0, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(annListPanel, annAvailableScrollPane, 0, 1, 1, 4, 5, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(annListPanel, new JPanel(), 1, 0, 1, 1, 0, 0, GBA.B, GBA.C, new Insets(0, 0, 0, 0), 0, 0); 
-            gba.add(annListPanel, annButtonPanel, 1, 1, 1, 4, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(annListPanel, annSelectedScrollPane, 2, 1, 1, 4, 5, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            
-            annFieldsTextField = new JTextField();
-            annFieldsTextField.setEditable(false);
-            annFieldsTextField.setBorder(new TitledBorder(new EtchedBorder(), "Annotation Fields"));
-            annFieldsTextField.setForeground(Color.black);
-            annFieldsTextField.setFont(new Font("serif", Font.BOLD, 12));
-            
-            gba.add(annSelectionPanel, annListPanel, 0, 0, 1, 2, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 0, 5), 0, 0);
-            gba.add(annSelectionPanel, annFieldsTextField, 0, 2, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(0, 5, 0, 5), 0, 0);
-            
-            gba.add(selectionPanel, annSelectionPanel, 0, 3, 2, 2, 1, 1, GBA.B, GBA.C, new Insets(0, 5, 0, 5), 0, 0);
-            
-            splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, fileTreePane, selectionPanel);
+		
 
-            fileLoaderPanel = new JPanel();
-            fileLoaderPanel.setLayout(new GridBagLayout());
-            gba.add(fileLoaderPanel, splitPane, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            
-            gba.add(this, fileLoaderPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            splitPane.setDividerLocation(0.6);     
-            
-        }
-        
-        public void setPath(String path) {
-            pathTextField.setText(path);
-        }
-        
-        public void openDataPath(){
-            this.fileTreePane.openDataPath();
-        }
-        
-        
-        public void validateLists() {
-            
-            // Currently, a minimum of one mev file must be selected to enable loading
-            
-            if (((DefaultListModel) mevSelectedList.getModel()).size() > 0) {
-                markLoadEnabled(true);
-            } else {
-                markLoadEnabled(false);
-            }
-        }
-        
-        public void onMevAdd() {
-            int[] chosenIndices = mevAvailableList.getSelectedIndices();
-            Object[] chosenObjects = new Object[chosenIndices.length];
-            
-            for (int i = chosenIndices.length - 1; i >= 0; i--) {
-                // For remove-then-add functionality
-                //Object addItem = ((DefaultListModel) mevAvailableList.getModel()).remove(chosenIndices[i]);
-                // For copy-then-add functionality
-                Object addItem = ((DefaultListModel) mevAvailableList.getModel()).getElementAt(chosenIndices[i]);
-                chosenObjects[i] = addItem;
-            }
-            
-            for (int i = 0; i < chosenIndices.length; i++) {
-                ((DefaultListModel) mevSelectedList.getModel()).addElement(chosenObjects[i]);
-            }
-            
-            validateLists();
-        }
-        
-        public void onMevAddAll() {
+		JPanel mevSelectionPanel;
+
+		JPanel mevListPanel;
+
+		// Added by Sarita
+		JPanel selectFilePanel;
+		JLabel selectFile;
+		JButton browseButton1;
+		JTextField pathTextField;
+		
+		
+		JLabel selectAnnotation;
+
+		JButton browseButton2;
+
+		JTextField annFileListTextField;
+
+		JPanel annotationPanel, selectAnnotationPanel;
+
+		//
+		JLabel mevAvailableLabel;
+
+		JLabel mevSelectedLabel;
+
+		JList mevAvailableList;
+
+		JList mevSelectedList;
+
+		JScrollPane mevAvailableScrollPane;
+
+		JScrollPane mevSelectedScrollPane;
+
+		JButton mevAddButton;
+
+		JButton mevAddAllButton;
+
+		JButton mevRemoveButton;
+
+		JButton mevRemoveAllButton;
+
+		JPanel mevButtonPanel;
+
+		JPanel annSelectionPanel;
+
+		JPanel annListPanel;
+
+		JLabel annAvailableLabel;
+
+		JLabel annSelectedLabel;
+
+		JList annAvailableList;
+
+		JList annSelectedList;
+
+		JScrollPane annAvailableScrollPane;
+
+		JScrollPane annSelectedScrollPane;
+
+		JButton annAddButton;
+
+		JButton annAddAllButton;
+
+		JButton annRemoveButton;
+
+		JButton annRemoveAllButton;
+
+		JPanel annButtonPanel;
+
+		JPanel selectionPanel;
+
+		JSplitPane splitPane;
+
+		JPanel fileLoaderPanel;
+
+		JCheckBox noAnnFileBox;
+
+		JCheckBox saveSpotInfoBox;
+
+		JCheckBox cutQuotesBox;
+
+		JRadioButton loadIButton;
+
+		JRadioButton loadMedButton;
+
+		public AgilentMevFileLoaderPanel() {
+
+			setLayout(new GridBagLayout());
+
+			// Added by Sarita
+
+			selectFilePanel = new JPanel();
+			selectFilePanel.setLayout(new GridBagLayout());
+
+			selectFile = new JLabel("Select directory containing Agilent Design files");
+
+			browseButton1 = new JButton("Browse");
+			browseButton1.setSize(new Dimension(100, 30));
+			browseButton1.setPreferredSize(new Dimension(100, 30));
+			browseButton1.addActionListener(new EventHandler());
+		
+			
+			pathTextField = new JTextField();
+			pathTextField.setEditable(false);
+			pathTextField.setForeground(Color.black);
+			pathTextField.setFont(new Font("monospaced", Font.BOLD, 12));
+			
+		/*	gba.add(selectFilePanel, selectFile, 0, 0, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+    		gba.add(selectFilePanel, pathTextField, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+    		gba.add(selectFilePanel, browseButton1, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+    		*/
+    		gba.add(selectFilePanel, selectFile, 0, 0, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+    		gba.add(selectFilePanel, pathTextField, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+    		gba.add(selectFilePanel, browseButton1, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+
+		
+
+			mevSelectionPanel = new JPanel();
+			mevSelectionPanel.setLayout(new GridBagLayout());
+
+			mevSelectionPanel.setBorder(new TitledBorder(new EtchedBorder(),
+					"File    (Agilent Design Files(*.txt)"));
+
+			mevAvailableLabel = new JLabel("Available Files");
+			mevSelectedLabel = new JLabel("Selected Files");
+			mevAvailableList = new JList(new DefaultListModel());
+			mevSelectedList = new JList(new DefaultListModel());
+
+			mevAvailableScrollPane = new JScrollPane(mevAvailableList);
+			mevSelectedScrollPane = new JScrollPane(mevSelectedList);
+			mevAddButton = new JButton("Add");
+			mevAddButton.setPreferredSize(new Dimension(100, 20));
+
+			mevAddButton.addActionListener(new EventHandler());
+			mevAddAllButton = new JButton("Add All");
+
+			mevAddAllButton.setPreferredSize(new Dimension(100, 20));
+
+			mevAddAllButton.addActionListener(new EventHandler());
+			mevRemoveButton = new JButton("Remove");
+
+			mevRemoveButton.setPreferredSize(new Dimension(100, 20));
+
+			mevRemoveButton.addActionListener(new EventHandler());
+			mevRemoveAllButton = new JButton("Remove All");
+
+			mevRemoveAllButton.setPreferredSize(new Dimension(100, 20));
+
+			mevRemoveAllButton.addActionListener(new EventHandler());
+
+			mevButtonPanel = new JPanel();
+			mevButtonPanel.setLayout(new GridBagLayout());
+
+		/*	gba.add(mevButtonPanel, mevAddButton, 0, 0, 1, 1, 0, 0, GBA.N,
+					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(mevButtonPanel, mevAddAllButton, 0, 1, 1, 1, 0, 0, GBA.N,
+					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(mevButtonPanel, mevRemoveButton, 0, 2, 1, 1, 0, 0, GBA.N,
+					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(mevButtonPanel, mevRemoveAllButton, 0, 3, 1, 1, 0, 0,
+					GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+						*/
+			
+			gba.add(mevButtonPanel, mevAddButton, 0, 0, 1, 1, 0, 0, GBA.N,
+					GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(mevButtonPanel, mevAddAllButton, 0, 1, 1, 1, 0, 0, GBA.N,
+					GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(mevButtonPanel, mevRemoveButton, 0, 2, 1, 1, 0, 0, GBA.N,
+					GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(mevButtonPanel, mevRemoveAllButton, 0, 3, 1, 1, 0, 0,
+					GBA.N, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			
+			
+			
+			
+			
+			// Medians vs. Integrate intensities
+			loadIButton = new JRadioButton("Load Integrated Spot Intensities",
+					true);
+			loadIButton.setFocusPainted(false);
+			loadMedButton = new JRadioButton("Load Median Spot Intensities");
+			loadMedButton.setFocusPainted(false);
+			ButtonGroup bg = new ButtonGroup();
+			bg.add(loadIButton);
+			bg.add(loadMedButton);
+
+			noAnnFileBox = new JCheckBox(
+					"Use Annotation Contained in MeV File (no annotation file)",
+					false);
+			noAnnFileBox.setFocusPainted(false);
+			noAnnFileBox.setActionCommand("use-annotation-in-mev-file");
+			noAnnFileBox.addActionListener(new EventHandler());
+
+			saveSpotInfoBox = new JCheckBox("Load Auxiliary Spot Information",
+					false);
+			saveSpotInfoBox.setFocusPainted(false);
+
+			cutQuotesBox = new JCheckBox("Remove Annotation Quotes(\"...\")",
+					false);
+			cutQuotesBox.setHorizontalAlignment(JCheckBox.CENTER);
+			cutQuotesBox.setFocusPainted(false);
+
+					
+
+			mevListPanel = new JPanel();
+			mevListPanel.setLayout(new GridBagLayout());
+
+		/*	gba.add(mevListPanel, mevAvailableLabel, 0, 0, 1, 1, 0, 0, GBA.N,
+					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(mevListPanel, mevAvailableScrollPane, 0, 1, 1, 4, 5, 1,
+					GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(mevListPanel, new JPanel(), 1, 0, 1, 1, 0, 0, GBA.B, GBA.C,
+					new Insets(0, 0, 0, 0), 0, 0);
+			gba.add(mevListPanel, mevButtonPanel, 1, 1, 1, 4, 1, 1, GBA.B,
+					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(mevListPanel, mevSelectedLabel, 2, 0, 1, 1, 0, 0, GBA.N,
+					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(mevListPanel, mevSelectedScrollPane, 2, 1, 1, 4, 5, 1,
+					GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+
+			gba.add(mevSelectionPanel, selectFilePanel, 0, 0, 1, 1, 1, 1,
+					GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(mevSelectionPanel, mevListPanel, 0, 2, 1, 1, 1, 1, GBA.B,
+					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+					*/	
+			
+
+			gba.add(mevListPanel, mevAvailableLabel, 0, 0, 1, 1, 0, 0, GBA.N,
+					GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(mevListPanel, mevAvailableScrollPane, 0, 1, 1, 4, 5, 1,
+					GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(mevListPanel, new JPanel(), 1, 0, 1, 1, 0, 0, GBA.B, GBA.C,
+					new Insets(0, 0, 0, 0), 0, 0);
+			gba.add(mevListPanel, mevButtonPanel, 1, 1, 1, 4, 1, 1, GBA.B,
+					GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(mevListPanel, mevSelectedLabel, 2, 0, 1, 1, 0, 0, GBA.N,
+					GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(mevListPanel, mevSelectedScrollPane, 2, 1, 1, 4, 5, 1,
+					GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+
+			gba.add(mevSelectionPanel, selectFilePanel, 0, 0, 1, 1, 1, 1,
+					GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(mevSelectionPanel, mevListPanel, 0, 2, 1, 1, 1, 1, GBA.B,
+					GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+
+			
+
+			selectAnnotationPanel = new JPanel();
+			selectAnnotationPanel.setLayout(new GridBagLayout());
+			browseButton2 = new JButton("Browse");
+			browseButton2.addActionListener(new EventHandler());
+			browseButton2.setSize(new Dimension(100, 30));
+			browseButton2.setPreferredSize(new Dimension(100, 30));
+
+			selectAnnotation = new JLabel("Select directory containing Agilent Feature Extraction Files");
+
+			annFileListTextField = new JTextField();
+			annFileListTextField.setEditable(false);
+			annFileListTextField.setForeground(Color.black);
+			annFileListTextField.setFont(new Font("monospaced", Font.BOLD, 12));
+
+			gba.add(selectAnnotationPanel, selectAnnotation, 0, 0, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+    		gba.add(selectAnnotationPanel, annFileListTextField, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+    		gba.add(selectAnnotationPanel, browseButton2, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+
+		
+
+			annSelectionPanel = new JPanel();
+			annSelectionPanel.setLayout(new GridBagLayout());
+
+			annSelectionPanel.setBorder(new TitledBorder(new EtchedBorder(),
+					"Agilent Feature Extraction Files (*.txt)"));
+			annAvailableLabel = new JLabel("Available Files");
+			annSelectedLabel = new JLabel("Selected Files");
+			annAvailableList = new JList(new DefaultListModel());
+			annSelectedList=new JList(new DefaultListModel());
+			
+			annAvailableScrollPane = new JScrollPane(annAvailableList);
+			annSelectedScrollPane = new JScrollPane(annSelectedList);
+			annAddButton = new JButton("Add");
+			annAddButton.addActionListener(new EventHandler());
+			annAddAllButton = new JButton("Add All");
+			annAddAllButton.addActionListener(new EventHandler());
+			annRemoveButton = new JButton("Remove");
+			annRemoveButton.addActionListener(new EventHandler());
+			annRemoveAllButton = new JButton("Remove All");
+			annRemoveAllButton.addActionListener(new EventHandler());
+
+			Dimension buttonSize = new Dimension(100, 20);
+
+			Dimension largestAnnButtonSize = annRemoveAllButton
+					.getPreferredSize();
+			annAddButton.setPreferredSize(buttonSize);
+			annAddAllButton.setPreferredSize(buttonSize);
+			annRemoveButton.setPreferredSize(buttonSize);
+			annRemoveAllButton.setPreferredSize(buttonSize);
+
+			this.mevAddAllButton.setFocusPainted(false);
+			this.mevAddButton.setFocusPainted(false);
+			this.mevRemoveAllButton.setFocusPainted(false);
+			this.mevRemoveButton.setFocusPainted(false);
+
+			this.annAddAllButton.setFocusPainted(false);
+			this.annAddButton.setFocusPainted(false);
+			this.annRemoveAllButton.setFocusPainted(false);
+			this.annRemoveButton.setFocusPainted(false);
+			
+			
+			
+			JPanel buttonPanel = new JPanel();
+			buttonPanel.setLayout(new GridBagLayout());
+
+			gba.add(buttonPanel, loadIButton, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C,
+					new Insets(0, 20, 0, 5), 0, 0);
+			gba.add(buttonPanel, saveSpotInfoBox, 1, 0, 1, 1, 1, 0, GBA.H,
+					GBA.C, new Insets(0, 20, 0, 5), 0, 0);
+			gba.add(buttonPanel, loadMedButton, 0, 1, 1, 1, 1, 0, GBA.H, GBA.C,
+					new Insets(0, 20, 0, 5), 0, 0);
+			gba.add(buttonPanel, noAnnFileBox, 1, 1, 1, 1, 1, 0, GBA.H, GBA.C,
+					new Insets(0, 20, 0, 5), 0, 0);
+			gba.add(buttonPanel, cutQuotesBox, 0, 2, 2, 1, 1, 0, GBA.H, GBA.E,
+					new Insets(0, 118, 0, 5), 0, 0);
+
+			annButtonPanel = new JPanel();
+			annButtonPanel.setLayout(new GridBagLayout());
+
+		/*	gba.add(annButtonPanel, annAddButton, 0, 0, 1, 1, 0, 0, GBA.N,
+					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(annButtonPanel, annAddAllButton, 0, 1, 1, 1, 0, 0, GBA.N,
+					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(annButtonPanel, annRemoveButton, 0, 2, 1, 1, 0, 0, GBA.N,
+					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(annButtonPanel, annRemoveAllButton, 0, 3, 1, 1, 0, 0,
+					GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);*/
+			
+			gba.add(annButtonPanel, annAddButton, 0, 0, 1, 1, 0, 0, GBA.N,
+					GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(annButtonPanel, annAddAllButton, 0, 1, 1, 1, 0, 0, GBA.N,
+					GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(annButtonPanel, annRemoveButton, 0, 2, 1, 1, 0, 0, GBA.N,
+					GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(annButtonPanel, annRemoveAllButton, 0, 3, 1, 1, 0, 0,
+					GBA.N, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+
+			annListPanel = new JPanel();
+			annListPanel.setLayout(new GridBagLayout());
+
+			/*gba.add(annListPanel, annAvailableLabel, 0, 0, 1, 1, 0, 0, GBA.N,
+					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(annListPanel, annSelectedLabel, 2, 0, 1, 1, 0, 0, GBA.N,
+					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(annListPanel, annAvailableScrollPane, 0, 1, 1, 4, 5, 1,
+					GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(annListPanel, new JPanel(), 1, 0, 1, 1, 0, 0, GBA.B, GBA.C,
+					new Insets(0, 0, 0, 0), 0, 0);
+			gba.add(annListPanel, annButtonPanel, 1, 1, 1, 4, 1, 1, GBA.B,
+					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(annListPanel, annSelectedScrollPane, 2, 1, 1, 4, 5, 1,
+					GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+
+			// Added by Sarita
+
+			gba.add(annSelectionPanel, buttonPanel, 0, 0, 1, 1, 1, 1, GBA.B,
+					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			//
+			gba.add(annSelectionPanel, selectAnnotationPanel, 0, 2, 1, 1, 1, 1,
+					GBA.B, GBA.C, new Insets(5, 0, 5, 0), 0, 0);
+			gba.add(annSelectionPanel, annListPanel, 0, 3, 1, 2, 1, 1, GBA.B,
+					GBA.C, new Insets(5, 5, 0, 5), 0, 0);
+			
+			selectionPanel = new JPanel();
+			selectionPanel.setLayout(new GridBagLayout());
+			gba.add(selectionPanel, annSelectionPanel, 0, 1, 2, 2, 1, 1, GBA.B,
+					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(selectionPanel, mevSelectionPanel, 0, 5, 2, 2, 1, 1, GBA.B,
+					GBA.C, new Insets(0, 5, 0, 5), 0, 0);
+
+			fileLoaderPanel = new JPanel();
+			fileLoaderPanel.setLayout(new GridBagLayout());
+
+			gba.add(fileLoaderPanel, selectionPanel, 0, 0, 1, 1, 1, 1, GBA.B,
+					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(this, fileLoaderPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C,
+					new Insets(5, 5, 5, 5), 0, 0);*/
+			
+			
+			gba.add(annListPanel, annAvailableLabel, 0, 0, 1, 1, 0, 0, GBA.N,
+					GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(annListPanel, annSelectedLabel, 2, 0, 1, 1, 0, 0, GBA.N,
+					GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(annListPanel, annAvailableScrollPane, 0, 1, 1, 4, 5, 1,
+					GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(annListPanel, new JPanel(), 1, 0, 1, 1, 0, 0, GBA.B, GBA.C,
+					new Insets(0, 0, 0, 0), 0, 0);
+			gba.add(annListPanel, annButtonPanel, 1, 1, 1, 4, 1, 1, GBA.B,
+					GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(annListPanel, annSelectedScrollPane, 2, 1, 1, 4, 5, 1,
+					GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+
+			// Added by Sarita
+
+			gba.add(annSelectionPanel, buttonPanel, 0, 0, 1, 1, 1, 1, GBA.B,
+					GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			//
+			gba.add(annSelectionPanel, selectAnnotationPanel, 0, 2, 1, 1, 1, 1,
+					GBA.B, GBA.C, new Insets(2, 0, 2, 0), 0, 0);
+			gba.add(annSelectionPanel, annListPanel, 0, 3, 1, 2, 1, 1, GBA.B,
+					GBA.C, new Insets(2, 2, 0, 2), 0, 0);
+			
+			selectionPanel = new JPanel();
+			selectionPanel.setLayout(new GridBagLayout());
+			gba.add(selectionPanel, annSelectionPanel, 0, 1, 2, 2, 1, 1, GBA.B,
+					GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(selectionPanel, mevSelectionPanel, 0, 5, 2, 2, 1, 1, GBA.B,
+					GBA.C, new Insets(0, 2, 0, 2), 0, 0);
+
+			fileLoaderPanel = new JPanel();
+			fileLoaderPanel.setLayout(new GridBagLayout());
+
+			gba.add(fileLoaderPanel, selectionPanel, 0, 0, 1, 1, 1, 1, GBA.B,
+					GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(this, fileLoaderPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C,
+					new Insets(2, 2, 2, 2), 0, 0);
+			
+			
+			
+
+		}
+
+		public void setPath(String path) {
+			pathTextField.setText(path);
+		}
+
+		public void validateLists() {
+
+			// Currently, a minimum of one mev file must be selected to enable
+			// loading
+
+			if (((DefaultListModel) mevSelectedList.getModel()).size() > 0) {
+				markLoadEnabled(true);
+			} else {
+				markLoadEnabled(false);
+			}
+		}
+		
+		
+		
+		//Added by Sarita
+		
+		public void onMevFileBrowse() {
+			FileLoaderUtility fileLoad=new FileLoaderUtility();
+			Vector retrievedFileNames=new Vector();
+			JFileChooser fileChooser = new JFileChooser(
+					SuperExpressionFileLoader.DATA_PATH);
+			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			int retVal = fileChooser.showOpenDialog(AgilentMevFileLoaderPanel.this);
+
+			if (retVal == JFileChooser.APPROVE_OPTION) {
+				((DefaultListModel) mevAvailableList.getModel()).clear();
+				((DefaultListModel) mevSelectedList.getModel()).clear();
+
+				File selectedFile = fileChooser.getSelectedFile();
+				String path=selectedFile.getAbsolutePath();
+				retrievedFileNames=fileLoad.getFileNameList(selectedFile.getAbsolutePath());
+				
+				for (int i = 0; i < retrievedFileNames.size(); i++) {
+					Object fileName=retrievedFileNames.get(i);
+					boolean acceptFile=getFileFilter().accept((File)fileName);
+
+					if(acceptFile) {
+						pathTextField.setText(path);
+						String Name=fileChooser.getName((File) fileName);
+						((DefaultListModel) mevAvailableList.getModel())
+						.addElement(new File(Name));
+						
+					/*	Object addItem = fileName;
+						((DefaultListModel) mevAvailableList.getModel())
+						.addElement(addItem);*/
+					}
+				}
+
+			}
+			
+	
+			
+		}
+
+		public void onMevAdd() {
+			int[] chosenIndices = mevAvailableList.getSelectedIndices();
+			Object[] chosenObjects = new Object[chosenIndices.length];
+
+			for (int i = chosenIndices.length - 1; i >= 0; i--) {
+				Object addItem = ((DefaultListModel) mevAvailableList
+						.getModel()).getElementAt(chosenIndices[i]);
+				chosenObjects[i] = addItem;
+			}
+
+			for (int i = 0; i < chosenIndices.length; i++) {
+				((DefaultListModel) mevSelectedList.getModel())
+						.addElement(chosenObjects[i]);
+			}
+
+			validateLists();
+		}
+
+		public void onMevAddAll() {
             int elementCount = ((DefaultListModel) mevAvailableList.getModel()).size();
             for (int i = 0; i < elementCount; i++) {
                 Object addItem = ((DefaultListModel) mevAvailableList.getModel()).getElementAt(i);
@@ -772,45 +1000,47 @@ public class AgilentMevFileLoader extends ExpressionFileLoader {
             validateLists();
         }
         
-        public void onMevRemove() {
-            int[] chosenIndices = mevSelectedList.getSelectedIndices();
-            
-            // Designed with copy-then-add functionality in mind
-            for (int i = chosenIndices.length - 1; i >= 0; i--) {
-                ((DefaultListModel) mevSelectedList.getModel()).remove(chosenIndices[i]);
-            }
-            
-            validateLists();
-        }
-        
-        public void onMevRemoveAll() {
-            // Designed with copy-then-add functionality in mind
-            ((DefaultListModel) mevSelectedList.getModel()).removeAllElements();
-            
-            validateLists();
-        }
-        
-        public void onAnnAdd() {
-            int[] chosenIndices = annAvailableList.getSelectedIndices();
-            Object[] chosenObjects = new Object[chosenIndices.length];
-            
-            for (int i = chosenIndices.length - 1; i >= 0; i--) {
-                // For remove-then-add functionality
-                //Object addItem = ((DefaultListModel) annAvailableList.getModel()).remove(chosenIndices[i]);
-                // For copy-then-add functionality
-                Object addItem = ((DefaultListModel) annAvailableList.getModel()).getElementAt(chosenIndices[i]);
-                chosenObjects[i] = addItem;
-            }
-            
-            for (int i = 0; i < chosenIndices.length; i++) {
-                ((DefaultListModel) annSelectedList.getModel()).addElement(chosenObjects[i]);
-            }
-            
-            validateLists();
-            updateAnnFieldTextField();
-        }
-        
-        public void onAnnAddAll() {
+		
+		
+		public void onMevRemove() {
+			int[] chosenIndices = mevSelectedList.getSelectedIndices();
+
+			// Designed with copy-then-add functionality in mind
+			for (int i = chosenIndices.length - 1; i >= 0; i--) {
+				((DefaultListModel) mevSelectedList.getModel())
+						.remove(chosenIndices[i]);
+			}
+
+			validateLists();
+		}
+
+		public void onMevRemoveAll() {
+			// Designed with copy-then-add functionality in mind
+			((DefaultListModel) mevSelectedList.getModel()).removeAllElements();
+
+			validateLists();
+		}
+
+		public void onAnnAdd() {
+			int[] chosenIndices = annAvailableList.getSelectedIndices();
+			Object[] chosenObjects = new Object[chosenIndices.length];
+
+			for (int i = chosenIndices.length - 1; i >= 0; i--) {
+				
+				Object addItem = ((DefaultListModel) annAvailableList
+						.getModel()).getElementAt(chosenIndices[i]);
+				chosenObjects[i] = addItem;
+			}
+
+			for (int i = 0; i < chosenIndices.length; i++) {
+				((DefaultListModel) annSelectedList.getModel())
+						.addElement(chosenObjects[i]);
+			}
+
+			validateLists();
+		//	updateAnnFieldTextField();
+		}
+		public void onAnnAddAll() {
             int elementCount = ((DefaultListModel) annAvailableList.getModel()).size();
             for (int i = 0; i < elementCount; i++) {
                 Object addItem = ((DefaultListModel) annAvailableList.getModel()).getElementAt(i);
@@ -818,30 +1048,34 @@ public class AgilentMevFileLoader extends ExpressionFileLoader {
             }
             
             validateLists();
-            updateAnnFieldTextField();
+         //   updateAnnFieldTextField();
         }
         
-        public void onAnnRemove() {
-            int[] chosenIndices = annSelectedList.getSelectedIndices();
-            
-            // Designed with copy-then-add functionality in mind
-            for (int i = chosenIndices.length - 1; i >= 0; i--) {
-                ((DefaultListModel) annSelectedList.getModel()).remove(chosenIndices[i]);
-            }
-            
-            validateLists();
-            updateAnnFieldTextField();
-        }
-        
-        public void onAnnRemoveAll() {
-            // Designed with copy-then-add functionality in mind
-            ((DefaultListModel) annSelectedList.getModel()).removeAllElements();
-            
-            validateLists();
-            updateAnnFieldTextField();
-        }
-        
-        public void updateAnnFieldTextField() {
+		
+		public void onAnnRemove() {
+			int[] chosenIndices = annSelectedList.getSelectedIndices();
+
+			// Designed with copy-then-add functionality in mind
+			for (int i = chosenIndices.length - 1; i >= 0; i--) {
+				((DefaultListModel) annSelectedList.getModel())
+						.remove(chosenIndices[i]);
+			}
+
+			validateLists();
+			//updateAnnFieldTextField();
+		}
+
+		public void onAnnRemoveAll() {
+			// Designed with copy-then-add functionality in mind
+			((DefaultListModel) annSelectedList.getModel()).removeAllElements();
+
+			validateLists();
+			//updateAnnFieldTextField();
+		}
+
+		
+		
+		public void updateAnnFieldTextField() {
             DefaultListModel model = (DefaultListModel) annSelectedList.getModel();
             AgilentAnnFileParser parser = new AgilentAnnFileParser();
             Vector annVector;
@@ -861,110 +1095,154 @@ public class AgilentMevFileLoader extends ExpressionFileLoader {
                     text += ((String)annVector.elementAt(annVector.size()-1));
                 }
             }
-            this.annFieldsTextField.setText(text);
+          //  this.annFieldsTextField.setText(text);
         }
         
-        public void onUseMevAnn() {
-            if(this.noAnnFileBox.isSelected())
-                enableAnnotationPanel(false);
-            else {
-                enableAnnotationPanel(true);
-            }
-        }
-        
-        public void enableAnnotationPanel(boolean enable) {
-            this.annAddAllButton.setEnabled(enable);
-            this.annAddButton.setEnabled(enable);
-            this.annRemoveAllButton.setEnabled(enable);
-            this.annRemoveButton.setEnabled(enable);
-            this.annAvailableLabel.setEnabled(enable);
-            this.annSelectedLabel.setEnabled(enable);
-            this.annAvailableList.setEnabled(enable);
-            this.annSelectedList.setEnabled(enable);
-            this.annFieldsTextField.setEnabled(enable);
-            
-            if(!enable){
-                this.annAvailableList.setBackground(Color.lightGray);
-                this.annSelectedList.setBackground(Color.lightGray);
-            } else {
-                this.annAvailableList.setBackground(Color.white);
-                this.annSelectedList.setBackground(Color.white);
-            }
-        }
-        
-        public DefaultListModel getMevAvailableListModel() {
-            return (DefaultListModel) mevAvailableList.getModel();
-        }
-        
-        public DefaultListModel getAnnAvailableListModel() {
-            return (DefaultListModel) annAvailableList.getModel();
-        }
-        
-        public DefaultListModel getMevSelectedListModel() {
-            return (DefaultListModel) mevSelectedList.getModel();
-        }
-        
-        public DefaultListModel getAnnSelectedListModel() {
-            return (DefaultListModel) annSelectedList.getModel();
-        }
-        
-        private class ListRenderer extends DefaultListCellRenderer {
-            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                File file = (File) value;
-                setText(file.getName());
-                return this;
-            }
-        }
-        
-        private class EventHandler implements ActionListener {
-            public void actionPerformed(ActionEvent event) {
-                
-                Object source = event.getSource();
-                
-                if (source == mevAddButton) {
-                    onMevAdd();
-                } else if (source == mevAddAllButton) {
-                    onMevAddAll();
-                } else if (source == mevRemoveButton) {
-                    onMevRemove();
-                } else if (source == mevRemoveAllButton) {
-                    onMevRemoveAll();
-                } else if (source == annAddButton) {
-                    onAnnAdd();
-                } else if (source == annAddAllButton) {
-                    onAnnAddAll();
-                } else if (source == annRemoveButton) {
-                    onAnnRemove();
-                } else if (source == annRemoveAllButton) {
-                    onAnnRemoveAll();
-                } else if (source == noAnnFileBox) {
-                    onUseMevAnn();
-                }
-            }
-        }
-        
-        private class FileTreePaneEventHandler implements FileTreePaneListener {
-            
-            public void nodeSelected(FileTreePaneEvent event) {
-                
-                String filePath = (String) event.getValue("Path");
-                Vector fileNames = (Vector) event.getValue("Filenames");
-                
-                processFileList(filePath, fileNames);
-            }
-            
-            public void nodeCollapsed(FileTreePaneEvent event) {}
-            public void nodeExpanded(FileTreePaneEvent event) {}
-        }
-    }
-    
-        public class ProgressRunner implements Runnable {
-        
-        
-        public void run() {
-            progress = new SlideLoaderProgressBar(superLoader.getFrame());
-        }
-        
-    }
+	
+		public void onUseMevAnn() {
+			if (this.noAnnFileBox.isSelected())
+				enableAnnotationPanel(false);
+			else {
+				enableAnnotationPanel(true);
+			}
+		}
+
+		//Added by Sarita
+		public void onAnnFileBrowse() {
+			
+			FileLoaderUtility fileLoad = new FileLoaderUtility();
+			Vector retrievedFileNames = new Vector();
+			JFileChooser fileChooser = new JFileChooser(
+					SuperExpressionFileLoader.DATA_PATH);
+			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			int retVal = fileChooser
+			.showOpenDialog(AgilentMevFileLoaderPanel.this);
+
+			if (retVal == JFileChooser.APPROVE_OPTION) {
+				((DefaultListModel) annAvailableList.getModel()).clear();
+				((DefaultListModel) annSelectedList.getModel()).clear();
+				File selectedFile = fileChooser.getSelectedFile();
+				String path = selectedFile.getAbsolutePath();
+				retrievedFileNames = fileLoad.getFileNameList(selectedFile
+						.getAbsolutePath());
+				// processFileList(path, retrievedFileNames);
+				for (int i = 0; i < retrievedFileNames.size(); i++) {
+					Object fileName = retrievedFileNames.get(i);
+					boolean acceptFile = getAnnotationFileFilter().accept(
+							(File) fileName);
+
+					if (acceptFile) {
+						annFileListTextField.setText(path);
+						String Name=fileChooser.getName((File) fileName);
+						((DefaultListModel) annAvailableList.getModel())
+						.addElement(new File(Name));
+						
+						
+						
+						/*Object addItem = fileName;
+						((DefaultListModel) annAvailableList.getModel())
+						.addElement(addItem);*/
+					}
+				}
+
+			}
+		}
+
+	
+		
+		
+		
+		public void enableAnnotationPanel(boolean enable) {
+			this.annAddAllButton.setEnabled(enable);
+			this.annAddButton.setEnabled(enable);
+			this.annRemoveAllButton.setEnabled(enable);
+			this.annRemoveButton.setEnabled(enable);
+			this.annAvailableLabel.setEnabled(enable);
+			this.annSelectedLabel.setEnabled(enable);
+			this.annAvailableList.setEnabled(enable);
+			this.annSelectedList.setEnabled(enable);
+			// this.annFieldsTextField.setEnabled(enable);
+
+			if (!enable) {
+				this.annAvailableList.setBackground(Color.lightGray);
+				this.annSelectedList.setBackground(Color.lightGray);
+			} else {
+				this.annAvailableList.setBackground(Color.white);
+				this.annSelectedList.setBackground(Color.white);
+			}
+		}
+
+		public DefaultListModel getMevAvailableListModel() {
+			return (DefaultListModel) mevAvailableList.getModel();
+		}
+
+		public DefaultListModel getAnnAvailableListModel() {
+			return (DefaultListModel) annAvailableList.getModel();
+		}
+
+		public DefaultListModel getMevSelectedListModel() {
+			return (DefaultListModel) mevSelectedList.getModel();
+		}
+
+		public DefaultListModel getAnnSelectedListModel() {
+			return (DefaultListModel) annSelectedList.getModel();
+		}
+
+		private class EventHandler implements ActionListener {
+			public void actionPerformed(ActionEvent event) {
+
+				Object source = event.getSource();
+
+				if (source == mevAddButton) {
+					onMevAdd();
+				} else if (source == browseButton1) {
+					onMevFileBrowse();
+				}else if (source == mevAddAllButton) {
+					onMevAddAll();
+				} else if (source == mevRemoveButton) {
+					onMevRemove();
+				} else if (source == mevRemoveAllButton) {
+					onMevRemoveAll();
+				} else if (source == annAddButton) {
+					onAnnAdd();
+				} else if (source == annAddAllButton) {
+					onAnnAddAll();
+				} else if (source == annRemoveButton) {
+					onAnnRemove();
+				} else if (source == annRemoveAllButton) {
+					onAnnRemoveAll();
+				} else if (source == noAnnFileBox) {
+					onUseMevAnn();
+				} else if (source == browseButton2) {
+					onAnnFileBrowse();
+				}
+
+			}
+		}
+
+		private class FileTreePaneEventHandler implements FileTreePaneListener {
+
+			public void nodeSelected(FileTreePaneEvent event) {
+
+				String filePath = (String) event.getValue("Path");
+				Vector fileNames = (Vector) event.getValue("Filenames");
+
+				processFileList(filePath, fileNames);
+			}
+
+			public void nodeCollapsed(FileTreePaneEvent event) {
+			}
+
+			public void nodeExpanded(FileTreePaneEvent event) {
+			}
+		}
+	}
+
+	public class ProgressRunner implements Runnable {
+
+		public void run() {
+			progress = new SlideLoaderProgressBar(superLoader.getFrame());
+		}
+
+	}
 }

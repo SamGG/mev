@@ -4,17 +4,15 @@ All rights reserved.
 */
 /*
  * $RCSfile: IDisplayMenu.java,v $
- * $Revision: 1.4 $
- * $Date: 2006-05-12 15:17:29 $
- * $Author: eleanorahowe $
+ * $Revision: 1.5 $
+ * $Date: 2007-12-19 21:39:36 $
+ * $Author: saritanair $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
-
-import javax.swing.JMenu;
 
 /**
  * This interface is used to access to framework display menu.
@@ -34,6 +32,8 @@ public interface IDisplayMenu {
     public static final int BLUE_YELLOW_SCHEME = 6;
     public static final int CUSTOM_COLOR_SCHEME = 7;
     public static final int RAINBOW_COLOR_SCHEME = 8;
+    //Added by Sarita
+    public static final int ACCESSIBLE_COLOR_SCHEME=10;
     
     /**
      * Returns a palette style.
@@ -120,5 +120,7 @@ public interface IDisplayMenu {
      * Returns true if the gradient style is double 
      */
     public boolean getUseDoubleGradient();
+    
+    
 
 }

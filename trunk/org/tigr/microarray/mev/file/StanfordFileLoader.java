@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: StanfordFileLoader.java,v $
- * $Revision: 1.12 $
- * $Date: 2007-02-07 19:16:49 $
- * $Author: wwang67 $
+ * $Revision: 1.13 $
+ * $Date: 2007-12-19 21:39:37 $
+ * $Author: saritanair $
  * $State: Exp $
  */
 
@@ -18,6 +18,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
@@ -25,16 +27,18 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Hashtable;
 import java.util.Vector;
 
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
-import javax.swing.DefaultListSelectionModel;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
@@ -47,20 +51,63 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import org.tigr.microarray.mev.AffySlideDataElement;
 import org.tigr.microarray.mev.FloatSlideData;
 import org.tigr.microarray.mev.ISlideData;
+import org.tigr.microarray.mev.ISlideDataElement;
+import org.tigr.microarray.mev.MultipleArrayData;
+import org.tigr.microarray.mev.MultipleArrayViewer;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.SlideDataElement;
 import org.tigr.microarray.mev.TMEV;
+//import org.tigr.microarray.mev.annotation.AnnotationDialog;
+//import org.tigr.microarray.mev.annotation.AnnotationFileReader1;
+//import org.tigr.microarray.mev.annotation.AnnotationURLConstants;
+//import org.tigr.microarray.mev.annotation.MevAnnotation;
+//import org.tigr.microarray.mev.annotation.PublicURL;
+import org.tigr.microarray.mev.annotation.AnnotationDialog;
+import org.tigr.microarray.mev.annotation.AnnotationFileReader;
+import org.tigr.microarray.mev.annotation.AnnotationURLConstants;
+import org.tigr.microarray.mev.annotation.MevAnnotation;
+import org.tigr.microarray.mev.annotation.PublicURL;
+import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.util.FileLoaderUtility;
+import org.tigr.microarray.util.MyCellRenderer;
+
+
 
 public class StanfordFileLoader extends ExpressionFileLoader {
     
     private GBA gba;
+    private int dataType=-1;
     private boolean stop = false;
+    private boolean dataLoaded=false;
     private StanfordFileLoaderPanel sflp;
+    protected String[] moreFields = new String[] {};
+  
+   
+   //Declaration moved from inside loadExpressionFile(File) to here.
+    
+    private ISlideData[] slideDataArray = null;
+    private ISlideDataElement sde;
+    
+    /**
+     * 
+     * Raktim - Annotation Specific
+     * Place Holder for reading in Affy Anno 
+     * MAV needed to pass ont he the ref to MevAnnotation Obj for MAV Index
+     **/
+    private Hashtable _tempAnno=new Hashtable();
+    private MultipleArrayViewer mav=new MultipleArrayViewer();
+    
+    protected MevAnnotation mevAnno=new MevAnnotation();
+    //Added by Sarita
+    private String annotationFileName;
+    
     
     public StanfordFileLoader(SuperExpressionFileLoader superLoader) {
         super(superLoader);
+        this.mav = superLoader.getArrayViewer();
         gba = new GBA();
         sflp = new StanfordFileLoaderPanel();
     }
@@ -73,127 +120,7 @@ public class StanfordFileLoader extends ExpressionFileLoader {
         return null;
     }
     
-    /*
-     *  Handling of Stanford data has been altered in version 3.0 to permit loading of
-     *  "ratio" input without the creation of false cy3 and cy5.  cy5 values in data structures
-     *  are used to hold the input value.
-     *
-     *  getRatio methods are altered to return the value (held in cy5) rather than
-     *  taking log2(cy5/cy3).
-     */
-    
-    public Vector loadStanfordExpressionFile_old(File f) throws IOException {
-        
-        final int preSpotRows = this.sflp.getXRow()+1;
-        final int preExperimentColumns = this.sflp.getXColumn();
-        
-        int numLines = this.getCountOfLines(f);
-        
-        int spotCount = numLines - preSpotRows;
-
-        if (spotCount <= 0) {
-            JOptionPane.showMessageDialog(superLoader.getFrame(),  "There is no spot data available.",  "TDMS Load Error", JOptionPane.INFORMATION_MESSAGE);
-        }
-        
-        int[] rows = new int[] {0, 1, 0};
-        int[] columns = new int[] {0, 1, 0};
-        String value;
-        float cy3, cy5;
-        String[] moreFields = new String[preExperimentColumns];
-        
-        final int rColumns = 1;
-        final int rRows = spotCount;
-        
-        ISlideData[] slideDataArray = null;
-        SlideDataElement sde;
-                        
-        BufferedReader reader = new BufferedReader(new FileReader(f));
-        StringSplitter ss = new StringSplitter((char)0x09);
-        String currentLine;
-        int counter, row, column;
-        counter = 0;
-        row = column = 1;
-        this.setFilesCount(1);
-        this.setRemain(1);
-        this.setFilesProgress(0);
-        this.setLinesCount(numLines);
-        this.setFileProgress(0);
-        
-        
-        while ((currentLine = reader.readLine()) != null) {
-            if (stop) {
-                return null;
-            }
-		//fix empty tabbs appending to the end of line by wwang
-            while(currentLine.endsWith("\t")){
-            	currentLine=currentLine.substring(0,currentLine.length()-1);
-            }
-            ss.init(currentLine);
-            if (counter == 0) { // parse header
-                int experimentCount = ss.countTokens()+1 - preExperimentColumns;
-                slideDataArray = new ISlideData[experimentCount];
-                slideDataArray[0] = new SlideData(rRows, rColumns);
-                slideDataArray[0].setSlideFileName(f.getPath());
-                for (int i=1; i<slideDataArray.length; i++) {
-                    slideDataArray[i] = new FloatSlideData(slideDataArray[0].getSlideMetaData(), spotCount);
-                    slideDataArray[i].setSlideFileName(f.getPath());
-                }
-                //get Field Names
-                String [] fieldNames = new String[preExperimentColumns];
-                for(int i = 0; i < preExperimentColumns; i++){
-                    fieldNames[i] = ss.nextToken();
-                }
-                //EH fieldnames are saved to SlideData rather than TMEV
-                slideDataArray[0].getSlideMetaData().setFieldNames(fieldNames);
-                //TMEV.setFieldNames(fieldNames);
-                
-                for (int i=0; i<experimentCount; i++) {
-                    slideDataArray[i].setSlideDataName(ss.nextToken());
-                }
-            } else if (counter >= preSpotRows) { // data rows
-                rows[0] = rows[2] = row;
-                columns[0] = columns[2] = column;
-                if (column == rColumns) {
-                    column = 1;
-                    row++;
-                } else {
-                    column++;
-                }
-                for (int i=0; i<preExperimentColumns; i++) {
-                    moreFields[i] = ss.nextToken();
-                }
-                sde = new SlideDataElement(String.valueOf(row+1),rows, columns, new float[2], moreFields);
-                slideDataArray[0].addSlideDataElement(sde);
-                
-                for (int i=0; i<slideDataArray.length; i++) {
-                    
-                    cy3 = 1f;  //set cy3 to a default value of 1.
-                    
-                    try {
-                        value = ss.nextToken();
-                        cy5 = Float.parseFloat(value);  //set cy5 to hold the value
-                        //getRatio methods will return cy5
-                        //for Stanford data type
-                    } catch (Exception e) {
-                        cy3 = 0;
-                        cy5 = Float.NaN;
-                    }
-                    slideDataArray[i].setIntensities(counter - preSpotRows, cy3, cy5);
-                }
-            }
-            this.setFileProgress(counter);
-            counter++;
-        }
-        reader.close();
-        
-        Vector data = new Vector(slideDataArray.length);
-        
-        for(int i = 0; i < slideDataArray.length; i++)
-            data.add(slideDataArray[i]);
-        
-        this.setFilesProgress(1);
-        return data;
-    }
+   
     
     
 
@@ -207,7 +134,7 @@ public class StanfordFileLoader extends ExpressionFileLoader {
      */
     
     public Vector loadStanfordExpressionFile(File f) throws IOException {
-        
+    	
         final int preSpotRows = this.sflp.getXRow()+1;
         final int preExperimentColumns = this.sflp.getXColumn();
         
@@ -223,13 +150,13 @@ public class StanfordFileLoader extends ExpressionFileLoader {
         int[] columns = new int[] {0, 1, 0};
         String value;
         float cy3, cy5;
-        String[] moreFields = new String[preExperimentColumns];
+        moreFields = new String[preExperimentColumns];
         
         final int rColumns = 1;
         final int rRows = spotCount;
         
-        ISlideData[] slideDataArray = null;
-        SlideDataElement sde;
+     //   ISlideData[] slideDataArray = null;
+       // SlideDataElement sde;
                         
         BufferedReader reader = new BufferedReader(new FileReader(f));
         StringSplitter ss = new StringSplitter((char)0x09);
@@ -242,6 +169,48 @@ public class StanfordFileLoader extends ExpressionFileLoader {
         this.setFilesProgress(0);
         this.setLinesCount(numLines);
         this.setFileProgress(0);
+        
+        
+        /*Loop added by Sarita to check if Annotation has been loaded
+         * "isAnnotationLoaded" is a boolean variable, which is set
+         * to "true" in the function onAnnotationFileBrowse().
+         * 
+         * The loop was included so as to enable loading data
+         * irrespective of whether annotation was loaded or not
+         * 
+         */
+        if(this.mav.getData().isAnnotationLoaded()) {
+        	_tempAnno = loadAnnotation(new File(getAnnotationFileName()));
+        	
+        }
+        
+     
+        /**
+         * TODO
+         * Raktim - Annotation Demo Only. 
+         * Good Place to initialize URLS.
+         */
+        if(PublicURL.loadURLs(new File("config/annotation_URLs.txt")) != 0){
+        	JOptionPane.showMessageDialog(new JFrame(), "URLs will not be loaded", "Warning", JOptionPane.WARNING_MESSAGE);
+        }
+       
+        
+        try {
+        	//System.out.println("1: " + PublicURL.getURL(AnnotationURLConstants.NCBI_GENE, new String[] {"MYC"}));
+        }catch(Exception e){
+        	e.printStackTrace();
+        }
+        try {
+        //	System.out.println("1: " + PublicURL.getURL(AnnotationURLConstants.NCBI_MAPVIEWER, new String[] {"9606", "16Abc", "12345", "223456"}));
+        } catch(Exception e){
+        	e.printStackTrace();
+        }
+
+      
+        
+//////////////////////////////////////////////////////////////////////
+        
+     
         
         
         while ((currentLine = reader.readLine()) != null) {
@@ -281,14 +250,51 @@ public class StanfordFileLoader extends ExpressionFileLoader {
                 columns[0] = columns[2] = column;
                 if (column == rColumns) {
                     column = 1;
-                    row++;
+                    row=row+1;
+                  //  System.out.println("row:"+row);
                 } else {
                     column++;
                 }
                 for (int i=0; i<preExperimentColumns; i++) {
                     moreFields[i] = ss.nextToken();
                 }
-                sde = new SlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields);
+                
+                String cloneName = moreFields[0];
+                if(_tempAnno.size()!=0 && getDataType()==TMEV.DATA_TYPE_AFFY) {
+             	   
+             	//  System.out.println("Loading annotation");
+                 if(((MevAnnotation)_tempAnno.get(cloneName))!=null) {
+                 	MevAnnotation mevAnno = (MevAnnotation)_tempAnno.get(cloneName);
+                 mevAnno.setViewer(this.mav);
+                sde = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields, mevAnno);
+                }else {
+             	 /*  String eMsg = "<html>The Probes IDs in your data <br>"+
+             	   		"<html>must be a subset or match all the Probe ID's<br>" +
+             	   		"<html>in the Annotation files. This does not seem to be the case..<br></html>";
+             	   		 JOptionPane.showMessageDialog(null, eMsg, "ERROR", JOptionPane.ERROR_MESSAGE);
+             	   		 */
+                	MevAnnotation mevAnno = new MevAnnotation();
+                	mevAnno.setCloneID(cloneName);
+                    mevAnno.setViewer(this.mav);
+                   sde = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields, mevAnno);
+                	
+                }
+                }
+                 /* Added by Sarita
+                  * Checks if annotation was loaded and accordingly use
+                  * the appropriate constructor.
+                  * 
+                  * 
+                  */
+                 
+                else {
+                 //sde = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields);
+                 sde = new SlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields);
+                 }
+                 
+                
+                
+           //     sde = new SlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields);
                 slideDataArray[0].addSlideDataElement(sde);
                 
                 for (int i=0; i<slideDataArray.length; i++) {
@@ -337,6 +343,34 @@ public class StanfordFileLoader extends ExpressionFileLoader {
     }
     
     
+   /**
+    * @author Sarita
+    * 
+    * @param annotationFile
+    * @return
+    */ 
+    
+    
+    private Hashtable loadAnnotation(File annotationFile) {
+    	   
+    	    	//System.out.println("loadAffyAnno");
+    	    	Hashtable _temp = null;
+    	    	AnnotationFileReader reader = new AnnotationFileReader();
+    	    	try {
+    	    		_temp = reader.loadAffyAnnotation(annotationFile);
+    	    		
+    	    		
+    	    		//reader.loadAffyAnnotation(affyFile);
+    			} catch (Exception e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
+    			return _temp;
+    	    }
+    	    
+    	    
+    
+    
     public FileFilter getFileFilter() {
         
         FileFilter mevFileFilter = new FileFilter() {
@@ -370,8 +404,14 @@ public class StanfordFileLoader extends ExpressionFileLoader {
             //  System.out.print(model.getColumnName(i) + (i + 1 == tableColumn ? "\n" : ", "));
             fieldSummary += model.getColumnName(i) + (i + 1 == tableColumn ? "" : ", ");
         }
+      
         
-        sflp.setFieldsText(fieldSummary);
+        if(!sflp.twoColorArray.isSelected()&!sflp.affymetrixArray.isSelected()) {
+      		 String eMsg = "<html>Please select an array type..<br>" ;
+   		     JOptionPane.showMessageDialog(null, eMsg, "Warning", JOptionPane.INFORMATION_MESSAGE);
+           	
+   		}
+        
         
         if (tableRow >= 1 && tableColumn >= 0) {
             setLoadEnabled(true);
@@ -459,21 +499,46 @@ public class StanfordFileLoader extends ExpressionFileLoader {
     }
     
     public void openDataPath() {
-        this.sflp.openDataPath();
+     //   this.sflp.openDataPath();
+    	
     }
     
-/*
-//
-//	StanfordFileLoader - Internal Classes
-//
+   public String getAnnotationFileName() {
+    	return this.annotationFileName;
+    }
+    
+    public void setAnnotationFileName(String name) {
+    	this.annotationFileName=name;
+    }
+   
+    public void setDataType(int data_Type){
+    	if(data_Type!=-1)
+		dataType=data_Type;
+    	else
+    		dataType=IData.DATA_TYPE_RATIO_ONLY;
+		//System.out.println("Datatype:"+this.dataType);
+	}
+
+	public int getDataType(){
+		return dataType;
+	}
+    
+/**
+ * 
+ * @author SARITA NAIR
+ * 
+ *
  */
     
     private class StanfordFileLoaderPanel extends JPanel {
         
-        FileTreePane fileTreePane;
+       // FileTreePane fileTreePane;
         
         JTextField fileNameTextField;
-        JPanel fileSelectionPanel;
+        //Added by Sarita
+
+        
+        JTextField selectedFiles;
         JTable expressionTable;
         JLabel instructionsLabel;
         JScrollPane tableScrollPane;
@@ -489,30 +554,161 @@ public class StanfordFileLoader extends ExpressionFileLoader {
         private int xRow = -1;
         private int xColumn = -1;
         
+       //Added by Sarita 
+        JPanel fileSelectionPanel;
+        JLabel fileSelectionLabel, dataSelection;
+        JButton browseButton1;
+        JTextField annFileNameTextField;
+        JPanel buttonPanel;
+		JRadioButton twoColorArray;
+		JRadioButton affymetrixArray;
+		
+		
+		
+		/**
+    	 * Annotation Panel lets user choose additional annotations from
+    	 * Resourcerer. This feature is currently available only for Affymetrix files.
+    	 */
+    	JPanel annotationPanel;
+    	JLabel getAnnotation,  customAnnotation;
+    	JButton connectButton, browseButton2;
+    	JTextField annFileListTextField;
+		
+	    protected EventListener eventListener;
+       
+     
+        
         public StanfordFileLoaderPanel() {
-            
+        	eventListener = new EventListener();
             setLayout(new GridBagLayout());
             
-            fileTreePane = new FileTreePane(SuperExpressionFileLoader.DATA_PATH);
-            fileTreePane.addFileTreePaneListener(new FileTreePaneEventHandler());
-            fileTreePane.setPreferredSize(new java.awt.Dimension(200, 50));
+       
             
             fileNameTextField = new JTextField();
             fileNameTextField.setEditable(false);
             fileNameTextField.setForeground(Color.black);
             fileNameTextField.setFont(new Font("monospaced", Font.BOLD, 12));
          
+            
+            selectedFiles = new JTextField();
+            selectedFiles.setEditable(false);
+            selectedFiles.setForeground(Color.black);
+            selectedFiles.setFont(new Font("monospaced", Font.BOLD, 12));
+         
+            
+            fileSelectionLabel=new JLabel();
+            fileSelectionLabel.setForeground(java.awt.Color.BLACK);
+            String fileTypeChoices = "<html> Selected files </html>";
+            fileSelectionLabel.setText(fileTypeChoices);
+
+            
+            dataSelection=new JLabel();
+            dataSelection.setForeground(java.awt.Color.BLACK);
+            String chooseFile="<html>Select expression data file</html>";
+            dataSelection.setText(chooseFile);
+           
+            
+            
             fileSelectionPanel = new JPanel();
             fileSelectionPanel.setLayout(new GridBagLayout());
-            fileSelectionPanel.setBorder(new TitledBorder(new EtchedBorder(), "Selected TDMS File"));
-            gba.add(fileSelectionPanel, fileNameTextField, 0, 0, 2, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    
-            expressionTable = new JTable();
-            expressionTable.setCellSelectionEnabled(true);
+            fileSelectionPanel.setBorder(new TitledBorder(new EtchedBorder(), "File    (Tab Delimited Multiple Sample (*.*))"));
+         
+            
+            browseButton1=new JButton("Browse");
+            browseButton1.addActionListener(eventListener);
+           	browseButton1.setSize(100, 30);
+    		browseButton1.setPreferredSize(new Dimension(100, 30));
+    		
+    		buttonPanel = new JPanel();
+			buttonPanel.setLayout(new GridBagLayout());
+			
+			twoColorArray = new JRadioButton("Spotted DNA/cDNA Array OR Other Array type", true);
+			twoColorArray.setFocusPainted(false);
+			twoColorArray.addActionListener(new EventListener());
+			
+			affymetrixArray = new JRadioButton("Affymetrix Array");
+			affymetrixArray.setFocusPainted(false);
+			affymetrixArray.addActionListener(new EventListener());
+			
+			
+			ButtonGroup bg = new ButtonGroup();
+			bg.add(twoColorArray);
+			bg.add(affymetrixArray);
+
+			gba.add(buttonPanel, twoColorArray, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C,
+					new Insets(0, 20, 0, 5), 0, 0);
+			gba.add(buttonPanel, affymetrixArray, 1, 0, 1, 1, 1, 0, GBA.H,
+					GBA.C, new Insets(0, 20, 0, 5), 0, 0);
+    		
+		/*	gba.add(fileSelectionPanel, dataSelection, 0, 0, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(fileSelectionPanel, fileNameTextField, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(fileSelectionPanel, browseButton1, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+
+			gba.add(fileSelectionPanel, fileSelectionLabel, 0, 2, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(fileSelectionPanel, selectedFiles, 1, 2, 1, 1, 2, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0); 
+			gba.add(fileSelectionPanel, buttonPanel, 0, 3, 0, 0, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+    	
+    		*/
+			
+			gba.add(fileSelectionPanel, dataSelection, 0, 0, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(fileSelectionPanel, fileNameTextField, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(fileSelectionPanel, browseButton1, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+
+			gba.add(fileSelectionPanel, fileSelectionLabel, 0, 2, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(fileSelectionPanel, selectedFiles, 1, 2, 1, 1, 2, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0); 
+			gba.add(fileSelectionPanel, buttonPanel, 0, 3, 0, 0, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+
+			
+			
+			
+			annotationPanel = new JPanel();
+            annotationPanel.setLayout(new GridBagLayout());
+            annotationPanel.setBorder(new TitledBorder(new EtchedBorder(), "Annotation"));
+              
+            
+            getAnnotation=new JLabel("Retrieve  Annotation  from  Resourcerer");
+
+
+    		connectButton = new JButton("Connect");
+    		connectButton.setSize(new Dimension(100, 30));
+    		connectButton.setPreferredSize(new Dimension(100, 30));
+    		connectButton.addActionListener(new EventListener());
+
+    		
+    		customAnnotation=new JLabel("Upload annotation");
+    		
+    		annFileListTextField=new JTextField();
+    		annFileListTextField.setEditable(false);
+    		annFileListTextField.setForeground(Color.black);
+    		annFileListTextField.setFont(new Font("monospaced", Font.BOLD, 12));
+    		
+    		browseButton2 = new JButton("Browse");
+    		browseButton2.setSize(new Dimension(100, 30));
+    		browseButton2.setPreferredSize(new Dimension(100, 30));
+    		browseButton2.addActionListener(new EventListener());
+
+    		 
+    		gba.add(annotationPanel, getAnnotation, 0, 0, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+    		gba.add(annotationPanel, connectButton, 1, 0, GBA.RELATIVE, 1, 0, 0,GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+    	    		
+    		gba.add(annotationPanel, customAnnotation, 0, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5,5,5,5),0,0);
+    		gba.add(annotationPanel, annFileListTextField, 1, 1, 1, 0, 1, 0, GBA.H,	GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+    		gba.add(annotationPanel, browseButton2, 2, 1, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 10, 5), 0, 0);
+    	
+    		
+    		expressionTable=new JTable();
+    		expressionTable.setDefaultRenderer(Object.class, new MyCellRenderer());
+    		expressionTable.setIntercellSpacing(new Dimension(1, 1));
+    		expressionTable.setShowHorizontalLines(false);
+    		expressionTable.setShowVerticalLines(true);
+    		expressionTable.setGridColor(Color.LIGHT_GRAY);
+    		expressionTable.setCellSelectionEnabled(true);
             expressionTable.setColumnSelectionAllowed(false);
             expressionTable.setRowSelectionAllowed(false);
             expressionTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
             expressionTable.getTableHeader().setReorderingAllowed(false);
+    	
+    		
             expressionTable.addMouseListener(new MouseAdapter() {
                 public void mousePressed(MouseEvent event) {
                     xRow = expressionTable.rowAtPoint(event.getPoint());
@@ -531,50 +727,90 @@ public class StanfordFileLoader extends ExpressionFileLoader {
             tablePanel = new JPanel();
             tablePanel.setLayout(new GridBagLayout());
             tablePanel.setBorder(new TitledBorder(new EtchedBorder(), "Expression Table"));
-            gba.add(tablePanel, tableScrollPane, 0, 0, 1, 2, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            
+        /*  gba.add(tablePanel, tableScrollPane, 0, 0, 1, 2, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             gba.add(tablePanel, instructionsLabel, 0, 2, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            */
             
-            fieldsTextField = new JTextField();
-            fieldsTextField.setEditable(false);
-            fieldsTextField.setForeground(Color.black);
-            fieldsTextField.setFont(new Font("serif", Font.BOLD, 12));
+            gba.add(tablePanel, tableScrollPane, 0, 0, 1, 2, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+            gba.add(tablePanel, instructionsLabel, 0, 2, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
             
-            fieldsPanel = new JPanel();
-            fieldsPanel.setLayout(new GridBagLayout());
-            fieldsPanel.setBorder(new TitledBorder(new EtchedBorder(), "Annotation Fields"));
-            gba.add(fieldsPanel, fieldsTextField, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            
+        
             fileLoaderPanel = new JPanel();
             fileLoaderPanel.setLayout(new GridBagLayout());
             
-            //jcb add list panel
-            availableList = new JList(new DefaultListModel());
-            availableList.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
-            availableList.setCellRenderer(new ListRenderer());
-            availableList.addListSelectionListener(new ListListener());
-            availableScrollPane = new JScrollPane(availableList);
+         /*   gba.add(fileLoaderPanel,fileSelectionPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+          //  gba.add(fileLoaderPanel, annotationPanel, 0, 2, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);//Uncomment when you add annotation for non affy
+            gba.add(fileLoaderPanel, tablePanel, 0, 2, 1, 6, 3, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+           
+            gba.add(this, fileLoaderPanel,0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+         */
+         
+            gba.add(fileLoaderPanel,fileSelectionPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+              gba.add(fileLoaderPanel, annotationPanel, 0, 2, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);//Uncomment when you add annotation for non affy
+              gba.add(fileLoaderPanel, tablePanel, 0, 3, 1, 6, 3, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+             
+              gba.add(this, fileLoaderPanel,0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+          
             
-            JPanel filePanel = new JPanel(new GridBagLayout());
-            filePanel.setPreferredSize(new Dimension(120, 100));
-            filePanel.setBorder(new TitledBorder(new EtchedBorder(), "Available Files (*.txt)"));
-            gba.add(filePanel, availableScrollPane, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             
-            gba.add(fileLoaderPanel, filePanel, 0, 0, 1, 4, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(fileLoaderPanel, fileSelectionPanel, 1, 0, 1, 1, 3, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(fileLoaderPanel, tablePanel, 1, 1, 1, 2, 3, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(fileLoaderPanel, fieldsPanel, 1, 3, 1, 1, 3, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             
-            //jcb
-            splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, fileTreePane, fileLoaderPanel);
-            
-            gba.add(this, splitPane, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            splitPane.setDividerLocation(0.50);
-            
+      
         }
         
-        public void openDataPath() {
-            fileTreePane.openDataPath();
-        }
+      
+        public void onBrowse() {
+        	JFileChooser fileChooser=new JFileChooser(SuperExpressionFileLoader.DATA_PATH);
+        	int retVal=fileChooser.showOpenDialog(StanfordFileLoaderPanel.this);
+        	
+        	if(retVal==JFileChooser.APPROVE_OPTION) {
+        	File selectedFile=fileChooser.getSelectedFile();
+        	processStanfordFile(selectedFile);
+        	}
+           		
+    	}
+        
+        
+        public void onAnnotationFileBrowse() {
+        	//System.out.println(getDataType());
+        	if(this.affymetrixArray.isSelected()) {
+        		FileLoaderUtility fileLoad = new FileLoaderUtility();
+        		File selectedFile;
+        		JFileChooser fileChooser = new JFileChooser(
+        				SuperExpressionFileLoader.DATA_PATH);
+        		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        		int retVal = fileChooser.showOpenDialog(StanfordFileLoaderPanel.this);
+
+        		if (retVal == JFileChooser.APPROVE_OPTION) {
+        			selectedFile = fileChooser.getSelectedFile();
+        			setAnnotationFileName(selectedFile.getAbsolutePath());
+        			annFileListTextField.setText(selectedFile.getAbsolutePath());
+        			mav.getData().setAnnotationLoaded(true);
+
+        		}
+        	}else {
+        		 String eMsg = "<html>This feature is currently available <br>"+
+        			 		   "<html> for Affymetrix data only <br>";
+    		     JOptionPane.showMessageDialog(null, eMsg, "Warning", JOptionPane.INFORMATION_MESSAGE);
+            	
+        	}
+    	}
+        
+        public void onConnect() {
+        	if(this.affymetrixArray.isSelected()) {
+        	AnnotationDialog annDialog=new AnnotationDialog(new JFrame());
+        	if(annDialog.showModal()==JOptionPane.OK_OPTION) {
+        	mav.getData().setAnnotationLoaded(true);
+        	setAnnotationFileName(annDialog.getAnnotationFileName());
+        	}
+        	}else{
+        		String eMsg = "<html>This feature is currently available <br>"+
+		 		   "<html> for Affymetrix data only <br>";
+		     JOptionPane.showMessageDialog(null, eMsg, "Warning", JOptionPane.INFORMATION_MESSAGE);
+       	
+        	}
+            }
+        
         
         public JTable getTable() {
             return expressionTable;
@@ -588,19 +824,11 @@ public class StanfordFileLoader extends ExpressionFileLoader {
             return xRow;
         }
         
-        public void selectStanfordFile() {
-            JFileChooser jfc = new JFileChooser(SuperExpressionFileLoader.DATA_PATH);
-            jfc.setFileFilter(getFileFilter());
-            int activityCode = jfc.showDialog(this, "Select");
-            
-            if (activityCode == JFileChooser.APPROVE_OPTION) {
-                File target = jfc.getSelectedFile();
-                processStanfordFile(target);
-            }
-        }
         
         public void setFileName(String fileName) {
             fileNameTextField.setText(fileName);
+            //Added by Sarita
+            selectedFiles.setText(fileName);
         }
         
         public void setTableModel(TableModel model) {
@@ -612,64 +840,34 @@ public class StanfordFileLoader extends ExpressionFileLoader {
         }
         
         public void setFieldsText(String fieldsText) {
-            fieldsTextField.setText(fieldsText);
+          //  fieldsTextField.setText(fieldsText);
         }
         
+      
+      
         
-        private class ListRenderer extends DefaultListCellRenderer {
-            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                File file = (File) value;
-                setText(file.getName());
-                return this;
-            }
-        }
+    private class EventListener implements ActionListener {
+    		public void actionPerformed(ActionEvent event) {
+    			Object source = event.getSource();
+    			if (source == browseButton1) {
+    				onBrowse();
+    			}else if (source == browseButton2) {
+    				onAnnotationFileBrowse();
+    			} else if (source==connectButton){
+        			onConnect();  
+        		}else if (source == twoColorArray) {
+					dataType=IData.DATA_TYPE_RATIO_ONLY;
+					setDataType(dataType);
+				} else if (source == affymetrixArray) {
+					dataType=TMEV.DATA_TYPE_AFFY;
+					setDataType(dataType);
+					
+				}
+    			
+    			
+    			}
+    		}
+    	
         
-        
-        
-        private class ListListener implements javax.swing.event.ListSelectionListener {
-            
-            public void valueChanged(ListSelectionEvent lse) {
-                
-                File file = (File)(availableList.getSelectedValue());
-                
-                if(file == null || !(file.exists()))
-                    return;
-                
-                processStanfordFile(file);
-            }
-        }
-        
-        
-        private class FileTreePaneEventHandler implements FileTreePaneListener {
-            
-            public void nodeSelected(FileTreePaneEvent event) {
-                
-                String filePath = (String) event.getValue("Path");
-                Vector fileNames = (Vector) event.getValue("Filenames");
-                
-                if(fileNames.size() < 1)
-                    return;
-                
-                String fileName = (String)(fileNames.elementAt(0));
-                
-                ((DefaultListModel)(availableList.getModel())).clear();
-                
-                
-                for (int i = 0; i < fileNames.size(); i++) {
-                    
-                    File targetFile = new File((String) fileNames.elementAt(i));
-                    
-                    FileFilter stanfordFileFilter = getFileFilter();
-                    
-                    if (stanfordFileFilter.accept(targetFile)) {
-                        ((DefaultListModel)(availableList.getModel())).addElement(new File((String) fileNames.elementAt(i)));
-                    }
-                }
-            }
-            
-            public void nodeCollapsed(FileTreePaneEvent event) {}
-            public void nodeExpanded(FileTreePaneEvent event) {}
-        }
     }    
 }

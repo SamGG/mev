@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayCanvas.java,v $
- * $Revision: 1.11 $
- * $Date: 2006-09-10 17:59:42 $
- * $Author: jdenvir $
+ * $Revision: 1.12 $
+ * $Date: 2007-12-19 21:39:34 $
+ * $Author: saritanair $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -45,7 +45,7 @@ import javax.swing.JViewport;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 
-import org.tigr.microarray.mev.MultipleArrayData;
+import org.tigr.microarray.mev.annotation.AnnoAttributeObj;
 import org.tigr.microarray.mev.action.DefaultAction;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
@@ -664,8 +664,30 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
         double maxWidth = 0;
         final int SIZE = data.getFeaturesSize();
         for (int i = 0; i < SIZE; i++) {
-            label = data.getElementAttribute(i, labelIndex);
+        	
+        	// Sarita--Changed the labelIndex comparison from hardcoded value 2 to data.getFieldNames.size(0
+        	//In the if loop below, the check for data.getFieldNames().length was introduced because
+        	//the .TAV files do not have "Field Names"
+        
+        	if(data.getFieldNames().length >0 && labelIndex > data.getFieldNames().length-1) {
+        		String prefix = "Label By ";
+        		String attr = getMenuLabel(labelIndex).substring(prefix.length()).trim();
+        		
+        		String[] _temp = data.getElementAnnotation(i, attr);
+        		if(_temp.length > 1)
+        			label = ((AnnoAttributeObj)data.getElementAnnotationObject(i, attr)).toString();
+        		else
+        			label = _temp[0];
+        	} else {
+        		label = data.getElementAttribute(i, labelIndex);
+        	}
             maxWidth = Math.max(maxWidth, fm.stringWidth(label));
+
+   
+            
+        /*Original code, commented temporarily by Raktim
+         * label = data.getElementAttribute(i, labelIndex);
+            maxWidth = Math.max(maxWidth, fm.stringWidth(label));*/
         }
         maxLabelWidth = (int)maxWidth;
     }
@@ -684,13 +706,69 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
         String label;
         g.setColor(Color.black);
         int[] indices = data.getSortedIndices(0);
-        for (int probe = top; probe < bottom; probe++) {
+        
+        //Added by Sarita
+       // Hard Coded preFix value of 2 replaced by data.getFieldNames().length-1.
+      //In the if loop below, the check for data.getFieldNames().length was introduced because
+    //the .TAV files do not have "Field Names"
+        
+        if(labelIndex > data.getFieldNames().length-1 && (data.getFieldNames()).length >0) { 
+        	for (int probe = top; probe < bottom; probe++) {
+        		String prefix = "Label By ";
+        		String attr = getMenuLabel(labelIndex).substring(prefix.length()).trim();
+               
+                String[] _temp = data.getElementAnnotation(indices[probe], attr);
+        		if(_temp.length > 1)
+        			label = ((AnnoAttributeObj)data.getElementAnnotationObject(indices[probe], attr)).toString();
+        		else
+        			label = _temp[0];
+             
+                if (label != null) {
+                    g.drawString(label, insets.left + getXSize() + insets.right, insets.top + ((probe +1)*elementSize.height) -1);
+                }
+            }
+        }
+        else {
+	        for (int probe = top; probe < bottom; probe++) {
+	            label = data.getElementAttribute(indices[probe], labelIndex);
+	            
+	            if (label != null) {
+	                g.drawString(label, insets.left + getXSize() + insets.right, insets.top + ((probe +1)*elementSize.height) -1);
+	            }
+	        }
+        }
+
+        
+     /*   for (int probe = top; probe < bottom; probe++) { Original code------commented by Raktim
             label = data.getElementAttribute(indices[probe], labelIndex);
             if (label != null) {
                 g.drawString(label, insets.left + getXSize() + insets.right, insets.top + ((probe +1)*elementSize.height) -1);
             }
-        }
+        }*/
     }
+    
+    
+    /**
+     * Raktim - Annotation Demo Only 
+     */
+    private String[] getMenuLabels() {
+    	MultipleArrayMenubar menuBar = (MultipleArrayMenubar)framework.getJFrame().getJMenuBar();
+    	String[] labels = menuBar.getLabelMenuItems();
+    //	System.out.println("Labels:"+labels);
+        //for(int i = 0; i < labels.length; i++){
+        	//System.out.println("Menu Labels: " + labels[i]);
+        //}
+        return labels;
+    }
+    
+    /**
+     * Raktim - Annotation Demo Only 
+     */
+    private String getMenuLabel(int index) {
+    //	System.out.println("MACanvas:getMenuLabel:"+index);
+    	return getMenuLabels()[index];
+    }
+
     
     /**
      * Returns index of top row.
@@ -1205,7 +1283,7 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
             } else if(command.equals("use-absolute-bar-colors")) {
                 isGRScale = !absoluteColorCheckBoxItem.isSelected();
                 repaint();
-                System.out.println("isGRScale ="+isGRScale);
+               // System.out.println("isGRScale ="+isGRScale);
             }
         }
         

@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayMenubar.java,v $
- * $Revision: 1.16 $
- * $Date: 2006-05-12 15:09:12 $
- * $Author: eleanorahowe $
+ * $Revision: 1.17 $
+ * $Date: 2007-12-19 21:39:35 $
+ * $Author: saritanair $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -37,6 +37,7 @@ import org.tigr.microarray.mev.cluster.gui.ICGHCloneValueMenu;
 import org.tigr.microarray.mev.cluster.gui.ICGHDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
+import org.tigr.microarray.util.awt.AccessibleColorPalette;
 
 public class MultipleArrayMenubar extends JMenuBar {
     
@@ -222,13 +223,16 @@ public class MultipleArrayMenubar extends JMenuBar {
         labelGroup = new ButtonGroup();      
         displayMenu.add(labelMenu);
         displayMenu.addSeparator();
-
+        
+      
         JMenu colorSchemeMenu = new JMenu("Color Scheme");
         colorSchemeMenu.add(createJMenuItem("Green-Black-Red Scheme", ActionManager.GREEN_RED_COLOR_SCHEME_CMD, listener));
         colorSchemeMenu.add(createJMenuItem("Blue-Black-Yellow Scheme", ActionManager.BLUE_YELLOW_COLOR_SCHEME_CMD, listener));
         colorSchemeMenu.add(createJMenuItem("Rainbow Scheme", ActionManager.RAINBOW_COLOR_SCHEME_CMD, listener));
         colorSchemeMenu.addSeparator();
         colorSchemeMenu.add(createJMenuItem("Custom Color Scheme", ActionManager.CUSTOM_COLOR_SCHEME_CMD, listener));
+        colorSchemeMenu.addSeparator();
+        colorSchemeMenu.add(createJMenuItem("Accessible Color Scheme", ActionManager.ACCESSIBLE_COLOR_SCHEME_CMD, listener));
         colorSchemeMenu.addSeparator();
         colorSchemeMenu.add(createJCheckBoxMenuItem("Use Color Gradient on Graphs", ActionManager.COLOR_GRADIENT_CMD, listener));
         displayMenu.add(colorSchemeMenu);
@@ -271,7 +275,8 @@ public class MultipleArrayMenubar extends JMenuBar {
         utilMenu.add(manager.getAction(ActionManager.APPEND_GENE_ANNOTATION_ACTION));        
         utilMenu.add(manager.getAction(ActionManager.APPEND_SAMPLE_ANNOTATION_ACTION));
                         
-        add(utilMenu);      
+        add(utilMenu);    
+       
     }
     
     
@@ -286,7 +291,7 @@ public class MultipleArrayMenubar extends JMenuBar {
         this(manager);
         
         IDisplayMenu origDisplayMenu = origMenubar.getDisplayMenu();
-        
+       
         this.setColorSchemeIndex(origDisplayMenu.getColorScheme());
         Dimension dim = origDisplayMenu.getElementSize();
         this.setElementSize(dim.width, dim.height);
@@ -302,6 +307,10 @@ public class MultipleArrayMenubar extends JMenuBar {
         this.setColorGradientState(origDisplayMenu.getColorGradientState());
         this.setNegativeCustomGradient(origDisplayMenu.getNegativeGradientImage());
         this.setPositiveCustomGradient(origDisplayMenu.getPositiveGradientImage());
+       
+        this.setNegativeAccessibleGradient(origDisplayMenu.getNegativeGradientImage());
+        this.setPositiveAccessibleGradient(origDisplayMenu.getPositiveGradientImage());
+        
         this.setUseDoubleGradient(origDisplayMenu.getUseDoubleGradient());
         this.addLabelMenuItems((origMenubar).getLabelMenuItems());
         
@@ -500,6 +509,8 @@ public class MultipleArrayMenubar extends JMenuBar {
     		temp2[i] = (String)temp.get(i);
    		return temp2;
     }
+  
+    
     public void addLabelMenuItems(String [] fieldNames){
         JRadioButtonMenuItem item;
         ButtonGroup bg = new ButtonGroup();
@@ -514,6 +525,40 @@ public class MultipleArrayMenubar extends JMenuBar {
             this.labelMenu.add(item);
         }
     }
+    
+   
+    /**
+     * Raktim - Added for Pilot Demo only
+     * @param fieldNames
+     * @param annoFields
+     */
+    public void addLabelMenuItems(String [] fieldNames, String[] annoFields){
+        JRadioButtonMenuItem item;
+        ButtonGroup bg = new ButtonGroup();
+        DefaultAction action;
+        for(int i = 0; i < fieldNames.length; i++){
+            action = new DefaultAction(actionManager, "Label by "+fieldNames[i], ActionManager.DISPLAY_LABEL_CMD);
+            action.putValue(ActionManager.PARAMETER, String.valueOf(i));
+            item = new JRadioButtonMenuItem(action);
+            labelGroup.add(item);
+            if(i == 0)
+                item.setSelected(true);
+            this.labelMenu.add(item);
+        }
+        
+        for(int i = 0; i < annoFields.length; i++){
+        	action = new DefaultAction(actionManager, "Label by "+annoFields[i], ActionManager.DISPLAY_LABEL_CMD);
+            action.putValue(ActionManager.PARAMETER, String.valueOf(i + fieldNames.length));
+            item = new JRadioButtonMenuItem(action);
+            labelGroup.add(item);
+            this.labelMenu.add(item);
+            //System.out.println("Here: " + "Label by "+annoFields[i]);
+        }
+    }
+    
+
+    
+    
     
     
     public void addExperimentLabelMenuItems(Vector fieldNames){
@@ -581,6 +626,15 @@ public class MultipleArrayMenubar extends JMenuBar {
             this.labelMenu.add(item);
         }
     }
+    
+    
+    //Added by Sarita
+    public void replaceLabelMenuItems(String [] fieldNames, String[]annoFields){
+        //remove all menu items
+        this.labelMenu.removeAll();
+       this.addLabelMenuItems(fieldNames, annoFields);
+    }
+    
     
     
     public void addAffyFilterMenuItems(){
@@ -664,6 +718,7 @@ public class MultipleArrayMenubar extends JMenuBar {
         for(int i=0;i<category.length;i++){
         	//while ((action = manager.getAction(ActionManager.ANALYSIS_ACTION+String.valueOf(index)))!=null) {
         		menu.add(createJMenuItem(category[i],manager));
+        		
         		//index++;
         	}
         }
@@ -715,17 +770,19 @@ public class MultipleArrayMenubar extends JMenuBar {
     }
     
     /**
-     * Creates a menu item with specified name and acton command.
+     * Creates a menu item with specified name and action command.
      */
     private JMenuItem createJMenuItem(String name, String command, ActionListener listener) {
         JMenuItem item = new JMenuItem(name);
+       
         item.setActionCommand(command);
         item.addActionListener(listener);
         return item;
     }
     
+    
     /**
-     * Creates a check box menu item with specified name, acton command and state.
+     * Creates a check box menu item with specified name, action command and state.
      */
     private JCheckBoxMenuItem createJCheckBoxMenuItem(String name, String command, ActionListener listener, boolean isSelected) {
         JCheckBoxMenuItem item = new JCheckBoxMenuItem(name);
@@ -736,14 +793,14 @@ public class MultipleArrayMenubar extends JMenuBar {
     }
     
     /**
-     * Creates a check box menu item with specified name and acton command.
+     * Creates a check box menu item with specified name and action command.
      */
     private JCheckBoxMenuItem createJCheckBoxMenuItem(String name, String command, ActionListener listener) {
         return createJCheckBoxMenuItem(name, command, listener, false);
     }
     
     /**
-     * Creates a radio button menu item with specified name, acton command and state.
+     * Creates a radio button menu item with specified name, action command and state.
      */
     private JRadioButtonMenuItem createJRadioButtonMenuItem(String name, String command, ActionListener listener, ButtonGroup buttonGroup, boolean isSelected) {
         JRadioButtonMenuItem item = new JRadioButtonMenuItem(name);
@@ -794,6 +851,12 @@ public class MultipleArrayMenubar extends JMenuBar {
         return null;
     }
     
+  
+    
+  
+    
+    
+    
     /**
      * Sets a menu state with specified name.
      */
@@ -808,6 +871,9 @@ public class MultipleArrayMenubar extends JMenuBar {
     /**
      * Sets a menu item state with specified name.
      */
+  
+    
+    
     private void setEnableMenuItem(String menu_name, String item_command, boolean enable) {
         JMenuItem item = getJMenuItem(menu_name, item_command);
         if (item == null) {
@@ -815,6 +881,8 @@ public class MultipleArrayMenubar extends JMenuBar {
         }
         item.setEnabled(enable);
     }
+   
+   
     
     // pcahan
     boolean get_affyNormAdded(){
@@ -938,6 +1006,23 @@ public class MultipleArrayMenubar extends JMenuBar {
         displayMenu.negCustomColorImage = image;
     }
     
+    
+    /**
+     * Sets positive color image for Accessible color scheme
+     */
+    void setPositiveAccessibleGradient(BufferedImage image){
+        displayMenu.posAccessibleColorImage = image;
+    }
+    
+    /**
+     * Sets negative color image for Accessible color scheme
+     */
+    void setNegativeAccessibleGradient(BufferedImage image){
+        displayMenu.negAccessibleColorImage = image;
+    }
+   
+    
+    
     /**
      * Sets color scheme index
      */
@@ -1011,6 +1096,13 @@ public class MultipleArrayMenubar extends JMenuBar {
         private BufferedImage posCustomColorImage;
         private boolean useDoubleGradient = true;
         
+        
+        //Added by Sarita
+        AccessibleColorPalette color=new AccessibleColorPalette();
+        private BufferedImage negAccessibleColorImage;//= createGradientImage(color.yellow, color.black);
+        private BufferedImage posAccessibleColorImage;//= createGradientImage(color.black, color.orange);
+       
+        
         public int getPaletteStyle() {
             return paletteStyle;
         }
@@ -1077,6 +1169,11 @@ public class MultipleArrayMenubar extends JMenuBar {
         public BufferedImage getPositiveGradientImage() {
         	BufferedImage image = this.posRedColorImage;
             switch (this.colorScheme){
+            //Added by Sarita
+            	case IDisplayMenu.ACCESSIBLE_COLOR_SCHEME:
+            		if(this.posAccessibleColorImage!=null)
+            		image=this.posAccessibleColorImage;
+            		break;
                 case IDisplayMenu.GREEN_RED_SCHEME:
                     break;
                 case IDisplayMenu.BLUE_YELLOW_SCHEME:
@@ -1099,6 +1196,10 @@ public class MultipleArrayMenubar extends JMenuBar {
         public BufferedImage getNegativeGradientImage() {
             BufferedImage image = this.negGreenColorImage;
             switch (this.colorScheme){
+            	case IDisplayMenu.ACCESSIBLE_COLOR_SCHEME:
+            		if(this.negAccessibleColorImage!=null)
+            			image = this.negAccessibleColorImage;
+                break;
                 case IDisplayMenu.GREEN_RED_SCHEME:
                     break;
                 case IDisplayMenu.BLUE_YELLOW_SCHEME:

@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: ExperimentViewer.java,v $
- * $Revision: 1.12 $
- * $Date: 2006-07-13 16:08:37 $
- * $Author: eleanorahowe $
+ * $Revision: 1.13 $
+ * $Date: 2007-12-19 21:39:36 $
+ * $Author: saritanair $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.helpers;
@@ -47,6 +47,7 @@ import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
+import org.tigr.microarray.mev.annotation.MevAnnotation;
 
 /**
  * This class is used to render an experiment values.
@@ -96,7 +97,8 @@ public class ExperimentViewer extends JPanel implements IViewer {
     private boolean showClusters = true;
     private boolean haveColorBar = false;
     protected int exptID = 0;
-    
+    //Added by Sarita
+    protected String LabelName;
     
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
@@ -658,9 +660,19 @@ public class ExperimentViewer extends JPanel implements IViewer {
         FontMetrics fm = g.getFontMetrics();
         int max = 0;
         String str;
-        for (int i=0; i<getCluster().length; i++) {
-            str = data.getElementAttribute(getMultipleArrayDataRow(i), labelIndex);
-            // str = genename ? data.getGeneName(getMultipleArrayDataRow(i)) : data.getUniqueId(getMultipleArrayDataRow(i));
+        
+       for (int i=0; i<getCluster().length; i++) {//For loop commented temporarily by sarita
+        	//Added by Sarita to check for Label width in both instances,
+    	   //namely if label is a "ExtraField" OR if label is actually
+    	   //added using the new annotation model 
+    	 if(labelIndex <= data.getFieldNames().length-1) {
+       		 str = data.getElementAttribute(getMultipleArrayDataRow(i), labelIndex);
+       		
+     	}
+       	else {
+       	 str =  (data.getElementAnnotation(getMultipleArrayDataRow(i), MevAnnotation.getFieldNames()[labelIndex-(data.getFieldNames().length)-1])).toString();
+       	}
+           
             max = Math.max(max, fm.stringWidth(str));
         }
         return max;
@@ -795,12 +807,34 @@ public class ExperimentViewer extends JPanel implements IViewer {
                     uniqX += this.elementSize.width;
                 
                 int annY;
+                String[]annot=new String[] {""};
+                int fieldNamesLength=data.getFieldNames().length-1;
                 for (int row=top; row<bottom; row++) {
                     if (labelIndex >= 0) {
-                        label = data.getElementAttribute(getMultipleArrayDataRow(row), labelIndex);
+                      //  label = data.getElementAttribute(getMultipleArrayDataRow(row), labelIndex);
+                       
+                    	/*Added by Sarita
+                         * These two if loops were introduced to check if the annotation
+                         * selected from the Display Menu was a part of the "Extrafields"
+                         * or the new annotation Model. The functions are called accordingly
+                         * 
+                         */
+                    	
+                    	if(labelIndex <= data.getFieldNames().length-1) {
+                    		annot[0] = data.getElementAttribute(getMultipleArrayDataRow(row), labelIndex);
+                    		System.out.println("Extra Field selected is:"+annot[0]);
+                    	}
+                    	else {
+                    		System.out.println("Annotation selected is:"+MevAnnotation.getFieldNames()[labelIndex-fieldNamesLength-1]);
+                    		annot= data.getElementAnnotation(getMultipleArrayDataRow(row), MevAnnotation.getFieldNames()[labelIndex-fieldNamesLength-1]);
+                    	}
+                        
                     }
                     annY = (row+1)*elementSize.height;
-                    g.drawString(label, uniqX + insets.left, annY);
+                  //  g.drawString(label, uniqX + insets.left, annY);
+                    
+                   
+                    g.drawString(annot[0], uniqX + insets.left, annY);
                 }
             }
         }

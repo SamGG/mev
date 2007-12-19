@@ -4,13 +4,16 @@ All rights reserved.
 */
 /*
  * $RCSfile: SlideDataElement.java,v $
- * $Revision: 1.11 $
- * $Date: 2006-09-06 23:28:47 $
- * $Author: eleanorahowe $
+ * $Revision: 1.12 $
+ * $Date: 2007-12-19 21:39:35 $
+ * $Author: saritanair $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
+import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.annotation.IAnnotation;
+import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.cluster.gui.IData;
 
 
@@ -25,6 +28,15 @@ public class SlideDataElement extends ArrayElement implements ISlideDataElement 
     protected boolean isNonZero = true;
      protected float pvalue=0;
     protected int flags=0; 
+    
+    
+    /**
+	 * Raktim - MeVAnnotation Object
+	 * 6/12/07
+	 */
+	
+	MevAnnotation annotation;
+	
     
     /**
      * 
@@ -480,5 +492,18 @@ public class SlideDataElement extends ArrayElement implements ISlideDataElement 
     public String getUID() {
         return this.UID;
     }
+    
+    /**
+     * Raktim - Return Annotation Object
+     */
+	public IAnnotation getElementAnnotation() {
+		return annotation;
+	}
+    
+// Sarita-- Annotation model State saving 
+	
+	public void setElementAnnotation(IAnnotation annotation) {
+		this.annotation=(MevAnnotation)annotation;
+	}
     
 }

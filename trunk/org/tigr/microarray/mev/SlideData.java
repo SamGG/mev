@@ -4,13 +4,14 @@ All rights reserved.
  */
 /*
  * $RCSfile: SlideData.java,v $
- * $Revision: 1.18 $
- * $Date: 2006-09-06 23:28:47 $
- * $Author: eleanorahowe $
+ * $Revision: 1.19 $
+ * $Date: 2007-12-19 21:39:35 $
+ * $Author: saritanair $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
 
+import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Vector;
