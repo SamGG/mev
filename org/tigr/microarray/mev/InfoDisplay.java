@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: InfoDisplay.java,v $
- * $Revision: 1.13 $
- * $Date: 2007-12-19 21:39:34 $
- * $Author: saritanair $
+ * $Revision: 1.14 $
+ * $Date: 2007-12-20 22:29:22 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -455,10 +455,10 @@ public class InfoDisplay extends ActionInfoDialog  {
         	for (int i = 0; i < MevAnnotation.getFieldNames().length; i++) {                
         		IAnnotation anno=element.getElementAnnotation();
         		String[]annotations=data.getElementAnnotation(this.probe, MevAnnotation.getFieldNames()[i]); 
-        		System.out.println("InfoDisplay:annotations"+annotations[0]);
+//        		System.out.println("InfoDisplay:annotations"+annotations[0]);
         		if(annotations.length>1) {
         			message += "<tr valign=top><td><i>" + "<html><font color=#0000ff><u>"+MevAnnotation.getFieldNames()[i]+"</u></font></html>" + "</i></td><td>" + ((AnnoAttributeObj)data.getElementAnnotationObject(i, MevAnnotation.getFieldNames()[i])).toString() + "</td></tr>";
-        		System.out.println("annotation size is >1:");
+//        		System.out.println("annotation size is >1:");
         		}
         		else
         			
