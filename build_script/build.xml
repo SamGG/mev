@@ -320,6 +320,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			mev/cluster/gui/impl/util/*.java, 
 			mev/cluster/gui/*.java,
 			mev/cluster/clusterUtil/**, 
+			mev/microarray/annotation/**, 
 			mev/cluster/gui/helpers/**">
         	
             <classpath>
@@ -350,6 +351,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
                 <pathelement location="${tigr.dir}/microarray/file"/>
 				<pathelement location="${lib.dir}/weka.jar" />
 				<pathelement location="${lib.dir}/cytoscape.jar" />
+				<pathelement location="${lib.dir}/commons-net-1.4.1.jar" />
             </classpath>	    
         </javac>
         <!-- Copy html files from source to dest directory so they can
@@ -464,6 +466,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			org/tigr/microarray/mev/file/**,
 			org/tigr/microarray/mev/script/**,
         	org/tigr/microarray/mev/persistence/**,
+        	org/tigr/microarray/mev/annotation/**,
 			org/tigr/microarray/mev/cluster/clusterUtil/**"
         	update="true"
         />
