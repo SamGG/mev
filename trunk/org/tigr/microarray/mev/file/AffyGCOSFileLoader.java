@@ -5,9 +5,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: AffyGCOSFileLoader.java,v $
- * $Revision: 1.11 $
- * $Date: 2007-12-19 21:39:36 $
- * $Author: saritanair $
+ * $Revision: 1.12 $
+ * $Date: 2007-12-20 19:55:12 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -785,10 +785,11 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                 gba.add(this, fileLoaderPanel,0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
              */
                 
-                gba.add(fileLoaderPanel,fileSelectionPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-                gba.add(fileLoaderPanel, annotationPanel, 0, 2, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-                gba.add(fileLoaderPanel, additionalRequirementPanel, 0, 4, 1, 2, 3, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-                gba.add(fileLoaderPanel, tablePanel, 0, 7, 1, 6, 3, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+                gba.add(fileLoaderPanel,fileSelectionPanel, 			0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+                gba.add(fileLoaderPanel, annotationPanel, 				0, 2, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+                gba.add(fileLoaderPanel, additionalRequirementPanel, 	0, 4, 1, 2, 3, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+                gba.add(fileLoaderPanel, tablePanel, 					0, 7, 1, 6, 3, 6, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+                
                 gba.add(this, fileLoaderPanel,0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
               
                 

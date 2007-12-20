@@ -24,8 +24,8 @@ public class UnzipAnnotationFile {
 
     try {
     
-      System.out.println("directory name:"+directoryName);
-      System.out.println("File name:"+fileName);
+//      System.out.println("directory name:"+directoryName);
+//      System.out.println("File name:"+fileName);
       String targetFileName=fileName.substring(0,fileName.indexOf('.'));
       zipFile = new ZipFile(directoryName+"/"+fileName);
       entries = zipFile.entries();
@@ -34,14 +34,14 @@ public class UnzipAnnotationFile {
         ZipEntry entry = (ZipEntry)entries.nextElement();
         System.out.println("zip fileentry name:"+entry.getName());
         if(entry.isDirectory()) {
-          System.err.println("Extracting directory: " + entry.getName());
+//          System.err.println("Extracting directory: " + entry.getName());
           File temp= (new File(directoryName+"/"+entry.getName()+".txt"));
           continue;
         }
        
         if(entry.getName().equals(targetFileName)) {
         	       
-        System.err.println("Extracting file: " + entry.getName());
+//        System.err.println("Extracting file: " + entry.getName());
         copyInputStream(zipFile.getInputStream(entry),
            new BufferedOutputStream(new FileOutputStream(directoryName+"/"+targetFileName+".txt")));
         this.unzippedFile=(targetFileName+".txt");

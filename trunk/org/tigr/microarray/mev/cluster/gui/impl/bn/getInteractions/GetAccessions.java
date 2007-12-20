@@ -55,7 +55,7 @@ public class GetAccessions {
 	    if(GetInteractionParemeterBothDialog.path!=null)
 	    	fr = new FileReader(GetInteractionParemeterBothDialog.path+"\\"+resourcererFileName);    
 	    */
-	    System.out.println("GetAccessions.getAccessions() File Name: " + resourcererFileName);
+	    //System.out.println("GetAccessions.getAccessions() File Name: " + resourcererFileName);
 	    fr = new FileReader(resourcererFileName);
 	    LineNumberReader lnr = new LineNumberReader(fr);
 	    String s = null;
@@ -101,9 +101,9 @@ public class GetAccessions {
      */
     public static void writeAccessionsGivenResourcererAndGeneSymbolsList(String geneSymbolsFileName, String resourcererFileName, String outputFileName) throws FileNotFoundException {
 	try {
-		System.out.println("writeAccessionsGivenResourcererAndGeneSymbolsList()" + geneSymbolsFileName);
-		System.out.println("writeAccessionsGivenResourcererAndGeneSymbolsList()" + resourcererFileName);
-		System.out.println("writeAccessionsGivenResourcererAndGeneSymbolsList()" + outputFileName);
+		//System.out.println("writeAccessionsGivenResourcererAndGeneSymbolsList()" + geneSymbolsFileName);
+		//System.out.println("writeAccessionsGivenResourcererAndGeneSymbolsList()" + resourcererFileName);
+		//System.out.println("writeAccessionsGivenResourcererAndGeneSymbolsList()" + outputFileName);
 	    Useful.checkFile(geneSymbolsFileName);
 	    Useful.checkFile(resourcererFileName);
 	    ArrayList geneSymbols = Useful.readNamesFromFile(geneSymbolsFileName);
