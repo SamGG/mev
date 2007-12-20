@@ -4,8 +4,8 @@
  */
 /*
  * $RCSfile: SuperExpressionFileLoader.java,v $
- * $Revision: 1.18 $
- * $Date: 2007-12-19 21:39:37 $
+ * $Revision: 1.19 $
+ * $Date: 2007-12-20 21:53:47 $
  * $Author: saritanair $
  * $State: Exp $
  */
@@ -965,16 +965,19 @@ public class SuperExpressionFileLoader {
 			try {
 				selectedFileLoader.showModal();
 				data = selectedFileLoader.loadExpressionFiles();
-				if (loaderIndex == 0 || loaderIndex == 10 || loaderIndex == 8||loaderIndex==7) /* Raktim, added check for 8, CGH Data */
+				if (loaderIndex == 10 || loaderIndex == 8||loaderIndex==7) /* Raktim, added check for 8, CGH Data */
 					dataType = IData.DATA_TYPE_RATIO_ONLY;
 				else if(loaderIndex == 6){
 					//dataType = ((Mas5FileLoader)selectedFileLoader)
 					//.getAffyDataType();
 					dataType = ((Mas5FileLoader)selectedFileLoader)
 						.getAffyDataType();
-				}
-				
-				else if (loaderIndex == 5) {
+				}else if(loaderIndex==0){
+					dataType = ((StanfordFileLoader)selectedFileLoader)
+					.getDataType();
+					
+					
+				}	else if (loaderIndex == 5) {
 				//	dataType = ((AffymetrixFileLoader) selectedFileLoader)
 					//		.getAffyDataType();
 					dataType = ((AffymetrixFileLoader) selectedFileLoader)
