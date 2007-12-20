@@ -218,7 +218,8 @@ public Vector loadExpressionFiles() throws IOException {
 
 	  private Vector loadSOFT_AffyFile(File file) throws IOException{
 
-		  setDataType(TMEV.DATA_TYPE_AFFY);
+		//  setDataType(TMEV.DATA_TYPE_AFFY);
+		  setDataType(IData.DATA_TYPE_AFFY_ABS);
 
 		  float[] intensities = new float[2];
 		  final int rColumns = 1;
