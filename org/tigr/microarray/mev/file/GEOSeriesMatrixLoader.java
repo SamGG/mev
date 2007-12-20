@@ -601,7 +601,7 @@ public class GEOSeriesMatrixLoader extends ExpressionFileLoader {
 					dataType=IData.DATA_TYPE_RATIO_ONLY;
 					setDataType(dataType);
 				} else if (source == affymetrixArray) {
-					dataType=TMEV.DATA_TYPE_AFFY;
+					dataType=IData.DATA_TYPE_AFFY_ABS;
 					setDataType(dataType);
 				}
 			}
