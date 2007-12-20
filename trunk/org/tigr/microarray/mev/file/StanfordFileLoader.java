@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: StanfordFileLoader.java,v $
- * $Revision: 1.15 $
- * $Date: 2007-12-20 21:55:40 $
- * $Author: saritanair $
+ * $Revision: 1.16 $
+ * $Date: 2007-12-20 23:17:13 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -79,7 +79,7 @@ import org.tigr.microarray.util.MyCellRenderer;
 public class StanfordFileLoader extends ExpressionFileLoader {
     
     private GBA gba;
-    private int dataType=-1;
+    private int dataType=IData.DATA_TYPE_RATIO_ONLY;
     private boolean stop = false;
     private boolean dataLoaded=false;
     private StanfordFileLoaderPanel sflp;
@@ -853,25 +853,20 @@ public class StanfordFileLoader extends ExpressionFileLoader {
     private class EventListener implements ActionListener {
     		public void actionPerformed(ActionEvent event) {
     			Object source = event.getSource();
-    			if (source == browseButton1) {
+    			if (source == browseButton1) { 
     				onBrowse();
-    			}else if (source == browseButton2) {
+    			} else if (source == browseButton2) {
     				onAnnotationFileBrowse();
     			} else if (source==connectButton){
         			onConnect();  
-        		}else if (source == twoColorArray) {
+        		} else if (source == twoColorArray) {
 					dataType=IData.DATA_TYPE_RATIO_ONLY;
 					setDataType(dataType);
 				} else if (source == affymetrixArray) {
 					dataType=IData.DATA_TYPE_AFFY_ABS;
 					setDataType(dataType);
-					
-				}
-    			
-    			
-    			}
+				} 
     		}
-    	
-        
+    	}
     }    
 }

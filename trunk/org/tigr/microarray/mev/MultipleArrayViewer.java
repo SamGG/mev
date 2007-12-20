@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.53 $
- * $Date: 2007-12-20 22:12:15 $
+ * $Revision: 1.54 $
+ * $Date: 2007-12-20 23:17:10 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -3732,7 +3732,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             }
         }
        sortedValues=initSortedValues(data.getExperiment().getMatrix()); 
-
        if(data.getDataType() == IData.DATA_TYPE_AFFY_ABS){
          	this.menubar.setMinRatioScale(0f);
          	this.menubar.setMidRatioValue(getMedian());
