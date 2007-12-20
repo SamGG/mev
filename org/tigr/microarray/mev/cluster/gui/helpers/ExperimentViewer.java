@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: ExperimentViewer.java,v $
- * $Revision: 1.13 $
- * $Date: 2007-12-19 21:39:36 $
- * $Author: saritanair $
+ * $Revision: 1.14 $
+ * $Date: 2007-12-20 19:55:10 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.helpers;
@@ -822,7 +822,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
                     	
                     	if(labelIndex <= data.getFieldNames().length-1) {
                     		annot[0] = data.getElementAttribute(getMultipleArrayDataRow(row), labelIndex);
-                    		System.out.println("Extra Field selected is:"+annot[0]);
+                    		//System.out.println("Extra Field selected is:"+annot[0]);
                     	}
                     	else {
                     		System.out.println("Annotation selected is:"+MevAnnotation.getFieldNames()[labelIndex-fieldNamesLength-1]);

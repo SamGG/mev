@@ -112,7 +112,7 @@ public class ISlideDataPersistenceDelegate extends
 							sd.getSlideDataLabels(), sd.getSlideFileName(), new Boolean(sd.isNonZero()), new Integer(sd.getRows()), new Integer(sd.getColumns()),
 							new Integer(sd.getNormalizedState()), new Integer(sd.getSortState()), sd.getSpotInformationData(), sd.getFieldNames(), new Integer(sd.getDataType()),
 							annotationFile.getName(), outputFile.getName(), iAnnotationFile.getName()/*, progBar*/});
-				System.out.println("annotation file name: " + iAnnotationFile.getName() + "\nExpression: " + e.toString());
+//				System.out.println("annotation file name: " + iAnnotationFile.getName() + "\nExpression: " + e.toString());
 			}
 		} catch (Exception ioe){
 			ioe.printStackTrace();

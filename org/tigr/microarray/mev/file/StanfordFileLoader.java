@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: StanfordFileLoader.java,v $
- * $Revision: 1.13 $
- * $Date: 2007-12-19 21:39:37 $
- * $Author: saritanair $
+ * $Revision: 1.14 $
+ * $Date: 2007-12-20 19:55:14 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -748,9 +748,9 @@ public class StanfordFileLoader extends ExpressionFileLoader {
          
             gba.add(fileLoaderPanel,fileSelectionPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
               gba.add(fileLoaderPanel, annotationPanel, 0, 2, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);//Uncomment when you add annotation for non affy
-              gba.add(fileLoaderPanel, tablePanel, 0, 3, 1, 6, 3, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+              gba.add(fileLoaderPanel, tablePanel, 		0, 3, 1, 6, 3, 6, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
              
-              gba.add(this, fileLoaderPanel,0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+              gba.add(this, fileLoaderPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
           
             
             
@@ -790,7 +790,9 @@ public class StanfordFileLoader extends ExpressionFileLoader {
         		}
         	}else {
         		 String eMsg = "<html>This feature is currently available <br>"+
-        			 		   "<html> for Affymetrix data only <br>";
+        			 		   "<html> for Affymetrix data only. <br> " +
+        			 		   "<html> To use it, select an Affymetrix data file<br>" +
+        			 		   "<html> and check the 'Affymetrix Array' radio button above.<br>";
     		     JOptionPane.showMessageDialog(null, eMsg, "Warning", JOptionPane.INFORMATION_MESSAGE);
             	
         	}
@@ -805,7 +807,9 @@ public class StanfordFileLoader extends ExpressionFileLoader {
         	}
         	}else{
         		String eMsg = "<html>This feature is currently available <br>"+
-		 		   "<html> for Affymetrix data only <br>";
+		 		   "<html> for Affymetrix data only. <br>"+
+		 		   "<html> To use it, select an Affymetrix data file<br>" +
+		 		   "<html> and check the 'Affymetrix Array' radio button above.<br>";
 		     JOptionPane.showMessageDialog(null, eMsg, "Warning", JOptionPane.INFORMATION_MESSAGE);
        	
         	}

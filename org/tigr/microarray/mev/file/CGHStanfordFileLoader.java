@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: CGHStanfordFileLoader.java,v $
- * $Revision: 1.8 $
- * $Date: 2007-12-19 21:39:36 $
- * $Author: saritanair $
+ * $Revision: 1.9 $
+ * $Date: 2007-12-20 19:55:12 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 
@@ -766,14 +766,11 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
             fileLoaderPanel = new JPanel();
             fileLoaderPanel.setLayout(new GridBagLayout());
 
-            gba.add(fileLoaderPanel,fileSelectionPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-         //   gba.add(fileLoaderPanel, annotationPanel, 0, 2, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(fileLoaderPanel, additionalRequirements, 0, 4, 1, 2, 3, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(fileLoaderPanel, tablePanel, 0, 7, 1, 6, 3, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            gba.add(fileLoaderPanel,fileSelectionPanel, 		0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+         //   gba.add(fileLoaderPanel, annotationPanel, 		0, 2, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            gba.add(fileLoaderPanel, additionalRequirements, 	0, 4, 1, 2, 3, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+            gba.add(fileLoaderPanel, tablePanel, 				0, 7, 1, 6, 3, 6, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
            
-
-           
-            
             gba.add(this, fileLoaderPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
            
         }

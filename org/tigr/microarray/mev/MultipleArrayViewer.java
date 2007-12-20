@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: MultipleArrayViewer.java,v $
- * $Revision: 1.50 $
- * $Date: 2007-12-19 21:39:35 $
- * $Author: saritanair $
+ * $Revision: 1.51 $
+ * $Date: 2007-12-20 19:55:05 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev;
@@ -223,7 +223,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     private ActionManager manager;
     
     private int resultCount = 1;
-    private boolean auto_scale=false;
+    //private boolean auto_scale=false;
     private ClusterRepository geneClusterRepository;
     private ClusterRepository experimentClusterRepository;
     private ClusterTable geneClusterManager;
@@ -1153,7 +1153,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         }
     }
     private void loadAnalysisFromFile(final File file) throws IOException, ClassNotFoundException {
-	    System.out.println("loading ananlysis from file function");
+//	    System.out.println("loading ananlysis from file function");
 	    progressPanel = new StateSavingProgressPanel("Loading Saved Analysis", this);
 		progressPanel.setLocationRelativeTo(mainframe);
 		progressPanel.setVisible(true);
@@ -1426,7 +1426,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 			this.menubar.setNegativeCustomGradient(msp.getNegativeGradientImageWrapper().getBufferedImage());
 		} catch (NullPointerException npe){npe.printStackTrace();}
 		try {
-			this.auto_scale = msp.isAutoScale();
+//			this.auto_scale = msp.isAutoScale();
 		} catch (NullPointerException npe){npe.printStackTrace();}
 		try {
 			this.menubar.setElementSize(msp.getElementSize().width, msp.getElementSize().height);
@@ -3244,8 +3244,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     private Color storeCluster(int[] indices, Experiment experiment,int clusterType) {
      	DefaultTreeModel model = (DefaultTreeModel) this.tree.getModel();
     	TreePath path = this.tree.getSelectionPath();
-    	DefaultMutableTreeNode clusterNode = (DefaultMutableTreeNode) path
-    	.getLastPathComponent();
+    	DefaultMutableTreeNode clusterNode = (DefaultMutableTreeNode) path.getLastPathComponent();
     	Object leafInfo = clusterNode.getUserObject();
     	if (!(leafInfo instanceof LeafInfo))
     		return null;
@@ -3631,7 +3630,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 		
 	}
     
-    
+    /*
     public boolean autoScale(float[] val){
     	    int count=0;
 			for(int i=0;i<val.length;i++)
@@ -3643,7 +3642,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 			
 			return auto_scale;
 			
-    }
+    }*/
     
     /** by wwang
 	 *  returns the median from the sorted array
@@ -3733,16 +3732,13 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             }
         }
         
-        // by wwang add for auto color scaling(for affy data) 
-        sortedValues=initSortedValues(data.getExperiment().getMatrix());
-        auto_scale=autoScale(sortedValues);
         //This if loop has been commented out temporarily by Sarita
-       if(data.getDataType() == IData.DATA_TYPE_AFFY_ABS || auto_scale==true){
+       if(data.getDataType() == IData.DATA_TYPE_AFFY_ABS){
          	this.menubar.setMinRatioScale(0f);
          	this.menubar.setMidRatioValue(getMedian());
          	this.menubar.setMaxRatioScale(getMaxScale());    	
         	//EH  added so the data are considered affy data whenever they are scaled as
-         	//affy data.
+         	//affy data. 
          	data.setDataType(IData.DATA_TYPE_AFFY_ABS);
          }
 
@@ -4833,7 +4829,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     	smd.setJREVersion(System.getProperty("java.version"));
     	smd.setJVMVersion(System.getProperty("java.vm.version"));
     	smd.setMevMajorVersion(4);
-    	smd.setMevMinorVersion(0);
+    	smd.setMevMinorVersion(1);
     	smd.setMevMicroVersion(01);
     	smd.setBeta(false);
     }

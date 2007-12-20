@@ -103,7 +103,7 @@ public class ResourcererFTPClient {
 				
 			}else {
 				if(this.dialog!=null) {
-					System.out.println("dialog is not null");
+					//System.out.println("dialog is not null");
 					this.dialog.progressPanel.update("Logged on to the FTP site");
 					this.dialog.progressPanel.setIndeterminate(true);
 					//this.dialog.progressPanel.increment();
@@ -119,7 +119,7 @@ public class ResourcererFTPClient {
 			for(int i=0;i<names.length;i++) {
 				
 				//System.out.println("Zip file names:"+names[i]);
-				System.out.println((names[i].substring(0, names[i].indexOf('.'))));
+				//System.out.println((names[i].substring(0, names[i].indexOf('.'))));
 				if(names[i].substring(0, names[i].indexOf('.')).equalsIgnoreCase(this.ChipType)) {
 					targetFile=names[i];
 					if(this.dialog!=null) {
@@ -128,7 +128,7 @@ public class ResourcererFTPClient {
 						this.dialog.progressPanel.setMaximum(ftp.stat(names[i]));
 						
 					}
-					System.out.println("targetFileName:"+targetFile);
+					//System.out.println("targetFileName:"+targetFile);
 				}
 			}
 			
@@ -176,7 +176,7 @@ public class ResourcererFTPClient {
 			this.dataPath+finalFileName;
 			
 			AnnotationDialog.statusChange(Msg);
-			System.out.println("");
+			//System.out.println("");
 			
 		}catch(Exception e) {
 			e.printStackTrace();	
