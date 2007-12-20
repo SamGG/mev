@@ -32,7 +32,7 @@ public class UnzipAnnotationFile {
 
       while(entries.hasMoreElements()) {
         ZipEntry entry = (ZipEntry)entries.nextElement();
-        System.out.println("zip fileentry name:"+entry.getName());
+        //System.out.println("zip fileentry name:"+entry.getName());
         if(entry.isDirectory()) {
 //          System.err.println("Extracting directory: " + entry.getName());
           File temp= (new File(directoryName+"/"+entry.getName()+".txt"));

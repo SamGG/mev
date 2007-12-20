@@ -4,9 +4,9 @@
  */
 /*
  * $RCSfile: SuperExpressionFileLoader.java,v $
- * $Revision: 1.19 $
- * $Date: 2007-12-20 21:53:47 $
- * $Author: saritanair $
+ * $Revision: 1.20 $
+ * $Date: 2007-12-20 22:29:22 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.file;
@@ -597,6 +597,8 @@ public class SuperExpressionFileLoader {
 			return fileLoaders[target];
 		}
 
+		setLoadEnabled(false);
+		
 		switch (target) {
 		case 0:
 			loader = fileLoaders[0];
