@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: ExperimentClusterViewer.java,v $
- * $Revision: 1.12 $
- * $Date: 2007-12-20 19:55:10 $
+ * $Revision: 1.13 $
+ * $Date: 2007-12-20 22:12:44 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -821,7 +821,7 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
                     		//System.out.println("Extra Field selected is:"+annot[0]);
                     	}
                     	else {
-                    		System.out.println("Annotation selected is:"+MevAnnotation.getFieldNames()[labelIndex-fieldNamesLength-1]);
+//                    		System.out.println("Annotation selected is:"+MevAnnotation.getFieldNames()[labelIndex-fieldNamesLength-1]);
                     		annot= data.getElementAnnotation(getMultipleArrayDataRow(row), MevAnnotation.getFieldNames()[labelIndex-fieldNamesLength-1]);
                     	}
                         
