@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: StanfordFileLoader.java,v $
- * $Revision: 1.14 $
- * $Date: 2007-12-20 19:55:14 $
- * $Author: eleanorahowe $
+ * $Revision: 1.15 $
+ * $Date: 2007-12-20 21:55:40 $
+ * $Author: saritanair $
  * $State: Exp $
  */
 
@@ -863,7 +863,7 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 					dataType=IData.DATA_TYPE_RATIO_ONLY;
 					setDataType(dataType);
 				} else if (source == affymetrixArray) {
-					dataType=TMEV.DATA_TYPE_AFFY;
+					dataType=IData.DATA_TYPE_AFFY_ABS;
 					setDataType(dataType);
 					
 				}
