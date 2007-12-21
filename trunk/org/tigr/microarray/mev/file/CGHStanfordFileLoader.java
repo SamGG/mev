@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: CGHStanfordFileLoader.java,v $
- * $Revision: 1.9 $
- * $Date: 2007-12-20 19:55:12 $
+ * $Revision: 1.10 $
+ * $Date: 2007-12-21 03:19:33 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -107,7 +107,7 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
     public Vector loadStanfordExpressionFile(File f) throws IOException {
 
         final int preSpotRows = this.CGHsflp.getXRow()+1;
-        final int preExperimentColumns = this.CGHsflp.getXColumn();
+        final int preExperimentColumns = this.CGHsflp.getXColumn()+1;
         final int species = this.CGHsflp.getXSpecies();
         final boolean isLog2 = this.CGHsflp.getXLog2Status();
        // System.out.println("Selected Species: " + species);
