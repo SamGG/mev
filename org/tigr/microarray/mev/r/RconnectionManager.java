@@ -35,6 +35,7 @@ public class RconnectionManager {
 		if( this.rc == null ) {
 			try {
 				this.rc = new Rconnection( this.sConn, this.iPort );
+				this.rc.setSendBufferSize( 100000000000l );
 			} catch( RSrvException e ) {
 				String s = e.getMessage();
 				if( s.startsWith( "Cannot connect" ) ) {
