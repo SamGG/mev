@@ -282,7 +282,7 @@ public class Rama {
 		if( allOut ) {
 			sb.append( ", all.out = TRUE" );
 		} else {
-			sb.append( ", all.out = FALSE" );
+			sb.append( ", all.out = TRUE" );
 		}
 		sb.append( ")" );
 		//System.out.println(sb.toString());

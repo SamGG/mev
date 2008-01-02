@@ -31,11 +31,11 @@ public class RDataFormatter {
 	 * statement.  It takes 2 Vectors as parameters.  vTreatCy3 is the Vector of 
 	 * RHyb objects in which the Treated sample was labeled with Cy3.  vTreatCy5 
 	 * is naturally the opposite case.  The returned String is a comma-delimited, 
-	 * concatenation of [ treatedCy3, treatedCy5, controlCy3, controlCy5 ].
+	 * concatenation of [ treatedCy3, treatedCy5, controlCy5, controlCy3 ].
 	 * @param dataName	Name to be assigned for this data object in R
 	 * @param vTreatCy3	Vector of RHyb objects where the treated sample is Cy3
 	 * @param vTreatCy5	Vector of RHyb objects where the treated sample is Cy5
-	 * @return String [ treatedCy3, treatedCy5, controlCy3, controlCy5 ]
+	 * @return String [ treatedCy3, treatedCy5, controlCy5, controlCy3 ]
 	 */
 	public String rSwapString( String dataName, Vector vTreatCy3, Vector vTreatCy5 ) {
 		//System.out.println("ramaSwapString()");
