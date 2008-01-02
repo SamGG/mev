@@ -136,7 +136,8 @@ public class BridgeWorker extends SwingWorker {
 			this.rc.voidEval( this.sAvg2 );
 			
 			//retrieve gammas
-			double[] gamma1 = rc.eval( "gamma1" ).asDoubleArray();
+			double[] gamma1 = (double[]) rc.eval("gamma1").getContent();
+			//double[] gamma1 = rc.eval( "gamma1" ).asDoubleArray();
 			double[] gamma2 = rc.eval( "gamma2" ).asDoubleArray();
 			
 			double[] postP = rc.eval( this.sPost ).asDoubleArray();

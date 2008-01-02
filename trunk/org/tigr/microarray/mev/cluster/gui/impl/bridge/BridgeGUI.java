@@ -368,7 +368,7 @@ public class BridgeGUI implements IClusterGUI {
 			sb.append( "TRUE" );
 		}
 		//sb.append( ", verbose = TRUE )" );
-		sb.append( ", all.out = FALSE, verbose = FALSE )" );
+		sb.append( ", all.out = TRUE, verbose = FALSE )" );
 		//System.out.println(sb.toString());
 		return sb.toString();
 		//return "mcmc.hiv <- bridge.2samples( hiv[ 1:10 , c( 1:2 )], hiv[ 1:10, c( 2:2 )], B = 21000, min.iter = 1000, batch = 1, mcmc.obj = NULL, affy = FALSE, verbose = TRUE )";
