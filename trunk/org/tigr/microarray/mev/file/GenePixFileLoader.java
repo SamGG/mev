@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: GenePixFileLoader.java,v $
- * $Revision: 1.10 $
- * $Date: 2007-12-19 21:39:36 $
+ * $Revision: 1.11 $
+ * $Date: 2008-01-04 17:51:56 $
  * $Author: saritanair $
  * $State: Exp $
  */
@@ -367,7 +367,7 @@ public class GenePixFileLoader extends ExpressionFileLoader {
     		selectFilePanel = new JPanel();
     		selectFilePanel.setLayout(new GridBagLayout());
 
-    		selectFile = new JLabel("Select expression data file");
+    		selectFile = new JLabel("Select expression data directory");
 
     		browseButton1 = new JButton("Browse");
     		browseButton1.setSize(new Dimension(100, 30));
