@@ -4,15 +4,14 @@ All rights reserved.
  */
 /*
  * $RCSfile: AffymetrixFileLoader.java,v $
- * $Revision: 1.7 $
- * $Date: 2007-12-19 21:39:36 $
- * $Author: saritanair $
+ * $Revision: 1.8 $
+ * $Date: 2008-01-07 20:24:20 $
+ * $Author: eleanorahowe $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.file;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
@@ -23,61 +22,40 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Vector;
 import java.util.Hashtable;
+import java.util.Vector;
 
-import javax.swing.JFrame;
-import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
-
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 import javax.swing.JTextField;
-import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileFilter;
-import javax.xml.soap.SOAPMessage;
 
 import org.tigr.microarray.mev.AffySlideDataElement;
 import org.tigr.microarray.mev.FloatSlideData;
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.ISlideMetaData;
-import org.tigr.microarray.mev.MultipleArrayData;
 import org.tigr.microarray.mev.MultipleArrayViewer;
-
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.TMEV;
-import org.tigr.microarray.mev.cluster.gui.IData;
-
-
 import org.tigr.microarray.mev.annotation.AnnotationDialog;
-import org.tigr.microarray.mev.annotation.AnnotationFieldConstants;
 import org.tigr.microarray.mev.annotation.AnnotationFileReader;
-import org.tigr.microarray.mev.annotation.AnnotationURLConstants;
 import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.annotation.PublicURL;
 import org.tigr.microarray.mev.cluster.gui.IData;
-
-
 import org.tigr.microarray.util.FileLoaderUtility;
-import org.tigr.remote.soap.*;
-
-import com.sun.org.apache.xml.internal.utils.URI;
 
 
 public class AffymetrixFileLoader extends ExpressionFileLoader {
