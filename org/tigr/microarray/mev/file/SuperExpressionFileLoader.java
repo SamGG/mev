@@ -4,9 +4,9 @@
  */
 /*
  * $RCSfile: SuperExpressionFileLoader.java,v $
- * $Revision: 1.20 $
- * $Date: 2007-12-20 22:29:22 $
- * $Author: eleanorahowe $
+ * $Revision: 1.21 $
+ * $Date: 2008-01-10 16:28:33 $
+ * $Author: saritanair $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.file;
@@ -412,11 +412,14 @@ public class SuperExpressionFileLoader {
 	}
 	public void initializeGUI() {
 		
-		try {
+	/*
+	 * Commented by Sarita on Jan 10, 2008 to see if this rids the run time error we get while using Mac
+	 * and Java version 1.5
+	 * 	try {
 			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 		}catch(Exception e) {
 			e.printStackTrace();
-		}
+		}*/
 		gba = new GBA();
 		eventListener = new EventListener();
 
@@ -604,32 +607,26 @@ public class SuperExpressionFileLoader {
 			loader = fileLoaders[0];
 			break;
 		case 1:
-			//loader = new MevFileLoader(this);
 			loader = new MevFileLoader(this);
 			break;
 		case 2:
-			//loader = new TavFileLoader(this);
 			loader = new TavFileLoader(this);
 			break;
 		case 3:
-			//loader = new AffyGCOSFileLoader(this);
 			loader = new AffyGCOSFileLoader(this);
 			break;
 		case 4:
-			//loader = new DFCI_CoreFileLoader(this);
 			loader = new DFCI_CoreFileLoader(this);
 			break;
 		case 5:
-			//loader = new AffymetrixFileLoader(this);
 			loader = new AffymetrixFileLoader(this);
 			break;
 		
 		case 6: 	
-			//loader = new Mas5FileLoader(this);
 			loader = new Mas5FileLoader(this);
 			break;
 		
-		case 7://loader =new RMAFileLoader(this);	//wwang for RMA
+		case 7:	//wwang for RMA
 			loader =new RMAFileLoader(this);
 			break;	
 		case 8:
@@ -642,7 +639,6 @@ public class SuperExpressionFileLoader {
 			loader = new SOFT_AffymetrixFileLoader(this);
 			break;	
 		case 10:
-			//loader = new SOFT_TwoChannelFileLoader(this);
 			loader = new SOFT_TwoChannelFileLoader(this);
 			break;	
 	
@@ -651,9 +647,7 @@ public class SuperExpressionFileLoader {
 			break;
 		case 12:
 			loader = new AgilentMevFileLoader(this);
-		//	loader = new AgilentMevFileLoader(this);
 			break;
-		//Added by Sarita
 		case 13:
 			loader = new GEOSeriesMatrixLoader(this);
 			break;	
@@ -661,7 +655,6 @@ public class SuperExpressionFileLoader {
 			loader = new GEO_GDSFileLoader(this);
 			break;
 		default:
-			//loader = new StanfordFileLoader(this);
 			loader = new StanfordFileLoader(this);
 			break;
 		}
