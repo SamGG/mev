@@ -5,8 +5,8 @@ All rights reserved.
 */
 /*
  * $RCSfile: AccessibleColorSchemeSelectionDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2007-12-19 21:47:04 $
+ * $Revision: 1.2 $
+ * $Date: 2008-01-10 15:28:06 $
  * $Author: saritanair $
  * $State: Exp $
  */
@@ -347,7 +347,7 @@ public class AccessibleColorSchemeSelectionDialog extends JDialog {
          */
         public void stateChanged(javax.swing.event.ChangeEvent changeEvent) {
             Color newColor = colorChooser.getColor();
-            System.out.println("new Color selected:"+newColor);
+           // System.out.println("new Color selected:"+newColor);
             if(newColor == null) return;
             
             if(highEndColorButton.isSelected()){
