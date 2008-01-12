@@ -160,7 +160,18 @@ public class PersistenceObjectFactory {
     	dis.close();
     	return fsd;
     }
-
+    public static SlideData makeSlideData(String slideDataName, Vector sampleLabelKeys, String sampleLabelKey,
+    		Hashtable sampleLabels, String slideFileName, Boolean isNonZero, Integer rows, Integer columns,
+			Integer normalizedState, Integer sortState, SpotInformationData spotInfoData, 
+			String[] fieldNames, Integer dataType,
+			String annotationFileName, String dataFile) throws IOException {
+    	return PersistenceObjectFactory.makeSlideData(slideDataName, sampleLabelKeys, sampleLabelKey,
+    			sampleLabels, slideFileName, isNonZero, rows, columns, 
+    			normalizedState, sortState, spotInfoData, 
+    			fieldNames, dataType, 
+    			annotationFileName, dataFile, null);
+    }
+    
     public static SlideData makeSlideData(String slideDataName, Vector sampleLabelKeys, String sampleLabelKey,
     		Hashtable sampleLabels, String slideFileName, Boolean isNonZero, Integer rows, Integer columns,
 			Integer normalizedState, Integer sortState, SpotInformationData spotInfoData, 
@@ -184,22 +195,22 @@ public class PersistenceObjectFactory {
     	
     	//load IAnnotation
     	Vector<IAnnotation> allIAnnotations = new Vector<IAnnotation>();
-    	//if(iAnnotationFileName!=null) {
-    	File iAnnotFile=new File(javaTempDir + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + iAnnotationFileName);
-    	FileReader fr=new FileReader(iAnnotFile);
-    	
-    	try {
-    		//allIAnnotations = new AnnotationStateSavingParser().readSavedAnnotation(iAnnotationFileName, iAnnotFile.getAbsolutePath());
-    	//	allIAnnotations = new AnnotationStateSavingParser().readSavedAnnotation(iAnnotFile);
-    		
-    		//allIAnnotations=loadSlideDataIAnnotation(fr);
-    		if(iAnnotFile.length()>1)
-    		allIAnnotations=loadSlideDataIAnnotation(iAnnotFile);
-        }catch(Exception e) {
-    		e.printStackTrace();
-    	}
+	    if(iAnnotationFileName!=null) {
+	    	File iAnnotFile=new File(javaTempDir + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + iAnnotationFileName);
+	    	FileReader fr=new FileReader(iAnnotFile);
+	    	
+	    	try {
+	    		//allIAnnotations = new AnnotationStateSavingParser().readSavedAnnotation(iAnnotationFileName, iAnnotFile.getAbsolutePath());
+	    	//	allIAnnotations = new AnnotationStateSavingParser().readSavedAnnotation(iAnnotFile);
+	    		
+	    		//allIAnnotations=loadSlideDataIAnnotation(fr);
+	    		if(iAnnotFile.length()>1)
+	    		allIAnnotations=loadSlideDataIAnnotation(iAnnotFile);
+	        }catch(Exception e) {
+	    		e.printStackTrace();
+	    	}
         
-    	//}//end of iAnnotationFileName check if block
+    	}//end of iAnnotationFileName check if block
     	//load intensities
     	dis = new DataInputStream(new FileInputStream(javaTempDir + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + dataFile));
     	ISlideDataElement sde;
