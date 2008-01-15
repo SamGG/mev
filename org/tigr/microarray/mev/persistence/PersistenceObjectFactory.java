@@ -160,6 +160,32 @@ public class PersistenceObjectFactory {
     	dis.close();
     	return fsd;
     }
+
+    
+    
+    /**
+     * This method was retained to allow backwards compatibility of saved MeV
+     * analysis results
+     * 
+     * @param slideDataName
+     * @param sampleLabelKeys
+     * @param sampleLabelKey
+     * @param sampleLabels
+     * @param slideFileName
+     * @param isNonZero
+     * @param rows
+     * @param columns
+     * @param normalizedState
+     * @param sortState
+     * @param spotInfoData
+     * @param fieldNames
+     * @param dataType
+     * @param annotationFileName
+     * @param dataFile
+     * @return
+     * @throws IOException
+     */
+    
     public static SlideData makeSlideData(String slideDataName, Vector sampleLabelKeys, String sampleLabelKey,
     		Hashtable sampleLabels, String slideFileName, Boolean isNonZero, Integer rows, Integer columns,
 			Integer normalizedState, Integer sortState, SpotInformationData spotInfoData, 
@@ -171,6 +197,40 @@ public class PersistenceObjectFactory {
     			fieldNames, dataType, 
     			annotationFileName, dataFile, null);
     }
+
+    
+    
+    
+    /***
+     * 
+     * @param slideDataName
+     * @param sampleLabelKeys
+     * @param sampleLabelKey
+     * @param sampleLabels
+     * @param slideFileName
+     * @param isNonZero
+     * @param rows
+     * @param columns
+     * @param normalizedState
+     * @param sortState
+     * @param spotInfoData
+     * @param fieldNames
+     * @param dataType
+     * @param annotationFileName
+     * @param dataFile
+     * @param iAnnotationFileName
+     * @return
+     * @throws IOException
+     * 
+     * This method was created to enable state-saving, when annotations (using Resourcerer) are loaded.
+     * This was added in the MeV 4.1.01 release.
+     * 
+     */
+    
+   
+    
+
+
     
     public static SlideData makeSlideData(String slideDataName, Vector sampleLabelKeys, String sampleLabelKey,
     		Hashtable sampleLabels, String slideFileName, Boolean isNonZero, Integer rows, Integer columns,
@@ -195,22 +255,30 @@ public class PersistenceObjectFactory {
     	
     	//load IAnnotation
     	Vector<IAnnotation> allIAnnotations = new Vector<IAnnotation>();
-	    if(iAnnotationFileName!=null) {
-	    	File iAnnotFile=new File(javaTempDir + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + iAnnotationFileName);
-	    	FileReader fr=new FileReader(iAnnotFile);
-	    	
+    	File iAnnotFile=new File(javaTempDir + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + iAnnotationFileName);
+    	FileReader fr=new FileReader(iAnnotFile);
+
+    	try {
+
+    		if(iAnnotFile.length()>1)
+    			allIAnnotations=loadSlideDataIAnnotation(iAnnotFile);
+    	}catch(Exception e) {
+    		e.printStackTrace();
+    	}
+
+
+
+	   
 	    	try {
-	    		//allIAnnotations = new AnnotationStateSavingParser().readSavedAnnotation(iAnnotationFileName, iAnnotFile.getAbsolutePath());
-	    	//	allIAnnotations = new AnnotationStateSavingParser().readSavedAnnotation(iAnnotFile);
 	    		
-	    		//allIAnnotations=loadSlideDataIAnnotation(fr);
 	    		if(iAnnotFile.length()>1)
 	    		allIAnnotations=loadSlideDataIAnnotation(iAnnotFile);
 	        }catch(Exception e) {
 	    		e.printStackTrace();
 	    	}
         
-    	}//end of iAnnotationFileName check if block
+    	
+
     	//load intensities
     	dis = new DataInputStream(new FileInputStream(javaTempDir + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + dataFile));
     	ISlideDataElement sde;
@@ -468,7 +536,7 @@ public class PersistenceObjectFactory {
 				}
 			}
 			AnnotationStateSavingParser fileParser = new AnnotationStateSavingParser();
-			if(annotationVector!=null)
+			if(annotationVector.size()>1)
 			fileParser.writeAnnotationFile(annotationVector, pw);
 			//System.out.println("writeSlideDataIAnnotation");
 		}
