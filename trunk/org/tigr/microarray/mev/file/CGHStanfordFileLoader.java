@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: CGHStanfordFileLoader.java,v $
- * $Revision: 1.10 $
- * $Date: 2007-12-21 03:19:33 $
- * $Author: eleanorahowe $
+ * $Revision: 1.11 $
+ * $Date: 2008-01-15 17:16:24 $
+ * $Author: saritanair $
  * $State: Exp $
  */
 
@@ -652,7 +652,7 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
             
             dataSelection=new JLabel();
             dataSelection.setForeground(java.awt.Color.BLACK);
-            String chooseFile="<html>Select expression data file</html>";
+            String chooseFile="<html>Select data file</html>";
             dataSelection.setText(chooseFile);
            
                            
@@ -751,9 +751,14 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
 
             instructionsLabel = new JLabel();
             instructionsLabel.setForeground(java.awt.Color.red);
-            String instructions = "<html>First 4 column MUST be MarkerID, Marker Chromosome, Marker Start, Marker End " +
-            					  "appearing exactly in the same order. <BR>" +
+            String instructions = "<html>First 5 columns MUST be ProbeID, Chromosome, Start, End and Description <BR>" +
+            					  "Columns MUST be in the order mentioned above<BR>"+
+            					  "Description field can contain anything e.g., Gene Symbol, RefSeq etc.<BR>" +
             					  "Click the upper-leftmost expression value. Click the <b>Load</b> button to finish.</html>";
+            
+            
+         
+            
             instructionsLabel.setText(instructions);
 
             tablePanel = new JPanel();
