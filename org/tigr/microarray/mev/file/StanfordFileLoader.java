@@ -4,8 +4,8 @@ All rights reserved.
  */
 /*
  * $RCSfile: StanfordFileLoader.java,v $
- * $Revision: 1.16 $
- * $Date: 2007-12-20 23:17:13 $
+ * $Revision: 1.17 $
+ * $Date: 2008-01-16 22:45:31 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
@@ -28,6 +28,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.NoSuchElementException;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
@@ -136,7 +137,7 @@ public class StanfordFileLoader extends ExpressionFileLoader {
     public Vector loadStanfordExpressionFile(File f) throws IOException {
     	
         final int preSpotRows = this.sflp.getXRow()+1;
-        final int preExperimentColumns = this.sflp.getXColumn();
+        final int preExperimentColumns = this.sflp.getXColumn(); 
         
         int numLines = this.getCountOfLines(f);
         
@@ -212,8 +213,8 @@ public class StanfordFileLoader extends ExpressionFileLoader {
         
      
         
-        
         while ((currentLine = reader.readLine()) != null) {
+        	try {
             if (stop) {
                 return null;
             }
@@ -330,6 +331,10 @@ public class StanfordFileLoader extends ExpressionFileLoader {
             
             counter++;
             //System.out.print(counter+"\t");
+        	} catch (NoSuchElementException nsee) {
+        		//Blank or corrupted line. Ignore.
+        		//System.out.println("caught a blank line");
+        	}
         }
         reader.close();
         
