@@ -4,9 +4,9 @@ All rights reserved.
  */
 /*
  * $RCSfile: CGHStanfordFileLoader.java,v $
- * $Revision: 1.11 $
- * $Date: 2008-01-15 17:16:24 $
- * $Author: saritanair $
+ * $Revision: 1.12 $
+ * $Date: 2008-01-17 19:51:15 $
+ * $Author: raktim $
  * $State: Exp $
  */
 
@@ -107,13 +107,13 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
     public Vector loadStanfordExpressionFile(File f) throws IOException {
 
         final int preSpotRows = this.CGHsflp.getXRow()+1;
-        final int preExperimentColumns = this.CGHsflp.getXColumn()+1;
+        final int preExperimentColumns = this.CGHsflp.getXColumn();
         final int species = this.CGHsflp.getXSpecies();
         final boolean isLog2 = this.CGHsflp.getXLog2Status();
        // System.out.println("Selected Species: " + species);
         ArrayList clones = new ArrayList();
                 
-        if (preExperimentColumns < 4) {
+        if (preExperimentColumns < 5) { //hanged from 4 to 5 to accomodate Probe Desc
         	//Throw Message Here for errors
         	JOptionPane.showMessageDialog(superLoader.getFrame(),  "Insufficient annotation.",  "TDMS Load Error", JOptionPane.INFORMATION_MESSAGE);
         }
