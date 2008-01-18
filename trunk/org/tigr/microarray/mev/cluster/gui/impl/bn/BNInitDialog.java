@@ -8,9 +8,55 @@ All rights reserved.
  * Created on August 03, 2006
  */
 package org.tigr.microarray.mev.cluster.gui.impl.bn;
-import java.awt.Color;import java.awt.Component;import java.awt.Dimension;import java.awt.Font;import java.awt.Frame;import java.awt.GridBagConstraints;import java.awt.GridBagLayout;import java.awt.Insets;import java.awt.Toolkit;import java.awt.event.ActionEvent;import java.awt.event.ActionListener;import java.awt.event.ItemEvent;import java.awt.event.ItemListener;import java.awt.event.WindowEvent;import java.io.File;import java.util.Vector;import javax.swing.BorderFactory;import javax.swing.ButtonGroup;import javax.swing.DefaultListCellRenderer;import javax.swing.DefaultListModel;import javax.swing.JButton;import javax.swing.JCheckBox;import javax.swing.JComboBox;import javax.swing.JFileChooser;import javax.swing.JFrame;import javax.swing.JLabel;import javax.swing.JList;import javax.swing.JOptionPane;import javax.swing.JPanel;import javax.swing.JRadioButton;import javax.swing.JScrollPane;import javax.swing.JTabbedPane;import javax.swing.JTextField;import javax.swing.JTextPane;import javax.swing.border.BevelBorder;import javax.swing.border.EtchedBorder;import javax.swing.border.TitledBorder;import javax.swing.event.ListSelectionEvent;import javax.swing.event.ListSelectionListener;import org.tigr.microarray.mev.TMEV;import org.tigr.microarray.mev.cluster.gui.IData;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.util.Vector;
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;import org.tigr.microarray.mev.cluster.gui.helpers.ClusterBrowser;import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
+import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
+import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterBrowser;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 /** Accumulates parameters for execution of BN analysis.
  * Based on EASEInitDialog
  * @author eleanora
@@ -60,7 +106,8 @@ public class BNInitDialog extends AlgorithmDialog {
         //Tabbed pane creation
         tabbedPane = new JTabbedPane();
         
-        //config panel                configPanel = new ConfigPanel();        
+        //config panel        
+        configPanel = new ConfigPanel();        
         
         JPanel popNClusterPanel = new JPanel(new GridBagLayout());
         popNClusterPanel.setBackground(Color.white);
@@ -93,12 +140,15 @@ public class BNInitDialog extends AlgorithmDialog {
         classnumPanel = new ClassNumPanel();
         useGoPanel = new XmlBifPanel();
         runBNPanel=new RunBNPanel();
-        tabbedPane.add("Running Bayesian Network Parameters", runBNPanel);        parameters.add(configPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));       
+        tabbedPane.add("Running Bayesian Network Parameters", runBNPanel);
+        parameters.add(configPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));       
         parameters.add(priorsPanel, new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         parameters.add(discPanel, new GridBagConstraints(0,2,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         parameters.add(classnumPanel, new GridBagConstraints(0,3,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-        parameters.add(useGoPanel, new GridBagConstraints(0,4,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));        parameters.add(bootStrapPanel, new GridBagConstraints(0,5,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-        //parameters.add(runBNPanel, new GridBagConstraints(0,5,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));        parameters.add(tabbedPane, new GridBagConstraints(0,6,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        parameters.add(useGoPanel, new GridBagConstraints(0,4,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        parameters.add(bootStrapPanel, new GridBagConstraints(0,5,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        //parameters.add(runBNPanel, new GridBagConstraints(0,5,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        parameters.add(tabbedPane, new GridBagConstraints(0,6,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         
         addContent(parameters);
         setActionListeners(listener);
@@ -133,7 +183,8 @@ public class BNInitDialog extends AlgorithmDialog {
         //Tabbed pane creation
         tabbedPane = new JTabbedPane();
         
-        //config panel                configPanel = new ConfigPanel();        
+        //config panel        
+        configPanel = new ConfigPanel();        
         
         JPanel popNClusterPanel = new JPanel(new GridBagLayout());
         popNClusterPanel.setBackground(Color.white);
@@ -175,12 +226,15 @@ public class BNInitDialog extends AlgorithmDialog {
         classnumPanel = new ClassNumPanel();
         useGoPanel = new XmlBifPanel();
         runBNPanel=new RunBNPanel(); 
-        tabbedPane.add("Running Bayesian Network Parameters", runBNPanel);        parameters.add(configPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));       
+        tabbedPane.add("Running Bayesian Network Parameters", runBNPanel);
+        parameters.add(configPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));       
         parameters.add(priorsPanel, new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         parameters.add(discPanel, new GridBagConstraints(0,2,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         parameters.add(classnumPanel, new GridBagConstraints(0,3,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-        parameters.add(useGoPanel, new GridBagConstraints(0,4,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));        parameters.add(bootStrapPanel, new GridBagConstraints(0,5,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-        //parameters.add(runBNPanel, new GridBagConstraints(0,5,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));        parameters.add(tabbedPane, new GridBagConstraints(0,6,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        parameters.add(useGoPanel, new GridBagConstraints(0,4,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        parameters.add(bootStrapPanel, new GridBagConstraints(0,5,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        //parameters.add(runBNPanel, new GridBagConstraints(0,5,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        parameters.add(tabbedPane, new GridBagConstraints(0,6,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
        
         addContent(parameters);
         setActionListeners(listener);
@@ -259,7 +313,8 @@ public class BNInitDialog extends AlgorithmDialog {
     
     /** Returns the base file location for BN file system
      */
-    public String getBaseFileLocation() {        return configPanel.getBaseFileLocation();
+    public String getBaseFileLocation() {
+        return configPanel.getBaseFileLocation();
         //return TMEV.getFile("data/bn").getAbsolutePath();
     }
     public int getNumberClass(){
@@ -324,7 +379,8 @@ public class BNInitDialog extends AlgorithmDialog {
     }
     public boolean isBootstrapping(){
     	return this.bootStrapPanel.isBootstrapping();
-    }    public int getKFolds(){
+    }
+    public int getKFolds(){
     	return Integer.parseInt(this.runBNPanel.kFolds());
     }
 
@@ -428,7 +484,8 @@ public class BNInitDialog extends AlgorithmDialog {
             setLayout(new GridBagLayout());
             setBackground(Color.white);
             setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Sample Classification", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
-                        numClassesField = new JTextField("0", 2);
+            
+            numClassesField = new JTextField("0", 2);
             numClassesField.setBackground(Color.white);
             
             numClassesLabel = new JLabel(" Number of Sample Classes");
@@ -454,7 +511,8 @@ public class BNInitDialog extends AlgorithmDialog {
         private JLabel confThresholdLabel;
         private JCheckBox isBootstrappingCheckbox;
         private JLabel isBootStrappingLabel;
-                //private JLabel bootstrappingNotAvailable;
+        
+        //private JLabel bootstrappingNotAvailable;
         
         /** Constructs a mode panel.
          * @param haveClusters
@@ -465,7 +523,8 @@ public class BNInitDialog extends AlgorithmDialog {
             setBackground(Color.white);
             setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Bootstrapping", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
             
-            isBootstrappingCheckbox = new JCheckBox();            isBootstrappingCheckbox.setSelected(true);
+            isBootstrappingCheckbox = new JCheckBox();
+            isBootstrappingCheckbox.setSelected(true);
             isBootstrappingCheckbox.setEnabled(true);
             isBootstrappingCheckbox.setBackground(Color.white);
             isBootStrappingLabel = new JLabel(" Bootstrapping");
@@ -492,14 +551,16 @@ public class BNInitDialog extends AlgorithmDialog {
             isBootStrappingLabel.setForeground(Color.gray);
             numIterationsLabel.setForeground(Color.gray);
             confThresholdLabel.setForeground(Color.gray);
-                        //add(bootstrappingNotAvailable, 	new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,15,0),0,0));
+            
+            //add(bootstrappingNotAvailable, 	new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,15,0),0,0));
             /*
             add(isBootstrappingCheckbox, 	new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,15,0),0,0));
             add(isBootStrappingLabel, 		new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.VERTICAL, new Insets(0,0,15,0),0,0));
             add(numIterationsField, 		new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.VERTICAL, new Insets(0,0,15,0),0,0));
             add(numIterationsLabel, 		new GridBagConstraints(1,2,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,15,0),0,0));
             add(confThresholdField, 		new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.VERTICAL, new Insets(0,0,15,0),0,0));
-            add(confThresholdLabel, 		new GridBagConstraints(1,3,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,15,0),0,0));            */
+            add(confThresholdLabel, 		new GridBagConstraints(1,3,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,15,0),0,0));
+            */
             
             add(isBootstrappingCheckbox, 	new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(10,10,25,10),0,0));
             add(isBootStrappingLabel, 		new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,10,25,10),0,0));
@@ -645,14 +706,17 @@ public class BNInitDialog extends AlgorithmDialog {
     	public XmlBifPanel(){
 	        super(new GridBagLayout());
 	        	setLayout(new GridBagLayout());
-	        	setBackground(Color.white);	        	useGoButton = new JRadioButton("Use GO Terms to direct edges"); 
-	        	useGoButton.setHorizontalAlignment(JRadioButton.CENTER);	        	useDFSButton = new JRadioButton("Use Depth-First Search to direct edges", true);           	
+	        	setBackground(Color.white);
+	        	useGoButton = new JRadioButton("Use GO Terms to direct edges"); 
+	        	useGoButton.setHorizontalAlignment(JRadioButton.CENTER);
+	        	useDFSButton = new JRadioButton("Use Depth-First Search to direct edges", true);           	
 	        	useDFSButton.setHorizontalAlignment(JRadioButton.CENTER);
 	        	bGroup=new ButtonGroup();
 	        	bGroup.add(useGoButton);
 	        	bGroup.add(useDFSButton);
 	        	setBackground(Color.white);
-    			setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "How to direct edges for graph", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));    			add(this.useDFSButton, new GridBagConstraints(0,0,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
+    			setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "How to direct edges for graph", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
+    			add(this.useDFSButton, new GridBagConstraints(0,0,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
     			add(this.useGoButton, new GridBagConstraints(1,0,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
     	}
         
@@ -1205,7 +1269,7 @@ public class BNInitDialog extends AlgorithmDialog {
         }
         
         public String getBaseFileLocation() {
-        	System.out.println("getBaseFileLocation() called");
+        	//System.out.println("getBaseFileLocation() called");
             return defaultFileBaseLocation.getText();
         }
     }
