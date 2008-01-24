@@ -260,6 +260,8 @@ public class SAMInitDialog extends AlgorithmDialog {
             JScrollPane scroll = new JScrollPane(bigPanel);
             scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
             scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+            scroll.getHorizontalScrollBar().setUnitIncrement(20);
+            scroll.getVerticalScrollBar().setUnitIncrement(20);
             
             buildConstraints(constraints, 0, 0, 1, 1, 100, 90);
             constraints.fill = GridBagConstraints.BOTH;
@@ -500,6 +502,8 @@ public class SAMInitDialog extends AlgorithmDialog {
             JScrollPane scroll = new JScrollPane(bigPanel);
             scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
             scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+            scroll.getHorizontalScrollBar().setUnitIncrement(20);
+            scroll.getVerticalScrollBar().setUnitIncrement(20);
             
             buildConstraints(constraints, 0, 0, 1, 1, 100, 90);
             constraints.fill = GridBagConstraints.BOTH;
@@ -810,6 +814,7 @@ public class SAMInitDialog extends AlgorithmDialog {
             
             JScrollPane scroll = new JScrollPane(bigPanel);
             scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+            scroll.getVerticalScrollBar().setUnitIncrement(20);
             
             JPanel enterMeanPanel = new JPanel();
             GridBagLayout grid2 = new GridBagLayout();
@@ -1201,8 +1206,9 @@ public class SAMInitDialog extends AlgorithmDialog {
                 bigPanel.add(panels[m] ,new GridBagConstraints(0,m,1,1,1,1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
             }
             JScrollPane scroll = new JScrollPane(bigPanel);
-            scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
             scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);            
+            scroll.getHorizontalScrollBar().setUnitIncrement(20);
+            scroll.getVerticalScrollBar().setUnitIncrement(20);
             
             buildConstraints(constraints, 0, 0, 1, 1, 40, 100);
             constraints.fill =GridBagConstraints.BOTH;
@@ -1288,8 +1294,14 @@ public class SAMInitDialog extends AlgorithmDialog {
             currentAScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
             currentAScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);   
             
+            currentAScroll.getHorizontalScrollBar().setUnitIncrement(20);
+            currentAScroll.getVerticalScrollBar().setUnitIncrement(20);
+            
             currentBScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
             currentBScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);            
+            
+            currentBScroll.getHorizontalScrollBar().setUnitIncrement(20);
+            currentBScroll.getVerticalScrollBar().setUnitIncrement(20);
             
             buildConstraints(constraints, 0, 0, 1, 1, 20, 50);
             grid2.setConstraints(removeCurrentAButton, constraints);
@@ -1629,9 +1641,9 @@ public class SAMInitDialog extends AlgorithmDialog {
                     bigPanel.add(panels[m] ,new GridBagConstraints(0,m,1,1,1,1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
                 }
                 JScrollPane scroll = new JScrollPane(bigPanel);
-                scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
                 scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-                
+                scroll.getHorizontalScrollBar().setUnitIncrement(20);
+                scroll.getVerticalScrollBar().setUnitIncrement(20);
                 //add by wwang
                 JPanel [] exptNameHeaderPanels = new JPanel[this.numPanels];
                 GridBagLayout exptHeaderGridbag = new GridBagLayout();

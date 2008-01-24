@@ -4,9 +4,9 @@ All rights reserved.
 */
 /*
  * $RCSfile: TtestInitDialog.java,v $
- * $Revision: 1.13 $
- * $Date: 2006-11-07 17:27:40 $
- * $Author: eleanorahowe $
+ * $Revision: 1.14 $
+ * $Date: 2008-01-24 21:17:16 $
+ * $Author: dschlauch $
  * $State: Exp $
  */
 package org.tigr.microarray.mev.cluster.gui.impl.ttest;
@@ -619,6 +619,9 @@ public class TtestInitDialog extends AlgorithmDialog {
             scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
             scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);            
             
+            scroll.getHorizontalScrollBar().setUnitIncrement(20);
+            scroll.getVerticalScrollBar().setUnitIncrement(20);
+            
             buildConstraints(constraints, 0, 0, 1, 1, 40, 100);
             constraints.fill =GridBagConstraints.BOTH;
             gridbag.setConstraints(scroll, constraints);
@@ -721,12 +724,19 @@ public class TtestInitDialog extends AlgorithmDialog {
             JScrollPane currentBScroll = new JScrollPane(currentBTextField);
             currentBScroll.setMinimumSize(new Dimension(90, 50));
             
+            
             currentAScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
             currentAScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);   
             
             currentBScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
             currentBScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);            
             
+            currentAScroll.getHorizontalScrollBar().setUnitIncrement(20);
+            currentAScroll.getVerticalScrollBar().setUnitIncrement(20);
+            
+            currentBScroll.getHorizontalScrollBar().setUnitIncrement(20);
+            currentBScroll.getVerticalScrollBar().setUnitIncrement(20);
+
             buildConstraints(constraints, 0, 0, 1, 1, 20, 50);
             grid2.setConstraints(removeCurrentAButton, constraints);
             currentSelectionPanel.add(removeCurrentAButton);
@@ -895,6 +905,8 @@ public class TtestInitDialog extends AlgorithmDialog {
             
             JScrollPane scroll = new JScrollPane(bigPanel);
             scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
+            scroll.getVerticalScrollBar().setUnitIncrement(20);
             
             JPanel enterMeanPanel = new JPanel();
             GridBagLayout grid2 = new GridBagLayout();
@@ -912,6 +924,9 @@ public class TtestInitDialog extends AlgorithmDialog {
             enterMeanPanel.add(meanField);    
             
             JScrollPane scroll2 = new JScrollPane(enterMeanPanel);
+            
+            scroll2.getHorizontalScrollBar().setUnitIncrement(20);
+            scroll2.getVerticalScrollBar().setUnitIncrement(20);
             
             JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scroll, scroll2);
             split.setOneTouchExpandable(true);
@@ -1152,6 +1167,8 @@ public class TtestInitDialog extends AlgorithmDialog {
             scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
             scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
             scroll.setBorder(BorderFactory.createLineBorder(Color.black,2));
+            scroll.getHorizontalScrollBar().setUnitIncrement(20);
+            scroll.getVerticalScrollBar().setUnitIncrement(20);
             
             buildConstraints(constraints, 0, 0, 1, 1, 100, 90);
             constraints.fill = GridBagConstraints.BOTH;
