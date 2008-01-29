@@ -1,0 +1,630 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE mev_val [
+<!ELEMENT mev_val (script_algorithm*)>
+
+<!ELEMENT script_algorithm (param_list*)>
+<!ATTLIST script_algorithm name CDATA #REQUIRED
+		               input_data_dep ( true | false) #REQUIRED >
+
+<!ELEMENT param_list (param+)>
+
+<!ELEMENT param (constraint?)>
+<!ATTLIST param key CDATA #REQUIRED
+		   value_type ( boolean | int | long | float | double | string ) #REQUIRED
+		   val_level ( optional | required ) #REQUIRED >
+
+<!ELEMENT constraint EMPTY>
+<!ATTLIST constraint min CDATA #IMPLIED
+			  max CDATA #IMPLIED>                          
+]>
+
+<mev_val>
+
+<script_algorithm name="HCL" input_data_dep="false">
+		
+   <param_list>
+
+	<!-- algorithm specific parameters -->
+	<param key="method-linkage" value_type="int" val_level="optional">
+		<constraint min="0" max="2"/>
+	</param>
+	<param key="calculate-genes" value_type="boolean" val_level="optional"/>
+	<param key="calculate-experiments" value_type="boolean" val_level="optional"/>
+
+	<!-- distance parameters -->
+	<param key="distance-factor" value_type="float" val_level="required"/>
+	<param key="distance-absolute" value_type="boolean" val_level="required"/>
+	<param key="distance-function" value_type="int" val_level="required">
+		<constraint min="0" max="9"/>
+	</param>
+   </param_list>
+ </script_algorithm>
+
+
+<script_algorithm name="ST" input_data_dep="false">
+   <param_list>
+   <param key="exptTreeIterations" value_type="int"  val_level="optional">
+	<constraint min="0"/>
+   </param>
+   <param key="distance-absolute" value_type="boolean"  val_level="required"/>
+   <param key="drawExptTree" value_type="boolean"  val_level="required"/>
+   <param key="drawGeneTree" value_type="boolean"  val_level="required"/>
+   <param key="method-linkage" value_type="int"  val_level="required">
+      <constraint min="0" max="2"/>
+   </param>
+   <param key="exptTreeAnalysisOption" value_type="int"  val_level="optional"/>
+   <param key="distance-factor" value_type="float"  val_level="required"/>
+   <param key="geneTreeAnalysisOption" value_type="int"  val_level="optional"/>
+   <param key="geneTreeIterations" value_type="int"  val_level="optional">
+	<constraint min="0"/>
+   </param>   
+   <param key="distance-function" value_type="int"  val_level="required">
+	<constraint min="0" max="9"/>
+   </param>
+   </param_list>
+</script_algorithm>
+
+
+<script_algorithm name="SOTA" input_data_dep="false">
+   <param_list>
+   <param key="distance-function" value_type="int"  val_level="required">
+	<constraint min="0" max="9"/>
+   </param>
+   <param key="method-linkage" value_type="int"  val_level="optional">
+      <constraint min="0" max="2"/>
+   </param>
+   <param key="end-training-diversity" value_type="float"  val_level="required">
+	<constraint min="0"/>
+   </param>   
+   <param key="calculate-genes" value_type="boolean"  val_level="optional"/>
+   <param key="set-max-cluster-div" value_type="boolean"  val_level="required"/>
+   <param key="calculate-experiments" value_type="boolean"  val_level="optional"/>
+   <param key="run-to-max-cycles" value_type="boolean"  val_level="required"/>
+   <param key="calc-cluster-hcl" value_type="boolean"  val_level="required"/>
+   <param key="calc-full-tree-hcl" value_type="boolean"  val_level="required"/>
+   <param key="epoch-improvement-cutoff" value_type="float"  val_level="required">
+	<constraint min="0"/>
+   </param>   
+   <param key="use-cluster-variance" value_type="boolean"  val_level="required"/>
+   <param key="sota-cluster-genes" value_type="boolean"  val_level="required"/>
+   <param key="pValue" value_type="float"  val_level="optional">
+	<constraint min="0"/>
+   </param>   
+   <param key="mig_w" value_type="float"  val_level="required">
+	<constraint min="0"/>
+   </param>   
+   <param key="distance-absolute" value_type="boolean"  val_level="required"/>
+   <param key="max-epochs-per-cycle" value_type="int"  val_level="required">
+	<constraint min="0"/>
+   </param>   
+   <param key="maxClusterDiv" value_type="float"  val_level="required"/>
+   <param key="mig_s" value_type="float"  val_level="required">
+	<constraint min="0"/>
+   </param>   
+   <param key="mig_p" value_type="float"  val_level="required">
+	<constraint min="0"/>
+   </param>   
+   <param key="neighborhood-level" value_type="int"  val_level="required"/>
+   <param key="max-number-of-cycles" value_type="int"  val_level="required">
+	<constraint min="0"/>
+   </param>   
+   </param_list>
+</script_algorithm>
+
+
+
+<script_algorithm name="RN" input_data_dep="false">
+   <param_list>
+   <param key="distance-absolute" value_type="boolean"  val_level="required"/>
+   <param key="min-threshold" value_type="float"  val_level="required">
+	<constraint min="0" max="1"/>
+   </param>   
+   <param key="threshold" value_type="float"  val_level="required">
+	<constraint min="0" max="1"/>
+   </param>   
+   <param key="max-threshold" value_type="float"  val_level="required">
+	<constraint min="0" max="1"/>
+   </param>   
+   <param key="distance-factor" value_type="float"  val_level="required"/>
+   <param key="rn-cluster-genes" value_type="boolean"  val_level="required"/>
+   <param key="distance-function" value_type="int"  val_level="required">
+	<constraint min="0" max="9"/>
+   </param>
+   <param key="filter-by-entropy" value_type="boolean"  val_level="required"/>
+   <param key="top-n-percent" value_type="float"  val_level="optional">
+	<constraint min="0" max="100"/>
+   </param>   
+   <param key="use-permutation" value_type="boolean"  val_level="required"/>
+   </param_list>
+</script_algorithm>
+
+
+	<script_algorithm name="KMC" input_data_dep="false">
+		<param_list>
+
+			<!-- script info parameters 
+			<param key="alg-type" value_type="string" val_level="required"/>
+			<param key="output-class" value_type="string" val_level="required"/>
+			<param key="name" value_type="string" val_level="required"/>
+			-->
+			<!-- algorithm specific parameters -->
+			<param key="number-of-clusters" value_type="int" val_level="required">
+				<constraint min="1"/>
+			</param>
+			<param key="number-of-iterations" value_type="int" val_level="required">
+				<constraint min="1"/>
+			</param>
+			<param key="calculate-means" value_type="boolean" val_level="required"/>
+			<param key="kmc-cluster-genes" value_type="boolean" val_level="required"/>
+
+			<!-- distance parameters -->
+			<param key="distance-factor" value_type="float" val_level="required"/>
+			<param key="distance-absolute" value_type="boolean" val_level="required"/>
+			<param key="distance-function" value_type="int" val_level="required">
+				<constraint min="0" max="9"/>
+			</param>
+
+			<!-- HCL parameters -->
+			<param key="hierarchical-tree" value_type="boolean" val_level="optional"/>
+			<param key="method-linkage" value_type="int" val_level="optional">
+				<constraint min="0" max="2"/>
+			</param>
+			<param key="calculate-genes" value_type="boolean" val_level="optional"/>
+			<param key="calculate-experiments" value_type="boolean" val_level="optional"/>
+		</param_list>
+	</script_algorithm>
+
+
+
+<script_algorithm name="KMS" input_data_dep="false">
+   <param_list>
+   <param key="calculate-means" value_type="boolean"  val_level="required"/>
+   <param key="number-of-iterations" value_type="int"  val_level="required">
+	<constraint min="1"/>
+   </param>   
+   <param key="hierarchical-tree" value_type="boolean"  val_level="optional"/>
+   <param key="distance-absolute" value_type="boolean"  val_level="required"/>
+   <param key="number-of-repetitions" value_type="int"  val_level="required">
+	<constraint min="1"/>
+   </param>   
+   <param key="kmc-cluster-genes" value_type="boolean"  val_level="required"/>
+   <param key="calculate-genes" value_type="boolean"  val_level="optional"/>
+   <param key="calculate-experiments" value_type="boolean"  val_level="optional"/>
+   <param key="method-linkage" value_type="int"  val_level="optional">
+      <constraint min="0" max="2"/>
+   </param>
+   <param key="distance-factor" value_type="float"  val_level="required"/>
+   <param key="threshold-percent" value_type="float"  val_level="required"/>
+   <param key="distance-function" value_type="int"  val_level="required">
+	<constraint min="0" max="9"/>
+   </param>
+   <param key="number-of-desired-clusters" value_type="int"  val_level="required">
+	<constraint min="1"/>
+   </param>   
+   </param_list>
+</script_algorithm>
+
+
+
+<script_algorithm name="CAST" input_data_dep="false">
+   <param_list>
+   <param key="distance-absolute" value_type="boolean"  val_level="required"/>
+   <param key="hierarchical-tree" value_type="boolean"  val_level="optional"/>
+   <param key="threshold" value_type="float"  val_level="required">
+	<constraint min="0" max="1"/>
+   </param>   
+   <param key="calculate-genes" value_type="boolean"  val_level="optional"/>
+   <param key="calculate-experiments" value_type="boolean"  val_level="optional"/>
+   <param key="method-linkage" value_type="int"  val_level="optional">
+      <constraint min="0" max="2"/>
+   </param>
+   <param key="distance-factor" value_type="float"  val_level="required"/>
+   <param key="cast-cluster-genes" value_type="boolean"  val_level="required"/>
+   <param key="distance-function" value_type="int"  val_level="required">
+	<constraint min="0" max="9"/>
+   </param>
+   </param_list>
+</script_algorithm>
+
+
+
+<script_algorithm name="QTC" input_data_dep="false">
+   <param_list>
+   <param key="hierarchical-tree" value_type="boolean"  val_level="optional"/>
+   <param key="use-absolute" value_type="boolean"  val_level="required"/>
+   <param key="min-cluster-size" value_type="int"  val_level="required">
+	<constraint min="1"/>
+   </param>   
+   <param key="calculate-genes" value_type="boolean"  val_level="optional"/>
+   <param key="calculate-experiments" value_type="boolean"  val_level="optional"/>
+   <param key="qtc-cluster-genes" value_type="boolean"  val_level="required"/>
+   <param key="method-linkage" value_type="int"  val_level="optional">
+      <constraint min="0" max="2"/>
+   </param>
+   <param key="distance-factor" value_type="float"  val_level="required"/>
+   <param key="distance-function" value_type="int"  val_level="required">
+	<constraint min="0" max="9"/>
+   </param>
+   <param key="diameter" value_type="float"  val_level="required">
+	<constraint min="0" max="1"/>
+   </param>   
+   </param_list>
+</script_algorithm>
+
+
+<script_algorithm name="GSH" input_data_dep="false">
+   <param_list>
+   <param key="gsh-cluster-genes" value_type="boolean"  val_level="required"/>
+   <param key="number-of-clusters" value_type="int"  val_level="required">
+	<constraint min="1"/>
+   </param>   
+   <param key="distance-absolute" value_type="boolean"  val_level="required"/>
+   <param key="hierarchical-tree" value_type="boolean"  val_level="optional"/>
+   <param key="number-of-fakedMatrix" value_type="int"  val_level="required">
+	<constraint min="1"/>
+   </param>   
+   <param key="calculate-genes" value_type="boolean"  val_level="optional"/>
+   <param key="calculate-experiments" value_type="boolean"  val_level="optional"/>
+   <param key="number-of-swap" value_type="int"  val_level="required">
+	<constraint min="1"/>
+   </param>   
+   <param key="method-linkage" value_type="int"  val_level="optional">
+      <constraint min="0" max="2"/>
+   </param>
+   <param key="distance-factor" value_type="float"  val_level="required"/>
+   <param key="distance-function" value_type="int"  val_level="required">
+	<constraint min="0" max="9"/>
+   </param>
+   </param_list>
+</script_algorithm>
+
+
+<script_algorithm name="SOM" input_data_dep="false">
+   <param_list>
+   <param key="distance-function" value_type="int"  val_level="required">
+	<constraint min="0" max="9"/>
+   </param>
+   <param key="dimension-y" value_type="int"  val_level="required">
+	<constraint min="1"/>
+   </param>   
+   <param key="dimension-x" value_type="int"  val_level="required">
+	<constraint min="1"/>
+   </param>   
+   <param key="radius" value_type="float"  val_level="optional">
+	<constraint min="0"/>
+   </param>   
+   <param key="is_random_vector" value_type="boolean"  val_level="required"/>
+   <param key="alpha" value_type="float"  val_level="optional">
+	<constraint min="0"/>
+   </param>   
+   <param key="method-linkage" value_type="int"  val_level="optional">
+      <constraint min="0" max="2"/>
+   </param>
+   <param key="calculate-genes" value_type="boolean"  val_level="optional"/>
+   <param key="calculate-experiments" value_type="boolean"  val_level="optional"/>
+   <param key="distance-absolute" value_type="boolean"  val_level="required"/>
+   <param key="iterations" value_type="int"  val_level="required">
+	<constraint min="1"/>
+   </param>   
+   <param key="distance-factor" value_type="float"  val_level="required"/>
+   <param key="som-cluster-genes" value_type="boolean"  val_level="required"/>
+   <param key="topology" value_type="string"  val_level="required"/>
+   <param key="hierarchical-tree" value_type="boolean"  val_level="optional"/>
+   <param key="is_neighborhood_bubble" value_type="boolean"  val_level="required"/>
+   </param_list>
+</script_algorithm>
+
+<script_algorithm name="FOM" input_data_dep="false">
+   <param_list>
+   <param key="calculate-means" value_type="boolean"  val_level="optional"/>
+   <param key="method" value_type="int"  val_level="required"/>
+   <param key="average" value_type="boolean"  val_level="required"/>
+   <param key="cluster-genes" value_type="boolean"  val_level="required"/>
+   <param key="number-of-clusters" value_type="int"  val_level="optional">
+	<constraint min="1"/>
+   </param>   
+   <param key="interval" value_type="float"  val_level="optional">
+	<constraint min="0" max="1"/>
+   </param>   
+   <param key="distance-absolute" value_type="boolean"  val_level="required"/>
+   <param key="iterations" value_type="int"  val_level="optional">
+	<constraint min="1"/>
+   </param>   
+   <param key="fom-iterations" value_type="int"  val_level="optional">
+	<constraint min="1"/>
+   </param>   
+   <param key="distance-factor" value_type="float"  val_level="required"/>
+   <param key="distance-function" value_type="int"  val_level="required">
+	<constraint min="0" max="9"/>
+   </param>   
+   </param_list>
+</script_algorithm>
+
+
+<script_algorithm name="PTM" input_data_dep="true">
+   <param_list>
+   <param key="hierarchical-tree" value_type="boolean"  val_level="required"/>
+   <param key="use-absolute" value_type="boolean"  val_level="required"/>
+   <param key="threshold" value_type="float"  val_level="required">
+	<constraint min="0" max="1"/>
+   </param>   
+   <param key="calculate-genes" value_type="boolean"  val_level="optional"/>
+   <param key="calculate-experiments" value_type="boolean"  val_level="optional"/>
+   <param key="method-linkage" value_type="int"  val_level="optional">
+      <constraint min="0" max="2"/>
+   </param>
+   <param key="distance-factor" value_type="float"  val_level="required"/>
+   <param key="useR" value_type="boolean"  val_level="required"/>
+   <param key="distance-function" value_type="int"  val_level="required">
+	<constraint min="0" max="9"/>
+   </param>
+   <param key="ptm-cluster-genes" value_type="boolean"  val_level="required"/>
+   </param_list>
+</script_algorithm>
+
+
+<script_algorithm name="TTEST" input_data_dep="true">
+   <param_list>
+   <param key="distance-function" value_type="int"  val_level="optional">
+	<constraint min="0" max="9"/>
+   </param>
+   <param key="alpha" value_type="float"  val_level="optional">
+	<constraint min="0" max="1"/>
+   </param>   
+   <param key="useWelchDf" value_type="boolean"  val_level="required"/>
+   <param key="method-linkage" value_type="int"  val_level="optional">
+      <constraint min="0" max="2"/>
+   </param>
+   <param key="significance-method" value_type="int"  val_level="required"/>
+   <param key="num-combs" value_type="int"  val_level="required">
+	<constraint min="1"/>
+   </param>   
+   <param key="calculate-genes" value_type="boolean"  val_level="optional"/>
+   <param key="calculate-experiments" value_type="boolean"  val_level="optional"/>
+   <param key="use-all-combs" value_type="boolean"  val_level="required"/>
+   <param key="distance-absolute" value_type="boolean"  val_level="optional"/>
+   <param key="is-permut" value_type="boolean"  val_level="required"/>
+   <param key="distance-factor" value_type="float"  val_level="optional"/>
+   <param key="oneClassMean" value_type="double"  val_level="optional">
+	<constraint min="0.0"/>
+   </param>   
+   <param key="hierarchical-tree" value_type="boolean"  val_level="optional"/>
+   <param key="tTestDesign" value_type="int"  val_level="required"/>
+   </param_list>
+</script_algorithm>
+
+
+
+<script_algorithm name="SAM" input_data_dep="true">
+   <param_list>
+   <param key="distance-function" value_type="int"  val_level="optional">
+	<constraint min="0" max="9"/>
+   </param>
+   <param key="useAllUniquePerms" value_type="boolean"  val_level="required"/>
+   <param key="saveImputedMatrix" value_type="boolean"  val_level="required"/>
+   <param key="method-linkage" value_type="int"  val_level="optional">
+      <constraint min="0" max="2"/>
+   </param>
+   <param key="num-combs" value_type="int"  val_level="optional">
+	<constraint min="1"/>
+   </param>   
+   <param key="userPercentile" value_type="double"  val_level="optional"/>
+   <param key="calculate-genes" value_type="boolean"  val_level="optional"/>
+   <param key="calculate-experiments" value_type="boolean"  val_level="optional"/>
+   <param key="permit-graph-interaction" value_type="boolean"  val_level="required"/>
+   <param key="useTusherEtAlS0" value_type="boolean"  val_level="required"/>
+   <param key="num-neighbors" value_type="int"  val_level="optional">
+	<constraint min="1"/>
+   </param>   
+   <param key="distance-absolute" value_type="boolean"  val_level="optional"/>
+   <param key="use-previous-graph" value_type="boolean"  val_level="required"/>
+   <param key="distance-factor" value_type="float"  val_level="optional"/>
+   <param key="calculateQLowestFDR" value_type="boolean"  val_level="required"/>
+   <param key="study-design" value_type="int"  val_level="required"/>
+   <param key="delta" value_type="double"  val_level="required">
+	<constraint min="0"/>
+   </param>
+   <param key="oneClassMean" type="float" val_level="optional"/>   
+   <param key="use-k-nearest" value_type="boolean"  val_level="required"/>
+   <param key="hierarchical-tree" value_type="boolean"  val_level="optional"/>
+   </param_list>
+</script_algorithm>
+
+
+
+<script_algorithm name="ANOVA" input_data_dep="true">
+   <param_list>
+   <param key="numGroups" value_type="int"  val_level="required">
+	<constraint min="2"/>
+   </param>   
+   <param key="distance-absolute" value_type="boolean"  val_level="optional"/>
+   <param key="hierarchical-tree" value_type="boolean"  val_level="optional"/>
+   <param key="correction-method" value_type="int"  val_level="required"/>
+   <param key="alpha" value_type="double"  val_level="required">
+	<constraint min="0" max="1"/>
+   </param>   
+   <param key="calculate-genes" value_type="boolean"  val_level="optional"/>
+   <param key="calculate-experiments" value_type="boolean"  val_level="optional"/>
+   <param key="method-linkage" value_type="int"  val_level="optional">
+      <constraint min="0" max="2"/>
+   </param>
+   <param key="distance-factor" value_type="float"  val_level="optional"/>
+   <param key="distance-function" value_type="int"  val_level="optional">
+	<constraint min="0" max="9"/>
+   </param>
+   </param_list>
+</script_algorithm>
+
+
+
+<script_algorithm name="TFA" input_data_dep="true">
+   <param_list>
+   <param key="hierarchical-tree" value_type="boolean"  val_level="optional"/>
+   <param key="distance-absolute" value_type="boolean"  val_level="optional"/>
+   <param key="alpha" value_type="float"  val_level="required">
+	<constraint min="0" max="1"/>
+   </param>   
+   <param key="isBalancedDesign" value_type="boolean"  val_level="required"/>
+   <param key="calculate-genes" value_type="boolean"  val_level="optional"/>
+   <param key="calculate-experiments" value_type="boolean"  val_level="optional"/>
+   <param key="method-linkage" value_type="int"  val_level="optional">
+      <constraint min="0" max="2"/>
+   </param>
+   <param key="distance-factor" value_type="float"  val_level="optional"/>
+   <param key="numPerms" value_type="int"  val_level="optional">
+	<constraint min="1"/>
+   </param>   
+   <param key="distance-function" value_type="int"  val_level="optional">
+	<constraint min="0" max="9"/>
+   </param>
+   <param key="allCellsHaveOneSample" value_type="boolean"  val_level="required"/>
+   <param key="usePerms" value_type="boolean"  val_level="required"/>
+   <param key="adjustmentMethod" value_type="int"  val_level="required"/>
+   </param_list>
+</script_algorithm>
+
+
+<script_algorithm name="SVM" input_data_dep="true">
+   <param_list>
+   <param key="distance-function" value_type="int"  val_level="required">
+	<constraint min="0" max="9"/>
+   </param>
+   <param key="constant" value_type="float"  val_level="optional">
+	<constraint min="0"/>
+   </param>   
+   <param key="constrain-weights" value_type="boolean"  val_level="required"/>
+   <param key="linkage-method" value_type="int"  val_level="optional">
+      <constraint min="0" max="2"/>
+   </param>
+   <param key="negative-diagonal" value_type="float"  val_level="required"/>
+   <param key="seed" value_type="float"  val_level="required"/>
+   <param key="used-classification-editor" value_type="boolean"  val_level="optional"/>
+   <param key="coefficient" value_type="float"  val_level="optional"/>
+   <param key="width-factor" value_type="float"  val_level="optional"/>
+   <param key="power" value_type="float"  val_level="optional"/>
+   <param key="negative-constraint" value_type="float"  val_level="optional"/>
+   <param key="calculate-samples-hcl" value_type="boolean"  val_level="optional"/>
+   <param key="is-classify" value_type="boolean"  val_level="required"/>
+   <param key="mode" value_type="int"  val_level="required"/>
+   <param key="diagonal-factor" value_type="float"  val_level="optional"/>
+   <param key="radial" value_type="boolean"  val_level="required"/>
+   <param key="calculate-hcl" value_type="boolean"  val_level="required"/>
+   <param key="convergence-threshold" value_type="float"  val_level="optional"/>
+   <param key="distance-absolute" value_type="boolean"  val_level="required"/>
+   <param key="normalize" value_type="boolean"  val_level="required"/>
+   <param key="distance-factor" value_type="float"  val_level="required"/>
+   <param key="positive-constraint" value_type="float"  val_level="optional"/>
+   <param key="positive-diagonal" value_type="float"  val_level="required"/>
+   <param key="classify-genes" value_type="boolean"  val_level="required"/>
+   <param key="calculate-genes-hcl" value_type="boolean"  val_level="optional"/>
+   </param_list>
+</script_algorithm>
+
+
+
+
+<script_algorithm name="KNNC" input_data_dep="true">
+   <param_list>
+   <param key="distance-function" value_type="int"  val_level="required">
+	<constraint min="0" max="9"/>
+   </param>
+   <param key="numClasses" value_type="int"  val_level="required"/>
+   <param key="method-linkage" value_type="int"  val_level="optional">
+      <constraint min="0" max="2"/>
+   </param>
+   <param key="numVarFilteredVectors" value_type="int"  val_level="optional"/>
+   <param key="useVarianceFilter" value_type="boolean"  val_level="optional"/>
+   <param key="calculate-genes" value_type="boolean"  val_level="optional"/>
+   <param key="calculate-experiments" value_type="boolean"  val_level="optional"/>
+   <param key="classifyGenes" value_type="boolean"  val_level="required"/>
+   <param key="validate" value_type="boolean"  val_level="required"/>
+   <param key="numNeighbors" value_type="int"  val_level="required">
+	<constraint min="1"/>
+   </param>   
+   <param key="distance-absolute" value_type="boolean"  val_level="required"/>
+   <param key="distance-factor" value_type="float"  val_level="optional"/>
+   <param key="useCorrelFilter" value_type="boolean"  val_level="required"/>
+   <param key="numPerms" value_type="int"  val_level="optional">
+	<constraint min="1"/>
+   </param>   
+   <param key="correlPValue" value_type="boolean"  val_level="optional">
+	<constraint min="0" max="1"/>
+   </param>   
+   <param key="hierarchical-tree" value_type="boolean"  val_level="required"/>
+   </param_list>
+</script_algorithm>
+
+
+
+<script_algorithm name="GDM" input_data_dep="false">
+   <param_list>
+   <param key="display-interval" value_type="int"  val_level="required">
+	<constraint min="1"/>
+   </param>   
+   <param key="distance-factor" value_type="float"  val_level="required"/>
+   <param key="distance-absolute" value_type="boolean"  val_level="required"/>
+   <param key="gdm-genes" value_type="boolean"  val_level="required"/>
+   <param key="distance-function" value_type="int"  val_level="required">
+	<constraint min="0" max="9"/>
+   </param>   
+   </param_list>
+</script_algorithm>
+
+
+<script_algorithm name="COA" input_data_dep="false">
+   <param_list>
+   <param key="numNeighbors" value_type="int"  val_level="required">
+	<constraint min="1"/>
+   </param>   
+   </param_list>
+</script_algorithm>
+
+
+<script_algorithm name="PCA" input_data_dep="false">
+   <param_list>
+   <param key="pca-mode" value_type="int"  val_level="required"/>
+   <param key="distance-factor" value_type="float"  val_level="required"/>
+   <param key="distance-absolute" value_type="boolean"  val_level="required"/>
+   <param key="distance-function" value_type="int"  val_level="required">
+	<constraint min="0" max="9"/>
+   </param>   
+   </param_list>
+</script_algorithm>
+
+
+<script_algorithm name="Terrain" input_data_dep="false">
+   <param_list>
+   <param key="use-genes" value_type="boolean"  val_level="required"/>
+   <param key="neighbors" value_type="int"  val_level="required"/>
+   <param key="distance-factor" value_type="float"  val_level="required"/>
+   <param key="distance-absolute" value_type="boolean"  val_level="required"/>
+   <param key="distance-function" value_type="int"  val_level="required">
+	<constraint min="0" max="9"/>
+   </param>   
+   </param_list>
+</script_algorithm>
+
+
+<script_algorithm name="EASE" input_data_dep="true">
+   <param_list>
+   <param key="population-file-name" value_type="string"  val_level="optional"/>
+   <param key="trim-option" value_type="string"  val_level="required"/>
+   <param key="run-permutation-analysis" value_type="boolean"  val_level="required"/>
+   <param key="bonferroni-step-down-correction" value_type="boolean"  val_level="optional"/>
+   <param key="report-ease-score" value_type="boolean"  val_level="required"/>
+   <param key="annotation-key-type" value_type="string"  val_level="required"/>
+   <param key="perform-cluster-analysis" value_type="boolean"  val_level="required"/>
+   <param key="bonferroni-correction" value_type="boolean"  val_level="optional"/>
+   <param key="p-value-corrections" value_type="boolean"  val_level="required"/>
+   <param key="trim-value" value_type="string"  val_level="optional"/>
+   <param key="permutation-count" value_type="int"  val_level="optional"/>
+   <param key="sidak-correction" value_type="boolean"  val_level="optional"/>
+   <param key="converter-file-name" value_type="string"  val_level="optional"/>
+   </param_list>
+</script_algorithm>
+
+</mev_val>
+
+
+

@@ -1,0 +1,100 @@
+<!DOCTYPE mev_cluster_submit [
+<!ELEMENT mev_cluster_submit (submit_entry+)>
+
+<!ELEMENT submit_entry (description, user, impl, submission)>
+
+<!ATTLIST submit_entry name CDATA #REQUIRED
+		           url CDATA #REQUIRED>	
+
+<!ELEMENT description (#PCDATA)>
+
+<!ELEMENT impl EMPTY>
+
+<!ATTLIST impl impl_class CDATA #REQUIRED>
+
+<!ELEMENT user EMPTY>
+
+<!ATTLIST user user_name CDATA #IMPLIED
+	         password CDATA #IMPLIED
+		   email CDATA #IMPLIED>	       
+
+<!ELEMENT submission (specification_table?, annot_list)>
+
+<!ELEMENT specification_table (spec+)>
+
+<!ELEMENT spec EMPTY>
+
+<!ATTLIST spec key CDATA #REQUIRED
+		   value CDATA #REQUIRED>
+
+<!ELEMENT annot_list (annot+)>
+
+<!ELEMENT annot EMPTY>
+
+<!ATTLIST annot key CDATA #REQUIRED
+		annot_name CDATA #REQUIRED
+		req CDATA #REQUIRED>
+
+]>
+
+
+<mev_cluster_submit>
+	<submit_entry name="LOLA" url="www.lola.gwu.edu">		
+		<description>List Of Lists Annotated (LOLA) is a web driven database allowing researchers 
+            	to identify andcorrelate significant subsets of genes derived from microarray expression 
+            	profiling. It is maintained by the George Washington University Genomics Core Facility 
+            	(http://www.gwumc.edu/microarray/). Unlike other databases, LOLA serves as a common platform 
+			for analyzing the biological significance of large and heterogeneous lists of genes while 
+			simultaneously archiving and integrating the data via links to published literature. 
+			In short, LOLA allows researchers to measure the similarity of their gene list to those 
+                  in the published literature.			
+		</description>
+
+		<user/>
+
+
+		<!-- Below is a sample USER information entry.  If you want to provide a user name
+		     and password to mev to preset the entries in the password dialog this is an example.
+		     if you do this remember to remove the empty user above (<user/>) -->
+		<!-- <user user_name="your_name" password="password" email="someone@someplace.org"/> -->			
+
+
+		<impl impl_class="org.tigr.microarray.mev.cluster.clusterUtil.submit.lola.LOLASubmitter"/>
+		<submission>
+			<specification_table>
+				<spec key="Login Info" value="Establish user name and password at www.lola.gwu.edu"/>
+				<spec key="Species Accepted" value="Human"/>
+				<spec key="Data Type" value="Affymetrix"/>
+				<spec key="Submission ID Types" value="Affy_ID or LocusLink ID"/>
+			</specification_table>
+			<annot_list>
+				<annot key="ID" annot_name="Affy ID" req="option"/>
+				<annot key="Locus Link" annot_name="Locus Link ID" req="option"/>
+			</annot_list>
+		</submission>
+	</submit_entry>
+</mev_cluster_submit>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
