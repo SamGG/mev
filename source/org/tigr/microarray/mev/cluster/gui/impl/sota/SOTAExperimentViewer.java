@@ -244,6 +244,7 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer {
      * Updates header and contents attributes when the viewer is selected.
      */
     public void onSelected(IFramework framework) {
+    	setFramework(framework);
         if(this.geneClusterViewer)
             ((ExperimentViewer) expViewer).onSelected(framework);
         else
@@ -364,6 +365,18 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer {
         menuItem.setActionCommand(SAVE_ALL_CLUSTERS_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
+
+        //EH Gaggle testing
+        menuItem = new JMenuItem("Broadcast Matrix to Gaggle", GUIFactory.getIcon("gaggle_broadcast_16.gif"));
+        menuItem.setActionCommand(BROADCAST_MATRIX_GAGGLE_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        menuItem = new JMenuItem("Broadcast Gene List to Gaggle", GUIFactory.getIcon("gaggle_broadcast_16.gif"));
+        menuItem.setActionCommand(BROADCAST_NAMELIST_GAGGLE_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        //end Gaggle testing
     }
     
     /**
@@ -487,6 +500,15 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer {
         return this.expViewer.getViewerType();
     }    
     
+    //EH gaggle test
+    public int[] getCluster() {
+    	
+        if(expViewer instanceof ExperimentViewer)
+            return ((ExperimentViewer)expViewer).getCluster();
+        else
+            return ((ExperimentClusterViewer)expViewer).getCluster();
+    }
+    
     /**
      * The class to listen to mouse and action events.
      */
@@ -504,6 +526,11 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer {
                 storeCluster();
             } else if(command.equals(LAUNCH_NEW_SESSION_CMD)){
                 launchNewSession();
+            //EH Gaggle test
+            } else if (command.equals(BROADCAST_MATRIX_GAGGLE_CMD)) {
+                broadcastClusterGaggle();
+            } else if (command.equals(BROADCAST_NAMELIST_GAGGLE_CMD)) {
+                broadcastNamelistGaggle();
             }
         }
         
@@ -513,10 +540,12 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer {
         
         private void maybeShowPopup(MouseEvent e) {
             int [] cluster = null;
-            if(expViewer instanceof ExperimentViewer)
-                cluster = ((ExperimentViewer)expViewer).getCluster();
-            else
-                cluster = ((ExperimentClusterViewer)expViewer).getCluster();
+            //EH
+            cluster = getCluster();
+//            if(expViewer instanceof ExperimentViewer)
+//                cluster = ((ExperimentViewer)expViewer).getCluster();
+//            else
+//                cluster = ((ExperimentClusterViewer)expViewer).getCluster();
             
             if (!e.isPopupTrigger() || cluster == null || cluster.length == 0) {
                 return;

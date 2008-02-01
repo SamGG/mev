@@ -18,6 +18,7 @@ import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -62,6 +63,10 @@ public class MultipleArrayMenubar extends JMenuBar {
     private JMenu helpMenu;
     CGHDisplayMenu cghDisplayMenu = new CGHDisplayMenu();
     CGHCloneValueMenu cghCloneValueMenu = new CGHCloneValueMenu();
+   
+    //EH Gaggle Test
+    JMenu gaggleMenu, targetMenu, showMenu;
+    ButtonGroup targetGooseNameGroup, showtargetGooseNameGroup;
    
     private ActionManager actionManager;
     
@@ -275,6 +280,27 @@ public class MultipleArrayMenubar extends JMenuBar {
         utilMenu.add(manager.getAction(ActionManager.APPEND_GENE_ANNOTATION_ACTION));        
         utilMenu.add(manager.getAction(ActionManager.APPEND_SAMPLE_ANNOTATION_ACTION));
                         
+        //EH Gaggle menu test
+	        targetGooseNameGroup = new ButtonGroup();
+	        showtargetGooseNameGroup = new ButtonGroup();
+	        gaggleMenu = new JMenu("Gaggle");
+	        gaggleMenu.add(manager.getAction(ActionManager.GAGGLE_CONNECT));        
+	        gaggleMenu.add(manager.getAction(ActionManager.GAGGLE_DISCONNECT));
+	        targetMenu = new JMenu("Broadcast Target");
+	        showMenu = new JMenu("Show Goose");
+	        JMenuItem notargets = new JMenuItem("No Broadcast Targets");
+	        JMenuItem noGeese = new JMenuItem("No Geese Available");
+	        notargets.setEnabled(false);
+	        noGeese.setEnabled(false);
+	        targetMenu.add(notargets);
+	        showMenu.add(noGeese);
+	        gaggleMenu.add(targetMenu);
+	        gaggleMenu.add(showMenu);
+	//        add(gaggleMenu);
+	        gaggleMenu.getMenuComponent(1).setEnabled(false);
+	        //end Gaggle test
+        
+        utilMenu.add(gaggleMenu);
         add(utilMenu);    
        
     }
@@ -456,7 +482,7 @@ public class MultipleArrayMenubar extends JMenuBar {
                 setEnableMenu("Adjust Data", false);
                 setEnableMenu("Normalization", false);
                 setEnableMenu("Metrics", false);
-                setEnableMenu("Utilities", false);
+                //setEnableMenu("Utilities", false);
                 break;
             case TMEV.DB_AVAILABLE:
                 setEnableMenu("File", true);
@@ -498,7 +524,7 @@ public class MultipleArrayMenubar extends JMenuBar {
     }
     public String[] getLabelMenuItems(){
     	//String[] temp = new String[labelGroup.getElements().];
-    	Vector temp = new Vector();
+    	Vector<String> temp = new Vector<String>();
     	Enumeration labels = labelGroup.getElements();
     	while(labels.hasMoreElements()){
     		JRadioButtonMenuItem aButton = (JRadioButtonMenuItem)labels.nextElement();
@@ -513,7 +539,7 @@ public class MultipleArrayMenubar extends JMenuBar {
     
     public void addLabelMenuItems(String [] fieldNames){
         JRadioButtonMenuItem item;
-        ButtonGroup bg = new ButtonGroup();
+        //ButtonGroup bg = new ButtonGroup();
         DefaultAction action;
         for(int i = 0; i < fieldNames.length; i++){
             action = new DefaultAction(actionManager, "Label by "+fieldNames[i], ActionManager.DISPLAY_LABEL_CMD);
@@ -534,7 +560,7 @@ public class MultipleArrayMenubar extends JMenuBar {
      */
     public void addLabelMenuItems(String [] fieldNames, String[] annoFields){
         JRadioButtonMenuItem item;
-        ButtonGroup bg = new ButtonGroup();
+        //ButtonGroup bg = new ButtonGroup();
         DefaultAction action;
         for(int i = 0; i < fieldNames.length; i++){
             action = new DefaultAction(actionManager, "Label by "+fieldNames[i], ActionManager.DISPLAY_LABEL_CMD);
@@ -583,6 +609,43 @@ public class MultipleArrayMenubar extends JMenuBar {
         expLabelSelectionMenu.add(item);
     }
     
+    //EH Gaggle test
+    public void replaceGaggleTargetMenuItems(String[] gooseNames) {
+    	//String[] gooseNames = new String[targetnames.length+1];
+    	//gooseNames[0] = "Boss";
+    	//System.arraycopy(targetnames, 0, gooseNames, 1, targetnames.length);
+    	//System.out.println("Replacing gaggle target menu items");
+    	this.targetMenu.removeAll();
+    	this.showMenu.removeAll();
+
+    	JRadioButtonMenuItem item, item1;
+    	DefaultAction action, action1; 
+    	String cmd;
+        for(int i = 0; i < gooseNames.length; i++){
+            cmd = gooseNames[i];
+
+            action = new DefaultAction(actionManager, cmd, ActionManager.SELECT_TARGET_GOOSE_CMD);
+            action.putValue(ActionManager.PARAMETER, gooseNames[i]);
+            item = new JRadioButtonMenuItem(action);
+            targetGooseNameGroup.add(item);
+            this.targetMenu.add(item);
+            item.setSelected(false);
+
+            action1 = new DefaultAction(actionManager, cmd, ActionManager.SHOW_GOOSE_CMD);
+            action1.putValue(ActionManager.PARAMETER, gooseNames[i]);
+            item1 = new JRadioButtonMenuItem(action1);
+            showtargetGooseNameGroup.add(item1);
+            this.showMenu.add(item1);
+            item1.setSelected(false);
+            
+            if(i == 0) {
+                item.setSelected(true);
+                item1.setSelected(true);
+            }
+        }
+    }
+
+    //EH end gaggle test
     
     public void replaceExperimentLabelMenuItems(String [] fieldNames){
         //remove all menu items
@@ -593,7 +656,7 @@ public class MultipleArrayMenubar extends JMenuBar {
         this.expLabelSelectionMenu.removeAll();
         
         JRadioButtonMenuItem item;
-        ButtonGroup bg = new ButtonGroup();
+        //ButtonGroup bg = new ButtonGroup();
         DefaultAction action;
         String cmd;
         for(int i = 0; i < fieldNames.length; i++){
@@ -614,7 +677,7 @@ public class MultipleArrayMenubar extends JMenuBar {
         this.labelMenu.removeAll();
         
         JRadioButtonMenuItem item;
-        ButtonGroup bg = new ButtonGroup();
+        //ButtonGroup bg = new ButtonGroup();
         DefaultAction action;
         for(int i = 0; i < fieldNames.length; i++){
             action = new DefaultAction(actionManager, "Label by "+fieldNames[i], ActionManager.DISPLAY_LABEL_CMD);
@@ -710,8 +773,8 @@ public class MultipleArrayMenubar extends JMenuBar {
      */
     private void addAnalysisMenu(JMenu menu, ActionManager manager) {
        
-    	int index = 0;
-        Action action;
+    	//int index = 0;
+        //Action action;
         String []category={"Clustering","Statistics","Classification","Data Reduction","Meta Analysis","Visualization","Miscellaneous"};
         //System.out.print(manager.getAction(ActionManager.ANALYSIS_ACTION+String.valueOf(0)));
         //while ((action = manager.getAction("HCL"))!=null) {
@@ -1256,7 +1319,7 @@ public class MultipleArrayMenubar extends JMenuBar {
         }        
         
         private Vector buildPalette() {
-            Vector palette = new Vector(256);
+            Vector<Color> palette = new Vector<Color>(256);
             Color newColor;
             double r, g, b;
             

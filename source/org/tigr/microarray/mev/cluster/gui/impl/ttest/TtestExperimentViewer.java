@@ -298,6 +298,11 @@ public class TtestExperimentViewer extends ExperimentViewer {
 		storeCluster();
 	    } else if(command.equals(LAUNCH_NEW_SESSION_CMD)){
                 launchNewSession();
+        //EH Gaggle test
+        } else if (command.equals(BROADCAST_MATRIX_GAGGLE_CMD)) {
+            broadcastClusterGaggle();
+        } else if (command.equals(BROADCAST_NAMELIST_GAGGLE_CMD)) {
+            broadcastNamelistGaggle();
             }
 	}
 	

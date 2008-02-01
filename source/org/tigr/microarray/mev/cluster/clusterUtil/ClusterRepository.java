@@ -863,4 +863,9 @@ public class ClusterRepository extends Vector {
         subManager.submit(cluster);
     }
     
+    //EH Gaggle test
+    public void broadcastGeneClusters( Cluster[] clusters ) {
+        this.framework.broadcastGeneClusters(clusters);
+    }
+    
 }

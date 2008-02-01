@@ -67,6 +67,10 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
     protected static final String SAVE_ALL_CLUSTERS_CMD = "save-all-clusters-cmd";
     protected static final String LAUNCH_NEW_SESSION_CMD = "launch-new-session-cmd";
     
+    //EH Gaggle testing
+    public static final String BROADCAST_MATRIX_GAGGLE_CMD = "broadcast-matrix-to-gaggle";
+    public static final String BROADCAST_NAMELIST_GAGGLE_CMD = "broadcast-namelist-to-gaggle";
+    
     private ExperimentClusterHeader header;
     private Experiment experiment;
     private IFramework framework;
@@ -1043,6 +1047,40 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         menuItem.setActionCommand(SAVE_ALL_CLUSTERS_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
+        
+        //TODO
+        //EH Gaggle testing
+        menuItem = new JMenuItem("Broadcast Matrix to Gaggle", GUIFactory.getIcon("gaggle_broadcast_16.gif"));
+        menuItem.setActionCommand(BROADCAST_MATRIX_GAGGLE_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        menuItem = new JMenuItem("Broadcast Gene List to Gaggle", GUIFactory.getIcon("gaggle_broadcast_16.gif"));
+        menuItem.setActionCommand(BROADCAST_NAMELIST_GAGGLE_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        //end Gaggle testing
+    }
+    
+	//EH Gaggle test
+	//TODO remove print statements after Gaggle viewer implementation is finished
+    public void broadcastClusterGaggle() {
+    	int[] temp = getCluster();
+    	Experiment e = getExperiment();
+    	if (temp == null)
+    		System.out.println("getCluster returns null");
+    	if(e == null)
+    		System.out.println("getExperiment returns null");
+    	if(framework == null)
+    		System.out.println(this.toString() + ": framework is null");
+    	System.out.println("cluster is size " + getCluster().length);
+    	framework.broadcastGeneCluster(getExperiment(), getCluster());
+	}
+    public void broadcastNamelistGaggle() {
+    	framework.broadcastNamelist(getExperiment(), getCluster());
+    }
+    public void setFramework(IFramework framework) {
+    	this.framework = framework;
     }
     
     /** Returns a component to be inserted into the scroll pane row header

@@ -116,6 +116,11 @@ public class ActionManager implements java.io.Serializable {
     
     
     
+        //EH Gaggle test
+        actions.put(GAGGLE_CONNECT, new DefaultAction(this, GAGGLE_CONNECT_NAME, GAGGLE_CONNECT_ACTION, getIcon("p.gif")));
+        actions.put(GAGGLE_DISCONNECT, new DefaultAction(this, GAGGLE_DISCONNECT_NAME, GAGGLE_DISCONNECT_ACTION, getIcon("p.gif")));
+        actions.put(SELECT_TARGET_GOOSE_CMD, new DefaultAction(this, GAGGLE_TARGET_SELECT_NAME, GAGGLE_TARGET_SELECT_ACTION, getIcon("p.gif")));
+        actions.put(SHOW_GOOSE_CMD, new DefaultAction(this, SHOW_GOOSE_CMD_NAME, SHOW_GOOSE_SELECT_ACTION, getIcon("p.gif")));
     }
 
     
@@ -554,6 +559,19 @@ public class ActionManager implements java.io.Serializable {
     public static final String COMPARE_EXPERIMENTS = "compare-experiments";
     /* End CGH Commands */
     
+    //EH Gaggle testing
+    public static final String GAGGLE_CONNECT = "gaggle-connect";
+    public static final String GAGGLE_DISCONNECT = "gaggle-disconnect";
+    public static final String SELECT_TARGET_GOOSE_CMD = "select-target-goose-cmd";
+    public static final String GAGGLE_CONNECT_NAME = "Connect to Gaggle";
+    public static final String GAGGLE_CONNECT_ACTION = "connect-to-gaggle";
+    public static final String GAGGLE_DISCONNECT_NAME = "Disconnect from Gaggle";
+    public static final String GAGGLE_DISCONNECT_ACTION = "disconnect-from-gaggle";
+    public static final String GAGGLE_TARGET_SELECT_ACTION = "select-gaggle-target";
+    public static final String GAGGLE_TARGET_SELECT_NAME = "select-gaggle-target-name";
+    public static final String SHOW_GOOSE_CMD = "show-goose-cmd";
+    public static final String SHOW_GOOSE_CMD_NAME  = "Show Goose";
+    public static final String SHOW_GOOSE_SELECT_ACTION = "show-goose-action";
   
     
     

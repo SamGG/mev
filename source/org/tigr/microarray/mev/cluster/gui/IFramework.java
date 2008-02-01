@@ -185,4 +185,9 @@ public interface IFramework {
 	 */
     public CytoBandsModel getCytoBandsModel();
     
+    //EH Gaggle testing
+    public void broadcastGeneClusters(org.tigr.microarray.mev.cluster.clusterUtil.Cluster[] c);
+    public void broadcastGeneCluster(Experiment experiment, int[] cluster);
+    public void broadcastNamelist(org.tigr.microarray.mev.cluster.clusterUtil.Cluster[] c);
+    public void broadcastNamelist(Experiment experiment, int[] cluster);
 }
