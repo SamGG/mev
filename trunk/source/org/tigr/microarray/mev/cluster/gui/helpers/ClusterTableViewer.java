@@ -52,6 +52,10 @@ public class ClusterTableViewer implements IViewer {
     protected static final String SORT_ORIG_ORDER_CMD = "sort-orig-order-cmd";
     protected static final String LINK_TO_URL_CMD = "link-to-url-cmd";    
     
+    //EH Gaggle testing
+    protected static final String BROADCAST_MATRIX_GAGGLE_CMD = "broadcast-matrix-to-gaggle";
+    protected static final String BROADCAST_NAMELIST_GAGGLE_CMD = "broadcast-namelist-to-gaggle";
+    
     public static final int INTEGER_TYPE = 10;
     public static final int FLOAT_TYPE = 11;
     public static final int DOUBLE_TYPE = 12;
@@ -859,6 +863,21 @@ public class ClusterTableViewer implements IViewer {
         urlMenuItem.addActionListener(listener);
         //if (clusterTable.getSelectedRows().length != 1) 
         menu.add(urlMenuItem);        
+
+        
+        //EH Gaggle test
+        menu.addSeparator();
+
+        menuItem = new JMenuItem("Broadcast Gene List to Gaggle", GUIFactory.getIcon("gaggle_broadcast_16.gif"));
+        menuItem.setActionCommand(BROADCAST_NAMELIST_GAGGLE_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+
+        menuItem = new JMenuItem("Broadcast Matrix to Gaggle", GUIFactory.getIcon("gaggle_broadcast_16.gif"));
+        menuItem.setActionCommand(BROADCAST_MATRIX_GAGGLE_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+
     }    
     
     /**
@@ -955,6 +974,11 @@ public class ClusterTableViewer implements IViewer {
                 sortInOrigOrder();
             } else if (command.equals(LINK_TO_URL_CMD)) {
                 linkToURL2();
+            //EH Gaggle test
+            } else if (command.equals(BROADCAST_MATRIX_GAGGLE_CMD)) {
+                broadcastClusterGaggle();
+            } else if (command.equals(BROADCAST_NAMELIST_GAGGLE_CMD)) {
+                broadcastNamelistGaggle();
             }
 	}
 	   
@@ -1094,5 +1118,11 @@ public class ClusterTableViewer implements IViewer {
     public int getViewerType() {
         return Cluster.GENE_CLUSTER;
     }    
-    
+	//EH Gaggle test
+    protected void broadcastClusterGaggle() {
+    	framework.broadcastGeneCluster(getExperiment(), getCluster());
+	}
+    protected void broadcastNamelistGaggle() {
+    	framework.broadcastNamelist(getExperiment(), getCluster());
+    }
 }

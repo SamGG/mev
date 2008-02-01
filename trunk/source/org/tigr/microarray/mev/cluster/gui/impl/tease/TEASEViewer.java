@@ -603,7 +603,38 @@ public class TEASEViewer extends JPanel implements IViewer{
 //	            menuItem.addActionListener(listener);
 //	            menu.add(menuItem);
 //	        }        
+
+	        //EH Gaggle testing
+	        menuItem = new JMenuItem("Broadcast Matrix to Gaggle", GUIFactory.getIcon("gaggle_broadcast_16.gif"));
+	        menuItem.setActionCommand(ExperimentViewer.BROADCAST_MATRIX_GAGGLE_CMD);
+	        menuItem.addActionListener(listener);
+	        menu.add(menuItem);
+	        
+	        menuItem = new JMenuItem("Broadcast Gene List to Gaggle", GUIFactory.getIcon("gaggle_broadcast_16.gif"));
+	        menuItem.setActionCommand(ExperimentViewer.BROADCAST_NAMELIST_GAGGLE_CMD);
+	        menuItem.addActionListener(listener);
+	        menu.add(menuItem);
+	        //end Gaggle testing
 	    }
+	    
+	    //EH Gaggle testing
+	    public void broadcastClusterGaggle() {
+	    	Experiment subExp;
+	    	int[] rows;
+	    	if(selectedCluster.isGeneCluster) {
+	    		subExp = getExperiment();
+	    		rows = getSubTreeElements();
+	    	} else {
+	    		subExp = ((org.tigr.microarray.mev.MultipleArrayData)data).getDataSubset(getSubTreeElements(), experiment.getRowMappingArrayCopy()).getExperiment();
+	    		rows = subExp.getRows();
+	    	}
+	    	framework.broadcastGeneCluster(subExp, rows);
+		}
+	    public void broadcastNamelistGaggle() {
+	    	framework.broadcastNamelist(getExperiment(), getSubTreeElements());
+	    }
+	    //EH end gaggle testing
+
 	    
 	    /**
 	     * Returns a menu item by specified action command.
@@ -1444,10 +1475,16 @@ public class TEASEViewer extends JPanel implements IViewer{
 	                sampleTree.saveExperimentNodeHeights();
 	            } else if (command.equals(SAVE_GENE_NEWICK_CMD)) {
 	                genesTree.saveAsNewickFile();
-	            } 
+	             
 //	              else if (command.equals(SAVE_SAMPLE_NEWICK_CMD)) {
 //	                sampleTree.saveAsNewickFile();                
 //	            }
+	            //EH Gaggle test
+	            } else if (command.equals(ExperimentViewer.BROADCAST_MATRIX_GAGGLE_CMD)) {
+	                broadcastClusterGaggle();
+	            } else if (command.equals(ExperimentViewer.BROADCAST_NAMELIST_GAGGLE_CMD)) {
+	            	broadcastNamelistGaggle();
+	            }
 	        }
 	        
 	        public void valueChanged(HCLTree source, HCLCluster cluster) {

@@ -28,9 +28,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.beans.Expression;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.util.Vector;
 
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
@@ -66,6 +70,10 @@ public class ExperimentViewer extends JPanel implements IViewer {
     protected static final String SAVE_CLUSTER_CMD = "save-cluster-cmd";
     protected static final String SAVE_ALL_CLUSTERS_CMD = "save-all-clusters-cmd";
     protected static final String LAUNCH_NEW_SESSION_CMD = "launch-new-session-cmd";
+    
+    //EH Gaggle testing
+    public static final String BROADCAST_MATRIX_GAGGLE_CMD = "broadcast-matrix-to-gaggle";
+    public static final String BROADCAST_NAMELIST_GAGGLE_CMD = "broadcast-namelist-to-gaggle";
     
     private ExperimentHeader header;
     private Experiment experiment;
@@ -987,7 +995,21 @@ public class ExperimentViewer extends JPanel implements IViewer {
         menuItem.setActionCommand(SAVE_ALL_CLUSTERS_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
+        
+        //TODO
+        //EH Gaggle testing
+        menuItem = new JMenuItem("Broadcast Matrix to Gaggle", GUIFactory.getIcon("gaggle_broadcast_16.gif"));
+        menuItem.setActionCommand(BROADCAST_MATRIX_GAGGLE_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        menuItem = new JMenuItem("Broadcast Gene List to Gaggle", GUIFactory.getIcon("gaggle_broadcast_16.gif"));
+        menuItem.setActionCommand(BROADCAST_NAMELIST_GAGGLE_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        //end Gaggle testing
     }
+    
     
     /** Returns a component to be inserted into the scroll pane row header
      */
@@ -1108,5 +1130,26 @@ public class ExperimentViewer extends JPanel implements IViewer {
 		this.exptID = id;
 		
 	}
+
+	//EH Gaggle test
+	//TODO remove print statements after Gaggle viewer implementation is finished
+    public void broadcastClusterGaggle() {
+    	int[] temp = getCluster();
+    	Experiment e = getExperiment();
+    	if (temp == null)
+    		System.out.println("getCluster returns null");
+    	if(e == null)
+    		System.out.println("getExperiment returns null");
+    	if(framework == null)
+    		System.out.println(this.toString() + ": framework is null");
+    	System.out.println("cluster is size " + getCluster().length);
+    	framework.broadcastGeneCluster(getExperiment(), getCluster());
+	}
+    public void broadcastNamelistGaggle() {
+    	framework.broadcastNamelist(getExperiment(), getCluster());
+    }
+    public void setFramework(IFramework framework) {
+    	this.framework = framework;
+    }
 
 }

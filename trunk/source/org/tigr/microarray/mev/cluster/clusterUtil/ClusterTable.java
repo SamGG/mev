@@ -230,6 +230,12 @@ public class ClusterTable extends JPanel implements IViewer {
             item.setActionCommand("submit-list-command");
             item.addActionListener(listener);
             this.menu.add(item);
+            
+            //EH Gaggle testing
+            item = new JMenuItem("Broadcast Clusters to Gaggle", GUIFactory.getIcon("empty.gif"));
+            item.setActionCommand("submit-broadcastcluster-command");
+            item.addActionListener(listener);
+            this.menu.add(item);
         }
     }
     
@@ -867,6 +873,10 @@ public class ClusterTable extends JPanel implements IViewer {
                     addCluster(newCluster);
             } else if(command.equals("submit-list-command")) {
                 submitCluster();
+
+            //EH Gaggle testing
+            } else if(command.equals("submit-broadcastcluster-command")) {
+                broadcastCluster();
             }
         }
     }
@@ -1215,6 +1225,13 @@ public class ClusterTable extends JPanel implements IViewer {
      */
     public Experiment getExperiment() {
         return null;
+    }
+    
+    //EH Gaggle testing
+    private void broadcastCluster() {
+        Cluster [] clusters = getSelectedClusters();
+        if(clusters != null && clusters.length > 0)
+            this.repository.broadcastGeneClusters(clusters);
     }
     
     /** Returns int value indicating viewer type

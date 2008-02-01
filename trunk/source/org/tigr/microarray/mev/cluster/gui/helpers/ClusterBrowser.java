@@ -67,7 +67,7 @@ public class ClusterBrowser extends JPanel {
     public ClusterBrowser(ClusterRepository repository) {
         this.repository = repository;
         
-        if(repository == null){
+        if(repository == null || repository.isEmpty()){
             add(new JLabel("Empty Cluster Repository"), java.awt.BorderLayout.CENTER);
             return;
         }

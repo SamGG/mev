@@ -20,7 +20,7 @@
 	<property name="java.target.version" value="1.5"/>
 	<property name="version" value="4_1"/>
 	<property name="package.dir" location="${home.dir}/deploy"/>
-	<property name="javac.loc" location="C:\Program Files\Java\jdk1.5.0_07\bin\javac.exe" />
+	<property name="javac.loc" location="C:\Program Files\Java\jdk1.6.0_02\bin\javac.exe" />
 
 
 
@@ -353,6 +353,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 				<pathelement location="${lib.dir}/weka.jar" />
 				<pathelement location="${lib.dir}/cytoscape.jar" />
 				<pathelement location="${lib.dir}/commons-net-1.4.1.jar" />
+				<pathelement location="${lib.dir}/goose.jar" />
             </classpath>	    
         </javac>
         <!-- Copy html files from source to dest directory so they can
