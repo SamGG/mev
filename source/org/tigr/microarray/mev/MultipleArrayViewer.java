@@ -3313,7 +3313,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     /**
      * Stores a cluster with specified indices.
      */
-    private Color storeCluster(int[] indices, Experiment experiment,int clusterType) {
+    private Color storeCluster(int[] indices, Experiment experiment, int clusterType) {
      	DefaultTreeModel model = (DefaultTreeModel) this.tree.getModel();
     	TreePath path = this.tree.getSelectionPath();
     	DefaultMutableTreeNode clusterNode = (DefaultMutableTreeNode) path.getLastPathComponent();
@@ -5710,6 +5710,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         	}
         	nl.setName("MeV Namelist (" + names.length + ") from algorithm " + clusters[0].getAlgorithmName());
     		nl.setNames(names);
+	        nl.setSpecies(currentSpecies);
         	MultipleArrayViewer.this.doBroadcastNamelist(nl);
         }
         
@@ -5725,6 +5726,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         	}
         	nl.setName("MeV Namelist (" + names.length + ")");
     		nl.setNames(names);
+	        nl.setSpecies(currentSpecies);
         	MultipleArrayViewer.this.doBroadcastNamelist(nl);
         }
     }
@@ -6004,6 +6006,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 
 	/**
 	 * @Deprecated
+	 * In place only to fulfill Goose interface requirements.
 	 */
 	public void doBroadcastList() throws RemoteException {
 		//Deprecated. Does nothing
