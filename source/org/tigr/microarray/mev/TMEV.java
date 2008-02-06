@@ -50,8 +50,6 @@ public class TMEV {
     
     public final static int ANALYSIS_LOADED = 101;
     
-    //public final static String TMP_FOLDER_NAME = "mev_saved_state_tmp";
-    
     private static Connection connection;
     private static Hashtable properties;
     private static AlgorithmFactory algorithmFactory;
@@ -64,7 +62,6 @@ public class TMEV {
     private static int nameIndex;
     //FL
     private static boolean indicesAdjusted = false;
-//    private static String[] fieldNames;
     private static String[] databases;
     private static int[] customerAnalysis=null;
     
@@ -100,8 +97,19 @@ public class TMEV {
     public static final int CGH_SPECIES_MM = 1;
     public static final int CGH_SPECIES_Undef = -100;
     
+    public static boolean GAGGLE_CONNECT_ON_STARTUP = false;
+
+    
+    
     public static void main(String[] args) {
         try {
+        	//Determine whether to run with Gaggle enabled
+        	for(String s: args) {
+        		if(s.equalsIgnoreCase("gaggle")) {
+        			//start gaggle up
+        			GAGGLE_CONNECT_ON_STARTUP=true;
+        		}
+        	}
             System.out.println("MultiExperimentViewer - version "+TMEV.VERSION+" - " + System.getProperty("os.name"));
             String Java3DTitle, Java3DVendor, Java3DVersion;
             InformationPanel info = new InformationPanel();

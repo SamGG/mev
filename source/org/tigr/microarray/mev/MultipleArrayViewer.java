@@ -268,7 +268,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	SessionMetaData smd;
 	
 	public static String CURRENT_TEMP_DIR = "mev_temp";
-	//TODO EH Gaggle connection testing
 
 	private static final String ORIGINAL_GAGGLE_NAME= "Multiple Array Viewer";
 	String myGaggleName = ORIGINAL_GAGGLE_NAME;
@@ -344,7 +343,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         //TODO
         //EH Gaggle testing
         //GaggleInit must happen after menubar is created.
-//        gaggleInit();
+        if(TMEV.GAGGLE_CONNECT_ON_STARTUP)  {
+        	gaggleInit();
+        }
     }
     
     
@@ -356,13 +357,13 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
      */
     public MultipleArrayViewer(MultipleArrayData arrayData) {
         super(new JFrame("Multiple Array Viewer"));
-        //EH
         initSessionMetaData();
         
         //TODO
         //EH Gaggle testing
-        //gaggleInit();
-        
+        if(TMEV.GAGGLE_CONNECT_ON_STARTUP)  {
+        	gaggleInit();
+        }        
         // listener
         EventListener eventListener = new EventListener();
         mainframe.addWindowListener(eventListener);
@@ -433,7 +434,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     public MultipleArrayViewer(MultipleArrayData arrayData, MultipleArrayMenubar origMenubar) {
         super(new JFrame("Multiple Array Viewer"));
  
-        //EH
         initSessionMetaData();
         
         
@@ -448,7 +448,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         
         //TODO
         //EH Gaggle testing
-        //gaggleInit();
+        if(TMEV.GAGGLE_CONNECT_ON_STARTUP)  {
+        	gaggleInit();
+        }
         
         //jcb 7/10/06 the Manager constructor takes care of adding field names
         //arrayData now has field names but don't add them again
