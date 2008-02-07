@@ -366,7 +366,8 @@ public class ScriptManager implements Serializable {
                 }
                 String className = (String)action.getValue(ActionManager.PARAMETER);
                 try {
-                    Class clazz = Class.forName(className);
+                	ClassLoader cl = Thread.currentThread().getContextClassLoader();
+                    Class clazz = Class.forName(className, true, cl);
                     IScriptGUI gui = (IScriptGUI)clazz.newInstance();
                     data = gui.getScriptParameters(framework);
                 } catch (Exception e) {

@@ -300,14 +300,7 @@ public class TMEV {
     public static int getIntensityCount() {return TMEV.intensityCount;}
     public static int getHeaderRowCount() {return TMEV.headerRowCount;}
     public static int getHeaderColumnCount() {return TMEV.headerColumnCount;}
-/* EH removed fieldNames from TMEV because they belong in SlideData
-    public static String[] getFieldNames() {
-        if(TMEV.fieldNames == null)
-            return new String[0];
-        return TMEV.fieldNames;
-    }
-*/    
-    //wwang for customer icon
+
     //get initial algorithm list from file tmev.cfg
     public static int[] getCustomerAnalysis() {
 	   String text = new String("");	   	   

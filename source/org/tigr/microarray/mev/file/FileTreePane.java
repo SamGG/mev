@@ -48,11 +48,11 @@ import javax.swing.tree.TreeSelectionModel;
 
 public class FileTreePane extends JPanel {
     
-    public final static ImageIcon ICON_COMPUTER = new ImageIcon(Toolkit.getDefaultToolkit().getImage(FileTreePane.class.getClassLoader().getResource("org/tigr/images/PCIcon.gif")));
-    public final static ImageIcon ICON_DISK = new ImageIcon(Toolkit.getDefaultToolkit().getImage(FileTreePane.class.getClassLoader().getResource("org/tigr/images/disk.gif")));
-    public final static ImageIcon ICON_FOLDER = new ImageIcon(Toolkit.getDefaultToolkit().getImage(FileTreePane.class.getClassLoader().getResource("org/tigr/images/Directory.gif")));
-    public final static ImageIcon ICON_EXPANDEDFOLDER = new ImageIcon(Toolkit.getDefaultToolkit().getImage(FileTreePane.class.getClassLoader().getResource("org/tigr/images/expandedfolder.gif")));
-    
+    public final static ImageIcon ICON_COMPUTER = new ImageIcon(Toolkit.getDefaultToolkit().getImage(Thread.currentThread().getContextClassLoader().getResource("org/tigr/images/PCIcon.gif")));
+    public final static ImageIcon ICON_DISK = new ImageIcon(Toolkit.getDefaultToolkit().getImage(Thread.currentThread().getContextClassLoader().getResource("org/tigr/images/disk.gif")));
+    public final static ImageIcon ICON_FOLDER = new ImageIcon(Toolkit.getDefaultToolkit().getImage(Thread.currentThread().getContextClassLoader().getResource("org/tigr/images/Directory.gif")));
+    public final static ImageIcon ICON_EXPANDEDFOLDER = new ImageIcon(Toolkit.getDefaultToolkit().getImage(Thread.currentThread().getContextClassLoader().getResource("org/tigr/images/expandedfolder.gif")));
+
     // hacked to work around directory problem
     public final static String WINDOWS = "windows";
     public final static String LINUX = "linux";

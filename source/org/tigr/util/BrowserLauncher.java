@@ -254,11 +254,12 @@ public class BrowserLauncher {
 		switch (jvm) {
 			case MRJ_2_0:
 				try {
-					Class aeTargetClass = Class.forName("com.apple.MacOS.AETarget");
-					Class osUtilsClass = Class.forName("com.apple.MacOS.OSUtils");
-					Class appleEventClass = Class.forName("com.apple.MacOS.AppleEvent");
-					Class aeClass = Class.forName("com.apple.MacOS.ae");
-					aeDescClass = Class.forName("com.apple.MacOS.AEDesc");
+					ClassLoader cl = Thread.currentThread().getContextClassLoader();
+					Class aeTargetClass = Class.forName("com.apple.MacOS.AETarget", true, cl);
+					Class osUtilsClass = Class.forName("com.apple.MacOS.OSUtils", true, cl);
+					Class appleEventClass = Class.forName("com.apple.MacOS.AppleEvent", true, cl);
+					Class aeClass = Class.forName("com.apple.MacOS.ae", true, cl);
+					aeDescClass = Class.forName("com.apple.MacOS.AEDesc", true, cl);
 
 					aeTargetConstructor = aeTargetClass.getDeclaredConstructor(new Class [] { int.class });
 					appleEventConstructor = appleEventClass.getDeclaredConstructor(new Class[] { int.class, int.class, aeTargetClass, int.class, int.class });
@@ -290,8 +291,9 @@ public class BrowserLauncher {
 				break;
 			case MRJ_2_1:
 				try {
-					mrjFileUtilsClass = Class.forName("com.apple.mrj.MRJFileUtils");
-					mrjOSTypeClass = Class.forName("com.apple.mrj.MRJOSType");
+					ClassLoader cl = Thread.currentThread().getContextClassLoader();
+					mrjFileUtilsClass = Class.forName("com.apple.mrj.MRJFileUtils", true, cl);
+					mrjOSTypeClass = Class.forName("com.apple.mrj.MRJOSType", true, cl);
 					Field systemFolderField = mrjFileUtilsClass.getDeclaredField("kSystemFolderType");
 					kSystemFolderType = systemFolderField.get(null);
 					findFolder = mrjFileUtilsClass.getDeclaredMethod("findFolder", new Class[] { mrjOSTypeClass });
@@ -316,7 +318,8 @@ public class BrowserLauncher {
 				break;
 			case MRJ_3_0:
 			    try {
-					Class linker = Class.forName("com.apple.mrj.jdirect.Linker");
+			    	ClassLoader cl = Thread.currentThread().getContextClassLoader();
+					Class linker = Class.forName("com.apple.mrj.jdirect.Linker", true, cl);
 					Constructor constructor = linker.getConstructor(new Class[]{ Class.class });
 					linkage = constructor.newInstance(new Object[] { BrowserLauncher.class });
 				} catch (ClassNotFoundException cnfe) {

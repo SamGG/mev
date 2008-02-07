@@ -1147,7 +1147,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     	DefaultMutableTreeNode result = null;
     	String className = (String)action.getValue(ActionManager.PARAMETER);
         try {
-            Class clazz = Class.forName(className);
+        	ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            Class clazz = Class.forName(className, true, cl);
             NumberOfAlterationsCalculator gui = (NumberOfAlterationsCalculator)clazz.newInstance();
             if(gui instanceof LoadGeneList) {
             	File file = new File((String)paramBuff.get(0));
@@ -2604,7 +2605,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         String className = (String)action.getValue(ActionManager.PARAMETER);
         
         try {
-            Class clazz = Class.forName(className);
+        	ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            Class clazz = Class.forName(className, true, cl);
            
             final IClusterGUI gui = (IClusterGUI)clazz.newInstance();
             Thread thread = new Thread(new Runnable() {
@@ -4490,7 +4492,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     	//System.out.println("onCghAnalysis ");
     	String className = (String)action.getValue(ActionManager.PARAMETER);
         try {
-            Class clazz = Class.forName(className);
+        	ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            Class clazz = Class.forName(className, true, cl);
             NumberOfAlterationsCalculator gui = (NumberOfAlterationsCalculator)clazz.newInstance();
             DefaultMutableTreeNode result = gui.execute(framework);
             addAnalysisResult(result);

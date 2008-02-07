@@ -324,7 +324,8 @@ public class ScriptAlgorithmInitDialog extends AlgorithmDialog {
                         descriptions.put(action.getValue(Action.NAME), action.getValue(Action.SHORT_DESCRIPTION));
                         indexHash.put(action.getValue(Action.NAME), String.valueOf(cnt));
                         try {
-                            Class clazz = Class.forName(((String)action.getValue(ActionManager.PARAMETER)));
+                        	ClassLoader cl = Thread.currentThread().getContextClassLoader();
+                            Class clazz = Class.forName(((String)action.getValue(ActionManager.PARAMETER)), true, cl);
                             IClusterGUI gui = (IClusterGUI)clazz.newInstance();
                             button.setEnabled(gui instanceof IScriptGUI);
                         } catch (Exception e ) {  }

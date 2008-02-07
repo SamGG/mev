@@ -41,22 +41,22 @@ public class SuperExpressionFileLoader {
 	
 	public final static ImageIcon ICON_COMPUTER = new ImageIcon(Toolkit
 			.getDefaultToolkit().getImage(
-					SuperExpressionFileLoader.class.getClassLoader()
+					Thread.currentThread().getContextClassLoader()
 							.getResource("org/tigr/images/PCIcon.gif")));
-
+	
 	public final static ImageIcon ICON_DISK = new ImageIcon(Toolkit
 			.getDefaultToolkit().getImage(
-					SuperExpressionFileLoader.class.getClassLoader()
+					Thread.currentThread().getContextClassLoader()
 							.getResource("org/tigr/images/disk.gif")));
 
 	public final static ImageIcon ICON_FOLDER = new ImageIcon(Toolkit
 			.getDefaultToolkit().getImage(
-					SuperExpressionFileLoader.class.getClassLoader()
+					Thread.currentThread().getContextClassLoader()
 							.getResource("org/tigr/images/Directory.gif")));
 
 	public final static ImageIcon ICON_EXPANDEDFOLDER = new ImageIcon(Toolkit
 			.getDefaultToolkit().getImage(
-					SuperExpressionFileLoader.class.getClassLoader()
+					Thread.currentThread().getContextClassLoader()
 							.getResource("org/tigr/images/expandedfolder.gif")));
 
 	protected ExpressionFileLoader[] fileLoaders;
