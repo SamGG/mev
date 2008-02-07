@@ -31,7 +31,8 @@ public class AlgorithmFactoryImpl implements AlgorithmFactory {
 	    throw new AlgorithmException("Can't find bundle for base name "+BUNDLE_NAME);
 	}
 	try {
-	    Class clazz = Class.forName(bundle.getString(name).trim());
+		ClassLoader cl = Thread.currentThread().getContextClassLoader();
+	    Class clazz = Class.forName(bundle.getString(name).trim(), true, cl);
 	    return(Algorithm)clazz.newInstance();
 	} catch (MissingResourceException e) {
 	    throw new AlgorithmException("There is no such algorithm: "+ name);

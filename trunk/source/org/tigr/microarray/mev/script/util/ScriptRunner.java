@@ -162,7 +162,8 @@ public class ScriptRunner {
                 String className = (String)(this.classHash.get(algName));
 
                 try {
-                    Class clazz = Class.forName(className);
+                	ClassLoader cl = Thread.currentThread().getContextClassLoader();
+                    Class clazz = Class.forName(className, true, cl);
                     IScriptGUI gui = (IScriptGUI)clazz.newInstance();
                     currNode = gui.executeScript(framework, data, experiment);
                 } catch (Exception e) {

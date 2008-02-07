@@ -23,12 +23,13 @@ public class ConnectionFactory {
     /** Creates new ConnectionFactory */
     public ConnectionFactory() {
         try{
-            //Class.forName("com.merant.datadirect.jdbc.sqlserver.SQLServerDriver");
-            //Class.forName("com.inet.tds.TdsDriver");
-            //Class.forName("com.microsoft.jdbc.sqlserver.SQLServerDriver");
+        	ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        	Class.forName("com.hxtt.sql.text.TextDriver", true, cl);//.newInstance();
+            //Class.forName("com.merant.datadirect.jdbc.sqlserver.SQLServerDriver", true, cl);
+            //Class.forName("com.inet.tds.TdsDriver", true, cl);
+            //Class.forName("com.microsoft.jdbc.sqlserver.SQLServerDriver", true, cl);
         	//CSV Flat File JDBC Driver
-        	//Class.forName("jstels.jdbc.csv.CsvDriver");
-        	Class.forName("com.hxtt.sql.text.TextDriver");//.newInstance();
+        	//Class.forName("jstels.jdbc.csv.CsvDriver", true, cl);
         }catch(ClassNotFoundException e){
             System.out.println("ERROR:  Exception loading driver class");
         }

@@ -155,7 +155,8 @@ public class HttpCommunicator2 {
         try {
             connection = new HttpURLConnection(sendURL);
             connection.setContext(context);
-            HTTPConnection.addDefaultModule(Class.forName("HTTPClient.CookieModule"),0);
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            HTTPConnection.addDefaultModule(Class.forName("HTTPClient.CookieModule", true, cl),0);
             CookieModule.setCookiePolicyHandler(null);
             connection.setRequestMethod("POST");
             connection.setAllowUserInteraction(true);

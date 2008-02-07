@@ -22,7 +22,8 @@ public class OracleConnectionFactory {
     /** Creates new ConnectionFactory */
     public OracleConnectionFactory() {
         try{
-            Class.forName("oracle.jdbc.driver.OracleDriver");
+        	ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            Class.forName("oracle.jdbc.driver.OracleDriver", true, cl);
         }catch(ClassNotFoundException e){
             System.out.println("ERROR:  Exception loading driver class");
         }

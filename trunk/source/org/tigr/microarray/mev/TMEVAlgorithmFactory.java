@@ -37,11 +37,12 @@ public class TMEVAlgorithmFactory implements AlgorithmFactory {
 	String className = cfg.getString("algorithm.factory.class");
 	if (className != null && !className.equals("null")) {
 	    try {
-		Class clazz = Class.forName(className);
-		localFactory = (AlgorithmFactory)clazz.newInstance();
+	    	ClassLoader cl = Thread.currentThread().getContextClassLoader();
+	    	Class clazz = Class.forName(className, true, cl);
+	    	localFactory = (AlgorithmFactory)clazz.newInstance();
 	    } catch (Exception e) {
-		System.out.println("Local factory not available, check the 'algorithm.factory.class' key in cfg file.");
-		e.printStackTrace();
+	    	System.out.println("Local factory not available, check the 'algorithm.factory.class' key in cfg file.");
+	    	e.printStackTrace();
 	    }
 	} else {
 	    System.out.println("Local factory not available, check the 'algorithm.factory.class' key in cfg file.");
