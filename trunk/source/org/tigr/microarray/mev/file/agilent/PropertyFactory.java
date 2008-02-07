@@ -20,7 +20,8 @@ public final class PropertyFactory {
      */
     public static Properties getPropertyBundle( String sBundle ) throws IOException {
         Properties p = new Properties();
-        InputStream is = ClassLoader.getSystemResourceAsStream( sBundle );
+//        InputStream is = ClassLoader.getSystemResourceAsStream( sBundle );
+        InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(sBundle);
         try {
             p.load( is );
         } finally {

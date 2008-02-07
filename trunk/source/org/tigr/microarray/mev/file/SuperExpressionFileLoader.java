@@ -11,37 +11,16 @@
  */
 package org.tigr.microarray.mev.file;
 
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.net.URL;
 
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
-import javax.swing.JTextField;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.filechooser.FileFilter;
 
@@ -467,16 +446,13 @@ public class SuperExpressionFileLoader {
 		fileLoaderPanel.setSize(new Dimension(750, 750)); 
 		fileLoaderPanel.setPreferredSize(new Dimension(750, 750)); 
 		
+        // begin additions by Dan
 	
-		
-		infoButton = new JButton(
-				null,
-				new ImageIcon(
-						Toolkit
-								.getDefaultToolkit()
-								.getImage(
-										ClassLoader
-												.getSystemResource("org/tigr/images/Information24.gif"))));
+        URL url = this.getClass().getClassLoader().getResource("org/tigr/images/Information24.gif");
+        Image image = Toolkit.getDefaultToolkit().getImage(url);
+        Icon imageIcon = new ImageIcon(image);
+        infoButton = new JButton(null, imageIcon);
+		// end additions by Dan
 		infoButton.setActionCommand("info-command");
 		infoButton.addActionListener(eventListener);
 		infoButton.setFocusPainted(false);
@@ -503,20 +479,24 @@ public class SuperExpressionFileLoader {
 		buttonPanel.setLayout(new GridBagLayout());
 		gba.add(buttonPanel, infoButton, 0, 0, 1, 1, 0, 0, GBA.N, GBA.C,
 				new Insets(5, 5, 5, 5), 0, 0);
-		gba
+
+
+        // begin additions by Dan:
+        url = this.getClass().getClassLoader().getResource("org/tigr/images/dialog_button_bar.gif");
+        image = Toolkit.getDefaultToolkit().getImage(url);
+        imageIcon = new ImageIcon(image);
+        JLabel myLbl = new JLabel(imageIcon);
+		// end additions by Dan 
+
+        gba
 				.add(
 						buttonPanel,
-						new JLabel(
-								new ImageIcon(
-										Toolkit
-												.getDefaultToolkit()
-												.getImage(
-														ClassLoader
-																.getSystemResource("org/tigr/images/dialog_button_bar.gif")))),
+                        myLbl,
 						1, 0, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5),
 						0, 0);
 		gba.add(buttonPanel, cancelButton, 2, 0, 1, 1, 0, 0, GBA.N, GBA.C,
 				new Insets(5, 5, 5, 5), 0, 0);
+
 		gba.add(buttonPanel, loadButton, 3, 0, 1, 1, 0, 0, GBA.N, GBA.C,
 				new Insets(5, 5, 5, 5), 0, 0);
 
@@ -1030,9 +1010,9 @@ public class SuperExpressionFileLoader {
 					new ImageIcon(
 							Toolkit
 									.getDefaultToolkit()
-									.getImage(
-											ClassLoader
-													.getSystemResource("org/tigr/images/dialog_banner2.gif"))));
+									.getImage(// changed by dan:
+											this.getClass().getClassLoader()
+													.getResource("org/tigr/images/dialog_banner2.gif"))));
 			iconLabel.setOpaque(false);
 			iconLabel.setAlignmentX(JLabel.LEFT_ALIGNMENT);
 			FillPanel fillPanel = new FillPanel();
