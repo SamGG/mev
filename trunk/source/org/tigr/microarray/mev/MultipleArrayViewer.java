@@ -5774,6 +5774,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     	
     public boolean connectToGaggle() {
     	System.out.println("Connecting to Gaggle");
+    	TMEV.GAGGLE_CONNECT_ON_STARTUP = true;
     	if(gaggleConnector == null) {
     		gaggleInit();
     	}
