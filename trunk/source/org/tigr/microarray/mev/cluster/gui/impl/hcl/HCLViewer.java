@@ -663,17 +663,22 @@ public class HCLViewer extends JPanel implements IViewer {
         menu.add(menuItem);
         //end Gaggle testing
     }
+    
     public void broadcastClusterGaggle() {
     	Experiment subExp;
     	int[] rows;
-    	if(selectedCluster.isGeneCluster) {
-    		subExp = getExperiment();
-    		rows = getSubTreeElements();
+    	if(doesClusterExist()) {
+	    	if(selectedCluster.isGeneCluster) {
+	    		subExp = getExperiment();
+	    		rows = getSubTreeElements();
+	    	} else {
+	    		subExp = ((org.tigr.microarray.mev.MultipleArrayData)data).getDataSubset(getSubTreeElements(), experiment.getRowMappingArrayCopy()).getExperiment();
+	    		rows = subExp.getRows();
+	    	}
+	    	framework.broadcastGeneCluster(subExp, rows);
     	} else {
-    		subExp = ((org.tigr.microarray.mev.MultipleArrayData)data).getDataSubset(getSubTreeElements(), experiment.getRowMappingArrayCopy()).getExperiment();
-    		rows = subExp.getRows();
+    		framework.broadcastGeneCluster(getExperiment(), getExperiment().getRows());
     	}
-    	framework.broadcastGeneCluster(subExp, rows);
     }
     public void broadcastNamelistGaggle() {
     	framework.broadcastNamelist(getExperiment(), getSubTreeElements());
