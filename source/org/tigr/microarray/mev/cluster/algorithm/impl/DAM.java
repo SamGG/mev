@@ -296,7 +296,7 @@ public class DAM extends AbstractAlgorithm {
                     probFunction = A2Algorithm(expMatrix);
                     break;
             case 3: 
-                    probFunction = InitialClassification(expMatrix);
+                    probFunction = initialClassification(expMatrix);
                     break;
             default: 
                     A0Algorithm(expMatrix);
@@ -1714,7 +1714,7 @@ public class DAM extends AbstractAlgorithm {
 
 
 
-    public Matrix InitialClassification(Matrix expMatrix) throws AlgorithmException {
+    public Matrix initialClassification(Matrix expMatrix) throws AlgorithmException {
 
 //	 System.out.println(" ");
 //  	 System.out.println("******************** Begin InitialClassification() ********************");

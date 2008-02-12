@@ -108,6 +108,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 //Raktim
 import org.tigr.microarray.mev.annotation.GenomeAnnoDialog;
+import org.tigr.microarray.mev.annotation.IAnnotation;
 import org.tigr.microarray.mev.annotation.MevAnnotation;
 
 
@@ -273,7 +274,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	String myGaggleName = ORIGINAL_GAGGLE_NAME;
 	Boss gaggleBoss;
 	String targetGoose = "Boss";
-	String currentSpecies = "unknown";
 	String[] gooseNames;
 	RmiGaggleConnector gaggleConnector;
 	private boolean isConnected = false;
@@ -5664,10 +5664,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	    	for(int i=0; i<temp.length; i++) {
 	    		temp[i] = data.getSampleName(i);
 	    	}
-//	    	System.out.println("1columntitle[0]: " + temp[0]);
 	    	m.setColumnTitles(temp);
-        	//TODO Get species information from new Annotation classes once they are integrated.
-        	m.setSpecies(currentSpecies);
+	    	m.setSpecies(getCurrentSpecies());
     		m.setFullName ("MeV matrix (" + m.getRowCount() + ") from algorithm " + clusters[0].getAlgorithmName());
     		m.setShortName ("MeV matrix (" + m.getRowCount() + ")");
         	MultipleArrayViewer.this.doBroadcastMatrix(m);
@@ -5693,13 +5691,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	    		for(int i=0; i<temp.length; i++)
 	    			temp[i] = "Sample " + i+1;
 	    	}
-	    	System.out.println("2columntitle[0]: " + temp[0]);
 	    	for(int i=0; i<temp.length; i++) {
 	    		temp[i] = data.getSampleName(i);
 	    	}
 	    	m.setColumnTitles(temp);
-	    	//TODO Get species information from new Annotation classes once they are integrated.
-	    	m.setSpecies(currentSpecies);
+	    	m.setSpecies(getCurrentSpecies());
 			m.setFullName ("MeV matrix (" + m.getRowCount() + ")");
 			m.setShortName ("MeV matrix (" + m.getRowCount() + ")");
 	
@@ -5715,15 +5711,17 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         	}
         	nl.setName("MeV Namelist (" + names.length + ") from algorithm " + clusters[0].getAlgorithmName());
     		nl.setNames(names);
-	        nl.setSpecies(currentSpecies);
+	    	nl.setSpecies(getCurrentSpecies());
         	MultipleArrayViewer.this.doBroadcastNamelist(nl);
         }
         
         //TODO remove Experiment parameter? 
         public void broadcastNamelist(Experiment e, int[] rows) {
-        	//System.out.println("Broadcasting namelist");
+        	if(e == null)
+        		System.out.println("Experiment is null");
+        	if(rows == null)
+        		System.out.println("rows is null");
 	        Namelist nl = new Namelist();
-        	ClusterWorker cw = new ClusterWorker(MultipleArrayViewer.this.geneClusterRepository);
         	int[] indices = rows;
         	String[] names = new String[indices.length];
         	for(int i=0; i<names.length; i++) {
@@ -5731,7 +5729,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         	}
         	nl.setName("MeV Namelist (" + names.length + ")");
     		nl.setNames(names);
-	        nl.setSpecies(currentSpecies);
+	    	nl.setSpecies(getCurrentSpecies());
         	MultipleArrayViewer.this.doBroadcastNamelist(nl);
         }
     }
@@ -5841,7 +5839,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	 * Taken from Paul Shannon's MeV 3.1 Goose implementation
 	 */
 	public void doShow() throws RemoteException {
-		mainframe.show ();
 		mainframe.toFront ();
 		MiscUtil.setJFrameAlwaysOnTop (mainframe, true);
 		mainframe.setVisible (true);
@@ -6050,5 +6047,23 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     	    myGaggleName = ORIGINAL_GAGGLE_NAME;
         }
         
+    }
+	/**
+	 * 
+	 * Get species information from new Annotation classes once they are integrated.
+     * This is a hack, until we update the annotation model to handle species a little more easily
+	 */
+    public String getCurrentSpecies() {
+    	ISlideData slideData = (ISlideData)data.getFeaturesList().get(0);
+        ISlideDataElement element = slideData.getSlideDataElement(0);
+    	IAnnotation annot = element.getElementAnnotation();
+        if(annot == null || annot.getSpeciesName() == null || annot.getSpeciesName().equalsIgnoreCase("unknown")) {
+        	if(currentSpecies == null)
+        		return "unknown";
+        	else
+        		return currentSpecies;
+        } else { 
+    		return annot.getSpeciesName();
+        }
     }
 }
