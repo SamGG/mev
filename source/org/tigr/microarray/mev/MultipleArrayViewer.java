@@ -275,7 +275,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	Boss gaggleBoss;
 	String targetGoose = "Boss";
 	//TODO replace this with a reference to the Annotation Model
-	//String currentSpecies = "unknown";
+	String currentSpecies = "unknown";
 	String[] gooseNames;
 	RmiGaggleConnector gaggleConnector;
 	private boolean isConnected = false;
