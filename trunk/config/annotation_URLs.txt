@@ -7,3 +7,4 @@ GO	http://www.ebi.ac.uk/ego/QuickGO?mode=display&entry=FIELD1	Gene Ontology Term
 KEGG	http://www.genome.ad.jp/dbget-bin/show_pathway?FIELD1	KEGG
 GenMAPP	http://www.genmapp.org/MAPPSet-FIELD1	GenMAPP
 Pfam	http://pfam.wustl.edu/cgi-bin/getdesc?acc=FIELD1	Pfam(St. Louis)
+Locus	http://cmr.jcvi.org/tigr-scripts/CMR/shared/GenePage.cgi?locus=FIELD1	CMR Gene Page
