@@ -5,7 +5,7 @@ All rights reserved.
 /*
  * $RCSfile: HCLGUI.java,v $
  * $Revision: 1.5 $
- * $Date: 2006-02-23 20:59:51 $
+ * $Date: 2006/02/23 20:59:51 $
  * $Author: caliente $
  * $State: Exp $
  */
@@ -82,6 +82,8 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
             if (dialog.isClusterGenes()) {
                 progress.setTitle("Clustering by Genes");
                 data.addParam("calculate-genes", String.valueOf(true));
+                data.addParam("optimize-gene-ordering", String.valueOf(false));
+                if (dialog.isGeneOrdering())data.addParam("optimize-gene-ordering", String.valueOf(true));
                 genes_result = algorithm.execute(data);
                 validate(genes_result);
             }
@@ -89,6 +91,8 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
             if (dialog.isClusterExperiments()) {
                 progress.setTitle("Clustering by Examples");
                 data.addParam("calculate-genes", String.valueOf(false));
+                data.addParam("optimize-sample-ordering", String.valueOf(false));
+                if (dialog.isSampleOrdering())data.addParam("optimize-sample-ordering", String.valueOf(true));
                 samples_result = algorithm.execute(data);
                 validate(samples_result);
             }
@@ -143,6 +147,13 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
         
         if (dialog.isClusterExperiments())
             data.addParam("calculate-experiments", String.valueOf(true));
+        
+        if (dialog.isGeneOrdering())
+            data.addParam("optimize-gene-ordering", String.valueOf(true));
+
+        if (dialog.isSampleOrdering())
+            data.addParam("optimize-sample-ordering", String.valueOf(true));
+        
         
         //script control parameters
         

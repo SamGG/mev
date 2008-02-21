@@ -5,7 +5,7 @@ All rights reserved.
 /*
  * $RCSfile: HCLTree.java,v $
  * $Revision: 1.12 $
- * $Date: 2007-09-13 19:07:31 $
+ * $Date: 2007/09/13 19:07:31 $
  * $Author: braistedj $
  * $State: Exp $
  */
@@ -411,7 +411,7 @@ public class HCLTree extends JPanel {
     }
     
     /**
-     * Returns min height of the tree nodes.
+     * Returns max height of the tree nodes.
      */
     private float getMaxHeight(int[] nodeOrder, float[] height) {
         float max = Float.MIN_VALUE;
