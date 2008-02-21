@@ -5,7 +5,7 @@ All rights reserved.
 /*
  * $RCSfile: HCLInitDialog.java,v $
  * $Revision: 1.4 $
- * $Date: 2006-02-23 20:59:51 $
+ * $Date: 2006/02/23 20:59:51 $
  * $Author: caliente $
  * $State: Exp $
  */
@@ -26,6 +26,7 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -43,6 +44,8 @@ public class HCLInitDialog extends AlgorithmDialog {//JDialog {
     
     private JCheckBox genes_box;
     private JCheckBox cluster_box;
+    private JCheckBox gene_ordering_box;
+    private JCheckBox sample_ordering_box;
     private JRadioButton ALC;
     private JRadioButton CLC;
     private JRadioButton SLC;
@@ -70,6 +73,9 @@ public class HCLInitDialog extends AlgorithmDialog {//JDialog {
         ParameterPanel sampleSelectionPanel = new ParameterPanel("Tree Selection");
         sampleSelectionPanel.setLayout(new GridBagLayout());
         
+        ParameterPanel orderingSelectionPanel = new ParameterPanel("Ordering Optimization");
+        orderingSelectionPanel.setLayout(new GridBagLayout());
+        
         genes_box = new JCheckBox("Gene Tree");
         genes_box.setSelected(true);
         genes_box.setFocusPainted(false);
@@ -84,8 +90,27 @@ public class HCLInitDialog extends AlgorithmDialog {//JDialog {
         cluster_box.setForeground(UIManager.getColor("Label.foreground"));
         cluster_box.addItemListener(listener);
         
-        sampleSelectionPanel.add(genes_box, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,0,5,20), 0,0));
-        sampleSelectionPanel.add(cluster_box, new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,20,5,0), 0,0));        
+        gene_ordering_box = new JCheckBox("Optimize Gene Leaf Order");
+        gene_ordering_box.setSelected(false);
+        gene_ordering_box.setFocusPainted(false);
+        gene_ordering_box.setBackground(Color.white);
+        gene_ordering_box.setForeground(UIManager.getColor("Label.foreground"));
+        gene_ordering_box.addItemListener(listener);
+        
+        sample_ordering_box = new JCheckBox("Optimize Sample Leaf Order");
+        sample_ordering_box.setSelected(false);
+        sample_ordering_box.setFocusPainted(false);
+        sample_ordering_box.setBackground(Color.white);
+        sample_ordering_box.setForeground(UIManager.getColor("Label.foreground"));
+        sample_ordering_box.addItemListener(listener);
+        
+        JLabel optimizationWarning = new JLabel("(Leaf ordering optimization will increase the calculation time)");
+        
+        sampleSelectionPanel.add(genes_box, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(0,0,5,111), 0,0));
+        sampleSelectionPanel.add(cluster_box, new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(0,0,5,86), 0,0));        
+        orderingSelectionPanel.add(gene_ordering_box, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(0,0,0,25),0,0));
+        orderingSelectionPanel.add(sample_ordering_box, new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(0,0,0,0),0,0));
+        orderingSelectionPanel.add(optimizationWarning, new GridBagConstraints(0,1,2,1,0,0,GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(10,10,0,0),0,0));
         
         metricPanel = new DistanceMetricPanel(globalMetricName, globalAbsoluteDistance, "Euclidean Distance", "HCL", true, true);
         
@@ -142,9 +167,10 @@ public class HCLInitDialog extends AlgorithmDialog {//JDialog {
         parameterPanel.setBackground(Color.white);
         
         parameterPanel.add(sampleSelectionPanel, new GridBagConstraints(0,0,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
+        parameterPanel.add(orderingSelectionPanel, new GridBagConstraints(0,1,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
         if(showDistancePanel) {
-            parameterPanel.add(metricPanel, new GridBagConstraints(0,1,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
-            parameterPanel.add(linkageMethodPanel, new GridBagConstraints(0,2,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
+            parameterPanel.add(metricPanel, new GridBagConstraints(0,2,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
+            parameterPanel.add(linkageMethodPanel, new GridBagConstraints(0,3,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
         } else {
             parameterPanel.add(linkageMethodPanel, new GridBagConstraints(0,1,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
         }
@@ -172,6 +198,8 @@ public class HCLInitDialog extends AlgorithmDialog {//JDialog {
         ALC.setSelected(true);
         genes_box.setSelected(true);
         cluster_box.setSelected(true);
+        gene_ordering_box.setSelected(false);
+        sample_ordering_box.setSelected(false);
         metricPanel.reset();
     }
     
@@ -187,6 +215,19 @@ public class HCLInitDialog extends AlgorithmDialog {//JDialog {
      */
     public boolean isClusterExperiments() {
         return cluster_box.isSelected();
+    }
+    
+    /**
+     * Returns true, if ordering check box is selected.
+     */
+    public boolean isGeneOrdering() {
+        return gene_ordering_box.isSelected();
+    }
+    /**
+     * Returns true, if ordering check box is selected.
+     */
+    public boolean isSampleOrdering() {
+        return sample_ordering_box.isSelected();
     }
     
     /**
@@ -256,6 +297,8 @@ public class HCLInitDialog extends AlgorithmDialog {//JDialog {
         
         public void itemStateChanged(ItemEvent e) {
             okButton.setEnabled(genes_box.isSelected() || cluster_box.isSelected());
+            if (!genes_box.isSelected()) gene_ordering_box.setSelected(false);
+            if (!cluster_box.isSelected())sample_ordering_box.setSelected(false);
         }
         
         public void windowClosing(WindowEvent e) {
