@@ -1360,7 +1360,7 @@ public class LinearExpressionMapViewer extends JPanel implements IViewer {
 	 */
 	public void linkToURL(int index) {	    
 		JFrame frame = (JFrame)(JOptionPane.getFrameForComponent(this));        	    	
-		ExperimentUtil.linkToURL(frame, fullExperiment, data, this.replicates[index][0], locusIDFieldName, ExperimentUtil.lastSelectedAnnotationIndices);      	    
+		ExperimentUtil.linkToURL(frame, fullExperiment, data, fullExperiment.getGeneIndexMappedToData(this.replicates[index][0]), locusIDFieldName, ExperimentUtil.lastSelectedAnnotationIndices);      	    
 	}
 
 	/**
