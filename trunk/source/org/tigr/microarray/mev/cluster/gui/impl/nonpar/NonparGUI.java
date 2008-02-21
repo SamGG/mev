@@ -23,6 +23,7 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
@@ -89,8 +90,15 @@ public class NonparGUI implements IClusterGUI {
 
 			//grab the HCL parameters if needed
 			if(algData.getParams().getBoolean("hcl-execution")) {
-				HCLInitDialog hclDialog = new HCLInitDialog(mainFrame);
-				if(hclDialog.showModal() == JOptionPane.OK_OPTION) {
+				IDistanceMenu menu = framework.getDistanceMenu();				
+				   int function = menu.getDistanceFunction();        
+			        if (function == Algorithm.DEFAULT) {        
+			            function = Algorithm.EUCLIDEAN;            
+			        }
+			        
+	            HCLInitDialog hclDialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(function), false, true);
+				
+	            if(hclDialog.showModal() == JOptionPane.OK_OPTION) {
 					int metric = hclDialog.getDistanceMetric();
 					boolean runGenes = hclDialog.isClusterGenes();
 					boolean runSamples = hclDialog.isClusterExperiments();
