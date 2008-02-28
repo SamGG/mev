@@ -457,12 +457,12 @@ public class InfoDisplay extends ActionInfoDialog  {
         		String[]annotations=data.getElementAnnotation(this.probe, MevAnnotation.getFieldNames()[i]); 
 //        		System.out.println("InfoDisplay:annotations"+annotations[0]);
         		if(annotations.length>1) {
-        			message += "<tr valign=top><td><i>" + "<html><font color=#0000ff><u>"+MevAnnotation.getFieldNames()[i]+"</u></font></html>" + "</i></td><td>" + ((AnnoAttributeObj)data.getElementAnnotationObject(i, MevAnnotation.getFieldNames()[i])).toString() + "</td></tr>";
+        			message += "<tr valign=top><td><i>"  +MevAnnotation.getFieldNames()[i]+ "</i></td><td>" + ((AnnoAttributeObj)data.getElementAnnotationObject(i, MevAnnotation.getFieldNames()[i])).toString() + "</td></tr>";
 //        		System.out.println("annotation size is >1:");
         		}
         		else
         			
-        		message += "<tr valign=top><td><i>" + "<html><font color=#0000ff><u>"+MevAnnotation.getFieldNames()[i] +"</i></td><td>" + annotations[0]+"</u></font></html>" +"</td></tr>";
+        		message += "<tr valign=top><td><i>" +MevAnnotation.getFieldNames()[i] +"</i></td><td>" + annotations[0] +"</td></tr>";
         		
         	}               
         }
