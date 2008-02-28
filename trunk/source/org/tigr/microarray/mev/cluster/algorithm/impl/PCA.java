@@ -51,11 +51,6 @@ public class PCA extends AbstractAlgorithm {
 	final int numberOfGenes = expMatrix.getRowDimension();
 	final int numberOfSamples = expMatrix.getColumnDimension();
 	
-	AlgorithmEvent event = new AlgorithmEvent(this, AlgorithmEvent.PROGRESS_VALUE, 0);
-	int eventValue = 0;
-	event.setIntValue(eventValue);
-	event.setDescription("Calculate covariance matrix\n");
-	fireValueChanged(event);
         /*
 	FloatMatrix An = new FloatMatrix(numberOfGenes, numberOfSamples);
 	for (int row=0; row<numberOfGenes; row++) {
@@ -68,7 +63,16 @@ public class PCA extends AbstractAlgorithm {
 	    }
 	}
         */
-        FloatMatrix An = imputeKNearestMatrix(expMatrix, numNeighbors);
+    
+	FloatMatrix An = imputeKNearestMatrix(expMatrix, numNeighbors);
+	
+	//jcb moved this event report after imputation
+	AlgorithmEvent event = new AlgorithmEvent(this, AlgorithmEvent.PROGRESS_VALUE, 0);
+	int eventValue = 0;
+	event.setIntValue(eventValue);
+	event.setDescription("Calculate covariance matrix\n");
+	fireValueChanged(event);
+	
 	FloatMatrix matrix = null;
 	if (mode==0) {
 	    matrix = An;
@@ -275,8 +279,10 @@ public class PCA extends AbstractAlgorithm {
 	int pp = p-1;
 	int iter = 0;
 	float eps = (float)Math.pow(2.0,-52.0);
+	
 	event.setDescription("Main iteration loop started...\n");
 	eventValue++;
+	
 	event.setIntValue(eventValue);
 	fireValueChanged(event);
 	counter=0;
@@ -547,7 +553,7 @@ public class PCA extends AbstractAlgorithm {
         FloatMatrix resultMatrix = new FloatMatrix(numRows, numCols);
         
         AlgorithmEvent event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, numGenes);
-        event.setDescription("Imputing missing values");
+        event.setDescription("Imputing missing values\n");
         fireValueChanged(event);
         event.setId(AlgorithmEvent.PROGRESS_VALUE);
         
