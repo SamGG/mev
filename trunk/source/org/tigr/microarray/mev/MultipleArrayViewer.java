@@ -2346,12 +2346,17 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         }else if(colorScheme==IDisplayMenu.ACCESSIBLE_COLOR_SCHEME) {//Added by Sarita
         	        	
         	AccessibleColorSchemeSelectionDialog adialog = new AccessibleColorSchemeSelectionDialog((Frame)getFrame(), true, menubar.getNegativeGradientImage(), menubar.getPositiveGradientImage(), this.menubar.getDisplayMenu().getUseDoubleGradient());            
-            adialog.showModal();
+          
+           
+            //Sarita:
+            //Added the if loop, to take make sure that heat map does not change 
+            //color if we cancelled the color selection
+            if(adialog.showModal()!=JOptionPane.CANCEL_OPTION) {
              this.menubar.setPositiveAccessibleGradient(adialog.getPositiveGradient());
              this.menubar.setNegativeAccessibleGradient(adialog.getNegativeGradient());
              this.menubar.setColorSchemeIndex(colorScheme);
              this.menubar.setUseDoubleGradient(adialog.getUseDoubleGradient());     
-          
+            }
         	
         } else { 
         	//select a custom color scheme
