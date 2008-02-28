@@ -169,6 +169,23 @@ public class MultipleArrayData implements IData {
     public int CGH_SPECIES = TMEV.CGH_SPECIES_Undef;
     public boolean hasCloneDistribution = false;
     
+    
+    /**
+     * @author Sarita Nair
+     * organismName and chipType added here to facilitate
+     * gaggle and EASE get this information independently of the
+     * Annotation model
+     * 
+     * 
+     * 
+     */
+    public String organismName;
+    public String chipType;
+    
+    
+    
+    
+    
     public MultipleArrayData(){mads = new MultipleArrayDataState();}
     /**
      * PersistenceDelegate constructor.  This constructor can be used to recreate a
@@ -284,6 +301,39 @@ public class MultipleArrayData implements IData {
 	}
 	public MultipleArrayDataState getMultipleArrayDataState(){return mads;}
 
+	
+	
+	/**
+	 * 
+	 * getters and setters for organismName and chipType
+	 * 
+	 * 
+	 * 
+	 */
+	
+	public String getOrganismName() {
+		return this.organismName;
+	}
+	
+	
+	public String getchipType() {
+		return this.chipType;
+	}
+	
+	
+	public void setOrganismName(String name) {
+		this.organismName=name;
+		
+	}
+	
+	
+	public void setchipType(String chipType) {
+		this.chipType=chipType;
+	}
+	
+	
+	
+	
 
     /**
      *  Sets the data objects feature list
