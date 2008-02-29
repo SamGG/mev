@@ -124,16 +124,14 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
         
         
         /*Loop added by Sarita to check if Annotation has been loaded
-         * "isAnnotationLoaded" is a boolean variable, which is set
-         * to "true" in the function onAnnotationFileBrowse().
-         * 
+        
          * The loop was included so as to enable loading data
          * irrespective of whether annotation was loaded or not
          * 
          */
         if(this.mav.getData().isAnnotationLoaded()) {
         	_tempAnno = loadAffyAnno(new File(getAnnotationFileName()));
-        	//this.mav.getData().setAnnotationLoaded(true);
+        	
         }
         
      
@@ -232,12 +230,13 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
 
     private Hashtable loadAffyAnno(File affyFile) {
     	Hashtable _temp = null;
-    	AnnotationFileReader reader = new AnnotationFileReader();
+    	//AnnotationFileReader reader = new AnnotationFileReader();
+    	AnnotationFileReader reader = new AnnotationFileReader(this.mav);
     	try {
     		_temp = reader.loadAffyAnnotation(affyFile);
     		
     		
-    		//reader.loadAffyAnnotation(affyFile);
+    		
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -577,23 +576,30 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
            if(_tempAnno.size()!=0) {
         	   
         	           	   
-            if(((MevAnnotation)_tempAnno.get(cloneName))!=null) {
-            	MevAnnotation mevAnno = (MevAnnotation)_tempAnno.get(cloneName);
-            mevAnno.setViewer(this.mav);
-           slideDataElement = new AffySlideDataElement(String.valueOf(curpos), rows, columns, intensities, moreFields, mevAnno);
-           }else {
-        	   
-        	   MevAnnotation mevAnno = new MevAnnotation();
-        	   mevAnno.setCloneID(cloneName);
-               mevAnno.setViewer(this.mav);
-              slideDataElement = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields, mevAnno);
-              
-          	/*   String eMsg = "<html>The Probes IDs in your data <br>"+
-     	   		"<html>must be a subset or match all the Probe ID's<br>" +
-     	   		"<html>in the Annotation files. This does not seem to be the case..<br></html>";
-     	   		 JOptionPane.showMessageDialog(null, eMsg, "ERROR", JOptionPane.ERROR_MESSAGE);
-     	   		 */
-        }
+        	   if(((MevAnnotation)_tempAnno.get(cloneName))!=null) {
+        		   MevAnnotation mevAnno = (MevAnnotation)_tempAnno.get(cloneName);
+        		   //Right now these two values get set a million times. Have to find a way to
+        		   //stop that---Sarita.
+        		   ((MultipleArrayData)this.mav.getData()).setchipType(mevAnno.getChipType());
+        		   ((MultipleArrayData)this.mav.getData()).setOrganismName(mevAnno.getSpeciesName());
+
+        		   slideDataElement = new AffySlideDataElement(String.valueOf(curpos), rows, columns, intensities, moreFields, mevAnno);
+        	   } else {
+        		   /**
+        		    * Sarita: clone ID explicitly set here because if the data file
+        		    * has a probe (for eg. Affy house keeping probes) for which Resourcerer
+        		    * does not have annotation, MeV would still work fine. NA will be
+        		    * appended for the rest of the fields. 
+        		    * 
+        		    * 
+        		    */
+        		   MevAnnotation mevAnno = new MevAnnotation();
+        		   mevAnno.setCloneID(cloneName);
+        		   mevAnno.setViewer(this.mav);
+        		   slideDataElement = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields, mevAnno);
+
+
+        	   }
            }
             /* Added by Sarita
              * Checks if annotation was loaded and accordingly use
