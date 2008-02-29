@@ -42,4 +42,5 @@ public class AnnotationFieldConstants {
 	public static final String KEGG = "KEGG";
 	public static final String DESC = "DESC";
 	public static final String TGI_TC = "TGI_TC";
+	public static final String CHR_CYTOBAND = "CHR:TX_START-TX_END(STRAND)";
 }
