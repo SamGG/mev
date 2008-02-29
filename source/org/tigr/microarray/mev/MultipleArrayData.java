@@ -296,13 +296,9 @@ public class MultipleArrayData implements IData {
 	}
 	public MultipleArrayDataState getMultipleArrayDataState(){return mads;}
 
-	
-	
 	/**
 	 * 
 	 * getters and setters for organismName and chipType
-	 * 
-	 * 
 	 * 
 	 */
 	
@@ -310,59 +306,19 @@ public class MultipleArrayData implements IData {
 		return this.organismName;
 	}
 	
-	
 	public String getchipType() {
 		return this.chipType;
 	}
-	
 	
 	public void setOrganismName(String name) {
 		this.organismName=name;
 		
 	}
 	
-	
 	public void setchipType(String chipType) {
 		this.chipType=chipType;
 	}
 	
-	
-	
-	
-
-	
-	/**
-	 * 
-	 * getters and setters for organismName and chipType
-	 * 
-	 * 
-	 * 
-	 */
-	
-	public String getOrganismName() {
-		return this.organismName;
-	}
-	
-	
-	public String getchipType() {
-		return this.chipType;
-	}
-	
-	
-	public void setOrganismName(String name) {
-		this.organismName=name;
-		
-	}
-	
-	
-	public void setchipType(String chipType) {
-		this.chipType=chipType;
-	}
-	
-	
-	
-	
-
     /**
      *  Sets the data objects feature list
      */
