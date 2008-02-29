@@ -10,14 +10,25 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
+import org.tigr.microarray.mev.MultipleArrayViewer;
 import org.tigr.util.StringSplitter;
 
 public class AnnotationFileReader {
 	String[] fieldNames=new String[0];
 	Vector columnNames=new Vector();
-	
+	MultipleArrayViewer mav;
 	
     public AnnotationFileReader() {
+    }
+    
+    //Added Feb 26, 2008
+    /**
+     * Sarita: This contsructor was added to allow setting chipType and organismName,
+     * while reading Annotation file. More comments below.
+     * 
+     */
+    public AnnotationFileReader(MultipleArrayViewer mav) {
+    	this.mav=mav;
     }
     
     public void setAnnotation(String[] newAnnotation) {
@@ -32,7 +43,7 @@ public class AnnotationFileReader {
     
     
     
-    public Hashtable loadAffyAnnotation(File affyFIle) throws IOException {
+    public Hashtable loadAffyAnnotation(File affyFIle) throws Exception {
     	//System.out.println("loadAffyAnnotation");
     	int numLines = this.getCountOfLines(affyFIle);
     	Hashtable<String, MevAnnotation> annoHash  = new Hashtable<String, MevAnnotation>(numLines);
@@ -47,18 +58,43 @@ public class AnnotationFileReader {
     	this.columnNames=getColumnHeader(affyFIle);
     	String _temp="NA";
     	Vector<String>_tmpGO=new Vector<String>();
+    	String orgName="";
+    	String chipType="";
+    	
+    	
     	while ((currentLine = reader.readLine()) != null) {
 
     		annotationObj = new MevAnnotation(); //TODO
     		probeID = "";
     		
     		while(currentLine.startsWith("#")) {
-    			//System.out.println(currentLine);
+
+    			StringSplitter split=new StringSplitter(':');//commented out till the mav.getInstance gets solved
+    			split.init(currentLine);
+
+    			/**
+    			 * The first two lines of the annotation file are Array name and Organism name
+    			 * The if loop parses and populates the local variables orgName and chipType.
+    			 * These variables are used to setChipType and setspeciesName later
+    			 * in the code.
+    			 * 
+    			 * 
+    			 */
+    			if(counter==0) {
+    				split.nextToken();
+    				chipType=split.nextToken();
+
+    			}else if(counter==1) {
+    				split.nextToken();
+    				orgName=split.nextToken();
+
+    			}
+    			counter=counter+1;
     			currentLine=reader.readLine();
     			
     		}
-    	
-    	
+
+    	    counter=0;
     		ss.init(currentLine);
           
     		for(int i = 0; i < columnNames.size(); i++){
@@ -134,7 +170,25 @@ public class AnnotationFileReader {
 
 
     		}
-        //  }
+       
+    		/**
+    		 * AnnotationReader now sets the viewer here, because "setChipType"
+    		 * requires to know the instance of MAV. Earlier, the viewer was
+    		 * set in the individual file loaders in the if loop
+    		 * "if(((MevAnnotation)_tempAnno.get(cloneName))!=null)".
+    		 * 
+    		 * The reason for checking value of 'counter' before setting 
+    		 * chipType and speciesName is to just do it once; MeVAnnotation object
+    		 * is created for every row (gene).
+    		 * 
+    		 * 
+    		 */
+    		annotationObj.setViewer(this.mav);
+    		if(counter==0) {
+    			
+    			annotationObj.setChipType(chipType);
+    			annotationObj.setSpeciesName(orgName);
+    		}
 
 
     		//  System.out.println("Clone name:"+cloneName);
