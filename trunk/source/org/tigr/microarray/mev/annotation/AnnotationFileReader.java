@@ -43,7 +43,7 @@ public class AnnotationFileReader {
     
     
     
-    public Hashtable loadAffyAnnotation(File affyFIle) throws Exception {
+    public Hashtable<String, MevAnnotation> loadAffyAnnotation(File affyFIle) throws IOException {
     	//System.out.println("loadAffyAnnotation");
     	int numLines = this.getCountOfLines(affyFIle);
     	Hashtable<String, MevAnnotation> annoHash  = new Hashtable<String, MevAnnotation>(numLines);
