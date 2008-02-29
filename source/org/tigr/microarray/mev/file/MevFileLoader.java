@@ -905,7 +905,9 @@ public class MevFileLoader extends ExpressionFileLoader {
 
 			if (((DefaultListModel) mevSelectedList.getModel()).size() > 0) {
 				markLoadEnabled(true);
-			} else {
+			}else if (((DefaultListModel) annSelectedList.getModel()).size() > 0) {
+				markLoadEnabled(true);
+			}else {
 				markLoadEnabled(false);
 			}
 		}
@@ -1026,7 +1028,7 @@ public class MevFileLoader extends ExpressionFileLoader {
 			}
 
 			validateLists();
-			updateAnnFieldTextField();
+			
 		}
 
 		public void onAnnAddAll() {
@@ -1040,7 +1042,7 @@ public class MevFileLoader extends ExpressionFileLoader {
 			}
 
 			validateLists();
-			updateAnnFieldTextField();
+			
 		}
 
 		public void onAnnRemove() {
@@ -1053,7 +1055,7 @@ public class MevFileLoader extends ExpressionFileLoader {
 			}
 
 			validateLists();
-			updateAnnFieldTextField();
+			
 		}
 
 		public void onAnnRemoveAll() {
@@ -1061,35 +1063,12 @@ public class MevFileLoader extends ExpressionFileLoader {
 			((DefaultListModel) annSelectedList.getModel()).removeAllElements();
 
 			validateLists();
-			updateAnnFieldTextField();
+			
 		}
 
 	
 		
-		public void updateAnnFieldTextField() {
-			DefaultListModel model = (DefaultListModel) annSelectedList
-					.getModel();
-			AnnFileParser parser = new AnnFileParser();
-			Vector annVector;
-			String text = "";
-			for (int i = 0; i < model.getSize(); i++) {
-				File annFile = (File) (model.get(i));
-				parser.loadFile(annFile);
-				if (parser.isAnnFileLoaded()) {
-					annVector = parser.getColumnHeaders();
-
-					if (i > 0 && annVector.size() > 3)
-						text += ", ";
-
-					for (int j = 3; j < annVector.size() - 1; j++) {
-						text += (((String) annVector.elementAt(j))) + ", ";
-					}
-					text += ((String) annVector.elementAt(annVector.size() - 1));
-				}
-			}
-			// this.annFieldsTextField.setText(text);
-		}
-
+		
 		public void onUseMevAnn() {
 			if (this.noAnnFileBox.isSelected())
 				enableAnnotationPanel(false);
