@@ -343,7 +343,7 @@ public class EASEUpdateManager {
         msg += "This will become the default location for EASE annoation information.";
         msg += "</html>";
         
-        HTMLMessageFileChooser chooser = new HTMLMessageFileChooser(frame, "EASE File Update Location", msg, TMEV.getFile("data"), true);
+        HTMLMessageFileChooser chooser = new HTMLMessageFileChooser(frame, "EASE File Update Location", msg, TMEV.getFile("data/ease"), true);
         JFileChooser baseChooser = chooser.getFileChooser();
         baseChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         chooser.setSize(550, 550);

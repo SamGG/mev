@@ -21,11 +21,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.tigr.microarray.mev.annotation.AnnotationFileReader;
+import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.cluster.algorithm.*;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
@@ -447,8 +450,9 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
      */
     protected String [] loadGeneIDs() throws IOException {
         if(annotationFile.exists()) {
-        	org.tigr.microarray.mev.annotation.AnnotationFileReader afr = new org.tigr.microarray.mev.annotation.AnnotationFileReader();
-            java.util.Hashtable<String, org.tigr.microarray.mev.annotation.MevAnnotation> annotations = afr.loadAffyAnnotation(annotationFile);
+        	try {
+        	AnnotationFileReader afr = new AnnotationFileReader();
+            Hashtable<String, MevAnnotation> annotations = afr.loadAffyAnnotation(annotationFile);
             String[] annot = new String[annotations.size()];
             java.util.Enumeration<String> allAnnotations = annotations.keys();
             int i=0;
@@ -459,6 +463,9 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
             	i++;
             }
             return annot;
+        	} catch (IOException ioe) {
+        		//TODO handle this!
+        	}
         }
         return null;
     }
