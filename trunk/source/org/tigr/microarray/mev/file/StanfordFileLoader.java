@@ -285,6 +285,7 @@ public class StanfordFileLoader extends ExpressionFileLoader {
                	  */
                 	MevAnnotation mevAnno = new MevAnnotation();
                 	mevAnno.setCloneID(cloneName);
+                	mevAnno.setViewer(this.mav);
                     sde = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields, mevAnno);
                 	
                 }
