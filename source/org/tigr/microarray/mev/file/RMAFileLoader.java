@@ -104,9 +104,7 @@ public class RMAFileLoader extends ExpressionFileLoader {
         
         
         /*Loop added by Sarita to check if Annotation has been loaded
-         * "isAnnotationLoaded" is a boolean variable, which is set
-         * to "true" in the function onAnnotationFileBrowse().
-         * 
+       
          * The loop was included so as to enable loading data
          * irrespective of whether annotation was loaded or not
          * 
@@ -132,22 +130,22 @@ public class RMAFileLoader extends ExpressionFileLoader {
     public ISlideData loadExpressionFile(File f){
         return null;
     }
+  
     private Hashtable loadAffyAnno(File affyFile) {
-       	Hashtable _temp = null;
-    	AnnotationFileReader reader = new AnnotationFileReader();
+    	Hashtable _temp = null;
+    	//AnnotationFileReader reader = new AnnotationFileReader();
+    	AnnotationFileReader reader = new AnnotationFileReader(this.mav);
     	try {
     		_temp = reader.loadAffyAnnotation(affyFile);
-    		
-    		
-    		//reader.loadAffyAnnotation(affyFile);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return _temp;
+
+    	} catch (Exception e) {
+    		// TODO Auto-generated catch block
+    		e.printStackTrace();
+    	}
+    	return _temp;
     }
 
-    
+
 
     
 
@@ -258,22 +256,22 @@ public class RMAFileLoader extends ExpressionFileLoader {
                  if(_tempAnno.size()!=0) {
               	   
               	           	   
-                  if(((MevAnnotation)_tempAnno.get(cloneName))!=null) {
-                  	MevAnnotation mevAnno = (MevAnnotation)_tempAnno.get(cloneName);
-                  mevAnno.setViewer(this.mav);
-                 sde = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields, mevAnno);
-                 }else {
-              	  /* String eMsg = "<html>The Probes IDs in your data <br>"+
-              	   		"<html>must be a subset or match all the Probe ID's<br>" +
-              	   		"<html>in the Annotation files. This does not seem to be the case..<br></html>";
-              	   		 JOptionPane.showMessageDialog(null, eMsg, "ERROR", JOptionPane.ERROR_MESSAGE);
-              	   	*/
-              	   	MevAnnotation mevAnno = new MevAnnotation();
-              	   	mevAnno.setCloneID(cloneName);
-                    mevAnno.setViewer(this.mav);
-                   sde = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields, mevAnno);
-                 
-                 }
+                	 if(((MevAnnotation)_tempAnno.get(cloneName))!=null) {
+                		 MevAnnotation mevAnno = (MevAnnotation)_tempAnno.get(cloneName);
+                		 //Right now these two values get set a million times. Have to find a way to
+                		 //stop that---Sarita.
+                		 ((MultipleArrayData)this.mav.getData()).setchipType(mevAnno.getChipType());
+                		 ((MultipleArrayData)this.mav.getData()).setOrganismName(mevAnno.getSpeciesName());
+
+                		 sde = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields, mevAnno);
+                	 } else {
+
+                		 MevAnnotation mevAnno = new MevAnnotation();
+                		 mevAnno.setCloneID(cloneName);
+                		 mevAnno.setViewer(this.mav);
+                		 sde = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields, mevAnno);
+
+                	 }
               	   
                  }
                   /* Added by Sarita
