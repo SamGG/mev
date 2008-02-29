@@ -90,60 +90,66 @@ public class AnnotationStateSavingParser {
        			int index=columnNames.indexOf((Object)field);
        		
        			Vector<String> _tmpGo = new Vector<String>();
-       			if(field.equalsIgnoreCase("CLONE_ID")&&index==i){
+       			if(field.equalsIgnoreCase(AnnotationFieldConstants.CLONE_ID)&&index==i){
        				cloneID=_temp;
        				annotationObj.setCloneID(_temp);
        				//System.out.println("clone id:"+probeID);
-       			}else if(field.equalsIgnoreCase("GENBANK_ACC")&&index==i){
+       			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.GENBANK_ACC)&&index==i){
        				if(_temp==null){
        					_temp="NA";
        				}
        				annotationObj.setGenBankAcc(_temp);
        				//System.out.println("Genbank acc:"+_temp);
-       			}else if(field.equalsIgnoreCase("UNIGENE_ID")&&index==i){
+       			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.UNIGENE_ID)&&index==i){
        				if(_temp==null){
        					_temp="NA";
        				}
        				annotationObj.setUnigeneID(_temp);
        			//	System.out.println("Unigene id:"+_temp);
-       			}else if(field.equalsIgnoreCase("GENE_TITLE")&&index==i){ 
+       			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.GENE_TITLE)&&index==i){ 
        				if(_temp==""){
        					_temp="NA";
        				}
        				annotationObj.setGeneTitle(_temp);
        				//System.out.println("Gene_Title:"+_temp);
-       			}else if(field.equalsIgnoreCase("GENE_SYMBOL")&&index==i){ 
+       			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.GENE_SYMBOL)&&index==i){ 
        				if(_temp==null){
        					_temp="NA";
        				}
        				annotationObj.setGeneSymbol(_temp);
        			//	System.out.println("Gene Symbol:"+_temp);
-       			}else if(field.equalsIgnoreCase("CHR:TX_START-TX_END(STRAND)")&&index==i){
+       			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.CHR_CYTOBAND)&&index==i){
        				if(_temp==null){
        					_temp="NA";
        				}
        				setAlignmentInfo(_temp, annotationObj);
        			//	System.out.println("Cytoband:"+_temp);
-       			}else if(field.equalsIgnoreCase("ENTREZ_ID")&&index==i){
+       			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.ENTREZ_ID)&&index==i){
        				if(_temp==null){
        					_temp="NA";
        				}
        				annotationObj.setLocusLinkID(_temp);
        			//	System.out.println("Entrez id:"+_temp);
-       			}else if(field.equalsIgnoreCase("REFSEQ_ACC")&&index==i){
+       			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.REFSEQ_ACC)&&index==i){
        				if(_temp==null){
        					_temp="NA";
        				}
        				String mRnaRefSeqs[] = parsemRnaIds(_temp);
    			 		annotationObj.setRefSeqTxAcc(mRnaRefSeqs);
        			//	System.out.println("RefSeq Acc:"+_temp);
-       			}else if(field.equalsIgnoreCase("GO_TERMS")&&index==i){
+       			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.GO_TERMS)&&index==i){
        				if(_temp==null){
        					_temp="NA";
        				}
        				 _tmpGo = parseGoTerms(_temp, "///"); 
        				annotationObj.setGoTerms((String[]) _tmpGo.toArray(new String[_tmpGo.size()]));
        			//	System.out.println("GO_Terms:"+_temp);
+       			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.TGI_TC)&&index==i){
+       				if(_temp==null){
+       					_temp="NA";
+       				}
+       				annotationObj.setTgiTC(_temp);
+       			//	System.out.println("TGI_TC:"+_temp);
        			}
 
 
@@ -170,7 +176,7 @@ public class AnnotationStateSavingParser {
 	    	StringSplitter split = new StringSplitter(' ');
 	    	StringSplitter ss = new StringSplitter('\t');
 	    	String currentLine;
-	    	Vector columnNames=new Vector();
+	    	Vector<String> columnNames=new Vector<String>();
 	    	while((currentLine=reader.readLine()).contains("#")) {
 	    		//System.out.println("getColumnHeader()::currentLine:"+currentLine);
 	    		//while(!currentLine.equals("# Fields:")){
@@ -311,6 +317,8 @@ public class AnnotationStateSavingParser {
 		writer.write("#    8. CHR:TX_START-TX_END(STRAND)");
 		writer.println();
 		writer.write("#    9. GO_TERMS");
+		writer.println();
+		writer.write("#   10. TGI_TC");
 		writer.println();
 		
 		for(int i=0; i<IAnnotations.size();i++) {

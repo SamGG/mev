@@ -134,7 +134,7 @@ public class AnnotationFileReader {
     				}
     				annotationObj.setGeneSymbol(_temp);
     			//	System.out.println("Gene Symbol:"+_temp);
-    			}else if(field.equalsIgnoreCase("CHR:TX_START-TX_END(STRAND)")&&index==i){
+    			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.CHR_CYTOBAND)&&index==i){
     				if(_temp==null){
     					_temp="NA";
     				}
