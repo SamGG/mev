@@ -578,7 +578,7 @@ public class ActionManager implements java.io.Serializable {
     public static final String SHOW_GOOSE_CMD = "show-goose-cmd";
     public static final String SHOW_GOOSE_CMD_NAME  = "Show Goose";
     public static final String SHOW_GOOSE_SELECT_ACTION = "show-goose-action";
-    public static final String GAGGLE_ICON = "gaggle-icon.gif";
+    public static final String GAGGLE_ICON = "gaggle_icon_16.gif";
   
     
     

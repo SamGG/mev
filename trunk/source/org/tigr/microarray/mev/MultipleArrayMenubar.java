@@ -64,7 +64,6 @@ public class MultipleArrayMenubar extends JMenuBar {
     CGHDisplayMenu cghDisplayMenu = new CGHDisplayMenu();
     CGHCloneValueMenu cghCloneValueMenu = new CGHCloneValueMenu();
    
-    //EH Gaggle Test
     JMenu gaggleMenu, targetMenu, showMenu;
     ButtonGroup targetGooseNameGroup, showtargetGooseNameGroup;
    
