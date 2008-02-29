@@ -38,11 +38,6 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
-import java.io.*;
-import java.rmi.Naming;
-import java.rmi.RemoteException;
-import java.rmi.UnmarshalException;
-import java.rmi.server.UnicastRemoteObject;
 import java.beans.ExceptionListener;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
@@ -58,13 +53,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.rmi.RemoteException;
+import java.rmi.UnmarshalException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.EventObject;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
@@ -106,14 +102,20 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-//Raktim
-import org.tigr.microarray.mev.annotation.GenomeAnnoDialog;
-import org.tigr.microarray.mev.annotation.IAnnotation;
-import org.tigr.microarray.mev.annotation.MevAnnotation;
-
-
+import org.systemsbiology.gaggle.core.Boss;
+import org.systemsbiology.gaggle.core.Goose;
+import org.systemsbiology.gaggle.core.datatypes.DataMatrix;
+import org.systemsbiology.gaggle.core.datatypes.GaggleTuple;
+import org.systemsbiology.gaggle.core.datatypes.Namelist;
+import org.systemsbiology.gaggle.core.datatypes.Network;
+import org.systemsbiology.gaggle.geese.common.GaggleConnectionListener;
+import org.systemsbiology.gaggle.geese.common.GooseShutdownHook;
+import org.systemsbiology.gaggle.geese.common.RmiGaggleConnector;
+import org.systemsbiology.gaggle.util.MiscUtil;
 import org.tigr.microarray.file.AnnFileParser;
 import org.tigr.microarray.mev.action.ActionManager;
+import org.tigr.microarray.mev.annotation.GenomeAnnoDialog;
+import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.cgh.CGHAlgorithms.CGHAlgorithmFactory;
 import org.tigr.microarray.mev.cgh.CGHAlgorithms.AlterationsComparator.CompareExperiments;
 import org.tigr.microarray.mev.cgh.CGHAlgorithms.NumberOfAlterations.NumberOfAlterationsCalculator;
@@ -176,9 +178,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableSearchDialog;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
-import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.TextViewer;
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HTMLMessageFileChooser;
 import org.tigr.microarray.mev.file.AnnFileFilter;
 import org.tigr.microarray.mev.file.CGHStanfordFileLoader;
@@ -202,23 +202,6 @@ import org.tigr.util.swing.ImageFileFilter;
 import org.tigr.util.swing.JPGFileFilter;
 import org.tigr.util.swing.PNGFileFilter;
 import org.tigr.util.swing.TIFFFileFilter;
-
-//EH
-import java.beans.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
-import org.tigr.microarray.mev.persistence.*;
-
-//Gaggle
-import org.systemsbiology.gaggle.core.*;
-import org.systemsbiology.gaggle.core.datatypes.*;
-import org.systemsbiology.gaggle.geese.common.GaggleConnectionListener;
-import org.systemsbiology.gaggle.geese.common.GooseShutdownHook;
-import org.systemsbiology.gaggle.geese.common.RmiGaggleConnector;
-import org.systemsbiology.gaggle.util.MiscUtil;
-//end Gaggle
 
 import com.sun.media.jai.codec.ImageEncodeParam;
 
@@ -274,8 +257,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	String myGaggleName = ORIGINAL_GAGGLE_NAME;
 	Boss gaggleBoss;
 	String targetGoose = "Boss";
-	//TODO replace this with a reference to the Annotation Model
-	String currentSpecies = "unknown";
 	String[] gooseNames;
 	RmiGaggleConnector gaggleConnector;
 	private boolean isConnected = false;
@@ -948,7 +929,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         float delThresh, delThresh_T = 0.0f;
         float ampThresh2Copy, ampThresh2Copy_T = 0.0f;
         float delThresh2Copy, delThresh2Copy_T = 0.0f;
-        Vector extraParam = null;
+        Vector<String> extraParam = null;
         int index = -1;
         
         //For restoring later
@@ -991,7 +972,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
                 }
                 
                 if(index != -1) {
-                	extraParam = new Vector();
+                	extraParam = new Vector<String>();
 	                treeEnum = analysisRoot.depthFirstEnumeration();
 	                while (treeEnum.hasMoreElements()){
 	                    currentNode = (DefaultMutableTreeNode)treeEnum.nextElement();
@@ -3777,7 +3758,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         	 * 
         	 */ 
         	
-        	if(this.getData().isAnnotationLoaded()) {
+        	if (this.getData().isAnnotationLoaded()) {
            	String[] annoFields = MevAnnotation.getFieldNames();
         	this.menubar.addLabelMenuItems(this.data.getFieldNames(), annoFields);
         	}
@@ -5166,7 +5147,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
                 appendSampleAnnotation();
             } else if (command.equals(ActionManager.APPEND_GENE_ANNOTATION_COMMAND)) {
                 appendGeneAnnotation();
-            } 
+	        } else if (command.equals(ActionManager.CHANGE_SPECIES_NAME_COMMAND)) {
+	            askUserForSpeciesName();
+	        }
             /**
              * Raktim Sept 29, 05
              * CGH Command Handlers
@@ -5692,14 +5675,12 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	        }
 	    	m.setRowTitles(rowTitles);
 	    	m.setRowTitlesTitle(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()]);
-	    	String[] temp = data.getAnnotationList(data.getCurrentSampleLabelKey());
-	    	if(temp == null) {
-	    		temp = new String[experiment.getNumberOfSamples()];
-	    		for(int i=0; i<temp.length; i++)
-	    			temp[i] = "Sample " + i+1;
-	    	}
+	    	int[] temp1 = experiment.getColumnIndicesCopy();
+	    	String[] temp = new String[temp1.length];
 	    	for(int i=0; i<temp.length; i++) {
-	    		temp[i] = data.getSampleName(i);
+	    		temp[i] = data.getSampleName(temp1[i]);
+	    		if(temp[i] == null)
+	    			temp[i] = "Sample " + i+1;
 	    	}
 	    	m.setColumnTitles(temp);
 	    	m.setSpecies(getCurrentSpecies());
@@ -5743,6 +5724,16 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 
 
     public void doBroadcastNamelist(Namelist nl){
+		if(!isConnected) {
+			String title = "Gaggle connection warning";
+			String msg = "You are not connected to Gaggle. Connect now?";
+			int dialogResult = JOptionPane.showConfirmDialog (this, msg, title,
+                    JOptionPane.YES_NO_OPTION);
+			if (dialogResult != JOptionPane.YES_OPTION)  
+				return;
+			if(!connectToGaggle())
+				return;
+		}
 		int rowCount = nl.getNames().length;
 		if (rowCount > 100) {
 			String title = "Broadcast names warning";
@@ -5760,7 +5751,17 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     }
 
     public void doBroadcastMatrix(DataMatrix matrix) {
-		int rowCount = matrix.getRowCount();
+		if(!isConnected) {
+			String title = "Gaggle connection warning";
+			String msg = "You are not connected to Gaggle. Connect now?";
+			int dialogResult = JOptionPane.showConfirmDialog (this, msg, title,
+                    JOptionPane.YES_NO_OPTION);
+			if (dialogResult != JOptionPane.YES_OPTION)  
+				return;
+			if(!connectToGaggle())
+				return;
+		}
+    	int rowCount = matrix.getRowCount();
 		if (rowCount > 100) {
 			String title = "Broadcast names warning";
 			String msg = "Do you really wish to broadcast " + rowCount + " records?";
@@ -5768,17 +5769,17 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 		                                                      JOptionPane.YES_NO_OPTION);
 			if (dialogResult != JOptionPane.YES_OPTION)  
 				return;
-		} // if warning dialog needed
-		  try {
-			  gaggleBoss.broadcastMatrix(myGaggleName, targetGoose, matrix);
-		  } catch (RemoteException rex) {
-			  System.err.println ("doBroadcastMatrix: " + " rmi error calling boss.broadcast (matrix)");
-			  rex.printStackTrace ();
-		  }
+		} 
+		try {	//here is where an exception is thrown if gaggle is not connected. Nullpointerconnection add if(targetGoose==null) spawn dialog or something
+			gaggleBoss.broadcastMatrix(myGaggleName, targetGoose, matrix);
+		} catch (RemoteException rex) {
+			System.err.println ("doBroadcastMatrix: " + " rmi error calling boss.broadcast (matrix)");
+			rex.printStackTrace ();
+		}
 	}
     	
     public boolean connectToGaggle() {
-    	System.out.println("Connecting to Gaggle");
+//    	System.out.println("Connecting to Gaggle");
     	TMEV.GAGGLE_CONNECT_ON_STARTUP = true;
     	if(gaggleConnector == null) {
     		gaggleInit();
@@ -5903,11 +5904,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	public void handleMatrix(String sourceGoose, DataMatrix matrix) throws RemoteException {
 		//Load broadcast data if there is no data already loaded into this MAV.
 		if(data.getFeaturesCount() <= 0) {
-//			System.out.println ("GaggledMev, matrix dim: " + matrix.getRowCount () + " x " +
-//			                      matrix.getColumnCount ());
-			this.currentSpecies = matrix.getSpecies ();
-//			System.out.println("received species: " + currentSpecies);
-			//TODO set species in new Annotation model once it's complete.
+			data.setOrganismName(matrix.getSpecies());
 			
 			float cy3, cy5;
 			String [] moreFields = new String [1];
@@ -6056,21 +6053,26 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         
     }
 	/**
-	 * 
-	 * Get species information from new Annotation classes once they are integrated.
-     * This is a hack, until we update the annotation model to handle species a little more easily
+	 * Check if there is a species name loaded, and if not, get one from the user and save it for later.
 	 */
     public String getCurrentSpecies() {
-    	ISlideData slideData = (ISlideData)data.getFeaturesList().get(0);
-        ISlideDataElement element = slideData.getSlideDataElement(0);
-    	IAnnotation annot = element.getElementAnnotation();
-        if(annot == null || annot.getSpeciesName() == null || annot.getSpeciesName().equalsIgnoreCase("unknown")) {
-        	if(currentSpecies == null)
-        		return "unknown";
-        	else
-        		return currentSpecies;
-        } else { 
-    		return annot.getSpeciesName();
-        }
+    	try {
+	    	String loadedAnnotationSpeciesName = data.getOrganismName();
+	    	if(loadedAnnotationSpeciesName != null && !loadedAnnotationSpeciesName.equalsIgnoreCase("na") && !loadedAnnotationSpeciesName.equalsIgnoreCase("unknown"))
+	    		return loadedAnnotationSpeciesName;
+	
+	       	return askUserForSpeciesName();
+    	} catch (Exception e) {
+    		return askUserForSpeciesName();
+    	}
+    }
+    public String askUserForSpeciesName() {
+        GetSpeciesDialog gsd = new GetSpeciesDialog(this.getFrame());
+        String speciesName = gsd.showModal();
+        if(speciesName == null)
+        	return "unknown";
+        if(gsd.saveSpeciesName())
+        	data.setOrganismName(speciesName);
+        return speciesName;
     }
 }
