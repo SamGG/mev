@@ -367,12 +367,12 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer {
         menu.add(menuItem);
 
         //EH Gaggle testing
-        menuItem = new JMenuItem("Broadcast Matrix to Gaggle", GUIFactory.getIcon("gaggle_broadcast_16.gif"));
+        menuItem = new JMenuItem("Broadcast Matrix to Gaggle", GUIFactory.getIcon("gaggle_icon_16.gif"));
         menuItem.setActionCommand(BROADCAST_MATRIX_GAGGLE_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
         
-        menuItem = new JMenuItem("Broadcast Gene List to Gaggle", GUIFactory.getIcon("gaggle_broadcast_16.gif"));
+        menuItem = new JMenuItem("Broadcast Gene List to Gaggle", GUIFactory.getIcon("gaggle_icon_16.gif"));
         menuItem.setActionCommand(BROADCAST_NAMELIST_GAGGLE_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);

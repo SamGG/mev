@@ -652,12 +652,12 @@ public class HCLViewer extends JPanel implements IViewer {
         }   
         //TODO
         //EH Gaggle testing
-        menuItem = new JMenuItem("Broadcast Matrix to Gaggle", GUIFactory.getIcon("gaggle_broadcast_16.gif"));
+        menuItem = new JMenuItem("Broadcast Matrix to Gaggle", GUIFactory.getIcon("gaggle_icon_16.gif"));
         menuItem.setActionCommand(ExperimentViewer.BROADCAST_MATRIX_GAGGLE_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
         
-        menuItem = new JMenuItem("Broadcast Gene List to Gaggle", GUIFactory.getIcon("gaggle_broadcast_16.gif"));
+        menuItem = new JMenuItem("Broadcast Gene List to Gaggle", GUIFactory.getIcon("gaggle_icon_16.gif"));
         menuItem.setActionCommand(ExperimentViewer.BROADCAST_NAMELIST_GAGGLE_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
@@ -667,7 +667,9 @@ public class HCLViewer extends JPanel implements IViewer {
     public void broadcastClusterGaggle() {
     	Experiment subExp;
     	int[] rows;
-    	if(doesClusterExist()) {
+    	
+    	if(selectedCluster != null) {
+    		System.out.println("Cluster exists");
 	    	if(selectedCluster.isGeneCluster) {
 	    		subExp = getExperiment();
 	    		rows = getSubTreeElements();
@@ -677,12 +679,28 @@ public class HCLViewer extends JPanel implements IViewer {
 	    	}
 	    	framework.broadcastGeneCluster(subExp, rows);
     	} else {
-    		framework.broadcastGeneCluster(getExperiment(), getExperiment().getRows());
+    		System.out.println("Cluster doesn't exist");
+    		framework.broadcastGeneCluster(getExperiment(), getExperiment().getColumns());
     	}
     }
     public void broadcastNamelistGaggle() {
-    	framework.broadcastNamelist(getExperiment(), getSubTreeElements());
-    }
+    	framework.broadcastNamelist(getExperiment(), getExperiment().getRows());
+//    	framework.broadcastNamelist(getExperiment(), getSubTreeElements());
+/*    	Experiment subExp;
+    	int[] rows;
+    	if(doesClusterExist()) {
+	    	if(selectedCluster.isGeneCluster) {
+	    		subExp = getExperiment();
+	    		rows = getSubTreeElements();
+	    	} else {
+	    		subExp = ((org.tigr.microarray.mev.MultipleArrayData)data).getDataSubset(getSubTreeElements(), experiment.getRowMappingArrayCopy()).getExperiment();
+	    		rows = subExp.getRows();
+	    	}
+	    	framework.broadcastNamelist(subExp, rows);
+    	} else {
+    		framework.broadcastNamelist(getExperiment(), getExperiment().getRows());
+    	}
+*/    }
     //EH end gaggle testing
     
     /**

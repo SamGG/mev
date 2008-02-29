@@ -123,7 +123,7 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
          */
         if(mav.getData().isAnnotationLoaded()) {
         	_tempAnno = loadAffyAnno(new File(getAnnotationFileName()));
-        	//mav.getData().setAnnotationLoaded(true);
+        	//mav.getData().setAnnotationLoaded(true); 
         }
         
      
