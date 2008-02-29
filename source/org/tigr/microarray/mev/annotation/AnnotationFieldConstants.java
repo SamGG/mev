@@ -41,4 +41,5 @@ public class AnnotationFieldConstants {
 	public static final String BIO_CARTA = "BIO_CARTA";
 	public static final String KEGG = "KEGG";
 	public static final String DESC = "DESC";
+	public static final String TGI_TC = "TGI_TC";
 }

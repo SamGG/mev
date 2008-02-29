@@ -32,7 +32,7 @@ public class AnnotationFileReader {
     
     
     
-    public Hashtable loadAffyAnnotation(File affyFIle) throws Exception {
+    public Hashtable loadAffyAnnotation(File affyFIle) throws IOException {
     	//System.out.println("loadAffyAnnotation");
     	int numLines = this.getCountOfLines(affyFIle);
     	Hashtable<String, MevAnnotation> annoHash  = new Hashtable<String, MevAnnotation>(numLines);
@@ -70,29 +70,29 @@ public class AnnotationFileReader {
     			int index=columnNames.indexOf((Object)field);
     		
     			Vector<String> _tmpGo = new Vector<String>();
-    			if(field.equalsIgnoreCase("CLONE_ID")&&index==i){
+    			if(field.equalsIgnoreCase(AnnotationFieldConstants.CLONE_ID)&&index==i){
     				probeID=_temp;
     				annotationObj.setCloneID(_temp);
     				//System.out.println("clone id:"+probeID);
-    			}else if(field.equalsIgnoreCase("GENBANK_ACC")&&index==i){
+    			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.GENBANK_ACC)&&index==i){
     				if(_temp==null){
     					_temp="NA";
     				}
     				annotationObj.setGenBankAcc(_temp);
     				//System.out.println("Genbank acc:"+_temp);
-    			}else if(field.equalsIgnoreCase("UNIGENE_ID")&&index==i){
+    			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.UNIGENE_ID)&&index==i){
     				if(_temp==null){
     					_temp="NA";
     				}
     				annotationObj.setUnigeneID(_temp);
     			//	System.out.println("Unigene id:"+_temp);
-    			}else if(field.equalsIgnoreCase("GENE_TITLE")&&index==i){ 
+    			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.GENE_TITLE)&&index==i){ 
     				if(_temp==""){
     					_temp="NA";
     				}
     				annotationObj.setGeneTitle(_temp);
     				//System.out.println("Gene_Title:"+_temp);
-    			}else if(field.equalsIgnoreCase("GENE_SYMBOL")&&index==i){ 
+    			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.GENE_SYMBOL)&&index==i){ 
     				if(_temp==null){
     					_temp="NA";
     				}
@@ -104,26 +104,32 @@ public class AnnotationFileReader {
     				}
     				setAlignmentInfo(_temp, annotationObj);
     			//	System.out.println("Cytoband:"+_temp);
-    			}else if(field.equalsIgnoreCase("ENTREZ_ID")&&index==i){
+    			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.ENTREZ_ID)&&index==i){
     				if(_temp==null){
     					_temp="NA";
     				}
     				annotationObj.setLocusLinkID(_temp);
     			//	System.out.println("Entrez id:"+_temp);
-    			}else if(field.equalsIgnoreCase("REFSEQ_ACC")&&index==i){
+    			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.REFSEQ_ACC)&&index==i){
     				if(_temp==null){
     					_temp="NA";
     				}
     				String mRnaRefSeqs[] = parsemRnaIds(_temp);
 			 		annotationObj.setRefSeqTxAcc(mRnaRefSeqs);
     			//	System.out.println("RefSeq Acc:"+_temp);
-    			}else if(field.equalsIgnoreCase("GO_TERMS")&&index==i){
+    			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.GO_TERMS)&&index==i){
     				if(_temp==null){
     					_temp="NA";
     				}
     				 _tmpGo = parseGoTerms(_temp, "///"); 
     				annotationObj.setGoTerms((String[]) _tmpGo.toArray(new String[_tmpGo.size()]));
     			//	System.out.println("GO_Terms:"+_temp);
+    			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.TGI_TC)&&index==i){
+    				if(_temp==null){
+    					_temp="NA";
+    				}
+    				annotationObj.setTgiTC(_temp);
+    			//	System.out.println("TGI_TC:"+_temp);
     			}
 
 
@@ -151,7 +157,7 @@ public class AnnotationFileReader {
 
   
     
-    private Vector getColumnHeader(File targetFile)throws Exception {
+    private Vector getColumnHeader(File targetFile)throws IOException {
     	BufferedReader reader = new BufferedReader(new FileReader(targetFile));
     	StringSplitter split = new StringSplitter(' ');
     	StringSplitter ss = new StringSplitter('\t');

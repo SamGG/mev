@@ -167,6 +167,13 @@ public interface IData {
     public String[] getFieldNames();
     
     /**
+     * Returns a list of all field names from the old annotation model and the new one,
+     * excluding new annotation model fields that have no annotation loaded.
+     * @return
+     */
+    public String[] getAllFilledAnnotationFields();
+    
+    /**
      *Returns all annotation field names associated with the loaded samples
      */
     public Vector getSampleAnnotationFieldNames();    
@@ -377,8 +384,6 @@ public interface IData {
 	public String[] getElementAnnotation(int index, String attr);
 	public AnnoAttributeObj getElementAnnotationObject(int index, String attr);
 	public boolean isAnnotationLoaded() ;
-	public void setAnnotationLoaded(boolean isAnnotationLoaded) ;
-	
-	
+	public void setAnnotationLoaded(boolean isAnnotationLoaded) ;	
     
 }

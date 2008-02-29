@@ -1,26 +1,14 @@
 package org.tigr.microarray.mev.annotation;
 
+import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.lang.reflect.Field;
-
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-//import java.lang.reflect.Method;
-//import java.lang.reflect.Member;
-
-import org.tigr.microarray.mev.MultipleArrayData;
 import org.tigr.microarray.mev.MultipleArrayViewer;
 import org.tigr.microarray.mev.cgh.CGHUtil.CGHUtility;
 import org.tigr.microarray.mev.cgh.DBObj.DSqlHandler;
-import org.tigr.util.StringSplitter;
 
 /**
  * @author Raktim
@@ -178,10 +166,6 @@ public class MevAnnotation implements IAnnotation, Comparable {
 		return (String)ChipName.get(this.getMavInstance());
 	}
 	
-	//public static String getChipType2(){
-		//return (String)ChipType.get(this.getMavInstance());
-	//}
-	
 	public String getChipType(){
 		return (String)ChipType.get(this.getMavInstance());
 	}
@@ -191,7 +175,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 		return (String)genomeBuild.get(this.getMavInstance());
 	}
 	
-	public String getCloneID(){
+	public String getCloneID() {
 		return (String)annotHash.get(AnnotationFieldConstants.CLONE_ID);
 	}
 	
@@ -358,6 +342,15 @@ public class MevAnnotation implements IAnnotation, Comparable {
 	//	return(String[]) annotHash.get(AnnotationFieldConstants.GO_TERMS);
 	}
 
+	public String getTgiTC(){
+		String _temp=(String)annotHash.get(AnnotationFieldConstants.TGI_TC);
+		if(_temp==null) {
+			_temp="NA";
+			return _temp;
+		}else
+			return _temp;
+		//return (String)annotHash.get(AnnotationFieldConstants.TGI_TC);
+	}
 	
 	
 	/* Setters  */
@@ -517,6 +510,11 @@ public class MevAnnotation implements IAnnotation, Comparable {
 		annotHash.put(AnnotationFieldConstants.GO_TERMS, _temp);
 	}
 	
+	public void setTgiTC(String _temp) {
+		annotHash.put(AnnotationFieldConstants.TGI_TC, _temp);
+	}
+	
+	
 	/**
 	 * Static Functions to extract Genome Information
 	 * E.g. Genes, RefSeq etc for a given co-ordinate range 
@@ -609,7 +607,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 		
 		for(int j = 0; j < fields.length; j++) {
 			names.add(fields[j].getName());
-			//System.out.println("Field: " + j + " " + fields[j].getName());
+//			System.out.println("Field: " + j + " " + fields[j].getName());
 		}
 	
 		return names.toArray(new String[0]);
@@ -690,6 +688,11 @@ public class MevAnnotation implements IAnnotation, Comparable {
 		if (this.viewer == null) System.out.println("Null MAV");
 		return this.viewer.getInstanceIndex();
 	}
+
+
+
+
+
 
 	
 /*	public static boolean getAnnotationStatus() {

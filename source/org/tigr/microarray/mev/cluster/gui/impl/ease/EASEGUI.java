@@ -91,6 +91,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
     /** Indicates if the algorithm run is via a script execution
      */
     protected boolean isScripting = false;
+    protected File annotationFile;
     
     /** Creates a new instance of EASEGUI */
     public EASEGUI() {
@@ -109,7 +110,22 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         
         ClusterRepository repository = framework.getClusterRepository(Cluster.GENE_CLUSTER);
         
-        EASEInitDialog dialog = new EASEInitDialog(framework.getFrame(), repository, framework.getData().getFieldNames());
+        //check for existance of annotation file. If there is annotation loaded and the annotation file it came
+        //from can be read, save a filehandle for it. 
+        boolean useLoadedAnnotation = false;
+        if(framework.getData().isAnnotationLoaded()) {
+        	String slideType = ((org.tigr.microarray.mev.MultipleArrayData)framework.getData()).getchipType();
+        	String filename = org.tigr.microarray.mev.TMEV.getDataPath() + System.getProperty("file.separator") + "Annotation" + System.getProperty("file.separator") + slideType + ".txt";
+        	annotationFile = new File(filename);
+	        if(annotationFile.canRead())
+	        	useLoadedAnnotation = true;
+        }
+        
+        EASEInitDialog dialog = new EASEInitDialog(
+        		framework.getFrame(), 
+        		repository, 
+        		framework.getData().getAllFilledAnnotationFields(), 
+        		useLoadedAnnotation);
         
         if(dialog.showModal() != JOptionPane.OK_OPTION)
             return null;
@@ -125,7 +141,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         String converterFileName = dialog.getConverterFileName();
         annotationKeyType = dialog.getAnnotationKeyType();
         String [] annotationFileList = dialog.getAnnToGOFileList();
-        int minClusterSize = dialog.getMinClusterSize();
+//        int minClusterSize = dialog.getMinClusterSize();
         int [] indices;
         boolean isPvalueCorrectionSelected;
         experiment = framework.getData().getExperiment();
@@ -154,24 +170,36 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         }
         
         //Use file or IData for population, only permit file use for cluster analysis
+        //populationKeys contains the list of IDs (usually EntrezGene IDs) that represent the background 
+        //population of the EASE run. This can be taken from the current viewer, a list or an annotation file.
         String [] populationKeys;
-        if(isClusterAnalysis && dialog.isPopFileModeSelected()) {
+        if(isClusterAnalysis && dialog.isPreloadedAnnotationSelected()) {
             try {
-                populationKeys = getPopulationKeysFromFile(dialog.getPopulationFileName());
-                algorithmData.addParam("population-file-name", dialog.getPopulationFileName());
-                if(populationKeys == null) {
-                    return null;
-                }
+            	
+        		populationKeys = loadGeneIDs();
             } catch (IOException ioe) {
                 //Bad file format
                 JOptionPane.showMessageDialog(framework.getFrame(), "Error loading population file.", "Population File Load Error", JOptionPane.ERROR_MESSAGE);
                 return null;
             }
         } else {
-            //populationKeys = framework.getData().getAnnotationList(annotationKeyType, experiment.getRowMappingArrayCopy());
-            populationKeys = framework.getData().getAnnotationList(annotationKeyType, framework.getData().getExperiment().getRowMappingArrayCopy());            
+	        if(isClusterAnalysis && dialog.isPopFileModeSelected()) {
+	            try {
+	                populationKeys = getPopulationKeysFromFile(dialog.getPopulationFileName());
+	                algorithmData.addParam("population-file-name", dialog.getPopulationFileName());
+	                if(populationKeys == null) {
+	                    return null;
+	                }
+	            } catch (IOException ioe) {
+	                //Bad file format
+	                JOptionPane.showMessageDialog(framework.getFrame(), "Error loading population file.", "Population File Load Error", JOptionPane.ERROR_MESSAGE);
+	                return null;
+	            }
+	        } else {
+	            //populationKeys = framework.getData().getAnnotationList(annotationKeyType, experiment.getRowMappingArrayCopy());
+	            populationKeys = framework.getData().getAnnotationList(annotationKeyType, framework.getData().getExperiment().getRowMappingArrayCopy());            
+	        }
         }
-        
         algorithmData.addParam("perform-cluster-analysis", String.valueOf(isClusterAnalysis));
         algorithmData.addStringArray("population-list", populationKeys);
         if(converterFileName != null)
@@ -233,8 +261,8 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         annotationKeyType = dialog.getAnnotationKeyType();
         algorithmData.addParam("annotation-key-type", annotationKeyType);
         String [] annotationFileList = dialog.getAnnToGOFileList();
-        int minClusterSize = dialog.getMinClusterSize();
-        int [] indices;
+//        int minClusterSize = dialog.getMinClusterSize();
+//        int [] indices;
         boolean isPvalueCorrectionSelected;
         experiment = framework.getData().getExperiment();
         
@@ -254,7 +282,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         }
         
         //Use file or IData for population, only permit file use for cluster analysis
-        String [] populationKeys;
+//        String [] populationKeys;
         if(isClusterAnalysis && dialog.isPopFileModeSelected()) {
             // try {
             // populationKeys = getPopulationKeysFromFile(dialog.getPopulationFileName());
@@ -394,7 +422,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         File file = new File(fileName);
         if(file.exists()) {
             BufferedReader reader = new BufferedReader(new FileReader(file));
-            Vector ann = new Vector();
+            Vector<String> ann = new Vector<String>();
             String key;
             while( (key = reader.readLine()) != null ) {
                 ann.add(key);
@@ -408,6 +436,31 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         return null;
     }
     
+    /**
+     * Loads Unique Gene IDs from a standard-formatted Resourcerer file stored in 
+     * MeV's Annotation directory, with the name slideType.
+     *
+     * @param slideType
+     * @return Gene id keys for the background population listed in annotationFile.
+     * @throws IOException
+     */
+    protected String [] loadGeneIDs() throws IOException {
+        if(annotationFile.exists()) {
+        	org.tigr.microarray.mev.annotation.AnnotationFileReader afr = new org.tigr.microarray.mev.annotation.AnnotationFileReader();
+            java.util.Hashtable<String, org.tigr.microarray.mev.annotation.MevAnnotation> annotations = afr.loadAffyAnnotation(annotationFile);
+            String[] annot = new String[annotations.size()];
+            java.util.Enumeration<String> allAnnotations = annotations.keys();
+            int i=0;
+            while(allAnnotations.hasMoreElements()) {
+            	String thisKey = allAnnotations.nextElement();
+            	org.tigr.microarray.mev.annotation.IAnnotation thisAnnotation = annotations.get(thisKey);
+            	annot[i] = thisAnnotation.getEntrezGeneID();
+            	i++;
+            }
+            return annot;
+        }
+        return null;
+    }
     
     /** Creates the result node.
      * @param result result matrix
@@ -481,7 +534,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         //set means and variances in the graph viewer
         graphViewer.setMeans(result.getMatrix("means").A);
         graphViewer.setVariances(result.getMatrix("variances").A);
-        DefaultMutableTreeNode clusterNode, annotNode, popNode;
+        DefaultMutableTreeNode clusterNode;//, annotNode, popNode;
         for (int i=0; i<this.clusters.length; i++) {
             clusterNode = new DefaultMutableTreeNode("Term "+String.valueOf(i+1));
             clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Image", expViewer, new Integer(i))));
@@ -533,7 +586,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
      */
     protected void addGeneralInfo(DefaultMutableTreeNode root, AlgorithmData result){
         DefaultMutableTreeNode generalInfo = new DefaultMutableTreeNode("General Information");
-        String converterFileName = result.getParams().getString("converter-file-name");
+//        String converterFileName = result.getParams().getString("converter-file-name");
         DefaultMutableTreeNode newNode;
         
         if(this.isClusterAnalysis && !isScripting){
