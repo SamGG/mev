@@ -57,6 +57,7 @@ public interface IAnnotation {
 	public String[] getBioCartaPathways();
 	public String[] getKeggPathways();
 	public String getProbeDesc();
+	public String getTgiTC();
 
 	// Setters
 	public void setRefSeqTxAcc(String[] _temp);
@@ -85,6 +86,7 @@ public interface IAnnotation {
 	public void setBioCartaPathways(String[] _temp);
 	public void setKeggPathways(String[] _temp);
 	public void setProbeDesc(String _temp);
+	public void setTgiTC(String _temp);
 	
 	/***********************************************************
 	 * Functions to Retreive Attribute value(s)by attribute Name

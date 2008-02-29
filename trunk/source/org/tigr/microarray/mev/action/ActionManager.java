@@ -16,6 +16,7 @@ import java.awt.event.ActionListener;
 import java.net.URL;
 import java.util.HashMap;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 
@@ -28,7 +29,7 @@ public class ActionManager implements java.io.Serializable {
     public static final String PARAMETER = "command-parameter";
     public static final String LARGE_ICON = "LargeIcon";
     public static final String CATEGORY="category";
-    private HashMap actions = new HashMap();
+    private HashMap<String, AbstractAction> actions = new HashMap<String, AbstractAction>();
     private ActionListener listener;
     
     /**
@@ -94,6 +95,7 @@ public class ActionManager implements java.io.Serializable {
 
         actions.put(APPEND_SAMPLE_ANNOTATION_ACTION, new DefaultAction(this, APPEND_SAMPLE_ANNOTATION_NAME, APPEND_SAMPLE_ANNOTATION_COMMAND, getIcon(APPEND_SAMPLE_ANNOTATION_ICON)));            
         actions.put(APPEND_GENE_ANNOTATION_ACTION, new DefaultAction(this, APPEND_GENE_ANNOTATION_NAME, APPEND_GENE_ANNOTATION_COMMAND, getIcon(APPEND_GENE_ANNOTATION_ICON)));            
+        actions.put(CHANGE_SPECIES_NAME_ACTION, new DefaultAction(this, CHANGE_SPECIES_NAME_NAME, CHANGE_SPECIES_NAME_COMMAND, null));            
         actions.put(CDNA_LOW_INTENSITY_ACTION, new DefaultAction(this, CDNA_LOW_INTENSITY_NAME, CDNA_LOW_INTENSITY_CMD, getIcon(CDNA_LOW_INTENSITY_ICON)));
         actions.put(OLIGEN_LOW_INTENSITY_ACTION, new DefaultAction(this, OLIGEN_LOW_INTENSITY_NAME, OLIGEN_LOW_INTENSITY_CMD, getIcon(OLIGEN_LOW_INTENSITY_ICON)));
 
@@ -195,7 +197,7 @@ public class ActionManager implements java.io.Serializable {
     /**
      * Creates an image by specified name.
      */
-    private ImageIcon getIcon(String name) {
+    public ImageIcon getIcon(String name) {
         URL url = getClass().getResource("/org/tigr/images/"+name);
         if (url == null)
             return null;
@@ -485,7 +487,11 @@ public class ActionManager implements java.io.Serializable {
     public static final String APPEND_GENE_ANNOTATION_NAME = "Append Gene Annotation";
     public static final String APPEND_GENE_ANNOTATION_ICON = "append_gene_annotation.gif";
    
-    
+
+    public static final String CHANGE_SPECIES_NAME_COMMAND = "change-species-name-command";
+    public static final String CHANGE_SPECIES_NAME_ACTION = "change-species-name-action";  
+    public static final String CHANGE_SPECIES_NAME_NAME = "Change Species Name";  
+
    
      
      /* Raktim - Annotation Demo Only */
@@ -572,6 +578,7 @@ public class ActionManager implements java.io.Serializable {
     public static final String SHOW_GOOSE_CMD = "show-goose-cmd";
     public static final String SHOW_GOOSE_CMD_NAME  = "Show Goose";
     public static final String SHOW_GOOSE_SELECT_ACTION = "show-goose-action";
+    public static final String GAGGLE_ICON = "gaggle-icon.gif";
   
     
     

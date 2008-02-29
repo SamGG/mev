@@ -1063,7 +1063,6 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
     }
     
 	//EH Gaggle test
-	//TODO remove print statements after Gaggle viewer implementation is finished
     public void broadcastClusterGaggle() {
     	int[] temp = getCluster();
     	Experiment e = getExperiment();
@@ -1073,7 +1072,6 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
     		System.out.println("getExperiment returns null");
     	if(framework == null)
     		System.out.println(this.toString() + ": framework is null");
-    	System.out.println("cluster is size " + getCluster().length);
     	framework.broadcastGeneCluster(getExperiment(), getCluster());
 	}
     public void broadcastNamelistGaggle() {

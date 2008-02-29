@@ -58,7 +58,7 @@ public class EASE extends AbstractAlgorithm {
     protected boolean haveAccessionNumbers = false;
     protected boolean reportEaseScore = false;
     protected AlgorithmEvent event;
-    protected Vector headerNames;
+    protected Vector<String> headerNames;
     protected DecimalFormat format;
     protected FloatMatrix expData;
     
@@ -232,7 +232,7 @@ public class EASE extends AbstractAlgorithm {
     protected AlgorithmData performClusterAnnotationAnalysis(AlgorithmData algorithmData) throws AlgorithmException {
         AlgorithmParameters params = algorithmData.getParams();
         
-        headerNames = new Vector();
+        headerNames = new Vector<String>();
         reportEaseScore = params.getBoolean("report-ease-score", false);
         intializeHeaderNames();
         
@@ -245,6 +245,7 @@ public class EASE extends AbstractAlgorithm {
         String converterFileName = params.getString("converter-file-name");
         int [] clusterIndices = algorithmData.getIntArray("sample-indices");
         String [] sampleList = algorithmData.getStringArray("sample-list");
+        
         String [] populationList = algorithmData.getStringArray("population-list");
         annotationFileList = algorithmData.getStringArray("annotation-file-list");
         

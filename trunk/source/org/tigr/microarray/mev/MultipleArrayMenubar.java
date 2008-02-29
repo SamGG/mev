@@ -278,12 +278,14 @@ public class MultipleArrayMenubar extends JMenuBar {
         utilMenu.addSeparator();
                 
         utilMenu.add(manager.getAction(ActionManager.APPEND_GENE_ANNOTATION_ACTION));        
-        utilMenu.add(manager.getAction(ActionManager.APPEND_SAMPLE_ANNOTATION_ACTION));
+        utilMenu.add(manager.getAction(ActionManager.APPEND_SAMPLE_ANNOTATION_ACTION));  
+        utilMenu.add(manager.getAction(ActionManager.CHANGE_SPECIES_NAME_ACTION));
                         
         //EH Gaggle menu test
 	        targetGooseNameGroup = new ButtonGroup();
 	        showtargetGooseNameGroup = new ButtonGroup();
 	        gaggleMenu = new JMenu("Gaggle");
+	        gaggleMenu.setIcon(actionManager.getIcon(ActionManager.GAGGLE_ICON));
 	        gaggleMenu.add(manager.getAction(ActionManager.GAGGLE_CONNECT));        
 	        gaggleMenu.add(manager.getAction(ActionManager.GAGGLE_DISCONNECT));
 	        targetMenu = new JMenu("Broadcast Target");
@@ -558,6 +560,7 @@ public class MultipleArrayMenubar extends JMenuBar {
      * @param fieldNames
      * @param annoFields
      */
+//TODO EH: Can we remove this method? I don't think it's used.
     public void addLabelMenuItems(String [] fieldNames, String[] annoFields){
         JRadioButtonMenuItem item;
         //ButtonGroup bg = new ButtonGroup();

@@ -59,6 +59,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.annotation.AnnotationFieldConstants;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterBrowser;
@@ -88,6 +89,8 @@ public class EASEInitDialog extends AlgorithmDialog {
     protected Font font;
     protected String sep;
     protected Frame parent;
+    private static String ANNOTATION_LINK = AnnotationFieldConstants.ENTREZ_ID;
+    protected boolean haveAnnotationFile = false;
     
     //EH added so AMP can subclass
     public EASEInitDialog(Frame parent, String windowTitle, boolean modal){
@@ -99,9 +102,10 @@ public class EASEInitDialog extends AlgorithmDialog {
      * @param repository Cluster repository to construct <CODE>ClusterBrowser</CODE>
      * @param annotationLabels Annotation types
      */
-    public EASEInitDialog(Frame parent, ClusterRepository repository, String [] annotationLabels) {
+    public EASEInitDialog(Frame parent, ClusterRepository repository, String [] annotationLabels, boolean useLoadedAnnotation) {
         super(parent, "EASE: EASE Annotation Analysis", true);
         this.parent = parent;
+        this.haveAnnotationFile = useLoadedAnnotation;
         font = new Font("Dialog", Font.BOLD, 12);
         listener = new EventListener();
         addWindowListener(listener);
@@ -258,6 +262,9 @@ public class EASEInitDialog extends AlgorithmDialog {
         return popPanel.fileButton.isSelected();
     }
     
+    public boolean isPreloadedAnnotationSelected() {
+    	return popPanel.preloadedAnnotationButton.isSelected();
+    }
     
     /** Returns the population fille to load
      */
@@ -420,6 +427,7 @@ public class EASEInitDialog extends AlgorithmDialog {
     
     protected class PopSelectionPanel extends ParameterPanel {
         
+    	JRadioButton preloadedAnnotationButton;
         JRadioButton fileButton;
         JRadioButton dataButton;
         JTextField popField;
@@ -431,14 +439,40 @@ public class EASEInitDialog extends AlgorithmDialog {
             setLayout(new GridBagLayout());
             
             ButtonGroup bg = new ButtonGroup();
-            fileButton = new JRadioButton("Population from File", true);
+            
+            if(haveAnnotationFile) {
+            	preloadedAnnotationButton = new JRadioButton("Use loaded array population as background", true);
+            } else {
+                preloadedAnnotationButton = new JRadioButton("Use loaded array population as background (annotation not loaded)", true);
+            }
+            preloadedAnnotationButton.setBackground(Color.white);
+            preloadedAnnotationButton.setFocusPainted(false);
+            bg.add(preloadedAnnotationButton);
+            preloadedAnnotationButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                	//disable 
+                	easeParamPanel.fieldNamesBox.setSelectedItem(ANNOTATION_LINK);
+                	easeParamPanel.fieldNamesBox.setEnabled(!preloadedAnnotationButton.isSelected());
+                	easeParamPanel.useAnnBox.setEnabled(!preloadedAnnotationButton.isSelected());
+                    browseButton.setEnabled(!preloadedAnnotationButton.isSelected());
+                    popField.setEnabled(!preloadedAnnotationButton.isSelected());
+                    popField.setBackground(Color.lightGray);
+                    fileLabel.setEnabled(!preloadedAnnotationButton.isSelected());
+                    
+                }
+            });  
+            
+            
+            fileButton = new JRadioButton("Select Background Population from File");
             fileButton.setBackground(Color.white);
             fileButton.setFocusPainted(false);
             bg.add(fileButton);
             
             fileButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent ae) {
-                    
+
+                	easeParamPanel.fieldNamesBox.setEnabled(!preloadedAnnotationButton.isSelected());
+                	easeParamPanel.useAnnBox.setEnabled(!preloadedAnnotationButton.isSelected());
                     browseButton.setEnabled(fileButton.isSelected());
                     popField.setEnabled(fileButton.isSelected());
                     popField.setBackground(Color.white);
@@ -447,7 +481,7 @@ public class EASEInitDialog extends AlgorithmDialog {
                 }
             });
             
-            dataButton = new JRadioButton("Population from Current Viewer");
+            dataButton = new JRadioButton("Select Background Population from Current Viewer");
             dataButton.setBackground(Color.white);
             dataButton.setFocusPainted(false);
             bg.add(dataButton);
@@ -467,7 +501,7 @@ public class EASEInitDialog extends AlgorithmDialog {
             browseButton.setSize(150, 25);
             browseButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent ae) {
-                    JFileChooser chooser = new JFileChooser(TMEV.getFile("Data/"));
+                    JFileChooser chooser = new JFileChooser(TMEV.getFile("Data/ease/"));
                     chooser.setDialogTitle("Population File Selection");
                     chooser.setMultiSelectionEnabled(false);
                     if(chooser.showOpenDialog(parent) == JOptionPane.OK_OPTION){
@@ -475,19 +509,36 @@ public class EASEInitDialog extends AlgorithmDialog {
                     }
                 }
             });
-            
+                 
             fileLabel = new JLabel("File: ");
             popField = new JTextField(25);
             
-            add(fileButton, new GridBagConstraints(0,0,3,1,1,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,30,0,0), 0,0));
-            add(fileLabel, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,30,0,0), 0,0));
-            add(popField, new GridBagConstraints(1,1,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,10,0,0), 0,0));
-            add(browseButton, new GridBagConstraints(2,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,25,0,20), 0,0));
+
+            browseButton.setEnabled(fileButton.isSelected());
+            popField.setEnabled(fileButton.isSelected());
+            popField.setBackground(Color.lightGray);
+            fileLabel.setEnabled(fileButton.isSelected());
             
-            add(dataButton, new GridBagConstraints(0,2,3,1,1,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(15,30,20,0), 0,0));
+            //Enable the preloaded population annotation options only if the annotation is available. 
+            //Otherwise, "population from file" is the default option.
+            fileButton.setSelected(!haveAnnotationFile);
+            preloadedAnnotationButton.setSelected(haveAnnotationFile);
+            preloadedAnnotationButton.setEnabled(haveAnnotationFile);
+
+            
+            add(preloadedAnnotationButton, 	new GridBagConstraints(0,0,3,1,1,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,30,0,0), 0,0));
+            add(fileButton, 				new GridBagConstraints(0,1,3,1,1,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,30,0,0), 0,0));
+            add(fileLabel, 					new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,30,0,0), 0,0));
+            add(popField, 					new GridBagConstraints(1,2,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,10,0,0), 0,0));
+            add(browseButton, 				new GridBagConstraints(2,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,25,0,20), 0,0));
+            
+            add(dataButton, 				new GridBagConstraints(0,3,3,1,1,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(15,30,20,0), 0,0));
         }
         
         protected void setEnableControls(boolean enable) {
+        	preloadedAnnotationButton.setEnabled(enable && haveAnnotationFile);
+        	easeParamPanel.fieldNamesBox.setEnabled(!preloadedAnnotationButton.isSelected());
+        	easeParamPanel.useAnnBox.setEnabled(!preloadedAnnotationButton.isSelected());
             fileButton.setEnabled(enable);
             dataButton.setEnabled(enable);
             popField.setEnabled(enable);
@@ -524,9 +575,12 @@ public class EASEInitDialog extends AlgorithmDialog {
         protected JCheckBox useAnnBox;
         protected JLabel fileLabel;
         
+
+        protected JRadioButton useLoadedAnn;
         
-        
-        /** Constructs a new EaseParameterPanel
+        /** 
+         * Constructs a new EaseParameterPanel. This panel contains the controls for
+         * selecting the annotation information to be used in running EASE.
          * @param fieldNames annotation types
          */
         public EaseParameterPanel(String [] fieldNames) {
@@ -539,10 +593,11 @@ public class EASEInitDialog extends AlgorithmDialog {
             useAnnBox.addActionListener(listener);
             useAnnBox.setBackground(Color.white);
             useAnnBox.setFocusPainted(false);
+            useAnnBox.setEnabled(!haveAnnotationFile);
             
             converterFileField = new JTextField(30);
             converterFileField.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED, Color.lightGray, Color.gray));
-            converterFileField.setEnabled(false);
+            converterFileField.setEnabled(useAnnBox.isEnabled());
             converterFileField.setBackground(Color.lightGray);
             
             browserButton = new JButton("File Browser");
@@ -551,7 +606,7 @@ public class EASEInitDialog extends AlgorithmDialog {
             browserButton.setPreferredSize(new Dimension(150, 25));
             browserButton.setSize(150, 25);
             browserButton.addActionListener(listener);
-            browserButton.setEnabled(false);
+            browserButton.setEnabled(useAnnBox.isEnabled());
             
             fileLabel = new JLabel("File :");
             fileLabel.setEnabled(false);
@@ -595,7 +650,7 @@ public class EASEInitDialog extends AlgorithmDialog {
             annPanel.add(annPane, new GridBagConstraints(1,1,2,1,0.0,1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
             
             sep = System.getProperty("file.separator");
-            File file = new File(getBaseFileLocation()+"/Data/Convert/");
+            File file = new File(getBaseFileLocation());
             String tempPath = file.getPath();
             Vector fileVector = new Vector();
             fileList = new JList(fileVector);
@@ -613,6 +668,8 @@ public class EASEInitDialog extends AlgorithmDialog {
             
             this.fieldNamesBox = new JComboBox(fieldNames);
             this.fieldNamesBox.setEditable(false);
+            this.fieldNamesBox.setEnabled(!haveAnnotationFile);
+            this.fieldNamesBox.setSelectedItem(ANNOTATION_LINK);
             
             minClusterSizeField = new JTextField(5);
             minClusterSizeField.setText("5");
@@ -740,7 +797,8 @@ public class EASEInitDialog extends AlgorithmDialog {
         protected JTextField trimPercentField;
         
         
-        /** Constucts a new AlphaPanel.
+        /** Constucts a new AlphaPanel. This panel contains the statistical parameter
+         * selection boxes for EASE.
          */
         public AlphaPanel(){
             super(new GridBagLayout());
@@ -897,6 +955,10 @@ public class EASEInitDialog extends AlgorithmDialog {
         }
     }
     
+    /**
+     * The topmost panel in the InitDialog, containing the location information for
+     * the EASE filesystem and the update controls.
+     */
     protected class ConfigPanel extends ParameterPanel {
 
         JTextField defaultFileBaseLocation;
