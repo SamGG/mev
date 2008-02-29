@@ -183,6 +183,7 @@ public class StanfordFileLoader extends ExpressionFileLoader {
         if(this.mav.getData().isAnnotationLoaded()) {
         	_tempAnno = loadAnnotation(new File(getAnnotationFileName()));
         	
+        	
         }
         
      
@@ -263,21 +264,28 @@ public class StanfordFileLoader extends ExpressionFileLoader {
                 String cloneName = moreFields[0];
                 if(_tempAnno.size()!=0 && getDataType()==TMEV.DATA_TYPE_AFFY) {
              	   
-             	//  System.out.println("Loading annotation");
-                 if(((MevAnnotation)_tempAnno.get(cloneName))!=null) {
-                 	MevAnnotation mevAnno = (MevAnnotation)_tempAnno.get(cloneName);
-                 mevAnno.setViewer(this.mav);
-                sde = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields, mevAnno);
-                }else {
-             	 /*  String eMsg = "<html>The Probes IDs in your data <br>"+
-             	   		"<html>must be a subset or match all the Probe ID's<br>" +
-             	   		"<html>in the Annotation files. This does not seem to be the case..<br></html>";
-             	   		 JOptionPane.showMessageDialog(null, eMsg, "ERROR", JOptionPane.ERROR_MESSAGE);
-             	   		 */
+             	
+                	if(((MevAnnotation)_tempAnno.get(cloneName))!=null) {
+                		MevAnnotation mevAnno = (MevAnnotation)_tempAnno.get(cloneName);
+                		
+                		//Right now these two values get set a million times. Have to find a way to
+                		//stop that---Sarita.
+                		((MultipleArrayData)this.mav.getData()).setchipType(mevAnno.getChipType());
+                		((MultipleArrayData)this.mav.getData()).setOrganismName(mevAnno.getSpeciesName());
+                	
+                		sde = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields, mevAnno);
+                	}else {
+                /**
+               	  * Sarita: clone ID explicitly set here because if the data file
+               	  * has a probe (for eg. Affy house keeping probes) for which Resourcerer
+               	  * does not have annotation, MeV would still work fine. NA will be
+               	  * appended for the rest of the fields. 
+               	  * 
+               	  * 
+               	  */
                 	MevAnnotation mevAnno = new MevAnnotation();
                 	mevAnno.setCloneID(cloneName);
-                    mevAnno.setViewer(this.mav);
-                   sde = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields, mevAnno);
+                    sde = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields, mevAnno);
                 	
                 }
                 }
@@ -360,12 +368,11 @@ public class StanfordFileLoader extends ExpressionFileLoader {
     	   
     	    	//System.out.println("loadAffyAnno");
     	    	Hashtable _temp = null;
-    	    	AnnotationFileReader reader = new AnnotationFileReader();
+    	    	//AnnotationFileReader reader = new AnnotationFileReader();
+    	    	AnnotationFileReader reader = new AnnotationFileReader(this.mav);
     	    	try {
     	    		_temp = reader.loadAffyAnnotation(annotationFile);
-    	    		
-    	    		
-    	    		//reader.loadAffyAnnotation(affyFile);
+    	    	    		
     			} catch (Exception e) {
     				// TODO Auto-generated catch block
     				e.printStackTrace();
