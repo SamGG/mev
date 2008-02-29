@@ -9,6 +9,7 @@ import java.util.Vector;
 import org.tigr.microarray.mev.MultipleArrayViewer;
 import org.tigr.microarray.mev.cgh.CGHUtil.CGHUtility;
 import org.tigr.microarray.mev.cgh.DBObj.DSqlHandler;
+import org.tigr.util.StringSplitter;
 
 /**
  * @author Raktim
@@ -22,13 +23,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 	private Hashtable<String, Object> annotHash;
 	private MultipleArrayViewer viewer;
 	
-	/*	Added by Sarita: This variable would be set to true, in
-	 * the respective file loader class, when annotation is loaded .
-	 * The purpose of having this variable is to enable displaying
-	 * only the available annotation fields in the Display Menu->Gene/Row Labels
-	 * 
-	 * This status of this variable is checked in the MultipleArrayViewer:fireDataLoaded()
-	 */
+	
 	
 	public MevAnnotation() {
 		annotHash = new Hashtable<String, Object>();
@@ -361,13 +356,17 @@ public class MevAnnotation implements IAnnotation, Comparable {
 	}
 
 	public void setChipType(String _temp) {
-		if (ChipType.size() < this.getMavInstance()-1)
+		
+		//if (ChipType.size() <this.getMavInstance()-1)
+		if (ChipType.size() <= this.getMavInstance())
 			ChipType.setSize(ChipType.size() + 5);
-		ChipType.setElementAt(_temp, this.getMavInstance());
+		
+			ChipType.setElementAt(_temp, this.getMavInstance());
 	}
 	
 	public void setSpeciesName(String _temp) {
-		if (speciesName.size() < this.getMavInstance()-1)
+		//if (speciesName.size() < this.getMavInstance()-1)
+		if (speciesName.size() <= this.getMavInstance())
 			speciesName.setSize(speciesName.size() + 5);
 		speciesName.setElementAt(_temp, this.getMavInstance());
 	}
