@@ -31,7 +31,9 @@ import java.util.Vector;
 import javax.swing.JOptionPane;
 
 import org.tigr.microarray.mev.annotation.AnnoAttributeObj;
+import org.tigr.microarray.mev.annotation.AnnotationFieldConstants;
 import org.tigr.microarray.mev.annotation.IAnnotation;
+import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.cgh.CGHDataGenerator.CGHCopyNumberCalculator;
 import org.tigr.microarray.mev.cgh.CGHDataGenerator.CGHCopyNumberCalculatorNoDyeSwap;
 import org.tigr.microarray.mev.cgh.CGHDataObj.AlterationRegion;
@@ -175,16 +177,9 @@ public class MultipleArrayData implements IData {
      * organismName and chipType added here to facilitate
      * gaggle and EASE get this information independently of the
      * Annotation model
-     * 
-     * 
-     * 
      */
     public String organismName;
     public String chipType;
-    
-    
-    
-    
     
     public MultipleArrayData(){mads = new MultipleArrayDataState();}
     /**
@@ -302,6 +297,39 @@ public class MultipleArrayData implements IData {
 	public MultipleArrayDataState getMultipleArrayDataState(){return mads;}
 
 	
+	
+	/**
+	 * 
+	 * getters and setters for organismName and chipType
+	 * 
+	 * 
+	 * 
+	 */
+	
+	public String getOrganismName() {
+		return this.organismName;
+	}
+	
+	
+	public String getchipType() {
+		return this.chipType;
+	}
+	
+	
+	public void setOrganismName(String name) {
+		this.organismName=name;
+		
+	}
+	
+	
+	public void setchipType(String chipType) {
+		this.chipType=chipType;
+	}
+	
+	
+	
+	
+
 	
 	/**
 	 * 
@@ -1102,8 +1130,6 @@ public class MultipleArrayData implements IData {
         return annot.getAttributeObj(attr);
 	}
     
-    
-    
     /**
      * Returns a gene unique id.
      */
@@ -1125,8 +1151,48 @@ public class MultipleArrayData implements IData {
     public String[] getFieldNames() {
     	//6/10/06 jcb changed to ISlideData rather than Slide data since
     	//the first feature might not be a SlideData object if it's a sample subset (cluster)
-        return ((ISlideData)featuresList.get(0)).getSlideMetaData().getFieldNames();
+    	return ((ISlideData)featuresList.get(0)).getSlideMetaData().getFieldNames();
     }
+    
+    /**
+     * Returns a combination of annotation fields from original annotation model and new model,
+     * excluding annotation fields from the new model that have no values loaded.
+     * @return the list of fieldnames
+     */
+    public String[] getAllFilledAnnotationFields() {
+
+    	String[] fieldnames = ((ISlideData)featuresList.get(0)).getSlideMetaData().getFieldNames();
+    	
+    	String[] _annotations = MevAnnotation.getFieldNames();
+    	Vector<String> filledAnnotations = new Vector<String>();
+    	IAnnotation annot;
+
+    	//For each ISlideDataElement in featuresList, check which annotation
+    	//fields contains a value. If no value is found for an entire annotation field
+    	//don't add the name of that field to the features list.
+    	if(isAnnotationLoaded()) {
+	    	ISlideData isd = (ISlideData)featuresList.get(0);
+			for(int j=0; j<_annotations.length; j++) {
+				for(int i=0; i<isd.getSize(); i++) {
+					annot = isd.getSlideDataElement(i).getElementAnnotation();
+	    			if(annot.getAttribute(_annotations[j]) != null && !annot.getAttribute(_annotations[j])[0].equalsIgnoreCase("na")) {
+	    				filledAnnotations.add(_annotations[j]);
+	    				break;
+	    			}
+	    		}
+	    	}
+    	}
+    	
+		String[] temp = new String[filledAnnotations.size() + fieldnames.length];
+    	for(int i=0; i<fieldnames.length; i++ ) {
+    		temp[i] = fieldnames[i];
+    	}
+    	for(int i=fieldnames.length; i<temp.length; i++) {
+    		temp[i] = filledAnnotations.get(i-fieldnames.length);
+    	}
+        return temp;
+    }
+    
     /**
      * Returns a spot base row.
      */
@@ -2763,12 +2829,25 @@ public class MultipleArrayData implements IData {
         String [] fieldNames = this.getFieldNames();
         int fieldIndex;
         for(fieldIndex = 0; fieldIndex < fieldNames.length; fieldIndex++){
-            if(fieldName.equals(fieldNames[fieldIndex]))
-                break;
+            if(fieldName.equals(fieldNames[fieldIndex])) {
+            	break;
+            }
         }
 
-        if(fieldIndex >= fieldNames.length)
+        if(fieldIndex >= fieldNames.length) {
+        	String[] _temp = new String[indices.length];
+        	boolean hasAnnotation = false;
+        	for(int i=0; i<indices.length; i++) {
+        		String thisAnnot = this.getElementAnnotation(i, fieldName)[0];
+        		if(thisAnnot != null && !thisAnnot.equalsIgnoreCase("na") && !thisAnnot.equalsIgnoreCase("n/a")) {
+        			hasAnnotation = true;
+        		}
+        		_temp[i] = thisAnnot;
+        	}
+        	if(hasAnnotation)
+        		return _temp;
             return null;
+        }
 
         String [] annot = new String[indices.length];
 
