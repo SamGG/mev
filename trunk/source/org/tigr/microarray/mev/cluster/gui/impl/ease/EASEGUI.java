@@ -116,6 +116,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         if(framework.getData().isAnnotationLoaded()) {
         	String slideType = ((org.tigr.microarray.mev.MultipleArrayData)framework.getData()).getchipType();
         	String filename = org.tigr.microarray.mev.TMEV.getDataPath() + System.getProperty("file.separator") + "Annotation" + System.getProperty("file.separator") + slideType + ".txt";
+        	System.out.println("Getting annotation file " + filename);
         	annotationFile = new File(filename);
 	        if(annotationFile.canRead())
 	        	useLoadedAnnotation = true;

@@ -70,6 +70,7 @@ public class TMEV {
     
     //Initial data path
     private static String dataPath;
+
     private static int flag=0;
     // pcahan                       jcb:constant
     private static int dataType = DATA_TYPE_TWO_DYE;
