@@ -306,7 +306,8 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer {
         useDoubleGradient = menu.getUseDoubleGradient();
         if(geneClusterViewer){
             ((CentroidExperimentHeader)this.header).setNegAndPosColorImages(menu.getNegativeGradientImage(), menu.getPositiveGradientImage());
-            ((CentroidExperimentHeader)this.header).setValues(Math.abs(menu.getMaxRatioScale()), -Math.abs(menu.getMinRatioScale()));
+            //jcb.. end point values were set in the wrong orientation changed to correct min,max order
+            ((CentroidExperimentHeader)this.header).setValues(-Math.abs(menu.getMinRatioScale()), Math.abs(menu.getMaxRatioScale()));
             ((CentroidExperimentHeader)this.header).setAntiAliasing(menu.isAntiAliasing());
             ((CentroidExperimentHeader)this.header).setDrawBorders(menu.isDrawingBorder());
             ((CentroidExperimentHeader)this.header).updateSize(menu.getElementSize());
