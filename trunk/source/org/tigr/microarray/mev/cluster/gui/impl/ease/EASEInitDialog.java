@@ -472,7 +472,6 @@ public class EASEInitDialog extends AlgorithmDialog {
             
             fileButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent ae) {
-
                 	easeParamPanel.fieldNamesBox.setEnabled(!preloadedAnnotationButton.isSelected());
                 	easeParamPanel.useAnnBox.setEnabled(!preloadedAnnotationButton.isSelected());
                     browseButton.setEnabled(fileButton.isSelected());
@@ -526,8 +525,13 @@ public class EASEInitDialog extends AlgorithmDialog {
             
             browseButton.setEnabled(fileButton.isSelected());
             popField.setEnabled(fileButton.isSelected());
-            popField.setBackground(Color.lightGray);
             fileLabel.setEnabled(fileButton.isSelected());
+
+            if(fileButton.isSelected())
+                popField.setBackground(Color.white);
+            else
+            	popField.setBackground(Color.lightGray);
+
             
             add(preloadedAnnotationButton, 	new GridBagConstraints(0,0,3,1,1,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,30,0,0), 0,0));
             add(fileButton, 				new GridBagConstraints(0,1,3,1,1,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,30,0,0), 0,0));

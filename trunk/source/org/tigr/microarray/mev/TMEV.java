@@ -12,11 +12,13 @@ All rights reserved.
 
 package org.tigr.microarray.mev;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -51,7 +53,7 @@ public class TMEV {
     public final static int ANALYSIS_LOADED = 101;
     
     private static Connection connection;
-    private static Hashtable properties;
+    //private static Hashtable<String, String> properties;
     private static AlgorithmFactory algorithmFactory;
     private static IGUIFactory guiFactory;
     private static int coordinatePairCount;
@@ -100,9 +102,13 @@ public class TMEV {
     
     public static boolean GAGGLE_CONNECT_ON_STARTUP = false;
 
-    
+    public static String sep;
+    //EH new properties field, to replace the hashtable properties. Better loading functions, more webstart-safe
+    //and user-configurable
+    public static ConfMap props;
     
     public static void main(String[] args) {
+    	sep = System.getProperty("file.separator");
         try {
         	//Determine whether to run with Gaggle enabled
         	for(String s: args) {
@@ -139,6 +145,9 @@ public class TMEV {
             System.out.println("Operating System name: "+os);
             System.out.println("Operating System version: "+System.getProperty("os.version"));
             System.out.println("Operating System architecture: "+System.getProperty("os.arch"));
+            setupFiles();
+            props = loadProperties();
+            System.out.println("Testing properties loading/editing: prompt-for-save" + props.getProperty("prompt-for-save"));
             
             configure();
             ImageScreen is = new ImageScreen();
@@ -153,10 +162,77 @@ public class TMEV {
             
             Manager.createNewMultipleArrayViewer();
                     
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static void writeProperties() throws IOException {
+
+        File mevDirectory = new File(System.getProperty("user.home") + sep + ".mev");
+        File mevPropertiesFile = new File(System.getProperty("user.home") + sep + ".mev" + sep + "mev.properties");
+        if(mevDirectory.exists()) {
+       	 if(mevDirectory.isDirectory() && mevDirectory.canRead()) {
+       		 if(mevPropertiesFile.exists() && mevPropertiesFile.canRead()) {
+       			props.store(new FileOutputStream(mevPropertiesFile), "MeV Default Properties");
+       		 }
+       	 }
+        }
+    }
+    /**
+     * Checks for the existence of configuration files in the user.home/.mev directory. 
+     * If files exist, save their locations. Otherwise, read them from classpath and write them 
+     * to user directory.
+     *
+     */
+    //TODO write this so that it reads all config files out of the classpath and writes them to .mev? 
+    private static void setupFiles() {
+    	
+    }
+    /**
+     * Loads a user properties file from userdir/.mev/mev.properties, if available or loads a default 
+     * properties file from the classpath and writes it to userdir/.mev/mev.properties if not. 
+     * 
+     * @return
+     * @throws IOException
+     */
+    private static ConfMap loadProperties() throws IOException {
+        File mevDirectory = new File(System.getProperty("user.home") + sep + ".mev");
+        File mevPropertiesFile = new File(System.getProperty("user.home") + sep + ".mev" + sep + "mev.properties");
+        
+        //Load default properties from the classpath
+        ConfMap defaultProps = new ConfMap();
+        ConfMap props = new ConfMap();
+        try {
+        	InputStream in = TMEV.class.getClassLoader().getResourceAsStream("org/tigr/microarray/mev/default.properties");
+        	if (in != null) {
+        		defaultProps.load(in); // Can throw IOException
+        	}
+        	props = new ConfMap(defaultProps);
+        } catch (IOException ioe) {
+        	System.out.println("Couldn't load default properties from org/tigr/microarray/mev/default.properties");
+        }
+        
+         if(mevDirectory.exists()) {
+        	 if(mevDirectory.isDirectory() && mevDirectory.canRead()) {
+        		 if(mevPropertiesFile.exists() && mevPropertiesFile.canRead()) {
+        			 InputStream in2 = new FileInputStream(mevPropertiesFile);
+        			 props.load(in2);
+        		 } else {
+  	                System.out.println("Createing MeV properties file " + mevPropertiesFile + ":");
+        			 mevPropertiesFile.createNewFile();
+ 	                System.out.println("Created MeV properties file " + mevPropertiesFile + ".");
+ 	               defaultProps.store(new FileOutputStream(mevPropertiesFile), "MeV Default Properties");
+        		 }
+        	 }
+         } else {
+        	 mevDirectory.mkdir();
+             System.out.println("Created MeV directory " + mevDirectory + ".");
+			 mevPropertiesFile.createNewFile();
+              System.out.println("Created MeV properties file " + mevPropertiesFile + ".");
+             defaultProps.store(new FileOutputStream(mevPropertiesFile), "MeV Default Properties");
+         }
+        return props;
     }
     
     public static boolean readPreferencesFile(File inputFile) {
@@ -172,7 +248,7 @@ public class TMEV {
         StringTokenizer ss;
         try {
             String currentLine, key;
-            TMEV.properties = new Hashtable();
+            //TMEV.properties = new Hashtable<String, String>();
             
             //FL
             indicesAdjusted = false;
@@ -182,8 +258,8 @@ public class TMEV {
                 if (!(currentLine.startsWith("//") || (currentLine.length() == 0))) {
                     ss = new StringTokenizer(currentLine, "\t");
                     key = ss.nextToken();
-                    if (ss.hasMoreTokens()) properties.put(key, ss.nextToken());
-                    else properties.put(key, new String(""));
+                    if (ss.hasMoreTokens()) props.put(key, ss.nextToken());
+                    else props.put(key, new String(""));
                 }
             }
         } catch (Exception e) {
@@ -212,16 +288,6 @@ public class TMEV {
             for (int i = 0; ss.hasMoreTokens(); i++) {
                 TMEV.databases[i] = ss.nextToken();
             }
-/* EH removed fieldnames from TMEV because they belong in SlideData            
-            String additionalFields = TMEV.getSettingForOption("Additional Fields");
-            ss = new StringTokenizer(additionalFields, ":");
-            if (ss.countTokens() > 0) {
-                TMEV.fieldNames = new String[ss.countTokens()];
-                for (int i = 0; ss.hasMoreTokens(); i++) {
-                    TMEV.fieldNames[i] = ss.nextToken();
-                }
-            } else TMEV.fieldNames = null;
-*/
         } catch (Exception e) {
             e.printStackTrace();
             returnValue = false;
@@ -232,7 +298,7 @@ public class TMEV {
     public static String getSettingForOption(String option) {
         String setting = "";
         try {
-            setting = (String) properties.get(option);
+            setting = (String) props.get(option);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -302,42 +368,20 @@ public class TMEV {
     public static int getHeaderRowCount() {return TMEV.headerRowCount;}
     public static int getHeaderColumnCount() {return TMEV.headerColumnCount;}
 
-    //get initial algorithm list from file tmev.cfg
+    //get initial algorithm list from properties
     public static int[] getCustomerAnalysis() {
-	   String text = new String("");	   	   
-       boolean haveCustomTag = false;
-	   String lineSep = System.getProperty("line.separator");
-       try {
-           BufferedReader br = new java.io.BufferedReader(new FileReader(TMEV.getFile("config/tmev.cfg")));
-           String line;
-           while((line = br.readLine()) != null) {
-               if(line.indexOf("algorithm-list") != -1) {
-                   haveCustomTag=true;
-                   line = line.substring(15);
-                   if(TMEV.customerAnalysis==null)
-                	   TMEV.initCustomerAnalysis(line.length());
-                   for(int i=0;i<line.length();i++){
-                	 int m=(new Integer(line.substring(i,i+1))).intValue();
-                	 TMEV.customerAnalysis[i]=m;
-                   }
-                	   
-               }
-               text += line+lineSep;
-           }
-           br.close();
-           if(!haveCustomTag){
-               text +="algorithm-list 1";
-               BufferedWriter bw = new java.io.BufferedWriter(new FileWriter(TMEV.getFile("config/tmev.cfg")));
-               bw.write(text);
-               bw.flush();
-               bw.close();
-               if(TMEV.customerAnalysis==null)
-            	   TMEV.initCustomerAnalysis(1);
-               TMEV.customerAnalysis[0]=1;
-           }
-       } catch (IOException ioe) {
-    	   System.out.print("File tmev.cfg not found");
-       }
+    	if(props.get("algorithm-list") != null) {
+    		String algorithmmask = ((String)props.get("algorithm-list"));
+            if(TMEV.customerAnalysis==null) {
+         	   //System.out.println("customeranalysis == null");
+         	   TMEV.initCustomerAnalysis(algorithmmask.length());
+            }
+            for(int i=0;i<algorithmmask.length();i++){
+           	 int m=(new Integer(algorithmmask.substring(i,i+1))).intValue();
+           	 //System.out.println("customerAnalysis[" + i + "] = " + m);
+           	 TMEV.customerAnalysis[i]=m;
+            }
+    	}
 	   return TMEV.customerAnalysis;
     }
     
@@ -370,6 +414,13 @@ public class TMEV {
    }
    
    public static void setCustomerStatSave(){
+       try {
+    	   props.put("algorithm-list", TMEV.getCustomerAnalysisList());
+    	   writeProperties();
+       } catch (IOException ioe) {
+    	   System.out.println("unable to write to properties file");
+       }
+       /*
 	   String lineSep = System.getProperty("line.separator");
        if(lineSep == null)
            lineSep = "\n";
@@ -384,7 +435,7 @@ public class TMEV {
                }
                text += line+lineSep;
            }
-           
+
            br.close();
      
            BufferedWriter bw = new java.io.BufferedWriter(new FileWriter(TMEV.getFile("config/tmev.cfg")));
@@ -394,6 +445,7 @@ public class TMEV {
        } catch (IOException ioe) {
     	   System.out.print("File tmev.cfg not found");
        }
+       */
    }
    
     public static String[] getDatabases() {return TMEV.databases;}
@@ -414,97 +466,33 @@ public class TMEV {
     public static void setNameIndex(int index) {
         TMEV.nameIndex = (index < 0) ? 0 : index;
     }
-/* EH removed fieldNames from TMEV because they belong in SlideData    
-    public static void setFieldNames(String [] fieldNames){
-        TMEV.fieldNames = fieldNames;
-    }
-   
-    public static void appendFieldNames(String [] fieldNames){
-        if(TMEV.fieldNames == null || fieldNames == null)  //trying to set to null or initial set
-            TMEV.fieldNames = fieldNames;
-        else {                  //names exist and new names exist, APPEND (ie. mev format, extra ann load)
-            String [] newNames = new String[TMEV.fieldNames.length+fieldNames.length];
-            System.arraycopy(TMEV.fieldNames, 0, newNames, 0, TMEV.fieldNames.length);
-            System.arraycopy(fieldNames, 0, newNames, TMEV.fieldNames.length, fieldNames.length);
-            TMEV.fieldNames = newNames;
-        }
-    }
-    
-    public static void clearFieldNames(){
-        TMEV.fieldNames = null;
-    }
-*/     
+
     public static void setPermitPrompt(boolean permitPrompt) {
-        boolean havePromptTag = false;
-        
         if(TMEV.permitSavePrompt != permitPrompt) {
-            String value = String.valueOf(permitPrompt);
-            String lineSep = System.getProperty("line.separator");
-            if(lineSep == null)
-                lineSep = "\n";
-            String fileName = "tmev.cfg";
-            String text = new String("");
-            
-            try {
-                BufferedReader br = new java.io.BufferedReader(new FileReader(TMEV.getFile("config/tmev.cfg")));
-                String line;
-                while((line = br.readLine()) != null) {
-                    if(line.indexOf("prompt-for-save") != -1) {
-                        havePromptTag = true;
-                        line = line.substring(0, line.lastIndexOf(" "));
-                        line += " "+value;
-                    }
-                    text += line+lineSep;
-                }
-                
-                if(!havePromptTag){
-                    text += lineSep+"# Prompt save state"+lineSep+"prompt-for-save "+String.valueOf(permitPrompt);
-                }
-                
-                br.close();
-                
-                BufferedWriter bw = new java.io.BufferedWriter(new FileWriter(fileName));
-                bw.write(text);
-                bw.flush();
-                bw.close();
-            } catch (IOException ioe) {
-                //no update to config file
-            }
-            TMEV.permitSavePrompt = permitPrompt;
+        	permitSavePrompt = permitPrompt;
+        	props.setProperty("prompt-for-save", new Boolean(permitPrompt).toString());
         }
+        try {
+        	writeProperties();
+        } catch (IOException ioe) {
+        	System.out.println("Couldn't write to user properties file.");
+        }
+
     }
     
- /*   public static void configure() {
-        String filename = "tmev.cfg";
-        ConfMap cfg = new ConfMap();
-        try {
-            cfg.load( new FileInputStream(filename));
-  
-            String guiFactoryClassName = cfg.getString("gui.factory.class");
-            if (guiFactoryClassName != null && !guiFactoryClassName.equals("null")) {
-                Class clazz = Class.forName(guiFactoryClassName);
-                guiFactory = (IGUIFactory)clazz.newInstance();
-            } else {
-                throw new Exception("GUI factory class name not found, check the 'gui.factory.class' key in "+filename+" file.");
-            }
-            algorithmFactory = new TMEVAlgorithmFactory(cfg);
-        } catch (IOException ioe) {
-            System.out.println("Error to load configuration file.");
-            ioe.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-  */
+
     /*
      * This code was modified by Jim Johnson with other changes to enable
      * Java Web Start
      */
     public static void configure() {
-        String filename = "config/tmev.cfg";
-        ConfMap cfg = new ConfMap();
+        ConfMap cfg = props;
+        
+//        String filename = "config/tmev.cfg";
+//        ConfMap cfg = new ConfMap();
         try {
-            // Try reading configuration from resource
+        	/*
+          // Try reading configuration from resource
             try {
                 InputStream is = TMEV.class.getClassLoader().getResourceAsStream(filename);
                 
@@ -528,7 +516,7 @@ public class TMEV {
                 System.out.println("Error to load configuration file.");
                 ioe.printStackTrace();
             }
-            
+            */
             //
             String guiFactoryClassName = cfg.getString("gui.factory.class");
            
@@ -536,7 +524,7 @@ public class TMEV {
                 Class clazz = Class.forName(guiFactoryClassName);
                 guiFactory = (IGUIFactory)clazz.newInstance();
             } else {
-                throw new Exception("GUI factory class name not found, check the 'gui.factory.class' key in "+filename+" file.");
+//                throw new Exception("GUI factory class name not found, check the 'gui.factory.class' key in "+filename+" file.");
             }
             algorithmFactory = new TMEVAlgorithmFactory(cfg);
             
@@ -544,7 +532,7 @@ public class TMEV {
             String path = cfg.getProperty("current-data-path");
             
             if(path != null) {
-                String sep = System.getProperty("file.separator");
+                //String sep = System.getProperty("file.separator");
                 StringTokenizer stok = new StringTokenizer(path, "/");
                 path = new String();
                 while(stok.hasMoreTokens())
@@ -582,7 +570,13 @@ public class TMEV {
     public static void updateRPath( String rPath ) {
         if(rPath == null)
             return;
-        
+        props.put("rserve-path", rPath);
+	    try { 
+	        writeProperties();
+	    } catch (IOException ioe) {
+	    	System.out.println("couldn't write properties file");
+	    }
+        /*
         //Read tmev.cfg
         try{
             BufferedReader br = new BufferedReader(new FileReader(TMEV.getFile("config/tmev.cfg")));
@@ -611,6 +605,7 @@ public class TMEV {
         } catch (IOException e){
             System.out.println("Error updating rserve path in tmev.cfg file.");
         }
+        */
     }
     
     
@@ -619,7 +614,13 @@ public class TMEV {
     public static void updateDataPath(String  dataPath){
         if(dataPath == null)
             return;
-        
+        props.put("current-data-path", dataPath);
+        try {
+        	writeProperties();
+        } catch(IOException ioe) {
+        	
+        }
+        /*
         String lineSep = System.getProperty("line.separator");
         
         //Read tmev.cfg
@@ -655,6 +656,7 @@ public class TMEV {
         } catch (IOException e){
             System.out.println("Error updating data path in tmev.cfg file.");
         }
+        */
     }
     
     

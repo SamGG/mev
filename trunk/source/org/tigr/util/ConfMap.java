@@ -13,9 +13,17 @@ package org.tigr.util;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Properties;
 
 public class ConfMap extends java.util.Properties {
     
+	public ConfMap() {
+		super();
+	}
+	public ConfMap(Properties props) {
+		super(props);
+	}
+	
     public String getString(String key) {
 	return getProperty(key);
     }
