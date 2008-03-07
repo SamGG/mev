@@ -102,8 +102,8 @@ public class HCLViewer extends JPanel implements IViewer {
     
     protected IData data;
     protected Experiment experiment;
-    protected ArrayList clusters = new ArrayList();
-    protected ArrayList experimentClusters = new ArrayList();
+    protected ArrayList<HCLCluster> clusters = new ArrayList<HCLCluster>();
+    protected ArrayList<HCLCluster> experimentClusters = new ArrayList<HCLCluster>();
     protected int [][] sampleClusters;
     public HCLCluster selectedCluster;
     protected int[] genesOrder;
@@ -650,8 +650,6 @@ public class HCLViewer extends JPanel implements IViewer {
             menuItem.addActionListener(listener);
             menu.add(menuItem);
         }   
-        //TODO
-        //EH Gaggle testing
         menuItem = new JMenuItem("Broadcast Matrix to Gaggle", GUIFactory.getIcon("gaggle_icon_16.gif"));
         menuItem.setActionCommand(ExperimentViewer.BROADCAST_MATRIX_GAGGLE_CMD);
         menuItem.addActionListener(listener);
@@ -661,7 +659,6 @@ public class HCLViewer extends JPanel implements IViewer {
         menuItem.setActionCommand(ExperimentViewer.BROADCAST_NAMELIST_GAGGLE_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
-        //end Gaggle testing
     }
     
     public void broadcastClusterGaggle() {
@@ -669,46 +666,49 @@ public class HCLViewer extends JPanel implements IViewer {
     	int[] rows;
     	
     	if(selectedCluster != null) {
+//    		System.out.println("HCLViewer.broadcastClusterGaggle: cluster exists");
     		System.out.println("Cluster exists");
 	    	if(selectedCluster.isGeneCluster) {
+//	    		System.out.println("\tsending gene cluster");
 	    		subExp = getExperiment();
 	    		rows = getSubTreeElements();
 	    	} else {
+//	    		System.out.println("\tsending experiment cluster");
 	    		subExp = ((org.tigr.microarray.mev.MultipleArrayData)data).getDataSubset(getSubTreeElements(), experiment.getRowMappingArrayCopy()).getExperiment();
 	    		rows = subExp.getRows();
 	    	}
 	    	framework.broadcastGeneCluster(subExp, rows);
     	} else {
-    		System.out.println("Cluster doesn't exist");
-    		framework.broadcastGeneCluster(getExperiment(), getExperiment().getColumns());
+//    		System.out.println("HCLViewer.broadcastClusterGaggle: Cluster doesn't exist");
+    		framework.broadcastGeneCluster(getExperiment(), getExperiment().getRows());
     	}
     }
     public void broadcastNamelistGaggle() {
-    	framework.broadcastNamelist(getExperiment(), getExperiment().getRows());
-//    	framework.broadcastNamelist(getExperiment(), getSubTreeElements());
-/*    	Experiment subExp;
+    	Experiment subExp;
     	int[] rows;
-    	if(doesClusterExist()) {
+    	if(selectedCluster != null) {
+//    		System.out.println("HCLViewer.broadcastNamelistGaggle: cluster exists");
 	    	if(selectedCluster.isGeneCluster) {
+//	    		System.out.println("\tsending gene cluster");
 	    		subExp = getExperiment();
 	    		rows = getSubTreeElements();
 	    	} else {
+//	    		System.out.println("\tsending experiment cluster");
 	    		subExp = ((org.tigr.microarray.mev.MultipleArrayData)data).getDataSubset(getSubTreeElements(), experiment.getRowMappingArrayCopy()).getExperiment();
 	    		rows = subExp.getRows();
 	    	}
 	    	framework.broadcastNamelist(subExp, rows);
     	} else {
+//    		System.out.println("HCLViewer.broadcastNamelistGaggle: Cluster doesn't exist");
     		framework.broadcastNamelist(getExperiment(), getExperiment().getRows());
     	}
-*/    }
-    //EH end gaggle testing
+    }
     
     /**
      * Returns a menu item by specified action command.
      * @return null, if menu item was not found.
      */
     protected JMenuItem getJMenuItem(String command) {
-        JMenuItem item;
         Component[] components = popup.getComponents();
         for (int i=0; i<components.length; i++) {
             if (components[i] instanceof JMenuItem) {
@@ -859,11 +859,11 @@ public class HCLViewer extends JPanel implements IViewer {
             return;
         }
         HCLCluster cluster = getCluster(this.selectedCluster);
-        boolean notANewNode = true;
+//        boolean notANewNode = true;
         
         if (cluster != null) {              //cluster already exists
             this.selectedCluster = cluster;
-            notANewNode = false;
+//            notANewNode = false;
         } else {                            //new cluster, add to list
             if(selectedCluster.isGeneCluster)
                 this.clusters.add(this.selectedCluster);
@@ -1534,8 +1534,7 @@ public class HCLViewer extends JPanel implements IViewer {
             } else if (command.equals(SAVE_GENE_NEXUS_CMD)) {
                 genesTree.saveAsNexusFile();
             } else if (command.equals(SAVE_SAMPLE_NEXUS_CMD)) {
-                sampleTree.saveAsNexusFile();                
-            //EH Gaggle test
+                sampleTree.saveAsNexusFile();
             } else if (command.equals(ExperimentViewer.BROADCAST_MATRIX_GAGGLE_CMD)) {
                 broadcastClusterGaggle();
             } else if (command.equals(ExperimentViewer.BROADCAST_NAMELIST_GAGGLE_CMD)) {
