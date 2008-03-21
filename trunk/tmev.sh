@@ -11,10 +11,22 @@
 #
 # $RCSfile: tmev.sh,v $
 # $Revision: 1.1 $
-# $Date: 2007-12-12 21:52:48 $
+# $Date: 2007/12/12 21:52:48 $
 # $Author: eleanorahowe $
 # $State: Exp $
 #
 #***********************************************************************
+$PWD=pwd
+for jar in lib/*.jar 
+do 
+# make sure CLASSPATH is defined before we reference it 
+if [ -z "$CLASSPATH" ] 
+then 
+CLASSPATH=$jar 
+else 
+CLASSPATH=$jar:$CLASSPATH 
+fi 
+done 
+export CLASSPATH
 
-java -Xss1M -Xmx512m -cp "lib/*" org.tigr.microarray.mev.TMEV
+java -Xss1M -Xmx1024m -cp $CLASSPATH org.tigr.microarray.mev.TMEV
