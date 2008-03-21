@@ -16,7 +16,6 @@
 # $State: Exp $
 #
 #***********************************************************************
-$PWD=pwd
 for jar in lib/*.jar 
 do 
 # make sure CLASSPATH is defined before we reference it 
