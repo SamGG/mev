@@ -1,0 +1,2 @@
+The folder MeV.app should contain all of the support files required to build an executable Mac OSX application, except for the jar files.
+Those should be copied into the package (MeV.app/Resources/Java) from the repository lib directory prior to distribution.
