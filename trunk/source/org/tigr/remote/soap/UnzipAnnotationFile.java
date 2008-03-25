@@ -5,6 +5,8 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.*;
 
+import javax.swing.JOptionPane;
+
 
 public class UnzipAnnotationFile {
 
@@ -13,67 +15,160 @@ public class UnzipAnnotationFile {
 	private String targetFileName;
 	private String unzippedFile;
 	
- public UnzipAnnotationFile(String localDirectory, String fileName ) {
-	 this.fileName=fileName;
-	 this.directoryName=localDirectory;
- }
+	//TO DO: Change the constructor
+	public UnzipAnnotationFile(String localDirectory, String fileName ) {
+		this.fileName=fileName;
+		this.directoryName=localDirectory;
+	}
 
-  public String unZipFiles() {
-   Enumeration entries;
-   ZipFile zipFile;
 
-    try {
-    
-//      System.out.println("directory name:"+directoryName);
-//      System.out.println("File name:"+fileName);
-      String targetFileName=fileName.substring(0,fileName.indexOf('.'));
-      zipFile = new ZipFile(directoryName+"/"+fileName);
-      entries = zipFile.entries();
+	/**
+	 * unZipResourcererFiles takes in the annotation files downloaded from Resourcerer
+	 * and unzips it in to a .txt file. Unzipping a Resourcerer annotation file does
+	 * not give a .txt file, hence requires the extra step. 
+	 *  
+	 * 
+	 * @param outputFile
+	 * @return
+	 */
 
-      while(entries.hasMoreElements()) {
-        ZipEntry entry = (ZipEntry)entries.nextElement();
-        //System.out.println("zip fileentry name:"+entry.getName());
-        if(entry.isDirectory()) {
-//          System.err.println("Extracting directory: " + entry.getName());
-          File temp= (new File(directoryName+"/"+entry.getName()+".txt"));
-          continue;
-        }
-       
-        if(entry.getName().equals(targetFileName)) {
-        	       
-//        System.err.println("Extracting file: " + entry.getName());
-        copyInputStream(zipFile.getInputStream(entry),
-           new BufferedOutputStream(new FileOutputStream(directoryName+"/"+targetFileName+".txt")));
-        this.unzippedFile=(targetFileName+".txt");
-      }
-      }
 
-      zipFile.close();
-    } catch (IOException ioe) {
-      System.err.println("Unhandled exception:");
-      ioe.printStackTrace();
-      
-    }
-    return (this.unzippedFile);
-  }
+	public boolean unZipResourcererFiles(File outputFile) {
+		BufferedInputStream bis;
+		BufferedOutputStream bos;
+		int BUFFERSIZE = 1024;
 
-  
-  public static final void copyInputStream(InputStream in, OutputStream out)
-  throws IOException
-  {
-    byte[] buffer = new byte[1024];
-    int len;
+		try {
+			ZipFile zipFile = new ZipFile(outputFile);
 
-    while((len = in.read(buffer)) >= 0)
-      out.write(buffer, 0, len);
+			//System.out.println("unzipFile:"+outputFile.getName());
+			//System.out.println("unzipFile length:"+outputFile.length());
+			Enumeration entries = zipFile.entries();
 
-    in.close();
-    out.close();
-  }
-  
-  
-  
-  
-  
-  
+			byte [] buffer = new byte [BUFFERSIZE];
+			int length = 0;
+			int cnt = 0;
+
+			while(entries.hasMoreElements()) {
+
+
+
+				ZipEntry entry = (ZipEntry)entries.nextElement();
+
+				if(entry.isDirectory()) {
+					cnt++;
+					continue;
+				}
+
+				String entryName = entry.getName();
+				String entryFolder = (new File(entryName)).getParent();
+				File entryDirectory = new File(this.directoryName+"/"+entryFolder);
+
+				if(entry.isDirectory()&!entryDirectory.exists()) {
+					entryDirectory.mkdirs();
+				}
+
+				bos = new BufferedOutputStream(new FileOutputStream(this.directoryName+"/"+entry.getName()+".txt"));
+				bis = new BufferedInputStream(zipFile.getInputStream(entry));
+
+				while( (length = bis.read(buffer, 0, BUFFERSIZE)) > 0 ) {
+					bos.write(buffer, 0, length);
+				}
+
+				cnt++;
+				bos.flush();
+				bos.close();
+				bis.close();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+
+		return true;
+
+
+	}
+
+	/**
+	 * extractZipFiles is essentially the same as unZipResourcererFiles,
+	 * minus converting the extracted files to .txt files.
+	 * This function was added, to enable downloading BN and EASE files along with the annotation files. 
+	 * BN and EASE zip files on extracting spit out .txt files.
+	 * 
+	 * 
+	 * 
+	 * @param outputFile
+	 * @return
+	 */
+
+
+	public boolean extractZipFile(File outputFile) {
+		BufferedInputStream bis;
+		BufferedOutputStream bos;
+		int BUFFERSIZE = 1024;
+
+		try {
+			ZipFile zipFile = new ZipFile(outputFile);
+			Enumeration entries = zipFile.entries();
+
+			byte [] buffer = new byte [BUFFERSIZE];
+			int length = 0;
+			int cnt = 0;
+
+			while(entries.hasMoreElements()) {
+
+				ZipEntry entry = (ZipEntry)entries.nextElement();
+
+				if(entry.isDirectory()) {
+					cnt++;
+					continue;
+				}
+
+				String entryName = entry.getName();
+				String entryFolder = (new File(entryName)).getParent();
+				File entryDirectory = new File(this.directoryName+"/"+entryFolder);
+
+				if(entry.isDirectory()&!entryDirectory.exists()) {
+					entryDirectory.mkdirs();
+				}
+
+				bos = new BufferedOutputStream(new FileOutputStream(this.directoryName+"/"+entry.getName()));
+				bis = new BufferedInputStream(zipFile.getInputStream(entry));
+
+				while( (length = bis.read(buffer, 0, BUFFERSIZE)) > 0 ) {
+					bos.write(buffer, 0, length);
+				}
+
+				cnt++;
+				bos.flush();
+				bos.close();
+				bis.close();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
