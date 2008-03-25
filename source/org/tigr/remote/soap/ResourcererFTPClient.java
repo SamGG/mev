@@ -1,14 +1,25 @@
 package org.tigr.remote.soap;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.InetAddress;
 
 import javax.swing.JOptionPane;
 
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPClientConfig;
-import org.apache.commons.net.ftp.FTPReply;
+
 import org.tigr.microarray.mev.annotation.AnnotationDialog;
+
+import ftp.FtpBean;
+import ftp.FtpBean;
+import ftp.FtpListResult;
+import ftp.FtpObserver;
+//
+
+
+
+
+
 /**
  *  
  * @author SARITA NAIR
@@ -33,6 +44,7 @@ public class ResourcererFTPClient {
 	private AnnotationDialog dialog;
 	private String dataPath="./data/Annotation/";
 	private String home="/pub/bio/tgi/data/Resourcerer/new/";
+	private String EASE_BN_remotedir="/pub/bio/tgi/data/Resourcerer/";
 	
 	public ResourcererFTPClient(String chipType, String organism,String userName, String password) {
 		this.ChipType=chipType;
@@ -72,116 +84,143 @@ public class ResourcererFTPClient {
 	public void connectToResourcerer() {
 		
 		try {
-			FTPClient ftp = new FTPClient();
-			
-			FTPClientConfig conf = new FTPClientConfig(FTPClientConfig.SYST_UNIX);
-			ftp.configure(conf);
-			
-			ftp.connect(InetAddress.getByName("occams.dfci.harvard.edu"));
-			int reply = ftp.getReplyCode();
-			
-			if(reply==FTPReply.SERVICE_NOT_AVAILABLE) {
-				String eMsg = "<html>The ftp link seems to be broken...<br>" +
-				"<html>Please report this to the MeV developers (mev@jimmy.harvard.edu) <br> "+
-				"<html>We apologize for the inconvenience.<br> </html>";
-				JOptionPane.showMessageDialog(null, eMsg, "Warning", JOptionPane.INFORMATION_MESSAGE);
-				System.exit(1);
-			}
-			
-			if(!FTPReply.isPositiveCompletion(reply)) {
-				
-				ftp.disconnect();
-				System.exit(1);
-				
-			}
-			
-			if(!ftp.login(this.userName, this.password)) {
-				String eMsg = "<html>Unable to login to the FTP server..<br>" +
-				"<html>Please report this to the MeV developers (mev@jimmy.harvard.edu) <br> "+
-				"<html>We apologize for the inconvenience.<br> </html>";
-				JOptionPane.showMessageDialog(null, eMsg, "Warning", JOptionPane.INFORMATION_MESSAGE);
-				
-			}else {
-				if(this.dialog!=null) {
-					//System.out.println("dialog is not null");
-					this.dialog.progressPanel.update("Logged on to the FTP site");
-					this.dialog.progressPanel.setIndeterminate(true);
-					//this.dialog.progressPanel.increment();
-				}
-			}
-			
-			ftp.changeWorkingDirectory(home+this.Organism+"/");
-			
-			// List the zip files in the directory
-			String[]names=ftp.listNames("*.zip");
-			String targetFile="";
-			
-			for(int i=0;i<names.length;i++) {
-				
-				//System.out.println("Zip file names:"+names[i]);
-				//System.out.println((names[i].substring(0, names[i].indexOf('.'))));
-				if(names[i].substring(0, names[i].indexOf('.')).equalsIgnoreCase(this.ChipType)) {
-					targetFile=names[i];
-					if(this.dialog!=null) {
-						this.dialog.progressPanel.update("Located "+targetFile);
-						this.dialog.progressPanel.setIndeterminate(true);
-						this.dialog.progressPanel.setMaximum(ftp.stat(names[i]));
 						
-					}
-					//System.out.println("targetFileName:"+targetFile);
-				}
-			}
-			
-			if(targetFile.equals("")) {
-				String eMsg = "<html>The file" +this.ChipType+".zip"+"does not exist.<br>"+
-				"<html> Please check if you selected the CORRECT <br> "+
-				"<html>ORGANISM and CHIP TYPE<br> </html>";
-				if(this.dialog!=null)
-					this.dialog.progressPanel.dispose();
-				JOptionPane.showMessageDialog(null, eMsg, "Warning", JOptionPane.INFORMATION_MESSAGE);
+		
+			int overallLength = 0;            
+			int currentLength = 0;        
+			FtpBean ftp = new FtpBean();
+        	ftp.ftpConnect("occams.dfci.harvard.edu", "anonymous");
+        	        	
+        	ftp.setDirectory(home+this.Organism);        	
+        	FtpListResult list = ftp.getDirectoryContent();
+        	
+        	while(list.next()) {		
+        		if(list.getName().equals(this.ChipType+".zip")) {
+        			overallLength = (int)list.getSize();
+        		}
+        	}
+        	
+        	//Checks if the Annotation directory exists, if not creates it
+        	File f=new File(dataPath);
+			if(!f.exists()) {
+				f.mkdir();
 				
 			}
 			
-			
-			
-			File f=new File(dataPath+targetFile);
-			FileOutputStream temp=new FileOutputStream(f);
-			ftp.type(FTPClient.BINARY_FILE_TYPE);
-			ftp.retrieveFile(f.getName(), temp);
-			if(this.dialog!=null) {
-				this.dialog.progressPanel.setIndeterminate(false);
-				this.dialog.progressPanel.update("Unzipping the files");
-				//this.dialog.progressPanel.increment();
-			}
-			
-			
-			//System.out.println("downloaded file name:"+f.getName());
-			//System.out.println("size of downloaded file is:"+f.length());
-			temp.close();
-			ftp.logout();
-			
-			//processing the downloaded zip file
-			if(this.dialog!=null) {
-				this.dialog.progressPanel.setIndeterminate(true);
-				this.dialog.progressPanel.update("Download was Successful");
-			}
-			UnzipAnnotationFile unzip=new UnzipAnnotationFile(f.getParent(),f.getName());
-			String unzippedFile=unzip.unZipFiles();
-			
-			String finalFileName=(unzippedFile.substring(0,unzippedFile.indexOf('.'))).concat(".txt");
-			setAnnotationFileName(this.dataPath+finalFileName);
-			
-			String Msg = "<html>File download completed..<br>"+
-			"<html>You can find the file here: <br> "+
-			this.dataPath+finalFileName;
-			
-			AnnotationDialog.statusChange(Msg);
-			//System.out.println("");
+			File newFile=new File(dataPath+this.ChipType+".zip");
+        	BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(newFile));        	
+            //get binary file to byte array, use listener
+            bos.write(ftp.getBinaryFile(this.ChipType+".zip"), 0, overallLength);
+			        	
+            bos.flush();
+            bos.close();
+           
+        	//String fileName=this.ChipType+".zip";
+        	UnzipAnnotationFile unzip=new UnzipAnnotationFile(dataPath,newFile.getName());
+        	boolean download=unzip.unZipResourcererFiles(new File(dataPath+newFile.getName()));
+        	
+        	if(download==true) {
+        		setAnnotationFileName(dataPath+this.ChipType+".txt");
+        		downloadEASE_BNFiles(ftp);
+        		String Msg = "<html>File download completed..<br>"+
+    			"<html>You can find the file here: <br> "+
+    			this.dataPath+this.ChipType+".txt";
+    			AnnotationDialog.statusChange(Msg);
+    			
+    			
+        	}else {
+        		setAnnotationFileName("NA");
+        		String Msg = "<html>File download could not be completed..</html>";
+    			AnnotationDialog.statusChange(Msg);
+        	}
+        	
+        	
+        	 ftp.close();
 			
 		}catch(Exception e) {
 			e.printStackTrace();	
 		}
 	}
+	
+	/**
+	 * 
+	 * 
+	 * 
+	 * @param ftp
+	 * @throws IOException
+	 */
+	public void downloadEASE_BNFiles(FtpBean ftp)throws IOException{
+		System.out.println("download EASE and BN files");
+		try {
+			int overallLength = 0;            
+			int currentLength = 0;        
+			String localEASEdir="./data/Ease/";
+			String localBNdir="./data/BN/";
+			ftp.setDirectory(EASE_BN_remotedir+this.Organism+"/");
+
+			// List the zip files in the directory
+			FtpListResult list = ftp.getDirectoryContent();
+
+
+
+			while(list.next()) {		
+				if(list.getName().equals(this.ChipType+"_EASE.zip")) {
+					overallLength = (int)list.getSize();
+
+					File f=new File(localEASEdir);
+					if(!f.exists()) {
+						f.mkdir();
+
+					}
+
+					File newFile=new File(localEASEdir+this.ChipType+"_EASE.zip");
+					BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(newFile));        	
+					//get binary file to byte array, use listener
+					bos.write(ftp.getBinaryFile(newFile.getName()), 0, overallLength);
+
+					bos.flush();
+					bos.close();
+
+					//String fileName=this.ChipType+".zip";
+					UnzipAnnotationFile unzip=new UnzipAnnotationFile(newFile.getParent(),newFile.getName());
+					boolean download=unzip.extractZipFile(newFile);
+				}
+				//Checks for BN files
+				if(list.getName().equals(this.ChipType+"_BN.zip")) {
+					File f=new File(localBNdir);
+					if(!f.exists()) {
+						f.mkdir();
+
+					}
+
+					overallLength = (int)list.getSize();
+
+
+					File newFile=new File(localBNdir+this.ChipType+"_BN.zip");
+					BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(newFile));        	
+					//get binary file to byte array, use listener
+					bos.write(ftp.getBinaryFile(newFile.getName()), 0, overallLength);
+
+					bos.flush();
+					bos.close();
+
+
+					UnzipAnnotationFile unzip=new UnzipAnnotationFile(newFile.getParent(),newFile.getName());
+					boolean download=unzip.extractZipFile(newFile);
+
+
+				}
+
+			}}catch(Exception e) {
+				e.printStackTrace();
+			}
+
+
+	}
+
+
+	
+	
 	// TODO Auto-generated method stub
 	
 	public String getAnnotationFileName() {
