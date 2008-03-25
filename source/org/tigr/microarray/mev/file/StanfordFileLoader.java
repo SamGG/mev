@@ -445,9 +445,9 @@ public class StanfordFileLoader extends ExpressionFileLoader {
     
     public void processStanfordFile(File targetFile) {
         
-        Vector columnHeaders = new Vector();
-        Vector dataVector = new Vector();
-        Vector rowVector = null;
+        Vector<String> columnHeaders = new Vector<String>();
+        Vector<Vector<String>> dataVector = new Vector<Vector<String>>();
+        Vector<String> rowVector = null;
         BufferedReader reader = null;
         String currentLine = null;
         
@@ -486,7 +486,7 @@ public class StanfordFileLoader extends ExpressionFileLoader {
             while ((currentLine = reader.readLine()) != null && cnt < 100) {
                 cnt++;
                 ss.init(currentLine);
-                rowVector = new Vector();
+                rowVector = new Vector<String>();
                 for (int i = 0; i < ss.countTokens()+1; i++) {
                     try {
                         rowVector.add(ss.nextToken());
