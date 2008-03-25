@@ -5656,8 +5656,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	    	}
 	    	m.setColumnTitles(temp);
 	    	m.setSpecies(getCurrentSpecies());
-    		m.setFullName ("MeV matrix (" + m.getRowCount() + ") from algorithm " + clusters[0].getAlgorithmName());
-    		m.setShortName ("MeV matrix (" + m.getRowCount() + ")");
+    		m.setName ("MeV matrix (" + m.getRowCount() +  " x " + m.getColumnCount() +") from algorithm " + clusters[0].getAlgorithmName());
+//    		m.setShortName ("MeV matrix (" + m.getRowCount() +  " x " + m.getColumnCount() +")");
         	MultipleArrayViewer.this.doBroadcastMatrix(m);
         }
         
@@ -5684,8 +5684,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	    	}
 	    	m.setColumnTitles(temp);
 	    	m.setSpecies(getCurrentSpecies());
-			m.setFullName ("MeV matrix (" + m.getRowCount() + ")");
-			m.setShortName ("MeV matrix (" + m.getRowCount() + ")");
+	    	if(((ISlideData)data.getFeaturesList().get(0)).getSlideFileName() != null)
+	    		m.setName(((ISlideData)data.getFeaturesList().get(0)).getSlideFileName());
+	    	else 
+	    		m.setName ("MeV matrix (" + m.getRowCount() + " x " + m.getColumnCount() + ")");
+//			m.setShortName ("MeV matrix (" + m.getRowCount() +  " x " + m.getColumnCount() +")");
 	
 	        doBroadcastMatrix(m);
 	    }

@@ -2263,7 +2263,6 @@ public class MultipleArrayData implements IData {
         ISlideDataElement sde;
         String name;
         MultipleArrayData data = new MultipleArrayData();
-        data.setDataType(this.dataType);
         int normalizedState = this.getNormalizationState();
 
         if(indices.length < 1)
@@ -2324,7 +2323,8 @@ public class MultipleArrayData implements IData {
                 }
             }
             slideData.setNormalizedState(normalizedState);
-            data.addFeature(slideData);          
+            data.addFeature(slideData);    
+            data.setDataType(this.dataType);      
         }
         return data;
     }
@@ -2339,7 +2339,6 @@ public class MultipleArrayData implements IData {
         ISlideDataElement sde;
         String name;
         MultipleArrayData data = new MultipleArrayData();
-        data.setDataType(this.dataType);
         int normalizedState = this.getNormalizationState();
 
         if(columnIndices.length < 1 || rowIndices.length < 1)
@@ -2399,6 +2398,7 @@ public class MultipleArrayData implements IData {
             slideData.setNormalizedState(normalizedState);
             data.addFeature(slideData);
         }
+        data.setDataType(this.dataType);
         return data;
     }
 
@@ -2782,10 +2782,12 @@ public class MultipleArrayData implements IData {
     /** Returns an annotation array for the provided indices based on annotation key
      */
     public String[] getAnnotationList(String fieldName, int[] indices) {
+//    	System.out.println("Getting annotations for field " + fieldName);
         String [] fieldNames = this.getFieldNames();
         int fieldIndex;
         for(fieldIndex = 0; fieldIndex < fieldNames.length; fieldIndex++){
             if(fieldName.equals(fieldNames[fieldIndex])) {
+//            	System.out.println("Field index = " + fieldIndex);
             	break;
             }
         }
@@ -2815,7 +2817,7 @@ public class MultipleArrayData implements IData {
     }
     
     /**
-     * Overload getAnnotatilnList, using the full indices list if no int[] input
+     * Overload getAnnotationList, using the full indices list if no int[] input
      * @param fieldName
      * @return 
      */

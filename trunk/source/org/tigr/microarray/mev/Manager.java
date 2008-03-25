@@ -676,12 +676,12 @@ public class Manager {//A class to keep track of viewers
 				}
             }else if( source == documentMenuItem ) {	//added wwang
             	try {
-					BrowserLauncher.openURL( "ftp://occams.dfci.harvard.edu/pub/bio/MeV/MeV_Manual_4_0.pdf" );
+					BrowserLauncher.openURL( "ftp://occams.dfci.harvard.edu/pub/bio/MeV/MeV_Manual_4_2.pdf" );
 				} catch( IOException e ) {
 					e.printStackTrace();
 					//BrowserLauncher doesn't work on this system, display dialog
 					JOptionPane.showMessageDialog( frame, 
-							"Go to ftp://occams.dfci.harvard.edu/pub/bio/MeV/MeV_Manual_4_0.pdf",
+							"Go to ftp://occams.dfci.harvard.edu/pub/bio/MeV/MeV_Manual_4_2.pdf",
 							"Input Error", JOptionPane.ERROR_MESSAGE );
 				}
             

@@ -74,8 +74,12 @@ Jar Descriptions and Contents
                   scripting, and cluster utilities
 
     Contents (packages or classes):
-
+    
+	org/tigr/microarray/mev/r/
+	org/tigr/microarray/mev/persistence/
    	org/tigr/microarray/file
+   	org/tigr/microarray/mev/script/
+   	org/tigr/microarray/mev/microarray/annotation/
 	org/tigr/microarray/util
 	org/tigr/microarray/util/awt
 	org/tigr/microarray/util/swing				
@@ -88,9 +92,10 @@ Jar Descriptions and Contents
 	org/tigr/microarray/mev/script/util
 	org/tigr/microarray/mev/cluster/clusterUtil
 	org/tigr/microarray/mev/cluster/clusterUtil/submit/**
+	org/tigr/microarray/mev/annotation
 	org/tigr/remote/** 
-
-
+	
+	
 
 5.) Name: mev-algorithm-impl.jar
 
