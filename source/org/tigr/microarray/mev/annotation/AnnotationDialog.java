@@ -12,6 +12,10 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -31,83 +35,72 @@ import org.tigr.remote.soap.ResourcererFTPClient;
 
 
 
+
 /**
  *
  * @author  Sarita Nair
  */
 public class AnnotationDialog extends AlgorithmDialog{
 	
-	private JComboBox  annFileKeyBox, organismList;
+	private JComboBox  annFileKeyBox, organismListBox;
 	private JButton connect;
 	private static JLabel statusLabel=new JLabel();
 	private String annotationFileName;
 	
-	private String [] annFileKeys= {"affy_HC_G110",
-			"affy_HG-Focus",
-			"affy_HG-U133A",
-			"affy_HG-U133B",
-			"affy_HG-U133_Plus_2",
-			"affy_HG_U95Av2",
-			"affy_HG_U95B",
-			"affy_HG_U95C",
-			"affy_HG_U95D",
-			"affy_HG_U95E",
-			"affy_Hu35KsubA",
-			"affy_Hu6800",
-			"affy_HuGeneFL",
-			"affy_MuscleChip",
-			"affy_U133_X3P",
-			"affy_MG_U74Av2",
-			"affy_MG_U74Bv2",
-			"affy_MG_U74Cv2",
-			"affy_MOE430A",
-			"affy_MOE430B",
-			"affy_Mouse430_2",
-			"affy_Mu11KsubA",
-			"affy_Mu11KsubB", 
-			"affy_RAE230A",
-			"affy_RAE230B",
-			"affy_RG_U34A",
-			"affy_RG_U34B",
-			"affy_RG_U34C",
-			"affy_RN_U34",
-			"affy_RT_U34",
-			"affy_Rat230_2"
-					};
-	
-	/*Sarita--At some point i would like to make the combo-box a little more funky.
-	 * As in when you select Human from "organismList" comboBox, the annFileKeyBox 
-	 * should only show the respective chips.
-	 * 
-	 * private String[]humanChips= {"affy_HG-Focus",	"affy_HG-U133_Plus_2","affy_HG-U133A",
-			"affy_U133B","affy_HG-U95Av2","affy_HG-U95B","affy_HG-U95C",
-			"affy_HG-U95D","affy_HG-U95E","affy_Hu35KsubA","affy_Hu6800",
-			"affy_HuGeneFL"};
-	
-    private String[]mouseChips= {"affy_MG_U74Av2","affy_MG_U74Bv2","affy_MG_U74Cv2",
-			"affy_MOE430A","affy_MOE430B","affy_Mouse430_2","affy_Mu11KsubA",
-			"affy_Mu11KsubB","affy_MuscleChip"};*/
-	
-	private String[]organismListKey= {"Human", "Mouse", "Rat"};
+	private String [] annFileKeys= new String[] {};
+	private String[]organismListKey= new String[] {};
 	
 	private ColumnNamesPanel fieldSelectionPanel;
 	public FileDownloadProgressPanel progressPanel;
 	private int result = JOptionPane.CANCEL_OPTION;
+	private Hashtable <String, Vector> Org2chipType;
+	private Hashtable AllHash;
+	
+	private Vector organismNames=new Vector();
+	private Vector arrayNames=new Vector();
+	
+	public ReadTaxonFile readFile;
+	
+	
+	
 	
 	/** Creates a new instance of AnnotationDialog */
 	public AnnotationDialog(JFrame frame) {
+		
+		
 		super(frame, "Annotation", true);
+		ReadTaxonFile readFile=new ReadTaxonFile("anonymous","");
+		readFile.connectToResourcerer();
+		
+		try {
+		AllHash=readFile.Org2ChipType(new File(readFile.getTaxonFilePath()));
+		
+		organismNames=(Vector)AllHash.get("OrganismList");
+		System.out.println("organismNames size:"+organismNames.size());
+		this.organismListKey =Vector2StringArray(organismNames);
 		
 		
-		this.annFileKeys = annFileKeys;
+		Org2chipType=(Hashtable)AllHash.get("Org2ChipType");
+		arrayNames=(Vector)Org2chipType.get(organismNames.firstElement());
+		System.out.println("arrayNames size:"+arrayNames.size());
+		this.annFileKeys=Vector2StringArray(arrayNames);
+		
+		
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		
 		
 		JLabel annKeyLabel = new JLabel("Select organism and chip type below then click Connect");
 		annFileKeyBox = new JComboBox(annFileKeys);
-	
+		annFileKeyBox.addActionListener(new Listener());
 		
 		JLabel chipTypeName=new JLabel("Select chip type");
-		organismList=new JComboBox(organismListKey);
-		organismList.addActionListener(new Listener());
+		organismListBox=new JComboBox(organismListKey);
+		organismListBox.addActionListener(new Listener());
 		
 		JLabel fileKeyLabel = new JLabel("Connect to Resourcerer"); 
 		
@@ -119,7 +112,7 @@ public class AnnotationDialog extends AlgorithmDialog{
 				//System.out.println("Trying to connect...");
 				onConnect(getFileAnnotationKey(), getOrganismNameKey());
 			}
-		});    ;
+		});    
 		
 		
 		fieldSelectionPanel = new ColumnNamesPanel(annFileKeys);
@@ -128,7 +121,7 @@ public class AnnotationDialog extends AlgorithmDialog{
 		panel.setLayout(new GridBagLayout());
 		
 		panel.add(annKeyLabel, new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(20,10,0,10),0,0));
-		panel.add(organismList, new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(25,10,0,10),0,0));
+		panel.add(organismListBox, new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(25,10,0,10),0,0));
 		panel.add(chipTypeName, new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(20,10,0,10),0,0));
 		panel.add(annFileKeyBox, new GridBagConstraints(0,3,1,1,0,0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(25,10,0,10),0,0));
 		
@@ -140,6 +133,22 @@ public class AnnotationDialog extends AlgorithmDialog{
 		addContent(panel);
 		pack();
 	}
+	
+	
+	
+	public String[]Vector2StringArray(Vector vec){
+		String[]array=new String[vec.size()] ;
+		
+		for(int i=0; i<vec.size();i++) {
+			array[i]=(String)vec.get(i);
+		}
+	return array;	
+		
+	}
+	
+	
+	
+	
 	
 	public void onConnect(final String chipType, final String organismType) {
 		
@@ -159,8 +168,8 @@ public class AnnotationDialog extends AlgorithmDialog{
 					
 					progressPanel.dispose();
 					
-					AnnotationDialog.this.cancelButton.setEnabled(false);
-					AnnotationDialog.this.resetButton.setEnabled(false);
+					AnnotationDialog.this.cancelButton.setEnabled(true);
+					AnnotationDialog.this.resetButton.setEnabled(true);
 					setAnnotationFileName(ftpclient.getAnnotationFileName());
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -203,7 +212,7 @@ public class AnnotationDialog extends AlgorithmDialog{
 	}
 	
 	public String getOrganismNameKey() {
-		return (String)this.organismList.getSelectedItem();
+		return (String)this.organismListBox.getSelectedItem();
 	}
 	
 	/** Resets the controls to the initial state
@@ -215,16 +224,14 @@ public class AnnotationDialog extends AlgorithmDialog{
 	
 	
 	 protected void updateLabel(String name) {
-		// System.out.println("updateLabel"+name);
-	       if(name.equalsIgnoreCase("human")) {
-	    	  // System.out.println("selected org:"+name);
-	    	  
-	       }else if(name.equalsIgnoreCase("mouse")) {
-	    	   
-	    	   this.annFileKeyBox.removeAllItems();
-	    	   annFileKeyBox.updateUI();
-	       }
-	    }
+		annFileKeyBox.removeAllItems();
+		Vector annFileKeyBoxItems = (Vector)(this.Org2chipType.get(name));
+		for(int i = 0; i < annFileKeyBoxItems.size(); i++)
+			annFileKeyBox.addItem(annFileKeyBoxItems.elementAt(i));
+		
+	}
+		
+	   
 	
 	
 	/**
@@ -235,12 +242,9 @@ public class AnnotationDialog extends AlgorithmDialog{
 		public void actionPerformed(ActionEvent e) {
 			String command = e.getActionCommand();
 						
-			if(e.getSource().equals(organismList)) {
-				updateLabel((String)organismList.getSelectedItem()); 
-			}
-			
-			
-			
+			if(e.getSource().equals(organismListBox)) {
+				updateLabel((String)organismListBox.getSelectedItem()); 
+			}			
 			if (command.equals("ok-command")) {
 				result = JOptionPane.OK_OPTION;
 				statusChange("");
@@ -268,7 +272,7 @@ public class AnnotationDialog extends AlgorithmDialog{
 					return;
 				}
 			}
-			dispose();
+			//dispose();
 		}
 		
 		public void windowClosing(WindowEvent e) {
@@ -365,7 +369,7 @@ public class AnnotationDialog extends AlgorithmDialog{
 		public void actionPerformed(ActionEvent evt) {
 			String command = evt.getActionCommand();
 			if (command.equals("cancel")) {
-				
+				dispose();
 				//mav.cancelLoadState();
 				setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 				progressBar.setIndeterminate(true);
@@ -373,7 +377,7 @@ public class AnnotationDialog extends AlgorithmDialog{
 			}
 		}
 		public void onClose(){
-			
+			dispose();
 			//mav.cancelLoadState();
 		}
 	}
