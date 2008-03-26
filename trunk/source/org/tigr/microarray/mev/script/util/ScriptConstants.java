@@ -20,7 +20,8 @@ public class ScriptConstants {
     /** Current document type string.
      */    
     public static final String DOCTYPE_STRING = "<!DOCTYPE TM4ML SYSTEM " +
-              "\"mev_script_dtd.dtd\">";
+              	"\"http://www.tm4.org/mev/mev_script_dtd.dtd\" " +
+              	"\"mev_script_dtd.dtd\">";
     
     //cluster types
     public static final int CLUSTER_TYPE_GENE = 0;  

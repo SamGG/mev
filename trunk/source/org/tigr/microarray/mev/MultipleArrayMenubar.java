@@ -97,8 +97,6 @@ public class MultipleArrayMenubar extends JMenuBar {
         fileMenu.addSeparator();
         fileMenu.add(createJMenuItem(manager.getAction(ActionManager.PRINT_IMAGE_ACTION)));
         fileMenu.addSeparator();
-        fileMenu.add(createJMenuItem(manager.getAction(ActionManager.NEW_MULTIPLEARRAYVIEWER)));
-        fileMenu.addSeparator();
         fileMenu.add(createJMenuItem(manager.getAction(ActionManager.CLOSE_ACTION)));
         add(fileMenu);
         
@@ -429,7 +427,6 @@ public class MultipleArrayMenubar extends JMenuBar {
                 setEnableMenuItem("File", ActionManager.NEW_SCRIPT_COMMAND, true);
                 setEnableMenuItem("File", ActionManager.LOAD_SCRIPT_COMMAND, true);
                 setEnableMenuItem("File", ActionManager.PRINT_IMAGE_COMMAND, true);
-                setEnableMenuItem("File", ActionManager.NEW_MAV_COMMAND, false);
                 setEnableMenu("Adjust Data", true);
                 setEnableMenu("Normalization", true);
                 setEnableMenu("Metrics", true);

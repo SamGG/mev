@@ -30,7 +30,7 @@ public class MultipleArrayToolbar extends JToolBar {
      * @see ActionManager
      */
     public MultipleArrayToolbar(ActionManager manager) { 
-	addAlgorithmActions(manager);
+    	addAlgorithmActions(manager);
     }
     
     /**
@@ -45,21 +45,22 @@ public class MultipleArrayToolbar extends JToolBar {
     	}
     	return count;
     }
+    
+    //TODO remove and clean this crap up. 
     private void addAlgorithmActions(ActionManager manager) {
     	int index = 0;
     	Action action;
-    	String []category={"Clustering","Statistics","Classification","Data Reduction","Meta Analysis","Visualization","Miscellaneous"};
-    	for(int i=0;i<category.length;i++){
+    	String [] category={"Clustering","Statistics","Classification","Data Reduction","Meta Analysis","Visualization","Miscellaneous"};
+    	for(int i=0;i<category.length;i++) {
    			 while ((action = manager.getAction(ActionManager.ANALYSIS_ACTION+String.valueOf(index)))!=null) {
-   				if((action.getValue(ActionManager.CATEGORY)).equals(category[i])){
-   					if(this.algorithmCount(manager)==TMEV.getCustomerAnalysis().length){
-   						if(TMEV.getCustomerAnalysis()[index]==1)
+   				if((action.getValue(ActionManager.CATEGORY)).equals(category[i])) {
+//   					if(this.algorithmCount(manager)==TMEV.getCustomerAnalysis().length) {
+//   						if(TMEV.getCustomerAnalysis()[index]==1)
    							add(action);
-   					}
-   				   else{
-   						 TMEV.initCustomerAnalysis(this.algorithmCount(manager));
-   						 index--;
-   				   }
+//   					} else {
+//   						 TMEV.initCustomerAnalysis(this.algorithmCount(manager));
+//   						 index--;
+//   				   }
    				}
    				index++;
    			 }
@@ -75,9 +76,7 @@ public class MultipleArrayToolbar extends JToolBar {
 	JButton button = super.add(a);
 	button.setActionCommand((String)a.getValue(Action.ACTION_COMMAND_KEY));
 	button.setIcon((Icon)a.getValue(ActionManager.LARGE_ICON));
-        button.setFocusPainted(false);
-      //  button.setBackground(java.awt.Color.white);
-     //   button.setBorder(javax.swing.BorderFactory.createLineBorder(java.awt.Color.black));
+    button.setFocusPainted(false);
 	return button;
     }
     

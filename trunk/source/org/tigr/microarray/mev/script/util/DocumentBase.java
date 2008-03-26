@@ -25,6 +25,7 @@ import java.util.Vector;
 
 import org.apache.xerces.dom.DOMImplementationImpl;
 import org.apache.xerces.parsers.DOMParser;
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
@@ -126,7 +127,7 @@ public class DocumentBase extends DefaultHandler implements Serializable {
         listeners = new Vector();
         
         DOMImplementationImpl impl = new DOMImplementationImpl();
-        DocumentType docType = impl.createDocumentType("TM4ML",null,"../../config/mev_script_dtd.dtd");
+        DocumentType docType = impl.createDocumentType("TM4ML",null,TMEV.getConfigurationFile("mev_script_dtd.dtd").getAbsolutePath());
         
         document = impl.createDocument(null, "TM4ML", docType);
         
@@ -169,7 +170,7 @@ public class DocumentBase extends DefaultHandler implements Serializable {
         listeners = new Vector();
         
         DOMImplementationImpl impl = new DOMImplementationImpl();
-        DocumentType docType = impl.createDocumentType("TM4ML",null,"../../config/mev_script_dtd.dtd");
+        DocumentType docType = impl.createDocumentType("TM4ML",null,TMEV.getConfigurationFile("mev_script_dtd.dtd").getAbsolutePath());
         
         document = impl.createDocument(null, "TM4ML", docType);
         
@@ -221,7 +222,7 @@ public class DocumentBase extends DefaultHandler implements Serializable {
      */    
     private Document copyDocument(Document doc) {
         DOMImplementationImpl impl = new DOMImplementationImpl();
-        DocumentType docType = impl.createDocumentType("TM4ML",null,"../../config/mev_script_dtd.dtd");
+        DocumentType docType = impl.createDocumentType("TM4ML",null,TMEV.getConfigurationFile("mev_script_dtd.dtd").getAbsolutePath());
         
         Document newDoc =  impl.createDocument(null, "TM4ML", docType);
         copyChildren(doc.getDocumentElement(), newDoc.getDocumentElement(), newDoc);

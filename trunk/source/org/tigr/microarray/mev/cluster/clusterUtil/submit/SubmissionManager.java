@@ -51,7 +51,7 @@ public class SubmissionManager {
         if(!parser.parseSubmissionConfigFile()) {
             // report error
             JOptionPane.showMessageDialog(this.framework.getFrame(), "Error parsing gene cluster submission configuration file, \n"+
-            "\"config/archive_submission_config.xml\"", "Submission Configuration File", JOptionPane.ERROR_MESSAGE);
+            "\"archive_submission_config.xml\"", "Submission Configuration File", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         

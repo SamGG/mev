@@ -14,6 +14,7 @@ import java.util.Hashtable;
 
 import javax.swing.JOptionPane;
 
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.clusterUtil.submit.IClusterSubmitter;
 import org.tigr.microarray.mev.cluster.clusterUtil.submit.RepositoryConfigParser;
@@ -257,7 +258,8 @@ public class LOLASubmitter implements IClusterSubmitter {
                     
                     if(sessionID.equals("")) {
                         JOptionPane.showMessageDialog(framework.getFrame(), "Error during login to LOLA.  Please go to http://lola.gwu.edu to establish an account.\n"+
-                        "If you have an account please try again. You may Edit the user information for LOLA in the archive_submission_config.xml (in the config folder) to reflect\nyour email and LOLA password so that MeV will retain this information for you.", "LOLA Login Error", JOptionPane.ERROR_MESSAGE);
+                        "If you have an account please try again. You may Edit the user information for LOLA in the archive_submission_config.xml" +
+                        "\n (in " + TMEV.getConfigurationFile("archive_submission_config.xml").getAbsoluteFile() + ") to reflect\nyour email and LOLA password so that MeV will retain this information for you.", "LOLA Login Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                     
@@ -283,7 +285,7 @@ public class LOLASubmitter implements IClusterSubmitter {
                     logger.dispose();
                 } else {
                     JOptionPane.showMessageDialog(framework.getFrame(), "Error during login to LOLA.  No login information available.  Please go to http://lola.gwu.edu to establish an account.\n"+
-                    "If you have an account edit the user information for LOLA in the archive_submission_config.xml (in the config folder) to reflect\nyour email and LOLA password.", "LOLA Login Error", JOptionPane.ERROR_MESSAGE);
+                    "If you have an account edit the user information for LOLA in the archive_submission_config.xml\n (in " + TMEV.getConfigurationFile("archive_submission_config.xml").getAbsoluteFile() + ") to reflect\nyour email and LOLA password.", "LOLA Login Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
             }

@@ -283,9 +283,9 @@ public class AnnotationURLLinkDialog extends AlgorithmDialog {
                 urlKeys[i] = (String)(urlKeysVector.get(i));
             }
         } catch (java.io.FileNotFoundException fne) {
-            JOptionPane.showMessageDialog(new JFrame(), "Could not find \"annotation_URLs.txt\" file in \"config\" directory", "Error", JOptionPane.ERROR_MESSAGE);            
+            JOptionPane.showMessageDialog(new JFrame(), "Could not find \"annotation_URLs.txt\" file.", "Error", JOptionPane.ERROR_MESSAGE);            
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(new JFrame(), "Incompatible \"annotation_URLs.txt\" file in \"config\" directory! Possible issues: extra newline characters, too many or too few tabs per line", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(new JFrame(), "Incompatible \"annotation_URLs.txt\" file. Possible issues: extra newline characters, too many or too few tabs per line", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
     
