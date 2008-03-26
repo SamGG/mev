@@ -738,7 +738,8 @@ public class ExperimentUtil {
     
 
     public static void linkToURL(JFrame frame, Experiment experiment, IData data, int row)  /*throws Exception*/ {
-        //NOTE: In this method, the argument "row" is what's obtained AFTER applying getGeneIndexMappedToSelectedRows(); i.e., use as is; no need to re-map for cutoffs 
+        //NOTE: In this method, the argument "row" is what's obtained AFTER applying 
+    	//getGeneIndexMappedToSelectedRows(); i.e., use as is; no need to re-map for cutoffs 
         try {
             File file = TMEV.getConfigurationFile("annotation_URLs.txt");
             //System.out.println("Found annotation file");
@@ -754,7 +755,8 @@ public class ExperimentUtil {
     
     public static void linkToURL(JFrame frame, Experiment experiment, IData data, int row, int[] lastSelectedIndices)  /*throws Exception*/ {
         //int[] indices = {0, 0};
-        //NOTE: In this method, the argument "row" is what's obtained AFTER applying getGeneIndexMappedToSelectedRows(); i.e., use as is; no need to re-map for cutoffs 
+        //NOTE: In this method, the argument "row" is what's obtained AFTER applying 
+    	//getGeneIndexMappedToSelectedRows(); i.e., use as is; no need to re-map for cutoffs 
         try {
             File file = TMEV.getConfigurationFile("annotation_URLs.txt");
             System.out.println("Found annotation file");

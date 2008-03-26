@@ -33,7 +33,7 @@ public class PublicURL {
 	/**
 	 * Generic Function to get the URL string for any URL Key.
 	 * The params string array could be 1 or many Strings are required
-	 * by the URL template defined in the config/annotation_URL.txt
+	 * by the URL template defined in the org/tigr/microarray/mev/config/annotation_URL.txt
 	 * file. The number of paramets should equal the number of "FIELD#"
 	 * occurs int the template. URLKeys are the constants as defined in the
 	 * AnnotationURLConstants class.

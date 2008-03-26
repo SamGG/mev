@@ -15,6 +15,7 @@ package org.tigr.microarray.mev;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -30,6 +31,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -37,10 +39,11 @@ import javax.swing.UIManager;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
 import org.tigr.microarray.mev.cluster.gui.IGUIFactory;
 import org.tigr.util.ConfMap;
+import org.tigr.util.StringSplitter;
 import org.tigr.util.awt.ImageScreen;
 
 public class TMEV {
-    public final static String VERSION = "4.1.01";
+    public final static String VERSION = "4.2";
     
     public final static int SYSTEM = 1000;
     public final static int DB_AVAILABLE = 1001;
@@ -101,14 +104,17 @@ public class TMEV {
     public static final int CGH_SPECIES_Undef = -100;
     
     public static boolean GAGGLE_CONNECT_ON_STARTUP = false;
+    public static String PROPERTY_CONFIG_FILES = "config-files";
 
     public static String sep;
+    public static File mevUserDir;
     //EH new properties field, to replace the hashtable properties. Better loading functions, more webstart-safe
     //and user-configurable
     public static ConfMap props;
     
     public static void main(String[] args) {
     	sep = System.getProperty("file.separator");
+    	mevUserDir = new File(System.getProperty("user.home") + sep + ".mev");
         try {
         	//Determine whether to run with Gaggle enabled
         	for(String s: args) {
@@ -145,9 +151,8 @@ public class TMEV {
             System.out.println("Operating System name: "+os);
             System.out.println("Operating System version: "+System.getProperty("os.version"));
             System.out.println("Operating System architecture: "+System.getProperty("os.arch"));
-            setupFiles();
             props = loadProperties();
-            System.out.println("Testing properties loading/editing: prompt-for-save" + props.getProperty("prompt-for-save"));
+            setupFiles();
             
             configure();
             ImageScreen is = new ImageScreen();
@@ -168,11 +173,9 @@ public class TMEV {
     }
 
     private static void writeProperties() throws IOException {
-
-        File mevDirectory = new File(System.getProperty("user.home") + sep + ".mev");
-        File mevPropertiesFile = new File(System.getProperty("user.home") + sep + ".mev" + sep + "mev.properties");
-        if(mevDirectory.exists()) {
-       	 if(mevDirectory.isDirectory() && mevDirectory.canRead()) {
+        File mevPropertiesFile = new File(mevUserDir + sep + "mev.properties");
+        if(mevUserDir.exists()) {
+       	 if(mevUserDir.isDirectory() && mevUserDir.canRead()) {
        		 if(mevPropertiesFile.exists() && mevPropertiesFile.canRead()) {
        			props.store(new FileOutputStream(mevPropertiesFile), "MeV Default Properties");
        		 }
@@ -181,14 +184,44 @@ public class TMEV {
     }
     /**
      * Checks for the existence of configuration files in the user.home/.mev directory. 
-     * If files exist, save their locations. Otherwise, read them from classpath and write them 
+     * If files exist, leave them alone. Otherwise, read them from classpath and write them 
      * to user directory.
      *
      */
-    //TODO write this so that it reads all config files out of the classpath and writes them to .mev? 
     private static void setupFiles() {
-    	
+		if(mevUserDir.exists()) {
+			if(mevUserDir.isDirectory() && mevUserDir.canRead()) {
+				//Get the list of config files from MeV's properties object
+	        	String configfilelist = (String)props.getProperty(PROPERTY_CONFIG_FILES);
+	        	StringSplitter ss = new StringSplitter(',');
+	        	Vector<String> filenames = new Vector<String>();
+	        	ss.init(configfilelist);
+	        	while(ss.hasMoreTokens()) {
+	        		String temp = ss.nextToken();
+	        		filenames.add(temp);
+	        	}
+	        	//for each configuration file, read it from the classpath and copy to the user's .mev directory
+	        	for(String filename: filenames) {
+	 	        	try {
+	 	        		InputStream in = TMEV.class.getClassLoader().getResourceAsStream(filename);
+		 	        	if(in != null) {
+			        		DataInputStream dis = new DataInputStream(in);
+			        		FileOutputStream fos = new FileOutputStream(mevUserDir + sep + filename.substring(filename.lastIndexOf('/')+1));
+			 	        	while(dis.available() != 0){
+			 	        		fos.write(dis.readByte());
+			 	        	}
+			 	        	in.close();
+			 	        	fos.close();
+		 	        	} 
+			        } catch (IOException ioe) {
+			        	System.out.println("Couldn't copy file " + filename + " from classpath to " + mevUserDir);
+			        	ioe.printStackTrace();
+			        }
+	        	}
+		    }
+		}
     }
+    	
     /**
      * Loads a user properties file from userdir/.mev/mev.properties, if available or loads a default 
      * properties file from the classpath and writes it to userdir/.mev/mev.properties if not. 
@@ -197,8 +230,7 @@ public class TMEV {
      * @throws IOException
      */
     private static ConfMap loadProperties() throws IOException {
-        File mevDirectory = new File(System.getProperty("user.home") + sep + ".mev");
-        File mevPropertiesFile = new File(System.getProperty("user.home") + sep + ".mev" + sep + "mev.properties");
+        File mevPropertiesFile = new File(mevUserDir + sep + "mev.properties");
         
         //Load default properties from the classpath
         ConfMap defaultProps = new ConfMap();
@@ -213,24 +245,26 @@ public class TMEV {
         	System.out.println("Couldn't load default properties from org/tigr/microarray/mev/default.properties");
         }
         
-         if(mevDirectory.exists()) {
-        	 if(mevDirectory.isDirectory() && mevDirectory.canRead()) {
+         if(mevUserDir.exists()) {
+        	 if(mevUserDir.isDirectory() && mevUserDir.canRead()) {
         		 if(mevPropertiesFile.exists() && mevPropertiesFile.canRead()) {
         			 InputStream in2 = new FileInputStream(mevPropertiesFile);
         			 props.load(in2);
         		 } else {
-  	                System.out.println("Createing MeV properties file " + mevPropertiesFile + ":");
-        			 mevPropertiesFile.createNewFile();
- 	                System.out.println("Created MeV properties file " + mevPropertiesFile + ".");
- 	               defaultProps.store(new FileOutputStream(mevPropertiesFile), "MeV Default Properties");
+  	                 mevPropertiesFile.createNewFile();
+ 	                FileOutputStream propsout = new FileOutputStream(mevPropertiesFile);
+ 	               defaultProps.store(propsout, "MeV Default Properties");
+ 	               propsout.close();
         		 }
         	 }
          } else {
-        	 mevDirectory.mkdir();
-             System.out.println("Created MeV directory " + mevDirectory + ".");
+        	 mevUserDir.mkdir();
+             //System.out.println("Created MeV directory " + mevUserDir + ".");
 			 mevPropertiesFile.createNewFile();
-              System.out.println("Created MeV properties file " + mevPropertiesFile + ".");
-             defaultProps.store(new FileOutputStream(mevPropertiesFile), "MeV Default Properties");
+              //System.out.println("Created MeV properties file " + mevPropertiesFile + ".");
+               FileOutputStream propsout = new FileOutputStream(mevPropertiesFile);
+             defaultProps.store(propsout, "MeV Default Properties");
+             propsout.close();
          }
         return props;
     }
@@ -304,7 +338,14 @@ public class TMEV {
         }
         return setting;
     }
-    
+    public static void storeProperty(String key, String value) {
+    	props.setProperty(key, value);
+    	try {
+    		writeProperties();
+    	} catch (IOException ioe) {
+    		System.out.println("Can't write to properties file.");
+    	}
+    }
     /*
     public static boolean connect(String username, String password) {
         try {
@@ -369,16 +410,16 @@ public class TMEV {
     public static int getHeaderColumnCount() {return TMEV.headerColumnCount;}
 
     //get initial algorithm list from properties
-    public static int[] getCustomerAnalysis() {
+/*    public static int[] getCustomerAnalysis() {
     	if(props.get("algorithm-list") != null) {
     		String algorithmmask = ((String)props.get("algorithm-list"));
             if(TMEV.customerAnalysis==null) {
-         	   //System.out.println("customeranalysis == null");
+         	   System.out.println("customeranalysis == null");
          	   TMEV.initCustomerAnalysis(algorithmmask.length());
             }
             for(int i=0;i<algorithmmask.length();i++){
            	 int m=(new Integer(algorithmmask.substring(i,i+1))).intValue();
-           	 //System.out.println("customerAnalysis[" + i + "] = " + m);
+           	 System.out.println("customerAnalysis[" + i + "] = " + m);
            	 TMEV.customerAnalysis[i]=m;
             }
     	}
@@ -420,34 +461,8 @@ public class TMEV {
        } catch (IOException ioe) {
     	   System.out.println("unable to write to properties file");
        }
-       /*
-	   String lineSep = System.getProperty("line.separator");
-       if(lineSep == null)
-           lineSep = "\n";
-       String text = new String("");
-       try {
-           BufferedReader br = new java.io.BufferedReader(new FileReader(TMEV.getFile("config/tmev.cfg")));
-           String line;
-           while((line = br.readLine()) != null) {
-               if(line.indexOf("algorithm-list") != -1) {
-                   line = line.substring(0, line.lastIndexOf(" "));
-                   line += " "+TMEV.getCustomerAnalysisList();
-               }
-               text += line+lineSep;
-           }
-
-           br.close();
-     
-           BufferedWriter bw = new java.io.BufferedWriter(new FileWriter(TMEV.getFile("config/tmev.cfg")));
-           bw.write(text);
-           bw.flush();
-           bw.close();
-       } catch (IOException ioe) {
-    	   System.out.print("File tmev.cfg not found");
-       }
-       */
    }
-   
+   */
     public static String[] getDatabases() {return TMEV.databases;}
     public static int getUniqueIDIndex() {return TMEV.uniqueIDIndex;}
     public static int getNameIndex() {return TMEV.nameIndex;}
@@ -488,36 +503,8 @@ public class TMEV {
     public static void configure() {
         ConfMap cfg = props;
         
-//        String filename = "config/tmev.cfg";
-//        ConfMap cfg = new ConfMap();
-        try {
-        	/*
-          // Try reading configuration from resource
             try {
-                InputStream is = TMEV.class.getClassLoader().getResourceAsStream(filename);
                 
-                URL url = TMEV.class.getClassLoader().getResource(filename);
-                
-                if (is != null) {
-                    cfg.load(is);
-                }
-            } catch (SecurityException se) {
-                System.out.println("resource configuration file " + se);
-            } catch (IOException ioe) {
-                System.out.println("Error to load configuration file.");
-                ioe.printStackTrace();
-            }
-            // Try reading configuration from local file
-            try {
-                cfg.load( new FileInputStream(filename) );
-            } catch (FileNotFoundException fnfe) {
-                System.out.println("local configuration file " + fnfe);
-            } catch (IOException ioe) {
-                System.out.println("Error to load configuration file.");
-                ioe.printStackTrace();
-            }
-            */
-            //
             String guiFactoryClassName = cfg.getString("gui.factory.class");
            
             if (guiFactoryClassName != null && !guiFactoryClassName.equals("null")) {
@@ -532,7 +519,6 @@ public class TMEV {
             String path = cfg.getProperty("current-data-path");
             
             if(path != null) {
-                //String sep = System.getProperty("file.separator");
                 StringTokenizer stok = new StringTokenizer(path, "/");
                 path = new String();
                 while(stok.hasMoreTokens())
@@ -576,36 +562,7 @@ public class TMEV {
 	    } catch (IOException ioe) {
 	    	System.out.println("couldn't write properties file");
 	    }
-        /*
-        //Read tmev.cfg
-        try{
-            BufferedReader br = new BufferedReader(new FileReader(TMEV.getFile("config/tmev.cfg")));
             
-            StringBuffer sb = new StringBuffer();
-            String line;
-            while( (line = br.readLine()) != null ){
-            	if( line.startsWith( "rserve-path" ) ) {
-            		//write the new rserve-path
-            		sb.append( "rserve-path " );
-            		sb.append( rPath );
-            		sb.append( "\r\n" );
-            	} else {
-            		sb.append( line );
-            		sb.append( "\r\n" );
-            	}
-            }
-            
-            
-            BufferedWriter bfr = new BufferedWriter(new FileWriter(TMEV.getFile("config/tmev.cfg")));
-            bfr.write( sb.toString() );
-            bfr.flush();
-            bfr.close();
-            br.close();
-            
-        } catch (IOException e){
-            System.out.println("Error updating rserve path in tmev.cfg file.");
-        }
-        */
     }
     
     
@@ -620,43 +577,6 @@ public class TMEV {
         } catch(IOException ioe) {
         	
         }
-        /*
-        String lineSep = System.getProperty("line.separator");
-        
-        //Read tmev.cfg
-        try{
-            BufferedReader br = new BufferedReader(new FileReader(TMEV.getFile("config/tmev.cfg")));
-            
-            String content = new String();
-            String line;
-            while( (line = br.readLine()) != null && !((line).equals("#DATA PATH"))){
-                content += line+lineSep;
-            }
-            
-            if(line == null) {   //if at end of file
-                content += lineSep;
-                content += "#DATA PATH"+lineSep;
-                content += "current-data-path "+dataPath+lineSep;
-            } else {
-                br.readLine(); //pass old path
-                content += "#DATA PATH"+lineSep;
-                content += "current-data-path "+dataPath+lineSep;
-                while( (line = br.readLine()) != null ){
-                    content += line+lineSep;
-                }
-            }
-            
-            
-            BufferedWriter bfr = new BufferedWriter(new FileWriter(TMEV.getFile("config/tmev.cfg")));
-            bfr.write(content);
-            bfr.flush();
-            bfr.close();
-            br.close();
-            
-        } catch (IOException e){
-            System.out.println("Error updating data path in tmev.cfg file.");
-        }
-        */
     }
     
     
@@ -686,7 +606,7 @@ public class TMEV {
     /** Returns the configuration file indicated by the fileName argument
      */
     public static File getConfigurationFile(String fileName) {
-        return new File("config/"+fileName);
+    	return new File(mevUserDir + sep + fileName);
     }
     
     /** Returns a file relative to the base directory

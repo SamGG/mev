@@ -1974,28 +1974,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
             }
         }
     }
-    
-    //wwang customized MAV
-    private void onNewMultipleArrayViewer(){
-    	MultipleArrayViewer mav;
-    	CustomToolbarInitDialog ctg=new CustomToolbarInitDialog(manager);
-    	 if (ctg.showModal() == JOptionPane.OK_OPTION) {  
-    		 TMEV.setCustomerStatSave();
-    		 mav = new MultipleArrayViewer();
-    		onClose();
-    		
-    		Manager.addComponent(mav);
-        
-    		//TMEV.clearFieldNames();
-        //Remove the next two lines (about DB system enabling)
-        //mav.systemEnable(TMEV.DB_AVAILABLE);
-        //mav.systemEnable(TMEV.DB_LOGIN);
-    		mav.getFrame().setSize(1150, 700);
-    		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    		mav.getFrame().setLocation((screenSize.width - mav.getFrame().getSize().width)/2, (screenSize.height - mav.getFrame().getSize().height)/2);
-    		mav.getFrame().setVisible(true);
-    	 }
-    }
+
     /**
      * Loads file with a microarray data.
      */
@@ -4930,8 +4909,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
             String command = event.getActionCommand();
             if (command.equals(ActionManager.CLOSE_COMMAND)) {
                 onClose();
-            } else if (command.equals(ActionManager.NEW_MAV_COMMAND)) {
-                onNewMultipleArrayViewer();   
             } else if (command.equals(ActionManager.LOAD_FILE_COMMAND)) {
                 onLoadFile();
             } else if (command.equals(ActionManager.LOAD_EXPRESSION_COMMAND)) {

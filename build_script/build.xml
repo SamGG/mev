@@ -8,6 +8,7 @@
     	   These properties specify key directories within the source
          and destination areas.
     -->
+	<property name="debug" value="true"/>
     <property name="dest.dir" location="${basedir}/temp"/>
     <property name="home.dir" location="${basedir}/.."/>
     <property name="source.dir" location="${home.dir}/source/"/>
@@ -19,9 +20,8 @@
     <property name="lib.dir" location="${home.dir}/lib"/>
     <property name="plugins.dir" location="${home.dir}/plugins"/>
 	<property name="java.target.version" value="1.5"/>
-	<property name="version" value="4_1"/>
+	<property name="version" value="4_2"/> 
 	<property name="package.dir" location="${home.dir}/deploy"/>
-	<property name="javac.loc" location="C:\Program Files\Java\jdk1.5.0_14\bin\javac.exe" />
 
 
 
@@ -185,7 +185,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 				org/tigr/util/swing
     -->
     <target name="util" depends="init">
-        <javac target="${java.target.version}" srcdir="${tigr.dir}/util" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${tigr.dir}/util" destdir="${dest.dir}">
 	  	<classpath>
                 <pathelement location="${lib.dir}/jai_core.jar"/>
                 <pathelement location="${lib.dir}/jai_codec.jar"/>
@@ -203,7 +203,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
          	Compilation Summary: org/tigr/graph
     -->
     <target name="graph" depends="util">
-        <javac target="${java.target.version}" srcdir="${tigr.dir}/graph" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${tigr.dir}/graph" destdir="${dest.dir}">
 	  	<classpath>
                 <pathelement location="${lib.dir}/jai_core.jar"/>
                 <pathelement location="${lib.dir}/jai_codec.jar"/>
@@ -246,13 +246,13 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 				mev/cluster/algorithm/impl/util
     -->
     <target name="algorithm-support" depends="jar-util">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${cluster.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${cluster.dir}" destdir="${dest.dir}">
             <include name="*.java"/>            
         </javac>
-        <javac target="${java.target.version}" sourcepath="" srcdir="${cluster.dir}/algorithm" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${cluster.dir}/algorithm" destdir="${dest.dir}">
             <include name="*.java"/>            
         </javac>
-        <javac target="${java.target.version}" sourcepath="" srcdir="${cluster.dir}/algorithm/impl" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${cluster.dir}/algorithm/impl" destdir="${dest.dir}">
             <include name="ExperimentUtil.java"/>            
             <include name="AlgorithmFactoryImpl.java"/>
             <include name="util/*.java"/>	            
@@ -301,9 +301,8 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
     -->
     <target name="base" depends="jar-algorithm-support">
-        <javac target="${java.target.version}" srcdir="${tigr.dir}/microarray:${tigr.dir}" destdir="${dest.dir}"
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${tigr.dir}/microarray:${tigr.dir}" destdir="${dest.dir}"
 
-        	executable="${javac.loc}"
     		fork="yes"
     		memoryMaximumSize="1024m"
             includes=
@@ -365,6 +364,28 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     	    	<include name="*.properties"/>
     		</fileset>
     	</copy>
+    	
+    	<copy todir="${dest.dir}/org/tigr/microarray/mev/annotation/">
+    		<fileset dir="${source.dir}/org/tigr/microarray/mev/annotation/">
+    	    	<include name="annotation_URLs.txt"/>
+    		</fileset>
+    	</copy>
+    	<copy todir="${dest.dir}/org/tigr/microarray/mev/cluster/clusterUtil/submit/">
+    		<fileset dir="${source.dir}/org/tigr/microarray/mev/cluster/clusterUtil/submit/">
+    	    	<include name="archive_submission_config.xml"/>
+    		</fileset>
+    	</copy>
+
+    	<copy todir="${dest.dir}/org/tigr/microarray/mev/script/">
+    		<fileset dir="${source.dir}/org/tigr/microarray/mev/script/">
+    	    	<include name="mev_script_dtd.dtd"/>
+    		</fileset>
+    	</copy>
+    	<copy todir="${dest.dir}/org/tigr/microarray/mev/script/util">
+			<fileset dir="${source.dir}/org/tigr/microarray/mev/script/util/">
+		    	<include name="ParameterConstraints.xml"/>
+			</fileset>
+		</copy>
     </target>
 
 
@@ -464,6 +485,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		    org/tigr/microarray/util/**,
 			org/tigr/microarray/mev/r/*.class,
         	org/tigr/microarray/mev/*.html,
+        	org/tigr/microarray/mev/config/**,
         	org/tigr/microarray/mev/*.properties,	
 			org/tigr/microarray/mev/cgh/**,
             org/tigr/microarray/mev/*.class,
@@ -500,7 +522,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
          ==================================================================== -->
 
     <target name="HCL" depends="HCL-GUI" if="HCL">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
 		<classpath refid="module.build.class.path"/>
             <include name="HCL.java"/>
 	  </javac>
@@ -510,7 +532,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="HCL-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/hcl" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/hcl" destdir="${dest.dir}">
 		<classpath refid="module.build.class.path"/>
 	  </javac>
 	  <propertyfile file="${gui.properties.file}">
@@ -525,7 +547,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
 	<target name="BN" depends="BN-GUI" if="BN">
-		<javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}/">
+		<javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}/">
 			<classpath refid="module.build.class.path" />
 			<include name="bn/**" />
 		</javac>
@@ -535,7 +557,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 	</target>
 
 	<target name="BN-GUI">
-		<javac target="${java.target.version}" srcdir="${gui.impl.dir}/bn" destdir="${dest.dir}">
+		<javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/bn" destdir="${dest.dir}">
 			<classpath>
 				<pathelement location="${lib.dir}/ftpbean.jar" />
 				<pathelement location="${lib.dir}/weka.jar" />
@@ -564,7 +586,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 	</target>
 
 	<target name="LM" depends="LM-GUI" if="LM">
-		<javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}/">
+		<javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}/">
 			<classpath refid="module.build.class.path" />
 			<include name="lm/**" />
 		</javac>
@@ -574,7 +596,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 	</target>
 
 	<target name="LM-GUI">
-		<javac target="${java.target.version}" srcdir="${gui.impl.dir}/lm" destdir="${dest.dir}">
+		<javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/lm" destdir="${dest.dir}">
 			<classpath>
 				<pathelement location="${lib.dir}/ftpbean.jar" />
 				<pathelement location="${lib.dir}/weka.jar" />
@@ -603,7 +625,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
 
     <target name="ST" depends="ST-GUI" if="ST">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
 		<classpath refid="module.build.class.path"/>
             <include name="NodeSupports.java"/>
 	  </javac>
@@ -613,7 +635,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="ST-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/st" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/st" destdir="${dest.dir}">
 		<classpath refid="module.build.class.path"/>
 	  </javac>
 	  <propertyfile file="${gui.properties.file}">
@@ -630,7 +652,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
 
     <target name="SOTA" depends="SOTA-GUI" if="SOTA">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
 		<classpath refid="module.build.class.path"/>
             <include name="SOTACell.java"/>
             <include name="SOTA.java"/>
@@ -641,7 +663,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="SOTA-GUI" if="SOTA">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/sota" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/sota" destdir="${dest.dir}">
 		<classpath refid="module.build.class.path"/>
 	  </javac>
 	  <propertyfile file="${gui.properties.file}">
@@ -658,7 +680,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
 
     <target name="RN" depends="RN-GUI" if="RN">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
 		<classpath refid="module.build.class.path"/>
             <include name="RelNetComparator.java"/>
             <include name="PermutationTest.java"/>
@@ -670,7 +692,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="RN-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/rn" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/rn" destdir="${dest.dir}">
 		<classpath refid="module.build.class.path"/>
 	  </javac>
 	  <propertyfile file="${gui.properties.file}">
@@ -687,7 +709,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
 
     <target name="KMC" depends="KMC-GUI" if="KMC">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
 		<classpath refid="module.build.class.path"/>
             <include name="KMC.java"/>
 	  </javac>
@@ -697,7 +719,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="KMC-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/kmc" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/kmc" destdir="${dest.dir}">
 		<classpath refid="module.build.class.path"/>
 	  </javac>
 	  <propertyfile file="${gui.properties.file}">
@@ -714,7 +736,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
 
     <target name="KMCS" depends="KMCS-GUI" if="KMCS">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
 		<classpath refid="module.build.class.path"/>
             <include name="KMCSupport.java"/>
 	  </javac>
@@ -724,7 +746,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="KMCS-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/kmcs" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/kmcs" destdir="${dest.dir}">
 		<classpath refid="module.build.class.path"/>
   </javac>
   <propertyfile file="${gui.properties.file}">
@@ -741,7 +763,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
 
     <target name="CAST" depends="CAST-GUI" if="CAST">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
 		<classpath refid="module.build.class.path"/>
             <include name="CastClust.java"/>
 	  </javac>
@@ -751,7 +773,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="CAST-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/cast" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/cast" destdir="${dest.dir}">
 		<classpath refid="module.build.class.path"/>
 	  </javac>
 	  <propertyfile file="${gui.properties.file}">
@@ -768,7 +790,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
 
     <target name="QTC" depends="QTC-GUI" if="QTC">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
 		<classpath refid="module.build.class.path"/>
             <include name="QTC.java"/>
 	  </javac>
@@ -778,7 +800,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="QTC-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/qtc" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/qtc" destdir="${dest.dir}">
 		<classpath refid="module.build.class.path"/>
 	  </javac>
 	  <propertyfile file="${gui.properties.file}">
@@ -795,7 +817,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
 
     <target name="GSH" depends="GSH-GUI" if="GSH">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
             <include name="GSH.java"/>	
             <classpath>
                 <pathelement location="${lib.dir}/jama.jar"/>
@@ -815,7 +837,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="GSH-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/gsh" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/gsh" destdir="${dest.dir}">
             <classpath refid="module.build.class.path"/>
 	  </javac>
 	  <propertyfile file="${gui.properties.file}">
@@ -832,7 +854,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
 
     <target name="SOM" depends="SOM-GUI" if="SOM">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
             <classpath refid="module.build.class.path"/>
             <include name="SOMMatrix.java"/>
             <include name="SOM.java"/>
@@ -843,7 +865,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="SOM-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/som" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/som" destdir="${dest.dir}">
             <classpath refid="module.build.class.path"/>
 	  </javac>
 	  <propertyfile file="${gui.properties.file}">
@@ -860,7 +882,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
 
     <target name="FOM" depends="FOM-GUI" if="FOM">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
             <classpath refid="module.build.class.path"/>
             <include name="FOM.java"/>
 	  </javac>
@@ -870,7 +892,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="FOM-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/fom" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/fom" destdir="${dest.dir}">
             <classpath refid="module.build.class.path"/>
 	  </javac>
 	  <propertyfile file="${gui.properties.file}">
@@ -886,7 +908,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
 
     <target name="PTM" depends="PTM-GUI" if="PTM">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
             <classpath> 
 	          <pathelement location="${lib.dir}/JSciCore.jar"/>
 
@@ -906,7 +928,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="PTM-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/ptm" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/ptm" destdir="${dest.dir}">
             <classpath refid="module.build.class.path"/>
 	  </javac>
 	  <propertyfile file="${gui.properties.file}">
@@ -923,7 +945,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
 
     <target name="TTEST" depends="TTEST-GUI" if="TTEST">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
             <include name="Ttest.java"/>
             <classpath>
                 <pathelement location="${lib.dir}/JSciCore.jar"/>
@@ -943,7 +965,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="TTEST-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/ttest" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/ttest" destdir="${dest.dir}">
             <classpath refid="module.build.class.path"/>
 	  </javac>
 	  <propertyfile file="${gui.properties.file}">
@@ -960,7 +982,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
 
     <target name="BRIDGE" depends="BRIDGE-GUI" if="BRIDGE">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
             <include name="Bridge.java"/>
             <classpath>
                 <pathelement location="${lib.dir}/JSciCore.jar"/>
@@ -980,7 +1002,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="BRIDGE-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/bridge" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/bridge" destdir="${dest.dir}">
             <classpath refid="module.build.class.path"/>
 	  </javac>
 	  <propertyfile file="${gui.properties.file}">
@@ -997,7 +1019,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
 
     <target name="SAM" depends="SAM-GUI" if="SAM">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
             <classpath refid="module.build.class.path"/>
             <include name="SAM.java"/>
 	  </javac>
@@ -1007,7 +1029,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="SAM-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/sam" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/sam" destdir="${dest.dir}">
             <classpath refid="module.build.class.path"/>
 	  </javac>
 	  <propertyfile file="${gui.properties.file}">
@@ -1024,7 +1046,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
 
     <target name="OWA" depends="OWA-GUI" if="OWA">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
             <include name="OneWayANOVA.java"/>
             <classpath>
                 <pathelement location="${lib.dir}/JSciCore.jar"/>
@@ -1044,7 +1066,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="OWA-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/owa" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/owa" destdir="${dest.dir}">
             <classpath refid="module.build.class.path"/>
 	  </javac>
 	  <propertyfile file="${gui.properties.file}">
@@ -1061,7 +1083,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
 
     <target name="TFA" depends="TFA-GUI" if="TFA">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
             <include name="TFA.java"/>
             <classpath>
                 <pathelement location="${lib.dir}/JSciCore.jar"/>
@@ -1081,7 +1103,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="TFA-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/tfa" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/tfa" destdir="${dest.dir}">
             <classpath refid="module.build.class.path"/>
 	  </javac>
 	  <propertyfile file="${gui.properties.file}">
@@ -1097,7 +1119,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
 
     <target name="NONPAR" depends="NONPAR-GUI" if="NONPAR">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
             <include name="Nonpar.java"/>
             <classpath>
                 <pathelement location="${lib.dir}/JSciCore.jar"/>
@@ -1117,7 +1139,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="NONPAR-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/nonpar" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/nonpar" destdir="${dest.dir}">
             <classpath refid="module.build.class.path"/>
 	  </javac>
 	  <propertyfile file="${gui.properties.file}">
@@ -1133,7 +1155,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
 
     <target name="SVM" depends="SVM-GUI" if="SVM">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
             <classpath refid="module.build.class.path"/>
             <include name="SVM.java"/>
 	  </javac>
@@ -1143,7 +1165,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="SVM-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/svm" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/svm" destdir="${dest.dir}">
             <classpath refid="module.build.class.path"/>
 	  </javac>
 	  <propertyfile file="${gui.properties.file}">
@@ -1160,7 +1182,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
 
 <target name="USC" depends="USC-GUI" if="USC">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
             <classpath refid="module.build.class.path"/>
             <include name="USC.java"/>
 	  </javac>
@@ -1170,7 +1192,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="USC-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/usc" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/usc" destdir="${dest.dir}">
             <classpath refid="module.build.class.path"/>
 	  </javac>
 	  <propertyfile file="${gui.properties.file}">
@@ -1187,11 +1209,11 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
     <target name="TEASE" depends="TEASE-GUI" if="TEASE">
     	<!-- Compile HCL classes along with TEASE classes -->
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/hcl" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/hcl" destdir="${dest.dir}">
 			<classpath refid="module.build.class.path"/>
        	</javac>
     	
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
 		<classpath refid="module.build.class.path"/>
             <include name="tease/**"/>
             <include name="ease/**"/>
@@ -1204,7 +1226,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="TEASE-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/tease" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/tease" destdir="${dest.dir}">
 		<classpath>
 
                 <pathelement location="${lib.dir}/ftpbean.jar"/>
@@ -1234,7 +1256,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="KNNC" depends="KNNC-GUI" if="KNNC">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
             <classpath refid="module.build.class.path"/>
             <include name="KNNClassify.java"/>
 	  </javac>
@@ -1244,7 +1266,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="KNNC-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/knnc" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/knnc" destdir="${dest.dir}">
             <classpath refid="module.build.class.path"/>
 	  </javac>
 	  <propertyfile file="${gui.properties.file}">
@@ -1261,7 +1283,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
 
     <target name="DAM" depends="DAM-GUI" if="DAM">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
             <include name="DAM.java"/>
             <classpath>
                 <pathelement location="${lib.dir}/jama.jar"/>	
@@ -1282,7 +1304,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="DAM-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/dam" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/dam" destdir="${dest.dir}">
             <classpath>
                 <pathelement location="${lib.dir}/vecmath.jar"/>	
                 <pathelement location="${lib.dir}/j3dcore.jar"/>	
@@ -1311,7 +1333,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
 
  <target name="LEM" depends="LEM-GUI" if="LEM">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
             <classpath refid="module.build.class.path"/>
             <include name="LEM.java"/>
 	  </javac>
@@ -1321,7 +1343,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="LEM-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/lem" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/lem" destdir="${dest.dir}">
             <classpath refid="module.build.class.path"/>
 	  </javac>
 	  <propertyfile file="${gui.properties.file}">
@@ -1335,7 +1357,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
         </propertyfile>
     </target>
     <target name="GDM" depends="GDM-GUI" if="GDM">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
             <classpath refid="module.build.class.path"/>
             <include name="GDM.java"/>
 	  </javac>
@@ -1345,7 +1367,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="GDM-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/gdm" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/gdm" destdir="${dest.dir}">
             <classpath refid="module.build.class.path"/>
 	  </javac>
 	  <propertyfile file="${gui.properties.file}">
@@ -1362,7 +1384,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
 
     <target name="PCA" depends="PCA-GUI" if="PCA">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
             <classpath refid="module.build.class.path"/>
             <include name="PCA.java"/>
 	  </javac>
@@ -1372,7 +1394,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="PCA-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/pca" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/pca" destdir="${dest.dir}">
             <classpath>
 	          <pathelement location="${lib.dir}/vecmath.jar"/>
                 <pathelement location="${lib.dir}/j3dcore.jar"/>	
@@ -1401,7 +1423,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
 
     <target name="COA" depends="COA-GUI" if="COA">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
             <classpath>
 	          <pathelement location="${lib.dir}/vecmath.jar"/>
 	          <pathelement location="${lib.dir}/jama.jar"/>
@@ -1422,7 +1444,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="COA-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/coa" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/coa" destdir="${dest.dir}">
             <classpath>
 	          <pathelement location="${lib.dir}/vecmath.jar"/>
                 <pathelement location="${lib.dir}/j3dcore.jar"/>	
@@ -1451,7 +1473,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
 
     <target name="TRN" depends="TRN-GUI" if="TRN">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
             <include name="terrain/**"/>
             <classpath>
 	          <pathelement location="${lib.dir}/vecmath.jar"/>
@@ -1472,7 +1494,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
 
     <target name="TRN-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/terrain" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/terrain" destdir="${dest.dir}">
             <classpath>
 	          <pathelement location="${lib.dir}/vecmath.jar"/>
                 <pathelement location="${lib.dir}/j3dcore.jar"/>	
@@ -1501,7 +1523,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
 
     <target name="EASE" depends="EASE-GUI" if="EASE">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
             <classpath refid="module.build.class.path">
 		</classpath>
             <include name="ease/**"/>
@@ -1512,7 +1534,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="EASE-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/ease" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/ease" destdir="${dest.dir}">
             <classpath>
                 <pathelement location="${lib.dir}/ftpbean.jar"/>
 
@@ -1545,7 +1567,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
          or appropriate class names.
     -->
     <target name="***" depends="***-GUI">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
             <include name="***.java"/>
 	  </javac>
 	  <propertyfile file="${alg.properties.file}">
@@ -1555,7 +1577,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
     <!--Generic Model GUI module build -->
     <target name="***-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/***" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/***" destdir="${dest.dir}">
 	  </javac>
 	  <propertyfile file="${gui.properties.file}">
 		<entry key="gui.names" value="***:" operation="+"/>
@@ -1659,22 +1681,16 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		<zip destfile="${package.dir}/MeV_${version}_source.zip"
 			basedir="${source.dir}"
 			includes="*"
-			excludes="CVS, CVS/**, .cvsignore, *.cvs, *.cvs/**"
+			excludes=".svn, .svn/**"
 		/>
 		
-		<copy file="${home.dir}/MeV_4_1/Artistic_License.pdf" todir="${package.dir}" />
-		<copy file="${home.dir}/MeV_4_1/MeV_4_1_release_notes.pdf" todir="${package.dir}" />
-		<copy file="${home.dir}/MeV_4_1/tmev.bat" todir="${package.dir}" />
-		<copy file="${home.dir}/MeV_4_1/tmev.sh" todir="${package.dir}" />
+		<copy file="${home.dir}/Artistic_License.pdf" todir="${package.dir}" />
+		<copy file="${home.dir}/tmev.bat" todir="${package.dir}" />
+		<copy file="${home.dir}/tmev.sh" todir="${package.dir}" />
 			
 		<mkdir dir="${package.dir}/data" />
 		<copy todir="${package.dir}/data">
-			<fileset dir="${home.dir}/MeV_4_1/data"/>
-		</copy>
-		
-		<mkdir dir="${package.dir}/config" />
-		<copy todir="${package.dir}/config">
-			<fileset dir="${home.dir}/MeV_4_1/config"/>
+			<fileset dir="${home.dir}/data"/>
 		</copy>
 		
 		<mkdir dir="${package.dir}/MacOSX_MeV_4_1.app" />

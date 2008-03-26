@@ -68,7 +68,6 @@ public class ActionManager implements java.io.Serializable {
      * Initializes main menu and toolbar actions.
      */
     private void initActions() {
-    	actions.put(NEW_MULTIPLEARRAYVIEWER, new DefaultAction(this, NEW_MAV_NAME, NEW_MAV_COMMAND, getIcon(NEW_MAV_SMALLICON), getIcon(NEW_MAV_LARGEICON)));
         actions.put(LOAD_ACTION, new DefaultAction(this, LOAD_NAME, LOAD_COMMAND, getIcon(LOAD_FILE_SMALLICON), getIcon(LOAD_FILE_LARGEICON)));
         actions.put(LOAD_ANALYSIS_ACTION, new DefaultAction(this, LOAD_ANALYSIS_NAME, LOAD_ANALYSIS_COMMAND, getIcon(LOAD_ANALYSIS_SMALLICON), getIcon(LOAD_ANALYSIS_LARGEICON)));
         actions.put(SAVE_ANALYSIS_ACTION, new DefaultAction(this, SAVE_ANALYSIS_NAME, SAVE_ANALYSIS_COMMAND, getIcon(SAVE_ANALYSIS_SMALLICON), getIcon(SAVE_ANALYSIS_LARGEICON)));
@@ -208,12 +207,6 @@ public class ActionManager implements java.io.Serializable {
     public static final String ANALYSIS_ACTION = "analysis-action";
     public static final String ANALYSIS_COMMAND = "analysis-command";
     
-    //launch a new customized MAV
-    public static final String NEW_MULTIPLEARRAYVIEWER  = "new-mav-load";
-    public static final String  NEW_MAV_COMMAND = "newmav-command-load";
-    public static final String  NEW_MAV_NAME    = "Customize Toolbar";
-    private static final String NEW_MAV_SMALLICON = "addmultiple16.gif";
-    private static final String NEW_MAV_LARGEICON = "addmultiple.gif";
     //load data action
     public static final String  LOAD_ACTION  = "action-load";
     public static final String  LOAD_COMMAND = "command-load";
