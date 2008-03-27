@@ -1743,6 +1743,18 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
         </java>
     </target>
 
+	<target name="clean">
+        <delete dir="${dest.dir}"/>
+		<delete file="${lib.dir}/mev-base.jar"/>
+		<delete file="${lib.dir}/mev-gui-impl.jar"/>
+		<delete file="${lib.dir}/mev-gui-support.jar"/>
+		<delete file="${lib.dir}/mev-algorithm-impl.jar"/>
+		<delete file="${lib.dir}/mev-algorithm-support.jar"/>
+		<delete file="${lib.dir}/mev-util.jar"/>
+		<delete file="${lib.dir}/images.jar"/>
+		<delete file="${lib.dir}/dialogHelp.jar"/>
+	</target>
+	
 </project>
 
 
