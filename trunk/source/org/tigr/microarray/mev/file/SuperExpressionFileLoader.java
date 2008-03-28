@@ -392,13 +392,14 @@ public class SuperExpressionFileLoader {
 	public void initializeGUI() {
 		
 	/*
-	 * Commented by Sarita on Jan 10, 2008 to see if this rids the run time error we get while using Mac
-	 * and Java version 1.5
-	 * 	try {
+	 * Added by Sarita: Setting the look and feel explicitly actually helped 
+	 * get rid of the stack trace we got when running MeV on Mac.
+	 * 
+	 */	try {
 			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 		}catch(Exception e) {
 			e.printStackTrace();
-		}*/
+		}
 		gba = new GBA();
 		eventListener = new EventListener();
 
