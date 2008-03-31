@@ -1665,47 +1665,93 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
         <delete dir="${dest.dir}"/> 
     </target>
 -->
+	
+	
+	<!-- builds distributable zipfiles for windows, mac, linux, plus a source zipfile.
+	Requires that all user docs be converted to .pdf already, and in the user_docs directory -->
 	<target name="build_package" depends="build-all">
+
 		<delete dir="${package.dir}"/>
 		<mkdir dir="${package.dir}"/>
-		<copy todir="${package.dir}/documentation">
-			<fileset dir="${home.dir}/user_docs" />
+		
+		<property name="mev_version.dir" value="MeV_${version}"/>
+		<mkdir dir="${package.dir}/${mev_version.dir}"/>
+
+		<copy todir="${package.dir}/${mev_version.dir}/documentation">
+			<fileset dir="${home.dir}/user_docs/">
+				<include name="*.pdf"/>
+			</fileset>
 		</copy>
-		<mkdir dir="${package.dir}/lib" />
-		<copy todir="${package.dir}/lib" >
+		
+		<copy todir="${package.dir}/${mev_version.dir}/lib">
 			<fileset dir="${home.dir}/lib/" includes="*.jar"/>
 		</copy>
-		<copy todir="${package.dir}/plugins" >
+		<copy todir="${package.dir}/${mev_version.dir}/plugins" >
 			<fileset dir="${home.dir}/plugins/" includes="*.jar"/>
 		</copy>
 		<zip destfile="${package.dir}/MeV_${version}_source.zip"
 			basedir="${source.dir}"
-			includes="*"
-			excludes=".svn, .svn/**"
+			excludes=".svn"
 		/>
 		
-		<copy file="${home.dir}/Artistic_License.pdf" todir="${package.dir}" />
-		<copy file="${home.dir}/tmev.bat" todir="${package.dir}" />
-		<copy file="${home.dir}/tmev.sh" todir="${package.dir}" />
+		<copy file="${home.dir}/Artistic_License.pdf" todir="${package.dir}/${mev_version.dir}" />
+		<copy file="${home.dir}/tmev.bat" todir="${package.dir}/${mev_version.dir}" />
+		<copy file="${home.dir}/tmev.sh" todir="${package.dir}/${mev_version.dir}" />
 			
-		<mkdir dir="${package.dir}/data" />
-		<copy todir="${package.dir}/data">
+		<mkdir dir="${package.dir}/${mev_version.dir}/data" />
+		<copy todir="${package.dir}/${mev_version.dir}/data">
 			<fileset dir="${home.dir}/data"/>
 		</copy>
 		
-		<mkdir dir="${package.dir}/MacOSX_MeV_4_1.app" />
-		<copy todir="${package.dir}/MacOSX_MeV_4_1.app">
-			<fileset dir="${home.dir}/MeV_4_1/MacOSX_MeV_4_1.app" excludes="${home.dir}/MeV_4_1/MacOSX_MeV_4_1.app/**/*.jar"/>
-		</copy>
-				
-		<zip destfile="${home.dir}/MeV_${version}.zip"
+		<zip destfile="${package.dir}/MeV_${version}_win.zip"
 			basedir="${package.dir}"
 			>
-		</zip>
-		<!--
-		zip lib dir, source dir, docs, config, sampledata, bat file into releasable zip file
-		-->
+			<include name="${mev_version.dir}/data/**"/>
+			<include name="${mev_version.dir}/documentation/**"/>
+			<include name="${mev_version.dir}/lib/**"/>
+			<include name="${mev_version.dir}/plugins/**"/>
+			<include name="${mev_version.dir}/Artistic_License.pdf"/>
+			<include name="${mev_version.dir}/tmev.bat"/>
+			<exclude name=".svn"/>
+		</zip>	
+		<zip destfile="${package.dir}/MeV_${version}_linux.zip"
+			basedir="${package.dir}"
+			>
+			<include name="${mev_version.dir}/data/**"/>
+			<include name="${mev_version.dir}/documentation/**"/>
+			<include name="${mev_version.dir}/lib/**"/>
+			<include name="${mev_version.dir}/plugins/**"/>
+			<include name="${mev_version.dir}/Artistic_License.pdf"/>
+			<include name="${mev_version.dir}/tmev.sh"/>
+			<exclude name=".svn"/>
+		</zip>	
+		
+		<!-- Build Mac distribution --> 
+		<copy todir="${package.dir}/${mev_version.dir}">
+			<fileset dir="${home.dir}/mac_distribution_support/" excludes="**/*.jar, .svn"/>
+		</copy>
+		<move todir="${package.dir}/${mev_version.dir}/MeV.app/Resources/Java/">
+			<fileset dir="${package.dir}/${mev_version.dir}/lib">
+				<include name="*.jar"/>
+				<exclude name=".svn"/>
+			</fileset>
+			<fileset dir="${package.dir}/${mev_version.dir}/plugins">
+				<include name="*.jar"/>
+				<exclude name=".svn"/>
+			</fileset>
+		</move>
+		<delete dir="${package.dir}/${mev_version.dir}/lib"/>
+		<delete dir="${package.dir}/${mev_version.dir}/plugins"/>
+		<delete file="${package.dir}/${mev_version.dir}/tmev.bat"/>
+		<delete file="${package.dir}/${mev_version.dir}/tmev.sh"/>
+		<zip destfile="${package.dir}/MeV_${version}_mac.zip"
+			basedir="${package.dir}"
+			>
+			<include name="${mev_version.dir}/**"/>
+			<exclude name=".svn"/>
+		</zip>	
 	</target>
+	
 	<target name="javadoc">
 		<delete dir="${home.dir}/javadoc"/>
 		<mkdir dir="${home.dir}/javadoc"/>
@@ -1730,6 +1776,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
         	doctitle="MultiExperimentViewer (MeV)"
         />
     </target>
+	
     <target name="run" depends="build-all" description="run TMEV">
         <java classname="org.tigr.microarray.mev.TMEV" dir="${home.dir}" fork="true">
             <classpath>
