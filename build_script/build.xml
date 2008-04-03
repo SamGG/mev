@@ -1730,7 +1730,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		<copy todir="${package.dir}/${mev_version.dir}">
 			<fileset dir="${home.dir}/mac_distribution_support/" excludes="**/*.jar, .svn"/>
 		</copy>
-		<move todir="${package.dir}/${mev_version.dir}/MeV.app/Resources/Java/">
+		<move todir="${package.dir}/${mev_version.dir}/MeV.app/Contents/Resources/Java/">
 			<fileset dir="${package.dir}/${mev_version.dir}/lib">
 				<include name="*.jar"/>
 				<exclude name=".svn"/>
@@ -1744,12 +1744,16 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		<delete dir="${package.dir}/${mev_version.dir}/plugins"/>
 		<delete file="${package.dir}/${mev_version.dir}/tmev.bat"/>
 		<delete file="${package.dir}/${mev_version.dir}/tmev.sh"/>
+		
+		<echo message="Mac build (MeV_${version}_mac.zip) must be zipped up by hand using 7-zip."/>
+		<!--
 		<zip destfile="${package.dir}/MeV_${version}_mac.zip"
 			basedir="${package.dir}"
 			>
 			<include name="${mev_version.dir}/**"/>
 			<exclude name=".svn"/>
-		</zip>	
+		</zip>
+		-->	
 	</target>
 	
 	<target name="javadoc">

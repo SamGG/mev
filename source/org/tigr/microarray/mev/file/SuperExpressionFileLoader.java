@@ -390,16 +390,7 @@ public class SuperExpressionFileLoader {
 		
 	}
 	public void initializeGUI() {
-		
-	/*
-	 * Added by Sarita: Setting the look and feel explicitly actually helped 
-	 * get rid of the stack trace we got when running MeV on Mac.
-	 * 
-	 */	try {
-			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
+
 		gba = new GBA();
 		eventListener = new EventListener();
 
