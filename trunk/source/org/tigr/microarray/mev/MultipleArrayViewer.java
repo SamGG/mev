@@ -4407,20 +4407,22 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     /**
      * Raktim
      * Renames a selected navigation tree node.
+     *
      */
     private void onRenameNode() {
+    	//TODO EH renaming nodes work
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
         if (node == null || node.getParent() == null) {
             return;
         }
         if(node.getUserObject() instanceof org.tigr.microarray.mev.cluster.gui.LeafInfo){
-            String name = JOptionPane.showInputDialog(getFrame(), "Enter New Name");
+            String name = JOptionPane.showInputDialog(getFrame(), "Enter New Name", node.toString());
             if(name != null && name.length() > 0){
                 ((org.tigr.microarray.mev.cluster.gui.LeafInfo)node.getUserObject()).setName(name);
                 ((DefaultTreeModel)tree.getModel()).nodeChanged(node);
             }
         }else if(node.getUserObject() instanceof String){
-            String name = JOptionPane.showInputDialog(getFrame(), "Enter New Name");
+            String name = JOptionPane.showInputDialog(getFrame(), "Enter New Name", node.toString());
             if(name != null && name.length() > 0){
                 node.setUserObject(name);
                 ((DefaultTreeModel)tree.getModel()).nodeChanged(node);
@@ -5015,6 +5017,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
                 menubar.setDistanceAbsolute(((AbstractButton)event.getSource()).isSelected());
             } else if (command.equals(ActionManager.DELETE_NODE_CMD)) {
                 onDeleteNode();
+            } else if (command.equals(ActionManager.RENAME_NODE_CMD)) {
+                onRenameNode();
             } else if (command.equals(ActionManager.SET_DATA_SOURCE_COMMAND)) {
                 Object source = event.getSource();
                 if(source instanceof JCheckBoxMenuItem)
@@ -5319,12 +5323,16 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         					
         					popup.add(createDeleteMenuItem());
         				} else if(viewerObj instanceof IViewer && ((IViewer)viewerObj).getClusters() != null && ((IViewer)viewerObj).getExperiment() != null && ((IViewer)viewerObj).getViewerType() != -1) {
+        					//Data viewer node
         					popup.add(createDeleteMenuItem());
         					popup.addSeparator();
         					popup.add(createSetDataMenuItem(((LeafInfo)userObject).isSelectedDataSource()));
         				}
         			} else {
         				popup.add(createDeleteMenuItem());
+    					if(node.getDepth() != 0 && node.getLevel() == 2 && node.getParent().toString().equals("Analysis Results")) {
+    						popup.add(createRenameMenuItem());
+    					}
         			}
         		} else {
         			if (!isContainsDeleteItem(popup)) {
@@ -5357,7 +5365,15 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
             menuItem.addActionListener(this);
             return menuItem;
         }
-     
+        /**
+         * Creates a rename menu item.
+         */
+        private JMenuItem createRenameMenuItem() {
+            JMenuItem menuItem = new JMenuItem("Rename Node");
+            menuItem.setActionCommand(ActionManager.RENAME_NODE_CMD);
+            menuItem.addActionListener(this);
+            return menuItem;
+        }     
         
         /**
          * Creates a data source CheckBox menu item.
