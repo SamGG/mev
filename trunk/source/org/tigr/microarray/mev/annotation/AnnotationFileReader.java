@@ -83,10 +83,18 @@ public class AnnotationFileReader {
     			if(counter==0) {
     				split.nextToken();
     				chipType=split.nextToken();
+    				
+    				//Remove leading space - hack
+    				//TODO should be fixed in a non-hack way
+    				chipType = chipType.substring(chipType.indexOf(' ')+1);
 
     			}else if(counter==1) {
     				split.nextToken();
     				orgName=split.nextToken();
+    				
+    				//Remove leading space - hack
+    				//TODO should be fixed in a non-hack way
+    				orgName = orgName.substring(orgName.indexOf(' ')+1);
 
     			}
     			counter=counter+1;
