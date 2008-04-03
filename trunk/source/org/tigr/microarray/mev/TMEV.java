@@ -160,11 +160,9 @@ public class TMEV {
             
             Manager manager = new Manager();
             
-            //default Mac Aqua L+F is not serializable, therefore use Java Metal L+F for Mac OS
             if (os.indexOf("Apple") != -1 || os.indexOf("Mac") != -1 ) {
-                manager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+                manager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());              
             }
-            
             Manager.createNewMultipleArrayViewer();
                     
         } catch (Exception e) {
