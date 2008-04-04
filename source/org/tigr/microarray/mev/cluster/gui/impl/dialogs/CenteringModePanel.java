@@ -92,7 +92,7 @@ public class CenteringModePanel extends javax.swing.JPanel {
         setLayout(new java.awt.GridBagLayout());
         java.awt.GridBagConstraints gridBagConstraints1;
         
-        //centerMedianButton.setSelected(true);
+        centerMedianButton.setSelected(true);
         centerMedianButton.setText("Median");
         selectButtonGroup.add(centerMedianButton);
         centerMedianButton.setFocusPainted(false);
@@ -115,7 +115,7 @@ public class CenteringModePanel extends javax.swing.JPanel {
         gridBagConstraints1.weightx = 1.0;
         add(centerMeanButton, gridBagConstraints1);
         
-        centerNoneButton.setSelected(true);
+        //centerNoneButton.setSelected(true);
         centerNoneButton.setText("None");
         centerNoneButton.add(centerNoneButton);
         centerNoneButton.setFocusPainted(false);
@@ -147,7 +147,7 @@ public class CenteringModePanel extends javax.swing.JPanel {
         setLayout(new java.awt.GridBagLayout());
         java.awt.GridBagConstraints gridBagConstraints1;
         
-        //centerMedianButton.setSelected(true);
+        centerMedianButton.setSelected(true);
         centerMedianButton.setText("Median");
         selectButtonGroup.add(centerMedianButton);
         centerMedianButton.setFocusPainted(false);
@@ -170,7 +170,7 @@ public class CenteringModePanel extends javax.swing.JPanel {
         gridBagConstraints1.weightx = 1.0;
         add(centerMeanButton, gridBagConstraints1);
         
-        centerNoneButton.setSelected(true);
+        //centerNoneButton.setSelected(true);
         centerNoneButton.setText("None");
         selectButtonGroup.add(centerNoneButton);
         centerNoneButton.setFocusPainted(false);
