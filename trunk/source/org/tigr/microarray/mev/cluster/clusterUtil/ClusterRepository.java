@@ -18,6 +18,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -57,6 +58,10 @@ public class ClusterRepository extends Vector {
      */
     private IFramework framework;
     
+    /**Stores list of currently selected cluster colors to prevent
+     * repeated selections
+     */
+    private ArrayList clusterColors = new ArrayList();
     /**
      * Used by XMLEncoder/XMLDecoder in conjunction with getPersistenceDelegateArgs()
      * @param isGeneClusterRepository
@@ -131,6 +136,41 @@ public class ClusterRepository extends Vector {
     public void setFramework(IFramework framework) {
         this.framework = framework;
     }
+    
+    /**
+     * Returns a boolean for whether two clusters represented by colors have overlapping genes
+     * @param index the index of the ClusterList to which a gene belonging to a cluster of Color "color" belongs
+     * @param color the Color of one cluster
+     * @param c the Color of another cluster
+     * @return
+     */
+    public boolean isColorOverlap(int index, Color color, Color c){
+    	int cluster=-1;
+    	for (int findColor=0; findColor<elementClusters[index].size(); findColor++){
+    		if (elementClusters[index].getClusterAt(findColor).getClusterColor() == color)
+    			cluster = findColor;
+    	}
+    	
+    	for (int j=0; j<elementClusters[index].getClusterAt(cluster).getIndices().length; j++){
+    	    for (int i=0; i<elementClusters[elementClusters[index].getClusterAt(cluster).getIndices()[j]].size(); i++){
+    	    	if (elementClusters[elementClusters[index].getClusterAt(cluster).getIndices()[j]].getClusterAt(i).getClusterColor() == color) continue;
+    			
+    			if (elementClusters[elementClusters[index].getClusterAt(cluster).getIndices()[j]].getClusterAt(i).getClusterColor() == c) return true;
+    		}
+    	}
+    	
+    	return false;
+    }
+    
+    /** Returns the total number of clusters 
+     * visible in the experiment viewer
+     * @return
+     */
+    public int getVisibleClusters(){
+    	return clusterColors.size();
+    }
+
+    
     /** Returns the color of the last cluster to which the element
      * (index) was assigned
      */
@@ -387,6 +427,18 @@ public class ClusterRepository extends Vector {
             return null;
         }
         
+        if (clusterColors.contains(dialog.getColor())){
+	        Object[] optionst = { "OK", "CANCEL" };
+	        int option = JOptionPane.showOptionDialog(null, "Cluster Color is already being used. Please select another Color.", "Duplicate Color Error", 
+        		JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+        		null, optionst, optionst[0]);
+	        if (option==JOptionPane.CANCEL_OPTION) return null;
+	        if (option==JOptionPane.OK_OPTION)
+	        	return storeCluster(algorithmIndex, algorithmName, clusterID, indices, clusterNode,experiment);
+        
+        return null;
+        }
+        clusterColors.add(dialog.getColor());
         Color clusterColor = dialog.getColor();
         String clusterLabel = dialog.getLabel();
         String clusterDescription = dialog.getDescription();
@@ -398,7 +450,7 @@ public class ClusterRepository extends Vector {
     }
     
     /**
-     * Stores a clsuter given the supplied parameters.
+     * Stores a cluster given the supplied parameters.
      */
     public Cluster storeSubCluster(int algorithmIndex, String algorithmName, String clusterID, int [] indices, DefaultMutableTreeNode clusterNode, Experiment experiment){
         
@@ -422,7 +474,18 @@ public class ClusterRepository extends Vector {
         if(dialog.showModal() != JOptionPane.OK_OPTION){
             return null;
         }
+        if (clusterColors.contains(dialog.getColor())){
+	        Object[] optionst = { "OK", "CANCEL" };
+	        int option = JOptionPane.showOptionDialog(null, "Cluster Color is already being used. Please select another Color.", "Duplicate Color Error", 
+        		JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+        		null, optionst, optionst[0]);
+	        if (option==JOptionPane.CANCEL_OPTION) return null;
+	        if (option==JOptionPane.OK_OPTION)
+	        	return storeSubCluster(algorithmIndex, algorithmName, clusterID, indices, clusterNode,experiment);
+        return null;
         
+        }
+        clusterColors.add(dialog.getColor());
         Color clusterColor = dialog.getColor();
         String clusterLabel = dialog.getLabel();
         String clusterDescription = dialog.getDescription();
@@ -512,7 +575,7 @@ public class ClusterRepository extends Vector {
     }
     
     
-    /** Removes a cluster from elenets cluster lists.
+    /** Removes a cluster from elements cluster lists.
      */
     private void removeElementClusters(int [] indices, Cluster cluster){
         for(int i = 0; i < indices.length; i++){
@@ -539,9 +602,10 @@ public class ClusterRepository extends Vector {
             list = this.getClusterList(i);
             for(int j = 0; j < list.size(); j++){
                 cluster = list.getClusterAt(j);
-                if(serialNumber == cluster.getSerialNumber())
+                if(serialNumber == cluster.getSerialNumber()){
                     return cluster;
             }
+        }
         }
         return cluster;
     }
@@ -575,7 +639,7 @@ public class ClusterRepository extends Vector {
         return true;
     }
     
-    /** Returns the next availible cluster serial
+    /** Returns the next available cluster serial
      * number and reserves it's use.
      */
     public int takeNextClusterSerialNumber(){
@@ -657,7 +721,18 @@ public class ClusterRepository extends Vector {
                         if(clusterDialog.showModal() != JOptionPane.OK_OPTION){
                             return null;
                         }
+                        if (clusterColors.contains(clusterDialog.getColor())){
+                	        Object[] optionst = { "OK", "CANCEL" };
+                	        int option = JOptionPane.showOptionDialog(null, "Cluster Color is already being used. Please select another Color.", "Duplicate Color Error", 
+                        		JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+                        		null, optionst, optionst[0]);
+                	        if (option==JOptionPane.CANCEL_OPTION) return null;
+                	        if (option==JOptionPane.OK_OPTION)
+                	        	return null;
                         
+                        return null;
+                        }
+                        clusterColors.add(clusterDialog.getColor());
                         ClusterList list = getClusterOperationsList();
                         Color clusterColor = clusterDialog.getColor();
                         String clusterLabel = clusterDialog.getLabel();
@@ -713,7 +788,17 @@ public class ClusterRepository extends Vector {
                         if(clusterDialog.showModal() != JOptionPane.OK_OPTION){
                             return null;
                         }
-                        
+                        if (clusterColors.contains(clusterDialog.getColor())){
+                	        Object[] optionst = { "OK", "CANCEL" };
+                	        int option = JOptionPane.showOptionDialog(null, "Cluster Color is already being used. Please select another Color.", "Duplicate Color Error", 
+                        		JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+                        		null, optionst, optionst[0]);
+                	        if (option==JOptionPane.CANCEL_OPTION) return null;
+                	        if (option==JOptionPane.OK_OPTION)
+                	        	return null;
+                        return null;
+                        }
+                        clusterColors.add(clusterDialog.getColor());
                         ClusterList list = getClusterOperationsList();
                         Color clusterColor = clusterDialog.getColor();
                         String clusterLabel = clusterDialog.getLabel();

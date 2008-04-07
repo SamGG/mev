@@ -123,7 +123,7 @@ public class ClusterList extends Vector {
         return null;
     }
     
-    /** Returns clsuter serial number for the specified cluster index
+    /** Returns cluster serial number for the specified cluster index
      */    
    public int getClusterSerialNumber(int clusterIndex){
         if(isInRange(clusterIndex))

@@ -42,7 +42,9 @@ public class STGUI implements IClusterGUI, IScriptGUI {
     private Progress progress;
     boolean drawGeneTree;
     boolean drawExptTree;
-    
+
+    boolean optimizeGeneOrdering;
+    boolean optimizeSampleOrdering;
     /**
      * Inits the algorithm parameters, runs calculation and returns
      * a result to be inserted into the framework analysis node.
@@ -69,6 +71,8 @@ public class STGUI implements IClusterGUI, IScriptGUI {
         int exptTreeAnalysisOption = dialog.getExptTreeAnalysisOption();
         int geneTreeIterations = Integer.parseInt(dialog.geneTreeIterationsTextField.getText());
         int exptTreeIterations = Integer.parseInt(dialog.exptTreeIterationsTextField.getText());
+        optimizeGeneOrdering = dialog.isOptimizeGenes();
+        optimizeSampleOrdering = dialog.isOptimizeSamples();
         Listener listener = new Listener();
         
         try {
@@ -91,7 +95,8 @@ public class STGUI implements IClusterGUI, IScriptGUI {
             data.addParam("exptTreeIterations", String.valueOf(exptTreeIterations));
             data.addParam("geneTreeAnalysisOption", String.valueOf(geneTreeAnalysisOption));
             data.addParam("exptTreeAnalysisOption", String.valueOf(exptTreeAnalysisOption));
-            
+            data.addParam("optimize-gene-ordering", String.valueOf(optimizeGeneOrdering));
+            data.addParam("optimize-sample-ordering", String.valueOf(optimizeSampleOrdering));
             this.progress = new Progress(framework.getFrame(), "", listener);
             this.progress.show();
             
@@ -161,6 +166,9 @@ public class STGUI implements IClusterGUI, IScriptGUI {
         int method = dialog.getMethod();
         drawGeneTree = dialog.drawGeneTreeCheckBox.isSelected();
         drawExptTree = dialog.drawExptTreeCheckBox.isSelected();
+
+        optimizeGeneOrdering = dialog.isOptimizeGenes();
+        optimizeSampleOrdering = dialog.isOptimizeSamples();
         int geneTreeAnalysisOption = dialog.getGeneTreeAnalysisOption();
         int exptTreeAnalysisOption = dialog.getExptTreeAnalysisOption();
         int geneTreeIterations = Integer.parseInt(dialog.geneTreeIterationsTextField.getText());
@@ -183,6 +191,8 @@ public class STGUI implements IClusterGUI, IScriptGUI {
         data.addParam("drawExptTree", String.valueOf(drawExptTree));
         data.addParam("drawGeneTree", String.valueOf(drawGeneTree));
         
+        data.addParam("optimize-gene-ordering", String.valueOf(optimizeGeneOrdering));
+        data.addParam("optimize-sample-ordering", String.valueOf(optimizeSampleOrdering));
         //script control parameters
         
         // alg name
@@ -208,7 +218,7 @@ public class STGUI implements IClusterGUI, IScriptGUI {
         AlgorithmParameters params = algData.getParams();
         this.drawExptTree = params.getBoolean("drawExptTree");
         this.drawGeneTree = params.getBoolean("drawGeneTree");
-     
+
         Listener listener = new Listener();
         
         try {
@@ -230,6 +240,7 @@ public class STGUI implements IClusterGUI, IScriptGUI {
                 progress.setTitle("Resampling by Experiments");
                 algData.addParam("drawGeneTree", String.valueOf(false));
                 algData.addParam("drawExptTree", String.valueOf(true));
+                algData.addParam("optimize-sample-ordering", String.valueOf(optimizeSampleOrdering));
                 samples_result = algorithm.execute(algData);
                 validate(samples_result);
             }
@@ -238,6 +249,7 @@ public class STGUI implements IClusterGUI, IScriptGUI {
                 progress.setTitle("Resampling by Genes");
                 algData.addParam("drawGeneTree", String.valueOf(true));
                 algData.addParam("drawExptTree", String.valueOf(false));
+                algData.addParam("optimize-gene-ordering", String.valueOf(optimizeGeneOrdering));
                 genes_result = algorithm.execute(algData);
                 validate(genes_result);
             }

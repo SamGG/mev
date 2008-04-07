@@ -48,8 +48,8 @@ public class HCL extends AbstractAlgorithm {
 	float factor; // = map.getFloat("distance-factor", 1.0f);
 	boolean absolute = map.getBoolean("hcl-distance-absolute", false);
 	boolean genes = map.getBoolean("calculate-genes", true);
-	boolean optimizeOrdering = map.getBoolean("optimize-sample-ordering", true);
-	if (genes) optimizeOrdering = map.getBoolean("optimize-gene-ordering", true);
+	boolean optimizeOrdering = map.getBoolean("optimize-sample-ordering", false);
+	if (genes) optimizeOrdering = map.getBoolean("optimize-gene-ordering", false);
 	int method = map.getInt("method-linkage", 0);
 	
 	//============= Init ====================
@@ -90,7 +90,6 @@ public class HCL extends AbstractAlgorithm {
 	    NodeOrder[i]=-1;
 	    NumberOfChildren[i]=1;
 	}
-	
 	//======== Init =========
 	float[][] SimilarityMatrix = new float[n][];
 	float[][] squareMatrix = new float[n][n];

@@ -55,6 +55,8 @@ public class NodeSupports extends AbstractAlgorithm {
 	boolean absolute = map.getBoolean("distance-absolute", false);
 	boolean drawGeneTree = map.getBoolean("drawGeneTree", true);
 	boolean drawExptTree = map.getBoolean("drawExptTree", true);
+	boolean optimizeGeneOrdering = map.getBoolean("optimize-gene-ordering");
+	boolean optimizeSampleOrdering = map.getBoolean("optimize-sample-ordering");
 		/*
 		System.out.println("distance-function: " + function);
 		System.out.println("factor: " + factor);
@@ -106,6 +108,8 @@ public class NodeSupports extends AbstractAlgorithm {
 	sub_algo_data.addParam("hcl-distance-function", String.valueOf(function));
 	
 	sub_algo_data.addParam("method-linkage", String.valueOf(method_linkage));
+	sub_algo_data.addParam("optimize-gene-ordering", String.valueOf(optimizeGeneOrdering));
+	sub_algo_data.addParam("optimize-sample-ordering", String.valueOf(optimizeSampleOrdering));
 	
 	int iterations = (drawGeneTree) ? geneTreeIterations : exptTreeIterations;
 	
@@ -135,6 +139,9 @@ public class NodeSupports extends AbstractAlgorithm {
 	    child2Arr = sub_algo_result.getIntArray("child-2-array");
 	    nodeOrder = sub_algo_result.getIntArray("node-order");
 	    height = sub_algo_result.getMatrix("height");
+
+		sub_algo_data.addParam("optimize-gene-ordering", String.valueOf(optimizeGeneOrdering));
+		sub_algo_data.addParam("optimize-sample-ordering", String.valueOf(optimizeSampleOrdering));
 	    
 	    //System.out.println("Original child1 array: ");
 	    printIntArray(child1Arr);
@@ -228,6 +235,9 @@ public class NodeSupports extends AbstractAlgorithm {
 		resamp_algo_data.addParam("hcl-distance-function", String.valueOf(function));
 		resamp_algo_data.addParam("method-linkage", String.valueOf(method_linkage));
 		resamp_algo_data.addParam("calculate-genes", "false");
+
+		resamp_algo_data.addParam("optimize-gene-ordering", String.valueOf(optimizeGeneOrdering));
+		resamp_algo_data.addParam("optimize-sample-ordering", String.valueOf(optimizeSampleOrdering));
 		
 		AlgorithmData resamp_algo_result = resamp_algo.execute(resamp_algo_data);
 		
@@ -409,6 +419,9 @@ public class NodeSupports extends AbstractAlgorithm {
 		resamp_algo_data.addParam("hcl-distance-function", String.valueOf(function));
 		resamp_algo_data.addParam("method-linkage", String.valueOf(method_linkage));
 		resamp_algo_data.addParam("calculate-genes", "true");
+
+		resamp_algo_data.addParam("optimize-gene-ordering", String.valueOf(optimizeGeneOrdering));
+		resamp_algo_data.addParam("optimize-sample-ordering", String.valueOf(optimizeSampleOrdering));
 		
 		AlgorithmData resamp_algo_result = resamp_algo.execute(resamp_algo_data);
 		

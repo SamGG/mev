@@ -297,8 +297,16 @@ public class HCLInitDialog extends AlgorithmDialog {//JDialog {
         
         public void itemStateChanged(ItemEvent e) {
             okButton.setEnabled(genes_box.isSelected() || cluster_box.isSelected());
-            if (!genes_box.isSelected()) gene_ordering_box.setSelected(false);
-            if (!cluster_box.isSelected())sample_ordering_box.setSelected(false);
+            if (!genes_box.isSelected()) {
+            	gene_ordering_box.setEnabled(false);
+            	gene_ordering_box.setSelected(false);
+            }
+            if (!cluster_box.isSelected()){
+            	sample_ordering_box.setEnabled(false);
+            	sample_ordering_box.setSelected(false);
+            }
+            if (genes_box.isSelected()) gene_ordering_box.setEnabled(true);
+            if (cluster_box.isSelected())sample_ordering_box.setEnabled(true);
         }
         
         public void windowClosing(WindowEvent e) {
