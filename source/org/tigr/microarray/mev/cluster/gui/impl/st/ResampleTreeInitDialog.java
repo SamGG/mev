@@ -19,6 +19,8 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
@@ -33,6 +35,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DistanceMetricPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 import org.tigr.util.awt.GBA;
@@ -41,9 +44,11 @@ public class ResampleTreeInitDialog extends AlgorithmDialog {
     
     protected GBA gba;
     protected EventListener eventListener;
+    protected ItemStateListener itemListener;
     
     protected JPanel geneTreePanel;
     public JCheckBox drawGeneTreeCheckBox;
+    public JCheckBox optimizeGeneCheckBox;
     protected JPanel geneTreeResamplingOptionsPanel;
     protected JRadioButton geneBootstrapExpts;
     protected JRadioButton geneJackknifeExpts;
@@ -54,6 +59,7 @@ public class ResampleTreeInitDialog extends AlgorithmDialog {
     
     protected JPanel exptTreePanel;
     public JCheckBox drawExptTreeCheckBox;
+    public JCheckBox optimizeSampleCheckBox;
     protected JPanel exptTreeResamplingOptionsPanel;
     protected JRadioButton exptBootstrapGenes;
     protected JRadioButton exptJackknifeGenes;
@@ -101,12 +107,19 @@ public class ResampleTreeInitDialog extends AlgorithmDialog {
     protected void initialize() {
         gba = new GBA();
         labelColor = UIManager.getColor("Label.foreground");
+        itemListener = new ItemStateListener();
         eventListener = new EventListener();
         
         drawGeneTreeCheckBox = new JCheckBox("Draw Gene Tree", true);
         this.drawGeneTreeCheckBox.setFocusPainted(false);
         this.drawGeneTreeCheckBox.setBackground(Color.white);
         this.drawGeneTreeCheckBox.setForeground(labelColor);
+        this.drawGeneTreeCheckBox.addItemListener(itemListener);
+        optimizeGeneCheckBox = new JCheckBox("Optimize Gene Leaf Order");
+        optimizeGeneCheckBox.setFocusPainted(false);
+        optimizeGeneCheckBox.setBackground(Color.white);
+        optimizeGeneCheckBox.setForeground(labelColor);
+        optimizeGeneCheckBox.addItemListener(itemListener);
         buttonGroup = new ButtonGroup();
         geneBootstrapExpts = new JRadioButton("Bootstrap Samples", true);
         this.geneBootstrapExpts.setFocusPainted(false);
@@ -147,13 +160,20 @@ public class ResampleTreeInitDialog extends AlgorithmDialog {
         geneTreePanel.setBorder(new TitledBorder(new EtchedBorder(), "Gene Tree", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
         
         gba.add(geneTreePanel, drawGeneTreeCheckBox, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-        gba.add(geneTreePanel, geneTreeResamplingOptionsPanel, 0, 1, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-        gba.add(geneTreePanel, geneTreeIterationsPanel, 0, 2, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+        gba.add(geneTreePanel, optimizeGeneCheckBox, 0, 1, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+        gba.add(geneTreePanel, geneTreeResamplingOptionsPanel, 0, 2, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+        gba.add(geneTreePanel, geneTreeIterationsPanel, 0, 3, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
         
         drawExptTreeCheckBox = new JCheckBox("Draw Sample Tree", true);
         drawExptTreeCheckBox.setFocusPainted(false);
         drawExptTreeCheckBox.setBackground(Color.white);
         drawExptTreeCheckBox.setForeground(labelColor);
+        drawExptTreeCheckBox.addItemListener(itemListener);
+        optimizeSampleCheckBox = new JCheckBox("Optimize Sample Leaf Order");
+        optimizeSampleCheckBox.setFocusPainted(false);
+        optimizeSampleCheckBox.setBackground(Color.white);
+        optimizeSampleCheckBox.setForeground(labelColor);
+        optimizeSampleCheckBox.addItemListener(itemListener);
         buttonGroup = new ButtonGroup();
         exptBootstrapGenes = new JRadioButton("Bootstrap Genes", true);
         this.exptBootstrapGenes.setFocusPainted(false);
@@ -195,8 +215,9 @@ public class ResampleTreeInitDialog extends AlgorithmDialog {
         exptTreePanel.setBorder(new TitledBorder(new EtchedBorder(), "Sample Tree", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
         
         gba.add(exptTreePanel, drawExptTreeCheckBox, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-        gba.add(exptTreePanel, exptTreeResamplingOptionsPanel, 0, 1, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-        gba.add(exptTreePanel, exptTreeIterationsPanel, 0, 2, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+        gba.add(exptTreePanel, optimizeSampleCheckBox, 0, 1, 1, 1, 1, 0, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+        gba.add(exptTreePanel, exptTreeResamplingOptionsPanel, 0, 2, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+        gba.add(exptTreePanel, exptTreeIterationsPanel, 0, 3, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
         
         topPanel = new JPanel();
         topPanel.setLayout(new GridBagLayout());
@@ -248,6 +269,7 @@ public class ResampleTreeInitDialog extends AlgorithmDialog {
         
         addContent(contentPane);
         setActionListeners(eventListener);
+        setActionListeners(itemListener);
         
         pack();
         setResizable(false);
@@ -297,6 +319,12 @@ public class ResampleTreeInitDialog extends AlgorithmDialog {
     public int getExptTreeAnalysisOption() {
         return exptTreeAnalysisOption;
     }
+    public boolean isOptimizeGenes(){
+    	return optimizeGeneCheckBox.isSelected();
+    }
+    public boolean isOptimizeSamples(){
+    	return optimizeSampleCheckBox.isSelected();
+    }
     
     protected void fireOkButtonEvent() {
         
@@ -324,7 +352,9 @@ public class ResampleTreeInitDialog extends AlgorithmDialog {
     
     private void resetControls(){
         this.drawGeneTreeCheckBox.setSelected(true);
+        this.optimizeGeneCheckBox.setSelected(false);
         this.drawExptTreeCheckBox.setSelected(true);
+        this.optimizeSampleCheckBox.setSelected(false);
         this.geneStandard.setSelected(true);
         this.exptStandard.setSelected(true);
         this.averageLinkage.setSelected(true);
@@ -405,5 +435,29 @@ public class ResampleTreeInitDialog extends AlgorithmDialog {
             dispose();
         }
         
+    }
+    /**
+     * The class to listen to check boxes items events.
+     */
+    private class ItemStateListener extends DialogListener implements ItemListener {
+    	public void actionPerformed(ActionEvent e){}
+	    public void itemStateChanged(ItemEvent e) {
+	        okButton.setEnabled(drawGeneTreeCheckBox.isSelected() || drawExptTreeCheckBox.isSelected());
+	        if (!drawGeneTreeCheckBox.isSelected()){
+	        	optimizeGeneCheckBox.setEnabled(false);
+	        	optimizeGeneCheckBox.setSelected(false);
+	        }
+	        if (!drawExptTreeCheckBox.isSelected()){
+	        	optimizeSampleCheckBox.setEnabled(false);
+	        	optimizeSampleCheckBox.setSelected(false);
+	        }
+	        if (drawExptTreeCheckBox.isSelected()){
+	        	optimizeSampleCheckBox.setEnabled(true);
+	        }
+	        if (drawGeneTreeCheckBox.isSelected()){
+	        	optimizeGeneCheckBox.setEnabled(true);
+	        }
+	        
+	    }
     }
 }

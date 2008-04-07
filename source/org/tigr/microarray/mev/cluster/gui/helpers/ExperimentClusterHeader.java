@@ -19,13 +19,18 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.FontMetrics;
 import java.awt.RenderingHints;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 
 import javax.swing.JPanel;
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
@@ -34,19 +39,37 @@ import org.tigr.microarray.mev.cluster.gui.IData;
 public class ExperimentClusterHeader extends JPanel implements IExperimentHeader{
     
     private static final int RECT_HEIGHT = 15;
-    private static final int COLOR_BAR_HEIGHT = 10;
+    private static final int COLOR_BAR_HEIGHT = 15;
     private Experiment experiment;
     private IData data;
     private int[][] samplesOrder;
+    private ArrayList storedGeneColors;
+    private ArrayList storedSampleColors = new ArrayList();
+    private int compactedColorBarHeight = 0;
+
     private int elementWidth;
     private boolean isAntiAliasing = true;
+    private boolean isCompact = false;
     private float maxValue = 3f;
     private float minValue = -3f;
     private float midValue = 0.0f;    
     int clusterIndex = 0;
     private String centroidName;
     private boolean hasCentroid;
+    private int activeCluster = 0;
+    private int[] ColorOverlaps = new int[1000];
     
+    private boolean mouseOnMap=false;
+	private int mouseRow = 0;
+	private int mouseColumn = 0;
+	private int clickedRow = 0;
+    private int clickedColumn = 0;
+    public boolean clickedCell = false;
+    private int maxSampleLabelLength = 0;
+    private int oldLabelLength = 0;
+	public boolean clusterViewerClicked = false;
+	public int clusterViewerClickedColumn = 0;
+	
     private BufferedImage negColorImage;
     private BufferedImage posColorImage;
     
@@ -71,6 +94,9 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
     	this.elementWidth = elementWidth;
     	this.hasCentroid = hasCentroid;
     	this.insets = insets;
+        Listener listener = new Listener();
+	    addMouseListener(listener);
+	    addMouseMotionListener(listener);
     }
     /**
      * Construct an <code>ExperimentClusterHeader</code> with specified experiment
@@ -82,6 +108,9 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
         this.samplesOrder[0] = samplesOrder;
         this.hasCentroid = false;
         setBackground(Color.white);
+        Listener listener = new Listener();
+	    addMouseListener(listener);
+	    addMouseMotionListener(listener);
     }
     
     /**
@@ -93,6 +122,19 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
         this.samplesOrder = samplesOrder;
         this.hasCentroid = false;
         setBackground(Color.white);
+        Listener listener = new Listener();
+	    addMouseListener(listener);
+	    addMouseMotionListener(listener);
+    }
+    public ExperimentClusterHeader(Experiment experiment, int[][] samplesOrder, ArrayList storedGeneColors) {
+        this.experiment = experiment;
+        this.samplesOrder = samplesOrder;
+        this.hasCentroid = false;
+        this.storedGeneColors = storedGeneColors;
+        setBackground(Color.white);
+        Listener listener = new Listener();
+	    addMouseListener(listener);
+	    addMouseMotionListener(listener);
     }
     
     
@@ -106,12 +148,33 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
         this.centroidName = centroidName;
         this.hasCentroid = true;
         setBackground(Color.white);
+        Listener listener = new Listener();
+	    addMouseListener(listener);
+	    addMouseMotionListener(listener);
+    }
+    public ExperimentClusterHeader(Experiment experiment, int[][] samplesOrder, String centroidName, ArrayList storedGeneColors) {
+        this.experiment = experiment;
+        this.samplesOrder = samplesOrder;
+        this.centroidName = centroidName;
+        this.hasCentroid = true;
+        this.storedGeneColors = storedGeneColors;
+        setBackground(Color.white);
+        Listener listener = new Listener();
+	    addMouseListener(listener);
+	    addMouseMotionListener(listener);
     }
         /**
      * Returns a component to be inserted into scroll pane view port.
      */
     public JComponent getContentComponent(){
         return this;
+    }
+    
+    /**
+     * Sets stored Color Array List
+     */
+    public void setStoredColors(ArrayList storedColors){
+    	this.storedGeneColors = storedColors;
     }
     
     /**
@@ -145,6 +208,62 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
         this.maxValue = maxValue;
         this.minValue = minValue;
     }
+    
+    /**
+     * Sets whether the color-coded clustering display is compact
+     */
+    public void setCompactClusters(boolean isCompact){
+    	this.isCompact=isCompact;
+    	storedSampleColors.clear();
+    }
+    
+    /**
+     * draws rectangle around specified sample cluster colors
+     * @param column
+     * @param color
+     */
+    public void drawClusterHeaderRectsAt(int column, Color color){
+    	Graphics2D g = (Graphics2D)getGraphics();
+        if (g == null) {
+            return;
+        }
+        g.setColor(color);
+        int centroidOffset = 0;
+        if (hasCentroid)
+        	centroidOffset=this.elementWidth +5;
+    	if (!isCompact)
+    		g.drawRect(column*elementWidth + insets.left+centroidOffset, getSize().height - (COLOR_BAR_HEIGHT*(storedSampleColors.size())) - 2, (elementWidth-1), (COLOR_BAR_HEIGHT)*storedSampleColors.size());
+    	if (isCompact)
+    		g.drawRect(column*elementWidth + insets.left+centroidOffset, getSize().height - (COLOR_BAR_HEIGHT*(compactedColorBarHeight)) - 2, (elementWidth-1), (COLOR_BAR_HEIGHT)*compactedColorBarHeight);
+    }
+    public void drawClusterHeaderRectsAt(int column, Color color, boolean cluster){
+    	Graphics2D g = (Graphics2D)getGraphics();
+        if (g == null) {
+            return;
+        }
+        int side = 0;
+        int inset = 0;
+        if (cluster)
+        	inset = 4;
+        g.setColor(color);
+        int centroidOffset = 0;
+        if (hasCentroid){
+        	centroidOffset=this.elementWidth +5;
+        }
+        if (column > (this.samplesOrder[clusterIndex].length))
+        		side = 10;
+        if (column > (experiment.getNumberOfSamples() -1)&&isCompact)
+        	return;
+    	if (!isCompact){
+    		
+    		g.drawRect(column*elementWidth + insets.left + centroidOffset + inset, getSize().height - (COLOR_BAR_HEIGHT*(storedSampleColors.size()) + maxSampleLabelLength + 7), (elementWidth)  , (COLOR_BAR_HEIGHT)*storedSampleColors.size()+maxSampleLabelLength+4 + side);
+    	}
+    	if (isCompact)
+    		g.drawRect(column*elementWidth + insets.left + centroidOffset + inset, getSize().height - (COLOR_BAR_HEIGHT*(compactedColorBarHeight) +   maxSampleLabelLength + 7), (elementWidth-1), (COLOR_BAR_HEIGHT)*compactedColorBarHeight + maxSampleLabelLength+4 + side);
+    	
+    }
+    
+    
     
     /**
      * Sets positive and negative images
@@ -202,11 +321,34 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
             name = data.getSampleName(experiment.getSampleIndex(samplesOrder[clusterIndex][feature]));
             maxHeight = Math.max(maxHeight, hfm.stringWidth(name));
         }
+        maxSampleLabelLength = maxHeight;
         if(hasCentroid)
             maxHeight = Math.max(maxHeight, hfm.stringWidth(this.centroidName));
         
         maxHeight += RECT_HEIGHT + hfm.getHeight() + 10;
-        maxHeight += getColorBarHeight();
+        if (!isCompact){
+        	maxHeight += (getColorBarHeight()*storedSampleColors.size());
+            String sampleLabel;
+            int labelLength=0;
+            for (int feature = 0; feature < storedSampleColors.size(); feature++) {
+                sampleLabel = data.getClusterLabel(feature, false);
+                labelLength = Math.max(labelLength, hfm.stringWidth(sampleLabel));
+            }
+            if (labelLength != oldLabelLength) {
+            	
+            	contentWidth = contentWidth - oldLabelLength + labelLength; 
+            	oldLabelLength = labelLength;
+            }
+        }
+        if(isCompact){
+    		int maxSpacesOver=-1;
+    		for (int i=0; i<storedSampleColors.size(); i++){
+    			if ((ColorOverlaps[i])>maxSpacesOver)
+    				maxSpacesOver=ColorOverlaps[i];
+    		}
+    		maxHeight += getColorBarHeight()*(maxSpacesOver+1);
+    		compactedColorBarHeight= maxSpacesOver+1;
+    	}
         if(!hasCentroid){
             setSize(contentWidth, maxHeight);
             setPreferredSize(new Dimension(contentWidth, maxHeight));
@@ -215,7 +357,7 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
             setSize(contentWidth, maxHeight);
             setPreferredSize(new Dimension(contentWidth, maxHeight));
         }
-
+        drawHeader(g);
     }
     
     /**
@@ -249,6 +391,7 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
      * Draws the header into specified graphics.
      */
     private void drawHeader(Graphics2D g) {
+    	
         final int samples = this.samplesOrder[clusterIndex].length;
         if (samples == 0) {
             return;
@@ -281,14 +424,17 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
         g.rotate(-Math.PI/2);
         String name;
         int h = -getSize().height + 5;
+        int hGeneClusters = h;
         boolean hasColorBar = false;
-        int centroidNameOffset = 0;
         
         if(this.getColorBarHeight() > 0){
-            h += COLOR_BAR_HEIGHT;
+        	if (isCompact)
+        		h += COLOR_BAR_HEIGHT*compactedColorBarHeight;
+        	if (!isCompact)
+        		h += COLOR_BAR_HEIGHT*storedSampleColors.size();
             hasColorBar = true;
         }
-        
+        int centroidNameOffset = 0;
         if(this.hasCentroid){
             centroidNameOffset = elementWidth + 5;
             g.drawString(this.centroidName, h, descent + elementWidth/2 + insets.left);
@@ -299,18 +445,291 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
             g.drawString(name, h, descent + elementWidth*sample + elementWidth/2 + insets.left + centroidNameOffset);
         }
         g.rotate(Math.PI/2);
+        
+        int visibleClusters = 0;
+        if (!isCompact){
+	        String clusterName;
+	        g.rotate(-Math.PI/2);
+	        int numberOfClusters = storedGeneColors.size();
+	        for (int cluster = 0; cluster < numberOfClusters; cluster++) {
+	        	if (data.getClusterLabel(cluster, true)==null) break;
+	        	int index = data.getVisibleCluster((Color)storedGeneColors.get(cluster), true);
+	        	clusterName = data.getClusterLabel(index, true);
+	        	g.drawString(clusterName, h, descent + elementWidth*(samples+cluster) + elementWidth/2 + insets.left+5 + centroidNameOffset);
+	        	visibleClusters++;
+	        }
+	        g.rotate(Math.PI/2);
+        }
+
+        if (storedSampleColors!=null&&!isCompact){
+	        String clusterName;
+	        int numberOfClusters = storedSampleColors.size();
+	        for (int cluster = 0; cluster < numberOfClusters; cluster++) {
+	        	if (data.getClusterLabel(cluster, false)==null) break;
+	        	int index = data.getVisibleCluster((Color)storedSampleColors.get(cluster), false);
+	        	clusterName = data.getClusterLabel(index, false);
+		        g.drawString(clusterName, elementWidth*(samples+visibleClusters) + insets.left+10 + centroidNameOffset, -h + COLOR_BAR_HEIGHT*(numberOfClusters-(cluster)));
+	        }
+        }
+        
+        
+        
+        int spacesOver=0;
         if(hasColorBar){
-            Color color;
+            int sscLength= storedSampleColors.size();
             for(int sample = 0; sample < samples; sample++){
-                color = data.getExperimentColor(experiment.getSampleIndex(this.samplesOrder[clusterIndex][sample]));
-                if(color != null)
-                    g.setColor(color);
-                else
+                Color[] colors = data.getSampleColorArray(experiment.getSampleIndex(this.samplesOrder[clusterIndex][sample]));
+                if (colors==null) { continue;}
+                for (int clusters=0; clusters<colors.length; clusters++){
+	            	if (colors[clusters]==null) {System.out.println("colors null");continue;}
+	            	if(storedSampleColors.contains(colors[clusters])) {
+	                	activeCluster=storedSampleColors.indexOf(colors[clusters]);
+	                }else{
+		                storedSampleColors.add(colors[clusters]);
+		                activeCluster=(storedSampleColors.size()-1);
+	                	ColorOverlaps[activeCluster]= activeCluster;
+	                	//compacts the cluster color display
+	                	boolean compact= false;
+	                	if (isCompact)compact=true;
+	                	while (compact){
+	                		for (int i=0; i<storedSampleColors.size(); i++){
+	                			boolean allClear = true;
+	                			for (int j=0; j<storedSampleColors.size(); j++){
+	                				if (ColorOverlaps[j]==i){
+	    			                	if (data.isColorOverlap(experiment.getSampleIndex(this.samplesOrder[clusterIndex][sample]), colors[clusters], (Color)storedSampleColors.get(j), false)){
+	    			                		allClear=false;
+	    			                		break;
+	    			                		}
+	    		                			allClear=true;
+	    		                		}	
+	                				}
+	                			if (allClear){
+	                				ColorOverlaps[activeCluster]= i;
+	                				compact=true;
+	                				break;
+	                			}
+	                		}
+	                		if (compact) break;
+	                	}
+	                }
+	                spacesOver=ColorOverlaps[activeCluster];
+                    g.setColor(colors[clusters]);
+                    if (sscLength!= storedSampleColors.size()){
                     g.setColor(Color.white);
-                g.fillRect(sample*elementWidth + insets.left + centroidNameOffset, getSize().height - COLOR_BAR_HEIGHT - 2, elementWidth, COLOR_BAR_HEIGHT);
+                    }
+                    g.fillRect(sample*elementWidth + insets.left + centroidNameOffset, getSize().height - (COLOR_BAR_HEIGHT*(1+spacesOver)) - 2, elementWidth, COLOR_BAR_HEIGHT);
+                }
+            }
+            int sizeTest = getSize().width;
+            if (sscLength!= storedSampleColors.size()){
+            	updateSizes(getSize().width, elementWidth);
+            }
+            if (sizeTest != getSize().width) repaint();
+        }
+        if (mouseOnMap){
+        	if (mouseColumn != clickedColumn)
+        		drawClusterHeaderRectsAt(mouseColumn, Color.gray, false);
+        	if (mouseRow != clickedRow)	
+        		drawHorizontalRect(mouseRow, Color.gray);
+        }
+        mouseOnMap = false;
+        if (clickedCell){
+            g.setColor(Color.red);
+            int centroidOffset = 0;
+            if (hasCentroid)
+            	centroidOffset = elementWidth + 5;
+            if (!isCompact){
+            	g.drawRect(centroidOffset + insets.left, this.getHeight()-COLOR_BAR_HEIGHT*(storedSampleColors.size() - clickedRow)-3, elementWidth*experiment.getNumberOfSamples() + 5 + elementWidth*this.storedGeneColors.size() + 5 + oldLabelLength + 2, COLOR_BAR_HEIGHT);
+            	g.drawRect(centroidOffset + clickedColumn*elementWidth + insets.left, getSize().height - (COLOR_BAR_HEIGHT*(storedSampleColors.size()) + maxSampleLabelLength + 7) , (elementWidth), (COLOR_BAR_HEIGHT)*storedSampleColors.size()+maxSampleLabelLength+4);
+        	}
+        }    
+        if (clusterViewerClicked&&!isCompact){
+        	g.setColor(Color.red);
+        	g.drawRect(clusterViewerClickedColumn*elementWidth + insets.left + 4, getSize().height - (COLOR_BAR_HEIGHT*(storedSampleColors.size()) + maxSampleLabelLength + 7) , (elementWidth), (COLOR_BAR_HEIGHT)*storedSampleColors.size()+maxSampleLabelLength+4 + 10);
+        	//g.drawRect(column*elementWidth + insets.left + centroidOffset + inset, getSize().height - (COLOR_BAR_HEIGHT*(compactedColorBarHeight) +   maxSampleLabelLength + 7), (elementWidth-1), (COLOR_BAR_HEIGHT)*compactedColorBarHeight + maxSampleLabelLength+4 + side);
+        	
+        }
+    }  
+    
+    private void drawHorizontalRect(int row, Color color){
+    	Graphics2D g = (Graphics2D)getGraphics();
+        if (g == null) {
+            return;
+        }
+        int centroidOffset = 0;
+        if (hasCentroid)
+        	centroidOffset = elementWidth + 5;
+                    g.setColor(color);
+        if (!isCompact)
+        	g.drawRect(centroidOffset + insets.left, this.getHeight()-COLOR_BAR_HEIGHT*(storedSampleColors.size() - row)-3, elementWidth*experiment.getNumberOfSamples() + 5 + elementWidth*this.storedGeneColors.size() + 5 + oldLabelLength + 2, COLOR_BAR_HEIGHT);
+    }
+    
+    private class Listener extends MouseAdapter implements MouseMotionListener {
+        
+        private int oldRow = -1;
+        private int oldColumn = -1;
+        
+        public void mouseClicked(MouseEvent event) {
+            if (SwingUtilities.isRightMouseButton(event)) {
+                return;
+            }
+            int column = findColumn(event.getX());
+            int row = findRow(event.getY());
+            if (!isLegalPosition(row, column)) {
+                return;
+            }
+            if (row==clickedRow&&column==clickedColumn){
+            	clickedCell = false;
+            	return;
+            }
+            clickedRow = row;
+            clickedColumn = column;
+            clickedCell = true;
+            drawClusterHeaderRectsAt(clickedColumn, Color.red, false);
+        	drawHorizontalRect(clickedRow, Color.red);
+        }
+        public void mouseExited(MouseEvent event){
+        	mouseOnMap = false;
+        	
+        	repaint();
+        	if (clickedCell&&!isCompact){
+            	
+            	drawClusterHeaderRectsAt(clickedColumn, Color.red, false);
+                drawHorizontalRect(clickedRow, Color.red);
             }
         }
+        public void mouseMoved(MouseEvent event) {
+            if (experiment.getNumberOfSamples() == 0 || event.isShiftDown())
+                return;
+            int column = findColumn(event.getX());
+            int row = findRow(event.getY());
+            Graphics g = null;
+            g = getGraphics();
+            if (!isLegalPosition(row, column)){
+            	repaint();
+            	if (clickedCell&&!isCompact){
+                	drawClusterHeaderRectsAt(clickedColumn, Color.red, false);
+                    drawHorizontalRect(clickedRow, Color.red);
+                }
+            	return;
+            }
+            if (isCurrentPosition(row, column)) {
+                if (isLegalPosition(row, column)){
+                	drawClusterHeaderRectsAt(oldColumn, Color.gray, false);
+                	drawHorizontalRect(row, Color.gray);
+                }
+                if (clickedCell&&!isCompact){
+                	drawClusterHeaderRectsAt(clickedColumn, Color.red, false);
+                    drawHorizontalRect(clickedRow, Color.red);
+                }
+                return;
+            }
+            if (!isCurrentPosition(row, column)&&isLegalPosition(row, column)){
+            	mouseOnMap = true;
+            	mouseRow = row;
+            	mouseColumn = column;
+            	repaint();
+            	drawClusterHeaderRectsAt(oldColumn, Color.gray, false);
+            	if (clickedCell&&!isCompact){
+                	drawClusterHeaderRectsAt(clickedColumn, Color.red, false);
+                    drawHorizontalRect(clickedRow, Color.red);
+                }
+            }/*
+            if (isLegalPosition(row, column)&& (column < (experiment.getNumberOfSamples() -1))) {
+                drawRectAt(g, row, column, Color.white);
+                drawClusterRectsAt(g, row, column, Color.gray);
+        } else {
+            	repaint();
+            }
+            if (isLegalPosition(oldRow, oldColumn)) {
+                g = g != null ? g : getGraphics();
+                fillRectAt(g, oldRow, oldColumn);
+            }*/
+            setOldPosition(row, column);
+            if (g != null) {
+                g.dispose();
+            }
+        }
+        
+        public void mouseDragged(MouseEvent event) {}
+        
+        private void setOldPosition(int row, int column) {
+            oldColumn = column;
+            oldRow = row;
+        }
+        
+        private boolean isCurrentPosition(int row, int column) {
+            return(row == oldRow && column == oldColumn);
+        }
+    }  
+    /**
+     * Finds column for specified x coordinate.
+     * @return -1 if column was not found.
+     */
+    private int findColumn(int targetx) {
+    	
+        int xSize = this.samplesOrder[clusterIndex].length*elementWidth;     
+        if(this.hasCentroid){
+            xSize += elementWidth + 5;
+            if (targetx >= (xSize + insets.left) || targetx < insets.left + elementWidth + 5) {
+                return -1;
+            }
+            return  (targetx - insets.left - elementWidth  - 5)/elementWidth;
+        }
+        if (targetx < insets.left) {
+            return -1;
+        }
+        if (targetx > (xSize + insets.left))
+        	return -1;
+        return (targetx - insets.left)/elementWidth;
     }
+    
+    /**
+     * Finds row for specified y coordinate.
+     * @return -1 if row was not found.
+     */
+    private int findRow(int targety) {
+    	int length = 0;
+    	if (!isCompact)
+    		length = (this.getSize().height-getColorBarHeight()*storedSampleColors.size());
+    		
+    	if (isCompact)
+    		length = this.getSize().height -compactedColorBarHeight*getColorBarHeight();
+        if (targety >= this.getSize().height || targety < (length))
+            return -1;
+        return (targety - length)/COLOR_BAR_HEIGHT;
+    }
+    
+    private boolean isLegalPosition(int row, int column) {
+        if (isLegalRow(row) && isLegalColumn(column))
+            return true;
+        return false;
+    }  
+    
+    private boolean isLegalColumn(int column) {
+        if (column < 0 || column > (experiment.getNumberOfSamples() -1))
+            return false;
+        return true;
+    }
+    
+    private boolean isLegalRow(int row) {
+        if (row < 0 || row > storedSampleColors.size())
+            return false;
+        if (isCompact){
+        	if (row < 0 || row > compactedColorBarHeight)
+                return false;
+        }
+        	
+        return true;
+    }
+    
+    
+    
+    
+    
+    
+    
+}
       /*
     private void writeObject(ObjectOutputStream oos) throws IOException {       
         oos.writeObject(experiment);            
@@ -335,5 +754,5 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
         }
     }
     */
-}
+
 

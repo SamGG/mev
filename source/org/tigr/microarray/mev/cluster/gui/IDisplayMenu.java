@@ -51,6 +51,11 @@ public interface IDisplayMenu {
     public boolean isDrawingBorder();
     
     /**
+     * Returns true if "Compact Color Clusters" item is selected.
+     */
+    public boolean isCompactClusters();
+    
+    /**
      * Returns true if "Tracing" item is selected.
      */
     public boolean isTracing();

@@ -252,6 +252,7 @@ public class MultipleArrayMenubar extends JMenuBar {
         displayMenu.add(sizeMenu);
 
         displayMenu.add(createJCheckBoxMenuItem("Draw Borders", ActionManager.DISPLAY_DRAW_BORDERS_CMD, listener, false));        
+        displayMenu.add(createJCheckBoxMenuItem("Compact Cluster Color Groups", ActionManager.COMPACT_CLUSTERS_CMD, listener, false));
         
         add(displayMenu);
         
@@ -326,6 +327,7 @@ public class MultipleArrayMenubar extends JMenuBar {
         this.setPaletteStyle(origDisplayMenu.getPaletteStyle());
         this.setGRScale(origDisplayMenu.isGRScale());
         this.setDrawBorders(origDisplayMenu.isDrawingBorder());
+        this.setCompactClusters(origDisplayMenu.isCompactClusters());
         this.setMaxRatioScale(origDisplayMenu.getMaxRatioScale());
         this.setMinRatioScale(origDisplayMenu.getMinRatioScale());
         this.setMidRatioValue(origDisplayMenu.getMidRatioValue());
@@ -991,6 +993,13 @@ public class MultipleArrayMenubar extends JMenuBar {
     }
     
     /**
+     * Sets compact clusters attribute.
+     */
+    void setCompactClusters(boolean compactClusters) {
+        displayMenu.compactClusters = compactClusters;
+    }
+    
+    /**
      * Sets anti-aliasing attribute.
      */
     void setAntiAliasing(boolean antialiasing) {
@@ -1139,6 +1148,7 @@ public class MultipleArrayMenubar extends JMenuBar {
         private int paletteStyle = IDisplayMenu.RATIOSPLIT;
         private boolean tracing = false;
         private boolean drawBorders = false;
+        private boolean compactClusters = false;
         private boolean antialiasing = true;
         private boolean grscale = true;
         private boolean useColorGradient = false;
@@ -1187,6 +1197,10 @@ public class MultipleArrayMenubar extends JMenuBar {
         
         public boolean isDrawingBorder() {
             return drawBorders;
+        }
+        
+        public boolean isCompactClusters(){
+        	return compactClusters;
         }
         
         public boolean isTracing() {

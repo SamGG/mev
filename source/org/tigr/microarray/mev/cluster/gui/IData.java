@@ -19,6 +19,7 @@ import java.util.Vector;
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.ISlideDataElement;
 import org.tigr.microarray.mev.cgh.CGHDataObj.CGHClone;
+import org.tigr.microarray.mev.cluster.clusterUtil.ClusterList;
 import org.tigr.microarray.mev.annotation.AnnoAttributeObj;
 
 public interface IData {
@@ -385,5 +386,16 @@ public interface IData {
 	public AnnoAttributeObj getElementAnnotationObject(int index, String attr);
 	public boolean isAnnotationLoaded() ;
 	public void setAnnotationLoaded(boolean isAnnotationLoaded) ;	
+    /**
+	 * Dan S - Colored cluster viewers
+	 *
+	 */
+	public Color[] getGeneColorArray(int index);
+	public Color[] getSampleColorArray(int index);
+    public boolean isColorOverlap(int index, Color color, Color c, boolean isGeneCR);
+    public String getClusterLabel(int index, boolean gene);
+    public int getVisibleClusters();
+    public int getVisibleCluster(Color color, boolean gene);
+    
     
 }

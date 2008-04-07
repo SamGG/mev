@@ -33,6 +33,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.io.PrintWriter;
 import java.util.Vector;
 
@@ -86,6 +87,10 @@ public class ExperimentViewer extends JPanel implements IViewer {
     private int labelIndex = -1;
     private boolean isAntiAliasing = true;
     private boolean isDrawBorders = true;
+    private boolean isCompact = false;
+    private boolean clickedCell = false;
+    private int clickedColumn = 0;
+    private int clickedRow = 0;
     private boolean isDrawAnnotations = true;
     public static Color missingColor = new Color(128, 128, 128);
     public static Color maskColor = new Color(255, 255, 255, 128);
@@ -107,6 +112,15 @@ public class ExperimentViewer extends JPanel implements IViewer {
     protected int exptID = 0;
     //Added by Sarita
     protected String LabelName;
+    
+    private int activeCluster = 0;
+    public ArrayList storedGeneColors = new ArrayList();
+    private int[] ColorOverlaps = new int[1000];
+    private int colorWidth = 0;
+    private int maxColorWidth = 0;
+	private boolean mouseOnMap = false;
+	private int mouseRow = 0;
+	private int mouseColumn = 0;
     
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
@@ -162,7 +176,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
         this.clusters = clusters == null ? defGenesOrder(experiment.getNumberOfGenes()) : clusters;
         this.samplesOrder = samplesOrder == null ? defSamplesOrder(experiment.getNumberOfSamples()) : samplesOrder;
         this.isDrawAnnotations = drawAnnotations;
-        this.header = new ExperimentHeader(this.experiment, this.clusters, this.samplesOrder);
+        this.header = new ExperimentHeader(this.experiment, this.clusters, this.samplesOrder, this.storedGeneColors);
         this.header.setNegAndPosColorImages(this.negColorImage, this.posColorImage);
         setBackground(Color.white);
         Listener listener = new Listener();
@@ -189,7 +203,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
         this.clusters = clusters == null ? defGenesOrder(experiment.getNumberOfGenes()) : clusters;
         this.samplesOrder = samplesOrder == null ? defSamplesOrder(experiment.getNumberOfSamples()) : samplesOrder;
         this.isDrawAnnotations = drawAnnotations;
-        this.header = new ExperimentHeader(this.experiment, this.clusters, this.samplesOrder);
+        this.header = new ExperimentHeader(this.experiment, this.clusters, this.samplesOrder, this.storedGeneColors);
         this.header.setNegAndPosColorImages(this.negColorImage, this.posColorImage);
         this.insets.left = offset;
         this.header.setLeftInset(offset);
@@ -253,7 +267,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
     	if(this.header !=null){
     		this.header.setExperiment(e);
     	} else{
-    		this.header = new ExperimentHeader(this.experiment, this.clusters, this.samplesOrder);
+    		this.header = new ExperimentHeader(this.experiment, this.clusters, this.samplesOrder, this.storedGeneColors);
             this.header.setNegAndPosColorImages(this.negColorImage, this.posColorImage);
     	}
    		this.header.setIData(data);
@@ -362,6 +376,9 @@ public class ExperimentViewer extends JPanel implements IViewer {
      * @see IViewer#onSelected
      */
     public void onSelected(IFramework framework) {
+    	header.clusterViewerClicked = false;
+    	header.clickedCell = false;
+    	clickedCell = false;
         this.framework = framework;
         this.data = framework.getData();
         IDisplayMenu menu = framework.getDisplayMenu();
@@ -376,12 +393,15 @@ public class ExperimentViewer extends JPanel implements IViewer {
         setElementSize(menu.getElementSize());
         setAntialiasing(menu.isAntiAliasing());
         setDrawBorders(menu.isDrawingBorder());
+        setCompactClusters(menu.isCompactClusters());
+        header.setCompactClusters(menu.isCompactClusters());
+        storedGeneColors.clear();
         if(showClusters)
             haveColorBar = areProbesColored();
         else
             haveColorBar = false;
         updateSize();        
-        header.updateSizes(getSize().width, elementSize.width);
+        header.updateSizes(header.getSize().width, elementSize.width);
         header.setData(data);
         onMenuChanged(menu);
         //header.setValues(maxValue, minValue);
@@ -396,7 +416,13 @@ public class ExperimentViewer extends JPanel implements IViewer {
      * @see IViewer#onMenuChanged
      */
     public void onMenuChanged(IDisplayMenu menu) {
+    	header.clusterViewerClicked = false;
+    	header.clickedCell = false;
+    	clickedCell = false;
         setDrawBorders(menu.isDrawingBorder());
+        setCompactClusters(menu.isCompactClusters());
+        header.setCompactClusters(menu.isCompactClusters());
+        storedGeneColors.clear();
         this.maxValue = menu.getMaxRatioScale();
         this.minValue = menu.getMinRatioScale();
         this.midValue = menu.getMidRatioValue();
@@ -611,6 +637,13 @@ public class ExperimentViewer extends JPanel implements IViewer {
     }
     
     /**
+     * Sets compact clusters attribute.
+     */
+    private void setCompactClusters(boolean value) {
+        this.isCompact = value;
+    }
+    
+    /**
      * Creates a gradient image with specified initial colors.
      */
     public BufferedImage createGradientImage(Color color1, Color color2) {
@@ -643,15 +676,18 @@ public class ExperimentViewer extends JPanel implements IViewer {
             this.annotationWidth = getMaxWidth(g);
             width += 20+this.annotationWidth;
         }
-        
+        if (maxColorWidth < colorWidth){
+        	maxColorWidth = colorWidth;
+        }
         if(haveColorBar)
-            width += this.elementSize.width + 10;
-        
+            width += this.elementSize.width*colorWidth + 10;
         this.contentWidth = width;
         
         int height = elementSize.height*getCluster().length+1;
         setSize(width, height);
         setPreferredSize(new Dimension(width, height));
+        if (header.getSize().width < getSize().width)
+        	header.setSize(new Dimension(getSize().width+15, header.getSize().height));
     }
     
     /**
@@ -690,6 +726,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
      * Returns content width
      */
     public int getContentWidth(){
+    	updateSize();
         return contentWidth;
     }
 
@@ -756,12 +793,20 @@ public class ExperimentViewer extends JPanel implements IViewer {
         return new Color(rgb);
     }
     
+    public ArrayList getStoredColors(){
+    	return this.storedGeneColors;
+    }
+    
     /**
      * Paint component into specified graphics.
      */
     public void paint(Graphics g) {
         super.paint(g);
-        
+        if (header!=null){
+        header.setStoredColors(storedGeneColors);
+        header.repaint();
+    	}
+        int oldWidth=colorWidth;
         if (this.data == null) {
             return;
         }
@@ -792,13 +837,8 @@ public class ExperimentViewer extends JPanel implements IViewer {
         }
         Color initColor = g.getColor();
         
-        int expWidth = samples * this.elementSize.width + 5;
-        
-        if(haveColorBar){
-            for (int row=top; row<bottom; row++) {
-                fillClusterRectAt(g, row, expWidth);
-            }
-        }
+        if(haveColorBar)
+        	fillClusterColorPositions(g);
         
         // draw annotations
         if (this.isDrawAnnotations) {
@@ -812,8 +852,20 @@ public class ExperimentViewer extends JPanel implements IViewer {
                 int uniqX = elementSize.width*samples+10;
                 
                 if(haveColorBar)
-                    uniqX += this.elementSize.width;
+	                if (!isCompact){
+	                	uniqX += this.elementSize.width*storedGeneColors.size();
+	                	colorWidth=storedGeneColors.size();
+	                }
+	                if(isCompact){
+	            		int maxSpacesOver=-1;
+	            		for (int i=0; i<storedGeneColors.size(); i++){
+	            			if ((ColorOverlaps[i])>maxSpacesOver)
+	            				maxSpacesOver=ColorOverlaps[i];
+	            		}
+	            		colorWidth=maxSpacesOver+1;
+	            		uniqX += this.elementSize.width*(maxSpacesOver+1);
                 
+	            	}
                 int annY;
                 String[]annot=new String[] {""};
                 int fieldNamesLength=data.getFieldNames().length-1;
@@ -833,7 +885,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
                     		//System.out.println("Extra Field selected is:"+annot[0]);
                     	}
                     	else {
-//                    		System.out.println("Annotation selected is:"+MevAnnotation.getFieldNames()[labelIndex-fieldNamesLength-1]);
+                    		System.out.println("Annotation selected is:"+MevAnnotation.getFieldNames()[labelIndex-fieldNamesLength-1]);
                     		annot= data.getElementAnnotation(getMultipleArrayDataRow(row), MevAnnotation.getFieldNames()[labelIndex-fieldNamesLength-1]);
                     	}
                         
@@ -842,16 +894,34 @@ public class ExperimentViewer extends JPanel implements IViewer {
                   //  g.drawString(label, uniqX + insets.left, annY);
                     
                    
-                    g.drawString(annot[0], uniqX + insets.left, annY);
+                    g.drawString(annot[0], uniqX + insets.left, annY-1);
                 }
             }
         }
+
+        if (mouseOnMap&&haveColorBar){
+            drawRectAt(g, mouseRow, mouseColumn, Color.white);
+            drawClusterRectsAt(g, mouseRow, mouseColumn, Color.gray);
+        }
+        mouseOnMap=false;
+        if (clickedCell){
+            g.setColor(Color.red);
+            if (!isCompact){
+            	drawClusterRectsAt(g,clickedRow,clickedColumn, Color.red);
+            }
+        }  
+        
+        
+        if (colorWidth!=oldWidth)
+        	updateSize();
     }
     
     /**
-     * Fills rect with specified row and colunn.
+     * Fills rect with specified row and column.
      */
     private void fillRectAt(Graphics g, int row, int column) {
+        if (column > (experiment.getNumberOfSamples() -1))
+        	return;
         int x = column*elementSize.width + insets.left;
         int y = row*elementSize.height;
         boolean mask = this.firstSelectedRow >= 0 && this.lastSelectedRow >= 0 && (row < this.firstSelectedRow || row > this.lastSelectedRow);
@@ -868,17 +938,76 @@ public class ExperimentViewer extends JPanel implements IViewer {
             g.drawRect(x, y, elementSize.width-1, elementSize.height-1);
         }
     }
-    
+      
     /**
      * fills cluster colors
      */
-    private void fillClusterRectAt(Graphics g, int row, int xLoc) {
-        Color geneColor = data.getProbeColor(getMultipleArrayDataRow(row));
-        if(geneColor == null)
-            geneColor = Color.white;
+    private void fillClusterRectAt(Graphics g, int row, int xLoc, Color color) {
+        //Color geneColor = data.getProbeColor(getMultipleArrayDataRow(row));
+        //if(geneColor == null)
+        //    geneColor = Color.white; 
+    	
+    	//g.setColor(geneColor);
+    	if(color == null)
+            color = Color.white;
+    	
+    	g.setColor(color);
         
-        g.setColor(geneColor);
         g.fillRect(xLoc + insets.left, row*elementSize.height, elementSize.width-1, elementSize.height);
+    }
+    /**
+     * Determines the location of the cluster colors for either compact
+     * or non-compact settings and then fills the appropriate rectangles
+     */
+    private void fillClusterColorPositions(Graphics g){
+        final int samples = experiment.getNumberOfSamples();
+        Rectangle bounds = g.getClipBounds();
+        final int top = getTopIndex(bounds.y);
+        final int bottom = getBottomIndex(bounds.y+bounds.height, getCluster().length);
+
+    	
+    	int spacesOver=0;
+    	for (int row=top; row<bottom; row++) {
+    		Color[] colors = data.getGeneColorArray(getMultipleArrayDataRow(row));
+    		if (colors==null) { continue;}
+            for (int clusters=0; clusters<colors.length; clusters++){
+            	if (colors[clusters]==null) {System.out.println("colors null");continue;}
+            	if(storedGeneColors.contains(colors[clusters])) {
+                	activeCluster=storedGeneColors.indexOf(colors[clusters]);
+                }
+                else{
+	                storedGeneColors.add(colors[clusters]);
+	                activeCluster=(storedGeneColors.size()-1);
+                	ColorOverlaps[activeCluster]= activeCluster;
+                	//compacts the cluster color display
+                	boolean foundit= false;
+                	if (!isCompact)foundit=true;
+                	while (!foundit){
+                		for (int i=0; i<storedGeneColors.size(); i++){
+                			boolean allClear = true;
+                			for (int j=0; j<storedGeneColors.size(); j++){
+                				if (ColorOverlaps[j]==i){
+    			                	if (data.isColorOverlap(getMultipleArrayDataRow(row), colors[clusters], (Color)storedGeneColors.get(j), true)){
+    			                		allClear=false;
+    			                		break;
+    			                		}
+    		                			allClear=true;
+    		                		}	
+                				}
+                			if (allClear){
+                				ColorOverlaps[activeCluster]= i;
+                				foundit=true;
+                				break;
+                			}
+                			}
+                			if (foundit) break;
+                		}
+                }
+                spacesOver=ColorOverlaps[activeCluster];
+                int expWidth = samples * this.elementSize.width + 5 + this.elementSize.width*spacesOver;
+                fillClusterRectAt(g, row, expWidth, colors[clusters]);
+            }
+        }
     }
     
     /**
@@ -886,7 +1015,26 @@ public class ExperimentViewer extends JPanel implements IViewer {
      */
     private void drawRectAt(Graphics g, int row, int column, Color color) {
         g.setColor(color);
+        if (column>=experiment.getNumberOfSamples()){
+        	return;
+        }
+        else{
         g.drawRect(column*elementSize.width + insets.left, row*elementSize.height, elementSize.width-1, elementSize.height-1);
+    }
+    }
+    private void drawClusterRectsAt(Graphics g, int row, int column, Color color){
+    	g.setColor(color);
+    	if (column>=experiment.getNumberOfSamples()){
+    		g.drawRect((experiment.getNumberOfSamples())*elementSize.width + insets.left +5-1, row*elementSize.height-1, (elementSize.width)*(colorWidth)+this.annotationWidth +8, elementSize.height+1);
+    		if (isCompact) return;
+    		g.drawRect(column*elementSize.width + insets.left +5-1, -1, (elementSize.width), elementSize.height*getCluster().length+1);
+        	header.drawClusterHeaderRectsAt(column, color, true);
+        	
+    	}
+    	else{
+    		g.drawRect((experiment.getNumberOfSamples())*elementSize.width + insets.left +5-1, row*elementSize.height-1, (elementSize.width)*(colorWidth)+this.annotationWidth +8, elementSize.height+1);
+    		header.drawClusterHeaderRectsAt(column, color, false);
+    	}
     }
     
     private int getTopIndex(int top) {
@@ -925,9 +1073,11 @@ public class ExperimentViewer extends JPanel implements IViewer {
      */
     private int findColumn(int targetx) {
         int xSize = experiment.getNumberOfSamples()*elementSize.width;
-        if (targetx >= (xSize + insets.left) || targetx < insets.left) {
+        if (targetx < insets.left) {
             return -1;
         }
+        if (targetx >= (xSize + insets.left) && (targetx < (xSize + insets.left+this.elementSize.width*colorWidth + 10)))
+        	return (targetx - insets.left-5)/elementSize.width;
         return (targetx - insets.left)/elementSize.width;
     }
     
@@ -949,7 +1099,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
     }
     
     private boolean isLegalColumn(int column) {
-        if (column < 0 || column > experiment.getNumberOfSamples() -1)
+        if (column < 0 || column > (experiment.getNumberOfSamples() -1+colorWidth))
             return false;
         return true;
     }
@@ -1051,6 +1201,24 @@ public class ExperimentViewer extends JPanel implements IViewer {
             if (!isLegalPosition(row, column)) {
                 return;
             }
+            if (column>experiment.getNumberOfSamples()-1){
+	            if (row==clickedRow&&column==clickedColumn){
+	            	clickedCell = false;
+	            	header.clusterViewerClicked = false;
+	            	return;
+	            }
+	            clickedRow = row;
+	            clickedColumn = column;
+	            clickedCell = true;
+	            header.clusterViewerClickedColumn = column;
+	            header.clusterViewerClicked = true;
+	            if (isCompact){
+	            	clickedCell = false;
+	        		header.clusterViewerClicked = false;
+	            }
+	            repaint();
+        		return;
+        	}
             if (event.isControlDown()) { // single array viewer
                 framework.displaySingleArrayViewer(experiment.getSampleIndex(getColumn(column)));
                 return;
@@ -1066,15 +1234,25 @@ public class ExperimentViewer extends JPanel implements IViewer {
                 return;
             int column = findColumn(event.getX());
             int row = findRow(event.getY());
+            Graphics g = null;
+            g = getGraphics();
             if (isCurrentPosition(row, column)) {
+                if (isLegalPosition(row, column))
+                	drawClusterRectsAt(g, oldRow, oldColumn, Color.gray);
                 return;
             }
-            Graphics g = null;
-            if (isLegalPosition(row, column)) {
-                g = getGraphics();
+            if (!isCurrentPosition(row, column)&&isLegalPosition(row, column)){
+            	mouseOnMap = true;
+            	mouseRow = row;
+            	mouseColumn = column;
+            	repaint();
+            }
+            if (isLegalPosition(row, column)&& (column < (experiment.getNumberOfSamples() -1))) {
                 drawRectAt(g, row, column, Color.white);
+                drawClusterRectsAt(g, row, column, Color.gray);
                 framework.setStatusText("Gene: "+data.getUniqueId(getMultipleArrayDataRow(row))+" Sample: "+data.getSampleName(experiment.getSampleIndex(getColumn(column)))+" Value: "+experiment.get(getExperimentRow(row), getColumn(column)));
             } else {
+            	repaint();
                 framework.setStatusText(oldStatusText);
             }
             if (isLegalPosition(oldRow, oldColumn)) {
@@ -1096,13 +1274,23 @@ public class ExperimentViewer extends JPanel implements IViewer {
         }
         
         public void mouseExited(MouseEvent event) {
-            if (isLegalPosition(oldRow, oldColumn)) {
+
+        	mouseOnMap = false;
+        	
+        	repaint();/*
+        	if (clickedCell&&!isCompact){
+            	
+            	drawClusterHeaderRectsAt(clickedColumn, Color.red, false);
+                drawHorizontalRect(clickedRow, Color.red);
+            }*/
+        	if (isLegalPosition(oldRow, oldColumn)) {
                 Graphics g = getGraphics();
                 fillRectAt(g, oldRow, oldColumn);
                 g.dispose();
             }
             setOldPosition(-1, -1);
             framework.setStatusText(oldStatusText);
+            repaint();
         }
         
         public void mouseDragged(MouseEvent event) {}

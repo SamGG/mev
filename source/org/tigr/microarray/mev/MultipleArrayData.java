@@ -1163,6 +1163,68 @@ public class MultipleArrayData implements IData {
     public int getProbeColumn(int column, int row) {
         ISlideMetaData meta = getFeature(column).getSlideMetaData();
         return meta.getColumn(row);
+
+
+    }
+    /**
+     * Returns an array of Colors associated with every cluster that gene "index" belongs to
+     */
+    public Color[] getGeneColorArray(int index) {
+    	return geneClusterRepository.getColors(index);
+    }
+    /**
+     * Returns an array of Colors associated with every cluster that sample "index" belongs to
+     */
+    public Color[] getSampleColorArray(int index) {
+    	return expClusterRepository.getColors(index);
+    }
+    /**
+     * Returns a boolean for whether two clusters represented by colors have overlapping genes
+     */
+    public boolean isColorOverlap(int index, Color color, Color c, boolean isGeneCR){
+    	if (isGeneCR)
+    	return geneClusterRepository.isColorOverlap(index, color, c);
+    	return expClusterRepository.isColorOverlap(index, color, c);
+    }
+    /**
+     * Returns the name of a cluster
+     */
+    public String getClusterLabel(int index, boolean gene){
+    	if (gene){
+	    	if (geneClusterRepository==null) return null;
+	    	return geneClusterRepository.getCluster(index).getClusterLabel();
+    	}
+    	else{
+    		if (expClusterRepository==null) return null;
+    		return expClusterRepository.getCluster(index).getClusterLabel();
+    	}
+    }
+    /**
+     * Returns the number of clusters visible
+     */
+    public int getVisibleClusters(){
+    	if (geneClusterRepository==null) return 0;
+    	return geneClusterRepository.getVisibleClusters();
+    }
+    /**
+     * Returns the index of a cluster of a given color
+     */
+    public int getVisibleCluster(Color color, boolean gene){
+    	if (gene){
+    		if (geneClusterRepository==null) return 0;
+    		int i=0;  
+    		while (geneClusterRepository.getCluster(i).getClusterColor()!=color){
+    		i++;
+    		}
+    		return i;
+    	}else{
+    		if (expClusterRepository==null) return 0;
+    		int i=0;  
+    		while (expClusterRepository.getCluster(i).getClusterColor()!=color){
+    		i++;
+    		}
+    		return i;
+    	}
     }
 
     /**
