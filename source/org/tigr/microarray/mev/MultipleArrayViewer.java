@@ -77,6 +77,7 @@ import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -178,7 +179,9 @@ import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableSearchDialog;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.TextViewer;
+import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HTMLMessageFileChooser;
 import org.tigr.microarray.mev.file.AnnFileFilter;
 import org.tigr.microarray.mev.file.CGHStanfordFileLoader;
@@ -2361,6 +2364,13 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         menubar.setDrawBorders(!menubar.getDisplayMenu().isDrawingBorder());
         fireMenuChanged();
     }
+    /**
+     * Invoked when compact clusters menu item is changed.
+     */
+    private void onCompactClusters() {
+        menubar.setCompactClusters(!menubar.getDisplayMenu().isCompactClusters());
+        fireMenuChanged();
+    }
     
     
     /**
@@ -3771,6 +3781,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 				loadCytoBandFile();
 				manager.initCghAnalysiActions(new org.tigr.microarray.mev.cgh.CGHAlgorithms.CGHAlgorithmFactory());
 				this.menubar.addCGHMenus();
+				//this.toolbar.addCGHComboBox();
 				mainframe.validate();
             }
         }
@@ -4961,6 +4972,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
                 onColorGradientChange(((javax.swing.JCheckBoxMenuItem)(event.getSource())).isSelected());
             } else if (command.equals(ActionManager.DISPLAY_DRAW_BORDERS_CMD)) {
                 onDrawBorders();
+            } else if (command.equals(ActionManager.COMPACT_CLUSTERS_CMD)) {
+                onCompactClusters();
             } else if (command.equals(ActionManager.SYSTEM_INFO_CMD)) {
                 onSystemInfo();
             } else if (command.equals(ActionManager.DEFAULT_DISTANCES_CMD)) {
