@@ -450,6 +450,8 @@ public class ActionManager implements java.io.Serializable {
     public static final String DISPLAY_OTHER_CMD = "display-other-cmd";
     public static final String SYSTEM_INFO_CMD = "system-info-cmd";
     public static final String DEFAULT_DISTANCES_CMD = "default-distances-cmd";
+    //Added by DanS
+    public static final String COMPACT_CLUSTERS_CMD = "compact-clusters-cmd";
     // popup commands
     public static final String DELETE_NODE_CMD = "delete-node-cmd";
 
