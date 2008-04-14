@@ -505,12 +505,15 @@ public class TMEV {
                 
             String guiFactoryClassName = cfg.getString("gui.factory.class");
            
-            if (guiFactoryClassName != null && !guiFactoryClassName.equals("null")) {
-                Class clazz = Class.forName(guiFactoryClassName);
-                guiFactory = (IGUIFactory)clazz.newInstance();
-            } else {
-//                throw new Exception("GUI factory class name not found, check the 'gui.factory.class' key in "+filename+" file.");
+            if (guiFactoryClassName == null || guiFactoryClassName.equals("null")) {
+
+            	guiFactoryClassName = "org.tigr.microarray.mev.cluster.gui.impl.GUIFactory";
+            	System.out.println("GUI Factory class name not found in properties. Using default value.");
             }
+            
+            Class clazz = Class.forName(guiFactoryClassName);
+            guiFactory = (IGUIFactory)clazz.newInstance();
+            
             algorithmFactory = new TMEVAlgorithmFactory(cfg);
             
             TMEV.permitSavePrompt = cfg.getBoolean("prompt-for-save", true);

@@ -32,29 +32,29 @@ public class TMEVAlgorithmFactory implements AlgorithmFactory {
      * @see ConfMap
      */
     public TMEVAlgorithmFactory(ConfMap cfg) {
-	this.cfg = cfg;
-	// local
-	String className = cfg.getString("algorithm.factory.class");
-	if (className != null && !className.equals("null")) {
+    	this.cfg = cfg;
+		// local
+		String className = cfg.getString("algorithm.factory.class");
+		if (className == null || className.equals("null")) {
+			className = "org.tigr.microarray.mev.cluster.algorithm.impl.AlgorithmFactoryImpl";
+		    System.out.println("Local factory not available, check the 'algorithm.factory.class' key in properties file.");
+		}
 	    try {
 	    	ClassLoader cl = Thread.currentThread().getContextClassLoader();
 	    	Class clazz = Class.forName(className, true, cl);
 	    	localFactory = (AlgorithmFactory)clazz.newInstance();
 	    } catch (Exception e) {
-	    	System.out.println("Local factory not available, check the 'algorithm.factory.class' key in cfg file.");
+	    	System.out.println("Local factory not available, check the 'algorithm.factory.class' key in properties file.");
 	    	e.printStackTrace();
 	    }
-	} else {
-	    System.out.println("Local factory not available, check the 'algorithm.factory.class' key in cfg file.");
-	}
-	// remote
-	try {
-	    CommunicatorFactory.init(cfg);
-	    this.isRemoteEnabled = true;
-	} catch (Exception e) {
-	    System.out.println("Failed to configure remote execution.");
-	    e.printStackTrace();
-	}
+		// remote
+		try {
+		    CommunicatorFactory.init(cfg);
+		    this.isRemoteEnabled = true;
+		} catch (Exception e) {
+		    System.out.println("Failed to configure remote execution.");
+		    e.printStackTrace();
+		}
     }
     
     /**
