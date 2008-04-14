@@ -885,7 +885,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
                     		//System.out.println("Extra Field selected is:"+annot[0]);
                     	}
                     	else {
-                    		System.out.println("Annotation selected is:"+MevAnnotation.getFieldNames()[labelIndex-fieldNamesLength-1]);
+                    	//	System.out.println("Annotation selected is:"+MevAnnotation.getFieldNames()[labelIndex-fieldNamesLength-1]);
                     		annot= data.getElementAnnotation(getMultipleArrayDataRow(row), MevAnnotation.getFieldNames()[labelIndex-fieldNamesLength-1]);
                     	}
                         
