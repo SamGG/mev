@@ -4421,7 +4421,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
      *
      */
     private void onRenameNode() {
-    	//TODO EH renaming nodes work
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
         if (node == null || node.getParent() == null) {
             return;
@@ -4433,9 +4432,23 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
                 ((DefaultTreeModel)tree.getModel()).nodeChanged(node);
             }
         }else if(node.getUserObject() instanceof String){
-            String name = JOptionPane.showInputDialog(getFrame(), "Enter New Name", node.toString());
-            if(name != null && name.length() > 0){
-                node.setUserObject(name);
+        	/*
+        	 * EH Renaming of algorithm module nodes. The name of a treenode is used by the treerenderer to 
+        	 * determine which icon to associate with that node, so the names for module nodes can't be replaced
+        	 * completely. The existing name must be maintained and added onto. The normal module naming
+        	 * scheme is "module acronym (algorithm number)", for example "KMC (2)". This code block appends the 
+        	 * name to the old, separated by a colon. If a colon is already present in the node's name, 
+        	 * the characters after the colon are replaced with the new string. 
+        	 */
+        	String oldName = (String)node.getUserObject();
+        	String oldAppend = "";
+        	if(oldName.indexOf(':') != -1) {
+        		oldAppend = oldName.substring(oldName.indexOf(':') + 1);
+        		oldName = oldName.substring(0, oldName.indexOf(':'));
+        	}
+            String name = JOptionPane.showInputDialog(getFrame(), "Append to " + oldName + ":", oldAppend);
+            if(name != null && name.length() > 0) {
+                node.setUserObject(oldName + ": " + name);
                 ((DefaultTreeModel)tree.getModel()).nodeChanged(node);
             }
         }
