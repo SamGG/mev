@@ -65,7 +65,7 @@ public class ResourcererFTPClient {
 		
 	}
 	/***
-	 * connectToResourcerer() function uses the Apache FTPClient to connect 
+	 * connectToResourcerer() function uses FTPBean to connect 
 	 * to the DFCI-Resourcerer FTP site. 
 	 * 
 	 * An error message is generated if, log-in attempt was unsuccessful.
@@ -150,11 +150,11 @@ public class ResourcererFTPClient {
 	 * @throws IOException
 	 */
 	public void downloadEASE_BNFiles(FtpBean ftp)throws IOException{
-		System.out.println("download EASE and BN files");
+		//System.out.println("download EASE and BN files");
 		try {
 			int overallLength = 0;            
 			int currentLength = 0;        
-			String localEASEdir="./data/Ease/";
+			String localEASEdir="./data/ease/";
 			String localBNdir="./data/BN/";
 			ftp.setDirectory(EASE_BN_remotedir+this.Organism+"/");
 
@@ -212,7 +212,8 @@ public class ResourcererFTPClient {
 				}
 
 			}}catch(Exception e) {
-				e.printStackTrace();
+				System.out.println("There was a problem while trying to download EASE and BN files");
+				//e.printStackTrace();
 			}
 
 
