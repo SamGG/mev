@@ -243,6 +243,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
 	    addMouseListener(listener);
 	    addMouseMotionListener(listener);
     }
+
     /*
     copy-paste this constructor into descendent classes
     /**

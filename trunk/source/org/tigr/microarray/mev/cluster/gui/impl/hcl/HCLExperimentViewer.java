@@ -37,6 +37,10 @@ public class HCLExperimentViewer extends ExperimentViewer {
      */
     public HCLExperimentViewer(){
     	super();
+        Listener listener = new Listener();
+        this.popup = createJPopupMenu(listener);
+        getContentComponent().addMouseListener(listener);
+        getHeaderComponent().addMouseListener(listener);
     }
     /**
      * Constructs a <code>HCLExperimentViewer</code> with specified

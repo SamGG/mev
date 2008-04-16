@@ -61,6 +61,10 @@ public class SAMExperimentViewer extends ExperimentViewer {
     public SAMExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder, Boolean drawAnnotations, ExperimentHeader header, Insets insets, Integer exptID,
     		Integer studyDesign, float[] dValues, float[] rValues, float[] foldChangeArray, float[] qLowestFDR, Boolean calculateQLowestFDR) {
     	super(e, clusters, samplesOrder, drawAnnotations.booleanValue(), header, insets);
+        Listener listener = new Listener();
+        this.popup = createJPopupMenu(listener);
+        getContentComponent().addMouseListener(listener);
+        getHeaderComponent().addMouseListener(listener);
     	initialize(studyDesign.intValue(), dValues, rValues, foldChangeArray, qLowestFDR, calculateQLowestFDR.booleanValue());
     } 
     

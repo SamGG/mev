@@ -55,8 +55,12 @@ public class QTCExperimentViewer extends ExperimentViewer {
      * @param header
      * @param insets
      */
-    public QTCExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets) {
-    	super(e, clusters, samplesOrder, drawAnnotations, header, insets);
+    public QTCExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder, boolean drawAnnotations) {
+    	super(e, clusters, samplesOrder, drawAnnotations, new ExperimentHeader(e, clusters), new Insets(0,10,0,0));
+        Listener listener = new Listener();
+        this.popup = createJPopupMenu(listener);
+        getContentComponent().addMouseListener(listener);
+        getHeaderComponent().addMouseListener(listener);
     }
     
     /**

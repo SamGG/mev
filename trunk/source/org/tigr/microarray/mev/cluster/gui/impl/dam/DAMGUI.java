@@ -168,7 +168,7 @@ public class DAMGUI implements IClusterGUI {
             	//has an experiment cluster) the matrix returned is null.  
                 FloatMatrix temp;
                 temp = (experiment.getMatrix()).transpose();
-                System.out.println("floatmatrix size: " + temp.m + ", " + temp.n);
+//                System.out.println("floatmatrix size: " + temp.m + ", " + temp.n);
             	data.addMatrix("experiment", temp);
                 
             } else {
