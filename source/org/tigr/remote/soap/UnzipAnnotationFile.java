@@ -111,7 +111,7 @@ public class UnzipAnnotationFile {
 		try {
 			ZipFile zipFile = new ZipFile(outputFile);
 			Enumeration entries = zipFile.entries();
-
+			File baseDir = outputFile.getParentFile();
 			byte [] buffer = new byte [BUFFERSIZE];
 			int length = 0;
 			int cnt = 0;
@@ -127,13 +127,13 @@ public class UnzipAnnotationFile {
 
 				String entryName = entry.getName();
 				String entryFolder = (new File(entryName)).getParent();
-				File entryDirectory = new File(this.directoryName+"/"+entryFolder);
+				File entryDirectory = new File(baseDir.getAbsolutePath()+"/"+entryFolder);
 
-				if(entry.isDirectory()&!entryDirectory.exists()) {
+				if(!entryDirectory.exists()) {
 					entryDirectory.mkdirs();
 				}
 
-				bos = new BufferedOutputStream(new FileOutputStream(this.directoryName+"/"+entry.getName()));
+				bos = new BufferedOutputStream(new FileOutputStream(baseDir.getAbsolutePath()+"/"+entry.getName()));
 				bis = new BufferedInputStream(zipFile.getInputStream(entry));
 
 				while( (length = bis.read(buffer, 0, BUFFERSIZE)) > 0 ) {
