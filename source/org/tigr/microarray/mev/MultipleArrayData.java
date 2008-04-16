@@ -178,8 +178,7 @@ public class MultipleArrayData implements IData {
      * gaggle and EASE get this information independently of the
      * Annotation model
      */
-    public String organismName;
-    public String chipType;
+    public String gaggleOrganismName;
     
     public MultipleArrayData(){mads = new MultipleArrayDataState();}
     /**
@@ -303,21 +302,31 @@ public class MultipleArrayData implements IData {
 	 */
 	
 	public String getOrganismName() {
-		return this.organismName;
+		return this.getSlideDataElement(0,0).getElementAnnotation().getSpeciesName();
 	}
 	
 	public String getchipType() {
-		return this.chipType;
+		return this.getSlideDataElement(0,0).getElementAnnotation().getChipType();
 	}
 	
-	public void setOrganismName(String name) {
-		this.organismName=name;
-		
+	/*
+	 * Setter for Gaggle-specific organism name. 
+	 */
+	public void setGaggleOrganismName(String name) {
+		this.gaggleOrganismName=name;	
+	}	
+	/*
+	 * Getter for gaggle-specific organism name. If no gaggle-specific organism name
+	 * has been set (by setGaggleOrganismName) then returns Annotation model's organism name.
+	 */
+	public String getGaggleOrganismName() {
+		if(gaggleOrganismName != null)
+			return gaggleOrganismName;
+		else 
+			return getOrganismName();
 	}
 	
-	public void setchipType(String chipType) {
-		this.chipType=chipType;
-	}
+
 	
     /**
      *  Sets the data objects feature list
@@ -2849,7 +2858,6 @@ public class MultipleArrayData implements IData {
         int fieldIndex;
         for(fieldIndex = 0; fieldIndex < fieldNames.length; fieldIndex++){
             if(fieldName.equals(fieldNames[fieldIndex])) {
-//            	System.out.println("Field index = " + fieldIndex);
             	break;
             }
         }
@@ -2873,8 +2881,8 @@ public class MultipleArrayData implements IData {
 
         for(int i = 0; i < annot.length; i++){
             annot[i] = this.getElementAttribute(indices[i], fieldIndex);
-        }
 
+        }
         return annot;
     }
     
