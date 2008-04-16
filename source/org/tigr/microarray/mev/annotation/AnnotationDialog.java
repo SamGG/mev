@@ -76,13 +76,13 @@ public class AnnotationDialog extends AlgorithmDialog{
 		AllHash=readFile.Org2ChipType(new File(readFile.getTaxonFilePath()));
 		
 		organismNames=(Vector)AllHash.get("OrganismList");
-		System.out.println("organismNames size:"+organismNames.size());
+		//System.out.println("organismNames size:"+organismNames.size());
 		this.organismListKey =Vector2StringArray(organismNames);
 		
 		
 		Org2chipType=(Hashtable)AllHash.get("Org2ChipType");
 		arrayNames=(Vector)Org2chipType.get(organismNames.firstElement());
-		System.out.println("arrayNames size:"+arrayNames.size());
+	//	System.out.println("arrayNames size:"+arrayNames.size());
 		this.annFileKeys=Vector2StringArray(arrayNames);
 		
 		
@@ -90,9 +90,7 @@ public class AnnotationDialog extends AlgorithmDialog{
 			e.printStackTrace();
 		}
 		
-		
-		
-		
+	
 		
 		JLabel annKeyLabel = new JLabel("Select organism and chip type below then click Connect");
 		annFileKeyBox = new JComboBox(annFileKeys);
@@ -127,7 +125,8 @@ public class AnnotationDialog extends AlgorithmDialog{
 		
 		panel.add(fileKeyLabel, new GridBagConstraints(0,4,1,1,0,0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,10,20,10),0,0));        
 		panel.add(connect, new GridBagConstraints(0,5,1,1,50,10, GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(5,10,5,0),0,0));
-		panel.add(fieldSelectionPanel, new GridBagConstraints(0,6,1,5,50,0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,0,20,0),0,0));        
+		//Changed grid height from 5 to 1
+		panel.add(fieldSelectionPanel, new GridBagConstraints(0,6,1,1,50,0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,0,20,0),0,0));        
 		
 		setActionListeners(new Listener());
 		addContent(panel);
