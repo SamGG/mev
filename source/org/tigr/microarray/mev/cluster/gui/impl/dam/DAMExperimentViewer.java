@@ -16,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.Expression;
 
 import javax.swing.JColorChooser;
 import javax.swing.JOptionPane;
@@ -35,11 +36,11 @@ public class DAMExperimentViewer extends ExperimentViewer {
      * experiment and clusters.
      */
     public DAMExperimentViewer(Experiment experiment, int[][] clusters) {
-	super(experiment, clusters);
-	Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
-	getContentComponent().addMouseListener(listener);
-	getHeaderComponent().addMouseListener(listener);
+		super(experiment, clusters);
+		Listener listener = new Listener();
+		this.popup = createJPopupMenu(listener);
+		getContentComponent().addMouseListener(listener);
+		getHeaderComponent().addMouseListener(listener);
     }
     
     /**
@@ -47,28 +48,42 @@ public class DAMExperimentViewer extends ExperimentViewer {
      */ 
     public DAMExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets) {
     	super(e, clusters, samplesOrder, drawAnnotations, header, insets);
+        Listener listener = new Listener();
+        this.popup = createJPopupMenu(listener);
+        getContentComponent().addMouseListener(listener);
+        getHeaderComponent().addMouseListener(listener);
+    }
+    /**
+     * Persistence constructor.
+     * @param e
+     * @param clusters
+     * @param samplesOrder
+     * @param drawAnnotations
+     */
+    public DAMExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder, boolean drawAnnotations) {
+    	super(e, clusters, samplesOrder, drawAnnotations, new ExperimentHeader(e, clusters), new Insets(0, 10, 0, 0));
     }
     
     /**
      * Creates a popup menu.
      */
     private JPopupMenu createJPopupMenu(Listener listener) {
-	JPopupMenu popup = new JPopupMenu();
-	addMenuItems(popup, listener);
-	return popup;
+		JPopupMenu popup = new JPopupMenu();
+		addMenuItems(popup, listener);
+		return popup;
     }    
     
     /**
      * Saves clusters.
      */
     private void onSaveClusters() {
-	Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
-	try {
-	    saveClusters(frame);
-	} catch (Exception e) {
-	    JOptionPane.showMessageDialog(frame, "Can not save clusters!", e.toString(), JOptionPane.ERROR_MESSAGE);
-	    e.printStackTrace();
-	}
+		Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
+		try {
+		    saveClusters(frame);
+		} catch (Exception e) {
+		    JOptionPane.showMessageDialog(frame, "Can not save clusters!", e.toString(), JOptionPane.ERROR_MESSAGE);
+		    e.printStackTrace();
+		}
     }
     
     /**

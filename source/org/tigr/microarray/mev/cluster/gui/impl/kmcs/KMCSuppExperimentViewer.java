@@ -47,6 +47,10 @@ public class KMCSuppExperimentViewer extends ExperimentViewer {
     public KMCSuppExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder,
     		Boolean drawAnnotations, ExperimentHeader header, Insets insets) {
     	super(e, clusters, samplesOrder, drawAnnotations.booleanValue(), header, insets);
+        Listener listener = new Listener();
+        this.popup = createJPopupMenu(listener);
+        getContentComponent().addMouseListener(listener);
+        getHeaderComponent().addMouseListener(listener);
     } 
     
     /**

@@ -157,15 +157,9 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer {
     
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new",
-//(Experiment experiment, int[][] clusters, FloatMatrix codes, FloatMatrix clusterDiv, SOTATreeData sotaTreeData, boolean clusterGenes) {
     			new Object[]{this.expViewer.getExperiment(), this.clusters, this.codes, this.clusterDivFM, this.sotaTreeData, new Boolean(this.geneClusterViewer)});
-//    			new Object[]{this.expViewer, new Float(this.factor), 
- //   			new Integer(this.function), new Integer(this.numberOfCells), 
-//				new Boolean(this.geneClusterViewer), new Boolean(this.useDoubleGradient), 
-//				this.clusterDivFM, this.centroidDataFM, this.clusters, 
-//				this.getHeaderComponent(), this.getInsets(), new Integer(this.exptID), 
-//				this.codes, this.viewPanel});  
-	}
+    }
+    
     public SOTAExperimentViewer(IViewer exptViewer, Float factor, Integer function,
     		Integer numberOfCells, Boolean geneClusterViewer, Boolean useDoubleGradient, 
 			FloatMatrix clusterDivFM, FloatMatrix centroidDataFM, int[][] clusters, 

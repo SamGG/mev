@@ -63,7 +63,10 @@ public class EASEExperimentViewer extends ExperimentViewer {
      */
     public EASEExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder, boolean drawAnnotations) {
     	super(e, clusters, samplesOrder, drawAnnotations, 10);
-    	
+        Listener listener = new Listener();
+        this.popup = createJPopupMenu(listener);
+        getContentComponent().addMouseListener(listener);
+        getHeaderComponent().addMouseListener(listener);
     }
     
     /**
