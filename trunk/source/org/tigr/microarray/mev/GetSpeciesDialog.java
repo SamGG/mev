@@ -38,13 +38,13 @@ public class GetSpeciesDialog extends org.tigr.microarray.mev.cluster.gui.impl.d
     JTextField speciesNameTextField;
     
     /** Creates a new instance of AnalysisSaveDialog */
-    public GetSpeciesDialog(JFrame frame) {
+    public GetSpeciesDialog(JFrame frame, String currentName) {
         super(frame, "Save Analysis Check", true);
         Listener listener = new Listener();
         
         speciesNameLabel = new JLabel("Please provide a species name: ");
 
-	    speciesNameTextField = new JTextField(10);
+	    speciesNameTextField = new JTextField(currentName, 10);
         
         JPanel buttonPanel = new JPanel(new GridBagLayout());
         JButton okButton = new JButton("Ok");
@@ -112,7 +112,7 @@ public class GetSpeciesDialog extends org.tigr.microarray.mev.cluster.gui.impl.d
     
     
     public static void main(String [] args) {
-        GetSpeciesDialog dialog = new GetSpeciesDialog(new JFrame());
+        GetSpeciesDialog dialog = new GetSpeciesDialog(new JFrame(), "previous species name");
         String result = dialog.showModal();
         System.out.println("result = " + result);
         System.out.println("save species name = " + dialog.saveSpeciesName());

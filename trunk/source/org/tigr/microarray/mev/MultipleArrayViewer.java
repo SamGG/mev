@@ -326,8 +326,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         systemDisable(TMEV.DB_AVAILABLE);
         systemDisable(TMEV.DATA_AVAILABLE);
 
-        //TODO
-        //EH Gaggle testing
         //GaggleInit must happen after menubar is created.
         if(TMEV.GAGGLE_CONNECT_ON_STARTUP)  {
         	gaggleInit();
@@ -345,8 +343,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         super(new JFrame("Multiple Array Viewer"));
         initSessionMetaData();
         
-        //TODO
-        //EH Gaggle testing
         if(TMEV.GAGGLE_CONNECT_ON_STARTUP)  {
         	gaggleInit();
         }        
@@ -432,8 +428,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         
         menubar = new MultipleArrayMenubar(origMenubar, manager);
         
-        //TODO
-        //EH Gaggle testing
+
         if(TMEV.GAGGLE_CONNECT_ON_STARTUP)  {
         	gaggleInit();
         }
@@ -2089,7 +2084,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         fireMenuChanged();
     }
     
-    //EH Gaggle test
     private void onChangeGaggleTarget(Action action) {
     	String key = (String)action.getValue(ActionManager.PARAMETER);
    // 	System.out.println("Changing Gaggle target to " + key);
@@ -2106,7 +2100,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     		System.err.println("Couldn't show Goose " + key);
     	}
     }
-    //EH end Gaggle test
 
     
     private void onExperimentLabelAdded() {
@@ -5155,7 +5148,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
             } else if (command.equals(ActionManager.APPEND_GENE_ANNOTATION_COMMAND)) {
                 appendGeneAnnotation();
 	        } else if (command.equals(ActionManager.CHANGE_SPECIES_NAME_COMMAND)) {
-	            askUserForSpeciesName();
+	            askUserForSpeciesName(data.getGaggleOrganismName());
 	        }
             /**
              * Raktim Sept 29, 05
@@ -5243,7 +5236,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 
             /* End CGH Command Handlers  */   
                 
-            //EH Gaggle test
             }else if(command.equals(ActionManager.GAGGLE_CONNECT_ACTION)){
             	gaggleInit();
             }else if(command.equals(ActionManager.GAGGLE_DISCONNECT_ACTION)){
@@ -5252,7 +5244,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
             	onChangeGaggleTarget((Action)event.getSource());
             }else if(command.equals(ActionManager.SHOW_GOOSE_CMD)){
             	onShowGoose((Action)event.getSource());
-            	//EH end gaggle test
             	
             }
             /* Raktim - Annotation Demo Only */
@@ -5647,7 +5638,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         	return cytoBandsModel;
         }
         
-        //EH Gaggle test
         public void broadcastGeneClusters(Cluster[] clusters){
         	System.out.println("broadcasting matrix size " + clusters.length);
         	DataMatrix m = new DataMatrix();
@@ -5926,7 +5916,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	public void handleMatrix(String sourceGoose, DataMatrix matrix) throws RemoteException {
 		//Load broadcast data if there is no data already loaded into this MAV.
 		if(data.getFeaturesCount() <= 0) {
-			data.setOrganismName(matrix.getSpecies());
+			data.setGaggleOrganismName(matrix.getSpecies());
 			
 			float cy3, cy5;
 			String [] moreFields = new String [1];
@@ -6078,23 +6068,23 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	 * Check if there is a species name loaded, and if not, get one from the user and save it for later.
 	 */
     public String getCurrentSpecies() {
+    	
     	try {
-	    	String loadedAnnotationSpeciesName = data.getOrganismName();
+	    	String loadedAnnotationSpeciesName = data.getGaggleOrganismName();
 	    	if(loadedAnnotationSpeciesName != null && !loadedAnnotationSpeciesName.equalsIgnoreCase("na") && !loadedAnnotationSpeciesName.equalsIgnoreCase("unknown"))
 	    		return loadedAnnotationSpeciesName;
-	
-	       	return askUserForSpeciesName();
+	       	return askUserForSpeciesName("");
     	} catch (Exception e) {
-    		return askUserForSpeciesName();
+    		return askUserForSpeciesName("");
     	}
     }
-    public String askUserForSpeciesName() {
-        GetSpeciesDialog gsd = new GetSpeciesDialog(this.getFrame());
+    public String askUserForSpeciesName(String currentName) {
+        GetSpeciesDialog gsd = new GetSpeciesDialog(this.getFrame(), currentName);
         String speciesName = gsd.showModal();
         if(speciesName == null)
         	return "unknown";
-        if(gsd.saveSpeciesName())
-        	data.setOrganismName(speciesName);
+        if(gsd.saveSpeciesName()) 
+        	data.setGaggleOrganismName(speciesName);
         return speciesName;
     }
 }
