@@ -674,8 +674,8 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
             		MevAnnotation mevAnno = (MevAnnotation)_tempAnno.get(cloneName);
             		//Right now these two values get set a million times. Have to find a way to
             		//stop that---Sarita.
-            		((MultipleArrayData)this.mav.getData()).setchipType(mevAnno.getChipType());
-            		((MultipleArrayData)this.mav.getData()).setOrganismName(mevAnno.getSpeciesName());
+//            		((MultipleArrayData)this.mav.getData()).setchipType(mevAnno.getChipType());
+//            		((MultipleArrayData)this.mav.getData()).setOrganismName(mevAnno.getSpeciesName());
             		slideDataElement = new AffySlideDataElement(String.valueOf(curpos), rows, columns, intensities, moreFields, mevAnno);
             	}else {
             		
