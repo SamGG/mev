@@ -420,7 +420,7 @@ public class Manager {//A class to keep track of viewers
             mav.getFrame().setTitle("Multiple Array Viewer, "+clusterLabel);
         Manager.addComponent(mav);
         mav.setInstanceIndex(MavInstanceCount-1); // Raktim - Annotation Model specific
-        System.out.println("getInstanceIndex(): " + mav.getInstanceIndex());
+//        System.out.println("getInstanceIndex(): " + mav.getInstanceIndex());
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         mav.getFrame().setLocation((screenSize.width - mav.getFrame().getSize().width)/2, (screenSize.height - mav.getFrame().getSize().height)/2);
         mav.getFrame().setVisible(true);
