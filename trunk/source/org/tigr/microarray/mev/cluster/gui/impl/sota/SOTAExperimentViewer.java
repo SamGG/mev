@@ -58,8 +58,6 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer {
     private static final String SAVE_ALL_CLUSTERS_CMD = "save-all-clusters-cmd";
     protected static final String LAUNCH_NEW_SESSION_CMD = "launch-new-session-cmd";
     
-    private JPopupMenu popup;
-    
     //panel components
     private IViewer expViewer;
     private JComponent header;
@@ -319,15 +317,6 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer {
     public void onDeselected() {}
     public void onClosed() {}
     
-    /**
-     * Creates a popup menu.
-     */
-    private JPopupMenu createJPopupMenu(Listener listener) {
-        JPopupMenu popup = new JPopupMenu();
-        addMenuItems(popup, listener);
-        return popup;
-    }
-    
     protected void addMenuItems(JPopupMenu menu, ActionListener listener) {
         JMenuItem menuItem;
         menuItem = new JMenuItem("Store cluster", GUIFactory.getIcon("new16.gif"));
@@ -377,7 +366,7 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer {
     /**
      * Saves clusters.
      */
-    private void onSaveClusters() {
+    protected void onSaveClusters() {
         Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
         try {
             if(expViewer instanceof ExperimentViewer)
@@ -393,7 +382,7 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer {
     /**
      * Save the viewer cluster.
      */
-    private void onSaveCluster() {
+    protected void onSaveCluster() {
         Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
         try {
             if(expViewer instanceof ExperimentViewer)
@@ -410,7 +399,7 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer {
     /**
      * Sets a public color.
      */
-    private void onSetColor() {
+    protected void onSetColor() {
         Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
         Color newColor = JColorChooser.showDialog(frame, "Choose color", CentroidViewer.DEF_CLUSTER_COLOR);
         if (newColor != null) {
@@ -456,7 +445,7 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer {
     /**
      * Removes a public color.
      */
-    private void onSetDefaultColor() {
+    protected void onSetDefaultColor() {
         if(expViewer instanceof ExperimentViewer)
             ((ExperimentViewer)expViewer).setClusterColor(null);
         else

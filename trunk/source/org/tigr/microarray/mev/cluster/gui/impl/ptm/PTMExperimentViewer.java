@@ -11,7 +11,6 @@
  */
 package org.tigr.microarray.mev.cluster.gui.impl.ptm;
 
-import java.awt.Color;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,7 +23,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Vector;
 
-import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -35,7 +33,6 @@ import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
-import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
@@ -49,7 +46,6 @@ public class PTMExperimentViewer extends ExperimentViewer implements IViewer {
 	protected static final String SAVE_ALL_CLUSTERS_CMD = "save-all-clusters-cmd";
 	protected static final String LAUNCH_NEW_SESSION_CMD = "launch-new-session-cmd";
 	
-	private JPopupMenu popup;
 	private ExperimentViewer expViewer;
 	private PTMExperimentHeader header;
 	private String[] auxTitles;
@@ -62,11 +58,8 @@ public class PTMExperimentViewer extends ExperimentViewer implements IViewer {
 	 * experiment, clusters and templateVector.
 	 */
 	public PTMExperimentViewer(Experiment experiment, int[][] clusters, Vector templateVector, String[] auxTitles, Object[][] auxData) {
-		Listener listener = new Listener();
-		this.popup = createJPopupMenu(listener);
 		
 		this.expViewer = new ExperimentViewer(experiment, clusters);
-		this.expViewer.getContentComponent().addMouseListener(listener);
 		this.auxTitles = auxTitles;
 		this.auxData = auxData;
 		this.clusters = clusters;
@@ -74,7 +67,6 @@ public class PTMExperimentViewer extends ExperimentViewer implements IViewer {
 		this.header = new PTMExperimentHeader(expViewer.getHeaderComponent(), templateVector);
 		this.header.setColorImages(expViewer.getNegColorImage(), expViewer.getPosColorImage());
 		this.header.setMissingColor(expViewer.getMissingColor());
-		this.header.addMouseListener(listener);
 	}
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new",
@@ -156,15 +148,6 @@ public class PTMExperimentViewer extends ExperimentViewer implements IViewer {
 	
 	
 	/**
-	 * Creates a popup menu.
-	 */
-	private JPopupMenu createJPopupMenu(Listener listener) {
-		JPopupMenu popup = new JPopupMenu();
-		addMenuItems(popup, listener);
-		return popup;
-	}
-	
-	/**
 	 * Adds viewer specific menu items.
 	 */
 	protected void addMenuItems(JPopupMenu menu, ActionListener listener) {
@@ -204,7 +187,7 @@ public class PTMExperimentViewer extends ExperimentViewer implements IViewer {
 	/**
 	 * Saves clusters.
 	 */
-	private void onSaveClusters() {
+	protected void onSaveClusters() {
 		Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
 		try {
 			//expViewer.saveClusters(frame);
@@ -218,7 +201,7 @@ public class PTMExperimentViewer extends ExperimentViewer implements IViewer {
 	/**
 	 * Save the viewer cluster.
 	 */
-	private void onSaveCluster() {
+	protected void onSaveCluster() {
 		Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
 		try {
 			//expViewer.saveCluster(frame);
@@ -230,20 +213,9 @@ public class PTMExperimentViewer extends ExperimentViewer implements IViewer {
 	}
 	
 	/**
-	 * Sets a public color.
-	 */
-	private void onSetColor() {
-		Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
-		Color newColor = JColorChooser.showDialog(frame, "Choose color", CentroidViewer.DEF_CLUSTER_COLOR);
-		if (newColor != null) {
-			expViewer.setClusterColor(newColor);
-		}
-	}
-	
-	/**
 	 * Removes a public color.
 	 */
-	private void onSetDefaultColor() {
+	protected void onSetDefaultColor() {
 		expViewer.setClusterColor(null);
 	}
 	
@@ -262,7 +234,7 @@ public class PTMExperimentViewer extends ExperimentViewer implements IViewer {
 		return this.expViewer.getViewerType();
 	}
 	
-	/**
+	/** //TODO may need this
 	 * The class to listen to mouse and action events.
 	 */
 	private class Listener extends MouseAdapter implements ActionListener {

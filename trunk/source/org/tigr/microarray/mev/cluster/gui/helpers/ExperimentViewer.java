@@ -22,6 +22,7 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -37,6 +38,7 @@ import java.util.ArrayList;
 import java.io.PrintWriter;
 import java.util.Vector;
 
+import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -121,6 +123,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
 	private boolean mouseOnMap = false;
 	private int mouseRow = 0;
 	private int mouseColumn = 0;
+	protected JPopupMenu popup;
     
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
@@ -182,6 +185,11 @@ public class ExperimentViewer extends JPanel implements IViewer {
         Listener listener = new Listener();
         addMouseListener(listener);
         addMouseMotionListener(listener);
+        
+        PopupListener popListener = new PopupListener();
+        this.popup = createJPopupMenu(popListener);
+        getContentComponent().addMouseListener(popListener);
+        getHeaderComponent().addMouseListener(popListener);
     }
     
     
@@ -211,6 +219,11 @@ public class ExperimentViewer extends JPanel implements IViewer {
         Listener listener = new Listener();
         addMouseListener(listener);
         addMouseMotionListener(listener);
+        
+        PopupListener popListener = new PopupListener();
+        this.popup = createJPopupMenu(popListener);
+        getContentComponent().addMouseListener(popListener);
+        getHeaderComponent().addMouseListener(popListener);
     }
     
     public ExperimentViewer(){  }
@@ -242,6 +255,11 @@ public class ExperimentViewer extends JPanel implements IViewer {
 	    Listener listener = new Listener();
 	    addMouseListener(listener);
 	    addMouseMotionListener(listener);
+
+        PopupListener popListener = new PopupListener();
+        this.popup = createJPopupMenu(popListener);
+        getContentComponent().addMouseListener(popListener);
+        getHeaderComponent().addMouseListener(popListener);
     }
 
     /*
@@ -1339,5 +1357,96 @@ public class ExperimentViewer extends JPanel implements IViewer {
     public void setFramework(IFramework framework) {
     	this.framework = framework;
     }
+	/**
+	 * Creates a popup menu.
+	 */
+	protected JPopupMenu createJPopupMenu(ActionListener listener) {
+	    JPopupMenu popup = new JPopupMenu();
+	    addMenuItems(popup, listener);
+	    return popup;
+	}
 
+	/**
+	 * Saves clusters.
+	 */
+	protected void onSaveClusters() {
+	    Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
+	    try {
+	        saveClusters(frame);
+	    } catch (Exception e) {
+	        JOptionPane.showMessageDialog(frame, "Can not save clusters!", e.toString(), JOptionPane.ERROR_MESSAGE);
+	        e.printStackTrace();
+	    }
+	}
+	/**
+	 * Save the viewer cluster.
+	 */
+	protected void onSaveCluster() {
+	    Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
+	    try {
+	        saveCluster(frame);
+	    } catch (Exception e) {
+	        JOptionPane.showMessageDialog(frame, "Can not save cluster!", e.toString(), JOptionPane.ERROR_MESSAGE);
+	        e.printStackTrace();
+	    }
+	}
+	/**
+	 * Sets a public color.
+	 */
+	protected void onSetColor() {
+	    Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
+	    Color newColor = JColorChooser.showDialog(frame, "Choose color", CentroidViewer.DEF_CLUSTER_COLOR);
+	    if (newColor != null) {
+	        setClusterColor(newColor);
+	    }
+	}
+	/**
+	 * Removes a public color.
+	 */
+	protected void onSetDefaultColor() {
+	    setClusterColor(null);
+	}
+
+	/**
+	 * The class to listen to mouse and action events.
+	 */
+	public class PopupListener extends MouseAdapter implements ActionListener {
+	    
+	    public void actionPerformed(ActionEvent e) {
+	        String command = e.getActionCommand();
+	        if (command.equals(SAVE_CLUSTER_CMD)) {
+	            onSaveCluster();
+	        } else if (command.equals(SAVE_ALL_CLUSTERS_CMD)) {
+	            onSaveClusters();
+	        } else if (command.equals(STORE_CLUSTER_CMD)) {
+	            storeCluster();
+	        } else if (command.equals(SET_DEF_COLOR_CMD)) {
+	            onSetDefaultColor();
+	        } else if(command.equals(LAUNCH_NEW_SESSION_CMD)){
+	            launchNewSession();
+	        //EH Gaggle test
+	        } else if (command.equals(BROADCAST_MATRIX_GAGGLE_CMD)) {
+	            broadcastClusterGaggle();
+	        } else if (command.equals(BROADCAST_NAMELIST_GAGGLE_CMD)) {
+	            broadcastNamelistGaggle();
+	        }
+	    }
+	    
+	    public void mouseReleased(MouseEvent event) {
+	        maybeShowPopup(event);
+	    }
+	    
+	    public void mousePressed(MouseEvent event) {
+	        maybeShowPopup(event);
+	    }
+	    
+	    private void maybeShowPopup(MouseEvent e) {
+	        
+	        if (!e.isPopupTrigger() || getCluster() == null || getCluster().length == 0) {
+	            return;
+	        }
+	        popup.show(e.getComponent(), e.getX(), e.getY());
+	    }
+	}
 }
+

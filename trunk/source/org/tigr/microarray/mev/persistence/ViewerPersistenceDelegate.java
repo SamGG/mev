@@ -4,6 +4,7 @@ package org.tigr.microarray.mev.persistence;
 import java.beans.*;
 
 import org.tigr.graph.GraphViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.kmc.*;
 import org.tigr.util.awt.Viewer;
 
@@ -16,7 +17,7 @@ public class ViewerPersistenceDelegate extends PersistenceDelegate {
 		
 		if (iv instanceof GraphViewer) {
 			GraphViewer ev = (GraphViewer)iv;
-			e = new Expression((KMCExperimentViewer) oldInstance, oldInstance.getClass(), "new",
+			e = new Expression((GraphViewer) oldInstance, oldInstance.getClass(), "new",
 					new Object[]{
 						ev.getFrame(), 
 						new Integer(new Double(ev.getStartX()).intValue()), 
