@@ -390,7 +390,6 @@ public class ExperimentUtil {
 	aved=en3n/6.0-(sf+sg)/12.0; // Expectation value of D,
 	fac=(1.0-sf/en3n)*(1.0-sg/en3n);
 	vard=((en-1.0)*en*en*Math.pow((en+1.0),2)/36.0)*fac; // and variance of D give
-	
 	return(float)((1.0-(6.0/en3n)*(d+(sf+sg)/12.0))/Math.sqrt(fac)*factor); // Rank correlation coe cient,
     }
     
@@ -659,7 +658,6 @@ public class ExperimentUtil {
 	aved=en3n/6.0-(sf+sg)/12.0; // Expectation value of D,
 	fac=(1.0-sf/en3n)*(1.0-sg/en3n);
 	vard=((en-1.0)*en*en*Math.pow((en+1.0),2)/36.0)*fac; // and variance of D give
-	
 	return(float)((1.0-(6.0/en3n)*(d+(sf+sg)/12.0))/Math.sqrt(fac)*factor); // Rank correlation coecient,
     }
     
@@ -801,7 +799,6 @@ public class ExperimentUtil {
 	if (j == n-1) w[n-1]=n-1; // If the last element was not tied, this is its rank.
 	return s;
     }
-    
     /**
      * Sorts an array arr[1..n] into ascending order using Quicksort,
      * while making the corresponding rearrangement of the array brr[1..n].
@@ -838,11 +835,11 @@ public class ExperimentUtil {
 		k=(l+ir) >> 1;
 		dummy=arr[k];
 		arr[k]=arr[l+1];
-		arr[l+1]=arr[k];
+		arr[l+1]=dummy;
 		
 		dummy=brr[k];
 		brr[k]=brr[l+1];
-		brr[l+1]=brr[k];
+		brr[l+1]=dummy;
 		
 		if (arr[l] > arr[ir]) {
 		    dummy=arr[l];
