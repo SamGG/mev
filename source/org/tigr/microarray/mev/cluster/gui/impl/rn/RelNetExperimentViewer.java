@@ -11,21 +11,16 @@ All rights reserved.
  */
 package org.tigr.microarray.mev.cluster.gui.impl.rn;
 
-import java.awt.Color;
-import java.awt.Frame;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JColorChooser;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
@@ -37,18 +32,12 @@ public class RelNetExperimentViewer extends ExperimentViewer {
     private static final String SAVE_CLUSTER_CMD = "save-cluster-cmd";
     private static final String SAVE_ALL_CLUSTERS_CMD = "save-all-clusters-cmd";
 
-    private JPopupMenu popup;
-
     /**
      * Constructs a <code>RelNetExperimentViewer</code> with specified
      * experiment and clusters.
      */
     public RelNetExperimentViewer(Experiment experiment, int[][] clusters) {
         super(experiment, clusters);
-        Listener listener = new Listener();
-        this.popup = createJPopupMenu(listener);
-        getContentComponent().addMouseListener(listener);
-        getHeaderComponent().addMouseListener(listener);
     }
     /**
      * This constructor is used to re-create an ExperimentViewer from information
@@ -64,20 +53,23 @@ public class RelNetExperimentViewer extends ExperimentViewer {
     public RelNetExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets) {
     	super(e, clusters, samplesOrder, drawAnnotations, header, insets);
     }
-    
-    /**
-     * Creates a popup menu.
-     */
-    private JPopupMenu createJPopupMenu(Listener listener) {
-        JPopupMenu popup = new JPopupMenu();
-        addMenuItems(popup, listener);
-        return popup;
+    public RelNetExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder, boolean drawAnnotations) {
+    	super(e, clusters, samplesOrder, drawAnnotations, new ExperimentHeader(e, clusters), new Insets(0,10,0,0));
     }
-
+    
+	/**
+	 * Creates a popup menu.
+	 *
+	protected JPopupMenu createJPopupMenu(ActionListener listener) {
+	    JPopupMenu popup = new JPopupMenu();
+	    this.addMenuItems(popup, listener);
+	    return popup;
+	}
+	
     /**
      * Adds the viewer specific menu items.
-     */
-    private void addMenuItems(JPopupMenu menu, Listener listener) {
+     *
+    protected void addMenuItems(JPopupMenu menu, ActionListener listener) {
         JMenuItem menuItem;
 
         menuItem = new JMenuItem("Set public cluster...", GUIFactory.getIcon("new16.gif"));
@@ -102,53 +94,9 @@ public class RelNetExperimentViewer extends ExperimentViewer {
     }
 
     /**
-     * Saves clusters.
-     */
-    private void onSaveClusters() {
-        Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
-        try {
-            saveClusters(frame);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(frame, "Can not save clusters!", e.toString(), JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Save the viewer cluster.
-     */
-    private void onSaveCluster() {
-        Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
-        try {
-            saveCluster(frame);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(frame, "Can not save cluster!", e.toString(), JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Sets a public color.
-     */
-    private void onSetColor() {
-        Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
-        Color newColor = JColorChooser.showDialog(frame, "Choose color", CentroidViewer.DEF_CLUSTER_COLOR);
-        if (newColor != null) {
-            setClusterColor(newColor);
-        }
-    }
-
-    /**
-     * Removes a public color.
-     */
-    private void onSetDefaultColor() {
-        setClusterColor(null);
-    }
-
-    /**
      * The class to listen to mouse and action events.
-     */
-    private class Listener extends MouseAdapter implements ActionListener {
+     *
+    private class RNPopupListener extends MouseAdapter implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
             String command = e.getActionCommand();
@@ -178,5 +126,5 @@ public class RelNetExperimentViewer extends ExperimentViewer {
 	        }
 	        popup.show(e.getComponent(), e.getX(), e.getY());
 	    }
-    }
+    }*/
 }
