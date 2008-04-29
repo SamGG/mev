@@ -44,6 +44,7 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JViewport;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import org.tigr.microarray.mev.annotation.AnnoAttributeObj;
 import org.tigr.microarray.mev.action.DefaultAction;
@@ -1169,12 +1170,11 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
         }
         
         public void mouseClicked(MouseEvent event) {
-            int column = findColumn(event.getX());
-            int row = findRow(event.getY());
-            if(event.isPopupTrigger()) {
-                popup.show(MultipleArrayCanvas.this, event.getX(), event.getY());
+            if (SwingUtilities.isRightMouseButton(event)) {
                 return;
             }
+            int column = findColumn(event.getX());
+            int row = findRow(event.getY());
             if (!isLegalPosition(row, column)) {
                 return;
             }
