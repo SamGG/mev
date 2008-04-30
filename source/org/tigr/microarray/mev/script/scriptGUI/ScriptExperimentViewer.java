@@ -28,55 +28,14 @@ public class ScriptExperimentViewer extends ExperimentViewer {
      */
     public ScriptExperimentViewer(Experiment experiment, int[][] clusters) {
         super(experiment, clusters);
-        Listener listener = new Listener();
-        this.popup = createJPopupMenu(listener);
-        getContentComponent().addMouseListener(listener);
-        getHeaderComponent().addMouseListener(listener);
     }
     
     private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
-        Listener listener = new Listener();
+        ExperimentViewer.PopupListener listener = new ExperimentViewer.PopupListener();
         this.popup = createJPopupMenu(listener);
         getContentComponent().addMouseListener(listener);
         getHeaderComponent().addMouseListener(listener);        
     }
     
     private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException { }
-    
-    /**
-     * The class to listen to mouse and action events.
-     */
-    private class Listener extends MouseAdapter implements ActionListener {
-        
-        public void actionPerformed(ActionEvent e) {
-            String command = e.getActionCommand();
-            if (command.equals(SAVE_CLUSTER_CMD)) {
-                onSaveCluster();
-            } else if (command.equals(SAVE_ALL_CLUSTERS_CMD)) {
-                onSaveClusters();
-            } else if (command.equals(STORE_CLUSTER_CMD)) {
-                storeCluster();
-            } else if (command.equals(SET_DEF_COLOR_CMD)) {
-                onSetDefaultColor();
-            } else if(command.equals(LAUNCH_NEW_SESSION_CMD)){
-                launchNewSession();
-            }
-        }
-        
-        public void mouseReleased(MouseEvent event) {
-            maybeShowPopup(event);
-        }
-        
-        public void mousePressed(MouseEvent event) {
-            maybeShowPopup(event);
-        }
-        
-        private void maybeShowPopup(MouseEvent e) {
-            
-            if (!e.isPopupTrigger() || getCluster() == null || getCluster().length == 0) {
-                return;
-            }
-            popup.show(e.getComponent(), e.getX(), e.getY());
-        }
-    }
 }

@@ -23,6 +23,7 @@ import java.awt.Graphics2D;
 import java.awt.FontMetrics;
 import java.awt.GradientPaint;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
@@ -36,6 +37,7 @@ import java.io.ObjectOutputStream;
 import java.util.Vector;
 import java.util.ArrayList;
 
+import javax.swing.JColorChooser;
 import javax.swing.JPanel;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
@@ -67,8 +69,6 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
     protected static final String SAVE_CLUSTER_CMD = "save-cluster-cmd";
     protected static final String SAVE_ALL_CLUSTERS_CMD = "save-all-clusters-cmd";
     protected static final String LAUNCH_NEW_SESSION_CMD = "launch-new-session-cmd";
-    
-    //EH Gaggle testing
     public static final String BROADCAST_MATRIX_GAGGLE_CMD = "broadcast-matrix-to-gaggle";
     public static final String BROADCAST_NAMELIST_GAGGLE_CMD = "broadcast-namelist-to-gaggle";
     
@@ -120,6 +120,8 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
     private int clickedColumn = 0;
     private int clickedRow = 0;
     
+    private JPopupMenu popup;
+    
     /**
      * Constructs an <code>ExperimentClusterViewer</code> with specified
      * experiment and clusters.
@@ -167,6 +169,12 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         Listener listener = new Listener();
         addMouseListener(listener);
         addMouseMotionListener(listener);
+        
+
+		PopupListener popupListener = new PopupListener();
+		this.popup = createJPopupMenu(popupListener);
+		getContentComponent().addMouseListener(popupListener);
+		getHeaderComponent().addMouseListener(popupListener);
     }
     /*
     copy-paste this constructor into descendent classes
@@ -181,7 +189,6 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
     */
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new",
-//			new Object[]{clusters, genesOrder, new Boolean(this.isDrawAnnotations), new Integer(this.insets.left), this.header, new Boolean(this.hasCentroid), this.centroids, this.elementSize, new Integer(this.labelIndex), new Integer(this.exptID)});  
     			new Object[]{experiment, clusters, genesOrder, new Boolean(isDrawAnnotations), new Integer(this.insets.left)});
     } 
     public ExperimentClusterViewer(Experiment experiment, int[][] clusters, int[] genesOrder, Boolean drawAnnotations, Integer offset){
@@ -213,6 +220,11 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         Listener listener = new Listener();
         addMouseListener(listener);
         addMouseMotionListener(listener);
+
+		PopupListener popupListener = new PopupListener();
+		this.popup = createJPopupMenu(popupListener);
+		getContentComponent().addMouseListener(popupListener);
+		getHeaderComponent().addMouseListener(popupListener);
     }
     
     
@@ -258,46 +270,13 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         Listener listener = new Listener();
         addMouseListener(listener);
         addMouseMotionListener(listener);
+
+		PopupListener popupListener = new PopupListener();
+		this.popup = createJPopupMenu(popupListener);
+		getContentComponent().addMouseListener(popupListener);
+		getHeaderComponent().addMouseListener(popupListener);
     }
-    
-    /**
-     * Builds an ExperimentClusterViewer in the state specified by an xml file.  Used by XMLDecoder to restore the saved
-     * state of an ExperimentClusterViewer.  This constructor must work in concert with the setExperiment() 
-     * method.  
-     * 
-     * @param clusters
-     * @param genesOrder
-     * @param drawAnnotations
-     * @param offset
-     * @param header
-     * @param hasCentroid
-     * @param centroids
-     * @param elementSize
-     * @param labelIndex
-     * @param exptID
-     
-    public ExperimentClusterViewer(int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
-    		Integer offset, ExperimentClusterHeader header, Boolean hasCentroid, float[][] centroids, 
-			Dimension elementSize, Integer labelIndex, Integer exptID) {
-    	this.clusters = clusters;
-        this.genesOrder = genesOrder;
-        this.insets.left = offset.intValue();
-        this.isDrawAnnotations = drawAnnotations.booleanValue();
-        this.hasCentroid = hasCentroid.booleanValue();
-        this.centroids = centroids;
-        this.elementSize = elementSize;
-        this.labelIndex = labelIndex.intValue();
-        this.header = header;
-        this.header.setData(data);
-        this.header.setNegAndPosColorImages(this.negColorImage, this.posColorImage);
-        this.header.setLeftInset(offset.intValue());
-        this.exptID = exptID.intValue();
-        setBackground(Color.white);
-        Listener listener = new Listener();
-        addMouseListener(listener);
-        addMouseMotionListener(listener);
-    }
-*/
+ 
     public void setExperiment(Experiment e) {
     	this.experiment = e;
         this.exptID = e.getId();
@@ -1182,9 +1161,7 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         menuItem.setActionCommand(SAVE_ALL_CLUSTERS_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
-        
-        //TODO
-        //EH Gaggle testing
+        /*
         menuItem = new JMenuItem("Broadcast Matrix to Gaggle", GUIFactory.getIcon("gaggle_icon_16.gif"));
         menuItem.setActionCommand(BROADCAST_MATRIX_GAGGLE_CMD);
         menuItem.addActionListener(listener);
@@ -1194,11 +1171,11 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         menuItem.setActionCommand(BROADCAST_NAMELIST_GAGGLE_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
-        //end Gaggle testing
+        */
     }
     
-	//EH Gaggle test
     public void broadcastClusterGaggle() {
+    	System.out.println("broadcasting from " + this.getClass().toString() + " cluster size: " + getCluster().length);
     	int[] temp = getCluster();
     	Experiment e = getExperiment();
     	if (temp == null)
@@ -1207,9 +1184,13 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
     		System.out.println("getExperiment returns null");
     	if(framework == null)
     		System.out.println(this.toString() + ": framework is null");
-    	framework.broadcastGeneCluster(getExperiment(), getCluster());
+    	
+    	//TODO change broadcastGeneCluster so it knows whether to broadcast a gene or expt list
+    	//or change gaggle broadcast framework so it can take both gene and cluster indices
+//    	framework.broadcastExperimentCluster(getExperiment(), getCluster());
 	}
     public void broadcastNamelistGaggle() {
+    	//TODO instead of calling getCluster, create a new int[] with all the names of the currently displayed genes
     	framework.broadcastNamelist(getExperiment(), getCluster());
     }
     public void setFramework(IFramework framework) {
@@ -1365,6 +1346,101 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
 	public void setExperimentID(int id) {
 		this.exptID = id;
 	}
+	
     
+    /**
+     * Creates a popup menu.
+     */
+	protected JPopupMenu createJPopupMenu(PopupListener listener) {
+		JPopupMenu popup = new JPopupMenu();
+		addMenuItems(popup, listener);
+		return popup;
+    }
+    
+    
+    /**
+     * Saves clusters.
+     */
+    protected void onSaveClusters() {
+		Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
+		try {
+		    saveClusters(frame);
+		} catch (Exception e) {
+		    JOptionPane.showMessageDialog(frame, "Can not save clusters!", e.toString(), JOptionPane.ERROR_MESSAGE);
+		    e.printStackTrace();
+		}
+    }
+    
+    /**
+     * Save the viewer cluster.
+     */
+    protected void onSaveCluster() {
+		Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
+		try {
+		    saveCluster(frame);
+		} catch (Exception e) {
+		    JOptionPane.showMessageDialog(frame, "Can not save cluster!", e.toString(), JOptionPane.ERROR_MESSAGE);
+		    e.printStackTrace();
+		}
+    }
+    
+    /**
+     * Sets a public color.
+     */
+    protected void onSetColor() {
+		Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
+		Color newColor = JColorChooser.showDialog(frame, "Choose color", CentroidViewer.DEF_CLUSTER_COLOR);
+		if (newColor != null) {
+		    setClusterColor(newColor);
+		}
+    }
+    
+    /**
+     * Removes a public color.
+     */
+    protected void onSetDefaultColor() {
+    	setClusterColor(null);
+    }
+	
+    /**
+     * The class to listen to mouse and action events.
+     */
+    private class PopupListener extends MouseAdapter implements ActionListener {
+	
+	public void actionPerformed(ActionEvent e) {
+	    String command = e.getActionCommand();
+	    if (command.equals(SAVE_CLUSTER_CMD)) {
+	    	onSaveCluster();
+	    } else if (command.equals(SAVE_ALL_CLUSTERS_CMD)) {
+	    	onSaveClusters();
+	    } else if (command.equals(STORE_CLUSTER_CMD)) {
+	    	storeCluster();
+	    } else if (command.equals(SET_DEF_COLOR_CMD)) {
+	    	onSetDefaultColor();
+	    } else if(command.equals(LAUNCH_NEW_SESSION_CMD)){
+            launchNewSession();
+	    } else if(command.equals(BROADCAST_MATRIX_GAGGLE_CMD)){
+            broadcastClusterGaggle();
+	    } else if(command.equals(BROADCAST_NAMELIST_GAGGLE_CMD)){
+            broadcastNamelistGaggle();
+        }
+	}
+	
+	public void mouseReleased(MouseEvent event) {
+	    maybeShowPopup(event);
+	}
+	
+	public void mousePressed(MouseEvent event) {
+	    maybeShowPopup(event);
+	}
+	
+	private void maybeShowPopup(MouseEvent e) {
+	    
+	    if (!e.isPopupTrigger() || getCluster() == null || getCluster().length == 0) {
+		return;
+	    }
+	    popup.show(e.getComponent(), e.getX(), e.getY());
+	}
+    }
 }
 

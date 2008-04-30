@@ -17,21 +17,14 @@ All rights reserved.
 
 package org.tigr.microarray.mev.cluster.gui.impl.sam;
 
-import java.awt.Color;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.beans.Expression;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 
-import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
 
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
@@ -47,8 +40,6 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
  */
 public class SAMCentroidViewer extends CentroidViewer {
         
-    private JPopupMenu popup;
-    
     private float[] dValues, rValues, foldChangeArray, qLowestFDR;
     private int studyDesign;
     //private Vector geneNamesVector;
@@ -78,33 +69,20 @@ public class SAMCentroidViewer extends CentroidViewer {
     }
     
     private void initialize(int studyDesign, float[] dValues, float[] rValues, float[] foldChangeArray, float[] qLowestFDR, boolean calculateQLowestFDR) {
-	Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
         this.studyDesign = studyDesign;
         this.dValues = dValues;
         this.rValues = rValues;
         //this.geneNamesVector = geneNamesVector;
         this.qLowestFDR = qLowestFDR;
         this.calculateQLowestFDR = calculateQLowestFDR;
-        this.foldChangeArray = foldChangeArray;
-	getContentComponent().addMouseListener(listener);        
-    }
-    
-    
-    /**
-     * Creates a popup menu.
-     */
-    private JPopupMenu createJPopupMenu(Listener listener) {
-	JPopupMenu popup = new JPopupMenu();
-	addMenuItems(popup, listener);
-	return popup;
+        this.foldChangeArray = foldChangeArray;       
     }
     
     
     /**
      * Saves all clusters.
      */
-    private void onSaveClusters() {
+    protected void onSaveClusters() {
 	Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
 	try {
 	    saveExperiment(frame, getExperiment(), getData(), getClusters());
@@ -117,7 +95,7 @@ public class SAMCentroidViewer extends CentroidViewer {
     /**
      * Save the viewer cluster.
      */
-    private void onSaveCluster() {
+    protected void onSaveCluster() {
 	Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
 	try {
 	    saveExperiment(frame, getExperiment(), getData(), getCluster());
@@ -127,25 +105,6 @@ public class SAMCentroidViewer extends CentroidViewer {
 	}
     }
     
-    /**
-     * Sets a public color.
-     */
-    private void onSetColor() {
-	Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
-	Color newColor = JColorChooser.showDialog(frame, "Choose color", DEF_CLUSTER_COLOR);
-	if (newColor != null) {
-	    setClusterColor(newColor);
-	}
-    }
-    
-    /**
-     * Removes a public color.
-     */
-    private void onSetDefaultColor() {
-	setClusterColor(null);
-    }
-    
-     
     /**
      * Saves values from specified experiment and its rows.
      */
@@ -253,55 +212,6 @@ public class SAMCentroidViewer extends CentroidViewer {
             file = fc.getSelectedFile();
         }
         return file;
-    }    
-    
-    /**
-     * The class to listen to mouse and action events.
-     */
-    private class Listener extends MouseAdapter implements ActionListener {
-	
-	public void actionPerformed(ActionEvent e) {
-	    String command = e.getActionCommand();
-	    if (command.equals(SAVE_CLUSTER_CMD)) {
-		onSaveCluster();
-	    } else if (command.equals(SAVE_ALL_CLUSTERS_CMD)) {
-		onSaveClusters();
-	    } else if (command.equals(SET_DEF_COLOR_CMD)) {
-		onSetDefaultColor();
-	    } else if(command.equals(SET_Y_TO_EXPERIMENT_MAX_CMD)){
-                yRangeOption = CentroidViewer.USE_EXPERIMENT_MAX;
-                setClusterMaxMenuItem.setEnabled(true);
-                setOverallMaxMenuItem.setEnabled(false);
-                repaint();
-            } else if(command.equals(SET_Y_TO_CLUSTER_MAX_CMD)){
-                yRangeOption = CentroidViewer.USE_CLUSTER_MAX;
-                setClusterMaxMenuItem.setEnabled(false);
-                setOverallMaxMenuItem.setEnabled(true);
-                repaint();
-            } else if (command.equals(STORE_CLUSTER_CMD)) {
-		storeCluster();
-	    } else if(command.equals(LAUNCH_NEW_SESSION_CMD)){
-                launchNewSession();
-            } else if(command.equals(TOGGLE_REF_LINE_CMD)){
-                showRefLine = !showRefLine;
-                repaint();
-            }            
-	}
-	
-	public void mouseReleased(MouseEvent event) {
-	    maybeShowPopup(event);
-	}
-	
-	public void mousePressed(MouseEvent event) {
-	    maybeShowPopup(event);
-	}
-	
-	private void maybeShowPopup(MouseEvent e) {
-	    if (!e.isPopupTrigger() || getCluster() == null || getCluster().length == 0) {
-		return;
-	    }
-	    popup.show(e.getComponent(), e.getX(), e.getY());
-	}
     }    
 
 }

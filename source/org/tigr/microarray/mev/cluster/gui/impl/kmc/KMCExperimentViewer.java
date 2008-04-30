@@ -32,7 +32,7 @@ public class KMCExperimentViewer extends ExperimentViewer {
     public KMCExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder,
     		Boolean drawAnnotations){
     	super(e, clusters, samplesOrder, drawAnnotations.booleanValue());
-        
+ 
     } 
 
     /**

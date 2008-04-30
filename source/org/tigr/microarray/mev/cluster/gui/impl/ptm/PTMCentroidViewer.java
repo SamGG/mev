@@ -18,16 +18,10 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.beans.Expression;
 import java.util.Vector;
 
-import javax.swing.JColorChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
@@ -35,7 +29,6 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 
 public class PTMCentroidViewer extends CentroidViewer {
        
-    private JPopupMenu popup;
     private Vector templateVector;
     private String[] auxTitles;
     private Object[][] auxData;
@@ -46,12 +39,9 @@ public class PTMCentroidViewer extends CentroidViewer {
      */
     public PTMCentroidViewer(Experiment experiment, int[][] clusters, Vector templateVector, String[] auxTitles, Object[][] auxData) {
 		super(experiment, clusters);
-		Listener listener = new Listener();
-		this.popup = createJPopupMenu(listener);
 		this.templateVector = templateVector;
         this.auxTitles = auxTitles;
         this.auxData = auxData;
-		getContentComponent().addMouseListener(listener);
     }
     /**
      * @inheritDoc
@@ -68,18 +58,9 @@ public class PTMCentroidViewer extends CentroidViewer {
     }
     
     /**
-     * Creates a popup menu.
-     */
-    private JPopupMenu createJPopupMenu(Listener listener) {
-		JPopupMenu popup = new JPopupMenu();
-		addMenuItems(popup, listener);
-		return popup;
-    }    
-    
-    /**
      * Saves all clusters.
      */
-    private void onSaveClusters() {
+    protected void onSaveClusters() {
 	Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
 	try {
 	    ExperimentUtil.saveAllGeneClustersWithAux(frame, getExperiment(), getData(), getClusters(), auxTitles, auxData);
@@ -92,7 +73,7 @@ public class PTMCentroidViewer extends CentroidViewer {
     /**
      * Save the viewer cluster.
      */
-    private void onSaveCluster() {
+    protected void onSaveCluster() {
 	Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
 	try {
 	    ExperimentUtil.saveGeneClusterWithAux(frame, getExperiment(), getData(), getCluster(), auxTitles, auxData);
@@ -100,24 +81,6 @@ public class PTMCentroidViewer extends CentroidViewer {
 	    JOptionPane.showMessageDialog(frame, "Can not save cluster!", e.toString(), JOptionPane.ERROR_MESSAGE);
 	    e.printStackTrace();
 	}
-    }
-    
-    /**
-     * Sets a public color.
-     */
-    private void onSetColor() {
-	Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
-	Color newColor = JColorChooser.showDialog(frame, "Choose color", DEF_CLUSTER_COLOR);
-	if (newColor != null) {
-	    setClusterColor(newColor);
-	}
-    }
-    
-    /**
-     * Removes a public color.
-     */
-    private void onSetDefaultColor() {
-	setClusterColor(null);
     }
     
     /**
@@ -354,51 +317,6 @@ public class PTMCentroidViewer extends CentroidViewer {
 	    g.drawString("No Genes", left+10, top+20);
 	} else {
 	    g.drawString(getCluster().length+" Genes", left+10, top+20);
-	}
-    }
-    
-    /**
-     * The class to listen to mouse and action events.
-     */
-    private class Listener extends MouseAdapter implements ActionListener {
-	
-	public void actionPerformed(ActionEvent e) {
-	    String command = e.getActionCommand();
-	    if (command.equals(SAVE_CLUSTER_CMD)) {
-		onSaveCluster();
-	    } else if (command.equals(SAVE_ALL_CLUSTERS_CMD)) {
-		onSaveClusters();
-	    } else if (command.equals(SET_DEF_COLOR_CMD)) {
-		onSetDefaultColor();
-	    } else if(command.equals(SET_Y_TO_EXPERIMENT_MAX_CMD)){
-                yRangeOption = CentroidViewer.USE_EXPERIMENT_MAX;
-                setClusterMaxMenuItem.setEnabled(true);
-                setOverallMaxMenuItem.setEnabled(false);
-                repaint();
-            } else if(command.equals(SET_Y_TO_CLUSTER_MAX_CMD)){
-                yRangeOption = CentroidViewer.USE_CLUSTER_MAX;
-                setClusterMaxMenuItem.setEnabled(false);
-                setOverallMaxMenuItem.setEnabled(true);
-                repaint();
-            } else if (command.equals(STORE_CLUSTER_CMD)) {
-		storeCluster();
-	    } else if(command.equals(LAUNCH_NEW_SESSION_CMD)){
-                launchNewSession();
-            } else if(command.equals(TOGGLE_REF_LINE_CMD)){
-                showRefLine = !showRefLine;
-                repaint();
-            }  
-	}
-	
-	public void mouseReleased(MouseEvent event) {
-	    maybeShowPopup(event);
-	}
-	
-	private void maybeShowPopup(MouseEvent e) {
-	    if (!e.isPopupTrigger() || getCluster() == null || getCluster().length == 0) {
-		return;
-	    }
-	    popup.show(e.getComponent(), e.getX(), e.getY());
 	}
     }
     

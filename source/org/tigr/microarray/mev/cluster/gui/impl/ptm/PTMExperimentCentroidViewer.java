@@ -38,7 +38,6 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 public class PTMExperimentCentroidViewer extends ExperimentClusterCentroidViewer {
     
    
-    private JPopupMenu popup;
     private Vector templateVector;
     private int numberOfGenes;
     private String[] auxTitles;
@@ -94,7 +93,7 @@ public class PTMExperimentCentroidViewer extends ExperimentClusterCentroidViewer
     /**
      * Saves all clusters.
      */
-    private void onSaveClusters() {
+    protected void onSaveClusters() {
 	Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
 	try {
 	    ExperimentUtil.saveAllExperimentClustersWithAux(frame, getExperiment(), getData(), getClusters(), auxTitles, auxData);
@@ -126,13 +125,6 @@ public class PTMExperimentCentroidViewer extends ExperimentClusterCentroidViewer
 	if (newColor != null) {
 	    setClusterColor(newColor);
 	}
-    }
-    
-    /**
-     * Removes a public color.
-     */
-    private void onSetDefaultColor() {
-	setClusterColor(null);
     }
     
     /**

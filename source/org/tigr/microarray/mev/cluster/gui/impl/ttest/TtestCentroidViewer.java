@@ -12,22 +12,15 @@ All rights reserved.
 
 package org.tigr.microarray.mev.cluster.gui.impl.ttest;
 
-import java.awt.Color;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.beans.Expression;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.Vector;
 
-import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
 
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
@@ -38,8 +31,6 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
 
 public class TtestCentroidViewer extends CentroidViewer {
     
-    private JPopupMenu popup;
-
     private Vector rawPValues, adjPValues, tValues, dfValues, meansA, meansB, sdA, sdB, oneClassMeans, oneClassSDs;
     private int tTestDesign;
     /**
@@ -48,8 +39,6 @@ public class TtestCentroidViewer extends CentroidViewer {
      */
     public TtestCentroidViewer(Experiment experiment, int[][] clusters, int tTestDesign, Vector oneClassMeans, Vector oneClassSDs, Vector meansA, Vector meansB, Vector sdA, Vector sdB, Vector rawPValues, Vector adjPValues, Vector tValues, Vector dfValues) {
         super(experiment, clusters);
-        Listener listener = new Listener();
-        this.popup = createJPopupMenu(listener);
         this.rawPValues = rawPValues;
         this.adjPValues = adjPValues;
         this.tValues = tValues;
@@ -61,7 +50,6 @@ public class TtestCentroidViewer extends CentroidViewer {
         this.oneClassSDs = oneClassSDs;
         this.sdA = sdA; 
         this.sdB =sdB;
-        getContentComponent().addMouseListener(listener);
     }
 
     /**
@@ -70,8 +58,6 @@ public class TtestCentroidViewer extends CentroidViewer {
     public TtestCentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes,
     		 Integer tTestDesign, Vector oneClassMeans, Vector oneClassSDs, Vector meansA, Vector meansB, Vector sdA, Vector sdB, Vector rawPValues, Vector adjPValues, Vector tValues, Vector dfValues) {
     	super(e, clusters, variances, means, codes);
-        Listener listener = new Listener();
-        this.popup = createJPopupMenu(listener);
         this.rawPValues = rawPValues;
         this.adjPValues = adjPValues;
         this.tValues = tValues;
@@ -83,7 +69,6 @@ public class TtestCentroidViewer extends CentroidViewer {
         this.oneClassSDs = oneClassSDs;
         this.sdA = sdA; 
         this.sdB =sdB;
-        getContentComponent().addMouseListener(listener);
      }
  
     public Expression getExpression(){
@@ -93,19 +78,9 @@ public class TtestCentroidViewer extends CentroidViewer {
     }
     
     /**
-     * Creates a popup menu.
-     */
-    private JPopupMenu createJPopupMenu(Listener listener) {
-        JPopupMenu popup = new JPopupMenu();
-        addMenuItems(popup, listener);
-        return popup;
-    }
-    
-    
-    /**
      * Saves all clusters.
      */
-    private void onSaveClusters() {
+    protected void onSaveClusters() {
         Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
         try {
             saveExperiment(frame, getExperiment(), getData(), getClusters());
@@ -118,7 +93,7 @@ public class TtestCentroidViewer extends CentroidViewer {
     /**
      * Save the viewer cluster.
      */
-    private void onSaveCluster() {
+    protected void onSaveCluster() {
         Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
         try {
             saveExperiment(frame, getExperiment(), getData(), getCluster());
@@ -126,24 +101,6 @@ public class TtestCentroidViewer extends CentroidViewer {
             JOptionPane.showMessageDialog(frame, "Can not save cluster!", e.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
-    }
-    
-    /**
-     * Sets a public color.
-     */
-    private void onSetColor() {
-        Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
-        Color newColor = JColorChooser.showDialog(frame, "Choose color", DEF_CLUSTER_COLOR);
-        if (newColor != null) {
-            setClusterColor(newColor);
-        }
-    }
-    
-    /**
-     * Removes a public color.
-     */
-    private void onSetDefaultColor() {
-        setClusterColor(null);
     }
     
     /**
@@ -259,56 +216,6 @@ public class TtestCentroidViewer extends CentroidViewer {
             file = fc.getSelectedFile();
         }
         return file;
-    }
-    
-    /**
-     * The class to listen to mouse and action events.
-     */
-    private class Listener extends MouseAdapter implements ActionListener {
-        
-        public void actionPerformed(ActionEvent e) {
-            String command = e.getActionCommand();
-            if (command.equals(SAVE_CLUSTER_CMD)) {
-                onSaveCluster();
-            } else if (command.equals(SAVE_ALL_CLUSTERS_CMD)) {
-                onSaveClusters();
-            } else if (command.equals(SET_DEF_COLOR_CMD)) {
-                onSetDefaultColor();
-            } else if(command.equals(SET_Y_TO_EXPERIMENT_MAX_CMD)){
-                yRangeOption = CentroidViewer.USE_EXPERIMENT_MAX;
-                setClusterMaxMenuItem.setEnabled(true);
-                setOverallMaxMenuItem.setEnabled(false);
-                repaint();
-            } else if(command.equals(SET_Y_TO_CLUSTER_MAX_CMD)){
-                yRangeOption = CentroidViewer.USE_CLUSTER_MAX;
-                setClusterMaxMenuItem.setEnabled(false);
-                setOverallMaxMenuItem.setEnabled(true);
-                repaint();
-            } else if (command.equals(STORE_CLUSTER_CMD)) {
-		storeCluster();
-	    } else if(command.equals(LAUNCH_NEW_SESSION_CMD)){
-                launchNewSession();
-            } else if(command.equals(TOGGLE_REF_LINE_CMD)){
-                showRefLine = !showRefLine;
-                repaint();
-            }      
-        }
-        
-        public void mouseReleased(MouseEvent event) {
-            maybeShowPopup(event);
-        }
-        
-        public void mousePressed(MouseEvent event) {
-            maybeShowPopup(event);
-        }
-        
-        
-        private void maybeShowPopup(MouseEvent e) {
-            if (!e.isPopupTrigger() || getCluster() == null || getCluster().length == 0) {
-                return;
-            }
-            popup.show(e.getComponent(), e.getX(), e.getY());
-        }
     }
     
 }

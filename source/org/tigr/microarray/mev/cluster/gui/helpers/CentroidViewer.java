@@ -13,16 +13,22 @@ package org.tigr.microarray.mev.cluster.gui.helpers;
 
 import java.awt.Font;
 import java.awt.Color;
+import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.FontMetrics;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.beans.Expression;
 
+import javax.swing.JColorChooser;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JComponent;
@@ -53,6 +59,8 @@ public class CentroidViewer extends JPanel implements IViewer {
     protected static final String SET_Y_TO_CLUSTER_MAX_CMD = "set-y-to-cluster-max-cmd";
     protected static final String LAUNCH_NEW_SESSION_CMD = "launch-new-session-cmd";   
     protected static final String TOGGLE_REF_LINE_CMD = "toggle-ref-line-cmd";   
+    public static final String BROADCAST_MATRIX_GAGGLE_CMD = "broadcast-matrix-to-gaggle";
+    public static final String BROADCAST_NAMELIST_GAGGLE_CMD = "broadcast-namelist-to-gaggle";
         
     protected Color centroidColor = Color.magenta;
     
@@ -92,6 +100,7 @@ public class CentroidViewer extends JPanel implements IViewer {
     protected int currExpRefLine;
     protected boolean showRefLine = false;
     private int exptID = 0;
+	protected JPopupMenu popup;
     
     public CentroidViewer() { }
     
@@ -118,6 +127,10 @@ public class CentroidViewer extends JPanel implements IViewer {
         this.maxExperimentValue = experiment.getMaxAbsValue();
         this.yRangeOption = CentroidViewer.USE_EXPERIMENT_MAX;
         this.addMouseMotionListener(new GraphListener()); 
+        
+    	PopupListener listener = new PopupListener();
+    	this.popup = createJPopupMenu(listener);
+    	getContentComponent().addMouseListener(listener);
     }
     //TODO EH testing
     public Expression getExpression(){
@@ -155,6 +168,10 @@ public class CentroidViewer extends JPanel implements IViewer {
         this.maxExperimentValue = experiment.getMaxAbsValue();
         this.yRangeOption = CentroidViewer.USE_EXPERIMENT_MAX;
         this.addMouseMotionListener(new GraphListener());        
+
+    	PopupListener listener = new PopupListener();
+    	this.popup = createJPopupMenu(listener);
+    	getContentComponent().addMouseListener(listener);
     }
     
     //EH begin state-saving additions
@@ -756,11 +773,21 @@ public class CentroidViewer extends JPanel implements IViewer {
         setClusterMaxMenuItem.setActionCommand(SET_Y_TO_CLUSTER_MAX_CMD);
         setClusterMaxMenuItem.addActionListener(listener);
         menu.add(setClusterMaxMenuItem);
-        
-        menu.addSeparator();
 
         menuItem = new JMenuItem("Toggle reference line...");
         menuItem.setActionCommand(TOGGLE_REF_LINE_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        menu.addSeparator();
+        
+        menuItem = new JMenuItem("Broadcast Matrix to Gaggle", GUIFactory.getIcon("gaggle_icon_16.gif"));
+        menuItem.setActionCommand(BROADCAST_MATRIX_GAGGLE_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        menuItem = new JMenuItem("Broadcast Gene List to Gaggle", GUIFactory.getIcon("gaggle_icon_16.gif"));
+        menuItem.setActionCommand(BROADCAST_NAMELIST_GAGGLE_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
         
@@ -787,6 +814,39 @@ public class CentroidViewer extends JPanel implements IViewer {
     }
     
     /**
+	 * Saves all clusters.
+	 */
+	protected void onSaveClusters() {
+		Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
+		try {
+		    ExperimentUtil.saveExperiment(frame, getExperiment(), getData(), getClusters());
+		} catch (Exception e) {
+		    JOptionPane.showMessageDialog(frame, "Can not save clusters!", e.toString(), JOptionPane.ERROR_MESSAGE);
+		    e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Save the viewer cluster.
+	 */
+	protected void onSaveCluster() {
+	Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
+	try {
+	    ExperimentUtil.saveExperiment(frame, getExperiment(), getData(), getCluster());
+	} catch (Exception e) {
+	    JOptionPane.showMessageDialog(frame, "Can not save cluster!", e.toString(), JOptionPane.ERROR_MESSAGE);
+	    e.printStackTrace();
+	}
+	}
+
+	/**
+	 * Removes a public color.
+	 */
+	protected void onSetDefaultColor() {
+	setClusterColor(null);
+	}
+
+	/**
      * Handles mouse event in viewer
      */
     public class GraphListener extends java.awt.event.MouseAdapter implements java.awt.event.MouseMotionListener{
@@ -818,4 +878,97 @@ public class CentroidViewer extends JPanel implements IViewer {
             repaint();        
         }
     } 
+    /**
+     * Creates a popup menu.
+     */
+    protected JPopupMenu createJPopupMenu(PopupListener listener) {
+		JPopupMenu popup = new JPopupMenu();
+		addMenuItems(popup, listener);
+		return popup;
+    }
+    
+    
+    /**
+	 * Sets a public color.
+	 */
+	private void onSetColor() {
+	    Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
+	    Color newColor = JColorChooser.showDialog(frame, "Choose color", DEF_CLUSTER_COLOR);
+	    if (newColor != null) {
+	        setClusterColor(newColor);
+	    }
+	}
+	/**
+	 * Broadcasts the current cluster's expression values to the Gaggle network.
+	 *
+	 */
+    public void broadcastClusterGaggle() {
+    	int[] temp = getCluster();
+    	Experiment e = getExperiment();
+    	if (temp == null)
+    		System.out.println("getCluster returns null");
+    	if(e == null)
+    		System.out.println("getExperiment returns null");
+    	if(framework == null)
+    		System.out.println(this.toString() + ": framework is null");
+    	framework.broadcastGeneCluster(getExperiment(), getCluster());
+	}
+    public void broadcastNamelistGaggle() {
+    	framework.broadcastNamelist(getExperiment(), getCluster());
+    }
+
+	/**
+     * The class to listen to mouse and action events.
+     */
+    public class PopupListener extends MouseAdapter implements ActionListener {
+	
+	public void actionPerformed(ActionEvent e) {
+	    String command = e.getActionCommand();
+	    if (command.equals(SAVE_CLUSTER_CMD)) {
+		onSaveCluster();
+	    } else if (command.equals(SAVE_ALL_CLUSTERS_CMD)) {
+		onSaveClusters();
+	    } else if (command.equals(STORE_CLUSTER_CMD)) {
+		storeCluster();
+	    } else if (command.equals(SET_DEF_COLOR_CMD)) {
+		onSetDefaultColor();
+	    } else if(command.equals(SET_Y_TO_EXPERIMENT_MAX_CMD)){
+                yRangeOption = CentroidViewer.USE_EXPERIMENT_MAX;
+                setClusterMaxMenuItem.setEnabled(true);
+                setOverallMaxMenuItem.setEnabled(false);
+                repaint();
+        } else if(command.equals(SET_Y_TO_CLUSTER_MAX_CMD)){
+                yRangeOption = CentroidViewer.USE_CLUSTER_MAX;
+                setClusterMaxMenuItem.setEnabled(false);
+                setOverallMaxMenuItem.setEnabled(true);
+                repaint();
+        } else if(command.equals(LAUNCH_NEW_SESSION_CMD)){
+                launchNewSession();
+        } else if(command.equals(TOGGLE_REF_LINE_CMD)){
+                showRefLine = !showRefLine;
+                repaint();
+	    } else if (command.equals(BROADCAST_MATRIX_GAGGLE_CMD)) {
+	        broadcastClusterGaggle();
+	    } else if (command.equals(BROADCAST_NAMELIST_GAGGLE_CMD)) {
+	        broadcastNamelistGaggle();
+        }
+
+
+	}
+	
+	public void mouseReleased(MouseEvent event) {
+	    maybeShowPopup(event);
+	}
+	
+	public void mousePressed(MouseEvent event) {
+	    maybeShowPopup(event);
+	}
+	
+	private void maybeShowPopup(MouseEvent e) {
+	    if (!e.isPopupTrigger() || getCluster() == null || getCluster().length == 0) {
+		return;
+	    }
+	    popup.show(e.getComponent(), e.getX(), e.getY());
+	}
+    }
 }

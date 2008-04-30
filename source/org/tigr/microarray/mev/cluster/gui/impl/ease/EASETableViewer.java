@@ -41,13 +41,20 @@ import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.TableViewer;
+import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.util.BrowserLauncher;
 
 /** Displays ease results
  */
 public class EASETableViewer extends TableViewer implements Serializable {
     
-    protected DefaultMutableTreeNode easeRoot;
+    private static final String LAUNCH_BROWSER_COMMAND = "launch-browser-command";
+	private static final String SAVE_EASE_TABLE_COMMAND = "save-ease-table-command";
+	private static final String LAUNCH_EXPRESSION_GRAPH_COMMAND = "launch-expression-graph-command";
+	protected static final String LAUNCH_CENTROID_GRAPH_COMMAND = "launch-centroid-graph-command";
+	protected static final String LAUNCH_EXPRESSION_IMAGE_COMMAND = "launch-expression-image-command";
+	protected static final String STORE_CLUSTER_COMMAND = "store-cluster-command";
+	protected DefaultMutableTreeNode easeRoot;
     protected JPopupMenu menu;
     
     protected Experiment experiment;
@@ -114,24 +121,24 @@ public class EASETableViewer extends TableViewer implements Serializable {
         
         
         item = new JMenuItem("Store Selection as Cluster");
-        item.setActionCommand("store-cluster-command");
+        item.setActionCommand(STORE_CLUSTER_COMMAND);
         item.addActionListener(listener);
         menu.add(item);
         
         JMenu launchMenu = new JMenu("Open Viewer");
         
         item = new JMenuItem("Expression Image");
-        item.setActionCommand("launch-expression-image-command");
+        item.setActionCommand(LAUNCH_EXPRESSION_IMAGE_COMMAND);
         item.addActionListener(listener);
         launchMenu.add(item);
         
         item = new JMenuItem("Centroid Graph");
-        item.setActionCommand("launch-centroid-graph-command");
+        item.setActionCommand(LAUNCH_CENTROID_GRAPH_COMMAND);
         item.addActionListener(listener);
         launchMenu.add(item);
         
         item = new JMenuItem("Expression Graph");
-        item.setActionCommand("launch-expression-graph-command");
+        item.setActionCommand(LAUNCH_EXPRESSION_GRAPH_COMMAND);
         item.addActionListener(listener);
         launchMenu.add(item);
         
@@ -140,16 +147,28 @@ public class EASETableViewer extends TableViewer implements Serializable {
         menu.addSeparator();
         
         item = new JMenuItem("Save EASE Table");
-        item.setActionCommand("save-ease-table-command");
+        item.setActionCommand(SAVE_EASE_TABLE_COMMAND);
         item.addActionListener(listener);
         menu.add(item);
         
         
         menu.addSeparator();
         
+        item = new JMenuItem("Broadcast Selection as Matrix to Gaggle", GUIFactory.getIcon("gaggle_icon_16.gif"));
+        item.setActionCommand(BROADCAST_MATRIX_GAGGLE_CMD);
+        item.addActionListener(listener);
+        menu.add(item);
+        
+        item = new JMenuItem("Broadcast Selection as Gene List to Gaggle", GUIFactory.getIcon("gaggle_icon_16.gif"));
+        item.setActionCommand(BROADCAST_NAMELIST_GAGGLE_CMD);
+        item.addActionListener(listener);
+        menu.add(item);
+        
+        menu.addSeparator();
+        
         if(this.haveAccessionNumbers){
             this.launchMenuItem = new JMenuItem("Open Web Page");
-            this.launchMenuItem.setActionCommand("launch-browser-command");
+            this.launchMenuItem.setActionCommand(LAUNCH_BROWSER_COMMAND);
             this.launchMenuItem.addActionListener(listener);
             menu.add(this.launchMenuItem);
         }
@@ -319,18 +338,22 @@ public class EASETableViewer extends TableViewer implements Serializable {
         
         public void actionPerformed(ActionEvent ae) {
             String command = ae.getActionCommand();
-            if(command.equals("store-cluster-command")){
+            if(command.equals(STORE_CLUSTER_COMMAND)){
                 onStoreCluster();
-            } else if(command.equals("launch-expression-image-command")){
+            } else if(command.equals(LAUNCH_EXPRESSION_IMAGE_COMMAND)){
                 onOpenViewer("expression image");
-            } else if(command.equals("launch-centroid-graph-command")){
+            } else if(command.equals(LAUNCH_CENTROID_GRAPH_COMMAND)){
                 onOpenViewer("centroid graph");
-            } else if(command.equals("launch-expression-graph-command")){
+            } else if(command.equals(LAUNCH_EXPRESSION_GRAPH_COMMAND)){
                 onOpenViewer("expression graph");
-            } else if(command.equals("launch-browser-command")){
+            } else if(command.equals(LAUNCH_BROWSER_COMMAND)){
                 onOpenBrowser();
-            } else if(command.equals("save-ease-table-command")){
+            } else if(command.equals(SAVE_EASE_TABLE_COMMAND)){
                 onSaveEaseTable();
+            } else if (command.equals(BROADCAST_MATRIX_GAGGLE_CMD)) {
+                broadcastClusterGaggle();
+            } else if (command.equals(BROADCAST_NAMELIST_GAGGLE_CMD)) {
+                broadcastNamelistGaggle();
             }
         }
         
@@ -352,6 +375,11 @@ public class EASETableViewer extends TableViewer implements Serializable {
         
     }
   
-    
+    protected void broadcastClusterGaggle() {
+    	framework.broadcastGeneCluster(framework.getData().getExperiment(), getGeneIndices(table.getSelectedRows()));
+	}
+    protected void broadcastNamelistGaggle() {
+    	framework.broadcastNamelist(framework.getData().getExperiment(), getGeneIndices(table.getSelectedRows()));
+    }
     
 }

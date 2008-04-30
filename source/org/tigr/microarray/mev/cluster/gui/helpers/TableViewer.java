@@ -49,6 +49,9 @@ import org.tigr.microarray.mev.cluster.gui.IViewer;
 
 
 public class TableViewer extends JPanel implements IViewer {
+
+    protected static final String BROADCAST_MATRIX_GAGGLE_CMD = "broadcast-matrix-to-gaggle";
+    protected static final String BROADCAST_NAMELIST_GAGGLE_CMD = "broadcast-namelist-to-gaggle";
     
     protected JTable table;
     protected TableModel model;
@@ -56,7 +59,6 @@ public class TableViewer extends JPanel implements IViewer {
     protected IFramework framework;
     private int exptID = 0;
     
-    //EH
     Object[][] data;
     String[] headerNames;
     
@@ -428,5 +430,5 @@ public class TableViewer extends JPanel implements IViewer {
 	public void setExperimentID(int id) {
 		this.exptID = id;
 	}
-    
+
 }
