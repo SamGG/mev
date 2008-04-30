@@ -45,9 +45,7 @@ public class TtestExperimentViewer extends ExperimentViewer {
      * experiment and clusters.
      */
     public TtestExperimentViewer(Experiment experiment, int[][] clusters, int tTestDesign, Vector oneClassMeans, Vector oneClassSDs, Vector meansA, Vector meansB, Vector sdA, Vector sdB, Vector rawPValues, Vector adjPValues, Vector tValues, Vector dfValues) {
-	super(experiment, clusters);
-	Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
+    	super(experiment, clusters);
         this.tTestDesign = tTestDesign;
         this.oneClassMeans = oneClassMeans;
         this.oneClassSDs = oneClassSDs;        
@@ -59,8 +57,6 @@ public class TtestExperimentViewer extends ExperimentViewer {
         this.meansB = meansB;
         this.sdA = sdA; 
         this.sdB =sdB;        
-	getContentComponent().addMouseListener(listener);
-	getHeaderComponent().addMouseListener(listener);
     }
     /**
      * @inheritDoc
@@ -68,8 +64,6 @@ public class TtestExperimentViewer extends ExperimentViewer {
     public TtestExperimentViewer(Experiment e, int[][] clusters, 
     		Integer tTestDesign, Vector oneClassMeans, Vector oneClassSDs, Vector meansA, Vector meansB, Vector sdA, Vector sdB, Vector rawPValues, Vector adjPValues, Vector tValues, Vector dfValues) {
     	super(e, clusters);
-        Listener listener = new Listener();
-        this.popup = createJPopupMenu(listener);
         this.tTestDesign = tTestDesign.intValue();
         this.oneClassMeans = oneClassMeans;
         this.oneClassSDs = oneClassSDs;        
@@ -80,9 +74,7 @@ public class TtestExperimentViewer extends ExperimentViewer {
         this.meansA = meansA;
         this.meansB = meansB;
         this.sdA = sdA; 
-        this.sdB =sdB;        
-        getContentComponent().addMouseListener(listener);
-        getHeaderComponent().addMouseListener(listener);        
+        this.sdB =sdB;               
      }
          
     public Expression getExpression(){
@@ -221,48 +213,5 @@ public class TtestExperimentViewer extends ExperimentViewer {
             file = fc.getSelectedFile();
         }
         return file;
-    }    
-    
-    /**
-     * The class to listen to mouse and action events.
-     */
-    private class Listener extends MouseAdapter implements ActionListener {
-	
-	public void actionPerformed(ActionEvent e) {
-	    String command = e.getActionCommand();
-	    if (command.equals(SAVE_CLUSTER_CMD)) {
-		onSaveCluster();
-	    } else if (command.equals(SAVE_ALL_CLUSTERS_CMD)) {
-		onSaveClusters();
-	    } else if (command.equals(SET_DEF_COLOR_CMD)) {
-		onSetDefaultColor();
-	    } else if (command.equals(STORE_CLUSTER_CMD)) {
-		storeCluster();
-	    } else if(command.equals(LAUNCH_NEW_SESSION_CMD)){
-                launchNewSession();
-        //EH Gaggle test
-        } else if (command.equals(BROADCAST_MATRIX_GAGGLE_CMD)) {
-            broadcastClusterGaggle();
-        } else if (command.equals(BROADCAST_NAMELIST_GAGGLE_CMD)) {
-            broadcastNamelistGaggle();
-            }
-	}
-	
-	public void mouseReleased(MouseEvent event) {
-	    maybeShowPopup(event);
-	}
-	
-	public void mousePressed(MouseEvent event) {
-	    maybeShowPopup(event);
-	}
-	
-	
-	private void maybeShowPopup(MouseEvent e) {
-	    
-	    if (!e.isPopupTrigger() || getCluster() == null || getCluster().length == 0) {
-		return;
-	    }
-	    popup.show(e.getComponent(), e.getX(), e.getY());
-	}
     }
 }

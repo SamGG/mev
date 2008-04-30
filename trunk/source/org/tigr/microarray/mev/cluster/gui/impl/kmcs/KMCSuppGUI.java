@@ -38,6 +38,7 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
+import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
@@ -572,7 +573,7 @@ public class KMCSuppGUI implements IClusterGUI, IScriptGUI {
         DefaultMutableTreeNode centroidNode = new DefaultMutableTreeNode("Centroid Graphs");
         DefaultMutableTreeNode expressionNode = new DefaultMutableTreeNode("Expression Graphs");
         int i;
-        KMCSuppCentroidViewer centroidViewer;
+        CentroidViewer centroidViewer;
         KMCSuppExperimentCentroidViewer expCentroidViewer;
         
         if(clusterGenes){

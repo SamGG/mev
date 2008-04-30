@@ -48,7 +48,10 @@ import org.tigr.microarray.mev.cluster.NodeValueList;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
+import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.CentroidsViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidsViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
 
@@ -585,7 +588,7 @@ public class KMCGUI implements IClusterGUI, IScriptGUI {
         DefaultMutableTreeNode centroidNode = new DefaultMutableTreeNode("Centroid Graphs");
         DefaultMutableTreeNode expressionNode = new DefaultMutableTreeNode("Expression Graphs");
         
-        KMCCentroidViewer centroidViewer;
+        CentroidViewer centroidViewer;
         ExperimentClusterCentroidViewer expCentroidViewer;
         if(clusterGenes){
             centroidViewer = new KMCCentroidViewer(this.experiment, clusters);
@@ -596,7 +599,7 @@ public class KMCGUI implements IClusterGUI, IScriptGUI {
                 expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+String.valueOf(i+1), centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
             }
             
-            KMCCentroidsViewer centroidsViewer = new KMCCentroidsViewer(this.experiment, clusters);
+            CentroidsViewer centroidsViewer = new KMCCentroidsViewer(this.experiment, clusters);
             centroidsViewer.setMeans(this.means.A);
             centroidsViewer.setVariances(this.variances.A);
             
@@ -613,7 +616,7 @@ public class KMCGUI implements IClusterGUI, IScriptGUI {
                 centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+String.valueOf(i+1), expCentroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
                 expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+String.valueOf(i+1), expCentroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
             }
-            KMCExperimentCentroidsViewer expCentroidsViewer = new KMCExperimentCentroidsViewer(this.experiment, clusters);
+            ExperimentClusterCentroidsViewer expCentroidsViewer = new KMCExperimentCentroidsViewer(this.experiment, clusters);
             expCentroidsViewer.setMeans(this.means.A);
             expCentroidsViewer.setVariances(this.variances.A);
             

@@ -12,22 +12,15 @@ All rights reserved.
 
 package org.tigr.microarray.mev.cluster.gui.impl.owa;
 
-import java.awt.Color;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.beans.Expression;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.Vector;
 
-import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
 
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
@@ -43,7 +36,6 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
  */
 public class OWACentroidViewer extends CentroidViewer {
     
-    private JPopupMenu popup;
     private Vector rawPValues, adjPValues, fValues, dfNumValues, dfDenomValues, ssGroups, ssError;
     private float[][] geneGroupMeans, geneGroupSDs;
     
@@ -69,7 +61,7 @@ public class OWACentroidViewer extends CentroidViewer {
 				new Object[]{parentExpressionArgs[0], parentExpressionArgs[1], parentExpressionArgs[2], parentExpressionArgs[3], parentExpressionArgs[4], geneGroupMeans, geneGroupSDs, rawPValues, adjPValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues});
 	}
     public void initialize(float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
-        Listener listener = new Listener();
+        PopupListener listener = new PopupListener();
         this.popup = createJPopupMenu(listener);
         this.rawPValues = rawPValues;
         this.adjPValues = adjPValues;
@@ -84,18 +76,9 @@ public class OWACentroidViewer extends CentroidViewer {
     }
     
     /**
-     * Creates a popup menu.
-     */
-    private JPopupMenu createJPopupMenu(Listener listener) {
-        JPopupMenu popup = new JPopupMenu();
-        addMenuItems(popup, listener);
-        return popup;
-    }    
-    
-    /**
      * Saves all clusters.
      */
-    private void onSaveClusters() {
+    protected void onSaveClusters() {
         Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
         try {
             saveExperiment(frame, getExperiment(), getData(), getClusters());
@@ -108,7 +91,7 @@ public class OWACentroidViewer extends CentroidViewer {
     /**
      * Save the viewer cluster.
      */
-    private void onSaveCluster() {
+    protected void onSaveCluster() {
         Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
         try {
             saveExperiment(frame, getExperiment(), getData(), getCluster());
@@ -116,24 +99,6 @@ public class OWACentroidViewer extends CentroidViewer {
             JOptionPane.showMessageDialog(frame, "Can not save cluster!", e.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
-    }
-    
-    /**
-     * Sets a public color.
-     */
-    private void onSetColor() {
-        Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
-        Color newColor = JColorChooser.showDialog(frame, "Choose color", DEF_CLUSTER_COLOR);
-        if (newColor != null) {
-            setClusterColor(newColor);
-        }
-    }
-    
-    /**
-     * Removes a public color.
-     */
-    private void onSetDefaultColor() {
-        setClusterColor(null);
     }
     
     /**
@@ -246,55 +211,5 @@ public class OWACentroidViewer extends CentroidViewer {
             file = fc.getSelectedFile();
         }
         return file;
-    }
-    
-    /**
-     * The class to listen to mouse and action events.
-     */
-    private class Listener extends MouseAdapter implements ActionListener {
-        
-        public void actionPerformed(ActionEvent e) {
-            String command = e.getActionCommand();
-            if (command.equals(SAVE_CLUSTER_CMD)) {
-                onSaveCluster();
-            } else if (command.equals(SAVE_ALL_CLUSTERS_CMD)) {
-                onSaveClusters();
-            } else if (command.equals(SET_DEF_COLOR_CMD)) {
-                onSetDefaultColor();
-            } else if(command.equals(SET_Y_TO_EXPERIMENT_MAX_CMD)){
-                yRangeOption = CentroidViewer.USE_EXPERIMENT_MAX;
-                setClusterMaxMenuItem.setEnabled(true);
-                setOverallMaxMenuItem.setEnabled(false);
-                repaint();
-            } else if(command.equals(SET_Y_TO_CLUSTER_MAX_CMD)){
-                yRangeOption = CentroidViewer.USE_CLUSTER_MAX;
-                setClusterMaxMenuItem.setEnabled(false);
-                setOverallMaxMenuItem.setEnabled(true);
-                repaint();
-            } else if (command.equals(STORE_CLUSTER_CMD)) {
-		storeCluster();
-	    } else if(command.equals(LAUNCH_NEW_SESSION_CMD)){
-                launchNewSession();
-            } else if(command.equals(TOGGLE_REF_LINE_CMD)){
-                showRefLine = !showRefLine;
-                repaint();
-            }   
-        }
-        
-        public void mouseReleased(MouseEvent event) {
-            maybeShowPopup(event);
-        }
-        
-        public void mousePressed(MouseEvent event) {
-            maybeShowPopup(event);
-        }
-        
-        
-        private void maybeShowPopup(MouseEvent e) {
-            if (!e.isPopupTrigger() || getCluster() == null || getCluster().length == 0) {
-                return;
-            }
-            popup.show(e.getComponent(), e.getX(), e.getY());
-        }
     }    
 }

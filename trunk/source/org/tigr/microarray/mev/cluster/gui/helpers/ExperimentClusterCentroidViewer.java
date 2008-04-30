@@ -14,16 +14,21 @@ package org.tigr.microarray.mev.cluster.gui.helpers;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.beans.Expression;
 
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
@@ -86,6 +91,7 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
     
     private boolean useDoubleGradient = true;
     private int exptID = 0;
+	protected JPopupMenu popup;
     
     /**
      * This constructor is used by XMLEncoder/Decoder and IViewerPersistenceDelegate
@@ -104,6 +110,11 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
         this.codes = codes;
         this.maxExperimentValue = experiment.getMaxAbsValue();
         this.yRangeOption = ExperimentClusterCentroidViewer.USE_EXPERIMENT_MAX;
+
+        PopupListener listener = new PopupListener();
+        this.popup = createJPopupMenu(listener);
+        getContentComponent().addMouseListener(listener);
+        
     }
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new",
@@ -129,6 +140,10 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
         setFont(new Font("monospaced", Font.BOLD, 10));
         this.maxExperimentValue = experiment.getMaxAbsValue();
         this.yRangeOption = ExperimentClusterCentroidViewer.USE_EXPERIMENT_MAX;
+        
+        PopupListener listener = new PopupListener();
+        this.popup = createJPopupMenu(listener);
+        getContentComponent().addMouseListener(listener);
     }
 
     /**
@@ -757,6 +772,99 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
 	public void setExperimentID(int id) {
 		this.exptID = id;
 	}
-    
+	
+
+    /**
+	 * Saves all clusters.
+	 */
+	protected void onSaveClusters() {
+	    Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
+	    try {
+	        ExperimentUtil.saveAllExperimentClusters(frame, getExperiment(), getData(), getClusters());
+	    } catch (Exception e) {
+	        JOptionPane.showMessageDialog(frame, "Can not save clusters!", e.toString(), JOptionPane.ERROR_MESSAGE);
+	        e.printStackTrace();
+	    }
+	}
+
+
+	/**
+	 * Removes a public color.
+	 */
+	public void onSetDefaultColor() {
+	    setClusterColor(null);
+	}
+
+
+	/**
+	 * Creates a popup menu.
+	 */
+	protected JPopupMenu createJPopupMenu(PopupListener listener) {
+	    JPopupMenu popup = new JPopupMenu();
+	    addMenuItems(popup, listener);
+	    return popup;
+	}
+	/**
+	 * Save the viewer cluster.
+	 */
+	private void onSaveCluster() {
+	    Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
+	    try {
+	        ExperimentUtil.saveExperimentCluster(frame, getExperiment(), getData(), getCluster());
+	    } catch (Exception e) {
+	        JOptionPane.showMessageDialog(frame, "Can not save cluster!", e.toString(), JOptionPane.ERROR_MESSAGE);
+	        e.printStackTrace();
+	    }
+	}
+
+
+	/**
+     * The class to listen to mouse and action events.
+     */
+    protected class PopupListener extends MouseAdapter implements ActionListener {
+        public PopupListener() {
+        	super();
+        }
+        public void actionPerformed(ActionEvent e) {
+            String command = e.getActionCommand();
+            if (command.equals(SAVE_CLUSTER_CMD)) {
+                onSaveCluster();
+            } else if (command.equals(SAVE_ALL_CLUSTERS_CMD)) {
+                onSaveClusters();
+            } else if (command.equals(STORE_CLUSTER_CMD)) {
+                storeCluster();
+            } else if (command.equals(SET_DEF_COLOR_CMD)) {
+                onSetDefaultColor();
+            } else if(command.equals(SET_Y_TO_EXPERIMENT_MAX_CMD)){
+                yRangeOption = ExperimentClusterCentroidViewer.USE_EXPERIMENT_MAX;
+                setClusterMaxMenuItem.setEnabled(true);
+                setOverallMaxMenuItem.setEnabled(false);
+                repaint();
+            } else if(command.equals(SET_Y_TO_CLUSTER_MAX_CMD)){
+                yRangeOption = ExperimentClusterCentroidViewer.USE_CLUSTER_MAX;
+                setClusterMaxMenuItem.setEnabled(false);
+                setOverallMaxMenuItem.setEnabled(true);
+                repaint();
+            } else if(command.equals(LAUNCH_NEW_SESSION_CMD)){
+                launchNewSession();
+            }
+            
+        }
+        
+        public void mouseReleased(MouseEvent event) {
+            maybeShowPopup(event);
+        }
+        
+        public void mousePressed(MouseEvent event) {
+            maybeShowPopup(event);
+        }
+        
+        private void maybeShowPopup(MouseEvent e) {
+            if (!e.isPopupTrigger() || getCluster() == null || getCluster().length == 0) {
+                return;
+            }
+            popup.show(e.getComponent(), e.getX(), e.getY());
+        }
+    }
 }
 

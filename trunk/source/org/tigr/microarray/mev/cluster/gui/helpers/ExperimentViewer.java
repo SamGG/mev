@@ -29,14 +29,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.beans.Expression;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.io.PrintWriter;
-import java.util.Vector;
 
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
@@ -46,6 +39,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
+import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
@@ -54,12 +48,26 @@ import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-import org.tigr.microarray.mev.annotation.MevAnnotation;
 
 /**
- * This class is used to render an experiment values.
+ * This class is used to render a heatmap of experiment values. 
+ * 
+ * Subclasses of this class in which adding to the right-click context menu would 
+ * be useful will need to make the following modifications: 
+ * 
+ * Subclass the inner class PopupListener. Override its method public void actionPerformed(ActionEvent e).
+ * Call super(e) and then add additional command handlers. 
+ * 
+ * Override the method protected void addMenuItems(JPopupMenu menu, ActionListener listener). Call 
+ * the overridden method first, then add additional menu items afterwards. They will be appended to the 
+ * bottom of the menu.
+ * 
+ * Add the following code block to subclass constructors: 
+ *         PopupListener popListener = new PopupListener();
+ *         this.popup = createJPopupMenu(popListener);
+ *         getContentComponent().addMouseListener(popListener);
+ *         getHeaderComponent().addMouseListener(popListener);
  *
- * @version 1.0
  * @author Aleksey D.Rezantsev
  */
 public class ExperimentViewer extends JPanel implements IViewer {
@@ -73,8 +81,6 @@ public class ExperimentViewer extends JPanel implements IViewer {
     protected static final String SAVE_CLUSTER_CMD = "save-cluster-cmd";
     protected static final String SAVE_ALL_CLUSTERS_CMD = "save-all-clusters-cmd";
     protected static final String LAUNCH_NEW_SESSION_CMD = "launch-new-session-cmd";
-    
-    //EH Gaggle testing
     public static final String BROADCAST_MATRIX_GAGGLE_CMD = "broadcast-matrix-to-gaggle";
     public static final String BROADCAST_NAMELIST_GAGGLE_CMD = "broadcast-namelist-to-gaggle";
     
@@ -138,6 +144,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
      */
     public ExperimentViewer(Experiment experiment, int[][] clusters) {
         this(experiment, clusters, true);
+        
     }
     
     /**
@@ -1165,8 +1172,8 @@ public class ExperimentViewer extends JPanel implements IViewer {
         menuItem.addActionListener(listener);
         menu.add(menuItem);
         
-        //TODO
-        //EH Gaggle testing
+        menu.addSeparator();
+        
         menuItem = new JMenuItem("Broadcast Matrix to Gaggle", GUIFactory.getIcon("gaggle_icon_16.gif"));
         menuItem.setActionCommand(BROADCAST_MATRIX_GAGGLE_CMD);
         menuItem.addActionListener(listener);
@@ -1176,7 +1183,6 @@ public class ExperimentViewer extends JPanel implements IViewer {
         menuItem.setActionCommand(BROADCAST_NAMELIST_GAGGLE_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
-        //end Gaggle testing
     }
     
     
@@ -1338,7 +1344,10 @@ public class ExperimentViewer extends JPanel implements IViewer {
 		
 	}
 
-	//EH Gaggle test
+	/**
+	 * Broadcasts the current cluster's expression values to the Gaggle network.
+	 *
+	 */
     public void broadcastClusterGaggle() {
     	int[] temp = getCluster();
     	Experiment e = getExperiment();
@@ -1348,7 +1357,6 @@ public class ExperimentViewer extends JPanel implements IViewer {
     		System.out.println("getExperiment returns null");
     	if(framework == null)
     		System.out.println(this.toString() + ": framework is null");
-//    	System.out.println("cluster is size " + getCluster().length);
     	framework.broadcastGeneCluster(getExperiment(), getCluster());
 	}
     public void broadcastNamelistGaggle() {
@@ -1424,7 +1432,6 @@ public class ExperimentViewer extends JPanel implements IViewer {
 	            onSetDefaultColor();
 	        } else if(command.equals(LAUNCH_NEW_SESSION_CMD)){
 	            launchNewSession();
-	        //EH Gaggle test
 	        } else if (command.equals(BROADCAST_MATRIX_GAGGLE_CMD)) {
 	            broadcastClusterGaggle();
 	        } else if (command.equals(BROADCAST_NAMELIST_GAGGLE_CMD)) {

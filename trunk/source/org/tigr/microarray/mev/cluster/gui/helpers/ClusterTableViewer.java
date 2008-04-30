@@ -51,8 +51,6 @@ public class ClusterTableViewer implements IViewer {
     protected static final String SELECT_ALL_CMD = "select-all-cmd";
     protected static final String SORT_ORIG_ORDER_CMD = "sort-orig-order-cmd";
     protected static final String LINK_TO_URL_CMD = "link-to-url-cmd";    
-    
-    //EH Gaggle testing
     protected static final String BROADCAST_MATRIX_GAGGLE_CMD = "broadcast-matrix-to-gaggle";
     protected static final String BROADCAST_NAMELIST_GAGGLE_CMD = "broadcast-namelist-to-gaggle";
     
@@ -974,7 +972,6 @@ public class ClusterTableViewer implements IViewer {
                 sortInOrigOrder();
             } else if (command.equals(LINK_TO_URL_CMD)) {
                 linkToURL2();
-            //EH Gaggle test
             } else if (command.equals(BROADCAST_MATRIX_GAGGLE_CMD)) {
                 broadcastClusterGaggle();
             } else if (command.equals(BROADCAST_NAMELIST_GAGGLE_CMD)) {
@@ -1118,7 +1115,6 @@ public class ClusterTableViewer implements IViewer {
     public int getViewerType() {
         return Cluster.GENE_CLUSTER;
     }    
-	//EH Gaggle test
     protected void broadcastClusterGaggle() {
     	framework.broadcastGeneCluster(getExperiment(), getCluster());
 	}

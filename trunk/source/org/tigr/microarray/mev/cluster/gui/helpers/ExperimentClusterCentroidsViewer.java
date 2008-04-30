@@ -13,27 +13,44 @@ package org.tigr.microarray.mev.cluster.gui.helpers;
 
 import java.awt.Font;
 import java.awt.Color;
+import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.beans.Expression;
 
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JComponent;
+import javax.swing.JPopupMenu;
 
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
+import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
 
 public class ExperimentClusterCentroidsViewer extends JPanel implements IViewer {
-    private int exptID = 0;
+
+	protected static final String SAVE_ALL_CLUSTERS_CMD = "save-all-clusters-cmd";
+	protected static final String SET_Y_TO_EXPERIMENT_MAX_CMD = "set-y-to-exp-max-cmd";
+	protected static final String SET_Y_TO_CLUSTER_MAX_CMD = "set-y-to-cluster-max-cmd";
+
+	private int exptID = 0;
     
     /** Wrapped experiment cluster centroid viewer */
     protected ExperimentClusterCentroidViewer centroidViewer;
+	protected JPopupMenu popup;
+	protected JMenuItem setOverallMaxMenuItem;
+	protected JMenuItem setClusterMaxMenuItem;
     
     /**
      * Constructs a <code>ExperimentClusterCentroidsViewer</code> for specified experiment
@@ -44,6 +61,11 @@ public class ExperimentClusterCentroidsViewer extends JPanel implements IViewer 
         this.exptID = experiment.getId();
         setBackground(Color.white);
         setFont(new Font("monospaced", Font.BOLD, 10));
+        
+
+        PopupListener listener = new PopupListener();
+        this.popup = createJPopupMenu(listener);
+        getContentComponent().addMouseListener(listener);
     }
     
     /**
@@ -54,6 +76,11 @@ public class ExperimentClusterCentroidsViewer extends JPanel implements IViewer 
         this.centroidViewer = cv;
         setBackground(Color.white);
         setFont(new Font("monospaced", Font.BOLD, 10));
+        
+
+        PopupListener listener = new PopupListener();
+        this.popup = createJPopupMenu(listener);
+        getContentComponent().addMouseListener(listener);
     } 
     //EH begin state-saving additions
     public Expression getExpression(){
@@ -233,6 +260,96 @@ public class ExperimentClusterCentroidsViewer extends JPanel implements IViewer 
     public int getViewerType() {
         return org.tigr.microarray.mev.cluster.clusterUtil.Cluster.EXPERIMENT_CLUSTER;
     }
+
+    /**
+	 * Saves all clusters.
+	 */
+	protected void onSaveClusters() {
+	    Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
+	    try {
+	        ExperimentUtil.saveAllExperimentClusters(frame, getExperiment(), getData(), getClusters());
+	    } catch (Exception e) {
+	        JOptionPane.showMessageDialog(frame, "Can not save cluster!", e.toString(), JOptionPane.ERROR_MESSAGE);
+	        e.printStackTrace();
+	    }
+	}
     
+    /**
+     * Creates a popup menu.
+     */
+    protected JPopupMenu createJPopupMenu(PopupListener listener) {
+        JPopupMenu popup = new JPopupMenu();
+        addMenuItems(popup, listener);
+        return popup;
+    }
+    
+    /**
+     * Adds the viewer specific menu items.
+     */
+    protected void addMenuItems(JPopupMenu menu, PopupListener listener) {
+        JMenuItem menuItem;
+        menuItem = new JMenuItem("Save all clusters", GUIFactory.getIcon("save16.gif"));
+        menuItem.setActionCommand(SAVE_ALL_CLUSTERS_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        setOverallMaxMenuItem = new JMenuItem("Set Y to overall max...", GUIFactory.getIcon("Y_range_expand.gif"));
+        setOverallMaxMenuItem.setActionCommand(SET_Y_TO_EXPERIMENT_MAX_CMD);
+        setOverallMaxMenuItem.addActionListener(listener);
+        setOverallMaxMenuItem.setEnabled(false);
+        menu.add(setOverallMaxMenuItem);
+        
+        setClusterMaxMenuItem = new JMenuItem("Set Y to cluster max...", GUIFactory.getIcon("Y_range_expand.gif"));
+        setClusterMaxMenuItem.setActionCommand(SET_Y_TO_CLUSTER_MAX_CMD);
+        setClusterMaxMenuItem.addActionListener(listener);
+        menu.add(setClusterMaxMenuItem);
+    }
+
+	/**
+     * The class to listen to mouse and action events.
+     */
+    public class PopupListener extends MouseAdapter implements ActionListener {
+        
+        public void actionPerformed(ActionEvent e) {
+            String command = e.getActionCommand();
+            if (command.equals(SAVE_ALL_CLUSTERS_CMD)) {
+                onSaveClusters();
+            } else if(command.equals(SET_Y_TO_EXPERIMENT_MAX_CMD)){
+                setAllYRanges(CentroidViewer.USE_EXPERIMENT_MAX);
+                setClusterMaxMenuItem.setEnabled(true);
+                setOverallMaxMenuItem.setEnabled(false);
+                repaint();
+            } else if(command.equals(SET_Y_TO_CLUSTER_MAX_CMD)){
+                setAllYRanges(CentroidViewer.USE_CLUSTER_MAX);
+                setClusterMaxMenuItem.setEnabled(false);
+                setOverallMaxMenuItem.setEnabled(true);
+                repaint();
+            }
+        }
+        
+        private void setAllYRanges(int yRangeOption){
+            int numClusters = getClusters().length;
+            for(int i = 0; i < numClusters; i++){
+                centroidViewer.setClusterIndex(i);
+                centroidViewer.setYRangeOption(yRangeOption);
+            }
+        }
+        
+        public void mouseReleased(MouseEvent event) {
+            maybeShowPopup(event);
+        }
+        
+        public void mousePressed(MouseEvent event) {
+            maybeShowPopup(event);
+        }
+        
+        private void maybeShowPopup(MouseEvent e) {
+            if (!e.isPopupTrigger()) {
+                return;
+            }
+            popup.show(e.getComponent(), e.getX(), e.getY());
+        }
+    }
 }
+
 

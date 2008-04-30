@@ -13,10 +13,6 @@ All rights reserved.
 package org.tigr.microarray.mev.cluster.gui.impl.owa;
 
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.beans.Expression;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -24,9 +20,7 @@ import java.io.PrintWriter;
 import java.util.Vector;
 
 import javax.swing.JFileChooser;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
 
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
@@ -35,7 +29,6 @@ import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidsViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileFilter;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
-import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
 /**
  *
@@ -44,14 +37,6 @@ import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
  */
 public class OWACentroidsViewer extends CentroidsViewer {
 
-    private static final String SAVE_ALL_CLUSTERS_CMD = "save-all-clusters-cmd";
-    private static final String SET_Y_TO_EXPERIMENT_MAX_CMD = "set-y-to-exp-max-cmd";
-    private static final String SET_Y_TO_CLUSTER_MAX_CMD = "set-y-to-cluster-max-cmd";
-    
-    private JPopupMenu popup;
-    private JMenuItem setOverallMaxMenuItem;
-    private JMenuItem setClusterMaxMenuItem;
-    
     private Vector fValues, rawPValues, adjPValues, dfNumValues, dfDenomValues, ssGroups, ssError;
     private float[][] geneGroupMeans, geneGroupSDs;
     
@@ -77,8 +62,6 @@ public class OWACentroidsViewer extends CentroidsViewer {
 	}
 	
 	public void initialize(float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
-        Listener listener = new Listener();
-        this.popup = createJPopupMenu(listener);
         this.rawPValues = rawPValues;
         this.adjPValues = adjPValues;
         this.fValues = fValues;
@@ -87,44 +70,12 @@ public class OWACentroidsViewer extends CentroidsViewer {
         this.ssGroups = ssGroups;
         this.ssError = ssError;
         this.dfNumValues = dfNumValues;
-        this.dfDenomValues = dfDenomValues;
-        getContentComponent().addMouseListener(listener);        
+        this.dfDenomValues = dfDenomValues;       
     }
-    /**
-     * Creates a popup menu.
-     */
-    private JPopupMenu createJPopupMenu(Listener listener) {
-        JPopupMenu popup = new JPopupMenu();
-        addMenuItems(popup, listener);
-        return popup;
-    } 
-    
-    /**
-     * Adds the viewer specific menu items.
-     */
-    private void addMenuItems(JPopupMenu menu, Listener listener) {
-        JMenuItem menuItem;
-        menuItem = new JMenuItem("Save all clusters", GUIFactory.getIcon("save16.gif"));
-        menuItem.setActionCommand(SAVE_ALL_CLUSTERS_CMD);
-        menuItem.addActionListener(listener);
-        menu.add(menuItem);
-        
-        setOverallMaxMenuItem = new JMenuItem("Set Y to overall max...", GUIFactory.getIcon("Y_range_expand.gif"));
-        setOverallMaxMenuItem.setActionCommand(SET_Y_TO_EXPERIMENT_MAX_CMD);
-        setOverallMaxMenuItem.addActionListener(listener);
-        setOverallMaxMenuItem.setEnabled(false);
-        menu.add(setOverallMaxMenuItem);
-        
-        setClusterMaxMenuItem = new JMenuItem("Set Y to cluster max...", GUIFactory.getIcon("Y_range_expand.gif"));
-        setClusterMaxMenuItem.setActionCommand(SET_Y_TO_CLUSTER_MAX_CMD);
-        setClusterMaxMenuItem.addActionListener(listener);
-        menu.add(setClusterMaxMenuItem);
-    }
-    
     /**
      * Saves all clusters.
      */
-    private void onSaveClusters() {
+    protected void onSaveClusters() {
         Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
         try {
             saveExperiment(frame, getExperiment(), getData(), getClusters());
@@ -237,51 +188,5 @@ public class OWACentroidsViewer extends CentroidsViewer {
         return file;
     }
     
-    /**
-     * The class to listen to mouse and action events.
-     */
-    private class Listener extends MouseAdapter implements ActionListener {
-        
-        public void actionPerformed(ActionEvent e) {
-            String command = e.getActionCommand();
-            if (command.equals(SAVE_ALL_CLUSTERS_CMD)) {
-                onSaveClusters();
-            } else if(command.equals(SET_Y_TO_EXPERIMENT_MAX_CMD)){
-                setAllYRanges(CentroidViewer.USE_EXPERIMENT_MAX);
-                setClusterMaxMenuItem.setEnabled(true);
-                setOverallMaxMenuItem.setEnabled(false);
-                repaint();
-            } else if(command.equals(SET_Y_TO_CLUSTER_MAX_CMD)){
-                setAllYRanges(CentroidViewer.USE_CLUSTER_MAX);
-                setClusterMaxMenuItem.setEnabled(false);
-                setOverallMaxMenuItem.setEnabled(true);
-                repaint();
-            }
-        }
-        
-        private void setAllYRanges(int yRangeOption){
-            int numClusters = getClusters().length;
-            for(int i = 0; i < numClusters; i++){
-                centroidViewer.setClusterIndex(i);
-                centroidViewer.setYRangeOption(yRangeOption);
-            }
-        }
-        
-        public void mouseReleased(MouseEvent event) {
-            maybeShowPopup(event);
-        }
-        
-        public void mousePressed(MouseEvent event) {
-            maybeShowPopup(event);
-        }
-        
-        
-        private void maybeShowPopup(MouseEvent e) {
-            if (!e.isPopupTrigger()) {
-                return;
-            }
-            popup.show(e.getComponent(), e.getX(), e.getY());
-        }
-    }    
 
 }
