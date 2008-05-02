@@ -13,11 +13,6 @@ import java.beans.Expression;
 import java.util.Arrays;
 
 import javax.swing.*;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTable;
-import javax.swing.JComponent;
 import javax.swing.border.Border;
 import javax.swing.table.*;
 
@@ -52,6 +47,7 @@ public class ClusterTableViewer implements IViewer {
     protected static final String SORT_ORIG_ORDER_CMD = "sort-orig-order-cmd";
     protected static final String LINK_TO_URL_CMD = "link-to-url-cmd";    
     protected static final String BROADCAST_MATRIX_GAGGLE_CMD = "broadcast-matrix-to-gaggle";
+    protected static final String BROADCAST_SELECTED_MATRIX_GAGGLE_CMD = "broadcast-selected-matrix-to-gaggle";
     protected static final String BROADCAST_NAMELIST_GAGGLE_CMD = "broadcast-namelist-to-gaggle";
     
     public static final int INTEGER_TYPE = 10;
@@ -863,11 +859,15 @@ public class ClusterTableViewer implements IViewer {
         menu.add(urlMenuItem);        
 
         
-        //EH Gaggle test
         menu.addSeparator();
 
         menuItem = new JMenuItem("Broadcast Gene List to Gaggle", GUIFactory.getIcon("gaggle_icon_16.gif"));
         menuItem.setActionCommand(BROADCAST_NAMELIST_GAGGLE_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        menuItem = new JMenuItem("Broadcast Selected Rows as Matrix to Gaggle", GUIFactory.getIcon("gaggle_icon_16.gif"));
+        menuItem.setActionCommand(BROADCAST_SELECTED_MATRIX_GAGGLE_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
 
@@ -974,6 +974,8 @@ public class ClusterTableViewer implements IViewer {
                 linkToURL2();
             } else if (command.equals(BROADCAST_MATRIX_GAGGLE_CMD)) {
                 broadcastClusterGaggle();
+            } else if (command.equals(BROADCAST_SELECTED_MATRIX_GAGGLE_CMD)) {
+                broadcastSelectedClusterGaggle();
             } else if (command.equals(BROADCAST_NAMELIST_GAGGLE_CMD)) {
                 broadcastNamelistGaggle();
             }
@@ -1116,7 +1118,10 @@ public class ClusterTableViewer implements IViewer {
         return Cluster.GENE_CLUSTER;
     }    
     protected void broadcastClusterGaggle() {
-    	framework.broadcastGeneCluster(getExperiment(), getCluster());
+    	framework.broadcastGeneCluster(getExperiment(), getCluster(), null);
+	}
+    protected void broadcastSelectedClusterGaggle() {
+    	framework.broadcastGeneCluster(getExperiment(), getArrayMappedToSelectedIndices(), null);
 	}
     protected void broadcastNamelistGaggle() {
     	framework.broadcastNamelist(getExperiment(), getCluster());

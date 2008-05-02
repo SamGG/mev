@@ -57,6 +57,8 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
     protected static final String SET_Y_TO_EXPERIMENT_MAX_CMD = "set-y-to-exp-max-cmd";
     protected static final String SET_Y_TO_CLUSTER_MAX_CMD = "set-y-to-cluster-max-cmd";
     protected static final String LAUNCH_NEW_SESSION_CMD = "launch-new-session-cmd";   
+    public static final String BROADCAST_MATRIX_GAGGLE_CMD = "broadcast-matrix-to-gaggle";
+    public static final String BROADCAST_NAMELIST_GAGGLE_CMD = "broadcast-namelist-to-gaggle";
  
     protected Experiment experiment;
     protected IData data;
@@ -727,6 +729,18 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
     //    menuItem.setActionCommand(TOGGLE_REF_LINE_CMD);
     //    menuItem.addActionListener(listener);
     //    menu.add(menuItem);        
+
+        menu.addSeparator();
+        
+        menuItem = new JMenuItem("Broadcast Matrix to Gaggle", GUIFactory.getIcon("gaggle_icon_16.gif"));
+        menuItem.setActionCommand(BROADCAST_MATRIX_GAGGLE_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        menuItem = new JMenuItem("Broadcast Gene List to Gaggle", GUIFactory.getIcon("gaggle_icon_16.gif"));
+        menuItem.setActionCommand(BROADCAST_NAMELIST_GAGGLE_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
     }
     
     /** Returns a component to be inserted into the scroll pane row header
@@ -816,7 +830,13 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
 	        e.printStackTrace();
 	    }
 	}
-
+    public void broadcastClusterGaggle() {
+    	framework.broadcastGeneCluster(getExperiment(), null, getCluster());
+	}
+    public void broadcastNamelistGaggle() {
+    	framework.broadcastNamelist(getExperiment(), getExperiment().getRows());
+    }
+    
 
 	/**
      * The class to listen to mouse and action events.
@@ -847,6 +867,10 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
                 repaint();
             } else if(command.equals(LAUNCH_NEW_SESSION_CMD)){
                 launchNewSession();
+    	    } else if(command.equals(BROADCAST_MATRIX_GAGGLE_CMD)){
+                broadcastClusterGaggle();
+    	    } else if(command.equals(BROADCAST_NAMELIST_GAGGLE_CMD)){
+                broadcastNamelistGaggle();
             }
             
         }

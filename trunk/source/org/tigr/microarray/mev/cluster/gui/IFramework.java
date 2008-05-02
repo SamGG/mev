@@ -187,7 +187,7 @@ public interface IFramework {
     
     //TODO add comments
     public void broadcastGeneClusters(org.tigr.microarray.mev.cluster.clusterUtil.Cluster[] c);
-    public void broadcastGeneCluster(Experiment experiment, int[] cluster);
+    public void broadcastGeneCluster(Experiment experiment, int[] cluster, int[] expcluster);
     public void broadcastNamelist(org.tigr.microarray.mev.cluster.clusterUtil.Cluster[] c);
     public void broadcastNamelist(Experiment experiment, int[] cluster);
 }

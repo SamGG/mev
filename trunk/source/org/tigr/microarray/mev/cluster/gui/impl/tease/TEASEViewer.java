@@ -628,7 +628,7 @@ public class TEASEViewer extends JPanel implements IViewer{
 	    		subExp = ((org.tigr.microarray.mev.MultipleArrayData)data).getDataSubset(getSubTreeElements(), experiment.getRowMappingArrayCopy()).getExperiment();
 	    		rows = subExp.getRows();
 	    	}
-	    	framework.broadcastGeneCluster(subExp, rows);
+	    	framework.broadcastGeneCluster(subExp, rows, null);
 		}
 	    public void broadcastNamelistGaggle() {
 	    	framework.broadcastNamelist(getExperiment(), getSubTreeElements());
