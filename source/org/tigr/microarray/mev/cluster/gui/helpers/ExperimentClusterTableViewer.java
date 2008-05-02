@@ -17,11 +17,6 @@ import java.beans.Expression;
 import java.util.Arrays;
 
 import javax.swing.*;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTable;
-import javax.swing.JComponent;
 import javax.swing.border.Border;
 import javax.swing.table.*;
 
@@ -54,6 +49,9 @@ public class ExperimentClusterTableViewer implements IViewer {
     protected static final String CLEAR_ALL_CMD = "clear-all-cmd";
     protected static final String SELECT_ALL_CMD = "select-all-cmd";
     protected static final String SORT_ORIG_ORDER_CMD = "sort-orig-order-cmd";
+    public static final String BROADCAST_MATRIX_GAGGLE_CMD = "broadcast-matrix-to-gaggle";
+    public static final String BROADCAST_SELECTED_MATRIX_GAGGLE_CMD = "broadcast-selected-matrix-to-gaggle";
+    public static final String BROADCAST_NAMELIST_GAGGLE_CMD = "broadcast-namelist-to-gaggle";
     
     public static final int INTEGER_TYPE = 10;
     public static final int FLOAT_TYPE = 11;
@@ -794,6 +792,23 @@ public class ExperimentClusterTableViewer implements IViewer {
         
         menuItem.addActionListener(listener);
         menu.add(menuItem);           
+
+        menu.addSeparator();
+        
+        menuItem = new JMenuItem("Broadcast Matrix to Gaggle", GUIFactory.getIcon("gaggle_icon_16.gif"));
+        menuItem.setActionCommand(BROADCAST_MATRIX_GAGGLE_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        menuItem = new JMenuItem("Broadcast Selected Rows as Matrix to Gaggle", GUIFactory.getIcon("gaggle_icon_16.gif"));
+        menuItem.setActionCommand(BROADCAST_SELECTED_MATRIX_GAGGLE_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        menuItem = new JMenuItem("Broadcast Gene List to Gaggle", GUIFactory.getIcon("gaggle_icon_16.gif"));
+        menuItem.setActionCommand(BROADCAST_NAMELIST_GAGGLE_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
         
     }    
     
@@ -851,30 +866,36 @@ public class ExperimentClusterTableViewer implements IViewer {
 	public void actionPerformed(ActionEvent e) {
 	    String command = e.getActionCommand();
 	    if (command.equals(SAVE_CLUSTER_CMD)) {
-		onSaveCluster();
+	    	onSaveCluster();
                 //getContentComponent().validate();
 	    } else if (command.equals(SAVE_ALL_CLUSTERS_CMD)) {
-		onSaveClusters();
+	    	onSaveClusters();
                 //getContentComponent().validate();
 	    } else if (command.equals(STORE_CLUSTER_CMD)) {
-		storeCluster();
+	    	storeCluster();
 	    } else if (command.equals(STORE_SELECTED_ROWS_CMD)) {
-                storeSelectedRowsAsCluster();
-            } else if (command.equals(SET_DEF_COLOR_CMD)) {
-		onSetDefaultColor();
+            storeSelectedRowsAsCluster();
+        } else if (command.equals(SET_DEF_COLOR_CMD)) {
+            onSetDefaultColor();
 	    }  else if(command.equals(LAUNCH_NEW_SESSION_CMD)){
-                launchNewSession();
-            }  else if(command.equals(LAUNCH_NEW_SESSION_WITH_SEL_ROWS_CMD)){
-                launchNewSessionWithSelectedRows();
-            }  else if (command.equals(SEARCH_CMD)) {
-                searchTable();
-            } else if (command.equals(CLEAR_ALL_CMD)) {
-                clusterTable.clearSelection();
-            } else if (command.equals(SELECT_ALL_CMD)) {
-                clusterTable.selectAll();
-            } else if (command.equals(SORT_ORIG_ORDER_CMD)) {
-                sortInOrigOrder();
-            }
+            launchNewSession();
+        }  else if(command.equals(LAUNCH_NEW_SESSION_WITH_SEL_ROWS_CMD)){
+            launchNewSessionWithSelectedRows();
+        }  else if (command.equals(SEARCH_CMD)) {
+            searchTable();
+        } else if (command.equals(CLEAR_ALL_CMD)) {
+            clusterTable.clearSelection();
+        } else if (command.equals(SELECT_ALL_CMD)) {
+            clusterTable.selectAll();
+        } else if (command.equals(SORT_ORIG_ORDER_CMD)) {
+            sortInOrigOrder();
+	    } else if(command.equals(BROADCAST_MATRIX_GAGGLE_CMD)){
+            broadcastClusterGaggle();
+	    } else if(command.equals(BROADCAST_SELECTED_MATRIX_GAGGLE_CMD)){
+            broadcastSelectedClusterGaggle();
+	    } else if(command.equals(BROADCAST_NAMELIST_GAGGLE_CMD)){
+            broadcastNamelistGaggle();
+        }
 	}
 	   
 	public void mouseReleased(MouseEvent event) {
@@ -1021,5 +1042,14 @@ public class ExperimentClusterTableViewer implements IViewer {
 	public void setExperimentID(int id) {
 		this.exptID = id;
 	}
+    public void broadcastClusterGaggle() {
+    	framework.broadcastGeneCluster(getExperiment(), null, getCluster());
+	}
+    public void broadcastSelectedClusterGaggle() {
+    	framework.broadcastGeneCluster(getExperiment(), null, clusterTable.getSelectedColumns());
+	}
+    public void broadcastNamelistGaggle() {
+    	framework.broadcastNamelist(getExperiment(), getExperiment().getRows());
+    }
     
 }

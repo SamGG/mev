@@ -376,7 +376,7 @@ public class EASETableViewer extends TableViewer implements Serializable {
     }
   
     protected void broadcastClusterGaggle() {
-    	framework.broadcastGeneCluster(framework.getData().getExperiment(), getGeneIndices(table.getSelectedRows()));
+    	framework.broadcastGeneCluster(framework.getData().getExperiment(), getGeneIndices(table.getSelectedRows()), null);
 	}
     protected void broadcastNamelistGaggle() {
     	framework.broadcastNamelist(framework.getData().getExperiment(), getGeneIndices(table.getSelectedRows()));

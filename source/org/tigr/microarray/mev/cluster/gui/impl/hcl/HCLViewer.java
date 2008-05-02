@@ -666,40 +666,31 @@ public class HCLViewer extends JPanel implements IViewer {
     	int[] rows;
     	
     	if(selectedCluster != null) {
-//    		System.out.println("HCLViewer.broadcastClusterGaggle: cluster exists");
-    		System.out.println("Cluster exists");
 	    	if(selectedCluster.isGeneCluster) {
-//	    		System.out.println("\tsending gene cluster");
 	    		subExp = getExperiment();
 	    		rows = getSubTreeElements();
 	    	} else {
-//	    		System.out.println("\tsending experiment cluster");
 	    		subExp = ((org.tigr.microarray.mev.MultipleArrayData)data).getDataSubset(getSubTreeElements(), experiment.getRowMappingArrayCopy()).getExperiment();
 	    		rows = subExp.getRows();
 	    	}
-	    	framework.broadcastGeneCluster(subExp, rows);
+	    	framework.broadcastGeneCluster(subExp, rows, null);
     	} else {
-//    		System.out.println("HCLViewer.broadcastClusterGaggle: Cluster doesn't exist");
-    		framework.broadcastGeneCluster(getExperiment(), getExperiment().getRows());
+    		framework.broadcastGeneCluster(getExperiment(), getExperiment().getRows(), null);
     	}
     }
     public void broadcastNamelistGaggle() {
     	Experiment subExp;
     	int[] rows;
     	if(selectedCluster != null) {
-//    		System.out.println("HCLViewer.broadcastNamelistGaggle: cluster exists");
 	    	if(selectedCluster.isGeneCluster) {
-//	    		System.out.println("\tsending gene cluster");
 	    		subExp = getExperiment();
 	    		rows = getSubTreeElements();
 	    	} else {
-//	    		System.out.println("\tsending experiment cluster");
 	    		subExp = ((org.tigr.microarray.mev.MultipleArrayData)data).getDataSubset(getSubTreeElements(), experiment.getRowMappingArrayCopy()).getExperiment();
 	    		rows = subExp.getRows();
 	    	}
 	    	framework.broadcastNamelist(subExp, rows);
     	} else {
-//    		System.out.println("HCLViewer.broadcastNamelistGaggle: Cluster doesn't exist");
     		framework.broadcastNamelist(getExperiment(), getExperiment().getRows());
     	}
     }

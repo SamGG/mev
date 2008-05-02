@@ -1161,7 +1161,9 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         menuItem.setActionCommand(SAVE_ALL_CLUSTERS_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
-        /*
+
+        menu.addSeparator();
+        
         menuItem = new JMenuItem("Broadcast Matrix to Gaggle", GUIFactory.getIcon("gaggle_icon_16.gif"));
         menuItem.setActionCommand(BROADCAST_MATRIX_GAGGLE_CMD);
         menuItem.addActionListener(listener);
@@ -1171,28 +1173,16 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         menuItem.setActionCommand(BROADCAST_NAMELIST_GAGGLE_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
-        */
+        
     }
     
     public void broadcastClusterGaggle() {
-    	System.out.println("broadcasting from " + this.getClass().toString() + " cluster size: " + getCluster().length);
-    	int[] temp = getCluster();
-    	Experiment e = getExperiment();
-    	if (temp == null)
-    		System.out.println("getCluster returns null");
-    	if(e == null)
-    		System.out.println("getExperiment returns null");
-    	if(framework == null)
-    		System.out.println(this.toString() + ": framework is null");
-    	
-    	//TODO change broadcastGeneCluster so it knows whether to broadcast a gene or expt list
-    	//or change gaggle broadcast framework so it can take both gene and cluster indices
-//    	framework.broadcastExperimentCluster(getExperiment(), getCluster());
+    	framework.broadcastGeneCluster(getExperiment(), null, getCluster());
 	}
     public void broadcastNamelistGaggle() {
-    	//TODO instead of calling getCluster, create a new int[] with all the names of the currently displayed genes
-    	framework.broadcastNamelist(getExperiment(), getCluster());
+    	framework.broadcastNamelist(getExperiment(), getExperiment().getRows());
     }
+    
     public void setFramework(IFramework framework) {
     	this.framework = framework;
     }

@@ -1357,7 +1357,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
     		System.out.println("getExperiment returns null");
     	if(framework == null)
     		System.out.println(this.toString() + ": framework is null");
-    	framework.broadcastGeneCluster(getExperiment(), getCluster());
+    	framework.broadcastGeneCluster(getExperiment(), getCluster(), null);
 	}
     public void broadcastNamelistGaggle() {
     	framework.broadcastNamelist(getExperiment(), getCluster());

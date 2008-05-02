@@ -5670,37 +5670,47 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         	MultipleArrayViewer.this.doBroadcastMatrix(m);
         }
         
-
-		public void broadcastGeneCluster(Experiment experiment, int[] rows) {
+        /**
+         * Builds a Gaggle DataMatrix data object containing the expression values from 
+         * experiment in the locations specified by rows and columns. Broadcasts this matrix
+         * to the Gaggle network.
+         */
+		public void broadcastGeneCluster(Experiment experiment, int[] rows, int[] columns) {
+			if(rows == null) 
+				rows = experiment.getRows();
+			if(columns == null) {
+				columns = experiment.getColumnIndicesCopy();
+			}
 	    	DataMatrix m = new DataMatrix();
 	        String[] rowTitles = new String[rows.length];
 	        m.setSize(rows.length, experiment.getNumberOfSamples());
 	        for (int i=0; i<rows.length; i++) {
 	        	rowTitles[i] =  data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{rows[i]})[0];
-	            for (int j=0; j<experiment.getNumberOfSamples(); j++) {
+	            for(int j=0; j<columns.length; j++) {
+//	        	for (int j=0; j<experiment.getNumberOfSamples(); j++) {
 //	            	System.out.println("value " + i + ", " + j + ": " + experiment.get(rows[i], j));
-	            	m.set(i, j, experiment.get(rows[i], j));
+	            	m.set(i, j, experiment.get(rows[i], columns[j]));
 	            }
 	        }
 	    	m.setRowTitles(rowTitles);
 	    	m.setRowTitlesTitle(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()]);
-	    	int[] temp1 = experiment.getColumnIndicesCopy();
-	    	String[] temp = new String[temp1.length];
-	    	for(int i=0; i<temp.length; i++) {
-	    		temp[i] = data.getSampleName(temp1[i]);
-	    		if(temp[i] == null)
-	    			temp[i] = "Sample " + i+1;
+
+	    	String[] columnTitles = new String[columns.length];
+	    	for(int i=0; i<columnTitles.length; i++) {
+	    		columnTitles[i] = data.getSampleName(columns[i]);
+	    		if(columnTitles[i] == null)
+	    			columnTitles[i] = "Sample " + i+1;
 	    	}
-	    	m.setColumnTitles(temp);
+	    	m.setColumnTitles(columnTitles);
 	    	m.setSpecies(getCurrentSpecies());
 	    	if(((ISlideData)data.getFeaturesList().get(0)).getSlideFileName() != null)
 	    		m.setName(((ISlideData)data.getFeaturesList().get(0)).getSlideFileName());
 	    	else 
 	    		m.setName ("MeV matrix (" + m.getRowCount() + " x " + m.getColumnCount() + ")");
-//			m.setShortName ("MeV matrix (" + m.getRowCount() +  " x " + m.getColumnCount() +")");
 	
 	        doBroadcastMatrix(m);
 	    }
+
         public void broadcastNamelist(Cluster[] clusters) {
         	Namelist nl = new Namelist();
         	ClusterWorker cw = new ClusterWorker(MultipleArrayViewer.this.geneClusterRepository);
@@ -5781,15 +5791,16 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 		                                                      JOptionPane.YES_NO_OPTION);
 			if (dialogResult != JOptionPane.YES_OPTION)  
 				return;
-		} 
+		}
 		try {	//here is where an exception is thrown if gaggle is not connected. Nullpointerconnection add if(targetGoose==null) spawn dialog or something
 			gaggleBoss.broadcastMatrix(myGaggleName, targetGoose, matrix);
 		} catch (RemoteException rex) {
-			System.err.println ("doBroadcastMatrix: " + " rmi error calling boss.broadcast (matrix)");
-			rex.printStackTrace ();
+		//	System.err.println ("doBroadcastMatrix: " + " rmi error calling boss.broadcast (matrix)");
+			JOptionPane.showMessageDialog(mainframe, "Gaggle unavailable. Please use Utilities -> Connect to Gaggle.");
+		//	rex.printStackTrace ();
 		}
 	}
-    	
+    
     public boolean connectToGaggle() {
 //    	System.out.println("Connecting to Gaggle");
     	TMEV.GAGGLE_CONNECT_ON_STARTUP = true;
@@ -5806,6 +5817,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	        return true;
         } else {
         	System.out.println("connectToGaggle(): Couldn't connect to Gaggle");
+			//JOptionPane.showMessageDialog(mainframe, "Gaggle unavailable.");
         	return false;
         }
     }
@@ -5826,6 +5838,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     		connectToGaggle();
 		} catch (Exception ex0) {
 			System.err.println ("Couldn't connect to Gaggle: " + ex0.getMessage ());
+			JOptionPane.showMessageDialog(mainframe, "Gaggle unavailable.");
 		}
 	}
     
