@@ -70,6 +70,7 @@ import org.tigr.midas.engine.Parameter;
 import org.tigr.util.FloatMatrix;
 import org.tigr.util.QSort;
 
+
 import cern.jet.math.Arithmetic;
 import cern.jet.stat.Probability;
 
@@ -1077,7 +1078,19 @@ public class MultipleArrayData implements IData {
         ISlideDataElement element = slideData.getSlideDataElement(row);
       
         IAnnotation annot = element.getElementAnnotation();
-        return(annot.getAttribute(attr));
+        
+        if(isAnnotationLoaded())
+        	if(annot.getAttribute(attr) != null)
+        		return(annot.getAttribute(attr));
+        
+
+        //EH added accessor for standard annotation fields
+        String[] allFields = getFieldNames();
+        for(int i=0; i<allFields.length; i++) {
+        	if(allFields[i].equals(attr))
+        		return new String[]{getElementAttribute(row, i)};
+        }
+        return new String[]{"NA"};
         
     }
     

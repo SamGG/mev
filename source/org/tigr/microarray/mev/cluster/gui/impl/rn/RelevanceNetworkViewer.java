@@ -38,6 +38,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Vector;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
@@ -84,6 +85,8 @@ public class RelevanceNetworkViewer extends JPanel implements IViewer, Scrollabl
     private static final String SHAPE_RECT_CMD = "shape-rect-cmd";
     private static final String SHAPE_OVAL_CMD = "shape-oval-cmd";
     private static final String FIND_CLUSTER_CMD = "find-cluster-cmd";
+    private static final String BROADCAST_NETWORK_GAGGLE_CMD = "broadcast-network-gaggle-cmd";
+    
 
     private static final int SHAPE_RECT = 0;
     private static final int SHAPE_OVAL = 1;
@@ -152,7 +155,39 @@ public class RelevanceNetworkViewer extends JPanel implements IViewer, Scrollabl
         this.draw = new boolean[clusters.length];
         setPreferredSize(new Dimension(300, 300));
         this.exptID = experiment.getId();
+
+        /*
+         * Ok, it seems that the cluster int[][] holds the network topology data. The first 
+         * dimension of the 2d array represents the nodes and the second represents the number
+         * of other nodes that node is connected to. So, cluster [0][0] holds the index of the
+         * first gene that gene 0 is connected to. cluster[0][1] holds the index of the second
+         * gene that gene 0 is connected to. 
+         * 
+         * The weights int[][] holds the weights of the connections described in the cluster object.
+         * So far I see only 1 and 0 as values.
+         */
+
+        
     }
+    protected void broadcastNetworkGaggle() {
+    	Vector<int[]> interactions = new Vector<int[]>();
+    	Vector<String> types = new Vector<String>();
+    	Vector<Boolean> directionals = new Vector<Boolean>();
+    	for(int i=0; i<clusters.length; i++) {
+    		for(int j=0; j<clusters[i].length; j++) {
+    			if(weights[i][j] == (1.0)) {
+    				int[] thisInt = new int[2];
+    				thisInt[0] = i;
+    				thisInt[1] = clusters[i][j];
+    				types.add("Relevance Network");
+    				directionals.add(false);
+    				interactions.add(thisInt);
+    			}
+    		}
+    	}
+     	framework.broadcastNetwork(interactions, types, directionals);
+    }
+
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
     			new Object[]{new Boolean(this.isGenes), this.experiment, this.clusters, this.weights, this.indices});
@@ -867,6 +902,14 @@ public class RelevanceNetworkViewer extends JPanel implements IViewer, Scrollabl
         menuItem.setActionCommand(SET_BACKGROUND_COLOR_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
+        
+        menu.addSeparator();
+        
+        menuItem = new JMenuItem("Broadcast Network to Gaggle", GUIFactory.getIcon("gaggle_icon_16.gif"));
+        menuItem.setActionCommand(BROADCAST_NETWORK_GAGGLE_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
     }
 
     /**
@@ -1464,7 +1507,9 @@ public class RelevanceNetworkViewer extends JPanel implements IViewer, Scrollabl
                 onSetPublicCluster();
             } else if (command.equals(FIND_CLUSTER_CMD)) {
                 onFindCluster(spotIndex);
-            }
+    	    } else if (command.equals(BROADCAST_NETWORK_GAGGLE_CMD)) {
+    	        broadcastNetworkGaggle();
+    	    }
         }
 
         public void mouseDragged(MouseEvent e) {
