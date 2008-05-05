@@ -14,6 +14,7 @@ package org.tigr.microarray.mev.cluster.gui;
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Rectangle;
+import java.util.Vector;
 
 import javax.swing.JFrame;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -190,4 +191,6 @@ public interface IFramework {
     public void broadcastGeneCluster(Experiment experiment, int[] cluster, int[] expcluster);
     public void broadcastNamelist(org.tigr.microarray.mev.cluster.clusterUtil.Cluster[] c);
     public void broadcastNamelist(Experiment experiment, int[] cluster);
+//    public void broadcastNetwork(int[][] clusters, float[][] weights);
+	public void broadcastNetwork(Vector<int[]> interactions, Vector<String> types, Vector<Boolean> directionals);
 }

@@ -107,8 +107,10 @@ import org.systemsbiology.gaggle.core.Boss;
 import org.systemsbiology.gaggle.core.Goose;
 import org.systemsbiology.gaggle.core.datatypes.DataMatrix;
 import org.systemsbiology.gaggle.core.datatypes.GaggleTuple;
+import org.systemsbiology.gaggle.core.datatypes.Interaction;
 import org.systemsbiology.gaggle.core.datatypes.Namelist;
 import org.systemsbiology.gaggle.core.datatypes.Network;
+import org.systemsbiology.gaggle.core.datatypes.Tuple;
 import org.systemsbiology.gaggle.geese.common.GaggleConnectionListener;
 import org.systemsbiology.gaggle.geese.common.GooseShutdownHook;
 import org.systemsbiology.gaggle.geese.common.RmiGaggleConnector;
@@ -5638,6 +5640,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         	return cytoBandsModel;
         }
         
+        /**
+         * @author eleanora
+         */
         public void broadcastGeneClusters(Cluster[] clusters){
         	System.out.println("broadcasting matrix size " + clusters.length);
         	DataMatrix m = new DataMatrix();
@@ -5674,6 +5679,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
          * Builds a Gaggle DataMatrix data object containing the expression values from 
          * experiment in the locations specified by rows and columns. Broadcasts this matrix
          * to the Gaggle network.
+         * @author eleanora
+         * 
          */
 		public void broadcastGeneCluster(Experiment experiment, int[] rows, int[] columns) {
 			if(rows == null) 
@@ -5711,6 +5718,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	        doBroadcastMatrix(m);
 	    }
 
+	    /**
+	     * @author eleanora
+	     */
         public void broadcastNamelist(Cluster[] clusters) {
         	Namelist nl = new Namelist();
         	ClusterWorker cw = new ClusterWorker(MultipleArrayViewer.this.geneClusterRepository);
@@ -5742,9 +5752,63 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	    	nl.setSpecies(getCurrentSpecies());
         	MultipleArrayViewer.this.doBroadcastNamelist(nl);
         }
+        
+        /**
+         * Builds a Gaggle Network object from input params and broadcasts it to the Gaggle network.
+         * Should be called by Network-broadcasting components.
+         * @author eleanora
+         */
+    public void broadcastNetwork(Vector<int[]> interactions, Vector<String> types, Vector<Boolean> directionals) {
+/*        public void broadcastNetwork(int[][] clusters, float[][] weights) {
+        	Network nt = new Network();
+        	for(int i=0; i<clusters.length; i++) {
+        		for(int j=0; j<clusters[i].length; j++) {
+        			if(weights[i][j] == (1.0)) {
+        				String source = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{i})[0];
+    	        		String target = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{clusters[i][j]})[0];
+    	            	Interaction tempInt = new Interaction(source, target, "test", false);
+    	        		nt.add(tempInt);
+            		
+        			}
+        		}
+        	}
+        	*/
+    		Network nt = new Network();
+        	Hashtable<String, String[]> nodeAnnotations = new Hashtable<String, String[]>();
+        	String[] allFields = data.getAllFilledAnnotationFields();
+        	for(int i=0; i<interactions.size(); i++) {
+        		String source = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{interactions.get(i)[0]})[0];
+        		String target = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{interactions.get(i)[1]})[0];
+        		Interaction tempInt = new Interaction(source, target, types.get(i), directionals.get(i));
+
+        		
+        		nt.add(tempInt);
+        		
+        		if(!nodeAnnotations.containsKey(source)) {
+        			nodeAnnotations.put(source, new String[0]);
+        			for(String field: allFields) {
+	        			nt.addNodeAttribute(source, field, data.getElementAnnotation(interactions.get(i)[0], field)[0]);
+	        			System.out.println("source: " + source + " field: " + field + " annot: " + data.getElementAnnotation(interactions.get(i)[0], field)[0]);
+        			}
+        		}
+        		if(!nodeAnnotations.containsKey(target)) {
+        			nodeAnnotations.put(target, new String[0]);
+        			for(String field: allFields)
+        				nt.addNodeAttribute(target, field, data.getElementAnnotation(interactions.get(i)[1], field)[0]);
+        		}
+
+        	}
+
+        	nt.setName("MeV Network (" + interactions.size() + ")");
+	    	nt.setSpecies(getCurrentSpecies());
+        	MultipleArrayViewer.this.doBroadcastNetwork(nt);
+        }
     }
 
-
+    /**
+     * @author eleanora
+     * @param nl
+     */
     public void doBroadcastNamelist(Namelist nl){
 		if(!isConnected) {
 			String title = "Gaggle connection warning";
@@ -5771,7 +5835,42 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     		System.err.println("doBroadcastNamelist: rmi error calling boss.broadcast");
     	}
     }
+    
+    /**
+     * @author eleanora
+     * @param nt
+     */
+    public void doBroadcastNetwork(Network nt) {
+		if(!isConnected) {
+			String title = "Gaggle connection warning";
+			String msg = "You are not connected to Gaggle. Connect now?";
+			int dialogResult = JOptionPane.showConfirmDialog (this, msg, title,
+                    JOptionPane.YES_NO_OPTION);
+			if (dialogResult != JOptionPane.YES_OPTION)  
+				return;
+			if(!connectToGaggle())
+				return;
+		}
+		int networkSize = nt.getNodes().length;
+		if (networkSize > 100) {
+			String title = "Broadcast names warning";
+			String msg = "Do you really wish to broadcast " + networkSize + " names?";
+			int dialogResult = JOptionPane.showConfirmDialog (this, msg, title,
+		                                                      JOptionPane.YES_NO_OPTION);
+			if (dialogResult != JOptionPane.YES_OPTION)  
+				return;
+		} // if warning dialog needed
+    	try {
+    		gaggleBoss.broadcastNetwork(myGaggleName, targetGoose, nt);
+    	} catch (RemoteException rex) {
+    		System.err.println("doBroadcastNamelist: rmi error calling boss.broadcast");
+    	}
+    }
 
+    /**
+     * @author eleanora
+     * @param matrix
+     */
     public void doBroadcastMatrix(DataMatrix matrix) {
 		if(!isConnected) {
 			String title = "Gaggle connection warning";
@@ -5801,6 +5900,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 		}
 	}
     
+    /**
+     * @author eleanora
+     * @return
+     */
     public boolean connectToGaggle() {
 //    	System.out.println("Connecting to Gaggle");
     	TMEV.GAGGLE_CONNECT_ON_STARTUP = true;
@@ -5821,7 +5924,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         	return false;
         }
     }
-
+    /**
+     * @author eleanora
+     */
     public void disconnectFromGaggle() {
     	gaggleConnector.disconnectFromGaggle(true);
     }
@@ -5841,10 +5946,15 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 			JOptionPane.showMessageDialog(mainframe, "Gaggle unavailable.");
 		}
 	}
-    
+    /**
+     * @author eleanora
+     */
     public String getName() {
     	return myGaggleName;
     }
+    /**
+     * @author eleanora
+     */
     public void setName(String gaggleName){
     	this.myGaggleName = gaggleName;
     	this.mainframe.setTitle(myGaggleName);
@@ -6005,7 +6115,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 		}
 	}
       
-   
+    /**
+     * @author eleanora
+     */
 	public void update(String[] gooseNames) throws RemoteException {
 		this.gooseNames = gooseNames;
 	
@@ -6052,6 +6164,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         
 	/**
 	 * This method is for the GaggleConnectionListener implementation.
+	 * @author eleanora
 	 * @param connected
 	 * @param boss
 	 */
