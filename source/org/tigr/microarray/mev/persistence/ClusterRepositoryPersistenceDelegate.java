@@ -11,7 +11,7 @@ public class ClusterRepositoryPersistenceDelegate extends PersistenceDelegate {
 		ClusterRepository cr = (ClusterRepository) oldInstance;
 		return new Expression((ClusterRepository) oldInstance, oldInstance.getClass(), "new",
 				new Object[]{new Boolean(cr.isGeneClusterRepository()), new Integer(cr.getNumberOfElements()),
-				new Integer(cr.getClusterSerialCounter()), cr.getElementClusters()});
+				new Integer(cr.getClusterSerialCounter()), cr.getElementClusters(), cr.getClusterColors()});
 	}
 }
 
