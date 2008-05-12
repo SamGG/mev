@@ -137,6 +137,11 @@ public interface IData {
     public void setSampleLabelKey(String key);
     
     /**
+     * Sets the experiment label index for the collection of features
+     */
+    public String getCurrentSampleLabelKey();
+    
+    /**
      * Returns an element attribute.
      */
     public String getElementAttribute(int row, int attr);

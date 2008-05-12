@@ -1018,10 +1018,29 @@ public class ClusterTable extends JPanel implements IViewer {
     
     private void modifyColor(int row, int col){
         Color color = (Color)(table.getValueAt(row, col));       
+        Color origColor = (Color)(table.getValueAt(row, col));
+        while(true){
         color = JColorChooser.showDialog(ClusterTable.this, "Reassign Color", color);
+	        if (repository.clusterColors.contains(color)){
+		        Object[] optionst = { "OK", "CANCEL" };
+		        int option = JOptionPane.showOptionDialog(null, "Cluster Color is already being used. Please select another Color.", "Duplicate Color Error", 
+	        		JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+	        		null, optionst, optionst[0]);
+		        if (option==JOptionPane.CANCEL_OPTION) 
+		        	return;
+		        if (option==JOptionPane.OK_OPTION)
+		        	continue;
+	        return;
+	        }
+	        break;
+    	}
+        
         if(color != null){
             table.setValueAt(color, row, col);
             repository.updateClusterColor(model.getClusterSerialNumber(row), color);
+
+            repository.clusterColors.add(color);
+            repository.clusterColors.remove(origColor);
         }
     }
     
@@ -1099,12 +1118,27 @@ public class ClusterTable extends JPanel implements IViewer {
         int row = table.getSelectedRow();
         if(model.isLegalRow(row)){
             Cluster cluster = repository.getCluster(model.getClusterSerialNumber(row));
-            ClusterAttributesDialog dialog = new ClusterAttributesDialog("Modify Cluster Attributes", cluster.getAlgorithmName(), cluster.getClusterID(),
+            Color origColor = (Color)cluster.getClusterColor();
+            ClusterAttributesDialog dialog;
+            while (true){
+	            dialog = new ClusterAttributesDialog("Modify Cluster Attributes", cluster.getAlgorithmName(), cluster.getClusterID(),
             cluster.getClusterLabel(), cluster.getClusterDescription(), cluster.getClusterColor());
             if(dialog.showModal() != JOptionPane.OK_OPTION){
                 return;
             }
-            
+                if (repository.clusterColors.contains(dialog.getColor())&&(origColor!=dialog.getColor())){
+        	        Object[] optionst = { "OK", "CANCEL" };
+        	        int option = JOptionPane.showOptionDialog(null, "Cluster Color is already being used. Please select another Color.", "Duplicate Color Error", 
+                		JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+                		null, optionst, optionst[0]);
+        	        if (option==JOptionPane.CANCEL_OPTION) 
+        	        	return;
+        	        if (option==JOptionPane.OK_OPTION)
+        	        	continue;
+                return;
+                }
+                break;
+            }
             Color clusterColor = dialog.getColor();
             String clusterLabel = dialog.getLabel();
             String clusterDescription = dialog.getDescription();
@@ -1112,7 +1146,10 @@ public class ClusterTable extends JPanel implements IViewer {
             cluster.setClusterColor(clusterColor);
             cluster.setClusterLabel(clusterLabel);
             cluster.setClusterDescription(clusterDescription);
-            
+            if (clusterColor!=origColor){
+            	repository.clusterColors.add(clusterColor);
+            	repository.clusterColors.remove(origColor);
+            }
             model.setClusterColor(row, clusterColor);
             model.setClusterLabel(row, clusterLabel);
             model.setClusterDescription(row, clusterDescription);

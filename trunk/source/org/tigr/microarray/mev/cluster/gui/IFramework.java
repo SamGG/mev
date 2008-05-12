@@ -108,7 +108,12 @@ public interface IFramework {
      * Stores the indices into the cluster repository
      */    
     public Color storeCluster(int [] indices, Experiment experiment, int clusterType);    
-
+    
+    /**
+     * Automatically stores clusters based on annotation
+     */
+    public void autoStoreClusters(int clusterType, int index);
+    
     /**
      *  Stores indices to a cluster in the manager but doesn't link to a particular viewer node.
      */
