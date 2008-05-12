@@ -29,6 +29,7 @@ public class ActionManager implements java.io.Serializable {
     public static final String PARAMETER = "command-parameter";
     public static final String LARGE_ICON = "LargeIcon";
     public static final String CATEGORY="category";
+    public static final String CATEGORY_ICON = "category-icon";
     private HashMap<String, AbstractAction> actions = new HashMap<String, AbstractAction>();
     private ActionListener listener;
     
@@ -91,6 +92,8 @@ public class ActionManager implements java.io.Serializable {
         actions.put(SEARCH_ACTION, new DefaultAction(this, SEARCH_NAME, SEARCH_COMMAND, getIcon(SEARCH_ICON)));
         actions.put(IMPORT_GENE_LIST_ACTION, new DefaultAction(this, IMPORT_GENE_LIST_NAME, IMPORT_GENE_LIST_COMMAND, getIcon(IMPORT_GENE_LIST_ICON)));
         actions.put(IMPORT_SAMPLE_LIST_ACTION, new DefaultAction(this, IMPORT_SAMPLE_LIST_NAME, IMPORT_SAMPLE_LIST_COMMAND, getIcon(IMPORT_SAMPLE_LIST_ICON)));
+        actions.put(AUTO_IMPORT_GENE_LIST_ACTION, new DefaultAction(this, AUTO_IMPORT_GENE_LIST_NAME, AUTO_IMPORT_GENE_LIST_COMMAND, getIcon(AUTO_IMPORT_GENE_LIST_ICON)));
+        actions.put(AUTO_IMPORT_SAMPLE_LIST_ACTION, new DefaultAction(this, AUTO_IMPORT_SAMPLE_LIST_NAME, AUTO_IMPORT_SAMPLE_LIST_COMMAND, getIcon(AUTO_IMPORT_SAMPLE_LIST_ICON)));
 
         actions.put(APPEND_SAMPLE_ANNOTATION_ACTION, new DefaultAction(this, APPEND_SAMPLE_ANNOTATION_NAME, APPEND_SAMPLE_ANNOTATION_COMMAND, getIcon(APPEND_SAMPLE_ANNOTATION_ICON)));            
         actions.put(APPEND_GENE_ANNOTATION_ACTION, new DefaultAction(this, APPEND_GENE_ANNOTATION_NAME, APPEND_GENE_ANNOTATION_COMMAND, getIcon(APPEND_GENE_ANNOTATION_ICON)));            
@@ -452,6 +455,8 @@ public class ActionManager implements java.io.Serializable {
     public static final String DEFAULT_DISTANCES_CMD = "default-distances-cmd";
     //Added by DanS
     public static final String COMPACT_CLUSTERS_CMD = "compact-clusters-cmd";
+    public static final String SHOW_RECTS_CMD = "show-rects-cmd";
+    public static final String AUTO_ARRANGE_COLORS = "auto-arrange-colors-cmd";
     // popup commands
     public static final String DELETE_NODE_CMD = "delete-node-cmd";
 
@@ -469,6 +474,16 @@ public class ActionManager implements java.io.Serializable {
     public static final String IMPORT_SAMPLE_LIST_ACTION = "import-sample-list-action";
     public static final String IMPORT_SAMPLE_LIST_NAME = "Import Sample List";
     public static final String IMPORT_SAMPLE_LIST_ICON = "import_list.gif";
+    
+    public static final String AUTO_IMPORT_GENE_LIST_COMMAND = "auto-import-gene-list-command";
+    public static final String AUTO_IMPORT_GENE_LIST_ACTION = "auto-import-gene-list-action";
+    public static final String AUTO_IMPORT_GENE_LIST_NAME = "By Gene Annotation";
+    public static final String AUTO_IMPORT_GENE_LIST_ICON = "import_list.gif";
+    
+    public static final String AUTO_IMPORT_SAMPLE_LIST_COMMAND = "auto-import-sample-list-command";
+    public static final String AUTO_IMPORT_SAMPLE_LIST_ACTION = "auto-import-sample-list-action";
+    public static final String AUTO_IMPORT_SAMPLE_LIST_NAME = "By Sample Annotation";
+    public static final String AUTO_IMPORT_SAMPLE_LIST_ICON = "import_list.gif";
     
     public static final String SET_DATA_SOURCE_COMMAND = "set-data-source-command";
     

@@ -33,6 +33,7 @@ public class AnalysisAction extends AbstractAction {
 	putValue(Action.ACTION_COMMAND_KEY, ActionManager.ANALYSIS_COMMAND);
 	putValue(Action.SMALL_ICON, desc.getSmallIcon());
 	putValue(ActionManager.LARGE_ICON, desc.getLargeIcon());
+	putValue(ActionManager.CATEGORY_ICON, desc.getCategoryIcon());
 	putValue(ActionManager.PARAMETER, desc.getClassName());
 	putValue(ActionManager.CATEGORY, desc.getCategory());
     }
