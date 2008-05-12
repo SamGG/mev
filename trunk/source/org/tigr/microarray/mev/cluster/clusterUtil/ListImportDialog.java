@@ -18,11 +18,14 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
+import java.awt.*;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -45,6 +48,9 @@ public class ListImportDialog extends AlgorithmDialog {
     private Vector annFields;
     private JComboBox listBox;
     private JTextPane pane;
+    private JCheckBox[] checkBoxes;
+    private List theList;
+    private List otherList;
     private int result = JOptionPane.CANCEL_OPTION;
     
     /** Creates a new instance of GeneListImportDialog */
@@ -140,6 +146,78 @@ public class ListImportDialog extends AlgorithmDialog {
         setActionListeners(new Listener());
         pack();
     }    
+    /** Creates a new instance of GeneListImportDialog */
+    public ListImportDialog(java.awt.Frame parent, String [] fieldNames, boolean geneList, boolean auto) {
+        super(parent, geneList ? "Automatic Gene List Import Dialog" : "Automatic Sample List Import Dialog", true);
+        annFields = new Vector();
+        for(int i = 0; i < fieldNames.length; i++){
+            annFields.addElement(fieldNames[i]);
+        }
+        checkBoxes = new JCheckBox[annFields.size()];
+        JComboBox comboBox = new JComboBox();
+        ParameterPanel paramPanel;
+        if(geneList)
+            paramPanel = new ParameterPanel("Gene List Import Parameters");
+        else
+            paramPanel = new ParameterPanel("Sample List Import Parameters");
+        
+        paramPanel.setLayout(new GridBagLayout());
+        
+        JLabel listLabel;
+        if(geneList)
+            listLabel = new JLabel("Available Gene ID Types:");        
+        else
+            listLabel = new JLabel("Available Sample ID Types:");        
+        JLabel otherListLabel;
+        if(geneList)
+            otherListLabel = new JLabel("Selected Gene ID Types:");        
+        else
+            otherListLabel = new JLabel("Selected Sample ID Types:"); 
+            
+        listBox = new JComboBox(annFields);
+        pane = new JTextPane();
+        pane.setPreferredSize(new Dimension(125, 200));
+        
+        JScrollPane scroll = new JScrollPane(pane);
+        scroll.getViewport().setViewSize(new Dimension(125, 200));
+        scroll.setBorder(BorderFactory.createLineBorder(Color.black, 2));
+        
+        
+        if(annFields.size() > 0)
+            listBox.setSelectedIndex(0);
+        
+        for (int i=0; i<annFields.size(); i++){
+        	checkBoxes[i] = new JCheckBox(fieldNames[i], false);
+        	comboBox.add(checkBoxes[i]);
+        }
+        
+        theList = new List(16, false);
+        otherList = new List(8, false);
+        JLabel selectorLabel = new JLabel("Add:");
+        Button selector = new Button(">>>>");
+        JLabel unSelectorLabel = new JLabel("Delete:");
+        Button unSelector = new Button("<<<<");
+        selector.setActionCommand("select-command");
+        unSelector.setActionCommand("unselect-command");
+        selector.addActionListener(new Listener());
+        unSelector.addActionListener(new Listener());
+        selector.setSize(50, 30);
+        for (int i=0; i<annFields.size(); i++){
+        	theList.add(fieldNames[i]);
+        }
+
+        paramPanel.add(listLabel, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.VERTICAL, new Insets(10,0,0,20), 0,0)); 
+        paramPanel.add(otherListLabel, new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.VERTICAL, new Insets(10,0,0,20), 0,0)); 
+        paramPanel.add(theList, new GridBagConstraints(0,1,1,5,0,0,GridBagConstraints.EAST, GridBagConstraints.VERTICAL, new Insets(10,0,0,20), 0,0));
+        paramPanel.add(selector, new GridBagConstraints(1,2,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.VERTICAL, new Insets(10,0,0,20), 0,0));
+        paramPanel.add(selectorLabel, new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.VERTICAL, new Insets(10,0,0,20), 0,0));
+        paramPanel.add(unSelector, new GridBagConstraints(1,4,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.VERTICAL, new Insets(10,0,0,20), 0,0));
+        paramPanel.add(unSelectorLabel, new GridBagConstraints(1,3,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.VERTICAL, new Insets(10,0,0,20), 0,0));
+        paramPanel.add(otherList, new GridBagConstraints(2,1,1,5,0,0,GridBagConstraints.EAST, GridBagConstraints.VERTICAL, new Insets(10,0,0,20), 0,0));
+        addContent(paramPanel);
+        setActionListeners(new Listener());
+        pack();
+    }    
     
         /**
      * Shows the dialog.
@@ -161,6 +239,13 @@ public class ListImportDialog extends AlgorithmDialog {
     
     public String getFieldName() {        
         return (String)(listBox.getSelectedItem());
+    }
+    /**
+     * 
+     * @return returns an array of selected fields
+     */
+    public List getSelectedFields(){
+    	return otherList;
     }
     
     public String [] getList() {
@@ -207,7 +292,22 @@ public class ListImportDialog extends AlgorithmDialog {
                     hw.setVisible(false);
                     hw.dispose();
                     return;
-                }            }
+                }            
+            }
+            else if (command.equals("select-command")){  
+            	if (theList.getSelectedItem()==null)
+            		return;
+            	otherList.add(theList.getSelectedItem());
+            	theList.remove((theList.getSelectedIndex()));
+            	return;
+            }
+            else if (command.equals("unselect-command")){ 
+            	if (otherList.getSelectedItem()==null)
+            		return;
+            	theList.add(otherList.getSelectedItem());
+            	otherList.remove((otherList.getSelectedIndex()));
+            	return;
+            }
             dispose();
         }
         

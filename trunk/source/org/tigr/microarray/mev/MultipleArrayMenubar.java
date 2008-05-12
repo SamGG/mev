@@ -252,7 +252,14 @@ public class MultipleArrayMenubar extends JMenuBar {
         displayMenu.add(sizeMenu);
 
         displayMenu.add(createJCheckBoxMenuItem("Draw Borders", ActionManager.DISPLAY_DRAW_BORDERS_CMD, listener, false));        
-        displayMenu.add(createJCheckBoxMenuItem("Compact Cluster Color Groups", ActionManager.COMPACT_CLUSTERS_CMD, listener, false));
+        displayMenu.addSeparator();
+        
+        JMenu clusteringMenu = new JMenu("Cluster Viewing Options");
+        clusteringMenu.add(createJCheckBoxMenuItem("Compact Cluster Color Groups", ActionManager.COMPACT_CLUSTERS_CMD, listener, false));
+        clusteringMenu.add(createJCheckBoxMenuItem("Show Mouse Rectangles", ActionManager.SHOW_RECTS_CMD, listener, true));
+        clusteringMenu.add(createJCheckBoxMenuItem("Auto-Arrange Cluster Colors", ActionManager.AUTO_ARRANGE_COLORS, listener, false));
+        
+        displayMenu.add(clusteringMenu);
         
         add(displayMenu);
         
@@ -262,10 +269,15 @@ public class MultipleArrayMenubar extends JMenuBar {
         
         JMenu clusterMenu = new JMenu("Cluster Utilities");
         
-        JMenu importMenu = new JMenu("Import Cluster");                
+        JMenu importMenu = new JMenu("Manual Cluster Import");                
         importMenu.add(manager.getAction(ActionManager.IMPORT_GENE_LIST_ACTION));
         importMenu.add(manager.getAction(ActionManager.IMPORT_SAMPLE_LIST_ACTION));        
         clusterMenu.add(importMenu);
+        
+        JMenu autoImportMenu = new JMenu("Automatic Cluster Import");                
+        autoImportMenu.add(manager.getAction(ActionManager.AUTO_IMPORT_GENE_LIST_ACTION));
+        autoImportMenu.add(manager.getAction(ActionManager.AUTO_IMPORT_SAMPLE_LIST_ACTION));        
+        clusterMenu.add(autoImportMenu);
         
         clusterMenu.addSeparator();
         
@@ -328,6 +340,8 @@ public class MultipleArrayMenubar extends JMenuBar {
         this.setGRScale(origDisplayMenu.isGRScale());
         this.setDrawBorders(origDisplayMenu.isDrawingBorder());
         this.setCompactClusters(origDisplayMenu.isCompactClusters());
+        this.setShowRects(origDisplayMenu.isShowRects());
+        this.setAutoArrangeColors(origDisplayMenu.isAutoArrangeColors());
         this.setMaxRatioScale(origDisplayMenu.getMaxRatioScale());
         this.setMinRatioScale(origDisplayMenu.getMinRatioScale());
         this.setMidRatioValue(origDisplayMenu.getMidRatioValue());
@@ -998,6 +1012,18 @@ public class MultipleArrayMenubar extends JMenuBar {
     void setCompactClusters(boolean compactClusters) {
         displayMenu.compactClusters = compactClusters;
     }
+    /**
+     * Sets compact clusters attribute.
+     */
+    void setShowRects(boolean showRects) {
+        displayMenu.showRects = showRects;
+    }
+    /**
+     * Sets cluster colors auto-arrange attribute.
+     */
+    void setAutoArrangeColors(boolean arrangeColors) {
+        displayMenu.arrangeColors = arrangeColors;
+    }
     
     /**
      * Sets anti-aliasing attribute.
@@ -1149,6 +1175,8 @@ public class MultipleArrayMenubar extends JMenuBar {
         private boolean tracing = false;
         private boolean drawBorders = false;
         private boolean compactClusters = false;
+        private boolean showRects = false;
+        private boolean arrangeColors = true;
         private boolean antialiasing = true;
         private boolean grscale = true;
         private boolean useColorGradient = false;
@@ -1201,6 +1229,12 @@ public class MultipleArrayMenubar extends JMenuBar {
         
         public boolean isCompactClusters(){
         	return compactClusters;
+        }
+        public boolean isShowRects(){
+        	return showRects;
+        }
+        public boolean isAutoArrangeColors(){
+        	return arrangeColors;
         }
         
         public boolean isTracing() {
