@@ -54,7 +54,14 @@ public interface IDisplayMenu {
      * Returns true if "Compact Color Clusters" item is selected.
      */
     public boolean isCompactClusters();
-    
+    /**
+     * Returns true if "Show Rects" item is selected.
+     */
+    public boolean isShowRects();
+    /**
+     * Returns true if "Auto-Arrange Colors" item is selected.
+     */
+    public boolean isAutoArrangeColors();
     /**
      * Returns true if "Tracing" item is selected.
      */
