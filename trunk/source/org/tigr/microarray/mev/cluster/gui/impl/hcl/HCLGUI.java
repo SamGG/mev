@@ -39,7 +39,8 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
     
     private Algorithm algorithm;
     private Progress progress;
-    
+    private boolean isSampOrdered = false;
+    private boolean isGeneOrdered = false;
     /**
      * Inits the algorithm parameters, runs calculation and returns
      * a result to be inserted into the framework analysis node.
@@ -83,7 +84,10 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
                 progress.setTitle("Clustering by Genes");
                 data.addParam("calculate-genes", String.valueOf(true));
                 data.addParam("optimize-gene-ordering", String.valueOf(false));
-                if (dialog.isGeneOrdering())data.addParam("optimize-gene-ordering", String.valueOf(true));
+                if (dialog.isGeneOrdering()){
+                	isGeneOrdered = true;
+                	data.addParam("optimize-gene-ordering", String.valueOf(true));
+                }
                 genes_result = algorithm.execute(data);
                 validate(genes_result);
             }
@@ -92,7 +96,10 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
                 progress.setTitle("Clustering by Examples");
                 data.addParam("calculate-genes", String.valueOf(false));
                 data.addParam("optimize-sample-ordering", String.valueOf(false));
-                if (dialog.isSampleOrdering())data.addParam("optimize-sample-ordering", String.valueOf(true));
+                if (dialog.isSampleOrdering()){
+                	isSampOrdered = true;
+                	data.addParam("optimize-sample-ordering", String.valueOf(true));
+                }
                 samples_result = algorithm.execute(data);
                 validate(samples_result);
             }
@@ -288,11 +295,25 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
     private void addGeneralInfo(DefaultMutableTreeNode root, GeneralInfo info) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("General Information");
         node.add(new DefaultMutableTreeNode("Linkage Method: "+info.getMethodName()));
+        node.add(new DefaultMutableTreeNode("Leaf Order Optimization: " + isOrdered()));
         node.add(new DefaultMutableTreeNode("Time: "+String.valueOf(info.time)+" ms"));
         node.add(new DefaultMutableTreeNode(info.function));
         root.add(node);
     }
-    
+    /**
+     * returns String for leaf order optimization
+     */
+    private String isOrdered(){
+    	if (isSampOrdered){
+    		if (isGeneOrdered)
+    			return "Samples, Genes";
+    		return "Samples";
+    	}else{
+		if (isGeneOrdered)
+			return "Genes";
+    	}
+    	return "None";
+    }
     
     /**
      * The class to listen to algorithm events.
