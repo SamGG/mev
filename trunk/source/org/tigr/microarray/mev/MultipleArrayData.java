@@ -1214,10 +1214,12 @@ public class MultipleArrayData implements IData {
     public String getClusterLabel(int index, boolean gene){
     	if (gene){
 	    	if (geneClusterRepository==null) return null;
+	    	if (geneClusterRepository.getCluster(index)==null) return null;
 	    	return geneClusterRepository.getCluster(index).getClusterLabel();
     	}
     	else{
     		if (expClusterRepository==null) return null;
+	    	if (expClusterRepository.getCluster(index)==null) return null;
     		return expClusterRepository.getCluster(index).getClusterLabel();
     	}
     }
@@ -1237,6 +1239,7 @@ public class MultipleArrayData implements IData {
     		int i=0;  
     		while (geneClusterRepository.getCluster(i).getClusterColor()!=color){
     		i++;
+    			if (i>geneClusterRepository.getClusterSerialCounter()) return -1;
     		}
     		return i;
     	}else{
@@ -1244,6 +1247,7 @@ public class MultipleArrayData implements IData {
     		int i=0;  
     		while (expClusterRepository.getCluster(i).getClusterColor()!=color){
     		i++;
+    			if (i>expClusterRepository.getClusterSerialCounter()) return -1;
     		}
     		return i;
     	}

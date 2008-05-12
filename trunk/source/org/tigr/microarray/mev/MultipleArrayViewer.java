@@ -90,6 +90,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneLayout;
 import javax.swing.JSplitPane;
 import javax.swing.JTree;
 import javax.swing.JViewport;
@@ -2367,6 +2368,20 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         fireMenuChanged();
     }
     
+    /**
+     * Invoked when show rects menu item is changed.
+     */
+    private void onShowRects() {
+        menubar.setShowRects(!menubar.getDisplayMenu().isShowRects());
+        fireMenuChanged();
+    }
+    /**
+     * Invoked when auto arrange colors menu item is changed.
+     */
+    private void onAutoArrangeColors() {
+        menubar.setAutoArrangeColors(!menubar.getDisplayMenu().isAutoArrangeColors());
+        fireMenuChanged();
+    }
     
     /**
      * Shows the system info dialog.
@@ -4011,6 +4026,48 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         }
     }
     
+    /** Automatically imports a list of identifiers for each annotation type and
+     * creates clusters for each identifier within each of the user-selected annotation type
+     */
+    private void onAutoImportList(int clusterType) {
+        ClusterRepository cr = getClusterRepository(clusterType);
+        
+        ArrayList clusterArray = cr.autoCreateClusters();
+        for (int i = 0; i< clusterArray.size(); i++){
+	        if(clusterArray != null) {
+	            if(clusterType == Cluster.GENE_CLUSTER) {
+	                this.geneClusterManager.onRepositoryChanged(cr);
+	                addHistory("Save Gene Cluster: Serial #: "+((Cluster)clusterArray.get(i)).getSerialNumber()+", Source: Auto List Import");
+	            } else {
+	                this.experimentClusterManager.onRepositoryChanged(cr);
+	                addHistory("Save Sample Cluster: Serial #: "+((Cluster)clusterArray.get(i)).getSerialNumber()+", Source: Auto List Import");
+	            }
+	            refreshCurrentViewer();
+	        }
+	    }
+    }
+    
+    /** Automatically imports a list of identifiers for each annotation type and
+     * creates clusters for each identifier within each of the user-selected annotation type
+     */
+    private void onAutoImportList(int clusterType, int index) {
+        ClusterRepository cr = getClusterRepository(clusterType);
+        
+        ArrayList clusterArray = cr.autoCreateClusters(index);
+        if(clusterArray != null) {
+        	for (int i = 0; i< clusterArray.size(); i++){
+	            if(clusterType == Cluster.GENE_CLUSTER) {
+	                this.geneClusterManager.onRepositoryChanged(cr);
+	                addHistory("Save Gene Cluster: Serial #: "+((Cluster)clusterArray.get(i)).getSerialNumber()+", Source: Auto List Import");
+	            } else {
+	                this.experimentClusterManager.onRepositoryChanged(cr);
+	                addHistory("Save Sample Cluster: Serial #: "+((Cluster)clusterArray.get(i)).getSerialNumber()+", Source: Auto List Import");
+	            }
+	            refreshCurrentViewer();
+	        }
+	    }
+    }
+    
     /** Appends Sample annoation.  Loads annoation using the loaded order.
      */
     private void appendSampleAnnotation() {
@@ -4982,6 +5039,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
                 onDrawBorders();
             } else if (command.equals(ActionManager.COMPACT_CLUSTERS_CMD)) {
                 onCompactClusters();
+            } else if (command.equals(ActionManager.SHOW_RECTS_CMD)) {
+                onShowRects();
+            } else if (command.equals(ActionManager.AUTO_ARRANGE_COLORS)) {
+                onAutoArrangeColors();
             } else if (command.equals(ActionManager.SYSTEM_INFO_CMD)) {
                 onSystemInfo();
             } else if (command.equals(ActionManager.DEFAULT_DISTANCES_CMD)) {
@@ -5065,6 +5126,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
                 onImportList(Cluster.GENE_CLUSTER);
             } else if (command.equals(ActionManager.IMPORT_SAMPLE_LIST_COMMAND)) {
                 onImportList(Cluster.EXPERIMENT_CLUSTER);
+            } else if (command.equals(ActionManager.AUTO_IMPORT_GENE_LIST_COMMAND)) {
+                onAutoImportList(Cluster.GENE_CLUSTER);
+            } else if (command.equals(ActionManager.AUTO_IMPORT_SAMPLE_LIST_COMMAND)) {
+                onAutoImportList(Cluster.EXPERIMENT_CLUSTER);
         	} else if (command.equals(ActionManager.CDNA_LOW_INTENSITY_CMD)) {
         		applyLowerCutoffs();
         	}else if (command.equals(ActionManager.OLIGEN_LOW_INTENSITY_CMD)) {
@@ -5540,6 +5605,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         
         public Color storeCluster(int[] indices, Experiment experiment, int clusterType){
             return MultipleArrayViewer.this.storeCluster(indices, experiment, clusterType);
+        }
+        
+        public void autoStoreClusters(int clusterType, int index){
+        	MultipleArrayViewer.this.onAutoImportList(clusterType, index);
         }
         
         public Color storeSubCluster(int[] indices, Experiment experiment, int clusterType){
