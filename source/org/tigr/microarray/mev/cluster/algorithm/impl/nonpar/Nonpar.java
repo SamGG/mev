@@ -900,7 +900,7 @@ public class Nonpar extends AbstractAlgorithm {
 		
 		for(int i = 0; i < numRows; i++) {
 			NonparOneWayData data = new NonparOneWayData(matrix.A[i], groups, 2);
-			
+
 			if(!data.areGroupsNull) {
 				
 				m11 = m12 = m21 = m22 = 0;
@@ -908,6 +908,7 @@ public class Nonpar extends AbstractAlgorithm {
 				currGroups = data.getGroups();
 				currData = data.getValues();
 				groupNs = data.getGroupNs();
+				
 				
 				//partition bins
 				binPartition = new boolean[currData.length];
@@ -922,6 +923,7 @@ public class Nonpar extends AbstractAlgorithm {
 					}
 				}
 				
+				
 				/*
 				 * The accumulation of matrix entries depends on the orientation requested
 				 * in terms of colunm and row associations with bin and grouping.
@@ -934,7 +936,7 @@ public class Nonpar extends AbstractAlgorithm {
 				if(!swapGroupLoc) {  //if we don't swap groups
 					
 					for(int j = 0; j < currData.length; j++) {
-						if(groups[j] == 0) {
+						if(currGroups[j] == 0) {
 							if(!swapBinLoc) {
 								if(binPartition[j])
 									m11++;
@@ -963,7 +965,7 @@ public class Nonpar extends AbstractAlgorithm {
 				} else {  //if we do swap groups
 					
 					for(int j = 0; j < currData.length; j++) {
-						if(groups[j] == 1) { //change group index orientation
+						if(currGroups[j] == 1) { //change group index orientation
 							if(!swapBinLoc) {
 								if(binPartition[j])
 									m11++;
