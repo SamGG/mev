@@ -331,7 +331,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 
         //GaggleInit must happen after menubar is created.
         if(TMEV.GAGGLE_CONNECT_ON_STARTUP)  {
-        	gaggleInit();
+        	connectToGaggle();
         }
     }
     
@@ -347,7 +347,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         initSessionMetaData();
         
         if(TMEV.GAGGLE_CONNECT_ON_STARTUP)  {
-        	gaggleInit();
+        	connectToGaggle();
         }        
         // listener
         EventListener eventListener = new EventListener();
@@ -433,7 +433,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         
 
         if(TMEV.GAGGLE_CONNECT_ON_STARTUP)  {
-        	gaggleInit();
+        	connectToGaggle();
         }
         
         //jcb 7/10/06 the Manager constructor takes care of adding field names
@@ -5304,7 +5304,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
             /* End CGH Command Handlers  */   
                 
             }else if(command.equals(ActionManager.GAGGLE_CONNECT_ACTION)){
-            	gaggleInit();
+            	connectToGaggle();
             }else if(command.equals(ActionManager.GAGGLE_DISCONNECT_ACTION)){
             	disconnectFromGaggle();
             }else if(command.equals(ActionManager.SELECT_TARGET_GOOSE_CMD)){
@@ -5712,7 +5712,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         /**
          * @author eleanora
          */
-        public void broadcastGeneClusters(Cluster[] clusters){
+        public void broadcastGeneClusters(Cluster[] clusters) {
+        	if(!isGaggleConnected())
+        		return;
         	System.out.println("broadcasting matrix size " + clusters.length);
         	DataMatrix m = new DataMatrix();
         	ClusterWorker cw = new ClusterWorker(MultipleArrayViewer.this.geneClusterRepository); 
@@ -5752,6 +5754,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
          * 
          */
 		public void broadcastGeneCluster(Experiment experiment, int[] rows, int[] columns) {
+        	if(!isGaggleConnected())
+        		return;
 			if(rows == null) 
 				rows = experiment.getRows();
 			if(columns == null) {
@@ -5791,6 +5795,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	     * @author eleanora
 	     */
         public void broadcastNamelist(Cluster[] clusters) {
+        	if(!isGaggleConnected())
+        		return;
         	Namelist nl = new Namelist();
         	ClusterWorker cw = new ClusterWorker(MultipleArrayViewer.this.geneClusterRepository);
         	int[] indices = cw.getUniqueIndices(clusters);
@@ -5806,6 +5812,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         
         //TODO remove Experiment parameter? 
         public void broadcastNamelist(Experiment e, int[] rows) {
+        	if(!isGaggleConnected())
+        		return;
         	if(e == null)
         		System.out.println("Experiment is null");
         	if(rows == null)
@@ -5828,67 +5836,46 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
          * @author eleanora
          */
     public void broadcastNetwork(Vector<int[]> interactions, Vector<String> types, Vector<Boolean> directionals) {
-/*        public void broadcastNetwork(int[][] clusters, float[][] weights) {
-        	Network nt = new Network();
-        	for(int i=0; i<clusters.length; i++) {
-        		for(int j=0; j<clusters[i].length; j++) {
-        			if(weights[i][j] == (1.0)) {
-        				String source = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{i})[0];
-    	        		String target = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{clusters[i][j]})[0];
-    	            	Interaction tempInt = new Interaction(source, target, "test", false);
-    	        		nt.add(tempInt);
-            		
-        			}
-        		}
-        	}
-        	*/
-    		Network nt = new Network();
-        	Hashtable<String, String[]> nodeAnnotations = new Hashtable<String, String[]>();
-        	String[] allFields = data.getAllFilledAnnotationFields();
-        	for(int i=0; i<interactions.size(); i++) {
-        		String source = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{interactions.get(i)[0]})[0];
-        		String target = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{interactions.get(i)[1]})[0];
-        		Interaction tempInt = new Interaction(source, target, types.get(i), directionals.get(i));
+    	if(!isGaggleConnected())
+    		return;
+		Network nt = new Network();
+    	Hashtable<String, String[]> nodeAnnotations = new Hashtable<String, String[]>();
+    	String[] allFields = data.getAllFilledAnnotationFields();
+    	for(int i=0; i<interactions.size(); i++) {
+    		String source = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{interactions.get(i)[0]})[0];
+    		String target = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{interactions.get(i)[1]})[0];
+    		Interaction tempInt = new Interaction(source, target, types.get(i), directionals.get(i));
 
-        		
-        		nt.add(tempInt);
-        		
-        		if(!nodeAnnotations.containsKey(source)) {
-        			nodeAnnotations.put(source, new String[0]);
-        			for(String field: allFields) {
-	        			nt.addNodeAttribute(source, field, data.getElementAnnotation(interactions.get(i)[0], field)[0]);
-	        			System.out.println("source: " + source + " field: " + field + " annot: " + data.getElementAnnotation(interactions.get(i)[0], field)[0]);
-        			}
-        		}
-        		if(!nodeAnnotations.containsKey(target)) {
-        			nodeAnnotations.put(target, new String[0]);
-        			for(String field: allFields)
-        				nt.addNodeAttribute(target, field, data.getElementAnnotation(interactions.get(i)[1], field)[0]);
-        		}
+    		
+    		nt.add(tempInt);
+    		
+    		if(!nodeAnnotations.containsKey(source)) {
+    			nodeAnnotations.put(source, new String[0]);
+    			for(String field: allFields) {
+        			nt.addNodeAttribute(source, field, data.getElementAnnotation(interactions.get(i)[0], field)[0]);
+        			System.out.println("source: " + source + " field: " + field + " annot: " + data.getElementAnnotation(interactions.get(i)[0], field)[0]);
+    			}
+    		}
+    		if(!nodeAnnotations.containsKey(target)) {
+    			nodeAnnotations.put(target, new String[0]);
+    			for(String field: allFields)
+    				nt.addNodeAttribute(target, field, data.getElementAnnotation(interactions.get(i)[1], field)[0]);
+    		}
 
-        	}
+    	}
 
-        	nt.setName("MeV Network (" + interactions.size() + ")");
-	    	nt.setSpecies(getCurrentSpecies());
-        	MultipleArrayViewer.this.doBroadcastNetwork(nt);
-        }
+    	nt.setName("MeV Network (" + interactions.size() + ")");
+    	nt.setSpecies(getCurrentSpecies());
+    	MultipleArrayViewer.this.doBroadcastNetwork(nt);
     }
+}
 
     /**
      * @author eleanora
      * @param nl
      */
     public void doBroadcastNamelist(Namelist nl){
-		if(!isConnected) {
-			String title = "Gaggle connection warning";
-			String msg = "You are not connected to Gaggle. Connect now?";
-			int dialogResult = JOptionPane.showConfirmDialog (this, msg, title,
-                    JOptionPane.YES_NO_OPTION);
-			if (dialogResult != JOptionPane.YES_OPTION)  
-				return;
-			if(!connectToGaggle())
-				return;
-		}
+
 		int rowCount = nl.getNames().length;
 		if (rowCount > 100) {
 			String title = "Broadcast names warning";
@@ -5904,22 +5891,12 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     		System.err.println("doBroadcastNamelist: rmi error calling boss.broadcast");
     	}
     }
-    
+
     /**
      * @author eleanora
      * @param nt
      */
     public void doBroadcastNetwork(Network nt) {
-		if(!isConnected) {
-			String title = "Gaggle connection warning";
-			String msg = "You are not connected to Gaggle. Connect now?";
-			int dialogResult = JOptionPane.showConfirmDialog (this, msg, title,
-                    JOptionPane.YES_NO_OPTION);
-			if (dialogResult != JOptionPane.YES_OPTION)  
-				return;
-			if(!connectToGaggle())
-				return;
-		}
 		int networkSize = nt.getNodes().length;
 		if (networkSize > 100) {
 			String title = "Broadcast names warning";
@@ -5941,16 +5918,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
      * @param matrix
      */
     public void doBroadcastMatrix(DataMatrix matrix) {
-		if(!isConnected) {
-			String title = "Gaggle connection warning";
-			String msg = "You are not connected to Gaggle. Connect now?";
-			int dialogResult = JOptionPane.showConfirmDialog (this, msg, title,
-                    JOptionPane.YES_NO_OPTION);
-			if (dialogResult != JOptionPane.YES_OPTION)  
-				return;
-			if(!connectToGaggle())
-				return;
-		}
     	int rowCount = matrix.getRowCount();
 		if (rowCount > 100) {
 			String title = "Broadcast names warning";
@@ -5960,21 +5927,26 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 			if (dialogResult != JOptionPane.YES_OPTION)  
 				return;
 		}
-		try {	//here is where an exception is thrown if gaggle is not connected. Nullpointerconnection add if(targetGoose==null) spawn dialog or something
+		try {	//here is where an exception is thrown if gaggle is not connected. 
 			gaggleBoss.broadcastMatrix(myGaggleName, targetGoose, matrix);
 		} catch (RemoteException rex) {
-		//	System.err.println ("doBroadcastMatrix: " + " rmi error calling boss.broadcast (matrix)");
 			JOptionPane.showMessageDialog(mainframe, "Gaggle unavailable. Please use Utilities -> Connect to Gaggle.");
-		//	rex.printStackTrace ();
 		}
 	}
+    private boolean isGaggleConnected() {
+    	if(isConnected)
+    		return true;
+		String title = "Not connected to Gaggle";
+		String msg = "Please connect to Gaggle using the Utilities -> Gaggle menu.";
+		JOptionPane.showMessageDialog(this, msg, title, JOptionPane.OK_OPTION);
+		return false;
+    }
     
     /**
      * @author eleanora
      * @return
      */
     public boolean connectToGaggle() {
-//    	System.out.println("Connecting to Gaggle");
     	TMEV.GAGGLE_CONNECT_ON_STARTUP = true;
     	if(gaggleConnector == null) {
     		gaggleInit();
@@ -5982,45 +5954,40 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         try {
             gaggleConnector.connectToGaggle();
         } catch (Exception ex0) {
-            System.err.println("Failed to connect to gaggle: " + ex0.getMessage());
+            System.err.println("MAV.connectToGaggle(): Failed to connect to gaggle: " + ex0.getMessage());
         }
         gaggleBoss = gaggleConnector.getBoss();
         if(gaggleBoss != null) {
 	        return true;
         } else {
-        	System.out.println("connectToGaggle(): Couldn't connect to Gaggle");
+        	System.out.println("MAV.connectToGaggle(): Couldn't connect to Gaggle");
 			//JOptionPane.showMessageDialog(mainframe, "Gaggle unavailable.");
         	return false;
         }
     }
-    /**
-     * @author eleanora
-     */
-    public void disconnectFromGaggle() {
-    	gaggleConnector.disconnectFromGaggle(true);
-    }
-    
-    protected void gaggleInit(){
+
+    private void gaggleInit(){
     	if(gaggleConnector == null) {
 	        gaggleConnector = new RmiGaggleConnector(this);
 	    	gaggleConnector.setAutoStartBoss(true);
 	        new GooseShutdownHook(gaggleConnector);
 	        gaggleConnector.addListener(this);
     	}
-    	
-        try {
-    		connectToGaggle();
-		} catch (Exception ex0) {
-			System.err.println ("Couldn't connect to Gaggle: " + ex0.getMessage ());
-			JOptionPane.showMessageDialog(mainframe, "Gaggle unavailable.");
-		}
 	}
+    
+    /**
+     * @author eleanora
+     */
+    public void disconnectFromGaggle() {
+    	gaggleConnector.disconnectFromGaggle(true);
+    }
     /**
      * @author eleanora
      */
     public String getName() {
     	return myGaggleName;
     }
+    
     /**
      * @author eleanora
      */
@@ -6204,32 +6171,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 		this.menubar.replaceGaggleTargetMenuItems(temp);
 	}
 
-	public void handleCluster(String arg0, org.systemsbiology.gaggle.core.datatypes.Cluster arg1) throws RemoteException {
-		// TODO Auto-generated method stub
-	}
-
-	public void handleNameList(String arg0, Namelist arg1) throws RemoteException {
-		// TODO Auto-generated method stub
-	}
-
-	public void handleNetwork(String arg0, Network arg1) throws RemoteException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @Deprecated
-	 * In place only to fulfill Goose interface requirements.
-	 */
-	public void doBroadcastList() throws RemoteException {
-		//Deprecated. Does nothing
-		
-	}
-
-	public void handleTuple(String arg0, GaggleTuple arg1) throws RemoteException {
-		// TODO Auto-generated method stub
-		
-	}
         
 	/**
 	 * This method is for the GaggleConnectionListener implementation.
@@ -6282,4 +6223,31 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         	data.setGaggleOrganismName(speciesName);
         return speciesName;
     }
+
+	public void handleCluster(String arg0, org.systemsbiology.gaggle.core.datatypes.Cluster arg1) throws RemoteException {
+		// TODO Auto-generated method stub
+	}
+
+	public void handleNameList(String arg0, Namelist arg1) throws RemoteException {
+		// TODO Auto-generated method stub
+	}
+
+	public void handleNetwork(String arg0, Network arg1) throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @Deprecated
+	 * In place only to fulfill Goose interface requirements.
+	 */
+	public void doBroadcastList() throws RemoteException {
+		//Deprecated. Does nothing
+		
+	}
+
+	public void handleTuple(String arg0, GaggleTuple arg1) throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
 }
