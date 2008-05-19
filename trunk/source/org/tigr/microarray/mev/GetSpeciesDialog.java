@@ -39,7 +39,7 @@ public class GetSpeciesDialog extends org.tigr.microarray.mev.cluster.gui.impl.d
     
     /** Creates a new instance of AnalysisSaveDialog */
     public GetSpeciesDialog(JFrame frame, String currentName) {
-        super(frame, "Save Analysis Check", true);
+        super(frame, "Change Species Name", true);
         Listener listener = new Listener();
         
         speciesNameLabel = new JLabel("Please provide a species name: ");
