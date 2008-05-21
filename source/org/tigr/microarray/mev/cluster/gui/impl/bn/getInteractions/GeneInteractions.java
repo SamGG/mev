@@ -85,6 +85,7 @@ public class GeneInteractions {
 				    // create an undirected weighted edge between symbol1 and symbol2 with this weight
 				    sGE = new SimpleGeneEdge(symbol1, symbol2, weight);
 				    // add this edge to the ArrayList of interactions, if it's not already there
+				    System.out.println("Simple Gene Edge: " + sGE.toString());
 				    if(!UsefulInteractions.containsEitherWay(interactions, sGE)){
 					interactions.add(sGE); 		
 				    }

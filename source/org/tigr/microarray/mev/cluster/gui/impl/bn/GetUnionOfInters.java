@@ -51,6 +51,7 @@ public class GetUnionOfInters {
 	    if(!UsefulInteractions.containsEitherWay(toWrite, sGE)){
 		toWrite.add(sGE);
 		toWrite.add(new SimpleGeneEdge(sGE.getTo(), sGE.getFrom(), sGE.getWeight()));
+		System.out.println("Adding Edge " + sGE.getTo() + "_" + sGE.getFrom() + "_" + sGE.getWeight());
 	    }
 	}
 	for(int i = 0; i < al2.size(); i++){
@@ -58,6 +59,7 @@ public class GetUnionOfInters {
 	    if(!UsefulInteractions.containsEitherWay(toWrite, sGE)){
 		toWrite.add(sGE);
 		toWrite.add(new SimpleGeneEdge(sGE.getTo(), sGE.getFrom(), sGE.getWeight()));
+		System.out.println("Adding Edge " + sGE.getTo() + "_" + sGE.getFrom() + "_" + sGE.getWeight());
 	    }
 	}
 	if(toWrite.size() == 0){

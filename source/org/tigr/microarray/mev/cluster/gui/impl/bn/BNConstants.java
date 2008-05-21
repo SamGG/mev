@@ -7,6 +7,7 @@ public class BNConstants {
 	 * Input File Names
 	 */
 	public final static String PPI_FILE = "all_ppi.txt";
+	public final static String KEGG_FILE = "_kegg_edges.txt";
 	public final static String RESOURCERER_FILE = "res.txt";
 	public final static String ACCESSION_FILE = "affyID_accession.txt";
 	public final static String NEW_ACCESSION_FILE = "newGBs.txt";
@@ -22,7 +23,11 @@ public class BNConstants {
 	public final static String OUT_ACCESSION_FILE = "list.txt";
 	public final static String LIT_INTER_FILE = "outInteractionsLit.txt";
 	public final static String PPI_INTER_FILE = "outInteractionsPPI.txt"; 
-	public final static String BOTH_INTER_FILE = "outInteractionsBoth.txt";
+	public final static String LIT_PPI_INTER_FILE = "outInteractionsBoth.txt";
+	public final static String KEGG_INTER_FILE = "outInteractionsKegg.txt";
+	public final static String LIT_KEGG_INTER_FILE = "outInteractionsLitKegg.txt";
+	public final static String PPI_KEGG_INTER_FILE = "outInteractionsPpiKegg.txt";
+	public final static String LIT_PPI_KEGG_INTER_FILE = "outInteractionsLitPpiKegg.txt";
 	public final static String BIF_RESULT_FILE = "resultBif.xml";
 	public final static String LABEL_FILE = "label";
 	
@@ -48,6 +53,7 @@ public class BNConstants {
 		  
 	public final static String FRM_LIT = "fromLiterature";
 	public final static String FRM_PPI = "fromPpi";
+	public final static String FRM_KEGG = "fromKegg";
 	public final static String OUT_INTER_FILE_NAME = "outInteractionsFileName";
 	public final static String PPI_FILE_NAME = "ppiFileName";
 	public final static String USE_GO = "useGo";
@@ -69,7 +75,12 @@ public class BNConstants {
 	 */
 	public final static String LIT_INTER_MODULE_FILE = "getInterModLit.props";
 	public final static String PPI_INTER_MODULE_DIRECT_FILE = "getInterModPPIDirectly.props";
-	public final static String BOTH_INTER_MODULE_FILE = "getInterModBoth.props";
+	public final static String BOTH_INTER_MODULE_FILE = "getInterModBoth.props"; //PPI-LIT
+	public final static String LIT_KEGG_INTER_MODULE_FILE = "getInterModLitKegg.props";
+	public final static String KEGG_INTER_MODULE_FILE = "getInterModKegg.props";
+	public final static String PPI_KEGG_LIT_INTER_MODULE_FILE = "getInterModLitPpiKegg.props";
+	public final static String PPI_KEGG_INTER_MODULE_FILE = "getInterModPpiKegg.props";
+	public final static String LIT_PPI_KEGG_INTER_MODULE_FILE = "getInterModLitPpiKegg.props";
 	public final static String XML_BIF_MODULE_FILE = "prepareXMLBifMod.props";
 	 
 	/**

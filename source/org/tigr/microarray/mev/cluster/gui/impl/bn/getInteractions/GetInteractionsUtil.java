@@ -15,9 +15,13 @@
  */
 package org.tigr.microarray.mev.cluster.gui.impl.bn.getInteractions;import java.util.HashMap;import java.util.HashSet;import java.util.ArrayList;
 import java.util.Properties;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.FileInputStream;
+import java.io.LineNumberReader;
+
+import org.tigr.microarray.mev.cluster.gui.impl.bn.BNConstants;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;import org.tigr.microarray.mev.cluster.gui.impl.bn.UsefulInteractions;import org.tigr.microarray.mev.cluster.gui.impl.bn.GetUnionOfInters;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.SimpleGeneEdge;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
@@ -221,6 +225,79 @@ public class GetInteractionsUtil {
 	    System.out.println(fnfe);
 	}
 	return null;
+    }
+    
+    public static ArrayList loadKeggInteractions(String species, String location){
+    	ArrayList<String> kegg = new ArrayList<String>();
+    	String fileName = location + species + "_kegg_edges.txt";
+    	try {    	    
+    	    FileReader fr = new FileReader(fileName);
+    	    LineNumberReader lnr = new LineNumberReader(fr);
+    	    String s = null;
+    	    while((s = lnr.readLine())!=null){
+    		s = s.trim();
+    		kegg.add(s);
+    	    }
+    	    lnr.close();
+    	    fr.close();
+    	    System.out.println("Loaded KEGG edges: " + kegg.size());
+    	    return kegg;
+    	}
+    	catch(IOException ioe){
+    	    System.out.println(ioe);
+    	}
+    	
+    	return null;
+    }
+    
+    public static ArrayList getEdgesfromKegg(ArrayList keggListAll, String accListFile) {
+    	ArrayList<String> dataNodes = new ArrayList<String>();
+    	
+    	try {    	    
+    	    FileReader fr = new FileReader(accListFile);
+    	    LineNumberReader lnr = new LineNumberReader(fr);
+    	    String s = null;
+    	    while((s = lnr.readLine())!=null){
+    		s = s.trim();
+    		dataNodes.add(s);
+    	    }
+    	    lnr.close();
+    	    fr.close();
+    	}
+    	catch(IOException ioe){
+    	    System.out.println(ioe);
+    	}
+    	
+    	ArrayList<SimpleGeneEdge> keggMatches = new ArrayList<SimpleGeneEdge>();
+    	ArrayList<String> keggMatchesAsStrings = new ArrayList<String>();
+    	// Find Kegg edges that match the data
+    	for(int i = 0; i < dataNodes.size(); i++) {
+    		String _curAcc = (String)dataNodes.get(i);
+    		for(int ii = i+1; ii < dataNodes.size(); ii++) {
+    			String _nextAcc = (String)dataNodes.get(ii);
+    			if(!_nextAcc.equals(_curAcc)) {
+	    			String _curEdge1 = _curAcc + "-" + _nextAcc;
+	    			String _curEdge2 = _nextAcc + "-" + _curAcc;
+	    			System.out.println("Searchin for: " + _curEdge1 + " and reverse");
+	    			if(!keggMatchesAsStrings.contains(_curEdge1) && !keggMatchesAsStrings.contains(_curEdge2)) {
+	    				keggMatches.add(new SimpleGeneEdge(_curAcc, _nextAcc, 1.0));
+	    				keggMatches.add(new SimpleGeneEdge(_nextAcc, _curAcc, 1.0));
+	    				keggMatchesAsStrings.add(_curEdge1);
+	    				keggMatchesAsStrings.add(_curEdge2);
+	    			}
+    			}
+    		}
+    		//dataNodes.remove(i);
+    	}
+    	if(keggMatches.size() > 0) {
+    		System.out.println("Returning KEGG matches: " + keggMatches.size());
+    		keggMatchesAsStrings = null;
+    		return keggMatches;
+    	}
+    	else {
+    		System.out.println("Returning KEGG matches: NONE Found!!");
+    		return null;
+    	}
     }
 }
 
