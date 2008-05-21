@@ -146,7 +146,7 @@ private void addGeneralInfo(DefaultMutableTreeNode root, GeneralInfo info) {
 	 propFile[3]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.XML_BIF_MODULE_FILE; 
 	 outFile[0] = BNConstants.LIT_INTER_FILE;
 	 outFile[1] = BNConstants.PPI_INTER_FILE; 
-	 outFile[2] = BNConstants.BOTH_INTER_FILE;
+	 outFile[2] = BNConstants.LIT_PPI_INTER_FILE;
 	 
 	 PrintWriter out=null;
 	 try{ 	 
