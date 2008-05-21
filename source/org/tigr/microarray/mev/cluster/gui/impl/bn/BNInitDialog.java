@@ -1262,7 +1262,8 @@ public class BNInitDialog extends AlgorithmDialog {
             //browseFileBaseButton.setToolTipText("<html>Helps select the BN annotation file system<br>that corresponds the current species and array type.</html>");
             JLabel fileLocation=new JLabel("BN Source Files Location:");
             //defaultFileBaseLocation = new JTextField(TMEV.getFile("data/bn").getAbsolutePath(), 25);
-            defaultFileBaseLocation = new JTextField(new File(System.getProperty("user.dir")).getAbsolutePath());
+            //defaultFileBaseLocation = new JTextField(new File(System.getProperty("user.dir")).getAbsolutePath());
+            defaultFileBaseLocation = new JTextField(new File(TMEV.getDataPath()).getAbsolutePath());
             defaultFileBaseLocation.setEditable(true);
             
             add(fileLocation, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0, 0));
@@ -1277,10 +1278,11 @@ public class BNInitDialog extends AlgorithmDialog {
             
             File file = new File(startDir);
             if(!file.exists()) {                
-                file = TMEV.getFile("data/bn");
-                if(file == null) {
-                    file = new File(System.getProperty("user.dir"));
-                }
+                //file = TMEV.getFile("data/bn");
+                //if(file == null) {
+                    //file = new File(System.getProperty("user.dir"));
+                    file = new File(TMEV.getDataPath());
+                //}
             }
             JFileChooser chooser = new JFileChooser(file);
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -1297,6 +1299,7 @@ public class BNInitDialog extends AlgorithmDialog {
                 	return;
                 }
                 defaultFileBaseLocation.setText(chooser.getSelectedFile().getAbsolutePath());
+                TMEV.setDataPath(defaultFileBaseLocation.getText());
             }
         }
         
