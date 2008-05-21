@@ -72,7 +72,7 @@ public class GetInteractionsModule {
   	    String symbolsArticlesFromGeneDbFileName = resFileLoc+props.getProperty("symbolsArticlesFromGeneDbFileName", null);
 	   
   	    //Useful.checkFile(resFileName);
-  	  //System.exit(0);
+  	    //System.exit(0);
 	    //Useful.checkFile(gbAccessionsFileName);
 	    //System.exit(0);
 	    //Useful.checkFile(symbolsArticlesFromPubmedFileName);
@@ -129,9 +129,14 @@ public class GetInteractionsModule {
 	    	UsefulInteractions.writeSifFileUndirWithWeights(interRes,gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"interRes");	    
 	    }	
 	    ArrayList unionOfInter = GetInteractionsUtil.uniquelyMergeArrayLists(interGeneDb, interRes, interPubmed);
+	    System.out.println("Edges Before KEGG " + unionOfInter.size());
+	    for(int i = 0; i < unionOfInter.size(); i++){
+	    	System.out.println(unionOfInter.get(i).toString());
+	    }
 	    
 	    //Raktim - New function to remove reverse edges between 2 nodes (cycles) from Lit mining interaction.
 	    //E.g - if there is an edge A -> B, there *cannot be an Edge B -> A to make it a DAG
+	    //unionOfInter = UsefulInteractions.removeReverseEdge(unionOfInter);
 	    unionOfInter = UsefulInteractions.removeReverseEdge(unionOfInter);
 	    return unionOfInter;
 	}
@@ -323,6 +328,80 @@ public class GetInteractionsModule {
 		System.out.println("GetInteractionsModule.getInteractionsFromPpi() " +  ppiIner.size() + " interaction");
 	return ppiIner;
     }
+    
+    /**
+     * getInteractionsFromKegg
+     * @param props
+     * @return
+     * @throws NullArgumentException
+     */
+    public static ArrayList getInteractionsFromKegg(Properties props) throws NullArgumentException {	
+    	try {
+    	    if(props == null){
+    	    	throw new NullArgumentException("The given properties were null");
+    	    }
+      	    String fileLoc=path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP;
+      	    //String resFileLoc = path+BNConstants.SEP;
+      	  
+      	    System.out.println("PATH Kegg Paiso: " + fileLoc);
+    	    //String resFileName = resFileLoc+props.getProperty("resourcererFileName");
+      	    
+      	    //System.out.print(resFileName);
+      	    String gbAccessionsFileName = fileLoc+props.getProperty("gbAccessionsFileName");
+      	    
+      	    // Code to load ALL Kegg Interactions
+    	    ArrayList keggListAll = GetInteractionsUtil.loadKeggInteractions("hsa", path+BNConstants.SEP);
+    	    // Find INteractions that corresponds to the Data
+    	    ArrayList keggList = GetInteractionsUtil.getEdgesfromKegg(keggListAll, gbAccessionsFileName);
+    	    System.out.println("Edges From KEGG " + keggList.size());
+    	    for(int i = 0; i < keggList.size(); i++){
+    	    	System.out.println(keggList.get(i).toString());
+    	    }
+    	    
+    	    //Raktim - New function to remove reverse edges between 2 nodes (cycles) from Lit mining interaction.
+    	    //E.g - if there is an edge A -> B, there *cannot be an Edge B -> A to make it a DAG
+    	    //unionOfInter = UsefulInteractions.removeReverseEdge(unionOfInter);
+    	    keggList = UsefulInteractions.removeReverseEdge(keggList);
+    	    return keggList;
+    	}
+    	catch(NullArgumentException nae){
+    	    System.out.println(nae);
+    	    nae.printStackTrace();
+    	}
+    	return null;
+    }
+    
+    /**
+     * getInteractionsFromLiteratureKegg
+     * @param props
+     * @return
+     * @throws NullArgumentException
+     */
+    public static ArrayList getInteractionsFromLiteratureKegg(Properties props) throws NullArgumentException {
+    	try {
+    	    if(props == null){
+    	    	throw new NullArgumentException("The given properties were null");
+    	    }
+	    	ArrayList kegg = getInteractionsFromKegg(props);
+	    	ArrayList lit = getInteractionsFromLiterature(props);
+	    	ArrayList unionLitKegg = GetUnionOfInters.uniquelyMergeArrayLists(kegg, lit);
+	    	unionLitKegg = UsefulInteractions.removeReverseEdge(unionLitKegg);
+	    	System.out.println("\nEdges From KEGG & LIT " + unionLitKegg.size());
+    	    for(int i = 0; i < unionLitKegg.size(); i++){
+    	    	System.out.println(unionLitKegg.get(i).toString());
+    	    }
+	    	return unionLitKegg;
+    	}
+    	catch(OutOfRangeException oore){
+    	    System.out.println(oore);
+    	    oore.printStackTrace();
+    	}
+    	catch(NullArgumentException nae){
+    	    System.out.println(nae);
+    	    nae.printStackTrace();
+    	}
+    	return null;
+    }
     /*
     public static ArrayList getInteractionsFromPpi(ArrayList ppi, ArrayList queryNodes, Properties props) throws NullArgumentException, OutOfRangeException{	
     	if(ppi == null || queryNodes == null){
@@ -419,15 +498,22 @@ public class GetInteractionsModule {
 	    throw new NullArgumentException("The given properties were null");
 	}
 	//System.out.println(props);
-	String isLiteratureStr = props.getProperty(BNConstants.FRM_LIT, "true");
-	isLiteratureStr = isLiteratureStr.trim();
-	String isPpiStr = props.getProperty(BNConstants.FRM_PPI, "false");
-	isPpiStr = isPpiStr.trim();
+	String isLiteratureStr = props.getProperty(BNConstants.FRM_LIT, "true").trim();
+	String isPpiStr = props.getProperty(BNConstants.FRM_PPI, "false").trim();
+	String isKeggStr = props.getProperty(BNConstants.FRM_KEGG, "false").trim();
+	
 	ArrayList interFromLit = null;
 	ArrayList interFromPpi = null;	
 	ArrayList interFromPpiSyms = null;	
-	// get interactions from both literature and ppi
-	if(isLiteratureStr.equals("true") && isPpiStr.equals("true")){
+	ArrayList interFromKegg = null;	
+	
+	// get interactions from all -  kegg, literature and ppi
+	if(isLiteratureStr.equals("true") && isPpiStr.equals("true") && isKeggStr.equals("true")){
+		//TODO
+		return null;
+	}
+	// get interactions from both literature and ppi NOT kegg
+	else if(isLiteratureStr.equals("true") && isPpiStr.equals("true") && !isKeggStr.equals("true")){
 		System.out.println("Only Lit & PPI");
 	    interFromPpiSyms = getInteractionsFromPpi(props);
 	    System.out.println("getInteractions()interFromPpiSyms Size: " + interFromPpiSyms.size());
@@ -443,15 +529,28 @@ public class GetInteractionsModule {
 	    	return GetUnionOfInters.uniquelyMergeArrayLists(interFromLit, interFromPpi);
 	    }
 	}
-	// get interactions from literature but not from ppi
-	else if(isLiteratureStr.equals("true") && !isPpiStr.equals("true")){
+	// get interactions from both literature and kegg and NOT ppi
+	else if(isLiteratureStr.equals("true") && !isPpiStr.equals("true") && isKeggStr.equals("true")){
+		System.out.println("Only KEGG & LIT");
+		ArrayList keggAndLitInterActions = null;
+		keggAndLitInterActions = getInteractionsFromLiteratureKegg(props);
+		return keggAndLitInterActions;
+	}
+	// get interactions from both kegg and ppi and NOT literature 
+	else if(!isLiteratureStr.equals("true") && isPpiStr.equals("true") && isKeggStr.equals("true")){
+		//TODO
+		System.out.println("Only KEGG & PPI");
+		return null;
+	}
+	// get interactions from literature but NOT from ppi & kegg
+	else if(isLiteratureStr.equals("true") && !isPpiStr.equals("true") && !isKeggStr.equals("true")){
 	    interFromLit = getInteractionsFromLiterature(props);
-	    System.out.println("Only Lit");
+	    System.out.println("Only LIT");
 	    //System.exit(1);
 	    return interFromLit;
 	}
-	// get interactions from ppi but not from literature
-	else if(isPpiStr.equals("true")&&!isLiteratureStr.equals("true")){	
+	// get interactions from ppi but not from literature and Kegg
+	else if(isPpiStr.equals("true") && !isLiteratureStr.equals("true") && !isKeggStr.equals("true")){	
 		System.out.println("Only PPI");
 	    interFromPpiSyms = getInteractionsFromPpi(props);
 	    //System.out.println(interFromPpiSyms.size());
@@ -463,6 +562,12 @@ public class GetInteractionsModule {
 	    	prepareGBsForPpiNotDirectly(interFromPpi, props);	
 	    }
 	    return interFromPpi;
+	}
+	//	 get interactions from only  kegg and  and NOT ppi and literature 
+	else if(!isLiteratureStr.equals("true") && !isPpiStr.equals("true") && isKeggStr.equals("true")){
+		System.out.println("Only KEGG");
+		interFromKegg = getInteractionsFromKegg(props);
+		return interFromKegg;
 	}
 	else {
 	    throw new NullArgumentException("At least one of fromPpi or fromLiterature was neither true nor false!\nfromPpi="+isPpiStr+"\nfromLiterature="+isLiteratureStr);
@@ -547,7 +652,7 @@ public class GetInteractionsModule {
 		//System.exit(1);
 	    Properties props = new Properties();
 	    props.load(new FileInputStream(propertiesFileName));	    System.out.print(props.getProperty(BNConstants.RES_FILE_NAME));
-	    ArrayList interactions = getInteractions(props);
+	    ArrayList interactions = getInteractions(props); //Magic Happens Here !!!
 	    if(interactions==null){
 	    	System.out.print("Oh no NULL Interaction object. Bad...");    
 	    }

@@ -65,11 +65,11 @@ public class BNGUI implements IClusterGUI {
 			done=true;
 		}
 		 converter(dialog.getSelectedCluster(),framework,dialog.getBaseFileLocation());
-         buildPropertyFile(dialog.isLit(),dialog.isPPI(),dialog.isBoth(),dialog.useGoTerm(),dialog.getBaseFileLocation());
+         buildPropertyFile(dialog.isLit(),dialog.isPPI(),dialog.isKEGG(), dialog.isBoth(),dialog.isLitAndKegg(), dialog.isPpiAndKegg(), dialog.isAll(),dialog.useGoTerm(),dialog.getBaseFileLocation());
 	     Thread thread = new Thread( new Runnable(){
 		    public void run(){	
-		         if(!dialog.isNone()){		         System.out.println(dialog.getBaseFileLocation());		 
-		         literatureMining(dialog.isLit(),dialog.isPPI(),dialog.isBoth(),dialog.getBaseFileLocation());
+		         if(!dialog.isNone()){		         System.out.println(dialog.getBaseFileLocation());
+		         literatureMining(dialog.isLit(),dialog.isPPI(),dialog.isKEGG(), dialog.isBoth(),dialog.isLitAndKegg(), dialog.isPpiAndKegg(), dialog.isAll(),dialog.getBaseFileLocation());
 		         //literatureMining(true,false,false,dialog.getBaseFileLocation());
 			     prepareXMLBifFile(dialog.getBaseFileLocation());
 		         BNGUI.done=true;		         
@@ -146,13 +146,13 @@ public class BNGUI implements IClusterGUI {
 	 * @param goTerms
 	 * @param path
 	 */
-	private void buildPropertyFile(boolean lit,boolean ppi,boolean both,boolean goTerms,String path){
-		 String sep= System.getProperty("file.separator");    
-		 final int fileSize=4;
+	private void buildPropertyFile(boolean lit,boolean ppi,boolean kegg, boolean LitPpi, boolean LitKegg, boolean KeggPpi, boolean LitPpiKegg,boolean goTerms,String path){
+		 //String sep= System.getProperty("file.separator");    
+		 final int fileSize=8;
 		 String[] propFile=new String[fileSize];
 		 String[] outFile=new String[fileSize-1];
-		 //String datPath=path+sep+"bn"+sep;
-		 //	 Raktim - USe Tmp dir
+		 // String datPath=path+sep+"bn"+sep;
+		 //	Raktim - USe Tmp dir
 		 /*
 		 propFile[0]= path+sep+"getInterModLit.props";
 		 propFile[1]= path+sep+"getInterModPPIDirectly.props";
@@ -165,10 +165,18 @@ public class BNGUI implements IClusterGUI {
 		 propFile[0]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.LIT_INTER_MODULE_FILE;
 		 propFile[1]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.PPI_INTER_MODULE_DIRECT_FILE;
 		 propFile[2]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.BOTH_INTER_MODULE_FILE;
-		 propFile[3]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.XML_BIF_MODULE_FILE; 
+		 propFile[3]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.KEGG_INTER_MODULE_FILE;
+		 propFile[4]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.LIT_KEGG_INTER_MODULE_FILE;
+		 propFile[5]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.PPI_KEGG_INTER_MODULE_FILE;
+		 propFile[6]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.LIT_PPI_KEGG_INTER_MODULE_FILE;
+		 propFile[7]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.XML_BIF_MODULE_FILE; 
 		 outFile[0] = BNConstants.LIT_INTER_FILE;
 		 outFile[1] = BNConstants.PPI_INTER_FILE; 
-		 outFile[2] = BNConstants.BOTH_INTER_FILE;
+		 outFile[2] = BNConstants.LIT_PPI_INTER_FILE;
+		 outFile[3] = BNConstants.KEGG_INTER_FILE;
+		 outFile[4] = BNConstants.LIT_KEGG_INTER_FILE;
+		 outFile[5] = BNConstants.PPI_KEGG_INTER_FILE;
+		 outFile[6] = BNConstants.LIT_PPI_KEGG_INTER_FILE;
 		 
 		 PrintWriter out=null;
 		 try{ 	 
@@ -181,12 +189,13 @@ public class BNGUI implements IClusterGUI {
 				 out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 
 				 out.println(BNConstants.FRM_LIT + "=true");
 				 out.println(BNConstants.FRM_PPI + "=false");
+				 out.println(BNConstants.FRM_KEGG + "=false");
 				 out.println(BNConstants.OUT_INTER_FILE_NAME + "=" +outFile[0]);
 				 out.flush();
 	             out.close();
 			 }
 			  if(ppi){
-				  out= new PrintWriter(new FileOutputStream(new File(propFile[1])));	 
+				 out= new PrintWriter(new FileOutputStream(new File(propFile[1])));	 
 		         out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
 				 out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
 				 out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
@@ -194,6 +203,7 @@ public class BNGUI implements IClusterGUI {
 				 out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
 				 out.println(BNConstants.FRM_LIT + "=false");
 				 out.println(BNConstants.FRM_PPI + "=true");
+				 out.println(BNConstants.FRM_KEGG + "=false");
 				 out.println(BNConstants.OUT_INTER_FILE_NAME + "=" + outFile[1]);
 				 out.println(BNConstants.USE_PPI_DIRECT + "=true");
 				 //out.println("usePpiOnlyWithin=true");
@@ -202,7 +212,7 @@ public class BNGUI implements IClusterGUI {
 	             out.close();
 			 
 			 }
-			  if(both){
+			  if(LitPpi){
 		          out= new PrintWriter(new FileOutputStream(new File(propFile[2])));	 
 		          out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
 		          out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
@@ -211,11 +221,71 @@ public class BNGUI implements IClusterGUI {
 		          out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
 			      out.println(BNConstants.FRM_LIT + "=true");
 			      out.println(BNConstants.FRM_PPI + "=true");
+			      out.println(BNConstants.FRM_KEGG + "=false");
 			      out.println(BNConstants.OUT_INTER_FILE_NAME + "=" + outFile[2]);
 			      out.println(BNConstants.PPI_FILE_NAME + "=" + BNConstants.PPI_FILE);
 			      out.flush();
 	              out.close();
 		     }
+			  if(kegg){
+		          out= new PrintWriter(new FileOutputStream(new File(propFile[3])));	 
+		          out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
+		          out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+		          out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
+		          out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
+		          //out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
+			      out.println(BNConstants.FRM_LIT + "=false");
+			      out.println(BNConstants.FRM_PPI + "=false");
+			      out.println(BNConstants.FRM_KEGG + "=true");
+			      out.println(BNConstants.OUT_INTER_FILE_NAME + "=" + outFile[3]);
+			      out.flush();
+	              out.close();
+		     }
+			  if(LitKegg){
+		          out= new PrintWriter(new FileOutputStream(new File(propFile[4])));	 
+		          out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
+		          out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+		          out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
+		          out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
+		          out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
+			      out.println(BNConstants.FRM_LIT + "=true");
+			      out.println(BNConstants.FRM_PPI + "=false");
+			      out.println(BNConstants.FRM_KEGG + "=true");
+			      out.println(BNConstants.OUT_INTER_FILE_NAME + "=" + outFile[4]);
+			      out.flush();
+	              out.close();
+		     }
+			  if(KeggPpi){
+		          out= new PrintWriter(new FileOutputStream(new File(propFile[5])));	 
+		          out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
+		          out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+		          out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
+		          out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
+		          out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
+			      out.println(BNConstants.FRM_LIT + "=false");
+			      out.println(BNConstants.FRM_PPI + "=true");
+			      out.println(BNConstants.FRM_KEGG + "=true");
+			      out.println(BNConstants.OUT_INTER_FILE_NAME + "=" + outFile[5]);
+			      out.println(BNConstants.PPI_FILE_NAME + "=" + BNConstants.PPI_FILE);
+			      out.flush();
+	              out.close();
+		     }
+			  if(LitPpiKegg){
+		          out= new PrintWriter(new FileOutputStream(new File(propFile[6])));	 
+		          out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
+		          out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+		          out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
+		          out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
+		          out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
+			      out.println(BNConstants.FRM_LIT + "=true");
+			      out.println(BNConstants.FRM_PPI + "=true");
+			      out.println(BNConstants.FRM_KEGG + "=true");
+			      out.println(BNConstants.OUT_INTER_FILE_NAME + "=" + outFile[2]);
+			      out.println(BNConstants.PPI_FILE_NAME + "=" + BNConstants.PPI_FILE);
+			      out.flush();
+	              out.close();
+		     }
+
 		     out= new PrintWriter(new FileOutputStream(new File(propFile[fileSize-1])));
 		     if(goTerms){
 		    	 System.out.println("Use GO Terms");
@@ -226,11 +296,19 @@ public class BNGUI implements IClusterGUI {
 		     out.println(BNConstants.DISTRIBUTION_FRM_WEIGHTS + "=" + "true");
 		     out.println(BNConstants.OUT_XML_BIF_FILE_NAME + "=" + BNConstants.BIF_RESULT_FILE);
 		     if(lit){
-		       out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[0]);
+		    	 out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[0]);
 		     }else if(ppi){
-	                 out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[1]);
-		     } else if(both){
-		      out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[2]);
+		    	 out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[1]);
+		     } else if(LitPpi){
+		    	 out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[2]);
+		     } else if(kegg){
+		    	 out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[3]);
+		     } else if(LitKegg){
+		    	 out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[4]);
+		     } else if(KeggPpi){
+		    	 out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[5]);
+		     } else if(LitPpiKegg){
+		    	 out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[6]);
 		     }
 		     out.flush();
 		     out.close();
@@ -337,13 +415,13 @@ public class BNGUI implements IClusterGUI {
     	IData data=framework.getData();
     	int[] rows = new int[genes];
     	rows=cl.getIndices();
-	String[] affyId=new String[genes];
+	String[] probeId=new String[genes];
 	String[] accList =new String[genes];
 	HashMap accHash = new HashMap();
 	String lineRead = "";
 	//String sep=System.getProperty("file.separator");	// TODO Raktim - Get ProbeIDs for Genes
 	for (int i=0; i<rows.length; i++) {
-    	  affyId[i]=data.getSlideDataElement(0,rows[i]).getFieldAt(0);    	  System.out.println("affyid :"+affyId[i] ); 
+    	  probeId[i]=data.getSlideDataElement(0,rows[i]).getFieldAt(0);    	  System.out.println("Probe_id :"+probeId[i] ); 
 	 }
 	
 	 try {
@@ -361,7 +439,7 @@ public class BNGUI implements IClusterGUI {
 			//System.out.println(fields[1] );
 	   }	 // TODO Raktim - Associate AffyID with Acc Ids ?
 	 for (int i = 0; i < accList.length; i++) {
-         accList[i] = (String)accHash.get((String)affyId[i].trim());
+         accList[i] = (String)accHash.get((String)probeId[i].trim());
 	}	 // TODO - Raktim Why write to file ?
 	writeAccToFile(accList,path);
 	} catch(FileNotFoundException e){
@@ -406,7 +484,7 @@ public class BNGUI implements IClusterGUI {
  		//return FILE_IO_ERROR;
 	}
  }
-	public void literatureMining(boolean lit,boolean ppi,boolean both,String path){
+	public void literatureMining(boolean lit,boolean ppi, boolean kegg, boolean LitPpi, boolean LitKegg, boolean KeggPpi, boolean LitPpiKegg, String path){
 		//System.out.print(sep);
 		GetInteractionsModule getModule=new GetInteractionsModule(path);
 		if(lit){		  //getModule.test(path+sep+"getInterModLit.props"); //Raktim - USe tmp dir
@@ -423,12 +501,44 @@ public class BNGUI implements IClusterGUI {
 				  BNConstants.SEP +
 				  BNConstants.PPI_INTER_MODULE_DIRECT_FILE); 
 		}
-		if(both){		  //getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
+		if(LitPpi){		  //getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
 		  GetInteractionsModule.test(path +
 				  BNConstants.SEP +
 				  BNConstants.TMP_DIR +
 				  BNConstants.SEP +
 				  BNConstants.BOTH_INTER_MODULE_FILE);
+		}
+		if(kegg){
+		  //getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
+		  GetInteractionsModule.test(path +
+				  BNConstants.SEP +
+				  BNConstants.TMP_DIR +
+				  BNConstants.SEP +
+				  BNConstants.KEGG_INTER_MODULE_FILE);
+		}
+		if(LitKegg){
+		  //getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
+		  GetInteractionsModule.test(path +
+				  BNConstants.SEP +
+				  BNConstants.TMP_DIR +
+				  BNConstants.SEP +
+				  BNConstants.LIT_KEGG_INTER_MODULE_FILE);
+		}
+		if(KeggPpi){
+		  //getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
+		  GetInteractionsModule.test(path +
+				  BNConstants.SEP +
+				  BNConstants.TMP_DIR +
+				  BNConstants.SEP +
+				  BNConstants.PPI_KEGG_INTER_MODULE_FILE);
+		}
+		if(LitPpiKegg){
+		  //getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
+		  GetInteractionsModule.test(path +
+				  BNConstants.SEP +
+				  BNConstants.TMP_DIR +
+				  BNConstants.SEP +
+				  BNConstants.PPI_KEGG_LIT_INTER_MODULE_FILE);
 		}
 	}
 		// TODO Raktim - What is the bif file for ?
@@ -461,8 +571,7 @@ public class BNGUI implements IClusterGUI {
 	 * @param message
 	 */
 	public void error( String message ) {
-		JOptionPane.showMessageDialog( new JFrame(), 
-				message, "Input Error", JOptionPane.ERROR_MESSAGE );
+		JOptionPane.showMessageDialog( new JFrame(), message, "Input Error", JOptionPane.ERROR_MESSAGE );
 	}//end error()
 	
 	/**

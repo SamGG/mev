@@ -329,13 +329,31 @@ public class BNInitDialog extends AlgorithmDialog {
     public boolean isPPI(){
     	return this.priorsPanel.ppiSourceCheckbox.isSelected();
     }
+    public boolean isKEGG(){
+    	return this.priorsPanel.keggSourceCheckbox.isSelected();
+    }
+    public boolean isAll(){
+    	if(isLit() && isPPI() && isKEGG())
+    		return true;
+    	return false;
+    }
+    public boolean isLitAndKegg(){
+    	if(isLit() && isKEGG())
+    		return true;
+    	return false;
+    }
+    public boolean isPpiAndKegg(){
+    	if(isKEGG() && isPPI() && !isLit())
+    		return true;
+    	return false;
+    }
     public boolean isBoth(){
     	if(isLit() && isPPI())
     		return true;
     	return false;
     }
     public boolean isNone(){
-	    if(!isLit()&&!isPPI()){
+	    if(!isLit() && !isPPI() && !isKEGG()){
 		    return true;
 	    }else
 	    	return false;
@@ -398,6 +416,7 @@ public class BNInitDialog extends AlgorithmDialog {
     private class PriorSelectionPanel extends JPanel {
         private JCheckBox litSourceCheckbox;
         private JCheckBox ppiSourceCheckbox;
+        private JCheckBox keggSourceCheckbox;
         
         /** Constructs a mode panel.
          * @param haveClusters
@@ -430,12 +449,25 @@ public class BNInitDialog extends AlgorithmDialog {
                 }
             });
             
+            keggSourceCheckbox = new JCheckBox("KEGG Interactions");
+            keggSourceCheckbox.setToolTipText("Uses KEGG pathway interactions to create a seed network.");
+            keggSourceCheckbox.setFocusPainted(false);
+            keggSourceCheckbox.setBackground(Color.white);
+            keggSourceCheckbox.setHorizontalAlignment(JRadioButton.CENTER);
+            keggSourceCheckbox.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    popPanel.setEnableControls(true);
+                }
+            });
+            
            
            ppiSourceCheckbox.setSelected(false);
            litSourceCheckbox.setEnabled(true);
+           keggSourceCheckbox.setEnabled(true);
             
            add(litSourceCheckbox, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
            add(ppiSourceCheckbox, new GridBagConstraints(1,0,1,1,1.0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
+           add(keggSourceCheckbox, new GridBagConstraints(2,0,1,1,1.0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
         }
     }
     /** Contains mode controls. (anal. or survey)
@@ -1381,6 +1413,19 @@ public class BNInitDialog extends AlgorithmDialog {
                 	}
                 }
                 
+                if(isKEGG()) {
+                	// TODO
+                	// Need to modify to caprure species.
+                	if(!(new File(fileBase + BNConstants.SEP + "hsa" + BNConstants.KEGG_FILE)).exists()) {
+                		JOptionPane.showMessageDialog(
+                				parent, 
+                				"File: " + 
+                				fileBase + BNConstants.SEP + BNConstants.PPI_FILE + " is missing",
+                                "BN Initialization: Missing File", JOptionPane.ERROR_MESSAGE);
+                		return;
+                	}
+                }
+                
                 if(isNone()) {
                 	JOptionPane.showMessageDialog(
             				parent, 
@@ -1517,6 +1562,7 @@ public class BNInitDialog extends AlgorithmDialog {
         		}
         	    
         		BNConstants.setBaseFileLocation(fileBase);
+        		TMEV.setDataPath(fileBase);
                 dispose();
             } else if (command.equals("cancel-command")) {
                 result = JOptionPane.CANCEL_OPTION;
