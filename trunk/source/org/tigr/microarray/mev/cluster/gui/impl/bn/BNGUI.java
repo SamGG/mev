@@ -29,6 +29,7 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.getInteractions.GetInteractionsModule;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.prepareXMLBif.PrepareXMLBifModule;
+import org.tigr.microarray.mev.cluster.gui.impl.lem.LEMInfoViewer;
 
 public class BNGUI implements IClusterGUI {
 	//String sep = System.getProperty("file.separator");
@@ -39,6 +40,7 @@ public class BNGUI implements IClusterGUI {
 	public static boolean prior=true;
 	
 	HistoryViewer wekaOutputViewer;
+	LMBNViewer fileViewer;
 	
 	public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
 		done=false;
@@ -99,7 +101,15 @@ public class BNGUI implements IClusterGUI {
 		
 		GeneralInfo info = new GeneralInfo();
 		if(dialog.isBoth()){
-		info.prior="Literature Mining and PPI";
+			info.prior="LM & PPI";
+		}else if (dialog.isKEGG()) {
+			info.prior="KEGG";
+		}else if(dialog.isAll()){
+			info.prior="LM, PPI & KEGG";
+		}else if(dialog.isLitAndKegg()){
+			info.prior="LM & KEGG";
+		}else if(dialog.isPpiAndKegg()){ 
+			info.prior="PPI & KEGG";
 		}else if(dialog.isPPI()){
 			info.prior="PPI";
 		}else if(dialog.isLit()){
@@ -115,17 +125,27 @@ public class BNGUI implements IClusterGUI {
 	    info.numGene=(dialog.getSelectedCluster()).getIndices().length;
 	    info.kFolds = dialog.getKFolds();
 	    info.score = dialog.getScoreType();
-		return createResultTree(exp, wekaOutputViewer, info);
+	    
+	    String lmFile = System.getProperty("LM_ONLY");
+	    String bnFile = bnEditor.getBootNetworkFile();
+	    fileViewer = createLMBNViewer(lmFile, bnFile);
+		return createResultTree(exp, fileViewer, wekaOutputViewer, info);
 	    //return root;
 	}
 	
-	private DefaultMutableTreeNode createResultTree(Experiment experiment, HistoryViewer out, GeneralInfo info) {
+	private DefaultMutableTreeNode createResultTree(Experiment experiment, LMBNViewer fileViewer, HistoryViewer out, GeneralInfo info) {
 	        DefaultMutableTreeNode root = new DefaultMutableTreeNode("BN");
+	        root.add(new DefaultMutableTreeNode(new LeafInfo("Networks", fileViewer, fileViewer.getJPopupMenu())));
 	        root.add(new DefaultMutableTreeNode(new LeafInfo("BN Details", out)));
 	        addGeneralInfo(root, info);
 	        return root;
 	    }
 	
+	private LMBNViewer createLMBNViewer(String lmFile, String bnFile) {
+		LMBNViewer viewer = new LMBNViewer(lmFile, bnFile);
+		return viewer;
+		
+	}
 	private void addGeneralInfo(DefaultMutableTreeNode root, GeneralInfo info) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("General Information");
         node.add(new DefaultMutableTreeNode("Number of Genes: "+info.numGene));
@@ -574,6 +594,20 @@ public class BNGUI implements IClusterGUI {
 		JOptionPane.showMessageDialog( new JFrame(), message, "Input Error", JOptionPane.ERROR_MESSAGE );
 	}//end error()
 	
+	/**
+	 * State Saving Function
+	 * @param LMBNViewer
+	 */
+	public void setLMBNViewer(LMBNViewer fileViewer){
+		this.fileViewer = fileViewer;
+	}
+	/**
+	 * Sate SAving Function
+	 * @return
+	 */
+	public LMBNViewer getLMBNViewerViewer(){
+		return fileViewer;
+	}
 	/**
 	 * State Saving Function
 	 * @param histViewer
