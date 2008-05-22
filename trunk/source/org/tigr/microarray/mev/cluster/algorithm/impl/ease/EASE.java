@@ -12,29 +12,14 @@ All rights reserved.
 
 package org.tigr.microarray.mev.cluster.algorithm.impl.ease;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.text.DecimalFormat;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Random;
-import java.util.StringTokenizer;
-import java.util.Vector;
+import java.util.*;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-//import org.tigr.microarray.mev.cluster.gui.impl.ease.NestedEaseSelectorDialog;
-import org.tigr.microarray.mev.cluster.gui.impl.sam.SAMGUI;
-import org.tigr.microarray.mev.cluster.gui.impl.sam.SAMGraph;
+import org.tigr.microarray.mev.cluster.algorithm.*;
 import org.tigr.util.FloatMatrix;
 import org.tigr.util.QSort;
 
@@ -46,8 +31,8 @@ public class EASE extends AbstractAlgorithm {
     
     //EH changed private to protected so AMP can make subclasses
     protected JEASEStatistics jstats;
-    protected Vector sampleVector;
-    protected Vector populationVector;
+    protected Vector<String> sampleVector;
+    protected Vector<String> populationVector;
     
     protected String [] annotationFileList;
     protected String [][] result;
@@ -82,7 +67,6 @@ public class EASE extends AbstractAlgorithm {
      * @return Returns result in <CODE>AlgorithmData</CODE>
      */
     public AlgorithmData execute(AlgorithmData algorithmData) throws AlgorithmException {
-        //start = System.currentTimeMillis();
         
         AlgorithmParameters params = algorithmData.getParams();
         performClusterAnalysis = params.getBoolean("perform-cluster-analysis", true);
@@ -271,7 +255,7 @@ public class EASE extends AbstractAlgorithm {
                 
                 populationElementList.loadValues(converterFileName);
             } else {
-                event.setDescription("Preparing Annotation Lists (no conversion file)\n");
+            	event.setDescription("Preparing Annotation Lists (no conversion file)\n");
                 sampleElementList.setDefaultValues();
                 populationElementList.setDefaultValues();
             }
@@ -353,7 +337,7 @@ public class EASE extends AbstractAlgorithm {
         if(algorithmData.getParams().getBoolean("run-permutation-analysis", false)){
         	event.setDescription("Resampling Analysis\n");
         	fireValueChanged(event);
-        	Vector sourcePop = null;
+        	Vector<String> sourcePop = null;
         	
         	//EH nested EASE changes
         	if(isNestedEaseRun) {
@@ -417,7 +401,7 @@ public class EASE extends AbstractAlgorithm {
     protected AlgorithmData performSlideAnnotationSurvey(AlgorithmData algorithmData) throws AlgorithmException {
         AlgorithmParameters params = algorithmData.getParams();
         
-        headerNames = new Vector();
+        headerNames = new Vector<String>();
         intializeHeaderNames();
         format = new DecimalFormat("0.###E00");
         
@@ -577,9 +561,6 @@ public class EASE extends AbstractAlgorithm {
         
         int [] orderedIndices = qsorter.getOrigIndx();
         
-        String [] holder;
-        String nameHolder;
-        
         String [] newCatNames = new String[categoryNames.length];
         String [][] newHitList = new String[hitList.length][];
         String [][] newResult = new String[result.length][];
@@ -617,9 +598,6 @@ public class EASE extends AbstractAlgorithm {
         hitCounts = qsorter.getSortedDouble();
         
         int [] orderedIndices = qsorter.getOrigIndx();
-        
-        String [] holder;
-        String nameHolder;
         
         String [] newCatNames = new String[categoryNames.length];
         String [][] newHitList = new String[hitList.length][];
@@ -724,7 +702,7 @@ public class EASE extends AbstractAlgorithm {
         
         BufferedReader fr = new BufferedReader(new FileReader(file));
         String line;
-        Hashtable accHash = new Hashtable();
+        Hashtable<String, String> accHash = new Hashtable<String, String>();
         StringTokenizer stok;
         while( (line = fr.readLine()) != null){
             stok = new StringTokenizer(line, "\t");
@@ -855,7 +833,7 @@ public class EASE extends AbstractAlgorithm {
     /** Appends a result onto the main result
      * @param resultVector data to append
      */
-    protected void appendResult(Vector resultVector){
+    protected void appendResult(Vector<double[]> resultVector){
         int numCorr = resultVector.size();
         double [] currentArray;
         int rawPIndex = result[0].length;
@@ -870,7 +848,7 @@ public class EASE extends AbstractAlgorithm {
         }
         int resultCol;
         for(int col = 0; col < numCorr; col++){
-            currentArray = (double [])resultVector.elementAt(col);
+            currentArray = resultVector.elementAt(col);
             resultCol = col + rawPIndex;
             for(int row = 0; row < newResult.length; row++){
                 
@@ -890,7 +868,7 @@ public class EASE extends AbstractAlgorithm {
     protected void pValueCorrections(AlgorithmData inputData){
         int k = this.result.length;
         double [] pValues = new double[k];
-        double [] correctedP = new double[k];
+//        double [] correctedP = new double[k];
         
         int pIndex;
         if(reportEaseScore)
@@ -900,7 +878,7 @@ public class EASE extends AbstractAlgorithm {
         
         pIndex--;  //subtract one since result is not indexed until after sort
         
-        Vector pValueCorrectionVector = new Vector();
+        Vector<double[]> pValueCorrectionVector = new Vector<double[]>();
         for(int i = 0; i < k; i++){
             pValues[i] = Double.parseDouble(result[i][pIndex]);
         }
@@ -979,7 +957,7 @@ public class EASE extends AbstractAlgorithm {
      * the population.
      * @param p number of permutations
      */
-    protected void permutationAnalysis(int p, Vector sourcePop){
+    protected void permutationAnalysis(int p, Vector<String> sourcePop){
         //Get a list of categories, have a corresponding accumulator array
         //Have a population Vector of strings
         //take k elements from here to construct a new sample list
@@ -993,8 +971,6 @@ public class EASE extends AbstractAlgorithm {
         permEvent.setIntValue(p);
         fireValueChanged(permEvent);
         permEvent.setDescription("SET_VALUE");
-        
-//        long start = System.currentTimeMillis();
         
         int k = result.length;
         int sampleSize = this.sampleVector.size();
@@ -1044,7 +1020,7 @@ public class EASE extends AbstractAlgorithm {
         permEvent.setDescription("DISPOSE");  //get rid of progress bar
         fireValueChanged(permEvent);
 
-        Vector probVector = new Vector();
+        Vector<double[]> probVector = new Vector<double[]>();
         probVector.add(prob);
         appendResult(probVector);
 
@@ -1065,13 +1041,13 @@ public class EASE extends AbstractAlgorithm {
      * If a source vector is specified in source, choose random sample vector from
      * that source.
      */
-    protected Vector getRandomSampleVector(int sampleSize, Random rand, Vector sourcePop) {
-        Vector sampleVector = new Vector(sampleSize);
-        Vector dummyPopVector;
+    protected Vector<String> getRandomSampleVector(int sampleSize, Random rand, Vector<String> sourcePop) {
+        Vector<String> sampleVector = new Vector<String>(sampleSize);
+        Vector<String> dummyPopVector;
         if(sourcePop == null) {
-        	dummyPopVector = (Vector)populationVector.clone();
+        	dummyPopVector = new Vector<String>(populationVector);
         } else {
-        	dummyPopVector = (Vector)sourcePop.clone();
+        	dummyPopVector = new Vector<String>(sourcePop);
         }
         
         int index = 0;

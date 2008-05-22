@@ -26,7 +26,7 @@ public class EaseDataElement {
     /** This is a set of values associated with the mev side key.  The structure
      * permits one to many associations.
      */    
-    private Vector easeKeys;
+    private Vector<String> easeKeys;
     
     /** Creates a new instance of EaseDataElement
      * @param index Index value
@@ -35,13 +35,13 @@ public class EaseDataElement {
     public EaseDataElement(int index, String mevKey) {
         this.index = index;
         this.mevKey = mevKey;
-        this.easeKeys = new Vector();
+        this.easeKeys = new Vector<String>();
     }
     
     /** Returns all Ease Keys as a <CODE>Vector</CODE>
      * @return
      */    
-    public Vector getEaseKeys(){
+    public Vector<String> getEaseKeys(){
         return easeKeys;
     }
     
@@ -53,7 +53,7 @@ public class EaseDataElement {
      */    
     public boolean ifEqualsAdd(String key, String value){
         if(this.mevKey.equals(key)){
-            //System.out.println("equal key = ***"+key+"*** value = ***"+value+"***");
+//            System.out.println("equal key = ***"+key+"*** value = ***"+value+"***");
             easeKeys.addElement(value);
             return true;
         }
@@ -63,7 +63,7 @@ public class EaseDataElement {
     /** Returns Vector of values if the key matches. (else null)
      * @param key
      * @return  */    
-    public Vector ifEqualsGetEaseKeys(String key){
+    public Vector<String> ifEqualsGetEaseKeys(String key){
         if(mevKey.equals(key) && easeKeys.size() > 0)
             return easeKeys;
         return null;       

@@ -96,6 +96,8 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
     protected boolean isScripting = false;
     protected File annotationFile;
     
+    public static final String LAST_EASE_FILE_LOCATION = "last-ease-file-location";
+    
     /** Creates a new instance of EASEGUI */
     public EASEGUI() {
     }
@@ -115,21 +117,23 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         
         //check for existance of annotation file. If there is annotation loaded and the annotation file it came
         //from can be read, save a filehandle for it. 
-        boolean useLoadedAnnotation = false;
+    	String easeFileLocation = null;
         if(framework.getData().isAnnotationLoaded()) {
         	String slideType = ((org.tigr.microarray.mev.MultipleArrayData)framework.getData()).getchipType();
-        	String filename = org.tigr.microarray.mev.TMEV.getDataPath() + System.getProperty("file.separator") + "Annotation" + System.getProperty("file.separator") + slideType + ".txt";
-        	System.out.println("Getting annotation file " + filename);
+        	//TODO This path is hardcoded only until the annotation file location is stored into a property
+        	//in TMEV.props.
+        	String filename = "./data/Annotation/" + slideType + ".txt";
         	annotationFile = new File(filename);
-	        if(annotationFile.canRead())
-	        	useLoadedAnnotation = true;
+	        if(annotationFile.canRead()) {
+	        	easeFileLocation = "./data/ease/ease_" + slideType;
+	        }
         }
         
         EASEInitDialog dialog = new EASEInitDialog(
         		framework.getFrame(), 
         		repository, 
         		framework.getData().getAllFilledAnnotationFields(), 
-        		useLoadedAnnotation);
+        		easeFileLocation);
         
         if(dialog.showModal() != JOptionPane.OK_OPTION)
             return null;
@@ -145,7 +149,6 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         String converterFileName = dialog.getConverterFileName();
         annotationKeyType = dialog.getAnnotationKeyType();
         String [] annotationFileList = dialog.getAnnToGOFileList();
-//        int minClusterSize = dialog.getMinClusterSize();
         int [] indices;
         boolean isPvalueCorrectionSelected;
         experiment = framework.getData().getExperiment();
@@ -169,6 +172,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
             
             logger.append("Extracting Annotation Key Lists\n");
             String [] clusterKeys = framework.getData().getAnnotationList(annotationKeyType, indices);
+
             algorithmData.addStringArray("sample-list", clusterKeys);
             algorithmData.addIntArray("sample-indices", cluster.getExperimentIndices());  //drop in experiment indices
         }
@@ -179,7 +183,6 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         String [] populationKeys;
         if(isClusterAnalysis && dialog.isPreloadedAnnotationSelected()) {
             try {
-            	
         		populationKeys = loadGeneIDs();
             } catch (IOException ioe) {
                 //Bad file format
@@ -200,7 +203,6 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
 	                return null;
 	            }
 	        } else {
-	            //populationKeys = framework.getData().getAnnotationList(annotationKeyType, experiment.getRowMappingArrayCopy());
 	            populationKeys = framework.getData().getAnnotationList(annotationKeyType, framework.getData().getExperiment().getRowMappingArrayCopy());            
 	        }
         }
@@ -251,8 +253,6 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
     public AlgorithmData getScriptParameters(IFramework framework) {
         algorithmData = new AlgorithmData();
         
-        //  ClusterRepository repository = framework.getClusterRepository(Cluster.GENE_CLUSTER);
-        
         EASEInitDialog dialog = new EASEInitDialog(framework.getFrame(), framework.getData().getFieldNames());
         
         if(dialog.showModal() != JOptionPane.OK_OPTION)
@@ -265,8 +265,6 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         annotationKeyType = dialog.getAnnotationKeyType();
         algorithmData.addParam("annotation-key-type", annotationKeyType);
         String [] annotationFileList = dialog.getAnnToGOFileList();
-//        int minClusterSize = dialog.getMinClusterSize();
-//        int [] indices;
         boolean isPvalueCorrectionSelected;
         experiment = framework.getData().getExperiment();
         
@@ -451,18 +449,18 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
     protected String [] loadGeneIDs() throws IOException {
         if(annotationFile.exists()) {
         	try {
-        	AnnotationFileReader afr = new AnnotationFileReader();
-            Hashtable<String, MevAnnotation> annotations = afr.loadAffyAnnotation(annotationFile);
-            String[] annot = new String[annotations.size()];
-            java.util.Enumeration<String> allAnnotations = annotations.keys();
-            int i=0;
-            while(allAnnotations.hasMoreElements()) {
-            	String thisKey = allAnnotations.nextElement();
-            	org.tigr.microarray.mev.annotation.IAnnotation thisAnnotation = annotations.get(thisKey);
-            	annot[i] = thisAnnotation.getEntrezGeneID();
-            	i++;
-            }
-            return annot;
+	        	AnnotationFileReader afr = new AnnotationFileReader();
+	            Hashtable<String, MevAnnotation> annotations = afr.loadAffyAnnotation(annotationFile);
+	            String[] annot = new String[annotations.size()];
+	            java.util.Enumeration<String> allAnnotations = annotations.keys();
+	            int i=0;
+	            while(allAnnotations.hasMoreElements()) {
+	            	String thisKey = allAnnotations.nextElement();
+	            	org.tigr.microarray.mev.annotation.IAnnotation thisAnnotation = annotations.get(thisKey);
+	            	annot[i] = thisAnnotation.getTgiTC();
+	            	i++;
+	            }
+	            return annot;
         	} catch (IOException ioe) {
         		//TODO handle this!
         	}

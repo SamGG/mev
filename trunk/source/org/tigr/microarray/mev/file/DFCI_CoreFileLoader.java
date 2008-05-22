@@ -578,10 +578,6 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
         	           	   
         	   if(((MevAnnotation)_tempAnno.get(cloneName))!=null) {
         		   MevAnnotation mevAnno = (MevAnnotation)_tempAnno.get(cloneName);
-        		   //Right now these two values get set a million times. Have to find a way to
-        		   //stop that---Sarita.
-//        		   ((MultipleArrayData)this.mav.getData()).setchipType(mevAnno.getChipType());
-//        		   ((MultipleArrayData)this.mav.getData()).setOrganismName(mevAnno.getSpeciesName());
 
         		   slideDataElement = new AffySlideDataElement(String.valueOf(curpos), rows, columns, intensities, moreFields, mevAnno);
         	   } else {
