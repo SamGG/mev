@@ -39,7 +39,7 @@ public class JEASEStatistics {
     public String output_file_name;
     
     /** a vector that contains names of the annotation files. */
-    public Vector annotation_file_names = new Vector();
+    public Vector<String> annotation_file_names = new Vector<String>();
     
     /** the total number of genes that are imported from a file and belong to categories in the annotation files */
     public int population_total;
@@ -48,16 +48,16 @@ public class JEASEStatistics {
     public int list_total;
     
     /** the categories from the annotation files*/
-    public Hashtable categories = new Hashtable();
+    public Hashtable<String, Hashtable<String, String>> categories = new Hashtable<String, Hashtable<String, String>>();
     
     /** categories and hits in each of the categories for the population  */
-    public Hashtable categories_population = new Hashtable();
+    public Hashtable<String, String> categories_population = new Hashtable<String, String>();
     
     /** categories and hits in each of the categories for the sample  */
-    public Hashtable categories_list = new Hashtable();
+    public Hashtable<String, String> categories_list = new Hashtable<String, String>();
     
     /** stores category names and associated locus id hits as java.lang.String in java.util.Vector */
-    public Hashtable hitAccumulator = new Hashtable(); //jcb
+    public Hashtable<String, Vector<String>> hitAccumulator = new Hashtable<String, Vector<String>>(); //jcb
     
     /** An instance of HypergeometricProbability class. */
     public HypergeometricProbability hgp_computation = new HypergeometricProbability();
@@ -81,10 +81,10 @@ public class JEASEStatistics {
     public boolean reportEaseScore = true; //jcb
     
     /** accumulates totals for various systems  **/
-    private Hashtable pop_totals = new Hashtable();
+    private Hashtable<String, Hashtable<String, String>> pop_totals = new Hashtable<String, Hashtable<String, String>>();
         
     /** accumulates totals for various systems  **/
-    private Hashtable sample_totals = new Hashtable();
+    private Hashtable<String, Hashtable<String, String>> sample_totals = new Hashtable<String, Hashtable<String, String>>();
     
     /** OS file separator **/
     private String sep;
@@ -138,7 +138,7 @@ public class JEASEStatistics {
      */
     public void GetCategories() {
         BufferedReader in = null;
-        Hashtable implied_associations = new Hashtable();
+        Hashtable<String, Vector<String>> implied_associations = new Hashtable<String, Vector<String>>();
         String term;
         String line="", category="", file_name="";
         int idx, idx2;        
@@ -152,8 +152,8 @@ public class JEASEStatistics {
                 term = file_name.substring(file_name.lastIndexOf(sep)+1, file_name.lastIndexOf("."));
                 
                 //store terms in total hits accumulators
-                this.sample_totals.put(term, new Hashtable());
-                this.pop_totals.put(term, new Hashtable());
+                this.sample_totals.put(term, new Hashtable<String, String>());
+                this.pop_totals.put(term, new Hashtable<String, String>());
                 
                 while((line = in.readLine()) != null){
                     
@@ -170,16 +170,14 @@ public class JEASEStatistics {
                     
                     category = term + "\t" + line.substring(idx+1, idx2).trim();
                     
-                    if(!categories.containsKey(category)){
-                        categories.put(category, new Hashtable());
-                        ((Hashtable) categories.get(category)).put(line.substring(0,idx).trim(), "");
+                    if(!categories.containsKey(category)) {
+                        categories.put(category, new Hashtable<String, String>());
+                        (categories.get(category)).put(line.substring(0,idx).trim(), "");
                     }else{
-                        ((Hashtable) categories.get(category)).put(line.substring(0,idx).trim(), "");
+                        (categories.get(category)).put(line.substring(0,idx).trim(), "");
                     }
                 }
             }
-
-            //System.out.println("categories size = "+categories.size());
             
             //(jcb)
             //create hash table for implies using (implies_associator)
@@ -210,10 +208,10 @@ public class JEASEStatistics {
                         continue;
                     
                     if(!implied_associations.containsKey(term + "\t" +line.substring(0,idx).trim())){
-                        implied_associations.put(term + "\t" +line.substring(0,idx).trim(), new Vector());
-                        ((Vector)(implied_associations.get(term + "\t" +line.substring(0,idx).trim()))).addElement(term + "\t" + line.substring(idx, line.length()).trim());
+                        implied_associations.put(term + "\t" +line.substring(0,idx).trim(), new Vector<String>());
+                        ((implied_associations.get(term + "\t" +line.substring(0,idx).trim()))).addElement(term + "\t" + line.substring(idx, line.length()).trim());
                     } else {
-                        ((Vector)(implied_associations.get(term + "\t" +line.substring(0,idx).trim()))).addElement(term + "\t" + line.substring(idx, line.length()).trim());
+                        ((implied_associations.get(term + "\t" +line.substring(0,idx).trim()))).addElement(term + "\t" + line.substring(idx, line.length()).trim());
                     }
                 }
             }
@@ -222,19 +220,19 @@ public class JEASEStatistics {
             //(jcb) append associated categories to the list
             for(int k = 0; k < 10 && !end; k++){  // !end will short circuit if stable
                 String cat="";
-                Hashtable catHash;
+                Hashtable<String, String> catHash;
                 Vector impVector;
                 String impCat;
 
                 end = true;  //start at true until no new indices are inserted
                 
-                for( Enumeration _enum = implied_associations.keys(); _enum.hasMoreElements(); ){
+                for( Enumeration<String> _enum = implied_associations.keys(); _enum.hasMoreElements(); ){
                     
-                    cat = (String) _enum.nextElement();
+                    cat = _enum.nextElement();
                     
                     //if the category is represented, add the implied associations if they don't exist
                     if(categories.containsKey(cat)){
-                        catHash = (Hashtable)categories.get(cat);
+                        catHash = categories.get(cat);
                         
                         //associated categories
                         impVector = ((Vector)implied_associations.get(cat));
@@ -245,16 +243,16 @@ public class JEASEStatistics {
                             
                             if(!categories.containsKey(impCat)){
                                 end = false;
-                                categories.put(impCat, new Hashtable());
-                                for(Enumeration categoryEnum = catHash.keys(); categoryEnum.hasMoreElements();){
-                                    ((Hashtable)categories.get(impCat)).put((String)categoryEnum.nextElement(), "");
+                                categories.put(impCat, new Hashtable<String, String>());
+                                for(Enumeration<String> categoryEnum = catHash.keys(); categoryEnum.hasMoreElements();){
+                                    (categories.get(impCat)).put(categoryEnum.nextElement(), "");
                                 }
                             } else {  //category exists, need to append locus link numbers
                                 for(Enumeration categoryEnum = catHash.keys(); categoryEnum.hasMoreElements();){
                                     String indexString = (String)categoryEnum.nextElement();
-                                    if(!((Hashtable)categories.get(impCat)).containsKey(indexString) ){
+                                    if(!(categories.get(impCat)).containsKey(indexString) ){
                                         // ((Hashtable)categories.get(impCat)).put((String)categoryEnum.nextElement(), "");
-                                        ((Hashtable)categories.get(impCat)).put(indexString, "");
+                                        (categories.get(impCat)).put(indexString, "");
                                         
                                         end = false;
                                     }
@@ -279,7 +277,7 @@ public class JEASEStatistics {
      */
     public void GetCategories(Vector popVector) {
         BufferedReader in = null;
-        Hashtable implied_associations = new Hashtable();
+        Hashtable<String, Vector<String>> implied_associations = new Hashtable<String, Vector<String>>();
         String term;
         String line="", category="", file_name="";
         int idx, idx2;        
@@ -293,8 +291,8 @@ public class JEASEStatistics {
                 term = file_name.substring(file_name.lastIndexOf(sep)+1, file_name.lastIndexOf("."));
                 
                 //store terms in total hits accumulators
-                this.sample_totals.put(term, new Hashtable());
-                this.pop_totals.put(term, new Hashtable());
+                this.sample_totals.put(term, new Hashtable<String, String>());
+                this.pop_totals.put(term, new Hashtable<String, String>());
                 
                 while((line = in.readLine()) != null){
                     
@@ -312,10 +310,10 @@ public class JEASEStatistics {
                     category = term + "\t" + line.substring(idx+1, idx2).trim();
                     if(popVector.contains(line.substring(0,idx).trim())) {
                         if(!categories.containsKey(category)){
-                            categories.put(category, new Hashtable());
-                            ((Hashtable) categories.get(category)).put(line.substring(0,idx).trim(), "");
+                            categories.put(category, new Hashtable<String, String>());
+                            (categories.get(category)).put(line.substring(0,idx).trim(), "");
                         }else{
-                            ((Hashtable) categories.get(category)).put(line.substring(0,idx).trim(), "");
+                            (categories.get(category)).put(line.substring(0,idx).trim(), "");
                         }
                     }
                 }
@@ -348,10 +346,10 @@ public class JEASEStatistics {
                         continue;
                     
                     if(!implied_associations.containsKey(term + "\t" +line.substring(0,idx).trim())){
-                        implied_associations.put(term + "\t" +line.substring(0,idx).trim(), new Vector());
-                        ((Vector)(implied_associations.get(term + "\t" +line.substring(0,idx).trim()))).addElement(term + "\t" + line.substring(idx, line.length()).trim());
+                        implied_associations.put(term + "\t" +line.substring(0,idx).trim(), new Vector<String>());
+                        (implied_associations.get(term + "\t" +line.substring(0,idx).trim())).addElement(term + "\t" + line.substring(idx, line.length()).trim());
                     } else {
-                        ((Vector)(implied_associations.get(term + "\t" +line.substring(0,idx).trim()))).addElement(term + "\t" + line.substring(idx, line.length()).trim());
+                        (implied_associations.get(term + "\t" +line.substring(0,idx).trim())).addElement(term + "\t" + line.substring(idx, line.length()).trim());
                     }
                 }
             }
@@ -360,19 +358,19 @@ public class JEASEStatistics {
             //(jcb) append associated categories to the list
             for(int k = 0; k < 10 && !end; k++){  // !end will short circuit if stable
                 String cat="";
-                Hashtable catHash;
+                Hashtable<String, String> catHash;
                 Vector impVector;
                 String impCat;
 
                 end = true;  //start at true until no new indices are inserted
                 
-                for( Enumeration _enum = implied_associations.keys(); _enum.hasMoreElements(); ){
+                for( Enumeration<String> _enum = implied_associations.keys(); _enum.hasMoreElements(); ){
                     
-                    cat = (String) _enum.nextElement();
+                    cat = _enum.nextElement();
                     
                     //if the category is represented, add the implied associations if they don't exist
                     if(categories.containsKey(cat)){
-                        catHash = (Hashtable)categories.get(cat);
+                        catHash = categories.get(cat);
                         
                         //associated categories
                         impVector = ((Vector)implied_associations.get(cat));
@@ -383,16 +381,16 @@ public class JEASEStatistics {
                             
                             if(!categories.containsKey(impCat)){
                                 end = false;
-                                categories.put(impCat, new Hashtable());
-                                for(Enumeration categoryEnum = catHash.keys(); categoryEnum.hasMoreElements();){
-                                    ((Hashtable)categories.get(impCat)).put((String)categoryEnum.nextElement(), "");
+                                categories.put(impCat, new Hashtable<String, String>());
+                                for(Enumeration<String> categoryEnum = catHash.keys(); categoryEnum.hasMoreElements();){
+                                    (categories.get(impCat)).put((String)categoryEnum.nextElement(), "");
                                 }
                             } else {  //category exists, need to append locus link numbers
-                                for(Enumeration categoryEnum = catHash.keys(); categoryEnum.hasMoreElements();){
-                                    String indexString = (String)categoryEnum.nextElement();
-                                    if(!((Hashtable)categories.get(impCat)).containsKey(indexString) ){
+                                for(Enumeration<String> categoryEnum = catHash.keys(); categoryEnum.hasMoreElements();){
+                                    String indexString = categoryEnum.nextElement();
+                                    if(!(categories.get(impCat)).containsKey(indexString) ){
                                         // ((Hashtable)categories.get(impCat)).put((String)categoryEnum.nextElement(), "");
-                                        ((Hashtable)categories.get(impCat)).put(indexString, "");
+                                        (categories.get(impCat)).put(indexString, "");
                                         
                                         end = false;
                                     }
@@ -424,10 +422,9 @@ public class JEASEStatistics {
         System.out.println("Testing for term " + term);
         
         //for each annotation category (such as go terms)
-        for(Enumeration _enum = categories.keys(); _enum.hasMoreElements();){
-            key = (String)(_enum.nextElement());
+        for(Enumeration<String> _enum = categories.keys(); _enum.hasMoreElements();){
+            key = _enum.nextElement();
             hash_table = (Hashtable<String, String>)categories.get(key);
-        	//System.out.println("category key: " + key);
         	
         	if(key.equals(term)) {
         		//System.out.println("getting category values for key " + key);
@@ -445,12 +442,10 @@ public class JEASEStatistics {
     /** Get the number of the genes in the population for each category that exists in the annotation files. */
     public void GetPopulationHitsByCategory() {
         BufferedReader in = null;
-        String line="", category="", hits="", key="", locus_id;
-        Hashtable locus_ids = new Hashtable();
-        Hashtable hash_table = new Hashtable();
-        Hashtable count_ids = new Hashtable();
-        
-        int c = 0;
+        String line="", hits="", key="", locus_id;
+        Hashtable<String, String> locus_ids = new Hashtable<String, String>();
+        Hashtable<String, String> hash_table = new Hashtable<String, String>();
+        Hashtable<String, String> count_ids = new Hashtable<String, String>();
         
         try{
         	//Read in population file full of locuslink ids
@@ -467,7 +462,7 @@ public class JEASEStatistics {
                 //for each annotation category (such as go terms)
                 for(Enumeration _enum = categories.keys(); _enum.hasMoreElements();){
                     key = (String)(_enum.nextElement());
-                    hash_table = (Hashtable) (categories.get(key));
+                    hash_table = categories.get(key);
                     
                     if(hash_table.containsKey(locus_id)){
                         if(!categories_population.containsKey(key)){
@@ -492,12 +487,10 @@ public class JEASEStatistics {
     /** Get the number of the genes in the sample for each category that exists in the annotation files. */
     public void GetListHitsByCategory() {
         BufferedReader in = null;
-        String line="", category="", hits="", key="", locus_id;
-        Hashtable locus_ids = new Hashtable();
+        String line="", hits="", key="", locus_id;
+        Hashtable<String, String> locus_ids = new Hashtable<String, String>();
         Hashtable hash_table = new Hashtable();
-        Hashtable count_ids = new Hashtable();
-        
-        int c = 0;
+        Hashtable<String, String> count_ids = new Hashtable<String, String>();
         
         try{
             in = new BufferedReader(new FileReader(list_file_name));
@@ -506,7 +499,7 @@ public class JEASEStatistics {
                 locus_ids.put(line.trim(), "");
             }
             
-            for(Enumeration enum1 = locus_ids.keys(); enum1.hasMoreElements();){
+            for(Enumeration<String> enum1 = locus_ids.keys(); enum1.hasMoreElements();){
                 locus_id = (String)(enum1.nextElement());
                 for(Enumeration _enum = categories.keys(); _enum.hasMoreElements();){
                     key = (String)(_enum.nextElement());
@@ -567,7 +560,7 @@ public class JEASEStatistics {
                 records[c][4] = "";
             }
             
-            population_total = ((Hashtable)(pop_totals.get(temp))).size();
+            population_total = (pop_totals.get(temp)).size();
             
             records[c][5] = String.valueOf(population_total);
             
@@ -722,37 +715,36 @@ public class JEASEStatistics {
     /** Get the number of the genes in the population for each category that exists in the annotation files.
      * @param list population list.
      */
-    public void GetPopulationHitsByCategory(Vector list) {
-        BufferedReader in = null;
-        String category="", hits="", key="", locus_id;
-        Hashtable locus_ids = new Hashtable();
-        Hashtable hash_table = new Hashtable();
-        Hashtable count_ids = new Hashtable();
+    public void GetPopulationHitsByCategory(Vector<String> list) {
+        String  hits="", key="", locus_id;
+        Hashtable<String, String> locus_ids = new Hashtable<String, String>();
+        Hashtable<String, String> hash_table = new Hashtable<String, String>();
+        Hashtable<String, String> count_ids = new Hashtable<String, String>();
         
         try{
             int size = list.size();
             for(int i = 0; i < size; i++)
-                locus_ids.put((String)list.elementAt(i), "");
+                locus_ids.put(list.elementAt(i), "");
             
-            for(Enumeration enum1 = locus_ids.keys(); enum1.hasMoreElements();){
-                locus_id = (String)(enum1.nextElement());
+            for(Enumeration<String> enum1 = locus_ids.keys(); enum1.hasMoreElements();){
+                locus_id = enum1.nextElement();
                 
-                for(Enumeration _enum = categories.keys(); _enum.hasMoreElements();){
-                    key = (String)(_enum.nextElement());
-                    hash_table = (Hashtable) (categories.get(key));
+                for(Enumeration<String> _enum = categories.keys(); _enum.hasMoreElements();){
+                    key = _enum.nextElement();
+                    hash_table = categories.get(key);
                     
                     if(hash_table.containsKey(locus_id)){
                         if(!categories_population.containsKey(key)){
                             categories_population.put(key, "1");
                         }else{
-                            hits = String.valueOf(Integer.parseInt((String) categories_population.get(key)) + 1);
+                            hits = String.valueOf(Integer.parseInt(categories_population.get(key)) + 1);
                             categories_population.put(key, hits);
                         }
                         count_ids.put(locus_id, "");
                         
                         //accumulate the pop total hits
                         key = key.substring(0, key.indexOf("\t")).trim();
-                        ((Hashtable)pop_totals.get(key)).put(locus_id,"");
+                        (pop_totals.get(key)).put(locus_id,"");
                     }
                 }
             }
@@ -766,45 +758,46 @@ public class JEASEStatistics {
      * in the annotation files.
      * @param list The list of locuslink accessions identifying the genes in the cluster list
      */
-    public void GetListHitsByCategory(Vector list) {
+    public void GetListHitsByCategory(Vector<String> list) {
         String hits="", key="", locus_id;
-        Hashtable locus_ids = new Hashtable();
-        Hashtable hash_table = new Hashtable();
-        Hashtable count_ids = new Hashtable();
+        Hashtable<String, String> locus_ids = new Hashtable<String, String>();
+        Hashtable<String, String> hash_table = new Hashtable<String, String>();
+        Hashtable<String, String> count_ids = new Hashtable<String, String>();
         
-        try{
+        try {
             int size = list.size();
             for(int i = 0; i < size; i++)
-                locus_ids.put((String)list.elementAt(i), "");
+                locus_ids.put(list.elementAt(i), "");
             
             //for each gene in the cluster list
-            for(Enumeration enum1 = locus_ids.keys(); enum1.hasMoreElements();){
-                locus_id = (String)(enum1.nextElement());
-                
+            for(Enumeration<String> enum1 = locus_ids.keys(); enum1.hasMoreElements();){
+                locus_id = enum1.nextElement();
+
                 //for each category (GO Term or Kegg pathway or whatever annotation)
-                for(Enumeration _enum = categories.keys(); _enum.hasMoreElements();){
-                    key = (String)(_enum.nextElement());
-                    hash_table = (Hashtable) (categories.get(key));
+                for(Enumeration<String> _enum = categories.keys(); _enum.hasMoreElements();){
+                    key = _enum.nextElement();
+                    hash_table = categories.get(key);
                     
+                    //If the current category includes the current gene
                     if(hash_table.containsKey(locus_id)){
                         if(!categories_list.containsKey(key)){
                             categories_list.put(key, "1");
                             //jcb
-                            hitAccumulator.put(key, new Vector());
-                            ((Vector)hitAccumulator.get(key)).add(locus_id);
+                            hitAccumulator.put(key, new Vector<String>());
+                            hitAccumulator.get(key).add(locus_id);
                             //end mod
                         }else {
                             hits = String.valueOf(Integer.parseInt((String) (categories_list.get(key))) + 1);
                             categories_list.put(key, hits);
                             //jcb
-                            ((Vector)hitAccumulator.get(key)).add(locus_id);
+                            hitAccumulator.get(key).add(locus_id);
                             //end mod
                         }
                         count_ids.put(locus_id, "");
                         
                         //accumulate the sample total hits
                         key = key.substring(0, key.indexOf("\t")).trim();
-                        ((Hashtable)sample_totals.get(key)).put(locus_id,"");
+                        sample_totals.get(key).put(locus_id,"");
                     }
                 }
             }
@@ -833,8 +826,8 @@ public class JEASEStatistics {
     /** Resets the list total and list hit accumulators.
      */    
     public void resetForNewList(){
-        this.categories_list = new Hashtable();
-        this.sample_totals = new Hashtable();
+        this.categories_list = new Hashtable<String, String>();
+        this.sample_totals = new Hashtable<String, Hashtable<String, String>>();
         String file_name, term;
    
         for(Enumeration e = annotation_file_names.elements(); e.hasMoreElements();){
@@ -842,7 +835,7 @@ public class JEASEStatistics {
             term = file_name.substring(file_name.lastIndexOf(sep)+1, file_name.lastIndexOf("."));
             
             //store terms in total hits accumulators
-            this.sample_totals.put(term, new Hashtable());
+            this.sample_totals.put(term, new Hashtable<String, String>());
         }
     }
     
@@ -855,47 +848,42 @@ public class JEASEStatistics {
     /** Get the number of the genes in the population for each category that exists in the annotation files.
      * @param list Input population list.
      */
-    public void GetPopulationHitsByCategoryForSurvey(Vector list) {
-        BufferedReader in = null;
-        String category="", hits="", key="", locus_id;
-        Hashtable locus_ids = new Hashtable();
-        Hashtable hash_table = new Hashtable();
-        Hashtable count_ids = new Hashtable();
+    public void GetPopulationHitsByCategoryForSurvey(Vector<String> list) {
+        String hits="", key="", locus_id;
+        Hashtable<String, String> locus_ids = new Hashtable<String, String>();
+        Hashtable<String, String> hash_table = new Hashtable<String, String>();
+        Hashtable<String, String> count_ids = new Hashtable<String, String>();
         //jcb
-        String impliedCategory="";
-        Vector impliedVector;
-        
-        int c = 0;
         
         try{
             int size = list.size();
             for(int i = 0; i < size; i++)
-                locus_ids.put((String)list.elementAt(i), "");
+                locus_ids.put(list.elementAt(i), "");
             
-            for(Enumeration enum1 = locus_ids.keys(); enum1.hasMoreElements();){
+            for(Enumeration<String> enum1 = locus_ids.keys(); enum1.hasMoreElements();){
                 locus_id = (String)(enum1.nextElement());
                 
-                for(Enumeration _enum = categories.keys(); _enum.hasMoreElements();){
+                for(Enumeration<String> _enum = categories.keys(); _enum.hasMoreElements();){
                     key = (String)(_enum.nextElement());
-                    hash_table = (Hashtable) (categories.get(key));
+                    hash_table = categories.get(key);
                     
                     if(hash_table.containsKey(locus_id)){
                         if(!categories_population.containsKey(key)){
                             categories_population.put(key, "1");
                             
-                            hitAccumulator.put(key, new Vector());
-                            ((Vector)hitAccumulator.get(key)).add(locus_id);
+                            hitAccumulator.put(key, new Vector<String>());
+                            (hitAccumulator.get(key)).add(locus_id);
                         }else{
-                            hits = String.valueOf(Integer.parseInt((String) categories_population.get(key)) + 1);
+                            hits = String.valueOf(Integer.parseInt(categories_population.get(key)) + 1);
                             categories_population.put(key, hits);
                             
-                            ((Vector)hitAccumulator.get(key)).add(locus_id);
+                            (hitAccumulator.get(key)).add(locus_id);
                         }
                         count_ids.put(locus_id, "");
                         
                         //accumulate the pop total hits
                         key = key.substring(0, key.indexOf("\t")).trim();
-                        ((Hashtable)pop_totals.get(key)).put(locus_id,"");
+                        (pop_totals.get(key)).put(locus_id,"");
                     }
                 }
             }

@@ -191,13 +191,11 @@ public class AnnotationFileReader {
     		 * 
     		 * 
     		 */
-    		annotationObj.setViewer(this.mav);
-    		if(counter==0) {
-    			
+    		if(counter==0 && mav != null) {
+        		annotationObj.setViewer(this.mav);
     			annotationObj.setChipType(chipType);
     			annotationObj.setSpeciesName(orgName);
     		}
-
 
     		//  System.out.println("Clone name:"+cloneName);
     		if(probeID!=null)

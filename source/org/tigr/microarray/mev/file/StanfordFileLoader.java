@@ -267,12 +267,7 @@ public class StanfordFileLoader extends ExpressionFileLoader {
              	
                 	if(((MevAnnotation)_tempAnno.get(cloneName))!=null) {
                 		MevAnnotation mevAnno = (MevAnnotation)_tempAnno.get(cloneName);
-                		
-                		//Right now these two values get set a million times. Have to find a way to
-                		//stop that---Sarita.
-//                		((MultipleArrayData)this.mav.getData()).setchipType(mevAnno.getChipType());
-//                		((MultipleArrayData)this.mav.getData()).setOrganismName(mevAnno.getSpeciesName());
-                	
+
                 		sde = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields, mevAnno);
                 	}else {
                 /**

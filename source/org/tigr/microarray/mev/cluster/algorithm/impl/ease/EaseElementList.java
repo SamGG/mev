@@ -29,9 +29,14 @@ import java.util.Vector;
  * to annotation keys used in ease files to map to biological themes.
  * @author braisted
  */
-public class EaseElementList extends Vector{
+public class EaseElementList extends Vector<EaseDataElement> {
     
-    /** Creates a new instance of EaseElementList */
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 2712099912710373113L;
+
+	/** Creates a new instance of EaseElementList */
     public EaseElementList() {
         super();
     }
@@ -82,18 +87,17 @@ public class EaseElementList extends Vector{
     /** Returns all values within the list.
      * (note that each element could have several values)
      */    
-    public Vector getValueList(){
-        Vector list = new Vector();
+    public Vector<String> getValueList(){
+        Vector<String> list = new Vector<String>();
         int size = size();
-        EaseDataElement element;
-        Vector values;
+        Vector<String> values;
         
         for(int i = 0; i < size; i++){
             values = dataElementAt(i).getEaseKeys();
             //System.out.println("values size = "+values.size());
             for(int j = 0; j < values.size(); j++){
                // if(!list.contains((String)values.elementAt(j)))
-                    list.add((String)values.elementAt(j));
+                    list.add(values.elementAt(j));
             }
         }        
         return list;
@@ -101,8 +105,8 @@ public class EaseElementList extends Vector{
     
     /** Returns a list of the values contained in the list in which each value is represented once.
      */    
-    public Vector getUniqueValueList(){
-        Vector list = new Vector();
+    public Vector<String> getUniqueValueList(){
+        Vector<String> list = new Vector<String>();
         int size = size();
         EaseDataElement element;
         Vector values;
@@ -123,7 +127,7 @@ public class EaseElementList extends Vector{
      * @return
      */    
     public int [] getIndices(String [] valuesList){
-        Vector indices = new Vector();
+        Vector<Integer> indices = new Vector<Integer>();
         int index;
         String value;
         Integer intObj;
@@ -157,10 +161,10 @@ public class EaseElementList extends Vector{
         String line = "", key = "", value = "";
         int delIndex = 0;
         
-        int cnt = 0;
+        //int cnt = 0;
         
         //First load the file into a hash
-        Hashtable ht = new Hashtable();
+        Hashtable<String, String> ht = new Hashtable<String, String>();
         while( (line = in.readLine()) != null ){        
             delIndex = line.indexOf('\t');
             if(delIndex < 0)
@@ -175,7 +179,7 @@ public class EaseElementList extends Vector{
         EaseDataElement ede;
         for(int i = 0; i < size; i++){
             ede = this.dataElementAt(i);
-            value = ((String)ht.get(ede.getMevKey()));
+            value = ht.get(ede.getMevKey());
             if(value != null)
                 ede.addValue(value);
         }

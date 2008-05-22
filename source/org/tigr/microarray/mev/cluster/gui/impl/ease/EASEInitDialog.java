@@ -74,7 +74,12 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindo
  */
 public class EASEInitDialog extends AlgorithmDialog {
     
-    /** Result when dialog is dismissed.
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -8572561763028404439L;
+
+	/** Result when dialog is dismissed.
      */
     protected int result = JOptionPane.CANCEL_OPTION;
     
@@ -89,10 +94,14 @@ public class EASEInitDialog extends AlgorithmDialog {
     protected Font font;
     protected String sep;
     protected Frame parent;
-    private static String ANNOTATION_LINK = AnnotationFieldConstants.ENTREZ_ID;
-    protected boolean useLoadedAnnotationFile = false;
     
-    protected String easeFileSystemLocation = "";
+    private static String ANNOTATION_LINK = AnnotationFieldConstants.TGI_TC;
+    protected boolean useLoadedAnnotationFile = false;
+    protected String defaultFileBaseLocation;
+    
+    public String getDefaultBaseFileLocation() {
+    	return defaultFileBaseLocation;
+    }
     
     //EH added so AMP can subclass
     public EASEInitDialog(Frame parent, String windowTitle, boolean modal){
@@ -104,10 +113,19 @@ public class EASEInitDialog extends AlgorithmDialog {
      * @param repository Cluster repository to construct <CODE>ClusterBrowser</CODE>
      * @param annotationLabels Annotation types
      */
-    public EASEInitDialog(Frame parent, ClusterRepository repository, String [] annotationLabels, boolean useLoadedAnn) {
-        super(parent, "EASE: EASE Annotation Analysis", true);
+//    public EASEInitDialog(Frame parent, ClusterRepository repository, String [] annotationLabels, boolean useLoadedAnn) {
+    public EASEInitDialog(Frame parent, ClusterRepository repository, String [] annotationLabels, String defaultFileLocation) {
+            super(parent, "EASE: EASE Annotation Analysis", true);
         this.parent = parent;
-        this.useLoadedAnnotationFile = useLoadedAnn;
+//        this.useLoadedAnnotationFile = useLoadedAnn;
+        if(defaultFileLocation == null) {
+        	this.useLoadedAnnotationFile = false;
+            defaultFileBaseLocation = TMEV.getSettingForOption(EASEGUI.LAST_EASE_FILE_LOCATION);
+        } else {
+        	this.useLoadedAnnotationFile = true;
+            defaultFileBaseLocation = defaultFileLocation;
+        }
+
         font = new Font("Dialog", Font.BOLD, 12);
         listener = new EventListener();
         addWindowListener(listener);
@@ -160,7 +178,7 @@ public class EASEInitDialog extends AlgorithmDialog {
         this.setSize(570,750);
     }
     
-        /** Creates a new instance of EaseInitDialog
+    /** Creates a new instance of EaseInitDialog
      * @param parent Parent Frame
      * @param repository Cluster repository to construct <CODE>ClusterBrowser</CODE>
      * @param annotationLabels Annotation types
@@ -216,18 +234,7 @@ public class EASEInitDialog extends AlgorithmDialog {
        
         addContent(parameters);
         setActionListeners(listener);
-        
-     /*   if(repository == null || repository.isEmpty()) {
-            Component comp = tabbedPane.getComponentAt(0);
-            JPanel panel = (JPanel)comp;
-            panel.removeAll();
-            panel.validate();
-            panel.setOpaque(false);
-            panel.add(new JLabel("Empty Cluster Repository"), new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(15,0,10,0),0,0));
-            panel.add(new JLabel("Only Annotation Survey is Enabled"), new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(0,0,0,0),0,0));
-            tabbedPane.setSelectedIndex(1);
-        }
-        */
+
         this.setSize(570,750);
     }
     
@@ -236,7 +243,6 @@ public class EASEInitDialog extends AlgorithmDialog {
     public int showModal() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation((screenSize.width - getSize().width)/2, (screenSize.height - getSize().height)/2);
-        //show();
         setVisible(true);
         return result;
     }
@@ -248,7 +254,8 @@ public class EASEInitDialog extends AlgorithmDialog {
     }
     
     /** Indicates if mode is cluster analysis, if not mode is annotation survey.
-     * @return  */
+     * @return  
+     */
     public boolean isClusterModeSelected(){
         return this.modePanel.clusterAnalysisButton.isSelected();
     }
@@ -381,7 +388,11 @@ public class EASEInitDialog extends AlgorithmDialog {
     /** Contains mode controls. (anal. or survey)
      */
     protected class ModePanel extends JPanel {
-        protected JRadioButton clusterAnalysisButton;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = -4927037409254942407L;
+		protected JRadioButton clusterAnalysisButton;
         protected JRadioButton slideSurveyButton;
         
         /** Constructs a mode panel.
@@ -429,7 +440,11 @@ public class EASEInitDialog extends AlgorithmDialog {
     
     protected class PopSelectionPanel extends ParameterPanel {
         
-    	JRadioButton preloadedAnnotationButton;
+    	/**
+		 * 
+		 */
+		private static final long serialVersionUID = 4355369410348482259L;
+		JRadioButton preloadedAnnotationButton;
         JRadioButton fileButton;
         JRadioButton dataButton;
         JTextField popField;
@@ -502,8 +517,9 @@ public class EASEInitDialog extends AlgorithmDialog {
             browseButton.setSize(150, 25);
             browseButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent ae) {
-                	//TODO have the chooser (and other file browsers for EASE) use the EASE file system as their root dir.
-                    JFileChooser chooser = new JFileChooser(TMEV.getFile("Data/ease/"));
+                	JFileChooser chooser = new JFileChooser(getBaseFileLocation() + sep + "Lists");
+//TODO
+                	//                	System.out.println("pop selection file location: " + getBaseFileLocation() + sep + "Lists");
                     chooser.setDialogTitle("Population File Selection");
                     chooser.setMultiSelectionEnabled(false);
                     if(chooser.showOpenDialog(parent) == JOptionPane.OK_OPTION){
@@ -569,15 +585,16 @@ public class EASEInitDialog extends AlgorithmDialog {
     /** Contains annotation parameter controls.
      */
     protected class EaseParameterPanel extends JPanel {
-        
-        protected JTextField converterFileField;
+
+		private static final long serialVersionUID = 3446234672105256730L;
+		protected JTextField converterFileField;
         protected JList fileList;
         protected JButton browserButton;
         protected JTextField minClusterSizeField;
         protected JComboBox fieldNamesBox;
         
         protected JList annFileList;
-        protected Vector annVector;
+       //protected Vector annVector;
         protected JButton removeButton;
         protected JCheckBox useAnnBox;
         protected JLabel fileLabel;
@@ -627,7 +644,7 @@ public class EASEInitDialog extends AlgorithmDialog {
             annPanel.setBackground(Color.white);
             annPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Gene Annotation / Gene Ontology Linking Files", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
             
-            annVector = new Vector();
+            //annVector = new Vector();
             annFileList = new JList(new DefaultListModel());
             annFileList.setCellRenderer(new ListRenderer());
             annFileList.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
@@ -659,14 +676,15 @@ public class EASEInitDialog extends AlgorithmDialog {
             sep = System.getProperty("file.separator");
             File file = new File(getBaseFileLocation());
             String tempPath = file.getPath();
-            Vector fileVector = new Vector();
+            Vector<String> fileVector = new Vector<String>();
             fileList = new JList(fileVector);
             if(file.exists()){
                 String [] listFileNames = file.list();
                 for(int i = 0; i < listFileNames.length; i++){
                     File tempFile = new File(tempPath+sep+listFileNames[i]);
-                    if(tempFile.isFile())
+                    if(tempFile.isFile()) {
                         fileVector.add(listFileNames[i]);
+                    }
                 }
                 if(fileVector.size() > 0){
                     converterFileField.setText(tempPath+sep+((String)fileVector.elementAt(0)));
@@ -680,10 +698,6 @@ public class EASEInitDialog extends AlgorithmDialog {
             
             minClusterSizeField = new JTextField(5);
             minClusterSizeField.setText("5");
-            
-            JPanel contentPanel = new JPanel(new GridBagLayout());
-            
-            JPanel easeFilePanel = new JPanel(new GridBagLayout());
             
             this.setLayout(new GridBagLayout());
             
@@ -771,7 +785,9 @@ public class EASEInitDialog extends AlgorithmDialog {
         }
         
         protected class ListRenderer extends DefaultListCellRenderer {
-            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+			private static final long serialVersionUID = 663620540385920562L;
+
+			public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 File file = (File) value;
                 setText(file.getName());
@@ -783,8 +799,8 @@ public class EASEInitDialog extends AlgorithmDialog {
     /** Contains statistical parameter controls.
      */
     protected class AlphaPanel extends JPanel{
-        
-        //Stats
+		private static final long serialVersionUID = -8638108335416140953L;
+		//Stats
         protected JCheckBox fisherBox;
         protected JCheckBox easeBox;
         //mult. corrections
@@ -967,8 +983,8 @@ public class EASEInitDialog extends AlgorithmDialog {
      * the EASE filesystem and the update controls.
      */
     protected class ConfigPanel extends ParameterPanel {
-
-        JTextField defaultFileBaseLocation;
+		private static final long serialVersionUID = -5298900627241870503L;
+		JTextField defaultFileBaseLocation;
         
         public ConfigPanel() {
             super("File Updates and Configuration");
@@ -984,7 +1000,8 @@ public class EASEInitDialog extends AlgorithmDialog {
             browseFileBaseButton.setFocusPainted(false);
             browseFileBaseButton.addActionListener(listener);
             browseFileBaseButton.setToolTipText("<html>Helps select the EASE annotation file system<br>that corresponds the current species and array type.</html>");
-            defaultFileBaseLocation = new JTextField(TMEV.getFile("data/ease").getAbsolutePath(), 25);
+            //defaultFileBaseLocation = new JTextField(TMEV.getFile("data/ease").getAbsolutePath(), 25);
+            defaultFileBaseLocation = new JTextField(getDefaultBaseFileLocation(), 25);
             defaultFileBaseLocation.setEditable(true);
             
             add(browseFileBaseButton, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,0,5,0), 0, 0));
@@ -993,7 +1010,9 @@ public class EASEInitDialog extends AlgorithmDialog {
         }
         
         public void selectFileSystem() {
-            String startDir = defaultFileBaseLocation.getText();
+        	String startDir = TMEV.getSettingForOption(EASEGUI.LAST_EASE_FILE_LOCATION);
+        	if(startDir == null)
+        		startDir = defaultFileBaseLocation.getText();
             File file = new File(startDir);
             if(!file.exists()) {                
                 file = TMEV.getFile("data/ease");
@@ -1005,6 +1024,7 @@ public class EASEInitDialog extends AlgorithmDialog {
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             if(chooser.showOpenDialog(EASEInitDialog.this) == JOptionPane.OK_OPTION) {
                 defaultFileBaseLocation.setText(chooser.getSelectedFile().getAbsolutePath());
+                TMEV.storeProperty(EASEGUI.LAST_EASE_FILE_LOCATION, defaultFileBaseLocation.getText());
             }
         }
         
