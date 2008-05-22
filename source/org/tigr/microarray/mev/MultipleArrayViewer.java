@@ -5557,8 +5557,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
      * all its invokations to the outer class.
      */
     private class FrameworkImpl implements IFramework {
-        //public static final long serialVersionUID = 10201020001L;
-        
         public IData getData() {
             return MultipleArrayViewer.this.getData();
         }

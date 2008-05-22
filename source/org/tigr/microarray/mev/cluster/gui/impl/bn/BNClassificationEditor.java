@@ -1462,5 +1462,9 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		// TODO Auto-generated method stub
 		return evalStr;
 	}
+	public String getBootNetworkFile() {
+		// TODO Auto-generated method stub
+		return this.bootNetFile;
+	}
     
 }
