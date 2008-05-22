@@ -101,6 +101,9 @@ public class ActionManager implements java.io.Serializable {
         actions.put(CDNA_LOW_INTENSITY_ACTION, new DefaultAction(this, CDNA_LOW_INTENSITY_NAME, CDNA_LOW_INTENSITY_CMD, getIcon(CDNA_LOW_INTENSITY_ICON)));
         actions.put(OLIGEN_LOW_INTENSITY_ACTION, new DefaultAction(this, OLIGEN_LOW_INTENSITY_NAME, OLIGEN_LOW_INTENSITY_CMD, getIcon(OLIGEN_LOW_INTENSITY_ICON)));
 
+        //Dan
+        actions.put(TOP_COMBOBOX_ACTION, new DefaultAction(this, TOP_COMBOBOX_NAME, TOP_COMBOBOX_CMD, getIcon(TOP_COMBOBOX_ICON)));
+
        
         /* Raktim - Annotation Demo Only */
         actions.put(GENOME_ANNOTATION_ACTION, new DefaultAction(this, GENOME_ANNOTATION_NAME, GENOME_ANNOTATION_COMMAND, getIcon(GENOME_ANNOTATION_ICON)));
@@ -162,10 +165,18 @@ public class ActionManager implements java.io.Serializable {
         for (int i=0; i<descs.length; i++) {
             if (isValidDescription(descs[i])) {
             	actions.put(ANALYSIS_ACTION+String.valueOf(i), new AnalysisAction(this, descs[i]));
+            	//System.out.println("tooltip: " + descs[i].getTooltip());
+            	actions.put(NAME_OF_ANALYSIS+String.valueOf(i), descs[i].getTooltip());
+            	
             	counter++;
             }
         }
     }
+    
+    public HashMap getActions(){
+    	return actions;
+    }
+    
     /**
      * Raktim
      * Initializes The CGH Copy Number based analysis actions;
@@ -183,6 +194,8 @@ public class ActionManager implements java.io.Serializable {
 		for (int i=0; i<descs.length; i++) {
 		    if (isValidDescription(descs[i])) {
 			actions.put(CGH_ANALYSIS_ACTION+String.valueOf(i), new AnalysisAction(this, descs[i]));
+			actions.put(CGH_NAME_OF_ANALYSIS+String.valueOf(i), descs[i].getName());
+			actions.put(CGH_SMALL_ICON+String.valueOf(i), descs[i].getSmallIcon());
 			counter++;
 		    }
 		}
@@ -209,6 +222,7 @@ public class ActionManager implements java.io.Serializable {
     // analysis action(s)
     public static final String ANALYSIS_ACTION = "analysis-action";
     public static final String ANALYSIS_COMMAND = "analysis-command";
+    public static final String NAME_OF_ANALYSIS = "analysis-name";
     
     //load data action
     public static final String  LOAD_ACTION  = "action-load";
@@ -370,6 +384,11 @@ public class ActionManager implements java.io.Serializable {
     public static final String SET_FOLD_FILTER_CMD = "set-fold-filter-cmd";
     public static final String USE_FOLD_FILTER_CMD = "use-fold-filter-cmd";
     
+    //Dan
+    public static final String TOP_COMBOBOX_ACTION="top-combobox-action";
+    public static final String TOP_COMBOBOX_NAME = "top combobox";
+    public static final String TOP_COMBOBOX_ICON = "arrow-down.gif";
+    public static final String TOP_COMBOBOX_CMD = "top-combobox-cmd";
     // adjust data commands
     public static final String LOG2_TRANSFORM_CMD  = "log2-transform-cmd";
     //wwang
@@ -560,6 +579,8 @@ public class ActionManager implements java.io.Serializable {
     public static final String CGH_COPY_NUMBER_BY_THRESHOLDS = "cgh-copy-number-by-thresholds";
     public static final String CGH_CLEAR_ANNOTATIONS = "cgh-clear-annotations";
     public static final String CGH_ANALYSIS_ACTION = "cgh-analysis-action";
+    public static final String CGH_NAME_OF_ANALYSIS = "cgh-analysis-name";
+    public static final String CGH_SMALL_ICON = "cgh-small-icon";
     public static final String CGH_ANALYSIS_COMMAND = "cgh-analysis-command";
     public static final String CIRCLE_VIEWER_BACKGROUND = "circle-viewer-background";
     public static final String CLONE_VALUE_DISCRETE_DETERMINATION = "clone-ratio-discrete-determination";
