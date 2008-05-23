@@ -31,6 +31,7 @@ public class ActionManager implements java.io.Serializable {
     public static final String CATEGORY="category";
     public static final String CATEGORY_ICON = "category-icon";
     private HashMap<String, AbstractAction> actions = new HashMap<String, AbstractAction>();
+    private HashMap<String, Object> categoryNames = new HashMap<String, Object>();
     private ActionListener listener;
     
     /**
@@ -166,7 +167,7 @@ public class ActionManager implements java.io.Serializable {
             if (isValidDescription(descs[i])) {
             	actions.put(ANALYSIS_ACTION+String.valueOf(i), new AnalysisAction(this, descs[i]));
             	//System.out.println("tooltip: " + descs[i].getTooltip());
-            	actions.put(NAME_OF_ANALYSIS+String.valueOf(i), descs[i].getTooltip());
+            	categoryNames.put(NAME_OF_ANALYSIS+String.valueOf(i), descs[i].getTooltip());
             	
             	counter++;
             }
@@ -175,6 +176,9 @@ public class ActionManager implements java.io.Serializable {
     
     public HashMap getActions(){
     	return actions;
+    }
+    public HashMap getActionNames(){
+    	return categoryNames;
     }
     
     /**
@@ -194,8 +198,8 @@ public class ActionManager implements java.io.Serializable {
 		for (int i=0; i<descs.length; i++) {
 		    if (isValidDescription(descs[i])) {
 			actions.put(CGH_ANALYSIS_ACTION+String.valueOf(i), new AnalysisAction(this, descs[i]));
-			actions.put(CGH_NAME_OF_ANALYSIS+String.valueOf(i), descs[i].getName());
-			actions.put(CGH_SMALL_ICON+String.valueOf(i), descs[i].getSmallIcon());
+			categoryNames.put(CGH_NAME_OF_ANALYSIS+String.valueOf(i), descs[i].getName());
+			categoryNames.put(CGH_SMALL_ICON+String.valueOf(i), descs[i].getSmallIcon());
 			counter++;
 		    }
 		}
