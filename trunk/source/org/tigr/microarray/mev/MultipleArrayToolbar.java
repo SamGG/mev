@@ -144,7 +144,7 @@ public class MultipleArrayToolbar extends JToolBar {
     	cghSteppedComboBox.addItem("CGH Analysis");int index = 0;
         Action action;
         while ((action = manager.getAction(ActionManager.CGH_ANALYSIS_ACTION+String.valueOf(index)))!=null) {
-            cghSteppedComboBox.addItem((String)manager.getActions().get(ActionManager.CGH_NAME_OF_ANALYSIS+String.valueOf(index)));
+            cghSteppedComboBox.addItem((String)manager.getActionNames().get(ActionManager.CGH_NAME_OF_ANALYSIS+String.valueOf(index)));
             index++;
         }
     	
@@ -264,7 +264,7 @@ public class MultipleArrayToolbar extends JToolBar {
         		if (cb.getSelectedIndex()==0)
         			return;
         		int index = 0;
-        		while (((String)manager.getActions().get(ActionManager.CGH_NAME_OF_ANALYSIS+String.valueOf(index))) != (String)cb.getItemAt(cb.getSelectedIndex()))
+        		while (((String)manager.getActionNames().get(ActionManager.CGH_NAME_OF_ANALYSIS+String.valueOf(index))) != (String)cb.getItemAt(cb.getSelectedIndex()))
         		{index++;}
         		actiontester = manager.getAction(ActionManager.CGH_ANALYSIS_ACTION+String.valueOf(index));
         		manager.forwardAction(new ActionEvent(actiontester, e.getID(), (String)actiontester.getValue(Action.ACTION_COMMAND_KEY)));
@@ -333,11 +333,11 @@ public class MultipleArrayToolbar extends JToolBar {
             	image = (ImageIcon)value;
             }else{
             	image = (ImageIcon)value;
-            	title = (String)manager.getActions().get(ActionManager.NAME_OF_ANALYSIS+String.valueOf(i));
+            	title = (String)manager.getActionNames().get(ActionManager.NAME_OF_ANALYSIS+String.valueOf(i));
 	            this.setBorder(BorderFactory.createLineBorder(Color.gray));
             }
     		if (cghAnalysis){
-    			image = (ImageIcon)manager.getActions().get(ActionManager.CGH_SMALL_ICON+String.valueOf(i));
+    			image = (ImageIcon)manager.getActionNames().get(ActionManager.CGH_SMALL_ICON+String.valueOf(i));
     		}
     		setIcon(image);
     		setText(title);
