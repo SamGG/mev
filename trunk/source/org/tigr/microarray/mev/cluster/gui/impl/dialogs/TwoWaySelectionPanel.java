@@ -376,7 +376,7 @@ public class TwoWaySelectionPanel extends JPanel implements IWizardParameterPane
 	private void saveAssignments() {
 		
 		File file;		
-		JFileChooser fileChooser = new JFileChooser();	
+		JFileChooser fileChooser = new JFileChooser("./data");	
 		
 		if(fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 			file = fileChooser.getSelectedFile();			
@@ -455,7 +455,7 @@ public class TwoWaySelectionPanel extends JPanel implements IWizardParameterPane
 		//Wow, that was easy :)
 		
 		File file;		
-		JFileChooser fileChooser = new JFileChooser();
+		JFileChooser fileChooser = new JFileChooser("./data");
 		
 		if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 		

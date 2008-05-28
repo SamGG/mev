@@ -534,7 +534,7 @@ public class GroupSelectionColorPanel extends JPanel implements IWizardParameter
 	private void saveAssignments() {
 		
 		File file;		
-		JFileChooser fileChooser = new JFileChooser();	
+		JFileChooser fileChooser = new JFileChooser("./data");	
 		
 		if(fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 			file = fileChooser.getSelectedFile();			
@@ -600,7 +600,7 @@ public class GroupSelectionColorPanel extends JPanel implements IWizardParameter
 		//Wow, that was easy :)
 		
 		File file;		
-		JFileChooser fileChooser = new JFileChooser();
+		JFileChooser fileChooser = new JFileChooser("./data");
 		
 		if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 		
