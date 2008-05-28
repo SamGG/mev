@@ -7,6 +7,21 @@
 The sample selection option indicates whether to perform the analysis
 on genes or experiments.
 <br>
+
+<h2> Centering Mode </h2>
+The centering mode selection option determines the type of matrix 
+centering (by mean, median, or none) to be performed before the PCA analysis is run
+<br>
+
+<h2> Algorithm Optimization </h2>
+This option determines which algorithm to run when clustering by samples.  
+The complete algorithm creates an nxn distance matrix where n is the number of genes.
+As data sets get large, memory requirements increase exponentially.  For most cases, it 
+is a sufficient approximation to calculate the result using the smaller mxm distance 
+matrix where m is the number of samples.  This dramatically decreases memory requirements 
+and calculation time.
+
+<br>
         </basefont>
     </body>
 </html>
