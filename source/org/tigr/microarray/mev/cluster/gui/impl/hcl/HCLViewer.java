@@ -548,6 +548,7 @@ public class HCLViewer extends JPanel implements IViewer {
      */
     protected void addMenuItems(JPopupMenu menu, Listener listener) {
         JMenuItem menuItem;
+        
         menuItem = new JMenuItem("Store Cluster", GUIFactory.getIcon("new16.gif"));
         menuItem.setEnabled(false);
         menuItem.setActionCommand(STORE_CLUSTER_CMD);
@@ -662,19 +663,19 @@ public class HCLViewer extends JPanel implements IViewer {
     }
     
     public void broadcastClusterGaggle() {
-    	Experiment subExp;
     	int[] rows;
-    	
+    	int[] cols;
     	if(selectedCluster != null) {
 	    	if(selectedCluster.isGeneCluster) {
-	    		subExp = getExperiment();
 	    		rows = getSubTreeElements();
-	    	} else {
-	    		subExp = ((org.tigr.microarray.mev.MultipleArrayData)data).getDataSubset(getSubTreeElements(), experiment.getRowMappingArrayCopy()).getExperiment();
-	    		rows = subExp.getRows();
+	    		cols = getExperiment().getColumnIndicesCopy();
+	    	} else { //isExperimentCluster
+	    		rows = getExperiment().getRows();
+	    		cols = getSubTreeElements();
 	    	}
-	    	framework.broadcastGeneCluster(subExp, rows, null);
+	    	framework.broadcastGeneCluster(getExperiment(), rows, cols);
     	} else {
+    		//Nothing selected by user, so broadcast complete experiment. 
     		framework.broadcastGeneCluster(getExperiment(), getExperiment().getRows(), null);
     	}
     }
@@ -995,7 +996,7 @@ public class HCLViewer extends JPanel implements IViewer {
         //cluster is a cluster of genes
         if(cluster.isGeneCluster){
             for (int i=0; i<size; i++) {
-                elements[i] = this.genesOrder[cluster.firstElem+i];
+            		elements[i] = this.genesOrder[cluster.firstElem+i];
             }
         }
         
@@ -1568,7 +1569,8 @@ public class HCLViewer extends JPanel implements IViewer {
         
         
         private void deselect(MouseEvent e){
-            Object source = e.getSource();
+        	selectedCluster = null;
+        	Object source = e.getSource();
             
             if(source instanceof HCLTree){  //in a tree don't deselect
                 if(source == genesTree) { //if colloring rows (genes)
@@ -1623,6 +1625,7 @@ public class HCLViewer extends JPanel implements IViewer {
                 deselectAllNodes();
                 repaint();
             }
+
         }
         
         

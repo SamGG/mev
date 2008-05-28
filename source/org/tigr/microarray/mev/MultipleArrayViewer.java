@@ -5739,8 +5739,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	    	}
 	    	m.setColumnTitles(temp);
 	    	m.setSpecies(getCurrentSpecies());
-    		m.setName ("MeV matrix (" + m.getRowCount() +  " x " + m.getColumnCount() +") from algorithm " + clusters[0].getAlgorithmName());
-//    		m.setShortName ("MeV matrix (" + m.getRowCount() +  " x " + m.getColumnCount() +")");
+	    	m.setName ("MeV matrix (" + m.getRowCount() +  " x " + m.getColumnCount() +") from algorithm " + clusters[0].getAlgorithmName());
+	    	m.setShortName ("MeV matrix (" + m.getRowCount() +  " x " + m.getColumnCount() +") from algorithm " + clusters[0].getAlgorithmName());
         	MultipleArrayViewer.this.doBroadcastMatrix(m);
         }
         
@@ -5765,8 +5765,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	        for (int i=0; i<rows.length; i++) {
 	        	rowTitles[i] =  data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{rows[i]})[0];
 	            for(int j=0; j<columns.length; j++) {
-//	        	for (int j=0; j<experiment.getNumberOfSamples(); j++) {
-//	            	System.out.println("value " + i + ", " + j + ": " + experiment.get(rows[i], j));
 	            	m.set(i, j, experiment.get(rows[i], columns[j]));
 	            }
 	        }
@@ -5781,10 +5779,15 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	    	}
 	    	m.setColumnTitles(columnTitles);
 	    	m.setSpecies(getCurrentSpecies());
-	    	if(((ISlideData)data.getFeaturesList().get(0)).getSlideFileName() != null)
-	    		m.setName(((ISlideData)data.getFeaturesList().get(0)).getSlideFileName());
-	    	else 
-	    		m.setName ("MeV matrix (" + m.getRowCount() + " x " + m.getColumnCount() + ")");
+	    	if(((ISlideData)data.getFeaturesList().get(0)).getSlideFileName() != null) {
+	    		String tempname = ((ISlideData)data.getFeaturesList().get(0)).getSlideFileName();
+	    		tempname = "MeV: " + tempname.substring(tempname.length()-25);
+	    		m.setName(tempname);
+	    		m.setShortName(tempname);
+	    	} else {
+	    		m.setName("MeV matrix (" + m.getRowCount() + " x " + m.getColumnCount() + ")");
+	    		m.setShortName("MeV matrix (" + m.getRowCount() + " x " + m.getColumnCount() + ")");
+	    	}
 	
 	        doBroadcastMatrix(m);
 	    }
