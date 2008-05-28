@@ -8,6 +8,14 @@ These checkboxes are used to indicate whether to construct trees for
 genes, samples, or both.
 <br>
 
+<h2> Leaf Order Optimization </h2>
+These checkboxes are used to indicate whether to use an algorithm that will rearrange the 
+analysis to optimize the sum of similarities between all adjacent leaves on the tree.  This 
+algorithm is memory intensive and will increase the calculation time over the arbitrary ordering
+technique.  Depending on the size of your data set this option may not be available due to Java 
+memory constraints.
+<br>
+
 <h2> Distance Metric Selection </h2>
 This area allows the selection of the metric to be used to assess gene-to-gene
 or sample-to-sample distances.  The initial metric displayed (choosen) corresponds to the global
