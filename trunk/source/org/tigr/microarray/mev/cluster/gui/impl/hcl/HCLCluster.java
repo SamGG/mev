@@ -27,9 +27,9 @@ public class HCLCluster {
      * firstRow and lastRow indices.
      */
     public HCLCluster(int root, int firstElem, int lastElem) {
-	this.root = root;
-	this.firstElem = firstElem;
-	this.lastElem = lastElem;
+		this.root = root;
+		this.firstElem = firstElem;
+		this.lastElem = lastElem;
         this.isGeneCluster = true;
         this.size = (lastElem - firstElem) + 1;
     }
