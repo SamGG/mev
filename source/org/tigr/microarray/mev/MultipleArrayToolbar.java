@@ -98,8 +98,6 @@ public class MultipleArrayToolbar extends JToolBar {
     		steppedComboArray[i] = new SteppedComboBox();
     		ComboListener comboListener = new ComboListener();
     		steppedComboArray[i].addActionListener(comboListener);
-    		ComboPopupListener comboPopupListener = new ComboPopupListener();
-    		//steppedComboArray[i].addPopupMenuListener(comboPopupListener);
     		steppedComboArray[i].setMaximumRowCount(13);	
     		steppedComboArray[i].addItem(disabledCategoryIcon[i]);
     	}
@@ -121,7 +119,6 @@ public class MultipleArrayToolbar extends JToolBar {
    		    int preferredWidth = steppedComboArray[i].getPreferredSize().width;
    			steppedComboArray[i].setPreferredSize(new Dimension(50, steppedComboArray[i].getPreferredSize().height));
    			steppedComboArray[i].setMinimumSize(new Dimension(0,0));
-   			//steppedComboArray[i].setMaximumSize(new Dimension(106,38));
    			steppedComboArray[i].setPopupWidth(preferredWidth);
    			
    			add(steppedComboArray[i]);
@@ -134,9 +131,6 @@ public class MultipleArrayToolbar extends JToolBar {
     	cghSteppedComboBox = new SteppedComboBox();
     	ComboListener comboListener = new ComboListener();
     	cghSteppedComboBox.addActionListener(comboListener);
-
-		ComboPopupListener comboPopupListener = new ComboPopupListener();
-    	//cghSteppedComboBox.addPopupMenuListener(comboPopupListener); 
     	
     	cghSteppedComboBox.setMaximumRowCount(100);
         
@@ -255,27 +249,6 @@ public class MultipleArrayToolbar extends JToolBar {
 		break;
 	}
     }
-    private class ComboPopupListener implements PopupMenuListener{
-    	ImageIcon categoryTemp;
-    	public void popupMenuWillBecomeVisible(PopupMenuEvent e){
-    		System.out.println("popupMenuWillBecomeVisible");
-    		JComboBox cb = (JComboBox)e.getSource();
-    		categoryTemp = (ImageIcon)cb.getItemAt(0);
-    		cb.removeItemAt(0);
-    		cb.setSelectedIndex(-1);
-    	}
-    	public void popupMenuCanceled(PopupMenuEvent e){
-
-    		System.out.println("popupMenuCanceled");
-    	}
-    	public void popupMenuWillBecomeInvisible(PopupMenuEvent e){
-
-    		System.out.println("popupMenuWillBecomeInvisible");
-    		JComboBox cb = (JComboBox)e.getSource();
-    		cb.insertItemAt(categoryTemp, 0);
-    		cb.setSelectedIndex(0);
-    	}
-    }
     private class ComboListener implements ActionListener{
     	public void actionPerformed(ActionEvent e){          
     		JComboBox cb = (JComboBox)e.getSource();
@@ -293,7 +266,6 @@ public class MultipleArrayToolbar extends JToolBar {
     			return;
     		}
     		if (cb.getSelectedIndex()<0 ||tempDeletion){
-    			System.out.println("action stopped");
     			cb.setSelectedIndex(0);
     			return;
     		}
@@ -306,13 +278,7 @@ public class MultipleArrayToolbar extends JToolBar {
     		manager.forwardAction(new ActionEvent(actiontester, e.getID(), (String)actiontester.getValue(Action.ACTION_COMMAND_KEY)));
     		cb.putClientProperty("categoryIconExists", true);
     		cb.insertItemAt((ImageIcon)cb.getClientProperty("categoryIcon"), 0);
-    		System.out.println("Icon? " + cb.getClientProperty("categoryIcon"));
-
-    		System.out.println("exists? " + cb.getClientProperty("categoryIconExists"));
-    		System.out.println("ap1 slected index: "+ cb.getSelectedIndex());
     		cb.setSelectedIndex(0);
-    		System.out.println("ap2 slected index: "+ cb.getSelectedIndex());
-    		System.out.println("category icon? " + cb.getItemAt(0));
     	}
     }
     
@@ -390,11 +356,8 @@ public class MultipleArrayToolbar extends JToolBar {
     	      public void show() {
     	       
     	        int selectedIndex = comboBox.getSelectedIndex();
-    	        //ImageIcon tempIcon = (ImageIcon)comboBox.getItemAt(0);
-    	        //comboBox.setSelectedIndex(-1);
     	        tempDeletion = true;
     	        if (comboBox.getClientProperty("categoryIconExists")==(Object)true){
-    	        	System.out.println("removed at 0");
     	        	comboBox.removeItemAt(0);
     	        	comboBox.putClientProperty("categoryIconExists", false);
     	        }
@@ -408,7 +371,6 @@ public class MultipleArrayToolbar extends JToolBar {
     	        scroller.setPreferredSize( popupBounds.getSize() );
     	        scroller.setMinimumSize( popupBounds.getSize() );
     	        list.invalidate();
-    	        System.out.println("selectedIndex: "+comboBox.getSelectedIndex());
     	        if (true  ) {
     	          list.clearSelection();
     	        } else {
@@ -416,9 +378,8 @@ public class MultipleArrayToolbar extends JToolBar {
     	        }
     	        list.ensureIndexIsVisible( list.getSelectedIndex() );
     	        setLightWeightPopupEnabled( comboBox.isLightWeightPopupEnabled() );
-    	 
+    	        comboBox.setFocusable(false);
     	        show( comboBox, popupBounds.x, popupBounds.y );
-    	        //comboBox.insertItemAt(tempIcon, 0);
     	      }
     	    };
     	    popup.getAccessibleContext().setAccessibleParent(comboBox);
