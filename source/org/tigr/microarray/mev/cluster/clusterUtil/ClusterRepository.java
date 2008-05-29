@@ -407,7 +407,7 @@ public class ClusterRepository extends Vector {
                 return null;
         }
         
-        ClusterAttributesDialog dialog = new ClusterAttributesDialog("Store Cluster Attributes", algorithmName, clusterID);
+        ClusterAttributesDialog dialog = new ClusterAttributesDialog("Store Cluster Attributes", algorithmName, clusterID, null, null, getNextDefaultColor());
         if(dialog.showModal() != JOptionPane.OK_OPTION){
             return null;
         }
@@ -439,7 +439,7 @@ public class ClusterRepository extends Vector {
                 return null;
         }
         
-        ClusterAttributesDialog dialog = new ClusterAttributesDialog("Store Cluster Attributes", algorithmName, clusterID);
+        ClusterAttributesDialog dialog = new ClusterAttributesDialog("Store Cluster Attributes", algorithmName, clusterID, null, null, getNextDefaultColor());
         if(dialog.showModal() != JOptionPane.OK_OPTION){
             return null;
         }
@@ -487,7 +487,7 @@ public class ClusterRepository extends Vector {
             }
         }
         
-        ClusterAttributesDialog dialog = new ClusterAttributesDialog("Store Cluster Attributes", algorithmName, clusterID);
+        ClusterAttributesDialog dialog = new ClusterAttributesDialog("Store Cluster Attributes", algorithmName, clusterID, null, null, getNextDefaultColor());
         if(dialog.showModal() != JOptionPane.OK_OPTION){
             return null;
         }
@@ -734,7 +734,7 @@ public class ClusterRepository extends Vector {
                         }
                         
                         while (true){
-                        ClusterAttributesDialog clusterDialog = new ClusterAttributesDialog("Store Cluster Attributes", "List Import", "Gene List");
+                        ClusterAttributesDialog clusterDialog = new ClusterAttributesDialog("Store Cluster Attributes", "List Import", "Gene List", null, null, getNextDefaultColor());
                         if(clusterDialog.showModal() != JOptionPane.OK_OPTION){
                             return null;
                         }
@@ -802,7 +802,7 @@ public class ClusterRepository extends Vector {
                             return null;
                         }                        
                         while (true){
-                        ClusterAttributesDialog clusterDialog = new ClusterAttributesDialog("Store Cluster Attributes", "List Import", "Sample List");
+                        ClusterAttributesDialog clusterDialog = new ClusterAttributesDialog("Store Cluster Attributes", "List Import", "Sample List", null, null, getNextDefaultColor());
                         if(clusterDialog.showModal() != JOptionPane.OK_OPTION){
                             return null;
                         }
@@ -898,44 +898,17 @@ public class ClusterRepository extends Vector {
 	                    if(selectedIndices == null || selectedIndices.length < 1) {
 	                        return null;
 	                    }                        
-	                    while (true){
-	                    	Color randomColor=null;
-	                        if (startingColors>6){
-			                    int red = (int)(Math.random()*256);
-			                    int green = (int)(Math.random()*256);
-			                    int blue = (int)(Math.random()*256);
-			                    randomColor = new Color(red, green, blue);
-	                        } else{
-	                        	if (startingColors==0)
-	                        		randomColor = new Color(255,0,0);//red
-	                        	if (startingColors==1)
-	                        		randomColor = new Color(0,0,255);//blue
-	                        	if (startingColors==2)
-	                        		randomColor = new Color(0,255,0);//green
-	                        	if (startingColors==3)
-	                        		randomColor = new Color(255,255,0);//yellow
-	                        	if (startingColors==4)
-	                        		randomColor = new Color(255,165,0);//orange
-	                        	if (startingColors==5)
-	                        		randomColor = new Color(0,0,0);//black
-	                        	if (startingColors==6)
-	                        		randomColor = new Color(255,105,180);//pink
-	                        	startingColors++;
-	                        }
-		                    if (clusterColors.contains(randomColor)){
-		                    	continue;
-		                    }
-		                  	clusterColors.add(randomColor);
+	                    Color nextColor = getNextDefaultColor();
+	                  	clusterColors.add(nextColor);
 		                    ClusterList list = getClusterOperationsList();
-		                    Color clusterColor = randomColor;
+		                    Color clusterColor = nextColor;
 		                    String clusterLabel = labelArray[label][0];
 		                    String clusterDescription = null;
 		                    this.clusterSerialCounter++;
 		                    Cluster cluster = new Cluster(selectedIndices, "List Import", key + " - " + clusterLabel, key, "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
 		                    addCluster(list, cluster);
 		                    clusterArray.add(cluster);
-		                    break;
-	                    }
+		                    
 		            }
         		}
         	}
@@ -974,45 +947,18 @@ public class ClusterRepository extends Vector {
     	                    int[] selectedIndices = newIndices;
     	                    if(selectedIndices == null || selectedIndices.length < 1) {
     	                        return null;
-    	                    }                        
-    	                    while (true){
-    	                    	Color randomColor=null;
-		                        if (startingColors>6){
-				                    int red = (int)(Math.random()*256);
-				                    int green = (int)(Math.random()*256);
-				                    int blue = (int)(Math.random()*256);
-				                    randomColor = new Color(red, green, blue);
-		                        } else{
-		                        	if (startingColors==0)
-		                        		randomColor = new Color(255,0,0);//red
-		                        	if (startingColors==1)
-		                        		randomColor = new Color(0,0,255);//blue
-		                        	if (startingColors==2)
-		                        		randomColor = new Color(0,255,0);//green
-		                        	if (startingColors==3)
-		                        		randomColor = new Color(255,255,0);//yellow
-		                        	if (startingColors==4)
-		                        		randomColor = new Color(255,165,0);//orange
-		                        	if (startingColors==5)
-		                        		randomColor = new Color(0,0,0);//black
-		                        	if (startingColors==6)
-		                        		randomColor = new Color(255,105,180);//pink
-		                        	startingColors++;
-		                        }
-    		                    if (clusterColors.contains(randomColor)){
-    		                    	continue;
-    		                    }
-    		                  	clusterColors.add(randomColor);
-    		                    ClusterList list = getClusterOperationsList();
-    		                    Color clusterColor = randomColor;
-    		                    String clusterLabel = labelArray[label][0];
-    		                    String clusterDescription = null;
-    		                    this.clusterSerialCounter++;
-    		                    Cluster cluster = new Cluster(selectedIndices, "List Import", key + " - " + clusterLabel, key, "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
-    		                    addCluster(list, cluster);
-    		                    clusterArray.add(cluster);
-    		                    break;
-    	                    }
+    	                    }  
+    	                    Color nextColor = getNextDefaultColor();
+		                  	clusterColors.add(nextColor);
+    		                ClusterList list = getClusterOperationsList();
+    		                Color clusterColor = nextColor;
+    		                String clusterLabel = labelArray[label][0];
+    		                String clusterDescription = null;
+    		                this.clusterSerialCounter++;
+    		                Cluster cluster = new Cluster(selectedIndices, "List Import", key + " - " + clusterLabel, key, "N/A", 
+    		                		clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
+    		                addCluster(list, cluster);
+    		                clusterArray.add(cluster);
     		            }
             		}
             	}
@@ -1044,153 +990,116 @@ public class ClusterRepository extends Vector {
         
         if(!this.isGeneClusterRepository()) {
         	key = framework.getData().getCurrentSampleLabelKey();
-        			//key = slideNames[index];
-                	allIndices = experiment.getColumnIndicesCopy();
-		            annList = new String[experiment.getNumberOfSamples()];
-		            ArrayList<String> noRepeatsLabelList = new ArrayList<String>();
-		            matches = new boolean[annList.length];
-		            for(int i = 0; i < allIndices.length; i++) {
-		                annList[i] = framework.getData().getFullSampleName(i);
-		                if (!noRepeatsLabelList.contains(annList[i]))
-		                	noRepeatsLabelList.add(annList[i]);
-		            }
-		            if (noRepeatsLabelList.size()>10){
-		    	        Object[] optionst = { "OK", "CANCEL" };
-		            	int option = JOptionPane.showOptionDialog(null, "Clustering by annotation type " + key + " will create " + noRepeatsLabelList.size() + " clusters.  Are you sure you want to continue?" , "High cluster count for annotation type",
-		            			JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
-		            			null, optionst, optionst[0]);
-		            	if (option!=JOptionPane.OK_OPTION)
-            	        	return null;
-		            }
-		            String[][] labelArray = new String[noRepeatsLabelList.size()][1];
-		            for (int i = 0; i<labelArray.length; i++){
-		            	labelArray[i][0]=noRepeatsLabelList.get(i);
-		            }
-		            for (int label = 0; label<noRepeatsLabelList.size();label++){
-		            	newIndices = getMatchingIndices(experiment, key, labelArray[label], matches, false);
-	                    int[] selectedIndices = newIndices;
-	                    if(selectedIndices == null || selectedIndices.length < 1) {
-	                        return null;
-	                    }                        
-	                    while (true){
-	                    	Color randomColor=null;
-	                        if (startingColors>6){
-			                    int red = (int)(Math.random()*256);
-			                    int green = (int)(Math.random()*256);
-			                    int blue = (int)(Math.random()*256);
-			                    randomColor = new Color(red, green, blue);
-	                        } else{
-	                        	if (startingColors==0)
-	                        		randomColor = new Color(255,0,0);//red
-	                        	if (startingColors==1)
-	                        		randomColor = new Color(0,0,255);//blue
-	                        	if (startingColors==2)
-	                        		randomColor = new Color(0,255,0);//green
-	                        	if (startingColors==3)
-	                        		randomColor = new Color(255,255,0);//yellow
-	                        	if (startingColors==4)
-	                        		randomColor = new Color(255,165,0);//orange
-	                        	if (startingColors==5)
-	                        		randomColor = new Color(0,0,0);//black
-	                        	if (startingColors==6)
-	                        		randomColor = new Color(255,105,180);//pink
-	                        	startingColors++;
-	                        }
-		                    if (clusterColors.contains(randomColor)){
-		                    	continue;
-		                    }
-		                  	clusterColors.add(randomColor);
-		                    ClusterList list = getClusterOperationsList();
-		                    Color clusterColor = randomColor;
-		                    String clusterLabel = labelArray[label][0];
-		                    String clusterDescription = null;
-		                    this.clusterSerialCounter++;
-		                    Cluster cluster = new Cluster(selectedIndices, "List Import", key + " - " + clusterLabel, key, "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
-		                    addCluster(list, cluster);
-		                    clusterArray.add(cluster);
-		                    break;
-	                    }
-		            }
-        		
-        	
-        }else{
-    		            key = this.framework.getData().getFieldNames()[index];
-    		            allIndices = experiment.getRowMappingArrayCopy();
-    		            annList = new String[experiment.getNumberOfGenes()];
-    		            annList = framework.getData().getAnnotationList(key, allIndices);
-    		            ArrayList<String> noRepeatsLabelList = new ArrayList<String>();
-    		            matches = new boolean[annList.length];
-    		            for(int i = 0; i < allIndices.length; i++) {
-    		                if (!noRepeatsLabelList.contains(annList[i]))
-    		                	noRepeatsLabelList.add(annList[i]);
-    		            }
-    		            if (noRepeatsLabelList.size()>10){
-    		    	        Object[] optionst = { "OK", "CANCEL" };
-    		            	int option = JOptionPane.showOptionDialog(null, "Clustering by annotation type " + key + " will create " + noRepeatsLabelList.size() + " clusters.  Are you sure you want to continue?" , "High cluster count for annotation type",
-    		            			JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
-    		            			null, optionst, optionst[0]);
-    		            	if (option!=JOptionPane.OK_OPTION)
-                	        	return null;
-    		            }
-    		            String[][] labelArray = new String[noRepeatsLabelList.size()][1];
-    		            for (int i = 0; i<labelArray.length; i++){
-    		            	labelArray[i][0]=noRepeatsLabelList.get(i);
-    		            }
-    		            for (int label = 0; label<noRepeatsLabelList.size();label++){
-    		            	newIndices = getMatchingIndices(experiment, key, labelArray[label], matches, true);
-    	                    int[] selectedIndices = newIndices;
-    	                    if(selectedIndices == null || selectedIndices.length < 1) {
-    	                        return null;
-    	                    }                        
-    	                    while (true){
-    	                    	Color randomColor=null;
-		                        if (startingColors>6){
-				                    int red = (int)(Math.random()*256);
-				                    int green = (int)(Math.random()*256);
-				                    int blue = (int)(Math.random()*256);
-				                    randomColor = new Color(red, green, blue);
-		                        } else{
-		                        	if (startingColors==0)
-		                        		randomColor = new Color(255,0,0);//red
-		                        	if (startingColors==1)
-		                        		randomColor = new Color(0,0,255);//blue
-		                        	if (startingColors==2)
-		                        		randomColor = new Color(0,255,0);//green
-		                        	if (startingColors==3)
-		                        		randomColor = new Color(255,255,0);//yellow
-		                        	if (startingColors==4)
-		                        		randomColor = new Color(255,165,0);//orange
-		                        	if (startingColors==5)
-		                        		randomColor = new Color(0,0,0);//black
-		                        	if (startingColors==6)
-		                        		randomColor = new Color(255,105,180);//pink
-		                        	startingColors++;
-		                        }
-    		                    if (clusterColors.contains(randomColor)){
-    		                    	continue;
-    		                    }
-    		                  	clusterColors.add(randomColor);
-    		                    ClusterList list = getClusterOperationsList();
-    		                    Color clusterColor = randomColor;
-    		                    String clusterLabel = labelArray[label][0];
-    		                    String clusterDescription = null;
-    		                    this.clusterSerialCounter++;
-    		                    Cluster cluster = new Cluster(selectedIndices, "List Import", key + " - " + clusterLabel, key, "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
-    		                    addCluster(list, cluster);
-    		                    clusterArray.add(cluster);
-    		                    break;
-    	                    }
-    		            }
-            		
-            	
+           	allIndices = experiment.getColumnIndicesCopy();
+            annList = new String[experiment.getNumberOfSamples()];
+            ArrayList<String> noRepeatsLabelList = new ArrayList<String>();
+            matches = new boolean[annList.length];
+            for(int i = 0; i < allIndices.length; i++) {
+                annList[i] = framework.getData().getFullSampleName(i);
+                if (!noRepeatsLabelList.contains(annList[i]))
+                	noRepeatsLabelList.add(annList[i]);
             }
+            if (noRepeatsLabelList.size()>10){
+    	        Object[] optionst = { "OK", "CANCEL" };
+            	int option = JOptionPane.showOptionDialog(null, "Clustering by annotation type " + key + " will create " + noRepeatsLabelList.size() + " clusters.  Are you sure you want to continue?" , "High cluster count for annotation type",
+            			JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+            			null, optionst, optionst[0]);
+            	if (option!=JOptionPane.OK_OPTION)
+       	        	return null;
+	        }
+            String[][] labelArray = new String[noRepeatsLabelList.size()][1];
+            for (int i = 0; i<labelArray.length; i++){
+            	labelArray[i][0]=noRepeatsLabelList.get(i);
+            }
+            for (int label = 0; label<noRepeatsLabelList.size();label++){
+            	newIndices = getMatchingIndices(experiment, key, labelArray[label], matches, false);
+                int[] selectedIndices = newIndices;
+                if(selectedIndices == null || selectedIndices.length < 1) {
+                    return null;
+                }            
+                Color nextColor = getNextDefaultColor();
+               	clusterColors.add(nextColor);
+                ClusterList list = getClusterOperationsList();
+                Color clusterColor = nextColor;
+                String clusterLabel = labelArray[label][0];
+                String clusterDescription = null;
+                this.clusterSerialCounter++;
+                Cluster cluster = new Cluster(selectedIndices, "List Import", key + " - " + clusterLabel, key, "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
+                addCluster(list, cluster);
+                clusterArray.add(cluster);  
+            }      		
+        }else{
+            key = this.framework.getData().getFieldNames()[index];
+            allIndices = experiment.getRowMappingArrayCopy();
+            annList = new String[experiment.getNumberOfGenes()];
+            annList = framework.getData().getAnnotationList(key, allIndices);
+            ArrayList<String> noRepeatsLabelList = new ArrayList<String>();
+            matches = new boolean[annList.length];
+            for(int i = 0; i < allIndices.length; i++) {
+                if (!noRepeatsLabelList.contains(annList[i]))
+                	noRepeatsLabelList.add(annList[i]);
+            }
+            if (noRepeatsLabelList.size()>10){
+    	        Object[] optionst = { "OK", "CANCEL" };
+            	int option = JOptionPane.showOptionDialog(null, "Clustering by annotation type " + key + " will create " + noRepeatsLabelList.size() + " clusters.  Are you sure you want to continue?" , "High cluster count for annotation type",
+           			JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+           			null, optionst, optionst[0]);
+            	if (option!=JOptionPane.OK_OPTION)
+       	        	return null;
+            }
+            String[][] labelArray = new String[noRepeatsLabelList.size()][1];
+            for (int i = 0; i<labelArray.length; i++){
+            	labelArray[i][0]=noRepeatsLabelList.get(i);
+            }
+            for (int label = 0; label<noRepeatsLabelList.size();label++){
+            	newIndices = getMatchingIndices(experiment, key, labelArray[label], matches, true);
+                int[] selectedIndices = newIndices;
+                if(selectedIndices == null || selectedIndices.length < 1) {
+                    return null;
+                } 
+              	Color nextColor = getNextDefaultColor();
+               	clusterColors.add(nextColor);
+                ClusterList list = getClusterOperationsList();
+    		    Color clusterColor = nextColor;
+    		    String clusterLabel = labelArray[label][0];
+    		    String clusterDescription = null;
+    		    this.clusterSerialCounter++;
+    		    Cluster cluster = new Cluster(selectedIndices, "List Import", key + " - " + clusterLabel, key, "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
+    		    addCluster(list, cluster);
+    		    clusterArray.add(cluster);
+            }
+        }
         return clusterArray;
     }
     
     
     
 //--------------------------------------------------------------------------------------------------------------------------------------------------
-    
+    private Color getNextDefaultColor(){
+    	Color color;
+    	if (!clusterColors.contains(Color.green))
+    		return Color.green;
+    	if (!clusterColors.contains(Color.blue))
+    		return Color.blue;
+    	if (!clusterColors.contains(Color.red))
+    		return Color.red;
+    	if (!clusterColors.contains(Color.yellow))
+    		return Color.yellow;
+    	if (!clusterColors.contains(Color.orange))
+    		return Color.orange;
+    	if (!clusterColors.contains(Color.black))
+    		return Color.black;
+    	if (!clusterColors.contains(Color.pink))
+    		return Color.pink;
+    	while(true){
+            int red = (int)(Math.random()*256);
+            int green = (int)(Math.random()*256);
+            int blue = (int)(Math.random()*256);
+            color = new Color(red, green, blue);
+        	if (!clusterColors.contains(color))
+        		return color;
+    	}
+    }
     
     
     private int [] getMatchingIndices(Experiment experiment, String key, String [] ids, boolean geneIndices) {
