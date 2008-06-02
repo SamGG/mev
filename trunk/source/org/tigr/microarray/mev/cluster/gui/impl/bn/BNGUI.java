@@ -126,7 +126,7 @@ public class BNGUI implements IClusterGUI {
 	    info.kFolds = dialog.getKFolds();
 	    info.score = dialog.getScoreType();
 	    
-	    String lmFile = System.getProperty("LM_ONLY");
+	    String lmFile = bnEditor.basePath + BNConstants.RESULT_DIR + BNConstants.SEP + System.getProperty("LM_ONLY");
 	    String bnFile = bnEditor.getBootNetworkFile();
 	    fileViewer = createLMBNViewer(lmFile, bnFile);
 		return createResultTree(exp, fileViewer, wekaOutputViewer, info);

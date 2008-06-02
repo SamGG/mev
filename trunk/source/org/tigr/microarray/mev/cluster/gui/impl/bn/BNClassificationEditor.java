@@ -43,7 +43,8 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
      JScrollPane evalScrollPane;
      String evalStr = null;
      RunWekaProgressPanel runProgressPanel;
-    int numClasses;    JButton showInCytoButton,showLitCytoButton, showBootInCytoButton; 
+    int numClasses;    JButton showInCytoButton,showLitCytoButton, showBootInCytoButton, showAllNetworks;
+    Vector<String> networkFiles = new Vector<String>();
     String[] fieldNames;
     int numGenes, numExps;
     JTable BNClassTable;
@@ -310,7 +311,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
                 		}
                 		runProgressPanel.dispose();
                 		//if(!BNGUI.cancelRun)
-                			displayScrollPane(getScrollPanePanel(evalStr));
+                		displayScrollPane(getScrollPanePanel(evalStr));
                 		BNGUI.run=true;
                 	}
 
@@ -468,6 +469,86 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		evalScrollPane.revalidate(); // knows when to resize
 		evalPanel.add(evalScrollPane, BorderLayout.NORTH);
 		//frame=(JFrame)evalPanel.getParent();
+		showAllNetworks = new JButton("All Networks: LM, BN-Observed, BN-Bootstrap");
+		showAllNetworks.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				// LM Network
+			    try {
+					 System.out.println("System.getProperty(LM_ONLY) " + System.getProperty("LM_ONLY"));
+					 String lmNetFile = basePath + BNConstants.RESULT_DIR + BNConstants.SEP + System.getProperty("LM_ONLY");
+					 networkFiles.add(lmNetFile);
+			    }catch(Exception ex){
+		    	 //System.out.println(ex);
+		    	 ex.printStackTrace();
+		    	 JOptionPane.showMessageDialog(null, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+			    }
+			    
+			    // BN Observed
+			    try {
+			    	String fileName = basePath + BNConstants.RESULT_DIR + BNConstants.SEP + Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" + "result.sif";
+			    	FileOutputStream fos = new FileOutputStream(fileName);
+			    	PrintWriter pw = new PrintWriter(fos, true);
+			    	//FromWekaToSif.fromWekaToSif(evalStr, pw);	
+			    	//System.out.println("******evalStr******* " + evalStr);
+			    	FromWekaToSif.fromWekaToSif(evalStr, pw, false);
+			    	networkFiles.add(fileName);
+			    } catch(IOException ioE){
+			    	 //ioE.printStackTrace(); 
+			    	 JOptionPane.showMessageDialog(null, ioE.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+			    } catch(Exception ex){
+			    	 //ex.printStackTrace();
+			    	 JOptionPane.showMessageDialog(null, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			    
+			    // BN Bootstrap Network
+			    if(isBootstraping){
+			    	String bootFile = bootNetFile; //fileName;
+			    	networkFiles.add(bootNetFile);
+			    	/*
+			    	updateNetwork = new JButton("Update Network");
+			    	updateNetwork.addActionListener(new ActionListener() {
+		            public void actionPerformed(ActionEvent evt) {
+		    		    try {
+		    		    	// Remove edges below threshold
+		    		    	float confThres = Float.parseFloat(confThreshField.getText().trim());
+							String bootNetFile = basePath+BNConstants.SEP+BNConstants.RESULT_DIR+BNConstants.SEP+
+												Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" +
+												"boot_result_"+numIterations+"_"+confThres+".sif";
+							try {
+								FileOutputStream fos = new FileOutputStream(bootNetFile);
+								PrintWriter pw = new PrintWriter(fos, true);
+								Enumeration enumerate = edgesTable.keys();
+								while(enumerate.hasMoreElements()){
+									String edge = (String)enumerate.nextElement();
+									Integer count = (Integer)edgesTable.get(edge);
+									float presence = count.floatValue()/numIterations;
+									//System.out.println(edge + " : " + count.toString() + " presence : " + presence + " thresh : " + confThres);
+									if(presence >= confThres){
+										pw.println(edge);
+									}
+								}
+								fos.close();
+							} catch (Exception e) {
+								JOptionPane.showMessageDialog(null, e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+							} 
+		    	     }catch(Exception ex){
+		    		 	JOptionPane.showMessageDialog(null, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+		    	     }
+		    	    }
+		    	});
+			    confThreshField = new JTextField("0.7");
+			    confThreshField.setPreferredSize(new Dimension(35, 10));
+			    */
+			    }
+			}
+		});
+		//Debug Print File Names
+		System.out.println("Files to Show");
+		for(int i=0; i < networkFiles.size(); i++) {
+			System.out.println("File: " + networkFiles.get(i));
+		}
+		//End Debug
+		
 		showLitCytoButton = new JButton("Literature Mining Network");
 		showLitCytoButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {			    try {	     
@@ -653,6 +734,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 	}
 	evalScrollPane.setCorner(JScrollPane.LOWER_RIGHT_CORNER, showInCytoButton);	evalPanel.add(showLitCytoButton, BorderLayout.PAGE_START);
 	evalPanel.add(showInCytoButton, BorderLayout.PAGE_END);
+	evalPanel.add(showAllNetworks, BorderLayout.PAGE_END);
 	if(isBootstraping) {
 		evalPanel.add(showBootInCytoButton, BorderLayout.LINE_START);
 		evalPanel.add(confThreshField, BorderLayout.CENTER);
