@@ -12,6 +12,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.Vector;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -128,7 +129,8 @@ public class BNGUI implements IClusterGUI {
 	    
 	    String lmFile = bnEditor.basePath + BNConstants.RESULT_DIR + BNConstants.SEP + System.getProperty("LM_ONLY");
 	    String bnFile = bnEditor.getBootNetworkFile();
-	    fileViewer = createLMBNViewer(lmFile, bnFile);
+	    //Vector files = bnEditor.getNetworkFiles();
+	    fileViewer = createLMBNViewer(bnEditor.getNetworkFiles());
 		return createResultTree(exp, fileViewer, wekaOutputViewer, info);
 	    //return root;
 	}
@@ -141,8 +143,8 @@ public class BNGUI implements IClusterGUI {
 	        return root;
 	    }
 	
-	private LMBNViewer createLMBNViewer(String lmFile, String bnFile) {
-		LMBNViewer viewer = new LMBNViewer(lmFile, bnFile);
+	private LMBNViewer createLMBNViewer(Vector files) {
+		LMBNViewer viewer = new LMBNViewer(files);
 		return viewer;
 		
 	}

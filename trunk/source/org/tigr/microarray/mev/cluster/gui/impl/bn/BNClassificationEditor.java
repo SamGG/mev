@@ -7,14 +7,16 @@ All rights reserved.
  *
  */
 package org.tigr.microarray.mev.cluster.gui.impl.bn;
-import java.awt.BorderLayout;import java.awt.Color;import java.awt.Dimension;import java.awt.GridBagConstraints;import java.awt.GridBagLayout;import java.awt.Toolkit;import java.awt.event.ActionEvent;import java.awt.event.ActionListener;import java.awt.event.WindowAdapter;
+import java.awt.BorderLayout;import java.awt.Color;import java.awt.ComponentOrientation;
+import java.awt.Dimension;import java.awt.GridBagConstraints;import java.awt.GridBagLayout;import java.awt.Toolkit;import java.awt.event.ActionEvent;import java.awt.event.ActionListener;import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;import java.io.BufferedReader;import java.io.File;import java.io.FileInputStream;
 import java.io.FileNotFoundException;import java.io.FileOutputStream;import java.io.FileReader;import java.io.PrintWriter;import java.util.Arrays;import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Vector;import javax.swing.ButtonGroup;
-import javax.swing.JButton;import javax.swing.JDialog;
+import javax.swing.JButton;import javax.swing.JCheckBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;import javax.swing.JFrame;import javax.swing.JMenu;import javax.swing.JMenuBar;import javax.swing.JMenuItem;import javax.swing.JOptionPane;import javax.swing.JPanel;import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;import javax.swing.JTable;import javax.swing.JTextArea;import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;import javax.swing.event.TableModelEvent;import javax.swing.event.TableModelListener;import javax.swing.table.AbstractTableModel;import javax.swing.table.TableColumn;import javax.swing.table.TableColumnModel;import org.tigr.microarray.mev.TMEV;import org.tigr.microarray.mev.cgh.CGHGuiObj.CharmDialogs.ExampleFileFilter;
@@ -55,7 +57,9 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
     JMenuItem[] classItem, labelsAscItem, labelsDescItem;    JRadioButton saveButton, doNotSaveButton;
     JButton nextButton, cancelButton, loadButton, saveSettingsButton, updateNetwork;
     JTextField confThreshField;
+    JCheckBox finalThreshBox;
     JFrame mainFrame;
+    JDialog resultFrame;
     String numBin, numParents, sAlgorithm, sType;
     boolean useArc=true;
     //SortListener sorter;
@@ -67,6 +71,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
     Properties props = null;
     boolean isBootstraping = false;
     String bootNetFile = null;
+    String finalBootFile = null;
     int numIterations = 100;
     float confThreshold = 0.07f;
     int kfold = 10;
@@ -451,231 +456,67 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
          //Create and set up the window.
 	    
         //JDialog frame = new JDialog(new JFrame(), "Results from Weka", true);
-        JDialog frame = new JDialog(mainFrame, "Results from Weka", false);
+        resultFrame = new JDialog(mainFrame, "Results from Weka", false);
         // frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //frame
-        frame.getContentPane().add(panel);
-        frame.pack();
-        frame.setLocation((screenSize.width-getSize().width)/2,(screenSize.height-getSize().height)/2);
-        frame.setVisible(true);
+        resultFrame.getContentPane().add(panel);
+        resultFrame.pack();
+        resultFrame.setLocation((screenSize.width-getSize().width)/2,(screenSize.height-getSize().height)/2);
+        resultFrame.setVisible(true);
     }
 
     public JPanel getScrollPanePanel(String evalString){		//final JFrame frame;
-		final JPanel evalPanel = new JPanel();
-		evalPanel.setLayout(new BorderLayout());
-		textArea = new JTextArea(evalString, 50, 50);
-		evalScrollPane = new JScrollPane(textArea);
-		evalScrollPane.setPreferredSize(textArea.getPreferredScrollableViewportSize());	
-		evalScrollPane.revalidate(); // knows when to resize
-		evalPanel.add(evalScrollPane, BorderLayout.NORTH);
-		//frame=(JFrame)evalPanel.getParent();
-		showAllNetworks = new JButton("All Networks: LM, BN-Observed, BN-Bootstrap");
-		showAllNetworks.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				// LM Network
-			    try {
-					 System.out.println("System.getProperty(LM_ONLY) " + System.getProperty("LM_ONLY"));
-					 String lmNetFile = basePath + BNConstants.RESULT_DIR + BNConstants.SEP + System.getProperty("LM_ONLY");
-					 networkFiles.add(lmNetFile);
-			    }catch(Exception ex){
-		    	 //System.out.println(ex);
-		    	 ex.printStackTrace();
-		    	 JOptionPane.showMessageDialog(null, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-			    }
-			    
-			    // BN Observed
-			    try {
-			    	String fileName = basePath + BNConstants.RESULT_DIR + BNConstants.SEP + Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" + "result.sif";
-			    	FileOutputStream fos = new FileOutputStream(fileName);
-			    	PrintWriter pw = new PrintWriter(fos, true);
-			    	//FromWekaToSif.fromWekaToSif(evalStr, pw);	
-			    	//System.out.println("******evalStr******* " + evalStr);
-			    	FromWekaToSif.fromWekaToSif(evalStr, pw, false);
-			    	networkFiles.add(fileName);
-			    } catch(IOException ioE){
-			    	 //ioE.printStackTrace(); 
-			    	 JOptionPane.showMessageDialog(null, ioE.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-			    } catch(Exception ex){
-			    	 //ex.printStackTrace();
-			    	 JOptionPane.showMessageDialog(null, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-				}
-			    
-			    // BN Bootstrap Network
-			    if(isBootstraping){
-			    	String bootFile = bootNetFile; //fileName;
-			    	networkFiles.add(bootNetFile);
-			    	/*
-			    	updateNetwork = new JButton("Update Network");
-			    	updateNetwork.addActionListener(new ActionListener() {
-		            public void actionPerformed(ActionEvent evt) {
-		    		    try {
-		    		    	// Remove edges below threshold
-		    		    	float confThres = Float.parseFloat(confThreshField.getText().trim());
-							String bootNetFile = basePath+BNConstants.SEP+BNConstants.RESULT_DIR+BNConstants.SEP+
-												Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" +
-												"boot_result_"+numIterations+"_"+confThres+".sif";
-							try {
-								FileOutputStream fos = new FileOutputStream(bootNetFile);
-								PrintWriter pw = new PrintWriter(fos, true);
-								Enumeration enumerate = edgesTable.keys();
-								while(enumerate.hasMoreElements()){
-									String edge = (String)enumerate.nextElement();
-									Integer count = (Integer)edgesTable.get(edge);
-									float presence = count.floatValue()/numIterations;
-									//System.out.println(edge + " : " + count.toString() + " presence : " + presence + " thresh : " + confThres);
-									if(presence >= confThres){
-										pw.println(edge);
-									}
-								}
-								fos.close();
-							} catch (Exception e) {
-								JOptionPane.showMessageDialog(null, e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-							} 
-		    	     }catch(Exception ex){
-		    		 	JOptionPane.showMessageDialog(null, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-		    	     }
-		    	    }
-		    	});
-			    confThreshField = new JTextField("0.7");
-			    confThreshField.setPreferredSize(new Dimension(35, 10));
-			    */
-			    }
-			}
-		});
-		//Debug Print File Names
-		System.out.println("Files to Show");
+    	
+    	// LM Network
+    	String lmNetFile = basePath + BNConstants.RESULT_DIR + BNConstants.SEP + System.getProperty("LM_ONLY");
+		networkFiles.add(lmNetFile);
+		
+		// BN Observed
+	    try {
+	    	String fileName = basePath + BNConstants.RESULT_DIR + BNConstants.SEP + Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" + "result.sif";
+	    	FileOutputStream fos = new FileOutputStream(fileName);
+	    	PrintWriter pw = new PrintWriter(fos, true);
+	    	FromWekaToSif.fromWekaToSif(evalStr, pw, false);
+	    	networkFiles.add(fileName);
+	    } catch(IOException ioE){
+	    	 //ioE.printStackTrace(); 
+	    	 JOptionPane.showMessageDialog(null, ioE.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+	    }
+	    
+	    // BN Bootstrap Network
+	    if(isBootstraping){
+	    	//System.out.println("BN BootStrap: " + bootNetFile);
+	    	networkFiles.add(bootNetFile);
+	    	updateNetwork = new JButton("Update Network");
+	    	confThreshField = new JTextField("0.7");
+		    confThreshField.setPreferredSize(new Dimension(35, 10));
+		    
+		    finalThreshBox = new JCheckBox("Final");
+		    finalThreshBox.setBackground(Color.white);
+		    finalThreshBox.setFocusPainted(false);
+	    }
+	    
+	    // Debug Print File Names
+		System.out.println("Files to Show: " + networkFiles.size());
 		for(int i=0; i < networkFiles.size(); i++) {
 			System.out.println("File: " + networkFiles.get(i));
 		}
 		//End Debug
 		
-		showLitCytoButton = new JButton("Literature Mining Network");
-		showLitCytoButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {			    try {	     
-				     // call cytoscape here
-					 final String[] argv = new String[6];
-					 //argv[0] = "-i";
-					 argv[0] = "-N";
-					 //Raktim - Modified. File name unique
-			         //argv[1] = System.getProperty("user.dir")+"/data/bn/liter_mining_alone_network.sif";
-					 System.out.println("System.getProperty(LM_ONLY) " + System.getProperty("LM_ONLY"));
-					 //argv[1] = System.getProperty("user.dir")+"/data/bn/results/"+System.getProperty("LM_ONLY");
-					 argv[1] = basePath + BNConstants.RESULT_DIR + BNConstants.SEP + System.getProperty("LM_ONLY");
-					 argv[2] = "-p";
-					 //argv[3] = System.getProperty("user.dir")+"/plugins/core/yLayouts.jar";
-					 argv[3] = System.getProperty("user.dir")+"/plugins/yLayouts.jar";
-					 //Raktim - For Edge properties file
-					 argv[4] = "-V";
-					 argv[5] = System.getProperty("user.dir")+"/plugins/vizmap.props";
-					 Thread thread = new Thread( new Runnable(){
-					     public void run(){
-							    try { 
-				                    cytoscape.CyMain.main(argv);
-							    }catch(Exception ex){
-							    	ex.printStackTrace();
-							    }
-					     }
-					 });
-					 thread.start(); 
-		     }catch(Exception ex){
-		    	 //System.out.println(ex);
-		    	 ex.printStackTrace();
-		    	 JOptionPane.showMessageDialog(null, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-		     }
-	    }
-            
-	});	//showInCytoButton = new JButton("Show network with priors in Cytoscape");
-	showInCytoButton = new JButton("Observed Network with Priors");
-	showInCytoButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-		    try {		    	
-		    	//FileOutputStream fos = new FileOutputStream("result.sif"); //Old Way - Raktim
-		    	// Raktim - Modified to make file name Unique
-		    	//String fileName = System.getProperty("user.dir")+"/data/bn/results/"+Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" + "result.sif";
-		    	String fileName = basePath + BNConstants.RESULT_DIR + BNConstants.SEP + Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" + "result.sif";
-		    	FileOutputStream fos = new FileOutputStream(fileName);
-		    	PrintWriter pw = new PrintWriter(fos, true);
-		    	//FromWekaToSif.fromWekaToSif(evalStr, pw);	
-		    	System.out.println("******evalStr******* " + evalStr);
-		    	FromWekaToSif.fromWekaToSif(evalStr, pw, false);
-		    	//FromWekaToSif.fromWekaToSif(evalString, pw);
-		    	// call cytoscape here
-		    	final String[] argv = new String[6];
-		    	//argv[0] = "-i";
-		    	argv[0] = "-N";
-		    	argv[1] = fileName;
-		    	argv[2] = "-p";
-		    	//argv[3] = System.getProperty("user.dir")+"/plugins/core/yLayouts.jar";
-		    	argv[3] = System.getProperty("user.dir")+"/plugins/yLayouts.jar";
-		    	//Raktim - For Edge properties file
-				 argv[4] = "-V";
-				 argv[5] = System.getProperty("user.dir")+"/plugins/vizmap.props";
-		    	Thread thread = new Thread( new Runnable(){
-		    		public void run(){
-		    			try{
-		    				//frame.dispose();    
-                              cytoscape.CyMain.main(argv);                              //String command = "java -Xmx512M -jar ./lib/cytoscape.jar -N " + fileName + " -p plugins";
-                              //Runtime.getRuntime().exec(command);
-                              
-		    			}catch(Exception ex){
-		    				ex.printStackTrace();
-		    			}
-			       }
-	              });
-	             thread.start();
-	 
-	     }catch(IOException ioE){	    	 ioE.printStackTrace();     
-	     }catch(Exception ex){
-		 //System.out.println(ex);
-		 ex.printStackTrace();		 	JOptionPane.showMessageDialog(null, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-	     }
-	    }
-	   
-	});	if(isBootstraping) {
-		//showBootInCytoButton = new JButton("Show network from BootStrap with priors in Cytoscape");
-		showBootInCytoButton = new JButton("Network from BootStrap");
-		showBootInCytoButton.addActionListener(new ActionListener() {
-	            public void actionPerformed(ActionEvent evt) {
-			    try {
-			    	//String fileName = System.getProperty("user.dir")+"/data/bn/results/"+Useful.getUniqueFileID()+ "_" + "result.sif";
-			    	// call cytoscape here
-			    	final String[] argv = new String[6];
-			    	//argv[0] = "-i";
-			    	argv[0] = "-N";
-			    	argv[1] = bootNetFile; //fileName;
-			    	argv[2] = "-p";
-			    	//argv[3] = System.getProperty("user.dir")+"/plugins/core/yLayouts.jar";
-			    	argv[3] = System.getProperty("user.dir")+"/plugins/yLayouts.jar";
-			    	//Raktim - For Edge properties file
-					 argv[4] = "-V";
-					 argv[5] = System.getProperty("user.dir")+"/plugins/vizmap.props";
-			    	Thread thread = new Thread( new Runnable(){
-			    		public void run(){
-			    			try{
-			    				cytoscape.CyMain.main(argv);
-			    			}catch(Exception ex){
-			    				ex.printStackTrace();
-			    			}
-				       }
-		              });
-		             thread.start();
-		   
-		     }catch(Exception ex){
-		    	 ex.printStackTrace();
-			 	JOptionPane.showMessageDialog(null, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-		     }
-		    }
-		   
-		});
+		// Call Webstart wuth Files
+		LMBNViewer.onWebstartCystoscape(networkFiles);
 		
-		updateNetwork = new JButton("Update Network");
-		updateNetwork.addActionListener(new ActionListener() {
+		final JPanel evalPanel = new JPanel();
+		evalPanel.setLayout(new BorderLayout());
+		evalPanel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+		// The evalStr is now shown in the Viewer
+	    if(isBootstraping){
+	    	//updateNetwork = new JButton("Update Network");
+	    	updateNetwork.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
     		    try {
-    		    	
     		    	// Remove edges below threshold
     		    	float confThres = Float.parseFloat(confThreshField.getText().trim());
-    		    	//String sep= System.getProperty("file.separator");
 					String bootNetFile = basePath+BNConstants.SEP+BNConstants.RESULT_DIR+BNConstants.SEP+
 										Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" +
 										"boot_result_"+numIterations+"_"+confThres+".sif";
@@ -694,52 +535,32 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 						}
 						fos.close();
 					} catch (Exception e) {
-						
+						JOptionPane.showMessageDialog(null, e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+					} 
+					// Broadcast to Cytoscape or Call Webstart
+					Vector<String> file = new Vector<String>();
+					file.add(bootNetFile);
+					System.out.println("Boot threshold: " + confThres);
+					System.out.println("Boot file: " + bootNetFile);
+					if(finalThreshBox.isSelected()) {
+						resultFrame.dispose();
+						// Do stuff to store the final thresh and the file name
+						finalBootFile = bootNetFile;
+						networkFiles.add(finalBootFile);
 					}
-
-    		    	// call cytoscape here
-    		    	final String[] argv = new String[6];
-    		    	//argv[0] = "-i";
-    		    	argv[0] = "-N";
-    		    	argv[1] = bootNetFile;
-    		    	argv[2] = "-p";
-    		    	//argv[3] = System.getProperty("user.dir")+"/plugins/corts.jar";
-    		    	argv[3] = System.getProperty("user.dir")+"/plugins/yLayouts.jar";
-    		    	// Raktim - For Edge properties file
-					 argv[4] = "-V";
-					 argv[5] = System.getProperty("user.dir")+"/plugins/vizmap.props";
-    		    	Thread thread = new Thread( new Runnable(){
-    		    		public void run(){
-    		    			try{
-    		    				//frame.dispose();    
-                                  cytoscape.CyMain.main(argv);
-    			      
-    		    			}catch(Exception ex){
-    		    				ex.printStackTrace();
-    		    			}
-    			       }
-    	              });
-    	             thread.start(); 
+					LMBNViewer.onWebstartCystoscape(file);
     	     }catch(Exception ex){
-    		 //System.out.println(ex);
-    		 ex.printStackTrace();
     		 	JOptionPane.showMessageDialog(null, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
     	     }
     	    }
-    	   
     	});
-			
-	    confThreshField = new JTextField("0.7");
-	    confThreshField.setPreferredSize(new Dimension(35, 10));
-	}
-	evalScrollPane.setCorner(JScrollPane.LOWER_RIGHT_CORNER, showInCytoButton);	evalPanel.add(showLitCytoButton, BorderLayout.PAGE_START);
-	evalPanel.add(showInCytoButton, BorderLayout.PAGE_END);
-	evalPanel.add(showAllNetworks, BorderLayout.PAGE_END);
-	if(isBootstraping) {
-		evalPanel.add(showBootInCytoButton, BorderLayout.LINE_START);
-		evalPanel.add(confThreshField, BorderLayout.CENTER);
-		evalPanel.add(updateNetwork, BorderLayout.LINE_END);
-	}
+	    }
+		if(isBootstraping) {
+			//evalPanel.add(showBootInCytoButton, BorderLayout.LINE_START);
+			evalPanel.add(finalThreshBox, BorderLayout.WEST);
+			evalPanel.add(confThreshField, BorderLayout.CENTER);
+			evalPanel.add(updateNetwork, BorderLayout.EAST);
+		}
 	return evalPanel;
     }
     
@@ -1544,9 +1365,12 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		// TODO Auto-generated method stub
 		return evalStr;
 	}
+	
 	public String getBootNetworkFile() {
-		// TODO Auto-generated method stub
 		return this.bootNetFile;
 	}
     
+	public Vector getNetworkFiles() {
+		return this.networkFiles;
+	}
 }

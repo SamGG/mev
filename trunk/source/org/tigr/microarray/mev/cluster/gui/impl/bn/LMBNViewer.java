@@ -45,7 +45,18 @@ public class LMBNViewer extends ViewerAdapter {
     
     private JLabel label;
     
+    public static Process runtimeProc;
+    
     private Vector<String> networkFiles = new Vector<String>();
+    
+    public LMBNViewer(Vector files) {    
+    	listener = new EvtListener();
+        header  = createHeader();
+        content = createContent(files);
+        networkFiles = files;
+        setMaxWidth(content, header);
+        this.popup = createJPopupMenu(listener);
+    }
     
     /**
      * Constructs a <code>LEMInfoViewer</code> with specified
@@ -129,6 +140,34 @@ public class LMBNViewer extends ViewerAdapter {
     }
     
     /**
+     * Creates the viewer content component.
+     */
+    private JTextPane createContent(Vector files) {
+
+    	JTextPane area = new JTextPane();
+        area.setContentType("text/html");
+        area.setEditable(false);
+        area.setMargin(new Insets(0, 10, 0, 0));
+        Font font = new Font("Serif", Font.PLAIN, 10);
+        area.setFont(font);
+ 
+        String text = "<html><body><font face=\"sanserif\" color='#000080'>";
+        
+        for(int i=0; i < files.size(); i++) {
+	        text += "<h2>Network Files Created</h2><br><br>";
+	        text += "<b>Network File:     </b>"+files.get(i)+"<br><br>"; 
+	        //text += "<b>BN Network File:     </b>"+bnFile+"<br>";
+        }
+        text += "</font></body></html>";
+        
+        area.setText(text);
+        area.setCaretPosition(0);
+        
+        label = new JLabel(text);
+        return area;
+    }
+    
+    /**
      * Synchronize content and header sizes.
      */
     private void setMaxWidth(JComponent content, JComponent header) {
@@ -150,10 +189,10 @@ public class LMBNViewer extends ViewerAdapter {
     /**
      * 
      */
-    public synchronized void onWebstartCystoscape() {
-    	String codeBase = "'http://www.wikipathways.org//wpi/bin/cytoscape/'";
-    	//String codeBase = "'http://www.cytoscape.org/tut/webstart/'";
-    	String jnlpLoc = createCytoscapeJNLP2(codeBase, this.networkFiles);
+    public static synchronized void onWebstartCystoscape(Vector netFiles) {
+    	//String codeBase = "'http://www.wikipathways.org//wpi/bin/cytoscape/'";
+    	String codeBase = "'http://www.cytoscape.org/tut/webstart/'";
+    	String jnlpLoc = createCytoscapeJNLP(codeBase, netFiles);
     	String jnlpURI = TMEV.getDataPath() + File.separator + BNConstants.RESULT_DIR + File.separator + BNConstants.CYTOSCAPE_URI;
     	
     	try {
@@ -171,21 +210,21 @@ public class LMBNViewer extends ViewerAdapter {
     /**
      * 
      */
-    private void startCytoscape(String jnlpURI) {
+    private static void startCytoscape(String jnlpURI) {
         String command = System.getProperty("java.home");
         System.out.println("Java Home: " + command);
         command += File.separator +  "bin" + File.separator + "javaws " + jnlpURI;
         try {
-            Runtime.getRuntime().exec(command);
+        	runtimeProc = Runtime.getRuntime().exec(command);
         } catch (IOException e) {
-            System.out.println("Failed to start boss process!");
+            System.out.println("Failed to start Cytoscape!");
             e.printStackTrace();
         }
     }
     /**
      * 
      */
-    private String createCytoscapeJNLP(String codeBase, Vector<String> files) {
+    private static String createCytoscapeJNLP2(String codeBase, Vector<String> files) {
     	String xml = "";
     	xml = "<?xml version='1.0' encoding='UTF-8'?>";
     	xml += "<jnlp codebase='http://www.wikipathways.org//wpi/bin/cytoscape/'>";
@@ -325,7 +364,7 @@ public class LMBNViewer extends ViewerAdapter {
     	return xml;
 	}
 
-    private String createCytoscapeJNLP2(String codeBase, Vector<String> files) {
+    private static String createCytoscapeJNLP(String codeBase, Vector<String> files) {
     	String xml = "";
     	xml = "<?xml version='1.0' encoding='UTF-8'?>";
     	xml += "<!-- Cytoscape 2.4 -->";
@@ -518,7 +557,7 @@ public class LMBNViewer extends ViewerAdapter {
 		public void actionPerformed(ActionEvent e) {
             String command = e.getActionCommand();
             if(command.equals(SHOW_CYTO_WEBSTART)){
-                onWebstartCystoscape();
+                onWebstartCystoscape(networkFiles);
             } else if(command.equals(SHOW_CYTO_GAGGLE)) {
                 onBroadcastToCystoscape();
             } 
