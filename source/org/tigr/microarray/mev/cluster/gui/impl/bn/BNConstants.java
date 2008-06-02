@@ -4,6 +4,11 @@ package org.tigr.microarray.mev.cluster.gui.impl.bn;
 public class BNConstants {
 	
 	/**
+	 * Cytoscape jnlp file Name
+	 */
+	public final static String CYTOSCAPE_URI = "mycyto.jnlp";
+	
+	/**
 	 * Input File Names
 	 */
 	public final static String PPI_FILE = "all_ppi.txt";
