@@ -77,8 +77,10 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
     int kfold = 10;
     Hashtable<String, Integer> edgesTable = new Hashtable<String, Integer>();    
     File labelFile = null;
+    Cluster clust;
+    HashMap probeIndexAssocHash;
     
-    /** Creates a new instance of BNClassificationEditor */    public BNClassificationEditor(final IFramework framework, boolean classifyGenes, final Cluster cl,String num,int numClasses,String parents,String algorithm,String scoreType,boolean uAr, boolean bootstrap, int iteration, float threshold, int kfolds, String path) {
+    /** Creates a new instance of BNClassificationEditor */    public BNClassificationEditor(final IFramework framework, boolean classifyGenes, final Cluster cl,String num,int numClasses,String parents,String algorithm,String scoreType,boolean uAr, boolean bootstrap, int iteration, float threshold, int kfolds, String path, HashMap probeIndexAssocHash) {
         super(framework.getFrame(), true);
         this.setTitle("BN Classification Editor");
         mainFrame = (JFrame)(framework.getFrame());        
@@ -96,7 +98,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
         this.fieldNames = data.getFieldNames();
         this.classifyGenes = classifyGenes;
         this.numClasses = numClasses;
-        
+        this.clust = cl;
         if(numClasses < 1)
         	width = 250;
        	else if (numClasses >= 1 && numClasses <= 2)
@@ -131,6 +133,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
         this.numIterations = iteration;
         this.confThreshold = threshold;
         this.kfold = kfolds;
+        this.probeIndexAssocHash = probeIndexAssocHash;
         //menuBar = new JMenuBar();        //this.setJMenuBar(menuBar);  
         
         GridBagLayout gridbag = new GridBagLayout();
@@ -515,6 +518,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 	    	updateNetwork.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
     		    try {
+    		    	Vector<String> interactions = new Vector<String>(); // For lookup during gaggle broadcast
     		    	// Remove edges below threshold
     		    	float confThres = Float.parseFloat(confThreshField.getText().trim());
 					String bootNetFile = basePath+BNConstants.SEP+BNConstants.RESULT_DIR+BNConstants.SEP+
@@ -531,6 +535,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 							//System.out.println(edge + " : " + count.toString() + " presence : " + presence + " thresh : " + confThres);
 							if(presence >= confThres){
 								pw.println(edge);
+								interactions.add(edge);
 							}
 						}
 						fos.close();
@@ -549,6 +554,10 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 						networkFiles.add(finalBootFile);
 					}
 					LMBNViewer.onWebstartCystoscape(file);
+					
+					// Try Cytoscape Broadcast
+					broadcastNetworkGaggle(interactions);
+					
     	     }catch(Exception ex){
     		 	JOptionPane.showMessageDialog(null, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
     	     }
@@ -564,6 +573,28 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 	return evalPanel;
     }
     
+    protected void broadcastNetworkGaggle(Vector<String> interacts) {
+    	Vector<int[]> interactions = new Vector<int[]>();
+    	Vector<String> types = new Vector<String>();
+    	Vector<Boolean> directionals = new Vector<Boolean>();
+    	//int rows[] = clust.getIndices();
+    	//for(int i=0; i<clusters.length; i++) {
+    		for(int j=0; j<interacts.size(); j++) {
+    			//String uid = this.data.getSlideDataElement(0,rows[j]).getFieldAt(0);
+    			// Of the form XXXXXX pp XXXXXX
+    			String[] edgeLabels = interacts.get(j).split(" ");
+    			//if(weights[i][j] == (1.0)) {
+    				int[] fromTo = new int[2];
+    				fromTo[0] = Integer.parseInt(probeIndexAssocHash.get(edgeLabels[0]).toString());
+    				fromTo[1] = Integer.parseInt(probeIndexAssocHash.get(edgeLabels[2]).toString());
+    				types.add("pp");
+    				directionals.add(true);
+    				interactions.add(fromTo);
+    			//}
+    		}
+    	//}
+     	framework.broadcastNetwork(interactions, types, directionals);
+    }
      private void cleanUpFile(){    	 /*
 	    String[] files=new String[8];
 	    files[0]="getInterModLit.props";

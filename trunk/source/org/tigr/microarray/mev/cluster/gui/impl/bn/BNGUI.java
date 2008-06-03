@@ -40,6 +40,7 @@ public class BNGUI implements IClusterGUI {
 	//public static boolean cancelRun=false;
 	public static boolean prior=true;
 	
+	HashMap<String, Integer> probeIndexAssocHash = new HashMap<String, Integer>();
 	HistoryViewer wekaOutputViewer;
 	LMBNViewer fileViewer;
 	
@@ -81,7 +82,7 @@ public class BNGUI implements IClusterGUI {
 	           });
 	    thread.start();	    //Raktim - Modified to pass bootstrap Params
 	    //BNClassificationEditor bnEditor=new BNClassificationEditor(framework,false,dialog.getSelectedCluster(),(new Integer(dialog.getNumberBin())).toString(),dialog.getNumberClass(),dialog.numParents(),dialog.getAlgorithm(),dialog.getScoreType(),dialog.useArcRev(), dialog.getBaseFileLocation());
-	    BNClassificationEditor bnEditor=new BNClassificationEditor(framework,false,dialog.getSelectedCluster(),(new Integer(dialog.getNumberBin())).toString(),dialog.getNumberClass(),dialog.numParents(),dialog.getAlgorithm(),dialog.getScoreType(),dialog.useArcRev(), dialog.isBootstrapping(), dialog.getNumIterations(), dialog.getConfThreshold(), dialog.getKFolds(), dialog.getBaseFileLocation());
+	    BNClassificationEditor bnEditor=new BNClassificationEditor(framework,false,dialog.getSelectedCluster(),(new Integer(dialog.getNumberBin())).toString(),dialog.getNumberClass(),dialog.numParents(),dialog.getAlgorithm(),dialog.getScoreType(),dialog.useArcRev(), dialog.isBootstrapping(), dialog.getNumIterations(), dialog.getConfThreshold(), dialog.getKFolds(), dialog.getBaseFileLocation(), probeIndexAssocHash);
 		bnEditor.showModal(true);
 		
 		while(!BNGUI.run){
@@ -433,17 +434,19 @@ public class BNGUI implements IClusterGUI {
 	
 	//from cluster to generate gene list file automatically 
 	public void converter(Cluster cl,IFramework framework,String path){
-         int genes=cl.getIndices().length;    	System.out.print(genes);
+        int genes=cl.getIndices().length;    	System.out.print(genes);
     	IData data=framework.getData();
     	int[] rows = new int[genes];
     	rows=cl.getIndices();
-	String[] probeId=new String[genes];
-	String[] accList =new String[genes];
-	HashMap accHash = new HashMap();
-	String lineRead = "";
+    	String[] probeId=new String[genes];
+    	String[] accList =new String[genes];
+    	HashMap accHash = new HashMap();
+    	String lineRead = "";
 	//String sep=System.getProperty("file.separator");	// TODO Raktim - Get ProbeIDs for Genes
 	for (int i=0; i<rows.length; i++) {
-    	  probeId[i]=data.getSlideDataElement(0,rows[i]).getFieldAt(0);    	  System.out.println("Probe_id :"+probeId[i] ); 
+    	  probeId[i]=data.getSlideDataElement(0,rows[i]).getFieldAt(0);
+    	  // Also Store probe IDs and cluster indices assoc for creating gaggle Network
+    	  probeIndexAssocHash.put(probeId[i], new Integer(i));    	  System.out.println("Probe_id :"+probeId[i] ); 
 	 }
 	
 	 try {
