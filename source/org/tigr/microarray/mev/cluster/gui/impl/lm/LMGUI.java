@@ -13,6 +13,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 //import org.tigr.microarray.mev.cluster.gui.impl.bn.BNGUI;
 import org.tigr.microarray.mev.cluster.gui.impl.lm.LiteratureMiningDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.BNConstants;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.LMBNViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.RunWekaProgressPanel;//import java.util.Hashtable;
 import java.util.HashMap;
 import java.io.FileReader;
@@ -66,19 +67,6 @@ public class LMGUI implements IClusterGUI {
        //if(cancelRun)
     	   //return null;
        
-       final String[] argv = new String[6];
-	   //argv[0] = "-i";
-	   argv[0] = "-N";
-       //argv[1] = System.getProperty("user.dir")+"/data/bn/liter_mining_alone_network.sif"; //Raktim - Old Way
-       //Raktim - Modified
-	   //argv[1] = System.getProperty("user.dir")+"/data/bn/results/"+System.getProperty("LM_ONLY");
-	   argv[1] = basePath + BNConstants.RESULT_DIR + BNConstants.SEP + System.getProperty("LM_ONLY");
-	   argv[2] = "-p";	   //argv[3] = System.getProperty("user.dir")+"/plugins/core/yLayouts.jar";
-	   argv[3] = System.getProperty("user.dir")+"/plugins/yLayouts.jar";
-	   // Raktim - For Edge properties file
-		 argv[4] = "-V";
-		 argv[5] = System.getProperty("user.dir")+"/plugins/vizmap.props";
-	   
 	   done=false;
 	   GeneralInfo info = new GeneralInfo();
 		if(dialog.isBoth()){
@@ -93,25 +81,12 @@ public class LMGUI implements IClusterGUI {
 	    }
 	    info.numGene=(dialog.getSelectedCluster()).getIndices().length;
 	    
-	    Runnable runnable=new Runnable(){
-	    	public void run(){
-	    		try{
-	                  cytoscape.CyMain.main(argv);
-				    }catch(Exception ex){
-				    ex.printStackTrace();
-				    }
-	    	}
-	    };
-	    try {
-			EventQueue.invokeAndWait(runnable);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	   
+	    //Call Webstart wuth File(s)
+	    String lmFile = basePath + BNConstants.RESULT_DIR + BNConstants.SEP + System.getProperty("LM_ONLY");
+	    Vector<String> networkFiles = new Vector<String>();
+	    networkFiles.add(lmFile);
+		LMBNViewer.onWebstartCystoscape(networkFiles);
+
 		return createResultTree(exp, info);
 	    
 	}
