@@ -5840,13 +5840,13 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     	if(!isGaggleConnected())
     		return;
 		Network nt = new Network();
+    	nt.setSpecies(getCurrentSpecies());
     	Hashtable<String, String[]> nodeAnnotations = new Hashtable<String, String[]>();
     	String[] allFields = data.getAllFilledAnnotationFields();
     	for(int i=0; i<interactions.size(); i++) {
     		String source = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{interactions.get(i)[0]})[0];
     		String target = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{interactions.get(i)[1]})[0];
     		Interaction tempInt = new Interaction(source, target, types.get(i), directionals.get(i));
-
     		
     		nt.add(tempInt);
     		
@@ -5854,19 +5854,17 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     			nodeAnnotations.put(source, new String[0]);
     			for(String field: allFields) {
         			nt.addNodeAttribute(source, field, data.getElementAnnotation(interactions.get(i)[0], field)[0]);
-        			System.out.println("source: " + source + " field: " + field + " annot: " + data.getElementAnnotation(interactions.get(i)[0], field)[0]);
     			}
     		}
     		if(!nodeAnnotations.containsKey(target)) {
     			nodeAnnotations.put(target, new String[0]);
-    			for(String field: allFields)
+    			for(String field: allFields) {
     				nt.addNodeAttribute(target, field, data.getElementAnnotation(interactions.get(i)[1], field)[0]);
+    			}
     		}
-
     	}
 
-    	nt.setName("MeV Network (" + interactions.size() + ")");
-    	nt.setSpecies(getCurrentSpecies());
+    	nt.setName("MeV Network (" + nt.getNodes().length + ")");
     	MultipleArrayViewer.this.doBroadcastNetwork(nt);
     }
 }
@@ -5901,7 +5899,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 		int networkSize = nt.getNodes().length;
 		if (networkSize > 100) {
 			String title = "Broadcast names warning";
-			String msg = "Do you really wish to broadcast " + networkSize + " names?";
+			String msg = "Do you really wish to broadcast " + networkSize + " nodes?";
 			int dialogResult = JOptionPane.showConfirmDialog (this, msg, title,
 		                                                      JOptionPane.YES_NO_OPTION);
 			if (dialogResult != JOptionPane.YES_OPTION)  
