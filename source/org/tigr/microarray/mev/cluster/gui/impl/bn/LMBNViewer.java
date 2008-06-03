@@ -192,7 +192,8 @@ public class LMBNViewer extends ViewerAdapter {
     public static synchronized void onWebstartCystoscape(Vector netFiles) {
     	//String codeBase = "'http://www.wikipathways.org//wpi/bin/cytoscape/'";
     	String codeBase = "'http://www.cytoscape.org/tut/webstart/'";
-    	String jnlpLoc = createCytoscapeJNLP(codeBase, netFiles);
+    	//String jnlpLoc = createSunCytoscapeJNLP(codeBase, netFiles);
+    	String jnlpLoc = createGaggleCytoscapeJNLP(codeBase, netFiles);
     	String jnlpURI = TMEV.getDataPath() + File.separator + BNConstants.RESULT_DIR + File.separator + BNConstants.CYTOSCAPE_URI;
     	
     	try {
@@ -223,8 +224,165 @@ public class LMBNViewer extends ViewerAdapter {
     }
     /**
      * 
+     * @param codeBase
+     * @param files
+     * @return
      */
-    private static String createCytoscapeJNLP2(String codeBase, Vector<String> files) {
+    private static String createGaggleCytoscapeJNLP(String codeBase, Vector<String> files) {
+    	String xml = "";
+    	xml = "<?xml version='1.0' encoding='utf-8'?>";
+    	xml += "<jnlp";
+    	xml += "  codebase='http://gaggle.systemsbiology.net/2007-04/cy/blankSlate/cy2.6.0'>";
+    	xml += "  <information>";
+    	xml += "    <title>Cytoscape 2.6.0 - Blank Slate</title>";
+    	xml += "    <vendor> ISB (2007-04)</vendor>";
+    	xml += "    <homepage href='docs/help.html'/>";
+    	xml += "    <offline-allowed/>";
+    	xml += "	<icon href='http://gaggle.systemsbiology.net/images/icons/gaggle_icon.gif'/><icon kind='splash' href='http://gaggle.systemsbiology.net/images/icons/gaggle_splash.gif'/>";
+    	xml += "  </information>";
+    	xml += "  <security>";
+    	xml += "      <all-permissions/>";
+    	xml += "  </security>";
+    	xml += "  <resources>";
+    	xml += "	<j2se version='1.5+' max-heap-size='1024M' />";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/cytoscape.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/FastInfoset.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/activation.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/biojava-1.4.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/colt.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/coltginy.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/com-nerius-math-xform.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/commons-cli-1.x-cytoscape-custom.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/concurrent.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/cytoscape-cruft-obo.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/cytoscape-geom-rtree.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/cytoscape-geom-spacial.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/cytoscape-graph-dynamic.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/cytoscape-graph-fixed.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/cytoscape-render-export.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/cytoscape-render-immed.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/cytoscape-render-stateful.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/cytoscape-task.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/cytoscape-util-intr.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/ding.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/fing.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/freehep-export-2.1.1.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/freehep-graphics2d-2.1.1.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/freehep-graphicsio-2.1.1.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/freehep-graphicsio-java-2.1.1.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/freehep-graphicsio-ps-2.1.1.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/freehep-graphicsio-svg-2.1.1.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/freehep-io-2.0.2.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/freehep-jas-plotter-2.2.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/freehep-swing-2.0.3.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/freehep-util-2.0.2.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/freehep-xml-2.1.1.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/giny.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/glf.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/http.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/i4jruntime.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/itext-2.0.4.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/jaxb-api.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/jaxb-impl.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/jaxws-api.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/jaxws-rt.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/jaxws-tools.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/jdom-1.0.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/jhall.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/jnlp.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/jsr173_1.0_api.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/jsr181-api.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/jsr250-api.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/junit.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/l2fprod-common-all.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/looks-2.1.4.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/phoebe.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/piccolo.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/resolver.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/saaj-api.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/saaj-impl.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/sjsxp.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/stax-ex.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/streambuffer.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/swing-layout-1.0.1.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/swingx-2006_10_27.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/tclib.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/undo.support.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/violinstrings-1.0.2.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/wizard.jar'/>";
+
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/plugins/AutomaticLayout.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/plugins/CyGoose.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/plugins/CytoscapeEditor.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/plugins/GraphMerge.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/plugins/ManualLayout.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/plugins/SBMLReader.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/plugins/TableImport.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/plugins/biopax.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/plugins/browser.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/plugins/cPath.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/plugins/cpath2.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/plugins/filter.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/plugins/filters.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/plugins/linkout.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/plugins/psi_mi.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/plugins/quick_find.jar'/>";
+    	xml += "	<jar href='/2007-04/jars_cy2.6.0/plugins/yLayouts.jar'/>";	
+    		
+    	xml += " </resources>";
+    	xml += "  <application-desc main-class='cytoscape.CyMain'>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>csplugins.layout.LayoutPlugin</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>org.mskcc.biopax_plugin.plugin.BioPaxPlugIn</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>browser.AttributeBrowserPlugin</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>org.cytoscape.coreplugin.cpath.plugin.CPathPlugIn</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>cytoscape.editor.CytoscapeEditorPlugin</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>filter.cytoscape.CsFilter</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>cytoscape.filters.FilterPlugin</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>GraphMerge.GraphMerge</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>linkout.LinkOutPlugin</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>ManualLayout.ManualLayoutPlugin</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>org.cytoscape.coreplugin.psi_mi.plugin.PsiMiPlugIn</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>csplugins.quickfind.plugin.QuickFindPlugIn</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>sbmlreader.SBMLReaderPlugin</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>edu.ucsd.bioeng.coreplugin.tableImport.TableImportPlugin</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>yfiles.YFilesLayoutPlugin</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>org.systemsbiology.cytoscape.GagglePlugin</argument>";
+    	xml += "    <argument>-V</argument>";
+    	xml += "    <argument>file:///C:/cscie75/Projects/MeV/MeV_SVN/plugins/vizmap.props</argument>";
+    	//xml += "    <argument>-N</argument>";
+    	//xml += "    <argument>file:///C:/cscie75/Projects/MeV/MeV_SVN/data/BN_RnaI/results/May_27_08_22_55_27_343TabuSearch_BAYES_boot_result_4_0.7.sif</argument>";
+    	for(int i=0; i < files.size(); i++) {
+    		xml += "<argument>-N</argument>";
+        	xml += "<argument>file:///" + files.get(i).replace("\\", "/") + "</argument>";
+    	}
+    	xml += "  </application-desc>";
+    	xml += "</jnlp>";
+    	return xml;
+    }
+    
+    /**
+     * 
+     * @param codeBase
+     * @param files
+     * @return
+     */
+    private static String createWikiCytoscapeJNLP(String codeBase, Vector<String> files) {
     	String xml = "";
     	xml = "<?xml version='1.0' encoding='UTF-8'?>";
     	xml += "<jnlp codebase='http://www.wikipathways.org//wpi/bin/cytoscape/'>";
@@ -363,8 +521,14 @@ public class LMBNViewer extends ViewerAdapter {
     	xml += "</jnlp>";
     	return xml;
 	}
-
-    private static String createCytoscapeJNLP(String codeBase, Vector<String> files) {
+    
+    /**
+     * 
+     * @param codeBase
+     * @param files
+     * @return
+     */
+    private static String createSunCytoscapeJNLP(String codeBase, Vector<String> files) {
     	String xml = "";
     	xml = "<?xml version='1.0' encoding='UTF-8'?>";
     	xml += "<!-- Cytoscape 2.4 -->";
@@ -487,6 +651,10 @@ public class LMBNViewer extends ViewerAdapter {
     	xml += "</jnlp>";
     	return xml;
     }
+    
+    /**
+     *
+     */
 	public void onBroadcastToCystoscape() {
     	JOptionPane.showMessageDialog( new JFrame(), "Cytoscape Popup", "Popup", JOptionPane.PLAIN_MESSAGE );
     }
@@ -511,11 +679,13 @@ public class LMBNViewer extends ViewerAdapter {
         menuItem.addActionListener(listener);
         menu.add(menuItem);
         
+        /*
         menuItem = new JMenuItem("Broadcast to Cytoscape", GUIFactory.getIcon("launch_new_mav.gif"));
         menuItem.setEnabled(true);
         menuItem.setActionCommand(SHOW_CYTO_GAGGLE);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
+        */
     }
     
     /**
@@ -580,7 +750,7 @@ public class LMBNViewer extends ViewerAdapter {
                 return;
             }
             setEnableMenuItem(SHOW_CYTO_WEBSTART, 0 >= 0);
-            setEnableMenuItem(SHOW_CYTO_GAGGLE, 0 >= 0);
+            //setEnableMenuItem(SHOW_CYTO_GAGGLE, 0 >= 0);
             popup.show(e.getComponent(), e.getX(), e.getY());
         }
     }
