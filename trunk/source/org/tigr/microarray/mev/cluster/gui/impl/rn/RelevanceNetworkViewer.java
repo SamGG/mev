@@ -173,13 +173,14 @@ public class RelevanceNetworkViewer extends JPanel implements IViewer, Scrollabl
     	Vector<int[]> interactions = new Vector<int[]>();
     	Vector<String> types = new Vector<String>();
     	Vector<Boolean> directionals = new Vector<Boolean>();
+    	
     	for(int i=0; i<clusters.length; i++) {
     		for(int j=0; j<clusters[i].length; j++) {
-    			if(weights[i][j] == (1.0)) {
+    			if(weights[i][j] > links_threshold) {
     				int[] thisInt = new int[2];
     				thisInt[0] = i;
     				thisInt[1] = clusters[i][j];
-    				types.add("Relevance Network");
+    				types.add("pp");
     				directionals.add(false);
     				interactions.add(thisInt);
     			}
