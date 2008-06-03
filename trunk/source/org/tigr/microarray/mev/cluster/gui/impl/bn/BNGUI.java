@@ -14,12 +14,14 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Vector;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.tigr.microarray.mev.HistoryViewer;
+import org.tigr.microarray.mev.MultipleArrayData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
@@ -40,7 +42,7 @@ public class BNGUI implements IClusterGUI {
 	//public static boolean cancelRun=false;
 	public static boolean prior=true;
 	
-	HashMap<String, Integer> probeIndexAssocHash = new HashMap<String, Integer>();
+	HashMap<String, String> probeIndexAssocHash = new HashMap<String, String>();
 	HistoryViewer wekaOutputViewer;
 	LMBNViewer fileViewer;
 	
@@ -59,7 +61,7 @@ public class BNGUI implements IClusterGUI {
                     b.setVisible(true);        
                     return null;
 		}else {	
-	        */  
+	    */  
 		//final BNInitDialog dialog = new BNInitDialog(framework.getFrame(), repository, framework.getData().getFieldNames());
 		final BNInitDialog dialog = new BNInitDialog(framework, repository, framework.getData().getFieldNames());
         if(dialog.showModal() != JOptionPane.OK_OPTION)
@@ -67,6 +69,30 @@ public class BNGUI implements IClusterGUI {
 		if(dialog.isNone()){
 			prior=false;
 			done=true;
+		}
+		
+		//Make sure if KEGG is selected as priors the files are downloaded if it doesnot exist 
+		if(dialog.isKEGG()) {
+			//Check if Species Name is available, if not prompt for it
+			String sp = null;
+			if(framework.getData().isAnnotationLoaded()) {
+				sp = ((MultipleArrayData)framework.getData()).getOrganismName();
+			}
+			if(sp == null) {
+				sp = (String)JOptionPane.showInputDialog(null, "Select a Species", "Annotation Unknown",
+				        JOptionPane.QUESTION_MESSAGE, null, new Object[] { "Human",
+				            "Mouse", "Rat" }, "Human");
+				
+				JOptionPane pane = new JOptionPane(sp);
+			    JDialog dlg = pane.createDialog(new JFrame(), "Dialog");
+			    dlg.show();
+			} else if(!sp.equals("Human") || !sp.equals("Mouse") || !sp.equals("Rat")) {
+				if (JOptionPane.showConfirmDialog(new JFrame(),
+				        "Do you want to continue ?", "Species not Supported for KEGG",
+				        JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+					return null;
+				}
+			}
 		}
 		 converter(dialog.getSelectedCluster(),framework,dialog.getBaseFileLocation());
          buildPropertyFile(dialog.isLit(),dialog.isPPI(),dialog.isKEGG(), dialog.isBoth(),dialog.isLitAndKegg(), dialog.isPpiAndKegg(), dialog.isAll(),dialog.useGoTerm(),dialog.getBaseFileLocation());
@@ -444,9 +470,7 @@ public class BNGUI implements IClusterGUI {
     	String lineRead = "";
 	//String sep=System.getProperty("file.separator");	// TODO Raktim - Get ProbeIDs for Genes
 	for (int i=0; i<rows.length; i++) {
-    	  probeId[i]=data.getSlideDataElement(0,rows[i]).getFieldAt(0);
-    	  // Also Store probe IDs and cluster indices assoc for creating gaggle Network
-    	  probeIndexAssocHash.put(probeId[i], new Integer(i));    	  System.out.println("Probe_id :"+probeId[i] ); 
+    	  probeId[i]=data.getSlideDataElement(0,rows[i]).getFieldAt(0);    	  System.out.println("Probe_id :"+probeId[i] ); 
 	 }
 	
 	 try {
@@ -465,6 +489,9 @@ public class BNGUI implements IClusterGUI {
 	   }	 // TODO Raktim - Associate AffyID with Acc Ids ?
 	 for (int i = 0; i < accList.length; i++) {
          accList[i] = (String)accHash.get((String)probeId[i].trim());
+         // Also Store probe IDs and cluster indices assoc for creating gaggle Network
+         // NM_23456 to 1-Afy_X1234 where 1 is the probe index
+   	  	 probeIndexAssocHash.put(accList[i], new Integer(i).toString()+"-"+probeId[i]);
 	}	 // TODO - Raktim Why write to file ?
 	writeAccToFile(accList,path);
 	} catch(FileNotFoundException e){

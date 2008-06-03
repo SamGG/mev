@@ -78,9 +78,9 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
     Hashtable<String, Integer> edgesTable = new Hashtable<String, Integer>();    
     File labelFile = null;
     Cluster clust;
-    HashMap probeIndexAssocHash;
+    HashMap<String, String> probeIndexAssocHash;
     
-    /** Creates a new instance of BNClassificationEditor */    public BNClassificationEditor(final IFramework framework, boolean classifyGenes, final Cluster cl,String num,int numClasses,String parents,String algorithm,String scoreType,boolean uAr, boolean bootstrap, int iteration, float threshold, int kfolds, String path, HashMap probeIndexAssocHash) {
+    /** Creates a new instance of BNClassificationEditor */    public BNClassificationEditor(final IFramework framework, boolean classifyGenes, final Cluster cl,String num,int numClasses,String parents,String algorithm,String scoreType,boolean uAr, boolean bootstrap, int iteration, float threshold, int kfolds, String path, HashMap<String, String> probeIndexAssocHash) {
         super(framework.getFrame(), true);
         this.setTitle("BN Classification Editor");
         mainFrame = (JFrame)(framework.getFrame());        
@@ -100,7 +100,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
         this.numClasses = numClasses;
         this.clust = cl;
         if(numClasses < 1)
-        	width = 250;
+        	width = 290;
        	else if (numClasses >= 1 && numClasses <= 2)
        		width = 360;
        	else if (numClasses > 2 && numClasses <= 3)
@@ -553,13 +553,14 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 						finalBootFile = bootNetFile;
 						networkFiles.add(finalBootFile);
 					}
-					LMBNViewer.onWebstartCystoscape(file);
+					//LMBNViewer.onWebstartCystoscape(file);
 					
-					// Try Cytoscape Broadcast
+					//Try Cytoscape Broadcast
 					broadcastNetworkGaggle(interactions);
 					
     	     }catch(Exception ex){
     		 	JOptionPane.showMessageDialog(null, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+    		 	ex.printStackTrace();
     	     }
     	    }
     	});
@@ -577,25 +578,29 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
     	Vector<int[]> interactions = new Vector<int[]>();
     	Vector<String> types = new Vector<String>();
     	Vector<Boolean> directionals = new Vector<Boolean>();
-    	//int rows[] = clust.getIndices();
-    	//for(int i=0; i<clusters.length; i++) {
-    		for(int j=0; j<interacts.size(); j++) {
-    			//String uid = this.data.getSlideDataElement(0,rows[j]).getFieldAt(0);
-    			// Of the form XXXXXX pp XXXXXX
-    			String[] edgeLabels = interacts.get(j).split(" ");
-    			//if(weights[i][j] == (1.0)) {
-    				int[] fromTo = new int[2];
-    				fromTo[0] = Integer.parseInt(probeIndexAssocHash.get(edgeLabels[0]).toString());
-    				fromTo[1] = Integer.parseInt(probeIndexAssocHash.get(edgeLabels[2]).toString());
-    				types.add("pp");
-    				directionals.add(true);
-    				interactions.add(fromTo);
-    			//}
-    		}
-    	//}
+		for(int j=0; j<interacts.size(); j++) {
+			//String uid = this.data.getSlideDataElement(0,rows[j]).getFieldAt(0);
+			// Of the form XXXXXX pp XXXXXX
+			String[] edgeLabels = interacts.get(j).split(" ");
+			System.out.println("Encoding edge: " + edgeLabels[0] + " - " + edgeLabels[2]);
+				int[] fromTo = new int[2];
+				//Get indx from hash map encoded int he form NM_23456 to 1-Afy_X1234 where 1 is the probe index
+				String tmp[] = probeIndexAssocHash.get(edgeLabels[0]).split("-");
+				fromTo[0] = Integer.parseInt(tmp[0]);
+				tmp = probeIndexAssocHash.get(edgeLabels[2]).split("-");
+				fromTo[1] = Integer.parseInt(tmp[0]);
+				types.add("pp");
+				directionals.add(true);
+				interactions.add(fromTo);
+		}
      	framework.broadcastNetwork(interactions, types, directionals);
     }
-     private void cleanUpFile(){    	 /*
+    
+    /**
+     * 
+     *
+     */
+    private void cleanUpFile(){    	 /*
 	    String[] files=new String[8];
 	    files[0]="getInterModLit.props";
 	    files[1]="getInterModBoth.props";
@@ -615,7 +620,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 	    }	    */
     }
     
-    private String[] convertFromFile(String path){    	
+    private String[] convertFromFile(String path){
 	 //String sep= System.getProperty("file.separator");    	 String filePath = path + BNConstants.SEP + BNConstants.OUT_ACCESSION_FILE; // Raktim - path incls tmp dir
 	 //String filePath = path+sep+"tmp"+sep+"list.txt";
 	 System.out.println("convertFromFile(): " + filePath);
