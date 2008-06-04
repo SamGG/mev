@@ -1,0 +1,512 @@
+package org.tigr.microarray.mev.cluster.gui.impl.bn;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.StringTokenizer;
+import java.util.Vector;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
+import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.annotation.AnnotationDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HTMLMessageFileChooser;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
+import org.tigr.remote.soap.UnzipAnnotationFile;
+
+import ftp.FtpBean;
+import ftp.FtpListResult;
+import ftp.FtpObserver;
+
+public class BNDownloadManager {
+
+	// Generic FTP related Constants
+	private String FTP_BASE_URL;
+	private String FTP_REMOTE_PATH;
+	private String FTP_REMOTE_FILE_OR_DIR;
+	private String COMPLETE_URI;
+	private boolean isDir = false;
+
+	private String FTP_CONFIG_URL = "http://www.tm4.org/bn/ftp_config.txt";
+	private String FTP_SERVER;    
+	private String REPOSITORY_ROOT;
+
+	private JFrame frame;
+	private int BUFFERSIZE = 1024;
+	private Progress progress;
+	private boolean okStatus = true;
+
+	private ProgressListener listener;
+	String destPath;
+	/** Creates a new instance of BNUpdateManager */
+	public BNDownloadManager(final JFrame parent, String destPath, String title, String ftpBase, String remotePath, String resourceName, boolean isDir) {        
+		frame = parent;
+		this.destPath = destPath;
+		this.FTP_BASE_URL = ftpBase;
+		this.FTP_REMOTE_PATH = remotePath;
+		this.FTP_REMOTE_FILE_OR_DIR = resourceName;
+		this.isDir = isDir;
+		
+		//Build URI
+		this.COMPLETE_URI = FTP_BASE_URL;
+		if(this.COMPLETE_URI.endsWith("/")) this.COMPLETE_URI += this.FTP_REMOTE_PATH;
+		else this.COMPLETE_URI += "/" + this.FTP_REMOTE_PATH;
+		this.COMPLETE_URI += "/" + this.FTP_REMOTE_FILE_OR_DIR;
+		
+		listener = new ProgressListener();
+		//Initialize the progress bar
+		progress = new Progress(parent, title, listener);                
+	}
+	
+	/**
+	 * 
+	 */
+	public void updateFiles() {    	
+		try {
+
+			//prepare progress to show repository config progress
+			progress.setDescription("Retreving Repository Information");
+			progress.setUnits(2);
+			progress.show();
+
+			//construct a vector of repository information hashes
+			//each hash on the vector is a tab and repository
+			//and contains properties for that repository
+			//(sets progress 1 and 2 during execution)
+			Vector tabPropertyHashes = getRepositoryInfo();
+			//prepare to visit repositories
+			progress.setDescription("Visiting Repsoitory for Resource Checks");
+			progress.setUnits(tabPropertyHashes.size());
+			//go to the repository, get a list of directories and
+			//files under each directory
+			//(This uses the list held by the repository (taxon-file)
+			populateMenuHashes(tabPropertyHashes);
+
+			progress.dispose();
+
+			//if we have repository information and repository content
+			//information (to populate the dialog), we are ready
+			//to construct the dialog and get selected files
+
+			if(okStatus) {          
+
+				//construct dialog given properties for each dialog tab
+				BNFileUpdateDialog dialog = new BNFileUpdateDialog(this.frame, tabPropertyHashes);
+				//if ok
+				if(dialog.showModal() == JOptionPane.OK_OPTION) {
+
+					//get the selected server, repository root, and implies zip name
+					this.FTP_SERVER = (String)(dialog.getRepositoryProperties().get("ftp-server"));
+					this.REPOSITORY_ROOT = (String)(dialog.getRepositoryProperties().get("base-dir"));
+					updateBNFiles(dialog.getSpeciesName(), dialog.getArrayName());
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.print("Message"+e.getMessage());
+			JOptionPane.showMessageDialog(frame, "<html>An error occurred when retrieving information on" +
+					"available<br>species and clone set files.  Update request cannot be fulfilled.", "BN Update Error", JOptionPane.ERROR_MESSAGE);
+			okStatus = false;
+			progress.dispose();
+		}      
+	}
+
+	/**
+	 * Pulls the config file and parses the repository information
+	 * into a vector of repository properties Hashtables
+	 * @return
+	 */
+	private Vector getRepositoryInfo() {
+		//get the repository information from the repository config File            
+		Vector repHashes = new Vector();
+
+		try {
+			URLConnection conn = new URL(FTP_CONFIG_URL).openConnection();    		    		
+			progress.setValue(1);
+
+			//add repository property hashes to the vector
+			repHashes = parseConfig(conn.getInputStream());			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		//return the vector of repository hashes
+		return repHashes;    	
+	}
+
+
+	/**
+	 * Populates a vector of Hashtables that contain properties
+	 * about the availible BN repositories and how the dialog
+	 * should be convfigured
+	 * 
+	 * @param is the InputStream from the HTTP connection and config file
+	 * @return returns a Vector of Hashtables
+	 * @throws IOException
+	 */
+	private Vector parseConfig(InputStream is) throws IOException{
+		Vector hashVector = new Vector();
+
+		BufferedReader br = new BufferedReader(new InputStreamReader(is));
+		String [] keyValue;
+		int numTabs = 0;
+
+		Hashtable currHash = null;
+		String line;
+		//loop through the file to parse into 
+		while((line = br.readLine())!= null) {
+
+			//comment line
+			if(line.startsWith("#"))
+				continue;
+			keyValue = line.split("\t");
+			//"tab-label" starts a new record
+			if(keyValue[0].equals("tab-label")) {
+
+				//on second or higher tab, add current hash to vector
+				//else it's the first
+				if(numTabs > 0)
+					hashVector.add(currHash);
+				currHash = new Hashtable();
+				numTabs++;
+			}
+			//add the current property
+			currHash.put(keyValue[0], keyValue[1]);
+		}
+		//add the last currHash to vector
+		hashVector.add(currHash);
+		progress.setValue(2);
+
+		return hashVector;
+	}
+	/**
+	 * Go to each repository (or tab in the dialog) and get menu information
+	 * @param tabHashes Vector of Repository Properties
+	 */
+	private void populateMenuHashes(Vector tabHashes) {    	
+		for(int i  = 0; i < tabHashes.size(); i++) {
+			getMenuInfo((Hashtable)tabHashes.get(i));
+			progress.setValue(i+1);
+		}    	
+	}
+
+	/**
+	 * Vist repository servers and get information about availible
+	 * directories and files under each directory
+	 * @param tabHash a set of parameters for that repository
+	 * (equivalent to a 'tab' on the dialog, hense 'tabHash)
+	 */
+	private void getMenuInfo(Hashtable tabHash) {
+		String server = (String)tabHash.get("ftp-server");
+		String baseLoc = (String)tabHash.get("base-dir");
+		String orgFile = (String)tabHash.get("taxon-file");
+		String label = (String)tabHash.get("tab-label");
+		String text;
+
+		//to construct directory keys
+		Vector upperLevelKeys = new Vector();
+		//for each directory there will be a set of files
+		//entries in this hash map directory key to a vector of file names
+		Hashtable upperToLowerHash = new Hashtable();
+
+		try {
+
+			//connect, grab the small content
+			//(No listener due to the small size, no need for progress)
+			FtpBean ftp = new FtpBean();        		
+			ftp.ftpConnect(server, "anonymous");
+			byte [] content = ftp.getBinaryFile(baseLoc+orgFile);
+			text = new String(content);
+			ftp.close();
+
+			//break on lines
+			StringTokenizer stok = new StringTokenizer(text, "\n");
+			StringTokenizer stok2;
+
+			String tabName, upperLabel, lowerLabel;
+			while(stok.hasMoreElements()) {
+				//break lines on tabs
+				stok2 = new StringTokenizer((String)(stok.nextElement()), "\t");
+
+				//make sure you have enough tokens to play!!! :)
+				if(stok2.countTokens() == 3) {
+					tabName = (String)stok2.nextToken();
+
+					//ignore if not for this tab... wasteful but simple to do
+					if(!tabName.equalsIgnoreCase(label))
+						continue;
+
+					//grab directory and file (upper and lower level in folder...)
+					upperLabel = (String)stok2.nextToken();
+					lowerLabel = (String)stok2.nextToken();
+
+					//solve dos2unix problem if it exists
+					lowerLabel = lowerLabel.trim();
+					//if it's a new directory add it
+					if(!upperLevelKeys.contains(upperLabel))
+						upperLevelKeys.add(upperLabel);
+
+					//if the hash already has the directory grab its file vector
+					//and add, else make a new vector, add file, put vector into hash
+					if(upperToLowerHash.containsKey(upperLabel)) {
+						((Vector)(upperToLowerHash.get(upperLabel))).add(lowerLabel);
+					} else {
+						Vector fileVector = new Vector();
+						fileVector.add(lowerLabel);
+						upperToLowerHash.put(upperLabel, fileVector);
+					}
+
+			} else {
+					continue;
+				}
+			}
+
+			//add keys and hash to the tab hash 
+			tabHash.put("main-keys", upperLevelKeys);
+			tabHash.put("menu-hash", upperToLowerHash);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.print("Message"+e.getMessage());
+			JOptionPane.showMessageDialog(frame, "<html>An error occurred when retrieving information on" +
+					"available<br>species and clone set files.  Update request cannot be fulfilled.", "BN Update Error", JOptionPane.ERROR_MESSAGE);
+			okStatus = false;
+			progress.dispose();
+		}
+
+	}
+
+
+
+	/** 
+	 * Kicks off the thread to update the file system given species and array
+	 */ 
+	private void updateBNFiles(String species, String array) {
+		Thread thread = new Thread(new Runner(species, array));
+		thread.start();
+	}
+
+	/** 
+	 * Controls the update process by calling for downloads and extractions
+	 */
+	private void getBaseFiles(String species, String array) {
+
+		boolean pass1 = true;
+		boolean pass2 = true;
+
+		File baseDir = new File(this.destPath);
+		//if(!baseDir.exists())
+		//baseDir.mkdir();
+
+		File outputFile = new File(baseDir.getAbsolutePath()+"/"+array+"_RE.zip");
+
+		progress.setTitle("BN File Download");
+		progress.setDescription("Download Base Zip File");        
+		progress.show();
+		pass1 = downloadFile(species, array+"_BN.zip", outputFile);
+		if(pass1){
+			pass1 = extractZipFile(outputFile);
+		}
+		outputFile=new File(baseDir.getAbsolutePath()+"/"+array+"_Ar.zip");
+		pass2 = downloadFile(species, "symArts.zip", outputFile);
+		if(pass2)
+			pass2 = extractZipFile(outputFile);
+		progress.dispose();
+
+		if(pass1&&pass2)
+			JOptionPane.showMessageDialog(frame, "The BN file system update is complete.", "BN File System Update", JOptionPane.INFORMATION_MESSAGE);
+		else
+			JOptionPane.showMessageDialog(frame, "The BN file system update was terminated due to the reported error.", "BN File System Update", JOptionPane.ERROR_MESSAGE);
+	}
+
+	/** Downloads the file at sourceURL to output file (dest), returns true if successful
+	 */
+	private boolean downloadFile(String species, String slide, File dest) {//String sourceURL, File dest) {
+		BufferedInputStream bis;
+		BufferedOutputStream bos;
+
+		//buffer = new byte [BUFFERSIZE];
+		int length = 0;
+
+		try {
+			int overallLength = 0;            
+			int currentLength = 0;            
+			progress.setValue(0);
+
+			FtpBean ftp = new FtpBean();
+			ftp.ftpConnect(FTP_SERVER, "anonymous");
+			ftp.setDirectory(REPOSITORY_ROOT+"/"+species);        	
+			FtpListResult list = ftp.getDirectoryContent();
+
+			while(list.next()) {		
+				if(list.getName().equals(slide)) {
+					overallLength = (int)list.getSize();
+				}
+			}
+			progress.setUnits(overallLength);
+			listener.reset();
+			listener.setMax(overallLength);
+
+			bos = new BufferedOutputStream(new FileOutputStream(dest));        	
+			//get binary file to byte array, use listener
+			bos.write(ftp.getBinaryFile(slide, listener), 0, overallLength);
+
+			bos.flush();
+			bos.close();
+			ftp.close();
+		} catch (Exception ioe) {
+			progress.dispose();
+			ioe.printStackTrace();
+			JOptionPane.showMessageDialog(frame, "<html>An Error occured when downloading "+species+".<br>The update request cannot be fulfilled.</html>", "BN Update Download Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		return true;
+	}
+
+	/** Extracts the specified zip file, returns true is successful
+	 */
+	private boolean extractZipFile(File outputFile) {
+		BufferedInputStream bis;
+		BufferedOutputStream bos;
+		progress.setTitle("Extracting zip file");
+		progress.setDescription("Extracting zip file: "+outputFile.getAbsolutePath());
+
+		try {
+			ZipFile zipFile = new ZipFile(outputFile);
+			progress.setUnits(zipFile.size());
+
+			Enumeration entries = zipFile.entries();
+			File baseDir = outputFile.getParentFile();
+			byte [] buffer = new byte [BUFFERSIZE];
+			int length = 0;
+			int cnt = 0;
+
+			while(entries.hasMoreElements()) {
+
+				progress.setValue(cnt);
+
+				ZipEntry entry = (ZipEntry)entries.nextElement();
+
+				if(entry.isDirectory()) {
+					cnt++;
+					continue;
+				}
+
+				String entryName = entry.getName();
+				String entryFolder = (new File(entryName)).getParent();
+				File entryDirectory = new File(baseDir.getAbsolutePath()+"/"+entryFolder);
+				if(!entryDirectory.exists()) {
+					entryDirectory.mkdirs();
+				}
+				bos = new BufferedOutputStream(new FileOutputStream(baseDir.getAbsolutePath()+"/"+entry.getName()));
+				bis = new BufferedInputStream(zipFile.getInputStream(entry));
+
+				while( (length = bis.read(buffer, 0, BUFFERSIZE)) > 0 ) {
+					bos.write(buffer, 0, length);
+				}
+
+				cnt++;
+				bos.flush();
+				bos.close();
+				bis.close();
+			}
+		} catch (Exception e) {
+			progress.dispose();
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(frame, "<html>An Error occured when extracting "+outputFile.getAbsolutePath()+".<br>The update request cannot be fulfilled.</html>", "BN Update Download Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		return true;
+	}
+
+
+	private class Runner implements Runnable {
+		private String species;
+		private String array;
+
+		public Runner(String species, String array) {
+			this.species = species;
+			this.array = array;
+		}
+
+		public void run() {
+			getBaseFiles(species, array);
+		}        
+	}
+
+
+	/**
+	 * The class to listen to progress, monitor and algorithms events.
+	 */
+	private class ProgressListener extends DialogListener implements WindowListener, FtpObserver {
+		private int maxProgress = 0;
+		private int currProgress = 0;
+
+		public void setMax(int max) {
+			maxProgress = 0;
+		}
+
+		public void reset() {
+			maxProgress = 0;
+			currProgress = 0;
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			String command = e.getActionCommand();
+			if (command.equals("cancel-command")) {                
+				progress.dispose();                
+			}
+		}
+
+		public void windowClosing(WindowEvent e) {
+			progress.dispose();
+		}
+		/* (non-Javadoc)
+		 * @see ftp.FtpObserver#byteRead(int)
+		 */
+		public void byteRead(int bytes) {
+			currProgress += bytes;			
+			if( progress != null)
+				progress.setValue(currProgress);
+
+
+		}
+		/* (non-Javadoc)
+		 * @see ftp.FtpObserver#byteWrite(int)
+		 */
+		public void byteWrite(int bytes) {
+			currProgress += bytes;
+			if( progress != null)
+				progress.setValue(bytes);			
+		}        
+	}
+
+
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}
