@@ -71,31 +71,6 @@ public class BNGUI implements IClusterGUI {
 			done=true;
 		}
 
-		//Make sure if KEGG is selected as priors the files are downloaded if it doesnot exist 
-		if(dialog.isKEGG()) {
-			//Check if Species Name is available, if not prompt for it
-			String sp = null;
-			if(framework.getData().isAnnotationLoaded()) {
-				sp = ((MultipleArrayData)framework.getData()).getOrganismName();
-			}
-			if(sp == null) {
-				sp = (String)JOptionPane.showInputDialog(null, "Select a Species", "Annotation Unknown",
-						JOptionPane.QUESTION_MESSAGE, null, new Object[] { "Human",
-						"Mouse", "Rat" }, "Human");
-
-				JOptionPane pane = new JOptionPane(sp);
-				JDialog dlg = pane.createDialog(new JFrame(), "Dialog");
-				dlg.show();
-			} else if(!sp.equals("Human") || !sp.equals("Mouse") || !sp.equals("Rat")) {
-				if (JOptionPane.showConfirmDialog(new JFrame(),
-						"Do you want to continue ?", "Species not Supported for KEGG",
-						JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
-					return null;
-				} else {
-					dialog.setLit();
-				}
-			}
-		}
 		if(dialog.isNone()){
 			return null;
 		}
