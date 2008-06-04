@@ -110,6 +110,10 @@ public class RNGUI implements IClusterGUI, IScriptGUI {
             info.entropy = entropy;
             info.function = menu.getFunctionName(function);
             info.absolute = true;
+            RelevanceNetworkLayout layout = new RelevanceNetworkLayout();
+            if(layout.formRelevanceNetworks(clusters).length < 1) {
+            	return createEmptyResultTree(info);
+            }
             return createResultTree(experiment, clusters, weights, indices, info, clusterGenes);
             
         } finally {
@@ -122,7 +126,16 @@ public class RNGUI implements IClusterGUI, IScriptGUI {
         }
     }
     
-    
+    /** creates an empty result if the result is null.
+     * @param info
+     * @return  
+     * */
+    protected DefaultMutableTreeNode createEmptyResultTree(GeneralInfo info){
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("RelNet - no Results");
+        root.add(new DefaultMutableTreeNode("No Results"));
+        addGeneralInfo(root, info);
+        return root;
+    }
     
     public AlgorithmData getScriptParameters(IFramework framework) {
         
