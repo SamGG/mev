@@ -31,6 +31,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -47,6 +48,8 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import org.tigr.microarray.mev.MultipleArrayData;
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
@@ -1420,14 +1423,50 @@ public class BNInitDialog extends AlgorithmDialog {
 				}
 
 				if(isKEGG()) {
-					// TODO
-					// Need to modify to caprure species.
-					if(!(new File(fileBase + BNConstants.SEP + "hsa" + BNConstants.KEGG_FILE)).exists()) {
+					//Make sure if KEGG is selected as priors the files are downloaded if it doesnot exist 
+					//Check if Species Name is available, if not prompt for it
+					String sp = null;
+					if(framework.getData().isAnnotationLoaded()) {
+						sp = ((MultipleArrayData)framework.getData()).getOrganismName();
+					}
+					if(sp == null) {
+						sp = (String)JOptionPane.showInputDialog(null, "Select a Species", "Annotation Unknown",
+								JOptionPane.QUESTION_MESSAGE, null, new Object[] { "Human",
+								"Mouse", "Rat" }, "Human");
+
+						//JOptionPane pane = new JOptionPane(sp); JDialog dlg = pane.createDialog(new JFrame(), "Dialog"); dlg.show();
+					} else if(!sp.equals("Human") || !sp.equals("Mouse") || !sp.equals("Rat")) {
+						if (JOptionPane.showConfirmDialog(new JFrame(),
+								"Do you want to continue ?", "Species not Supported for KEGG",
+								JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
+							return;
+						} 
+					}
+					
+					//Chnage species name to match KEGG file prefix
+					if(sp.equals("Human"))
+						sp="hsa";
+					else if (sp.equals("Mouse"))
+						sp="mmu";
+					else if (sp.equals("Rat"))
+						sp="rno";
+					
+					//System.out.println("User Dir: " + System.getProperty("user.dir"));
+					//System.out.println("User fileBase: " + fileBase);
+					String keggFilebase = System.getProperty("user.dir") + BNConstants.SEP + "data";
+					String keggFileName = sp + BNConstants.KEGG_FILE;
+					if(!(new File(keggFilebase + BNConstants.SEP + keggFileName)).exists()) {
 						JOptionPane.showMessageDialog(
 								parent, 
 								"File: " + 
 								fileBase + BNConstants.SEP + BNConstants.PPI_FILE + " is missing",
 								"BN Initialization: Missing File", JOptionPane.ERROR_MESSAGE);
+						
+						//Download kegg file for species
+						String destPath = "";
+						String ftpBase = "";
+						String remotePath = "";
+						BNDownloadManager dwnMgr = new BNDownloadManager((JFrame)parent, destPath, "Trying to Download KEGG File", ftpBase, remotePath, keggFileName, false);
 						return;
 					}
 				}
