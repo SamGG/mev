@@ -117,7 +117,6 @@ public class BNInitDialog extends AlgorithmDialog {
 		popPanel = new PopSelectionPanel();
 		browser = new ClusterBrowser(repository);
 
-
 		//re-enable this panel when population selection from file is available
 		//popNClusterPanel.add(popPanel, new GridBagConstraints(0,0,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
 		popNClusterPanel.add(browser, new GridBagConstraints(0,1,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
@@ -143,15 +142,15 @@ public class BNInitDialog extends AlgorithmDialog {
 		classnumPanel = new ClassNumPanel();
 		useGoPanel = new XmlBifPanel();
 		runBNPanel=new RunBNPanel();
-		tabbedPane.add("Running Bayesian Network Parameters", runBNPanel);
-		parameters.add(configPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));       
-		parameters.add(priorsPanel, new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-		parameters.add(discPanel, new GridBagConstraints(0,2,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-		parameters.add(classnumPanel, new GridBagConstraints(0,3,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-		parameters.add(useGoPanel, new GridBagConstraints(0,4,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-		parameters.add(bootStrapPanel, new GridBagConstraints(0,5,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+		tabbedPane.add("Running BN Parameters", runBNPanel);
+		parameters.add(configPanel, new GridBagConstraints(0,0,2,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0),0,0));       
+		parameters.add(priorsPanel, new GridBagConstraints(0,1,2,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0),0,0));
+		parameters.add(discPanel, new GridBagConstraints(0,2,1,1,1.0,0,GridBagConstraints.EAST,GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0),0,0));
+		parameters.add(classnumPanel, new GridBagConstraints(1,2,1,1,1.0,0,GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0),0,0));
+		parameters.add(useGoPanel, new GridBagConstraints(0,4,2,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+		parameters.add(bootStrapPanel, new GridBagConstraints(0,5,2,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
 		//parameters.add(runBNPanel, new GridBagConstraints(0,5,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-		parameters.add(tabbedPane, new GridBagConstraints(0,6,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+		parameters.add(tabbedPane, new GridBagConstraints(0,6,2,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
 
 		addContent(parameters);
 		setActionListeners(listener);
@@ -230,14 +229,14 @@ public class BNInitDialog extends AlgorithmDialog {
 		useGoPanel = new XmlBifPanel();
 		runBNPanel=new RunBNPanel(); 
 		tabbedPane.add("Running Bayesian Network Parameters", runBNPanel);
-		parameters.add(configPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));       
-		parameters.add(priorsPanel, new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-		parameters.add(discPanel, new GridBagConstraints(0,2,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-		parameters.add(classnumPanel, new GridBagConstraints(0,3,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-		parameters.add(useGoPanel, new GridBagConstraints(0,4,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-		parameters.add(bootStrapPanel, new GridBagConstraints(0,5,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+		parameters.add(configPanel, new GridBagConstraints(0,0,2,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));       
+		parameters.add(priorsPanel, new GridBagConstraints(0,1,2,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+		parameters.add(discPanel, new GridBagConstraints(0,2,1,1,1.0,0,GridBagConstraints.EAST,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+		parameters.add(classnumPanel, new GridBagConstraints(1,2,1,1,1.0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+		parameters.add(useGoPanel, new GridBagConstraints(0,4,2,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+		parameters.add(bootStrapPanel, new GridBagConstraints(0,5,2,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
 		//parameters.add(runBNPanel, new GridBagConstraints(0,5,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-		parameters.add(tabbedPane, new GridBagConstraints(0,6,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+		parameters.add(tabbedPane, new GridBagConstraints(0,6,2,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
 
 		addContent(parameters);
 		setActionListeners(listener);
@@ -393,7 +392,7 @@ public class BNInitDialog extends AlgorithmDialog {
 		return this.popPanel.dataButton.isSelected();
 	}
 	//public String getAnnotationField(){
-		//return annotKeyPanel.getAnnotationKeyType();
+	//return annotKeyPanel.getAnnotationKeyType();
 	// }
 	public int getNumIterations(){
 		return this.bootStrapPanel.getNumIterations();
@@ -472,8 +471,8 @@ public class BNInitDialog extends AlgorithmDialog {
 			keggSourceCheckbox.setEnabled(true);
 
 			add(litSourceCheckbox, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
-			add(ppiSourceCheckbox, new GridBagConstraints(1,0,1,1,1.0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
-			add(keggSourceCheckbox, new GridBagConstraints(2,0,1,1,1.0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
+			add(keggSourceCheckbox, new GridBagConstraints(1,0,1,1,1.0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
+			add(ppiSourceCheckbox, new GridBagConstraints(2,0,1,1,1.0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
 		}
 	}
 	/** Contains mode controls. (anal. or survey)
@@ -489,7 +488,7 @@ public class BNInitDialog extends AlgorithmDialog {
 			super(new GridBagLayout());
 			setLayout(new GridBagLayout());
 			setBackground(Color.white);
-			setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Discretizing Expression Values", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
+			setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Discretize Expression Values", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
 
 			numLevelsField = new JTextField("3", 1);
 			numLevelsField.setBackground(Color.white);
@@ -502,8 +501,8 @@ public class BNInitDialog extends AlgorithmDialog {
 					popPanel.setEnableControls(true);
 				}
 			});
-			add(numLevelsLabel, new GridBagConstraints(1,3,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,15,0),0,0));
-			add(numLevelsField, new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.VERTICAL, new Insets(0,0,15,0),0,0));
+			add(numLevelsLabel, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.BOTH, new Insets(0,0,0,5),0,0));
+			add(numLevelsField, new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
 
 		}
 		public int getNumLevels(){return new Integer(numLevelsField.getText()).intValue();}
@@ -534,8 +533,8 @@ public class BNInitDialog extends AlgorithmDialog {
 					popPanel.setEnableControls(true);
 				}
 			});
-			add(numClassesLabel, new GridBagConstraints(1,3,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,15,0),0,0));
-			add(numClassesField, new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.VERTICAL, new Insets(0,0,15,0),0,0));
+			add(numClassesLabel, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.BOTH, new Insets(0,0,0,5),0,0));
+			add(numClassesField, new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
 
 		}
 		public int getNumClasses(){return new Integer(numClassesField.getText()).intValue();}
@@ -559,21 +558,21 @@ public class BNInitDialog extends AlgorithmDialog {
 			super(new GridBagLayout());
 			setLayout(new GridBagLayout());
 			setBackground(Color.white);
-			setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Bootstrapping", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
+			setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Bootstrapping Parameters", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
 
-			isBootstrappingCheckbox = new JCheckBox();
+			isBootstrappingCheckbox = new JCheckBox("Bootstrapping");
 			isBootstrappingCheckbox.setSelected(true);
 			isBootstrappingCheckbox.setEnabled(true);
-			isBootstrappingCheckbox.setBackground(Color.white);
-			isBootStrappingLabel = new JLabel(" Bootstrapping");
-			isBootStrappingLabel.setBackground(Color.white);
+			isBootstrappingCheckbox.setBackground(Color.lightGray);
+			//isBootStrappingLabel = new JLabel("Is Bootstrapping");
+			//isBootStrappingLabel.setBackground(Color.GRAY);
 			isBootstrappingCheckbox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ae) {
 					bootStrapPanel.setEnableControls(isBootstrappingCheckbox.isSelected());
 				}
 			});
 
-			numIterationsField = new JTextField("100", 4);
+			numIterationsField = new JTextField("4", 4);
 			numIterationsField.setBackground(Color.white);
 			numIterationsLabel = new JLabel(" Number of Iterations");
 			numIterationsLabel.setBackground(Color.white);
@@ -586,9 +585,9 @@ public class BNInitDialog extends AlgorithmDialog {
 			isBootstrappingCheckbox.setEnabled(true);
 			numIterationsField.setEnabled(true);
 			confThresholdField.setEnabled(true);
-			isBootStrappingLabel.setForeground(Color.gray);
-			numIterationsLabel.setForeground(Color.gray);
-			confThresholdLabel.setForeground(Color.gray);
+			//isBootStrappingLabel.setForeground(Color.gray);
+			//numIterationsLabel.setForeground(Color.gray);
+			//confThresholdLabel.setForeground(Color.gray);
 
 			//add(bootstrappingNotAvailable, 	new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,15,0),0,0));
 			/*
@@ -600,15 +599,12 @@ public class BNInitDialog extends AlgorithmDialog {
             add(confThresholdLabel, 		new GridBagConstraints(1,3,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,15,0),0,0));
 			 */
 
-			add(isBootstrappingCheckbox, 	new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(10,10,25,10),0,0));
-			add(isBootStrappingLabel, 		new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,10,25,10),0,0));
-
-			add(numIterationsField, 		new GridBagConstraints(2,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(10,10,25,10),0,0));
-			add(numIterationsLabel, 		new GridBagConstraints(3,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,10,25,10),0,0));            
-
-			add(confThresholdField, 		new GridBagConstraints(4,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(10,10,25,10),0,0));
-			add(confThresholdLabel, 		new GridBagConstraints(5,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,10,25,10),0,0));
-
+			add(isBootstrappingCheckbox, 	new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(0,0,0,30),0,0));
+			//add(isBootStrappingLabel, 		new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(0,0,0,5),0,0));
+			add(numIterationsLabel, 		new GridBagConstraints(2,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,5),0,0));
+			add(numIterationsField, 		new GridBagConstraints(3,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,15),0,0));            
+			add(confThresholdLabel, 		new GridBagConstraints(4,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,5),0,0));
+			add(confThresholdField, 		new GridBagConstraints(5,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,15),0,0));
 
 		}
 		public void setEnableControls(boolean enableControls){
@@ -749,6 +745,8 @@ public class BNInitDialog extends AlgorithmDialog {
 			useGoButton.setHorizontalAlignment(JRadioButton.CENTER);
 			useDFSButton = new JRadioButton("Use Depth-First Search to direct edges", true);           	
 			useDFSButton.setHorizontalAlignment(JRadioButton.CENTER);
+			//GO Functionality is not working currently
+			useGoButton.setEnabled(false);
 			bGroup=new ButtonGroup();
 			bGroup.add(useGoButton);
 			bGroup.add(useDFSButton);
@@ -991,60 +989,60 @@ public class BNInitDialog extends AlgorithmDialog {
 
 		/** Returns the converter file name (or null if none)
 		 */
-		 public String getConverterFileName(){
-			 if(this.useAnnBox.isSelected())
-				 return converterFileField.getText();
-			 return null;
-		 }
+		public String getConverterFileName(){
+			if(this.useAnnBox.isSelected())
+				return converterFileField.getText();
+			return null;
+		}
 
-		 /** Returns the annotation type string.
-		  */
-		 // public String getAnnotationKeyType(){
-		 //   return annotKeyPanel.getAnnotationKeyType();
-		 // }
+		/** Returns the annotation type string.
+		 */
+		// public String getAnnotationKeyType(){
+		//   return annotKeyPanel.getAnnotationKeyType();
+		// }
 
-		 private class BNListListener implements ListSelectionListener {
-			 public void valueChanged(ListSelectionEvent listSelectionEvent) {
-				 updateFileDirectoryField();
-			 }
-		 }
+		private class BNListListener implements ListSelectionListener {
+			public void valueChanged(ListSelectionEvent listSelectionEvent) {
+				updateFileDirectoryField();
+			}
+		}
 
-		 private void updateConverterFileField(String field){
-			 this.converterFileField.setText(field);
-		 }
+		private void updateConverterFileField(String field){
+			this.converterFileField.setText(field);
+		}
 
-		 /** Returns the list of annotation-theme mapping files.
-		  */
-		 public String [] getAnnToGOFileList(){
-			 String [] fileNames = new String[((DefaultListModel) annFileList.getModel()).size()];
-			 for(int i = 0; i < fileNames.length; i++){
-				 fileNames[i] = ((File)(((DefaultListModel)annFileList.getModel()).elementAt(i))).getPath();
-			 }
-			 return fileNames;
-		 }
+		/** Returns the list of annotation-theme mapping files.
+		 */
+		public String [] getAnnToGOFileList(){
+			String [] fileNames = new String[((DefaultListModel) annFileList.getModel()).size()];
+			for(int i = 0; i < fileNames.length; i++){
+				fileNames[i] = ((File)(((DefaultListModel)annFileList.getModel()).elementAt(i))).getPath();
+			}
+			return fileNames;
+		}
 
-		 public void removeSelectedFiles(){
-			 int [] indices = annFileList.getSelectedIndices();
+		public void removeSelectedFiles(){
+			int [] indices = annFileList.getSelectedIndices();
 
-			 for(int i = 0; i < indices.length; i++){
-				 // annFileList.remove(indices[i]);
-				 ((DefaultListModel)annFileList.getModel()).removeElementAt(indices[i]);
-			 }
-			 if(annFileList.getModel().getSize() < 1){
-				 this.removeButton.setEnabled(false);
-				 okButton.setEnabled(false);
-			 }
-			 annFileList.validate();
-		 }
+			for(int i = 0; i < indices.length; i++){
+				// annFileList.remove(indices[i]);
+				((DefaultListModel)annFileList.getModel()).removeElementAt(indices[i]);
+			}
+			if(annFileList.getModel().getSize() < 1){
+				this.removeButton.setEnabled(false);
+				okButton.setEnabled(false);
+			}
+			annFileList.validate();
+		}
 
-		 private class ListRenderer extends DefaultListCellRenderer {
-			 public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-				 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-				 File file = (File) value;
-				 setText(file.getName());
-				 return this;
-			 }
-		 }
+		private class ListRenderer extends DefaultListCellRenderer {
+			public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+				super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+				File file = (File) value;
+				setText(file.getName());
+				return this;
+			}
+		}
 	}
 
 	/** Contains statistical parameter controls.
@@ -1073,18 +1071,18 @@ public class BNInitDialog extends AlgorithmDialog {
 
 		/** Constucts a new AlphaPanel.
 		 */
-		 public AlphaPanel(){
-			 super(new GridBagLayout());
-			 setBackground(Color.white);
+		public AlphaPanel(){
+			super(new GridBagLayout());
+			setBackground(Color.white);
 
-			 bootStrapPanel = new BootStrapPanel();  	
+			bootStrapPanel = new BootStrapPanel();  	
 
-			 //STAT PANEL
-			 JPanel statPanel = new JPanel(new GridBagLayout());
-			 statPanel.setBackground(Color.white);
-			 statPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Reported Statistic", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
+			//STAT PANEL
+			JPanel statPanel = new JPanel(new GridBagLayout());
+			statPanel.setBackground(Color.white);
+			statPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Reported Statistic", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
 
-			 /*
+			/*
             ButtonGroup bg = new ButtonGroup();
             fisherBox = new JCheckBox("Fisher Exact Probability", true);
             fisherBox.setBackground(Color.white);
@@ -1192,52 +1190,52 @@ public class BNInitDialog extends AlgorithmDialog {
             trimPanel.add(trimPercentBox, new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
             trimPanel.add(trimPercentLabel, new GridBagConstraints(1,2,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.BOTH, new Insets(10,20,0,15),0,0));
             trimPanel.add(trimPercentField, new GridBagConstraints(2,2,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.NONE, new Insets(10,0,0,0),0,0));
-			  */
-			 //Add panels to main panel
-			 //add(statPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-			 //add(correctionPanel, new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-			 //add(trimPanel, new GridBagConstraints(0,2,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+			 */
+			//Add panels to main panel
+			//add(statPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+			//add(correctionPanel, new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+			//add(trimPanel, new GridBagConstraints(0,2,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
 
-			 discPanel = new DiscretizingPanel();
-			 classnumPanel = new ClassNumPanel();
+			discPanel = new DiscretizingPanel();
+			classnumPanel = new ClassNumPanel();
 
-			 //TODO removed bootStrapPanel until bootstrapping is enabled in module
-			 add(discPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-			 add(classnumPanel, new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-			 //add(bootStrapPanel, new GridBagConstraints(0,2,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+			//TODO removed bootStrapPanel until bootstrapping is enabled in module
+			add(discPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+			add(classnumPanel, new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+			//add(bootStrapPanel, new GridBagConstraints(0,2,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
 
-		 }
+		}
 
-		 /** Indicates if permutations are selected.
-		  */
-		 public boolean performPermutations(){
-			 return permBox.isSelected();
-		 }
+		/** Indicates if permutations are selected.
+		 */
+		public boolean performPermutations(){
+			return permBox.isSelected();
+		}
 
-		 public void setEnablePermutations(){
-			 permLabel.setEnabled(permBox.isSelected());
-			 permField.setEnabled(permBox.isSelected());
-		 }
+		public void setEnablePermutations(){
+			permLabel.setEnabled(permBox.isSelected());
+			permField.setEnabled(permBox.isSelected());
+		}
 
-		 public void validateTrimOptions(){
-			 if(this.trimBox.isSelected()){
-				 trimNBox.setEnabled(true);
-				 trimPercentBox.setEnabled(true);
+		public void validateTrimOptions(){
+			if(this.trimBox.isSelected()){
+				trimNBox.setEnabled(true);
+				trimPercentBox.setEnabled(true);
 
-				 trimNLabel.setEnabled(trimNBox.isSelected());
-				 trimNField.setEnabled(trimNBox.isSelected());
-				 trimPercentLabel.setEnabled(!trimNBox.isSelected());
-				 trimPercentField.setEnabled(!trimNBox.isSelected());
-			 } else {
-				 trimNBox.setEnabled(false);
-				 trimPercentBox.setEnabled(false);
+				trimNLabel.setEnabled(trimNBox.isSelected());
+				trimNField.setEnabled(trimNBox.isSelected());
+				trimPercentLabel.setEnabled(!trimNBox.isSelected());
+				trimPercentField.setEnabled(!trimNBox.isSelected());
+			} else {
+				trimNBox.setEnabled(false);
+				trimPercentBox.setEnabled(false);
 
-				 trimNLabel.setEnabled(false);
-				 trimNField.setEnabled(false);
-				 trimPercentLabel.setEnabled(false);
-				 trimPercentField.setEnabled(false);
-			 }
-		 }
+				trimNLabel.setEnabled(false);
+				trimNField.setEnabled(false);
+				trimPercentLabel.setEnabled(false);
+				trimPercentField.setEnabled(false);
+			}
+		}
 	}
 
 	private class ConfigPanel extends ParameterPanel {
@@ -1249,7 +1247,7 @@ public class BNInitDialog extends AlgorithmDialog {
 
 
 
-			JButton cngFilesButton = new JButton("Change Location");
+			JButton cngFilesButton = new JButton("Change");
 			cngFilesButton.setActionCommand("select-file-base-command");
 			cngFilesButton.addActionListener(listener);
 			cngFilesButton.setToolTipText("<html>Select the directory where BN  files reside.</html>");
@@ -1266,16 +1264,16 @@ public class BNInitDialog extends AlgorithmDialog {
 			//browseFileBaseButton.setFocusPainted(false);
 			//browseFileBaseButton.addActionListener(listener);
 			//browseFileBaseButton.setToolTipText("<html>Helps select the BN annotation file system<br>that corresponds the current species and array type.</html>");
-			JLabel fileLocation=new JLabel("BN Source Files Location:");
+			JLabel fileLocation=new JLabel("File(s) Location:");
 			//defaultFileBaseLocation = new JTextField(TMEV.getFile("data/bn").getAbsolutePath(), 25);
 			//defaultFileBaseLocation = new JTextField(new File(System.getProperty("user.dir")).getAbsolutePath());
 			defaultFileBaseLocation = new JTextField(new File(TMEV.getDataPath()).getAbsolutePath());
 			defaultFileBaseLocation.setEditable(true);
 
-			add(fileLocation, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0, 0));
+			add(fileLocation, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
 			add(defaultFileBaseLocation,  new GridBagConstraints(1,0,1,1,2,0,GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));            
 			//add(updateFilesButton, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,2,0), 0, 0));  
-			add(cngFilesButton, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,2,0), 0, 0));
+			add(cngFilesButton, new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
 
 		}
 
@@ -1442,7 +1440,7 @@ public class BNInitDialog extends AlgorithmDialog {
 							return;
 						} 
 					}
-					
+
 					//Chnage species name to match KEGG file prefix
 					if(sp.equals("Human"))
 						sp="hsa";
@@ -1450,24 +1448,34 @@ public class BNInitDialog extends AlgorithmDialog {
 						sp="mmu";
 					else if (sp.equals("Rat"))
 						sp="rno";
-					
+
 					//System.out.println("User Dir: " + System.getProperty("user.dir"));
 					//System.out.println("User fileBase: " + fileBase);
-					String keggFilebase = System.getProperty("user.dir") + BNConstants.SEP + "data";
+					String keggFilebase = System.getProperty("user.dir") + BNConstants.SEP + "data" + BNConstants.SEP + "BN_files" + BNConstants.SEP + "kegg";
+					if(!(new File(keggFilebase)).exists()){
+						boolean success = (new File(keggFilebase)).mkdir();
+					    if (!success) {
+					        // Directory creation failed
+					    	JOptionPane.showMessageDialog(
+									parent, 
+									"Failed to create directory",
+									"Error", JOptionPane.ERROR_MESSAGE);
+					    }
+					}
 					String keggFileName = sp + BNConstants.KEGG_FILE;
 					if(!(new File(keggFilebase + BNConstants.SEP + keggFileName)).exists()) {
 						JOptionPane.showMessageDialog(
 								parent, 
 								"KEGG file is missing, will try to download",
 								"BN Initialization: Missing File", JOptionPane.ERROR_MESSAGE);
-						
+
 						//Download kegg file for species
-						String destPath = "";
-						String ftpBase = "";
-						String remotePath = "";
-						BNDownloadManager dwnMgr = new BNDownloadManager((JFrame)parent, destPath, "Trying to Download KEGG File", ftpBase, remotePath, keggFileName, false);
-						dwnMgr.updateFiles();
-						//return;
+						//String destPath = "";
+						//String ftpBase = "";
+						//String remotePath = "";
+						BNDownloadManager dwnMgr = new BNDownloadManager((JFrame)parent, keggFilebase, "Trying to Download KEGG File", keggFileName, false);
+						if(!dwnMgr.updateFiles())
+							return;
 					}
 				}
 
