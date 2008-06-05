@@ -183,7 +183,7 @@ public class ResourcererFTPClient {
 
 					//String fileName=this.ChipType+".zip";
 					UnzipAnnotationFile unzip=new UnzipAnnotationFile(newFile.getParent(),newFile.getName());
-					boolean download=unzip.extractZipFile(newFile);
+					boolean download=unzip.extractEASEZipFile(newFile, this.ChipType);
 				}
 				//Checks for BN files
 				if(list.getName().equals(this.ChipType+"_BN.zip")) {
@@ -206,7 +206,7 @@ public class ResourcererFTPClient {
 
 
 					UnzipAnnotationFile unzip=new UnzipAnnotationFile(newFile.getParent(),newFile.getName());
-					boolean download=unzip.extractZipFile(newFile);
+					boolean download=unzip.extractBNZipFile(newFile);
 
 
 				}
