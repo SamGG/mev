@@ -110,7 +110,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
      * @return
      */
     public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
-        
+        String sep = System.getProperty("file.separator");
         algorithmData = new AlgorithmData();
         
         ClusterRepository repository = framework.getClusterRepository(Cluster.GENE_CLUSTER);
@@ -125,7 +125,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         	String filename = "./data/Annotation/" + slideType + ".txt";
         	annotationFile = new File(filename);
 	        if(annotationFile.canRead()) {
-	        	easeFileLocation = "./data/ease/ease_" + slideType;
+	        	easeFileLocation = "./data/ease" + sep + "ease_" + slideType;
 	        }
         }
         
@@ -210,6 +210,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         algorithmData.addStringArray("population-list", populationKeys);
         if(converterFileName != null)
             algorithmData.addParam("converter-file-name", converterFileName);
+        
         algorithmData.addStringArray("annotation-file-list", annotationFileList);
         algorithmData.addMatrix("expression", experiment.getMatrix());
         

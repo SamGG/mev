@@ -113,11 +113,9 @@ public class EASEInitDialog extends AlgorithmDialog {
      * @param repository Cluster repository to construct <CODE>ClusterBrowser</CODE>
      * @param annotationLabels Annotation types
      */
-//    public EASEInitDialog(Frame parent, ClusterRepository repository, String [] annotationLabels, boolean useLoadedAnn) {
     public EASEInitDialog(Frame parent, ClusterRepository repository, String [] annotationLabels, String defaultFileLocation) {
             super(parent, "EASE: EASE Annotation Analysis", true);
         this.parent = parent;
-//        this.useLoadedAnnotationFile = useLoadedAnn;
         if(defaultFileLocation == null) {
         	this.useLoadedAnnotationFile = false;
             defaultFileBaseLocation = TMEV.getSettingForOption(EASEGUI.LAST_EASE_FILE_LOCATION);
@@ -125,7 +123,10 @@ public class EASEInitDialog extends AlgorithmDialog {
         	this.useLoadedAnnotationFile = true;
             defaultFileBaseLocation = defaultFileLocation;
         }
-
+        if(! new File(defaultFileBaseLocation).canRead()) {
+        	defaultFileBaseLocation = "./data/ease";
+        }
+        
         font = new Font("Dialog", Font.BOLD, 12);
         listener = new EventListener();
         addWindowListener(listener);
@@ -518,8 +519,6 @@ public class EASEInitDialog extends AlgorithmDialog {
             browseButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent ae) {
                 	JFileChooser chooser = new JFileChooser(getBaseFileLocation() + sep + "Lists");
-//TODO
-                	//                	System.out.println("pop selection file location: " + getBaseFileLocation() + sep + "Lists");
                     chooser.setDialogTitle("Population File Selection");
                     chooser.setMultiSelectionEnabled(false);
                     if(chooser.showOpenDialog(parent) == JOptionPane.OK_OPTION){
@@ -619,6 +618,7 @@ public class EASEInitDialog extends AlgorithmDialog {
             useAnnBox.setFocusPainted(false);
             useAnnBox.setEnabled(!useLoadedAnnotationFile);
             
+      
             converterFileField = new JTextField(30);
             converterFileField.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED, Color.lightGray, Color.gray));
             converterFileField.setEnabled(useAnnBox.isEnabled());
@@ -690,6 +690,9 @@ public class EASEInitDialog extends AlgorithmDialog {
                     converterFileField.setText(tempPath+sep+((String)fileVector.elementAt(0)));
                 }
             }
+            
+
+          	converterFileField.setText("");
             
             this.fieldNamesBox = new JComboBox(fieldNames);
             this.fieldNamesBox.setEditable(false);
@@ -1019,6 +1022,7 @@ public class EASEInitDialog extends AlgorithmDialog {
                 if(file == null) {
                     file = new File(System.getProperty("user.dir"));
                 }
+                TMEV.storeProperty(EASEGUI.LAST_EASE_FILE_LOCATION, file.toString());
             }
             JFileChooser chooser = new JFileChooser(file);
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -1053,7 +1057,7 @@ public class EASEInitDialog extends AlgorithmDialog {
                     easeParamPanel.fileLabel.setEnabled(false);
                 }
             } else if (command.equals("converter-file-browser-command")){
-                File convertFile = new File(getBaseFileLocation()+"/Data/Convert");
+                File convertFile = new File(getBaseFileLocation() + sep + "Data" + sep + "Convert");
                 JFileChooser chooser = new JFileChooser(convertFile);
                 chooser.setDialogTitle("Annotation Converter Selection");
                 chooser.setMultiSelectionEnabled(false);
@@ -1062,8 +1066,9 @@ public class EASEInitDialog extends AlgorithmDialog {
                 }
                 return;
             } else if (command.equals("ann-file-browser-command")){
-                
-                File classFile = new File(getBaseFileLocation()+"/Data/Class/");
+                File classFile = new File(getBaseFileLocation()+ sep + "Data" + sep + "Class" + sep);
+                if(!classFile.canRead())
+                 	classFile = new File("." + sep + "data" + sep + "ease");
                 JFileChooser chooser = new JFileChooser(classFile);
                 chooser.setDialogTitle("Annotation --> GO Term, File(s) Selection");
                 chooser.setMultiSelectionEnabled(true);
