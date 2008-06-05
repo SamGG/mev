@@ -25,6 +25,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Enumeration;
@@ -43,7 +44,9 @@ import org.tigr.util.StringSplitter;
 import org.tigr.util.awt.ImageScreen;
 
 public class TMEV {
-    public final static String VERSION = "4.2";
+    private static final String MEV_URL_PROPERTIES_LOCATION = "http://www.tm4.org/mev/mev_url.properties";
+
+	public final static String VERSION = "4.2";
     
     public final static int SYSTEM = 1000;
     public final static int DB_AVAILABLE = 1001;
@@ -107,15 +110,19 @@ public class TMEV {
     public static String PROPERTY_CONFIG_FILES = "config-files";
 
     public static String sep;
-    public static File mevUserDir;
+    private static File mevUserDir;
+    private static File mevPropertiesFile;
+    
     //EH new properties field, to replace the hashtable properties. Better loading functions, more webstart-safe
     //and user-configurable
-    public static ConfMap props;
+    private static ConfMap props;
     
     public static void main(String[] args) {
     	sep = System.getProperty("file.separator");
     	mevUserDir = new File(System.getProperty("user.home") + sep + ".mev");
-        try {
+    	mevPropertiesFile = new File(mevUserDir + sep + "mev.properties");
+        
+    	try {
         	//Determine whether to run with Gaggle enabled
         	for(String s: args) {
         		if(s.equalsIgnoreCase("gaggle")) {
@@ -151,9 +158,9 @@ public class TMEV {
             System.out.println("Operating System name: "+os);
             System.out.println("Operating System version: "+System.getProperty("os.version"));
             System.out.println("Operating System architecture: "+System.getProperty("os.arch"));
-            props = loadProperties();
+            loadProperties();
             setupFiles();
-            
+                     
             configure();
             ImageScreen is = new ImageScreen();
             is.showImageScreen(1500);
@@ -170,16 +177,28 @@ public class TMEV {
         }
     }
 
-    private static void writeProperties() throws IOException {
-        File mevPropertiesFile = new File(mevUserDir + sep + "mev.properties");
-        if(mevUserDir.exists()) {
-       	 if(mevUserDir.isDirectory() && mevUserDir.canRead()) {
-       		 if(mevPropertiesFile.exists() && mevPropertiesFile.canRead()) {
-       			props.store(new FileOutputStream(mevPropertiesFile), "MeV Default Properties");
-       		 }
-       	 }
-        }
+    private static void writeProperties() {
+    	try {
+	        if(mevUserDir.exists()) {
+	        	if(mevUserDir.isDirectory() && mevUserDir.canRead()) {
+	        		if(mevPropertiesFile.exists() && mevPropertiesFile.canRead()) {
+	        	        FileOutputStream propsout = new FileOutputStream(mevPropertiesFile);
+	        			props.store(propsout, "MeV Properties");
+	        			propsout.close();
+	       		 	}
+	       	 	} 
+	        } else {
+		       	mevUserDir.mkdir();
+				mevPropertiesFile.createNewFile();
+		        FileOutputStream propsout = new FileOutputStream(mevPropertiesFile);
+		        props.store(propsout, "MeV Properties");
+		        propsout.close();
+	        }
+    	} catch (IOException ioe) {
+    		System.out.println("Cannot store properties to file " + mevPropertiesFile.toString());
+    	}
     }
+    
     /**
      * Checks for the existence of configuration files in the user.home/.mev directory. 
      * If files exist, leave them alone. Otherwise, read them from classpath and write them 
@@ -227,32 +246,47 @@ public class TMEV {
      * @return
      * @throws IOException
      */
-    private static ConfMap loadProperties() throws IOException {
-        File mevPropertiesFile = new File(mevUserDir + sep + "mev.properties");
+    private static void loadProperties() throws IOException {
         
         //Load default properties from the classpath
-        ConfMap defaultProps = new ConfMap();
-        ConfMap props = new ConfMap();
+        ConfMap defaultWebProps;
+        ConfMap defaultUserProps;
+
+        defaultUserProps = new ConfMap();
         try {
         	InputStream in = TMEV.class.getClassLoader().getResourceAsStream("org/tigr/microarray/mev/default.properties");
         	if (in != null) {
-        		defaultProps.load(in); // Can throw IOException
+        		defaultUserProps.load(in); // Can throw IOException
         	}
-        	props = new ConfMap(defaultProps);
         } catch (IOException ioe) {
-        	System.out.println("Couldn't load default properties from org/tigr/microarray/mev/default.properties");
+        	System.out.println("Could not load default properties from org/tigr/microarray/mev/default.properties");
+        }
+
+        /* 
+         * Try to get online and download default properties from tm4.org. If not available, skip. 
+         * If available, *override* stored user url locations with new ones from website. 
+         */
+    	defaultWebProps = new ConfMap(defaultUserProps);
+        try {
+        	URLConnection conn = new URL(MEV_URL_PROPERTIES_LOCATION).openConnection(); 
+        	InputStream is = conn.getInputStream();
+        	defaultWebProps.load(is);
+        } catch (IOException ioe) {
+        	System.out.println("Could not download default properties from tm4.org.");
         }
         
-         if(mevUserDir.exists()) {
+
+    	props = new ConfMap(defaultWebProps);
+
+    	/*
+    	 * load user's properties from mev.properties file, if any. 
+    	 */
+          if(mevUserDir.exists()) {
         	 if(mevUserDir.isDirectory() && mevUserDir.canRead()) {
         		 if(mevPropertiesFile.exists() && mevPropertiesFile.canRead()) {
         			 InputStream in2 = new FileInputStream(mevPropertiesFile);
         			 props.load(in2);
-        		 } else {
-  	                 mevPropertiesFile.createNewFile();
- 	                FileOutputStream propsout = new FileOutputStream(mevPropertiesFile);
- 	               defaultProps.store(propsout, "MeV Default Properties");
- 	               propsout.close();
+        			 in2.close();
         		 }
         	 }
          } else {
@@ -260,11 +294,11 @@ public class TMEV {
              //System.out.println("Created MeV directory " + mevUserDir + ".");
 			 mevPropertiesFile.createNewFile();
               //System.out.println("Created MeV properties file " + mevPropertiesFile + ".");
-               FileOutputStream propsout = new FileOutputStream(mevPropertiesFile);
-             defaultProps.store(propsout, "MeV Default Properties");
+             FileOutputStream propsout = new FileOutputStream(mevPropertiesFile);
+             defaultWebProps.store(propsout, "MeV Default Properties");
              propsout.close();
          }
-        return props;
+         writeProperties();
     }
     
     public static boolean readPreferencesFile(File inputFile) {
@@ -338,11 +372,8 @@ public class TMEV {
     }
     public static void storeProperty(String key, String value) {
     	props.setProperty(key, value);
-    	try {
-    		writeProperties();
-    	} catch (IOException ioe) {
-    		System.out.println("Can't write to properties file.");
-    	}
+   		writeProperties();
+
     }
     /*
     public static boolean connect(String username, String password) {
@@ -483,14 +514,8 @@ public class TMEV {
     public static void setPermitPrompt(boolean permitPrompt) {
         if(TMEV.permitSavePrompt != permitPrompt) {
         	permitSavePrompt = permitPrompt;
-        	props.setProperty("prompt-for-save", new Boolean(permitPrompt).toString());
+        	storeProperty("prompt-for-save", new Boolean(permitPrompt).toString());
         }
-        try {
-        	writeProperties();
-        } catch (IOException ioe) {
-        	System.out.println("Couldn't write to user properties file.");
-        }
-
     }
     
 
@@ -550,6 +575,8 @@ public class TMEV {
     }
     
     public static String getDataPath() {
+    	if(dataPath == null)
+    		return getSettingForOption("current-data-path");
         return dataPath;
     }
     
@@ -557,31 +584,22 @@ public class TMEV {
     public static void updateRPath( String rPath ) {
         if(rPath == null)
             return;
-        props.put("rserve-path", rPath);
-	    try { 
-	        writeProperties();
-	    } catch (IOException ioe) {
-	    	System.out.println("couldn't write properties file");
-	    }
-            
+        storeProperty("rserve-path", rPath);
     }
     
     
     /** Updates the data path in config given a formatted data path string
+     * @deprecated use TMEV.setDataPath(String newPath)
      */
     public static void updateDataPath(String  dataPath){
         if(dataPath == null)
             return;
-        props.put("current-data-path", dataPath);
-        try {
-        	writeProperties();
-        } catch(IOException ioe) {
-        	
-        }
+        storeProperty("current-data-path", dataPath);
     }
     
     
     public static void setDataPath(String newPath) {
+    	storeProperty("current-data-path", newPath);
         dataPath = newPath;
     }
     

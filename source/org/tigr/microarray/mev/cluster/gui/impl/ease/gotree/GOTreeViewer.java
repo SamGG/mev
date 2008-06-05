@@ -239,6 +239,13 @@ public class GOTreeViewer extends JPanel implements IViewer {
         } else {
             statIndex = 7;
         }
+
+        try {
+        	if(data[0][statIndex] == null)
+        		statIndex = 7;
+        } catch (ArrayIndexOutOfBoundsException aioobe) {
+        	statIndex = 7;
+        }
         
         //accumulate primary nodes.
         nodes = new Vector(data.length);
