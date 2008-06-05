@@ -93,8 +93,73 @@ public class UnzipAnnotationFile {
 	/**
 	 * extractZipFiles is essentially the same as unZipResourcererFiles,
 	 * minus converting the extracted files to .txt files.
-	 * This function was added, to enable downloading BN and EASE files along with the annotation files. 
+	 * This function was added, to enable downloading EASE files along with the annotation files. 
 	 * BN and EASE zip files on extracting spit out .txt files.
+	 * 
+	 * EASE has a different file structure from BN and hence ywo different functions
+	 * 
+	 * @param outputFile
+	 * @return
+	 */
+
+
+	public boolean extractEASEZipFile(File outputFile, String chipType) {
+		BufferedInputStream bis;
+		BufferedOutputStream bos;
+		int BUFFERSIZE = 1024;
+
+		try {
+			ZipFile zipFile = new ZipFile(outputFile);
+			Enumeration entries = zipFile.entries();
+			File baseDir = outputFile.getParentFile();
+			File chip=new File("ease_"+chipType);
+			
+			byte [] buffer = new byte [BUFFERSIZE];
+			int length = 0;
+			int cnt = 0;
+
+			while(entries.hasMoreElements()) {
+
+				ZipEntry entry = (ZipEntry)entries.nextElement();
+
+				if(entry.isDirectory()) {
+					cnt++;
+					continue;
+				}
+
+				String entryName = entry.getName();
+				String entryFolder = (new File(entryName)).getParent();
+				File entryDirectory = new File(baseDir.getAbsolutePath()+"/"+chip+"/"+entryFolder);
+
+				if(!entryDirectory.exists()) {
+					entryDirectory.mkdirs();
+				}
+
+				bos = new BufferedOutputStream(new FileOutputStream(baseDir.getAbsolutePath()+"/"+chip+"/"+entry.getName()));
+				bis = new BufferedInputStream(zipFile.getInputStream(entry));
+
+				while( (length = bis.read(buffer, 0, BUFFERSIZE)) > 0 ) {
+					bos.write(buffer, 0, length);
+				}
+
+				cnt++;
+				bos.flush();
+				bos.close();
+				bis.close();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+
+	/**
+	 * extractBNZipFiles is essentially the same as unZipResourcererFiles,
+	 * minus converting the extracted files to .txt files.
+	 * This function was added, to enable downloading BN  files along with the annotation files. 
+	 * BN  zip files on extracting spit out .txt files.
 	 * 
 	 * 
 	 * 
@@ -103,7 +168,7 @@ public class UnzipAnnotationFile {
 	 */
 
 
-	public boolean extractZipFile(File outputFile) {
+	public boolean extractBNZipFile(File outputFile) {
 		BufferedInputStream bis;
 		BufferedOutputStream bos;
 		int BUFFERSIZE = 1024;
@@ -151,7 +216,6 @@ public class UnzipAnnotationFile {
 		}
 		return true;
 	}
-
 
 
 
