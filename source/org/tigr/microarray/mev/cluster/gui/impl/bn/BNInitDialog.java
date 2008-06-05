@@ -1458,8 +1458,7 @@ public class BNInitDialog extends AlgorithmDialog {
 					if(!(new File(keggFilebase + BNConstants.SEP + keggFileName)).exists()) {
 						JOptionPane.showMessageDialog(
 								parent, 
-								"File: " + 
-								fileBase + BNConstants.SEP + BNConstants.PPI_FILE + " is missing",
+								"KEGG file is missing, will try to download",
 								"BN Initialization: Missing File", JOptionPane.ERROR_MESSAGE);
 						
 						//Download kegg file for species
@@ -1467,7 +1466,8 @@ public class BNInitDialog extends AlgorithmDialog {
 						String ftpBase = "";
 						String remotePath = "";
 						BNDownloadManager dwnMgr = new BNDownloadManager((JFrame)parent, destPath, "Trying to Download KEGG File", ftpBase, remotePath, keggFileName, false);
-						return;
+						dwnMgr.updateFiles();
+						//return;
 					}
 				}
 

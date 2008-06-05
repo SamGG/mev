@@ -78,7 +78,7 @@ public class BNDownloadManager {
 	/**
 	 * 
 	 */
-	public void updateFiles() {    	
+	public boolean updateFiles() {    	
 		try {
 
 			//prepare progress to show repository config progress
@@ -112,10 +112,10 @@ public class BNDownloadManager {
 					//get the selected server, repository root, and implies zip name
 					this.FTP_SERVER = (String)propertyHashes.get("kegg_server");
 					this.REPOSITORY_ROOT = (String)propertyHashes.get("kegg_dir");
-					updateBNFiles(this.FTP_REMOTE_FILE_OR_DIR);
+					return updateBNFiles(this.FTP_REMOTE_FILE_OR_DIR);
 				//}
-			}
-
+			} else
+				return okStatus;
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.print("Message"+e.getMessage());
@@ -123,6 +123,7 @@ public class BNDownloadManager {
 					"available<br>species and clone set files.  Update request cannot be fulfilled.", "BN Update Error", JOptionPane.ERROR_MESSAGE);
 			okStatus = false;
 			progress.dispose();
+			return okStatus;
 		}      
 	}
 
@@ -211,15 +212,16 @@ public class BNDownloadManager {
 	/** 
 	 * Kicks off the thread to update the file system given species and array
 	 */ 
-	private void updateBNFiles(String file) {
-		Thread thread = new Thread(new Runner(file));
-		thread.start();
+	private boolean updateBNFiles(String file) {
+		//Thread thread = new Thread(new Runner(file));
+		//thread.start();
+		return getBaseFiles(file);
 	}
 
 	/** 
 	 * Controls the update process by calling for downloads and extractions
 	 */
-	private void getBaseFiles(String file) {
+	private boolean getBaseFiles(String file) {
 
 		boolean pass1 = true;
 		//boolean pass2 = true;
@@ -247,6 +249,8 @@ public class BNDownloadManager {
 			JOptionPane.showMessageDialog(frame, "The BN file system update is complete.", "BN File System Update", JOptionPane.INFORMATION_MESSAGE);
 		else
 			JOptionPane.showMessageDialog(frame, "The BN file system update was terminated due to the reported error.", "BN File System Update", JOptionPane.ERROR_MESSAGE);
+		
+		return pass1;
 	}
 
 	/** Downloads the file at sourceURL to output file (dest), returns true if successful
