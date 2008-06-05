@@ -56,19 +56,11 @@ public class BNDownloadManager {
 	private ProgressListener listener;
 	String destPath;
 	/** Creates a new instance of BNDownloadManager */
-	public BNDownloadManager(final JFrame parent, String destPath, String title, String ftpBase, String remotePath, String resourceName, boolean isDir) {        
+	public BNDownloadManager(final JFrame parent, String destPath, String title, String resourceName, boolean isDir) {        
 		frame = parent;
 		this.destPath = destPath;
-		this.FTP_BASE_URL = ftpBase;
-		this.FTP_REMOTE_PATH = remotePath;
 		this.FTP_REMOTE_FILE_OR_DIR = resourceName;
 		this.isDir = isDir;
-		
-		//Build URI
-		this.COMPLETE_URI = FTP_BASE_URL;
-		if(this.COMPLETE_URI.endsWith("/")) this.COMPLETE_URI += this.FTP_REMOTE_PATH;
-		else this.COMPLETE_URI += "/" + this.FTP_REMOTE_PATH;
-		this.COMPLETE_URI += "/" + this.FTP_REMOTE_FILE_OR_DIR;
 		
 		listener = new ProgressListener();
 		//Initialize the progress bar
@@ -111,11 +103,15 @@ public class BNDownloadManager {
 
 					//get the selected server, repository root, and implies zip name
 					this.FTP_SERVER = (String)propertyHashes.get("kegg_server");
+					if(this.FTP_SERVER.endsWith("/"))
+						this.FTP_SERVER = this.FTP_SERVER.substring(0, this.FTP_SERVER.length()-1);
 					this.REPOSITORY_ROOT = (String)propertyHashes.get("kegg_dir");
+					if(this.REPOSITORY_ROOT.endsWith("/"))
+						this.REPOSITORY_ROOT = this.REPOSITORY_ROOT.substring(0, this.REPOSITORY_ROOT.length()-1);
 					return updateBNFiles(this.FTP_REMOTE_FILE_OR_DIR);
 				//}
 			} else
-				return okStatus;
+				return false;
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.print("Message"+e.getMessage());
@@ -191,17 +187,16 @@ public class BNDownloadManager {
 		BufferedReader br = new BufferedReader(new InputStreamReader(is));
 		String [] keyValue;
 
-		Hashtable currHash = null;
+		Hashtable<String, String> currHash = new Hashtable<String, String>();
 		String line;
 		//loop through the file to parse into 
 		while((line = br.readLine())!= null) {
-
-			//comment line
+			//comment line, if any
 			if(line.startsWith("#"))
 				continue;
 			keyValue = line.split("=");
-
 			//add the current property
+			System.out.println("URL Config: " + keyValue[0] + "-" + keyValue[1]);
 			currHash.put(keyValue[0], keyValue[1]);
 		}
 		progress.setValue(2);
@@ -269,7 +264,9 @@ public class BNDownloadManager {
 
 			FtpBean ftp = new FtpBean();
 			ftp.ftpConnect(FTP_SERVER, "anonymous");
-			ftp.setDirectory(REPOSITORY_ROOT);        	
+			ftp.setDirectory(REPOSITORY_ROOT);
+			//ftp.ftpConnect("occams.dfci.harvard.edu", "anonymous");
+			//ftp.setDirectory("pub/bio/MeV/kegg");
 			FtpListResult list = ftp.getDirectoryContent();
 
 			while(list.next()) {		

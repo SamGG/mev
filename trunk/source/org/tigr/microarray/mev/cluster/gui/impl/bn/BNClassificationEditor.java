@@ -99,10 +99,10 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
         this.classifyGenes = classifyGenes;
         this.numClasses = numClasses;
         this.clust = cl;
-        if(numClasses < 1)
-        	width = 290;
-       	else if (numClasses >= 1 && numClasses <= 2)
-       		width = 360;
+        if(numClasses <= 1)
+        	width = 360;
+       	else if (numClasses > 1 && numClasses <= 2)
+       		width = 390;
        	else if (numClasses > 2 && numClasses <= 3)
        		width = 450;
        	else if (numClasses > 3 && numClasses <= 5)
@@ -153,7 +153,11 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
         TableColumn column = null;
         for (int i = 0; i < kModel.getColumnCount(); i++) {
             column = BNClassTable.getColumnModel().getColumn(i);
-            column.setMinWidth(30);
+            if(i == (kModel.getColumnCount()-1))
+            	//Resize the last column to make it bigger for sample names.
+                column.setMinWidth(190);
+            else
+            	column.setMinWidth(30);
         }
         BNClassTable.setColumnModel(new BNClassTableColumnModel(BNClassTable.getColumnModel()));
         BNClassTable.getModel().addTableModelListener(new ClassSelectionListener());
@@ -165,7 +169,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
         grid1.setConstraints(scroll, constraints);
         tablePanel.add(scroll);
         
-        buildConstraints(constraints, 0, 0, 1, 1, 100, 90);
+        buildConstraints(constraints, 0, 0, 2, 1, 100, 90);
         gridbag.setConstraints(tablePanel, constraints);
         pane.add(tablePanel);
         
@@ -393,24 +397,24 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 	           });	    		thread.start();
             }
         });
-    	cleanUpFile();        constraints.fill = GridBagConstraints.NONE; 
+    	cleanUpFile();        constraints.fill = GridBagConstraints.HORIZONTAL; 
         
-        buildConstraints(constraints, 0, 0, 1, 1, 5, 25);
+        buildConstraints(constraints, 0, 0, 1, 1, 0, 0);
 	    grid2.setConstraints(loadButton, constraints);
     	bottomPanel.add(loadButton);
     	
-    	buildConstraints(constraints, 1, 0, 1, 1, 5, 25);
+    	buildConstraints(constraints, 1, 0, 1, 1, 0, 0);
 	    grid2.setConstraints(saveSettingsButton, constraints);
     	bottomPanel.add(saveSettingsButton);	
-        buildConstraints(constraints, 2, 0, 1, 1, 5, 25);
+        buildConstraints(constraints, 2, 0, 1, 1, 0, 0);
 	    grid2.setConstraints(cancelButton, constraints);
         bottomPanel.add(cancelButton); 
-	        buildConstraints(constraints, 3, 0, 1, 1, 5, 25);
+	        buildConstraints(constraints, 3, 0, 1, 1, 0, 0);
         grid2.setConstraints(nextButton, constraints);
         bottomPanel.add(nextButton);        
         
-        constraints.fill = GridBagConstraints.BOTH;
-        buildConstraints(constraints, 0, 1, 1, 1, 0, 10);
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        buildConstraints(constraints, 0, 1, 1, 1, 0, 0);
         gridbag.setConstraints(bottomPanel, constraints);
         pane.add(bottomPanel);
         
