@@ -670,7 +670,7 @@ public class ResultTree extends JTree implements java.io.Serializable {
                     setIcon(searchIcon);                    
                 } else if(text.indexOf("Data Filter") != -1) {
                         setIcon(dataFilterIcon);
-                } else if(text.equals("Main View")){
+                } else if(text.equals("Original Data")){
                     setIcon(mainViewIcon);
                 } /* CGH Icons */ else if(text.equals("Chromosome Views")){
                     setIcon(chrViewIcon);
@@ -739,7 +739,7 @@ public class ResultTree extends JTree implements java.io.Serializable {
                         setIcon(clusterInfoIcon);
                     } else if(text.equals("MultipleExperimentViewer")){
                         setIcon(openIcon);
-                    } else if(text.equals("Main View")){
+                    } else if(text.equals("Original Data")){
                         setIcon(mainViewIcon);
                     } else if(text.equalsIgnoreCase("Analysis Results")){
                         setIcon(analysisIcon);

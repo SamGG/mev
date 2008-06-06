@@ -1579,7 +1579,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         
         this.viewer = new MultipleArrayCanvas(this.framework, new Insets(0, 10, 0, 20));
         
-        LeafInfo mainViewLeafInfo = new LeafInfo("Main View", viewer);
+        LeafInfo mainViewLeafInfo = new LeafInfo("Original Data", viewer);
         //mainViewerNode = new DefaultMutableTreeNode(mainViewLeafInfo, false);
         mainViewerNode = new DefaultMutableTreeNode(mainViewLeafInfo, true); /* To add new nodes at this level */
         
@@ -2675,8 +2675,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
                 experiment = viewer.getExperiment();
                 clusters = viewer.getClusters();
                 
-                //special case, reset to main view data
-                if(leafInfo.toString().equals("Main View")) {
+                //special case, reset to Original Data data
+                if(leafInfo.toString().equals("Original Data")) {
                     tree.clearDataSelection();
                     leafInfo.setSelectedDataSource(isSelected);
                     data.setUseMainData(true);
@@ -4893,7 +4893,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         //initializeViews() creates Chr & Circle viewers
         //Vector viewerNodes = (Vector)eventObj.getSource();
         Vector viewerNodes = initializeViews();
-        //Delete existing nodes from the main view
+        //Delete existing nodes from the Original Data
         //removeChildren(mainViewNode);
         removeChildren(mainViewerNode);
         /* Raktim Removed for Sate Saving 4/24 */
@@ -5106,7 +5106,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
                 if(source instanceof JCheckBoxMenuItem)
                     onSetData(((JCheckBoxMenuItem)event.getSource()).isSelected());
                 else
-                    onSetData(true);  //reset main view
+                    onSetData(true);  //reset Original Data view
             } else if (command.equals(ActionManager.USE_PERCENTAGE_CUTOFFS_CMD)) {
                 applyPercentageCutoffs();
                 //add mas5 present call noise filter
@@ -5424,7 +5424,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         				popup.add(createDeleteMenuItem());
         			}
         		}
-        	} else if( ((LeafInfo)userObject).toString().equals("Main View") && data.getFeaturesCount() != 0 ) {
+        	} else if( ((LeafInfo)userObject).toString().equals("Original Data") && data.getFeaturesCount() != 0 ) {
         		popup = new JPopupMenu();
         		JMenuItem item = new JMenuItem(" Set as Data Source ");
         		item.setActionCommand(ActionManager.SET_DATA_SOURCE_COMMAND);
