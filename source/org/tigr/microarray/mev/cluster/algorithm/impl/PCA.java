@@ -25,21 +25,23 @@ import org.tigr.util.Maths;
 import org.tigr.util.QSort;
 
 public class PCA extends AbstractAlgorithm {
-    
     private boolean stop = false;
     private int numNeighbors;    
     private int numGenes, numExps;  
     private float factor;   
-    private int mode, center;
-    
+    private int mode, center, shortcut;
+    private boolean useShortcut;
     public AlgorithmData execute(AlgorithmData data) throws AlgorithmException {
 	FloatMatrix expMatrix = data.getMatrix("experiment");
 	AlgorithmParameters map = data.getParams();
-	
 	int function = map.getInt("distance-function", COVARIANCE);
 	factor = map.getFloat("distance-factor", 1.0f);
 	boolean absolute = map.getBoolean("distance-absolute", false);
 	mode = map.getInt("pca-mode", 0);
+	shortcut = map.getInt("use-shortcut");
+	useShortcut=false;
+	if (shortcut==0)
+		useShortcut=true;
 	numNeighbors = map.getInt("numNeighbors", 10);  
     
 	//Raktim - Indicate centering mode as mean or median or none
@@ -50,7 +52,6 @@ public class PCA extends AbstractAlgorithm {
 	
 	final int numberOfGenes = expMatrix.getRowDimension();
 	final int numberOfSamples = expMatrix.getColumnDimension();
-	
         /*
 	FloatMatrix An = new FloatMatrix(numberOfGenes, numberOfSamples);
 	for (int row=0; row<numberOfGenes; row++) {
@@ -63,7 +64,6 @@ public class PCA extends AbstractAlgorithm {
 	    }
 	}
         */
-    
 	FloatMatrix An = imputeKNearestMatrix(expMatrix, numNeighbors);
 	
 	//jcb moved this event report after imputation
@@ -76,15 +76,26 @@ public class PCA extends AbstractAlgorithm {
 	FloatMatrix matrix = null;
 	if (mode==0) {
 	    matrix = An;
-	} else {
+	}
+	if (mode==1||useShortcut){
 	    matrix = new FloatMatrix(numberOfSamples, numberOfSamples);
 	    for (int column=0; column<numberOfSamples; column++) {
 	    	for (int row=0; row<numberOfSamples; row++) {
-		    //matrix.set(row, column, ExperimentUtil.distance(expMatrix, row, column, function, factor, absolute));
                     matrix.set(row, column, ExperimentUtil.distance(An, row, column, function, factor, absolute));
 	    	}
 	    }
 	}
+	if (mode==3&&(!useShortcut)){
+		matrix = new FloatMatrix(numberOfGenes, numberOfGenes);
+		FloatMatrix AnTranspose = An.transpose();
+		
+		for (int column=0; column<numberOfGenes; column++) {
+		    for (int row=0; row<numberOfGenes; row++) {
+		    	matrix.set(row, column, ExperimentUtil.distance(AnTranspose, row, column, function, factor, absolute));
+	        }
+		}
+	}
+	
 	
 	float[][] A = matrix.getArrayCopy();
 	int m = matrix.getRowDimension();
@@ -524,15 +535,20 @@ public class PCA extends AbstractAlgorithm {
 		result.addMatrix("U", An.transpose().times(T));
 		break;
 	    case 3:
+	    	if (!useShortcut){
+			    result.addMatrix("U", An.transpose().times(T));
+			    break;
+	    	}
 		FloatMatrix Q = T.copy();
 		FloatMatrix D = S.copy();
 		final int dim = D.getRowDimension();
 		for (int i=0;i<dim;i++) {
 		    D.set(i,i,1.0f/(float)Math.sqrt(D.get(i,i)));
 		}
-		T = An.times(Q.times(D));
+			T = An.times(Q.times(D)).transpose();
 		result.addMatrix("U", An.transpose().times(T));
 		break;
+		
 	    default:;
 	}
 	
@@ -859,7 +875,7 @@ public class PCA extends AbstractAlgorithm {
     	if(center == 3) // No Centering
     		return expMatrix;
     	else {
-    		if(mode == 3){ // Cluster Samples, Center Genes
+    		if(mode == 3 && (!useShortcut)){ // Cluster Samples, Center Genes
     			int rowDim = expMatrix.getRowDimension();
         		int colDim = expMatrix.getColumnDimension();
         		
@@ -873,7 +889,7 @@ public class PCA extends AbstractAlgorithm {
     			}
     		} 
     		
-    		if (mode == 1){ // Cluster Genes, Center Samples
+    		if (mode == 1 ||useShortcut){ // Cluster Genes, Center Samples
     			expMatrix = expMatrix.transpose();
     			int rowDim = expMatrix.getRowDimension();
         		int colDim = expMatrix.getColumnDimension();

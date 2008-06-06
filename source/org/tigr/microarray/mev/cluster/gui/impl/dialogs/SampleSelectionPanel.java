@@ -12,6 +12,7 @@ package org.tigr.microarray.mev.cluster.gui.impl.dialogs;
 
 import java.awt.Color;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
 
 
 /**
@@ -64,6 +65,22 @@ public class SampleSelectionPanel extends javax.swing.JPanel {
     public void setGeneButtonActionListener(ActionListener listener){
         clusterGenesButton.addActionListener(listener);
     }
+    public void setSampleButtonActionListener(ActionListener listener){
+        clusterSamplesButton.addActionListener(listener);
+    }
+    public void setGeneButtonItemListener(ItemListener listener){
+        clusterGenesButton.addItemListener(listener);
+    }    
+    public void setSampleButtonItemListener(ItemListener listener){
+        clusterSamplesButton.addItemListener(listener);
+    }
+    public javax.swing.JRadioButton getGeneButton(){
+    	return clusterGenesButton;
+    }
+    public javax.swing.JRadioButton getSampleButton(){
+    	return clusterSamplesButton;
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

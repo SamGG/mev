@@ -41,7 +41,7 @@ public class PCAGUI implements IClusterGUI, IScriptGUI {
     private static final String ADD_NEW_3D_CMD = "add-new-3d-cmd";
     private static final String ADD_NEW_2D_CMD = "add-new-2d-cmd";
     
-    private int mode, numNeibs, center;
+    private int mode, numNeibs, center, shortcut;
     private FloatMatrix T;
     private FloatMatrix V;
     private FloatMatrix S;
@@ -77,6 +77,12 @@ public class PCAGUI implements IClusterGUI, IScriptGUI {
             else 
             	this.center = 2;
             
+            if (dialog.isShortcutUsed()){
+            	this.shortcut = 0;
+            }else{
+            	this.shortcut = 1;
+            }
+            
             numNeibs = dialog.getNumNeighbors();
             
             algorithm = framework.getAlgorithmFactory().getAlgorithm("PCA");
@@ -103,6 +109,7 @@ public class PCAGUI implements IClusterGUI, IScriptGUI {
             data.addParam("pca-mode", String.valueOf(mode));
             data.addParam("centering", String.valueOf(center));
             data.addParam("numNeighbors", String.valueOf(numNeibs));
+            data.addParam("use-shortcut", String.valueOf(shortcut));
             AlgorithmData result = null;
             DefaultMutableTreeNode node = null;
             long start = System.currentTimeMillis();
@@ -169,6 +176,7 @@ public class PCAGUI implements IClusterGUI, IScriptGUI {
         data.addParam("distance-function", String.valueOf(function));
         data.addParam("pca-mode", String.valueOf(mode));
         data.addParam("numNeighbors", String.valueOf(numNeibs));
+        data.addParam("use-shortcut", String.valueOf(shortcut));
         //script control parameters
         
         // alg name
@@ -193,6 +201,7 @@ public class PCAGUI implements IClusterGUI, IScriptGUI {
         try {
             
             mode = algData.getParams().getInt("pca-mode");
+            shortcut = algData.getParams().getInt("use-shortcut");
             numNeibs = algData.getParams().getInt("numNeighbors");
             int function = algData.getParams().getInt("distance-function");
             
