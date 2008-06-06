@@ -1435,7 +1435,7 @@ public class BNInitDialog extends AlgorithmDialog {
 						//JOptionPane pane = new JOptionPane(sp); JDialog dlg = pane.createDialog(new JFrame(), "Dialog"); dlg.show();
 					} else if(!sp.equals("Human") || !sp.equals("Mouse") || !sp.equals("Rat")) {
 						if (JOptionPane.showConfirmDialog(new JFrame(),
-								"Do you want to continue ?", "Species not Supported for KEGG",
+								"Do you want to continue ?", "Species " + sp + " not Supported for KEGG",
 								JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
 							return;
 						} 

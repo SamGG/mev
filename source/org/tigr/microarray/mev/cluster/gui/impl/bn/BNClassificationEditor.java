@@ -19,7 +19,8 @@ import javax.swing.JButton;import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;import javax.swing.JFrame;import javax.swing.JMenu;import javax.swing.JMenuBar;import javax.swing.JMenuItem;import javax.swing.JOptionPane;import javax.swing.JPanel;import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;import javax.swing.JTable;import javax.swing.JTextArea;import javax.swing.JTextField;
-import javax.swing.border.EtchedBorder;import javax.swing.event.TableModelEvent;import javax.swing.event.TableModelListener;import javax.swing.table.AbstractTableModel;import javax.swing.table.TableColumn;import javax.swing.table.TableColumnModel;import org.tigr.microarray.mev.TMEV;import org.tigr.microarray.mev.cgh.CGHGuiObj.CharmDialogs.ExampleFileFilter;
+import javax.swing.border.EtchedBorder;import javax.swing.event.TableModelEvent;import javax.swing.event.TableModelListener;import javax.swing.table.AbstractTableModel;import javax.swing.table.TableColumn;import javax.swing.table.TableColumnModel;import org.tigr.microarray.mev.MultipleArrayViewer;
+import org.tigr.microarray.mev.TMEV;import org.tigr.microarray.mev.cgh.CGHGuiObj.CharmDialogs.ExampleFileFilter;
 import org.tigr.microarray.mev.cluster.algorithm.impl.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.IData;import org.tigr.microarray.mev.cluster.gui.IFramework;import org.tigr.microarray.mev.cluster.gui.impl.dam.DAMClassificationEditor;
 import org.tigr.util.StringSplitter;import org.tigr.microarray.mev.cluster.gui.impl.bn.WekaBNGui;
@@ -552,7 +553,8 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 					System.out.println("Boot threshold: " + confThres);
 					System.out.println("Boot file: " + bootNetFile);
 					if(finalThreshBox.isSelected()) {
-						resultFrame.dispose();
+						//resultFrame.dispose();
+						resultFrame.hide();
 						// Do stuff to store the final thresh and the file name
 						finalBootFile = bootNetFile;
 						networkFiles.add(finalBootFile);
@@ -560,8 +562,19 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 					//LMBNViewer.onWebstartCystoscape(file);
 					
 					//Try Cytoscape Broadcast
-					broadcastNetworkGaggle(interactions);
-					
+					//if(((MultipleArrayViewer) framework).isGaggleConnected()) {
+					try {
+						broadcastNetworkGaggle(interactions);
+					} catch (Exception e) {
+						JOptionPane.showMessageDialog(null, e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+		    		 	e.printStackTrace();
+		    		 	resultFrame.show();
+					} finally {
+						resultFrame.dispose();
+					}
+					//} else {
+						//resultFrame.show();
+					//}
     	     }catch(Exception ex){
     		 	JOptionPane.showMessageDialog(null, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
     		 	ex.printStackTrace();

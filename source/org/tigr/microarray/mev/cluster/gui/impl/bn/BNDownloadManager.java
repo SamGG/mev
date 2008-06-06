@@ -94,18 +94,17 @@ public class BNDownloadManager {
 			//if we have repository information and repository content
 			//information, we are ready to construct the dialog and get selected files
 
-			if(okStatus) {          
-
+			if(okStatus) {
 				//construct dialog given properties for each dialog tab
 				//BNFileUpdateDialog dialog = new BNFileUpdateDialog(this.frame, tabPropertyHashes);
 				//if ok
 				//if(dialog.showModal() == JOptionPane.OK_OPTION) {
 
 					//get the selected server, repository root, and implies zip name
-					this.FTP_SERVER = (String)propertyHashes.get("kegg_server");
+					this.FTP_SERVER = ((String)propertyHashes.get("kegg_server")).trim();
 					if(this.FTP_SERVER.endsWith("/"))
 						this.FTP_SERVER = this.FTP_SERVER.substring(0, this.FTP_SERVER.length()-1);
-					this.REPOSITORY_ROOT = (String)propertyHashes.get("kegg_dir");
+					this.REPOSITORY_ROOT = ((String)propertyHashes.get("kegg_dir")).trim();
 					if(this.REPOSITORY_ROOT.endsWith("/"))
 						this.REPOSITORY_ROOT = this.REPOSITORY_ROOT.substring(0, this.REPOSITORY_ROOT.length()-1);
 					return updateBNFiles(this.FTP_REMOTE_FILE_OR_DIR);
