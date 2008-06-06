@@ -121,7 +121,8 @@ public class HelpWindow extends JDialog {
         }
         else
             this.setTitle(this.dialogName+": Parameter Information");
-        
+        if (dialogName=="Java Out of Memory Error")
+        	this.setTitle(this.dialogName+": Information");
         JPanel iconPanel = new JPanel(new GridBagLayout());
         JLabel iconLabel = new JLabel(GUIFactory.getIcon("dialog_banner2.gif"));
         FillPanel fill = new FillPanel();
@@ -374,6 +375,8 @@ public class HelpWindow extends JDialog {
         	if(key.equals("NonpaR Fisher Exact Parameters"))
         		return "nonpar_fisher_exact_parameters.html";
         	
+        	if(key.equals("Java Out of Memory Error"))
+        		return "hcl_out_of_memory_help.html";
 		else {
 			return null;
 		}

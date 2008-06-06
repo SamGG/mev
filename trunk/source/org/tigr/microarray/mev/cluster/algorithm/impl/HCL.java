@@ -68,7 +68,6 @@ public class HCL extends AbstractAlgorithm {
 	double MaxCorrelation = 0;
 	
 	float[] Height = new float[two_n];
-	float[][] OptimalSum = new float[n][n];
 	int[] Parent = new int[two_n];
 	int[] Child1 = new int[two_n];
 	int[] Child2 = new int[two_n];
@@ -91,8 +90,10 @@ public class HCL extends AbstractAlgorithm {
 	    NumberOfChildren[i]=1;
 	}
 	//======== Init =========
+	stop = ExperimentUtil.javaHCLMemoryAssess(n, optimizeOrdering);
 	float[][] SimilarityMatrix = new float[n][];
-	float[][] squareMatrix = new float[n][n];
+	if (optimizeOrdering)
+		SimilarityMatrix = new float[n][n];
 	float[] Min = new float[n];
 	int[] MinIndex = new int[n];
 	final int UNITS = 200;
@@ -131,7 +132,8 @@ public class HCL extends AbstractAlgorithm {
 		fireValueChanged(event);
 		OldCurrentProgress=CurrentProgress;
 	    }
-	    SimilarityMatrix[i] = new float[n];
+	    if (!optimizeOrdering)
+	    	SimilarityMatrix[i] = new float[i];
 
 	    Min[i] = Float.POSITIVE_INFINITY;
 	    for (int j=0; j<i; ++j) {
@@ -144,14 +146,17 @@ public class HCL extends AbstractAlgorithm {
 		} else {
 		    SimilarityMatrix[i][j] = ExperimentUtil.distance(expMatrix, i, j, function, factor, absolute); //ExpMatrix.ExperimentDistance(i,j);
 		}
-		squareMatrix[i][j] = SimilarityMatrix[i][j]; //square matrix created from  
-		squareMatrix[j][i] = SimilarityMatrix[i][j]; //triangular Similarity Matrix
+			if (optimizeOrdering){
+				SimilarityMatrix[j][i] = SimilarityMatrix[i][j]; //square matrix created from  
+				//squareMatrix[j][i] = SimilarityMatrix[i][j]; //triangular Similarity Matrix
+			}
 		if (SimilarityMatrix[i][j] < Min[i]) {
 		    Min[i] = SimilarityMatrix[i][j];
 		    MinIndex[i] = j;
 		}
 	    }
 	}
+	
 	
 	//========================================
 	
@@ -321,6 +326,7 @@ public class HCL extends AbstractAlgorithm {
 	    }
 		MakeLeavesUnderMatrix(2*n-2, Child1, Child2, n, LeavesUnder, NumberOfChildren);
 		
+		float[][] OptimalSum = new float[n][n];
 		float match;
 		float bestMatch = Float.POSITIVE_INFINITY;
 		int bestU=0;
@@ -340,7 +346,7 @@ public class HCL extends AbstractAlgorithm {
 			Child1[reset]=reset;
 			Child2[reset]=reset;
 		}
-		MakeOptimalSumMatrix(Child1, Child2, NumberOfChildren, LeavesUnder, OptimalSum, squareMatrix, n, (2*n-2), optevent);
+		MakeOptimalSumMatrix(Child1, Child2, NumberOfChildren, LeavesUnder, OptimalSum, SimilarityMatrix, n, (2*n-2), optevent);
 	   	for (int reset=0; reset<n; reset++){ //Child arrays are reset to their original values for leaves
 			Child1[reset]=-1;
 			Child2[reset]=-1;
@@ -432,7 +438,7 @@ public class HCL extends AbstractAlgorithm {
     		LeavesUnder[node][NumberOfChildren[Child1[node]]] = Child2[node];   		
     	}
     }
-	/** MakeOptimalSumMatrix uses the optimal leaf ordering algorithm to generate a FloatMatrix of n x n values.  
+	/** MakeOptimalSumMatrix uses the optimal leaf ordering algorithm to generate a float matrix of n x n values.  
 	 * OptimalSum[i][j] represents the best possible sum of similarities between all adjacent leaves located 
 	 * between i and j in the tree when i and j are set to be their maximum distance apart.
 	 * 
@@ -600,7 +606,7 @@ public class HCL extends AbstractAlgorithm {
 	    	}	 
 		}
     }
-    	/** OptimizeLeafOrder uses the complete FloatMatrix OptimalSum[][] to determine optimal ordering.
+    	/** OptimizeLeafOrder uses the complete float matrix OptimalSum[][] to determine optimal ordering.
 		 * Given two leaves on opposite ends of a tree, OptimizeLeafOrder can determine the optimal intersecting leaves.
 		 * This method checks and adjusts the original Child arrays to make sure the outside leaves(u and w) and 
 		 * intersecting leaves (m and k) belong to opposite grand-child nodes of their common node.
