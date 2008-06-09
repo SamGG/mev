@@ -12,13 +12,12 @@ All rights reserved.
 
 package org.tigr.microarray.mev.cluster.algorithm.impl;
 
+
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JDialog;
 
-import org.tigr.microarray.mev.ExperimentLabelEditor;
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 import org.tigr.util.FloatMatrix;
 
 public class ExperimentUtil {
@@ -782,17 +781,19 @@ public class ExperimentUtil {
     /**
      * Determines available memory in Java
      */
-    public static boolean javaHCLMemoryAssess(int n, boolean ordered){
+    public static int javaHCLMemoryAssess(int n, boolean ordered){
         Runtime runtime = Runtime.getRuntime();
         long maxMemory = runtime.maxMemory();
         long allocatedMemory = runtime.totalMemory();
         long freeMemory = runtime.freeMemory();
         long totalFreeMemory = freeMemory + (maxMemory - allocatedMemory);
         int maxGenes = (int)(Math.sqrt((totalFreeMemory/1024)*256)*Math.sqrt(2));
-        if (ordered)
+        String opt = " ";
+        if (ordered){
         	maxGenes = (int)(Math.sqrt((totalFreeMemory/1024)*256)/Math.sqrt(2));
+        	opt = " optimized ";
+        }
         Object[] optionInfo = { "INFO", "OK" };
-    	JFrame hmmm = new JFrame();
         if (maxGenes<n){
 	        int option = JOptionPane.showOptionDialog(null, 
 	        	"Java does not currently have enough memory to run this analysis." + "\n" + 
@@ -800,7 +801,7 @@ public class ExperimentUtil {
 	        	"Allocated memory: " + allocatedMemory / 1024 + " kb" + "\n" +
 	        	"Max memory: " + maxMemory / 1024 + " kb" + "\n" +
 	        	"Total free memory: " + totalFreeMemory / 1024 + " kb" + "\n" +
-	        	"Your system can handle up to " + maxGenes + " genes for Hierarchical Clustering." + "\n" +
+	        	"Your system can handle up to " + maxGenes + " genes for" + opt + "Hierarchical Clustering." + "\n" +
 	        	"You are attempting to run " + n + " genes." + "\n"+
 	        	"----------------------------------------------------------------------------------" + "\n" +
 	        	"Click 'INFO' for instructions on increasing your Java memory."
@@ -808,29 +809,11 @@ public class ExperimentUtil {
 	        	, "Not Enough Java Memory Error", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
 		    	null, optionInfo, optionInfo[0]);
 	        if (option==0){
-	            HelpWindow hw = new HelpWindow(hmmm, "Java Out of Memory Error");
-	            if(hw.getWindowContent()){
-	                hw.setSize(550,600);
-	                hw.setLocation();
-	                hw.show();
-	            }
-	            else {
-	                hw.setVisible(false);
-	                hw.dispose();
-	            }
+	            return 2;
 	        }
-	        return true;
+	        return 1;
         }
-        System.out.println("free memory: " + freeMemory / 1024);
-        System.out.println("allocated memory: " + allocatedMemory / 1024);
-        System.out.println("max memory: " + maxMemory /1024);
-        System.out.println("total free memory: " + (totalFreeMemory) / 1024);
-        System.out.println("Your System can handle up to " + maxGenes + " genes, unoptimized.");
-        System.out.println("You want to try " + n + " genes.");
-        
-        maxGenes = (int)(Math.sqrt((totalFreeMemory/1024)*256)/Math.sqrt(2));
-        System.out.println("Your System can handle up to " + maxGenes + " genes, optimized.");
-        return false;
+        return 0;
     }
     
     
