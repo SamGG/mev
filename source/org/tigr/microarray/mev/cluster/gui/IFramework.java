@@ -196,6 +196,7 @@ public interface IFramework {
     public void broadcastGeneCluster(Experiment experiment, int[] cluster, int[] expcluster);
     public void broadcastNamelist(org.tigr.microarray.mev.cluster.clusterUtil.Cluster[] c);
     public void broadcastNamelist(Experiment experiment, int[] cluster);
-//    public void broadcastNetwork(int[][] clusters, float[][] weights);
 	public void broadcastNetwork(Vector<int[]> interactions, Vector<String> types, Vector<Boolean> directionals);
+	public boolean isGaggleConnected();
+	public boolean requestGaggleConnect();
 }

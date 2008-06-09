@@ -1873,6 +1873,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         TMEV.setDataType(TMEV.DATA_TYPE_TWO_DYE);  //default type
         DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
         fireOnCloseEvent((DefaultMutableTreeNode)model.getRoot());
+        disconnectFromGaggle();
         mainframe.dispose();
         Manager.removeComponent(this);
     }
@@ -4982,7 +4983,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
      */
     
     private class EventListener extends MouseAdapter implements ActionListener, TreeSelectionListener, KeyListener, WindowListener, java.io.Serializable, IDataRegionSelectionListener, ICGHListener  {
-        
+
         public void actionPerformed(ActionEvent event) {
             String command = event.getActionCommand();
             if (command.equals(ActionManager.CLOSE_COMMAND)) {
@@ -5493,7 +5494,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         public void windowClosing(WindowEvent e) {
             onClose();
         }
-        public void windowClosed(WindowEvent e) {}
+        public void windowClosed(WindowEvent e) { }
         public void windowIconified(WindowEvent e) {}
         public void windowDeiconified(WindowEvent e) {}
         public void windowActivated(WindowEvent e) {}
@@ -5877,6 +5878,17 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     	nt.setName("MeV Network (" + nt.getNodes().length + ")");
     	MultipleArrayViewer.this.doBroadcastNetwork(nt);
     }
+    public boolean isGaggleConnected() {
+		return isConnected;
+    }
+    
+    /**
+     * Attempts to connect to the Gaggle network. Returns true if successful.
+     * @return 
+     */
+    public boolean requestGaggleConnect() {
+    	return MultipleArrayViewer.this.connectToGaggle();
+    }
 }
 
     /**
@@ -5942,9 +5954,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 			JOptionPane.showMessageDialog(mainframe, "Gaggle unavailable. Please use Utilities -> Connect to Gaggle.");
 		}
 	}
-    public boolean isGaggleConnected() {
-		return isConnected;
-    }
+
     
     private void gaggleConnectWarning() {
 		String title = "Not connected to Gaggle";
@@ -5956,7 +5966,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
      * @author eleanora
      * @return
      */
-    public boolean connectToGaggle() {
+    private boolean connectToGaggle() {
     	TMEV.GAGGLE_CONNECT_ON_STARTUP = true;
     	if(gaggleConnector == null) {
     		gaggleInit();
@@ -5964,13 +5974,13 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         try {
             gaggleConnector.connectToGaggle();
         } catch (Exception ex0) {
-            System.err.println("MAV.connectToGaggle(): Failed to connect to gaggle: " + ex0.getMessage());
+            //System.err.println("MAV.connectToGaggle(): Failed to connect to gaggle: " + ex0.getMessage());
         }
         gaggleBoss = gaggleConnector.getBoss();
         if(gaggleBoss != null) {
 	        return true;
         } else {
-        	System.out.println("MAV.connectToGaggle(): Couldn't connect to Gaggle");
+        	//System.out.println("MAV.connectToGaggle(): Couldn't connect to Gaggle");
 			//JOptionPane.showMessageDialog(mainframe, "Gaggle unavailable.");
         	return false;
         }
@@ -6260,4 +6270,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 		// TODO Auto-generated method stub
 		
 	}
+
+
 }
