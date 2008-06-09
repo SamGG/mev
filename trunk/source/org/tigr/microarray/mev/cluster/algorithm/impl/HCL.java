@@ -18,8 +18,10 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 import org.tigr.util.FloatMatrix;
 import java.util.Arrays;
+import javax.swing.JFrame;
 
 public class HCL extends AbstractAlgorithm {
     
@@ -90,9 +92,26 @@ public class HCL extends AbstractAlgorithm {
 	    NumberOfChildren[i]=1;
 	}
 	//======== Init =========
-	stop = ExperimentUtil.javaHCLMemoryAssess(n, optimizeOrdering);
+	int memoryAssess =  ExperimentUtil.javaHCLMemoryAssess(n, optimizeOrdering);
+	if (memoryAssess == 0)
+		stop = false;
+	if (memoryAssess == 1)
+		stop = true;
+	if (memoryAssess == 2){
+		stop = true;
+		HelpWindow hw = new HelpWindow(new JFrame(), "Java Out of Memory Error");
+    	if(hw.getWindowContent()){
+    		hw.setSize(550,600);
+        	hw.setLocation();
+        	hw.show();
+    	}
+    	else {
+    		hw.setVisible(false);
+        	hw.dispose();
+    	}
+	}
 	float[][] SimilarityMatrix = new float[n][];
-	if (optimizeOrdering)
+	if (optimizeOrdering&&!stop)
 		SimilarityMatrix = new float[n][n];
 	float[] Min = new float[n];
 	int[] MinIndex = new int[n];
