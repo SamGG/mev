@@ -5711,8 +5711,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
          * @author eleanora
          */
         public void broadcastGeneClusters(Cluster[] clusters) {
-        	if(!isGaggleConnected())
+        	if(!isGaggleConnected()) {
+        		gaggleConnectWarning();
         		return;
+        	}
         	System.out.println("broadcasting matrix size " + clusters.length);
         	DataMatrix m = new DataMatrix();
         	ClusterWorker cw = new ClusterWorker(MultipleArrayViewer.this.geneClusterRepository); 
@@ -5752,8 +5754,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
          * 
          */
 		public void broadcastGeneCluster(Experiment experiment, int[] rows, int[] columns) {
-        	if(!isGaggleConnected())
+        	if(!isGaggleConnected()) {
+        		gaggleConnectWarning();
         		return;
+        	}
 			if(rows == null) 
 				rows = experiment.getRows();
 			if(columns == null) {
@@ -5796,8 +5800,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	     * @author eleanora
 	     */
         public void broadcastNamelist(Cluster[] clusters) {
-        	if(!isGaggleConnected())
+        	if(!isGaggleConnected()) {
+        		gaggleConnectWarning();
         		return;
+        	}
         	Namelist nl = new Namelist();
         	ClusterWorker cw = new ClusterWorker(MultipleArrayViewer.this.geneClusterRepository);
         	int[] indices = cw.getUniqueIndices(clusters);
@@ -5813,8 +5819,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         
         //TODO remove Experiment parameter? 
         public void broadcastNamelist(Experiment e, int[] rows) {
-        	if(!isGaggleConnected())
+        	if(!isGaggleConnected()) {
+        		gaggleConnectWarning();
         		return;
+        	}
         	if(e == null)
         		System.out.println("Experiment is null");
         	if(rows == null)
@@ -5837,8 +5845,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
          * @author eleanora
          */
     public void broadcastNetwork(Vector<int[]> interactions, Vector<String> types, Vector<Boolean> directionals) {
-    	if(!isGaggleConnected())
+    	if(!isGaggleConnected()) {
+    		gaggleConnectWarning();
     		return;
+    	}
 		Network nt = new Network();
     	nt.setSpecies(getCurrentSpecies());
     	Hashtable<String, String[]> nodeAnnotations = new Hashtable<String, String[]>();
@@ -5932,13 +5942,14 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 			JOptionPane.showMessageDialog(mainframe, "Gaggle unavailable. Please use Utilities -> Connect to Gaggle.");
 		}
 	}
-    private boolean isGaggleConnected() {
-    	if(isConnected)
-    		return true;
+    public boolean isGaggleConnected() {
+		return isConnected;
+    }
+    
+    private void gaggleConnectWarning() {
 		String title = "Not connected to Gaggle";
 		String msg = "Please connect to Gaggle using the Utilities -> Gaggle menu.";
 		JOptionPane.showMessageDialog(this, msg, title, JOptionPane.OK_OPTION);
-		return false;
     }
     
     /**
