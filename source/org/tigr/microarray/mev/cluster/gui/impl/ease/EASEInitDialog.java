@@ -123,7 +123,7 @@ public class EASEInitDialog extends AlgorithmDialog {
         	this.useLoadedAnnotationFile = true;
             defaultFileBaseLocation = defaultFileLocation;
         }
-        if(! new File(defaultFileBaseLocation).canRead()) {
+        if(defaultFileBaseLocation == null || ! new File(defaultFileBaseLocation).canRead()) {
         	defaultFileBaseLocation = "./data/ease";
         }
         
