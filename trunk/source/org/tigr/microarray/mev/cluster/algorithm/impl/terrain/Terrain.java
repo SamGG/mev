@@ -141,7 +141,7 @@ public class Terrain extends AbstractAlgorithm implements InterfaceToObjects {
 
         event.setId(AlgorithmEvent.SET_UNITS);
         event.setIntValue(100);
-        event.setDescription("Layouting...");
+        event.setDescription("Building Layout...");
         fireValueChanged(event);
         event.setId(AlgorithmEvent.PROGRESS_VALUE);
 
@@ -154,7 +154,7 @@ public class Terrain extends AbstractAlgorithm implements InterfaceToObjects {
             fdgl.UpdateSource();    //TODO: may be change interface for QuadTree to fdgl??
 
             event.setIntValue((int)fdgl.getPercentage());
-            event.setDescription("Layouting...");
+            event.setDescription("Building Layout...");
             fireValueChanged(event);
         }
         float max = normalize(this.coords);
