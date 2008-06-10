@@ -5999,7 +5999,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
      * @author eleanora
      */
     public void disconnectFromGaggle() {
-    	gaggleConnector.disconnectFromGaggle(true);
+    	if(isConnected)
+    		gaggleConnector.disconnectFromGaggle(true);
     }
     /**
      * @author eleanora
