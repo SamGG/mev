@@ -25,7 +25,12 @@ import org.tigr.microarray.mev.cluster.algorithm.impl.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.IData;import org.tigr.microarray.mev.cluster.gui.IFramework;import org.tigr.microarray.mev.cluster.gui.impl.dam.DAMClassificationEditor;
 import org.tigr.util.StringSplitter;import org.tigr.microarray.mev.cluster.gui.impl.bn.WekaBNGui;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
-import weka.classifiers.Evaluation;import weka.classifiers.bayes.BayesNet;import weka.gui.GUIChooser;import weka.gui.explorer.Explorer;
+import weka.classifiers.Evaluation;import weka.classifiers.bayes.BayesNet;
+import weka.classifiers.bayes.net.estimate.BayesNetEstimator;
+import weka.classifiers.bayes.net.estimate.SimpleEstimator;
+import weka.classifiers.bayes.net.estimate.BMAEstimator;
+import weka.classifiers.bayes.net.search.*;import weka.estimators.Estimator;
+import weka.gui.GUIChooser;import weka.gui.explorer.Explorer;
 import weka.gui.explorer.PreprocessPanel;
 import java.io.IOException;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.RunWekaProgressPanel;
@@ -80,6 +85,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
     File labelFile = null;
     Cluster clust;
     HashMap<String, String> probeIndexAssocHash;
+    Vector<String> interactionsfinal = null;
     
     /** Creates a new instance of BNClassificationEditor */    public BNClassificationEditor(final IFramework framework, boolean classifyGenes, final Cluster cl,String num,int numClasses,String parents,String algorithm,String scoreType,boolean uAr, boolean bootstrap, int iteration, float threshold, int kfolds, String path, HashMap<String, String> probeIndexAssocHash) {
         super(framework.getFrame(), true);
@@ -291,7 +297,35 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
                     	    	String arguments = Useful.getWekaArgs(path, outarff, sAlgorithm, useArc, numParents, sType, kfold);
                     	    	System.out.println("calling weka with arguments: \n"+arguments);
                     	    	final String[] argsWeka = arguments.split(" ");
-                                evalStr = Evaluation.evaluateModel(new BayesNet(), argsWeka);
+                    	    	BayesNet bnNetOrg = new BayesNet();
+                                evalStr = Evaluation.evaluateModel(bnNetOrg, argsWeka);
+                                Estimator myEstm [][] = bnNetOrg.getDistributions();
+                                System.out.println("Length: " + myEstm.length);
+                                //System.out.println(bnNetOrg.toXMLBIF03());
+                                
+                                //TODO ALL TESTING FROM HERE ON 
+                                //Test for BaynetNet & Estimator Class
+                                /*
+                                BayesNet bnNet = new BayesNet();
+                                //Set Search Algorithim
+                                SearchAlgorithm srchAlgo = new SearchAlgorithm();
+                                String ars = "weka.classifiers.bayes.net.search.local."+sAlgorithm;
+                                if(useArc){
+                                	ars +=" -R ";
+                                }
+                                ars +=" -P "+numParents+" -S "+sType;
+                                srchAlgo.setOptions(ars.split(" "));
+                                bnNet.setSearchAlgorithm(srchAlgo);
+                                //Set Estimator
+                                BayesNetEstimator bnEst = new BayesNetEstimator();
+                                String estimatorArgs = "weka.classifiers.bayes.net.estimate.BMAEstimator A 0.5";
+                                bnEst.setOptions(estimatorArgs.split(" "));
+                                bnNet.setEstimator(bnEst);
+                                //Run CLassifer
+                                String modelArgs = "-t " + path + outarff + " -c 1 -x " + kfold;
+                                Evaluation.evaluateModel(bnNet, modelArgs.split(" "));
+                                System.out.println(bnNet.toXMLBIF03());
+                                */
                     	    } else {
                     	    	//WEKA on observed Data
                     	    	String arguments = Useful.getWekaArgs(path, outarff, sAlgorithm, useArc, numParents, sType, kfold);
@@ -305,6 +339,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
                                 evalStrs = new String[numIterations];
                                 
 	                			for(int i=0; i < numIterations; i++){
+	                				//Previously created .arff files for bootstrap
 	                				outarff = outarffbase + i + outarffext;
 	                				arguments = Useful.getWekaArgs(path, outarff, sAlgorithm, useArc, numParents, sType, kfold);
 	                				System.out.println("calling weka On Bootstrap Data, arguments: \n"+arguments);
@@ -523,7 +558,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 	    	updateNetwork.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
     		    try {
-    		    	Vector<String> interactions = new Vector<String>(); // For lookup during gaggle broadcast
+    		    	interactionsfinal = new Vector<String>(); // For lookup during gaggle broadcast
     		    	// Remove edges below threshold
     		    	float confThres = Float.parseFloat(confThreshField.getText().trim());
 					String bootNetFile = basePath+BNConstants.SEP+BNConstants.RESULT_DIR+BNConstants.SEP+
@@ -540,7 +575,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 							//System.out.println(edge + " : " + count.toString() + " presence : " + presence + " thresh : " + confThres);
 							if(presence >= confThres){
 								pw.println(edge);
-								interactions.add(edge);
+								interactionsfinal.add(edge);
 							}
 						}
 						fos.close();
@@ -558,22 +593,28 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 						// Do stuff to store the final thresh and the file name
 						finalBootFile = bootNetFile;
 						networkFiles.add(finalBootFile);
+						
+						//TODO - Is it possible to just take a network and 
+						//Create weka instance to evaluate probabilities
+						//Create Weka Instance Object
+						//Evalute model
+						//Extract probabilities from Estimator class
 					}
 					//LMBNViewer.onWebstartCystoscape(file);
 					
 					//Try Cytoscape Broadcast
-					//if(((MultipleArrayViewer) framework).isGaggleConnected()) {
-					try {
-						broadcastNetworkGaggle(interactions);
-					} catch (Exception e) {
-						JOptionPane.showMessageDialog(null, e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-		    		 	e.printStackTrace();
-		    		 	resultFrame.show();
-					} finally {
-						resultFrame.dispose();
-					}
+					//if((framework).isGaggleConnected()) {
+						try {
+							broadcastNetworkGaggle(interactionsfinal);
+						} catch (Exception e) {
+							JOptionPane.showMessageDialog(null, e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+			    		 	e.printStackTrace();
+			    		 	resultFrame.show();
+						} finally {
+							resultFrame.dispose();
+						}
 					//} else {
-						//resultFrame.show();
+						resultFrame.show();
 					//}
     	     }catch(Exception ex){
     		 	JOptionPane.showMessageDialog(null, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
