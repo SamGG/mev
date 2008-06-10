@@ -326,6 +326,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
                                 Evaluation.evaluateModel(bnNet, modelArgs.split(" "));
                                 System.out.println(bnNet.toXMLBIF03());
                                 */
+                                //END TESTING
                     	    } else {
                     	    	//WEKA on observed Data
                     	    	String arguments = Useful.getWekaArgs(path, outarff, sAlgorithm, useArc, numParents, sType, kfold);
@@ -603,19 +604,31 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 					//LMBNViewer.onWebstartCystoscape(file);
 					
 					//Try Cytoscape Broadcast
-					//if((framework).isGaggleConnected()) {
+					if(framework.isGaggleConnected()) {
 						try {
 							broadcastNetworkGaggle(interactionsfinal);
 						} catch (Exception e) {
 							JOptionPane.showMessageDialog(null, e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
 			    		 	e.printStackTrace();
-			    		 	resultFrame.show();
-						} finally {
-							resultFrame.dispose();
-						}
-					//} else {
-						resultFrame.show();
-					//}
+			    		 	if(finalThreshBox.isSelected())
+			    		 		resultFrame.dispose();
+			    		 	else
+			    		 		resultFrame.show();
+						} 
+					} else {
+						try {
+							framework.requestGaggleConnect();
+							broadcastNetworkGaggle(interactionsfinal);
+							if(finalThreshBox.isSelected())
+			    		 		resultFrame.dispose();
+			    		 	else
+			    		 		resultFrame.show();
+						} catch (Exception e) {
+							JOptionPane.showMessageDialog(null, e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+							e.printStackTrace();
+							resultFrame.show();
+						} 
+					}
     	     }catch(Exception ex){
     		 	JOptionPane.showMessageDialog(null, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
     		 	ex.printStackTrace();
@@ -628,6 +641,8 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 			evalPanel.add(finalThreshBox, BorderLayout.WEST);
 			evalPanel.add(confThreshField, BorderLayout.CENTER);
 			evalPanel.add(updateNetwork, BorderLayout.EAST);
+		} else {
+			resultFrame.dispose();
 		}
 	return evalPanel;
     }
