@@ -460,6 +460,28 @@ public class Useful {
         return arguments;
     }
     
+public static String getWekaArgsWithCPTs(String path, String outArffFileName, String sAlgorithm, boolean useArc, String numParents, String sType, int kfolds) {
+    	
+    	String arguments = "-t " + path + outArffFileName + " -c 1 -x " + kfolds + " -Q weka.classifiers.bayes.net.search.local."+sAlgorithm+" -- ";
+        if(useArc){
+        	arguments +="-R";
+        }
+        arguments +=" -P "+numParents+" -S "+sType;
+        while(!BNGUI.done){
+        	try{
+        		Thread.sleep(10000);	
+        	}catch(InterruptedException x){
+        		//ignore;
+        	}
+        }
+        if(BNGUI.prior){     
+        	arguments += " -X " + path+ "resultBif.xml";
+        	//System.out.print("my prior");
+        }
+        arguments += " -E weka.classifiers.bayes.net.estimate.BMAEstimator -- -A 0.5";
+        return arguments;
+    }
+    
 }
 
 
