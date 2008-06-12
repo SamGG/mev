@@ -106,4 +106,9 @@ public class BNConstants {
 	public static String getBaseFileLocation(){
 		return BASE_PATH;
 	}
+	
+	/**
+	 * KEGG base location for interactions
+	 */
+	public final static String KEGG_FILE_BASE = System.getProperty("user.dir") + BNConstants.SEP + "data" + BNConstants.SEP + "BN_files" + BNConstants.SEP + "kegg";
 }

@@ -34,271 +34,282 @@ import org.tigr.microarray.mev.cluster.gui.impl.bn.OutOfRangeException;
  * @author <a href="mailto:amira@jimmy.harvard.edu"></a>
  */
 public class GetInteractionsUtil {
-    public static boolean debug = true;
+	public static boolean debug = true;
 
-    /**
-     * The <code>getOfficialGeneSymbols</code> method gets the official gene symbols for GenBank accessions 
-     * in a given file using a given Resourcerer data file
-     *
-     * @param resFileName a <code>String</code> denoting the name of the Resourcerer data file
-     * @param gbAccessionsFileName a <code>String</code> denoting the name of the file containing GenBank accessions
-     * @return a <code>HashMap</code> with GenBank accessions as keys and their corresponding gene symbols as values.
-     * @exception FileNotFoundException if an error occurs because at least one of the files
-     * denoted by resFileName or gbAccessionsFileName was not found
-     */
-    public static HashMap getOfficialGeneSymbols(String resFileName, String gbAccessionsFileName) throws FileNotFoundException{
-	//Useful.checkFile(resFileName);
-	//Useful.checkFile(gbAccessionsFileName);
-	return GetOfficialGeneSymbols.getGBsSymbolsGivenResourcererAndGBsFileName(gbAccessionsFileName, resFileName);
-    }
-
-    /**
-     * The <code>getAccessions</code> method gets the GenBank accessions for the given official gene symbols 
-     * using a given Resourcerer data file
-     *
-     * @param resFileName a <code>String</code> denoting the name of the Resourcerer data file
-     * @param geneSymbols an <code>ArrayList</code> corresponding to the list of official gene symbols
-     * @return a <code>HashMap</code> with official gene symbols as keys and GenBank accessions as values
-     * @exception FileNotFoundException if an error occurs because the file denoted by resFileName was not found
-     */
-    public static HashMap getAccessions(String resFileName, ArrayList geneSymbols) throws FileNotFoundException{
-	try {
-	    //Useful.checkFile(resFileName);
-	    return GetAccessions.getAccessions(resFileName, geneSymbols);
+	/**
+	 * The <code>getOfficialGeneSymbols</code> method gets the official gene symbols for GenBank accessions 
+	 * in a given file using a given Resourcerer data file
+	 *
+	 * @param resFileName a <code>String</code> denoting the name of the Resourcerer data file
+	 * @param gbAccessionsFileName a <code>String</code> denoting the name of the file containing GenBank accessions
+	 * @return a <code>HashMap</code> with GenBank accessions as keys and their corresponding gene symbols as values.
+	 * @exception FileNotFoundException if an error occurs because at least one of the files
+	 * denoted by resFileName or gbAccessionsFileName was not found
+	 */
+	public static HashMap getOfficialGeneSymbols(String resFileName, String gbAccessionsFileName) throws FileNotFoundException{
+		//Useful.checkFile(resFileName);
+		//Useful.checkFile(gbAccessionsFileName);
+		return GetOfficialGeneSymbols.getGBsSymbolsGivenResourcererAndGBsFileName(gbAccessionsFileName, resFileName);
 	}
-	catch(NullArgumentException nae){
-	    System.out.println(nae);
-	}
-	return null;
-    }
 
-    /**
-     * The <code>getGOs</code> method gets the Gene Ontology (GO) terms for GenBank accessions in a given file
-     * using a given Resourcerer data file
-     *
-     * @param resFileName a <code>String</code> denoting the name of the Resourcerer data file
-     * @param gbAccessionsFileName a <code>String</code> denoting the name of the file containing GenBank accessions
-     * @return a <code>HashMap</code> with GenBank accessions as keys and their corresponding GO terms as values.
-     * @exception FileNotFoundException if an error occurs because at least one of the files
-     * denoted by resFileName or gbAccessionsFileName was not found
-     */
-    public static HashMap getGOs(String resFileName, String gbAccessionsFileName) throws FileNotFoundException{
-	//Useful.checkFile(resFileName);
-	//Useful.checkFile(gbAccessionsFileName);
-	return GetGOs.getGOsGivenResourcererAndGBsFileName(resFileName, gbAccessionsFileName);
-    }
-
-
-    /**
-     * The <code>getResourcererArticles</code> method gets the Resourcerer articles for GenBank accessions 
-     * in a given file using a given Resourcerer data file
-     *
-     * @param resFileName a <code>String</code> denoting the name of the Resourcerer data file
-     * @param gbAccessionsFileName a <code>String</code> denoting the name of the file containing GenBank accessions
-     * @return a <code>HashMap</code> with GenBank accessions as keys and their corresponding articles 
-     * from Resourcerer as values.
-     * @exception FileNotFoundException if an error occurs because at least one of the files
-     * denoted by resFileName or gbAccessionsFileName was not found
-     */
-    public static HashMap getResourcererArticles(String resFileName, String gbAccessionsFileName) throws FileNotFoundException{
-	//Useful.checkFile(resFileName);
-	//Useful.checkFile(gbAccessionsFileName);
-	return GetResourcererArticles.getGBsArticlesGivenResourcererAndGBsFileName(resFileName, gbAccessionsFileName);
-    }
-    /**
-     * The <code>getUniqueSymbols</code> method takes in a <code>HashMap</code> with GenBank accessions as keys 
-     * and their corresponding official gene symbols as values and returns a <code>HashSet</code>
-     * containing the unique gene symbols in the values of the given <code>HashMap</code>
-     *
-     * @param gbSymbols a <code>HashMap</code> with GenBank accessions as keys and their corresponding
-     * official gene symbols as values.
-     * @return a <code>HashSet</code> containing the unique gene symbols as <code>String</code>s in the values
-     * of the given <code>HashMap</code>
-     * @exception NullArgumentException if an error occurs because the given <code>HashMap</code> was null
-     */
-    public static HashSet getUniqueSymbols(HashMap gbSymbols) throws NullArgumentException {
-	if(gbSymbols == null){
-	    throw new NullArgumentException("The argument gbSymbols was null");
+	/**
+	 * The <code>getAccessions</code> method gets the GenBank accessions for the given official gene symbols 
+	 * using a given Resourcerer data file
+	 *
+	 * @param resFileName a <code>String</code> denoting the name of the Resourcerer data file
+	 * @param geneSymbols an <code>ArrayList</code> corresponding to the list of official gene symbols
+	 * @return a <code>HashMap</code> with official gene symbols as keys and GenBank accessions as values
+	 * @exception FileNotFoundException if an error occurs because the file denoted by resFileName was not found
+	 */
+	public static HashMap getAccessions(String resFileName, ArrayList geneSymbols) throws FileNotFoundException{
+		try {
+			//Useful.checkFile(resFileName);
+			return GetAccessions.getAccessions(resFileName, geneSymbols);
+		}
+		catch(NullArgumentException nae){
+			System.out.println(nae);
+		}
+		return null;
 	}
-	return Useful.getUniqueSymbols(gbSymbols);
-    }
-    /**
-     * The <code>getSubsetSymbolsArticlesFromSymbolsArticles</code> method takes in a <code>HashSet</code>
-     * of unique gene symbols and a <code>HashMap</code> of gene symbols as keys and corresponding articles as values
-     *
-     * @param uniqueSymbols a <code>HashSet</code> containing unique gene symbols as <code>String</code>s
-     * @param symbolsArticles a <code>HashMap</code> containing gene symbols as <code>String</code>s as keys
-     * and their corresponding articles as values
-     * @return a <code>HashMap</code> with the given subset of keys as keys and their values found
-     * in the given <code>HashMap</code> as values.
-     * @exception NullArgumentException if an error occurs because at least one of the given arguments was null.
-     */
-    public static HashMap getSubsetSymbolsArticlesFromSymbolsArticles(HashSet uniqueSymbols,  HashMap symbolsArticles) throws NullArgumentException {
-	if(uniqueSymbols == null || symbolsArticles == null){
-	    throw new NullArgumentException("At least one of uniqueSymbols or symbolsArticles was null");
-	}
-	return GetSubsetKeyValuesGivenSubsetKeysAndKeyValues.getSubsetKeyValues(uniqueSymbols, symbolsArticles);
-    }
-    /**
-     * The <code>replaceSymbolsWithGbsInSymbolsArticles</code> method takes in 2 <code>HashMap</code>s
-     * where the values of the first HashMap correspond to the keys of the second HashMap
-     * and returns a new HashMap by replacing the keys in the second HashMap by the corresponding values in the first HashMap
-     *
-     * @param gbSymbols a <code>HashMap</code> corresponding to key value pairs, in this application,
-     * GenBank accessions as keys and their corresponding official gene symbols as values.
-     * @param symbolsArticles a <code>HashMap</code> corresponding to key value pairs where the keys
-     * are the same as the value of the first HashMap, in this application, official gene symbols as keys
-     * and their corresponding articles as values.
-     * @return a <code>HashMap</code> by replacing the keys in the second HashMap by the corresponding values
-     * in the first HashMap
-     * @exception NullArgumentException if an error occurs because at least one of the arguments was null
-     */
-    public static HashMap replaceSymbolsWithGbsInSymbolsArticles(HashMap gbSymbols, HashMap symbolsArticles) throws NullArgumentException {
-	if(gbSymbols == null || symbolsArticles == null){
-	    throw new NullArgumentException("At least one of gbSymbols or symbolsArticles was null");
-	}	
-	return ReplaceSymbolsWithGbsInSymbolsArticles.getGbArticles(gbSymbols, symbolsArticles);
-    }
 
-    /**
-     * The <code>uniquelyMergeArrayLists</code> method takes in 3 <code>ArrayList</code>s
-     * of <code>SimpleGeneEdge</code> objects and returns the union of them.
-     *
-     * @param inter1 an <code>ArrayList</code> of <code>SimpleGeneEdge</code> objects
-     * @param inter2 an <code>ArrayList</code> of <code>SimpleGeneEdge</code> objects
-     * @param inter3 an <code>ArrayList</code> of <code>SimpleGeneEdge</code> objects
-     * @return an <code>ArrayList</code> of <code>SimpleGeneEdge</code> objects corresponding to the union of
-     * the 3 given <code>ArrayList</code> of <code>SimpleGeneEdge</code> objects
-     * @exception NullArgumentException if an error occurs because at least one of the given arguments was null
-     */
-    public static ArrayList uniquelyMergeArrayLists(ArrayList inter1, ArrayList inter2, ArrayList inter3) throws NullArgumentException {
-	if(inter1 == null || inter2 == null || inter3 == null){
-	    throw new NullArgumentException("At least one of inter1, inter2 or inter3 is null\ninter1="+inter1+"\ninter2="+inter2+"\ninter3="+inter3);
+	/**
+	 * The <code>getGOs</code> method gets the Gene Ontology (GO) terms for GenBank accessions in a given file
+	 * using a given Resourcerer data file
+	 *
+	 * @param resFileName a <code>String</code> denoting the name of the Resourcerer data file
+	 * @param gbAccessionsFileName a <code>String</code> denoting the name of the file containing GenBank accessions
+	 * @return a <code>HashMap</code> with GenBank accessions as keys and their corresponding GO terms as values.
+	 * @exception FileNotFoundException if an error occurs because at least one of the files
+	 * denoted by resFileName or gbAccessionsFileName was not found
+	 */
+	public static HashMap getGOs(String resFileName, String gbAccessionsFileName) throws FileNotFoundException{
+		//Useful.checkFile(resFileName);
+		//Useful.checkFile(gbAccessionsFileName);
+		return GetGOs.getGOsGivenResourcererAndGBsFileName(resFileName, gbAccessionsFileName);
 	}
-	ArrayList union1And2 = GetUnionOfInters.uniquelyMergeArrayLists(inter1, inter2);
-	return GetUnionOfInters.uniquelyMergeArrayLists(inter3, union1And2);
-    }
 
 
-    /**
-     * The <code>replaceSymsWithGBsInInter</code> method takes in a Resourcerer file name and an <code>ArrayList</code> of 
-     * <code>SimpleGeneEdge</code> objects using official gene symbols and replaces the official gene symbols with their
-     * corresponding GenBank accessions as found in the given Resourcerer file
-     *
-     * @param resourcererFileName a <code>String</code> denoting the name of the Resourcerer file
-     * @param interFromPpiSyms an <code>ArrayList</code> of <code>SimpleGeneEdge</code> objects using official gene symbols 
-     * @return an <code>ArrayList</code>  of <code>SimpleGeneEdge</code> objects after replacing the official gene symbols 
-     * with their corresponding GenBank accessions as found in the given Resourcerer file
-     * @exception NullArgumentException if an error occurs because the given interFromPpiSyms was null
-     */
-    public static ArrayList replaceSymsWithGBsInInter(String resourcererFileName, ArrayList interFromPpiSyms) throws NullArgumentException{
-	try {
-	    //Useful.checkFile(resourcererFileName);
-	    if(interFromPpiSyms == null){
-		throw new NullArgumentException("Given interFromPpiSyms is null!");
-	    } 
-	    ArrayList newGeneSymbols = UsefulInteractions.getNodes(interFromPpiSyms);
-	    HashMap newGeneSymbolsGBs = GetInteractionsUtil.getAccessions(resourcererFileName, newGeneSymbols);
-	    SimpleGeneEdge sGE = null;
-	    SimpleGeneEdge replacedSGE = null;
-	    String from = null;
-	    String to = null;
-	    String replacedFrom = null;
-	    String replacedTo = null;
-	    ArrayList result = new ArrayList();
-	    for(int i = 0; i < interFromPpiSyms.size(); i++){
-		sGE = (SimpleGeneEdge) interFromPpiSyms.get(i);
-		from = sGE.getFrom();
-		to = sGE.getTo();
-		replacedFrom = (String) newGeneSymbolsGBs.get(from);
-		replacedTo = (String) newGeneSymbolsGBs.get(to);
-		if(replacedFrom != null && replacedTo != null){
-		    replacedSGE = new SimpleGeneEdge(replacedFrom, replacedTo, sGE.getWeight());
-		    if(!UsefulInteractions.containsEitherWay(result, replacedSGE)){
-			result.add(replacedSGE);
-		    }
-		}		
-	    }
-	    return result;
+	/**
+	 * The <code>getResourcererArticles</code> method gets the Resourcerer articles for GenBank accessions 
+	 * in a given file using a given Resourcerer data file
+	 *
+	 * @param resFileName a <code>String</code> denoting the name of the Resourcerer data file
+	 * @param gbAccessionsFileName a <code>String</code> denoting the name of the file containing GenBank accessions
+	 * @return a <code>HashMap</code> with GenBank accessions as keys and their corresponding articles 
+	 * from Resourcerer as values.
+	 * @exception FileNotFoundException if an error occurs because at least one of the files
+	 * denoted by resFileName or gbAccessionsFileName was not found
+	 */
+	public static HashMap getResourcererArticles(String resFileName, String gbAccessionsFileName) throws FileNotFoundException{
+		//Useful.checkFile(resFileName);
+		//Useful.checkFile(gbAccessionsFileName);
+		return GetResourcererArticles.getGBsArticlesGivenResourcererAndGBsFileName(resFileName, gbAccessionsFileName);
 	}
-	catch(FileNotFoundException fnfe){
-	    System.out.println(fnfe);
+	/**
+	 * The <code>getUniqueSymbols</code> method takes in a <code>HashMap</code> with GenBank accessions as keys 
+	 * and their corresponding official gene symbols as values and returns a <code>HashSet</code>
+	 * containing the unique gene symbols in the values of the given <code>HashMap</code>
+	 *
+	 * @param gbSymbols a <code>HashMap</code> with GenBank accessions as keys and their corresponding
+	 * official gene symbols as values.
+	 * @return a <code>HashSet</code> containing the unique gene symbols as <code>String</code>s in the values
+	 * of the given <code>HashMap</code>
+	 * @exception NullArgumentException if an error occurs because the given <code>HashMap</code> was null
+	 */
+	public static HashSet getUniqueSymbols(HashMap gbSymbols) throws NullArgumentException {
+		if(gbSymbols == null){
+			throw new NullArgumentException("The argument gbSymbols was null");
+		}
+		return Useful.getUniqueSymbols(gbSymbols);
 	}
-	return null;
-    }
-    
-    public static ArrayList loadKeggInteractions(String species, String location){
-    	ArrayList<String> kegg = new ArrayList<String>();
-    	String fileName = location + species + "_kegg_edges.txt";
-    	try {    	    
-    	    FileReader fr = new FileReader(fileName);
-    	    LineNumberReader lnr = new LineNumberReader(fr);
-    	    String s = null;
-    	    while((s = lnr.readLine())!=null){
-    		s = s.trim();
-    		kegg.add(s);
-    	    }
-    	    lnr.close();
-    	    fr.close();
-    	    System.out.println("Loaded KEGG edges: " + kegg.size());
-    	    return kegg;
-    	}
-    	catch(IOException ioe){
-    	    System.out.println(ioe);
-    	}
-    	
-    	return null;
-    }
-    
-    public static ArrayList getEdgesfromKegg(ArrayList keggListAll, String accListFile) {
-    	ArrayList<String> dataNodes = new ArrayList<String>();
-    	
-    	try {    	    
-    	    FileReader fr = new FileReader(accListFile);
-    	    LineNumberReader lnr = new LineNumberReader(fr);
-    	    String s = null;
-    	    while((s = lnr.readLine())!=null){
-    		s = s.trim();
-    		dataNodes.add(s);
-    	    }
-    	    lnr.close();
-    	    fr.close();
-    	}
-    	catch(IOException ioe){
-    	    System.out.println(ioe);
-    	}
-    	
-    	ArrayList<SimpleGeneEdge> keggMatches = new ArrayList<SimpleGeneEdge>();
-    	ArrayList<String> keggMatchesAsStrings = new ArrayList<String>();
-    	// Find Kegg edges that match the data
-    	for(int i = 0; i < dataNodes.size(); i++) {
-    		String _curAcc = (String)dataNodes.get(i);
-    		for(int ii = i+1; ii < dataNodes.size(); ii++) {
-    			String _nextAcc = (String)dataNodes.get(ii);
-    			if(!_nextAcc.equals(_curAcc)) {
-	    			String _curEdge1 = _curAcc + "-" + _nextAcc;
-	    			String _curEdge2 = _nextAcc + "-" + _curAcc;
-	    			System.out.println("Searchin for: " + _curEdge1 + " and reverse");
-	    			if(!keggMatchesAsStrings.contains(_curEdge1) && !keggMatchesAsStrings.contains(_curEdge2)) {
-	    				keggMatches.add(new SimpleGeneEdge(_curAcc, _nextAcc, 1.0));
-	    				keggMatches.add(new SimpleGeneEdge(_nextAcc, _curAcc, 1.0));
-	    				keggMatchesAsStrings.add(_curEdge1);
-	    				keggMatchesAsStrings.add(_curEdge2);
-	    			}
-    			}
-    		}
-    		//dataNodes.remove(i);
-    	}
-    	if(keggMatches.size() > 0) {
-    		System.out.println("Returning KEGG matches: " + keggMatches.size());
-    		keggMatchesAsStrings = null;
-    		return keggMatches;
-    	}
-    	else {
-    		System.out.println("Returning KEGG matches: NONE Found!!");
-    		return null;
-    	}
-    }
+	/**
+	 * The <code>getSubsetSymbolsArticlesFromSymbolsArticles</code> method takes in a <code>HashSet</code>
+	 * of unique gene symbols and a <code>HashMap</code> of gene symbols as keys and corresponding articles as values
+	 *
+	 * @param uniqueSymbols a <code>HashSet</code> containing unique gene symbols as <code>String</code>s
+	 * @param symbolsArticles a <code>HashMap</code> containing gene symbols as <code>String</code>s as keys
+	 * and their corresponding articles as values
+	 * @return a <code>HashMap</code> with the given subset of keys as keys and their values found
+	 * in the given <code>HashMap</code> as values.
+	 * @exception NullArgumentException if an error occurs because at least one of the given arguments was null.
+	 */
+	public static HashMap getSubsetSymbolsArticlesFromSymbolsArticles(HashSet uniqueSymbols,  HashMap symbolsArticles) throws NullArgumentException {
+		if(uniqueSymbols == null || symbolsArticles == null){
+			throw new NullArgumentException("At least one of uniqueSymbols or symbolsArticles was null");
+		}
+		return GetSubsetKeyValuesGivenSubsetKeysAndKeyValues.getSubsetKeyValues(uniqueSymbols, symbolsArticles);
+	}
+	/**
+	 * The <code>replaceSymbolsWithGbsInSymbolsArticles</code> method takes in 2 <code>HashMap</code>s
+	 * where the values of the first HashMap correspond to the keys of the second HashMap
+	 * and returns a new HashMap by replacing the keys in the second HashMap by the corresponding values in the first HashMap
+	 *
+	 * @param gbSymbols a <code>HashMap</code> corresponding to key value pairs, in this application,
+	 * GenBank accessions as keys and their corresponding official gene symbols as values.
+	 * @param symbolsArticles a <code>HashMap</code> corresponding to key value pairs where the keys
+	 * are the same as the value of the first HashMap, in this application, official gene symbols as keys
+	 * and their corresponding articles as values.
+	 * @return a <code>HashMap</code> by replacing the keys in the second HashMap by the corresponding values
+	 * in the first HashMap
+	 * @exception NullArgumentException if an error occurs because at least one of the arguments was null
+	 */
+	public static HashMap replaceSymbolsWithGbsInSymbolsArticles(HashMap gbSymbols, HashMap symbolsArticles) throws NullArgumentException {
+		if(gbSymbols == null || symbolsArticles == null){
+			throw new NullArgumentException("At least one of gbSymbols or symbolsArticles was null");
+		}	
+		return ReplaceSymbolsWithGbsInSymbolsArticles.getGbArticles(gbSymbols, symbolsArticles);
+	}
+
+	/**
+	 * The <code>uniquelyMergeArrayLists</code> method takes in 3 <code>ArrayList</code>s
+	 * of <code>SimpleGeneEdge</code> objects and returns the union of them.
+	 *
+	 * @param inter1 an <code>ArrayList</code> of <code>SimpleGeneEdge</code> objects
+	 * @param inter2 an <code>ArrayList</code> of <code>SimpleGeneEdge</code> objects
+	 * @param inter3 an <code>ArrayList</code> of <code>SimpleGeneEdge</code> objects
+	 * @return an <code>ArrayList</code> of <code>SimpleGeneEdge</code> objects corresponding to the union of
+	 * the 3 given <code>ArrayList</code> of <code>SimpleGeneEdge</code> objects
+	 * @exception NullArgumentException if an error occurs because at least one of the given arguments was null
+	 */
+	public static ArrayList uniquelyMergeArrayLists(ArrayList inter1, ArrayList inter2, ArrayList inter3) throws NullArgumentException {
+		if(inter1 == null || inter2 == null || inter3 == null){
+			throw new NullArgumentException("At least one of inter1, inter2 or inter3 is null\ninter1="+inter1+"\ninter2="+inter2+"\ninter3="+inter3);
+		}
+		ArrayList union1And2 = GetUnionOfInters.uniquelyMergeArrayLists(inter1, inter2);
+		ArrayList unionAll = null;
+		if(union1And2 == null || union1And2.size() == 0) {
+			System.out.println("***** Union of the first 2 vectors is null or empty *****");
+			unionAll =  GetUnionOfInters.uniquelyMergeArrayLists(inter3, new ArrayList());
+		} else {
+			unionAll =  GetUnionOfInters.uniquelyMergeArrayLists(inter3, union1And2);
+		}
+		if(unionAll == null || unionAll.size() == 0) {
+			System.out.println("***** Union of 1-2 & 3 vectors is null or empty *****");
+			//return null;
+		}
+		return unionAll;
+	}
+
+
+	/**
+	 * The <code>replaceSymsWithGBsInInter</code> method takes in a Resourcerer file name and an <code>ArrayList</code> of 
+	 * <code>SimpleGeneEdge</code> objects using official gene symbols and replaces the official gene symbols with their
+	 * corresponding GenBank accessions as found in the given Resourcerer file
+	 *
+	 * @param resourcererFileName a <code>String</code> denoting the name of the Resourcerer file
+	 * @param interFromPpiSyms an <code>ArrayList</code> of <code>SimpleGeneEdge</code> objects using official gene symbols 
+	 * @return an <code>ArrayList</code>  of <code>SimpleGeneEdge</code> objects after replacing the official gene symbols 
+	 * with their corresponding GenBank accessions as found in the given Resourcerer file
+	 * @exception NullArgumentException if an error occurs because the given interFromPpiSyms was null
+	 */
+	public static ArrayList replaceSymsWithGBsInInter(String resourcererFileName, ArrayList interFromPpiSyms) throws NullArgumentException{
+		try {
+			//Useful.checkFile(resourcererFileName);
+			if(interFromPpiSyms == null){
+				throw new NullArgumentException("Given interFromPpiSyms is null!");
+			} 
+			ArrayList newGeneSymbols = UsefulInteractions.getNodes(interFromPpiSyms);
+			HashMap newGeneSymbolsGBs = GetInteractionsUtil.getAccessions(resourcererFileName, newGeneSymbols);
+			SimpleGeneEdge sGE = null;
+			SimpleGeneEdge replacedSGE = null;
+			String from = null;
+			String to = null;
+			String replacedFrom = null;
+			String replacedTo = null;
+			ArrayList result = new ArrayList();
+			for(int i = 0; i < interFromPpiSyms.size(); i++){
+				sGE = (SimpleGeneEdge) interFromPpiSyms.get(i);
+				from = sGE.getFrom();
+				to = sGE.getTo();
+				replacedFrom = (String) newGeneSymbolsGBs.get(from);
+				replacedTo = (String) newGeneSymbolsGBs.get(to);
+				if(replacedFrom != null && replacedTo != null){
+					replacedSGE = new SimpleGeneEdge(replacedFrom, replacedTo, sGE.getWeight());
+					if(!UsefulInteractions.containsEitherWay(result, replacedSGE)){
+						result.add(replacedSGE);
+					}
+				}		
+			}
+			return result;
+		}
+		catch(FileNotFoundException fnfe){
+			System.out.println(fnfe);
+		}
+		return null;
+	}
+
+	public static ArrayList loadKeggInteractions(String species, String location){
+		ArrayList<String> kegg = new ArrayList<String>();
+		String fileName = location + species + "_kegg_edges.txt";
+		try {    	    
+			FileReader fr = new FileReader(fileName);
+			LineNumberReader lnr = new LineNumberReader(fr);
+			String s = null;
+			while((s = lnr.readLine())!=null){
+				s = s.trim();
+				kegg.add(s);
+			}
+			lnr.close();
+			fr.close();
+			System.out.println("Loaded KEGG edges: " + kegg.size());
+			return kegg;
+		}
+		catch(IOException ioe){
+			System.out.println(ioe);
+		}
+
+		return null;
+	}
+
+	public static ArrayList getEdgesfromKegg(ArrayList keggListAll, String accListFile) {
+		ArrayList<String> dataNodes = new ArrayList<String>();
+
+		try {    	    
+			FileReader fr = new FileReader(accListFile);
+			LineNumberReader lnr = new LineNumberReader(fr);
+			String s = null;
+			while((s = lnr.readLine())!=null){
+				s = s.trim();
+				dataNodes.add(s);
+			}
+			lnr.close();
+			fr.close();
+		}
+		catch(IOException ioe){
+			System.out.println(ioe);
+		}
+
+		ArrayList<SimpleGeneEdge> keggMatches = new ArrayList<SimpleGeneEdge>();
+		ArrayList<String> keggMatchesAsStrings = new ArrayList<String>();
+		// Find Kegg edges that match the data
+		for(int i = 0; i < dataNodes.size(); i++) {
+			String _curAcc = (String)dataNodes.get(i);
+			for(int ii = i+1; ii < dataNodes.size(); ii++) {
+				String _nextAcc = (String)dataNodes.get(ii);
+				if(!_nextAcc.equals(_curAcc)) {
+					String _curEdge1 = _curAcc + "-" + _nextAcc;
+					String _curEdge2 = _nextAcc + "-" + _curAcc;
+					System.out.println("Searchin for: " + _curEdge1 + " and reverse");
+					if(!keggMatchesAsStrings.contains(_curEdge1) && !keggMatchesAsStrings.contains(_curEdge2)) {
+						keggMatches.add(new SimpleGeneEdge(_curAcc, _nextAcc, 1.0));
+						keggMatches.add(new SimpleGeneEdge(_nextAcc, _curAcc, 1.0));
+						keggMatchesAsStrings.add(_curEdge1);
+						keggMatchesAsStrings.add(_curEdge2);
+					}
+				}
+			}
+			//dataNodes.remove(i);
+		}
+		if(keggMatches.size() > 0) {
+			System.out.println("Returning KEGG matches: " + keggMatches.size());
+			keggMatchesAsStrings = null;
+			return keggMatches;
+		}
+		else {
+			System.out.println("Returning KEGG matches: NONE Found!!");
+			return null;
+		}
+	}
 }
 
 

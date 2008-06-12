@@ -1424,36 +1424,39 @@ public class BNInitDialog extends AlgorithmDialog {
 					//Make sure if KEGG is selected as priors the files are downloaded if it doesnot exist 
 					//Check if Species Name is available, if not prompt for it
 					String sp = null;
+					//Array for KEGG supported oraganism
+					String kegg_org[] = new String[]{"Human", "Mouse", "Rat" };
 					if(framework.getData().isAnnotationLoaded()) {
-						sp = ((MultipleArrayData)framework.getData()).getOrganismName();
+						sp = ((MultipleArrayData)framework.getData()).getOrganismName().trim();
+						JOptionPane pane = new JOptionPane(sp); JDialog dlg = pane.createDialog(new JFrame(), "Annotation Species is- "+ sp); dlg.show();
 					}
 					if(sp == null) {
 						sp = (String)JOptionPane.showInputDialog(null, "Select a Species", "Annotation Unknown",
-								JOptionPane.QUESTION_MESSAGE, null, new Object[] { "Human",
-								"Mouse", "Rat" }, "Human");
+								JOptionPane.WARNING_MESSAGE, null, kegg_org, kegg_org[0]);
 
 						//JOptionPane pane = new JOptionPane(sp); JDialog dlg = pane.createDialog(new JFrame(), "Dialog"); dlg.show();
-					} else if(!sp.equals("Human") || !sp.equals("Mouse") || !sp.equals("Rat")) {
+					} else if(!isKeggOrgSupported(kegg_org, sp)) {
+							//!sp.equalsIgnoreCase("Human") || !sp.equalsIgnoreCase("Mouse") || !sp.equalsIgnoreCase("Rat")) {
 						if (JOptionPane.showConfirmDialog(new JFrame(),
-								"Do you want to continue ?", "Species " + sp + " not Supported for KEGG",
+								"Do you want to continue ? ", "Species " + sp + " not Supported for KEGG",
 								JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
 							return;
 						} 
 					}
 
 					//Chnage species name to match KEGG file prefix
-					if(sp.equals("Human"))
+					if(sp.equalsIgnoreCase("Human"))
 						sp="hsa";
-					else if (sp.equals("Mouse"))
+					else if (sp.equalsIgnoreCase("Mouse"))
 						sp="mmu";
-					else if (sp.equals("Rat"))
+					else if (sp.equalsIgnoreCase("Rat"))
 						sp="rno";
 
 					//System.out.println("User Dir: " + System.getProperty("user.dir"));
 					//System.out.println("User fileBase: " + fileBase);
-					String keggFilebase = System.getProperty("user.dir") + BNConstants.SEP + "data" + BNConstants.SEP + "BN_files" + BNConstants.SEP + "kegg";
-					if(!(new File(keggFilebase)).exists()){
-						boolean success = (new File(keggFilebase)).mkdir();
+					//String keggFilebase = System.getProperty("user.dir") + BNConstants.SEP + "data" + BNConstants.SEP + "BN_files" + BNConstants.SEP + "kegg";
+					if(!(new File(BNConstants.KEGG_FILE_BASE)).exists()){
+						boolean success = (new File(BNConstants.KEGG_FILE_BASE)).mkdir();
 					    if (!success) {
 					        // Directory creation failed
 					    	JOptionPane.showMessageDialog(
@@ -1463,7 +1466,7 @@ public class BNInitDialog extends AlgorithmDialog {
 					    }
 					}
 					String keggFileName = sp + BNConstants.KEGG_FILE;
-					if(!(new File(keggFilebase + BNConstants.SEP + keggFileName)).exists()) {
+					if(!(new File(BNConstants.KEGG_FILE_BASE + BNConstants.SEP + keggFileName)).exists()) {
 						JOptionPane.showMessageDialog(
 								parent, 
 								"KEGG file is missing, will try to download",
@@ -1473,7 +1476,7 @@ public class BNInitDialog extends AlgorithmDialog {
 						//String destPath = "";
 						//String ftpBase = "";
 						//String remotePath = "";
-						BNDownloadManager dwnMgr = new BNDownloadManager((JFrame)parent, keggFilebase, "Trying to Download KEGG File", keggFileName, false);
+						BNDownloadManager dwnMgr = new BNDownloadManager((JFrame)parent, BNConstants.KEGG_FILE_BASE, "Trying to Download KEGG File", keggFileName, false);
 						if(!dwnMgr.updateFiles())
 							return;
 					}
@@ -1637,6 +1640,20 @@ public class BNInitDialog extends AlgorithmDialog {
 					hw.dispose();
 				}
 			}
+		}
+
+		/**
+		 * 
+		 * @param kegg_org
+		 * @param sp
+		 * @return
+		 */
+		private boolean isKeggOrgSupported(String[] kegg_org, String sp) {
+			for(int i=0; i < kegg_org.length; i++){
+				if(sp.equalsIgnoreCase(kegg_org[i]))
+					return true;
+			}
+			return false;
 		}
 
 		public void itemStateChanged(ItemEvent e) {
