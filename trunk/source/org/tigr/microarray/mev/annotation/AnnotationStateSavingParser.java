@@ -318,7 +318,7 @@ public class AnnotationStateSavingParser {
 		writer.println();
 		writer.write("#    9. GO_TERMS");
 		writer.println();
-		writer.write("#   10. TGI_TC");
+		writer.write("#    10. TGI_TC");
 		writer.println();
 		
 		for(int i=0; i<IAnnotations.size();i++) {
@@ -422,11 +422,17 @@ public class AnnotationStateSavingParser {
 			writer.println();
 			}else {
 				writer.write("NA");
+				writer.write('\t');
+			}
+			}else if(index==9) {	
+				_tempStr=_obj.getTgiTC();
+				if(_tempStr!="NA") {
+				writer.write(_obj.getTgiTC());
 				writer.println();
-			}
-			}
 			
-			
+			}else {
+				writer.write("NA");
+				writer.println();
 			}
 			
 			
@@ -438,13 +444,8 @@ public class AnnotationStateSavingParser {
 		
 	}
 	
+
 	
-	
-	
-	
-	
-	
-	
-	
-	
+}
+	 }
 }
