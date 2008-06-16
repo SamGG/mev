@@ -68,8 +68,8 @@ public class AnnotationStateSavingParser {
     	String _temp="NA";
     	//System.out.println("currentLine:"+reader.readLine());
     	while ((currentLine = reader.readLine()) != null) {
- 
-    		annotationObj = new MevAnnotation(); //TODO
+
+			annotationObj = new MevAnnotation(); //TODO
     		cloneID = "";
     		
     		while(currentLine.startsWith("#")) {
@@ -160,7 +160,6 @@ public class AnnotationStateSavingParser {
     		annovEC.add(annotationObj);
     		
     	}
-    	//System.out.println("annoVec size"+annovEC.size());
     	reader.close();
     return annovEC;
 		
@@ -278,8 +277,7 @@ public class AnnotationStateSavingParser {
 
 	    
 	
-	 //public void writeAnnotationFile(Vector IAnnotations, File iAnnotationFile)throws Exception {
-	 public void writeAnnotationFile(Vector IAnnotations, PrintWriter writer)throws Exception {
+	 public void writeAnnotationFile(Vector IAnnotations, PrintWriter writer) throws Exception {
 		/**
 		 * This fucntion would take in a vector containing MevAnnotation objects,
 		 * (corresponding to the respective AffySlideDataElements). Writes the content of
@@ -295,7 +293,18 @@ public class AnnotationStateSavingParser {
 		//System.out.println("annotation file name:"+iAnnotationFile.getName());
 		
 		File AnnotationFile_saved;
-		//PrintWriter writer  = new PrintWriter(new BufferedWriter(new FileWriter(iAnnotationFile)));
+
+		String[] fieldNames = new String[]{	AnnotationFieldConstants.CLONE_ID, 
+											AnnotationFieldConstants.GENBANK_ACC, 
+											AnnotationFieldConstants.REFSEQ_ACC, 
+											AnnotationFieldConstants.ENTREZ_ID, 
+											AnnotationFieldConstants.UNIGENE_ID,
+											AnnotationFieldConstants.GENE_SYMBOL, 
+											AnnotationFieldConstants.GENE_TITLE,
+											AnnotationFieldConstants.CHR_CYTOBAND, 
+											AnnotationFieldConstants.GO_TERMS, 
+											AnnotationFieldConstants.TGI_TC};
+
 		writer.write("#");
 		writer.println();
 		writer.write("# Fields:"); 
@@ -320,132 +329,131 @@ public class AnnotationStateSavingParser {
 		writer.println();
 		writer.write("#    10. TGI_TC");
 		writer.println();
-		
-		for(int i=0; i<IAnnotations.size();i++) {
+		//TODO
+//		System.out.println("AnnotationStateSavingParser.writeAnnotationFile: IAnnotations.size(): " + IAnnotations.size());
+		for(int i=0; i<IAnnotations.size(); i++) {
 			MevAnnotation _obj=(MevAnnotation)IAnnotations.get(i);
 			
-			for(int index=0;index<MevAnnotation.getFieldNames().length;index++) {
-			String _tempRefSeq="";
-			String _tmpGO="";
-			String[]_temparray;
-			String _tempStr;
-			
-			
-			
-			
-			if(index==0) {
-			writer.write(_obj.getCloneID());
-			writer.write('\t');
-			}else if(index==1) {
-			_tempStr=_obj.getGenBankAcc();
-			if(_tempStr!="NA") {
-			writer.write(_obj.getGenBankAcc());
-			writer.write('\t');
-			}else {
-				writer.write("NA");
-				writer.write('\t');
-			}
-			}else if(index==2) {
-			_temparray=_obj.getRefSeqTxAcc();
-			if(_temparray[0]!="NA") {
-			String[]_temp=_obj.getRefSeqTxAcc();
-			for(int j=0;j<_temp.length;j++) {
-				_tempRefSeq=_tempRefSeq.concat(_temp[j]);
-				if(j<_temp.length-1)
-					_tempRefSeq=_tempRefSeq.concat("///");
+//			for(int index=0; index<MevAnnotation.getFieldNames().length; index++) {
+			for(int index=0; index<fieldNames.length; index++) {
+				String _tempRefSeq="";
+				String _tmpGO="";
+				String[] _temparray;
+				String _tempStr;
 				
-			}
-			writer.write(_tempRefSeq);
-			writer.write('\t');
-			}else {
-				writer.write("NA");
-				writer.write('\t');
-			}
-			}else if(index==3) {
-			_tempStr=_obj.getEntrezGeneID();
-			if(_tempStr!="NA") {
-			writer.write(_obj.getEntrezGeneID());
-			writer.write('\t');
-			}else {
-				writer.write("NA");
-				writer.write('\t');
-			}
-			}else if(index==4) {
-			_tempStr=_obj.getUnigeneID();
-			if(_tempStr!="NA") {
-			writer.write(_obj.getUnigeneID());
-			writer.write('\t');
-			}else {
-				writer.write("NA");
-				writer.write('\t');
-			}
-			}else if(index==5) {
-			_tempStr=_obj.getGeneSymbol();
-			if(_tempStr!="NA") {
-			writer.write(_obj.getGeneSymbol());
-			writer.write('\t');
-			}else {
-				writer.write("NA");
-				writer.write('\t');
-			}
-			}else if(index==6) {
-			_tempStr=_obj.getGeneTitle();
-			if(_tempStr!="NA") {
-			writer.write(_obj.getGeneTitle());
-			writer.write('\t');
-			}else {
-				writer.write("NA");
-				writer.write('\t');
-			}
-			}else if(index==7) {
-			_tempStr=_obj.getProbeChromosome();
-			if(_tempStr!="NA") {
-			writer.write("chr"+_obj.getProbeChromosome()+":"+_obj.getProbeTxStartBP()+"-"+
-					_obj.getProbeTxEndBP()+"("+_obj.getProbeStrand()+")");
-			writer.write('\t');
-			}else {
-				writer.write("NA");
-				writer.write('\t');
+				if(index==0) {
+					writer.write(_obj.getCloneID());
+					writer.write('\t');
+				} else if(index==1) {
+					_tempStr=_obj.getGenBankAcc();
+					if(_tempStr!="NA") {
+						writer.write(_obj.getGenBankAcc());
+						writer.write('\t');
+					} else {
+						writer.write("NA");
+						writer.write('\t');
+					}
+				} else if(index==2) {
+					_temparray=_obj.getRefSeqTxAcc();
+					if(_temparray[0]!="NA") {
+						String[]_temp=_obj.getRefSeqTxAcc();
+						for(int j=0;j<_temp.length;j++) {
+							_tempRefSeq=_tempRefSeq.concat(_temp[j]);
+							if(j<_temp.length-1)
+								_tempRefSeq=_tempRefSeq.concat("///");
+							
+						}
+						writer.write(_tempRefSeq);
+						writer.write('\t');
+					} else {
+						writer.write("NA");
+						writer.write('\t');
+					}
+				} else if(index==3) {
+					_tempStr=_obj.getEntrezGeneID();
+					if(_tempStr!="NA") {
+						writer.write(_obj.getEntrezGeneID());
+						writer.write('\t');
+					} else {
+						writer.write("NA");
+						writer.write('\t');
+					}
+				} else if(index==4) {
+					_tempStr=_obj.getUnigeneID();
+					if(_tempStr!="NA") {
+						writer.write(_obj.getUnigeneID());
+						writer.write('\t');
+					} else {
+						writer.write("NA");
+						writer.write('\t');
+					}
+				} else if(index==5) {
+					_tempStr=_obj.getGeneSymbol();
+					if(_tempStr!="NA") {
+						writer.write(_obj.getGeneSymbol());
+						writer.write('\t');
+					} else {
+						writer.write("NA");
+						writer.write('\t');
+					}
+				} else if(index==6) {
+					_tempStr=_obj.getGeneTitle();
+					if(_tempStr!="NA") {
+						writer.write(_obj.getGeneTitle());
+						writer.write('\t');
+					} else {
+						writer.write("NA");
+						writer.write('\t');
+					}
+				} else if(index==7) {
+					_tempStr=_obj.getProbeChromosome();
+					if(_tempStr!="NA") {
+						writer.write("chr"+_obj.getProbeChromosome()+":"+_obj.getProbeTxStartBP()+"-"+
+								_obj.getProbeTxEndBP()+"("+_obj.getProbeStrand()+")");
+						writer.write('\t');
+					} else {
+						writer.write("NA");
+						writer.write('\t');
+						
+					}
+				} else if(index==8) {	
+					_temparray=_obj.getGoTerms();
+					if(_temparray[0]!=null) {
+						String[]_temp=_obj.getGoTerms();
+						for(int j=0;j<_temp.length;j++) {
+							_tmpGO=_tmpGO.concat(_temp[j]);
+							if(j<_temp.length-1)
+								_tmpGO=_tmpGO.concat("///");
+							
+						}
+						writer.write(_tmpGO);
+						writer.println();
+					} else {
+						writer.write("NA");
+						writer.write('\t');
+					}
+				} else if(index==9) {	
+					_tempStr=_obj.getTgiTC();
+					if(_tempStr!="NA") {
+					writer.write(_obj.getTgiTC());
+					writer.println();
 				
-			}
-			}else if(index==8) {	
-			_temparray=_obj.getGoTerms();
-			if(_temparray[0]!=null) {
-			String[]_temp=_obj.getGoTerms();
-			for(int j=0;j<_temp.length;j++) {
-				_tmpGO=_tmpGO.concat(_temp[j]);
-				if(j<_temp.length-1)
-					_tmpGO=_tmpGO.concat("///");
+				} else {
+					writer.write("NA");
+					writer.println();
+				}
 				
+				
+				}
+
 			}
-			writer.write(_tmpGO);
-			writer.println();
-			}else {
-				writer.write("NA");
-				writer.write('\t');
-			}
-			}else if(index==9) {	
-				_tempStr=_obj.getTgiTC();
-				if(_tempStr!="NA") {
-				writer.write(_obj.getTgiTC());
-				writer.println();
-			
-			}else {
-				writer.write("NA");
-				writer.println();
-			}
-			
-			
+		
 		}
+
+		writer.close();
+		//System.out.println("File size:"+iAnnotationFile.length());
 		
-	writer.close();
-	//System.out.println("File size:"+iAnnotationFile.length());
-		
-		
-	}
-	
 
 	
-}
 	 }
 }
