@@ -38,10 +38,7 @@ import ftp.FtpObserver;
 public class BNDownloadManager {
 
 	// Generic FTP related Constants
-	private String FTP_BASE_URL;
-	private String FTP_REMOTE_PATH;
 	private String FTP_REMOTE_FILE_OR_DIR;
-	private String COMPLETE_URI;
 	private boolean isDir = false;
 
 	private static String FTP_CONFIG_URL = "http://www.tm4.org/mev/mev_url.properties";
@@ -56,7 +53,7 @@ public class BNDownloadManager {
 	private ProgressListener listener;
 	String destPath;
 	/** Creates a new instance of BNDownloadManager */
-	public BNDownloadManager(final JFrame parent, String destPath, String title, String resourceName, boolean isDir) {        
+	public BNDownloadManager(JFrame parent, String destPath, String title, String resourceName, boolean isDir) {        
 		frame = parent;
 		this.destPath = destPath;
 		this.FTP_REMOTE_FILE_OR_DIR = resourceName;
@@ -64,7 +61,9 @@ public class BNDownloadManager {
 		
 		listener = new ProgressListener();
 		//Initialize the progress bar
-		progress = new Progress(parent, title, listener);                
+		progress = new Progress(frame, title, listener);
+		progress.setLocationRelativeTo(frame.getOwner());
+		progress.setAlwaysOnTop(true);
 	}
 	
 	/**
@@ -77,29 +76,25 @@ public class BNDownloadManager {
 			progress.setDescription("Retreving Repository Information");
 			progress.setUnits(2);
 			progress.show();
-
-			//construct a vector of repository information hashes
-			//each hash on the vector is a tab and repository
-			//and contains properties for that repository
-			//(sets progress 1 and 2 during execution)
+			
+			//TODO
+			//Just to show the progress
+			//Thread.sleep(3000);
+			
 			Hashtable propertyHashes = getRepositoryInfo();
 			//prepare to visit repositories
 			progress.setDescription("Visiting Repository for Resource Checks");
 			progress.setUnits(propertyHashes.size());
-			//go to the repository, get a list of directories and
-			//files under each directory
-			//(This uses the list held by the repository (taxon-file)
+			//TODO
+			//Just to show the progress
+			//Thread.sleep(3000);
+			
 			progress.dispose();
 
 			//if we have repository information and repository content
 			//information, we are ready to construct the dialog and get selected files
 
 			if(okStatus) {
-				//construct dialog given properties for each dialog tab
-				//BNFileUpdateDialog dialog = new BNFileUpdateDialog(this.frame, tabPropertyHashes);
-				//if ok
-				//if(dialog.showModal() == JOptionPane.OK_OPTION) {
-
 					//get the selected server, repository root, and implies zip name
 					this.FTP_SERVER = ((String)propertyHashes.get("kegg_server")).trim();
 					if(this.FTP_SERVER.endsWith("/"))
@@ -108,7 +103,6 @@ public class BNDownloadManager {
 					if(this.REPOSITORY_ROOT.endsWith("/"))
 						this.REPOSITORY_ROOT = this.REPOSITORY_ROOT.substring(0, this.REPOSITORY_ROOT.length()-1);
 					return updateBNFiles(this.FTP_REMOTE_FILE_OR_DIR);
-				//}
 			} else
 				return false;
 		} catch (Exception e) {
@@ -276,7 +270,7 @@ public class BNDownloadManager {
 			progress.setUnits(overallLength);
 			listener.reset();
 			listener.setMax(overallLength);
-
+			
 			bos = new BufferedOutputStream(new FileOutputStream(dest));        	
 			//get binary file to byte array, use listener
 			bos.write(ftp.getBinaryFile(file, listener), 0, overallLength);
