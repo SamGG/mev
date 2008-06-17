@@ -563,7 +563,7 @@ public class BNInitDialog extends AlgorithmDialog {
 			isBootstrappingCheckbox = new JCheckBox("Bootstrapping");
 			isBootstrappingCheckbox.setSelected(true);
 			isBootstrappingCheckbox.setEnabled(true);
-			isBootstrappingCheckbox.setBackground(Color.lightGray);
+			isBootstrappingCheckbox.setBackground(Color.white);
 			//isBootStrappingLabel = new JLabel("Is Bootstrapping");
 			//isBootStrappingLabel.setBackground(Color.GRAY);
 			isBootstrappingCheckbox.addActionListener(new ActionListener() {
@@ -1463,6 +1463,7 @@ public class BNInitDialog extends AlgorithmDialog {
 									parent, 
 									"Failed to create directory",
 									"Error", JOptionPane.ERROR_MESSAGE);
+					    	return;
 					    }
 					}
 					String keggFileName = sp + BNConstants.KEGG_FILE;
@@ -1473,9 +1474,6 @@ public class BNInitDialog extends AlgorithmDialog {
 								"BN Initialization: Missing File", JOptionPane.ERROR_MESSAGE);
 
 						//Download kegg file for species
-						//String destPath = "";
-						//String ftpBase = "";
-						//String remotePath = "";
 						BNDownloadManager dwnMgr = new BNDownloadManager((JFrame)parent, BNConstants.KEGG_FILE_BASE, "Trying to Download KEGG File", keggFileName, false);
 						if(!dwnMgr.updateFiles())
 							return;
