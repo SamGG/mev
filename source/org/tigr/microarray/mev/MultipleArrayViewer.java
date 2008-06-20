@@ -119,7 +119,9 @@ import org.systemsbiology.gaggle.util.MiscUtil;
 import org.tigr.microarray.file.AnnFileParser;
 import org.tigr.microarray.mev.action.ActionManager;
 import org.tigr.microarray.mev.annotation.GenomeAnnoDialog;
+import org.tigr.microarray.mev.annotation.IChipAnnotation;
 import org.tigr.microarray.mev.annotation.MevAnnotation;
+import org.tigr.microarray.mev.annotation.MevChipAnnotation;
 import org.tigr.microarray.mev.cgh.CGHAlgorithms.CGHAlgorithmFactory;
 import org.tigr.microarray.mev.cgh.CGHAlgorithms.AlterationsComparator.CompareExperiments;
 import org.tigr.microarray.mev.cgh.CGHAlgorithms.NumberOfAlterations.NumberOfAlterationsCalculator;
@@ -3733,9 +3735,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 
 	
     /**
-     *  Handles new data load.  Vector contains ISlideData objects.
+     *  Handles new data load.  Vector contains ISlideData objects. 
      */
-    public void fireDataLoaded(ISlideData [] features, int dataType){
+    public void fireDataLoaded(ISlideData [] features, IChipAnnotation chipAnnotation, int dataType){
     	//add for auto-color scaling format(onedecimalformat)
     	DecimalFormat oneDecimalFormat = new DecimalFormat();
 		oneDecimalFormat.setMaximumFractionDigits(1);
@@ -3744,6 +3746,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
             return;
         data.addFeatures(features);
         data.setDataType(dataType);
+        data.setChipAnnotation(chipAnnotation);
         if(this.data.getFieldNames() != null && this.data.getFeaturesCount() > 0){
         	//Raktim - Modified to display the fileds from Annotation Model
         
@@ -6166,9 +6169,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 			        //                r + ", " + cy3 + ", " + cy5);
 				} // for i
 			} // for r
-			fireDataLoaded(slideDataArray,  IData.DATA_TYPE_RATIO_ONLY);
+			IChipAnnotation chipAnno = new MevChipAnnotation();
+			chipAnno.setSpeciesName(matrix.getSpecies());
+			fireDataLoaded(slideDataArray, chipAnno, IData.DATA_TYPE_RATIO_ONLY);
 		} else {
-			System.out.println("Cannot accept broadcast matrix to " + myGaggleName +": data is already loaded.");
+			System.out.println("Cannot accept broadcast matrix to " + myGaggleName + ": data is already loaded.");
 		}
 	}
       

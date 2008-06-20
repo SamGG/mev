@@ -28,6 +28,7 @@ import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.tigr.microarray.mev.annotation.AnnotationFileReader;
+import org.tigr.microarray.mev.annotation.IChipAnnotation;
 import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.cluster.algorithm.*;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
@@ -119,14 +120,19 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         //from can be read, save a filehandle for it. 
     	String easeFileLocation = null;
         if(framework.getData().isAnnotationLoaded()) {
-        	String slideType = ((org.tigr.microarray.mev.MultipleArrayData)framework.getData()).getchipType();
-        	//TODO This path is hardcoded only until the annotation file location is stored into a property
-        	//in TMEV.props.
-        	String filename = "./data/Annotation/" + slideType + ".txt";
+        	String chipType = framework.getData().getChipAnnotation().getChipType();
+        	String filename = framework.getData().getChipAnnotation().getAnnFileName();
+
         	annotationFile = new File(filename);
 	        if(annotationFile.canRead()) {
-	        	easeFileLocation = "./data/ease" + sep + "ease_" + slideType;
-	        }
+	        	easeFileLocation = "./data/ease" + sep + "ease_" + chipType;
+	        } else {
+	        	annotationFile = new File("./data/Annotation/" + chipType + ".txt");
+	        	easeFileLocation = "./data/ease" + sep + "ease_" + chipType;
+	        	if(!annotationFile.canRead()) {
+	        		easeFileLocation = null;
+	        	}
+	        } 
         }
         
         EASEInitDialog dialog = new EASEInitDialog(
@@ -188,6 +194,10 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
                 //Bad file format
                 JOptionPane.showMessageDialog(framework.getFrame(), "Error loading population file.", "Population File Load Error", JOptionPane.ERROR_MESSAGE);
                 return null;
+            }
+            if(populationKeys == null) {
+            	JOptionPane.showMessageDialog(framework.getFrame(), "Error loading population file.", "Population File Load Error", JOptionPane.ERROR_MESSAGE);
+            	return null;
             }
         } else {
 	        if(isClusterAnalysis && dialog.isPopFileModeSelected()) {
@@ -448,10 +458,11 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
      * @throws IOException
      */
     protected String [] loadGeneIDs() throws IOException {
-        if(annotationFile.exists()) {
+        if(annotationFile != null && annotationFile.exists()) {
         	try {
-	        	AnnotationFileReader afr = new AnnotationFileReader();
-	            Hashtable<String, MevAnnotation> annotations = afr.loadAffyAnnotation(annotationFile);
+	        	AnnotationFileReader afr = AnnotationFileReader.createAnnotationFileReader(annotationFile);
+	            Hashtable<String, MevAnnotation> annotations = afr.getAffyAnnotation();
+	            IChipAnnotation icAnnotation = afr.getAffyChipAnnotation();
 	            String[] annot = new String[annotations.size()];
 	            java.util.Enumeration<String> allAnnotations = annotations.keys();
 	            int i=0;

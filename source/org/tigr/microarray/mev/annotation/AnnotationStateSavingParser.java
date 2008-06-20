@@ -187,18 +187,18 @@ public class AnnotationStateSavingParser {
 	    			//System.out.println("currentLine is:"+currentLine);
 	    			while((currentLine=reader.readLine()).contains("#")) {
 	    				//System.out.println("currentLine is:"+currentLine);
-	    			split.init(currentLine);
-	    			split.nextToken();
-	    			split.nextToken();
-	    			split.nextToken();
-	    			split.nextToken();
-	    			
-	    			temp=split.nextToken();
-	    			int index=Integer.parseInt(temp.substring(0, temp.indexOf(".")));
-	    			String ann=split.nextToken();
-	    		//	System.out.println("index:"+index);
-	    		//	System.out.println("ann:"+ann);
-	    			columnNames.add(index-1, ann);
+		    			split.init(currentLine);
+		    			split.nextToken();
+		    			split.nextToken();
+		    			split.nextToken();
+		    			split.nextToken();
+		    			
+		    			temp=split.nextToken();
+		    			int index=Integer.parseInt(temp.substring(0, temp.indexOf(".")));
+		    			String ann=split.nextToken();
+		    		//	System.out.println("index:"+index);
+		    		//	System.out.println("ann:"+ann);
+		    			columnNames.add(index-1, ann);
 	    			}
 	    			break;
 	    		}

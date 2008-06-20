@@ -33,7 +33,9 @@ import javax.swing.JOptionPane;
 import org.tigr.microarray.mev.annotation.AnnoAttributeObj;
 import org.tigr.microarray.mev.annotation.AnnotationFieldConstants;
 import org.tigr.microarray.mev.annotation.IAnnotation;
+import org.tigr.microarray.mev.annotation.IChipAnnotation;
 import org.tigr.microarray.mev.annotation.MevAnnotation;
+import org.tigr.microarray.mev.annotation.MevChipAnnotation;
 import org.tigr.microarray.mev.cgh.CGHDataGenerator.CGHCopyNumberCalculator;
 import org.tigr.microarray.mev.cgh.CGHDataGenerator.CGHCopyNumberCalculatorNoDyeSwap;
 import org.tigr.microarray.mev.cgh.CGHDataObj.AlterationRegion;
@@ -134,10 +136,12 @@ public class MultipleArrayData implements IData {
     //fields for maintaining the 'experiment to use' statu
     private boolean useMainData = true;
     private Experiment alternateExperiment = null;
-    
-    
-    //EH
+
 	MultipleArrayDataState mads;
+
+	/* Stores annotation data that applies to the entire loaded dataset, such as species names and chip types. */
+	IChipAnnotation chipAnnotation; 
+	
 	/**
      * List of all clones ordered by chromosome and then start position.
      * Raktim OCt 3, 2005
@@ -181,7 +185,10 @@ public class MultipleArrayData implements IData {
      */
     public String gaggleOrganismName;
     
-    public MultipleArrayData(){mads = new MultipleArrayDataState();}
+    public MultipleArrayData(){
+    	mads = new MultipleArrayDataState();
+    	this.chipAnnotation = new MevChipAnnotation();
+    }
     /**
      * PersistenceDelegate constructor.  This constructor can be used to recreate a
      * previously-stored MultipleArrayData. 
@@ -246,7 +253,7 @@ public class MultipleArrayData implements IData {
         setSampleLabelKey(currentSampleLabelKey);
 //        System.out.println("MAD Cons() currentSampleLabelKey: " + currentSampleLabelKey);
         try{
-        setDataType(dataType.intValue());
+        	setDataType(dataType.intValue());
         } catch (Exception e){e.printStackTrace();}
         
         //Raktim 4/11. SS modifications
@@ -287,6 +294,65 @@ public class MultipleArrayData implements IData {
     }
     
     /**
+     * State-saving constructor for MultipleArrayData. New as of 6/13/08. Simply calls the original
+     * state-saving constructor and then sets the chipAnnotation object.
+     * @param experiment
+     * @param useMainData
+     * @param alternateExperiment
+     * @param percentageCutoff
+     * @param usePercentageCutoffs
+     * @param useVarianceFilter
+     * @param useDetectionFilter
+     * @param useFoldFilter
+     * @param dfSet
+     * @param ffSet
+     * @param df
+     * @param ff
+     * @param isMedianIntensities
+     * @param useLowerCutoffs
+     * @param lowerCY3Cutoff
+     * @param lowerCY5Cutoff
+     * @param experimentColors
+     * @param spotColors
+     * @param currentSampleLabelKey
+     * @param featuresList
+     * @param dataType
+     * @param samplesOrder
+     * @param hasDyeSwap
+     * @param CGHData
+     * @param log2Data
+     * @param clones
+     * @param cgh_Sp
+     * @param chromosomeIndices
+     * @param cloneValueType
+     * @param mads
+     * @param chipAnnotation
+     */
+    public MultipleArrayData(
+    		Experiment experiment, 
+    		Boolean useMainData, Experiment alternateExperiment, Float percentageCutoff, Boolean usePercentageCutoffs, 
+			Boolean useVarianceFilter, Boolean useDetectionFilter, Boolean useFoldFilter,
+			Boolean dfSet, Boolean ffSet, DetectionFilter df, FoldFilter ff, Boolean isMedianIntensities, 
+			Boolean useLowerCutoffs, Float lowerCY3Cutoff, Float lowerCY5Cutoff, 
+			ArrayList experimentColors, ArrayList spotColors, 
+			String currentSampleLabelKey, ArrayList featuresList, Integer dataType,
+			int[] samplesOrder, Boolean hasDyeSwap, Boolean CGHData, Boolean log2Data, ArrayList clones, Integer cgh_Sp, 
+			int[][] chromosomeIndices, 
+			Integer cloneValueType, 
+			//Integer logState,
+			MultipleArrayDataState mads, IChipAnnotation chipAnnotation){
+    	this(experiment, 
+       		 useMainData,  alternateExperiment,  percentageCutoff,  usePercentageCutoffs, 
+   			 useVarianceFilter,  useDetectionFilter,  useFoldFilter,
+   			 dfSet,  ffSet,  df,  ff,  isMedianIntensities, 
+   			 useLowerCutoffs,  lowerCY3Cutoff,  lowerCY5Cutoff, 
+   			 experimentColors,  spotColors, 
+   			 currentSampleLabelKey,  featuresList,  dataType,
+   			 samplesOrder, hasDyeSwap, CGHData, log2Data, clones, cgh_Sp, chromosomeIndices, cloneValueType, mads);
+    	setChipAnnotation(chipAnnotation);
+    }
+    
+    /**
 	 * @param mads2
 	 */
 	private void loadMADS(MultipleArrayDataState mads) {
@@ -295,20 +361,27 @@ public class MultipleArrayData implements IData {
     	setMaxCy5(mads.getMaxCY5());
 	}
 	public MultipleArrayDataState getMultipleArrayDataState(){return mads;}
-
+	
 	/**
-	 * 
-	 * getters and setters for organismName and chipType
-	 * 
+	 * Sets MultipleArrayData's IChipAnnotation object. If the input parameter is null, 
+	 * a new, blank one is created.
 	 */
-	
-	public String getOrganismName() {
-		return this.getSlideDataElement(0,0).getElementAnnotation().getSpeciesName();
+	public void setChipAnnotation(IChipAnnotation annot) {
+		if(annot == null)
+			this.chipAnnotation = new MevChipAnnotation();
+		this.chipAnnotation = annot;
+	}
+	/**
+	 * Returns MultipleArrayData's IChipAnnotation object. If the current object is null, 
+	 * a new, empty one is created and set, then returned. 
+	 */
+	public IChipAnnotation getChipAnnotation(){
+		if(chipAnnotation == null)
+			chipAnnotation = new MevChipAnnotation();
+		return chipAnnotation;
 	}
 	
-	public String getchipType() {
-		return this.getSlideDataElement(0,0).getElementAnnotation().getChipType();
-	}
+
 	
 	/*
 	 * Setter for Gaggle-specific organism name. 
@@ -324,7 +397,7 @@ public class MultipleArrayData implements IData {
 		if(gaggleOrganismName != null)
 			return gaggleOrganismName;
 		else 
-			return getOrganismName();
+			return chipAnnotation.getSpeciesName();
 	}
 	
 
@@ -1845,7 +1918,7 @@ public class MultipleArrayData implements IData {
         int[] probes = null;
 
         // pcahan affy detection filter or fold filter
-        if ((isLowerCutoffs()||isGenePixFilter() || isPercentageCutoff()) ||isPvaluePercentageCutoff()|| isPresentCallCutoff()||isGCOSPercentCutoff()||isVarianceFilter() || ( (TMEV.getDataType() == TMEV.DATA_TYPE_AFFY) && (isDetectionFilter() || isFoldFilter())) ) {
+        if ((isLowerCutoffs()||isGenePixFilter() || isPercentageCutoff()) ||isPvaluePercentageCutoff()|| isPresentCallCutoff()||isGCOSPercentCutoff()||isVarianceFilter() || ( (getDataType() == TMEV.DATA_TYPE_AFFY) && (isDetectionFilter() || isFoldFilter())) ) {
             probes = createCutoffGeneList(featuresSize, probesSize);
             experiment = createExperiment(featuresSize, probes);
         } else {

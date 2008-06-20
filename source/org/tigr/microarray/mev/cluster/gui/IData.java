@@ -21,6 +21,7 @@ import org.tigr.microarray.mev.ISlideDataElement;
 import org.tigr.microarray.mev.cgh.CGHDataObj.CGHClone;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterList;
 import org.tigr.microarray.mev.annotation.AnnoAttributeObj;
+import org.tigr.microarray.mev.annotation.IChipAnnotation;
 
 public interface IData {
     //Log state
@@ -391,6 +392,8 @@ public interface IData {
 	public AnnoAttributeObj getElementAnnotationObject(int index, String attr);
 	public boolean isAnnotationLoaded() ;
 	public void setAnnotationLoaded(boolean isAnnotationLoaded) ;	
+	public IChipAnnotation getChipAnnotation();
+	public void setChipAnnotation(IChipAnnotation chipAnnotation);
     /**
 	 * Dan S - Colored cluster viewers
 	 *

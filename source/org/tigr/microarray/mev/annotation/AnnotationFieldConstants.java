@@ -43,4 +43,13 @@ public class AnnotationFieldConstants {
 	public static final String DESC = "DESC";
 	public static final String TGI_TC = "TGI_TC";
 	public static final String CHR_CYTOBAND = "CHR:TX_START-TX_END(STRAND)";
+	
+	public static final String NOT_AVAILABLE = "NA";
+
+	public static final String CHIP_TYPE = "chip-type";
+	public static final String CHIP_NAME = "chip-name";
+	public static final String SPECIES_NAME = "species-name";
+	public static final String GENOME_BUILD = "genome-build";
+	public static final String ANNOTATION_FILE_NAME = "annotation-file-name";
+	public static final String DATA_TYPE = "data-type";
 }

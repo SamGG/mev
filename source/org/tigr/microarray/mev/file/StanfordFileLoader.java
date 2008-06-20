@@ -69,6 +69,7 @@ import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.annotation.AnnotationDialog;
 import org.tigr.microarray.mev.annotation.AnnotationFileReader;
 import org.tigr.microarray.mev.annotation.AnnotationURLConstants;
+import org.tigr.microarray.mev.annotation.IChipAnnotation;
 import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.annotation.PublicURL;
 import org.tigr.microarray.mev.cluster.gui.IData;
@@ -181,9 +182,12 @@ public class StanfordFileLoader extends ExpressionFileLoader {
          * 
          */
         if(this.mav.getData().isAnnotationLoaded()) {
-        	_tempAnno = loadAnnotation(new File(getAnnotationFileName()));
-        	
-        	
+//        	_tempAnno = loadAnnotation(new File(getAnnotationFileName()));
+
+            //EH testing chip annotation change
+        	AnnotationFileReader afr = AnnotationFileReader.createAnnotationFileReader(new File(getAnnotationFileName()));
+        	_tempAnno = afr.getAffyAnnotation();
+        	chipAnno = afr.getAffyChipAnnotation();    
         }
         
      
@@ -280,7 +284,8 @@ public class StanfordFileLoader extends ExpressionFileLoader {
                	  */
                 	MevAnnotation mevAnno = new MevAnnotation();
                 	mevAnno.setCloneID(cloneName);
-                	mevAnno.setViewer(this.mav);
+//	EH testing chip annotatio changes
+//                	mevAnno.setViewer(this.mav);
                     sde = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields, mevAnno);
                 	
                 }
@@ -350,33 +355,6 @@ public class StanfordFileLoader extends ExpressionFileLoader {
         this.setFilesProgress(1);
         return data;
     }
-    
-    
-   /**
-    * @author Sarita
-    * 
-    * @param annotationFile
-    * @return
-    */ 
-    
-    
-    private Hashtable loadAnnotation(File annotationFile) {
-    	   
-    	    	//System.out.println("loadAffyAnno");
-    	    	Hashtable _temp = null;
-    	    	//AnnotationFileReader reader = new AnnotationFileReader();
-    	    	AnnotationFileReader reader = new AnnotationFileReader(this.mav);
-    	    	try {
-    	    		_temp = reader.loadAffyAnnotation(annotationFile);
-    	    	    		
-    			} catch (Exception e) {
-    				// TODO Auto-generated catch block
-    				e.printStackTrace();
-    			}
-    			return _temp;
-    	    }
-    	    
-    	    
     
     
     public FileFilter getFileFilter() {

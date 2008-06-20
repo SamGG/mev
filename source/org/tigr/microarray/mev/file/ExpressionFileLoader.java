@@ -23,6 +23,7 @@ import javax.swing.filechooser.FileFilter;
 
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.annotation.IChipAnnotation;
 
 public abstract class ExpressionFileLoader extends SlideLoaderProgressBar { // implements Runnable {
     
@@ -30,6 +31,13 @@ public abstract class ExpressionFileLoader extends SlideLoaderProgressBar { // i
     protected SlideLoaderProgressBar progress;
     protected boolean stop = false;
 
+    //EH testing chip annotation change
+    protected IChipAnnotation chipAnno = null;
+    
+	public IChipAnnotation getChipAnnotation() {
+		return chipAnno;
+	}
+    
     public ExpressionFileLoader(SuperExpressionFileLoader superLoader) {
         super(superLoader.getFrame());
         this.superLoader = superLoader;
@@ -94,20 +102,6 @@ public abstract class ExpressionFileLoader extends SlideLoaderProgressBar { // i
         return count;
     }
     
-    //EH removed this method because annotation field names should be 
-    //put into the SlideData object instead of TMEV.java
-    /**
-     * Sets the annotation field names in TMEV, appends if names exist
-     */
-    /*
-    protected void setTMEVFieldNames(Vector annotNames){
-        if(annotNames.size() > 0){
-            String [] fieldNames = new String[annotNames.size()];
-            for(int i = 0; i < fieldNames.length; i++){
-                fieldNames[i] = (String)(annotNames.elementAt(i));
-            }
-            TMEV.appendFieldNames(fieldNames);
-        }
-    }
-    */
+    
+
 }

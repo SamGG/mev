@@ -59,6 +59,7 @@ import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.annotation.AnnotationDialog;
 import org.tigr.microarray.mev.annotation.AnnotationFileReader;
+import org.tigr.microarray.mev.annotation.IChipAnnotation;
 import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.annotation.PublicURL;
 import org.tigr.microarray.util.FileLoaderUtility;
@@ -80,10 +81,6 @@ public class Mas5FileLoader extends ExpressionFileLoader {
     private File selectedAnnoFile;
     protected MevAnnotation mevAnno=new MevAnnotation();
     private String annotationFileName;
-    
-   
-    
-    
     
     
     public Mas5FileLoader(SuperExpressionFileLoader superLoader) {
@@ -123,27 +120,6 @@ public class Mas5FileLoader extends ExpressionFileLoader {
     public int getAffyDataType(){
         return this.affyDataType;
     }
-    
-    /**
-     * 
-     * Loads Affy Annotation from a File
-     */
-
-    private Hashtable loadAffyAnno(File affyFile) {
-    	Hashtable _temp = null;
-    	//AnnotationFileReader reader = new AnnotationFileReader();
-    	AnnotationFileReader reader = new AnnotationFileReader(this.mav);
-    	try {
-    		_temp = reader.loadAffyAnnotation(affyFile);
-
-
-    	} catch (Exception e) {
-    		// TODO Auto-generated catch block
-    		e.printStackTrace();
-    	}
-    	return _temp;
-    }
-    
     
     public Vector loadMas5ExpressionFile(File f,String callfile) throws IOException {
         
@@ -191,8 +167,12 @@ public class Mas5FileLoader extends ExpressionFileLoader {
          * 
          */
         if(this.mav.getData().isAnnotationLoaded()) {
-        	_tempAnno = loadAffyAnno(new File(getAnnotationFileName()));
-        	//this.mav.getData().setAnnotationLoaded(true);
+//        	_tempAnno = loadAffyAnno(new File(getAnnotationFileName()));        	
+
+            //EH testing chip annotation change
+        	AnnotationFileReader afr = AnnotationFileReader.createAnnotationFileReader(new File(getAnnotationFileName()));
+        	_tempAnno = afr.getAffyAnnotation();
+        	chipAnno = afr.getAffyChipAnnotation();    
         }
         
      
@@ -278,7 +258,8 @@ public class Mas5FileLoader extends ExpressionFileLoader {
              		    */
                 		MevAnnotation mevAnno = new MevAnnotation();
                 		mevAnno.setCloneID(cloneName);
-                		mevAnno.setViewer(this.mav);
+// EH testing chip annotation changes                		
+//                		mevAnno.setViewer(this.mav);
                 		sde = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields, mevAnno);
                 	}
                 }
