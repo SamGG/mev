@@ -20,10 +20,10 @@ public interface IAnnotation {
 	 ********************************************************************/
 	public AnnotationFieldConstants fieldConsts = new AnnotationFieldConstants();
 	
-	static Vector<String> ChipType = new Vector<String>(5);
-	static Vector<String> ChipName = new Vector<String>(5);
-	static Vector<String> speciesName = new Vector<String>(5);
-	static Vector<String> genomeBuild = new Vector<String>(5);
+//	static Vector<String> ChipType = new Vector<String>(5);
+//	static Vector<String> ChipName = new Vector<String>(5);
+//	static Vector<String> speciesName = new Vector<String>(5);
+//	static Vector<String> genomeBuild = new Vector<String>(5);
 	
 	/****************************
 	 * Attribute Getter Functions
@@ -39,10 +39,10 @@ public interface IAnnotation {
 	public String getProbeCytoband();
 	public String getProbeStrand();
 	public String getProbeSequence();
-	public String getSpeciesName();
-	public String getChipName();
-	public String getChipType();
-	public String getGenomeBuild();
+//	public String getSpeciesName();
+//	public String getChipName();
+//	public String getChipType();
+//	public String getGenomeBuild();
 	public String getCloneID();
 	public String getProbeChromosome();
 	public int getProbeChromosomeAsInt() throws Exception;
@@ -71,10 +71,10 @@ public interface IAnnotation {
 	public void setProbeCytoband(String _temp);
 	public void setProbeStrand(String _temp);
 	public void setProbeSequence(String _temp);
-	public void setSpeciesName(String _temp);
-	public void setChipName(String _temp);
-	public void setChipType(String _temp);
-	public void setGenomeBuild(String _temp);
+//	public void setSpeciesName(String _temp);
+//	public void setChipName(String _temp);
+//	public void setChipType(String _temp);
+//	public void setGenomeBuild(String _temp);
 	public void setCloneID(String _temp);
 	public void setProbeChromosome(String _temp);
 	public void setProbeTxStartBP(String _temp) throws Exception;

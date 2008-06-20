@@ -44,8 +44,8 @@ public class MultipleArrayDataPersistenceDelegate extends PersistenceDelegate {
 						mad.getChromosomeIndices(),/* n x 3 Dim Array of ints */
 						new Integer(mad.getCloneValueType()),
 						//new Integer(mad.getLogState()),
-						mad.getMultipleArrayDataState()
-						
+						mad.getMultipleArrayDataState(),
+						mad.getChipAnnotation()
 						});
 //		System.out.println("MultipleArrayDataPersistenceDelegate Expression: " + e.toString());
 		return e;

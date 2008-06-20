@@ -1427,7 +1427,7 @@ public class BNInitDialog extends AlgorithmDialog {
 					//Array for KEGG supported oraganism
 					String kegg_org[] = new String[]{"Human", "Mouse", "Rat" };
 					if(framework.getData().isAnnotationLoaded()) {
-						sp = ((MultipleArrayData)framework.getData()).getOrganismName().trim();
+						sp = framework.getData().getChipAnnotation().getSpeciesName().trim();
 						JOptionPane pane = new JOptionPane(sp); JDialog dlg = pane.createDialog(new JFrame(), "Annotation Species is- "+ sp); dlg.show();
 					}
 					if(sp == null) {

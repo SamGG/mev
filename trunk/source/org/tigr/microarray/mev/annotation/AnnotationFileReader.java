@@ -16,23 +16,25 @@ import org.tigr.util.StringSplitter;
 public class AnnotationFileReader {
 	String[] fieldNames=new String[0];
 	Vector columnNames=new Vector();
-	MultipleArrayViewer mav;
+	Hashtable<String, MevAnnotation> annoHash;
+	IChipAnnotation chipAnnotation;
+
 	
-    public AnnotationFileReader() {
-    }
-    
-    //Added Feb 26, 2008
-    /**
-     * Sarita: This contsructor was added to allow setting chipType and organismName,
-     * while reading Annotation file. More comments below.
-     * 
-     */
-    public AnnotationFileReader(MultipleArrayViewer mav) {
-    	this.mav=mav;
-    }
+	public static AnnotationFileReader createAnnotationFileReader(File affyFile) throws IOException {
+		AnnotationFileReader newReader = new AnnotationFileReader();
+       	newReader.loadAffyAnnotation(affyFile);
+		return newReader;
+	}
+
+	/**
+	 * Private constructer forces use of createAnnotationFileReader to 
+	 * create a reader and load annotation data. 
+	 * @author eleanorahowe
+	 */
+    private AnnotationFileReader() {}
     
     public void setAnnotation(String[] newAnnotation) {
-    fieldNames=newAnnotation;	
+    	fieldNames=newAnnotation;	
     }
     
     
@@ -41,14 +43,20 @@ public class AnnotationFileReader {
     	return this.fieldNames;
     }
     
+    public IChipAnnotation getAffyChipAnnotation() {
+    	return chipAnnotation;
+    }
+    public Hashtable<String, MevAnnotation> getAffyAnnotation(){
+    	return annoHash;
+    }
     
-    
-    public Hashtable<String, MevAnnotation> loadAffyAnnotation(File affyFIle) throws IOException {
+    private void loadAffyAnnotation(File affyFIle) throws IOException {
     	//System.out.println("loadAffyAnnotation");
     	int numLines = this.getCountOfLines(affyFIle);
-    	Hashtable<String, MevAnnotation> annoHash  = new Hashtable<String, MevAnnotation>(numLines);
-       	BufferedReader reader = new BufferedReader(new FileReader(affyFIle));
-
+    	BufferedReader reader = new BufferedReader(new FileReader(affyFIle));
+    	annoHash = new Hashtable<String, MevAnnotation>(numLines);
+    	chipAnnotation = new MevChipAnnotation();
+    	chipAnnotation.setAnnFileName(affyFIle.getAbsolutePath());
     	StringSplitter ss = new StringSplitter('\t');
     	String currentLine, probeID;
 
@@ -56,8 +64,8 @@ public class AnnotationFileReader {
 
     	MevAnnotation annotationObj; 
     	this.columnNames=getColumnHeader(affyFIle);
-    	String _temp="NA";
-    	Vector<String>_tmpGO=new Vector<String>();
+    	String _temp=AnnotationFieldConstants.NOT_AVAILABLE;
+    	Vector<String> _tmpGO=new Vector<String>();
     	String orgName="";
     	String chipType="";
     	
@@ -97,6 +105,10 @@ public class AnnotationFileReader {
     				orgName = orgName.substring(orgName.indexOf(' ')+1);
 
     			}
+
+        		chipAnnotation.setChipType(chipType);
+        		chipAnnotation.setSpeciesName(orgName);
+        		
     			counter=counter+1;
     			currentLine=reader.readLine();
     			
@@ -120,81 +132,63 @@ public class AnnotationFileReader {
     				//System.out.println("clone id:"+probeID);
     			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.GENBANK_ACC)&&index==i){
     				if(_temp==null){
-    					_temp="NA";
+    					_temp=AnnotationFieldConstants.NOT_AVAILABLE;
     				}
     				annotationObj.setGenBankAcc(_temp);
     				//System.out.println("Genbank acc:"+_temp);
     			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.UNIGENE_ID)&&index==i){
     				if(_temp==null){
-    					_temp="NA";
+    					_temp=AnnotationFieldConstants.NOT_AVAILABLE;
     				}
     				annotationObj.setUnigeneID(_temp);
     			//	System.out.println("Unigene id:"+_temp);
     			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.GENE_TITLE)&&index==i){ 
     				if(_temp==""){
-    					_temp="NA";
+    					_temp=AnnotationFieldConstants.NOT_AVAILABLE;
     				}
     				annotationObj.setGeneTitle(_temp);
     				//System.out.println("Gene_Title:"+_temp);
     			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.GENE_SYMBOL)&&index==i){ 
     				if(_temp==null){
-    					_temp="NA";
+    					_temp=AnnotationFieldConstants.NOT_AVAILABLE;
     				}
     				annotationObj.setGeneSymbol(_temp);
     			//	System.out.println("Gene Symbol:"+_temp);
     			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.CHR_CYTOBAND)&&index==i){
     				if(_temp==null){
-    					_temp="NA";
+    					_temp=AnnotationFieldConstants.NOT_AVAILABLE;
     				}
     				setAlignmentInfo(_temp, annotationObj);
     			//	System.out.println("Cytoband:"+_temp);
     			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.ENTREZ_ID)&&index==i){
     				if(_temp==null){
-    					_temp="NA";
+    					_temp=AnnotationFieldConstants.NOT_AVAILABLE;
     				}
     				annotationObj.setLocusLinkID(_temp);
     			//	System.out.println("Entrez id:"+_temp);
     			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.REFSEQ_ACC)&&index==i){
     				if(_temp==null){
-    					_temp="NA";
+    					_temp=AnnotationFieldConstants.NOT_AVAILABLE;
     				}
     				String mRnaRefSeqs[] = parsemRnaIds(_temp);
 			 		annotationObj.setRefSeqTxAcc(mRnaRefSeqs);
     			//	System.out.println("RefSeq Acc:"+_temp);
     			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.GO_TERMS)&&index==i){
     				if(_temp==null){
-    					_temp="NA";
+    					_temp=AnnotationFieldConstants.NOT_AVAILABLE;
     				}
     				 _tmpGo = parseGoTerms(_temp, "///"); 
     				annotationObj.setGoTerms((String[]) _tmpGo.toArray(new String[_tmpGo.size()]));
     			//	System.out.println("GO_Terms:"+_temp);
     			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.TGI_TC)&&index==i){
     				if(_temp==null){
-    					_temp="NA";
+    					_temp=AnnotationFieldConstants.NOT_AVAILABLE;
     				}
     				annotationObj.setTgiTC(_temp);
     			//	System.out.println("TGI_TC:"+_temp);
     			}
 
 
-    		}
-       
-    		/**
-    		 * AnnotationReader now sets the viewer here, because "setChipType"
-    		 * requires to know the instance of MAV. Earlier, the viewer was
-    		 * set in the individual file loaders in the if loop
-    		 * "if(((MevAnnotation)_tempAnno.get(cloneName))!=null)".
-    		 * 
-    		 * The reason for checking value of 'counter' before setting 
-    		 * chipType and speciesName is to just do it once; MeVAnnotation object
-    		 * is created for every row (gene).
-    		 * 
-    		 * 
-    		 */
-    		if(counter==0 && mav != null) {
-        		annotationObj.setViewer(this.mav);
-    			annotationObj.setChipType(chipType);
-    			annotationObj.setSpeciesName(orgName);
     		}
 
     		//  System.out.println("Clone name:"+cloneName);
@@ -211,8 +205,6 @@ public class AnnotationFileReader {
     		counter++;
     	}
     	reader.close();
-   
-    	return annoHash;
     }
 
   
@@ -274,8 +266,8 @@ public class AnnotationFileReader {
     	 */
     	//chr6:30964144-30975910 (+) // 95.63 // p21.33 /// chr6_cox_hap1:2304770-2316538 (+) // 95.56 // /// chr6_qbl_hap2:2103099-2114867 (+) // 95.45 //
     	if(!temp.trim().startsWith("chr")) { //Alignment info not available
-    		obj.setProbeStrand("na");
-        	obj.setProbeChromosome("na");
+    		obj.setProbeStrand(AnnotationFieldConstants.NOT_AVAILABLE);
+        	obj.setProbeChromosome(AnnotationFieldConstants.NOT_AVAILABLE);
         	try {
         		obj.setProbeTxStartBP("-1");
         		obj.setProbeTxEndBP("-1");

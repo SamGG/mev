@@ -66,6 +66,7 @@ import org.tigr.microarray.mev.SlideDataElement;
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.annotation.AnnotationDialog;
 import org.tigr.microarray.mev.annotation.AnnotationFileReader;
+import org.tigr.microarray.mev.annotation.IChipAnnotation;
 import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.annotation.PublicURL;
 import org.tigr.microarray.util.FileLoaderUtility;
@@ -86,7 +87,6 @@ public class RMAFileLoader extends ExpressionFileLoader {
     private File selectedAnnoFile;
     protected MevAnnotation mevAnno=new MevAnnotation();
     private String annotationFileName;
-    
     
     public RMAFileLoader(SuperExpressionFileLoader superLoader) {
         super(superLoader);
@@ -110,8 +110,12 @@ public class RMAFileLoader extends ExpressionFileLoader {
          * 
          */
         if(this.mav.getData().isAnnotationLoaded()) {
-        	_tempAnno = loadAffyAnno(new File(getAnnotationFileName()));
-        	
+//        	_tempAnno = loadAffyAnno(new File(getAnnotationFileName()));
+
+        	//EH testing chip annotation change
+        	AnnotationFileReader afr = AnnotationFileReader.createAnnotationFileReader(new File(getAnnotationFileName()));
+        	_tempAnno = afr.getAffyAnnotation();
+        	chipAnno = afr.getAffyChipAnnotation();  
         }
         
      
@@ -131,6 +135,7 @@ public class RMAFileLoader extends ExpressionFileLoader {
         return null;
     }
   
+    /*
     private Hashtable loadAffyAnno(File affyFile) {
     	Hashtable _temp = null;
     	//AnnotationFileReader reader = new AnnotationFileReader();
@@ -145,7 +150,7 @@ public class RMAFileLoader extends ExpressionFileLoader {
     	return _temp;
     }
 
-
+*/
 
     
 
@@ -264,7 +269,8 @@ public class RMAFileLoader extends ExpressionFileLoader {
 
                 		 MevAnnotation mevAnno = new MevAnnotation();
                 		 mevAnno.setCloneID(cloneName);
-                		 mevAnno.setViewer(this.mav);
+// EH testing chip annotation changes                		 
+//                		 mevAnno.setViewer(this.mav);
                 		 sde = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields, mevAnno);
 
                 	 }

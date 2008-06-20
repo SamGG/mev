@@ -27,6 +27,7 @@ import javax.swing.filechooser.FileFilter;
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.MultipleArrayViewer;
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.annotation.IChipAnnotation;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindowDialog;
@@ -929,9 +930,11 @@ public class SuperExpressionFileLoader {
 		//	System.out.println("Run");
 			Vector data = null;
 			int dataType = 0;
+			IChipAnnotation chipAnnotation = null;
 			try {
 				selectedFileLoader.showModal();
 				data = selectedFileLoader.loadExpressionFiles();
+				chipAnnotation = selectedFileLoader.getChipAnnotation();
 				if (loaderIndex == 10 || loaderIndex == 8||loaderIndex==7) /* Raktim, added check for 8, CGH Data */
 					dataType = IData.DATA_TYPE_RATIO_ONLY;
 				else if(loaderIndex == 6){
@@ -939,52 +942,51 @@ public class SuperExpressionFileLoader {
 					//.getAffyDataType();
 					dataType = ((Mas5FileLoader)selectedFileLoader)
 						.getAffyDataType();
-				}else if(loaderIndex==0){
+					
+				} else if(loaderIndex==0){
 					dataType = ((StanfordFileLoader)selectedFileLoader)
 					.getDataType();
 					
-					
-				}	else if (loaderIndex == 5) {
+				} else if (loaderIndex == 5) {
 				//	dataType = ((AffymetrixFileLoader) selectedFileLoader)
 					//		.getAffyDataType();
 					dataType = ((AffymetrixFileLoader) selectedFileLoader)
 					.getAffyDataType();
-				}
-				else if (loaderIndex == 3) {
+				} else if (loaderIndex == 3) {
 					dataType = ((AffyGCOSFileLoader) selectedFileLoader)
 					.getAffyDataType();
 									
 					//dataType = ((AffyGCOSFileLoader) selectedFileLoader)
 						//	.getAffyDataType();
-				}else if (loaderIndex == 9) {
+				} else if (loaderIndex == 9) {
 					dataType = ((SOFT_AffymetrixFileLoader) selectedFileLoader)
 							.getDataType();
 									
 					
-				}else if (loaderIndex == 4) {
+				} else if (loaderIndex == 4) {
 					//dataType = ((DFCI_CoreFileLoader) selectedFileLoader)
 					//.getAffyDataType();	
 					dataType = ((DFCI_CoreFileLoader) selectedFileLoader)
 					.getAffyDataType();	
 								
 	
-				}else if (loaderIndex == 13) {
+				} else if (loaderIndex == 13) {
 				 dataType = ((GEOSeriesMatrixLoader) selectedFileLoader)
 					.getDataType();	
 					
 	
-				}else if (loaderIndex == 14) {
+				} else if (loaderIndex == 14) {
 					dataType = ((GEO_GDSFileLoader) selectedFileLoader)
 					.getDataType();
 								
 	
-				}else 
+				} else 
 					dataType = IData.DATA_TYPE_TWO_INTENSITY;
 				selectedFileLoader.dispose();
 				
 				updateDataPath(selectedFileLoader.getFilePath());
 				if (data != null) {
-					viewer.fireDataLoaded(toISlideDataArray(data), dataType);					
+					viewer.fireDataLoaded(toISlideDataArray(data), chipAnnotation, dataType);					
 				}
 			} catch (Exception ioe) {
 			

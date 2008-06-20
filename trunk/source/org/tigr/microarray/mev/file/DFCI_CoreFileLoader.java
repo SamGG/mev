@@ -65,6 +65,7 @@ import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.annotation.AnnotationDialog;
 import org.tigr.microarray.mev.annotation.AnnotationFileReader;
+import org.tigr.microarray.mev.annotation.IChipAnnotation;
 import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.annotation.PublicURL;
 import org.tigr.microarray.mev.cluster.gui.IData;
@@ -94,8 +95,7 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
     private File selectedAnnoFile;
     protected MevAnnotation mevAnno=new MevAnnotation();
     private String annotationFileName;
-
-
+    
     public DFCI_CoreFileLoader(SuperExpressionFileLoader superLoader) {
         super(superLoader);
         this.mav = superLoader.getArrayViewer();
@@ -130,7 +130,12 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
          * 
          */
         if(this.mav.getData().isAnnotationLoaded()) {
-        	_tempAnno = loadAffyAnno(new File(getAnnotationFileName()));
+//        	_tempAnno = loadAffyAnno(new File(getAnnotationFileName()));
+
+            //EH testing chip annotation change
+        	AnnotationFileReader afr = AnnotationFileReader.createAnnotationFileReader(new File(getAnnotationFileName()));
+        	_tempAnno = afr.getAffyAnnotation();
+        	chipAnno = afr.getAffyChipAnnotation();    
         	
         }
         
@@ -226,7 +231,7 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
     /**
      * Raktim - Annotation Demo. 
      * Loads Affy Annotation from a File
-     */
+     
 
     private Hashtable loadAffyAnno(File affyFile) {
     	Hashtable _temp = null;
@@ -244,7 +249,7 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
 		return _temp;
     }
     
-    
+    */
 
     
     
@@ -591,7 +596,8 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
         		    */
         		   MevAnnotation mevAnno = new MevAnnotation();
         		   mevAnno.setCloneID(cloneName);
-        		   mevAnno.setViewer(this.mav);
+//	EH testing chip annotation changes
+//        		   mevAnno.setViewer(this.mav);
         		   slideDataElement = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields, mevAnno);
 
 

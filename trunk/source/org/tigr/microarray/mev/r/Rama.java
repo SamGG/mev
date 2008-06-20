@@ -398,7 +398,7 @@ public class Rama {
 		features[ 0 ].setSlideDataName( "Rama Intensities" );
 		
 		MultipleArrayViewer newMav = ( MultipleArrayViewer ) Manager.getLastComponent();
-		newMav.fireDataLoaded( features, IData.DATA_TYPE_TWO_INTENSITY );
+		newMav.fireDataLoaded( features, null, IData.DATA_TYPE_TWO_INTENSITY );
 		this.mav.getFrame().dispose();
 		return newMav;
 	}//spawnNewMav()
