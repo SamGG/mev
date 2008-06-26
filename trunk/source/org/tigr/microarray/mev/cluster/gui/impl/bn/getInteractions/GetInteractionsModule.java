@@ -408,13 +408,15 @@ public class GetInteractionsModule {
 
 			// Code to load ALL Kegg Interactions
 			//ArrayList keggListAll = GetInteractionsUtil.loadKeggInteractions("hsa", path+BNConstants.SEP);
+			//TODO
+			//Remove hard coded organism name
 			ArrayList keggListAll = GetInteractionsUtil.loadKeggInteractions("hsa",BNConstants.SEP+BNConstants.KEGG_FILE_BASE+BNConstants.SEP);
 			// Find INteractions that corresponds to the Data
 			ArrayList keggList = GetInteractionsUtil.getEdgesfromKegg(keggListAll, gbAccessionsFileName);
 			System.out.println("Edges From KEGG " + keggList.size());
-			for(int i = 0; i < keggList.size(); i++){
-				System.out.println(keggList.get(i).toString());
-			}
+			//for(int i = 0; i < keggList.size(); i++){
+				//System.out.println(keggList.get(i).toString());
+			//}
 
 			//Raktim - New function to remove reverse edges between 2 nodes (cycles) from Lit mining interaction.
 			//E.g - if there is an edge A -> B, there *cannot be an Edge B -> A to make it a DAG
@@ -440,14 +442,41 @@ public class GetInteractionsModule {
 			if(props == null){
 				throw new NullArgumentException("The given properties were null");
 			}
+			
+			ArrayList unionLitKegg = null;
 			ArrayList kegg = getInteractionsFromKegg(props);
 			ArrayList lit = getInteractionsFromLiterature(props);
-			ArrayList unionLitKegg = GetUnionOfInters.uniquelyMergeArrayLists(kegg, lit);
-			unionLitKegg = UsefulInteractions.removeReverseEdge(unionLitKegg);
-			System.out.println("\nEdges From KEGG & LIT " + unionLitKegg.size());
-			for(int i = 0; i < unionLitKegg.size(); i++){
-				System.out.println(unionLitKegg.get(i).toString());
+			if(kegg == null || kegg.size() == 0) {
+				System.out.println("No valid KEGG interactions found");
+				if(lit == null || lit.size() == 0) {
+					System.out.println("No valid LIT interactions found");
+					System.out.println("No valid KEGG-LIT interactions found");
+					return null;
+				} else {
+					//KEGG is null but LIT is valid
+					unionLitKegg = GetUnionOfInters.uniquelyMergeArrayLists(new ArrayList(), lit);
+					unionLitKegg = UsefulInteractions.removeReverseEdge(unionLitKegg);
+					//return unionLitKegg;
+				}
+			} else {
+				//KEGG is valid but LIT is not
+				if(lit == null || lit.size() == 0) {
+					System.out.println("No valid LIT interactions found");
+					unionLitKegg = GetUnionOfInters.uniquelyMergeArrayLists(kegg, new ArrayList());
+					unionLitKegg = UsefulInteractions.removeReverseEdge(unionLitKegg);
+					//return unionLitKegg;
+				} else {
+					//KEGG is valid and LIT is valid
+					unionLitKegg = GetUnionOfInters.uniquelyMergeArrayLists(kegg, lit);
+					unionLitKegg = UsefulInteractions.removeReverseEdge(unionLitKegg);
+					//return unionLitKegg;
+				}
 			}
+			
+			System.out.println("\nEdges From KEGG & LIT " + unionLitKegg.size());
+			//for(int i = 0; i < unionLitKegg.size(); i++){
+				//System.out.println(unionLitKegg.get(i).toString());
+			//}
 			return unionLitKegg;
 		}
 		catch(OutOfRangeException oore){
@@ -704,15 +733,20 @@ public class GetInteractionsModule {
 	 * and some optional properties such as usePpiDirectly (default = true), usePpiOnlyWithin (default = true),
 	 * useTransitiveClosure (default = false), distanceK (default = 3)
 	 */
-	public static void test(String propertiesFileName){
+	public static int test(String propertiesFileName){
 		try {
 			//System.out.print(propertiesFileName);
 			//System.exit(1);
 			Properties props = new Properties();
 			props.load(new FileInputStream(propertiesFileName));			System.out.print(props.getProperty(BNConstants.RES_FILE_NAME));
 			ArrayList interactions = getInteractions(props); //Magic Happens Here !!!
-			if(interactions==null){
-				System.out.print("Oh no NULL Interaction object. Bad...");    
+			if(interactions == null || interactions.size() == 0){
+				System.out.print("Oh no NULL Interaction object. Bad...");
+				JOptionPane.showMessageDialog(
+						new JFrame() , 
+						"No interactions found, aborting ....",
+						"Info", JOptionPane.INFORMATION_MESSAGE);
+				return -1;
 			}
 			String outInteractionsFileName = props.getProperty(BNConstants.OUT_INTER_FILE_NAME, BNConstants.OUT_INTERACTION_FILE);
 			//System.out.print(outInteractionsFileName);			//Raktim - Modified. Name File(s) uniquely
@@ -721,19 +755,23 @@ public class GetInteractionsModule {
 			//System.out.println("fname_cyto " + fname_cyto);
 			System.setProperty("LM_ONLY", fname_cyto);
 			UsefulInteractions.writeSifFileUndir(interactions, fname_cyto);	
-			UsefulInteractions.writeSifFileUndirWithWeights(interactions, outInteractionsFileName);	
+			UsefulInteractions.writeSifFileUndirWithWeights(interactions, outInteractionsFileName);
+			return interactions.size();
 		}
 		catch(IOException ioe){
 			System.out.println(ioe);
 			ioe.printStackTrace();
+			return -1;
 		}
 
 		catch(NullArgumentException nae){
 			System.out.println(nae);			nae.printStackTrace(); 
+			return -1;
 		}
 		catch(OutOfRangeException oore){
 			System.out.println(oore);
 			oore.printStackTrace();
+			return -1;
 		}
 	}
 

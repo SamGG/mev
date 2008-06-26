@@ -673,15 +673,16 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
      * 
      *
      */
-    private void cleanUpFile(){    	 /*
-	    String[] files=new String[8];
+    private void cleanUpFile(){
+	    /*
+    	String[] files=new String[8];
 	    files[0]="getInterModLit.props";
 	    files[1]="getInterModBoth.props";
 	    files[2]="getInterModPPIDirectly.props";
 	    files[3]="outInteractionsLit.txt";
 	    files[4]="outInteractionsPPI.txt";
 	    files[5]="outInteractionsBoth.txt";
-            files[6]="weka_transposed.csv";
+        files[6]="weka_transposed.csv";
 	    files[7]="prepareXMLBifMod.props";
 	    
 	    String sep=System.getProperty("file.separator");
@@ -690,7 +691,31 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 	    for(int i=0;i<8;i++){
 	     File file=new File(path,files[i]);
               file.deleteOnExit();	    
-	    }	    */
+	    }
+	    */
+	    File file;
+	    String path = basePath + BNConstants.TMP_DIR;
+	    System.out.println("Cleaning UP temporary files at: " + path);
+	    try {
+	    	file = new File(path);
+	    } catch (Exception e) {
+	    	file = null;
+	    	e.printStackTrace();
+	    }
+	    if (file != null) {
+	    	String files[] = file.list();
+		    for(int x = 0; x < files.length ; x ++){
+		    	File f = new File (files[x]);
+		    	if(f.isFile()){
+		    		f.delete();
+		    	}else{
+		    		System.out.print("Not a file to delete");
+		    	}
+		    } 
+	    } else {
+	    System.out.println("No such Location");
+	    }
+	    System.out.println("Done !!");
     }
     
     private String[] convertFromFile(String path){

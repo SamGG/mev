@@ -51,7 +51,7 @@ public class BNGUI implements IClusterGUI {
 		run=false;
 		//cancelRun=false;
 		prior=true;
-		DefaultMutableTreeNode root = new DefaultMutableTreeNode( "BN" );
+		//DefaultMutableTreeNode root = new DefaultMutableTreeNode( "BN" );
 		IData data = framework.getData();
 		Experiment exp =data.getExperiment();
 		ClusterRepository repository = framework.getClusterRepository(Cluster.GENE_CLUSTER);
@@ -79,19 +79,21 @@ public class BNGUI implements IClusterGUI {
 		Thread thread = new Thread( new Runnable(){
 			public void run(){	
 				if(!dialog.isNone()){					System.out.println(dialog.getBaseFileLocation());
-					literatureMining(dialog.isLit(),dialog.isPPI(),dialog.isKEGG(), dialog.isBoth(), dialog.isLitAndKegg(), dialog.isPpiAndKegg(), dialog.isAll(),dialog.getBaseFileLocation());
+					int status = literatureMining(dialog.isLit(),dialog.isPPI(),dialog.isKEGG(), dialog.isBoth(), dialog.isLitAndKegg(), dialog.isPpiAndKegg(), dialog.isAll(),dialog.getBaseFileLocation());
 					//literatureMining(true,false,false,dialog.getBaseFileLocation());
-					prepareXMLBifFile(dialog.getBaseFileLocation());
-					BNGUI.done=true;
+					if(status > 0) {
+						prepareXMLBifFile(dialog.getBaseFileLocation());
+						BNGUI.done = true;
+					} else {
+						BNGUI.done = false;
+						return;
+					}
 				} else {
 					return;
 				}
 			}
 		});
-		thread.start();		//Raktim - Modified to pass bootstrap Params
-		//BNClassificationEditor bnEditor=new BNClassificationEditor(framework,false,dialog.getSelectedCluster(),(new Integer(dialog.getNumberBin())).toString(),dialog.getNumberClass(),dialog.numParents(),dialog.getAlgorithm(),dialog.getScoreType(),dialog.useArcRev(), dialog.getBaseFileLocation());
-		BNClassificationEditor bnEditor=new BNClassificationEditor(framework,false,dialog.getSelectedCluster(),(new Integer(dialog.getNumberBin())).toString(),dialog.getNumberClass(),dialog.numParents(),dialog.getAlgorithm(),dialog.getScoreType(),dialog.useArcRev(), dialog.isBootstrapping(), dialog.getNumIterations(), dialog.getConfThreshold(), dialog.getKFolds(), dialog.getBaseFileLocation(), probeIndexAssocHash);
-		bnEditor.showModal(true);
+		thread.start();
 
 		while(!BNGUI.run){
 			try{
@@ -100,10 +102,15 @@ public class BNGUI implements IClusterGUI {
 				//ignore;
 			}
 		}
-
-		//if(BNGUI.cancelRun) 
-		//return null;
-
+		
+		if(!BNGUI.done)
+			return null;
+		
+		//Raktim - Modified to pass bootstrap Params
+		//BNClassificationEditor bnEditor=new BNClassificationEditor(framework,false,dialog.getSelectedCluster(),(new Integer(dialog.getNumberBin())).toString(),dialog.getNumberClass(),dialog.numParents(),dialog.getAlgorithm(),dialog.getScoreType(),dialog.useArcRev(), dialog.getBaseFileLocation());
+		BNClassificationEditor bnEditor = new BNClassificationEditor(framework,false,dialog.getSelectedCluster(),(new Integer(dialog.getNumberBin())).toString(),dialog.getNumberClass(),dialog.numParents(),dialog.getAlgorithm(),dialog.getScoreType(),dialog.useArcRev(), dialog.isBootstrapping(), dialog.getNumIterations(), dialog.getConfThreshold(), dialog.getKFolds(), dialog.getBaseFileLocation(), probeIndexAssocHash);
+		bnEditor.showModal(true);
+		
 		//Raktim - Added to record the Weka output for Observed BN analysis
 		wekaOutputViewer = new HistoryViewer(new JTextArea(), null);
 		String wekaResult = bnEditor.getWekaEvalString();
@@ -136,8 +143,8 @@ public class BNGUI implements IClusterGUI {
 		info.kFolds = dialog.getKFolds();
 		info.score = dialog.getScoreType();
 
-		String lmFile = bnEditor.basePath + BNConstants.RESULT_DIR + BNConstants.SEP + System.getProperty("LM_ONLY");
-		String bnFile = bnEditor.getBootNetworkFile();
+		//String lmFile = bnEditor.basePath + BNConstants.RESULT_DIR + BNConstants.SEP + System.getProperty("LM_ONLY");
+		//String bnFile = bnEditor.getBootNetworkFile();
 		//Vector files = bnEditor.getNetworkFiles();
 		fileViewer = createLMBNViewer(bnEditor.getNetworkFiles());
 		return createResultTree(exp, fileViewer, wekaOutputViewer, info);
@@ -518,25 +525,25 @@ public class BNGUI implements IClusterGUI {
 			//return FILE_IO_ERROR;
 		}
 	}
-	public void literatureMining(boolean lit,boolean ppi, boolean kegg, boolean LitPpi, boolean LitKegg, boolean KeggPpi, boolean LitPpiKegg, String path){
+	public int literatureMining(boolean lit,boolean ppi, boolean kegg, boolean LitPpi, boolean LitKegg, boolean KeggPpi, boolean LitPpiKegg, String path){
 		//System.out.print(sep);
-		GetInteractionsModule getModule=new GetInteractionsModule(path);
+		GetInteractionsModule getModule = new GetInteractionsModule(path);
 		if(lit){			//getModule.test(path+sep+"getInterModLit.props"); //Raktim - USe tmp dir
-			GetInteractionsModule.test(path + 
+			return GetInteractionsModule.test(path + 
 					BNConstants.SEP + 
 					BNConstants.TMP_DIR + 
 					BNConstants.SEP + 
 					BNConstants.LIT_INTER_MODULE_FILE);
 		}
 		if(ppi){			//getModule.test(path+sep+"getInterModPPIDirectly.props"); //Raktim - USe tmp dir
-			GetInteractionsModule.test(path +
+			return GetInteractionsModule.test(path +
 					BNConstants.SEP +
 					BNConstants.TMP_DIR +
 					BNConstants.SEP +
 					BNConstants.PPI_INTER_MODULE_DIRECT_FILE); 
 		}
 		if(LitPpi){			//getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
-			GetInteractionsModule.test(path +
+			return GetInteractionsModule.test(path +
 					BNConstants.SEP +
 					BNConstants.TMP_DIR +
 					BNConstants.SEP +
@@ -544,7 +551,7 @@ public class BNGUI implements IClusterGUI {
 		}
 		if(kegg){
 			//getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
-			GetInteractionsModule.test(path +
+			return GetInteractionsModule.test(path +
 					BNConstants.SEP +
 					BNConstants.TMP_DIR +
 					BNConstants.SEP +
@@ -552,7 +559,7 @@ public class BNGUI implements IClusterGUI {
 		}
 		if(LitKegg){
 			//getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
-			GetInteractionsModule.test(path +
+			return GetInteractionsModule.test(path +
 					BNConstants.SEP +
 					BNConstants.TMP_DIR +
 					BNConstants.SEP +
@@ -560,7 +567,7 @@ public class BNGUI implements IClusterGUI {
 		}
 		if(KeggPpi){
 			//getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
-			GetInteractionsModule.test(path +
+			return GetInteractionsModule.test(path +
 					BNConstants.SEP +
 					BNConstants.TMP_DIR +
 					BNConstants.SEP +
@@ -568,12 +575,13 @@ public class BNGUI implements IClusterGUI {
 		}
 		if(LitPpiKegg){
 			//getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
-			GetInteractionsModule.test(path +
+			return GetInteractionsModule.test(path +
 					BNConstants.SEP +
 					BNConstants.TMP_DIR +
 					BNConstants.SEP +
 					BNConstants.PPI_KEGG_LIT_INTER_MODULE_FILE);
 		}
+		return -1;
 	}
 	// TODO Raktim - What is the bif file for ?
 	public void prepareXMLBifFile(String path){
