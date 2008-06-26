@@ -1428,7 +1428,7 @@ public class BNInitDialog extends AlgorithmDialog {
 					String kegg_org[] = new String[]{"Human", "Mouse", "Rat" };
 					if(framework.getData().isAnnotationLoaded()) {
 						sp = framework.getData().getChipAnnotation().getSpeciesName().trim();
-						JOptionPane pane = new JOptionPane(sp); JDialog dlg = pane.createDialog(new JFrame(), "Annotation Species is- "+ sp); dlg.show();
+						//JOptionPane pane = new JOptionPane(sp); JDialog dlg = pane.createDialog(new JFrame(), "Annotation Species is- "+ sp); dlg.show();
 					}
 					if(sp == null) {
 						sp = (String)JOptionPane.showInputDialog(null, "Select a Species", "Annotation Unknown",
