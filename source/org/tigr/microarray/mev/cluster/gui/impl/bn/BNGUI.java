@@ -76,40 +76,38 @@ public class BNGUI implements IClusterGUI {
 		}
 		converter(dialog.getSelectedCluster(),framework,dialog.getBaseFileLocation());
 		buildPropertyFile(dialog.isLit(),dialog.isPPI(),dialog.isKEGG(), dialog.isBoth(), dialog.isLitAndKegg(), dialog.isPpiAndKegg(), dialog.isAll(),dialog.useGoTerm(),dialog.getBaseFileLocation());
-		Thread thread = new Thread( new Runnable(){
-			public void run(){	
-				if(!dialog.isNone()){					System.out.println(dialog.getBaseFileLocation());
+		//Thread thread = new Thread( new Runnable(){
+			//public void run(){	
+				//if(!dialog.isNone()){					System.out.println(dialog.getBaseFileLocation());
 					int status = literatureMining(dialog.isLit(),dialog.isPPI(),dialog.isKEGG(), dialog.isBoth(), dialog.isLitAndKegg(), dialog.isPpiAndKegg(), dialog.isAll(),dialog.getBaseFileLocation());
 					//literatureMining(true,false,false,dialog.getBaseFileLocation());
+					System.out.println("LM interaction count: " + status);
 					if(status > 0) {
 						prepareXMLBifFile(dialog.getBaseFileLocation());
 						BNGUI.done = true;
 					} else {
 						BNGUI.done = false;
-						return;
+						return null;
 					}
-				} else {
-					return;
-				}
-			}
-		});
-		thread.start();
-
-		while(!BNGUI.run){
-			try{
-				Thread.sleep(3000);	
-			}catch(InterruptedException x){
-				//ignore;
-			}
-		}
-		
-		if(!BNGUI.done)
-			return null;
-		
+				//} else {
+					//return null;
+				//}
+			//}
+		//});
+		//thread.start();
+				
 		//Raktim - Modified to pass bootstrap Params
 		//BNClassificationEditor bnEditor=new BNClassificationEditor(framework,false,dialog.getSelectedCluster(),(new Integer(dialog.getNumberBin())).toString(),dialog.getNumberClass(),dialog.numParents(),dialog.getAlgorithm(),dialog.getScoreType(),dialog.useArcRev(), dialog.getBaseFileLocation());
 		BNClassificationEditor bnEditor = new BNClassificationEditor(framework,false,dialog.getSelectedCluster(),(new Integer(dialog.getNumberBin())).toString(),dialog.getNumberClass(),dialog.numParents(),dialog.getAlgorithm(),dialog.getScoreType(),dialog.useArcRev(), dialog.isBootstrapping(), dialog.getNumIterations(), dialog.getConfThreshold(), dialog.getKFolds(), dialog.getBaseFileLocation(), probeIndexAssocHash);
 		bnEditor.showModal(true);
+				
+		while(!BNGUI.run){
+				try{
+					Thread.sleep(500);	
+				}catch(InterruptedException x){
+					//ignore;
+				}
+		}
 		
 		//Raktim - Added to record the Weka output for Observed BN analysis
 		wekaOutputViewer = new HistoryViewer(new JTextArea(), null);
