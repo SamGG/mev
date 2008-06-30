@@ -39,6 +39,7 @@ import org.tigr.microarray.mev.file.agilent.AgilentMevFileLoader;
 public class SuperExpressionFileLoader {
 
 	public static String DATA_PATH = TMEV.getDataPath();
+	public static String ANNOTATION_PATH=TMEV.getDataPath()+"/"+"Annotation";
 	
 	public final static ImageIcon ICON_COMPUTER = new ImageIcon(Toolkit
 			.getDefaultToolkit().getImage(
