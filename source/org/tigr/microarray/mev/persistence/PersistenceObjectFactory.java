@@ -252,32 +252,19 @@ public class PersistenceObjectFactory {
     	DataInputStream dis = new DataInputStream(new FileInputStream(javaTempDir + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + annotationFileName));
     	Vector allSlideDataElements = loadSlideDataAnnotation(dis, dataType.intValue());
     	dis.close();
-    	
-    	//load IAnnotation
+
     	Vector<IAnnotation> allIAnnotations = new Vector<IAnnotation>();
-    	File iAnnotFile=new File(javaTempDir + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + iAnnotationFileName);
-    	FileReader fr=new FileReader(iAnnotFile);
-
-    	try {
-
-    		if(iAnnotFile.length()>1)
-    			allIAnnotations=loadSlideDataIAnnotation(iAnnotFile);
-    	}catch(Exception e) {
-    		e.printStackTrace();
-    	}
-
-
-
-	   
+    	if(iAnnotationFileName != null) {
+	    	//load IAnnotation
+	    	File iAnnotFile=new File(javaTempDir + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + iAnnotationFileName);
+	    	FileReader fr=new FileReader(iAnnotFile);
 	    	try {
-	    		
 	    		if(iAnnotFile.length()>1)
-	    		allIAnnotations=loadSlideDataIAnnotation(iAnnotFile);
-	        }catch(Exception e) {
+	    			allIAnnotations=loadSlideDataIAnnotation(iAnnotFile);
+	    	} catch(Exception e) {
 	    		e.printStackTrace();
 	    	}
-        
-    	
+    	}
 
     	//load intensities
     	dis = new DataInputStream(new FileInputStream(javaTempDir + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + dataFile));
@@ -293,7 +280,7 @@ public class PersistenceObjectFactory {
         		sde.setDetection(new Character(dis.readChar()).toString());
     		} 	
     	
-    		if(allIAnnotations.size()>0)
+    		if(allIAnnotations != null && allIAnnotations.size()>0)
     		sde.setElementAnnotation((IAnnotation)allIAnnotations.get(i));
     	}
     	dis.close();
