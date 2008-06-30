@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -37,6 +38,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -48,7 +50,9 @@ import javax.swing.border.TitledBorder;
 
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HCLSigOnlyPanel;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterSelector;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
+import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 
 /**
  *
@@ -63,19 +67,24 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
     public static final int MAX_T = 9; 
     public static final int FALSE_NUM = 12;
     public static final int FALSE_PROP = 13;    
+    public static final int BUTTON_SELECTION = 14;
+    public static final int CLUSTER_SELECTION = 15;
     
     boolean okPressed = false;
     Vector exptNames;    
-    MultiClassPanel mPanel; 
+    MultiClassPanel mPanel;
+    JTabbedPane selectionPanel;
     PermOrFDistPanel permPanel;
     PValuePanel pPanel;
     //HCLSelectionPanel hclOpsPanel;    
     HCLSigOnlyPanel hclOpsPanel;
+    ClusterRepository repository;
     
     /** Creates new OneWayANOVAInitBox */
-    public OneWayANOVAInitBox(JFrame parentFrame, boolean modality, Vector exptNames) {
+    public OneWayANOVAInitBox(JFrame parentFrame, boolean modality, Vector exptNames, ClusterRepository repository) {
         super(parentFrame, "One-way ANOVA Initialization", modality);
         this.exptNames = exptNames;  
+        this.repository = repository;
         setBounds(0, 0, 800, 850);
         setBackground(Color.white);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -85,27 +94,31 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
         
         JPanel pane = new JPanel();
         pane.setLayout(gridbag);
-        
+          
         mPanel = new MultiClassPanel();
 
         buildConstraints(constraints, 0, 0, 1, 1, 100, 80);
         gridbag.setConstraints(mPanel, constraints);
         pane.add(mPanel);   
         
+        JTabbedPane consolidatedPane = new JTabbedPane();
         permPanel = new PermOrFDistPanel();
-        buildConstraints(constraints, 0, 1, 1, 1, 0, 5);
-        gridbag.setConstraints(permPanel, constraints);
-        pane.add(permPanel);        
+        //buildConstraints(constraints, 0, 1, 1, 1, 0, 5);
+        //gridbag.setConstraints(permPanel, constraints);
+        consolidatedPane.add("Permutations of F-Distribution", permPanel);        
 
         pPanel = new PValuePanel();
-        buildConstraints(constraints, 0, 2, 1, 1, 0, 10);
-        gridbag.setConstraints(pPanel, constraints);
-        pane.add(pPanel);
+        //buildConstraints(constraints, 0, 2, 1, 1, 0, 10);
+        //gridbag.setConstraints(pPanel, constraints);
+        consolidatedPane.add("P-Value/False Discovery Parameters", pPanel);
         
         hclOpsPanel = new HCLSigOnlyPanel();
-        buildConstraints(constraints, 0, 3, 1, 1, 0, 5);
-        gridbag.setConstraints(hclOpsPanel, constraints);
-        pane.add(hclOpsPanel);        
+        //buildConstraints(constraints, 0, 3, 1, 1, 0, 5);
+        //gridbag.setConstraints(hclOpsPanel, constraints);
+        consolidatedPane.add("Hierarchical Clusters", hclOpsPanel);  
+        buildConstraints(constraints, 0, 1, 1, 1, 0, 20);
+        gridbag.setConstraints(consolidatedPane, constraints);
+        pane.add(consolidatedPane);
         
         addContent(pane);
         EventListener listener = new EventListener();
@@ -156,6 +169,8 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
         GridBagLayout gridbag;
         JPanel dummyPanel;
         MultiGroupExperimentsPanel mulgPanel;
+        JTabbedPane tabbedmulg;
+        ClusterSelector clusterSelector;
         int numGroups;
         //Vector exptNames;
         
@@ -179,18 +194,24 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
                             JOptionPane.showMessageDialog(null, "Please enter a positive integer > 2!", "Error", JOptionPane.ERROR_MESSAGE);
                         } else {
                             mulgPanel = new MultiGroupExperimentsPanel(exptNames, numGroups);
-                            //System.out.println("OK Pressed");
+                            
+                            
                             //JButton dummyButton  = new JButton("dummyButton");
-                            buildConstraints(constraints, 0, 1, 1, 1, 0, 90);
-                            constraints.fill = GridBagConstraints.BOTH;
-                            gridbag.setConstraints(mulgPanel, constraints);
                             //dummyButton.setVisible(true);
                             MultiClassPanel.this.remove(dummyPanel);
-                            MultiClassPanel.this.add(mulgPanel);
+                            tabbedmulg = new JTabbedPane();
+                            clusterSelector = new ClusterSelector(repository, numGroups);
+                            tabbedmulg.add("Button Selection", mulgPanel);
+                            tabbedmulg.add("Cluster Selection", clusterSelector);
+                            buildConstraints(constraints, 0, 1, 1, 1, 0, 90);
+                            constraints.fill = GridBagConstraints.BOTH;
+                            gridbag.setConstraints(tabbedmulg, constraints);
+                            MultiClassPanel.this.add(tabbedmulg);
                             //MultiClassPanel.this.add(dummyButton);
                             MultiClassPanel.this.validate();
                             ngPanel.okButton.setEnabled(false);
                             ngPanel.numGroupsField.setEnabled(false);
+                            
                         }
                         //MultiClassPanel.this.repaint();
                         //dispose();
@@ -353,7 +374,6 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
                 JPanel [] exptNameHeaderPanels = new JPanel[this.numPanels];
                 GridBagLayout exptHeaderGridbag = new GridBagLayout();
                 //exptNameHeaderPanel.HEIGHT = panel1.getHeight();
-                //System.out.println("panel1.preferredSise().height = " + panel1.getPreferredSize().height);
                 for(int i = 0; i < exptNameHeaderPanels.length; i++) {
                     exptNameHeaderPanels[i] = new JPanel();
                     exptNameHeaderPanels[i].setSize(50, panels[i].getPreferredSize().height);
@@ -426,7 +446,10 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
                             File file = fc.getSelectedFile();
                             try {
                                 PrintWriter out = new PrintWriter(new FileOutputStream(file));
-                                int[] groupAssgn = getGroupAssignments();
+                                int[] groupAssgn=getClusterGroupAssignments();
+                                if (getTestDesign()==OneWayANOVAInitBox.BUTTON_SELECTION){
+                                	groupAssgn=getGroupAssignments();
+                                } 
                                 for (int i = 0; i < groupAssgn.length; i++) {
                                     out.print(groupAssgn[i]);
                                     if (i < groupAssgn.length - 1) {
@@ -458,7 +481,6 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
                                 FileReader file = new FileReader(fc.getSelectedFile());
                                 BufferedReader buff = new BufferedReader(file);
                                // String line = buff.readLine();
-                                //System.out.println(line);
                                // StringSplitter st = new StringSplitter('\t');
                                 //st.init(line);
                                 Vector groupsVector = new Vector();
@@ -466,10 +488,12 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
                                 while ((current = buff.readLine()) != null) {
                                     //current = st.nextToken();
                                     groupsVector.add(new Integer(current));
-                                    //System.out.print(current);
                                 }
                                 buff.close();
-                                int[] groupAssgn = getGroupAssignments();
+                                int[] groupAssgn=getClusterGroupAssignments();
+                                if (getTestDesign()==OneWayANOVAInitBox.BUTTON_SELECTION){
+                                	groupAssgn=getGroupAssignments();
+                                } 
                                 if (groupsVector.size() != groupAssgn.length) {
                                     JOptionPane.showMessageDialog(mPanel, "Incompatible file!", "Error", JOptionPane.WARNING_MESSAGE);
                                 } else {
@@ -814,7 +838,12 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
             String command = ae.getActionCommand();
             if(command.equals("ok-command")){
                 boolean tooFew = false;
-                int[] grpAssignments = getGroupAssignments();
+                int[] grpAssignments=getClusterGroupAssignments();
+                if (getTestDesign()==OneWayANOVAInitBox.BUTTON_SELECTION){
+                	grpAssignments=getGroupAssignments();
+                } 
+                if (grpAssignments==null)
+                	return;
                 int numGroups = getNumGroups();
                 int[] groupSize = new int[numGroups];
                 
@@ -829,19 +858,9 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
                     }
                 }
                 
-                        /*
-                        for (int i = 0; i < grpAssignments.length; i++) {
-                            System.out.println("grpAssignments[" + i + "] = "  + grpAssignments[i]);
-                        }
-                         
-                        for (int i = 0; i < groupSize.length; i++) {
-                            System.out.println("groupSize[" + i + "] = " + groupSize[i] + " (group " + (i +1) + ")");
-                        }
-                         */
-                
                 for (int i = 0; i < groupSize.length; i++) {
                     if (groupSize[i] <= 1) {
-                        JOptionPane.showMessageDialog(null, "Each group must contain more than one sample.", "Error", JOptionPane.WARNING_MESSAGE);
+                    	JOptionPane.showMessageDialog(null, "Each group must contain more than one sample.", "Error", JOptionPane.WARNING_MESSAGE);
                         tooFew = true;
                         break;
                     }
@@ -923,6 +942,49 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
         
         return groupAssignments;
     }   
+    public int getTestDesign() {
+        int design = -1;
+        if (mPanel.tabbedmulg.getSelectedIndex() == 0) {
+        	design = OneWayANOVAInitBox.BUTTON_SELECTION;
+        	} else {
+        	design = OneWayANOVAInitBox.CLUSTER_SELECTION;
+        }
+        return design;
+    }
+
+    public int[] getClusterGroupAssignments(){
+    	boolean doubleAssigned;
+    	int[]groupAssignments = new int[exptNames.size()];
+    	ArrayList[] arraylistArray = new ArrayList[mPanel.numGroups];
+    	for (int i=0; i<mPanel.numGroups; i++){
+    		int j = i+1;
+    		arraylistArray[i] = mPanel.clusterSelector.getGroupSamples("Group "+j);
+    		
+    	}
+    	for (int i=0; i<arraylistArray[0].size();i++){
+    	}
+    	for (int i = 0; i < exptNames.size(); i++) {
+    		doubleAssigned = false;
+    		groupAssignments[i] = 0;
+    		for (int j = 0;j<mPanel.numGroups;j++){
+	    		if (arraylistArray[j].contains(i)){
+	    			if (doubleAssigned){
+	    		        Object[] optionst = { "OK" };
+	    				JOptionPane.showOptionDialog(null, 
+	    						"The clusters you have chosen have overlapping samples. \n Each group must contain unique samples.", 
+	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+	    						optionst, optionst[0]);
+	    				return null;
+
+	    			}
+	    			
+	    			groupAssignments[i] = j+1;
+	    			doubleAssigned = true;
+	    		}
+    		}
+        }
+    	return groupAssignments;
+    }
     
     public int getNumGroups() {
         return mPanel.numGroups;
@@ -1015,7 +1077,7 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
             dummyVect.add("Expt " + i);
         }
         
-        OneWayANOVAInitBox oBox = new OneWayANOVAInitBox(dummyFrame, true, dummyVect);
+        OneWayANOVAInitBox oBox = new OneWayANOVAInitBox(dummyFrame, true, dummyVect, null);
         oBox.setVisible(true);
         
     }

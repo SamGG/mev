@@ -104,14 +104,20 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
             exptNamesVector.add(framework.getData().getFullSampleName(columnIndices[i]));
         }
         
-        OneWayANOVAInitBox owaDialog = new OneWayANOVAInitBox((JFrame)framework.getFrame(), true, exptNamesVector);
+        OneWayANOVAInitBox owaDialog = new OneWayANOVAInitBox((JFrame)framework.getFrame(), true, exptNamesVector, framework.getClusterRepository(1));
         owaDialog.setVisible(true);
         
         if (!owaDialog.isOkPressed()) return null;
         
         double alpha = owaDialog.getPValue();
         numGroups = owaDialog.getNumGroups();
-        groupAssignments = owaDialog.getGroupAssignments();
+        
+        groupAssignments =owaDialog.getClusterGroupAssignments();
+        if (owaDialog.getTestDesign()==OneWayANOVAInitBox.BUTTON_SELECTION){
+        	groupAssignments=owaDialog.getGroupAssignments();
+        } 
+        if (groupAssignments == null)
+        	return null;
         boolean usePerms = owaDialog.usePerms();
         int numPerms = 0;
         if (usePerms) {
@@ -340,14 +346,19 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
             exptNamesVector.add(framework.getData().getFullSampleName(experiment.getSampleIndex(i)));
         }
         
-        OneWayANOVAInitBox owaDialog = new OneWayANOVAInitBox((JFrame)framework.getFrame(), true, exptNamesVector);
+        OneWayANOVAInitBox owaDialog = new OneWayANOVAInitBox((JFrame)framework.getFrame(), true, exptNamesVector,framework.getClusterRepository(1));
         owaDialog.setVisible(true);
         
         if (!owaDialog.isOkPressed()) return null;
         
         double alpha = owaDialog.getPValue();
         numGroups = owaDialog.getNumGroups();
-        groupAssignments = owaDialog.getGroupAssignments();
+        groupAssignments =owaDialog.getClusterGroupAssignments();
+        if (owaDialog.getTestDesign()==OneWayANOVAInitBox.BUTTON_SELECTION){
+        	groupAssignments=owaDialog.getGroupAssignments();
+        }
+        if (groupAssignments ==null)
+        	return null;
         boolean usePerms = owaDialog.usePerms();     
         int numPerms = 0;
         if (usePerms) {

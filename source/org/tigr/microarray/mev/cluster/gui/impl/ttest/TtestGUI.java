@@ -109,7 +109,7 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
             exptNamesVector.add(framework.getData().getSampleName(experiment.getSampleIndex(i)));
         }
         
-        TtestInitDialog ttDialog = new TtestInitDialog((JFrame) framework.getFrame(), true, exptNamesVector);
+        TtestInitDialog ttDialog = new TtestInitDialog((JFrame) framework.getFrame(), true, exptNamesVector, framework.getClusterRepository(1),framework.getData().getAllFilledAnnotationFields());
         ttDialog.setVisible(true);
         
         if (!ttDialog.isOkPressed()) return null;
@@ -131,6 +131,17 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
         } else if (tTestDesign == TtestInitDialog.PAIRED) {
             pairedGroupAExpts = ttDialog.getPairedAExpts();
             pairedGroupBExpts = ttDialog.getPairedBExpts();
+        } else if (tTestDesign == TtestInitDialog.CLUSTER_SELECTION){
+        	groupAssignments = ttDialog.getClusterGroupAssignments();
+        	if (groupAssignments==null)
+        		return null;
+        	tTestDesign = TtestInitDialog.BETWEEN_SUBJECTS;
+        } else if(tTestDesign == TtestInitDialog.ONE_CLASS_CLUSTER_SELECTION){
+        	groupAssignments = ttDialog.getOneClassClusterAssignments();
+        	oneClassMean = ttDialog.getOneClassClusterMean();
+        	if (groupAssignments==null)
+        		return null;
+        	tTestDesign = TtestInitDialog.ONE_CLASS;
         }
         int significanceMethod = ttDialog.getSignificanceMethod();
         if (significanceMethod == TtestInitDialog.FALSE_NUM) {
@@ -486,7 +497,7 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
             exptNamesVector.add(framework.getData().getSampleName(experiment.getSampleIndex(i)));
         }
         
-        TtestInitDialog ttDialog = new TtestInitDialog((JFrame) framework.getFrame(), true, exptNamesVector);
+        TtestInitDialog ttDialog = new TtestInitDialog((JFrame) framework.getFrame(), true, exptNamesVector,framework.getClusterRepository(1),framework.getData().getAllFilledAnnotationFields());
         ttDialog.setVisible(true);
         
         if (!ttDialog.isOkPressed()) return null;
@@ -498,6 +509,7 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
             JOptionPane.showMessageDialog(framework.getFrame(), "Invalid alpha value!", "Error", JOptionPane.ERROR_MESSAGE);
             return null;
         }
+        
         tTestDesign = ttDialog.getTestDesign();
         oneClassMean = 0;
         if (tTestDesign == TtestInitDialog.ONE_CLASS) {
@@ -508,17 +520,29 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
         } else if (tTestDesign == TtestInitDialog.PAIRED) {
             pairedGroupAExpts = ttDialog.getPairedAExpts();
             pairedGroupBExpts = ttDialog.getPairedBExpts();
+        } else if (tTestDesign == TtestInitDialog.CLUSTER_SELECTION){
+        	groupAssignments = ttDialog.getClusterGroupAssignments();
+        	if (groupAssignments==null)
+        		return null;
+        	tTestDesign = TtestInitDialog.BETWEEN_SUBJECTS;
+        } else if(tTestDesign == TtestInitDialog.ONE_CLASS_CLUSTER_SELECTION){
+        	groupAssignments = ttDialog.getOneClassClusterAssignments();
+        	oneClassMean = ttDialog.getOneClassClusterMean();
+        	if (groupAssignments==null)
+        		return null;
+        	tTestDesign = TtestInitDialog.ONE_CLASS;
         }
+        
+        
+        
         int significanceMethod = ttDialog.getSignificanceMethod();
         if (significanceMethod == TtestInitDialog.FALSE_NUM) {
             falseNum = ttDialog.getFalseNum();
-            System.out.println("getScriptParams: falseNum = " + falseNum);
             calculateAdjFDRPVals = ttDialog.calculateFDRPVals();
             doFastFDRApprox = ttDialog.doFastFDRApprox();
         }
         if (significanceMethod == TtestInitDialog.FALSE_PROP) {
             falseProp = ttDialog.getFalseProp();
-            System.out.println("getScriptParams: falseProp = " + falseProp);
             calculateAdjFDRPVals = ttDialog.calculateFDRPVals();
             doFastFDRApprox = ttDialog.doFastFDRApprox();
         }        
@@ -660,8 +684,7 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
             int significanceMethod = algData.getParams().getInt("significance-method");
             algData.addMatrix("experiment", experiment.getMatrix());
             
-            this.tTestDesign = algData.getParams().getInt("tTestDesign");            
-            System.out.println("reached upto here");
+            this.tTestDesign = algData.getParams().getInt("tTestDesign");    
             if (significanceMethod == TtestInitDialog.FALSE_NUM) {
                 this.falseNum = algData.getParams().getInt("falseNum");
                 System.out.println("executeScript: fasleNum = " + falseNum);

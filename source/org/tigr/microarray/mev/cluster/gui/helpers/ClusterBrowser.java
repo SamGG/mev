@@ -1,5 +1,4 @@
-/*
-Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
+/*Copyright @ 1999-2004, The Institute for Genomic Research (TIGR).
 All rights reserved.
  */
 /*

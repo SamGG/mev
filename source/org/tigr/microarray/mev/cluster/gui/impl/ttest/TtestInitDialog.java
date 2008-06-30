@@ -27,6 +27,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.PrintWriter;
 import java.util.Vector;
+import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
@@ -51,9 +52,16 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
+import org.tigr.microarray.mev.cluster.clusterUtil.ClusterList;
+import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterBrowser;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterSelector;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HCLSigOnlyPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
+import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLInitDialog;
 import org.tigr.util.StringSplitter;
 /**
  *
@@ -71,6 +79,9 @@ public class TtestInitDialog extends AlgorithmDialog {
     HCLSigOnlyPanel hclOpsPanel;    
     Vector exptNames;
     JTabbedPane chooseDesignPane;
+    JTabbedPane betweenSubsTab;
+    JTabbedPane oneClassTab;
+    JTextField oneClassClusterMean;
     DfCalcPanel dPanel;
     
     boolean lotsOfSamples = false;
@@ -89,23 +100,28 @@ public class TtestInitDialog extends AlgorithmDialog {
     public static final int PAIRED = 11;   
     public static final int FALSE_NUM = 12;
     public static final int FALSE_PROP = 13;
+    public static final int CLUSTER_SELECTION = 14;
+    public static final int ONE_CLASS_CLUSTER_SELECTION = 15;
     
     boolean okPressed = false;
     boolean permParamOkPressed = false;
     protected int userNumCombs = 0;
     protected boolean allCombsUsed = false;
     protected int allPossCombs;
-    protected Color LABEL_COLOR = UIManager.getColor("Label.foreground");
-    
+    protected Color LABEL_COLOR = UIManager.getColor("Label.foreground");    
+    protected ClusterSelector clusterSelector;
+    protected ClusterSelector oneClassSelector;
+    protected ClusterRepository repository;
     
     boolean tooMany = false;
     int count;
    
     final int fileLoadMin=20;
     /** Creates new TtestInitDialog */
-    public TtestInitDialog(JFrame parentFrame, boolean modality, Vector exptNames) {
+    public TtestInitDialog(JFrame parentFrame, boolean modality, Vector exptNames, ClusterRepository repository, String [] annotationLabels) {
         super(parentFrame, "TTEST: T-test", modality);
         this.exptNames = exptNames;
+        this.repository=repository;
         setBounds(0, 0, 800, 850);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         GridBagLayout gridbag = new GridBagLayout();
@@ -199,10 +215,40 @@ public class TtestInitDialog extends AlgorithmDialog {
                 }                
             });
        }
-        chooseDesignPane.add("One-class", oPanel);
-        chooseDesignPane.add("Between subjects", gPanel);
+        JLabel meanLabel = new JLabel("Enter the mean value to be tested against: ");
+        JPanel oneClassPanel = new JPanel();
+        oneClassPanel.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.BOTH;
+        c.gridx = 0;
+        c.gridy = 0;
+        oneClassClusterMean = new JTextField("0", 7);
+        oneClassClusterMean.setSize(15, oneClassClusterMean.getHeight());
+        oneClassSelector = new ClusterSelector(repository, 1);
+        oneClassPanel.add(meanLabel,c);
+        c.gridx = 1;
+        oneClassPanel.add(oneClassClusterMean,c);
+        c.weighty =1;
+        c.weightx = 1;
+        c.gridx = 0;
+        c.gridy = 1;
+        c.gridwidth = 2;
+        c.anchor = GridBagConstraints.PAGE_END;
+        oneClassPanel.add(oneClassSelector,c);
+        
+        oneClassTab = new JTabbedPane();
+        oneClassTab.add("Button Selection", oPanel);
+        oneClassTab.add("Cluster Selection", oneClassPanel);
+        chooseDesignPane.add("One Class", oneClassTab);
+        betweenSubsTab = new JTabbedPane();
+        betweenSubsTab.add("Button Selection", gPanel);
+        clusterSelector = new ClusterSelector(repository, 2);
+        betweenSubsTab.add("Cluster Selection",clusterSelector);
+        chooseDesignPane.add("Between subjects", betweenSubsTab);
         tcpmPanel = new TwoClassPairedMainPanel();
-        chooseDesignPane.add("Paired", tcpmPanel);        
+        chooseDesignPane.add("Paired", tcpmPanel);  
+        
+        
         pPanel.tDistButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 sPanel.justAlphaButton.setSelected(true);
@@ -232,8 +278,11 @@ public class TtestInitDialog extends AlgorithmDialog {
                     sPanel.falseNumField.setEnabled(true);
                     sPanel.falsePropField.setEnabled(true); 
                     
-                    if (getTestDesign() == TtestInitDialog.BETWEEN_SUBJECTS) {
-                        int[] grpAssignments = getGroupAssignments();
+                    if (getTestDesign() == TtestInitDialog.BETWEEN_SUBJECTS|| getTestDesign() == TtestInitDialog.CLUSTER_SELECTION) {
+                    	int[] grpAssignments = getGroupAssignments();
+                    	if (getTestDesign() == TtestInitDialog.CLUSTER_SELECTION)
+                    		grpAssignments = getClusterGroupAssignments();
+                        
                         int grpACounter = 0;
                         int grpBCounter = 0;
                         for (int i = 0; i < grpAssignments.length; i++) {
@@ -267,7 +316,7 @@ public class TtestInitDialog extends AlgorithmDialog {
                                 pPanel.randomGroupsButton.setEnabled(true);
                             }
                         }
-                    } else if (getTestDesign() == TtestInitDialog.ONE_CLASS) {
+                    } else if (getTestDesign() == TtestInitDialog.ONE_CLASS||getTestDesign() == TtestInitDialog.ONE_CLASS_CLUSTER_SELECTION) {
                         pPanel.numCombsLabel.setForeground(Color.black);
                         int validNum = getNumValidOneClassExpts();
                         if (validNum <= 1) {
@@ -338,35 +387,35 @@ public class TtestInitDialog extends AlgorithmDialog {
                 }
             }
         });
-        buildConstraints(constraints, 0, 0, 1, 1, 100, 45);
+        JTabbedPane bigTabbedPane = new JTabbedPane();
+        buildConstraints(constraints, 0, 0, 1, 1, 100, 100);
         gridbag.setConstraints(chooseDesignPane, constraints);
         pane.add(chooseDesignPane);     
         
         dPanel = new DfCalcPanel();
-        buildConstraints(constraints, 0, 1, 1, 1, 0, 5);
-        gridbag.setConstraints(dPanel, constraints);  
-        pane.add(dPanel);
+        bigTabbedPane.add("Variance Assumption",dPanel);
         
-        buildConstraints(constraints, 0, 2, 1, 1, 0, 20);
-        gridbag.setConstraints(pPanel, constraints);
-        pane.add(pPanel);
+        bigTabbedPane.add("P-Value Parameters",pPanel);
         
-        //sPanel = new SignificancePanel();
-        buildConstraints(constraints, 0, 3, 1, 1, 0, 25);
-        gridbag.setConstraints(sPanel, constraints);
-        pane.add(sPanel);
+        bigTabbedPane.add("P-Value/ False Discovery Corrections", sPanel);
         
         hclOpsPanel = new HCLSigOnlyPanel();
-        buildConstraints(constraints, 0, 4, 1, 1, 0, 5);
-        gridbag.setConstraints(hclOpsPanel, constraints);
         
-        pane.add(hclOpsPanel);
+        bigTabbedPane.add("Hierarchical Clustering",hclOpsPanel);
+        constraints.gridy =1;
+        constraints.weighty = 0;
+        pane.add(bigTabbedPane, constraints);
         addContent(pane);
         
         EventListener listener = new EventListener();
         setActionListeners(listener);
     }
-    
+    public int showModal() {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation((screenSize.width - getSize().width)/2, (screenSize.height - getSize().height)/2);
+        show();
+        return 0;
+    }
     
     public void setVisible(boolean visible) {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -1945,12 +1994,20 @@ public class TtestInitDialog extends AlgorithmDialog {
     public int getTestDesign() {
         int design = -1;
         if (chooseDesignPane.getSelectedIndex() == 0) {
-            design = TtestInitDialog.ONE_CLASS;
+        	if (oneClassTab.getSelectedIndex()==0){
+        		design = TtestInitDialog.ONE_CLASS;
+        	} else {
+        		design = TtestInitDialog.ONE_CLASS_CLUSTER_SELECTION;
+        	}
         } else if (chooseDesignPane.getSelectedIndex() == 1){
-            design = TtestInitDialog.BETWEEN_SUBJECTS;
+            if (betweenSubsTab.getSelectedIndex()==0){
+            	design = TtestInitDialog.BETWEEN_SUBJECTS;
+            } else {
+            	design = TtestInitDialog.CLUSTER_SELECTION;
+            }
         } else if (chooseDesignPane.getSelectedIndex() == 2) {
             design = TtestInitDialog.PAIRED;
-        }
+        } 
         return design;
     }
     
@@ -1967,6 +2024,44 @@ public class TtestInitDialog extends AlgorithmDialog {
         }
         
         return groupAssignments;
+    }
+    public int[] getClusterGroupAssignments(){
+    	boolean doubleAssigned;
+    	int[]groupAssignments = new int[exptNames.size()];
+    	ArrayList<Integer> groupAsamps = clusterSelector.getGroupSamples("Group "+1);
+    	ArrayList<Integer> groupBsamps = clusterSelector.getGroupSamples("Group "+2);
+    	int toWhich = 0;
+    	boolean chosen = false;
+    	for (int i = 0; i < exptNames.size(); i++) {
+    		doubleAssigned = false;
+    		groupAssignments[i] = NEITHER_GROUP;
+    		if (groupAsamps.contains(i)){
+    			groupAssignments[i] = GROUP_A;
+    			doubleAssigned = true;
+    		} 
+    		if (groupBsamps.contains(i)){
+    			groupAssignments[i] = GROUP_B;
+    			if (doubleAssigned){
+    				if (!chosen){
+	    		        Object[] optionst = { "GROUP 1", "GROUP 2", "NEITHER", "CANCEL" };
+	    				int option = JOptionPane.showOptionDialog(null, 
+	    						"The clusters you have chosen have overlapping samples. \n Which group should these samples be added to?", 
+	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+	    						optionst, optionst[0]);
+	    				
+	    		        if (option==0) groupAssignments[i] = GROUP_A;
+	    		        if (option==1) groupAssignments[i] = GROUP_B;
+	    		        if (option==2) groupAssignments[i] = NEITHER_GROUP;
+	    		        if (option==3) return null;
+	    		        toWhich=groupAssignments[i];
+	    		        chosen = true;
+    				} else {
+    					groupAssignments[i]=toWhich;
+    				}
+    			}
+    		}
+        }
+    	return groupAssignments;
     }
     
     public boolean isPermut() {
@@ -2009,6 +2104,18 @@ public class TtestInitDialog extends AlgorithmDialog {
         
         return oneClassAssignments;
     }
+    public int[] getOneClassClusterAssignments(){
+    	ArrayList<Integer> groupAsamps = oneClassSelector.getGroupSamples("Group "+1);
+    	int[] groupAssignments = new int[exptNames.size()];
+    	for (int i = 0; i < exptNames.size(); i++) {
+    		groupAssignments[i] = NEITHER_GROUP;
+    		if (groupAsamps.contains(i)){
+    			groupAssignments[i] = GROUP_A;
+    		} 
+    	}
+    	return groupAssignments;
+    }
+    
     
     public int getNumValidOneClassExpts() {
         int validNum = 0;
@@ -2026,7 +2133,9 @@ public class TtestInitDialog extends AlgorithmDialog {
     public double getOneClassMean() {
         return Double.parseDouble(oPanel.meanField.getText());
     }
-    
+    public double getOneClassClusterMean(){
+    	return Double.parseDouble(oneClassClusterMean.getText());
+    }
     public int getFalseNum() {
         return Integer.parseInt(sPanel.falseNumField.getText());
     }
@@ -2121,6 +2230,82 @@ public class TtestInitDialog extends AlgorithmDialog {
             String command = ae.getActionCommand();
             
             if(command.equals("ok-command")){
+            	if( getTestDesign() == TtestInitDialog.CLUSTER_SELECTION) {
+            		if (repository==null){
+                        JOptionPane.showMessageDialog(new JPanel(), "Sample cluster repository is empty", "Error", JOptionPane.WARNING_MESSAGE);
+                        return;
+            		}
+                    String alpha = pPanel.alphaInputField.getText();
+                    float a;
+                    if(pPanel.permutButton.isSelected() && pPanel.randomGroupsButton.isSelected()){
+                        String iter = pPanel.timesField.getText();
+                        if(!validatePermutations(iter)){
+                            okPressed = false;
+                            return;                            
+                        }
+                    }                    
+                    if(!validateAlpha(alpha)){
+                    okPressed = false;
+                        return;
+                    } 
+                    if (sPanel.falseNumButton.isSelected()) {                           
+                        if (!validateFalseNum()) {
+                            okPressed = false; 
+                            return;
+                        }
+                    }
+                    if (sPanel.falsePropButton.isSelected()) {
+                        if (!validateFalseProp()) {
+                            okPressed = false;
+                            return;
+                        }
+                    }
+                    okPressed = true;
+                    dispose();
+            	}
+            	if( getTestDesign() == TtestInitDialog.ONE_CLASS_CLUSTER_SELECTION) {
+            		 try {
+                         Float.parseFloat(oneClassClusterMean.getText());
+                     } catch (NumberFormatException nfe) {
+                         JOptionPane.showMessageDialog(oPanel, "Invalid value entered for mean", "Error", JOptionPane.WARNING_MESSAGE);
+                         okPressed = false;
+                         return;
+                     }
+                     if (repository==null){
+                         JOptionPane.showMessageDialog(new JPanel(), "Sample cluster repository is empty", "Error", JOptionPane.WARNING_MESSAGE);
+                         return;
+             		 }
+                     
+                     String alpha = pPanel.alphaInputField.getText();
+                     
+                     if(pPanel.permutButton.isSelected() && pPanel.randomGroupsButton.isSelected()){
+                         String iter = pPanel.timesField.getText();
+                         if(!validatePermutations(iter)){
+                             okPressed = false;
+                             return;
+                         }
+                     }
+                     if(!validateAlpha(alpha)){
+                         okPressed = false;
+                         return;
+                     } 
+                     
+                     if (sPanel.falseNumButton.isSelected()) {
+                         if (!validateFalseNum()) {
+                             okPressed = false;
+                             return;
+                         }
+                     }
+                     if (sPanel.falsePropButton.isSelected()) {
+                         if (!validateFalseProp()) {
+                             okPressed = false;
+                             return;
+                         }
+                     }                   
+                     okPressed = true;
+                     dispose();  
+            	}
+            	
                 if (getTestDesign() == TtestInitDialog.BETWEEN_SUBJECTS) {
                     int[] grpAssignments = getGroupAssignments();
                     int grpACounter = 0;
@@ -2323,6 +2508,10 @@ public class TtestInitDialog extends AlgorithmDialog {
         }
     }
     
+    public Cluster getSelectedClusterA(){
+        return this.clusterSelector.getSelectedCluster();
+    } 
+    
     public boolean calculateFDRPVals() {
         return sPanel.calcFDRPVals.isSelected();
     }
@@ -2339,20 +2528,35 @@ public class TtestInitDialog extends AlgorithmDialog {
         return pPanel.allCombsButton.isSelected();
     }
     
-    public static void main(String[] args) {
+ /*   public static void main(String[] args) {
         JFrame dummyFrame = new JFrame();
         Vector nameVector = new Vector();
         
         for (int i = 0; i < 10; i++) {
             nameVector.add("Exp " + i);
         }
-        TtestInitDialog  tDialog= new TtestInitDialog(dummyFrame, true, nameVector);
+        //TtestInitDialog  tDialog= new TtestInitDialog(dummyFrame, true, nameVector);
         for (int i = 0; i < 50; i++) {
             System.out.println("2^" + i + " = " + (int)Math.pow(2, i));
         }
         
-        tDialog.setVisible(true);
+        //tDialog.setVisible(true);
         
         System.exit(0);
-    }    
+    }    */
+    public static void main(String[] args) {
+        javax.swing.JFrame frame = new javax.swing.JFrame("Test");
+        Vector blah = new Vector();
+        blah.add("a");
+        blah.add("b");
+        ClusterRepository cr;
+        ClusterList[] cl = new ClusterList[1];
+        cr = new ClusterRepository(0);
+        TtestInitDialog dialog = new TtestInitDialog(frame,true, blah, null, new String[]{"sample 1", "sample 2"});
+        if (dialog.showModal() != JOptionPane.OK_OPTION) {
+            System.exit(0);
+        }
+        System.out.println("===============================");
+        
+    }
 }

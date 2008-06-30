@@ -131,7 +131,7 @@ public class TFAGUI implements IClusterGUI, IScriptGUI {
         numFactorLevels[0] = t1Box.getNumFactorALevels();
         numFactorLevels[1] = t1Box.getNumFactorBLevels();
         
-        TFAInitBox2 t2Box  = new TFAInitBox2((JFrame)framework.getFrame(), true, exptNamesVector, factorNames, numFactorLevels);
+        TFAInitBox2 t2Box  = new TFAInitBox2((JFrame)framework.getFrame(), true, exptNamesVector, factorNames, numFactorLevels, framework.getClusterRepository(1));
         t2Box.setVisible(true);
         
         if (!t2Box.isOkPressed()) return null;
@@ -144,8 +144,13 @@ public class TFAGUI implements IClusterGUI, IScriptGUI {
         }        
         int adjustmentMethod = t2Box.getAdjustmentMethod();
         float alpha = t2Box.getAlpha();
-        factorAAssignments = t2Box.getFactorAAssignments();
-        factorBAssignments = t2Box.getFactorBAssignments();
+        if (t2Box.isButtonSelectionMethod()){
+	        factorAAssignments = t2Box.getFactorAAssignments();
+	        factorBAssignments = t2Box.getFactorBAssignments();
+        } else {
+	        factorAAssignments = t2Box.getFactorAClusterAssignments();
+	        factorBAssignments = t2Box.getFactorBClusterAssignments();
+        }
         Vector[][] bothFactorAssignments = t2Box.getBothFactorAssignments();
         boolean isBalancedDesign = false;
         if (!allCellsHaveOneSample) {
@@ -357,7 +362,7 @@ public class TFAGUI implements IClusterGUI, IScriptGUI {
         numFactorLevels[0] = t1Box.getNumFactorALevels();
         numFactorLevels[1] = t1Box.getNumFactorBLevels();
         
-        TFAInitBox2 t2Box  = new TFAInitBox2((JFrame)framework.getFrame(), true, exptNamesVector, factorNames, numFactorLevels);
+        TFAInitBox2 t2Box  = new TFAInitBox2((JFrame)framework.getFrame(), true, exptNamesVector, factorNames, numFactorLevels, framework.getClusterRepository(1));
         t2Box.setVisible(true);
         
         if (!t2Box.isOkPressed()) return null;
@@ -371,8 +376,13 @@ public class TFAGUI implements IClusterGUI, IScriptGUI {
         
         int adjustmentMethod = t2Box.getAdjustmentMethod();
         float alpha = t2Box.getAlpha();
-        factorAAssignments = t2Box.getFactorAAssignments();
-        factorBAssignments = t2Box.getFactorBAssignments();
+        if (t2Box.isButtonSelectionMethod()){
+	        factorAAssignments = t2Box.getFactorAAssignments();
+	        factorBAssignments = t2Box.getFactorBAssignments();
+        } else {
+	        factorAAssignments = t2Box.getFactorAClusterAssignments();
+	        factorBAssignments = t2Box.getFactorBClusterAssignments();
+        }
         Vector[][] bothFactorAssignments = t2Box.getBothFactorAssignments();
         boolean isBalancedDesign = false;
         if (!allCellsHaveOneSample) {
