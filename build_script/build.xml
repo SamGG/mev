@@ -1669,9 +1669,12 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 	
 	<!-- builds distributable zipfiles for windows, mac, linux, plus a source zipfile.
 	Requires that all user docs be converted to .pdf already, and in the user_docs directory -->
-	<target name="build_package" depends="build-all">
+	<target name="build_package" depends="clean, build-all">
 
-		<delete dir="${package.dir}"/>
+	
+		<echo message="Please be sure that all user documentation to be included in the package
+		has been converted to pdf and placed in the user_docs directory. "/>
+		
 		<mkdir dir="${package.dir}"/>
 		
 		<property name="mev_version.dir" value="MeV_${version}"/>
@@ -1746,14 +1749,13 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		<delete file="${package.dir}/${mev_version.dir}/tmev.sh"/>
 		
 		<echo message="Mac build (MeV_${version}_mac.zip) must be zipped up by hand using 7-zip."/>
-		<!--
 		<zip destfile="${package.dir}/MeV_${version}_mac.zip"
 			basedir="${package.dir}"
+			encoding="UTF-8"
 			>
 			<include name="${mev_version.dir}/**"/>
 			<exclude name=".svn"/>
 		</zip>
-		-->	
 	</target>
 	
 	<target name="javadoc">
@@ -1795,6 +1797,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
 	<target name="clean">
+		<delete dir="${package.dir}"/>
         <delete dir="${dest.dir}"/>
 		<delete file="${lib.dir}/mev-base.jar"/>
 		<delete file="${lib.dir}/mev-gui-impl.jar"/>
