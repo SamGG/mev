@@ -763,7 +763,7 @@ public class StanfordFileLoader extends ExpressionFileLoader {
         		FileLoaderUtility fileLoad = new FileLoaderUtility();
         		File selectedFile;
         		JFileChooser fileChooser = new JFileChooser(
-        				SuperExpressionFileLoader.DATA_PATH);
+        				SuperExpressionFileLoader.ANNOTATION_PATH);
         		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         		int retVal = fileChooser.showOpenDialog(StanfordFileLoaderPanel.this);
 
