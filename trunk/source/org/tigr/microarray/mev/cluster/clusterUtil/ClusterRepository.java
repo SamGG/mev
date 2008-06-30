@@ -108,6 +108,13 @@ public class ClusterRepository extends Vector {
         this.geneClusterRepository = isGeneClusterRepository;
         this.addClusterList(new ClusterList("Cluster Ops."));
     }
+    public ClusterRepository(int numberOfElements){
+        this.numberOfElements = numberOfElements;
+        this.elementClusters = new ClusterList[numberOfElements];
+        this.geneClusterRepository = false;
+        this.addClusterList(new ClusterList("Cluster Ops."));
+    }
+    
     public ArrayList getClusterColors(){
     	return this.clusterColors;
     }
@@ -152,6 +159,12 @@ public class ClusterRepository extends Vector {
      */
     public void setFramework(IFramework framework) {
         this.framework = framework;
+    }    
+    /**
+     *  Gets the repository's framework field
+     */
+    public IFramework getFramework() {
+        return framework;
     }
     
     /**

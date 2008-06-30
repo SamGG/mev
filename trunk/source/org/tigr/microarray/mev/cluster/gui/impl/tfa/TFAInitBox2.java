@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -37,6 +38,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
@@ -46,6 +48,8 @@ import javax.swing.border.TitledBorder;
 
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HCLSigOnlyPanel;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterSelector;
+import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 import org.tigr.util.StringSplitter;
 
 
@@ -70,29 +74,61 @@ public class TFAInitBox2 extends AlgorithmDialog {
     PValuePanel pPanel;
     PValueAdjustmentPanel pAdjPanel;
     HCLSigOnlyPanel hclOpsPanel;    
+    JTabbedPane tabbedSelectors;
+    ClusterSelector clusterSelectorA;
+    ClusterSelector clusterSelectorB;
+    ClusterRepository repository;
     //HCLSelectionPanel hclOpsPanel;
     /** Creates a new instance of TFAInitBox2 */
-    public TFAInitBox2(JFrame parentFrame, boolean modality, Vector exptNames, String[] factorNames, int[] numFactorLevels) {
+    public TFAInitBox2(JFrame parentFrame, boolean modality, Vector exptNames, String[] factorNames, int[] numFactorLevels, ClusterRepository repository) {
         super(parentFrame, "Two-factor ANOVA Initialization", modality);
         this.exptNames = exptNames;
         this.factorNames = factorNames;
         this.numFactorLevels = numFactorLevels;
+        this.repository = repository;
         
-        setBounds(0, 0, 800, 720);
+        setBounds(0, 0, 1000, 720);
         setBackground(Color.white);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints constraints = new GridBagConstraints();
+        GridBagConstraints c = new GridBagConstraints();
         constraints.fill = GridBagConstraints.BOTH;
         
         JPanel pane = new JPanel();
         pane.setLayout(gridbag);
         
         gPanel = new GroupExptsPanel();
+        clusterSelectorA= new ClusterSelector(repository,numFactorLevels[0]);
+        clusterSelectorB= new ClusterSelector(repository,numFactorLevels[1]);
+        if (repository!=null){
+        	clusterSelectorA.setClusterType(factorNames[0]);
+        	clusterSelectorB.setClusterType(factorNames[1]);
+		}
+        JPanel clusterSelectorPanel = new JPanel();
+        clusterSelectorPanel.setLayout(new GridBagLayout());
+        
+        c.fill = GridBagConstraints.BOTH;
+        c.weighty =1;
+        c.weightx = 1;
+        c.gridx = 0;
+        c.gridy = 1;
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.PAGE_END;
+        clusterSelectorPanel.add(clusterSelectorA, c);
+        c.gridx = 1;
+        clusterSelectorPanel.add(clusterSelectorB, c);
+        
+        tabbedSelectors = new JTabbedPane();
+        tabbedSelectors.add("Button Selection",gPanel);        
+        //buildConstraints(constraints, 0, 0, 1, 1, 100, 80);
+        //gridbag.setConstraints(clusterSelectorPanel, constraints);
+        //constraints.anchor = GridBagConstraints.PAGE_END;
+        tabbedSelectors.add("Cluster Selection",clusterSelectorPanel);
         
         buildConstraints(constraints, 0, 0, 1, 1, 100, 80);
-        gridbag.setConstraints(gPanel, constraints);
-        pane.add(gPanel);
+        gridbag.setConstraints(tabbedSelectors, constraints);
+        pane.add(tabbedSelectors);
         
         pPanel = new PValuePanel();
         buildConstraints(constraints, 0, 1, 1, 1, 0, 8);
@@ -305,6 +341,7 @@ public class TFAInitBox2 extends AlgorithmDialog {
             factorBPanel.reset();
         }
     }
+
     
     class MultiGroupExperimentsPanel extends JPanel {
         JLabel[] expLabels;
@@ -745,6 +782,10 @@ public class TFAInitBox2 extends AlgorithmDialog {
             
             String command = ae.getActionCommand();
             if(command.equals("ok-command")){
+            	if (repository==null){
+                    JOptionPane.showMessageDialog(new JPanel(), "Sample cluster repository is empty", "Error", JOptionPane.WARNING_MESSAGE);
+                    return;
+        		}
                 Vector[][] bothFactorAssignments = getBothFactorAssignments();
                 int[] cellSizes =new int[bothFactorAssignments.length*bothFactorAssignments[0].length];
                 //System.out.println("cellSizes.length = " + cellSizes.length);
@@ -832,11 +873,86 @@ public class TFAInitBox2 extends AlgorithmDialog {
     public int[] getFactorAAssignments() {
         return gPanel.factorAPanel.getGroupAssignments();
     }
-    
+
     public int[] getFactorBAssignments() {
         return gPanel.factorBPanel.getGroupAssignments();
     }   
     
+    
+    
+    public int[] getFactorAClusterAssignments(){
+    	boolean doubleAssigned;
+    	int[]groupAssignments = new int[exptNames.size()];
+    	ArrayList[] arraylistArray = new ArrayList[numFactorLevels[0]];
+    	for (int i=0; i<numFactorLevels[0]; i++){
+    		int j = i+1;
+    		arraylistArray[i] = clusterSelectorA.getGroupSamples("Group "+j);
+    		
+    	}
+    	for (int i=0; i<arraylistArray[0].size();i++){
+    	}
+    	for (int i = 0; i < exptNames.size(); i++) {
+    		doubleAssigned = false;
+    		groupAssignments[i] = 0;
+    		for (int j = 0;j<numFactorLevels[0];j++){
+	    		if (arraylistArray[j].contains(i)){
+	    			if (doubleAssigned){
+	    		        Object[] optionst = { "OK" };
+	    				JOptionPane.showOptionDialog(null, 
+	    						"The clusters you have chosen have overlapping samples. \n Each group must contain unique samples.", 
+	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+	    						optionst, optionst[0]);
+	    				return null;
+
+	    			}
+	    			
+	    			groupAssignments[i] = j+1;
+	    			doubleAssigned = true;
+	    		}
+    		}
+        }
+    	return groupAssignments;
+    }
+    public int[] getFactorBClusterAssignments(){
+    	boolean doubleAssigned;
+    	int[]groupAssignments = new int[exptNames.size()];
+    	ArrayList[] arraylistArray = new ArrayList[numFactorLevels[0]];
+    	for (int i=0; i<numFactorLevels[0]; i++){
+    		int j = i+1;
+    		arraylistArray[i] = clusterSelectorB.getGroupSamples("Group "+j);
+    		
+    	}
+    	for (int i=0; i<arraylistArray[0].size();i++){
+    	}
+    	for (int i = 0; i < exptNames.size(); i++) {
+    		doubleAssigned = false;
+    		groupAssignments[i] = 0;
+    		for (int j = 0;j<numFactorLevels[0];j++){
+	    		if (arraylistArray[j].contains(i)){
+	    			if (doubleAssigned){
+	    		        Object[] optionst = { "OK" };
+	    				JOptionPane.showOptionDialog(null, 
+	    						"The clusters you have chosen have overlapping samples. \n Each group must contain unique samples.", 
+	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+	    						optionst, optionst[0]);
+	    				return null;
+
+	    			}
+	    			
+	    			groupAssignments[i] = j+1;
+	    			doubleAssigned = true;
+	    		}
+    		}
+        }
+    	return groupAssignments;
+    }
+    
+    
+    public boolean isButtonSelectionMethod(){
+    	return (tabbedSelectors.getSelectedIndex()==0);
+    }
+    
+
     public Vector[][] getBothFactorAssignments() {
         Vector[][] bothFactorAssignments = new Vector[numFactorLevels[0]][numFactorLevels[1]];
         
@@ -845,11 +961,16 @@ public class TFAInitBox2 extends AlgorithmDialog {
                 bothFactorAssignments[i][j] = new Vector();
             }
         }
-        
-        int[] factorAAssgn = getFactorAAssignments();
-        int[] factorBAssgn = getFactorBAssignments();
-        
-        for (int i = 0; i < factorAAssgn.length; i++) {
+        int[] factorAAssgn;
+    	int[] factorBAssgn;
+        if (isButtonSelectionMethod()){
+        	factorAAssgn = getFactorAAssignments();
+        	factorBAssgn = getFactorBAssignments();
+        } else{
+        	factorAAssgn = getFactorAClusterAssignments();
+        	factorBAssgn = getFactorBClusterAssignments();
+        }
+    	for (int i = 0; i < factorAAssgn.length; i++) {
             if ((factorAAssgn[i] != 0)&&(factorBAssgn[i] != 0)) {
                 bothFactorAssignments[factorAAssgn[i] - 1][factorBAssgn[i] - 1].add(new Integer(i));
             }
