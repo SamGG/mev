@@ -90,6 +90,7 @@ public class BNInitDialog extends AlgorithmDialog {
 	String scoreType="BAYES"; //"BDeu";
 	boolean useArc=true;
 	File fileDir = null;
+	String kegg_sp = null;
 
 	/** Creates a new instance of BNInitDialog
 	 * @param parent Parent Frame
@@ -406,7 +407,9 @@ public class BNInitDialog extends AlgorithmDialog {
 	public int getKFolds(){
 		return Integer.parseInt(this.runBNPanel.kFolds());
 	}
-
+	public String getKeggSpecies() {
+		return kegg_sp;
+	}
 
 	/** Returns a list of file names corresponding to files mapping
 	 * indices to annotation terms (themes).
@@ -1423,34 +1426,34 @@ public class BNInitDialog extends AlgorithmDialog {
 				if(isKEGG()) {
 					//Make sure if KEGG is selected as priors the files are downloaded if it doesnot exist 
 					//Check if Species Name is available, if not prompt for it
-					String sp = null;
+					kegg_sp = null;
 					//Array for KEGG supported oraganism
 					String kegg_org[] = new String[]{"Human", "Mouse", "Rat" };
 					if(framework.getData().isAnnotationLoaded()) {
-						sp = framework.getData().getChipAnnotation().getSpeciesName().trim();
+						kegg_sp = framework.getData().getChipAnnotation().getSpeciesName().trim();
 						//JOptionPane pane = new JOptionPane(sp); JDialog dlg = pane.createDialog(new JFrame(), "Annotation Species is- "+ sp); dlg.show();
 					}
-					if(sp == null) {
-						sp = (String)JOptionPane.showInputDialog(null, "Select a Species", "Annotation Unknown",
+					if(kegg_sp == null) {
+						kegg_sp = (String)JOptionPane.showInputDialog(null, "Select a Species", "Annotation Unknown",
 								JOptionPane.WARNING_MESSAGE, null, kegg_org, kegg_org[0]);
 
 						//JOptionPane pane = new JOptionPane(sp); JDialog dlg = pane.createDialog(new JFrame(), "Dialog"); dlg.show();
-					} else if(!isKeggOrgSupported(kegg_org, sp)) {
+					} else if(!isKeggOrgSupported(kegg_org, kegg_sp)) {
 							//!sp.equalsIgnoreCase("Human") || !sp.equalsIgnoreCase("Mouse") || !sp.equalsIgnoreCase("Rat")) {
 						if (JOptionPane.showConfirmDialog(new JFrame(),
-								"Do you want to continue ? ", "Species " + sp + " not Supported for KEGG",
+								"Do you want to continue ? ", "Species " + kegg_sp + " not Supported for KEGG",
 								JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
 							return;
 						} 
 					}
 
 					//Chnage species name to match KEGG file prefix
-					if(sp.equalsIgnoreCase("Human"))
-						sp="hsa";
-					else if (sp.equalsIgnoreCase("Mouse"))
-						sp="mmu";
-					else if (sp.equalsIgnoreCase("Rat"))
-						sp="rno";
+					if(kegg_sp.equalsIgnoreCase("Human"))
+						kegg_sp="hsa";
+					else if (kegg_sp.equalsIgnoreCase("Mouse"))
+						kegg_sp="mmu";
+					else if (kegg_sp.equalsIgnoreCase("Rat"))
+						kegg_sp="rno";
 
 					//System.out.println("User Dir: " + System.getProperty("user.dir"));
 					//System.out.println("User fileBase: " + fileBase);
@@ -1466,7 +1469,7 @@ public class BNInitDialog extends AlgorithmDialog {
 					    	return;
 					    }
 					}
-					String keggFileName = sp + BNConstants.KEGG_FILE;
+					String keggFileName = kegg_sp + BNConstants.KEGG_FILE;
 					if(!(new File(BNConstants.KEGG_FILE_BASE + BNConstants.SEP + keggFileName)).exists()) {
 						JOptionPane.showMessageDialog(
 								parent, 

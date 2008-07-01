@@ -74,6 +74,8 @@ public class BNConstants {
 	public final static String DISTRIBUTION_FRM_WEIGHTS = "distributionFromWeights";
 	public final static String OUT_XML_BIF_FILE_NAME = "outXMLBifFileName";
     public final static String SIF_FILE_NAME = "sifFileName";
+    
+    public final static String KEGG_SPECIES = "kegg_sp";
 	
 	/**
 	 * Property file names

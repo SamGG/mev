@@ -2,6 +2,8 @@
  * Created on Aug 30, 2005
  */
 package org.tigr.microarray.mev.cluster.gui.impl.bn;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -37,8 +39,8 @@ import org.tigr.microarray.mev.cluster.gui.impl.lem.LEMInfoViewer;
 public class BNGUI implements IClusterGUI {
 	//String sep = System.getProperty("file.separator");
 	public static final int GENE_CLUSTER = 0;
-	public static boolean done=false;
-	public static boolean run=false;
+	public static boolean done = false;
+	public static boolean run = false;
 	//public static boolean cancelRun=false;
 	public static boolean prior=true;
 
@@ -47,10 +49,10 @@ public class BNGUI implements IClusterGUI {
 	LMBNViewer fileViewer;
 
 	public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
-		done=false;
-		run=false;
+		done = false;
+		run = false;
 		//cancelRun=false;
-		prior=true;
+		prior = true;
 		//DefaultMutableTreeNode root = new DefaultMutableTreeNode( "BN" );
 		IData data = framework.getData();
 		Experiment exp =data.getExperiment();
@@ -74,19 +76,39 @@ public class BNGUI implements IClusterGUI {
 		if(dialog.isNone()){
 			return null;
 		}
+		
+		RunWekaProgressPanel pgPanel = new RunWekaProgressPanel();
+		pgPanel.setIndeterminate(true);
+		pgPanel.setLocationRelativeTo(framework.getFrame());
+		//pgPanel.setLocation((screenSize.width-framework.getFrame().getSize().width)/2,(screenSize.height-framework.getFrame().getSize().height)/2);
+		pgPanel.setVisible(true);
+		
 		converter(dialog.getSelectedCluster(),framework,dialog.getBaseFileLocation());
-		buildPropertyFile(dialog.isLit(),dialog.isPPI(),dialog.isKEGG(), dialog.isBoth(), dialog.isLitAndKegg(), dialog.isPpiAndKegg(), dialog.isAll(),dialog.useGoTerm(),dialog.getBaseFileLocation());
+		String kegg_sp = dialog.getKeggSpecies().trim();
+		buildPropertyFile(dialog.isLit(),dialog.isPPI(),dialog.isKEGG(), dialog.isBoth(), dialog.isLitAndKegg(), dialog.isPpiAndKegg(), dialog.isAll(),dialog.useGoTerm(),dialog.getBaseFileLocation(),kegg_sp);
 		//Thread thread = new Thread( new Runnable(){
 			//public void run(){	
 				//if(!dialog.isNone()){					System.out.println(dialog.getBaseFileLocation());
 					int status = literatureMining(dialog.isLit(),dialog.isPPI(),dialog.isKEGG(), dialog.isBoth(), dialog.isLitAndKegg(), dialog.isPpiAndKegg(), dialog.isAll(),dialog.getBaseFileLocation());
 					//literatureMining(true,false,false,dialog.getBaseFileLocation());
-					System.out.println("LM interaction count: " + status);
+					System.out.println("Interaction count: " + status);
 					if(status > 0) {
+						//Display warning if too many interactions are found.
+						if(status > 50) {
+							if (JOptionPane.showConfirmDialog(new JFrame(),
+									"Too many interactions found. \n The process might Run our of Memory! \n Do you want to continue ? ", "Interaction found: " + status + "!",
+									JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
+								BNGUI.done = false;
+								pgPanel.dispose();
+								return null;
+							} 
+						}
 						prepareXMLBifFile(dialog.getBaseFileLocation());
 						BNGUI.done = true;
+						pgPanel.dispose();
 					} else {
 						BNGUI.done = false;
+						pgPanel.dispose();
 						return null;
 					}
 				//} else {
@@ -100,7 +122,7 @@ public class BNGUI implements IClusterGUI {
 		//BNClassificationEditor bnEditor=new BNClassificationEditor(framework,false,dialog.getSelectedCluster(),(new Integer(dialog.getNumberBin())).toString(),dialog.getNumberClass(),dialog.numParents(),dialog.getAlgorithm(),dialog.getScoreType(),dialog.useArcRev(), dialog.getBaseFileLocation());
 		BNClassificationEditor bnEditor = new BNClassificationEditor(framework,false,dialog.getSelectedCluster(),(new Integer(dialog.getNumberBin())).toString(),dialog.getNumberClass(),dialog.numParents(),dialog.getAlgorithm(),dialog.getScoreType(),dialog.useArcRev(), dialog.isBootstrapping(), dialog.getNumIterations(), dialog.getConfThreshold(), dialog.getKFolds(), dialog.getBaseFileLocation(), probeIndexAssocHash);
 		bnEditor.showModal(true);
-				
+			
 		while(!BNGUI.run){
 				try{
 					Thread.sleep(500);	
@@ -182,7 +204,7 @@ public class BNGUI implements IClusterGUI {
 	 * @param goTerms
 	 * @param path
 	 */
-	private void buildPropertyFile(boolean lit,boolean ppi,boolean kegg, boolean LitPpi, boolean LitKegg, boolean KeggPpi, boolean LitPpiKegg,boolean goTerms,String path){
+	private void buildPropertyFile(boolean lit,boolean ppi,boolean kegg, boolean LitPpi, boolean LitKegg, boolean KeggPpi, boolean LitPpiKegg,boolean goTerms,String path, String keggSpecies){
 		//String sep= System.getProperty("file.separator");    
 		final int fileSize=8;
 		String[] propFile=new String[fileSize];
@@ -267,6 +289,7 @@ public class BNGUI implements IClusterGUI {
 				out= new PrintWriter(new FileOutputStream(new File(propFile[3])));	 
 				out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
 				out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+				out.println(BNConstants.KEGG_SPECIES + "=" + keggSpecies);
 				out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
 				out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
 				//out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
@@ -281,6 +304,7 @@ public class BNGUI implements IClusterGUI {
 				out= new PrintWriter(new FileOutputStream(new File(propFile[4])));	 
 				out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
 				out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+				out.println(BNConstants.KEGG_SPECIES + "=" + keggSpecies);
 				out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
 				out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
 				out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
@@ -295,6 +319,7 @@ public class BNGUI implements IClusterGUI {
 				out= new PrintWriter(new FileOutputStream(new File(propFile[5])));	 
 				out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
 				out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+				out.println(BNConstants.KEGG_SPECIES + "=" + keggSpecies);
 				out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
 				out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
 				out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
@@ -310,6 +335,7 @@ public class BNGUI implements IClusterGUI {
 				out= new PrintWriter(new FileOutputStream(new File(propFile[6])));	 
 				out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
 				out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+				out.println(BNConstants.KEGG_SPECIES + "=" + keggSpecies);
 				out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
 				out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
 				out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  

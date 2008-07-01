@@ -13,19 +13,26 @@
 /* GetInteractionsModule.java
  * Copyright (C) 2005 Amira Djebbari
  */
-package org.tigr.microarray.mev.cluster.gui.impl.bn.getInteractions;import java.util.HashMap;import java.util.HashSet;import java.util.Iterator;import java.util.ArrayList;
-import java.util.Properties;import java.io.File;
-import java.io.IOException;
+package org.tigr.microarray.mev.cluster.gui.impl.bn.getInteractions;import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Properties;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import org.tigr.microarray.mev.cluster.gui.impl.bn.BNConstants;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.GetUnionOfInters;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.OutOfRangeException;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.UsefulInteractions;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.GetUnionOfInters;import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;import org.tigr.microarray.mev.cluster.gui.impl.bn.OutOfRangeException;import org.tigr.microarray.mev.cluster.gui.impl.bn.algs.TransitiveClosure;import org.tigr.microarray.mev.cluster.gui.impl.bn.algs.AllPairsShortestPaths;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.algs.AllPairsShortestPaths;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.algs.TransitiveClosure;
 /**
  * The class <code>GetInteractionsModule</code> gets gene interactions from the literature or
  * from protein protein interactions (PPI) or both. If interactions are obtained from the literature,
@@ -39,7 +46,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.bn.GetUnionOfInters;import org.
  */
 public class GetInteractionsModule {
 	public static boolean debug = false;
-	static String sep = System.getProperty("file.separator");
+	static String sep = BNConstants.SEP;
 	static String path;
 	public GetInteractionsModule(String basepath){
 		path=basepath;
@@ -69,14 +76,14 @@ public class GetInteractionsModule {
 			String resFileLoc = path+BNConstants.SEP;
 
 			System.out.println("PATH Paiso: " + fileLoc);
-			String resFileName = resFileLoc+props.getProperty("resourcererFileName");
+			String resFileName = resFileLoc+props.getProperty(BNConstants.RES_FILE_NAME);
 
-			//System.out.print(resFileName);			String gbAccessionsFileName = fileLoc+props.getProperty("gbAccessionsFileName");
+			//System.out.print(resFileName);			String gbAccessionsFileName = fileLoc+props.getProperty(BNConstants.GB_ACC_FILE_NAME);
 			//String gbAccessionsFileName = resFileLoc+props.getProperty("gbAccessionsFileName");
-			String symbolsArticlesFromPubmedFileName = resFileLoc+props.getProperty("symbolsArticlesFromPubmedFileName", null);
-			String symbolsArticlesFromGeneDbFileName = resFileLoc+props.getProperty("symbolsArticlesFromGeneDbFileName", null);
+			String symbolsArticlesFromPubmedFileName = resFileLoc+props.getProperty(BNConstants.SYM_ARTICLES_FRM_PUBMED, null);
+			String symbolsArticlesFromGeneDbFileName = resFileLoc+props.getProperty(BNConstants.SYM_ARTICLES_FRM_GENEDB, null);
 
-			int articleRemovalThreshold = Integer.parseInt(props.getProperty("articleRemovalThreshold"));
+			int articleRemovalThreshold = Integer.parseInt(props.getProperty(BNConstants.ART_REM_THRESH));
 			HashMap gbSymbols = GetInteractionsUtil.getOfficialGeneSymbols(resFileName, gbAccessionsFileName);
 			//System.exit(0);
 			if(debug){
@@ -404,13 +411,13 @@ public class GetInteractionsModule {
 			//String resFileName = resFileLoc+props.getProperty("resourcererFileName");
 
 			//System.out.print(resFileName);
-			String gbAccessionsFileName = fileLoc+props.getProperty("gbAccessionsFileName");
-
+			String gbAccessionsFileName = fileLoc+props.getProperty(BNConstants.GB_ACC_FILE_NAME);
+			String kegg_sp = fileLoc+props.getProperty(BNConstants.KEGG_SPECIES).trim();
 			// Code to load ALL Kegg Interactions
 			//ArrayList keggListAll = GetInteractionsUtil.loadKeggInteractions("hsa", path+BNConstants.SEP);
 			//TODO
 			//Remove hard coded organism name
-			ArrayList keggListAll = GetInteractionsUtil.loadKeggInteractions("hsa",BNConstants.SEP+BNConstants.KEGG_FILE_BASE+BNConstants.SEP);
+			ArrayList keggListAll = GetInteractionsUtil.loadKeggInteractions(kegg_sp,BNConstants.SEP+BNConstants.KEGG_FILE_BASE+BNConstants.SEP);
 			// Find INteractions that corresponds to the Data
 			ArrayList keggList = GetInteractionsUtil.getEdgesfromKegg(keggListAll, gbAccessionsFileName);
 			System.out.println("Edges From KEGG " + keggList.size());
@@ -768,6 +775,7 @@ public class GetInteractionsModule {
 			System.out.println(nae);			nae.printStackTrace(); 
 			return -1;
 		}
+		
 		catch(OutOfRangeException oore){
 			System.out.println(oore);
 			oore.printStackTrace();
