@@ -782,7 +782,7 @@ public class TFAInitBox2 extends AlgorithmDialog {
             
             String command = ae.getActionCommand();
             if(command.equals("ok-command")){
-            	if (repository==null){
+            	if (repository==null||repository.isEmpty()){
                     JOptionPane.showMessageDialog(new JPanel(), "Sample cluster repository is empty", "Error", JOptionPane.WARNING_MESSAGE);
                     return;
         		}

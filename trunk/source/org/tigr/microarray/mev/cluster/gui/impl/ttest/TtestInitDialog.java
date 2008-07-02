@@ -2230,8 +2230,8 @@ public class TtestInitDialog extends AlgorithmDialog {
             String command = ae.getActionCommand();
             
             if(command.equals("ok-command")){
-            	if( getTestDesign() == TtestInitDialog.CLUSTER_SELECTION) {
-            		if (repository==null){
+            	if((getTestDesign() == TtestInitDialog.CLUSTER_SELECTION)||(getTestDesign()==TtestInitDialog.ONE_CLASS_CLUSTER_SELECTION)) {
+            		if (repository==null||repository.isEmpty()){
                         JOptionPane.showMessageDialog(new JPanel(), "Sample cluster repository is empty", "Error", JOptionPane.WARNING_MESSAGE);
                         return;
             		}

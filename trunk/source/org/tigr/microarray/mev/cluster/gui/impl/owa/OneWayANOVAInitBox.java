@@ -837,11 +837,15 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
         public void actionPerformed(ActionEvent ae) {
             String command = ae.getActionCommand();
             if(command.equals("ok-command")){
+            	if ((getTestDesign()==OneWayANOVAInitBox.CLUSTER_SELECTION)&&(repository.isEmpty())){
+            		JOptionPane.showMessageDialog(null, "Cluster Repository is Empty.", "Error", JOptionPane.WARNING_MESSAGE);
+            		return;
+            	}
                 boolean tooFew = false;
-                int[] grpAssignments=getClusterGroupAssignments();
-                if (getTestDesign()==OneWayANOVAInitBox.BUTTON_SELECTION){
-                	grpAssignments=getGroupAssignments();
-                } 
+                int[] grpAssignments=getGroupAssignments();
+                if (getTestDesign()==OneWayANOVAInitBox.CLUSTER_SELECTION){
+                	grpAssignments=getClusterGroupAssignments();
+                }
                 if (grpAssignments==null)
                 	return;
                 int numGroups = getNumGroups();
