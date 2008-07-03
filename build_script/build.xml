@@ -20,7 +20,7 @@
     <property name="lib.dir" location="${home.dir}/lib"/>
     <property name="plugins.dir" location="${home.dir}/plugins"/>
 	<property name="java.target.version" value="1.5"/>
-	<property name="version" value="4_2"/> 
+	<property name="version" value="4_2_RC1"/> 
 	<property name="package.dir" location="${home.dir}/deploy"/>
 
 
@@ -351,7 +351,6 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 				<pathelement location="${lib.dir}/soap.jar" />
                 <pathelement location="${tigr.dir}/microarray/file"/>
 				<pathelement location="${lib.dir}/weka.jar" />
-				<pathelement location="${lib.dir}/cytoscape.jar" />
 				<pathelement location="${lib.dir}/commons-net-1.4.1.jar" />
 				<pathelement location="${lib.dir}/goose.jar" />
             </classpath>	    
@@ -561,7 +560,6 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			<classpath>
 				<pathelement location="${lib.dir}/ftpbean.jar" />
 				<pathelement location="${lib.dir}/weka.jar" />
-				<pathelement location="${lib.dir}/cytoscape.jar" />
 
 				<!-- jars to support module compilation -->
 				<pathelement location="${lib.dir}/mev-util.jar" />
@@ -600,7 +598,6 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			<classpath>
 				<pathelement location="${lib.dir}/ftpbean.jar" />
 				<pathelement location="${lib.dir}/weka.jar" />
-				<pathelement location="${lib.dir}/cytoscape.jar" />
 
 				<!-- jars to support module compilation -->
 				<pathelement location="${lib.dir}/mev-util.jar" />
@@ -1690,7 +1687,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			<fileset dir="${home.dir}/lib/" includes="*.jar"/>
 		</copy>
 		<copy todir="${package.dir}/${mev_version.dir}/plugins" >
-			<fileset dir="${home.dir}/plugins/" includes="*.jar"/>
+			<fileset dir="${home.dir}/plugins/" includes="*.jar, *.props"/>
 		</copy>
 		<zip destfile="${package.dir}/MeV_${version}_source.zip"
 			basedir="${source.dir}"
