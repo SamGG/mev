@@ -48,5 +48,12 @@ public class KMCSuppExperimentViewer extends ExperimentViewer {
     public KMCSuppExperimentViewer(Experiment experiment, int[][] clusters) {
 	super(experiment, clusters);
     }
+    /**
+     * Constructs a <code>HJCExperimentViewer</code> with specified
+     * experiment and clusters.
+     */
+    public KMCSuppExperimentViewer(Experiment experiment, int[][] clusters, int[] samplesOrder, Boolean drawAnnotations) {
+	super(experiment, clusters, samplesOrder, drawAnnotations);
+    }
     
 }
