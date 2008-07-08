@@ -12,6 +12,23 @@ The MAV.saveAnalysisAs() and saveAnalysis() methods contain the gui code for sav
 
 An XMLEncoder writes the state of these objects to temporary files which are then zipped together into the final .anl file. In the original trial implementation of this state-saving model all of the data were stored as xml in one large text file. However, because of the size of array data and its associated annotation, these xml files were far too large. Therefore custom persistence delegates and instantiation classes were written for several of the data-storage classes, such as Experiment and SlideData. Furthermore, many of the subclasses of IViewer were not amenable to the default bean-style conversion to XML, so these classes also needed a custom persistence delegate. IViewer and its subclasses are discussed in their own section. 
 
+
+Custom Persistence Delegates
+Several of the major MeV classes required their own persistence delegate. These classes are all found in the persistence package. A class requires its own persistence delegate if 1) it cannot be reproduced accurately using the default XMLEncoder api methods or 2) using those methods would produce an object so large that it cannot be stored in memory or stored easily as an xml document on the filesystem. 
+
+If the former is the case, a simple PersistenceObject can be created that specifies the constructor and initializer needed to recreate the object. A good example of this type is the MultipleArrayData class. The MultipleArrayDataPersistenceDelegate is used to store this class' state. This PersistenceDelegate is registered in the XMLEncoderFactory. 
+
+The latter case is true if saving the contents of an object would produce an xml document so large that it either fills up all available memory or results in an overly-large saved analysis file. A good example of this case is the various subclasses of ISlideData, such as FloatSlideData. For these classes a custom PersistenceDelegate is also written (in this case, ISlideDataPersistenceDelegate) but this PersistenceDelegate is more elaborate. Instead of simply specifying a constructor signature and its appropriate input parameters, this delegate creates and writes to a separate binary file in the mev temp directory*. 
+
+The writing of binary files for some of MeV's objects is a very fragile part of the state-saving system. Modifying these methods should be done carefully so that older saved state files remain readable. 
+
+*The fact that the PersistenceDelegate needs to know the location of the mev temp directory is a design flaw in the state-saving system. 
+
+
+PersistenceObjectFactory
+
+The XMLEncoderFactory produces an XMLEncoder that has been loaded with all of the custom PersistenceDelegates required to save state in MeV. All new custom PersistenceDelegates must be registered with the XMLEncoderFactory in the method getMAVEncoder().
+
 Result Viewers (IViewer and its subclasses)
 Because so many different classes extend IViewer, a single persistence delegate was written for that class that can be used by all of its subclasses. The IViewerPersistenceDelegate is the common persistence delegate for all IViewer classes. The IViewer interface specifies a method called getExpression(). Each subclass' implementation of this method must return an Expression object that represents the constructor call (complete with parameter values) that must be made to re-create the object when the saved state is restored. It is the responsibility of the developer who writes and/or maintains the IViewer subclass to ensure that the class' getExpression() method returns an expression that accurately represents the appropriate constructor. 
 
