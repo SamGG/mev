@@ -1,0 +1,31 @@
+MeV state-saving 
+(EH: this document is a work-in-progress. It should be complete by 7/31/08.)
+Changes made to the state-saving model of MeV should be added to this document.
+
+MeV state-saving is done using the Java XMLEncoder/XMLDecoder API. A good understanding of this API is required to understand and work with the state-saving functions of MeV. The API uses Java introspection and other tools to reduce Java objects to xml for storage. A good introductory article to the API is here:  http://java.sun.com/products/jfc/tsc/articles/persistence4/ The remainder of this document will assume that the reader understands this API, including the use of custom persistence delegates and custom instantiation. 
+
+An "analysis" includes the data and annotation loaded into a MAV, plus the results of modules run on those data. Only the data and results included in the currently-selected MAV will be saved as part of an analysis file. The user, upon loading a saved analysis file, should be able to continue working with their data, running further analyses, interacting with the saved and loaded result viewers as they had before. These saved analysis file should be portable across computers on differing platforms and openable by all future versions of MeV. That is, it should be possible for a user working on a Mac and MeV v4.1 to send a saved analysis file to a Windows user running MeV v4.2 or higher. This analysis file should be openable without trouble. It is not expected, however, that an older version of MeV should be able to open saved analysis files created by a newer version of MeV.
+
+State-saving is initiated by the user through the File->Save Analysis menu item in the MultipleArrayViewer (MAV). Data is written to a file named with the extension ".anl". If the user specifies a name that does not end in ".anl" MeV will add it. This .anl file is effectively a zip file (made using Java's zip api) containing several other files. More details on those files can be found in a later section of this document. All classes used to assist in the saving and restoring of MeV's state can be found in the org.tigr.microarray.mev.persistence package.
+
+The MAV.saveAnalysisAs() and saveAnalysis() methods contain the gui code for saving an analysis. They handle opening a file-selection window, setting the filename, and calling the saveState method. The objects that are saved for later loading include the MultipleArrayData object, the result tree, the cluster repositories, and the SessionMetaData object. The MultipleArrayViewer is not saved. 
+
+An XMLEncoder writes the state of these objects to temporary files which are then zipped together into the final .anl file. In the original trial implementation of this state-saving model all of the data were stored as xml in one large text file. However, because of the size of array data and its associated annotation, these xml files were far too large. Therefore custom persistence delegates and instantiation classes were written for several of the data-storage classes, such as Experiment and SlideData. Furthermore, many of the subclasses of IViewer were not amenable to the default bean-style conversion to XML, so these classes also needed a custom persistence delegate. IViewer and its subclasses are discussed in their own section. 
+
+Result Viewers (IViewer and its subclasses)
+Because so many different classes extend IViewer, a single persistence delegate was written for that class that can be used by all of its subclasses. The IViewerPersistenceDelegate is the common persistence delegate for all IViewer classes. The IViewer interface specifies a method called getExpression(). Each subclass' implementation of this method must return an Expression object that represents the constructor call (complete with parameter values) that must be made to re-create the object when the saved state is restored. It is the responsibility of the developer who writes and/or maintains the IViewer subclass to ensure that the class' getExpression() method returns an expression that accurately represents the appropriate constructor. 
+
+The saveState method creates temp files in the Mev temp directory and zips them into the final .anl file. These files are created in various ways. 
+
+The most complicated of the files is mev_state.xml. Most of the class structure of the saved data is stored here, using Java's XMLEncoder/XMLDecoder API. 
+
+ 
+
+1 mev_state.xml file
+1+ floatmatrix binary files
+1+ floadslidedata binary files
+1 optional iannotation text file
+1 slidedata binary file
+1 slidedataannotation binary file
+2 bufferedimage binary files
+
