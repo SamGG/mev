@@ -680,17 +680,14 @@ public class HCLViewer extends JPanel implements IViewer {
     	}
     }
     public void broadcastNamelistGaggle() {
-    	Experiment subExp;
     	int[] rows;
     	if(selectedCluster != null) {
 	    	if(selectedCluster.isGeneCluster) {
-	    		subExp = getExperiment();
 	    		rows = getSubTreeElements();
 	    	} else {
-	    		subExp = ((org.tigr.microarray.mev.MultipleArrayData)data).getDataSubset(getSubTreeElements(), experiment.getRowMappingArrayCopy()).getExperiment();
-	    		rows = subExp.getRows();
+	    		rows = getExperiment().getRows();
 	    	}
-	    	framework.broadcastNamelist(subExp, rows);
+	    	framework.broadcastNamelist(getExperiment(), rows);
     	} else {
     		framework.broadcastNamelist(getExperiment(), getExperiment().getRows());
     	}
