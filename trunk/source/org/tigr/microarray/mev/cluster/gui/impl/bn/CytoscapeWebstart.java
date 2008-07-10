@@ -11,17 +11,22 @@ import javax.swing.JOptionPane;
 
 import org.tigr.microarray.mev.TMEV;
 
+/**
+ * Webstart utility file for Cystoscape
+ * @author Raktim
+ *
+ */
 public class CytoscapeWebstart {
 
 	public static Process runtimeProc;
 	
 	/**
-     * 
+     * Public static funtion invokes webstart and creates the jnlp file
      */
     public static void onWebstartCytoscape(Vector netFiles) {
-    	//String codeBase = "'http://www.wikipathways.org//wpi/bin/cytoscape/'";
+    	//TODO
+    	//Read code base from property file
     	String codeBase = "'http://www.cytoscape.org/tut/webstart/'";
-    	//String jnlpLoc = createSunCytoscapeJNLP(codeBase, netFiles);
     	String jnlpLoc = createGaggleCytoscapeJNLP(codeBase, netFiles);
     	String jnlpURI = TMEV.getDataPath() + File.separator + BNConstants.RESULT_DIR + File.separator + BNConstants.CYTOSCAPE_URI;
     	
@@ -38,7 +43,7 @@ public class CytoscapeWebstart {
     }
     
     /**
-     * 
+     * privare Static function to fork Java Webstart based on a JNLP file
      */
     private static void startCytoscape(String jnlpURI) {
         String command = System.getProperty("java.home");
@@ -53,7 +58,7 @@ public class CytoscapeWebstart {
         }
     }
     /**
-     * 
+     * JNLP file created from Gagggle code Base
      * @param codeBase
      * @param files
      * @return
@@ -207,7 +212,7 @@ public class CytoscapeWebstart {
     }
     
     /**
-     * 
+     * Jnlp file created from Wiki jar - Unused
      * @param codeBase
      * @param files
      * @return
@@ -353,7 +358,7 @@ public class CytoscapeWebstart {
 	}
     
     /**
-     * 
+     * JNLP file created from Sun Example Jar - UNused
      * @param codeBase
      * @param files
      * @return
