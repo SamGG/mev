@@ -103,27 +103,29 @@ public interface IViewer {
     public int getViewerType();
     
     /**
-     * EH - state-saving
+     * state-saving
      * Sets the Experiment field for this Viewer.  Used when restoring state.  
      *
      */
     public void setExperiment(Experiment e);
     
     /**
-    * EH - state-saving
+    * state-saving
     * Returns the ID value for the Experiment associated with this viewer.
     */
     public int getExperimentID();
     
     /**
-    * EH - state-saving
+    * state-saving
     * Sets the ID value for the Experiment associated with this IViewer
     */
     public void setExperimentID(int id);
     
     /**
-     * EH testing
-     * @return An Expression that can be used to save the object's state.
+     * This method returns an expression that represents the constructor call that 
+     * will result in the re-creation of this object's state. See the state-saving 
+     * developer documentation for more details. 
+     * @return An Expression that can be used to restore the object's state. 
      */
     public Expression getExpression();
 }

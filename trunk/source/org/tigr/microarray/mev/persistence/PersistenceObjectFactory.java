@@ -49,12 +49,7 @@ public class PersistenceObjectFactory {
 	 * @throws IOException
 	 */
 	public static FloatMatrix readFloatMatrix(String inputFile) throws IOException{
-    	//get location of tempfiles for this sytem, append directory name for temp unzipping directory
-    	//use this as the path for inputFile
-		String javaTempDir = System.getProperty("java.io.tmpdir");
-		if(!javaTempDir.endsWith(System.getProperty("file.separator")))
-			javaTempDir = javaTempDir + System.getProperty("file.separator");
-		File binFile = new File(javaTempDir + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + inputFile);
+		File binFile = new File(MultipleArrayViewer.CURRENT_TEMP_DIR , inputFile);
 		FloatMatrix fm = new FloatMatrix(readMatrix(binFile));
 		return fm;
 	}
@@ -112,11 +107,7 @@ public class PersistenceObjectFactory {
 				normalizedState.intValue(), sortState.intValue(), spotInfoData, 
 				dataType, ismd);
 
-		String javaTempDir = System.getProperty("java.io.tmpdir");
-		if(!javaTempDir.endsWith(System.getProperty("file.separator")))
-			javaTempDir = javaTempDir + System.getProperty("file.separator");
-    	String filePath = javaTempDir + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + intensityFileName;
-//    	System.out.println("read FloatSlideData from " + filePath);
+    	File filePath = new File(MultipleArrayViewer.CURRENT_TEMP_DIR, intensityFileName);
     	DataInputStream dis = new DataInputStream(new FileInputStream(filePath));
     	
     	float[] currentCY3 = new float[dis.readInt()];
@@ -238,10 +229,7 @@ public class PersistenceObjectFactory {
 			String[] fieldNames, Integer dataType,
 			String annotationFileName, String dataFile, String iAnnotationFileName) throws IOException {
 
-		String javaTempDir = System.getProperty("java.io.tmpdir");
-		if(!javaTempDir.endsWith(System.getProperty("file.separator")))
-			javaTempDir = javaTempDir + System.getProperty("file.separator");
-		
+
     	SlideData aSlideData;
     	aSlideData = new SlideData(slideDataName, sampleLabelKeys, sampleLabelKey,
         		sampleLabels, slideFileName, isNonZero, rows, columns,
@@ -249,14 +237,14 @@ public class PersistenceObjectFactory {
 				fieldNames, dataType);
     	
     	//load annotation
-    	DataInputStream dis = new DataInputStream(new FileInputStream(javaTempDir + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + annotationFileName));
+    	DataInputStream dis = new DataInputStream(new FileInputStream(new File(MultipleArrayViewer.CURRENT_TEMP_DIR, annotationFileName)));
     	Vector allSlideDataElements = loadSlideDataAnnotation(dis, dataType.intValue());
     	dis.close();
 
     	Vector<IAnnotation> allIAnnotations = new Vector<IAnnotation>();
     	if(iAnnotationFileName != null) {
 	    	//load IAnnotation
-	    	File iAnnotFile=new File(javaTempDir + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + iAnnotationFileName);
+	    	File iAnnotFile=new File(MultipleArrayViewer.CURRENT_TEMP_DIR, iAnnotationFileName);
 	    	FileReader fr=new FileReader(iAnnotFile);
 	    	try {
 	    		if(iAnnotFile.length()>1)
@@ -267,7 +255,7 @@ public class PersistenceObjectFactory {
     	}
 
     	//load intensities
-    	dis = new DataInputStream(new FileInputStream(javaTempDir + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + dataFile));
+    	dis = new DataInputStream(new FileInputStream(new File(MultipleArrayViewer.CURRENT_TEMP_DIR, dataFile)));
     	ISlideDataElement sde;
     	int numSlideDataElements = dis.readInt();
     	for(int i=0; i<numSlideDataElements; i++){
@@ -493,12 +481,8 @@ public class PersistenceObjectFactory {
 		}
 	}
 	public static BufferedImageWrapper readBufferedImage(String inputFile) throws IOException {
-
-		String javaTempDir = System.getProperty("java.io.tmpdir");
-		if(!javaTempDir.endsWith(System.getProperty("file.separator")))
-			javaTempDir = javaTempDir + System.getProperty("file.separator");
+		File binFile = new File(MultipleArrayViewer.CURRENT_TEMP_DIR, inputFile);
 		
-		File binFile = new File(javaTempDir + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + inputFile);
 		DataInputStream dis = new DataInputStream(new FileInputStream(binFile));
 		BufferedImage bi = ImageIO.read(binFile);
 		dis.close();

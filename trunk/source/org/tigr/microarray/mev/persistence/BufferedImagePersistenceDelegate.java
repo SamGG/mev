@@ -17,7 +17,7 @@ public class BufferedImagePersistenceDelegate extends PersistenceDelegate {
 		BufferedImageWrapper biw = (BufferedImageWrapper) oldInstance;
 		BufferedImage bi = biw.getBufferedImage();
 		try {
-			File outputFile = File.createTempFile(MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + "bufferedimage", ".jpg");
+			File outputFile = File.createTempFile("bufferedimage", ".jpg", new File(MultipleArrayViewer.CURRENT_TEMP_DIR));
 	        outputFile.deleteOnExit();
 	        DataOutputStream dos = new DataOutputStream(new FileOutputStream(outputFile));
 	        PersistenceObjectFactory.writeBufferedImage(dos, bi);
