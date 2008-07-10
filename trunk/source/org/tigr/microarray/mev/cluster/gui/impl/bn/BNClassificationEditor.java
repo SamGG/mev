@@ -385,13 +385,27 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 								//if(!BNGUI.cancelRun)
 								bootNetFile = createNetworkFromBootstrapedEvals(evalStrs, numIterations, outarffbase, confThreshold);
 							}
-						}catch(Exception ex){
+						}
+						catch(OutOfMemoryError ofm){
+							runProgressPanel.dispose();
+							System.out.println("Error: Out of Memory..");
+							ofm.printStackTrace();
+							JOptionPane.showMessageDialog(new JFrame(), ofm.getMessage() + "\n Out of Memory", "Error - Out of Memory. Cannot Continue!", JOptionPane.ERROR_MESSAGE);
+							BNGUI.run = true;
+							BNGUI.cancelRun = true;
+						}
+						catch(Exception ex){
+							runProgressPanel.dispose();
+							System.out.println("Weka exception..");
 							ex.printStackTrace();
+							JOptionPane.showMessageDialog(new JFrame(), ex.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
+							BNGUI.run = true;
+							BNGUI.cancelRun = true;
 						}
 						runProgressPanel.dispose();
 						//if(!BNGUI.cancelRun)
 						displayScrollPane(getScrollPanePanel(evalStr));
-						BNGUI.run=true;
+						BNGUI.run = true;
 					}
 
 					private String createNetworkFromBootstrapedEvals(String[] evalStrs, int numItr, String outarffbase, float threshold) {
@@ -578,7 +592,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		//End Debug
 
 		// Call Webstart wuth Files
-		LMBNViewer.onWebstartCystoscape(networkFiles);
+		CytoscapeWebstart.onWebstartCytoscape(networkFiles);
 
 		final JPanel evalPanel = new JPanel();
 		evalPanel.setLayout(new BorderLayout());
@@ -1526,7 +1540,6 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 	}
 
 	public String getWekaEvalString() {
-		// TODO Auto-generated method stub
 		return evalStr;
 	}
 
@@ -1536,5 +1549,20 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 
 	public Vector getNetworkFiles() {
 		return this.networkFiles;
+	}
+	
+	/**
+	 * For State Saving
+	 */
+	public void setWekaEvalString(String s) {
+		evalStr = s;
+	}
+	
+	public void setBootNetworkFile(String file) {
+		this.bootNetFile = file;
+	}
+	
+	public void setNetworkFiles(Vector netFiles) {
+		this.networkFiles = netFiles;
 	}
 }
