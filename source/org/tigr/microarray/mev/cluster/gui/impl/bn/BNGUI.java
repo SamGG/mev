@@ -2,8 +2,7 @@
  * Created on Aug 30, 2005
  */
 package org.tigr.microarray.mev.cluster.gui.impl.bn;
-import java.awt.Dimension;
-import java.awt.Toolkit;
+import java.beans.Expression;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,14 +15,12 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Vector;
 
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.tigr.microarray.mev.HistoryViewer;
-import org.tigr.microarray.mev.MultipleArrayData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
@@ -34,14 +31,13 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.getInteractions.GetInteractionsModule;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.prepareXMLBif.PrepareXMLBifModule;
-import org.tigr.microarray.mev.cluster.gui.impl.lem.LEMInfoViewer;
 
 public class BNGUI implements IClusterGUI {
 	//String sep = System.getProperty("file.separator");
 	public static final int GENE_CLUSTER = 0;
 	public static boolean done = false;
 	public static boolean run = false;
-	//public static boolean cancelRun=false;
+	public static boolean cancelRun=false;
 	public static boolean prior=true;
 
 	HashMap<String, String> probeIndexAssocHash = new HashMap<String, String>();
@@ -51,7 +47,7 @@ public class BNGUI implements IClusterGUI {
 	public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
 		done = false;
 		run = false;
-		//cancelRun=false;
+		cancelRun = false;
 		prior = true;
 		//DefaultMutableTreeNode root = new DefaultMutableTreeNode( "BN" );
 		IData data = framework.getData();
@@ -76,63 +72,85 @@ public class BNGUI implements IClusterGUI {
 		if(dialog.isNone()){
 			return null;
 		}
-		
+
 		RunWekaProgressPanel pgPanel = new RunWekaProgressPanel();
 		pgPanel.setIndeterminate(true);
 		pgPanel.setLocationRelativeTo(framework.getFrame());
 		//pgPanel.setLocation((screenSize.width-framework.getFrame().getSize().width)/2,(screenSize.height-framework.getFrame().getSize().height)/2);
 		pgPanel.setVisible(true);
-		
+
 		converter(dialog.getSelectedCluster(),framework,dialog.getBaseFileLocation());
-		String kegg_sp = dialog.getKeggSpecies().trim();
+		String kegg_sp = dialog.getKeggSpecies();
+		if(kegg_sp != null) kegg_sp = kegg_sp.trim();
+		else kegg_sp = "na";
+
 		buildPropertyFile(dialog.isLit(),dialog.isPPI(),dialog.isKEGG(), dialog.isBoth(), dialog.isLitAndKegg(), dialog.isPpiAndKegg(), dialog.isAll(),dialog.useGoTerm(),dialog.getBaseFileLocation(),kegg_sp);
 		//Thread thread = new Thread( new Runnable(){
-			//public void run(){	
-				//if(!dialog.isNone()){					System.out.println(dialog.getBaseFileLocation());
-					int status = literatureMining(dialog.isLit(),dialog.isPPI(),dialog.isKEGG(), dialog.isBoth(), dialog.isLitAndKegg(), dialog.isPpiAndKegg(), dialog.isAll(),dialog.getBaseFileLocation());
-					//literatureMining(true,false,false,dialog.getBaseFileLocation());
-					System.out.println("Interaction count: " + status);
-					if(status > 0) {
-						//Display warning if too many interactions are found.
-						if(status > 50) {
-							if (JOptionPane.showConfirmDialog(new JFrame(),
-									"Too many interactions found. \n The process might Run our of Memory! \n Do you want to continue ? ", "Interaction found: " + status + "!",
-									JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
-								BNGUI.done = false;
-								pgPanel.dispose();
-								return null;
-							} 
-						}
-						prepareXMLBifFile(dialog.getBaseFileLocation());
-						BNGUI.done = true;
-						pgPanel.dispose();
-					} else {
-						BNGUI.done = false;
-						pgPanel.dispose();
-						return null;
-					}
-				//} else {
-					//return null;
-				//}
-			//}
+		//public void run(){	
+		//if(!dialog.isNone()){		System.out.println(dialog.getBaseFileLocation());
+		int status = -1;
+		try {
+			status = literatureMining(dialog.isLit(), dialog.isPPI(), dialog.isKEGG(), dialog.isBoth(), dialog.isLitAndKegg(), dialog.isPpiAndKegg(), dialog.isAll(),dialog.getBaseFileLocation());
+		} 
+		catch(OutOfMemoryError ofm){
+			pgPanel.dispose();
+			BNGUI.done = false;
+			System.out.println("Out of Memory. Aborting...");
+			JOptionPane.showMessageDialog(new JFrame(), ofm.getMessage() + "\n Out of Memory", "Error - Out of Memory. Aborting!", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+		catch (Exception e) {
+			JOptionPane.showMessageDialog(new JFrame(), e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
+			BNGUI.done = false;
+			pgPanel.dispose();
+			return null;
+		}
+		//literatureMining(true,false,false,dialog.getBaseFileLocation());
+		System.out.println("Interaction count: " + status);
+		if(status > 0) {
+			//Display warning if too many interactions are found.
+			if(status > 50) {
+				if (JOptionPane.showConfirmDialog(new JFrame(),
+						"Too many interactions found. \n The process might Run our of Memory! \n Do you want to continue ? ", "Interaction found: " + status + "!",
+						JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
+					BNGUI.done = false;
+					pgPanel.dispose();
+					return null;
+				} 
+			}
+			prepareXMLBifFile(dialog.getBaseFileLocation());
+			BNGUI.done = true;
+			pgPanel.dispose();
+		} else {
+			BNGUI.done = false;
+			pgPanel.dispose();
+			return null;
+		}
+		//} else {
+		//return null;
+		//}
+		//}
 		//});
 		//thread.start();
-				
+
 		//Raktim - Modified to pass bootstrap Params
 		//BNClassificationEditor bnEditor=new BNClassificationEditor(framework,false,dialog.getSelectedCluster(),(new Integer(dialog.getNumberBin())).toString(),dialog.getNumberClass(),dialog.numParents(),dialog.getAlgorithm(),dialog.getScoreType(),dialog.useArcRev(), dialog.getBaseFileLocation());
 		BNClassificationEditor bnEditor = new BNClassificationEditor(framework,false,dialog.getSelectedCluster(),(new Integer(dialog.getNumberBin())).toString(),dialog.getNumberClass(),dialog.numParents(),dialog.getAlgorithm(),dialog.getScoreType(),dialog.useArcRev(), dialog.isBootstrapping(), dialog.getNumIterations(), dialog.getConfThreshold(), dialog.getKFolds(), dialog.getBaseFileLocation(), probeIndexAssocHash);
 		bnEditor.showModal(true);
-			
+
 		while(!BNGUI.run){
-				try{
-					Thread.sleep(500);	
-				}catch(InterruptedException x){
-					//ignore;
-				}
+			try{
+				Thread.sleep(500);	
+			}catch(InterruptedException x){
+				//ignore;
+			}
 		}
 		
+		if(BNGUI.cancelRun)
+			return null;
+		
 		//Raktim - Added to record the Weka output for Observed BN analysis
-		wekaOutputViewer = new HistoryViewer(new JTextArea(), null);
+		wekaOutputViewer = new HistoryViewer();
 		String wekaResult = bnEditor.getWekaEvalString();
 		wekaOutputViewer.addHistory(wekaResult);
 
@@ -173,7 +191,7 @@ public class BNGUI implements IClusterGUI {
 
 	private DefaultMutableTreeNode createResultTree(Experiment experiment, LMBNViewer fileViewer, HistoryViewer out, GeneralInfo info) {
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode("BN");
-		root.add(new DefaultMutableTreeNode(new LeafInfo("Networks", fileViewer, fileViewer.getJPopupMenu())));
+		root.add(new DefaultMutableTreeNode(new LeafInfo("Networks", fileViewer)));
 		root.add(new DefaultMutableTreeNode(new LeafInfo("BN Details", out)));
 		addGeneralInfo(root, info);
 		return root;
@@ -669,4 +687,5 @@ public class BNGUI implements IClusterGUI {
 	public HistoryViewer getHistoryViewer(){
 		return wekaOutputViewer;
 	}
+	
 }//end class
