@@ -14,7 +14,7 @@ public class FloatMatrixPersistenceDelegate extends PersistenceDelegate {
 	public Expression instantiate(Object oldInstance, Encoder encoder) {
 		FloatMatrix fm = (FloatMatrix) oldInstance;
 		try {
-			File outputFile = File.createTempFile(MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + "floatmatrix", ".bin");
+			File outputFile = File.createTempFile("floatmatrix", ".bin", new File(MultipleArrayViewer.CURRENT_TEMP_DIR));
 	        outputFile.deleteOnExit();
 	        PersistenceObjectFactory.writeMatrix(outputFile, fm);
 			return new Expression((FloatMatrix) oldInstance, new PersistenceObjectFactory().getClass(), "readFloatMatrix",

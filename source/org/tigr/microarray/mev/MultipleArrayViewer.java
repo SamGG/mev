@@ -594,9 +594,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
                                 file = new File(file.getPath() + ".anl");
                             
                             saveState(file);
-                            //set tmev.cfg path to match formatted path
-                            TMEV.updateDataPath(formatDataPath(file.getPath()));
-                            //set variable to OS specific path format
                             TMEV.setDataPath(file.getParentFile().getPath());
                         } catch (IOException ioe) {
                             JOptionPane.showMessageDialog(MultipleArrayViewer.this, "I/O Exception, Error saving analysis. File ("+(file != null ? file.getName() : "name unknown")+")", "Save Analysis", JOptionPane.ERROR_MESSAGE);
@@ -682,31 +679,32 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     }
     
     /**
-     * Save MultipleArrayData state.
+     * Save the current analysis.
      * @param file
      * @throws FileNotFoundException
      * @throws IOException
      */
     private void saveState(File file) throws FileNotFoundException, IOException {
-//    	try {
+
         this.currentAnalysisFile = file;
-    	final boolean debug = true;
-    	String javaTempDir = System.getProperty("java.io.tmpdir");
-    	if(!javaTempDir.endsWith(System.getProperty("file.separator")))
-   			javaTempDir = javaTempDir + System.getProperty("file.separator");
-   			
-    	final String tempFilePath = javaTempDir + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator");
-    	final File tempDir = new File(javaTempDir + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator"));
-        if (!tempDir.mkdir()) {
-            System.out.println("Couldn't create directory for saving: " + tempFilePath);
-            //TODO handle this better
-        }
-        File tmpXML = new File(tempFilePath + "mev_state" + ".xml");
-//        System.out.println("mev state file: " + tmpXML);
+    	final boolean debug = false;
+    	
+    	final File tempDir = File.createTempFile("mev_temp", "", null);
+        if (!tempDir.delete())
+            throw new IOException();
+        if (!tempDir.mkdir())
+            throw new IOException();
+        
+        
+  
+    	MultipleArrayViewer.CURRENT_TEMP_DIR = tempDir.getPath();
+    	File tmpXML = new File(tempDir, "mev_state.xml");
     	BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(tmpXML));
     	final XMLEncoder oos = XMLEncoderFactory.getMAVEncoder(new XMLEncoder(os), tree);  	
-    	if(!debug)
-           tmpXML.deleteOnExit();
+    	if(!debug) {
+	    	tempDir.deleteOnExit();
+	    	tmpXML.deleteOnExit();
+    	}
    		
 
     	//Directs XMLEncoder errors to a log file. Very useful when debugging new
@@ -767,7 +765,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 					
 			      	//Zip all files in temp saving directory (one xml file, many binary files) into final .anl file
 			        ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(currentAnalysisFile));
-			        zipTempFiles(zos, tempFilePath, tempDir);
+			        zipTempFiles(zos, tempDir.getPath(), tempDir);
 			    	zos.close();
 					//End Zipping of temp files
 			
@@ -777,12 +775,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 					File aFile;
 			    	String[] files = tempDir.list();
 			    	for(int i=0; i<files.length; i++){
-			    		aFile = new File(tempFilePath + files[i]);
+			    		aFile = new File(tempDir, files[i]);
 			    		aFile.deleteOnExit();
-			    		if(!(new File(tempFilePath + files[i]).delete()))
-			    			System.out.println("Couldn't delete " + tempFilePath + files[i]);
+			    		if(!aFile.delete())
+			    			System.out.println("Couldn't delete " + aFile.getPath());
 			    	}
-			    	tempDir.deleteOnExit();
 			    	if(!tempDir.delete())
 			    		System.out.println("Couldn't delete " + tempDir.toString());
 			
@@ -794,30 +791,13 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
                     "Save Error", JOptionPane.WARNING_MESSAGE);
                     ioe.printStackTrace();
                     TMEV.activeSave = false;
-                    /*
-            	} catch (Throwable t) {
-            		System.out.println("Catching throwable");
-            //    	thread.destroy();
-            		//ShowThrowableDialog.show(MultipleArrayViewer.this, "Out of Memory", false, t);
-            		JOptionPane.showMessageDialog(MultipleArrayViewer.this, "Analysis was not saved.  Not enough memory.",
-                            "Save Error", JOptionPane.WARNING_MESSAGE);
-            		
-            		*/
+
                 }
             }
            });
      
 	        thread.setPriority(Thread.NORM_PRIORITY);
 	       	thread.start();
-	       	/* } catch (Throwable t){
-	    	
-    		System.out.println("Catching outer throwable");
-    		JOptionPane.showMessageDialog(MultipleArrayViewer.this, "Analysis was not saved.  Not enough memory.",
-                    "Save Error", JOptionPane.WARNING_MESSAGE);
-    		progressPanel.dispose();
-    	
-	       	}
-    	*/
     }
     
 
@@ -831,9 +811,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	    FileInputStream fis;
 	    String[] fileNames = tempDir.list();
 		progressPanel.setMaximum(fileNames.length);
-	    
+
 	    for(int i=0; i<fileNames.length; i++){
-	    	aFile = new File(tempFilePath + fileNames[i]);
+	    	aFile = new File(tempFilePath, fileNames[i]);
 		    entry = new ZipEntry(aFile.getName());
 		    zos.putNextEntry(entry);
 		    fis = new FileInputStream(aFile);
@@ -848,7 +828,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     }
     
 	/**
-	* EH
+	* State-saving
 	* 
 	*/
     public void cancelLoadState(){
@@ -1195,25 +1175,25 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         }
     }
     private void loadAnalysisFromFile(final File file) throws IOException, ClassNotFoundException {
-//	    System.out.println("loading ananlysis from file function");
 	    progressPanel = new StateSavingProgressPanel("Loading Saved Analysis", this);
 		progressPanel.setLocationRelativeTo(mainframe);
 		progressPanel.setVisible(true);
+		
+    	File tempDir = File.createTempFile("mev_temp", "", null);
+        if (!tempDir.delete())
+            throw new IOException();
+        if (!tempDir.mkdir())
+            throw new IOException();
+        MultipleArrayViewer.CURRENT_TEMP_DIR = tempDir.getPath();
         
         Thread thread = new Thread( new Runnable(){
             public void run() {
                 try {
-                	String javaTempDir = System.getProperty("java.io.tmpdir");
-                	if(!javaTempDir.endsWith(System.getProperty("file.separator")))
-                		javaTempDir = javaTempDir + System.getProperty("file.separator");
-                	File unzipDir = new File(javaTempDir + MultipleArrayViewer.CURRENT_TEMP_DIR);
-            	    if (!unzipDir.mkdir()) {
-            	        System.out.println("Couldn't create directory for unzipping:" + unzipDir);
-            	    }
+                	File unzipDir = new File(MultipleArrayViewer.CURRENT_TEMP_DIR);
             	    
                 	ZipFile zipFile = new ZipFile(file);
                 	ZipInputStream zis = new ZipInputStream(new FileInputStream(file));
-                	File tmpXML = new File(unzipDir + System.getProperty("file.separator") + "mev_state.xml");
+                	File tmpXML = new File(unzipDir, "mev_state.xml");
             	    tmpXML.deleteOnExit();
 
 					progressPanel.update("Uncompressing Data");
@@ -1231,8 +1211,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 				    	    }
 				            fw.close();
 				    	} else {
-				    		String outFile = unzipDir + System.getProperty("file.separator") + entry.getName();
-				    		DataOutputStream dos = new DataOutputStream(new FileOutputStream(new File(outFile)));
+				    		File outFile = new File(unzipDir, entry.getName());
+				    		DataOutputStream dos = new DataOutputStream(new FileOutputStream(outFile));
 				   	        while ((len = zis.read(buf)) > 0) {
 					            dos.write(buf, 0, len);
 					        }
@@ -1378,11 +1358,13 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	        	    
 	        		String[] files = unzipDir.list();
 	        		for(int i=0; i<files.length; i++){
-	        			if(!new File(unzipDir + System.getProperty("file.separator") + files[i]).delete())
-	        				System.out.println("Can't delete " + unzipDir + System.getProperty("file.separator") + files[i]);
+	        			if(!new File(unzipDir, files[i]).delete()){
+	        				//System.out.println("Can't delete " + unzipDir + System.getProperty("file.separator") + files[i]);
+	        			}
 	        		}
-	        		if(!unzipDir.delete())
-	        			System.out.println("Couldn't delete " + unzipDir.toString());
+	        		if(!unzipDir.delete()) {
+	        		//	System.out.println("Couldn't delete " + unzipDir.toString());
+	        		}
 	        		
 	        		((HistoryViewer)(((LeafInfo)(((DefaultMutableTreeNode)historyNode.getChildAt(0)).getUserObject())).getViewer())).addHistory("Load analysis: " + file);
 

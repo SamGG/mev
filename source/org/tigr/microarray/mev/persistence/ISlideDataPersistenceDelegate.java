@@ -44,7 +44,7 @@ public class ISlideDataPersistenceDelegate extends
 			if(oldInstance instanceof FloatSlideData){
 				FloatSlideData fsd = (FloatSlideData) oldInstance;
 				
-				File outputFile = File.createTempFile(MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + "floatslidedata", ".bin");
+				File outputFile = File.createTempFile("floatslidedata", ".bin", new File(MultipleArrayViewer.CURRENT_TEMP_DIR));
 		        outputFile.deleteOnExit();
 		        DataOutputStream dos = new DataOutputStream(new FileOutputStream(outputFile));
 		        PersistenceObjectFactory.writeFloatSlideDataIntensities(dos, fsd);
@@ -58,50 +58,21 @@ public class ISlideDataPersistenceDelegate extends
 			} else {
 				SlideData sd = (SlideData) oldInstance;
 				
-				File annotationFile = File.createTempFile(MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + "slidedataannotation", ".bin");
+				File annotationFile = File.createTempFile("slidedataannotation", ".bin", new File(MultipleArrayViewer.CURRENT_TEMP_DIR));
 				annotationFile.deleteOnExit();
 				DataOutputStream dos = new DataOutputStream(new FileOutputStream(annotationFile));
 				PersistenceObjectFactory.writeSlideDataAnnotation(dos, sd);
 				dos.close();
-////////////////////////////////////////////////////////
-				File iAnnotationFile = File.createTempFile(MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + "iannotation", ".txt");
+
+				File iAnnotationFile = File.createTempFile("iannotation", ".txt", new File(MultipleArrayViewer.CURRENT_TEMP_DIR));
 				annotationFile.deleteOnExit();
 				PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(iAnnotationFile)));
 							
 				PersistenceObjectFactory.writeSlideDataIAnnotation(pw, sd);
 				pw.close();
-				/**
-				 * Trial IAnnotation state saving
-				 
 				
-				String iAnnotationFileName=null;
-				if(sd.getAllElements().get(0) instanceof AffySlideDataElement) {
-					AnnotationStateSavingParser asp=new AnnotationStateSavingParser();
-					Vector <IAnnotation>annotationVector=new Vector();
-					Vector allslideData=sd.getAllElements();
 
-					for(int i=0; i<allslideData.size(); i++) {
-						//We need to create a function getIAnnotation in ISlideDataElement/AffySlideDataElement
-						ISlideDataElement sde=(ISlideDataElement)allslideData.get(i);
-						IAnnotation annot;
-						if( ( annot=sde.getElementAnnotation())!=null) {
-							annotationVector.add(annot);
-						}
-					}
-
-					if(annotationVector.size()>0) {
-						File iAnnotationFile = File.createTempFile(MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + "iannotation", ".txt");
-						iAnnotationFileName=iAnnotationFile.getName();
-						//iAnnotationFile.deleteOnExit();
-						asp.writeAnnotationFile(annotationVector, iAnnotationFile); 
-						System.out.println("ISlideDataPersistenceDelegate:"+iAnnotationFile.length());
-						System.out.println("ISlideDataPersistenceDelegate:"+iAnnotationFile.length());
-						
-					}
-
-				}*/
-		//////////////////////////////////////////////		
-				File outputFile = File.createTempFile(MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + "slidedata", ".bin");
+				File outputFile = File.createTempFile("slidedata", ".bin", new File(MultipleArrayViewer.CURRENT_TEMP_DIR));
 				outputFile.deleteOnExit();
 				dos = new DataOutputStream(new FileOutputStream(outputFile));
 				PersistenceObjectFactory.writeSlideDataIntensities(dos, sd);
