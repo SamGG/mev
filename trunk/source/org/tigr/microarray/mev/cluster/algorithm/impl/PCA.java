@@ -535,20 +535,24 @@ public class PCA extends AbstractAlgorithm {
 		result.addMatrix("U", An.transpose().times(T));
 		break;
 	    case 3:
-	    	if (!useShortcut){
-			    result.addMatrix("U", An.transpose().times(T));
-			    break;
-	    	}
+	    System.out.println("useShortcut = " + useShortcut);
+	    if (!useShortcut){
+	    	System.out.println("long cut-- T dims: "+ T.getColumnDimension()+ " X " + T.getRowDimension()+"  An dims: " + An.getColumnDimension() + " X " + An.getRowDimension());
+		
+		    result.addMatrix("U", An.transpose().times(T));
+		    break;
+	    }
+	    	
 		FloatMatrix Q = T.copy();
 		FloatMatrix D = S.copy();
 		final int dim = D.getRowDimension();
 		for (int i=0;i<dim;i++) {
 		    D.set(i,i,1.0f/(float)Math.sqrt(D.get(i,i)));
 		}
-			T = An.times(Q.times(D)).transpose();
+		T = An.times(Q.times(D));
+		System.out.println("T dims: "+ T.getColumnDimension()+ " X " + T.getRowDimension()+"  An dims: " + An.getColumnDimension() + " X " + An.getRowDimension());
 		result.addMatrix("U", An.transpose().times(T));
 		break;
-		
 	    default:;
 	}
 	
@@ -875,7 +879,7 @@ public class PCA extends AbstractAlgorithm {
     	if(center == 3) // No Centering
     		return expMatrix;
     	else {
-    		if(mode == 3 && (!useShortcut)){ // Cluster Samples, Center Genes
+    		if(mode == 3 ){ // Cluster Samples, Center Genes
     			int rowDim = expMatrix.getRowDimension();
         		int colDim = expMatrix.getColumnDimension();
         		
@@ -889,7 +893,7 @@ public class PCA extends AbstractAlgorithm {
     			}
     		} 
     		
-    		if (mode == 1 ||useShortcut){ // Cluster Genes, Center Samples
+    		if (mode == 1){ // Cluster Genes, Center Samples
     			expMatrix = expMatrix.transpose();
     			int rowDim = expMatrix.getRowDimension();
         		int colDim = expMatrix.getColumnDimension();
