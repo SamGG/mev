@@ -872,10 +872,9 @@ public class SuperExpressionFileLoader {
 	}
 
 	private void updateDataPath(String dataPath) {
-		
-		
-		if (dataPath == null)
+		if (dataPath == null) {
 			return;
+		}
 		String renderedSep = "/";
 		String renderedPath = new String();
 
@@ -892,10 +891,7 @@ public class SuperExpressionFileLoader {
 			renderedPath += str + renderedSep;
 			DATA_PATH += str + sep;
 		}
-		// sets the data path in config to render well
-		TMEV.updateDataPath(renderedPath);
-
-		// sets variable to conform to OS spec.
+		
 		TMEV.setDataPath(DATA_PATH);
 	}
 

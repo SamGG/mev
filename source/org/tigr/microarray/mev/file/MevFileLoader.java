@@ -521,10 +521,7 @@ public class MevFileLoader extends ExpressionFileLoader {
 	}
 
 	public String getFilePath() {
-		if (this.mflp.getMevSelectedListModel().getSize() < 1)
-			return null;
-		return ((File) (mflp.getMevSelectedListModel().getElementAt(0)))
-				.getAbsolutePath();
+		return new File(this.mflp.pathTextField.getText(), ((File) (mflp.getMevSelectedListModel().toArray())[0]).getName()).getPath();
 	}
 
 	public void openDataPath() {
