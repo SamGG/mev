@@ -128,22 +128,29 @@ public class LMBNViewer extends ViewerAdapter {
 		text += "</tr>";
 		
 		//1. LM File
-		text += "<tr bgcolor='#FFE87C'>";
-			text += "<td>Literature Mining Network File</td>";
-			text += "<td>"+files.get(0)+"</td>";
-		text += "</tr>";
+		if(files.size() >= 1) {
+			text += "<tr bgcolor='#FFE87C'>";
+				text += "<td>Literature Mining Network File</td>";
+				text += "<td>"+files.get(0)+"</td>";
+			text += "</tr>";
+		}
 		
 		//2. BN File for Observed Data
-		text += "<tr bgcolor='#ECD872'>";
-			text += "<td>BN File for Observed Data</td>";
-			text += "<td>"+files.get(1)+"</td>";
-		text += "</tr>";
+		if(files.size() >= 2) {
+			text += "<tr bgcolor='#ECD872'>";
+				text += "<td>BN File for Observed Data</td>";
+				text += "<td>"+files.get(1)+"</td>";
+			text += "</tr>";
+		}
 		
 		//3. BN File from bootstrap Data
-		text += "<tr bgcolor='#FFE87C'>";
-			text += "<td>BN File from bootstrap Data with user chosen Conf. Threshold</td>";
-			text += "<td>"+files.get(2)+"</td>";
-		text += "</tr>";
+		if(files.size() >= 3) {
+			text += "<tr bgcolor='#FFE87C'>";
+				text += "<td>BN File from bootstrap Data with user chosen Conf. Threshold</td>";
+				text += "<td>"+files.get(2)+"</td>";
+			text += "</tr>";
+		}
+		
 		text += "</table></li>";
 		text += "</ul>";
 		
