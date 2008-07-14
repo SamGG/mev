@@ -13,7 +13,10 @@
 /* Useful.java
  * Copyright (C) 2005 Amira Djebbari
  */
-package org.tigr.microarray.mev.cluster.gui.impl.bn;import java.io.FileReader;
+package org.tigr.microarray.mev.cluster.gui.impl.bn;import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.LineNumberReader;
 import java.io.File;import java.io.FileNotFoundException;import java.io.PrintWriter;
 import java.io.FileOutputStream;import java.io.IOException;import java.text.SimpleDateFormat;
@@ -21,6 +24,9 @@ import java.util.Date;
 import java.util.HashSet;import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Iterator;import java.util.Set;import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
+import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
 /**
  * The class <code>Useful</code> contains many useful methods for reading/writing from/to files
  *
@@ -482,6 +488,385 @@ public class Useful {
 		return arguments;
 	}
 
+	/**
+	 * Function to read a cluster. Used both by BN & LM
+	 * It reads the UID(probe id, ref seq etc) 
+	 * and maps them to Genbank acc and writes them to a tmp file - list.txt 
+	 * It also maps a probe_id to its index positon in the cluster to which the probe belongs.
+	 * It returns a Hashmap of the probe-id - Index association. The Hashmap is used in the Gaggle
+	 * broadcast, by the BN module. Its ignored in the LM module right now.
+	 * @param cl
+	 * @param framework
+	 * @param path
+	 */
+	public static HashMap<String, String> converter(Cluster cl,IFramework framework,String path){
+		int genes = cl.getIndices().length;
+		System.out.print(genes);
+		IData data = framework.getData();
+		int[] rows = new int[genes];
+		rows = cl.getIndices();
+		String[] probeId = new String[genes];
+		String[] accList = new String[genes];
+		HashMap accHash = new HashMap();
+		HashMap<String, String> probeIndexAssocHash = new HashMap<String, String>();
+		String lineRead = "";
+		//String sep=System.getProperty("file.separator");
+		// TODO Raktim - Get ProbeIDs for Genes
+		for (int i = 0; i < rows.length; i++) {
+			probeId[i]=data.getSlideDataElement(0,rows[i]).getFieldAt(0);
+			System.out.println("Probe_id :"+probeId[i] ); 
+		}
+
+		try {
+			File file = new File(path, BNConstants.ACCESSION_FILE);
+			FileReader fr = new FileReader(file);
+			BufferedReader br = new BufferedReader(fr);
+			String[] fields;
+			//PrintWriter out = new PrintWriter (new FileOutputStream(new File(path+sep+"list.txt")));
+			br.readLine();
+			br.readLine();
+			while((lineRead = br.readLine()) != null) {
+				//System.out.println("lineRead :"+lineRead );
+				fields = lineRead.split("\t");
+				// TODO Raktim are the fields 0 & 1 ?
+				accHash.put(fields[0].trim(), fields[1].trim());
+				//System.out.println(fields[1] );
+			}
+			// TODO Raktim - Associate AffyID with Acc Ids ?
+			for (int i = 0; i < accList.length; i++) {
+				accList[i] = (String)accHash.get((String)probeId[i].trim());
+				// Also Store probe IDs and cluster indices assoc for creating gaggle Network
+				// NM_23456 to 1-Afy_X1234 where 1 is the probe index
+				probeIndexAssocHash.put(accList[i], new Integer(i).toString()+"-"+probeId[i]);
+			}
+			// TODO - Raktim Why write to file ?
+			writeAccToFile(accList,path);
+			return probeIndexAssocHash;
+		} catch(FileNotFoundException e){
+			e.printStackTrace();
+			return null;
+		} catch (IOException e){
+			e.printStackTrace();
+			System.out.println("File Write Error ");
+			return null;
+		}
+	}
+	
+	/**
+ 	Function to match a subset of ProbeIDs to their corresponding Acc Numbers
+ 	Return a list of Acc numbers
+	 */
+	private String[] matchSet (String[] accs, HashMap accHash) {
+		String[] accList = new String[accs.length];
+		for (int i = 0; i < accs.length; i++) {
+			accList[i] = (String)accHash.get((String)accs[i].trim());
+		}
+		return accList;
+	}
+	
+	/**
+	 * Writes an associative hashmap of Probe Ids to RefSeqs to a file.
+	 * @param accList
+	 * @param path
+	 */
+	private static void writeAccToFile (String[] accList, String path) {
+		//String sep=System.getProperty("file.separator");
+		//String outFile = path + sep+"list.txt";
+		//	 Raktim - Use tmp Dir
+		String outFile = path + BNConstants.SEP+ BNConstants.TMP_DIR + BNConstants.SEP + BNConstants.OUT_ACCESSION_FILE;
+		System.out.println(outFile);
+		BufferedWriter out = null;
+		int nRows = accList.length;
+		try {
+			out = new BufferedWriter (new FileWriter(outFile));
+			for (int row = 0; row < nRows; row++) {
+				out.write(accList[row]);
+				out.newLine();
+				//System.out.println(accList[row]);
+			}
+			out.flush();
+			out.close();
+		} catch (IOException e){
+			e.printStackTrace();
+			//System.out.println("File Write Error " + errorStrings[FILE_IO_ERROR]);
+			//return FILE_IO_ERROR;
+		}
+	}
+	
+	/**
+	 * Build property files for both LM & BN
+	 * Description:
+	 * @param lit
+	 * @param ppi
+	 * @param both
+	 * @param goTerms
+	 * @param path
+	 */
+	public static void buildPropertyFile(boolean lit,boolean ppi,boolean kegg, boolean LitPpi, boolean LitKegg, boolean KeggPpi, boolean LitPpiKegg,boolean goTerms,String path, String keggSpecies){
+		//String sep= System.getProperty("file.separator");    
+		final int fileSize = 8;
+		String[] propFile = new String[fileSize];
+		String[] outFile = new String[fileSize-1];
+		
+		propFile[0]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.LIT_INTER_MODULE_FILE;
+		propFile[1]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.PPI_INTER_MODULE_DIRECT_FILE;
+		propFile[2]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.BOTH_INTER_MODULE_FILE;
+		propFile[3]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.KEGG_INTER_MODULE_FILE;
+		propFile[4]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.LIT_KEGG_INTER_MODULE_FILE;
+		propFile[5]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.PPI_KEGG_INTER_MODULE_FILE;
+		propFile[6]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.LIT_PPI_KEGG_INTER_MODULE_FILE;
+		propFile[7]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.XML_BIF_MODULE_FILE; 
+		outFile[0] = BNConstants.LIT_INTER_FILE;
+		outFile[1] = BNConstants.PPI_INTER_FILE; 
+		outFile[2] = BNConstants.LIT_PPI_INTER_FILE;
+		outFile[3] = BNConstants.KEGG_INTER_FILE;
+		outFile[4] = BNConstants.LIT_KEGG_INTER_FILE;
+		outFile[5] = BNConstants.PPI_KEGG_INTER_FILE;
+		outFile[6] = BNConstants.LIT_PPI_KEGG_INTER_FILE;
+
+		PrintWriter out = null;
+		try{ 	 
+			if(lit){
+				out= new PrintWriter(new FileOutputStream(new File(propFile[0])));	 
+				out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
+				out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+				out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
+				out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
+				out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 
+				out.println(BNConstants.FRM_LIT + "=true");
+				out.println(BNConstants.FRM_PPI + "=false");
+				out.println(BNConstants.FRM_KEGG + "=false");
+				out.println(BNConstants.OUT_INTER_FILE_NAME + "=" +outFile[0]);
+				out.flush();
+				out.close();
+			}
+			if(ppi){
+				out= new PrintWriter(new FileOutputStream(new File(propFile[1])));	 
+				out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
+				out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+				out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
+				out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
+				out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
+				out.println(BNConstants.FRM_LIT + "=false");
+				out.println(BNConstants.FRM_PPI + "=true");
+				out.println(BNConstants.FRM_KEGG + "=false");
+				out.println(BNConstants.OUT_INTER_FILE_NAME + "=" + outFile[1]);
+				out.println(BNConstants.USE_PPI_DIRECT + "=true");
+				//out.println("usePpiOnlyWithin=true");
+				out.println(BNConstants.PPI_FILE_NAME + "=" + BNConstants.PPI_FILE);
+				out.flush();
+				out.close();
+
+			}
+			if(LitPpi){
+				out= new PrintWriter(new FileOutputStream(new File(propFile[2])));	 
+				out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
+				out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+				out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
+				out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
+				out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
+				out.println(BNConstants.FRM_LIT + "=true");
+				out.println(BNConstants.FRM_PPI + "=true");
+				out.println(BNConstants.FRM_KEGG + "=false");
+				out.println(BNConstants.OUT_INTER_FILE_NAME + "=" + outFile[2]);
+				out.println(BNConstants.PPI_FILE_NAME + "=" + BNConstants.PPI_FILE);
+				out.flush();
+				out.close();
+			}
+			if(kegg){
+				out= new PrintWriter(new FileOutputStream(new File(propFile[3])));	 
+				out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
+				out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+				out.println(BNConstants.KEGG_SPECIES + "=" + keggSpecies);
+				out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
+				out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
+				//out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
+				out.println(BNConstants.FRM_LIT + "=false");
+				out.println(BNConstants.FRM_PPI + "=false");
+				out.println(BNConstants.FRM_KEGG + "=true");
+				out.println(BNConstants.OUT_INTER_FILE_NAME + "=" + outFile[3]);
+				out.flush();
+				out.close();
+			}
+			if(LitKegg){
+				out= new PrintWriter(new FileOutputStream(new File(propFile[4])));	 
+				out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
+				out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+				out.println(BNConstants.KEGG_SPECIES + "=" + keggSpecies);
+				out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
+				out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
+				out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
+				out.println(BNConstants.FRM_LIT + "=true");
+				out.println(BNConstants.FRM_PPI + "=false");
+				out.println(BNConstants.FRM_KEGG + "=true");
+				out.println(BNConstants.OUT_INTER_FILE_NAME + "=" + outFile[4]);
+				out.flush();
+				out.close();
+			}
+			if(KeggPpi){
+				out= new PrintWriter(new FileOutputStream(new File(propFile[5])));	 
+				out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
+				out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+				out.println(BNConstants.KEGG_SPECIES + "=" + keggSpecies);
+				out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
+				out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
+				out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
+				out.println(BNConstants.FRM_LIT + "=false");
+				out.println(BNConstants.FRM_PPI + "=true");
+				out.println(BNConstants.FRM_KEGG + "=true");
+				out.println(BNConstants.OUT_INTER_FILE_NAME + "=" + outFile[5]);
+				out.println(BNConstants.PPI_FILE_NAME + "=" + BNConstants.PPI_FILE);
+				out.flush();
+				out.close();
+			}
+			if(LitPpiKegg){
+				out= new PrintWriter(new FileOutputStream(new File(propFile[6])));	 
+				out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
+				out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+				out.println(BNConstants.KEGG_SPECIES + "=" + keggSpecies);
+				out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
+				out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
+				out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
+				out.println(BNConstants.FRM_LIT + "=true");
+				out.println(BNConstants.FRM_PPI + "=true");
+				out.println(BNConstants.FRM_KEGG + "=true");
+				out.println(BNConstants.OUT_INTER_FILE_NAME + "=" + outFile[2]);
+				out.println(BNConstants.PPI_FILE_NAME + "=" + BNConstants.PPI_FILE);
+				out.flush();
+				out.close();
+			}
+
+			out= new PrintWriter(new FileOutputStream(new File(propFile[fileSize-1])));
+			if(goTerms){
+				System.out.println("Use GO Terms");
+				out.println(BNConstants.USE_GO + "=" + "true");
+				out.println(BNConstants.GB_GO_FILE_NAME + "=" + BNConstants.GB_GO_FILE); //"gbGOs.txt"
+			}
+			out.println(BNConstants.NAMES_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+			out.println(BNConstants.DISTRIBUTION_FRM_WEIGHTS + "=" + "true");
+			out.println(BNConstants.OUT_XML_BIF_FILE_NAME + "=" + BNConstants.BIF_RESULT_FILE);
+			if(lit){
+				out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[0]);
+			}else if(ppi){
+				out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[1]);
+			} else if(LitPpi){
+				out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[2]);
+			} else if(kegg){
+				out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[3]);
+			} else if(LitKegg){
+				out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[4]);
+			} else if(KeggPpi){
+				out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[5]);
+			} else if(LitPpiKegg){
+				out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[6]);
+			}
+			out.flush();
+			out.close();
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Older version - Unused
+	 * @param lit
+	 * @param ppi
+	 * @param both
+	 * @param goTerms
+	 * @param path
+	 */
+	private void buildPropertyFile(boolean lit,boolean ppi,boolean both,boolean goTerms,String path){
+		//String sep= System.getProperty("file.separator");    
+		final int fileSize=4;
+		String[] propFile=new String[fileSize];
+		String[] outFile=new String[fileSize-1];
+		//String datPath=path+sep+"bn"+sep;
+		//	 Raktim - USe Tmp dir
+		/*
+	 propFile[0]= path+sep+"getInterModLit.props";
+	 propFile[1]= path+sep+"getInterModPPIDirectly.props";
+	 propFile[2]= path+sep+"getInterModBoth.props";
+	 propFile[3]= path+sep+"prepareXMLBifMod.props";
+	 outFile[0]="outInteractionsLit.txt";
+	 outFile[1]="outInteractionsPPI.txt"; 
+	 outFile[2]="outInteractionsBoth.txt";
+		 */
+		propFile[0]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.LIT_INTER_MODULE_FILE;
+		propFile[1]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.PPI_INTER_MODULE_DIRECT_FILE;
+		propFile[2]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.BOTH_INTER_MODULE_FILE;
+		propFile[3]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.XML_BIF_MODULE_FILE; 
+		outFile[0] = BNConstants.LIT_INTER_FILE;
+		outFile[1] = BNConstants.PPI_INTER_FILE; 
+		outFile[2] = BNConstants.LIT_PPI_INTER_FILE;
+
+		PrintWriter out=null;
+		try{ 	 
+			if(lit){
+				out= new PrintWriter(new FileOutputStream(new File(propFile[0])));	 
+				out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
+				out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+				out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
+				out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
+				out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 
+				out.println(BNConstants.FRM_LIT + "=true");
+				out.println(BNConstants.FRM_PPI + "=false");
+				out.println(BNConstants.OUT_INTER_FILE_NAME + "=" +outFile[0]);
+				out.flush();
+				out.close();
+			}
+			if(ppi){
+				out= new PrintWriter(new FileOutputStream(new File(propFile[1])));	 
+				out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
+				out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+				out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
+				out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
+				out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
+				out.println(BNConstants.FRM_LIT + "=false");
+				out.println(BNConstants.FRM_PPI + "=true");
+				out.println(BNConstants.OUT_INTER_FILE_NAME + "=" + outFile[1]);
+				out.println(BNConstants.USE_PPI_DIRECT + "=true");
+				//out.println("usePpiOnlyWithin=true");
+				out.println(BNConstants.PPI_FILE_NAME + "=" + BNConstants.PPI_FILE);
+				out.flush();
+				out.close();
+
+			}
+			if(both){
+				out= new PrintWriter(new FileOutputStream(new File(propFile[2])));	 
+				out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
+				out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+				out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
+				out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
+				out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
+				out.println(BNConstants.FRM_LIT + "=true");
+				out.println(BNConstants.FRM_PPI + "=true");
+				out.println(BNConstants.OUT_INTER_FILE_NAME + "=" + outFile[2]);
+				out.println(BNConstants.PPI_FILE_NAME + "=" + BNConstants.PPI_FILE);
+				out.flush();
+				out.close();
+			}
+			out= new PrintWriter(new FileOutputStream(new File(propFile[fileSize-1])));
+			if(goTerms){
+				System.out.println("Use GO Terms");
+				out.println(BNConstants.USE_GO + "=" + "true");
+				out.println(BNConstants.GB_GO_FILE_NAME + "=" + BNConstants.GB_GO_FILE); //"gbGOs.txt"
+			}
+			out.println(BNConstants.NAMES_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+			out.println(BNConstants.DISTRIBUTION_FRM_WEIGHTS + "=" + "true");
+			out.println(BNConstants.OUT_XML_BIF_FILE_NAME + "=" + BNConstants.BIF_RESULT_FILE);
+			if(lit){
+				out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[0]);
+			}else if(ppi){
+				out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[1]);
+			} else if(both){
+				out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[2]);
+			}
+			out.flush();
+			out.close();
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
 }
 
 
