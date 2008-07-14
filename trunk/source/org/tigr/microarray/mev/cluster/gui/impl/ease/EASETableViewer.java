@@ -264,7 +264,7 @@ public class EASETableViewer extends TableViewer implements Serializable {
     /** Saves the ease table to file
      */
     protected void onSaveEaseTable(){
-        JFileChooser chooser = new JFileChooser(TMEV.getFile("/Data"));
+        JFileChooser chooser = new JFileChooser(TMEV.getDataPath());
         String fileName = "";
         if(chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION){
             File file = chooser.getSelectedFile();
@@ -273,7 +273,11 @@ public class EASETableViewer extends TableViewer implements Serializable {
                 PrintWriter pw = new PrintWriter(new FileOutputStream(file));
                 int rows = table.getRowCount();
                 int cols = table.getColumnCount();
-                
+
+                for(String headerName : headerNames) {
+                	pw.print(headerName + "\t");
+                }
+                pw.print("\n");
                 for(int row = 0; row < rows; row++){
                     for(int col = 0; col < cols; col++){
                         pw.print(((String)(table.getValueAt(row, col))) + "\t");
