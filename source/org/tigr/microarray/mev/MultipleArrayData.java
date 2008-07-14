@@ -1196,12 +1196,11 @@ public class MultipleArrayData implements IData {
     }
 
     /**
-     * EH updated to get field names from slideData rather than TMEV
+     * 
      * Returns all annotation fields
+     * @deprecated Use String[] getAllFilledAnnotationFields()
      */
     public String[] getFieldNames() {
-    	//6/10/06 jcb changed to ISlideData rather than Slide data since
-    	//the first feature might not be a SlideData object if it's a sample subset (cluster)
     	return ((ISlideData)featuresList.get(0)).getSlideMetaData().getFieldNames();
     }
     
@@ -2940,10 +2939,10 @@ public class MultipleArrayData implements IData {
        return indices; 
     }
     
-    /** Returns an annotation array for the provided indices based on annotation key
+    /** 
+     * Returns an annotation array for the provided indices based on annotation key
      */
     public String[] getAnnotationList(String fieldName, int[] indices) {
-//    	System.out.println("Getting annotations for field " + fieldName);
         String [] fieldNames = this.getFieldNames();
         int fieldIndex;
         for(fieldIndex = 0; fieldIndex < fieldNames.length; fieldIndex++){
@@ -2952,11 +2951,12 @@ public class MultipleArrayData implements IData {
             }
         }
 
+        
         if(fieldIndex >= fieldNames.length) {
         	String[] _temp = new String[indices.length];
         	boolean hasAnnotation = false;
         	for(int i=0; i<indices.length; i++) {
-        		String thisAnnot = this.getElementAnnotation(i, fieldName)[0];
+        		String thisAnnot = this.getElementAnnotation(indices[i], fieldName)[0];
         		if(thisAnnot != null && !thisAnnot.equalsIgnoreCase("na") && !thisAnnot.equalsIgnoreCase("n/a")) {
         			hasAnnotation = true;
         		}

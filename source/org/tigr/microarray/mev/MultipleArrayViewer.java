@@ -5701,21 +5701,21 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         		gaggleConnectWarning();
         		return;
         	}
-        	System.out.println("broadcasting matrix size " + clusters.length);
         	DataMatrix m = new DataMatrix();
         	ClusterWorker cw = new ClusterWorker(MultipleArrayViewer.this.geneClusterRepository); 
-        	int[] indices = cw.getUniqueIndices(clusters);
+        	int[] rows = cw.getUniqueIndices(clusters);
         	FloatMatrix f = data.getExperiment().getMatrix();
-        	String[] rowTitles = new String[indices.length];
-        	m.setSize(indices.length, f.getColumnDimension());
-        	for (int i=0; i<indices.length; i++) {
-        		rowTitles[i] = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{indices[i]})[0];
+        	String[] rowTitles = new String[rows.length];
+        	m.setSize(rows.length, f.getColumnDimension());
+        	for (int i=0; i<rows.length; i++) {
         		for (int j=0; j<f.getColumnDimension(); j++) {
-                    m.set(i, j, data.getRatio(j, indices[i], IData.LOG));
+                    m.set(i, j, data.getRatio(j, rows[i], IData.LOG));
         		}
         	}
+        	String fieldname = data.getAllFilledAnnotationFields()[menubar.getDisplayMenu().getLabelIndex()];
+        	rowTitles = data.getAnnotationList(fieldname, rows);
         	m.setRowTitles(rowTitles);
-	    	m.setRowTitlesTitle(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()]);
+	    	m.setRowTitlesTitle(data.getAllFilledAnnotationFields()[menubar.getDisplayMenu().getLabelIndex()]);
 	    	String[] temp = data.getAnnotationList(data.getCurrentSampleLabelKey());
 	    	if(temp == null) {
 	    		temp = new String[f.getColumnDimension()];
@@ -5750,16 +5750,21 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 				columns = experiment.getColumnIndicesCopy();
 			}
 	    	DataMatrix m = new DataMatrix();
-	        String[] rowTitles = new String[rows.length];
+//	        String[] rowTitles = new String[rows.length];
 	        m.setSize(rows.length, experiment.getNumberOfSamples());
 	        for (int i=0; i<rows.length; i++) {
-	        	rowTitles[i] =  data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{rows[i]})[0];
+//	        	String fieldname = data.getAllFilledAnnotationFields()[menubar.getDisplayMenu().getLabelIndex()];
+//	        	int[] genes = new int[]{rows[i]};
+//	        	rowTitles[i] =  data.getAnnotationList(fieldname, genes)[0];
 	            for(int j=0; j<columns.length; j++) {
 	            	m.set(i, j, experiment.get(rows[i], columns[j]));
 	            }
 	        }
+	        String fieldname = data.getAllFilledAnnotationFields()[menubar.getDisplayMenu().getLabelIndex()];
+	        String[] rowTitles = data.getAnnotationList(fieldname, rows);
+
 	    	m.setRowTitles(rowTitles);
-	    	m.setRowTitlesTitle(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()]);
+	    	m.setRowTitlesTitle(data.getAllFilledAnnotationFields()[menubar.getDisplayMenu().getLabelIndex()]);
 
 	    	String[] columnTitles = new String[columns.length];
 	    	for(int i=0; i<columnTitles.length; i++) {
@@ -5795,7 +5800,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         	int[] indices = cw.getUniqueIndices(clusters);
         	String[] names = new String[indices.length];
         	for(int i=0; i<names.length; i++) {
-        		names[i] = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{indices[i]})[0];
+        		names[i] = data.getAnnotationList(data.getAllFilledAnnotationFields()[menubar.getDisplayMenu().getLabelIndex()], new int[]{indices[i]})[0];
         	}
         	nl.setName("MeV Namelist (" + names.length + ") from algorithm " + clusters[0].getAlgorithmName());
     		nl.setNames(names);
@@ -5817,7 +5822,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         	int[] indices = rows;
         	String[] names = new String[indices.length];
         	for(int i=0; i<names.length; i++) {
-        		names[i] = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{indices[i]})[0];
+        		names[i] = data.getAnnotationList(data.getAllFilledAnnotationFields()[menubar.getDisplayMenu().getLabelIndex()], new int[]{indices[i]})[0];
         	}
         	nl.setName("MeV Namelist (" + names.length + ")");
     		nl.setNames(names);
@@ -5840,8 +5845,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     	Hashtable<String, String[]> nodeAnnotations = new Hashtable<String, String[]>();
     	String[] allFields = data.getAllFilledAnnotationFields();
     	for(int i=0; i<interactions.size(); i++) {
-    		String source = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{interactions.get(i)[0]})[0];
-    		String target = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{interactions.get(i)[1]})[0];
+    		String source = data.getAnnotationList(data.getAllFilledAnnotationFields()[menubar.getDisplayMenu().getLabelIndex()], new int[]{interactions.get(i)[0]})[0];
+    		String target = data.getAnnotationList(data.getAllFilledAnnotationFields()[menubar.getDisplayMenu().getLabelIndex()], new int[]{interactions.get(i)[1]})[0];
     		Interaction tempInt = new Interaction(source, target, types.get(i), directionals.get(i));
     		
     		nt.add(tempInt);
@@ -5895,6 +5900,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     		gaggleBoss.broadcastNamelist(myGaggleName, targetGoose, nl);
     	} catch (RemoteException rex) {
     		System.err.println("doBroadcastNamelist: rmi error calling boss.broadcast");
+			disconnectFromGaggle();
     	}
     }
 
@@ -5916,6 +5922,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     		gaggleBoss.broadcastNetwork(myGaggleName, targetGoose, nt);
     	} catch (RemoteException rex) {
     		System.err.println("doBroadcastNamelist: rmi error calling boss.broadcast");
+			disconnectFromGaggle();
     	}
     }
 
@@ -5937,6 +5944,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 			gaggleBoss.broadcastMatrix(myGaggleName, targetGoose, matrix);
 		} catch (RemoteException rex) {
 			JOptionPane.showMessageDialog(mainframe, "Gaggle unavailable. Please use Utilities -> Connect to Gaggle.");
+			disconnectFromGaggle();
 		}
 	}
 
@@ -5945,6 +5953,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 		String title = "Not connected to Gaggle";
 		String msg = "Please connect to Gaggle using the Utilities -> Gaggle menu.";
 		JOptionPane.showMessageDialog(this, msg, title, JOptionPane.OK_OPTION);
+		disconnectFromGaggle();
     }
     
     /**
@@ -5986,6 +5995,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     public void disconnectFromGaggle() {
     	if(isConnected)
     		gaggleConnector.disconnectFromGaggle(true);
+
     }
     /**
      * @author eleanora
