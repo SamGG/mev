@@ -86,9 +86,9 @@ public class BNInitDialog extends AlgorithmDialog {
 	String sep;
 	Frame parent;
 	IFramework framework;
-	String searchAlgorithm="TabuSearch"; //"HillClimber";
-	String scoreType="BAYES"; //"BDeu";
-	boolean useArc=true;
+	String searchAlgorithm = "TabuSearch"; //"HillClimber";
+	String scoreType = "BAYES"; //"BDeu";
+	boolean useArc = true;
 	File fileDir = null;
 	String kegg_sp = null;
 
@@ -1245,7 +1245,7 @@ public class BNInitDialog extends AlgorithmDialog {
 		JTextField defaultFileBaseLocation;
 
 		public ConfigPanel() {
-			super("File Updates and Configuration");
+			super("Location of Support File(s)");
 			setLayout(new GridBagLayout());
 
 
@@ -1267,7 +1267,7 @@ public class BNInitDialog extends AlgorithmDialog {
 			//browseFileBaseButton.setFocusPainted(false);
 			//browseFileBaseButton.addActionListener(listener);
 			//browseFileBaseButton.setToolTipText("<html>Helps select the BN annotation file system<br>that corresponds the current species and array type.</html>");
-			JLabel fileLocation=new JLabel("File(s) Location:");
+			JLabel fileLocation = new JLabel("File(s) Location:");
 			//defaultFileBaseLocation = new JTextField(TMEV.getFile("data/bn").getAbsolutePath(), 25);
 			//defaultFileBaseLocation = new JTextField(new File(System.getProperty("user.dir")).getAbsolutePath());
 			defaultFileBaseLocation = new JTextField(new File(TMEV.getDataPath()).getAbsolutePath());
@@ -1439,7 +1439,7 @@ public class BNInitDialog extends AlgorithmDialog {
 
 						//JOptionPane pane = new JOptionPane(sp); JDialog dlg = pane.createDialog(new JFrame(), "Dialog"); dlg.show();
 					} else if(!isKeggOrgSupported(kegg_org, kegg_sp)) {
-							//!sp.equalsIgnoreCase("Human") || !sp.equalsIgnoreCase("Mouse") || !sp.equalsIgnoreCase("Rat")) {
+						//!sp.equalsIgnoreCase("Human") || !sp.equalsIgnoreCase("Mouse") || !sp.equalsIgnoreCase("Rat")) {
 						if (JOptionPane.showConfirmDialog(new JFrame(),
 								"Do you want to continue ? ", "Species " + kegg_sp + " not Supported for KEGG",
 								JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
@@ -1460,14 +1460,14 @@ public class BNInitDialog extends AlgorithmDialog {
 					//String keggFilebase = System.getProperty("user.dir") + BNConstants.SEP + "data" + BNConstants.SEP + "BN_files" + BNConstants.SEP + "kegg";
 					if(!(new File(BNConstants.KEGG_FILE_BASE)).exists()){
 						boolean success = (new File(BNConstants.KEGG_FILE_BASE)).mkdir();
-					    if (!success) {
-					        // Directory creation failed
-					    	JOptionPane.showMessageDialog(
+						if (!success) {
+							// Directory creation failed
+							JOptionPane.showMessageDialog(
 									parent, 
 									"Failed to create directory",
 									"Error", JOptionPane.ERROR_MESSAGE);
-					    	return;
-					    }
+							return;
+						}
 					}
 					String keggFileName = kegg_sp + BNConstants.KEGG_FILE;
 					if(!(new File(BNConstants.KEGG_FILE_BASE + BNConstants.SEP + keggFileName)).exists()) {
@@ -1644,7 +1644,7 @@ public class BNInitDialog extends AlgorithmDialog {
 		}
 
 		/**
-		 * 
+		 * Function to check if the organism is currently supported by KEGG files
 		 * @param kegg_org
 		 * @param sp
 		 * @return

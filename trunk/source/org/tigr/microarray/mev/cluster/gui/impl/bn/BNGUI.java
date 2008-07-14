@@ -1,8 +1,10 @@
 /*
  * Created on Aug 30, 2005
+ * @author Others
+ * Modified by
+ * @author Raktim
  */
 package org.tigr.microarray.mev.cluster.gui.impl.bn;
-import java.beans.Expression;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -17,7 +19,6 @@ import java.util.Vector;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.tigr.microarray.mev.HistoryViewer;
@@ -33,11 +34,10 @@ import org.tigr.microarray.mev.cluster.gui.impl.bn.getInteractions.GetInteractio
 import org.tigr.microarray.mev.cluster.gui.impl.bn.prepareXMLBif.PrepareXMLBifModule;
 
 public class BNGUI implements IClusterGUI {
-	//String sep = System.getProperty("file.separator");
 	public static final int GENE_CLUSTER = 0;
 	public static boolean done = false;
 	public static boolean run = false;
-	public static boolean cancelRun=false;
+	public static boolean cancelRun = false;
 	public static boolean prior=true;
 
 	HashMap<String, String> probeIndexAssocHash = new HashMap<String, String>();
@@ -65,8 +65,8 @@ public class BNGUI implements IClusterGUI {
 		if(dialog.showModal() != JOptionPane.OK_OPTION)
 			return null;
 		if(dialog.isNone()){
-			prior=false;
-			done=true;
+			prior = false;
+			done = true;
 		}
 
 		if(dialog.isNone()){
@@ -84,7 +84,9 @@ public class BNGUI implements IClusterGUI {
 		if(kegg_sp != null) kegg_sp = kegg_sp.trim();
 		else kegg_sp = "na";
 
+		//Build Property file for Weka Params
 		buildPropertyFile(dialog.isLit(),dialog.isPPI(),dialog.isKEGG(), dialog.isBoth(), dialog.isLitAndKegg(), dialog.isPpiAndKegg(), dialog.isAll(),dialog.useGoTerm(),dialog.getBaseFileLocation(),kegg_sp);
+		
 		//Thread thread = new Thread( new Runnable(){
 		//public void run(){	
 		//if(!dialog.isNone()){		System.out.println(dialog.getBaseFileLocation());
@@ -224,9 +226,9 @@ public class BNGUI implements IClusterGUI {
 	 */
 	private void buildPropertyFile(boolean lit,boolean ppi,boolean kegg, boolean LitPpi, boolean LitKegg, boolean KeggPpi, boolean LitPpiKegg,boolean goTerms,String path, String keggSpecies){
 		//String sep= System.getProperty("file.separator");    
-		final int fileSize=8;
-		String[] propFile=new String[fileSize];
-		String[] outFile=new String[fileSize-1];
+		final int fileSize = 8;
+		String[] propFile = new String[fileSize];
+		String[] outFile = new String[fileSize-1];
 		// String datPath=path+sep+"bn"+sep;
 		//	Raktim - USe Tmp dir
 		/*
@@ -567,6 +569,19 @@ public class BNGUI implements IClusterGUI {
 			//return FILE_IO_ERROR;
 		}
 	}
+	
+	/**
+	 * New LM Module with KEGG priors
+	 * @param lit
+	 * @param ppi
+	 * @param kegg
+	 * @param LitPpi
+	 * @param LitKegg
+	 * @param KeggPpi
+	 * @param LitPpiKegg
+	 * @param path
+	 * @return
+	 */
 	public int literatureMining(boolean lit,boolean ppi, boolean kegg, boolean LitPpi, boolean LitKegg, boolean KeggPpi, boolean LitPpiKegg, String path){
 		//System.out.print(sep);
 		GetInteractionsModule getModule = new GetInteractionsModule(path);
