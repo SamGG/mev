@@ -12,16 +12,12 @@ All rights reserved.
 
 package org.tigr.microarray.mev;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -29,12 +25,10 @@ import java.net.URLConnection;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
@@ -109,19 +103,17 @@ public class TMEV {
     public static boolean GAGGLE_CONNECT_ON_STARTUP = false;
     public static String PROPERTY_CONFIG_FILES = "config-files";
 
-    public static String sep;
     private static File mevUserDir;
     private static File mevPropertiesFile;
     
-    //EH new properties field, to replace the hashtable properties. Better loading functions, more webstart-safe
+    //new properties field, to replace the hashtable properties. Better loading functions, more webstart-safe
     //and user-configurable
     private static ConfMap props;
     
     public static void main(String[] args) {
-    	sep = System.getProperty("file.separator");
-    	mevUserDir = new File(System.getProperty("user.home") + sep + ".mev");
-    	mevPropertiesFile = new File(mevUserDir + sep + "mev.properties");
         
+    	mevUserDir = new File(System.getProperty("user.home"), ".mev");
+    	mevPropertiesFile = new File(mevUserDir, "mev.properties");
     	try {
         	//Determine whether to run with Gaggle enabled
         	for(String s: args) {
@@ -223,7 +215,7 @@ public class TMEV {
 	 	        		InputStream in = TMEV.class.getClassLoader().getResourceAsStream(filename);
 		 	        	if(in != null) {
 			        		DataInputStream dis = new DataInputStream(in);
-			        		FileOutputStream fos = new FileOutputStream(mevUserDir + sep + filename.substring(filename.lastIndexOf('/')+1));
+			        		FileOutputStream fos = new FileOutputStream(new File(mevUserDir, filename.substring(filename.lastIndexOf('/')+1)));
 			 	        	while(dis.available() != 0){
 			 	        		fos.write(dis.readByte());
 			 	        	}
@@ -287,16 +279,13 @@ public class TMEV {
         			 InputStream in2 = new FileInputStream(mevPropertiesFile);
         			 props.load(in2);
         			 in2.close();
+        		 } else {
+        			 mevPropertiesFile.createNewFile();
         		 }
         	 }
          } else {
         	 mevUserDir.mkdir();
-             //System.out.println("Created MeV directory " + mevUserDir + ".");
 			 mevPropertiesFile.createNewFile();
-              //System.out.println("Created MeV properties file " + mevPropertiesFile + ".");
-             FileOutputStream propsout = new FileOutputStream(mevPropertiesFile);
-             defaultWebProps.store(propsout, "MeV Default Properties");
-             propsout.close();
          }
          writeProperties();
     }
@@ -375,26 +364,6 @@ public class TMEV {
    		writeProperties();
 
     }
-    /*
-    public static boolean connect(String username, String password) {
-        try {
-            Class.forName("com.sybase.jdbc2.jdbc.SybDriver");
-            String server = new String(getSettingForOption("Database Server Name"));
-            Properties connectionProperties = new Properties();
-     
-            connectionProperties.put("user", username);
-            connectionProperties.put("password", password);
-            connectionProperties.put("APPLICATIONNAME", "TIGR MultiExperimentViewer");
-     
-            DriverManager.setLoginTimeout(2200);
-            TMEV.connection = DriverManager.getConnection(server, connectionProperties);
-            return true;
-        } catch (Exception e) {
-            System.out.println("Exception (TMEV.connect()): " + e);
-            return false;
-        }
-    }
-     */
     
         /*
          * This code was modified by Jim Johnson with other changes to enable
@@ -437,61 +406,6 @@ public class TMEV {
     public static int getIntensityCount() {return TMEV.intensityCount;}
     public static int getHeaderRowCount() {return TMEV.headerRowCount;}
     public static int getHeaderColumnCount() {return TMEV.headerColumnCount;}
-
-    //get initial algorithm list from properties
-/*    public static int[] getCustomerAnalysis() {
-    	if(props.get("algorithm-list") != null) {
-    		String algorithmmask = ((String)props.get("algorithm-list"));
-            if(TMEV.customerAnalysis==null) {
-         	   System.out.println("customeranalysis == null");
-         	   TMEV.initCustomerAnalysis(algorithmmask.length());
-            }
-            for(int i=0;i<algorithmmask.length();i++){
-           	 int m=(new Integer(algorithmmask.substring(i,i+1))).intValue();
-           	 System.out.println("customerAnalysis[" + i + "] = " + m);
-           	 TMEV.customerAnalysis[i]=m;
-            }
-    	}
-	   return TMEV.customerAnalysis;
-    }
-    
-   public static String getCustomerAnalysisList() {
-       String list="";
-	   for(int i=0;i<TMEV.customerAnalysis.length;i++)
-		   list=list+TMEV.customerAnalysis[i];
-	   return list;
-   }
-   
-   public static boolean validCustomerAnalysis() {
-	   int count=TMEV.customerAnalysis.length;
-	   for(int i=0;i<count;i++){
-		   if(TMEV.customerAnalysis[i]==1)
-			   return true;
-	   }
-	   return false;
-   }
-   
-   public static void initCustomerAnalysis(int total){
-		   TMEV.customerAnalysis=new int[total];
-		   for(int i=0;i<total;i++)
-			   TMEV.customerAnalysis[i]=1;
-	   }
-	   
-  
-   	   
-   public static void setCustomerAnalysis(int total,int index,int tag) {
-    	   TMEV.customerAnalysis[index]=tag;
-   }
-   
-   public static void setCustomerStatSave(){
-       try {
-    	   props.put("algorithm-list", TMEV.getCustomerAnalysisList());
-    	   writeProperties();
-       } catch (IOException ioe) {
-    	   System.out.println("unable to write to properties file");
-       }
-   }
-   */
     public static String[] getDatabases() {return TMEV.databases;}
     public static int getUniqueIDIndex() {return TMEV.uniqueIDIndex;}
     public static int getNameIndex() {return TMEV.nameIndex;}
@@ -542,20 +456,8 @@ public class TMEV {
             algorithmFactory = new TMEVAlgorithmFactory(cfg);
             
             TMEV.permitSavePrompt = cfg.getBoolean("prompt-for-save", true);
-            String path = cfg.getProperty("current-data-path");
-            
-            if(path != null) {
-                StringTokenizer stok = new StringTokenizer(path, "/");
-                path = new String();
-                while(stok.hasMoreTokens())
-                    path += stok.nextToken()+sep;
-                TMEV.dataPath = path;
-                
-                //Mac/Linux needs to start with a /  vu4.8.05
-                if(System.getProperty("os.name").startsWith("Mac")) {
-                    //TMEV.dataPath = sep + path;
-                }
-            }
+            TMEV.setDataPath(cfg.getProperty("current-data-path"));
+
             
             //read the Rserve connection path
             String sPath = cfg.getString( "rserve-path" );
@@ -591,10 +493,10 @@ public class TMEV {
     /** Updates the data path in config given a formatted data path string
      * @deprecated use TMEV.setDataPath(String newPath)
      */
-    public static void updateDataPath(String  dataPath){
-        if(dataPath == null)
+    public static void updateDataPath(String  newDataPath){
+        if(newDataPath == null)
             return;
-        storeProperty("current-data-path", dataPath);
+        setDataPath(newDataPath);
     }
     
     
@@ -625,7 +527,7 @@ public class TMEV {
     /** Returns the configuration file indicated by the fileName argument
      */
     public static File getConfigurationFile(String fileName) {
-    	return new File(mevUserDir + sep + fileName);
+    	return new File(mevUserDir, fileName);
     }
     
     /** Returns a file relative to the base directory
