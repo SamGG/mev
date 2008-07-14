@@ -304,6 +304,7 @@ public class EASEInitDialog extends AlgorithmDialog {
     /** Returns the base file location for EASE file system
      */
     public String getBaseFileLocation() {
+    	TMEV.storeProperty(EASEGUI.LAST_EASE_FILE_LOCATION, configPanel.getBaseFileLocation());
         return configPanel.getBaseFileLocation();
     }
     
