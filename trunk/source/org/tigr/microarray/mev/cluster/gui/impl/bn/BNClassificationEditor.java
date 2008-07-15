@@ -753,7 +753,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 				if(f.isFile()){
 					f.delete();
 				}else{
-					System.out.print("Not a file to delete");
+					System.out.println("Not a file to delete");
 				}
 			} 
 		} else {
