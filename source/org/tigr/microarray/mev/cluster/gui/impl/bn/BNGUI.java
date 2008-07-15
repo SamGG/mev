@@ -43,7 +43,7 @@ public class BNGUI implements IClusterGUI {
 		prior = true;
 
 		IData data = framework.getData();
-		Experiment exp =data.getExperiment();
+		Experiment exp = data.getExperiment();
 		ClusterRepository repository = framework.getClusterRepository(Cluster.GENE_CLUSTER);
 		/*
 		if(exp.getNumberOfGenes()>200 && repository.isEmpty()){
@@ -71,13 +71,18 @@ public class BNGUI implements IClusterGUI {
 		//pgPanel.setLocation((screenSize.width-framework.getFrame().getSize().width)/2,(screenSize.height-framework.getFrame().getSize().height)/2);
 		pgPanel.setVisible(true);
 
-		this.probeIndexAssocHash = Useful.converter(dialog.getSelectedCluster(),framework,dialog.getBaseFileLocation());
-		if(this.probeIndexAssocHash == null){
-			JOptionPane.showMessageDialog(new JFrame(), "Error mapping Unique identifiers", "Error!", JOptionPane.ERROR_MESSAGE);
+		try {
+			this.probeIndexAssocHash = Useful.converter(dialog.getSelectedCluster(),framework,dialog.getBaseFileLocation());
+			if(this.probeIndexAssocHash == null){
+				throw new Exception("Error in mapping Unique identifiers to Accession");
+			}
+		} catch(Exception e) {
+			JOptionPane.showMessageDialog(framework.getFrame(), "Error mapping Unique identifiers", "Error!", JOptionPane.ERROR_MESSAGE);
 			LMGUI.done = false;
 			pgPanel.dispose();
 			return null;
 		}
+		
 		String kegg_sp = dialog.getKeggSpecies();
 		if(kegg_sp != null) kegg_sp = kegg_sp.trim();
 		else kegg_sp = "na";
@@ -96,11 +101,11 @@ public class BNGUI implements IClusterGUI {
 			pgPanel.dispose();
 			BNGUI.done = false;
 			System.out.println("Out of Memory. Aborting...");
-			JOptionPane.showMessageDialog(new JFrame(), ofm.getMessage() + "\n Out of Memory", "Error - Out of Memory. Aborting!", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(framework.getFrame(), ofm.getMessage() + "\n Out of Memory", "Error - Out of Memory. Aborting!", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(new JFrame(), e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(framework.getFrame(), e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
 			BNGUI.done = false;
 			pgPanel.dispose();
 			return null;
@@ -110,7 +115,7 @@ public class BNGUI implements IClusterGUI {
 		if(status > 0) {
 			//Display warning if too many interactions are found.
 			if(status > 50) {
-				if (JOptionPane.showConfirmDialog(new JFrame(),
+				if (JOptionPane.showConfirmDialog(framework.getFrame(),
 						"Too many interactions found. \n The process might Run our of Memory! \n Do you want to continue ? ", "Interaction found: " + status + "!",
 						JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
 					BNGUI.done = false;
