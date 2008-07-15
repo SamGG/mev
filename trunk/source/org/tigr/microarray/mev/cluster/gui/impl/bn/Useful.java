@@ -15,15 +15,22 @@
  */
 package org.tigr.microarray.mev.cluster.gui.impl.bn;import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.LineNumberReader;
-import java.io.File;import java.io.FileNotFoundException;import java.io.PrintWriter;
-import java.io.FileOutputStream;import java.io.IOException;import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;import java.util.HashMap;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Iterator;import java.util.Set;import org.tigr.microarray.mev.TMEV;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
@@ -69,7 +76,7 @@ public class Useful {
     	}
 		 */
 		if(!(new File(fileName)).exists()){
-			throw new FileNotFoundException("File denoted by "+"newwww "+fileName+" does not exist!");
+			throw new FileNotFoundException("File denoted by " + fileName + " does not exist!");
 		}
 	}
 	/*
@@ -99,8 +106,8 @@ public class Useful {
 	 * @return an <code>HashSet</code> containing String objects corresponding to all the lines in the given file
 	 * @exception FileNotFoundException if an error occurs because the file denoted by the given fileName was not found
 	 */
-	public static HashSet readUniqueNamesFromFile(String fileName) throws FileNotFoundException{
-		String path=null;		System.out.println("readUniqueNamesFromFile()" + fileName);
+	public static HashSet readUniqueNamesFromFile(String fileName) throws FileNotFoundException {
+		//String path=null;		System.out.println("readUniqueNamesFromFile()" + fileName);
 		checkFile(fileName);
 
 		try {
@@ -140,22 +147,11 @@ public class Useful {
 	 */
 	public static ArrayList readNamesFromFile(String fileName) throws FileNotFoundException{
 		try {
-			ArrayList names = new ArrayList();
-			/*
-	    String dataPath = TMEV.getDataPath();
-    	File pathFile = TMEV.getFile("data/");
-    	if(dataPath != null) {
-            pathFile = new File(dataPath);
-            if(!pathFile.exists())
-                pathFile = TMEV.getFile("data/");
-        }
-			 */
-			//FileReader fr = new FileReader(pathFile+fileName);
-			//System.out.print(fileName);
+			ArrayList<String> names = new ArrayList<String>();
 			FileReader fr = new FileReader(fileName);
 			LineNumberReader lnr = new LineNumberReader(fr);
 			String s = null;
-			String[] tokens = null;
+			//String[] tokens = null;
 			while((s = lnr.readLine())!=null){
 				s = s.trim();
 				names.add(s);
@@ -190,7 +186,7 @@ public class Useful {
 			LineNumberReader lnr = new LineNumberReader(fr);
 			String s = null;
 			String[] tokens = null;
-			while((s = lnr.readLine())!=null){
+			while((s = lnr.readLine())!= null){
 				s = s.trim();
 				tokens = s.split("\t");
 				if(tokens.length >= 2){
@@ -466,6 +462,17 @@ public class Useful {
 		return arguments;
 	}
 
+	/**
+	 * Function to create arguments string for Weka using Weka BMAEstimator class instead of SimpleEstimator
+	 * @param path
+	 * @param outArffFileName
+	 * @param sAlgorithm
+	 * @param useArc
+	 * @param numParents
+	 * @param sType
+	 * @param kfolds
+	 * @return
+	 */
 	public static String getWekaArgsWithCPTs(String path, String outArffFileName, String sAlgorithm, boolean useArc, String numParents, String sType, int kfolds) {
 
 		String arguments = "-t " + path + outArffFileName + " -c 1 -x " + kfolds + " -Q weka.classifiers.bayes.net.search.local."+sAlgorithm+" -- ";
@@ -499,30 +506,30 @@ public class Useful {
 	 * @param framework
 	 * @param path
 	 */
-	public static HashMap<String, String> converter(Cluster cl,IFramework framework,String path){
+	public static HashMap<String, String> converter(Cluster cl, IFramework framework, String path) throws Exception {
 		int genes = cl.getIndices().length;
-		System.out.print(genes);
+		//System.out.print(genes);
 		IData data = framework.getData();
 		int[] rows = new int[genes];
 		rows = cl.getIndices();
 		String[] probeId = new String[genes];
 		String[] accList = new String[genes];
-		HashMap accHash = new HashMap();
+		HashMap<String, String> accHash = new HashMap<String, String>();
 		HashMap<String, String> probeIndexAssocHash = new HashMap<String, String>();
 		String lineRead = "";
 		//String sep=System.getProperty("file.separator");
 		// TODO Raktim - Get ProbeIDs for Genes
-		for (int i = 0; i < rows.length; i++) {
-			probeId[i]=data.getSlideDataElement(0,rows[i]).getFieldAt(0);
-			System.out.println("Probe_id :"+probeId[i] ); 
-		}
-
 		try {
+			for (int i = 0; i < rows.length; i++) {
+				probeId[i] = data.getSlideDataElement(0,rows[i]).getFieldAt(0);
+				//System.out.println("Probe_id :"+probeId[i] ); 
+			}
+
 			File file = new File(path, BNConstants.ACCESSION_FILE);
 			FileReader fr = new FileReader(file);
 			BufferedReader br = new BufferedReader(fr);
 			String[] fields;
-			//PrintWriter out = new PrintWriter (new FileOutputStream(new File(path+sep+"list.txt")));
+
 			br.readLine();
 			br.readLine();
 			while((lineRead = br.readLine()) != null) {
@@ -535,26 +542,38 @@ public class Useful {
 			// TODO Raktim - Associate AffyID with Acc Ids ?
 			for (int i = 0; i < accList.length; i++) {
 				accList[i] = (String)accHash.get((String)probeId[i].trim());
-				// Also Store probe IDs and cluster indices assoc for creating gaggle Network
-				// NM_23456 to 1-Afy_X1234 where 1 is the probe index
+				// Also Stores probe IDs and cluster indices assoc for creating gaggle Network
+				// E.g.:- NM_23456 to 1-Afy_X1234 where 1 is the probe index
 				probeIndexAssocHash.put(accList[i], new Integer(i).toString()+"-"+probeId[i]);
 			}
 			// TODO - Raktim Why write to file ?
 			writeAccToFile(accList,path);
 			return probeIndexAssocHash;
 		} catch(FileNotFoundException e){
-			e.printStackTrace();
-			return null;
+			System.out.println("File Not Found Error Useful.converter()");
+			throw e;
+			//e.printStackTrace();
+			//return null;
 		} catch (IOException e){
-			e.printStackTrace();
-			System.out.println("File Write Error ");
-			return null;
+			System.out.println("File Write Error Useful.converter()");
+			throw e;
+			//e.printStackTrace();
+			//return null;
+		} catch (ArrayIndexOutOfBoundsException e) {
+			System.out.println("Error Useful.converter()");
+			throw e;
+		} catch (Exception e) {
+			System.out.println("Error Useful.converter()");
+			throw e;
 		}
 	}
-	
+
 	/**
- 	Function to match a subset of ProbeIDs to their corresponding Acc Numbers
- 	Return a list of Acc numbers
+	 * Function to match a subset of ProbeIDs to their corresponding Acc Numbers
+	 * Return a list of Acc numbers
+	 * @param accs
+	 * @param accHash
+	 * @return
 	 */
 	private String[] matchSet (String[] accs, HashMap accHash) {
 		String[] accList = new String[accs.length];
@@ -563,16 +582,13 @@ public class Useful {
 		}
 		return accList;
 	}
-	
+
 	/**
 	 * Writes an associative hashmap of Probe Ids to RefSeqs to a file.
 	 * @param accList
 	 * @param path
 	 */
-	private static void writeAccToFile (String[] accList, String path) {
-		//String sep=System.getProperty("file.separator");
-		//String outFile = path + sep+"list.txt";
-		//	 Raktim - Use tmp Dir
+	private static void writeAccToFile (String[] accList, String path) throws Exception {
 		String outFile = path + BNConstants.SEP+ BNConstants.TMP_DIR + BNConstants.SEP + BNConstants.OUT_ACCESSION_FILE;
 		System.out.println(outFile);
 		BufferedWriter out = null;
@@ -587,12 +603,15 @@ public class Useful {
 			out.flush();
 			out.close();
 		} catch (IOException e){
-			e.printStackTrace();
+			throw e;
+			//e.printStackTrace();
 			//System.out.println("File Write Error " + errorStrings[FILE_IO_ERROR]);
 			//return FILE_IO_ERROR;
+		} catch (Exception e) {
+			throw e;
 		}
 	}
-	
+
 	/**
 	 * Build property files for both LM & BN
 	 * Description:
@@ -607,7 +626,7 @@ public class Useful {
 		final int fileSize = 8;
 		String[] propFile = new String[fileSize];
 		String[] outFile = new String[fileSize-1];
-		
+
 		propFile[0]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.LIT_INTER_MODULE_FILE;
 		propFile[1]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.PPI_INTER_MODULE_DIRECT_FILE;
 		propFile[2]= path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+BNConstants.BOTH_INTER_MODULE_FILE;
@@ -766,7 +785,7 @@ public class Useful {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Older version - Unused
 	 * @param lit
@@ -777,9 +796,9 @@ public class Useful {
 	 */
 	private void buildPropertyFile(boolean lit,boolean ppi,boolean both,boolean goTerms,String path){
 		//String sep= System.getProperty("file.separator");    
-		final int fileSize=4;
-		String[] propFile=new String[fileSize];
-		String[] outFile=new String[fileSize-1];
+		final int fileSize = 4;
+		String[] propFile = new String[fileSize];
+		String[] outFile = new String[fileSize-1];
 		//String datPath=path+sep+"bn"+sep;
 		//	 Raktim - USe Tmp dir
 		/*

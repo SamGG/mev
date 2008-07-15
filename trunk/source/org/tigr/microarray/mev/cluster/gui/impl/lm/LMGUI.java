@@ -30,11 +30,13 @@ public class LMGUI implements IClusterGUI {
 	public static boolean done = false;
 	public static boolean cancelRun = false;
 	public static boolean prior = true;
+	protected IFramework framework;
 	RunWekaProgressPanel runProgressPanel;
 	LMBNViewer fileViewer;
 	Vector<String> networkFiles = new Vector<String>();
 	
-	public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
+	public DefaultMutableTreeNode execute(IFramework frame) throws AlgorithmException {
+		this.framework = frame;
 		done = false;
 		cancelRun = false; 
 		prior = true;
@@ -62,8 +64,12 @@ public class LMGUI implements IClusterGUI {
 		runProgressPanel.setVisible(true);
 		
 		String basePath = dialog.getBaseFileLocation() + BNConstants.SEP;
-		if(Useful.converter(dialog.getSelectedCluster(),framework,dialog.getBaseFileLocation()) == null) {
-			JOptionPane.showMessageDialog(new JFrame(), "Error mapping Unique identifiers", "Error!", JOptionPane.ERROR_MESSAGE);
+		try {
+			if(Useful.converter(dialog.getSelectedCluster(),framework,dialog.getBaseFileLocation()) == null) {
+				throw new Exception("Error in mapping Unique identifiers to Accession");
+			}
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(framework.getFrame(), e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
 			LMGUI.done = false;
 			runProgressPanel.dispose();
 			return null;
@@ -87,11 +93,11 @@ public class LMGUI implements IClusterGUI {
 					runProgressPanel.dispose();
 					LMGUI.done = false;
 					System.out.println("Out of Memory. Aborting...");
-					JOptionPane.showMessageDialog(new JFrame(), ofm.getMessage() + "\n Out of Memory", "Error - Out of Memory. Aborting!", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(framework.getFrame(), ofm.getMessage() + "\n Out of Memory", "Error - Out of Memory. Aborting!", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				catch (Exception e) {
-					JOptionPane.showMessageDialog(new JFrame(), e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(framework.getFrame(), e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
 					LMGUI.done = false;
 					runProgressPanel.dispose();
 					return;
@@ -154,7 +160,7 @@ public class LMGUI implements IClusterGUI {
 	}
 	
 	/**
-	 * 
+	 * Creates Analysis Viewers Node
 	 * @param experiment
 	 * @param info
 	 * @return
@@ -314,14 +320,7 @@ public class LMGUI implements IClusterGUI {
 		String useGoTerms = "Use modification of DFS";
 		int numGene;
 	}
-	/**
-	 * Displays an error dialog
-	 * @param message
-	 */
-	public void error( String message ) {
-		JOptionPane.showMessageDialog( new JFrame(), message, "Input Error", JOptionPane.ERROR_MESSAGE );
-	}//end error()
-	
+		
 	/**
 	 * State Saving Function
 	 * @param LMBNViewer
