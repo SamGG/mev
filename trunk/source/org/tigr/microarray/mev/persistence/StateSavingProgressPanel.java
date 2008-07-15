@@ -59,7 +59,7 @@ import org.tigr.microarray.mev.MultipleArrayViewer;
 			setContentPane(progressPanel);
 
 	        progressPanel.setOpaque(true);
-			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 			pack(); 
 			setVisible(true);
 	    }

@@ -777,11 +777,13 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 			    	for(int i=0; i<files.length; i++){
 			    		aFile = new File(tempDir, files[i]);
 			    		aFile.deleteOnExit();
-			    		if(!aFile.delete())
+			    		if(!aFile.delete()) {
 			    			System.out.println("Couldn't delete " + aFile.getPath());
+			    		}
 			    	}
-			    	if(!tempDir.delete())
-			    		System.out.println("Couldn't delete " + tempDir.toString());
+			    	if(!tempDir.delete()) {
+			    		//System.out.println("Couldn't delete " + tempDir.toString());
+			    	}
 			
 			    	progressPanel.dispose();
 			    	modifiedResult = false;
