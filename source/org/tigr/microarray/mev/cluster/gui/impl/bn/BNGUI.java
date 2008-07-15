@@ -30,7 +30,7 @@ public class BNGUI implements IClusterGUI {
 	public static boolean done = false;
 	public static boolean run = false;
 	public static boolean cancelRun = false;
-	public static boolean prior=true;
+	public static boolean prior = true;
 
 	HashMap<String, String> probeIndexAssocHash = new HashMap<String, String>();
 	HistoryViewer wekaOutputViewer;
@@ -45,13 +45,7 @@ public class BNGUI implements IClusterGUI {
 		IData data = framework.getData();
 		Experiment exp = data.getExperiment();
 		ClusterRepository repository = framework.getClusterRepository(Cluster.GENE_CLUSTER);
-		/*
-		if(exp.getNumberOfGenes()>200 && repository.isEmpty()){
-		    BNPreDialog b=new BNPreDialog(framework.getJFrame(),true);
-                    b.setVisible(true);        
-                    return null;
-		}else {	
-		 */  
+		 
 		//final BNInitDialog dialog = new BNInitDialog(framework.getFrame(), repository, framework.getData().getFieldNames());
 		final BNInitDialog dialog = new BNInitDialog(framework, repository, framework.getData().getFieldNames());
 		if(dialog.showModal() != JOptionPane.OK_OPTION)
@@ -65,6 +59,12 @@ public class BNGUI implements IClusterGUI {
 			return null;
 		}
 
+		if(dialog.getSelectedCluster().getIndices().length > BNConstants.MAX_GENES) {
+			JOptionPane.showMessageDialog(framework.getFrame(), "Cluster size exceeds max gene limit of " + BNConstants.MAX_GENES + ". Please reduce cluster size.", "Error!", JOptionPane.ERROR_MESSAGE);
+			LMGUI.done = false;
+			return null;
+		}
+		
 		RunWekaProgressPanel pgPanel = new RunWekaProgressPanel();
 		pgPanel.setIndeterminate(true);
 		pgPanel.setLocationRelativeTo(framework.getFrame());

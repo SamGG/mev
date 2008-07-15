@@ -436,8 +436,7 @@ public class Useful {
 
 		SimpleDateFormat formatDt = new SimpleDateFormat("MMM_dd_yy_HH_mm_ss_SSS");
 		dateString = formatDt.format(now);
-		//System.out.println(" 2. " + dateString);
-		return dateString;
+		//System.out.println(" 2. " + dateString);		return dateString;
 	}
 
 	public static String getWekaArgs(String path, String outArffFileName, String sAlgorithm, boolean useArc, String numParents, String sType, int kfolds) {

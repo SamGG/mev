@@ -113,4 +113,11 @@ public class BNConstants {
 	 * KEGG base location for interactions
 	 */
 	public final static String KEGG_FILE_BASE = System.getProperty("user.dir") + BNConstants.SEP + "data" + BNConstants.SEP + "BN_files" + BNConstants.SEP + "kegg";
+
+	/**
+	 * Maximum number of genes allowed for BN analysis.
+	 * It sets the max size of the transpose matrix in Transpose.java as well.
+	 * This variable corresponds to the max length of matrix in either dimension.
+	 */
+	public static final int MAX_GENES = 250;
 }
