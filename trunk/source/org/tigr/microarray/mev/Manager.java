@@ -345,7 +345,6 @@ public class Manager {//A class to keep track of viewers
     
     public void initializeInput() {
         try {
-            //  String inputPreference = TMEV.getSettingForOption("Input Preference");
             String inputPreference = "Only File";
             if (inputPreference.equals("Database")) {
                 databaseLogin();
@@ -367,8 +366,6 @@ public class Manager {//A class to keep track of viewers
     public static void createNewMultipleArrayViewer( int xOffset, int yOffset ) {
         MultipleArrayViewer mav = new MultipleArrayViewer();
         Manager.addComponent(mav);
-        mav.setInstanceIndex(MavInstanceCount-1); // Raktim - Annotation Model specific
-        //TMEV.clearFieldNames();
         mav.getFrame().setSize(1150, 700);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int x = (screenSize.width - mav.getFrame().getSize().width)/2 + xOffset;
@@ -380,12 +377,6 @@ public class Manager {//A class to keep track of viewers
     public static void createNewMultipleArrayViewer() {
         MultipleArrayViewer mav = new MultipleArrayViewer();
         Manager.addComponent(mav);
-        mav.setInstanceIndex(MavInstanceCount-1); // Raktim - Annotation Model specific
-      
-        //TMEV.clearFieldNames();
-        //Remove the next two lines (about DB system enabling)
-        //mav.systemEnable(TMEV.DB_AVAILABLE);
-        //mav.systemEnable(TMEV.DB_LOGIN);
         mav.getFrame().setSize(1150, 700);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         mav.getFrame().setLocation((screenSize.width - mav.getFrame().getSize().width)/2, (screenSize.height - mav.getFrame().getSize().height)/2);
@@ -398,11 +389,6 @@ public class Manager {//A class to keep track of viewers
     	//CustomToolbarInitDialog ctg=new CustomToolbarInitDialog();
         MultipleArrayViewer mav = new MultipleArrayViewer();
         Manager.addComponent(mav);
-        mav.setInstanceIndex(MavInstanceCount-1); // Raktim - Annotation Model specific
-        //TMEV.clearFieldNames();
-        //Remove the next two lines (about DB system enabling)
-        //mav.systemEnable(TMEV.DB_AVAILABLE);
-        //mav.systemEnable(TMEV.DB_LOGIN);
         mav.getFrame().setSize(1150, 700);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         mav.getFrame().setLocation((screenSize.width - mav.getFrame().getSize().width)/2, (screenSize.height - mav.getFrame().getSize().height)/2);
@@ -412,15 +398,10 @@ public class Manager {//A class to keep track of viewers
     
     public static void createNewMultipleArrayViewer(MultipleArrayData data, String clusterLabel){
         MultipleArrayViewer mav = new MultipleArrayViewer(data);
-        //Remove the next two lines (about DB system enabling)
-        //mav.systemEnable(TMEV.DB_AVAILABLE);
-        //mav.systemEnable(TMEV.DB_LOGIN);
         mav.getFrame().setSize(1150, 700);
         if(clusterLabel != null)
             mav.getFrame().setTitle("Multiple Array Viewer, "+clusterLabel);
         Manager.addComponent(mav);
-        mav.setInstanceIndex(MavInstanceCount-1); // Raktim - Annotation Model specific
-//        System.out.println("getInstanceIndex(): " + mav.getInstanceIndex());
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         mav.getFrame().setLocation((screenSize.width - mav.getFrame().getSize().width)/2, (screenSize.height - mav.getFrame().getSize().height)/2);
         mav.getFrame().setVisible(true);
@@ -430,15 +411,10 @@ public class Manager {//A class to keep track of viewers
     public static void createNewMultipleArrayViewer(MultipleArrayMenubar origMenubar, MultipleArrayData data, String clusterLabel){
         
         MultipleArrayViewer mav = new MultipleArrayViewer(data, origMenubar);
-        //Remove the next two lines (about DB system enabling)
-        //mav.systemEnable(TMEV.DB_AVAILABLE);
-        //mav.systemEnable(TMEV.DB_LOGIN);
         mav.getFrame().setSize(1150, 700);
         if(clusterLabel != null)
             mav.getFrame().setTitle("Multiple Array Viewer, "+clusterLabel);
         Manager.addComponent(mav);
-        mav.setInstanceIndex(MavInstanceCount-1); // Raktim - Annotation Model specific
-        System.out.println("getInstanceIndex(): " + mav.getInstanceIndex());
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         mav.getFrame().setLocation((screenSize.width - mav.getFrame().getSize().width)/2, (screenSize.height - mav.getFrame().getSize().height)/2);
         mav.getFrame().setVisible(true);
@@ -447,9 +423,6 @@ public class Manager {//A class to keep track of viewers
     public static void createNewSingleArrayViewer() {
         SingleArrayViewer sav = new SingleArrayViewer(new JFrame("Single Array Viewer"));
         Manager.addComponent(sav);
-        //Remove the next two lines (about DB system enabling)
-        sav.systemEnable(TMEV.DB_AVAILABLE);
-        sav.systemEnable(TMEV.DB_LOGIN);
         sav.getFrame().setSize(650, 650);
         sav.getFrame().setLocation(100, 100);
         sav.getFrame().setVisible(true);
@@ -458,9 +431,6 @@ public class Manager {//A class to keep track of viewers
     public static void createNewSingleArrayViewer(ISlideData preparedArray) {
         SingleArrayViewer sav = new SingleArrayViewer(new JFrame("Single Array Viewer"), preparedArray);
         Manager.addComponent(sav);
-        //Remove the next two lines (about DB system enabling)
-        //sav.systemEnable(TMEV.DB_AVAILABLE);
-        //sav.systemEnable(TMEV.DB_LOGIN);
         sav.getFrame().setSize(650, 650);
         sav.getFrame().setLocation(100, 100);
         sav.getFrame().setVisible(true);
@@ -470,9 +440,6 @@ public class Manager {//A class to keep track of viewers
     public static void createNewSingleArrayViewer(ISlideData preparedArray, float upperCy3Cutoff, float upperCy5Cutoff) {
         SingleArrayViewer sav = new SingleArrayViewer(new JFrame("Single Array Viewer"), preparedArray);
         Manager.addComponent(sav);
-        //Remove the next two lines (about DB system enabling)
-        sav.systemEnable(TMEV.DB_AVAILABLE);
-        sav.systemEnable(TMEV.DB_LOGIN);
         sav.setUpperLimits(upperCy3Cutoff, upperCy5Cutoff);
         sav.panel.setXYScrollbars((long)upperCy3Cutoff, (long)upperCy5Cutoff);
         sav.getFrame().setSize(650, 650);
@@ -676,12 +643,12 @@ public class Manager {//A class to keep track of viewers
 				}
             }else if( source == documentMenuItem ) {	//added wwang
             	try {
-					BrowserLauncher.openURL( "ftp://occams.dfci.harvard.edu/pub/bio/MeV/MeV_Manual_4_2.pdf" );
+					BrowserLauncher.openURL( "http://www.tm4.org/documentation/MeV_Manual_4_2.pdf" );
 				} catch( IOException e ) {
 					e.printStackTrace();
 					//BrowserLauncher doesn't work on this system, display dialog
 					JOptionPane.showMessageDialog( frame, 
-							"Go to ftp://occams.dfci.harvard.edu/pub/bio/MeV/MeV_Manual_4_2.pdf",
+							"Go to http://www.tm4.org/documentation/MeV_Manual_4_2.pdf",
 							"Input Error", JOptionPane.ERROR_MESSAGE );
 				}
             
