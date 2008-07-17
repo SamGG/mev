@@ -1,0 +1,16 @@
+MeV properties storage
+
+The mev properties system stores application-wide user preferences data, such as datafile locations, preferred display options, etc. 
+
+When MeV starts up, a directory called ".mev" is created in the $USER_HOME directory (). Several files are written from the mev jars into this directory, including one file called mev.properties. This is where user-specific property information is stored, such as path locations. The default values of the user properties are stored in a file called default.properties in org/tigr/microarray/mev. Only values that differ from this default file are written out to the mev.properties file. 
+
+TODO - write about web-loading file locations
+
+
+
+A thought for MeV v4.3 or higher,
+Propose adding two methods to IFramework:
+	public void setUserProperty(String key, String value);
+	public String getUserProperty(String key);
+	
+These methods would handle storing properties from modules to the properties file, so the modules would no longer need access to TMEV.java, like many currently do. 
