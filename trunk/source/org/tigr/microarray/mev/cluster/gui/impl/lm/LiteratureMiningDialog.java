@@ -354,6 +354,7 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
 			});
 			
 			ppiSourceCheckbox.setSelected(false);
+			ppiSourceCheckbox.setEnabled(false);
 			litSourceCheckbox.setEnabled(true);
 			keggSourceCheckbox.setEnabled(true);
 			

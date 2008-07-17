@@ -13,9 +13,12 @@
 /* Transpose.java
  * Copyright (C) 2005 Amira Djebbari
  */
-package org.tigr.microarray.mev.cluster.gui.impl.bn;import java.io.*;
-
-import org.tigr.microarray.mev.TMEV;
+package org.tigr.microarray.mev.cluster.gui.impl.bn;import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.PrintWriter;
 /**
  * The class <code>Transpose</code>  contains methods to transpose takes in a tab delimited file
  * and outputs the transpose of it
@@ -201,12 +204,12 @@ public class Transpose {
 	public static void test(String inFileName, String outFileName){
 		String[][] matrix = readMatrix(inFileName);
 		System.out.println("test read");
-		//printMatrix(matrix);
+		printMatrix(matrix);
 		System.out.println("test write");
 		writeMatrix(matrix, "another_"+inFileName);
 		System.out.println("test tranpose");
 		String[][] transposedMatrix = transposeMatrix(matrix);
-		//printMatrix(transposedMatrix);
+		printMatrix(transposedMatrix);
 		System.out.println("test read and write transpose");
 	}
 }
