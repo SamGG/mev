@@ -1746,13 +1746,15 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		<delete file="${package.dir}/${mev_version.dir}/tmev.sh"/>
 		
 		<echo message="Mac build (MeV_${version}_mac.zip) must be zipped up by hand using 7-zip."/>
-		<zip destfile="${package.dir}/MeV_${version}_mac.zip"
-			basedir="${package.dir}"
-			encoding="UTF-8"
-			>
-			<include name="${mev_version.dir}/**"/>
-			<exclude name=".svn"/>
-		</zip>
+		<!-- 
+			<zip destfile="${package.dir}/MeV_${version}_mac.zip"
+				basedir="${package.dir}"
+				encoding="UTF-8"
+				>
+				<include name="${mev_version.dir}/**"/>
+				<exclude name=".svn"/>
+			</zip>
+		 -->
 	</target>
 	
 	<target name="javadoc">
