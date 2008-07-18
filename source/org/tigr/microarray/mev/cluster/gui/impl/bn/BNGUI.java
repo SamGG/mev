@@ -66,6 +66,7 @@ public class BNGUI implements IClusterGUI {
 		}
 		
 		RunWekaProgressPanel pgPanel = new RunWekaProgressPanel();
+		pgPanel.setString("Learning Network priors");
 		pgPanel.setIndeterminate(true);
 		pgPanel.setLocationRelativeTo(framework.getFrame());
 		//pgPanel.setLocation((screenSize.width-framework.getFrame().getSize().width)/2,(screenSize.height-framework.getFrame().getSize().height)/2);

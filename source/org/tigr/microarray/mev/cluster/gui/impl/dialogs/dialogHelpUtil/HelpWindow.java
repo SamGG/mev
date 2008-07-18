@@ -360,6 +360,12 @@ public class HelpWindow extends JDialog {
 		if (key.equals("USC Load Result Dialog")) {
 			return "usc_parameters4.html";
 		} 
+		if(key.equals("BN Initialization Dialog")) {
+			return "bn_parameters.html";
+		}
+		if(key.equals("LM Initialization Dialog")) {
+			return "lm_parameters.html";
+		}
         	if(key.equals("LEM Initialization Dialog"))
         		return "lem_parameters.html";
         	if(key.equals("LEM Bin Color and Limits Selection Dialog"))
