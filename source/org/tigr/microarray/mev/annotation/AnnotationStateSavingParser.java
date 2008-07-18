@@ -427,7 +427,7 @@ public class AnnotationStateSavingParser {
 							
 						}
 						writer.write(_tmpGO);
-						writer.println();
+						writer.write('\t');
 					} else {
 						writer.write("NA");
 						writer.write('\t');
