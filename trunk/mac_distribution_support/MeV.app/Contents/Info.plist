@@ -3,7 +3,7 @@
 <plist version="0.9">
 <dict>
 	<key>CFBundleName</key>
-	<string>MacOSX_MeV_4_1</string>
+	<string>MacOSX_MeV_4_2</string>
 	<key>CFBundleVersion</key>
 	<string>10.2</string>
 	<key>CFBundleAllowMixedLocalizations</key>
@@ -23,7 +23,7 @@
 	<key>Java</key>
 	<dict>
 		<key>VMOptions</key>
-		<string>-Xmx1024m</string>
+		<string>-Xmx1024m -Xss1M</string>
 		<key>MainClass</key>
 		<string>org.tigr.microarray.mev.TMEV</string>
 		<key>JVMVersion</key>
