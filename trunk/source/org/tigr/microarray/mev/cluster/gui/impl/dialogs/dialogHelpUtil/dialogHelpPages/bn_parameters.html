@@ -1,0 +1,73 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>BN: Bayes Network Analysis</h1> <h2>Parameter Information</h2>
+            <hr size = 10>
+
+<h2> Location of Support File(s) </h2>
+This option allows users to select the location where all support files needed to run BN.
+<br>
+<h2> Network Priors Sources </h2>
+The checkboxes provide the users to select the source of Bayesian prior probablities in constructing a seeded network.
+Currently Literature Mining and KEGG priors are avaialble. The Protein - Protein Interaction as a source of priors is still under development.
+<br><br>
+As of now, the KEGG support files are automatically downloaded from TN4 website by the application. The user is prompted for Species information
+if annotation is not avaialble. All other prior sources must be made avaialble.
+<br>
+<h2> Discretize Expression Values </h2>
+The data mining algorithm requires that the data be discretized into bins before it can be evaluated for network structure learning.
+It is strongly recomended that user selects the default value of 3, which means the data can exist in 3 states:
+<ol>
+	<li>Under expressed</li>
+	<li>Over expressed</li>
+	<li>Unchanged</li>
+</ol>
+The algorithm functions and reports meaningfully if the 3 state rule is followed.
+<h2> Sample Calssification </h2>
+The samples or experiments can be classified based on some knowledge that the user might have and the user might want to preserve the classification
+when learning the newtwork structure. In that case the the user might want a specify a numerical value denoting the number of groups the samples belongs
+to. The default is 0 or no class difference and performs best for this setting when sample size is small. The same also is true for large samplesize
+but the user is strongly recomended not to exceed more than 2 or 3 groups.
+<p>
+Note that the user is presented with a Classification Dialog where samples can be assigned to group of users choice. 
+A sample can be assigned as group neutral as well, even when number of groups is set to 0. The sample classification dialog shows up
+once the user navigates from the main dialog by hitting OK.
+neutral as well
+</p>
+<h2> How to direct Edges for graph </h2>
+The algorithim uses DFS or Depth First Search to connect nodes in the intial seeded network. For large networks with lots of nodes this can take a while
+to complete. The GO Term option of directing edges is not yet fully developed.
+
+<h2> Bootstraping Parameters </h2>
+The user has the option of bootstraping the samples to generate random networks. This feature is optional.
+This panel allows the user provide the number of time random samples will be generated in the 'Number of Iterations' box.
+The 'Confidence Threshold' box allows to define a confidence level cutt-off . The default is 0.7 means the algorithm will select an edge
+if it appears in 70% of the bootstrap networks. 
+<p>
+Note that if bootstrap is chosen, the user is given a chance to play with diffrent cut-offs after the algorithim runs via a samll dialog box. 
+It creates new networks for each new threshold, that can be viewed in Cytoscape via Gaggle broadcast.
+</p>
+<br>
+<h2> Population and Cluster Selection </h2>
+The user has to choose a cluster that BN algorithm would use to run the analysis. By default the first cluster is highlighted.
+<p> Note, that there is max limit in terms of number of genes that this algorithm can handle. If a cluster is chosen that exceeds the maximum
+genes limit an error window is displayed ahoing the maximum allowable number of genes. At this point the user can choose a new 
+cluster, if one is already defined and is below the limit. If a cluster of allowable size is not defined, the user needs to cancel out 
+of BN window, create new cluster(s) and then launch the BN Analysis window again.
+</p>
+<h2> Running BN Parameters </h2>
+This tab allows the user to customize some advanced options of the algorithm. Most users would be OK to accept the default settings in this
+panel. Below is a concise description of each available option:
+<ol>
+	<li>Search Algorithm - The algorithm to search for best network </li>
+	<li>Scoring Scheme - The scoring mechanism to choose from top networks </li>
+	<li>Use Arc Reversal - </li>
+	<li>Max. Number of Parents - Maximum number of parents each netoerk node may have</li>
+	<li>Cross Validation Folds(K) - In absence of a training dataset how many cross validation(s) are needed</li>
+</ol>
+
+<br>
+
+        </basefont>
+    </body>
+</html>
+
