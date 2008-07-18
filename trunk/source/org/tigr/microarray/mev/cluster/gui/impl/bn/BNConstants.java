@@ -120,4 +120,9 @@ public class BNConstants {
 	 * This variable corresponds to the max length of matrix in either dimension.
 	 */
 	public static final int MAX_GENES = 250;
+	
+	/**
+	 * List of organisims that currently has data for KEGG priors support
+	 */
+	public static final String KEGG_ORG[] = new String[]{"Human", "Mouse", "Rat" };
 }

@@ -58,6 +58,7 @@ public class LMGUI implements IClusterGUI {
 		}
 		
 		runProgressPanel = new RunWekaProgressPanel();
+		runProgressPanel.setString("Learning Network Priors");
 		runProgressPanel.setIndeterminate(true);
 		runProgressPanel.setLocationRelativeTo(framework.getFrame());
 		//pgPanel.setLocation((screenSize.width-framework.getFrame().getSize().width)/2,(screenSize.height-framework.getFrame().getSize().height)/2);

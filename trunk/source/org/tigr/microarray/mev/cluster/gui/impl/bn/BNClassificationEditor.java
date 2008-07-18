@@ -119,7 +119,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 
 	/** Creates a new instance of BNClassificationEditor */	public BNClassificationEditor(final IFramework framework, boolean classifyGenes, final Cluster cl,String num,int numClasses,String parents,String algorithm,String scoreType,boolean uAr, boolean bootstrap, int iteration, float threshold, int kfolds, String path, HashMap<String, String> probeIndexAssocHash) {
 		super(framework.getFrame(), true);
-		this.setTitle("BN Classification Editor");
+		this.setTitle("Classification Editor: Assign Samples to group(s)");
 		mainFrame = (JFrame)(framework.getFrame());
 		//setBounds(0, 0, 550, 800);
 		int width = 300;
@@ -314,7 +314,8 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 					public void run(){
 						try{     
 							Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-							runProgressPanel=new RunWekaProgressPanel();
+							runProgressPanel = new RunWekaProgressPanel();
+							runProgressPanel.setString("Running Network Search");
 							runProgressPanel.setIndeterminate(true);
 							runProgressPanel.setLocation((screenSize.width-getSize().width)/2,(screenSize.height-getSize().height)/2);
 							runProgressPanel.setVisible(true);

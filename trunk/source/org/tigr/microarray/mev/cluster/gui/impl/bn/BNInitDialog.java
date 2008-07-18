@@ -142,7 +142,7 @@ public class BNInitDialog extends AlgorithmDialog {
 		discPanel = new DiscretizingPanel();
 		classnumPanel = new ClassNumPanel();
 		useGoPanel = new XmlBifPanel();
-		runBNPanel=new RunBNPanel();
+		runBNPanel = new RunBNPanel();
 		tabbedPane.add("Running BN Parameters", runBNPanel);
 		parameters.add(configPanel, new GridBagConstraints(0,0,2,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0),0,0));       
 		parameters.add(priorsPanel, new GridBagConstraints(0,1,2,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0),0,0));
@@ -200,7 +200,7 @@ public class BNInitDialog extends AlgorithmDialog {
 		text += "that feeds source data into BN.</center>";
 		JTextPane textArea = new JTextPane();
 		textArea.setEditable(false);
-		textArea.setBackground(Color.lightGray);
+		textArea.setBackground(Color.white);
 		textArea.setContentType("text/html");
 		textArea.setText(text);
 		emptyClusterPanel.add(textArea, new GridBagConstraints(0,0,1,1,0.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
@@ -432,7 +432,7 @@ public class BNInitDialog extends AlgorithmDialog {
 		public PriorSelectionPanel(boolean haveClusters){
 			super(new GridBagLayout());
 			setLayout(new GridBagLayout());
-			setBackground(Color.white);
+			//setBackground(Color.white);
 			setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Network Priors Sources", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
 
 			litSourceCheckbox = new JCheckBox("Literature Mining",true);
@@ -657,7 +657,7 @@ public class BNInitDialog extends AlgorithmDialog {
 				public void actionPerformed(ActionEvent ae) {
 					browseButton.setEnabled(fileButton.isSelected());
 					popField.setEnabled(fileButton.isSelected());
-					popField.setBackground(Color.lightGray);
+					popField.setBackground(Color.white);
 					fileLabel.setEnabled(fileButton.isSelected());
 
 				}
@@ -747,14 +747,16 @@ public class BNInitDialog extends AlgorithmDialog {
 			setBackground(Color.white);
 			useGoButton = new JRadioButton("Use GO Terms to direct edges"); 
 			useGoButton.setHorizontalAlignment(JRadioButton.CENTER);
+			useGoButton.setBackground(Color.white);
 			useDFSButton = new JRadioButton("Use Depth-First Search to direct edges", true);           	
 			useDFSButton.setHorizontalAlignment(JRadioButton.CENTER);
+			useDFSButton.setBackground(Color.white);
 			//GO Functionality is not working currently
 			useGoButton.setEnabled(false);
 			bGroup=new ButtonGroup();
 			bGroup.add(useGoButton);
 			bGroup.add(useDFSButton);
-			setBackground(Color.white);
+			//setBackground(Color.white);
 			setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "How to direct edges for graph", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
 			add(this.useDFSButton, new GridBagConstraints(0,0,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
 			add(this.useGoButton, new GridBagConstraints(1,0,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
@@ -811,7 +813,7 @@ public class BNInitDialog extends AlgorithmDialog {
 					setUseArcRev(at);
 				}
 			});
-			setBackground(Color.white);
+			//setBackground(Color.white);
 			setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Running Bayesian Network Parameters ", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
 			add(this.slabel, new GridBagConstraints(0,0,1,1,0.0,0.0,GridBagConstraints.WEST,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
 			add(this.searchOptionBox, new GridBagConstraints(1,0,1,1,0.0,0.0,GridBagConstraints.EAST,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
@@ -868,7 +870,7 @@ public class BNInitDialog extends AlgorithmDialog {
 			converterFileField = new JTextField(30);
 			converterFileField.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED, Color.lightGray, Color.gray));
 			converterFileField.setEnabled(false);
-			converterFileField.setBackground(Color.lightGray);
+			converterFileField.setBackground(Color.white);
 
 			browserButton = new JButton("File Browser");
 			browserButton.setActionCommand("converter-file-browser-command");
@@ -1249,8 +1251,6 @@ public class BNInitDialog extends AlgorithmDialog {
 			super("Location of Support File(s)");
 			setLayout(new GridBagLayout());
 
-
-
 			JButton cngFilesButton = new JButton("Change");
 			cngFilesButton.setActionCommand("select-file-base-command");
 			cngFilesButton.addActionListener(listener);
@@ -1333,7 +1333,7 @@ public class BNInitDialog extends AlgorithmDialog {
 				} else {
 					bnParamPanel.browserButton.setEnabled(false);
 					bnParamPanel.converterFileField.setEnabled(false);
-					bnParamPanel.converterFileField.setBackground(Color.lightGray);
+					bnParamPanel.converterFileField.setBackground(Color.white);
 					bnParamPanel.fileLabel.setEnabled(false);
 				}
 			} else if (command.equals("converter-file-browser-command")){
@@ -1372,6 +1372,12 @@ public class BNInitDialog extends AlgorithmDialog {
 				result = JOptionPane.OK_OPTION;
 				System.out.println("BN Dlg. OK Cmd");
 				//**
+				//Check if cluster size exceeds max genes allowed
+				if(getSelectedCluster().getSize() > BNConstants.MAX_GENES) {
+					JOptionPane.showMessageDialog(parent, "Cluster size exceeds max gene limit of " + BNConstants.MAX_GENES + ". Please select or create a different one.", "Error!", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
 				// Validate if selected options have supporting file(s)
 				String fileBase =  getBaseFileLocation(); //configPanel.getBaseFileLocation();
 				if(isLit()){
@@ -1429,17 +1435,17 @@ public class BNInitDialog extends AlgorithmDialog {
 					//Check if Species Name is available, if not prompt for it
 					kegg_sp = null;
 					//Array for KEGG supported oraganism
-					String kegg_org[] = new String[]{"Human", "Mouse", "Rat" };
+					//String kegg_org[] = new String[]{"Human", "Mouse", "Rat" };
 					if(framework.getData().isAnnotationLoaded()) {
 						kegg_sp = framework.getData().getChipAnnotation().getSpeciesName().trim();
 						//JOptionPane pane = new JOptionPane(sp); JDialog dlg = pane.createDialog(new JFrame(), "Annotation Species is- "+ sp); dlg.show();
 					}
 					if(kegg_sp == null) {
 						kegg_sp = (String)JOptionPane.showInputDialog(null, "Select a Species", "Annotation Unknown",
-								JOptionPane.WARNING_MESSAGE, null, kegg_org, kegg_org[0]);
+								JOptionPane.WARNING_MESSAGE, null, BNConstants.KEGG_ORG, BNConstants.KEGG_ORG[0]);
 
 						//JOptionPane pane = new JOptionPane(sp); JDialog dlg = pane.createDialog(new JFrame(), "Dialog"); dlg.show();
-					} else if(!isKeggOrgSupported(kegg_org, kegg_sp)) {
+					} else if(!isKeggOrgSupported(kegg_sp)) {
 						//!sp.equalsIgnoreCase("Human") || !sp.equalsIgnoreCase("Mouse") || !sp.equalsIgnoreCase("Rat")) {
 						if (JOptionPane.showConfirmDialog(new JFrame(),
 								"Do you want to continue ? ", "Species " + kegg_sp + " not Supported for KEGG",
@@ -1631,7 +1637,7 @@ public class BNInitDialog extends AlgorithmDialog {
 				return;
 			} else if (command.equals("info-command")){
 				HelpWindow hw = new HelpWindow(BNInitDialog.this, "BN Initialization Dialog");
-				result = JOptionPane.CANCEL_OPTION;
+				//result = JOptionPane.CANCEL_OPTION;
 				if(hw.getWindowContent()){
 					hw.setSize(600,600);
 					hw.setLocation();
@@ -1650,9 +1656,9 @@ public class BNInitDialog extends AlgorithmDialog {
 		 * @param sp
 		 * @return
 		 */
-		private boolean isKeggOrgSupported(String[] kegg_org, String sp) {
-			for(int i=0; i < kegg_org.length; i++){
-				if(sp.equalsIgnoreCase(kegg_org[i]))
+		private boolean isKeggOrgSupported(String sp) {
+			for(int i=0; i < BNConstants.KEGG_ORG.length; i++){
+				if(sp.equalsIgnoreCase(BNConstants.KEGG_ORG[i]))
 					return true;
 			}
 			return false;
