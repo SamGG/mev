@@ -17,18 +17,12 @@ import org.tigr.microarray.mev.cgh.CGHDataModel.CharmDataModel.SegmentInfo;
  * TODO
  * NOT needed in MeV. All functions moved to ChARM.java
  */
-/**
-* Description: This class implements the core functionality of the ChARM
- * algorithm.
- *
- * <p>Title: ChARMRunner</p>
- * <p>Description: This class implements the core functionality of the ChARM
- * algorithm.</p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: Princeton University</p>
- * @author Chad Myers, Xing Chen
- * @version 1.0
- */
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
 
 public class ChARMRunner_NotUsed extends Thread {
   /**

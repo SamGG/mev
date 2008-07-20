@@ -10,10 +10,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/* RenameStates.java
- * Copyright (C) 2005 Amira Djebbari
- */
-package org.tigr.microarray.mev.cluster.gui.impl.bn;import weka.core.Attribute;import weka.core.Instances;import java.util.ArrayList;
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
+package org.tigr.microarray.mev.cluster.gui.impl.bn;
+import weka.core.Attribute;
+import weka.core.Instances;
+import java.util.ArrayList;
 public class RenameStates {
     // Assumes first attribute is CLASS
     /**

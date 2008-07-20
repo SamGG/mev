@@ -6,18 +6,12 @@ import org.tigr.microarray.mev.cgh.CGHDataObj.CGHClone;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 
-/**
- * This class is a container class for all data associated with a chromosome.  Each chromosome object
- * contains data for all experiments in a dataset.
- *
- * <p>Title: Chromosome</p>
- * <p>Description: This class is a container class for all data associated with a chromosome.  Each chromosome object
- * contains data for all experiments in a dataset.</p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: Princeton University</p>
- * @author Chad Myers, Xing Chen
- * @author  Raktim Sinha
- */
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
 public class Chromosome implements Comparable{
 
   //IVARS

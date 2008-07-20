@@ -10,13 +10,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/* UsefulInteractions.java
- * Copyright (C) 2005 Amira Djebbari
- */
-package org.tigr.microarray.mev.cluster.gui.impl.bn;import java.io.FileReader;import java.io.LineNumberReader;import java.io.PrintWriter;import java.io.FileOutputStream;
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
+package org.tigr.microarray.mev.cluster.gui.impl.bn;
+import java.io.FileReader;
+import java.io.LineNumberReader;
+import java.io.PrintWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;import java.util.HashSet;import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
 
 /**
@@ -75,7 +84,8 @@ public class UsefulInteractions {
 	 * to the interactions with weights contained in the file denoted by the given file name.
 	 * @exception FileNotFoundException if an error occurs because the file denoted by the given fileName was not found
 	 */
-	public static ArrayList readInteractionsWithWeights(String fileName) throws FileNotFoundException{		System.out.println("readInteractionsWithWeights(), File: " + fileName);
+	public static ArrayList readInteractionsWithWeights(String fileName) throws FileNotFoundException{
+		System.out.println("readInteractionsWithWeights(), File: " + fileName);
 		Useful.checkFile(fileName);
 		try {
 			ArrayList inter = new ArrayList();
@@ -187,7 +197,8 @@ public class UsefulInteractions {
 	 * the interactions contained in the file denoted by the given file name.
 	 * @exception FileNotFoundException if an error occurs because the file denoted by the given fileName was not found
 	 */
-	public static ArrayList readDirectedInteractions(String fileName) throws FileNotFoundException {		System.out.println("readDirectedInteractions()" + fileName);
+	public static ArrayList readDirectedInteractions(String fileName) throws FileNotFoundException {
+		System.out.println("readDirectedInteractions()" + fileName);
 		Useful.checkFile(fileName);
 		try {
 			ArrayList inter = new ArrayList();
@@ -224,7 +235,8 @@ public class UsefulInteractions {
 	 * the interactions with weights contained in the file denoted by the given file name.
 	 * @exception FileNotFoundException if an error occurs because the file denoted by the given fileName was not found
 	 */
-	public static ArrayList readDirectedInteractionsWithWeights(String fileName) throws FileNotFoundException {		System.out.println("readDirectedInteractionsWithWeights()" + fileName);
+	public static ArrayList readDirectedInteractionsWithWeights(String fileName) throws FileNotFoundException {
+		System.out.println("readDirectedInteractionsWithWeights()" + fileName);
 		Useful.checkFile(fileName);
 		try {
 			ArrayList inter = new ArrayList();
@@ -283,7 +295,8 @@ public class UsefulInteractions {
 	public static void writeSifFileUndir(ArrayList inter, String fileName) throws NullArgumentException {
 		FileOutputStream fos=null;
 		String path=System.getProperty("user.dir");
-		String sep=System.getProperty("file.separator");		//path=path+sep+"data"+sep+"bn"+sep; //Raktim - Old Way
+		String sep=System.getProperty("file.separator");
+		//path=path+sep+"data"+sep+"bn"+sep; //Raktim - Old Way
 		//path=path+sep+"data"+sep+"bn"+sep+BNConstants.RESULT_DIR+sep;
 		path = BNConstants.getBaseFileLocation() + BNConstants.SEP + BNConstants.RESULT_DIR + BNConstants.SEP;
 		try {
@@ -318,7 +331,8 @@ public class UsefulInteractions {
 	 */
 	public static void writeSifFileWithWeights(ArrayList inter, String fileName) throws NullArgumentException {
 		String path=System.getProperty("user.dir");
-		String sep=System.getProperty("file.separator");		//path=path+sep+"data"+sep+"bn"+sep;//Raktim - Old Way
+		String sep=System.getProperty("file.separator");
+		//path=path+sep+"data"+sep+"bn"+sep;//Raktim - Old Way
 		//path=path+sep+"data"+sep+"bn"+sep+BNConstants.RESULT_DIR+sep;
 		path = BNConstants.getBaseFileLocation() + BNConstants.SEP + BNConstants.RESULT_DIR + BNConstants.SEP;
 		try {
@@ -352,7 +366,8 @@ public class UsefulInteractions {
 
 	public static void writeSifFileUndirWithWeights(ArrayList inter, String fileName) throws NullArgumentException{
 		FileOutputStream fos=null;
-		String path=System.getProperty("user.dir");		String sep=System.getProperty("file.separator");
+		String path=System.getProperty("user.dir");
+		String sep=System.getProperty("file.separator");
 		//path=path+sep+"data"+sep+"bn"+sep;//Raktim - Old Way
 		//path=path+sep+"data"+sep+"bn"+sep+"tmp"+sep;
 		path = BNConstants.getBaseFileLocation() + BNConstants.SEP + BNConstants.TMP_DIR + BNConstants.SEP;

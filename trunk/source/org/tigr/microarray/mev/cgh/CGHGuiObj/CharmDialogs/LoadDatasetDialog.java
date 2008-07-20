@@ -28,16 +28,12 @@ import javax.swing.border.TitledBorder;
 import com.borland.jbcl.layout.BoxLayout2;
 import com.borland.jbcl.layout.VerticalFlowLayout;
 
-/**
-* This class implements the dialog that allows users to load new pcl files.
-*
- * <p>Title: LoadDatasetDialog</p>
- * <p>Description: This class implements the dialog that allows users to load new pcl files.</p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: Princeton University</p>
- * @author Chad Myers, Xing Chen
- * @author  Raktim Sinha
- */
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
 
 public class LoadDatasetDialog extends JDialog {
   JPanel contentPane = new JPanel();

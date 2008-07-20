@@ -2,18 +2,12 @@ package org.tigr.microarray.mev.cgh.CGHAlgorithms.Charm;
 
 import java.util.Arrays;
 
-/**
-* This class implements all of the statistics-related functionality
- * required for the ChARM project.
-*
- * <p>Title: Statistics</p>
- * <p>Description: This class implements all of the statistics-related functionality
- * required for the ChARM project.</p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: Princeton University</p>
- * @author Chad Myers, Xing Chen
- * @author  Raktim Sinha
- */
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
 
 public class Statistics {
 

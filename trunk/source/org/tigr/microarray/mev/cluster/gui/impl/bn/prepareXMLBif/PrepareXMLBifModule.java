@@ -10,14 +10,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/* PrepareXMLBifModule.java
- * Copyright (C) 2005 Amira Djebbari
- */
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
 package org.tigr.microarray.mev.cluster.gui.impl.bn.prepareXMLBif;
-import java.io.FileInputStream;import java.io.IOException;import java.io.FileOutputStream;
-import java.io.PrintWriter;import java.util.ArrayList;import java.util.HashMap;import java.util.Properties;import org.tigr.microarray.mev.cluster.gui.impl.bn.algs.DFSModification;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Properties;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.algs.DFSModification;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.BNConstants;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.NotDAGException;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.UsefulInteractions;
 /**
@@ -150,7 +160,8 @@ public class PrepareXMLBifModule {
 		//String path=System.getProperty("user.dir");
 		String path=BNConstants.getBaseFileLocation();
 		System.out.println("PrepareXMLBifModule path: user.dir: " + path);
-		//String sep=System.getProperty("file.separator");		//path=path+sep+"data"+sep+"bn"+sep; //Raktim - Use tmp Dir
+		//String sep=System.getProperty("file.separator");
+		//path=path+sep+"data"+sep+"bn"+sep; //Raktim - Use tmp Dir
 		//path=path+BNConstants.SEP+"data"+BNConstants.SEP+"bn"+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP;
 		path=path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP;
 		try {
@@ -164,13 +175,15 @@ public class PrepareXMLBifModule {
 			boolean useGO = Boolean.getBoolean(props.getProperty(BNConstants.USE_GO, "false"));	    
 			String gbGOsFileName = path+props.getProperty(BNConstants.GB_GO_FILE_NAME, null); //"gbGOsFileName"
 			String namesFileName = path+props.getProperty(BNConstants.NAMES_FILE_NAME,null);
-			long seed = (long) Integer.parseInt(props.getProperty("seed", "1"));			System.out.println("test()" + namesFileName);
+			long seed = (long) Integer.parseInt(props.getProperty("seed", "1"));
+			System.out.println("test()" + namesFileName);
 			System.out.println("test()" + sifFileName);
 			Useful.checkFile(sifFileName);
 			Useful.checkFile(namesFileName);
 			if(useGO){
 				Useful.checkFile(gbGOsFileName);
-			}			//String outXMLBifFileName = System.getProperty("user.dir")+sep+props.getProperty("outXMLBifFileName","out_bif.xml");
+			}
+			//String outXMLBifFileName = System.getProperty("user.dir")+sep+props.getProperty("outXMLBifFileName","out_bif.xml");
 			// Raktim - Use tmp Dir
 			//String fileLoc = System.getProperty("user.dir")+BNConstants.SEP+"data"+BNConstants.SEP+"bn"+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP;
 			//String fileLoc = path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP;
@@ -180,11 +193,29 @@ public class PrepareXMLBifModule {
 			System.out.println("Num. of interaction to be considered: " + inter.size());
 			ArrayList names = Useful.readNamesFromFile(namesFileName);
 			ArrayList newInter = null;
-			if(useGO){				HashMap gbGOs = ParseGB_GO.readGB_GOs(gbGOsFileName);				newInter = getInteractionsFromGB_GOsAndRandom(inter, gbGOs, seed);			}
-			else {				newInter = getDAGFromUndirectedGraph(inter);			}			PrintWriter pw = new PrintWriter(new FileOutputStream(outXMLBifFileName), true);	    			SifToXMLBif.createXMLBifGivenSifFile(newInter, names, pw, props);			pw.close();		}
-		catch(IOException ioe){			System.out.println(ioe);			ioe.printStackTrace();		}
-		catch(NullArgumentException nae){			System.out.println(nae);			nae.printStackTrace();		}
-		catch(NotDAGException nde){			System.out.println(nde);			nde.printStackTrace();		}
+			if(useGO){
+				HashMap gbGOs = ParseGB_GO.readGB_GOs(gbGOsFileName);
+				newInter = getInteractionsFromGB_GOsAndRandom(inter, gbGOs, seed);
+			}
+			else {
+				newInter = getDAGFromUndirectedGraph(inter);
+			}
+			PrintWriter pw = new PrintWriter(new FileOutputStream(outXMLBifFileName), true);	    
+			SifToXMLBif.createXMLBifGivenSifFile(newInter, names, pw, props);
+			pw.close();
+		}
+		catch(IOException ioe){
+			System.out.println(ioe);
+			ioe.printStackTrace();
+		}
+		catch(NullArgumentException nae){
+			System.out.println(nae);
+			nae.printStackTrace();
+		}
+		catch(NotDAGException nde){
+			System.out.println(nde);
+			nde.printStackTrace();
+		}
 	}
 
 	/**

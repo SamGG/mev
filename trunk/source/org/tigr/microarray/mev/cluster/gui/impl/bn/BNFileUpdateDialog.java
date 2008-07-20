@@ -1,18 +1,36 @@
-/*
-Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
-All rights reserved.
- */
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
 /*
  * EaseFileUpdateDialog.java
  *
  * Created on January 19, 2005, 4:25 PM
  */
 package org.tigr.microarray.mev.cluster.gui.impl.bn;
-import java.awt.Color;import java.awt.Dimension;import java.awt.GridBagLayout;import java.awt.GridBagConstraints;
-import java.awt.Insets;import java.awt.Toolkit;
-import java.awt.event.ActionEvent;import java.awt.event.WindowEvent;
-import java.util.Hashtable;import java.util.Vector;import javax.swing.JFrame;import javax.swing.JComboBox;
-import javax.swing.JLabel;import javax.swing.JOptionPane;import javax.swing.JPanel;import javax.swing.JTabbedPane;import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
+import java.util.Hashtable;
+import java.util.Vector;
+
+import javax.swing.JFrame;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 /**
  *
  * 

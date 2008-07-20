@@ -1,11 +1,9 @@
-/*
- * Copyright @ 2001-2004, The Institute for Genomic Research (TIGR).  
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
  * All rights reserved.
- *
- * LinRegNormInitDialog.java
- *
- * Created on March 31, 2003, 11:35 AM
- */
+ *******************************************************************************/
 
 package org.tigr.microarray.mev.cluster.gui.impl.dialogs.normalization;
 

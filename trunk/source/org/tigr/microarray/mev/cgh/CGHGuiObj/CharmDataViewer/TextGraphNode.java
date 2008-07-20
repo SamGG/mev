@@ -8,18 +8,12 @@ import java.awt.geom.Rectangle2D;
 import edu.umd.cs.piccolo.nodes.PText;
 import edu.umd.cs.piccolo.util.PPaintContext;
 
-/**
-* This class implements a single text node to be displayed on the ChARM UI
- * display panel.
-*
- * <p>Title: TextGraphNode</p>
- * <p>Description: This class implements a single text node to be displayed on the ChARM UI
- * display panel. </p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: Princeton University</p>
- * @author Chad Myers, Xing Chen
- * @version 1.0
- */
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
 public class TextGraphNode extends PText {
 
   private static final double[] SCALE_MAPPING = {.125,.25,.5,1,2,4,6};

@@ -10,10 +10,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/* Useful.java
- * Copyright (C) 2005 Amira Djebbari
- */
-package org.tigr.microarray.mev.cluster.gui.impl.bn;import java.io.BufferedReader;
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
+package org.tigr.microarray.mev.cluster.gui.impl.bn;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -107,7 +111,8 @@ public class Useful {
 	 * @exception FileNotFoundException if an error occurs because the file denoted by the given fileName was not found
 	 */
 	public static HashSet readUniqueNamesFromFile(String fileName) throws FileNotFoundException {
-		//String path=null;		System.out.println("readUniqueNamesFromFile()" + fileName);
+		//String path=null;
+		System.out.println("readUniqueNamesFromFile()" + fileName);
 		checkFile(fileName);
 
 		try {
@@ -178,7 +183,8 @@ public class Useful {
 	 * as keys and the second column Strings as values
 	 * @exception FileNotFoundException if an error occurs because the file denoted by the given fileName was not found
 	 */
-	public static HashMap readHashMapFromFile(String fileName) throws FileNotFoundException{		System.out.println("readHashMapFromFile()" + fileName);
+	public static HashMap readHashMapFromFile(String fileName) throws FileNotFoundException{
+		System.out.println("readHashMapFromFile()" + fileName);
 		checkFile(fileName);
 		try {
 			HashMap result = new HashMap();
@@ -436,7 +442,8 @@ public class Useful {
 
 		SimpleDateFormat formatDt = new SimpleDateFormat("MMM_dd_yy_HH_mm_ss_SSS");
 		dateString = formatDt.format(now);
-		//System.out.println(" 2. " + dateString);		return dateString;
+		//System.out.println(" 2. " + dateString);
+		return dateString;
 	}
 
 	public static String getWekaArgs(String path, String outArffFileName, String sAlgorithm, boolean useArc, String numParents, String sType, int kfolds) {

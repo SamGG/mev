@@ -10,21 +10,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/* FromWekaToSif.java
- * Copyright (C) 2006 Amira Djebbari
- */
-package org.tigr.microarray.mev.cluster.gui.impl.bn;import java.io.*;
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
+package org.tigr.microarray.mev.cluster.gui.impl.bn;
+import java.io.*;
 import java.util.Hashtable;
 public class FromWekaToSif {
     // Pre: Name of input file from WEKA containing network structure
     // in the format: variable: parent1,...,parentn
     //      PrintWriter where to write the network in directed SIF format: node1 pd node2
-    // Post: Read a network structure from WEKA output from the given input file name and writes the network in SIF format to the give output PrintWriter    public static void fromWekaToSif(String evalStr, PrintWriter pw, boolean map){
+    // Post: Read a network structure from WEKA output from the given input file name and writes the network in SIF format to the give output PrintWriter
+    public static void fromWekaToSif(String evalStr, PrintWriter pw, boolean map){
 	    String[] evalSubstrings = evalStr.split("\n");
 	    String s = null;
 	    // Process lines after reading Network Structure and before reading LogScore
 	    boolean toProcess = false;
-	    for(int i = 0; i < evalSubstrings.length; i++){			s = evalSubstrings[i];
+	    for(int i = 0; i < evalSubstrings.length; i++){
+			s = evalSubstrings[i];
 			s = s.trim();
 			if(s.startsWith("LogScore")){
 			    toProcess = false;
@@ -44,7 +50,8 @@ public class FromWekaToSif {
     }
     // Pre: String containing variable: parent1,...,parentn
     //      PrintWriter where to write the network in directed SIF format: node1 pd node2
-    // Post: Reads a variable parent1,...,parentn String and writes in directed SIF format node1 pd node2 to the PrintWriter    public static void fromWekaToSifOneLine(String s, PrintWriter pw){	
+    // Post: Reads a variable parent1,...,parentn String and writes in directed SIF format node1 pd node2 to the PrintWriter
+    public static void fromWekaToSifOneLine(String s, PrintWriter pw){	
     	if(s.endsWith(":")){
     		return;
     	}
@@ -55,7 +62,8 @@ public class FromWekaToSif {
 	String from;
 	while(index != s.lastIndexOf(" ")){
 	    index = s.indexOf(" ", startIndex+1);
-	    if(index != -1){			from = s.substring(startIndex,index).trim();
+	    if(index != -1){
+			from = s.substring(startIndex,index).trim();
 			if(!from.equals("CLASS") || !to.equals("CLASS")){
 			    pw.println(from + " pd "+ to);
 			}
@@ -65,7 +73,8 @@ public class FromWekaToSif {
 		break;
 	    }
 	}
-	from = s.substring(startIndex, s.length()).trim();		if(!from.equals("CLASS") || !to.equals("CLASS")){
+	from = s.substring(startIndex, s.length()).trim();
+		if(!from.equals("CLASS") || !to.equals("CLASS")){
 		    pw.println(from + " pd "+ to);
 		}
     }
@@ -120,7 +129,8 @@ public class FromWekaToSif {
     }
     
     // For testing
-    public static void main(String[] argv){		if(argv.length != 2){
+    public static void main(String[] argv){
+		if(argv.length != 2){
 		    System.out.println("Usage: java FromWekaToSif inWekaFileName outSifFileName\nExample: java FromWekaToSif testFromWekaToSif.weka testFromWekaToSif.sif");
 		    System.exit(0);
 		}

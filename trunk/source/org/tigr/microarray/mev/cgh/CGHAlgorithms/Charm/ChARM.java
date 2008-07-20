@@ -26,16 +26,12 @@ import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 
 //import edu.umd.cs.piccolox.swing.PScrollPane;
-/**
-* Main application class for ChARMView- starts both GUI and command-line versions.
-*
- * <p>Title: ChARM</p>
- * <p>Description: Main application class for ChARMView- starts both GUI and command-line versions.</p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: Princeton University</p>
- * @author Chad Myers, Xing Chen
- * @author  Raktim Sinha
- */
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
 
 public class ChARM /*extends Thread*/ implements IClusterGUI{
 		boolean packFrame = false;

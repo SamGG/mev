@@ -29,18 +29,12 @@ import org.tigr.microarray.mev.cgh.CGHDataModel.CharmDataModel.SegmentInfo;
 import org.tigr.microarray.mev.cluster.gui.IData;
 
 import com.borland.jbcl.layout.VerticalFlowLayout;
-/**
-* This class implements the dialog that allows users to test
- * manually-selected regions for significance.
-*
- * <p>Title: TestSignificanceDialog</p>
- * <p>Description: This class implements the dialog that allows users to test
- * manually-selected regions for significance.</p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: Princeton University</p>
- * @author Chad Myers, Xing Chen
- * @author  Raktim Sinha
- */
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
 
 public class TestSignificanceDialog extends JDialog {
   JPanel jPanel1 = new JPanel();

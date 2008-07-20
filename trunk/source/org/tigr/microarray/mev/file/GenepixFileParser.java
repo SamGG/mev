@@ -1,31 +1,11 @@
 package org.tigr.microarray.mev.file;
 
-/**
- * <p>Title: GenepixFileParser</p>
- * <p>Description: Read a GenePix file, convert to TIGR tav file format, and
- *    provide it as an output.
- * <br><br> The constructors receive GenePix file or file name.  If using thread to
- *    load the file, provide true to the constructor.  It should call isCompleted()
- *    method to check if the complement of loading before calling getTavFile() to
- *    have the output. The output is in a form of vector that contains a number
- *    of vector with 8 elements as following:
- * <table boarder=0, cellpadding=1>
- * <tr><th>Index</th><th>Data Type</th><th>Contents</th></tr>
- * <tr><td>1</td><td>Integer</td><td>Intensity of Channel A</td></tr>
- * <tr><td>2</td><td>Integer</td><td>Intensity of Channel B</td></tr>
- * <tr><td>3</td><td>Integer</td><td>Slide Row</td></tr>
- * <tr><td>4</td><td>Integer</td><td>Slide Column</td></tr>
- * <tr><td>5</td><td>Integer</td><td>Meta Row</td></tr>
- * <tr><td>6</td><td>Integer</td><td>Meta Column</td></tr>
- * <tr><td>7</td><td>String</td><td>Name (in GenePix File)</td></tr>
- * <tr><td>8</td><td>String</td><td>ID (in GenePix File)</td></tr>
- * </table>
- * </p>
- * <p>Copyright: Copyright (c) 2003</p>
- * <p>Company: The Institute for Genomic Research</p>
- * @author Jianwei (Jerry) Li
- * @version 1.0
- */
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
 
 import java.io.BufferedReader;
 import java.io.File;

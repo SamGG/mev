@@ -1,18 +1,12 @@
 package org.tigr.microarray.mev.cgh.CGHAlgorithms.Charm;
 import java.util.Arrays;
 
-/**
-* This is a container class for all the data associated with
- * and edge, used in the EM-based edge-finding algorithm.
-*
- * <p>Title: Edge</p>
- * <p>Description: This is a container class for all the data associated with
- * and edge, used in the EM-based edge-finding algorithm.</p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: Princeton University</p>
- * @author Chad Myers, Xing Chen
- * @author  Raktim Sinha
- */
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
 
 public class Edge {
 

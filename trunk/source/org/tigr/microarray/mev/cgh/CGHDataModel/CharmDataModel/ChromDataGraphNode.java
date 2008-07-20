@@ -8,18 +8,12 @@ import org.tigr.microarray.mev.cgh.CGHGuiObj.CharmDataViewer.GeneGraphNode;
 
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolox.nodes.PLine;
-/**
-* This class implements a single chromosome and associated gene values
- *  to be displayed on the ChARM UI display panel.
-*
- * <p>Title: ChromDataGraphNode</p>
- * <p>Description: This class implements a single chromosome and associated gene values
- *  to be displayed on the ChARM UI display panel.</p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: Princeton University</p>
- * @author Chad Myers, Xing Chen
- * @author  Raktim Sinha
- */
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
 
 public class ChromDataGraphNode extends PNode implements IChromGraphNode {
 

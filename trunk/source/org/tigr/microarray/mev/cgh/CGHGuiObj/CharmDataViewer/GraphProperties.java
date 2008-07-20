@@ -1,16 +1,12 @@
 package org.tigr.microarray.mev.cgh.CGHGuiObj.CharmDataViewer;
 
 import java.awt.Color;
-/**
-* This is a container class for the default display settings.
-*
- * <p>Title: GraphProperties</p>
- * <p>Description: This is a container class for the default display settings.</p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: Princeton University</p>
- * @author Chad Myers, Xing Chen
- * @author  Raktim Sinha
- */
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
 
 public class GraphProperties {
   /**

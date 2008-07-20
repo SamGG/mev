@@ -10,10 +10,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/* PrepareArrayDataModule.java
- * Copyright (C) 2005 Amira Djebbari
- */
-package org.tigr.microarray.mev.cluster.gui.impl.bn;import weka.core.Instances;import weka.filters.Filter;import weka.filters.unsupervised.attribute.Discretize;import weka.filters.unsupervised.attribute.ReplaceMissingValues;import java.io.File;
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
+package org.tigr.microarray.mev.cluster.gui.impl.bn;
+import weka.core.Instances;
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.Discretize;
+import weka.filters.unsupervised.attribute.ReplaceMissingValues;
+import java.io.File;
 import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -52,7 +60,8 @@ public class PrepareArrayDataModule {
      * @param outFileName a <code>String</code> denoting the name of the output expression matrix data file
      */
     public static void transpose(String inFileName, String outFileName) {
-	try {		System.out.println("transpose()" + outFileName);
+	try {
+		System.out.println("transpose()" + outFileName);
 	    Useful.checkFile(inFileName);
 	    Transpose.readAndWriteTranspose(inFileName, outFileName);	
 	}
@@ -157,20 +166,25 @@ public class PrepareArrayDataModule {
      * dataset is to be written. The default is boot_.
      * </ul>
      */
-      //public static void prepareArrayData(String fileName,String num){
+  
+    //public static void prepareArrayData(String fileName,String num){
     public static Properties prepareArrayData(String fileName,String num, boolean bootStrap, int numIter, int numClasses){
     	try {
-    	        		System.out.println("prepareArrayData()" + fileName);
-    	    Useful.checkFile(fileName);    	    boolean isBootstrapStr = bootStrap; //Raktim - Temp. Need to handle differently later.
+    	    
+    		System.out.println("prepareArrayData()" + fileName);
+    	    Useful.checkFile(fileName);
+    	    boolean isBootstrapStr = bootStrap; //Raktim - Temp. Need to handle differently later.
     	    //String fullPathfileName=Useful.getFilePath();
     	    String outFileName = "outExpression.arff";
     	    String numBins = num;
     	    ArrayList binLabels = new ArrayList();
-    	    for(int i = 0; i < Integer.parseInt(numBins); i++){    	    	binLabels.add("state"+i);
+    	    for(int i = 0; i < Integer.parseInt(numBins); i++){
+    	    	binLabels.add("state"+i);
     	    }
     	    // transpose the given expression data
     	    transpose(fileName,fileName.substring(0, fileName.length()-4)+"_transposed.csv");
-    	    // read the transposed data into WEKA Instances object    	    //System.exit(1);
+    	    // read the transposed data into WEKA Instances object
+    	    //System.exit(1);
     	    Instances data = WekaUtil.readInstancesCSV(/*fileName,*/fileName.substring(0, fileName.length()-4)+"_transposed.csv");
     	    // discretize the data
     	    Instances discreteData = discretize(data, numBins);
@@ -180,7 +194,8 @@ public class PrepareArrayDataModule {
     	    Instances discreteAndCompleteData = replaceMissingValues(discreteData);
     	    // rename states to be the name of the bins provided in the properties file (e.g. "state1", "state2", "state3")
     	    // for each attribute except the CLASS attribute
-    	    Instances renamedStatesData = RenameStates.renameStates(discreteAndCompleteData, binLabels);    	    // Raktim - Bootstrap 
+    	    Instances renamedStatesData = RenameStates.renameStates(discreteAndCompleteData, binLabels);
+    	    // Raktim - Bootstrap 
     	    Properties props = new Properties();
     	    
     	    if(isBootstrapStr){
@@ -212,15 +227,18 @@ public class PrepareArrayDataModule {
     	
     	catch(OutOfRangeException oore){
     	    //System.out.println(oore);
-    	    oore.printStackTrace();    	    return null;
+    	    oore.printStackTrace();
+    	    return null;
     	}
     	catch(NullArgumentException nae){
     	    System.out.println(nae);
-    	    nae.printStackTrace();    	    return null;
+    	    nae.printStackTrace();
+    	    return null;
     	}
     	catch(IOException ioe){
     	    System.out.println(ioe);
-    	    ioe.printStackTrace();    	    return null;
+    	    ioe.printStackTrace();
+    	    return null;
     	}
         }
     /**
