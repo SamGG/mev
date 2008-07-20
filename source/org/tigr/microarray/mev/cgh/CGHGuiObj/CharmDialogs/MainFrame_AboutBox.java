@@ -21,16 +21,12 @@ import org.tigr.microarray.mev.cgh.CGHGuiObj.CharmDataViewer.CharmGUI;
 
 import com.borland.jbcl.layout.BoxLayout2;
 import com.borland.jbcl.layout.VerticalFlowLayout;
-/**
-* This class implements the About dialog box.
-*
- * <p>Title: MainFrame_AboutBox </p>
- * <p>Description: This class implements the About dialog box.</p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: Princeton University</p>
- * @author Chad Myers, Xing Chen
- * @author  Raktim Sinha
- */
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
 
 public class MainFrame_AboutBox extends JDialog implements ActionListener {
 

@@ -1,14 +1,47 @@
-/*
-Copyright @ 1999-2006, The Institute for Genomic Research (TIGR).
-All rights reserved.
- */
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
 /*
  * EaseUpdateManager.java
  *
  * Created on January 19, 2005, 2:53 PM
  */
 package org.tigr.microarray.mev.cluster.gui.impl.bn;
-import java.awt.event.ActionEvent;import java.awt.event.WindowEvent;import java.awt.event.WindowListener;import java.io.BufferedInputStream;import java.io.BufferedOutputStream;import java.io.BufferedReader;import java.io.File;import java.io.FileOutputStream;import java.io.IOException;import java.io.InputStream;import java.io.InputStreamReader;import java.net.URL;import java.net.URLConnection;import java.util.Enumeration;import java.util.Hashtable;import java.util.StringTokenizer;import java.util.Vector;import java.util.zip.ZipEntry;import java.util.zip.ZipFile;import javax.swing.JFileChooser;import javax.swing.JFrame;import javax.swing.JOptionPane;import org.tigr.microarray.mev.TMEV;import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HTMLMessageFileChooser;import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;import ftp.FtpBean;import ftp.FtpListResult;import ftp.FtpObserver;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.StringTokenizer;
+import java.util.Vector;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
+import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HTMLMessageFileChooser;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
+
+import ftp.FtpBean;
+import ftp.FtpListResult;
+import ftp.FtpObserver;
 /**
  *
  * @author  braisted

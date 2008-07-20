@@ -7,18 +7,12 @@ import org.tigr.microarray.mev.cgh.CGHDataModel.CharmDataModel.SegmentInfo;
 
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.nodes.PPath;
-/**
-* This class implements a single prediction rectangle to be displayed on the ChARM UI
- * display panel.
- *
- * <p>Title: PredictionGraphNode</p>
- * <p>Description: This class implements a single prediction rectangle to be displayed on the ChARM UI
- * display panel.</p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: Princeton University</p>
- * @author Chad Myers, Xing Chen
- * @author  Raktim Sinha
- */
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
 
 public class PredictionGraphNode extends PNode {
 

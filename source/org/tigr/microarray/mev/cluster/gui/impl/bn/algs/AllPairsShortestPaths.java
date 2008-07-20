@@ -10,14 +10,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/* AllPairsShortestPaths.java
- * Copyright (C) 2005 Amira Djebbari
- */
-package org.tigr.microarray.mev.cluster.gui.impl.bn.algs;import java.io.IOException;import java.io.FileInputStream;
-import java.util.ArrayList;import java.util.Properties;import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
+package org.tigr.microarray.mev.cluster.gui.impl.bn.algs;
+import java.io.IOException;
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.Properties;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.SimpleGeneEdge;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.UsefulInteractions;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;import org.tigr.microarray.mev.cluster.gui.impl.bn.OutOfRangeException;import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.OutOfRangeException;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
 /**
  * The class <code>AllPairsShortestPaths</code> contains methods 
  * to compute all pairs shortest paths of a given graph 
@@ -176,7 +185,8 @@ public class AllPairsShortestPaths {
 	    props.load(new FileInputStream(propsFileName));
 	    String ppiFileName = props.getProperty("ppiFileName", null);
 	    String queryNodesFileName = props.getProperty("queryNodesFileName", null);	    
-	    double distanceK = Double.parseDouble(props.getProperty("distanceK", "3"));	    	    String outInterWithNodesAtDistanceKFileName = props.getProperty("outInteractionsWithNodesAtDistanceKFileName", "outInteractionsWithNodesAtDistanceK.txt");
+	    double distanceK = Double.parseDouble(props.getProperty("distanceK", "3"));	    
+	    String outInterWithNodesAtDistanceKFileName = props.getProperty("outInteractionsWithNodesAtDistanceKFileName", "outInteractionsWithNodesAtDistanceK.txt");
 	    System.out.println("test()" + ppiFileName);
 		System.out.println("test()" + queryNodesFileName);
 	    Useful.checkFile(ppiFileName);

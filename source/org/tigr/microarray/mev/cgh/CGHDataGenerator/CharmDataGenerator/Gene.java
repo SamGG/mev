@@ -4,18 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-/**
-* This class is a container class for all data associated with a gene.  Each gene object
- * contains data for all experiments in a dataset.
-*
- * <p>Title: Gene</p>
- * <p>Description: This class is a container class for all data associated with a gene.  Each gene object
- * contains data for all experiments in a dataset. </p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: Princeton University</p>
- * @author Chad Myers, Xing Chen
- * @version 1.0
- */
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
 public class Gene implements Comparable{
   // Instance Fields
   private String id;//either yorf or id field for humans

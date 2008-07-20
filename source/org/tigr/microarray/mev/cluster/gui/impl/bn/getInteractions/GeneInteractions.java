@@ -10,13 +10,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/* GeneInteractions.java
- * Copyright (C) 2005 Amira Djebbari
- */
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
 package org.tigr.microarray.mev.cluster.gui.impl.bn.getInteractions;
-import java.io.FileNotFoundException;import java.util.HashMap;import java.util.ArrayList;
-import java.util.Iterator;import java.util.HashSet;
-import java.util.Set;import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;import org.tigr.microarray.mev.cluster.gui.impl.bn.UsefulInteractions;import org.tigr.microarray.mev.cluster.gui.impl.bn.SimpleGeneEdge;
+import java.io.FileNotFoundException;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.HashSet;
+import java.util.Set;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.UsefulInteractions;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.SimpleGeneEdge;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.OutOfRangeException;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
 /**
@@ -244,7 +253,8 @@ public class GeneInteractions {
      * @param gbArticlesFileName a <code>String</code> denoting the name of the file containing key value pairs in tab-delimited format such that: key_1\tvalue_1,value_2,...,value_n
      */
     public static void testCreateInteractions(String gbArticlesFileName){      
-	try {		System.out.println("testCreateInteractions()" + gbArticlesFileName);
+	try {
+		System.out.println("testCreateInteractions()" + gbArticlesFileName);
 	    Useful.checkFile(gbArticlesFileName);
 	    HashMap gbArticles = Useful.readHashMapFromFile(gbArticlesFileName);
 	    System.out.println("gbArticles="+gbArticles);

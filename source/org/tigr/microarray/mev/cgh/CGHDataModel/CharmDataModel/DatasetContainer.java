@@ -9,16 +9,12 @@ import java.util.HashMap;
 
 import org.tigr.microarray.mev.cgh.CGHDataGenerator.CharmDataGenerator.Chromosome;
 
-/**
-* Encapsulates all data associated with a single dataset (a set of related experiments and associated array values.
-*
- * <p>Title: DatasetContainer</p>
- * <p>Description: Encapsulates all data associated with a single dataset (a set of related experiments and associated array values.</p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: Princeton University</p>
- * @author Chad Myers, Xing Chen
- * @version 1.0
- */
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
 
 public class DatasetContainer {
   //private String datasetId;

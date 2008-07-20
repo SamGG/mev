@@ -13,18 +13,12 @@ import javax.swing.border.TitledBorder;
 
 import org.tigr.microarray.mev.MultipleArrayData;
 import org.tigr.microarray.mev.cgh.CGHDataObj.CGHClone;
-/**
-* This class implements the gene list panel in the upper left corner of
- * the ChARM UI display.
-*
- * <p>Title: GeneList</p>
- * <p>Description: This class implements the gene list panel in the upper left corner of
- * the ChARM UI display.</p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: </p>
- * @author Xing Chen
- * @author  Raktim Sinha
- */
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
 
 public class GeneList extends JList {
 

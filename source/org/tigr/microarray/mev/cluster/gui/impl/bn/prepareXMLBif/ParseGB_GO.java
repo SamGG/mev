@@ -10,16 +10,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/* ParseGB_GO.java
- * Copyright (C) 2005 Amira Djebbari
- */
-package org.tigr.microarray.mev.cluster.gui.impl.bn.prepareXMLBif;import java.io.FileOutputStream;import java.io.FileInputStream;
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
+package org.tigr.microarray.mev.cluster.gui.impl.bn.prepareXMLBif;
+import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.io.PrintWriter;
 import java.io.LineNumberReader;
-import java.io.FileReader;import java.io.IOException;import java.util.HashMap;import java.util.ArrayList;
-import java.util.Random;import java.util.Properties;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.UsefulInteractions;import org.tigr.microarray.mev.cluster.gui.impl.bn.SimpleGeneEdge;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.Properties;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.UsefulInteractions;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.SimpleGeneEdge;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.algs.Cyclic;
 /**
  * The class <code>ParseGB_GO</code> parses GO terms associated with GenBank accessions 
@@ -79,7 +90,8 @@ public class ParseGB_GO {
      * as read in the given file.
      */
     public static HashMap readGB_GOs(String fileName){
-	try {		System.out.println("readGB_GOs()" + fileName);
+	try {
+		System.out.println("readGB_GOs()" + fileName);
 	    Useful.checkFile(fileName);
 	    HashMap hm = new HashMap();
 	    FileReader fr = new FileReader(fileName);
@@ -334,7 +346,8 @@ public class ParseGB_GO {
 	    String sifFileName = props.getProperty("sifFileName", null);	    
 	    long seed = (long) Integer.parseInt(props.getProperty("seed", "1"));
 	    String newInterFileName = props.getProperty("outDirectedInteractionsFileName", "outDirectedInteractions.txt");
-	    String newInterAndRandomFileName = props.getProperty("outDirectedInteractionsAndRandomFileName", "outDirectedInteractionsAndRandom.txt");	    System.out.println("test()" + gbGOsFileName);
+	    String newInterAndRandomFileName = props.getProperty("outDirectedInteractionsAndRandomFileName", "outDirectedInteractionsAndRandom.txt");
+	    System.out.println("test()" + gbGOsFileName);
 	    System.out.println("test()" + sifFileName);
 	    Useful.checkFile(gbGOsFileName);
 	    Useful.checkFile(sifFileName);

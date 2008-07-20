@@ -1,17 +1,11 @@
 package org.tigr.microarray.mev.cgh.CGHAlgorithms.Charm;
 
-/**
-* The class is a container for two p-values (sign and mean permutation tests) and can be used
- * for comparison with significance cutoffs.
-*
- * <p>Title: PValue</p>
- * <p>Description: The class is a container for two p-values (sign and mean permutation tests) and can be used
- * for comparison with significance cutoffs.</p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: Princeton University</p>
- * @author Chad Myers, Xing Chen
- * @author  Raktim Sinha
- */
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
 
 public class PValue {
   /**

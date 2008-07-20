@@ -6,18 +6,12 @@ import java.util.ArrayList;
 import org.tigr.microarray.mev.cgh.CGHGuiObj.CharmDataViewer.PredictionGraphNode;
 
 import edu.umd.cs.piccolo.PNode;
-/**
-* This class implements a single chromosome and associated prediction
- * rectangles to be displayed on the ChARM UI display panel.
-*
- * <p>Title: ChromPredictionsGraphNode</p>
- * <p>Description: This class implements a single chromosome and associated prediction
- * rectangles to be displayed on the ChARM UI display panel.</p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: Princeton University</p>
- * @author Chad Myers, Xing Chen
- * @author  Raktim Sinha
- */
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
 
 public class ChromPredictionsGraphNode extends PNode implements IChromGraphNode {
 

@@ -10,10 +10,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/* GetInteractionsModule.java
- * Copyright (C) 2005 Amira Djebbari
- */
-package org.tigr.microarray.mev.cluster.gui.impl.bn.getInteractions;import java.io.FileInputStream;
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
+package org.tigr.microarray.mev.cluster.gui.impl.bn.getInteractions;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -71,14 +75,16 @@ public class GetInteractionsModule {
 			if(props == null){
 				throw new NullArgumentException("The given properties were null");
 			}
-			debug=true;			//path=path+sep; //Raktim - Use tmp Dir
+			debug=true;
+			//path=path+sep; //Raktim - Use tmp Dir
 			String fileLoc=path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP;
 			String resFileLoc = path+BNConstants.SEP;
 
 			System.out.println("PATH Paiso: " + fileLoc);
 			String resFileName = resFileLoc+props.getProperty(BNConstants.RES_FILE_NAME);
 
-			//System.out.print(resFileName);			String gbAccessionsFileName = fileLoc+props.getProperty(BNConstants.GB_ACC_FILE_NAME);
+			//System.out.print(resFileName);
+			String gbAccessionsFileName = fileLoc+props.getProperty(BNConstants.GB_ACC_FILE_NAME);
 			//String gbAccessionsFileName = resFileLoc+props.getProperty("gbAccessionsFileName");
 			String symbolsArticlesFromPubmedFileName = resFileLoc+props.getProperty(BNConstants.SYM_ARTICLES_FRM_PUBMED, null);
 			String symbolsArticlesFromGeneDbFileName = resFileLoc+props.getProperty(BNConstants.SYM_ARTICLES_FRM_GENEDB, null);
@@ -238,10 +244,12 @@ public class GetInteractionsModule {
 			if(props == null){
 				throw new NullArgumentException("The given properties were null");
 			}
-			// get props of ppi list, gbs, res			//path=path+sep;
+			// get props of ppi list, gbs, res
+			//path=path+sep;
 			String fileLoc=path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP;
 			String resFileLoc = path+BNConstants.SEP;
-			//System.out.print(path);			String ppiFileName = resFileLoc+props.getProperty(BNConstants.PPI_FILE_NAME, null);
+			//System.out.print(path);
+			String ppiFileName = resFileLoc+props.getProperty(BNConstants.PPI_FILE_NAME, null);
 			String resFileName = resFileLoc+props.getProperty(BNConstants.RES_FILE_NAME, null);
 			String gbAccessionsFileName = fileLoc+props.getProperty(BNConstants.GB_ACC_FILE_NAME, null);
 			//Useful.checkFile(ppiFileName);
@@ -745,7 +753,8 @@ public class GetInteractionsModule {
 			//System.out.print(propertiesFileName);
 			//System.exit(1);
 			Properties props = new Properties();
-			props.load(new FileInputStream(propertiesFileName));			System.out.print(props.getProperty(BNConstants.RES_FILE_NAME));
+			props.load(new FileInputStream(propertiesFileName));
+			System.out.print(props.getProperty(BNConstants.RES_FILE_NAME));
 			ArrayList interactions = getInteractions(props); //Magic Happens Here !!!
 			if(interactions == null || interactions.size() == 0){
 				System.out.print("Oh no NULL Interaction object. Bad...");
@@ -756,7 +765,8 @@ public class GetInteractionsModule {
 				return -1;
 			}
 			String outInteractionsFileName = props.getProperty(BNConstants.OUT_INTER_FILE_NAME, BNConstants.OUT_INTERACTION_FILE);
-			//System.out.print(outInteractionsFileName);			//Raktim - Modified. Name File(s) uniquely
+			//System.out.print(outInteractionsFileName);
+			//Raktim - Modified. Name File(s) uniquely
 			//String fname_cyto= "liter_mining_alone_network.sif"; // Raktim - Old Way
 			String fname_cyto= Useful.getUniqueFileID() +"_"+ "liter_mining_alone_network.sif";
 			//System.out.println("fname_cyto " + fname_cyto);
@@ -772,7 +782,8 @@ public class GetInteractionsModule {
 		}
 
 		catch(NullArgumentException nae){
-			System.out.println(nae);			nae.printStackTrace(); 
+			System.out.println(nae);
+			nae.printStackTrace(); 
 			return -1;
 		}
 		

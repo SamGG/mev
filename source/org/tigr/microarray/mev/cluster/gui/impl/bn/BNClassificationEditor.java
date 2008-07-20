@@ -1,7 +1,9 @@
-/*
-Copyright @ 1999-2005, The Institute for Genomic Research (TIGR).
-All rights reserved.
- */
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
 /*
  * BNClassificationEditor.java
  *
@@ -81,7 +83,8 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 	JScrollPane evalScrollPane;
 	String evalStr = null;
 	RunWekaProgressPanel runProgressPanel;
-	int numClasses;	JButton showInCytoButton,showLitCytoButton, showBootInCytoButton, showAllNetworks;
+	int numClasses;
+	JButton showInCytoButton,showLitCytoButton, showBootInCytoButton, showAllNetworks;
 	Vector<String> networkFiles = new Vector<String>();
 	String[] fieldNames;
 	int numGenes, numExps;
@@ -90,7 +93,8 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 	JMenuBar menuBar;
 	JMenu fileMenu, editMenu, toolsMenu, assignSubMenu, sortAscMenu, sortDescMenu;
 	JMenuItem saveItem, closeItem, fileMenuItem,selectAllItem, searchItem, sortByClassItem, origOrderItem;
-	JMenuItem[] classItem, labelsAscItem, labelsDescItem;	JRadioButton saveButton, doNotSaveButton;
+	JMenuItem[] classItem, labelsAscItem, labelsDescItem;
+	JRadioButton saveButton, doNotSaveButton;
 	JButton nextButton, cancelButton, loadButton, saveSettingsButton, updateNetwork;
 	JTextField confThreshField;
 	JCheckBox finalThreshBox;
@@ -101,7 +105,8 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 	//SortListener sorter;
 	String[] label;
 	Object[][] origData;
-	final String basePath;	//Raktim 
+	final String basePath;
+	//Raktim 
 	//String fileName;
 	String evalStrs[] = null;
 	Properties props = null;
@@ -117,7 +122,8 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 	HashMap<String, String> probeIndexAssocHash;
 	Vector<String> interactionsfinal = null;
 
-	/** Creates a new instance of BNClassificationEditor */	public BNClassificationEditor(final IFramework framework, boolean classifyGenes, final Cluster cl,String num,int numClasses,String parents,String algorithm,String scoreType,boolean uAr, boolean bootstrap, int iteration, float threshold, int kfolds, String path, HashMap<String, String> probeIndexAssocHash) {
+	/** Creates a new instance of BNClassificationEditor */
+	public BNClassificationEditor(final IFramework framework, boolean classifyGenes, final Cluster cl,String num,int numClasses,String parents,String algorithm,String scoreType,boolean uAr, boolean bootstrap, int iteration, float threshold, int kfolds, String path, HashMap<String, String> probeIndexAssocHash) {
 		super(framework.getFrame(), true);
 		this.setTitle("Classification Editor: Assign Samples to group(s)");
 		mainFrame = (JFrame)(framework.getFrame());
@@ -171,7 +177,8 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		this.confThreshold = threshold;
 		this.kfold = kfolds;
 		this.probeIndexAssocHash = probeIndexAssocHash;
-		//menuBar = new JMenuBar();		//this.setJMenuBar(menuBar);  
+		//menuBar = new JMenuBar();
+		//this.setJMenuBar(menuBar);  
 
 		GridBagLayout gridbag = new GridBagLayout();
 		GridBagConstraints constraints = new GridBagConstraints();
@@ -227,7 +234,8 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		//End unnecessary Block
 
 		//fc1.setCurrentDirectory(new File(pathFile.getAbsolutePath()));
-		fc1.setCurrentDirectory(new File(basePath));		fc1.setDialogTitle("Open Classification");
+		fc1.setCurrentDirectory(new File(basePath));
+		fc1.setDialogTitle("Open Classification");
 
 		//fc2.setCurrentDirectory(new File(pathFile.getAbsolutePath()));
 		fc2.setCurrentDirectory(new File(basePath));
@@ -273,7 +281,8 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		nextButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				//String sep = System.getProperty("file.separator");   
-				BNClassificationEditor.this.dispose(); 				//saveToFile(basePath+sep+"label"); // Raktim - Use Tmp dir
+				BNClassificationEditor.this.dispose(); 
+				//saveToFile(basePath+sep+"label"); // Raktim - Use Tmp dir
 				saveToFile(basePath+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+"label");
 				if(labelFile != null) {
 					saveToFile(labelFile);
@@ -476,10 +485,12 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 						}
 						return bootNetFile;
 					}
-				});				thread.start();
+				});
+				thread.start();
 			}
 		});
-		cleanUpFile();		constraints.fill = GridBagConstraints.HORIZONTAL; 
+		cleanUpFile();
+		constraints.fill = GridBagConstraints.HORIZONTAL; 
 
 		buildConstraints(constraints, 0, 0, 1, 1, 0, 0);
 		grid2.setConstraints(loadButton, constraints);
@@ -491,7 +502,8 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		buildConstraints(constraints, 2, 0, 1, 1, 0, 0);
 		grid2.setConstraints(cancelButton, constraints);
 		bottomPanel.add(cancelButton); 
-		buildConstraints(constraints, 3, 0, 1, 1, 0, 0);
+
+		buildConstraints(constraints, 3, 0, 1, 1, 0, 0);
 		grid2.setConstraints(nextButton, constraints);
 		bottomPanel.add(nextButton);        
 
@@ -541,7 +553,8 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 	}
 
 	public void displayScrollPane(JPanel panel){
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();		//JFrame.setDefaultLookAndFeelDecorated(true);
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		//JFrame.setDefaultLookAndFeelDecorated(true);
 		//Create and set up the window.
 
 		//JDialog frame = new JDialog(new JFrame(), "Results from Weka", true);
@@ -554,7 +567,8 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		resultFrame.setVisible(true);
 	}
 
-	public JPanel getScrollPanePanel(String evalString){		//final JFrame frame;
+	public JPanel getScrollPanePanel(String evalString){
+		//final JFrame frame;
 
 		// LM Network
 		String lmNetFile = basePath + BNConstants.RESULT_DIR + BNConstants.SEP + System.getProperty("LM_ONLY");
@@ -731,7 +745,8 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 	    files[7]="prepareXMLBifMod.props";
 
 	    String sep=System.getProperty("file.separator");
-	    String path=System.getProperty("user.dir");	    //path=path+sep+"data"+sep+"bn"+sep; // Raktim - Use Tmp dir
+	    String path=System.getProperty("user.dir");
+	    //path=path+sep+"data"+sep+"bn"+sep; // Raktim - Use Tmp dir
 	    path=path+sep+"data"+sep+"bn"+sep+"tmp"+sep;
 	    for(int i=0;i<8;i++){
 	     File file=new File(path,files[i]);
@@ -764,7 +779,8 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 	}
 
 	private String[] convertFromFile(String path){
-		//String sep= System.getProperty("file.separator");    		String filePath = path + BNConstants.SEP + BNConstants.OUT_ACCESSION_FILE; // Raktim - path incls tmp dir
+		//String sep= System.getProperty("file.separator");    
+		String filePath = path + BNConstants.SEP + BNConstants.OUT_ACCESSION_FILE; // Raktim - path incls tmp dir
 		//String filePath = path+sep+"tmp"+sep+"list.txt";
 		System.out.println("convertFromFile(): " + filePath);
 		String lineRead = "";
@@ -802,8 +818,10 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		//System.out.print(genes);
 		IData data=frame.getData();
 		int[] rows = new int[genes];
-		rows=cl.getIndices();		String[] accList=new String[genes];
-		try{ 			//PrintWriter out = new PrintWriter(new FileOutputStream(new File(basePath+"wekaData"))); // Raktim - USe Tmp dir
+		rows=cl.getIndices();
+		String[] accList=new String[genes];
+		try{ 
+			//PrintWriter out = new PrintWriter(new FileOutputStream(new File(basePath+"wekaData"))); // Raktim - USe Tmp dir
 			//String sep= System.getProperty("file.separator");    
 			PrintWriter out = new PrintWriter(new FileOutputStream(new File(basePath+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+"wekaData")));
 
@@ -848,7 +866,8 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 			e.printStackTrace();
 		}
 	}
-	//public void tranSaveWeka(String binNum,String path){
+
+	//public void tranSaveWeka(String binNum,String path){
 	public Properties tranSaveWeka(String binNum,String path, boolean bootStrap, int numIter){
 		//String sep= System.getProperty("file.separator");    
 		return PrepareArrayDataModule.prepareArrayData(path+BNConstants.SEP+"wekaData", binNum, bootStrap, numIter, this.numClasses); 

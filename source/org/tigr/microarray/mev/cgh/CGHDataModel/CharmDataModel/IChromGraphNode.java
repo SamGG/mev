@@ -5,16 +5,12 @@ package org.tigr.microarray.mev.cgh.CGHDataModel.CharmDataModel;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
-/**
-* This interface defines the structure for a single data or prediction display chromosome.
-*
- * <p>Title: ChromGraphNode </p>
- * <p>Description: This interface defines the structure for a single data or prediction display chromosome.</p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: Princeton University</p>
- * @author Chad Myers, Xing Chen
- * @version 1.0
- */
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
 
 public interface IChromGraphNode {
   public static final int TYPE_DATA=1;

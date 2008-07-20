@@ -14,18 +14,12 @@ import javax.swing.JLabel;
 import org.tigr.microarray.mev.cgh.CGHDataModel.CharmDataModel.SegmentInfo;
 import org.tigr.microarray.mev.cgh.CGHDataObj.CGHClone;
 import org.tigr.microarray.mev.cluster.gui.IData;
-/**
-* This class implements the statistic/annotation panel in the lower left corner of
- * the ChARM UI display.
-*
- * <p>Title: StatComponent</p>
- * <p>Description: This class implements the statistic/annotation panel in the lower left corner of
- * the ChARM UI display.</p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: Princeton University</p>
- * @author Chad Myers, Xing Chen
- * @author  Raktim Sinha
- */
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
 
 public class StatComponent extends JLabel {
 
