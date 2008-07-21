@@ -1700,7 +1700,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			
 		<mkdir dir="${package.dir}/${mev_version.dir}/data" />
 		<copy todir="${package.dir}/${mev_version.dir}/data">
-			<fileset dir="${home.dir}/data"/>
+			<fileset dir="${home.dir}/data"	includesfile="samplefiles.txt"/>
 		</copy>
 		
 		<zip destfile="${package.dir}/MeV_${version}_win.zip"

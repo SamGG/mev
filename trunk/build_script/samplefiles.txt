@@ -1,0 +1,66 @@
+# Affymetrix sample files
+Affymetrix Files/Affy_GCOS_simplewithall.txt
+Affymetrix Files/Bioconductor_mas5_simple.txt
+
+# Annotation files
+Annotation/kingdom_species_cloneset_list.txt
+
+# BN datafiles
+BN_files/symArtsPubmed.txt
+
+# CGH datafiles
+CGH/Hs_CytoBands.txt
+
+# EASE files
+ease/Data/Class/Implies/ARED.txt
+ease/Data/Class/Implies/Chromosome.txt
+ease/Data/Class/Implies/GO Biological Process.txt
+ease/Data/Class/Implies/GO Cellular Component.txt
+ease/Data/Class/Implies/GO Molecular Function.txt
+ease/Data/Class/Implies/Phenotype.txt
+ease/Data/Class/Implies/Published Gene List from HuGeneFL.txt
+ease/Data/Class/Implies/Transmembrane Domains.txt
+ease/Data/Class/URL data/ARED.txt
+ease/Data/Class/URL data/BBID pathway.txt
+ease/Data/Class/URL data/GenMAPP pathway.txt
+ease/Data/Class/URL data/GO Biological Process.txt
+ease/Data/Class/URL data/GO Cellular Component.txt
+ease/Data/Class/URL data/GO Molecular Function.txt
+ease/Data/Class/URL data/KEGG pathway.txt
+ease/Data/Class/URL data/PFAM domain.txt
+ease/Data/Class/URL data/PIR pcmotif.txt
+ease/Data/Class/URL data/PIR superfamily.txt
+ease/Data/Class/URL data/PIRaln.txt
+ease/Data/Class/URL data/Published Gene List from HuGeneFL.txt
+ease/Data/Class/URL data/SMART domain.txt
+ease/Data/Class/URL data/SwissProt keyword.txt
+ease/Data/Class/URL data/Upstream transcription factor sites.txt
+ease/Data/Class/URL data/Tags/GenMAPP pathway.txt
+ease/Data/Class/URL data/Tags/GO Biological Process.txt
+ease/Data/Class/URL data/Tags/GO Cellular Component.txt
+ease/Data/Class/URL data/Tags/GO Molecular Function.txt
+ease/Data/Class/URL data/Tags/KEGG pathway.txt
+ease/Data/Class/URL data/Tags/PFAM domain.txt
+ease/Data/Class/URL data/Tags/PIR pcmotif.txt
+ease/Data/Class/URL data/Tags/PIR superfamily.txt
+ease/Data/Class/URL data/Tags/PIRaln.txt
+ease/Data/Class/URL data/Tags/Published Gene List from HuGeneFL.txt
+ease/Data/Class/URL data/Tags/SMART domain.txt
+ease/Data/Convert/Sample_GB_to_LocusLink.txt
+ease/Data/Convert/TC_to_LL_Convert.txt
+ease/Lists/TIGR_MGI/TDMS_EASE_GenBank_Sample_Population.txt
+ease/Lists/TIGR_MGI/TIGR_25K_Mouse.txt
+
+
+# Scripting support
+scripts/mev_script_dtd.dtd
+
+# misc. sample datafiles
+brain.mev
+heart.mev
+kidney.mev
+liver.mev
+TDMS_format_sample.txt
+CGH_sample_genelist.txt
+CGH_sample_data.txt
+brain-heart-kidney-liver_annotation.ann
