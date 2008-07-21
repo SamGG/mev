@@ -259,7 +259,7 @@ public class MultipleArrayMenubar extends JMenuBar {
         JMenu clusteringMenu = new JMenu("Cluster Viewing Options");
         clusteringMenu.add(createJCheckBoxMenuItem("Compact Cluster Color Groups", ActionManager.COMPACT_CLUSTERS_CMD, listener, false));
         clusteringMenu.add(createJCheckBoxMenuItem("Show Mouse Rectangles", ActionManager.SHOW_RECTS_CMD, listener, true));
-        clusteringMenu.add(createJCheckBoxMenuItem("Auto-Arrange Cluster Colors", ActionManager.AUTO_ARRANGE_COLORS, listener, false));
+        clusteringMenu.add(createJCheckBoxMenuItem("Auto-Arrange Cluster Colors", ActionManager.AUTO_ARRANGE_COLORS, listener, true));
         
         displayMenu.add(clusteringMenu);
         
@@ -1178,7 +1178,7 @@ public class MultipleArrayMenubar extends JMenuBar {
         private boolean drawBorders = false;
         private boolean compactClusters = false;
         private boolean showRects = false;
-        private boolean arrangeColors = true;
+        private boolean arrangeColors = false;
         private boolean antialiasing = true;
         private boolean grscale = true;
         private boolean useColorGradient = false;
