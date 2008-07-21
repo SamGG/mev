@@ -310,11 +310,17 @@ public class ClusterSelector extends JPanel {
             //if (col == 0) {
                 //return Color.red;//repository.getFramework().getData().getExperimentColor(repository.getCluster(clusterTable.getSelectedRow()+1).getExperimentIndices()[row]) == null? Color.white : repository.getFramework().getData().getExperimentColor(repository.getCluster(clusterTable.getSelectedRow()+1).getExperimentIndices()[row]);
             if (col >= 0) {
-            	String before = repository.getFramework().getData().getCurrentSampleLabelKey();
-            	repository.getFramework().getData().setSampleLabelKey((String)repository.getFramework().getData().getSampleAnnotationFieldNames().get(col));
-                String value = repository.getFramework().getData().getSampleName((repository.getFramework().getData().getExperiment().getSampleIndex(repository.getCluster(clusterTable.getSelectedRow()+1).getExperimentIndices()[row])));
-            	repository.getFramework().getData().setSampleLabelKey(before);
-            	return value;
+            	try{
+	            	String before = repository.getFramework().getData().getCurrentSampleLabelKey();
+	            	repository.getFramework().getData().setSampleLabelKey((String)repository.getFramework().getData().getSampleAnnotationFieldNames().get(col));
+	            	String value = repository.getFramework().getData().getSampleName((repository.getFramework().getData().getExperiment().getSampleIndex(repository.getCluster(clusterTable.getSelectedRow()+1).getIndices()[row])));
+	            	repository.getFramework().getData().setSampleLabelKey(before);
+            	
+	            	return value;
+            	}catch(Exception e){
+            		e.printStackTrace();
+            	}
+            	return "error";
             } else {
                 return null;//String.valueOf(auxData[getSortedCluster()[row]][col - 2]);
             }
