@@ -1580,6 +1580,8 @@ public class TtestInitDialog extends AlgorithmDialog {
             
             timesField = new JTextField("100", 7);
             timesField.setEnabled(false);
+            timesField.setMinimumSize(new Dimension(100,20));
+            //timesField.setMinimumSize(this.getSize());
             buildConstraints(constraints, 1, 0, 1, 1, 20, 0);
             constraints.anchor = GridBagConstraints.WEST;
             grid2.setConstraints(timesField, constraints);
@@ -1658,6 +1660,7 @@ public class TtestInitDialog extends AlgorithmDialog {
             panel3.add(alphaLabel);
             
             alphaInputField = new JTextField("0.01", 7);
+            alphaInputField.setMinimumSize(new Dimension(100,20));
             buildConstraints(constraints, 1, 0, 1, 1, 25, 0);
             constraints.anchor = GridBagConstraints.WEST;
             grid3.setConstraints(alphaInputField, constraints);
@@ -1749,9 +1752,11 @@ public class TtestInitDialog extends AlgorithmDialog {
             
             falseNumField = new JTextField(10);
             falseNumField.setText("10");
+            falseNumField.setMinimumSize(new Dimension(100,20));
             falseNumField.setEnabled(false);
             falsePropField = new JTextField(10);
             falsePropField.setText("0.05");
+            falsePropField.setMinimumSize(new Dimension(100,20));
             falsePropField.setEnabled(false);
             calcFDRPVals = new JCheckBox("Calculate adjusted p values for false discovery control", false);
             calcFDRPVals.setEnabled(false);
