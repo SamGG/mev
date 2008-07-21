@@ -443,6 +443,16 @@ public class ExperimentViewer extends JPanel implements IViewer {
         else
             haveColorBar = false;
         updateSize();        
+        this.maxValue = menu.getMaxRatioScale();
+        this.minValue = menu.getMinRatioScale();
+        this.midValue = menu.getMidRatioValue();
+        this.posColorImage = menu.getPositiveGradientImage();
+        this.negColorImage = menu.getNegativeGradientImage();
+        this.useDoubleGradient = menu.getUseDoubleGradient();
+        this.header.setNegAndPosColorImages(this.negColorImage, this.posColorImage);
+        this.header.setUseDoubleGradient(useDoubleGradient);
+        //header.setValues(maxValue, minValue);
+        header.setValues(minValue, midValue, maxValue);
         header.updateSizes(header.getSize().width, elementSize.width);
         header.setData(data);
         //onMenuChanged(menu);
