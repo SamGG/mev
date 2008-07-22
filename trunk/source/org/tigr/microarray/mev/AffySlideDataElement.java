@@ -127,7 +127,9 @@ public class AffySlideDataElement extends ArrayElement implements ISlideDataElem
 		this.setPvalue(sde.getPvalue());
 		this.isNull = sde.getIsNull();
 		this.isNonZero = sde.isNonZero();
-		this.annotation = (MevAnnotation)sde.getElementAnnotation().clone();
+		if(sde instanceof AffySlideDataElement && ((AffySlideDataElement)sde).annotation != null) {
+			this.annotation = (MevAnnotation)sde.getElementAnnotation().clone();
+		}
 	}
 	
 	/**
