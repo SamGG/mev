@@ -3752,7 +3752,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         	this.menubar.addLabelMenuItems(this.data.getFieldNames(), annoFields);
         	}
         	else
-        	 this.menubar.addLabelMenuItems(this.data.getFieldNames());//--Commented by Raktim for demo
+        	 this.menubar.addLabelMenuItems(this.data.getFieldNames(), null);//--Commented by Raktim for demo
            
         	
         	//add the experiment key vector that is longest
@@ -4138,9 +4138,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
                 if(importDialog.showModal() == JOptionPane.OK_OPTION) {
 
                     String [] newFields = importDialog.getSelectedAnnotationFields();
-                    
-                   // System.out.println("After Gene Annotation Upload");
-                    //System.out.println("New Fields:"+newFields[0]);
+
                     
                     int updateCount = data.addNewGeneAnnotation(annMatrix, importDialog.getDataAnnotationKey(), importDialog.getFileAnnotationKey(), newFields);
                     
@@ -4148,8 +4146,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
                         
                         //update menubar and TMEV field names
                         
-                        //EH - moved field names to IData class instead of TMEV
-//                    	TMEV.appendFieldNames(newFields);
+
                     	data.getSlideMetaData().appendFieldNames(newFields);
                     	
                         menubar.replaceLabelMenuItems(data.getFieldNames());

@@ -49,6 +49,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import org.tigr.microarray.mev.annotation.AnnoAttributeObj;
+import org.tigr.microarray.mev.annotation.AnnotationFieldConstants;
 import org.tigr.microarray.mev.action.DefaultAction;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
@@ -673,7 +674,7 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
         	//the .TAV files do not have "Field Names"
         
         	if(data.getFieldNames().length >0 && labelIndex > data.getFieldNames().length-1) {
-        		String prefix = "Label By ";
+        		String prefix = "Label by ";
         		String attr = getMenuLabel(labelIndex).substring(prefix.length()).trim();
         		
         		String[] _temp = data.getElementAnnotation(i, attr);
@@ -709,7 +710,6 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
         String label;
         g.setColor(Color.black);
         int[] indices = data.getSortedIndices(0);
-        
         //Added by Sarita
        // Hard Coded preFix value of 2 replaced by data.getFieldNames().length-1.
       //In the if loop below, the check for data.getFieldNames().length was introduced because
@@ -717,22 +717,26 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
         
         if(labelIndex > data.getFieldNames().length-1 && (data.getFieldNames()).length >0) { 
         	for (int probe = top; probe < bottom; probe++) {
-        		String prefix = "Label By ";
+        		String prefix = "Label by ";
         		String attr = getMenuLabel(labelIndex).substring(prefix.length()).trim();
+            	//System.out.println("label: " + attr);
                
                 String[] _temp = data.getElementAnnotation(indices[probe], attr);
-        		if(_temp.length > 1)
-        			label = ((AnnoAttributeObj)data.getElementAnnotationObject(indices[probe], attr)).toString();
-        		else
+        		if(_temp.length > 1) {
+        			//label = ((AnnoAttributeObj)data.getElementAnnotationObject(indices[probe], attr)).toString();
+//        			label = data.getAnnotationList(data.getAllFilledAnnotationFields()[labelIndex], new int[]{indices[probe]})[0];
+//        			getElementAnnotation
+        			//   public String[] getElementAnnotation(int row, String attr) {
+        			label = data.getElementAnnotation(indices[probe], attr)[0];
+        		} else
         			label = _temp[0];
              
                 if (label != null) {
                     g.drawString(label, insets.left + getXSize() + insets.right, insets.top + ((probe +1)*elementSize.height) -1);
                 }
             }
-        }
-        else {
-	        for (int probe = top; probe < bottom; probe++) {
+        } else {
+        	for (int probe = top; probe < bottom; probe++) {
 	            label = data.getElementAttribute(indices[probe], labelIndex);
 	            
 	            if (label != null) {

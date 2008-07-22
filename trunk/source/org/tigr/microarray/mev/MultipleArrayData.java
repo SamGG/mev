@@ -2420,6 +2420,7 @@ public class MultipleArrayData implements IData {
      * Returns a MultipleArrayData object comprised of a subset of elements
      */
     public MultipleArrayData getDataSubset(int [] indices){
+    	//TODO EH look here for problems in adding annotation
         ISlideData slideData;
         ISlideMetaData metaData = null;
         ISlideDataElement sde;
@@ -2451,7 +2452,7 @@ public class MultipleArrayData implements IData {
 
                 for(int spot = 0; spot < indices.length; spot++){
                     index = indices[spot];
-                    sde = new SlideDataElement(this.getSlideDataElement(slide, index));
+                    sde = this.getSlideDataElement(slide, index).clone();
                     slideData.addSlideDataElement(sde);
                 }
 
@@ -2485,9 +2486,11 @@ public class MultipleArrayData implements IData {
                 }
             }
             slideData.setNormalizedState(normalizedState);
-            data.addFeature(slideData);    
+            data.addFeature(slideData);   
             data.setDataType(this.dataType);      
         }
+        data.setChipAnnotation(this.getChipAnnotation());
+        data.setAnnotationLoaded(this.isAnnotationLoaded());
         return data;
     }
 

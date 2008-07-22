@@ -355,7 +355,7 @@ public class MultipleArrayMenubar extends JMenuBar {
         this.setPositiveAccessibleGradient(origDisplayMenu.getPositiveGradientImage());
         
         this.setUseDoubleGradient(origDisplayMenu.getUseDoubleGradient());
-        this.addLabelMenuItems((origMenubar).getLabelMenuItems());
+        this.addLabelMenuItems((origMenubar).getLabelMenuItems(), null);
         
         IDistanceMenu origDistanceMenu = origMenubar.getDistanceMenu();
         
@@ -553,34 +553,24 @@ public class MultipleArrayMenubar extends JMenuBar {
     }
   
     
-    public void addLabelMenuItems(String [] fieldNames){
-        JRadioButtonMenuItem item;
-        //ButtonGroup bg = new ButtonGroup();
-        DefaultAction action;
-        for(int i = 0; i < fieldNames.length; i++){
-            action = new DefaultAction(actionManager, "Label by "+fieldNames[i], ActionManager.DISPLAY_LABEL_CMD);
-            action.putValue(ActionManager.PARAMETER, String.valueOf(i));
-            item = new JRadioButtonMenuItem(action);
-            labelGroup.add(item);
-            if(i == 0)
-                item.setSelected(true);
-            this.labelMenu.add(item);
-        }
-    }
-    
    
     /**
      * Raktim - Added for Pilot Demo only
      * @param fieldNames
      * @param annoFields
      */
-//TODO EH: Can we remove this method? I don't think it's used.
     public void addLabelMenuItems(String [] fieldNames, String[] annoFields){
         JRadioButtonMenuItem item;
         //ButtonGroup bg = new ButtonGroup();
         DefaultAction action;
+        String thisFieldName;
+    	String prefix = "Label by ";
         for(int i = 0; i < fieldNames.length; i++){
-            action = new DefaultAction(actionManager, "Label by "+fieldNames[i], ActionManager.DISPLAY_LABEL_CMD);
+        	thisFieldName = fieldNames[i];
+        	if(thisFieldName.startsWith(prefix)) {
+        		thisFieldName = thisFieldName.substring(prefix.length()).trim();
+        	}        		
+        	action = new DefaultAction(actionManager, "Label by " + thisFieldName, ActionManager.DISPLAY_LABEL_CMD);
             action.putValue(ActionManager.PARAMETER, String.valueOf(i));
             item = new JRadioButtonMenuItem(action);
             labelGroup.add(item);
@@ -588,14 +578,19 @@ public class MultipleArrayMenubar extends JMenuBar {
                 item.setSelected(true);
             this.labelMenu.add(item);
         }
-        
-        for(int i = 0; i < annoFields.length; i++){
-        	action = new DefaultAction(actionManager, "Label by "+annoFields[i], ActionManager.DISPLAY_LABEL_CMD);
-            action.putValue(ActionManager.PARAMETER, String.valueOf(i + fieldNames.length));
-            item = new JRadioButtonMenuItem(action);
-            labelGroup.add(item);
-            this.labelMenu.add(item);
-            //System.out.println("Here: " + "Label by "+annoFields[i]);
+        String thisAnnoField;
+        if(annoFields != null) {
+	        for(int i = 0; i < annoFields.length; i++){
+	        	thisAnnoField = annoFields[i];
+	        	if(thisAnnoField.startsWith(prefix)) {
+	        		thisAnnoField = thisAnnoField.substring(prefix.length()).trim();
+	        	}
+	        	action = new DefaultAction(actionManager, "Label by "+thisAnnoField, ActionManager.DISPLAY_LABEL_CMD);
+	            action.putValue(ActionManager.PARAMETER, String.valueOf(i + fieldNames.length));
+	            item = new JRadioButtonMenuItem(action);
+	            labelGroup.add(item);
+	            this.labelMenu.add(item);
+	        }
         }
     }
     
@@ -626,12 +621,8 @@ public class MultipleArrayMenubar extends JMenuBar {
         expLabelSelectionMenu.add(item);
     }
     
-    //EH Gaggle test
+
     public void replaceGaggleTargetMenuItems(String[] gooseNames) {
-    	//String[] gooseNames = new String[targetnames.length+1];
-    	//gooseNames[0] = "Boss";
-    	//System.arraycopy(targetnames, 0, gooseNames, 1, targetnames.length);
-    	//System.out.println("Replacing gaggle target menu items");
     	this.targetMenu.removeAll();
     	this.showMenu.removeAll();
 
@@ -662,18 +653,12 @@ public class MultipleArrayMenubar extends JMenuBar {
         }
     }
 
-    //EH end gaggle test
+
     
     public void replaceExperimentLabelMenuItems(String [] fieldNames){
-        //remove all menu items
-        
-        //ButtonModel model =
-        //String currentKey = (this.experimentLabelGroup.getSelection()).getActionCommand();
-        
+
         this.expLabelSelectionMenu.removeAll();
-        
         JRadioButtonMenuItem item;
-        //ButtonGroup bg = new ButtonGroup();
         DefaultAction action;
         String cmd;
         for(int i = 0; i < fieldNames.length; i++){
@@ -694,7 +679,6 @@ public class MultipleArrayMenubar extends JMenuBar {
         this.labelMenu.removeAll();
         
         JRadioButtonMenuItem item;
-        //ButtonGroup bg = new ButtonGroup();
         DefaultAction action;
         for(int i = 0; i < fieldNames.length; i++){
             action = new DefaultAction(actionManager, "Label by "+fieldNames[i], ActionManager.DISPLAY_LABEL_CMD);
@@ -789,17 +773,9 @@ public class MultipleArrayMenubar extends JMenuBar {
      * Adds analysis menu items.
      */
     private void addAnalysisMenu(JMenu menu, ActionManager manager) {
-       
-    	//int index = 0;
-        //Action action;
         String []category={"Clustering","Statistics","Classification","Data Reduction","Meta Analysis","Visualization","Miscellaneous"};
-        //System.out.print(manager.getAction(ActionManager.ANALYSIS_ACTION+String.valueOf(0)));
-        //while ((action = manager.getAction("HCL"))!=null) {
         for(int i=0;i<category.length;i++){
-        	//while ((action = manager.getAction(ActionManager.ANALYSIS_ACTION+String.valueOf(index)))!=null) {
         		menu.add(createJMenuItem(category[i],manager));
-        		
-        		//index++;
         	}
         }
     	
@@ -834,10 +810,6 @@ public class MultipleArrayMenubar extends JMenuBar {
      * add by wwang
      */
     private JMenu createJMenuItem(String category,ActionManager manager) {
-    	/*
-        JMenuItem item = new JMenuItem(action);
-        item.setActionCommand((String)action.getValue(Action.ACTION_COMMAND_KEY));
-        */
     	int index=0;
     	Action action;
     	JMenu item = new JMenu(category);

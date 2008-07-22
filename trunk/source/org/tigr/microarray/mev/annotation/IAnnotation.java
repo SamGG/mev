@@ -99,5 +99,6 @@ public interface IAnnotation {
 	 ***********************************************************/
 	public String[] getAttribute(final String attr);
 	public AnnoAttributeObj getAttributeObj(final String attr);
+	public IAnnotation clone();
 	
 }
