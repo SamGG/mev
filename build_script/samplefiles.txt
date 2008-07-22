@@ -5,11 +5,26 @@ Affymetrix Files/Bioconductor_mas5_simple.txt
 # Annotation files
 Annotation/kingdom_species_cloneset_list.txt
 
-# BN datafiles
+# BN datafiles & folders
+# Note this directory contains an empty folder 'kegg' 
+# where kegg interaction data is downloaded
+BN_files/kegg
 BN_files/symArtsPubmed.txt
+BN_files/symArtsGeneDb.txt
+BN_files/res.txt
+BN_files/gbGO.txt
+BN_files/all_ppi.txt
+BN_files/affyID_accession.txt
+BN_files/affy_U133plus2_dataset.txt
+
 
 # CGH datafiles
 CGH/Hs_CytoBands.txt
+CGH/Mm_CytoBands.txt
+CGH/Hs_RefGenesMapped.csv
+CGH/Mm_RefGenesMapped.csv
+
+
 
 # EASE files
 ease/Data/Class/Implies/ARED.txt
