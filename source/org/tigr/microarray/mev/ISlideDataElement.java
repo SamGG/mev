@@ -156,5 +156,6 @@ public interface ISlideDataElement {
     public IAnnotation getElementAnnotation();
     //Sarita-- Annotation State saving 
     public void setElementAnnotation(IAnnotation obj);
+    public ISlideDataElement clone();
     
 }

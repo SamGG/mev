@@ -104,6 +104,10 @@ public class SlideDataElement extends ArrayElement implements ISlideDataElement 
         this.trueIntensity = copyArray(sde.getTrueIntensity());
         this.extraFields = sde.getExtraFields();
     }
+    
+    public ISlideDataElement clone(){
+    	return new SlideDataElement(this);
+    }
 
     public void setRows(int[] r){this.rows = copyArray(r);}
     public void setColumns(int[] c){this.columns = copyArray(c);}

@@ -12,22 +12,17 @@ import java.sql.SQLException;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import org.tigr.microarray.mev.MultipleArrayViewer;
 import org.tigr.microarray.mev.cgh.CGHUtil.CGHUtility;
 import org.tigr.microarray.mev.cgh.DBObj.DSqlHandler;
-import org.tigr.util.StringSplitter;
 
 /**
  * @author Raktim
- *
- *
  *
  */
 
 public class MevAnnotation implements IAnnotation, Comparable {
 
 	private Hashtable<String, Object> annotHash;
-//	private MultipleArrayViewer viewer;
 	
 	
 	
@@ -35,7 +30,10 @@ public class MevAnnotation implements IAnnotation, Comparable {
 		annotHash = new Hashtable<String, Object>();
 		
 	}
-
+	private MevAnnotation(Hashtable<String, Object> newhash) {
+		annotHash = newhash;
+		
+	}
 	
 	
 	 public int compareTo(Object arg0) {
@@ -155,27 +153,6 @@ public class MevAnnotation implements IAnnotation, Comparable {
 		//return (String)annotHash.get(AnnotationFieldConstants.CYTOBAND);
 	}
 	
-	
-	/*
-	public String getSpeciesName(){
-		return (String)speciesName.get(this.getMavInstance());
-	}
-	
-
-	
-	public String getChipName(){
-		return (String)ChipName.get(this.getMavInstance());
-	}
-	
-	public String getChipType(){
-		return (String)ChipType.get(this.getMavInstance());
-	}
-
-		
-	public String getGenomeBuild() {
-		return (String)genomeBuild.get(this.getMavInstance());
-	}
-	*/
 	public String getCloneID() {
 		return (String)annotHash.get(AnnotationFieldConstants.CLONE_ID);
 	}
@@ -187,7 +164,6 @@ public class MevAnnotation implements IAnnotation, Comparable {
 			return _temp;
 		}else
 			return _temp;
-
 	//	return (String)annotHash.get(AnnotationFieldConstants.CHR);
 	}
 	
@@ -354,35 +330,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 	}
 	
 	
-	/* Setters  
-	public void setChipName(String _temp) {	
-		if (ChipName.size() < this.getMavInstance()-1)
-			ChipName.setSize(ChipName.size() + 5);
-		ChipName.setElementAt(_temp, this.getMavInstance());
-	}
-
-	public void setChipType(String _temp) {
-		
-		//if (ChipType.size() <this.getMavInstance()-1)
-		if (ChipType.size() <= this.getMavInstance())
-			ChipType.setSize(ChipType.size() + 5);
-		
-			ChipType.setElementAt(_temp, this.getMavInstance());
-	}
-	
-	public void setSpeciesName(String _temp) {
-		//if (speciesName.size() < this.getMavInstance()-1)
-		if (speciesName.size() <= this.getMavInstance())
-			speciesName.setSize(speciesName.size() + 5);
-		speciesName.setElementAt(_temp, this.getMavInstance());
-	}
-	
-	public void setGenomeBuild(String _temp) {
-		if (genomeBuild.size() < this.getMavInstance()-1)
-			genomeBuild.setSize(genomeBuild.size() + 5);
-		genomeBuild.setElementAt(_temp, this.getMavInstance());
-	}
-	*/
+	/* Setters */
 	public void setCloneID(String _temp) {
 		//String[] _tmp = {_temp};
 		String _tmp = _temp;
@@ -528,7 +476,6 @@ public class MevAnnotation implements IAnnotation, Comparable {
 		Vector<String[]> annoVec = new Vector<String[]>();
 		
 		if(validateColNames(colNames)) {
-			//String db = getDBNameBySpecies(getSpeciesName2(mevInstance));
 			String db = "Hs_RefGenesMapped";
 			String sql = "SELECT ";
 			for(int j = 0; j < colNames.length; j++){
@@ -676,42 +623,12 @@ public class MevAnnotation implements IAnnotation, Comparable {
 		return _tempAttr;
 	}
 
-	/**
-	 * 
-	 * @param mav
-	
-	public void setViewer(MultipleArrayViewer mav) {
-		//System.out.println("MevAnno setViewer()");
-		this.viewer = mav;	
-	} */
-	
-	/**
-	 * 
-	 * @return
-	 
-	private int getMavInstance(){
-		if (this.viewer == null) System.out.println("Null MAV");
-		return this.viewer.getInstanceIndex();
-	}*/
 
-
-
-
-
-
-	
-/*	public static boolean getAnnotationStatus() {
-		return MultipleArrayData.isAnnotationLoaded;
-	}*/
-
-
+	public IAnnotation clone() {
+		Hashtable<String, Object> newhash = new Hashtable<String, Object>(annotHash);
+		return new MevAnnotation(newhash);
+	}
 	
 
-
-	
-	
-	/*****************************************************
-	 * Implementation of Annotation URL class functions
-	 *****************************************************/
 
 }

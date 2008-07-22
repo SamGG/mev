@@ -127,7 +127,7 @@ public class AffySlideDataElement extends ArrayElement implements ISlideDataElem
 		this.setPvalue(sde.getPvalue());
 		this.isNull = sde.getIsNull();
 		this.isNonZero = sde.isNonZero();
-		//System.out.print(this.getPvalue());
+		this.annotation = (MevAnnotation)sde.getElementAnnotation().clone();
 	}
 	
 	/**
@@ -495,6 +495,10 @@ public class AffySlideDataElement extends ArrayElement implements ISlideDataElem
 	 */
 	public ISlideDataElement copy() {
 		return new AffySlideDataElement(this);
+	}
+	
+	public ISlideDataElement clone() {
+		return copy();
 	}
 	
 	public String toString() {
