@@ -41,6 +41,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
+import org.tigr.microarray.mev.annotation.AnnoAttributeObj;
 import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
@@ -827,13 +828,13 @@ public class ExperimentViewer extends JPanel implements IViewer {
     	   //namely if label is a "ExtraField" OR if label is actually
     	   //added using the new annotation model 
     	 if(labelIndex <= data.getFieldNames().length-1) {
+    		 //using new annotation model
        		 str = data.getElementAttribute(getMultipleArrayDataRow(i), labelIndex);
        		
-     	}
-       	else {
-       	 str =  (data.getElementAnnotation(getMultipleArrayDataRow(i), MevAnnotation.getFieldNames()[labelIndex-(data.getFieldNames().length)-1])).toString();
+     	} else {
+     		//using new annotation model
+       	 str =  (data.getElementAnnotation(getMultipleArrayDataRow(i), MevAnnotation.getFieldNames()[labelIndex-(data.getFieldNames().length)])).toString();
        	}
-           
             max = Math.max(max, fm.stringWidth(str));
         }
         return max;
