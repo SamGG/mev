@@ -1212,37 +1212,17 @@ public class MultipleArrayData implements IData {
      * @return the list of fieldnames
      */
     public String[] getAllFilledAnnotationFields() {
+	    String[] fieldnames =  ((ISlideData)featuresList.get(0)).getSlideMetaData().getFieldNames();
+	    String[] annotations =  MevAnnotation.getFieldNames();
+	    String[] allanns = new String[fieldnames.length + annotations.length];
+	    for(int i=0; i<fieldnames.length; i++) {
+		    allanns[i] = fieldnames[i];
+	    }
+	    for(int i=fieldnames.length; i<allanns.length; i++) {
+		    allanns[i] = annotations[i-fieldnames.length];
+	    }
+	    return allanns;
 
-    	String[] fieldnames = ((ISlideData)featuresList.get(0)).getSlideMetaData().getFieldNames();
-    	
-    	String[] _annotations = MevAnnotation.getFieldNames();
-    	Vector<String> filledAnnotations = new Vector<String>();
-    	IAnnotation annot;
-
-    	//For each ISlideDataElement in featuresList, check which annotation
-    	//fields contains a value. If no value is found for an entire annotation field
-    	//don't add the name of that field to the features list.
-    	if(isAnnotationLoaded()) {
-	    	ISlideData isd = (ISlideData)featuresList.get(0);
-			for(int j=0; j<_annotations.length; j++) {
-				for(int i=0; i<isd.getSize(); i++) {
-					annot = isd.getSlideDataElement(i).getElementAnnotation();
-	    			if(annot.getAttribute(_annotations[j]) != null && !annot.getAttribute(_annotations[j])[0].equalsIgnoreCase("na")) {
-	    				filledAnnotations.add(_annotations[j]);
-	    				break;
-	    			}
-	    		}
-	    	}
-    	}
-    	
-		String[] temp = new String[filledAnnotations.size() + fieldnames.length];
-    	for(int i=0; i<fieldnames.length; i++ ) {
-    		temp[i] = fieldnames[i];
-    	}
-    	for(int i=fieldnames.length; i<temp.length; i++) {
-    		temp[i] = filledAnnotations.get(i-fieldnames.length);
-    	}
-        return temp;
     }
     
     /**
@@ -2962,19 +2942,15 @@ public class MultipleArrayData implements IData {
         	boolean hasAnnotation = false;
         	for(int i=0; i<indices.length; i++) {
         		String thisAnnot = this.getElementAnnotation(indices[i], fieldName)[0];
-        		if(thisAnnot != null && !thisAnnot.equalsIgnoreCase("na") && !thisAnnot.equalsIgnoreCase("n/a")) {
-        			hasAnnotation = true;
-        		}
+
         		_temp[i] = thisAnnot;
         	}
-        	if(hasAnnotation)
         		return _temp;
-            return null;
         }
 
         String [] annot = new String[indices.length];
 
-        for(int i = 0; i < annot.length; i++){
+        for(int i = 0; i < annot.length; i++) {
             annot[i] = this.getElementAttribute(indices[i], fieldIndex);
 
         }
