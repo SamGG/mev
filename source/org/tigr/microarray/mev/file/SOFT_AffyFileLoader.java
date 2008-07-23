@@ -585,5 +585,11 @@ public class SOFT_AffyFileLoader extends ExpressionFileLoader {
             public void nodeCollapsed(FileTreePaneEvent event) {}
             public void nodeExpanded(FileTreePaneEvent event) {}
         }
-    }    
+    }
+
+	@Override
+	public String getAnnotationFilePath() {
+		// TODO Auto-generated method stub
+		return null;
+	}    
 }
