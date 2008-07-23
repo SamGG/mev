@@ -1775,4 +1775,11 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
             public void nodeExpanded(FileTreePaneEvent event) {}
         }
     }
+
+
+
+	@Override
+	public String getAnnotationFilePath() {
+		return this.aflp.annFileListTextField.getText();
+	}
 }
