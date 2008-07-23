@@ -241,56 +241,55 @@ public class TMEV {
      * @throws IOException
      */
     private static void loadProperties() throws IOException {
-        
-        //Load default properties from the classpath
-        ConfMap defaultWebProps;
-        ConfMap defaultUserProps;
 
-        defaultUserProps = new ConfMap();
-        try {
-        	InputStream in = TMEV.class.getClassLoader().getResourceAsStream("org/tigr/microarray/mev/default.properties");
-        	if (in != null) {
-        		defaultUserProps.load(in); // Can throw IOException
-        	}
-        } catch (IOException ioe) {
-        	System.out.println("Could not load default properties from org/tigr/microarray/mev/default.properties");
+            props = new ConfMap();
+            try {
+            	InputStream in =
+    TMEV.class.getClassLoader().getResourceAsStream("org/tigr/microarray/mev/default.properties");
+            	if (in != null) {
+            		props.load(in); // Can throw IOException
+            	}
+            } catch (IOException ioe) {
+            	System.out.println("Could not load default properties from org/tigr/microarray/mev/default.properties");
+            }
+
+            /* 
+             * Try to get online and download default properties from tm4.org. If not available, skip. 
+             * If available, *override* stored user url locations with new ones from website. 
+             */
+            try {
+            	URLConnection conn = new
+    URL(MEV_URL_PROPERTIES_LOCATION).openConnection(); 
+            	InputStream is = conn.getInputStream();
+            	props.load(is);
+            } catch (IOException ioe) {
+            	System.out.println("Could not download default properties from tm4.org.");
+            }
+            
+        	/*
+        	 * load user's properties from mev.properties file, if any. 
+        	 */
+              if(mevUserDir.exists()) {
+            	 if(mevUserDir.isDirectory() && mevUserDir.canRead()) {
+            		 if(mevPropertiesFile.exists() &&
+    mevPropertiesFile.canRead()) {
+            			 InputStream in2 = new
+    FileInputStream(mevPropertiesFile);
+            			 props.load(in2);
+            			 in2.close();
+            		 } else {
+            			 mevPropertiesFile.createNewFile();
+            		 }
+            	 }
+             } else {
+            	 mevUserDir.mkdir();
+    			 mevPropertiesFile.createNewFile();
+             }
+              props.list(System.out);
+             writeProperties();
+
+
         }
-
-        /* 
-         * Try to get online and download default properties from tm4.org. If not available, skip. 
-         * If available, *override* stored user url locations with new ones from website. 
-         */
-    	defaultWebProps = new ConfMap(defaultUserProps);
-        try {
-        	URLConnection conn = new URL(MEV_URL_PROPERTIES_LOCATION).openConnection(); 
-        	InputStream is = conn.getInputStream();
-        	defaultWebProps.load(is);
-        } catch (IOException ioe) {
-        	System.out.println("Could not download default properties from tm4.org.");
-        }
-        
-
-    	props = new ConfMap(defaultWebProps);
-
-    	/*
-    	 * load user's properties from mev.properties file, if any. 
-    	 */
-          if(mevUserDir.exists()) {
-        	 if(mevUserDir.isDirectory() && mevUserDir.canRead()) {
-        		 if(mevPropertiesFile.exists() && mevPropertiesFile.canRead()) {
-        			 InputStream in2 = new FileInputStream(mevPropertiesFile);
-        			 props.load(in2);
-        			 in2.close();
-        		 } else {
-        			 mevPropertiesFile.createNewFile();
-        		 }
-        	 }
-         } else {
-        	 mevUserDir.mkdir();
-			 mevPropertiesFile.createNewFile();
-         }
-         writeProperties();
-    }
     
     public static boolean readPreferencesFile(File inputFile) {
         BufferedReader reader = null;
