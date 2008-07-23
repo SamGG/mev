@@ -70,7 +70,7 @@ public class AnnotationFileReader {
 
     	MevAnnotation annotationObj; 
     	this.columnNames=getColumnHeader(affyFIle);
-    	String _temp=AnnotationFieldConstants.NOT_AVAILABLE;
+    	String _temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
     	Vector<String> _tmpGO=new Vector<String>();
     	String orgName="";
     	String chipType="";
@@ -138,57 +138,57 @@ public class AnnotationFileReader {
     				//System.out.println("clone id:"+probeID);
     			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.GENBANK_ACC)&&index==i){
     				if(_temp==null){
-    					_temp=AnnotationFieldConstants.NOT_AVAILABLE;
+    					_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
     				}
     				annotationObj.setGenBankAcc(_temp);
     				//System.out.println("Genbank acc:"+_temp);
     			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.UNIGENE_ID)&&index==i){
     				if(_temp==null){
-    					_temp=AnnotationFieldConstants.NOT_AVAILABLE;
+    					_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
     				}
     				annotationObj.setUnigeneID(_temp);
     			//	System.out.println("Unigene id:"+_temp);
     			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.GENE_TITLE)&&index==i){ 
     				if(_temp==""){
-    					_temp=AnnotationFieldConstants.NOT_AVAILABLE;
+    					_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
     				}
     				annotationObj.setGeneTitle(_temp);
     				//System.out.println("Gene_Title:"+_temp);
     			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.GENE_SYMBOL)&&index==i){ 
     				if(_temp==null){
-    					_temp=AnnotationFieldConstants.NOT_AVAILABLE;
+    					_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
     				}
     				annotationObj.setGeneSymbol(_temp);
     			//	System.out.println("Gene Symbol:"+_temp);
     			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.CHR_CYTOBAND)&&index==i){
     				if(_temp==null){
-    					_temp=AnnotationFieldConstants.NOT_AVAILABLE;
+    					_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
     				}
     				setAlignmentInfo(_temp, annotationObj);
     			//	System.out.println("Cytoband:"+_temp);
     			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.ENTREZ_ID)&&index==i){
     				if(_temp==null){
-    					_temp=AnnotationFieldConstants.NOT_AVAILABLE;
+    					_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
     				}
     				annotationObj.setLocusLinkID(_temp);
     			//	System.out.println("Entrez id:"+_temp);
     			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.REFSEQ_ACC)&&index==i){
     				if(_temp==null){
-    					_temp=AnnotationFieldConstants.NOT_AVAILABLE;
+    					_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
     				}
     				String mRnaRefSeqs[] = parsemRnaIds(_temp);
 			 		annotationObj.setRefSeqTxAcc(mRnaRefSeqs);
     			//	System.out.println("RefSeq Acc:"+_temp);
     			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.GO_TERMS)&&index==i){
     				if(_temp==null){
-    					_temp=AnnotationFieldConstants.NOT_AVAILABLE;
+    					_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
     				}
     				 _tmpGo = parseGoTerms(_temp, "///"); 
     				annotationObj.setGoTerms((String[]) _tmpGo.toArray(new String[_tmpGo.size()]));
     			//	System.out.println("GO_Terms:"+_temp);
     			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.TGI_TC)&&index==i){
     				if(_temp==null){
-    					_temp=AnnotationFieldConstants.NOT_AVAILABLE;
+    					_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
     				}
     				annotationObj.setTgiTC(_temp);
     			//	System.out.println("TGI_TC:"+_temp);
@@ -272,8 +272,8 @@ public class AnnotationFileReader {
     	 */
     	//chr6:30964144-30975910 (+) // 95.63 // p21.33 /// chr6_cox_hap1:2304770-2316538 (+) // 95.56 // /// chr6_qbl_hap2:2103099-2114867 (+) // 95.45 //
     	if(!temp.trim().startsWith("chr")) { //Alignment info not available
-    		obj.setProbeStrand(AnnotationFieldConstants.NOT_AVAILABLE);
-        	obj.setProbeChromosome(AnnotationFieldConstants.NOT_AVAILABLE);
+    		obj.setProbeStrand(ChipAnnotationFieldConstants.NOT_AVAILABLE);
+        	obj.setProbeChromosome(ChipAnnotationFieldConstants.NOT_AVAILABLE);
         	try {
         		obj.setProbeTxStartBP("-1");
         		obj.setProbeTxEndBP("-1");
