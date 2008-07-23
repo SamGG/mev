@@ -874,6 +874,16 @@ public class Mas5FileLoader extends ExpressionFileLoader {
             public void nodeCollapsed(FileTreePaneEvent event) {}
             public void nodeExpanded(FileTreePaneEvent event) {}
         }
-    }  
+    }
+
+
+
+
+
+	@Override
+	public String getAnnotationFilePath() {
+		return this.sflp.annFileListTextField.getText();
+		
+	}  
     }
 
