@@ -537,11 +537,8 @@ public class PCA extends AbstractAlgorithm {
 		result.addMatrix("U", An.transpose().times(T));
 		break;
 	    case 3:
-	    System.out.println("useShortcut = " + useShortcut);
 	    if (!useShortcut){
-	    	System.out.println("long cut-- T dims: "+ T.getColumnDimension()+ " X " + T.getRowDimension()+"  An dims: " + An.getColumnDimension() + " X " + An.getRowDimension());
-		
-		    result.addMatrix("U", An.transpose().times(T));
+	    	result.addMatrix("U", An.transpose().times(T));
 		    break;
 	    }
 	    	
@@ -552,7 +549,6 @@ public class PCA extends AbstractAlgorithm {
 		    D.set(i,i,1.0f/(float)Math.sqrt(D.get(i,i)));
 		}
 		T = An.times(Q.times(D));
-		System.out.println("T dims: "+ T.getColumnDimension()+ " X " + T.getRowDimension()+"  An dims: " + An.getColumnDimension() + " X " + An.getRowDimension());
 		result.addMatrix("U", An.transpose().times(T));
 		break;
 	    default:;
