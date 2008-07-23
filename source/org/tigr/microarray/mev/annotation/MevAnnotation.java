@@ -69,7 +69,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 		String[]_temp=(String[])annotHash.get(AnnotationFieldConstants.REFSEQ_ACC);
 		if(_temp==null) {
 			_temp=new String[1];
-			_temp[0]=AnnotationFieldConstants.NOT_AVAILABLE;
+			_temp[0]=ChipAnnotationFieldConstants.NOT_AVAILABLE;
 			return _temp;
 		}else
 			return _temp; 
@@ -78,7 +78,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 	public String getGenBankAcc(){
 		String _temp=(String)annotHash.get(AnnotationFieldConstants.GENBANK_ACC);
 		if(_temp==null) {
-			_temp=AnnotationFieldConstants.NOT_AVAILABLE;
+			_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
 			return _temp;
 		}else
 			return _temp;
@@ -88,7 +88,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 	public String getGeneID(){
 		String _temp=(String)annotHash.get(AnnotationFieldConstants.ENTREZ_ID);
 		if(_temp==null) {
-			_temp=AnnotationFieldConstants.NOT_AVAILABLE;
+			_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
 			return _temp;
 		}else
 			return _temp;
@@ -100,7 +100,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 	public String getEntrezGeneID(){
 		String _temp=(String)annotHash.get(AnnotationFieldConstants.ENTREZ_ID);
 		if(_temp==null) {
-			_temp=AnnotationFieldConstants.NOT_AVAILABLE;
+			_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
 			return _temp;
 		}else
 			return _temp;
@@ -111,7 +111,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 	public String getLocusLinkID(){
 		String _temp=(String)annotHash.get(AnnotationFieldConstants.ENTREZ_ID);
 		if(_temp==null) {
-			_temp=AnnotationFieldConstants.NOT_AVAILABLE;
+			_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
 			return _temp;
 		}else
 			return _temp;
@@ -123,7 +123,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 	public String getGeneSymbol(){
 		String _temp=(String)annotHash.get(AnnotationFieldConstants.GENE_SYMBOL);
 		if(_temp==null) {
-			_temp=AnnotationFieldConstants.NOT_AVAILABLE;
+			_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
 			return _temp;
 		}else
 			return _temp;
@@ -134,7 +134,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 	public String getGeneTitle(){
 		String _temp=(String)annotHash.get(AnnotationFieldConstants.GENE_TITLE);
 		if(_temp==null) {
-			_temp=AnnotationFieldConstants.NOT_AVAILABLE;
+			_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
 			return _temp;
 		}else
 			return _temp;
@@ -145,7 +145,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 	public String getProbeCytoband(){
 		String _temp=(String)annotHash.get(AnnotationFieldConstants.CYTOBAND);
 		if(_temp==null) {
-			_temp=AnnotationFieldConstants.NOT_AVAILABLE;
+			_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
 			return _temp;
 		}else
 			return _temp;
@@ -160,7 +160,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 	public String getProbeChromosome(){
 		String _temp=(String)annotHash.get(AnnotationFieldConstants.CHR);
 		if(_temp==null) {
-			_temp=AnnotationFieldConstants.NOT_AVAILABLE;
+			_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
 			return _temp;
 		}else
 			return _temp;
@@ -178,7 +178,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 	 public String getProbeStrand(){
 		 String _temp=(String)annotHash.get(AnnotationFieldConstants.STRAND);
 			if(_temp==null) {
-				_temp=AnnotationFieldConstants.NOT_AVAILABLE;
+				_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
 				return _temp;
 			}else
 				return _temp;
@@ -210,7 +210,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 	public String getProbeSequence(){
 		String _temp=(String)annotHash.get(AnnotationFieldConstants.SEQUENCE);
 		if(_temp==null) {
-			_temp=AnnotationFieldConstants.NOT_AVAILABLE;
+			_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
 			return _temp;
 		}else
 			return _temp;
@@ -222,7 +222,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 		String[] _temp=(String[])annotHash.get(AnnotationFieldConstants.PROTEIN_ACC);
 		if(_temp==null) {
 			_temp=new String[1];
-			_temp[0]=AnnotationFieldConstants.NOT_AVAILABLE;
+			_temp[0]=ChipAnnotationFieldConstants.NOT_AVAILABLE;
 			return _temp;
 		}else
 			return _temp;
@@ -234,7 +234,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 	public int getProbeTxLengthInBP() throws Exception {
 		String _temp=(String)annotHash.get(AnnotationFieldConstants.TX_END);
 		if(_temp==null) {
-			_temp=AnnotationFieldConstants.NOT_AVAILABLE;
+			_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
 			//System.out.println("if na:"+Integer.parseInt(_temp));
 			return Integer.parseInt(_temp);
 		}else
@@ -260,7 +260,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 		String[] _temp=(String[])annotHash.get(AnnotationFieldConstants.BIO_CARTA);
 		if(_temp==null) {
 			_temp=new String[1];
-			_temp[0]=AnnotationFieldConstants.NOT_AVAILABLE;
+			_temp[0]=ChipAnnotationFieldConstants.NOT_AVAILABLE;
 			return _temp;
 		}else
 			return _temp;
@@ -272,7 +272,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 		String[] _temp=(String[])annotHash.get(AnnotationFieldConstants.KEGG);
 		if(_temp==null) {
 			_temp=new String[1];
-			_temp[0]=AnnotationFieldConstants.NOT_AVAILABLE;
+			_temp[0]=ChipAnnotationFieldConstants.NOT_AVAILABLE;
 			return _temp;
 		}else
 			return _temp;
@@ -285,7 +285,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 	public String getProbeDesc(){
 		String _temp=(String)annotHash.get(AnnotationFieldConstants.DESC);
 		if(_temp==null) {
-			_temp=AnnotationFieldConstants.NOT_AVAILABLE;
+			_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
 			return _temp;
 		}else
 			return _temp;
@@ -296,7 +296,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 	public String getUnigeneID() {
 		String _temp=(String)annotHash.get(AnnotationFieldConstants.UNIGENE_ID);
 		if(_temp==null) {
-			_temp=AnnotationFieldConstants.NOT_AVAILABLE;
+			_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
 			return _temp;
 		}else
 			return _temp;
@@ -311,7 +311,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 		String[] _temp=(String[])annotHash.get(AnnotationFieldConstants.GO_TERMS);
 		if(_temp==null) {
 			_temp=new String[1];
-			_temp[0]=AnnotationFieldConstants.NOT_AVAILABLE;
+			_temp[0]=ChipAnnotationFieldConstants.NOT_AVAILABLE;
 			return _temp;
 		}else
 			return _temp;
@@ -322,7 +322,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 	public String getTgiTC(){
 		String _temp=(String)annotHash.get(AnnotationFieldConstants.TGI_TC);
 		if(_temp==null) {
-			_temp=AnnotationFieldConstants.NOT_AVAILABLE;
+			_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
 			return _temp;
 		}else
 			return _temp;
@@ -579,7 +579,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 			_temp[0]=temp;
 			
 			if(temp==null) {
-				_temp[0]=AnnotationFieldConstants.NOT_AVAILABLE;
+				_temp[0]=ChipAnnotationFieldConstants.NOT_AVAILABLE;
 			}
 			return _temp;
 
@@ -590,7 +590,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 			_temp = (String[])annotHash.get(attr);
 			if (_temp == null) {
 				_temp = new String[1];
-				_temp[0] = AnnotationFieldConstants.NOT_AVAILABLE;
+				_temp[0] = ChipAnnotationFieldConstants.NOT_AVAILABLE;
 				//	System.out.println("getAttribute():MevAnnotation "+_temp[0] );
 
 			}
@@ -599,7 +599,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 		
 		/*}else {
 			String[]_temp=new String[1];
-			_temp[0]=AnnotationFieldConstants.NOT_AVAILABLE;
+			_temp[0]=ChipAnnotationFieldConstants.NOT_AVAILABLE;
 			return _temp;
 		}*/
 			
@@ -615,7 +615,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 		_temp = (String[])annotHash.get(attr);
 		if (_temp == null) {
 			_temp = new String[1];
-			_temp[0] = AnnotationFieldConstants.NOT_AVAILABLE;
+			_temp[0] = ChipAnnotationFieldConstants.NOT_AVAILABLE;
 			_tempAttr = new AnnoAttributeObj(attr, _temp);
 			return _tempAttr;
 		}
