@@ -652,6 +652,8 @@ public class ClusterSelector extends JPanel {
         
         public void mousePressed(MouseEvent evt){
             clusterSamplesTable.repaint();
+            clusterSamplesTable.updateUI();
+            clusterSamplesTable.doLayout();
             scrollPane.updateUI();
           
         }
