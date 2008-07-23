@@ -1825,4 +1825,10 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
 
     
     }
+
+
+	@Override
+	public String getAnnotationFilePath() {
+		return this.aflp.annFileListTextField.getText();
+	}
 }
