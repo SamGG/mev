@@ -918,6 +918,14 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
       
         
        
-    }  
+    }
+
+
+	@Override
+	public String getAnnotationFilePath() {
+		// TODO Auto-generated method stub
+		return this.sflp.annFileListTextField.getText();
+		
+	}  
     }
 
