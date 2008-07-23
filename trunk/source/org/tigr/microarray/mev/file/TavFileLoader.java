@@ -916,4 +916,10 @@ public class TavFileLoader extends ExpressionFileLoader {
             public void nodeExpanded(FileTreePaneEvent event) {}
         }
     }
+
+	@Override
+	public String getAnnotationFilePath() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
