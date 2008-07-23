@@ -648,6 +648,14 @@ public class GenePixFileLoader extends ExpressionFileLoader {
         }
 
     
-    }  
+    }
+
+
+@Override
+public String getAnnotationFilePath() {
+	
+	
+	return null;
+}  
   
 }
