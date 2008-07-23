@@ -285,7 +285,6 @@ public class TMEV {
             	 mevUserDir.mkdir();
     			 mevPropertiesFile.createNewFile();
              }
-              props.list(System.out);
              writeProperties();
 
 
