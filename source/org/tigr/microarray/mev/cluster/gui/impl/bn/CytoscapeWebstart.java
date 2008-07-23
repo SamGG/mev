@@ -10,6 +10,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -31,9 +32,13 @@ public class CytoscapeWebstart {
      */
     public static void onWebstartCytoscape(Vector netFiles) {
     	//TODO
-    	//Read code base from property file
-    	String codeBase = "'http://www.cytoscape.org/tut/webstart/'";
-    	String jnlpLoc = createGaggleCytoscapeJNLP(codeBase, netFiles);
+    	//Read code base and lib path from property file
+    	//String codeBase = "'http://www.cytoscape.org/tut/webstart/'";
+    	Hashtable repInfo = BNDownloadManager.getRepositoryInfoCytoscape();
+    	String codeBase = ((String)repInfo.get("cytoscape_webstart")).trim();
+    	String libDir = ((String)repInfo.get("cytoscape_lib_dir")).trim();
+    	
+    	String jnlpLoc = createGaggleCytoscapeJNLP(codeBase, libDir, netFiles);
     	String jnlpURI = TMEV.getDataPath() + File.separator + BNConstants.RESULT_DIR + File.separator + BNConstants.CYTOSCAPE_URI;
     	
     	try {
@@ -63,6 +68,162 @@ public class CytoscapeWebstart {
             e.printStackTrace();
         }
     }
+    
+    /**
+     * JNLP file created from Gagggle code Base
+     * @param codeBase
+     * @param libDir
+     * @param files
+     * @return
+     */
+    private static String createGaggleCytoscapeJNLP(String codeBase, String libDir, Vector<String> files) {
+    	String xml = "";
+    	xml = "<?xml version='1.0' encoding='utf-8'?>";
+    	xml += "<jnlp";
+    	xml += "  codebase='http://" + codeBase + "'>";
+    	xml += "  <information>";
+    	xml += "    <title>Cytoscape 2.6.0 - Blank Slate</title>";
+    	xml += "    <vendor> ISB (2007-04)</vendor>";
+    	xml += "    <homepage href='docs/help.html'/>";
+    	xml += "    <offline-allowed/>";
+    	xml += "	<icon href='http://gaggle.systemsbiology.net/images/icons/gaggle_icon.gif'/><icon kind='splash' href='http://gaggle.systemsbiology.net/images/icons/gaggle_splash.gif'/>";
+    	xml += "  </information>";
+    	xml += "  <security>";
+    	xml += "      <all-permissions/>";
+    	xml += "  </security>";
+    	xml += "  <resources>";
+    	xml += "	<j2se version='1.5+' max-heap-size='1024M' />";
+    	xml += "	<jar href='" + libDir + "cytoscape.jar'/>";
+    	xml += "	<jar href='" + libDir + "FastInfoset.jar'/>";
+    	xml += "	<jar href='" + libDir + "activation.jar'/>";
+    	xml += "	<jar href='" + libDir + "biojava-1.4.jar'/>";
+    	xml += "	<jar href='" + libDir + "colt.jar'/>";
+    	xml += "	<jar href='" + libDir + "coltginy.jar'/>";
+    	xml += "	<jar href='" + libDir + "com-nerius-math-xform.jar'/>";
+    	xml += "	<jar href='" + libDir + "commons-cli-1.x-cytoscape-custom.jar'/>";
+    	xml += "	<jar href='" + libDir + "concurrent.jar'/>";
+    	xml += "	<jar href='" + libDir + "cytoscape-cruft-obo.jar'/>";
+    	xml += "	<jar href='" + libDir + "cytoscape-geom-rtree.jar'/>";
+    	xml += "	<jar href='" + libDir + "cytoscape-geom-spacial.jar'/>";
+    	xml += "	<jar href='" + libDir + "cytoscape-graph-dynamic.jar'/>";
+    	xml += "	<jar href='" + libDir + "cytoscape-graph-fixed.jar'/>";
+    	xml += "	<jar href='" + libDir + "cytoscape-render-export.jar'/>";
+    	xml += "	<jar href='" + libDir + "cytoscape-render-immed.jar'/>";
+    	xml += "	<jar href='" + libDir + "cytoscape-render-stateful.jar'/>";
+    	xml += "	<jar href='" + libDir + "cytoscape-task.jar'/>";
+    	xml += "	<jar href='" + libDir + "cytoscape-util-intr.jar'/>";
+    	xml += "	<jar href='" + libDir + "ding.jar'/>";
+    	xml += "	<jar href='" + libDir + "fing.jar'/>";
+    	xml += "	<jar href='" + libDir + "freehep-export-2.1.1.jar'/>";
+    	xml += "	<jar href='" + libDir + "freehep-graphics2d-2.1.1.jar'/>";
+    	xml += "	<jar href='" + libDir + "freehep-graphicsio-2.1.1.jar'/>";
+    	xml += "	<jar href='" + libDir + "freehep-graphicsio-java-2.1.1.jar'/>";
+    	xml += "	<jar href='" + libDir + "freehep-graphicsio-ps-2.1.1.jar'/>";
+    	xml += "	<jar href='" + libDir + "freehep-graphicsio-svg-2.1.1.jar'/>";
+    	xml += "	<jar href='" + libDir + "freehep-io-2.0.2.jar'/>";
+    	xml += "	<jar href='" + libDir + "freehep-jas-plotter-2.2.jar'/>";
+    	xml += "	<jar href='" + libDir + "freehep-swing-2.0.3.jar'/>";
+    	xml += "	<jar href='" + libDir + "freehep-util-2.0.2.jar'/>";
+    	xml += "	<jar href='" + libDir + "freehep-xml-2.1.1.jar'/>";
+    	xml += "	<jar href='" + libDir + "giny.jar'/>";
+    	xml += "	<jar href='" + libDir + "glf.jar'/>";
+    	xml += "	<jar href='" + libDir + "http.jar'/>";
+    	xml += "	<jar href='" + libDir + "i4jruntime.jar'/>";
+    	xml += "	<jar href='" + libDir + "itext-2.0.4.jar'/>";
+    	xml += "	<jar href='" + libDir + "jaxb-api.jar'/>";
+    	xml += "	<jar href='" + libDir + "jaxb-impl.jar'/>";
+    	xml += "	<jar href='" + libDir + "jaxws-api.jar'/>";
+    	xml += "	<jar href='" + libDir + "jaxws-rt.jar'/>";
+    	xml += "	<jar href='" + libDir + "jaxws-tools.jar'/>";
+    	xml += "	<jar href='" + libDir + "jdom-1.0.jar'/>";
+    	xml += "	<jar href='" + libDir + "jhall.jar'/>";
+    	xml += "	<jar href='" + libDir + "jnlp.jar'/>";
+    	xml += "	<jar href='" + libDir + "jsr173_1.0_api.jar'/>";
+    	xml += "	<jar href='" + libDir + "jsr181-api.jar'/>";
+    	xml += "	<jar href='" + libDir + "jsr250-api.jar'/>";
+    	xml += "	<jar href='" + libDir + "junit.jar'/>";
+    	xml += "	<jar href='" + libDir + "l2fprod-common-all.jar'/>";
+    	xml += "	<jar href='" + libDir + "looks-2.1.4.jar'/>";
+    	xml += "	<jar href='" + libDir + "phoebe.jar'/>";
+    	xml += "	<jar href='" + libDir + "piccolo.jar'/>";
+    	xml += "	<jar href='" + libDir + "resolver.jar'/>";
+    	xml += "	<jar href='" + libDir + "saaj-api.jar'/>";
+    	xml += "	<jar href='" + libDir + "saaj-impl.jar'/>";
+    	xml += "	<jar href='" + libDir + "sjsxp.jar'/>";
+    	xml += "	<jar href='" + libDir + "stax-ex.jar'/>";
+    	xml += "	<jar href='" + libDir + "streambuffer.jar'/>";
+    	xml += "	<jar href='" + libDir + "swing-layout-1.0.1.jar'/>";
+    	xml += "	<jar href='" + libDir + "swingx-2006_10_27.jar'/>";
+    	xml += "	<jar href='" + libDir + "tclib.jar'/>";
+    	xml += "	<jar href='" + libDir + "undo.support.jar'/>";
+    	xml += "	<jar href='" + libDir + "violinstrings-1.0.2.jar'/>";
+    	xml += "	<jar href='" + libDir + "wizard.jar'/>";
+
+    	xml += "	<jar href='" + libDir + "plugins/AutomaticLayout.jar'/>";
+    	xml += "	<jar href='" + libDir + "plugins/CyGoose.jar'/>";
+    	xml += "	<jar href='" + libDir + "plugins/CytoscapeEditor.jar'/>";
+    	xml += "	<jar href='" + libDir + "plugins/GraphMerge.jar'/>";
+    	xml += "	<jar href='" + libDir + "plugins/ManualLayout.jar'/>";
+    	xml += "	<jar href='" + libDir + "plugins/SBMLReader.jar'/>";
+    	xml += "	<jar href='" + libDir + "plugins/TableImport.jar'/>";
+    	xml += "	<jar href='" + libDir + "plugins/biopax.jar'/>";
+    	xml += "	<jar href='" + libDir + "plugins/browser.jar'/>";
+    	xml += "	<jar href='" + libDir + "plugins/cPath.jar'/>";
+    	xml += "	<jar href='" + libDir + "plugins/cpath2.jar'/>";
+    	xml += "	<jar href='" + libDir + "plugins/filter.jar'/>";
+    	xml += "	<jar href='" + libDir + "plugins/filters.jar'/>";
+    	xml += "	<jar href='" + libDir + "plugins/linkout.jar'/>";
+    	xml += "	<jar href='" + libDir + "plugins/psi_mi.jar'/>";
+    	xml += "	<jar href='" + libDir + "plugins/quick_find.jar'/>";
+    	xml += "	<jar href='" + libDir + "plugins/yLayouts.jar'/>";	
+    		
+    	xml += " </resources>";
+    	xml += "  <application-desc main-class='cytoscape.CyMain'>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>csplugins.layout.LayoutPlugin</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>org.mskcc.biopax_plugin.plugin.BioPaxPlugIn</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>browser.AttributeBrowserPlugin</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>org.cytoscape.coreplugin.cpath.plugin.CPathPlugIn</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>cytoscape.editor.CytoscapeEditorPlugin</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>filter.cytoscape.CsFilter</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>cytoscape.filters.FilterPlugin</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>GraphMerge.GraphMerge</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>linkout.LinkOutPlugin</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>ManualLayout.ManualLayoutPlugin</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>org.cytoscape.coreplugin.psi_mi.plugin.PsiMiPlugIn</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>csplugins.quickfind.plugin.QuickFindPlugIn</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>sbmlreader.SBMLReaderPlugin</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>edu.ucsd.bioeng.coreplugin.tableImport.TableImportPlugin</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>yfiles.YFilesLayoutPlugin</argument>";
+    	xml += "    <argument>-p</argument>";
+    	xml += "    <argument>org.systemsbiology.cytoscape.GagglePlugin</argument>";
+    	xml += "    <argument>-V</argument>";
+    	xml += "    <argument>file:///C:/cscie75/Projects/MeV/MeV_SVN/plugins/vizmap.props</argument>";
+    	//xml += "    <argument>-N</argument>";
+    	//xml += "    <argument>file:///C:/cscie75/Projects/MeV/MeV_SVN/data/BN_RnaI/results/May_27_08_22_55_27_343TabuSearch_BAYES_boot_result_4_0.7.sif</argument>";
+    	for(int i=0; i < files.size(); i++) {
+    		xml += "<argument>-N</argument>";
+        	xml += "<argument>file:///" + files.get(i).replace("\\", "/") + "</argument>";
+    	}
+    	xml += "  </application-desc>";
+    	xml += "</jnlp>";
+    	return xml;
+    }
+    
     /**
      * JNLP file created from Gagggle code Base
      * @param codeBase
