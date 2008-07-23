@@ -20,7 +20,7 @@
     <property name="lib.dir" location="${home.dir}/lib"/>
     <property name="plugins.dir" location="${home.dir}/plugins"/>
 	<property name="java.target.version" value="1.5"/>
-	<property name="version" value="4_2_RC2"/> 
+	<property name="version" value="4_2_RC3"/> 
 	<property name="package.dir" location="${home.dir}/deploy"/>
 
 
