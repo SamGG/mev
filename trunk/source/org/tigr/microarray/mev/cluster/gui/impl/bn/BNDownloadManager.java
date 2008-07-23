@@ -6,6 +6,7 @@
  *******************************************************************************/
 package org.tigr.microarray.mev.cluster.gui.impl.bn;
 
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -171,6 +172,52 @@ public class BNDownloadManager {
 		return repHash;    	
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
+	public static Hashtable getRepositoryInfoCytoscape() {
+		Hashtable repHash = new Hashtable();
+
+		try {
+			URLConnection conn = new URL(FTP_CONFIG_URL).openConnection();    		    		
+
+			//add repository property hashes to the vector
+			repHash = parseConfigCytoscape(conn.getInputStream());			
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(new Frame(), "An error occurred when retrieving Web Repository Info.\n  Update request cannot be fulfilled.", "Cytoscape Launch Error", JOptionPane.ERROR_MESSAGE);
+		}
+
+		//return the vector of repository hashes
+		return repHash; 
+	}
+	
+	/**
+	 * 
+	 * @param is
+	 * @return
+	 * @throws IOException
+	 */
+	private static Hashtable parseConfigCytoscape(InputStream is) throws IOException{
+		
+		BufferedReader br = new BufferedReader(new InputStreamReader(is));
+		String [] keyValue;
+
+		Hashtable<String, String> currHash = new Hashtable<String, String>();
+		String line;
+		//loop through the file to parse into 
+		while((line = br.readLine())!= null) {
+			//comment line, if any
+			if(line.startsWith("#"))
+				continue;
+			keyValue = line.split("=");
+			//add the current property
+			System.out.println("URL Config: " + keyValue[0] + "-" + keyValue[1]);
+			currHash.put(keyValue[0], keyValue[1]);
+		}
+		return currHash;
+	}
 
 	/**
 	 * Populates a vector of Hashtables that contain properties
@@ -247,7 +294,8 @@ public class BNDownloadManager {
 		return pass1;
 	}
 
-	/** Downloads the file at sourceURL to output file (dest), returns true if successful
+	/** 
+	 * Downloads the file at sourceURL to output file (dest), returns true if successful
 	 */
 	private boolean downloadFile(String file, File dest) {//String sourceURL, File dest) {
 		BufferedInputStream bis;
