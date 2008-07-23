@@ -41,7 +41,8 @@ import org.tigr.microarray.mev.file.agilent.AgilentMevFileLoader;
 public class SuperExpressionFileLoader {
 
 	public static String DATA_PATH = TMEV.getDataPath();
-	public static String ANNOTATION_PATH=TMEV.getDataPath()+"/"+"Annotation";
+	
+	public static String ANNOTATION_PATH=TMEV.getSettingForOption("current-annotation-path");
 	
 	public final static ImageIcon ICON_COMPUTER = new ImageIcon(Toolkit
 			.getDefaultToolkit().getImage(
@@ -121,6 +122,7 @@ public class SuperExpressionFileLoader {
 		this.viewer = viewer;
 		loader = new Loader();
 		initializeDataPath();
+		initializeAnnotationPath();
 		initializeFileLoaders();
 		initializeGUI();
 	}
@@ -561,6 +563,45 @@ public class SuperExpressionFileLoader {
 				DATA_PATH = file.getPath();
 		}
 	}
+	
+	
+	public void initializeAnnotationPath(){
+		String newPath = TMEV.getSettingForOption("current-annotation-path");	
+//		System.out.println("initializeAnnotationPath:"+newPath);
+		File file;
+		if (newPath == null) {
+			file = new File("/data/Annotation");
+			if (file != null)
+				ANNOTATION_PATH = file.getPath();
+			return;
+		} else {
+			file = new File(newPath);
+		}
+	
+//		newPath = (new File(newPath)).getPath();
+      newPath = file.getPath();
+
+		String sep = System.getProperty("file.separator");
+
+		// if Linux or Mac / goes in front of the path
+		if (sep.equals("/"))
+			newPath = sep + newPath;
+
+//		file = new File(newPath);
+		if (file.exists()) {
+			ANNOTATION_PATH = newPath;
+		} //else {
+//			file = TMEV.getFile("/data/Annotation");
+//			if (file != null)
+//				ANNOTATION_PATH = file.getPath();
+//		}
+
+	}
+	
+	
+	
+	
+	
 
 	public void setLoadEnabled(boolean state) {
 		loadButton.setEnabled(state);
@@ -873,8 +914,13 @@ public class SuperExpressionFileLoader {
 		return data;
 	}
 
-	private void updateDataPath(String dataPath) {
-		if (dataPath == null) {
+	//private void updateDataPath(String dataPath) {
+	private void updateDataPath(String dataPath, String annotationPath) {
+		/*if (dataPath == null) {
+			return;
+		}*/
+		
+		if(dataPath==null || annotationPath ==null){
 			return;
 		}
 		String renderedSep = "/";
@@ -886,7 +932,7 @@ public class SuperExpressionFileLoader {
 		StringTokenizer stok = new StringTokenizer(dataPath, sep);
 
 		DATA_PATH = new String();
-
+		ANNOTATION_PATH=new String();
 		String str;
 		while (stok.hasMoreTokens() && stok.countTokens() > 1) {
 			str = stok.nextToken();
@@ -894,7 +940,21 @@ public class SuperExpressionFileLoader {
 			DATA_PATH += str + sep;
 		}
 		
+		//For remembering annotation path
+		 stok = new StringTokenizer(annotationPath, sep);
+		
+		while (stok.hasMoreTokens() && stok.countTokens() > 1) {
+			str = stok.nextToken();
+			renderedPath += str + renderedSep;
+			ANNOTATION_PATH += str + sep;
+		}
+		
+		
+		
+		
 		TMEV.setDataPath(DATA_PATH);
+		TMEV.storeProperty("current-annotation-path", ANNOTATION_PATH);
+		//TMEV.setAnnotationPath(ANNOTATION_PATH);
 	}
 
 	/*
@@ -983,7 +1043,7 @@ public class SuperExpressionFileLoader {
 					dataType = IData.DATA_TYPE_TWO_INTENSITY;
 				selectedFileLoader.dispose();
 				
-				updateDataPath(selectedFileLoader.getFilePath());
+				updateDataPath(selectedFileLoader.getFilePath(), selectedFileLoader.getAnnotationFilePath());
 				if (data != null) {
 					viewer.fireDataLoaded(toISlideDataArray(data), chipAnnotation, dataType);					
 				}
