@@ -89,6 +89,7 @@ public abstract class ExpressionFileLoader extends SlideLoaderProgressBar { // i
     public abstract JPanel getFileLoaderPanel();
     public abstract String getFilePath();
     public abstract void openDataPath();    
+    public abstract String getAnnotationFilePath();
     
     /**
      * Returns number of lines in the specified file.
