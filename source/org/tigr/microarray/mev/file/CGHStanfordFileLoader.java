@@ -875,4 +875,10 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
 
        
     }
+
+	@Override
+	public String getAnnotationFilePath() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
