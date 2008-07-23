@@ -486,6 +486,10 @@ public class StanfordFileLoader extends ExpressionFileLoader {
         return this.sflp.fileNameTextField.getText();
     }
     
+    public String getAnnotationFilePath(){
+    	return this.sflp.annFileListTextField.getText();
+    }
+    
     public void openDataPath() {
      //   this.sflp.openDataPath();
     	
