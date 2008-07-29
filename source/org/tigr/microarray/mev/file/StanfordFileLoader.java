@@ -102,7 +102,7 @@ public class StanfordFileLoader extends ExpressionFileLoader {
      * MAV needed to pass ont he the ref to MevAnnotation Obj for MAV Index
      **/
     private Hashtable _tempAnno=new Hashtable();
-    private MultipleArrayViewer mav=new MultipleArrayViewer();
+    private MultipleArrayViewer mav;
     
     protected MevAnnotation mevAnno=new MevAnnotation();
     //Added by Sarita
