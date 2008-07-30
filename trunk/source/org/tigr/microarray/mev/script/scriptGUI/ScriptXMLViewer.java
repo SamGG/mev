@@ -397,7 +397,7 @@ public class ScriptXMLViewer extends ViewerAdapter {
         if(scriptFile != null) {
             chooser = new JFileChooser(scriptFile.getPath());
         } else {
-            chooser = new JFileChooser(TMEV.getFile("/data/scripts/"));
+            chooser = new JFileChooser(new File(TMEV.getSettingForOption(ScriptManager.CURRENT_SCRIPT_PATH)));
         }
         
         if(chooser.showSaveDialog(new JPanel()) == JFileChooser.APPROVE_OPTION) {

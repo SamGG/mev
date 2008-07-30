@@ -73,7 +73,9 @@ import org.tigr.microarray.mev.script.util.ScriptTree;
  * @author braisted
  */
 public class ScriptManager implements Serializable {
-    public static final long serialVersionUID = 10001020103010001L;
+    public static final String CURRENT_SCRIPT_PATH = "current-script-path";
+
+	public static final long serialVersionUID = 10001020103010001L;
     
     /** Holds the Mev' ResultTree script mount point.
      */
@@ -127,7 +129,7 @@ public class ScriptManager implements Serializable {
     /** Loads a script following File selection.
      */
     public void loadScript() {
-        JFileChooser chooser = new JFileChooser(TMEV.getFile("data/scripts/"));
+        JFileChooser chooser = new JFileChooser(TMEV.getSettingForOption(CURRENT_SCRIPT_PATH));
         chooser.setMultiSelectionEnabled(false);
         boolean loadState;
         if( chooser.showOpenDialog(framework.getFrame()) == JFileChooser.APPROVE_OPTION ) {
@@ -294,7 +296,7 @@ public class ScriptManager implements Serializable {
      * @param doc <CODE>ScriptDocument</CODE> to save.
      */
     public void saveScript(ScriptDocument doc) {
-        JFileChooser chooser = new JFileChooser(TMEV.getFile("data/scripts/"));
+        JFileChooser chooser = new JFileChooser(TMEV.getSettingForOption(CURRENT_SCRIPT_PATH));
         if(chooser.showSaveDialog(new JFrame()) == JFileChooser.APPROVE_OPTION) {
             try {
                 writeScript(chooser.getSelectedFile(), doc);
