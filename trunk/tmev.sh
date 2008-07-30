@@ -1,7 +1,9 @@
 #!/bin/sh
 #***********************************************************************
 #
-# Copyright @ 1999-2007, Dana-Farber Cancer Institute (DFCI).
+# Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+# Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+# J. Craig Venter Institute (JCVI) and the University of Washington.
 # All rights reserved.
 #
 # This software is OSI Certified Open Source Software.
