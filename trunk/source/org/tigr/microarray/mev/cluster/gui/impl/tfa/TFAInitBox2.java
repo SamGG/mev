@@ -789,6 +789,8 @@ public class TFAInitBox2 extends AlgorithmDialog {
                     return;
         		}
                 Vector[][] bothFactorAssignments = getBothFactorAssignments();
+                if (bothFactorAssignments==null)
+                	return;
                 int[] cellSizes =new int[bothFactorAssignments.length*bothFactorAssignments[0].length];
                 //System.out.println("cellSizes.length = " + cellSizes.length);
                 int cellCounter = 0;
@@ -901,7 +903,7 @@ public class TFAInitBox2 extends AlgorithmDialog {
 	    			if (doubleAssigned){
 	    		        Object[] optionst = { "OK" };
 	    				JOptionPane.showOptionDialog(null, 
-	    						"The clusters you have chosen have overlapping samples. \n Each group must contain unique samples.", 
+	    						"The clusters you have chosen "+factorNames[0]+" have overlapping samples. \n Each group must contain unique samples.", 
 	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
 	    						optionst, optionst[0]);
 	    				return null;
@@ -934,7 +936,7 @@ public class TFAInitBox2 extends AlgorithmDialog {
 	    			if (doubleAssigned){
 	    		        Object[] optionst = { "OK" };
 	    				JOptionPane.showOptionDialog(null, 
-	    						"The clusters you have chosen have overlapping samples. \n Each group must contain unique samples.", 
+	    						"The clusters you have chosen for "+factorNames[1]+" have overlapping samples. \n Each group must contain unique samples.", 
 	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
 	    						optionst, optionst[0]);
 	    				return null;
@@ -972,6 +974,8 @@ public class TFAInitBox2 extends AlgorithmDialog {
         	factorAAssgn = getFactorAClusterAssignments();
         	factorBAssgn = getFactorBClusterAssignments();
         }
+        if (factorAAssgn==null||factorBAssgn==null)
+        	return null;
     	for (int i = 0; i < factorAAssgn.length; i++) {
             if ((factorAAssgn[i] != 0)&&(factorBAssgn[i] != 0)) {
                 bothFactorAssignments[factorAAssgn[i] - 1][factorBAssgn[i] - 1].add(new Integer(i));
