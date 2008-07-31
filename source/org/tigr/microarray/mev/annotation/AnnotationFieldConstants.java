@@ -39,7 +39,7 @@ public class AnnotationFieldConstants {
 	public static final String PROTEIN_ACC = "PROTEIN_ACC";
 	public static final String GENE_SYMBOL = "GENE_SYMBOL";
 	public static final String GENE_TITLE = "GENE_TITLE";
-	public static final String CYTOBAND = "CYTOBAND";
+	public static final String CYTOBAND = "CHR:TX_START-TX_END(STRAND)";
 	public static final String STRAND = "STRAND";
 	public static final String SEQUENCE = "SEQUENCE";
 	public static final String UNIGENE_ID = "UNIGENE_ID";
@@ -48,6 +48,6 @@ public class AnnotationFieldConstants {
 	public static final String KEGG = "KEGG";
 	public static final String DESC = "DESC";
 	public static final String TGI_TC = "TGI_TC";
-	public static final String CHR_CYTOBAND = "CHR:TX_START-TX_END(STRAND)";
+	//public static final String CHR_CYTOBAND = "CHR:TX_START-TX_END(STRAND)";
 	
 	}
