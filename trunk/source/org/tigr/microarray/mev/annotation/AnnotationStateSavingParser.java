@@ -124,7 +124,7 @@ public class AnnotationStateSavingParser {
        				}
        				annotationObj.setGeneSymbol(_temp);
        			//	System.out.println("Gene Symbol:"+_temp);
-       			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.CHR_CYTOBAND)&&index==i){
+       			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.CYTOBAND)&&index==i){
        				if(_temp==null){
        					_temp="NA";
        				}
@@ -307,7 +307,7 @@ public class AnnotationStateSavingParser {
 											AnnotationFieldConstants.UNIGENE_ID,
 											AnnotationFieldConstants.GENE_SYMBOL, 
 											AnnotationFieldConstants.GENE_TITLE,
-											AnnotationFieldConstants.CHR_CYTOBAND, 
+											AnnotationFieldConstants.CYTOBAND, 
 											AnnotationFieldConstants.GO_TERMS, 
 											AnnotationFieldConstants.TGI_TC};
 
