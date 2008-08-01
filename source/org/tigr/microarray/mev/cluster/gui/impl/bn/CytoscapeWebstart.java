@@ -52,7 +52,13 @@ public class CytoscapeWebstart {
     	}
     	
     	String jnlpLoc = createGaggleCytoscapeJNLP(codeBase, libDir, netFiles);
-    	String jnlpURI = TMEV.getDataPath() + File.separator + BNConstants.RESULT_DIR + File.separator + BNConstants.CYTOSCAPE_URI;
+    	// Figure out the location of the file location from the netFiles
+    	String filePath = (String)(netFiles.get(0));
+    	int index = filePath.indexOf(BNConstants.RESULT_DIR);
+    	String fileLoc = filePath.substring(0, index-1);
+    	//String jnlpURI = TMEV.getDataPath() + File.separator + BNConstants.RESULT_DIR + File.separator + BNConstants.CYTOSCAPE_URI;
+    	String jnlpURI = fileLoc + File.separator + BNConstants.RESULT_DIR + File.separator + BNConstants.CYTOSCAPE_URI;
+    	System.out.println("jnlpURI: " + jnlpURI);
     	
     	try {
             BufferedWriter out = new BufferedWriter(new FileWriter(jnlpURI));
