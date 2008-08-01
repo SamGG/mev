@@ -28,6 +28,46 @@ The algorithim uses DFS or Depth First Search to connect nodes in the intial see
 to complete. The GO Term option of directing edges is not yet fully developed.
 <br>
 
+<h2> Using Support Files created for standard arrays </h2>
+We have pre-created support files needed to run BN or LM analysis for some popular microarray platforms like Affymetrix, Agilent etc. Currently we are providing support files 3 species Human, Mouse & Rat. MeV comes preloaded with the files for 2 array types in the ~/data/BN_files folder.
+<ol>
+<li> Afymetrix Human U133 Plus 2 Array </li>
+<li> Affymetrix Mouse 430 2 Array </li>
+</ol>
+<ul>	
+	<li> Support file FTP Location:  <b> Human, Mouse &  Rat only</b> </li>
+	<ol>
+		<li> <a href="ftp://occams.dfci.harvard.edu/pub/bio/tgi/data/Resourcerer/Human">ftp://occams.dfci.harvard.edu/pub/bio/tgi/data/Resourcerer/Human</a>  </li>
+		<li> <a href="ftp://occams.dfci.harvard.edu/pub/bio/tgi/data/Resourcerer/Mouse">ftp://occams.dfci.harvard.edu/pub/bio/tgi/data/Resourcerer/Mouse</a>  </li>
+		<li> <a href="ftp://occams.dfci.harvard.edu/pub/bio/tgi/data/Resourcerer/Rat">ftp://occams.dfci.harvard.edu/pub/bio/tgi/data/Resourcerer/Rat</a>  </li>
+	</ol> 
+	<li> File Naming Conventions:  </li>
+	<ol>
+		<li> All BN/LM related files ends with *_BN.zip. E.g.: affy_HG-U133_Plus_2_BN.zip </li>
+		<li> All files start with array/chip vendor name, affy for Afymetrix. E.g.: affy_HG-U133_Plus_2_BN.zip </li>
+		<li> Vendor name is followed by chip/array name. E.g.: affy_HG-U133_Plus_2_BN.zip </li> 
+	</ol>
+	<li> Contents of zip files: All zip files contain 6 files </li>
+	<ol>
+		<li> affyID_accession.txt </li>
+		<li> res.txt </li>
+		<li> symArtsGeneDb.txt </li>
+		<li> symArtsPubmed.txt </li>
+		<li> all_ppi.txt </li>
+		<li> gbGO.txt </li>
+	</ol>
+	<li> Steps to use the pre-designed support files. Example array chosen for illustration is Affymetrix Human U133 Plus 2. To use any array follow the steps below:
+	Download your species & array specific file from the FTP location mentioned above. E.g. affy_HG-U133_Plus_2_BN.zip  </li>
+	<ol>
+		<li> Extract the contents of the zip under the following MeV directory: ~/data/BN_files/ </li>
+		<li> Once extracted, a folder by the array name will be created. In this case if the example file was downloaded, the following location will now exist: ~/data/BN_files/affy_HG-U133_Plus_2_BN </li>
+		<li> Verify all 6 files exist. </li>
+		<li> From Mev launch LM or BN module. </li>
+		<li> In the start-up dialogue make sure the ‘File(s) Location’ box points to the folder where the supporting files are downloaded for the species and array concerned. If the example array was chosen, the text box should point to ./data/BN_files/affy_HG-U133_Plus_2_BN folder. </li>
+		<li> Now you are ready to start the algorithm. </li>
+	</ol>
+</ul>
+
         </basefont>
     </body>
 </html>
