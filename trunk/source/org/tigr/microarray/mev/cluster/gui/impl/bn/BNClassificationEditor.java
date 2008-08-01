@@ -430,6 +430,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 								FileOutputStream fos = new FileOutputStream(fileName+i+".sif");
 								PrintWriter pw = new PrintWriter(fos, true);
 								//FromWekaToSif.fromWekaToSif(evalStrs[i], pw);	
+								//TODO pass probeIndexAssocHash structure here to access Annotation Model
 								FromWekaToSif.fromWekaToSif(evalStrs[i], pw, false);
 							}
 						} catch (Exception e){
@@ -463,6 +464,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 						}
 
 						// Remove edges below threshold
+						// TODO map edges to annotation attributes here
 						String bootNetFile = basePath+BNConstants.SEP+BNConstants.RESULT_DIR+BNConstants.SEP+
 						Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" +
 						"boot_result_"+numIterations+"_"+confThreshold+".sif";

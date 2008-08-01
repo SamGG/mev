@@ -25,6 +25,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.Hashtable;
 import java.util.Vector;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -1373,7 +1374,19 @@ public class BNInitDialog extends AlgorithmDialog {
 			} else if (command.equals("ok-command")) {
 				result = JOptionPane.OK_OPTION;
 				System.out.println("BN Dlg. OK Cmd");
-				//**
+				//Check to see if user is connected to internet
+				Hashtable repInfo = BNDownloadManager.getRepositoryInfoCytoscape();
+		    	String codeBase = ((String)repInfo.get("cytoscape_webstart")).trim();
+		    	String libDir = ((String)repInfo.get("cytoscape_lib_dir")).trim();
+		    	
+		    	if(codeBase == null || libDir == null) {
+		    		JOptionPane.showMessageDialog(new JFrame(), "Internet Connection error or Error reading properties file, will try with default values", "Cytoscape may not launch", JOptionPane.ERROR_MESSAGE);
+		    		return;
+		    	}
+				
+		    	BNConstants.setCodeBaseLocation(codeBase);
+		    	BNConstants.setLibDirLocation(libDir);
+		    	
 				//Check if cluster size exceeds max genes allowed
 				if(getSelectedCluster().getSize() > BNConstants.MAX_GENES) {
 					JOptionPane.showMessageDialog(parent, "Cluster size exceeds max gene limit of " + BNConstants.MAX_GENES + ". Please select or create a different one.", "Error!", JOptionPane.ERROR_MESSAGE);

@@ -131,4 +131,34 @@ public class BNConstants {
 	 * List of organisims that currently has data for KEGG priors support
 	 */
 	public static final String KEGG_ORG[] = new String[]{"Human", "Mouse", "Rat" };
+	
+	/**
+	 * Cytoscape webstart params and getters & setters
+	 */
+	private static String CODE_BASE = "";
+	private static String LIB_DIR = "";
+	private static boolean CODE_BASE_SET = false;
+	private static boolean LIB_DIR_SET = false;
+	
+	public static void setCodeBaseLocation(String path){
+		CODE_BASE = path;
+		CODE_BASE_SET = true;
+	}
+	
+	public static String getCodeBaseLocation(){
+		return CODE_BASE;
+	}
+	
+	public static void setLibDirLocation(String path){
+		LIB_DIR = path;
+		LIB_DIR_SET = true;
+	}
+	
+	public static String getLibDirLocation(){
+		return LIB_DIR;
+	}
+	
+	public static boolean isSetCytoscapeParams() {
+		return CODE_BASE_SET | LIB_DIR_SET;
+	}
 }

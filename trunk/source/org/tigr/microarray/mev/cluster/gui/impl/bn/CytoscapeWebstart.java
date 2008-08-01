@@ -33,10 +33,23 @@ public class CytoscapeWebstart {
     public static void onWebstartCytoscape(Vector netFiles) {
     	//TODO
     	//Read code base and lib path from property file
-    	//String codeBase = "'http://www.cytoscape.org/tut/webstart/'";
-    	Hashtable repInfo = BNDownloadManager.getRepositoryInfoCytoscape();
-    	String codeBase = ((String)repInfo.get("cytoscape_webstart")).trim();
-    	String libDir = ((String)repInfo.get("cytoscape_lib_dir")).trim();
+    	String codeBase = ""; //"'http://www.cytoscape.org/tut/webstart/'";
+    	String libDir = "";
+    	
+    	if(BNConstants.isSetCytoscapeParams()) {
+    		codeBase = BNConstants.getCodeBaseLocation();
+    		libDir = BNConstants.getLibDirLocation();
+    	} else {
+    		Hashtable repInfo = BNDownloadManager.getRepositoryInfoCytoscape();
+        	codeBase = ((String)repInfo.get("cytoscape_webstart")).trim();
+        	libDir = ((String)repInfo.get("cytoscape_lib_dir")).trim();
+    	}
+    		
+    	if(codeBase == null || libDir == null) {
+    		JOptionPane.showMessageDialog(new JFrame(), "Error reading properties file, will try with default values", "Cytoscape may not launch", JOptionPane.ERROR_MESSAGE);
+    		codeBase = "gaggle.systemsbiology.net/2007-04/cy/blankSlate/cy2.6.0";
+    		libDir = "/2007-04/jars_cy2.6.0/";
+    	}
     	
     	String jnlpLoc = createGaggleCytoscapeJNLP(codeBase, libDir, netFiles);
     	String jnlpURI = TMEV.getDataPath() + File.separator + BNConstants.RESULT_DIR + File.separator + BNConstants.CYTOSCAPE_URI;

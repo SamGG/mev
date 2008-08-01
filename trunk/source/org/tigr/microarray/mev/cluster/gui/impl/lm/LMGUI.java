@@ -37,6 +37,7 @@ public class LMGUI implements IClusterGUI {
 	public static boolean cancelRun = false;
 	public static boolean prior = true;
 	protected IFramework framework;
+	IData data;
 	RunWekaProgressPanel runProgressPanel;
 	LMBNViewer fileViewer;
 	Vector<String> networkFiles = new Vector<String>();
@@ -47,7 +48,7 @@ public class LMGUI implements IClusterGUI {
 		cancelRun = false; 
 		prior = true;
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode( "LM" );
-		IData data = framework.getData();
+		data = framework.getData();
 		Experiment exp = data.getExperiment();
 		ClusterRepository repository = framework.getClusterRepository(Cluster.GENE_CLUSTER);
 		final LiteratureMiningDialog dialog = new LiteratureMiningDialog(framework, repository, framework.getData().getFieldNames());
@@ -94,7 +95,7 @@ public class LMGUI implements IClusterGUI {
 				//literatureMining(dialog.isLit(),dialog.isPPI(),dialog.isBoth(),dialog.getBaseFileLocation());
 				int status = -1;
 				try {
-					status = literatureMining(dialog.isLit(), dialog.isPPI(), dialog.isKEGG(), dialog.isBoth(), dialog.isLitAndKegg(), dialog.isPpiAndKegg(), dialog.isAll(),dialog.getBaseFileLocation());
+					status = literatureMining(dialog.isLit(), dialog.isPPI(), dialog.isKEGG(), dialog.isBoth(), dialog.isLitAndKegg(), dialog.isPpiAndKegg(), dialog.isAll(),dialog.getBaseFileLocation(), data);
 				} 
 				catch(OutOfMemoryError ofm){
 					runProgressPanel.dispose();
@@ -105,6 +106,7 @@ public class LMGUI implements IClusterGUI {
 				}
 				catch (Exception e) {
 					JOptionPane.showMessageDialog(framework.getFrame(), e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
 					LMGUI.done = false;
 					runProgressPanel.dispose();
 					return;
@@ -205,7 +207,7 @@ public class LMGUI implements IClusterGUI {
 	 * @param path
 	 * @return
 	 */
-	public int literatureMining(boolean lit,boolean ppi, boolean kegg, boolean LitPpi, boolean LitKegg, boolean KeggPpi, boolean LitPpiKegg, String path){
+	public int literatureMining(boolean lit,boolean ppi, boolean kegg, boolean LitPpi, boolean LitKegg, boolean KeggPpi, boolean LitPpiKegg, String path, IData data){
 		//System.out.print(sep);
 		GetInteractionsModule getModule = new GetInteractionsModule(path);
 		if(lit){
@@ -214,7 +216,7 @@ public class LMGUI implements IClusterGUI {
 					BNConstants.SEP + 
 					BNConstants.TMP_DIR + 
 					BNConstants.SEP + 
-					BNConstants.LIT_INTER_MODULE_FILE);
+					BNConstants.LIT_INTER_MODULE_FILE, data);
 		}
 		if(ppi){
 			//getModule.test(path+sep+"getInterModPPIDirectly.props"); //Raktim - USe tmp dir
@@ -222,7 +224,7 @@ public class LMGUI implements IClusterGUI {
 					BNConstants.SEP +
 					BNConstants.TMP_DIR +
 					BNConstants.SEP +
-					BNConstants.PPI_INTER_MODULE_DIRECT_FILE); 
+					BNConstants.PPI_INTER_MODULE_DIRECT_FILE, data); 
 		}
 		if(LitPpi){
 			//getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
@@ -230,7 +232,7 @@ public class LMGUI implements IClusterGUI {
 					BNConstants.SEP +
 					BNConstants.TMP_DIR +
 					BNConstants.SEP +
-					BNConstants.BOTH_INTER_MODULE_FILE);
+					BNConstants.BOTH_INTER_MODULE_FILE, data);
 		}
 		if(kegg){
 			//getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
@@ -238,7 +240,7 @@ public class LMGUI implements IClusterGUI {
 					BNConstants.SEP +
 					BNConstants.TMP_DIR +
 					BNConstants.SEP +
-					BNConstants.KEGG_INTER_MODULE_FILE);
+					BNConstants.KEGG_INTER_MODULE_FILE, data);
 		}
 		if(LitKegg){
 			//getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
@@ -246,7 +248,7 @@ public class LMGUI implements IClusterGUI {
 					BNConstants.SEP +
 					BNConstants.TMP_DIR +
 					BNConstants.SEP +
-					BNConstants.LIT_KEGG_INTER_MODULE_FILE);
+					BNConstants.LIT_KEGG_INTER_MODULE_FILE, data);
 		}
 		if(KeggPpi){
 			//getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
@@ -254,7 +256,7 @@ public class LMGUI implements IClusterGUI {
 					BNConstants.SEP +
 					BNConstants.TMP_DIR +
 					BNConstants.SEP +
-					BNConstants.PPI_KEGG_INTER_MODULE_FILE);
+					BNConstants.PPI_KEGG_INTER_MODULE_FILE, data);
 		}
 		if(LitPpiKegg){
 			//getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
@@ -262,7 +264,7 @@ public class LMGUI implements IClusterGUI {
 					BNConstants.SEP +
 					BNConstants.TMP_DIR +
 					BNConstants.SEP +
-					BNConstants.PPI_KEGG_LIT_INTER_MODULE_FILE);
+					BNConstants.PPI_KEGG_LIT_INTER_MODULE_FILE, data);
 		}
 		return -1;
 	}
@@ -276,7 +278,7 @@ public class LMGUI implements IClusterGUI {
 	 */
 	public void literatureMining(boolean lit,boolean ppi,boolean both,String path){
 		//System.out.print(sep);
-		GetInteractionsModule getModule=new GetInteractionsModule(path);
+		GetInteractionsModule getModule = new GetInteractionsModule(path);
 		if(lit && !both){
 			System.out.print("run");
 			//getModule.test(path+sep+"getInterModLit.props"); 	//Raktim - USe tmp dir
@@ -285,7 +287,7 @@ public class LMGUI implements IClusterGUI {
 					BNConstants.SEP +
 					BNConstants.TMP_DIR +
 					BNConstants.SEP +
-					BNConstants.LIT_INTER_MODULE_FILE);
+					BNConstants.LIT_INTER_MODULE_FILE, data);
 			return;
 		}
 		if(ppi && !both){
@@ -295,7 +297,7 @@ public class LMGUI implements IClusterGUI {
 					BNConstants.SEP +
 					BNConstants.TMP_DIR +
 					BNConstants.SEP +
-					BNConstants.PPI_INTER_MODULE_DIRECT_FILE); 
+					BNConstants.PPI_INTER_MODULE_DIRECT_FILE, data); 
 			return;
 		}
 		if(both){
@@ -305,12 +307,12 @@ public class LMGUI implements IClusterGUI {
 					BNConstants.SEP +
 					BNConstants.TMP_DIR +
 					BNConstants.SEP +
-					BNConstants.BOTH_INTER_MODULE_FILE);
+					BNConstants.BOTH_INTER_MODULE_FILE, data);
 		}
 
 	}
 	public void prepareXMLBifFile(String path){
-		PrepareXMLBifModule getModule=new PrepareXMLBifModule();		//getModule.test(path+sep+"prepareXMLBifMod.props"); //Raktim - USe tmp dir
+		PrepareXMLBifModule getModule =  new PrepareXMLBifModule();		//getModule.test(path+sep+"prepareXMLBifMod.props"); //Raktim - USe tmp dir
 		PrepareXMLBifModule.test(
 				path +
 				BNConstants.SEP +
