@@ -41,14 +41,14 @@ public class BNGUI implements IClusterGUI {
 	HashMap<String, String> probeIndexAssocHash = new HashMap<String, String>();
 	HistoryViewer wekaOutputViewer;
 	LMBNViewer fileViewer;
-
+	IData data;
 	public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
 		done = false;
 		run = false;
 		cancelRun = false;
 		prior = true;
 
-		IData data = framework.getData();
+		data = framework.getData();
 		Experiment exp = data.getExperiment();
 		ClusterRepository repository = framework.getClusterRepository(Cluster.GENE_CLUSTER);
 		 
@@ -102,7 +102,7 @@ public class BNGUI implements IClusterGUI {
 		//if(!dialog.isNone()){		System.out.println(dialog.getBaseFileLocation());
 		int status = -1;
 		try {
-			status = literatureMining(dialog.isLit(), dialog.isPPI(), dialog.isKEGG(), dialog.isBoth(), dialog.isLitAndKegg(), dialog.isPpiAndKegg(), dialog.isAll(),dialog.getBaseFileLocation());
+			status = literatureMining(dialog.isLit(), dialog.isPPI(), dialog.isKEGG(), dialog.isBoth(), dialog.isLitAndKegg(), dialog.isPpiAndKegg(), dialog.isAll(),dialog.getBaseFileLocation(), this.data);
 		} 
 		catch(OutOfMemoryError ofm){
 			pgPanel.dispose();
@@ -237,29 +237,29 @@ public class BNGUI implements IClusterGUI {
 	 * @param path
 	 * @return
 	 */
-	public int literatureMining(boolean lit,boolean ppi, boolean kegg, boolean LitPpi, boolean LitKegg, boolean KeggPpi, boolean LitPpiKegg, String path){
+	public int literatureMining(boolean lit,boolean ppi, boolean kegg, boolean LitPpi, boolean LitKegg, boolean KeggPpi, boolean LitPpiKegg, String path, IData data){
 		//System.out.print(sep);
-		GetInteractionsModule getModule = new GetInteractionsModule(path);
+		GetInteractionsModule getModule = new GetInteractionsModule(path, this.probeIndexAssocHash);
 		if(lit){			//getModule.test(path+sep+"getInterModLit.props"); //Raktim - USe tmp dir
 			return GetInteractionsModule.test(path + 
 					BNConstants.SEP + 
 					BNConstants.TMP_DIR + 
 					BNConstants.SEP + 
-					BNConstants.LIT_INTER_MODULE_FILE);
+					BNConstants.LIT_INTER_MODULE_FILE, data);
 		}
 		if(ppi){			//getModule.test(path+sep+"getInterModPPIDirectly.props"); //Raktim - USe tmp dir
 			return GetInteractionsModule.test(path +
 					BNConstants.SEP +
 					BNConstants.TMP_DIR +
 					BNConstants.SEP +
-					BNConstants.PPI_INTER_MODULE_DIRECT_FILE); 
+					BNConstants.PPI_INTER_MODULE_DIRECT_FILE, data); 
 		}
 		if(LitPpi){			//getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
 			return GetInteractionsModule.test(path +
 					BNConstants.SEP +
 					BNConstants.TMP_DIR +
 					BNConstants.SEP +
-					BNConstants.BOTH_INTER_MODULE_FILE);
+					BNConstants.BOTH_INTER_MODULE_FILE, data);
 		}
 		if(kegg){
 			//getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
@@ -267,7 +267,7 @@ public class BNGUI implements IClusterGUI {
 					BNConstants.SEP +
 					BNConstants.TMP_DIR +
 					BNConstants.SEP +
-					BNConstants.KEGG_INTER_MODULE_FILE);
+					BNConstants.KEGG_INTER_MODULE_FILE, data);
 		}
 		if(LitKegg){
 			//getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
@@ -275,7 +275,7 @@ public class BNGUI implements IClusterGUI {
 					BNConstants.SEP +
 					BNConstants.TMP_DIR +
 					BNConstants.SEP +
-					BNConstants.LIT_KEGG_INTER_MODULE_FILE);
+					BNConstants.LIT_KEGG_INTER_MODULE_FILE, data);
 		}
 		if(KeggPpi){
 			//getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
@@ -283,7 +283,7 @@ public class BNGUI implements IClusterGUI {
 					BNConstants.SEP +
 					BNConstants.TMP_DIR +
 					BNConstants.SEP +
-					BNConstants.PPI_KEGG_INTER_MODULE_FILE);
+					BNConstants.PPI_KEGG_INTER_MODULE_FILE, data);
 		}
 		if(LitPpiKegg){
 			//getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
@@ -291,7 +291,7 @@ public class BNGUI implements IClusterGUI {
 					BNConstants.SEP +
 					BNConstants.TMP_DIR +
 					BNConstants.SEP +
-					BNConstants.PPI_KEGG_LIT_INTER_MODULE_FILE);
+					BNConstants.PPI_KEGG_LIT_INTER_MODULE_FILE, data);
 		}
 		return -1;
 	}

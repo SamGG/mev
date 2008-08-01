@@ -29,6 +29,7 @@ import java.util.Properties;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.BNConstants;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.GetUnionOfInters;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
@@ -52,9 +53,16 @@ public class GetInteractionsModule {
 	public static boolean debug = false;
 	static String sep = BNConstants.SEP;
 	static String path;
+	static HashMap<String, String> probeIndexAssocHash = new HashMap<String, String>();
+	
 	public GetInteractionsModule(String basepath){
 		path=basepath;
 		//System.out.println("Base PAth Loc....................: " + path);
+	}
+	
+	public GetInteractionsModule(String basepath, HashMap<String, String> probeIndexAssocHash) {
+		path = basepath;
+		this.probeIndexAssocHash = probeIndexAssocHash;
 	}
 	/**
 	 * The <code>getInteractionsFromLiterature</code> method gets interactions from co-occurrences 
@@ -748,7 +756,7 @@ public class GetInteractionsModule {
 	 * and some optional properties such as usePpiDirectly (default = true), usePpiOnlyWithin (default = true),
 	 * useTransitiveClosure (default = false), distanceK (default = 3)
 	 */
-	public static int test(String propertiesFileName){
+	public static int test(String propertiesFileName, IData data){
 		try {
 			//System.out.print(propertiesFileName);
 			//System.exit(1);
@@ -771,7 +779,8 @@ public class GetInteractionsModule {
 			String fname_cyto= Useful.getUniqueFileID() +"_"+ "liter_mining_alone_network.sif";
 			//System.out.println("fname_cyto " + fname_cyto);
 			System.setProperty("LM_ONLY", fname_cyto);
-			UsefulInteractions.writeSifFileUndir(interactions, fname_cyto);	
+			UsefulInteractions.writeSifFileUndir(interactions, fname_cyto);
+			//UsefulInteractions.writeXgmmlFileUndir(interactions, fname_cyto, probeIndexAssocHash, data);
 			UsefulInteractions.writeSifFileUndirWithWeights(interactions, outInteractionsFileName);
 			return interactions.size();
 		}
@@ -802,12 +811,5 @@ public class GetInteractionsModule {
 		System.out.println("java GetInteractionsModule propsFileName\njava GetInteractionsModule getInteractions.props");
 		System.exit(0);
 	}
-	public static void main(String[] argv){
-		if(argv.length !=1){
-			usage();
-		}
-		String propsFileName = argv[0];
-		//System.out.print(propsFileName);
-		test(propsFileName);
-	}
+	
 }

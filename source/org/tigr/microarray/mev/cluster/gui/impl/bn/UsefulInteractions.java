@@ -24,7 +24,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+
+import org.tigr.microarray.mev.annotation.MevAnnotation;
+import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
 
@@ -292,6 +296,13 @@ public class UsefulInteractions {
 			System.out.println(ioe);
 		}
 	}
+	
+	/**
+	 * Writes a network in sif file format
+	 * @param inter
+	 * @param fileName
+	 * @throws NullArgumentException
+	 */
 	public static void writeSifFileUndir(ArrayList inter, String fileName) throws NullArgumentException {
 		FileOutputStream fos=null;
 		String path=System.getProperty("user.dir");
@@ -407,6 +418,62 @@ public class UsefulInteractions {
 	}
     }
 	 */
+	
+	/**
+	 * TODO XGMML
+	 */
+	/*
+	public static void writeXgmmlFileUndir(ArrayList inter, String fileName, HashMap probeIndexAssocHash, IData data) throws NullArgumentException {
+		FileOutputStream fos = null;
+		String path=System.getProperty("user.dir");
+		String sep=System.getProperty("file.separator");
+		//path=path+sep+"data"+sep+"bn"+sep; //Raktim - Old Way
+		//path=path+sep+"data"+sep+"bn"+sep+BNConstants.RESULT_DIR+sep;
+		path = BNConstants.getBaseFileLocation() + BNConstants.SEP + BNConstants.RESULT_DIR + BNConstants.SEP;
+		try {
+			if(inter == null){
+				System.out.println("UsefulInteractions-writeSif");  
+				throw new NullArgumentException("Given inter was null!");
+			}
+
+			fos = new FileOutputStream(path + fileName);
+			PrintWriter pw = new PrintWriter(fos, true);
+			SimpleGeneEdge sGE = null;
+			int nodeId = 1;
+			String xgmmlFile = "";
+			xgmmlFile = XSGMMLGenerator.createHeader("Sample XGMML File");
+			
+			for(int i = 0; i < inter.size(); i++){
+				sGE = (SimpleGeneEdge) inter.get(i);
+				//System.out.println("UsefulInteractions-writeSif"+inter.size());
+				String labelFrom = sGE.getFrom();
+				String labelTo = sGE.getTo();
+				pw.println(sGE.getFrom() + " pp " + sGE.getTo());
+				int[] fromTo = new int[2];
+				//Get indx from hash map encoded int the form NM_23456 to 1-Afy_X1234 where 1 is the probe index
+				String tmp[] = ((String)probeIndexAssocHash.get(sGE.getFrom())).split("-");
+				fromTo[0] = Integer.parseInt(tmp[0]);
+				tmp = ((String)probeIndexAssocHash.get(sGE.getTo())).split("-");
+				fromTo[1] = Integer.parseInt(tmp[0]);
+				//Get annotation and create nodes and edges in XGMML Format
+				System.out.println("writeXGMML Edge Indices From: " + fromTo[0] + " To: " + fromTo[1]);
+				int srcId = nodeId;
+				xgmmlFile += XSGMMLGenerator.createNode(labelFrom, String.valueOf(nodeId), data, fromTo[0]);
+				nodeId++;
+				int tgtId = nodeId;
+				xgmmlFile += XSGMMLGenerator.createNode(labelTo, String.valueOf(nodeId), data, fromTo[1]);
+				nodeId++;
+				xgmmlFile += XSGMMLGenerator.createEdge(labelFrom, labelTo, String.valueOf(srcId), String.valueOf(tgtId));
+			}
+			xgmmlFile += XSGMMLGenerator.getFooter();
+			XSGMMLGenerator.writeFileXGMML(path + "xgmmlFile.xgmml", xgmmlFile);
+		}
+		catch(IOException ioe){
+			System.out.println(ioe);
+		}
+	}
+	*/
+	
 	/**
 	 * The <code>createAdjMatrix</code> method takes in an <code>ArrayList</code> of <code>SimpleGeneEdge</code>objects
 	 * corresponding to interactions and returns a 2D array of ints corresponding to the adjacency matrix representation
@@ -436,7 +503,7 @@ public class UsefulInteractions {
 		}
 		return adjMatrix;
 	}
-
+	
 	/**
 	 * The <code>printAdjMatrix</code> method prints the given adjacency matrix to screen
 	 *

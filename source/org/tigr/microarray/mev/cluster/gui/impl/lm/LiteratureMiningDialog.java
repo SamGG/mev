@@ -27,6 +27,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -1142,7 +1143,19 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
 			} else if (command.equals("ok-command")) {
 				System.out.println("LIT Mining Dlg. OK Cmd");
 				result = JOptionPane.OK_OPTION;
-
+				//Check to see if user is connected to internet
+				Hashtable repInfo = BNDownloadManager.getRepositoryInfoCytoscape();
+		    	String codeBase = ((String)repInfo.get("cytoscape_webstart")).trim();
+		    	String libDir = ((String)repInfo.get("cytoscape_lib_dir")).trim();
+		    	
+		    	if(codeBase == null || libDir == null) {
+		    		JOptionPane.showMessageDialog(new JFrame(), "Internet Connection error or Error reading properties file, will try with default values", "Cytoscape may not launch", JOptionPane.ERROR_MESSAGE);
+		    		return;
+		    	}
+				
+		    	BNConstants.setCodeBaseLocation(codeBase);
+		    	BNConstants.setLibDirLocation(libDir);
+		    	
 				// Validate if selected options have supporting file(s)
 				String fileBase = configPanel.getBaseFileLocation();
 				if(isLit()){
