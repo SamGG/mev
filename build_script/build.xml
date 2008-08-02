@@ -1,4 +1,4 @@
-<project name="mev_quickfix" default="build-all" basedir="./">
+<project name="mev" default="build-all" basedir="./">
     
     <description>
        
