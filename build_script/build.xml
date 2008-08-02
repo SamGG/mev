@@ -1,4 +1,4 @@
-<project name="mev" default="build-all" basedir="./">
+<project name="mev_quickfix" default="build-all" basedir="./">
     
     <description>
        
@@ -1697,6 +1697,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		<copy file="${home.dir}/Artistic_License.pdf" todir="${package.dir}/${mev_version.dir}" />
 		<copy file="${home.dir}/tmev.bat" todir="${package.dir}/${mev_version.dir}" />
 		<copy file="${home.dir}/tmev.sh" todir="${package.dir}/${mev_version.dir}" />
+		<copy file="${home.dir}/www.tm4.org.url" todir="${package.dir}/${mev_version.dir}" />
 			
 		<mkdir dir="${package.dir}/${mev_version.dir}/data" />
 		<copy todir="${package.dir}/${mev_version.dir}/data">
