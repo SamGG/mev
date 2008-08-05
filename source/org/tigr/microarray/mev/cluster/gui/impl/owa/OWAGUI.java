@@ -113,8 +113,10 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
         
         double alpha = owaDialog.getPValue();
         numGroups = owaDialog.getNumGroups();
-        
-        groupAssignments =owaDialog.getClusterGroupAssignments();
+
+        if (owaDialog.getTestDesign()==OneWayANOVAInitBox.CLUSTER_SELECTION){
+        	groupAssignments =owaDialog.getClusterGroupAssignments();
+        }
         if (owaDialog.getTestDesign()==OneWayANOVAInitBox.BUTTON_SELECTION){
         	groupAssignments=owaDialog.getGroupAssignments();
         } 
@@ -355,7 +357,10 @@ public class OWAGUI implements IClusterGUI, IScriptGUI {
         
         double alpha = owaDialog.getPValue();
         numGroups = owaDialog.getNumGroups();
-        groupAssignments =owaDialog.getClusterGroupAssignments();
+
+        if (owaDialog.getTestDesign()==OneWayANOVAInitBox.CLUSTER_SELECTION){
+        	groupAssignments =owaDialog.getClusterGroupAssignments();
+        }
         if (owaDialog.getTestDesign()==OneWayANOVAInitBox.BUTTON_SELECTION){
         	groupAssignments=owaDialog.getGroupAssignments();
         }

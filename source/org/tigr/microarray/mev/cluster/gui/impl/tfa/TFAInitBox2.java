@@ -714,7 +714,9 @@ public class TFAInitBox2 extends AlgorithmDialog {
     public int getNumPerms() {
         return Integer.parseInt(pPanel.timesField.getText());
     }
-    
+    public int getSelectionType() {
+    	return tabbedSelectors.getSelectedIndex();
+    }
     public boolean isBalancedDesign() {
         boolean balanced = true;
         Vector[][] bothFactorAssignments = getBothFactorAssignments();     
@@ -784,10 +786,12 @@ public class TFAInitBox2 extends AlgorithmDialog {
             
             String command = ae.getActionCommand();
             if(command.equals("ok-command")){
-            	if (repository==null||repository.isEmpty()){
-                    JOptionPane.showMessageDialog(new JPanel(), "Sample cluster repository is empty", "Error", JOptionPane.WARNING_MESSAGE);
-                    return;
-        		}
+            	if (getSelectionType() == 1){
+	            	if (repository==null||repository.isEmpty()){
+	                    JOptionPane.showMessageDialog(new JPanel(), "Sample cluster repository is empty", "Error", JOptionPane.WARNING_MESSAGE);
+	                    return;
+	        		}
+            	}
                 Vector[][] bothFactorAssignments = getBothFactorAssignments();
                 if (bothFactorAssignments==null)
                 	return;
