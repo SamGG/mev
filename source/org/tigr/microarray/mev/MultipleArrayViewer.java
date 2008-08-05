@@ -5717,14 +5717,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         	rowTitles = data.getAnnotationList(fieldname, rows);
         	m.setRowTitles(rowTitles);
 	    	m.setRowTitlesTitle(data.getAllFilledAnnotationFields()[menubar.getDisplayMenu().getLabelIndex()]);
-	    	String[] temp = data.getAnnotationList(data.getCurrentSampleLabelKey());
-	    	if(temp == null) {
-	    		temp = new String[f.getColumnDimension()];
-	    		for(int i=0; i<temp.length; i++)
-	    			temp[i] = "Sample " + i+1;
-	    	}
+	    	String[] temp = new String[f.getColumnDimension()];
 	    	for(int i=0; i<temp.length; i++) {
-	    		temp[i] = data.getSampleName(i);
+	    		temp[i] = data.getSampleAnnotation(i, data.getCurrentSampleLabelKey());
+	    		if(temp[i] == null || temp[i].equalsIgnoreCase("na"))
+	    			temp[i] = "Sample " + i+1;
 	    	}
 	    	m.setColumnTitles(temp);
 	    	m.setSpecies(getCurrentSpecies());
