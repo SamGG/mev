@@ -124,19 +124,20 @@ public class ClusterSelector extends JPanel {
     	ClusterList list;
     	Cluster cluster;
     	ArrayList<Integer> groupsamps = new ArrayList<Integer>();
-    
+    	int k=0;
         for(int i = 0; i < repository.size(); i++){
             list = repository.getClusterList(i);
             for(int j = 0; j < list.size(); j++){
-                if (key.equals(clusterTable.getModel().getValueAt(j, 8))){
+                if (key.equals(clusterTable.getModel().getValueAt(k, 8))){
                 	cluster = list.getClusterAt(j);
                 	for (int index=0; index<cluster.getIndices().length; index++){
                 		if (!groupsamps.contains(cluster.getIndices()[index])){
                 			groupsamps.add(cluster.getIndices()[index]);
+                			System.out.println(cluster.getIndices()[index]);
                 		}
                 	}
-                	
                 }
+                k++;
             }
         }
         int[] groupA = new int[groupsamps.size()];
