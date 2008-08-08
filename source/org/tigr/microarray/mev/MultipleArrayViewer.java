@@ -298,15 +298,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         // listener
         EventListener eventListener = new EventListener();
         mainframe.addWindowListener(eventListener);
-//        manager = new ActionManager(eventListener, TMEV.getFieldNames(), TMEV.getGUIFactory());
-        //EH
-        /*
-        * 06/27/05 moved FieldNames out of TMEV, so replacing 
-        * the argument with empty string array
-        * The actionmanager should be recreated by MultipleArrayData when data is loaded
-        * Field names should be given to that new manager.  
-        * manager = new ActionManager(eventListener, TMEV.getFieldNames(), TMEV.getGUIFactory());
-        */
         manager = new ActionManager(eventListener, new String[0], TMEV.getGUIFactory());
         
         menubar = new MultipleArrayMenubar(manager);
@@ -5747,19 +5738,21 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 			if(columns == null) {
 				columns = experiment.getColumnIndicesCopy();
 			}
+			
+			int[] indices = new int[rows.length];
+        	for(int i=0; i<rows.length; i++) {
+        		indices[i] = experiment.getGeneIndexMappedToData(rows[i]);
+        	}
+        	
 	    	DataMatrix m = new DataMatrix();
-//	        String[] rowTitles = new String[rows.length];
 	        m.setSize(rows.length, experiment.getNumberOfSamples());
 	        for (int i=0; i<rows.length; i++) {
-//	        	String fieldname = data.getAllFilledAnnotationFields()[menubar.getDisplayMenu().getLabelIndex()];
-//	        	int[] genes = new int[]{rows[i]};
-//	        	rowTitles[i] =  data.getAnnotationList(fieldname, genes)[0];
 	            for(int j=0; j<columns.length; j++) {
 	            	m.set(i, j, experiment.get(rows[i], columns[j]));
 	            }
 	        }
 	        String fieldname = data.getAllFilledAnnotationFields()[menubar.getDisplayMenu().getLabelIndex()];
-	        String[] rowTitles = data.getAnnotationList(fieldname, rows);
+	        String[] rowTitles = data.getAnnotationList(fieldname, indices);
 
 	    	m.setRowTitles(rowTitles);
 	    	m.setRowTitlesTitle(data.getAllFilledAnnotationFields()[menubar.getDisplayMenu().getLabelIndex()]);
@@ -5812,12 +5805,13 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         		gaggleConnectWarning();
         		return;
         	}
-        	if(e == null)
-        		System.out.println("Experiment is null");
-        	if(rows == null)
-        		System.out.println("rows is null");
+        	if(e == null || rows == null)
+        		return;
+        	int[] indices = new int[rows.length];
+        	for(int i=0; i<rows.length; i++) {
+        		indices[i] = e.getGeneIndexMappedToData(rows[i]);
+        	}
 	        Namelist nl = new Namelist();
-        	int[] indices = rows;
         	String[] names = new String[indices.length];
         	for(int i=0; i<names.length; i++) {
         		names[i] = data.getAnnotationList(data.getAllFilledAnnotationFields()[menubar.getDisplayMenu().getLabelIndex()], new int[]{indices[i]})[0];
