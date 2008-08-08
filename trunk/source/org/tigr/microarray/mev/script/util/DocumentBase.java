@@ -747,15 +747,15 @@ public class DocumentBase extends DefaultHandler implements Serializable {
      * underlying information changes.
      */
     public void updateScript() {
-        if(!isTextCurrent) {
-        try {
-            scriptText = "";
-            writeScriptText(document, "");
-            //text is updated
-            isTextCurrent = true;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        if(!isTextCurrent) {        	
+	        try {
+	            scriptText = "";
+	            writeScriptText(document, "");
+	            //text is updated
+	            isTextCurrent = true;
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
         }
     }
     
@@ -1078,13 +1078,13 @@ public class DocumentBase extends DefaultHandler implements Serializable {
             parser.setFeature("http://xml.org/sax/features/validation", true);
             parser.setErrorHandler(this);
             
-            parser.parse(inputFile.toURL().toString());
-            
+            parser.parse(inputFile.toURI().toURL().toString());
         } catch ( Exception e ) {
             return false;
         }
         
         document = parser.getDocument();
+        isTextCurrent = false;
         
         //now set key element references.
         root = document.getDocumentElement();
