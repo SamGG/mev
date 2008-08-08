@@ -46,7 +46,7 @@ public class ScriptParser {
         //Intantiate parser
         DOMParser parser = new DOMParser();
         //Parse file
-        parser.parse(file.toURL().toString());
+        parser.parse(file.toURI().toURL().toString());
         //get document
         doc = parser.getDocument();
         //get document root

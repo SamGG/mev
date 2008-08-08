@@ -44,7 +44,7 @@
 <!ELEMENT output_data (data_node+)>
 <!ATTLIST output_data output_class 
                 ( single-output | multi-cluster-output | multi-gene-cluster-output 
-                | multi-expteriment-cluster-output | partition-output) #REQUIRED>
+                | multi-expteriment-cluster-output | partition-output | cluster-selection-output) #REQUIRED>
 
 <!-- single-output indicates that the result is one set 
      (usually the result of normalization, filtering, or transform.

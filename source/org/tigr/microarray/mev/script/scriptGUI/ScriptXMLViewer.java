@@ -396,10 +396,13 @@ public class ScriptXMLViewer extends ViewerAdapter {
         JFileChooser chooser;
         if(scriptFile != null) {
             chooser = new JFileChooser(scriptFile.getPath());
+            chooser.setSelectedFile(new File(scriptFile.getName()));
         } else {
             chooser = new JFileChooser(new File(TMEV.getSettingForOption(ScriptManager.CURRENT_SCRIPT_PATH)));
+            if(doc.getDocumentName() != null) {
+            	chooser.setSelectedFile(new File(doc.getDocumentName()));
+            }
         }
-        
         if(chooser.showSaveDialog(new JPanel()) == JFileChooser.APPROVE_OPTION) {
             try {
                 writeScript(chooser.getSelectedFile());

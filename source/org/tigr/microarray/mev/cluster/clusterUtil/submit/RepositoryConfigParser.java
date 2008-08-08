@@ -70,7 +70,7 @@ public class RepositoryConfigParser extends DefaultHandler {
                 return false;
             }
             
-            URL url = file.toURL();
+            URL url = file.toURI().toURL();
             
             DOMParser parser = new DOMParser();
             

@@ -54,16 +54,16 @@ public class GetSpeciesDialog extends org.tigr.microarray.mev.cluster.gui.impl.d
         
         JPanel buttonPanel = new JPanel(new GridBagLayout());
         JButton okButton = new JButton("Ok");
-        okButton.setFocusPainted(false);
+        okButton.setFocusPainted(true);
         okButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-        okButton.setPreferredSize(new Dimension(50, 30));
+        okButton.setPreferredSize(new Dimension(60, 30));
         okButton.setActionCommand("yes");
         okButton.addActionListener(listener);
         
         JButton cancelButton = new JButton("Cancel");
         cancelButton.setFocusPainted(false);
         cancelButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-        cancelButton.setPreferredSize(new Dimension(50, 30));
+        cancelButton.setPreferredSize(new Dimension(60, 30));
         cancelButton.setActionCommand("no");
         cancelButton.addActionListener(listener);
         
@@ -73,10 +73,10 @@ public class GetSpeciesDialog extends org.tigr.microarray.mev.cluster.gui.impl.d
         JPanel paramPanel = new JPanel(new GridBagLayout());
         paramPanel.setBackground(Color.white);
         paramPanel.setBorder(BorderFactory.createLineBorder(Color.black));
-        JLabel promptLabel = new JLabel("Gaggle needs to broadcast a species name along with the selected data.");
+        JLabel promptLabel = new JLabel("Gaggle needs to broadcast a species name for the selected data.");
         promptLabel.setHorizontalAlignment(JLabel.CENTER);
         
-        saveSpeciesName = new JCheckBox("Save this species name for future broadcasts.", true);
+        saveSpeciesName = new JCheckBox("Save this species name for the session.", true);
         saveSpeciesName.setBackground(Color.white);
         saveSpeciesName.setFocusPainted(false);
         //															 x y w h wxwy	anchor					fill
@@ -89,7 +89,7 @@ public class GetSpeciesDialog extends org.tigr.microarray.mev.cluster.gui.impl.d
         this.supplantButtonPanel(buttonPanel);
         this.addContent(paramPanel);
         
-        this.setSize(470, 250);
+        this.setSize(480, 260);
     }
     
     

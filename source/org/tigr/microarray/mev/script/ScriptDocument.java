@@ -71,7 +71,8 @@ public class ScriptDocument extends DocumentBase {
         super(doc);
         this.id = doc.getDocumentID();
         this.name = doc.getDocumentName();
-        this.description = doc.getDescription();        
+        this.description = doc.getDescription();
+        updateScript();
     }
     
     /** Returns the document's name, or null if not set.

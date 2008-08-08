@@ -72,7 +72,7 @@ public class ParameterValidator extends DefaultHandler{
             
             parser.setFeature("http://xml.org/sax/features/validation", true);
             parser.setErrorHandler(this);
-            parser.parse(paramFile.toURL().toString());            
+            parser.parse(paramFile.toURI().toURL().toString());            
             validationRoot = parser.getDocument().getDocumentElement();
             haveValidationRoot = true;
         } catch ( NullPointerException e ) {
@@ -166,7 +166,7 @@ public class ParameterValidator extends DefaultHandler{
                                                       "\nPlease be aware that script loading will proceed without validation of this algorithm.", "Unsupported Parameter Validation",  JOptionPane.WARNING_MESSAGE);
             return true;
         }
-        
+        /*
         if(algElement == null) {
             //invalid name or no entry in xml
             //REPORT
@@ -175,6 +175,7 @@ public class ParameterValidator extends DefaultHandler{
             log.recordParameterError(spe);
             return false;
         }
+        */
         
         Vector missingParameterVector = validateRequiredParameters(map.keySet(), algElement);
         

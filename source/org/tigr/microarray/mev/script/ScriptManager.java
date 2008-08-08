@@ -175,8 +175,8 @@ public class ScriptManager implements Serializable {
         boolean validationErrors = false;
         
         try {
-            newScriptDoc.loadXMLFile(inputFile, this.progress);
-            
+           newScriptDoc.loadXMLFile(inputFile, this.progress);
+
             //if loaded with errors get the error log from the document
             if(newScriptDoc.getErrorCount() > 0) {
                 if(errorLog.hasErrors() || errorLog.hasFatalErrors()) {
@@ -202,6 +202,7 @@ public class ScriptManager implements Serializable {
         }
         
         newScriptDoc.setDocumentFileName(inputFile.getPath());
+        newScriptDoc.setName(inputFile.getName());
         
         if(validator == null) {
             //construct a parameter validator
@@ -297,6 +298,9 @@ public class ScriptManager implements Serializable {
      */
     public void saveScript(ScriptDocument doc) {
         JFileChooser chooser = new JFileChooser(TMEV.getSettingForOption(CURRENT_SCRIPT_PATH));
+        if (doc.getDocumentName() != null) {
+        	chooser.setSelectedFile(new File(doc.getDocumentName()));
+        }
         if(chooser.showSaveDialog(new JFrame()) == JFileChooser.APPROVE_OPTION) {
             try {
                 writeScript(chooser.getSelectedFile(), doc);
