@@ -51,6 +51,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
 
 public class TEASEGUI implements IClusterGUI {
 
+	public static final String LAST_TEASE_FILE_LOCATION = "last-tease-file-location";
 	private Algorithm algorithm;   //a reference to TEASE algorithm
 	private JFrame frame;
 	private GeneralInfo info;      //store parameters of the analysis
@@ -159,8 +160,28 @@ public class TEASEGUI implements IClusterGUI {
         if (function == Algorithm.DEFAULT) {      //default value is Euclidean distance
             function = Algorithm.EUCLIDEAN;
         }        
-    	TEASEInitDialog dialog = new TEASEInitDialog(framework.getFrame(), framework.getData().getFieldNames(),
-    			menu.getFunctionName(function),	menu.isAbsoluteDistance(), true);
+        
+        File defaultTEASEDirectory = null;
+        if(framework.getData().isAnnotationLoaded()) {
+	
+        	String chipType = framework.getData().getChipAnnotation().getChipType();
+        	String filename = framework.getData().getChipAnnotation().getAnnFileName();
+
+        	File annotationFile = new File(filename);
+	        if(annotationFile.canRead()) {
+	        	defaultTEASEDirectory = new File("./data/ease/ease_" + chipType);
+	        } else {
+	        	annotationFile = new File("./data/Annotation/" + chipType + ".txt");
+	        	defaultTEASEDirectory = new File("./data/ease/ease_" + chipType);
+	        	if(!annotationFile.canRead()) {
+	        		defaultTEASEDirectory = null;
+	        	}
+	        } 
+        }
+    
+        		
+    	TEASEInitDialog dialog = new TEASEInitDialog(framework.getFrame(), framework.getData().getAllFilledAnnotationFields(),
+    			menu.getFunctionName(function),	menu.isAbsoluteDistance(), true, defaultTEASEDirectory);
     	
         if (dialog.showModal() != JOptionPane.OK_OPTION) {
             return null;
@@ -275,7 +296,7 @@ public class TEASEGUI implements IClusterGUI {
         File file = new File(fileName);
         if(file.exists()) {
             BufferedReader reader = new BufferedReader(new FileReader(file));
-            Vector ann = new Vector();
+            Vector<String> ann = new Vector<String>();
             String key;
             while( (key = reader.readLine()) != null ) {
                 ann.add(key);

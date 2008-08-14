@@ -55,6 +55,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.annotation.AnnotationFieldConstants;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterBrowser;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
@@ -95,7 +96,12 @@ public class TEASEInitDialog extends AlgorithmDialog{
     private Font font;
     private String sep;
     private Frame parent;
-	
+
+    private static String ANNOTATION_LINK = AnnotationFieldConstants.TGI_TC;
+    protected boolean useLoadedAnnotationFile = false;
+    protected File defaultEaseFileLocation;
+    
+
     
     /** Creates a new instance of EaseInitDialog
      * @param parent Parent Frame
@@ -103,9 +109,21 @@ public class TEASEInitDialog extends AlgorithmDialog{
      * @param annotationLabels Annotation types
      */
     public TEASEInitDialog(Frame parent, String [] annotationLabels, String globalMetricName, 
-    		boolean globalAbsoluteDistance, boolean showDistancePanel) {
-    	
+    		boolean globalAbsoluteDistance, boolean showDistancePanel, File defaultEaseFileLocation) {
         super(parent, "TEASE: TEASE Annotation Analysis", true);
+
+        if(defaultEaseFileLocation == null) {
+        	this.useLoadedAnnotationFile = false;
+        	defaultEaseFileLocation = new File(TMEV.getSettingForOption(TEASEGUI.LAST_TEASE_FILE_LOCATION));
+        } else {
+        	this.useLoadedAnnotationFile = true;
+            this.defaultEaseFileLocation = defaultEaseFileLocation;
+        }
+        if(defaultEaseFileLocation == null || !defaultEaseFileLocation.canRead()) {
+        	defaultEaseFileLocation = new File("./data/ease");
+        }
+        
+        
         this.parent = parent;
         this.font = new Font("Dialog", Font.BOLD, 12);
         this.listener = new EventListener();
@@ -161,12 +179,15 @@ public class TEASEInitDialog extends AlgorithmDialog{
         this.setSize(570,750);
     }
     
+    public File getDefaultBaseFileLocation() {
+    	return defaultEaseFileLocation;
+    }
     /** Shows the dialog.
      * @return  */
     public int showModal() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation((screenSize.width - getSize().width)/2, (screenSize.height - getSize().height)/2);
-        show();
+        setVisible(true);
         return result;
     }
     
@@ -221,7 +242,9 @@ public class TEASEInitDialog extends AlgorithmDialog{
     public boolean isPopFileModeSelected() {
         return popPanel.fileButton.isSelected();
     } 
-    
+    public boolean isPreloadedAnnotationSelected() {
+    	return popPanel.preloadedAnnotationButton.isSelected();
+    }
     /**
      * Returns a method code.
      * @return 0 for ALC method, 1 for CLC or -1 otherwise.
@@ -468,6 +491,7 @@ public class TEASEInitDialog extends AlgorithmDialog{
     
     private class PopSelectionPanel extends ParameterPanel {
         
+		JRadioButton preloadedAnnotationButton;
         JRadioButton fileButton;
         JRadioButton dataButton;
         JTextField popField;
@@ -479,14 +503,39 @@ public class TEASEInitDialog extends AlgorithmDialog{
             setLayout(new GridBagLayout());
             
             ButtonGroup bg = new ButtonGroup();
-            fileButton = new JRadioButton("Population from File", true);
+            
+            if(useLoadedAnnotationFile) {
+            	preloadedAnnotationButton = new JRadioButton("Use loaded array population as background", true);
+            } else {
+                preloadedAnnotationButton = new JRadioButton("Use loaded array population as background (annotation not loaded)", true);
+            }
+            preloadedAnnotationButton.setBackground(Color.white);
+            preloadedAnnotationButton.setFocusPainted(false);
+            bg.add(preloadedAnnotationButton);
+            preloadedAnnotationButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                	//disable 
+                	easeParamPanel.fieldNamesBox.setSelectedItem(ANNOTATION_LINK);
+                	easeParamPanel.fieldNamesBox.setEnabled(!preloadedAnnotationButton.isSelected());
+                	easeParamPanel.useAnnBox.setEnabled(!preloadedAnnotationButton.isSelected());
+                    browseButton.setEnabled(!preloadedAnnotationButton.isSelected());
+                    popField.setEnabled(!preloadedAnnotationButton.isSelected());
+                    popField.setBackground(Color.lightGray);
+                    fileLabel.setEnabled(!preloadedAnnotationButton.isSelected());
+                    
+                }
+            });  
+
+
+            fileButton = new JRadioButton("Select Background Population from File");
             fileButton.setBackground(Color.white);
             fileButton.setFocusPainted(false);
             bg.add(fileButton);
             
             fileButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent ae) {
-                    
+                	easeParamPanel.fieldNamesBox.setEnabled(!preloadedAnnotationButton.isSelected());
+                	easeParamPanel.useAnnBox.setEnabled(!preloadedAnnotationButton.isSelected());
                     browseButton.setEnabled(fileButton.isSelected());
                     popField.setEnabled(fileButton.isSelected());
                     popField.setBackground(Color.white);
@@ -495,7 +544,7 @@ public class TEASEInitDialog extends AlgorithmDialog{
                 }
             });
             
-            dataButton = new JRadioButton("Population from Current Viewer");
+            dataButton = new JRadioButton("Select Background Population from Current Viewer");
             dataButton.setBackground(Color.white);
             dataButton.setFocusPainted(false);
             bg.add(dataButton);
@@ -515,11 +564,14 @@ public class TEASEInitDialog extends AlgorithmDialog{
             browseButton.setSize(150, 25);
             browseButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent ae) {
-                    JFileChooser chooser = new JFileChooser(TMEV.getFile("Data/"));
+                	JFileChooser chooser = new JFileChooser(new File(getBaseFileLocation(), "Lists"));
                     chooser.setDialogTitle("Population File Selection");
                     chooser.setMultiSelectionEnabled(false);
                     if(chooser.showOpenDialog(parent) == JOptionPane.OK_OPTION){
                         updatePopField(chooser.getSelectedFile().getPath());
+                        if(TMEV.getSettingForOption(TEASEGUI.LAST_TEASE_FILE_LOCATION) == null) {
+	                        TMEV.storeProperty(TEASEGUI.LAST_TEASE_FILE_LOCATION, chooser.getSelectedFile().getParentFile().getParentFile().getParentFile().getParent());
+                        }
                     }
                 }
             });
@@ -527,38 +579,57 @@ public class TEASEInitDialog extends AlgorithmDialog{
             fileLabel = new JLabel("File: ");
             popField = new JTextField(25);
             
-            add(fileButton, new GridBagConstraints(0,0,3,1,1,0,GridBagConstraints.WEST, 
-            		GridBagConstraints.BOTH, new Insets(10,30,0,0), 0,0));
-            add(fileLabel, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER, 
-            		GridBagConstraints.BOTH, new Insets(5,30,0,0), 0,0));
-            add(popField, new GridBagConstraints(1,1,1,1,1,0,GridBagConstraints.CENTER, 
-            		GridBagConstraints.BOTH, new Insets(5,10,0,0), 0,0));
-            add(browseButton, new GridBagConstraints(2,1,1,1,0,0,GridBagConstraints.CENTER, 
-            		GridBagConstraints.BOTH, new Insets(5,25,0,20), 0,0));
+
+
+            //Enable the preloaded population annotation options only if the annotation is available. 
+            //Otherwise, "population from file" is the default option.
+            fileButton.setSelected(!useLoadedAnnotationFile);
+            preloadedAnnotationButton.setSelected(useLoadedAnnotationFile);
+            preloadedAnnotationButton.setEnabled(useLoadedAnnotationFile);
             
-            add(dataButton, new GridBagConstraints(0,2,3,1,1,0,GridBagConstraints.WEST, 
-            		GridBagConstraints.BOTH, new Insets(15,30,20,0), 0,0));
+            browseButton.setEnabled(fileButton.isSelected());
+            popField.setEnabled(fileButton.isSelected());
+            fileLabel.setEnabled(fileButton.isSelected());
+
+            if(fileButton.isSelected())
+                popField.setBackground(Color.white);
+            else
+            	popField.setBackground(Color.lightGray);
+
+
+            add(preloadedAnnotationButton, 	new GridBagConstraints(0,0,3,1,1,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,30,0,0), 0,0));
+            add(fileButton, 				new GridBagConstraints(0,1,3,1,1,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,30,0,0), 0,0));
+            add(fileLabel, 					new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,30,0,0), 0,0));
+            add(popField, 					new GridBagConstraints(1,2,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,10,0,0), 0,0));
+            add(browseButton, 				new GridBagConstraints(2,2,1,1,0,0,GridBagConstraints.CENTER,	GridBagConstraints.BOTH, new Insets(5,25,0,20), 0,0));
+            
+            add(dataButton, 				new GridBagConstraints(0,3,3,1,1,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(15,30,20,0), 0,0));
         }
         
-        private void setEnableControls(boolean enable) {
+        protected void setEnableControls(boolean enable) {
+        	preloadedAnnotationButton.setEnabled(enable && useLoadedAnnotationFile);
+        	easeParamPanel.fieldNamesBox.setEnabled(!preloadedAnnotationButton.isSelected());
+        	easeParamPanel.useAnnBox.setEnabled(!preloadedAnnotationButton.isSelected());
             fileButton.setEnabled(enable);
             dataButton.setEnabled(enable);
             popField.setEnabled(enable);
             browseButton.setEnabled(enable);
             fileLabel.setEnabled(enable);
             setOpaque(enable);
-            tabbedPane.setEnabledAt(1, enable);
+            tabbedPane.setEnabledAt(0, enable);
         }
         
-        private void updatePopField(String file) {
+        protected void updatePopField(String file) {
             this.popField.setText(file);
         }
         
-        private String getPopFile() {
+        protected String getPopFile() {
             return popField.getText();
         }        
     }
     
+
+
     /** Contains annotation parameter controls.
      */
     private class EaseParameterPanel extends JPanel {
@@ -590,11 +661,13 @@ public class TEASEInitDialog extends AlgorithmDialog{
             useAnnBox.addActionListener(listener);
             useAnnBox.setBackground(Color.white);
             useAnnBox.setFocusPainted(false);
+            useAnnBox.setEnabled(!useLoadedAnnotationFile);
+            
             
             converterFileField = new JTextField(30);
             converterFileField.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED, 
             		Color.lightGray, Color.gray));
-            converterFileField.setEnabled(false);
+            converterFileField.setEnabled(useAnnBox.isEnabled());
             converterFileField.setBackground(Color.lightGray);
             
             browserButton = new JButton("File Browser");
@@ -603,7 +676,7 @@ public class TEASEInitDialog extends AlgorithmDialog{
             browserButton.setPreferredSize(new Dimension(150, 25));
             browserButton.setSize(150, 25);
             browserButton.addActionListener(listener);
-            browserButton.setEnabled(false);
+            browserButton.setEnabled(useAnnBox.isEnabled());
             
             fileLabel = new JLabel("File :");
             fileLabel.setEnabled(false);
@@ -623,7 +696,7 @@ public class TEASEInitDialog extends AlgorithmDialog{
             		EtchedBorder.LOWERED), "Gene Annotation / Gene Ontology Linking Files", 
 					TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
             
-            annVector = new Vector();
+            //annVector = new Vector();
             annFileList = new JList(new DefaultListModel());
             annFileList.setCellRenderer(new ListRenderer());
             annFileList.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
@@ -658,24 +731,30 @@ public class TEASEInitDialog extends AlgorithmDialog{
             		GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
             
             sep = System.getProperty("file.separator");
-            File file = new File(getBaseFileLocation()+"/Data/Convert/");
+            File file = new File(getBaseFileLocation());
             String tempPath = file.getPath();
-            Vector fileVector = new Vector();
+            Vector<String> fileVector = new Vector<String>();
             fileList = new JList(fileVector);
             if(file.exists()){
                 String [] listFileNames = file.list();
                 for(int i = 0; i < listFileNames.length; i++){
                     File tempFile = new File(tempPath+sep+listFileNames[i]);
-                    if(tempFile.isFile())
+                    if(tempFile.isFile()) {
                         fileVector.add(listFileNames[i]);
+                	}
                 }
                 if(fileVector.size() > 0){
                     converterFileField.setText(tempPath+sep+((String)fileVector.elementAt(0)));
                 }
             }
             
+
+          	converterFileField.setText("");
+            
             this.fieldNamesBox = new JComboBox(fieldNames);
             this.fieldNamesBox.setEditable(false);
+            this.fieldNamesBox.setEnabled(!useLoadedAnnotationFile);
+            this.fieldNamesBox.setSelectedItem(ANNOTATION_LINK);
             
             minClusterSizeField = new JTextField(5);
             minClusterSizeField.setText("5");
@@ -712,6 +791,7 @@ public class TEASEInitDialog extends AlgorithmDialog{
                 return;
             
             String tempPath = file.getParent();
+            int fileIndex = this.fileList.getSelectedIndex();
             String fileName = (String)(this.fileList.getModel().getElementAt(this.fileList.getSelectedIndex()));
             this.converterFileField.setText(tempPath+sep+fileName);
         }
@@ -730,7 +810,7 @@ public class TEASEInitDialog extends AlgorithmDialog{
         	fileLabel.setEnabled(enable);
         }
         
-        private void updateAnnFileList(File [] files){
+        protected void updateAnnFileList(File [] files){
             File file;
             for(int i = 0; i < files.length; i++){
                 file = files[i];
@@ -755,13 +835,13 @@ public class TEASEInitDialog extends AlgorithmDialog{
             return (String)this.fieldNamesBox.getSelectedItem();
         }
         
-        private class EaseListListener implements ListSelectionListener {
+        protected class EaseListListener implements ListSelectionListener {
             public void valueChanged(ListSelectionEvent listSelectionEvent) {
                 updateFileDirectoryField();
             }
         }
         
-        private void updateConverterFileField(String field){
+        protected void updateConverterFileField(String field){
             this.converterFileField.setText(field);
         }
         
@@ -789,7 +869,7 @@ public class TEASEInitDialog extends AlgorithmDialog{
             annFileList.validate();
         }
         
-        private class ListRenderer extends DefaultListCellRenderer {
+        protected class ListRenderer extends DefaultListCellRenderer {
             public Component getListCellRendererComponent(JList list, Object value, int index, 
             		boolean isSelected, boolean cellHasFocus) {
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
@@ -1183,7 +1263,7 @@ public class TEASEInitDialog extends AlgorithmDialog{
             browseFileBaseButton.setFocusPainted(false);
             browseFileBaseButton.addActionListener(listener);
             browseFileBaseButton.setToolTipText("<html>Helps select the EASE annotation file system<br>that corresponds the current species and array type.</html>");
-            defaultFileBaseLocation = new JTextField(TMEV.getFile("data/ease").getAbsolutePath(), 25);
+            defaultFileBaseLocation = new JTextField(getDefaultBaseFileLocation().getAbsolutePath(), 25);
             defaultFileBaseLocation.setEditable(true);
             
             add(browseFileBaseButton, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,0,5,0), 0, 0));
@@ -1192,18 +1272,22 @@ public class TEASEInitDialog extends AlgorithmDialog{
         }
         
         public void selectFileSystem() {
-            String startDir = defaultFileBaseLocation.getText();
+        	String startDir = TMEV.getSettingForOption(TEASEGUI.LAST_TEASE_FILE_LOCATION);
+        	if(startDir == null)
+        		startDir = defaultFileBaseLocation.getText();
             File file = new File(startDir);
             if(!file.exists()) {                
                 file = TMEV.getFile("data/ease");
                 if(file == null) {
                     file = new File(System.getProperty("user.dir"));
                 }
+                TMEV.storeProperty(TEASEGUI.LAST_TEASE_FILE_LOCATION, file.toString());
             }
             JFileChooser chooser = new JFileChooser(file);
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             if(chooser.showOpenDialog(TEASEInitDialog.this) == JOptionPane.OK_OPTION) {
                 defaultFileBaseLocation.setText(chooser.getSelectedFile().getAbsolutePath());
+                TMEV.storeProperty(TEASEGUI.LAST_TEASE_FILE_LOCATION, defaultFileBaseLocation.getText());
             }
         }
         
@@ -1266,23 +1350,28 @@ public class TEASEInitDialog extends AlgorithmDialog{
                     easeParamPanel.fileLabel.setEnabled(false);
                 }
             } else if (command.equals("converter-file-browser-command")){
-                File convertFile = new File(getBaseFileLocation()+"/Data/Convert");
+                File convertFile = new File(getBaseFileLocation() + sep + "Data" + sep + "Convert");
                 JFileChooser chooser = new JFileChooser(convertFile);
                 chooser.setDialogTitle("Annotation Converter Selection");
                 chooser.setMultiSelectionEnabled(false);
                 if(chooser.showOpenDialog(parent) == JOptionPane.OK_OPTION){
                     easeParamPanel.updateConverterFileField(chooser.getSelectedFile().getPath());
+                    if(TMEV.getSettingForOption(TEASEGUI.LAST_TEASE_FILE_LOCATION) == null)
+                    	TMEV.storeProperty(TEASEGUI.LAST_TEASE_FILE_LOCATION, chooser.getSelectedFile().getParentFile().getParentFile().getParent());
                 }
                 return;
             } else if (command.equals("ann-file-browser-command")){
-                
-                File classFile = new File(getBaseFileLocation()+"/Data/Class/");
+                File classFile = new File(getBaseFileLocation()+ sep + "Data" + sep + "Class" + sep);
+                if(!classFile.canRead())
+                 	classFile = new File("." + sep + "data" + sep + "ease");
                 JFileChooser chooser = new JFileChooser(classFile);
                 chooser.setDialogTitle("Annotation --> GO Term, File(s) Selection");
                 chooser.setMultiSelectionEnabled(true);
                 if(chooser.showOpenDialog(parent) == JOptionPane.OK_OPTION){
                     easeParamPanel.updateAnnFileList(chooser.getSelectedFiles());
                     easeParamPanel.removeButton.setEnabled(true);
+                    if(TMEV.getSettingForOption(TEASEGUI.LAST_TEASE_FILE_LOCATION) == null)
+                    	TMEV.storeProperty(TEASEGUI.LAST_TEASE_FILE_LOCATION, chooser.getSelectedFiles()[0].getParentFile().getParentFile().getParent());
                     okButton.setEnabled(true);
                 }
             } else if (command.equals("remove-ann-file-command")){
