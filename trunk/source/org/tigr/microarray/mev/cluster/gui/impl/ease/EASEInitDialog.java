@@ -521,7 +521,7 @@ public class EASEInitDialog extends AlgorithmDialog {
             browseButton.setSize(150, 25);
             browseButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent ae) {
-                	JFileChooser chooser = new JFileChooser(getBaseFileLocation() + sep + "Lists");
+                	JFileChooser chooser = new JFileChooser(new File(getBaseFileLocation(), "Lists"));
                     chooser.setDialogTitle("Population File Selection");
                     chooser.setMultiSelectionEnabled(false);
                     if(chooser.showOpenDialog(parent) == JOptionPane.OK_OPTION){
