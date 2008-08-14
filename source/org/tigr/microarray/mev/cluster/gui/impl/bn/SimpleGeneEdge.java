@@ -73,6 +73,10 @@ public class SimpleGeneEdge extends GeneEdge {
     public double getWeight(){
 	return this.weight;
     }
+	
+	public String getEdgeAsString(String edgeConnector){
+		return from + " " + edgeConnector + " " + to;
+	}
     /**
      * The <code>equals</code> method checks whether the given SimpleGeneEdge is equal to this SimpleGeneEdge
      *

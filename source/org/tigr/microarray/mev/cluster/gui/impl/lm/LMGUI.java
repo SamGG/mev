@@ -9,6 +9,7 @@
  * @author Raktim
  */
 package org.tigr.microarray.mev.cluster.gui.impl.lm;
+import java.util.HashMap;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -41,6 +42,7 @@ public class LMGUI implements IClusterGUI {
 	RunWekaProgressPanel runProgressPanel;
 	LMBNViewer fileViewer;
 	Vector<String> networkFiles = new Vector<String>();
+	HashMap<String, String> probeIndexAssocHash = new HashMap<String, String>();
 	
 	public DefaultMutableTreeNode execute(IFramework frame) throws AlgorithmException {
 		this.framework = frame;
@@ -73,7 +75,8 @@ public class LMGUI implements IClusterGUI {
 		
 		String basePath = dialog.getBaseFileLocation() + BNConstants.SEP;
 		try {
-			if(Useful.converter(dialog.getSelectedCluster(),framework,dialog.getBaseFileLocation()) == null) {
+			this.probeIndexAssocHash = Useful.converter(dialog.getSelectedCluster(),framework,dialog.getBaseFileLocation());
+			if(this.probeIndexAssocHash == null) {
 				throw new Exception("Error in mapping Unique identifiers to Accession");
 			}
 		} catch (Exception e) {
@@ -209,7 +212,7 @@ public class LMGUI implements IClusterGUI {
 	 */
 	public int literatureMining(boolean lit,boolean ppi, boolean kegg, boolean LitPpi, boolean LitKegg, boolean KeggPpi, boolean LitPpiKegg, String path, IData data){
 		//System.out.print(sep);
-		GetInteractionsModule getModule = new GetInteractionsModule(path);
+		GetInteractionsModule getModule = new GetInteractionsModule(path, this.probeIndexAssocHash);
 		if(lit){
 			//getModule.test(path+sep+"getInterModLit.props"); //Raktim - USe tmp dir
 			return GetInteractionsModule.test(path + 
@@ -270,47 +273,9 @@ public class LMGUI implements IClusterGUI {
 	}
 
 	/**
-	 * Older version - Unused
-	 * @param lit
-	 * @param ppi
-	 * @param both
+	 * 
 	 * @param path
 	 */
-	public void literatureMining(boolean lit,boolean ppi,boolean both,String path){
-		//System.out.print(sep);
-		GetInteractionsModule getModule = new GetInteractionsModule(path);
-		if(lit && !both){
-			System.out.print("run");
-			//getModule.test(path+sep+"getInterModLit.props"); 	//Raktim - USe tmp dir
-			GetInteractionsModule.test(
-					path +
-					BNConstants.SEP +
-					BNConstants.TMP_DIR +
-					BNConstants.SEP +
-					BNConstants.LIT_INTER_MODULE_FILE, data);
-			return;
-		}
-		if(ppi && !both){
-			//getModule.test(path+sep+"getInterModPPIDirectly.props"); //Raktim - USe tmp dir
-			GetInteractionsModule.test(
-					path +
-					BNConstants.SEP +
-					BNConstants.TMP_DIR +
-					BNConstants.SEP +
-					BNConstants.PPI_INTER_MODULE_DIRECT_FILE, data); 
-			return;
-		}
-		if(both){
-			//getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
-			GetInteractionsModule.test(
-					path +
-					BNConstants.SEP +
-					BNConstants.TMP_DIR +
-					BNConstants.SEP +
-					BNConstants.BOTH_INTER_MODULE_FILE, data);
-		}
-
-	}
 	public void prepareXMLBifFile(String path){
 		PrepareXMLBifModule getModule =  new PrepareXMLBifModule();		//getModule.test(path+sep+"prepareXMLBifMod.props"); //Raktim - USe tmp dir
 		PrepareXMLBifModule.test(

@@ -18,7 +18,14 @@
  *******************************************************************************/
 package org.tigr.microarray.mev.cluster.gui.impl.bn;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Vector;
+
+import org.tigr.microarray.mev.cluster.gui.IData;
 public class FromWekaToSif {
     // Pre: Name of input file from WEKA containing network structure
     // in the format: variable: parent1,...,parentn
@@ -128,20 +135,289 @@ public class FromWekaToSif {
 		}
     }
     
-    // For testing
-    public static void main(String[] argv){
-		if(argv.length != 2){
-		    System.out.println("Usage: java FromWekaToSif inWekaFileName outSifFileName\nExample: java FromWekaToSif testFromWekaToSif.weka testFromWekaToSif.sif");
-		    System.exit(0);
+	/**
+	 * 
+	 * @param evalStr
+	 * @param fileName
+	 * @param b
+	 * @param probeIndexAssocHash
+	 * @param data
+	 * @throws NullArgumentException
+	 * @throws IOException
+	 */
+	public static void fromWekaToXgmml(String evalStr, String fileName, boolean b, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException {
+		if(probeIndexAssocHash != null) {
+			System.out.println("probeIndexAssocHash Size: " + probeIndexAssocHash.size());
+			//System.out.println("First Entry : " + probeIndexAssocHash.entrySet().toArray()[0]);
+		} else {
+			throw new NullArgumentException("Given Probe-Index Hash was null!");
 		}
+		
+		Hashtable<String, String> uniqueNodesWithId = new Hashtable<String, String>();
+		Vector<String> edges = new Vector<String>();
+		int nodeId = 1;
+		String xgmmlContent = "";
+		String label = fileName.substring(fileName.lastIndexOf(BNConstants.SEP)+1, fileName.lastIndexOf("."));
+		xgmmlContent = XGMMLGenerator.createHeader(label);
+		
+		String[] evalSubstrings = evalStr.split("\n");
+		String s = null;
+		// Process lines after reading Network Structure and before reading LogScore
+		boolean toProcess = false;
+		for(int i = 0; i < evalSubstrings.length; i++){
+			s = evalSubstrings[i];
+			s = s.trim();
+			if(s.startsWith("LogScore")){
+				toProcess = false;
+			}
+			if(s.startsWith("CLASS"))
+				continue;
+			if(toProcess){
+				Vector<String> _tmpEdges = fromWekaToNodes(s);
+				if(_tmpEdges != null) {
+					if(_tmpEdges.size() != 0) {
+						edges.addAll(_tmpEdges);
+						Iterator _itr = _tmpEdges.iterator();
+						while(_itr.hasNext()) {
+							String fromTo[] = ((String)_itr.next()).split("-");
+							if(!uniqueNodesWithId.containsKey(fromTo[0])) {
+								uniqueNodesWithId.put(fromTo[0].trim(), String.valueOf(nodeId));
+								nodeId++;
+							}
+							if(!uniqueNodesWithId.containsKey(fromTo[1].trim())) {
+								uniqueNodesWithId.put(fromTo[1].trim(), String.valueOf(nodeId));
+								nodeId++;
+							}
+						}
+						String _tmp = getXgmmlNodesAndEdges(edges, "-", uniqueNodesWithId, probeIndexAssocHash, data);
+						if(_tmp != null)
+							xgmmlContent += _tmp;
+					}
+				}
+			}
+			if(s.startsWith("Network structure")){
+				toProcess = true;
+			}
+		}
+		xgmmlContent += XGMMLGenerator.getFooter();
+		try {
+			XGMMLGenerator.writeFileXGMML(fileName, xgmmlContent);
+		} catch (IOException ioe) {
+			throw ioe;
+		}
+	}
+	
+	/**
+	 * 
+	 * @param edges
+	 * @param fileName
+	 * @param b
+	 * @param probeIndexAssocHash
+	 * @param data
+	 * @throws NullArgumentException
+	 * @throws IOException
+	 */
+	public static void fromWekaToXgmml(Hashtable edgesTable, int numItr, float confThreshold, String fileName, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException {
+		if(probeIndexAssocHash != null) {
+			System.out.println("probeIndexAssocHash Size: " + probeIndexAssocHash.size());
+			//System.out.println("First Entry : " + probeIndexAssocHash.entrySet().toArray()[0]);
+		} else {
+			throw new NullArgumentException("Given Probe-Index Hash was null!");
+		}
+		Hashtable<String, String> uniqueNodesWithId = new Hashtable<String, String>();
+		Vector<String> edges = new Vector<String>();
+		int nodeId = 1;
+		String xgmmlContent = "";
+		String label = fileName.substring(fileName.lastIndexOf(BNConstants.SEP)+1, fileName.lastIndexOf("."));
+		xgmmlContent = XGMMLGenerator.createHeader(label);
+		
+		Enumeration enumerate = edgesTable.keys();
+		while(enumerate.hasMoreElements()){
+			String edge = (String)enumerate.nextElement();
+			Integer count = (Integer)edgesTable.get(edge);
+			float presence = count.floatValue()/numItr;
+			if(presence >= confThreshold){
+				edges.add(edge);
+				String fromTo[] = edge.split("pd");
+				if(!uniqueNodesWithId.containsKey(fromTo[0].trim())) {
+					uniqueNodesWithId.put(fromTo[0].trim(), String.valueOf(nodeId));
+					nodeId++;
+				}
+				if(!uniqueNodesWithId.containsKey(fromTo[1].trim())) {
+					uniqueNodesWithId.put(fromTo[1].trim(), String.valueOf(nodeId));
+					nodeId++;
+				}
+			}
+		}
+		String _tmp = getXgmmlNodesAndEdges(edges, "pd", uniqueNodesWithId, probeIndexAssocHash, data);
+		if(_tmp != null) {
+			if(!_tmp.isEmpty()) {
+				xgmmlContent += _tmp;
+			}
+		}
+		xgmmlContent += XGMMLGenerator.getFooter();
+		try {
+			XGMMLGenerator.writeFileXGMML(fileName, xgmmlContent);
+		} catch (IOException ioe) {
+			throw ioe;
+		}
+	}
+
+	/**
+	 * 
+	 * @param edges
+	 * @param nodeId
+	 * @param probeIndexAssocHash
+	 * @param data
+	 * @return
+	 */
+	private static String getXgmmlNodesAndEdges(Vector edges, String nodeConnector, Hashtable nodesWithId, HashMap probeIndexAssocHash, IData data) {
+		String xgmmlContent = "";
+		Vector<String> nodeCreated = new Vector<String>();
+		String labelTo;
+		String labelFrom;
+		int[] fromTo = new int[2];
+		Enumeration myEnum = edges.elements();
+		while(myEnum.hasMoreElements()) {
+			String nodes[] = ((String)myEnum.nextElement()).split(nodeConnector); //"-"
+			labelFrom = nodes[0].trim();
+			labelTo = nodes[1].trim();
+			
+			//Conver to XGMML node & Edge
+			//Get indx from hash map encoded int the form NM_23456 to 1-Afy_X1234 where 1 is the probe index
+			String tmp[] = ((String)probeIndexAssocHash.get(labelFrom)).split("-");
+			fromTo[0] = Integer.parseInt(tmp[0]);
+			tmp = ((String)probeIndexAssocHash.get(labelTo)).split("-");
+			fromTo[1] = Integer.parseInt(tmp[0]);
+			
+			//Get annotation and create nodes and edges in XGMML Format
+			//System.out.println("writeXGMML Edge Indices From: " + fromTo[0] + " To: " + fromTo[1]);
+			String srcId = (String)nodesWithId.get(labelFrom);
+			if(!nodeCreated.contains(labelFrom)) {
+				xgmmlContent += XGMMLGenerator.createNode(labelFrom, srcId, data, fromTo[0]);
+				nodeCreated.add(labelFrom);
+			}
+			
+			String tgtId = (String)nodesWithId.get(labelTo);
+			if(!nodeCreated.contains(labelTo)) {
+				xgmmlContent += XGMMLGenerator.createNode(labelTo, tgtId, data, fromTo[1]);
+				nodeCreated.add(labelTo);
+			}
+			
+			xgmmlContent += XGMMLGenerator.createEdge(labelFrom, labelTo, srcId, tgtId);	
+		}
+		return xgmmlContent;
+	}
+	
+	/**
+	 * 
+	 * @param inter
+	 * @param fileName
+	 * @param probeIndexAssocHash
+	 * @param data
+	 * @throws NullArgumentException
+	 * @throws IOException
+	 */
+	public static void fromSimpleGeneEdgeToXgmml(ArrayList<SimpleGeneEdge> inter, String fileName, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException {
+		//FileOutputStream fos = null;
+		String path=System.getProperty("user.dir");
+		path = BNConstants.getBaseFileLocation() + BNConstants.SEP + BNConstants.RESULT_DIR + BNConstants.SEP;
 		try {	    
-		    FileOutputStream fos = new FileOutputStream(argv[1]);
-		    PrintWriter pw = new PrintWriter(fos, true);
-		    fromWekaToSif(argv[0], pw, false);
+			if(inter == null){
+				System.out.println("UsefulInteractions-writeSif");  
+				throw new NullArgumentException("Given inter was null!");
+			}
+
+			if(probeIndexAssocHash != null) {
+				System.out.println("probeIndexAssocHash Size: " + probeIndexAssocHash.size());
+				System.out.println("First Entry : " + probeIndexAssocHash.entrySet().toArray()[0]);
+			} else {
+				throw new NullArgumentException("Given Probe-Index Hash was null!");
+			}
+			
+			Hashtable<String, String> uniqueNodesWithId = new Hashtable<String, String>();
+			Vector<String> edges = new Vector<String>();
+			SimpleGeneEdge sGE = null;
+			int nodeId = 1;
+			String xgmmlContent = "";
+			System.out.println("Network File Name " + fileName);
+			String label = fileName.substring(0, fileName.lastIndexOf("."));
+			//String _tmp[] = fileName.split(".");
+			//String label = _tmp[0];
+			System.out.println("Network File Prefix " + label);
+			xgmmlContent = XGMMLGenerator.createHeader(label);
+			
+			for(int i = 0; i < inter.size(); i++){
+				sGE = (SimpleGeneEdge) inter.get(i);
+				String labelFrom = sGE.getFrom().trim();
+				String labelTo = sGE.getTo().trim();
+				edges.add(sGE.getEdgeAsString("pd"));
+				if(!uniqueNodesWithId.containsKey(labelFrom)) {
+					uniqueNodesWithId.put(labelFrom, String.valueOf(nodeId));
+					nodeId++;
+				}
+				if(!uniqueNodesWithId.containsKey(labelTo)) {
+					uniqueNodesWithId.put(labelTo, String.valueOf(nodeId));
+					nodeId++;
+				}
+			}
+			String _tmp = getXgmmlNodesAndEdges(edges, "pd", uniqueNodesWithId, probeIndexAssocHash, data);
+			if(_tmp != null) {
+				if(!_tmp.isEmpty()) {
+					xgmmlContent += _tmp;
+				}
+			}
+			xgmmlContent += XGMMLGenerator.getFooter();
+			try {
+				XGMMLGenerator.writeFileXGMML(path + fileName, xgmmlContent);
+			} catch (IOException ioe) {
+				throw ioe;
 		}
-		catch(FileNotFoundException fnfe){
-		    System.out.println(fnfe);
 		}
+		catch(IOException ioe){
+			//System.out.println(ioe);
+			throw ioe;
+		}
+	}
+	
+	/**
+	 * 
+	 * @param s
+	 * @return
+	 */
+	private static Vector<String> fromWekaToNodes(String s) {
+		if(s.endsWith(":")){
+			return null;
+		}
+		
+		Vector<String> edges = new Vector<String>();
+		int colon = s.indexOf("(");
+		String labelTo = s.substring(0,colon).trim();
+		int startIndex = s.indexOf("): ") + 3;
+		int index = 0;
+		String labelFrom;
+		
+		while(index != s.lastIndexOf(" ")){
+			index = s.indexOf(" ", startIndex+1);
+			if(index != -1){
+				labelFrom = s.substring(startIndex,index).trim();
+				if(!labelFrom.equals("CLASS") || !labelTo.equals("CLASS")){
+					//pw.println(labelFrom + " pd " + labelTo);
+					edges.add(labelFrom + "-" + labelTo);
+				}
+				startIndex = index;	    
+			}	
+			else {
+				break;
+			}
+		}
+		labelFrom = s.substring(startIndex, s.length()).trim();
+		if(!labelFrom.equals("CLASS") || !labelTo.equals("CLASS")){
+			//pw.println(labelFrom + " pd " + labelTo);
+			edges.add(labelFrom + "-" + labelTo);
+		}
+		return edges;
+		
     }
 }
 	    

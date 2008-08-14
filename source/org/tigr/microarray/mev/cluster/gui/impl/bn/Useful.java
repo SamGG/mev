@@ -440,7 +440,7 @@ public class Useful {
 		Date now = new Date();
 		String dateString = now.toString();
 
-		SimpleDateFormat formatDt = new SimpleDateFormat("MMM_dd_yy_HH_mm_ss_SSS");
+		SimpleDateFormat formatDt = new SimpleDateFormat("MMM_dd_yy_HHmmssSSS");
 		dateString = formatDt.format(now);
 		//System.out.println(" 2. " + dateString);
 		return dateString;
@@ -543,14 +543,15 @@ public class Useful {
 				fields = lineRead.split("\t");
 				// TODO Raktim are the fields 0 & 1 ?
 				accHash.put(fields[0].trim(), fields[1].trim());
-				//System.out.println(fields[1] );
+				//System.out.println("Clone - Acc: " + fields[0] + " - " + fields[1] );
 			}
 			// TODO Raktim - Associate AffyID with Acc Ids ?
 			for (int i = 0; i < accList.length; i++) {
 				accList[i] = (String)accHash.get((String)probeId[i].trim());
 				// Also Stores probe IDs and cluster indices assoc for creating gaggle Network
 				// E.g.:- NM_23456 to 1-Afy_X1234 where 1 is the probe index
-				probeIndexAssocHash.put(accList[i], new Integer(i).toString()+"-"+probeId[i]);
+				probeIndexAssocHash.put(accList[i], new Integer(rows[i]).toString()+"-"+probeId[i]);
+				System.out.println("Clone - Acc, Hash Value: " + probeId[i] + " - " + accList[i] + " , " + new Integer(rows[i]).toString()+"-"+probeId[i] );
 			}
 			// TODO - Raktim Why write to file ?
 			writeAccToFile(accList,path);

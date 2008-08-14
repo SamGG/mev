@@ -1053,7 +1053,12 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
 			//browseFileBaseButton.setToolTipText("<html>Helps select the LM annotation file system<br>that corresponds the current species and array type.</html>");
 			//defaultFileBaseLocation = new JTextField(TMEV.getFile("data/bn").getAbsolutePath(), 25);
 			//defaultFileBaseLocation = new JTextField(new File(System.getProperty("user.dir")).getAbsolutePath());
-			defaultFileBaseLocation = new JTextField(new File(TMEV.getDataPath()).getAbsolutePath());
+			String _loc = TMEV.getSettingForOption(BNConstants.BN_LM_LOC_PROP);
+			if(_loc == null)
+				_loc = TMEV.getDataPath();
+			if(_loc.isEmpty() || _loc.equals(""))
+				_loc = TMEV.getDataPath();
+			defaultFileBaseLocation = new JTextField(new File(_loc).getAbsolutePath());
 			defaultFileBaseLocation.setEditable(true);
 			add(fileLocation, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
 			add(defaultFileBaseLocation,  new GridBagConstraints(1,0,1,1,2,0,GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));            
@@ -1085,6 +1090,7 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
 					return;
 				}
 				defaultFileBaseLocation.setText(chooser.getSelectedFile().getAbsolutePath());
+				TMEV.storeProperty(BNConstants.BN_LM_LOC_PROP, defaultFileBaseLocation.getText());
 			}
 		}
 		public String getBaseFileLocation() {
@@ -1350,7 +1356,8 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
 					}
 				}                
 				BNConstants.setBaseFileLocation(fileBase);
-				TMEV.setDataPath(fileBase);
+				TMEV.storeProperty(BNConstants.BN_LM_LOC_PROP, fileBase);
+				//TMEV.setDataPath(fileBase);
 				dispose();
 			} else if (command.equals("cancel-command")) {
 				result = JOptionPane.CANCEL_OPTION;

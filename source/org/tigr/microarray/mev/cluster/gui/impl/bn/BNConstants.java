@@ -6,6 +6,8 @@
  *******************************************************************************/
 package org.tigr.microarray.mev.cluster.gui.impl.bn;
 
+import java.util.Hashtable;
+
 
 public class BNConstants {
 	
@@ -97,9 +99,14 @@ public class BNConstants {
 	public final static String XML_BIF_MODULE_FILE = "prepareXMLBifMod.props";
 	 
 	/**
-	 * Base Location where BN/LIT DB files reside
+	 * BN TMEV properties name that points to last used file location
 	 */
-	private static String BASE_PATH = ".";
+	public static String BN_LM_LOC_PROP = "bn_lm_loc_prop";
+	/**
+	 * Base Location where BN/LIT DB files reside
+	 * BN TMEV properties as well
+	 */
+	private static String BN_LM_BASE_PATH = ".";
 	
 	/**
 	 * Params
@@ -108,11 +115,11 @@ public class BNConstants {
 	public final static String DIST_K_VAL = "3.0";
 	
 	public static void setBaseFileLocation(String path){
-		BASE_PATH = path;
+		BN_LM_BASE_PATH = path;
 	}
 	
 	public static String getBaseFileLocation(){
-		return BASE_PATH;
+		return BN_LM_BASE_PATH;
 	}
 	
 	/**
