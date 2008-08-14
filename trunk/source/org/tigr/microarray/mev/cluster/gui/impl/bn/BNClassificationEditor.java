@@ -123,7 +123,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 	Vector<String> interactionsfinal = null;
 
 	/** Creates a new instance of BNClassificationEditor */
-	public BNClassificationEditor(final IFramework framework, boolean classifyGenes, final Cluster cl,String num,int numClasses,String parents,String algorithm,String scoreType,boolean uAr, boolean bootstrap, int iteration, float threshold, int kfolds, String path, HashMap<String, String> probeIndexAssocHash) {
+	public BNClassificationEditor(final IFramework framework, boolean classifyGenes, final Cluster cl,String num,int numClasses,String parents,String algorithm,String scoreType,boolean uAr, boolean bootstrap, int iteration, float threshold, int kfolds, String path, HashMap<String, String> probeIndexHash) {
 		super(framework.getFrame(), true);
 		this.setTitle("Classification Editor: Assign Samples to group(s)");
 		mainFrame = (JFrame)(framework.getFrame());
@@ -176,7 +176,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		this.numIterations = iteration;
 		this.confThreshold = threshold;
 		this.kfold = kfolds;
-		this.probeIndexAssocHash = probeIndexAssocHash;
+		this.probeIndexAssocHash = probeIndexHash;
 		//menuBar = new JMenuBar();
 		//this.setJMenuBar(menuBar);  
 
@@ -223,7 +223,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		fc2.setFileFilter(filter);
 
 		//TODO
-		//The following bloch may not be needed
+		//The following block may not be needed
 		String dataPath = TMEV.getDataPath();
 		File pathFile = TMEV.getFile("data/bn");
 		if(dataPath != null) {
@@ -253,8 +253,6 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					File file = fc1.getSelectedFile();  
 					loadFromFile(file);
-					//fileOpened = true;
-					//nextPressed = false;                        
 				}
 			}
 		});
@@ -280,215 +278,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		nextButton = new JButton("OK");
 		nextButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				//String sep = System.getProperty("file.separator");   
-				BNClassificationEditor.this.dispose(); 
-				//saveToFile(basePath+sep+"label"); // Raktim - Use Tmp dir
-				saveToFile(basePath+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+"label");
-				if(labelFile != null) {
-					saveToFile(labelFile);
-				}
-				//saveWekaData(cl,framework,basePath); // Raktim - Use Tmp dir
-				saveWekaData(cl,framework,basePath+BNConstants.SEP+BNConstants.TMP_DIR);
-				//tranSaveWeka(numBin,basePath); // Raktim - Use Tmp dir
-				props = tranSaveWeka(numBin,basePath+BNConstants.SEP+BNConstants.TMP_DIR, isBootstraping, numIterations);
-				//WekaBNGui.createAndShowGUI(basePath+"outExpression.arff");
-				//WekaBNGui.createAndShowGUI("outExpression.arff");
-				/*
-                String path = basePath+sep+"tmp"+sep;
-                String outarff = "outExpression.arff";
-                String arguments = Useful.getWekaArgs(path, outarff, sAlgorithm, useArc, numParents, sType);
-
-                String arguments = "-t " + basePath+sep+"tmp"+sep+ "outExpression.arff -c 1 -Q weka.classifiers.bayes.net.search.local."+sAlgorithm+" -- ";
-                if(useArc){
-                	arguments +="-R";
-                }
-                arguments +=" -P "+numParents+" -S "+sType;
-                while(!BNGUI.done){
-                	try{
-                		Thread.sleep(10000);	
-                	}catch(InterruptedException x){
-                		//ignore;
-                	}
-                }
-                if(BNGUI.prior){     
-                	arguments += " -X " + basePath+sep+"tmp"+sep+ "resultBif.xml";
-                	//System.out.print("my prior");
-                }
-                arguments += " -E weka.classifiers.bayes.net.estimate.SimpleEstimator -- -A 0.5";
-
-                System.out.println("calling weka with arguments: \n"+arguments);
-                final String[] argsWeka = arguments.split(" ");
-				 */
-				Thread thread = new Thread( new Runnable(){
-					public void run(){
-						try{     
-							Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-							runProgressPanel = new RunWekaProgressPanel();
-							runProgressPanel.setString("Running Network Search");
-							runProgressPanel.setIndeterminate(true);
-							runProgressPanel.setLocation((screenSize.width-getSize().width)/2,(screenSize.height-getSize().height)/2);
-							runProgressPanel.setVisible(true);
-
-							//String sep = System.getProperty("file.separator"); 
-							String path = basePath+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP;
-							String outarff = "outExpression.arff";
-
-							if(!isBootstraping) {
-								String arguments = Useful.getWekaArgs(path, outarff, sAlgorithm, useArc, numParents, sType, kfold);
-								System.out.println("calling weka with arguments: \n"+arguments);
-								final String[] argsWeka = arguments.split(" ");
-								BayesNet bnNetOrg = new BayesNet();
-								evalStr = Evaluation.evaluateModel(bnNetOrg, argsWeka);
-								Estimator myEstm [][] = bnNetOrg.getDistributions();
-								System.out.println("Length: " + myEstm.length);
-								//System.out.println(bnNetOrg.toXMLBIF03());
-
-								//TODO ALL TESTING FROM HERE ON 
-								//Test for BaynetNet & Estimator Class
-								/*
-                                BayesNet bnNet = new BayesNet();
-                                //Set Search Algorithim
-                                SearchAlgorithm srchAlgo = new SearchAlgorithm();
-                                String ars = "weka.classifiers.bayes.net.search.local."+sAlgorithm;
-                                if(useArc){
-                                	ars +=" -R ";
-                                }
-                                ars +=" -P "+numParents+" -S "+sType;
-                                srchAlgo.setOptions(ars.split(" "));
-                                bnNet.setSearchAlgorithm(srchAlgo);
-                                //Set Estimator
-                                BayesNetEstimator bnEst = new BayesNetEstimator();
-                                String estimatorArgs = "weka.classifiers.bayes.net.estimate.BMAEstimator A 0.5";
-                                bnEst.setOptions(estimatorArgs.split(" "));
-                                bnNet.setEstimator(bnEst);
-                                //Run CLassifer
-                                String modelArgs = "-t " + path + outarff + " -c 1 -x " + kfold;
-                                Evaluation.evaluateModel(bnNet, modelArgs.split(" "));
-                                System.out.println(bnNet.toXMLBIF03());
-								 */
-								//END TESTING
-							} else {
-								//WEKA on observed Data
-								String arguments = Useful.getWekaArgs(path, outarff, sAlgorithm, useArc, numParents, sType, kfold);
-								System.out.println("calling weka On Observed Data,  with arguments: \n"+arguments);
-								String[] argsWeka = arguments.split(" ");
-								evalStr = Evaluation.evaluateModel(new BayesNet(), argsWeka);
-
-								//WEKA On bootstrapped data
-								String outarffbase = props.getProperty("rootOutputFileName");
-								String outarffext = ".arff";
-								evalStrs = new String[numIterations];
-
-								for(int i=0; i < numIterations; i++){
-									//Previously created .arff files for bootstrap
-									outarff = outarffbase + i + outarffext;
-									arguments = Useful.getWekaArgs(path, outarff, sAlgorithm, useArc, numParents, sType, kfold);
-									System.out.println("calling weka On Bootstrap Data, arguments: \n"+arguments);
-									argsWeka = arguments.split(" ");
-									// evalStr = Evaluation.evaluateModel(new BayesNet(), argsWeka);
-									evalStrs[i] = Evaluation.evaluateModel(new BayesNet(), argsWeka);
-									//evalStr = evalStrs[i];
-									System.out.println("Bootstrap Itr: " + i);
-									//if(BNGUI.cancelRun)
-									//break;
-								}
-								//if(!BNGUI.cancelRun)
-								bootNetFile = createNetworkFromBootstrapedEvals(evalStrs, numIterations, outarffbase, confThreshold);
-							}
-						}
-						catch(OutOfMemoryError ofm){
-							runProgressPanel.dispose();
-							System.out.println("Error: Out of Memory..");
-							ofm.printStackTrace();
-							JOptionPane.showMessageDialog(new JFrame(), ofm.getMessage() + "\n Out of Memory", "Error - Out of Memory. Cannot Continue!", JOptionPane.ERROR_MESSAGE);
-							BNGUI.run = true;
-							BNGUI.cancelRun = true;
-						}
-						catch(Exception ex){
-							runProgressPanel.dispose();
-							System.out.println("Weka exception..");
-							ex.printStackTrace();
-							JOptionPane.showMessageDialog(new JFrame(), ex.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
-							BNGUI.run = true;
-							BNGUI.cancelRun = true;
-						}
-						runProgressPanel.dispose();
-						//if(!BNGUI.cancelRun)
-						displayScrollPane(getScrollPanePanel(evalStr));
-						BNGUI.run = true;
-					}
-
-					private String createNetworkFromBootstrapedEvals(String[] evalStrs, int numItr, String outarffbase, float threshold) {
-						//String sep = System.getProperty("file.separator"); 
-						String path = basePath+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP;
-						String fileName = path + outarffbase;
-
-						//Create sif files for every output of the resampled WEKA evaluation
-						try {
-							for(int i = 0; i < numItr; i++) {
-								//System.out.println("Creating file: " + fileName+i+outarffext);
-								FileOutputStream fos = new FileOutputStream(fileName+i+".sif");
-								PrintWriter pw = new PrintWriter(fos, true);
-								//FromWekaToSif.fromWekaToSif(evalStrs[i], pw);	
-								//TODO pass probeIndexAssocHash structure here to access Annotation Model
-								FromWekaToSif.fromWekaToSif(evalStrs[i], pw, false);
-							}
-						} catch (Exception e){
-							e.printStackTrace();
-						}
-
-						// Count occurance of each edge accros all the iterations of the bootstrap
-
-						try {
-							for(int i = 0; i < numItr; i++) {
-								//System.out.println("Reading file: " + fileName+i+".sif");
-								BufferedReader br = new BufferedReader(new FileReader(fileName+i+".sif"));
-								String line = br.readLine();
-								while (line != null) {
-									//System.out.println(line);
-
-									Integer count = (Integer)edgesTable.get(line.trim());
-									if(count != null) {
-										edgesTable.remove(line.trim());
-										edgesTable.put(line.trim(), count + new Integer(1));
-									}
-									else {
-										edgesTable.put(line.trim(), new Integer(1));
-									}
-									line = br.readLine();
-								}
-								br.close();
-							}
-						} catch (Exception e){
-							e.printStackTrace();
-						}
-
-						// Remove edges below threshold
-						// TODO map edges to annotation attributes here
-						String bootNetFile = basePath+BNConstants.SEP+BNConstants.RESULT_DIR+BNConstants.SEP+
-						Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" +
-						"boot_result_"+numIterations+"_"+confThreshold+".sif";
-						try {
-							FileOutputStream fos = new FileOutputStream(bootNetFile);
-							PrintWriter pw = new PrintWriter(fos, true);
-							Enumeration enumerate = edgesTable.keys();
-							while(enumerate.hasMoreElements()){
-								String edge = (String)enumerate.nextElement();
-								Integer count = (Integer)edgesTable.get(edge);
-								float presence = count.floatValue()/numItr;
-								//System.out.println(edge + " : " + count.toString() + " presence : " + presence + " thresh : " + threshold);
-								if(presence >= threshold){
-									pw.println(edge);
-								}
-							}
-							fos.close();
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-						return bootNetFile;
-					}
-				});
-				thread.start();
+				onOk(cl);
 			}
 		});
 		cleanUpFile();
@@ -578,14 +368,26 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 
 		// BN Observed
 		try {
-			String fileName = basePath + BNConstants.RESULT_DIR + BNConstants.SEP + Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" + "result.sif";
-			FileOutputStream fos = new FileOutputStream(fileName);
-			PrintWriter pw = new PrintWriter(fos, true);
-			FromWekaToSif.fromWekaToSif(evalStr, pw, false);
+			String fileName = "";
+			if(!data.isAnnotationLoaded()) {
+				//Create sif file
+				fileName = basePath + BNConstants.RESULT_DIR + BNConstants.SEP + Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" + "result.sif";
+				FileOutputStream fos = new FileOutputStream(fileName);
+				PrintWriter pw = new PrintWriter(fos, true);
+				FromWekaToSif.fromWekaToSif(evalStr, pw, false);
+			}
+			else {
+				//create xgmml file
+				fileName = basePath + BNConstants.RESULT_DIR + BNConstants.SEP + Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" + "result.xgmml";
+				FromWekaToSif.fromWekaToXgmml(evalStr, fileName, false, probeIndexAssocHash, data);
+			}					
 			networkFiles.add(fileName);
 		} catch(IOException ioE){
-			//ioE.printStackTrace(); 
+			ioE.printStackTrace(); 
 			JOptionPane.showMessageDialog(null, ioE.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+		} catch(NullArgumentException nae){
+			nae.printStackTrace(); 
+			JOptionPane.showMessageDialog(null, nae.toString(), "Error", JOptionPane.ERROR_MESSAGE);
 		}
 
 		// BN Bootstrap Network
@@ -605,7 +407,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		System.out.println("Files to Show: " + networkFiles.size());
 		for(int i=0; i < networkFiles.size(); i++) {
 			System.out.println("File: " + networkFiles.get(i));
-		}
+				}
 		//End Debug
 
 		// Call Webstart wuth Files
@@ -619,15 +421,273 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 			//updateNetwork = new JButton("Update Network");
 			updateNetwork.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					try {
-						interactionsfinal = new Vector<String>(); // For lookup during gaggle broadcast
+					onUpdateNetwork();
+					/* Try Cytoscape Broadcast */
+					if(framework.isGaggleConnected()) {
+						try {
+							broadcastNetworkGaggle(interactionsfinal);
+						} catch (Exception e) {
+							JOptionPane.showMessageDialog(null, e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+							e.printStackTrace();
+							if(finalThreshBox.isSelected())
+								resultFrame.dispose();
+							else
+								resultFrame.show();
+                }
+					} else {
+                	try{
+							framework.requestGaggleConnect();
+							broadcastNetworkGaggle(interactionsfinal);
+							if(finalThreshBox.isSelected())
+								resultFrame.dispose();
+							else
+								resultFrame.show();
+						} catch (Exception e) {
+							JOptionPane.showMessageDialog(null, e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+							e.printStackTrace();
+							resultFrame.show();
+						} 
+                	}
+                }
+			});
+		}
+		if(isBootstraping) {
+			//evalPanel.add(showBootInCytoButton, BorderLayout.LINE_START);
+			evalPanel.add(finalThreshBox, BorderLayout.WEST);
+			evalPanel.add(confThreshField, BorderLayout.CENTER);
+			evalPanel.add(updateNetwork, BorderLayout.EAST);
+		} else {
+			resultFrame.dispose();
+		}
+		return evalPanel;
+                }
+
+	/**
+	 * Core function to run BN with weka on the selected cluster
+	 * @param cl
+				 */
+	protected void onOk(Cluster cl) {
+		BNClassificationEditor.this.dispose(); 
+		saveToFile(basePath+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+"label");
+		if(labelFile != null) {
+			saveToFile(labelFile);
+		}
+		saveWekaData(cl,framework,basePath+BNConstants.SEP+BNConstants.TMP_DIR);
+		props = tranSaveWeka(numBin,basePath+BNConstants.SEP+BNConstants.TMP_DIR, isBootstraping, numIterations);
+
+				Thread thread = new Thread( new Runnable(){
+					public void run(){
+						try{     
+							Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+							runProgressPanel = new RunWekaProgressPanel();
+							runProgressPanel.setString("Running Network Search");
+							runProgressPanel.setIndeterminate(true);
+							runProgressPanel.setLocation((screenSize.width-getSize().width)/2,(screenSize.height-getSize().height)/2);
+							runProgressPanel.setVisible(true);
+
+							//String sep = System.getProperty("file.separator"); 
+							String path = basePath+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP;
+							String outarff = "outExpression.arff";
+
+							if(!isBootstraping) {
+								String arguments = Useful.getWekaArgs(path, outarff, sAlgorithm, useArc, numParents, sType, kfold);
+								System.out.println("calling weka with arguments: \n"+arguments);
+								final String[] argsWeka = arguments.split(" ");
+								BayesNet bnNetOrg = new BayesNet();
+								evalStr = Evaluation.evaluateModel(bnNetOrg, argsWeka);
+								Estimator myEstm [][] = bnNetOrg.getDistributions();
+								System.out.println("Length: " + myEstm.length);
+								//System.out.println(bnNetOrg.toXMLBIF03());
+
+								//TODO ALL TESTING FROM HERE ON 
+								//Test for BaynetNet & Estimator Class
+								/*
+                                BayesNet bnNet = new BayesNet();
+                                //Set Search Algorithim
+                                SearchAlgorithm srchAlgo = new SearchAlgorithm();
+                                String ars = "weka.classifiers.bayes.net.search.local."+sAlgorithm;
+                                if(useArc){
+                                	ars +=" -R ";
+                                }
+                                ars +=" -P "+numParents+" -S "+sType;
+                                srchAlgo.setOptions(ars.split(" "));
+                                bnNet.setSearchAlgorithm(srchAlgo);
+                                //Set Estimator
+                                BayesNetEstimator bnEst = new BayesNetEstimator();
+                                String estimatorArgs = "weka.classifiers.bayes.net.estimate.BMAEstimator A 0.5";
+                                bnEst.setOptions(estimatorArgs.split(" "));
+                                bnNet.setEstimator(bnEst);
+                                //Run CLassifer
+                                String modelArgs = "-t " + path + outarff + " -c 1 -x " + kfold;
+                                Evaluation.evaluateModel(bnNet, modelArgs.split(" "));
+                                System.out.println(bnNet.toXMLBIF03());
+								 */
+								//END TESTING
+							} else {
+								//WEKA on observed Data
+								String arguments = Useful.getWekaArgs(path, outarff, sAlgorithm, useArc, numParents, sType, kfold);
+								System.out.println("calling weka On Observed Data,  with arguments: \n"+arguments);
+								String[] argsWeka = arguments.split(" ");
+								evalStr = Evaluation.evaluateModel(new BayesNet(), argsWeka);
+
+								//WEKA On bootstrapped data
+								String outarffbase = props.getProperty("rootOutputFileName");
+								String outarffext = ".arff";
+								evalStrs = new String[numIterations];
+
+								for(int i=0; i < numIterations; i++){
+									//Previously created .arff files for bootstrap
+									outarff = outarffbase + i + outarffext;
+									arguments = Useful.getWekaArgs(path, outarff, sAlgorithm, useArc, numParents, sType, kfold);
+									System.out.println("calling weka On Bootstrap Data, arguments: \n"+arguments);
+									argsWeka = arguments.split(" ");
+									// evalStr = Evaluation.evaluateModel(new BayesNet(), argsWeka);
+									evalStrs[i] = Evaluation.evaluateModel(new BayesNet(), argsWeka);
+									//evalStr = evalStrs[i];
+									System.out.println("Bootstrap Itr: " + i);
+									//if(BNGUI.cancelRun)
+									//break;
+								}
+								//if(!BNGUI.cancelRun)
+						bootNetFile = createNetworkFromBootstrapedEvals(evalStrs, numIterations, outarffbase);
+							}
+						}
+						catch(OutOfMemoryError ofm){
+							runProgressPanel.dispose();
+							System.out.println("Error: Out of Memory..");
+							ofm.printStackTrace();
+							JOptionPane.showMessageDialog(new JFrame(), ofm.getMessage() + "\n Out of Memory", "Error - Out of Memory. Cannot Continue!", JOptionPane.ERROR_MESSAGE);
+							BNGUI.run = true;
+							BNGUI.cancelRun = true;
+						}
+						catch(Exception ex){
+							runProgressPanel.dispose();
+							System.out.println("Weka exception..");
+							ex.printStackTrace();
+							JOptionPane.showMessageDialog(new JFrame(), ex.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
+							BNGUI.run = true;
+							BNGUI.cancelRun = true;
+						}
+						runProgressPanel.dispose();
+						//if(!BNGUI.cancelRun)
+						displayScrollPane(getScrollPanePanel(evalStr));
+						BNGUI.run = true;
+					}
+		});
+		thread.start();
+	}
+
+	/**
+	 * From an array of Weka evaluation string it creates a network that exceeds a confidence threshold
+	 * Writes the netwrok to a file and retirn the file name
+	 * @param evalStrs
+	 * @param numItr
+	 * @param outarffbase
+	 * @return
+	 */
+	private String createNetworkFromBootstrapedEvals(String[] evalStrs, int numItr, String outarffbase) {
+						//String sep = System.getProperty("file.separator"); 
+						String path = basePath+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP;
+						String fileName = path + outarffbase;
+
+						//Create sif files for every output of the resampled WEKA evaluation
+						try {
+							for(int i = 0; i < numItr; i++) {
+								//System.out.println("Creating file: " + fileName+i+outarffext);
+								FileOutputStream fos = new FileOutputStream(fileName+i+".sif");
+								PrintWriter pw = new PrintWriter(fos, true);
+								//FromWekaToSif.fromWekaToSif(evalStrs[i], pw);	
+				//No* need to convert to xgmml as these files are just used to select
+				//a netwrok from the bootstrap netwoek for a threshold.
+								FromWekaToSif.fromWekaToSif(evalStrs[i], pw, false);
+							}
+						} catch (Exception e){
+							e.printStackTrace();
+						}
+
+						// Count occurance of each edge accros all the iterations of the bootstrap
+						try {
+							for(int i = 0; i < numItr; i++) {
+								//System.out.println("Reading file: " + fileName+i+".sif");
+								BufferedReader br = new BufferedReader(new FileReader(fileName+i+".sif"));
+								String line = br.readLine();
+								while (line != null) {
+									//System.out.println(line);
+									Integer count = (Integer)edgesTable.get(line.trim());
+									if(count != null) {
+										edgesTable.remove(line.trim());
+										edgesTable.put(line.trim(), count + new Integer(1));
+									}
+									else {
+										edgesTable.put(line.trim(), new Integer(1));
+									}
+									line = br.readLine();
+								}
+								br.close();
+							}
+						} catch (Exception e){
+							e.printStackTrace();
+						}
+
 						// Remove edges below threshold
-						float confThres = Float.parseFloat(confThreshField.getText().trim());
-						String bootNetFile = basePath+BNConstants.SEP+BNConstants.RESULT_DIR+BNConstants.SEP+
-						Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" +
-						"boot_result_"+numIterations+"_"+confThres+".sif";
+		// Create sif or xgmml File
+		String bootNetFile = "";
+		if(!data.isAnnotationLoaded()) {
+			//Create sif file
+			bootNetFile = basePath+BNConstants.SEP+BNConstants.RESULT_DIR+BNConstants.SEP+
+			Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" + "boot_result_" + numIterations + "_" + confThreshold + ".sif";
 						try {
 							FileOutputStream fos = new FileOutputStream(bootNetFile);
+							PrintWriter pw = new PrintWriter(fos, true);
+							Enumeration enumerate = edgesTable.keys();
+							while(enumerate.hasMoreElements()){
+								String edge = (String)enumerate.nextElement();
+								Integer count = (Integer)edgesTable.get(edge);
+								float presence = count.floatValue()/numItr;
+								//System.out.println(edge + " : " + count.toString() + " presence : " + presence + " thresh : " + threshold);
+					if(presence >= confThreshold){
+									pw.println(edge);
+								}
+							}
+							fos.close();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+		} else {
+			//create xgmml file
+			bootNetFile = basePath+BNConstants.SEP+BNConstants.RESULT_DIR+BNConstants.SEP+
+			Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" + "boot_result_" + numIterations + "_" + confThreshold + ".xgmml";
+		try {
+				FromWekaToSif.fromWekaToXgmml(edgesTable, numItr, confThreshold, bootNetFile, probeIndexAssocHash, data);
+			} catch (Exception e) {
+				//throw new Exception("Error creating XGML File from Bootstrap");
+				e.printStackTrace();
+		}
+		}
+		return bootNetFile;
+		}
+
+	/**
+	 * Called when Update Network button is clicked
+	 * Creates interactions & network files
+	 *
+	 */
+	protected void onUpdateNetwork() {
+					try {
+			// For lookup during gaggle broadcast
+			interactionsfinal = new Vector<String>();
+			// To Remove edges below threshold
+						float confThres = Float.parseFloat(confThreshField.getText().trim());
+			String _bootNetFile = null;
+			if(finalThreshBox.isSelected()) {
+				//Create File & interaction adges
+				_bootNetFile = basePath+BNConstants.SEP+BNConstants.RESULT_DIR+BNConstants.SEP+
+				Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" +"boot_result_"+numIterations+"_"+confThres;
+				if(!data.isAnnotationLoaded()) {
+					//Create interactions & sif file
+						try {
+						_bootNetFile += ".sif";
+						FileOutputStream fos = new FileOutputStream(_bootNetFile);
 							PrintWriter pw = new PrintWriter(fos, true);
 							Enumeration enumerate = edgesTable.keys();
 							while(enumerate.hasMoreElements()){
@@ -642,18 +702,22 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 							}
 							fos.close();
 						} catch (Exception e) {
+						e.printStackTrace();
 							JOptionPane.showMessageDialog(null, e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
 						} 
-						// Broadcast to Cytoscape or Call Webstart
-						Vector<String> file = new Vector<String>();
-						file.add(bootNetFile);
+				} else {
+					// Create interactions & xgmml File
+					_bootNetFile += ".xgmml";
+					interactionsfinal = createInteractions(edgesTable, confThres, numIterations);
+					FromWekaToSif.fromWekaToXgmml(edgesTable, numIterations, confThres, _bootNetFile, probeIndexAssocHash, data);
+				}
+
 						System.out.println("Boot threshold: " + confThres);
-						System.out.println("Boot file: " + bootNetFile);
-						if(finalThreshBox.isSelected()) {
-							//resultFrame.dispose();
+				System.out.println("Boot file: " + _bootNetFile);
+
 							resultFrame.hide();
 							// Do stuff to store the final thresh and the file name
-							finalBootFile = bootNetFile;
+				finalBootFile = _bootNetFile;
 							networkFiles.add(finalBootFile);
 
 							//TODO - Is it possible to just take a network and 
@@ -661,51 +725,37 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 							//Create Weka Instance Object
 							//Evalute model
 							//Extract probabilities from Estimator class
-						}
-						//LMBNViewer.onWebstartCystoscape(file);
-
-						//Try Cytoscape Broadcast
-						if(framework.isGaggleConnected()) {
-							try {
-								broadcastNetworkGaggle(interactionsfinal);
-							} catch (Exception e) {
-								JOptionPane.showMessageDialog(null, e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-								e.printStackTrace();
-								if(finalThreshBox.isSelected())
-									resultFrame.dispose();
-								else
-									resultFrame.show();
-							} 
+				//}
 						} else {
-							try {
-								framework.requestGaggleConnect();
-								broadcastNetworkGaggle(interactionsfinal);
-								if(finalThreshBox.isSelected())
-									resultFrame.dispose();
-								else
-									resultFrame.show();
-							} catch (Exception e) {
-								JOptionPane.showMessageDialog(null, e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-								e.printStackTrace();
-								resultFrame.show();
-							} 
+				//Just create interactions, if not final
+				interactionsfinal = createInteractions(edgesTable, confThres, numIterations);
 						}
 					}catch(Exception ex){
 						JOptionPane.showMessageDialog(null, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
 						ex.printStackTrace();
 					}
 				}
-			});
+
+	/**
+	 * Given a list of edges and its count in a hashtable along with a cut-off
+	 * this return a list of edges that exceeds the cut-off over a n iterations
+	 * @param edges
+	 * @param thresh
+	 * @param itr
+	 * @return
+	 */
+	protected Vector<String> createInteractions(Hashtable edges, float thresh, int itr) {
+		Vector<String> _tmp = new Vector<String>();
+		Enumeration enumerate = edges.keys();
+		while(enumerate.hasMoreElements()){
+			String edge = (String)enumerate.nextElement();
+			Integer count = (Integer)edges.get(edge);
+			float presence = count.floatValue()/itr;
+			if(presence >= thresh){
+				_tmp.add(edge);
 		}
-		if(isBootstraping) {
-			//evalPanel.add(showBootInCytoButton, BorderLayout.LINE_START);
-			evalPanel.add(finalThreshBox, BorderLayout.WEST);
-			evalPanel.add(confThreshField, BorderLayout.CENTER);
-			evalPanel.add(updateNetwork, BorderLayout.EAST);
-		} else {
-			resultFrame.dispose();
 		}
-		return evalPanel;
+		return _tmp;
 	}
 
 	protected void broadcastNetworkGaggle(Vector<String> interacts) {
@@ -723,15 +773,15 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 			fromTo[0] = Integer.parseInt(tmp[0]);
 			tmp = probeIndexAssocHash.get(edgeLabels[2]).split("-");
 			fromTo[1] = Integer.parseInt(tmp[0]);
-			types.add("pp");
-			directionals.add(true);
+			types.add("pd");
+			directionals.add(false);
 			interactions.add(fromTo);
 		}
 		framework.broadcastNetwork(interactions, types, directionals);
 	}
 
 	/**
-	 * 
+	 * Cleans up the tmp directory
 	 *
 	 */
 	private void cleanUpFile(){
@@ -771,7 +821,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 				if(f.isFile()){
 					f.delete();
 				}else{
-					System.out.println("Not a file to delete");
+					//System.out.println("Not a file to delete");
 				}
 			} 
 		} else {
@@ -780,13 +830,18 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		System.out.println("Done !!");
 	}
 
+	/**
+	 * 
+	 * @param path
+	 * @return
+	 */
 	private String[] convertFromFile(String path){
 		//String sep= System.getProperty("file.separator");    
 		String filePath = path + BNConstants.SEP + BNConstants.OUT_ACCESSION_FILE; // Raktim - path incls tmp dir
 		//String filePath = path+sep+"tmp"+sep+"list.txt";
 		System.out.println("convertFromFile(): " + filePath);
 		String lineRead = "";
-		Vector store=new Vector();
+		Vector<String> store=new Vector<String>();
 		String[] accList=null;
 		try {
 			File file = new File(filePath);
@@ -869,16 +924,29 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		}
 	}
 
-	//public void tranSaveWeka(String binNum,String path){
+	/**
+	 * 
+	 * @param binNum
+	 * @param path
+	 * @param bootStrap
+	 * @param numIter
+	 * @return
+	 */
 	public Properties tranSaveWeka(String binNum,String path, boolean bootStrap, int numIter){
-		//String sep= System.getProperty("file.separator");    
 		return PrepareArrayDataModule.prepareArrayData(path+BNConstants.SEP+"wekaData", binNum, bootStrap, numIter, this.numClasses); 
-		// Raktim - USe Tmp dir
-		//PrepareArrayDataModule.prepareArrayData(path+sep+"tmp"+sep+"wekaData",binNum);
 	}
-	void buildConstraints(GridBagConstraints gbc, int gx, int gy,
-			int gw, int gh, int wx, int wy) {
 
+	/**
+	 * 
+	 * @param gbc
+	 * @param gx
+	 * @param gy
+	 * @param gw
+	 * @param gh
+	 * @param wx
+	 * @param wy
+	 */
+	void buildConstraints(GridBagConstraints gbc, int gx, int gy, int gw, int gh, int wx, int wy) {
 		gbc.gridx = gx;
 		gbc.gridy = gy;
 		gbc.gridwidth = gw;
@@ -887,6 +955,10 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		gbc.weighty = wy;
 	}
 
+	/**
+	 * 
+	 * @param visible
+	 */
 	public void showModal(boolean visible) {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		setLocation((screenSize.width - getSize().width)/2, (screenSize.height - getSize().height)/2);
@@ -894,8 +966,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		super.setVisible(visible);        
 	}
 
-	class BNClassifierTable extends JTable {
-	}
+	class BNClassifierTable extends JTable {}
 
 	class BNClassTableModel extends AbstractTableModel {
 		String[] columnNames;
@@ -1444,6 +1515,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 			//BNClassificationEditor.this.setVisible(true);
 			// showWarningMessage();
 		} catch (Exception e) {
+			e.printStackTrace();
 			JOptionPane.showMessageDialog(framework.getFrame(), "Incompatible file!", "Error", JOptionPane.WARNING_MESSAGE);
 			incompatible = true;
 			//BNClassificationEditor.this.dispose();

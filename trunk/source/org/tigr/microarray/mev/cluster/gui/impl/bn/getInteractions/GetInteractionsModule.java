@@ -776,11 +776,26 @@ public class GetInteractionsModule {
 			//System.out.print(outInteractionsFileName);
 			//Raktim - Modified. Name File(s) uniquely
 			//String fname_cyto= "liter_mining_alone_network.sif"; // Raktim - Old Way
-			String fname_cyto= Useful.getUniqueFileID() +"_"+ "liter_mining_alone_network.sif";
+
+			//Check if annotation is loaded
+			if(!data.isAnnotationLoaded()) {
+				String fname_cyto= Useful.getUniqueFileID() +"_"+ "LM.sif";
 			//System.out.println("fname_cyto " + fname_cyto);
 			System.setProperty("LM_ONLY", fname_cyto);
 			UsefulInteractions.writeSifFileUndir(interactions, fname_cyto);
-			//UsefulInteractions.writeXgmmlFileUndir(interactions, fname_cyto, probeIndexAssocHash, data);
+			} else {
+				String fname_cyto= Useful.getUniqueFileID() +"_"+ "LM.xgmml";
+				System.setProperty("LM_ONLY", fname_cyto);
+				if(probeIndexAssocHash != null ) {
+					if (probeIndexAssocHash.size() <= 0) {
+						System.out.println("probeIndexAssocHash Size: " + probeIndexAssocHash.size());
+						System.out.println("First Entry : " + probeIndexAssocHash.entrySet().toArray()[0]);
+					}
+				} else {
+					throw new NullArgumentException("Given Probe-Index Hash was null!");
+				}
+				UsefulInteractions.writeXgmmlFileUndir(interactions, fname_cyto, probeIndexAssocHash, data);
+			}
 			UsefulInteractions.writeSifFileUndirWithWeights(interactions, outInteractionsFileName);
 			return interactions.size();
 		}

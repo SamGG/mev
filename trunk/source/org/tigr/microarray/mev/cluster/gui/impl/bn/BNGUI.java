@@ -50,6 +50,7 @@ public class BNGUI implements IClusterGUI {
 
 		data = framework.getData();
 		Experiment exp = data.getExperiment();
+		//exp.getGeneIndexMappedToData(row);
 		ClusterRepository repository = framework.getClusterRepository(Cluster.GENE_CLUSTER);
 		 
 		//final BNInitDialog dialog = new BNInitDialog(framework.getFrame(), repository, framework.getData().getFieldNames());
@@ -112,6 +113,7 @@ public class BNGUI implements IClusterGUI {
 			return null;
 		}
 		catch (Exception e) {
+			e.printStackTrace();
 			JOptionPane.showMessageDialog(framework.getFrame(), e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
 			BNGUI.done = false;
 			pgPanel.dispose();

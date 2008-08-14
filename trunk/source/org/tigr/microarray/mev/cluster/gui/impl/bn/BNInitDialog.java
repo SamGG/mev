@@ -1274,7 +1274,12 @@ public class BNInitDialog extends AlgorithmDialog {
 			JLabel fileLocation = new JLabel("File(s) Location:");
 			//defaultFileBaseLocation = new JTextField(TMEV.getFile("data/bn").getAbsolutePath(), 25);
 			//defaultFileBaseLocation = new JTextField(new File(System.getProperty("user.dir")).getAbsolutePath());
-			defaultFileBaseLocation = new JTextField(new File(TMEV.getDataPath()).getAbsolutePath());
+			String _loc = TMEV.getSettingForOption(BNConstants.BN_LM_LOC_PROP);
+			if(_loc == null)
+				_loc = TMEV.getDataPath();
+			if(_loc.isEmpty() || _loc.equals(""))
+				_loc = TMEV.getDataPath();
+			defaultFileBaseLocation = new JTextField(new File(_loc).getAbsolutePath());
 			defaultFileBaseLocation.setEditable(true);
 
 			add(fileLocation, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
@@ -1310,7 +1315,8 @@ public class BNInitDialog extends AlgorithmDialog {
 					return;
 				}
 				defaultFileBaseLocation.setText(chooser.getSelectedFile().getAbsolutePath());
-				TMEV.setDataPath(defaultFileBaseLocation.getText());
+				//TMEV.setDataPath(defaultFileBaseLocation.getText());
+				TMEV.storeProperty(BNConstants.BN_LM_LOC_PROP, defaultFileBaseLocation.getText());
 			}
 		}
 
@@ -1641,7 +1647,8 @@ public class BNInitDialog extends AlgorithmDialog {
 				}
 
 				BNConstants.setBaseFileLocation(fileBase);
-				TMEV.setDataPath(fileBase);
+				//TMEV.setDataPath(fileBase);
+				TMEV.storeProperty(BNConstants.BN_LM_LOC_PROP, fileBase);
 				dispose();
 			} else if (command.equals("cancel-command")) {
 				result = JOptionPane.CANCEL_OPTION;
