@@ -49,7 +49,7 @@ public class XGMMLGenerator {
 		xgmml_header += "    </rdf:RDF>" + lineSep;
 		xgmml_header += "  </att>" + lineSep;
 		xgmml_header += "  <att type='string' name='backgroundColor' value='#ccccff'/>" + lineSep;
-		xgmml_header += "  <att type='string' name='Layout' value='Hierarchical'/>" + lineSep;
+		//xgmml_header += "  <att type='string' name='Layout' value='Hierarchical'/>" + lineSep;
 		return xgmml_header;
 	}
 
