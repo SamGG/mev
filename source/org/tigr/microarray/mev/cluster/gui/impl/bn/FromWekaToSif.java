@@ -155,7 +155,7 @@ public class FromWekaToSif {
 		
 		Hashtable<String, String> uniqueNodesWithId = new Hashtable<String, String>();
 		Vector<String> edges = new Vector<String>();
-		int nodeId = 1;
+		//int nodeId = 1;
 		String xgmmlContent = "";
 		String label = fileName.substring(fileName.lastIndexOf(BNConstants.SEP)+1, fileName.lastIndexOf("."));
 		xgmmlContent = XGMMLGenerator.createHeader(label);
@@ -164,6 +164,7 @@ public class FromWekaToSif {
 		String s = null;
 		// Process lines after reading Network Structure and before reading LogScore
 		boolean toProcess = false;
+		Vector<String> nodes = new Vector<String>();
 		for(int i = 0; i < evalSubstrings.length; i++){
 			s = evalSubstrings[i];
 			s = s.trim();
@@ -180,6 +181,14 @@ public class FromWekaToSif {
 						Iterator _itr = _tmpEdges.iterator();
 						while(_itr.hasNext()) {
 							String fromTo[] = ((String)_itr.next()).split("-");
+							if(!nodes.contains(fromTo[0].trim())) {
+								nodes.add(fromTo[0].trim());
+							}
+							
+							if(!nodes.contains(fromTo[1].trim())) {
+								nodes.add(fromTo[1].trim());
+							}
+							/*
 							if(!uniqueNodesWithId.containsKey(fromTo[0])) {
 								uniqueNodesWithId.put(fromTo[0].trim(), String.valueOf(nodeId));
 								nodeId++;
@@ -188,7 +197,17 @@ public class FromWekaToSif {
 								uniqueNodesWithId.put(fromTo[1].trim(), String.valueOf(nodeId));
 								nodeId++;
 							}
+							*/
 						}
+						
+						//To give a negative ID to nodes. Not sure if required
+						int nodeId = nodes.size();
+						Iterator _itr1 = nodes.iterator();
+						while(_itr1.hasNext()) {
+							uniqueNodesWithId.put((String)_itr1.next(), String.valueOf(nodeId*-1));
+							nodeId--;
+						}
+						
 						String _tmp = getXgmmlNodesAndEdges(edges, "-", uniqueNodesWithId, probeIndexAssocHash, data);
 						if(_tmp != null)
 							xgmmlContent += _tmp;
@@ -226,7 +245,8 @@ public class FromWekaToSif {
 		}
 		Hashtable<String, String> uniqueNodesWithId = new Hashtable<String, String>();
 		Vector<String> edges = new Vector<String>();
-		int nodeId = 1;
+		Vector<String> nodes = new Vector<String>();
+		
 		String xgmmlContent = "";
 		String label = fileName.substring(fileName.lastIndexOf(BNConstants.SEP)+1, fileName.lastIndexOf("."));
 		xgmmlContent = XGMMLGenerator.createHeader(label);
@@ -239,6 +259,15 @@ public class FromWekaToSif {
 			if(presence >= confThreshold){
 				edges.add(edge);
 				String fromTo[] = edge.split("pd");
+				if(!nodes.contains(fromTo[0].trim())) {
+					nodes.add(fromTo[0].trim());
+				}
+				
+				if(!nodes.contains(fromTo[1].trim())) {
+					nodes.add(fromTo[1].trim());
+				}
+				
+				/*
 				if(!uniqueNodesWithId.containsKey(fromTo[0].trim())) {
 					uniqueNodesWithId.put(fromTo[0].trim(), String.valueOf(nodeId));
 					nodeId++;
@@ -247,8 +276,17 @@ public class FromWekaToSif {
 					uniqueNodesWithId.put(fromTo[1].trim(), String.valueOf(nodeId));
 					nodeId++;
 				}
+				*/
 			}
 		}
+		//To give a negative ID to nodes. Not sure if required
+		int nodeId = nodes.size();
+		Iterator _itr = nodes.iterator();
+		while(_itr.hasNext()) {
+			uniqueNodesWithId.put((String)_itr.next(), String.valueOf(nodeId*-1));
+			nodeId--;
+		}
+			
 		String _tmp = getXgmmlNodesAndEdges(edges, "pd", uniqueNodesWithId, probeIndexAssocHash, data);
 		if(_tmp != null) {
 			if(!_tmp.isEmpty()) {
@@ -272,11 +310,13 @@ public class FromWekaToSif {
 	 * @return
 	 */
 	private static String getXgmmlNodesAndEdges(Vector edges, String nodeConnector, Hashtable nodesWithId, HashMap probeIndexAssocHash, IData data) {
-		String xgmmlContent = "";
+		String xgmmlNodeContent = "";
+		String xgmmlEdgeContent = "";
 		Vector<String> nodeCreated = new Vector<String>();
 		String labelTo;
 		String labelFrom;
 		int[] fromTo = new int[2];
+		
 		Enumeration myEnum = edges.elements();
 		while(myEnum.hasMoreElements()) {
 			String nodes[] = ((String)myEnum.nextElement()).split(nodeConnector); //"-"
@@ -294,19 +334,20 @@ public class FromWekaToSif {
 			//System.out.println("writeXGMML Edge Indices From: " + fromTo[0] + " To: " + fromTo[1]);
 			String srcId = (String)nodesWithId.get(labelFrom);
 			if(!nodeCreated.contains(labelFrom)) {
-				xgmmlContent += XGMMLGenerator.createNode(labelFrom, srcId, data, fromTo[0]);
+				xgmmlNodeContent += XGMMLGenerator.createNode(labelFrom, srcId, data, fromTo[0]);
 				nodeCreated.add(labelFrom);
 			}
 			
 			String tgtId = (String)nodesWithId.get(labelTo);
 			if(!nodeCreated.contains(labelTo)) {
-				xgmmlContent += XGMMLGenerator.createNode(labelTo, tgtId, data, fromTo[1]);
+				xgmmlNodeContent += XGMMLGenerator.createNode(labelTo, tgtId, data, fromTo[1]);
 				nodeCreated.add(labelTo);
 			}
 			
-			xgmmlContent += XGMMLGenerator.createEdge(labelFrom, labelTo, srcId, tgtId);	
+			xgmmlEdgeContent += XGMMLGenerator.createEdge(labelFrom, labelTo, srcId, tgtId);	
 		}
-		return xgmmlContent;
+		
+		return xgmmlNodeContent += xgmmlEdgeContent;
 	}
 	
 	/**
@@ -337,8 +378,9 @@ public class FromWekaToSif {
 			
 			Hashtable<String, String> uniqueNodesWithId = new Hashtable<String, String>();
 			Vector<String> edges = new Vector<String>();
+			Vector<String> nodes = new Vector<String>();
 			SimpleGeneEdge sGE = null;
-			int nodeId = 1;
+			//int nodeId = 1;
 			String xgmmlContent = "";
 			System.out.println("Network File Name " + fileName);
 			String label = fileName.substring(0, fileName.lastIndexOf("."));
@@ -352,6 +394,14 @@ public class FromWekaToSif {
 				String labelFrom = sGE.getFrom().trim();
 				String labelTo = sGE.getTo().trim();
 				edges.add(sGE.getEdgeAsString("pd"));
+				if(!nodes.contains(labelFrom.trim())) {
+					nodes.add(labelFrom.trim());
+				}
+				
+				if(!nodes.contains(labelTo.trim())) {
+					nodes.add(labelTo.trim());
+				}
+				/*
 				if(!uniqueNodesWithId.containsKey(labelFrom)) {
 					uniqueNodesWithId.put(labelFrom, String.valueOf(nodeId));
 					nodeId++;
@@ -360,6 +410,14 @@ public class FromWekaToSif {
 					uniqueNodesWithId.put(labelTo, String.valueOf(nodeId));
 					nodeId++;
 				}
+				*/
+			}
+			//To give a negative ID to nodes. Not sure if required
+			int nodeId = nodes.size();
+			Iterator _itr = nodes.iterator();
+			while(_itr.hasNext()) {
+				uniqueNodesWithId.put((String)_itr.next(), String.valueOf(nodeId*-1));
+				nodeId--;
 			}
 			String _tmp = getXgmmlNodesAndEdges(edges, "pd", uniqueNodesWithId, probeIndexAssocHash, data);
 			if(_tmp != null) {

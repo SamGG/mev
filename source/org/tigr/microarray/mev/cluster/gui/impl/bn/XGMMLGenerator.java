@@ -48,7 +48,7 @@ public class XGMMLGenerator {
 		xgmml_header += "      </rdf:Description>" + lineSep;
 		xgmml_header += "    </rdf:RDF>" + lineSep;
 		xgmml_header += "  </att>" + lineSep;
-		xgmml_header += "  <att type='string' name='backgroundColor' value='#FFDEAD'/>" + lineSep;
+		xgmml_header += "  <att type='string' name='backgroundColor' value='#ccccff'/>" + lineSep;
 		xgmml_header += "  <att type='string' name='Layout' value='Hierarchical'/>" + lineSep;
 		return xgmml_header;
 	}
@@ -77,7 +77,7 @@ public class XGMMLGenerator {
 			//System.out.println("Annotation from data.getElementAnnotation() & annoObj.getAttributeAt(): " + _tmp[0] + " : " /*+ (String)annoObj.getAttributeAt(0)*/);
 			node += createNodeAttribute(fieldNames[i], _tmp[0]);
 		}
-		node += "    <graphics type='ELLIPSE' />" + lineSep;
+		node += "    <graphics type='ELLIPSE' fill='#CCFF99'/>" + lineSep;
 		node += "  </node>" + lineSep;
 		return node;
 	}
@@ -116,9 +116,9 @@ public class XGMMLGenerator {
 	public static String createEdge(String srcLbl, String tgtLabel, String srcId, String tgtId) {
 		String edge = "";
 		//edge = "  <edge label='" + NM_138957 + " (pd) " + NM_176795 + "' source='" + -9 +"' target='" + -5 + "'>";
-		edge = "  <edge label='" + srcLbl + " (pd) " + tgtLabel + "' source='" + srcId +"' target='" + tgtId + "'>" + lineSep;
-		edge += "    <att type='string' name='canonicalName' value='" + srcLbl + " (pd) " + tgtLabel + "'/>" + lineSep;
-		edge += "    <att type='string' name='interaction' value='pd'/>" + lineSep;
+		edge = "  <edge label='" + srcLbl + " (pd) " + tgtLabel + "' source='" + srcId +"' target='" + tgtId + "' weight='0'>" + lineSep;
+		//edge += "    <att type='string' name='canonicalName' value='" + srcLbl + " (pd) " + tgtLabel + "'/>" + lineSep;
+		//edge += "    <att type='string' name='interaction' value='pd'/>" + lineSep;
 		//edge += "    <graphics width='1' fill='#0000ff' cy:sourceArrow='3' cy:targetArrow='0' cy:sourceArrowColor='#000000' cy:targetArrowColor='#000000' cy:edgeLabelFont='Default-0-10' cy:edgeLineType='SOLID' cy:curved='STRAIGHT_LINES'/>" + lineSep;
 		edge += "  </edge>" + lineSep;
 		return edge;
