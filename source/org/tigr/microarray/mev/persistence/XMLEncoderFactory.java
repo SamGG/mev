@@ -54,7 +54,7 @@ public abstract class XMLEncoderFactory {
 	 * PersistenceDelegates for implementations of IViewer are found in 
 	 * {@link IViewerPersistenceDelegate}.
 	 */
-	public static XMLEncoder getMAVEncoder(XMLEncoder oos, ResultTree tree){
+	public static MavXMLEncoder getMAVEncoder(MavXMLEncoder oos, ResultTree tree){
 		
 		DefaultMutableTreeNode analysisNode = tree.getAnalysisNode();
         Enumeration allNodes = analysisNode.breadthFirstEnumeration();

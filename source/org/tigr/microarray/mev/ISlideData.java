@@ -78,7 +78,7 @@ public interface ISlideData {
     /**
      * Returns the slide name keys.
      */
-    public Vector getSlideDataKeys();
+    public Vector<String> getSlideDataKeys();
  
     /**
      * Returns the slide data labels hash

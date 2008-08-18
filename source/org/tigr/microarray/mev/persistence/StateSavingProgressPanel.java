@@ -19,6 +19,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -35,7 +36,7 @@ import org.tigr.microarray.mev.MultipleArrayViewer;
 	public class StateSavingProgressPanel extends JFrame implements ActionListener {
 
 	    public JProgressBar progressBar;
-//	    private JButton cancelButton;
+	    private JButton cancelButton;
 	    //MultipleArrayViewer variable made private, to enable SoapCall class
 	    //to extend StateSavingProgressPanel without disturbing any varibles.
 	    private MultipleArrayViewer mav;
@@ -45,21 +46,22 @@ import org.tigr.microarray.mev.MultipleArrayViewer;
 			setTitle(initialMessage);
             this.mav = mav;
             
-			progressPanel = new JPanel(new BorderLayout());
-			progressPanel.setPreferredSize(new Dimension(350, 80));
+            progressPanel = new JPanel(new BorderLayout());
+			progressPanel.setPreferredSize(new Dimension(350, 120));
             
 	        progressBar = new JProgressBar(0, 100);
 	        progressBar.setValue(0);
 	        progressBar.setStringPainted(true);
 	        progressBar.setPreferredSize(new Dimension(310, 30));
 
-//	        cancelButton = new JButton("Cancel");
-//	        cancelButton.setActionCommand("cancel");	      
-//	        cancelButton.addActionListener(this);
-//	        cancelButton.setPreferredSize(new Dimension(70, 30));
+	        cancelButton = new JButton("Cancel");
+	        cancelButton.setActionCommand("cancel");	      
+	        cancelButton.addActionListener(this);
+	        cancelButton.setPreferredSize(new Dimension(50, 30));
+	        cancelButton.setFocusPainted(false);
 
 	        progressPanel.add(progressBar, BorderLayout.PAGE_START);
-//	        progressPanel.add(cancelButton, BorderLayout.CENTER);
+	        progressPanel.add(cancelButton, BorderLayout.CENTER);
 	        progressPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 	        
 			setContentPane(progressPanel);
@@ -69,7 +71,6 @@ import org.tigr.microarray.mev.MultipleArrayViewer;
 			pack(); 
 			setVisible(true);
 	    }
-	    
 	    public void update(String message){
 	    	progressBar.setString(message);
 	    	progressBar.setValue(progressBar.getMinimum());
@@ -104,8 +105,12 @@ import org.tigr.microarray.mev.MultipleArrayViewer;
     			progressBar.setString("Cleaning Up...");
             }
 	    }
+
 	    public void onClose(){
 	    	mav.cancelLoadState();
+	    }
+	    public MultipleArrayViewer getMav(){
+	    	return mav;
 	    }
 }
 
