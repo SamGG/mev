@@ -106,17 +106,9 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.systemsbiology.gaggle.core.Boss;
-import org.systemsbiology.gaggle.core.Goose;
-import org.systemsbiology.gaggle.core.datatypes.DataMatrix;
-import org.systemsbiology.gaggle.core.datatypes.GaggleTuple;
-import org.systemsbiology.gaggle.core.datatypes.Interaction;
-import org.systemsbiology.gaggle.core.datatypes.Namelist;
-import org.systemsbiology.gaggle.core.datatypes.Network;
-import org.systemsbiology.gaggle.core.datatypes.Tuple;
-import org.systemsbiology.gaggle.geese.common.GaggleConnectionListener;
-import org.systemsbiology.gaggle.geese.common.GooseShutdownHook;
-import org.systemsbiology.gaggle.geese.common.RmiGaggleConnector;
+import org.systemsbiology.gaggle.core.*;
+import org.systemsbiology.gaggle.core.datatypes.*;
+import org.systemsbiology.gaggle.geese.common.*;
 import org.systemsbiology.gaggle.util.MiscUtil;
 import org.tigr.microarray.file.AnnFileParser;
 import org.tigr.microarray.mev.action.ActionManager;
@@ -195,6 +187,8 @@ import org.tigr.microarray.mev.file.CGHStanfordFileLoader;
 import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
 import org.tigr.microarray.mev.persistence.BufferedImageWrapper;
 import org.tigr.microarray.mev.persistence.MEVSessionPrefs;
+import org.tigr.microarray.mev.persistence.MavXMLDecoder;
+import org.tigr.microarray.mev.persistence.MavXMLEncoder;
 import org.tigr.microarray.mev.persistence.SessionMetaData;
 import org.tigr.microarray.mev.persistence.StateSavingProgressPanel;
 import org.tigr.microarray.mev.persistence.XMLEncoderFactory;
@@ -217,6 +211,7 @@ import com.sun.media.jai.codec.ImageEncodeParam;
 
 public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose, GaggleConnectionListener {
     
+
     private MultipleArrayMenubar menubar;
     private MultipleArrayToolbar toolbar;
     private JSplitPane splitPane;
@@ -254,10 +249,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     /* Raktim, CGH Model for Cytoband */
     private CytoBandsModel cytoBandsModel;
     
-        //EH state-saving
+    //state-saving
     XMLDecoder ois;
 	DataInputStream dis;
-	boolean keepRunning;
+	boolean keepRunning = true;
 	StateSavingProgressPanel progressPanel;
 	SessionMetaData smd;
 	
@@ -578,22 +573,34 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
                     String cmd = ae.getActionCommand();
                     if(cmd.equals(JFileChooser.APPROVE_SELECTION)) {
                         File file = chooser.getSelectedFile();
-                        dialog.dispose();
                         try {
                             AnalysisFileFilter filter = new AnalysisFileFilter();
                             String ext = filter.getExtension(file);
                             
                             if(ext == null)
                                 file = new File(file.getPath() + ".anl");
-                            
+                            if(file.exists()) {
+                            	JOptionPane pane = new JOptionPane("File exists. Overwrite?");
+                            	Object[] options = new String[]{"Ok", "Cancel"};
+                            	pane.setOptions(options);
+                            	JDialog dialog = pane.createDialog(new JFrame(), "File Overwrite Warning.");
+                            	dialog.setVisible(true);
+                            	if(!pane.getValue().equals("Ok")) {
+                            		return;
+                            	}
+                            }
+                            dialog.dispose();
+
                             saveState(file);
                             TMEV.setDataPath(file.getParentFile().getPath());
+                            
                         } catch (IOException ioe) {
                             JOptionPane.showMessageDialog(MultipleArrayViewer.this, "I/O Exception, Error saving analysis. File ("+(file != null ? file.getName() : "name unknown")+")", "Save Analysis", JOptionPane.ERROR_MESSAGE);
                             ioe.printStackTrace();
                         }
                     } else {
-                        dialog.dispose();
+                    	if(dialog == null)
+                    		dialog.dispose();
                     }
                 }
             });
@@ -629,35 +636,14 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
             
             Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
             dialog.setLocation((screenSize.width - dialog.getSize().width)/2, (screenSize.height - dialog.getSize().height)/2);
-            dialog.show();
+            dialog.setVisible(true);
             
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
     
-    private String formatDataPath(String dataPath) {
-        if(dataPath == null)
-            return " ";
-        
-        String renderedSep = "/";
-        String renderedPath = new String();
-        
-        String sep = System.getProperty("file.separator");
-        
-        StringTokenizer stok = new StringTokenizer(dataPath, sep);
-        
-        String newDataPath = new String();
-        
-        String str;
-        while(stok.hasMoreTokens() && stok.countTokens() > 1){
-            str = stok.nextToken();
-            renderedPath += str + renderedSep;
-            newDataPath += str + sep;
-        }
-        return renderedPath;
-    }
-    
+   
     public void saveAnalysis() {
         if(this.currentAnalysisFile != null) {
             try {
@@ -670,6 +656,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
             "Please use the \"Save As...\" menu item.", "Save Error", JOptionPane.WARNING_MESSAGE);
         }
     }
+    public boolean keepSaving() {
+//    	if(!keepRunning)
+//    		(new Exception()).printStackTrace();
+    	return keepRunning;
+    }
     
     /**
      * Save the current analysis.
@@ -678,7 +669,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
      * @throws IOException
      */
     private void saveState(File file) throws FileNotFoundException, IOException {
-
+    	this.keepRunning = true;
         this.currentAnalysisFile = file;
     	final boolean debug = false;
     	
@@ -693,7 +684,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     	MultipleArrayViewer.CURRENT_TEMP_DIR = tempDir.getPath();
     	File tmpXML = new File(tempDir, "mev_state.xml");
     	BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(tmpXML));
-    	final XMLEncoder oos = XMLEncoderFactory.getMAVEncoder(new XMLEncoder(os), tree);  	
+    	final MavXMLEncoder oos = XMLEncoderFactory.getMAVEncoder(new MavXMLEncoder(os, this), tree);  	
     	if(!debug) {
 	    	tempDir.deleteOnExit();
 	    	tmpXML.deleteOnExit();
@@ -714,6 +705,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
             		}
             	} catch (IOException ioe){
             		System.out.println("Could not open save log file.");
+
             	} catch (StackOverflowError soe) {
             		System.out.println("Stack overflow error");
             		soe.printStackTrace();
@@ -729,6 +721,12 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 		prepSessionMetaData(smd.getMevSessionPrefs());
 		
         Thread thread = new Thread(new Runnable() {
+        	private void cancelSave() {
+        		currentAnalysisFile.delete();
+        		tempDir.delete();
+        		progressPanel.dispose();
+		    	modifiedResult = false;
+        	}
             public void run() {
             	try {
 			        setCursor(new Cursor(Cursor.WAIT_CURSOR));
@@ -736,17 +734,31 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 					progressPanel.update("Writing Metadata");
 					progressPanel.setIndeterminate(true);
 					oos.writeObject(smd);
+					
+			    	if(!keepSaving()) {
+			    		cancelSave();
+			    		return;
+			    	}
 			    	
 					progressPanel.update("Writing Intensities");
 					progressPanel.setIndeterminate(true);
 			        oos.writeObject(data);
-			        
+			    	if(!keepSaving()) {
+			    		cancelSave();
+			    		return;
+			    	}
 					progressPanel.update("Writing Clusters");
 			        saveClusterRepositories(oos);
-			
+			    	if(!keepSaving()) {
+			    		cancelSave();
+			    		return;
+			    	}
 					progressPanel.update("Writing Analysis Results");
 			    	oos.writeObject(tree.getAnalysisNode());
-			    	
+			    	if(!keepSaving()) {
+			    		cancelSave();
+			    		return;
+			    	}
 					progressPanel.update("Writing History");
 			    	oos.writeObject(historyNode);
 			    	
@@ -761,7 +773,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 			        zipTempFiles(zos, tempDir.getPath(), tempDir);
 			    	zos.close();
 					//End Zipping of temp files
-			
+			    	if(!keepSaving()) {
+			    		cancelSave();
+			    		return;
+			    	}
 					progressPanel.update("Cleaning Up");
 					progressPanel.setIndeterminate(false);
 					//Delete all temp files, including temp folder
@@ -1170,6 +1185,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         }
     }
     private void loadAnalysisFromFile(final File file) throws IOException, ClassNotFoundException {
+    	keepRunning = true; 
+    	
 	    progressPanel = new StateSavingProgressPanel("Loading Saved Analysis", this);
 		progressPanel.setLocationRelativeTo(mainframe);
 		progressPanel.setVisible(true);
@@ -1182,6 +1199,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         MultipleArrayViewer.CURRENT_TEMP_DIR = tempDir.getPath();
         
         Thread thread = new Thread( new Runnable(){
+        	private void cancelLoad() {
+        		cleanUp();
+        	}
             public void run() {
                 try {
                 	File unzipDir = new File(MultipleArrayViewer.CURRENT_TEMP_DIR);
@@ -1191,6 +1211,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
                 	File tmpXML = new File(unzipDir, "mev_state.xml");
             	    tmpXML.deleteOnExit();
 
+            	    if(!keepSaving()) {
+            	    	cancelLoad();
+            	    	return;
+            	    }
 					progressPanel.update("Uncompressing Data");
 				    progressPanel.setIndeterminate(false);
 					progressPanel.setMaximum(zipFile.size());
@@ -1218,7 +1242,12 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 				    }
 				    zis.close();
 					zipFile.close();
-					
+            	    
+					if(!keepSaving()) {
+            	    	cancelLoad();
+            	    	return;
+            	    }
+            	    
 					BufferedInputStream ois = new BufferedInputStream(new FileInputStream(tmpXML));
             		XMLDecoder xmld = new XMLDecoder(ois);
     
@@ -1228,6 +1257,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     	
 			    	smd = (SessionMetaData)xmld.readObject();
 			    	processMeVPrefs(smd.getMevSessionPrefs());
+            	    
+			    	if(!keepSaving()) {
+            	    	cancelLoad();
+            	    	return;
+            	    }
 			    	
 					progressPanel.update("Loading Experiment Data");
 			        data = (MultipleArrayData)xmld.readObject();
@@ -1236,6 +1270,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 			            TMEV.setDataType(TMEV.DATA_TYPE_AFFY);
 			        }
 			        
+            	    if(!keepSaving()) {
+            	    	cancelLoad();
+            	    	return;
+            	    }
+            	    
 			        if(data.isCGHData()) {
 			        	initializeCGH();
 			        }
@@ -1250,6 +1289,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 			            addNode(clusterNode, genesNode);
 			            
 			        }
+            	    if(!keepSaving()) {
+            	    	cancelLoad();
+            	    	return;
+            	    }
+            	    
 			        if(((Boolean)xmld.readObject()).booleanValue()){
 			            experimentClusterRepository = (ClusterRepository)xmld.readObject();
 			            data.setExperimentClusterRepository(experimentClusterRepository);
@@ -1260,19 +1304,29 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 			            addNode(clusterNode, experimentNode);
 			        }
 			        
-
+            	    if(!keepSaving()) {
+            	    	cancelLoad();
+            	    	return;
+            	    }
 					progressPanel.update("Loading Analysis Results");
 			        int location = tree.getModel().getIndexOfChild(tree.getRoot(), analysisNode);
 			        tree.removeNode(analysisNode);
 			        analysisNode = (DefaultMutableTreeNode)xmld.readObject();
 			        tree.insertNode(analysisNode, tree.getRoot(), location);
 			        tree.setAnalysisNode(analysisNode);
-			
+            	    if(!keepSaving()) {
+            	    	cancelLoad();
+            	    	return;
+            	    }
 			    	loadHistoryNode((DefaultMutableTreeNode)xmld.readObject());
 
 			        if(data.isCGHData()) {
 			        	initializeCGH();
 			        }
+            	    if(!keepSaving()) {
+            	    	cancelLoad();
+            	    	return;
+            	    }
 			        
 			        //Refresh views, etc
 			        data.updateSpotColors();
@@ -1283,7 +1337,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 			        data.setSampleLabelKey(MultipleArrayData.DEFAULT_SAMPLE_ANNOTATION_KEY);
 			        //populate the display menu
 			         
-			      
+            	    if(!keepSaving()) {
+            	    	cancelLoad();
+            	    	return;
+            	    }
 			        
 			         /*Added by Sarita*/
 			        
@@ -1293,7 +1350,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 			    	   menubar.replaceLabelMenuItems(data.getFieldNames());
 			       }
 			        
-			      
+           	    if(!keepSaving()) {
+        	    	cancelLoad();
+        	    	return;
+        	    }
 			        /////////////////////////////////////////////// 
 			      //  menubar.replaceLabelMenuItems(data.getFieldNames());--original code commented by Sarita
 			        menubar.replaceSortMenuItems(data.getFieldNames());
@@ -1302,6 +1362,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 			        	createCGHAnalysisNodes();
 			        	initializeCGHViews();
 			        }
+            	    if(!keepSaving()) {
+            	    	cancelLoad();
+            	    	return;
+            	    }
 			        
 			        setMaxCY3AndCY5();
 			        systemEnable(TMEV.DATA_AVAILABLE);
@@ -1346,9 +1410,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	        		xmld.close();
 	        		
 	        	    currentAnalysisFile = file;
-	        	    //set tmev.cfg to formatted path
-	        	    TMEV.updateDataPath(formatDataPath(file.getPath()));
-	        	    //set variable to OS format path
+	        	    
 	        	    TMEV.setDataPath(file.getParentFile().getPath());
 	        	    
 	        		String[] files = unzipDir.list();
