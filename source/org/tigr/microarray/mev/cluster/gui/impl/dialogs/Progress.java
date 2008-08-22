@@ -75,7 +75,7 @@ public class Progress extends JDialog {
     public void show() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation((screenSize.width - getSize().width)/2, (screenSize.height - getSize().height)/2);
-        super.setVisible(true);
+        super.show();
     }
     
     /**
