@@ -1155,7 +1155,7 @@ public class MultipleArrayData implements IData {
         IAnnotation annot = element.getElementAnnotation();
         
         if(isAnnotationLoaded())
-        	if(annot.getAttribute(attr) != null)
+        	if(annot.getAttribute(attr) != null && !annot.getAttribute(attr)[0].equalsIgnoreCase("NA"))
         		return(annot.getAttribute(attr));
         
 

@@ -444,7 +444,7 @@ public class ExperimentUtil {
     
     protected static void saveCluster(File file, Experiment experiment, IData data, int[] rows) throws Exception {
         PrintWriter out = new PrintWriter(new FileOutputStream(file));
-        String[] fieldNames = data.getFieldNames();
+        String[] fieldNames = data.getAllFilledAnnotationFields();
         if(fieldNames == null)
             return;
         out.print("Original row");
@@ -497,8 +497,7 @@ public class ExperimentUtil {
             out.print(Integer.toString(experiment.getGeneIndexMappedToData(rows[i]) + 1));  //JCB handles cuttoffs, gets gene mapping
             out.print("\t");
             for (int k = 0; k < fieldNames.length; k++) {
-                out.print(data.getElementAttribute(experiment.getGeneIndexMappedToData(rows[i]), k));  //JCB in case of using cuttoffs, get mapping
-                
+                out.print(data.getElementAnnotation(experiment.getGeneIndexMappedToData(rows[i]), fieldNames[k])[0]);
                 if (k < fieldNames.length - 1) {
                     out.print("\t");
                 }
