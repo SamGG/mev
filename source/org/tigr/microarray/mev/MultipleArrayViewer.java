@@ -6200,7 +6200,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	
 			double matrixData [][] = matrix.get ();
 			String [] rowTitles = matrix.getRowTitles ();
-	
+			double maxval =Double.NEGATIVE_INFINITY, minval = Double.POSITIVE_INFINITY;
+			
 			for (int r=0; r < matrix.getRowCount (); r++) {
 				int [] rows = new int [] {0, 1, 0};
 				int [] columns = new int [] {0, 1, 0};
@@ -6223,13 +6224,24 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 					cy3 = 1f;  //set cy3 to a default value of 1.
 					cy5 = (new Double (matrixData [r][i])).floatValue ();
 					slideDataArray[i].setIntensities (r, cy3, cy5);
+					if(cy5<minval)
+						minval = cy5;
+					if(cy5 > maxval)
+						maxval = cy5;
 					//System.out.println ("slideDataArray [" + i + "].setIntensities (" +
 			        //                r + ", " + cy3 + ", " + cy5);
 				} // for i
 			} // for r
 			IChipAnnotation chipAnno = new MevChipAnnotation();
 			chipAnno.setSpeciesName(matrix.getSpecies());
-			fireDataLoaded(slideDataArray, chipAnno, IData.DATA_TYPE_RATIO_ONLY);
+	         	
+			this.menubar.setMinRatioScale(new Float(minval));
+	         this.menubar.setMidRatioValue(new Float((maxval-minval) / 2 + minval));
+	         this.menubar.setMaxRatioScale(new Float(maxval));    	
+
+	         fireDataLoaded(slideDataArray, chipAnno, IData.DATA_TYPE_RATIO_ONLY);
+			//Set heatmap min/max intensities to min/maxvals
+
 		} else {
 			System.out.println("Cannot accept broadcast matrix to " + myGaggleName + ": data is already loaded.");
 		}
