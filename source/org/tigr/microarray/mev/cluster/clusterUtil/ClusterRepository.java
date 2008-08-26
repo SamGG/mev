@@ -714,11 +714,15 @@ public class ClusterRepository extends Vector {
         }
     }
     
-    
-        
     /** Creates a cluster by importing a gene list         
      */
     public Cluster createClusterFromList() {
+	    return createClusterFromList(null);
+    }
+        
+    /** Creates a cluster by importing a gene list         
+     */
+    public Cluster createClusterFromList(String[] genelist) {
         ListImportDialog dialog;
         String [] ids;
         String key;
@@ -726,7 +730,7 @@ public class ClusterRepository extends Vector {
         boolean [] matches;
         Experiment experiment = framework.getData().getExperiment();
         if(this.isGeneClusterRepository()) {
-            dialog = new ListImportDialog(framework.getFrame(), this.framework.getData().getFieldNames(), true);
+            dialog = new ListImportDialog(framework.getFrame(), this.framework.getData().getFieldNames(), true, genelist);
             if(dialog.showModal() == JOptionPane.OK_OPTION) {
                 key = dialog.getFieldName();
                 ids = dialog.getList();
@@ -794,7 +798,7 @@ public class ClusterRepository extends Vector {
                 slideNames[i] = (String)(slideNameKeys.elementAt(i));
             }
             
-            dialog = new ListImportDialog(framework.getFrame(), slideNames, false);
+            dialog = new ListImportDialog(framework.getFrame(), slideNames, false, genelist);
             
             if(dialog.showModal() == JOptionPane.OK_OPTION) {
                 
