@@ -4053,17 +4053,29 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
      * Imported cluster will be added to the proper repository.
      */
     private void onImportList(int clusterType) {
+	    onImportList(clusterType, null);
+    }
+    /** Imports a list of gene or sample identifiers based on matching an annotation key
+     * Imported cluster will be added to the proper repository.
+     */
+    private void onImportList(int clusterType, String[] genelist) {
         ClusterRepository cr = getClusterRepository(clusterType);
         
-        Cluster cluster = cr.createClusterFromList();
+        Cluster cluster = cr.createClusterFromList(genelist);
+        
+        String source;
+        if(genelist != null)
+        	source = "Gaggle Broadcast";
+        else
+        	source = "List Import";
         
         if(cluster != null) {
             if(clusterType == Cluster.GENE_CLUSTER) {
                 this.geneClusterManager.onRepositoryChanged(cr);
-                addHistory("Save Gene Cluster: Serial #: "+cluster.getSerialNumber()+", Source: List Import");
+                addHistory("Save Gene Cluster: Serial #: "+cluster.getSerialNumber()+", Source: " + source);
             } else {
                 this.experimentClusterManager.onRepositoryChanged(cr);
-                addHistory("Save Sample Cluster: Serial #: "+cluster.getSerialNumber()+", Source: List Import");
+                addHistory("Save Sample Cluster: Serial #: "+cluster.getSerialNumber()+", Source: " + source);
             }
             refreshCurrentViewer();
         }
@@ -6300,9 +6312,13 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 		// TODO Auto-generated method stub
 	}
 
-	public void handleNameList(String arg0, Namelist arg1) throws RemoteException {
-		// TODO Auto-generated method stub
-	}
+	/**
+	 * Handles an incoming broadcast of a namelist and attempts to create a cluster based on it.
+	 */
+	public void handleNameList(String sourceGoose, Namelist nl) throws RemoteException {
+		nl.getName();
+                onImportList(Cluster.GENE_CLUSTER, nl.getNames());
+ 	}
 
 	public void handleNetwork(String arg0, Network arg1) throws RemoteException {
 		// TODO Auto-generated method stub
