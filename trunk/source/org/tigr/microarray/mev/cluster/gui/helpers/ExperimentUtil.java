@@ -24,6 +24,7 @@ import java.io.PrintWriter;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -242,6 +243,21 @@ public class ExperimentUtil {
         int ret = fc.showSaveDialog(frame);
         if (ret == JFileChooser.APPROVE_OPTION) {
             file = fc.getSelectedFile();
+            while(file.exists()) {
+                	JOptionPane pane = new JOptionPane("File exists. Overwrite?");
+                	Object[] options = new String[]{"Ok", "Cancel"};
+                	pane.setOptions(options);
+                	JDialog dialog = pane.createDialog(new JFrame(), "File Overwrite Warning.");
+                	dialog.setVisible(true);
+                	if(pane.getValue().equals("Ok")) {
+                		System.out.println("Ok");
+                		return file;
+                	} else {
+                		System.out.println("not ok");
+                		fc.showSaveDialog(frame);
+                		file = fc.getSelectedFile();
+                	}
+                }
         } else {
             return null;
         }
@@ -253,7 +269,6 @@ public class ExperimentUtil {
         if(extIndex < 0 || ( fileName.length()- 1 - extIndex ) != 3)
             file = new File(file.getPath()+".txt");
         
-        TMEV.updateDataPath(formatDataPath(file.getPath()));
         TMEV.setDataPath(file.getParent());
         
         return file;
