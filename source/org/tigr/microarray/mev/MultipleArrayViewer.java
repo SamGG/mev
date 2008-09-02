@@ -652,13 +652,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
                 e.printStackTrace();
             }
         } else {
-            JOptionPane.showMessageDialog(this, "State was not saved.  Error finding file to save. \n"+
-            "Please use the \"Save As...\" menu item.", "Save Error", JOptionPane.WARNING_MESSAGE);
+        	saveAnalysisAs();
         }
     }
     public boolean keepSaving() {
-//    	if(!keepRunning)
-//    		(new Exception()).printStackTrace();
     	return keepRunning;
     }
     

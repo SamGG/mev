@@ -438,7 +438,7 @@ public class MultipleArrayMenubar extends JMenuBar {
                 break;
             case TMEV.DATA_AVAILABLE:
                 setEnableMenu("File", true);
-                setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_COMMAND, false);
+                setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_COMMAND, true);
                 setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_AS_COMMAND, true);
                 setEnableMenuItem("File", ActionManager.SAVE_MATRIX_COMMAND, true);
                 setEnableMenuItem("File", ActionManager.SAVE_IMAGE_COMMAND, true);
