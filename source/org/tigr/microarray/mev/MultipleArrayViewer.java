@@ -564,6 +564,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
             chooser.setFileView(new AnalysisFileView());
             chooser.setFileFilter(new AnalysisFileFilter());
             chooser.setApproveButtonText("Save");
+            chooser.setDialogType(JFileChooser.SAVE_DIALOG);
             JPanel panel = new JPanel(new GridBagLayout());
             
             final javax.swing.JDialog dialog = new javax.swing.JDialog(getFrame(), "Save Dialog", true);
@@ -1989,6 +1990,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         chooser.addChoosableFileFilter(new JPGFileFilter());
         chooser.addChoosableFileFilter(new PNGFileFilter());
         chooser.addChoosableFileFilter(new TIFFFileFilter());
+        chooser.setDialogType(JFileChooser.SAVE_DIALOG);
         int chooserState = chooser.showSaveDialog(getFrame());
         if (chooserState == JFileChooser.APPROVE_OPTION) {
             IViewer viewer = getCurrentViewer();
