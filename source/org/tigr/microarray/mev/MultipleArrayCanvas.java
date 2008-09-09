@@ -38,6 +38,7 @@ import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -116,6 +117,8 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
     private JRadioButtonMenuItem expressionBarItem;
     private JRadioButtonMenuItem overlayItem;
     private JCheckBoxMenuItem absoluteColorCheckBoxItem;   
+    private JLabel emptyMacLabel;
+    private String emptyMacLabelText = "Use the File menu to load data from text files or a saved analysis file. Use the Utilities menu to connect to the Gaggle network";      
 
     public MultipleArrayCanvas() {
         
@@ -139,6 +142,8 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
         this.posColorImage = framework.getDisplayMenu().getPositiveGradientImage();
         this.header.setNegativeAndPositiveColorImages(this.negColorImage, this.posColorImage);
         popup = createPopupMenu(listener);
+        emptyMacLabel = new JLabel(emptyMacLabelText);
+        add(emptyMacLabel);
     }
     
     /**
@@ -201,14 +206,13 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
      */
     public void onDataChanged(IData data) {
         this.data = data;
+        if(data.getFeaturesSize() > 0)
+        	remove(emptyMacLabel);
         features = data.getFeaturesCount();
         probes   = data.getFeaturesSize();
         setDrawChain(false);
         updateSize();
         header.setData(data);
-        //        header.updateSize();
-        //header.setContentWidth(getSize().width);
-        //   header.updateSize();
         thumbnail.onDataChanged(data);
     }
     
@@ -216,10 +220,7 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
      * Updates the viewer when the framework display menu is changed.
      */
     public void onMenuChanged(IDisplayMenu menu) {
-      //  paletteStyle = menu.getPaletteStyle();
-      //  isGRScale = menu.isGRScale();
-        isDrawBorders = menu.isDrawingBorder();        
-      //  isTracing = menu.isTracing();
+        isDrawBorders = menu.isDrawingBorder();       
         useDoubleGradient = menu.getUseDoubleGradient();
         header.setUseDoubleGradient(useDoubleGradient);
         Dimension newSize = menu.getElementSize();
@@ -404,54 +405,6 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
         }
     }
     
-    /**
-     * Calculates color for passed value.
-     */
-    /*private Color getColor(float value) {
-        if (Float.isNaN(value)) {
-            return missingColor;
-        }
-        float maximum = value < 0 ? this.minRatio : this.maxRatio;
-        int colorIndex = (int)(255*value/maximum);
-        colorIndex = colorIndex > 255 ? 255 : colorIndex;
-        int rgb = value < 0 ? negColorImage.getRGB(255-colorIndex, 0) : posColorImage.getRGB(colorIndex, 0);
-        return new Color(rgb);
-    }
-    */
-    
-    
-    /**
-     * Calculates color for passed value.
-     */
-   /* private Color getColor(float value) {
-        if (Float.isNaN(value)) {
-            return missingColor;
-        }
-        
-        float maximum;
-        int colorIndex, rgb;
-        
-        if(useDoubleGradient) {
-        	maximum = value < 0 ? this.minRatio : this.maxRatio;
-			colorIndex = (int) (255 * value / maximum);
-			colorIndex = colorIndex > 255 ? 255 : colorIndex;
-			rgb = value < 0 ? negColorImage.getRGB(255 - colorIndex, 0)
-					: posColorImage.getRGB(colorIndex, 0);
-        } else {
-        	float span = this.maxRatio - this.minRatio;
-        	if(value <= minRatio)
-        		colorIndex = 0;
-        	else if(value >= maxRatio)
-        		colorIndex = 255;
-        	else
-        		colorIndex = (int)(((value - this.minRatio)/span) * 255);
-         	
-        	rgb = posColorImage.getRGB(colorIndex,0);
-        }
-        return new Color(rgb);
-    }
-    */
-
     
     /**
      * Calculates color for passed value.
@@ -550,11 +503,9 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
         Graphics2D g2 = (Graphics2D)bi.createGraphics();
         g2.setColor(Color.white);
         g2.fillRect(0,0, elementSize.width, elementSize.height);
-        // g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)(cy3/(cy3+cy5))));
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)(0.5)));
         g2.setColor(negColor);
         g2.fillRect(0,0, elementSize.width, elementSize.height);
-        // g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)(cy5/(cy3+cy5))));
         g2.setColor(posColor);
         g2.fillRect(0, 0, elementSize.width, elementSize.height);
         
@@ -686,12 +637,6 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
         		label = data.getElementAttribute(i, labelIndex);
         	}
             maxWidth = Math.max(maxWidth, fm.stringWidth(label));
-
-   
-            
-        /*Original code, commented temporarily by Raktim
-         * label = data.getElementAttribute(i, labelIndex);
-            maxWidth = Math.max(maxWidth, fm.stringWidth(label));*/
         }
         maxLabelWidth = (int)maxWidth;
     }
@@ -719,14 +664,10 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
         	for (int probe = top; probe < bottom; probe++) {
         		String prefix = "Label by ";
         		String attr = getMenuLabel(labelIndex).substring(prefix.length()).trim();
-            	//System.out.println("label: " + attr);
                
                 String[] _temp = data.getElementAnnotation(indices[probe], attr);
         		if(_temp.length > 1) {
-        			//label = ((AnnoAttributeObj)data.getElementAnnotationObject(indices[probe], attr)).toString();
-//        			label = data.getAnnotationList(data.getAllFilledAnnotationFields()[labelIndex], new int[]{indices[probe]})[0];
-//        			getElementAnnotation
-        			//   public String[] getElementAnnotation(int row, String attr) {
+
         			label = data.getElementAnnotation(indices[probe], attr)[0];
         		} else
         			label = _temp[0];
@@ -744,14 +685,6 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
 	            }
 	        }
         }
-
-        
-     /*   for (int probe = top; probe < bottom; probe++) { Original code------commented by Raktim
-            label = data.getElementAttribute(indices[probe], labelIndex);
-            if (label != null) {
-                g.drawString(label, insets.left + getXSize() + insets.right, insets.top + ((probe +1)*elementSize.height) -1);
-            }
-        }*/
     }
     
     
@@ -761,10 +694,6 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
     private String[] getMenuLabels() {
     	MultipleArrayMenubar menuBar = (MultipleArrayMenubar)framework.getJFrame().getJMenuBar();
     	String[] labels = menuBar.getLabelMenuItems();
-    //	System.out.println("Labels:"+labels);
-        //for(int i = 0; i < labels.length; i++){
-        	//System.out.println("Menu Labels: " + labels[i]);
-        //}
         return labels;
     }
     
@@ -772,7 +701,6 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
      * Raktim - Annotation Demo Only 
      */
     private String getMenuLabel(int index) {
-    //	System.out.println("MACanvas:getMenuLabel:"+index);
     	return getMenuLabels()[index];
     }
 
@@ -894,13 +822,10 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
      * @return -1 if column was not found.
      */
     private int findColumn(int targetx) {
-        //targetx -= insets.left;
         int columnSize = elementSize.width + getSpacing();
         if (targetx >= features*columnSize - getSpacing() + insets.left || targetx < insets.left) {
             return -1;
         }
-        //  if(targetx < insets.left)
-        //     return 0;
         else
             return ((targetx - insets.left)/columnSize);
     }
@@ -1035,11 +960,6 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
         
         menu.addSeparator();
         
-     /*   menu.add(createJCheckBoxMenuItem("G/R Scale", ActionManager.DISPLAY_GR_SCALE_CMD, listener, true));
-        menu.add(createJCheckBoxMenuItem("Tracing", ActionManager.DISPLAY_TRACING_CMD, listener));
-        menu.add(createJMenuItem("Set Upper Limits", ActionManager.DISPLAY_SET_UPPER_LIMITS_CMD, listener));
-       */ 
-        
         //move to main view context
         sortGroup = new ButtonGroup();
         sortMenu = new JMenu("Sort Main View");
@@ -1062,9 +982,6 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
         if(data != null && data.getFieldNames() != null)
             addSortMenuItems(this.data.getFieldNames());
         menu.add(sortMenu);
-        
-        //        Menu.add(manager.getAction(ActionManager.SHOW_THUMBNAIL_ACTION));
-        
         
         return menu;
         
