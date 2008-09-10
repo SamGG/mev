@@ -114,8 +114,8 @@ public class ReadTaxonFile {
 			} else {
 				e.printStackTrace();
 				String eMsg = "<html>There seems to be a problem with the FTP connection...<br>"
-					+ "<html>Please report this to the MeV developers (mev@jimmy.harvard.edu) <br> "
-					+ "<html>We apologize for the inconvenience.<br> </html>";
+					+ "<html>Please check that the computer is connected to the internet and that your firewall allows FTP connections. <br> "
+					+ "<html></html>";
 				JOptionPane.showMessageDialog(null, eMsg, "Error",
 						JOptionPane.ERROR_MESSAGE);
 				System.exit(1);
