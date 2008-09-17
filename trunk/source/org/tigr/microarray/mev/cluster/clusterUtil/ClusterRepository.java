@@ -55,6 +55,9 @@ public class ClusterRepository extends Vector {
     private int clusterSerialCounter = 0;
     /** true if the repository maintains gene clusters
      */
+    private int totalClusters = 0;
+    private int removedClusters = 0;
+    
     private boolean geneClusterRepository = false;
     
     /** IFramework implementation
@@ -143,6 +146,10 @@ public class ClusterRepository extends Vector {
     		} catch (NullPointerException npe){}
     	}
     	return allExpts;
+    }
+    
+    public int getTotalClusters(){
+    	return (clusterSerialCounter-removedClusters);
     }
     
     public void populateExperiments(Hashtable allExpts){
@@ -559,6 +566,8 @@ public class ClusterRepository extends Vector {
             return false;
         Cluster cluster = list.getCluster(clusterID);
         if(cluster != null){
+        	cluster=null;
+        	removedClusters++;
             int serialNumber = cluster.getSerialNumber();
             if(this.isGeneClusterRepository()){
                 framework.getData().setProbesColor(indices, null);
@@ -591,7 +600,8 @@ public class ClusterRepository extends Vector {
         }
         if(cluster == null)
             return false;
-        
+        cluster=null;
+    	removedClusters++;
         int serialNumber = cluster.getSerialNumber();
         if(this.isGeneClusterRepository()){
             framework.getData().setProbesColor(indices, null);
@@ -633,9 +643,8 @@ public class ClusterRepository extends Vector {
         for(int i = 0; i < size(); i++){
             list = this.getClusterList(i);
             for(int j = 0; j < list.size(); j++){
-                cluster = list.getClusterAt(j);
-                if(serialNumber == cluster.getSerialNumber()){
-                    return cluster;
+                if(serialNumber == list.getClusterAt(j).getSerialNumber()){
+                    return list.getClusterAt(j);
             }
         }
         }
@@ -661,7 +670,8 @@ public class ClusterRepository extends Vector {
         int [] indices = cluster.getIndices();
         removeClusterMembership(cluster);
         clusterColors.remove(cluster.getClusterColor());
-        
+        cluster=null;
+    	removedClusters++;
         if(this.isGeneClusterRepository()){
             framework.getData().setProbesColor(indices, null);
             framework.addHistory("Remove Gene Cluster From Repository: Serial # "+String.valueOf(serialNumber));
@@ -1094,7 +1104,7 @@ public class ClusterRepository extends Vector {
     
     
 //--------------------------------------------------------------------------------------------------------------------------------------------------
-    private Color getNextDefaultColor(){
+    public Color getNextDefaultColor(){
     	Color color;
     	if (!clusterColors.contains(Color.green))
     		return Color.green;
