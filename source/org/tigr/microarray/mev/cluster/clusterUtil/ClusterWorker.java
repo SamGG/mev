@@ -73,10 +73,22 @@ public class ClusterWorker {
         //different gene members, the most restrictive gene set is preserved.
         Experiment experiment = getMinExperiment(clusters);
 
-       ClusterAttributesDialog dialog = new ClusterAttributesDialog("Cluster Operation: "+operation+"( "+clusterNumbers+" )", "Cluster Op", operation+"( "+clusterNumbers+" )", null, null, Color.lightGray);
-        if(dialog.showModal() == JOptionPane.OK_OPTION)        
+       ClusterAttributesDialog dialog = new ClusterAttributesDialog("Cluster Operation: "+operation+"( "+clusterNumbers+" )", "Cluster Op", operation+"( "+clusterNumbers+" )", null, null, repository.getNextDefaultColor());
+        if(dialog.showModal() == JOptionPane.OK_OPTION){        
+            if (repository.clusterColors.contains(dialog.getColor())){
+    	        Object[] optionst = { "OK", "CANCEL" };
+    	        int option = JOptionPane.showOptionDialog(null, "Cluster Color is already being used. Please select another Color.", "Duplicate Color Error", 
+            		JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+            		null, optionst, optionst[0]);
+    	        if (option==JOptionPane.CANCEL_OPTION) return null;
+    	        if (option==JOptionPane.OK_OPTION)
+    	        	return buildResultCluster(operation, clusters, indices);
+            
+    	        return null;
+            }
+            repository.clusterColors.add(dialog.getColor());
             return new Cluster(indices, "Cluster Op.", dialog.getLabel(), operation+"( "+clusterNumbers+" )", "", dialog.getDescription(), -1, repository.takeNextClusterSerialNumber(), dialog.getColor(), experiment);            
-        else
+        }else
             return null;
     }
     

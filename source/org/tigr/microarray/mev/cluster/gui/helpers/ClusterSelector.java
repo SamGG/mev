@@ -133,7 +133,6 @@ public class ClusterSelector extends JPanel {
                 	for (int index=0; index<cluster.getIndices().length; index++){
                 		if (!groupsamps.contains(cluster.getIndices()[index])){
                 			groupsamps.add(cluster.getIndices()[index]);
-                			System.out.println(cluster.getIndices()[index]);
                 		}
                 	}
                 }

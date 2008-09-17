@@ -897,8 +897,6 @@ public class TFAInitBox2 extends AlgorithmDialog {
     		arraylistArray[i] = clusterSelectorA.getGroupSamples("Group "+j);
     		
     	}
-    	for (int i=0; i<arraylistArray[0].size();i++){
-    	}
     	for (int i = 0; i < exptNames.size(); i++) {
     		doubleAssigned = false;
     		groupAssignments[i] = 0;
@@ -924,18 +922,16 @@ public class TFAInitBox2 extends AlgorithmDialog {
     public int[] getFactorBClusterAssignments(){
     	boolean doubleAssigned;
     	int[]groupAssignments = new int[exptNames.size()];
-    	ArrayList[] arraylistArray = new ArrayList[numFactorLevels[0]];
-    	for (int i=0; i<numFactorLevels[0]; i++){
+    	ArrayList[] arraylistArray = new ArrayList[numFactorLevels[1]];
+    	for (int i=0; i<numFactorLevels[1]; i++){
     		int j = i+1;
     		arraylistArray[i] = clusterSelectorB.getGroupSamples("Group "+j);
     		
     	}
-    	for (int i=0; i<arraylistArray[0].size();i++){
-    	}
     	for (int i = 0; i < exptNames.size(); i++) {
     		doubleAssigned = false;
     		groupAssignments[i] = 0;
-    		for (int j = 0;j<numFactorLevels[0];j++){
+    		for (int j = 0;j<numFactorLevels[1];j++){
 	    		if (arraylistArray[j].contains(i)){
 	    			if (doubleAssigned){
 	    		        Object[] optionst = { "OK" };

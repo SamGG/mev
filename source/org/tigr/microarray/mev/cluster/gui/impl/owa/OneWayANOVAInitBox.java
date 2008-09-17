@@ -448,7 +448,10 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
                             File file = fc.getSelectedFile();
                             try {
                                 PrintWriter out = new PrintWriter(new FileOutputStream(file));
-                                int[] groupAssgn=getClusterGroupAssignments();
+                                int[] groupAssgn =null;
+                                if (getTestDesign()==OneWayANOVAInitBox.CLUSTER_SELECTION){
+                                	groupAssgn=getClusterGroupAssignments();
+                                }
                                 if (getTestDesign()==OneWayANOVAInitBox.BUTTON_SELECTION){
                                 	groupAssgn=getGroupAssignments();
                                 } 
@@ -492,7 +495,10 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
                                     groupsVector.add(new Integer(current));
                                 }
                                 buff.close();
-                                int[] groupAssgn=getClusterGroupAssignments();
+                                int[] groupAssgn=null;
+                                if (getTestDesign()==OneWayANOVAInitBox.CLUSTER_SELECTION){
+                                	groupAssgn=getClusterGroupAssignments();
+                                }
                                 if (getTestDesign()==OneWayANOVAInitBox.BUTTON_SELECTION){
                                 	groupAssgn=getGroupAssignments();
                                 } 
