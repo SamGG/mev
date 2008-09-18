@@ -65,14 +65,19 @@ public class ClusterSelector extends JPanel {
     int numGroups;
     SampleTableModel clusterModel;
     JPanel tablePanel;
+    String groupName = "Group";
     /** Creates a new instance of ClusterSelector */
     public ClusterSelector(ClusterRepository repository, int numGroups) {
+    	this(repository, numGroups, "Group");
+    }
+    public ClusterSelector(ClusterRepository repository, int numGroups, String groupName) {
     	if(repository == null || repository.isEmpty()){
             add(new JLabel("Empty Cluster Repository"), java.awt.BorderLayout.CENTER);
             return;
         }
     	this.numGroups = numGroups;
         this.repository = repository;
+        this.groupName = groupName;
         groupComboBoxes = new JComboBox[repository.getClusterSerialCounter()];
         for (int i=0;i<repository.getClusterSerialCounter();i++){
         	groupComboBoxes[i] = new JComboBox();
@@ -160,36 +165,53 @@ public class ClusterSelector extends JPanel {
         int width = 10;
         if(headerName.equals("Serial #")){
             column = clusterTable.getColumn(headerName);
-            width = 50;
+            width = 35;
             column.setWidth(width);
-            column.setMaxWidth(width);
             column.setPreferredWidth(width);
         } else if(headerName.equals("Source")){
+            column = clusterTable.getColumn(headerName);
+            width = 35;
+            column.setWidth(width);
+            column.setPreferredWidth(width);
+        } else if(headerName.equals("Algorithm Node")){
+            column = clusterTable.getColumn(headerName);
+            width = 35;
+            column.setWidth(width);
+            column.setPreferredWidth(width);
+        } else if(headerName.equals("Cluster Node")){
+            column = clusterTable.getColumn(headerName);
+            width = 35;
+            column.setWidth(width);
+            column.setPreferredWidth(width);
+        } else if(headerName.equals("Cluster Label")){
             column = clusterTable.getColumn(headerName);
             width = 100;
             column.setWidth(width);
             column.setPreferredWidth(width);
         } else if(headerName.equals("Color")){
             column = clusterTable.getColumn(headerName);
-            width = 60;
+            width = 40;
             column.setWidth(width);
             column.setPreferredWidth(width);
+            column.setMaxWidth(width);
         } else if(headerName.equals("Size")){
             column = clusterTable.getColumn(headerName);
-            width = 50;
+            width = 35;
             column.setWidth(width);
-            column.setMaxWidth(width);
             column.setPreferredWidth(width);
         } else if (headerName.equals("Remarks")){
             column = clusterTable.getColumn(headerName);
-            width = 75;
+            width = 35;
             column.setWidth(width);
+            column.setPreferredWidth(width);
         } else if (headerName.equals("Group Assignment")){
             column = clusterTable.getColumn(headerName);
-            width = 125;
+            width = 120;
             column.setWidth(width);
+            column.setPreferredWidth(width);
         }
     }
+    
     
     private JScrollPane createClusterTable(){
         
@@ -266,7 +288,7 @@ public class ClusterSelector extends JPanel {
         String[] cbox = new String[numGroups+1];
         cbox[0] = "Unassigned";
         for (int i=0; i<numGroups;i++){
-        	cbox[i+1]="Group "+(i+1);
+        	cbox[i+1]=groupName + " "+(i+1);
         }
 		clusterTable.getColumnModel().getColumn(8).setCellEditor(new DefaultCellEditor(new JComboBox(cbox)));
 		
