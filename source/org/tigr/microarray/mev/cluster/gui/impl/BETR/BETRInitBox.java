@@ -358,8 +358,14 @@ public class BETRInitBox extends AlgorithmDialog {
 		                    		}
 		                            JPanel clusterSelectorPanel = new JPanel();
 		                            clusterSelectorPanel.setLayout(new GridBagLayout());
-	
+		                            String andconditions = "";
+		                            if (ngPanel.getExperimentDesign()==2)
+		                            	andconditions = " and Conditions";
+		                            JLabel clusterInstructions = new JLabel("Use the drop-down menus to assign clusters of samples to their corresponding Time-Points"+andconditions+".");
 		                            GridBagConstraints c = new GridBagConstraints();
+		                            c.gridwidth=2;
+		                            clusterSelectorPanel.add(clusterInstructions, c);
+		                            
 		                            c.fill = GridBagConstraints.BOTH;
 		                            c.weighty =1;
 		                            c.weightx = 1;
@@ -375,8 +381,9 @@ public class BETRInitBox extends AlgorithmDialog {
 		                            
 		                            
 		                            
-		                            tabbedmulg.add("Cluster Selection", clusterSelectorPanel);
 		                            tabbedmulg.add("Button Selection", mulgPanel);
+		                            tabbedmulg.add("Cluster Selection", clusterSelectorPanel);
+		                            tabbedmulg.setSelectedIndex(1);
 		                            buildConstraints(constraints, 0, 1, 2, 1, 0, 90);
 		                            constraints.fill = GridBagConstraints.BOTH;
 		                            gridbag.setConstraints(tabbedmulg, constraints);
@@ -1243,8 +1250,11 @@ public class BETRInitBox extends AlgorithmDialog {
 		                
 		                for (int i = 0; i < timePointGroupSize.length; i++) {
 		                    if (timePointGroupSize[i] < 2) {
+		                    	int ci = 0;
+		                    	if (getTestDesign()==BETRInitBox.CLUSTER_SELECTION)
+		                    		ci=1;
 		                    	JOptionPane.showMessageDialog(null, "Each condition must have at least two samples for each time point. \n \n" +
-		                    			"Condition "+(condition+1)+ ", time point "+(i)+ " has "+timePointGroupSize[i] + " samples(s).",
+		                    			"Condition "+(condition+1)+ ", time point "+(i+ci)+ " has "+timePointGroupSize[i] + " samples(s).",
 		                    			"Error: Insufficient Data", JOptionPane.WARNING_MESSAGE);
 		                        tooFew = true;
 		                        break;
@@ -1252,7 +1262,7 @@ public class BETRInitBox extends AlgorithmDialog {
 		                }
 	                }
             	}
-                if (getDataDesign()==1){
+                if (getDataDesign()==1||getDataDesign()==3){
                 	int[] timeAssignments=getTimeAssignments();
  	                if (getTestDesign()==BETRInitBox.CLUSTER_SELECTION){
  	                	timeAssignments=getClusterTimeAssignments();
@@ -1276,8 +1286,11 @@ public class BETRInitBox extends AlgorithmDialog {
  		                
 	                for (int i = 0; i < timePointGroupSize.length; i++) {
 	                    if (timePointGroupSize[i] < 2) {
+	                    	int ci = 0;
+	                    	if (getTestDesign()==BETRInitBox.CLUSTER_SELECTION)
+	                    		ci=1;
 	                    	JOptionPane.showMessageDialog(null, "Each condition must have at least two samples for each time point. \n \n" +
-	                    			"Time point "+(i)+ " has "+timePointGroupSize[i] + " samples(s).",
+	                    			"Time point "+(i+ci)+ " has "+timePointGroupSize[i] + " samples(s).",
 	                    			"Error: Insufficient Data", JOptionPane.WARNING_MESSAGE);
 	                        tooFew = true;
 	                        break;
