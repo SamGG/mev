@@ -75,6 +75,7 @@ public class ClusterSelector extends JPanel {
             add(new JLabel("Empty Cluster Repository"), java.awt.BorderLayout.CENTER);
             return;
         }
+    	
     	this.numGroups = numGroups;
         this.repository = repository;
         this.groupName = groupName;
@@ -108,7 +109,14 @@ public class ClusterSelector extends JPanel {
         this.clusterSamplesTable.addMouseListener(new TableListener());
         this.clusterSamplesTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
         scrollPane = new JScrollPane(clusterSamplesTable);
+        setTableBorderTitle(getSelectedCluster().getClusterLabel());
         this.add(scrollPane, new GridBagConstraints(0,2,1,1,1.0,1.0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        
+    }
+    
+    private void setTableBorderTitle(String string){
+    	Font font = new Font("Dialog", Font.BOLD, 12);
+    	scrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Cluster Label: "+string, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
         
     }
     
@@ -677,6 +685,7 @@ public class ClusterSelector extends JPanel {
             clusterSamplesTable.updateUI();
             clusterSamplesTable.doLayout();
             scrollPane.updateUI();
+            setTableBorderTitle(getSelectedCluster().getClusterLabel());
           
         }
         
