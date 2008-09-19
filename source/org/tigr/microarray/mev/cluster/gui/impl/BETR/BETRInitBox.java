@@ -98,11 +98,11 @@ public class BETRInitBox extends AlgorithmDialog {
         super(parentFrame, "BETR Initialization", modality);
         this.exptNames = exptNames;  
         this.repository = repository;
-        System.out.println("repository size = " + repository.capacity());
-        System.out.println("repository size = " + repository.getClusterSerialCounter());
-        System.out.println("repository size = " + repository.getDataElementCount());
-        System.out.println("repository size = " + repository.getNumberOfElements());
-//        System.out.println("repository size = " + repository.);
+//        System.out.println("repository size = " + repository.capacity());
+//        System.out.println("repository size = " + repository.getClusterSerialCounter());
+//        System.out.println("repository size = " + repository.getDataElementCount());
+//        System.out.println("repository size = " + repository.getNumberOfElements());
+////        System.out.println("repository size = " + repository.);
         
         
         setBounds(0, 0, 1000, 850);
@@ -322,10 +322,12 @@ public class BETRInitBox extends AlgorithmDialog {
                         step2 = false;
                         tabbedmulg.setVisible(false);
                         buildConstraints(constraints, 0, 1, 2, 1, 0, 90);
-                        JPanel dummyPanel = new JPanel();
+                        //JPanel dummyPanel = new JPanel();
                         constraints.fill = GridBagConstraints.BOTH;
+                        buildConstraints(constraints, 0, 3, 1, 1, 100, 90);
                         gridbag.setConstraints(dummyPanel, constraints);
-                        //MultiClassPanel.this.add(dummyPanel);
+                        MultiClassPanel.this.add(dummyPanel);
+                        step2Button.setSelected(false);
                 	}
                 	else{
 	                    ngPanel.okPressed = true;
@@ -373,8 +375,8 @@ public class BETRInitBox extends AlgorithmDialog {
 		                            
 		                            
 		                            
-		                            tabbedmulg.add("Button Selection", mulgPanel);
 		                            tabbedmulg.add("Cluster Selection", clusterSelectorPanel);
+		                            tabbedmulg.add("Button Selection", mulgPanel);
 		                            buildConstraints(constraints, 0, 1, 2, 1, 0, 90);
 		                            constraints.fill = GridBagConstraints.BOTH;
 		                            gridbag.setConstraints(tabbedmulg, constraints);
