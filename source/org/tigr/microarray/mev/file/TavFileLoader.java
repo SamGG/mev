@@ -195,6 +195,7 @@ public class TavFileLoader extends ExpressionFileLoader {
             for (int j = 0; j < intensityCount; j++) {
                 intensities[j] = ss.nextFloatToken(0.0f);
             }
+            moreFields.clear();
             
             //EH fieldnames are saved to SlideData rather than TMEV
             while(ss.hasMoreTokens()) {
