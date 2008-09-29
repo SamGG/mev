@@ -55,6 +55,7 @@ import org.tigr.microarray.mev.ISlideMetaData;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.SlideDataElement;
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.cluster.gui.IData;
 
 import org.tigr.microarray.util.FileLoaderUtility;
 
@@ -68,11 +69,27 @@ public class TavFileLoader extends ExpressionFileLoader {
     private ISlideMetaData meta;
     private boolean fillMissingSpots = false;
     private static final int BUFFER_SIZE = 1024*128;
-    
+
+
     public TavFileLoader(SuperExpressionFileLoader superLoader) {
         super(superLoader);
         gba = new GBA();
         tflp = new TavFileLoaderPanel();
+    }
+
+    public void setFilePath(String path) {
+    	tflp.setPath(path);
+    	File fileDir = new File(path);
+    	File[] allFiles = fileDir.listFiles();
+    	Vector<File> v = new Vector<File>(allFiles.length);
+    	for(int i=0; i<allFiles.length; i++) {
+    		v.add(allFiles[i]);
+    	}
+    	processFileList(path, v);
+    }
+    
+    public int getDataType() {
+    	return IData.DATA_TYPE_TWO_INTENSITY;
     }
     
     public Vector loadExpressionFiles() throws IOException {

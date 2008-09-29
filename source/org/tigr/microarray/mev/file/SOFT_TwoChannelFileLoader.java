@@ -108,7 +108,12 @@ public class SOFT_TwoChannelFileLoader extends ExpressionFileLoader {
        softflp = new SOFT_TwoChannelFileLoaderPanel();
 	   
    }
-   
+   //TODO EH
+   public void setFilePath(String path) {
+   	softflp.setFileName(path);
+	processSOFT_TwoChannelFile(new File(path));
+   }
+
    
    public FileFilter getFileFilter() {
 

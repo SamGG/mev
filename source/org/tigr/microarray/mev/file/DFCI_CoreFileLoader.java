@@ -78,6 +78,8 @@ import org.tigr.microarray.util.FileLoaderUtility;
 
 public class DFCI_CoreFileLoader extends ExpressionFileLoader {
 
+
+	
     private GBA gba;
     private DFCI_CoreFileLoaderPanel aflp;
 
@@ -104,7 +106,22 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
         gba = new GBA();
         aflp = new DFCI_CoreFileLoaderPanel();
     }
-
+   
+    
+    /**
+     * Set the file system location
+     */
+    public void setFilePath(String path) {
+    	aflp.pathTextField.setText(path);
+    	File fileDir = new File(path);
+    	File[] allFiles = fileDir.listFiles();
+    	Vector<File> v = new Vector<File>(allFiles.length);
+    	for(int i=0; i<allFiles.length; i++) {
+    		v.add(allFiles[i]);
+    	}
+    	processFileList(path, v);
+    }
+    
     public Vector loadExpressionFiles() throws IOException {
 
         Object[] affymetrixFiles = aflp.getAffymetrixSelectedListModel().toArray();
@@ -221,40 +238,9 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
         return new Vector();
     }
 
-    private void setAffyDataType(int type){
-        this.affyDataType = type;
-    }
-
-    public int getAffyDataType(){
+    public int getDataType(){
         return this.affyDataType;
     }
-    
-    
-    /**
-     * Raktim - Annotation Demo. 
-     * Loads Affy Annotation from a File
-     
-
-    private Hashtable loadAffyAnno(File affyFile) {
-    	Hashtable _temp = null;
-    	//AnnotationFileReader reader = new AnnotationFileReader();
-    	AnnotationFileReader reader = new AnnotationFileReader(this.mav);
-    	try {
-    		_temp = reader.loadAffyAnnotation(affyFile);
-    		
-    		
-    		
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return _temp;
-    }
-    
-    */
-
-    
-    
     
 
     /**

@@ -134,7 +134,7 @@ public class CentroidViewer extends JPanel implements IViewer {
     	this.popup = createJPopupMenu(listener);
     	getContentComponent().addMouseListener(listener);
     }
-    //TODO EH testing
+
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new",
 				new Object[]{experiment, clusters, variances, means, codes});

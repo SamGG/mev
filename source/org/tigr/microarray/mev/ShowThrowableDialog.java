@@ -87,7 +87,7 @@ public class ShowThrowableDialog extends JDialog {
         ShowThrowableDialog dlg = new ShowThrowableDialog(frame, title, modal, type, t);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         dlg.setLocation((screenSize.width - dlg.getSize().width)/2, (screenSize.height - dlg.getSize().height)/2);
-        dlg.show();
+        dlg.setVisible(true);
     }
 
     /**

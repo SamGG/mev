@@ -109,7 +109,12 @@ public class SOFT_AffymetrixFileLoader extends ExpressionFileLoader {
 	   
    }
    
-   
+   //TODO EH
+   public void setFilePath(String path) {
+   	softflp.setFileName(path);
+	processSOFT_AffymetrixFile(new File(path));
+   }
+
    public FileFilter getFileFilter() {
 
        FileFilter affymetrixFileFilter = new FileFilter() {

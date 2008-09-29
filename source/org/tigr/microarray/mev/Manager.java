@@ -28,8 +28,6 @@ import java.net.URL;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import javax.swing.MenuElement;
-import javax.swing.JButton;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
@@ -46,17 +44,16 @@ import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 
+import org.tigr.microarray.mev.file.FileType;
 import org.tigr.util.BrowserLauncher;
 import org.tigr.util.Query;
 import org.tigr.util.awt.ActionInfoEvent;
 import org.tigr.util.awt.ActionInfoListener;
 import org.tigr.util.awt.ImageScreen;
 import org.tigr.util.awt.MessageDisplay;
-//Added by sarita
-import org.tigr.microarray.mev.action.ActionManager;
 
 public class Manager {//A class to keep track of viewers
-    private static Vector activeComponents;
+    private static Vector<Component> activeComponents;
     private JFrame frame;
     private JMenuBar menuBar;
     private JMenu fileMenu;
@@ -86,12 +83,10 @@ public class Manager {//A class to keep track of viewers
     private JMenuItem documentMenuItem;
     
     private static EventListener eventListener;
-    /* Raktim -  Annotation Model. Variable tracks number of MAV instances created.*/
-    private static int MavInstanceCount = 0;
     
     public Manager() {
         try {
-            activeComponents = new Vector();
+            activeComponents = new Vector<Component>();
             eventListener = new EventListener();
             
             initializeFrame();
@@ -104,21 +99,7 @@ public class Manager {//A class to keep track of viewers
         }
     }
     
-/*
     public void initializeFrame() {
-        frame = new JFrame("MultiExperiment Viewer");
-        frame.addWindowListener(eventListener);
-        frame.setVisible(true);
- 
-        initializeMenuBar(frame);
-        frame.setSize(frame.getPreferredSize());
- 
-        frame.validate();
-        frame.setResizable(false);
-    }
- */
-  
-   public void initializeFrame() {
         frame = new JFrame("MultiExperiment Viewer");
         frame.addWindowListener(eventListener);
         
@@ -157,20 +138,6 @@ public class Manager {//A class to keep track of viewers
         fileMenu.add(newSingleArrayViewerItem);
         
         fileMenu.addSeparator();
-        
-        //newPreferencesItem = new JMenuItem("New Preferences File");
-        //newPreferencesItem.addActionListener(eventListener);
-        //newPreferencesItem.setMnemonic(KeyEvent.VK_P);
-        //fileMenu.add(newPreferencesItem);
-        
-        //fileMenu.addSeparator();
-        
-        //loginItem = new JMenuItem("Login to Database");
-        //loginItem.addActionListener(eventListener);
-        //loginItem.setMnemonic(KeyEvent.VK_L);
-        //fileMenu.add(loginItem);
-        
-        //fileMenu.addSeparator();
         
         quitItem = new JMenuItem("Quit");
         quitItem.addActionListener(eventListener);
@@ -239,9 +206,7 @@ public class Manager {//A class to keep track of viewers
         
         menuBar.add(referencesMenu);
         
-        //added 9.21.05 vu
         helpMenu = new JMenu( "Help" );
-        //added wwang
         documentMenuItem = new JMenuItem( "Mev Manual" );
         documentMenuItem.addActionListener(eventListener);
         bugReportMenuItem = new JMenuItem( "Report Bug" );
@@ -263,13 +228,9 @@ public class Manager {//A class to keep track of viewers
     
     public boolean selectPreferencesFile() {
         File inputFile = null;
-        String filename = "";
-        boolean success = false;
-        Dimension screenSize = frame.getToolkit().getScreenSize();
         JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
         chooser.addChoosableFileFilter(new javax.swing.filechooser.FileFilter() {
             public boolean accept(File f) {
-                String extension = "";
                 if (f.isDirectory()) return true;
                 if (f.getName().endsWith("Preferences")) return true;
                 else if (f.getName().endsWith("preferences")) return true;
@@ -289,7 +250,6 @@ public class Manager {//A class to keep track of viewers
         } else {
             System.out.println("No preference file selected");
             return false;
-            //    inputFile = new File(chooser.getCurrentDirectory(), "TMEV Preferences");
         }
         
         if (TMEV.readPreferencesFile(inputFile) == false) {
@@ -305,12 +265,10 @@ public class Manager {//A class to keep track of viewers
     
     public static void addComponent(Component component) {
         activeComponents.addElement(component);
-        MavInstanceCount++; // Raktim - Annotation Model specific
         updateWindowMenu();
     }
     
     public static void updateWindowMenu() {
-        String menuTitle;
         JMenuItem item;
         windowMenu.removeAll();
         
@@ -384,20 +342,7 @@ public class Manager {//A class to keep track of viewers
         mav.getFrame().setLocation((screenSize.width - mav.getFrame().getSize().width)/2, (screenSize.height - mav.getFrame().getSize().height)/2);
         mav.getFrame().setVisible(true);
     }
-    
-    //wwang add for cumstomized toolbar
-    public static void createNewCustomMultipleArrayViewer() {
-    	//TMEV.customized=true;
-    	//CustomToolbarInitDialog ctg=new CustomToolbarInitDialog();
-        MultipleArrayViewer mav = new MultipleArrayViewer();
-        Manager.addComponent(mav);
-        mav.getFrame().setSize(1150, 700);
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        mav.getFrame().setLocation((screenSize.width - mav.getFrame().getSize().width)/2, (screenSize.height - mav.getFrame().getSize().height)/2);
-        mav.getFrame().setVisible(true);
-    }
-    
-    
+
     public static void createNewMultipleArrayViewer(MultipleArrayData data, String clusterLabel){
         MultipleArrayViewer mav = new MultipleArrayViewer(data);
         mav.getFrame().setSize(1150, 700);
@@ -411,7 +356,6 @@ public class Manager {//A class to keep track of viewers
     
     
     public static void createNewMultipleArrayViewer(MultipleArrayMenubar origMenubar, MultipleArrayData data, String clusterLabel){
-        
         MultipleArrayViewer mav = new MultipleArrayViewer(data, origMenubar);
         mav.getFrame().setSize(1150, 700);
         if(clusterLabel != null)
@@ -449,6 +393,17 @@ public class Manager {//A class to keep track of viewers
         sav.getFrame().setVisible(true);
         sav.refreshSlide();
     }
+
+    public static void createNewMultipleArrayViewer(File file, FileType fileType, String arrayType) {
+    	MultipleArrayViewer mav = new MultipleArrayViewer();
+        Manager.addComponent(mav);
+        mav.getFrame().setSize(1150, 700);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        mav.getFrame().setLocation((screenSize.width - mav.getFrame().getSize().width)/2, (screenSize.height - mav.getFrame().getSize().height)/2);
+       mav.getFrame().setVisible(true);
+       mav.loadData(file, fileType, arrayType);
+    }
+
     
     public static void displaySlideElementInfo(JFrame frame, MultipleArrayData data, int feature, int probe) {
     	new InfoDisplay(frame, data, feature, probe);
@@ -498,7 +453,7 @@ public class Manager {//A class to keep track of viewers
                 databaseLoad((String) hash.get("username"), (String) hash.get("password"));
             }
         });
-        dld.show();
+        dld.setVisible(true);
     }
     
     public void databaseLoad(String username, String password) {
@@ -525,7 +480,7 @@ public class Manager {//A class to keep track of viewers
     public static void message(JFrame parent, String message) {
         System.out.println(message);
         MessageDisplay md = new MessageDisplay(parent, message);
-        md.show();
+        md.setVisible(true);
     }
     
     public static void message(JFrame parent, Exception e) {
@@ -535,7 +490,7 @@ public class Manager {//A class to keep track of viewers
     public static void exception(JFrame parent, String exception) {
         System.out.println("EXCEPTION: " + exception);
         MessageDisplay md = new MessageDisplay(parent, exception);
-        md.show();
+        md.setVisible(true);
     }
     
     public static void exception(JFrame parent, Exception e) {
