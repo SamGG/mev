@@ -22,6 +22,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -75,6 +76,7 @@ import org.tigr.microarray.mev.annotation.AnnotationFileReader;
 import org.tigr.microarray.mev.annotation.IChipAnnotation;
 import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.annotation.PublicURL;
+import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.util.FileLoaderUtility;
 import org.tigr.microarray.util.MyCellRenderer;
 
@@ -83,6 +85,7 @@ public class RMAFileLoader extends ExpressionFileLoader {
     private GBA gba;
     private boolean stop = false;
     private RMAFileLoaderPanel sflp;
+    private MyCellRenderer myCellRenderer;
     /**
      * Raktim - Annotation Specific
      * Place Holder for reading in Affy Anno 
@@ -101,14 +104,18 @@ public class RMAFileLoader extends ExpressionFileLoader {
         sflp = new RMAFileLoaderPanel();
     }
     
+    public int getDataType() {
+    	return IData.DATA_TYPE_RATIO_ONLY;
+    }
+    
+    public void setFilePath(String path) {
+    	sflp.setFileName(path);
+    	processRMAFile(new File(path));
+    }
+
+    
     public Vector loadExpressionFiles() throws IOException {
-    	 /**
-         * TODO
-         * Raktim - Annotation Addition. 
-         * Code to load Affy Annotation File into a Indexed Object
-         */
-        
-        
+       
         /*Loop added by Sarita to check if Annotation has been loaded
        
          * The loop was included so as to enable loading data
@@ -116,9 +123,6 @@ public class RMAFileLoader extends ExpressionFileLoader {
          * 
          */
         if(this.mav.getData().isAnnotationLoaded()) {
-//        	_tempAnno = loadAffyAnno(new File(getAnnotationFileName()));
-
-        	//EH testing chip annotation change
         	AnnotationFileReader afr = AnnotationFileReader.createAnnotationFileReader(new File(getAnnotationFileName()));
         	_tempAnno = afr.getAffyAnnotation();
         	chipAnno = afr.getAffyChipAnnotation();  
@@ -141,25 +145,6 @@ public class RMAFileLoader extends ExpressionFileLoader {
         return null;
     }
   
-    /*
-    private Hashtable loadAffyAnno(File affyFile) {
-    	Hashtable _temp = null;
-    	//AnnotationFileReader reader = new AnnotationFileReader();
-    	AnnotationFileReader reader = new AnnotationFileReader(this.mav);
-    	try {
-    		_temp = reader.loadAffyAnnotation(affyFile);
-
-    	} catch (Exception e) {
-    		// TODO Auto-generated catch block
-    		e.printStackTrace();
-    	}
-    	return _temp;
-    }
-
-*/
-
-    
-
     /**
      *  Handling of RMA data has been altered in version 3.0 to permit loading of
      *  "ratio" input without the creation of false cy3 and cy5.  cy5 values in data structures
@@ -209,7 +194,6 @@ public class RMAFileLoader extends ExpressionFileLoader {
     		}
 
     		//fix empty tabbs appending to the end of line by wwang
-
     		while(currentLine.endsWith("\t")){
     			currentLine=currentLine.substring(0,currentLine.length()-1);
     		}
@@ -235,12 +219,7 @@ public class RMAFileLoader extends ExpressionFileLoader {
     				fieldNames[i] = ss.nextToken();
 
     			}
-
-    			//EH field names are saved in SlideData rather than TMEV
-
     			slideDataArray[0].getSlideMetaData().setFieldNames(fieldNames);
-
-    			//TMEV.setFieldNames(fieldNames);
 
     			for (int i=0; i<experimentCount; i++) {
     				slideDataArray[i].setSlideDataName(ss.nextToken());
@@ -255,12 +234,10 @@ public class RMAFileLoader extends ExpressionFileLoader {
 
     			} else {
     				column++;
-
     			}
 
     			for (int i=0; i<preExperimentColumns; i++) {
     				moreFields[i] = ss.nextToken();
-
     			}
     			
     			 String cloneName = moreFields[0];
@@ -275,23 +252,13 @@ public class RMAFileLoader extends ExpressionFileLoader {
 
                 		 MevAnnotation mevAnno = new MevAnnotation();
                 		 mevAnno.setCloneID(cloneName);
-// EH testing chip annotation changes                		 
-//                		 mevAnno.setViewer(this.mav);
                 		 sde = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields, mevAnno);
 
                 	 }
               	   
-                 }
-                  /* Added by Sarita
-                   * Checks if annotation was loaded and accordingly use
-                   * the appropriate constructor.
-                   * 
-                   * 
-                   */
-                  
-                 else {
+                 } else {
                   sde = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields);
-                  }
+                 }
  
     			slideDataArray[0].addSlideDataElement(sde);
 
@@ -405,27 +372,21 @@ public class RMAFileLoader extends ExpressionFileLoader {
 
     }
 
-    
-
     public boolean validateFile(File targetFile) {
         return true; // For now, no validation on RMA Files
 
     }
-
-    
 
     public JPanel getFileLoaderPanel() {
         return sflp;
 
     }
 
-    
-
     public void processRMAFile(File targetFile) {
 
-        Vector columnHeaders = new Vector();
-        Vector dataVector = new Vector();
-        Vector rowVector = null;
+        Vector<String> columnHeaders = new Vector<String>();
+        Vector<Vector<String>> dataVector = new Vector<Vector<String>>();
+        Vector<String> rowVector = null;
         BufferedReader reader = null;
         String currentLine = null;
 
@@ -476,7 +437,7 @@ public class RMAFileLoader extends ExpressionFileLoader {
             while ((currentLine = reader.readLine()) != null && cnt < 100) {
                 cnt++;
                 ss.init(currentLine);
-                rowVector = new Vector();
+                rowVector = new Vector<String>();
 
                 for (int i = 0; i < ss.countTokens()+1; i++) {
                     try {
@@ -498,6 +459,8 @@ public class RMAFileLoader extends ExpressionFileLoader {
 
         }
         sflp.setTableModel(model);
+        Point p = guessFirstExpressionCell(dataVector);
+        sflp.setSelectedCell(p.x, p.y);
 
     }
 
@@ -660,7 +623,8 @@ public class RMAFileLoader extends ExpressionFileLoader {
     	
     	
             expressionTable = new JTable();
-            expressionTable.setDefaultRenderer(Object.class, new MyCellRenderer());
+            myCellRenderer = new MyCellRenderer();
+            expressionTable.setDefaultRenderer(Object.class, myCellRenderer);
             expressionTable.setIntercellSpacing(new Dimension(1, 1));
     		expressionTable.setShowHorizontalLines(false);
     		expressionTable.setShowVerticalLines(true);
@@ -673,9 +637,7 @@ public class RMAFileLoader extends ExpressionFileLoader {
             
             expressionTable.addMouseListener(new MouseAdapter() {
                 public void mousePressed(MouseEvent event) {
-                   xRow = expressionTable.rowAtPoint(event.getPoint());
-                   xColumn = expressionTable.columnAtPoint(event.getPoint());
-                   checkLoadEnable();
+                    setSelectedCell(expressionTable.rowAtPoint(event.getPoint()), expressionTable.columnAtPoint(event.getPoint()));
                 }
 
             });
@@ -707,7 +669,13 @@ public class RMAFileLoader extends ExpressionFileLoader {
 
         }
 
-       
+      private void setSelectedCell( int xR, int xC) {
+          xRow = xR;
+          xColumn = xC;
+      myCellRenderer.setSelected(xRow, xColumn);
+      expressionTable.repaint();
+      checkLoadEnable();
+  }
 
         public void openDataPath() {
         }

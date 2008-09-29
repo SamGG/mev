@@ -14,6 +14,7 @@ package org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -177,6 +178,63 @@ public class HelpWindow extends JDialog {
         
     }
 
+    public HelpWindow(JFrame parent, String dialogName, boolean isParmDialog) { 
+        super(parent);
+        this.dialogName = dialogName;
+        int lastIndex = dialogName.indexOf(" ");
+        
+        this.setTitle(dialogName);
+        
+        JPanel iconPanel = new JPanel(new GridBagLayout());
+        JLabel iconLabel = new JLabel(GUIFactory.getIcon("dialog_banner2.gif"));
+        FillPanel fill = new FillPanel();
+        iconPanel.add(iconLabel, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
+        iconPanel.add(fill, new GridBagConstraints(1,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
+                
+        pane = new JEditorPane();
+        pane.setEditable(false);
+        pane.setForeground(Color.black);
+        pane.setMinimumSize(new Dimension(100,100));
+
+        getContentPane().setLayout(new GridBagLayout());
+        JScrollPane scroll = new JScrollPane();
+        scroll.getViewport().setView(pane);
+        scroll.setPreferredSize(new Dimension(200,200));
+        scroll.setBorder(BorderFactory.createLineBorder(Color.blue, 1));
+        
+        
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridBagLayout());
+        
+        JButton closeButton = new JButton(" Close Help Window ");
+        closeButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+        closeButton.requestFocus();
+        closeButton.setFocusPainted(false);
+        closeButton.setPreferredSize(new Dimension(180, 30));
+        closeButton.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                dispose();
+            }
+        });
+        
+        buttonPanel.add(new JPanel(), new GridBagConstraints(0,0,1,1,1.0,0.0,GridBagConstraints.EAST,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
+        buttonPanel.add(closeButton, new GridBagConstraints(1,0,1,1,0.0,0.0,GridBagConstraints.EAST,GridBagConstraints.BOTH,new Insets(5,5,5,15),0,0));
+        
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(0,5,0,5));
+        
+        mainPanel.add(iconPanel, new GridBagConstraints(0,0,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
+        mainPanel.add(scroll, new GridBagConstraints(0,1,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
+        mainPanel.add(buttonPanel, new GridBagConstraints(0,2,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.HORIZONTAL,new Insets(0,0,0,0),0,0));
+        
+        this.getContentPane().add(mainPanel, new GridBagConstraints(0,0,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        
+        validate();
+        pane.setContentType("text/html");
+        setBackground(new Color(Integer.parseInt("FFFFCC",16)));
+        pane.setBackground(new Color(Integer.parseInt("FFFFCC",16)));
+        pane.setMargin(new Insets(10,15,10,15));
+    }
     
     public boolean getWindowContent(){
         String fileName = getFileName(dialogName);
@@ -299,6 +357,10 @@ public class HelpWindow extends JDialog {
             return "lower_cutoff_parameters.html";
         if(key.equals("Set Percentage Cutoff"))
             return "percent_cutoff_parameters.html";
+        if(key.equals("Data Download"))
+            return "jws_download_message.html";
+        if(key.equals("Welcome to MeV!"))
+            return "jws_welcome_message.html";
         if(key.equals("Experiment Label Editor"))
             return "experiment_label_editor.html";       
         if(key.equals("KNNC Mode Selection"))

@@ -12,6 +12,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -83,9 +84,16 @@ public class GEOSeriesMatrixLoader extends ExpressionFileLoader {
 
 	private int dataType;
 	private GEO_SeriesMatrixFileLoaderPanel smatrixflp;
+	private MyCellRenderer myCellRenderer;
 	private Vector datainfo=new Vector();//	   store sample info
 	private Vector platforminfo=new Vector();//store platform info
 	private boolean unload=false;
+
+
+    public void setFilePath(String path) {
+    	smatrixflp.setFileName(path);
+    	process_GEOSeriesMatrixFile(new File(path));
+    }
 
 	public GEOSeriesMatrixLoader(SuperExpressionFileLoader superLoader) {
 		super(superLoader);
@@ -304,12 +312,12 @@ public class GEOSeriesMatrixLoader extends ExpressionFileLoader {
 	public void process_GEOSeriesMatrixFile(File targetFile) {        
 		
 		this.smatrixflp.selectedFiles.setText(targetFile.getAbsolutePath());
-		Vector dataVector = new Vector();
-		Vector rowVector = null;
+		Vector<Vector<String>> dataVector = new Vector<Vector<String>>();
+		Vector<String> rowVector = null;
 		BufferedReader reader = null;
 		String currentLine = null;
 		//String tmp=null;
-		Vector columnHeaders = new Vector();//store tabel header
+		Vector<String> columnHeaders = new Vector<String>();//store tabel header
 		if (! validateFile(targetFile)) return;
 
 		smatrixflp.setFileName(targetFile.getAbsolutePath());
@@ -350,7 +358,7 @@ public class GEOSeriesMatrixLoader extends ExpressionFileLoader {
 			while ((currentLine = reader.readLine()) != null && !currentLine.contains("series_matrix_table_end")) {
 				cnt++;
 				ss.init(currentLine);
-				rowVector = new Vector();
+				rowVector = new Vector<String>();
 				for (int i = 0; i < ss.countTokens()+1; i++) {
 					try {
 						rowVector.add(ss.nextToken());
@@ -369,6 +377,8 @@ public class GEOSeriesMatrixLoader extends ExpressionFileLoader {
 		}
 
 		smatrixflp.setTableModel(model);
+        Point p = guessFirstExpressionCell(dataVector);
+        smatrixflp.setSelectedCell(p.x, p.y);
 	}
 
 	public String getFilePath() {
@@ -498,7 +508,7 @@ public class GEOSeriesMatrixLoader extends ExpressionFileLoader {
 
 
 			expressionTable = new JTable();
-			expressionTable.setDefaultRenderer(Object.class, new MyCellRenderer());
+			expressionTable.setDefaultRenderer(Object.class, myCellRenderer);
 			expressionTable.setGridColor(Color.LIGHT_GRAY);
 			expressionTable.setSize(300, 300);
 			expressionTable.setCellSelectionEnabled(true);
@@ -508,9 +518,7 @@ public class GEOSeriesMatrixLoader extends ExpressionFileLoader {
 			expressionTable.getTableHeader().setReorderingAllowed(true);
 			expressionTable.addMouseListener(new MouseAdapter() {
 				public void mousePressed(MouseEvent event) {
-					xRow = expressionTable.rowAtPoint(event.getPoint());
-					xColumn = expressionTable.columnAtPoint(event.getPoint());
-					checkLoadEnable();
+				    setSelectedCell(expressionTable.rowAtPoint(event.getPoint()), expressionTable.columnAtPoint(event.getPoint()));
 				}
 			});           
 			tableScrollPane = new JScrollPane(expressionTable, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);           
@@ -538,7 +546,13 @@ public class GEOSeriesMatrixLoader extends ExpressionFileLoader {
 
 
 		}
-
+        private void setSelectedCell( int xR, int xC) {
+            xRow = xR;
+            xColumn = xC;
+        myCellRenderer.setSelected(xRow, xColumn);
+        expressionTable.repaint();
+        checkLoadEnable();
+    }
 		public void openDataPath() {
 
 		}

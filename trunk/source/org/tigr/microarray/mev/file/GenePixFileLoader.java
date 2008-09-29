@@ -46,6 +46,7 @@ import org.tigr.microarray.mev.ISlideDataElement;
 import org.tigr.microarray.mev.ISlideMetaData;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.SlideDataElement;
+import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.util.FileLoaderUtility;
 
 public class GenePixFileLoader extends ExpressionFileLoader {
@@ -60,6 +61,20 @@ public class GenePixFileLoader extends ExpressionFileLoader {
         gpflp = new GenePixFileLoaderPanel();
     }
     
+    
+    public void setFilePath(String path) {
+    	gpflp.pathTextField.setText(path);
+    	File fileDir = new File(path);
+    	File[] allFiles = fileDir.listFiles();
+    	Vector<File> v = new Vector<File>(allFiles.length);
+    	for(int i=0; i<allFiles.length; i++) {
+    		v.add(allFiles[i]);
+    	}
+    	processFileList(path, v);
+    }
+    public int getDataType() {
+    	return IData.DATA_TYPE_TWO_INTENSITY;
+    }
     
     public Vector loadExpressionFiles() throws IOException {
         Object[] genePixFiles = gpflp.getGenePixSelectedListModel().toArray();

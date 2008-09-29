@@ -184,6 +184,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HTMLMessageFileChooser;
 import org.tigr.microarray.mev.file.AnnFileFilter;
 import org.tigr.microarray.mev.file.CGHStanfordFileLoader;
+import org.tigr.microarray.mev.file.FileType;
 import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
 import org.tigr.microarray.mev.persistence.BufferedImageWrapper;
 import org.tigr.microarray.mev.persistence.MEVSessionPrefs;
@@ -265,10 +266,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	String[] gooseNames;
 	RmiGaggleConnector gaggleConnector;
 	private boolean isConnected = false;
-	
-	
-	/* Raktim - MAV tracking the index of its current instance */
-	private int mevInstanceIndex;
+
 
 	
 	//Added by sarita
@@ -278,7 +276,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	private int clusterIndex;
 	private ClusterTableSearchDialog searchDialog;  
 	
-    
+    public MultipleArrayViewer(File file, FileType fileType, String arrayType) {
+    	this();
+    	loadData(file, fileType, arrayType);
+    }
+	
     /**
      * Construct a <code>MultipleArrayViewer</code> with default title,
      * creates menu and tool bars from new instance of action manager,
@@ -3921,6 +3923,21 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     }
     
     /**
+     *  Loads data using <code>SuperExpressionFileLoader</code> and specified file.
+     */
+    public void loadData(File file, FileType fileType, String arrayType){
+        SuperExpressionFileLoader loader = new SuperExpressionFileLoader(this, file, fileType, arrayType);
+		
+        //Add time node to the analysis node
+        Date date = new Date(System.currentTimeMillis());
+        DateFormat format = DateFormat.getDateTimeInstance();
+        format.setTimeZone(TimeZone.getDefault());
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode(format.format(date));
+        DefaultTreeModel treeModel = (DefaultTreeModel)tree.getModel();
+        treeModel.insertNodeInto(node, analysisNode, analysisNode.getChildCount());
+    }
+
+    /**
      *  Loads data using <code>SuperExpressionFileLoader</code>.
      */
     private void loadData(){
@@ -4771,7 +4788,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         display.setData(data);
         display.setDataRegionInfo(dataRegionInfo);
         display.createTextDocument();
-        display.show();
+        display.setVisible(true);
     }
     /**
      * Raktim
@@ -4840,7 +4857,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         dlg.setJMenuBar((JMenuBar)viewer.getHeaderComponent());
         dlg.setSize(1000, 500);
         GuiUtil.center(dlg);
-        dlg.show();
+        dlg.setVisible(true);
     }
     /**
      * Raktim
@@ -5006,27 +5023,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     	smd.setBeta(false);
     }
     
-    
-    
-    /**
-     * Raktim - Annotation Model specific Functions 
-     * Returns the current instance index in the order of creation.
-     */ 
-    public int getInstanceIndex() {
-    	return mevInstanceIndex;
-    }
-    
-    /**
-     * Raktim - Annotation Model specific Functions 
-     * Sets the current instance index in the order of creation.
-     * @param index
-     */
-    public void setInstanceIndex(int index) {
-    	this.mevInstanceIndex = index;
-    }
-
-
-
 
     /**
      * The listener to listen to mouse, action, tree, keyboard and window events.
@@ -6352,3 +6348,5 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 
 
 }
+
+

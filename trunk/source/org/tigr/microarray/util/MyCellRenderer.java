@@ -21,23 +21,43 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 	private static final long serialVersionUID = 1L;
 	private Color whiteColor = new Color(254, 254, 254);
 	private Color alternateColor = new Color(237, 243, 254);
-	private Color selectedColor = new Color(61, 128, 223);
+	private Color sampleAnnotationColor = new Color(163, 188, 223);
+	private Color colAnnotationColor = new Color(200, 200, 225);
+	private Color sampleAnnLabelColor = new Color(255,255,128);
+	private int selectedRow=0;
+	private int selectedCol=0;
 
+	public void setSelected(int row, int col){
+		this.selectedRow = row;
+		this.selectedCol = col;
+	}
 	public Component getTableCellRendererComponent(JTable table,
 			Object value, boolean selected, boolean focused,
-			int row, int column)
+			int thisRow, int thisColumn)
 	{
 		super.getTableCellRendererComponent(table, value,
-				selected, focused, row, column);
+				selected, focused, thisRow, thisColumn);
 
 //		Set the background color
 		Color bg;
 		if (!selected)
-			bg = (row % 2 == 0 ? alternateColor : whiteColor);
+			bg = (thisRow % 2 == 0 ? alternateColor : whiteColor);
 		else
-			bg = selectedColor;
+			bg = sampleAnnotationColor;
 		setBackground(bg);
 
+//		Color cells based on whether they will be loaded as annotation or expression data
+		if (selectedRow != 0 || selectedCol != 0){
+			if(thisColumn < selectedCol && thisRow < selectedRow) {
+				setBackground(Color.WHITE);
+				if(thisColumn == selectedCol-1)
+					setBackground(sampleAnnLabelColor);
+			} else if(thisColumn < selectedCol)
+				setBackground(colAnnotationColor);
+			else if (thisRow < selectedRow)
+				setBackground(sampleAnnotationColor);
+		}
+		
 //		Set the foreground to white when selected
 		Color fg;
 		if (selected)
@@ -46,6 +66,7 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 			fg = Color.black;
 		setForeground(fg);
 
+		
 		return this;
 	}
 }

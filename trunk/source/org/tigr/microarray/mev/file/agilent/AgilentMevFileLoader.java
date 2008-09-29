@@ -52,6 +52,7 @@ import org.tigr.microarray.mev.ISlideMetaData;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.SlideDataElement;
 import org.tigr.microarray.mev.SpotInformationData;
+import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.file.ExpressionFileLoader;
 import org.tigr.microarray.mev.file.FileTreePane;
 import org.tigr.microarray.mev.file.FileTreePaneEvent;
@@ -63,6 +64,8 @@ import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
 import org.tigr.microarray.util.FileLoaderUtility;
 
 public class AgilentMevFileLoader extends ExpressionFileLoader {
+    
+
     
     private GBA gba;
     private AgilentMevFileLoaderPanel amflp;
@@ -79,10 +82,15 @@ public class AgilentMevFileLoader extends ExpressionFileLoader {
         super(superLoader);
         gba = new GBA();
         amflp = new AgilentMevFileLoaderPanel();
-       // amflp.splitPane.setDividerLocation(0.6);
-        //amflp.validate();
     }
     
+    public int getDataType() {
+    	return IData.DATA_TYPE_TWO_INTENSITY;
+    }
+    public void setFilePath(String path) {
+    	amflp.pathTextField.setText(path);
+    	processFileList(path, new Vector());
+    }
     public Vector loadExpressionFiles() throws IOException {
 
         Object[] mevFiles = amflp.getMevSelectedListModel().toArray();

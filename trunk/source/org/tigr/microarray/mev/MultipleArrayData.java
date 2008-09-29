@@ -2400,7 +2400,7 @@ public class MultipleArrayData implements IData {
      * Returns a MultipleArrayData object comprised of a subset of elements
      */
     public MultipleArrayData getDataSubset(int [] indices){
-    	//TODO EH look here for problems in adding annotation
+
         ISlideData slideData;
         ISlideMetaData metaData = null;
         ISlideDataElement sde;

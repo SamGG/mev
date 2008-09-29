@@ -14,6 +14,7 @@ import java.net.InetAddress;
 import javax.swing.JOptionPane;
 
 
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.annotation.AnnotationDialog;
 
 import ftp.FtpBean;
@@ -48,7 +49,7 @@ public class ResourcererFTPClient {
 	private String password;
 	private String AnnotationFileName;
 	private AnnotationDialog dialog;
-	private String dataPath="./data/Annotation/";
+	private String dataPath= TMEV.getDataPath();
 	private String home="/pub/bio/tgi/data/Resourcerer/new/";
 	private String EASE_BN_remotedir="/pub/bio/tgi/data/Resourcerer/";
 	
@@ -107,14 +108,15 @@ public class ResourcererFTPClient {
         	}
         	
         	//Checks if the Annotation directory exists, if not creates it
-        	File f=new File(dataPath);
+        	File f=new File(dataPath, "Annotation");
 			if(!f.exists()) {
 				f.mkdir();
-				
 			}
+        	dataPath = f.getAbsolutePath();
 			
-			File newFile=new File(dataPath+this.ChipType+".zip");
-        	BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(newFile));        	
+			File newFile=new File(dataPath, this.ChipType+".zip");
+
+			BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(newFile));        	
             //get binary file to byte array, use listener
             bos.write(ftp.getBinaryFile(this.ChipType+".zip"), 0, overallLength);
 			        	
@@ -123,10 +125,10 @@ public class ResourcererFTPClient {
            
         	//String fileName=this.ChipType+".zip";
         	UnzipAnnotationFile unzip=new UnzipAnnotationFile(dataPath,newFile.getName());
-        	boolean download=unzip.unZipResourcererFiles(new File(dataPath+newFile.getName()));
+        	boolean download=unzip.unZipResourcererFiles(newFile);
         	
         	if(download==true) {
-        		setAnnotationFileName(dataPath+this.ChipType+".txt");
+        		setAnnotationFileName(new File(dataPath, this.ChipType+".txt").getAbsolutePath());
         		downloadEASE_BNFiles(ftp);
         		String Msg = "<html>File download completed..<br>"+
     			"<html>You can find the file here: <br> "+

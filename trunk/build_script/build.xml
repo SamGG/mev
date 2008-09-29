@@ -326,6 +326,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			mev/cluster/gui/helpers/**">
         	
             <classpath>
+                <pathelement location="${lib.dir}/args4j-2.0.9.jar"/>	
                 <pathelement location="${lib.dir}/normalization.jar"/>	
                 <pathelement location="${lib.dir}/jai_codec.jar"/>	
                 <pathelement location="${lib.dir}/jama.jar"/>	
@@ -354,6 +355,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 				<pathelement location="${lib.dir}/weka.jar" />
 				<pathelement location="${lib.dir}/commons-net-1.4.1.jar" />
 				<pathelement location="${lib.dir}/goose.jar" />
+				<pathelement location="${lib.dir}/tar.jar" />
             </classpath>	    
         </javac>
         <!-- Copy html files from source to dest directory so they can
@@ -368,6 +370,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     	<copy todir="${dest.dir}/org/tigr/microarray/mev/annotation/">
     		<fileset dir="${source.dir}/org/tigr/microarray/mev/annotation/">
     	    	<include name="annotation_URLs.txt"/>
+	    		<include name="kingdom_species_cloneset_list.txt"/>
     		</fileset>
     	</copy>
     	<copy todir="${dest.dir}/org/tigr/microarray/mev/cluster/clusterUtil/submit/">
@@ -1762,6 +1765,8 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			<include name="${mev_version.dir}/tmev.sh"/>
 			<exclude name=".svn"/>
 		</zip>	
+
+		<ant target="webstart-package"/>
 		
 		<!-- Build Mac distribution --> 
 		<copy todir="${package.dir}/${mev_version.dir}">
@@ -1792,7 +1797,38 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 				<exclude name=".svn"/>
 			</zip>
 		 -->
+		
+		<!-- Build WebStart distribution -->
 	</target>
+	
+	<target name="webstart-package">
+		<mkdir dir="${home.dir}/webstart"/>
+		<copy todir="${package.dir}/webstart/mev/lib">
+			<fileset dir="${home.dir}/lib"	includes="*.jar"/>
+		</copy>
+		
+		<ant target="signjars"/>
+		
+		<!-- Zipping not necessary right now
+		<zip destfile="${package.dir}/MeV_${version}_webstart.zip"
+			basedir="${package.dir}/${mev_version.dir}/"
+			encoding="UTF-8"
+			>
+			<include name="lib/*.jar"/>
+			<exclude name=".svn"/>
+		</zip>
+		-->
+	</target>
+	
+		<target name="signjars">
+			<signjar 
+			    alias="TM4 Group" keystore="C:\Users\Eleanor\.keystore"
+			    storepass="fillmein">
+			  
+			    <fileset dir="../deploy/webstart/mev/lib" includes="*.jar" />
+			  
+			</signjar>
+		</target>
 	
 	<target name="javadoc">
 		<delete dir="${home.dir}/javadoc"/>
@@ -1831,6 +1867,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
             </classpath>
         </java>
     </target>
+
 
 	<target name="clean">
 		<delete dir="${package.dir}"/>

@@ -14,6 +14,7 @@
 
 package org.tigr.microarray.mev.file;
 
+import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -24,87 +25,112 @@ import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 
 import org.tigr.microarray.mev.ISlideData;
-import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.MultipleArrayViewer;
 import org.tigr.microarray.mev.annotation.IChipAnnotation;
 
-public abstract class ExpressionFileLoader extends SlideLoaderProgressBar { // implements Runnable {
-    
-    protected SuperExpressionFileLoader superLoader;
-    protected SlideLoaderProgressBar progress;
-    protected boolean stop = false;
+public abstract class ExpressionFileLoader extends SlideLoaderProgressBar { 
 
-    //EH testing chip annotation change
-    protected IChipAnnotation chipAnno = null;
-    
+	protected SuperExpressionFileLoader superLoader;
+	protected SlideLoaderProgressBar progress;
+	protected boolean stop = false;
+
+	protected IChipAnnotation chipAnno = null;
+
+	public ExpressionFileLoader(MultipleArrayViewer mav) {
+		super(mav.getFrame());
+
+	}
+
+	public ExpressionFileLoader(SuperExpressionFileLoader superLoader) {
+		super(superLoader.getFrame());
+		this.superLoader = superLoader;
+	}
+
 	public IChipAnnotation getChipAnnotation() {
 		return chipAnno;
 	}
-    
-    public ExpressionFileLoader(SuperExpressionFileLoader superLoader) {
-        super(superLoader.getFrame());
-        this.superLoader = superLoader;
-   //     this.loadingPanel = new LoadingPanel();   
-    }
-    
-    public abstract ISlideData loadExpressionFile(File f) throws IOException;
-    
-    public abstract Vector loadExpressionFiles() throws IOException;
-    
-    private Vector loadExpressionFile(Vector fileVector) throws IOException{
-        Vector dataVector = new Vector();
-        ISlideData slideData;
-        
-        for (int i = 0; i < fileVector.size(); i++) {
-            slideData = loadExpressionFile((File) fileVector.elementAt(i));
-            if(slideData == null)
-                return null;
-            
-            dataVector.add(slideData);
-        }
-        
-        return dataVector;
-    }
-    
-    public FileFilter getFileFilter() {
-        
-        FileFilter defaultFileFilter = new FileFilter() {
-            
-            public boolean accept(File f) {
-                return true;
-            }
-            
-            public String getDescription() {
-                return "Generic Expression Files (*.*)";
-            }
-        };
-        
-        return defaultFileFilter;
-    }
-    
-    public void setLoadEnabled(boolean state) {
-        superLoader.setLoadEnabled(state);
-    }
-    
-    public abstract boolean checkLoadEnable();
-    public abstract JPanel getFileLoaderPanel();
-    public abstract String getFilePath();
-    public abstract void openDataPath();    
-    public abstract String getAnnotationFilePath();
-    
-    /**
-     * Returns number of lines in the specified file.
-     */
-    protected int getCountOfLines(File file) throws IOException {
-        int count = 0;
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        String currentLine;
-        while ((currentLine = reader.readLine()) != null) {
-            count++;
-        }
-        reader.close();
-        return count;
-    }
-    
-    
+
+	public abstract ISlideData loadExpressionFile(File f)
+			throws IOException;
+
+	public abstract Vector<ISlideData> loadExpressionFiles() throws IOException;
+
+	public FileFilter getFileFilter() {
+
+		FileFilter defaultFileFilter = new FileFilter() {
+
+			public boolean accept(File f) {
+				return true;
+			}
+
+			public String getDescription() {
+				return "Generic Expression Files (*.*)";
+			}
+		};
+
+		return defaultFileFilter;
+	}
+
+	public void setLoadEnabled(boolean state) {
+		superLoader.setLoadEnabled(state);
+	}
+
+	public abstract boolean checkLoadEnable();
+
+	public abstract JPanel getFileLoaderPanel();
+
+	public abstract String getFilePath();
+
+	public abstract void openDataPath();
+
+	public abstract String getAnnotationFilePath();
+	
+	public abstract int getDataType();
+
+	/**
+	 * Returns number of lines in the specified file.
+	 */
+	protected int getCountOfLines(File file) throws IOException {
+		int count = 0;
+		BufferedReader reader = new BufferedReader(new FileReader(file));
+		String currentLine;
+		while ((currentLine = reader.readLine()) != null) {
+			count++;
+		}
+		reader.close();
+		return count;
+	}
+
+	public abstract void setFilePath(String path);
+
+	/**
+	 * Make a guess as to which of the data values represents the
+	 * upper-leftmost expression value. Select that cell as the default.
+	 */
+	public Point guessFirstExpressionCell(Vector<Vector<String>> dataVector) {
+		int guessCol = 0, guessRow = 0;
+		Vector<String> lastRow = dataVector.get(dataVector.size() - 1);
+		for (int j = lastRow.size() - 1; j >= 0; j--) {
+			String thisEntry = lastRow.get(j);
+			try {
+				Float temp = new Float(thisEntry);
+			} catch (Exception e) {
+				guessCol = j + 1;
+				break;
+			}
+		}
+	
+		for (int i = dataVector.size() - 1; i >= 0; i--) {
+			Vector<String> thisRow = dataVector.get(i);
+			String thisEntry = thisRow.get(guessCol);
+			try {
+				Float temp = new Float(thisEntry);
+			} catch (Exception e) {
+				guessRow = i + 1;
+				break;
+			}
+		}
+		return new Point(guessRow, guessCol);
+	}
 
 }

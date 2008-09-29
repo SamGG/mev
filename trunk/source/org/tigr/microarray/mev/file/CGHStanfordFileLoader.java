@@ -20,6 +20,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Point;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -70,12 +71,15 @@ import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cgh.CGHDataGenerator.CGHCloneComparator;
 import org.tigr.microarray.mev.cgh.CGHDataObj.CGHClone;
+import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.util.MyCellRenderer;
 
 public class CGHStanfordFileLoader extends ExpressionFileLoader {
 
     private GBA gba;
     private boolean stop = false;
     private CGHStanfordFileLoaderPanel CGHsflp;
+    private MyCellRenderer myCellRenderer;
     
     /**
      * 
@@ -88,11 +92,18 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
     }
 
     public Vector loadExpressionFiles() throws IOException {
-//    	Raktim
-    //	System.out.println("CGH StanfordFileLoader loadExpressionFiles() " + this.CGHsflp.fileNameTextField.getText());
         return loadStanfordExpressionFile(new File(this.CGHsflp.fileNameTextField.getText()));
     }
-
+    
+    public void setFilePath(String path) {
+    	CGHsflp.fileNameTextField.setText(path);
+    	processStanfordFile(new File(path));
+    }
+    
+    public int getDataType() {
+    	return IData.DATA_TYPE_RATIO_ONLY;
+    }
+    
     public ISlideData loadExpressionFile(File f){
         return null;
     }
@@ -525,9 +536,9 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
 
     public void processStanfordFile(File targetFile) {
 
-        Vector columnHeaders = new Vector();
-        Vector dataVector = new Vector();
-        Vector rowVector = null;
+        Vector<String> columnHeaders = new Vector<String>();
+        Vector<Vector<String>> dataVector = new Vector<Vector<String>>();
+        Vector<String> rowVector = null;
         BufferedReader reader = null;
         String currentLine = null;
 
@@ -562,7 +573,7 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
             while ((currentLine = reader.readLine()) != null && cnt < 100) {
                 cnt++;
                 ss.init(currentLine);
-                rowVector = new Vector();
+                rowVector = new Vector<String>();
                 for (int i = 0; i < ss.countTokens()+1; i++) {
                     try {
                         rowVector.add(ss.nextToken());
@@ -581,6 +592,8 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
         }
 
         CGHsflp.setTableModel(model);
+        Point p = guessFirstExpressionCell(dataVector);
+        CGHsflp.setSelectedCell(p.x, p.y);
     }
 
     public String getFilePath() {
@@ -669,13 +682,6 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
             fileSelectionPanel.setLayout(new GridBagLayout());
             fileSelectionPanel.setBorder(new TitledBorder(new EtchedBorder(), "File    (CGH Stanford Format Files)"));
             
-        /*    gba.add(fileSelectionPanel, dataSelection, 0, 0, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(fileSelectionPanel, fileNameTextField, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(fileSelectionPanel, browseButton1, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-
-    		gba.add(fileSelectionPanel, fileSelectionLabel, 0, 2, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-            gba.add(fileSelectionPanel, selectedFiles, 1, 2, 1, 1, 2, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0); 
-             */
             gba.add(fileSelectionPanel, dataSelection, 0, 0, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(5, 5, 5, 5), 0, 0);
     		gba.add(fileSelectionPanel, fileNameTextField, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
     		gba.add(fileSelectionPanel, browseButton1, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
@@ -683,32 +689,6 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
     		gba.add(fileSelectionPanel, fileSelectionLabel, 0, 2, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             gba.add(fileSelectionPanel, selectedFiles, 1, 2, 1, 1, 2, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0); 
               
-            
-            
-            
-            
-    		
-          /*  annotationPanel = new JPanel();
-            annotationPanel.setLayout(new GridBagLayout());
-            annotationPanel.setBorder(new TitledBorder(new EtchedBorder(), "Annotation"));
-            
-            customAnnotation=new JLabel("Upload annotation of your choice");
-    		
-            browseButton2=new JButton("Browse");
-            browseButton2.addActionListener(eventListener);
-           	browseButton2.setSize(100, 30);
-    		browseButton2.setPreferredSize(new Dimension(100, 30));
-    		
-    		annFileNameTextField=new JTextField();
-    		annFileNameTextField.setEditable(false);
-    		annFileNameTextField.setForeground(Color.black);
-    		annFileNameTextField.setFont(new Font("monospaced", Font.BOLD, 12));
-    		
-            
-            gba.add(annotationPanel, customAnnotation, 0, 0, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(annotationPanel, annFileNameTextField, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(annotationPanel, browseButton2, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-	          */
             speciesHsButton = new JRadioButton("Human", true);
             speciesHsButton.setFocusPainted(false);
             speciesMmButton = new JRadioButton("Mouse");
@@ -736,16 +716,16 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
             gba.add(additionalRequirements, justRatioButton, 1, 1, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(0, 20, 0, 5), 0, 0);
             //
             expressionTable = new JTable();
+            myCellRenderer = new MyCellRenderer();
+            expressionTable.setDefaultRenderer(Object.class, myCellRenderer);
             expressionTable.setCellSelectionEnabled(true);
             expressionTable.setColumnSelectionAllowed(false);
             expressionTable.setRowSelectionAllowed(false);
             expressionTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
             expressionTable.getTableHeader().setReorderingAllowed(false);
             expressionTable.addMouseListener(new MouseAdapter() {
-                public void mousePressed(MouseEvent event) {
-                    xRow = expressionTable.rowAtPoint(event.getPoint());
-                    xColumn = expressionTable.columnAtPoint(event.getPoint());
-                    checkLoadEnable();
+                public void mousePressed(MouseEvent event) {    
+                	setSelectedCell(expressionTable.rowAtPoint(event.getPoint()), expressionTable.columnAtPoint(event.getPoint()));
                 }
             });
 
@@ -781,7 +761,13 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
             gba.add(this, fileLoaderPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
            
         }
-
+        private void setSelectedCell( int xR, int xC) {
+            xRow = xR;
+            xColumn = xC;
+        myCellRenderer.setSelected(xRow, xColumn);
+        expressionTable.repaint();
+        checkLoadEnable();
+    }
         public void openDataPath() {
             //fileTreePane.openDataPath();
         }

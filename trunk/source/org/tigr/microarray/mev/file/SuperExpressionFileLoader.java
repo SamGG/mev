@@ -13,16 +13,37 @@
  */
 package org.tigr.microarray.mev.file;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.util.StringTokenizer;
-import java.util.Vector;
 import java.net.URL;
+import java.util.Vector;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
 import javax.swing.filechooser.FileFilter;
 
@@ -34,115 +55,83 @@ import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindowDialog;
 import org.tigr.microarray.mev.file.agilent.AgilentMevFileLoader;
-import org.tigr.microarray.mev.file.agilent.AgilentMevFileLoader;
 
 // Loads expression data in various file formats
 
 public class SuperExpressionFileLoader {
 
 	public static String DATA_PATH = TMEV.getDataPath();
-	
-	public static String ANNOTATION_PATH=TMEV.getSettingForOption("current-annotation-path");
-	
-	public final static ImageIcon ICON_COMPUTER = new ImageIcon(Toolkit
-			.getDefaultToolkit().getImage(
-					Thread.currentThread().getContextClassLoader()
-							.getResource("org/tigr/images/PCIcon.gif")));
-	
-	public final static ImageIcon ICON_DISK = new ImageIcon(Toolkit
-			.getDefaultToolkit().getImage(
-					Thread.currentThread().getContextClassLoader()
-							.getResource("org/tigr/images/disk.gif")));
 
-	public final static ImageIcon ICON_FOLDER = new ImageIcon(Toolkit
-			.getDefaultToolkit().getImage(
-					Thread.currentThread().getContextClassLoader()
-							.getResource("org/tigr/images/Directory.gif")));
+	public static String ANNOTATION_PATH = TMEV.getSettingForOption("current-annotation-path");
 
-	public final static ImageIcon ICON_EXPANDEDFOLDER = new ImageIcon(Toolkit
-			.getDefaultToolkit().getImage(
-					Thread.currentThread().getContextClassLoader()
-							.getResource("org/tigr/images/expandedfolder.gif")));
+	public final static ImageIcon ICON_COMPUTER = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+			Thread.currentThread().getContextClassLoader().getResource("org/tigr/images/PCIcon.gif")));
+
+	public final static ImageIcon ICON_DISK = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+			Thread.currentThread().getContextClassLoader().getResource("org/tigr/images/disk.gif")));
+
+	public final static ImageIcon ICON_FOLDER = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+			Thread.currentThread().getContextClassLoader().getResource("org/tigr/images/Directory.gif")));
+
+	public final static ImageIcon ICON_EXPANDEDFOLDER = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+			Thread.currentThread().getContextClassLoader().getResource("org/tigr/images/expandedfolder.gif")));
 
 	protected ExpressionFileLoader[] fileLoaders;
-
 	protected ExpressionFileLoader selectedFileLoader;
-
 	protected FileFilter[] fileFilters;
-
 	protected FileFilter selectedFileFilter;
-
 	protected JFrame mainFrame;
-
 	protected JPanel fileFilterPanel;
-
 	protected JLabel fileFilterLabel;
-	//Added by Sarita
 	protected JLabel fileType;
 	protected JComboBox fileTypeList;
-	//
-	
 	protected JComboBox fileFilterComboBox;
-
 	protected JPanel fileLoaderPanel;
-
 	protected JButton infoButton;
-
 	protected JButton cancelButton;
-
 	protected JButton loadButton;
-
 	protected JPanel buttonPanel;
-
 	protected JPanel selectionPanel;
-
 	protected JSplitPane mainSplitPane;
-
 	protected GBA gba;
-
 	protected EventListener eventListener;
-
 	protected MultipleArrayViewer viewer;
-
 	protected Loader loader;
-
 	protected int loaderIndex = 0;
 	protected JMenuBar menuBar;
-	protected JMenu menu1,menu2, menu3, menu4;
-	//Added by Sarita
+	protected JMenu menu1, menu2, menu3, menu4;
 	protected JMenu helpMenu;
-	//
 	protected JMenuItem menuItem[];
 	protected JMenuItem subMenuItem[];
-	protected JTextField filetype=null;
-	
-	public SuperExpressionFileLoader(MultipleArrayViewer viewer) {
-	
+	protected JTextField filetype = null;
 
+	public SuperExpressionFileLoader(MultipleArrayViewer viewer, File file, FileType fileType, String arrayType) {
+		this(viewer);
+		changeSelectedFileFilterAndLoader(fileType.getLoaderIndex());
+		setFilePath(file.getAbsolutePath());
+	}
+
+	public SuperExpressionFileLoader(MultipleArrayViewer viewer) {
 		this.viewer = viewer;
 		loader = new Loader();
-		initializeDataPath();
-		initializeAnnotationPath();
+//		initializeDataPath();
+//		initializeAnnotationPath();
 		initializeFileLoaders();
 		initializeGUI();
 	}
 
 	public SuperExpressionFileLoader() {
-		
 		loader = new Loader();
 		initializeFileLoaders();
 		initializeGUI();
 	}
 
 	protected void initializeFileLoaders() {
-
 		int defaultSelection = 0;
 
-		//Added by Sarita: Changed file loaders from 13 to 14
 		fileLoaders = new ExpressionFileLoader[15];
-		
 		fileLoaders[0] = new StanfordFileLoader(this);
-		
+
 		fileLoaders[1] = null;
 		fileLoaders[2] = null;
 		fileLoaders[3] = null;
@@ -153,87 +142,85 @@ public class SuperExpressionFileLoader {
 		fileLoaders[8] = null;
 		fileLoaders[9] = null;
 		fileLoaders[10] = null;
-		fileLoaders[11] = null; /* Raktim, CGH Loader */
+		fileLoaders[11] = null;
 		fileLoaders[12] = null;
-		//Added by Sarita
 		fileLoaders[13] = null;
 		fileLoaders[14] = null;
-		
+
 		selectedFileLoader = fileLoaders[defaultSelection];
 
 		fileFilters = new FileFilter[fileLoaders.length];
 		fileFilters[0] = fileLoaders[0].getFileFilter();
 		selectedFileFilter = fileFilters[defaultSelection];
 	}
-	public void helpWindow(String st){
+
+	public void helpWindow(String st) {
 		HelpWindow hw = new HelpWindow(mainFrame, st);
 		if (hw.getWindowContent()) {
 			hw.setSize(750, 650);
 			hw.setLocation();
-			hw.show();
+			hw.setVisible(true);
 		} else {
 			hw.setVisible(false);
 			hw.dispose();
-		}	
+		}
 	}
-	public void menuItem(JMenu jItem,final String st){
-		menuItem=new JMenuItem[6];
-		menuItem[0]= new JMenuItem("Tab Delimited, Multiple Sample Files");
-		
+
+	public void menuItem(JMenu jItem, final String st) {
+		menuItem = new JMenuItem[6];
+		menuItem[0] = new JMenuItem("Tab Delimited, Multiple Sample Files");
+
 		menuItem[0].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if(st=="File Format Hint"){
+				if (st == "File Format Hint") {
 					helpWindow("TDMS");
-				}else{
-				changeSelectedFileFilterAndLoader(0);
-				
+				} else {
+					changeSelectedFileFilterAndLoader(0);
+
 				}
 			}
 		});
 		jItem.add(menuItem[0]);
-		
-		menuItem[1]= new JMenu("TIGR Files");
-		subMenuItem= new JMenuItem[2];
-		subMenuItem[0]=new JMenuItem("MeV Files");
+
+		menuItem[1] = new JMenu("TIGR Files");
+		subMenuItem = new JMenuItem[2];
+		subMenuItem[0] = new JMenuItem("MeV Files");
 		subMenuItem[0].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if(st=="File Format Hint"){
-				  HelpWindowDialog hwd= new HelpWindowDialog(mainFrame,HelpWindowDialog.createText("Mev"));
-				}else{
-				changeSelectedFileFilterAndLoader(1);
-				//filetype.setText("MeV Files(*.mev)");
+				if (st == "File Format Hint") {
+					HelpWindowDialog hwd = new HelpWindowDialog(mainFrame, HelpWindowDialog.createText("Mev"));
+				} else {
+					changeSelectedFileFilterAndLoader(1);
 				}
 			}
 		});
 		menuItem[1].add(subMenuItem[0]);
-		
-		subMenuItem[1]=new JMenuItem("TIGR ArrayViewer (*.tav) Files");
+
+		subMenuItem[1] = new JMenuItem("TIGR ArrayViewer (*.tav) Files");
 		subMenuItem[1].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if(st=="File Format Hint"){
-					  HelpWindowDialog hwd =new HelpWindowDialog(mainFrame,HelpWindowDialog.createText("Tav"));
-					}else{
-				changeSelectedFileFilterAndLoader(2);
-				//filetype.setText("TIGR ArrayViewer Files(*.tav)");
-			}
+				if (st == "File Format Hint") {
+					HelpWindowDialog hwd = new HelpWindowDialog(mainFrame, HelpWindowDialog.createText("Tav"));
+				} else {
+					changeSelectedFileFilterAndLoader(2);
+				}
 			}
 		});
 		menuItem[1].add(subMenuItem[1]);
-		
+
 		jItem.add(menuItem[1]);
-		
+
 		menuItem[2] = new JMenu("Affymetrix Files");
-		
-        subMenuItem= new JMenuItem[5];
-        subMenuItem[0]=new JMenuItem("Affymetrix GCOS(using MAS5)Files");
-        subMenuItem[0].addActionListener(new ActionListener() {
+
+		subMenuItem = new JMenuItem[5];
+		subMenuItem[0] = new JMenuItem("Affymetrix GCOS(using MAS5)Files");
+		subMenuItem[0].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if(st=="File Format Hint"){
-					  helpWindow("GCOS");
-					}else{
-				changeSelectedFileFilterAndLoader(3);
-				//filetype.setText("Affymetrix GCOS(using MAS5)Files");
-					}
+				if (st == "File Format Hint") {
+					helpWindow("GCOS");
+				} else {
+					changeSelectedFileFilterAndLoader(3);
+				}
 			}
 		});
 		menuItem[2].add(subMenuItem[0]);
@@ -242,232 +229,196 @@ public class SuperExpressionFileLoader {
 		menuItem[2].add(subMenuItem[1]);
 		subMenuItem[1].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if(st=="File Format Hint"){
-					  helpWindow("dChip");
-					}else{
-				changeSelectedFileFilterAndLoader(4);
-				//filetype.setText("dChip/DFCI_Core Format Files");
-			}
+				if (st == "File Format Hint") {
+					helpWindow("dChip");
+				} else {
+					changeSelectedFileFilterAndLoader(4);
+				}
 			}
 		});
-		
+
 		subMenuItem[2] = new JMenuItem("GW Affymetrix Files");
 		menuItem[2].add(subMenuItem[2]);
 		subMenuItem[2].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if(st=="File Format Hint"){
-					  helpWindow("GW");
-					}else{
-				changeSelectedFileFilterAndLoader(5);
-				//filetype.setText("GW Affymetrix Files");
-			}
+				if (st == "File Format Hint") {
+					helpWindow("GW");
+				} else {
+					changeSelectedFileFilterAndLoader(5);
+				}
 			}
 		});
-		
+
 		subMenuItem[3] = new JMenuItem("Bioconductor(using MAS5) Files");
 		menuItem[2].add(subMenuItem[3]);
 		subMenuItem[3].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if(st=="File Format Hint"){
-					  helpWindow("bioconductor");
-				}else{
-				changeSelectedFileFilterAndLoader(6);
-				//filetype.setText("Bioconductor(using MAS5) Files");
+				if (st == "File Format Hint") {
+					helpWindow("bioconductor");
+				} else {
+					changeSelectedFileFilterAndLoader(6);
+				}
 			}
-		}
 		});
 		subMenuItem[4] = new JMenuItem("RMA Files");
 		menuItem[2].add(subMenuItem[4]);
 		subMenuItem[4].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if(st=="File Format Hint"){
-					  helpWindow("RMA");
-				}else{
-				changeSelectedFileFilterAndLoader(7);
-				//filetype.setText("RMA Files");
+				if (st == "File Format Hint") {
+					helpWindow("RMA");
+				} else {
+					changeSelectedFileFilterAndLoader(7);
+				}
 			}
-		}
 		});
-		
+
 		jItem.add(menuItem[2]);
-	
+
 		menuItem[3] = new JMenuItem("CGH Tab Delimited, Multiple Sample");
 		menuItem[3].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if(st=="File Format Hint"){
-					  helpWindow("CGH");
-				}else{
-				changeSelectedFileFilterAndLoader(8);
-				//filetype.setText("CGH Files");
+				if (st == "File Format Hint") {
+					helpWindow("CGH");
+				} else {
+					changeSelectedFileFilterAndLoader(8);
+				}
 			}
-		}
 		});
 		jItem.add(menuItem[3]);
-		
-		menuItem[4]= new JMenu("GEO Files");
-		//Added by Sarita:Submenu items increased to 4
-		subMenuItem= new JMenuItem[4];
-		subMenuItem[0]=new JMenuItem("GPL Family Format Files (Affymetrix)");
+
+		menuItem[4] = new JMenu("GEO Files");
+		subMenuItem = new JMenuItem[4];
+		subMenuItem[0] = new JMenuItem("GPL Family Format Files (Affymetrix)");
 		subMenuItem[0].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if(st=="File Format Hint"){
-					HelpWindowDialog hwd =new HelpWindowDialog(mainFrame,HelpWindowDialog.createText("GEOaffy"));
-				}else{
-				changeSelectedFileFilterAndLoader(9);
-				//filetype.setText("GEO SOFT Affymetrix Format Files");
-			}
+				if (st == "File Format Hint") {
+					HelpWindowDialog hwd = new HelpWindowDialog(mainFrame, HelpWindowDialog.createText("GEOaffy"));
+				} else {
+					changeSelectedFileFilterAndLoader(9);
+				}
 			}
 		});
 		menuItem[4].add(subMenuItem[0]);
-		
-		subMenuItem[1]=new JMenuItem("GPL Family Format Files (Two Channel)");
+
+		subMenuItem[1] = new JMenuItem("GPL Family Format Files (Two Channel)");
 		subMenuItem[1].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if(st=="File Format Hint"){
-					HelpWindowDialog hwd =new HelpWindowDialog(mainFrame,HelpWindowDialog.createText("GEOtwo"));
-				}else{
-				changeSelectedFileFilterAndLoader(10);
-				//filetype.setText("GEO SOFT Two Channel Format Files");
+				if (st == "File Format Hint") {
+					HelpWindowDialog hwd = new HelpWindowDialog(mainFrame, HelpWindowDialog.createText("GEOtwo"));
+				} else {
+					changeSelectedFileFilterAndLoader(10);
+				}
 			}
-		}
 		});
 		menuItem[4].add(subMenuItem[1]);
-		
-	//Added by Sarita	
-		
-		subMenuItem[2]=new JMenuItem("GEO Series Matrix Files");
+
+		subMenuItem[2] = new JMenuItem("GEO Series Matrix Files");
 		subMenuItem[2].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if(st=="File Format Hint"){
-					HelpWindowDialog hwd =new HelpWindowDialog(mainFrame,HelpWindowDialog.createText("GEOSeriesMatrix"));
-				}else{
-				changeSelectedFileFilterAndLoader(13);
-				//filetype.setText("GEO SOFT Two Channel Format Files");
+				if (st == "File Format Hint") {
+					HelpWindowDialog hwd = new HelpWindowDialog(mainFrame, HelpWindowDialog.createText("GEOSeriesMatrix"));
+				} else {
+					changeSelectedFileFilterAndLoader(13);
+				}
 			}
-		}
 		});
 		menuItem[4].add(subMenuItem[2]);
-	
-		subMenuItem[3]=new JMenuItem("GEO GDS Format Files");
+
+		subMenuItem[3] = new JMenuItem("GEO GDS Format Files");
 		subMenuItem[3].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if(st=="File Format Hint"){
-					HelpWindowDialog hwd =new HelpWindowDialog(mainFrame,HelpWindowDialog.createText("GEO GDS Format Files"));
-				}else{
-				changeSelectedFileFilterAndLoader(14);
-				//filetype.setText("GEO SOFT Two Channel Format Files");
+				if (st == "File Format Hint") {
+					HelpWindowDialog hwd = new HelpWindowDialog(mainFrame, HelpWindowDialog.createText("GEO GDS Format Files"));
+				} else {
+					changeSelectedFileFilterAndLoader(14);
+				}
 			}
-		}
 		});
 		menuItem[4].add(subMenuItem[3]);
-		
+
 		jItem.add(menuItem[4]);
-		
-		menuItem[5]= new JMenu("Other Format Files");
-		
-		subMenuItem= new JMenuItem[2];
-		subMenuItem[0]=new JMenuItem("GenePix Format Files");
+
+		menuItem[5] = new JMenu("Other Format Files");
+
+		subMenuItem = new JMenuItem[2];
+		subMenuItem[0] = new JMenuItem("GenePix Format Files");
 		subMenuItem[0].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if(st=="File Format Hint"){
-					HelpWindowDialog hwd =new HelpWindowDialog(mainFrame,HelpWindowDialog.createText("GenePix"));
-				}else{
-				changeSelectedFileFilterAndLoader(11);
-			//	filetype.setText("GenePix Format Files");
+				if (st == "File Format Hint") {
+					HelpWindowDialog hwd = new HelpWindowDialog(mainFrame, HelpWindowDialog.createText("GenePix"));
+				} else {
+					changeSelectedFileFilterAndLoader(11);
+				}
 			}
-		}
 		});
 		menuItem[5].add(subMenuItem[0]);
-		
-		subMenuItem[1]=new JMenuItem("Agilent Files");
+
+		subMenuItem[1] = new JMenuItem("Agilent Files");
 		subMenuItem[1].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if(st=="File Format Hint"){
-					HelpWindowDialog hwd =new HelpWindowDialog(mainFrame,HelpWindowDialog.createText("Agilent"));
-				}else{
-				changeSelectedFileFilterAndLoader(12);
-				//filetype.setText("Agilent Format Files");
+				if (st == "File Format Hint") {
+					HelpWindowDialog hwd = new HelpWindowDialog(mainFrame, HelpWindowDialog.createText("Agilent"));
+				} else {
+					changeSelectedFileFilterAndLoader(12);
+				}
 			}
-		}
 		});
 		menuItem[5].add(subMenuItem[1]);
-		
+
 		jItem.add(menuItem[5]);
-		
+
 	}
+
 	public void initializeGUI() {
 
 		gba = new GBA();
 		eventListener = new EventListener();
 
 		mainFrame = new JFrame("Expression File Loader");
-		//mainFrame.getContentPane().setBackground(new Color(220, 220, 220));
 		mainFrame.getContentPane().setLayout(new GridBagLayout());
 
 		menuBar = new JMenuBar();
-		
-	//Commented by Sarita	
+
 		menu1 = new JMenu("Select File Loader");
 		menu1.setMnemonic(KeyEvent.VK_S);
-		menuItem(menu1,"Select Expression File Type");
+		menuItem(menu1, "Select Expression File Type");
 		menuBar.add(menu1);
-		
-	/*	menu3 = new JMenu("  ");
-		menu3.setMnemonic(KeyEvent.VK_S);
-		menuItem(menu3,"Select Expression File Type");
-		menuBar.add(menu1);
-		
-		
-		menu4 = new JMenu("  ");
-		menu4.setMnemonic(KeyEvent.VK_S);
-		menuItem(menu4,"Select Expression File Type");
-		menuBar.add(menu1);*/
-		
-		
+
 		menu2 = new JMenu("Help");
 		menu2.setMnemonic(KeyEvent.VK_H);
-		menuItem(menu2,"File Format Hint");
+		menuItem(menu2, "File Format Hint");
 		menuBar.add(menu2);
 		menuBar.setBorderPainted(true);
 		mainFrame.setJMenuBar(menuBar);
-		
-		
-		fileFilterLabel=new JLabel();
-	
-			
+
+		fileFilterLabel = new JLabel();
+
 		fileLoaderPanel = selectedFileLoader.getFileLoaderPanel();
-	//	fileLoaderPanel.setSize(new Dimension(600, 600));// commented by sarita, temporarily
-		//fileLoaderPanel.setPreferredSize(new Dimension(600, 600));// commented temporarily by sarita
-		//fileLoaderPanel.setSize(new Dimension(650, 650)); //Works except when you add more stuff to AnnotationPanel
-		//fileLoaderPanel.setPreferredSize(new Dimension(650, 650)); 
-		
-		fileLoaderPanel.setSize(new Dimension(750, 750)); 
-		fileLoaderPanel.setPreferredSize(new Dimension(750, 750)); 
-		
-        // begin additions by Dan
-	
-        URL url = this.getClass().getClassLoader().getResource("org/tigr/images/Information24.gif");
-        Image image = Toolkit.getDefaultToolkit().getImage(url);
-        Icon imageIcon = new ImageIcon(image);
-        infoButton = new JButton(null, imageIcon);
+
+		fileLoaderPanel.setSize(new Dimension(750, 750));
+		fileLoaderPanel.setPreferredSize(new Dimension(750, 750));
+
+		// begin additions by Dan
+
+		URL url = this.getClass().getClassLoader().getResource("org/tigr/images/Information24.gif");
+		Image image = Toolkit.getDefaultToolkit().getImage(url);
+		Icon imageIcon = new ImageIcon(image);
+		infoButton = new JButton(null, imageIcon);
 		// end additions by Dan
 		infoButton.setActionCommand("info-command");
 		infoButton.addActionListener(eventListener);
 		infoButton.setFocusPainted(false);
-		infoButton.setBorder(BorderFactory
-				.createBevelBorder(BevelBorder.RAISED));
+		infoButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		cancelButton = new JButton("Cancel");
 		cancelButton.addActionListener(eventListener);
-		cancelButton.setBorder(BorderFactory
-				.createBevelBorder(BevelBorder.RAISED));
+		cancelButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		cancelButton.setSize(60, 30);
 		cancelButton.setPreferredSize(new Dimension(60, 30));
 		cancelButton.setFocusPainted(false);
 		loadButton = new JButton("Load");
 		loadButton.addActionListener(eventListener);
-		loadButton.setBorder(BorderFactory.createBevelBorder(
-				BevelBorder.RAISED, new Color(240, 240, 240), new Color(180,
-						180, 180), new Color(10, 0, 0), new Color(10, 10, 10)));
+		loadButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED, new Color(240, 240, 240), new Color(180, 180, 180),
+				new Color(10, 0, 0), new Color(10, 10, 10)));
 		loadButton.setSize(60, 30);
 		loadButton.setPreferredSize(new Dimension(60, 30));
 		loadButton.setFocusPainted(false);
@@ -475,133 +426,50 @@ public class SuperExpressionFileLoader {
 
 		buttonPanel = new JPanel();
 		buttonPanel.setLayout(new GridBagLayout());
-		gba.add(buttonPanel, infoButton, 0, 0, 1, 1, 0, 0, GBA.N, GBA.C,
-				new Insets(5, 5, 5, 5), 0, 0);
+		gba.add(buttonPanel, infoButton, 0, 0, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
 
+		// begin additions by Dan:
+		url = this.getClass().getClassLoader().getResource("org/tigr/images/dialog_button_bar.gif");
+		image = Toolkit.getDefaultToolkit().getImage(url);
+		imageIcon = new ImageIcon(image);
+		JLabel myLbl = new JLabel(imageIcon);
+		// end additions by Dan
 
-        // begin additions by Dan:
-        url = this.getClass().getClassLoader().getResource("org/tigr/images/dialog_button_bar.gif");
-        image = Toolkit.getDefaultToolkit().getImage(url);
-        imageIcon = new ImageIcon(image);
-        JLabel myLbl = new JLabel(imageIcon);
-		// end additions by Dan 
+		gba.add(buttonPanel, myLbl, 1, 0, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+		gba.add(buttonPanel, cancelButton, 2, 0, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
 
-        gba
-				.add(
-						buttonPanel,
-                        myLbl,
-						1, 0, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5),
-						0, 0);
-		gba.add(buttonPanel, cancelButton, 2, 0, 1, 1, 0, 0, GBA.N, GBA.C,
-				new Insets(5, 5, 5, 5), 0, 0);
+		gba.add(buttonPanel, loadButton, 3, 0, 1, 1, 0, 0, GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
 
-		gba.add(buttonPanel, loadButton, 3, 0, 1, 1, 0, 0, GBA.N, GBA.C,
-				new Insets(5, 5, 5, 5), 0, 0);
+		gba.add(mainFrame.getContentPane(), fileLoaderPanel, 0, 1, 1, 3, 1, 1, GBA.B, GBA.C);
+		gba.add(mainFrame.getContentPane(), buttonPanel, 0, 4, 1, 1, 1, 0, GBA.H, GBA.C);
 
-		//gba.add(mainFrame.getContentPane(), header, 0, 0, 1, 1, 1, 0, GBA.H,
-			//	GBA.C);
-		//Check why this configuration works fine for TDMS but NOT for RMA
-	//	gba.add(mainFrame.getContentPane(), fileFilterPanel, 0, 0, 1, 1, 1, 1,
-		//		GBA.B, GBA.C);
-		
-	//	gba.add(mainFrame.getContentPane(), fileFilterLabel, 0, 0, 1, 1, 1, 0,
-		//		GBA.H, GBA.C);///-----------commented temporarily by sarita
-		gba.add(mainFrame.getContentPane(), fileLoaderPanel, 0, 1, 1, 3, 1, 1,
-				GBA.B, GBA.C);
-		gba.add(mainFrame.getContentPane(), buttonPanel, 0, 4, 1, 1, 1, 0,
-				GBA.H, GBA.C);
-
-		//mainFrame.setSize(1000, 780); //Original size, Commented by sarita
-		
-		//Commented temporarily--Dec 08,07.
-		//mainFrame.setSize(1000, 840);//Stops GUI shaking when trying to add stuff to Annotation panel
 		mainFrame.setSize(800, 680);
-		
+
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		
-		//Added by Sarita
 		Dimension frameSize = mainFrame.getSize();
-		
+
 		if (frameSize.height > screenSize.height) {
-			   frameSize.height = screenSize.height;
-			}
-		if (frameSize.width > screenSize.width) {
-			   frameSize.width = screenSize.width;
+			frameSize.height = screenSize.height;
 		}
-		//		
-		
-		mainFrame.setLocation(
-				(screenSize.width - mainFrame.getSize().width) / 2,
-				(screenSize.height - mainFrame.getSize().height) / 2);
-		
-		
-	
+		if (frameSize.width > screenSize.width) {
+			frameSize.width = screenSize.width;
+		}
+
+		mainFrame.setLocation((screenSize.width - mainFrame.getSize().width) / 2, (screenSize.height - mainFrame.getSize().height) / 2);
+
 		mainFrame.setVisible(true);
 		selectedFileLoader.openDataPath();
 	}
 
-	public void initializeDataPath() {
-		String newPath = TMEV.getDataPath();
-		newPath = (new File(newPath)).getPath();
-
-		if (newPath == null) {
-			return;
-		}
-
-		String sep = System.getProperty("file.separator");
-
-		// if Linux or Mac / goes in front of the path
-		if (sep.equals("/"))
-			newPath = sep + newPath;
-
-		File file = new File(newPath);
-		if (file.exists()) {
-			DATA_PATH = newPath;
-		} else {
-			file = TMEV.getFile("/data");
-			if (file != null)
-				DATA_PATH = file.getPath();
-		}
+	// TODO EH testing whether this method is even necessary
+/*	public void initializeDataPath() {
+		DATA_PATH = TMEV.getDataPath();
 	}
-	
-	
-	public void initializeAnnotationPath(){
-		String newPath = TMEV.getSettingForOption("current-annotation-path");	
-//		System.out.println("initializeAnnotationPath:"+newPath);
-		File file;
-		if (newPath == null) {
-			file = new File("/data/Annotation");
-			if (file != null)
-				ANNOTATION_PATH = file.getPath();
-			return;
-		} else {
-			file = new File(newPath);
-		}
-	
-//		newPath = (new File(newPath)).getPath();
-      newPath = file.getPath();
 
-		String sep = System.getProperty("file.separator");
-
-		// if Linux or Mac / goes in front of the path
-		if (sep.equals("/"))
-			newPath = sep + newPath;
-
-//		file = new File(newPath);
-		if (file.exists()) {
-			ANNOTATION_PATH = newPath;
-		} //else {
-//			file = TMEV.getFile("/data/Annotation");
-//			if (file != null)
-//				ANNOTATION_PATH = file.getPath();
-//		}
-
-	}
-	
-	
-	
-	
-	
+	// TODO EH testing whether this method is even necessary
+	public void initializeAnnotationPath() {
+		ANNOTATION_PATH = TMEV.getSettingForOption("current-annotation-path");
+	}*/
 
 	public void setLoadEnabled(boolean state) {
 		loadButton.setEnabled(state);
@@ -610,65 +478,59 @@ public class SuperExpressionFileLoader {
 	private ExpressionFileLoader getFileLoader(int target) {
 
 		ExpressionFileLoader loader;
-		
-		if (target >= 0 && target < fileLoaders.length
-				&& fileLoaders[target] != null) {
-			
+		FileType selectedType = FileType.getTypeFromLoaderIndex(target);
+
+		if (target >= 0 && target < fileLoaders.length && fileLoaders[target] != null) {
+
 			return fileLoaders[target];
 		}
 
 		setLoadEnabled(false);
-		
-		switch (target) {
-		case 0:
+
+		switch (selectedType) {
+		case STANFORD:
 			loader = fileLoaders[0];
 			break;
-		case 1:
+		case MEV_TARBALL:
 			loader = new MevFileLoader(this);
 			break;
-		case 2:
+		case TAV:
 			loader = new TavFileLoader(this);
 			break;
-		case 3:
+		case AFFY_GCOS:
 			loader = new AffyGCOSFileLoader(this);
 			break;
-		case 4:
+		case DCHIP:
 			loader = new DFCI_CoreFileLoader(this);
 			break;
-		case 5:
+		case GW_AFFY:
 			loader = new AffymetrixFileLoader(this);
 			break;
-		
-		case 6: 	
+		case BIOCONDUCTOR_MAS5:
 			loader = new Mas5FileLoader(this);
 			break;
-		
-		case 7:	//wwang for RMA
-			loader =new RMAFileLoader(this);
-			break;	
-		case 8:
-			 //loader = new CGHStanfordFileLoader(this); /* Raktim, for CGH Loader */
-			 loader = new CGHStanfordFileLoader(this);
-			 break;		
-		case 9:
-			
-			//loader = new SOFT_AffyFileLoader(this);
+		case RMA:
+			loader = new RMAFileLoader(this);
+			break;
+		case CGH:
+			loader = new CGHStanfordFileLoader(this);
+			break;
+		case AFFY_GPL:
 			loader = new SOFT_AffymetrixFileLoader(this);
-			break;	
-		case 10:
+			break;
+		case TWO_CHANNEL_GPL:
 			loader = new SOFT_TwoChannelFileLoader(this);
-			break;	
-	
-		case 11:
+			break;
+		case GENEPIX:
 			loader = new GenePixFileLoader(this);
 			break;
-		case 12:
+		case AGILENT:
 			loader = new AgilentMevFileLoader(this);
 			break;
-		case 13:
+		case GEO_SERIES_MATRIX:
 			loader = new GEOSeriesMatrixLoader(this);
-			break;	
-		case 14:
+			break;
+		case GEO_GDS:
 			loader = new GEO_GDSFileLoader(this);
 			break;
 		default:
@@ -681,12 +543,11 @@ public class SuperExpressionFileLoader {
 
 	public void changeSelectedFileFilterAndLoader(int target) {
 
-		if (target < 0 || target >= fileLoaders.length
-				|| target >= fileFilters.length)
+		if (target < 0 || target >= fileLoaders.length || target >= fileFilters.length)
 			return;
 
 		selectedFileLoader = getFileLoader(target);
-		
+
 		this.mainFrame.toFront();
 		fileFilters[target] = selectedFileLoader.getFileFilter();
 		selectedFileFilter = fileFilters[target];
@@ -697,10 +558,11 @@ public class SuperExpressionFileLoader {
 	public void changeFileLoaderPanel(ExpressionFileLoader targetFileLoader) {
 
 		Container cp = mainFrame.getContentPane();
-		
-		cp.remove(fileLoaderPanel); // Remove the old fileLoaderPanel
+
+		cp.remove(fileLoaderPanel); // Remove the old
+		// fileLoaderPanel
 		fileLoaderPanel = targetFileLoader.getFileLoaderPanel();
-		
+
 		gba.add(cp, fileLoaderPanel, 0, 1, 1, 3, 1, 1, GBA.B, GBA.C);
 		checkLoadEnable();
 		cp.validate();
@@ -724,148 +586,20 @@ public class SuperExpressionFileLoader {
 		}
 	}
 
-	
-	
-	
 	public String getFileDescription(int target) {
-		String desc;
-		switch (target) {
-		case 0:
-			desc = "Tab Delimited, Multiple Sample Files (TDMS) (*.*)";
-			break;
-		case 1:
-			desc = "MeV Files (*.mev and *.ann)";
-			break;
-		case 2:
-			desc = "TIGR ArrayViewer Files (*.tav)";
-			break;
-		case 3:
-			desc = "Affymetrix GCOS(using MAS5) Files";
-			break;
-		case 4:
-			desc = "dChip/DFCI_Core Format Files";
-			break;
-		case 5:
-			desc = "GW Affymetrix Files";
-			break;
-			
-		case 6:
-			desc ="Bioconductor(using MAS5) Files";
-			break;
-				
-		case 7:
-			desc = "RMA Files";
-			break;	
-		case 8:
-			desc = "CGH Tab Delimited, Multiple Sample";
-			break;
-		case 9:
-			desc = "GEO SOFT Affymetrix Format Files";
-			break;		
-		case 10:
-			desc =  "GEO SOFT Two Channel Format Files";
-			break;			
-        case 11:
-            desc = "GenePix Format Files";
-            break;
-        case 12:
-            desc =  "Agilent Files";
-        case 13:
-            desc =  "GEO Series Matrix Files";
-              
-            break;
-        case 14:
-            desc =  "GEO GDS Format Files";
-            break;
-		default:
-			desc = "Tab Delimited, Multiple Sample Files (TDMS) (*.*)";
-			
-			break;
-		}
-		return desc;
+		return FileType.getTypeFromLoaderIndex(target).getDescription();
 	}
 
 	public void checkLoadEnable() {
 		selectedFileLoader.checkLoadEnable();
 	}
-	
-	
-	//Added by Sarita
-	 public void onSelectingFileType(Object selectedItem) {
-     	//String sft=(String)fileTypeList.getSelectedItem();
-     	String sft=(String)selectedItem;
-     	if(sft.equalsIgnoreCase("Tab Delimited, Multiple Sample")) {
-     		changeSelectedFileFilterAndLoader(0);
-     	}
-     	
-     	if(sft.equalsIgnoreCase("MeV")) {
-     		changeSelectedFileFilterAndLoader(1);
-     	}
-     	
-     	if(sft.equalsIgnoreCase("TIGR Array Viewer (*.tav)")) {
-     		changeSelectedFileFilterAndLoader(2);
-     	}
-     	
-    	if(sft.equalsIgnoreCase("Affymetrix GCOS(using MAS5) Files")) {
-     		changeSelectedFileFilterAndLoader(3);
-     	}
-     	
-    	if(sft.equalsIgnoreCase("dChip/DFCI_Core Format Files")) {
-     		changeSelectedFileFilterAndLoader(4);
-     	}
-    	
-    	if(sft.equalsIgnoreCase("GW Affymetrix Files")) {
-     		changeSelectedFileFilterAndLoader(5);
-     	} 	
-    	          	
-     	if(sft.equalsIgnoreCase("Bioconductor(using MAS5) Files")) {
-     		changeSelectedFileFilterAndLoader(6);
-     	}
-     	
-     	if(sft.equalsIgnoreCase("RMA Files")) {
-     		changeSelectedFileFilterAndLoader(7);
-     	}
-     	
-     	if(sft.equalsIgnoreCase("CGH Tab Delimited, Multiple Sample")) {
-     		changeSelectedFileFilterAndLoader(8);
-     	}
-    	
-       	if(sft.equalsIgnoreCase("GEO SOFT Affymetrix Format Files")) {
-     		changeSelectedFileFilterAndLoader(9);
-     	}
-     	
-    	if(sft.equalsIgnoreCase("GEO SOFT Two Channel Format Files")) {
-     		changeSelectedFileFilterAndLoader(10);
-     	}
-    	
-    	
-    	if(sft.equalsIgnoreCase("GenePix Format Files")) {
-     		changeSelectedFileFilterAndLoader(11);
-     	}
-     	
-    
-     	if(sft.equalsIgnoreCase("Agilent Files")) {
-     		changeSelectedFileFilterAndLoader(12);
-     	}
-     	
-    	if(sft.equalsIgnoreCase("GEO Series Matrix Files")) {
-     		changeSelectedFileFilterAndLoader(13);
-     	}
-    	
-    	if(sft.equalsIgnoreCase("GEO GDS Format Files")) {
-     		changeSelectedFileFilterAndLoader(14);
-     	}
- 	}
-     
-  
 
 	public void onInfo() {
-		HelpWindow hw = new HelpWindow(SuperExpressionFileLoader.this
-				.getFrame(), "File Loader");
+		HelpWindow hw = new HelpWindow(SuperExpressionFileLoader.this.getFrame(), "File Loader");
 		if (hw.getWindowContent()) {
 			hw.setSize(450, 650);
 			hw.setLocation();
-			hw.show();
+			hw.setVisible(true);
 		} else {
 			hw.setVisible(false);
 			hw.dispose();
@@ -898,63 +632,33 @@ public class SuperExpressionFileLoader {
 		return this.viewer;
 	}
 
-	//main mETHOD COMMENTED BY sARITA
-	/*public static void main(String[] args) {
-		SuperExpressionFileLoader loader = new SuperExpressionFileLoader();
-	}*/
+	// main mETHOD COMMENTED BY sARITA
+	/*
+	 * public static void main(String[] args) { SuperExpressionFileLoader
+	 * loader = new SuperExpressionFileLoader(); }
+	 */
 
-	private ISlideData[] toISlideDataArray(Vector dataVector) {
+	private ISlideData[] toISlideDataArray(Vector<ISlideData> dataVector) {
 		if (dataVector == null || dataVector.size() < 1)
 			return null;
 		ISlideData[] data = new ISlideData[dataVector.size()];
-	
+
 		for (int i = 0; i < data.length; i++) {
 			data[i] = (ISlideData) (dataVector.elementAt(i));
 		}
 		return data;
 	}
 
-	//private void updateDataPath(String dataPath) {
 	private void updateDataPath(String dataPath, String annotationPath) {
-		/*if (dataPath == null) {
-			return;
-		}*/
-		
-		if(dataPath==null || annotationPath ==null){
-			return;
-		}
-		String renderedSep = "/";
-		String renderedPath = new String();
 
-		String sep = System.getProperty("file.separator");
-		String lineSep = System.getProperty("line.separator");
-
-		StringTokenizer stok = new StringTokenizer(dataPath, sep);
-
-		DATA_PATH = new String();
-		ANNOTATION_PATH=new String();
-		String str;
-		while (stok.hasMoreTokens() && stok.countTokens() > 1) {
-			str = stok.nextToken();
-			renderedPath += str + renderedSep;
-			DATA_PATH += str + sep;
+		if(dataPath != null) {
+			DATA_PATH = dataPath;
+			TMEV.setDataPath(DATA_PATH);
 		}
-		
-		//For remembering annotation path
-		 stok = new StringTokenizer(annotationPath, sep);
-		
-		while (stok.hasMoreTokens() && stok.countTokens() > 1) {
-			str = stok.nextToken();
-			renderedPath += str + renderedSep;
-			ANNOTATION_PATH += str + sep;
+		if (annotationPath != null) {
+			ANNOTATION_PATH = annotationPath;
+			TMEV.storeProperty("current-annotation-path", ANNOTATION_PATH);
 		}
-		
-		
-		
-		
-		TMEV.setDataPath(DATA_PATH);
-		TMEV.storeProperty("current-annotation-path", ANNOTATION_PATH);
-		//TMEV.setAnnotationPath(ANNOTATION_PATH);
 	}
 
 	/*
@@ -962,7 +666,7 @@ public class SuperExpressionFileLoader {
 	 * Member Classes
 	 * 
 	 */
-
+	
 	private class EventListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
 			Object source = event.getSource();
@@ -973,7 +677,7 @@ public class SuperExpressionFileLoader {
 			} else if (source == loadButton) {
 				onLoad();
 			}
-			
+
 		}
 	}
 
@@ -986,96 +690,48 @@ public class SuperExpressionFileLoader {
 		}
 
 		public void run() {
-		//	System.out.println("Run");
-			Vector data = null;
+			Vector<ISlideData> data = null;
 			int dataType = 0;
 			IChipAnnotation chipAnnotation = null;
 			try {
 				selectedFileLoader.showModal();
 				data = selectedFileLoader.loadExpressionFiles();
 				chipAnnotation = selectedFileLoader.getChipAnnotation();
-				if (loaderIndex == 10 || loaderIndex == 8||loaderIndex==7) /* Raktim, added check for 8, CGH Data */
-					dataType = IData.DATA_TYPE_RATIO_ONLY;
-				else if(loaderIndex == 6){
-					//dataType = ((Mas5FileLoader)selectedFileLoader)
-					//.getAffyDataType();
-					dataType = ((Mas5FileLoader)selectedFileLoader)
-						.getAffyDataType();
-					
-				} else if(loaderIndex==0){
-					dataType = ((StanfordFileLoader)selectedFileLoader)
-					.getDataType();
-					
-				} else if (loaderIndex == 5) {
-				//	dataType = ((AffymetrixFileLoader) selectedFileLoader)
-					//		.getAffyDataType();
-					dataType = ((AffymetrixFileLoader) selectedFileLoader)
-					.getAffyDataType();
-				} else if (loaderIndex == 3) {
-					dataType = ((AffyGCOSFileLoader) selectedFileLoader)
-					.getAffyDataType();
-									
-					//dataType = ((AffyGCOSFileLoader) selectedFileLoader)
-						//	.getAffyDataType();
-				} else if (loaderIndex == 9) {
-					dataType = ((SOFT_AffymetrixFileLoader) selectedFileLoader)
-							.getDataType();
-									
-					
-				} else if (loaderIndex == 4) {
-					//dataType = ((DFCI_CoreFileLoader) selectedFileLoader)
-					//.getAffyDataType();	
-					dataType = ((DFCI_CoreFileLoader) selectedFileLoader)
-					.getAffyDataType();	
-								
-	
-				} else if (loaderIndex == 13) {
-				 dataType = ((GEOSeriesMatrixLoader) selectedFileLoader)
-					.getDataType();	
-					
-	
-				} else if (loaderIndex == 14) {
-					dataType = ((GEO_GDSFileLoader) selectedFileLoader)
-					.getDataType();
-								
-	
-				} else 
-					dataType = IData.DATA_TYPE_TWO_INTENSITY;
+				dataType = selectedFileLoader.getDataType();
 				selectedFileLoader.dispose();
-				
+
 				updateDataPath(selectedFileLoader.getFilePath(), selectedFileLoader.getAnnotationFilePath());
 				if (data != null) {
-					viewer.fireDataLoaded(toISlideDataArray(data), chipAnnotation, dataType);					
+					viewer.fireDataLoaded(toISlideDataArray(data), chipAnnotation, dataType);
 				}
 			} catch (Exception ioe) {
-			
+
 				ioe.printStackTrace();
 				ioe.getCause();
 			}
 		}
 	}
 
+	public void setFilePath(String path) {
+		selectedFileLoader.setFilePath(path);
+	}
+
 	public class HeaderImagePanel extends JPanel {
 
 		public HeaderImagePanel() {
 			setLayout(new GridBagLayout());
-			JLabel iconLabel = new JLabel(
-					new ImageIcon(
-							Toolkit
-									.getDefaultToolkit()
-									.getImage(// changed by dan:
-											this.getClass().getClassLoader()
-													.getResource("org/tigr/images/dialog_banner2.gif"))));
+			JLabel iconLabel = new JLabel(new ImageIcon(Toolkit.getDefaultToolkit().getImage(// changed
+					// by
+					// dan:
+					this.getClass().getClassLoader().getResource("org/tigr/images/dialog_banner2.gif"))));
 			iconLabel.setOpaque(false);
 			iconLabel.setAlignmentX(JLabel.LEFT_ALIGNMENT);
 			FillPanel fillPanel = new FillPanel();
 			fillPanel.setBackground(Color.blue);
-			add(iconLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
-					GridBagConstraints.WEST, GridBagConstraints.BOTH,
-					new Insets(0, 5, 0, 0), 0, 0));
-			add(fillPanel, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0,
-					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-					new Insets(0, 0, 0, 0), 0, 0));
+			add(iconLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 5, 0, 0),
+					0, 0));
+			add(fillPanel, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0),
+					0, 0));
 		}
 
 	}
@@ -1093,8 +749,7 @@ public class SuperExpressionFileLoader {
 			Dimension dim = this.getSize();
 			// gp = new
 			// GradientPaint(dim.width/2,0,backgroundColor,dim.width/2,dim.height/2,fadeColor);
-			gp = new GradientPaint(0, dim.height / 2, backgroundColor,
-					dim.width, dim.height / 2, fadeColor);
+			gp = new GradientPaint(0, dim.height / 2, backgroundColor, dim.width, dim.height / 2, fadeColor);
 			g2.setPaint(gp);
 			g2.fillRect(0, 0, dim.width, dim.height);
 			g2.setColor(Color.black);

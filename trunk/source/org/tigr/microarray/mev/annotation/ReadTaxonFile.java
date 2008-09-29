@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPReply;
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.remote.soap.UnzipAnnotationFile;
 import org.tigr.util.StringSplitter;
 
@@ -52,7 +53,7 @@ public class ReadTaxonFile {
 	private String password;
 	private String eMsg;
 	private String home = "/pub/bio/tgi/data/Resourcerer/";
-	private String taxonFile = "kingdom_species_cloneset_list.txt";
+	private File taxonFile = TMEV.getConfigurationFile("kingdom_species_cloneset_list.txt");
 	private String dataPath = "./data/Annotation/";
 	private String taxonFilePath;
 
@@ -83,7 +84,7 @@ public class ReadTaxonFile {
 			FtpListResult list = ftp.getDirectoryContent();
 
 			while(list.next()) {		
-				if(list.getName().equals(this.taxonFile)) {
+				if(list.getName().equals(this.taxonFile.getName())) {
 					overallLength = (int)list.getSize();
 				}
 			}
@@ -95,7 +96,7 @@ public class ReadTaxonFile {
 
 			}
 
-			File newFile = new File(dataPath + taxonFile);
+			File newFile = taxonFile;
 			BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(newFile));        	
 			//get binary file to byte array, use listener
 			bos.write(ftp.getBinaryFile(newFile.getName()), 0, overallLength);
@@ -104,8 +105,7 @@ public class ReadTaxonFile {
 			bos.close();
 			ftp.close();
 
-
-			setTaxonFilePath(dataPath, taxonFile);
+			taxonFilePath = taxonFile.getAbsolutePath();
 
 		} catch (Exception e) {
 			if (eMsg != null) {
@@ -118,7 +118,6 @@ public class ReadTaxonFile {
 					+ "<html></html>";
 				JOptionPane.showMessageDialog(null, eMsg, "Error",
 						JOptionPane.ERROR_MESSAGE);
-				System.exit(1);
 			}
 
 		}

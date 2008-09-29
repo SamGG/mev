@@ -21,6 +21,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -81,9 +82,13 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
     private GBA gba;
     private boolean stop = false;
     private AffyGCOSFileLoaderPanel sflp;
+    MyCellRenderer myCellRenderer;
     private int affyDataType = IData.DATA_TYPE_AFFY_ABS;
     
-    
+    public void setFilePath(String path) {
+    	sflp.setDataFileName(path);
+    	processAffyGCOSFile(new File(path));
+    }
     /**
      * Raktim - Annotation Specific
      * Place Holder for reading in Affy Anno 
@@ -119,9 +124,6 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
          * 
          */
         if(this.mav.getData().isAnnotationLoaded()) {
-//        	_tempAnno = loadAffyAnno(new File(getAnnotationFileName()));
-
-            //EH testing chip annotation change
         	AnnotationFileReader afr = AnnotationFileReader.createAnnotationFileReader(new File(getAnnotationFileName()));
         	_tempAnno = afr.getAffyAnnotation();
         	chipAnno = afr.getAffyChipAnnotation();        	
@@ -155,32 +157,11 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
     public ISlideData loadExpressionFile(File f){
         return null;
     }
-    /*by wwang 
-     * set datatype =DATA_TYPE_AFFY
-     */ 
-     
-     public void setTMEVDataType(){
+
+    public void setTMEVDataType(){
          TMEV.setDataType(TMEV.DATA_TYPE_AFFY);
      }
-     
-     /*
-     private Hashtable loadAffyAnno(File affyFile) {
-    	       	Hashtable _temp = null;
-    	    	//AnnotationFileReader reader = new AnnotationFileReader();
-    	    	AnnotationFileReader reader = new AnnotationFileReader(this.mav);
-    	    	try {
-    	    		_temp = reader.loadAffyAnnotation(affyFile);
-    	    		
-    	    		
-    	    		//reader.loadAffyAnnotation(affyFile);
-    			} catch (Exception e) {
-    				// TODO Auto-generated catch block
-    				e.printStackTrace();
-    			}
-    			return _temp;
-    	    }
-     */
-     
+          
     /*
      *  Handling of Mas5 data has been altered in version 3.0 to permit loading of
      *  "ratio" input without the creation of false cy3 and cy5.  cy5 values in data structures
@@ -330,8 +311,6 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
             	  */
             		MevAnnotation mevAnno = new MevAnnotation();
             		mevAnno.setCloneID(cloneName);
-//EH testing  chip annotation change
-//                    mevAnno.setViewer(this.mav);
                     sde = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields, mevAnno);
             	   		 
                }
@@ -481,15 +460,15 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
     public JPanel getFileLoaderPanel() {
         return sflp;
     }
-    public int getAffyDataType(){
+    public int getDataType(){
         return this.affyDataType;
     }
    
     public void processAffyGCOSFile(File targetFile) {
         
-        Vector columnHeaders = new Vector();
-        Vector dataVector = new Vector();
-        Vector rowVector = null;
+        Vector<String> columnHeaders = new Vector<String>();
+        Vector<Vector<String>> dataVector = new Vector<Vector<String>>();
+        Vector<String> rowVector = null;
         BufferedReader reader = null;
         String currentLine = null;
         
@@ -527,7 +506,7 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
             while ((currentLine = reader.readLine()) != null && cnt < 100) {
                 cnt++;
                 ss.init(currentLine);
-                rowVector = new Vector();
+                rowVector = new Vector<String>();
                 for (int i = 0; i < ss.countTokens()+1; i++) {
                     try {
                         rowVector.add(ss.nextToken());
@@ -546,6 +525,8 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
         }
         
         sflp.setTableModel(model);
+        Point p = guessFirstExpressionCell(dataVector);
+        sflp.setSelectedCell(p.x, p.y);
     }
     
     
@@ -622,10 +603,6 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                 fileNameTextField.setEditable(false);
                 fileNameTextField.setForeground(Color.black);
                 fileNameTextField.setFont(new Font("monospaced", Font.BOLD, 12));
-             
-         
-                
-     //Added by Sarita    
                 
                 selectedFiles = new JTextField();
                 selectedFiles.setEditable(false);
@@ -655,15 +632,6 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                 fileSelectionPanel = new JPanel();
                 fileSelectionPanel.setLayout(new GridBagLayout());
                 fileSelectionPanel.setBorder(new TitledBorder(new EtchedBorder(), "File    (Affy GCOS Format Files)"));
-                
-                
-             /*   gba.add(fileSelectionPanel, dataSelection, 0, 0, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-        		gba.add(fileSelectionPanel, fileNameTextField, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-        		gba.add(fileSelectionPanel, browseButton1, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-
-        		gba.add(fileSelectionPanel, fileSelectionLabel, 0, 2, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-                gba.add(fileSelectionPanel, selectedFiles, 1, 2, 1, 1, 2, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0); 
-                  */
            
                 gba.add(fileSelectionPanel, dataSelection, 0, 0, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(2, 2, 2, 2), 0, 0);
         		gba.add(fileSelectionPanel, fileNameTextField, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
@@ -702,15 +670,6 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
         		browseButton2.setSize(new Dimension(100, 30));
         		browseButton2.setPreferredSize(new Dimension(100, 30));
         		browseButton2.addActionListener(eventListener);
-        		
-        	/*	gba.add(annotationPanel, getAnnotation, 0, 0, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-        		gba.add(annotationPanel, connectButton, 1, 0, GBA.RELATIVE, 1, 0, 0,GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-        		
-        		
-        		gba.add(annotationPanel, customAnnotation, 0, 2, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5,5,5,5),0,0);
-        		gba.add(annotationPanel, annFileListTextField, 1, 2, 1, 1, 1, 0, GBA.H,	GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-        		gba.add(annotationPanel, browseButton2, 2, 2, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-        	*/
         	       		
         		gba.add(annotationPanel, getAnnotation, 0, 0, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
         		gba.add(annotationPanel, connectButton, 1, 0, GBA.RELATIVE, 1, 0, 0,GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
@@ -734,12 +693,6 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
 
                 intensityWithDetectionPvalRadioButton = new JRadioButton("Intensity with Detection and P-value");
                 optionsButtonGroup.add(intensityWithDetectionPvalRadioButton);
-               
-                            
-            /*	gba.add(additionalRequirementPanel, onlyIntensityRadioButton, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 0, 5), 0, 0);
-                gba.add(additionalRequirementPanel, intensityWithDetectionPvalRadioButton, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 0, 5), 0, 0);
-                gba.add(additionalRequirementPanel, intensityWithDetectionRadioButton, 0, 1, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-               */
                 
                 gba.add(additionalRequirementPanel, onlyIntensityRadioButton, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 0, 2), 0, 0);
                 gba.add(additionalRequirementPanel, intensityWithDetectionPvalRadioButton, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 0, 2), 0, 0);
@@ -747,7 +700,8 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                 
                 
                 expressionTable = new JTable();
-                expressionTable.setDefaultRenderer(Object.class, new MyCellRenderer());
+        		myCellRenderer = new MyCellRenderer();
+                expressionTable.setDefaultRenderer(Object.class, myCellRenderer);
     			expressionTable.setGridColor(Color.LIGHT_GRAY);
                 expressionTable.setCellSelectionEnabled(true);
                 expressionTable.setColumnSelectionAllowed(false);
@@ -758,9 +712,8 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
              
                 expressionTable.addMouseListener(new MouseAdapter() {
                     public void mousePressed(MouseEvent event) {
-                        xRow = expressionTable.rowAtPoint(event.getPoint());
-                        xColumn = expressionTable.columnAtPoint(event.getPoint());
-                        checkLoadEnable();
+                        setSelectedCell(expressionTable.rowAtPoint(event.getPoint()), expressionTable.columnAtPoint(event.getPoint()));
+              
                     }
                 });
                 
@@ -775,9 +728,6 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                 tablePanel = new JPanel();
                 tablePanel.setLayout(new GridBagLayout());
                 tablePanel.setBorder(new TitledBorder(new EtchedBorder(), "Expression Table"));
-              /*  gba.add(tablePanel, tableScrollPane, 0, 0, 1, 2, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-                gba.add(tablePanel, instructionsLabel, 0, 2, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-                */
                  
                 gba.add(tablePanel, tableScrollPane, 0, 0, 1, 2, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
                 gba.add(tablePanel, instructionsLabel, 0, 2, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
@@ -785,13 +735,6 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                
                 fileLoaderPanel = new JPanel();
                 fileLoaderPanel.setLayout(new GridBagLayout());
-                
-           /*     gba.add(fileLoaderPanel,fileSelectionPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-                gba.add(fileLoaderPanel, annotationPanel, 0, 2, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-                gba.add(fileLoaderPanel, additionalRequirementPanel, 0, 4, 1, 2, 3, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-                gba.add(fileLoaderPanel, tablePanel, 0, 7, 1, 6, 3, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-                gba.add(this, fileLoaderPanel,0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-             */
                 
                 gba.add(fileLoaderPanel,fileSelectionPanel, 			0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
                 gba.add(fileLoaderPanel, annotationPanel, 				0, 2, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
@@ -806,7 +749,13 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                 
                 
         }
-        
+        private void setSelectedCell( int xR, int xC) {
+            xRow = xR;
+            xColumn = xC;
+        myCellRenderer.setSelected(xRow, xColumn);
+        expressionTable.repaint();
+        checkLoadEnable();
+    }
         public void openDataPath() {
             //fileTreePane.openDataPath();
         }     

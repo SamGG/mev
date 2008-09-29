@@ -20,6 +20,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -65,6 +66,7 @@ import org.tigr.microarray.mev.annotation.IChipAnnotation;
 import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.annotation.PublicURL;
 import org.tigr.microarray.util.FileLoaderUtility;
+import org.tigr.microarray.util.MyCellRenderer;
 
 
 public class Mas5FileLoader extends ExpressionFileLoader {
@@ -72,6 +74,7 @@ public class Mas5FileLoader extends ExpressionFileLoader {
     private GBA gba;
     private boolean stop = false;
     private Mas5FileLoaderPanel sflp;
+    MyCellRenderer myCellRenderer;
     private int affyDataType = TMEV.DATA_TYPE_AFFY;
     /**
      * Annotation Specific
@@ -84,6 +87,12 @@ public class Mas5FileLoader extends ExpressionFileLoader {
     protected MevAnnotation mevAnno=new MevAnnotation();
     private String annotationFileName;
     
+
+    public void setFilePath(String path) {
+    	sflp.pathTextField.setText(path);
+    	processMas5File(new File(path));
+    }
+
     
     public Mas5FileLoader(SuperExpressionFileLoader superLoader) {
         super(superLoader);
@@ -109,17 +118,13 @@ public class Mas5FileLoader extends ExpressionFileLoader {
      *
      *  getRatio methods are altered to return the value (held in cy5) rather than
      *  taking log2(cy5/cy3).
+     * @deprecated 
      */
-    
-   /*by wwang 
-    * set datatype =DATA_TYPE_AFFY
-    */ 
-    
     public void setTMEVDataType(){
         TMEV.setDataType(TMEV.DATA_TYPE_AFFY);
     }
     
-    public int getAffyDataType(){
+    public int getDataType(){
         return this.affyDataType;
     }
     
@@ -387,9 +392,9 @@ public class Mas5FileLoader extends ExpressionFileLoader {
     
     public void processMas5File(File targetFile) {
         
-        Vector columnHeaders = new Vector();
-        Vector dataVector = new Vector();
-        Vector rowVector = null;
+        Vector<String> columnHeaders = new Vector<String>();
+        Vector<Vector<String>> dataVector = new Vector<Vector<String>>();
+        Vector<String> rowVector = null;
         BufferedReader reader = null;
         String currentLine = null;
         
@@ -420,7 +425,7 @@ public class Mas5FileLoader extends ExpressionFileLoader {
             while ((currentLine = reader.readLine()) != null && cnt < 100) {
                 cnt++;
                 ss.init(currentLine);
-                rowVector = new Vector();
+                rowVector = new Vector<String>();
                 for (int i = 0; i < ss.countTokens()+1; i++) {
                     try {
                         rowVector.add(ss.nextToken());
@@ -439,6 +444,8 @@ public class Mas5FileLoader extends ExpressionFileLoader {
         }
         
         sflp.setTableModel(model);
+        Point p = guessFirstExpressionCell(dataVector);
+        sflp.setSelectedCell(p.x, p.y);
     }
     
     
@@ -675,6 +682,8 @@ public class Mas5FileLoader extends ExpressionFileLoader {
 
 
         	expressionTable = new JTable();
+    		myCellRenderer = new MyCellRenderer();
+            expressionTable.setDefaultRenderer(Object.class, myCellRenderer);
         	expressionTable.setCellSelectionEnabled(true);
         	expressionTable.setColumnSelectionAllowed(false);
         	expressionTable.setRowSelectionAllowed(false);
@@ -683,10 +692,8 @@ public class Mas5FileLoader extends ExpressionFileLoader {
 
         	expressionTable.addMouseListener(new MouseAdapter() {
         		public void mousePressed(MouseEvent event) {
-        			xRow = expressionTable.rowAtPoint(event.getPoint());
-        			xColumn = expressionTable.columnAtPoint(event.getPoint());
-        			checkLoadEnable();
-        		}
+        		    setSelectedCell(expressionTable.rowAtPoint(event.getPoint()), expressionTable.columnAtPoint(event.getPoint()));
+                }
 
         	});
 
@@ -722,7 +729,13 @@ public class Mas5FileLoader extends ExpressionFileLoader {
         	gba.add(this,fileLoaderPanel,0,0,1,1,1,1,GBA.B,GBA.C, new Insets(5, 5, 5, 5), 0, 0);
 
         }
-
+        private void setSelectedCell(int xR, int xC) {
+			xRow = xR;
+			xColumn = xC;
+			myCellRenderer.setSelected(xRow, xColumn);
+			expressionTable.repaint();
+			checkLoadEnable();
+		}
 
         public void onAnnotationFileBrowse() {
          	FileLoaderUtility fileLoad = new FileLoaderUtility();

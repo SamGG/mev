@@ -1,0 +1,59 @@
+<html>
+    <body bgcolor = "#FFFFCC">
+	<center><h1>Welcome to MeV</h1>
+<h2>Hints and Reminders</h2></center>
+        <hr size = 5>
+
+Note: Download and Information about the full TM4 Microarray Analysis Suite is available at:<br>
+<h3><center>http://www.tm4.org/</center></h3><br>
+An online pdf manual for MeV (this application) is available for viewing at:<br>
+<h3><center>http://www.tm4.org/documentation/MeV_Manual.pdf</center></h3>
+
+<h3>Hints, Trimming Data</h3>
+Some large data sets should be trimmed before full analysis begins.  This enables memory intensive
+algorithms (e.g. Hierarchical Clustering (HCL), which works best on sets below about 8,000 genes)
+to work on a reasonable size data set.  The limits depend primarily on available memory.
+Two primary methods of filtering are available.
+
+<h3>Percentage Cutoff Trimming</h3>
+This will allow the user to insure that there is adequate expression representation for each gene.
+If gene expression is reported for a gene and for some reason over the set of hybridizations
+the gene has very few valid values then the gene should probably not enter analysis.
+<br><br>
+To use this feature select the 'Adjustment' menu and then select 'Set Percent Cutoff'.
+The resulting dialog will allow you to set a percentage value (0 to 100) describing the
+percentage of valid values a gene requires in order to pass.  Note that all MeV dialogs
+have an <i>information</i> button in the lower left corner to provide further information.
+After selecting the cutoff criteria select 'Use Percent Cutoff' from the 'Adjustment' menu.
+The main view will still show all genes but a subset, reported in the history node on
+the navigation tree, will describe the number of remaining genes.
+
+<h3>Statistical Methods for Trimming</h3>
+TTEST and SAM (manual sections 9.13 and 9.14) are popular statistical tools that can extract 
+significant genes.  Note that after running any algorithm, a right click menu
+option within cluster viewers, 'Launch New Session', will allow you to open a new viewer containing just the selected genes.
+This will allow further analysis on a data subset.
+<br>
+<h3>Display Options</h3>
+The 'Display' menu contains many controls that affect the main and cluster viewers.  
+The most frequently used options are <i>'Element Size', 'Label', 'Set Ratio Scale', and 'Color Scheme'.</i>
+<br><br>
+The Element Size menu option (of the Display menu), allows one to select the size of each
+expression element in expression image viewers (e.g. the Main View). Text size in this view
+is linked to the element height.
+<br><br>
+The Label menu option allows you select the annotation type to display.
+<br><br>
+The Set Ratio Scale menu option in the Display menu allows you to adjust the color scale limits to
+better resolve expression changes in the expression images.
+<br><br>
+The Color Scheme menu options allow the use of alternate color schemes, such as blue/yellow or a cutomized scheme,
+if the green/red scale is difficult to resolve.
+
+<h3>Final Notes</h3>
+Please use the pdf manual to explore the various algorithm options and to get a full
+understanding of MeV's capabilities.  The standalone version of MeV is available through
+the TM4 website above.  Thanks for using MeV.  
+    </body>
+</html>
+

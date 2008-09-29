@@ -13,6 +13,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -76,6 +77,7 @@ public class GEO_GDSFileLoader extends ExpressionFileLoader {
 
 	private int dataType;
 	private GEO_GDSFileLoaderPanel smatrixflp;
+	private MyCellRenderer myCellRenderer;
 	private Vector datainfo=new Vector();//	   store sample info
 	private Vector platforminfo=new Vector();//store platform info
 	private boolean unload=false;
@@ -86,6 +88,13 @@ public class GEO_GDSFileLoader extends ExpressionFileLoader {
 		smatrixflp = new GEO_GDSFileLoaderPanel();
 	}
 
+
+    public void setFilePath(String path) {
+    	smatrixflp.setFileName(path);
+    	process_GEO_GDSFile(new File(path));
+    }
+
+	
 	public Vector loadExpressionFiles() throws IOException {
 		return load_GEO_GDSFile(new File(this.smatrixflp.fileNameTextField.getText()));
 	}
@@ -288,12 +297,12 @@ public class GEO_GDSFileLoader extends ExpressionFileLoader {
 	public void process_GEO_GDSFile(File targetFile) {        
 		
 		this.smatrixflp.selectedFiles.setText(targetFile.getAbsolutePath());
-		Vector dataVector = new Vector();
-		Vector rowVector = null;
+		Vector<Vector<String>> dataVector = new Vector<Vector<String>>();
+		Vector<String> rowVector = null;
 		BufferedReader reader = null;
 		String currentLine = null;
 		//String tmp=null;
-		Vector columnHeaders = new Vector();//store tabel header
+		Vector<String> columnHeaders = new Vector<String>();//store tabel header
 		if (! validateFile(targetFile)) return;
 
 		smatrixflp.setFileName(targetFile.getAbsolutePath());
@@ -334,7 +343,7 @@ public class GEO_GDSFileLoader extends ExpressionFileLoader {
 			while ((currentLine = reader.readLine()) != null && !currentLine.contains("dataset_table_end")) {
 				cnt++;
 				ss.init(currentLine);
-				rowVector = new Vector();
+				rowVector = new Vector<String>();
 				for (int i = 0; i < ss.countTokens()+1; i++) {
 					try {
 						rowVector.add(ss.nextToken());
@@ -353,6 +362,8 @@ public class GEO_GDSFileLoader extends ExpressionFileLoader {
 		}
 
 		smatrixflp.setTableModel(model);
+        Point p = guessFirstExpressionCell(dataVector);
+        smatrixflp.setSelectedCell(p.x, p.y);
 	}
 
 	public String getFilePath() {
@@ -479,7 +490,7 @@ public class GEO_GDSFileLoader extends ExpressionFileLoader {
 
 			expressionTable = new JTable();
 			expressionTable.setSize(300, 300);
-			expressionTable.setDefaultRenderer(Object.class, new MyCellRenderer());
+			expressionTable.setDefaultRenderer(Object.class, myCellRenderer);
 			expressionTable.setGridColor(Color.LIGHT_GRAY);
 			expressionTable.setCellSelectionEnabled(true);
 			expressionTable.setColumnSelectionAllowed(false);
@@ -488,9 +499,7 @@ public class GEO_GDSFileLoader extends ExpressionFileLoader {
 			expressionTable.getTableHeader().setReorderingAllowed(true);
 			expressionTable.addMouseListener(new MouseAdapter() {
 				public void mousePressed(MouseEvent event) {
-					xRow = expressionTable.rowAtPoint(event.getPoint());
-					xColumn = expressionTable.columnAtPoint(event.getPoint());
-					checkLoadEnable();
+				    setSelectedCell(expressionTable.rowAtPoint(event.getPoint()), expressionTable.columnAtPoint(event.getPoint()));
 				}
 			});           
 			tableScrollPane = new JScrollPane(expressionTable, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);           
@@ -511,7 +520,13 @@ public class GEO_GDSFileLoader extends ExpressionFileLoader {
 
 
 		}
-
+        private void setSelectedCell( int xR, int xC) {
+            xRow = xR;
+            xColumn = xC;
+        myCellRenderer.setSelected(xRow, xColumn);
+        expressionTable.repaint();
+        checkLoadEnable();
+    }
 		public void openDataPath() {
 
 		}
