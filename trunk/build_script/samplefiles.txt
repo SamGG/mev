@@ -2,7 +2,7 @@
 Affymetrix Files/Affy_GCOS_simplewithall.txt
 Affymetrix Files/Bioconductor_mas5_simple.txt
 Affymetrix Files/affy_U133plus2_dataset.txt
-Affymetrix Files/breast_cancer_affy_u133A.txt
+Affymetrix Files/leukemia_ross_small_HG-U133A.txt
 Affymetrix Files/affy_430_2_dataset.txt
 
 # Annotation files
