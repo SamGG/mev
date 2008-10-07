@@ -1331,8 +1331,6 @@ public class BETRInitBox extends AlgorithmDialog {
 
                 }
             } else if (command.equals("reset-command")) {
-
-                System.out.println(mPanel.ngPanel.numTimePointsField.getHeight());
                 mPanel.reset();
                 pPanel.reset();
             } else if (command.equals("cancel-command")) {
