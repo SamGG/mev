@@ -303,6 +303,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         
         toolbar = new MultipleArrayToolbar(manager);
         mainframe.getContentPane().add(toolbar, BorderLayout.NORTH);
+        setMenubarDefaults();
         
         viewScrollPane = createViewScrollPane(eventListener);
         viewScrollPane.setBackground(Color.white);
@@ -358,9 +359,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
        
         //need to populate the experiment label menu items
         menubar.addExperimentLabelMenuItems(arrayData.getSlideNameKeyVectorUnion());
-              
-        mainframe.setJMenuBar(menubar);
+
         
+        mainframe.setJMenuBar(menubar);
+
+        setMenubarDefaults();
         toolbar = new MultipleArrayToolbar(manager);
         mainframe.getContentPane().add(toolbar, BorderLayout.NORTH);
         
@@ -422,7 +425,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         data = arrayData;
         
         menubar = new MultipleArrayMenubar(origMenubar, manager);
-        
 
         if(TMEV.GAGGLE_CONNECT_ON_STARTUP)  {
         	connectToGaggle();
@@ -446,6 +448,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         viewScrollPane.setBackground(Color.white);
         
         treeScrollPane = createTreeScrollPane(eventListener);
+        setMenubarDefaults();
 
         //have the main scroll pane
         ((MultipleArrayCanvas)this.viewer).addSortMenuItems(arrayData.getFieldNames());
@@ -485,6 +488,22 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         
         //systemDisable(TMEV.DB_AVAILABLE);
         //systemDisable(TMEV.DATA_AVAILABLE);
+    }
+    /**
+     * Updates display settings according to contents of properties file.
+     *
+     */
+    protected void setMenubarDefaults() {
+ 	   try {
+		   int height = new Integer(TMEV.getSettingForOption(TMEV.ELEMENT_SIZE_HEIGHT)).intValue();
+		   int width = new Integer(TMEV.getSettingForOption(TMEV.ELEMENT_SIZE_WIDTH)).intValue();
+	    	onElementSizeChanged(width, height);
+	   } catch (Exception e) {
+		   //No reason to throw an exception. Just use defaults instead.
+	   }
+	   try {
+		   onColorSchemeChange(new Integer(TMEV.getSettingForOption(TMEV.COLOR_SCHEME_INDEX)));
+	   } catch (Exception e) {}
     }
    
     /**
@@ -2312,6 +2331,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
      */
     private void onElementSizeChanged(int width, int height) {
         menubar.setElementSize(width, height);
+        TMEV.storeProperty(TMEV.ELEMENT_SIZE_WIDTH, new Integer(width).toString());
+        TMEV.storeProperty(TMEV.ELEMENT_SIZE_HEIGHT, new Integer(height).toString());
         fireMenuChanged();
     }
     
@@ -2337,6 +2358,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
      */
     private void onColorSchemeChange(int colorScheme){
         int initColorScheme = menubar.getColorScheme();
+        TMEV.storeProperty(TMEV.COLOR_SCHEME_INDEX, new Integer(colorScheme).toString());
        
         if(colorScheme == IDisplayMenu.GREEN_RED_SCHEME || colorScheme == IDisplayMenu.BLUE_YELLOW_SCHEME || colorScheme == IDisplayMenu.RAINBOW_COLOR_SCHEME) {
             this.menubar.setColorSchemeIndex(colorScheme);
