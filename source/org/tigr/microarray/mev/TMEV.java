@@ -74,6 +74,10 @@ public class TMEV {
 	public final static int DATA_TYPE_AFFY = 2;
 
 	public final static int ANALYSIS_LOADED = 101;
+	
+	public final static String ELEMENT_SIZE_WIDTH = "last-selected-element-width";
+	public final static String ELEMENT_SIZE_HEIGHT = "last-selected-element-height";
+	public static final String COLOR_SCHEME_INDEX = "last-selected-color-scheme-index";
 
 	private static Connection connection;
 	// private static Hashtable<String, String> properties;
@@ -122,6 +126,7 @@ public class TMEV {
 	public static final int CGH_SPECIES_HS = 0;
 	public static final int CGH_SPECIES_MM = 1;
 	public static final int CGH_SPECIES_Undef = -100;
+
 
 	public static boolean GAGGLE_CONNECT_ON_STARTUP = false;
 	public static String PROPERTY_CONFIG_FILES = "config-files";

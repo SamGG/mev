@@ -11,7 +11,7 @@
  * $Author: dschlauch $
  * $State: Exp $
  */
-package org.tigr.microarray.mev.cluster.gui.impl.RP;
+package org.tigr.microarray.mev.cluster.gui.impl.rp;
 
 
 import java.awt.Color;

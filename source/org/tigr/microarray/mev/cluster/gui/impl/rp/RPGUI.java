@@ -11,7 +11,7 @@
  * $Author: eleanorahowe $
  * $State: Exp $
  */
-package org.tigr.microarray.mev.cluster.gui.impl.RP;
+package org.tigr.microarray.mev.cluster.gui.impl.rp;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
