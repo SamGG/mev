@@ -894,9 +894,8 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
      */
     protected void addGeneralInfo(DefaultMutableTreeNode root, GeneralInfo info) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("General Information");
-        node.add(getTimeAssignmentInfo());
-        if (dataDesign==2)
-        	node.add(getConditionAssignmentInfo());
+        //node.add(getTimeAssignmentInfo());
+        node.add(getConditionAssignmentInfo());
         //node.add(new DefaultMutableTreeNode("Alpha (overall threshold p-value): "+info.alpha));
         if (info.correctionMethod.startsWith("False")) {
             node.add(new DefaultMutableTreeNode("Confidence (1 - alpha) : "+(1d - info.alpha)*100 + " %"));
@@ -951,26 +950,23 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
     }
     
     protected DefaultMutableTreeNode getConditionAssignmentInfo() {
-        DefaultMutableTreeNode groupAssignmentInfo = new DefaultMutableTreeNode("Condition assignments ");
-        DefaultMutableTreeNode notInGroups = new DefaultMutableTreeNode("Not in groups");
-        DefaultMutableTreeNode[] groups = new DefaultMutableTreeNode[2];
-        for (int i = 0; i < 2; i++) {
-            groups[i] = new DefaultMutableTreeNode("Condition " + (i + 1));
-            
-        }
+        DefaultMutableTreeNode groupAssignmentInfo = new DefaultMutableTreeNode("Group assignments ");
+        DefaultMutableTreeNode notInGroups = new DefaultMutableTreeNode("Samples Excluded");
+        DefaultMutableTreeNode groups = new DefaultMutableTreeNode("Samples Included");
+        
         
         for (int i = 0; i < inGroupAssignments.length; i++) {
             int currentGroup = inGroupAssignments[i];
             if (currentGroup == 0) {
                 notInGroups.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i))));
             } else {
-                groups[currentGroup - 1].add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i))));
+                groups.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i))));
             }
         }
         
-        for (int i = 0; i < groups.length; i++) {
-            groupAssignmentInfo.add(groups[i]);
-        }
+        
+        groupAssignmentInfo.add(groups);
+        
         if (notInGroups.getChildCount() > 0) {
             groupAssignmentInfo.add(notInGroups);
         }

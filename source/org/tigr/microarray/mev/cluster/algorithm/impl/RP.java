@@ -917,6 +917,12 @@ public class RP extends AbstractAlgorithm{
 		    		sigGenesCounter++;
 		    }
 	    }
+	    if (correctionMethod == RPInitBox.FALSE_NUM){
+		    for (int i=0; i<rankg.length; i++){
+		    	if(expectedP[i]<=falseNum)
+		    		sigGenesCounter++;
+		    }
+	    }
 	    	
 	    
 	    
@@ -945,6 +951,18 @@ public class RP extends AbstractAlgorithm{
 		    		counters++;
 		    	}
 		    	if(qValues[i]>falseProp){
+		    		sigGenesArrays[1][counteri] = i;
+		    		counteri++;
+		    	}
+		    }
+	    }
+	    if (correctionMethod == RPInitBox.FALSE_NUM){
+	    	for (int i=0; i<rankg.length; i++){
+		    	if(expectedP[i]<=falseNum){
+		    		sigGenesArrays[0][counters] = i;
+		    		counters++;
+		    	}
+		    	if(expectedP[i]>falseNum){
 		    		sigGenesArrays[1][counteri] = i;
 		    		counteri++;
 		    	}
