@@ -95,7 +95,7 @@ public class RPInitBox extends AlgorithmDialog {
         super(parentFrame, "RP Initialization", modality);
         this.exptNames = exptNames;  
         this.repository = repository;
-        setBounds(0, 0, 1000, 850);
+        setBounds(0, 0, 600, 850);
         setBackground(Color.white);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         GridBagLayout gridbag = new GridBagLayout();
@@ -259,6 +259,9 @@ public class RPInitBox extends AlgorithmDialog {
 	                            
 	                            tabbedmulg.add("Button Selection", mulgPanel);
 	                            tabbedmulg.add("Cluster Selection", clusterSelectorPanel);
+	                            tabbedmulg.setSelectedIndex(1);
+	                            if (repository==null||repository.isEmpty())
+	                            	tabbedmulg.setSelectedIndex(0);
 	                            buildConstraints(constraints, 1, 0, 1, 3, 100, 100);
 	                            constraints.fill = GridBagConstraints.BOTH;
 	                            gridbag.setConstraints(tabbedmulg, constraints);
@@ -360,6 +363,7 @@ public class RPInitBox extends AlgorithmDialog {
                 this.add(numTimePointsLabel);
                 
                 numTimePointsField = new JTextField("4", 7);
+                numTimePointsField.setMinimumSize(new Dimension(numTimePointsField.getSize().height, 30));
                 constraints.anchor = GridBagConstraints.WEST;
                 buildConstraints(constraints, 1, 3, 1, 1, 30, 0);
                 gridbag.setConstraints(numTimePointsField, constraints);
@@ -929,6 +933,7 @@ public class RPInitBox extends AlgorithmDialog {
             this.add(numPermsLabel);
             
             timesField = new JTextField("100", 7);
+            timesField.setMinimumSize(new Dimension(50, 20));
             //timesField.setEnabled(false);
             //timesField.setBackground(Color.darkGray);
             buildConstraints(constraints, 1, 0, 1, 1, 33, 25);
@@ -943,6 +948,7 @@ public class RPInitBox extends AlgorithmDialog {
             this.add(pValueLabel);
             
             pValueInputField = new JTextField("0.01", 7);
+            pValueInputField.setMinimumSize(new Dimension(50, 20));
             buildConstraints(constraints, 1, 1, 1, 1, 33, 0);
             constraints.anchor = GridBagConstraints.WEST;
             gridbag.setConstraints(pValueInputField, constraints);
@@ -967,10 +973,10 @@ public class RPInitBox extends AlgorithmDialog {
             
             falseNumField = new JTextField(10);
             falseNumField.setText("10");
-            //falseNumField.setEnabled(false);
+            falseNumField.setMinimumSize(new Dimension(50, 20));
             falsePropField = new JTextField(10);
             falsePropField.setText("0.05");
-            //falsePropField.setEnabled(false);            
+            falsePropField.setMinimumSize(new Dimension(50, 20));          
             
             ButtonGroup chooseCorrection = new ButtonGroup();
             chooseCorrection.add(falseNumButton);
