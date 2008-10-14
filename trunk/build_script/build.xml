@@ -1212,13 +1212,13 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="RP-GUI">
-        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/RP" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/rp" destdir="${dest.dir}">
             <classpath refid="module.build.class.path"/>
 	  </javac>
 	  <propertyfile file="${gui.properties.file}">
 		<entry key="gui.names" value="RP:" operation="+"/>
             <entry key="RP.name" value="RP"/>
-            <entry key="RP.class" value="org.tigr.microarray.mev.cluster.gui.impl.RP.RPGUI"/>
+            <entry key="RP.class" value="org.tigr.microarray.mev.cluster.gui.impl.rp.RPGUI"/>
 	  	<entry key="RP.category" value="${STATISTICS}"/> 
 	  	<entry key="RP.smallIcon" value="analysis16.gif"/>
             <entry key="RP.largeIcon" value="RP_button.gif"/>
