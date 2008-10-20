@@ -384,6 +384,8 @@ public class BETRInitBox extends AlgorithmDialog {
 		                            tabbedmulg.add("Button Selection", mulgPanel);
 		                            tabbedmulg.add("Cluster Selection", clusterSelectorPanel);
 		                            tabbedmulg.setSelectedIndex(1);
+		                            if (repository==null||repository.isEmpty())
+		                            	tabbedmulg.setSelectedIndex(0);
 		                            buildConstraints(constraints, 0, 1, 2, 1, 0, 90);
 		                            constraints.fill = GridBagConstraints.BOTH;
 		                            gridbag.setConstraints(tabbedmulg, constraints);
@@ -798,7 +800,7 @@ public class BETRInitBox extends AlgorithmDialog {
                                 	out.println("cond");
                                 	int[] condAssgn=null;
                                     if (getTestDesign()==BETRInitBox.CLUSTER_SELECTION){
-                                    	condAssgn=getClusterTimeAssignments();
+                                    	condAssgn=getClusterConditionAssignments();
                                     }
                                 	if (getTestDesign()==BETRInitBox.BUTTON_SELECTION){
                                     	condAssgn=getConditionAssignments();
@@ -1511,7 +1513,7 @@ public class BETRInitBox extends AlgorithmDialog {
     public int[] getClusterConditionAssignments(){
     	boolean doubleAssigned;
     	int[]groupAssignments = new int[exptNames.size()];
-    	ArrayList[] arraylistArray = new ArrayList[mPanel.numTimePoints];
+    	ArrayList[] arraylistArray = new ArrayList[2];
     	for (int i=0; i<2; i++){
     		int j = i+1;
     		arraylistArray[i] = mPanel.clusterSelectorCondition.getGroupSamples("Condition "+j);
