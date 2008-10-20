@@ -125,11 +125,9 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
         //numTimePoints = RPDialog.getNumTimePoints();
 
         if (RPDialog.getTestDesign()==RPInitBox.CLUSTER_SELECTION){
-        	//timeAssignments =RPDialog.getClusterTimeAssignments();
         	inGroupAssignments=RPDialog.getClusterConditionAssignments();
         }
         if (RPDialog.getTestDesign()==RPInitBox.BUTTON_SELECTION){
-        	//timeAssignments=RPDialog.getTimeAssignments();
         	inGroupAssignments=RPDialog.getInGroupAssignments();
         }
         boolean usePerms = RPDialog.usePerms();
@@ -184,7 +182,7 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
             algorithm = framework.getAlgorithmFactory().getAlgorithm("RP");
             algorithm.addAlgorithmListener(listener);
             
-            this.progress = new Progress(framework.getFrame(), "Finding significant genes", listener);
+            this.progress = new Progress(framework.getFrame(), "Running Rank Products Analysis", listener);
             this.progress.show();
             
             AlgorithmData data = new AlgorithmData();
@@ -227,7 +225,6 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
             long start = System.currentTimeMillis();
             AlgorithmData result = algorithm.execute(data);
 
-            System.out.println("0");
             long time = System.currentTimeMillis() - start;
             
             // getting the results
@@ -240,38 +237,20 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
             for (int i=0; i<k; i++) {
                 clusters[i] = nodeList.getNode(i).getFeaturesIndexes();
             }*/
-            System.out.println("1");
             this.means = result.getMatrix("clusters_means");
             this.variances = result.getMatrix("clusters_variances");
 
-            System.out.println("2");
             this.clusters = result.getIntMatrix("sigGenesArrays");
-            //errorGenesArray[0] = result.getIntArray("error-genes");
-            //int errorGenesLength = result.getParams().getInt("error-length");
-            //if (errorGenesLength>0){
-            //	errorGenes = true;
-            //}
-
-            System.out.println("3");
-            /*//FloatMatrix pValuesMatrix = result.getMatrix("pValues");
-            FloatMatrix rawPValuesMatrix = result.getMatrix("rawPValues");
-            FloatMatrix adjPValuesMatrix = result.getMatrix("adjPValues");
-            //FloatMatrix pValuesMatrix = result.getMatrix("pValues");
-            FloatMatrix fValuesMatrix = result.getMatrix("fValues");
-            FloatMatrix dfNumMatrix = result.getMatrix("dfNumMatrix");
-            FloatMatrix dfDenomMatrix = result.getMatrix("dfDenomMatrix");
-            FloatMatrix ssGroupsMatrix = result.getMatrix("ssGroupsMatrix");
-            FloatMatrix ssErrorMatrix = result.getMatrix("ssErrorMatrix");*/
+            for (int i=0; i<clusters.length; i++){
+            	for (int j=0; j<clusters[0].length; j++){
+            		System.out.print(clusters[i][j] + "  ");
+            	}
+            	System.out.println();
+            }
+            
             FloatMatrix geneTimeMeansMatrix = result.getMatrix("geneTimeMeansMatrix");
             FloatMatrix geneTimeSDsMatrix = result.getMatrix("geneTimeSDsMatrix");
-            FloatMatrix geneConditionMeansMatrix=null;
-            FloatMatrix geneConditionSDsMatrix=null;
-            if (dataDesign == 2){
-            	geneConditionMeansMatrix = result.getMatrix("geneConditionMeansMatrix");
-            	geneConditionSDsMatrix = result.getMatrix("geneConditionSDsMatrix");
-            }
 
-            System.out.println("4");
             FloatMatrix pValues = result.getMatrix("pValues");
             FloatMatrix qValues = result.getMatrix("qValues");
             
@@ -288,7 +267,6 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
 //            	geneConditionSDs = new float[geneConditionSDsMatrix.getRowDimension()][geneConditionSDsMatrix.getColumnDimension()];
 //            }
 
-            System.out.println("5");
             for (int i = 0; i < geneTimeMeans.length; i++) {
                 for (int j = 0; j < geneTimeMeans[i].length; j++) {
                     geneTimeMeans[i][j] = geneTimeMeansMatrix.A[i][j];
@@ -304,7 +282,6 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
 //	            }
 //            }
 
-            System.out.println("6");
             
             
             /*
@@ -388,7 +365,6 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
                     auxData[i][counter++] = adjPValues.get(i);
                 }*/
             }
-            System.out.println("RPGUI");
             
             return createResultTree(result_cluster, info);
             
@@ -553,7 +529,7 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
             algorithm = framework.getAlgorithmFactory().getAlgorithm("RP");
             algorithm.addAlgorithmListener(listener);
             
-            this.progress = new Progress(framework.getFrame(), "Finding significant genes", listener);
+            this.progress = new Progress(framework.getFrame(), "Running Rank Products Analysis...", listener);
             this.progress.show();
             
             long start = System.currentTimeMillis();
@@ -731,9 +707,7 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
      * Adds result nodes into the tree root.
      */
     protected void addResultNodes(DefaultMutableTreeNode root, Cluster result_cluster, GeneralInfo info) {
-    	if (result_cluster==null)
-    		System.out.println("result cluster is null");
-    	System.out.println(result_cluster);
+    
         addExpressionImages(root);
         addHierarchicalTrees(root, result_cluster, info);
         addCentroidViews(root);

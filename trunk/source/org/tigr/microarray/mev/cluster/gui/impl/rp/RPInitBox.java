@@ -52,6 +52,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.JSeparator;
 
+import org.tigr.microarray.mev.cluster.gui.impl.BETR.BETRInitBox;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HCLSigOnlyPanel;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterSelector;
@@ -570,16 +571,16 @@ public class RPInitBox extends AlgorithmDialog {
                 gridbag2.setConstraints(scroll, constraints);
                 this.add(scroll);
                 
-                JLabel label1 = new JLabel("Note: Each time-point MUST each contain more than one sample.");
-                if (ngPanel.getExperimentDesign()==2){
-                	label1 = new JLabel ("Note: Each time-point MUST each contain more than one sample for both conditions.");
-                }
-                label1.setHorizontalAlignment(JLabel.CENTER);
-                buildConstraints(constraints, 0, 1, 1, 1, 0, 5);
-                constraints.anchor = GridBagConstraints.EAST;
+                //JLabel label1 = new JLabel("Note: Each time-point MUST each contain more than one sample.");
+                //if (ngPanel.getExperimentDesign()==2){
+                //	label1 = new JLabel ("Note: Each time-point MUST each contain more than one sample for both conditions.");
+                //}
+                //label1.setHorizontalAlignment(JLabel.CENTER);
+                //buildConstraints(constraints, 0, 1, 1, 1, 0, 5);
+                //constraints.anchor = GridBagConstraints.EAST;
                 //constraints.fill = GridBagConstraints.BOTH;
-                gridbag2.setConstraints(label1, constraints);
-                this.add(label1);
+                //gridbag2.setConstraints(label1, constraints);
+                //this.add(label1);
                 
                 JPanel panel2 = new JPanel();
                 GridBagLayout gridbag3 = new GridBagLayout();
@@ -1043,77 +1044,7 @@ public class RPInitBox extends AlgorithmDialog {
             		JOptionPane.showMessageDialog(null, "Cluster Repository is Empty.", "Error", JOptionPane.WARNING_MESSAGE);
             		return;
             	}
-                boolean tooFew = false;/*
-                if (getDataDesign()==2){
-	                int[] timeAssignments=getTimeAssignments();
-	                int[] conditionAssignments = getConditionAssignments();
-	                if (getTestDesign()==RPInitBox.CLUSTER_SELECTION){
-	                	timeAssignments=getClusterTimeAssignments();
-	                	conditionAssignments = getClusterConditionAssignments();
-	                }
-	                if (timeAssignments==null)
-	                	return;
-	                if (conditionAssignments==null)
-	                	return;
-	                int numTimePoints = getNumTimePoints();
-	                int[] timePointGroupSize = new int[numTimePoints];
-	                
-	                for (int condition = 0; condition<2; condition++){
-		                for (int i = 0; i < timePointGroupSize.length; i++) {
-		                    timePointGroupSize[i] = 0;
-		                }
-		                
-		                for (int i = 0; i < timeAssignments.length; i++) {
-		                    int currentGroup = timeAssignments[i];
-		                    if (currentGroup != 0&& conditionAssignments[i]==condition+1) {
-		                        timePointGroupSize[currentGroup - 1]++;
-		                    }
-		                }
-		                
-		                for (int i = 0; i < timePointGroupSize.length; i++) {
-		                    if (timePointGroupSize[i] < 2) {
-		                    	JOptionPane.showMessageDialog(null, "Each condition must have at least two samples for each time point. \n \n" +
-		                    			"Condition "+(condition+1)+ ", time point "+(i)+ " has "+timePointGroupSize[i] + " samples(s).",
-		                    			"Error: Insufficient Data", JOptionPane.WARNING_MESSAGE);
-		                        tooFew = true;
-		                        break;
-		                    }
-		                }
-	                }
-            	}
-                if (getDataDesign()==1){
-                	int[] timeAssignments=getTimeAssignments();
- 	                if (getTestDesign()==RPInitBox.CLUSTER_SELECTION){
- 	                	timeAssignments=getClusterTimeAssignments();
- 	                }
- 	                if (timeAssignments==null)
- 	                	return;
- 	                int numTimePoints = getNumTimePoints();
- 	                int[] timePointGroupSize = new int[numTimePoints];
- 	                
-              
-	                for (int i = 0; i < timePointGroupSize.length; i++) {
-	                    timePointGroupSize[i] = 0;
-	                }
-	                
-	                for (int i = 0; i < timeAssignments.length; i++) {
-	                    int currentGroup = timeAssignments[i];
-	                    if (currentGroup != 0) {
-	                        timePointGroupSize[currentGroup - 1]++;
-	                    }
-	                }
- 		                
-	                for (int i = 0; i < timePointGroupSize.length; i++) {
-	                    if (timePointGroupSize[i] < 2) {
-	                    	JOptionPane.showMessageDialog(null, "Each condition must have at least two samples for each time point. \n \n" +
-	                    			"Time point "+(i)+ " has "+timePointGroupSize[i] + " samples(s).",
-	                    			"Error: Insufficient Data", JOptionPane.WARNING_MESSAGE);
-	                        tooFew = true;
-	                        break;
-	                    }
-	                }
- 	                
-            	}*/
+                boolean tooFew = false;
                 if (!tooFew) {
                     try {               
                         if (pPanel.falseNumButton.isSelected()) {
@@ -1135,6 +1066,24 @@ public class RPInitBox extends AlgorithmDialog {
                             int p = getNumPerms();
                         }
                          */
+                        int[] inGroupAssignments;
+                        if (getTestDesign()==RPInitBox.CLUSTER_SELECTION){
+                        	inGroupAssignments=getClusterConditionAssignments();
+                        }else{
+                        	inGroupAssignments=getInGroupAssignments();
+                        }
+                        int inNum = 0;
+                        while(true){
+                        	
+                        	if (inGroupAssignments[inNum]==1)
+                        		break;
+                        	inNum++;
+                        	if (inNum==inGroupAssignments.length){
+                        		JOptionPane.showMessageDialog(null, "No samples have been assigned to the analysis.", "Error!", JOptionPane.ERROR_MESSAGE);
+                        		okPressed = false;
+                        		return;
+                        	}
+                        }
                         if ((d <= 0d)||(d > 1d) || (usePerms() && (getNumPerms() <= 1))) {
                             JOptionPane.showMessageDialog(null, "Valid inputs: 0 < alpha < 1, and # of permutations (integer only) > 1", "Error!", JOptionPane.ERROR_MESSAGE);                            
                         } else {
@@ -1153,7 +1102,7 @@ public class RPInitBox extends AlgorithmDialog {
                 okPressed = false;
                 dispose();
             } else if (command.equals("info-command")){
-                HelpWindow hw = new HelpWindow(RPInitBox.this, "Bayesian Estimation of Temporal Regulation- Initialization Dialog");
+                HelpWindow hw = new HelpWindow(RPInitBox.this, "Rank Products- Initialization Dialog");
                 okPressed = false;
                 if(hw.getWindowContent()){
                     hw.setSize(450,600);
@@ -1401,7 +1350,7 @@ public class RPInitBox extends AlgorithmDialog {
     public static void main(String[] args) {
         JFrame dummyFrame = new JFrame();
         Vector<String> dummyVect = new Vector<String>();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             dummyVect.add("Expt " + i);
         }
         
