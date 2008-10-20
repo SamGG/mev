@@ -1,0 +1,41 @@
+<html>
+    <body bgcolor = "#FFFFCC"><basefont face = "Arial">
+	<h1>RP: Rank Products</h1><h2>Parameter Information</h2>
+            <hr size = 10>
+Rank products is a simple, yet powerful, new method to detect differentially regulated genes in replicated microarray experiments.
+<h2>Group Assignments</h2>
+<h3>Group Selection Controls</h3>
+This set of buttons determines which experiments on which to run the analysis.
+  If an experiment is unchecked it will be ignored for the purposes the analysis.
+<br><br>
+Note that groups A and B must each have at least two members
+following the assignment.
+<h3>Save Grouping</h3>
+The save grouping button allows you to save the grouping
+to file.  This is particularly useful when there are many experiments.
+<h3>Load Grouping</h3>
+This button allows you to select and load a saved grouping.
+<h3>Reset</h3>
+The reset button returns all of the group selection control buttons
+to Group A, the initial state.
+<br>
+<h2>Significance Level Parameters</h2>
+Significance levels are determined by random permutations.  
+<br>Choose a value for the number of random permutations, 100 is the default.
+<br>Choose a value (between 0 and 1) for the alpha value or critical p-value.
+
+If permutations are used, two buttons allow you to select to permute
+the values a number of times indicated or to permute the values a number of
+times equal to the maximum number of permutations possible.
+
+<H3>False discovery control</H3>
+Under this option, with confidence of (1 - alpha), the number or proportion of false positives 
+in the significant gene list should not exceed the input value. 
+<br>
+<h2> Hierarchical Clustering </h2>
+This check box selects whether to perform hierarchical clustering on the elements in each cluster
+created.
+<br>
+        </basefont>
+    </body>
+</html>
