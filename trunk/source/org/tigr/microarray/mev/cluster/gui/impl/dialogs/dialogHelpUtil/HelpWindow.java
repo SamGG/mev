@@ -335,6 +335,8 @@ public class HelpWindow extends JDialog {
             return "one_way_anova_parameters.html";
         if(key.equals("Bayesian Estimation of Temporal Regulation- Initialization Dialog"))
             return "betr_parameters.html";
+        if(key.equals("Rank Products- Initialization Dialog"))
+            return "rp_parameters.html";
         if(key.equals("Cluster Save Dialog"))
             return "cluster_save_parameters.html";
         if(key.equals("Terrain Map Initialization Dialog"))
