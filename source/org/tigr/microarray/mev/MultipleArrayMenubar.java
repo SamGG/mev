@@ -51,6 +51,7 @@ public class MultipleArrayMenubar extends JMenuBar {
     private JMenu expLabelSelectionMenu;
     private JMenu adjustMenu;
     private JMenu filterMenu;
+    private JMenu clusterMenu;
     private ButtonGroup labelGroup;
     private ActionListener listener;
     private boolean affyNormAdded = false;
@@ -269,12 +270,17 @@ public class MultipleArrayMenubar extends JMenuBar {
         utilMenu.add(createJMenuItem(manager.getAction(ActionManager.SEARCH_ACTION)));
         utilMenu.addSeparator();
         
-        JMenu clusterMenu = new JMenu("Cluster Utilities");
+        clusterMenu = new JMenu("Cluster Utilities");
         
         JMenu importMenu = new JMenu("Manual Cluster Import");                
         importMenu.add(manager.getAction(ActionManager.IMPORT_GENE_LIST_ACTION));
         importMenu.add(manager.getAction(ActionManager.IMPORT_SAMPLE_LIST_ACTION));        
         clusterMenu.add(importMenu);
+        
+        JMenu binImportMenu = new JMenu("Binned Cluster Import");                
+        binImportMenu.add(manager.getAction(ActionManager.BIN_IMPORT_GENE_LIST_ACTION));
+        binImportMenu.add(manager.getAction(ActionManager.BIN_IMPORT_SAMPLE_LIST_ACTION));        
+        clusterMenu.add(binImportMenu);
         
         JMenu autoImportMenu = new JMenu("Automatic Cluster Import");                
         autoImportMenu.add(manager.getAction(ActionManager.AUTO_IMPORT_GENE_LIST_ACTION));
@@ -452,6 +458,7 @@ public class MultipleArrayMenubar extends JMenuBar {
                 setEnableMenu("Analysis", true);
                 setEnableMenu("Display", true);
                 setEnableMenu("Sort", true);
+                clusterMenu.setEnabled(true);
                 break;
             case TMEV.ANALYSIS_LOADED:
                 setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_COMMAND, true);
@@ -498,6 +505,7 @@ public class MultipleArrayMenubar extends JMenuBar {
                 setEnableMenu("Adjust Data", false);
                 setEnableMenu("Normalization", false);
                 setEnableMenu("Metrics", false);
+                clusterMenu.setEnabled(false);
                 //setEnableMenu("Utilities", false);
                 break;
             case TMEV.DB_AVAILABLE:

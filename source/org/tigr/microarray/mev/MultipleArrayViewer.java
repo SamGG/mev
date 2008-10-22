@@ -4122,6 +4122,29 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     /** Automatically imports a list of identifiers for each annotation type and
      * creates clusters for each identifier within each of the user-selected annotation type
      */
+    private void onBinImportList(int clusterType) {
+        ClusterRepository cr = getClusterRepository(clusterType);
+        
+        ArrayList clusterArray = cr.binCreateClusters();
+        if (clusterArray == null)
+        	return;
+        for (int i = 0; i< clusterArray.size(); i++){
+	        if(clusterArray != null) {
+	            if(clusterType == Cluster.GENE_CLUSTER) {
+	                this.geneClusterManager.onRepositoryChanged(cr);
+	                addHistory("Save Gene Cluster: Serial #: "+((Cluster)clusterArray.get(i)).getSerialNumber()+", Source: Auto List Import");
+	            } else {
+	                this.experimentClusterManager.onRepositoryChanged(cr);
+	                addHistory("Save Sample Cluster: Serial #: "+((Cluster)clusterArray.get(i)).getSerialNumber()+", Source: Auto List Import");
+	            }
+	            refreshCurrentViewer();
+	        }
+	    }
+    }
+    
+    /** Automatically imports a list of identifiers for each annotation type and
+     * creates clusters for each identifier within each of the user-selected annotation type
+     */
     private void onAutoImportList(int clusterType) {
         ClusterRepository cr = getClusterRepository(clusterType);
         
@@ -5195,6 +5218,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
                 onImportList(Cluster.GENE_CLUSTER);
             } else if (command.equals(ActionManager.IMPORT_SAMPLE_LIST_COMMAND)) {
                 onImportList(Cluster.EXPERIMENT_CLUSTER);
+            } else if (command.equals(ActionManager.BIN_IMPORT_GENE_LIST_COMMAND)) {
+                onBinImportList(Cluster.GENE_CLUSTER);
+            } else if (command.equals(ActionManager.BIN_IMPORT_SAMPLE_LIST_COMMAND)) {
+                onBinImportList(Cluster.EXPERIMENT_CLUSTER);
             } else if (command.equals(ActionManager.AUTO_IMPORT_GENE_LIST_COMMAND)) {
                 onAutoImportList(Cluster.GENE_CLUSTER);
             } else if (command.equals(ActionManager.AUTO_IMPORT_SAMPLE_LIST_COMMAND)) {
