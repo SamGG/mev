@@ -95,6 +95,8 @@ public class ActionManager implements java.io.Serializable {
         actions.put(SEARCH_ACTION, new DefaultAction(this, SEARCH_NAME, SEARCH_COMMAND, getIcon(SEARCH_ICON)));
         actions.put(IMPORT_GENE_LIST_ACTION, new DefaultAction(this, IMPORT_GENE_LIST_NAME, IMPORT_GENE_LIST_COMMAND, getIcon(IMPORT_GENE_LIST_ICON)));
         actions.put(IMPORT_SAMPLE_LIST_ACTION, new DefaultAction(this, IMPORT_SAMPLE_LIST_NAME, IMPORT_SAMPLE_LIST_COMMAND, getIcon(IMPORT_SAMPLE_LIST_ICON)));
+        actions.put(BIN_IMPORT_GENE_LIST_ACTION, new DefaultAction(this, BIN_IMPORT_GENE_LIST_NAME, BIN_IMPORT_GENE_LIST_COMMAND, getIcon(BIN_IMPORT_GENE_LIST_ICON)));
+        actions.put(BIN_IMPORT_SAMPLE_LIST_ACTION, new DefaultAction(this, BIN_IMPORT_SAMPLE_LIST_NAME, BIN_IMPORT_SAMPLE_LIST_COMMAND, getIcon(BIN_IMPORT_SAMPLE_LIST_ICON)));
         actions.put(AUTO_IMPORT_GENE_LIST_ACTION, new DefaultAction(this, AUTO_IMPORT_GENE_LIST_NAME, AUTO_IMPORT_GENE_LIST_COMMAND, getIcon(AUTO_IMPORT_GENE_LIST_ICON)));
         actions.put(AUTO_IMPORT_SAMPLE_LIST_ACTION, new DefaultAction(this, AUTO_IMPORT_SAMPLE_LIST_NAME, AUTO_IMPORT_SAMPLE_LIST_COMMAND, getIcon(AUTO_IMPORT_SAMPLE_LIST_ICON)));
 
@@ -499,6 +501,16 @@ public class ActionManager implements java.io.Serializable {
     public static final String IMPORT_SAMPLE_LIST_ACTION = "import-sample-list-action";
     public static final String IMPORT_SAMPLE_LIST_NAME = "Import Sample List";
     public static final String IMPORT_SAMPLE_LIST_ICON = "import_list.gif";
+
+    public static final String BIN_IMPORT_GENE_LIST_COMMAND = "bin-import-gene-list-command";
+    public static final String BIN_IMPORT_GENE_LIST_ACTION = "bin-import-gene-list-action";
+    public static final String BIN_IMPORT_GENE_LIST_NAME = "By Gene Annotation";
+    public static final String BIN_IMPORT_GENE_LIST_ICON = "import_list.gif";
+    
+    public static final String BIN_IMPORT_SAMPLE_LIST_COMMAND = "bin-import-sample-list-command";
+    public static final String BIN_IMPORT_SAMPLE_LIST_ACTION = "bin-import-sample-list-action";
+    public static final String BIN_IMPORT_SAMPLE_LIST_NAME = "By Sample Annotation";
+    public static final String BIN_IMPORT_SAMPLE_LIST_ICON = "import_list.gif";
     
     public static final String AUTO_IMPORT_GENE_LIST_COMMAND = "auto-import-gene-list-command";
     public static final String AUTO_IMPORT_GENE_LIST_ACTION = "auto-import-gene-list-action";

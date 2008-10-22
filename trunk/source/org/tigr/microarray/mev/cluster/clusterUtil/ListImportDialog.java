@@ -33,6 +33,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import javax.swing.JTextField;
 
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
@@ -54,6 +55,9 @@ public class ListImportDialog extends AlgorithmDialog {
     private List theList;
     private List otherList;
     private int result = JOptionPane.CANCEL_OPTION;
+    private boolean bin = false;
+    private JTextField lowerField;
+    private JTextField upperField;
  
     
     /** Creates a new instance of GeneListImportDialog */
@@ -107,6 +111,73 @@ public class ListImportDialog extends AlgorithmDialog {
         setActionListeners(new Listener());
         pack();
     }    
+    
+    /** Creates a new instance of binned GeneListImportDialog */
+    public ListImportDialog(java.awt.Frame parent, String [] fieldNames, boolean geneList, boolean auto, boolean bin) {
+        super(parent, geneList ? "Gene List Import Dialog" : "Sample List Import Dialog", true);
+        this.bin =bin;
+        annFields = new Vector<String>();
+        for(int i = 0; i < fieldNames.length; i++){
+            annFields.addElement(fieldNames[i]);
+        }
+        checkBoxes = new JCheckBox[annFields.size()];
+        JComboBox comboBox = new JComboBox();
+        ParameterPanel paramPanel;
+        if(geneList)
+            paramPanel = new ParameterPanel("Gene List Import Parameters");
+        else
+            paramPanel = new ParameterPanel("Sample List Import Parameters");
+        
+        paramPanel.setLayout(new GridBagLayout());
+        
+        JLabel listLabel;
+        if(geneList)
+            listLabel = new JLabel("Gene ID Type:");        
+        else
+            listLabel = new JLabel("Sample ID Type:");      
+        JLabel lowerLimit = new JLabel("Lower Limit: ");
+        JLabel upperLimit = new JLabel("Upper Limit: ");
+        lowerField = new JTextField("");
+        upperField = new JTextField("");
+        lowerField.setSize(50, 20);
+        lowerField.setMinimumSize(new Dimension(20,10));
+        listBox = new JComboBox(annFields);
+        pane = new JTextPane();
+        pane.setPreferredSize(new Dimension(125, 200));
+        
+        JScrollPane scroll = new JScrollPane(pane);
+        scroll.getViewport().setViewSize(new Dimension(125, 200));
+        scroll.setBorder(BorderFactory.createLineBorder(Color.black, 2));
+        
+        
+        if(annFields.size() > 0)
+            listBox.setSelectedIndex(0);
+        
+        for (int i=0; i<annFields.size(); i++){
+        	checkBoxes[i] = new JCheckBox(fieldNames[i], false);
+        	comboBox.add(checkBoxes[i]);
+        }
+        
+        theList = new List(16, false);
+        otherList = new List(8, false);
+        for (int i=0; i<annFields.size(); i++){
+        	theList.add(fieldNames[i]);
+        }
+
+        paramPanel.add(listLabel, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,0,0,20), 0,0)); 
+        paramPanel.add(listBox, new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,0,0,0), 0,0));
+
+        paramPanel.add(lowerLimit, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,0,0,20), 0,0)); 
+        paramPanel.add(upperLimit, new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,0,0,20), 0,0)); 
+        
+        paramPanel.add(lowerField, new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,0,0,20), 0,0)); 
+        paramPanel.add(upperField, new GridBagConstraints(1,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,0,0,20), 0,0)); 
+        
+        addContent(paramPanel);
+        setActionListeners(new Listener());
+        pack();
+    }    
+    
     /** Creates a new instance of GeneListImportDialog */
     public ListImportDialog(java.awt.Frame parent, String [] fieldNames, boolean geneList, boolean auto) {
         super(parent, geneList ? "Automatic Gene List Import Dialog" : "Automatic Sample List Import Dialog", true);
@@ -221,6 +292,13 @@ public class ListImportDialog extends AlgorithmDialog {
         return outputList;
     }
     
+    public float getLowerLimit(){
+    	return Float.parseFloat(this.lowerField.getText());
+    }
+    public float getUpperLimit(){
+    	return Float.parseFloat(this.upperField.getText());
+    }
+    
         /**
      * The class to listen to the dialog and check boxes items events.
      */
@@ -229,6 +307,17 @@ public class ListImportDialog extends AlgorithmDialog {
         public void actionPerformed(ActionEvent e) {
             String command = e.getActionCommand();
             if (command.equals("ok-command")) {
+            	if (bin){
+            		try{
+            			if (Float.parseFloat(upperField.getText()) < Float.parseFloat(lowerField.getText())){
+            				JOptionPane.showMessageDialog(null, "Upper limit must be greater than lower limit.", "Error", JOptionPane.ERROR_MESSAGE);
+            				return;
+            			}
+            		}catch (NumberFormatException nfe) {
+            			JOptionPane.showMessageDialog(null, "Please enter numerical values for the upper and lower limits.", "Error", JOptionPane.ERROR_MESSAGE);
+            			return;
+            		}
+            	}
                 result = JOptionPane.OK_OPTION;
                 dispose();
             } else if (command.equals("cancel-command")) {
@@ -276,6 +365,14 @@ public class ListImportDialog extends AlgorithmDialog {
             result = JOptionPane.CANCEL_OPTION;
             dispose();
         }
+        
+    }
+    public static void main(String[] args){
+    	String[] qwe ={"qwe","werhjkhjkhjk"};
+    	ListImportDialog lid = new ListImportDialog(new java.awt.Frame(), qwe, true, false, true);
+    	if(lid.showModal() == JOptionPane.OK_OPTION) {
+    		System.out.println("done");
+    	}
     }
     
 }
