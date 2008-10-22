@@ -182,7 +182,7 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
             algorithm = framework.getAlgorithmFactory().getAlgorithm("RP");
             algorithm.addAlgorithmListener(listener);
             
-            this.progress = new Progress(framework.getFrame(), "Running Rank Products Analysis", listener);
+            this.progress = new Progress(framework.getFrame(), "Running Rank Products Analysis...", listener);
             this.progress.show();
             
             AlgorithmData data = new AlgorithmData();
