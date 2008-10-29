@@ -61,6 +61,7 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
     protected Progress progress;
     protected Experiment experiment;
     protected int[][] clusters;
+    protected int[][] clustersWithNull;
     protected int[][] errorGenesArray = new int[1][];
     protected FloatMatrix means;
     protected FloatMatrix variances;
@@ -75,6 +76,7 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
     protected float[][] geneTimeMeans, geneTimeSDs;
 //    protected float[][] geneConditionMeans, geneConditionSDs;
     protected boolean drawSigTreesOnly;
+    protected int upDown = 0;
     
     //protected boolean usePerms;
     
@@ -123,6 +125,7 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
         float alpha = RPDialog.getPValue();
         dataDesign = RPDialog.getDataDesign();
         //numTimePoints = RPDialog.getNumTimePoints();
+        upDown = RPDialog.upDownPanel.getUpDown();
 
         if (RPDialog.getTestDesign()==RPInitBox.CLUSTER_SELECTION){
         	inGroupAssignments=RPDialog.getClusterConditionAssignments();
@@ -162,6 +165,7 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
         boolean hcl_absolute = false;
         boolean hcl_samples_ordered=false;
         boolean hcl_genes_ordered=false;
+       
         if (isHierarchicalTree) {
             HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(function), menu.isAbsoluteDistance(), true);
             if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
@@ -203,6 +207,7 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
             data.addParam("correction-method", String.valueOf(correctionMethod));
             //data.addParam("numTimePoints", String.valueOf(numTimePoints));
             data.addParam("alpha-value", String.valueOf(RPDialog.mPanel.alpha));
+            data.addParam("UpOrDown", String.valueOf(upDown));
             if (correctionMethod == RPInitBox.FALSE_NUM) {
                 data.addParam("falseNum", String.valueOf(falseNum));
             }
@@ -240,19 +245,27 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
             this.means = result.getMatrix("clusters_means");
             this.variances = result.getMatrix("clusters_variances");
 
-            this.clusters = result.getIntMatrix("sigGenesArrays");
-            for (int i=0; i<clusters.length; i++){
-            	for (int j=0; j<clusters[0].length; j++){
-            		System.out.print(clusters[i][j] + "  ");
-            	}
-            	System.out.println();
+            this.clustersWithNull = result.getIntMatrix("sigGenesArrays");
+            if (upDown==1){
+            	this.clusters = new int[2][];
+            	this.clusters[0]=this.clustersWithNull[1];
+            	this.clusters[1]=this.clustersWithNull[2];
             }
-            
+            if (upDown==2){
+            	this.clusters = new int[2][];
+            	this.clusters[0]=this.clustersWithNull[0];
+            	this.clusters[1]=this.clustersWithNull[2];
+            }
+            if (upDown==3){
+            	this.clusters = this.clustersWithNull;
+            }
             FloatMatrix geneTimeMeansMatrix = result.getMatrix("geneTimeMeansMatrix");
             FloatMatrix geneTimeSDsMatrix = result.getMatrix("geneTimeSDsMatrix");
 
-            FloatMatrix pValues = result.getMatrix("pValues");
-            FloatMatrix qValues = result.getMatrix("qValues");
+            FloatMatrix pValuesDown = result.getMatrix("pValuesDown");
+            FloatMatrix qValuesDown = result.getMatrix("qValuesDown");
+            FloatMatrix pValuesUp = result.getMatrix("pValuesUp");
+            FloatMatrix qValuesUp = result.getMatrix("qValuesUp");
             
             rawPValues = new Vector<Float>();
             adjPValues = new Vector<Float>();
@@ -327,9 +340,14 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
             Vector<String> titlesVector = new Vector<String>();
             titlesVector.add("Mean");
             titlesVector.add("std.dev");
-            
-            titlesVector.add("p-Values");
-            titlesVector.add("q-Values");
+            if (upDown!=1){
+            	titlesVector.add("p-Values (Down)");
+            	titlesVector.add("q-Values (Down)");
+            }
+            if (upDown!=2){
+            	titlesVector.add("p-Values (Up)");
+            	titlesVector.add("q-Values (Up)");
+            }
             /*
             titlesVector.add("F ratio");
             titlesVector.add("SS(Groups)");
@@ -351,9 +369,14 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
                 int counter = 0;
                 auxData[i][counter++] = new Float(geneTimeMeans[i][0]);
                 auxData[i][counter++] = new Float(geneTimeSDs[i][0]);
-                
-                auxData[i][counter++] = pValues.get(i, 0);
-                auxData[i][counter++] = qValues.get(i, 0);
+                if (upDown!=1){
+                	auxData[i][counter++] = pValuesDown.get(i, 0);
+                	auxData[i][counter++] = qValuesDown.get(i, 0);
+                }
+                if (upDown!=2){
+                	auxData[i][counter++] = pValuesUp.get(i, 0);
+                	auxData[i][counter++] = qValuesUp.get(i, 0);
+                }
                 /*
                 auxData[i][counter++] = fValues.get(i);
                 auxData[i][counter++] = ssGroups.get(i);
@@ -723,9 +746,13 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
         IViewer tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData);
         //IViewer tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.data, null, null);
         for (int i=0; i<this.clusters.length; i++) {
-            if (i < this.clusters.length - 1) {
-                node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", tabViewer, new Integer(i))));
-            } else if (i == this.clusters.length - 1) {
+        	if (clusters[i]==null)
+        		continue;
+            if ((i==0)&&(upDown==2||upDown==3)) {
+                node.add(new DefaultMutableTreeNode(new LeafInfo("Negative Significant Genes ", tabViewer, new Integer(i))));
+            }else if ((i == 1 && upDown==3)||(i==0&&upDown==1)) {
+                node.add(new DefaultMutableTreeNode(new LeafInfo("Positive Significant Genes ", tabViewer, new Integer(i))));
+            }else if (i == this.clusters.length - 1) {
                 node.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", tabViewer, new Integer(i))));
                 
             }
@@ -741,8 +768,12 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
         IViewer expViewer = new RPExperimentViewer(this.experiment, clusters, null, null, null, null, null, null, null, null, null);
         //IViewer expViewer = new RPExperimentViewer(this.experiment, this.clusters, geneGroupMeans, geneGroupSDs, rawPValues, adjPValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues);
         for (int i=0; i<this.clusters.length; i++) {
-            if (i < this.clusters.length - 1) {
-                node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", expViewer, new Integer(i))));
+        	if (clusters[i]==null)
+        		continue;
+            if ((i==0)&&(upDown==2||upDown==3)) {
+                node.add(new DefaultMutableTreeNode(new LeafInfo("Negative Significant Genes ", expViewer, new Integer(i))));
+            }else if ((i == 1 && upDown==3)||(i==0&&upDown==1)) {
+                node.add(new DefaultMutableTreeNode(new LeafInfo("Positive Significant Genes ", expViewer, new Integer(i))));
             } else if (i == this.clusters.length - 1) {
                 node.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", expViewer, new Integer(i))));
                 
@@ -766,14 +797,23 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
         NodeList nodeList = result_cluster.getNodeList();
         if (!drawSigTreesOnly) {        
             for (int i=0; i<nodeList.getSize(); i++) {
-                if (i < nodeList.getSize() - 1 ) {
-                    node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
-                } else if (i == nodeList.getSize() - 1) {
+                if ((i==0&&upDown==2)||(upDown==3)) {
+                    node.add(new DefaultMutableTreeNode(new LeafInfo("Negative Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
+                }else if((i == 1 && upDown==3)||(i==0&&upDown==1)){
+                	node.add(new DefaultMutableTreeNode(new LeafInfo("Positive Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
+                }else if (i == nodeList.getSize() - 1) {
                     node.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
                 }
             }
         } else {
-            node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", createHCLViewer(nodeList.getNode(0), info))));            
+        	for (int i=0; i<nodeList.getSize(); i++) {
+                if ((i==0)&&(upDown==2||upDown==3)) {
+                	node.add(new DefaultMutableTreeNode(new LeafInfo("Negative Significant Genes ", createHCLViewer(nodeList.getNode(0), info))));            
+                }
+                if ((i == 1 && upDown==3)||(i==0&&upDown==1)) {
+                	node.add(new DefaultMutableTreeNode(new LeafInfo("Positive Significant Genes ", createHCLViewer(nodeList.getNode(1), info))));            
+                }
+        	}
         }
         root.add(node);
     }
@@ -805,7 +845,7 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
      */
     protected void addClusterInfo(DefaultMutableTreeNode root) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Cluster Information");
-        node.add(new DefaultMutableTreeNode(new LeafInfo("Results (#,%)", new RPInfoViewer(this.clusters, this.experiment.getNumberOfGenes()))));
+        node.add(new DefaultMutableTreeNode(new LeafInfo("Results (#,%)", new RPInfoViewer(this.clusters, this.experiment.getNumberOfGenes(), upDown))));
         root.add(node);
     }
     
@@ -821,13 +861,27 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
         centroidViewer.setVariances(this.variances.A);
         for (int i=0; i<this.clusters.length; i++) {
             
-            if (i == 0) {
-                centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
-                expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
-            } else if (i == 1) {
+            if (i==0) {
+            	if (upDown!=1){
+	                centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("Negative Significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
+	                expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Negative Significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
+            	}else{
+            		centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("Positive Significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
+                    expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Positive Significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
+                }
+            }
+            if (i==1){ 
+            	if (upDown==3){
+                centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("Positive Significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
+                expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Positive Significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
+            	}else{
+            		centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
+                    expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
+                }
+            }
+            if (i == 2) {
                 centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
                 expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
-                
             }
         }
         
@@ -875,7 +929,15 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
             node.add(new DefaultMutableTreeNode("Confidence (1 - alpha) : "+(1d - info.alpha)*100 + " %"));
         } else {
             node.add(new DefaultMutableTreeNode("Alpha (overall threshold p-value): "+info.alpha));
-        }        
+        }
+        if (upDown==1)
+        	node.add(new DefaultMutableTreeNode("Find up-regulated genes"));
+        if (upDown==2)
+        	node.add(new DefaultMutableTreeNode("Find down-regulated genes"));
+        if (upDown==3)
+        	node.add(new DefaultMutableTreeNode("Find up and down-regulated genes"));
+        
+        	
         //node.add(new DefaultMutableTreeNode("Used permutation test? " + info.usePerms));
         if (info.usePerms) {
             //node.add(new DefaultMutableTreeNode("Number of permutations " + info.numPerms));
