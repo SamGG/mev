@@ -786,6 +786,7 @@ public class FloatMatrix implements Cloneable {
     
    public LUDecomposition lu () {
       return new LUDecomposition(this);
+
    }
     
     /** QR Decomposition
@@ -829,24 +830,27 @@ public class FloatMatrix implements Cloneable {
      * @return     solution if A is square, least squares solution otherwise
      */
     
+
    public FloatMatrix solve (FloatMatrix B) {
       return (m == n ? (new LUDecomposition(this)).solve(B) :
 		       (new QRDecomposition(this)).solve(B));
    }
+
     
     /** Solve X*A = B, which is also A'*X' = B'
      * @param B    right hand side
      * @return     solution if A is square, least squares solution otherwise.
      */
     
-/*   public FloatMatrix solveTranspose (FloatMatrix B) {
+   public FloatMatrix solveTranspose (FloatMatrix B) {
       return transpose().solve(B.transpose());
-   }*/
+   }
     
     /** Matrix inverse or pseudoinverse
      * @return     inverse(A) if A is square, pseudoinverse otherwise.
      */
     
+
    public FloatMatrix inverse () {
       return solve(identity(m,m));
    }
@@ -858,6 +862,7 @@ public class FloatMatrix implements Cloneable {
    public float det () {
       return new LUDecomposition(this).det();
    }
+
     
     /** Matrix rank
      * @return     effective numerical rank, obtained from SVD.

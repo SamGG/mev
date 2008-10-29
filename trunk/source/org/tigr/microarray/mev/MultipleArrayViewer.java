@@ -112,6 +112,7 @@ import org.systemsbiology.gaggle.geese.common.*;
 import org.systemsbiology.gaggle.util.MiscUtil;
 import org.tigr.microarray.file.AnnFileParser;
 import org.tigr.microarray.mev.action.ActionManager;
+import org.tigr.microarray.mev.annotation.AnnotationFileReader;
 import org.tigr.microarray.mev.annotation.GenomeAnnoDialog;
 import org.tigr.microarray.mev.annotation.IChipAnnotation;
 import org.tigr.microarray.mev.annotation.MevAnnotation;
@@ -4303,11 +4304,72 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         }
     }
     
-    
+   /*Added by Sarita Nair
+    * 
+    * 
+    * 
+    */
     
   
+private void appendResourcererGeneAnnotation() {
+	
+	  
+      String msg = "<html><center><h1>Import Gene Annotation</h1></center>";
+        msg += "Please select an annotation file to import.  The file should contain a column that can be used ";
+        msg += "to map annotation in the file to the proper genes.  After file selection you will be asked to identify ";
+        msg += "a key from the data and from the input file to be used to insure proper mapping of annotation. ";
+        msg += "Note that this file format should conform the MeV annotation file format conventions (.ann) file ";
+        msg += "described in the appendix of the manual</html>";
+        
+        HTMLMessageFileChooser dialog = new HTMLMessageFileChooser(getFrame(), "Gene Annotation File Selection", msg, TMEV.getFile("data"), true);
+        dialog.setFileFilter(new AnnFileFilter());
+        dialog.setApproveButtonText("Load");
+        dialog.setSize(500, 600);
+
+        if(dialog.showModal() == JFileChooser.APPROVE_OPTION) {
+            File file = dialog.getSelectedFile();
+            
+            try {
+            	
+            	
+               String [] dataFieldNames = data.getFieldNames();
+           
+                AnnotationFileReader reader =AnnotationFileReader.createAnnotationFileReader(file);
+                
+                
+                //get annotation keys for mapping
+                GeneAnnotationImportDialog importDialog = new GeneAnnotationImportDialog(getFrame(), dataFieldNames, MevAnnotation.getFieldNames());
+            	                
+                if(importDialog.showModal() == JOptionPane.OK_OPTION) {
+
+                    String [] newFields = MevAnnotation.getFieldNames();
+                                                    
+                     data.addResourcererGeneAnnotation(importDialog.getDataAnnotationKey(), reader.getAffyAnnotation());
+                    
+                  //  if(updateCount > 0) {
+                    	
+                      //  menubar.replaceLabelMenuItems(data.getFieldNames(),newFields );
+                        menubar.replaceLabelMenuItems(data.getAllFilledAnnotationFields());
+                        
+                        //add event to history log
+                        String historyMsg = "New Gene Annotation\n";
+                        historyMsg += "Annotation File = " + file.getAbsolutePath() + "\n";
+                        historyMsg += "New Annotation Fields: ";
+                        addHistory(historyMsg);
+                        
+                        JOptionPane.showMessageDialog(getFrame(), "<html>Gene annotation has been successfully added.<br>Check the history node for field information.</html>", "Append Gene Annotation", JOptionPane.INFORMATION_MESSAGE);
+                        
+                 //   } 
+                }
+            }catch(Exception e) {
+                JOptionPane.showMessageDialog(getFrame(), "Error processing gene annotation file. Please check file format.", "Sample Annotation Input Error", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
+        }
+}
+
     
-    
+      
     
     
 	/* Start CGH Functions */
@@ -5310,6 +5372,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
                 appendSampleAnnotation();
             } else if (command.equals(ActionManager.APPEND_GENE_ANNOTATION_COMMAND)) {
                 appendGeneAnnotation();
+            } else if (command.equals(ActionManager.IMPORT_RESOURCERER_ANNOTATION_COMMAND)) {
+               appendResourcererGeneAnnotation();
 	        } else if (command.equals(ActionManager.CHANGE_SPECIES_NAME_COMMAND)) {
 	            askUserForSpeciesName(data.getGaggleOrganismName());
 	        }
