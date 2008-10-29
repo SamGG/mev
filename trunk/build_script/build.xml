@@ -69,6 +69,7 @@
     <property name="OWA" value="y"/>
     <property name="TFA" value="y"/>
     <property name="NONPAR" value="y"/>
+	<property name="GSEA" value="y"/>
     <property name="BETR" value="y"/>
     <property name="RP" value="y"/>
     <property name="SVM" value="y"/>
@@ -116,7 +117,7 @@
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="algorithm-modules"
-depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,NONPAR,BETR,RP,SVM,USC,LEM,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM">
+depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,NONPAR,GSEA,BETR,RP,SVM,USC,LEM,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM">
     </target>
 
 
@@ -138,7 +139,7 @@ depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="modules-only"
-depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,NONPAR,BETR,RP,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM">
+depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,NONPAR,GSEA,BETR,RP,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM">
     </target>
 
 
@@ -1154,6 +1155,43 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
             <entry key="NONPAR.tooltip" value="Nonparametric Tests"/>
         </propertyfile>
     </target>
+	
+	
+	
+	<target name="GSEA" depends="GSEA-GUI" if="GSEA">
+	        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+	            <include name="GSEA.java"/>
+	            <classpath>
+	                <pathelement location="${lib.dir}/JSciCore.jar"/>
+
+	                <!-- jars to support module compilation -->
+	                <pathelement location="${lib.dir}/mev-util.jar"/>
+	                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
+	                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+	                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
+	                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+	                <pathelement location="${lib.dir}/mev-base.jar"/>            
+	            </classpath>
+		  </javac>
+		  <propertyfile file="${alg.properties.file}">
+	            <entry key="GSEA" value="org.tigr.microarray.mev.cluster.algorithm.impl.GSEA.GSEA"/>
+	        </propertyfile>
+	    </target>
+
+	    <target name="GSEA-GUI">
+	        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/GSEA" destdir="${dest.dir}">
+	            <classpath refid="module.build.class.path"/>
+		  </javac>
+		  <propertyfile file="${gui.properties.file}">
+			<entry key="gui.names" value="GSEA:" operation="+"/>
+	            <entry key="GSEA.name" value="GSEA"/>
+	            <entry key="GSEA.class" value="org.tigr.microarray.mev.cluster.gui.impl.GSEA.GSEAGUI"/>
+		  	<entry key="GSEA.category" value="${STATISTICS}"/> 
+		  	<entry key="GSEA.smallIcon" value="analysis16.gif"/>
+	            <entry key="GSEA.largeIcon" value="gsealogo.jpg"/>
+	            <entry key="GSEA.tooltip" value="Gene set enrichment analysis"/>
+	        </propertyfile>
+	    </target>
 
 	
     <target name="BETR" depends="BETR-GUI" if="BETR">
@@ -1853,7 +1891,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			<include name="lib/*.jar"/>
 			<exclude name=".svn"/>
 		</zip>
-		-->
+		-->	
 	</target>
 	
 		<target name="signjars">
