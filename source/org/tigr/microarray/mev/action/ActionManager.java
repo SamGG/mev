@@ -106,9 +106,7 @@ public class ActionManager implements java.io.Serializable {
         actions.put(CDNA_LOW_INTENSITY_ACTION, new DefaultAction(this, CDNA_LOW_INTENSITY_NAME, CDNA_LOW_INTENSITY_CMD, getIcon(CDNA_LOW_INTENSITY_ICON)));
         actions.put(OLIGEN_LOW_INTENSITY_ACTION, new DefaultAction(this, OLIGEN_LOW_INTENSITY_NAME, OLIGEN_LOW_INTENSITY_CMD, getIcon(OLIGEN_LOW_INTENSITY_ICON)));
 
-        //Added by Sarita
-        actions.put(IMPORT_RESOURCERER_ANNOTATION_ACTION, new DefaultAction(this, IMPORT_RESOURCERER_ANNOTATION_NAME, IMPORT_RESOURCERER_ANNOTATION_COMMAND, getIcon(APPEND_GENE_ANNOTATION_ICON)));
-			//Dan
+        //Dan
         actions.put(TOP_COMBOBOX_ACTION, new DefaultAction(this, TOP_COMBOBOX_NAME, TOP_COMBOBOX_CMD, getIcon(TOP_COMBOBOX_ICON)));
 
        
@@ -536,16 +534,6 @@ public class ActionManager implements java.io.Serializable {
     public static final String APPEND_GENE_ANNOTATION_NAME = "Append Gene Annotation";
     public static final String APPEND_GENE_ANNOTATION_ICON = "append_gene_annotation.gif";
    
-    //Added by Sarita to allow adding Resourcerer annotations after data loading.
-    //Icon stolen from append gene annotation
-    
-    public static final String IMPORT_RESOURCERER_ANNOTATION_COMMAND = "import-resourcerer-gene-annotation-command";
-    public static final String IMPORT_RESOURCERER_ANNOTATION_ACTION = "import-resourcerer-gene-annotation-action";
-    public static final String IMPORT_RESOURCERER_ANNOTATION_NAME = "Import Resourcerer Gene Annotation";
-    public static final String IMPORT_RESOURCERER_ANNOTATION_ICON = "append_gene_annotation.gif";
-   
-    
-    
 
     public static final String CHANGE_SPECIES_NAME_COMMAND = "change-species-name-command";
     public static final String CHANGE_SPECIES_NAME_ACTION = "change-species-name-action";  
