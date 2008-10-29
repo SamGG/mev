@@ -296,6 +296,7 @@ public class MultipleArrayMenubar extends JMenuBar {
         utilMenu.addSeparator();
                 
         utilMenu.add(manager.getAction(ActionManager.APPEND_GENE_ANNOTATION_ACTION));        
+      //  utilMenu.add(manager.getAction(ActionManager.IMPORT_RESOURCERER_ANNOTATION_ACTION));
         utilMenu.add(manager.getAction(ActionManager.APPEND_SAMPLE_ANNOTATION_ACTION));  
         utilMenu.add(manager.getAction(ActionManager.CHANGE_SPECIES_NAME_ACTION));
                         

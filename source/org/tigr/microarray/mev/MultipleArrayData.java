@@ -1128,6 +1128,91 @@ public class MultipleArrayData implements IData {
         return updateCount;
     }
 
+    /**
+     * Added by Sarita Nair
+     * 
+     * 
+     * 
+     * 
+     * 
+     */
+    
+    public void addResourcererGeneAnnotation(String dataKey, Hashtable annotationHash) {
+
+        int updateCount = 0;
+
+        //get annFile key column number
+       
+        
+        //get current field index for datakey
+        String [] fieldNames = getFieldNames();
+        int dataKeyCol = -1;
+        
+            for(dataKeyCol = 0; dataKeyCol < fieldNames.length; dataKeyCol++) {
+                if(dataKey.equals(fieldNames[dataKeyCol]))
+                    break;
+            }
+            /*
+             *  Probably want to make the hash contain only fields that are 
+             *  specified, maybe pass in String [] fieldsToAppend             
+             */
+                        
+        //build hash of annFileKeys and String [] rows
+       
+     
+        
+        //loop through IData to get ISlideDataElements, get dataKey, get values from hash to apppend to sde
+        //if hash returns null append "" for each field.
+        ISlideData slideData = (ISlideData)getSlideMetaData();
+        int rows = getFeaturesSize();
+        ISlideDataElement sde;
+        String dataID = "";
+        String [] newFields;
+        
+        //check for id matches, and count updates
+        for(int row = 0; row < rows; row++) {
+            //get sde
+            sde = slideData.getSlideDataElement(row);
+            
+            dataID = sde.getFieldAt(dataKeyCol);
+             String cloneName = dataID;
+             //System.out.println("cloneName:"+cloneName);
+                if(annotationHash.size()!=0 && getDataType()==TMEV.DATA_TYPE_AFFY) {
+             	   
+             	
+                	if(((MevAnnotation)annotationHash.get(cloneName))!=null) {
+                		MevAnnotation mevAnno = (MevAnnotation)annotationHash.get(cloneName);
+                		
+                		
+                	     sde.setElementAnnotation(mevAnno);
+                		
+                	}else {
+                /**
+               	  * Sarita: clone ID explicitly set here because if the data file
+               	  * has a probe (for eg. Affy house keeping probes) for which Resourcerer
+               	  * does not have annotation, MeV would still work fine. NA will be
+               	  * appended for the rest of the fields. 
+               	  * 
+               	  * 
+               	  */
+                	MevAnnotation mevAnno = new MevAnnotation();
+                	mevAnno.setCloneID(cloneName);
+                    sde.setElementAnnotation(mevAnno);
+                	
+                }
+                }
+                
+                
+             }
+        this.setAnnotationLoaded(true);
+        }
+        
+      
+    
+    
+    
+    
+    
 
     /**
      * Returns an element attribute for specified row and

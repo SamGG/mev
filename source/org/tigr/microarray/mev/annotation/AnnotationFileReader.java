@@ -248,7 +248,7 @@ public class AnnotationFileReader {
     		
     	}
     	
-    	
+    	reader.close();
     	return columnNames;
     }
     

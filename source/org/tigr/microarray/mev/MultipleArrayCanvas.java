@@ -664,8 +664,9 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
         	for (int probe = top; probe < bottom; probe++) {
         		String prefix = "Label by ";
         		String attr = getMenuLabel(labelIndex).substring(prefix.length()).trim();
-               
+        		
                 String[] _temp = data.getElementAnnotation(indices[probe], attr);
+               
         		if(_temp.length > 1) {
 
         			label = data.getElementAnnotation(indices[probe], attr)[0];
