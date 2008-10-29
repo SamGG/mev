@@ -29,15 +29,17 @@ import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
 /**
  *
- * @author  nbhagaba
+ * @author  dschlauch
  * @version 
  */
 public class RPInfoViewer extends ViewerAdapter {
     
     private JComponent header;
     private JTextArea  content;
+    private int upDown;
     /** Creates new RPInfoViewer */
-    public RPInfoViewer(int[][] clusters, int genes) {
+    public RPInfoViewer(int[][] clusters, int genes, int upDown) {
+    this.upDown = upDown;
 	header  = createHeader();
 	content = createContent(clusters, genes);
 	setMaxWidth(content, header);        
@@ -84,19 +86,47 @@ public class RPInfoViewer extends ViewerAdapter {
 	StringBuffer sb = new StringBuffer(clusters.length*3*10);
 	for (int counter = 0; counter < clusters.length; counter++) {
 	    if (counter == 0) {
-		sb.append("Significant genes ");
-		sb.append("\t");
-		sb.append("# of Significant Genes: " +clusters[counter].length);
-		sb.append("\n\t\t");
-		sb.append("% of Genes that are Signficant: "+Math.round((float)clusters[counter].length/(float)genes*100f)+"%");
-		sb.append("\n\n");
-	    } else {
-		sb.append("Non-significant genes ");
-		sb.append("\t");
-		sb.append("# of non-significant Genes: " +clusters[counter].length);
-		sb.append("\n\t\t");
-		sb.append("% of Genes that are not signficant: "+Math.round((float)clusters[counter].length/(float)genes*100f)+"%");
-		sb.append("\n\n");
+	    	if (upDown!=1){
+	    		sb.append("Negative Significant genes ");
+	    		sb.append("\t");
+		    	sb.append("# of Negatively Significant Genes: " +clusters[counter].length);
+				sb.append("\n\t\t");
+				sb.append("% of Genes that are Negatively Signficant: "+Math.round((float)clusters[counter].length/(float)genes*100f)+"%");
+				sb.append("\n\n");
+	    	}else{
+	    		sb.append("Positive Significant genes ");
+	    		sb.append("\t");
+		    	sb.append("# of Positively Significant Genes: " +clusters[counter].length);
+				sb.append("\n\t\t");
+				sb.append("% of Genes that are Positively Signficant: "+Math.round((float)clusters[counter].length/(float)genes*100f)+"%");
+				sb.append("\n\n");
+	    	}
+	    } 
+	    if (counter==1) {
+	    	if (upDown!=3){
+				sb.append("Non-significant genes ");
+				sb.append("\t");
+				sb.append("# of non-significant Genes: " +clusters[counter].length);
+				sb.append("\n\t\t");
+				sb.append("% of Genes that are not signficant: "+Math.round((float)clusters[counter].length/(float)genes*100f)+"%");
+				sb.append("\n\n");
+	    	}else{
+	    		sb.append("Positive Significant genes ");
+	    		sb.append("\t");
+		    	sb.append("# of Positively Significant Genes: " +clusters[counter].length);
+				sb.append("\n\t\t");
+				sb.append("% of Genes that are Positively Signficant: "+Math.round((float)clusters[counter].length/(float)genes*100f)+"%");
+				sb.append("\n\n");
+	    	}
+	    }
+	    if (counter==2) {
+
+			sb.append("Non-significant genes ");
+			sb.append("\t");
+			sb.append("# of non-significant Genes: " +clusters[counter].length);
+			sb.append("\n\t\t");
+			sb.append("% of Genes that are not signficant: "+Math.round((float)clusters[counter].length/(float)genes*100f)+"%");
+			sb.append("\n\n");
 	    }
 	}
 	area.setText(sb.toString());

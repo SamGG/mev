@@ -86,6 +86,7 @@ public class RPInitBox extends AlgorithmDialog {
     JTabbedPane selectionPanel;
     //PermOrFDistPanel permPanel;
     PValuePanel pPanel;
+    UpDownPanel upDownPanel;
     //HCLSelectionPanel hclOpsPanel;    
     HCLSigOnlyPanel hclOpsPanel;
     ClusterRepository repository;
@@ -121,6 +122,10 @@ public class RPInitBox extends AlgorithmDialog {
         //buildConstraints(constraints, 0, 2, 1, 1, 0, 10);
         //gridbag.setConstraints(pPanel, constraints);
         consolidatedPane.add("P-Value/False Discovery Parameters", pPanel);
+        
+        upDownPanel = new UpDownPanel();
+        consolidatedPane.add("Targeted Genes", upDownPanel);
+        
         
         hclOpsPanel = new HCLSigOnlyPanel();
         //buildConstraints(constraints, 0, 3, 1, 1, 0, 5);
@@ -911,7 +916,52 @@ public class RPInitBox extends AlgorithmDialog {
 //        }
 //    }
     
-    
+    class UpDownPanel extends JPanel {
+    	JRadioButton upButton, downButton, bothButton;
+    	public UpDownPanel(){
+    		this.setBorder(new TitledBorder(new EtchedBorder(), "Find regulated genes", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
+    		GridBagLayout gridbag = new GridBagLayout();
+            GridBagConstraints constraints = new GridBagConstraints();
+            this.setBackground(Color.white);
+            this.setLayout(gridbag);
+            upButton = new JRadioButton("Up-Regulated", false);
+            downButton = new JRadioButton("Down-Regulated", true);
+            bothButton = new JRadioButton("Both", false);
+            upButton.setBackground(Color.white);
+            downButton.setBackground(Color.white);
+            bothButton.setBackground(Color.white);
+            ButtonGroup buttonGroup = new ButtonGroup();
+            buttonGroup.add(upButton);
+            buttonGroup.add(downButton);
+            buttonGroup.add(bothButton);
+            
+
+            buildConstraints(constraints, 0, 0, 1, 1, 50, 50);
+            constraints.anchor = GridBagConstraints.WEST;
+            gridbag.setConstraints(upButton, constraints);
+            this.add(upButton);  
+
+            buildConstraints(constraints, 1, 0, 1, 1, 50, 50);
+            constraints.anchor = GridBagConstraints.WEST;
+            gridbag.setConstraints(downButton, constraints);
+            this.add(downButton);  
+
+            buildConstraints(constraints, 2, 0, 1, 1, 50, 50);
+            constraints.anchor = GridBagConstraints.WEST;
+            gridbag.setConstraints(bothButton, constraints);
+            this.add(bothButton);  
+            
+    	}
+    	public int getUpDown(){
+    		if (upButton.isSelected())
+    			return 1;
+    		if (downButton.isSelected())
+    			return 2;
+    		if (bothButton.isSelected())
+    			return 3;
+    		return 0;
+    	}
+    }
     class PValuePanel extends JPanel {
     	JLabel numPermsLabel;
     	JTextField timesField;
