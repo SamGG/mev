@@ -10,7 +10,6 @@
 package org.tigr.microarray.mev.file;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
@@ -26,29 +25,21 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
-import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.ListSelectionEvent;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -56,12 +47,9 @@ import javax.swing.table.TableModel;
 import org.tigr.microarray.mev.AffySlideDataElement;
 import org.tigr.microarray.mev.FloatSlideData;
 import org.tigr.microarray.mev.ISlideData;
-import org.tigr.microarray.mev.ISlideMetaData;
 import org.tigr.microarray.mev.SlideData;
-import org.tigr.microarray.mev.SlideDataElement;
-import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.util.MyCellRenderer;
+import org.tigr.microarray.util.ExpressionFileTableCellRenderer;
 
 /**
  * @author Sarita Nair
@@ -809,7 +797,7 @@ public Vector loadExpressionFiles() throws IOException {
 
 
 			expressionTable = new JTable();
-			expressionTable.setDefaultRenderer(Object.class, new MyCellRenderer());
+			expressionTable.setDefaultRenderer(Object.class, new ExpressionFileTableCellRenderer());
 			expressionTable.setGridColor(Color.LIGHT_GRAY);
 			expressionTable.setSize(300, 300);
 			expressionTable.setCellSelectionEnabled(true);

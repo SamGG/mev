@@ -27,7 +27,14 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Hashtable;
+import java.util.StringTokenizer;
+import java.util.Vector;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Vector;
 
@@ -49,12 +56,19 @@ import javax.swing.filechooser.FileFilter;
 
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.MultipleArrayViewer;
+import org.tigr.microarray.mev.SetDetectionFilterDialog;
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.annotation.IChipAnnotation;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindowDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.ease.EASESupportDataFile;
 import org.tigr.microarray.mev.file.agilent.AgilentMevFileLoader;
+import org.tigr.microarray.mev.resources.AvailableAnnotationsFileDefinition;
+import org.tigr.microarray.mev.resources.ISupportFileDefinition;
+import org.tigr.microarray.mev.resources.ResourcererAnnotationFileDefinition;
+import org.tigr.microarray.mev.resources.SupportFileAccessError;
+import org.tigr.util.StringSplitter;
 
 // Loads expression data in various file formats
 
@@ -103,7 +117,12 @@ public class SuperExpressionFileLoader {
 	protected JMenu helpMenu;
 	protected JMenuItem menuItem[];
 	protected JMenuItem subMenuItem[];
-	protected JTextField filetype = null;
+	protected JTextField filetype=null;
+	protected boolean hasAnnotationList = false;
+	protected Hashtable<String, Vector<String>> annotationLists; 
+	protected String defaultSpeciesName;
+	protected String defaultArrayName;
+	
 
 	public SuperExpressionFileLoader(MultipleArrayViewer viewer, File file, FileType fileType, String arrayType) {
 		this(viewer);
@@ -113,9 +132,10 @@ public class SuperExpressionFileLoader {
 
 	public SuperExpressionFileLoader(MultipleArrayViewer viewer) {
 		this.viewer = viewer;
+		this.defaultArrayName = TMEV.getSettingForOption(TMEV.LAST_LOADED_ARRAY);
+		this.defaultSpeciesName = TMEV.getSettingForOption(TMEV.LAST_LOADED_SPECIES);
+		hasAnnotationList = initializeAnnotationInfo();
 		loader = new Loader();
-//		initializeDataPath();
-//		initializeAnnotationPath();
 		initializeFileLoaders();
 		initializeGUI();
 	}
@@ -125,6 +145,24 @@ public class SuperExpressionFileLoader {
 		initializeFileLoaders();
 		initializeGUI();
 	}
+	private boolean initializeAnnotationInfo() {
+		try {
+			AvailableAnnotationsFileDefinition aafd = new AvailableAnnotationsFileDefinition();
+			File f = viewer.getSupportFile(aafd);
+			this.annotationLists = aafd.parseAnnotationListFile(f);
+			return true;
+		} catch (SupportFileAccessError sfae) {
+			this.annotationLists = null;
+			return false;
+		} catch (IOException ioe) {
+			this.annotationLists = null;
+			return false;
+		}
+	}
+	public File getAnnotationFile(String organismName, String arrayName) throws SupportFileAccessError {
+		return viewer.getSupportFile(new ResourcererAnnotationFileDefinition(organismName, arrayName));
+	}
+
 
 	protected void initializeFileLoaders() {
 		int defaultSelection = 0;
@@ -652,6 +690,7 @@ public class SuperExpressionFileLoader {
 	private void updateDataPath(String dataPath, String annotationPath) {
 
 		if(dataPath != null) {
+			
 			DATA_PATH = dataPath;
 			TMEV.setDataPath(DATA_PATH);
 		}
@@ -699,13 +738,11 @@ public class SuperExpressionFileLoader {
 				chipAnnotation = selectedFileLoader.getChipAnnotation();
 				dataType = selectedFileLoader.getDataType();
 				selectedFileLoader.dispose();
-
 				updateDataPath(selectedFileLoader.getFilePath(), selectedFileLoader.getAnnotationFilePath());
 				if (data != null) {
 					viewer.fireDataLoaded(toISlideDataArray(data), chipAnnotation, dataType);
 				}
 			} catch (Exception ioe) {
-
 				ioe.printStackTrace();
 				ioe.getCause();
 			}
@@ -754,5 +791,24 @@ public class SuperExpressionFileLoader {
 			g2.fillRect(0, 0, dim.width, dim.height);
 			g2.setColor(Color.black);
 		}
+	}
+
+	public String getDefaultSpeciesName() {
+		return defaultSpeciesName;
+	}
+
+	public String getDefaultArrayName() {
+		return defaultArrayName;
+	}
+
+	/**
+	 * Downloads additional support files (besides the annotation files) that may be needed by the user for their data.
+	 * @param organismName
+	 * @param arrayName
+	 */
+	public void getAdditionalSupportFiles(String organismName, String arrayName) throws SupportFileAccessError {
+		Vector<ISupportFileDefinition> defs = new Vector<ISupportFileDefinition>();
+		defs.add(new EASESupportDataFile(organismName, arrayName));
+		viewer.getSupportFiles(defs);
 	}
 }

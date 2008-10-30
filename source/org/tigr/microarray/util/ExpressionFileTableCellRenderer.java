@@ -13,7 +13,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
 
-public class MyCellRenderer extends DefaultTableCellRenderer
+public class ExpressionFileTableCellRenderer extends DefaultTableCellRenderer
 {
 	/**
 	 * 
@@ -21,9 +21,9 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 	private static final long serialVersionUID = 1L;
 	private Color whiteColor = new Color(254, 254, 254);
 	private Color alternateColor = new Color(237, 243, 254);
-	private Color sampleAnnotationColor = new Color(163, 188, 223);
-	private Color colAnnotationColor = new Color(200, 200, 225);
-	private Color sampleAnnLabelColor = new Color(255,255,128);
+	private Color sampleAnnotationColor = new Color(205, 225, 225);
+	private Color colAnnotationColor = new Color(225, 225, 255);
+	private Color sampleAnnLabelColor = new Color(255,255,200);
 	private int selectedRow=0;
 	private int selectedCol=0;
 

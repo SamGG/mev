@@ -300,26 +300,23 @@ public class MultipleArrayMenubar extends JMenuBar {
         utilMenu.add(manager.getAction(ActionManager.APPEND_SAMPLE_ANNOTATION_ACTION));  
         utilMenu.add(manager.getAction(ActionManager.CHANGE_SPECIES_NAME_ACTION));
                         
-        //EH Gaggle menu test
-	        targetGooseNameGroup = new ButtonGroup();
-	        showtargetGooseNameGroup = new ButtonGroup();
-	        gaggleMenu = new JMenu("Gaggle");
-	        gaggleMenu.setIcon(actionManager.getIcon(ActionManager.GAGGLE_ICON));
-	        gaggleMenu.add(manager.getAction(ActionManager.GAGGLE_CONNECT));        
-	        gaggleMenu.add(manager.getAction(ActionManager.GAGGLE_DISCONNECT));
-	        targetMenu = new JMenu("Broadcast Target");
-	        showMenu = new JMenu("Show Goose");
-	        JMenuItem notargets = new JMenuItem("No Broadcast Targets");
-	        JMenuItem noGeese = new JMenuItem("No Geese Available");
-	        notargets.setEnabled(false);
-	        noGeese.setEnabled(false);
-	        targetMenu.add(notargets);
-	        showMenu.add(noGeese);
-	        gaggleMenu.add(targetMenu);
-	        gaggleMenu.add(showMenu);
-	//        add(gaggleMenu);
-	        gaggleMenu.getMenuComponent(1).setEnabled(false);
-	        //end Gaggle test
+        targetGooseNameGroup = new ButtonGroup();
+        showtargetGooseNameGroup = new ButtonGroup();
+        gaggleMenu = new JMenu("Gaggle");
+        gaggleMenu.setIcon(actionManager.getIcon(ActionManager.GAGGLE_ICON));
+        gaggleMenu.add(manager.getAction(ActionManager.GAGGLE_CONNECT));        
+        gaggleMenu.add(manager.getAction(ActionManager.GAGGLE_DISCONNECT));
+        targetMenu = new JMenu("Broadcast Target");
+        showMenu = new JMenu("Show Goose");
+        JMenuItem notargets = new JMenuItem("No Broadcast Targets");
+        JMenuItem noGeese = new JMenuItem("No Geese Available");
+        notargets.setEnabled(false);
+        noGeese.setEnabled(false);
+        targetMenu.add(notargets);
+        showMenu.add(noGeese);
+        gaggleMenu.add(targetMenu);
+        gaggleMenu.add(showMenu);
+        gaggleMenu.getMenuComponent(1).setEnabled(false);
         
         utilMenu.add(gaggleMenu);
         add(utilMenu);    
@@ -355,11 +352,8 @@ public class MultipleArrayMenubar extends JMenuBar {
         this.setMinRatioScale(origDisplayMenu.getMinRatioScale());
         this.setMidRatioValue(origDisplayMenu.getMidRatioValue());
         this.setColorGradientState(origDisplayMenu.getColorGradientState());
-        this.setNegativeCustomGradient(origDisplayMenu.getNegativeGradientImage());
-        this.setPositiveCustomGradient(origDisplayMenu.getPositiveGradientImage());
-       
-        this.setNegativeAccessibleGradient(origDisplayMenu.getNegativeGradientImage());
-        this.setPositiveAccessibleGradient(origDisplayMenu.getPositiveGradientImage());
+        this.setNegativeGradientImage(origDisplayMenu.getNegativeGradientImage());
+        this.setPositiveGradientImage(origDisplayMenu.getPositiveGradientImage());
         
         this.setUseDoubleGradient(origDisplayMenu.getUseDoubleGradient());
         this.addLabelMenuItems((origMenubar).getLabelMenuItems(), null);
@@ -744,37 +738,11 @@ public class MultipleArrayMenubar extends JMenuBar {
     }
     
     public void addSortMenuItems(String [] fieldNames){
-       /* JRadioButtonMenuItem item;
-        DefaultAction action;
-        for(int i = 0; i < fieldNames.length; i++){
-            action = new DefaultAction(actionManager, "Sort by "+fieldNames[i], ActionManager.SORT_LABEL_CMD);
-            action.putValue(ActionManager.PARAMETER, String.valueOf(i));
-            item = new JRadioButtonMenuItem(action);
-            sortGroup.add(item);
-            this.sortMenu.add(item);
-        }
-        */
+
     }
     
     public void replaceSortMenuItems(String [] fieldNames){
-        //Remove all items
-     /*   this.sortMenu.removeAll();
-        
-        //Restore defaults
-        sortMenu.add(createJRadioButtonMenuItem("Sort by Location", ActionManager.SORT_BY_LOCATION_CMD, listener, sortGroup, true));
-        sortMenu.add(createJRadioButtonMenuItem("Sort by Ratio", ActionManager.SORT_BY_RATIO_CMD, listener, sortGroup));
-        
-        JRadioButtonMenuItem item;
-        DefaultAction action;
-        for(int i = 0; i < fieldNames.length; i++){
-            action = new DefaultAction(actionManager, "Sort by "+fieldNames[i], ActionManager.SORT_LABEL_CMD);
-            action.putValue(ActionManager.PARAMETER, String.valueOf(i));
-            item = new JRadioButtonMenuItem(action);
-            sortGroup.add(item);
-            this.sortMenu.add(item);
-        }
-    */
-        
+
       
     }
     
@@ -1048,7 +1016,6 @@ public class MultipleArrayMenubar extends JMenuBar {
      */
     void setMaxRatioScale(float scale) {
         displayMenu.maxRatioScale = scale;
-    	//displayMenu.maxRatioScale=200;
     }
     
     /**
@@ -1071,43 +1038,38 @@ public class MultipleArrayMenubar extends JMenuBar {
     void setMaxCY5Scale(float scale) {
         displayMenu.maxCY5Scale = scale;
     }
-    
-    /**
-     * Sets positive color image
-     */
-    void setPositiveCustomGradient(BufferedImage image){
-        displayMenu.posCustomColorImage = image;
-    }
-    
-    /**
-     * Sets negative color image
-     */
-    void setNegativeCustomGradient(BufferedImage image){
-        displayMenu.negCustomColorImage = image;
-    }
-    
-    
-    /**
-     * Sets positive color image for Accessible color scheme
-     */
-    void setPositiveAccessibleGradient(BufferedImage image){
-        displayMenu.posAccessibleColorImage = image;
-    }
-    
-    /**
-     * Sets negative color image for Accessible color scheme
-     */
-    void setNegativeAccessibleGradient(BufferedImage image){
-        displayMenu.negAccessibleColorImage = image;
-    }
+
    
-    
+    void setPositiveGradientImage(BufferedImage image){
+        displayMenu.currentPositiveColorImage = image;
+    }
+    void setNegativeGradientImage(BufferedImage image){
+        displayMenu.currentNegativeColorImage = image;
+    }
     
     /**
      * Sets color scheme index
      */
     void setColorSchemeIndex(int index){
     	displayMenu.colorScheme = index;
+
+      switch (displayMenu.colorScheme){
+      	case IDisplayMenu.ACCESSIBLE_COLOR_SCHEME:
+      		break;
+          case IDisplayMenu.GREEN_RED_SCHEME:
+        	  displayMenu.currentNegativeColorImage = displayMenu.negGreenColorImage;
+        	  displayMenu.currentPositiveColorImage = displayMenu.posRedColorImage;
+              break;
+          case IDisplayMenu.BLUE_YELLOW_SCHEME:
+
+        	  displayMenu.currentNegativeColorImage = displayMenu.negBlueColorImage;
+        	  displayMenu.currentPositiveColorImage = displayMenu.posYellowColorImage;
+              break;
+          case IDisplayMenu.CUSTOM_COLOR_SCHEME:
+              break;
+          case IDisplayMenu.RAINBOW_COLOR_SCHEME:  
+        	  displayMenu.currentPositiveColorImage = displayMenu.rainbowImage;
+      }
     }
     
     int getColorScheme(){
@@ -1175,15 +1137,13 @@ public class MultipleArrayMenubar extends JMenuBar {
         private BufferedImage negBlueColorImage = createGradientImage(Color.blue, Color.black);
         private BufferedImage posYellowColorImage = createGradientImage(Color.black, Color.yellow);
         private BufferedImage rainbowImage = createRainbowImage();
-        private BufferedImage negCustomColorImage;
-        private BufferedImage posCustomColorImage;
         private boolean useDoubleGradient = true;
         
+        BufferedImage currentNegativeColorImage = negGreenColorImage;
+        BufferedImage currentPositiveColorImage = posRedColorImage;
         
         //Added by Sarita
         AccessibleColorPalette color=new AccessibleColorPalette();
-        private BufferedImage negAccessibleColorImage;//= createGradientImage(color.yellow, color.black);
-        private BufferedImage posAccessibleColorImage;//= createGradientImage(color.black, color.orange);
        
         
         public int getPaletteStyle() {
@@ -1260,26 +1220,7 @@ public class MultipleArrayMenubar extends JMenuBar {
          * Return current positive gradient image
          */
         public BufferedImage getPositiveGradientImage() {
-        	BufferedImage image = this.posRedColorImage;
-            switch (this.colorScheme){
-            //Added by Sarita
-            	case IDisplayMenu.ACCESSIBLE_COLOR_SCHEME:
-            		if(this.posAccessibleColorImage!=null)
-            		image=this.posAccessibleColorImage;
-            		break;
-                case IDisplayMenu.GREEN_RED_SCHEME:
-                    break;
-                case IDisplayMenu.BLUE_YELLOW_SCHEME:
-                    image = this.posYellowColorImage;
-                    break;
-                case IDisplayMenu.CUSTOM_COLOR_SCHEME:
-                    if(this.posCustomColorImage != null)
-                        image = this.posCustomColorImage;
-                    break;
-                case IDisplayMenu.RAINBOW_COLOR_SCHEME:                	
-                		image = this.rainbowImage;
-            }
-            return image;
+        	return currentPositiveColorImage;
         }
         
         
@@ -1287,22 +1228,7 @@ public class MultipleArrayMenubar extends JMenuBar {
          * Return current negative gradient image
          */
         public BufferedImage getNegativeGradientImage() {
-            BufferedImage image = this.negGreenColorImage;
-            switch (this.colorScheme){
-            	case IDisplayMenu.ACCESSIBLE_COLOR_SCHEME:
-            		if(this.negAccessibleColorImage!=null)
-            			image = this.negAccessibleColorImage;
-                break;
-                case IDisplayMenu.GREEN_RED_SCHEME:
-                    break;
-                case IDisplayMenu.BLUE_YELLOW_SCHEME:
-                    image = this.negBlueColorImage;
-                    break;
-                case IDisplayMenu.CUSTOM_COLOR_SCHEME:
-                    if(this.negCustomColorImage != null)
-                        image = this.negCustomColorImage;
-            }
-            return image;
+        	return currentNegativeColorImage;
         }
         
         /**

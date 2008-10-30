@@ -13,6 +13,7 @@
  */
 package org.tigr.microarray.mev.cluster.gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 
@@ -114,6 +115,8 @@ public interface IDisplayMenu {
      * Returns current negative gradient image
      */
     public BufferedImage getNegativeGradientImage();
+    
+    public BufferedImage createGradientImage(Color color1, Color color2);
     
        /**
      * Returns current positive gradient image

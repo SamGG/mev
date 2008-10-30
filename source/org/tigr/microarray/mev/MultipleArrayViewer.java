@@ -60,6 +60,7 @@ import java.rmi.UnmarshalException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.EventObject;
@@ -195,6 +196,10 @@ import org.tigr.microarray.mev.persistence.SessionMetaData;
 import org.tigr.microarray.mev.persistence.StateSavingProgressPanel;
 import org.tigr.microarray.mev.persistence.XMLEncoderFactory;
 import org.tigr.microarray.mev.r.Rama;
+import org.tigr.microarray.mev.resources.IMultiSupportFileDefinition;
+import org.tigr.microarray.mev.resources.IResourceManager;
+import org.tigr.microarray.mev.resources.ISupportFileDefinition;
+import org.tigr.microarray.mev.resources.SupportFileAccessError;
 import org.tigr.microarray.mev.script.ScriptManager;
 import org.tigr.microarray.util.awt.AccessibleColorSchemeSelectionDialog;
 import org.tigr.microarray.util.awt.ColorSchemeSelectionDialog;
@@ -503,7 +508,17 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 		   //No reason to throw an exception. Just use defaults instead.
 	   }
 	   try {
-		   onColorSchemeChange(new Integer(TMEV.getSettingForOption(TMEV.COLOR_SCHEME_INDEX)));
+		   
+		    this.menubar.setUseDoubleGradient(new Boolean(TMEV.getSettingForOption(TMEV.COLOR_SCHEME_DOUBLE)));  
+	       
+	        Color positiveColor = new Color(new Integer(TMEV.getSettingForOption(TMEV.COLOR_SCHEME_POSITIVE)));
+	        Color negativeColor = new Color(new Integer(TMEV.getSettingForOption(TMEV.COLOR_SCHEME_NEGATIVE)));
+	        Color neutralColor = new Color(new Integer(TMEV.getSettingForOption(TMEV.COLOR_SCHEME_NEUTRAL)));
+	        this.menubar.setPositiveGradientImage(this.menubar.getDisplayMenu().createGradientImage(neutralColor, positiveColor));
+	        this.menubar.setNegativeGradientImage(this.menubar.getDisplayMenu().createGradientImage(negativeColor, neutralColor));
+	        this.menubar.setColorSchemeIndex(new Integer(TMEV.getSettingForOption(TMEV.COLOR_SCHEME_INDEX)));
+		       
+//		   onColorSchemeChange(new Integer(TMEV.getSettingForOption(TMEV.COLOR_SCHEME_INDEX)));
 	   } catch (Exception e) {}
     }
    
@@ -1521,10 +1536,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 			this.menubar.setColorSchemeIndex(msp.getColorScheme());
 		} catch (NullPointerException npe){npe.printStackTrace();}
 		try {
-			this.menubar.setPositiveCustomGradient(msp.getPositiveGradientImageWrapper().getBufferedImage());
+			this.menubar.setPositiveGradientImage(msp.getPositiveGradientImageWrapper().getBufferedImage());
 		} catch (NullPointerException npe){npe.printStackTrace();}
 		try {
-			this.menubar.setNegativeCustomGradient(msp.getNegativeGradientImageWrapper().getBufferedImage());
+			this.menubar.setNegativeGradientImage(msp.getNegativeGradientImageWrapper().getBufferedImage());
 		} catch (NullPointerException npe){npe.printStackTrace();}
 		try {
 //			this.auto_scale = msp.isAutoScale();
@@ -1695,118 +1710,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         scrollPane.registerKeyboardAction(listener, "pagedown", pgdown, JComponent.WHEN_IN_FOCUSED_WINDOW);
         return scrollPane;
     }
-    
-    /**
-     * Sets a current viewer. The viewer content will be inserted
-     * into the scroll pane view port and the viewer header will
-     * be used as the scroll pane header view.
-     */
-    /*private void setCurrentViewer(IViewer viewer) {
-        if (viewer == null || viewer.getContentComponent() == null) {
-            return;
-        }
-        if (this.viewer != null) {
-            this.viewer.onDeselected();
-        }
-        this.viewer = viewer;
-        this.viewScrollPane.setViewportView(this.viewer.getContentComponent());
-     
-        JPanel emptycorner = new JPanel();
-        emptycorner.setBackground(Color.white);
-        emptycorner.setOpaque(true);
-     
-        if (viewer instanceof GDMGeneViewer == true) {
-     
-                GDMGeneViewer gdmV = (GDMGeneViewer)viewer;
-     
-                gdmV.setMultipleArrayData(data);
-     
-                gdmV.setMainFrame(mainframe);
-     
-                JComponent colHeader = gdmV.getColumnHeaderComponent();
-                if (colHeader != null) {
-                    this.viewScrollPane.setColumnHeaderView(colHeader);
-                } else {
-                    this.viewScrollPane.setColumnHeader(null);
-                }
-     
-                JComponent rowHeader = gdmV.getRowHeaderComponent();
-                if (rowHeader != null) {
-                    this.viewScrollPane.setRowHeaderView(rowHeader);
-                } else {
-                    this.viewScrollPane.setRowHeader(null);
-                }
-     
-                JComponent upperRightCornerSB = gdmV.getUpperRightCornerSB();
-                if (upperRightCornerSB != null) {
-                    this.viewScrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, upperRightCornerSB);
-                }
-     
-                JComponent lowerLeftCornerSB = gdmV.getLowerLeftCornerSB();
-                if (lowerLeftCornerSB != null) {
-                    this.viewScrollPane.setCorner(JScrollPane.LOWER_LEFT_CORNER, lowerLeftCornerSB);
-                }
-     
-                this.viewScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-                this.viewScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-     
-        } else if (viewer instanceof GDMExpViewer == true) {
-     
-                GDMExpViewer gdmV = (GDMExpViewer)viewer;
-     
-                gdmV.setMultipleArrayData(data);
-     
-                gdmV.setMainFrame(mainframe);
-     
-                JComponent colHeader = gdmV.getColumnHeaderComponent();
-                if (colHeader != null) {
-                    this.viewScrollPane.setColumnHeaderView(colHeader);
-                } else {
-                    this.viewScrollPane.setColumnHeader(null);
-                }
-     
-                JComponent rowHeader = gdmV.getRowHeaderComponent();
-                if (rowHeader != null) {
-                    this.viewScrollPane.setRowHeaderView(rowHeader);
-                } else {
-                    this.viewScrollPane.setRowHeader(null);
-                }
-     
-                JComponent upperRightCornerSB = gdmV.getUpperRightCornerSB();
-                if (upperRightCornerSB != null) {
-                    this.viewScrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, upperRightCornerSB);
-                }
-     
-                JComponent lowerLeftCornerSB = gdmV.getLowerLeftCornerSB();
-                if (lowerLeftCornerSB != null) {
-                    this.viewScrollPane.setCorner(JScrollPane.LOWER_LEFT_CORNER, lowerLeftCornerSB);
-                }
-     
-                this.viewScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-                this.viewScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-     
-        } else {
-     
-                JComponent header = viewer.getHeaderComponent();
-                if (header != null) {
-                    this.viewScrollPane.setColumnHeaderView(header);
-     
-                    if (this.viewScrollPane.getCorner(JScrollPane.UPPER_RIGHT_CORNER) != null) {
-                        this.viewScrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, emptycorner);
-                    }
-     
-                } else {
-                    this.viewScrollPane.setColumnHeader(null);
-                }
-                this.viewScrollPane.setRowHeader(null);
-     
-        }
-     
-        this.viewer.onSelected(framework);
-        doViewLayout();
-        handleThumbnailButton(this.viewer);
-    }
-     */
+ 
     
     /**
      * Sets a current viewer. The viewer content will be inserted
@@ -2359,8 +2263,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
      */
     private void onColorSchemeChange(int colorScheme){
         int initColorScheme = menubar.getColorScheme();
-        TMEV.storeProperty(TMEV.COLOR_SCHEME_INDEX, new Integer(colorScheme).toString());
-       
+
         if(colorScheme == IDisplayMenu.GREEN_RED_SCHEME || colorScheme == IDisplayMenu.BLUE_YELLOW_SCHEME || colorScheme == IDisplayMenu.RAINBOW_COLOR_SCHEME) {
             this.menubar.setColorSchemeIndex(colorScheme);
             if(colorScheme == IDisplayMenu.RAINBOW_COLOR_SCHEME) {
@@ -2377,8 +2280,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
             //Added the if loop, to take make sure that heat map does not change 
             //color if we cancelled the color selection
             if(adialog.showModal()!=JOptionPane.CANCEL_OPTION) {
-             this.menubar.setPositiveAccessibleGradient(adialog.getPositiveGradient());
-             this.menubar.setNegativeAccessibleGradient(adialog.getNegativeGradient());
+             this.menubar.setPositiveGradientImage(adialog.getPositiveGradient());
+             this.menubar.setNegativeGradientImage(adialog.getNegativeGradient());
              this.menubar.setColorSchemeIndex(colorScheme);
              this.menubar.setUseDoubleGradient(adialog.getUseDoubleGradient());     
             }
@@ -2400,11 +2303,30 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
             	}
             	return;
             }
-            this.menubar.setPositiveCustomGradient(dialog.getPositiveGradient());
-            this.menubar.setNegativeCustomGradient(dialog.getNegativeGradient());
+            this.menubar.setPositiveGradientImage(dialog.getPositiveGradient());
+            this.menubar.setNegativeGradientImage(dialog.getNegativeGradient());
             this.menubar.setColorSchemeIndex(colorScheme);
-            this.menubar.setUseDoubleGradient(dialog.getUseDoubleGradient());                    	
+            this.menubar.setUseDoubleGradient(dialog.getUseDoubleGradient());     
+            
         }
+        
+        //Storing color scheme selections to properties file
+        Integer positiveColor, negativeColor, neutralColor;
+        boolean useDoubleGradient;
+        
+        useDoubleGradient = this.menubar.getDisplayMenu().getUseDoubleGradient();
+        BufferedImage positiveImage = this.menubar.getPositiveGradientImage();
+        BufferedImage negativeImage = this.menubar.getNegativeGradientImage();
+        positiveColor = positiveImage.getRGB(positiveImage.getWidth()-1, 0);
+        negativeColor = negativeImage.getRGB(0, 0);
+        neutralColor = positiveImage.getRGB(0,0);
+        
+        //store positive color, negative, neutral, index of gradient type
+        TMEV.storeProperty(TMEV.COLOR_SCHEME_INDEX, new Integer(colorScheme).toString());
+        TMEV.storeProperty(TMEV.COLOR_SCHEME_POSITIVE, positiveColor.toString());
+        TMEV.storeProperty(TMEV.COLOR_SCHEME_NEGATIVE, negativeColor.toString());
+        TMEV.storeProperty(TMEV.COLOR_SCHEME_NEUTRAL, neutralColor.toString());
+        TMEV.storeProperty(TMEV.COLOR_SCHEME_DOUBLE, new Boolean(useDoubleGradient).toString());
         
         fireMenuChanged();
     }
@@ -3314,7 +3236,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
             menubar.setUseDoubleGradient(srsd.getUseDoubleGradient());
     
             if(srsd.isGradientStyleAltered() && srsd.getUseDoubleGradient()) 
-            	this.menubar.setPositiveCustomGradient(srsd.getPosImage());
+            	this.menubar.setPositiveGradientImage(srsd.getPosImage());
                
             fireMenuChanged();
         }
@@ -3800,7 +3722,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     /**
      *  Handles new data load.  Vector contains ISlideData objects. 
      */
-    public void fireDataLoaded(ISlideData [] features, IChipAnnotation chipAnnotation, int dataType){
+    public void fireDataLoaded(ISlideData [] features, IChipAnnotation chipAnnotation, int dataType) {
     	//add for auto-color scaling format(onedecimalformat)
     	DecimalFormat oneDecimalFormat = new DecimalFormat();
 		oneDecimalFormat.setMaximumFractionDigits(1);
@@ -3810,6 +3732,12 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         data.addFeatures(features);
         data.setDataType(dataType);
         data.setChipAnnotation(chipAnnotation);
+        if(chipAnnotation != null) {
+        	if(chipAnnotation.getSpeciesName() != null)
+                	TMEV.storeProperty(TMEV.LAST_LOADED_SPECIES, chipAnnotation.getSpeciesName());
+                if(chipAnnotation.getChipType() != null)
+                	TMEV.storeProperty(TMEV.LAST_LOADED_ARRAY, chipAnnotation.getChipType());
+        }
         if(this.data.getFieldNames() != null && this.data.getFeaturesCount() > 0){
         	//Raktim - Modified to display the fileds from Annotation Model
         
@@ -4347,7 +4275,7 @@ private void appendResourcererGeneAnnotation() {
                      data.addResourcererGeneAnnotation(importDialog.getDataAnnotationKey(), reader.getAffyAnnotation());
                     
                   //  if(updateCount > 0) {
-                    	
+    
                       //  menubar.replaceLabelMenuItems(data.getFieldNames(),newFields );
                         menubar.replaceLabelMenuItems(data.getAllFilledAnnotationFields());
                         
@@ -4358,7 +4286,7 @@ private void appendResourcererGeneAnnotation() {
                         addHistory(historyMsg);
                         
                         JOptionPane.showMessageDialog(getFrame(), "<html>Gene annotation has been successfully added.<br>Check the history node for field information.</html>", "Append Gene Annotation", JOptionPane.INFORMATION_MESSAGE);
-                        
+    
                  //   } 
                 }
             }catch(Exception e) {
@@ -4367,9 +4295,9 @@ private void appendResourcererGeneAnnotation() {
             }
         }
 }
-
+  
     
-      
+    
     
     
 	/* Start CGH Functions */
@@ -6053,8 +5981,59 @@ private void appendResourcererGeneAnnotation() {
     public boolean requestGaggleConnect() {
     	return MultipleArrayViewer.this.connectToGaggle();
     }
-}
+    
+	public File getSupportFile(ISupportFileDefinition def) throws SupportFileAccessError {
 
+			return getSupportFile(def, true);
+	}    
+	public File getSupportFile(ISupportFileDefinition def, boolean getOnline) throws SupportFileAccessError {
+		if(isResourceManagerAvailable())
+			return TMEV.getResourceManager().getSupportFile(def, true);
+		else 
+			throw new SupportFileAccessError("ResourceManager is not available");
+	}
+	public File[] getMultipleSupportFiles(IMultiSupportFileDefinition def) throws SupportFileAccessError {
+		if(isResourceManagerAvailable()) {
+			Collection<File> temp = TMEV.getResourceManager().getMultipleSupportFiles(def).values();
+			return temp.toArray(new File[temp.size()]);
+		}
+		throw new SupportFileAccessError("ResourceManager is not available");
+	}	
+	public boolean hasSupportFile(ISupportFileDefinition def) {
+		if(isResourceManagerAvailable())
+			return TMEV.getResourceManager().fileIsInRepository(def);
+		else
+			return false;
+	}
+	public boolean isResourceManagerAvailable() {
+		if(TMEV.getResourceManager() != null)
+			return true;
+		else
+			return false;
+	}
+    	public IResourceManager getResourceManager() {
+    		return TMEV.getResourceManager();
+    	}
+	public Hashtable<ISupportFileDefinition, File> getSupportFiles(Collection<ISupportFileDefinition> defs, boolean getOnline) throws SupportFileAccessError {
+		return TMEV.getResourceManager().getSupportFiles(defs, getOnline);
+	}
+}
+    
+	public File getSupportFile(ISupportFileDefinition def) throws SupportFileAccessError {
+		return framework.getSupportFile(def, true);
+	}
+	public Hashtable<ISupportFileDefinition, File> getSupportFiles(Collection<ISupportFileDefinition> defs) throws SupportFileAccessError {
+		return framework.getSupportFiles(defs, true);
+	}
+	public File[] getMultipleSupportFiles(IMultiSupportFileDefinition def) throws SupportFileAccessError {
+		return framework.getMultipleSupportFiles(def);
+	}
+	public boolean hasSupportFile(ISupportFileDefinition def) {
+		return framework.hasSupportFile(def);
+	}
+	public boolean isResourceManagerAvailable() {
+		return framework.isResourceManagerAvailable();
+	}
     /**
      * @author eleanora
      * @param nl

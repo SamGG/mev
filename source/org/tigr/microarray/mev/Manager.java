@@ -62,11 +62,13 @@ public class Manager {//A class to keep track of viewers
     private JMenuItem newPreferencesItem;
     private JMenuItem loginItem;
     private JMenuItem quitItem;
-    private JMenu displayMenu;
+    private JMenu preferencesMenu;
     private JRadioButtonMenuItem javaLFItem;
     private JRadioButtonMenuItem windowsLFItem;
     private JRadioButtonMenuItem motifLFItem;
     private JCheckBoxMenuItem toolTipsItem;
+    private JCheckBoxMenuItem promptToSaveItem;
+    private JCheckBoxMenuItem promptToGetOnlineItem;
     private static JMenu windowMenu;
     private JMenu referencesMenu;
     private JMenuItem systemInfoItem;
@@ -146,32 +148,43 @@ public class Manager {//A class to keep track of viewers
         
         menuBar.add(fileMenu);
         
-        displayMenu = new JMenu("Display");
+        preferencesMenu = new JMenu("Preferences");
         
         buttonGroup = new ButtonGroup();
         
         javaLFItem = new JRadioButtonMenuItem("Metal L&F");
         javaLFItem.addActionListener(eventListener);
-        displayMenu.add(javaLFItem);
+        preferencesMenu.add(javaLFItem);
         buttonGroup.add(javaLFItem);
         javaLFItem.setSelected(true);
         
         windowsLFItem = new JRadioButtonMenuItem("Windows L&F");
         windowsLFItem.addActionListener(eventListener);
-        displayMenu.add(windowsLFItem);
+        preferencesMenu.add(windowsLFItem);
         buttonGroup.add(windowsLFItem);
         
         motifLFItem = new JRadioButtonMenuItem("Motif L&F");
         motifLFItem.addActionListener(eventListener);
-        displayMenu.add(motifLFItem);
+        preferencesMenu.add(motifLFItem);
         buttonGroup.add(motifLFItem);
         
         toolTipsItem = new JCheckBoxMenuItem("Show ToolTips");
         toolTipsItem.addActionListener(eventListener);
-        displayMenu.add(toolTipsItem);
+        preferencesMenu.add(toolTipsItem);
         toolTipsItem.setSelected(true);
         
-        menuBar.add(displayMenu);
+
+        promptToSaveItem = new JCheckBoxMenuItem("Prompt to save analysis before closing");
+        promptToSaveItem.addActionListener(eventListener);
+        preferencesMenu.add(promptToSaveItem);
+        promptToSaveItem.setSelected(new Boolean(TMEV.getSettingForOption(TMEV.PROMPT_TO_SAVE_ANALYSIS)));
+
+        promptToGetOnlineItem = new JCheckBoxMenuItem("Ask to get online");
+        promptToGetOnlineItem.addActionListener(eventListener);
+        preferencesMenu.add(promptToGetOnlineItem);
+        promptToGetOnlineItem.setSelected(new Boolean(TMEV.getSettingForOption(TMEV.PROMPT_TO_GET_ONLINE)));
+        
+        menuBar.add(preferencesMenu);
         
         windowMenu = new JMenu("Window");
         windowMenu.setEnabled(false);  //until we meet again...
@@ -558,6 +571,12 @@ public class Manager {//A class to keep track of viewers
                 } else {
                     ToolTipManager.sharedInstance().setEnabled(false);
                 }
+
+            } else if (source == promptToGetOnlineItem) {
+        	    TMEV.storeProperty(TMEV.PROMPT_TO_GET_ONLINE, new Boolean(promptToGetOnlineItem.isSelected()).toString());
+        	    TMEV.getResourceManager().setAskToGetOnline(new Boolean(promptToGetOnlineItem.isSelected()));
+            } else if (source == promptToSaveItem) {
+        	    TMEV.storeProperty(TMEV.PROMPT_TO_SAVE_ANALYSIS, new Boolean(promptToSaveItem.isSelected()).toString());
             } else if(source == acknolMenuItem){
                 new AcknowlegementDialog(frame, AcknowlegementDialog.createAcknowlegementText());
             } else if (source == papersMenuItem) {

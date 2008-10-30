@@ -33,7 +33,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -69,6 +74,13 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
+import org.tigr.microarray.mev.resources.AvailableAnnotationsFileDefinition;
+import org.tigr.microarray.mev.resources.FileResourceManager;
+import org.tigr.microarray.mev.resources.IResourceManager;
+import org.tigr.microarray.mev.resources.ISupportFileDefinition;
+import org.tigr.microarray.mev.resources.RepositoryInitializationError;
+import org.tigr.microarray.mev.resources.ResourcererAnnotationFileDefinition;
+import org.tigr.microarray.mev.resources.SupportFileAccessError;
 
 /** Accumulates parameters for execution of
  * EASE analysis.
@@ -97,30 +109,39 @@ public class EASEInitDialog extends AlgorithmDialog {
     protected String sep;
     protected Frame parent;
     
+    protected String arrayName, speciesName;
+    protected Hashtable<String, Vector<String>> speciestoarrays;
+    protected IResourceManager resourceManager;
+    
     private static String ANNOTATION_LINK = AnnotationFieldConstants.TGI_TC;
     protected boolean useLoadedAnnotationFile = false;
+    File annotationFile;
     protected String defaultFileBaseLocation;
     
     public String getDefaultBaseFileLocation() {
     	return defaultFileBaseLocation;
     }
-    
-    //EH added so AMP can subclass
-    public EASEInitDialog(Frame parent, String windowTitle, boolean modal){
-    	super(parent, windowTitle, modal);
+    public File getAnnotationFile() {
+    	return annotationFile;
     }
-
+    
     /** Creates a new instance of EaseInitDialog
      * @param parent Parent Frame
      * @param repository Cluster repository to construct <CODE>ClusterBrowser</CODE>
      * @param annotationLabels Annotation types
      */
-    public EASEInitDialog(Frame parent, ClusterRepository repository, String [] annotationLabels, String defaultFileLocation) {
+    public EASEInitDialog(Frame parent, ClusterRepository repository, String [] annotationLabels, String defaultFileLocation, IResourceManager rm, String speciesName, String arrayName, Hashtable<String, Vector<String>> speciestoarrays) {
             super(parent, "EASE: EASE Annotation Analysis", true);
         this.parent = parent;
+        this.speciesName = speciesName;
+        this.arrayName = arrayName;
+        this.resourceManager = rm;
+        this.speciestoarrays = speciestoarrays;
+
+        
         if(defaultFileLocation == null) {
         	this.useLoadedAnnotationFile = false;
-            defaultFileBaseLocation = TMEV.getSettingForOption(EASEGUI.LAST_EASE_FILE_LOCATION);
+        	defaultFileBaseLocation = TMEV.getSettingForOption(EASEGUI.LAST_EASE_FILE_LOCATION);
         } else {
         	this.useLoadedAnnotationFile = true;
             defaultFileBaseLocation = defaultFileLocation;
@@ -160,9 +181,9 @@ public class EASEInitDialog extends AlgorithmDialog {
         //mode panel
         modePanel = new ModePanel(!(repository == null || repository.isEmpty()));
         
-        parameters.add(configPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));       
-        parameters.add(modePanel, new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-        parameters.add(tabbedPane, new GridBagConstraints(0,2,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        parameters.add(configPanel, 	new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));       
+        parameters.add(modePanel, 		new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        parameters.add(tabbedPane, 		new GridBagConstraints(0,2,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         
         addContent(parameters);
         setActionListeners(listener);
@@ -306,7 +327,6 @@ public class EASEInitDialog extends AlgorithmDialog {
     /** Returns the base file location for EASE file system
      */
     public String getBaseFileLocation() {
-    	TMEV.storeProperty(EASEGUI.LAST_EASE_FILE_LOCATION, configPanel.getBaseFileLocation());
         return configPanel.getBaseFileLocation();
     }
     
@@ -455,137 +475,135 @@ public class EASEInitDialog extends AlgorithmDialog {
         JButton browseButton;
         JLabel fileLabel;
         
-        public PopSelectionPanel() {
-            super("Population Selection");
-            setLayout(new GridBagLayout());
-            
-            ButtonGroup bg = new ButtonGroup();
-            
-            if(useLoadedAnnotationFile) {
-            	preloadedAnnotationButton = new JRadioButton("Use loaded array population as background", true);
-            } else {
-                preloadedAnnotationButton = new JRadioButton("Use loaded array population as background (annotation not loaded)", true);
-            }
-            preloadedAnnotationButton.setBackground(Color.white);
-            preloadedAnnotationButton.setFocusPainted(false);
-            bg.add(preloadedAnnotationButton);
-            preloadedAnnotationButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent ae) {
-                	//disable 
-                	easeParamPanel.fieldNamesBox.setSelectedItem(ANNOTATION_LINK);
-                	easeParamPanel.fieldNamesBox.setEnabled(!preloadedAnnotationButton.isSelected());
-                	easeParamPanel.useAnnBox.setEnabled(!preloadedAnnotationButton.isSelected());
-                    browseButton.setEnabled(!preloadedAnnotationButton.isSelected());
-                    popField.setEnabled(!preloadedAnnotationButton.isSelected());
-                    popField.setBackground(Color.lightGray);
-                    fileLabel.setEnabled(!preloadedAnnotationButton.isSelected());
-                    
-                }
-            });  
-            
-            
-            fileButton = new JRadioButton("Select Background Population from File");
-            fileButton.setBackground(Color.white);
-            fileButton.setFocusPainted(false);
-            bg.add(fileButton);
-            
-            fileButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent ae) {
-                	easeParamPanel.fieldNamesBox.setEnabled(!preloadedAnnotationButton.isSelected());
-                	easeParamPanel.useAnnBox.setEnabled(!preloadedAnnotationButton.isSelected());
-                    browseButton.setEnabled(fileButton.isSelected());
-                    popField.setEnabled(fileButton.isSelected());
-                    popField.setBackground(Color.white);
-                    fileLabel.setEnabled(fileButton.isSelected());
-                    
-                }
-            });
-            
-            dataButton = new JRadioButton("Select Background Population from Current Viewer");
-            dataButton.setBackground(Color.white);
-            dataButton.setFocusPainted(false);
-            bg.add(dataButton);
-            dataButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent ae) {
-                    browseButton.setEnabled(fileButton.isSelected());
-                    popField.setEnabled(fileButton.isSelected());
-                    popField.setBackground(Color.lightGray);
-                    fileLabel.setEnabled(fileButton.isSelected());
-                    
-                }
-            });
-            
-            browseButton = new JButton("File Browser");
-            browseButton.setFocusPainted(false);
-            browseButton.setPreferredSize(new Dimension(150, 25));
-            browseButton.setSize(150, 25);
-            browseButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent ae) {
-                	JFileChooser chooser = new JFileChooser(new File(getBaseFileLocation(), "Lists"));
-                    chooser.setDialogTitle("Population File Selection");
-                    chooser.setMultiSelectionEnabled(false);
-                    if(chooser.showOpenDialog(parent) == JOptionPane.OK_OPTION){
-                        updatePopField(chooser.getSelectedFile().getPath());
-                    }
-                }
-            });
-                 
-            fileLabel = new JLabel("File: ");
-            popField = new JTextField(25);
-            
+	public PopSelectionPanel() {
+		super("Population Selection");
+		setLayout(new GridBagLayout());
 
-            
-            //Enable the preloaded population annotation options only if the annotation is available. 
-            //Otherwise, "population from file" is the default option.
-            fileButton.setSelected(!useLoadedAnnotationFile);
-            preloadedAnnotationButton.setSelected(useLoadedAnnotationFile);
-            preloadedAnnotationButton.setEnabled(useLoadedAnnotationFile);
-            
-            browseButton.setEnabled(fileButton.isSelected());
-            popField.setEnabled(fileButton.isSelected());
-            fileLabel.setEnabled(fileButton.isSelected());
+		ButtonGroup bg = new ButtonGroup();
 
-            if(fileButton.isSelected())
-                popField.setBackground(Color.white);
-            else
-            	popField.setBackground(Color.lightGray);
+		if (useLoadedAnnotationFile) {
+			preloadedAnnotationButton = new JRadioButton("Use loaded array population as background", true);
+		} else {
+			preloadedAnnotationButton = new JRadioButton("Use loaded array population as background (annotation not loaded)", true);
+		}
+		preloadedAnnotationButton.setBackground(Color.white);
+		preloadedAnnotationButton.setFocusPainted(false);
+		bg.add(preloadedAnnotationButton);
+		preloadedAnnotationButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				//disable 
+//	                	easeParamPanel.fieldNamesBox.setSelectedItem(ANNOTATION_LINK);
+//	                	easeParamPanel.fieldNamesBox.setEnabled(!preloadedAnnotationButton.isSelected());
+//	                	easeParamPanel.useAnnBox.setEnabled(!preloadedAnnotationButton.isSelected());
+				browseButton.setEnabled(!preloadedAnnotationButton.isSelected());
+				popField.setEnabled(!preloadedAnnotationButton.isSelected());
+				popField.setBackground(Color.lightGray);
+				fileLabel.setEnabled(!preloadedAnnotationButton.isSelected());
 
-            
-            add(preloadedAnnotationButton, 	new GridBagConstraints(0,0,3,1,1,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,30,0,0), 0,0));
-            add(fileButton, 				new GridBagConstraints(0,1,3,1,1,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,30,0,0), 0,0));
-            add(fileLabel, 					new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,30,0,0), 0,0));
-            add(popField, 					new GridBagConstraints(1,2,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,10,0,0), 0,0));
-            add(browseButton, 				new GridBagConstraints(2,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,25,0,20), 0,0));
-            
-            add(dataButton, 				new GridBagConstraints(0,3,3,1,1,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(15,30,20,0), 0,0));
-        }
-        
-        protected void setEnableControls(boolean enable) {
-        	preloadedAnnotationButton.setEnabled(enable && useLoadedAnnotationFile);
-        	easeParamPanel.fieldNamesBox.setEnabled(!preloadedAnnotationButton.isSelected());
-        	easeParamPanel.useAnnBox.setEnabled(!preloadedAnnotationButton.isSelected());
-            fileButton.setEnabled(enable);
-            dataButton.setEnabled(enable);
-            popField.setEnabled(enable);
-            browseButton.setEnabled(enable);
-            fileLabel.setEnabled(enable);
-            setOpaque(enable);
-            tabbedPane.setEnabledAt(0, enable);
-        }
-        
-        protected void updatePopField(String file) {
-            this.popField.setText(file);
-        }
-        
-        protected String getPopFile() {
-            return popField.getText();
-        }        
-    }
+			}
+		});
+
+		fileButton = new JRadioButton("Select Background Population from File");
+		fileButton.setBackground(Color.white);
+		fileButton.setFocusPainted(false);
+		bg.add(fileButton);
+
+		fileButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				easeParamPanel.fieldNamesBox.setEnabled(!preloadedAnnotationButton.isSelected());
+				easeParamPanel.fieldNamesBox.setSelectedItem(AnnotationFieldConstants.CLONE_ID);
+				easeParamPanel.useAnnBox.setEnabled(!preloadedAnnotationButton.isSelected());
+				browseButton.setEnabled(fileButton.isSelected());
+				popField.setEnabled(fileButton.isSelected());
+				popField.setBackground(Color.white);
+				fileLabel.setEnabled(fileButton.isSelected());
+
+			}
+		});
+
+		dataButton = new JRadioButton("Select Background Population from Current Viewer");
+		dataButton.setBackground(Color.white);
+		dataButton.setFocusPainted(false);
+		bg.add(dataButton);
+		dataButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				browseButton.setEnabled(fileButton.isSelected());
+				popField.setEnabled(fileButton.isSelected());
+				popField.setBackground(Color.lightGray);
+				fileLabel.setEnabled(fileButton.isSelected());
+
+			}
+		});
+
+		browseButton = new JButton("File Browser");
+		browseButton.setFocusPainted(false);
+		browseButton.setPreferredSize(new Dimension(150, 25));
+		browseButton.setSize(150, 25);
+		browseButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				JFileChooser chooser = new JFileChooser(new File(getBaseFileLocation(), "Lists"));
+				chooser.setDialogTitle("Population File Selection");
+				chooser.setMultiSelectionEnabled(false);
+				if (chooser.showOpenDialog(parent) == JOptionPane.OK_OPTION) {
+					updatePopField(chooser.getSelectedFile().getPath());
+				}
+			}
+		});
+
+		fileLabel = new JLabel("File: ");
+		popField = new JTextField(25);
+
+		//Enable the preloaded population annotation options only if the annotation is available. 
+		//Otherwise, "population from file" is the default option.
+		fileButton.setSelected(!useLoadedAnnotationFile);
+		preloadedAnnotationButton.setSelected(useLoadedAnnotationFile);
+		preloadedAnnotationButton.setEnabled(useLoadedAnnotationFile);
+
+		browseButton.setEnabled(fileButton.isSelected());
+		popField.setEnabled(fileButton.isSelected());
+		fileLabel.setEnabled(fileButton.isSelected());
+
+		if (fileButton.isSelected())
+			popField.setBackground(Color.white);
+		else
+			popField.setBackground(Color.lightGray);
+
+		add(preloadedAnnotationButton, new GridBagConstraints(0, 0, 3, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10, 30, 0, 0), 0, 0));
+		add(fileButton, new GridBagConstraints(0, 1, 3, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10, 30, 0, 0), 0, 0));
+		add(fileLabel, new GridBagConstraints(0, 2, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 30, 0, 0), 0, 0));
+		add(popField, new GridBagConstraints(1, 2, 1, 1, 1, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 10, 0, 0), 0, 0));
+		add(browseButton, new GridBagConstraints(2, 2, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 25, 0, 20), 0, 0));
+
+		add(dataButton, new GridBagConstraints(0, 3, 3, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(15, 30, 20, 0), 0, 0));
+		}
+
+		protected void setEnableControls(boolean enable) {
+			preloadedAnnotationButton.setEnabled(enable && useLoadedAnnotationFile);
+			easeParamPanel.fieldNamesBox.setEnabled(!preloadedAnnotationButton.isSelected());
+			easeParamPanel.useAnnBox.setEnabled(!preloadedAnnotationButton.isSelected());
+			fileButton.setEnabled(enable);
+			dataButton.setEnabled(enable);
+			popField.setEnabled(enable);
+			browseButton.setEnabled(enable);
+			fileLabel.setEnabled(enable);
+			setOpaque(enable);
+			tabbedPane.setEnabledAt(0, enable);
+		}
+
+		protected void updatePopField(String file) {
+			this.popField.setText(file);
+		}
+
+		protected String getPopFile() {
+			return popField.getText();
+		}
+	}
     
     
     
-    /** Contains annotation parameter controls.
-     */
+    /**
+	 * Contains annotation parameter controls.
+	 */
     protected class EaseParameterPanel extends JPanel {
 
 		private static final long serialVersionUID = 3446234672105256730L;
@@ -714,9 +732,9 @@ public class EASEInitDialog extends AlgorithmDialog {
             annotKeyPanel.add(new JLabel("Annotation Key:  "), new GridBagConstraints(0,0,1,1,0.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
             annotKeyPanel.add(this.fieldNamesBox, new GridBagConstraints(1,0,1,1,0.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
             
-            this.add(annotKeyPanel, new GridBagConstraints(0,0,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
-            this.add(convPanel, new GridBagConstraints(0,1,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
-            this.add(annPanel, new GridBagConstraints(0,2,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
+            	this.add(annotKeyPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+		this.add(convPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+		this.add(annPanel, new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         }
         
         protected void updateFileDirectoryField(){
@@ -750,17 +768,18 @@ public class EASEInitDialog extends AlgorithmDialog {
             return null;
         }
         
-        /** Returns the annotation type string.
-         */
-        public String getAnnotationKeyType(){
-            return (String)this.fieldNamesBox.getSelectedItem();
-        }
+        /**
+	 * Returns the annotation type string.
+	 */
+		public String getAnnotationKeyType() {
+			return (String) this.fieldNamesBox.getSelectedItem();
+		}
         
         protected class EaseListListener implements ListSelectionListener {
-            public void valueChanged(ListSelectionEvent listSelectionEvent) {
-                updateFileDirectoryField();
-            }
-        }
+			public void valueChanged(ListSelectionEvent listSelectionEvent) {
+				updateFileDirectoryField();
+			}
+	}
         
         protected void updateConverterFileField(String field){
             this.converterFileField.setText(field);
@@ -936,234 +955,393 @@ public class EASEInitDialog extends AlgorithmDialog {
             trimPercentField = new JTextField("5", 10);
             trimPercentField.setEnabled(false);
             
-            trimPanel.add(trimBox, new GridBagConstraints(0,0,3,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,20,0),0,0));
-            
-            trimPanel.add(trimNBox, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-            trimPanel.add(trimNLabel, new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.BOTH, new Insets(0,20,0,15),0,0));
-            trimPanel.add(trimNField, new GridBagConstraints(2,1,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.NONE, new Insets(0,0,0,0),0,0));
-            
-            trimPanel.add(trimPercentBox, new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
-            trimPanel.add(trimPercentLabel, new GridBagConstraints(1,2,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.BOTH, new Insets(10,20,0,15),0,0));
-            trimPanel.add(trimPercentField, new GridBagConstraints(2,2,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.NONE, new Insets(10,0,0,0),0,0));
-            
-            //Add panels to main panel
-            add(statPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-            add(correctionPanel, new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-            add(trimPanel, new GridBagConstraints(0,2,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+	    trimPanel.add(trimBox, new GridBagConstraints(0,0,3,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,20,0),0,0));
+	    
+	    trimPanel.add(trimNBox, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+	    trimPanel.add(trimNLabel, new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.BOTH, new Insets(0,20,0,15),0,0));
+	    trimPanel.add(trimNField, new GridBagConstraints(2,1,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.NONE, new Insets(0,0,0,0),0,0));
+	    
+	    trimPanel.add(trimPercentBox, new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
+	    trimPanel.add(trimPercentLabel, new GridBagConstraints(1,2,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.BOTH, new Insets(10,20,0,15),0,0));
+	    trimPanel.add(trimPercentField, new GridBagConstraints(2,2,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.NONE, new Insets(10,0,0,0),0,0));
+	    
+	    //Add panels to main panel
+	    add(statPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+	    add(correctionPanel, new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+	    add(trimPanel, new GridBagConstraints(0,2,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         }
         
-        /** Indicates if permutations are selected.
-         */
-        public boolean performPermutations(){
-            return permBox.isSelected();
-        }
+        /**
+	 * Indicates if permutations are selected.
+	 */
+		public boolean performPermutations() {
+			return permBox.isSelected();
+		}
+
+		public void setEnablePermutations() {
+			permLabel.setEnabled(permBox.isSelected());
+			permField.setEnabled(permBox.isSelected());
+		}
         
-        public void setEnablePermutations(){
-            permLabel.setEnabled(permBox.isSelected());
-            permField.setEnabled(permBox.isSelected());
-        }
-        
-        public void validateTrimOptions(){
-            if(this.trimBox.isSelected()){
-                trimNBox.setEnabled(true);
-                trimPercentBox.setEnabled(true);
-                
-                trimNLabel.setEnabled(trimNBox.isSelected());
-                trimNField.setEnabled(trimNBox.isSelected());
-                trimPercentLabel.setEnabled(!trimNBox.isSelected());
-                trimPercentField.setEnabled(!trimNBox.isSelected());
-            } else {
-                trimNBox.setEnabled(false);
-                trimPercentBox.setEnabled(false);
-                
-                trimNLabel.setEnabled(false);
-                trimNField.setEnabled(false);
-                trimPercentLabel.setEnabled(false);
-                trimPercentField.setEnabled(false);
-            }
-        }
-    }
+        public void validateTrimOptions() {
+		if (this.trimBox.isSelected()) {
+			trimNBox.setEnabled(true);
+			trimPercentBox.setEnabled(true);
+
+			trimNLabel.setEnabled(trimNBox.isSelected());
+			trimNField.setEnabled(trimNBox.isSelected());
+			trimPercentLabel.setEnabled(!trimNBox.isSelected());
+			trimPercentField.setEnabled(!trimNBox.isSelected());
+		} else {
+			trimNBox.setEnabled(false);
+			trimPercentBox.setEnabled(false);
+
+			trimNLabel.setEnabled(false);
+			trimNField.setEnabled(false);
+			trimPercentLabel.setEnabled(false);
+			trimPercentField.setEnabled(false);
+		}
+	}
+}
     
     /**
-     * The topmost panel in the InitDialog, containing the location information for
-     * the EASE filesystem and the update controls.
-     */
+	 * The topmost panel in the InitDialog, containing the location
+	 * information for the EASE filesystem and the update controls.
+	 */
     protected class ConfigPanel extends ParameterPanel {
 		private static final long serialVersionUID = -5298900627241870503L;
-		JTextField defaultFileBaseLocation;
-        
-        public ConfigPanel() {
-            super("File Updates and Configuration");
-            setLayout(new GridBagLayout());
-            
-            JButton updateFilesButton = new JButton("Update EASE File System");
-            updateFilesButton.setActionCommand("update-files-command");
-            updateFilesButton.setFocusPainted(false);
-            updateFilesButton.addActionListener(listener);
-            updateFilesButton.setToolTipText("<html>Downloads EASE annotation files<br>for a selected species and array type.</html>");
-            JButton browseFileBaseButton = new JButton("Select EASE File System");
-            browseFileBaseButton.setActionCommand("select-file-base-command");
-            browseFileBaseButton.setFocusPainted(false);
-            browseFileBaseButton.addActionListener(listener);
-            browseFileBaseButton.setToolTipText("<html>Helps select the EASE annotation file system<br>that corresponds the current species and array type.</html>");
-            //defaultFileBaseLocation = new JTextField(TMEV.getFile("data/ease").getAbsolutePath(), 25);
-            defaultFileBaseLocation = new JTextField(getDefaultBaseFileLocation(), 25);
-            defaultFileBaseLocation.setEditable(true);
-            
-            add(browseFileBaseButton, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,0,5,0), 0, 0));
-            add(defaultFileBaseLocation,  new GridBagConstraints(1,0,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,5,5,0), 0, 0));            
-            add(updateFilesButton, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0, 0));                               
-        }
-        
-        public void selectFileSystem() {
-        	String startDir = TMEV.getSettingForOption(EASEGUI.LAST_EASE_FILE_LOCATION);
-        	if(startDir == null)
-        		startDir = defaultFileBaseLocation.getText();
-            File file = new File(startDir);
-            if(!file.exists()) {                
-                file = TMEV.getFile("data/ease");
-                if(file == null) {
-                    file = new File(System.getProperty("user.dir"));
-                }
-                TMEV.storeProperty(EASEGUI.LAST_EASE_FILE_LOCATION, file.toString());
-            }
-            JFileChooser chooser = new JFileChooser(file);
-            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            if(chooser.showOpenDialog(EASEInitDialog.this) == JOptionPane.OK_OPTION) {
-                defaultFileBaseLocation.setText(chooser.getSelectedFile().getAbsolutePath());
-                TMEV.storeProperty(EASEGUI.LAST_EASE_FILE_LOCATION, defaultFileBaseLocation.getText());
-            }
-        }
-        
-        public String getBaseFileLocation() {
-            return defaultFileBaseLocation.getText();
-        }
-    }
+
+		JComboBox organismListBox;
+		JComboBox arrayListBox;
+		JLabel chooseOrg, chooseArray, browseLabel, statusLabel;
+		JButton getEaseSupportFileButton;
+		JButton browseSupportFileButton;
+		JTextField supportFileLocationField;
+
+		public ConfigPanel() {
+			super("File Updates and Configuration");
+			setLayout(new GridBagLayout());
+				
+
+			getEaseSupportFileButton = new JButton("Download");
+			getEaseSupportFileButton.setActionCommand("download-support-file-command");
+			getEaseSupportFileButton.addActionListener(listener);
+			getEaseSupportFileButton.setToolTipText("<html>Downloads EASE annotation files<br>for a selected species and array type.</html>");
+
+			browseSupportFileButton = new JButton("Browse");
+			browseSupportFileButton.setActionCommand("select-file-base-command");
+			browseSupportFileButton.addActionListener(listener);
+
+			supportFileLocationField = new JTextField(getDefaultBaseFileLocation(), 25);
+			supportFileLocationField.setEditable(true);
+
+			chooseOrg = new JLabel("Organism");
+			chooseArray = new JLabel("Array Platform");
+			browseLabel = new JLabel("or Browse for another Ease data file system:");
+			statusLabel = new JLabel("Click to download");
+
+			if(speciestoarrays == null || speciestoarrays.size() == 0) {
+				organismListBox = new JComboBox();
+				organismListBox.addItem("No organisms listed");
+				organismListBox.setEnabled(false);
+				
+				arrayListBox = new JComboBox();
+				arrayListBox.addItem("No species listed");
+				arrayListBox.setEnabled(false);
+			} else {
+				
+				organismListBox = new JComboBox(new Vector<String>(speciestoarrays.keySet()));
+//				organismListBox.addActionListener(listener);
+//				organismListBox.setActionCommand("organism-selected-command");
+	
+				try {
+					organismListBox.setSelectedItem(speciesName);
+				} catch (NullPointerException npe) {/* Leave as default */}
+				arrayListBox = new JComboBox(speciestoarrays.get(organismListBox.getSelectedItem()));
+				
+				try {
+					arrayListBox.setSelectedItem(arrayName);
+				} catch (NullPointerException npe) {/* Leave as default */}
+				
+				arrayListBox.setEnabled(true); 
+
+			}
+
+			arrayListBox.addActionListener(listener);
+			arrayListBox.setActionCommand("array-selected-command");
+			organismListBox.addActionListener(listener);
+			organismListBox.setActionCommand("organism-selected-command");
+	
+			add(chooseOrg, 				new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, 	GridBagConstraints.BOTH, new Insets(5, 30, 0, 0), 0, 0));
+			add(chooseArray, 				new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.WEST, 	GridBagConstraints.BOTH, new Insets(5, 30, 0, 0), 0, 0));
+			add(organismListBox, 			new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.CENTER, 	GridBagConstraints.BOTH, new Insets(5, 30, 0, 0), 0, 0));
+			add(arrayListBox, 				new GridBagConstraints(1, 1, 1, 1, 0, 0, GridBagConstraints.CENTER, 	GridBagConstraints.BOTH, new Insets(5, 30, 0, 0), 0, 0));
+			add(statusLabel, 				new GridBagConstraints(4, 0, 1, 1, 0, 0, GridBagConstraints.EAST, 	GridBagConstraints.BOTH, new Insets(5, 25, 0, 20),0, 0));
+			add(getEaseSupportFileButton, 	new GridBagConstraints(4, 1, 1, 1, 0, 0, GridBagConstraints.EAST, 	GridBagConstraints.BOTH, new Insets(5, 25, 0, 20), 0, 0));
+			add(browseLabel, 				new GridBagConstraints(0, 2, 2, 1, 0, 0, GridBagConstraints.WEST, 	GridBagConstraints.BOTH, new Insets(10, 30, 0, 0),0, 0));
+			add(supportFileLocationField, 	new GridBagConstraints(0, 3, 2, 1, 1, 0, GridBagConstraints.WEST, 	GridBagConstraints.BOTH, new Insets(10, 30, 5, 0), 0, 0));
+			add(browseSupportFileButton, 	new GridBagConstraints(4, 3, 1, 1, 0, 0, GridBagConstraints.EAST, 	GridBagConstraints.BOTH, new Insets(5, 25, 5, 20), 0, 0));
+
+			try {
+				boolean b = resourceManager.fileIsInRepository(new EASESupportDataFile(organismListBox.getSelectedItem().toString(), arrayListBox.getSelectedItem().toString()));
+				if(b) {
+					getEaseSupportFileButton.setText("Select This");
+				} else {
+					getEaseSupportFileButton.setText("Download");
+				}
+			} catch (NullPointerException npe) {
+				getEaseSupportFileButton.setText("Download");
+			}
+			updateSelection();
+		}
+
+		private void onDownloadSupportFile() {
+			try {
+				File f = resourceManager.getSupportFile(new EASESupportDataFile(organismListBox.getSelectedItem().toString(), arrayListBox.getSelectedItem().toString()), true);
+				supportFileLocationField.setText(f.getAbsolutePath());
+				getEaseSupportFileButton.setText("Select This");
+				statusLabel.setText("Selected");
+				getEaseSupportFileButton.setEnabled(false);
+			} catch (SupportFileAccessError sfae) {
+				statusLabel.setText("Failure");
+				sfae.printStackTrace();
+			} catch (NullPointerException npe) {
+				statusLabel.setText("Failure");
+			}
+		}
+		
+		public void browseForSupportFiles() {
+			String startDir = TMEV.getSettingForOption(EASEGUI.LAST_EASE_FILE_LOCATION);
+			if (startDir == null)
+				startDir = supportFileLocationField.getText();
+			File file = new File(startDir);
+			if (!file.exists()) {
+				file = TMEV.getFile("data/ease");
+				if (file == null) {
+					file = new File(System.getProperty("user.dir"));
+				}
+				TMEV.storeProperty(EASEGUI.LAST_EASE_FILE_LOCATION, file.toString());
+			}
+			JFileChooser chooser = new JFileChooser(file);
+			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			if (chooser.showOpenDialog(EASEInitDialog.this) == JOptionPane.OK_OPTION) {
+				supportFileLocationField.setText(chooser.getSelectedFile().getAbsolutePath());
+				TMEV.storeProperty(EASEGUI.LAST_EASE_FILE_LOCATION, supportFileLocationField.getText());
+			}
+		}
+		public String getBaseFileLocation() {
+			return supportFileLocationField.getText();
+		}
+		public void selectSpecies() {
+			arrayListBox.removeAllItems();
+			Vector<String> arraysForThisSpecies = speciestoarrays.get(organismListBox.getSelectedItem());
+			for (int i = 0; i < arraysForThisSpecies.size(); i++) {
+				arrayListBox.addItem(arraysForThisSpecies.elementAt(i));
+			}
+		}
+		public void updateSelection() {
+			if(arrayListBox.getSelectedItem() == null) {
+				return;
+			}
+			String selectedOrganism = organismListBox.getSelectedItem().toString();
+			String selectedArray = arrayListBox.getSelectedItem().toString();
+			if(selectedOrganism != null && selectedArray != null) {
+				if(resourceManager.fileIsInRepository(new EASESupportDataFile(selectedOrganism, selectedArray))) {
+					statusLabel.setText("Click to Select");
+					getEaseSupportFileButton.setText("Select");
+				} else {
+					statusLabel.setText("Click to Download");
+					getEaseSupportFileButton.setText("Download");
+				}
+				getEaseSupportFileButton.setEnabled(true);
+			        try {
+			        	ResourcererAnnotationFileDefinition def = new ResourcererAnnotationFileDefinition(speciesName, arrayName);
+			        	annotationFile = resourceManager.getSupportFile(def, false);
+			        } catch (SupportFileAccessError sfae) {
+			        	//disable population from file button
+			        	useLoadedAnnotationFile = false;
+				        popPanel.fileButton.setSelected(true);
+				        popPanel.preloadedAnnotationButton.setSelected(false);
+				        popPanel.preloadedAnnotationButton.setEnabled(false);
+			        }
+			} else {
+				getEaseSupportFileButton.setEnabled(false);
+			}
+		}
+
+	}
     
     /**
-     * The class to listen to the dialog and check boxes items events.
-     */
+	 * The class to listen to the dialog and check boxes items events.
+	 */
     protected class EventListener extends DialogListener implements ItemListener {
-        
-        public void actionPerformed(ActionEvent e) {
-            String command = e.getActionCommand();
-            if (command.equals("use-converter-command")) {
-                if(easeParamPanel.useAnnBox.isSelected()){
-                    easeParamPanel.browserButton.setEnabled(true);
-                    easeParamPanel.converterFileField.setEnabled(true);
-                    easeParamPanel.converterFileField.setBackground(Color.white);
-                    easeParamPanel.fileLabel.setEnabled(true);
-                } else {
-                    easeParamPanel.browserButton.setEnabled(false);
-                    easeParamPanel.converterFileField.setEnabled(false);
-                    easeParamPanel.converterFileField.setBackground(Color.lightGray);
-                    easeParamPanel.fileLabel.setEnabled(false);
-                }
-            } else if (command.equals("converter-file-browser-command")){
-                File convertFile = new File(getBaseFileLocation() + sep + "Data" + sep + "Convert");
-                JFileChooser chooser = new JFileChooser(convertFile);
-                chooser.setDialogTitle("Annotation Converter Selection");
-                chooser.setMultiSelectionEnabled(false);
-                if(chooser.showOpenDialog(parent) == JOptionPane.OK_OPTION){
-                    easeParamPanel.updateConverterFileField(chooser.getSelectedFile().getPath());
-                }
-                return;
-            } else if (command.equals("ann-file-browser-command")){
-                File classFile = new File(getBaseFileLocation()+ sep + "Data" + sep + "Class" + sep);
-                if(!classFile.canRead())
-                 	classFile = new File("." + sep + "data" + sep + "ease");
-                JFileChooser chooser = new JFileChooser(classFile);
-                chooser.setDialogTitle("Annotation --> GO Term, File(s) Selection");
-                chooser.setMultiSelectionEnabled(true);
-                if(chooser.showOpenDialog(parent) == JOptionPane.OK_OPTION){
-                    easeParamPanel.updateAnnFileList(chooser.getSelectedFiles());
-                    easeParamPanel.removeButton.setEnabled(true);
-                    okButton.setEnabled(true);
-                }
-            } else if (command.equals("remove-ann-file-command")){
-                easeParamPanel.removeSelectedFiles();
-            } else if (command.equals("permutation-analysis-command")){
-                alphaPanel.setEnablePermutations();
-            } else if (command.equals("trim-result-command")){
-                alphaPanel.validateTrimOptions();
-            } else if (command.equals("select-file-base-command")) {
-                configPanel.selectFileSystem();
-            } else if (command.equals("update-files-command")) {
-                EASEUpdateManager manager = new EASEUpdateManager((JFrame)parent);
-                manager.updateFiles();
-            } else if (command.equals("ok-command")) {
-                result = JOptionPane.OK_OPTION;
-                if(isClusterModeSelected() && popPanel.fileButton.isSelected()) {
-                    String fileName = popPanel.popField.getText();
-                    if(fileName == null || fileName.equals("") || fileName.equals(" ")) {
-                        JOptionPane.showMessageDialog(parent, "You have selected to use a population file but have not "+
-                        "entered a file name.  \nPlease enter a file or use the file browser to select a file.", "EASE Initialization: Missing Parameter", JOptionPane.WARNING_MESSAGE);
-                        tabbedPane.setSelectedIndex(0);
-                        popPanel.popField.grabFocus();
-                        popPanel.popField.selectAll();
-                        popPanel.popField.setCaretPosition(0);
-                        return;
-                    }
-                }
-                
-                if(getAnnToGOFileList().length == 0) {
-                    JOptionPane.showMessageDialog(parent, "You have not selected any gene annotation/gene ontology linking files. \n"+
-                    "Please enter files or use the browser to select files.", "EASE Initialization: Missing Parameter", JOptionPane.WARNING_MESSAGE);
-                    tabbedPane.setSelectedIndex(1);
-                    easeParamPanel.browserButton.grabFocus();
-                    return;
-                }
-                
-                if(easeParamPanel.useAnnBox.isSelected()) {
-                    String fileName = easeParamPanel.getConverterFileName();
-                    if( fileName == null || fileName.equals("") || fileName.equals(" ") ) {
-                        JOptionPane.showMessageDialog(parent, "You have selected to use an annotation conversion file but have not made a file selection.\n" +
-                        "Please enter a file name or browse to select a file.", "EASE Initialization: Missing Parameter", JOptionPane.WARNING_MESSAGE);
-                        tabbedPane.setSelectedIndex(1);
-                        easeParamPanel.browserButton.grabFocus();
-                        return;
-                    }
-                }                
-                dispose();
-            } else if (command.equals("cancel-command")) {
-                result = JOptionPane.CANCEL_OPTION;
-                dispose();
-            } else if (command.equals("reset-command")){
-                resetControls();
-                result = JOptionPane.CANCEL_OPTION;
-                return;
-            } else if (command.equals("info-command")){
-                HelpWindow hw = new HelpWindow(EASEInitDialog.this, "EASE Initialization Dialog");
-                result = JOptionPane.CANCEL_OPTION;
-                if(hw.getWindowContent()){
-                    hw.setSize(600,600);
-                    hw.setLocation();
-                    hw.show();
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                }
-            }
-        }
-        
-        public void itemStateChanged(ItemEvent e) {
-            //okButton.setEnabled(genes_box.isSelected() || cluster_box.isSelected());
-        }
-        
-        public void windowClosing(WindowEvent e) {
-            result = JOptionPane.CLOSED_OPTION;
-            dispose();
-        }
-    }
-    
-    public static void main(String [] args) {
-        String [] labels = new String [3];
-        labels[0] = "TC#";
-        labels[1] = "GB#";
-        labels[2] = "Role";
 
-        EASEInitDialog eid = new EASEInitDialog(new JFrame(), labels);
-        eid.showModal();
-    }
+		public void actionPerformed(ActionEvent e) {
+			String command = e.getActionCommand();
+			if (command.equals("use-converter-command")) {
+				if (easeParamPanel.useAnnBox.isSelected()) {
+					easeParamPanel.browserButton.setEnabled(true);
+					easeParamPanel.converterFileField.setEnabled(true);
+					easeParamPanel.converterFileField.setBackground(Color.white);
+					easeParamPanel.fileLabel.setEnabled(true);
+				} else {
+					easeParamPanel.browserButton.setEnabled(false);
+					easeParamPanel.converterFileField.setEnabled(false);
+					easeParamPanel.converterFileField.setBackground(Color.lightGray);
+					easeParamPanel.fileLabel.setEnabled(false);
+				}
+			} else if (command.equals("converter-file-browser-command")) {
+				File convertFile = new File(getBaseFileLocation() + sep + "Data" + sep + "Convert");
+				JFileChooser chooser = new JFileChooser(convertFile);
+				chooser.setDialogTitle("Annotation Converter Selection");
+				chooser.setMultiSelectionEnabled(false);
+				if (chooser.showOpenDialog(parent) == JOptionPane.OK_OPTION) {
+					easeParamPanel.updateConverterFileField(chooser.getSelectedFile().getPath());
+				}
+				return;
+			} else if (command.equals("ann-file-browser-command")) {
+				File classFile = new File(getBaseFileLocation() + sep + "Data" + sep + "Class" + sep);
+				if (!classFile.canRead())
+					classFile = new File("." + sep + "data" + sep + "ease");
+				JFileChooser chooser = new JFileChooser(classFile);
+				chooser.setDialogTitle("Annotation --> GO Term, File(s) Selection");
+				chooser.setMultiSelectionEnabled(true);
+				if (chooser.showOpenDialog(parent) == JOptionPane.OK_OPTION) {
+					easeParamPanel.updateAnnFileList(chooser.getSelectedFiles());
+					easeParamPanel.removeButton.setEnabled(true);
+					okButton.setEnabled(true);
+				}
+			} else if (command.equals("remove-ann-file-command")) {
+				easeParamPanel.removeSelectedFiles();
+			} else if (command.equals("permutation-analysis-command")) {
+				alphaPanel.setEnablePermutations();
+			} else if (command.equals("trim-result-command")) {
+				alphaPanel.validateTrimOptions();
+			} else if (command.equals("select-file-base-command")) {
+				configPanel.browseForSupportFiles();
+			} else if (command.equals("organism-selected-command")) {
+				configPanel.selectSpecies();
+				configPanel.updateSelection();
+			} else if (command.equals("array-selected-command")) {
+				configPanel.updateSelection();
+			} else if (command.equals("download-support-file-command")) {
+				configPanel.onDownloadSupportFile();
+			} else if (command.equals("ok-command")) {
+				result = JOptionPane.OK_OPTION;
+				if (isClusterModeSelected() && popPanel.fileButton.isSelected()) {
+					String fileName = popPanel.popField.getText();
+					if (fileName == null || fileName.equals("") || fileName.equals(" ")) {
+						JOptionPane.showMessageDialog(parent, "You have selected to use a population file but have not "
+								+ "entered a file name.  \nPlease enter a file or use the file browser to select a file.",
+								"EASE Initialization: Missing Parameter", JOptionPane.WARNING_MESSAGE);
+						tabbedPane.setSelectedIndex(0);
+						popPanel.popField.grabFocus();
+						popPanel.popField.selectAll();
+						popPanel.popField.setCaretPosition(0);
+						return;
+					}
+				}
+
+				if (getAnnToGOFileList().length == 0) {
+					JOptionPane.showMessageDialog(parent, "You have not selected any gene annotation/gene ontology linking files. \n"
+							+ "Please enter files or use the browser to select files.", "EASE Initialization: Missing Parameter",
+							JOptionPane.WARNING_MESSAGE);
+					tabbedPane.setSelectedIndex(1);
+					easeParamPanel.browserButton.grabFocus();
+					return;
+				}
+
+				if (easeParamPanel.useAnnBox.isSelected()) {
+					String fileName = easeParamPanel.getConverterFileName();
+					if (fileName == null || fileName.equals("") || fileName.equals(" ")) {
+						JOptionPane.showMessageDialog(parent,
+								"You have selected to use an annotation conversion file but have not made a file selection.\n"
+										+ "Please enter a file name or browse to select a file.",
+								"EASE Initialization: Missing Parameter", JOptionPane.WARNING_MESSAGE);
+						tabbedPane.setSelectedIndex(1);
+						easeParamPanel.browserButton.grabFocus();
+						return;
+					}
+				}
+				dispose();
+			} else if (command.equals("cancel-command")) {
+				result = JOptionPane.CANCEL_OPTION;
+				dispose();
+			} else if (command.equals("reset-command")) {
+				resetControls();
+				result = JOptionPane.CANCEL_OPTION;
+				return;
+			} else if (command.equals("info-command")) {
+				HelpWindow hw = new HelpWindow(EASEInitDialog.this, "EASE Initialization Dialog");
+				result = JOptionPane.CANCEL_OPTION;
+				if (hw.getWindowContent()) {
+					hw.setSize(600, 600);
+					hw.setLocation();
+					hw.show();
+				} else {
+					hw.setVisible(false);
+					hw.dispose();
+				}
+			}
+		}
+
+		public void itemStateChanged(ItemEvent e) {
+			//okButton.setEnabled(genes_box.isSelected() || cluster_box.isSelected());
+		}
+
+		public void windowClosing(WindowEvent e) {
+			result = JOptionPane.CLOSED_OPTION;
+			dispose();
+		}
+	}
+    
+
+
+    
+    public static void main(String[] args) {
+		try {
+			IResourceManager rm = new FileResourceManager(new File(new File(System.getProperty("user.home"), ".mev"), "repository"));
+			String[] labels = new String[3];
+			labels[0] = "TC#";
+			labels[1] = "GB#";
+			labels[2] = "Role";
+			
+			Hashtable<String, Vector<String>> speciestoarrays = new Hashtable<String, Vector<String>>();
+			AvailableAnnotationsFileDefinition speciestoarray = new AvailableAnnotationsFileDefinition();
+			try {
+				File f = rm.getSupportFile(speciestoarray, true);
+				speciestoarrays = speciestoarray.parseAnnotationListFile(f);
+			} catch (SupportFileAccessError sfae) {
+				sfae.printStackTrace();
+				Vector<String> temp = new Vector<String>();
+				temp.add("HG_U133A");
+				temp.add("APPLERA_ABI1700");
+				speciestoarrays.put("Human", temp);
+				Vector<String> temp2 = new Vector<String>();
+				temp2.add("junk");
+				temp2.add("junk2");
+				speciestoarrays.put("Junk", temp2);
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+				Vector<String> temp = new Vector<String>();
+				temp.add("HG_U133A");
+				temp.add("APPLERA_ABI1700");
+				speciestoarrays.put("Human", temp);
+				Vector<String> temp2 = new Vector<String>();
+				temp2.add("junk");
+				temp2.add("junk2");
+				speciestoarrays.put("Junk", temp2);
+			}
+			
+			
+			
+			//EASEInitDialog eid = new EASEInitDialog(new JFrame(), labels);
+			EASEInitDialog eid = new EASEInitDialog(new JFrame(), new ClusterRepository(0), labels, "", rm, "Human", "HG_U133A", speciestoarrays);
+
+			eid.showModal();
+		} catch (RepositoryInitializationError rie) {
+			rie.printStackTrace();
+		}
+	}
+
 }

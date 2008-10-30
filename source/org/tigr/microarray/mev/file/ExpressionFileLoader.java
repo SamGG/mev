@@ -36,10 +36,9 @@ public abstract class ExpressionFileLoader extends SlideLoaderProgressBar {
 
 	protected IChipAnnotation chipAnno = null;
 
-	public ExpressionFileLoader(MultipleArrayViewer mav) {
+/*	public ExpressionFileLoader(MultipleArrayViewer mav) {
 		super(mav.getFrame());
-
-	}
+	}*/
 
 	public ExpressionFileLoader(SuperExpressionFileLoader superLoader) {
 		super(superLoader.getFrame());
@@ -122,8 +121,8 @@ public abstract class ExpressionFileLoader extends SlideLoaderProgressBar {
 	
 		for (int i = dataVector.size() - 1; i >= 0; i--) {
 			Vector<String> thisRow = dataVector.get(i);
-			String thisEntry = thisRow.get(guessCol);
 			try {
+				String thisEntry = thisRow.get(guessCol);
 				Float temp = new Float(thisEntry);
 			} catch (Exception e) {
 				guessRow = i + 1;

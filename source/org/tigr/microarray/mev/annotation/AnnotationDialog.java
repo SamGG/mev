@@ -166,7 +166,7 @@ public class AnnotationDialog extends AlgorithmDialog{
 		Thread thread = new Thread( new Runnable(){
 			public void run() {
 				try {
-					
+					//TODO put access to ResourceManager here.
 					ResourcererFTPClient ftpclient=new ResourcererFTPClient(chipType, organismType,
 							"anonymous","", AnnotationDialog.this);
 					ftpclient.connectToResourcerer();

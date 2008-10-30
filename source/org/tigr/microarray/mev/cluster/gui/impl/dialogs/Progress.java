@@ -84,7 +84,9 @@ public class Progress extends JDialog {
     public void setUnits(int units) {
         progress.setMaximum(units);
     }
-    
+    public void setIndeterminate(boolean b) {
+	    progress.setIndeterminate(b);
+    }
     /**
      * Sets progress value.
      */

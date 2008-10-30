@@ -29,6 +29,7 @@ import java.util.Vector;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.tigr.microarray.mev.ShowThrowableDialog;
 import org.tigr.microarray.mev.annotation.AnnotationFileReader;
 import org.tigr.microarray.mev.annotation.IChipAnnotation;
 import org.tigr.microarray.mev.annotation.MevAnnotation;
@@ -41,6 +42,9 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Logger;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
 import org.tigr.microarray.mev.cluster.gui.impl.ease.gotree.GOTreeViewer;
+import org.tigr.microarray.mev.resources.AvailableAnnotationsFileDefinition;
+import org.tigr.microarray.mev.resources.ISupportFileDefinition;
+import org.tigr.microarray.mev.resources.SupportFileAccessError;
 import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
 
 
@@ -121,27 +125,59 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         //check for existance of annotation file. If there is annotation loaded and the annotation file it came
         //from can be read, save a filehandle for it. 
     	String easeFileLocation = null;
-        if(framework.getData().isAnnotationLoaded()) {
-        	String chipType = framework.getData().getChipAnnotation().getChipType();
-        	String filename = framework.getData().getChipAnnotation().getAnnFileName();
+	String chipType = null;
+	String species = null;
+	Vector<ISupportFileDefinition> defs = new Vector<ISupportFileDefinition>();
 
-        	annotationFile = new File(filename);
-	        if(annotationFile.canRead()) {
-	        	easeFileLocation = "./data/ease" + sep + "ease_" + chipType;
+	EASESupportDataFile edf = null;
+
+	
+	if (framework.getData().isAnnotationLoaded()) {
+		chipType = framework.getData().getChipAnnotation().getChipType();
+		species = framework.getData().getChipAnnotation().getSpeciesName();
+		edf = new EASESupportDataFile(species, chipType);
+		defs.add(edf);
+
+	}
+	
+	Hashtable<String, Vector<String>> speciestoarrays = null;
+	AvailableAnnotationsFileDefinition aafd = new AvailableAnnotationsFileDefinition();
+	defs.add(aafd);
+        
+        EASEImpliesAndURLDataFile eiudf = new EASEImpliesAndURLDataFile();
+        defs.add(eiudf);
+        
+        try {
+        	Hashtable<ISupportFileDefinition, File> supportFiles = framework.getSupportFiles(defs, true);
+        	
+        	File impliesFile = supportFiles.get(eiudf);
+	        algorithmData.addParam("implies-location-list", eiudf.getImpliesLocation(impliesFile));
+	        algorithmData.addParam("tags-location-list", eiudf.getTagsLocation(impliesFile));
+	        
+	        File speciesarraymapping = supportFiles.get(aafd);
+	        try {
+	        	speciestoarrays = aafd.parseAnnotationListFile(speciesarraymapping);
+	        } catch (IOException ioe) {
+	        	speciestoarrays = null;
+	        }
+	        if(edf != null || framework.getData().isAnnotationLoaded()) {
+	        	easeFileLocation = supportFiles.get(edf).getAbsolutePath();
 	        } else {
-	        	annotationFile = new File("./data/Annotation/" + chipType + ".txt");
 	        	easeFileLocation = "./data/ease" + sep + "ease_" + chipType;
-	        	if(!annotationFile.canRead()) {
-	        		easeFileLocation = null;
-	        	}
-	        } 
+	        }
+        } catch (SupportFileAccessError sfae) {
+        	easeFileLocation = "./data/ease" + sep + "ease_" + chipType;
         }
         
         EASEInitDialog dialog = new EASEInitDialog(
         		framework.getFrame(), 
         		repository, 
         		framework.getData().getAllFilledAnnotationFields(), 
-        		easeFileLocation);
+        		easeFileLocation,
+        		framework.getResourceManager(),
+        		species, 
+        		chipType, 
+        		speciestoarrays);
         
         if(dialog.showModal() != JOptionPane.OK_OPTION)
             return null;
@@ -183,6 +219,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
 
             algorithmData.addStringArray("sample-list", clusterKeys);
             algorithmData.addIntArray("sample-indices", cluster.getExperimentIndices());  //drop in experiment indices
+
         }
         
         //Use file or IData for population, only permit file use for cluster analysis
@@ -191,14 +228,14 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         String [] populationKeys;
         if(isClusterAnalysis && dialog.isPreloadedAnnotationSelected()) {
             try {
-        		populationKeys = loadGeneIDs();
+        		populationKeys = loadGeneIDs(dialog.getAnnotationFile());
             } catch (IOException ioe) {
                 //Bad file format
-                JOptionPane.showMessageDialog(framework.getFrame(), "Error loading population file.", "Population File Load Error", JOptionPane.ERROR_MESSAGE);
+                ShowThrowableDialog.show(framework.getFrame(), "Error loading population file.", ioe);
                 return null;
             }
             if(populationKeys == null) {
-            	JOptionPane.showMessageDialog(framework.getFrame(), "Error loading population file.", "Population File Load Error", JOptionPane.ERROR_MESSAGE);
+            	JOptionPane.showMessageDialog(framework.getFrame(), "Error loading population file:.", "Population File Load Error", JOptionPane.ERROR_MESSAGE);
             	return null;
             }
         } else {
@@ -211,7 +248,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
 	                }
 	            } catch (IOException ioe) {
 	                //Bad file format
-	                JOptionPane.showMessageDialog(framework.getFrame(), "Error loading population file.", "Population File Load Error", JOptionPane.ERROR_MESSAGE);
+	                ShowThrowableDialog.show(framework.getFrame(), "Population File is not formatted correctly.", ioe);
 	                return null;
 	            }
 	        } else {
@@ -392,7 +429,8 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
                 }
             } catch (IOException ioe) {
                 //Bad file format
-                JOptionPane.showMessageDialog(framework.getFrame(), "Error loading population file.", "Population File Load Error", JOptionPane.ERROR_MESSAGE);
+            	ShowThrowableDialog.show(framework.getFrame(), "Error loading population file.", ioe);
+//                JOptionPane.showMessageDialog(framework.getFrame(), "Error loading population file.", "Population File Load Error", JOptionPane.ERROR_MESSAGE);
                 return null;
             }
         } else {
@@ -459,7 +497,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
      * @return Gene id keys for the background population listed in annotationFile.
      * @throws IOException
      */
-    protected String [] loadGeneIDs() throws IOException {
+    protected String [] loadGeneIDs(File annotationFile) throws IOException {
         if(annotationFile != null && annotationFile.exists()) {
         	try {
 	        	AnnotationFileReader afr = AnnotationFileReader.createAnnotationFileReader(annotationFile);
@@ -478,6 +516,11 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         	} catch (IOException ioe) {
         		//TODO handle this!
         	}
+        } else {
+        	if(annotationFile == null)
+        		System.out.println("annotation file is null");
+        	else 
+        		System.out.println(annotationFile.getAbsolutePath() + " does not exist.");
         }
         return null;
     }

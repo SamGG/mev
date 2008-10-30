@@ -53,6 +53,8 @@ public class EASE extends AbstractAlgorithm {
     protected boolean performClusterAnalysis;
     protected boolean isNestedEaseRun = false;
     
+    String tagsFileLocation;
+    
     long start;
     /** Creates a new instance of ease (Default)
      */
@@ -234,7 +236,10 @@ public class EASE extends AbstractAlgorithm {
         
         String [] populationList = algorithmData.getStringArray("population-list");
         annotationFileList = algorithmData.getStringArray("annotation-file-list");
-        
+
+        String impliesFileLocation = params.getString("implies-location-list");
+        tagsFileLocation = params.getString("tags-location-list");
+         
         EaseElementList sampleElementList = new EaseElementList(clusterIndices, sampleList);
         EaseElementList populationElementList = new EaseElementList(populationList);
 
@@ -285,6 +290,7 @@ public class EASE extends AbstractAlgorithm {
         for(int i = 0; i < annotationFileList.length; i++){
             jstats.AddAnnotationFileName(annotationFileList[i]);
         }
+        jstats.setImpliesFileLocation(impliesFileLocation);
         
         event.setDescription("Loading Annotation Category Files\n");
         fireValueChanged(event);
@@ -719,19 +725,15 @@ public class EASE extends AbstractAlgorithm {
         }
         
     }
-    
     /** Creates the <CODE>File</CODE> object containing the
      * accessions (or indices)
      * @param fileName File name String
      * @return
      */
-    protected File getAccessionFile(String fileName){
-        String sep = System.getProperty("file.separator");
+    protected File getAccessionFile(String fileName) {
         File file = new File(fileName);
         String accFileName = file.getName();
-        file = file.getParentFile();
-        file = new File(file.getPath()+sep+"URL data"+sep+"Tags"+sep+accFileName);
-        return file;
+    	return new File(tagsFileLocation, accFileName);
     }
     
     /** Returns header names based on criteria of the analysis mode and

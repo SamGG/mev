@@ -88,6 +88,9 @@ public class JEASEStatistics {
     /** accumulates totals for various systems  **/
     private Hashtable<String, Hashtable<String, String>> sample_totals = new Hashtable<String, Hashtable<String, String>>();
     
+    /** Contains the directory location of the Implies files **/
+    private String impliesFileLocation;
+    
     /** OS file separator **/
     private String sep;
     
@@ -131,6 +134,9 @@ public class JEASEStatistics {
     /** set the name of the file that stores the results.*/
     public void SetOutputFileName(String file_name){
         output_file_name = file_name;
+    }
+    public void setImpliesFileLocation(String impliesFileLocation) {
+    	this.impliesFileLocation = impliesFileLocation;
     }
     
     /**
@@ -189,17 +195,16 @@ public class JEASEStatistics {
             for(int i = 0; i < annotation_file_names.size(); i++){
                 fileName = (String)annotation_file_names.elementAt(i);
                 stringIndex = fileName.lastIndexOf(sep);
-                impliesFile = fileName.substring(0, stringIndex) + sep+"Implies"+sep;
-                impliesFile += fileName.substring(stringIndex+1, fileName.length());
-                
-                //System.out.println("implies file = "+impliesFile);
+                impliesFile = impliesFileLocation;
+                impliesFile = new File(impliesFile, fileName.substring(stringIndex+1, fileName.length())).getAbsolutePath();
                 
                 File file = new File(impliesFile);
-                if(!file.exists() || !file.isFile())  //if implies file is missing move on
-                    continue;
+                if(!file.exists() || !file.isFile())  {//if implies file is missing move on
+                	System.out.println("Couldn't find implies file at " + impliesFile);
+                	continue;
+                }
                 
                 in = new BufferedReader(new FileReader(impliesFile));
-                //term = fileName.substring(file_name.lastIndexOf("/")+1, file_name.indexOf("."));
                 term = fileName.substring(fileName.lastIndexOf(sep)+1, fileName.lastIndexOf("."));
                 
                 
@@ -227,7 +232,7 @@ public class JEASEStatistics {
                 String impCat;
 
                 end = true;  //start at true until no new indices are inserted
-                
+
                 for( Enumeration<String> _enum = implied_associations.keys(); _enum.hasMoreElements(); ){
                     
                     cat = _enum.nextElement();
@@ -242,7 +247,7 @@ public class JEASEStatistics {
                         for(int i = 0; i < impVector.size(); i++){
                             
                             impCat = ((String)impVector.elementAt(i));
-                            
+				
                             if(!categories.containsKey(impCat)){
                                 end = false;
                                 categories.put(impCat, new Hashtable<String, String>());
@@ -278,144 +283,146 @@ public class JEASEStatistics {
      * these categories as keys.
      */
     public void GetCategories(Vector popVector) {
-        BufferedReader in = null;
-        Hashtable<String, Vector<String>> implied_associations = new Hashtable<String, Vector<String>>();
-        String term;
-        String line="", category="", file_name="";
-        int idx, idx2;        
-        
-        try{
-            for(Enumeration e = annotation_file_names.elements(); e.hasMoreElements();){
-                file_name = e.nextElement().toString();
-                in = new BufferedReader(new FileReader(file_name));
-                
-                //use last index of . in case a user has a . in the path.
-                term = file_name.substring(file_name.lastIndexOf(sep)+1, file_name.lastIndexOf("."));
-                
-                //store terms in total hits accumulators
-                this.sample_totals.put(term, new Hashtable<String, String>());
-                this.pop_totals.put(term, new Hashtable<String, String>());
-                
-                while((line = in.readLine()) != null){
-                    
-                    idx = line.indexOf("\t");
-                    
-                    if( idx >= line.length() || idx < 1){
-                        continue;
-                    }
-                    
-                    //put this in to guard against no trailing tab (jcb)
-                    idx2 = line.indexOf("\t", idx+1);
-                    if(idx2 >= line.length() || idx2 < 1)
-                        idx2 = line.length();
-                    
-                    category = term + "\t" + line.substring(idx+1, idx2).trim();
-                    if(popVector.contains(line.substring(0,idx).trim())) {
-                        if(!categories.containsKey(category)){
-                            categories.put(category, new Hashtable<String, String>());
-                            (categories.get(category)).put(line.substring(0,idx).trim(), "");
-                        }else{
-                            (categories.get(category)).put(line.substring(0,idx).trim(), "");
-                        }
-                    }
-                }
-            }
-                        
-            //(jcb)
-            //create hash table for implies using (implies_associator)
-            //This will then be used to add implied categories
-            String fileName, impliesFile;
-            int stringIndex;
-            for(int i = 0; i < annotation_file_names.size(); i++){
-                fileName = (String)annotation_file_names.elementAt(i);
-                stringIndex = fileName.lastIndexOf(sep);
-                impliesFile = fileName.substring(0, stringIndex) + sep+"Implies"+sep;
-                impliesFile += fileName.substring(stringIndex+1, fileName.length());
-                 
-                File file = new File(impliesFile);
-                if(!file.exists() || !file.isFile())  //if implies file is missing move on
-                    continue;
-                
-                in = new BufferedReader(new FileReader(impliesFile));
-                //term = fileName.substring(file_name.lastIndexOf("/")+1, file_name.indexOf("."));
-                term = fileName.substring(fileName.lastIndexOf(sep)+1, fileName.lastIndexOf("."));
-                
-                
-                while((line = in.readLine()) != null){
-                    idx = line.indexOf('\t');
-                    
-                    if(idx >= line.length() || idx < 1)  //must include a tab
-                        continue;
-                    
-                    if(!implied_associations.containsKey(term + "\t" +line.substring(0,idx).trim())){
-                        implied_associations.put(term + "\t" +line.substring(0,idx).trim(), new Vector<String>());
-                        (implied_associations.get(term + "\t" +line.substring(0,idx).trim())).addElement(term + "\t" + line.substring(idx, line.length()).trim());
-                    } else {
-                        (implied_associations.get(term + "\t" +line.substring(0,idx).trim())).addElement(term + "\t" + line.substring(idx, line.length()).trim());
-                    }
-                }
-            }
-            
-            boolean end = false;
-            //(jcb) append associated categories to the list
-            for(int k = 0; k < 10 && !end; k++){  // !end will short circuit if stable
-                String cat="";
-                Hashtable<String, String> catHash;
-                Vector impVector;
-                String impCat;
+		BufferedReader in = null;
+		Hashtable<String, Vector<String>> implied_associations = new Hashtable<String, Vector<String>>();
+		String term;
+		String line = "", category = "", file_name = "";
+		int idx, idx2;
 
-                end = true;  //start at true until no new indices are inserted
-                
-                for( Enumeration<String> _enum = implied_associations.keys(); _enum.hasMoreElements(); ){
-                    
-                    cat = _enum.nextElement();
-                    
-                    //if the category is represented, add the implied associations if they don't exist
-                    if(categories.containsKey(cat)){
-                        catHash = categories.get(cat);
-                        
-                        //associated categories
-                        impVector = ((Vector)implied_associations.get(cat));
-                        
-                        for(int i = 0; i < impVector.size(); i++){
-                            
-                            impCat = ((String)impVector.elementAt(i));
-                            
-                            if(!categories.containsKey(impCat)){
-                                end = false;
-                                categories.put(impCat, new Hashtable<String, String>());
-                                for(Enumeration<String> categoryEnum = catHash.keys(); categoryEnum.hasMoreElements();){
-                                    (categories.get(impCat)).put((String)categoryEnum.nextElement(), "");
-                                }
-                            } else {  //category exists, need to append locus link numbers
-                                for(Enumeration<String> categoryEnum = catHash.keys(); categoryEnum.hasMoreElements();){
-                                    String indexString = categoryEnum.nextElement();
-                                    if(!(categories.get(impCat)).containsKey(indexString) ){
-                                        // ((Hashtable)categories.get(impCat)).put((String)categoryEnum.nextElement(), "");
-                                        (categories.get(impCat)).put(indexString, "");
-                                        
-                                        end = false;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            
-        }catch(Exception error){
-            System.out.println("Error occured collecting categories");
-            System.out.println(error.getMessage());
-            error.printStackTrace();
-        }
-    }
+		try {
+			for (Enumeration e = annotation_file_names.elements(); e.hasMoreElements();) {
+				file_name = e.nextElement().toString();
+				in = new BufferedReader(new FileReader(file_name));
+
+				//use last index of . in case a user has a . in the path.
+				term = file_name.substring(file_name.lastIndexOf(sep) + 1, file_name.lastIndexOf("."));
+
+				//store terms in total hits accumulators
+				this.sample_totals.put(term, new Hashtable<String, String>());
+				this.pop_totals.put(term, new Hashtable<String, String>());
+
+				while ((line = in.readLine()) != null) {
+
+					idx = line.indexOf("\t");
+
+					if (idx >= line.length() || idx < 1) {
+						continue;
+					}
+
+					//put this in to guard against no trailing tab (jcb)
+					idx2 = line.indexOf("\t", idx + 1);
+					if (idx2 >= line.length() || idx2 < 1)
+						idx2 = line.length();
+
+					category = term + "\t" + line.substring(idx + 1, idx2).trim();
+					if (popVector.contains(line.substring(0, idx).trim())) {
+						if (!categories.containsKey(category)) {
+							categories.put(category, new Hashtable<String, String>());
+							(categories.get(category)).put(line.substring(0, idx).trim(), "");
+						} else {
+							(categories.get(category)).put(line.substring(0, idx).trim(), "");
+						}
+					}
+				}
+			}
+
+			//(jcb)
+			//create hash table for implies using (implies_associator)
+			//This will then be used to add implied categories
+			String fileName, impliesFile;
+			int stringIndex;
+			for (int i = 0; i < annotation_file_names.size(); i++) {
+				fileName = (String) annotation_file_names.elementAt(i);
+				stringIndex = fileName.lastIndexOf(sep);
+				impliesFile = impliesFileLocation;
+				impliesFile = new File(impliesFile, fileName.substring(stringIndex + 1, fileName.length())).getAbsolutePath();
+
+				File file = new File(impliesFile);
+				if (!file.exists() || !file.isFile()) {//if implies file is missing move on
+					System.out.println("Couldn't find implies file at " + impliesFile);
+					continue;
+				}
+
+				in = new BufferedReader(new FileReader(impliesFile));
+				term = fileName.substring(fileName.lastIndexOf(sep) + 1, fileName.lastIndexOf("."));
+
+				while ((line = in.readLine()) != null) {
+					idx = line.indexOf('\t');
+
+					if (idx >= line.length() || idx < 1) //must include a tab
+						continue;
+
+					if (!implied_associations.containsKey(term + "\t" + line.substring(0, idx).trim())) {
+						implied_associations.put(term + "\t" + line.substring(0, idx).trim(), new Vector<String>());
+						(implied_associations.get(term + "\t" + line.substring(0, idx).trim())).addElement(term + "\t" + line.substring(idx, line.length()).trim());
+					} else {
+						(implied_associations.get(term + "\t" + line.substring(0, idx).trim())).addElement(term + "\t" + line.substring(idx, line.length()).trim());
+					}
+
+				}
+			}
+
+			boolean end = false;
+			//(jcb) append associated categories to the list
+			for (int k = 0; k < 10 && !end; k++) { // !end will short circuit if stable
+				String cat = "";
+				Hashtable<String, String> catHash;
+				Vector impVector;
+				String impCat;
+
+				end = true; //start at true until no new indices are inserted
+				for (Enumeration<String> _enum = implied_associations.keys(); _enum.hasMoreElements();) {
+
+					cat = _enum.nextElement();
+
+					//if the category is represented, add the implied associations if they don't exist
+					if (categories.containsKey(cat)) {
+						catHash = categories.get(cat);
+
+						//associated categories
+						impVector = ((Vector) implied_associations.get(cat));
+
+						for (int i = 0; i < impVector.size(); i++) {
+
+							impCat = ((String) impVector.elementAt(i));
+							
+							if (!categories.containsKey(impCat)) {
+								end = false;
+								categories.put(impCat, new Hashtable<String, String>());
+								for (Enumeration<String> categoryEnum = catHash.keys(); categoryEnum.hasMoreElements();) {
+									(categories.get(impCat)).put((String) categoryEnum.nextElement(), "");
+								}
+							} else { //category exists, need to append locus link numbers
+								for (Enumeration<String> categoryEnum = catHash.keys(); categoryEnum.hasMoreElements();) {
+									String indexString = categoryEnum.nextElement();
+									if (!(categories.get(impCat)).containsKey(indexString)) {
+										// ((Hashtable)categories.get(impCat)).put((String)categoryEnum.nextElement(), "");
+										(categories.get(impCat)).put(indexString, "");
+
+										end = false;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+		} catch (Exception error) {
+			System.out.println("Error occured collecting categories");
+			System.out.println(error.getMessage());
+			error.printStackTrace();
+		}
+	}
     
     /**
-     * Returns a list of gene indices that correspond to the functional class "term". Used by the 
-     * Nested EASE resampling functions.
-     * @param term the term to find the matching genes for
-     * @return the list of gene indices
-     */
+	 * Returns a list of gene indices that correspond to the functional
+	 * class "term". Used by the Nested EASE resampling functions.
+	 * 
+	 * @param term
+	 *                the term to find the matching genes for
+	 * @return the list of gene indices
+	 */
     public Vector<String> getSubPopulationForCategory(String term) {
         String key="";
         Hashtable<String, String> hash_table = new Hashtable<String, String>();

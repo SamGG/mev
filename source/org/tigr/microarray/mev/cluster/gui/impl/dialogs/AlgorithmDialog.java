@@ -47,6 +47,10 @@ public class AlgorithmDialog extends JDialog {
     protected JPanel contentPanel;
     protected JPanel buttonPanel;
     
+    public static final String RESET_COMMAND = "reset-command";
+    public static final String OK_COMMAND = "ok-command";
+    public static final String CANCEL_COMMAND = "cancel-command";
+    
     GradientPaint gp;
     Color backgroundColor = new Color(25,25,169);
     Color fadeColor = new Color(140,220,240);
@@ -62,17 +66,17 @@ public class AlgorithmDialog extends JDialog {
         contentPanel.setLayout(new GridBagLayout());
         buttonPanel = new JPanel();
         okButton = new JButton("OK");
-        okButton.setActionCommand("ok-command");
+        okButton.setActionCommand(OK_COMMAND);
         okButton.setSize(60,30);
         okButton.setPreferredSize(new Dimension(60,30));
         okButton.setFocusPainted(false);
         cancelButton = new JButton("Cancel");
-        cancelButton.setActionCommand("cancel-command");
+        cancelButton.setActionCommand(CANCEL_COMMAND);
         cancelButton.setSize(60,30);
         cancelButton.setPreferredSize(new Dimension(60,30));
         cancelButton.setFocusPainted(false);
         resetButton = new JButton("Reset");
-        resetButton.setActionCommand("reset-command");
+        resetButton.setActionCommand(RESET_COMMAND);
         resetButton.setSize(60,30);
         resetButton.setPreferredSize(new Dimension(60,30));
         resetButton.setFocusPainted(false);
@@ -217,7 +221,7 @@ public class AlgorithmDialog extends JDialog {
     
     public static void main(String [] args){
         AlgorithmDialog dialog = new AlgorithmDialog(new JFrame(), "Test", true);
-        dialog.show();
+        dialog.setVisible(true);
         System.exit(0);
     }
     
