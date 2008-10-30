@@ -15,6 +15,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -36,6 +37,13 @@ import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Logger;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
+import org.tigr.microarray.mev.cluster.gui.impl.ease.EASEImpliesAndURLDataFile;
+import org.tigr.microarray.mev.cluster.gui.impl.ease.EASEInitDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.ease.EASESupportDataFile;
+import org.tigr.microarray.mev.resources.AvailableAnnotationsFileDefinition;
+import org.tigr.microarray.mev.resources.IResourceManager;
+import org.tigr.microarray.mev.resources.ISupportFileDefinition;
+import org.tigr.microarray.mev.resources.SupportFileAccessError;
 
 
 
@@ -160,13 +168,20 @@ public class TEASEGUI implements IClusterGUI {
         if (function == Algorithm.DEFAULT) {      //default value is Euclidean distance
             function = Algorithm.EUCLIDEAN;
         }        
-        
+
+        String speciesName = null; 
+    	Hashtable<String, Vector<String>> speciestoarrays = null;
+    	Vector<ISupportFileDefinition> defs = new Vector<ISupportFileDefinition>();
+    	EASESupportDataFile edf = null;
+    	String chipType = null;
         File defaultTEASEDirectory = null;
         if(framework.getData().isAnnotationLoaded()) {
-	
-        	String chipType = framework.getData().getChipAnnotation().getChipType();
+        	chipType = framework.getData().getChipAnnotation().getChipType();
         	String filename = framework.getData().getChipAnnotation().getAnnFileName();
-
+    		String species = framework.getData().getChipAnnotation().getSpeciesName();
+    		edf = new EASESupportDataFile(species, chipType);
+    		defs.add(edf);
+        	
         	File annotationFile = new File(filename);
 	        if(annotationFile.canRead()) {
 	        	defaultTEASEDirectory = new File("./data/ease/ease_" + chipType);
@@ -177,12 +192,55 @@ public class TEASEGUI implements IClusterGUI {
 	        		defaultTEASEDirectory = null;
 	        	}
 	        } 
+        }	
+        
+
+    	AvailableAnnotationsFileDefinition aafd = new AvailableAnnotationsFileDefinition();
+    	defs.add(aafd);
+        EASEImpliesAndURLDataFile eiudf = new EASEImpliesAndURLDataFile();
+        defs.add(eiudf);        
+        if (framework.getData().isAnnotationLoaded()) {
+    		chipType = framework.getData().getChipAnnotation().getChipType();
+    		speciesName = framework.getData().getChipAnnotation().getSpeciesName();
+    		edf = new EASESupportDataFile(speciesName, chipType);
+    		defs.add(edf);
+    	} 
+        try {
+        	Hashtable<ISupportFileDefinition, File> supportFiles = framework.getSupportFiles(defs, true);
+        	
+        	File impliesFile = supportFiles.get(eiudf);
+	        data.addParam("implies-location-list", eiudf.getImpliesLocation(impliesFile));
+	        data.addParam("tags-location-list", eiudf.getTagsLocation(impliesFile));
+	        
+	        File speciesarraymapping = supportFiles.get(aafd);
+	        try {
+	        	speciestoarrays = aafd.parseAnnotationListFile(speciesarraymapping);
+	        } catch (IOException ioe) {
+	        	speciestoarrays = null;
+	        }
+	        if(edf != null || framework.getData().isAnnotationLoaded()) {
+	        	defaultTEASEDirectory = new File(supportFiles.get(edf).getAbsolutePath());
+	        } else {
+	        	defaultTEASEDirectory = new File("./data/ease/ease_" + chipType);
+	        }
+        } catch (SupportFileAccessError sfae) {
+        	defaultTEASEDirectory = new File("./data/ease/ease_" + chipType);
         }
-    
-        		
-    	TEASEInitDialog dialog = new TEASEInitDialog(framework.getFrame(), framework.getData().getAllFilledAnnotationFields(),
-    			menu.getFunctionName(function),	menu.isAbsoluteDistance(), true, defaultTEASEDirectory);
+//    	TEASEInitDialog dialog = new TEASEInitDialog(framework.getFrame(), framework.getData().getAllFilledAnnotationFields(),
+//    			menu.getFunctionName(function),	menu.isAbsoluteDistance(), true, defaultTEASEDirectory);
     	
+        TEASEInitDialog dialog = new TEASEInitDialog(
+        		framework.getFrame(), 
+        		framework.getData().getAllFilledAnnotationFields(), 
+        		menu.getFunctionName(function), 
+        		menu.isAbsoluteDistance(), 
+        		true,
+        		defaultTEASEDirectory,
+        		framework.getResourceManager(),
+        		speciesName, 
+        		chipType, 
+        		speciestoarrays);
+        
         if (dialog.showModal() != JOptionPane.OK_OPTION) {
             return null;
         }

@@ -77,15 +77,15 @@ import org.tigr.microarray.mev.annotation.IChipAnnotation;
 import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.annotation.PublicURL;
 import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.util.ExpressionFileTableCellRenderer;
 import org.tigr.microarray.util.FileLoaderUtility;
-import org.tigr.microarray.util.MyCellRenderer;
 
 
 public class RMAFileLoader extends ExpressionFileLoader {
     private GBA gba;
     private boolean stop = false;
     private RMAFileLoaderPanel sflp;
-    private MyCellRenderer myCellRenderer;
+    private ExpressionFileTableCellRenderer myCellRenderer;
     /**
      * Raktim - Annotation Specific
      * Place Holder for reading in Affy Anno 
@@ -93,7 +93,7 @@ public class RMAFileLoader extends ExpressionFileLoader {
      **/
     private Hashtable _tempAnno=new Hashtable();
     private MultipleArrayViewer mav;
-    private File selectedAnnoFile;
+//    private File selectedAnnoFile;
     protected MevAnnotation mevAnno=new MevAnnotation();
     private String annotationFileName;
     
@@ -122,8 +122,10 @@ public class RMAFileLoader extends ExpressionFileLoader {
          * irrespective of whether annotation was loaded or not
          * 
          */
-        if(this.mav.getData().isAnnotationLoaded()) {
-        	AnnotationFileReader afr = AnnotationFileReader.createAnnotationFileReader(new File(getAnnotationFileName()));
+    	if(isAnnotationSelected()) {
+//        if(this.mav.getData().isAnnotationLoaded()) {
+    		this.mav.getData().setAnnotationLoaded(true);
+        	AnnotationFileReader afr = AnnotationFileReader.createAnnotationFileReader(new File(getAnnotationFilePath()));
         	_tempAnno = afr.getAffyAnnotation();
         	chipAnno = afr.getAffyChipAnnotation();  
         }
@@ -474,17 +476,8 @@ public class RMAFileLoader extends ExpressionFileLoader {
     
 
     public void openDataPath() {
+    }
 
-       // this.sflp.openDataPath();
-
-    }
-    public String getAnnotationFileName() {
-    	return this.annotationFileName;
-    }
-    
-    public void setAnnotationFileName(String name) {
-    	this.annotationFileName=name;
-    }
 
 /***
  * 
@@ -523,10 +516,7 @@ public class RMAFileLoader extends ExpressionFileLoader {
     	 * Resourcerer. This feature is currently available only for Affymetrix files.
     	 */
     	JPanel annotationPanel;
-    	JLabel getAnnotation,  customAnnotation;
-    	JButton connectButton, browseButton3;
-    	JTextField annFileListTextField;
-    	
+    	AnnotationDownloadHandler adh;
     	
         protected EventListener eventListener;
   
@@ -542,6 +532,7 @@ public class RMAFileLoader extends ExpressionFileLoader {
             
     	  eventListener=new EventListener();
             setLayout(new GridBagLayout());
+      	  adh = new AnnotationDownloadHandler(superLoader);
 
             fileNameTextField = new JTextField();
             fileNameTextField.setEditable(false);
@@ -587,43 +578,10 @@ public class RMAFileLoader extends ExpressionFileLoader {
     		gba.add(fileSelectionPanel, fileSelectionLabel, 0, 2, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             gba.add(fileSelectionPanel, selectedFiles, 1, 2, 1, 1, 2, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0); 
               
-            annotationPanel = new JPanel();
-            annotationPanel.setLayout(new GridBagLayout());
-            annotationPanel.setBorder(new TitledBorder(new EtchedBorder(), "Annotation"));
-              
-            
-            getAnnotation=new JLabel("Retrieve  Annotation  from  Resourcerer");
-
-
-    		connectButton = new JButton("Connect");
-    		connectButton.setSize(new Dimension(100, 30));
-    		connectButton.setPreferredSize(new Dimension(100, 30));
-    		connectButton.addActionListener(new EventListener());
-
-    		
-    		customAnnotation=new JLabel("Upload annotation");
-    		
-    		annFileListTextField=new JTextField();
-    		annFileListTextField.setEditable(false);
-    		annFileListTextField.setForeground(Color.black);
-    		annFileListTextField.setFont(new Font("monospaced", Font.BOLD, 12));
-    		
-    		browseButton3 = new JButton("Browse");
-    		browseButton3.setSize(new Dimension(100, 30));
-    		browseButton3.setPreferredSize(new Dimension(100, 30));
-    		browseButton3.addActionListener(new EventListener());
-
-    		 
-    		gba.add(annotationPanel, getAnnotation, 0, 0, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(annotationPanel, connectButton, 1, 0, GBA.RELATIVE, 1, 0, 0,GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    	    		
-    		gba.add(annotationPanel, customAnnotation, 0, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5,5,5,5),0,0);
-    		gba.add(annotationPanel, annFileListTextField, 1, 1, 1, 0, 1, 0, GBA.H,	GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(annotationPanel, browseButton3, 2, 1, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 10, 5), 0, 0);
-    	
+            annotationPanel = adh.getAnnotationLoaderPanel(gba);
     	
             expressionTable = new JTable();
-            myCellRenderer = new MyCellRenderer();
+            myCellRenderer = new ExpressionFileTableCellRenderer();
             expressionTable.setDefaultRenderer(Object.class, myCellRenderer);
             expressionTable.setIntercellSpacing(new Dimension(1, 1));
     		expressionTable.setShowHorizontalLines(false);
@@ -676,7 +634,9 @@ public class RMAFileLoader extends ExpressionFileLoader {
       expressionTable.repaint();
       checkLoadEnable();
   }
-
+public boolean isAnnotationSelected() {
+	return adh.isAnnotationSelected();
+}
         public void openDataPath() {
         }
         public void onBrowse() {
@@ -689,40 +649,7 @@ public class RMAFileLoader extends ExpressionFileLoader {
         	}
            		
     	}
-        
-        public void onAnnotationFileBrowse() {
-        	FileLoaderUtility fileLoad = new FileLoaderUtility();
-        	File selectedFile;
-        	JFileChooser fileChooser = new JFileChooser(
-        			SuperExpressionFileLoader.ANNOTATION_PATH);
-        	fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        	int retVal = fileChooser.showOpenDialog(RMAFileLoaderPanel.this);
 
-        	if (retVal == JFileChooser.APPROVE_OPTION) {
-
-        		selectedFile = fileChooser.getSelectedFile();
-        		setAnnotationFileName(selectedFile.getAbsolutePath());
-        		annFileListTextField.setText(selectedFile.getAbsolutePath());
-        		mav.getData().setAnnotationLoaded(true);
-        	}
-    	}
-        
-        
-    
-        
-        public void onConnect() {
-        	AnnotationDialog annDialog=new AnnotationDialog(new JFrame());
-        	if(annDialog.showModal()==JOptionPane.OK_OPTION) {
-        	setAnnotationFileName(annDialog.getAnnotationFileName());
-        	mav.getData().setAnnotationLoaded(true);
-        	}else {
-        		mav.getData().setAnnotationLoaded(false);
-        	}
-        
-            } 
-        
-   
-        
         public JTable getTable() {
             return expressionTable;
 
@@ -786,11 +713,6 @@ public class RMAFileLoader extends ExpressionFileLoader {
     			Object source = event.getSource();
     			if (source == browseButton1) {
     				onBrowse();
-    			} else if (source==browseButton3){
-        			onAnnotationFileBrowse();  
-        		}
-        		else if (source==connectButton){
-        			onConnect();  
         		}
         		   
     			
@@ -810,9 +732,12 @@ public class RMAFileLoader extends ExpressionFileLoader {
         }
     }
 
-@Override
-public String getAnnotationFilePath() {
-	return this.sflp.annFileListTextField.getText();
-	
-}    
+	@Override
+	public String getAnnotationFilePath() {
+		return this.sflp.adh.annFileListTextField.getText();
+		
+	}    
+	public boolean isAnnotationSelected() {
+		return sflp.isAnnotationSelected();
+	}
 }

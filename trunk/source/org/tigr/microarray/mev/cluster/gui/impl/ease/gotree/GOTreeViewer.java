@@ -55,6 +55,9 @@ import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.helpers.ktree.ITreeNode;
 import org.tigr.microarray.mev.cluster.gui.helpers.ktree.ITreeNodeRenderer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ktree.Ktree;
+import org.tigr.microarray.mev.cluster.gui.impl.ease.EASEImpliesAndURLDataFile;
+import org.tigr.microarray.mev.resources.ISupportFileDefinition;
+import org.tigr.microarray.mev.resources.SupportFileAccessError;
 
 /**
  *
@@ -80,7 +83,7 @@ public class GOTreeViewer extends JPanel implements IViewer {
     private double upper = 0.05;
     private double lower = 0.01;
     
-    private String baseFileSystem;
+//    private String baseFileSystem;
     
     private GONode[][] storedNodes;
     private String[] headerFields;
@@ -108,7 +111,7 @@ public class GOTreeViewer extends JPanel implements IViewer {
     public GOTreeViewer(GONode [][] data, DefaultMutableTreeNode viewerNode, String baseFileSystem) {
         super(new GridBagLayout());
         this.storedNodes = data;
-        this.baseFileSystem = baseFileSystem;
+//        this.baseFileSystem = baseFileSystem;
         tree = new Ktree(data);
         header = new GOTreeHeader(data[0][0], this, upper, lower);
         this.viewerNode = viewerNode;
@@ -134,7 +137,7 @@ public class GOTreeViewer extends JPanel implements IViewer {
         super(new GridBagLayout());
         
         this.viewerNode = viewerNode;
-        this.baseFileSystem = baseFileSystem;
+//        this.baseFileSystem = baseFileSystem;
         category = goCategory;
         this.storedNodes = constructTree(goCategory, headerFields, data);
         this.headerFields = headerFields;
@@ -157,7 +160,7 @@ public class GOTreeViewer extends JPanel implements IViewer {
      */
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{storedNodes, viewerNode, baseFileSystem,
+    			new Object[]{storedNodes, viewerNode, "",
     		});
 
     	}
@@ -182,7 +185,7 @@ public class GOTreeViewer extends JPanel implements IViewer {
 
     	this.storedNodes = storedNodes;
     	this.headerFields = headerFields;
-    	this.baseFileSystem = baseFileSystem;
+//    	this.baseFileSystem = baseFileSystem;
     	this.category = category;
     	
         this.tree = new Ktree(this.storedNodes);
@@ -410,8 +413,16 @@ public class GOTreeViewer extends JPanel implements IViewer {
         int idx;
         String impliesFile, line;
         Hashtable implied_associations = new Hashtable(10000);
-        
-        File impliesFolder = TMEV.getFile(baseFileSystem+"/Data/Class/Implies/");
+        EASEImpliesAndURLDataFile impliesFolderDef = new EASEImpliesAndURLDataFile();
+        File impliesFolder = null;
+        File impliesAndUrlFolder;
+        try {
+        	impliesAndUrlFolder = TMEV.getResourceManager().getSupportFile(impliesFolderDef, false);
+        	impliesFolder = new File(impliesFolderDef.getImpliesLocation(impliesAndUrlFolder));
+        } catch (SupportFileAccessError sfae) {
+        	throw new IOException(sfae);
+        }
+//        File impliesFolder = TMEV.getFile(baseFileSystem+"/Data/Class/Implies/");
         String folderPath = impliesFolder.getPath();
         impliesFile = folderPath+"/"+category+".txt";
         
@@ -753,7 +764,7 @@ public class GOTreeViewer extends JPanel implements IViewer {
             }
         }
         
-        GOTreeViewer viewer = new GOTreeViewer(data, viewerNode, baseFileSystem);
+        GOTreeViewer viewer = new GOTreeViewer(data, viewerNode, "");
         viewer.setThresholds(upper, lower);
         
         JFrame frame = new JFrame();
@@ -901,7 +912,7 @@ public class GOTreeViewer extends JPanel implements IViewer {
             }
         }
         
-        GOTreeViewer viewer = new GOTreeViewer(data, viewerNode, baseFileSystem);
+        GOTreeViewer viewer = new GOTreeViewer(data, viewerNode, "");
         viewer.setThresholds(upper, lower);
         DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(new LeafInfo("GO Subtree", viewer));
         

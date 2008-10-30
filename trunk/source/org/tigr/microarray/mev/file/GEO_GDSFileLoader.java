@@ -56,7 +56,7 @@ import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.SlideDataElement;
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.util.MyCellRenderer;
+import org.tigr.microarray.util.ExpressionFileTableCellRenderer;
 
 /**
  * @author SARITA NAIR
@@ -77,7 +77,7 @@ public class GEO_GDSFileLoader extends ExpressionFileLoader {
 
 	private int dataType;
 	private GEO_GDSFileLoaderPanel smatrixflp;
-	private MyCellRenderer myCellRenderer;
+	private ExpressionFileTableCellRenderer myCellRenderer;
 	private Vector datainfo=new Vector();//	   store sample info
 	private Vector platforminfo=new Vector();//store platform info
 	private boolean unload=false;

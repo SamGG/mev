@@ -72,14 +72,14 @@ import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cgh.CGHDataGenerator.CGHCloneComparator;
 import org.tigr.microarray.mev.cgh.CGHDataObj.CGHClone;
 import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.util.MyCellRenderer;
+import org.tigr.microarray.util.ExpressionFileTableCellRenderer;
 
 public class CGHStanfordFileLoader extends ExpressionFileLoader {
 
     private GBA gba;
     private boolean stop = false;
     private CGHStanfordFileLoaderPanel CGHsflp;
-    private MyCellRenderer myCellRenderer;
+    private ExpressionFileTableCellRenderer myCellRenderer;
     
     /**
      * 
@@ -716,7 +716,7 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
             gba.add(additionalRequirements, justRatioButton, 1, 1, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(0, 20, 0, 5), 0, 0);
             //
             expressionTable = new JTable();
-            myCellRenderer = new MyCellRenderer();
+            myCellRenderer = new ExpressionFileTableCellRenderer();
             expressionTable.setDefaultRenderer(Object.class, myCellRenderer);
             expressionTable.setCellSelectionEnabled(true);
             expressionTable.setColumnSelectionAllowed(false);

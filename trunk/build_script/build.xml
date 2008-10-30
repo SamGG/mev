@@ -20,7 +20,7 @@
     <property name="lib.dir" location="${home.dir}/lib"/>
     <property name="plugins.dir" location="${home.dir}/plugins"/>
 	<property name="java.target.version" value="1.5"/>
-	<property name="version" value="4_2"/> 
+	<property name="version" value="4_3"/> 
 	<property name="package.dir" location="${home.dir}/deploy"/>
 
 
@@ -280,8 +280,6 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
     
    
-
-
     <!-- TARGET ============================================		
          	Target Name: base
 		Depends: jar-algorithm-support
@@ -325,6 +323,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			mev/cluster/gui/*.java,
 			mev/cluster/clusterUtil/**, 
 			mev/microarray/annotation/**, 
+			mev/microarray/resources/**, 
 			mev/cluster/gui/helpers/**">
         	
             <classpath>
@@ -352,6 +351,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
                 <pathelement location="${lib.dir}/HTTPClient.jar"/>
                 <pathelement location="${lib.dir}/servlet.jar"/>
                 <pathelement location="${lib.dir}/ftpbean.jar"/>
+                <pathelement location="${lib.dir}/jsch-0.1.39.jar"/>
 				<pathelement location="${lib.dir}/soap.jar" />
                 <pathelement location="${tigr.dir}/microarray/file"/>
 				<pathelement location="${lib.dir}/weka.jar" />
@@ -364,6 +364,13 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
          be jar-ed up with the .class files -->
     	<copy todir="${dest.dir}/org/tigr/microarray/mev/">
     	    <fileset dir="${source.dir}/org/tigr/microarray/mev/">
+    	    	<include name="*.html"/>
+    	    	<include name="*.properties"/>
+    		</fileset>
+    	</copy>
+    		
+    	<copy todir="${dest.dir}/org/tigr/microarray/mev/resources/">
+    	    <fileset dir="${source.dir}/org/tigr/microarray/mev/resources/">
     	    	<include name="*.html"/>
     	    	<include name="*.properties"/>
     		</fileset>
@@ -499,6 +506,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			org/tigr/microarray/mev/script/**,
         	org/tigr/microarray/mev/persistence/**,
         	org/tigr/microarray/mev/annotation/**,
+        	org/tigr/microarray/mev/resources/**,
 			org/tigr/microarray/mev/cluster/clusterUtil/**"
         	update="true"
         />
@@ -526,6 +534,19 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
          ==================================================================== -->
 
+    <target name="ResourceManager">
+            <java classname="org.tigr.microarray.mev.resources.FileResourceManagerTMEV" dir="${home.dir}" fork="true">
+                <classpath>
+                    <fileset dir="${lib.dir}">
+                    <include name="**/*.jar"/>
+                  </fileset>
+                    <fileset dir="${plugins.dir}">
+                    <include name="**/*.jar"/>
+                  </fileset>
+                </classpath>
+            </java>
+    </target>
+	
     <target name="HCL" depends="HCL-GUI" if="HCL">
         <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
 		<classpath refid="module.build.class.path"/>
@@ -1155,7 +1176,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
             <entry key="NONPAR.tooltip" value="Nonparametric Tests"/>
         </propertyfile>
     </target>
-	
+
 	
 	
 	<target name="GSEA" depends="GSEA-GUI" if="GSEA">
@@ -1839,9 +1860,9 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			<include name="${mev_version.dir}/tmev.sh"/>
 			<exclude name=".svn"/>
 		</zip>	
-
+<!--
 		<ant target="webstart-package"/>
-		
+-->		
 		<!-- Build Mac distribution --> 
 		<copy todir="${package.dir}/${mev_version.dir}">
 			<fileset dir="${home.dir}/mac_distribution_support/" excludes="**/*.jar, .svn"/>
@@ -1891,18 +1912,25 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			<include name="lib/*.jar"/>
 			<exclude name=".svn"/>
 		</zip>
-		-->	
+		-->
 	</target>
 	
-		<target name="signjars">
-			<signjar 
-			    alias="TM4 Group" keystore="C:\Users\Eleanor\.keystore"
-			    storepass="fillmein">
-			  
-			    <fileset dir="../deploy/webstart/mev/lib" includes="*.jar" />
-			  
-			</signjar>
-		</target>
+	<target name="signjars">
+		<unsignjar jar="${package.dir}/webstart/mev/lib/goose.jar"/>
+		<unsignjar jar="${package.dir}/webstart/mev/lib/mail.jar"/>
+
+		<input
+		    message="Please enter jarsigner password:"
+		    addproperty="pwd"
+		  />
+		<signjar 
+		    alias="tm4group" keystore="C:\Users\Eleanor\.keystore"
+		    storepass="${pwd}">
+		  
+		    <fileset dir="../deploy/webstart/mev/lib" includes="*.jar" />
+		  
+		</signjar>
+	</target>
 	
 	<target name="javadoc">
 		<delete dir="${home.dir}/javadoc"/>
@@ -1955,7 +1983,42 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		<delete file="${lib.dir}/images.jar"/>
 		<delete file="${lib.dir}/dialogHelp.jar"/>
 	</target>
-	
+
+	<macrodef name="unsignjar">
+		
+	    <attribute name="jar"/>
+
+	    <sequential>
+		<!-- Remove any existing signatures from a JAR file. -->
+		<tempfile prefix="usignjar-" destdir="${java.io.tmpdir}" property="temp.file"/>
+	        <echo message="Removing signatures from JAR: @{jar}"/>
+	        <mkdir dir="${temp.file}"/>
+		        
+	        <unjar src="@{jar}" dest="${temp.file}">
+	            <patternset>
+	                <include name="**"/>
+	                <exclude name="META-INF/*.SF"/>
+	                <exclude name="META-INF/*.DSA"/>
+	                <exclude name="META-INF/*.RSA"/>
+	            </patternset>
+	        </unjar>
+		        
+	        <delete file="@{jar}" failonerror="true"/>
+		        
+	        <!-- Touch it in case the file didn't have a manifest.
+	             Otherwise the JAR task below will fail if the manifest 
+		     file doesn't exist. -->
+	        <mkdir dir="${temp.file}/META-INF"/>
+	        <touch file="${temp.file}/META-INF/MANIFEST.MF"/>
+		        
+	        <jar destfile="@{jar}" 
+	            basedir="${temp.file}" 
+	            includes="**" 
+	            manifest="${temp.file}/META-INF/MANIFEST.MF"/>
+		        
+	        <delete dir="${temp.file}" failonerror="true"/>
+	    </sequential>
+	</macrodef>
 </project>
 
 

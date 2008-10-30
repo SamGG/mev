@@ -28,6 +28,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -63,8 +64,13 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DistanceMetricPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
+import org.tigr.microarray.mev.cluster.gui.impl.ease.EASEGUI;
 import org.tigr.microarray.mev.cluster.gui.impl.ease.EASEInitDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.ease.EASESupportDataFile;
 import org.tigr.microarray.mev.cluster.gui.impl.ease.EASEUpdateManager;
+import org.tigr.microarray.mev.resources.IResourceManager;
+import org.tigr.microarray.mev.resources.ResourcererAnnotationFileDefinition;
+import org.tigr.microarray.mev.resources.SupportFileAccessError;
 
 
 /**
@@ -101,6 +107,11 @@ public class TEASEInitDialog extends AlgorithmDialog{
     protected boolean useLoadedAnnotationFile = false;
     protected File defaultEaseFileLocation;
     
+    protected String speciesName;
+    protected String arrayName;
+    protected IResourceManager resourceManager;
+    protected Hashtable<String, Vector<String>> speciestoarrays;
+    protected File annotationFile;
 
     
     /** Creates a new instance of EaseInitDialog
@@ -109,9 +120,13 @@ public class TEASEInitDialog extends AlgorithmDialog{
      * @param annotationLabels Annotation types
      */
     public TEASEInitDialog(Frame parent, String [] annotationLabels, String globalMetricName, 
-    		boolean globalAbsoluteDistance, boolean showDistancePanel, File defaultEaseFileLocation) {
+    		boolean globalAbsoluteDistance, boolean showDistancePanel, File defaultEaseFileLocation, IResourceManager rm, String speciesName, String arrayName, Hashtable<String, Vector<String>> speciestoarrays) {
         super(parent, "TEASE: TEASE Annotation Analysis", true);
-
+        this.speciesName = speciesName;
+        this.arrayName = arrayName;
+        this.resourceManager = rm;
+        this.speciestoarrays = speciestoarrays;
+        
         if(defaultEaseFileLocation == null) {
         	this.useLoadedAnnotationFile = false;
         	defaultEaseFileLocation = new File(TMEV.getSettingForOption(TEASEGUI.LAST_TEASE_FILE_LOCATION));
@@ -1244,57 +1259,223 @@ public class TEASEInitDialog extends AlgorithmDialog{
             }
         }
     }
-    
-    private class ConfigPanel extends ParameterPanel {
 
-        JTextField defaultFileBaseLocation;
-        
-        public ConfigPanel() {
-            super("File Updates and Configuration");
-            setLayout(new GridBagLayout());
-            
-            JButton updateFilesButton = new JButton("Update EASE File System");
-            updateFilesButton.setActionCommand("update-files-command");
-            updateFilesButton.setFocusPainted(false);
-            updateFilesButton.addActionListener(listener);
-            updateFilesButton.setToolTipText("<html>Downloads EASE annotation files<br>for a selected species and array type.</html>");
-            JButton browseFileBaseButton = new JButton("Select EASE File System");
-            browseFileBaseButton.setActionCommand("select-file-base-command");
-            browseFileBaseButton.setFocusPainted(false);
-            browseFileBaseButton.addActionListener(listener);
-            browseFileBaseButton.setToolTipText("<html>Helps select the EASE annotation file system<br>that corresponds the current species and array type.</html>");
-            defaultFileBaseLocation = new JTextField(getDefaultBaseFileLocation().getAbsolutePath(), 25);
-            defaultFileBaseLocation.setEditable(true);
-            
-            add(browseFileBaseButton, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,0,5,0), 0, 0));
-            add(defaultFileBaseLocation,  new GridBagConstraints(1,0,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,5,5,0), 0, 0));            
-            add(updateFilesButton, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0, 0));                               
-        }
-        
-        public void selectFileSystem() {
-        	String startDir = TMEV.getSettingForOption(TEASEGUI.LAST_TEASE_FILE_LOCATION);
-        	if(startDir == null)
-        		startDir = defaultFileBaseLocation.getText();
-            File file = new File(startDir);
-            if(!file.exists()) {                
-                file = TMEV.getFile("data/ease");
-                if(file == null) {
-                    file = new File(System.getProperty("user.dir"));
-                }
-                TMEV.storeProperty(TEASEGUI.LAST_TEASE_FILE_LOCATION, file.toString());
-            }
-            JFileChooser chooser = new JFileChooser(file);
-            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            if(chooser.showOpenDialog(TEASEInitDialog.this) == JOptionPane.OK_OPTION) {
-                defaultFileBaseLocation.setText(chooser.getSelectedFile().getAbsolutePath());
-                TMEV.storeProperty(TEASEGUI.LAST_TEASE_FILE_LOCATION, defaultFileBaseLocation.getText());
-            }
-        }
-        
-        public String getBaseFileLocation() {
-            return defaultFileBaseLocation.getText();
-        }
-    }
+    /**
+	 * The topmost panel in the InitDialog, containing the location
+	 * information for the EASE filesystem and the update controls.
+	 */
+    public class ConfigPanel extends ParameterPanel {
+		private static final long serialVersionUID = -5298900627241870503L;
+
+		JComboBox organismListBox;
+		JComboBox arrayListBox;
+		JLabel chooseOrg, chooseArray, browseLabel, statusLabel;
+		JButton getEaseSupportFileButton;
+		JButton browseSupportFileButton;
+		JTextField supportFileLocationField;
+
+		public ConfigPanel() {
+			super("File Updates and Configuration");
+			setLayout(new GridBagLayout());
+				
+
+			getEaseSupportFileButton = new JButton("Download");
+			getEaseSupportFileButton.setActionCommand("download-support-file-command");
+			getEaseSupportFileButton.addActionListener(listener);
+			getEaseSupportFileButton.setToolTipText("<html>Downloads EASE annotation files<br>for a selected species and array type.</html>");
+
+			browseSupportFileButton = new JButton("Browse");
+			browseSupportFileButton.setActionCommand("select-file-base-command");
+			browseSupportFileButton.addActionListener(listener);
+
+			supportFileLocationField = new JTextField(getDefaultBaseFileLocation().getAbsolutePath(), 25);
+			supportFileLocationField.setEditable(true);
+
+			chooseOrg = new JLabel("Organism");
+			chooseArray = new JLabel("Array Platform");
+			browseLabel = new JLabel("or Browse for another Ease data file system:");
+			statusLabel = new JLabel("Click to download");
+
+			if(speciestoarrays == null || speciestoarrays.size() == 0) {
+				organismListBox = new JComboBox();
+				organismListBox.addItem("No organisms listed");
+				organismListBox.setEnabled(false);
+				
+				arrayListBox = new JComboBox();
+				arrayListBox.addItem("No species listed");
+				arrayListBox.setEnabled(false);
+			} else {
+				
+				organismListBox = new JComboBox(new Vector<String>(speciestoarrays.keySet()));
+//				organismListBox.addActionListener(listener);
+//				organismListBox.setActionCommand("organism-selected-command");
+	
+				try {
+					organismListBox.setSelectedItem(speciesName);
+				} catch (NullPointerException npe) {/* Leave as default */}
+				arrayListBox = new JComboBox(speciestoarrays.get(organismListBox.getSelectedItem()));
+				
+				try {
+					arrayListBox.setSelectedItem(arrayName);
+				} catch (NullPointerException npe) {/* Leave as default */}
+				
+				arrayListBox.setEnabled(true); 
+
+			}
+
+			arrayListBox.addActionListener(listener);
+			arrayListBox.setActionCommand("array-selected-command");
+			organismListBox.addActionListener(listener);
+			organismListBox.setActionCommand("organism-selected-command");
+	
+			add(chooseOrg, 				new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, 	GridBagConstraints.BOTH, new Insets(5, 30, 0, 0), 0, 0));
+			add(chooseArray, 				new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.WEST, 	GridBagConstraints.BOTH, new Insets(5, 30, 0, 0), 0, 0));
+			add(organismListBox, 			new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.CENTER, 	GridBagConstraints.BOTH, new Insets(5, 30, 0, 0), 0, 0));
+			add(arrayListBox, 				new GridBagConstraints(1, 1, 1, 1, 0, 0, GridBagConstraints.CENTER, 	GridBagConstraints.BOTH, new Insets(5, 30, 0, 0), 0, 0));
+			add(statusLabel, 				new GridBagConstraints(4, 0, 1, 1, 0, 0, GridBagConstraints.EAST, 	GridBagConstraints.BOTH, new Insets(5, 25, 0, 20),0, 0));
+			add(getEaseSupportFileButton, 	new GridBagConstraints(4, 1, 1, 1, 0, 0, GridBagConstraints.EAST, 	GridBagConstraints.BOTH, new Insets(5, 25, 0, 20), 0, 0));
+			add(browseLabel, 				new GridBagConstraints(0, 2, 2, 1, 0, 0, GridBagConstraints.WEST, 	GridBagConstraints.BOTH, new Insets(10, 30, 0, 0),0, 0));
+			add(supportFileLocationField, 	new GridBagConstraints(0, 3, 2, 1, 1, 0, GridBagConstraints.WEST, 	GridBagConstraints.BOTH, new Insets(10, 30, 5, 0), 0, 0));
+			add(browseSupportFileButton, 	new GridBagConstraints(4, 3, 1, 1, 0, 0, GridBagConstraints.EAST, 	GridBagConstraints.BOTH, new Insets(5, 25, 5, 20), 0, 0));
+
+			try {
+				boolean b = resourceManager.fileIsInRepository(new EASESupportDataFile(organismListBox.getSelectedItem().toString(), arrayListBox.getSelectedItem().toString()));
+				if(b) {
+					getEaseSupportFileButton.setText("Select This");
+				} else {
+					getEaseSupportFileButton.setText("Download");
+				}
+			} catch (NullPointerException npe) {
+				getEaseSupportFileButton.setText("Download");
+			}
+			updateSelection();
+		}
+
+		private void onDownloadSupportFile() {
+			try {
+				File f = resourceManager.getSupportFile(new EASESupportDataFile(organismListBox.getSelectedItem().toString(), arrayListBox.getSelectedItem().toString()), true);
+				supportFileLocationField.setText(f.getAbsolutePath());
+				getEaseSupportFileButton.setText("Select This");
+				statusLabel.setText("Selected");
+				getEaseSupportFileButton.setEnabled(false);
+			} catch (SupportFileAccessError sfae) {
+				statusLabel.setText("Failure");
+				sfae.printStackTrace();
+			} catch (NullPointerException npe) {
+				statusLabel.setText("Failure");
+			}
+		}
+		
+		public void browseForSupportFiles() {
+			String startDir = TMEV.getSettingForOption(EASEGUI.LAST_EASE_FILE_LOCATION);
+			if (startDir == null)
+				startDir = supportFileLocationField.getText();
+			File file = new File(startDir);
+			if (!file.exists()) {
+				file = TMEV.getFile("data/ease");
+				if (file == null) {
+					file = new File(System.getProperty("user.dir"));
+				}
+				TMEV.storeProperty(EASEGUI.LAST_EASE_FILE_LOCATION, file.toString());
+			}
+			JFileChooser chooser = new JFileChooser(file);
+			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			if (chooser.showOpenDialog(TEASEInitDialog.this) == JOptionPane.OK_OPTION) {
+				supportFileLocationField.setText(chooser.getSelectedFile().getAbsolutePath());
+				TMEV.storeProperty(EASEGUI.LAST_EASE_FILE_LOCATION, supportFileLocationField.getText());
+			}
+		}
+		public String getBaseFileLocation() {
+			return supportFileLocationField.getText();
+		}
+		public void selectSpecies() {
+			arrayListBox.removeAllItems();
+			Vector<String> arraysForThisSpecies = speciestoarrays.get(organismListBox.getSelectedItem());
+			for (int i = 0; i < arraysForThisSpecies.size(); i++) {
+				arrayListBox.addItem(arraysForThisSpecies.elementAt(i));
+			}
+		}
+		public void updateSelection() {
+			if(arrayListBox.getSelectedItem() == null) {
+				return;
+			}
+			String selectedOrganism = organismListBox.getSelectedItem().toString();
+			String selectedArray = arrayListBox.getSelectedItem().toString();
+			if(selectedOrganism != null && selectedArray != null) {
+				if(resourceManager.fileIsInRepository(new EASESupportDataFile(selectedOrganism, selectedArray))) {
+					statusLabel.setText("Click to Select");
+					getEaseSupportFileButton.setText("Select");
+				} else {
+					statusLabel.setText("Click to Download");
+					getEaseSupportFileButton.setText("Download");
+				}
+				getEaseSupportFileButton.setEnabled(true);
+			        try {
+			        	ResourcererAnnotationFileDefinition def = new ResourcererAnnotationFileDefinition(speciesName, arrayName);
+			        	annotationFile = resourceManager.getSupportFile(def, false);
+			        } catch (SupportFileAccessError sfae) {
+			        	//disable population from file button
+			        	useLoadedAnnotationFile = false;
+				        popPanel.fileButton.setSelected(true);
+				        popPanel.preloadedAnnotationButton.setSelected(false);
+				        popPanel.preloadedAnnotationButton.setEnabled(false);
+			        }
+			} else {
+				getEaseSupportFileButton.setEnabled(false);
+			}
+		}
+
+	}
+//    private class ConfigPanel extends EASEInitDialog.ConfigPanel {
+
+//        JTextField defaultFileBaseLocation;
+//        
+//        public ConfigPanel() {
+//            super("File Updates and Configuration");
+//            setLayout(new GridBagLayout());
+//            
+//            JButton updateFilesButton = new JButton("Update EASE File System");
+//            updateFilesButton.setActionCommand("update-files-command");
+//            updateFilesButton.setFocusPainted(false);
+//            updateFilesButton.addActionListener(listener);
+//            updateFilesButton.setToolTipText("<html>Downloads EASE annotation files<br>for a selected species and array type.</html>");
+//            JButton browseFileBaseButton = new JButton("Select EASE File System");
+//            browseFileBaseButton.setActionCommand("select-file-base-command");
+//            browseFileBaseButton.setFocusPainted(false);
+//            browseFileBaseButton.addActionListener(listener);
+//            browseFileBaseButton.setToolTipText("<html>Helps select the EASE annotation file system<br>that corresponds the current species and array type.</html>");
+//            defaultFileBaseLocation = new JTextField(getDefaultBaseFileLocation().getAbsolutePath(), 25);
+//            defaultFileBaseLocation.setEditable(true);
+//            
+//            add(browseFileBaseButton, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,0,5,0), 0, 0));
+//            add(defaultFileBaseLocation,  new GridBagConstraints(1,0,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,5,5,0), 0, 0));            
+//            add(updateFilesButton, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0, 0));                               
+//        }
+//        
+//        public void selectFileSystem() {
+//        	String startDir = TMEV.getSettingForOption(TEASEGUI.LAST_TEASE_FILE_LOCATION);
+//        	if(startDir == null)
+//        		startDir = defaultFileBaseLocation.getText();
+//            File file = new File(startDir);
+//            if(!file.exists()) {                
+//                file = TMEV.getFile("data/ease");
+//                if(file == null) {
+//                    file = new File(System.getProperty("user.dir"));
+//                }
+//                TMEV.storeProperty(TEASEGUI.LAST_TEASE_FILE_LOCATION, file.toString());
+//            }
+//            JFileChooser chooser = new JFileChooser(file);
+//            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+//            if(chooser.showOpenDialog(TEASEInitDialog.this) == JOptionPane.OK_OPTION) {
+//                defaultFileBaseLocation.setText(chooser.getSelectedFile().getAbsolutePath());
+//                TMEV.storeProperty(TEASEGUI.LAST_TEASE_FILE_LOCATION, defaultFileBaseLocation.getText());
+//            }
+//        }
+//        
+//        public String getBaseFileLocation() {
+//            return defaultFileBaseLocation.getText();
+//        }
+//    }
     
     private class ColorBoundaryPanel extends ParameterPanel {
     	private JTextField upperField;
@@ -1381,7 +1562,7 @@ public class TEASEInitDialog extends AlgorithmDialog{
             } else if (command.equals("trim-result-command")){
                 alphaPanel.validateTrimOptions();
             } else if (command.equals("select-file-base-command")) {
-                configPanel.selectFileSystem();
+                configPanel.browseForSupportFiles();
             } else if (command.equals("update-files-command")) {
                 EASEUpdateManager manager = new EASEUpdateManager((JFrame)parent);
                 manager.updateFiles();

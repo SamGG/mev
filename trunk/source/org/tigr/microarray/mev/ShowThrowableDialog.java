@@ -26,6 +26,8 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -46,12 +48,16 @@ public class ShowThrowableDialog extends JDialog {
      * Constructs the dialog with specified title, modal flag, type to display 
      * throwable object.
      */
-    public ShowThrowableDialog(Frame frame, String title, boolean modal, int type, Throwable t) {
+    private ShowThrowableDialog(Frame frame, String title, boolean modal, int type, Throwable t, String friendlyMessage) {
         super(frame, title, modal);
         Listener listener = new Listener();
         addWindowListener(listener);
 
-        this.message = createMessageContent(type, t);
+        if(friendlyMessage == null || friendlyMessage.equals(""))
+            this.message = createMessageContent(type, t);
+        else
+        	this.message = new JEditorPane("text/html", t.getMessage());
+        
         this.stack   = createStackContent(t);
 
         this.mainPanel = createMainPanel();
@@ -83,11 +89,14 @@ public class ShowThrowableDialog extends JDialog {
     /**
      * Displays the dialog with specified title, modal state and message type.
      */
-    public static void show(Frame frame, String title, boolean modal, int type, Throwable t) {
-        ShowThrowableDialog dlg = new ShowThrowableDialog(frame, title, modal, type, t);
+    public static void show(Frame frame, String title, boolean modal, int type, Throwable t, String friendlyMessage) {
+        ShowThrowableDialog dlg = new ShowThrowableDialog(frame, title, modal, type, t, friendlyMessage);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         dlg.setLocation((screenSize.width - dlg.getSize().width)/2, (screenSize.height - dlg.getSize().height)/2);
         dlg.setVisible(true);
+    }
+    public static void show(Frame frame, String title, boolean modal, int type, Throwable t) {
+    	show(frame, title, modal, type, t, null);   
     }
 
     /**
@@ -223,5 +232,13 @@ public class ShowThrowableDialog extends JDialog {
         public void windowClosing(WindowEvent e) {
             dispose();
         }
+    }
+    /**
+     * Main class for testing. Creates a new dialog and shows it. 
+     * @param args
+     */
+    public static void main(String[] args) {
+    	ShowThrowableDialog.show(new JFrame(), "Test ShowThrowableDialog", new Exception("First line is really really really really really really really really really really really really really really really really really really really really really really really really really long."));
+    	System.exit(0);
     }
 }

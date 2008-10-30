@@ -61,7 +61,8 @@ import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.SlideDataElement;
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.util.MyCellRenderer;
+import org.tigr.microarray.util.ExpressionFileTableCellRenderer;
+import org.tigr.microarray.util.ExpressionFileTableCellRenderer;
 
 /**
  * @author Sarita Nair
@@ -716,7 +717,7 @@ public Vector loadExpressionFiles() throws IOException {
 	           
 	            
 	            expressionTable = new JTable();
-	            expressionTable.setDefaultRenderer(Object.class, new MyCellRenderer());
+	            expressionTable.setDefaultRenderer(Object.class, new ExpressionFileTableCellRenderer());
 				expressionTable.setGridColor(Color.LIGHT_GRAY);
 	            expressionTable.setCellSelectionEnabled(true);
 	            expressionTable.setColumnSelectionAllowed(false);

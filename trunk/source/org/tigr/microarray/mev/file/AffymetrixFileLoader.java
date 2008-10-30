@@ -69,9 +69,6 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
     private AffymetrixFileLoaderPanel aflp;
 
     private boolean loadEnabled = false;
-    private File refChipFile;// = new File(".", "Data/");
-    private String mode = "";
-    
     
     private File [] files;
     private int affyDataType = IData.DATA_TYPE_AFFY_ABS;
@@ -84,8 +81,6 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
      **/
     private Hashtable _tempAnno=new Hashtable();
     private MultipleArrayViewer mav;
-    private File selectedAnnoFile;
-
 
     protected MevAnnotation mevAnno=new MevAnnotation();
     private String annotationFileName;
@@ -93,8 +88,6 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
     public AffymetrixFileLoader(SuperExpressionFileLoader superLoader) {
         super(superLoader);
         this.mav = superLoader.getArrayViewer(); //Raktim - Annotation Specific
-     //   System.out.println("Loader getInstanceIndex(): " + this.mav.getInstanceIndex());
-
         gba = new GBA();
         aflp = new AffymetrixFileLoaderPanel();
     }
@@ -137,14 +130,11 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
          * irrespective of whether annotation was loaded or not
          * 
          */
-        if(mav.getData().isAnnotationLoaded()) {
-//        	_tempAnno = loadAffyAnno(new File(getAnnotationFileName()));
-        	
-            //EH testing chip annotation change
-        	AnnotationFileReader afr = AnnotationFileReader.createAnnotationFileReader(new File(getAnnotationFileName()));
+        if(isAnnotationSelected()) {
+        	mav.getData().setAnnotationLoaded(true);
+        	AnnotationFileReader afr = AnnotationFileReader.createAnnotationFileReader(new File(getAnnotationFilePath()));
         	_tempAnno = afr.getAffyAnnotation();
         	chipAnno = afr.getAffyChipAnnotation();
-
         }
         
      
@@ -183,19 +173,7 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
               data = loadAffyAbsMean(files);
               this.affyDataType = IData.DATA_TYPE_AFFY_MEAN;
 
-
-/*
-        } else if (aflp.meanRadioButton.isSelected()){
-            data = loadAffyMean(files);
-            this.affyDataType = IData.DATA_TYPE_AFFY_MEAN;
-        } else if (aflp.medianRadioButton.isSelected()){
-            data = loadAffyMedian(files);
-            this.affyDataType = IData.DATA_TYPE_AFFY_MEDIAN;
-
- */
         } else if ( aflp.referenceRadioButton.isSelected()){
-           /* DefaultListModel list = aflp.getRefSelectedListModel();
-            DefaultListModel dataList = aflp.getAffymetrixSelectedListModel();*/
         	
         	Object[] list = aflp.getRefSelectedListModel().toArray();
             Object[] dataList = aflp.getAffymetrixSelectedListModel().toArray();
@@ -678,9 +656,6 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
                	  */
             		MevAnnotation mevAnno = new MevAnnotation();
             		mevAnno.setCloneID(cloneName);
-            		
-            		//EH testing chip annotation change
-//            		mevAnno.setViewer(this.mav);
             		slideDataElement = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields, mevAnno);
             		
             	}
@@ -708,7 +683,6 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
         reader.close();
         slideData.setSlideDataName(file.getName());
         slideData.setSlideFileName(file.getPath());
-        //EH field names added to SlideData instead of TMEV.java
         slideData.setFieldNames(this.fieldNames);
         return slideData;
     }
@@ -851,9 +825,13 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
     }
 
     public String getFilePath() {
-        if(this.aflp.getAffymetrixSelectedListModel().getSize() <1)
-            return null;
-        return ((File)(aflp.getAffymetrixSelectedListModel().getElementAt(0))).getAbsolutePath();
+        if(this.aflp.getAffymetrixSelectedListModel().getSize() <1) {
+        	return null;
+        }
+        //TODO This isn't accurate for multi-file selection dialogs
+//        System.out.println("file: " + (new File(((File)aflp.getAffymetrixSelectedListModel().getElementAt(0)).getAbsolutePath())));
+//        System.out.println("parent: " + (new File(((File)aflp.getAffymetrixSelectedListModel().getElementAt(0)).getAbsolutePath())).getParentFile());
+        return (new File(((File)aflp.getAffymetrixSelectedListModel().getElementAt(0)).getAbsolutePath())).getParentFile().getAbsolutePath();
     }
     
     public void openDataPath() {
@@ -1061,16 +1039,13 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
     	 * Resourcerer. This feature is currently available only for Affymetrix files.
     	 */
     	JPanel annotationPanel;
-    	JLabel getAnnotation,  customAnnotation;
-    	JButton connectButton, browseButton3;
-    	JTextField annFileListTextField;
-    
+    	AnnotationDownloadHandler adh;   
 
 
     	public AffymetrixFileLoaderPanel() {
 
     		setLayout(new GridBagLayout());
-    		
+    		adh = new AnnotationDownloadHandler(superLoader);
     		
     		selectionPanel = new JPanel();
     		selectionPanel.setLayout(new GridBagLayout());
@@ -1100,11 +1075,6 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
     		pathTextField.setForeground(Color.black);
     		pathTextField.setFont(new Font("monospaced", Font.BOLD, 12));
     		
-    	/*	gba.add(selectFilePanel, selectFile, 0, 0, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(selectFilePanel, pathTextField, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(selectFilePanel, browseButton1, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-              */
-    		
     		gba.add(selectFilePanel, selectFile, 0, 0, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(2, 2, 2, 2), 0, 0);
     		gba.add(selectFilePanel, pathTextField, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
     		gba.add(selectFilePanel, browseButton1, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
@@ -1123,8 +1093,6 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
 
     		affymetrixAvailableScrollPane = new JScrollPane(affymetrixAvailableList);
     		affymetrixSelectedScrollPane = new JScrollPane(affymetrixSelectedList);
-    		
-    		
     		
     		affymetrixButtonPanel = new JPanel();
     		affymetrixButtonPanel.setLayout(new GridBagLayout());
@@ -1168,32 +1136,6 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
     		gba.add(affymetrixButtonPanel, affymetrixRemoveAllButton, 0, 3, 1, 1, 0, 0,
     				GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
 
-    	
-    		
-    
-    		//Setting the layout for affymetrixListPanel
-    		
-    	/*	gba.add(affymetrixListPanel, affymetrixAvailableLabel, 0, 0, 1, 1, 0, 0, GBA.N,
-    				GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(affymetrixListPanel, affymetrixAvailableScrollPane, 0, 1, 1, 4, 5, 1,
-    				GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(affymetrixListPanel, new JPanel(), 1, 0, 1, 1, 0, 0, GBA.B, GBA.C,
-    				new Insets(0, 0, 0, 0), 0, 0);
-    		gba.add(affymetrixListPanel, affymetrixButtonPanel, 1, 1, 1, 4, 1, 1, GBA.B,
-    				GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(affymetrixListPanel, affymetrixSelectedLabel, 2, 0, 1, 1, 0, 0, GBA.N,
-    				GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(affymetrixListPanel, affymetrixSelectedScrollPane, 2, 1, 1, 4, 5, 1,
-    				GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-
-    		gba.add(affymetrixSelectionPanel, selectFilePanel, 0, 0, 1, 1, 1, 1,
-    				GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		//gba.add(affymetrixSelectionPanel, buttonPanel, 0, 1, 1, 1, 1, 1, GBA.B,
-    			//	GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(affymetrixSelectionPanel, affymetrixListPanel, 0, 2, 1, 1, 1, 1, GBA.B,
-    				GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-*/
-    		
     		gba.add(affymetrixListPanel, affymetrixAvailableLabel, 0, 0, 1, 1, 0, 0, GBA.N,
     				GBA.C, new Insets(2, 2, 2, 2), 0, 0);
     		gba.add(affymetrixListPanel, affymetrixAvailableScrollPane, 0, 1, 1, 4, 5, 1,
@@ -1209,66 +1151,11 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
 
     		gba.add(affymetrixSelectionPanel, selectFilePanel, 0, 0, 1, 1, 1, 1,
     				GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-    		//gba.add(affymetrixSelectionPanel, buttonPanel, 0, 1, 1, 1, 1, 1, GBA.B,
-    			//	GBA.C, new Insets(5, 5, 5, 5), 0, 0);
     		gba.add(affymetrixSelectionPanel, affymetrixListPanel, 0, 2, 1, 1, 1, 1, GBA.B,
     				GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 
-    		
-    		
-    		
-    		// Annotation Panel
-    		   		
-    		    		
-    		annotationPanel = new JPanel();
-    		annotationPanel.setLayout(new GridBagLayout());
-    		annotationPanel.setBorder(new TitledBorder(new EtchedBorder(),
-    		"Annotation"));
 
-    		getAnnotation=new JLabel("Retrieve  Annotation  from  Resourcerer");
-
-
-    		connectButton = new JButton("Connect");
-    		connectButton.setSize(new Dimension(100, 30));
-    		connectButton.setPreferredSize(new Dimension(100, 30));
-    		connectButton.addActionListener(new EventHandler());
-
-    		
-    		customAnnotation=new JLabel("Upload annotation");
-    		
-    		annFileListTextField=new JTextField();
-    		annFileListTextField.setEditable(false);
-    		annFileListTextField.setForeground(Color.black);
-    		annFileListTextField.setFont(new Font("monospaced", Font.BOLD, 12));
-    		
-    		browseButton3 = new JButton("Browse");
-    		browseButton3.setSize(new Dimension(100, 30));
-    		browseButton3.setPreferredSize(new Dimension(100, 30));
-    		browseButton3.addActionListener(new EventHandler());
-
-    		
-
-    	/*	 
-    		gba.add(annotationPanel, getAnnotation, 0, 0, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		//gba.add(annotationPanel, connectButton, 1, 0, 1, 0, 1, 1,GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(annotationPanel, connectButton, 1, 0, GBA.RELATIVE, 1, 0, 0,GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		
-    		
-    		gba.add(annotationPanel, customAnnotation, 0, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5,5,5,5),0,0);
-    		gba.add(annotationPanel, annFileListTextField, 1, 1, 1, 0, 1, 0, GBA.H,	GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(annotationPanel, browseButton3, 2, 1, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 10, 5), 0, 0);
-    	*/
-    		
-    		
-    		gba.add(annotationPanel, getAnnotation, 0, 0, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-    		//gba.add(annotationPanel, connectButton, 1, 0, 1, 0, 1, 1,GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(annotationPanel, connectButton, 1, 0, GBA.RELATIVE, 1, 0, 0,GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-    		
-    		
-    		gba.add(annotationPanel, customAnnotation, 0, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(2,2,2,2),0,0);
-    		gba.add(annotationPanel, annFileListTextField, 1, 1, 1, 0, 1, 0, GBA.H,	GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-    		gba.add(annotationPanel, browseButton3, 2, 1, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(2, 2, 10, 2), 0, 0);
-    	
+    		annotationPanel = adh.getAnnotationLoaderPanel(gba);	
 
     	//Additional Requirement Panel	
     		additionalReqPanel = new JPanel();
@@ -1293,13 +1180,6 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
 
     		selectReference = new JLabel("Select Reference data directory");
 
-    		
-    	/*	gba.add(refPanel, selectReference, 0, 0, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(refPanel, refFileListTextField, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(refPanel, browseButton2, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-
-    	*/
-    		
     		gba.add(refPanel, selectReference, 0, 0, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(2, 2, 2, 2), 0, 0);
     		gba.add(refPanel, refFileListTextField, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
     		gba.add(refPanel, browseButton2, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
@@ -1332,17 +1212,6 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
     		this.refRemoveAllButton.setFocusPainted(false);
     		this.refRemoveButton.setFocusPainted(false);
 
-    		
-
-    	/*	gba.add(refButtonPanel, refAddButton, 0, 0, 1, 1, 0, 0, GBA.N,
-    				GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(refButtonPanel, refAddAllButton, 0, 1, 1, 1, 0, 0, GBA.N,
-    				GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(refButtonPanel, refRemoveButton, 0, 2, 1, 1, 0, 0, GBA.N,
-    				GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(refButtonPanel, refRemoveAllButton, 0, 3, 1, 1, 0, 0,
-    				GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);*/
-    		
     		gba.add(refButtonPanel, refAddButton, 0, 0, 1, 1, 0, 0, GBA.N,
     				GBA.C, new Insets(2, 2, 2, 2), 0, 0);
     		gba.add(refButtonPanel, refAddAllButton, 0, 1, 1, 1, 0, 0, GBA.N,
@@ -1364,19 +1233,6 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
 
     		refAvailableScrollPane = new JScrollPane(refAvailableList);
     		refSelectedScrollPane = new JScrollPane(refSelectedList);
-    		
-    	/*	gba.add(refListPanel, refAvailableLabel, 0, 0, 1, 1, 0, 0, GBA.N,
-    				GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(refListPanel, refSelectedLabel, 2, 0, 1, 1, 0, 0, GBA.N,
-    				GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(refListPanel, refAvailableScrollPane, 0, 1, 1, 4, 5, 1,
-    				GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(refListPanel, new JPanel(), 1, 0, 1, 1, 0, 0, GBA.B, GBA.C,
-    				new Insets(0, 0, 0, 0), 0, 0);
-    		gba.add(refListPanel, refButtonPanel, 1, 1, 1, 4, 1, 1, GBA.B,
-    				GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(refListPanel, refSelectedScrollPane, 2, 1, 1, 4, 5, 1,
-    				GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);*/
 
     		gba.add(refListPanel, refAvailableLabel, 0, 0, 1, 1, 0, 0, GBA.N,
     				GBA.C, new Insets(2, 2, 2, 2), 0, 0);
@@ -1414,41 +1270,6 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
     		bg.add(absMeanRadioButton);
     		bg.add(referenceRadioButton);
     		
-    	
-    		
-    	/*	gba.add(buttonPanel, absoluteRadioButton, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 50, 0, 5), 0, 0);
-    		gba.add(buttonPanel, referenceRadioButton, 0, 1, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 50, 0, 5), 0, 0);
-    		gba.add(buttonPanel, absMeanRadioButton, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 0, 5), 0, 0);
-
-
-    		//Setting layout for AdditionalRequirement panel
-    		gba.add(additionalReqPanel, buttonPanel, 0, 0, 1, 1, 1, 1, GBA.B,
-    				GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(additionalReqPanel, refPanel, 0, 2, 1, 1, 1, 1,
-    				GBA.B, GBA.C, new Insets(5, 0, 5, 0), 0, 0);
-    		gba.add(additionalReqPanel, refListPanel, 0, 3, 1, 2, 1, 1, GBA.B,
-    				GBA.C, new Insets(5, 5, 0, 5), 0, 0);
-
-    	
-    	   		
-    		
-    		gba.add(selectionPanel, affymetrixSelectionPanel, 0, 1, 2, 2, 1, 1, GBA.B,
-    				GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(selectionPanel, annotationPanel, 0, 3, 2, 3, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(selectionPanel, additionalReqPanel, 0, 6, 2, 2, 1, 1, GBA.B,
-    				GBA.C, new Insets(5, 5, 5, 5), 0, 0);//commented temporarily by sarita
-
-    		
-    		
-    		fileLoaderPanel = new JPanel();
-    		fileLoaderPanel.setLayout(new GridBagLayout());
-
-    		gba.add(fileLoaderPanel, selectionPanel, 0, 0, 1, 1, 1, 1, GBA.B,
-    				GBA.C, new Insets(5, 5, 5, 5), 0, 0);//commented temporarily by sarita
-    	
-    		 gba.add(this, fileLoaderPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			*/
-    		
     		gba.add(buttonPanel, absoluteRadioButton, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 50, 0, 2), 0, 0);
     		gba.add(buttonPanel, referenceRadioButton, 0, 1, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 50, 0, 2), 0, 0);
     		gba.add(buttonPanel, absMeanRadioButton, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 0, 2), 0, 0);
@@ -1461,9 +1282,6 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
     				GBA.B, GBA.C, new Insets(2, 0, 2, 0), 0, 0);
     		gba.add(additionalReqPanel, refListPanel, 0, 3, 1, 2, 1, 1, GBA.B,
     				GBA.C, new Insets(2, 2, 0, 2), 0, 0);
-
-    	
-    	   		
     		
     		gba.add(selectionPanel, affymetrixSelectionPanel, 0, 1, 2, 2, 1, 1, GBA.B,
     				GBA.C, new Insets(2, 2, 2, 2), 0, 0);
@@ -1480,14 +1298,9 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
     				GBA.C, new Insets(2, 2, 2, 2), 0, 0);
     	
     		 gba.add(this, fileLoaderPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-    		
-    		
 
         }
-    	
-    	 
-    	
-    	
+
         public void setPath(String path) {
             pathTextField.setText(path);
         }
@@ -1496,44 +1309,7 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
         //   this.fileTreePane.openDataPath();
         }
         
-        
-        public void onAnnotationFileBrowse() {
-     	FileLoaderUtility fileLoad = new FileLoaderUtility();
-        	File selectedFile;
-        	JFileChooser fileChooser = new JFileChooser(
-        			SuperExpressionFileLoader.ANNOTATION_PATH);
-        	fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        	int retVal = fileChooser.showOpenDialog(AffymetrixFileLoaderPanel.this);
-
-        	if (retVal == JFileChooser.APPROVE_OPTION) {
-        		
-        		selectedFile = fileChooser.getSelectedFile();
-        		//setAnnotationFile(selectedFile);
-        		setAnnotationFileName(selectedFile.getAbsolutePath());
-        		annFileListTextField.setText(selectedFile.getAbsolutePath());
-        		mav.getData().setAnnotationLoaded(true);
-        		
-        	}
-			
-        }
-        
-        
-        
-        public void onConnect() {
-        	AnnotationDialog annDialog=new AnnotationDialog(new JFrame());
-        	if(annDialog.showModal()==JOptionPane.OK_OPTION) {
-            	setAnnotationFileName(annDialog.getAnnotationFileName());
-            	mav.getData().setAnnotationLoaded(true);
-            	}else {
-            		mav.getData().setAnnotationLoaded(false);
-            	}
-        	
-        
-            } 
-        
-  
-        
-        
+ 
         public void onDataFileBrowse() {
         	FileLoaderUtility fileLoad = new FileLoaderUtility();
         	Vector retrievedFileNames = new Vector();
@@ -1559,12 +1335,7 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
 
         			if (acceptFile) {
         				String Name=fileChooser.getName((File) fileName);
-        				
-        				
-        				/*Object addItem = fileName;
-        				((DefaultListModel) affymetrixAvailableList.getModel())
-        				.addElement(addItem);*/
-        				
+
         				((DefaultListModel) affymetrixAvailableList.getModel())
         				.addElement(new File(Name));
         				
@@ -1604,9 +1375,6 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
         			if (acceptFile) {
         				String Name=fileChooser.getName((File) fileName);
         				
-        				/*Object addItem = fileName;
-        				((DefaultListModel) refAvailableList.getModel())
-        				.addElement(addItem);*/
         				((DefaultListModel) refAvailableList.getModel())
         				.addElement(new File(Name));
 
@@ -1790,26 +1558,16 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
         		else if (source==browseButton2){
         			onRefFileBrowse();  
         		}
-        		else if (source==browseButton3){
-        			onAnnotationFileBrowse();  
-        		}
-        		else if (source==connectButton){
-        			onConnect();  
-        		}
-        		   
-        		       		
-        		
-
-
         	}
         }
-
-    
     }
 
 
 	@Override
 	public String getAnnotationFilePath() {
-		return this.aflp.annFileListTextField.getText();
+		return this.aflp.adh.annFileListTextField.getText();
+	}
+	public boolean isAnnotationSelected() {
+		return aflp.adh.isAnnotationSelected();
 	}
 }

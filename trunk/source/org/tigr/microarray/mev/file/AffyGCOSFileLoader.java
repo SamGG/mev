@@ -73,8 +73,9 @@ import org.tigr.microarray.mev.annotation.PublicURL;
 import org.tigr.microarray.mev.cluster.gui.IData;
 
 
+import org.tigr.microarray.util.ExpressionFileTableCellRenderer;
 import org.tigr.microarray.util.FileLoaderUtility;
-import org.tigr.microarray.util.MyCellRenderer;
+import org.tigr.microarray.util.ExpressionFileTableCellRenderer;
 
 
 public class AffyGCOSFileLoader extends ExpressionFileLoader {
@@ -82,7 +83,7 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
     private GBA gba;
     private boolean stop = false;
     private AffyGCOSFileLoaderPanel sflp;
-    MyCellRenderer myCellRenderer;
+    ExpressionFileTableCellRenderer myCellRenderer;
     private int affyDataType = IData.DATA_TYPE_AFFY_ABS;
     
     public void setFilePath(String path) {
@@ -98,7 +99,6 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
 
     private MultipleArrayViewer mav;
     protected MevAnnotation mevAnno=new MevAnnotation();
-    private String annotationFileName;
 
 	
     public AffyGCOSFileLoader(SuperExpressionFileLoader superLoader) {
@@ -123,8 +123,9 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
          * irrespective of whether annotation was loaded or not
          * 
          */
-        if(this.mav.getData().isAnnotationLoaded()) {
-        	AnnotationFileReader afr = AnnotationFileReader.createAnnotationFileReader(new File(getAnnotationFileName()));
+    	if(isAnnotationSelected()) {
+    		mav.getData().setAnnotationLoaded(true);
+        	AnnotationFileReader afr = AnnotationFileReader.createAnnotationFileReader(new File(getAnnotationFilePath()));
         	_tempAnno = afr.getAffyAnnotation();
         	chipAnno = afr.getAffyChipAnnotation();        	
         }
@@ -463,6 +464,14 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
     public int getDataType(){
         return this.affyDataType;
     }
+
+	@Override
+	public String getAnnotationFilePath() {
+		return this.sflp.getAnnFilePath();
+	}  
+	public boolean isAnnotationSelected() {
+		return sflp.isAnnotationSelected();
+	}
    
     public void processAffyGCOSFile(File targetFile) {
         
@@ -534,21 +543,12 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
         return this.sflp.selectedFiles.getText();
     }
     
+    
     public void openDataPath() {
         this.sflp.openDataPath();
     }
     
-    
-    
-	 public String getAnnotationFileName() {
-	    	return this.annotationFileName;
-	 }
-	    
-	 public void setAnnotationFileName(String name) {
-	    	this.annotationFileName=name;
-	    }
-	    
-  
+ 
 /*
 //
 //	AffyGCOSFileLoader - Internal Classes
@@ -578,13 +578,13 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
         JRadioButton intensityWithDetectionPvalRadioButton;
         
         JPanel  annotationPanel, mainPanel;
-        JLabel getAnnotation,  customAnnotation;
+//        JLabel getAnnotation,  customAnnotation;
         JLabel fileSelectionLabel, dataSelection;
         
     	
-    	JButton connectButton, browseButton2;
+//    	JButton connectButton, browseButton2;
     	
-    	JTextField annFileListTextField;
+//    	JTextField annFileListTextField;
     
     	        
         JButton browseButton1;
@@ -594,9 +594,12 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
         private int xRow = -1;
         private int xColumn = -1;
         
+        AnnotationDownloadHandler adh;
         
         public AffyGCOSFileLoaderPanel() {                
                 setLayout(new GridBagLayout());
+                
+                adh = new AnnotationDownloadHandler(superLoader);
                 
                 eventListener=new EventListener();
                 fileNameTextField = new JTextField();
@@ -642,43 +645,9 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
 
                 
                 
+                annotationPanel = adh.getAnnotationLoaderPanel(gba);
+                adh.setEnabled(true);
                 
-                annotationPanel = new JPanel();
-                annotationPanel.setLayout(new GridBagLayout());
-                annotationPanel.setBorder(new TitledBorder(new EtchedBorder(), "Annotation"));
-                
-               
-
-        		getAnnotation=new JLabel("Retrieve  Annotation  from  Resourcerer");
-
-
-        		connectButton = new JButton("Connect");
-        		connectButton.setSize(new Dimension(100, 30));
-        		connectButton.setPreferredSize(new Dimension(100, 30));
-        		connectButton.addActionListener(eventListener);
-
-        		
-        		
-        		customAnnotation=new JLabel("OR upload annotation of your choice");
-        		
-        		annFileListTextField=new JTextField();
-        		annFileListTextField.setEditable(false);
-        		annFileListTextField.setForeground(Color.black);
-        		annFileListTextField.setFont(new Font("monospaced", Font.BOLD, 12));
-        		
-        		browseButton2 = new JButton("Browse");
-        		browseButton2.setSize(new Dimension(100, 30));
-        		browseButton2.setPreferredSize(new Dimension(100, 30));
-        		browseButton2.addActionListener(eventListener);
-        	       		
-        		gba.add(annotationPanel, getAnnotation, 0, 0, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-        		gba.add(annotationPanel, connectButton, 1, 0, GBA.RELATIVE, 1, 0, 0,GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-        		
-        		
-        		gba.add(annotationPanel, customAnnotation, 0, 2, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(2,2,2,2),0,0);
-        		gba.add(annotationPanel, annFileListTextField, 1, 2, 1, 1, 1, 0, GBA.H,	GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-        		gba.add(annotationPanel, browseButton2, 2, 2, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-        		
         		additionalRequirementPanel = new JPanel();
                 additionalRequirementPanel.setLayout(new GridBagLayout());
                 additionalRequirementPanel.setBorder(new TitledBorder(new EtchedBorder(), "Additional Requirements"));
@@ -700,7 +669,7 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                 
                 
                 expressionTable = new JTable();
-        		myCellRenderer = new MyCellRenderer();
+        		myCellRenderer = new ExpressionFileTableCellRenderer();
                 expressionTable.setDefaultRenderer(Object.class, myCellRenderer);
     			expressionTable.setGridColor(Color.LIGHT_GRAY);
                 expressionTable.setCellSelectionEnabled(true);
@@ -749,6 +718,12 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                 
                 
         }
+		public boolean isAnnotationSelected() {
+			return adh.isAnnotationSelected();
+		}
+		public String getAnnFilePath() {
+			return adh.getAnnFilePath();
+		}
         private void setSelectedCell( int xR, int xC) {
             xRow = xR;
             xColumn = xC;
@@ -775,43 +750,7 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
         	}
            		
     	}
-        
-        public void onConnect() {
-        	AnnotationDialog annDialog=new AnnotationDialog(new JFrame());
-        	if(annDialog.showModal()==JOptionPane.OK_OPTION) {
-        	setAnnotationFileName(annDialog.getAnnotationFileName());
-        	mav.getData().setAnnotationLoaded(true);
-        	//isAnnotationLoaded=true;
-        	}else {
-        		mav.getData().setAnnotationLoaded(false);
-        		//isAnnotationLoaded=true;
-        	}
-        
-            } 
-        
-        public void onAnnotationFileBrowse() {
-         	FileLoaderUtility fileLoad = new FileLoaderUtility();
-            	File selectedFile;
-            	JFileChooser fileChooser = new JFileChooser(
-            			SuperExpressionFileLoader.ANNOTATION_PATH);
-            	fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            	int retVal = fileChooser.showOpenDialog(AffyGCOSFileLoaderPanel.this);
-
-            	if (retVal == JFileChooser.APPROVE_OPTION) {
-            		
-            		selectedFile = fileChooser.getSelectedFile();
-            		setAnnotationFileName(selectedFile.getAbsolutePath());
-            		annFileListTextField.setText(selectedFile.getAbsolutePath());
-            		mav.getData().setAnnotationLoaded(true);
-            		//isAnnotationLoaded=true;
-            		
-            	}
-    			
-            }
-            
-        
-        
-        
+         
        
         public JTable getTable() {
             return expressionTable;
@@ -853,28 +792,39 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
     			if (source == browseButton1) {
     				onBrowse();
     			} 
-    			if (source == browseButton2) {
-    				onAnnotationFileBrowse();
-    			} 
-    			
-    			if (source == connectButton) {
-    				onConnect();
-    			} 
-    	
-    			
-    			}
     		}
-      
-        
-       
+    	}
     }
 
+	/**
+	 * Make a guess as to which of the data values represents the
+	 * upper-leftmost expression value. Select that cell as the default.
+	 */
+	public Point guessFirstExpressionCell(Vector<Vector<String>> dataVector) {
+		int guessCol = 0, guessRow = 0;
+		Vector<String> lastRow = dataVector.get(dataVector.size() - 1);
+		for (int j = lastRow.size() - 2; j >= 0; j--) {
+			String thisEntry = lastRow.get(j);
+			try {
+				Float temp = new Float(thisEntry);
+			} catch (Exception e) {
+				guessCol = j + 1;
+				break;
+			}
+		}
+	
+		for (int i = dataVector.size() - 1; i >= 0; i--) {
+			Vector<String> thisRow = dataVector.get(i);
+			try {
+				String thisEntry = thisRow.get(guessCol);
+				Float temp = new Float(thisEntry);
+			} catch (Exception e) {
+				guessRow = i + 1;
+				break;
+			}
+		}
+		return new Point(guessRow, guessCol);
+	}
 
-	@Override
-	public String getAnnotationFilePath() {
-		// TODO Auto-generated method stub
-		return this.sflp.annFileListTextField.getText();
-		
-	}  
-    }
+}
 

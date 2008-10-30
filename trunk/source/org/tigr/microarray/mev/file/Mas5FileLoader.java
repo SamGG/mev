@@ -65,8 +65,8 @@ import org.tigr.microarray.mev.annotation.AnnotationFileReader;
 import org.tigr.microarray.mev.annotation.IChipAnnotation;
 import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.annotation.PublicURL;
+import org.tigr.microarray.util.ExpressionFileTableCellRenderer;
 import org.tigr.microarray.util.FileLoaderUtility;
-import org.tigr.microarray.util.MyCellRenderer;
 
 
 public class Mas5FileLoader extends ExpressionFileLoader {
@@ -74,7 +74,7 @@ public class Mas5FileLoader extends ExpressionFileLoader {
     private GBA gba;
     private boolean stop = false;
     private Mas5FileLoaderPanel sflp;
-    MyCellRenderer myCellRenderer;
+    ExpressionFileTableCellRenderer myCellRenderer;
     private int affyDataType = TMEV.DATA_TYPE_AFFY;
     /**
      * Annotation Specific
@@ -83,7 +83,6 @@ public class Mas5FileLoader extends ExpressionFileLoader {
      **/
     private Hashtable _tempAnno=new Hashtable();
     private MultipleArrayViewer mav;
-    private File selectedAnnoFile;
     protected MevAnnotation mevAnno=new MevAnnotation();
     private String annotationFileName;
     
@@ -173,11 +172,9 @@ public class Mas5FileLoader extends ExpressionFileLoader {
          * irrespective of whether annotation was loaded or not
          * 
          */
-        if(this.mav.getData().isAnnotationLoaded()) {
-//        	_tempAnno = loadAffyAnno(new File(getAnnotationFileName()));        	
-
-            //EH testing chip annotation change
-        	AnnotationFileReader afr = AnnotationFileReader.createAnnotationFileReader(new File(getAnnotationFileName()));
+        if(isAnnotationSelected()) {
+        	this.mav.getData().setAnnotationLoaded(true);
+        	AnnotationFileReader afr = AnnotationFileReader.createAnnotationFileReader(new File(getAnnotationFilePath()));
         	_tempAnno = afr.getAffyAnnotation();
         	chipAnno = afr.getAffyChipAnnotation();    
         }
@@ -265,8 +262,6 @@ public class Mas5FileLoader extends ExpressionFileLoader {
              		    */
                 		MevAnnotation mevAnno = new MevAnnotation();
                 		mevAnno.setCloneID(cloneName);
-// EH testing chip annotation changes                		
-//                		mevAnno.setViewer(this.mav);
                 		sde = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields, mevAnno);
                 	}
                 }
@@ -450,26 +445,13 @@ public class Mas5FileLoader extends ExpressionFileLoader {
     
     
     public String getFilePath() {
-       // return this.sflp.pathTextField.getText();
     	return this.sflp.fileNameTextField.getText();
     }
     
     public void openDataPath() {
-      //  this.sflp.openDataPath();
     }
-    
-    public String getAnnotationFileName() {
-    	return this.annotationFileName;
-    }
-    
-    public void setAnnotationFileName(String name) {
-    	this.annotationFileName=name;
-    }
-    
-    
-    
-    
-    
+
+       
 /*
 //
 //	Mas5FileLoader - Internal Classes
@@ -518,10 +500,7 @@ public class Mas5FileLoader extends ExpressionFileLoader {
     	 * Resourcerer. This feature is currently available only for Affymetrix files.
     	 */
     	JPanel annotationPanel;
-    	JLabel getAnnotation,  customAnnotation;
-    	JButton connectButton, browseButton2;
-    	JTextField annFileListTextField;
-        
+        AnnotationDownloadHandler adh;
         
         protected EventListener eventListener;
   
@@ -537,6 +516,7 @@ public class Mas5FileLoader extends ExpressionFileLoader {
         public Mas5FileLoaderPanel() {                
         	eventListener = new EventListener();
             setLayout(new GridBagLayout());
+            adh = new AnnotationDownloadHandler(superLoader);
             
        
             
@@ -587,52 +567,7 @@ public class Mas5FileLoader extends ExpressionFileLoader {
             gba.add(fileSelectionPanel, selectedFiles, 1, 2, 1, 1, 2, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0); 
               
 
-            annotationPanel = new JPanel();
-    		annotationPanel.setLayout(new GridBagLayout());
-    		annotationPanel.setBorder(new TitledBorder(new EtchedBorder(),
-    		"Annotation"));
-
-    		getAnnotation=new JLabel("Retrieve  Annotation  from  Resourcerer");
-
-
-    		connectButton = new JButton("Connect");
-    		connectButton.setSize(new Dimension(100, 30));
-    		connectButton.setPreferredSize(new Dimension(100, 30));
-    		connectButton.addActionListener(new EventListener());
-
-    		
-    		customAnnotation=new JLabel("Upload annotation");
-    		
-    		annFileListTextField=new JTextField();
-    		annFileListTextField.setEditable(false);
-    		annFileListTextField.setForeground(Color.black);
-    		annFileListTextField.setFont(new Font("monospaced", Font.BOLD, 12));
-    		
-    		browseButton2 = new JButton("Browse");
-    		browseButton2.setSize(new Dimension(100, 30));
-    		browseButton2.setPreferredSize(new Dimension(100, 30));
-    		browseButton2.addActionListener(new EventListener());
-
-    		
-
-    		 
-    		gba.add(annotationPanel, getAnnotation, 0, 0, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		//gba.add(annotationPanel, connectButton, 1, 0, 1, 0, 1, 1,GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(annotationPanel, connectButton, 1, 0, GBA.RELATIVE, 1, 0, 0,GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		
-    		
-    		gba.add(annotationPanel, customAnnotation, 0, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5,5,5,5),0,0);
-    		gba.add(annotationPanel, annFileListTextField, 1, 1, 1, 0, 1, 0, GBA.H,	GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(annotationPanel, browseButton2, 2, 1, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 10, 5), 0, 0);
-    	
-
-        	
-             
-          /*  gba.add(annotationPanel, customAnnotation, 0, 0, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-     		gba.add(annotationPanel, annFileNameTextField, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-     		gba.add(annotationPanel, browseButton2, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			*/
-        	
+            annotationPanel = adh.getAnnotationLoaderPanel(gba);
         	
         	additionalRequirements=new JPanel();
         	additionalRequirements.setLayout(new GridBagLayout());
@@ -668,21 +603,15 @@ public class Mas5FileLoader extends ExpressionFileLoader {
         	selectedCallFileTextField.setForeground(Color.black);
         	selectedCallFileTextField.setFont(new Font("monospaced", Font.BOLD, 12));
 
-
-
-        	
         	gba.add(additionalRequirements, callFileSelection, 0, 0, 1, 1, 1, 0, GBA.B,GBA.C, new Insets(5, 5, 5, 5), 0, 0);
     		gba.add(additionalRequirements, callFileNameTextField, 1, 0, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
     		gba.add(additionalRequirements, browseButton3, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
 
     		gba.add(additionalRequirements, selectedCallFile, 0, 2, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
             gba.add(additionalRequirements, selectedCallFileTextField, 1, 2, 1, 1, 2, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0); 
-              
-       
-
 
         	expressionTable = new JTable();
-    		myCellRenderer = new MyCellRenderer();
+    		myCellRenderer = new ExpressionFileTableCellRenderer();
             expressionTable.setDefaultRenderer(Object.class, myCellRenderer);
         	expressionTable.setCellSelectionEnabled(true);
         	expressionTable.setColumnSelectionAllowed(false);
@@ -697,8 +626,6 @@ public class Mas5FileLoader extends ExpressionFileLoader {
 
         	});
 
-
-
         	tableScrollPane = new JScrollPane(expressionTable, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         	instructionsLabel = new JLabel();
         	instructionsLabel.setForeground(java.awt.Color.red);
@@ -712,9 +639,6 @@ public class Mas5FileLoader extends ExpressionFileLoader {
         	gba.add(tablePanel, tableScrollPane, 0, 0, 1, 2, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
         	gba.add(tablePanel, instructionsLabel, 0, 2, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
 
-
-
-        	//gba.add(fileLoaderPanel, filePanel, 0, 0, 1, 4, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
         	fileLoaderPanel = new JPanel();
         	fileLoaderPanel.setLayout(new GridBagLayout());
 
@@ -736,43 +660,6 @@ public class Mas5FileLoader extends ExpressionFileLoader {
 			expressionTable.repaint();
 			checkLoadEnable();
 		}
-
-        public void onAnnotationFileBrowse() {
-         	FileLoaderUtility fileLoad = new FileLoaderUtility();
-            	File selectedFile;
-            	JFileChooser fileChooser = new JFileChooser(
-            			SuperExpressionFileLoader.ANNOTATION_PATH);
-            	fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            	int retVal = fileChooser.showOpenDialog(Mas5FileLoaderPanel.this);
-
-            	if (retVal == JFileChooser.APPROVE_OPTION) {
-            		
-            		selectedFile = fileChooser.getSelectedFile();
-            		//setAnnotationFile(selectedFile);
-            		setAnnotationFileName(selectedFile.getAbsolutePath());
-            		annFileListTextField.setText(selectedFile.getAbsolutePath());
-            		mav.getData().setAnnotationLoaded(true);
-            		
-            	}
-    			
-            }
-            
-            
-            
-            public void onConnect() {
-            	AnnotationDialog annDialog=new AnnotationDialog(new JFrame());
-            	if(annDialog.showModal()==JOptionPane.OK_OPTION) {
-                	setAnnotationFileName(annDialog.getAnnotationFileName());
-                	mav.getData().setAnnotationLoaded(true);
-                	}else {
-                		mav.getData().setAnnotationLoaded(false);
-                	}
-            	
-            
-                } 
-            
-	        
-	  
         
         public void onDataFileBrowse() {
         	JFileChooser fileChooser=new JFileChooser(SuperExpressionFileLoader.DATA_PATH);
@@ -839,14 +726,12 @@ public class Mas5FileLoader extends ExpressionFileLoader {
         public void setTableModel(TableModel model) {
             expressionTable.setModel(model);
             int numCols = expressionTable.getColumnCount();
-            //System.out.print(numCols);
             for(int i = 0; i < numCols; i++){
                 expressionTable.getColumnModel().getColumn(i).setMinWidth(75);
             }
         }
         
         public void setFieldsText(String fieldsText) {
-      //      annoTextField.setText(fieldsText);
         }
         
         private class EventListener implements ActionListener {
@@ -854,12 +739,8 @@ public class Mas5FileLoader extends ExpressionFileLoader {
     			Object source = event.getSource();
     			if (source == browseButton1) {
     				onDataFileBrowse();
-    			} if (source == browseButton2) {
-    				onAnnotationFileBrowse();
     			} if (source == browseButton3) {
     				onCallFileBrowse();
-    			} if (source==connectButton){
-        			onConnect();  
         		}
     	    			
     			}
@@ -895,8 +776,10 @@ public class Mas5FileLoader extends ExpressionFileLoader {
 
 	@Override
 	public String getAnnotationFilePath() {
-		return this.sflp.annFileListTextField.getText();
-		
+		return this.sflp.adh.annFileListTextField.getText();
 	}  
+	public boolean isAnnotationSelected() {
+		return this.sflp.adh.isAnnotationSelected();
+	}
     }
 
