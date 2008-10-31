@@ -4245,8 +4245,8 @@ private void appendResourcererGeneAnnotation() {
       String msg = "<html><center><h1>Import Gene Annotation</h1></center>";
         msg += "Please select an annotation file to import.  The file should contain a column that can be used ";
         msg += "to map annotation in the file to the proper genes.  After file selection you will be asked to identify ";
-        msg += "a key from the data and from the input file to be used to insure proper mapping of annotation. ";
-        msg += "Note that this file format should conform the MeV annotation file format conventions (.ann) file ";
+        msg += "a key from the data and from the input file to be used to ensure proper mapping of annotation. ";
+        msg += "Note that this file format should conform the MeV Resourcerer annotation file format conventions (.txt) file ";
         msg += "described in the appendix of the manual</html>";
         
         HTMLMessageFileChooser dialog = new HTMLMessageFileChooser(getFrame(), "Gene Annotation File Selection", msg, TMEV.getFile("data"), true);
@@ -4261,7 +4261,9 @@ private void appendResourcererGeneAnnotation() {
             	
             	
                String [] dataFieldNames = data.getFieldNames();
-           
+               
+             
+               
                 AnnotationFileReader reader =AnnotationFileReader.createAnnotationFileReader(file);
                 
                 
@@ -4274,8 +4276,8 @@ private void appendResourcererGeneAnnotation() {
                                                     
                      data.addResourcererGeneAnnotation(importDialog.getDataAnnotationKey(), reader.getAffyAnnotation());
                     
-                  //  if(updateCount > 0) {
-    
+                            	
+                    
                       //  menubar.replaceLabelMenuItems(data.getFieldNames(),newFields );
                         menubar.replaceLabelMenuItems(data.getAllFilledAnnotationFields());
                         
@@ -4287,7 +4289,7 @@ private void appendResourcererGeneAnnotation() {
                         
                         JOptionPane.showMessageDialog(getFrame(), "<html>Gene annotation has been successfully added.<br>Check the history node for field information.</html>", "Append Gene Annotation", JOptionPane.INFORMATION_MESSAGE);
     
-                 //   } 
+                  
                 }
             }catch(Exception e) {
                 JOptionPane.showMessageDialog(getFrame(), "Error processing gene annotation file. Please check file format.", "Sample Annotation Input Error", JOptionPane.ERROR_MESSAGE);
@@ -4295,8 +4297,7 @@ private void appendResourcererGeneAnnotation() {
             }
         }
 }
-  
-    
+
     
     
     

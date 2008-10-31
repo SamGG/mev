@@ -296,7 +296,7 @@ public class MultipleArrayMenubar extends JMenuBar {
         utilMenu.addSeparator();
                 
         utilMenu.add(manager.getAction(ActionManager.APPEND_GENE_ANNOTATION_ACTION));        
-      //  utilMenu.add(manager.getAction(ActionManager.IMPORT_RESOURCERER_ANNOTATION_ACTION));
+        utilMenu.add(manager.getAction(ActionManager.IMPORT_RESOURCERER_ANNOTATION_ACTION));
         utilMenu.add(manager.getAction(ActionManager.APPEND_SAMPLE_ANNOTATION_ACTION));  
         utilMenu.add(manager.getAction(ActionManager.CHANGE_SPECIES_NAME_ACTION));
                         
@@ -541,17 +541,25 @@ public class MultipleArrayMenubar extends JMenuBar {
             index++;
         }
     }
+    
+    
     public String[] getLabelMenuItems(){
     	//String[] temp = new String[labelGroup.getElements().];
     	Vector<String> temp = new Vector<String>();
     	Enumeration labels = labelGroup.getElements();
+    	
     	while(labels.hasMoreElements()){
     		JRadioButtonMenuItem aButton = (JRadioButtonMenuItem)labels.nextElement();
     		temp.add((String)aButton.getLabel());
+    		
     	}
     	String[] temp2 = new String[temp.size()];
     	for(int i=0; i<temp.size();i++)
     		temp2[i] = (String)temp.get(i);
+    	
+    	
+    	
+    	
    		return temp2;
     }
   
@@ -564,7 +572,7 @@ public class MultipleArrayMenubar extends JMenuBar {
      */
     public void addLabelMenuItems(String [] fieldNames, String[] annoFields){
         JRadioButtonMenuItem item;
-        //ButtonGroup bg = new ButtonGroup();
+       //ButtonGroup bg = new ButtonGroup();
         DefaultAction action;
         String thisFieldName;
     	String prefix = "Label by ";
@@ -678,12 +686,15 @@ public class MultipleArrayMenubar extends JMenuBar {
     }
     
     public void replaceLabelMenuItems(String [] fieldNames){
+    
         //remove all menu items
-        this.labelMenu.removeAll();
-        
+    	 this.labelMenu.removeAll();
+    	labelGroup=new ButtonGroup();
+    
         JRadioButtonMenuItem item;
         DefaultAction action;
         for(int i = 0; i < fieldNames.length; i++){
+        
             action = new DefaultAction(actionManager, "Label by "+fieldNames[i], ActionManager.DISPLAY_LABEL_CMD);
             action.putValue(ActionManager.PARAMETER, String.valueOf(i));
             item = new JRadioButtonMenuItem(action);
@@ -699,6 +710,7 @@ public class MultipleArrayMenubar extends JMenuBar {
     public void replaceLabelMenuItems(String [] fieldNames, String[]annoFields){
         //remove all menu items
         this.labelMenu.removeAll();
+        labelGroup=new ButtonGroup();
        this.addLabelMenuItems(fieldNames, annoFields);
     }
     
