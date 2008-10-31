@@ -661,10 +661,12 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
     //the .TAV files do not have "Field Names"
         
         if(labelIndex > data.getFieldNames().length-1 && (data.getFieldNames()).length >0) { 
+        
+        	
         	for (int probe = top; probe < bottom; probe++) {
         		String prefix = "Label by ";
         		String attr = getMenuLabel(labelIndex).substring(prefix.length()).trim();
-        		
+        
                 String[] _temp = data.getElementAnnotation(indices[probe], attr);
                
         		if(_temp.length > 1) {
@@ -695,6 +697,11 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
     private String[] getMenuLabels() {
     	MultipleArrayMenubar menuBar = (MultipleArrayMenubar)framework.getJFrame().getJMenuBar();
     	String[] labels = menuBar.getLabelMenuItems();
+    	
+    	/*for(int i=0; i<labels.length; i++){
+    		System.out.println("MAC"+labels[i]);
+    	}*/
+    	
         return labels;
     }
     
