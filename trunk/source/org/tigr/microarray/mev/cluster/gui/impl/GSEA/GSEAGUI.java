@@ -347,8 +347,8 @@ public class GSEAGUI implements IClusterGUI {
 	 */
 	
 	public String checkFileNameExtension(String fileName){
-		String extension=fileName.substring(fileName.indexOf('.')+1, fileName.length());
-			
+		String extension=fileName.substring(fileName.lastIndexOf('.')+1, fileName.length());
+		System.out.println("Extension:"+extension);	
 		return extension;
 	}
 	
