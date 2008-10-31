@@ -12,6 +12,7 @@ import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.GSEAWizard;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.IWizardParameterPanel;
+import org.tigr.microarray.mev.resources.IResourceManager;
 
 
 public class GSEAInitWizard extends GSEAWizard {
@@ -37,7 +38,7 @@ public class GSEAInitWizard extends GSEAWizard {
 	 * @param mavIndex The index of the current MultipleArrayViewer
 	 * @param stepComponents initial JPanel to display
 	 */
-	public GSEAInitWizard(IData idata, JFrame parent, String title, boolean modal, AlgorithmData algData, String[] stepTitles, int stepCount, JPanel initPanel, ClusterRepository clusterRepository) {
+	public GSEAInitWizard(IData idata, JFrame parent, String title, boolean modal, AlgorithmData algData, String[] stepTitles, int stepCount, JPanel initPanel, ClusterRepository clusterRepository, IResourceManager irm) {
 		super(parent, title, modal, algData,  stepTitles, stepCount, initPanel);
 		
 		this.idata=idata;
@@ -46,7 +47,7 @@ public class GSEAInitWizard extends GSEAWizard {
 		//currentPanel = stepsPanel;
 		
 		//dataPanel = new GSEADataPanel(idata,algData, this);--commented for testing to see what haeepns on passing parent
-		dataPanel = new GSEADataPanel(idata,algData, parent, clusterRepository);
+		dataPanel = new GSEADataPanel(idata,algData, parent, clusterRepository, irm);
 		currentPanel = dataPanel;
 		super.setInitialPanel(dataPanel);
 		parameterPanel= new GSEAParameterPanel(algData, this);
