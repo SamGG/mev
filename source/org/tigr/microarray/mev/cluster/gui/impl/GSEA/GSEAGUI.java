@@ -86,7 +86,7 @@ public class GSEAGUI implements IClusterGUI {
 		//Need the "." after the step names, to keep track of the highlighting
 		String [] steps = {"Data Selection.","Parameter Selection.", "Execute."};		
 		
-		GSEAInitWizard wiz=new GSEAInitWizard(idata, mainFrame, "GSEA Initialization", true, algData,steps,  2, new StepsPanel(), framework.getClusterRepository(1));
+		GSEAInitWizard wiz=new GSEAInitWizard(idata, mainFrame, "GSEA Initialization", true, algData,steps,  2, new StepsPanel(), framework.getClusterRepository(1), framework.getResourceManager());
 		
 		 listener = new Listener();
 	     logger = new Logger(framework.getFrame(), "Gene Set Enrichment Analysis", listener);

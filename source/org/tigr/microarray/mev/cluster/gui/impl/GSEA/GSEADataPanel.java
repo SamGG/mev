@@ -8,6 +8,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -37,6 +38,11 @@ import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.IWizardParameterPanel;
 import org.tigr.microarray.mev.file.GBA;
 import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
+import org.tigr.microarray.mev.resources.GseaMultiSuppFileDefinition;
+import org.tigr.microarray.mev.resources.IMultiSupportFileDefinition;
+import org.tigr.microarray.mev.resources.IResourceManager;
+import org.tigr.microarray.mev.resources.ISupportFileDefinition;
+import org.tigr.microarray.mev.resources.SupportFileAccessError;
 import org.tigr.microarray.mev.Manager;
 import org.tigr.microarray.util.FileLoaderUtility;
 
@@ -67,6 +73,9 @@ import org.tigr.microarray.util.FileLoaderUtility;
 	  	private javax.swing.JLabel infoLabel;
 	  
 	  	//Gene set panel
+	  	private javax.swing.JLabel downloadGenesetLabel;
+	  	private javax.swing.JLabel downloadStatusLabel;
+	  	private javax.swing.JButton DownloadButton;
 	    private javax.swing.JPanel genesetPanel;
 	  	private javax.swing.JButton browseButton2;
 	    private javax.swing.JLabel uploadGeneSetLabel;
@@ -84,7 +93,7 @@ import org.tigr.microarray.util.FileLoaderUtility;
 	    protected int[] factorAAssignments, factorBAssignments, factorCAssignments;
 	    protected JFrame parentFrame;
 	    protected ClusterRepository clusterRepository;
-	    
+	    private IResourceManager irm;
 	    
 	    
 	    /** Creates new form DataPanel 
@@ -95,12 +104,13 @@ import org.tigr.microarray.util.FileLoaderUtility;
 	     * 
 	     * */
 	//    public GSEADataPanel(IData idata,AlgorithmData algData, JDialog parent) {//commented for testing
-	    public GSEADataPanel(IData idata,AlgorithmData algData, JFrame parent, ClusterRepository clusterRepository) {
+	    public GSEADataPanel(IData idata,AlgorithmData algData, JFrame parent, ClusterRepository clusterRepository, IResourceManager irm) {
 	    	
 		    this.parentFrame = parent;
 	    	this.idata=idata;
 			this.algData = algData;
 			this.clusterRepository=clusterRepository;
+			this.irm=irm;
 			
 	        initComponents();
 	        initialize("./data/Annotation/"+this.idata.getChipAnnotation().getChipType()+".txt",idata.isAnnotationLoaded(),
@@ -154,6 +164,15 @@ import org.tigr.microarray.util.FileLoaderUtility;
 
 	    	//Gene set panel
 	    	genesetPanel = new javax.swing.JPanel();
+	    	downloadGenesetLabel=new javax.swing.JLabel();
+	    	downloadStatusLabel=new javax.swing.JLabel();
+	    	
+	    	DownloadButton= new javax.swing.JButton();
+	     	DownloadButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+			DownloadButton.setPreferredSize(new Dimension(90, 30));
+			DownloadButton.addActionListener(new Listener());
+
+	    	
 	       	geneSetTextField = new javax.swing.JTextField();
 	    	geneSetTextField.setEditable(false);
 	    	uploadGeneSetLabel = new javax.swing.JLabel();
@@ -162,21 +181,23 @@ import org.tigr.microarray.util.FileLoaderUtility;
 	       	browseButton2.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 			browseButton2.setPreferredSize(new Dimension(90, 30));
 			browseButton2.addActionListener(new Listener());
+			
+		
 
 	    	//Group assignment panel
 	    	groupAssignmentPanel.setLayout(new GridBagLayout());
 	    	groupAssignmentPanel.setBorder(new TitledBorder(new EtchedBorder(), "Phenotype Assignment"));
 	    	
+	        	
    	    	factorLabel.setText("Assign phenotype labels to your samples");
    	    	groupAssignment.setText("Assign");
    	    
-   	      	       	
-   	        
-    		gba.add(groupAssignmentPanel, factorLabel, 0, 0, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5,5,5,5),0,0);
-    		gba.add(groupAssignmentPanel, emptyLabel, 1, 0, 0, 0, 1, 0, GBA.H,	GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(groupAssignmentPanel, groupAssignment, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 10, 5), 0, 0);
-    		gba.add(groupAssignmentPanel, assignmentSuccessfulLabel, 0, 1, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    	
+   	    	
+   	    	gba.add(groupAssignmentPanel, factorLabel, 0, 0, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5,5,5,5),0,0);
+   	    	gba.add(groupAssignmentPanel, emptyLabel, 1, 0, 0, 0, 1, 0, GBA.H,	GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+   	    	gba.add(groupAssignmentPanel, groupAssignment, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 10, 5), 0, 0);
+   	    	gba.add(groupAssignmentPanel, assignmentSuccessfulLabel, 0, 1, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+	       	
    	    		    	
 	    	//Annotation panel layout
 			annotationPanel.setLayout(new GridBagLayout());
@@ -205,13 +226,20 @@ import org.tigr.microarray.util.FileLoaderUtility;
 	       //Gene set panel layout
     		genesetPanel.setLayout(new GridBagLayout());
 	    	genesetPanel.setBorder(new TitledBorder(new EtchedBorder(), "Geneset"));
+	    	downloadGenesetLabel.setText("Download gene sets from the Broad-MIT FTP site");
+	    	DownloadButton.setText("Download");
 	       	uploadGeneSetLabel.setText("Upload Geneset"); 
 	       	browseButton2.setText("Browse"); 
 	       	
-	       	gba.add(genesetPanel, uploadGeneSetLabel, 0, 0, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-			gba.add(genesetPanel, geneSetTextField, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-			gba.add(genesetPanel, browseButton2, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+	       	
+	            
+			gba.add(genesetPanel, downloadGenesetLabel, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(genesetPanel, DownloadButton, 1, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 			
+			gba.add(genesetPanel, uploadGeneSetLabel, 0, 1, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(genesetPanel, geneSetTextField, 2, 1, 1, 0, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(genesetPanel, browseButton2, 3, 1, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+		 	gba.add(genesetPanel, downloadStatusLabel, 0, 2, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 			
 			fileLoaderPanel = new JPanel();
             fileLoaderPanel.setLayout(new GridBagLayout());
@@ -405,7 +433,33 @@ import org.tigr.microarray.util.FileLoaderUtility;
 	
 	}
 
-
+/**
+ * Downloads gene set files from the MIT ftp site.
+ * @TO DO: The delay in getting the supportfile dialog box is way too long. No intermittent msg and hence confusing
+ * 
+ * 
+ */
+	
+	public void onGeneSetDownload(){
+		IMultiSupportFileDefinition mdef = new GseaMultiSuppFileDefinition();
+		try {
+			Hashtable<ISupportFileDefinition, File> supportfilesHash = irm.getMultipleSupportFiles(mdef);
+			Enumeration<ISupportFileDefinition> supportfiles = supportfilesHash.keys();
+			
+			if(supportfilesHash.size()>0){
+				//Set the text filed to reflect the repository directory
+				//Set the text for "downloadSuccessfulLabel" 
+			}
+			
+		} catch(SupportFileAccessError sfae) {
+			sfae.printStackTrace();
+		}
+		
+	}
+	
+	
+	
+	
 	
 	
 	
@@ -490,6 +544,8 @@ import org.tigr.microarray.util.FileLoaderUtility;
 			} else if (source==connectButton){
     			onConnect(); 
 				
+    		}else if (source == DownloadButton){
+    			onGeneSetDownload();
     		}
 			
 		}
