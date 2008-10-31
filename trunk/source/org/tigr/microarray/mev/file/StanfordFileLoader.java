@@ -97,7 +97,6 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 	private MultipleArrayViewer mav;
 
 	protected MevAnnotation mevAnno = new MevAnnotation();
-//	private String annotationFileName;
 
 
     public void setFilePath(String path) {
@@ -180,7 +179,6 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 		 * 
 		 */
 		if(isAnnotationSelected()) {
-//		if (this.mav.getData().isAnnotationLoaded()) {
 			this.mav.getData().setAnnotationLoaded(true);
 			AnnotationFileReader afr = AnnotationFileReader.createAnnotationFileReader(new File(getAnnotationFilePath()));
 			_tempAnno = afr.getAffyAnnotation();
@@ -195,18 +193,6 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 		 */
 		if (PublicURL.loadURLs(TMEV.getConfigurationFile("annotation_URLs.txt")) != 0) {
 			JOptionPane.showMessageDialog(new JFrame(), "URLs will not be loaded", "Warning", JOptionPane.WARNING_MESSAGE);
-		}
-
-        
-		try {
-			//System.out.println("1: " + PublicURL.getURL(AnnotationURLConstants.NCBI_GENE, new String[] {"MYC"}));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		try {
-			//	System.out.println("1: " + PublicURL.getURL(AnnotationURLConstants.NCBI_MAPVIEWER, new String[] {"9606", "16Abc", "12345", "223456"}));
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 
 		while ((currentLine = reader.readLine()) != null) {
@@ -506,26 +492,11 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 		JPanel fileSelectionPanel;
 		JLabel fileSelectionLabel, dataSelection;
 		JButton browseButton1;
-//		JTextField annFileNameTextField;
 		JPanel buttonPanel;
 		JRadioButton twoColorArray;
 		JRadioButton singleColorArray;
 		
 		AnnotationDownloadHandler adh;
-
-//		JComboBox organismListBox;
-//		JComboBox arrayListBox;
-//
-//		/**
-//		 * Annotation Panel lets user choose additional annotations from
-//		 * Resourcerer. This feature is currently available only for
-//		 * Affymetrix files.
-//		 */
-//		JPanel annotationPanel;
-//		JLabel getAnnotation, customAnnotation;
-//		JButton connectButton, browseButton2;
-//		JTextField annFileListTextField;
-//		JLabel chooseOrg, chooseArray;
 
 		protected EventListener eventListener;
 
@@ -596,87 +567,10 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 			gba.add(fileSelectionPanel, fileSelectionLabel, 0, 2, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 			gba.add(fileSelectionPanel, selectedFiles, 1, 2, 1, 1, 2, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 			gba.add(fileSelectionPanel, buttonPanel, 0, 3, 0, 0, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-//
-//			annotationPanel = new JPanel();
-//			annotationPanel.setLayout(new GridBagLayout());
-//			annotationPanel.setBorder(new TitledBorder(new EtchedBorder(), "Annotation"));
-//
-//			getAnnotation = new JLabel("Retrieve  Annotation  from  Resourcerer");
-//
-//			connectButton = new JButton("Connect");
-//			connectButton.setSize(new Dimension(100, 30));
-//			connectButton.setPreferredSize(new Dimension(100, 30));
-//			connectButton.addActionListener(new EventListener());
-//
-//			customAnnotation = new JLabel("Selected File:");
-//
-//			annFileListTextField = new JTextField();
-//			annFileListTextField.setEditable(false);
-//			annFileListTextField.setForeground(Color.black);
-//			annFileListTextField.setFont(new Font("monospaced", Font.BOLD, 12));
-//
-//			browseButton2 = new JButton("Browse");
-//			browseButton2.setSize(new Dimension(100, 30));
-//			browseButton2.setPreferredSize(new Dimension(100, 30));
-//			browseButton2.addActionListener(new EventListener());
-//
-//			chooseOrg = new JLabel("Choose Organism");
-//			chooseArray = new JLabel("Choose Array");
-//			
-//			//adding new items to annotation panel - orglist and array list
-//			if (superLoader.hasAnnotationList) {
-//				arrayListBox = new JComboBox();
-//				arrayListBox.setEnabled(true);
-//				arrayListBox.addActionListener(new EventListener());
-//				
-//				organismListBox = new JComboBox(new Vector<String>(superLoader.annotationLists.keySet()));
-//				organismListBox.setSelectedIndex(0);
-//				organismListBox.addActionListener(new EventListener());
-//				
-//				if(superLoader.getDefaultSpeciesName() != null) {
-//					organismListBox.setSelectedItem(superLoader.getDefaultSpeciesName());
-//				}
-//
-//				
-//				updateLabel(organismListBox.getSelectedItem().toString());
-//				
-//				if(superLoader.getDefaultArrayName() != null) {
-//					arrayListBox.setSelectedItem(superLoader.getDefaultArrayName());
-//				}
-//				
-//				connectButton.setEnabled(true);
-//			} else {
-//				Vector<String> temp = new Vector<String>();
-//				temp.add("No species available");
-//				organismListBox = new JComboBox(temp);
-//				organismListBox.setEnabled(false);
-//				Vector<String> temp2 = new Vector<String>();
-//				temp2.add("No arrays available");
-//				arrayListBox = new JComboBox(new Vector<String>(temp2));
-//				arrayListBox.setEnabled(false);
-//				getAnnotation = new JLabel("No annotation lists available.");
-//				connectButton.setEnabled(false);
-//				chooseOrg.setEnabled(false);
-//				chooseArray.setEnabled(false);
-//			}
-//
-//			gba.add(annotationPanel, chooseOrg, 					0, 0, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-//			gba.add(annotationPanel, chooseArray, 					0, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-//
-//			gba.add(annotationPanel, organismListBox, 				1, 0, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-//			gba.add(annotationPanel, arrayListBox, 					1, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-//
-//
-//			gba.add(annotationPanel, getAnnotation, 					3, 0, 2, 1, 0, 0, GBA.H, GBA.E, new Insets(5, 5, 5, 5), 0, 0);
-//			gba.add(annotationPanel, connectButton, 					3, 1, GBA.RELATIVE, 1, 0, 0, GBA.NONE, GBA.E, new Insets(5, 5, 5, 0), 0, 0);
-//
-//			gba.add(annotationPanel, customAnnotation, 				0, 2, 3, 1, 0, 0, GBA.H, GBA.E, new Insets(5, 5, 5, 5), 0, 0);
-//			gba.add(annotationPanel, annFileListTextField, 			0, 3, 2, 0, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-//			gba.add(annotationPanel, browseButton2,	 			2, 3, GBA.RELATIVE, 1, 0, 0, GBA.NONE, GBA.E, new Insets(5, 5, 10, 0), 0, 0);
 
 			expressionTable = new JTable();
-	    		myCellRenderer = new ExpressionFileTableCellRenderer();
-	    		expressionTable.setDefaultRenderer(Object.class, myCellRenderer);
+    		myCellRenderer = new ExpressionFileTableCellRenderer();
+    		expressionTable.setDefaultRenderer(Object.class, myCellRenderer);
 			expressionTable.setIntercellSpacing(new Dimension(1, 1));
 			expressionTable.setShowHorizontalLines(false);
 			expressionTable.setShowVerticalLines(true);
@@ -712,7 +606,6 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 
 			
 			gba.add(fileLoaderPanel, fileSelectionPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-//			gba.add(fileLoaderPanel, annotationPanel, 0, 2, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);//Uncomment when you add annotation for non affy
 			gba.add(fileLoaderPanel, adh.getAnnotationLoaderPanel(gba), 0, 2, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);//Uncomment when you add annotation for non affy
 			gba.add(fileLoaderPanel, tablePanel, 0, 3, 1, 6, 3, 6, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 
@@ -723,7 +616,6 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 			return adh.isAnnotationSelected();
 		}
 		public String getAnnFilePath() {
-//			return annFileListTextField.getText();
 			return adh.getAnnFilePath();
 		}
         private void setSelectedCell(int xR, int xC) {
@@ -744,32 +636,6 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 
 		}
 
-
-
-//		public void onConnect() {
-//	        	if(this.singleColorArray.isSelected()) {
-
-//					try {
-//						File f = superLoader.getAnnotationFile(organismListBox.getSelectedItem().toString(), arrayListBox.getSelectedItem().toString());
-//						mav.getData().setAnnotationLoaded(true);
-//						setAnnotationFileName(f.getAbsolutePath());
-//						annFileListTextField.setText(f.getAbsolutePath());
-//						connectButton.setText("Select This");
-//						getAnnotation.setText("Selected");
-//						superLoader.getAdditionalSupportFiles(organismListBox.getSelectedItem().toString(), arrayListBox.getSelectedItem().toString());
-//					} catch (SupportFileAccessError sfae) {
-//						getAnnotation.setText("Failure");
-//						sfae.printStackTrace();
-//					}
-//				}else{
-//	        		String eMsg = "<html>This feature is currently available <br>"+
-//			 		   "<html> for Affymetrix data only. <br>"+
-//			 		   "<html> To use it, select an Affymetrix data file<br>" +
-//			 		   "<html> and check the 'Affymetrix Array' radio button above.<br>";
-//			     JOptionPane.showMessageDialog(null, eMsg, "Warning", JOptionPane.INFORMATION_MESSAGE);
-//	       	
-//	        	}
-//		}
 
 		public JTable getTable() {
 			return expressionTable;
@@ -805,10 +671,6 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 				Object source = event.getSource();
 				if (source == browseButton1) {
 					onBrowse();
-//				} else if (source == browseButton2) {
-//					onAnnotationFileBrowse();
-//				} else if (source == connectButton) {
-//					onConnect();
 				} else if (source == twoColorArray) {
 					dataType = IData.DATA_TYPE_RATIO_ONLY;
 					setDataType(dataType);
@@ -817,37 +679,9 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 					dataType = IData.DATA_TYPE_AFFY_ABS;
 					setDataType(dataType);
 					adh.setEnabled(singleColorArray.isSelected());
-//				} else if (source.equals(organismListBox)) {
-//					updateLabel((String) organismListBox.getSelectedItem());
-//					checkForAnnotationFile();
-//				} else if (source.equals(arrayListBox)) {
-//					checkForAnnotationFile();
 				}
 			}
 		}
 
-//		//TODO move this and all annotation panel stuff to expressionfileloader
-//		protected void updateLabel(String name) {
-//			arrayListBox.removeAllItems();
-//			Vector<String> annFileKeyBoxItems = superLoader.annotationLists.get(name);
-//			for (int i = 0; i < annFileKeyBoxItems.size(); i++) {
-//				arrayListBox.addItem(annFileKeyBoxItems.elementAt(i));
-//			}
-//		}
-//		protected void checkForAnnotationFile() {
-//			if(organismListBox.getSelectedItem() != null && arrayListBox.getSelectedItem() != null) {
-//				ISupportFileDefinition def = new ResourcererAnnotationFileDefinition(organismListBox.getSelectedItem().toString(), arrayListBox.getSelectedItem().toString());
-//				
-//				if (superLoader.viewer.hasSupportFile(def)) {
-//					connectButton.setText("Select This");
-//					getAnnotation.setText("MeV has this file");
-//				} else {
-//					connectButton.setText("Download");
-//					getAnnotation.setText("Click to download.");
-//				}
-//			} else {
-//			}
-//			
-//		}
 	}
 }
