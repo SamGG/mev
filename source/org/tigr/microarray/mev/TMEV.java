@@ -203,12 +203,8 @@ public class TMEV {
 
 				ExpressionDataSupportDataFile def = new ExpressionDataSupportDataFile(so.getDataFile(), isMultifile, so.getFileType());
 				File file = resourceManager.getSupportFile(def, true);
-//				File file = getAndSaveDataFile(so.getDataFile(), showJWSDataSaveDialog(isMultifile, so.getDataFile()));
 	
 				if (file != null) {
-//					if (isMultifile) {
-//						file = getUnzippedFiles(file);
-//					} 
 					Manager.createNewMultipleArrayViewer(file, so.getFileType(), so.getArrayType());
 				} else { //downloaded file is null
 					JOptionPane.showMessageDialog(new JFrame(),
@@ -377,8 +373,6 @@ public class TMEV {
         StringTokenizer ss;
         try {
             String currentLine, key;
-            //TMEV.properties = new Hashtable<String, String>();
-            
             //FL
             indicesAdjusted = false;
             
