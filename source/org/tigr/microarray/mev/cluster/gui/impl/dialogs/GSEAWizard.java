@@ -82,6 +82,9 @@ public abstract class GSEAWizard extends GSEADialog {
 		super(parent, title, modal);
 
 		mainPanel = new JPanel(new GridBagLayout());
+		//For Testing
+		mainPanel.setSize(800, 680);
+		//Testing ENDS
 		
 		//stepTitles = steps;		
 		algData = params;		
@@ -384,41 +387,8 @@ public abstract class GSEAWizard extends GSEADialog {
 
 			
 			
-			/*gba=new GBA();
-			setLayout(new GridBagLayout());
-			runGSEA = new JRadioButton("Run GSEA");
-			runGSEA.setFocusPainted(false);
-			runGSEA.setActionCommand("run-gsea");
-			runGSEA.addActionListener(new Listener());
-			
-			antialiasing = new JRadioButton("Antialiasing");
-			antialiasing.setFocusPainted(false);
-			antialiasing.setActionCommand("antialiasing");
-		//	antialiasing.addActionListener(new Listener());
-			
-			gba.add(this, runGSEA, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C,
-					new Insets(0, 20, 0, 5), 0, 0);
-			gba.add(this, antialiasing, 0, 3, 1, 1, 1, 0, GBA.H,
-					GBA.C, new Insets(0, 20, 0, 5), 0, 0);
-		   */
-			
 		}
 		
-	/*public class Listener implements ActionListener {
-			
-			public void actionPerformed(ActionEvent e) {
-				String command = e.getActionCommand();
-				
-				
-				if (command.equalsIgnoreCase("run-gsea")) {
-					System.out.println("run-gsea");
-					
-				}else if (command.equalsIgnoreCase("antialiasing")) {
-					
-				}
-			}
-			
-		}*/
 		
 		private void setHighlight(int step) {
 			try {				

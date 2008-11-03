@@ -32,6 +32,7 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import org.tigr.microarray.mev.ShowThrowableDialog;
@@ -355,6 +356,7 @@ public class FileResourceManager implements IResourceManager {
 	 * @return a Hashtable mapping the results
 	 */
 	public Hashtable<ISupportFileDefinition, File> getMultipleSupportFiles(IMultiSupportFileDefinition def) throws SupportFileAccessError {
+		//For testing
 		try {
 			URL url = def.getURL();
 			FileDownloader fd = FileDownloader.getInstance(url);

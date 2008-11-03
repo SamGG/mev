@@ -233,13 +233,16 @@ import org.tigr.microarray.util.FileLoaderUtility;
 	       	
 	       	
 	            
-			gba.add(genesetPanel, downloadGenesetLabel, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-			gba.add(genesetPanel, DownloadButton, 1, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 			
-			gba.add(genesetPanel, uploadGeneSetLabel, 0, 1, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-			gba.add(genesetPanel, geneSetTextField, 2, 1, 1, 0, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-			gba.add(genesetPanel, browseButton2, 3, 1, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-		 	gba.add(genesetPanel, downloadStatusLabel, 0, 2, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+	    	gba.add(genesetPanel, downloadStatusLabel, 0, 0, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+	    	gba.add(genesetPanel, downloadGenesetLabel, 0, 1, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+    		gba.add(genesetPanel, DownloadButton, 1, 1, GBA.RELATIVE, 1, 0, 0,GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+    			
+			
+			gba.add(genesetPanel, uploadGeneSetLabel, 0, 3, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5,5,5,5),0,0);
+    		gba.add(genesetPanel, geneSetTextField, 1, 3, 1, 0, 1, 0, GBA.H,	GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+    		gba.add(genesetPanel, browseButton2, 2, 3, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+	    	
 			
 			fileLoaderPanel = new JPanel();
             fileLoaderPanel.setLayout(new GridBagLayout());
@@ -441,12 +444,18 @@ import org.tigr.microarray.util.FileLoaderUtility;
  */
 	
 	public void onGeneSetDownload(){
+		
 		IMultiSupportFileDefinition mdef = new GseaMultiSuppFileDefinition();
 		try {
+			
 			Hashtable<ISupportFileDefinition, File> supportfilesHash = irm.getMultipleSupportFiles(mdef);
 			Enumeration<ISupportFileDefinition> supportfiles = supportfilesHash.keys();
 			
 			if(supportfilesHash.size()>0){
+				File genesetFile=supportfilesHash.get(mdef);
+				geneSetTextField.setText(genesetFile.getAbsolutePath());
+				downloadStatusLabel.setText("Gene set file download was successful");
+				downloadStatusLabel.setForeground(Color.RED);
 				//Set the text filed to reflect the repository directory
 				//Set the text for "downloadSuccessfulLabel" 
 			}
@@ -472,6 +481,7 @@ import org.tigr.microarray.util.FileLoaderUtility;
     			setAnnotationFile(selectedFile);
     			annotationTextField.setText(annDialog.getAnnotationFileName());
     			processAnnotationFile();
+    			
 
     		}
 
