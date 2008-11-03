@@ -28,11 +28,11 @@ public class ExpressionDataSupportDataFile extends ISupportFileDefinition {
 			URL temp = new URL(fileURL);
 			String temp2 = temp.getFile();
 			String temp3 = temp2.substring(temp2.lastIndexOf('/')+1);
-			System.out.println("got URL, returning " + temp3);
+//			System.out.println("got URL, returning " + temp3);
 			return temp3;
 		} catch (MalformedURLException mue) {
 			String temp = fileURL.substring(fileURL.lastIndexOf('/')+1);
-			System.out.println("couldn't get URL, returning " + temp);
+//			System.out.println("couldn't get URL, returning " + temp);
 			return temp;
 		}
 	}
