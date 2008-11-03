@@ -642,8 +642,9 @@ public class ClusterRepository extends Vector {
         for(int i = 0; i < size(); i++){
             list = this.getClusterList(i);
             for(int j = 0; j < list.size(); j++){
-                if(serialNumber == list.getClusterAt(j).getSerialNumber()){
-                    return list.getClusterAt(j);
+            	cluster = list.getClusterAt(j);
+                if(serialNumber == cluster.getSerialNumber()){
+                    return cluster;
             }
         }
         }
