@@ -41,6 +41,8 @@ public class SelectMultiFilesDialog extends AlgorithmDialog {
 	int[] selectedFiles;
 	JTable filelisttable;
 	JLabel tableLabel, sourceLabel;
+	//Sarita: Testing
+	JLabel statusLabel;
 
 	public SelectMultiFilesDialog(JFrame frame, String title, String source, String[] filenames) {
 		super(frame, title, true);

@@ -206,20 +206,20 @@ public class GSEAGUI implements IClusterGUI {
 			}catch(Exception e){
 				e.printStackTrace();
 			}
+			gsea = framework.getAlgorithmFactory().getAlgorithm("GSEA");
+			gsea.addAlgorithmListener(listener);
+			logger.append("Algorithm execution begins... \n");
+			AlgorithmData result = gsea.execute(algData);//--commented for testing viewer	
+			logger.append("Algorithm excecution ends...\n");
+			logger.dispose();
 			
+			//resultNode = createResultNode(null, algData, idata, null, experiment);
+			resultNode = createResultNode(null, result, idata, null, experiment);//--commented for Testing
+				
+		
 		}
 		
 		
-		gsea = framework.getAlgorithmFactory().getAlgorithm("GSEA");
-		gsea.addAlgorithmListener(listener);
-		logger.append("Algorithm execution begins... \n");
-		AlgorithmData result = gsea.execute(algData);//--commented for testing viewer	
-		logger.append("Algorithm excecution ends...\n");
-		logger.dispose();
-		
-		//resultNode = createResultNode(null, algData, idata, null, experiment);
-		resultNode = createResultNode(null, result, idata, null, experiment);//--commented for Testing
-			
 		//temporarily commented for testing and building gsea
 		//algData.addGeneMatrix("association-matrix", createAssociationMatrix(gset, algData.getGeneData("gene-data-array")));
 		

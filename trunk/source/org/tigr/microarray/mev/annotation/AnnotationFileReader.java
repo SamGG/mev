@@ -28,6 +28,7 @@ public class AnnotationFileReader {
 	
 	public static AnnotationFileReader createAnnotationFileReader(File affyFile) throws IOException {
 		AnnotationFileReader newReader = new AnnotationFileReader();
+		
        	newReader.loadAffyAnnotation(affyFile);
 		return newReader;
 	}
