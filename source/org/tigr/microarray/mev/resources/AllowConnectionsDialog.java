@@ -1,7 +1,7 @@
 /*******************************************************************************
- * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
- * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
- * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * Copyright (c) 1999-2005, The Institute for Genomic Research (TIGR).
+ * Copyright (c) 1999, 2008, the Dana-Farber Cancer Institute (DFCI), 
+ * the J. Craig Science Foundataion (JCVI), and the University of Washington.
  * All rights reserved.
  *******************************************************************************/
 /*
