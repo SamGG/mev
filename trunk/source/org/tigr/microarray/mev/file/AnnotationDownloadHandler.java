@@ -73,8 +73,7 @@ public class AnnotationDownloadHandler {
 
 		annotationPanel = new JPanel();
 		annotationPanel.setLayout(new GridBagLayout());
-		annotationPanel.setBorder(new TitledBorder(new EtchedBorder(),
-				"Annotation"));
+		annotationPanel.setBorder(new TitledBorder(new EtchedBorder(), "Annotation"));
 
 		getAnnotation = new JLabel("Retrieve  Annotation  from  Resourcerer");
 
@@ -85,7 +84,7 @@ public class AnnotationDownloadHandler {
 
 		customAnnotation = new JLabel("Selected File:");
 
-		annFileListTextField = new JTextField();
+		annFileListTextField = new JTextField("No annotation selected.");
 		annFileListTextField.setEditable(false);
 		annFileListTextField.setForeground(Color.black);
 		annFileListTextField.setFont(new Font("monospaced", Font.BOLD, 12));
@@ -155,8 +154,12 @@ public class AnnotationDownloadHandler {
 				GBA.C, new Insets(5, 5, 5, 5), 0, 0);
 		gba.add(annotationPanel, browseButton, 2, 3, GBA.RELATIVE, 1, 0, 0,
 				GBA.NONE, GBA.E, new Insets(5, 5, 10, 0), 0, 0);
+		
+		checkForAnnotationFile();
 		return annotationPanel;
 	}
+	
+
 
 	public void setEnabled(boolean isEnabled) {
 		connectButton.setEnabled(isEnabled);
@@ -175,8 +178,8 @@ public class AnnotationDownloadHandler {
 	}
 
 	protected void checkForAnnotationFile() {
-		if (organismListBox.getSelectedItem() != null
-				&& arrayListBox.getSelectedItem() != null) {
+		connectButton.setEnabled(true);
+		if (organismListBox.getSelectedItem() != null && arrayListBox.getSelectedItem() != null) {
 			ISupportFileDefinition def = new ResourcererAnnotationFileDefinition(
 					organismListBox.getSelectedItem().toString(), arrayListBox
 							.getSelectedItem().toString());
@@ -207,7 +210,8 @@ public class AnnotationDownloadHandler {
 			annotationFilename = f.getAbsolutePath();
 			// setAnnotationFileName(f.getAbsolutePath());
 			annFileListTextField.setText(f.getAbsolutePath());
-			connectButton.setText("Select This");
+			connectButton.setText("Selected");
+			connectButton.setEnabled(false);
 			getAnnotation.setText("Selected");
 			superLoader.getAdditionalSupportFiles(organismListBox
 					.getSelectedItem().toString(), arrayListBox
@@ -215,6 +219,8 @@ public class AnnotationDownloadHandler {
 		} catch (SupportFileAccessError sfae) {
 			annotationSelected = false;
 			getAnnotation.setText("Failure");
+			connectButton.setText("Select this");
+			connectButton.setEnabled(true);
 			sfae.printStackTrace();
 		}
 	}
@@ -240,17 +246,14 @@ public class AnnotationDownloadHandler {
 			Object source = event.getSource();
 			if (source == browseButton) {
 				onAnnotationFileBrowse();
-			} else
-				if (source == connectButton) {
-					onClickAnnDownload();
-				} else
-					if (source.equals(organismListBox)) {
-						updateLabel((String) organismListBox.getSelectedItem());
-						checkForAnnotationFile();
-					} else
-						if (source.equals(arrayListBox)) {
-							checkForAnnotationFile();
-						}
+			} else if (source == connectButton) {
+				onClickAnnDownload();
+			} else if (source.equals(organismListBox)) {
+				updateLabel((String) organismListBox.getSelectedItem());
+				checkForAnnotationFile();
+			} else if (source.equals(arrayListBox)) {
+				checkForAnnotationFile();
+			}
 		}
 	}
 }

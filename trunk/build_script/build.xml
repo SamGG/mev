@@ -1924,7 +1924,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		    addproperty="pwd"
 		  />
 		<signjar 
-		    alias="tm4group" keystore="C:\Users\Eleanor\.keystore"
+		    alias="tm4group" keystore="C:\Documents and Settings\eleanora.BCB\.keystore"
 		    storepass="${pwd}">
 		  
 		    <fileset dir="../deploy/webstart/mev/lib" includes="*.jar" />
