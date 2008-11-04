@@ -70,7 +70,7 @@ public class AffymetrixAnnotationParser {
     			if(field.equalsIgnoreCase(AnnotationFieldConstants.CLONE_ID)&&index==i){
     				probeID=_temp;
     				annotationObj.setCloneID(_temp);
-    				System.out.println("clone id:"+probeID);
+    			//	System.out.println("clone id:"+probeID);
     			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.GENBANK_ACC)&&index==i){
     				if(_temp==null){
     					_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
@@ -106,7 +106,7 @@ public class AffymetrixAnnotationParser {
     					_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
     				}
     				annotationObj.setLocusLinkID(_temp);
-    				System.out.println("Entrez id:"+_temp);
+    			//	System.out.println("Entrez id:"+_temp);
     			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.REFSEQ_ACC)&&index==i){
     				if(_temp==null){
     					_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
@@ -182,37 +182,39 @@ public class AffymetrixAnnotationParser {
     		
     		while(split.hasMoreTokens()){
     			String _temp=split.nextToken().trim();
-    			
-    			if(_temp.contains("Probe Set ID")){
-    				System.out.println(_temp);
+    			_temp=_temp.replace('"', ' ');
+    			_temp=removeAllSpaces(_temp);
+    			System.out.println(_temp);
+    			if(_temp.contains("ProbeSetID")){
+    				System.out.println("matches:"+_temp);
     				columnNames.add(columnNumber, AnnotationFieldConstants.CLONE_ID);
     				columnNumber=columnNumber+1;
-    			}else if(_temp.equalsIgnoreCase("UniGene ID")){
-    				System.out.println(_temp);
+    			}else if(_temp.contentEquals("UniGeneID")){
+    				System.out.println("matches:"+_temp);
     				columnNames.add(columnNumber, AnnotationConstants.UNIGENE_ID);
     				columnNumber=columnNumber+1;
-    			}else if(_temp.equalsIgnoreCase("Gene Title")){
-    				System.out.println(_temp);
+    			}else if(_temp.equalsIgnoreCase("GeneTitle")){
+    				System.out.println("matches:"+_temp);
     				columnNames.add(columnNumber, AnnotationConstants.GENE_TITLE);
     				columnNumber=columnNumber+1;
-    			}else if(_temp.equalsIgnoreCase("Gene Symbol")){
-    				System.out.println(_temp);
+    			}else if(_temp.equalsIgnoreCase("GeneSymbol")){
+    				System.out.println("matches:"+_temp);
     				columnNames.add(columnNumber, AnnotationFieldConstants.GENE_SYMBOL);
     				columnNumber=columnNumber+1;
     			}else if(_temp.equalsIgnoreCase("Chromosomal Location")){
-    				System.out.println(_temp);
+    				System.out.println("matches:"+_temp);
     				columnNames.add(columnNumber, AnnotationFieldConstants.CYTOBAND);
     				columnNumber=columnNumber+1;
     			}else if(_temp.equalsIgnoreCase("Entrez Gene")){
-    				System.out.println(_temp);
+    				System.out.println("matches:"+_temp);
     				columnNames.add(columnNumber, AnnotationFieldConstants.ENTREZ_ID);
     				columnNumber=columnNumber+1;
     			}else if(_temp.equalsIgnoreCase("RefSeq Protein ID")){
-    				System.out.println(_temp);
+    				System.out.println("matches:"+_temp);
     				columnNames.add(columnNumber, AnnotationFieldConstants.PROTEIN_ACC);
     				columnNumber=columnNumber+1;
     			}else if(_temp.equalsIgnoreCase("Gene Ontology Biological Process")){
-    				System.out.println(_temp);
+    				System.out.println("matches:"+_temp);
     				if(!columnNames.contains(AnnotationFieldConstants.GO_TERMS))
     					columnNames.add(columnNumber, AnnotationFieldConstants.GO_TERMS);
     				columnNumber=columnNumber+1;
@@ -330,6 +332,20 @@ public class AffymetrixAnnotationParser {
     		
     	}
     	return numLines;
+    }
+    
+    
+    public String removeAllSpaces(String str){
+    	String newString=new String();
+    	StringSplitter split=new StringSplitter(' ');
+    	split.init(str);
+    	while(split.hasMoreTokens()){
+    		newString=newString+split.nextToken().trim();
+    		
+    	}
+    
+    	return newString;
+    	
     }
     
 public static void main(String[] args){
