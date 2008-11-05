@@ -48,7 +48,7 @@ public class AffymetrixAnnotationParser {
     	int numLines = this.getCountOfLines(annotationFile);
     	annoHash = new Hashtable<String, MevAnnotation>(numLines);
     	BufferedReader reader = new BufferedReader(new FileReader(annotationFile));
-    	System.out.println("Num_of_lines_to_skip:"+get_Lines_To_Skip());
+    	
     	CSVReader csvreader = new CSVReader( reader, CSVReader.DEFAULT_SEPARATOR, CSVReader.DEFAULT_QUOTE_CHARACTER, get_Lines_To_Skip());
  
     	while((currentLine=csvreader.readNext())!=null){
@@ -168,16 +168,13 @@ public class AffymetrixAnnotationParser {
     	//Skip the lines that begin with #
     	while((currentLine=reader.readLine()).contains("#")){
     		num_of_skippedLines=num_of_skippedLines+1;
-    		System.out.println(currentLine);
-    		
-    		
+    		   		
     	}
     	
     	set_Lines_To_Skip(num_of_skippedLines+1);
     	
     	//Extracting column names and columns positions 
-    	//while((currentLine=reader.readLine())!=null) {
-    		//Remove any leading and trailing spaces
+    	//Remove any leading and trailing spaces
     		currentLine=currentLine.trim();
     		split.init(currentLine);
     		int columnNumber=0;
@@ -220,13 +217,10 @@ public class AffymetrixAnnotationParser {
     			columnNumber=columnNumber+1;
     		}
     		
-    //	}//Outer while loop ends
-    	
+      	
     	reader.close();
     	
-    	for(int i=0; i<columnNames.size(); i++){
-    		System.out.println((String)columnNames.get(i));
-    	}
+    	
     	return columnNames;
     }
     
