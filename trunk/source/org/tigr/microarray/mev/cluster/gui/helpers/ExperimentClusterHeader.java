@@ -509,7 +509,7 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
 	        g.rotate(-Math.PI/2);
 	        int numberOfClusters = storedGeneColors.size();
 	        for (int cluster = 0; cluster < numberOfClusters; cluster++) {
-	        	if (data.getClusterLabel(cluster, true)==null) break;
+	        	//if (data.getClusterLabel(cluster, true)==null) break;
 	        	int index = data.getVisibleCluster((Color)storedGeneColors.get(cluster), true);
 	        	clusterName = data.getClusterLabel(index, true);
 	        	g.drawString(clusterName, h, descent + elementWidth*(samples+cluster) + elementWidth/2 + insets.left+5 + centroidNameOffset);
@@ -522,7 +522,7 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
 	        String clusterName;
 	        int numberOfClusters = storedSampleColors.size();
 	        for (int cluster = 0; cluster < numberOfClusters; cluster++) {
-	        	if (data.getClusterLabel(cluster, false)==null) break;
+	        	//if (data.getClusterLabel(cluster, false)==null) break;
 	        	int index = data.getVisibleCluster((Color)storedSampleColors.get(cluster), false);
 	        	clusterName = data.getClusterLabel(index, false);
 		        g.drawString(clusterName, elementWidth*(samples+visibleClusters) + insets.left+10 + centroidNameOffset, -h + COLOR_BAR_HEIGHT*(numberOfClusters-(cluster)));
