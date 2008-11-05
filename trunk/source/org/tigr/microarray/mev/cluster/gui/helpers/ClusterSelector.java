@@ -156,7 +156,6 @@ public class ClusterSelector extends JPanel {
         for(int i=0; i<groupsamps.size(); i++){
         	groupA[i] = groupsamps.get(i);
         }
-        
         return groupsamps;
     }
     
@@ -261,22 +260,42 @@ public class ClusterSelector extends JPanel {
         
         int clustersFound = 0;
         int serialInt = 0;
-        while (serialInt<repository.getClusterSerialCounter()){
-        	serialInt++;
-        	if (repository.getCluster(serialInt)==null)
-        		continue;
-        	cluster = repository.getCluster(serialInt);
-            dataVector.add(new JLabel(String.valueOf(cluster.getSerialNumber())));
-            dataVector.add(new JLabel(String.valueOf(cluster.getSource())));
-            dataVector.add(new JLabel(String.valueOf(cluster.getAlgorithmName())));
-            dataVector.add(new JLabel(String.valueOf(cluster.getClusterID())));
-            dataVector.add(cluster.getClusterLabel());
-            dataVector.add(cluster.getClusterDescription());
-            dataVector.add(new JLabel(String.valueOf(cluster.getSize())));
-            dataVector.add(cluster.getClusterColor());
-            dataVector.add("Unassigned");
-        	clustersFound++;
+        
+        for(int i = 0; i < repository.size(); i++){
+            list = repository.getClusterList(i);
+            for(int j = 0; j < list.size(); j++){
+                
+                	cluster = list.getClusterAt(j);
+                	 dataVector.add(new JLabel(String.valueOf(cluster.getSerialNumber())));
+                     dataVector.add(new JLabel(String.valueOf(cluster.getSource())));
+                     dataVector.add(new JLabel(String.valueOf(cluster.getAlgorithmName())));
+                     dataVector.add(new JLabel(String.valueOf(cluster.getClusterID())));
+                     dataVector.add(cluster.getClusterLabel());
+                     dataVector.add(cluster.getClusterDescription());
+                     dataVector.add(new JLabel(String.valueOf(cluster.getSize())));
+                     dataVector.add(cluster.getClusterColor());
+                     dataVector.add("Unassigned");
+                 	clustersFound++;
+            }
         }
+        
+        
+//        while (serialInt<repository.getClusterSerialCounter()){
+//        	serialInt++;
+//        	if (repository.getCluster(serialInt)==null)
+//        		continue;
+//        	cluster = repository.getCluster(serialInt);
+//            dataVector.add(new JLabel(String.valueOf(cluster.getSerialNumber())));
+//            dataVector.add(new JLabel(String.valueOf(cluster.getSource())));
+//            dataVector.add(new JLabel(String.valueOf(cluster.getAlgorithmName())));
+//            dataVector.add(new JLabel(String.valueOf(cluster.getClusterID())));
+//            dataVector.add(cluster.getClusterLabel());
+//            dataVector.add(cluster.getClusterDescription());
+//            dataVector.add(new JLabel(String.valueOf(cluster.getSize())));
+//            dataVector.add(cluster.getClusterColor());
+//            dataVector.add("Unassigned");
+//        	clustersFound++;
+//        }
         
         model = new ClusterTableModel(header, dataVector);
         clusterTable = new JTable(model);
@@ -328,7 +347,10 @@ public class ClusterSelector extends JPanel {
         
         public int getRowCount() {
         	//System.out.println("row count: "+repository.getCluster(clusterTable.getSelectedRow()+1).getSize());
-        	return repository.getCluster(clusterTable.getSelectedRow()+1).getSize();
+        	if (getSelectedCluster()==null){
+        		return 0;
+        	}
+        	return getSelectedCluster().getSize();
         }
         
         public String getColumnName(int col) {
@@ -343,7 +365,7 @@ public class ClusterSelector extends JPanel {
             	try{
 	            	String before = repository.getFramework().getData().getCurrentSampleLabelKey();
 	            	repository.getFramework().getData().setSampleLabelKey((String)repository.getFramework().getData().getSampleAnnotationFieldNames().get(col));
-	            	String value = repository.getFramework().getData().getSampleName((repository.getFramework().getData().getExperiment().getSampleIndex(repository.getCluster(clusterTable.getSelectedRow()+1).getIndices()[row])));
+	            	String value = repository.getFramework().getData().getSampleName((repository.getFramework().getData().getExperiment().getSampleIndex(getSelectedCluster().getIndices()[row])));
 	            	repository.getFramework().getData().setSampleLabelKey(before);
             	
 	            	return value;

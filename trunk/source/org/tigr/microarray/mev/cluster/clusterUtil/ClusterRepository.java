@@ -636,7 +636,7 @@ public class ClusterRepository extends Vector {
     /** Returns the cluster specified by the provided
      * serial number.
      */
-    public Cluster getCluster(int serialNumber){
+    public Cluster getCluster2(int serialNumber){
         Cluster cluster = null;
         ClusterList list = null;
         for(int i = 0; i < size(); i++){
@@ -645,6 +645,22 @@ public class ClusterRepository extends Vector {
             	cluster = list.getClusterAt(j);
                 if(serialNumber == cluster.getSerialNumber()){
                     return cluster;
+            }
+        }
+        }
+        return cluster;
+    }
+    /** Returns the cluster specified by the provided
+     * serial number.
+     */
+    public Cluster getCluster(int serialNumber){
+        Cluster cluster = null;
+        ClusterList list = null;
+        for(int i = 0; i < size(); i++){
+            list = this.getClusterList(i);
+            for(int j = 0; j < list.size(); j++){
+                if(serialNumber == list.getClusterAt(j).getSerialNumber()){
+                    return list.getClusterAt(j);
             }
         }
         }
