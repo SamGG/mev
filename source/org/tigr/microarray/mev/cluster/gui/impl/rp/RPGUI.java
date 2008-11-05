@@ -419,7 +419,6 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
         if (!RPDialog.isOkPressed()) return null;
         
         float alpha = RPDialog.getPValue();
-        int dataDesign = RPDialog.getDataDesign();
         //numTimePoints = RPDialog.getNumTimePoints();
 
         if (RPDialog.getTestDesign()==RPInitBox.CLUSTER_SELECTION){
@@ -795,26 +794,42 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
         }
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Hierarchical Trees");
         NodeList nodeList = result_cluster.getNodeList();
-        if (!drawSigTreesOnly) {        
-            for (int i=0; i<nodeList.getSize(); i++) {
-                if ((i==0&&upDown==2)||(upDown==3)) {
-                    node.add(new DefaultMutableTreeNode(new LeafInfo("Negative Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
-                }else if((i == 1 && upDown==3)||(i==0&&upDown==1)){
-                	node.add(new DefaultMutableTreeNode(new LeafInfo("Positive Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
-                }else if (i == nodeList.getSize() - 1) {
-                    node.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
-                }
+               
+        for (int i=0; i<nodeList.getSize(); i++) {
+            if (i==0&&upDown!=1) {
+            	node.add(new DefaultMutableTreeNode(new LeafInfo("Negative Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
+            }else if(i==1&&upDown!=2){
+            	node.add(new DefaultMutableTreeNode(new LeafInfo("Positive Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
+            }else if (i == nodeList.getSize() - 1) {
+            	if (!drawSigTreesOnly)
+            		node.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
             }
-        } else {
-        	for (int i=0; i<nodeList.getSize(); i++) {
-                if ((i==0)&&(upDown==2||upDown==3)) {
-                	node.add(new DefaultMutableTreeNode(new LeafInfo("Negative Significant Genes ", createHCLViewer(nodeList.getNode(0), info))));            
-                }
-                if ((i == 1 && upDown==3)||(i==0&&upDown==1)) {
-                	node.add(new DefaultMutableTreeNode(new LeafInfo("Positive Significant Genes ", createHCLViewer(nodeList.getNode(1), info))));            
-                }
-        	}
         }
+        
+//         else {
+//        	for (int i=0; i<nodeList.getSize(); i++) {
+//            	if (i==0){
+//            		if (upDown!=1){
+//            			node.add(new DefaultMutableTreeNode(new LeafInfo("Negative Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));            
+//            		}
+//            	}
+//            	if (i==1){
+//            		if (upDown!=2){
+//            			node.add(new DefaultMutableTreeNode(new LeafInfo("Positive Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));            
+//                    }
+//            	}
+////            	if (i==2){
+////            		
+////            	}
+////                if ((i==0)&&(upDown==2||upDown==3)) {
+////                	node.add(new DefaultMutableTreeNode(new LeafInfo("Negative Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));            
+////                }
+////                if ((i == 1 && upDown==3)||(i==0&&upDown==1)) {
+////                	//System.out.println(nodeList.getNode(1));
+////                	node.add(new DefaultMutableTreeNode(new LeafInfo("Positive Significant Genes ", createHCLViewer(nodeList.getNode(1), info))));            
+////                }
+//        	}
+//        }
         root.add(node);
     }
     
@@ -963,7 +978,7 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
     
     protected DefaultMutableTreeNode getTimeAssignmentInfo() {
         DefaultMutableTreeNode groupAssignmentInfo = new DefaultMutableTreeNode("Time assignments ");
-        DefaultMutableTreeNode notInGroups = new DefaultMutableTreeNode("Not in groups");
+        //DefaultMutableTreeNode notInGroups = new DefaultMutableTreeNode("Not in groups");
         //DefaultMutableTreeNode[] groups = new DefaultMutableTreeNode[numTimePoints];
         
         
