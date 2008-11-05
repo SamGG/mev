@@ -1352,6 +1352,8 @@ public class MultipleArrayData implements IData {
      */
     public String getClusterLabel(int index, boolean gene){
     	if (gene){
+//    		System.out.println("geneClusterRepository = "+geneClusterRepository);
+//    		System.out.println("geneClusterRepository.getCluster("+index+") = "+geneClusterRepository.getCluster(index));
 	    	if (geneClusterRepository==null) return null;
 	    	if (geneClusterRepository.getCluster(index)==null) return null;
 	    	return geneClusterRepository.getCluster(index).getClusterLabel();
@@ -1376,17 +1378,28 @@ public class MultipleArrayData implements IData {
     	if (gene){
     		if (geneClusterRepository==null) return 0;
     		int i=0;  
-    		while (geneClusterRepository.getCluster(i).getClusterColor()!=color){
-    		i++;
-    			if (i>geneClusterRepository.getClusterSerialCounter()) return -1;
+    		while (true){
+    			i++;
+    			if (geneClusterRepository.getCluster(i)==null)
+    				continue;
+    			if( geneClusterRepository.getCluster(i).getClusterColor()==color)
+    				break;
+    			
+    			if (i>geneClusterRepository.getClusterSerialCounter()) 
+    				return -1;
     		}
     		return i;
     	}else{
     		if (expClusterRepository==null) return 0;
     		int i=0;  
-    		while (expClusterRepository.getCluster(i).getClusterColor()!=color){
-    		i++;
-    			if (i>expClusterRepository.getClusterSerialCounter()) return -1;
+    		while (true){
+    			i++;
+    			if (expClusterRepository.getCluster(i)==null)
+    				continue;
+    			if (expClusterRepository.getCluster(i).getClusterColor()==color)
+    				break;
+    			if (i>expClusterRepository.getClusterSerialCounter()) 
+    				return -1;
     		}
     		return i;
     	}
