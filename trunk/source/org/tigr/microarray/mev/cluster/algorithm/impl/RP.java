@@ -208,7 +208,7 @@ public class RP extends AbstractAlgorithm{
     	    nodeList.addNode(node);
     	    if (hierarchical_tree) {
                     if (drawSigTreesOnly) {
-                        if (i == 0) {
+                        if ((i == 0)||(i == 1)) {
                             node.setValues(calculateHierarchicalTree(features, method_linkage, calculate_genes, calculate_experiments));
                             event.setIntValue(i+1);
                             fireValueChanged(event);                       
