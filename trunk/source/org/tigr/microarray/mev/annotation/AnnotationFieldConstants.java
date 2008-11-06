@@ -12,17 +12,6 @@ package org.tigr.microarray.mev.annotation;
 /**
  * @author Raktim
  *
- *@Revision
- *Sarita commented out some of the Annotation Constants
- *Reason: We will be downloading annotation from the TGI-FTP site.
- *The files hosted at the ftp site do not match our format.
- *Some of the fields like TX_START, TX_END requires a standard delimiter
- *to be in the data, in order for AnnotationFileReader to be able
- *to parse out the information.  
- *
- *After SOAP service is implemented at the Resourcerer end and we start
- *getting back annotation files in the format we want,we would uncomment these fields and their
- *getter/setter methods.
  *
  */
 

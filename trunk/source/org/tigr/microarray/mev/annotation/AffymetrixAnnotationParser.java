@@ -43,7 +43,7 @@ public class AffymetrixAnnotationParser {
     	MevAnnotation annotationObj; 
     	this.columnNames=getColumnHeader(annotationFile);
     	String _temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
-    	Vector<String> _tmpGO=new Vector<String>();
+    	Vector<String> _tmpGo=new Vector<String>();
 
     	int numLines = this.getCountOfLines(annotationFile);
     	annoHash = new Hashtable<String, MevAnnotation>(numLines);
@@ -54,26 +54,19 @@ public class AffymetrixAnnotationParser {
     	while((currentLine=csvreader.readNext())!=null){
     		annotationObj = new MevAnnotation(); 
     		probeID="";
-    		
-    		/*if(counter==0){
-    			for(int k=0; k<currentLine.length; k++){
-    				System.out.println(currentLine[k]);
-    			}
-    			counter=1;
-    		}*/
-    		
+    		 _tmpGo = new Vector<String>();
     		
     		for(int i = 0; i < columnNames.size(); i++){
 
     		 _temp=(String)currentLine[i];	
     			String field=((String)columnNames.get(i));
     			int index=columnNames.indexOf((Object)field);
+    		
     			
-    			Vector<String> _tmpGo = new Vector<String>();
     			if(field.equalsIgnoreCase(AnnotationFieldConstants.CLONE_ID)&&index==i){
     				probeID=_temp;
     				annotationObj.setCloneID(_temp);
-    				//System.out.println("clone id:"+probeID+":"+index);
+    		//		System.out.println("clone id:"+probeID+":"+index);
     			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.GENBANK_ACC)&&index==i){
     				if(_temp==null){
     					_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
@@ -117,12 +110,14 @@ public class AffymetrixAnnotationParser {
     				String[] proteinAcc = parseProteinIds(_temp);
     				annotationObj.setRefSeqProtAcc(proteinAcc);
     				
-    			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.GO_TERMS)&&index==i){
+    			}else if(field.equalsIgnoreCase("GeneOntologyMolecularFunction")&&index==i || 
+    					field.equalsIgnoreCase("GeneOntologyCellularComponent")&&index==i ||
+    					field.equalsIgnoreCase("GeneOntologyBiologicalProcess")&&index==i){
     				if(_temp==null){
     					_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
     				}
-    				_tmpGo = parseGoTerms(_temp, "///"); 
-    				annotationObj.setGoTerms((String[]) _tmpGo.toArray(new String[_tmpGo.size()]));
+    				Vector <String>temp=parseGoTerms(_temp, "///");
+    				_tmpGo.addAll(parseGoTerms(_temp, "///"));
     				//	System.out.println("GO_Terms:"+_temp);
     			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.TGI_TC)&&index==i){
     				if(_temp==null){
@@ -134,6 +129,8 @@ public class AffymetrixAnnotationParser {
 
 
     		}//For loop ends...
+    		//GO term set here because Affymetrix annotation files have multiple columns with GO Terms
+    		 annotationObj.setGoTerms((String[]) _tmpGo.toArray(new String[_tmpGo.size()]));
     		if(probeID!=null)
     			annoHash.put(probeID, annotationObj);
     		else{
@@ -162,7 +159,7 @@ public class AffymetrixAnnotationParser {
     	BufferedReader reader = new BufferedReader(new FileReader(targetFile));
     	StringSplitter split = new StringSplitter(',');
     	String currentLine;
-    	Vector columnNames=new Vector();
+    	
     	
     	
     	//Skip the lines that begin with #
@@ -173,42 +170,43 @@ public class AffymetrixAnnotationParser {
     	
     	set_Lines_To_Skip(num_of_skippedLines+1);
     	
-    	//Extracting column names and columns positions 
+    	//Extracting column names and column positions 
     	//Remove any leading and trailing spaces
     		currentLine=currentLine.trim();
     		split.init(currentLine);
     		int columnNumber=0;
-    		
+    		Vector columnNames=new Vector(split.countTokens());	
     		while(split.hasMoreTokens()){
     			String _temp=split.nextToken().trim();
     			_temp=_temp.replace('"', ' ');
     			_temp=removeAllSpaces(_temp);
     			
     			if(_temp.contains("ProbeSetID")){
-    				columnNames.add(columnNumber, AnnotationFieldConstants.CLONE_ID);
+    				columnNames.add(columnNumber,AnnotationFieldConstants.CLONE_ID);
     				
     			}else if(_temp.equalsIgnoreCase("UniGeneID")){
     				columnNames.add(columnNumber, AnnotationConstants.UNIGENE_ID);
-    				
+    				    				
     			}else if(_temp.contentEquals("GeneTitle")){
     				columnNames.add(columnNumber, AnnotationConstants.GENE_TITLE);
-    				
+    				    				
     			}else if(_temp.contentEquals("GeneSymbol")){
     				columnNames.add(columnNumber, AnnotationFieldConstants.GENE_SYMBOL);
-    				
+    				    				
     			}else if(_temp.contentEquals("Alignments")){
     				columnNames.add(columnNumber, AnnotationFieldConstants.CYTOBAND);
-    				
+    				    				
     			}else if(_temp.contentEquals("EntrezGene")){
     				columnNames.add(columnNumber, AnnotationFieldConstants.ENTREZ_ID);
-    				
+    				    				
     			}else if(_temp.equalsIgnoreCase("RefSeqProteinID")){
     				columnNames.add(columnNumber, AnnotationFieldConstants.PROTEIN_ACC);
-    				
     			}else if(_temp.equalsIgnoreCase("GeneOntologyBiologicalProcess")){
-    				if(!columnNames.contains(AnnotationFieldConstants.GO_TERMS))
-    					columnNames.add(columnNumber, AnnotationFieldConstants.GO_TERMS);
-    				
+    					columnNames.add(columnNumber, "GeneOntologyBiologicalProcess");
+    			}else if(_temp.equalsIgnoreCase("GeneOntologyCellularComponent")){
+    				columnNames.add(columnNumber, "GeneOntologyCellularComponent");
+    			}else if(_temp.equalsIgnoreCase("GeneOntologyMolecularFunction")){
+    				columnNames.add(columnNumber, "GeneOntologyMolecularFunction");
     			}else{
     				columnNames.add(columnNumber, "No element");
     			}
@@ -219,7 +217,6 @@ public class AffymetrixAnnotationParser {
     		
       	
     	reader.close();
-    	
     	
     	return columnNames;
     }
