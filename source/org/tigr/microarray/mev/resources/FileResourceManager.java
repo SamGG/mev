@@ -250,8 +250,8 @@ public class FileResourceManager implements IResourceManager {
 					}
 				}
 			} else {
-				//Couldn't connect to server... 
-				return null;
+				SupportFileAccessError sfae = new SupportFileAccessError("Couldn't connect to server " + fd.hostURL);			
+				throw sfae;
 			}
 		}
 		return tempMap;
