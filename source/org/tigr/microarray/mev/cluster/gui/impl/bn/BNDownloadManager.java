@@ -156,7 +156,7 @@ public class BNDownloadManager {
 	 */
 	private Hashtable getRepositoryInfo() {
 		//get the repository information from the repository config File            
-		Hashtable repHash = new Hashtable();
+		Hashtable<String, String> repHash = new Hashtable<String, String>();
 
 		try {
 			URLConnection conn = new URL(FTP_CONFIG_URL).openConnection();    		    		
@@ -164,8 +164,34 @@ public class BNDownloadManager {
 
 			//add repository property hashes to the vector
 			repHash = parseConfig(conn.getInputStream());			
+			
+			//Cache property results in TMEV props
+			Enumeration keySet = repHash.keys();
+			while(keySet.hasMoreElements()) {
+				String key = (String)keySet.nextElement();
+				TMEV.storeProperty(key, (String)repHash.get(key));
+			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println("Could not tereive Web Repository Info. Using cached value instead.");
+			//e.printStackTrace();
+			//JOptionPane.showMessageDialog(new Frame(), "An error occurred when retrieving Web Repository Info.\n  Update request cannot be fulfilled.", "Cytoscape Launch Error", JOptionPane.ERROR_MESSAGE);
+			// Try to use cached values from TMEV props
+			String cytoURL = TMEV.getSettingForOption("cytoscape_webstart").trim();
+			String cytoLibDir = TMEV.getSettingForOption("cytoscape_lib_dir").trim();
+			String keggServer = TMEV.getSettingForOption("kegg_server").trim();
+			String keggDir = TMEV.getSettingForOption("kegg_dir").trim();
+			if(cytoURL.isEmpty() || cytoURL == null 
+					|| cytoLibDir.isEmpty() || cytoLibDir == null 
+					|| keggServer.isEmpty() || keggServer == null
+					|| keggDir.isEmpty() || keggDir == null) {
+				JOptionPane.showMessageDialog(new Frame(), "An error occurred when retrieving Web Repository Info.\n  Previously cached info not avaialble", "Cytoscape Launch Error", JOptionPane.ERROR_MESSAGE);
+			} else {
+				repHash.put("cytoscape_webstart", cytoURL);
+				repHash.put("cytoscape_lib_dir", cytoLibDir);
+				repHash.put("kegg_server", keggServer);
+				repHash.put("kegg_dir", keggDir);
+				return repHash;
+			}
 		}
 
 		//return the vector of repository hashes
@@ -177,16 +203,41 @@ public class BNDownloadManager {
 	 * @return
 	 */
 	public static Hashtable getRepositoryInfoCytoscape() {
-		Hashtable repHash = new Hashtable();
+		Hashtable<String, String> repHash = new Hashtable<String, String>();
 
 		try {
 			URLConnection conn = new URL(FTP_CONFIG_URL).openConnection();    		    		
 
 			//add repository property hashes to the vector
 			repHash = parseConfigCytoscape(conn.getInputStream());			
+			
+			//Cache property results in TMEV props
+			Enumeration keySet = repHash.keys();
+			while(keySet.hasMoreElements()) {
+				String key = (String)keySet.nextElement();
+				TMEV.storeProperty(key, (String)repHash.get(key));
+			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(new Frame(), "An error occurred when retrieving Web Repository Info.\n  Update request cannot be fulfilled.", "Cytoscape Launch Error", JOptionPane.ERROR_MESSAGE);
+			System.out.println("Could not tereive Web Repository Info. Using cached value instead.");
+			//e.printStackTrace();
+			//JOptionPane.showMessageDialog(new Frame(), "An error occurred when retrieving Web Repository Info.\n  Update request cannot be fulfilled.", "Cytoscape Launch Error", JOptionPane.ERROR_MESSAGE);
+			// Try to use cached values from TMEV props
+			String cytoURL = TMEV.getSettingForOption("cytoscape_webstart").trim();
+			String cytoLibDir = TMEV.getSettingForOption("cytoscape_lib_dir").trim();
+			String keggServer = TMEV.getSettingForOption("kegg_server").trim();
+			String keggDir = TMEV.getSettingForOption("kegg_dir").trim();
+			if(cytoURL.isEmpty() || cytoURL == null 
+					|| cytoLibDir.isEmpty() || cytoLibDir == null 
+					|| keggServer.isEmpty() || keggServer == null
+					|| keggDir.isEmpty() || keggDir == null) {
+				JOptionPane.showMessageDialog(new Frame(), "An error occurred when retrieving Web Repository Info.\n  Previously cached info not avaialble", "Cytoscape Launch Error", JOptionPane.ERROR_MESSAGE);
+			} else {
+				repHash.put("cytoscape_webstart", cytoURL);
+				repHash.put("cytoscape_lib_dir", cytoLibDir);
+				repHash.put("kegg_server", keggServer);
+				repHash.put("kegg_dir", keggDir);
+				return repHash;
+			}
 		}
 
 		//return the vector of repository hashes
@@ -199,7 +250,7 @@ public class BNDownloadManager {
 	 * @return
 	 * @throws IOException
 	 */
-	private static Hashtable parseConfigCytoscape(InputStream is) throws IOException{
+	private static Hashtable<String, String> parseConfigCytoscape(InputStream is) throws IOException{
 		
 		BufferedReader br = new BufferedReader(new InputStreamReader(is));
 		String [] keyValue;
@@ -228,7 +279,7 @@ public class BNDownloadManager {
 	 * @return returns a Vector of Hashtables
 	 * @throws IOException
 	 */
-	private Hashtable parseConfig(InputStream is) throws IOException{
+	private Hashtable<String, String> parseConfig(InputStream is) throws IOException{
 		
 		BufferedReader br = new BufferedReader(new InputStreamReader(is));
 		String [] keyValue;

@@ -579,7 +579,7 @@ public class BNInitDialog extends AlgorithmDialog {
 				}
 			});
 
-			numIterationsField = new JTextField("4", 4);
+			numIterationsField = new JTextField("20", 4);
 			numIterationsField.setBackground(Color.white);
 			numIterationsLabel = new JLabel(" Number of Iterations");
 			numIterationsLabel.setBackground(Color.white);
