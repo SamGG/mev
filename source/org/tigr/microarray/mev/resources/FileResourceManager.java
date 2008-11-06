@@ -68,7 +68,7 @@ public class FileResourceManager implements IResourceManager {
 			if (!localRepository.mkdir())
 				throw new RepositoryInitializationError("Could not create new Repository in location " + localRepository.getAbsolutePath());
 		}
-		if (!localRepository.isDirectory() || !localRepository.canExecute())
+		if (!localRepository.isDirectory() || !localRepository.canRead())
 			throw new RepositoryInitializationError("Cannot write to repository at " + localRepository.getAbsolutePath());
 		try {
 			initializeProperties();
@@ -468,7 +468,6 @@ public class FileResourceManager implements IResourceManager {
 			}
 			dos.close();
 			zis.closeEntry();
-			outFile.setReadable(true);
 		}
 		zis.close();
 
@@ -492,7 +491,7 @@ public class FileResourceManager implements IResourceManager {
 			if (!supportFileDirectory.exists()) {
 				supportFileDirectory.mkdir();
 			} else {
-				if (!supportFileDirectory.isDirectory() || !supportFileDirectory.canExecute())
+				if (!supportFileDirectory.isDirectory() || !supportFileDirectory.canRead())
 					throw new IOException("Couldn't write to support file directory " + supportFileDirectory.getAbsolutePath());
 			}
 
@@ -585,7 +584,7 @@ public class FileResourceManager implements IResourceManager {
 		if (!supportFileDirectory.exists()) {
 			supportFileDirectory.mkdir();
 		} else {
-			if (!supportFileDirectory.isDirectory() || !supportFileDirectory.canExecute())
+			if (!supportFileDirectory.isDirectory() || !supportFileDirectory.canRead())
 				throw new IOException("Couldn't write to support file directory " + supportFileDirectory.getAbsolutePath());
 		}
 		File supportFile;
@@ -663,8 +662,6 @@ public class FileResourceManager implements IResourceManager {
 				}
 			}
 		}
-		//File shouldn't be overwritten. If updated, a new file should be added with a different datestamp.
-		f.setWritable(false, false);
 		return f;
 	}
 

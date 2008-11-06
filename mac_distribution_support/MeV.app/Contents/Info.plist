@@ -30,7 +30,9 @@
 		<string>1.5+</string>
 		<key>ClassPath</key>
 			<array>		 
+			 <string>$JAVAROOT/args4j-2.0.9.jar</string> 	 
 			 <string>$JAVAROOT/base64.jar</string> 	 
+			 <string>$JAVAROOT/boss.jar</string> 	 
 			 <string>$JAVAROOT/colt.jar</string>
 			 <string>$JAVAROOT/comcgh.jar</string> 
 			 <string>$JAVAROOT/commons-net-1.4.1.jar</string> 
@@ -38,7 +40,6 @@
 			 <string>$JAVAROOT/educgh.jar</string>
 			 <string>$JAVAROOT/examples.jar</string>
 			 <string>$JAVAROOT/ftpbean.jar</string>
-			 <string>$JAVAROOT/getopt.jar</string>
 			 <string>$JAVAROOT/goose.jar</string>
 			 <string>$JAVAROOT/HTTPClient.jar</string>
 			 <string>$JAVAROOT/images.jar</string>
@@ -55,6 +56,7 @@
 			 <string>$JAVAROOT/jdom.jar</string>
 			 <string>$JAVAROOT/jfreechart-0.9.20.jar</string>
 			 <string>$JAVAROOT/jfreechart-common-0.9.5.jar</string>
+			 <string>$JAVAROOT/jsch-0.1.39.jar</string>
 			 <string>$JAVAROOT/JSciCore.jar</string>
 			 <string>$JAVAROOT/JSciPartial.jar</string>
 			 <string>$JAVAROOT/mail.jar</string>
@@ -71,6 +73,7 @@
 			 <string>$JAVAROOT/servlet.jar</string>
 			 <string>$JAVAROOT/soap.jar</string>
 			 <string>$JAVAROOT/swt.jar</string>
+			 <string>$JAVAROOT/tar.jar</string>
 			 <string>$JAVAROOT/Text_JDBC30.jar</string>
 			 <string>$JAVAROOT/tools.jar</string>
 			 <string>$JAVAROOT/vecmath.jar</string>

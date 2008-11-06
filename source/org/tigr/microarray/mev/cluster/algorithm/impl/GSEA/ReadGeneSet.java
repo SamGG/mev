@@ -501,7 +501,7 @@ public class ReadGeneSet {
 
     		//Check if the gene set is empty OR name of gene set is NA/null/"". If so, add the gene set
     		//to the new list, with zeroth gene set element set to null
-    		if(gset[setIndex].getGenesetElements()==null||gsetName.equalsIgnoreCase("na")||gsetName.equalsIgnoreCase("null")||gsetName.isEmpty() ){
+    		if(gset[setIndex].getGenesetElements()==null||gsetName.equalsIgnoreCase("na")||gsetName.equalsIgnoreCase("null")||gsetName.length()<1 ){
     			GeneSetElement gsElement=null;
     			
     			newGeneSet[setIndex].setGeneSetElement(gsElement, 0);
