@@ -103,7 +103,7 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
     	processFileList(path, v);
     }
     
-    public Vector loadExpressionFiles() throws IOException {
+    public Vector<ISlideData> loadExpressionFiles() throws IOException {
 
         Object[] affymetrixFiles = aflp.getAffymetrixSelectedListModel().toArray();
         Object[] refFiles = aflp.getRefSelectedListModel().toArray();
@@ -113,7 +113,6 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
         files = new File[affymetrixFiles.length];
         for(int j = 0; j < affymetrixFiles.length ; j++) {
         	 File file=new File(this.aflp.pathTextField.getText(),((File) affymetrixFiles[j]).getName());
-           // files[j] = (File)affymetrixFiles[j];
         	 files[j] = file;
         }
 
@@ -125,7 +124,7 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
         
         
         /*Loop added by Sarita to check if Annotation has been loaded
-         *  
+
          * The loop was included so as to enable loading data
          * irrespective of whether annotation was loaded or not
          * 
@@ -147,25 +146,6 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
         	JOptionPane.showMessageDialog(new JFrame(), "URLs will not be loaded", "Warning", JOptionPane.WARNING_MESSAGE);
         }
        
-        
-        try {
-        	//System.out.println("1: " + PublicURL.getURL(AnnotationURLConstants.NCBI_GENE, new String[] {"MYC"}));
-        }catch(Exception e){
-        	e.printStackTrace();
-        }
-        try {
-        	//System.out.println("1: " + PublicURL.getURL(AnnotationURLConstants.NCBI_MAPVIEWER, new String[] {"9606", "16Abc", "12345", "223456"}));
-        } catch(Exception e){
-        	e.printStackTrace();
-        }
-
- /************************************************************************************************************/
- /************************************************************************************************************/
-        
-        
- 
-        
-
         if(aflp.absoluteRadioButton.isSelected()){
             data = loadAffyAbsolute(files);
             this.affyDataType = IData.DATA_TYPE_AFFY_ABS;
@@ -189,7 +169,7 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
                 this.affyDataType = IData.DATA_TYPE_AFFY_REF;
             }
         }
-        Vector carrier = new Vector();
+        Vector<ISlideData> carrier = new Vector<ISlideData>();
         if(data != null){
             TMEV.setDataType(TMEV.DATA_TYPE_AFFY);
             for(int i = 0; i < data.length; i++)
@@ -825,13 +805,9 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
     }
 
     public String getFilePath() {
-        if(this.aflp.getAffymetrixSelectedListModel().getSize() <1) {
-        	return null;
-        }
-        //TODO This isn't accurate for multi-file selection dialogs
-//        System.out.println("file: " + (new File(((File)aflp.getAffymetrixSelectedListModel().getElementAt(0)).getAbsolutePath())));
-//        System.out.println("parent: " + (new File(((File)aflp.getAffymetrixSelectedListModel().getElementAt(0)).getAbsolutePath())).getParentFile());
-        return (new File(((File)aflp.getAffymetrixSelectedListModel().getElementAt(0)).getAbsolutePath())).getParentFile().getAbsolutePath();
+        if(aflp.pathTextField == null)
+            return null;
+        return aflp.pathTextField.getText();
     }
     
     public void openDataPath() {

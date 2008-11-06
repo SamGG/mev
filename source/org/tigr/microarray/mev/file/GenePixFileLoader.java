@@ -262,9 +262,9 @@ public class GenePixFileLoader extends ExpressionFileLoader {
     }
     
     public String getFilePath() {
-        if(this.gpflp.getGenePixSelectedListModel().getSize() < 1)
+        if(gpflp.pathTextField == null)
             return null;
-        return ((File)(gpflp.getGenePixSelectedListModel().getElementAt(0))).getAbsolutePath();
+        return gpflp.pathTextField.getText();
     }
     
     public void openDataPath() {
