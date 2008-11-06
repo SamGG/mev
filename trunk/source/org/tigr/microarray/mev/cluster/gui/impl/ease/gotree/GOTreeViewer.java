@@ -420,7 +420,7 @@ public class GOTreeViewer extends JPanel implements IViewer {
         	impliesAndUrlFolder = TMEV.getResourceManager().getSupportFile(impliesFolderDef, false);
         	impliesFolder = new File(impliesFolderDef.getImpliesLocation(impliesAndUrlFolder));
         } catch (SupportFileAccessError sfae) {
-        	throw new IOException(sfae);
+        	throw new IOException(sfae.getMessage());
         }
 //        File impliesFolder = TMEV.getFile(baseFileSystem+"/Data/Class/Implies/");
         String folderPath = impliesFolder.getPath();

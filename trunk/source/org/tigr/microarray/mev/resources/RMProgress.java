@@ -8,6 +8,8 @@ package org.tigr.microarray.mev.resources;
 
 import java.awt.Frame;
 
+import javax.swing.JDialog;
+
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
 import org.tigr.microarray.mev.resources.FileDownloader.DownloadProgressListener;
 
@@ -27,7 +29,7 @@ public class RMProgress extends Progress implements SftpProgressMonitor, FtpObse
 		this.title = title;
 		this.dpl = listener;
 		this.parentFrame = parent;
-		setModalityType(ModalityType.MODELESS);
+		setModal(false);
 	}
 	
 	public boolean count(long increment) {
